@@ -6,7 +6,7 @@
 unit ZdbFactory;
 
 interface
-uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase,ZAbstractDataset,ZClient;
+uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase,ZAbstractDataset,ZClient,Forms;
 type
   TdbFactory = class(TComponent)
   private
@@ -14,11 +14,14 @@ type
     dbResolver:TCustomdbResolver;
     FConnMode: integer;
     FConnStr: string;
+    OkKey:boolean;
     procedure SetConnMode(const Value: integer);
     procedure SetConnStr(const Value: string);
   protected
     procedure Enter;
     procedure Leave;
+
+    procedure LoadKey;
   public
     constructor Create;
     destructor  Destroy;override;
@@ -54,13 +57,13 @@ type
     function CancelBatch:Boolean;
 
     //查询数据;
-    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; 
-    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload; 
+    function Open(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload;
+    function Open(DataSet:TDataSet;AClassName:String):Boolean;overload;
     function Open(DataSet:TDataSet):Boolean;overload;
 
     //提交数据
-    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload; 
-    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload; 
+    function UpdateBatch(DataSet:TDataSet;AClassName:String;Params:TftParamList):Boolean;overload;
+    function UpdateBatch(DataSet:TDataSet;AClassName:String):Boolean;overload;
     function UpdateBatch(DataSet:TDataSet):Boolean;overload;
 
     //返回执行影响记录数
@@ -80,7 +83,96 @@ type
     property ConnString:string read FConnStr write SetConnStr;
   end;
 implementation
-
+type
+  TFileInfo = packed record
+    CommpanyName: string;
+    FileDescription: string;
+    FileVersion: string;
+    InternalName: string;
+    LegalCopyright: string;
+    LegalTrademarks: string;
+    OriginalFileName: string;
+    ProductName: string;
+    ProductVersion: string;
+    SpecialBuild: string;
+    PrivateBuild: string;
+    Comments: string;
+    VsFixedFileInfo: VS_FIXEDFILEINFO;
+    UserDefineValue: string;
+  end;
+function GetFileVersionInfomation(const FileName: string;
+  var info: TFileInfo; UserDefine: string): boolean;
+const
+  SFInfo = '\StringFileInfo\';
+var
+  VersionInfo: Pointer;
+  InfoSize: DWORD;
+  InfoPointer: Pointer;
+  Translation: Pointer;
+  VersionValue: string;
+  unused: DWORD;
+begin
+  unused := 0;
+  Result := False;
+  InfoSize := GetFileVersionInfoSize(pchar(FileName), unused);
+  if InfoSize > 0 then
+  begin
+    GetMem(VersionInfo, InfoSize);
+    Result := GetFileVersionInfo(pchar(FileName), 0, InfoSize, VersionInfo);
+    if Result then
+    begin
+      VerQueryValue(VersionInfo, '\VarFileInfo\Translation', Translation,
+        InfoSize);
+      VersionValue := SFInfo + IntToHex(LoWord(Longint(Translation^)), 4) +
+        IntToHex(HiWord(Longint(Translation^)), 4) + '\';
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'CompanyName'),
+        InfoPointer, InfoSize);
+      info.CommpanyName := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'FileDescription'),
+        InfoPointer, InfoSize);
+      info.FileDescription := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'FileVersion'),
+        InfoPointer, InfoSize);
+      info.FileVersion := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'InternalName'),
+        InfoPointer, InfoSize);
+      info.InternalName := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'LegalCopyright'),
+        InfoPointer, InfoSize);
+      info.LegalCopyright := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'LegalTrademarks'),
+        InfoPointer, InfoSize);
+      info.LegalTrademarks := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'OriginalFileName'),
+        InfoPointer, InfoSize);
+      info.OriginalFileName := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'ProductName'),
+        InfoPointer, InfoSize);
+      info.ProductName := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'ProductVersion'),
+        InfoPointer, InfoSize);
+      info.ProductVersion := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'SpecialBuild'),
+        InfoPointer, InfoSize);
+      info.SpecialBuild := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'PrivateBuild'),
+        InfoPointer, InfoSize);
+      info.PrivateBuild := string(pchar(InfoPointer));
+      VerQueryValue(VersionInfo, pchar(VersionValue + 'Comments'), InfoPointer,
+        InfoSize);
+      info.Comments := string(pchar(InfoPointer));
+      if VerQueryValue(VersionInfo, '\', InfoPointer, InfoSize) then
+        info.VsFixedFileInfo := TVSFixedFileInfo(InfoPointer^);
+      if UserDefine <> '' then
+      begin
+        if VerQueryValue(VersionInfo, pchar(VersionValue + UserDefine),
+          InfoPointer, InfoSize) then
+          info.UserDefineValue := string(pchar(InfoPointer));
+      end;
+    end;
+    FreeMem(VersionInfo);
+  end;
+end;
 { TdbFactory }
 
 procedure TdbFactory.BeginTrans(TimeOut: integer);
@@ -132,6 +224,8 @@ constructor TdbFactory.Create;
 begin
   InitializeCriticalSection(FThreadLock);
   dbResolver := nil;
+  OkKey := true;
+//  LoadKey;
 end;
 
 destructor TdbFactory.Destroy;
@@ -232,6 +326,7 @@ end;
 function TdbFactory.UpdateBatch(DataSet: TDataSet; AClassName: String;
   Params: TftParamList): Boolean;
 begin
+  if DataSet.State in [dsEdit,dsInsert] then DataSet.Post;
   if dbResolver=nil then Connect;
   Enter;
   try
@@ -255,6 +350,7 @@ end;
 
 function TdbFactory.UpdateBatch(DataSet: TDataSet): Boolean;
 begin
+  if DataSet.State in [dsEdit,dsInsert] then DataSet.Post;
   if dbResolver=nil then Connect;
   Enter;
   try
@@ -268,6 +364,7 @@ end;
 function TdbFactory.AddBatch(DataSet: TDataSet; AClassName: string;
   Params: TftParamList): Boolean;
 begin
+  if DataSet.State in [dsEdit,dsInsert] then DataSet.Post;
   if dbResolver=nil then Connect;
   Enter;
   try
@@ -336,23 +433,24 @@ end;
 function TdbFactory.Open(DataSet: TDataSet; AClassName: String): Boolean;
 begin
   if dbResolver=nil then Connect;
-  Enter;
+//  Enter;
   try
     result := Open(DataSet,AClassName,nil);
   finally
-    Leave;
+//    Leave;
   end;
 end;
 
 function TdbFactory.UpdateBatch(DataSet: TDataSet;
   AClassName: String): Boolean;
 begin
+  if DataSet.State in [dsEdit,dsInsert] then DataSet.Post;
   if dbResolver=nil then Connect;
-  Enter;
+//  Enter;
   try
     result := UpdateBatch(DataSet,AClassName,nil);
   finally
-    Leave;
+//    Leave;
   end;
 end;
 
@@ -371,6 +469,11 @@ end;
 procedure TdbFactory.Enter;
 begin
   EnterCriticalSection(FThreadLock);
+  if not OkKey and (Application.MainForm<>nil) then
+     begin
+       Application.MainForm.Caption := '欢迎使用"zLib开发平台演示系统"，请支持我们正版，缴活热线：13860431130张先生';
+       Application.Title := '欢迎使用"zLib开发平台演示系统"，请支持我们正版，缴活热线：13860431130张先生';
+     end;
 end;
 
 procedure TdbFactory.Leave;
@@ -386,6 +489,53 @@ end;
 procedure TdbFactory.DBLock(Locked: boolean);
 begin
   dbResolver.DBLock(Locked);
+end;
+
+procedure TdbFactory.LoadKey;
+var
+  DllHandle:THandle;
+function GetResString(ResName:integer):string;
+var
+  iRet:array[0..254] of char;
+begin
+  result := '';
+  LoadString(DllHandle, ResName, iRet, 254);
+  result := StrPas(iRet);
+end;
+function EncStr(AStr,ENC_KEY:string):string;
+var
+  i: integer;
+  LongKey: string;
+  TmpStr: string;
+begin
+  Result:='';
+  LongKey:='';
+  for i:=0 to (Length(AStr) div Length(ENC_KEY)) do
+      LongKey:=LongKey+ENC_KEY;
+  for i:=1 to Length(AStr) do
+    begin
+      TmpStr:=IntToHex((Ord(AStr[i]) xor Ord(LongKey[i])),2);
+      Result:= Result+TmpStr;
+    end;
+end;
+var
+  KeyStr:string;
+  FileInfo:TFileInfo;
+begin
+  DllHandle := LoadLibrary('key.dll');
+  if DllHandle=0 then
+     begin
+       MessageBox(0,'欢迎使用"zLib开发平台演示系统"，请支持我们的正版.','友情提示..',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
+  KeyStr := GetResString(1);
+  GetFileVersionInfomation(ParamStr(0),FileInfo,'');
+  OkKey := (KeyStr = EncStr(FileInfo.CommpanyName+'#2@~#$%^&*-1235'+FileInfo.ProductName,'zhangsr30355701'));
+  if not OkKey then
+     begin
+       MessageBox(0,'欢迎使用"zLib开发平台演示系统"，请支持我们的正版.','友情提示..',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
 end;
 
 end.

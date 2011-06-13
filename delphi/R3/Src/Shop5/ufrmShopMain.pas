@@ -5,8 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, StdCtrls, jpeg,
-  RzBmpBtn, RzLabel, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
-  RzButton, ZBase, MultInst, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
+  RzBmpBtn, RzLabel,MultInst, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
+  RzButton, ZBase, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
   DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg,uTimerFactory;
@@ -487,10 +487,12 @@ type
     //p3 企业号
     //p4 产品号
     //p5 行业号
-    function  ConnectToSrvr:boolean;
+    function  ConnectToRsp:boolean;
+    function  ConnectToXsm:boolean;
     function  UpdateDbVersion:boolean;
     procedure SetLoging(const Value: boolean);
     procedure SetSystemShutdown(const Value: boolean);
+    procedure InitTenant;
   public
     { Publicdeclarations }
     procedure LoadPic32;
@@ -514,7 +516,7 @@ var
 
 implementation
 uses
-  uFnUtil,ufrmLogo,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uFnUtil,ufrmLogo,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -763,15 +765,11 @@ var
 begin
   if TimerFactory<>nil then FreeAndNil(TimerFactory);
   try
-  Logined := false;
-  Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
-  result := Logined;
-  if Locked then Exit;
-  if Logined then
+  if not Logined or Locked then
      begin
-       Loging := false;
-       frmLogo.Show;
-       try
+       Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
+       if Logined then
+       begin
          Global.SHOP_ID := Params.ShopId;
          Global.SHOP_NAME := Params.ShopName;
          Global.UserID := Params.UserID;
@@ -779,28 +777,24 @@ begin
          Global.Roles := Params.Roles;
          Global.CloseAll;
          Global.SysDate := lDate;
-
+         result := true;
+       end;
+     end
+  else
+     result := true;
+  if Locked then Exit;
+  if Logined then
+     begin
+       Loging := false;
+       frmLogo.Show;
+       try
          if CaFactory.Audited then
             begin
-              //if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
-              //   begin
-              //     Global.MoveToRemate;
-              //     try
-              //       try
-              //         Global.Connect;
-              //       except
-              //         MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
-              //       end;
-              //     finally
-              //       Global.MoveToLocal;
-              //     end;
-              //   end;
               if not FindCmdLineSwitch('DEBUG',['-','+'],false) then //同步门店专用资料
                  begin
                    if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(false);
                  end;
             end;
-
          Global.LoadBasic();
          ShopGlobal.LoadRight;
          CheckEnabled;
@@ -810,11 +804,7 @@ begin
          frmLogo.Close;
        end;
        ShopGlobal.SyncTimeStamp;
-//       Factor.ExecProc('TGetXDictInfo');
-//       MsgFactory.Load;
-//       Timer1.OnTimer(nil);
-       if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and ShopGlobal.GetChkRight('500028')
-       then
+       if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and (ParamStr(1)<>'-xsm') and ShopGlobal.GetChkRight('500028') then
        begin
           PostMessage(Handle,WM_DESKTOP_REQUEST,500054,0);
        end;   
@@ -833,8 +823,8 @@ begin
             if Exited then Application.Terminate;
           end;
      end;
-  LoadFrame;
   finally
+     LoadFrame;
      if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,120000);
   end;
 end;
@@ -844,13 +834,26 @@ var prm:string;
 begin
   if Logined then Exit;
   try
-    if ParamStr(1)='-rsp' then
+    if (ParamStr(1)='-rsp') then
        begin
-         if not ConnectToSrvr then
+         if not ConnectToRsp then
            begin
              Application.Terminate;
              Exit;
-           end;
+           end
+         else
+           Logined := true;
+       end
+    else
+    if (ParamStr(1)='-xsm') then
+       begin
+         if not ConnectToXsm then
+           begin
+             Application.Terminate;
+             Exit;
+           end
+         else
+           Logined := true;
        end
     else
        begin
@@ -858,7 +861,9 @@ begin
            begin
              Application.Terminate;
              Exit;
-           end;
+           end
+         else
+           Logined := false;
        end;
     Logined := Login(false);
     if not frmShopMain.Visible and Logined then
@@ -953,10 +958,18 @@ end;
 procedure TfrmShopMain.wm_desktop(var Message: TMessage);
 var
   i:integer;
+  Form:TfrmBasic;
 begin
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Form := FindChildForm(TfrmPosMain);
+  if Form<>nil then Form.WindowState := wsMinimized;
+  if Message.WParam=0 then
+     begin
+       RzBmpButton3Click(nil);
        Exit;
      end;
   for i:=0 to actList.ActionCount -1 do
@@ -1315,6 +1328,7 @@ begin
      end;
   if FList.Count=0 then
      begin
+       Logined := false;
        Logined := Login(false,false);
      end;
 end;
@@ -1337,8 +1351,7 @@ begin
 
 end;
 
-function TfrmShopMain.ConnectToDb:boolean;
-procedure InitTenant;
+procedure TfrmShopMain.InitTenant;
 var
   Params:TftParamList;
 begin
@@ -1350,6 +1363,7 @@ begin
     Params.Free;
   end;
 end;
+function TfrmShopMain.ConnectToDb:boolean;
 var RspComVersion:string;
 begin
   frmLogo.Show;
@@ -1443,8 +1457,8 @@ begin
              end;
           if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
              begin
-               CaFactory.SyncAll(1);
-               SyncFactory.SyncBasic(true);
+               if CaFactory.CheckInitSync then CaFactory.SyncAll(1);
+               if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
                InitTenant;
              end;
         end
@@ -1452,6 +1466,7 @@ begin
         begin
           if CaFactory.Audited and Global.RemoteFactory.Connected then //管理什么版本，有连接到服务器时，必须先同步数据
              begin
+               if CaFactory.CheckInitSync then CaFactory.SyncAll(1);
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
                     SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
@@ -1461,7 +1476,9 @@ begin
                     SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
                   end
                else
-                  SyncFactory.SyncBasic(true);
+                  begin
+                    if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
+                  end;
              end;
           InitTenant;
         end;
@@ -3423,7 +3440,7 @@ begin
 
 end;
 
-function TfrmShopMain.ConnectToSrvr: boolean;
+function TfrmShopMain.ConnectToRsp: boolean;
 var
   rs:TZQuery;
   rspComVersion:string;
@@ -3680,6 +3697,213 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+function TfrmShopMain.ConnectToXsm: boolean;
+const
+  dec='{1#2$3%4(5)6@7!poeeww$3%4(5)djjkkldss}';
+var
+  mm,chk,tid,fn:string;
+function  CheckParams:boolean;
+begin
+ try
+  mm := ParamStr(2);
+  if (copy(mm,1,3)<>'-mm') then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
+  mm := copy(mm,5,255);
+
+  chk := ParamStr(3);
+  if (copy(chk,1,4)<>'-chk') then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
+  chk := copy(chk,6,255);
+  if chk<>md5Encode(mm+dec) then Raise Exception.Create('系统传入的校验码无效..');
+
+  tid := ParamStr(5);
+  if copy(tid,1,3)<>'-id' then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
+  tid := copy(tid,5,255);
+
+  fn := ParamStr(4);
+  if copy(fn,1,3)<>'-fn' then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
+  fn := copy(fn,5,255);
+  result := true;
+
+ except
+   on E:Exception do
+      begin
+        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+        result := false;
+      end;
+ end;
+end;
+function CheckTenant:boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select Value from SYS_DEFINE Where Define = ''TENANT_ID'' and TENANT_ID=0 ';
+    Factor.Open(rs);
+    if rs.Fields[0].asString<>tid then //不相同要自动注册
+       begin
+         Global.TENANT_ID := 0;
+         result := TfrmTenant.coAutoRegister(tid);
+       end
+    else
+       result := TfrmTenant.coRegister(self);
+  finally
+    rs.Free;
+  end;
+end;
+var
+  rs:TZQuery;
+  RspComVersion:string;
+begin
+  result := false;
+  frmLogo.Show;
+  try
+    result := false;
+    Global.MoveToLocal;
+    Global.Connect;
+  finally
+    frmLogo.Close;
+  end;
+  if not UpdateDbVersion then
+     begin
+       result := false;
+       Exit;
+     end;
+  result := CheckParams;
+  result := CheckTenant;
+  if result then LoadFrame;
+  if result and CaFactory.Audited then result := CheckVersion;
+  if not result then Exit;
+  if result then
+     begin
+      if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
+         begin
+           frmLogo.Show;
+           try
+             Global.MoveToRemate;
+             try
+               Global.Connect;
+               with TCreateDbFactory.Create do
+               begin
+                 try
+                    RspComVersion := Factor.ExecProc('TGetComVersion');
+                    if CheckVersion(DBVersion,Global.RemoteFactory) or CompareVersion(ComVersion,RspComVersion) then
+                    begin
+                      if ShopGlobal.ONLVersion then
+                         begin
+                           MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                           result := false;
+                           Exit;
+                         end;
+                      result := (MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+                      if result then
+                        begin
+                          Global.MoveToLocal;
+                          Global.Connect;
+                        end;
+                    end;   
+                 finally
+                    free;
+                 end;
+               end;
+             except
+               if ShopGlobal.ONLVersion then
+                  begin
+                    if MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+                       TfrmHostDialog.HostDialog(self);
+                    result := false;
+                    Exit;
+                  end;
+               result := (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+               if result then
+                  begin
+                    Global.MoveToLocal;
+                    Global.Connect;
+                  end;
+             end;
+           finally
+             frmLogo.Close;
+           end;
+         end;
+     end;
+  try
+    frmLogo.Show;
+    try
+     if CaFactory.Audited and not ShopGlobal.ONLVersion then
+        begin
+          if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
+             begin
+               frmLogo.Label1.Caption := '正在连接远程服务...';
+               frmLogo.Label1.Update;
+               Global.MoveToRemate;
+               try
+                 try
+                   Global.Connect;
+                 except
+                   MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+                 end;
+               finally
+                 Global.MoveToLocal;
+               end;
+             end;
+          if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
+             begin
+               CaFactory.SyncAll(1);
+               SyncFactory.SyncBasic(true);
+               InitTenant;
+             end;
+        end
+     else
+        begin
+          if CaFactory.Audited and Global.RemoteFactory.Connected then //管理什么版本，有连接到服务器时，必须先同步数据
+             begin
+               if ShopGlobal.ONLVersion then //在线版只需同步注册数据
+                  begin
+                    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+                    SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
+                    SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
+                    SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
+                    SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
+                  end
+               else
+                  SyncFactory.SyncBasic(true);
+             end;
+          InitTenant;
+        end;
+    finally
+      frmLogo.Close;
+    end;
+  except
+    on E:Exception do
+      begin
+        MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
+        result := false;
+        Exit;
+      end;
+  end;
+  rs := Global.GetZQueryFromName('CA_USERS');
+  if rs.Locate('MM',lowercase(mm),[]) or rs.Locate('MM',uppercase(mm),[]) then
+    begin
+      Global.SysDate := Date();
+      Global.UserID := rs.FieldbyName('USER_ID').AsString;
+      Global.SHOP_ID := rs.FieldbyName('SHOP_ID').AsString;
+      Global.Roles  := rs.FieldbyName('ROLE_IDS').AsString;
+      Global.SHOP_NAME := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',rs.FieldbyName('SHOP_ID').AsString);
+      Global.UserName := rs.FieldbyName('USER_NAME').AsString;
+      result := true;
+    end
+  else
+    begin
+      Global.SysDate := Date();
+      Global.UserID := 'admin';
+      Global.SHOP_ID := inttostr(Global.TENANT_ID)+'0001';
+      Global.Roles  := '';
+      Global.SHOP_NAME := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Global.SHOP_ID);
+      Global.UserName := '管理员';
+      result := true;
+    end;
+  PostMessage(Handle,WM_DESKTOP_REQUEST,StrtoIntDef(fn,0),0);
 end;
 
 end.

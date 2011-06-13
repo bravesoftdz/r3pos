@@ -33,6 +33,9 @@ type
 
     function GetFactoryName(node:PSynTableInfo):string;
 
+    //检测启动时是否同步
+    function CheckInitSync:boolean;
+
     //检测数据库版本.
     function CheckDBVersion:boolean;
     //初始化同步队列
@@ -41,7 +44,7 @@ type
     function GetSynTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     //双同同步
-    procedure SyncSingleTable(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0;onlyDown:boolean=false);
+    procedure SyncSingleTable(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0;onlyDown:boolean=false;timeStampNoChg:integer=1);
     //同步入库类单据
     procedure SyncStockOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步出库类单据
@@ -116,6 +119,21 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TSyncFactory.CheckInitSync: boolean;
+var
+  timestamp:int64;
+  cDate:Currency;
+  CurDate:Currency;
+begin
+  result := true;
+  timestamp := GetSynTimeStamp('#','#');
+  if timestamp=0 then Exit;
+  cDate := trunc(timestamp/86400.0+40542.0);
+  CurDate := date();
+  CurDate := trunc(CurDate)-2;
+  result := cDate<CurDate;
 end;
 
 function TSyncFactory.CheckRemeteData: boolean;
@@ -692,6 +710,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -825,6 +844,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -940,6 +960,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1057,6 +1078,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1190,6 +1212,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1305,6 +1328,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1402,6 +1426,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1499,6 +1524,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1596,6 +1622,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1728,6 +1755,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1843,6 +1871,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1976,6 +2005,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2091,6 +2121,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2229,6 +2260,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2362,6 +2394,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2466,7 +2499,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string;KeyFlag:integer=0;onlyDown:boolean=false);
+procedure TSyncFactory.SyncSingleTable(tbName, KeyFields,ZClassName: string;KeyFlag:integer=0;onlyDown:boolean=false;timeStampNoChg:integer=1);
 var
   cs,rs:TZQuery;
 begin
@@ -2475,6 +2508,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   cs := TZQuery.Create(nil);
@@ -2545,6 +2579,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2659,6 +2694,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2784,7 +2820,7 @@ end;
 procedure TSyncFactory.SyncTransOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 begin
-  SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag);
+  SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag,false,0);
 end;
 
 initialization

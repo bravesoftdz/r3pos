@@ -85,6 +85,19 @@ begin
 end;
 
 procedure TfrmLogin.cxBtnOkClick(Sender: TObject);
+procedure CheckSysDate;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID);
+    Factor.Open(rs);
+    if formatDatetime('YYYYMMDD',edtOPER_DATE.Date) < rs.Fields[0].AsString then Raise Exception.Create('业务日期不能小于已关账日期...');
+  finally
+    rs.Free;
+  end;
+end;
 var
   temp:TZQuery;
   cId,cName:string;
@@ -95,7 +108,7 @@ begin
      begin
        Raise Exception.Create('当前计算机时间不正确，请检查服务器时间及本地计算机时间...');
      end;
-  if edtOPER_DATE.Date < Date() then Raise Exception.Create('业务日期不能小于今天...');
+  CheckSysDate;
   if trim(cxedtUsers.Text)='' then
      begin
        cxedtUsers.SetFocus;
@@ -135,51 +148,8 @@ var
     offline:boolean;
     _ok:boolean;
     rs:TZQuery;
-    s,chk:string;
 begin
   result := false;
-  s := ParamStr(1);
-  if (s<>'') and (copy(s,1,3)='-mm') then
-     begin
-       rs := Global.GetZQueryFromName('CA_USERS');
-       chk := copy(ParamStr(2),6,255);
-       if rs.Locate('MM',lowercase(copy(s,5,255)),[]) or rs.Locate('MM',uppercase(copy(s,5,255)),[]) then
-          begin
-            lDate := Date();
-            LoginParam.UserID := rs.FieldbyName('USER_ID').AsString;
-            LoginParam.ShopId := rs.FieldbyName('SHOP_ID').AsString;
-            LoginParam.Roles  := rs.FieldbyName('ROLE_IDS').AsString;
-            LoginParam.ShopName := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',rs.FieldbyName('SHOP_ID').AsString);
-            LoginParam.UserName := rs.FieldbyName('USER_NAME').AsString;
-            if chk<>md5Encode(copy(s,5,255)) then
-               begin
-                 MessageBox(Application.Handle,'登录校验码不正确，无法完成自动登录,请输入用户密码...','友情提示...',MB_OK+MB_ICONINFORMATION);
-               end
-            else
-               begin
-                 result := true;
-                 Exit;
-               end;
-          end
-       else
-          begin
-            lDate := Date();
-            LoginParam.UserID := 'admin';
-            LoginParam.ShopId := inttostr(Global.TENANT_ID)+'0001';
-            LoginParam.Roles  := '';
-            LoginParam.ShopName := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',LoginParam.ShopId);
-            LoginParam.UserName := '管理员';
-            if chk<>md5Encode(copy(s,5,255)) then
-               begin
-                 MessageBox(Application.Handle,'登录校验码不正确，无法完成自动登录,请输入用户密码...','友情提示...',MB_OK+MB_ICONINFORMATION);
-               end
-            else
-               begin
-                 result := true;
-                 Exit;
-               end;
-          end;
-     end;
   with TfrmLogin.Create(Application) do
     begin
       try

@@ -21,12 +21,15 @@ uses
 const
   WM_DESKTOP_REQUEST=WM_USER+11;
 
+var
+  Runed         : boolean;
 implementation
 
 const
   STR_UNIQUE    = '{A16ABE7C-AEEA-4BAB-B2E0-DB9D097D5676}';
   MI_ACTIVEAPP  = 1;  //激活应用程序
   MI_GETHANDLE  = 2;  //取得句柄
+  MI_DESKTOP  = 3;    //发子模块消息
 
 var
   iMessageID    : Integer;
@@ -52,10 +55,11 @@ begin
             OpenIcon(lParam)
           else
             SetForegroundWindow(lParam);
-          prm := ParamStr(1);
-          if copy(prm,1,3)='id=' then
+          prm := ParamStr(4);
+          if copy(prm,1,3)='-fn' then
              begin
-               PostMessage(HWND(lParam), WM_DESKTOP_REQUEST, strtointdef(copy(prm,4,50),0),0);
+               BroadCastSystemMessage(BSF_IGNORECURRENTTASK or BSF_POSTMESSAGE,
+               @BSMRecipients, iMessageID, MI_DESKTOP,strtointdef(copy(prm,5,50),0));
              end;
           //终止本实例
           Application.Terminate;
@@ -65,6 +69,10 @@ begin
           PostMessage(HWND(lParam), iMessageID, MI_ACTIVEAPP,
             Application.Handle);
           Application.Restore;
+        end;
+      MI_DESKTOP: //取得程序句柄
+        begin
+          PostMessage(Application.MainForm.Handle, WM_DESKTOP_REQUEST, lParam,0);
         end;
     end;
   end
@@ -84,6 +92,7 @@ begin
   begin
     //建立互斥对象
     MutHandle := CreateMutex(nil, False, STR_UNIQUE);
+    Runed := false;
   end
   else begin
     //已经有程序实例,广播消息取得实例句柄
@@ -94,6 +103,7 @@ begin
     //关闭互斥对象
     if MutHandle <> 0 then CloseHandle(MutHandle);
     MutHandle := 0;
+    Runed := true;
   end;
 end;
 

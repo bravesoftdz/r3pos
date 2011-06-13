@@ -130,6 +130,7 @@ type
     destructor Destroy;override;
 
     function CreateRio(_timeOut:integer=-1):THTTPRIO;
+    function CheckInitSync: boolean;
 
     function GetHeader(rio:THTTPRIO):rsp;
     function SendHeader(rio:THTTPRIO;flag:integer=1):rsp;
@@ -193,6 +194,20 @@ uses ufrmLogo,uShopGlobal,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaPro
      IniFiles;
 { TCaFactory }
 
+function TCaFactory.CheckInitSync: boolean;
+var
+  timestamp:int64;
+  cDate:Currency;
+  CurDate:Currency;
+begin
+  result := true;
+  timestamp := GetSynTimeStamp('#','#');
+  if timestamp=0 then Exit;
+  cDate := trunc(timestamp/86400.0+40542.0);
+  CurDate := date();
+  CurDate := trunc(CurDate)-2;
+  result := cDate<CurDate;
+end;
 procedure TCaFactory.doAfterExecute(const MethodName: string; SOAPResponse: TStream);
 begin
   try
@@ -1322,6 +1337,7 @@ begin
     frmLogo.Label1.Update;
     queryUnion(Global.TENANT_ID);
     frmLogo.ProgressBar1.Position := 9;
+    SetSynTimeStamp('#',TimeStamp,'#');
   finally
     frmLogo.Close;
   end;
@@ -1494,7 +1510,6 @@ begin
   if r=0 then
      Global.RemoteFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')');
   end;
-  ShopGlobal.SyncTimeStamp;
 end;
 
 function TCaFactory.downloadServiceLines(TenantId, flag: integer): boolean;

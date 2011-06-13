@@ -57,7 +57,9 @@ uses
   ObjQuestionnaire in '..\Shop5\Obj\ObjQuestionnaire.pas',
   objDownOrder in '..\PlugIn\obj\objDownOrder.pas',
   ObjSyncMessage in '..\PlugIn\obj\ObjSyncMessage.pas',
-  ObjDefineGodsState in '..\Shop5\Obj\ObjDefineGodsState.pas';
+  ObjDefineGodsState in '..\Shop5\Obj\ObjDefineGodsState.pas',
+  ObjDefineReport in '..\Shop5\Obj\ObjDefineReport.pas',
+  objHandSetRelation in '..\Shop5\Obj\objHandSetRelation.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}

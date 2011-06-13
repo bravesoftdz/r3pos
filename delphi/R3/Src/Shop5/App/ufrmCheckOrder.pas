@@ -372,7 +372,10 @@ begin
   if not cdsHeader.Active then Raise Exception.Create('  不能审核空单据！ ');
   PRINT_DATE:=InttoStr(cdsHeader.FieldByName('PRINT_DATE').AsInteger);
   if PRINT_DATE = '' then Raise Exception.Create(' 不能审核空单据！ ');
-  if (not IsAudit) and (cdsDetail.IsEmpty) then Raise Exception.Create(' 不能审核（没有录入盘点数量商品的）空单据！ ');
+  if (not IsAudit) and (cdsDetail.IsEmpty) then
+     begin
+       if MessageBox(Handle,'你没有录入盘点数据，是否继续审核？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+     end;
   if dbState <> dsBrowse then SaveOrder;
   op := 0;
   if IsAudit then

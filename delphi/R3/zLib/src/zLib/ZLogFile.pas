@@ -11,17 +11,18 @@ TZLogFilePool=class
     FThreadLock:TRTLCriticalSection;
     FDefaultPath: string;
     F:TextFile;
+    NoLog:boolean;
     Ffilename: string;
     procedure Enter;
     procedure Leave;
     procedure SetDefaultPath(const Value: string);
     procedure Setfilename(const Value: string);
   protected
-    procedure OpenLogFile;
+    function OpenLogFile:boolean;
     procedure CloseLogFile;
   public
     procedure Clear;
-    procedure AddLogFile(InfoType: Integer;Information:WideString;InfoSource:Widestring='';Operation:Widestring='';InfoID:Integer=-1;ComputerName:WideString='');
+    procedure AddLogFile(InfoType: Integer;Information:string;InfoSource:string='';Operation:string='';InfoID:Integer=-1;ComputerName:string='');
     function ReadLogFile:string;
     constructor Create;
     destructor Destroy; override;
@@ -33,12 +34,12 @@ implementation
 uses Forms;
 { TZLogFilePool }
 
-procedure TZLogFilePool.AddLogFile(InfoType: Integer;Information:WideString;InfoSource:Widestring;Operation:Widestring;InfoID:Integer;ComputerName:WideString);
+procedure TZLogFilePool.AddLogFile(InfoType: Integer;Information:string;InfoSource:string;Operation:string;InfoID:Integer;ComputerName:string);
 begin
    Enter;
    try
      //if FindCmdLineSwitch('DEBUG',['-','+'],false) then //µ÷ÊÔÄ£Ê½
-     OpenLogFile;
+     if OpenLogFile then Exit;
      Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
      if MainFormHandle>0 then
         begin
@@ -77,6 +78,7 @@ begin
 //    rewrite(f);
 //  end;
 //  OpenLogFile;
+  NoLog := false;
   InitializeCriticalSection(FThreadLock);
   FList := TStringList.Create;
 end;
@@ -106,15 +108,22 @@ begin
   LeaveCriticalSection(FThreadLock);
 end;
 
-procedure TZLogFilePool.OpenLogFile;
+function TZLogFilePool.OpenLogFile:boolean;
 var
   myFile:string;
 begin
-  myFile := DefaultPath+'log\log'+formatDatetime('YYYYMMDD',date)+'.log';
-  if myFile=FileName then Exit else CloseLogFile;
-  AssignFile(F,myFile);
-  if FileExists(myFile) then Append(F) else rewrite(F);
-  FileName := myFile;
+  if NoLog then Exit;
+  try
+    myFile := DefaultPath+'log\log'+formatDatetime('YYYYMMDD',date)+'.log';
+    if myFile=FileName then Exit else CloseLogFile;
+    AssignFile(F,myFile);
+    if FileExists(myFile) then Append(F) else rewrite(F);
+    FileName := myFile;
+    result := true;
+  except
+    result := false;
+    NoLog := true;
+  end;
 end;
 
 function TZLogFilePool.ReadLogFile: string;

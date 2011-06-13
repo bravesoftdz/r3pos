@@ -46,6 +46,7 @@ end;
 procedure TfrmPrgBar.setPrecent(const Value: integer);
 begin
   RzProgressBar1.Percent := Value;
+  RzProgressBar1.Update;
 end;
 
 procedure TfrmPrgBar.SetWaitHint(const Value: string);

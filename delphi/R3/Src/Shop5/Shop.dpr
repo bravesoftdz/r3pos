@@ -3,6 +3,7 @@ uses
   Forms,
   Windows,
   SysUtils,
+  MultInst,
   uGlobal in '..\..\BASIC\uGlobal.pas' {Global: TDataModule},
   ufrmMain in '..\..\BASIC\ufrmMain.pas' {frmMain},
   ufrmDesk in '..\..\BASIC\ufrmDesk.pas' {frmDesk},
@@ -249,7 +250,10 @@ begin
   Application.CreateForm(TfrmShopMain, frmShopMain);
   Application.CreateForm(TfrmShopDesk, frmShopDesk);
   Application.ShowMainForm := false;
-  PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,1,1);
+  if not Runed then //如果已经运行
+  begin
+    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,1,1);
+  end;
   Application.Run;
 
 end.

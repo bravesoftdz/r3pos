@@ -741,12 +741,17 @@ begin
   result := true;
   if ATree[idx].idxflag <> 2 then Exit;
   if idx=0 then Exit;
-  result := false;
+  result := true;
   IdxNode := PIdxNode(TList(ATree[idx].Data)[CurIdx]);
-  for i:=0 to idx do
+  for i:=0 to idx-1 do
     begin
-      result := (IdxNode^.Relation[ATree[i].idx]<>nil) and IdxNode^.Relation[ATree[i].idx].Find(ATree[i].curid,Index);
-      if result then break;
+      if (IdxNode^.Relation[ATree[i].idx]<>nil) and IdxNode^.Relation[ATree[i].idx].Find(ATree[i].curid,Index) then
+         continue
+      else
+         begin
+           result := false;
+           break;
+         end;
     end;
 end;
 

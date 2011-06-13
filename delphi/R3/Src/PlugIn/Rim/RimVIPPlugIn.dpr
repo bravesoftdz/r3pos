@@ -42,6 +42,7 @@ end;
 //RSP调用插件时执行此方法
 //由R3程序调用，只同步本门店的
 function DoExecute(Params:Pchar;var Data:OleVariant):Integer; stdcall;
+var basInfo:TZQuery;
 //tid 企业号
 //cid 会员ID
 procedure UpLoadCustomer(tid,custid:string;rs:TZQuery);
@@ -62,10 +63,30 @@ case flag of
   end;
 end;
 end;
+//对照到RIM的内码。
+function GetRimId(id:string;flag:integer):string;
+var
+  rs:TZQuery;
+begin
+  result := id;
+  if (flag=0) and BasInfo.Locate('GODS_ID',id,[]) then
+     result := BasInfo.FieldbyName('SECOND_ID').AsString;
+  if (flag=4) and BasInfo.Locate('SORT_ID4',id,[]) then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text := 'select BRAND_ID1 from sd_item where ITEM_ID='''+BasInfo.FieldbyName('SECOND_ID').AsString+'''';
+         OpenData(GPlugIn,rs);
+         result := rs.Fields[0].AsString;
+       finally
+         rs.Free;
+       end;
+     end;
+end;
 function GetStamp(UPD_Date:string;UPD_Time:string):int64;
 begin
   upd_time := stringreplace(upd_time,':','',[rfReplaceAll]);
-  result := round((fnTime.fnStrToDatetime(UPD_DATE+UPD_TIME)-40542.0)*86400);
+  result := round((fnTime.fnStrToDatetime(UPD_DATE+UPD_TIME)-fnTime.fnStrToDatetime('2011-01-01'))*86400);
 end;
 var
   tmp,idx:TZQuery;
@@ -147,6 +168,27 @@ begin
                   else
                      Str := 'SMOKE_DATE=null';
                 end;
+             if idx.FieldbyName('INDEX_NAME').AsString = '职业' then
+                begin
+                  if idx.FieldByName('INDEX_VALUE').AsString<>'' then
+                     Str := 'DEGREES='''+idx.FieldByName('INDEX_VALUE').AsString+''''
+                  else
+                     Str := 'DEGREES=null';
+                end;
+             if idx.FieldbyName('INDEX_NAME').AsString = '月收入' then
+                begin
+                  if idx.FieldByName('INDEX_VALUE').AsString<>'' then
+                     Str := 'MONTH_PAY='''+idx.FieldByName('INDEX_VALUE').AsString+''''
+                  else
+                     Str := 'MONTH_PAY=null';
+                end;
+             if idx.FieldbyName('INDEX_NAME').AsString = '人口类型' then
+                begin
+                  if idx.FieldByName('INDEX_VALUE').AsString<>'' then
+                     Str := 'POP_TYPE='''+idx.FieldByName('INDEX_VALUE').AsString+''''
+                  else
+                     Str := 'POP_TYPE=null';
+                end;
              if idx.FieldbyName('INDEX_NAME').AsString = '焦油含量' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
@@ -161,6 +203,13 @@ begin
                   else
                      Str := 'FAVOR=null';
                 end;
+             if (idx.FieldbyName('INDEX_NAME').AsString = '乐意购买新品') or (idx.FieldbyName('INDEX_NAME').AsString = '是否购买新品') or (idx.FieldbyName('INDEX_NAME').AsString = '购买新品') then
+                begin
+                  if idx.FieldByName('INDEX_VALUE').AsString<>'' then
+                     Str := 'is_buynewitem='''+idx.FieldByName('INDEX_VALUE').AsString+''''
+                  else
+                     Str := 'is_buynewitem=null';
+                end;
              if idx.FieldbyName('INDEX_NAME').AsString = '每日吸烟量' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
@@ -168,35 +217,35 @@ begin
                   else
                      Str := 'DAILY_USE=null';
                 end;
-             if idx.FieldbyName('INDEX_NAME').AsString = '喜好厂家' then
+             if (idx.FieldbyName('INDEX_NAME').AsString = '喜好厂家') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜好厂家') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
-                     Str := 'FACT_ID='''+idx.FieldByName('INDEX_VALUE').AsString+''''
+                     Str := 'FACT_ID='''+GetRimId(idx.FieldByName('INDEX_VALUE').AsString,9)+''''
                   else
                      Str := 'FACT_ID=null';
                 end;
-             if idx.FieldbyName('INDEX_NAME').AsString = '喜爱品牌' then
+             if (idx.FieldbyName('INDEX_NAME').AsString = '喜爱卷烟') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜爱卷烟') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
-                     Str := 'ITEM_ID='''+idx.FieldByName('INDEX_VALUE').AsString+''''
+                     Str := 'ITEM_ID='''+GetRimId(idx.FieldByName('INDEX_VALUE').AsString,0)+''''
                   else
                      Str := 'ITEM_ID=null';
                 end;
-             if idx.FieldbyName('INDEX_NAME').AsString = '喜爱卷烟' then
+             if (idx.FieldbyName('INDEX_NAME').AsString = '喜爱品牌') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜爱品牌') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
-                     Str := 'BRAND_ID='''+idx.FieldByName('INDEX_VALUE').AsString+''''
+                     Str := 'BRAND_ID='''+GetRimId(idx.FieldByName('INDEX_VALUE').AsString,4)+''''
                   else
                      Str := 'BRAND_ID=null';
                 end;
-             if idx.FieldbyName('INDEX_NAME').AsString = '价位结构' then
+             if (idx.FieldbyName('INDEX_NAME').AsString = '价位结构') or (idx.FieldbyName('INDEX_NAME').AsString = '常抽价位') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'STRUCT='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
                      Str := 'STRUCT=null';
                 end;
-             if idx.FieldbyName('INDEX_NAME').AsString = '城农网' then
+             if (idx.FieldbyName('INDEX_NAME').AsString = '城农网') or (idx.FieldbyName('INDEX_NAME').AsString = '地址类型') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'ADDRESS_TYPE='''+idx.FieldByName('INDEX_VALUE').AsString+''''
@@ -208,8 +257,6 @@ begin
              idx.Next;
            end;
        end;
-
-
   finally
     idx.free;
     tmp.free;
@@ -261,8 +308,12 @@ begin
     //开始执行插件该做的工作.
     ParamList := TftParamList.Create(nil);
     rs := TZQuery.Create(nil);
+    BasInfo := TZQuery.Create(nil);
     try
       ParamList.Decode(ParamList,Params);
+      BasInfo.Close;
+      BasInfo.SQL.Text := 'select GODS_ID,SORT_ID4,SORT_ID9 from VIW_GOODSINFO where TENANT_ID='+ParamList.ParambyName('TENANT_ID').asString;
+      OpenData(GPlugIn,rs);
       if ParamList.FindParam('SHOP_ID')<>nil then //报当前门店的
          begin
            SyncCustomer(ParamList.ParambyName('TENANT_ID').asString,ParamList.ParambyName('SHOP_ID').asString);
@@ -280,6 +331,7 @@ begin
              end;
          end;
     finally
+      BasInfo.Free;
       rs.Free;
       ParamList.Free;
     end;

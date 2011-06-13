@@ -82,6 +82,7 @@ type
     TENANT_ID: Integer;
     function Check:boolean;
     procedure SaveParams;
+    class function coAutoRegister(id:string):boolean;
     class function coRegister(Owner:TForm):boolean;
     class function coNewRegister(Owner:TForm):boolean;
     function Login_F(NetWork:boolean=true):Boolean;
@@ -465,6 +466,54 @@ begin
         free;
       end;
     end;
+end;
+
+class function TfrmTenant.coAutoRegister(id: string): boolean;
+var
+  Tenant: TCaTenant;
+  Login: TCaLogin;
+begin
+  result := false;
+  Login := CaFactory.coLogin(id,copy(id,length(id)-5,6));
+  //
+  Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
+  with TfrmTenant.Create(nil) do
+  begin
+    try
+      Open(Tenant.TENANT_ID);
+      CdsTable.Edit;
+      CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+      CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
+      CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
+      CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
+      CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
+      CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
+      CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
+      CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
+      CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
+      CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
+      CdsTable.FieldByName('MSN').AsString := Tenant.MSN;
+      CdsTable.FieldByName('QQ').AsString := Tenant.QQ;
+      CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
+      CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
+      CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
+      CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
+      CdsTable.FieldByName('PASSWRD').AsString := EncStr(copy(id,length(id)-5,6),ENC_KEY);
+      CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
+      CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
+      CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+      CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
+      CdsTable.Post;
+      Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
+      Global.TENANT_ID := Tenant.TENANT_ID;
+      Global.TENANT_NAME := Tenant.TENANT_NAME;
+      TENANT_ID := Tenant.TENANT_ID;
+      SaveParams;
+      result := true;
+    finally
+      free;
+    end;
+  end;
 end;
 
 end.

@@ -1533,7 +1533,7 @@ begin
       Rs.Filtered:=false;
       Rs.Filter:='DEPT_TYPE=1';
       Rs.Filtered:=true;
-      rzPage.Pages[0].TabVisible:=(Rs.RecordCount>0);  //多个营销部时显示
+      rzPage.Pages[0].TabVisible:=(Rs.RecordCount>1);  //多个营销部时显示
     finally
       Rs.Filtered:=false;
       Rs.Filter:='';

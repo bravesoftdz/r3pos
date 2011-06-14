@@ -7,7 +7,7 @@ uses
   Dialogs, uframeOrderForm, DB, ActnList, Menus, StdCtrls, Buttons,
   cxTextEdit, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, ExtCtrls, RzPanel, cxDropDownEdit,
-  cxCalendar, ZBase,cxSpinEdit, RzButton, cxListBox,
+  cxCalendar, ZBase,cxSpinEdit, RzButton, cxListBox,Math,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, DBClient;
 const
   WM_PRESENT_MSG=WM_USER+4;
@@ -132,6 +132,7 @@ type
     RtlPSTFlag:integer;
     RtlGDPC_ID:string;
     Dibs,Cash:Currency;
+    agioLower:real;
     procedure ShowInfo;
     procedure ShowOweInfo;
     procedure Calc;
@@ -387,6 +388,7 @@ begin
     edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
     ReadHeader;
     ReadFrom(cdsDetail);
+    agioLower := 0;
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := id;
     gid := AObj.FieldbyName('GLIDE_NO').AsString;
@@ -531,7 +533,7 @@ var
   r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
-  rs,us:TZQuery;
+  bs:TZQuery;
 begin
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
@@ -547,12 +549,13 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12400001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
      end else allow := true;
+     
   if allow then
   begin
     try
@@ -573,6 +576,32 @@ begin
     op := TColumnEh(Sender).Field.asFloat;
     TColumnEh(Sender).Field.asFloat := r;
     PriceToCalc(r);
+    if edtTable.FieldbyName('AGIO_RATE').AsFloat < agioLower then
+       begin
+         edtTable.Edit;
+         edtTable.FieldbyName('APRICE').AsFloat := op;
+         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         edtTable.Edit;
+         MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+         Exit;
+       end;
+    bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+       begin
+         if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
+         begin
+           edtTable.Edit;
+           edtTable.FieldbyName('APRICE').AsFloat := op;
+           PriceToCalc(op);
+           Text := TColumnEh(Sender).Field.AsString;
+           Value := TColumnEh(Sender).Field.asFloat;
+           edtTable.Edit;
+           MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+           Exit;
+         end;
+       end;
     edtTable.Edit;
     edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
   end
@@ -582,6 +611,9 @@ begin
     Text := TColumnEh(Sender).Field.AsString;
     MessageBox(Handle,pchar('你没有修改销售单价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
+
+
+
 end;
 
 procedure TfrmSalesOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
@@ -590,7 +622,7 @@ var
   r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
-  rs,us:TZQuery;
+  bs:TZQuery;
 begin
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
@@ -605,8 +637,8 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12400001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -624,9 +656,37 @@ begin
       Raise Exception.Create('输入无效数值型');
     end;
     if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
-    op := TColumnEh(Sender).Field.asFloat;
+    op := edtTable.FieldbyName('APRICE').AsFloat;
     TColumnEh(Sender).Field.asFloat := r;
     AMoneyToCalc(r);
+
+    if edtTable.FieldbyName('AGIO_RATE').AsFloat < agioLower then
+       begin
+         edtTable.Edit;
+         edtTable.FieldbyName('APRICE').AsFloat := op;
+         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         edtTable.Edit;
+         MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+         Exit;
+       end;
+    bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+       begin
+         if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
+         begin
+           edtTable.Edit;
+           edtTable.FieldbyName('APRICE').AsFloat := op;
+           PriceToCalc(op);
+           Text := TColumnEh(Sender).Field.AsString;
+           Value := TColumnEh(Sender).Field.asFloat;
+           edtTable.Edit;
+           MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+           Exit;
+         end;
+       end;
+
     edtTable.Edit;
     edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
   end
@@ -641,10 +701,10 @@ end;
 procedure TfrmSalesOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
-  r:Currency;
+  r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
-  rs,us:TZQuery;
+  bs:TZQuery;
 begin
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
@@ -659,8 +719,8 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12400001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -683,9 +743,39 @@ begin
             Exit;
          end;
     end;
+    op := edtTable.FieldbyName('APRICE').AsFloat;
     TColumnEh(Sender).Field.asFloat := r;
-    edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
     AgioToCalc(r);
+
+    if edtTable.FieldbyName('AGIO_RATE').AsFloat < agioLower then
+       begin
+         edtTable.Edit;
+         edtTable.FieldbyName('APRICE').AsFloat := op;
+         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+         Text := TColumnEh(Sender).Field.AsString;
+         Value := TColumnEh(Sender).Field.asFloat;
+         edtTable.Edit;
+         MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+         Exit;
+       end;
+    bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+       begin
+         if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
+         begin
+           edtTable.Edit;
+           edtTable.FieldbyName('APRICE').AsFloat := op;
+           PriceToCalc(op);
+           Text := TColumnEh(Sender).Field.AsString;
+           Value := TColumnEh(Sender).Field.asFloat;
+           edtTable.Edit;
+           MessageBox(Handle,pchar('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+           Exit;
+         end;
+       end;
+    edtTable.Edit;
+    edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
+
   end
   else
   begin
@@ -1055,16 +1145,21 @@ end;
 
 procedure TfrmSalesOrder.AgioToGods(id: string);
 var
-  r:Currency;
+  r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
-  rs,us:TZQuery;
+  bs:TZQuery;
 begin
+  if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
+     begin
+       MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗不允许调价销售！'),'友情提示..',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12400001',6,Params.UserID);
+            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
             if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
           end
        else
@@ -1072,7 +1167,26 @@ begin
      end else allow := true;
   if allow then
   begin
+    op := edtTable.FieldbyName('APRICE').AsFloat;
     inherited;
+    if edtTable.FieldbyName('AGIO_RATE').AsFloat < agioLower then
+       begin
+         edtTable.Edit;
+         edtTable.FieldbyName('APRICE').AsFloat := op;
+         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+         Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折');
+       end;
+    bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+       begin
+         if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
+         begin
+           edtTable.Edit;
+           edtTable.FieldbyName('APRICE').AsFloat := op;
+           PriceToCalc(op);
+           Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
+         end;
+       end;
     edtTable.Edit;
     edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
   end;
@@ -1083,14 +1197,19 @@ var
   r,op:Currency;
   Params:TLoginParam;
   allow :boolean;
-  rs,us:TZQuery;
+  bs:TZQuery;
 begin
+  if CheckNotChangePrice(edtTable.fieldbyName('GODS_ID').AsString) then
+     begin
+       MessageBox(Handle,pchar('商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗不允许调价销售！'),'友情提示..',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
   if not ShopGlobal.GetChkRight('12400001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12400001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12400001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -1099,6 +1218,24 @@ begin
   begin
     op := edtTable.FieldbyName('APRICE').AsFloat;
     inherited;
+    if edtTable.FieldbyName('AGIO_RATE').AsFloat < agioLower then
+       begin
+         edtTable.Edit;
+         edtTable.FieldbyName('APRICE').AsFloat := op;
+         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+         Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折');
+       end;
+    bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) and (edtTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+       begin
+         if RoundTo(edtTable.FieldByName('CALC_MONEY').AsCurrency/edtTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
+         begin
+           edtTable.Edit;
+           edtTable.FieldbyName('APRICE').AsFloat := op;
+           PriceToCalc(op);
+           Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
+         end;
+       end;
     edtTable.Edit;
     edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
   end;
@@ -1127,7 +1264,7 @@ begin
   if Field=nil then Exit;
   if Field.AsFloat <> 0 then
   begin
-    if not ShopGlobal.GetChkRight('12400001',5) then
+    if not ShopGlobal.GetChkRight('12400001',6) then
        begin
        if TfrmLogin.doLogin(Params) then
           begin

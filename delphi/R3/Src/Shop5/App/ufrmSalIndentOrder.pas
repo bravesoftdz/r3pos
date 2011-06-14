@@ -628,8 +628,9 @@ begin
          end;
     end;
     TColumnEh(Sender).Field.asFloat := r;
-    edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
     AgioToCalc(r);
+    edtTable.Edit;
+    edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
   end
   else
   begin

@@ -267,9 +267,9 @@ type
     procedure CalcPrice;
     //输入会员号
     procedure WriteInfo(id:string);
-    //整单折扣  没用
+    //整单调价
     procedure AgioInfo(id:string);
-    //单笔折扣  没用
+    //单笔折扣  
     procedure AgioToGods(id:string;vss:boolean=false);
     //修改单价
     procedure PriceToGods(id:string);
@@ -1614,12 +1614,20 @@ procedure TfrmPosMain.AgioToGods(id: string;vss:boolean=false);
 var
   Field:TField;
   s:string;
-  r:Currency;
   Params:TLoginParam;
   allow :boolean;
-  rs,us:TZQuery;
+  op:real;
+  bs:TZQuery;
 begin
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  
+  //2011.06.08 Add 供应链限制改价：
+  if CheckNotChangePrice(cdsTable.fieldbyName('GODS_ID').AsString) then
+     begin
+       if not vss then Raise Exception.Create('商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗不允许调价销售！');
+       Exit;
+     end;
+
   if not vss then
   begin
   if not ShopGlobal.GetChkRight('13100001',5) then //调价权限
@@ -1648,10 +1656,22 @@ begin
     cdsTable.DisableControls;
     try
       cdsTable.Edit;
-      if StrToFloat(s) < agioLower then Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折');
-      Field.AsFloat := StrToFloat(s);
+      op := cdsTable.FieldbyName('APRICE').AsFloat;
+      if StrToCurr(s) < agioLower then Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折');
+      Field.AsFloat := StrToCurr(s);
       cdsTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
       AgioToCalc(Field.AsFloat);
+      bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+      if bs.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) and (cdsTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+         begin
+           if RoundTo(cdsTable.FieldByName('CALC_MONEY').AsCurrency/cdsTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
+           begin
+             cdsTable.Edit;
+             cdsTable.FieldbyName('APRICE').AsFloat := op;
+             PriceToCalc(op);
+             Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
+           end;
+         end;
     finally
       cdsTable.EnableControls;
     end;
@@ -1663,6 +1683,7 @@ var
   r,op:Currency;
   s:string;
   Field:TField;
+  bs:TZQuery;
 begin
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
   s := trim(id);
@@ -1685,6 +1706,17 @@ begin
        PriceToCalc(Field.AsFloat);
        Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折');
      end;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if bs.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) and (cdsTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
+     begin
+       if RoundTo(cdsTable.FieldByName('CALC_MONEY').AsCurrency/cdsTable.FieldByName('CALC_AMOUNT').AsCurrency,-3)<bs.FieldByName('NEW_LOWPRICE').AsCurrency then
+       begin
+         cdsTable.Edit;
+         Field.AsFloat := op;
+         PriceToCalc(op);
+         Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
+       end;
+         end;
   cdsTable.Edit;
   cdsTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
 end;
@@ -2102,6 +2134,7 @@ begin
     gid := AObj.FieldbyName('GLIDE_NO').AsString;
     dbState := dsBrowse;
     cdsTable.Last;
+    agioLower := 0;
     RowId := cdsTable.FieldbyName('SEQNO').AsInteger;
   finally
     Params.Free;
@@ -3158,6 +3191,8 @@ var
   allow :boolean;
 begin
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+  //2011.06.08 Add 供应链限制改价：
+  if CheckNotChangePrice(cdsTable.fieldbyName('GODS_ID').AsString) then Raise Exception.Create('商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗不允许调价销售！');
   if not ShopGlobal.GetChkRight('13100001',5) then  //调价权限
      begin
        if TfrmLogin.doLogin(Params) then

@@ -622,11 +622,11 @@ begin
   inherited;
   if Key=VK_F5 then
      begin
-       if not ShopGlobal.GetChkRight('500057') then
+       if not ShopGlobal.GetChkRight('13100001',7) then
           begin
             if TfrmLogin.doLogin(Params) then
                begin
-                 allow := ShopGlobal.GetChkRight('500057',1,Params.UserID);
+                 allow := ShopGlobal.GetChkRight('13100001',7,Params.UserID);
                  if not allow then Exception.Create('你输入的用户没有抹零权限...'); 
                end
             else

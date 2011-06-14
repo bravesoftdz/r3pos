@@ -188,7 +188,7 @@ type
     procedure Close;
 
     //工作线程分配
-    procedure CheckWorker;
+    //procedure CheckWorker;
     procedure CallWorker(SessionId:integer=0);
     //===========
 
@@ -423,19 +423,25 @@ begin
     c := 0;
     for i:=List.Count-1 downto 0 do
       begin
-        if not TSocketWorkerThread(List[i]).Working then
+        if not TSocketWorkerThread(List[i]).Working and not TSocketWorkerThread(List[i]).Terminated then
            begin
-             Worker := TSocketWorkerThread(List[i]);
-             if (c > ThreadCacheSize) and (Worker<>nil) then
+             if Worker=nil then
                 begin
-                  with TSocketWorkerThread(List[i]) do
-                    begin
-                      Terminate;
-                      SetEvent(FhEvent);
-                      Waitfor;
-                      free;
-                      List.Delete(i);
-                    end;
+                  Worker := TSocketWorkerThread(List[i]);
+                  SetEvent(Worker.FhEvent);
+                end
+             else
+                begin
+                  if c>ThreadCacheSize then
+                     begin
+                       with TSocketWorkerThread(List[i]) do
+                         begin
+                           FreeOnTerminate := true;
+                           Terminate;
+                           SetEvent(Worker.FhEvent);
+                         end;
+                       List.Delete(i); 
+                     end;
                 end;
            end;
         inc(c);
@@ -1155,8 +1161,8 @@ destructor TSocketWorkerThread.Destroy;
 begin
   if FhEvent<>0 then CloseHandle(FhEvent);
   InterlockedDecrement(WorkThreadCount);
-  if MainFormHandle>0 then PostMessage(MainFormHandle,WM_WORK_THREAD_UPDATE,0,0);
   inherited;
+  if MainFormHandle>0 then PostMessage(MainFormHandle,WM_WORK_THREAD_UPDATE,0,0);
 end;
 
 procedure TSocketWorkerThread.Execute;
@@ -1166,12 +1172,12 @@ var
   _Start:int64;
 begin
   CoInitialize(nil);
-  try
   ResetEvent(FhEvent);
+  try
   while not Terminated do
     begin
       FWorking := true;
-      SocketDispatcher.CheckWorker;
+//      SocketDispatcher.CheckWorker;
       sdb := SocketDispatcher.GetBlock;
       try
         while (sdb<>nil) and not Terminated do
@@ -1208,14 +1214,17 @@ begin
                sdb.Data := nil;
                dispose(sdb);
             end;
-            SocketDispatcher.CheckWorker;
+//            SocketDispatcher.CheckWorker;
             sdb := SocketDispatcher.GetBlock;
           end;
       finally
         FWorking := false;
       end;
-      WaitForSingleObject(FhEvent, INFINITE);
-      ResetEvent(FhEvent);
+      WaitForSingleObject(FhEvent, 60000);
+      if not Terminated then
+         begin
+           ResetEvent(FhEvent);
+         end;
     end;
   finally
     CoUninitialize;
@@ -1263,11 +1272,11 @@ begin
   
 end;
 
-procedure TSocketDispatcher.CheckWorker;
-begin
-  WorkerPool.LockList;
-  WorkerPool.UnlockList;
-end;
+//procedure TSocketDispatcher.CheckWorker;
+//begin
+//  WorkerPool.LockList;
+//  WorkerPool.UnlockList;
+//end;
 
 initialization
   WorkThreadCount := 0;

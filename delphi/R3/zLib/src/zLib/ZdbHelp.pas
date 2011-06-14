@@ -43,7 +43,7 @@ type
     function UpdateBatch(DataSet:TDataSet):boolean;OverLoad;stdcall;
     //返回执行影响记录数
     function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;stdcall;
-    //数据集执行Query 返回执行影响记录数    
+    //数据集执行Query 返回执行影响记录数
     function ExecQuery(DataSet:TDataSet):Integer;stdcall;
   public
     constructor Create;
@@ -216,7 +216,7 @@ end;
 
 function TdbHelp.CheckError(s:string): boolean;
 begin
-  result := (pos('网络错误',s)>0) or (pos('SQL0954C',s)>0) or (pos('CLI0115E',s)>0) or (pos('ORA-12170',s)>0) or (pos('ORA-02063',s)>0);
+  result := not ZConn.InTransaction and ((pos('网络错误',s)>0) or (pos('SQL0954C',s)>0) or (pos('CLI0115E',s)>0) or (pos('ORA-12170',s)>0) or (pos('ORA-02063',s)>0));
 end;
 
 procedure TdbHelp.CommitTrans;
@@ -673,7 +673,7 @@ var
   Factory:TZFactory;
 begin
   Factory := CreateFactory(AClassName);
-  FList.Add(Factory); 
+  FList.Add(Factory);
   Factory.DataSet := DataSet;
   if Assigned(Params) then  Factory.Params.Assign(Params);
   Factory.InitClass;

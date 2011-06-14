@@ -72,7 +72,7 @@ begin
         end;
       MI_DESKTOP: //È¡µÃ³ÌÐò¾ä±ú
         begin
-          PostMessage(Application.MainForm.Handle, WM_DESKTOP_REQUEST, lParam,0);
+          PostMessage(Application.MainForm.Handle, WM_DESKTOP_REQUEST, lParam,1);
         end;
     end;
   end

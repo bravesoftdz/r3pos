@@ -48,6 +48,7 @@ type
     FPlugInDisplayName: string;
     FLastError: string;
     FData: Pointer;
+    FWorking: integer;
     procedure SetHandle(const Value: THandle);
     procedure SetPlugInId(const Value: integer);
     procedure SetdbResolver(const Value: TdbResolver);
@@ -55,6 +56,7 @@ type
     procedure SetPlugInDisplayName(const Value: string);
     procedure SetLastError(const Value: string);
     procedure SetData(const Value: Pointer);
+    procedure SetWorking(const Value: integer);
    protected
     IParams:IPlugIn;
     //设置当前插件参数,指定连锁ID号
@@ -102,6 +104,7 @@ type
     property dbid:integer read Fdbid write Setdbid;
     property LastError:string read FLastError write SetLastError;
     property Data:Pointer read FData write SetData;
+    property Working:integer read FWorking write SetWorking;
    end;
   TPlugInList=class
    private
@@ -229,17 +232,22 @@ procedure TPlugIn.DLLDoExecute(Params:string;var Data:OleVariant);
 var
   _DLLDoExecute:function(Params:Pchar;var Data:OleVariant) :integer; stdcall;
 begin
+  InterlockedIncrement(FWorking);
   try
-    @_DLLDoExecute := GetProcAddress(Handle, 'DoExecute');
-    if @_DLLDoExecute=nil then Raise Exception.Create('DoExecute方法没有实现');
-    if _DLLDoExecute(Pchar(Params),Data)<>0 then
-       Raise Exception.Create(DLLGetLastError);
-  except
-    on E:Exception do
-       begin
-         LogFile.AddLogFile(0,E.Message,PlugInDisplayName);
-         Raise;
-       end;
+    try
+      @_DLLDoExecute := GetProcAddress(Handle, 'DoExecute');
+      if @_DLLDoExecute=nil then Raise Exception.Create('DoExecute方法没有实现');
+      if _DLLDoExecute(Pchar(Params),Data)<>0 then
+         Raise Exception.Create(DLLGetLastError);
+    except
+      on E:Exception do
+         begin
+           LogFile.AddLogFile(0,E.Message,PlugInDisplayName);
+           Raise;
+         end;
+    end;
+  finally
+    InterlockedDecrement(FWorking);
   end;
 end;
 
@@ -461,6 +469,11 @@ end;
 procedure TPlugIn.SetData(const Value: Pointer);
 begin
   FData := Value;
+end;
+
+procedure TPlugIn.SetWorking(const Value: integer);
+begin
+  FWorking := Value;
 end;
 
 { TPlugInList }

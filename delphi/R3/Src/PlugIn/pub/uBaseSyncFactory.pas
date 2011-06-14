@@ -135,9 +135,11 @@ type
     class function GetTickTime: string;   //返回当前时间
     class function OpenData(GPlugIn: IPlugIn; Qry: TZQuery):Boolean;  //取数据（暂时兼容以前使用）
     class function GetCommStr(iDbType:integer;alias:string=''):string;
+    class function GetUpCommStr(iDbType:integer;alias:string=''):string;
     class function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
     class function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
+    class function GetR3ToRimUnit_ID(iDbType:integer; UNIT_ID: string): string;     //返回单位换算
 
     //数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase 3: access  4: db2
     property DbType:Integer read FDbType write SetDbType;
@@ -336,7 +338,7 @@ begin
    0:Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
    1:Result := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))+(sysdate - trunc(sysdate))*24*60*60';
    4:result := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))+MIDNIGHT_SECONDS(CURRENT TIMESTAMP)';
-   5:result := 'strftime(''%s'',''now'',''localtime'')-1293840000';
+   //5:result := 'strftime(''%s'',''now'',''localtime'')-1293840000'; //没有修改[暂时未找到对应函数处理]
    else Result := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
   end;
 end;
@@ -349,10 +351,10 @@ begin
   if trim(AliasTable)<>'' then
     AliasTab:=trim(AliasTable)+'.';
   result:=
-    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+             //默认单位为 计量单位
-        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
-        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+      //默认单位为 大单位
-        ' else 1.0 end ';                                                        //都不是则默认为换算为1;
+    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+             //默认单位为 计量单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*1.00 '+  //默认单位为 小单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC*1.00 '+      //默认单位为 大单位
+        ' else 1.00 end ';                                                        //都不是则默认为换算为1;
 end;
 
 class function TBaseSyncFactory.ParseSQL(iDbType: integer; SQL: string): string;
@@ -538,6 +540,17 @@ begin
   end;
 end;
 
+
+class function TBaseSyncFactory.GetUpCommStr(iDbType: integer; alias: string): string;
+begin
+  case iDbType of
+   0: result := ' ''1''+substring('+alias+'COMM,2,1) ';
+   3: result := ' ''1''+mid('+alias+'COMM,2,1) ';
+   1,4,5:
+      result := ' ''1'' || substr('+alias+'COMM,2,1) ';
+  end;
+end;
+
 class function TBaseSyncFactory.GetTickTime: string;
 var
   Hour, Min, Sec, MSec: Word;
@@ -575,6 +588,28 @@ begin
   result:=FormatFloat('0000',vYear)+FormatFloat('00',vMonth)+FormatFloat('00',vDay);
   DecodeTime(Time(), vHour, vMin, vSec, vMSec);
   result:=result+'_'+FormatFloat('00',vHour)+':'+FormatFloat('00',vMin)+':'+FormatFloat('00',vSec);
+end;
+
+class function TBaseSyncFactory.GetR3ToRimUnit_ID(iDbType: integer; UNIT_ID: string): string;
+begin
+  case iDbType of
+   0,4:
+    begin
+      Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then ''02'' '+
+                   ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then ''03'' '+
+               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
+               ' else ''01'' end)';
+    end;
+   1:
+    begin
+      Result:=' DECODE('+UNIT_ID+',''13F817A7-9472-48CF-91CD-27125E077FEB'',''02'',''95331F4A-7AD6-45C2-B853-C278012C5525'',''03'',''93996CD7-B043-4440-9037-4B82BB5207DA'',''04'',''01'')';
+    end;
+  end;
+   {  Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then ''02'' '+
+               ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then ''03'' '+
+               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
+               ' else ''01'' end)';
+}
 end;
 
 end.

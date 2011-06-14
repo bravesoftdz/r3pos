@@ -1191,9 +1191,7 @@ begin
             '	BAL_CST decimal(18, 3) NULL '+
             ')';
          Factor.ExecSQL(SQL);
-         Factor.ExecSQL('CREATE INDEX IX_'+tempTableName+'_TENANT_ID ON '+tempTableName+'(TENANT_ID)');
          Factor.ExecSQL('CREATE INDEX IX_'+tempTableName+'_CREA_DATE ON '+tempTableName+'(TENANT_ID,CREA_DATE)');
-         Factor.ExecSQL('CREATE INDEX IX_'+tempTableName+'_GODS_ID ON '+tempTableName+'(TENANT_ID,GODS_ID)');
          end;
     finally
       rs.Free;

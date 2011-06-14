@@ -339,7 +339,8 @@ type
     function PrintSQL(tenantid,id:string):string;
 
     procedure LoadFile(cName: string);
-
+    function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
+    function  CheckSale_Limit: Boolean; //2011.06.12判断是否限量
   public
     { Public declarations }
     // 最近输的货品
@@ -1362,11 +1363,28 @@ end;
 
 procedure TfrmPosMain.edtInputKeyPress(Sender: TObject; var Key: Char);
 var
-  s:string;
+  s,GodsID:string;
   IsNumber,IsFind,isAdd:Boolean;
   amt:Currency;
   AObj:TRecord_;
-begin                                                                            
+begin
+  //2011.06.10增加限制修改价格
+  if (InputFlag=2) or (InputFlag=3) or (InputFlag=4) then //整单折扣、修改单价、单笔折扣
+  begin
+    GodsID:=trim(cdsTable.fieldbyname('GODS_ID').AsString);
+    if CheckNotChangePrice(GodsID) then
+    begin
+      if InputFlag=3 then
+        GodsID:='商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改价格！'
+      else
+        GodsID:='商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许折扣！';
+      InputFlag := 0;
+      edtInput.Text := '';
+      MessageBox(Handle,pchar(GodsID),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+      Exit;
+    end;
+  end; 
+
   inherited;
   if Key=#13 then
     begin
@@ -2121,6 +2139,9 @@ begin
      if AObj.FieldByName('GUIDE_USER').AsString='' then
         Raise Exception.Create('请输入导购员再结账！');
   end;
+
+  //2011.06.14增加单品限量和本单限量
+  CheckSale_Limit;   
 
   Saved := false;
   Check;
@@ -3888,6 +3909,128 @@ end;
 procedure TfrmPosMain.Setxsm(const Value: boolean);
 begin
   Fxsm := Value;
+end;
+
+function TfrmPosMain.CheckNotChangePrice(GodsID: string): Boolean;
+var
+  RelationID: string;
+  RsGods,Rs: TZQuery;
+begin
+  result:=False;
+  RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO');
+  if RsGods.Locate('GODS_ID',trim(GodsID),[]) then
+  begin
+    RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
+  end;
+  Rs:=Global.GetZQueryFromName('CA_RELATIONS');
+  if Rs.Locate('RELATION_ID',RelationID,[]) then
+  begin
+    result:=(trim(Rs.FieldByName('CHANGE_PRICE').AsString)='2');
+  end;
+
+end;
+
+function TfrmPosMain.CheckSale_Limit: Boolean;
+var
+  CurIdx: integer;
+  GodsID, RelationID: string;  
+  Singe_Litmit,All_Litmit: Real;  //单品限量，本单限量
+  RsGods,RsRelation,GodsQry,RelQry: TZQuery;
+begin
+  result:=False;
+  try
+    GodsQry:=TZQuery.Create(nil);  //本单商品汇总
+    GodsQry.Close;
+    GodsQry.FieldDefs.Add('GODS_ID',ftstring,36,true);
+    GodsQry.FieldDefs.Add('GODS_NAME',ftstring,50,true);
+    GodsQry.FieldDefs.Add('CalcSum',ftFloat,0,true);
+    GodsQry.CreateDataSet;  
+    RelQry:=TZQuery.Create(nil);   //本单供应链汇总
+    RelQry.Close;
+    RelQry.FieldDefs.Add('RELATION_ID',ftInteger,0,true);
+    GodsQry.FieldDefs.Add('RELATION_NAME',ftstring,50,true);
+    RelQry.FieldDefs.Add('CalcSum',ftFloat,0,true);
+    RelQry.CreateDataSet;
+    RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO'); //商品档案
+    RsRelation:=Global.GetZQueryFromName('CA_RELATIONS'); //供应链
+    //开始循环[累计出本单单品和供应链汇总数据]：
+    CurIdx:=cdsTable.RecNo;  //保存当前序号
+    cdsTable.First;
+    while not cdsTable.Eof do
+    begin
+      GodsID:=trim(cdsTable.fieldbyName('GODS_ID').AsString);
+      //单项目累计
+      if GodsQry.Locate('GODS_ID',GodsID,[]) then //定位则累计数量
+      begin
+        GodsQry.Edit;
+        GodsQry.FieldByName('CalcSum').AsFloat:=GodsQry.FieldByName('CalcSum').AsFloat+cdsTable.fieldbyName('CALC_AMOUNT').AsFloat;
+        GodsQry.Post;
+      end else
+      begin
+        GodsQry.Append;
+        GodsQry.FieldByName('GODS_ID').AsString:=GodsID;
+        GodsQry.FieldByName('GODS_NAME').AsString:=trim(cdsTable.fieldbyName('GODS_NAME').AsString);
+        GodsQry.FieldByName('CalcSum').AsFloat:=cdsTable.fieldbyName('CALC_AMOUNT').AsFloat;
+        GodsQry.Post;
+      end;
+      if RsGods.Locate('GODS_ID',GodsID,[]) then
+      begin
+        RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
+        //单项目累计
+        if RelQry.Locate('RELATION_ID',GodsID,[]) then //定位则累计数量
+        begin
+          RelQry.Edit;
+          RelQry.FieldByName('CalcSum').AsFloat:=GodsQry.FieldByName('CalcSum').AsFloat+cdsTable.fieldbyName('CALC_AMOUNT').AsFloat;
+          RelQry.Post;
+        end else
+        begin
+          RelQry.Append;
+          RelQry.FieldByName('RELATION_ID').AsString:=RelationID;
+          if RsRelation.Locate('RELATION_ID',RelationID,[]) then 
+            RelQry.FieldByName('RELATION_NAME').AsString:=trim(RsRelation.fieldbyName('RELATION_NAME').AsString);
+          RelQry.FieldByName('CalcSum').AsFloat:=cdsTable.fieldbyName('CALC_AMOUNT').AsFloat;
+          RelQry.Post;
+        end;
+      end; 
+      cdsTable.Next;
+    end;
+
+    //判断单品是否超过
+    GodsQry.First;
+    while not GodsQry.Eof do
+    begin
+      GodsID:=trim(GodsQry.fieldbyName('GODS_ID').AsString);
+      if RsGods.Locate('GODS_ID',GodsID,[]) then
+      begin
+        RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
+        if RsRelation.Locate('RELATION_ID',RelationID,[]) then
+        begin
+          Singe_Litmit:=RsRelation.FieldByName('SINGLE_LIMIT').AsFloat; //单品限量
+          if (Singe_Litmit>0) and (GodsQry.FieldByName('CalcSum').AsFloat>Singe_Litmit) then
+            Raise Exception.Create('商品〖'+GodsQry.fieldbyName('GODS_NAME').AsString+'〗数量'+FloattoStr(GodsQry.FieldByName('CalcSum').AsFloat)+'超过限量值'+FloattoStr(Singe_Litmit)+'！');
+        end;
+      end;
+      GodsQry.Next;
+    end;
+
+    //判断供应链本单限量：
+    RelQry.First;
+    while not RelQry.Eof do
+    begin
+      RelationID:=trim(RelQry.fieldbyName('RELATION_ID').AsString);
+      if RsRelation.Locate('RELATION_ID',RelationID,[]) then
+      begin
+        All_Litmit:=RsRelation.FieldByName('SALE_LIMIT').AsFloat; //本单限量
+        if (All_Litmit>0) and (RelQry.FieldByName('CalcSum').AsFloat>All_Litmit) then
+          Raise Exception.Create('供应链〖'+RelQry.FieldByName('RELATION_NAME').AsString+'〗本单总量'+FloattoStr(RelQry.FieldByName('CalcSum').AsFloat)+' 超过限量值'+FloattoStr(All_Litmit)+'！');
+      end;
+      RelQry.Next;
+    end;
+  finally
+    cdsTable.RecNo:=CurIdx;   
+    GodsQry.Free;
+    RelQry.Free;
+  end;
 end;
 
 end.

@@ -309,7 +309,7 @@ end;
 
 function TShopGlobal.GetNetVersion: boolean;
 begin
-  result := (SFVersion='.NET');
+  result := (SFVersion='.NET') and not Debug;
 end;
 
 procedure TShopGlobal.SyncTimeStamp;
@@ -341,7 +341,7 @@ end;
 
 function TShopGlobal.GetONLVersion: boolean;
 begin
-  result := (SFVersion='.ONL');
+  result := (SFVersion='.ONL') or Debug;
 end;
 
 function TShopGlobal.GetProdFlag: Char;

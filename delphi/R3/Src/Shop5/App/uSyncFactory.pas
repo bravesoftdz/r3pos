@@ -2243,7 +2243,8 @@ begin
     try
       Global.RemoteFactory.ExecProc('TSyncRimInfo',Params);
     except
-      MessageBox(Application.Handle,'数据无法同步的RIM平台,请通知客服人员','友情提示...',MB_OK+MB_ICONINFORMATION);
+      on E:Exception do
+         MessageBox(Application.Handle,pchar('数据无法同步的RIM平台,请通知客服人员,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
     end;
   finally
     Params.Free;

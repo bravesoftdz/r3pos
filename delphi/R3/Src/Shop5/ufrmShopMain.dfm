@@ -1,11 +1,11 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 276
-  Top = 33
+  Left = 307
+  Top = 187
   Width = 700
   Height = 535
   Caption = ''
   Menu = nil
-  Position = poDesigned
+  Position = poDefault
   WindowState = wsNormal
   WindowMenu = mnuWindow
   OnActivate = FormActivate
@@ -7481,17 +7481,17 @@ inherited frmShopMain: TfrmShopMain
       Enabled = False
       OnExecute = actfrmPosMainExecute
     end
-    object actfrmPriceGradeInfo: TAction
-      Tag = 33200001
-      Caption = #23458#25143#31561#32423
-      Enabled = False
-      OnExecute = actfrmPriceGradeInfoExecute
-    end
     object actfrmSalIndentOrderList: TAction
       Tag = 12300001
       Caption = #38144#21806#35746#21333
       Enabled = False
       OnExecute = actfrmSalIndentOrderListExecute
+    end
+    object actfrmPriceGradeInfo: TAction
+      Tag = 33200001
+      Caption = #23458#25143#31561#32423
+      Enabled = False
+      OnExecute = actfrmPriceGradeInfoExecute
     end
     object actfrmStkIndentOrderList: TAction
       Tag = 11100001
@@ -10221,5 +10221,12 @@ inherited frmShopMain: TfrmShopMain
       Caption = #31383#20307#37325#25490
       OnClick = N103Click
     end
+  end
+  object RzTrayIcon1: TRzTrayIcon
+    HideOnMinimize = False
+    PopupMenu = PopupMenu
+    OnLButtonDblClick = RzTrayIcon1LButtonDblClick
+    Left = 296
+    Top = 216
   end
 end

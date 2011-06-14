@@ -9,7 +9,7 @@ uses
   RzButton, ZBase, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
-  DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg,uTimerFactory;
+  DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
 type
@@ -342,6 +342,7 @@ type
     actfrmSaleTotalReport: TAction;
     actfrmStgTotalReport: TAction;
     actfrmStockTotalReport: TAction;
+    RzTrayIcon1: TRzTrayIcon;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -459,6 +460,7 @@ type
     procedure actfrmSaleTotalReportExecute(Sender: TObject);
     procedure actfrmStgTotalReportExecute(Sender: TObject);
     procedure actfrmStockTotalReportExecute(Sender: TObject);
+    procedure RzTrayIcon1LButtonDblClick(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -468,7 +470,7 @@ type
     FLoging: boolean;
     FSystemShutdown: boolean;
     sflag:string;
-    TimerFactory:TTimerFactory;
+    IsXsm:Boolean;
     procedure DoLoadMsg(Sender:TObject);
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
@@ -516,7 +518,7 @@ var
 
 implementation
 uses
-  uDsUtil,uFnUtil,ufrmLogo,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -550,6 +552,7 @@ var
   i:integer;
 begin
   inherited;
+  IsXsm := false;
   for i:=0 to rzLogo.PageCount -1 do rzLogo.Pages[i].TabVisible := false;
   LoadPic32;
   Panel25.Visible := (sflag='s1_');
@@ -800,14 +803,14 @@ begin
          CheckEnabled;
          CA_MODULE.Close;
          LoadMenu;
+         ShopGlobal.SyncTimeStamp;
+         if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and (ParamStr(1)<>'-xsm') and ShopGlobal.GetChkRight('500028') then
+         begin
+            PostMessage(Handle,WM_DESKTOP_REQUEST,500054,0);
+         end;
        finally
          frmLogo.Close;
        end;
-       ShopGlobal.SyncTimeStamp;
-       if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and (ParamStr(1)<>'-xsm') and ShopGlobal.GetChkRight('500028') then
-       begin
-          PostMessage(Handle,WM_DESKTOP_REQUEST,500054,0);
-       end;   
      end
   else
      begin
@@ -826,6 +829,7 @@ begin
   finally
      LoadFrame;
      if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,120000);
+     Timer1.Enabled := true;
   end;
 end;
 
@@ -866,11 +870,13 @@ begin
            Logined := false;
        end;
     Logined := Login(false);
-    if not frmShopMain.Visible and Logined then
+    if not frmShopMain.Visible and Logined and not IsXsm then
     begin
+      Application.Minimize;
       frmShopMain.Show;
       frmShopMain.WindowState := wsMaximized;
-    end;    
+      Application.Restore;
+    end;
   except
     on E:Exception do
        begin
@@ -885,7 +891,7 @@ procedure TfrmShopMain.SetLogined(const Value: boolean);
 var s:string;
 begin
   FLogined := Value;
-  Timer1.Enabled := Value;
+  if not Value then Timer1.Enabled := Value;
 //  if ShopGlobal.offline then s := '【脱机使用】' else s := '【联机使用】';
   if Value then
      lblUserInfo.Caption := '用户名:'+Global.UserName
@@ -897,7 +903,7 @@ end;
 procedure TfrmShopMain.miCloseClick(Sender: TObject);
 begin
   inherited;
-  Application.Terminate;
+  Close;
 end;
 
 procedure TfrmShopMain.FormShow(Sender: TObject);
@@ -952,7 +958,12 @@ end;
 procedure TfrmShopMain.N68Click(Sender: TObject);
 begin
   inherited;
-  Application.Restore;
+  if Logined then
+  begin
+    frmShopMain.Show;
+    frmShopMain.WindowState := wsMaximized;
+    Application.Restore;
+  end;
 end;
 
 procedure TfrmShopMain.wm_desktop(var Message: TMessage);
@@ -971,6 +982,12 @@ begin
      begin
        RzBmpButton3Click(nil);
        Exit;
+     end;
+  IsXsm := (Message.LParam=1);
+  if IsXsm then
+     begin
+       Application.MainForm.Visible := false;
+       Application.Minimize;
      end;
   for i:=0 to actList.ActionCount -1 do
     begin
@@ -1014,7 +1031,7 @@ begin
   if not Visible then Exit;
   if not Factor.Connected then Exit;
 
-  if not MsgFactory.Loaded or (MsgFactory.Loaded and (Timer1.Tag>0) and
+  if (not MsgFactory.Loaded and (Timer1.Tag>5)) or (MsgFactory.Loaded and (Timer1.Tag>0) and
      (MsgFactory.UnRead=0) and ((Timer1.Tag mod 120)=0)
      )
   then
@@ -1065,10 +1082,13 @@ begin
     else
        Caption := Caption +'【联机使用】门店：'+ Global.SHOP_NAME;
     Application.Title :=  F.ReadString('soft','name','云盟软件R3');
-    SFVersion := F.ReadString('soft','SFVersion','.NET');
-    CLVersion := F.ReadString('soft','CLVersion','.MKT');
-    ProductID := F.ReadString('soft','ProductID','R3_RYC');
     RzLabel1.Caption := F.ReadString('soft','copyright','')+' | 使用单位:'+Global.TENANT_NAME;
+    if not FindCmdLineSwitch('rsp',['-','+'],false) then
+       begin
+          SFVersion := F.ReadString('soft','SFVersion','.NET');
+          CLVersion := F.ReadString('soft','CLVersion','.MKT');
+          ProductID := F.ReadString('soft','ProductID','R3_RYC');
+       end;
   finally
     F.Free;
   end;
@@ -1389,6 +1409,7 @@ begin
          begin
            frmLogo.Show;
            try
+             frmLogo.ShowTitle := '检测远程应用服务器...';
              Global.MoveToRemate;
              try
                Global.Connect;
@@ -1502,7 +1523,7 @@ begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-  Application.Restore;
+//  Application.Restore;
   frmShopDesk.SaveToFront;
   with TfrmMeaUnits.Create(self) do
     begin
@@ -1525,7 +1546,7 @@ begin
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-  Application.Restore;
+//  Application.Restore;
   frmShopDesk.SaveToFront;
   Form := FindChildForm(TfrmDutyInfoList);
   if not Assigned(Form) then
@@ -1547,7 +1568,7 @@ begin
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-  Application.Restore;
+//  Application.Restore;
   frmShopDesk.SaveToFront;
   Form := FindChildForm(TfrmRoleInfoList);
   if not Assigned(Form) then
@@ -1569,7 +1590,7 @@ begin
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-  Application.Restore;
+//  Application.Restore;
   frmShopDesk.SaveToFront;
   Form := FindChildForm(TfrmDeptInfoList);
   if not Assigned(Form) then
@@ -1591,7 +1612,7 @@ begin
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-  Application.Restore;
+//  Application.Restore;
   frmShopDesk.SaveToFront;
   Form := FindChildForm(TfrmUsers);
   if not Assigned(Form) then
@@ -1611,7 +1632,7 @@ begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-  Application.Restore;
+//  Application.Restore;
   frmShopDesk.SaveToFront;
   TfrmGoodsSort.ShowDialog(self,4);
 end;
@@ -1626,7 +1647,7 @@ begin
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-  Application.Restore;
+//  Application.Restore;
   frmShopDesk.SaveToFront;
   Form := FindChildForm(TfrmStockOrderList);
   if not Assigned(Form) then
@@ -1896,7 +1917,7 @@ begin
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-  Application.Restore;
+// Application.Restore;
   frmShopDesk.SaveToFront;
   Form := FindChildForm(TfrmClient);
   if not Assigned(Form) then
@@ -2089,6 +2110,19 @@ begin
      begin
        Form := TfrmCustomer.Create(self);
        AddFrom(Form);
+     end;
+  if not Application.MainForm.Visible and (Form.FormStyle = fsMDIChild) then
+     begin
+       Form.FormStyle :=  fsNormal;
+       Form.Width := 800;
+       Form.Height := 575;
+       Form.WindowState := wsNormal;
+     end
+  else
+  if Application.MainForm.Visible and (Form.FormStyle = fsNormal) then
+     begin
+       Form.FormStyle :=  fsMDIChild;
+       Form.WindowState := wsMaximized;
      end;
   Form.Show;
   Form.BringToFront;
@@ -2821,6 +2855,19 @@ begin
     Form := TfrmStorageTracking.Create(self);
     AddFrom(Form);
   end;
+  if not Application.MainForm.Visible and (Form.FormStyle = fsMDIChild) then
+     begin
+       Form.FormStyle :=  fsNormal;
+       Form.Width := 800;
+       Form.Height := 575;
+       Form.WindowState := wsNormal;
+     end
+  else
+  if Application.MainForm.Visible and (Form.FormStyle = fsNormal) then
+     begin
+       Form.FormStyle :=  fsMDIChild;
+       Form.WindowState := wsMaximized;
+     end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;
@@ -2872,11 +2919,19 @@ end;
 procedure TfrmShopMain.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
+  if CaFactory.Audited then
+     begin
+       CaFactory.SyncAll(1);
+       if ShopGlobal.ONLVersion then Exit; 
+     end
+  else
+     begin
+       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...'); 
+     end;
   if PrainpowerJudge.Locked>0 then
      begin
        MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
      end;
-  if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不能执行数据同步..'); 
   if ShopGlobal.offline and not Global.RemoteFactory.Connected then
      begin
        Global.MoveToRemate;
@@ -2892,8 +2947,13 @@ begin
      end;
   if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
   SyncFactory.SyncAll;
-  Global.LoadBasic;
-  ShopGlobal.LoadRight;
+  frmLogo.Show;
+  try
+    Global.LoadBasic;
+    ShopGlobal.LoadRight;
+  finally
+    frmLogo.Close;
+  end;
 end;
 
 procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject); 
@@ -3317,7 +3377,7 @@ begin
     PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
-  Application.Restore;
+ // Application.Restore;
   frmShopDesk.SaveToFront;
   Form := FindChildForm(TfrmOutLocusOrderList);
   if not Assigned(Form) then
@@ -3374,13 +3434,29 @@ begin
     Exit;
   end;
 
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmDownStockOrder);
+  if (Form<>nil) and TfrmDownStockOrder(Form).Xsm and not Application.MainForm.Visible then
+     begin
+       Form.Show;
+       Form.WindowState := wsNormal;
+       Form.BringToFront;
+       Exit;
+     end;
+  if (Form<>nil) then Form.Free;
+  if not Application.MainForm.Visible then
+     begin
+       TfrmDownStockOrder.XsmShow;
+       Exit;
+     end;
   try
     Aobj:=TRecord_.Create;
     if TfrmDownStockOrder.DownStockOrder(AObj,vData) then
     begin
       if trim(AObj.fieldbyName('INDE_ID').AsString)<>'' then
       begin
-        Application.Restore;
+        //Application.Restore;
         frmShopDesk.SaveToFront;
         Form := FindChildForm(TfrmStockOrderList);
         if not Assigned(Form) then
@@ -3521,8 +3597,19 @@ begin
        Form := TfrmSaleAnaly.Create(self);
        AddFrom(Form);
      end;
-  Form.Show;
-  Form.BringToFront;
+  if not Application.MainForm.Visible and (Form.FormStyle = fsMDIChild) then
+     begin
+       Form.FormStyle :=  fsNormal;
+       Form.WindowState := wsNormal;
+       Form.Width := 800;
+       Form.Height := 575;
+     end
+  else
+  if Application.MainForm.Visible and (Form.FormStyle = fsNormal) then
+     begin
+       Form.FormStyle :=  fsMDIChild;
+       Form.WindowState := wsMaximized;
+     end;
 end;
 
 procedure TfrmShopMain.wm_message(var Message: TMessage);
@@ -3629,6 +3716,7 @@ end;
 
 procedure TfrmShopMain.DoLoadMsg(Sender: TObject);
 begin
+  if not Visible then Exit;
   if SyncFactory.Locked > 0 then Exit;
   PrainpowerJudge.SyncMsgc;
 end;
@@ -3756,6 +3844,7 @@ var
   rs:TZQuery;
   RspComVersion:string;
 begin
+  RzTrayIcon1.HideOnMinimize := true;
   result := false;
   frmLogo.Show;
   try
@@ -3849,8 +3938,8 @@ begin
              end;
           if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
              begin
-               CaFactory.SyncAll(1);
-               SyncFactory.SyncBasic(true);
+               if CaFactory.CheckInitSync then CaFactory.SyncAll(1);
+               if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
                InitTenant;
              end;
         end
@@ -3858,6 +3947,7 @@ begin
         begin
           if CaFactory.Audited and Global.RemoteFactory.Connected then //管理什么版本，有连接到服务器时，必须先同步数据
              begin
+               if CaFactory.CheckInitSync then CaFactory.SyncAll(1);
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
                     SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
@@ -3867,7 +3957,9 @@ begin
                     SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
                   end
                else
-                  SyncFactory.SyncBasic(true);
+                  begin
+                    if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
+                  end;
              end;
           InitTenant;
         end;
@@ -3903,7 +3995,18 @@ begin
       Global.UserName := '管理员';
       result := true;
     end;
-  PostMessage(Handle,WM_DESKTOP_REQUEST,StrtoIntDef(fn,0),0);
+  IsXsm := true;
+  PostMessage(Handle,WM_DESKTOP_REQUEST,StrtoIntDef(fn,0),1);
+end;
+
+procedure TfrmShopMain.RzTrayIcon1LButtonDblClick(Sender: TObject);
+begin
+  inherited;
+  if Logined then
+  begin
+    frmShopMain.Show;
+    frmShopMain.WindowState := wsMaximized;
+  end;
 end;
 
 end.

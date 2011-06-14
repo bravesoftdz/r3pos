@@ -13,11 +13,7 @@ type
     RzPanel1: TRzPanel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
-    rzTaskBar: TRzGroupBar;
-    RzGroup1: TRzGroup;
     ImageList1: TImageList;
-    RzGroup2: TRzGroup;
-    RzGroup3: TRzGroup;
     rsDesk: TRzPageControl;
     TabSheet1: TRzTabSheet;
     TabSheet2: TRzTabSheet;
@@ -274,7 +270,7 @@ begin
   inherited;
   dgDesk.Top := (Height-dgDesk.Height) div 2;
   if dgDesk.Top > 60 then dgDesk.Top := dgDesk.Top -50;
-  dgDesk.Left := (Width-dgDesk.Width-rzTaskBar.Width) div 2;
+  dgDesk.Left := (Width-dgDesk.Width) div 2;
   if dgDesk.Top > 100 then dgDesk.Top := dgDesk.Top -50;
 end;
 

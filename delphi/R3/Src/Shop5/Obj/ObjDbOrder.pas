@@ -365,6 +365,10 @@ begin
         Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
         if FieldbyName('SALES_DATE').AsOldString <> '' then
            Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
+        if FieldbyName('PLAN_DATE').AsString<>'' then
+           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString)),FieldbyName('TIME_STAMP').AsString);
+        if FieldbyName('PLAN_DATE').AsOldString <> '' then
+           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsOldString)),FieldbyName('TIME_STAMP').AsOldString);
         result := true;
       end
    else

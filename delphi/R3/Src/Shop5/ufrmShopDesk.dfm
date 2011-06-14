@@ -1,6 +1,6 @@
 inherited frmShopDesk: TfrmShopDesk
-  Left = 1
-  Top = 1
+  Left = 230
+  Top = 96
   Caption = 'frmShopDesk'
   ClientHeight = 520
   ClientWidth = 942
@@ -20,142 +20,16 @@ inherited frmShopDesk: TfrmShopDesk
     Color = clWhite
     FlatColor = 14588523
     TabOrder = 0
-    object rzTaskBar: TRzGroupBar
-      Left = 755
-      Top = 0
-      Width = 187
-      Height = 520
-      BorderOuter = fsFlat
-      BorderSides = [sdLeft, sdRight]
-      BorderColor = 13871254
-      BorderShadow = 13871254
-      GroupBorderSize = 3
-      FlatColor = 13871254
-      LargeImages = ImageList1
-      SmallImages = ImageList1
-      UseGradients = False
-      Align = alRight
-      Color = 16381681
-      ParentColor = False
-      TabOrder = 0
-      Visible = False
-      object RzGroup1: TRzGroup
-        BorderColor = 13871254
-        CaptionColor = 16109714
-        CaptionColorDefault = False
-        CaptionHeight = 30
-        CaptionHotColor = clMenuHighlight
-        CaptionImageIndex = 0
-        Color = 16381681
-        ColorDefault = False
-        Items = <
-          item
-            Action = frmShopMain.actfrmStockOrderList
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmSalesOrderList
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmPosMain
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmChangeOrderList2
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmStorageTracking
-            IndentLevel = 1
-          end>
-        ItemIndent = 10
-        Opened = True
-        OpenedHeight = 138
-        DividerVisible = True
-        UseGradients = True
-        Caption = #26368#36817#24120#29992#21151#33021
-        ParentColor = False
-      end
-      object RzGroup2: TRzGroup
-        BorderColor = 13871254
-        CaptionColor = 16109714
-        CaptionColorDefault = False
-        CaptionHeight = 30
-        CaptionImageIndex = 1
-        Color = 16381681
-        ColorDefault = False
-        Items = <
-          item
-            Action = frmShopMain.actfrmSaleDayReport
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmStorageDayReport
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmRckDayReport
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmStockDayReport
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmJxcTotalReport
-            IndentLevel = 1
-          end>
-        ItemIndent = 10
-        Opened = True
-        OpenedHeight = 138
-        DividerVisible = True
-        UseGradients = True
-        Caption = #26368#36817#24120#29992#25253#34920
-        ParentColor = False
-      end
-      object RzGroup3: TRzGroup
-        BorderColor = 13871254
-        CaptionColor = 16109714
-        CaptionColorDefault = False
-        CaptionImageIndex = 0
-        Color = 16381681
-        ColorDefault = False
-        Items = <
-          item
-            Action = frmShopMain.actfrmNewPaperReader
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmQuestionnaire
-            IndentLevel = 1
-          end
-          item
-            Caption = #25237#35785#24314#35758
-            IndentLevel = 1
-          end
-          item
-            Action = frmShopMain.actfrmMessage
-            IndentLevel = 1
-          end>
-        ItemIndent = 10
-        Opened = True
-        OpenedHeight = 108
-        UseGradients = True
-        Caption = #21363#26102#20449#24687#20114#21160
-        ParentColor = False
-      end
-    end
     object rsDesk: TRzPageControl
       Left = 0
       Top = 0
-      Width = 755
+      Width = 942
       Height = 520
-      ActivePage = TabSheet2
+      ActivePage = TabSheet1
       Align = alClient
       ShowCardFrame = False
-      TabIndex = 1
-      TabOrder = 1
+      TabIndex = 0
+      TabOrder = 0
       FixedDimension = 18
       object TabSheet1: TRzTabSheet
         Color = clWhite

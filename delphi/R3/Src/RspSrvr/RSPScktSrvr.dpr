@@ -111,22 +111,23 @@ end;
 var FromService:boolean;
 begin
   FromService := StartService;
-//  if not Installing and FromService then
-//  begin
-//    CreateMutex(nil, True, 'RSPSCKTSRVR');
-//    if GetLastError = ERROR_ALREADY_EXISTS then
-//    begin
-//      MessageBox(0, PChar(SAlreadyRunning), SApplicationName, MB_ICONERROR);
-//      Halt;
-//    end;
-//  end;
+  if not Installing and not FromService then
+  begin
+    CreateMutex(nil, True, 'RSPSCKTSRVR');
+    if GetLastError = ERROR_ALREADY_EXISTS then
+    begin
+      MessageBox(0, PChar('RSP Socket Service 已经运行，不能重复执行.'), SApplicationName, MB_ICONERROR);
+      Halt;
+      Exit;
+    end;
+  end;
   if Installing or FromService then
   begin
     SvcMgr.Application.Initialize;
     SvcMgr.Application.Title := '通讯服务器';
     SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
-  SvcMgr.Application.Run;
+    SvcMgr.Application.Run;
   end else
   begin
     Forms.Application.Initialize;

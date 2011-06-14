@@ -531,7 +531,7 @@ try
                  end;
                  Audited := true;
                  finded := false;
-                 if not FindCmdLineSwitch('DEBUG',['-','+'],false) and (RspFlag=0) then
+                 if not Global.Debug and (RspFlag=0) then
                    begin
                      r.WriteString('soft','SFVersion','.'+GetNodeValue(caTenantLoginResp,'prodFlag'));
                      r.WriteString('soft','CLVersion','.'+GetNodeValue(caTenantLoginResp,'industry'));

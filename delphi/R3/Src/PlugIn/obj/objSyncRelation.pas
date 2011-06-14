@@ -53,10 +53,10 @@ begin
     //第二步：处理手工对照:[]
     case AGlobal.iDbType of
      1:
-       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=1 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
+       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=5 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
              ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0)';
      4:
-       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=1 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
+       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=5 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
              ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and locate('','' || A.SECOND_ID || '','',B.COMM_ID)>0)';
     end;
     AGlobal.ExecSQL(Str);
@@ -68,14 +68,14 @@ begin
       begin
         Str:=  //B.SORT_NAME as SORT_NAME2,C.SORT_NAME as SORT_NAME6,
           'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,SORT_ID6,'+
-          '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' when UPDATE_FLAG=4 then ''条码重复'' else ''未知状态'' end) as UpdateCase '+
+          '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' when UPDATE_FLAG=4 then ''条码重复'' when UPDATE_FLAG=5 then ''手工对照'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' Order by GODS_CODE';
       end;
      2:
       begin
         Str:=
           'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,SORT_ID6,'+
-          '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照''  when UPDATE_FLAG=4 then ''条码重复''  else ''未知状态'' end) as UpdateCase '+
+          '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照''  when UPDATE_FLAG=4 then ''条码重复'' when UPDATE_FLAG=5 then ''手工对照''  else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG<>1 Order by GODS_CODE';
       end;
      3:

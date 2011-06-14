@@ -213,8 +213,6 @@ begin
 
     CommitTrans;  //提交事务
     result:=UpiRet;
-    //执行成功写日志:
-    WriteToRIM_BAL_LOG(vRimParam.LICENSE_CODE,vRimParam.CustID,'10','上报日销售成功！','01');
   except
     on E:Exception do
     begin
@@ -223,7 +221,9 @@ begin
       WriteToRIM_BAL_LOG(vRimParam.LICENSE_CODE,vRimParam.CustID,'10','上报日销售错误！','02'); //写日志
       Raise Exception.Create(E.Message);
     end;
-  end;    
+  end;
+  //执行成功写日志:
+  WriteToRIM_BAL_LOG(vRimParam.LICENSE_CODE,vRimParam.CustID,'10','上报日销售成功！','01');
 end;
 
 end.

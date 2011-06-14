@@ -1,5 +1,5 @@
 {------------------------------------------------------------------------------
-  插件共用函数单元
+  RIM插件共用函数、基础类、数据结构
 
   
  ------------------------------------------------------------------------------}
@@ -43,10 +43,12 @@ type
     function SetRimORGAN_CUST_ID(const InTENANT_ID,InSHOP_ID: string; var InCOM_ID,InCUST_ID: string): Boolean;
     //6、返回上报的门店List
     function GetR3ReportShopList(var ShopList: TZQuery): Boolean;
-    //7、写上报日志
+    //7、返回当前门店一样许可证号的所有门店List
+    function GetShop_IDS(TenID,LICENSE_CODE: string): string;
+    //8、写上报日志
     procedure BeginLogRun; virtual;  //开始上报
     procedure WriteLogRun(ReportName: string=''); virtual;  //结束上报
-    //8、写RIM_BAL_LOG日志
+    //9、写RIM_BAL_LOG日志
     function WriteToRIM_BAL_LOG(LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean;
 
     property MaxStmp: string read FMaxStmp write SetMaxStmp;              //最大时间戳
@@ -86,13 +88,21 @@ end;
 function TRimSyncFactory.GetMaxNUM(BillType, COM_ID, CUST_ID, SHOP_ID: string): string;
 var
   iRet: integer;
-  Str: string;
+  Str,TimeStamp: string;
   Rs: TZQuery;
 begin
   result:='';
   try
-    Rs:=TZQuery.Create(nil);                  
-    Rs.SQL.Text:='select MAX_NUM,'+GetTimeStamp(DbType)+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+COM_ID+''' and CUST_ID='''+Cust_ID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+''' ';
+    case DbType of
+     0: TimeStamp := 'convert(bigint,(convert(float,Convert(datetime,Convert(varchar(10),GetDate(),23)))-40542.0)*86400)';
+     1: TimeStamp := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))';
+     4: TimeStamp := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))';
+     
+     else TimeStamp := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+    end;
+
+    Rs:=TZQuery.Create(nil);       // GetTimeStamp(DbType)
+    Rs.SQL.Text:='select MAX_NUM,'+TimeStamp+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+COM_ID+''' and CUST_ID='''+Cust_ID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+''' ';
     if Open(Rs) then
     begin
       result:=trim(Rs.Fields[0].AsString);
@@ -105,8 +115,8 @@ begin
       if PlugIntf.ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('RIM_R3_NUM执行插入初值错误！（'+str+'）');
 
       //重新在取一次：最大时间戳：
-      Rs.Close;
-      Rs.SQL.Text:='select MAX_NUM,'+GetTimeStamp(DbType)+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+COM_ID+''' and CUST_ID='''+Cust_ID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+''' ';
+      Rs.Close;                      // GetTimeStamp(DbType)
+      Rs.SQL.Text:='select MAX_NUM,'+TimeStamp+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+COM_ID+''' and CUST_ID='''+Cust_ID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+''' ';
       if Open(Rs) then
       begin
         result:=trim(Rs.Fields[0].AsString);
@@ -218,6 +228,7 @@ var
   str: string;
   iRet: integer;
 begin
+  sleep(1);
   Str:='insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values '+
        '('''+LICENSE_CODE+Formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''','''+LogType+''','''+CustID+''','''+Formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','''+LogNote+''',''auto'','''+LogStatus+''')' ;
   if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then
@@ -310,5 +321,33 @@ begin
   FRunInfo.ErrorStr:=''
 end;
 
+
+function TRimSyncFactory.GetShop_IDS(TenID,LICENSE_CODE: string): string;
+var
+  Rs: TZQuery;
+  ReStr: string;
+begin
+  result:=''' ''';
+  try
+    ReStr:='';
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select SHOP_ID from CA_SHOP_INFO where TENANT_ID='+TenID+' and LICENSE_CODE='''+LICENSE_CODE+''' ';
+    if Open(Rs) then
+    begin
+      Rs.First;
+      while not Rs.Eof do
+      begin
+        if ReStr='' then
+          ReStr:=''''+Rs.fieldbyName('SHOP_ID').AsString+''''
+        else
+          ReStr:=ReStr+','''+Rs.fieldbyName('SHOP_ID').AsString+'''';
+        Rs.Next;
+      end;
+      result:=ReStr;
+    end;
+  finally
+    Rs.Free;
+  end;
+end;
 
 end.

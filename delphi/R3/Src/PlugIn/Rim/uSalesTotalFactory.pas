@@ -91,7 +91,7 @@ begin
           //写日志LogList
           WriteToLogList(true, ErrorFlag);
         end else
-          WriteToLogList(true, ErrorFlag); //对应不上门店
+          WriteToLogList(False); //对应不上门店
       except
         on E:Exception do
         begin

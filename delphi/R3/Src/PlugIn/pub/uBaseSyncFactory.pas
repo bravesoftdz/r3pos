@@ -109,10 +109,14 @@ type
     FParams: TftParamList;
     FDbType: Integer;
     FLogList: TStringList;
+    FHasError: boolean;
+    FErrorMsg: string;
     procedure SetPlugIntf(const Value: IPlugIn);
     procedure SetParams(const Value: TftParamList);
     procedure SetDbType(const Value: Integer);
-    function  GetUpdateTime: string; //最新更新时间[YYYY-MM-DD_HH:MM:SS]
+    function  GetUpdateTime: string;
+    procedure SetHasError(const Value: boolean);
+    procedure SetErrorMsg(const Value: string); //最新更新时间[YYYY-MM-DD_HH:MM:SS]
   public
     FRunInfo: TRunInfo; //日志信息
     constructor Create; virtual;
@@ -128,6 +132,7 @@ type
     function CommitTrans: Boolean;   //提交事务
     function RollbackTrans: Boolean; //回滚事务
     function Open(DataSet: TDataSet):Boolean;  //取数据
+    procedure WriteRunErrorMsg(Msg: string);  //写日志
 
     //返回类函数
     class function newId(id:string=''): string; //获取GUID
@@ -147,6 +152,8 @@ type
     property PlugIntf: IPlugIn read FPlugIntf write SetPlugIntf;
     property LogList: TStringList read FLogList;
     property UpdateTime: string read GetUpdateTime; //最新更新时间[YYYY-MM-DD_HH:MM:SS]
+    property HasError: boolean read FHasError write SetHasError;   //插件运行是否错误
+    property ErrorMsg: string read FErrorMsg write SetErrorMsg;    //插件运行第一错误消息
   end;
 
 
@@ -610,6 +617,24 @@ begin
                ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
                ' else ''01'' end)';
 }
+end;
+
+procedure TBaseSyncFactory.SetHasError(const Value: boolean);
+begin
+  FHasError := Value;
+end;
+
+procedure TBaseSyncFactory.SetErrorMsg(const Value: string);
+begin
+  FErrorMsg := Value;
+end;
+
+procedure TBaseSyncFactory.WriteRunErrorMsg(Msg: string);
+begin
+  if HasError then Exit;
+  //永远只记录第一个错误消息
+  HasError:=true;
+  ErrorMsg:=Msg; 
 end;
 
 end.

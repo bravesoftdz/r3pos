@@ -29,7 +29,8 @@ type
     procedure SetMaxStmp(const Value: string);
     procedure SetSyncType(const Value: Integer);
   public
-    R3ShopList: TZQuery;  
+    R3ShopList: TZQuery;  //上报门店List
+    RimParam: TRimParams; //上报参数记录
     constructor Create; override;
     destructor Destroy;override;
     // 同步类型
@@ -49,6 +50,7 @@ type
     //8、写上报日志
     procedure BeginLogRun; virtual;  //开始上报
     procedure WriteLogRun(ReportName: string=''); virtual;  //结束上报
+    procedure WriteToLogList(RelationFlag: Boolean; RunFlag: Boolean=False);  //写入LogList   
 
     //9、写RIM_BAL_LOG日志
     function WriteToRIM_BAL_LOG(LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean;
@@ -291,22 +293,22 @@ begin
     begin
       LogFileList.Add('------------- R3终端上报 '+ReportTitle+' ---------------------');
       LogFileList.Add(Str);
-      LogFileList.Add('  ');
       for i:=0 to LogList.Count-1 do
       begin
         LogFileList.Add(LogList.Strings[i]);
-      end; 
+      end;
       LogFileList.Add('------------- R3终端上报 [结束]-----------------------');
+      LogFileList.Add('  ');
     end else
     begin
       LogFileList.Add('------------- RSP调度上报 '+ReportTitle+' -----------------------');
       LogFileList.Add(Str);
-      LogFileList.Add('  ');
       for i:=0 to LogList.Count-1 do
       begin
         LogFileList.Add(LogList.Strings[i]);
       end;
       LogFileList.Add('------------- RSP调度上报[结束]-----------------------');
+      LogFileList.Add('  ');      
     end;
   finally
     LogFileList.SaveToFile(LogFile);
@@ -354,5 +356,28 @@ begin
   end;
 end;
 
+
+procedure TRimSyncFactory.WriteToLogList(RelationFlag, RunFlag: Boolean);
+begin
+  if RelationFlag then //R3门店与Rim零售户有对应上
+  begin
+    if R3ShopList.RecordCount=1 then
+      LogInfo.SetLogMsg(LogList)  //添加本次执行日志
+    else
+      LogInfo.SetLogMsg(LogList,R3ShopList.RecNo); //添加本次执行日志
+
+    if RunFlag then
+      Inc(FRunInfo.ErrorCount)  //执行异常！
+    else
+      Inc(FRunInfo.RunCount);   //执行成功！
+  end else
+  begin
+    Inc(FRunInfo.NotCount);  //对应不上
+    if R3ShopList.RecordCount=1 then
+      LogList.Add('   门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！')
+    else
+      LogList.Add('  ('+InttoStr(R3ShopList.RecNo)+')门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！');
+  end;
+end;
 
 end.

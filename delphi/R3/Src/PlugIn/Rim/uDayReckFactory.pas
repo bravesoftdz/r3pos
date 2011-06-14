@@ -84,7 +84,7 @@ type
   private
     DayReck: TGodsDayReck;
     //上报1个零售户的日销售台账数据
-    function GodsDayReckSync(vRimParam: TRimParams): integer;
+    function GodsDayReckSync: integer;
   public
     constructor Create; override;
     destructor Destroy;override;
@@ -1005,7 +1005,6 @@ function TDayReckSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string):
 var
   iRet: integer;
   ErrorFlag: Boolean; 
-  RimParam: TRimParams;
 begin
   result:=-1;
   {------初始化参数------}
@@ -1036,15 +1035,14 @@ begin
     begin
       RimParam.CustID:='';
       try
+        ErrorFlag:=False;
         RimParam.TenID  :=trim(R3ShopList.fieldbyName('TENANT_ID').AsString);   //R3企业ID (Field: TENANT_ID)
         RimParam.TenName:=trim(R3ShopList.fieldbyName('TENANT_NAME').AsString); //R3企业名称 (Field: TENANT_NAME)
         RimParam.ShopID :=trim(R3ShopList.fieldbyName('SHOP_ID').AsString);     //R3门店ID (Field: SHOP_ID)
         RimParam.ShopName:=trim(R3ShopList.fieldbyName('SHOP_NAME').AsString);  //R3门店名称 (Field: SHOP_NAME)
         RimParam.LICENSE_CODE:=trim(R3ShopList.fieldbyName('LICENSE_CODE').AsString);  //R3门店许可证号 (Field: LICENSE_CODE)
-        RimParam.SHORT_ShopID:=Copy(RimParam.ShopID,Length(RimParam.ShopID)-3,4);     //门店ID的后4位
-
-        //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
-        SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID); //返回烟草公司ComID、零售户CustID
+        RimParam.SHORT_ShopID:=Copy(RimParam.ShopID,Length(RimParam.ShopID)-3,4);      //门店ID的后4位
+        SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID); //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
 
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
@@ -1052,26 +1050,19 @@ begin
 
           //开始上报日台帐：
           try
-            iRet:=GodsDayReckSync(RimParam);
+            iRet:=GodsDayReckSync;
             LogInfo.AddBillMsg('零售户日台帐',iRet);
           except
             on E:Exception do
             begin
               WriteRunErrorMsg(E.Message);
-              ErrorFlag:=true;                
+              ErrorFlag:=true;
             end;
           end;
 
-          if R3ShopList.RecordCount=1 then LogInfo.SetLogMsg(LogList) //添加本次执行日志
-          else LogInfo.SetLogMsg(LogList, R3ShopList.RecNo);  //添加本次执行日志
-          //记录
-          if ErrorFlag then Inc(FRunInfo.ErrorCount)
-          else Inc(FRunInfo.RunCount);
+          WriteToLogList(true,ErrorFlag);
         end else
-        begin
-          Inc(FRunInfo.NotCount);  //对应不上
-          LogList.Add('   门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！'); 
-        end;
+          WriteToLogList(False); //对应不上门店
       except
         on E:Exception do
         begin
@@ -1097,7 +1088,7 @@ end;
    (3)日台帐上报规则根据传入的门店(SHOP_ID)，取出许可证号，用符合该许可证号的
       的门店一起上报。  
  ------------------------------------------------------------------------------}
-function TDayReckSyncFactory.GodsDayReckSync(vRimParam: TRimParams): integer;
+function TDayReckSyncFactory.GodsDayReckSync: integer;
 var
   LastReckDate: TDate;   //最后结账日期
   iRet,UpiRet: integer;  //返回ExeSQL影响多少行记录
@@ -1106,13 +1097,13 @@ var
 begin
   result:=-1;
   //在上报零售户日台账之前（调用TGodsDayReck对象）
-  DayReck.CalcDayReck(vRimParam.TenID);
+  DayReck.CalcDayReck(RimParam.TenID);
 
   //返回最大结账日期:
   LastReckDate:=DayReck.bDate;
 
   //返回当前门店相同许可证号一样的:SHOP_IDS
-  SHOP_IDS:=GetShop_IDS(vRimParam.TenID,vRimParam.LICENSE_CODE);
+  SHOP_IDS:=GetShop_IDS(RimParam.TenID,RimParam.LICENSE_CODE);
 
   //第一步: 创建台帐临时[INF_DAYMONTH]:
   case DbType of
@@ -1144,20 +1135,20 @@ begin
   end;  
 
   //返回时间戳:
-  MaxStmp:=GetMaxNUM('09',vRimParam.ComID, vRimParam.CustID, vRimParam.ShopID); //返回时间戳和更新时间戳
+  MaxStmp:=GetMaxNUM('09',RimParam.ComID, RimParam.CustID, RimParam.ShopID); //返回时间戳和更新时间戳
   //第二步:删除历史数据:
-  Str:='delete from '+Session+'INF_RECKDAY where TENANT_ID='+vRimParam.TenID+' and LICENSE_CODE='''+vRimParam.LICENSE_CODE+''' ';
+  Str:='delete from '+Session+'INF_RECKDAY where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''' ';
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除临时表出错:'+PlugIntf.GetLastError);
 
   //日台账表
   DayTab:=                                                               
-    '(select distinct TENANT_ID,CREA_DATE,GODS_ID from RCK_GOODS_DAYS where TENANT_ID='+vRimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
+    '(select distinct TENANT_ID,CREA_DATE,GODS_ID from RCK_GOODS_DAYS where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
     ' union  '+
-    ' select distinct A.TENANT_ID,A.CREA_DATE,A.GODS_ID from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+vRimParam.TenID+' and '+
+    ' select distinct A.TENANT_ID,A.CREA_DATE,A.GODS_ID from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+RimParam.TenID+' and '+
     ' A.SHOP_ID in ('+SHOP_IDS+') and '+ReckDate+'=C.CREA_DATE and A.TIME_STAMP>'+MaxStmp+')';
 
   Str:='insert into '+Session+'INF_RECKDAY(TENANT_ID,LICENSE_CODE,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_CALC,NEW_INPIRCE,NEW_OUTPIRCE,RECK_DATE) '+
-       'select A.TENANT_ID,'''+vRimParam.LICENSE_CODE+''' as LICENSE_CODE,'''+vRimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+vRimParam.ComID+''' as COM_ID,'''+vRimParam.CustID+''' as CUST_ID,'+
+       'select A.TENANT_ID,'''+RimParam.LICENSE_CODE+''' as LICENSE_CODE,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,'+
        'B.SECOND_ID,A.GODS_ID,('+GetDefaultUnitCalc+') as UNIT_CALC,B.NEW_OUTPRICE,B.NEW_INPRICE,'+ReckDate+' as RECK_DATE '+
        ' from '+DayTab+' A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
@@ -1169,7 +1160,7 @@ begin
   end;
 
   //先删除RIM日台账表掉需要重新上报记录:
-  Str:='delete from RIM_CUST_DAY A where A.COM_ID='''+vRimParam.ComID+''' and A.CUST_ID='''+vRimParam.CustID+''' and '+
+  Str:='delete from RIM_CUST_DAY A where A.COM_ID='''+RimParam.ComID+''' and A.CUST_ID='''+RimParam.CustID+''' and '+
        ' exists(select 1 from '+Session+'INF_RECKDAY B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.ITEM_ID=B.ITEM_ID and A.DATE1=B.RECK_DATE)';
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除日台账历史数据出错：'+PlugIntf.GetLastError);
 
@@ -1198,9 +1189,9 @@ begin
              // '(case when sum(SALE_AMT)>0 then sum(SALE_MNY)*1.00/cast(sum(SALE_AMT) as decimal(18,6)) else SALE_MNY end) as COST_PRICE ';
   DayTab:=
     'select TENANT_ID,CREA_DATE,GODS_ID,'+SumFields+' from '+
-    '(select * from RCK_GOODS_DAYS where TENANT_ID='+vRimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
+    '(select * from RCK_GOODS_DAYS where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
     ' union all '+
-    ' select A.* from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+vRimParam.TenID+' and '+
+    ' select A.* from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+RimParam.TenID+' and '+
     ' A.SHOP_ID in ('+SHOP_IDS+') and '+ReckDate+'=C.CREA_DATE and A.TIME_STAMP>'+MaxStmp+') tmp '+
     ' group by TENANT_ID,CREA_DATE,GODS_ID ';
     
@@ -1249,12 +1240,12 @@ begin
     BeginTrans;
     //将月台帐上报的标记位:COMM的第1位设置为：1
     Str:='update RCK_GOODS_DAYS A set COMM='+GetUpCommStr(DbType)+'  '+
-         ' where A.TENANT_ID='''+vRimParam.TenID+''' and A.SHOP_ID in ('+SHOP_IDS+') and '+ReckDate+'<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and  '+
+         ' where A.TENANT_ID='''+RimParam.TenID+''' and A.SHOP_ID in ('+SHOP_IDS+') and '+ReckDate+'<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and  '+
          ' exists(select 1 from '+Session+'INF_RECKDAY INF where A.TENANT_ID=INF.TENANT_ID and '+ReckDate+'=INF.RECK_DATE and A.GODS_ID=INF.GODS_ID)';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐通信标记:'+PlugIntf.GetLastError);
 
     Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' '+
-         ' where COM_ID='''+vRimParam.ComID+''' and CUST_ID='''+vRimParam.CustID+''' and TYPE=''09'' and TERM_ID='''+vRimParam.ShopID+''' ';
+         ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''09'' and TERM_ID='''+RimParam.ShopID+''' ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐上报时间戳出错:'+PlugIntf.GetLastError);
 
     CommitTrans; //提交事务
@@ -1263,12 +1254,12 @@ begin
     on E:Exception do
     begin
       RollbackTrans;
-      WriteToRIM_BAL_LOG(vRimParam.LICENSE_CODE,vRimParam.CustID,'09','上报日台帐错误！','02'); //写日志
+      WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐错误！','02'); //写日志
       Raise Exception.Create(E.Message);
     end;
   end;
   //执行成功写日志:
-  WriteToRIM_BAL_LOG(vRimParam.LICENSE_CODE,vRimParam.CustID,'09','上报日台帐成功','01');
+  WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐成功','01');
 end;
 
 

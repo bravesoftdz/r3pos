@@ -29,7 +29,6 @@ type
     procedure SetBillKeyField(const Value: string);
     procedure SetBillMainTable(const Value: string);
     procedure SetINFKeyField(const Value: string);
-    procedure WriteLogRunList(RelationFlag: Boolean; RunFlag: Boolean=False);  //结束上报
 
     //上报月台账
     function SendMonthReck: integer;
@@ -51,7 +50,6 @@ type
 
     function Test(SQL: string): integer;
   public
-    RimParam: TRimParams; //上报参数记录
     function CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer; override; //调用上报
     property BillType: string read FBillType write SetBillType;                 //单据类型
     property TempTableName: string read FTempTableName write SetTempTableName;  //单据类型
@@ -185,9 +183,9 @@ begin
               if not ErrorFlag then ErrorFlag:=true;
             end;
           end;
-          WriteLogRunList(true,ErrorFlag); //写当前上报情况日志
+          WriteToLogList(true,ErrorFlag); //写当前上报情况日志
         end else
-          WriteLogRunList(False); //没有对应上写日志
+          WriteToLogList(False); //没有对应上写日志
       except
         on E: Exception do
         begin
@@ -877,29 +875,6 @@ end;
 procedure TBillSyncFactory.SetINFKeyField(const Value: string);
 begin
   FINFKeyField := Value;
-end;
-
-procedure TBillSyncFactory.WriteLogRunList(RelationFlag, RunFlag: Boolean);
-begin
-  if RelationFlag then //R3门店与Rim零售户有对应上
-  begin
-    if R3ShopList.RecordCount=1 then
-      LogInfo.SetLogMsg(LogList)  //添加本次执行日志
-    else
-      LogInfo.SetLogMsg(LogList,R3ShopList.RecNo); //添加本次执行日志
-
-    if RunFlag then
-      Inc(FRunInfo.ErrorCount)  //执行异常！
-    else
-      Inc(FRunInfo.RunCount);   //执行成功！
-  end else
-  begin
-    Inc(FRunInfo.NotCount);  //对应不上
-    if R3ShopList.RecordCount=1 then
-      LogList.Add('   门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！')
-    else
-      LogList.Add('  ('+InttoStr(R3ShopList.RecNo)+')门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！');
-  end;
 end;
 
 end.

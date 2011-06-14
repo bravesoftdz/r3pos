@@ -60,18 +60,25 @@ function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
 var
   SalesFactory: TSalesTotalSyncFactory;
 begin
+  result:=-1;
+  GLastError:='';
   try
     try
       SalesFactory:=TSalesTotalSyncFactory.Create;
       SalesFactory.CallSyncData(GPlugIn,StrPas(Params));
+      if not SalesFactory.HasError then //运行正常：
+        result:=0
+      else
+        GLastError:='<810>'+SalesFactory.ErrorMsg;
     finally
       SalesFactory.Free;
     end;
-    result := 0;
+
   except
     on E:Exception do
       begin
-        GLastError := E.Message;
+        if GLastError='' then 
+           GLastError := E.Message;
         result := 2001;
       end;
   end;

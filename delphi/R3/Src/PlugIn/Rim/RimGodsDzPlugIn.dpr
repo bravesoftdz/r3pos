@@ -62,18 +62,23 @@ var
   DzFactory: TGodsDzSyncFactory;
 begin
   result:=-1;
+  GLastError:='';
   try
     try
       DzFactory:=TGodsDzSyncFactory.Create;
       DzFactory.CallSyncData(GPlugIn,StrPas(Params));
-      result:=0;
+      if not DzFactory.HasError then
+        result:=0
+      else
+        GLastError := DzFactory.ErrorMsg;
     finally
       DzFactory.Free;
     end;
   except
     on E:Exception do
     begin
-      GLastError := E.Message;
+      if GLastError='' then
+        GLastError := E.Message;
       GPlugIn.WriteLogFile(PChar(GLastError));
       result := 2001;
     end;

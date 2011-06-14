@@ -27,6 +27,7 @@ implementation
 function TOrderDownSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer;
 begin
   result := -1;
+  HasError:=False;
   {------初始化参数------}
   PlugIntf:=GPlugIn;
 
@@ -40,6 +41,8 @@ begin
 
   //2、返回数据库类型
   GetDBType;
+
+  //3、开始执行
   try
     case Params.ParamByName('ExeType').AsInteger of   //执行类型： 
      1: DownOrderToINF_INDEOrder;   //下载订单主表
@@ -47,10 +50,10 @@ begin
     end;
     result := 0;
   except
-    on E:Exception do
+    on E: Exception do
     begin
-      GLastError := E.Message;
-      PlugIntf.WriteLogFile(Pchar(E.Message));
+      HasError:=true;
+      ErrorMsg:=E.Message;
       result := 2001;
     end;
   end;
@@ -73,8 +76,8 @@ begin
   //返回Rim烟草公司ID,零售户ID
   SetRimORGAN_CUST_ID(TENANT_ID,SHOP_ID, COM_ID, CUST_ID);
 
-  if COM_ID='' then Raise Exception.Create('没有找到RIM系统烟草公司！');
-  if CUST_ID='' then Raise Exception.Create('没有找到RIM系统零售户！'); //写异常日志;
+  if COM_ID='' then Raise Exception.Create('R3企业ID［'+TENANT_ID+'］没有找到RIM系统烟草公司！');
+  if CUST_ID='' then Raise Exception.Create('R3门店ID［'+SHOP_ID+'］没有找到RIM系统零售户！'); //写异常日志;
 
   try
     {== 中间表是作为接口，相应系统共用，此处处理: 主表作为查询显示下载列表显示使用 ==}

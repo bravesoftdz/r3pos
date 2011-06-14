@@ -59,19 +59,24 @@ function DoExecute(Params:Pchar; var Data:oleVariant):Integer; stdcall;
 var
   OrderFactory: TOrderDownSyncFactory;
 begin
+  result:=-1;
+  GLastError:='';
   try
     try
       OrderFactory:=TOrderDownSyncFactory.Create;
       OrderFactory.CallSyncData(GPlugIn,StrPas(Params));
-      result:=0;
+      if not  OrderFactory.HasError then
+        result:=0
+      else
+        GLastError:=OrderFactory.ErrorMsg;
     finally
       OrderFactory.Free;
     end;
   except
     on E:Exception do
     begin
-      GLastError := E.Message;
-      GPlugIn.WriteLogFile(Pchar('Error:'+E.Message));
+      if GLastError='' then
+        GLastError := E.Message;
       result := 2001;
     end;
   end;

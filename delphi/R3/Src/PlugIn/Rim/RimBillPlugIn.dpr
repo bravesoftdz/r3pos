@@ -65,7 +65,7 @@ begin
     try
       BillFactory:=TBillSyncFactory.Create;
       BillFactory.CallSyncData(GPlugIn,StrPas(Params));
-      if not BillFactory.HasError then //运行存在错误：
+      if not BillFactory.HasError then //运行正常
         result:=0
       else
         GLastError:='<1003>'+BillFactory.ErrorMsg;

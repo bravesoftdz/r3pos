@@ -31,6 +31,7 @@ var
   RsRim,RsInf,RsBarPub: TZQuery;
 begin
   result:=-1;
+  HasError:=False;
   iRet:=-1;
   TENANT_ID:= Params.ParamByName('TENANT_ID').AsString;
   Sort_ID2:=
@@ -140,15 +141,15 @@ begin
         begin
           result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation');
           if result<>0 then
-            Raise Exception.Create('提交中间表[Inf_Goods_Relation]数据错误！');
+            Raise Exception.Create('提交中间表[Inf_Goods_Relation]数据错误！'); 
         end else
           Raise Exception.Create('在Rim没有找到对应条码的卷烟档案！');
       end else
-        Raise Exception.Create(' 存在数据集没有Open状态！');
+        Raise Exception.Create('存在数据集没有Open状态！');
     except
       on E:Exception do
       begin
-        Raise Exception.Create('从RIM_GOODS_RELATION视图插入到中间表:INF_GOODS_RELATION出错：'+E.Message);
+        Raise Exception.Create('从RIM_GOODS_RELATION视图插入到中间表:INF_GOODS_RELATION出错：'+E.Message); 
       end;
     end;
   finally
@@ -191,6 +192,11 @@ begin
   try
     result:=InsertData_INF_GOODS_RELATION(COM_ID, UpdateMode);
   except
+    on E:Exception do
+    begin
+      HasError:=true;
+      ErrorMsg:=E.Message;
+    end;
   end;
 end;
 

@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=D:\TestCase\GzDemo\Rsp\plugin
+OutputDir=D:\Rsp\plugin
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -101,7 +101,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=D:\TestCase\GzDemo\Rsp\RSPScktSrvr.exe
+HostApplication=D:\Rsp\RSPScktSrvr.exe
 Launcher=
 UseLauncher=0
 DebugCWD=
@@ -147,7 +147,7 @@ Item2=D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib
 Item3=D:\Delphi\R3\Pub
 [HistoryLists\hlOutputDirectorry]
 Count=4
-Item0=D:\TestCase\GzDemo\Rsp\plugin
-Item1=D:\TestCase\GzDemo\ZY
-Item2=D:\TestCase\Rsp\plugin
-Item3=D:\rsp\plugin
+Item0=D:\Rsp\plugin
+Item1=D:\TestCase\GzDemo\Rsp\plugin
+Item2=D:\TestCase\GzDemo\ZY
+Item3=D:\TestCase\Rsp\plugin

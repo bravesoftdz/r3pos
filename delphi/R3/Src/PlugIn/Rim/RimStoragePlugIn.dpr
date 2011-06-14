@@ -64,19 +64,25 @@ function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
 var
   StorageFactory: TStorageSyncFactory;
 begin
+  result:=-1;
+  GLastError:='';
   try
-    result := -1;
     try
       StorageFactory:=TStorageSyncFactory.Create;
       //上报库存
-      result:=StorageFactory.CallSyncData(GPlugIn, StrPas(Params));
+      StorageFactory.CallSyncData(GPlugIn, StrPas(Params));
+      if not StorageFactory.HasError then //运行正常
+        result:=0
+      else
+        GLastError:='<805>'+StorageFactory.ErrorMsg;
     finally
       StorageFactory.Free;
     end;
   except
     on E:Exception do
     begin
-      GLastError := E.Message;
+      if GLastError='' then
+        GLastError := E.Message;
       result := 2001;
     end;
   end;

@@ -28,8 +28,9 @@ type
     procedure SetTempTableName(const Value: string);
     procedure SetBillKeyField(const Value: string);
     procedure SetBillMainTable(const Value: string);
-    procedure SetINFKeyField(const Value: string);    
-    
+    procedure SetINFKeyField(const Value: string);
+    procedure WriteLogRunList(RelationFlag: Boolean; RunFlag: Boolean=False);  //结束上报
+
     //上报月台账
     function SendMonthReck: integer;
     //上报销售单[零售、批发、退货]
@@ -58,27 +59,28 @@ type
     property BillKeyField: string read FBillKeyField write SetBillKeyField;     //单据关联关键字
     property INFKeyField: string read FINFKeyField write SetINFKeyField;     //单据关联关键字
   end;
- 
+
+
 implementation
 
 { TSalesTotalSyncFactory }
 
 function TBillSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer;
 var
-  ErrorFlag: Boolean;  //运行状态
   iRet: integer;  //返回上报成功记录
-  R3ShopList: TZQuery;
+  ErrorFlag: Boolean;  //运行状态   
 begin
   result:=-1;
   {------初始化参数------}
   PlugIntf:=GPlugIn;
+  HasError:=False;
+  ErrorMsg:='';
   GetDBType;    //1、返回数据库类型
   Params.Decode(Params, InParamStr); //2、还原ParamsList的参数对象
   GetSyncType;  //3、返回同步类型标记
 
   {------开始运行日志------}
   BeginLogRun;
-  R3ShopList := TZQuery.Create(nil);
   try
     DBLock(true);  //锁定数据库链接   
 
@@ -97,7 +99,7 @@ begin
     begin
       RimParam.CustID:='';
       try
-        ErrorFlag:=False; 
+        ErrorFlag:=False; //当前门店跟踪运行状态 
         RimParam.TenID  :=trim(R3ShopList.fieldbyName('TENANT_ID').AsString);   //R3企业ID (Field: TENANT_ID)
         RimParam.TenName:=trim(R3ShopList.fieldbyName('TENANT_NAME').AsString); //R3企业名称 (Field: TENANT_NAME)
         RimParam.ShopID :=trim(R3ShopList.fieldbyName('SHOP_ID').AsString);     //R3门店ID (Field: SHOP_ID)
@@ -108,70 +110,95 @@ begin
         //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
         SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID); //返回烟草公司ComID、零售户CustID
 
-        //if then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
           LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
-
+          
           //开始上报月台帐：
-          iRet:=SendMonthReck;
-          LogInfo.AddBillMsg('月台帐',iRet);
-          if not ErrorFlag then ErrorFlag:=(iRet=-1);
+          try
+            iRet:=SendMonthReck;
+            LogInfo.AddBillMsg('月台帐',iRet);
+          except
+            on E:Exception do
+            begin
+              WriteRunErrorMsg(E.Message);
+              if not ErrorFlag then ErrorFlag:=true;
+            end;
+          end;
 
           //上报销售单 [零售、批发、退货]
-          iRet:=SendSalesDetail;
-          LogInfo.AddBillMsg('销售单',iRet);
-          if not ErrorFlag then ErrorFlag:=(iRet=-1);
+          try
+            iRet:=SendSalesDetail;
+            LogInfo.AddBillMsg('销售单',iRet);
+          except
+            on E:Exception do
+            begin
+              WriteRunErrorMsg(E.Message);
+              if not ErrorFlag then ErrorFlag:=true;
+            end;
+          end;
 
           //上报调拨单（调入）
-          iRet:=SenddbInDetail;
-          LogInfo.AddBillMsg('调拨单(入)',iRet);
-          if not ErrorFlag then ErrorFlag:=(iRet=-1);
+          try
+            iRet:=SenddbInDetail;
+            LogInfo.AddBillMsg('调拨单(入)',iRet);
+          except
+            on E:Exception do
+            begin
+              WriteRunErrorMsg(E.Message);
+              if not ErrorFlag then ErrorFlag:=true;
+            end;
+          end;
 
           //上报调拨单（调出）
-          iRet:=SenddbOutDetail;
-          LogInfo.AddBillMsg('调拨单(出)',iRet);
-          if not ErrorFlag then ErrorFlag:=(iRet=-1);
+          try
+            iRet:=SenddbOutDetail;
+            LogInfo.AddBillMsg('调拨单(出)',iRet);
+          except
+            on E:Exception do
+            begin
+              WriteRunErrorMsg(E.Message);
+              if not ErrorFlag then ErrorFlag:=true;
+            end;
+          end;
       
           //上报入库单
-          iRet:=SendStockDetail;
-          LogInfo.AddBillMsg('入库单',iRet);
-          if not ErrorFlag then ErrorFlag:=(iRet=-1);
+          try
+            iRet:=SendStockDetail;
+            LogInfo.AddBillMsg('入库单',iRet);
+          except
+            on E:Exception do
+            begin
+              WriteRunErrorMsg(E.Message);
+              if not ErrorFlag then ErrorFlag:=true;
+            end;
+          end;
 
           //上报调整单
-          iRet:=SendChangeDetail;
-          LogInfo.AddBillMsg('调整单',iRet);
-          if not ErrorFlag then ErrorFlag:=(iRet=-1); 
-
-          if R3ShopList.RecordCount=1 then 
-            LogInfo.SetLogMsg(LogList)  //添加本次执行日志
-          else 
-            LogInfo.SetLogMsg(LogList,R3ShopList.RecNo); //添加本次执行日志
-
-          if ErrorFlag then
-            Inc(FRunInfo.ErrorCount)  //执行异常！
-          else
-            Inc(FRunInfo.RunCount);   //执行成功！
+          try
+            iRet:=SendChangeDetail;
+            LogInfo.AddBillMsg('调整单',iRet);
+          except
+            on E:Exception do
+            begin
+              WriteRunErrorMsg(E.Message);
+              if not ErrorFlag then ErrorFlag:=true;
+            end;
+          end;
+          WriteLogRunList(true,ErrorFlag); //写当前上报情况日志
         end else
-        begin
-          if R3ShopList.RecordCount=1 then
-            LogList.Add('   门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！') 
-          else
-            LogList.Add('  ('+InttoStr(R3ShopList.RecordCount)+')门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！');
-          Inc(FRunInfo.NotCount);  //对应不上
-        end;
+          WriteLogRunList(False); //没有对应上写日志
       except
-        on E:Exception do
+        on E: Exception do
         begin
-          Raise Exception.Create(E.Message);
+          PlugIntf.WriteLogFile(Pchar('<1003>'+E.Message));
         end;
       end;
       R3ShopList.Next;
     end;
   finally
     FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
-    DBLock(False); //解锁     
-    R3ShopList.Free;
+    DBLock(False); //解锁
     WriteLogRun('业务流水单据'); //输出到文本日志
   end;
 end;
@@ -374,7 +401,7 @@ begin
    4:
     begin
       Session:='session.';
-      SALES_DATE:='trim(char((A.SALES_DATE)) as SALES_DATE ';
+      SALES_DATE:='trim(char(A.SALES_DATE)) as SALES_DATE ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALE( '+
              'TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
@@ -847,11 +874,32 @@ begin
   WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE, RimParam.CustID, '01','上报P销售单成功！','01');
 end;
 
-
-
 procedure TBillSyncFactory.SetINFKeyField(const Value: string);
 begin
   FINFKeyField := Value;
+end;
+
+procedure TBillSyncFactory.WriteLogRunList(RelationFlag, RunFlag: Boolean);
+begin
+  if RelationFlag then //R3门店与Rim零售户有对应上
+  begin
+    if R3ShopList.RecordCount=1 then
+      LogInfo.SetLogMsg(LogList)  //添加本次执行日志
+    else
+      LogInfo.SetLogMsg(LogList,R3ShopList.RecNo); //添加本次执行日志
+
+    if RunFlag then
+      Inc(FRunInfo.ErrorCount)  //执行异常！
+    else
+      Inc(FRunInfo.RunCount);   //执行成功！
+  end else
+  begin
+    Inc(FRunInfo.NotCount);  //对应不上
+    if R3ShopList.RecordCount=1 then
+      LogList.Add('   门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！')
+    else
+      LogList.Add('  ('+InttoStr(R3ShopList.RecNo)+')门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！');
+  end;
 end;
 
 end.

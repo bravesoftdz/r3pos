@@ -10,12 +10,15 @@ unit uSalesTotalFactory;
 interface
 
 uses                 
-  SysUtils,windows, Variants, Classes, Dialogs, DB, zDataSet, zIntf, zBase,
+  SysUtils,windows, Variants, Classes, Dialogs,Forms, DB, zDataSet, zIntf, zBase,
   uBaseSyncFactory, uRimSyncFactory;
 
 type
   TSalesTotalSyncFactory=class(TRimSyncFactory)
   private
+    //从Rim的零售户表同步参数[single_sale_limit、sale_limit、IS_CHG_PRI]
+    function DownRimParamsToR3: Boolean;
+    //上报日台帐
     function SendDaySaleTotal(vRimParam: TRimParams): integer;
   public
     function CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer; override; //调用上报
@@ -105,6 +108,56 @@ begin
     R3ShopList.Free;
     if SyncType<>3 then  //调度运行才写日志
       WriteLogRun('日销售汇总');  //输出到文本日志 
+  end;
+end;
+
+//从Rim的零售户表同步参数[single_sale_limit、sale_limit、IS_CHG_PRI]
+function TSalesTotalSyncFactory.DownRimParamsToR3: Boolean;
+var
+  iRet: integer;
+  Str,COM_ID,RimCust,LogFile: string;
+  LogFileList: TStringList;
+begin
+  COM_ID:=GetRimCOM_ID(trim(Params.ParamByName('TENANT_ID').AsString));
+  RimCust:='(select distinct TENANT_ID,single_sale_limit,sale_limit,IS_CHG_PRI from RM_CUST AA,CA_SHOP_INFO BB '+
+           ' where AA.LICENSE_CODE=BB.LICENSE_CODE and AA.COM_ID='''+COM_ID+''') ';
+  str:='update CA_RELATIONS A '+
+       ' set (SINGLE_LIMIT*10.0,SALE_LIMIT*10.0,CHANGE_PRICE,TIME_STAMP)='+
+            '(select single_sale_limit,sale_limit,IS_CHG_PRI,'+GetTimeStamp(DbType)+' as TIME_STAMP from '+RimCust+' B where A.RELATI_ID=B.TENANT_ID) '+
+       ' where A.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and exists(select 1 from '+RimCust+' B where A.RELATI_ID=B.TENANT_ID)  ';
+
+  {------开始运行日志------}
+  BeginLogRun;
+  if PlugIntf.ExecSQL(Pchar(str),iRet)<>0 then
+    Raise Exception.Create('下载Rim零售户改价限销量参数出错：'+PlugIntf.GetLastError);
+
+  if SyncType<>3 then
+  begin
+    try
+      LogFile := ExtractShortPathName(ExtractFilePath(Application.ExeName))+'log\REPORT'+FormatDatetime('YYYYMMDD',Date())+'.log';
+      LogFileList:=TStringList.Create;
+      if FileExists(LogFile) then
+      begin
+        LogFileList.LoadFromFile(LogFile);
+        LogFileList.Add('    ');
+      end;
+      FRunInfo.BegTick:=GetTickCount-FRunInfo.BegTick;  //总执行多少秒
+      Str:='     下载Rim零售户参数   共执行'+FormatFloat('#0.00',FRunInfo.BegTick/1000)+'秒，更新了'+InttoStr(iRet)+'笔 ';
+      {if SyncType=3 then
+      begin
+        LogFileList.Add('------------- R3终端同步 【Rim零售户限量参数】 ---------------------');
+        LogFileList.Add(Str);
+        LogFileList.Add('  ');
+      end else }
+      begin
+        LogFileList.Add('------------- RSP调度同步【Rim限价量参数】-----------------------');
+        LogFileList.Add(Str);
+        LogFileList.Add('  ');
+        LogFileList.Add('------------- RSP调度同步【运行结束】-----------------------');
+      end;
+    finally
+      LogFileList.SaveToFile(LogFile);
+    end;
   end;
 end;
 

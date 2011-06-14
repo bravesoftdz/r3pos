@@ -59,18 +59,24 @@ function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
 var
   BillFactory: TBillSyncFactory;
 begin
+  result:=-1;
+  GLastError:='';
   try
     try
       BillFactory:=TBillSyncFactory.Create;
       BillFactory.CallSyncData(GPlugIn,StrPas(Params));
+      if not BillFactory.HasError then //‘À––¥Ê‘⁄¥ÌŒÛ£∫
+        result:=0
+      else
+        GLastError:='<1003>'+BillFactory.ErrorMsg;
     finally
       BillFactory.Free;
     end;
-    result := 0;
   except
     on E:Exception do
     begin
-      GLastError := E.Message;
+      if GLastError='' then
+        GLastError := '<1003>'+ E.Message;
       result := 2001;
     end;
   end;

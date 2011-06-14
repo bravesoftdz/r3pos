@@ -21,41 +21,6 @@ implementation
 
 { TRimSyncFactory }
 
-function TGodsDzSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer;
-var
-  COM_ID: String;
-  UpdateMode: integer; //更新模式
-begin
-  result:=-1;
-  {------初始化参数------}
-  PlugIntf:=GPlugIn;
-
-  //1、返回数据库类型
-  GetDBType;
-
-  //2、还原ParamsList的参数对象
-  Params.Decode(Params, InParamStr);
-  GetSyncType;  //返回同步类型标记
-    
-  UpdateMode:=1;  //默认为全部；
-  if Params.FindParam('UPDATE_MODE')<>nil then
-  begin
-    UpdateMode:=Params.ParamByName('UPDATE_MODE').AsInteger;  //刷新模式
-    if (UpdateMode<1) or (UpdateMode>3) then
-      UpdateMode:=1;  //默认为全部；  
-  end;
-
-  //3、返回Rim烟草公司Com_ID
-  COM_ID:=GetRimCOM_ID(Params.ParamByName('TENANT_ID').AsString);
-  if COM_ID='' then Raise Exception.Create('没有找到对应Rim系统烟草公司！');
-
-  {------开始处理对照------}
-  try
-    result:=InsertData_INF_GOODS_RELATION(COM_ID, UpdateMode);
-  except
-  end;
-end;
-
 function TGodsDzSyncFactory.InsertData_INF_GOODS_RELATION(COM_ID: string; UpdateMode: integer): Integer;
 var
   iRet: integer;    //返回更改记录数
@@ -193,5 +158,41 @@ begin
     RsBarPub.Free;
   end;
 end;
+
+function TGodsDzSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer;
+var
+  COM_ID: String;
+  UpdateMode: integer; //更新模式
+begin
+  result:=-1;
+  {------初始化参数------}
+  PlugIntf:=GPlugIn;
+
+  //1、返回数据库类型
+  GetDBType;
+
+  //2、还原ParamsList的参数对象
+  Params.Decode(Params, InParamStr);
+  GetSyncType;  //返回同步类型标记
+    
+  UpdateMode:=1;  //默认为全部；
+  if Params.FindParam('UPDATE_MODE')<>nil then
+  begin
+    UpdateMode:=Params.ParamByName('UPDATE_MODE').AsInteger;  //刷新模式
+    if (UpdateMode<1) or (UpdateMode>3) then
+      UpdateMode:=1;  //默认为全部；  
+  end;
+
+  //3、返回Rim烟草公司Com_ID
+  COM_ID:=GetRimCOM_ID(Params.ParamByName('TENANT_ID').AsString);
+  if COM_ID='' then Raise Exception.Create('没有找到对应Rim系统烟草公司！');
+
+  {------开始处理对照------}
+  try
+    result:=InsertData_INF_GOODS_RELATION(COM_ID, UpdateMode);
+  except
+  end;
+end;
+
  
 end.

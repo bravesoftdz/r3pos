@@ -29,8 +29,9 @@ type
     procedure SetMaxStmp(const Value: string);
     procedure SetSyncType(const Value: Integer);
   public
+    R3ShopList: TZQuery;  
     constructor Create; override;
-    destructor Destroy;override;  
+    destructor Destroy;override;
     // 同步类型
     function GetSyncType: integer; //同步类型   
     //1、返回RIM_R3_NUM表的上次时间戳和当前最大时间戳:
@@ -48,6 +49,7 @@ type
     //8、写上报日志
     procedure BeginLogRun; virtual;  //开始上报
     procedure WriteLogRun(ReportName: string=''); virtual;  //结束上报
+
     //9、写RIM_BAL_LOG日志
     function WriteToRIM_BAL_LOG(LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean;
 
@@ -68,11 +70,13 @@ implementation
 constructor TRimSyncFactory.Create;
 begin
   inherited;
+  R3ShopList:=TZQuery.Create(nil);
   FLogInfo:=TLogShopInfo.Create;
 end;
 
 destructor TRimSyncFactory.Destroy;
 begin
+  R3ShopList.Free;
   FLogInfo.Free;
   inherited;
 end;
@@ -349,5 +353,6 @@ begin
     Rs.Free;
   end;
 end;
+
 
 end.

@@ -27,8 +27,7 @@ uses
   zBase,
   uBaseSyncFactory in '..\Pub\uBaseSyncFactory.pas',
   uRimSyncFactory in 'uRimSyncFactory.pas',
-  uGodsDzFactory in 'uGodsDzFactory.pas',
-  objSyncRelation in '..\obj\objSyncRelation.pas';
+  uGodsDzFactory in 'uGodsDzFactory.pas';
 
 {$R *.res}
 

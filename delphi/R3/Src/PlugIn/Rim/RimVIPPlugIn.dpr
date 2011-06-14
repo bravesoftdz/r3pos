@@ -278,7 +278,7 @@ begin
          'select A.CUST_ID,A.CUST_NAME,A.IDN_TYPE,A.ID_NUMBER,A.FAMI_ADDR,A.SEX,A.BIRTHDAY,A.FAMI_TELE,A.MOVE_TELE,A.POSTALCODE,A.EMAIL,'+
          'B.IC_CARDNO,B.CREA_DATE,B.END_DATE,B.IC_STATUS,'+
          'A.MONTH_PAY,A.DEGREES,A.OCCUPATION,A.JOBUNIT,A.TIME_STAMP '+
-         'from PUB_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.SHOP_ID<>''#'' and B.UNION_ID in (select PRICE_ID from PUB_PRICEGRADE where TENANT_ID in (select TENANT_ID from CA_RELATIONS where RELATI_ID='+tid+' AND RELATION_ID=''1000006'') and PRICE_TYPE=''2'') and A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID';
+         'from PUB_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.SHOP_ID<>''#'' and B.UNION_ID in (select PRICE_ID from PUB_PRICEGRADE where TENANT_ID in (select TENANT_ID from CA_RELATIONS where RELATI_ID='+tid+' AND RELATION_ID=1000006) and PRICE_TYPE=''2'') and A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID';
       OpenData(GPlugIn, rs);
       if rs.IsEmpty then Exit;
       rs.First;

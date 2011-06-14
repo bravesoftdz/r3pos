@@ -49,6 +49,7 @@ type
     procedure SetrspConnected(const Value: boolean);
     procedure SetLocalFactory(const Value: TdbFactory);
     procedure SetRemoteFactory(const Value: TdbFactory);
+    function Getdebug: boolean;
   protected
     function GetSysDate: TDate;virtual;
   public
@@ -108,6 +109,8 @@ type
     property LocalFactory:TdbFactory read FLocalFactory write SetLocalFactory;
     //远程连接
     property RemoteFactory:TdbFactory read FRemoteFactory write SetRemoteFactory;
+    //是否调试模式
+    property debug:boolean read Getdebug;
   end;
   
 function CopyScreen(SaveAndFree:Boolean=True): TBitmap;
@@ -551,6 +554,11 @@ end;
 procedure TGlobal.MoveToRemate;
 begin
   Factor := RemoteFactory;
+end;
+
+function TGlobal.Getdebug: boolean;
+begin
+  result := FindCmdLineSwitch('DEBUG',['-','+'],false);
 end;
 
 initialization

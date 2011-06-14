@@ -14,10 +14,13 @@ type
     Image3: TImage;
     procedure FormCreate(Sender: TObject);
   private
+    FShowTitle: string;
+    procedure SetShowTitle(const Value: string);
   public
     procedure ShowPostion(Postion:Integer;Caption:String);
     { Public declarations }
     procedure Show;
+    property ShowTitle:string read FShowTitle write SetShowTitle;
   end;
 var frmLogo:TfrmLogo;
 implementation
@@ -42,6 +45,13 @@ procedure TfrmLogo.FormCreate(Sender: TObject);
 begin
   if FileExists(ExtractFilePath(ParamStr(0))+'flash.jpg') then
      Image3.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'flash.jpg');
+end;
+
+procedure TfrmLogo.SetShowTitle(const Value: string);
+begin
+  FShowTitle := Value;
+  Label1.Caption := Value;
+  Label1.Update;
 end;
 
 initialization

@@ -1770,7 +1770,7 @@ begin
     RelQry:=TZQuery.Create(nil);   //本单供应链汇总
     RelQry.Close;
     RelQry.FieldDefs.Add('RELATION_ID',ftInteger,0,true);
-    GodsQry.FieldDefs.Add('RELATION_NAME',ftstring,50,true);
+    RelQry.FieldDefs.Add('RELATION_NAME',ftstring,50,true);
     RelQry.FieldDefs.Add('CalcSum',ftFloat,0,true);
     RelQry.CreateDataSet;
     RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO'); //商品档案
@@ -1795,14 +1795,15 @@ begin
         GodsQry.FieldByName('CalcSum').AsFloat:=edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
         GodsQry.Post;
       end;
+      
       if RsGods.Locate('GODS_ID',GodsID,[]) then
       begin
         RelationID:=trim(RsGods.fieldbyName('RELATION_ID').AsString);
         //单项目累计
-        if RelQry.Locate('RELATION_ID',GodsID,[]) then //定位则累计数量
+        if RelQry.Locate('RELATION_ID',RelationID,[]) then //定位则累计数量
         begin
           RelQry.Edit;
-          RelQry.FieldByName('CalcSum').AsFloat:=GodsQry.FieldByName('CalcSum').AsFloat+edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
+          RelQry.FieldByName('CalcSum').AsFloat:=RelQry.FieldByName('CalcSum').AsFloat+edtTable.fieldbyName('CALC_AMOUNT').AsFloat;
           RelQry.Post;
         end else
         begin

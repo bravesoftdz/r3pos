@@ -22,7 +22,7 @@ type
     Ds: TDataSource;
     cdsTable: TZQuery;
     TitlePanel: TPanel;
-    labTitle: TLabel;
+    LblMsg: TLabel;
     Bevel2: TBevel;
     HintL: TLabel;
     BottonPanel: TPanel;
@@ -31,6 +31,7 @@ type
     RzBitBtn1: TRzBitBtn;
     DBGridEh1: TDBGridEh;
     CdsStockData: TZQuery;
+    LblCount: TLabel;
     procedure RzBitBtn1Click(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
@@ -39,6 +40,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FXsm: boolean;
+    procedure SetINDEOrderMsg;//设置记录信息
     function CheckIsOrderDown: Boolean; //判断本地是否已下载过
     function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function GetOrderDate: TDate;
@@ -147,6 +149,7 @@ begin
       if CheckIsOrderDown then
       begin
         cdsTable.Delete;
+        SetINDEOrderMsg;  //显示订单数
         Raise Exception.Create('当前订单：'+CdsTable.fieldbyName('INDE_ID').AsString+'已本地下载不能重复下载！');
       end;
 
@@ -257,6 +260,7 @@ begin
       end;
       CdsTable.First;
     end;
+    SetINDEOrderMsg; //显示订单数
   finally
     CdsTable.EnableControls;
     vParam.Free;
@@ -658,6 +662,18 @@ begin
       FAobj.Free;
       MessageBox(Handle,pchar('自动接收订单失败，请手工执行！'),'友情提示...',MB_OK+MB_ICONWARNING);
     end;
+  end;
+end;
+
+procedure TfrmDownStockOrder.SetINDEOrderMsg;
+begin
+  LblMsg.Visible:=False;
+  LblCount.Visible:=False;
+  if cdsTable.Active then
+  begin
+    LblCount.Caption:=Inttostr(cdsTable.RecordCount);
+    LblMsg.Visible:=true;
+    LblCount.Visible:=true;
   end;
 end;
 

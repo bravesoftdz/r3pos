@@ -111,11 +111,12 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 1
-    object labTitle: TLabel
-      Left = 16
-      Top = 16
-      Width = 7
+    object LblMsg: TLabel
+      Left = 80
+      Top = 9
+      Width = 119
       Height = 12
+      Caption = #24403#21069#26377'    '#21333#35746#21333#65281
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -138,6 +139,19 @@ inherited frmDownStockOrder: TfrmDownStockOrder
       Caption = #21040#36135#30830#35748
       Font.Charset = GB2312_CHARSET
       Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object LblCount: TLabel
+      Left = 126
+      Top = 9
+      Width = 7
+      Height = 12
+      Caption = '1'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = [fsBold]

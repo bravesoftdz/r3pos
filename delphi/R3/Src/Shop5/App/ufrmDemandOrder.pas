@@ -73,12 +73,7 @@ type
     TotalFee:real;
     //结算数量
     TotalAmt:real;
-    //默认发票类型
-    DefInvFlag:integer;
-    //普通税率
-    RtlRate2:real;
-    //增值税率
-    RtlRate3:real;
+
     //赠品处理,
     RtlPSTFlag:integer;
     RtlGDPC_ID:string;
@@ -88,7 +83,7 @@ type
     procedure Calc;
 
     //赠送
-    //procedure PresentToGods;
+    procedure PresentToGods;
 
     //检测数据合法性
     procedure CheckInvaid;override;
@@ -173,67 +168,45 @@ begin
   inherited;
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   edtDEMA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
-  {RtlRate2 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
-  RtlRate3 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE3'),0.17);
-  DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1); }
-
-  // 0是现场领取 1是后台领取
-  //RtlPSTFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_PST_FLAG'),0);
-
   //进位法则
   CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
   //保留小数位
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
 
-  {if ShopGlobal.GetProdFlag = 'E' then
-    begin
-      Label40.Caption := '订货仓库';
-      Label6.Caption := '业务员';
-    end;}
 end;
 
 procedure TfrmDemandOrder.InitPrice(GODS_ID, UNIT_ID: string);
 var
-  rs,bs:TZQuery;
+  bs:TZQuery;
   Params:TftParamList;
   str,OutLevel:string;
 begin
-  rs := TZQuery.Create(nil);
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');
-  Params := TftParamList.Create(nil);
-  try
-    {Params.ParamByName('CarryRule').asInteger := CarryRule;
-    Params.ParamByName('Deci').asInteger := Deci;
-    Params.ParamByName('CLIENT_ID').asString := edtCLIENT_ID.AsString;
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Params.ParamByName('GODS_ID').asString := GODS_ID;
-    if AObj.FieldbyName('PRICE_ID').AsString='' then
-    Params.ParamByName('PRICE_ID').asString := '#' else
-    Params.ParamByName('PRICE_ID').asString := AObj.FieldbyName('PRICE_ID').AsString;
-    Params.ParamByName('UNIT_ID').asString := UNIT_ID;
-    Factor.Open(rs,'TGetSalesPrice',Params);}
-    if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
-    edtTable.FieldByName('APRICE').AsFloat := bs.FieldbyName('NEW_INPRICE').AsFloat;
-    edtTable.FieldbyName('ORG_PRICE').AsFloat := bs.FieldbyName('NEW_INPRICE').AsFloat;
-    //edtTable.FieldbyName('COST_PRICE').AsFloat := bs.FieldbyName('NEW_INPRICE').AsFloat;
-    //edtTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
-    //edtTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
-    //看是否换购商品
-    if bs.FieldByName('USING_BARTER').AsInteger=3 then
-       begin
-         edtTable.FieldByName('IS_PRESENT').AsInteger := 2;
-         //edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := bs.FieldbyName('BARTER_INTEGRAL').AsInteger;
-       end
-    else
-       begin
-         edtTable.FieldByName('IS_PRESENT').AsInteger := 0;
-         //edtTable.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
-       end;
-  finally
-    Params.Free;
-    rs.Free;
-  end;
+
+  if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
+  if edtTable.FieldByName('UNIT_ID').AsString = bs.FieldByName('UNIT_ID').AsString then
+    begin
+      edtTable.FieldByName('APRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE').AsFloat;
+      edtTable.FieldbyName('ORG_PRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE').AsFloat;
+    end
+  else if edtTable.FieldByName('UNIT_ID').AsString = bs.FieldByName('SMALL_UNITS').AsString then
+    begin
+      edtTable.FieldByName('APRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE1').AsFloat;
+      edtTable.FieldbyName('ORG_PRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE1').AsFloat;
+    end
+  else if edtTable.FieldByName('UNIT_ID').AsString = bs.FieldByName('BIG_UNITS').AsString then
+    begin
+      edtTable.FieldByName('APRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE2').AsFloat;
+      edtTable.FieldbyName('ORG_PRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE2').AsFloat;
+    end;
+
+  //看是否换购商品
+  if bs.FieldByName('USING_BARTER').AsInteger=3 then
+    edtTable.FieldByName('IS_PRESENT').AsInteger := 2
+  else
+    edtTable.FieldByName('IS_PRESENT').AsInteger := 0;
+
   ShowInfo;
 end;
 
@@ -852,6 +825,44 @@ begin
       TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
   end;
+end;
+
+procedure TfrmDemandOrder.PresentToGods;
+var
+  r:real;
+  Params:TLoginParam;
+  allow :boolean;
+  rs,us:TZQuery;
+  s:string;
+  Field:TField;
+begin
+  Field := edtTable.FindField('APRICE');
+  if Field=nil then Exit;
+  if Field.AsFloat <> 0 then
+    begin
+      if not ShopGlobal.GetChkRight('12300001',5) then
+         begin
+         if TfrmLogin.doLogin(Params) then
+            begin
+              allow := ShopGlobal.GetChkRight('12300001',6,Params.UserID);
+              if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            end
+         else
+            allow := false;
+         end else allow := true;
+      if allow then
+      begin
+        if edtTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
+        edtTable.Edit;
+        edtTable.FieldbyName('APRICE').AsFloat := 0;
+        PriceToCalc(Field.AsFloat);
+      end;
+    end
+  else
+    begin
+      InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
+      PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
+    end;
 end;
 
 end.

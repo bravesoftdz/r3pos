@@ -39,7 +39,7 @@ begin
    Enter;
    try
      //if FindCmdLineSwitch('DEBUG',['-','+'],false) then //µ÷ÊÔÄ£Ê½
-     if OpenLogFile then Exit;
+     if not OpenLogFile then Exit;
      Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
      if MainFormHandle>0 then
         begin
@@ -112,6 +112,7 @@ function TZLogFilePool.OpenLogFile:boolean;
 var
   myFile:string;
 begin
+  result := not NoLog;
   if NoLog then Exit;
   try
     myFile := DefaultPath+'log\log'+formatDatetime('YYYYMMDD',date)+'.log';
@@ -119,10 +120,10 @@ begin
     AssignFile(F,myFile);
     if FileExists(myFile) then Append(F) else rewrite(F);
     FileName := myFile;
-    result := true;
+    NoLog := false;
   except
-    result := false;
     NoLog := true;
+    result := not NoLog;
   end;
 end;
 

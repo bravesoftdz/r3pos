@@ -1,0 +1,48 @@
+--2011.06.13中午修改过滤类型；
+--创建视图：RIM_SD_CO (订单主表)
+drop view RIM_SD_CO;
+create view RIM_SD_CO
+as
+select 
+  CO_NUM,      --订单号ID
+  COM_ID,      --供应商公司ID
+  CUST_ID,     --客户编号（零售户）ID
+  CRT_DATE,    --创建日期
+  BORN_DATE,   --生效日期 为客户保留库存
+  ARR_DATE,    --送达日期, 承诺订单的商品送达到客户手中的日期
+  QTY_SUM,     --数量合计  
+  AMT_SUM,     --应收金额合计
+  STATUS       --单据状态		
+from SD_CO
+where STATUS in ('05','06') ;
+
+--2011.06.13重建日台账表：
+drop table INF_RECKDAY;
+CREATE GLOBAL TEMPORARY TABLE INF_RECKDAY (
+    TENANT_ID NUMBER(9,0) NOT NULL,      --R3企业ID
+    LICENSE_CODE VARCHAR2(50) NOT NULL,  --R3门店许可证号
+    SHORT_SHOP_ID VARCHAR2(4) NOT NULL,  --R3门店ID后4位
+    COM_ID VARCHAR2(30) NOT NULL,        --RIM烟草公司ID
+    CUST_ID VARCHAR2(30) NOT NULL,       --RIM零售户ID
+    ITEM_ID VARCHAR2(30) NOT NULL,       --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,           --R3商品ID
+    UNIT_CALC DECIMAL (18,6),            --商品计量单位换算管理单位换算值
+    NEW_INPIRCE DECIMAL (18,6),          --商品最新进价[批发价]
+    NEW_OUTPIRCE DECIMAL (18,6),         --商品门店零售价
+    RECK_DATE VARCHAR2(8) NOT NULL       --台账日期
+   ) ON COMMIT PRESERVE ROWS;
+   
+--2011.06.14重建上报月台帐：
+drop table INF_RECKMONTH;
+CREATE GLOBAL TEMPORARY TABLE INF_RECKMONTH (
+    TENANT_ID NUMBER(9,0) NOT NULL,      --R3企业ID
+    LICENSE_CODE VARCHAR2(50) NOT NULL,  --R3门店许可证号
+    SHORT_SHOP_ID VARCHAR(4) NOT NULL,   --R3门店ID后4位
+    COM_ID VARCHAR(30) NOT NULL,         --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,        --RIM零售户ID
+    ITEM_ID VARCHAR(30) NOT NULL,        --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,           --R3商品ID
+    UNIT_CALC DECIMAL (18,6),            --商品计量单位换算管理单位换算值
+    RECK_MONTH VARCHAR(8) NOT NULL       --台账月份
+   ) ON COMMIT PRESERVE ROWS; 
+ 

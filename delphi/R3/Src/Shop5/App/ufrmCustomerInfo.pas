@@ -387,6 +387,7 @@ begin
   while not cdsCustomerExt.Eof do
      begin
        cdsCustomerExt.Edit;
+       cdsCustomerExt.FieldByName('TENANT_ID').AsString := AObj.FieldbyName('TENANT_ID').AsString;
        cdsCustomerExt.FieldByName('CUST_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
        cdsCustomerExt.Post;
        cdsCustomerExt.Next;
@@ -394,9 +395,15 @@ begin
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);
   cdsTable.Post;
-  cdsUnionCard.Edit;
-  cdsUnionCard.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
-  cdsUnionCard.Post;
+  cdsUnionCard.First;
+  while not cdsUnionCard.Eof do
+     begin
+       cdsUnionCard.Edit;
+       cdsUnionCard.FieldByName('TENANT_ID').AsString := AObj.FieldbyName('TENANT_ID').AsString;
+       cdsUnionCard.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+       cdsUnionCard.Post;
+       cdsUnionCard.Next;
+     end;
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsTable,'TCustomer');

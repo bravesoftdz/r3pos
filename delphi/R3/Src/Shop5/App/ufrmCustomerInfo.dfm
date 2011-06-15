@@ -1,6 +1,6 @@
 inherited frmCustomerInfo: TfrmCustomerInfo
-  Left = 9
-  Top = 55
+  Left = 509
+  Top = 135
   Caption = #20250#21592#26723#26696
   ClientHeight = 414
   ClientWidth = 535
@@ -139,9 +139,9 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 525
       Height = 212
-      ActivePage = TabSheet6
+      ActivePage = TabSheet2
       Align = alBottom
-      TabIndex = 1
+      TabIndex = 2
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

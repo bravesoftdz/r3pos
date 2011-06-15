@@ -806,7 +806,7 @@ begin
          ShopGlobal.SyncTimeStamp;
          if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and (ParamStr(1)<>'-xsm') and ShopGlobal.GetChkRight('500028') then
          begin
-            PostMessage(Handle,WM_DESKTOP_REQUEST,500054,0);
+            PostMessage(Handle,WM_DESKTOP_REQUEST,13100001,0);
          end;
        finally
          frmLogo.Close;
@@ -2111,7 +2111,7 @@ begin
        Form := TfrmCustomer.Create(self);
        AddFrom(Form);
      end;
-  if not Application.MainForm.Visible and (Form.FormStyle = fsMDIChild) then
+  if not Application.MainForm.Visible then
      begin
        Form.FormStyle :=  fsNormal;
        Form.Width := 800;
@@ -2855,10 +2855,10 @@ begin
     Form := TfrmStorageTracking.Create(self);
     AddFrom(Form);
   end;
-  if not Application.MainForm.Visible and (Form.FormStyle = fsMDIChild) then
+  if not Application.MainForm.Visible then
      begin
        Form.FormStyle :=  fsNormal;
-       Form.Width := 800;
+       Form.Width := 934;
        Form.Height := 575;
        Form.WindowState := wsNormal;
      end
@@ -2868,7 +2868,7 @@ begin
        Form.FormStyle :=  fsMDIChild;
        Form.WindowState := wsMaximized;
      end;
-  Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -2966,8 +2966,8 @@ end;
 procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('14100001',5) then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
-  actfrmDownIndeOrder.Execute;
+  if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
+  actfrmDownIndeOrder.OnExecute(actfrmDownIndeOrder);
 end;
 
 procedure TfrmShopMain.tlbCloseClick(Sender: TObject);

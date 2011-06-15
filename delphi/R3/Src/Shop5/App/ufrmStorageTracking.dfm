@@ -1,7 +1,7 @@
 inherited frmStorageTracking: TfrmStorageTracking
   Left = 189
   Top = 131
-  Width = 1073
+  Width = 934
   Height = 604
   Caption = #21830#21697#24211#23384
   OnCreate = FormCreate
@@ -9,24 +9,24 @@ inherited frmStorageTracking: TfrmStorageTracking
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1057
+    Width = 918
     Height = 530
     inherited RzPanel2: TRzPanel
-      Width = 1047
+      Width = 908
       Height = 520
       inherited RzPage: TRzPageControl
-        Width = 1041
+        Width = 902
         Height = 514
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 1039
+            Width = 900
             Height = 487
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 1029
+              Width = 890
               Height = 477
               Align = alClient
               BorderOuter = fsNone
@@ -65,7 +65,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel6: TRzPanel
                 Left = 180
                 Top = 68
-                Width = 849
+                Width = 710
                 Height = 409
                 Align = alClient
                 BorderOuter = fsNone
@@ -73,7 +73,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel1: TPanel
                   Left = 0
                   Top = 0
-                  Width = 849
+                  Width = 710
                   Height = 409
                   Align = alClient
                   Caption = 'Panel1'
@@ -81,7 +81,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   object Grid: TDBGridEh
                     Left = 1
                     Top = 1
-                    Width = 847
+                    Width = 708
                     Height = 407
                     Align = alClient
                     AllowedOperations = [alopUpdateEh]
@@ -250,7 +250,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 1029
+                Width = 890
                 Height = 68
                 Align = alTop
                 BorderOuter = fsNone
@@ -276,7 +276,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel2: TPanel
                   Left = 178
                   Top = 0
-                  Width = 851
+                  Width = 712
                   Height = 68
                   Align = alClient
                   Alignment = taLeftJustify
@@ -614,7 +614,7 @@ inherited frmStorageTracking: TfrmStorageTracking
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 1039
+            Width = 900
             Height = 487
             Align = alClient
             BorderOuter = fsNone
@@ -654,7 +654,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel11: TRzPanel
               Left = 185
               Top = 73
-              Width = 849
+              Width = 710
               Height = 409
               Align = alClient
               BorderOuter = fsNone
@@ -935,7 +935,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel12: TRzPanel
               Left = 5
               Top = 5
-              Width = 1029
+              Width = 890
               Height = 68
               Align = alTop
               BorderOuter = fsNone
@@ -1269,7 +1269,7 @@ inherited frmStorageTracking: TfrmStorageTracking
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 1039
+            Width = 900
             Height = 487
             Align = alClient
             BorderOuter = fsNone
@@ -1309,7 +1309,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel15: TRzPanel
               Left = 185
               Top = 73
-              Width = 849
+              Width = 710
               Height = 409
               Align = alClient
               BorderOuter = fsNone
@@ -1549,7 +1549,7 @@ inherited frmStorageTracking: TfrmStorageTracking
             object RzPanel16: TRzPanel
               Left = 5
               Top = 5
-              Width = 1029
+              Width = 890
               Height = 68
               Align = alTop
               BorderOuter = fsNone
@@ -1882,17 +1882,17 @@ inherited frmStorageTracking: TfrmStorageTracking
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1057
+    Width = 918
     inherited Image1: TImage
       Left = 294
-      Width = 743
+      Width = 604
     end
     inherited Image3: TImage
       Left = 294
-      Width = 743
+      Width = 604
     end
     inherited Image14: TImage
-      Left = 1037
+      Left = 898
     end
     inherited rzPanel5: TPanel
       Left = 294

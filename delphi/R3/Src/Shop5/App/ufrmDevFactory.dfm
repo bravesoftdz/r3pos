@@ -48,7 +48,7 @@ object frmDevFactory: TfrmDevFactory
     Top = 0
     Width = 337
     Height = 193
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alTop
     TabOrder = 2
     object TabSheet4: TTabSheet
@@ -76,6 +76,7 @@ object frmDevFactory: TfrmDevFactory
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #36719#20214#21551#21160#26102#26159#21542#31435#21363#21551#21160#25910#27454#26426
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object chkCloseDayPrinted: TcxCheckBox
         Left = 16
@@ -85,12 +86,14 @@ object frmDevFactory: TfrmDevFactory
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #20132#29677#32467#36134#26102#26159#21542#25171#21360#23567#31080
         TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCloseDayPrintFlag: TcxComboBox
         Left = 174
         Top = 44
         Width = 79
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #25171#21360#37329#39069
@@ -105,6 +108,7 @@ object frmDevFactory: TfrmDevFactory
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #38144#21806#32467#36134#26102#26159#21542#25171#21360#23567#31080
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object cxPrintFormat: TcxComboBox
         Left = 174
@@ -112,6 +116,7 @@ object frmDevFactory: TfrmDevFactory
         Width = 79
         Height = 20
         Enabled = False
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #23567#31080
@@ -126,6 +131,7 @@ object frmDevFactory: TfrmDevFactory
         Lines.Strings = (
           #25964#35831#20445#30041#23567#31080','#20197#20316#21806#21518#20381#25454)
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     object TabSheet1: TTabSheet
@@ -186,12 +192,14 @@ object frmDevFactory: TfrmDevFactory
         Width = 51
         Height = 20
         TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtPRINTERWIDTH: TcxComboBox
         Left = 72
         Top = 57
         Width = 89
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           '57.5'#177'0.5mm'
@@ -203,6 +211,7 @@ object frmDevFactory: TfrmDevFactory
         Top = 29
         Width = 78
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #27809#23433#35013
@@ -244,12 +253,14 @@ object frmDevFactory: TfrmDevFactory
         Width = 51
         Height = 20
         TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtTICKET_PRINT_NAME: TcxComboBox
         Left = 72
         Top = 113
         Width = 137
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #21697#21517
@@ -267,6 +278,7 @@ object frmDevFactory: TfrmDevFactory
         Height = 20
         TabOrder = 5
         Text = 'edtTitle'
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     object TabSheet2: TTabSheet
@@ -298,6 +310,7 @@ object frmDevFactory: TfrmDevFactory
         Top = 26
         Width = 73
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #27809#23433#35013
@@ -317,6 +330,7 @@ object frmDevFactory: TfrmDevFactory
         Top = 49
         Width = 73
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           '2400'
@@ -354,6 +368,7 @@ object frmDevFactory: TfrmDevFactory
         Top = 29
         Width = 73
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           #27809#23433#35013
@@ -374,6 +389,7 @@ object frmDevFactory: TfrmDevFactory
         Top = 53
         Width = 73
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           '2400'

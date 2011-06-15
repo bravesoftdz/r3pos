@@ -234,7 +234,9 @@ uses
   ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
   ufrmPrgBar in '..\..\Basic\ufrmPrgBar.pas' {frmPrgBar},
   objHandSetRelation in 'Obj\objHandSetRelation.pas',
-  ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet};
+  ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet},
+  ufrmDemandOrder in 'App\ufrmDemandOrder.pas' {frmDemandOrder},
+  ufrmDemandOrderList in 'App\ufrmDemandOrderList.pas' {frmDemandOrderList};
 
 {$R *.res}
 var

@@ -509,8 +509,8 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12300001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -558,8 +558,8 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12300001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -603,8 +603,8 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12300001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -985,8 +985,8 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12300001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -1010,8 +1010,8 @@ begin
      begin
        if TfrmLogin.doLogin(Params) then
           begin
-            allow := ShopGlobal.GetChkRight('12300001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
           end
        else
           allow := false;
@@ -1048,7 +1048,7 @@ begin
   if Field=nil then Exit;
   if Field.AsFloat <> 0 then
   begin
-    if not ShopGlobal.GetChkRight('12300001',5) then
+    if not ShopGlobal.GetChkRight('12300001',6) then
        begin
        if TfrmLogin.doLogin(Params) then
           begin

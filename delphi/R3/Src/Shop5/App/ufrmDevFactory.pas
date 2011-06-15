@@ -106,6 +106,10 @@ var F:TIniFile;
 begin
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'dev.fty');
   try
+    if edtAutoRunPos.Checked then
+       F.WriteString('SYS_DEFINE','AUTORUNPOS','1')
+    else
+       F.WriteString('SYS_DEFINE','AUTORUNPOS','0');
     if cxSavePrint.Checked then
        F.WriteString('SYS_DEFINE','SAVEPRINT','1')
     else

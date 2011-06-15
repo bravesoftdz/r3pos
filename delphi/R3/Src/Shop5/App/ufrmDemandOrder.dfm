@@ -1,16 +1,16 @@
 inherited frmDemandOrder: TfrmDemandOrder
-  Left = 655
-  Top = 110
+  Left = 210
+  Top = 151
   Width = 796
   Height = 552
   Caption = #38656#27714#22635#25253
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 788
-    Height = 525
+    Width = 780
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 778
+      Width = 770
       Height = 125
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -253,8 +253,8 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 453
-      Width = 778
+      Top = 442
+      Width = 770
       Height = 30
       TabOrder = 2
       object Label8: TLabel
@@ -294,8 +294,8 @@ inherited frmDemandOrder: TfrmDemandOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 163
-      Width = 778
-      Height = 290
+      Width = 770
+      Height = 279
       TabOrder = 3
       Columns = <
         item
@@ -405,15 +405,15 @@ inherited frmDemandOrder: TfrmDemandOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 130
-      Width = 778
+      Width = 770
     end
     inherited stbHint: TRzPanel
-      Top = 483
-      Width = 778
+      Top = 472
+      Width = 770
     end
     inherited rzHelp: TRzPanel
-      Top = 507
-      Width = 778
+      Top = 496
+      Width = 770
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox

@@ -94,6 +94,7 @@ end;
 
 function TTenantInit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
+function GetCodeInfo:boolean;
 var
   Str: String;
   rs:TZQuery;
@@ -111,8 +112,92 @@ begin
   finally
     rs.Free;
   end;
+end;
+function GetDeptInfo:boolean;
+var
+  Str: String;
+  rs:TZQuery;
+begin
+  Result := False;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from CA_DEPT_INFO where TENANT_ID='+Params.ParambyName('TENANT_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then
+       begin
+         result := true;
+         Exit;
+       end;
+  finally
+    rs.Free;
+  end;
+end;
+function GetRoleInfo:boolean;
+var
+  Str: String;
+  rs:TZQuery;
+begin
+  Result := False;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from CA_ROLE_INFO where TENANT_ID='+Params.ParambyName('TENANT_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then
+       begin
+         result := true;
+         Exit;
+       end;
+  finally
+    rs.Free;
+  end;
+end;
+function GetDutyInfo:boolean;
+var
+  Str: String;
+  rs:TZQuery;
+begin
+  Result := False;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from CA_DUTY_INFO where TENANT_ID='+Params.ParambyName('TENANT_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then
+       begin
+         result := true;
+         Exit;
+       end;
+  finally
+    rs.Free;
+  end;
+end;
+function GetGradeInfo:boolean;
+var
+  Str: String;
+  rs:TZQuery;
+begin
+  Result := False;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from PUB_PRICEGRADE where TENANT_ID='+Params.ParambyName('TENANT_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then
+       begin
+         result := true;
+         Exit;
+       end;
+  finally
+    rs.Free;
+  end;
+end;
+var
+  Str: String;
+  rs:TZQuery;
+begin
+  Result := False;
 AGlobal.BeginTrans;
 try
+  if not GetCodeInfo then
+  begin
   //管理组 CODE_TYPE=12
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
   ' values(:TENANT_ID,''CA73FC48-985B-4EE7-9BDA-B7D638BD25F6'',''总店'',''ZD'',''12'',1,''00'',5497000)';
@@ -156,7 +241,9 @@ try
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
   ' values(:TENANT_ID,''291A4198-8AAC-46F7-8AB0-193189BF82EC'',''管理费用'',''GLFY'',''3'',5,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
-
+  end;
+  if not GetDutyInfo then
+  begin
   //为企业初始化职务
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''总经理'',''001'',''LB'',''企业经营者'',''00'',5497000)';
@@ -176,7 +263,9 @@ try
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'006'+''',''仓管'',''001003'',''CG'',''仓库管理者'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
-
+  end;
+  if not GetRoleInfo then
+  begin
   //为企业初始化角色
   Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''经理'',''LB'',''企业经营者拥有所有模块权限'',''00'',5497000)';
@@ -193,7 +282,9 @@ try
   Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'006'+''',''仓管'',''CG'',''拥有存货管理所需相关权限'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
-
+  end;
+  if not GetDeptInfo then
+  begin
   //为企业初始化部门
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,DEPT_TYPE,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''营销部'',''1'',''001'',''ZD'',''业务销售部门'',''00'',5497000)';
@@ -207,7 +298,9 @@ try
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,DEPT_TYPE,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'004'+''',''拓展部'',''3'',''004'',''ZD'',''企业发展策略经营管理部'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
-
+  end;
+  if not GetGradeInfo then
+  begin
   //初始化会员等级
   Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
   'values(:TENANT_ID,''332E5CE8-D1FC-4D53-84C3-2A1EB07EF8AA'',''银卡'',''YK'',0,0,0,0,0,0,1,''00'',5497000)';
@@ -218,7 +311,7 @@ try
   Str := 'insert into PUB_PRICEGRADE(TENANT_ID,PRICE_ID,PRICE_NAME,PRICE_SPELL,INTEGRAL,INTE_TYPE,INTE_AMOUNT,MINIMUM_PERCENT,AGIO_TYPE,AGIO_PERCENT,SEQ_NO,COMM,TIME_STAMP)'+
   'values(:TENANT_ID,''4433497A-0A2E-4D72-BE0B-723850A6EFE8'',''钻石'',''ZS'',0,0,0,0,0,0,1,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
-
+  end;
   Result := True;
   AGlobal.CommitTrans;
 except

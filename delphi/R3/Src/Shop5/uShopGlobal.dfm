@@ -970,12 +970,13 @@ inherited ShopGlobal: TShopGlobal
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
-      'select CODE_ID,CODE_NAME from ('
+      'select CODE_ID,CODE_NAME,SEQ_NO from ('
       
         'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME ' +
-        'else b.CODE_NAME end as CODE_NAME,case when b.SEQ_NO is null the' +
-        'n 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer joi' +
-        'n '
+        'else b.CODE_NAME end as CODE_NAME,'
+      
+        'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO fr' +
+        'om PUB_PARAMS j left outer join '
       
         '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENAN' +
         'T_ID=:TENANT_ID and CODE_TYPE='#39'16'#39' ) b on j.CODE_ID=b.CODE_ID '

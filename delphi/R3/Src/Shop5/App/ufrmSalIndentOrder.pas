@@ -40,7 +40,7 @@ type
     edtLINKMAN: TcxTextEdit;
     Label16: TLabel;
     Label17: TLabel;
-    edtSALE_STYLE: TzrComboBoxList;
+    edtSALES_STYLE: TzrComboBoxList;
     Label13: TLabel;
     edtPLAN_DATE: TcxDateEdit;
     N1: TMenuItem;
@@ -84,7 +84,7 @@ type
     procedure edtCLIENT_IDAddClick(Sender: TObject);
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
-    procedure edtSALE_STYLEAddClick(Sender: TObject);
+    procedure edtSALES_STYLEAddClick(Sender: TObject);
     procedure edtCLIENT_IDFindClick(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
@@ -92,6 +92,7 @@ type
     procedure actCustomerExecute(Sender: TObject);
     procedure actIsPressentExecute(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure edtGUIDE_USERAddClick(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -229,7 +230,7 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   edtGUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
-  edtSALE_STYLE.DataSet := Global.GetZQueryFromName('PUB_SALE_STYLE');
+  edtSALES_STYLE.DataSet := Global.GetZQueryFromName('PUB_SALE_STYLE');
   RtlRate2 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
   RtlRate3 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1);
@@ -341,10 +342,10 @@ begin
   edtGUIDE_USER.Text := Global.UserName;
   edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
   edtINVOICE_FLAGPropertiesChange(nil);
-  if not edtSALE_STYLE.DataSet.IsEmpty then
+  if not edtSALES_STYLE.DataSet.IsEmpty then
      begin
-       edtSALE_STYLE.KeyValue := edtSALE_STYLE.DataSet.FieldbyName('CODE_ID').AsString;
-       edtSALE_STYLE.Text := edtSALE_STYLE.DataSet.FieldbyName('CODE_NAME').AsString;
+       edtSALES_STYLE.KeyValue := edtSALES_STYLE.DataSet.FieldbyName('CODE_ID').AsString;
+       edtSALES_STYLE.Text := edtSALES_STYLE.DataSet.FieldbyName('CODE_NAME').AsString;
      end;
   InitRecord;
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
@@ -1192,7 +1193,7 @@ begin
 
 end;
 
-procedure TfrmSalIndentOrder.edtSALE_STYLEAddClick(Sender: TObject);
+procedure TfrmSalIndentOrder.edtSALES_STYLEAddClick(Sender: TObject);
 var
   r:TRecord_;
 begin
@@ -1201,8 +1202,8 @@ begin
   try
     if TfrmCodeInfo.AddDialog(self,r,2) then
        begin
-         edtSALE_STYLE.KeyValue := r.FieldbyName('CODE_ID').AsString;
-         edtSALE_STYLE.Text := r.FieldbyName('CODE_NAME').AsString;
+         edtSALES_STYLE.KeyValue := r.FieldbyName('CODE_ID').AsString;
+         edtSALES_STYLE.Text := r.FieldbyName('CODE_NAME').AsString;
        end;
   finally
     r.Free;
@@ -1384,6 +1385,23 @@ begin
     3:begin
       TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
+  end;
+end;
+
+procedure TfrmSalIndentOrder.edtGUIDE_USERAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  r := TRecord_.Create;
+  try
+    if TfrmUsersInfo.AddDialog(self,r) then
+       begin
+         edtGUIDE_USER.KeyValue := r.FieldbyName('USER_ID').AsString;
+         edtGUIDE_USER.Text := r.FieldbyName('USER_NAME').AsString;
+       end;
+  finally
+    r.Free;
   end;
 end;
 

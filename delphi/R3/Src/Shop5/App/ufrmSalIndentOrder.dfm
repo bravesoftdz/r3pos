@@ -304,6 +304,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         DropHeight = 150
         ShowTitle = True
         AutoFitColWidth = True
+        OnAddClick = edtGUIDE_USERAddClick
         ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbNew]
@@ -344,7 +345,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         TabOrder = 6
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
-      object edtSALE_STYLE: TzrComboBoxList
+      object edtSALES_STYLE: TzrComboBoxList
         Left = 619
         Top = 26
         Width = 121
@@ -373,7 +374,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         DropHeight = 120
         ShowTitle = False
         AutoFitColWidth = True
-        OnAddClick = edtSALE_STYLEAddClick
+        OnAddClick = edtSALES_STYLEAddClick
         ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbNew]

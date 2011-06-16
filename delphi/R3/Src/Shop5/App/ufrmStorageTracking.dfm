@@ -17,6 +17,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 902
         Height = 514
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -113,6 +115,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     DigitalNumber = 12
                     OnDrawColumnCell = GridDrawColumnCell
                     OnGetCellParams = GridGetCellParams
+                    OnGetFooterParams = GridGetFooterParams
                     Columns = <
                       item
                         Checkboxes = True
@@ -140,8 +143,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                       item
                         EditButtons = <>
                         FieldName = 'GODS_CODE'
-                        Footer.Value = #35760#24405#25968#65306
-                        Footer.ValueType = fvtStaticText
                         Footers = <>
                         ReadOnly = True
                         Title.Caption = #36135#21495
@@ -662,7 +663,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel4: TPanel
                 Left = 0
                 Top = 0
-                Width = 849
+                Width = 710
                 Height = 409
                 Align = alClient
                 Caption = 'Panel1'
@@ -670,7 +671,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel5: TPanel
                   Left = 1
                   Top = 378
-                  Width = 847
+                  Width = 708
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -738,7 +739,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 847
+                  Width = 708
                   Height = 377
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
@@ -770,6 +771,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
                     item
                       Checkboxes = True
@@ -797,8 +799,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                     item
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
-                      Footer.Value = #35760#24405#25968#65306
-                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #36135#21495
@@ -961,7 +961,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel7: TPanel
                 Left = 178
                 Top = 0
-                Width = 851
+                Width = 712
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -1317,7 +1317,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel8: TPanel
                 Left = 0
                 Top = 0
-                Width = 849
+                Width = 710
                 Height = 409
                 Align = alClient
                 Caption = 'Panel1'
@@ -1325,7 +1325,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object Panel9: TPanel
                   Left = 1
                   Top = 378
-                  Width = 847
+                  Width = 708
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -1385,7 +1385,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh2: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 847
+                  Width = 708
                   Height = 377
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
@@ -1417,6 +1417,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh2DrawColumnCell
                   OnGetCellParams = DBGridEh2GetCellParams
+                  OnGetFooterParams = DBGridEh2GetFooterParams
                   Columns = <
                     item
                       Checkboxes = True
@@ -1444,8 +1445,6 @@ inherited frmStorageTracking: TfrmStorageTracking
                     item
                       EditButtons = <>
                       FieldName = 'GODS_CODE'
-                      Footer.Value = #35760#24405#25968#65306
-                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #36135#21495
@@ -1575,7 +1574,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel11: TPanel
                 Left = 178
                 Top = 0
-                Width = 851
+                Width = 712
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify

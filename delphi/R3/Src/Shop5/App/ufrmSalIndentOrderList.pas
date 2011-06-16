@@ -211,7 +211,7 @@ end;
 
 procedure TfrmSalIndentOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('12300001',3) then Raise Exception.Create('你没有删除销售订单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('12300001',3) then Raise Exception.Create('你没有修改销售订单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;

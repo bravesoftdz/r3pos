@@ -964,7 +964,7 @@ begin
           rs.SQL.Text :=
             'select j.*,c.UNION_NAME from ('+
             'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.INVOICE_FLAG,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
-            'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+            'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and (A.TELEPHONE2='''+id+''' or A.LICENSE_CODE='''+id+''') and A.COMM not in (''02'',''12'') ) j left outer join '+
             '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
             ' union all '+
             ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME  from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+

@@ -662,7 +662,7 @@ procedure TfrmIORODayReport.DBGridEh3GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'RECV_DATE' then Text := '合计:'+Text+'笔';   
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';   
 end;
 
 procedure TfrmIORODayReport.DBGridEh4GetFooterParams(Sender: TObject;

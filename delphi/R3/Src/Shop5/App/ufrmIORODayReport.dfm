@@ -1,6 +1,6 @@
 inherited frmIORODayReport: TfrmIORODayReport
-  Left = 225
-  Top = 119
+  Left = 195
+  Top = 108
   Width = 1022
   Height = 611
   Caption = #25910#20837#25903#20986#25253#34920
@@ -15,10 +15,10 @@ inherited frmIORODayReport: TfrmIORODayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 532
-        ActivePage = TabSheet4
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

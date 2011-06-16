@@ -206,6 +206,7 @@ implementation
 procedure TfrmChangeDayReport.FormCreate(Sender: TObject);
 var
   rs: TZQuery;
+  SetCol: TColumnEh;
 begin
   inherited;
   TDbGridEhSort.InitForm(self);
@@ -238,6 +239,18 @@ begin
 
       Label28.Caption := '仓库群组';
       Label17.Caption := '仓库名称';
+
+      //2011.06.16 15:51 修改
+      TabSheet2.Caption:='仓库调整汇总表';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_ID');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库代码';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
+      SetCol:=FindColumn(DBGridEh5, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
     end;
 
   SetRzPageActivePage;  //设置默认RzPage
@@ -1150,7 +1163,7 @@ procedure TfrmChangeDayReport.DBGridEh5GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'DEPT_ID' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'GLIDE_NO' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmChangeDayReport.DBGridEh4GetFooterParams(Sender: TObject;

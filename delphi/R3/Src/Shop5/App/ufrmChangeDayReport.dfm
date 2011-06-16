@@ -15,10 +15,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 677
         Height = 510
-        ActivePage = TabSheet3
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1908,6 +1908,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Width = 30
                     end
                     item
+                      DisplayFormat = '0000-00-00'
                       EditButtons = <>
                       FieldName = 'CHANGE_DATE'
                       Footers = <>
@@ -1916,17 +1917,24 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     item
                       EditButtons = <>
                       FieldName = 'GLIDE_NO'
+                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21333#21495
                       Width = 92
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'SHOP_NAME'
+                      Footers = <>
+                      Title.Caption = #38376#24215#21517#31216
+                      Width = 103
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'DEPT_ID'
-                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #37096#38376#21517#31216
-                      Width = 121
+                      Width = 74
                     end
                     item
                       EditButtons = <>

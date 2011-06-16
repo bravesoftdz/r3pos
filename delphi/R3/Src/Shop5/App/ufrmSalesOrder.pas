@@ -45,7 +45,7 @@ type
     edtLINKMAN: TcxTextEdit;
     Label16: TLabel;
     Label17: TLabel;
-    edtSALE_STYLE: TzrComboBoxList;
+    edtSALES_STYLE: TzrComboBoxList;
     Label13: TLabel;
     edtPLAN_DATE: TcxDateEdit;
     N1: TMenuItem;
@@ -85,7 +85,7 @@ type
     procedure edtCLIENT_IDAddClick(Sender: TObject);
     procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
-    procedure edtSALE_STYLEAddClick(Sender: TObject);
+    procedure edtSALES_STYLEAddClick(Sender: TObject);
     procedure edtCLIENT_IDFindClick(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
@@ -94,6 +94,8 @@ type
     procedure actIsPressentExecute(Sender: TObject);
     procedure edtFROM_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure edtInputKeyPress(Sender: TObject; var Key: Char);
+    procedure edtGUIDE_USERAddClick(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -236,7 +238,7 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   edtGUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
-  edtSALE_STYLE.DataSet := Global.GetZQueryFromName('PUB_SALE_STYLE');
+  edtSALES_STYLE.DataSet := Global.GetZQueryFromName('PUB_SALE_STYLE');
   RtlRate2 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
   RtlRate3 := StrtoFloatDef(ShopGlobal.GetParameter('RTL_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('RTL_INV_FLAG'),1);
@@ -351,10 +353,10 @@ begin
   edtGUIDE_USER.Text := Global.UserName;
   edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
   edtINVOICE_FLAGPropertiesChange(nil);
-  if not edtSALE_STYLE.DataSet.IsEmpty then
+  if not edtSALES_STYLE.DataSet.IsEmpty then
      begin
-       edtSALE_STYLE.KeyValue := edtSALE_STYLE.DataSet.FieldbyName('CODE_ID').AsString;
-       edtSALE_STYLE.Text := edtSALE_STYLE.DataSet.FieldbyName('CODE_NAME').AsString;
+       edtSALES_STYLE.KeyValue := edtSALES_STYLE.DataSet.FieldbyName('CODE_ID').AsString;
+       edtSALES_STYLE.Text := edtSALES_STYLE.DataSet.FieldbyName('CODE_NAME').AsString;
      end;
   InitRecord;
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
@@ -1407,17 +1409,17 @@ begin
 
 end;
 
-procedure TfrmSalesOrder.edtSALE_STYLEAddClick(Sender: TObject);
+procedure TfrmSalesOrder.edtSALES_STYLEAddClick(Sender: TObject);
 var
   r:TRecord_;
 begin
   inherited;
   r := TRecord_.Create;
   try
-    if TfrmCodeInfo.AddDialog(self,r,2) then
+    if TfrmUsersInfo.AddDialog(self,r) then
        begin
-         edtSALE_STYLE.KeyValue := r.FieldbyName('CODE_ID').AsString;
-         edtSALE_STYLE.Text := r.FieldbyName('CODE_NAME').AsString;
+         edtSALES_STYLE.KeyValue := r.FieldbyName('CODE_ID').AsString;
+         edtSALES_STYLE.Text := r.FieldbyName('CODE_NAME').AsString;
        end;
   finally
     r.Free;
@@ -1517,9 +1519,9 @@ begin
       self.AObj.FieldbyName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
       self.AObj.FieldbyName('UNION_ID').AsString := AObj.FieldbyName('UNION_ID').AsString;
       self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
-      self.edtSALE_STYLE.KeyValue := edtSALE_STYLE.KeyValue;
+      self.edtSALES_STYLE.KeyValue := edtSALES_STYLE.KeyValue;
       self.edtADVA_MNY.Text := edtADVA_MNY.Text;
-      self.edtSALE_STYLE.Text := edtSALE_STYLE.Text;
+      self.edtSALES_STYLE.Text := edtSALES_STYLE.Text;
       self.edtSEND_ADDR.Text := edtSEND_ADDR.Text;
       self.edtPLAN_DATE.Date := edtPLAN_DATE.Date;
       self.edtREMARK.Text := edtREMARK.Text;
@@ -1726,6 +1728,12 @@ begin
   end;
 end;
 
+//2011.06.08 Add 供应链限制改价 继承基类之前做判断
+procedure TfrmSalesOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;  //继承基类
+end;
+
 function TfrmSalesOrder.CheckSale_Limit: Boolean;
 var
   CurIdx: integer;
@@ -1827,6 +1835,23 @@ begin
     edtTable.RecNo:=CurIdx;   
     GodsQry.Free;
     RelQry.Free;
+  end;
+end;
+
+procedure TfrmSalesOrder.edtGUIDE_USERAddClick(Sender: TObject);
+var
+  r:TRecord_;
+begin
+  inherited;
+  r := TRecord_.Create;
+  try
+    if TfrmCodeInfo.AddDialog(self,r,2) then
+       begin
+         edtGUIDE_USER.KeyValue := r.FieldbyName('USER_ID').AsString;
+         edtGUIDE_USER.Text := r.FieldbyName('USER_NAME').AsString;
+       end;
+  finally
+    r.Free;
   end;
 end;
 

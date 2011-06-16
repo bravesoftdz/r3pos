@@ -1701,7 +1701,7 @@ begin
          PriceToCalc(op);
          Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
        end;
-         end;
+     end;
   cdsTable.Edit;
   cdsTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
 end;
@@ -1745,7 +1745,7 @@ begin
           rs.SQL.Text :=
             'select j.*,c.UNION_NAME from ('+
             'select B.IC_CARDNO,A.CLIENT_NAME,A.CLIENT_SPELL,A.CLIENT_ID,A.CLIENT_CODE,A.INTEGRAL,B.BALANCE,A.PRICE_ID,B.UNION_ID from VIW_CUSTOMER A left outer join PUB_IC_INFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
-            'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.TELEPHONE2='''+id+''' and A.LICENSE_CODE='''+id+''' and A.COMM not in (''02'',''12'') ) j left outer join '+
+            'where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and (A.TELEPHONE2='''+id+''' or A.LICENSE_CODE='''+id+''') and A.COMM not in (''02'',''12'') ) j left outer join '+
             '(select UNION_ID,UNION_NAME from PUB_UNION_INFO '+
             ' union all '+
             ' select ''#'' as UNION_ID,''企业客户'' as UNION_NAME '+
@@ -3495,7 +3495,7 @@ begin
     end;
   1:self.WindowState := wsMinimized;
   2:begin
-    if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增"会员档案"的权限,请和管理员联系.');
     With TfrmCustomerInfo.Create(self) do
     begin
       try

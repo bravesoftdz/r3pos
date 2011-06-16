@@ -94,7 +94,6 @@ type
     procedure actIsPressentExecute(Sender: TObject);
     procedure edtFROM_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzBitBtn1Click(Sender: TObject);
-    procedure edtInputKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     //进位法则
@@ -1725,31 +1724,6 @@ begin
   begin
     result:=(trim(Rs.FieldByName('CHANGE_PRICE').AsString)='2');
   end;
-end;
-
-//2011.06.08 Add 供应链限制改价 继承基类之前做判断
-procedure TfrmSalesOrder.edtInputKeyPress(Sender: TObject; var Key: Char);
-var
-  GodsID: string;
-begin
-  if (InputFlag=3) or (InputFlag=4) then //改价 和 折扣率
-  begin
-    GodsID:=trim(edtTable.fieldbyname('GODS_ID').AsString);
-    if CheckNotChangePrice(GodsID) then
-    begin
-      if InputFlag=3 then
-        GodsID:='商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改价格！'
-      else
-        GodsID:='商品〖'+edtTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许折扣！';
-      InputFlag := 0;
-      DBGridEh1.Col := 1;
-      edtInput.Text := '';
-      MessageBox(Handle,pchar(GodsID),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-      Exit;
-    end;
-  end;
-  
-  inherited;  //继承基类
 end;
 
 function TfrmSalesOrder.CheckSale_Limit: Boolean;

@@ -269,7 +269,7 @@ type
     procedure WriteInfo(id:string);
     //整单调价
     procedure AgioInfo(id:string);
-    //单笔折扣  
+    //单笔折扣
     procedure AgioToGods(id:string;vss:boolean=false);
     //修改单价
     procedure PriceToGods(id:string);
@@ -1363,27 +1363,11 @@ end;
 
 procedure TfrmPosMain.edtInputKeyPress(Sender: TObject; var Key: Char);
 var
-  s,GodsID:string;
+  s:string;
   IsNumber,IsFind,isAdd:Boolean;
   amt:Currency;
   AObj:TRecord_;
 begin
-  //2011.06.10增加限制修改价格
-  if (InputFlag=2) or (InputFlag=3) or (InputFlag=4) then //整单折扣、修改单价、单笔折扣
-  begin
-    GodsID:=trim(cdsTable.fieldbyname('GODS_ID').AsString);
-    if CheckNotChangePrice(GodsID) then
-    begin
-      if InputFlag=3 then
-        GodsID:='商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许修改价格！'
-      else
-        GodsID:='商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗统一定价，不允许折扣！';
-      InputFlag := 0;
-      edtInput.Text := '';
-      MessageBox(Handle,pchar(GodsID),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-      Exit;
-    end;
-  end; 
 
   inherited;
   if Key=#13 then
@@ -1620,13 +1604,13 @@ var
   bs:TZQuery;
 begin
   if cdsTable.FieldbyName('GODS_ID').asString='' then Raise Exception.Create('请选择商品后再执行此操作');
-  
+
   //2011.06.08 Add 供应链限制改价：
   if CheckNotChangePrice(cdsTable.fieldbyName('GODS_ID').AsString) then
-     begin
-       if not vss then Raise Exception.Create('商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗不允许调价销售！');
-       Exit;
-     end;
+  begin
+    if not vss then Raise Exception.Create('商品〖'+cdsTable.FieldByName('GODS_NAME').AsString+'〗不允许调价销售！');
+    Exit;
+  end;
 
   if not vss then
   begin
@@ -1693,6 +1677,7 @@ begin
   except
     Raise Exception.Create('输入的单价无效，请正确输入');
   end;
+
   Field := cdsTable.FindField('APRICE');
   if Field=nil then Exit;
   cdsTable.Edit;
@@ -4018,7 +4003,7 @@ begin
           RelQry.FieldByName('CalcSum').AsFloat:=RelQry.FieldByName('CalcSum').AsFloat+cdsTable.fieldbyName('CALC_AMOUNT').AsFloat;
           RelQry.Post;
         end else
-        begin
+        begin  
           RelQry.Append;
           RelQry.FieldByName('RELATION_ID').AsString:=RelationID;
           if RsRelation.Locate('RELATION_ID',RelationID,[]) then 

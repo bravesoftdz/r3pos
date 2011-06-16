@@ -246,7 +246,7 @@ try
   begin
   //为企业初始化职务
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''总经理'',''001'',''LB'',''企业经营者'',''00'',5497000)';
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''老板'',''001'',''LB'',''企业经营者'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str :='insert into CA_DUTY_INFO (TENANT_ID,DUTY_ID,DUTY_NAME,LEVEL_ID,DUTY_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'002'+''',''店长'',''001001'',''DZ'',''门店管理者'',''00'',5497000)';
@@ -268,7 +268,7 @@ try
   begin
   //为企业初始化角色
   Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''经理'',''LB'',''企业经营者拥有所有模块权限'',''00'',5497000)';
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''老板'',''LB'',''企业经营者拥有所有模块权限'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str :='insert into CA_ROLE_INFO (TENANT_ID,ROLE_ID,ROLE_NAME,ROLE_SPELL,REMARK,COMM,TIME_STAMP)'+
   ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'002'+''',''店长'',''DZ'',''拥有门店管理所需相关权限'',''00'',5497000)';

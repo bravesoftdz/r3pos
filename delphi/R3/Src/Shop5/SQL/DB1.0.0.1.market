@@ -1,25 +1,19 @@
---经销商添加签约时间
-        --加盟日期
-alter table PUB_CLIENTINFO add	[SND_DATE] [varchar] (10) NULL;
-        --续约日期
-alter table PUB_CLIENTINFO add	[CON_DATE] [varchar] (10) NULL;
-        --有效日期
-alter table PUB_CLIENTINFO add	[END_DATE] [varchar] (10) NULL;
-
+--账户类型
+alter table ACC_ACCOUNT_INFO add [ACCT_TYPE] char(1) NULL;
 
 --销售计划
 CREATE TABLE [MKT_PLANORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
-        --门店代码
-	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[PLAN_ID] [char] (36) NOT NULL ,
         --流水号
 	[GLIDE_NO] [varchar] (20) NOT NULL ,
         --签约日期
 	[PLAN_DATE] int NULL ,
-        --生效日期
+        --续约日期
+	[CONT_DATE] int NULL ,
+        --开始日期
 	[BEGIN_DATE] [varchar] (10) NULL ,
         --结束日期
 	[END_DATE] [varchar] (10) NULL ,
@@ -60,8 +54,6 @@ CREATE INDEX IX_MKT_PLANORDER_PLAN_DATE ON MKT_PLANORDER(PLAN_DATE);
 CREATE TABLE [MKT_PLANDATA] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
-        --门店代码
-	[SHOP_ID] [varchar] (13) NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
         --订单号
@@ -110,6 +102,59 @@ CREATE TABLE [MKT_PLANDATA] (
 
 CREATE INDEX IX_MKT_PLANDATA_TENANT_ID ON MKT_PLANDATA(TENANT_ID);
 CREATE INDEX IX_MKT_PLANDATA_GODS_ID ON MKT_PLANDATA(TENANT_ID,GODS_ID);
+
+--考核区间
+CREATE TABLE [MKT_PE_FORYEAR] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --计划单号
+	[PLAN_ID] [char] (36) NOT NULL ,
+        --考核年度
+	[PE_YEAR] int NOT NULL ,
+        --签约日期
+	[PLAN_DATE] int NULL ,
+        --开始日期
+	[BEGIN_DATE] [varchar] (10) NULL ,
+        --结束日期
+	[END_DATE] [varchar] (10) NULL ,
+        --经销商
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+        --本年销量
+	[PE_AMT] [decimal](18, 3) NULL ,
+        --本年销售额 
+	[PE_MNY] [decimal](18, 3) NULL ,
+        --本年返利
+	[PE_RP_MNY] [decimal](18, 3) NULL ,
+        --本年冲销
+	[PE_SB_MNY] [decimal](18, 3) NULL ,
+        --返利余额
+	[BALANCE] [decimal](18, 3) NULL ,
+        --年度保证金
+	[PB_MNY] [decimal](18, 3) NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_PLANORDER_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_PLANORDER] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[PLAN_ID]
+	) 
+);
+
+CREATE INDEX IX_MKT_PLANORDER_TENANT_ID ON MKT_PLANORDER(TENANT_ID);
+CREATE INDEX IX_MKT_PLANORDER_TIME_STAMP ON MKT_PLANORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MKT_PLANORDER_PLAN_DATE ON MKT_PLANORDER(PLAN_DATE);
 
 --需求类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','补货需求','DEMA_TYPE','00',5497000);

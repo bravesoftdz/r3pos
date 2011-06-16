@@ -225,7 +225,7 @@ begin
 
   edtDEMA_USER.KeyValue := Global.UserID;
   edtDEMA_USER.Text := Global.UserName;
-  edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
+  //edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
 
   InitRecord;
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;

@@ -963,12 +963,15 @@ begin
        Exit;
     result := 0;
     AddRecord(AObj,uid,true);
-    edtTable.Edit;
-    edtTable.FieldbyName('BATCH_NO').AsString := vBtNo;
-    if not Bulk then
-       WriteAmount(uid,vP1,vP2,1,true)
-    else
-       BulkAmount(uid,amt,pri,mny,true);
+    if AObj.FieldbyName('GODS_ID').asString=edtTable.FieldbyName('GODS_ID').asString then
+    begin
+      edtTable.Edit;
+      edtTable.FieldbyName('BATCH_NO').AsString := vBtNo;
+      if not Bulk then
+         WriteAmount(uid,vP1,vP2,1,true)
+      else
+         BulkAmount(uid,amt,pri,mny,true);
+    end;
   finally
     AObj.Free;
   end;

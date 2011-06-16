@@ -521,7 +521,7 @@ var
   r:Integer;
 begin
   if FieldbyName('UNION_ID').asString='#' then Exit;
-  if Trim(FieldbyName('IC_CARDNO').asString)<>'' then Exit;
+  if Trim(FieldbyName('IC_CARDNO').asString)='' then Exit;
   Str := 'update PUB_IC_INFO set IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,IC_CARDNO=:IC_CARDNO,IC_STATUS=:IC_STATUS,PASSWRD=:PASSWRD '+
          ' where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and UNION_ID=:UNION_ID';
   r := AGlobal.ExecSQL(Str,self);

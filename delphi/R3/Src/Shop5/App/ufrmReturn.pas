@@ -101,36 +101,40 @@ begin
   if Trim(edtIC_AMONEY.Text)='' then
   begin
     if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
-    Raise Exception.Create('充值金额不能为空!');
+    Raise Exception.Create('退款金额不能为空!');
   end;
   try
     StrToFloat(Trim(edtIC_AMONEY.Text));
   except
     if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
-    Raise Exception.Create('充值金额不是有效的数字!');
+    Raise Exception.Create('退款金额不是有效的数字!');
   end;
   if StrToFloat(Trim(edtIC_AMONEY.Text))<0 then
   begin
     if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
-    Raise Exception.Create('充值金额不能小于0!');
+    Raise Exception.Create('退款金额不能小于0!');
   end;
-
+  if Trim(edtPAY.Text)='' then
+  begin
+    if edtPAY.CanFocus then edtPAY.SetFocus;
+    Raise Exception.Create('退款现金不能为空!');
+  end;
   edtPAY.Text:= FloatToStr(StrToFloatDef(Trim(edtPAY.Text),0));
   if StrToFloat(Trim(edtPAY.Text))<0 then
   begin
     if edtPAY.CanFocus then edtPAY_CASH.SetFocus;
-    Raise Exception.Create('支付不能小于0!');
+    Raise Exception.Create('退款不能小于0!');
   end;
 
   if StrToFloat(edtPAY.Text)>StrToFloat(edtIC_AMONEY.Text) then
   begin
     if edtPAY.CanFocus then edtPAY.SetFocus;
-    Raise Exception.Create('支付现金不能大于充值金额!');
+    Raise Exception.Create('退款现金不能大于退款金额!');
   end;
 
   if Trim(edtGLIDE_INFO.Text)='' then
   begin
-    edtGLIDE_INFO.Text:='充值';
+    edtGLIDE_INFO.Text:='退款';
   end;
   Str_Pay := 'PAY_'+TRecord_(edtPAY_CASH.Properties.Items.Objects[edtPAY_CASH.ItemIndex]).FieldbyName('CODE_ID').AsString;
   cdsTable1.Append;

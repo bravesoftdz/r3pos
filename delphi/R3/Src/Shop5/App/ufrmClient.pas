@@ -836,7 +836,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
         Result := False;
         Raise Exception.Create('缺少结算方式字段!');
       end;
-    if not CdsCol.Locate('FieldName','CUST_NAME',[]) then
+    if not CdsCol.Locate('FieldName','CLIENT_NAME',[]) then
       begin
         Result := False;
         Raise Exception.Create('缺少客户名称字段!');

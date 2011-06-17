@@ -78,9 +78,11 @@ uses ufrmChangeOrder,ufrmFastReport,uFnUtil,uGlobal,uDsUtil,uShopUtil,uXDictFact
 function TfrmChangeOrderList.EncodeSQL(id: string): string;
 var w:string;
 begin
-  w := 'where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.CHANGE_CODE='''+CodeId+''' and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
+  w := 'where A.TENANT_ID=:TENANT_ID and A.CHANGE_CODE='''+CodeId+''' and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
   if fndDUTY_USER.AsString <> '' then
      w := w +' and A.DUTY_USER=:DUTY_USER';
+  if fndSHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if trim(fndCHANGE_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndCHANGE_ID.Text)+'''';
   if fndSTATUS.ItemIndex > 0 then
@@ -129,10 +131,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     if rs.Params.FindParam('DUTY_USER')<>nil then rs.Params.FindParam('DUTY_USER').AsString := fndDUTY_USER.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('CHANGE_ID').AsString;

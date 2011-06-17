@@ -105,9 +105,11 @@ uses ufrmStkLocusOrder, ufrmSalRetuLocusOrder, uDsUtil, uFnUtil,uGlobal,uShopUti
 function TfrmInLocusOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=1';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=1';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndSHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndDEPT_ID.AsString <> '' then
      w := w +' and A.DEPT_ID=:DEPT_ID';
   if trim(fndSTOCK_ID.Text) <> '' then
@@ -162,10 +164,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
-    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString; 
+    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
@@ -559,9 +561,11 @@ end;
 function TfrmInLocusOrderList.EncodeSQL2(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=3 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=3 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   if fndP2_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndP2_SHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndP2_DEPT_ID.AsString <> '' then
      w := w +' and A.DEPT_ID=:DEPT_ID';
   if trim(fndP2_SALES_ID.Text) <> '' then
@@ -608,10 +612,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL2(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndP2_SHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP2_D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP2_D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndP2_CLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndP2_SHOP_ID.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndP2_DEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;

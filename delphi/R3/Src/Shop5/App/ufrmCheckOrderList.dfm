@@ -8,22 +8,22 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 875
-    Height = 497
+    Width = 883
+    Height = 508
     inherited RzPanel2: TRzPanel
-      Width = 865
-      Height = 487
+      Width = 873
+      Height = 498
       inherited RzPage: TRzPageControl
-        Width = 859
-        Height = 481
+        Width = 867
+        Height = 492
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #30424#28857#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 857
-            Height = 454
+            Width = 865
+            Height = 465
             inherited RzPanel1: TRzPanel
-              Width = 847
+              Width = 855
               Height = 91
               object RzLabel2: TRzLabel
                 Left = 57
@@ -225,17 +225,17 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
             end
             inherited DBGridEh1: TDBGridEh
               Top = 96
-              Width = 847
-              Height = 353
+              Width = 855
+              Height = 364
               OnDblClick = actInfoExecute
               Columns = <
                 item
@@ -316,40 +316,40 @@ inherited frmCheckOrderList: TfrmCheckOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 875
+    Width = 883
     inherited Image1: TImage
-      Left = 585
-      Width = 270
+      Left = 581
+      Width = 282
     end
     inherited Image3: TImage
-      Left = 585
-      Width = 270
+      Left = 581
+      Width = 282
     end
     inherited Image14: TImage
-      Left = 855
+      Left = 863
     end
     inherited rzPanel5: TPanel
-      Left = 585
+      Left = 581
       inherited lblToolCaption: TRzLabel
         Width = 36
         Caption = #30424#28857#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 565
+      Width = 561
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 565
+          MinHeight = 561
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 565
+        Width = 561
         object ToolButton11: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actExit
         end

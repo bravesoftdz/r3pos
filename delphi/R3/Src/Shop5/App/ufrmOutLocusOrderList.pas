@@ -157,9 +157,11 @@ uses ufrmSalLocusOrder, ufrmDbLocusOrder, ufrmChangeLocusOrder, ufrmStkRetuLocus
 function TfrmOutLocusOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=1 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=1 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndSHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndDEPT_ID.AsString <> '' then
      w := w +' and A.DEPT_ID=:DEPT_ID';
   if trim(fndSALES_ID.Text) <> '' then
@@ -218,10 +220,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
@@ -684,9 +686,11 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL2(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.SALES_TYPE=2 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   if fndP2_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndP2_SHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if trim(fndP2_SALES_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndP2_SALES_ID.Text)+'''';
   if fndP2_STATUS.ItemIndex > 0 then
@@ -734,10 +738,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL2(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndP2_SHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP2_D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP2_D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndP2_CLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndP2_SHOP_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId2 := rs.FieldbyName('SALES_ID').AsString;
@@ -772,9 +776,11 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL3(id: string): string;
 var w,w1:string;
 begin
-  w := 'where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.CHK_DATE is not null and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
+  w := 'where A.TENANT_ID=:TENANT_ID and A.CHK_DATE is not null and A.CHANGE_DATE>=:D1 and A.CHANGE_DATE<=:D2';
   if fndP3_DUTY_USER.AsString <> '' then
      w := w +' and A.DUTY_USER=:DUTY_USER';
+  if fndP3_SHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if trim(fndP3_CHANGE_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndP3_CHANGE_ID.Text)+'''';
   if fndP3_STATUS.ItemIndex > 0 then
@@ -818,10 +824,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL3(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndP3_SHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP3_D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP3_D2.Date));
     if rs.Params.FindParam('DUTY_USER')<>nil then rs.Params.FindParam('DUTY_USER').AsString := fndP3_DUTY_USER.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndP3_SHOP_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId3 := rs.FieldbyName('CHANGE_ID').AsString;
@@ -877,9 +883,11 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL4(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.CHK_DATE is not null and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=3';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.CHK_DATE is not null and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2 and A.STOCK_TYPE=3';
   if fndP4_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndP4_SHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndP4_DEPT_ID.AsString <> '' then
      w := w +' and A.DEPT_ID=:DEPT_ID';
   if trim(fndP4_STOCK_ID.Text) <> '' then
@@ -929,10 +937,10 @@ begin
   try
     rs.SQL.Text := EncodeSQL4(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('SHOP_ID').AsString := fndP4_SHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP4_D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP4_D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndP4_CLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndP4_SHOP_ID.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndP4_DEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;

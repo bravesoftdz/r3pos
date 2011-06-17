@@ -77,9 +77,11 @@ uses
 function TfrmCheckOrderList.EncodeSQL(id: string): string;
 var str,w,RowNum:string;
 begin
-  w := 'where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE>=:BEG_DATE and CREA_DATE<=:END_DATE ';
+  w := 'where TENANT_ID=:TENANT_ID and CREA_DATE>=:BEG_DATE and CREA_DATE<=:END_DATE ';
   if fndCHECK_EMPL.AsString <> '' then
      w := w +' and CREA_USER=:CREA_USER ';
+  if fndSHOP_ID.AsString <> '' then
+     w := w +' and SHOP_ID=:SHOP_ID ';
   if trim(fndPRINT_DATE.Text) <> '' then
   begin
     case Factor.iDbType of

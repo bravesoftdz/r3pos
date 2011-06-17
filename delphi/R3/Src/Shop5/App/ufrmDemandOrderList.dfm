@@ -8,22 +8,22 @@ inherited frmDemandOrderList: TfrmDemandOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 820
-    Height = 533
+    Width = 828
+    Height = 544
     inherited RzPanel2: TRzPanel
-      Width = 810
-      Height = 523
+      Width = 818
+      Height = 534
       inherited RzPage: TRzPageControl
-        Width = 804
-        Height = 517
+        Width = 812
+        Height = 528
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38656#35201#22635#25253
           inherited RzPanel3: TRzPanel
-            Width = 802
-            Height = 490
+            Width = 810
+            Height = 501
             inherited RzPanel1: TRzPanel
-              Width = 792
+              Width = 800
               Height = 92
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -264,8 +264,8 @@ inherited frmDemandOrderList: TfrmDemandOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 97
-              Width = 792
-              Height = 388
+              Width = 800
+              Height = 399
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -348,39 +348,39 @@ inherited frmDemandOrderList: TfrmDemandOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 820
+    Width = 828
     inherited Image1: TImage
-      Left = 585
-      Width = 215
+      Left = 581
+      Width = 227
     end
     inherited Image3: TImage
-      Left = 585
-      Width = 215
+      Left = 581
+      Width = 227
     end
     inherited Image14: TImage
-      Left = 800
+      Left = 808
     end
     inherited rzPanel5: TPanel
-      Left = 585
+      Left = 581
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 565
+      Width = 561
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 565
+          MinHeight = 561
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 565
+        Width = 561
         object ToolButton17: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actExit
         end

@@ -8,24 +8,22 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 852
-    Height = 501
+    Width = 860
+    Height = 512
     inherited RzPanel2: TRzPanel
-      Width = 842
-      Height = 491
+      Width = 850
+      Height = 502
       inherited RzPage: TRzPageControl
-        Width = 836
-        Height = 485
-        ActivePage = TabSheet3
-        TabIndex = 2
+        Width = 844
+        Height = 496
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 834
-            Height = 458
+            Width = 842
+            Height = 469
             inherited RzPanel1: TRzPanel
-              Width = 824
+              Width = 832
               Height = 112
               object RzLabel2: TRzLabel
                 Left = 33
@@ -263,9 +261,9 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -306,8 +304,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 117
-              Width = 824
-              Height = 336
+              Width = 832
+              Height = 347
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -409,8 +407,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 834
-            Height = 458
+            Width = 842
+            Height = 469
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -421,7 +419,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel7: TRzPanel
               Left = 5
               Top = 5
-              Width = 824
+              Width = 832
               Height = 102
               Align = alTop
               BorderOuter = fsNone
@@ -639,8 +637,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh2: TDBGridEh
               Left = 5
               Top = 107
-              Width = 824
-              Height = 346
+              Width = 832
+              Height = 357
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -781,8 +779,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 834
-            Height = 458
+            Width = 842
+            Height = 469
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -793,7 +791,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel9: TRzPanel
               Left = 5
               Top = 5
-              Width = 824
+              Width = 832
               Height = 92
               Align = alTop
               BorderOuter = fsNone
@@ -999,9 +997,9 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -1009,8 +1007,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh3: TDBGridEh
               Left = 5
               Top = 97
-              Width = 824
-              Height = 356
+              Width = 832
+              Height = 367
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -1151,8 +1149,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel10: TRzPanel
             Left = 0
             Top = 0
-            Width = 834
-            Height = 458
+            Width = 842
+            Height = 469
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -1163,7 +1161,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel11: TRzPanel
               Left = 5
               Top = 5
-              Width = 824
+              Width = 832
               Height = 110
               Align = alTop
               BorderOuter = fsNone
@@ -1405,9 +1403,9 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -1449,8 +1447,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh4: TDBGridEh
               Left = 5
               Top = 115
-              Width = 824
-              Height = 338
+              Width = 832
+              Height = 349
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -1578,39 +1576,39 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 852
+    Width = 860
     inherited Image1: TImage
-      Left = 593
-      Width = 239
+      Left = 589
+      Width = 251
     end
     inherited Image3: TImage
-      Left = 593
-      Width = 239
+      Left = 589
+      Width = 251
     end
     inherited Image14: TImage
-      Left = 832
+      Left = 840
     end
     inherited rzPanel5: TPanel
-      Left = 593
+      Left = 589
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#20837#24211
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 573
+      Width = 569
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 573
+          MinHeight = 569
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 573
+        Width = 569
         object ToolButton17: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -1619,7 +1617,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           Visible = False
         end
         object ToolButton11: TToolButton
-          Left = 530
+          Left = 526
           Top = 0
           Action = actExit
         end

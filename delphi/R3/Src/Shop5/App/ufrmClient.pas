@@ -757,10 +757,6 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                         Result := True;
                       end;
                   end;
-              end
-            else
-              begin
-                Dest.FieldbyName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
               end;
           end;
 
@@ -814,6 +810,9 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('IC_TYPE').AsString := '0';
         if CdsExcel.FieldByName('CLIENT_SPELL').AsString = '' then
           CdsExcel.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CLIENT_NAME').AsString),3);
+        if CdsExcel.FieldByName('CLIENT_CODE').AsString = '' then
+          CdsExcel.FieldByName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
+
         CdsExcel.Post;
         CdsExcel.Next;
       end;

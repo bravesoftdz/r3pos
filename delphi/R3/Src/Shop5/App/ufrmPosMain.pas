@@ -207,7 +207,7 @@ type
     procedure WMExecOrder(var Message: TMessage); message WM_EXEC_ORDER;
     procedure OpenDialogGoods;
     procedure OpenDialogProperty;
-    function  OpenDialogCustomer(KeyString:string):boolean;
+    function  OpenDialogCustomer(KeyString:string;C_T:Integer=0):boolean;
     procedure OpenDialogGuide;
     procedure AddFromDialog(AObj:TRecord_);
     procedure SetgRepeat(const Value: boolean);
@@ -1994,7 +1994,7 @@ begin
   if not cdsTable.IsEmpty then cdsTable.Delete; 
 end;
 
-function TfrmPosMain.OpenDialogCustomer(KeyString:string):boolean;
+function TfrmPosMain.OpenDialogCustomer(KeyString:string;C_T:Integer=0):boolean;
 begin
   result := false;
   if dbState = dsBrowse then Exit;
@@ -2002,6 +2002,7 @@ begin
     begin
       try
         edtSearch.Text := KeyString;
+        CustType := C_T;
         Open('');
         if ShowModal=MROK then
            begin
@@ -3515,7 +3516,7 @@ begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
-        if OpenDialogCustomer('') then
+        if OpenDialogCustomer('',2) then
           begin
             NewCardExecute;
           end;
@@ -3527,7 +3528,7 @@ begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
-        if OpenDialogCustomer('') then
+        if OpenDialogCustomer('',2) then
           begin
             DepositExecute;
           end;
@@ -3539,7 +3540,7 @@ begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
-        if OpenDialogCustomer('') then
+        if OpenDialogCustomer('',2) then
           begin
             ReturnExecute;
           end;
@@ -3551,7 +3552,7 @@ begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
-        if OpenDialogCustomer('') then
+        if OpenDialogCustomer('',2) then
           begin
             LossCardExecute;
           end;
@@ -3563,7 +3564,7 @@ begin
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin
-        if OpenDialogCustomer('') then
+        if OpenDialogCustomer('',2) then
           begin
             PasswordExecute;
           end;

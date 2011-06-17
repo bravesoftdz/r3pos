@@ -22,7 +22,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
           object RzPanel4: TRzPanel
             Left = 5
             Top = 5
-            Width = 517
+            Width = 525
             Height = 334
             Align = alClient
             BorderOuter = fsFlatRounded
@@ -30,7 +30,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
             object DBGridEh1: TDBGridEh
               Left = 2
               Top = 42
-              Width = 513
+              Width = 521
               Height = 290
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -141,7 +141,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
             object fndPanel: TPanel
               Left = 2
               Top = 2
-              Width = 513
+              Width = 521
               Height = 40
               Align = alTop
               BevelOuter = bvLowered
@@ -150,7 +150,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
               object RzPanel5: TRzPanel
                 Left = 1
                 Top = 1
-                Width = 511
+                Width = 519
                 Height = 38
                 Align = alClient
                 BorderOuter = fsNone

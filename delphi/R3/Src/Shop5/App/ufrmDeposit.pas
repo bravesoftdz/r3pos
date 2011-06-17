@@ -120,7 +120,11 @@ begin
     if edtIC_AMONEY.CanFocus then edtIC_AMONEY.SetFocus;
     Raise Exception.Create('充值金额不能小于0!');
   end;
-
+  if Trim(edtPAY.Text)='' then
+  begin
+    if edtPAY.CanFocus then edtPAY.SetFocus;
+    Raise Exception.Create('支付现金不能为空!');
+  end;
   edtPAY.Text:= FloatToStr(StrToFloatDef(Trim(edtPAY.Text),0));
   if StrToFloat(Trim(edtPAY.Text))<0 then
   begin

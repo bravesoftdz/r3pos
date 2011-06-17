@@ -264,7 +264,7 @@ procedure TfrmCustomerInfo.Save;
     Temp.FieldByName('PRICE_ID').AsString := AObj.FieldbyName('PRICE_ID').AsString;
     Temp.Post;
    end;
-var tmp,temp,temp1,tmp1:TZQuery;
+var tmp,temp,temp1,tmp1,rs:TZQuery;
     j:integer;
 begin
   if trim(cmbCUST_CODE.Text)='' then
@@ -339,9 +339,9 @@ begin
         Exit;
     end;
   finally
-    tmp1.Close;
+    tmp1.Free;
   end;
-  if cmbCUST_NAME.Text<>cdsTable.FieldByName('CUST_NAME').AsString  then
+  if cmbCUST_NAME.Text<>cdsTable.FieldByName('CUST_NAME').AsString then
   begin
     if dbState=dsEdit then
     begin
@@ -395,6 +395,7 @@ begin
   cdsTable.Edit;
   Aobj.WriteToDataSet(cdsTable);
   cdsTable.Post;
+
   cdsUnionCard.First;
   while not cdsUnionCard.Eof do
      begin
@@ -404,6 +405,7 @@ begin
        cdsUnionCard.Post;
        cdsUnionCard.Next;
      end;
+
   Factor.BeginBatch;
   try
     Factor.AddBatch(cdsTable,'TCustomer');

@@ -45,6 +45,7 @@ type
     procedure CheckRightBeforeSave(var ChangeCount: Integer); //保存前检查数据
     procedure CheckSaveBeforeClose; //关闭前检查是否保存
     procedure DefineStateSort;
+    procedure UpdateGlobal(CdsState: TDataSet);
   protected
     function CheckCanExport:boolean;
   public
@@ -54,7 +55,10 @@ type
   end;
 
 implementation
-uses  uGlobal,uFnUtil,uDsUtil,uShopUtil, uShopGlobal, ufrmBasic, Math;
+
+uses
+  uGlobal,uFnUtil,uDsUtil,uShopUtil, uShopGlobal, ufrmBasic, Math;
+
 {$R *.dfm}
 
 procedure TfrmDefineStateInfo.btnExitClick(Sender: TObject);
@@ -73,6 +77,7 @@ begin
     Param := TftParamList.Create;
     Param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(cdsStateInfo,'TDefineStateInfo',Param);
+
     if CdsStateInfo.Active then
     begin
       //设置SEQ_NO
@@ -81,7 +86,7 @@ begin
       CdsStateInfo.First;
       while not CdsStateInfo.Eof do
       begin
-        if (CdsStateInfo.FieldByName('SEQ_NO').AsInteger<40) and (Idx<CdsStateInfo.FieldByName('SEQ_NO').AsInteger) then
+        if (CdsStateInfo.FieldByName('SEQ_NO').AsInteger>0) and (Idx<CdsStateInfo.FieldByName('SEQ_NO').AsInteger) then
           Idx:=CdsStateInfo.FieldByName('SEQ_NO').AsInteger;
         CdsStateInfo.Next;
       end;
@@ -89,7 +94,7 @@ begin
       CdsStateInfo.First;
       while not CdsStateInfo.Eof do
       begin
-        if CdsStateInfo.FieldByName('SEQ_NO').AsInteger=40 then
+        if CdsStateInfo.FieldByName('SEQ_NO').AsInteger=0 then
         begin
           inc(Idx);
           CdsStateInfo.Edit;
@@ -97,8 +102,7 @@ begin
           CdsStateInfo.Post;
         end;
         CdsStateInfo.Next;
-      end;
-      
+      end;    
       SrcQry.Close;
       SrcQry.Data:=CdsStateInfo.Data;
     end;
@@ -107,60 +111,13 @@ begin
     CdsStateInfo.EnableControls;
     Param.Free;
   end;
+  CdsStateInfo.IndexFieldNames:='SEQ_NO';
 end;
 
 procedure TfrmDefineStateInfo.Save;
-  procedure UpdateGlobal(CdsState: TDataSet);
-  var
-    CodeID: string;
-    Rs: TZQuery;
-  begin
-    Rs:=Global.GetZQueryFromName('PUB_STAT_INFO');
-    try
-      cdsStateInfo.DisableControls;
-      cdsStateInfo.First;
-      while not cdsStateInfo.Eof do
-      begin
-        CodeID:=cdsStateInfo.fieldbyName('Code_ID').AsString;
-        if cdsStateInfo.FieldByName('USEFLAG').AsInteger=1 then
-        begin
-          if Rs.Locate('CODE_ID',CodeID,[]) then
-          begin
-            Rs.Edit;
-            Rs.FieldByName('CODE_NAME').AsString:=cdsStateInfo.fieldbyName('CODE_NAME').AsString;
-            Rs.Post;
-          end else
-          begin
-            Rs.Append;
-            Rs.FieldByName('CODE_ID').AsString:=cdsStateInfo.fieldbyName('CODE_ID').AsString;
-            Rs.FieldByName('CODE_NAME').AsString:=cdsStateInfo.fieldbyName('CODE_NAME').AsString;
-            Rs.Post;
-          end;
-        end else
-        begin
-          if Rs.Locate('CODE_ID',CodeID,[]) then
-          begin
-            Rs.Delete;
-            Rs.Edit;
-            Rs.Post;
-          end;
-        end;
-        cdsStateInfo.Next;
-      end;
-    finally
-      cdsStateInfo.EnableControls;
-    end;
-  end;
 begin
-  cdsStateInfo.First;
-  while not cdsStateInfo.Eof do
-  begin
-    cdsStateInfo.Edit;
-    cdsStateInfo.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-    cdsStateInfo.FieldByName('CODE_SPELL').AsString:=Fnstring.GetWordSpell(cdsStateInfo.FieldByName('CODE_NAME').AsString,3);
-    cdsStateInfo.Post;
-    cdsStateInfo.Next;
-  end;
+  if CdsStateInfo.State in [dsInsert,dsEdit] then
+    CdsStateInfo.Post;
   //保存前重新对序号重新编号
   DefineStateSort;
 
@@ -279,16 +236,28 @@ procedure TfrmDefineStateInfo.DBGridEh1Columns2UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
-  if (cdsStateInfo.Active) and (cdsStateInfo.FieldByName('CODE_ID').AsInteger>0) and
-     (cdsStateInfo.FieldByName('CODE_ID').AsInteger<9) then
-  begin
-    Value:=1;
-    Text:='1';
-    cdsStateInfo.Edit;
-    cdsStateInfo.FieldByName('USEFLAG').AsInteger:=1;
+  if not cdsStateInfo.Active then Exit;
+  try
+    cdsStateInfo.DisableControls;
+    if not (cdsStateInfo.State in [dsInsert,dsEdit]) then
+      cdsStateInfo.Edit;
+    case cdsStateInfo.FieldByName('CODE_ID').AsInteger of
+     1..8:
+      begin
+        Value:=1;
+        Text:='1';
+        cdsStateInfo.FieldByName('USEFLAG').AsInteger:=1;
+      end;
+     9..20:
+      begin
+        cdsStateInfo.FieldByName('USEFLAG').AsInteger:=Value;
+      end;
+    end;
     cdsStateInfo.Post;
+  finally
+    cdsStateInfo.EnableControls;
+    cdsStateInfo.Edit;
   end;
-  cdsStateInfo.Edit;
 end;
 
 procedure TfrmDefineStateInfo.CheckRightBeforeSave(var ChangeCount: Integer); //保存前检查数据
@@ -345,14 +314,16 @@ begin
 end;
 
 procedure TfrmDefineStateInfo.btnSaveClick(Sender: TObject);
-var
-  ChangeCount: integer;
+// var ChangeCount: integer;
 begin
   inherited;
-  CheckRightBeforeSave(ChangeCount); //保存前检查数据
+  {
+   CheckRightBeforeSave(ChangeCount); //保存前检查数据
   if (ChangeCount=0) and (not FIsChange) then
      Raise Exception.Create('系统检测没有修改指标，不需要保存！');
-  self.Save;
+  }
+
+  Save;
   FIsChange:=False;
 end;
 
@@ -462,11 +433,12 @@ end;
 procedure TfrmDefineStateInfo.DefineStateSort;
 var
   CodeID: string;
-  Qry: TZQuery;
+  Qry:TZQuery;
 begin
   try
     Qry:=TZQuery.Create(nil);
     Qry.Data:=cdsStateInfo.Data;
+    Qry.IndexFieldNames:='SEQ_NO';
     cdsStateInfo.DisableControls;
     cdsStateInfo.First;
     while not cdsStateInfo.Eof do
@@ -475,7 +447,9 @@ begin
       if Qry.Locate('CODE_ID',CodeID,[]) then
       begin
         cdsStateInfo.Edit;
-        cdsStateInfo.FieldByName('SEQ_NO').AsInteger:=Qry.RecNo+10; 
+        cdsStateInfo.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+        cdsStateInfo.FieldByName('CODE_SPELL').AsString:=Fnstring.GetWordSpell(cdsStateInfo.FieldByName('CODE_NAME').AsString,3);
+        cdsStateInfo.FieldByName('SEQ_NO').AsInteger:=Qry.RecNo+10; //变成两位数排序
         cdsStateInfo.Post;  
       end;
       cdsStateInfo.Next;
@@ -483,6 +457,53 @@ begin
   finally
     cdsStateInfo.EnableControls;
     Qry.Free;
+  end;
+end;
+
+procedure TfrmDefineStateInfo.UpdateGlobal(CdsState: TDataSet);
+var
+  CodeID: string;
+  Rs: TZQuery;
+begin
+  Rs:=Global.GetZQueryFromName('PUB_STAT_INFO');
+  try
+    Rs.IndexFieldNames:='SEQ_NO';
+    cdsStateInfo.DisableControls;
+    cdsStateInfo.First;
+    while not cdsStateInfo.Eof do
+    begin
+      CodeID:=cdsStateInfo.fieldbyName('Code_ID').AsString;
+      if cdsStateInfo.FieldByName('USEFLAG').AsInteger=1 then
+      begin
+        if Rs.Locate('CODE_ID',CodeID,[]) then
+        begin
+          Rs.Edit;
+          Rs.FieldByName('CODE_NAME').AsString:=cdsStateInfo.fieldbyName('CODE_NAME').AsString;
+          if Rs.FindField('SEQ_NO')<>nil then
+            Rs.FindField('SEQ_NO').AsInteger:=cdsStateInfo.fieldbyName('SEQ_NO').AsInteger;
+          Rs.Post;
+        end else
+        begin
+          Rs.Append;
+          Rs.FieldByName('CODE_ID').AsString:=cdsStateInfo.fieldbyName('CODE_ID').AsString;
+          Rs.FieldByName('CODE_NAME').AsString:=cdsStateInfo.fieldbyName('CODE_NAME').AsString;
+          if Rs.FindField('SEQ_NO')<>nil then
+            Rs.FindField('SEQ_NO').AsInteger:=cdsStateInfo.fieldbyName('SEQ_NO').AsInteger;          
+          Rs.Post;
+        end;
+      end else
+      begin
+        if Rs.Locate('CODE_ID',CodeID,[]) then
+        begin
+          Rs.Delete;
+          Rs.Edit;
+          Rs.Post;
+        end;
+      end;
+      cdsStateInfo.Next;
+    end;
+  finally
+    cdsStateInfo.EnableControls;
   end;
 end;
 

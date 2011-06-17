@@ -63,19 +63,11 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'SEQNO'
-                Footers = <>
-                Title.Caption = #24207#21495
-                Title.Color = clWhite
-                Width = 36
-              end
-              item
-                EditButtons = <>
                 FieldName = 'CODE_ID'
                 Footers = <>
                 Title.Caption = #25351#26631'ID'
                 Title.Color = clWindow
-                Width = 43
+                Width = 55
               end
               item
                 EditButtons = <>

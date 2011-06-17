@@ -161,7 +161,7 @@ begin
       SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
       fndP1_SHOP_ID.Properties.ReadOnly := True;
     end;
-  fndP1_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');  
+  fndP1_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');  
   RzPage.ActivePageIndex := 0;
 
   if ShopGlobal.GetProdFlag = 'E' then

@@ -1490,11 +1490,14 @@ begin
                if CaFactory.CheckInitSync then CaFactory.SyncAll(1);
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
-                    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
-                    SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
-                    SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
-                    SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
-                    SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
+                    if Global.RemoteFactory.ConnString<>Global.LocalFactory.ConnString then //调试模式时，不同步
+                    begin
+                      SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+                      SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
+                      SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
+                      SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
+                      SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
+                    end;
                   end
                else
                   begin

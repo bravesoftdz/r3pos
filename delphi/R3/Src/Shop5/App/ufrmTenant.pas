@@ -126,6 +126,8 @@ begin
         if (not result) then
            result := (ShowModal=MROK);
       finally
+        frmLogo.Label1.Caption := '获取企业证书完毕...';
+        frmLogo.Label1.Update;
         free;
       end;
     end;

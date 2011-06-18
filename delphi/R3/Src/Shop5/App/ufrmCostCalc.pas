@@ -239,6 +239,8 @@ begin
   w := 1;
   for i:= 1 to pt do
     begin
+      Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
+      Label11.Update;
       PrgPercent := (i*100 div pt) div 3+5;
       SQL :=
         'insert into '+tempTableName1+'('+
@@ -652,7 +654,6 @@ begin
   b := 1;
   while true do
   begin
-    if pt>0 then PrgPercent := (b*100 div pt) div 3+5;
     if reck_flag=1 then
        begin
          if isfirst and (b=1) then
@@ -669,6 +670,8 @@ begin
          if e<=(bDate+b-1) then
             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
        end;
+    Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM',bDate+b);
+    Label11.Update;
 //    if (bDate+b)<=uDate then //只计算有数据部份
     begin
 
@@ -722,6 +725,9 @@ begin
     for i:= b to pt do
       begin
         if (bDate+i)>e then break;
+        Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',bDate+i);
+        Label11.Update;
+        PrgPercent := (i*100 div pt) div 3+5;
         //生成数据
         SQL :=
           'insert into '+tempTableName1+'('+
@@ -995,6 +1001,8 @@ begin
   w := 1;
   for i:= 1 to pt do
     begin
+      Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
+      Label11.Update;
       PrgPercent := (i*100 div pt) div 3+5;
       //准备期初
       SQL :=

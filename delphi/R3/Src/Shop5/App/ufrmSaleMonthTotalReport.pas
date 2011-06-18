@@ -80,7 +80,7 @@ uses
 procedure TfrmSaleMonthTotalReport.btnNewClick(Sender: TObject);
 begin
   inherited;
-  if TfrmDefineReport.AddReport(self,RF_DATA_SOURCE1,'3','1') then
+  if TfrmDefineReport.AddReport(self,RF_DATA_SOURCE4,'3','4') then
      begin
        load;
      end;
@@ -109,7 +109,7 @@ begin
     if w <> '' then w := ' and ('+w+')';
     end;
     rs.Close;
-    rs.SQL.Text := 'select REPORT_ID,REPORT_NAME from SYS_REPORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_TYPE=''3'' and COMM not in (''02'',''12'') and REPORT_SOURCE=''1'' '+w;
+    rs.SQL.Text := 'select REPORT_ID,REPORT_NAME from SYS_REPORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and REPORT_TYPE=''3'' and COMM not in (''02'',''12'') and REPORT_SOURCE=''4'' '+w;
     Factor.Open(rs);
     TdsItems.AddDataSetToItems(rs,rptTemplate.Properties.Items,'REPORT_NAME');
     if rptTemplate.Properties.Items.Count>0 then rptTemplate.ItemIndex := 0;
@@ -167,8 +167,6 @@ procedure TfrmSaleMonthTotalReport.actFindExecute(Sender: TObject);
 var strSql:string;
 begin
   inherited;
-  strSql := GetGodsSQL;
-  showmessage(strSQL);
   if rptTempLate.ItemIndex<0 then Exit;
   if Factory.DataSet.Active then Factory.DataSet.Close;
   strSql := GetGodsSQL;
@@ -209,7 +207,7 @@ procedure TfrmSaleMonthTotalReport.btnEditClick(Sender: TObject);
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;
-  if TfrmDefineReport.EditReport(self,TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString,RF_DATA_SOURCE1) then
+  if TfrmDefineReport.EditReport(self,TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString,RF_DATA_SOURCE4) then
   begin
     load;
   end;
@@ -281,7 +279,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME '+
 
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
     ',sum(SALE_RTL) as SALE_RTL '+   //可销售额<按零售价>
@@ -311,11 +309,13 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID ';
+    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME ';
 
   strSql :=
     'select j.* '+
-    ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
+    'r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME as GODS_ID_TEXT,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID,'+
+    'r.SORT_ID1,r.RELATION_ID as SORT_ID24,r.SORT_ID1 as SORT_ID21,r.SORT_ID1 as SORT_ID22,r.SORT_ID1 as SORT_ID23,r.SORT_ID2,r.SORT_ID3,r.SORT_ID4,r.SORT_ID5,r.SORT_ID6,r.SORT_ID7,r.SORT_ID8,r.SORT_ID9,r.SORT_ID10,'+
+    'r.SORT_ID11,r.SORT_ID12,r.SORT_ID13,r.SORT_ID14,r.SORT_ID15,r.SORT_ID16,r.SORT_ID17,r.SORT_ID18,r.SORT_ID19,r.SORT_ID20 '+
     ' from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
   strSql :=
@@ -351,7 +351,7 @@ procedure TfrmSaleMonthTotalReport.btnDeleteClick(Sender: TObject);
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;
-  if TfrmDefineReport.DeleteReport(self,TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString,RF_DATA_SOURCE1) then
+  if TfrmDefineReport.DeleteReport(self,TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString,RF_DATA_SOURCE4) then
      begin
        load;
      end;

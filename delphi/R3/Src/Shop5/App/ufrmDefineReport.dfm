@@ -13,8 +13,6 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
-      ActivePage = TabSheet2
-      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -284,6 +282,32 @@ inherited frmDefineReport: TfrmDefineReport
               TextStyle = tsRaised
               ThemeAware = False
               OnClick = BtnLeftRowClick
+              NumGlyphs = 2
+              Spacing = 5
+            end
+            object btnSort: TRzBitBtn
+              Left = 3
+              Top = 165
+              Width = 70
+              Height = 26
+              Caption = #23383#27573#25490#24207
+              Color = clSilver
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clBlack
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              HighlightColor = 16026986
+              HotTrack = True
+              HotTrackColor = 3983359
+              HotTrackColorType = htctActual
+              ParentFont = False
+              TextShadowColor = clWhite
+              TextShadowDepth = 4
+              TabOrder = 6
+              TextStyle = tsRaised
+              ThemeAware = False
+              OnClick = btnSortClick
               NumGlyphs = 2
               Spacing = 5
             end

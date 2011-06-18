@@ -52,6 +52,7 @@ type
     DBGridEh3: TDBGridEh;
     RoleDs: TDataSource;
     RoleList: TZQuery;
+    btnSort: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BtnAddClick(Sender: TObject);
@@ -83,6 +84,7 @@ type
     procedure DBGridEh1Columns2EditButtonClick(Sender: TObject;
       var Handled: Boolean);
     procedure DsReportTemplateAfterScroll(DataSet: TDataSet);
+    procedure btnSortClick(Sender: TObject);
   private
     { Private declarations }
     AObj:TRecord_;
@@ -122,7 +124,7 @@ type
   end;
 
 implementation
-uses uShopUtil, uDsUtil, uFnUtil, uGlobal, uShopGlobal, uframeListDialog, ufrmBasic;
+uses uShopUtil, uDsUtil, uFnUtil, uGlobal, uShopGlobal, uframeListDialog, ufrmBasic, ufrmFieldSort;
 {$R *.dfm}
 
 procedure TfrmDefineReport.Append;
@@ -1596,6 +1598,32 @@ end;
 procedure TfrmDefineReport.SetSourceId(const Value: String);
 begin
   FSourceId := Value;
+end;
+
+procedure TfrmDefineReport.btnSortClick(Sender: TObject);
+var Field_Id,Field_Text:String;
+    COL:Integer;
+begin
+  inherited;
+  if DsReportTemplate.FieldByName('FIELD_NAME').AsString = '' then Exit;
+  COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
+  Field_Id := DsReportTemplate.FieldByName('FIELD_NAME').AsString;
+  Field_Text := DsReportTemplate.FieldByName('FIELD_NAME_TEXT').AsString;
+  if TfrmFieldSort.ShowSort(Self,Field_Id,Field_Text) then
+    begin
+      DsReportTemplate.First;
+      while not DsReportTemplate.Eof do
+        begin
+          if DsReportTemplate.FieldByName('CELL_COL').AsInteger = COL then
+            begin
+              DsReportTemplate.Edit;
+              DsReportTemplate.FieldByName('FIELD_NAME').AsString := Field_Id;
+              DsReportTemplate.FieldByName('FIELD_NAME_TEXT').AsString := Field_Text;
+              DsReportTemplate.Post;
+            end;
+          DsReportTemplate.Next;
+        end;
+    end;
 end;
 
 end.

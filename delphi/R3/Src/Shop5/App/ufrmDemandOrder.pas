@@ -185,7 +185,7 @@ begin
   if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');
 
   if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
-  if edtTable.FieldByName('UNIT_ID').AsString = bs.FieldByName('UNIT_ID').AsString then
+  if edtTable.FieldByName('UNIT_ID').AsString = bs.FieldByName('CALC_UNITS').AsString then
     begin
       edtTable.FieldByName('APRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE').AsFloat;
       edtTable.FieldbyName('ORG_PRICE').AsFloat := bs.FieldbyName('NEW_OUTPRICE').AsFloat;
@@ -376,40 +376,93 @@ end;
 
 procedure TfrmDemandOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var r:real;
+var
+  r,op:real;
+  Params:TLoginParam;
+  allow :boolean;
+  rs,us:TZQuery;
 begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoFloat(Text);
-  except
-    Text := TColumnEh(Sender).Field.AsString;
+  if not ShopGlobal.GetChkRight('12300001',5) then
+     begin
+       if TfrmLogin.doLogin(Params) then
+          begin
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
+          end
+       else
+          allow := false;
+     end else allow := true;
+  if allow then
+  begin
+    try
+      if Text='' then
+         r := 0
+      else
+         r := StrtoFloat(Text);
+    except
+      on E:Exception do
+         begin
+           Text := TColumnEh(Sender).Field.AsString;
+           Value := TColumnEh(Sender).Field.asFloat;
+           MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+           Exit;
+         end;
+    end;
+    if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+    op := TColumnEh(Sender).Field.asFloat;
+    TColumnEh(Sender).Field.asFloat := r;
+    PriceToCalc(r);
+  end
+  else
+  begin
     Value := TColumnEh(Sender).Field.asFloat;
-    Raise Exception.Create('输入无效数值型');
+    Text := TColumnEh(Sender).Field.AsString;
+    MessageBox(Handle,pchar('你没有修改"需求填报"价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
-  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
-  TColumnEh(Sender).Field.asFloat := r;
-  PriceToCalc(r);
+  
 end;
 
 procedure TfrmDemandOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var r:real;
+var
+  r,op:real;
+  Params:TLoginParam;
+  allow :boolean;
+  rs,us:TZQuery;
 begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoFloat(Text);
-  except
-    Text := TColumnEh(Sender).Field.AsString;
+  if not ShopGlobal.GetChkRight('12300001',5) then
+     begin
+       if TfrmLogin.doLogin(Params) then
+          begin
+            allow := ShopGlobal.GetChkRight('12300001',5,Params.UserID);
+            if not allow then Raise Exception.Create('你输入的用户没有调价权限...');
+          end
+       else
+          allow := false;
+     end else allow := true;
+  if allow then
+  begin
+    try
+      if Text='' then
+         r := 0
+      else
+         r := StrtoFloat(Text);
+    except
+      Text := TColumnEh(Sender).Field.AsString;
+      Value := TColumnEh(Sender).Field.asFloat;
+      Raise Exception.Create('输入无效数值型');
+    end;
+    if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+    op := TColumnEh(Sender).Field.asFloat;
+    TColumnEh(Sender).Field.asFloat := r;
+    AMoneyToCalc(r);
+  end
+  else
+  begin
     Value := TColumnEh(Sender).Field.asFloat;
-    Raise Exception.Create('输入无效数值型');
+    Text := TColumnEh(Sender).Field.AsString;
+    MessageBox(Handle,pchar('你没有修改"需求填报"价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
-  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
-  TColumnEh(Sender).Field.asFloat := r;
-  AMoneyToCalc(r);
 end;
 
 procedure TfrmDemandOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
@@ -449,14 +502,13 @@ begin
          end;
     end;
     TColumnEh(Sender).Field.asFloat := r;
-    edtTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
     AgioToCalc(r);
   end
   else
   begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('你没有修改销售订单价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    MessageBox(Handle,pchar('你没有修改"需求填报"价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
 end;
 

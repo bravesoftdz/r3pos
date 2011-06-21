@@ -350,7 +350,7 @@ var
 begin
   result:=False;
   IndeID:=trim(CdsTable.fieldbyName('INDE_ID').AsString);
-  Str:='select Count(*) as ReSum from STK_STOCKORDER where TENANT_ID='''+InttoStr(Global.TENANT_ID)+''' and COMM_ID='''+IndeID+''' ';
+  Str:='select Count(*) as ReSum from STK_STOCKORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and COMM_ID='''+IndeID+''' ';
   try
     Rs:=TZQuery.Create(nil);
     Rs.Close;

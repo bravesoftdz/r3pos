@@ -17,6 +17,8 @@ CREATE TABLE [MKT_PLANORDER] (
 	[PLAN_ID] [char] (36) NOT NULL ,
         --流水号
 	[GLIDE_NO] [varchar] (20) NOT NULL ,
+        --计划指标<保存为PUB_GOODSINFO各指标的字段名>
+	[KPI_TYPE] [varchar] (10) NULL ,
         --年度
 	[KPI_YEAR] int NULL ,
         --签约日期
@@ -68,38 +70,12 @@ CREATE TABLE [MKT_PLANDATA] (
 	[SEQNO] [int] NOT NULL ,
         --订单号
 	[PLAN_ID] [char] (36) NOT NULL ,
-        --货品代码
-	[GODS_ID] [char] (36) NOT NULL ,
-        --尺码
-	[PROPERTY_01] [varchar] (36) NOT NULL ,
-        --颜色
-	[PROPERTY_02] [varchar] (36) NOT NULL ,
-        --物流跟踪号
-	[LOCUS_NO] [varchar] (36) NULL ,
-        --礼盒跟踪号
-	[BOM_ID] [char] (36)  NULL ,
-        --批号
-	[BATCH_NO] [varchar] (36) NULL ,
-        --是否赠品
-	[IS_PRESENT] [int] NOT NULL,
-        --单位
-	[UNIT_ID] [varchar] (36) NOT NULL ,
+        --指标代码
+	[SORT_ID] [char] (36) NOT NULL ,
         --订划数量
 	[AMOUNT] [decimal](18, 3) NULL ,
-        --原单价
-	[ORG_PRICE] [decimal](18, 3) NULL ,
-        --供货单价
-	[APRICE] [decimal](18, 3) NULL ,
         --销售金额
 	[AMONEY] [decimal](18, 3) NULL ,
-        --折扣率
-	[AGIO_RATE] [decimal](18, 3) NULL ,
-        --折扣额
-	[AGIO_MONEY] [decimal](18, 3) NULL ,
-        --计量单位数量
-	[CALC_AMOUNT] [decimal](18, 3) NULL ,
-        --计划金额
-	[CALC_MONEY] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
 	CONSTRAINT [PK_MKT_PLANDATA] PRIMARY KEY  

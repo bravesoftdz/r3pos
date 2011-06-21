@@ -427,7 +427,6 @@ inherited frmClient: TfrmClient
           Action = actNewCard
           DropdownMenu = PopupMenu2
           Style = tbsDropDown
-          Visible = False
         end
         object But_Print: TToolButton
           Left = 291
@@ -485,9 +484,25 @@ inherited frmClient: TfrmClient
       ImageIndex = 24
       OnExecute = actNewCardExecute
     end
+    object actCancelCard: TAction
+      Caption = #27880#38144#21345
+      OnExecute = actCancelCardExecute
+    end
     object actDeposit: TAction
       Caption = #20805#20540
       OnExecute = actDepositExecute
+    end
+    object actPassword: TAction
+      Caption = #20462#25913#23494#30721
+      OnExecute = actPasswordExecute
+    end
+    object actReturn: TAction
+      Caption = #36864#27454
+      OnExecute = actReturnExecute
+    end
+    object actLossCard: TAction
+      Caption = #25346#22833
+      OnExecute = actLossCardExecute
     end
   end
   object Ds_Client: TDataSource
@@ -592,6 +607,21 @@ inherited frmClient: TfrmClient
     end
     object N5: TMenuItem
       Action = actDeposit
+    end
+    object N6: TMenuItem
+      Action = actReturn
+    end
+    object N7: TMenuItem
+      Action = actLossCard
+    end
+    object N8: TMenuItem
+      Action = actCancelCard
+    end
+    object N9: TMenuItem
+      Caption = '-'
+    end
+    object N11: TMenuItem
+      Action = actPassword
     end
   end
 end

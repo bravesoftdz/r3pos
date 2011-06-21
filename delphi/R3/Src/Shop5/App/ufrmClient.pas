@@ -50,6 +50,15 @@ type
     actDeposit: TAction;
     N5: TMenuItem;
     Excel1: TMenuItem;
+    actCancelCard: TAction;
+    actPassword: TAction;
+    actReturn: TAction;
+    actLossCard: TAction;
+    N6: TMenuItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
+    N9: TMenuItem;
+    N11: TMenuItem;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -81,6 +90,10 @@ type
     procedure actNewCardExecute(Sender: TObject);
     procedure actfrmIntegralExecute(Sender: TObject);
     procedure Excel1Click(Sender: TObject);
+    procedure actReturnExecute(Sender: TObject);
+    procedure actLossCardExecute(Sender: TObject);
+    procedure actPasswordExecute(Sender: TObject);
+    procedure actCancelCardExecute(Sender: TObject);
   private
     sqlstring:string;
     function CheckCanExport:boolean;
@@ -94,7 +107,8 @@ type
 
 implementation
 uses ufrmClientInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport, ufrmIntegralGlide, ufrmExcelFactory,
-     ufrmIntegralGlide_Add, ufrmDeposit, ufrmBasic;//,ufrmSendGsm
+     ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmCancelCard, ufrmReturn, ufrmPassWord,
+     ufrmLossCard, ufrmBasic;//,ufrmSendGsm
 {$R *.dfm}
 
 procedure TfrmClient.actNewExecute(Sender: TObject);
@@ -597,19 +611,44 @@ begin
   inherited;
   if not Cds_Client.Active then exit;
   if Cds_Client.IsEmpty then exit;
-  if Cds_Client.FieldByName('CLIENT_CODE').AsString='' then  Raise Exception.Create('此客户没有会员卡！');
+  //if Cds_Client.FieldByName('CLIENT_CODE').AsString='' then  Raise Exception.Create('此客户没有会员卡！');
   if TfrmDeposit.Open(Cds_Client.FieldByName('CLIENT_ID').AsString,BALANCE) then
   begin
-    {Cds_Client.Edit;
+    Cds_Client.Edit;
     Cds_Client.FieldByName('BALANCE').AsString:=BALANCE;
-    Cds_Client.Post; }
+    Cds_Client.Post; 
   end;
 end;
 
 procedure TfrmClient.actNewCardExecute(Sender: TObject);
+ procedure UpdateToGlobal(IC:string;ID:string);
+   var Temp:TZQuery;
+   begin
+      Temp := Global.GetZQueryFromName('PUB_CLIENTINFO');
+      Temp.Filtered := false;
+      if not Temp.Locate('CLIENT_ID',ID,[]) then
+         Temp.Append
+      else
+         Temp.Edit;
+      Temp.FieldByName('CLIENT_CODE').AsString:=IC;
+      Temp.Post;
+   end;
+var  card,union:string;
 begin
   inherited;
-//
+  if Cds_Client.IsEmpty then Exit;
+
+  if TfrmNewCard.SelectSendCard(Self,Cds_Client.FieldbyName('CLIENT_ID').AsString,'#',Cds_Client.FieldByName('CLIENT_NAME').AsString,1,card,union) then
+    begin
+      if union = '#' then
+        begin
+          Cds_Client.Edit;
+          Cds_Client.FieldByName('CLIENT_CODE').AsString:=card;
+          Cds_Client.Post;
+          UpdateToGlobal(card,Cds_Client.FieldByName('CLIENT_ID').AsString);
+        end;
+        MessageBox(Handle,'发新卡成功！',pchar(Application.Title),MB_OK);
+    end;
 end;
 
 procedure TfrmClient.actfrmIntegralExecute(Sender: TObject);
@@ -871,6 +910,53 @@ begin
     Params.Free;
     cdsTable.Free;
   end;
+end;
+
+procedure TfrmClient.actReturnExecute(Sender: TObject);
+var BALANCE:string;
+begin
+  inherited;
+  if not Cds_Client.Active then exit;
+  if Cds_Client.IsEmpty then exit;
+  if TfrmReturn.Open(Cds_Client.FieldByName('CLIENT_ID').AsString,BALANCE) then
+  begin
+    Cds_Client.Edit;
+    Cds_Client.FieldByName('BALANCE').AsString:=BALANCE;
+    Cds_Client.Post;
+  end;
+end;
+
+procedure TfrmClient.actLossCardExecute(Sender: TObject);
+var CardNo,CardName:String;
+begin
+  inherited;
+  if not Cds_Client.Active then exit;
+  if Cds_Client.IsEmpty then exit;
+
+  if TfrmLossCard.SelectCard(Self,Cds_Client.FieldbyName('CLIENT_ID').AsString,'#',CardNo,CardName) then
+    begin
+      MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"挂失成功！'),pchar(Application.Title),MB_OK);
+    end;
+end;
+
+procedure TfrmClient.actPasswordExecute(Sender: TObject);
+begin
+  inherited;
+  if (not Cds_Client.Active) and (Cds_Client.IsEmpty) then exit;
+  TfrmPassWord.SelectCard(Self,Cds_Client.FieldByName('CLIENT_ID').AsString,IntToStr(Global.TENANT_ID));
+end;
+
+procedure TfrmClient.actCancelCardExecute(Sender: TObject);
+var CardNo,CardName:String;
+begin
+  inherited;
+  if not Cds_Client.Active then exit;
+  if Cds_Client.IsEmpty then exit;
+
+  if TfrmCancelCard.SelectCard(Self,Cds_Client.FieldbyName('CLIENT_ID').AsString,'#',CardNo,CardName) then
+    begin
+      MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"注销成功！'),pchar(Application.Title),MB_OK);
+    end;
 end;
 
 end.

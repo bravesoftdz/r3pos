@@ -18,7 +18,7 @@ CREATE TABLE [MKT_PLANORDER] (
         --流水号
 	[GLIDE_NO] [varchar] (20) NOT NULL ,
         --计划指标<保存为PUB_GOODSINFO各指标的字段名>
-	[KPI_TYPE] [varchar] (10) NULL ,
+	[KPI_FLAG] [varchar] (10) NULL ,
         --年度
 	[KPI_YEAR] int NULL ,
         --签约日期
@@ -72,9 +72,9 @@ CREATE TABLE [MKT_PLANDATA] (
 	[PLAN_ID] [char] (36) NOT NULL ,
         --指标代码
 	[SORT_ID] [char] (36) NOT NULL ,
-        --订划数量
+        --订划销量
 	[AMOUNT] [decimal](18, 3) NULL ,
-        --销售金额
+        --计划金额
 	[AMONEY] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
@@ -92,6 +92,129 @@ CREATE INDEX IX_MKT_PLANDATA_GODS_ID ON MKT_PLANDATA(TENANT_ID,GODS_ID);
 --考核类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','年度考核','KPI_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','季度考核','KPI_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按实销量','KPI_TYPE','00',5497000);
+
+--考核数据
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按销量完成率','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按金额完成率','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按完成销量','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','按完成金额','KPI_DATA','00',5497000);
+
+--考核指标
+CREATE TABLE [MKT_KPI_OPTION] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --序号
+	[SEQNO] [int] NOT NULL ,
+        --订单号
+	[PLAN_ID] [char] (36) NOT NULL ,
+        --指标代码
+	[SORT_ID] [char] (36) NOT NULL ,
+        --考核类型
+	[KPI_TYPE] [char] (1) NOT NULL ,
+        --标准折扣
+	[KPI_AGIO] [decimal](18, 3) NULL ,
+	
+        --上半年完成率
+	[KPI_Y_DATA] char(1) NULL ,
+	[KPI_Y1_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_Y1_AGIO] [decimal](18, 3) NULL ,
+        --上半年完成率
+	[KPI_Y2_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_Y2_AGIO] [decimal](18, 3) NULL ,
+        --上半年完成率
+	[KPI_Y3_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_Y3_AGIO] [decimal](18, 3) NULL ,
+	
+        --下半年完成率
+	[KPI_L_DATA] char(1) NULL ,
+	[KPI_L1_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_L1_AGIO] [decimal](18, 3) NULL ,
+        --下半年完成率
+	[KPI_L2_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_L2_AGIO] [decimal](18, 3) NULL ,
+        --下半年完成率
+	[KPI_L3_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_L3_AGIO] [decimal](18, 3) NULL ,
+	
+        --第一季度完成率
+	[KPI_G1_DATA] char(1) NULL ,
+	[KPI_G11_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G11_AGIO] [decimal](18, 3) NULL ,
+        --第一季度完成率
+	[KPI_G12_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G12_AGIO] [decimal](18, 3) NULL ,
+        --第一季度完成率
+	[KPI_G13_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G13_AGIO] [decimal](18, 3) NULL ,
+
+        --第二季度完成率
+	[KPI_G2_DATA] char(1) NULL ,
+	[KPI_G21_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G21_AGIO] [decimal](18, 3) NULL ,
+	[KPI_G22_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G22_AGIO] [decimal](18, 3) NULL ,
+	[KPI_G23_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G23_AGIO] [decimal](18, 3) NULL ,
+
+        --第三季度完成率
+	[KPI_G3_DATA] char(1) NULL ,
+	[KPI_G31_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G31_AGIO] [decimal](18, 3) NULL ,
+	[KPI_G32_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G32_AGIO] [decimal](18, 3) NULL ,
+	[KPI_G33_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G33_AGIO] [decimal](18, 3) NULL ,
+
+        --第四季度完成率
+	[KPI_G4_DATA] char(1) NULL ,
+	[KPI_G41_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G41_AGIO] [decimal](18, 3) NULL ,
+	[KPI_G42_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G42_AGIO] [decimal](18, 3) NULL ,
+	[KPI_G43_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_G43_AGIO] [decimal](18, 3) NULL ,
+	
+        --时间段
+	[KPI_D1_ST] [int] NULL ,
+	[KPI_D1_ED] [int] NULL ,
+	[KPI_D1_MNY] [decimal](18, 3) NULL ,
+	
+	[KPI_D2_ST] [int] NULL ,
+	[KPI_D2_ED] [int] NULL ,
+	[KPI_D2_MNY] [decimal](18, 3) NULL ,
+
+	[KPI_D3_ST] [int] NULL ,
+	[KPI_D3_ED] [int] NULL ,
+	[KPI_D3_MNY] [decimal](18, 3) NULL ,
+	
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+	CONSTRAINT [PK_MKT_KPI_OPTION] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[PLAN_ID],
+		[SEQNO]
+	)
+);
 
 --考核区间
 CREATE TABLE [MKT_KPI_FORHEAER] (
@@ -104,7 +227,7 @@ CREATE TABLE [MKT_KPI_FORHEAER] (
         --年度
 	[KPI_YEAR] int NULL ,
         --考核类型
-	[KPI_TYPE] [char] (36) NOT NULL ,
+	[KPI_TYPE] [char] (1) NOT NULL ,
         --序号<对季度考核时，1为第一季度,其他都为0>
 	[SEQNO] [int] NOT NULL ,
         --开始日期
@@ -153,11 +276,11 @@ CREATE TABLE [MKT_KPI_FORDATA] (
 	[PLAN_ID] [char] (36) NOT NULL ,
         --考核ID
 	[KPI_ID] [char] (36) NOT NULL ,
-        --货品代码
-	[GODS_ID] [char] (36) NOT NULL ,
+        --指标代码
+	[SORT_ID] [char] (36) NOT NULL ,
         --订划内销量
 	[SALE_AMT] [decimal](18, 3) NULL ,
-        --订划内销量额
+        --订划内金额
 	[SALE_MNY] [decimal](18, 3) NULL ,
         --完成比率
 	[KPI_RATE] [decimal](18, 3) NULL ,

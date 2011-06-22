@@ -45,6 +45,7 @@ var
 begin
   inherited;
 
+{
   Str:='select TENANT_ID,CODE_ID,CODE_NAME,CODE_SPELL,USEFLAG,SEQ_NO from '+
        '(select j.CODE_ID,(case when SEQ_NO>0 then SEQ_NO else 40 end)as SEQ_NO,b.TENANT_ID,'+
         '(case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end) as CODE_NAME,b.CODE_SPELL,'+
@@ -53,8 +54,8 @@ begin
        ' left outer join (select CODE_ID,CODE_NAME,CODE_SPELL,TENANT_ID,SEQ_NO from PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') b '+
        ' on j.CODE_ID=b.CODE_ID '+
        ' where j.CODE_ID not in (''1'',''3'',''7'',''8'') and j.TYPE_CODE=''SORT_TYPE'')g order by SEQ_NO,cast(CODE_ID as int)';
+}
 
-{
   Str:=
     'select * from  '+
     ' (select b.TENANT_ID,j.CODE_ID,'+
@@ -66,7 +67,6 @@ begin
     '   on j.CODE_ID=b.CODE_ID '+
     '  where j.CODE_ID not in (''1'',''3'',''7'',''8'') and j.TYPE_CODE=''SORT_TYPE'') tmp '+
     ' order by SEQ_NO,cast(CODE_ID as int) ';
-}
   SelectSQL.Text:=Str;
 end;
 

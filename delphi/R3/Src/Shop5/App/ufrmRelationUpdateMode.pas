@@ -44,11 +44,12 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure RB_ViewAllClick(Sender: TObject);
     procedure Grid_RelationDblClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
-    FAllcount, //当前返回总记录数
-    FNotcount, //未对上
-    FNewcount, //新对上
-    FDtcount,  //重复条码
+    FAllcount,  //当前返回总记录数
+    FNotcount,  //未对上
+    FNewcount,  //新对上
+    FDtcount,   //重复条码
     FHandcount,  //手工对照
     FOldCount: integer;  //原对上
     function  DoUpdateRelation: Boolean; //更新对照关系
@@ -294,8 +295,6 @@ procedure TfrmRelationUpdateMode.RB_ViewAllClick(Sender: TObject);
 begin
   inherited;
   DoFilterResultData;
-  //判断并添加菜单
-  AddMenu;
   //设置菜单是否显示
   SetChoice;
 end;
@@ -355,51 +354,60 @@ end;
 
 procedure TfrmRelationUpdateMode.AddMenu;
 var
+  i: integer;
   p: TPopupMenu;
   Item :TMenuItem;
-  Cmp: TComponent;
-  IsExists: Boolean;  
+  CurName: string;
+  IsCopy,IsHand,IsCancel: Boolean;
 begin
   p := Grid_Relation.PopupMenu;
   if p=nil then Exit;
-  //判断[取消手工对照]
-  IsExists:=False;
-  Cmp:=p.FindComponent('CopyToClipboard');
-  if (Cmp<>nil) and (Cmp is TMenuItem) and (Cmp.Tag=11) then
-    IsExists:=true;
-  if not IsExists then
+  IsCopy:=False;
+  IsHand:=False;
+  IsCancel:=False;
+  for i:=0 to p.Items.Count-1 do
+  begin
+    CurName:=trim(p.Items[i].Caption);
+    if (not IsCopy) and (Pos('复制',CurName)>0) then   //判断复制
+      IsCopy:=true;
+    if (not IsHand) and (Pos('手工对照卷烟',CurName)>0) then   //判断复制
+      IsCopy:=true;
+    if (not IsCancel) and (Pos('查看手工对照关系',CurName)>0) then   //判断复制
+      IsCopy:=true;
+  end;
+
+  {
+  if not IsCopy then
   begin
     Item := TMenuItem.Create(nil);
-    Item.Tag:=10;
     Item.Caption := '-';
     p.Items.Add(Item);
     Item := TMenuItem.Create(nil);
     Item.Caption := '复制';
-    Item.Tag:=11;
-    Item.Name:='CopyToClipboard';
     Item.OnClick:=CopyCellToClipboard;
     p.Items.Add(Item);
-  end;
+  end; }
   
-  //判断[手工对照卷烟是否存在]
-  IsExists:=False;
-  Cmp:=p.FindComponent('AddHandRelation');
-  if (Cmp<>nil) and (Cmp is TMenuItem) and (Cmp.Tag=13) then  
-    IsExists:=true;
-  if not IsExists then
+  if not IsHand then   //判断[手工对照卷烟是否存在]
   begin
     Item := TMenuItem.Create(nil);
-    Item.Tag:=12;
     Item.Caption := '-';
     p.Items.Add(Item);
     Item := TMenuItem.Create(nil);
     Item.Caption := '手工对照卷烟';
-    Item.Tag:=13;
-    Item.Name:='AddHandDz';
     Item.OnClick:=HandRelation;
     p.Items.Add(Item);
   end;
-  
+  if not IsCancel then   //判断[查看手工对照关系]
+  begin
+    Item := TMenuItem.Create(nil);
+    Item.Caption := '-';
+    p.Items.Add(Item);
+    Item := TMenuItem.Create(nil);
+    Item.Caption := '查看手工对照关系';
+    Item.OnClick:=CancelHandRelation;
+    p.Items.Add(Item);
+  end;    
 end;
 
 procedure TfrmRelationUpdateMode.HandRelation(Sender: TObject);
@@ -458,6 +466,7 @@ var
   Pm: TPopupMenu;
   Item: TMenuItem;
   SetCol: TColumnEh;
+  IsCancle: Boolean;
 begin
   SetCol:=FindColumn(Grid_Relation,'FLAG');
   if SetCol<>nil then
@@ -465,13 +474,15 @@ begin
     SetCol.Visible:=False;
     SetCol.Visible:=(RB_ViewNot.Visible and RB_ViewNot.Checked) or
                     (RB_DT.Visible and RB_DT.Checked);  //是否显示
-
+    IsCancle:=(RB_Hander.Visible and RB_Hander.Checked);  //手工对照显示标记
     Pm:=Grid_Relation.PopupMenu;
     for i:=0 to Pm.Items.Count-1 do
     begin
       Item:=Pm.Items[i];
       if Pos('手工对照卷烟', Item.Caption)>0 then
-        Item.Enabled:=SetCol.Visible;
+        Item.Enabled:=SetCol.Visible; 
+      if Pos('查看手工对照关系', Item.Caption)>0 then
+        Item.Enabled:=IsCancle;
     end;
   end;
 end;
@@ -479,11 +490,12 @@ end;
 procedure TfrmRelationUpdateMode.Grid_RelationDblClick(Sender: TObject);
 var
   i: integer;
-  R3GodsInfo,MainGodsInfo,Cnd,MainID,COMM_ID,vFields: string;
   Rs: TZQuery;
   StrList: TStringList;
+  R3GodsInfo,MainGodsInfo,Cnd,MainID,COMM_ID,vFields: string;  
 begin
   //手工对照查看对照关系：
+ {
   if (RB_Hander.Visible) and (RB_Hander.Checked) then
   begin
     try
@@ -562,6 +574,7 @@ begin
       StrList.Free;
     end;
   end;
+  }
 end;
 
 procedure TfrmRelationUpdateMode.CopyCellToClipboard(Sender: TObject);
@@ -600,38 +613,32 @@ end;
 
 procedure TfrmRelationUpdateMode.CancelHandRelation(Sender: TObject);
 var
-  CName: string;
+  CName,sID: string;
   InObj: TRecord_;
 begin
-{
   if trim(CdsTable.fieldbyName('GODS_CODE').AsString)='' then
     Raise Exception.Create('请先选择手工对照的卷烟');
-  try
-    InObj:=TRecord_.Create;
-    if TfrmRelationHandSet.FrmShowCancel(InObj)=1 then
+
+  InObj:=TRecord_.Create;
+  InObj.ReadFromDataSet(CdsTable);
+  sID:=trim(InObj.fieldbyName('SECOND_ID').AsString);
+  if TfrmRelationHandSet.FrmShowCancel(InObj)=1 then
+  begin
+    //重新对照后在返回结果
+    if DoUpdateRelation then
     begin
-      CdsTable.Filtered:=False;
-      CdsTable.DisableControls;
-      CdsTable.First;
-      while not CdsTable.Eof do
-      begin
-        if CdsTable.FieldByName('FLAG').AsString='1' then
-        begin
-          CdsTable.Edit;
-          CdsTable.FieldByName('FLAG').AsString:='0';
-          CdsTable.FieldByName('Update_Flag').AsString:='5';
-          CdsTable.FieldByName('UpdateCase').AsString:='手工对照';
-          CdsTable.Post;
-        end;
-        CdsTable.Next;
-      end;
-      finally
-        CdsTable.EnableControls;
-        DoFilterResultData;
-      end;
+      // SetPageTable(1);
+      SetUpdateModeResult;
+      RB_Hander.Checked:=true;
     end;
   end;
- }
+end;
+
+procedure TfrmRelationUpdateMode.FormShow(Sender: TObject);
+begin
+  inherited;
+  //判断并添加菜单
+  AddMenu;
 end;
 
 end.

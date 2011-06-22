@@ -88,6 +88,15 @@ inherited frmRelationHandSet: TfrmRelationHandSet
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object edt_R3Gods: TcxTextEdit
+      Left = 108
+      Top = 6
+      Width = 355
+      Height = 20
+      TabOrder = 2
+      Visible = False
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+    end
     object R3_GODS_ID: TzrComboBoxList
       Tag = 100
       Left = 108
@@ -144,6 +153,8 @@ inherited frmRelationHandSet: TfrmRelationHandSet
       Top = 29
       Width = 355
       Height = 20
+      Properties.ReadOnly = True
+      Style.Color = 14737632
       TabOrder = 1
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end

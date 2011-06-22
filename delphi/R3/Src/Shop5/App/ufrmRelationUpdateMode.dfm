@@ -7,6 +7,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
   ClientWidth = 413
   OldCreateOrder = True
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   object TitlePanel: TPanel [0]

@@ -59,7 +59,9 @@ type
     function  GetUpdateMode: integer;  //返回刷新模式
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure AddMenu;
-    procedure HandRelation(Sender: TObject);
+    procedure HandRelation(Sender: TObject);  //手工对照
+    procedure CancelHandRelation(Sender: TObject);  //取消对照
+    procedure CopyCellToClipboard(Sender: TObject); //复制单元格到剪贴板
     procedure SetChoice;
   public
     class function FrmShow: Integer;
@@ -289,27 +291,13 @@ begin
 end;
 
 procedure TfrmRelationUpdateMode.RB_ViewAllClick(Sender: TObject);
-var
-  i,j: integer;
-  CurCaption: string;
 begin
   inherited;
   DoFilterResultData;
-  SetChoice; 
-  if ((RB_ViewNot.Visible) and (RB_ViewNot.Checked)) or ((RB_DT.Visible) and (RB_DT.Checked)) then
-  begin
-    for i:=0 to Grid_Relation.PopupMenu.Items.Count-1 do
-    begin
-      CurCaption:=trim(Grid_Relation.PopupMenu.Items[i].Caption);
-      if Pos('手工对照',CurCaption)>0 then
-      begin
-        j:=1;
-        break;
-      end;
-    end;
-    if j<>1 then 
-      AddMenu;
-  end;
+  //判断并添加菜单
+  AddMenu;
+  //设置菜单是否显示
+  SetChoice;
 end;
 
 procedure TfrmRelationUpdateMode.SetResultMsg;
@@ -367,18 +355,51 @@ end;
 
 procedure TfrmRelationUpdateMode.AddMenu;
 var
-  p:TPopupMenu;
+  p: TPopupMenu;
   Item :TMenuItem;
+  Cmp: TComponent;
+  IsExists: Boolean;  
 begin
   p := Grid_Relation.PopupMenu;
   if p=nil then Exit;
-  Item := TMenuItem.Create(nil);
-  Item.Caption := '-';
-  p.Items.Add(Item);
-  Item := TMenuItem.Create(nil);
-  Item.Caption := '手工对照卷烟';
-  Item.OnClick:=HandRelation;
-  p.Items.Add(Item);
+  //判断[取消手工对照]
+  IsExists:=False;
+  Cmp:=p.FindComponent('CopyToClipboard');
+  if (Cmp<>nil) and (Cmp is TMenuItem) and (Cmp.Tag=11) then
+    IsExists:=true;
+  if not IsExists then
+  begin
+    Item := TMenuItem.Create(nil);
+    Item.Tag:=10;
+    Item.Caption := '-';
+    p.Items.Add(Item);
+    Item := TMenuItem.Create(nil);
+    Item.Caption := '复制';
+    Item.Tag:=11;
+    Item.Name:='CopyToClipboard';
+    Item.OnClick:=CopyCellToClipboard;
+    p.Items.Add(Item);
+  end;
+  
+  //判断[手工对照卷烟是否存在]
+  IsExists:=False;
+  Cmp:=p.FindComponent('AddHandRelation');
+  if (Cmp<>nil) and (Cmp is TMenuItem) and (Cmp.Tag=13) then  
+    IsExists:=true;
+  if not IsExists then
+  begin
+    Item := TMenuItem.Create(nil);
+    Item.Tag:=12;
+    Item.Caption := '-';
+    p.Items.Add(Item);
+    Item := TMenuItem.Create(nil);
+    Item.Caption := '手工对照卷烟';
+    Item.Tag:=13;
+    Item.Name:='AddHandDz';
+    Item.OnClick:=HandRelation;
+    p.Items.Add(Item);
+  end;
+  
 end;
 
 procedure TfrmRelationUpdateMode.HandRelation(Sender: TObject);
@@ -418,7 +439,7 @@ begin
         begin
           CdsTable.Edit;
           CdsTable.FieldByName('FLAG').AsString:='0';
-          CdsTable.FieldByName('Update_Flag').AsString:='2';
+          CdsTable.FieldByName('Update_Flag').AsString:='5';
           CdsTable.FieldByName('UpdateCase').AsString:='手工对照';
           CdsTable.Post;
         end;
@@ -541,7 +562,76 @@ begin
       StrList.Free;
     end;
   end;
+end;
 
+procedure TfrmRelationUpdateMode.CopyCellToClipboard(Sender: TObject);
+var
+  pmem: Pchar;
+  CopyStr: Pchar;
+  hMem: THandle;
+  ColName: string;
+  GridDs: TDataSet;
+begin
+  ColName:=trim(Grid_Relation.SelectedField.FieldName);
+  GridDs:=Grid_Relation.DataSource.DataSet;
+  if GridDs.FindField(ColName)<>nil then
+  begin
+    CopyStr:=Pchar(trim(GridDs.FindField(ColName).AsString));
+    if CopyStr<>'' then
+    begin
+      hMem:=GlobalAlloc(GHND or GMEM_DDESHARE,20);
+      if hMem <> 0 then
+      begin
+        pMem:=GlobalLock(hMem);  {加锁全局内存块}
+        if pMem <> nil then
+        begin
+          StrCopy(pMem,CopyStr); {向全局内存块写入数据}
+          GlobalUnlock(hMem);    {解锁全局内存块}
+        end;
+      end;
+      OpenClipboard(0);
+      EmptyClipboard();
+      SetClipboardData(CF_TEXT,hMem);
+      CloseClipboard();
+      GlobalFree(hMem);
+    end;
+  end;
+end;
+
+procedure TfrmRelationUpdateMode.CancelHandRelation(Sender: TObject);
+var
+  CName: string;
+  InObj: TRecord_;
+begin
+{
+  if trim(CdsTable.fieldbyName('GODS_CODE').AsString)='' then
+    Raise Exception.Create('请先选择手工对照的卷烟');
+  try
+    InObj:=TRecord_.Create;
+    if TfrmRelationHandSet.FrmShowCancel(InObj)=1 then
+    begin
+      CdsTable.Filtered:=False;
+      CdsTable.DisableControls;
+      CdsTable.First;
+      while not CdsTable.Eof do
+      begin
+        if CdsTable.FieldByName('FLAG').AsString='1' then
+        begin
+          CdsTable.Edit;
+          CdsTable.FieldByName('FLAG').AsString:='0';
+          CdsTable.FieldByName('Update_Flag').AsString:='5';
+          CdsTable.FieldByName('UpdateCase').AsString:='手工对照';
+          CdsTable.Post;
+        end;
+        CdsTable.Next;
+      end;
+      finally
+        CdsTable.EnableControls;
+        DoFilterResultData;
+      end;
+    end;
+  end;
+ }
 end;
 
 end.

@@ -28,7 +28,7 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
     object LblMsg: TLabel
       Left = 342
       Top = 16
-      Width = 38
+      Width = 65
       Height = 12
       Caption = #21047#26032#26041#24335#65306
       Font.Charset = GB2312_CHARSET

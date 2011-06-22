@@ -41,7 +41,7 @@ type
     procedure Grid_RelationDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh;State: TGridDrawState);
     procedure Grid_RelationCellClick(Column: TColumnEh);
     procedure btnOKClick(Sender: TObject);
-    function  CheckIsExistsRelation: Boolean;
+    function  CheckIsExistsRelation(var MsgStr: string): Boolean;
   private
     ReRun: integer;
     FSecond_IDS: string;
@@ -49,6 +49,7 @@ type
     procedure InitParams(vData: OleVariant);
   public
     class function FrmShow(vData: OleVariant): Integer;
+    class function FrmShowCancel(Aobj: TRecord_): Integer;
   end;
 
 implementation
@@ -157,6 +158,8 @@ begin
 end;
 
 procedure TfrmRelationHandSet.btnOKClick(Sender: TObject);
+var
+  Msg: string;
 begin
   if R3_GODS_ID.AsString='' then raise Exception.Create('请选择R3的商品');
   //判断当前选入的是否已存在对照关系：
@@ -165,7 +168,8 @@ begin
   Factor.Open(SaveQry);
 
   //编辑前判断当前所选商品是否已在供应两
-  if not CheckIsExistsRelation then Exit; 
+  CheckIsExistsRelation(Msg);
+  if MessageBox(Handle,pChar(Msg),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Abort;
 
   //保存
   SaveQry.Edit;
@@ -200,24 +204,22 @@ begin
   end;
 end;
 
-function TfrmRelationHandSet.CheckIsExistsRelation: Boolean;
+function TfrmRelationHandSet.CheckIsExistsRelation(var MsgStr: string): Boolean;
 var
   Rs: TZQuery;
   Str,COMM_ID: string;
 begin
+  result:=false;
   if SaveQry.FieldByName('ROWS_ID').AsString<>'' then
   begin
     COMM_ID:=trim(SaveQry.FieldByName('COMM_ID').AsString);
-    if COMM_ID<>'' then //是手工对照
-      Str:='select * from INF_GOODS_RELATION where SECOND_ID in ('''+stringReplace(COMM_ID,',',''',''',[rfReplaceAll])+''')'
-    else
-      Str:='select * from INF_GOODS_RELATION where SECOND_ID='''+trim(SaveQry.FieldByName('SECOND_ID').AsString)+''' ' ;
     try
       Rs:=TZQuery.Create(nil);
-      Rs.Close;
-      Rs.SQL.Text:=Str;
+      if COMM_ID<>'' then //是手工对照
+        Rs.SQL.Text:='select * from PUB_GOODS_RELATION where SECOND_ID in ('''+stringReplace(COMM_ID,',',''',''',[rfReplaceAll])+''')'
+      else
+        Rs.SQL.Text:='select * from PUB_GOODS_RELATION where SECOND_ID='''+trim(SaveQry.FieldByName('SECOND_ID').AsString)+''' ' ;
       Factor.Open(Rs);
-      Str:='您选择卷烟〖'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'〗已存在卷烟供应链, 真的要覆盖吗？';
       if Rs.RecordCount>0 then
       begin
         COMM_ID:='';
@@ -235,20 +237,26 @@ begin
           Str:='您选择卷烟〖'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'〗已存在对照关系：'+#13+COMM_ID+#13+'， 真的要覆盖吗？';
         end else
         if Rs.RecordCount=1 then
+        begin
           Str:='您选择卷烟〖'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'〗已存在对照关系：'+#13+
-               '         编码:'+Rs.FieldbyName('GODS_CODE').AsString+' ，名称：'+Rs.FieldbyName('GODS_NAME').AsString+'，条条码：'+Rs.FieldbyName('PACK_BARCODE').AsString+
-               #13+'， 真的要覆盖吗？';
+               '        编码:'+Rs.FieldbyName('GODS_CODE').AsString+' ，名称：'+Rs.FieldbyName('GODS_NAME').AsString+'，条条码：'+Rs.FieldbyName('PACK_BARCODE').AsString+#13+'， 真的要覆盖吗？';
+        end;
       end;
-      if MessageBox(Handle,pChar(Str),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then
-        Exit;
+      result:=true;
     finally
       Rs.Free;
     end;
   end else
   begin
-    if MessageBox(Handle,pChar('您选择卷烟“'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'”未加入卷烟供应链, 确定要加入吗？'),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then
-      Exit;
+    Str:='您选择卷烟“'+NT_GOODSINFO.FieldByName('GODS_NAME').AsString+'”未加入卷烟供应链, 确定要加入吗？';
+    if MessageBox(Handle,pChar(Str),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Abort;
+    result:=true;
   end;
+end;
+
+class function TfrmRelationHandSet.FrmShowCancel(Aobj: TRecord_): Integer;
+begin
+
 end;
 
 end.

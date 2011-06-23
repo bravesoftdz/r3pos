@@ -144,7 +144,6 @@ type
     class function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
     class function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
-    class function GetR3ToRimUnit_ID(iDbType:integer; UNIT_ID: string): string;     //返回单位换算
 
     //数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase 3: access  4: db2
     property DbType:Integer read FDbType write SetDbType;
@@ -488,6 +487,8 @@ begin
     except
       on E:Exception do
       begin
+        HasError:=true;
+        ErrorMsg:=PlugIntf.GetLastError;
         Raise Exception.Create(Pchar('PlugIntf.Open:('+TZQuery(DataSet).SQL.Text+') 错误：'+E.Message));
       end;
     end;
@@ -592,31 +593,9 @@ var
   vYear,vMonth,vDay,vHour,vMin, vSec,vMSec: Word;
 begin
   DecodeDate(Date(), vYear, vMonth,vDay);
-  result:=FormatFloat('0000',vYear)+FormatFloat('00',vMonth)+FormatFloat('00',vDay);
+  result:=FormatFloat('0000',vYear)+'-'+FormatFloat('00',vMonth)+'-'+FormatFloat('00',vDay);  //10位
   DecodeTime(Time(), vHour, vMin, vSec, vMSec);
-  result:=result+'_'+FormatFloat('00',vHour)+':'+FormatFloat('00',vMin)+':'+FormatFloat('00',vSec);
-end;
-
-class function TBaseSyncFactory.GetR3ToRimUnit_ID(iDbType: integer; UNIT_ID: string): string;
-begin
-  case iDbType of
-   0,4:
-    begin
-      Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then ''02'' '+
-                   ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then ''03'' '+
-               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
-               ' else ''01'' end)';
-    end;
-   1:
-    begin
-      Result:=' DECODE('+UNIT_ID+',''13F817A7-9472-48CF-91CD-27125E077FEB'',''02'',''95331F4A-7AD6-45C2-B853-C278012C5525'',''03'',''93996CD7-B043-4440-9037-4B82BB5207DA'',''04'',''01'')';
-    end;
-  end;
-   {  Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then ''02'' '+
-               ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then ''03'' '+
-               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
-               ' else ''01'' end)';
-}
+  result:=result+' '+FormatFloat('00',vHour)+':'+FormatFloat('00',vMin)+':'+FormatFloat('00',vSec);
 end;
 
 procedure TBaseSyncFactory.SetHasError(const Value: boolean);

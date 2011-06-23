@@ -76,8 +76,7 @@ begin
   //返回Rim烟草公司ID,零售户ID
   SetRimORGAN_CUST_ID(TENANT_ID,SHOP_ID, COM_ID, CUST_ID);
 
-  if COM_ID='' then Raise Exception.Create('R3企业ID［'+TENANT_ID+'］没有找到RIM系统烟草公司！');
-  if CUST_ID='' then Raise Exception.Create('R3门店ID［'+SHOP_ID+'］没有找到RIM系统零售户！'); //写异常日志;
+  if (COM_ID='') or (CUST_ID='') then Raise Exception.Create('R3门店ID［'+SHOP_ID+'］没有找到RIM系统零售户［许可证号没对应上］！');  
 
   try
     {== 中间表是作为接口，相应系统共用，此处处理: 主表作为查询显示下载列表显示使用 ==}

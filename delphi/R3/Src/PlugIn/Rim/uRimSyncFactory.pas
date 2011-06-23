@@ -210,12 +210,22 @@ end;
 
 function TRimSyncFactory.GetRimCOM_ID(TENANT_ID: string): string;
 var
+  TenID: string;
   Rs: TZQuery;
 begin
   try
     try
       Rs:=TZQuery.Create(nil);
-      Rs.SQL.Text:='select A.ORGAN_ID as ORGAN_ID from RIM_PUB_ORGAN A,CA_TENANT B where B.LOGIN_NAME=A.ORGAN_CODE and B.TENANT_ID='+TENANT_ID+' ';
+      if SyncType=3 then  //前台门店终端提交上报[先将门店的企业ID 根据供应链ID换成 烟草公司的企业ID]
+      begin
+        Rs.Close;
+        Rs.SQL.Text:='select TENANT_ID from CA_RELATIONS where RELATION_ID=1000006 and RELATI_ID ='+TENANT_ID+' ';
+        if Open(Rs) then
+          TenID:=trim(Rs.Fields[0].AsString);
+      end else
+        TenID:=TENANT_ID;  
+      Rs.Close;
+      Rs.SQL.Text:='select A.ORGAN_ID as ORGAN_ID from RIM_PUB_ORGAN A,CA_TENANT B where B.LOGIN_NAME=A.ORGAN_CODE and B.TENANT_ID='+TenID+' ';
       if Open(Rs) then
         result:=trim(Rs.Fields[0].AsString)
     except

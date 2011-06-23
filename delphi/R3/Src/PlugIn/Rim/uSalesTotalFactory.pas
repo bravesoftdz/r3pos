@@ -44,7 +44,6 @@ begin
 
   //2011.06.12 Add从Rim下载销售限价、限量定义参数值
   DownRimParamsToR3;
-
   {------开始运行日志------}
   BeginLogRun;
   try
@@ -127,7 +126,8 @@ begin
            ' where AA.LICENSE_CODE=BB.LICENSE_CODE and AA.COM_ID='''+COM_ID+''') ';
   str:='update CA_RELATIONS A '+
        ' set (SINGLE_LIMIT,SALE_LIMIT,CHANGE_PRICE,TIME_STAMP)='+
-            '(select single_sale_limit*10.0,sale_limit*10.0,'+CHANGE_PRICE+' as IS_CHG_PRI,'+GetTimeStamp(DbType)+' as TIME_STAMP from '+RimCust+' B where A.RELATI_ID=B.TENANT_ID) '+
+            '(select single_sale_limit*10.0,sale_limit*10.0,'+CHANGE_PRICE+' as IS_CHG_PRI,'+GetTimeStamp(DbType)+' as TIME_STAMP from '+RimCust+' B '+
+            ' where A.RELATI_ID=B.TENANT_ID) '+
        ' where A.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and exists(select 1 from '+RimCust+' B where A.RELATI_ID=B.TENANT_ID)  ';
 
   {------开始运行日志------}
@@ -233,7 +233,7 @@ begin
   if PlugIntf.ExecSQL(PChar('delete from '+Session+'INF_SALESUM'),iRet)<>0 then Raise Exception.Create('删除中间表出错:'+PlugIntf.GetLastError);
   Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_ID,SALES_DATE,QTY_ORD,AMT,CO_NUM) '+
     'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,B.UNIT_ID,'+vSALES_DATE+' as SALES_DATE,'+
-    ' (case when '+GetDefaultUnitCalc+'<>0 then A.CALC_AMOUNT/('+GetDefaultUnitCalc+') else A.CALC_AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+RimParam.CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
+    ' (case when '+GetDefaultUnitCalc+'<>0 then cast(A.CALC_AMOUNT as decimal(18,3))/('+GetDefaultUnitCalc+') else A.CALC_AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+RimParam.CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
     ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售汇总中间表出错:'+PlugIntf.GetLastError);

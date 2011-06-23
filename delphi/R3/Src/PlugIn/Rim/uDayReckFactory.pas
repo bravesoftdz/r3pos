@@ -145,7 +145,7 @@ begin
     else
     begin
       rs.Close;
-      rs.SQL.Text :=  'select value from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE=''USING_DATE'' ';
+      rs.SQL.Text := 'select value from SYS_DEFINE where TENANT_ID='+TENANT_ID+' and DEFINE=''USING_DATE'' ';
       Open(rs);
       if rs.Fields[0].asString<>'' then
         bDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
@@ -1240,7 +1240,7 @@ begin
     BeginTrans;
     //将月台帐上报的标记位:COMM的第1位设置为：1
     Str:='update RCK_GOODS_DAYS A set COMM='+GetUpCommStr(DbType)+'  '+
-         ' where A.TENANT_ID='''+RimParam.TenID+''' and A.SHOP_ID in ('+SHOP_IDS+') and '+ReckDate+'<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and  '+
+         ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and '+ReckDate+'<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and  '+
          ' exists(select 1 from '+Session+'INF_RECKDAY INF where A.TENANT_ID=INF.TENANT_ID and '+ReckDate+'=INF.RECK_DATE and A.GODS_ID=INF.GODS_ID)';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐通信标记:'+PlugIntf.GetLastError);
 

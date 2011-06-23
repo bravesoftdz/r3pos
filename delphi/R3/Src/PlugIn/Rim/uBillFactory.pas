@@ -357,7 +357,7 @@ begin
     BeginTrans;
     //将月台帐上报的标记位:COMM的第1位设置为：1
     Str:='update RCK_GOODS_MONTH A set COMM='+GetUpCommStr(DbType)+'  '+
-         ' where A.TENANT_ID='''+RimParam.TenID+''' and A.SHOP_ID in ('+SHOP_IDS+') and '+
+         ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and '+
          ' exists(select 1 from '+Session+'INF_RECKMONTH INF where A.TENANT_ID=INF.TENANT_ID and '+ReckMonth+'=INF.RECK_MONTH and A.GODS_ID=INF.GODS_ID)';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新月台帐通信标记:'+PlugIntf.GetLastError);
     
@@ -424,7 +424,7 @@ begin
   BeginPrepare; //取时间戳和删除临时表数据
 
   str:='insert into '+Session+'INF_SALE(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,SALES_ID,SALE_DATE,CUST_CODE)'+
-       'select '+RimParam.TenID+' as TENANT_ID,'''+RimParam.ShopID+''' as SHOP_ID,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,A.SALES_ID,A.SALES_DATE,B.CUST_CODE '+
+       'select '+RimParam.TenID+' as TENANT_ID,'''+RimParam.ShopID+''' as SHOP_ID,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,A.SALES_ID,'+SALES_DATE+',B.CUST_CODE '+
        ' from SAL_SALESORDER A left outer join PUB_CUSTOMER B on A.IC_CARDNO=B.CUST_ID '+
        ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID='''+RimParam.ShopID+''' and A.SALES_TYPE in (1,3,4) and A.COMM not in (''02'',''12'') and '+
        ' A.TIME_STAMP>'+MaxStmp+' ';
@@ -849,7 +849,7 @@ begin
     BeginTrans; //开始一个批次事务:
     //1、将单据上报的标记位:COMM的第1位设置为：1
     Str:='update '+BillMainTable+' set COMM='+GetUpCommStr(DbType)+' '+
-         ' where TENANT_ID='''+RimParam.TenID+''' and SHOP_ID='''+RimParam.ShopID+''' and '+
+         ' where TENANT_ID='+RimParam.TenID+' and SHOP_ID='''+RimParam.ShopID+''' and '+
          ' exists(select 1 from '+TempTableName+' INF where '+BillMainTable+'.TENANT_ID=INF.TENANT_ID and '+BillMainTable+'.SHOP_ID=INF.SHOP_ID and '+BillMainTable+'.'+BillKeyField+'=INF.'+INFKeyField+')';
     if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('更新通信标记:'+PlugIntf.GetLastError);
 

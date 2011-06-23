@@ -101,7 +101,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=D:\TestCase\GzDemo\Rsp\RSPScktSrvr.exe
+HostApplication=D:\Rsp\RSPScktSrvr.exe
 Launcher=
 UseLauncher=0
 DebugCWD=

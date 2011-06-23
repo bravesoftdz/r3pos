@@ -33,6 +33,8 @@ type
     RimParam: TRimParams; //上报参数记录
     constructor Create; override;
     destructor Destroy;override;
+
+    function GetR3ToRimUnit_ID(iDbType:integer; UNIT_ID: string): string;     //返回单位换算
     // 同步类型
     function GetSyncType: integer; //同步类型   
     //1、返回RIM_R3_NUM表的上次时间戳和当前最大时间戳:
@@ -388,6 +390,28 @@ begin
     else
       LogList.Add('  ('+InttoStr(R3ShopList.RecNo)+')门店('+RimParam.TenName+'-'+RimParam.ShopName+')许可证号'+RimParam.LICENSE_CODE+' 在Rim系统中没对应上零售户！');
   end;
+end;
+
+function TRimSyncFactory.GetR3ToRimUnit_ID(iDbType: integer; UNIT_ID: string): string;
+begin
+  case iDbType of
+   0,4:
+    begin
+      Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then ''02'' '+
+                   ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then ''03'' '+
+               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
+               ' else ''01'' end)';
+    end;
+   1:
+    begin
+      Result:=' DECODE('+UNIT_ID+',''13F817A7-9472-48CF-91CD-27125E077FEB'',''02'',''95331F4A-7AD6-45C2-B853-C278012C5525'',''03'',''93996CD7-B043-4440-9037-4B82BB5207DA'',''04'',''01'')';
+    end;
+  end;
+   {  Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then ''02'' '+
+               ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then ''03'' '+
+               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
+               ' else ''01'' end)';
+  }
 end;
 
 end.

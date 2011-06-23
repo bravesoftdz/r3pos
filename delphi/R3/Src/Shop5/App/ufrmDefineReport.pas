@@ -289,6 +289,7 @@ begin
             DsReportTemplate.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
             DsReportTemplate.FieldByName('CELL_TYPE').AsString := '1';
             DsReportTemplate.FieldByName('SUM_TYPE').AsString := '1';
+            DsReportTemplate.FieldByName('CELL_WIDTH').AsInteger := 0;
             if RecordList.Records[i].FieldByName('CODE_ID').AsString = 'TOTAL' then
               begin
                 ColumnNum := ColumnNum + 1;
@@ -1114,6 +1115,7 @@ begin
             DsReportTemplate1.FieldByName('SUM_TYPE').AsString := '#';   
             DsReportTemplate1.FieldByName('FIELD_NAME').AsString := '#';
             DsReportTemplate1.FieldByName('INDEX_FLAG').AsString := '2';
+            DsReportTemplate.FieldByName('CELL_WIDTH').AsInteger := 0;
             DsReportTemplate1.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate1.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
             DsReportTemplate1.Post;
@@ -1513,27 +1515,62 @@ end;
 
 procedure TfrmDefineReport.AnalysisData(Ds: TDataSet);
 var i:Integer;
-    Str_Field:String;
+    Str_Field,Str_Format:String;
+    rs:TZQuery;
     VList:TStringList;
 begin
   if Ds.IsEmpty then Exit;
 
   VList := TStringList.Create;
+  rs := TZQuery.Create(nil);
   try
+    rs.Close;
+    rs.SQL.Text := SQL;
+    Factor.Open(rs);
+
     Ds.First;
     while not Ds.Eof do
       begin
         if Ds.FieldByName('FIELD_NAME').AsString <> '' then
           begin
             VList.CommaText := Ds.FieldByName('FIELD_NAME').AsString;
-            for i := 0 to VList.Count - 1 do
+            if pos('=',Ds.FieldByName('FIELD_NAME').AsString)=0 then
               begin
-                if Str_Field = '' then
-                  Str_Field := VList.ValueFromIndex[i]
-                else
-                  Str_Field := Str_Field + ','+VList.ValueFromIndex[i];
+                Str_Format := '';
+                for i := 0 to VList.Count - 1 do
+                  begin
+                    if rs.Locate('CODE_ID',VList[i],[]) then
+                      begin
+                        if Str_Field = '' then
+                          begin
+                            Str_Field := rs.FieldByName('CODE_NAME').AsString;
+                            Str_Format := VList[i]+'='+rs.FieldByName('CODE_NAME').AsString;
+                          end
+                        else
+                          begin
+                            Str_Field := Str_Field + ','+rs.FieldByName('CODE_NAME').AsString;
+                            Str_Format := Str_Format + ','+VList[i]+'='+rs.FieldByName('CODE_NAME').AsString;
+                          end;
+                      end;
+                  end;
+              end
+            else
+              begin
+                for i := 0 to VList.Count - 1 do
+                  begin
+                    if Str_Field = '' then
+                      begin
+                        Str_Field := VList.ValueFromIndex[i]
+                      end
+                    else
+                      begin
+                        Str_Field := Str_Field + ','+VList.ValueFromIndex[i];
+                      end;
+                  end;
               end;
             Ds.Edit;
+            if Str_Format <> '' then
+              Ds.FieldByName('FIELD_NAME').AsString := Str_Format;
             Ds.FieldByName('FIELD_NAME_TEXT').AsString := Str_Field;
             Ds.Post;
             Str_Field := '';
@@ -1542,6 +1579,7 @@ begin
       end;
   finally
     VList.Free;
+    rs.Free;
   end;
 end;
 

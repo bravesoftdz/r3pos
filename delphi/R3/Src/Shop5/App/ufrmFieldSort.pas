@@ -70,6 +70,7 @@ begin
         VId := TStringList.Create;
         VName := TStringList.Create;
         try
+          //if pos('=',Field_Id)=0 then Field_Id := stringreplace(Field_Id,',','=,',[rfReplaceAll]);
           VId.CommaText := Field_Id;
           VName.CommaText := Field_Name;
           cdsFieldSort.Close;

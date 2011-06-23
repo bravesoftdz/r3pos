@@ -78,6 +78,14 @@ inherited frmDefineReport: TfrmDefineReport
                 Width = 160
               end
               item
+                EditButtons = <>
+                FieldName = 'CELL_WIDTH'
+                Footers = <>
+                Title.Caption = #21015#23485
+                Title.Color = clWhite
+                Width = 40
+              end
+              item
                 ButtonStyle = cbsEllipsis
                 EditButtons = <>
                 FieldName = 'FIELD_NAME_TEXT'

@@ -130,10 +130,10 @@ procedure TfrmSaleMonthTotalReport.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false);
-  P1_D1.Text := FormatDateTime('YYYYMM', date); //默认当月
-  P1_D2.Text := FormatDateTime('YYYYMM', date); //默认当月
+  P1_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P1_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
   
-  Factory := TReportFactory.Create('1');
+  Factory := TReportFactory.Create('4');
   Factory.DataSet := TZQuery.Create(nil);
   load;
   if ShopGlobal.GetProdFlag = 'E' then
@@ -281,8 +281,29 @@ begin
     ' A.TENANT_ID '+
     ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME '+
 
+    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
+    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
+
+
+    ',sum(YEAR_STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(YEAR_STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(YEAR_STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(YEAR_STOCK_MNY),0)+isnull(sum(YEAR_STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
+
+
+    ',sum(PRIOR_STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(PRIOR_STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(PRIOR_STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(PRIOR_STOCK_MNY),0)+isnull(sum(PRIOR_STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
-    ',sum(SALE_RTL) as SALE_RTL '+   //可销售额<按零售价>
     ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
     ',sum(SALE_TAX) as SALE_TAX '+   //销项税额
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
@@ -296,13 +317,15 @@ begin
     ',sum(PRIOR_YEAR_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
     ',isnull(sum(PRIOR_YEAR_MNY),0)+isnull(sum(PRIOR_YEAR_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
     ',sum(PRIOR_YEAR_CST) as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',isnull(sum(PRIOR_YEAR_MNY),0)-isnull(sum(PRIOR_YEAR_CST),0) as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
     ',sum(PRIOR_MONTH_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
     ',sum(PRIOR_MONTH_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
     ',sum(PRIOR_MONTH_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
     ',isnull(sum(PRIOR_MONTH_MNY),0)+isnull(sum(PRIOR_MONTH_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
     ',sum(PRIOR_MONTH_CST) as PRIOR_MONTH_CST '+   //上月销售成本
- 
+    ',isnull(sum(PRIOR_MONTH_MNY),0)-isnull(sum(PRIOR_MONTH_CST),0) as PRIOR_YEAR_PRF '+   //上月销售毛利
+
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
@@ -312,7 +335,7 @@ begin
     'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME ';
 
   strSql :=
-    'select j.* '+
+    'select j.*,'+
     'r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME as GODS_ID_TEXT,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID,'+
     'r.SORT_ID1,r.RELATION_ID as SORT_ID24,r.SORT_ID1 as SORT_ID21,r.SORT_ID1 as SORT_ID22,r.SORT_ID1 as SORT_ID23,r.SORT_ID2,r.SORT_ID3,r.SORT_ID4,r.SORT_ID5,r.SORT_ID6,r.SORT_ID7,r.SORT_ID8,r.SORT_ID9,r.SORT_ID10,'+
     'r.SORT_ID11,r.SORT_ID12,r.SORT_ID13,r.SORT_ID14,r.SORT_ID15,r.SORT_ID16,r.SORT_ID17,r.SORT_ID18,r.SORT_ID19,r.SORT_ID20 '+
@@ -344,7 +367,7 @@ procedure TfrmSaleMonthTotalReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if (Column.Field.Index>2) and not VarIsNull(Factory.Footer[Column.Field.Index-3].Value) and not VarIsClear(Factory.Footer[Column.Field.Index-3].Value) then
-     Text := formatFloat('#0.00',Factory.Footer[Column.Field.Index-3].Value);
+     Text := formatFloat(Column.Footer.DisplayFormat,Factory.Footer[Column.Field.Index-3].Value);
 end;
 
 procedure TfrmSaleMonthTotalReport.btnDeleteClick(Sender: TObject);

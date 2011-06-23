@@ -852,6 +852,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 55
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.#'
                       EditButtons = <>
                       FieldName = 'CAN_SALE_DAY'
                       Footers = <>
@@ -869,6 +871,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 57
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'LOWER_AMOUNT'
                       Footer.ValueType = fvtSum
@@ -1498,6 +1502,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 60
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.#'
                       EditButtons = <>
                       FieldName = 'DAY_SALE_AMT'
                       Footer.ValueType = fvtSum
@@ -1506,6 +1512,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Width = 58
                     end
                     item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.#'
                       EditButtons = <>
                       FieldName = 'CAN_SALE_DAY'
                       Footers = <>

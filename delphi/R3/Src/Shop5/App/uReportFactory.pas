@@ -7,7 +7,16 @@ const
   RF_DATA_SOURCE1='CLIENT_CODE=客户编码,ACCOUNT=登录账号,GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
   RF_DATA_SOURCE2='ACCOUNT=登录账号,GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,STOCK_AMT=数量,STOCK_MNY=未税金额,STOCK_TTL=金额,STOCK_TAX=进项税额';
   RF_DATA_SOURCE3='ACCOUNT=登录账号,GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,BAL_AMT=库存,BAL_CST=成本,BAL_RTL=销售额';
-  RF_DATA_SOURCE4='GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,SALE_AMT=数量,SALE_MNY=未税金额,SALE_TTL=金额,SALE_TAX=销项税额,SALE_CST=成本,SALE_PRF=毛利';
+  RF_DATA_SOURCE4=
+     'GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,STOCK_AMT=进货数量,STOCK_AMT_RATE=进货占比,STOCK_MNY=进货金额,STOCK_TAX=进项税额,STOCK_TTL=进货总额,STOCK_TTL_RATE=进货金额占比,'+
+     'YEAR_STOCK_AMT=进货数量(同期),YEAR_STOCK_AMT_DIFF=进货数量(同期差),YEAR_STOCK_MNY=进货金额(同期),YEAR_STOCK_TAX=进项税额(同期),YEAR_STOCK_TTL=进货总额(同期),YEAR_STOCK_TTL_DIFF=进货总额(同期差),'+
+     'PRIOR_STOCK_AMT=进货数量(上期),PRIOR_STOCK_AMT_DIFF=进货数量(上期差),PRIOR_STOCK_MNY=进货金额(上期),PRIOR_STOCK_TAX=进项税额(上期),PRIOR_STOCK_TTL=进货总额(上期),PRIOR_STOCK_TTL_DIFF=进货总额(同期差),'+
+     'SALE_AMT=销量,SALE_AMT_RATE=销量(占比),SALE_MNY=销售金额,SALE_TTL=销售总额,SALE_TTL_RATE=销售总额(占比),SALE_TAX=销项税额,SALE_CST=成本,SALE_CST_RATE=成本(占比),SALE_PRF=毛利,SALE_PRF_RATE=销量毛利(占比),'+
+     'PRIOR_YEAR_AMT=销量(同期),PRIOR_YEAR_AMT_DIFF=销量(同期差),PRIOR_YEAR_MNY=销售金额(同期),PRIOR_YEAR_TTL=销售总额(同期),PRIOR_YEAR_TTL_DIFF=销售总额(同期差),PRIOR_YEAR_TAX=销项税额(同期),PRIOR_YEAR_CST=成本(同期),'+
+     'PRIOR_YEAR_CST_DIFF=成本(同期差),PRIOR_YEAR_PRF=毛利(同期),PRIOR_YEAR_PRF_DIFF=毛利(同期差),'+
+     'PRIOR_MONTH_AMT=销量(上期),PRIOR_MONTH_AMT_DIFF=销量(上期差),PRIOR_MONTH_MNY=销售金额(上期),PRIOR_MONTH_TTL=销售总额(上期),PRIOR_MONTH_TTL_DIFF=销售总额(上期差),PRIOR_MONTH_TAX=销项税额(上期),PRIOR_MONTH_CST=成本(上期),'+
+     'PRIOR_MONTH_CST_DIFF=成本(上期差),PRIOR_MONTH_PRF=毛利(上期),PRIOR_MONTH_PRF_DIFF=毛利(上期差),'+
+     'BAL_AMT=结存数量,BAL_CST=结存成本,DAY_SALE_AMT=日均销量,DAY_SALE_AMT=日均销量';
 type
 
 pRCondi=^TRCondi;
@@ -73,6 +82,7 @@ TReportFactory=class
     TLate:TList;
     FDataSet: TDataSet;
     Fields:TStringList;
+    Func:TStringList;
     procedure SetDataSet(const Value: TDataSet);
   protected
     function IsDSIndex(sid:string):boolean;
@@ -88,8 +98,10 @@ TReportFactory=class
     procedure PrepareRows;
     procedure Prepare;
     procedure Calc;
+    procedure AddFunc(fn:string;idx:integer);
     procedure Fill(rs:TDataSet);
     procedure CreateHeader(Grid:TDBGridEh);
+    function CalcFunc(fn:string;vRows:array of RVariant):real;
   public
     Footer:array [0..8000] of RVariant;
     procedure Open(id:string;Grid:TDBGridEh);
@@ -128,9 +140,11 @@ begin
   Rows := TList.Create;
   TLate := TList.Create;
   Fields := TStringList.Create;
+  Func := TStringList.Create;
   if sourid='1' then Fields.CommaText := RF_DATA_SOURCE1;
   if sourid='2' then Fields.CommaText := RF_DATA_SOURCE2;
   if sourid='3' then Fields.CommaText := RF_DATA_SOURCE3;
+  if sourid='4' then Fields.CommaText := RF_DATA_SOURCE4;
 end;
 
 destructor TReportFactory.Destroy;
@@ -139,6 +153,7 @@ begin
   Cols.Free;
   Rows.Free;
   Fields.Free;
+  Func.Free;
   inherited;
 end;
 
@@ -392,6 +407,7 @@ begin
          else
             Column^.Idx := -1;
          Cols.Add(Column);
+         AddFunc(Column^.FieldName,Cols.Count-1);
        end;
      end
   else
@@ -630,8 +646,16 @@ begin
       begin
         tb.FieldDefs.Add('A_'+inttostr(i),ftFloat,0,true);
         Column.Width := 60;
-        Column.DisplayFormat := '#0.00';
-        Column.Footer.DisplayFormat := '#0.00';
+        if pos('_RATE',PColumnR(Cols[i])^.FieldName)=0 then
+        begin
+          Column.DisplayFormat := '#0.00';
+          Column.Footer.DisplayFormat := '#0.00';
+        end
+        else
+        begin
+          Column.DisplayFormat := '#0.00%';
+          Column.Footer.DisplayFormat := '#0.00%';
+        end;
         case PColumnR(Cols[i])^.SumType of
         1:Column.Footer.ValueType := fvtSum;
         2:Column.Footer.ValueType := fvtAvg;
@@ -648,7 +672,7 @@ begin
 end;
 
 procedure TReportFactory.Calc;
-var i,j:integer;
+var i,j,w:integer;
 begin
   for j:=0 to Cols.Count -1 do Footer[j].Value := null;
   DataSet.First;
@@ -683,6 +707,24 @@ begin
            end;
       end;
       DataSet.Next;
+    end;
+  if Func.Count > 0 then //有计算公式
+    begin
+      for i:=0 to Rows.Count -1 do
+      begin
+        for j:=0 to Func.Count -1 do
+        begin
+          w := Integer(Func.Objects[j]);
+          if w>=0 then
+             PRowR(Rows[i])^.Buffer[w].Value := CalcFunc(Func[j],PRowR(Rows[i])^.Buffer);
+        end;
+      end;
+      for j:=0 to Func.Count -1 do
+      begin
+        w := Integer(Func.Objects[j]);
+        if w>=0 then
+           Footer[w].Value := CalcFunc(Func[j],Footer);
+      end;
     end;
 end;
 
@@ -1251,6 +1293,191 @@ begin
      (sid='CREGION_ID2')
      or
      (sid='SREGION_ID2');
+end;
+
+function TReportFactory.CalcFunc(fn: string;vRows:array of RVariant): real;
+function GetFuncData(FieldName:string):integer;
+var
+  i:integer;
+begin
+  result := -1;
+  for i:=0 to Cols.Count -1 do
+    begin
+      if (PColumnR(Cols[i])^.FieldName=FieldName) then
+         begin
+           result := i;
+           break;
+         end;
+    end;
+end;
+var
+  v1,v2:real;
+  w,w1,w2:integer;
+begin
+  result := 0;
+  if fn='STOCK_AMT_RATE' then
+     begin
+       w := GetFuncData('STOCK_AMT');
+       if w<0 then Exit;
+       if VarIsNull(Footer[w].Value) then Exit;
+       if Footer[w].Value=0 then Exit;
+       result := vRows[w].Value/Footer[w].Value*100;
+     end
+  else
+  if fn='STOCK_TTL_RATE' then
+     begin
+       w := GetFuncData('STOCK_TTL');
+       if w<0 then Exit;
+       if VarIsNull(Footer[w].Value) then Exit;
+       if Footer[w].Value=0 then Exit;
+       result := vRows[w].Value/Footer[w].Value*100;
+     end
+  else
+  if fn='YEAR_STOCK_AMT_DIFF' then
+     begin
+       w1 := GetFuncData('STOCK_AMT');
+       w2 := GetFuncData('YEAR_STOCK_AMT');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end
+  else
+  if fn='PRIOR_STOCK_AMT_DIFF' then
+     begin
+       w1 := GetFuncData('STOCK_AMT');
+       w2 := GetFuncData('PRIOR_STOCK_AMT');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end
+  else
+  if fn='YEAR_STOCK_TTL_DIFF' then
+     begin
+       w1 := GetFuncData('STOCK_TTL');
+       w2 := GetFuncData('YEAR_STOCK_TTL');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end
+  else
+  if fn='PRIOR_STOCK_TTL_DIFF' then
+     begin
+       w1 := GetFuncData('STOCK_TTL');
+       w2 := GetFuncData('PRIOR_STOCK_TTL');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end
+  else
+  if fn='SALE_AMT_RATE' then
+     begin
+       w := GetFuncData('SALE_AMT');
+       if w<0 then Exit;
+       if VarIsNull(Footer[w].Value) then Exit;
+       if Footer[w].Value=0 then Exit;
+       result := vRows[w].Value/Footer[w].Value*100;
+     end
+  else
+  if fn='SALE_TTL_RATE' then
+     begin
+       w := GetFuncData('SALE_TTL');
+       if w<0 then Exit;
+       if VarIsNull(Footer[w].Value) then Exit;
+       if Footer[w].Value=0 then Exit;
+       result := vRows[w].Value/Footer[w].Value*100;
+     end
+  else
+  if fn='SALE_CST_RATE' then
+     begin
+       w := GetFuncData('SALE_CST');
+       if w<0 then Exit;
+       if VarIsNull(Footer[w].Value) then Exit;
+       if Footer[w].Value=0 then Exit;
+       result := vRows[w].Value/Footer[w].Value*100;
+     end
+  else
+  if fn='SALE_PRF_RATE' then
+     begin
+       w := GetFuncData('SALE_PRF');
+       if w<0 then Exit;
+       if VarIsNull(Footer[w].Value) then Exit;
+       if Footer[w].Value=0 then Exit;
+       result := vRows[w].Value/Footer[w].Value*100;
+     end
+  else
+  if fn='PRIOR_YEAR_AMT_DIFF' then
+     begin
+       w1 := GetFuncData('SALE_AMT');
+       w2 := GetFuncData('PRIOR_YEAR_AMT');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end
+  else
+  if fn='PRIOR_YEAR_TTL_DIFF' then
+     begin
+       w1 := GetFuncData('SALE_AMT');
+       w2 := GetFuncData('PRIOR_YEAR_TTL');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end
+  else
+  if fn='PRIOR_MONTH_AMT_DIFF' then
+     begin
+       w1 := GetFuncData('SALE_AMT');
+       w2 := GetFuncData('PRIOR_MONTH_AMT');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end
+  else
+  if fn='PRIOR_MONTH_TTL_DIFF' then
+     begin
+       w1 := GetFuncData('SALE_AMT');
+       w2 := GetFuncData('PRIOR_MONTH_TTL');
+       if (w1<0) or (w2<0) then Exit;
+       result := vRows[w1].Value-vRows[w2].Value;
+     end;
+end;
+
+procedure TReportFactory.AddFunc(fn: string;idx:integer);
+begin
+  if Func.IndexOfObject(TObject(idx))>=0 then Exit; 
+  if fn='STOCK_AMT_RATE' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='STOCK_TTL_RATE' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='YEAR_STOCK_AMT_DIFF' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='PRIOR_STOCK_AMT_DIFF' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='YEAR_STOCK_TTL_DIFF' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='PRIOR_STOCK_TTL_DIFF' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='SALE_AMT_RATE' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='SALE_TTL_RATE' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='SALE_CST_RATE' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='SALE_PRF_RATE' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='PRIOR_YEAR_AMT_DIFF' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='PRIOR_YEAR_TTL_DIFF' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='PRIOR_MONTH_AMT_DIFF' then
+     Func.AddObject(fn,TObject(idx))
+  else
+  if fn='PRIOR_MONTH_TTL_DIFF' then
+     Func.AddObject(fn,TObject(idx));
 end;
 
 end.

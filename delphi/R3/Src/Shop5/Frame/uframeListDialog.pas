@@ -51,6 +51,7 @@ type
     FMultiSelect: boolean;
     procedure InitGrid;
     procedure SetMultiSelect(const Value: boolean);
+    procedure LoadFormat;override;
   public
     { Public declarations }
     procedure ParserField(ListField:String);
@@ -420,6 +421,12 @@ begin
   inherited;
   cdsList.Filtered:=False;
   cdsList.Filtered:=True;
+end;
+
+procedure TframeListDialog.LoadFormat;
+begin
+//  inherited;
+
 end;
 
 end.

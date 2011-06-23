@@ -79,7 +79,7 @@ begin
             begin
               cdsFieldSort.Append;
               cdsFieldSort.FieldByName('SEQ_NO').AsString := IntToStr(i+1);
-              cdsFieldSort.FieldByName('CODE_ID').AsString := VId[i];
+              cdsFieldSort.FieldByName('CODE_ID').AsString := VId.Names[i];
               cdsFieldSort.FieldByName('CODE_NAME').AsString := VName[i];
               cdsFieldSort.Post;
             end;
@@ -96,9 +96,9 @@ begin
             while not cdsFieldSort.Eof do
               begin
                 if Sort_Id = '' then
-                  Sort_Id := cdsFieldSort.FieldByName('CODE_ID').AsString
+                  Sort_Id := cdsFieldSort.FieldByName('CODE_ID').AsString+'='+cdsFieldSort.FieldByName('CODE_NAME').AsString
                 else
-                  Sort_Id := Sort_Id + ',' + cdsFieldSort.FieldByName('CODE_ID').AsString;
+                  Sort_Id := Sort_Id + ',' + cdsFieldSort.FieldByName('CODE_ID').AsString+'='+cdsFieldSort.FieldByName('CODE_NAME').AsString;
                 if Sort_Name = '' then
                   Sort_Name := cdsFieldSort.FieldByName('CODE_NAME').AsString
                 else

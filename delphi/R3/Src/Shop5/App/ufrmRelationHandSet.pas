@@ -62,7 +62,7 @@ type
 
 implementation
 
-uses uGlobal, ObjCommon;
+uses uGlobal, ObjCommon, uFnUtil;
 
 {$R *.dfm}
 
@@ -320,19 +320,20 @@ begin
 
   //保存
   SaveQry.Edit;
-  if SaveQry.FieldByName('ROWS_ID').AsString='' then //返回空记录
-  begin
-    SaveQry.FieldByName('ROWS_ID').AsString:=NewId('');
-    SaveQry.FieldByName('GODS_ID').AsString:=R3_GODS_ID.AsString;
-    SaveQry.FieldByName('GODS_CODE').AsString:=R3_GODS_ID.DataSet.fieldbyName('GODS_CODE').AsString;
-    SaveQry.FieldByName('GODS_NAME').AsString:=R3_GODS_ID.DataSet.fieldbyName('GODS_NAME').AsString;
-    SaveQry.FieldByName('GODS_SPELL').AsString:=R3_GODS_ID.DataSet.fieldbyName('GODS_SPELL').AsString;
-    SaveQry.FieldByName('COMM').AsString:='00';
-    SaveQry.FieldByName('TIME_STAMP').AsInteger:=1; //设置不空，后台在取
-  end;
+  //if SaveQry.FieldByName('ROWS_ID').AsString='' then //返回空记录
+  //begin
+
+  SaveQry.FieldByName('ROWS_ID').AsString:=NewId('');
+  SaveQry.FieldByName('GODS_ID').AsString:=R3_GODS_ID.AsString;
+  SaveQry.FieldByName('COMM').AsString:='00';
+  SaveQry.FieldByName('TIME_STAMP').AsInteger:=1; //设置不空，后台在取
+  //end;
   SaveQry.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
   SaveQry.FieldByName('RELATION_ID').AsInteger:=NT_RELATION_ID;
-  SaveQry.FieldByName('COMM_ID').AsString:=FSecond_IDS; 
+  SaveQry.FieldByName('COMM_ID').AsString:=FSecond_IDS;
+  SaveQry.FieldByName('GODS_CODE').AsString:=CdsTable.fieldbyName('GODS_CODE').AsString;
+  SaveQry.FieldByName('GODS_NAME').AsString:=CdsTable.fieldbyName('GODS_NAME').AsString;
+  SaveQry.FieldByName('GODS_SPELL').AsString:=Fnstring.GetWordSpell(CdsTable.fieldbyName('GODS_NAME').AsString,3);;
   SaveQry.FieldByName('SECOND_ID').AsString:=CdsTable.fieldbyName('SECOND_ID').AsString;  //Rim的GODS_ID
   SaveQry.FieldByName('SORT_ID2').AsString:=CdsTable.fieldbyName('SORT_ID2').AsString;
   SaveQry.FieldByName('SORT_ID6').AsString:=CdsTable.fieldbyName('SORT_ID6').AsString;

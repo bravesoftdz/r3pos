@@ -605,15 +605,19 @@ var
 begin
   inherited;
   if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
+
+  {
   //2011.06.08 Add增加自动对照:
-  pTen_ID:=GetParentTENANT_ID;  //返回省级烟草公司ID 
+  pTen_ID:=GetParentTENANT_ID;  //返回省级烟草公司ID
   if pTen_ID>0 then
   begin
     CurTen_ID:=Global.TENANT_ID; //当前Tenant_ID存储临时 CurTen_ID
     Global.TENANT_ID:=pTen_ID;   //省级ID 赋入 Global.TENANT_ID
     CaFactory.SyncAll(1);        //执行省公司
-    Global.TENANT_ID:=CurTen_ID; //替换回原TENANT_ID 
+    Global.TENANT_ID:=CurTen_ID; //替换回原TENANT_ID
   end;
+  }
+  
   //原来
   CaFactory.SyncAll(1);
   Global.LoadBasic;

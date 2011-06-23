@@ -1,6 +1,6 @@
 inherited frmDefineReport: TfrmDefineReport
-  Left = 575
-  Top = 275
+  Left = 391
+  Top = 171
   Caption = #25253#34920#26679#24335
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -73,7 +73,6 @@ inherited frmDefineReport: TfrmDefineReport
                 EditButtons = <>
                 FieldName = 'DISPLAY_NAME'
                 Footers = <>
-                ReadOnly = True
                 Title.Caption = #26174#31034#21517#31216
                 Title.Color = clWhite
                 Width = 160
@@ -546,7 +545,6 @@ inherited frmDefineReport: TfrmDefineReport
                 EditButtons = <>
                 FieldName = 'DISPLAY_NAME'
                 Footers = <>
-                ReadOnly = True
                 Title.Caption = #26174#31034#21517#31216
                 Title.Color = clWhite
                 Width = 160

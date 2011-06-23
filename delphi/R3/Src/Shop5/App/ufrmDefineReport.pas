@@ -1437,12 +1437,12 @@ begin
           begin
             if Str_Sql = '' then
               begin
-              Str_Sql := RecordList.Records[i].FieldByName('CODE_ID').AsString;
+              Str_Sql := RecordList.Records[i].FieldByName('CODE_ID').AsString+'='+RecordList.Records[i].FieldByName('CODE_NAME').AsString;
               Str_Field := RecordList.Records[i].FieldByName('CODE_NAME').AsString;
               end
             else
               begin
-                Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_ID').AsString;
+                Str_Sql := Str_Sql + ',' + RecordList.Records[i].FieldByName('CODE_ID').AsString+'='+RecordList.Records[i].FieldByName('CODE_NAME').AsString;
                 Str_Field := Str_Field + ',' + RecordList.Records[i].FieldByName('CODE_NAME').AsString;
               end;
           end;
@@ -1514,18 +1514,12 @@ end;
 procedure TfrmDefineReport.AnalysisData(Ds: TDataSet);
 var i:Integer;
     Str_Field:String;
-    rs:TZQuery;
     VList:TStringList;
 begin
   if Ds.IsEmpty then Exit;
 
   VList := TStringList.Create;
-  rs := TZQuery.Create(nil);
   try
-    rs.Close;
-    rs.SQL.Text := SQL;
-    Factor.Open(rs);
-
     Ds.First;
     while not Ds.Eof do
       begin
@@ -1534,13 +1528,10 @@ begin
             VList.CommaText := Ds.FieldByName('FIELD_NAME').AsString;
             for i := 0 to VList.Count - 1 do
               begin
-                if rs.Locate('CODE_ID',VList[i],[]) then
-                  begin
-                    if Str_Field = '' then
-                      Str_Field := rs.FieldByName('CODE_NAME').AsString
-                    else
-                      Str_Field := Str_Field + ','+rs.FieldByName('CODE_NAME').AsString;
-                  end;
+                if Str_Field = '' then
+                  Str_Field := VList.ValueFromIndex[i]
+                else
+                  Str_Field := Str_Field + ','+VList.ValueFromIndex[i];
               end;
             Ds.Edit;
             Ds.FieldByName('FIELD_NAME_TEXT').AsString := Str_Field;
@@ -1551,7 +1542,6 @@ begin
       end;
   finally
     VList.Free;
-    rs.Free;
   end;
 end;
 

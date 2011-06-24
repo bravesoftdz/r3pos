@@ -8,7 +8,8 @@ uses
   ComCtrls, ToolWin, StdCtrls, RzLabel, jpeg, ExtCtrls, RzTabs, RzPanel, cxEdit, 
   RzButton, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar, cxControls,
   cxContainer, cxTextEdit, cxMaskEdit, uframeBaseAnaly, TeEngine,
-  Series, TeeProcs, Chart, cxMemo, cxRadioGroup,ZBase;
+  Series, TeeProcs, Chart, cxMemo, cxRadioGroup,ZBase, zrMonthEdit,
+  cxSpinEdit;
 
 type
   TfrmSaleAnaly = class(TframeBaseAnaly)
@@ -51,6 +52,60 @@ type
     fndP1_Sale_UNIT: TcxComboBox;
     Label4: TLabel;
     AnalyQry1: TZQuery;
+    TabSheet2: TRzTabSheet;
+    TabSheet3: TRzTabSheet;
+    RzPanel1: TRzPanel;
+    Panel1: TPanel;
+    RzPnl2: TRzPanel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label12: TLabel;
+    Label14: TLabel;
+    fndP2_TYPE_ID: TcxComboBox;
+    fndP2_SHOP_TYPE: TcxComboBox;
+    fndP2_SHOP_VALUE: TzrComboBoxList;
+    fndP2_STAT_ID: TzrComboBoxList;
+    fndP2_SORT_ID: TcxButtonEdit;
+    RzBitBtn1: TRzBitBtn;
+    RzPanel10: TRzPanel;
+    P2_RB_Money: TcxRadioButton;
+    P2_RB_PRF: TcxRadioButton;
+    fndP2_DEPT_ID: TzrComboBoxList;
+    RzLabel1: TRzLabel;
+    P2_D1: TcxDateEdit;
+    RzLabel4: TRzLabel;
+    P2_D2: TcxDateEdit;
+    adoReport2: TZQuery;
+    dsadoReport2: TDataSource;
+    P2_RB_AMT: TcxRadioButton;
+    SB2: TScrollBox;
+    RzPanel11: TRzPanel;
+    Panel2: TPanel;
+    RzPnl3: TRzPanel;
+    Label13: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label18: TLabel;
+    RzLabel5: TRzLabel;
+    RzLabel6: TRzLabel;
+    fndP3_TYPE_ID: TcxComboBox;
+    fndP3_SHOP_TYPE: TcxComboBox;
+    fndP3_SHOP_VALUE: TzrComboBoxList;
+    fndP3_STAT_ID: TzrComboBoxList;
+    fndP3_SORT_ID: TcxButtonEdit;
+    RzBitBtn2: TRzBitBtn;
+    fndP3_DEPT_ID: TzrComboBoxList;
+    P3_D1: TcxDateEdit;
+    P3_D2: TcxDateEdit;
+    SB3: TScrollBox;
+    adoReport3: TZQuery;
+    dsadoReport3: TDataSource;
+    Label11: TLabel;
+    RzPanel13: TRzPanel;
+    P3_RB_Money: TcxRadioButton;
+    P3_RB_PRF: TcxRadioButton;
+    P3_RB_AMT: TcxRadioButton;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzPanel7Resize(Sender: TObject);
@@ -58,16 +113,21 @@ type
     procedure FormCreate(Sender: TObject);
     procedure RB_SaleMoneyClick(Sender: TObject);
     procedure fndP1_Sale_UNITPropertiesChange(Sender: TObject);
+    procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure fndP3_SORT_IDKeyPress(Sender: TObject; var Key: Char);
   private
-    SortName: string; //商品分类名称
-    sid1: string;      //商品分类ID
-    srid1: string;     //商品供应链关系ID
+    SortName: string;  //商品分类名称
+    sid1,sid2,sid3: string;        //商品分类ID
+    srid1,srid2,srid3: string;     //商品供应链关系ID
     function  FormateStr(const InStr, Format: string): string;
-    procedure AddFillChat1; //
-    //EnSQLCode
+    procedure AddFillChat1;
     function GetMarketAnalySQL(vType: integer=0): string; //营销分析
+    function GetProfitAnalySQL(vType: integer=0): string; //盈利分析
+    function GetPotenAnalySQL(vType: integer=0): string;  //潜力分析
+    procedure FreeFrameObj(vType: integer); //释放掉Frame对象
   public
-    
+    procedure ShowFrameProfitAnaly; //盈利分析
+    procedure ShowFramePotenAnaly;  //潜力分析
   end;
 
 var
@@ -75,7 +135,8 @@ var
 
 implementation
 
-uses uGlobal,uFnUtil,uShopUtil, ObjCommon;
+uses                                                   
+  uGlobal,uFnUtil,uShopUtil, ObjCommon,ufrmProfitAnaly,ufrmPotenAnaly;
 
 {$R *.dfm}
 
@@ -104,13 +165,31 @@ var
 begin
   case rzPage.ActivePageIndex of
     0:
-      begin //按部门汇总表
+      begin //按销售分析
         if adoReport1.Active then adoReport1.Close;
         strSql := GetMarketAnalySQL;
         if strSql='' then Exit;
         adoReport1.SQL.Text:= strSql;
         Factor.Open(adoReport1);
         AddFillChat1;
+      end;
+    1:
+      begin //按盈利分析
+        if adoReport2.Active then adoReport2.Close;
+        strSql := GetProfitAnalySQL;
+        if strSql='' then Exit;
+        adoReport2.SQL.Text:= strSql;
+        Factor.Open(adoReport2);
+        ShowFrameProfitAnaly;
+      end;
+    2:
+      begin //按潜力分析
+        if adoReport3.Active then adoReport3.Close;
+        strSql := self.GetPotenAnalySQL;
+        if strSql='' then Exit;
+        adoReport3.SQL.Text:= strSql;
+        Factor.Open(adoReport3);
+        ShowFramePotenAnaly;
       end;
   end;
 end;
@@ -201,7 +280,7 @@ begin
       'group by A.TYPE_ID'; 
     Result :=  ParseSQL(Factor.iDbType,strSql);
   end else
-  if vType=1 then 
+  if vType=1 then
   begin
     JoinStr:=GetStrJoin(Factor.iDbType);
     //返回总单数
@@ -443,8 +522,12 @@ procedure TfrmSaleAnaly.FormCreate(Sender: TObject);
 begin
   inherited;
   P1_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
-  P1_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
-  fndP1_Sale_UNIT.ItemIndex:=0;
+  P1_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  fndP1_Sale_UNIT.ItemIndex:=0;   
+  P2_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P2_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P3_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P3_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 end;
 
 procedure TfrmSaleAnaly.RB_SaleMoneyClick(Sender: TObject);
@@ -466,6 +549,378 @@ var
 begin
   vLen:=Length(Format)-Length(InStr);
   result:=InStr+StringOfChar(' ', vLen);
+end;
+
+function TfrmSaleAnaly.GetProfitAnalySQL(vType: integer): string; //盈利分析
+var
+  TYPE_ID,SaleCnd,JoinStr: string;  //单位计算关系
+  strSql,strWhere,GoodTab,SQLData: string;
+begin
+  if P2_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
+  if P2_D2.EditValue=null then Raise Exception.Create('截止日期不能为空！');
+  SaleCnd:='';
+  strWhere:='';
+
+  //企业ID过滤
+  SaleCnd:=' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  //销售日期条件
+  if P1_D1.Date=P1_D2.Date then
+    SaleCnd:=SaleCnd+' and SALES_DATE='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' '
+  else if P1_D1.Date<P1_D2.Date then
+    SaleCnd:=SaleCnd+' and SALES_DATE>='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' and SALES_DATE<='+FormatDatetime('YYYYMMDD',P2_D2.Date)+' ';
+  //部门条件
+  if fndP2_DEPT_ID.AsString<>'' then
+    SaleCnd:=SaleCnd+' and DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
+  //门店所属行政区域|门店类型:
+  if (fndP2_SHOP_VALUE.AsString<>'') then
+  begin
+    case fndP2_SHOP_TYPE.ItemIndex of
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP2_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP2_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
+       end;
+      1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
+    end;
+  end;
+
+  //商品指标:
+  if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
+  begin
+    case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP2_STAT_ID.AsString+''' ';
+      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP2_STAT_ID.AsString+''' ';
+      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndp2_STAT_ID.AsString+''' ';
+      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP2_STAT_ID.AsString+''' ';
+      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
+    end;
+  end;
+
+  //商品分类:
+  if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
+  begin
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and C.RELATION_ID='+srid2+' ';
+     else
+        strWhere:=strWhere+' and C.RELATION_ID='''+srid2+''' ';
+    end;
+    if trim(sid2)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
+  end else
+    GoodTab:='VIW_GOODSINFO';
+
+  if P2_RB_Money.Checked then  //销售额
+    TYPE_ID:='(CALC_MONEY+AGIO_MONEY) as ANALYSUM '
+  else if P2_RB_PRF.Checked then //毛利
+    TYPE_ID:='(NOTAX_MONEY-COST_MONEY) as ANALYSUM '
+  else if P2_RB_AMT.Checked then //销量
+    TYPE_ID:='CALC_AMOUNT as ANALYSUM ';
+
+  //销售SQL
+  SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,'+TYPE_ID+' from VIW_SALESDATA '+SaleCnd;
+  strSql :=
+    'select * from '+
+    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(ANALYSUM)as ANALYSUM from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and '+
+    ' A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
+    'order by RELATION_ID asc,ANALYSUM desc ';
+  Result := ParseSQL(Factor.iDbType,strSql);
+end;
+
+function TfrmSaleAnaly.GetPotenAnalySQL(vType: integer): string;  //潜力分析
+var
+  SaleCnd,JoinStr,OrderBy: string;  //单位计算关系
+  strSql,strWhere,GoodTab,SQLData: string;
+begin
+  if P3_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
+  if P3_D2.EditValue=null then Raise Exception.Create('截止日期不能为空！');
+  SaleCnd:='';
+  strWhere:='';
+
+  //企业ID过滤
+  SaleCnd:=' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  //销售日期条件
+  if P3_D1.Date=P3_D2.Date then
+    SaleCnd:=SaleCnd+' and SALES_DATE='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' '
+  else if P3_D1.Date<P3_D2.Date then
+    SaleCnd:=SaleCnd+' and SALES_DATE>='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' and SALES_DATE<='+FormatDatetime('YYYYMMDD',P3_D2.Date)+' ';
+  //部门条件
+  if fndP3_DEPT_ID.AsString<>'' then
+    SaleCnd:=SaleCnd+' and DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+  //门店所属行政区域|门店类型:
+  if (fndP3_SHOP_VALUE.AsString<>'') then
+  begin
+    case fndP3_SHOP_TYPE.ItemIndex of
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP3_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP3_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
+       end;
+      1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
+    end;
+  end;
+  //商品指标:
+  if (fndP3_STAT_ID.AsString <> '') and (fndP3_TYPE_ID.ItemIndex>=0) then
+  begin
+    case TRecord_(fndP3_TYPE_ID.Properties.Items.Objects[fndP3_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP3_STAT_ID.AsString+''' ';
+      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP3_STAT_ID.AsString+''' ';
+      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndp3_STAT_ID.AsString+''' ';
+      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP3_STAT_ID.AsString+''' ';
+      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP3_STAT_ID.AsString+''' ';
+    end;
+  end;
+
+  //商品分类:
+  if (trim(fndP3_SORT_ID.Text)<>'') and (trim(srid3)<>'') then
+  begin
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and C.RELATION_ID='+srid3+' ';
+     else
+        strWhere:=strWhere+' and C.RELATION_ID='''+srid3+''' ';
+    end;
+    if trim(sid3)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid3+'%'' ';
+  end else
+    GoodTab:='VIW_GOODSINFO';
+
+  if P3_RB_Money.Checked then
+    OrderBy:='order by RELATION_ID asc,MNY_SUM desc,PRF_SUM desc,AMT_SUM desc '
+  else if P3_RB_PRF.Checked then
+    OrderBy:='order by RELATION_ID asc,PRF_SUM desc,MNY_SUM desc,AMT_SUM desc '
+  else if P3_RB_AMT.Checked then
+    OrderBy:='order by RELATION_ID asc,AMT_SUM desc,MNY_SUM desc,PRF_SUM desc ';
+
+  //销售SQL
+  SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as AMT_SUM,(CALC_MONEY+AGIO_MONEY) as MNY_SUM,(NOTAX_MONEY-COST_MONEY) as PRF_SUM from VIW_SALESDATA '+SaleCnd;
+  strSql :=
+    'select * from '+
+    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(AMT_SUM) as AMT_SUM,sum(MNY_SUM)as MNY_SUM,sum(PRF_SUM)as PRF_SUM from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and '+
+    ' A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+OrderBy;
+  Result := ParseSQL(Factor.iDbType,strSql);
+end;
+
+procedure TfrmSaleAnaly.FreeFrameObj(vType: integer);
+var
+  i:integer;
+  FindCmp: TComponent;
+begin
+  for i:=0 to 100 do
+  begin
+    if vType=1 then
+    begin
+      FindCmp:=FindComponent('frmProfitAnaly'+Inttostr(i));
+      if (FindCmp<>nil) and (TWinControl(FindCmp).Parent=SB2) and (FindCmp is TfrmProfitAnaly)  then
+      begin
+        TfrmProfitAnaly(FindCmp).Free;
+      end;
+
+      FindCmp:=FindComponent('frmProfitAnalysplt'+Inttostr(i));
+      if (FindCmp<>nil) and (TWinControl(FindCmp).Parent=SB2) and (FindCmp is TSplitter)  then
+      begin
+        TSplitter(FindCmp).Free;
+      end;
+    end else
+    if vType=2 then
+    begin
+      FindCmp:=FindComponent('frmPotenAnaly'+Inttostr(i));
+      if (FindCmp<>nil) and (TWinControl(FindCmp).Parent=SB3) and (FindCmp is TfrmPotenAnaly)  then
+      begin
+        TfrmPotenAnaly(FindCmp).Free;
+      end;
+
+      FindCmp:=FindComponent('frmPotenAnalysplt'+Inttostr(i));
+      if (FindCmp<>nil) and (TWinControl(FindCmp).Parent=SB3) and (FindCmp is TSplitter)  then
+      begin
+        TSplitter(FindCmp).Free;
+      end;
+    end;
+  end;
+end;
+
+procedure TfrmSaleAnaly.ShowFrameProfitAnaly;
+  procedure ShowFrameDetail(Relation_ID, RelCount,vNo: integer);
+  var
+    Spilt: TSplitter; frmAnaly: TfrmProfitAnaly; AnalyType: integer;
+  begin
+    if Relation_ID<>1000006 then //不是卷烟都创建分割栏
+    begin
+      Spilt:=TSplitter.Create(self); 
+      Spilt.Name:='frmProfitAnalysplt'+InttoStr(vNo-1);
+      Spilt.Parent:=SB2;
+      Spilt.Height:=8;
+      Spilt.Color:=clBtnFace;
+      Spilt.Align:=alBottom;
+      Spilt.Align:=alTop;
+    end;
+
+    try
+      frmAnaly:=TfrmProfitAnaly.Create(self);
+      frmAnaly.Name:='frmProfitAnaly'+InttoStr(vNo);
+      frmAnaly.Parent:=SB2;
+      frmAnaly.Align:=alBottom;
+      frmAnaly.Align:=alTop;
+      if P2_RB_Money.Checked then AnalyType:=1
+      else if P2_RB_PRF.Checked then AnalyType:=2
+      else if P2_RB_AMT.Checked then AnalyType:=3;
+      frmAnaly.InitData(AnalyType,Relation_ID,adoReport2.Data);
+      if (RelCount * (frmAnaly.Height+8)-8>SB2.Height) and (SB2.Align<>alNone) then
+      begin
+        SB2.Align:=alNone;
+        SB2.Top:=RzPnl2.Top+RzPnl2.Height;
+        SB2.Left:=0;
+        SB2.Height:=(frmAnaly.Height+8)* RelCount-8;
+      end else
+      if (RelCount * (frmAnaly.Height+8)-8<SB2.Height) and (SB2.Align<>alClient) then
+      begin
+        SB2.Align:=alClient;
+        frmAnaly.Height:=(SB2.Height-RelCount*8+8) div RelCount;
+      end;
+    except
+      frmAnaly.Free;
+    end;
+  end;
+var
+  i,vHeigh,vNo: integer;
+  RelID: string;
+  ReList: TStringList;
+begin
+  vNo:=1;
+  //创建前释放上次创建
+  FreeFrameObj(1);
+
+  //卷烟放在第一栏：
+  try
+    ReList:=TStringList.Create;
+    adoReport2.First;
+    while not adoReport2.Eof do
+    begin
+      RelID:=trim(adoReport2.fieldbyName('RELATION_ID').AsString);
+      if RelID<>'1000006' then
+      begin
+        if ReList.IndexOf(RelID)=-1 then
+          ReList.Add(RelID);
+      end;
+      adoReport2.Next;
+    end;
+    //卷烟供应链:
+    ShowFrameDetail(1000006, ReList.Count+1,vNo);
+
+    //非卷烟供应链
+    for i:=0 to ReList.Count-1 do
+    begin
+      RelID:=trim(ReList.Strings[i]); 
+      if RelID = '1000006' then continue;
+      Inc(vNo); //序号+1
+      ShowFrameDetail(StrtoInt(RelID), ReList.Count+1, vNo); 
+    end;
+  finally
+    ReList.Free;
+  end;
+end;
+
+procedure TfrmSaleAnaly.ShowFramePotenAnaly;
+  procedure ShowFrameDetail(Relation_ID, RelCount,vNo: integer);
+  var
+    Spilt: TSplitter; frmPoten: TfrmPotenAnaly; AnalyType: integer;
+  begin
+    if Relation_ID<>1000006 then //不是卷烟都创建分割栏
+    begin
+      Spilt:=TSplitter.Create(self);     
+      Spilt.Name:='frmPotenAnalysplt'+InttoStr(vNo-1);
+      Spilt.Parent:=SB3;
+      Spilt.Height:=8;
+      Spilt.Color:=clBtnFace;
+      Spilt.Align:=alBottom;
+      Spilt.Align:=alTop;
+    end;
+    try
+      frmPoten:=TfrmPotenAnaly.Create(self);
+      frmPoten.Name:='frmPotenAnaly'+InttoStr(vNo);
+      frmPoten.Parent:=SB3;
+      frmPoten.Align:=alBottom;
+      frmPoten.Align:=alTop;
+      frmPoten.InitData(Relation_ID,adoReport3.Data);
+      if (RelCount * (frmPoten.Height+8)-8>SB3.Height) and (SB3.Align<>alNone) then
+      begin
+        SB3.Align:=alNone;
+        SB3.Top:=RzPnl3.Top+RzPnl3.Height;;
+        SB3.Left:=0;
+        SB3.Height:=(frmPoten.Height+8)* RelCount-8;
+      end else
+      if (RelCount * (frmPoten.Height+8)-8<SB3.Height) and (SB3.Align<>alClient) then
+      begin
+        SB3.Align:=alClient;
+        frmPoten.Height:=(SB3.Height-RelCount*8+8) div RelCount;
+      end;
+    except
+      frmPoten.Free;
+    end;
+  end;
+var
+  i,vHeigh,vNo: integer;
+  RelID: string;
+  ReList: TStringList;
+begin
+  vNo:=1;
+  //创建前释放上次创建
+  FreeFrameObj(2);
+
+  //卷烟放在第一栏：
+  try
+    ReList:=TStringList.Create;
+    adoReport3.First;
+    while not adoReport3.Eof do
+    begin
+      RelID:=trim(adoReport3.fieldbyName('RELATION_ID').AsString);
+      if RelID<>'1000006' then
+      begin
+        if ReList.IndexOf(RelID)=-1 then
+          ReList.Add(RelID);
+      end;
+      adoReport3.Next;
+    end;
+    //卷烟供应链:
+    ShowFrameDetail(1000006, ReList.Count+1,vNo);
+    
+    //非卷烟供应链
+    for i:=0 to ReList.Count-1 do
+    begin
+      RelID:=trim(ReList.Strings[i]);
+      if RelID = '1000006' then continue;
+      Inc(vNo); //序号+1
+      ShowFrameDetail(StrtoInt(RelID), ReList.Count+1, vNo);
+    end;
+  finally
+    ReList.Free;
+  end;
+end;    
+
+procedure TfrmSaleAnaly.fndP2_SORT_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  sid2 := '';
+  srid2 := '';
+  fndP2_SORT_ID.Text := '';
+end;
+
+procedure TfrmSaleAnaly.fndP3_SORT_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  sid3 := '';
+  srid3 := '';
+  fndP3_SORT_ID.Text := '';
 end;
 
 end.

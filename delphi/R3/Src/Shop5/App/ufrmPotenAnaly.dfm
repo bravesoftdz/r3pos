@@ -1,6 +1,9 @@
-inherited frmPotenAnaly: TfrmPotenAnaly
+object frmPotenAnaly: TfrmPotenAnaly
+  Left = 0
+  Top = 0
   Width = 1046
   Height = 236
+  TabOrder = 0
   OnResize = FrameResize
   object Splitter1: TSplitter
     Left = 500

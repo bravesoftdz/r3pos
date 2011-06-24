@@ -4,13 +4,12 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeAnalyBase, ExtCtrls, TeEngine, Series, TeeProcs, Chart,
-  Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
-  cxDropDownEdit, StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  DB;
+  Dialogs, ExtCtrls, TeEngine, Series, TeeProcs, Chart, Grids, DBGridEh,
+  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
+  StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset, DB;
 
 type
-  TfrmPotenAnaly = class(TframeAnalyBase)
+  TfrmPotenAnaly = class(TFrame)
     Pnl_Left: TPanel;
     PnlTop1: TPanel;
     Panel1: TPanel;

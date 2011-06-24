@@ -4,13 +4,12 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeAnalyBase, ExtCtrls, TeEngine, Series, TeeProcs, Chart,
-  Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
-  cxDropDownEdit, StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  DB;
+  Dialogs,  ExtCtrls, TeEngine, Series, TeeProcs, Chart, Grids, DBGridEh,
+  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
+  StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset,DB;
 
 type
-  TfrmProfitAnaly = class(TframeAnalyBase)
+  TfrmProfitAnaly = class(TFrame)
     Pnl_Left: TPanel;
     Pnl_Right: TPanel;
     PnlTop: TPanel;
@@ -33,6 +32,7 @@ type
   private
     FTtileName: string;
     FAnalyType: integer;
+    function FindColumn(DBGrid:TDBGridEh; FieldName:string):TColumnEh;
     procedure SetRealition_ID(const Realition_ID: integer);
   public
     procedure ShowOrderData; //刷新显示多少条
@@ -164,6 +164,21 @@ procedure TfrmProfitAnaly.FrameResize(Sender: TObject);
 begin
   inherited;
   Pnl_Left.Width:=(self.Width-6) div 2;
+end;
+
+function TfrmProfitAnaly.FindColumn(DBGrid: TDBGridEh; FieldName: string): TColumnEh;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to DBGrid.Columns.Count - 1 do
+  begin
+    if DBGrid.Columns[i].FieldName = FieldName then
+     begin
+       result := DBGrid.Columns[i];
+       Exit;
+     end;
+  end;
 end;
 
 end.

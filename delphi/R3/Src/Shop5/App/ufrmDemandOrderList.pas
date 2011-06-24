@@ -363,41 +363,21 @@ end;
 function TfrmDemandOrderList.PrintSQL(tenantid, id: string): string;
 begin
   result :=
-   'select j.*,case when j.IS_PRESENT=2 then ''(¶Ò»»)'' when j.IS_PRESENT=1 then ''(ÔùËÍ)'' else '''' end as IS_PRESENT_TEXT ,'+
-   '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+') as TOTAL_OWE_MNY,'+
-   '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+' and INDE_ID='''+id+''') as ORDER_OWE_MNY '+
-   'from ('+
-   'select jn.*,n.DEPT_NAME as DEPT_ID_TEXT from ('+
-   'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
-   'select jl.*,l.CODE_NAME as SALES_STYLE_TEXT from ( '+
-   'select jk.*,k.UNIT_NAME from ('+
-   'select jj.*,j.COLOR_NAME as PROPERTY_02_TEXT from ('+
-   'select ji.*,i.SIZE_NAME as PROPERTY_01_TEXT from ('+
-   'select jh.*,h.GODS_NAME,h.GODS_CODE,h.BARCODE from ('+
-   'select jg.*,g.SHOP_NAME,g.ADDRESS as SHOP_ADDR,g.TELEPHONE as SHOP_TELE,g.FAXES from ('+
-   'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
-   'select je.*,e.CODE_NAME as INVOICE_FLAG_TEXT from ('+
-   'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
-   'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
-   'select jb.*,b.CLIENT_NAME,b.CLIENT_CODE,b.SETTLE_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE2 as MOVE_TELE,b.INTEGRAL as ACCU_INTEGRAL,b.FAXES as CLIENT_FAXES from ('+
-   'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
-   'A.CHK_DATE,A.CHK_USER,A.FIG_ID,A.INDE_AMT,A.INDE_MNY,'+
-   'A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
-   'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,B.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT from SAL_INDENTORDER A,SAL_INDENTDATA B '+
-   'where A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.INDE_ID and A.TENANT_ID='+tenantid+' and A.INDE_ID='''+id+''' ) jb '+
-   'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
-   'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
-   'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INVOICE_FLAG'') e on je.INVOICE_FLAG=e.CODE_ID ) jf '+
-   'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
-   'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+
-   'left outer join VIW_GOODSINFO h on jh.TENANT_ID=h.TENANT_ID and jh.GODS_ID=h.GODS_ID ) ji '+
-   'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
-   'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and  jj.PROPERTY_02=j.COLOR_ID ) jk '+
-   'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
-   'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j order by SEQNO';
+   'select j.* from ( '+
+   'select jd.*,f.USER_NAME as CHK_USER_TEXT from ( '+
+   'select jc.*,e.USER_NAME as CREA_USER_TEXT from ( '+
+   'select jb.*,d.USER_NAME as DEMA_USER_TEXT from ( '+
+   'select ja.*,c.CLIENT_NAME from ( '+
+   'select A.TENANT_ID,A.SHOP_ID,A.DEMA_ID,A.DEMA_TYPE,A.GLIDE_NO,A.DEMA_DATE,A.CLIENT_ID,A.DEMA_USER,'+
+   'A.DEMA_AMT,A.DEMA_MNY,A.CHK_DATE,A.CHK_USER,A.REMARK,A.CREA_DATE,A.CREA_USER,B.SEQNO,B.GODS_ID,'+
+   'B.PROPERTY_01,B.PROPERTY_02,B.LOCUS_NO,B.BOM_ID,B.BATCH_NO,B.IS_PRESENT,B.UNIT_ID,B.AMOUNT,B.ORG_PRICE,'+
+   'B.APRICE,B.AMONEY,B.AGIO_RATE,B.AGIO_MONEY,B.CALC_AMOUNT,B.CALC_MONEY,B.REMARK '+
+   ' from MKT_DEMANDDATA B left join MKT_DEMANDORDER A on A.TENANT_ID=B.TENANT_ID '+
+   ' and A.DEMA_ID=B.DEMA_ID where A.TENANT_ID='+tenantid+' and A.DEMA_ID='''+id+''' ) ja '+
+   ' left outer join VIW_CLIENTINFO c on ja.TENANT_ID=c.TENANT_ID and ja.CLIENT_ID=c.CLIENT_ID ) jb '+
+   ' left outer join VIW_USERS d on jb.TENANT_ID=d.TENANT_ID and jb.DEMA_USER=d.USER_ID ) jc '+
+   ' left outer join VIW_USERS e on jc.TENANT_ID=e.TENANT_ID and jc.CREA_USER=e.USER_ID ) jd '+
+   ' left outer join VIW_USERS f on jd.TENANT_ID=f.TENANT_ID and jd.CHK_USER=f.USER_ID ) j order by SEQNO';
 end;
 
 procedure TfrmDemandOrderList.frfSalIndentOrderUserFunction(const Name: String;

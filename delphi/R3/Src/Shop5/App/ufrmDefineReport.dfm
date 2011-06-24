@@ -13,6 +13,8 @@ inherited frmDefineReport: TfrmDefineReport
     inherited RzPage: TRzPageControl
       Top = 91
       Height = 251
+      ActivePage = TabSheet3
+      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -574,8 +576,8 @@ inherited frmDefineReport: TfrmDefineReport
         object RzPanel6: TRzPanel
           Left = 0
           Top = 0
-          Width = 527
-          Height = 213
+          Width = 535
+          Height = 224
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -584,8 +586,8 @@ inherited frmDefineReport: TfrmDefineReport
           object DBGridEh3: TDBGridEh
             Left = 0
             Top = 0
-            Width = 527
-            Height = 213
+            Width = 535
+            Height = 224
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = RoleDs
@@ -616,7 +618,7 @@ inherited frmDefineReport: TfrmDefineReport
             Columns = <
               item
                 Checkboxes = True
-                Color = clBtnFace
+                Color = clWhite
                 EditButtons = <>
                 FieldName = 'selflag'
                 Footers = <>
@@ -627,6 +629,7 @@ inherited frmDefineReport: TfrmDefineReport
                   '0'
                   '1')
                 Title.Caption = #36873#25321
+                Title.Color = clWhite
                 Width = 36
               end
               item
@@ -634,6 +637,7 @@ inherited frmDefineReport: TfrmDefineReport
                 FieldName = 'ROLE_NAME'
                 Footers = <>
                 Title.Caption = #35282#33394#21517#31216
+                Title.Color = clWhite
                 Width = 83
               end
               item
@@ -641,6 +645,7 @@ inherited frmDefineReport: TfrmDefineReport
                 FieldName = 'REMARK'
                 Footers = <>
                 Title.Caption = #25551#36848
+                Title.Color = clWhite
                 Width = 212
               end>
           end

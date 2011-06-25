@@ -102,6 +102,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Height = 206
         Align = alClient
         AllowedOperations = []
+        AutoFitColWidths = True
         BorderStyle = bsNone
         Color = clWhite
         Ctl3D = True
@@ -120,6 +121,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         FooterFont.Style = []
         FooterRowCount = 1
         FrozenCols = 3
+        HorzScrollBar.Visible = False
         ImeName = #26497#21697#20116#31508#36755#20837#27861
         Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
@@ -136,6 +138,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         TitleFont.Style = [fsBold]
         TitleHeight = 22
         UseMultiTitle = True
+        VertScrollBar.VisibleMode = sbNeverShowEh
         IsDrawNullRow = False
         CurrencySymbol = #65509
         DecimalNumber = 2
@@ -157,7 +160,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             Footers = <>
             Title.Caption = #36135#21495
             Title.Color = clWhite
-            Width = 79
+            Width = 80
           end
           item
             EditButtons = <>
@@ -295,6 +298,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Height = 206
         Align = alClient
         AllowedOperations = []
+        AutoFitColWidths = True
         BorderStyle = bsNone
         Color = clWhite
         Ctl3D = True
@@ -313,6 +317,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         FooterFont.Style = []
         FooterRowCount = 1
         FrozenCols = 3
+        HorzScrollBar.Visible = False
         ImeName = #26497#21697#20116#31508#36755#20837#27861
         Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
@@ -329,6 +334,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         TitleFont.Style = [fsBold]
         TitleHeight = 22
         UseMultiTitle = True
+        VertScrollBar.VisibleMode = sbNeverShowEh
         IsDrawNullRow = False
         CurrencySymbol = #65509
         DecimalNumber = 2
@@ -350,7 +356,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             Footers = <>
             Title.Caption = #36135#21495
             Title.Color = clWhite
-            Width = 96
+            Width = 80
           end
           item
             EditButtons = <>
@@ -377,7 +383,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             Footers = <>
             Title.Caption = #27611#21033
             Title.Color = clWhite
-            Width = 70
+            Width = 65
           end
           item
             EditButtons = <>

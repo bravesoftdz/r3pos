@@ -102,6 +102,7 @@ object frmProfitAnaly: TfrmProfitAnaly
         Height = 206
         Align = alClient
         AllowedOperations = []
+        AutoFitColWidths = True
         BorderStyle = bsNone
         Color = clWhite
         Ctl3D = True
@@ -120,6 +121,7 @@ object frmProfitAnaly: TfrmProfitAnaly
         FooterFont.Style = []
         FooterRowCount = 1
         FrozenCols = 3
+        HorzScrollBar.Visible = False
         ImeName = #26497#21697#20116#31508#36755#20837#27861
         Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
@@ -136,6 +138,7 @@ object frmProfitAnaly: TfrmProfitAnaly
         TitleFont.Style = [fsBold]
         TitleHeight = 22
         UseMultiTitle = True
+        VertScrollBar.VisibleMode = sbNeverShowEh
         IsDrawNullRow = False
         CurrencySymbol = #65509
         DecimalNumber = 2
@@ -184,7 +187,7 @@ object frmProfitAnaly: TfrmProfitAnaly
             Footers = <>
             Title.Caption = #25490#21517
             Title.Color = clWhite
-            Width = 32
+            Width = 46
           end>
       end
     end

@@ -13,6 +13,7 @@ type
   private
     FLogined: boolean;
     Fready: boolean;
+    FSessionFail: boolean;
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
                                                    const szPara: WideString);
@@ -25,6 +26,7 @@ type
                                                    const szPara3: WideString);
     procedure SetLogined(const Value: boolean);
     procedure Setready(const Value: boolean);
+    procedure SetSessionFail(const Value: boolean);
   public
     { Public declarations }
     LCObject:TLCObject;
@@ -41,11 +43,12 @@ type
     procedure Open(sid,oid:string);
     property Logined:boolean read FLogined write SetLogined;
     property ready:boolean read Fready write Setready;
+    property SessionFail:boolean read FSessionFail write SetSessionFail;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
-uses uGlobal,ufrmLogo,uIdLogFile,ufrmXsmLogin;
+uses uCaFactory,uGlobal,ufrmLogo,ZLogFile,ufrmXsmLogin;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -74,7 +77,7 @@ procedure TfrmXsmIEBrowser.DoFuncCall3(ASender: TObject;
   const szMethodName, szPara1, szPara2, szPara3: WideString);
 begin
   runed := false;
-  idLogFile.AddLogFile(0,'FuncCall3:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2+' 参数3='+szPara3);
+  LogFile.AddLogFile(0,'FuncCall3:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2+' 参数3='+szPara3);
 end;
 
 function TfrmXsmIEBrowser.DoLogin:boolean;
@@ -96,6 +99,7 @@ end;
 procedure TfrmXsmIEBrowser.SetLogined(const Value: boolean);
 begin
   FLogined := Value;
+  SessionFail := false;
 end;
 
 procedure TfrmXsmIEBrowser.DoFuncCall(ASender: TObject; const szMethodName,
@@ -103,31 +107,33 @@ procedure TfrmXsmIEBrowser.DoFuncCall(ASender: TObject; const szMethodName,
 begin
   if szMethodName='ready' then
      ready := true;
+  if szMethodName='loginReady' then
+     ready := true;
   if szMethodName='loginStatus' then
      Logined := (szPara='success');
   if szMethodName='sessionFail' then
      begin
        Logined := false;
-       ready := false;
+       SessionFail := true;
      end;
   if szMethodName='loginReady' then
      Logined := true;
   runed := false;
-  idLogFile.AddLogFile(0,'FuncCall:方法='+szMethodName+' 参数1='+szPara);
+  LogFile.AddLogFile(0,'FuncCall:方法='+szMethodName+' 参数1='+szPara);
 end;
 
 procedure TfrmXsmIEBrowser.DoFuncCall2(ASender: TObject;
   const szMethodName, szPara1, szPara2: WideString);
 begin
   runed := false;
-  idLogFile.AddLogFile(0,'FuncCall2:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2);
+  LogFile.AddLogFile(0,'FuncCall2:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2);
 end;
 
 procedure TfrmXsmIEBrowser.Connect;
 var r:integer;
 begin
   r := LCObject.Connect('_r3');
-  if r<>0 then idLogFile.AddLogFile(0,'初始化新商盟LCObject失败，失败代码:'+inttostr(r));
+  if r<>0 then LogFile.AddLogFile(0,'初始化新商盟LCObject失败，失败代码:'+inttostr(r));
 end;
 
 procedure TfrmXsmIEBrowser.Send(const szMethodName, szPara: WideString);
@@ -135,7 +141,7 @@ var r:integer;
 begin
   runed := true;
   r := LCObject.Send('_R3_XSM',szMethodName,szPara);
-  if r<>0 then idLogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara+'失败，失败代码:'+inttostr(r));
+  if r<>0 then LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara+'失败，失败代码:'+inttostr(r));
 end;
 
 procedure TfrmXsmIEBrowser.Send2(const szMethodName, szPara1,
@@ -144,7 +150,7 @@ var r:integer;
 begin
   runed := true;
   r := LCObject.Send2('_R3_XSM',szMethodName,szPara1,szPara2);
-  if r<>0 then idLogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+'失败，失败代码:'+inttostr(r));
+  if r<>0 then LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+'失败，失败代码:'+inttostr(r));
 end;
 
 procedure TfrmXsmIEBrowser.Send3(const szMethodName, szPara1, szPara2,
@@ -153,7 +159,7 @@ var r:integer;
 begin
   runed := true;
   r := LCObject.Send3('_R3_XSM',szMethodName,szPara1,szPara2,szPara3);
-  if r<>0 then idLogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+',p3='+szPara3+'失败，失败代码:'+inttostr(r));
+  if r<>0 then LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+',p3='+szPara3+'失败，失败代码:'+inttostr(r));
 end;
 
 procedure TfrmXsmIEBrowser.FormClose(Sender: TObject;
@@ -168,9 +174,11 @@ begin
   FormStyle := fsMDIChild;
   WindowState := wsMaximized;
   BringToFront;
+  if not CaFactory.Audited then Raise Exception.Create('脱机状态不能进行新商盟...');
   if not Logined then
      begin
-       if TfrmXsmLogin.XsmRegister then
+       if SessionFail then DoLogin;
+       if not Logined and TfrmXsmLogin.XsmRegister then
           begin
             if not DoLogin then Open(sid,oid);
           end
@@ -187,7 +195,7 @@ end;
 
 procedure TfrmXsmIEBrowser.DoInit;
 var
-  _Start:Int64;
+  _Start,W:Int64;
 begin
   ready := false;
   Runed := true;
@@ -196,11 +204,17 @@ begin
   _Start := GetTickCount;
   frmLogo.Show;
   frmLogo.ProgressBar1.Position := 0;
+  frmLogo.ProgressBar1.Update;
   while not ready do
      begin
        Application.ProcessMessages;
-       frmLogo.ProgressBar1.Position := frmLogo.ProgressBar1.Position + 5;
-       if (GetTickCount-_Start)>60000 then
+       W := (GetTickCount-_Start);
+//       if (W mod 1000)=0 then
+//          begin
+            frmLogo.ProgressBar1.Position := (W div 1000);
+            frmLogo.ProgressBar1.Update;
+//          end;
+       if W>60000 then
           begin
             ready := false;
             Exit;
@@ -229,6 +243,11 @@ end;
 procedure TfrmXsmIEBrowser.ClearResource;
 begin
   Send('getModule','clear');
+end;
+
+procedure TfrmXsmIEBrowser.SetSessionFail(const Value: boolean);
+begin
+  FSessionFail := Value;
 end;
 
 end.

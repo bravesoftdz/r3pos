@@ -528,6 +528,9 @@ begin
   P2_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
   P3_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P3_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+
+  //默认第一分页
+  RzPage.ActivePage:=TabSheet1;
 end;
 
 procedure TfrmSaleAnaly.RB_SaleMoneyClick(Sender: TObject);
@@ -758,7 +761,7 @@ procedure TfrmSaleAnaly.ShowFrameProfitAnaly;
       Spilt.Name:='frmProfitAnalysplt'+InttoStr(vNo-1);
       Spilt.Parent:=SB2;
       Spilt.Height:=8;
-      Spilt.Color:=clBtnFace;
+      Spilt.Color:=clwhite;
       Spilt.Align:=alBottom;
       Spilt.Align:=alTop;
     end;
@@ -839,7 +842,7 @@ procedure TfrmSaleAnaly.ShowFramePotenAnaly;
       Spilt.Name:='frmPotenAnalysplt'+InttoStr(vNo-1);
       Spilt.Parent:=SB3;
       Spilt.Height:=8;
-      Spilt.Color:=clBtnFace;
+      Spilt.Color:=clwhite;
       Spilt.Align:=alBottom;
       Spilt.Align:=alTop;
     end;

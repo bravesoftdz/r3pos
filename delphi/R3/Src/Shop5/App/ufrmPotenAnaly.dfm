@@ -8,9 +8,9 @@ object frmPotenAnaly: TfrmPotenAnaly
   object Splitter1: TSplitter
     Left = 500
     Top = 0
-    Width = 5
+    Width = 6
     Height = 236
-    Color = clBtnFace
+    Color = clWhite
     ParentColor = False
   end
   object Pnl_Left: TPanel
@@ -27,8 +27,9 @@ object frmPotenAnaly: TfrmPotenAnaly
       Width = 500
       Height = 28
       Align = alTop
-      BevelOuter = bvLowered
+      BevelOuter = bvNone
       Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517#9#9
+      Color = clWhite
       TabOrder = 0
       object Label1: TLabel
         Left = 411
@@ -147,6 +148,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'SEQNO'
             Footers = <>
             Title.Caption = #24207#21495
+            Title.Color = clWhite
             Width = 30
           end
           item
@@ -154,6 +156,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'GODS_CODE'
             Footers = <>
             Title.Caption = #36135#21495
+            Title.Color = clWhite
             Width = 79
           end
           item
@@ -161,6 +164,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'GODS_NAME'
             Footers = <>
             Title.Caption = #21830#21697#21517#31216
+            Title.Color = clWhite
             Width = 130
           end
           item
@@ -171,6 +175,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #38144#21806#39069
+            Title.Color = clWhite
             Width = 80
           end
           item
@@ -179,6 +184,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'PRF_SUM'
             Footers = <>
             Title.Caption = #27611#21033
+            Title.Color = clWhite
             Width = 65
           end
           item
@@ -186,6 +192,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'AMT_SUM'
             Footers = <>
             Title.Caption = #38144#37327
+            Title.Color = clWhite
             Width = 70
           end
           item
@@ -193,15 +200,16 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'OrderNo'
             Footers = <>
             Title.Caption = #25490#21517
+            Title.Color = clWhite
             Width = 32
           end>
       end
     end
   end
   object Pnl_Right: TPanel
-    Left = 505
+    Left = 506
     Top = 0
-    Width = 541
+    Width = 540
     Height = 236
     Align = alClient
     BevelOuter = bvNone
@@ -209,11 +217,12 @@ object frmPotenAnaly: TfrmPotenAnaly
     object PnlTop2: TPanel
       Left = 0
       Top = 0
-      Width = 541
+      Width = 540
       Height = 28
       Align = alTop
-      BevelOuter = bvLowered
+      BevelOuter = bvNone
       Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517#9#9
+      Color = clWhite
       TabOrder = 0
       object Label3: TLabel
         Left = 416
@@ -274,7 +283,7 @@ object frmPotenAnaly: TfrmPotenAnaly
     object Panel4: TPanel
       Left = 0
       Top = 28
-      Width = 541
+      Width = 540
       Height = 208
       Align = alClient
       BevelOuter = bvLowered
@@ -282,7 +291,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       object DBGridEh2: TDBGridEh
         Left = 1
         Top = 1
-        Width = 539
+        Width = 538
         Height = 206
         Align = alClient
         AllowedOperations = []
@@ -332,6 +341,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'SEQNO'
             Footers = <>
             Title.Caption = #24207#21495
+            Title.Color = clWhite
             Width = 30
           end
           item
@@ -339,6 +349,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'GODS_CODE'
             Footers = <>
             Title.Caption = #36135#21495
+            Title.Color = clWhite
             Width = 96
           end
           item
@@ -346,6 +357,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'GODS_NAME'
             Footers = <>
             Title.Caption = #21830#21697#21517#31216
+            Title.Color = clWhite
             Width = 130
           end
           item
@@ -356,6 +368,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #38144#21806#39069
+            Title.Color = clWhite
             Width = 80
           end
           item
@@ -363,6 +376,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'PRF_SUM'
             Footers = <>
             Title.Caption = #27611#21033
+            Title.Color = clWhite
             Width = 70
           end
           item
@@ -370,6 +384,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'AMT_SUM'
             Footers = <>
             Title.Caption = #21806#37327
+            Title.Color = clWhite
             Width = 70
           end
           item
@@ -377,6 +392,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             FieldName = 'OrderNo'
             Footers = <>
             Title.Caption = #25490#21517
+            Title.Color = clWhite
             Width = 32
           end>
       end

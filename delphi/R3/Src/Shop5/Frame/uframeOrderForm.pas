@@ -67,6 +67,7 @@ type
     mnuBatchNo: TMenuItem;
     munUnitConvert: TMenuItem;
     mnuIsPressent: TMenuItem;
+    Excel1: TMenuItem;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -119,6 +120,7 @@ type
     procedure edtInputEnter(Sender: TObject);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure Excel1Click(Sender: TObject);
   private
     FdbState: TDataSetState;
     FgRepeat: boolean;
@@ -146,6 +148,7 @@ type
     FInputMode: integer;
     FisZero: boolean;
     FIsDefault: boolean;
+    Frs: TZQuery;
     //end;
     procedure InitGrid;
     procedure IsPresentUpdateData(Sender: TObject;
@@ -173,6 +176,7 @@ type
     procedure SetInputMode(const Value: integer);
     procedure SetisZero(const Value: boolean);
     procedure SetIsDefault(const Value: boolean);
+    procedure Setrs(const Value: TZQuery);
     { Private declarations }
   protected
     // 最近输的货品
@@ -195,6 +199,9 @@ type
     //SEQNO控制号
     RowID:integer;
 
+    //Excel导入中各继承模块字段名 (2011.06.22)
+    FieldsString,FormatString:String;
+    
     Locked:boolean;
     AObj:TRecord_;
     //重复条码控制
@@ -266,6 +273,13 @@ type
     procedure NextOrder;virtual;
     procedure Open(id:string);virtual;
 
+    //查找对应字段中的值在数据库中是否存在 (2011.06.22)
+    function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;virtual;
+    //将要导入的各字段值写入数据库中 (2011.06.22)
+    function SaveExcel(CdsExcel:TDataSet):Boolean;virtual;
+    //判断不可缺少的字段域 (2011.06.22)
+    function FindFieldColumn(CdsCol:TDataSet):Boolean;virtual;
+
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     
@@ -288,10 +302,13 @@ type
     property CanAppend:boolean read FCanAppend write SetCanAppend;
     property isZero:boolean read FisZero write SetisZero;
     property IsDefault:boolean read FIsDefault write SetIsDefault;
+    //接收子模块主从表的各字段和 (2011.06.22)
+    property rs:TZQuery  read Frs write Setrs;
   end;
 
 implementation
-uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory, uframeDialogProperty, uframeSelectGoods, ufrmGoodsInfo, uframeListDialog;
+uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uExpression, uXDictFactory,
+uframeDialogProperty, uframeSelectGoods, ufrmGoodsInfo, uframeListDialog, ufrmExcelFactory;
 {$R *.dfm}
 
 { TframeOrderFrom }
@@ -3339,6 +3356,161 @@ end;
 
 function TframeOrderForm.GodsToLocusNo(id: string): boolean;
 begin
+
+end;
+
+function TframeOrderForm.Check(Source, Dest: TDataSet; SFieldName,
+  DFieldName: string): Boolean;
+var rs:TZQuery;
+begin
+  if (SFieldName<>'') and (DFieldName<>'') then
+    begin
+      Result := False;
+      // *******************所属门店********************
+      if DFieldName = 'SHOP_ID' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('CA_SHOP_INFO');
+              if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                begin
+                  Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
+                  Result := True;
+                  Exit;
+                end
+              else
+                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
+            end
+          else
+            Raise Exception.Create('门店不能为空!');
+        end;
+      // *******************所属商品********************
+      if DFieldName = 'GODS_ID' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+              if rs.Locate('GODS_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                begin
+                  Dest.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;
+                  Result := True;
+                  Exit;
+                end
+              else
+                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的商品代码...');
+            end
+          else
+            Raise Exception.Create('商品不能为空!');
+        end;
+      // *******************所属单位********************
+      if DFieldName = 'UNIT_ID' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+              if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                begin
+                  Dest.FieldByName('UNIT_ID').AsString := rs.FieldByName('UNIT_ID').AsString;
+                  Result := True;
+                  Exit;
+                end
+              else
+                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的单位代码...');
+            end
+          else
+            Raise Exception.Create('单位不能为空!');
+        end;
+      // *******************所属尺码********************
+      if DFieldName = 'PROPERTY_01' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+              if rs.Locate('SIZE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                Dest.FieldByName('PROPERTY_01').AsString := rs.FieldByName('SIZE_ID').AsString
+              else
+                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的尺码代码...');
+            end
+          else
+            Dest.FieldByName('PROPERTY_01').AsString := '#';
+          Result := True;
+          Exit;
+        end;
+      // *******************所属颜色********************
+      if DFieldName = 'PROPERTY_02' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+              if rs.Locate('COLOR_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                Dest.FieldByName('PROPERTY_02').AsString := rs.FieldByName('COLOR_ID').AsString
+              else
+                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的颜色代码...');
+            end
+          else
+            Dest.FieldByName('PROPERTY_02').AsString := '#';
+          Result := True;
+          Exit;          
+        end;
+      // *******************相关审核人员********************
+      if DFieldName = 'CHK_USER' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('CA_USERS');
+              if rs.Locate('USER_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                begin
+                  Dest.FieldByName('CHK_USER').AsString := rs.FieldByName('USER_ID').AsString;
+                  Result := True;
+                  Exit;
+                end
+              else
+                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的人员代码...');
+            end;
+        end;
+      // *******************相关制单人********************
+      if DFieldName = 'CREA_USER' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('CA_USERS');
+              if rs.Locate('USER_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                begin
+                  Dest.FieldByName('CREA_USER').AsString := rs.FieldByName('USER_ID').AsString;
+                  Result := True;
+                  Exit;
+                end
+              else
+                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的人员代码...');
+            end;
+        end;
+    end;
+end;
+
+function TframeOrderForm.FindFieldColumn(CdsCol: TDataSet): Boolean;
+begin
+    if not CdsCol.Locate('FieldName','SHOP_ID',[]) then
+      begin
+        Result := False;
+        Raise Exception.Create('缺少门店字段!');
+      end;
+end;
+
+function TframeOrderForm.SaveExcel(CdsExcel: TDataSet): Boolean;
+begin
+
+end;
+
+procedure TframeOrderForm.Setrs(const Value: TZQuery);
+begin
+  Frs := Value;
+end;
+
+procedure TframeOrderForm.Excel1Click(Sender: TObject);
+
+begin
+  inherited;
+  TfrmExcelFactory.ExcelFactory(rs,FieldsString,@TframeOrderForm.Check,@TframeOrderForm.SaveExcel,@TframeOrderForm.FindFieldColumn,FormatString,1);
 
 end;
 

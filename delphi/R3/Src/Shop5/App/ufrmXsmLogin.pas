@@ -98,7 +98,7 @@ begin
       Factor.UpdateBatch(cdsUnion,'TSysDefine');
     end;
   1:begin
-      Factor.ExecSQL('update CA_SHOP_INFO set CUST_CODE='''+Trim(edtUsername.Text)+''',PASS_WORD='''+EncStr(Trim(edtPassword.Text),ENC_KEY)+''',COMM='''+GetCommStr(Factor.idbType)+''',TIME_STAMP='''+GetTimeStamp(Factor.idbType)+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
+      Factor.ExecSQL('update CA_SHOP_INFO set CUST_CODE='''+Trim(edtUsername.Text)+''',PASS_WORD='''+EncStr(Trim(edtPassword.Text),ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
     end;
   end;
 end;

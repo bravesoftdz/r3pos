@@ -496,7 +496,8 @@ begin
           TZQuery(Result).Params.FindParam('TENANT_ID').AsInteger := TENANT_ID;
        if TZQuery(Result).Params.FindParam('USER_ID')<>nil then
           TZQuery(Result).Params.FindParam('USER_ID').AsString := UserId;
-       Factor.Open(Result);
+       if Trim(TZQuery(Result).SQL.Text) = '' then Exit; 
+          Factor.Open(Result);
      end;
   if Result.Filtered then Result.Filtered := false;
   Result.CommitUpdates;
@@ -530,6 +531,7 @@ end;
 procedure TGlobal.Connect;
 var
   F:TIniFile;
+  ConStr:string;
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   try
@@ -539,7 +541,16 @@ begin
          Factor.Initialize('provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db');
        end
     else
-       Factor.Initialize(F.ReadString('db','Connstr',''));
+       begin
+         ConStr := F.ReadString('db','Connstr','');
+         if debug and (ConStr='') then
+            begin
+              if not FileExists(Global.InstallPath+'data\r3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\r3.db'),false);
+              Factor.Initialize('provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db');
+            end
+         else
+           Factor.Initialize(ConStr);
+       end;
     Factor.Connect;
   finally
     F.Free;

@@ -53,6 +53,7 @@ type
     procedure WMClose(var Message: TWMClose); message WM_CLOSE;
   public
     procedure OpenAction(ActionName:string;Params:string); virtual;
+    function FindAction(ActionName:string):TAction;virtual;
     property ParamsStr:string read FParamStr write SetParamStr;
   end;
 
@@ -362,6 +363,20 @@ begin
   finally
     Reg.Free;
   end;
+end;
+
+function TfrmMain.FindAction(ActionName: string):TAction;
+var i:Integer;
+begin
+  result := nil;
+  for i:=0 to actList.ActionCount -1 do
+    begin
+      if uppercase(actList.Actions[i].Name) = uppercase(ActionName) then
+         begin
+           result := TAction(actList.Actions[i]);
+           Break;
+         end;
+    end;
 end;
 
 end.

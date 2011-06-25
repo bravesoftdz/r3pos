@@ -34,7 +34,7 @@ object frmPrgBar: TfrmPrgBar
     TabOrder = 0
     object RzLabel1: TRzLabel
       Left = 27
-      Top = 40
+      Top = 48
       Width = 302
       Height = 13
       AutoSize = False

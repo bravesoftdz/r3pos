@@ -328,6 +328,7 @@ procedure TdmIcon.DataModuleCreate(Sender: TObject);
 begin
   HsResOpr := THsResOpr.Create;
   LoadIcon16;
+  dmIcon := self;
 end;
 
 procedure TdmIcon.DataModuleDestroy(Sender: TObject);

@@ -747,9 +747,10 @@ begin
           Result := DivX / DivY
         else
         begin
-          raise
-            Exception.CreateFmt('¼ÆËã´íÎó: "%f / %f" Áã³ı´íÎó.',
-            [DivX, DivY]);
+          result := null;
+          //raise
+          //  Exception.CreateFmt('¼ÆËã´íÎó: "%f / %f" Áã³ı´íÎó.',
+          //  [DivX, DivY]);
           Exit;
         end;
       end

@@ -7,16 +7,16 @@ inherited frameToolForm: TframeToolForm
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Top = 36
+    Top = 37
     Width = 634
-    Height = 340
+    Height = 339
     BorderColor = clWhite
     BorderShadow = clWhite
     object RzPanel2: TRzPanel
       Left = 5
       Top = 5
       Width = 624
-      Height = 330
+      Height = 329
       Align = alClient
       BorderOuter = fsNone
       BorderWidth = 3
@@ -25,7 +25,7 @@ inherited frameToolForm: TframeToolForm
         Left = 3
         Top = 3
         Width = 618
-        Height = 324
+        Height = 323
         ActivePage = TabSheet1
         Align = alClient
         TabHeight = 25
@@ -39,7 +39,7 @@ inherited frameToolForm: TframeToolForm
             Left = 0
             Top = 0
             Width = 616
-            Height = 297
+            Height = 296
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -53,15 +53,15 @@ inherited frameToolForm: TframeToolForm
     Left = 0
     Top = 0
     Width = 634
-    Height = 36
+    Height = 37
     Align = alTop
-    BorderOuter = fsNone
-    BorderSides = [sdBottom]
-    FlatColor = clActiveCaption
+    BorderOuter = fsFlat
+    BorderSides = [sdTop]
+    FlatColor = clWhite
     TabOrder = 1
     object Image2: TImage
       Left = 0
-      Top = 0
+      Top = 1
       Width = 20
       Height = 36
       Align = alLeft
@@ -140,7 +140,7 @@ inherited frameToolForm: TframeToolForm
     end
     object Image1: TImage
       Left = 520
-      Top = 0
+      Top = 1
       Width = 94
       Height = 36
       Align = alClient
@@ -177,7 +177,7 @@ inherited frameToolForm: TframeToolForm
     end
     object Image3: TImage
       Left = 520
-      Top = 0
+      Top = 1
       Width = 94
       Height = 36
       Align = alClient
@@ -257,7 +257,7 @@ inherited frameToolForm: TframeToolForm
     end
     object Image14: TImage
       Left = 614
-      Top = 0
+      Top = 1
       Width = 20
       Height = 36
       Align = alRight
@@ -336,7 +336,7 @@ inherited frameToolForm: TframeToolForm
     end
     object rzPanel5: TPanel
       Left = 520
-      Top = 0
+      Top = 1
       Width = 0
       Height = 36
       Align = alLeft
@@ -397,7 +397,7 @@ inherited frameToolForm: TframeToolForm
     end
     object CoolBar1: TCoolBar
       Left = 20
-      Top = 0
+      Top = 1
       Width = 500
       Height = 36
       Align = alLeft

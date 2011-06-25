@@ -356,7 +356,7 @@ type
   end;
 
 implementation
-uses ufrmShopMain, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
+uses ufrmMain, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
      ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
      ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard;
@@ -2381,7 +2381,7 @@ begin
      end;
   if (Shift = []) and (Key = VK_PAUSE) then
      begin
-       frmShopMain.actfrmLockScreen.OnExecute(nil);
+       frmMain.FindAction('actfrmLockScreen').OnExecute(nil);
      end;
   if (Shift = []) and (Key=VK_F5) then
      begin
@@ -3819,7 +3819,7 @@ end;
 procedure TfrmPosMain.Label10Click(Sender: TObject);
 begin
   inherited;
-  frmShopMain.actfrmLockScreen.OnExecute(nil);
+  frmMain.FindAction('actfrmLockScreen').OnExecute(nil);
 end;
 
 procedure TfrmPosMain.h11Click(Sender: TObject);

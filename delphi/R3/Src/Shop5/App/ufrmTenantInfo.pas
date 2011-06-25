@@ -73,7 +73,7 @@ type
   end;
 
 implementation
-uses uShopUtil, uDsUtil, uFnUtil, EncDec, uGlobal, uShopGlobal,ufrmShopMain, ufrmBasic;
+uses uShopUtil, uDsUtil, uFnUtil, EncDec, uGlobal, uShopGlobal, ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmTenantInfo.btnOkClick(Sender: TObject);

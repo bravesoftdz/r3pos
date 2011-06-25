@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 307
-  Top = 187
+  Left = 308
+  Top = 159
   Width = 700
   Height = 535
   Caption = ''
@@ -3475,7 +3475,7 @@ inherited frmShopMain: TfrmShopMain
       object RzPanel2: TRzPanel
         Left = 0
         Top = 0
-        Width = 685
+        Width = 684
         Height = 105
         Align = alTop
         BorderOuter = fsNone
@@ -3484,7 +3484,7 @@ inherited frmShopMain: TfrmShopMain
         object Panel27: TPanel
           Left = 0
           Top = 0
-          Width = 685
+          Width = 684
           Height = 70
           Align = alTop
           AutoSize = True
@@ -3493,7 +3493,7 @@ inherited frmShopMain: TfrmShopMain
           object Panel28: TPanel
             Left = 0
             Top = 0
-            Width = 685
+            Width = 684
             Height = 70
             Align = alTop
             BevelOuter = bvNone
@@ -3857,7 +3857,7 @@ inherited frmShopMain: TfrmShopMain
               Stretch = True
             end
             object Panel29: TPanel
-              Left = 20
+              Left = 19
               Top = 0
               Width = 665
               Height = 70
@@ -5912,13 +5912,13 @@ inherited frmShopMain: TfrmShopMain
         object Panel34: TPanel
           Left = 0
           Top = 67
-          Width = 685
+          Width = 684
           Height = 38
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
           object Image36: TImage
-            Left = 674
+            Left = 673
             Top = 2
             Width = 9
             Height = 36
@@ -6639,7 +6639,7 @@ inherited frmShopMain: TfrmShopMain
           object Panel39: TPanel
             Left = 480
             Top = 2
-            Width = 194
+            Width = 193
             Height = 36
             Align = alClient
             BevelOuter = bvNone
@@ -6647,7 +6647,7 @@ inherited frmShopMain: TfrmShopMain
             object Panel40: TPanel
               Left = 0
               Top = 0
-              Width = 194
+              Width = 193
               Height = 8
               Align = alTop
               BevelOuter = bvNone
@@ -6655,7 +6655,7 @@ inherited frmShopMain: TfrmShopMain
               object Image42: TImage
                 Left = 0
                 Top = 0
-                Width = 194
+                Width = 193
                 Height = 8
                 Align = alClient
                 Stretch = True
@@ -6664,7 +6664,7 @@ inherited frmShopMain: TfrmShopMain
             object rzs2ToolButton: TPanel
               Left = 0
               Top = 8
-              Width = 194
+              Width = 193
               Height = 28
               Align = alClient
               BevelOuter = bvNone
@@ -6672,7 +6672,7 @@ inherited frmShopMain: TfrmShopMain
               object Image43: TImage
                 Left = 0
                 Top = 0
-                Width = 194
+                Width = 193
                 Height = 28
                 Align = alClient
                 Stretch = True
@@ -6680,7 +6680,7 @@ inherited frmShopMain: TfrmShopMain
             end
           end
           object Panel42: TPanel
-            Left = 683
+            Left = 682
             Top = 2
             Width = 2
             Height = 36
@@ -7005,7 +7005,7 @@ inherited frmShopMain: TfrmShopMain
           object Panel43: TPanel
             Left = 0
             Top = 0
-            Width = 685
+            Width = 684
             Height = 2
             Align = alTop
             BevelOuter = bvNone
@@ -7795,6 +7795,11 @@ inherited frmShopMain: TfrmShopMain
       Tag = 42600001
       Caption = #36827#36135#20998#26512#25253#34920
       OnExecute = actfrmStockTotalReportExecute
+    end
+    object actfrmSaleMonthTotalReport: TAction
+      Tag = 42800001
+      Caption = #38144#21806#26376#20998#26512#34920
+      OnExecute = actfrmSaleMonthTotalReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu
@@ -9073,14 +9078,6 @@ inherited frmShopMain: TfrmShopMain
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
   end
-  object CA_MODULE: TZQuery
-    FieldDefs = <>
-    OnFilterRecord = CA_MODULEFilterRecord
-    CachedUpdates = True
-    Params = <>
-    Left = 424
-    Top = 304
-  end
   object ImageList3: TImageList
     Height = 28
     Width = 77
@@ -10228,5 +10225,13 @@ inherited frmShopMain: TfrmShopMain
     OnLButtonDblClick = RzTrayIcon1LButtonDblClick
     Left = 296
     Top = 216
+  end
+  object CA_MODULE: TZQuery
+    FieldDefs = <>
+    OnFilterRecord = CA_MODULEFilterRecord
+    CachedUpdates = True
+    Params = <>
+    Left = 232
+    Top = 224
   end
 end

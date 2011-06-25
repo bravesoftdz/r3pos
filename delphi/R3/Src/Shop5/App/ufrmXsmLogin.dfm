@@ -1,12 +1,12 @@
 inherited frmXsmLogin: TfrmXsmLogin
   Left = 358
   Top = 212
+  ActiveControl = edtUsername
   BorderStyle = bsDialog
   Caption = #26032#21830#30431
   ClientHeight = 210
   ClientWidth = 342
   OldCreateOrder = True
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12

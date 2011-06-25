@@ -165,6 +165,8 @@ type
     function downloadBarcode(TenantId,flag:integer):boolean;
     function SyncAll(flag:integer):boolean;
 
+    function downloadCaModule(TenantId,flag:integer):boolean;
+
     //企业服务
     function AutoCoLogo:boolean;
     function coLogin(Account:string;PassWrd:string):TCaLogin;
@@ -2921,6 +2923,141 @@ except
        LogFile.AddLogFile(0,'下载<商盟资料>xml='+doc.xml+';原因:'+E.Message)
     else
        LogFile.AddLogFile(0,'下载<商盟资料>xml=无;原因:'+E.Message);
+    Raise;
+  end;
+end;
+end;
+
+function TCaFactory.downloadCaModule(TenantId, flag: integer): boolean;
+var
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  listModulesResp:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  line:PServiceLine;
+  h,r:rsp;
+  i:integer;
+  rs:TZQuery;
+  Params:TftParamList;
+  OutXml:WideString;
+begin
+try
+  SetTicket;
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := inttostr(flag);
+  FindNode(doc,'header\pub').appendChild(Node);
+
+  Node := doc.createElement('timeStamp');
+  Node.text := inttostr(GetSynTimeStamp('CA_MODULE','#'));
+  FindNode(doc,'header\pub').appendChild(Node);
+  LogFile.AddLogFile(0,'开始下载<功能模块>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
+
+  Node := doc.createElement('listModulesReq');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(TenantId);
+  FindNode(doc,'body\listModulesReq').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  rio := CreateRio(120000);
+  try
+    h := SendHeader(rio,2);
+    try
+      try
+        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadUnit(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise;
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+
+    CheckRecAck(doc);
+    Node := FindNode(doc,'body');
+    LogFile.AddLogFile(0,'下载<功能模块>打开时长:'+inttostr(GetTicket));
+    SetTicket;
+    rs := TZQuery.Create(nil);
+    try
+      rs.Close;
+      rs.FieldDefs.Add('PROD_ID',ftstring,10,true);
+      rs.FieldDefs.Add('MODU_ID',ftstring,20,true);
+      rs.FieldDefs.Add('SEQ_NO',ftInteger,0,true);
+      rs.FieldDefs.Add('MODU_NAME',ftstring,50,true);
+      rs.FieldDefs.Add('LEVEL_ID',ftstring,21,true);
+      rs.FieldDefs.Add('MODU_TYPE',ftInteger,0,true);
+      rs.FieldDefs.Add('ACTION_NAME',ftstring,50,true);
+      rs.FieldDefs.Add('ACTION_URL',ftstring,50,true);
+      rs.FieldDefs.Add('COMM',ftstring,2,true);
+      rs.FieldDefs.Add('TIME_STAMP',ftLargeInt,0,true);
+      rs.CreateDataSet;
+      listModulesResp := Node.firstChild;
+      while listModulesResp<>nil do
+         begin
+           rs.Append;
+           rs.FieldByName('PROD_ID').AsString := GetNodeValue(listModulesResp,'prodId');
+           rs.FieldByName('MODU_ID').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'moduId'));
+           if GetNodeValue(listModulesResp,'seqNo')='' then
+           rs.FieldByName('SEQ_NO').AsInteger := 0 else
+           rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'seqNo'));
+           rs.FieldByName('MODU_NAME').AsString := GetNodeValue(listModulesResp,'moduName');
+           rs.FieldByName('LEVEL_ID').AsString := GetNodeValue(listModulesResp,'levelId');
+           rs.FieldByName('MODU_TYPE').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'moduType'));
+           rs.FieldByName('ACTION_NAME').AsString := GetNodeValue(listModulesResp,'actionName');
+           rs.FieldByName('ACTION_URL').AsString := GetNodeValue(listModulesResp,'actionUrl');
+           rs.FieldByName('COMM').AsString := GetNodeValue(listModulesResp,'comm');
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(listModulesResp,'timeStamp'));
+           rs.Post;
+           listModulesResp := listModulesResp.nextSibling;
+         end;
+      Params := TftParamList.Create(nil);
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        Params.ParamByName('TABLE_NAME').AsString := 'CA_MODULE';
+        Params.ParamByName('KEY_FIELDS').AsString := 'PROD_ID;MODU_ID';
+        Params.ParamByName('COMM_LOCK').AsString := '1';
+        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+        Factor.UpdateBatch(rs,'TSyncCaModule',Params);
+        SetSynTimeStamp('CA_MODULE',timeStamp,'#');
+      finally
+        Params.free;
+      end;
+      LogFile.AddLogFile(0,'保存<功能模块>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
+    finally
+      rs.Free;
+    end;
+  finally
+    //rio.Free;
+  end;
+except
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'下载<功能模块>失败xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'下载<功能模块>失败xml=无;原因:'+E.Message);
     Raise;
   end;
 end;

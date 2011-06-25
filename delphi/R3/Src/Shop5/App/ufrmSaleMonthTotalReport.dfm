@@ -2,7 +2,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
   Top = 109
   Width = 958
   Height = 558
-  Caption = #38144#21806#26376#36134#20998#26512#25253#34920
+  Caption = #21160#38144#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -16,7 +16,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
         Height = 468
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #38144#21806#26376#36134#20998#26512#25253#34920
+          Caption = #21160#38144#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
             Width = 725
             Height = 441

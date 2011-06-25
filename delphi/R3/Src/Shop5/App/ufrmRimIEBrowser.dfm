@@ -11,10 +11,5 @@ inherited frmRimIEBrowser: TfrmRimIEBrowser
         8000000000000000000000000000000000000000000000000000000000000000
         00000000000000000100000000000000000000000000000000000000}
     end
-    inherited RzPanel1: TRzPanel
-      inherited RzTab: TRzTabControl
-        FixedDimension = 25
-      end
-    end
   end
 end

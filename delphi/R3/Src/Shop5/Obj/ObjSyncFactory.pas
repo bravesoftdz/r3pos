@@ -514,6 +514,14 @@ type
      //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //25
+  TSyncCaModule=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -3382,6 +3390,33 @@ begin
   SelectSQL.Text := 'select * from MSC_QUESTION_ITEM where TENANT_ID=:TENANT_ID and QUESTION_ID=:QUESTION_ID';
 end;
 
+{ TSyncCaModule }
+
+function TSyncCaModule.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+   try
+     FillParams(InsertQuery);
+     AGlobal.ExecQuery(InsertQuery);
+   except
+     on E:Exception do
+        begin
+          if CheckUnique(E.Message) then
+             begin
+               FillParams(UpdateQuery);
+               AGlobal.ExecQuery(UpdateQuery);
+             end
+          else
+             Raise;
+        end;
+   end;
+end;
+
+function TSyncCaModule.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from CA_MODULE where PROD_ID=:PROD_ID'); 
+  result := true;
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3445,6 +3480,8 @@ initialization
   RegisterClass(TSyncSequence);
   RegisterClass(TSyncMscQuestion);
   RegisterClass(TSyncMscQuestionItem);
+
+  RegisterClass(TSyncCaModule);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaTenant);
@@ -3508,4 +3545,6 @@ finalization
   UnRegisterClass(TSyncSequence);
   UnRegisterClass(TSyncMscQuestion);
   UnRegisterClass(TSyncMscQuestionItem);
+
+  UnRegisterClass(TSyncCaModule);
 end.

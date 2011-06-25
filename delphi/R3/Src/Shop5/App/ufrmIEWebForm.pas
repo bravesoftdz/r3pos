@@ -24,7 +24,6 @@ type
     RzPanel2: TRzPanel;
     RzPanel1: TRzPanel;
     ImgLst16: TImageList;
-    RzTab: TRzTabControl;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure IEBrowserDocumentComplete(Sender: TObject;
@@ -34,12 +33,11 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure IEBrowserTitleChange(Sender: TObject;
       const Text: WideString);
-    procedure RzTabChange(Sender: TObject);
   private
     { Private declarations }
-    FhEvent:THandle;
-    Runed:boolean;
   protected
+    Runed:boolean;
+    FhEvent:THandle;
     //¶ÁÈ¡xml
     function GetXml(Url:string;flag:integer):IXMLDomDocument;
 
@@ -48,19 +46,16 @@ type
   public
     { Public declarations }
     function GetDoLogin(Url:string):string;
-    function Open(Url:string):boolean;
+    function Open(Url:string):boolean;virtual;
 
-    procedure LoadMenu(id:string);
-    procedure AddPage(Act:PIEAction);
-    procedure Clear;
-    procedure DoAction(Act:PIEAction);virtual;
+    procedure DoLogin;virtual;
   end;
 var
   xsm_url:string;
   xsm_username:string;
   xsm_password:string;
 implementation
-uses EncDec,uShopGlobal,ufrmXsmLogin,udmR3Icon, uGlobal;
+uses EncDec,uShopGlobal,ufrmXsmLogin, uGlobal;
 
 {$R *.dfm}
 
@@ -169,6 +164,7 @@ begin
   if xsm_username='' then xsm_username := '';
   xsm_password := DecStr(ShopGlobal.GetParameter('XSM_PASSWORD'),ENC_KEY);
   if xsm_password='' then xsm_password := '';
+  ResetEvent(FhEvent);
 end;
 
 procedure TfrmIEWebForm.FormDestroy(Sender: TObject);
@@ -210,82 +206,9 @@ begin
   inherited;
   Caption := Text;
 end;
-
-procedure TfrmIEWebForm.AddPage(Act:PIEAction);
-var
-  tb:TRzTabCollectionItem;
-  bmp:TBitmap;
-begin
-  RzTab.Tabs.BeginUpdate;
-  try
-    tb := RzTab.Tabs.Add;
-    tb.Caption := Act.Title;
-    tb.Data := Act;
-    tb.ImageIndex := ImgLst16.Count;
-    bmp := dmR3Icon.GetResBitbmp('bmp16_'+Act^.id);
-    try
-      ImgLst16.AddMasked(bmp,clWhite);
-    finally
-      bmp.Free;
-    end;
-  finally
-    RzTab.Tabs.EndUpdate;
-  end;
-end;
-
-procedure TfrmIEWebForm.Clear;
-var
-  i:integer;
-begin
-  ImgLst16.Clear;
-  for i:=0 to rzTab.Tabs.Count -1 do
-    begin
-      dispose(PIEAction(rzTab.Tabs[i].Data));
-    end;
-  rzTab.Tabs.Clear;
-end;
-
-procedure TfrmIEWebForm.DoAction(Act: PIEAction);
+procedure TfrmIEWebForm.DoLogin;
 begin
 
-end;
-
-procedure TfrmIEWebForm.RzTabChange(Sender: TObject);
-begin
-  inherited;
-  DoAction(PIEAction(TRzTabCollectionItem(Sender).Data));
-end;
-
-procedure TfrmIEWebForm.LoadMenu(id: string);
-var
-  rs:TZQuery;
-  lvid:string;
-  Act:PIEAction;
-begin
-  rs := Global.GetZQueryFromName('CA_MODULE');
-  if rs.Locate('MODU_ID',id,[]) then
-     lvid := rs.FieldbyName('LEVEL_ID').AsString
-  else
-     lvid := '';
-  RzTab.Visible := true;
-  Clear;
-  rs.First;
-  while not rs.Eof do
-     begin
-       if (copy(rs.FieldByName('LEVEL_ID').AsString,1,length(lvid))=lvid) and
-          (length(rs.FieldByName('LEVEL_ID').AsString)=length(lvid)+4) and
-          ShopGlobal.GetChkRight(rs.FieldbyName('MODU_ID').AsString,1)
-       then
-          begin
-            new(Act);
-            Act^.flag := 0;
-            Act^.id := rs.FieldbyName('MODU_ID').AsString;
-            Act^.Title := rs.FieldbyName('MODU_NAME').AsString;
-            AddPage(Act);
-          end;
-       rs.Next;
-     end;
-  if RzTab.Tabs.Count > 0 then RzTab.TabIndex := 0;
 end;
 
 end.

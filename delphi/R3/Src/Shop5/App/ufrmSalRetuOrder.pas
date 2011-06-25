@@ -155,7 +155,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer, ufrmShopMain, ufrmSalesOrder, ufrmFindOrder, ufrmCustomerInfo,ufrmTenantInfo;
+   ,uframeSelectCustomer, ufrmMain, ufrmSalesOrder, ufrmFindOrder, ufrmCustomerInfo,ufrmTenantInfo;
 {$R *.dfm}
 
 procedure TfrmSalRetuOrder.ReadHeader;

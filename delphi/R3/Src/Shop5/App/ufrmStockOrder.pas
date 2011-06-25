@@ -131,7 +131,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo,ufrmTenantInfo,  
-  ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmShopMain,ufrmFindOrder,ufrmBarCodePrint;
+  ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmMain,ufrmFindOrder,ufrmBarCodePrint;
 {$R *.dfm}
 
 procedure TfrmStockOrder.CancelOrder;
@@ -1158,10 +1158,10 @@ var frmStkRetuOrderList:TfrmStkRetuOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
-  if not frmShopMain.actfrmStkRetuOrderList.Enabled then Exit;
+  if not frmMain.FindAction('actfrmStkRetuOrderList').Enabled then Exit;
   if not IsAudit then Raise Exception.Create('没有审核的单据不能退货..');
-  frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
-  frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
+  frmMain.FindAction('actfrmStkRetuOrderList').OnExecute(nil);
+  frmStkRetuOrderList := TfrmStkRetuOrderList(frmMain.FindChildForm(TfrmStkRetuOrderList));
   SendMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStkRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
@@ -1172,10 +1172,10 @@ var frmStkRetuOrderList:TfrmStkRetuOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
-  if not frmShopMain.actfrmStkRetuOrderList.Enabled then Exit;
+  if not frmMain.FindAction('actfrmStkRetuOrderList').Enabled then Exit;
   if not IsAudit then Raise Exception.Create('没有审核的单据不能退货..');
-  frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
-  frmStkRetuOrderList := TfrmStkRetuOrderList(frmShopMain.FindChildForm(TfrmStkRetuOrderList));
+  frmMain.FindAction('actfrmStkRetuOrderList').OnExecute(nil);
+  frmStkRetuOrderList := TfrmStkRetuOrderList(frmMain.FindChildForm(TfrmStkRetuOrderList));
   SendMessage(frmStkRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStkRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;

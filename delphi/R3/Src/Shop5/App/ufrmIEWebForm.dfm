@@ -8,30 +8,31 @@ inherited frmIEWebForm: TfrmIEWebForm
     Top = 1
     Height = 375
     BorderInner = fsFlat
+    BorderSides = [sdTop]
     BorderColor = 12300436
     BorderWidth = 0
     FlatColor = 12300436
     object IEBrowser: TWebBrowser
-      Left = 1
+      Left = 0
       Top = 30
-      Width = 539
-      Height = 344
+      Width = 541
+      Height = 345
       Align = alClient
       TabOrder = 0
       OnTitleChange = IEBrowserTitleChange
       OnNavigateComplete2 = IEBrowserNavigateComplete2
       OnDocumentComplete = IEBrowserDocumentComplete
       ControlData = {
-        4C000000B53700008E2300000000000000000000000000000000000000000000
+        4C000000EA370000A82300000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126208000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
         00000000000000000100000000000000000000000000000000000000}
     end
     object RzPanel1: TRzPanel
-      Left = 1
+      Left = 0
       Top = 1
-      Width = 539
+      Width = 541
       Height = 29
       Align = alTop
       BorderOuter = fsNone
@@ -41,28 +42,6 @@ inherited frmIEWebForm: TfrmIEWebForm
       FlatColor = 12300436
       TabOrder = 1
       Visible = False
-      object RzTab: TRzTabControl
-        Left = 0
-        Top = 0
-        Width = 539
-        Height = 29
-        Align = alClient
-        FlatColor = 12300436
-        Images = ImgLst16
-        ShowCard = False
-        TabColors.HighlightBar = 10344365
-        TabHeight = 25
-        TabIndex = 0
-        TabOrder = 0
-        Tabs = <
-          item
-            Caption = #32593#19978#37197#36135
-            ImageIndex = 0
-          end>
-        TabStyle = tsRoundCorners
-        OnChange = RzTabChange
-        FixedDimension = 25
-      end
     end
   end
   object RzPanel2: TRzPanel [1]

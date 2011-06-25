@@ -164,7 +164,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalIndentOrder,ufrmCustomerInfo,ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmShopMain,ufrmFindOrder,ufrmTenantInfo;
+   ,uframeSelectCustomer,ufrmSalIndentOrder,ufrmCustomerInfo,ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmMain,ufrmFindOrder,ufrmTenantInfo;
 {$R *.dfm}
 
 procedure TfrmSalesOrder.ReadHeader;
@@ -1439,9 +1439,9 @@ begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not IsAudit then Raise Exception.Create('没有审核单据，不能退货..');
-  if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
-  frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
-  frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
+  if not frmMain.FindAction('actfrmSalRetuOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmSalRetuOrderList').OnExecute(nil);
+  frmSalRetuOrderList := TfrmSalRetuOrderList(frmMain.FindChildForm(TfrmSalRetuOrderList));
   SendMessage(frmSalRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
@@ -1453,9 +1453,9 @@ begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not IsAudit then Raise Exception.Create('没有审核单据，不能退货..');
-  if not frmShopMain.actfrmSalRetuOrderList.Enabled then Exit;
-  frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
-  frmSalRetuOrderList := TfrmSalRetuOrderList(frmShopMain.FindChildForm(TfrmSalRetuOrderList));
+  if not frmMain.FindAction('actfrmSalRetuOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmSalRetuOrderList').OnExecute(nil);
+  frmSalRetuOrderList := TfrmSalRetuOrderList(frmMain.FindChildForm(TfrmSalRetuOrderList));
   SendMessage(frmSalRetuOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalRetuOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;

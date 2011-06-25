@@ -70,7 +70,7 @@ type
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断门店资料是否有修改
   end;
 implementation
-uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, uShopGlobal,ufrmShopMain,ufrmCodeInfo,
+uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, uShopGlobal,ufrmCodeInfo,
   ufrmBasic;
 {$R *.dfm}
 

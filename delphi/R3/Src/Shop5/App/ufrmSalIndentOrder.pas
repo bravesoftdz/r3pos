@@ -156,7 +156,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmShopMain,ufrmCustomerInfo,ufrmTenantInfo;
+   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -1225,9 +1225,9 @@ begin
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not isAudit then Raise Exception.Create('没有审核的单据不能发货...'); 
   if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...'); 
-  if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
-  frmShopMain.actfrmSalesOrderList.OnExecute(nil);
-  frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
+  if not frmMain.FindAction('actfrmSalesOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmSalesOrderList').OnExecute(nil);
+  frmSalesOrderList := TfrmSalesOrderList(frmMain.FindChildForm(TfrmSalesOrderList));
   SendMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalesOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
@@ -1240,9 +1240,9 @@ begin
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not isAudit then Raise Exception.Create('没有审核的单据不能发货...'); 
   if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...'); 
-  if not frmShopMain.actfrmSalesOrderList.Enabled then Exit;
-  frmShopMain.actfrmSalesOrderList.OnExecute(nil);
-  frmSalesOrderList := TfrmSalesOrderList(frmShopMain.FindChildForm(TfrmSalesOrderList));
+  if not frmMain.FindAction('actfrmSalesOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmSalesOrderList').OnExecute(nil);
+  frmSalesOrderList := TfrmSalesOrderList(frmMain.FindChildForm(TfrmSalesOrderList));
   SendMessage(frmSalesOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmSalesOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;

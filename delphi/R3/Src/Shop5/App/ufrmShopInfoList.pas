@@ -69,7 +69,7 @@ type
   end;
 
 implementation
-uses ufrmShopInfo, uGlobal,uTreeUtil,uShopGlobal,uCtrlUtil,ufrmEhLibReport,ufrmShopMain,
+uses ufrmShopInfo, uGlobal,uTreeUtil,uShopGlobal,uCtrlUtil,ufrmEhLibReport,
   ufrmBasic;//
 {$R *.dfm}
 

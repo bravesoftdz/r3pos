@@ -217,6 +217,7 @@ function TfrmSaleMonthTotalReport.GetGodsSQL(chk: boolean): string;
 var
   mx, UnitCalc: string;  //单位计算关系
   strSql,strWhere,GoodTab: widestring;
+  Day:integer;
 begin
   result:='';
   if P1_D1.EditValue = null then Raise Exception.Create('销售月份条件不能为空');
@@ -251,7 +252,7 @@ begin
      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
     end;
   end;
-
+  Day := trunc(incMonth(fnTime.fnStrtoDate(P1_D2.asString+'01'),1) - fnTime.fnStrtoDate(P1_D1.asString+'01'));
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
@@ -309,8 +310,6 @@ begin
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
     ',sum(SALE_CST) as SALE_CST '+   //销售成本
     ',sum(SALE_PRF) as SALE_PRF '+   //销售毛利
-    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_AVGPRF '+ //单位毛利
-    ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+ //毛利率
 
     ',sum(PRIOR_YEAR_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
     ',sum(PRIOR_YEAR_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
@@ -324,12 +323,13 @@ begin
     ',sum(PRIOR_MONTH_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
     ',isnull(sum(PRIOR_MONTH_MNY),0)+isnull(sum(PRIOR_MONTH_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
     ',sum(PRIOR_MONTH_CST) as PRIOR_MONTH_CST '+   //上月销售成本
-    ',isnull(sum(PRIOR_MONTH_MNY),0)-isnull(sum(PRIOR_MONTH_CST),0) as PRIOR_YEAR_PRF '+   //上月销售毛利
+    ',isnull(sum(PRIOR_MONTH_MNY),0)-isnull(sum(PRIOR_MONTH_CST),0) as PRIOR_MONTH_PRF '+   //上月销售毛利
 
     ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
     ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME ';

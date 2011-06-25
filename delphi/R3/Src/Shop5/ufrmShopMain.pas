@@ -179,7 +179,6 @@ type
     actfrmIoroOrderList2: TAction;
     actfrmDevFactory: TAction;
     actfrmIntfSetup: TAction;
-    CA_MODULE: TZQuery;
     actfrmStorageTracking: TAction;
     actfrmRckMng: TAction;
     actfrmCheckTablePrint: TAction;
@@ -343,6 +342,8 @@ type
     actfrmStgTotalReport: TAction;
     actfrmStockTotalReport: TAction;
     RzTrayIcon1: TRzTrayIcon;
+    actfrmSaleMonthTotalReport: TAction;
+    CA_MODULE: TZQuery;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -461,6 +462,7 @@ type
     procedure actfrmStgTotalReportExecute(Sender: TObject);
     procedure actfrmStockTotalReportExecute(Sender: TObject);
     procedure RzTrayIcon1LButtonDblClick(Sender: TObject);
+    procedure actfrmSaleMonthTotalReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -529,7 +531,7 @@ uses
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
-  ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar
+  ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport
   ;
 {$R *.dfm}
 
@@ -555,6 +557,7 @@ begin
   IsXsm := false;
   for i:=0 to rzLogo.PageCount -1 do rzLogo.Pages[i].TabVisible := false;
   LoadPic32;
+  FList := TList.Create;
   Panel25.Visible := (sflag='s1_');
   PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
@@ -564,19 +567,11 @@ begin
   SystemShutdown := false;
   Loging :=false;
   frmInstall := TfrmInstall.Create(self);
-  FList := TList.Create;
   screen.OnActiveFormChange := DoActiveChange;
-  AssignFile(F,ExtractFilePath(ParamStr(0))+'hook.cfg');
-  rewrite(f);
-  try
-    writeln(f,handle);
-    writeln(f,WM_DESKTOP_REQUEST);
-  finally
-    closefile(f);
-  end;
   RzVersionInfo.FilePath := ParamStr(0);
   LoadFrame;
   TimerFactory := nil;
+
 end;
 
 procedure TfrmShopMain.FormDestroy(Sender: TObject);
@@ -1260,6 +1255,8 @@ begin
       RzGroupBar1.RemoveGroup(RzGroupBar1.Groups[i]);
     end;
   rs := CA_MODULE;
+  CA_MODULE.OnFilterRecord := CA_MODULEFilterRecord;
+  try
   rs.Filtered := false;
   rs.Filtered := true;
   rs.First;
@@ -1293,6 +1290,9 @@ begin
          end;
       rs.Next;
     end;
+  finally
+    CA_MODULE.OnFilterRecord := nil;
+  end;
   for i:=RzGroupBar1.GroupCount -1 downto 0 do
     begin
       if RzGroupBar1.Groups[i].Items.Count =0 then
@@ -4010,6 +4010,28 @@ begin
     frmShopMain.Show;
     frmShopMain.WindowState := wsMaximized;
   end;
+end;
+
+procedure TfrmShopMain.actfrmSaleMonthTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSaleMonthTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleMonthTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

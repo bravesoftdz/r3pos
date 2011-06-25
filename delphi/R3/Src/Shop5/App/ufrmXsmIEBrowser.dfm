@@ -13,20 +13,5 @@ inherited frmXsmIEBrowser: TfrmXsmIEBrowser
         8000000000000000000000000000000000000000000000000000000000000000
         00000000000000000100000000000000000000000000000000000000}
     end
-    inherited RzPanel1: TRzPanel
-      inherited RzTab: TRzTabControl
-        Visible = False
-        FixedDimension = 25
-      end
-    end
-    object Button1: TButton
-      Left = 336
-      Top = 64
-      Width = 75
-      Height = 25
-      Caption = 'Button1'
-      TabOrder = 2
-      OnClick = Button1Click
-    end
   end
 end

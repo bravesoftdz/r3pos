@@ -13,7 +13,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    procedure DoAction(Act:PIEAction);override;
+    procedure OpenUrl(url:string);
   end;
 
 implementation
@@ -22,10 +22,12 @@ implementation
 
 { TfrmRimIEBrowser }
 
-procedure TfrmRimIEBrowser.DoAction(Act: PIEAction);
+procedure TfrmRimIEBrowser.OpenUrl(url: string);
 begin
-  inherited;
-
+  FormStyle := fsMDIChild;
+  WindowState := wsMaximized;
+  BringToFront;
+  inherited Open(url);
 end;
 
 end.

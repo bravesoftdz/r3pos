@@ -113,7 +113,7 @@ type
 
 implementation
 uses uGlobal, uFnUtil, ufrmFastReport, uDsUtil, uShopUtil, uShopGlobal, uCtrlUtil, ufrmBatchCloseForDay,
-  ufrmBasic, uframeMDForm, ufrmShopMain, ObjCommon, ufrmCostCalc, ufrmTicketPrint;
+  ufrmBasic, uframeMDForm, ObjCommon, ufrmCostCalc, ufrmTicketPrint, ufrmMain;
 {$R *.dfm}
 
 procedure TfrmRckMng.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -368,14 +368,14 @@ begin
     end
   else if RzPage.TabIndex = 2 then
     begin
-      if not frmShopMain.actfrmDaysClose.Enabled then Raise Exception.Create('你没有日结账权限，不能完成操作此功能.');
-      frmShopMain.actfrmDaysClose.OnExecute(nil);
+      if not frmMain.FindAction('actfrmDaysClose').Enabled then Raise Exception.Create('你没有日结账权限，不能完成操作此功能.');
+      frmMain.FindAction('actfrmDaysClose').OnExecute(nil);
       Open;
     end
   else if RzPage.TabIndex = 1 then
     begin
-      if not frmShopMain.actfrmMonthClose.Enabled then Raise Exception.Create('你没有月结账权限，不能完成操作此功能.');
-      frmShopMain.actfrmMonthClose.OnExecute(nil);
+      if not frmMain.FindAction('actfrmMonthClose').Enabled then Raise Exception.Create('你没有月结账权限，不能完成操作此功能.');
+      frmMain.FindAction('actfrmMonthClose').OnExecute(nil);
       Open;
     end;
 end;

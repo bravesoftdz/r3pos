@@ -10,31 +10,31 @@ inherited frmShopInfoList: TfrmShopInfoList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 893
-    Height = 453
+    Width = 885
+    Height = 441
     inherited RzPanel2: TRzPanel
-      Width = 883
-      Height = 443
+      Width = 875
+      Height = 431
       inherited RzPage: TRzPageControl
-        Width = 877
-        Height = 437
+        Width = 869
+        Height = 425
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38376#24215#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 875
-            Height = 410
+            Width = 867
+            Height = 398
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 865
+              Width = 857
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                865
+                857
                 36)
               object Panel1: TPanel
                 Left = 0
@@ -88,6 +88,7 @@ inherited frmShopInfoList: TfrmShopInfoList
                   Width = 196
                   Height = 20
                   TabOrder = 0
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   OnKeyDown = edtKeyKeyDown
                 end
                 object btnOk: TRzBitBtn
@@ -122,16 +123,16 @@ inherited frmShopInfoList: TfrmShopInfoList
             object Panel3: TPanel
               Left = 5
               Top = 41
-              Width = 865
-              Height = 364
+              Width = 857
+              Height = 352
               Align = alClient
               Caption = 'Panel3'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 863
-                Height = 343
+                Width = 855
+                Height = 331
                 Align = alClient
                 DataSource = dsBrowser
                 Flat = True
@@ -143,6 +144,7 @@ inherited frmShopInfoList: TfrmShopInfoList
                 FooterFont.Style = []
                 FooterRowCount = 1
                 FrozenCols = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 PopupMenu = PopupMenu1
@@ -263,8 +265,8 @@ inherited frmShopInfoList: TfrmShopInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 344
-                Width = 863
+                Top = 332
+                Width = 855
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -290,17 +292,17 @@ inherited frmShopInfoList: TfrmShopInfoList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 893
+    Width = 885
     inherited Image1: TImage
       Left = 328
-      Width = 545
+      Width = 537
     end
     inherited Image3: TImage
       Left = 328
-      Width = 545
+      Width = 537
     end
     inherited Image14: TImage
-      Left = 873
+      Left = 865
     end
     inherited rzPanel5: TPanel
       Left = 328

@@ -121,7 +121,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrderList,
-     ufrmShopInfo, ufrmShopMain, ufrmTenantInfo;
+     ufrmShopInfo, ufrmMain, ufrmTenantInfo;
 {$R *.dfm}
 
 procedure TfrmStkIndentOrder.CancelOrder;
@@ -986,9 +986,9 @@ begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
-  if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
-  frmShopMain.actfrmStockOrderList.OnExecute(nil);
-  frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
+  if not frmMain.FindAction('actfrmStockOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmStockOrderList').OnExecute(nil);
+  frmStockOrderList := TfrmStockOrderList(frmMain.FindChildForm(TfrmStockOrderList));
   SendMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   inherited;
@@ -1000,9 +1000,9 @@ begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
-  if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
-  frmShopMain.actfrmStockOrderList.OnExecute(nil);
-  frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
+  if not frmMain.FindAction('actfrmStockOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmStockOrderList').OnExecute(nil);
+  frmStockOrderList := TfrmStockOrderList(frmMain.FindChildForm(TfrmStockOrderList));
   SendMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
   PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   inherited;

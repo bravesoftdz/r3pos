@@ -1115,7 +1115,7 @@ begin
             DsReportTemplate1.FieldByName('SUM_TYPE').AsString := '#';   
             DsReportTemplate1.FieldByName('FIELD_NAME').AsString := '#';
             DsReportTemplate1.FieldByName('INDEX_FLAG').AsString := '2';
-            DsReportTemplate.FieldByName('CELL_WIDTH').AsInteger := 0;
+            DsReportTemplate1.FieldByName('CELL_WIDTH').AsInteger := 0;
             DsReportTemplate1.FieldByName('INDEX_ID').AsString := RecordList.Records[i].FieldbyName('CODE_ID').AsString;
             DsReportTemplate1.FieldByName('DISPLAY_NAME').AsString := RecordList.Records[i].FieldbyName('CODE_NAME').AsString;
             DsReportTemplate1.Post;

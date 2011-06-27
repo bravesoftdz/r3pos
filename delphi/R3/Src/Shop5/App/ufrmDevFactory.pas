@@ -6,10 +6,10 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, RzButton, ComCtrls, cxControls, cxContainer, cxEdit, cxCheckBox,
   StdCtrls, cxTextEdit, cxMaskEdit, cxDropDownEdit, ExtCtrls, cxButtonEdit,ZBase,
-  cxSpinEdit, zrComboBoxList, DB, cxMemo;
+  cxSpinEdit, zrComboBoxList, DB, cxMemo, ufrmBasic;
 
 type
-  TfrmDevFactory = class(TForm)
+  TfrmDevFactory = class(TfrmBasic)
     btnOK: TRzBitBtn;
     btnCancel: TRzBitBtn;
     PageControl1: TPageControl;

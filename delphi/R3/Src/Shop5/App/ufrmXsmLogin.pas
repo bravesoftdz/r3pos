@@ -64,7 +64,7 @@ begin
     end;
   1:begin
       cdsUnion.Close;
-      cdsUnion.SQL.Text := 'select CUST_CODE,PASS_WORD from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''';
+      cdsUnion.SQL.Text := 'select XSM_CODE,XSM_PSWD from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''';
       Factor.Open(cdsUnion);
       edtUrl.Text := '新商盟主机';
       edtUrl.Enabled := false;
@@ -98,7 +98,7 @@ begin
       Factor.UpdateBatch(cdsUnion,'TSysDefine');
     end;
   1:begin
-      Factor.ExecSQL('update CA_SHOP_INFO set CUST_CODE='''+Trim(edtUsername.Text)+''',PASS_WORD='''+EncStr(Trim(edtPassword.Text),ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
+      Factor.ExecSQL('update CA_SHOP_INFO set XSM_CODE='''+Trim(edtUsername.Text)+''',XSM_PSWD='''+EncStr(Trim(edtPassword.Text),ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
     end;
   end;
 end;

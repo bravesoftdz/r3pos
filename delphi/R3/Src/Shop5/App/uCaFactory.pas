@@ -153,7 +153,7 @@ type
     function queryServiceLines(tid:integer;List:TList):boolean;
     function applyRelation(supTenantId,serviceLineId,subTenantId,relationType:integer):TRelationInfo;
     //商盟服务
-    function queryUnion(tid:integer):boolean;
+    function downloadUnion(tid:integer):boolean;
     //数据同步
     function downloadTenants(TenantId,flag:integer):boolean;
     function downloadServiceLines(TenantId,flag:integer):boolean;
@@ -1337,7 +1337,13 @@ begin
     frmLogo.ProgressBar1.Position := 8;
     frmLogo.Label1.Caption := '下载商盟信息...';
     frmLogo.Label1.Update;
-    queryUnion(Global.TENANT_ID);
+    downloadUnion(Global.TENANT_ID);
+    frmLogo.ProgressBar1.Position := 9;
+    SetSynTimeStamp('#',TimeStamp,'#');
+    frmLogo.ProgressBar1.Position := 8;
+    frmLogo.Label1.Caption := '下载功能模块...';
+    frmLogo.Label1.Update;
+    //downloadCaModule(Global.TENANT_ID,flag);
     frmLogo.ProgressBar1.Position := 9;
     SetSynTimeStamp('#',TimeStamp,'#');
   finally
@@ -2692,7 +2698,7 @@ begin
   FRspFlag := Value;
 end;
 
-function TCaFactory.queryUnion(tid: integer): boolean;
+function TCaFactory.downloadUnion(tid: integer): boolean;
 function GetParant:string;
 var
   rs:TZQuery;
@@ -2935,12 +2941,12 @@ var
   rio:THTTPRIO;
   listModulesResp:IXMLDOMNode;
   Node:IXMLDOMNode;
-  line:PServiceLine;
   h,r:rsp;
   i:integer;
   rs:TZQuery;
   Params:TftParamList;
   OutXml:WideString;
+  RioImpl:CaProductWebServiceImpl;
 begin
 try
   SetTicket;
@@ -2968,7 +2974,8 @@ try
     h := SendHeader(rio,2);
     try
       try
-        OutXml := GetRspDownloadWebServiceImpl(true,URL+'RspDownloadService?wsdl',rio).downloadUnit(Encode(inxml,sslpwd));
+        RioImpl := GetCaProductWebServiceImpl(true,URL+'CaProductService?wsdl',rio);
+       // OutXml := RioImpl.listModules(Encode(inxml,pubpwd));
         r := GetHeader(rio);
         try
           case r.encryptType of
@@ -3027,7 +3034,7 @@ try
            rs.FieldByName('ACTION_NAME').AsString := GetNodeValue(listModulesResp,'actionName');
            rs.FieldByName('ACTION_URL').AsString := GetNodeValue(listModulesResp,'actionUrl');
            rs.FieldByName('COMM').AsString := GetNodeValue(listModulesResp,'comm');
-           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := StrtoInt64(GetNodeValue(listModulesResp,'timeStamp'));
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := timeStamp;
            rs.Post;
            listModulesResp := listModulesResp.nextSibling;
          end;

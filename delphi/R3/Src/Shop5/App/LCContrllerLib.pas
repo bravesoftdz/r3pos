@@ -12,7 +12,7 @@ unit LCContrllerLib;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2011/6/21 21:23:43 from Type Library described below.
+// File generated on 2011/6/26 17:04:27 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\Windows\system32\LCContrller.dll (1)
@@ -98,6 +98,7 @@ type
                    const bstrPara1: WideString; const bstrPara2: WideString; 
                    const bstrPara3: WideString): LongWord; safecall;
     procedure Test1(saParas: PSafeArray); safecall;
+    function UnRegisterLC(const szLocConnName: WideString): LongWord; safecall;
   end;
 
 // *********************************************************************//
@@ -117,6 +118,7 @@ type
                    const bstrPara1: WideString; const bstrPara2: WideString; 
                    const bstrPara3: WideString): LongWord; dispid 5;
     procedure Test1(saParas: {??PSafeArray}OleVariant); dispid 6;
+    function UnRegisterLC(const szLocConnName: WideString): LongWord; dispid 7;
   end;
 
 
@@ -162,6 +164,7 @@ type
                    const bstrPara1: WideString; const bstrPara2: WideString; 
                    const bstrPara3: WideString): LongWord;
     procedure Test1(saParas: PSafeArray);
+    function UnRegisterLC(const szLocConnName: WideString): LongWord;
     property  ControlInterface: ILCObject read GetControlInterface;
     property  DefaultInterface: ILCObject read GetControlInterface;
   published
@@ -264,6 +267,11 @@ end;
 procedure TLCObject.Test1(saParas: PSafeArray);
 begin
   DefaultInterface.Test1(saParas);
+end;
+
+function TLCObject.UnRegisterLC(const szLocConnName: WideString): LongWord;
+begin
+  Result := DefaultInterface.UnRegisterLC(szLocConnName);
 end;
 
 procedure Register;

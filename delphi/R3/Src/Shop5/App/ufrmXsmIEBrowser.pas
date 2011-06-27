@@ -5,15 +5,20 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmIEWebForm, ActnList, Menus, OleCtrls, SHDocVw, ExtCtrls,
-  RzPanel, RzTabs, ImgList, LCContrllerLib, ZDataSet, StdCtrls;
+  RzPanel, RzTabs, ImgList,LCContrllerLib, ZDataSet, StdCtrls;
 
 type
   TfrmXsmIEBrowser = class(TfrmIEWebForm)
+    LCObject: TLCObject;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FLogined: boolean;
     Fready: boolean;
+    LoginError:string;
     FSessionFail: boolean;
+    FCurid: string;
+    Ffinish: boolean;
+    Fconfirm: boolean;
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
                                                    const szPara: WideString);
@@ -21,15 +26,17 @@ type
                                                    const szPara1: WideString;
                                                    const szPara2: WideString);
     procedure DoFuncCall3(ASender: TObject; const szMethodName: WideString;
-                                                   const szPara1: WideString; 
-                                                   const szPara2: WideString; 
+                                                   const szPara1: WideString;
+                                                   const szPara2: WideString;
                                                    const szPara3: WideString);
     procedure SetLogined(const Value: boolean);
     procedure Setready(const Value: boolean);
     procedure SetSessionFail(const Value: boolean);
+    procedure SetCurid(const Value: string);
+    procedure Setfinish(const Value: boolean);
+    procedure Setconfirm(const Value: boolean);
   public
     { Public declarations }
-    LCObject:TLCObject;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     procedure Connect;
@@ -38,17 +45,21 @@ type
     procedure Send3(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString;const szPara3: WideString);
     function WaitRun:boolean;
     procedure DoInit;
-    function DoLogin:boolean;
+    procedure ReadInfo;
+    function DoLogin(Hinted:boolean=false):boolean;
     procedure ClearResource;
     procedure Open(sid,oid:string);
     property Logined:boolean read FLogined write SetLogined;
     property ready:boolean read Fready write Setready;
     property SessionFail:boolean read FSessionFail write SetSessionFail;
+    property finish:boolean read Ffinish write Setfinish;
+    property confirm:boolean read Fconfirm write Setconfirm;
+    property Curid:string read FCurid write SetCurid;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
-uses uCaFactory,uGlobal,ufrmLogo,ZLogFile,ufrmXsmLogin;
+uses uCaFactory,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -56,12 +67,11 @@ uses uCaFactory,uGlobal,ufrmLogo,ZLogFile,ufrmXsmLogin;
 constructor TfrmXsmIEBrowser.Create(AOwner: TComponent);
 begin
   inherited;
+  FormStyle := fsMDIChild;
   try
-    LCObject := TLCObject.Create(AOwner);
     LCObject.OnFuncCall := DoFuncCall;
     LCObject.OnFuncCall2 := DoFuncCall2;
     LCObject.OnFuncCall3 := DoFuncCall3;
-    LCObject.Visible := false;
     Connect;
   except
     MessageBox(Handle,'系统没有检测到"新商盟接口组件",请检查软件是否正确安装?','友情提示...',MB_OK+MB_ICONWARNING);
@@ -70,6 +80,7 @@ end;
 
 destructor TfrmXsmIEBrowser.Destroy;
 begin
+  runed := false;
   inherited;
 end;
 
@@ -80,7 +91,7 @@ begin
   LogFile.AddLogFile(0,'FuncCall3:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2+' 参数3='+szPara3);
 end;
 
-function TfrmXsmIEBrowser.DoLogin:boolean;
+function TfrmXsmIEBrowser.DoLogin(Hinted:boolean=false):boolean;
 var
   _Start:Int64;
 begin
@@ -91,6 +102,10 @@ begin
     Send2('login',xsm_username,xsm_password);
     if not WaitRun then Logined := false;
     result := Logined;
+    if Hinted then
+       begin
+         MessageBox(Handle,pchar(LoginError),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       end;
   finally
     frmLogo.Close;
   end;
@@ -110,11 +125,35 @@ begin
   if szMethodName='loginReady' then
      ready := true;
   if szMethodName='loginStatus' then
-     Logined := (szPara='success');
+     begin
+       Logined := (szPara='success');
+       if szPara='getUrlconfigFail' then
+          LoginError := '无效Url,代码:'+szPara
+       else
+       if szPara='serviceFail' then
+          LoginError := '无效服务,代码:'+szPara
+       else
+       if szPara='approveFail' then
+          LoginError := '登录新商盟的用户或密码无效，请重新设置....'
+       else
+       if szPara='getInforFail' then
+          LoginError := '无效信息,代码:'+szPara
+       else
+          LoginError := '登录新商盟返回未知错误...';
+     end;
   if szMethodName='sessionFail' then
      begin
        Logined := false;
        SessionFail := true;
+     end;
+  if szMethodName='finish' then
+     begin
+       finish := (szPara = 'finish');
+       confirm := (szPara = 'confirm');
+     end;
+  if szMethodName='kickOut' then
+     begin
+       Logined := false;
      end;
   if szMethodName='loginReady' then
      Logined := true;
@@ -125,6 +164,8 @@ end;
 procedure TfrmXsmIEBrowser.DoFuncCall2(ASender: TObject;
   const szMethodName, szPara1, szPara2: WideString);
 begin
+  if szMethodName='error' then
+     MessageBox(Handle,Pchar(szPara2+'<code='+szPara1+'>'),'友情提示...',MB_OK+MB_ICONWARNING);
   runed := false;
   LogFile.AddLogFile(0,'FuncCall2:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2);
 end;
@@ -132,7 +173,9 @@ end;
 procedure TfrmXsmIEBrowser.Connect;
 var r:integer;
 begin
-  r := LCObject.Connect('_r3');
+  LCObject.UnRegisterLC('_R3_XSM');
+  LCObject.UnRegisterLC('_XSM_R3');
+  r := LCObject.Connect('_XSM_R3');
   if r<>0 then LogFile.AddLogFile(0,'初始化新商盟LCObject失败，失败代码:'+inttostr(r));
 end;
 
@@ -171,7 +214,7 @@ end;
 
 procedure TfrmXsmIEBrowser.Open(sid, oid: string);
 begin
-  FormStyle := fsMDIChild;
+  if Runed then Raise Exception.Create('正在等待新商盟响应...');
   WindowState := wsMaximized;
   BringToFront;
   if not CaFactory.Audited then Raise Exception.Create('脱机状态不能进行新商盟...');
@@ -180,12 +223,25 @@ begin
        if SessionFail then DoLogin;
        if not Logined and TfrmXsmLogin.XsmRegister then
           begin
-            if not DoLogin then Open(sid,oid);
+            if not DoLogin(True) then
+               Open(sid,oid);
           end
        else
           Exit;
      end;
+  finish := false;
+  confirm := false;
   Send2('getModule',sid,oid);
+  if not WaitRun then Exit;
+  if confirm then
+     begin
+       if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+          begin
+            Send3('getModule',sid,oid,'clearModel=force');
+            if not WaitRun then Exit;
+          end;
+     end;
+  CurId := sid + '#' + oid;
 end;
 
 procedure TfrmXsmIEBrowser.Setready(const Value: boolean);
@@ -196,10 +252,20 @@ end;
 procedure TfrmXsmIEBrowser.DoInit;
 var
   _Start,W:Int64;
+  F:TIniFile;
 begin
   ready := false;
+  SessionFail := false;
   Runed := true;
-  IEBrowser.Navigate(ExtractFilePath(ParamStr(0))+'xsm\xsm.html');
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+    xsm_url := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
+    if xsm_url='' then xsm_url := ExtractFilePath(ParamStr(0))+'xsm\xsm.html';
+    Left := -9000;
+    IEBrowser.Navigate(xsm_url);
+  finally
+    F.Free;
+  end;
   if not WaitRun then Exit;
   _Start := GetTickCount;
   frmLogo.Show;
@@ -207,14 +273,14 @@ begin
   frmLogo.ProgressBar1.Update;
   while not ready do
      begin
-       Application.ProcessMessages;
+       Application.HandleMessage;
        W := (GetTickCount-_Start);
 //       if (W mod 1000)=0 then
 //          begin
-            frmLogo.ProgressBar1.Position := (W div 1000);
-            frmLogo.ProgressBar1.Update;
+       frmLogo.ProgressBar1.Position := (W div 500);
+       frmLogo.ProgressBar1.Update;
 //          end;
-       if W>60000 then
+       if W>30000 then
           begin
             ready := false;
             Exit;
@@ -225,29 +291,69 @@ end;
 
 function TfrmXsmIEBrowser.WaitRun:boolean;
 var
-  _Start:Int64;
+  _Start,W:Int64;
 begin
   _Start := GetTickCount;
   result := true;
+  _Start := GetTickCount;
+  frmLogo.ProgressBar1.Position := 1;
+  frmLogo.ProgressBar1.Update;
   while Runed do
      begin
-       Application.ProcessMessages;
+       Application.HandleMessage;
+       W := (GetTickCount-_Start);
+       frmLogo.ProgressBar1.Position := (W div 500);
+       frmLogo.ProgressBar1.Update;
        if (GetTickCount-_Start)>20000 then
           begin
             Runed := false;
             result := false;
+            LoginError := '请求超时了....';
           end;
      end;
+  Runed := false;
 end;
 
 procedure TfrmXsmIEBrowser.ClearResource;
 begin
   Send('getModule','clear');
+  WaitRun;
 end;
 
 procedure TfrmXsmIEBrowser.SetSessionFail(const Value: boolean);
 begin
   FSessionFail := Value;
+end;
+
+procedure TfrmXsmIEBrowser.ReadInfo;
+var
+  cdsUnion:TZQuery;
+begin
+  cdsUnion := TZQuery.Create(nil);
+  try
+    cdsUnion.Close;
+    cdsUnion.SQL.Text := 'select XSM_CODE,XSM_PSWD from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''';
+    Factor.Open(cdsUnion);
+    xsm_username := cdsUnion.Fields[0].AsString;
+    xsm_password := DecStr(cdsUnion.Fields[1].AsString,ENC_KEY);
+  finally
+    cdsUnion.Free;
+  end;
+end;
+
+procedure TfrmXsmIEBrowser.SetCurid(const Value: string);
+begin
+  FCurid := Value;
+end;
+
+procedure TfrmXsmIEBrowser.Setfinish(const Value: boolean);
+begin
+  Ffinish := Value;
+end;
+
+procedure TfrmXsmIEBrowser.Setconfirm(const Value: boolean);
+begin
+  Fconfirm := Value;
 end;
 
 end.

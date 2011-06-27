@@ -76,6 +76,7 @@ type
   // ************************************************************************ //
   CaProductWebServiceImpl = interface(IInvokable)
   ['{53086D7B-8250-CCF2-1195-57EA9B5C9244}']
+    function  listModules(const inXml: WideString): WideString; stdcall;
     function  checkUpgrade(const inXml: WideString): WideString; stdcall;
   end;
 

@@ -241,7 +241,7 @@ begin
   result := false;
   CHK_Value:=0;
   if userid='' then uid := Global.UserID else uid := userid;
-  if (uid = 'admin') or (uid='system') then
+  if (uid = 'admin') or (uid='system') or (roles='xsm') then
   begin
     result := true;
     Exit;

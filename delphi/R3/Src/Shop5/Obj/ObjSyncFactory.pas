@@ -517,6 +517,8 @@ type
   //25
   TSyncCaModule=class(TSyncSingleTable)
   public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
     function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -3409,6 +3411,17 @@ begin
              Raise;
         end;
    end;
+end;
+
+function TSyncCaModule.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+  SelectSQL.Text := Str;
 end;
 
 function TSyncCaModule.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;

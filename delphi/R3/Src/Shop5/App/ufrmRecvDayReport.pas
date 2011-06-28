@@ -93,6 +93,10 @@ type
     fndP5_CLIENT_ID: TzrComboBoxList;
     Label7: TLabel;
     fndP5_RecvMan: TzrComboBoxList;
+    Label8: TLabel;
+    fndP5_PAYM_ID: TcxComboBox;
+    Label13: TLabel;
+    fndP5_ACCOUNT_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -152,10 +156,16 @@ type
   end;
 
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon;
+
+uses
+   uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon,uDsUtil;
+
 {$R *.dfm}
 
 procedure TfrmRecvDayReport.FormCreate(Sender: TObject);
+var
+  Rs: TZQuery;
+  SetCol: TColumnEh;
 begin
   inherited;
   IsOnDblClick:=False;
@@ -217,7 +227,29 @@ begin
 
       Label4.Caption := '仓库群组';
       Label6.Caption := '仓库名称';
+
+      //2011.06.16 15:51 修改
+      TabSheet2.Caption:='仓库收款汇总表';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_ID');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库代码';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
+      SetCol:=FindColumn(DBGridEh5, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';      
     end;
+
+  fndP5_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndP5_PAYM_ID.Properties.Items,'CODE_NAME');
+  //初始化Grid: 银行帐户
+  Rs:=Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  AddDBGridEhColumnItems(DBGridEh5, Rs, 'ACCOUNT_ID', 'ACCOUNT_ID', 'ACCT_NAME');
+
+  //初始化Grid: 付款方式
+  Rs:=Global.GetZQueryFromName('PUB_PAYMENT');
+  AddDBGridEhColumnItems(DBGridEh5, Rs, 'PAYM_ID', 'CODE_ID', 'CODE_NAME');
 end;
 
 function TfrmRecvDayReport.GetGroupSQL(chk:boolean=true): string;
@@ -714,6 +746,14 @@ begin
   if fndP5_RecvMan.AsString<>'' then
     strWhere:=strWhere+' and A.RECV_USER='''+fndP5_RecvMan.AsString+''' ';
 
+  //银行账户：
+  if fndP5_ACCOUNT_ID.AsString<>'' then
+    strWhere:=strWhere+' and A.ACCOUNT_ID='''+fndP5_ACCOUNT_ID.AsString+''' ';
+    
+  //收款方式
+  if fndP5_PAYM_ID.ItemIndex<>-1 then
+    strWhere:=strWhere+' and A.PAYM_ID='''+TRecord_(fndP5_PAYM_ID.Properties.Items.Objects[fndP5_PAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString+''' '; 
+
    //关联语句
   strSql:=
     'select jp.*,r.USER_NAME as USER_NAME,0 as OVERDAYS from '+
@@ -723,7 +763,7 @@ begin
     ' '+strWhere+') jb '+
     ' left outer join VIW_CUSTOMER D on jb.TENANT_ID=D.TENANT_ID and jb.CLIENT_ID=D.CLIENT_ID)jp '+
     ' left outer join VIW_USERS r on jp.TENANT_ID=r.TENANT_ID and jp.RECV_USER=r.USER_ID order by jp.RECV_USER ';
-    
+
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 

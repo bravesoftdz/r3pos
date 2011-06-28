@@ -146,11 +146,13 @@ type
   end;
 
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon,
+uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon, uDsUtil,
   ufrmCostCalc;
 {$R *.dfm}
 
 procedure TfrmPayAbleReport.FormCreate(Sender: TObject);
+var
+  SetCol: TColumnEh;
 begin
   inherited;
   IsOnDblClick:=False;
@@ -210,6 +212,18 @@ begin
 
       Label12.Caption := '仓库群组';
       Label3.Caption := '仓库名称';
+
+      //2011.06.16 15:51 修改
+      TabSheet2.Caption:='仓库付款汇总表';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_ID');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库代码';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
+      SetCol:=FindColumn(DBGridEh5, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
     end;
 end;
 
@@ -374,11 +388,11 @@ begin
   //日期：
   strWhere:=strWhere+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' ';
   //门店管理群组
-  strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+'  ';  
+  strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+'  ';
+
   //验货人：
   if trim(fndP5_GLIDE_ID.AsString)<>'' then
-    GLIDE_Cnd:=' where GUIDE_USER='''+fndP5_GLIDE_ID.AsString+''' ';  
-
+    GLIDE_Cnd:=' where GUIDE_USER='''+fndP5_GLIDE_ID.AsString+''' ';
 
   //按根据条件门店查询:
   strSql:=

@@ -1,5 +1,6 @@
 inherited frmPayAbleReport: TfrmPayAbleReport
-  Left = 195
+  Left = 192
+  Top = 104
   Width = 1022
   Height = 611
   Caption = #24212#20184#27454#25253#34920
@@ -201,7 +202,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'RECK_MNY'
+                      FieldName = 'PAYM_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -223,7 +224,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAYM_MNY'
+                      FieldName = 'RECK_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -482,7 +483,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'RECK_MNY'
+                      FieldName = 'PAYM_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -504,7 +505,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAYM_MNY'
+                      FieldName = 'RECK_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -807,7 +808,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'RECK_MNY'
+                      FieldName = 'PAYM_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -829,7 +830,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PAYM_MNY'
+                      FieldName = 'RECK_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -1128,7 +1129,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'RECK_MNY'
+                    FieldName = 'PAYM_MNY'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
@@ -1150,7 +1151,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'PAYM_MNY'
+                    FieldName = 'RECK_MNY'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
@@ -1168,7 +1169,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 82
+            Height = 100
             Align = alTop
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdTop, sdRight]
@@ -1204,7 +1205,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Caption = #38376#24215#21517#31216
             end
             object Label7: TLabel
-              Left = 284
+              Left = 300
               Top = 58
               Width = 36
               Height = 12
@@ -1212,7 +1213,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Caption = #21046#21333#20154
             end
             object Label8: TLabel
-              Left = 284
+              Left = 300
               Top = 36
               Width = 36
               Height = 12
@@ -1236,8 +1237,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               TabOrder = 1
             end
             object RzBitBtn3: TRzBitBtn
-              Left = 430
-              Top = 41
+              Left = 473
+              Top = 43
               Width = 67
               Height = 32
               Action = actFind
@@ -1358,9 +1359,9 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               MultiSelect = False
             end
             object fndP5_USER_ID: TzrComboBoxList
-              Left = 323
+              Left = 340
               Top = 54
-              Width = 89
+              Width = 120
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <
@@ -1399,9 +1400,9 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               MultiSelect = False
             end
             object fndP5_GLIDE_ID: TzrComboBoxList
-              Left = 323
+              Left = 340
               Top = 32
-              Width = 89
+              Width = 120
               Height = 20
               Properties.AutoSelect = False
               Properties.Buttons = <
@@ -1442,9 +1443,9 @@ inherited frmPayAbleReport: TfrmPayAbleReport
           end
           object Panel6: TPanel
             Left = 0
-            Top = 82
+            Top = 100
             Width = 797
-            Height = 423
+            Height = 405
             Align = alClient
             BevelOuter = bvNone
             Color = clWhite
@@ -1453,7 +1454,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Left = 0
               Top = 0
               Width = 797
-              Height = 423
+              Height = 405
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1462,7 +1463,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 2
                 Top = 2
                 Width = 793
-                Height = 419
+                Height = 401
                 Align = alClient
                 AllowedOperations = []
                 DataSource = dsadoReport4
@@ -1585,12 +1586,12 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'RECK_MNY'
+                    FieldName = 'PAYM_MNY'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #24050#20184#37329#39069
+                    Title.Caption = #32467#20313#37329#39069
                     Title.Font.Charset = GB2312_CHARSET
                     Title.Font.Color = clWindowText
                     Title.Font.Height = -12
@@ -1619,7 +1620,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'PAYM_MNY'
+                    FieldName = 'RECK_MNY'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>

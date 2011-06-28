@@ -93,6 +93,10 @@ type
     fndP5_CLIENT_ID: TzrComboBoxList;
     Label7: TLabel;
     fndP5_PayMan: TzrComboBoxList;
+    Label14: TLabel;
+    fndP5_ACCOUNT_ID: TzrComboBoxList;
+    Label13: TLabel;
+    fndP5_PAYM_ID: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -153,10 +157,16 @@ type
   end;
 
 implementation
-uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon;
+
+uses
+  uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon, uDsUtil;
+
 {$R *.dfm}
 
 procedure TfrmPayDayReport.FormCreate(Sender: TObject);
+var
+  Rs: TZQuery;
+  SetCol: TColumnEh;
 begin
   inherited;
   IsOnDblClick:=False;
@@ -218,7 +228,26 @@ begin
 
       Label4.Caption := '仓库群组';
       Label6.Caption := '仓库名称';
+
+      //2011.06.16 15:51 修改
+      TabSheet2.Caption:='仓库付款汇总表';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_ID');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库代码';
+      SetCol:=FindColumn(DBGridEh2, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
+      SetCol:=FindColumn(DBGridEh5, 'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
     end;
+
+  fndP5_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndP5_PAYM_ID.Properties.Items,'CODE_NAME');
+
+  //初始化Grid: 付款方式
+  Rs:=Global.GetZQueryFromName('PUB_PAYMENT');
+  AddDBGridEhColumnItems(DBGridEh5, Rs, 'PAYM_ID', 'CODE_ID', 'CODE_NAME');
 end;
 
 function TfrmPayDayReport.GetGroupSQL(chk:boolean=true): string;
@@ -668,16 +697,28 @@ begin
 
   //付款查询条件
   strWhere:=GetDateCnd(P5_D1, P5_D2, 'ABLE_DATE');
+
   //门店管理群组
   strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'');
+
   //门店名称查询条件
   strWhere:=strWhere+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID');
+
   //供应商查询条件
   if fndP5_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP5_CLIENT_ID.AsString+''' ';
+
   //收款人查询条件
   if fndP5_PayMan.AsString<>'' then
     strWhere:=strWhere+' and A.PAY_USER='''+fndP5_PayMan.AsString+''' ';
+
+  //银行账户：
+  if fndP5_ACCOUNT_ID.AsString<>'' then
+    strWhere:=strWhere+' and A.ACCOUNT_ID='''+fndP5_ACCOUNT_ID.AsString+''' ';
+    
+  //收款方式
+  if fndP5_PAYM_ID.ItemIndex<>-1 then
+    strWhere:=strWhere+' and A.PAYM_ID='''+TRecord_(fndP5_PAYM_ID.Properties.Items.Objects[fndP5_PAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString+''' '; 
 
   //关联语句
   strSql:=
@@ -691,7 +732,6 @@ begin
 
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
-
 
 procedure TfrmPayDayReport.DBGridEh4DblClick(Sender: TObject);
 begin

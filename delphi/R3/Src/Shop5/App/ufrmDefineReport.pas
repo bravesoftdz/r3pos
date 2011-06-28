@@ -146,6 +146,8 @@ var
 begin
   Params := TftParamList.Create(nil);
   Params1 := TftParamList.Create(nil);
+  DsReportTemplate.DisableControls;
+  DsReportTemplate1.DisableControls;
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('REPORT_ID').AsString := Report_Id;
@@ -184,6 +186,8 @@ begin
   finally
     Params.Free;
     Params1.Free;
+    DsReportTemplate.EnableControls;
+    DsReportTemplate1.EnableControls;
   end;
   dbState := dsBrowse;
 end;
@@ -276,6 +280,7 @@ begin
   ' (select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
   ' where j.TYPE_CODE=''SORT_TYPE'') '+
   ' g where not(CODE_NAME like ''自定义%'') ';
+  DsReportTemplate.DisableControls;
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=指标名称',RecordList) then
       begin
@@ -322,6 +327,7 @@ begin
   finally
     RecordList.Free;
     Record_1.Free;
+    DsReportTemplate.EnableControls;
   end;
   if not DsReportTemplate.IsEmpty then BtnDelete.Enabled := True;
 end;
@@ -399,24 +405,30 @@ begin
     begin
       if DsReport.IsEmpty then Exit;
       DsReport.Delete;
-
-      DsReportTemplate.First;
-      while not DsReportTemplate.Eof do DsReportTemplate.Delete;
-
-      DsReportTemplate1.First;
-      while not DsReportTemplate1.Eof do DsReportTemplate1.Delete;
-
-      Factor.BeginBatch;
+      DsReportTemplate.DisableControls;
+      DsReportTemplate1.DisableControls;
       try
-        Factor.AddBatch(DsReport,'TR3Report');
-        Factor.AddBatch(DsReportTemplate,'TReportTemplate');
-        Factor.AddBatch(DsReportTemplate1,'TReportTemplate');
-        Factor.CommitBatch;
-      except
-        Factor.CancelBatch;
-        Raise;
+        DsReportTemplate.First;
+        while not DsReportTemplate.Eof do DsReportTemplate.Delete;
+
+        DsReportTemplate1.First;
+        while not DsReportTemplate1.Eof do DsReportTemplate1.Delete;
+
+        Factor.BeginBatch;
+        try
+          Factor.AddBatch(DsReport,'TR3Report');
+          Factor.AddBatch(DsReportTemplate,'TReportTemplate');
+          Factor.AddBatch(DsReportTemplate1,'TReportTemplate');
+          Factor.CommitBatch;
+        except
+          Factor.CancelBatch;
+          Raise;
+        end;
+        ModalResult := mrOk;
+      finally
+        DsReportTemplate.EnableControls;
+        DsReportTemplate1.EnableControls;
       end;
-      ModalResult := mrOk;
     end;
 end;
 
@@ -687,25 +699,29 @@ begin
   if DsReportTemplate.RecNo = 1 then Exit;
   if DsReportTemplate.FieldByName('CELL_ROW').AsInteger = 1 then Exit;
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
+  DsReportTemplate.DisableControls;
+  try
+    ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+    ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+    DsReportTemplate.Prior;
+    ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+    ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
 
-  ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
-  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-  DsReportTemplate.Prior;
-  ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
-  ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-
-  if DsReportTemplate.Locate('ROWS_ID',ROWS_ID1,[]) then
-    begin
-      DsReportTemplate.Edit;
-      DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW;
-      DsReportTemplate.Post;
-    end;
-  if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then
-    begin
-      DsReportTemplate.Edit;
-      DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW1;
-      DsReportTemplate.Post;
-    end;
+    if DsReportTemplate.Locate('ROWS_ID',ROWS_ID1,[]) then
+      begin
+        DsReportTemplate.Edit;
+        DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW;
+        DsReportTemplate.Post;
+      end;
+    if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then
+      begin
+        DsReportTemplate.Edit;
+        DsReportTemplate.FieldByName('CELL_ROW').AsInteger := ROW1;
+        DsReportTemplate.Post;
+      end;
+  finally
+    DsReportTemplate.EnableControls;
+  end;
   //DsReportTemplate.IndexFieldNames := 'DISPLAY_NAME';
 end;
 
@@ -878,6 +894,7 @@ begin
   if DsReportTemplate1.IsEmpty then Exit;
   RecordList := TRecordList.Create;
   Str_Sql := SQL;
+  DsReportTemplate1.DisableControls;
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
       begin
@@ -895,6 +912,7 @@ begin
       end;
   finally
     RecordList.Free;
+    DsReportTemplate1.EnableControls;
   end;
 end;
 
@@ -1015,6 +1033,7 @@ begin
   if Column.FieldName <> 'FIELD_NAME' then Exit; 
   RecordList := TRecordList.Create;
   Str_Sql := SQL;
+  DsReportTemplate1.DisableControls;
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
       begin
@@ -1032,6 +1051,7 @@ begin
       end;
   finally
     RecordList.Free;
+    DsReportTemplate1.EnableControls;
   end;
 end;
 
@@ -1044,17 +1064,22 @@ begin
   ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
   COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
   SUMTYPE := Value;
-  DsReportTemplate.First;
-  while not DsReportTemplate.Eof do
-    begin
-      if DsReportTemplate.FieldByName('CELL_COL').AsInteger = COL then
-        begin
-          DsReportTemplate.Edit;
-          DsReportTemplate.FieldByName('SUM_TYPE').AsString := SUMTYPE;
-          DsReportTemplate.Post;
-        end;
-      DsReportTemplate.Next;
-    end;
+  DsReportTemplate.DisableControls;
+  try
+    DsReportTemplate.First;
+    while not DsReportTemplate.Eof do
+      begin
+        if DsReportTemplate.FieldByName('CELL_COL').AsInteger = COL then
+          begin
+            DsReportTemplate.Edit;
+            DsReportTemplate.FieldByName('SUM_TYPE').AsString := SUMTYPE;
+            DsReportTemplate.Post;
+          end;
+        DsReportTemplate.Next;
+      end;
+  finally
+    DsReportTemplate.EnableControls;
+  end;
   if DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate.Edit;
 end;
 
@@ -1067,17 +1092,22 @@ begin
   ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
   COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
   SUMTYPE := Value;
-  DsReportTemplate1.First;
-  while not DsReportTemplate1.Eof do
-    begin
-      if DsReportTemplate1.FieldByName('CELL_COL').AsInteger = COL then
-        begin
-          DsReportTemplate1.Edit;
-          DsReportTemplate1.FieldByName('SUM_TYPE').AsString := SUMTYPE;
-          DsReportTemplate1.Post;
-        end;
-      DsReportTemplate1.Next;
-    end;
+  DsReportTemplate1.DisableControls;
+  try
+    DsReportTemplate1.First;
+    while not DsReportTemplate1.Eof do
+      begin
+        if DsReportTemplate1.FieldByName('CELL_COL').AsInteger = COL then
+          begin
+            DsReportTemplate1.Edit;
+            DsReportTemplate1.FieldByName('SUM_TYPE').AsString := SUMTYPE;
+            DsReportTemplate1.Post;
+          end;
+        DsReportTemplate1.Next;
+      end;
+  finally
+    DsReportTemplate1.EnableControls;
+  end;
   if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then DsReportTemplate1.Edit;
 end;
 
@@ -1098,6 +1128,7 @@ begin
   ' (select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
   ' where j.TYPE_CODE=''SORT_TYPE'') '+
   ' g where not(CODE_NAME like ''自定义%'') ';
+  DsReportTemplate1.DisableControls;
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=指标名称',RecordList) then
       begin
@@ -1123,6 +1154,7 @@ begin
       end;
   finally
     RecordList.Free;
+    DsReportTemplate1.EnableControls;
   end;
   if not DsReportTemplate1.IsEmpty then BtnDelete1.Enabled := True;
 end;
@@ -1321,33 +1353,38 @@ begin
   if DsReportTemplate1.FieldByName('CELL_COL').AsInteger = 1 then Exit;
   if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
 
-  COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
-  ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
-  ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
-  DsReportTemplate1.Prior;
-  COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
-  ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
-  ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+  DsReportTemplate1.DisableControls;
+  try
+    COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+    ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
+    ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+    DsReportTemplate1.Prior;
+    COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+    ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
+    ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
 
-  if ROW <> ROW1 then
-    begin
-      DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]);
-      Exit;
-    end;
+    if ROW <> ROW1 then
+      begin
+        DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]);
+        Exit;
+      end;
 
-  if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID1,[]) then
-    begin
-      DsReportTemplate1.Edit;
-      DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL;
-      DsReportTemplate1.Post;
-    end;
+    if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID1,[]) then
+      begin
+        DsReportTemplate1.Edit;
+        DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL;
+        DsReportTemplate1.Post;
+      end;
     
-  if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then
-    begin
-      DsReportTemplate1.Edit;
-      DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL1;
-      DsReportTemplate1.Post;
-    end;
+    if DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]) then
+      begin
+        DsReportTemplate1.Edit;
+        DsReportTemplate1.FieldByName('CELL_COL').AsInteger := COL1;
+        DsReportTemplate1.Post;
+      end;
+  finally
+    DsReportTemplate1.EnableControls;
+  end;
 end;
 
 procedure TfrmDefineReport.BtnRightRow1Click(Sender: TObject);
@@ -1431,6 +1468,7 @@ begin
 
   RecordList := TRecordList.Create;
   Str_Sql := SQL;
+  DsReportTemplate.DisableControls;
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=数据字段名',RecordList) then
       begin
@@ -1463,6 +1501,7 @@ begin
       end;
   finally
     RecordList.Free;
+    DsReportTemplate.EnableControls;
   end;
 end;
 
@@ -1634,24 +1673,29 @@ var Field_Id,Field_Text:String;
 begin
   inherited;
   if DsReportTemplate.FieldByName('FIELD_NAME').AsString = '' then Exit;
-  COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
-  Field_Id := DsReportTemplate.FieldByName('FIELD_NAME').AsString;
-  Field_Text := DsReportTemplate.FieldByName('FIELD_NAME_TEXT').AsString;
-  if TfrmFieldSort.ShowSort(Self,Field_Id,Field_Text) then
-    begin
-      DsReportTemplate.First;
-      while not DsReportTemplate.Eof do
-        begin
-          if DsReportTemplate.FieldByName('CELL_COL').AsInteger = COL then
-            begin
-              DsReportTemplate.Edit;
-              DsReportTemplate.FieldByName('FIELD_NAME').AsString := Field_Id;
-              DsReportTemplate.FieldByName('FIELD_NAME_TEXT').AsString := Field_Text;
-              DsReportTemplate.Post;
-            end;
-          DsReportTemplate.Next;
-        end;
-    end;
+  DsReportTemplate.DisableControls;
+  try
+    COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
+    Field_Id := DsReportTemplate.FieldByName('FIELD_NAME').AsString;
+    Field_Text := DsReportTemplate.FieldByName('FIELD_NAME_TEXT').AsString;
+    if TfrmFieldSort.ShowSort(Self,Field_Id,Field_Text) then
+      begin
+        DsReportTemplate.First;
+        while not DsReportTemplate.Eof do
+          begin
+            if DsReportTemplate.FieldByName('CELL_COL').AsInteger = COL then
+              begin
+                DsReportTemplate.Edit;
+                DsReportTemplate.FieldByName('FIELD_NAME').AsString := Field_Id;
+                DsReportTemplate.FieldByName('FIELD_NAME_TEXT').AsString := Field_Text;
+                DsReportTemplate.Post;
+              end;
+            DsReportTemplate.Next;
+          end;
+      end;
+  finally
+    DsReportTemplate.EnableControls;
+  end;
 end;
 
 end.

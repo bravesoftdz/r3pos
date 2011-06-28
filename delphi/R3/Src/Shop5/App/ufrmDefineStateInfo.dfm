@@ -65,6 +65,7 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
                 EditButtons = <>
                 FieldName = 'CODE_ID'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #25351#26631'ID'
                 Title.Color = clWindow
                 Width = 55

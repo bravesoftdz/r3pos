@@ -181,7 +181,7 @@ begin
     if not DsReportTemplate1.IsEmpty then
       begin
         DsReportTemplate1.Last;
-        RowNum := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+        RowNum := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
       end;
   finally
     Params.Free;

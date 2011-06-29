@@ -9,19 +9,19 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 860
-    Height = 494
+    Height = 493
     inherited RzPanel2: TRzPanel
       Width = 850
-      Height = 484
+      Height = 483
       inherited RzPage: TRzPageControl
         Width = 844
-        Height = 478
+        Height = 477
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36827#36135#35746#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 842
-            Height = 451
+            Height = 450
             inherited RzPanel1: TRzPanel
               Width = 832
               Height = 115
@@ -321,7 +321,7 @@ inherited frmStkIndentOrderList: TfrmStkIndentOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 120
               Width = 832
-              Height = 326
+              Height = 325
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <

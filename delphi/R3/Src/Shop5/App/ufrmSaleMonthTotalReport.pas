@@ -98,7 +98,7 @@ begin
   lock := true;
   try
     w := '';
-    if not ((Global.UserID = 'admin') or (Global.UserID = 'system')) then
+    if not ((Global.UserID = 'admin') or (Global.UserID = 'system') or (Global.Roles = 'xsm')) then
     begin
     list.CommaText := Global.Roles;
     for i:=0 to list.Count - 1 do
@@ -149,9 +149,9 @@ begin
     SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
     fndP1_SHOP_ID.Properties.ReadOnly := True;
   end;
-  btnNew.Visible := (Global.UserId='system') or (Global.UserId='admin');
-  btnEdit.Visible := (Global.UserId='system') or (Global.UserId='admin');
-  btnDelete.Visible := (Global.UserId='system') or (Global.UserId='admin');
+  btnNew.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
+  btnEdit.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
+  btnDelete.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
 end;
 
 procedure TfrmSaleMonthTotalReport.FormDestroy(Sender: TObject);

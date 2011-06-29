@@ -203,6 +203,7 @@ var
   CurDate:Currency;
 begin
   result := true;
+  if Global.debug then Exit;
   timestamp := GetSynTimeStamp('#','#');
   if timestamp=0 then Exit;
   cDate := trunc(timestamp/86400.0+40542.0);
@@ -1343,7 +1344,7 @@ begin
     frmLogo.ProgressBar1.Position := 8;
     frmLogo.Label1.Caption := '下载功能模块...';
     frmLogo.Label1.Update;
-    //downloadCaModule(Global.TENANT_ID,flag);
+    downloadCaModule(Global.TENANT_ID,flag);
     frmLogo.ProgressBar1.Position := 9;
     SetSynTimeStamp('#',TimeStamp,'#');
   finally
@@ -2971,11 +2972,11 @@ try
 
   rio := CreateRio(120000);
   try
-    h := SendHeader(rio,2);
+    h := SendHeader(rio,1);
     try
       try
         RioImpl := GetCaProductWebServiceImpl(true,URL+'CaProductService?wsdl',rio);
-       // OutXml := RioImpl.listModules(Encode(inxml,pubpwd));
+        OutXml := RioImpl.listModules(Encode(inxml,pubpwd));
         r := GetHeader(rio);
         try
           case r.encryptType of
@@ -3010,7 +3011,7 @@ try
       rs.Close;
       rs.FieldDefs.Add('PROD_ID',ftstring,10,true);
       rs.FieldDefs.Add('MODU_ID',ftstring,20,true);
-      rs.FieldDefs.Add('SEQ_NO',ftInteger,0,true);
+      rs.FieldDefs.Add('SEQNO',ftInteger,0,true);
       rs.FieldDefs.Add('MODU_NAME',ftstring,50,true);
       rs.FieldDefs.Add('LEVEL_ID',ftstring,21,true);
       rs.FieldDefs.Add('MODU_TYPE',ftInteger,0,true);
@@ -3025,9 +3026,9 @@ try
            rs.Append;
            rs.FieldByName('PROD_ID').AsString := GetNodeValue(listModulesResp,'prodId');
            rs.FieldByName('MODU_ID').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'moduId'));
-           if GetNodeValue(listModulesResp,'seqNo')='' then
-           rs.FieldByName('SEQ_NO').AsInteger := 0 else
-           rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'seqNo'));
+           if GetNodeValue(listModulesResp,'seqno')='' then
+           rs.FieldByName('SEQNO').AsInteger := 0 else
+           rs.FieldByName('SEQNO').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'seqno'));
            rs.FieldByName('MODU_NAME').AsString := GetNodeValue(listModulesResp,'moduName');
            rs.FieldByName('LEVEL_ID').AsString := GetNodeValue(listModulesResp,'levelId');
            rs.FieldByName('MODU_TYPE').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'moduType'));
@@ -3046,7 +3047,7 @@ try
         Params.ParamByName('COMM_LOCK').AsString := '1';
         Params.ParamByName('TIME_STAMP').Value := TimeStamp;
         Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncCaModule',Params);
+//        Factor.UpdateBatch(rs,'TSyncCaModule',Params);
         SetSynTimeStamp('CA_MODULE',timeStamp,'#');
       finally
         Params.free;

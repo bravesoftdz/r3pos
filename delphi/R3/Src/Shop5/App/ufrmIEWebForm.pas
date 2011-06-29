@@ -55,7 +55,7 @@ var
   xsm_username:string;
   xsm_password:string;
 implementation
-uses EncDec,uShopGlobal,ufrmXsmLogin, uGlobal;
+uses EncDec,uShopGlobal,ufrmXsmLogin, uGlobal, ufrmMain;
 
 {$R *.dfm}
 
@@ -184,10 +184,32 @@ end;
 
 procedure TfrmIEWebForm.IEBrowserNavigateComplete2(Sender: TObject;
   const pDisp: IDispatch; var URL: OleVariant);
+function FindAction(id:string):TAction;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to frmMain.actList.ActionCount - 1 do
+    begin
+      if frmMain.actList.Actions[i].Tag = strtoint(id) then
+         begin
+           result := TAction(frmMain.actList.Actions[i]);
+           Exit;
+         end;
+    end;
+end;
+var
+  act:TAction;
 begin
   inherited;
   Runed := false;
   if pos('relogin',lowercase(URL))>0 then close;
+  if pos('#=',url)>0 then
+  begin
+    act := FindAction(copy(url,pos('#=',url)+2,255));
+    if act=nil then Raise Exception.Create('没找到对应的模块,id='+url);
+    act.OnExecute(act);
+  end;
 //  SetEvent(FhEvent);
 
 end;

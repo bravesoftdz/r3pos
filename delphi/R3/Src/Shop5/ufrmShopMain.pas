@@ -612,6 +612,7 @@ begin
   SortToolButton;
   button.Down := true;
   TfrmBasic(Form).OnFreeForm := DoFreeForm;
+  TfrmBasic(Form).PageHandle := Integer(Button);
   rzChildTitle.Caption := 'µ±Ç°Î»ÖÃ->'+form.Caption;
 end;
 

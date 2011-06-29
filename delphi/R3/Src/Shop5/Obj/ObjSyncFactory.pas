@@ -3396,6 +3396,7 @@ end;
 
 function TSyncCaModule.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
+   InitSQL(AGlobal);
    try
      FillParams(InsertQuery);
      AGlobal.ExecQuery(InsertQuery);
@@ -3416,12 +3417,23 @@ end;
 function TSyncCaModule.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
+  rs :TZQuery;
 begin
-  Str :=
-  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP>:TIME_STAMP';
-  if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
-  SelectSQL.Text := Str;
+  rs := TZQuery.Create(nil);
+  try
+    Str := 'select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP>:TIME_STAMP ';
+    if Params.ParamByName('SYN_COMM').AsBoolean then
+       Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+    rs.SQL.Text := Str;       
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger=0 then
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP=0 '
+    else
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' ';
+    SelectSQL.Text := Str;
+  finally
+    rs.Free;
+  end;
 end;
 
 function TSyncCaModule.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;

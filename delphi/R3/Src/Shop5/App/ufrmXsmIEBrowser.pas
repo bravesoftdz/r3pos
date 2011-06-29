@@ -19,6 +19,7 @@ type
     FCurid: string;
     Ffinish: boolean;
     Fconfirm: boolean;
+    SaveHandle:THandle;
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
                                                    const szPara: WideString);
@@ -32,9 +33,9 @@ type
     procedure SetLogined(const Value: boolean);
     procedure Setready(const Value: boolean);
     procedure SetSessionFail(const Value: boolean);
-    procedure SetCurid(const Value: string);
     procedure Setfinish(const Value: boolean);
     procedure Setconfirm(const Value: boolean);
+    procedure DoMsgFilter(var Msg: TMsg; var Handled: Boolean);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -43,23 +44,23 @@ type
     procedure Send(const szMethodName: WideString;const szPara: WideString);
     procedure Send2(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString);
     procedure Send3(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString;const szPara3: WideString);
-    function WaitRun:boolean;
+    function WaitRun(WaitOutTime:integer=20000):boolean;
     procedure DoInit;
     procedure ReadInfo;
     function DoLogin(Hinted:boolean=false):boolean;
     procedure ClearResource;
-    procedure Open(sid,oid:string);
+    function Open(sid,oid:string;hHandle:THandle):boolean;
     property Logined:boolean read FLogined write SetLogined;
     property ready:boolean read Fready write Setready;
     property SessionFail:boolean read FSessionFail write SetSessionFail;
     property finish:boolean read Ffinish write Setfinish;
     property confirm:boolean read Fconfirm write Setconfirm;
-    property Curid:string read FCurid write SetCurid;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
-uses uCaFactory,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin;
+uses uCaFactory,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
+  ufrmDesk;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -81,6 +82,7 @@ end;
 destructor TfrmXsmIEBrowser.Destroy;
 begin
   runed := false;
+  SetEvent(FhEvent);
   inherited;
 end;
 
@@ -99,6 +101,7 @@ begin
   frmLogo.Show;
   frmLogo.ShowTitle := '正在登录新商盟...';
   try
+    SessionFail := false;
     Send2('login',xsm_username,xsm_password);
     if not WaitRun then Logined := false;
     result := Logined;
@@ -145,6 +148,7 @@ begin
      begin
        Logined := false;
        SessionFail := true;
+       LoginError := 'Session失效了，请重新点击...';
      end;
   if szMethodName='finish' then
      begin
@@ -212,19 +216,23 @@ begin
   FormStyle := fsNormal;
 end;
 
-procedure TfrmXsmIEBrowser.Open(sid, oid: string);
+function TfrmXsmIEBrowser.Open(sid, oid: string;hHandle:THandle):boolean;
 begin
   if Runed then Raise Exception.Create('正在等待新商盟响应...');
+  SaveHandle := PageHandle;
+  try
+  PageHandle := hHandle;
   WindowState := wsMaximized;
   BringToFront;
-  if not CaFactory.Audited then Raise Exception.Create('脱机状态不能进行新商盟...');
+  result := false;
+  if not CaFactory.Audited then Raise Exception.Create('脱机状态不能进入新商盟...');
   if not Logined then
      begin
        if SessionFail then DoLogin;
        if not Logined and TfrmXsmLogin.XsmRegister then
           begin
             if not DoLogin(True) then
-               Open(sid,oid);
+               Open(sid,oid,hHandle);
           end
        else
           Exit;
@@ -233,15 +241,23 @@ begin
   confirm := false;
   Send2('getModule',sid,oid);
   if not WaitRun then Exit;
+  if SessionFail then //失效了，自动重新请求
+     begin
+       result := Open(sid,oid,hHandle);
+       Exit;
+     end;
   if confirm then
      begin
-       if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+       if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
           begin
-            Send3('getModule',sid,oid,'clearModel=force');
+            Send3('getModule',sid,oid,'force');
             if not WaitRun then Exit;
           end;
      end;
-  CurId := sid + '#' + oid;
+  result := true;
+  finally
+    if not result then PageHandle := SaveHandle;
+  end;
 end;
 
 procedure TfrmXsmIEBrowser.Setready(const Value: boolean);
@@ -253,17 +269,25 @@ procedure TfrmXsmIEBrowser.DoInit;
 var
   _Start,W:Int64;
   F:TIniFile;
+  List:TStringList;
 begin
   ready := false;
   SessionFail := false;
   Runed := true;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  List := TStringList.Create;
   try
     xsm_url := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
-    if xsm_url='' then xsm_url := ExtractFilePath(ParamStr(0))+'xsm\xsm.html';
+    if xsm_url='' then xsm_url := ExtractFilePath(ParamStr(0))+'xsm\xsm.html'
+       else
+       begin
+         List.CommaText := xsm_url;
+         xsm_url := List.Values['xsm'];
+       end;
     Left := -9000;
     IEBrowser.Navigate(xsm_url);
   finally
+    List.free;
     F.Free;
   end;
   if not WaitRun then Exit;
@@ -273,7 +297,8 @@ begin
   frmLogo.ProgressBar1.Update;
   while not ready do
      begin
-       Application.HandleMessage;
+//       windows.WaitForSingleObject(FhEvent,500);
+       Application.ProcessMessages;
        W := (GetTickCount-_Start);
 //       if (W mod 1000)=0 then
 //          begin
@@ -289,29 +314,42 @@ begin
   frmLogo.ProgressBar1.Position := 100;
 end;
 
-function TfrmXsmIEBrowser.WaitRun:boolean;
+function TfrmXsmIEBrowser.WaitRun(WaitOutTime:integer=20000):boolean;
 var
   _Start,W:Int64;
+  s:boolean;
 begin
   _Start := GetTickCount;
   result := true;
   _Start := GetTickCount;
+  s := frmLogo.Visible;
+  if not s then frmLogo.Show;
   frmLogo.ProgressBar1.Position := 1;
   frmLogo.ProgressBar1.Update;
+//  Application.OnMessage := DoMsgFilter;
+  frmDesk.Waited := true;
+  try
   while Runed do
      begin
-       Application.HandleMessage;
+//       windows.MsgWaitForMultipleObjects(1,FhEvent,False,500,QS_ALLINPUT);
+       Application.ProcessMessages;
        W := (GetTickCount-_Start);
+       frmLogo.BringToFront;
        frmLogo.ProgressBar1.Position := (W div 500);
        frmLogo.ProgressBar1.Update;
-       if (GetTickCount-_Start)>20000 then
+       if (GetTickCount-_Start)>WaitOutTime then
           begin
             Runed := false;
             result := false;
             LoginError := '请求超时了....';
           end;
      end;
-  Runed := false;
+  finally
+//    Application.OnMessage := nil;
+    frmDesk.Waited := false;
+    if not s then frmLogo.Close;
+    Runed := false;
+  end;
 end;
 
 procedure TfrmXsmIEBrowser.ClearResource;
@@ -341,11 +379,6 @@ begin
   end;
 end;
 
-procedure TfrmXsmIEBrowser.SetCurid(const Value: string);
-begin
-  FCurid := Value;
-end;
-
 procedure TfrmXsmIEBrowser.Setfinish(const Value: boolean);
 begin
   Ffinish := Value;
@@ -354,6 +387,12 @@ end;
 procedure TfrmXsmIEBrowser.Setconfirm(const Value: boolean);
 begin
   Fconfirm := Value;
+end;
+
+procedure TfrmXsmIEBrowser.DoMsgFilter(var Msg: TMsg;
+  var Handled: Boolean);
+begin
+//  if Msg.message =
 end;
 
 end.

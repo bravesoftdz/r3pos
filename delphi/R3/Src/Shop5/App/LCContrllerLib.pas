@@ -12,7 +12,7 @@ unit LCContrllerLib;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 2011/6/26 17:04:27 from Type Library described below.
+// File generated on 2011/6/27 22:04:45 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\Windows\system32\LCContrller.dll (1)
@@ -97,7 +97,6 @@ type
     function Send3(const bstrLocConnName: WideString; const bstrMethodName: WideString; 
                    const bstrPara1: WideString; const bstrPara2: WideString; 
                    const bstrPara3: WideString): LongWord; safecall;
-    procedure Test1(saParas: PSafeArray); safecall;
     function UnRegisterLC(const szLocConnName: WideString): LongWord; safecall;
   end;
 
@@ -117,8 +116,7 @@ type
     function Send3(const bstrLocConnName: WideString; const bstrMethodName: WideString; 
                    const bstrPara1: WideString; const bstrPara2: WideString; 
                    const bstrPara3: WideString): LongWord; dispid 5;
-    procedure Test1(saParas: {??PSafeArray}OleVariant); dispid 6;
-    function UnRegisterLC(const szLocConnName: WideString): LongWord; dispid 7;
+    function UnRegisterLC(const szLocConnName: WideString): LongWord; dispid 6;
   end;
 
 
@@ -163,7 +161,6 @@ type
     function Send3(const bstrLocConnName: WideString; const bstrMethodName: WideString; 
                    const bstrPara1: WideString; const bstrPara2: WideString; 
                    const bstrPara3: WideString): LongWord;
-    procedure Test1(saParas: PSafeArray);
     function UnRegisterLC(const szLocConnName: WideString): LongWord;
     property  ControlInterface: ILCObject read GetControlInterface;
     property  DefaultInterface: ILCObject read GetControlInterface;
@@ -262,11 +259,6 @@ function TLCObject.Send3(const bstrLocConnName: WideString; const bstrMethodName
                          const bstrPara3: WideString): LongWord;
 begin
   Result := DefaultInterface.Send3(bstrLocConnName, bstrMethodName, bstrPara1, bstrPara2, bstrPara3);
-end;
-
-procedure TLCObject.Test1(saParas: PSafeArray);
-begin
-  DefaultInterface.Test1(saParas);
 end;
 
 function TLCObject.UnRegisterLC(const szLocConnName: WideString): LongWord;

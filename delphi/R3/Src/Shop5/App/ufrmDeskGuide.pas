@@ -45,12 +45,10 @@ type
     Image7: TImage;
     Image8: TImage;
     Image9: TImage;
-    PopupMenu1: TPopupMenu;
-    N2211221211: TMenuItem;
-    N122222222222222221: TMenuItem;
-    N2111111111111111: TMenuItem;
     btnGoodsInfo: TRzBmpButton;
     btnfrmCustomer: TRzBmpButton;
+    Timer1: TTimer;
+    PopupMenu: TPopupMenu;
     procedure bgReportResize(Sender: TObject);
     procedure page_01Click(Sender: TObject);
     procedure btnStockOrderClick(Sender: TObject);
@@ -63,28 +61,24 @@ type
     procedure btnfrmSupplierClick(Sender: TObject);
     procedure btnfrmCustomerClick(Sender: TObject);
     procedure btnSysDefineClick(Sender: TObject);
-    procedure btnSalesOrderMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure btnStockOrderMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure btnStorageMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure btnReckOningMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure btnRecvPostMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
-    procedure btnGoodsInfoMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure btnfrmSupplierMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure btnfrmCustomerMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure btnBaseInfoMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure btnSysDefineMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
+    procedure Timer1Timer(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnSalesOrderMouseEnter(Sender: TObject);
+    procedure btnStockOrderMouseEnter(Sender: TObject);
+    procedure btnStorageMouseEnter(Sender: TObject);
+    procedure btnReckOningMouseEnter(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnGoodsInfoMouseEnter(Sender: TObject);
+    procedure btnfrmSupplierMouseEnter(Sender: TObject);
+    procedure btnfrmCustomerMouseEnter(Sender: TObject);
+    procedure btnBaseInfoMouseEnter(Sender: TObject);
+    procedure btnSysDefineMouseEnter(Sender: TObject);
   private
     FCA_MODULE: TZQuery;
+    rc:int64;
+    myBtn,SecBtn:TRzBmpButton;
     procedure SetCA_MODULE(const Value: TZQuery);
     { Private declarations }
     procedure wm_popup(var Message: TMessage); message MSC_POPUP;
@@ -163,13 +157,16 @@ var
 begin
   if Action=nil then Exit;
   if not Action.Enabled then Exit;
-  Item := TMenuItem.Create(PopupMenu1);
+  Item := TMenuItem.Create(PopupMenu);
   Item.Action := Action;
-  PopupMenu1.Items.Add(Item);
+  PopupMenu.Items.Add(Item);
 end;
 var HostP:TPoint;
 begin
-  PopupMenu1.Items.Clear;
+  Timer1.Enabled := true;
+  rc := 0;
+//  if myBtn<>nil then Exit;
+  PopupMenu.Items.Clear;
   if btn=btnStockOrder then
      begin
        AddPopupMenu(FindAction('actfrmStkIndentOrderList'));
@@ -179,6 +176,8 @@ begin
      end;
   if btn=btnSalesOrder then
      begin
+       AddPopupMenu(FindAction('actfrmPriceOrderList'));
+       AddPopupMenu(FindAction('actfrmPosMain'));
        AddPopupMenu(FindAction('actfrmSalIndentOrderList'));
        AddPopupMenu(FindAction('actfrmSalesOrderList'));
        AddPopupMenu(FindAction('actfrmSalRetuOrderList'));
@@ -227,8 +226,9 @@ begin
        AddPopupMenu(FindAction('actfrmIntfSetup'));
        AddPopupMenu(FindAction('actfrmMessage'));
      end;
-   HostP := btn.ClientToScreen(Point(0,btn.Height));
-   PopupMenu1.Popup(HostP.X,HostP.Y);
+  HostP := btn.ClientToScreen(Point(0,btn.Height));
+  PopupMenu.Popup(HostP.X,HostP.Y);
+  myBtn := Btn;
 end;
 
 procedure TfrmDeskGuide.page_01Click(Sender: TObject);
@@ -354,39 +354,8 @@ end;
 
 procedure TfrmDeskGuide.wm_popup(var Message: TMessage);
 begin
+  SecBtn := TrzBmpButton(Message.WParam);
   DropMenu(TrzBmpButton(Message.WParam));
-end;
-
-procedure TfrmDeskGuide.btnSalesOrderMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(btnSalesOrder),0);
-
-end;
-
-procedure TfrmDeskGuide.btnStockOrderMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(btnStockOrder),0);
-
-end;
-
-procedure TfrmDeskGuide.btnStorageMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(btnStorage),0);
-
-end;
-
-procedure TfrmDeskGuide.btnReckOningMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(btnReckOning),0);
-
 end;
 
 procedure TfrmDeskGuide.btnRecvPostMouseMove(Sender: TObject;
@@ -397,40 +366,97 @@ begin
 
 end;
 
-procedure TfrmDeskGuide.btnGoodsInfoMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
+procedure TfrmDeskGuide.Timer1Timer(Sender: TObject);
+begin
+  inherited;
+  if (rc>30) then
+     begin
+       Timer1.Enabled := false;
+       PostMessage(PopupMenu.WindowHandle,WM_KEYDOWN,VK_ESCAPE,0);
+       //if (SecBtn<>myBtn) and (SecBtn<>nil) then
+       //begin
+       //  myBtn := nil;
+       //  DropMenu(SecBtn)
+       //end else
+       //begin
+       //  myBtn := nil;
+       //  SecBtn := nil;
+       //end;
+       Exit;
+     end;
+  inc(rc);
+end;
+
+procedure TfrmDeskGuide.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+//  inherited;
+
+end;
+
+procedure TfrmDeskGuide.btnSalesOrderMouseEnter(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,MSC_POPUP,integer(btnSalesOrder),0);
+
+end;
+
+procedure TfrmDeskGuide.btnStockOrderMouseEnter(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,MSC_POPUP,integer(btnStockOrder),0);
+
+end;
+
+procedure TfrmDeskGuide.btnStorageMouseEnter(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,MSC_POPUP,integer(btnStorage),0);
+
+end;
+
+procedure TfrmDeskGuide.btnReckOningMouseEnter(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,MSC_POPUP,integer(btnReckOning),0);
+
+end;
+
+procedure TfrmDeskGuide.FormCreate(Sender: TObject);
+begin
+  inherited;
+  myBtn := nil;
+end;
+
+procedure TfrmDeskGuide.btnGoodsInfoMouseEnter(Sender: TObject);
 begin
   inherited;
   PostMessage(Handle,MSC_POPUP,integer(btnGoodsInfo),0);
 
 end;
 
-procedure TfrmDeskGuide.btnfrmSupplierMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
+procedure TfrmDeskGuide.btnfrmSupplierMouseEnter(Sender: TObject);
 begin
   inherited;
   PostMessage(Handle,MSC_POPUP,integer(btnfrmSupplier),0);
 
 end;
 
-procedure TfrmDeskGuide.btnfrmCustomerMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
+procedure TfrmDeskGuide.btnfrmCustomerMouseEnter(Sender: TObject);
 begin
   inherited;
   PostMessage(Handle,MSC_POPUP,integer(btnfrmCustomer),0);
 
 end;
 
-procedure TfrmDeskGuide.btnBaseInfoMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
+procedure TfrmDeskGuide.btnBaseInfoMouseEnter(Sender: TObject);
 begin
   inherited;
   PostMessage(Handle,MSC_POPUP,integer(btnBaseInfo),0);
 
 end;
 
-procedure TfrmDeskGuide.btnSysDefineMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
+procedure TfrmDeskGuide.btnSysDefineMouseEnter(Sender: TObject);
 begin
   inherited;
   PostMessage(Handle,MSC_POPUP,integer(btnSysDefine),0);

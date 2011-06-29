@@ -233,7 +233,7 @@ begin
   FList.Clear;
   new(n);
   n^.tbname := 'CA_RELATIONS';
-  n^.keyFields := 'TENANT_ID;RELATION_ID;RELATI_ID';
+  n^.keyFields := 'RELATION_ID;RELATI_ID';
   n^.synFlag := 1;
   n^.KeyFlag := 1;
   n^.tbtitle := '供应关系';

@@ -3047,7 +3047,7 @@ try
         Params.ParamByName('COMM_LOCK').AsString := '1';
         Params.ParamByName('TIME_STAMP').Value := TimeStamp;
         Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-//        Factor.UpdateBatch(rs,'TSyncCaModule',Params);
+        Factor.UpdateBatch(rs,'TSyncCaModule',Params);
         SetSynTimeStamp('CA_MODULE',timeStamp,'#');
       finally
         Params.free;

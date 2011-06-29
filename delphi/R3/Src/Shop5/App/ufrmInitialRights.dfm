@@ -7,7 +7,6 @@ inherited frmInitialRights: TfrmInitialRights
   ClientWidth = 328
   Color = clWhite
   OldCreateOrder = True
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   object Panel1: TPanel [0]

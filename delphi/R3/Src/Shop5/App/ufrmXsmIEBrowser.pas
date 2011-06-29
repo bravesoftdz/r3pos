@@ -59,7 +59,7 @@ type
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
-uses uCaFactory,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
+uses uCaFactory,uCtrlUtil,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
   ufrmDesk;
 {$R *.dfm}
 
@@ -82,8 +82,10 @@ end;
 destructor TfrmXsmIEBrowser.Destroy;
 begin
   runed := false;
-  SetEvent(FhEvent);
+  IEBrowser.Free;
+//  LCObject.Close;
   inherited;
+  frmXsmIEBrowser := nil;
 end;
 
 procedure TfrmXsmIEBrowser.DoFuncCall3(ASender: TObject;
@@ -291,6 +293,8 @@ begin
     F.Free;
   end;
   if not WaitRun then Exit;
+  frmDesk.Waited := true;
+  try
   _Start := GetTickCount;
   frmLogo.Show;
   frmLogo.ProgressBar1.Position := 0;
@@ -312,6 +316,9 @@ begin
           end;
      end;
   frmLogo.ProgressBar1.Position := 100;
+  finally
+    frmDesk.Waited := false;
+  end;
 end;
 
 function TfrmXsmIEBrowser.WaitRun(WaitOutTime:integer=20000):boolean;

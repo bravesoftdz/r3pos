@@ -8,7 +8,7 @@ uses
   cxDropDownEdit, cxControls, cxContainer, cxEdit, cxCheckBox, RzButton,
   jpeg, ExtCtrls, StdCtrls, cxSpinEdit, IniFiles, cxButtonEdit,
   zrComboBoxList, DB, cxCalendar, ZAbstractRODataset, ZDataset,
-  Grids, DBGridEh, ZAbstractDataset, RzLabel;
+  Grids, DBGridEh, ZAbstractDataset, RzLabel, RzBckgnd;
 type
   TLoginParam=Record
     UserID:String;
@@ -36,6 +36,7 @@ type
     RzLabel1: TRzLabel;
     Label1: TLabel;
     cbxTenant: TcxComboBox;
+    RzBackground1: TRzBackground;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxcbxLoginParamPropertiesChange(Sender: TObject);

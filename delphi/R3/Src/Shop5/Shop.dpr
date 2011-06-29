@@ -236,7 +236,8 @@ uses
   objHandSetRelation in 'Obj\objHandSetRelation.pas',
   ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet},
   ufrmFieldSort in 'App\ufrmFieldSort.pas' {frmFieldSort},
-  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport};
+  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
+  ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights};
 
 {$R *.res}
 var

@@ -531,7 +531,8 @@ uses
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
-  ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport
+  ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
+  ufrmInitialRights
   ;
 {$R *.dfm}
 
@@ -1378,8 +1379,11 @@ var
 begin
   Params := TftParamList.Create(nil);
   try
+    frmLogo.Label1.Caption := '正在初始化默认数据...';
+    frmLogo.Label1.Update;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Factor.ExecProc('TTenantInit',Params);   
+    Factor.ExecProc('TTenantInit',Params);
+    TfrmInitialRights.Rights(self);
   finally
     Params.Free;
   end;

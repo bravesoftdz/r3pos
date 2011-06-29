@@ -10,7 +10,6 @@ type
   TfrmInitialRights = class(TfrmBasic)
     Panel1: TPanel;
     ProgressBar1: TRzProgressBar;
-    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     R:Integer;
@@ -74,7 +73,7 @@ begin
   try
     reset(f);
     try
-       Global.LocalFactory.BeginTrans();
+       Factor.BeginTrans();
        InitRights;
        TotalSize := FileSize(F)*1024 div 8;
        if TotalSize=0 then TotalSize := 1;
@@ -116,11 +115,11 @@ begin
             DoSQL(SQL.Text);
             SQL.Clear;
           end;
-       Global.LocalFactory.CommitTrans;
+       Factor.CommitTrans;
     except
       on E:Exception do
         begin
-          Global.LocalFactory.RollbackTrans;
+          Factor.RollbackTrans;
           Raise E.Create('初始化角色权限出错了,错误:'+E.Message);
         end;
     end;
@@ -131,20 +130,13 @@ begin
   end;
 end;
 
-procedure TfrmInitialRights.FormShow(Sender: TObject);
-begin
-  inherited;
-  R := 1;
-  if not GetRightsInfo then
-    InitialRights;
-end;
-
 class function TfrmInitialRights.Rights(Owner: TForm): Boolean;
 begin
   with TfrmInitialRights.Create(Owner) do
     begin
       try
-        Show;
+        R := 1;
+        if not GetRightsInfo then InitialRights;
       finally
         Free;
       end;

@@ -11,6 +11,9 @@ type
   TfrmXsmIEBrowser = class(TfrmIEWebForm)
     LCObject: TLCObject;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FLogined: boolean;
     Fready: boolean;
@@ -215,7 +218,7 @@ procedure TfrmXsmIEBrowser.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
 //  inherited;
-  FormStyle := fsNormal;
+//  FormStyle := fsNormal;
 end;
 
 function TfrmXsmIEBrowser.Open(sid, oid: string;hHandle:THandle):boolean;
@@ -400,6 +403,19 @@ procedure TfrmXsmIEBrowser.DoMsgFilter(var Msg: TMsg;
   var Handled: Boolean);
 begin
 //  if Msg.message =
+end;
+
+procedure TfrmXsmIEBrowser.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+//  inherited;
+
+end;
+
+procedure TfrmXsmIEBrowser.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+//  inherited;
+
 end;
 
 end.

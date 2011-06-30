@@ -9,10 +9,16 @@ uses
 
 type
   TfrmRimIEBrowser = class(TfrmIEWebForm)
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy;override;
     procedure ReadParam;
     function EncodeChk:string;
 
@@ -22,6 +28,7 @@ var
   Rim_Url:string;
   Rim_ComId:string;
   Rim_CustId:string;
+  frmRimIEBrowser:TfrmRimIEBrowser;
 implementation
 uses IniFiles;
 {$R *.dfm}
@@ -36,7 +43,6 @@ end;
 function TfrmRimIEBrowser.OpenUrl(url: string):boolean;
 var p:string;
 begin
-  FormStyle := fsMDIChild;
   WindowState := wsMaximized;
   BringToFront;
   ReadParam;
@@ -70,6 +76,40 @@ begin
   end;
   Rim_ComId := 'LZ0000000000001';
   Rim_CustId := 'GX00000004392';
+end;
+
+procedure TfrmRimIEBrowser.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+//  inherited;
+
+end;
+
+constructor TfrmRimIEBrowser.Create(AOwner: TComponent);
+begin
+  inherited;
+  FormStyle := fsMDIChild;
+  frmRimIEBrowser := self;
+end;
+
+destructor TfrmRimIEBrowser.Destroy;
+begin
+
+  inherited;
+  frmRimIEBrowser := nil;
+end;
+
+procedure TfrmRimIEBrowser.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+//  inherited;
+
+end;
+
+procedure TfrmRimIEBrowser.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+//  inherited;
+
 end;
 
 end.

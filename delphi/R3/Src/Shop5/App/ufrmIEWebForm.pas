@@ -170,6 +170,7 @@ end;
 procedure TfrmIEWebForm.FormDestroy(Sender: TObject);
 begin
   if FhEvent<>0 then CloseHandle(FhEvent);
+  IEBrowser.Free;
   inherited;
 
 end;

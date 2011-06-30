@@ -30,16 +30,18 @@ uses IniFiles;
 
 function TfrmRimIEBrowser.EncodeChk: string;
 begin
-  result := '?comId='+Rim_ComId+'&custId='+Rim_CustId;
+  result := 'comId='+Rim_ComId+'&custId='+Rim_CustId;
 end;
 
 function TfrmRimIEBrowser.OpenUrl(url: string):boolean;
+var p:string;
 begin
   FormStyle := fsMDIChild;
   WindowState := wsMaximized;
   BringToFront;
   ReadParam;
-  result := inherited Open(Rim_Url+url+EncodeChk);
+  if pos('?',url)=0 then p := '?' else p := '&';
+  result := inherited Open(Rim_Url+url+p+EncodeChk);
 end;
 
 procedure TfrmRimIEBrowser.ReadParam;
@@ -66,8 +68,8 @@ begin
     List.free;
     F.Free;
   end;
-  Rim_ComId := 'GX0000000000331';
-  Rim_CustId := '1450010016224';
+  Rim_ComId := 'LZ0000000000001';
+  Rim_CustId := 'GX00000004392';
 end;
 
 end.

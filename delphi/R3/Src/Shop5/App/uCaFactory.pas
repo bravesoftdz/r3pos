@@ -1344,7 +1344,7 @@ begin
     frmLogo.ProgressBar1.Position := 8;
     frmLogo.Label1.Caption := '下载功能模块...';
     frmLogo.Label1.Update;
-    downloadCaModule(Global.TENANT_ID,flag);
+//    downloadCaModule(Global.TENANT_ID,flag);
     frmLogo.ProgressBar1.Position := 9;
     SetSynTimeStamp('#',TimeStamp,'#');
   finally

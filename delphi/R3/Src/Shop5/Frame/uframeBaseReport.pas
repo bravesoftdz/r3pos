@@ -140,6 +140,9 @@ type
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure CreateColumn(FieldName,TitleName:string;Index:Integer;ValueType:TFooterValueType=fvtNon;vWidth:Integer=70);
     procedure ClearSortMark;
+    //2011.06.30 Am Add 导出Excel前表头
+    function  DoBeforeExport: boolean; override;
+
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
     property  SumRecord: TRecord_ read FSumRecord;  //汇总记录值
@@ -321,6 +324,8 @@ begin
         exit;
       DeleteFile(SaveDialog1.FileName);
     end;
+    //导出Excel数据
+    DoBeforeExport;
     Stream := TMemoryStream.Create;
     try
       Stream.Position := 0;
@@ -1301,6 +1306,43 @@ procedure TframeBaseReport.FormDestroy(Sender: TObject);
 begin
   inherited;
   FSumRecord.Free;
+end;
+
+//2011.06.30 Am Add 导出Excel前表头
+function TframeBaseReport.DoBeforeExport: boolean;
+var
+  i: integer;                      
+  PageNo,CurStr: string;  //控件页码
+  Str: WideString;
+  TitleList: TStringList;
+begin
+  Str:='';
+  try
+    DBGridEh.DBGridHeader.Clear;
+    DBGridEh.DBGridFooter.Clear;
+    PageNo:=InttoStr(RzPage.ActivePageIndex+1);
+    DBGridEh.DBGridTitle:=RzPage.ActivePage.Caption;
+    //调用DBGridEh的Print来获取导出条件
+    TitleList:=TStringList.Create;
+    AddReportReport(TitleList, PageNo);
+    for i:=0 to TitleList.Count-1 do
+    begin
+      CurStr:=trim(TitleList.Strings[i]);
+      if (i>0) and (i mod 4=0) then  //4个条件换一行
+        Str:=Str+#13+CurStr
+      else
+      begin
+        if i=0 then
+          Str:=CurStr
+        else
+          Str:=Str+'      '+CurStr;
+      end;
+    end;
+  finally
+    TitleList.Free;
+  end;
+  DBGridEh.DBGridHeader.Text:=Str;
+  DBGridEh.DBGridFooter.Add(' '+#13+' 操作员：'+Global.UserName+'  导出时间：'+formatDatetime('YYYY-MM-DD HH:NN:SS',now()));
 end;
 
 end.

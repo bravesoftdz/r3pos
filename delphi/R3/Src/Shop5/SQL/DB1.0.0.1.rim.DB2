@@ -137,6 +137,8 @@ select
   '条' as CALC_UNIT,          --单位
   PACK_BAR as PACK_BARCODE,   --条条码
   BOX_BAR as BOX_BARCODE,     --盒条码
+  um2.UM_ID as PACK_UNIT_ID,  --条单位ID
+  um1.UM_ID as BOX_UNIT_ID,   --盒单位ID  
   um2.um_size/um1.um_size as CAlC_AMT, --条换算成合的换算关系
   c.pri as PACK_INPRICE,      --批发价
   d.pri as PACK_OUTPRICE      --零售价

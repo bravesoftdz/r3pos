@@ -42,7 +42,7 @@ CREATE GLOBAL TEMPORARY TABLE INF_RECKMONTH (
     CUST_ID VARCHAR(30) NOT NULL,        --RIM零售户ID
     ITEM_ID VARCHAR(30) NOT NULL,        --RIM商品ID
     GODS_ID CHAR(36) NOT NULL,           --R3商品ID
-    UNIT_CALC DECIMAL (18,6),            --商品计量单位换算管理单位换算值
+    UNIT_CALC DECIMAL (18,6),            --单位换算值
     RECK_MONTH VARCHAR(8) NOT NULL       --台账月份
    ) ON COMMIT PRESERVE ROWS; 
  

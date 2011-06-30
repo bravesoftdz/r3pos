@@ -257,16 +257,14 @@ begin
     try
        us := Global.GeTZQueryFromName('CA_USERS');
        if not us.Locate('USER_ID',uid,[]) then Raise Exception.Create('无效用户名...');
-       myRoles := us.FieldbyName('DUTY_IDS').AsString;
+       myRoles := us.FieldbyName('ROLE_IDS').AsString;
        rs.Close;
-       rs.SQL.Text:='(select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where MODU_ID='''+MID+''' and R.ROLE_TYPE=1 and R.TENANT_ID=B.TENANT_ID and R.ROLE_ID=B.ROLE_ID and '+
-         ' R.TENANT_ID=:TENANT_ID and B.ROLE_ID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''')) '+
+       rs.SQL.Text:=
+         'select * from '+
+         '(select distinct MODU_ID,R.ROLE_ID as ROLE_ID,CHK from CA_RIGHTS R,CA_ROLE_INFO B where R.TENANT_ID=B.TENANT_ID and R.ROLE_ID=B.ROLE_ID and R.ROLE_TYPE=1 and  '+
+         '  MODU_ID='''+MID+''' and R.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and B.ROLE_ID in ('''+stringReplace(myRoles,',',''',''',[rfReplaceAll])+''') '+
          ' union all '+
-         ' (select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and MODU_ID='''+MID+''' and TENANT_ID=:TENANT_ID and ROLE_ID=:USER_ID) ';
-       if rs.Params.FindParam('TENANT_ID')<>nil then
-         rs.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-       if rs.Params.FindParam('USER_ID')<>nil then
-         rs.ParamByName('USER_ID').AsString:=uid;
+         ' select distinct MODU_ID,ROLE_ID,CHK from CA_RIGHTS where ROLE_TYPE=0 and TENANT_ID='+InttoStr(Global.TENANT_ID)+' and MODU_ID='''+MID+''' and ROLE_ID='''+uid+''')tp ';
        Factor.Open(rs);
        if (rs.Active) and (not rs.IsEmpty) then
        result:=GetOperRight(rs,SEQUNo,''); //返回判断

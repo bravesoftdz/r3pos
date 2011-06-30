@@ -55,6 +55,8 @@ type
     ToolButton6: TToolButton;
     actDefineState: TAction;
     Excel1: TMenuItem;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -87,6 +89,7 @@ type
     procedure N10Click(Sender: TObject);
     procedure actDefineStateExecute(Sender: TObject);
     procedure Excel1Click(Sender: TObject);
+    procedure ToolButton11Click(Sender: TObject);
   private
      edtProperty2,edtProperty1: TZQuery;
      procedure PrintView;
@@ -442,7 +445,7 @@ begin
   edtProperty1:=TZQuery.Create(nil);
   edtProperty2:=TZQuery.Create(nil);
   //暂关闭Gird表头排序
-  TDbGridEhSort.InitForm(self);
+  TDbGridEhSort.InitForm(self);   
 end;
 
 procedure TfrmGoodsInfoList.edtKeyKeyDown(Sender: TObject; var Key: Word;
@@ -1054,12 +1057,14 @@ begin
 end;
 
 procedure TfrmGoodsInfoList.N8Click(Sender: TObject);
-var CurObj: TRecord_;
+var
+  CurObj: TRecord_;
 begin
   inherited;
-  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');  
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
   try
     CurObj:=TRecord_.Create;
+    if not ShopGlobal.GetChkRight('32100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
     if TfrmGoodsSortTree.AddDialog(self,CurObj,1) then
     begin
       LoadTree;
@@ -1615,6 +1620,12 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+procedure TfrmGoodsInfoList.ToolButton11Click(Sender: TObject);
+begin
+  inherited;
+  N8.OnClick(Sender);
 end;
 
 end.

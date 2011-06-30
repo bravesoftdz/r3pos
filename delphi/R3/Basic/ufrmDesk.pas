@@ -28,6 +28,7 @@ type
     FButtons:TList;
     FDeletes:TList;
     FLocked: Boolean;
+    FWaited: Boolean;
     procedure DoEnter(Sender:TObject);
     procedure DoExit(Sender:TObject);
     procedure DoDelete(Sender: TObject; var Key: Word;
@@ -35,6 +36,7 @@ type
     function AddButton(ALeft:Integer=-1;ATop:Integer=-1):THsBmButton;
     function GetButtons(Index: Integer): THsBmButton;
     procedure SetLocked(const Value: Boolean);
+    procedure SetWaited(const Value: Boolean);
   protected
     Saved:boolean;
     procedure MouseHook(Code: integer; Msg: word;MouseHook: longint);virtual;
@@ -60,6 +62,7 @@ type
 
     property  Buttons[Index:Integer]:THsBmButton Read GetButtons;
     property  Locked:Boolean read FLocked write SetLocked;
+    property  Waited:Boolean read FWaited write SetWaited;
   end;
 
 var
@@ -84,6 +87,11 @@ function MouseHookCallBack(Code: integer; Msg: word;
 begin
   if Code >= 0 then
      begin
+       if frmDesk.Waited then
+          begin
+            result := 1;
+            exit;
+          end;
        Result := CallNextHookEx(whMouse, Code, Msg, MouseHook);
        if Assigned(frmDesk) then frmDesk.MouseHook(Code, Msg, MouseHook);
        if Assigned(frmDesk) and not frmDesk.Locked then frmDesk.SendToBack;
@@ -104,6 +112,11 @@ begin
   Result := 0;
   if Code>=0 then
      begin
+       if frmDesk.Waited then
+          begin
+            result := 1;
+            exit;
+          end;
        Result := CallNextHookEx(whKeyboard, Code, Msg, KeyboardHook);
        if Assigned(frmDesk) then frmDesk.KeyboardHook(Code, Msg, KeyboardHook);
      end;
@@ -123,6 +136,7 @@ constructor TfrmDesk.Create(AOwner: TComponent);
 begin
   FButtons := TList.Create;
   FDeletes := TList.Create;
+  Waited := false;
   inherited;
   frmDesk := Self;
   if Application.MainForm = nil then
@@ -482,6 +496,11 @@ procedure TfrmDesk.SaveToFront;
 begin
   if Locked then Saved := true else Saved := false;
   SendToBack;
+end;
+
+procedure TfrmDesk.SetWaited(const Value: Boolean);
+begin
+  FWaited := Value;
 end;
 
 { THsBmButton }

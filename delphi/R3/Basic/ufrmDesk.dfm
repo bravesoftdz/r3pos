@@ -1,5 +1,5 @@
 object frmDesk: TfrmDesk
-  Left = 83
+  Left = 84
   Top = 0
   Cursor = crArrow
   BorderStyle = bsNone

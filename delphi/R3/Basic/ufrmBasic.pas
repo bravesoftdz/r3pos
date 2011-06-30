@@ -5,11 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes,DB, Graphics, Controls, Forms,
   Dialogs,ZdbFactory,uGlobal, Menus, ActnList, cxControls, cxSpinEdit, RzSplit,RzTabs,
-  cxContainer, cxEdit, cxTextEdit, cxMemo,DbGridEh,cxDropDownEdit,ZBase,FR_Class,
-  ComCtrls,RzTreeVw, StdCtrls, RzButton, ShellApi, cxCalendar,DBGrids,cxCheckBox,
+  cxContainer, cxEdit, cxTextEdit,ExtCtrls, cxMemo,DbGridEh,cxDropDownEdit,ZBase,FR_Class,
+  ComCtrls,RzTreeVw, StdCtrls, RzButton, RzPanel, ShellApi, cxCalendar,DBGrids,cxCheckBox,
   cxMaskEdit,cxButtonEdit,zrComboBoxList;
 const
   RowSelectColor=clAqua;
+  BtnColor = $00DAD39C;
+  bgkColor = clWhite;
+  GridHeaderColor = $00FED99D;
 type
   TfrmBasic = class(TForm)
     mmMenu: TMainMenu;
@@ -23,6 +26,7 @@ type
     FIsFree : Boolean;
     FContainerHanle: THandle;
     FOnFreeForm: TNotifyEvent;
+    FPageHandle: THandle;
     procedure SetLock(const Value: Boolean);
     procedure SetContainerHanle(const Value: THandle);
     procedure SetOnFreeForm(const Value: TNotifyEvent);
@@ -30,6 +34,7 @@ type
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
     function GetFactor: TdbFactory;
+    procedure SetPageHandle(const Value: THandle);
     { Private declarations }
   protected
     procedure SetCaption;virtual;
@@ -75,8 +80,9 @@ type
     property Factor:TdbFactory read GetFactor;
     property ContainerHanle:THandle read FContainerHanle write SetContainerHanle;
     property OnFreeForm:TNotifyEvent read FOnFreeForm write SetOnFreeForm;
+    property PageHandle:THandle read FPageHandle write SetPageHandle;
   end;
-
+var FormBgk:boolean;
 implementation
 uses IniFiles,uCtrlUtil;
 {$R *.dfm}
@@ -116,9 +122,11 @@ end;
 { TTfrmBasic }
 
 constructor TfrmBasic.Create(AOwner: TComponent);
-var i:integer;
+var i,c:integer;
 begin
   inherited;
+  PageHandle := 0;
+  ContainerHanle := 0;
 //  try
 //     LoadInterfaceFromFile;
 //  if sysLogFile and Factor.Connected then
@@ -146,6 +154,8 @@ begin
            TDBGridEh(Components[i]).Options := TDBGridEh(Components[i]).Options - [dgRowSelect];
            if TDBGridEh(Components[i]).AllowedOperations = [alopInsertEh, alopUpdateEh, alopDeleteEh, alopAppendEh] then
               TDBGridEh(Components[i]).AllowedOperations := [alopUpdateEh, alopAppendEh];
+           //if FormBgk then TDBGridEh(Components[i]).FixedColor := GridHeaderColor;
+           //for c := 0 to TDBGridEh(Components[i]).Columns.Count -1 do TDBGridEh(Components[i]).Columns[c].Title.Color := GridHeaderColor;
          end;
       if Components[i] is TcxTextEdit then
          begin
@@ -175,8 +185,24 @@ begin
          begin
            TzrComboBoxList(Components[i]).ImeName := '';
          end;
+      if Components[i].ClassNameIs('TRzBitBtn') then
+         begin
+           if FormBgk then TRzBitBtn(Components[i]).Color := BtnColor;
+         end;
+      if Components[i].ClassNameIs('TRzPanel') then
+         begin
+           //if FormBgk then TRzPanel(Components[i]).Color := bgkColor;
+         end;
+      if Components[i].ClassNameIs('TRzPanel') then
+         begin
+           //if FormBgk then TRzPanel(Components[i]).Color := bgkColor;
+         end;
+      if Components[i].ClassNameIs('TPanel') then
+         begin
+           //if FormBgk then TPanel(Components[i]).Color := bgkColor;
+         end;
     end;
-
+//  if FormBgk then Color := bgkColor;
   LoadFormat;
   TDbGridEhExport.InitForm(self);
   TDbGridEhMark.InitForm(self,false);
@@ -639,5 +665,12 @@ begin
 
 end;
 
+procedure TfrmBasic.SetPageHandle(const Value: THandle);
+begin
+  FPageHandle := Value;
+end;
+
+initialization
+  FormBgk := false;
 end.
 

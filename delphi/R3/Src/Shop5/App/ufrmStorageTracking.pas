@@ -173,6 +173,8 @@ type
     procedure Open2(ID:String);
     procedure Open3(ID:String);
     procedure Shop_Type_Change(edtSHOP_VALUE:TzrComboBoxList);
+    //2011.06.30 Am Add 导出Excel前表头
+    function  DoBeforeExport: boolean; override;    
   public
     { Public declarations }
   end;
@@ -1125,6 +1127,47 @@ begin
   inherited;
   if Column.FieldName='GODS_NAME' then Text := '合计:'+Text+'笔';
 
+end;
+
+function TfrmStorageTracking.DoBeforeExport: boolean;
+var
+  i: integer;
+  PageNo,CurStr: string;  //控件页码
+  Str: WideString;
+  DBGridEh: TDBGridEh;
+  TitleList: TStringList;
+begin
+  Str:='';
+  try
+    case RzPage.ActivePageIndex of
+     0: DBGridEh:= Grid;
+     1: DBGridEh:= DBGridEh1;
+     2: DBGridEh:= DBGridEh2;
+    end;
+    PageNo:=InttoStr(RzPage.ActivePageIndex+1);
+    DBGridEh.DBGridTitle:=RzPage.ActivePage.Caption;
+    //调用DBGridEh的Print来获取导出条件
+    TitleList:=TStringList.Create;
+    PrintView;
+    TitleList.CommaText:=PrintDBGridEh1.BeforeGridText.CommaText;
+    for i:=0 to TitleList.Count-1 do
+    begin
+      CurStr:=trim(TitleList.Strings[i]);
+      if (i>0) and (i mod 4=0) then  //4个条件换一行
+        Str:=Str+#13+CurStr
+      else
+      begin
+        if i=0 then
+          Str:=CurStr
+        else
+          Str:=Str+'      '+CurStr;
+      end;
+    end;
+  finally
+    TitleList.Free;
+  end;
+  DBGridEh.DBGridHeader.Text:=Str;
+  DBGridEh.DBGridFooter.Add(' '+#13+' 操作员：'+Global.UserName+'  导出时间：'+formatDatetime('YYYY-MM-DD HH:NN:SS',now()));
 end;
 
 end.

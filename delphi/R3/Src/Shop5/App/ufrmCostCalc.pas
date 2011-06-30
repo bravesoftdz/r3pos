@@ -1481,7 +1481,11 @@ begin
     ' CHANGE5_AMT decimal(18, 3) ,'+
     ' CHANGE5_MNY decimal(18, 3) ,'+
     ' CHANGE5_RTL decimal(18, 3) ,'+
-    ' CHANGE5_CST decimal(18, 3) '+
+    ' CHANGE5_CST decimal(18, 3) ,'+
+    '	BAL_AMT decimal(18, 3) ,'+
+    '	BAL_MNY decimal(18, 3) ,'+
+    '	BAL_RTL decimal(18, 3) ,'+
+    '	BAL_CST decimal(18, 3) '+
     ') ON COMMIT PRESERVE ROWS';
   4:result :=
     'declare global temporary table '+tb+' ('+

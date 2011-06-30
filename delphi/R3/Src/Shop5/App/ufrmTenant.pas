@@ -119,6 +119,9 @@ begin
                 Login_F(false);
                 Exit;
               end;
+
+            Label24.Enabled := false;
+            Label20.Enabled := false;
           end;
         finally
           frmLogo.Close;

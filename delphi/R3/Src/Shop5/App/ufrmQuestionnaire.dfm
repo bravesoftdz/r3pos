@@ -1,6 +1,6 @@
 inherited frmQuestionnaire: TfrmQuestionnaire
-  Left = 464
-  Top = 139
+  Left = 378
+  Top = 140
   BorderStyle = bsDialog
   Caption = #38382#21367#35843#26597
   ClientHeight = 477

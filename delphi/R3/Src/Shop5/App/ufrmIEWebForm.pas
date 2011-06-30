@@ -55,7 +55,7 @@ var
   xsm_username:string;
   xsm_password:string;
 implementation
-uses EncDec,uShopGlobal,ufrmXsmLogin, uGlobal, ufrmMain;
+uses EncDec,ufrmDesk,uShopGlobal,ufrmXsmLogin, uGlobal, ufrmMain;
 
 {$R *.dfm}
 
@@ -150,7 +150,15 @@ function TfrmIEWebForm.Open(Url: string):boolean;
 begin
   result := false;
   if url='' then Exit;
+  Runed := true;
   IEBrowser.Navigate(url);
+  frmDesk.Waited := true;
+  try
+    IEBrowser.Navigate(Url);
+    while Runed do Application.ProcessMessages; 
+  finally
+    frmDesk.Waited := false;
+  end;
   result := true;
 end;
 

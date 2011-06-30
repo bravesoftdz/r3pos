@@ -4,6 +4,7 @@ inherited frmRimIEBrowser: TfrmRimIEBrowser
   TextHeight = 12
   inherited bgPanel: TRzPanel
     inherited IEBrowser: TWebBrowser
+      OnDownloadComplete = IEBrowserDownloadComplete
       ControlData = {
         4C000000B53700008E2300000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800

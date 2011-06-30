@@ -13,7 +13,10 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure IEBrowserDownloadComplete(Sender: TObject);
   private
+    FCurUrl: string;
+    procedure SetCurUrl(const Value: string);
     { Private declarations }
   public
     { Public declarations }
@@ -23,6 +26,7 @@ type
     function EncodeChk:string;
 
     function OpenUrl(url:string):boolean;
+    property CurUrl:string read FCurUrl write SetCurUrl;
   end;
 var
   Rim_Url:string;
@@ -30,7 +34,7 @@ var
   Rim_CustId:string;
   frmRimIEBrowser:TfrmRimIEBrowser;
 implementation
-uses IniFiles;
+uses IniFiles,EncDec,uAdvFactory;
 {$R *.dfm}
 
 { TfrmRimIEBrowser }
@@ -41,13 +45,18 @@ begin
 end;
 
 function TfrmRimIEBrowser.OpenUrl(url: string):boolean;
-var p:string;
+var
+  p:string;
+  e:string;
 begin
   WindowState := wsMaximized;
   BringToFront;
   ReadParam;
   if pos('?',url)=0 then p := '?' else p := '&';
+  e := EncStr(url,ENC_KEY);
   result := inherited Open(Rim_Url+url+p+EncodeChk);
+  if result then
+     url := e;
 end;
 
 procedure TfrmRimIEBrowser.ReadParam;
@@ -110,6 +119,17 @@ procedure TfrmRimIEBrowser.FormKeyPress(Sender: TObject; var Key: Char);
 begin
 //  inherited;
 
+end;
+
+procedure TfrmRimIEBrowser.SetCurUrl(const Value: string);
+begin
+  FCurUrl := Value;
+end;
+
+procedure TfrmRimIEBrowser.IEBrowserDownloadComplete(Sender: TObject);
+begin
+  inherited;
+  AdvFactory.GetAllFile(IEBrowser,CurUrl); 
 end;
 
 end.

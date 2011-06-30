@@ -413,7 +413,7 @@ inherited ShopGlobal: TShopGlobal
         Name = 'TENANT_ID'
         ParamType = ptUnknown
       end>
-    Left = 368
+    Left = 384
     Top = 152
     ParamData = <
       item

@@ -7,6 +7,7 @@ uses
   Dialogs, uGlobal, DB, ZdbFactory, Registry, ZAbstractRODataset,
   ZAbstractDataset, ZDataset, ZBase;
 
+  
 type
   TShopGlobal = class(TGlobal)
     SYS_DEFINE: TZQuery;

@@ -506,18 +506,22 @@ end;
 
 procedure TfrmGoodssort.SetSort_Type(const Value: integer);
 var
-  Tmp:TZQuery;
+  Rs,Tmp:TZQuery;
 begin
   FSort_Type := Value;
+  Rs := Global.GetZQueryFromName('PUB_STAT_INFO');
   Tmp := Global.GetZQueryFromName('PUB_PARAMS');
+  if Rs.Locate('CODE_ID',IntToStr(Sort_Type),[]) then //定位指标ID
+  begin
+    Self.Caption :=  Rs.fieldbyName('CODE_NAME').AsString+'管理';
+    RzPage.Pages[0].Caption :=  Rs.fieldbyName('CODE_NAME').AsString+'信息';
+  end else
   if Tmp.Locate('TYPE_CODE;CODE_ID',VarArrayOf(['SORT_TYPE',IntToStr(Sort_Type)]),[]) then
-    begin
-      Self.Caption :=  Tmp.Fields[1].AsString+'管理';
-      RzPage.Pages[0].Caption :=  Tmp.Fields[1].AsString+'信息';
-    end
-  else
-    Raise Exception.Create('无效的SORT_TYPE值！');
-
+  begin
+    Self.Caption :=  Tmp.Fields[1].AsString+'管理';
+    RzPage.Pages[0].Caption :=  Tmp.Fields[1].AsString+'信息';
+  end else
+    Raise Exception.Create('无效的SORT_TYPE值！');    
 end;
 
 procedure TfrmGoodssort.cdsGoodsSortBeforeInsert(DataSet: TDataSet);

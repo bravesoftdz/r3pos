@@ -317,15 +317,15 @@ inherited frmRelationUpdateMode: TfrmRelationUpdateMode
               EditButtons = <>
               FieldName = 'NEW_INPRICE'
               Footers = <>
-              Title.Caption = #36827#36135#20215
-              Width = 54
+              Title.Caption = #26465#21333#20301'|'#36827#36135#20215
+              Width = 49
             end
             item
               EditButtons = <>
               FieldName = 'NEW_OUTPRICE'
               Footers = <>
-              Title.Caption = #38646#21806#20215
-              Width = 53
+              Title.Caption = #26465#21333#20301'|'#38646#21806#20215
+              Width = 46
             end
             item
               EditButtons = <>

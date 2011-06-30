@@ -76,7 +76,7 @@ inherited frmDefineStateInfo: TfrmDefineStateInfo
                 Footers = <>
                 Title.Caption = #25351#26631#21517#31216
                 Title.Color = clWhite
-                Width = 194
+                Width = 185
                 OnUpdateData = DBGridEh1Columns1UpdateData
               end
               item

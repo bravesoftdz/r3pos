@@ -47,6 +47,7 @@ type
     procedure DefineStateSort;
     procedure UpdateGlobal(CdsState: TDataSet);
   protected
+    procedure CheckBeforeSave; //保存前判断是否存在自定义
     function CheckCanExport:boolean;
   public
     procedure Open;
@@ -323,6 +324,7 @@ begin
      Raise Exception.Create('系统检测没有修改指标，不需要保存！');
   }
 
+  CheckBeforeSave; //保存前作 判断
   Save;
   FIsChange:=False;
 end;
@@ -500,6 +502,32 @@ begin
           Rs.Post;
         end;
       end;
+      cdsStateInfo.Next;
+    end;
+  finally
+    cdsStateInfo.EnableControls;
+  end;
+end;
+
+procedure TfrmDefineStateInfo.CheckBeforeSave;
+var
+  i: integer;
+  StatID,StatName: string;
+begin
+  if CdsStateInfo.State in [dsInsert,dsEdit] then
+    CdsStateInfo.Post;
+  try
+    cdsStateInfo.DisableControls;
+    cdsStateInfo.First;
+    while not cdsStateInfo.Eof do
+    begin
+      if trim(cdsStateInfo.FieldByName('USEFLAG').AsString)='1' then //选中
+      begin
+        StatID:=cdsStateInfo.FieldByName('CODE_ID').AsString;
+        StatName:=trim(cdsStateInfo.FieldByName('CODE_NAME').AsString);
+        if Pos('自定义',StatName)=1 then
+          Raise Exception.Create('指标ID：'+StatID+'的名称不能使用〖自定义〗开头！');  
+      end; 
       cdsStateInfo.Next;
     end;
   finally

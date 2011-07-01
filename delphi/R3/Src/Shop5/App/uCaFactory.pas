@@ -3,7 +3,7 @@ unit uCaFactory;
 interface
 uses
   Windows, Messages, SysUtils, Classes,InvokeRegistry, SOAPHTTPClient, Types, XSBuiltIns,Des,WinInet, xmldom, XMLIntf,
-  msxmldom, XMLDoc, MSHTML, ActiveX,msxml,ComObj,ZDataSet,DB,ZBase,Variants,ZLogFile;
+  msxmldom, XMLDoc, MSHTML,ComObj, ActiveX,msxml,ZDataSet,DB,ZBase,Variants,ZLogFile;
 type
   TCaTenant=record
     TENANT_ID:integer;
@@ -454,8 +454,7 @@ try
     h := SendHeader(rio,1);
     try
       try
-      doc := CreateXML(
-                   Decode(
+      doc := CreateXML(Decode(
                       GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).login(Encode(inxml,pubpwd))
                       ,pubpwd
                    )
@@ -786,10 +785,24 @@ begin
 end;
 
 function TCaFactory.CreateXML(xml: string): IXMLDomDocument;
+var
+  ErrXml:string;
+  w:integer;
 begin
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try
-    if xml<>'' then result.loadXML(xml);
+    if xml<>'' then
+       begin
+         if not result.loadXML(xml) then
+            begin
+              ErrXml :=xml;
+              w := pos('?>',ErrXml);
+              delete(ErrXml,1,w+1);
+              if not result.loadXML(ErrXml) then Raise Exception.Create('loadxml出错了,xml='+xml);
+            end;
+       end
+    else
+       Raise Exception.Create('xml字符串不能为空...');
   except
     result := nil;
     Raise;

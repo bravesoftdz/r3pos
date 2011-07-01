@@ -121,8 +121,8 @@ begin
   finally
     if (Result = nil) and (HTTPRIO = nil) then
       RIO.Free;
+    if result=nil then Raise Exception.Create('无法访问CaServiceLineWebService服务,url='+addr);
   end;
-  if result=nil then Raise Exception.Create('无法访问CaServiceLineWebService服务');
 end;
 
 

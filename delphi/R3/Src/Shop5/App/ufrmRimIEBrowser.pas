@@ -56,7 +56,14 @@ begin
   e := EncStr(url,ENC_KEY);
   result := inherited Open(Rim_Url+url+p+EncodeChk);
   if result then
-     url := e;
+     begin
+       url := e;
+       AdvFactory.GetAllFile(IEBrowser,e);
+     end
+  else
+     begin
+       AdvFactory.LoadAllFile(IEBrowser,e); 
+     end;
 end;
 
 procedure TfrmRimIEBrowser.ReadParam;
@@ -129,7 +136,7 @@ end;
 procedure TfrmRimIEBrowser.IEBrowserDownloadComplete(Sender: TObject);
 begin
   inherited;
-  AdvFactory.GetAllFile(IEBrowser,CurUrl); 
+//  AdvFactory.GetAllFile(IEBrowser,CurUrl); 
 end;
 
 end.

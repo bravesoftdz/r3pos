@@ -211,7 +211,6 @@ var
   act:TAction;
 begin
   inherited;
-  Runed := false;
   if pos('relogin',lowercase(URL))>0 then close;
   if pos('#=',url)>0 then
   begin

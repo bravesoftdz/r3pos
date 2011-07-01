@@ -289,15 +289,15 @@ var Str:string;
     Temp:TZQuery;
 begin
   try
-    Temp := TZQuery.Create(nil);
-    try
-      Temp.SQL.Text := 'select STKBILL_STATUS from STK_INDENTORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+'''';
-      AGlobal.Open(Temp);
-      if Temp.Fields[0].AsInteger>0 then Raise Exception.Create('已经入库的订单不能再修改了...');  
-    finally
-      Temp.Free;
-    end;
-    Str := 'update STK_INDENTORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NULL';
+//    Temp := TZQuery.Create(nil);
+//    try
+//      Temp.SQL.Text := 'select STKBILL_STATUS from STK_INDENTORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+'''';
+//      AGlobal.Open(Temp);
+//      if Temp.Fields[0].AsInteger>0 then Raise Exception.Create('已经入库的订单不能再修改了...');
+//    finally
+//      Temp.Free;
+//    end;
+    Str := 'update STK_INDENTORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
@@ -336,7 +336,7 @@ begin
     finally
       rs.Free;
     end;
-    Str := 'update STK_INDENTORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NOT NULL';
+    Str := 'update STK_INDENTORDER set CHK_DATE=null,CHK_USER=null,STKBILL_STATUS=0,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')

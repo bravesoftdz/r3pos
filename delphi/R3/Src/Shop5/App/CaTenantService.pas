@@ -126,8 +126,8 @@ begin
   finally
     if (Result = nil) and (HTTPRIO = nil) then
       RIO.Free;
+    if result=nil then Raise Exception.Create('无法访问CaTenantWebService服务,url='+Addr);
   end;
-  if result=nil then Raise Exception.Create('无法访问CaTenantWebService服务');
 end;
 
 

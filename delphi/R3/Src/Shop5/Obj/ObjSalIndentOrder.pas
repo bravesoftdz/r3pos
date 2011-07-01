@@ -277,17 +277,8 @@ function TSalIndentOrderAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
-    Temp:TZQuery;
 begin
   try
-    Temp := TZQuery.Create(nil);
-    try
-      Temp.SQL.Text := 'select SALBILL_STATUS from SAL_INDENTORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+'''';
-      AGlobal.Open(Temp);
-      if Temp.Fields[0].AsInteger>0 then Raise Exception.Create('已经出货的订单不能再修改了...');  
-    finally
-      Temp.Free;
-    end;
     Str := 'update SAL_INDENTORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
@@ -312,9 +303,18 @@ function TSalIndentOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+    Temp:TZQuery;
 begin
+   Temp := TZQuery.Create(nil);
    try
-    Str := 'update SAL_INDENTORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NOT NULL';
+     Temp.SQL.Text := 'select count(*) from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and FROM_ID='''+Params.FindParam('INDE_ID').asString+'''';
+     AGlobal.Open(Temp);
+     if Temp.Fields[0].AsInteger>0 then Raise Exception.Create('已经出货的订单不能再弃审了...');
+   finally
+     Temp.Free;
+   end;
+   try
+    Str := 'update SAL_INDENTORDER set CHK_DATE=null,CHK_USER=null,SALBILL_STATUS=0,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')

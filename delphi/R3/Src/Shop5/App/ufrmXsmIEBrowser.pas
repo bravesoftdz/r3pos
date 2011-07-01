@@ -62,7 +62,7 @@ type
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
-uses uCaFactory,uCtrlUtil,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
+uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
   ufrmDesk;
 {$R *.dfm}
 
@@ -127,6 +127,7 @@ end;
 
 procedure TfrmXsmIEBrowser.DoFuncCall(ASender: TObject; const szMethodName,
   szPara: WideString);
+var Action:TAction;
 begin
   if szMethodName='ready' then
      ready := true;
@@ -154,6 +155,11 @@ begin
        Logined := false;
        SessionFail := true;
        LoginError := 'Session失效了，请重新点击...';
+     end;
+  if szMethodName='windowClose' then
+     begin
+       Action := frmMain.FindAction('actfrmOpenDesk');
+       if Action<>nil then Action.OnExecute(Action); 
      end;
   if szMethodName='finish' then
      begin
@@ -193,7 +199,7 @@ var r:integer;
 begin
   runed := true;
   r := LCObject.Send('_R3_XSM',szMethodName,szPara);
-  if r<>0 then LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara+'失败，失败代码:'+inttostr(r));
+  LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara+'，代码:'+inttostr(r))
 end;
 
 procedure TfrmXsmIEBrowser.Send2(const szMethodName, szPara1,
@@ -202,7 +208,7 @@ var r:integer;
 begin
   runed := true;
   r := LCObject.Send2('_R3_XSM',szMethodName,szPara1,szPara2);
-  if r<>0 then LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+'失败，失败代码:'+inttostr(r));
+  LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+'，代码:'+inttostr(r));
 end;
 
 procedure TfrmXsmIEBrowser.Send3(const szMethodName, szPara1, szPara2,
@@ -211,7 +217,7 @@ var r:integer;
 begin
   runed := true;
   r := LCObject.Send3('_R3_XSM',szMethodName,szPara1,szPara2,szPara3);
-  if r<>0 then LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+',p3='+szPara3+'失败，失败代码:'+inttostr(r));
+  LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+',p3='+szPara3+'，代码:'+inttostr(r));
 end;
 
 procedure TfrmXsmIEBrowser.FormClose(Sender: TObject;
@@ -244,7 +250,7 @@ begin
      end;
   finish := false;
   confirm := false;
-  Send2('getModule',sid,oid);
+  Send3('getModule',sid,oid,'clear');
   if not WaitRun then Exit;
   if SessionFail then //失效了，自动重新请求
      begin

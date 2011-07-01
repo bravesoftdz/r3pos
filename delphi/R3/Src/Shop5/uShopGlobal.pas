@@ -99,6 +99,15 @@ const
   SysID:TGUID='{149C2F30-9066-48A6-8CFC-0EDD7F6DFE54}';
 var
   ShopGlobal: TShopGlobal;
+  //跟Rim通讯参数
+  Rim_Url:string;
+  Rim_ComId:string = 'LZ0000000000001';
+  Rim_CustId:string = 'GX00000004392';
+  //跟新商蝟通读参数
+  xsm_url:string;
+  xsm_username:string;
+  xsm_password:string;
+  xsm_signature:string; //令牌
 implementation
 uses uFnUtil;
 {$R *.dfm}

@@ -44,6 +44,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     procedure Connect;
+    function EncodeXml(objectId:string):string;
     procedure Send(const szMethodName: WideString;const szPara: WideString);
     procedure Send2(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString);
     procedure Send3(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString;const szPara3: WideString);
@@ -63,7 +64,7 @@ var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
 uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uShopGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
-  ufrmDesk, uGlobal;
+  ufrmDesk, uGlobal, MultInst;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -158,8 +159,7 @@ begin
      end;
   if szMethodName='windowClose' then
      begin
-       Action := frmMain.FindAction('actfrmOpenDesk');
-       if Action<>nil then Action.OnExecute(Action); 
+       PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
      end;
   if szMethodName='finish' then
      begin
@@ -179,6 +179,11 @@ end;
 procedure TfrmXsmIEBrowser.DoFuncCall2(ASender: TObject;
   const szMethodName, szPara1, szPara2: WideString);
 begin
+  if szMethodName='loginStatus' then
+     begin
+       Logined := (szPara1='success');
+       xsm_signature := szPara2;
+     end;
   if szMethodName='error' then
      MessageBox(Handle,Pchar(szPara2+'<code='+szPara1+'>'),'友情提示...',MB_OK+MB_ICONWARNING);
   runed := false;
@@ -250,7 +255,7 @@ begin
      end;
   finish := false;
   confirm := false;
-  Send3('getModule',sid,oid,'clear');
+  Send3('getModule',sid,EncodeXml(oid),'clear');
   if not WaitRun then Exit;
   if SessionFail then //失效了，自动重新请求
      begin
@@ -261,7 +266,7 @@ begin
      begin
        if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
           begin
-            Send3('getModule',sid,oid,'force');
+            Send3('getModule',sid,EncodeXml(oid),'force');
             if not WaitRun then Exit;
           end;
      end;
@@ -422,6 +427,11 @@ procedure TfrmXsmIEBrowser.FormKeyDown(Sender: TObject; var Key: Word;
 begin
 //  inherited;
 
+end;
+
+function TfrmXsmIEBrowser.EncodeXml(objectId: string): string;
+begin
+  result := '<onClick><action object_id="'+objectId+'" method="POST" isPopUp="true" name="'+Caption+'"/></onClick>';
 end;
 
 end.

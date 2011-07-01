@@ -659,6 +659,7 @@ end;
 procedure TfrmShopMain.DoActiveChange(Sender: TObject);
 var
   i:integer;
+  SOn:TNotifyEvent;
 begin
   for i:=0 to FList.Count -1 do
     begin
@@ -2930,11 +2931,11 @@ begin
   if CaFactory.Audited then
      begin
        CaFactory.SyncAll(1);
-       if ShopGlobal.ONLVersion then Exit; 
+       if ShopGlobal.ONLVersion then Exit;
      end
   else
      begin
-       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...'); 
+       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
      end;
   if PrainpowerJudge.Locked>0 then
      begin
@@ -2947,7 +2948,7 @@ begin
          try
            Global.Connect;
          except
-           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...'); 
+           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...');
          end;
        finally
          Global.MoveToLocal;
@@ -2964,7 +2965,7 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject); 
+procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('14100001',5) then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
@@ -4041,4 +4042,10 @@ begin
 end;
 
 end.
+
+
+
+
+
+
 

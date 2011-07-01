@@ -51,7 +51,7 @@ type
     procedure DoLogin;virtual;
   end;
 implementation
-uses EncDec,ufrmDesk,uShopGlobal,ufrmXsmLogin, uGlobal, ufrmMain;
+uses EncDec,ufrmDesk,uShopGlobal,ufrmLogo,ufrmXsmLogin, uGlobal, ufrmMain;
 
 {$R *.dfm}
 
@@ -143,6 +143,8 @@ begin
 end;
 
 function TfrmIEWebForm.Open(Url: string):boolean;
+var W:int64;
+  _Start:int64;
 begin
   result := false;
   if url='' then Exit;
@@ -150,8 +152,18 @@ begin
   IEBrowser.Navigate(url);
   frmDesk.Waited := true;
   try
+    frmLogo.ProgressBar1.Position := 1;
+    frmLogo.ProgressBar1.Update;
+    _Start := GetTickCount;
     IEBrowser.Navigate(Url);
-    while Runed do Application.ProcessMessages; 
+    while Runed do
+      begin
+        W := (GetTickCount-_Start);
+        frmLogo.BringToFront;
+        frmLogo.ProgressBar1.Position := (W div 500);
+        frmLogo.ProgressBar1.Update;
+        Application.ProcessMessages;
+      end;
   finally
     frmDesk.Waited := false;
   end;
@@ -206,6 +218,7 @@ end;
 var
   act:TAction;
 begin
+  Runed := false;
   inherited;
   if pos('relogin',lowercase(URL))>0 then close;
   if pos('#=',url)>0 then

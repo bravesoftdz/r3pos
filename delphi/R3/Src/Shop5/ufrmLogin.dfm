@@ -1,6 +1,6 @@
 inherited frmLogin: TfrmLogin
-  Left = 329
-  Top = 189
+  Left = 330
+  Top = 190
   ActiveControl = cxedtUsers
   BorderStyle = bsDialog
   Caption = #29992#25143#30331#38470
@@ -1292,7 +1292,7 @@ inherited frmLogin: TfrmLogin
     Cancel = True
     ModalResult = 2
     Caption = #36864#20986'(&C)'
-    Color = 15791348
+    Color = 14341020
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359

@@ -798,7 +798,7 @@ begin
        rs.Fields[2].Value :=  0;
     for j:=0 to Cols.Count -1 do
     begin
-      rs.Fields[j+3].Value :=  PRowR(Rows[i])^.Buffer[j].Value;
+      rs.Fields[j+3].Value := PRowR(Rows[i])^.Buffer[j].Value;
     end;
     rs.Post;
   end;

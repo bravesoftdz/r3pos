@@ -41,8 +41,7 @@ type
   end;
 
 implementation
-uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,uShopGlobal,uDsUtil,ufrmIEWebForm,ObjCommon,
-  ufrmXsmIEBrowser;
+uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,uShopGlobal,uDsUtil,ufrmIEWebForm,ObjCommon;
 {$R *.dfm}
 
 procedure TfrmXsmLogin.ReadFrom;

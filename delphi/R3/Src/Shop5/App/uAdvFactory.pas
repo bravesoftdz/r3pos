@@ -242,6 +242,20 @@ end;
 
 function TAdvFactory.GetAllFile(IEBrowser: TWebBrowser;
   id: string): integer;
+function GetUrl(url:string):string;
+var
+  s:TStringList;
+begin
+  s := TStringList.Create;
+  try
+    s.Delimiter := '/';
+    s.DelimitedText := url;
+    s.Delete(s.Count-1);
+    result := s.DelimitedText; 
+  finally
+    s.Free;
+  end;
+end;  
 var url:string;
     Doc:IHTMLDocument2;
     Ec:IHTMLElementCollection;
@@ -256,26 +270,30 @@ begin
   if pos('´íÎó',Doc.title)>0 then Exit;
   result := 0;
   try
-  Ec := Doc.all.tags('embed') as IHTMLElementCollection;
+  Ec := Doc.embeds;
   if Ec<>nil then
   for i:=0 to Ec.length-1 do
      begin
        Embed := Ec.item(i,EmptyParam) as IHTMLEmbedElement;
        url := Embed.src;
-       if not GetUrlFile(url,ExtractFilePath(ParamStr(0))+'adv\images_'+id+'\'+GetUrlFileName(url)) then
+       if pos('http://',url)=0 then Exit;
+       ForceDirectories(ExtractFilePath(ParamStr(0))+'adv\images\'+id);
+       if not GetUrlFile(url,ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url)) then
           continue;
-       Embed.src := ExtractFilePath(ParamStr(0))+'adv\images_'+id+'\'+GetUrlFileName(url);
+       Embed.src := ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url);
        inc(result);
      end;
-  Ec := Doc.all.tags('img') as IHTMLElementCollection;
+  Ec := Doc.images;
   if Ec<>nil then
   for i:=0 to Ec.length-1 do
      begin
        img := Ec.item(i,EmptyParam) as IHTMLImgElement;
-       url := Embed.src;
-       if not GetUrlFile(url,ExtractFilePath(ParamStr(0))+'adv\images_'+id+'\'+GetUrlFileName(url)) then
+       url := img.src;
+       if pos('http://',url)=0 then Exit;
+       ForceDirectories(ExtractFilePath(ParamStr(0))+'adv\images\'+id);
+       if not GetUrlFile(url,ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url)) then
           continue;
-       Embed.src := ExtractFilePath(ParamStr(0))+'adv\images_'+id+'\'+GetUrlFileName(url);
+       img.src := ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url);
        inc(result);
      end;
   PersistFile := Doc as IPersistFile;

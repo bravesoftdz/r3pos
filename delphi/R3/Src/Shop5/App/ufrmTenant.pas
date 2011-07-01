@@ -80,6 +80,7 @@ type
     { Public declarations }
     Obj: TRecord_;
     TENANT_ID: Integer;
+    Added:boolean;
     function Check:boolean;
     procedure SaveParams;
     class function coAutoRegister(id:string):boolean;
@@ -99,6 +100,7 @@ begin
   with TfrmTenant.Create(Owner) do
     begin
       try
+        Added := false;
         frmLogo.Show;
         try
         frmLogo.Label1.Caption := '正在获取企业证书...';
@@ -457,10 +459,11 @@ end;
 
 class function TfrmTenant.coNewRegister(Owner: TForm): boolean;
 begin
-  if not CAFactory.CheckNetwork then Raise Exception.Create('对不起请检查网络是否正常连接...'); 
+  if not CAFactory.CheckNetwork then Raise Exception.Create('对不起请检查网络是否正常连接...');
   with TfrmTenant.Create(Owner) do
     begin
       try
+        Added := true;
         frmLogo.Label1.Caption := '正在获取企业证书...';
         frmLogo.Label1.Update;
         rzPage.ActivePageIndex := 0;
@@ -485,6 +488,7 @@ begin
   with TfrmTenant.Create(nil) do
   begin
     try
+      Added := false;
       Open(Tenant.TENANT_ID);
       CdsTable.Edit;
       CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;

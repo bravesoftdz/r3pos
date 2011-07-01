@@ -16,6 +16,7 @@ type
     procedure IEBrowserDownloadComplete(Sender: TObject);
   private
     FCurUrl: string;
+    SaveHandle:integer;
     procedure SetCurUrl(const Value: string);
     { Private declarations }
   public
@@ -25,7 +26,7 @@ type
     procedure ReadParam;
     function EncodeChk:string;
 
-    function OpenUrl(url:string):boolean;
+    function OpenUrl(url:string;hHandle:integer):boolean;
     property CurUrl:string read FCurUrl write SetCurUrl;
   end;
 var
@@ -34,7 +35,7 @@ var
   Rim_CustId:string;
   frmRimIEBrowser:TfrmRimIEBrowser;
 implementation
-uses IniFiles,EncDec,uAdvFactory;
+uses IniFiles,ufrmLogo,EncDec,uAdvFactory;
 {$R *.dfm}
 
 { TfrmRimIEBrowser }
@@ -44,26 +45,26 @@ begin
   result := 'comId='+Rim_ComId+'&custId='+Rim_CustId;
 end;
 
-function TfrmRimIEBrowser.OpenUrl(url: string):boolean;
+function TfrmRimIEBrowser.OpenUrl(url: string;hHandle:integer):boolean;
 var
   p:string;
   e:string;
 begin
-  WindowState := wsMaximized;
-  BringToFront;
-  ReadParam;
-  if pos('?',url)=0 then p := '?' else p := '&';
-  e := EncStr(url,ENC_KEY);
-  result := inherited Open(Rim_Url+url+p+EncodeChk);
-  if result then
-     begin
-       url := e;
-       AdvFactory.GetAllFile(IEBrowser,e);
-     end
-  else
-     begin
-       AdvFactory.LoadAllFile(IEBrowser,e); 
-     end;
+  SaveHandle := PageHandle;
+  try
+    PageHandle := hHandle;
+    WindowState := wsMaximized;
+    BringToFront;
+    frmLogo.Show;
+    frmLogo.ShowTitle := '正在打开网页...';
+    ReadParam;
+    if pos('?',url)=0 then p := '?' else p := '&';
+    e := EncStr(url,ENC_KEY);
+    result := inherited Open(Rim_Url+url+p+EncodeChk);
+  finally
+    if not result then PageHandle := SaveHandle;
+    frmLogo.Close;
+  end;
 end;
 
 procedure TfrmRimIEBrowser.ReadParam;

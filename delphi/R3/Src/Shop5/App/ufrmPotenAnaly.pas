@@ -6,34 +6,40 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, TeEngine, Series, TeeProcs, Chart, Grids, DBGridEh,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset, DB;
+  StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset, DB, cxCheckBox;
 
 type
   TfrmPotenAnaly = class(TFrame)
     Pnl_Left: TPanel;
-    PnlTop1: TPanel;
     Panel1: TPanel;
     DBGridEh1: TDBGridEh;
-    edtMaxNo: TcxComboBox;
-    Label1: TLabel;
-    Label2: TLabel;
     dsMaxAnaly: TDataSource;
     adoReport: TZQuery;
     Pnl_Right: TPanel;
-    PnlTop2: TPanel;
-    Label3: TLabel;
-    Label4: TLabel;
-    edtMinNo: TcxComboBox;
     Panel4: TPanel;
     DBGridEh2: TDBGridEh;
     Splitter1: TSplitter;
     MaxAnaly: TZQuery;
     MinAnaly: TZQuery;
     dsMinAnaly: TDataSource;
+    Panel2: TPanel;
+    PnlTop1: TPanel;
+    RightPnl: TPanel;
+    Label1: TLabel;
+    edtMaxNo: TcxComboBox;
+    Label2: TLabel;
+    Panel3: TPanel;
+    Panel5: TPanel;
+    Label3: TLabel;
+    edtMinNo: TcxComboBox;
+    Label4: TLabel;
+    PnlTop2: TPanel;
+    CB_NotSale: TcxCheckBox;
     procedure edtOrderNoPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FrameResize(Sender: TObject);
     procedure edtMinNoPropertiesChange(Sender: TObject);
+    procedure CB_NotSalePropertiesChange(Sender: TObject);
   private
   public
     procedure ShowOrderData(vType: Integer); //刷新显示多少条
@@ -70,7 +76,7 @@ begin
       RelName:=trim(Rs.fieldbyName('RELATION_NAME').AsString);
   end;
   PnlTop1.Caption:='最有潜力的'+RelName+'商品（销售额）排名';
-  PnlTop2.Caption:='可退市的'+RelName+'商品（销售额）排名';
+  PnlTop2.Caption:='最滞销的'+RelName+'商品（销售额）排名';
   
   adoReport.Close;
   adoReport.Data:=vData;
@@ -104,26 +110,34 @@ end;
 
 procedure TfrmPotenAnaly.ShowOrderData(vType: Integer);
 var
-  i,j,vmax,vmin: integer;
+  i,j,vmax,vmin,ReIdx: integer;
 begin
   if (vType=1) or (vType=11) then
   begin
     if not MaxAnaly.IsEmpty then MaxAnaly.EmptyDataSet;
     vmax:=StrtoIntDef(edtMaxNo.Text,5);
-    for i:=1 to vmax do
-    begin  //表格显示
-      if i<=adoReport.RecordCount then
-      begin
-        adoReport.RecNo:=i;
-        MaxAnaly.Append;
-        MaxAnaly.fieldbyName('GODS_CODE').AsString:=adoReport.fieldByName('GODS_CODE').AsString;
-        MaxAnaly.fieldbyName('GODS_NAME').AsString:=adoReport.fieldByName('GODS_NAME').AsString;
-        MaxAnaly.fieldbyName('MNY_SUM').AsFloat:=adoReport.fieldByName('MNY_SUM').AsFloat;
-        MaxAnaly.fieldbyName('PRF_SUM').AsFloat:=adoReport.fieldByName('PRF_SUM').AsFloat;
-        MaxAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
-        MaxAnaly.fieldbyName('ORDERNO').AsInteger:=i;
-        MaxAnaly.Post;
+    try
+      adoReport.Filtered:=False;
+      adoReport.Filter:='vType=4';
+      adoReport.Filtered:=true;
+      for i:=1 to vmax do
+      begin  //表格显示
+        if i<=adoReport.RecordCount then
+        begin
+          adoReport.RecNo:=i;
+          MaxAnaly.Append;
+          MaxAnaly.fieldbyName('GODS_CODE').AsString:=adoReport.fieldByName('GODS_CODE').AsString;
+          MaxAnaly.fieldbyName('GODS_NAME').AsString:=adoReport.fieldByName('GODS_NAME').AsString;
+          MaxAnaly.fieldbyName('MNY_SUM').AsFloat:=adoReport.fieldByName('MNY_SUM').AsFloat;
+          MaxAnaly.fieldbyName('PRF_SUM').AsFloat:=adoReport.fieldByName('PRF_SUM').AsFloat;
+          MaxAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
+          MaxAnaly.fieldbyName('ORDERNO').AsInteger:=i;
+          MaxAnaly.Post;
+        end;
       end;
+    finally
+      adoReport.Filtered:=False;
+      adoReport.Filter:='';
     end;
   end;
 
@@ -131,20 +145,32 @@ begin
   begin
     if not MinAnaly.IsEmpty then MinAnaly.EmptyDataSet;
     vmin:=StrtoIntDef(edtMinNo.Text,5);
-    for i:=0 to vmin-1 do
-    begin  //表格显示
-      if i<=adoReport.RecordCount then
-      begin
-        adoReport.RecNo:=adoReport.RecordCount-i;
-        MinAnaly.Append;
-        MinAnaly.fieldbyName('GODS_CODE').AsString:=adoReport.fieldByName('GODS_CODE').AsString;
-        MinAnaly.fieldbyName('GODS_NAME').AsString:=adoReport.fieldByName('GODS_NAME').AsString;
-        MinAnaly.fieldbyName('MNY_SUM').AsFloat:=adoReport.fieldByName('MNY_SUM').AsFloat;
-        MinAnaly.fieldbyName('PRF_SUM').AsFloat:=adoReport.fieldByName('PRF_SUM').AsFloat;      
-        MinAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
-        MinAnaly.fieldbyName('ORDERNO').AsInteger:=i+1;
-        MinAnaly.Post;
+    try
+      ReIdx:=0;
+      adoReport.Filtered:=False;
+      adoReport.Filter:='vType=1';
+      adoReport.Filtered:=true;
+      ReIdx:=adoReport.RecordCount;
+      for i:=ReIdx downto 1 do
+      begin  //表格显示
+        if MinAnaly.RecordCount=vmin then break; //退出循环
+        adoReport.RecNo:=i;
+        if (CB_NotSale.Checked) and (adoReport.FieldByName('AMT_SUM').AsFloat=0) then Continue
+        else
+        begin
+          MinAnaly.Append;
+          MinAnaly.fieldbyName('GODS_CODE').AsString:=adoReport.fieldByName('GODS_CODE').AsString;
+          MinAnaly.fieldbyName('GODS_NAME').AsString:=adoReport.fieldByName('GODS_NAME').AsString;
+          MinAnaly.fieldbyName('MNY_SUM').AsFloat:=adoReport.fieldByName('MNY_SUM').AsFloat;
+          MinAnaly.fieldbyName('PRF_SUM').AsFloat:=adoReport.fieldByName('PRF_SUM').AsFloat;
+          MinAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
+          MinAnaly.fieldbyName('ORDERNO').AsInteger:=MinAnaly.RecordCount+1;
+          MinAnaly.Post;
+        end;
       end;
+    finally
+      adoReport.Filtered:=False;
+      adoReport.Filter:='';
     end;
   end;
 end;
@@ -180,6 +206,11 @@ end;
 procedure TfrmPotenAnaly.edtMinNoPropertiesChange(Sender: TObject);
 begin
   inherited;
+  ShowOrderData(10);
+end;
+
+procedure TfrmPotenAnaly.CB_NotSalePropertiesChange(Sender: TObject);
+begin
   ShowOrderData(10);
 end;
 

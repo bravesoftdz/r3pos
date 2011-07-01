@@ -20,73 +20,13 @@ object frmPotenAnaly: TfrmPotenAnaly
     Height = 236
     Align = alLeft
     BevelOuter = bvNone
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
     TabOrder = 0
-    object PnlTop1: TPanel
-      Left = 0
-      Top = 0
-      Width = 500
-      Height = 28
-      Align = alTop
-      BevelOuter = bvNone
-      Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517#9#9
-      Color = clWhite
-      TabOrder = 0
-      object Label1: TLabel
-        Left = 411
-        Top = 7
-        Width = 12
-        Height = 13
-        Caption = #21069
-      end
-      object Label2: TLabel
-        Left = 477
-        Top = 7
-        Width = 12
-        Height = 13
-        Caption = #21517
-      end
-      object edtMaxNo: TcxComboBox
-        Left = 424
-        Top = 4
-        Width = 51
-        Height = 19
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        ParentFont = False
-        Properties.DropDownListStyle = lsFixedList
-        Properties.Items.Strings = (
-          '5'
-          '6'
-          '7'
-          '8'
-          '9'
-          '10'
-          '11'
-          '12'
-          '13'
-          '14'
-          '15'
-          '16'
-          '17'
-          '18'
-          '19'
-          '20'
-          '25'
-          '30'
-          '35'
-          '40'
-          '50'
-          '80'
-          '100')
-        Properties.OnChange = edtOrderNoPropertiesChange
-        Style.Font.Charset = GB2312_CHARSET
-        Style.Font.Color = clRed
-        Style.Font.Height = -11
-        Style.Font.Name = #23435#20307
-        Style.Font.Style = [fsBold]
-        TabOrder = 0
-        Text = '5'
-      end
-    end
     object Panel1: TPanel
       Left = 0
       Top = 28
@@ -94,7 +34,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       Height = 208
       Align = alClient
       BevelOuter = bvLowered
-      TabOrder = 1
+      TabOrder = 0
       object DBGridEh1: TDBGridEh
         Left = 1
         Top = 1
@@ -208,6 +148,97 @@ object frmPotenAnaly: TfrmPotenAnaly
           end>
       end
     end
+    object Panel2: TPanel
+      Left = 0
+      Top = 0
+      Width = 500
+      Height = 28
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      object PnlTop1: TPanel
+        Left = 0
+        Top = 0
+        Width = 409
+        Height = 28
+        Align = alClient
+        BevelOuter = bvNone
+        Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+      end
+      object RightPnl: TPanel
+        Left = 409
+        Top = 0
+        Width = 91
+        Height = 28
+        Align = alRight
+        BevelOuter = bvNone
+        Color = clWhite
+        TabOrder = 1
+        object Label1: TLabel
+          Left = 5
+          Top = 7
+          Width = 12
+          Height = 12
+          Caption = #21069
+        end
+        object Label2: TLabel
+          Left = 71
+          Top = 7
+          Width = 12
+          Height = 12
+          Caption = #21517
+        end
+        object edtMaxNo: TcxComboBox
+          Left = 19
+          Top = 4
+          Width = 50
+          Height = 19
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          ParentFont = False
+          Properties.DropDownListStyle = lsFixedList
+          Properties.Items.Strings = (
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+            '11'
+            '12'
+            '13'
+            '14'
+            '15'
+            '16'
+            '17'
+            '18'
+            '19'
+            '20'
+            '25'
+            '30'
+            '35'
+            '40'
+            '50'
+            '80'
+            '100')
+          Properties.OnChange = edtOrderNoPropertiesChange
+          Style.Font.Charset = GB2312_CHARSET
+          Style.Font.Color = clRed
+          Style.Font.Height = -11
+          Style.Font.Name = #23435#20307
+          Style.Font.Style = [fsBold]
+          TabOrder = 0
+          Text = '5'
+        end
+      end
+    end
   end
   object Pnl_Right: TPanel
     Left = 506
@@ -216,73 +247,13 @@ object frmPotenAnaly: TfrmPotenAnaly
     Height = 236
     Align = alClient
     BevelOuter = bvNone
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
     TabOrder = 1
-    object PnlTop2: TPanel
-      Left = 0
-      Top = 0
-      Width = 540
-      Height = 28
-      Align = alTop
-      BevelOuter = bvNone
-      Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517#9#9
-      Color = clWhite
-      TabOrder = 0
-      object Label3: TLabel
-        Left = 416
-        Top = 7
-        Width = 12
-        Height = 13
-        Caption = #21069
-      end
-      object Label4: TLabel
-        Left = 482
-        Top = 7
-        Width = 12
-        Height = 13
-        Caption = #21517
-      end
-      object edtMinNo: TcxComboBox
-        Left = 429
-        Top = 4
-        Width = 51
-        Height = 19
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        ParentFont = False
-        Properties.DropDownListStyle = lsFixedList
-        Properties.Items.Strings = (
-          '5'
-          '6'
-          '7'
-          '8'
-          '9'
-          '10'
-          '11'
-          '12'
-          '13'
-          '14'
-          '15'
-          '16'
-          '17'
-          '18'
-          '19'
-          '20'
-          '25'
-          '30'
-          '35'
-          '40'
-          '50'
-          '80'
-          '100')
-        Properties.OnChange = edtMinNoPropertiesChange
-        Style.Font.Charset = GB2312_CHARSET
-        Style.Font.Color = clRed
-        Style.Font.Height = -11
-        Style.Font.Name = #23435#20307
-        Style.Font.Style = [fsBold]
-        TabOrder = 0
-        Text = '5'
-      end
-    end
     object Panel4: TPanel
       Left = 0
       Top = 28
@@ -290,7 +261,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       Height = 208
       Align = alClient
       BevelOuter = bvLowered
-      TabOrder = 1
+      TabOrder = 0
       object DBGridEh2: TDBGridEh
         Left = 1
         Top = 1
@@ -403,6 +374,101 @@ object frmPotenAnaly: TfrmPotenAnaly
           end>
       end
     end
+    object Panel3: TPanel
+      Left = 0
+      Top = 0
+      Width = 540
+      Height = 28
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      object Panel5: TPanel
+        Left = 452
+        Top = 0
+        Width = 88
+        Height = 28
+        Align = alRight
+        BevelOuter = bvNone
+        Color = clWhite
+        TabOrder = 0
+        object Label3: TLabel
+          Left = 5
+          Top = 7
+          Width = 12
+          Height = 12
+          Caption = #21069
+        end
+        object Label4: TLabel
+          Left = 70
+          Top = 7
+          Width = 12
+          Height = 12
+          Caption = #21517
+        end
+        object edtMinNo: TcxComboBox
+          Left = 19
+          Top = 4
+          Width = 50
+          Height = 19
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          ParentFont = False
+          Properties.DropDownListStyle = lsFixedList
+          Properties.Items.Strings = (
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+            '11'
+            '12'
+            '13'
+            '14'
+            '15'
+            '16'
+            '17'
+            '18'
+            '19'
+            '20'
+            '25'
+            '30'
+            '35'
+            '40'
+            '50'
+            '80'
+            '100')
+          Properties.OnChange = edtMinNoPropertiesChange
+          Style.Font.Charset = GB2312_CHARSET
+          Style.Font.Color = clRed
+          Style.Font.Height = -11
+          Style.Font.Name = #23435#20307
+          Style.Font.Style = [fsBold]
+          TabOrder = 0
+          Text = '5'
+        end
+      end
+      object PnlTop2: TPanel
+        Left = 0
+        Top = 0
+        Width = 452
+        Height = 28
+        Align = alClient
+        BevelOuter = bvNone
+        Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517
+        Color = clWhite
+        TabOrder = 1
+        object CB_NotSale: TcxCheckBox
+          Left = 0
+          Top = 4
+          Width = 96
+          Height = 21
+          Properties.DisplayUnchecked = 'False'
+          Properties.OnChange = CB_NotSalePropertiesChange
+          Properties.Caption = #19981#26174#31034#26080#38144#21806
+          TabOrder = 0
+        end
+      end
+    end
   end
   object dsMaxAnaly: TDataSource
     DataSet = MaxAnaly
@@ -427,12 +493,12 @@ object frmPotenAnaly: TfrmPotenAnaly
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 536
-    Top = 60
+    Left = 528
+    Top = 28
   end
   object dsMinAnaly: TDataSource
     DataSet = MinAnaly
-    Left = 537
-    Top = 98
+    Left = 529
+    Top = 66
   end
 end

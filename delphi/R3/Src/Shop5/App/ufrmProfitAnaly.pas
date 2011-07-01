@@ -12,30 +12,36 @@ type
   TfrmProfitAnaly = class(TFrame)
     Pnl_Left: TPanel;
     Pnl_Right: TPanel;
-    PnlTop: TPanel;
     Panel1: TPanel;
     DBGridEh1: TDBGridEh;
     Chart1: TChart;
     BarSeries1: TBarSeries;
-    BarSeries2: TBarSeries;
-    edtOrderNo: TcxComboBox;
-    Label1: TLabel;
-    Label2: TLabel;
     adoAnaly: TZQuery;
     dsAnaly: TDataSource;
     adoReport: TZQuery;
     Splitter1: TSplitter;
+    Panel2: TPanel;
+    PnlTop: TPanel;
+    RightPnl: TPanel;
+    Label2: TLabel;
+    edtOrderNo: TcxComboBox;
+    vType: TcxComboBox;
+    Panel3: TPanel;
+    ChartTitle: TPanel;
+    Panel4: TPanel;
+    CB_Color: TCheckBox;
     procedure edtOrderNoPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FrameResize(Sender: TObject);
+    procedure CB_ColorClick(Sender: TObject);
   private
     FTtileName: string;
     FAnalyType: integer;
     function FindColumn(DBGrid:TDBGridEh; FieldName:string):TColumnEh;
     procedure SetRealition_ID(const Realition_ID: integer);
   public
-    procedure ShowOrderData; //刷新显示多少条
+    procedure ShowOrderData(Sender: Tobject); //刷新显示多少条
     procedure InitData(const AnalyType,Relation_ID: integer; const vData: OleVariant);
   end;
 
@@ -68,18 +74,21 @@ begin
    3: FTtileName:=RelName+'商品（销量）排名';
   end;
   PnlTop.Caption:=FTtileName;
+  ChartTitle.Caption:=FTtileName;
 end;
 
 procedure TfrmProfitAnaly.edtOrderNoPropertiesChange(Sender: TObject);
 begin
   //开始处理重新画
-  ShowOrderData;
+  ShowOrderData(Sender);
 end;
 
 procedure TfrmProfitAnaly.InitData(const AnalyType,Relation_ID: integer; const vData: OleVariant);
 var
   SetCol: TColumnEh;
 begin
+  vType.ItemIndex:=0;
+  vType.Properties.OnChange:=ShowOrderData;
   //分析类型
   FAnalyType:=AnalyType;
   SetCol:=FindColumn(DBGridEh1, 'ANALYSUM');
@@ -105,37 +114,50 @@ begin
   adoAnaly.FieldDefs.Add('ANALYSUM',ftFloat,0,true);     //汇总数量
   adoAnaly.FieldDefs.Add('ORDERNO',ftInteger,0,true);    //排序号
   adoAnaly.CreateDataSet;
-  //刷新显示
-  ShowOrderData;
+  ShowOrderData(nil);
 end;
 
-procedure TfrmProfitAnaly.ShowOrderData;
+procedure TfrmProfitAnaly.ShowOrderData(Sender: Tobject);
 var
-  i,j,vmax: integer;
+  i,j,vmax,allReCount: integer;
 begin
+  if not adoAnaly.Active then Exit;
+  if not adoReport.Active then Exit;
+
   if not adoAnaly.IsEmpty then
     adoAnaly.EmptyDataSet;
   if Chart1.Series[0].Count>0 then
     Chart1.Series[0].Clear;
   vmax:=StrtoIntDef(edtOrderNo.Text,5);
+  allReCount:=adoReport.RecordCount;
   for i:=1 to vmax do
   begin
-    //表格显示
-    if i< adoReport.RecordCount then
-    begin
-      adoReport.RecNo:=i;
-      adoAnaly.Append;
-      adoAnaly.fieldbyName('GODS_CODE').AsString:=adoReport.fieldByName('GODS_CODE').AsString;
-      adoAnaly.fieldbyName('GODS_NAME').AsString:=adoReport.fieldByName('GODS_NAME').AsString;
-      adoAnaly.fieldbyName('ANALYSUM').AsFloat:=adoReport.fieldByName('ANALYSUM').AsFloat;
-      adoAnaly.fieldbyName('ORDERNO').AsInteger:=i;
-      adoAnaly.Post;
-      //图表显示
-      Chart1.Series[0].Add(adoReport.fieldByName('ANALYSUM').AsFloat,trim(adoReport.fieldByName('GODS_NAME').AsString));
+    case vType.ItemIndex of
+     0: //前几面排序
+      begin
+        if i<= allReCount then
+          adoReport.RecNo:=i
+        else
+          continue;
+      end;
+     1: //后几名排序
+      begin
+        if allReCount-i+1>0 then
+          adoReport.RecNo:=allReCount-i+1 //前几面排序
+        else
+          continue;
+      end;
     end;
+    //表格显示
+    adoAnaly.Append;
+    adoAnaly.fieldbyName('GODS_CODE').AsString:=adoReport.fieldByName('GODS_CODE').AsString;
+    adoAnaly.fieldbyName('GODS_NAME').AsString:=adoReport.fieldByName('GODS_NAME').AsString;
+    adoAnaly.fieldbyName('ANALYSUM').AsFloat:=adoReport.fieldByName('ANALYSUM').AsFloat;
+    adoAnaly.fieldbyName('ORDERNO').AsInteger:=i;
+    adoAnaly.Post;
+    //图表显示
+    Chart1.Series[0].Add(adoReport.fieldByName('ANALYSUM').AsFloat,trim(adoReport.fieldByName('GODS_NAME').AsString));
   end;
-  Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add(FTtileName);
 end;
 
 procedure TfrmProfitAnaly.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -179,6 +201,11 @@ begin
        Exit;
      end;
   end;
+end;
+
+procedure TfrmProfitAnaly.CB_ColorClick(Sender: TObject);
+begin
+  BarSeries1.ColorEachPoint:=CB_Color.Checked;
 end;
 
 end.

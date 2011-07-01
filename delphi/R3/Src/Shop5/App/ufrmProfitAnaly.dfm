@@ -1,7 +1,7 @@
 object frmProfitAnaly: TfrmProfitAnaly
   Left = 0
   Top = 0
-  Width = 1046
+  Width = 1057
   Height = 236
   TabOrder = 0
   OnResize = FrameResize
@@ -21,72 +21,6 @@ object frmProfitAnaly: TfrmProfitAnaly
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 0
-    object PnlTop: TPanel
-      Left = 0
-      Top = 0
-      Width = 470
-      Height = 28
-      Align = alTop
-      BevelOuter = bvNone
-      Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517#9#9
-      Color = clWhite
-      TabOrder = 0
-      object Label1: TLabel
-        Left = 385
-        Top = 7
-        Width = 12
-        Height = 13
-        Caption = #21069
-      end
-      object Label2: TLabel
-        Left = 451
-        Top = 7
-        Width = 12
-        Height = 13
-        Caption = #21517
-      end
-      object edtOrderNo: TcxComboBox
-        Left = 398
-        Top = 4
-        Width = 51
-        Height = 19
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        ParentFont = False
-        Properties.DropDownListStyle = lsFixedList
-        Properties.Items.Strings = (
-          '5'
-          '6'
-          '7'
-          '8'
-          '9'
-          '10'
-          '11'
-          '12'
-          '13'
-          '14'
-          '15'
-          '16'
-          '17'
-          '18'
-          '19'
-          '20'
-          '25'
-          '30'
-          '35'
-          '40'
-          '50'
-          '80'
-          '100')
-        Properties.OnChange = edtOrderNoPropertiesChange
-        Style.Font.Charset = GB2312_CHARSET
-        Style.Font.Color = clRed
-        Style.Font.Height = -11
-        Style.Font.Name = #23435#20307
-        Style.Font.Style = [fsBold]
-        TabOrder = 0
-        Text = '5'
-      end
-    end
     object Panel1: TPanel
       Left = 0
       Top = 28
@@ -94,7 +28,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Height = 208
       Align = alClient
       BevelOuter = bvLowered
-      TabOrder = 1
+      TabOrder = 0
       object DBGridEh1: TDBGridEh
         Left = 1
         Top = 1
@@ -191,20 +125,128 @@ object frmProfitAnaly: TfrmProfitAnaly
           end>
       end
     end
+    object Panel2: TPanel
+      Left = 0
+      Top = 0
+      Width = 470
+      Height = 28
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      object PnlTop: TPanel
+        Left = 0
+        Top = 0
+        Width = 365
+        Height = 28
+        Align = alClient
+        BevelOuter = bvNone
+        Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+      end
+      object RightPnl: TPanel
+        Left = 365
+        Top = 0
+        Width = 105
+        Height = 28
+        Align = alRight
+        BevelOuter = bvNone
+        Color = clWhite
+        TabOrder = 1
+        object Label2: TLabel
+          Left = 89
+          Top = 7
+          Width = 12
+          Height = 12
+          Caption = #21517
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+        end
+        object edtOrderNo: TcxComboBox
+          Left = 39
+          Top = 4
+          Width = 49
+          Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          ParentFont = False
+          Properties.DropDownListStyle = lsFixedList
+          Properties.Items.Strings = (
+            '5'
+            '6'
+            '7'
+            '8'
+            '9'
+            '10'
+            '11'
+            '12'
+            '13'
+            '14'
+            '15'
+            '16'
+            '17'
+            '18'
+            '19'
+            '20'
+            '25'
+            '30'
+            '35'
+            '40'
+            '50'
+            '80'
+            '100')
+          Properties.OnChange = edtOrderNoPropertiesChange
+          Style.Font.Charset = GB2312_CHARSET
+          Style.Font.Color = clRed
+          Style.Font.Height = -12
+          Style.Font.Name = #23435#20307
+          Style.Font.Style = [fsBold]
+          TabOrder = 0
+          Text = '5'
+        end
+        object vType: TcxComboBox
+          Left = 3
+          Top = 4
+          Width = 39
+          Height = 20
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          ParentFont = False
+          Properties.DropDownListStyle = lsFixedList
+          Properties.Items.Strings = (
+            #21069
+            #21518)
+          Style.Font.Charset = GB2312_CHARSET
+          Style.Font.Color = clBlack
+          Style.Font.Height = -12
+          Style.Font.Name = #23435#20307
+          Style.Font.Style = []
+          TabOrder = 1
+        end
+      end
+    end
   end
   object Pnl_Right: TPanel
     Left = 476
     Top = 0
-    Width = 570
+    Width = 581
     Height = 236
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Chart1: TChart
       Left = 0
-      Top = 0
-      Width = 570
-      Height = 236
+      Top = 28
+      Width = 581
+      Height = 208
       BackWall.Brush.Color = clWhite
       BackWall.Brush.Style = bsClear
       Title.Font.Charset = DEFAULT_CHARSET
@@ -214,6 +256,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Title.Font.Style = [fsBold]
       Title.Text.Strings = (
         '')
+      Title.Visible = False
       Legend.Alignment = laBottom
       Legend.TextStyle = ltsRightValue
       Legend.Visible = False
@@ -223,6 +266,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Color = clWhite
       TabOrder = 0
       object BarSeries1: TBarSeries
+        ColorEachPoint = True
         Marks.ArrowLength = 20
         Marks.Style = smsValue
         Marks.Visible = False
@@ -238,19 +282,58 @@ object frmProfitAnaly: TfrmProfitAnaly
         YValues.Multiplier = 1.000000000000000000
         YValues.Order = loNone
       end
-      object BarSeries2: TBarSeries
-        Marks.ArrowLength = 20
-        Marks.Visible = True
-        SeriesColor = clGreen
-        Title = #37329#39069
-        XValues.DateTime = False
-        XValues.Name = 'X'
-        XValues.Multiplier = 1.000000000000000000
-        XValues.Order = loAscending
-        YValues.DateTime = False
-        YValues.Name = 'Bar'
-        YValues.Multiplier = 1.000000000000000000
-        YValues.Order = loNone
+    end
+    object Panel3: TPanel
+      Left = 0
+      Top = 0
+      Width = 581
+      Height = 28
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      object ChartTitle: TPanel
+        Left = 0
+        Top = 0
+        Width = 472
+        Height = 28
+        Align = alClient
+        BevelOuter = bvNone
+        Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517
+        Color = clWhite
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+      end
+      object Panel4: TPanel
+        Left = 472
+        Top = 0
+        Width = 109
+        Height = 28
+        Align = alRight
+        BevelOuter = bvNone
+        Color = clWhite
+        TabOrder = 1
+        object CB_Color: TCheckBox
+          Left = 9
+          Top = 6
+          Width = 96
+          Height = 17
+          Caption = #26174#31034#19981#21516#39068#33394
+          Checked = True
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
+          State = cbChecked
+          TabOrder = 0
+          OnClick = CB_ColorClick
+        end
       end
     end
   end

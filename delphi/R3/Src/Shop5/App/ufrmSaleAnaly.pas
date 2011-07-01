@@ -32,7 +32,6 @@ type
     Pnl_Char: TRzPanel;
     Chart1: TChart;
     BarSeries1: TBarSeries;
-    BarSeries2: TBarSeries;
     AnalyInfo: TcxMemo;
     RzTool: TRzPanel;
     RzPanel9: TRzPanel;
@@ -45,8 +44,6 @@ type
     RB_batch: TcxRadioButton;
     Label3: TLabel;
     Label2: TLabel;
-    RB_SaleMoney: TcxRadioButton;
-    RB_SaleMount: TcxRadioButton;
     Label32: TLabel;
     fndP1_DEPT_ID: TzrComboBoxList;
     fndP1_Sale_UNIT: TcxComboBox;
@@ -102,10 +99,12 @@ type
     adoReport3: TZQuery;
     dsadoReport3: TDataSource;
     Label11: TLabel;
-    RzPanel13: TRzPanel;
-    P3_RB_Money: TcxRadioButton;
-    P3_RB_PRF: TcxRadioButton;
-    P3_RB_AMT: TcxRadioButton;
+    RzPanel8: TRzPanel;
+    RB_SaleMoney: TcxRadioButton;
+    RB_SaleMount: TcxRadioButton;
+    RB_PRF: TcxRadioButton;
+    CB_Color: TCheckBox;
+    EdtvType: TcxComboBox;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzPanel7Resize(Sender: TObject);
@@ -115,15 +114,16 @@ type
     procedure fndP1_Sale_UNITPropertiesChange(Sender: TObject);
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP3_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure CB_ColorClick(Sender: TObject);
   private
     SortName: string;  //商品分类名称
     sid1,sid2,sid3: string;        //商品分类ID
     srid1,srid2,srid3: string;     //商品供应链关系ID
     function  FormateStr(const InStr, Format: string): string;
     procedure AddFillChat1;
-    function GetMarketAnalySQL(vType: integer=0): string; //营销分析
-    function GetProfitAnalySQL(vType: integer=0): string; //盈利分析
-    function GetPotenAnalySQL(vType: integer=0): string;  //潜力分析
+    function  GetMarketAnalySQL(vType: integer=0): string; //营销分析
+    function  GetProfitAnalySQL(vType: integer=0): string; //盈利分析
+    function  GetPotenAnalySQL(vType: integer=0): string;  //潜力分析
     procedure FreeFrameObj(vType: integer); //释放掉Frame对象
   public
     procedure ShowFrameProfitAnaly; //盈利分析
@@ -272,9 +272,9 @@ begin
   if vType=0 then //返回查询语句   
   begin
     //销售SQL
-    SQLData:='select TENANT_ID,SHOP_ID,'+TYPE_ID+'GODS_ID,CALC_AMOUNT as SALE_AMT,(CALC_MONEY+AGIO_MONEY) as SALE_RTL from VIW_SALESDATA '+SaleCnd;
+    SQLData:='select TENANT_ID,SHOP_ID,'+TYPE_ID+'GODS_ID,CALC_AMOUNT as SALE_AMT,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,(NOTAX_MONEY-COST_MONEY) as SALE_PRF  from VIW_SALESDATA '+SaleCnd;
     strSql :=
-      'SELECT A.TYPE_ID,sum(SALE_AMT) as SALE_AMT,sum(SALE_RTL) as SALE_RTL from '+ //销售额
+      'SELECT A.TYPE_ID,sum(SALE_AMT) as SALE_AMT,sum(SALE_RTL) as SALE_RTL,sum(SALE_PRF) as SALE_PRF from '+ //销售额
       ' ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
       'group by A.TYPE_ID'; 
@@ -367,8 +367,10 @@ begin
       begin
         if RB_SaleMount.Checked then
           Chart1.Series[0].Add(adoReport1.Fields[1].asFloat,xPoint+'时')
+        else if RB_SaleMoney.Checked then
+          Chart1.Series[0].Add(adoReport1.Fields[2].asFloat/CalcCount,xPoint+'时') 
         else
-          Chart1.Series[0].Add(adoReport1.Fields[2].asFloat/CalcCount,xPoint+'时');
+          Chart1.Series[0].Add(adoReport1.Fields[3].asFloat/CalcCount,xPoint+'时');
       end else
         Chart1.Series[0].Add(0,xPoint+'时');
     end;
@@ -381,8 +383,10 @@ begin
       begin   
         if RB_SaleMount.Checked then
           Chart1.Series[0].Add(adoReport1.Fields[1].asFloat,xPoint)
+        else if RB_SaleMoney.Checked then
+          Chart1.Series[0].Add(adoReport1.Fields[2].asFloat/CalcCount,xPoint)
         else
-          Chart1.Series[0].Add(adoReport1.Fields[2].asFloat/CalcCount,xPoint);
+          Chart1.Series[0].Add(adoReport1.Fields[3].asFloat/CalcCount,xPoint);
       end else
         Chart1.Series[0].Add(0,xPoint);
     end;
@@ -396,9 +400,9 @@ begin
     //添加
     LStrList.Clear;
     if RB_hour.Checked then   //时段
-      LStrList.Add('          时段              销量              销售额              ')
+      LStrList.Add('          时段              销量              销售额            毛利              ')
     else
-      LStrList.Add('          星期              销量              销售额              ');
+      LStrList.Add('          星期              销量              销售额            毛利              ');
                             
     //添加左侧的List
     if RB_hour.Checked then
@@ -410,11 +414,13 @@ begin
         begin
           LStrList.Add('          '+FormateStr(xPoint+'时','                  ')
                                    +FormateStr(adoReport1.Fields[1].AsString,'                  ')
-                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'              '));
+                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
+                                   +FormateStr(FloatToStr(adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
         end else
         begin
           LStrList.Add('          '+FormateStr(xPoint+'时','                  ')
                                    +FormateStr('0','                  ')
+                                   +FormateStr('0'+MnyUnit,'                  ')
                                    +FormateStr('0'+MnyUnit,'              '));
         end;
       end;
@@ -427,11 +433,13 @@ begin
         begin
           LStrList.Add('          '+FormateStr(xPoint,'                  ')
                                    +FormateStr(adoReport1.Fields[1].AsString,'                  ')
-                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'              '));
+                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
+                                   +FormateStr(FloatToStr(adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
         end else
         begin
           LStrList.Add('          '+FormateStr(xPoint,'                  ')
                                    +FormateStr('0','                  ')
+                                   +FormateStr('0'+MnyUnit,'                  ')
                                    +FormateStr('0'+MnyUnit,'              '));
         end;
       end;
@@ -501,7 +509,7 @@ begin
     begin
       LefStr:='';
       if i< LStrList.Count then LefStr:=LStrList.Strings[i];
-      LefStr:=FormateStr(LefStr,'                                                                                 ');
+      LefStr:=FormateStr(LefStr,'                                                                                                   ');
 
       if i< RStrList.Count then
         LefStr:=LefStr+RStrList.Strings[i]
@@ -531,12 +539,13 @@ begin
 
   //默认第一分页
   RzPage.ActivePage:=TabSheet1;
+  EdtvType.ItemIndex:=0;
 end;
 
 procedure TfrmSaleAnaly.RB_SaleMoneyClick(Sender: TObject);
 begin
   inherited;
-  fndP1_Sale_UNIT.Enabled:=RB_SaleMoney.Checked;
+  fndP1_Sale_UNIT.Enabled:=((RB_SaleMoney.Checked) or (RB_PRF.Checked));
   AddFillChat1;
 end;
 
@@ -567,9 +576,9 @@ begin
   //企业ID过滤
   SaleCnd:=' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
   //销售日期条件
-  if P1_D1.Date=P1_D2.Date then
+  if P2_D1.Date=P2_D2.Date then
     SaleCnd:=SaleCnd+' and SALES_DATE='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' '
-  else if P1_D1.Date<P1_D2.Date then
+  else if P2_D1.Date<P2_D2.Date then
     SaleCnd:=SaleCnd+' and SALES_DATE>='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' and SALES_DATE<='+FormatDatetime('YYYYMMDD',P2_D2.Date)+' ';
   //部门条件
   if fndP2_DEPT_ID.AsString<>'' then
@@ -636,7 +645,9 @@ end;
 
 function TfrmSaleAnaly.GetPotenAnalySQL(vType: integer): string;  //潜力分析
 var
+  Qry: TZQuery;
   SaleCnd,JoinStr,OrderBy: string;  //单位计算关系
+  FieldStr,MaxSQL,MaxValue1,MaxValue2: string;
   strSql,strWhere,GoodTab,SQLData: string;
 begin
   if P3_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
@@ -694,21 +705,67 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  if P3_RB_Money.Checked then
-    OrderBy:='order by RELATION_ID asc,MNY_SUM desc,PRF_SUM desc,AMT_SUM desc '
-  else if P3_RB_PRF.Checked then
-    OrderBy:='order by RELATION_ID asc,PRF_SUM desc,MNY_SUM desc,AMT_SUM desc '
-  else if P3_RB_AMT.Checked then
-    OrderBy:='order by RELATION_ID asc,AMT_SUM desc,MNY_SUM desc,PRF_SUM desc ';
-
   //销售SQL
   SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as AMT_SUM,(CALC_MONEY+AGIO_MONEY) as MNY_SUM,(NOTAX_MONEY-COST_MONEY) as PRF_SUM from VIW_SALESDATA '+SaleCnd;
+
+  //分类取出Max(字段)
+  case EdtvType.ItemIndex of
+   0: FieldStr:=' max(MNY_SUM) as SUM1,max(PRF_SUM) as SUM2 ';   //销售额 毛利
+   1: FieldStr:=' max(AMT_SUM) as SUM1,max(PRF_SUM) as SUM2 ';   //销量 、毛利
+   2: FieldStr:=' max(AMT_SUM) as SUM1,max(MNY_SUM) as SUM2 ';   //销量 、销售额
+  end;
+  MaxSQL:=
+    'select '+FieldStr+' from '+
+    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(AMT_SUM) as AMT_SUM,sum(MNY_SUM)as MNY_SUM,sum(PRF_SUM)as PRF_SUM from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp ';
+  try
+    Qry:=TZQuery.Create(nil);
+    Qry.SQL.Text:=MaxSQL;
+    Factor.Open(Qry);
+    if Qry.Active then
+    begin
+      MaxValue1:=FloatToStr(Qry.fieldbyName('SUM1').AsFloat*0.50);
+      MaxValue2:=FloatToStr(Qry.fieldbyName('SUM2').AsFloat*0.50);
+    end;
+  finally
+    Qry.Free;
+  end;
+
+  //销售SQL
+  SQLData:=
+     'select STO.TENANT_ID,STO.SHOP_ID,STO.GODS_ID,isnull(SAL.CALC_AMOUNT,0) as AMT_SUM,(isnull(SAL.CALC_MONEY,0)+isnull(SAL.AGIO_MONEY,0)) as MNY_SUM,(isnull(SAL.NOTAX_MONEY,0)-isnull(SAL.COST_MONEY,0)) as PRF_SUM '+
+     ' from STO_STORAGE STO left outer join '+
+     ' (select * from VIW_SALESDATA '+SaleCnd+') SAL '+
+     'on STO.TENANT_ID=SAL.TENANT_ID and STO.SHOP_ID=SAL.SHOP_ID and STO.GODS_ID=SAL.GODS_ID ';
+
+  //分类取出Max(字段)
+  case EdtvType.ItemIndex of
+   0: //销售额 毛利
+    begin
+      FieldStr:=',(case when (sum(MNY_SUM)<'+MaxValue1+' and sum(PRF_SUM)<'+MaxValue2+') then 1 when (sum(MNY_SUM)>='+MaxValue1+' and sum(PRF_SUM)>='+MaxValue2+') then 4 else 2 end) vType ';
+      OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,MNY_SUM desc,AMT_SUM desc '
+    end;
+   1: //销售量 毛利
+    begin
+      FieldStr:=',(case when (sum(AMT_SUM)<'+MaxValue1+' and sum(PRF_SUM)<'+MaxValue2+') then 1 when (sum(AMT_SUM)>='+MaxValue1+' and sum(PRF_SUM)>='+MaxValue2+') then 4 else 2 end) vType ';
+      OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,AMT_SUM desc,MNY_SUM desc'
+    end;
+   2: //销售量 销售额
+    begin
+      FieldStr:=',(case when (sum(AMT_SUM)<'+MaxValue1+' and sum(MNY_SUM)<'+MaxValue2+') then 1 when (sum(AMT_SUM)>='+MaxValue1+' and sum(MNY_SUM)>='+MaxValue2+') then 4 else 2 end) vType ';
+      OrderBy:='order by RELATION_ID asc,vType asc,MNY_SUM desc,AMT_SUM desc,PRF_SUM desc ';
+    end;
+  end;
+ 
   strSql :=
     'select * from '+
-    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(AMT_SUM) as AMT_SUM,sum(MNY_SUM)as MNY_SUM,sum(PRF_SUM)as PRF_SUM from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(AMT_SUM) as AMT_SUM,sum(MNY_SUM)as MNY_SUM,sum(PRF_SUM)as PRF_SUM '+FieldStr+' '+
+    ' from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and '+
     ' A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+OrderBy;
+    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
+    OrderBy;
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -776,17 +833,18 @@ procedure TfrmSaleAnaly.ShowFrameProfitAnaly;
       else if P2_RB_PRF.Checked then AnalyType:=2
       else if P2_RB_AMT.Checked then AnalyType:=3;
       frmAnaly.InitData(AnalyType,Relation_ID,adoReport2.Data);
-      if (RelCount * (frmAnaly.Height+8)-8>SB2.Height) and (SB2.Align<>alNone) then
+      if RelCount * (frmAnaly.Height+8)-8>SB2.Height then
       begin
         SB2.Align:=alNone;
         SB2.Top:=RzPnl2.Top+RzPnl2.Height;
         SB2.Left:=0;
         SB2.Height:=(frmAnaly.Height+8)* RelCount-8;
       end else
-      if (RelCount * (frmAnaly.Height+8)-8<SB2.Height) and (SB2.Align<>alClient) then
+      if RelCount * (frmAnaly.Height+8)-8<SB2.Height then
       begin
         SB2.Align:=alClient;
-        frmAnaly.Height:=(SB2.Height-RelCount*8+8) div RelCount;
+        frmAnaly.Height:=(SB2.Height-RelCount*8+8) div RelCount-2;
+        frmAnaly.Align:=alClient;
       end;
     except
       frmAnaly.Free;
@@ -821,7 +879,7 @@ begin
     //非卷烟供应链
     for i:=0 to ReList.Count-1 do
     begin
-      RelID:=trim(ReList.Strings[i]); 
+      RelID:=trim(ReList.Strings[i]);
       if RelID = '1000006' then continue;
       Inc(vNo); //序号+1
       ShowFrameDetail(StrtoInt(RelID), ReList.Count+1, vNo); 
@@ -853,23 +911,25 @@ procedure TfrmSaleAnaly.ShowFramePotenAnaly;
       frmPoten.Align:=alBottom;
       frmPoten.Align:=alTop;
       frmPoten.InitData(Relation_ID,adoReport3.Data);
-      if (RelCount * (frmPoten.Height+8)-8>SB3.Height) and (SB3.Align<>alNone) then
+      if RelCount * (frmPoten.Height+8)-8>SB3.Height then
       begin
         SB3.Align:=alNone;
-        SB3.Top:=RzPnl3.Top+RzPnl3.Height;;
+        SB3.Top:=RzPnl3.Top+RzPnl3.Height;
         SB3.Left:=0;
         SB3.Height:=(frmPoten.Height+8)* RelCount-8;
       end else
-      if (RelCount * (frmPoten.Height+8)-8<SB3.Height) and (SB3.Align<>alClient) then
+      if RelCount * (frmPoten.Height+8)-8<SB3.Height  then
       begin
         SB3.Align:=alClient;
-        frmPoten.Height:=(SB3.Height-RelCount*8+8) div RelCount;
+        frmPoten.Height:=(SB3.Height-RelCount*8+8) div RelCount-2;
+        frmPoten.Align:=alClient;
       end;
     except
       frmPoten.Free;
     end;
   end;
 var
+  IsFlag: Boolean;
   i,vHeigh,vNo: integer;
   RelID: string;
   ReList: TStringList;
@@ -924,6 +984,12 @@ begin
   sid3 := '';
   srid3 := '';
   fndP3_SORT_ID.Text := '';
+end;
+
+procedure TfrmSaleAnaly.CB_ColorClick(Sender: TObject);
+begin
+  inherited;
+  BarSeries1.ColorEachPoint:=CB_Color.Checked;
 end;
 
 end.

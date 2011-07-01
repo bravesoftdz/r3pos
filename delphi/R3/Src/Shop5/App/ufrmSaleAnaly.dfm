@@ -1,6 +1,6 @@
 inherited frmSaleAnaly: TfrmSaleAnaly
-  Left = 190
-  Top = 104
+  Left = 197
+  Top = 68
   Width = 984
   Height = 667
   Caption = #38144#21806#20998#26512#34920
@@ -8,13 +8,13 @@ inherited frmSaleAnaly: TfrmSaleAnaly
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 976
-    Height = 604
+    Height = 603
     inherited RzPanel2: TRzPanel
       Width = 966
-      Height = 594
+      Height = 593
       inherited RzPage: TRzPageControl
         Width = 960
-        Height = 588
+        Height = 587
         ActivePage = TabSheet2
         TabIndex = 1
         FixedDimension = 25
@@ -22,10 +22,10 @@ inherited frmSaleAnaly: TfrmSaleAnaly
           Caption = #32463#33829#27010#20917
           inherited RzPanel3: TRzPanel
             Width = 958
-            Height = 561
+            Height = 560
             inherited Panel4: TPanel
               Width = 948
-              Height = 551
+              Height = 550
               inherited w1: TRzPanel
                 Width = 948
                 Height = 97
@@ -426,13 +426,13 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               inherited RzPanel7: TRzPanel
                 Top = 97
                 Width = 948
-                Height = 454
+                Height = 453
                 OnResize = RzPanel7Resize
                 object Pnl_Mm: TRzPanel
                   Left = 2
                   Top = 265
                   Width = 944
-                  Height = 187
+                  Height = 186
                   Align = alClient
                   BorderOuter = fsGroove
                   BorderSides = []
@@ -442,7 +442,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     Left = 0
                     Top = 24
                     Width = 944
-                    Height = 163
+                    Height = 162
                     Align = alClient
                     Properties.ReadOnly = True
                     TabOrder = 0
@@ -457,41 +457,21 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     BorderSides = []
                     TabOrder = 1
                     object Label2: TLabel
-                      Left = 57
+                      Left = 25
                       Top = 6
                       Width = 60
                       Height = 12
-                      Caption = #26597#30475#25968#20540#65306
+                      Caption = #32479#35745#31867#22411#65306
                     end
                     object Label4: TLabel
-                      Left = 307
+                      Left = 313
                       Top = 7
                       Width = 72
                       Height = 12
                       Caption = #38144#21806#39069#21333#20301#65306
                     end
-                    object RB_SaleMoney: TcxRadioButton
-                      Left = 126
-                      Top = 4
-                      Width = 62
-                      Height = 17
-                      Caption = #39069#38144#21806
-                      Checked = True
-                      TabOrder = 0
-                      TabStop = True
-                      OnClick = RB_SaleMoneyClick
-                    end
-                    object RB_SaleMount: TcxRadioButton
-                      Left = 197
-                      Top = 4
-                      Width = 62
-                      Height = 17
-                      Caption = #38144#21806#37327
-                      TabOrder = 1
-                      OnClick = RB_SaleMoneyClick
-                    end
                     object fndP1_Sale_UNIT: TcxComboBox
-                      Left = 378
+                      Left = 382
                       Top = 3
                       Width = 95
                       Height = 20
@@ -501,7 +481,59 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                         #20803
                         #19975#20803)
                       Properties.OnChange = fndP1_Sale_UNITPropertiesChange
+                      TabOrder = 0
+                    end
+                    object RzPanel8: TRzPanel
+                      Left = 89
+                      Top = 3
+                      Width = 207
+                      Height = 20
+                      BorderInner = fsFlat
+                      BorderOuter = fsNone
+                      Color = clWhite
+                      FlatColor = 6956042
+                      GridColor = clGray
+                      TabOrder = 1
+                      object RB_SaleMoney: TcxRadioButton
+                        Left = 6
+                        Top = 2
+                        Width = 60
+                        Height = 17
+                        Caption = #38144#21806#39069
+                        Checked = True
+                        TabOrder = 0
+                        TabStop = True
+                        OnClick = RB_SaleMoneyClick
+                      end
+                      object RB_SaleMount: TcxRadioButton
+                        Left = 72
+                        Top = 2
+                        Width = 59
+                        Height = 17
+                        Caption = #38144#21806#37327
+                        TabOrder = 1
+                        OnClick = RB_SaleMoneyClick
+                      end
+                      object RB_PRF: TcxRadioButton
+                        Left = 141
+                        Top = 2
+                        Width = 50
+                        Height = 17
+                        Caption = #27611#21033
+                        TabOrder = 2
+                        OnClick = RB_SaleMoneyClick
+                      end
+                    end
+                    object CB_Color: TCheckBox
+                      Left = 488
+                      Top = 5
+                      Width = 96
+                      Height = 17
+                      Caption = #26174#31034#19981#21516#39068#33394
+                      Checked = True
+                      State = cbChecked
                       TabOrder = 2
+                      OnClick = CB_ColorClick
                     end
                   end
                 end
@@ -539,26 +571,13 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     Color = clWhite
                     TabOrder = 0
                     object BarSeries1: TBarSeries
+                      ColorEachPoint = True
                       Marks.ArrowLength = 20
                       Marks.Style = smsValue
                       Marks.Visible = False
                       SeriesColor = clRed
                       Title = #38144#37327
                       MultiBar = mbNone
-                      XValues.DateTime = False
-                      XValues.Name = 'X'
-                      XValues.Multiplier = 1.000000000000000000
-                      XValues.Order = loAscending
-                      YValues.DateTime = False
-                      YValues.Name = 'Bar'
-                      YValues.Multiplier = 1.000000000000000000
-                      YValues.Order = loNone
-                    end
-                    object BarSeries2: TBarSeries
-                      Marks.ArrowLength = 20
-                      Marks.Visible = True
-                      SeriesColor = clGreen
-                      Title = #37329#39069
                       XValues.DateTime = False
                       XValues.Name = 'X'
                       XValues.Multiplier = 1.000000000000000000
@@ -580,7 +599,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
             Left = 0
             Top = 0
             Width = 958
-            Height = 561
+            Height = 560
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -590,7 +609,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               Left = 5
               Top = 5
               Width = 948
-              Height = 551
+              Height = 550
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -906,12 +925,11 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 Left = 0
                 Top = 74
                 Width = 948
-                Height = 477
+                Height = 476
                 HorzScrollBar.Style = ssFlat
                 HorzScrollBar.Tracking = True
                 VertScrollBar.Style = ssHotTrack
                 VertScrollBar.Tracking = True
-                Align = alClient
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BevelKind = bkSoft
@@ -928,7 +946,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
             Left = 0
             Top = 0
             Width = 958
-            Height = 561
+            Height = 560
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -938,7 +956,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               Left = 5
               Top = 5
               Width = 948
-              Height = 551
+              Height = 550
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1117,7 +1135,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 end
                 object fndP3_SORT_ID: TcxButtonEdit
                   Left = 351
-                  Top = 27
+                  Top = 28
                   Width = 196
                   Height = 20
                   Properties.Buttons = <
@@ -1159,7 +1177,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 end
                 object fndP3_DEPT_ID: TzrComboBoxList
                   Left = 351
-                  Top = 6
+                  Top = 7
                   Width = 196
                   Height = 20
                   Properties.AutoSelect = False
@@ -1211,55 +1229,29 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.DateButtons = [btnToday]
                   TabOrder = 8
                 end
-                object RzPanel13: TRzPanel
-                  Left = 352
+                object EdtvType: TcxComboBox
+                  Left = 351
                   Top = 49
-                  Width = 194
-                  Height = 19
-                  BorderInner = fsFlat
-                  BorderOuter = fsNone
-                  Color = clWhite
-                  FlatColor = 6956042
-                  GridColor = clGray
+                  Width = 196
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #38144#21806#39069' '#8212' '#27611#21033
+                    #38144#37327' '#8212' '#27611#21033
+                    #38144#37327' '#8212' '#38144#21806#39069)
                   TabOrder = 9
-                  object P3_RB_Money: TcxRadioButton
-                    Left = 4
-                    Top = 1
-                    Width = 58
-                    Height = 17
-                    Caption = #38144#21806#39069
-                    Checked = True
-                    TabOrder = 0
-                    TabStop = True
-                  end
-                  object P3_RB_PRF: TcxRadioButton
-                    Left = 77
-                    Top = 1
-                    Width = 46
-                    Height = 17
-                    Caption = #27611#21033
-                    TabOrder = 1
-                  end
-                  object P3_RB_AMT: TcxRadioButton
-                    Left = 143
-                    Top = 1
-                    Width = 47
-                    Height = 17
-                    Caption = #38144#37327
-                    TabOrder = 2
-                  end
                 end
               end
               object SB3: TScrollBox
                 Left = 0
                 Top = 74
                 Width = 948
-                Height = 477
+                Height = 476
                 HorzScrollBar.Style = ssFlat
                 HorzScrollBar.Tracking = True
                 VertScrollBar.Style = ssHotTrack
                 VertScrollBar.Tracking = True
-                Align = alClient
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 BevelKind = bkSoft

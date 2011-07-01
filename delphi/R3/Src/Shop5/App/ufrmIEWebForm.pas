@@ -50,10 +50,6 @@ type
 
     procedure DoLogin;virtual;
   end;
-var
-  xsm_url:string;
-  xsm_username:string;
-  xsm_password:string;
 implementation
 uses EncDec,ufrmDesk,uShopGlobal,ufrmXsmLogin, uGlobal, ufrmMain;
 

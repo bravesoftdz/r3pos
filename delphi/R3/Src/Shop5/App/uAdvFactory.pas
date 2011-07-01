@@ -359,13 +359,13 @@ begin
   sm := TMemoryStream.Create;
   try
     while not Assigned(IEBrowser.Document) do Application.ProcessMessages;
+    sm.LoadFromFile(ExtractFilePath(ParamStr(0))+'adv\'+id+'.html');
+    sm.Position := 0;
+    (IEBrowser.Document as IPersistStreamInit).Load(TStreamAdapter.Create(sm));
   finally
     sm.Free;
     frmDesk.Waited := false;
   end;
-  sm.LoadFromFile(ExtractFilePath(ParamStr(0))+'adv\'+id+'.html');
-  sm.Position := 0;
-  (IEBrowser.Document as IPersistStreamInit).Load(TStreamAdapter.Create(sm));
 end;
 
 procedure TAdvFactory.ReadParam;

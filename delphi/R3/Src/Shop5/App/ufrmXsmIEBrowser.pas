@@ -62,8 +62,8 @@ type
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
-uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
-  ufrmDesk;
+uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uShopGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
+  ufrmDesk, uGlobal;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmIEWebForm, ImgList, ActnList, Menus, RzTabs, OleCtrls,
-  SHDocVw, ExtCtrls, RzPanel;
+  SHDocVw, ExtCtrls, RzPanel,ZBase;
 
 type
   TfrmRimIEBrowser = class(TfrmIEWebForm)
@@ -17,25 +17,26 @@ type
   private
     FCurUrl: string;
     SaveHandle:integer;
+    FLogined: boolean;
     procedure SetCurUrl(const Value: string);
+    procedure SetLogined(const Value: boolean);
     { Private declarations }
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     procedure ReadParam;
+    procedure DoLogin;
     function EncodeChk:string;
 
     function OpenUrl(url:string;hHandle:integer):boolean;
     property CurUrl:string read FCurUrl write SetCurUrl;
+    property Logined:boolean read FLogined write SetLogined;
   end;
 var
-  Rim_Url:string;
-  Rim_ComId:string;
-  Rim_CustId:string;
   frmRimIEBrowser:TfrmRimIEBrowser;
 implementation
-uses IniFiles,ufrmLogo,EncDec,uAdvFactory;
+uses IniFiles,ufrmLogo,uShopGlobal,uCaFactory,EncDec,uAdvFactory, uGlobal;
 {$R *.dfm}
 
 { TfrmRimIEBrowser }
@@ -72,7 +73,7 @@ var
   F:TIniFile;
   List:TStringList;
 begin
-  if Rim_ComId<>'' then Exit;
+  if Rim_Url<>'' then Exit;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   List := TStringList.Create;
   try
@@ -91,8 +92,6 @@ begin
     List.free;
     F.Free;
   end;
-  Rim_ComId := 'LZ0000000000001';
-  Rim_CustId := 'GX00000004392';
 end;
 
 procedure TfrmRimIEBrowser.FormClose(Sender: TObject;
@@ -107,6 +106,8 @@ begin
   inherited;
   FormStyle := fsMDIChild;
   frmRimIEBrowser := self;
+  Logined := false;
+  left := -9000;
 end;
 
 destructor TfrmRimIEBrowser.Destroy;
@@ -138,6 +139,37 @@ procedure TfrmRimIEBrowser.IEBrowserDownloadComplete(Sender: TObject);
 begin
   inherited;
 //  AdvFactory.GetAllFile(IEBrowser,CurUrl); 
+end;
+
+procedure TfrmRimIEBrowser.DoLogin;
+var
+  Params:TftParamList;
+  Msg:string;
+begin
+  Logined := false;
+  if not CaFactory.Audited or (Factor.ConnMode=1) then
+     begin
+       if Global.debug then Logined := true;
+       Exit;
+     end;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
+    Params.Decode(Params,Msg);
+    Rim_ComId := Params.ParambyName('rimcid').AsString;
+    Rim_CustId := Params.ParambyName('rimuid').AsString;
+    if Rim_CustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
+    Logined := true;
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TfrmRimIEBrowser.SetLogined(const Value: boolean);
+begin
+  FLogined := Value;
 end;
 
 end.

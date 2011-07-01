@@ -10,7 +10,7 @@ const
   RF_DATA_SOURCE4=
      'GODS_CODE=货号,BARCODE=条码,UNIT_NAME=单位,STOCK_AMT=进货数量,STOCK_AMT_RATE=进货占比,STOCK_MNY=进货金额,STOCK_TAX=进项税额,STOCK_TTL=进货总额,STOCK_TTL_RATE=进货金额占比,'+
      'YEAR_STOCK_AMT=进货数量(同期),YEAR_STOCK_AMT_DIFF=进货数量(同期差),YEAR_STOCK_MNY=进货金额(同期),YEAR_STOCK_TAX=进项税额(同期),YEAR_STOCK_TTL=进货总额(同期),YEAR_STOCK_TTL_DIFF=进货总额(同期差),'+
-     'PRIOR_STOCK_AMT=进货数量(上期),PRIOR_STOCK_AMT_DIFF=进货数量(上期差),PRIOR_STOCK_MNY=进货金额(上期),PRIOR_STOCK_TAX=进项税额(上期),PRIOR_STOCK_TTL=进货总额(上期),PRIOR_STOCK_TTL_DIFF=进货总额(同期差),'+
+     'PRIOR_STOCK_AMT=进货数量(上期),PRIOR_STOCK_AMT_DIFF=进货数量(上期差),PRIOR_STOCK_MNY=进货金额(上期),PRIOR_STOCK_TAX=进项税额(上期),PRIOR_STOCK_TTL=进货总额(上期),PRIOR_STOCK_TTL_DIFF=进货总额(上期差),'+
      'SALE_AMT=销量,SALE_AMT_RATE=销量(占比),SALE_MNY=销售金额,SALE_TTL=销售总额,SALE_TTL_RATE=销售总额(占比),SALE_TAX=销项税额,SALE_CST=成本,SALE_CST_RATE=成本(占比),SALE_PRF=毛利,SALE_PRF_RATE=毛利(占比),'+
      'PRIOR_YEAR_AMT=销量(同期),PRIOR_YEAR_AMT_DIFF=销量(同期差),PRIOR_YEAR_MNY=销售金额(同期),PRIOR_YEAR_TTL=销售总额(同期),PRIOR_YEAR_TTL_DIFF=销售总额(同期差),PRIOR_YEAR_TAX=销项税额(同期),PRIOR_YEAR_CST=成本(同期),'+
      'PRIOR_YEAR_CST_DIFF=成本(同期差),PRIOR_YEAR_PRF=毛利(同期),PRIOR_YEAR_PRF_DIFF=毛利(同期差),'+
@@ -674,12 +674,12 @@ begin
       Column := Grid.Columns.Add;
       Column.FieldName := 'A_'+inttostr(i);
       Column.Title.Caption := PColumnR(Cols[i])^.Title;
-      if PColumnR(Cols[i])^.width <> 0 then
-         Column.Width := PColumnR(Cols[i])^.width;
       if PColumnR(Cols[i])^.DataType = 0 then
       begin
         Column.Width := 100;
         tb.FieldDefs.Add('A_'+inttostr(i),ftString,255,true);
+        if PColumnR(Cols[i])^.width <> 0 then
+           Column.Width := PColumnR(Cols[i])^.width;
       end
       else
       begin
@@ -700,6 +700,8 @@ begin
         2:Column.Footer.ValueType := fvtAvg;
         3:Column.Footer.ValueType := fvtCount;
         end;
+        if PColumnR(Cols[i])^.width <> 0 then
+           Column.Width := PColumnR(Cols[i])^.width;
         Column.Alignment := taRightJustify;
         Column.Footer.Alignment := taRightJustify;
       end;

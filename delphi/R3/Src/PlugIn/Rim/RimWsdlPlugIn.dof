@@ -110,7 +110,7 @@ ActiveLang=
 ProjectLang=
 RootDir=D:\Delphi\R3\Src\RspSrvr\
 [Version Info]
-IncludeVerInfo=0
+IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
 MinorVer=0
@@ -124,7 +124,7 @@ DLL=0
 Locale=2052
 CodePage=936
 [Version Info Keys]
-CompanyName=
+CompanyName=RimµÇÂ¼²å¼þ
 FileDescription=
 FileVersion=1.0.0.0
 InternalName=

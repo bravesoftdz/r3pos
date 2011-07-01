@@ -90,7 +90,7 @@ begin
 end;
 var
   tmp,idx:TZQuery;
-  Str:string;
+  Str,idno:string;
   r:integer;
 begin
   tmp := TZQuery.Create(nil);
@@ -100,6 +100,7 @@ begin
     tmp.SQL.Text := 'select UPD_DATE,UPD_TIME from RIM_VIP_CONSUMER where CONSUMER_ID='''+rs.FieldbyName('CUST_ID').AsString+'''';
     OpenData(GPlugIn,tmp);
     Str :='';
+    if rs.FieldbyName('ID_NUMBER').AsString='' then idno := '无' else idno := rs.FieldbyName('ID_NUMBER').AsString;
     if not tmp.IsEmpty then
        begin
         if rs.FieldByName('TIME_STAMP').AsInteger>=GetStamp(rs.Fields[0].asString,rs.Fields[1].asString) then //有更新，则上传
@@ -109,7 +110,7 @@ begin
                'CUST_ID='''+custid+''','+
                'CONSUMER_CARD_ID='''+rs.FieldbyName('IC_CARDNO').AsString+''','+
                'CERT_TYPE_ID='''+fnString.FormatStringEx(rs.FieldbyName('IDN_TYPE').AsString,2)+''','+
-               'CERT_ID='''+rs.FieldbyName('ID_NUMBER').AsString+''','+
+               'CERT_ID='''+idno+''','+
                'ADDRESS='''+rs.FieldbyName('FAMI_ADDR').AsString+''','+
                'CR_NAME='''+rs.FieldbyName('CUST_NAME').AsString+''','+
                'GENDER='''+GetGender(rs.FieldbyName('SEX').AsString,1)+''','+
@@ -129,12 +130,13 @@ begin
     else
        begin
          Str :=
-           'insert into RIM_VIP_CONSUMER(CONSUMER_ID,CUST_ID,CONSUMER_CARD_ID,CERT_TYPE_ID,CERT_ID,ADDRESS,CR_NAME,GENDER,BIRTHDAY,HOME_TEL,MOBILE_TEL,EMAIL,DEGREES,MONTH_PAY,OCCUPATION,JOBUNIT,UPD_DATE,UPD_TIME) '+
+           'insert into RIM_VIP_CONSUMER(CONSUMER_ID,CUST_ID,CONSUMER_CARD_ID,CERT_TYPE_ID,CERT_ID,ADDRESS,CR_NAME,GENDER,BIRTHDAY,HOME_TEL,MOBILE_TEL,EMAIL,DEGREES,MONTH_PAY,OCCUPATION,JOBUNIT,UPD_DATE,UPD_TIME,CONSUMER_STATUS,'+
+           'POP_TYPE,TAR_CONT,FAVOR,is_buynewitem,DAILY_USE,FACT_ID,ITEM_ID,BRAND_ID,STRUCT,ADDRESS_TYPE) '+
            'values('''+rs.FieldbyName('CUST_ID').AsString+''','+
-           ''''+rs.FieldbyName('IC_CARDNO').AsString+''','+
            ''''+custid+''','+
+           ''''+rs.FieldbyName('IC_CARDNO').AsString+''','+
            ''''+fnString.FormatStringEx(rs.FieldbyName('IDN_TYPE').AsString,2)+''','+
-           ''''+rs.FieldbyName('ID_NUMBER').AsString+''','+
+           ''''+idno+''','+
            ''''+rs.FieldbyName('FAMI_ADDR').AsString+''','+
            ''''+rs.FieldbyName('CUST_NAME').AsString+''','+
            ''''+GetGender(rs.FieldbyName('SEX').AsString,1)+''','+
@@ -147,15 +149,15 @@ begin
            ''''+fnString.FormatStringEx(rs.FieldbyName('OCCUPATION').AsString,2)+''','+
            ''''+rs.FieldbyName('JOBUNIT').AsString+''','+
            ''''+formatdatetime('YYYYMMDD',Date())+''','+
-           ''''+formatdatetime('HH:NN:SS',now())+''' '+
-           ')';
+           ''''+formatdatetime('HH:NN:SS',now())+''',''01'','+
+           '''#'',''#'',''#'',''#'',''#'',''#'',''#'',''#'',''#'',''#'')';
        end;
     if Str<>'' then
        begin
          if GPlugIn.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
          //开始更新指标
          idx.Close;
-         idx.SQL.Text := 'select INDEX_ID,INDEX_NAME,INDEX_VALUE from PUB_CUSTOMER_EXT where TENANT_ID='+tid+' and  and CUST_ID='''+rs.FieldbyName('CUST_ID').AsString+'''';
+         idx.SQL.Text := 'select INDEX_ID,INDEX_NAME,INDEX_VALUE from PUB_CUSTOMER_EXT where TENANT_ID='+tid+' and CUST_ID='''+rs.FieldbyName('CUST_ID').AsString+'''';
          OpenData(GPlugIn,idx);
          Str := '';
          idx.First;
@@ -166,91 +168,91 @@ begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'SMOKE_DATE='+formatDatetime('YYYYMM',fnTime.fnStrtoDate(idx.FieldByName('INDEX_VALUE').AsString) )
                   else
-                     Str := 'SMOKE_DATE=null';
+                     Str := 'SMOKE_DATE=''#''';
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '职业' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'DEGREES='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'DEGREES=null';
+                     Str := 'DEGREES=''#''';
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '月收入' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'MONTH_PAY='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'MONTH_PAY=null';
+                     Str := 'MONTH_PAY=''#''';
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '人口类型' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'POP_TYPE='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'POP_TYPE=null';
+                     Str := 'POP_TYPE=''#''';
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '焦油含量' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'TAR_CONT='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'TAR_CONT=null';
+                     Str := 'TAR_CONT=''#''';
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '吸食口味' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'FAVOR='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'FAVOR=null';
+                     Str := 'FAVOR=''#''';
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '乐意购买新品') or (idx.FieldbyName('INDEX_NAME').AsString = '是否购买新品') or (idx.FieldbyName('INDEX_NAME').AsString = '购买新品') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'is_buynewitem='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'is_buynewitem=null';
+                     Str := 'is_buynewitem=''#''';
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '每日吸烟量' then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'DAILY_USE='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'DAILY_USE=null';
+                     Str := 'DAILY_USE=''#''';
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '喜好厂家') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜好厂家') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'FACT_ID='''+GetRimId(idx.FieldByName('INDEX_VALUE').AsString,9)+''''
                   else
-                     Str := 'FACT_ID=null';
+                     Str := 'FACT_ID=''#''';
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '喜爱卷烟') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜爱卷烟') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'ITEM_ID='''+GetRimId(idx.FieldByName('INDEX_VALUE').AsString,0)+''''
                   else
-                     Str := 'ITEM_ID=null';
+                     Str := 'ITEM_ID=''#''';
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '喜爱品牌') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜爱品牌') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'BRAND_ID='''+GetRimId(idx.FieldByName('INDEX_VALUE').AsString,4)+''''
                   else
-                     Str := 'BRAND_ID=null';
+                     Str := 'BRAND_ID=''#''';
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '价位结构') or (idx.FieldbyName('INDEX_NAME').AsString = '常抽价位') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'STRUCT='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'STRUCT=null';
+                     Str := 'STRUCT=''#''';
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '城农网') or (idx.FieldbyName('INDEX_NAME').AsString = '地址类型') then
                 begin
                   if idx.FieldByName('INDEX_VALUE').AsString<>'' then
                      Str := 'ADDRESS_TYPE='''+idx.FieldByName('INDEX_VALUE').AsString+''''
                   else
-                     Str := 'ADDRESS_TYPE=null';
+                     Str := 'ADDRESS_TYPE=''#''';
                 end;
              Str := 'update RIM_VIP_CONSUMER set '+Str+' where CONSUMER_ID='''+rs.FieldbyName('CUST_ID').AsString+'''';
              if GPlugIn.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
@@ -272,6 +274,7 @@ begin
   try
       rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+tid+' and B.SHOP_ID='''+sid+''' ';
       OpenData(GPlugIn,rs);
+      if rs.IsEmpty then Raise Exception.Create('许可证号在RIM中没找到，请核对许可证号...'); 
       custid := rs.fieldbyname('CUST_ID').AsString;
       rs.Close;
       rs.SQL.Text:=
@@ -313,7 +316,7 @@ begin
       ParamList.Decode(ParamList,Params);
       BasInfo.Close;
       BasInfo.SQL.Text := 'select GODS_ID,SORT_ID4,SORT_ID9 from VIW_GOODSINFO where TENANT_ID='+ParamList.ParambyName('TENANT_ID').asString;
-      OpenData(GPlugIn,rs);
+      OpenData(GPlugIn,BasInfo);
       if ParamList.FindParam('SHOP_ID')<>nil then //报当前门店的
          begin
            SyncCustomer(ParamList.ParambyName('TENANT_ID').asString,ParamList.ParambyName('SHOP_ID').asString);

@@ -1,7 +1,7 @@
 object frmPotenAnaly: TfrmPotenAnaly
   Left = 0
   Top = 0
-  Width = 1046
+  Width = 1028
   Height = 236
   TabOrder = 0
   OnResize = FrameResize
@@ -125,6 +125,8 @@ object frmPotenAnaly: TfrmPotenAnaly
             DisplayFormat = '#0.###'
             EditButtons = <>
             FieldName = 'PRF_SUM'
+            Footer.DisplayFormat = '#0.###'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #27611#21033
             Title.Color = clWhite
@@ -133,6 +135,8 @@ object frmPotenAnaly: TfrmPotenAnaly
           item
             EditButtons = <>
             FieldName = 'AMT_SUM'
+            Footer.DisplayFormat = '#0.##'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #38144#37327
             Title.Color = clWhite
@@ -243,7 +247,7 @@ object frmPotenAnaly: TfrmPotenAnaly
   object Pnl_Right: TPanel
     Left = 506
     Top = 0
-    Width = 540
+    Width = 522
     Height = 236
     Align = alClient
     BevelOuter = bvNone
@@ -257,7 +261,7 @@ object frmPotenAnaly: TfrmPotenAnaly
     object Panel4: TPanel
       Left = 0
       Top = 28
-      Width = 540
+      Width = 522
       Height = 208
       Align = alClient
       BevelOuter = bvLowered
@@ -265,7 +269,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       object DBGridEh2: TDBGridEh
         Left = 1
         Top = 1
-        Width = 538
+        Width = 520
         Height = 206
         Align = alClient
         AllowedOperations = []
@@ -351,6 +355,8 @@ object frmPotenAnaly: TfrmPotenAnaly
           item
             EditButtons = <>
             FieldName = 'PRF_SUM'
+            Footer.DisplayFormat = '#0.###'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #27611#21033
             Title.Color = clWhite
@@ -359,6 +365,8 @@ object frmPotenAnaly: TfrmPotenAnaly
           item
             EditButtons = <>
             FieldName = 'AMT_SUM'
+            Footer.DisplayFormat = '#0.##'
+            Footer.ValueType = fvtSum
             Footers = <>
             Title.Caption = #21806#37327
             Title.Color = clWhite
@@ -377,13 +385,13 @@ object frmPotenAnaly: TfrmPotenAnaly
     object Panel3: TPanel
       Left = 0
       Top = 0
-      Width = 540
+      Width = 522
       Height = 28
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
       object Panel5: TPanel
-        Left = 452
+        Left = 434
         Top = 0
         Width = 88
         Height = 28
@@ -450,7 +458,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       object PnlTop2: TPanel
         Left = 0
         Top = 0
-        Width = 452
+        Width = 434
         Height = 28
         Align = alClient
         BevelOuter = bvNone

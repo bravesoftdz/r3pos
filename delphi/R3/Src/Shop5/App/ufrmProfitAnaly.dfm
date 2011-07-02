@@ -1,7 +1,7 @@
 object frmProfitAnaly: TfrmProfitAnaly
   Left = 0
   Top = 0
-  Width = 1057
+  Width = 1028
   Height = 236
   TabOrder = 0
   OnResize = FrameResize
@@ -237,7 +237,7 @@ object frmProfitAnaly: TfrmProfitAnaly
   object Pnl_Right: TPanel
     Left = 476
     Top = 0
-    Width = 581
+    Width = 552
     Height = 236
     Align = alClient
     BevelOuter = bvNone
@@ -245,7 +245,7 @@ object frmProfitAnaly: TfrmProfitAnaly
     object Chart1: TChart
       Left = 0
       Top = 28
-      Width = 581
+      Width = 552
       Height = 208
       BackWall.Brush.Color = clWhite
       BackWall.Brush.Style = bsClear
@@ -286,7 +286,7 @@ object frmProfitAnaly: TfrmProfitAnaly
     object Panel3: TPanel
       Left = 0
       Top = 0
-      Width = 581
+      Width = 552
       Height = 28
       Align = alTop
       BevelOuter = bvNone
@@ -294,7 +294,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       object ChartTitle: TPanel
         Left = 0
         Top = 0
-        Width = 472
+        Width = 443
         Height = 28
         Align = alClient
         BevelOuter = bvNone
@@ -309,7 +309,7 @@ object frmProfitAnaly: TfrmProfitAnaly
         TabOrder = 0
       end
       object Panel4: TPanel
-        Left = 472
+        Left = 443
         Top = 0
         Width = 109
         Height = 28

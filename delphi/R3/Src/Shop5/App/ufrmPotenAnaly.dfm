@@ -456,18 +456,28 @@ object frmPotenAnaly: TfrmPotenAnaly
         end
       end
       object PnlTop2: TPanel
-        Left = 0
+        Left = 94
         Top = 0
-        Width = 434
+        Width = 340
         Height = 28
         Align = alClient
         BevelOuter = bvNone
         Caption = #21367#28895#21830#21697#65288#38144#21806#39069#65289#25490#21517
         Color = clWhite
         TabOrder = 1
+      end
+      object Panel6: TPanel
+        Left = 0
+        Top = 0
+        Width = 94
+        Height = 28
+        Align = alLeft
+        BevelOuter = bvNone
+        Color = clWhite
+        TabOrder = 2
         object CB_NotSale: TcxCheckBox
-          Left = 0
-          Top = 4
+          Left = -1
+          Top = 5
           Width = 96
           Height = 21
           Properties.DisplayUnchecked = 'False'

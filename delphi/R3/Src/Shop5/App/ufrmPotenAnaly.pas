@@ -34,6 +34,7 @@ type
     edtMinNo: TcxComboBox;
     Label4: TLabel;
     PnlTop2: TPanel;
+    Panel6: TPanel;
     CB_NotSale: TcxCheckBox;
     procedure edtOrderNoPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);

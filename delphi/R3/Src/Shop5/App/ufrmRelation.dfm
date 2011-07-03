@@ -9,23 +9,23 @@ inherited frmRelation: TfrmRelation
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 836
-    Height = 480
+    Height = 479
     inherited RzPanel2: TRzPanel
       Width = 826
-      Height = 470
+      Height = 469
       inherited RzPage: TRzPageControl
         Width = 820
-        Height = 464
+        Height = 463
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#38142#31649#29702
           inherited RzPanel3: TRzPanel
             Width = 818
-            Height = 437
+            Height = 436
             object Splitter1: TSplitter
               Left = 181
               Top = 47
-              Height = 385
+              Height = 384
             end
             object RzPanel1: TRzPanel
               Left = 5
@@ -92,7 +92,7 @@ inherited frmRelation: TfrmRelation
               Left = 5
               Top = 47
               Width = 176
-              Height = 385
+              Height = 384
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -109,13 +109,13 @@ inherited frmRelation: TfrmRelation
               Left = 184
               Top = 47
               Width = 629
-              Height = 385
+              Height = 384
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 2
               object stbPanel: TPanel
                 Left = 1
-                Top = 365
+                Top = 364
                 Width = 627
                 Height = 19
                 Align = alBottom
@@ -139,7 +139,7 @@ inherited frmRelation: TfrmRelation
                 Left = 1
                 Top = 1
                 Width = 627
-                Height = 364
+                Height = 363
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_RelationAndGoods

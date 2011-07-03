@@ -607,21 +607,21 @@ begin
   if not ShopGlobal.GetChkRight('32700001',5) then Raise Exception.Create('你没有维护'+Caption+'的权限,请和管理员联系.');
 
   //2011.06.08 Add增加自动对照:
-  try
-    pTen_ID:=GetParentTENANT_ID;  //返回省级烟草公司ID
-    if (pTen_ID>0) and (pTen_ID<>110000001)  then  //不等于国家级企业
-    begin
+  pTen_ID:=GetParentTENANT_ID;  //返回省级烟草公司ID
+  if (pTen_ID>0) and (pTen_ID<>110000001)  then  //不等于国家级企业
+  begin
+    try
       CurTen_ID:=Global.TENANT_ID; //当前Tenant_ID存储临时 CurTen_ID
       Global.TENANT_ID:=pTen_ID;   //省级ID 赋入 Global.TENANT_ID
       try
         CaFactory.SyncAll(1);        //执行省公司
       except
       end;
+    finally
+      Global.TENANT_ID:=CurTen_ID; //替换回原TENANT_ID
     end;
-  finally
-    Global.TENANT_ID:=CurTen_ID; //替换回原TENANT_ID
   end;
-  
+
   //原来
   CaFactory.SyncAll(1);
   Global.LoadBasic;

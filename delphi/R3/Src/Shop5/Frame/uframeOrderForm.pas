@@ -275,7 +275,7 @@ type
 
     //查找对应字段中的值在数据库中是否存在 (2011.06.22)
     function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;virtual;
-    //将要导入的各字段值写入数据库中 (2011.06.22)
+    //将要导入的各字段值写入数据集中 (2011.06.22)
     function SaveExcel(CdsExcel:TDataSet):Boolean;virtual;
     //判断不可缺少的字段域 (2011.06.22)
     function FindFieldColumn(CdsCol:TDataSet):Boolean;virtual;
@@ -3366,44 +3366,26 @@ begin
   if (SFieldName<>'') and (DFieldName<>'') then
     begin
       Result := False;
-      // *******************所属门店********************
-      if DFieldName = 'SHOP_ID' then
+      // *******************条码********************
+      if DFieldName = 'BARCODE' then
         begin
-          if Source.FieldByName(SFieldName).AsString <> '' then
-            begin
-              rs := Global.GetZQueryFromName('CA_SHOP_INFO');
-              if rs.Locate('SHOP_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-                begin
-                  Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
-                  Result := True;
-                  Exit;
-                end
-              else
-                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
-            end
-          else
-            Raise Exception.Create('门店不能为空!');
+          if Source.FieldByName(SFieldName).AsString = '' then
+            Raise Exception.Create('条码不能为空...');
         end;
-      // *******************所属商品********************
-      if DFieldName = 'GODS_ID' then
+      // *******************货号********************
+      if DFieldName = 'GODS_CODE' then
         begin
-          if Source.FieldByName(SFieldName).AsString <> '' then
-            begin
-              rs := Global.GetZQueryFromName('PUB_GOODSINFO');
-              if rs.Locate('GODS_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-                begin
-                  Dest.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;
-                  Result := True;
-                  Exit;
-                end
-              else
-                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的商品代码...');
-            end
-          else
-            Raise Exception.Create('商品不能为空!');
+          if Source.FieldByName(SFieldName).AsString = '' then
+            Raise Exception.Create('货号不能为空...');
+        end;
+      // *******************商品名称********************
+      if DFieldName = 'GODS_NAME' then
+        begin
+          if Source.FieldByName(SFieldName).AsString = '' then
+            Raise Exception.Create('商品名称不能为空...');
         end;
       // *******************所属单位********************
-      if DFieldName = 'UNIT_ID' then
+      {if DFieldName = 'UNIT_ID' then
         begin
           if Source.FieldByName(SFieldName).AsString <> '' then
             begin
@@ -3415,10 +3397,8 @@ begin
                   Exit;
                 end
               else
-                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的单位代码...');
-            end
-          else
-            Raise Exception.Create('单位不能为空!');
+                Dest.FieldByName('UNIT_ID').AsString := '';
+            end;
         end;
       // *******************所属尺码********************
       if DFieldName = 'PROPERTY_01' then
@@ -3451,54 +3431,103 @@ begin
             Dest.FieldByName('PROPERTY_02').AsString := '#';
           Result := True;
           Exit;          
-        end;
-      // *******************相关审核人员********************
-      if DFieldName = 'CHK_USER' then
-        begin
-          if Source.FieldByName(SFieldName).AsString <> '' then
-            begin
-              rs := Global.GetZQueryFromName('CA_USERS');
-              if rs.Locate('USER_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-                begin
-                  Dest.FieldByName('CHK_USER').AsString := rs.FieldByName('USER_ID').AsString;
-                  Result := True;
-                  Exit;
-                end
-              else
-                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的人员代码...');
-            end;
-        end;
-      // *******************相关制单人********************
-      if DFieldName = 'CREA_USER' then
-        begin
-          if Source.FieldByName(SFieldName).AsString <> '' then
-            begin
-              rs := Global.GetZQueryFromName('CA_USERS');
-              if rs.Locate('USER_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-                begin
-                  Dest.FieldByName('CREA_USER').AsString := rs.FieldByName('USER_ID').AsString;
-                  Result := True;
-                  Exit;
-                end
-              else
-                Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的人员代码...');
-            end;
-        end;
+        end;}
     end;
 end;
 
 function TframeOrderForm.FindFieldColumn(CdsCol: TDataSet): Boolean;
 begin
-    if not CdsCol.Locate('FieldName','SHOP_ID',[]) then
-      begin
-        Result := False;
-        Raise Exception.Create('缺少门店字段!');
-      end;
+  if not CdsCol.Locate('FieldName','GODS_NAME',[]) then
+    begin
+      Result := False;
+      Raise Exception.Create('缺少"商品名称"字段!');
+    end;
+  if not CdsCol.Locate('FieldName','GODS_CODE',[]) then
+    begin
+      Result := False;
+      Raise Exception.Create('缺少"货号"字段!');
+    end;
+  if not CdsCol.Locate('FieldName','BARCODE',[]) then
+    begin
+      Result := False;
+      Raise Exception.Create('缺少"条码"字段!');
+    end;
 end;
 
 function TframeOrderForm.SaveExcel(CdsExcel: TDataSet): Boolean;
+var rs,us,tmp:TZQuery;
+  Obj:TRecord_;
+  UnitType,I:Integer;
+  AMount:Real;
+  APrice:Real;
+  AMoney:Real;
+  IsCalcTax:Integer;
+  Field:TField_;
+  CoinRate:Real;
+  GID,P1,P2:string;
 begin
-
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  us := Global.GetZQueryFromName('PUB_MEAUNITS');
+  edtTable.DisableControls;
+  tmp := TZQuery.Create(nil);
+  Obj := TRecord_.Create;
+  try
+    CdsExcel.First;
+    while not CdsExcel.Eof do
+      begin
+        if CdsExcel.FieldByName('BARCODE').AsString = '' then
+          begin
+            CdsExcel.Next;
+            Continue;
+          end;
+        P1 := '#';
+        P2 := '#';
+        tmp.Close;
+        tmp.SQL.Text := 'select * from VIW_BARCODE where BARCODE='''+trim(cdsExcel.FieldByName('BARCODE').AsString)+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
+        Factor.Open(tmp);
+        if not tmp.IsEmpty then
+          begin
+            GID := tmp.FieldByName('GODS_ID').AsString;
+            P1 := tmp.FieldByName('PROPERTY_01').AsString;
+            P2 := tmp.FieldByName('PROPERTY_02').AsString;
+          end
+        else
+          begin
+            GID := CdsExcel.FieldByName('GODS_CODE').AsString;
+          end;
+        if not rs.Locate('GODS_ID',GID,[]) then
+          begin
+            tmp.Close;
+            tmp.SQL.Text := 'select * from VIW_GOODSPRICEEXT where GODS_CODE='''+GID+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
+            Factor.Open(tmp);
+            if not tmp.IsEmpty then
+              begin
+                GID := tmp.FieldByName('GODS_ID').AsString;
+                P1 := tmp.FieldByName('SORT_ID7').AsString;
+                P2 := tmp.FieldByName('SORT_ID8').AsString;
+                Obj.ReadFromDataSet(tmp);
+              end
+            else
+              begin
+               MessageBox(Handle,Pchar(GID+'为无效货品编号'),'提示...',MB_OK+MB_ICONINFORMATION);
+               cdsExcel.Next;
+               Continue;
+              end;
+          end
+        else
+          Obj.ReadFromDataSet(rs);
+        Obj.FieldbyName('IS_PRESENT').AsString := '0';
+        Obj.FieldbyName('LOCUS_NO').AsString := '';
+        Obj.FieldbyName('BATCH_NO').AsString := '#';
+        AddRecord(Obj,Obj.FieldByName('UNIT_ID').AsString);
+        //UpdateRecord(Obj,Obj.FieldByName('UNIT_ID').AsString);
+        CdsExcel.Next;
+      end;
+  finally
+    tmp.Free;
+    Obj.Free;
+    edtTable.EnableControls;
+  end;
 end;
 
 procedure TframeOrderForm.Setrs(const Value: TZQuery);
@@ -3507,7 +3536,6 @@ begin
 end;
 
 procedure TframeOrderForm.Excel1Click(Sender: TObject);
-
 begin
   inherited;
   TfrmExcelFactory.ExcelFactory(rs,FieldsString,@TframeOrderForm.Check,@TframeOrderForm.SaveExcel,@TframeOrderForm.FindFieldColumn,FormatString,1);

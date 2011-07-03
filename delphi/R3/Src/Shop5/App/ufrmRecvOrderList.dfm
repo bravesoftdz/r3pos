@@ -1,6 +1,6 @@
 inherited frmRecvOrderList: TfrmRecvOrderList
-  Left = 323
-  Top = 142
+  Left = 329
+  Top = 123
   Width = 908
   Height = 600
   Caption = #25910#27454#21333
@@ -10,22 +10,20 @@ inherited frmRecvOrderList: TfrmRecvOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 900
-    Height = 537
+    Height = 536
     inherited RzPanel2: TRzPanel
       Width = 890
-      Height = 527
+      Height = 526
       inherited RzPage: TRzPageControl
         Width = 884
-        Height = 521
-        ActivePage = TabSheet2
-        TabIndex = 1
+        Height = 520
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #24212#25910#24080#27454#26597#35810
+          Caption = #24212#25910#36134#27454#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 882
-            Height = 494
+            Height = 493
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
@@ -248,7 +246,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               Left = 6
               Top = 90
               Width = 870
-              Height = 398
+              Height = 397
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -256,7 +254,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Left = 1
                 Top = 1
                 Width = 868
-                Height = 396
+                Height = 395
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = RecvListDs
@@ -405,7 +403,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
             Left = 0
             Top = 0
             Width = 882
-            Height = 494
+            Height = 493
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -791,7 +789,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               Left = 6
               Top = 129
               Width = 870
-              Height = 359
+              Height = 358
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -799,7 +797,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Left = 1
                 Top = 1
                 Width = 868
-                Height = 357
+                Height = 356
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2

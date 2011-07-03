@@ -7,10 +7,10 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 771
-    Height = 504
+    Width = 779
+    Height = 515
     inherited RzPanel2: TRzPanel
-      Width = 761
+      Width = 769
       Height = 98
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -364,8 +364,8 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 402
-      Width = 761
+      Top = 413
+      Width = 769
       Height = 54
       TabOrder = 2
       object Label19: TLabel
@@ -550,8 +550,8 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 137
-      Width = 761
-      Height = 265
+      Width = 769
+      Height = 276
       TabOrder = 3
       Columns = <
         item
@@ -696,16 +696,16 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 103
-      Width = 761
+      Width = 769
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 456
-      Width = 761
+      Top = 467
+      Width = 769
     end
     inherited rzHelp: TRzPanel
-      Top = 480
-      Width = 761
+      Top = 491
+      Width = 769
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

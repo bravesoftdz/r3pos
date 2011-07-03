@@ -327,7 +327,10 @@ begin
   cid := edtSHOP_ID.AsString;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
-  if ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0' then
+  if ((CodeId = '1') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14300001',5))
+     or
+     ((CodeId = '2') and (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('14200001',5))
+  then
      begin
        AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
        AObj.FieldbyName('CHK_USER').AsString := Global.UserID;

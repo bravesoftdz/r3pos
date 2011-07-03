@@ -349,7 +349,7 @@ begin
   AObj.FieldByName('PAY_H').AsFloat := 0;
   AObj.FieldByName('PAY_I').AsFloat := 0;
   AObj.FieldByName('PAY_J').AsFloat := 0;
-  if (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and (AObj.FieldbyName('PLAN_DATE').asString<>'') then
+  if (ShopGlobal.GetParameter('STO_AUTO_CHK')<>'0') and (AObj.FieldbyName('PLAN_DATE').asString<>'') and ShopGlobal.GetChkRight('14100001',7) then
      begin
        AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
        AObj.FieldbyName('CHK_USER').AsString := Global.UserID;

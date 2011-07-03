@@ -1,6 +1,6 @@
 inherited frmChangeOrderList: TfrmChangeOrderList
-  Left = 275
-  Top = 200
+  Left = 282
+  Top = 133
   Width = 832
   Height = 572
   Caption = #35843#25972#21333
@@ -8,19 +8,19 @@ inherited frmChangeOrderList: TfrmChangeOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 824
-    Height = 509
+    Height = 508
     inherited RzPanel2: TRzPanel
       Width = 814
-      Height = 499
+      Height = 498
       inherited RzPage: TRzPageControl
         Width = 808
-        Height = 493
+        Height = 492
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25972#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 806
-            Height = 466
+            Height = 465
             inherited RzPanel1: TRzPanel
               Width = 796
               Height = 92
@@ -234,7 +234,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 97
               Width = 796
-              Height = 364
+              Height = 363
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]

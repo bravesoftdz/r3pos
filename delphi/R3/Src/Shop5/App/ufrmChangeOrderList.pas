@@ -391,7 +391,7 @@ begin
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('CHANGE_ID').AsString,cdsList.FieldbyName('COMP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('CHANGE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   if CurOrder<>nil then
      TfrmChangeOrder(CurOrder).CodeId := CodeId;

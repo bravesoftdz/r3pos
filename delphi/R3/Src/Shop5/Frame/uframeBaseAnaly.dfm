@@ -9,25 +9,25 @@ inherited frameBaseAnaly: TframeBaseAnaly
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 790
-    Height = 505
+    Height = 504
     inherited RzPanel2: TRzPanel
       Width = 780
-      Height = 495
+      Height = 494
       inherited RzPage: TRzPageControl
         Width = 774
-        Height = 489
+        Height = 488
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20998#26512#22270#31034
           inherited RzPanel3: TRzPanel
             Width = 772
-            Height = 462
+            Height = 461
             BorderColor = clWhite
             object Panel4: TPanel
               Left = 5
               Top = 5
               Width = 762
-              Height = 452
+              Height = 451
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -47,7 +47,7 @@ inherited frameBaseAnaly: TframeBaseAnaly
                 Left = 0
                 Top = 81
                 Width = 762
-                Height = 371
+                Height = 370
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite

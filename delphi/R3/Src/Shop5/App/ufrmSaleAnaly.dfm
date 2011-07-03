@@ -15,8 +15,6 @@ inherited frmSaleAnaly: TfrmSaleAnaly
       inherited RzPage: TRzPageControl
         Width = 960
         Height = 587
-        ActivePage = TabSheet2
-        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32463#33829#27010#20917
@@ -1294,6 +1292,12 @@ inherited frmSaleAnaly: TfrmSaleAnaly
   inherited actList: TActionList
     Left = 48
     Top = 464
+    inherited actPrint: TAction
+      OnExecute = actPrintExecute
+    end
+    inherited actPreview: TAction
+      OnExecute = actPreviewExecute
+    end
     inherited actFind: TAction
       OnExecute = actFindExecute
     end

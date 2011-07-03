@@ -115,6 +115,8 @@ type
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP3_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure CB_ColorClick(Sender: TObject);
+    procedure actPrintExecute(Sender: TObject);
+    procedure actPreviewExecute(Sender: TObject);
   private
     SortName: string;  //商品分类名称
     sid1,sid2,sid3: string;        //商品分类ID
@@ -990,6 +992,21 @@ procedure TfrmSaleAnaly.CB_ColorClick(Sender: TObject);
 begin
   inherited;
   BarSeries1.ColorEachPoint:=CB_Color.Checked;
+end;
+
+procedure TfrmSaleAnaly.actPrintExecute(Sender: TObject);
+begin
+  inherited;
+  //打印
+  
+end;
+
+procedure TfrmSaleAnaly.actPreviewExecute(Sender: TObject);
+begin
+  inherited;
+  //打印预览
+
+  
 end;
 
 end.

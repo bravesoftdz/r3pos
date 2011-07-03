@@ -31,6 +31,7 @@ uses uGlobal,uCaFactory,Des,uShopGlobal,uDsUtil,ObjCommon;
 
 procedure TfrmInitialRights.DoSql(Sql: String);
 begin
+  sql := stringreplace(sql,':ROWS_ID',TSequence.NewId,[rfReplaceAll]);
   sql := stringreplace(sql,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
   sql := stringreplace(sql,':ROLE_ID',inttostr(Global.TENANT_ID)+'00'+IntToStr(R),[rfReplaceAll]);
   Global.LocalFactory.ExecSQL(sql);

@@ -3385,23 +3385,21 @@ begin
             Raise Exception.Create('商品名称不能为空...');
         end;
       // *******************所属单位********************
-      {if DFieldName = 'UNIT_ID' then
+      if DFieldName = 'UNIT_ID' then
         begin
           if Source.FieldByName(SFieldName).AsString <> '' then
             begin
               rs := Global.GetZQueryFromName('PUB_MEAUNITS');
               if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
-                begin
-                  Dest.FieldByName('UNIT_ID').AsString := rs.FieldByName('UNIT_ID').AsString;
-                  Result := True;
-                  Exit;
-                end
+                Dest.FieldByName('UNIT_ID').AsString := rs.FieldByName('UNIT_ID').AsString
               else
                 Dest.FieldByName('UNIT_ID').AsString := '';
+              Result := True;
+              Exit;
             end;
         end;
       // *******************所属尺码********************
-      if DFieldName = 'PROPERTY_01' then
+      {if DFieldName = 'PROPERTY_01' then
         begin
           if Source.FieldByName(SFieldName).AsString <> '' then
             begin
@@ -3455,7 +3453,7 @@ begin
 end;
 
 function TframeOrderForm.SaveExcel(CdsExcel: TDataSet): Boolean;
-var rs,us,tmp:TZQuery;
+var rs,tmp:TZQuery;
   Obj:TRecord_;
   UnitType,I:Integer;
   AMount:Real;
@@ -3467,7 +3465,6 @@ var rs,us,tmp:TZQuery;
   GID,P1,P2:string;
 begin
   rs := Global.GetZQueryFromName('PUB_GOODSINFO');
-  us := Global.GetZQueryFromName('PUB_MEAUNITS');
   edtTable.DisableControls;
   tmp := TZQuery.Create(nil);
   Obj := TRecord_.Create;
@@ -3490,6 +3487,8 @@ begin
             GID := tmp.FieldByName('GODS_ID').AsString;
             P1 := tmp.FieldByName('PROPERTY_01').AsString;
             P2 := tmp.FieldByName('PROPERTY_02').AsString;
+            if CdsExcel.FieldByName('UNIT_ID').AsString = '' then
+              CdsExcel.FieldByName('UNIT_ID').AsString := tmp.FieldByName('UNIT_ID').AsString;
           end
         else
           begin
@@ -3505,6 +3504,8 @@ begin
                 GID := tmp.FieldByName('GODS_ID').AsString;
                 P1 := tmp.FieldByName('SORT_ID7').AsString;
                 P2 := tmp.FieldByName('SORT_ID8').AsString;
+                if CdsExcel.FieldByName('UNIT_ID').AsString = '' then
+                  CdsExcel.FieldByName('UNIT_ID').AsString := tmp.FieldByName('UNIT_ID').AsString;
                 Obj.ReadFromDataSet(tmp);
               end
             else
@@ -3516,7 +3517,7 @@ begin
           end
         else
           Obj.ReadFromDataSet(rs);
-        Obj.FieldbyName('IS_PRESENT').AsString := '0';
+        Obj.FieldbyName('IS_PRESENT').AsString := CdsExcel.FieldByName('IS_PRESENT').AsString;
         Obj.FieldbyName('LOCUS_NO').AsString := '';
         Obj.FieldbyName('BATCH_NO').AsString := '#';
         AddRecord(Obj,Obj.FieldByName('UNIT_ID').AsString);
@@ -3538,8 +3539,7 @@ end;
 procedure TframeOrderForm.Excel1Click(Sender: TObject);
 begin
   inherited;
-  TfrmExcelFactory.ExcelFactory(rs,FieldsString,@TframeOrderForm.Check,@TframeOrderForm.SaveExcel,@TframeOrderForm.FindFieldColumn,FormatString,1);
-
+  //TfrmExcelFactory.ExcelFactory(rs,FieldsString,@.Check,@self.SaveExcel,@TframeOrderForm.FindFieldColumn,FormatString,1);
 end;
 
 end.

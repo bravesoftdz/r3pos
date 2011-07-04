@@ -93,6 +93,7 @@ type
     procedure actIsPressentExecute(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
     procedure edtGUIDE_USERAddClick(Sender: TObject);
+    procedure Excel1Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -138,7 +139,10 @@ type
     procedure PriceToGods(id:string);override;
     //赠送
     procedure PresentToGods;
-
+    
+    function Check(Source,Dest:TDataSet;SFieldName:string;DFieldName:string):Boolean;override;
+    function SaveExcel(CdsExcel:TDataSet):Boolean;override;
+    function FindFieldColumn(CdsCol:TDataSet):Boolean;override;
     //检测数据合法性
     procedure CheckInvaid;override;
     procedure ReadFrom(DataSet:TDataSet);override;
@@ -156,7 +160,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo;
+   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo,ufrmExcelFactory;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -1402,6 +1406,75 @@ begin
        end;
   finally
     r.Free;
+  end;
+end;
+
+function TfrmSalIndentOrder.Check(Source, Dest: TDataSet; SFieldName,
+  DFieldName: string): Boolean;
+var rs:TZQuery;
+begin
+  inherited  Check(Source, Dest,SFieldName,DFieldName);
+  if (SFieldName<>'') and (DFieldName<>'') then
+    begin
+      // *******************赠品********************
+      if DFieldName = 'IS_PRESENT' then
+        begin
+          if Source.FieldByName(SFieldName).AsString <> '' then
+            begin
+              rs := Global.GetZQueryFromName('PUB_PARAMS');
+              if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                Dest.FieldByName('IS_PRESENT').AsString := rs.FieldByName('CODE_ID').AsString
+              else
+                Dest.FieldByName('IS_PRESENT').AsString := '0';
+            end;
+          Result := True;
+          Exit;
+        end;
+    end;
+
+end;
+
+function TfrmSalIndentOrder.FindFieldColumn(CdsCol: TDataSet): Boolean;
+begin
+  inherited FindFieldColumn(CdsCol);
+end;
+
+function TfrmSalIndentOrder.SaveExcel(CdsExcel: TDataSet): Boolean;
+begin
+  inherited SaveExcel(CdsExcel);
+end;
+
+procedure TfrmSalIndentOrder.Excel1Click(Sender: TObject);
+var temp:TZQuery;
+begin
+  temp := TZQuery.Create(nil);
+  try
+    with temp.FieldDefs do
+      begin
+        Add('SEQNO',ftInteger,0,False);
+        Add('GODS_CODE',ftString,20,False);
+        Add('GODS_NAME',ftString,50,False);
+        Add('BARCODE',ftString,20,False);
+        Add('UNIT_ID',ftString,36,False);
+        Add('AMOUNT',ftFloat,0,False);
+        Add('FNSH_AMOUNT',ftFloat,0,False);
+        Add('APRICE',ftFloat,0,False);
+        Add('AMONEY',ftFloat,0,False);
+        Add('AGIO_RATE',ftFloat,0,False);
+        Add('IS_PRESENT',ftInteger,0,False);
+        Add('REMARK',ftString,100,False);
+      end;
+    temp.CreateDataSet;
+    rs := temp;
+    FieldsString :=
+    'SEQNO=序号,GODS_NAME=商品名称,GODS_CODE=货号,BARCODE=条码,UNIT_ID=单位,AMOUNT=订货量,FNSH_AMOUNT=实发量,APRICE=单价,AMONEY=金额,'+
+    'AGIO_RATE=折扣率,IS_PRESENT=赠品,REMARK=备注';
+    FormatString :=
+    '0=SEQNO,1=GODS_NAME,2=GODS_CODE,3=BARCODE,4=UNIT_ID,5=AMOUNT,6=FNSH_AMOUNT,7=APRICE,8=AMONEY,9=AGIO_RATE,10=IS_PRESENT,11=REMARK';
+
+    TfrmExcelFactory.ExcelFactory(rs,FieldsString,@TfrmSalIndentOrder.Check,@TfrmSalIndentOrder.SaveExcel,@TfrmSalIndentOrder.FindFieldColumn,FormatString,1);
+  finally
+    temp.Free;
   end;
 end;
 

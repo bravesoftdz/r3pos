@@ -511,6 +511,8 @@ begin
       CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
       CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
       CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+      CdsTable.FieldByName('XSM_CODE').AsString := id;
+      CdsTable.FieldByName('XSM_PSWD').AsString := copy(id,length(id)-5,6);
       CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
       CdsTable.Post;
       Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);

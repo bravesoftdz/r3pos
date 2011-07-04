@@ -240,7 +240,8 @@ uses
   LCContrllerLib in 'App\LCContrllerLib.pas',
   ufrmRimIEBrowser in 'App\ufrmRimIEBrowser.pas' {frmRimIEBrowser},
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
-  uAdvFactory in 'App\uAdvFactory.pas';
+  uAdvFactory in 'App\uAdvFactory.pas',
+  CDO_TLB in '..\..\Pub\CDO_TLB.pas';
 
 {$R *.res}
 var

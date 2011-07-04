@@ -102,21 +102,25 @@ end;
 function TfrmXsmIEBrowser.DoLogin(Hinted:boolean=false):boolean;
 var
   _Start:Int64;
+  SaveLog:Boolean;
 begin
   if not ready then Raise Exception.Create('系统装载新商盟运行环境无效.');
-  frmLogo.Show;
+  SaveLog := frmLogo.Visible;
+  if not SaveLog then frmLogo.Show;
   frmLogo.ShowTitle := '正在登录新商盟...';
   try
     SessionFail := false;
     Send2('login',xsm_username,xsm_password);
     if not WaitRun then Logined := false;
     result := Logined;
-    if Hinted then
+    if Hinted and not result then
        begin
+         if LoginError='' then LoginError := '未错误类型...';
+         LoginError := '登录新商盟失败了，错误:'+LoginError;
          MessageBox(Handle,pchar(LoginError),'友情提示...',MB_OK+MB_ICONINFORMATION);
        end;
   finally
-    frmLogo.Close;
+    if not SaveLog then frmLogo.Close;
   end;
 end;
 
@@ -149,7 +153,7 @@ begin
        if szPara='getInforFail' then
           LoginError := '无效信息,代码:'+szPara
        else
-          LoginError := '登录新商盟返回未知错误...';
+          LoginError := '返回未知错误...';
      end;
   if szMethodName='sessionFail' then
      begin
@@ -159,7 +163,9 @@ begin
      end;
   if szMethodName='windowClose' then
      begin
+       PageHandle := 0;
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+
      end;
   if szMethodName='finish' then
      begin
@@ -182,6 +188,19 @@ begin
   if szMethodName='loginStatus' then
      begin
        Logined := (szPara1='success');
+       if szPara1='getUrlconfigFail' then
+          LoginError := '无效Url,代码:'+szPara1
+       else
+       if szPara1='serviceFail' then
+          LoginError := '无效服务,代码:'+szPara1
+       else
+       if szPara1='approveFail' then
+          LoginError := '登录新商盟的用户或密码无效，请重新设置....'
+       else
+       if szPara1='getInforFail' then
+          LoginError := '无效信息,代码:'+szPara1
+       else
+          LoginError := '返回未知错误...';
        xsm_signature := szPara2;
      end;
   if szMethodName='error' then
@@ -431,7 +450,9 @@ end;
 
 function TfrmXsmIEBrowser.EncodeXml(objectId: string): string;
 begin
-  result := '<onClick><action object_id="'+objectId+'" method="POST" isPopUp="true" name="'+Caption+'"/></onClick>';
+  result := objectId;
+  result := stringreplace(result,'&nbsp;',' ',[rfReplaceAll]);//'<onClick><action object_id="'+objectId+'" method="POST" isPopUp="true" name="'+Caption+'"/></onClick>';
+  result := stringreplace(result,'&quot;','"',[rfReplaceAll]);//'<onClick><action object_id="'+objectId+'" method="POST" isPopUp="true" name="'+Caption+'"/></onClick>';
 end;
 
 end.

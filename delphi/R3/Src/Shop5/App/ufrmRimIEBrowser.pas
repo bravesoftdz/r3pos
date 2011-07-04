@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmIEWebForm, ImgList, ActnList, Menus, RzTabs, OleCtrls,
-  SHDocVw, ExtCtrls, RzPanel,ZBase;
+  SHDocVw, ExtCtrls, RzPanel,ZBase,ZLogFile,HTTPApp;
 
 type
   TfrmRimIEBrowser = class(TfrmIEWebForm)
@@ -14,6 +14,11 @@ type
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure IEBrowserDownloadComplete(Sender: TObject);
+    procedure IEBrowserBeforeNavigate2(Sender: TObject;
+      const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
+      Headers: OleVariant; var Cancel: WordBool);
+    procedure IEBrowserTitleChange(Sender: TObject;
+      const Text: WideString);
   private
     FCurUrl: string;
     SaveHandle:integer;
@@ -26,17 +31,20 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     procedure ReadParam;
-    procedure DoLogin;
+    procedure DoLogin(Hinted:boolean=false);
     function EncodeChk:string;
+    function CheckError:boolean;
 
-    function OpenUrl(url:string;hHandle:integer):boolean;
+    procedure OpenXsm(objectId:string);
+
+    function OpenUrl(url:string;hHandle:integer;xsmed:boolean=false):boolean;
     property CurUrl:string read FCurUrl write SetCurUrl;
     property Logined:boolean read FLogined write SetLogined;
   end;
 var
   frmRimIEBrowser:TfrmRimIEBrowser;
 implementation
-uses IniFiles,ufrmLogo,uShopGlobal,uCaFactory,EncDec,uAdvFactory, uGlobal;
+uses IniFiles,ufrmLogo,ufrmXsmLogin,encddecd,ufrmXsmIEBrowser,uShopGlobal,uCaFactory,EncDec,uAdvFactory, uGlobal;
 {$R *.dfm}
 
 { TfrmRimIEBrowser }
@@ -46,7 +54,7 @@ begin
   result := 'comId='+Rim_ComId+'&custId='+Rim_CustId;
 end;
 
-function TfrmRimIEBrowser.OpenUrl(url: string;hHandle:integer):boolean;
+function TfrmRimIEBrowser.OpenUrl(url: string;hHandle:integer;xsmed:boolean=false):boolean;
 var
   p:string;
   e:string;
@@ -56,6 +64,28 @@ begin
     PageHandle := hHandle;
     WindowState := wsMaximized;
     BringToFront;
+    if not CaFactory.Audited then Raise Exception.Create('脱机状态不能进入此模块...');
+    if xsmed and not logined then frmXsmIEBrowser.Logined := false;
+    if xsmed and not frmXsmIEBrowser.Logined then
+    with frmXsmIEBrowser do
+     begin
+       if SessionFail then DoLogin;
+       if not Logined and TfrmXsmLogin.XsmRegister then
+          begin
+            if not DoLogin(True) then
+               begin
+                 OpenUrl(url,hHandle,xsmed);
+                 Exit;
+               end;
+          end
+       else
+          Exit;
+     end;
+    if xsmed and not Logined then
+       begin
+         DoLogin(true);
+         if not Logined then Exit;
+       end;
     frmLogo.Show;
     frmLogo.ShowTitle := '正在打开网页...';
     ReadParam;
@@ -112,7 +142,7 @@ end;
 
 destructor TfrmRimIEBrowser.Destroy;
 begin
-
+  runed := false;
   inherited;
   frmRimIEBrowser := nil;
 end;
@@ -141,35 +171,97 @@ begin
 //  AdvFactory.GetAllFile(IEBrowser,CurUrl); 
 end;
 
-procedure TfrmRimIEBrowser.DoLogin;
+procedure TfrmRimIEBrowser.DoLogin(Hinted:boolean=false);
 var
   Params:TftParamList;
   Msg:string;
 begin
   Logined := false;
-  if not CaFactory.Audited or (Factor.ConnMode=1) then
+  if (not CaFactory.Audited or (Factor.ConnMode=1)) and Global.debug then
      begin
-       if Global.debug then Logined := true;
-       Exit;
+       //调试模用指定的用户
+     end
+  else
+     begin
+       Params := TftParamList.Create(nil);
+       try
+         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+         Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+         Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
+         Params.Decode(Params,Msg);
+         Rim_ComId := Params.ParambyName('rimcid').AsString;
+         Rim_CustId := Params.ParambyName('rimuid').AsString;
+         if Rim_CustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
+       finally
+         Params.Free;
+       end;
+    end;
+  if frmXsmIEBrowser.Logined then
+     begin
+       Runed := true;
+       IEBrowser.Navigate(rim_url+'xsmReg/reg.action?CTOKEN='+HTTPEncode(xsm_signature)+'&CUST_ID='+Rim_CustId);
+       while Runed do Application.ProcessMessages;
+       Logined := CheckError;
+     end
+  else
+     begin
+       if Hinted then MessageBox(Handle,pchar('登录Rim失败了,错误:'+Caption),'友情提示..',MB_OK+MB_ICONERROR);
      end;
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-    Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
-    Params.Decode(Params,Msg);
-    Rim_ComId := Params.ParambyName('rimcid').AsString;
-    Rim_CustId := Params.ParambyName('rimuid').AsString;
-    if Rim_CustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
-    Logined := true;
-  finally
-    Params.Free;
-  end;
 end;
 
 procedure TfrmRimIEBrowser.SetLogined(const Value: boolean);
 begin
   FLogined := Value;
+end;
+
+procedure TfrmRimIEBrowser.OpenXsm(objectId: string);
+var
+  xml,sid:string;
+  vList:TStringList;
+begin
+  if not Logined then Exit;
+  vList := TStringList.Create;
+  try
+    vList.CommaText := objectId;
+    if vList.Count<>2 then Raise Exception.Create('无效活动连接...'); 
+    sid := DecodeString(vList[0]);
+    xml := DecodeString(vList[1]);
+    if not frmXsmIEBrowser.Open(sid,xml,PageHandle) then MessageBox(Handle,'无法打开活动详情','友情提示...',MB_OK+MB_ICONINFORMATION);
+  finally
+    vList.Free;
+  end;
+end;
+
+procedure TfrmRimIEBrowser.IEBrowserBeforeNavigate2(Sender: TObject;
+  const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
+  Headers: OleVariant; var Cancel: WordBool);
+var w:integer;
+begin
+ // inherited;
+ w := pos('xsm=',url);
+ if w>0 then
+    begin
+      Cancel := true;
+      OpenXsm(copy(url,w+4,length(url)));
+    end;
+end;
+
+function TfrmRimIEBrowser.CheckError: boolean;
+begin
+  result := (copy(Caption,1,6)='<0000>');
+  LogFile.AddLogFile(0,Caption);
+end;
+
+procedure TfrmRimIEBrowser.IEBrowserTitleChange(Sender: TObject;
+  const Text: WideString);
+var s:string;
+begin
+  inherited;
+  s := Text;
+  if length(s)>=6 then
+     begin
+       if (s[1]='<') and (s[6]='>') then Logined := CheckError;
+     end;
 end;
 
 end.

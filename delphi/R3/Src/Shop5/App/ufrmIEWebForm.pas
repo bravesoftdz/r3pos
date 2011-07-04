@@ -201,7 +201,7 @@ end;
 
 procedure TfrmIEWebForm.IEBrowserNavigateComplete2(Sender: TObject;
   const pDisp: IDispatch; var URL: OleVariant);
-function FindAction(id:string):TAction;
+{function FindAction(id:string):TAction;
 var
   i:integer;
 begin
@@ -216,17 +216,17 @@ begin
     end;
 end;
 var
-  act:TAction;
+  act:TAction;   }
 begin
   Runed := false;
   inherited;
   if pos('relogin',lowercase(URL))>0 then close;
-  if pos('#=',url)>0 then
-  begin
-    act := FindAction(copy(url,pos('#=',url)+2,255));
-    if act=nil then Raise Exception.Create('没找到对应的模块,id='+url);
-    act.OnExecute(act);
-  end;
+//  if pos('#=',url)>0 then
+//  begin
+//    act := FindAction(copy(url,pos('#=',url)+2,255));
+//    if act=nil then Raise Exception.Create('没找到对应的模块,id='+url);
+//    act.OnExecute(act);
+//  end;
 //  SetEvent(FhEvent);
 
 end;

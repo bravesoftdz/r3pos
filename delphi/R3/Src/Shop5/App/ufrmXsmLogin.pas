@@ -121,6 +121,8 @@ begin
        Raise Exception.Create('«Î ‰»Î√‹¬Î°£');
     end;
   WriteTo;
+  xsm_username := edtUsername.Text;
+  xsm_password := edtPassword.Text;
   ModalResult := MROK;
 end;
 

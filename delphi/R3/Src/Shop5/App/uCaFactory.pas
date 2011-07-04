@@ -3029,7 +3029,7 @@ try
       rs.FieldDefs.Add('LEVEL_ID',ftstring,21,true);
       rs.FieldDefs.Add('MODU_TYPE',ftInteger,0,true);
       rs.FieldDefs.Add('ACTION_NAME',ftstring,50,true);
-      rs.FieldDefs.Add('ACTION_URL',ftstring,50,true);
+      rs.FieldDefs.Add('ACTION_URL',ftstring,255,true);
       rs.FieldDefs.Add('COMM',ftstring,2,true);
       rs.FieldDefs.Add('TIME_STAMP',ftLargeInt,0,true);
       rs.CreateDataSet;

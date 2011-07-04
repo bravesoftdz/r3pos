@@ -5,6 +5,7 @@ inherited frmRimIEBrowser: TfrmRimIEBrowser
   inherited bgPanel: TRzPanel
     inherited IEBrowser: TWebBrowser
       OnDownloadComplete = IEBrowserDownloadComplete
+      OnBeforeNavigate2 = IEBrowserBeforeNavigate2
       ControlData = {
         4C000000B53700008E2300000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800

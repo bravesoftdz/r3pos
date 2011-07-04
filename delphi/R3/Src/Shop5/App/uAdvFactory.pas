@@ -3,7 +3,7 @@ unit uAdvFactory;
 interface
 uses
   Windows, Messages, Forms, SysUtils, Classes,InvokeRegistry, SOAPHTTPClient, IdHttp, Types, XSBuiltIns,Des,WinInet, xmldom, XMLIntf,
-  msxmldom, XMLDoc, MSHTML, ActiveX,msxml,ComObj,ZDataSet,DB,ZBase,Variants,ZLogFile,SHDocVw;
+  msxmldom, XMLDoc, MSHTML, ActiveX,msxml,CDO_TLB,ADODB_TLB,ComObj,ZDataSet,DB,ZBase,Variants,ZLogFile,SHDocVw;
 type
   PAdvInfo=^TAdvInfo;
   TAdvInfo=record
@@ -25,12 +25,14 @@ type
     destructor Destroy;override;
 
     procedure ReadParam;
-    
+
     function GetUrlStream(url:string;Stream:TStream):boolean;
     function GetUrlFile(url:string;FileName:string):boolean;
 
-    function GetAllFile(IEBrowser:TWebBrowser;id:string):integer;
-    function LoadAllFile(IEBrowser:TWebBrowser;id:string):integer;
+    function WBSaveAsMht(mUrl:string;id:string):boolean;
+
+    function GetAllFile(IEBrowser:TWebBrowser):boolean;
+    function LoadAllFile(IEBrowser:TWebBrowser):boolean;
 
     procedure LoadAdv;
     function AdvRequest(Position:integer;var AdvInfo:TAdvInfo):boolean;
@@ -53,6 +55,8 @@ begin
   try
     list.Delimiter := '/';
     list.DelimitedText := url;
+    if list.Count = 0 then
+    result := url else
     result := list[list.Count-1];
   finally
     list.free;
@@ -217,7 +221,7 @@ begin
     end;
     adv.Add('</body>');
     adv.Add('</html>');
-    adv.SaveToFile(ExtractFilePath(ParamStr(0))+'adv\adv1.html')
+    adv.SaveToFile(ExtractFilePath(ParamStr(0))+'adv\adv'+inttostr(AdvInfo.Position)+'.html')
   finally
     adv.Free;
   end;
@@ -240,66 +244,79 @@ begin
   end;
 end;
 
-function TAdvFactory.GetAllFile(IEBrowser: TWebBrowser;
-  id: string): integer;
-function GetUrl(url:string):string;
+function TAdvFactory.GetAllFile(IEBrowser: TWebBrowser): boolean;
+function GetDocFile(Doc: IHTMLDocument2): boolean;
+function GetFrame(nFrame: Integer): IWebBrowser2;
 var
-  s:TStringList;
+  pContainer: IOLEContainer;
+  enumerator: ActiveX.IEnumUnknown;
+  nFetched: PLongInt;
+  unkFrame: IUnknown;
+  hr: HRESULT;
 begin
-  s := TStringList.Create;
-  try
-    s.Delimiter := '/';
-    s.DelimitedText := url;
-    s.Delete(s.Count-1);
-    result := s.DelimitedText; 
-  finally
-    s.Free;
+  Result := nil;
+  nFetched := nil;
+  // Cast the page as an OLE container
+  pContainer := Doc as IOleContainer;
+  // Get an enumerator for the frames on the page
+  hr := pContainer.EnumObjects(OLECONTF_EMBEDDINGS or OLECONTF_OTHERS, enumerator);
+  if hr <> S_OK then
+  begin
+    pContainer._Release;
+    Exit;
   end;
-end;  
+  // Now skip to the frame we're interested in
+  enumerator.Skip(nFrame);
+  // and get the frame as IUnknown
+  enumerator.Next(1,unkFrame, nFetched);
+// Now QI the frame for a WebBrowser Interface - I'm not entirely
+// sure this is necessary, but COM never ceases to surprise me
+  unkframe.QueryInterface(IID_IWebBrowser2, Result);
+end;
+
 var url:string;
-    Doc:IHTMLDocument2;
     Ec:IHTMLElementCollection;
+    Fc:IHTMLFramesCollection2;
     Embed:IHTMLEmbedElement;
-    img:IHTMLImgElement;
+    iw2:IWebBrowser2;
     i:integer;
     PersistFile: IPersistFile;
 begin
-  if not CaFactory.Audited then Exit;
-  Doc := IEBrowser.Document as IHTMLDocument2;
-  if Doc=nil then Raise Exception.Create('IE没有找开');
   if pos('错误',Doc.title)>0 then Exit;
-  result := 0;
-  try
+  if pos('无法显示',Doc.title)>0 then Exit;
   Ec := Doc.embeds;
   if Ec<>nil then
   for i:=0 to Ec.length-1 do
      begin
        Embed := Ec.item(i,EmptyParam) as IHTMLEmbedElement;
        url := Embed.src;
-       if pos('http://',url)=0 then Exit;
-       ForceDirectories(ExtractFilePath(ParamStr(0))+'adv\images\'+id);
-       if not GetUrlFile(url,ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url)) then
-          continue;
-       Embed.src := ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url);
-       inc(result);
+       if pos('http://',url)=0 then continue;
+       ForceDirectories(ExtractFilePath(ParamStr(0))+'adv\images');
+       if FileExists(ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(url)) then
+          begin
+            if not GetUrlFile(url,ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(url)) then
+               continue;
+          end;
      end;
-  Ec := Doc.images;
-  if Ec<>nil then
-  for i:=0 to Ec.length-1 do
+  Fc := Doc.frames;
+  for i:=0 to Fc.length -1 do
      begin
-       img := Ec.item(i,EmptyParam) as IHTMLImgElement;
-       url := img.src;
-       if pos('http://',url)=0 then Exit;
-       ForceDirectories(ExtractFilePath(ParamStr(0))+'adv\images\'+id);
-       if not GetUrlFile(url,ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url)) then
-          continue;
-       img.src := ExtractFilePath(ParamStr(0))+'adv\images\'+id+'\'+GetUrlFileName(url);
-       inc(result);
+       iw2 := GetFrame(i);
+       if iw2=nil then continue;
+       if iw2.Document=nil then continue;
+       GetDocFile(iw2.document as IHTMLDocument2);
      end;
-  PersistFile := Doc as IPersistFile;
-  PersistFile.Save(StringToOleStr(ExtractFilePath(ParamStr(0))+'adv\'+id+'.html'),True);
+end;
+var Doc:IHTMLDocument2;
+begin
+  result := false;
+  if not CaFactory.Audited then Exit;
+  Doc := IEBrowser.Document as IHTMLDocument2;
+  if Doc=nil then Raise Exception.Create('IE没有找开');
+  try
+    result := GetDocFile(Doc);
   except
-    result := 0;
+    result := false;
   end;
 end;
 
@@ -344,28 +361,78 @@ end;
 procedure TAdvFactory.LoadAdv;
 begin
   if not CaFactory.Audited then Exit;
-  ReadParam;
-  GetAdvInfo(1);  
+  try
+    ReadParam;
+    GetAdvInfo(1);
+  except
+    
+  end;
 end;
 
-function TAdvFactory.LoadAllFile(IEBrowser: TWebBrowser;
-  id: string): integer;
+function TAdvFactory.LoadAllFile(IEBrowser: TWebBrowser): boolean;
+function UpdateFile(Doc:IHTMLDocument2):boolean;
+function GetFrame(nFrame: Integer): IWebBrowser2;
+var
+  pContainer: IOLEContainer;
+  enumerator: ActiveX.IEnumUnknown;
+  nFetched: PLongInt;
+  unkFrame: IUnknown;
+  hr: HRESULT;
+begin
+  Result := nil;
+  nFetched := nil;
+  // Cast the page as an OLE container
+  pContainer := Doc as IOleContainer;
+  // Get an enumerator for the frames on the page
+  hr := pContainer.EnumObjects(OLECONTF_EMBEDDINGS or OLECONTF_OTHERS, enumerator);
+  if hr <> S_OK then
+  begin
+    pContainer._Release;
+    Exit;
+  end;
+  // Now skip to the frame we're interested in
+  enumerator.Skip(nFrame);
+  // and get the frame as IUnknown
+  enumerator.Next(1,unkFrame, nFetched);
+// Now QI the frame for a WebBrowser Interface - I'm not entirely
+// sure this is necessary, but COM never ceases to surprise me
+  unkframe.QueryInterface(IID_IWebBrowser2, Result);
+end;
+var url:string;
+    Ec:IHTMLElementCollection;
+    Fc:IHTMLFramesCollection2;
+    Embed:IHTMLEmbedElement;
+    iframe:DispHTMLIFrame;
+    iw2:IWebBrowser2;
+    i:integer;
+    Flags,nurl:OleVariant;
+    TargetFrameName: OleVariant;
+    PostData: OleVariant;
+    Headers: OleVariant;    
+begin
+  Ec := Doc.embeds;
+  if Ec<>nil then
+  for i:=0 to Ec.length-1 do
+     begin
+       Embed := Ec.item(i,EmptyParam) as IHTMLEmbedElement;
+       url := Embed.src;
+       if pos('http://',url)=0 then continue;
+       Embed.src := ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(url);
+     end;
+  Fc := Doc.frames;
+  for i:=0 to Fc.length -1 do
+     begin
+       iw2 := GetFrame(i);
+       if iw2=nil then continue;
+       while not (iw2.ReadyState in [READYSTATE_INTERACTIVE,READYSTATE_COMPLETE]) do Application.ProcessMessages;
+       UpdateFile(iw2.document as IHTMLDocument2);
+     end;
+end;
 var
   sm: TMemoryStream;
 begin
-  if not FileExists(ExtractFilePath(ParamStr(0))+'adv\'+id+'.html') then Exit;
-  IEBrowser.Navigate('about:blank');
-  frmDesk.Waited := true;
-  sm := TMemoryStream.Create;
-  try
-    while not Assigned(IEBrowser.Document) do Application.ProcessMessages;
-    sm.LoadFromFile(ExtractFilePath(ParamStr(0))+'adv\'+id+'.html');
-    sm.Position := 0;
-    (IEBrowser.Document as IPersistStreamInit).Load(TStreamAdapter.Create(sm));
-  finally
-    sm.Free;
-    frmDesk.Waited := false;
-  end;
+  while not (IEBrowser.ReadyState in [READYSTATE_INTERACTIVE,READYSTATE_COMPLETE]) do Application.ProcessMessages;
+  UpdateFile(IEBrowser.Document as IHTMLDocument2);
 end;
 
 procedure TAdvFactory.ReadParam;
@@ -396,8 +463,33 @@ begin
   Rim_CustId := 'GX00000004392';
 end;
 
+function TAdvFactory.WBSaveAsMht(mUrl:string;
+  id: string): boolean;
+var
+  vMessage: IMessage;
+  vConfiguration: IConfiguration;
+  vStream:_Stream;
+  mFileName:string;
+begin
+  vMessage := CreateComObject(CLASS_Message) as IMessage;
+  vConfiguration := CreateComObject(CLASS_Configuration) as IConfiguration;
+  try
+    vMessage.Configuration := vConfiguration;
+    vMessage.CreateMHTMLBody(mURL, cdoSuppressNone,'','');
+    vStream := vMessage.GetStream;
+    mFileName := ExtractFilePath(ParamStr(0))+'adv\'+id+'.mht';
+    vStream.SaveToFile(mFileName, adSaveCreateOverWrite);
+  finally
+    vMessage := nil;
+    vConfiguration := nil;
+    vStream := nil;
+  end;
+end;
+
 initialization
   AdvFactory := TAdvFactory.Create;
+  OleInitialize(nil);
 finalization
   AdvFactory.Free;
+  OleUninitialize;
 end.

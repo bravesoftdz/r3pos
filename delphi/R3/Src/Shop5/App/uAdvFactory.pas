@@ -347,6 +347,8 @@ begin
   try
     Http := TIdHttp.Create(nil);
     try
+      Http.HandleRedirects := True;
+      Http.ReadTimeout := 20000;
       Stream.Position := 0;
       Http.Get(url,Stream);
       result := true;
@@ -408,7 +410,8 @@ var url:string;
     Flags,nurl:OleVariant;
     TargetFrameName: OleVariant;
     PostData: OleVariant;
-    Headers: OleVariant;    
+    Headers: OleVariant;
+    _Start:Int64;  
 begin
   Ec := Doc.embeds;
   if Ec<>nil then
@@ -424,15 +427,26 @@ begin
      begin
        iw2 := GetFrame(i);
        if iw2=nil then continue;
-       while not (iw2.ReadyState in [READYSTATE_INTERACTIVE,READYSTATE_COMPLETE]) do Application.ProcessMessages;
+       _Start := GetTickCount;
+       while not (IEBrowser.ReadyState in [READYSTATE_INTERACTIVE,READYSTATE_COMPLETE]) do
+          begin
+            if (GetTickCount-_Start)>20000 then break;
+            Application.ProcessMessages;
+          end;
        UpdateFile(iw2.document as IHTMLDocument2);
      end;
 end;
 var
   sm: TMemoryStream;
+  _Start:int64;
 begin
-  while not (IEBrowser.ReadyState in [READYSTATE_INTERACTIVE,READYSTATE_COMPLETE]) do Application.ProcessMessages;
-  UpdateFile(IEBrowser.Document as IHTMLDocument2);
+   _Start := GetTickCount;
+   while not (IEBrowser.ReadyState in [READYSTATE_INTERACTIVE,READYSTATE_COMPLETE]) do
+      begin
+        if (GetTickCount-_Start)>20000 then break;
+        Application.ProcessMessages;
+      end;
+   UpdateFile(IEBrowser.Document as IHTMLDocument2);
 end;
 
 procedure TAdvFactory.ReadParam;

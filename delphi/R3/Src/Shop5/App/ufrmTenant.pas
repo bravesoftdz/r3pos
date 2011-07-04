@@ -83,7 +83,7 @@ type
     Added:boolean;
     function Check:boolean;
     procedure SaveParams;
-    class function coAutoRegister(id:string):boolean;
+    class function coAutoRegister(id:string;isnew:boolean=true):boolean;
     class function coRegister(Owner:TForm):boolean;
     class function coNewRegister(Owner:TForm):boolean;
     function Login_F(NetWork:boolean=true):Boolean;
@@ -398,6 +398,7 @@ begin
     Global.LocalFactory.Open(Temp);
     if NetWork then
        begin
+         cxedtLOGIN_NAME.Text := Temp.FieldByName('LOGIN_NAME').AsString;
          try
             login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
          except
@@ -476,13 +477,15 @@ begin
     end;
 end;
 
-class function TfrmTenant.coAutoRegister(id: string): boolean;
+class function TfrmTenant.coAutoRegister(id: string;isnew:boolean=true): boolean;
 var
   Tenant: TCaTenant;
   Login: TCaLogin;
 begin
   result := false;
-  Login := CaFactory.coLogin(id,copy(id,length(id)-5,6));
+  Login := CaFactory.coLogin(id,CaFactory.DesEncode(id,CaFactory.pubpwd),2);
+  result := login.RET='1';
+  if not isnew then Exit;
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
   with TfrmTenant.Create(nil) do

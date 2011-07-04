@@ -317,7 +317,7 @@ begin
        else
        begin
          List.CommaText := xsm_url;
-         xsm_url := List.Values['xsm'];
+         xsm_url := 'http://preview.xinshangmeng.com/xsm2/xsm_r3.html';//List.Values['xsm'];
        end;
     Left := -9000;
     IEBrowser.Navigate(xsm_url);

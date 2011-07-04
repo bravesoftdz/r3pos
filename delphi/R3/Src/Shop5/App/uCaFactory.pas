@@ -129,6 +129,8 @@ type
     constructor Create;
     destructor Destroy;override;
 
+    function DesEncode(inStr:string;Key:string):string;
+
     function CreateRio(_timeOut:integer=-1):THTTPRIO;
     function CheckInitSync: boolean;
 
@@ -169,7 +171,7 @@ type
 
     //企业服务
     function AutoCoLogo:boolean;
-    function coLogin(Account:string;PassWrd:string):TCaLogin;
+    function coLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
     function coRegister(Info:TCaTenant):TCaTenant;
     function coGetList(TENANT_ID:string):TCaTenant;
 
@@ -417,7 +419,7 @@ except
 end;
 end;
 
-function TCaFactory.coLogin(Account, PassWrd: string): TCaLogin;
+function TCaFactory.coLogin(Account, PassWrd: string;flag:integer=1): TCaLogin;
 var
   inxml:string;
   doc:IXMLDomDocument;
@@ -433,7 +435,7 @@ try
   Audited := false;
   doc := CreateRspXML;
   Node := doc.createElement('flag');
-  Node.text := '1';
+  Node.text := inttostr(flag);
   FindNode(doc,'header\pub').appendChild(Node);
   
   Node := doc.createElement('caTenant');
@@ -3082,6 +3084,14 @@ except
     Raise;
   end;
 end;
+end;
+
+function TCaFactory.DesEncode(inStr, Key: string): string;
+var
+  EncStr:string;
+begin
+  EncStr := EncryStr(inStr+'{1#2$3%4(5)6@7!poeeww$3%4(5)djjkkldss}',Key);
+  result := encddecd.EncodeString(EncStr);
 end;
 
 { rsp }

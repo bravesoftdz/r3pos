@@ -304,7 +304,7 @@ begin
   new(n);
   n^.tbname := 'CA_MODULE';
   n^.keyFields := 'PROD_ID;MODU_ID';
-  n^.synFlag := 0;
+  n^.synFlag := 25;
   n^.KeyFlag := 0;
   n^.tbtitle := '¹¦ÄÜÄ£¿é';
   FList.Add(n);

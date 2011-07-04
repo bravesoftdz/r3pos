@@ -124,7 +124,6 @@ alter table SYS_REPORT_TEMPLATE add CELL_WIDTH int null;
 alter table CA_SHOP_INFO add XSM_CODE varchar(50) null;
 alter table CA_SHOP_INFO add XSM_PSWD varchar(50) null;
 
-drop view VIW_USERS;
 alter view [VIW_USERS]
 as
 select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,USER_NAME,USER_SPELL,DUTY_IDS,ROLE_IDS,QQ,MM,MSN,PASS_WRD,DEPT_ID,COMM from CA_USERS

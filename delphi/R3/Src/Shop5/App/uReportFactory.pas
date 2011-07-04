@@ -1550,7 +1550,7 @@ begin
   if fn='CURR_SALE_PRF_RATE' then
      begin
        w1 := GetFuncData('SALE_PRF');
-       w2 := GetFuncData('SALE_CST');
+       w2 := GetFuncData('SALE_MNY');
        if w1<0 then Exit;
        if w2<0 then Exit;
        if VarIsNull(vRows[w1].Value) or VarIsClear(vRows[w1].Value) then Exit;
@@ -1562,7 +1562,7 @@ begin
   if fn='YEAR_SALE_PRF_RATE' then
      begin
        w1 := GetFuncData('PRIOR_YEAR_PRF');
-       w2 := GetFuncData('PRIOR_YEAR_CST');
+       w2 := GetFuncData('PRIOR_YEAR_MNY');
        if w1<0 then Exit;
        if w2<0 then Exit;
        if VarIsNull(vRows[w1].Value) or VarIsClear(vRows[w1].Value) then Exit;
@@ -1574,7 +1574,7 @@ begin
   if fn='PRIOR_SALE_PRF_RATE' then
      begin
        w1 := GetFuncData('PRIOR_MONTH_PRF');
-       w2 := GetFuncData('PRIOR_MONTH_CST');
+       w2 := GetFuncData('PRIOR_MONTH_MNY');
        if w1<0 then Exit;
        if w2<0 then Exit;
        if VarIsNull(vRows[w1].Value) or VarIsClear(vRows[w1].Value) then Exit;

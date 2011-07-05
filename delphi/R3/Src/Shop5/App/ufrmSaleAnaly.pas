@@ -76,7 +76,6 @@ type
     adoReport2: TZQuery;
     dsadoReport2: TDataSource;
     P2_RB_AMT: TcxRadioButton;
-    SB2: TScrollBox;
     RzPanel11: TRzPanel;
     Panel2: TPanel;
     RzPnl3: TRzPanel;
@@ -105,6 +104,14 @@ type
     RB_PRF: TcxRadioButton;
     CB_Color: TCheckBox;
     EdtvType: TcxComboBox;
+    RzPanel12: TRzPanel;
+    SB2: TScrollBox;
+    RzPanel13: TRzPanel;
+    ScrollBox1: TScrollBox;
+    RzPanel14: TRzPanel;
+    RzPanel15: TRzPanel;
+    ScrollBox3: TScrollBox;
+    ScrollBox2: TScrollBox;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzPanel7Resize(Sender: TObject);

@@ -30,6 +30,7 @@ type
     ChartTitle: TPanel;
     Panel4: TPanel;
     CB_Color: TCheckBox;
+    Panel7: TPanel;
     procedure edtOrderNoPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);

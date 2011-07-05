@@ -67,7 +67,7 @@ type
 implementation
 
 uses
-  uFnUtil, uDsUtil, uGlobal, uShopGlobal;  //ufrmCallIntf,
+  uFnUtil, uDsUtil, ZLogFile, uGlobal, uShopGlobal;  //ufrmCallIntf,
 
 {$R *.dfm}
 
@@ -75,15 +75,23 @@ uses
 
 { 订单日期：IndeDate 如：20110527 }
 class function TfrmDownStockOrder.AutoDownStockOrder(const IndeDate: string):Boolean; //自动到货确认
+var
+  MsgStr,ErrMsg: string;
 begin
   Result:=False;
+  MsgStr:='';
+  ErrMsg:='';
   with TfrmDownStockOrder.Create(nil) do
   begin
     try
       FAobj:=TRecord_.Create;
       //1、调用原取Orade列表过程，返回近30天订单
       OpenIndeOrderList;  //查询订单主表数据
-      if cdsTable.IsEmpty then exit; //没有订单List就不退出
+      if cdsTable.IsEmpty then
+      begin
+        LogFile.AddLogFile(0,'自动下载订单<没有订单>');  //自动订单写日志
+        exit;   //没有订单List就不退出
+      end;
       //2、循环订单入库
       cdsTable.First;
       while not cdsTable.Eof do
@@ -96,7 +104,21 @@ begin
               DoCopyIndeOrderData;   //复制订单明细数据
               FAobj.ReadFromDataSet(cdsTable);  //读取返回值
               IndeOrderWriteToStock(FAobj, FReData); //保存入库
+              if cdsTable.FindField('INDE_ID')<>nil then
+              begin
+                if MsgStr='' then MsgStr:=cdsTable.FindField('INDE_ID').AsString
+                else MsgStr:=MsgStr+','+cdsTable.FindField('INDE_ID').AsString;
+              end;
+            end else
+            begin
+              if cdsTable.FindField('INDE_ID')<>nil then
+              begin
+                if ErrMsg='' then ErrMsg:=cdsTable.FindField('INDE_ID').AsString
+                else ErrMsg:=ErrMsg+','+cdsTable.FindField('INDE_ID').AsString;
+              end;
             end;
+            //自动订单写日志:
+            if MsgStr<>'' then LogFile.AddLogFile(0,'自动下载订单<下载成功:'+MsgStr+'; 检测到入库：'+ErrMsg+'>');
           except
             MessageBox(Handle,pchar('自动接收订单失败，请手工执行！'),'友情提示...',MB_OK+MB_ICONWARNING);
           end;

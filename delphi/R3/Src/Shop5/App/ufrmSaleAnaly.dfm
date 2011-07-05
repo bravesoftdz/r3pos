@@ -1,6 +1,6 @@
 inherited frmSaleAnaly: TfrmSaleAnaly
   Left = 197
-  Top = 68
+  Top = 104
   Width = 984
   Height = 667
   Caption = #38144#21806#20998#26512#34920
@@ -15,6 +15,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
       inherited RzPage: TRzPageControl
         Width = 960
         Height = 587
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32463#33829#27010#20917
@@ -919,21 +921,60 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   TabOrder = 9
                 end
               end
-              object SB2: TScrollBox
+              object RzPanel12: TRzPanel
                 Left = 0
                 Top = 74
                 Width = 948
                 Height = 476
-                HorzScrollBar.Style = ssFlat
-                HorzScrollBar.Tracking = True
-                VertScrollBar.Style = ssHotTrack
-                VertScrollBar.Tracking = True
-                BevelInner = bvNone
-                BevelOuter = bvNone
-                BevelKind = bkSoft
+                Align = alClient
+                BorderOuter = fsNone
+                BorderSides = []
                 Color = clWhite
-                ParentColor = False
                 TabOrder = 1
+                object SB2: TScrollBox
+                  Left = 0
+                  Top = 0
+                  Width = 947
+                  Height = 476
+                  HorzScrollBar.Style = ssFlat
+                  HorzScrollBar.Tracking = True
+                  VertScrollBar.Tracking = True
+                  Align = alClient
+                  BevelInner = bvNone
+                  BevelOuter = bvNone
+                  Color = clWhite
+                  Ctl3D = False
+                  ParentColor = False
+                  ParentCtl3D = False
+                  TabOrder = 0
+                end
+                object RzPanel13: TRzPanel
+                  Left = 947
+                  Top = 0
+                  Width = 1
+                  Height = 476
+                  Align = alRight
+                  BorderOuter = fsNone
+                  BorderSides = []
+                  Color = clWhite
+                  TabOrder = 1
+                  object ScrollBox1: TScrollBox
+                    Left = -240
+                    Top = -8
+                    Width = 948
+                    Height = 476
+                    HorzScrollBar.Style = ssFlat
+                    HorzScrollBar.Tracking = True
+                    VertScrollBar.Tracking = True
+                    BevelInner = bvNone
+                    BevelOuter = bvNone
+                    Color = clWhite
+                    Ctl3D = False
+                    ParentColor = False
+                    ParentCtl3D = False
+                    TabOrder = 0
+                  end
+                end
               end
             end
           end
@@ -1242,8 +1283,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 end
               end
               object SB3: TScrollBox
-                Left = 0
-                Top = 74
+                Left = -704
+                Top = 82
                 Width = 948
                 Height = 476
                 HorzScrollBar.Style = ssFlat
@@ -1254,8 +1295,65 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 BevelOuter = bvNone
                 BevelKind = bkSoft
                 Color = clWhite
+                Ctl3D = False
                 ParentColor = False
+                ParentCtl3D = False
                 TabOrder = 1
+              end
+              object RzPanel14: TRzPanel
+                Left = 0
+                Top = 74
+                Width = 948
+                Height = 476
+                Align = alClient
+                BorderOuter = fsNone
+                BorderSides = []
+                Color = clWhite
+                TabOrder = 2
+                object RzPanel15: TRzPanel
+                  Left = 947
+                  Top = 0
+                  Width = 1
+                  Height = 476
+                  Align = alRight
+                  BorderOuter = fsNone
+                  BorderSides = []
+                  Color = clWhite
+                  TabOrder = 0
+                  object ScrollBox3: TScrollBox
+                    Left = -240
+                    Top = -8
+                    Width = 948
+                    Height = 476
+                    HorzScrollBar.Style = ssFlat
+                    HorzScrollBar.Tracking = True
+                    VertScrollBar.Tracking = True
+                    BevelInner = bvNone
+                    BevelOuter = bvNone
+                    Color = clWhite
+                    Ctl3D = False
+                    ParentColor = False
+                    ParentCtl3D = False
+                    TabOrder = 0
+                  end
+                end
+                object ScrollBox2: TScrollBox
+                  Left = 0
+                  Top = 0
+                  Width = 947
+                  Height = 476
+                  HorzScrollBar.Style = ssFlat
+                  HorzScrollBar.Tracking = True
+                  VertScrollBar.Tracking = True
+                  Align = alClient
+                  BevelInner = bvNone
+                  BevelOuter = bvNone
+                  Color = clWhite
+                  Ctl3D = False
+                  ParentColor = False
+                  ParentCtl3D = False
+                  TabOrder = 1
+                end
               end
             end
           end

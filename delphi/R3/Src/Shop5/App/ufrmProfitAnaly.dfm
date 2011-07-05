@@ -6,7 +6,7 @@ object frmProfitAnaly: TfrmProfitAnaly
   TabOrder = 0
   OnResize = FrameResize
   object Splitter1: TSplitter
-    Left = 470
+    Left = 475
     Top = 0
     Width = 6
     Height = 236
@@ -14,7 +14,7 @@ object frmProfitAnaly: TfrmProfitAnaly
     ParentColor = False
   end
   object Pnl_Left: TPanel
-    Left = 0
+    Left = 5
     Top = 0
     Width = 470
     Height = 236
@@ -235,9 +235,9 @@ object frmProfitAnaly: TfrmProfitAnaly
     end
   end
   object Pnl_Right: TPanel
-    Left = 476
+    Left = 481
     Top = 0
-    Width = 552
+    Width = 547
     Height = 236
     Align = alClient
     BevelOuter = bvNone
@@ -245,7 +245,7 @@ object frmProfitAnaly: TfrmProfitAnaly
     object Chart1: TChart
       Left = 0
       Top = 28
-      Width = 552
+      Width = 547
       Height = 208
       BackWall.Brush.Color = clWhite
       BackWall.Brush.Style = bsClear
@@ -286,7 +286,7 @@ object frmProfitAnaly: TfrmProfitAnaly
     object Panel3: TPanel
       Left = 0
       Top = 0
-      Width = 552
+      Width = 547
       Height = 28
       Align = alTop
       BevelOuter = bvNone
@@ -294,7 +294,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       object ChartTitle: TPanel
         Left = 0
         Top = 0
-        Width = 443
+        Width = 438
         Height = 28
         Align = alClient
         BevelOuter = bvNone
@@ -309,7 +309,7 @@ object frmProfitAnaly: TfrmProfitAnaly
         TabOrder = 0
       end
       object Panel4: TPanel
-        Left = 443
+        Left = 438
         Top = 0
         Width = 109
         Height = 28
@@ -336,6 +336,22 @@ object frmProfitAnaly: TfrmProfitAnaly
         end
       end
     end
+  end
+  object Panel7: TPanel
+    Left = 0
+    Top = 0
+    Width = 5
+    Height = 236
+    Align = alLeft
+    BevelOuter = bvNone
+    Color = clWhite
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 2
   end
   object adoAnaly: TZQuery
     FieldDefs = <>

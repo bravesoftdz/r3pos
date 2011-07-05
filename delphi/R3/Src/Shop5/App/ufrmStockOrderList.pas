@@ -74,7 +74,7 @@ type
 
 implementation
 uses ufrmStockOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
-  uShopGlobal;
+  uShopGlobal, uframeOrderForm;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -616,6 +616,7 @@ end;
 
 function TfrmStockOrderList.DoIndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
 begin
+  SendMessage(self.Handle,WM_EXEC_ORDER,0,2);
   Result:=TfrmStockOrder(CurOrder).IndeOrderWriteToStock(AObj, vData);
 end;
 

@@ -6,7 +6,7 @@ object frmPotenAnaly: TfrmPotenAnaly
   TabOrder = 0
   OnResize = FrameResize
   object Splitter1: TSplitter
-    Left = 500
+    Left = 505
     Top = 0
     Width = 6
     Height = 236
@@ -14,7 +14,7 @@ object frmPotenAnaly: TfrmPotenAnaly
     ParentColor = False
   end
   object Pnl_Left: TPanel
-    Left = 0
+    Left = 5
     Top = 0
     Width = 500
     Height = 236
@@ -245,9 +245,9 @@ object frmPotenAnaly: TfrmPotenAnaly
     end
   end
   object Pnl_Right: TPanel
-    Left = 506
+    Left = 511
     Top = 0
-    Width = 522
+    Width = 517
     Height = 236
     Align = alClient
     BevelOuter = bvNone
@@ -261,7 +261,7 @@ object frmPotenAnaly: TfrmPotenAnaly
     object Panel4: TPanel
       Left = 0
       Top = 28
-      Width = 522
+      Width = 517
       Height = 208
       Align = alClient
       BevelOuter = bvLowered
@@ -269,7 +269,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       object DBGridEh2: TDBGridEh
         Left = 1
         Top = 1
-        Width = 520
+        Width = 515
         Height = 206
         Align = alClient
         AllowedOperations = []
@@ -385,13 +385,13 @@ object frmPotenAnaly: TfrmPotenAnaly
     object Panel3: TPanel
       Left = 0
       Top = 0
-      Width = 522
+      Width = 517
       Height = 28
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
       object Panel5: TPanel
-        Left = 434
+        Left = 429
         Top = 0
         Width = 88
         Height = 28
@@ -458,7 +458,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       object PnlTop2: TPanel
         Left = 94
         Top = 0
-        Width = 340
+        Width = 335
         Height = 28
         Align = alClient
         BevelOuter = bvNone
@@ -487,6 +487,22 @@ object frmPotenAnaly: TfrmPotenAnaly
         end
       end
     end
+  end
+  object Panel7: TPanel
+    Left = 0
+    Top = 0
+    Width = 5
+    Height = 236
+    Align = alLeft
+    BevelOuter = bvNone
+    Color = clWhite
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 2
   end
   object dsMaxAnaly: TDataSource
     DataSet = MaxAnaly

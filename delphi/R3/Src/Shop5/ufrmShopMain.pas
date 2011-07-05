@@ -1482,18 +1482,18 @@ begin
                  Global.MoveToLocal;
                end;
              end;
+          if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
           if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
              begin
-               if CaFactory.CheckInitSync then CaFactory.SyncAll(1);
                if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
                InitTenant;
              end;
         end
      else
         begin
+          if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
           if CaFactory.Audited and Global.RemoteFactory.Connected then //管理什么版本，有连接到服务器时，必须先同步数据
              begin
-               if CaFactory.CheckInitSync then CaFactory.SyncAll(1);
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
                     if Global.RemoteFactory.ConnString<>Global.LocalFactory.ConnString then //调试模式时，不同步

@@ -431,7 +431,7 @@ var
   rio:THTTPRIO;
   caTenantLoginResp,ServerInfo:IXMLDOMNode;
   Node:IXMLDOMNode;
-  code,hsname,srvrId,cstr:string;
+  code,hsname,srvrId,cstr,DefConstr:string;
   h:rsp;
   f,r:TIniFile;
   finded:boolean;
@@ -573,6 +573,10 @@ try
                                    f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
                                    finded := true;
                                  end;
+                            end
+                         else
+                            begin
+                             ;// if DefConstr
                             end;
                          ServerInfo := ServerInfo.nextSibling;
                        end;
@@ -2984,7 +2988,7 @@ try
   FindNode(doc,'header\pub').appendChild(Node);
 
   Node := doc.createElement('timeStamp');
-  Node.text := inttostr(GetSynTimeStamp('CA_MODULE','#'));
+  Node.text := inttostr(GetSynTimeStamp('CA_MODULE',ProductId));
   FindNode(doc,'header\pub').appendChild(Node);
   LogFile.AddLogFile(0,'开始下载<功能模块>上次同步时间:'+Node.text+' 本次同步时间:'+inttostr(TimeStamp));
 
@@ -3075,7 +3079,7 @@ try
         Params.ParamByName('TIME_STAMP').Value := TimeStamp;
         Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
         Factor.UpdateBatch(rs,'TSyncCaModule',Params);
-        SetSynTimeStamp('CA_MODULE',timeStamp,'#');
+        SetSynTimeStamp('CA_MODULE',timeStamp,ProductId);
       finally
         Params.free;
       end;

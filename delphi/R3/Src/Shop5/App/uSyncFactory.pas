@@ -81,6 +81,8 @@ type
     procedure SyncLocusForChag(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步问答卷
     procedure SyncQuestion(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //同步模块表
+    procedure SyncCaModule(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -128,6 +130,7 @@ var
   CurDate:Currency;
 begin
   result := true;
+  if Global.debug then Exit;
   timestamp := GetSynTimeStamp('#','#');
   if timestamp=0 then Exit;
   cDate := trunc(timestamp/86400.0+40542.0);
@@ -645,7 +648,7 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20,21,22,23,25:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      0,1,2,3,4,10,20,21,22,23:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
@@ -660,6 +663,7 @@ begin
       17:SyncCloseForDay(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       18:SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      25:SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
       frmLogo.ProgressBar1.Update;
@@ -691,11 +695,15 @@ begin
       frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       frmLogo.Label1.Update;
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20,21,22,23,25:
+      0,1,2,3,4,10,20,21,22,23:
         begin
           if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
         end;
       18:if not gbl then SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      25:
+        begin
+          if gbl then SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+        end
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -705,6 +713,77 @@ begin
   end;
   finally
     InterlockedDecrement(Locked);
+  end;
+end;
+
+procedure TSyncFactory.SyncCaModule(tbName, KeyFields, ZClassName: string;
+  KeyFlag: integer);
+var
+  cs,rs:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('PROD_ID').AsString := ProductId;
+  if not ShopGlobal.offline then
+  begin
+    LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
+    cs := TZQuery.Create(nil);
+    rs := TZQuery.Create(nil);
+    try
+      Params.ParamByName('SYN_COMM').AsBoolean := false;
+      //以服务器为优先下载
+      cs.Close;
+      rs.Close;
+      SetTicket;
+      Global.RemoteFactory.Open(rs,ZClassName,Params);
+      LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
+      SetTicket;
+      cs.SyncDelta := rs.SyncDelta;
+      if not cs.IsEmpty then
+      Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+      LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+    finally
+      rs.Free;
+      cs.Free;
+    end;
+  end;
+  if ShopGlobal.offline then
+  begin
+    cs := TZQuery.Create(nil);
+    rs := TZQuery.Create(nil);
+    try
+      Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+      //上传本机数据
+      cs.Close;
+      rs.Close;
+      Global.LocalFactory.BeginTrans;
+      try
+        SetTicket;
+        Global.LocalFactory.Open(cs,ZClassName,Params);
+        LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+        SetSynTimeStamp(tbName,SyncTimeStamp);
+        if not cs.IsEmpty then
+        begin
+          SetTicket;
+          rs.SyncDelta := cs.SyncDelta;
+          if not rs.IsEmpty then
+          Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+          LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+        end;
+        Global.LocalFactory.CommitTrans;
+      except
+        Global.LocalFactory.RollbackTrans;
+        Raise;
+      end;
+    finally
+      rs.Free;
+      cs.Free;
+    end;
   end;
 end;
 

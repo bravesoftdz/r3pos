@@ -3572,15 +3572,8 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
           else
             IsPt := False;
           ExportForm.AddRecord(RecordObj,RecordObj.FieldByName('UNIT_ID').AsString,True,IsPt);
-          Field := CdsExcel.FindField('AMOUNT');
-          if Field <> nil then
-            begin
-              ExportForm.edtTable.Edit;
-              ExportForm.edtTable.FieldByName('AMOUNT').AsFloat := Field.AsFloat;
-              ExportForm.edtTable.Post;
-              ExportForm.AmountToCalc(Field.AsFloat);
-            end;
-          Field := CdsExcel.FindField('AMOUNT');
+
+          Field := CdsExcel.FindField('AMOUNT');     //数量
           if (Field <> nil) and (Field.AsString <> '') then
             begin
               ExportForm.edtTable.Edit;
@@ -3588,7 +3581,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               ExportForm.edtTable.Post;
               ExportForm.AmountToCalc(Field.AsFloat);
             end;
-          Field := CdsExcel.FindField('APRICE');
+          Field := CdsExcel.FindField('APRICE');     //单价
           if (Field <> nil) and (Field.AsString <> '') then
             begin
               ExportForm.edtTable.Edit;
@@ -3596,7 +3589,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               ExportForm.edtTable.Post;
               ExportForm.PriceToCalc(Field.AsFloat);
             end;
-          Field := CdsExcel.FindField('AGIO_RATE');
+          Field := CdsExcel.FindField('AGIO_RATE');   //折扣率
           if (Field <> nil) and (Field.AsString <> '') then
             begin
               ExportForm.edtTable.Edit;
@@ -3604,21 +3597,60 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               ExportForm.edtTable.Post;
               ExportForm.AgioToCalc(Field.AsFloat);
             end;
-          Field := CdsExcel.FindField('FNSH_AMOUNT');
+          if (ExportForm.Name = 'frmStkIndentOrder') or (ExportForm.Name = 'frmStkRetuOrder') or (ExportForm.Name = 'frmStockOrder') then
+            begin
+              Field := CdsExcel.FindField('IS_PRESENT');   //赠品
+              if (Field <> nil) and (Field.AsString <> '') then
+                begin
+                  ExportForm.edtTable.Edit;
+                  ExportForm.edtTable.FieldByName('IS_PRESENT').AsFloat := Field.AsFloat;
+                  ExportForm.edtTable.Post;
+                  ExportForm.PresentToCalc(Field.AsInteger);
+                end;
+            end;
+
+          Field := CdsExcel.FindField('FNSH_AMOUNT'); //实入量
           if (Field <> nil) and (Field.AsString <> '') then
             begin
               ExportForm.edtTable.Edit;
               ExportForm.edtTable.FieldByName('FNSH_AMOUNT').AsFloat := Field.AsFloat;
               ExportForm.edtTable.Post;
             end;
-          Field := CdsExcel.FindField('REMARK');
+          Field := CdsExcel.FindField('ORG_PRICE');  //零售价
+          if (Field <> nil) and (Field.AsString <> '') then
+            begin
+              ExportForm.edtTable.Edit;
+              ExportForm.edtTable.FieldByName('ORG_PRICE').AsFloat := Field.AsFloat;
+              ExportForm.edtTable.Post;
+            end;
+          Field := CdsExcel.FindField('RTL_MONEY');  //销售额
+          if (Field <> nil) and (Field.AsString <> '') then
+            begin
+              ExportForm.edtTable.Edit;
+              ExportForm.edtTable.FieldByName('RTL_MONEY').AsFloat := Field.AsFloat;
+              ExportForm.edtTable.Post;
+            end;
+          Field := CdsExcel.FindField('AGIO_MONEY'); //折扣金(让利金额)
+          if (Field <> nil) and (Field.AsString <> '') then
+            begin
+              ExportForm.edtTable.Edit;
+              ExportForm.edtTable.FieldByName('AGIO_MONEY').AsFloat := Field.AsFloat;
+              ExportForm.edtTable.Post;
+            end;
+          Field := CdsExcel.FindField('BATCH_NO');  //批号
+          if (Field <> nil) and (Field.AsString <> '') then
+            begin
+              ExportForm.edtTable.Edit;
+              ExportForm.edtTable.FieldByName('BATCH_NO').AsString := Field.AsString;
+              ExportForm.edtTable.Post;
+            end;
+          Field := CdsExcel.FindField('REMARK');    //备注
           if Field <> nil then
             begin
               ExportForm.edtTable.Edit;
               ExportForm.edtTable.FieldByName('REMARK').AsString := Field.AsString;
               ExportForm.edtTable.Post;
             end;
-          //UpdateRecord(Obj,Obj.FieldByName('UNIT_ID').AsString);
           CdsExcel.Next;
         end;
     finally
@@ -3648,9 +3680,7 @@ begin
   rs.Data := edtTable.Data;
   rs.EmptyDataSet;
   try
-
     TfrmExcelFactory.ExcelFactory(rs,FieldsString,@Check,@SaveExcel,@FindFieldColumn,FormatString,1);
-
   finally
     rs.Free;
   end;

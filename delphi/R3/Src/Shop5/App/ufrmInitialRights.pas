@@ -33,7 +33,7 @@ procedure TfrmInitialRights.DoSql(Sql: String);
 begin
   sql := stringreplace(sql,':ROWS_ID',''''+TSequence.NewId+'''',[rfReplaceAll]);
   sql := stringreplace(sql,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
-  sql := stringreplace(sql,':ROLE_ID',inttostr(Global.TENANT_ID)+'00'+IntToStr(R),[rfReplaceAll]);
+  sql := stringreplace(sql,':ROLE_ID',''''+inttostr(Global.TENANT_ID)+formatFloat('000',r)+'''',[rfReplaceAll]);
   Global.LocalFactory.ExecSQL(sql);
   if CaFactory.Audited then Global.RemoteFactory.ExecSQL(sql);
 end;

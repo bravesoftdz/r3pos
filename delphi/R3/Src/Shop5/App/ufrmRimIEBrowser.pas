@@ -31,7 +31,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     procedure ReadParam;
-    procedure DoLogin(Hinted:boolean=false);
+    procedure DoLogin(Hinted:boolean=false;checked:boolean=false);
     function EncodeChk:string;
     function CheckError:boolean;
 
@@ -171,42 +171,48 @@ begin
 //  AdvFactory.GetAllFile(IEBrowser,CurUrl); 
 end;
 
-procedure TfrmRimIEBrowser.DoLogin(Hinted:boolean=false);
+procedure TfrmRimIEBrowser.DoLogin(Hinted:boolean=false;checked:boolean=false);
 var
   Params:TftParamList;
   Msg:string;
 begin
   Logined := false;
-  if (not CaFactory.Audited or (Factor.ConnMode=1)) and Global.debug then
-     begin
-       //调试模用指定的用户
-     end
-  else
-     begin
-       Params := TftParamList.Create(nil);
-       try
-         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-         Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-         Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
-         Params.Decode(Params,Msg);
-         Rim_ComId := Params.ParambyName('rimcid').AsString;
-         Rim_CustId := Params.ParambyName('rimuid').AsString;
-         if Rim_CustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
-       finally
-         Params.Free;
+  try
+    if (not CaFactory.Audited or (Factor.ConnMode=1)) and Global.debug then
+       begin
+         //调试模用指定的用户
+       end
+    else
+       begin
+         if checked and not Global.RemoteFactory.Connected then Exit;
+         Params := TftParamList.Create(nil);
+         try
+           Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+           Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+           Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
+           Params.Decode(Params,Msg);
+           Rim_ComId := Params.ParambyName('rimcid').AsString;
+           Rim_CustId := Params.ParambyName('rimuid').AsString;
+           if Rim_CustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
+         finally
+           Params.Free;
+         end;
+      end;
+    if frmXsmIEBrowser.Logined then
+       begin
+         Runed := true;
+         IEBrowser.Navigate(rim_url+'xsmReg/reg.action?CTOKEN='+HTTPEncode(xsm_signature)+'&CUST_ID='+Rim_CustId);
+         while Runed do Application.ProcessMessages;
+         Logined := CheckError;
+       end
+    else
+       begin
+         if Hinted then MessageBox(Handle,pchar('登录Rim失败了,错误:'+Caption),'友情提示..',MB_OK+MB_ICONERROR);
        end;
-    end;
-  if frmXsmIEBrowser.Logined then
-     begin
-       Runed := true;
-       IEBrowser.Navigate(rim_url+'xsmReg/reg.action?CTOKEN='+HTTPEncode(xsm_signature)+'&CUST_ID='+Rim_CustId);
-       while Runed do Application.ProcessMessages;
-       Logined := CheckError;
-     end
-  else
-     begin
-       if Hinted then MessageBox(Handle,pchar('登录Rim失败了,错误:'+Caption),'友情提示..',MB_OK+MB_ICONERROR);
-     end;
+  except
+    logined := false;
+    MessageBox(Handle,'登录RIM失败，请检查服务用网络是否正常.','友情提示...',MB_OK+MB_ICONINFORMATION);
+  end;
 end;
 
 procedure TfrmRimIEBrowser.SetLogined(const Value: boolean);

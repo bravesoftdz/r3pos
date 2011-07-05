@@ -2520,6 +2520,7 @@ begin
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('PROD_ID').AsString := ProductId;
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   cs := TZQuery.Create(nil);
   rs := TZQuery.Create(nil);
@@ -2533,6 +2534,7 @@ begin
     LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
     SetTicket;
     cs.SyncDelta := rs.SyncDelta;
+    if not cs.IsEmpty then
     Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
     LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
@@ -2562,8 +2564,9 @@ begin
         SetTicket;
         rs.SyncDelta := cs.SyncDelta;
         cs.Delete;
+        if not cs.IsEmpty then
         Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
-
+        if not rs.IsEmpty then
         Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
       end;

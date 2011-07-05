@@ -485,6 +485,7 @@ begin
   result := false;
   Login := CaFactory.coLogin(id,CaFactory.DesEncode(id,CaFactory.pubpwd),2);
   result := login.RET='1';
+  if not result then Exit;
   if not isnew then Exit;
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
@@ -510,12 +511,12 @@ begin
       CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
       CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
       CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
-      CdsTable.FieldByName('PASSWRD').AsString := EncStr(copy(id,length(id)-5,6),ENC_KEY);
+      CdsTable.FieldByName('PASSWRD').AsString := EncStr(Tenant.PASSWRD,ENC_KEY);
       CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
       CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
       CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
       CdsTable.FieldByName('XSM_CODE').AsString := id;
-      CdsTable.FieldByName('XSM_PSWD').AsString := copy(id,length(id)-5,6);
+      CdsTable.FieldByName('XSM_PSWD').AsString := EncStr(xsm_password,ENC_KEY);
       CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
       CdsTable.Post;
       Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);

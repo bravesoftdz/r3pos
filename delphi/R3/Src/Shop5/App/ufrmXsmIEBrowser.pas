@@ -50,7 +50,7 @@ type
     procedure Send3(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString;const szPara3: WideString);
     function WaitRun(WaitOutTime:integer=20000):boolean;
     procedure DoInit;
-    procedure ReadInfo;
+    procedure ReadInfo(checked:boolean=false);
     function DoLogin(Hinted:boolean=false):boolean;
     procedure ClearResource;
     function Open(sid,oid:string;hHandle:THandle):boolean;
@@ -317,7 +317,7 @@ begin
        else
        begin
          List.CommaText := xsm_url;
-         xsm_url := 'http://preview.xinshangmeng.com/xsm2/xsm_r3.html';//List.Values['xsm'];
+         xsm_url := List.Values['xsm'];
        end;
     Left := -9000;
     IEBrowser.Navigate(xsm_url);
@@ -403,10 +403,11 @@ begin
   FSessionFail := Value;
 end;
 
-procedure TfrmXsmIEBrowser.ReadInfo;
+procedure TfrmXsmIEBrowser.ReadInfo(checked:boolean=false);
 var
   cdsUnion:TZQuery;
 begin
+  if checked and not Factor.Connected then Exit;
   cdsUnion := TZQuery.Create(nil);
   try
     cdsUnion.Close;

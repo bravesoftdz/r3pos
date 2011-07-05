@@ -109,6 +109,7 @@ type
     _Start:int64;
     FTenantType: integer;
     FRspFlag: integer;
+    FDownModule: boolean;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -120,7 +121,9 @@ type
     procedure SetTimeStamp(const Value: int64);
     procedure SetTenantType(const Value: integer);
     procedure SetRspFlag(const Value: integer);
+    procedure SetDownModule(const Value: boolean);
   protected
+    auto:boolean;
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
     procedure SetTicket;
@@ -191,6 +194,8 @@ type
     property TenantType:integer read FTenantType write SetTenantType;
     //0不是Rsp调用 1是
     property RspFlag:integer read FRspFlag write SetRspFlag;
+    //是否下载菜单
+    property DownModule:boolean read FDownModule write SetDownModule;
   end;
 var CaFactory:TCaFactory;
 implementation
@@ -483,6 +488,7 @@ try
     result.RET := code;
     if StrtoIntDef(code,0) in [1,5] then //认证成功
        begin
+         Auto := (flag=2);
          result.TENANT_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'tenantId'));
          sslpwd := encddecd.DecodeString(GetNodeValue(caTenantLoginResp,'keyStr'));
          result.SLL := sslpwd;
@@ -758,6 +764,8 @@ var
   f:TIniFile;
   s:string;
 begin
+  auto := false;
+  DownModule := false;
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     s := f.ReadString('soft','rsp','http://rsp.xinshangmeng.com/services/');
@@ -2682,7 +2690,10 @@ begin
     Temp.Close;
     Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_TYPE from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
     Global.LocalFactory.Open(Temp);
-    coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY));
+    if auto then
+       coLogin(Temp.Fields[0].AsString,DesEncode(Temp.Fields[0].AsString,pubpwd),2)
+    else
+       coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY),1);
     TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
   finally
     Temp.Free;
@@ -2964,6 +2975,7 @@ var
   OutXml:WideString;
   RioImpl:CaProductWebServiceImpl;
 begin
+if not DownModule then Exit;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -3040,7 +3052,7 @@ try
          begin
            rs.Append;
            rs.FieldByName('PROD_ID').AsString := GetNodeValue(listModulesResp,'prodId');
-           rs.FieldByName('MODU_ID').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'moduId'));
+           rs.FieldByName('MODU_ID').AsString := GetNodeValue(listModulesResp,'moduId');
            if GetNodeValue(listModulesResp,'seqno')='' then
            rs.FieldByName('SEQNO').AsInteger := 0 else
            rs.FieldByName('SEQNO').AsInteger := StrtoInt(GetNodeValue(listModulesResp,'seqno'));
@@ -3092,6 +3104,11 @@ var
 begin
   EncStr := EncryStr(inStr+'{1#2$3%4(5)6@7!poeeww$3%4(5)djjkkldss}',Key);
   result := encddecd.EncodeString(EncStr);
+end;
+
+procedure TCaFactory.SetDownModule(const Value: boolean);
+begin
+  FDownModule := Value;
 end;
 
 { rsp }

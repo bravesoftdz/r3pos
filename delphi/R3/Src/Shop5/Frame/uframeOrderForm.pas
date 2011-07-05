@@ -3449,6 +3449,54 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
                 end;
               end;
           end;
+        // *******************单位********************
+        Field := Dest.FindField('UNIT_ID');
+        if Field <> nil then
+          begin
+            if Field.AsString = '' then
+              Raise Exception.Create('单位不能为空...');
+          end;
+
+        //实入量
+        Field := Dest.FindField('FNSH_AMOUNT');
+        if (Field <> nil) and (Field.AsString <> '') then
+          begin
+            try
+              StrToFloat(Field.AsString);
+            except
+              Raise Exception.Create('"实入量"数据格式错误...');
+            end;
+          end;
+        //零售价
+        Field := Dest.FindField('ORG_PRICE');
+        if (Field <> nil) and (Field.AsString <> '') then
+          begin
+            try
+              StrToFloat(Field.AsString);
+            except
+              Raise Exception.Create('"零售价"数据格式错误...');
+            end;
+          end;
+        //销售额
+        Field := Dest.FindField('RTL_MONEY');
+        if (Field <> nil) and (Field.AsString <> '') then
+          begin
+            try
+              StrToFloat(Field.AsString);
+            except
+              Raise Exception.Create('"销售额"数据格式错误...');
+            end;
+          end;
+        //折扣金(让利金额)
+        Field := Dest.FindField('AGIO_MONEY');
+        if (Field <> nil) and (Field.AsString <> '') then
+          begin
+            try
+              StrToFloat(Field.AsString);
+            except
+              Raise Exception.Create('"让利金额"数据格式错误...');
+            end;
+          end;
       end;
   end;
 

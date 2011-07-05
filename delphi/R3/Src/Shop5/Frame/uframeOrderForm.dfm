@@ -591,7 +591,7 @@ inherited frameOrderForm: TframeOrderForm
   object PopupMenu1: TPopupMenu
     AutoHotkeys = maManual
     Left = 312
-    Top = 208
+    Top = 216
     object munInsertRow: TMenuItem
       Caption = #25554#20837#26032#34892
       ShortCut = 8237

@@ -523,6 +523,8 @@ type
     function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
 implementation
 
@@ -3394,6 +3396,16 @@ end;
 
 { TSyncCaModule }
 
+function TSyncCaModule.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where PROD_ID=:PROD_ID'),Params);
+end;
+
 function TSyncCaModule.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
    InitSQL(AGlobal);
@@ -3421,15 +3433,15 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    Str := 'select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP>:TIME_STAMP ';
+    Str := 'select count(*) from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').asString+''' and TIME_STAMP>'+Params.ParambyName('TIME_STAMP').asString;
     if Params.ParamByName('SYN_COMM').AsBoolean then
        Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
-    rs.SQL.Text := Str;       
+    rs.SQL.Text := Str;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger=0 then
-       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP=0 '
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TIME_STAMP=0 and PROD_ID='''+Params.ParambyName('PROD_ID').asString+''''
     else
-       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' ';
+       Str :='select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where PROD_ID='''+Params.ParambyName('PROD_ID').asString+'''';
     SelectSQL.Text := Str;
   finally
     rs.Free;
@@ -3438,7 +3450,7 @@ end;
 
 function TSyncCaModule.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
 begin
-  AGlobal.ExecSQL('delete from CA_MODULE where PROD_ID=:PROD_ID'); 
+  AGlobal.ExecSQL('delete from CA_MODULE where PROD_ID=:PROD_ID',Params);
   result := true;
 end;
 

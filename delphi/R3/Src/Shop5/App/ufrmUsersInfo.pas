@@ -70,6 +70,7 @@ type
     edtQQ: TcxTextEdit;
     edtMSN: TcxTextEdit;
     edtMM: TcxTextEdit;
+    RzLabel7: TRzLabel;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -239,6 +240,11 @@ begin
     if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
     raise Exception.Create('所属门店不能为空！');
   end;
+  if trim(edtWORK_DATE.AsString)='' then
+  begin
+    if edtWORK_DATE.CanFocus then edtWORK_DATE.SetFocus;
+    raise Exception.Create('入职日期不能为空！');
+  end;
 
   //此检测，现已经不能只对前台检测，要OBJ中对整个数据库检测
   if dbState = dsInsert then
@@ -263,7 +269,7 @@ begin
       tmp:=Global.GetZQueryFromName('CA_USERS');
       if temp.Locate('USER_NAME',Trim(edtUSER_NAME.Text),[]) then
         if tmp.FieldByName('USER_ID').AsString<>cdsTable.FieldByName('USER_ID').AsString then
-          MessageBox(handle,Pchar('提示:用户名称已经存在!'),Pchar(Caption),MB_OK);
+          MessageBox(handle,Pchar('提示:用户姓名已经存在!'),Pchar(Caption),MB_OK);
     end;
     if dbState=dsInsert then
     begin

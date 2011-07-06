@@ -331,6 +331,21 @@ inherited frmUsersInfo: TfrmUsersInfo
             Font.Style = []
             ParentFont = False
           end
+          object RzLabel7: TRzLabel
+            Left = 462
+            Top = 40
+            Width = 6
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = '*'
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clMaroon
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
           object edtREMARK: TcxMemo
             Left = 106
             Top = 87

@@ -3764,15 +3764,16 @@ begin
 end;
 
 procedure TfrmPosMain.Label8Click(Sender: TObject);
+var AObj_1:TRecord_;
 begin
   inherited;
   if MessageBox(Handle,'请确认是否删除当前选中的商品?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  AObj := TRecord_.Create;
+  AObj_1 := TRecord_.Create;
   try
-     AObj.ReadFromDataSet(cdsTable);
-     DelRecord(AObj);
+    AObj_1.ReadFromDataSet(cdsTable);
+    DelRecord(AObj_1);
   finally
-     AObj.Free;
+    AObj_1.Free;
   end;
 end;
 

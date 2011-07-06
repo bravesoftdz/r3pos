@@ -1,6 +1,6 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 377
-  Top = 145
+  Left = 544
+  Top = 96
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
@@ -599,7 +599,7 @@ inherited frmPosMain: TfrmPosMain
         object lblDIBS: TLabel
           Left = 198
           Top = 108
-          Width = 93
+          Width = 90
           Height = 29
           Caption = #25214#38646#65306
           Font.Charset = GB2312_CHARSET
@@ -612,7 +612,7 @@ inherited frmPosMain: TfrmPosMain
         object lblCASH: TLabel
           Left = 198
           Top = 68
-          Width = 93
+          Width = 90
           Height = 29
           Caption = #29616#37329#65306
           Font.Charset = GB2312_CHARSET
@@ -670,7 +670,7 @@ inherited frmPosMain: TfrmPosMain
         object lblACCT_MNY: TLabel
           Left = 198
           Top = 18
-          Width = 93
+          Width = 90
           Height = 29
           Caption = #32467#31639#65306
           Font.Charset = GB2312_CHARSET

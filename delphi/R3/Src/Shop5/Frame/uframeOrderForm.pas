@@ -3645,17 +3645,15 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               ExportForm.edtTable.Post;
               ExportForm.AgioToCalc(Field.AsFloat);
             end;
-          if (ExportForm.Name = 'frmStkIndentOrder') or (ExportForm.Name = 'frmStkRetuOrder') or (ExportForm.Name = 'frmStockOrder') then
+          Field := CdsExcel.FindField('IS_PRESENT');   //赠品
+          if (Field <> nil) and (Field.AsString <> '') then
             begin
-              Field := CdsExcel.FindField('IS_PRESENT');   //赠品
-              if (Field <> nil) and (Field.AsString <> '') then
-                begin
-                  ExportForm.edtTable.Edit;
-                  ExportForm.edtTable.FieldByName('IS_PRESENT').AsFloat := Field.AsFloat;
-                  ExportForm.edtTable.Post;
-                  ExportForm.PresentToCalc(Field.AsInteger);
-                end;
+              ExportForm.edtTable.Edit;
+              ExportForm.edtTable.FieldByName('IS_PRESENT').AsFloat := Field.AsFloat;
+              ExportForm.edtTable.Post;
+              ExportForm.PresentToCalc(Field.AsInteger);
             end;
+
 
           Field := CdsExcel.FindField('FNSH_AMOUNT'); //实入量
           if (Field <> nil) and (Field.AsString <> '') then

@@ -142,6 +142,7 @@ type
     procedure ClearSortMark;
     //2011.06.30 Am Add 导出Excel前表头
     function  DoBeforeExport: boolean; override;
+    procedure SingleReportParams(ParameStr: string='');virtual; //简单报表调用参数
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -1343,6 +1344,11 @@ begin
   end;
   DBGridEh.DBGridHeader.Text:=Str;
   DBGridEh.DBGridFooter.Add(' '+#13+' 操作员：'+Global.UserName+'  导出时间：'+formatDatetime('YYYY-MM-DD HH:NN:SS',now()));
+end;
+
+procedure TframeBaseReport.SingleReportParams(ParameStr: string);
+begin
+
 end;
 
 end.

@@ -91,6 +91,7 @@ type
 
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
+    procedure SingleReportParams(ParameStr: string='');virtual; //简单报表调用参数    
     procedure PrintBefore;virtual;
   end;
 
@@ -558,6 +559,11 @@ begin
    5: result:=WeekName+'五';
    6: result:=WeekName+'六';
   end;
+end;
+
+procedure TframeBaseAnaly.SingleReportParams(ParameStr: string);
+begin
+ 
 end;
 
 end.

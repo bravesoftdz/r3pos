@@ -30,9 +30,11 @@ type
     FClientInstance, FPrevClientProc: TFarProc;
     FOnIconDbClick: TNotifyEvent;
     FParamStr: string;
+    FCloseing: boolean;
     procedure ClientWndProc(var Message: TMessage);
     procedure SetOnIconDbClick(const Value: TNotifyEvent);
     procedure SetParamStr(const Value: string);
+    procedure SetCloseing(const Value: boolean);
   public
     { Public declarations }
     DeskForm: TForm;
@@ -55,6 +57,7 @@ type
     procedure OpenAction(ActionName:string;Params:string); virtual;
     function FindAction(ActionName:string):TAction;virtual;
     property ParamsStr:string read FParamStr write SetParamStr;
+    property Closeing:boolean read FCloseing write SetCloseing;
   end;
 
 var
@@ -138,6 +141,7 @@ end;
 constructor TfrmMain.Create(AOwner: TComponent);
 begin
   inherited;
+  Closeing := false;
   Application.OnException := ShowException;
   frmMain := Self;
   DeskForm := nil;
@@ -149,6 +153,7 @@ end;
 destructor TfrmMain.Destroy;
 var i:Integer;
 begin
+  Closeing := true;
   for i:= MDIChildCount-1 downto 0 do
     begin
       MDIChildren[i].Free;
@@ -377,6 +382,11 @@ begin
            Break;
          end;
     end;
+end;
+
+procedure TfrmMain.SetCloseing(const Value: boolean);
+begin
+  FCloseing := Value;
 end;
 
 end.

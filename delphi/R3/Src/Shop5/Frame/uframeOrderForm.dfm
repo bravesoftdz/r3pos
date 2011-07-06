@@ -1,6 +1,6 @@
 inherited frameOrderForm: TframeOrderForm
-  Left = 701
-  Top = 151
+  Left = 633
+  Top = 293
   Width = 647
   Height = 467
   Caption = #24320#21333#30028#38754#27169#29256
@@ -11,8 +11,8 @@ inherited frameOrderForm: TframeOrderForm
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 639
-    Height = 440
+    Width = 631
+    Height = 429
     Align = alClient
     BorderInner = fsFlatRounded
     BorderOuter = fsNone
@@ -22,7 +22,7 @@ inherited frameOrderForm: TframeOrderForm
     object RzPanel2: TRzPanel
       Left = 5
       Top = 5
-      Width = 629
+      Width = 621
       Height = 87
       Align = alTop
       BorderOuter = fsNone
@@ -301,8 +301,8 @@ inherited frameOrderForm: TframeOrderForm
     end
     object RzPanel3: TRzPanel
       Left = 5
-      Top = 310
-      Width = 629
+      Top = 299
+      Width = 621
       Height = 53
       Align = alBottom
       BorderOuter = fsNone
@@ -313,8 +313,8 @@ inherited frameOrderForm: TframeOrderForm
     object DBGridEh1: TDBGridEh
       Left = 5
       Top = 125
-      Width = 629
-      Height = 185
+      Width = 621
+      Height = 174
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       DataSource = dsTable
@@ -459,7 +459,7 @@ inherited frameOrderForm: TframeOrderForm
     object pnlBarCode: TRzPanel
       Left = 5
       Top = 92
-      Width = 629
+      Width = 621
       Height = 33
       Align = alTop
       BorderOuter = fsFlat
@@ -514,8 +514,8 @@ inherited frameOrderForm: TframeOrderForm
     end
     object stbHint: TRzPanel
       Left = 5
-      Top = 411
-      Width = 629
+      Top = 400
+      Width = 621
       Height = 24
       Align = alBottom
       BorderOuter = fsFlat
@@ -532,8 +532,8 @@ inherited frameOrderForm: TframeOrderForm
     end
     object rzHelp: TRzPanel
       Left = 5
-      Top = 363
-      Width = 629
+      Top = 352
+      Width = 621
       Height = 48
       Align = alBottom
       BorderOuter = fsFlat

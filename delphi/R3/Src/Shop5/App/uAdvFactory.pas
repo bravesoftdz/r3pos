@@ -208,7 +208,7 @@ begin
        for i:=0 to 20 do
          begin
             if AdvInfo.urlList[i]<>'' then
-               adv.Add('<td><img src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i])+'"/></td>');
+               adv.Add('<td><a target="_blank" href="'+AdvInfo.linkList[i]+'"><img src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i])+'"/></a></td>');
          end;
        adv.Add('</tr>');
        adv.Add('</table>');

@@ -522,6 +522,7 @@ begin
       Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
       Global.TENANT_ID := Tenant.TENANT_ID;
       Global.TENANT_NAME := Tenant.TENANT_NAME;
+      Global.SHORT_TENANT_NAME := Tenant.SHORT_TENANT_NAME;
       TENANT_ID := Tenant.TENANT_ID;
       SaveParams;
       result := true;

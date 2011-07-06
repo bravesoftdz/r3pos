@@ -247,7 +247,8 @@ begin
     begin
       try
         GetLastDate;
-        if not (GetBalance and (LastTime = 0)) then
+        GetBalance;
+        if true then
           begin
             Open;
             if CheckStatus then  //打印当天已经结账汇总
@@ -572,6 +573,7 @@ begin
       cdsTable.Next;
     end;
   edtHIS_MNY.Text := formatfloat('#0.00',Balance);
+  result := true;
 end;
 
 procedure TfrmCloseForDay.CheckOffData;

@@ -26,6 +26,7 @@ type
     procedure SetCurUrl(const Value: string);
     procedure SetLogined(const Value: boolean);
     { Private declarations }
+    procedure DoAction(actionname:string);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -44,7 +45,7 @@ type
 var
   frmRimIEBrowser:TfrmRimIEBrowser;
 implementation
-uses IniFiles,ufrmLogo,ufrmXsmLogin,encddecd,ufrmXsmIEBrowser,uShopGlobal,uCaFactory,EncDec,uAdvFactory, uGlobal;
+uses IniFiles,ufrmMain,ufrmLogo,ufrmXsmLogin,encddecd,ufrmXsmIEBrowser,uShopGlobal,uCaFactory,EncDec,uAdvFactory, uGlobal;
 {$R *.dfm}
 
 { TfrmRimIEBrowser }
@@ -64,7 +65,11 @@ begin
     PageHandle := hHandle;
     WindowState := wsMaximized;
     BringToFront;
-    if not CaFactory.Audited then Raise Exception.Create('脱机状态不能进入此模块...');
+    if not CaFactory.Audited then
+      begin
+        MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
+        Exit;
+      end;
     if xsmed and not logined then frmXsmIEBrowser.Logined := false;
     if xsmed and not frmXsmIEBrowser.Logined then
     with frmXsmIEBrowser do
@@ -175,6 +180,7 @@ procedure TfrmRimIEBrowser.DoLogin(Hinted:boolean=false;checked:boolean=false);
 var
   Params:TftParamList;
   Msg:string;
+  _Start:Int64;
 begin
   Logined := false;
   try
@@ -201,8 +207,13 @@ begin
     if frmXsmIEBrowser.Logined then
        begin
          Runed := true;
+         _Start := GetTickCount;
          IEBrowser.Navigate(rim_url+'xsmReg/reg.action?CTOKEN='+HTTPEncode(xsm_signature)+'&CUST_ID='+Rim_CustId);
-         while Runed do Application.ProcessMessages;
+         while not (IEBrowser.ReadyState in [READYSTATE_COMPLETE]) do
+            begin
+              if (GetTickCount-_Start)>20000 then break;
+              Application.ProcessMessages;
+            end;
          Logined := CheckError;
        end
     else
@@ -250,6 +261,13 @@ begin
       Cancel := true;
       OpenXsm(copy(url,w+4,length(url)));
     end;
+ w := pos('#=',url);
+ if w>0 then
+    begin
+      Cancel := true;
+      if copy(url,w+2,length(url))='000000000' then
+         DoAction('actfrmOpenDesk');
+    end
 end;
 
 function TfrmRimIEBrowser.CheckError: boolean;
@@ -268,6 +286,20 @@ begin
      begin
        if (s[1]='<') and (s[6]='>') then Logined := CheckError;
      end;
+end;
+
+procedure TfrmRimIEBrowser.DoAction(actionname: string);
+var
+  i:integer;
+begin
+  for i:=0 to frmMain.actList.ActionCount-1 do
+    begin
+      if lowercase(frmMain.actList.Actions[i].Name)=lowercase(actionname) then
+         begin
+           TAction(frmMain.actList.Actions[i]).OnExecute(frmMain.actList.Actions[i]);
+           Exit;
+         end;
+    end;
 end;
 
 end.

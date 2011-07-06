@@ -210,6 +210,7 @@ var
   CurDate:Currency;
 begin
   result := true;
+  Exit;
   if Global.debug then Exit;
   timestamp := GetSynTimeStamp('#','#');
   if timestamp=0 then Exit;
@@ -431,7 +432,7 @@ var
   rio:THTTPRIO;
   caTenantLoginResp,ServerInfo:IXMLDOMNode;
   Node:IXMLDOMNode;
-  code,hsname,srvrId,cstr,DefConstr:string;
+  code,hsname,srvrId,cstr,defSrvrId,defStr:string;
   h:rsp;
   f,r:TIniFile;
   finded:boolean;
@@ -499,6 +500,7 @@ try
               try
                  srvrId := f.readString('db','srvrId','');
                  result.DB_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
+                 defSrvrId := GetNodeValue(caTenantLoginResp,'srvrId');
                  f.WriteString('db','dbid',inttostr(result.DB_ID));
                  if StrtointDef(GetNodeValue(caTenantLoginResp,'databasePort'),0)=0 then
                     hsname := GetNodeValue(caTenantLoginResp,'dbHostName')
@@ -573,10 +575,10 @@ try
                                    f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
                                    finded := true;
                                  end;
-                            end
-                         else
+                            end;
+                         if defSrvrId=GetNodeValue(ServerInfo,'srvrId') then
                             begin
-                             ;// if DefConstr
+                              defStr := 'connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID);
                             end;
                          ServerInfo := ServerInfo.nextSibling;
                        end;
@@ -586,8 +588,8 @@ try
                          ServerInfo := ServerInfo.firstChild;
                          if ServerInfo<>nil then
                             begin
-                              f.WriteString('db','srvrId',GetNodeValue(ServerInfo,'srvrId'));
-                              f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
+                              f.WriteString('db','srvrId',defSrvrId);
+                              f.WriteString('db','Connstr',defStr);
                             end;
                       end;
                    end;

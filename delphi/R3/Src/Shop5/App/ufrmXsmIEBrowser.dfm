@@ -1,6 +1,6 @@
 inherited frmXsmIEBrowser: TfrmXsmIEBrowser
-  Left = 795
-  Top = 214
+  Left = 671
+  Top = 215
   Width = 457
   Height = 333
   Caption = 'frmXsmIEBrowser'

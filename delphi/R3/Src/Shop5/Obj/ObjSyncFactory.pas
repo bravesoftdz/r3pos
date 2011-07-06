@@ -603,7 +603,7 @@ begin
          begin
            if ZQuery.Params[i].Value>2808566734 then
               ZQuery.Params[i].Value := 5497000;
-           if (Params.ParamByName('TIME_STAMP_NOCHG').AsInteger = 0) and (ZQuery.Params[i].Value < Params.ParamByName('TIME_STAMP').Value) then
+           if (Params.FindParam('TIME_STAMP_NOCHG')<>nil) and (Params.ParamByName('TIME_STAMP_NOCHG').AsInteger = 0) and (ZQuery.Params[i].Value < Params.ParamByName('TIME_STAMP').Value) then
               ZQuery.Params[i].Value := Params.ParamByName('TIME_STAMP').Value;
          end;
       if WasNull then ZQuery.Params[i].Value := null;

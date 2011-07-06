@@ -23,6 +23,8 @@ type
     Ffinish: boolean;
     Fconfirm: boolean;
     SaveHandle:THandle;
+    FConnectTimeOut: integer;
+    FCommandTimeOut: integer;
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
                                                    const szPara: WideString);
@@ -39,6 +41,8 @@ type
     procedure Setfinish(const Value: boolean);
     procedure Setconfirm(const Value: boolean);
     procedure DoMsgFilter(var Msg: TMsg; var Handled: Boolean);
+    procedure SetCommandTimeOut(const Value: integer);
+    procedure SetConnectTimeOut(const Value: integer);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -59,6 +63,8 @@ type
     property SessionFail:boolean read FSessionFail write SetSessionFail;
     property finish:boolean read Ffinish write Setfinish;
     property confirm:boolean read Fconfirm write Setconfirm;
+    property ConnectTimeOut:integer read FConnectTimeOut write SetConnectTimeOut;
+    property CommandTimeOut:integer read FCommandTimeOut write SetCommandTimeOut;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
@@ -70,9 +76,19 @@ uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uShopGlobal,EncDec,ufrmLogo,ZLogFile
 { TfrmXsmIEBrowser }
 
 constructor TfrmXsmIEBrowser.Create(AOwner: TComponent);
+var
+  F:TIniFile;
 begin
   inherited;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    ConnectTimeOut := F.ReadInteger('xsm','connectTimeout',60000);
+    CommandTimeOut := F.ReadInteger('xsm','commandTimeout',30000);
+  finally
+    F.Free;
+  end;
   FormStyle := fsMDIChild;
+  left := -9000;
   try
     LCObject.OnFuncCall := DoFuncCall;
     LCObject.OnFuncCall2 := DoFuncCall2;
@@ -111,7 +127,7 @@ begin
   try
     SessionFail := false;
     Send2('login',xsm_username,xsm_password);
-    if not WaitRun then Logined := false;
+    if not WaitRun(commandTimeout) then Logined := false;
     result := Logined;
     if Hinted and not result then
        begin
@@ -184,6 +200,7 @@ end;
 
 procedure TfrmXsmIEBrowser.DoFuncCall2(ASender: TObject;
   const szMethodName, szPara1, szPara2: WideString);
+var s:string;
 begin
   if szMethodName='loginStatus' then
      begin
@@ -204,7 +221,10 @@ begin
        xsm_signature := szPara2;
      end;
   if szMethodName='error' then
-     MessageBox(Handle,Pchar(szPara2+'<code='+szPara1+'>'),'友情提示...',MB_OK+MB_ICONWARNING);
+     begin
+        s := szPara2;
+        MessageBox(Handle,Pchar('<新商盟>'+ s +'<code='+szPara1+'>'),'友情提示...',MB_OK+MB_ICONWARNING);
+     end;
   runed := false;
   LogFile.AddLogFile(0,'FuncCall2:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2);
 end;
@@ -260,7 +280,11 @@ begin
   WindowState := wsMaximized;
   BringToFront;
   result := false;
-  if not CaFactory.Audited then Raise Exception.Create('脱机状态不能进入新商盟...');
+  if not CaFactory.Audited then
+     begin
+       MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
   if not Logined then
      begin
        if SessionFail then DoLogin;
@@ -275,7 +299,7 @@ begin
   finish := false;
   confirm := false;
   Send3('getModule',sid,EncodeXml(oid),'clear');
-  if not WaitRun then Exit;
+  if not WaitRun(commandTimeout) then Exit;
   if SessionFail then //失效了，自动重新请求
      begin
        result := Open(sid,oid,hHandle);
@@ -286,7 +310,7 @@ begin
        if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
           begin
             Send3('getModule',sid,EncodeXml(oid),'force');
-            if not WaitRun then Exit;
+            if not WaitRun(commandTimeout) then Exit;
           end;
      end;
   result := true;
@@ -325,7 +349,7 @@ begin
     List.free;
     F.Free;
   end;
-  if not WaitRun then Exit;
+  if not WaitRun(commandTimeout) then Exit;
   frmDesk.Waited := true;
   try
   _Start := GetTickCount;
@@ -342,7 +366,7 @@ begin
        frmLogo.ProgressBar1.Position := (W div 500);
        frmLogo.ProgressBar1.Update;
 //          end;
-       if W>30000 then
+       if W>ConnectTimeOut then
           begin
             ready := false;
             Exit;
@@ -395,7 +419,7 @@ end;
 procedure TfrmXsmIEBrowser.ClearResource;
 begin
   Send('getModule','clear');
-  WaitRun;
+  WaitRun(commandTimeout);
 end;
 
 procedure TfrmXsmIEBrowser.SetSessionFail(const Value: boolean);
@@ -454,6 +478,16 @@ begin
   result := objectId;
   result := stringreplace(result,'&nbsp;',' ',[rfReplaceAll]);//'<onClick><action object_id="'+objectId+'" method="POST" isPopUp="true" name="'+Caption+'"/></onClick>';
   result := stringreplace(result,'&quot;','"',[rfReplaceAll]);//'<onClick><action object_id="'+objectId+'" method="POST" isPopUp="true" name="'+Caption+'"/></onClick>';
+end;
+
+procedure TfrmXsmIEBrowser.SetCommandTimeOut(const Value: integer);
+begin
+  FCommandTimeOut := Value;
+end;
+
+procedure TfrmXsmIEBrowser.SetConnectTimeOut(const Value: integer);
+begin
+  FConnectTimeOut := Value;
 end;
 
 end.

@@ -2207,7 +2207,7 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  if TfrmCloseForDay.ShowClDy(self)=2 then MessageBox(Handle,'当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
+  if TfrmCloseForDay.ShowClDy(self)=2 then ;// MessageBox(Handle,'当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmShopMain.actfrmPriceOrderListExecute(Sender: TObject);

@@ -162,6 +162,7 @@ begin
         frmLogo.BringToFront;
         frmLogo.ProgressBar1.Position := (W div 500);
         frmLogo.ProgressBar1.Update;
+        if W>20000 then break;
         Application.ProcessMessages;
       end;
   finally

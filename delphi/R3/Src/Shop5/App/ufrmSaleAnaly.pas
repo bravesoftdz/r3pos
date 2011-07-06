@@ -135,6 +135,7 @@ type
     function  GetPotenAnalySQL(vType: integer=0): string;  //潜力分析
     procedure FreeFrameObj(vType: integer); //释放掉Frame对象
   public
+    procedure SingleReportParams(ParameStr: string='');override; //简单报表调用参数
     procedure ShowFrameProfitAnaly; //盈利分析
     procedure ShowFramePotenAnaly;  //潜力分析
   end;
@@ -1014,6 +1015,13 @@ begin
   //打印预览
 
   
+end;
+
+procedure TfrmSaleAnaly.SingleReportParams(ParameStr: string);
+begin
+  inherited;
+  TabSheet1.PageIndex:=2;
+  RzPage.ActivePage:=TabSheet2;
 end;
 
 end.

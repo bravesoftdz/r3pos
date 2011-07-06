@@ -237,6 +237,7 @@ type
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
     procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override; //
   public
+    procedure SingleReportParams(ParameStr: string='');override; //简单报表调用参数
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
@@ -1568,6 +1569,43 @@ procedure TfrmSaleDayReport.DBGridEh3GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmSaleDayReport.SingleReportParams(ParameStr: string);
+var
+  i: integer;
+  SetCol: TColumnEh;
+begin
+  inherited;
+  //隐藏掉分页 (显示: 商品销售报表)
+  for i:=0 to RzPage.PageCount-1 do
+  begin
+    if i<>4 then 
+      RzPage.Pages[i].TabVisible:=false
+    else
+      RzPage.ActivePageIndex:=4;
+  end;
+  //不显示Grid列:
+  SetNotShowCostPrice(DBGridEh5, ['SALE_TAX','SALE_MNY','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
+  //设置控件上移：
+  Label12.Visible:=False;
+  fndP5_SHOP_TYPE.Visible:=False;
+  fndP5_SHOP_VALUE.Visible:=False;
+  Label36.Visible:=False;
+  fndP5_DEPT_ID.Visible:=False;
+
+  Label25.Top:=Label21.Top;
+  Label26.Top:=Label21.Top;
+  fndP5_TYPE_ID.Top:=fndP5_SHOP_ID.Top;
+  fndP5_STAT_ID.Top:=fndP5_SHOP_ID.Top;
+  fndP5_UNIT_ID.Top:=fndP5_SHOP_ID.Top;
+  
+  Label21.Top:=Label12.Top;
+  Label24.Top:=Label21.Top;
+  fndP5_SHOP_ID.Top:=fndP5_SHOP_TYPE.Top;
+  fndP5_SORT_ID.Top:=fndP5_SHOP_TYPE.Top;
+  RzPanel15.Height:=RzPanel15.Height-22;
+  BtnSaleSum.Top:=BtnSaleSum.Top-22;
 end;
 
 end.

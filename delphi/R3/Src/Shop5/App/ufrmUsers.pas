@@ -7,14 +7,14 @@ uses
   Dialogs, uframeToolForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit,
   StdCtrls, RzLabel, ComCtrls, ToolWin, DB, ZBase, EncDec,
-  FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh;
+  FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset, PrnDbgeh,
+  cxMaskEdit, cxButtonEdit, zrComboBoxList, cxDropDownEdit;
 
 type
   TfrmUsers = class(TframeToolForm)
     RzPanel1: TRzPanel;
     DBGridEh1: TDBGridEh;
     RzPanel6: TRzPanel;
-    Panel1: TPanel;
     Panel2: TPanel;
     Label1: TLabel;
     edtKey: TcxTextEdit;
@@ -38,6 +38,20 @@ type
     PrintDBGridEh1: TPrintDBGridEh;
     N2: TMenuItem;
     actPasswordReset: TAction;
+    Bevel1: TBevel;
+    Label3: TLabel;
+    RzLabel22: TRzLabel;
+    RzLabel13: TRzLabel;
+    RzLabel6: TRzLabel;
+    fndSEX: TRadioGroup;
+    fndDEPT_ID: TzrComboBoxList;
+    labDEGREES: TRzLabel;
+    fndDEGREES: TcxComboBox;
+    lab_DUTY_IDS: TRzLabel;
+    fndDUTY_IDS: TzrComboBoxList;
+    RzLabel1: TRzLabel;
+    fndState: TRadioGroup;
+    fndSHOP_ID: TzrComboBoxList;
     procedure actFindExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -59,12 +73,14 @@ type
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure actPasswordResetExecute(Sender: TObject);
+    procedure DBGridEh1CellClick(Column: TColumnEh);
   private
     //IsCompany:Boolean;
     //ccid:string;
     { Private declarations }
     function CheckCanExport:Boolean;
     procedure PrintView;
+    procedure IniDegrees;
   public
     { Public declarations }
     procedure InitGrid;
@@ -74,7 +90,7 @@ type
 
 
 implementation
-uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, objCommon, ufrmUserRights,uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmFastReport,
+uses ufrmUsersInfo, ufrmBasic, uframeDialogForm, uGlobal, objCommon, uShopUtil, ufrmUserRights,uShopGlobal,ufrmEhLibReport,uCtrlUtil;//ufrmFastReport,
 {$R *.dfm}
 
 procedure TfrmUsers.actFindExecute(Sender: TObject);
@@ -83,8 +99,27 @@ begin
   inherited;
   //查自已门店用户，及下属直营门店的用户
   if not ShopGlobal.GetChkRight('31500001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
+  if fndSHOP_ID.AsString <> '' then
+    str := ' and SHOP_ID = '+QuotedStr(fndSHOP_ID.AsString);
+  if fndDUTY_IDS.AsString <> '' then
+    str := str + ' and DUTY_IDS = '+QuotedStr(fndDUTY_IDS.AsString);
+  if fndDEPT_ID.AsString <> '' then
+    str := str + ' and DEPT_ID = '+QuotedStr(fndDEPT_ID.AsString);
+  if fndDEGREES.Text <> '' then
+    str := str + ' and DEGREES = '+QuotedStr(TRecord_(fndDEGREES.Properties.Items.Objects[fndDEGREES.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  if fndSEX.ItemIndex <> -1 then
+    str := str + ' and SEX = '+QuotedStr(IntToStr(fndSEX.ItemIndex));
+  {if fndState.ItemIndex <> -1 then
+    begin
+      case fndState.ItemIndex of
+        0:str := str + '';
+        1:str := str + '';
+        2:str := str + '';
+      end;
+    end;}
+
   if edtKey.Text<>'' then
-     str:=' and ( USER_NAME LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
+     str:= str + ' and ( USER_NAME LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
                   ' or USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
   Cds_Users.Close;
   Cds_Users.SQL.Text :=
@@ -198,6 +233,10 @@ procedure TfrmUsers.FormCreate(Sender: TObject);
 begin
   inherited;
   InitGrid;
+  IniDegrees;
+  fndSHOP_ID.DataSet:=Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndDUTY_IDS.DataSet := Global.GetZQueryFromName('CA_DUTY_INFO');
+  fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   TDbGridEhSort.InitForm(self);  
 end;
 
@@ -400,6 +439,38 @@ begin
     MessageBox(handle,Pchar('提示:密码重置失败!'),Pchar(Caption),MB_OK)
   else if i > 0 then
     MessageBox(handle,Pchar('提示:密码重置成功!'),Pchar(Caption),MB_OK);
+end;
+
+procedure TfrmUsers.DBGridEh1CellClick(Column: TColumnEh);
+begin
+  inherited;
+  if Column.FieldName = 'ROLE_IDS_TEXT' then
+    begin
+      actRightsExecute(nil);
+    end;
+end;
+
+procedure TfrmUsers.IniDegrees;
+var Tem:TZQuery;
+    Aobj_3:TRecord_;
+begin
+  try
+    Tem := TZQuery.Create(nil);
+    Tem.Close;
+    Tem.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''14'' and TENANT_ID=0 order by SEQ_NO';
+    Factor.Open(Tem);
+    if not Tem.IsEmpty then ClearCbxPickList(fndDEGREES);
+    Tem.First;
+    while not Tem.Eof do
+      begin
+        Aobj_3 := TRecord_.Create;
+        Aobj_3.ReadFromDataSet(Tem);
+        fndDEGREES.Properties.Items.AddObject(Tem.FieldbyName('CODE_NAME').AsString,Aobj_3);
+        Tem.Next;
+      end;
+  finally
+    Tem.Free;
+  end;
 end;
 
 end.

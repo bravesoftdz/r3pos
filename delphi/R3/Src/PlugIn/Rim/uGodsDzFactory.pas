@@ -49,9 +49,13 @@ begin
          ' else ''#'' end) as SORT_ID6';
   CALC_UNIT:='''95331F4A-7AD6-45C2-B853-C278012C5525'' as CALC_UNIT '; //盒包装单位: GUID
 
-  Box_InPrice:='(case when CAlC_AMT>0 then PACK_INPRICE*1.00/CAlC_AMT else PACK_INPRICE end) as NEW_INPRICE ';   //盒单位的 入库价
-  Box_OutPrice:='(case when CAlC_AMT>0 then PACK_OUTPRICE*1.00/CAlC_AMT else PACK_OUTPRICE end) as NEW_OUTPRICE ';  //盒单位的 零售价
-
+  //2011.06.29修改换算系数用R3的单位换算系数:
+   Box_InPrice:=' PACK_INPRICE as NEW_INPRICE ';   //盒单位的 入库价
+   Box_OutPrice:=' PACK_OUTPRICE as NEW_OUTPRICE ';  //盒单位的 零售价
+  {Box_InPrice:='(case when CAlC_AMT>0 then PACK_INPRICE*1.00/CAlC_AMT else PACK_INPRICE end) as NEW_INPRICE ';   //盒单位的 入库价
+   Box_OutPrice:='(case when CAlC_AMT>0 then PACK_OUTPRICE*1.00/CAlC_AMT else PACK_OUTPRICE end) as NEW_OUTPRICE ';  //盒单位的 零售价
+  }
+  
   //1、先删除供应关系中间表:
   StrSQL:=PChar('delete from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' ');
   if PlugIntf.ExecSQL(StrSQL,iRet)<>0 then Raise Exception.Create('1、先删除供应关系中间表:');

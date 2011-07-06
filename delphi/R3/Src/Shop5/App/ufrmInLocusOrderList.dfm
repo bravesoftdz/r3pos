@@ -1,6 +1,6 @@
 inherited frmInLocusOrderList: TfrmInLocusOrderList
-  Left = 228
-  Top = 147
+  Left = 475
+  Top = 127
   Width = 868
   Height = 575
   Caption = #25910#36135#21333
@@ -9,13 +9,13 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 860
-    Height = 512
+    Height = 511
     inherited RzPanel2: TRzPanel
       Width = 850
-      Height = 502
+      Height = 501
       inherited RzPage: TRzPageControl
         Width = 844
-        Height = 496
+        Height = 495
         ActivePage = TabSheet2
         TabIndex = 1
         FixedDimension = 25
@@ -23,7 +23,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
           Caption = #36827#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 842
-            Height = 469
+            Height = 468
             inherited RzPanel1: TRzPanel
               Width = 832
               Height = 110
@@ -307,7 +307,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 115
               Width = 832
-              Height = 349
+              Height = 348
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -410,7 +410,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
             Left = 0
             Top = 0
             Width = 842
-            Height = 469
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -663,9 +663,9 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = []
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -708,7 +708,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
               Left = 5
               Top = 117
               Width = 832
-              Height = 347
+              Height = 346
               Align = alClient
               AllowedOperations = []
               Color = clWhite

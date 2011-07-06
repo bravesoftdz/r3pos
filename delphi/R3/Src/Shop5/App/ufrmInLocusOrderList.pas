@@ -117,7 +117,7 @@ begin
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
-       1:w :=w +' and LOCUS_STATUS=''2''';
+       1:w :=w +' and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
        2:w :=w +' and LOCUS_STATUS=''3''';
        end;
      end;
@@ -573,7 +573,7 @@ begin
   if fndP2_STATUS.ItemIndex > 0 then
      begin
        case fndP2_STATUS.ItemIndex of
-       1:w :=w +' and LOCUS_STATUS=''2''';
+       1:w :=w +' and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
        2:w :=w +' and LOCUS_STATUS=''3''';
        end;
      end;

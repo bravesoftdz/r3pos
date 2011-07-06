@@ -109,6 +109,9 @@ type
     class function StartMonthReck(Owner:TForm):boolean;
     //计算库存监控数据
     class function CalcAnalyLister(Owner:TForm):boolean;
+    //判断是否月结账
+    class function CheckMonthReck(Owner:TForm):boolean;
+
     property PrgPercent:integer read FPrgPercent write SetPrgPercent;
 
   end;
@@ -2139,6 +2142,49 @@ begin
   0,1:Factor.ExecSQL('truncate table '+tb);
   5:Factor.ExecSQL('delete from '+tb);
   end;
+end;
+
+//判断是否月结账
+class function TfrmCostCalc.CheckMonthReck(Owner: TForm): boolean;
+var
+  Rs,tmp: TZQuery;
+  str,CurDay: string;
+  CurMonth,MaxMonth,vYear,vMonth: Integer;
+begin
+  result:=False;
+  with TfrmCostCalc.Create(Owner) do
+    begin
+      try
+        CurDay:=FormatDatetime('YYYYMMDD',Date());
+        CurMonth:=strtoint(Copy(CurDay,1,6));
+        CurDay:=Copy(CurDay,7,2);   //当前日期（本月第几天）
+        tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
+        if (tmp.Active) and (tmp.RecordCount=1) and (CurDay>'05') then //是单店
+        begin
+          Rs:=TZQuery.Create(nil);
+          Rs.SQL.Text:='select Max(MONTH) as MaxMONTH from RCK_MONTH_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID);
+          Factor.Open(Rs);
+          vYear:=strtoInt(Copy(Rs.FieldByName('MaxMONTH').AsString,1,4));
+          vMonth:=strtoInt(Copy(Rs.FieldByName('MaxMONTH').AsString,5,2));  //+1月
+          vYear:=vYear+(vMonth+1) div 12;
+          vMonth:=(vMonth+1) mod 12;
+          MaxMonth:=StrtoInt(Inttostr(vYear)+FormatFloat('00',vMonth));
+        end;
+        
+        if CurMonth>MaxMonth then //当前月份 > 结帐月份+1 就显示:
+        begin
+          flag := 2;
+          Caption := '月结账';
+          eDate := Date()-1;
+          Prepare;
+          Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
+          if eDate>Date() then Raise Exception.Create('没有到本月结账日，无法执行月结操作。');
+          result :=(ShowModal=MROK);
+        end;
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

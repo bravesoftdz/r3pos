@@ -40,6 +40,7 @@ begin
       try
         edtPLAN_DATE.Date := OkDate;
         edtSTOCK_USER.KeyValue := OkUser;
+        edtSTOCK_USER.DataSet:=Global.GetZQueryFromName('CA_USERS');
         edtSTOCK_USER.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',OkUser);
         if edtSTOCK_USER.AsString = '' then
            begin
@@ -48,6 +49,11 @@ begin
            end;
         if edtPLAN_DATE.EditValue = null then edtPLAN_DATE.Date := Date();
         result := (ShowModal=MROK);
+        if result then  //将结果返回给取
+        begin
+          OkDate:=edtPLAN_DATE.Date;
+          OkUser:=edtSTOCK_USER.AsString;
+        end;
       finally
         free;
       end;

@@ -1,6 +1,6 @@
 inherited frmDbOrderList: TfrmDbOrderList
-  Left = 351
-  Top = 283
+  Left = 197
+  Top = 110
   Width = 845
   Height = 536
   Caption = #35843#25320#21333
@@ -9,19 +9,19 @@ inherited frmDbOrderList: TfrmDbOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 837
-    Height = 473
+    Height = 472
     inherited RzPanel2: TRzPanel
       Width = 827
-      Height = 463
+      Height = 462
       inherited RzPage: TRzPageControl
         Width = 821
-        Height = 457
+        Height = 456
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25320#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 819
-            Height = 430
+            Height = 429
             inherited RzPanel1: TRzPanel
               Width = 809
               Height = 102
@@ -244,7 +244,7 @@ inherited frmDbOrderList: TfrmDbOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 107
               Width = 809
-              Height = 318
+              Height = 317
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -436,7 +436,7 @@ inherited frmDbOrderList: TfrmDbOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      18000000AA1F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000A31F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -689,6 +689,6 @@ inherited frmDbOrderList: TfrmDbOrderList
       00205661726961626C6573000000000200736C0014006364735F436867426F64
       792E22534C30303030220002006A650014006364735F436867426F64792E224A
       4530303030220004006B68796800000000040079687A68000000000200647A00
-      0000000000000000000000FDFF0100000000}
+      0000000000000000000000}
   end
 end

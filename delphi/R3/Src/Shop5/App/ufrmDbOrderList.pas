@@ -101,7 +101,7 @@ begin
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
   result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID ';
   result := 'select jf.*,f.GUIDE_USER as STOCK_USER from ('+result+') jf left outer join STK_STOCKORDER f on jf.TENANT_ID=f.TENANT_ID and jf.SALES_ID=f.STOCK_ID and jf.SALES_TYPE=f.STOCK_TYPE ';
-  result := 'select jg.*,g.USER_NAME as STOCK_USER_TEXT from ('+result+') jg left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.GUIDE_USER=g.USER_ID '+w1;
+  result := 'select jg.*,g.USER_NAME as STOCK_USER_TEXT from ('+result+') jg left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.STOCK_USER=g.USER_ID '+w1;
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by SALES_ID';
   1:result :=
@@ -409,7 +409,7 @@ begin
 //   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
 //   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
    'left outer join (select n1.TENANT_ID,n1.STOCK_ID,n2.USER_NAME as STOCK_USER_TEXT from STK_STOCKORDER n1,VIW_USERS n2 where n1.TENANT_ID=n2.TENANT_ID and n1.GUIDE_USER=n2.USER_ID and n1.TENANT_ID='+tenantid+' and n1.STOCK_ID='''+id+''' and STOCK_TYPE=2 ) n on jn.TENANT_ID=n.TENANT_ID and jn.SALES_ID=n.STOCK_ID '+
-   ') j order by SEQNO ';
+   ') j order by SEQNO ';                                                                                                                                      
 end;
 
 procedure TfrmDbOrderList.frfDbOrderUserFunction(const Name: String;

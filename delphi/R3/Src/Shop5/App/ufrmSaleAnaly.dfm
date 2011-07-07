@@ -3,7 +3,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
   Top = 104
   Width = 984
   Height = 667
-  Caption = #38144#21806#20998#26512#34920
+  Caption = #30408#21033#20998#26512
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -15,9 +15,773 @@ inherited frmSaleAnaly: TfrmSaleAnaly
       inherited RzPage: TRzPageControl
         Width = 960
         Height = 587
-        ActivePage = TabSheet3
-        TabIndex = 2
+        ActivePage = TabSheet2
         FixedDimension = 25
+        object TabSheet2: TRzTabSheet [0]
+          Caption = #30408#21033#20998#26512
+          object RzPanel1: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 958
+            Height = 560
+            Align = alClient
+            BorderOuter = fsNone
+            BorderColor = clWhite
+            BorderWidth = 5
+            TabOrder = 0
+            object Panel1: TPanel
+              Left = 5
+              Top = 5
+              Width = 948
+              Height = 550
+              Align = alClient
+              BevelOuter = bvNone
+              Color = clWhite
+              TabOrder = 0
+              object RzPnl2: TRzPanel
+                Left = 0
+                Top = 0
+                Width = 948
+                Height = 74
+                Align = alTop
+                BorderOuter = fsGroove
+                BorderSides = [sdLeft, sdTop, sdRight]
+                Color = clWhite
+                TabOrder = 0
+                object Label8: TLabel
+                  Left = 17
+                  Top = 32
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #38376#24215#32676#32452
+                end
+                object Label9: TLabel
+                  Left = 17
+                  Top = 53
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #21830#21697#25351#26631
+                end
+                object Label10: TLabel
+                  Left = 300
+                  Top = 31
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #21830#21697#20998#31867
+                end
+                object Label12: TLabel
+                  Left = 301
+                  Top = 52
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #32479#35745#31867#22411
+                end
+                object Label14: TLabel
+                  Left = 300
+                  Top = 10
+                  Width = 48
+                  Height = 12
+                  Caption = #25152#23646#37096#38376
+                end
+                object RzLabel1: TRzLabel
+                  Left = 17
+                  Top = 12
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #24320#22987#26085#26399
+                end
+                object RzLabel4: TRzLabel
+                  Left = 155
+                  Top = 11
+                  Width = 48
+                  Height = 12
+                  Caption = #25130#27490#26085#26399
+                end
+                object fndP2_TYPE_ID: TcxComboBox
+                  Left = 69
+                  Top = 49
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #20027#20379#24212#21830
+                    #21697#29260#21517#31216)
+                  TabOrder = 0
+                end
+                object fndP2_SHOP_TYPE: TcxComboBox
+                  Left = 69
+                  Top = 28
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  TabOrder = 1
+                end
+                object fndP2_SHOP_VALUE: TzrComboBoxList
+                  Tag = -1
+                  Left = 153
+                  Top = 28
+                  Width = 134
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 2
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbClear, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP2_STAT_ID: TzrComboBoxList
+                  Tag = -1
+                  Left = 153
+                  Top = 49
+                  Width = 134
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 3
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP2_SORT_ID: TcxButtonEdit
+                  Left = 350
+                  Top = 26
+                  Width = 194
+                  Height = 20
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                      Kind = bkEllipsis
+                    end>
+                  Properties.ReadOnly = True
+                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
+                  TabOrder = 4
+                  OnKeyPress = fndP2_SORT_IDKeyPress
+                end
+                object RzBitBtn1: TRzBitBtn
+                  Left = 553
+                  Top = 40
+                  Width = 67
+                  Height = 27
+                  Action = actFind
+                  Caption = #26597#35810
+                  Color = clSilver
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = [fsBold]
+                  HighlightColor = 16026986
+                  HotTrack = True
+                  HotTrackColor = 3983359
+                  HotTrackColorType = htctActual
+                  ParentFont = False
+                  TextShadowColor = clWhite
+                  TextShadowDepth = 4
+                  TabOrder = 5
+                  TextStyle = tsRaised
+                  ThemeAware = False
+                  ImageIndex = 12
+                  NumGlyphs = 2
+                  Spacing = 5
+                end
+                object RzPanel10: TRzPanel
+                  Left = 351
+                  Top = 48
+                  Width = 192
+                  Height = 19
+                  BorderInner = fsFlat
+                  BorderOuter = fsNone
+                  Color = clWhite
+                  FlatColor = 6956042
+                  GridColor = clGray
+                  TabOrder = 6
+                  object P2_RB_Money: TcxRadioButton
+                    Left = 4
+                    Top = 1
+                    Width = 58
+                    Height = 17
+                    Caption = #38144#21806#39069
+                    Checked = True
+                    TabOrder = 0
+                    TabStop = True
+                  end
+                  object P2_RB_PRF: TcxRadioButton
+                    Left = 78
+                    Top = 1
+                    Width = 46
+                    Height = 17
+                    Caption = #27611#21033
+                    TabOrder = 1
+                  end
+                  object P2_RB_AMT: TcxRadioButton
+                    Left = 142
+                    Top = 1
+                    Width = 45
+                    Height = 17
+                    Caption = #38144#37327
+                    TabOrder = 2
+                  end
+                end
+                object fndP2_DEPT_ID: TzrComboBoxList
+                  Left = 350
+                  Top = 6
+                  Width = 194
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 7
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                  KeyField = 'DEPT_ID'
+                  ListField = 'DEPT_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'DEPT_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = []
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  RangeField = 'DEPT_TYPE'
+                  RangeValue = '1'
+                end
+                object P2_D1: TcxDateEdit
+                  Left = 69
+                  Top = 7
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DateButtons = [btnToday]
+                  TabOrder = 8
+                end
+                object P2_D2: TcxDateEdit
+                  Left = 205
+                  Top = 7
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DateButtons = [btnToday]
+                  TabOrder = 9
+                end
+              end
+              object RzPanel12: TRzPanel
+                Left = 0
+                Top = 74
+                Width = 948
+                Height = 476
+                Align = alClient
+                BorderOuter = fsNone
+                BorderSides = []
+                Color = clWhite
+                TabOrder = 1
+                object SB2: TScrollBox
+                  Left = 0
+                  Top = 0
+                  Width = 947
+                  Height = 476
+                  HorzScrollBar.Style = ssFlat
+                  HorzScrollBar.Tracking = True
+                  VertScrollBar.Tracking = True
+                  Align = alClient
+                  BevelInner = bvNone
+                  BevelOuter = bvNone
+                  Color = clWhite
+                  Ctl3D = False
+                  ParentColor = False
+                  ParentCtl3D = False
+                  TabOrder = 0
+                end
+                object RzPanel13: TRzPanel
+                  Left = 947
+                  Top = 0
+                  Width = 1
+                  Height = 476
+                  Align = alRight
+                  BorderOuter = fsNone
+                  BorderSides = []
+                  Color = clWhite
+                  TabOrder = 1
+                  object ScrollBox1: TScrollBox
+                    Left = -240
+                    Top = -8
+                    Width = 948
+                    Height = 476
+                    HorzScrollBar.Style = ssFlat
+                    HorzScrollBar.Tracking = True
+                    VertScrollBar.Tracking = True
+                    BevelInner = bvNone
+                    BevelOuter = bvNone
+                    Color = clWhite
+                    Ctl3D = False
+                    ParentColor = False
+                    ParentCtl3D = False
+                    TabOrder = 0
+                  end
+                end
+              end
+            end
+          end
+        end
+        object TabSheet3: TRzTabSheet [1]
+          Caption = #28508#21147#20998#26512#34920
+          object RzPanel11: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 958
+            Height = 560
+            Align = alClient
+            BorderOuter = fsNone
+            BorderColor = clWhite
+            BorderWidth = 5
+            TabOrder = 0
+            object Panel2: TPanel
+              Left = 5
+              Top = 5
+              Width = 948
+              Height = 550
+              Align = alClient
+              BevelOuter = bvNone
+              Color = clWhite
+              TabOrder = 0
+              object RzPnl3: TRzPanel
+                Left = 0
+                Top = 0
+                Width = 948
+                Height = 74
+                Align = alTop
+                BorderOuter = fsGroove
+                BorderSides = [sdLeft, sdTop, sdRight]
+                Color = clWhite
+                TabOrder = 0
+                object Label13: TLabel
+                  Left = 17
+                  Top = 32
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #38376#24215#32676#32452
+                end
+                object Label15: TLabel
+                  Left = 17
+                  Top = 53
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #21830#21697#25351#26631
+                end
+                object Label16: TLabel
+                  Left = 300
+                  Top = 32
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #21830#21697#20998#31867
+                end
+                object Label18: TLabel
+                  Left = 300
+                  Top = 11
+                  Width = 48
+                  Height = 12
+                  Caption = #25152#23646#37096#38376
+                end
+                object RzLabel5: TRzLabel
+                  Left = 17
+                  Top = 12
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #24320#22987#26085#26399
+                end
+                object RzLabel6: TRzLabel
+                  Left = 155
+                  Top = 11
+                  Width = 48
+                  Height = 12
+                  Caption = #25130#27490#26085#26399
+                end
+                object Label11: TLabel
+                  Left = 301
+                  Top = 53
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #32479#35745#31867#22411
+                end
+                object fndP3_TYPE_ID: TcxComboBox
+                  Left = 69
+                  Top = 49
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #20027#20379#24212#21830
+                    #21697#29260#21517#31216)
+                  TabOrder = 0
+                end
+                object fndP3_SHOP_TYPE: TcxComboBox
+                  Left = 69
+                  Top = 28
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  TabOrder = 1
+                end
+                object fndP3_SHOP_VALUE: TzrComboBoxList
+                  Tag = -1
+                  Left = 153
+                  Top = 28
+                  Width = 134
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 2
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbClear, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP3_STAT_ID: TzrComboBoxList
+                  Tag = -1
+                  Left = 153
+                  Top = 49
+                  Width = 134
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 3
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP3_SORT_ID: TcxButtonEdit
+                  Left = 351
+                  Top = 28
+                  Width = 196
+                  Height = 20
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                      Kind = bkEllipsis
+                    end>
+                  Properties.ReadOnly = True
+                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
+                  TabOrder = 4
+                  OnKeyPress = fndP3_SORT_IDKeyPress
+                end
+                object RzBitBtn2: TRzBitBtn
+                  Left = 565
+                  Top = 40
+                  Width = 67
+                  Height = 27
+                  Action = actFind
+                  Caption = #26597#35810
+                  Color = clSilver
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = [fsBold]
+                  HighlightColor = 16026986
+                  HotTrack = True
+                  HotTrackColor = 3983359
+                  HotTrackColorType = htctActual
+                  ParentFont = False
+                  TextShadowColor = clWhite
+                  TextShadowDepth = 4
+                  TabOrder = 5
+                  TextStyle = tsRaised
+                  ThemeAware = False
+                  ImageIndex = 12
+                  NumGlyphs = 2
+                  Spacing = 5
+                end
+                object fndP3_DEPT_ID: TzrComboBoxList
+                  Left = 351
+                  Top = 7
+                  Width = 196
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 6
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                  KeyField = 'DEPT_ID'
+                  ListField = 'DEPT_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'DEPT_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = []
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  RangeField = 'DEPT_TYPE'
+                  RangeValue = '1'
+                end
+                object P3_D1: TcxDateEdit
+                  Left = 69
+                  Top = 7
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DateButtons = [btnToday]
+                  TabOrder = 7
+                end
+                object P3_D2: TcxDateEdit
+                  Left = 205
+                  Top = 7
+                  Width = 82
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DateButtons = [btnToday]
+                  TabOrder = 8
+                end
+                object EdtvType: TcxComboBox
+                  Left = 351
+                  Top = 49
+                  Width = 196
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #38144#21806#39069' '#8212' '#27611#21033
+                    #38144#37327' '#8212' '#27611#21033
+                    #38144#37327' '#8212' '#38144#21806#39069)
+                  TabOrder = 9
+                end
+              end
+              object SB3: TScrollBox
+                Left = -704
+                Top = 82
+                Width = 948
+                Height = 476
+                HorzScrollBar.Style = ssFlat
+                HorzScrollBar.Tracking = True
+                VertScrollBar.Style = ssHotTrack
+                VertScrollBar.Tracking = True
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BevelKind = bkSoft
+                Color = clWhite
+                Ctl3D = False
+                ParentColor = False
+                ParentCtl3D = False
+                TabOrder = 1
+              end
+              object RzPanel14: TRzPanel
+                Left = 0
+                Top = 74
+                Width = 948
+                Height = 476
+                Align = alClient
+                BorderOuter = fsNone
+                BorderSides = []
+                Color = clWhite
+                TabOrder = 2
+                object RzPanel15: TRzPanel
+                  Left = 947
+                  Top = 0
+                  Width = 1
+                  Height = 476
+                  Align = alRight
+                  BorderOuter = fsNone
+                  BorderSides = []
+                  Color = clWhite
+                  TabOrder = 0
+                  object ScrollBox3: TScrollBox
+                    Left = -240
+                    Top = -8
+                    Width = 948
+                    Height = 476
+                    HorzScrollBar.Style = ssFlat
+                    HorzScrollBar.Tracking = True
+                    VertScrollBar.Tracking = True
+                    BevelInner = bvNone
+                    BevelOuter = bvNone
+                    Color = clWhite
+                    Ctl3D = False
+                    ParentColor = False
+                    ParentCtl3D = False
+                    TabOrder = 0
+                  end
+                end
+                object ScrollBox2: TScrollBox
+                  Left = 0
+                  Top = 0
+                  Width = 947
+                  Height = 476
+                  HorzScrollBar.Style = ssFlat
+                  HorzScrollBar.Tracking = True
+                  VertScrollBar.Tracking = True
+                  Align = alClient
+                  BevelInner = bvNone
+                  BevelOuter = bvNone
+                  Color = clWhite
+                  Ctl3D = False
+                  ParentColor = False
+                  ParentCtl3D = False
+                  TabOrder = 1
+                end
+              end
+            end
+          end
+        end
         inherited TabSheet1: TRzTabSheet
           Caption = #32463#33829#27010#20917
           inherited RzPanel3: TRzPanel
@@ -588,771 +1352,6 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       YValues.Order = loNone
                     end
                   end
-                end
-              end
-            end
-          end
-        end
-        object TabSheet2: TRzTabSheet
-          Caption = #30408#21033#20998#26512
-          object RzPanel1: TRzPanel
-            Left = 0
-            Top = 0
-            Width = 958
-            Height = 560
-            Align = alClient
-            BorderOuter = fsNone
-            BorderColor = clWhite
-            BorderWidth = 5
-            TabOrder = 0
-            object Panel1: TPanel
-              Left = 5
-              Top = 5
-              Width = 948
-              Height = 550
-              Align = alClient
-              BevelOuter = bvNone
-              Color = clWhite
-              TabOrder = 0
-              object RzPnl2: TRzPanel
-                Left = 0
-                Top = 0
-                Width = 948
-                Height = 74
-                Align = alTop
-                BorderOuter = fsGroove
-                BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
-                TabOrder = 0
-                object Label8: TLabel
-                  Left = 17
-                  Top = 32
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #38376#24215#32676#32452
-                end
-                object Label9: TLabel
-                  Left = 17
-                  Top = 53
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #21830#21697#25351#26631
-                end
-                object Label10: TLabel
-                  Left = 300
-                  Top = 31
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #21830#21697#20998#31867
-                end
-                object Label12: TLabel
-                  Left = 301
-                  Top = 52
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #32479#35745#31867#22411
-                end
-                object Label14: TLabel
-                  Left = 300
-                  Top = 10
-                  Width = 48
-                  Height = 12
-                  Caption = #25152#23646#37096#38376
-                end
-                object RzLabel1: TRzLabel
-                  Left = 17
-                  Top = 12
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #24320#22987#26085#26399
-                end
-                object RzLabel4: TRzLabel
-                  Left = 155
-                  Top = 11
-                  Width = 48
-                  Height = 12
-                  Caption = #25130#27490#26085#26399
-                end
-                object fndP2_TYPE_ID: TcxComboBox
-                  Left = 69
-                  Top = 49
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  TabOrder = 0
-                end
-                object fndP2_SHOP_TYPE: TcxComboBox
-                  Left = 69
-                  Top = 28
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
-                  TabOrder = 1
-                end
-                object fndP2_SHOP_VALUE: TzrComboBoxList
-                  Tag = -1
-                  Left = 153
-                  Top = 28
-                  Width = 134
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 2
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = [zbNew, zbClear, zbFind]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP2_STAT_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 153
-                  Top = 49
-                  Width = 134
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 3
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP2_SORT_ID: TcxButtonEdit
-                  Left = 350
-                  Top = 26
-                  Width = 194
-                  Height = 20
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                      Kind = bkEllipsis
-                    end>
-                  Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 4
-                  OnKeyPress = fndP2_SORT_IDKeyPress
-                end
-                object RzBitBtn1: TRzBitBtn
-                  Left = 553
-                  Top = 40
-                  Width = 67
-                  Height = 27
-                  Action = actFind
-                  Caption = #26597#35810
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 5
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  ImageIndex = 12
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-                object RzPanel10: TRzPanel
-                  Left = 351
-                  Top = 48
-                  Width = 192
-                  Height = 19
-                  BorderInner = fsFlat
-                  BorderOuter = fsNone
-                  Color = clWhite
-                  FlatColor = 6956042
-                  GridColor = clGray
-                  TabOrder = 6
-                  object P2_RB_Money: TcxRadioButton
-                    Left = 4
-                    Top = 1
-                    Width = 58
-                    Height = 17
-                    Caption = #38144#21806#39069
-                    Checked = True
-                    TabOrder = 0
-                    TabStop = True
-                  end
-                  object P2_RB_PRF: TcxRadioButton
-                    Left = 78
-                    Top = 1
-                    Width = 46
-                    Height = 17
-                    Caption = #27611#21033
-                    TabOrder = 1
-                  end
-                  object P2_RB_AMT: TcxRadioButton
-                    Left = 142
-                    Top = 1
-                    Width = 45
-                    Height = 17
-                    Caption = #38144#37327
-                    TabOrder = 2
-                  end
-                end
-                object fndP2_DEPT_ID: TzrComboBoxList
-                  Left = 350
-                  Top = 6
-                  Width = 194
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 7
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'DEPT_NAME;DEPT_SPELL'
-                  KeyField = 'DEPT_ID'
-                  ListField = 'DEPT_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'DEPT_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = []
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                  RangeField = 'DEPT_TYPE'
-                  RangeValue = '1'
-                end
-                object P2_D1: TcxDateEdit
-                  Left = 69
-                  Top = 7
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DateButtons = [btnToday]
-                  TabOrder = 8
-                end
-                object P2_D2: TcxDateEdit
-                  Left = 205
-                  Top = 7
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DateButtons = [btnToday]
-                  TabOrder = 9
-                end
-              end
-              object RzPanel12: TRzPanel
-                Left = 0
-                Top = 74
-                Width = 948
-                Height = 476
-                Align = alClient
-                BorderOuter = fsNone
-                BorderSides = []
-                Color = clWhite
-                TabOrder = 1
-                object SB2: TScrollBox
-                  Left = 0
-                  Top = 0
-                  Width = 947
-                  Height = 476
-                  HorzScrollBar.Style = ssFlat
-                  HorzScrollBar.Tracking = True
-                  VertScrollBar.Tracking = True
-                  Align = alClient
-                  BevelInner = bvNone
-                  BevelOuter = bvNone
-                  Color = clWhite
-                  Ctl3D = False
-                  ParentColor = False
-                  ParentCtl3D = False
-                  TabOrder = 0
-                end
-                object RzPanel13: TRzPanel
-                  Left = 947
-                  Top = 0
-                  Width = 1
-                  Height = 476
-                  Align = alRight
-                  BorderOuter = fsNone
-                  BorderSides = []
-                  Color = clWhite
-                  TabOrder = 1
-                  object ScrollBox1: TScrollBox
-                    Left = -240
-                    Top = -8
-                    Width = 948
-                    Height = 476
-                    HorzScrollBar.Style = ssFlat
-                    HorzScrollBar.Tracking = True
-                    VertScrollBar.Tracking = True
-                    BevelInner = bvNone
-                    BevelOuter = bvNone
-                    Color = clWhite
-                    Ctl3D = False
-                    ParentColor = False
-                    ParentCtl3D = False
-                    TabOrder = 0
-                  end
-                end
-              end
-            end
-          end
-        end
-        object TabSheet3: TRzTabSheet
-          Caption = #28508#21147#20998#26512#34920
-          object RzPanel11: TRzPanel
-            Left = 0
-            Top = 0
-            Width = 958
-            Height = 560
-            Align = alClient
-            BorderOuter = fsNone
-            BorderColor = clWhite
-            BorderWidth = 5
-            TabOrder = 0
-            object Panel2: TPanel
-              Left = 5
-              Top = 5
-              Width = 948
-              Height = 550
-              Align = alClient
-              BevelOuter = bvNone
-              Color = clWhite
-              TabOrder = 0
-              object RzPnl3: TRzPanel
-                Left = 0
-                Top = 0
-                Width = 948
-                Height = 74
-                Align = alTop
-                BorderOuter = fsGroove
-                BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
-                TabOrder = 0
-                object Label13: TLabel
-                  Left = 17
-                  Top = 32
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #38376#24215#32676#32452
-                end
-                object Label15: TLabel
-                  Left = 17
-                  Top = 53
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #21830#21697#25351#26631
-                end
-                object Label16: TLabel
-                  Left = 300
-                  Top = 32
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #21830#21697#20998#31867
-                end
-                object Label18: TLabel
-                  Left = 300
-                  Top = 11
-                  Width = 48
-                  Height = 12
-                  Caption = #25152#23646#37096#38376
-                end
-                object RzLabel5: TRzLabel
-                  Left = 17
-                  Top = 12
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #24320#22987#26085#26399
-                end
-                object RzLabel6: TRzLabel
-                  Left = 155
-                  Top = 11
-                  Width = 48
-                  Height = 12
-                  Caption = #25130#27490#26085#26399
-                end
-                object Label11: TLabel
-                  Left = 301
-                  Top = 53
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #32479#35745#31867#22411
-                end
-                object fndP3_TYPE_ID: TcxComboBox
-                  Left = 69
-                  Top = 49
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  TabOrder = 0
-                end
-                object fndP3_SHOP_TYPE: TcxComboBox
-                  Left = 69
-                  Top = 28
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
-                  TabOrder = 1
-                end
-                object fndP3_SHOP_VALUE: TzrComboBoxList
-                  Tag = -1
-                  Left = 153
-                  Top = 28
-                  Width = 134
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 2
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = [zbNew, zbClear, zbFind]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP3_STAT_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 153
-                  Top = 49
-                  Width = 134
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 3
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP3_SORT_ID: TcxButtonEdit
-                  Left = 351
-                  Top = 28
-                  Width = 196
-                  Height = 20
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                      Kind = bkEllipsis
-                    end>
-                  Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 4
-                  OnKeyPress = fndP3_SORT_IDKeyPress
-                end
-                object RzBitBtn2: TRzBitBtn
-                  Left = 565
-                  Top = 40
-                  Width = 67
-                  Height = 27
-                  Action = actFind
-                  Caption = #26597#35810
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 5
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  ImageIndex = 12
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-                object fndP3_DEPT_ID: TzrComboBoxList
-                  Left = 351
-                  Top = 7
-                  Width = 196
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 6
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'DEPT_NAME;DEPT_SPELL'
-                  KeyField = 'DEPT_ID'
-                  ListField = 'DEPT_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'DEPT_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = []
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                  RangeField = 'DEPT_TYPE'
-                  RangeValue = '1'
-                end
-                object P3_D1: TcxDateEdit
-                  Left = 69
-                  Top = 7
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DateButtons = [btnToday]
-                  TabOrder = 7
-                end
-                object P3_D2: TcxDateEdit
-                  Left = 205
-                  Top = 7
-                  Width = 82
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DateButtons = [btnToday]
-                  TabOrder = 8
-                end
-                object EdtvType: TcxComboBox
-                  Left = 351
-                  Top = 49
-                  Width = 196
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsFixedList
-                  Properties.Items.Strings = (
-                    #38144#21806#39069' '#8212' '#27611#21033
-                    #38144#37327' '#8212' '#27611#21033
-                    #38144#37327' '#8212' '#38144#21806#39069)
-                  TabOrder = 9
-                end
-              end
-              object SB3: TScrollBox
-                Left = -704
-                Top = 82
-                Width = 948
-                Height = 476
-                HorzScrollBar.Style = ssFlat
-                HorzScrollBar.Tracking = True
-                VertScrollBar.Style = ssHotTrack
-                VertScrollBar.Tracking = True
-                BevelInner = bvNone
-                BevelOuter = bvNone
-                BevelKind = bkSoft
-                Color = clWhite
-                Ctl3D = False
-                ParentColor = False
-                ParentCtl3D = False
-                TabOrder = 1
-              end
-              object RzPanel14: TRzPanel
-                Left = 0
-                Top = 74
-                Width = 948
-                Height = 476
-                Align = alClient
-                BorderOuter = fsNone
-                BorderSides = []
-                Color = clWhite
-                TabOrder = 2
-                object RzPanel15: TRzPanel
-                  Left = 947
-                  Top = 0
-                  Width = 1
-                  Height = 476
-                  Align = alRight
-                  BorderOuter = fsNone
-                  BorderSides = []
-                  Color = clWhite
-                  TabOrder = 0
-                  object ScrollBox3: TScrollBox
-                    Left = -240
-                    Top = -8
-                    Width = 948
-                    Height = 476
-                    HorzScrollBar.Style = ssFlat
-                    HorzScrollBar.Tracking = True
-                    VertScrollBar.Tracking = True
-                    BevelInner = bvNone
-                    BevelOuter = bvNone
-                    Color = clWhite
-                    Ctl3D = False
-                    ParentColor = False
-                    ParentCtl3D = False
-                    TabOrder = 0
-                  end
-                end
-                object ScrollBox2: TScrollBox
-                  Left = 0
-                  Top = 0
-                  Width = 947
-                  Height = 476
-                  HorzScrollBar.Style = ssFlat
-                  HorzScrollBar.Tracking = True
-                  VertScrollBar.Tracking = True
-                  Align = alClient
-                  BevelInner = bvNone
-                  BevelOuter = bvNone
-                  Color = clWhite
-                  Ctl3D = False
-                  ParentColor = False
-                  ParentCtl3D = False
-                  TabOrder = 1
                 end
               end
             end

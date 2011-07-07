@@ -1041,6 +1041,7 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsString := TaskThread.TenantId;
       Params.ParamByName('flag').AsInteger := -1;
+      if PlugIn.Working > 0 then Raise Exception.Create('插件正在执行中，不能重复执行...'); 
       PlugIn.DLLDoExecute(TftParamList.Encode(Params),V);
     finally
       Params.free;

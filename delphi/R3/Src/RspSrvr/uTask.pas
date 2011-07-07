@@ -331,11 +331,11 @@ begin
       if Stoped then continue;
       if PlugIn=nil then
          begin
-           if PlugInList.Count = 0 then Exit;
            if n>(PlugInList.Count-1) then n := 0;
-           PlugIn := PlugInList.Items[n];
+           if PlugInList.Items[n].Working=0 then
+              PlugIn := PlugInList.Items[n];
            inc(n);
-           if not CheckTimer(PlugIn) then
+           if (PlugIn<>nil) and not CheckTimer(PlugIn) then
               begin
                 PlugIn := nil;
                 Continue;
@@ -346,16 +346,18 @@ begin
         StartTime := GetTickCount;
         try
           Params.ParamByName('TENANT_ID').AsString := TenantId; 
-          Params.ParamByName('flag').AsInteger := -1; 
+          Params.ParamByName('flag').AsInteger := -1;
           PlugIn.DLLDoExecute(TftParamList.Encode(Params),V);
           WriteLogFile('<'+PlugIn.PlugInDisplayName+'>执行完毕,总用时:'+inttostr((GetTickCount-StartTime) div 1000)+'秒');
-          GetTimer(PlugIn).NearTime := formatdatetime('YYYYMMDDHHNNSS',now());
-          WriteTimer(PlugIn);
         except
           on E:Exception do
-             WriteLogFile('执行失败,原因:未知错误类型"'+E.Message+'"');
+             begin
+               WriteLogFile('<'+PlugIn.PlugInDisplayName+'>执行失败,原因:未知错误类型"'+E.Message+'"');
+             end;
         end;
       finally
+        GetTimer(PlugIn).NearTime := formatdatetime('YYYYMMDDHHNNSS',now());
+        WriteTimer(PlugIn);
         PlugIn := nil;
         Working := false;
       end;

@@ -59,7 +59,8 @@ uses
   ObjSyncMessage in '..\PlugIn\obj\ObjSyncMessage.pas',
   ObjDefineGodsState in '..\Shop5\Obj\ObjDefineGodsState.pas',
   ObjDefineReport in '..\Shop5\Obj\ObjDefineReport.pas',
-  objHandSetRelation in '..\Shop5\Obj\objHandSetRelation.pas';
+  objHandSetRelation in '..\Shop5\Obj\objHandSetRelation.pas',
+  ObjDemandOrder in '..\Shop5\Obj\ObjDemandOrder.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}
@@ -127,7 +128,7 @@ begin
     SvcMgr.Application.Title := '通讯服务器';
     SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
-    SvcMgr.Application.Run;
+  SvcMgr.Application.Run;
   end else
   begin
     Forms.Application.Initialize;

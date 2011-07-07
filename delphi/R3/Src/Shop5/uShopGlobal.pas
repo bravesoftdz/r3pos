@@ -335,12 +335,15 @@ begin
 end;
 
 function TShopGlobal.GetDeptInfo: TZQuery;
-var DeptId:string;
+var
+  DeptId:string;
+  us:TZQuery;
 begin
-  CA_USERS.Filtered := false;
-  if CA_USERS.Locate('USER_ID',UserId,[]) then
+  us := Global.GetZQueryFromName('CA_USERS'); 
+  us.Filtered := false;
+  if us.Locate('USER_ID',UserId,[]) then
      begin
-       DeptId := CA_USERS.FieldbyName('DEPT_ID').AsString;
+       DeptId := us.FieldbyName('DEPT_ID').AsString;
      end;
   result := Global.GetZQueryFromName('CA_DEPT_INFO');
   if not(result.Locate('DEPT_ID',DeptId,[]) and (result.FieldbyName('DEPT_TYPE').AsString='1')) then

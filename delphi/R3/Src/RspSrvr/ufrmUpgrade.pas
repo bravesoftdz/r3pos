@@ -287,11 +287,6 @@ begin
        begin
          RzVersionInfo.FilePath := ExtractFilePath(ParamStr(0))+'RSPScktSrvr.exe';
          CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),'R3_RSP',RzVersionInfo.FileVersion);
-         //if not CaUpgrade.UpGrade in [1,2] then
-         //   begin
-         //     if MessageBox(Handle,'你当前使用的软件已经是最新版了.','友情提示...',MB_OK+MB_ICONINFORMATION);
-         //     Exit;
-         //   end;
        end
     else Raise Exception.Create('企业认证失败，无法完成安装升级..');
 

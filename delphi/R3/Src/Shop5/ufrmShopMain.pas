@@ -721,7 +721,7 @@ begin
           begin
             MessageBox(Application.Handle,pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
             Exit
-          end else CaUpgrade.UpGrade := 0;
+          end else CaUpgrade.UpGrade := 3;
      end;
   end
   else

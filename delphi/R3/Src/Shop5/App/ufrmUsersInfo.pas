@@ -240,11 +240,19 @@ begin
     if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
     raise Exception.Create('所属门店不能为空！');
   end;
-  if trim(edtWORK_DATE.AsString)='' then
+  if trim(edtWORK_DATE.Text)='' then
   begin
     if edtWORK_DATE.CanFocus then edtWORK_DATE.SetFocus;
     raise Exception.Create('入职日期不能为空！');
   end;
+  if Trim(edtDIMI_DATE.Text) <> '' then
+    begin
+      if edtDIMI_DATE.Date < edtWORK_DATE.Date then
+        begin
+          if edtDIMI_DATE.CanFocus then edtDIMI_DATE.SetFocus;
+          raise Exception.Create('离职日期不能小于入职日期！');
+        end;
+    end;
 
   //此检测，现已经不能只对前台检测，要OBJ中对整个数据库检测
   if dbState = dsInsert then

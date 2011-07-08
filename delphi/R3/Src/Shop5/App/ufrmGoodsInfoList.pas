@@ -1385,7 +1385,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
         if (Dest.FieldByName('BARCODE3').AsString <> '') or (Dest.FieldByName('BIG_UNITS').AsString <> '') or (Dest.FieldByName('BIGTO_CALC').AsInteger <> 0) then
           begin
             if (Dest.FieldByName('BARCODE3').AsString = '') or (Dest.FieldByName('BIG_UNITS').AsString = '') or (Dest.FieldByName('BIGTO_CALC').AsInteger = 0) then
-              raise Exception.Create('包装1参数不完整!')
+              raise Exception.Create('包装2参数不完整!')
             else
               begin
                 if Dest.FieldByName('MY_OUTPRICE2').AsString = '' then

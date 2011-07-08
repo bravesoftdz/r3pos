@@ -290,7 +290,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object RzLabel13: TRzLabel
                   Left = 227
-                  Top = 12
+                  Top = 15
                   Width = 37
                   Height = 12
                   Alignment = taRightJustify
@@ -350,7 +350,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object RzLabel1: TRzLabel
                   Left = 213
-                  Top = 44
+                  Top = 47
                   Width = 51
                   Height = 12
                   Alignment = taRightJustify
@@ -362,7 +362,6 @@ inherited frmUsers: TfrmUsers
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
-                  Visible = False
                 end
                 object edtKey: TcxTextEdit
                   Left = 80
@@ -515,7 +514,6 @@ inherited frmUsers: TfrmUsers
                     #22312#32844
                     #31163#32844)
                   TabOrder = 6
-                  Visible = False
                 end
                 object fndSHOP_ID: TzrComboBoxList
                   Left = 81

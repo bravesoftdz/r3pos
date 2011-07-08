@@ -242,7 +242,7 @@ begin
     except
       on E:Exception do
          begin
-           LogFile.AddLogFile(0,E.Message,PlugInDisplayName);
+           //LogFile.AddLogFile(0,'<'+inttostr(PlugInId)+'>'+E.Message,PlugInDisplayName);
            Raise;
          end;
     end;

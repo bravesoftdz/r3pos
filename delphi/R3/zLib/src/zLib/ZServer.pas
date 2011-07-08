@@ -1079,7 +1079,7 @@ begin
   Enter;
   try
     result := 0;
-    if FList.Count < 2 then exit;
+    if FList.Count < 1 then exit;
     result := GetTickCount - PZDataBlock(FList[0])^.TimeStamp;
   finally
     Leave;
@@ -1092,7 +1092,7 @@ procedure TZConnCache.Push(Conn: TdbResolver);
 begin
   Enter;
   try
-    if FList.Count>=MaxCache then
+    if (FList.Count>=MaxCache) or (not Conn.Connected) then
        begin
          Conn.Free;
        end

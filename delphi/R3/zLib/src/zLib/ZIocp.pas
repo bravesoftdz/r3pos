@@ -1220,7 +1220,7 @@ begin
       finally
         FWorking := false;
       end;
-      WaitForSingleObject(FhEvent, 60000);
+      WaitForSingleObject(FhEvent, 100);
       if not Terminated then
          begin
            ResetEvent(FhEvent);

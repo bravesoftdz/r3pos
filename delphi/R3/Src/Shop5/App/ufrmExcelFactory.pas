@@ -166,7 +166,6 @@ begin
         cdsExcel.Next;
       end;
     except
-      //rzPage.ActivePageIndex := 3;
       //RzBitBtn3.Visible := False;
       //rzPage.OnChange(nil);
       {if UpperCase(DataSet.ClassName)='TCLIENTDATASET' then
@@ -178,14 +177,15 @@ begin
     end;
     if HasError then
       begin
-        //rzPage.ActivePageIndex := 3;
+        MessageBox(Handle,'执行过程发现数据异常，请核对正确后再导入','友情提示...',MB_OK+MB_ICONWARNING);
+        rzPage.ActivePageIndex := 3;
+        RzBitBtn1.Caption := '下一步';
         //RzBitBtn3.Visible := False;
         //rzPage.OnChange(nil);
         {if UpperCase(DataSet.ClassName)='TCLIENTDATASET' then
            TClientDataSet(DataSet).CancelUpdates
         else
            TZQuery(DataSet).CancelUpdates;}
-        MessageBox(Handle,'执行过程发现数据异常，请核对正确后再导入','友情提示...',MB_OK+MB_ICONWARNING);
       end
     else
       result := true;

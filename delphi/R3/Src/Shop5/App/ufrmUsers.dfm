@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 451
-  Top = 161
+  Left = 160
+  Top = 125
   Width = 948
   Height = 580
   Caption = #29992#25143#26723#26696#31649#29702
@@ -26,9 +26,9 @@ inherited frmUsers: TfrmUsers
             Height = 473
             object RzPanel1: TRzPanel
               Left = 5
-              Top = 152
+              Top = 117
               Width = 912
-              Height = 316
+              Height = 351
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -37,7 +37,7 @@ inherited frmUsers: TfrmUsers
                 Left = 5
                 Top = 5
                 Width = 902
-                Height = 287
+                Height = 322
                 Align = alClient
                 DataSource = Ds_Users
                 Flat = True
@@ -191,7 +191,7 @@ inherited frmUsers: TfrmUsers
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 292
+                Top = 327
                 Width = 902
                 Height = 19
                 Align = alBottom
@@ -216,7 +216,7 @@ inherited frmUsers: TfrmUsers
               Left = 5
               Top = 5
               Width = 912
-              Height = 147
+              Height = 112
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
@@ -225,7 +225,7 @@ inherited frmUsers: TfrmUsers
                 Left = 5
                 Top = 5
                 Width = 902
-                Height = 137
+                Height = 102
                 Align = alClient
                 Alignment = taLeftJustify
                 BevelInner = bvLowered
@@ -239,10 +239,10 @@ inherited frmUsers: TfrmUsers
                 TabOrder = 0
                 DesignSize = (
                   902
-                  137)
+                  102)
                 object Label1: TLabel
                   Left = 7
-                  Top = 92
+                  Top = 61
                   Width = 247
                   Height = 12
                   Caption = #25903#25345#65288#29992#25143#22995#21517#12289#25340#38899#30721#12289#29992#25143#36134#21495#65289#26597#35810
@@ -255,14 +255,14 @@ inherited frmUsers: TfrmUsers
                 end
                 object Bevel1: TBevel
                   Left = 262
-                  Top = 96
+                  Top = 65
                   Width = 623
                   Height = 2
                   Anchors = [akLeft, akTop, akRight]
                 end
                 object Label3: TLabel
                   Left = 10
-                  Top = 115
+                  Top = 80
                   Width = 65
                   Height = 12
                   Caption = #26597#35810#20851#20581#23383
@@ -275,7 +275,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object RzLabel22: TRzLabel
                   Left = 8
-                  Top = 8
+                  Top = 13
                   Width = 63
                   Height = 12
                   Alignment = taRightJustify
@@ -289,7 +289,7 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object RzLabel13: TRzLabel
-                  Left = 227
+                  Left = 443
                   Top = 15
                   Width = 37
                   Height = 12
@@ -305,7 +305,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object RzLabel6: TRzLabel
                   Left = 21
-                  Top = 29
+                  Top = 42
                   Width = 49
                   Height = 12
                   Alignment = taRightJustify
@@ -319,8 +319,8 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object labDEGREES: TRzLabel
-                  Left = 25
-                  Top = 71
+                  Left = 233
+                  Top = 42
                   Width = 45
                   Height = 12
                   Alignment = taRightJustify
@@ -334,8 +334,8 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object lab_DUTY_IDS: TRzLabel
-                  Left = 31
-                  Top = 50
+                  Left = 239
+                  Top = 13
                   Width = 40
                   Height = 12
                   Alignment = taRightJustify
@@ -349,8 +349,8 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object RzLabel1: TRzLabel
-                  Left = 213
-                  Top = 47
+                  Left = 429
+                  Top = 44
                   Width = 51
                   Height = 12
                   Alignment = taRightJustify
@@ -365,7 +365,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object edtKey: TcxTextEdit
                   Left = 80
-                  Top = 111
+                  Top = 76
                   Width = 196
                   Height = 20
                   TabOrder = 0
@@ -373,7 +373,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object btnOk: TRzBitBtn
                   Left = 290
-                  Top = 109
+                  Top = 74
                   Width = 67
                   Height = 24
                   Action = actFind
@@ -399,10 +399,10 @@ inherited frmUsers: TfrmUsers
                   Spacing = 5
                 end
                 object fndSEX: TRadioGroup
-                  Left = 274
+                  Left = 490
                   Top = 2
                   Width = 189
-                  Height = 33
+                  Height = 29
                   Columns = 3
                   Items.Strings = (
                     #22899
@@ -412,7 +412,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object fndDEPT_ID: TzrComboBoxList
                   Left = 81
-                  Top = 25
+                  Top = 38
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -462,15 +462,15 @@ inherited frmUsers: TfrmUsers
                   MultiSelect = False
                 end
                 object fndDEGREES: TcxComboBox
-                  Left = 81
-                  Top = 67
+                  Left = 289
+                  Top = 38
                   Width = 121
                   Height = 20
                   TabOrder = 4
                 end
                 object fndDUTY_IDS: TzrComboBoxList
-                  Left = 81
-                  Top = 46
+                  Left = 289
+                  Top = 9
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -504,10 +504,10 @@ inherited frmUsers: TfrmUsers
                   MultiSelect = False
                 end
                 object fndState: TRadioGroup
-                  Left = 274
-                  Top = 34
+                  Left = 490
+                  Top = 31
                   Width = 189
-                  Height = 33
+                  Height = 29
                   Columns = 3
                   Items.Strings = (
                     #26410#20837#32844
@@ -517,7 +517,7 @@ inherited frmUsers: TfrmUsers
                 end
                 object fndSHOP_ID: TzrComboBoxList
                   Left = 81
-                  Top = 4
+                  Top = 9
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False

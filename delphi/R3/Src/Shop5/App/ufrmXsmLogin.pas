@@ -6,13 +6,12 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ExtCtrls, RzPanel, ActnList, Menus, RzButton,
   cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, jpeg, DB,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, RzBckgnd;
 
 type
   TfrmXsmLogin = class(TfrmBasic)
     RzPanel1: TRzPanel;
     RzPanel2: TRzPanel;
-    Image1: TImage;
     lblName: TLabel;
     lblPass: TLabel;
     edtPassword: TcxTextEdit;
@@ -22,6 +21,8 @@ type
     Label1: TLabel;
     edtUrl: TcxTextEdit;
     cdsUnion: TZQuery;
+    imgLogin: TImage;
+    RzBackground1: TRzBackground;
     procedure cxBtnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cxbtnCancelClick(Sender: TObject);

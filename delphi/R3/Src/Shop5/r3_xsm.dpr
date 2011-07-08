@@ -241,7 +241,8 @@ uses
   ufrmRimIEBrowser in 'App\ufrmRimIEBrowser.pas' {frmRimIEBrowser},
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
   uAdvFactory in 'App\uAdvFactory.pas',
-  CDO_TLB in '..\..\Pub\CDO_TLB.pas';
+  CDO_TLB in '..\..\Pub\CDO_TLB.pas',
+  ufrmNetLogin in 'App\ufrmNetLogin.pas' {frmNetLogin};
 
 {$R *.res}
 var

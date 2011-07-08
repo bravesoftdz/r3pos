@@ -523,6 +523,10 @@ begin
       Global.TENANT_ID := Tenant.TENANT_ID;
       Global.TENANT_NAME := Tenant.TENANT_NAME;
       Global.SHORT_TENANT_NAME := Tenant.SHORT_TENANT_NAME;
+      Global.SHOP_ID := inttostr(Tenant.TENANT_ID)+'0001';
+      Global.SHOP_NAME := Tenant.TENANT_NAME;
+      Global.UserID := inttostr(Tenant.TENANT_ID)+'0001';
+      Global.UserName := Tenant.SHORT_TENANT_NAME;
       TENANT_ID := Tenant.TENANT_ID;
       SaveParams;
       result := true;

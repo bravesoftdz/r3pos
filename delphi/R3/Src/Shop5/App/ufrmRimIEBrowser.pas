@@ -222,6 +222,7 @@ begin
        end;
   except
     logined := false;
+    frmLogo.Close;
     MessageBox(Handle,'登录RIM失败，请检查服务用网络是否正常.','友情提示...',MB_OK+MB_ICONINFORMATION);
   end;
 end;

@@ -4041,7 +4041,7 @@ CREATE TABLE [CA_MODULE] (
         --R3 Delphi专用
 	[ACTION_NAME] [varchar] (50) NOT NULL ,
         --R3 Web版专用
-	[ACTION_URL] [varchar] (50) NOT NULL ,
+	[ACTION_URL] [varchar] (255) NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_CA_MODULE_COMM] DEFAULT ('00'),
   --更新时间 从2011-01-01开始的秒数  

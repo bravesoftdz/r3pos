@@ -210,7 +210,6 @@ var
   CurDate:Currency;
 begin
   result := true;
-  Exit;
   if Global.debug then Exit;
   timestamp := GetSynTimeStamp('#','#');
   if timestamp=0 then Exit;

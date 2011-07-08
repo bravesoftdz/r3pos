@@ -9,19 +9,19 @@ inherited frmSalesOrderList: TfrmSalesOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 828
-    Height = 497
+    Height = 496
     inherited RzPanel2: TRzPanel
       Width = 818
-      Height = 487
+      Height = 486
       inherited RzPage: TRzPageControl
         Width = 812
-        Height = 481
+        Height = 480
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 810
-            Height = 454
+            Height = 453
             inherited RzPanel1: TRzPanel
               Width = 800
               Height = 121
@@ -313,7 +313,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 126
               Width = 800
-              Height = 323
+              Height = 322
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -530,7 +530,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      18000000C4200000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000BD200000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -792,6 +792,6 @@ inherited frmSalesOrderList: TfrmSalesOrderList
       61626C6573000000000200736C0014006364735F436867426F64792E22534C30
       303030220002006A650014006364735F436867426F64792E224A453030303022
       0004006B68796800000000040079687A68000000000200647A00000000000000
-      0000000000FDFF0100000000}
+      0000000000}
   end
 end

@@ -170,6 +170,7 @@ procedure TfrmChangeOrderList.FormCreate(Sender: TObject);
 var
   rs:TZQuery;
   AObj:TRecord_;
+  SetCol: TColumnEh;
 begin
   inherited;
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
@@ -190,6 +191,9 @@ begin
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label40.Caption := '仓库名称';
+      SetCol:=self.FindColumn('SHOP_NAME');
+      if SetCol<>nil then
+        SetCol.Title.Caption:='仓库名称'; 
     end;
 end;
 
@@ -521,7 +525,9 @@ begin
 end;
 
 procedure TfrmChangeOrderList.SetCodeId(const Value: string);
-var rs:TZQuery;
+var
+  rs:TZQuery;
+  SetCol: TColumnEh;
 begin
   FCodeId := Value;
   rs := TZQuery.Create(nil);
@@ -542,12 +548,31 @@ begin
        RzLabel6.Caption := '领 用 人';
        FindColumn('DUTY_USER_TEXT').Title.Caption := '领用人';
        FindColumn('DEPT_NAME').Title.Caption := '领用部门';
+       //添加门店List
+       SetCol:=FindColumn('SHOP_ID');
+       if SetCol<>nil then
+       begin
+         rs:=Global.GetZQueryFromName('CA_SHOP_INFO');
+         if (rs<>nil) and (rs.Active) then
+         begin
+           rs.First;
+           while not rs.Eof do
+           begin
+             SetCol.KeyList.Add(trim(rs.fieldbyName('SHOP_ID').AsString));
+             SetCol.PickList.Add(trim(rs.fieldbyName('SHOP_NAME').AsString));  
+             rs.Next;
+           end;
+         end; 
+       end;
      end
   else
      begin
        RzLabel6.Caption := '经 手 人';
        FindColumn('DUTY_USER_TEXT').Title.Caption := '经手人';
        FindColumn('DEPT_NAME').Title.Caption := '损益部门';
+       SetCol:=FindColumn('SHOP_ID');
+       if SetCol<>nil then
+         SetCol.Free; 
      end;
 end;
 

@@ -800,7 +800,7 @@ begin
     ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_PRF) as SALE_PRF '+
-    ',case when sum(SALE_CST)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_CST) as decimal(18,3)) else 0 end SALE_RATE '+
+    ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end SALE_RATE '+
     ',sum(DBIN_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBIN_AMT '+
     ',sum(DBIN_CST) as DBIN_CST '+
     ',sum(DBOUT_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+') as DBOUT_AMT '+

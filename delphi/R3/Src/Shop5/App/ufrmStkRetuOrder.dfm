@@ -1,6 +1,6 @@
 inherited frmStkRetuOrder: TfrmStkRetuOrder
-  Left = 184
-  Top = 139
+  Left = 391
+  Top = 171
   Width = 787
   Height = 542
   Caption = #37319#36141#36864#36135#21333

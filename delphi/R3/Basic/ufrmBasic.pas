@@ -7,7 +7,7 @@ uses
   Dialogs,ZdbFactory,uGlobal, Menus, ActnList, cxControls, cxSpinEdit, RzSplit,RzTabs,
   cxContainer, cxEdit, cxTextEdit,ExtCtrls, cxMemo,DbGridEh,cxDropDownEdit,ZBase,FR_Class,
   ComCtrls,RzTreeVw, StdCtrls, RzButton, RzPanel, ShellApi, cxCalendar,DBGrids,cxCheckBox,
-  cxMaskEdit,cxButtonEdit,zrComboBoxList;
+  cxMaskEdit,cxButtonEdit,zrComboBoxList,ZLogFile;
 const
   RowSelectColor=clAqua;
   BtnColor = $00DAD39C;
@@ -350,6 +350,8 @@ begin
       if Components[i] is TDataSet then
          TDataSet(Components[i]).Close;
       except
+        on E:Exception do
+          LogFile.AddLogFile(0,E.Message);
       end;
     end;
 //  if sysLogFile and Assigned(Factor) and Factor.Connected then
@@ -357,6 +359,8 @@ begin
   TDbGridEhExport.FreeForm(self);
   TDbGridEhMark.FreeForm(self);
   except
+    on E:Exception do
+       LogFile.AddLogFile(0,E.Message);
   end;
   inherited;
 end;

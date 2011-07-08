@@ -1,6 +1,6 @@
 inherited frmOutLocusOrderList: TfrmOutLocusOrderList
-  Left = 205
-  Top = 142
+  Left = 198
+  Top = 108
   Width = 868
   Height = 575
   Caption = #21457#36135#21333
@@ -16,6 +16,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 844
         Height = 495
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
@@ -407,8 +409,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 834
-            Height = 457
+            Width = 842
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -419,7 +421,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel7: TRzPanel
               Left = 5
               Top = 5
-              Width = 824
+              Width = 832
               Height = 102
               Align = alTop
               BorderOuter = fsNone
@@ -637,8 +639,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh2: TDBGridEh
               Left = 5
               Top = 107
-              Width = 824
-              Height = 345
+              Width = 832
+              Height = 356
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -1147,8 +1149,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           object RzPanel10: TRzPanel
             Left = 0
             Top = 0
-            Width = 834
-            Height = 457
+            Width = 842
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -1159,7 +1161,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object RzPanel11: TRzPanel
               Left = 5
               Top = 5
-              Width = 824
+              Width = 832
               Height = 110
               Align = alTop
               BorderOuter = fsNone
@@ -1445,8 +1447,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             object DBGridEh4: TDBGridEh
               Left = 5
               Top = 115
-              Width = 824
-              Height = 337
+              Width = 832
+              Height = 348
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -1662,7 +1664,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      18000000C4200000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000BD200000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -1924,7 +1926,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       61626C6573000000000200736C0014006364735F436867426F64792E22534C30
       303030220002006A650014006364735F436867426F64792E224A453030303022
       0004006B68796800000000040079687A68000000000200647A00000000000000
-      0000000000FDFF0100000000}
+      0000000000}
   end
   object cdsP2List: TZQuery
     FieldDefs = <>

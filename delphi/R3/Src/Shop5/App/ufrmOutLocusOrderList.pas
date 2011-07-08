@@ -149,7 +149,8 @@ type
   end;
 
 implementation
-uses ufrmSalLocusOrder, ufrmDbLocusOrder, ufrmChangeLocusOrder, ufrmStkRetuLocusOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport,uShopGlobal;
+uses ufrmSalLocusOrder, ufrmDbLocusOrder, ufrmChangeLocusOrder, ufrmStkRetuLocusOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport,uShopGlobal,
+  ObjCommon, ufrmDbOkDialog;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -577,7 +578,9 @@ end;
 
 procedure TfrmOutLocusOrderList.actNewExecute(Sender: TObject);
 var
-  idx:integer;
+  idx: integer;
+  SendMan: String;  //送货人
+  SendDate: TDate;  //送货日期
 begin
   if not ShopGlobal.GetChkRight('14700001',2) then Raise Exception.Create('你没有扫码的权限,请和管理员联系.');
   if (CurOrder=nil) then
@@ -592,7 +595,15 @@ begin
          end;
        1:begin
            if cdsP2List.IsEmpty then Exit;
-           OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
+           SendMan := Global.UserId;
+           SendDate := Date();
+           if TfrmDbOkDialog.DBOkDialog(self,SendDate,SendMan) then
+           begin
+             OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
+             TfrmDbLocusOrder(CurOrder).edtGUIDE_USER.KeyValue:=SendMan;
+             TfrmDbLocusOrder(CurOrder).edtGUIDE_USER.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',SendMan);
+             TfrmDbLocusOrder(CurOrder).edtSALES_DATE.Date:=SendDate;
+           end;
          end;
        2:begin
            if cdsP3List.IsEmpty then Exit;
@@ -686,7 +697,8 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL2(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 '+
+       ' and isnull(A.CHK_DATE,'''')<>'''' and isnull(A.CHK_USE,'''')<>'''' '; //增加过滤审核
   if fndP2_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndP2_SHOP_ID.AsString <> '' then
@@ -702,6 +714,7 @@ begin
      end;
   if id<>'' then
      w := w +' and A.SALES_ID>'''+id+'''';
+
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.SALES_TYPE,A.PLAN_DATE,A.REMARK,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,'+
             'A.SALE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT '+
             'from SAL_SALESORDER A '+w+' ';
@@ -724,7 +737,9 @@ begin
   else
     result := 'select * from ('+result+') j order by SALES_ID';
   end;
+  result:=ParseSQL(Factor.iDbType, result);
 end;
+
 procedure TfrmOutLocusOrderList.Open2(Id: string);
 var
   rs:TZQuery;

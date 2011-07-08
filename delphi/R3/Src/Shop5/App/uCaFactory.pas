@@ -123,12 +123,12 @@ type
     procedure SetRspFlag(const Value: integer);
     procedure SetDownModule(const Value: boolean);
   protected
-    auto:boolean;
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
     procedure SetTicket;
     function GetTicket:Int64;
   public
+    auto:boolean;
     constructor Create;
     destructor Destroy;override;
 

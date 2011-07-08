@@ -83,6 +83,8 @@ type
     procedure SyncQuestion(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步模块表
     procedure SyncCaModule(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //同步自定义报表
+    procedure SyncSysReport(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -199,6 +201,7 @@ begin
   22:result := 'TSyncGodsInfo';
   23:result := 'TSyncSequence';
   25:result := 'TSyncCaModule';
+  26:result := 'TSyncSysReportList';
   else
     result := 'TSyncSingleTable';
   end;
@@ -585,6 +588,13 @@ begin
   n^.tbtitle := '消息公告';
   FList.Add(n);
 
+  new(n);
+  n^.tbname := 'SYS_REPORT';
+  n^.keyFields := 'TENANT_ID;REPORT_ID';
+  n^.synFlag := 26;
+  n^.KeyFlag := 0;
+  n^.tbtitle := '报表模版';
+  FList.Add(n);
 end;
 
 procedure TSyncFactory.SetParams(const Value: TftParamList);
@@ -664,6 +674,7 @@ begin
       18:SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       25:SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      26:SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
       frmLogo.ProgressBar1.Update;
@@ -700,10 +711,8 @@ begin
           if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
         end;
       18:if not gbl then SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      25:
-        begin
-          if gbl then SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-        end
+      25:if gbl then SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      26:if gbl then SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
     end;
@@ -2906,6 +2915,122 @@ begin
     cs_d.Free;
     rs_l.Free;
     cs_l.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncSysReport(tbName, KeyFields, ZClassName: string;
+  KeyFlag: integer);
+var
+  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         //以服务器为优先下载
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('REPORT_ID').AsString := ls.FieldbyName('REPORT_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncSysReport',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncSysReportTemplate',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+         cs_d.SyncDelta := rs_d.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncSysReport',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncSysReportTemplate',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    ls.First;
+    while not ls.Eof do
+       begin
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('REPORT_ID').AsString := ls.FieldbyName('REPORT_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncSysReport',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncSysReportTemplate',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+         rs_d.SyncDelta := cs_d.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncSysReport',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncSysReportTemplate',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
   end;
 end;
 

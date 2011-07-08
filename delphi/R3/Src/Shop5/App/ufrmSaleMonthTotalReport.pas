@@ -280,7 +280,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
 
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
@@ -332,7 +332,7 @@ begin
     ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME ';
+    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
 
   strSql :=
     'select j.*,'+

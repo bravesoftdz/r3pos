@@ -5,7 +5,7 @@ inherited frmXsmLogin: TfrmXsmLogin
   BorderStyle = bsDialog
   Caption = #29992#25143#30331#24405
   ClientHeight = 253
-  ClientWidth = 362
+  ClientWidth = 363
   OldCreateOrder = True
   OnShow = FormShow
   PixelsPerInch = 96
@@ -13,7 +13,7 @@ inherited frmXsmLogin: TfrmXsmLogin
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 362
+    Width = 363
     Height = 62
     Align = alTop
     BorderOuter = fsNone
@@ -23,7 +23,7 @@ inherited frmXsmLogin: TfrmXsmLogin
     object imgLogin: TImage
       Left = 0
       Top = 0
-      Width = 362
+      Width = 363
       Height = 64
       Align = alTop
       Picture.Data = {
@@ -1144,7 +1144,7 @@ inherited frmXsmLogin: TfrmXsmLogin
   object RzPanel2: TRzPanel [1]
     Left = 0
     Top = 62
-    Width = 362
+    Width = 363
     Height = 191
     Align = alClient
     BorderOuter = fsNone
@@ -1153,7 +1153,7 @@ inherited frmXsmLogin: TfrmXsmLogin
     object RzBackground1: TRzBackground
       Left = 0
       Top = 0
-      Width = 362
+      Width = 363
       Height = 191
       Active = True
       Align = alClient

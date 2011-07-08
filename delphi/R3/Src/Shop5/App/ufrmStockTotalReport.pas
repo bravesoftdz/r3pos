@@ -295,7 +295,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID,isnull(B.REGION_ID,''#'') as SREGION_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT '+
+    ',A.GODS_ID,isnull(B.REGION_ID,''#'') as SREGION_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
     ',sum(STOCK_MNY)+sum(STOCK_TAX) as STOCK_TTL '+
@@ -307,7 +307,7 @@ begin
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    ' group by A.TENANT_ID,A.GODS_ID,A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME';
+    ' group by A.TENANT_ID,A.GODS_ID,A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME,B.SHOP_TYPE';
 
   strSql :=
     'select j.*,r.RELATION_ID as SORT_ID24,r.SORT_ID1 as SORT_ID21,r.SORT_ID1 as SORT_ID22,r.SORT_ID1 as SORT_ID23 '+

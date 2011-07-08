@@ -1,5 +1,4 @@
 inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
-  Top = 109
   Width = 958
   Height = 558
   Caption = #21160#38144#20998#26512#25253#34920
@@ -7,22 +6,22 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 942
-    Height = 484
+    Height = 483
     inherited RzPanel2: TRzPanel
       Width = 932
-      Height = 474
+      Height = 473
       inherited RzPage: TRzPageControl
         Width = 727
-        Height = 468
+        Height = 467
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21160#38144#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
             Width = 725
-            Height = 441
+            Height = 440
             inherited Panel4: TPanel
               Width = 715
-              Height = 431
+              Height = 430
               inherited w1: TRzPanel
                 Width = 715
                 Height = 104
@@ -413,10 +412,10 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
               inherited RzPanel7: TRzPanel
                 Top = 104
                 Width = 715
-                Height = 327
+                Height = 326
                 inherited DBGridEh1: TDBGridEh
                   Width = 711
-                  Height = 323
+                  Height = 322
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end
@@ -426,7 +425,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
       end
       inherited PanelColumnS: TPanel
         Left = 730
-        Height = 468
+        Height = 467
         Visible = False
         inherited Panel2: TPanel
           Height = 444

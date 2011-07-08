@@ -865,6 +865,8 @@ begin
      (sid='CREGION_ID2')
      or
      (sid='SREGION_ID2')
+     or
+     (sid='SHOP_TYPE')
   then
      result := DataSet.FindField(sid).Index
   else
@@ -922,7 +924,7 @@ end;
 var
   i,j:integer;
   node:PIdxNode;
-  dept,users,region,sort:TZQuery;
+  dept,users,region,sort,shpType:TZQuery;
 begin
   for i:=0 to TLate.Count-1 do
   begin
@@ -935,6 +937,7 @@ begin
   users := Global.GetZQueryFromName('CA_USERS');
   region := Global.GetZQueryFromName('PUB_REGION_INFO');
   sort := Global.GetZQueryFromName('PUB_GOODSSORT');
+  shpType := Global.GetZQueryFromName('PUB_SHOP_TYPE');
   DataSet.First;
   while not DataSet.Eof do
     begin
@@ -959,6 +962,23 @@ begin
                    end
                 else
                 begin
+                  if PRTemplate(TLate[i])^.INDEX_ID='SHOP_TYPE' then
+                     begin
+                       if shpType.Locate('CODE_ID',node^.id,[]) then
+                          node^.title := shpType.FieldbyName('CODE_NAME').AsString
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := 'нч';
+                          end;
+                     end;
                   if PRTemplate(TLate[i])^.INDEX_ID='DEPT_ID' then
                      begin
                        if dept.Locate('DEPT_ID',node^.id,[]) then
@@ -1322,6 +1342,8 @@ begin
      (sid='GODS_ID')
      or
      (sid='SHOP_ID')
+     or
+     (sid='SHOP_TYPE')
      or
      (sid='CREGION_ID')
      or

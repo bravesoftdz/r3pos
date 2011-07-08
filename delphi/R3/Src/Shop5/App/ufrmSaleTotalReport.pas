@@ -327,7 +327,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID,isnull(A.DEPT_ID,''#'') as DEPT_ID,isnull(A.GUIDE_USER,''#'') as GUIDE_USER,isnull(A.CLIENT_ID,''#'') as CLIENT_ID,isnull(B.REGION_ID,''#'') as SREGION_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT '+
+    ',A.GODS_ID,isnull(A.DEPT_ID,''#'') as DEPT_ID,isnull(A.GUIDE_USER,''#'') as GUIDE_USER,isnull(A.CLIENT_ID,''#'') as CLIENT_ID,isnull(B.REGION_ID,''#'') as SREGION_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+    //销售数量
     ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+   //价税合计
@@ -341,7 +341,7 @@ begin
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID,isnull(A.DEPT_ID,''#''),isnull(A.GUIDE_USER,''#''),isnull(A.CLIENT_ID,''#''),A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME';
+    'group by A.TENANT_ID,A.GODS_ID,isnull(A.DEPT_ID,''#''),isnull(A.GUIDE_USER,''#''),isnull(A.CLIENT_ID,''#''),A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME,B.SHOP_TYPE';
 
   strSql :=
     'select j.*,a.CLIENT_CODE,'+

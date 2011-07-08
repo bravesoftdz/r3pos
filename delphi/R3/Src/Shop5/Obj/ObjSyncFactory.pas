@@ -526,6 +526,30 @@ type
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //26
+  TSyncSysReportList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncSysReport=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncSysReportTemplate=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -3454,6 +3478,117 @@ begin
   result := true;
 end;
 
+{ TSyncSysReportList }
+
+function TSyncSysReportList.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select distinct TENANT_ID,REPORT_ID from SYS_REPORT where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncSysReport }
+
+function TSyncSysReport.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update SYS_REPORT set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and REPORT_ID=:REPORT_ID'),self);
+end;
+
+function TSyncSysReport.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SYS_REPORT';
+     end;
+  InitSQL(AGlobal,false);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger=0) then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncSysReport.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from SYS_REPORT where TENANT_ID=:TENANT_ID and REPORT_ID=:REPORT_ID';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncSysReportTemplate }
+
+function TSyncSysReportTemplate.BeforeInsertRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SYS_REPORT_TEMPLATE';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncSysReportTemplate.BeforeOpenRecord(
+  AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from SYS_REPORT_TEMPLATE where TENANT_ID=:TENANT_ID and REPORT_ID=:REPORT_ID';
+  SelectSQL.Text := Str;
+end;
+
+function TSyncSysReportTemplate.BeforeUpdateRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from SYS_REPORT_TEMPLATE where TENANT_ID=:TENANT_ID and REPORT_ID=:REPORT_ID',Params);
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3519,6 +3654,9 @@ initialization
   RegisterClass(TSyncMscQuestionItem);
 
   RegisterClass(TSyncCaModule);
+  RegisterClass(TSyncSysReportList);
+  RegisterClass(TSyncSysReport);
+  RegisterClass(TSyncSysReportTemplate);
 finalization
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaTenant);
@@ -3584,4 +3722,7 @@ finalization
   UnRegisterClass(TSyncMscQuestionItem);
 
   UnRegisterClass(TSyncCaModule);
+  UnRegisterClass(TSyncSysReportList);
+  UnRegisterClass(TSyncSysReport);
+  UnRegisterClass(TSyncSysReportTemplate);
 end.

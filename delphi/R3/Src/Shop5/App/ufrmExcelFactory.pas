@@ -286,10 +286,15 @@ begin
      begin
        rzPage.ActivePageIndex := 1;
        RzBitBtn1.Caption := '下一步';
+       cdsExcel.Filtered := False;
      end
   else if rzPage.ActivePageIndex = 1 then
      begin
        rzPage.ActivePageIndex := 0;
+       RzStatus.Caption := '';
+       RzStatus.Update;
+       RzStatus1.Caption := '';
+       RzStatus1.Update;
        RzBitBtn1.Visible := True;
        RzBitBtn2.Visible := False;
        RzBitBtn1.Caption := '开始';
@@ -390,6 +395,7 @@ begin
                         cdsDropColumn.ItemIndex := n;
                         cdsColumn.FieldByName('FieldName').AsString := DataSet.Fields[Integer(cdsDropColumn.Properties.Items.Objects[cdsDropColumn.ItemIndex])].FieldName;
                         cdsColumn.FieldByName('DestTitleName').AsString := cdsDropColumn.Text;
+                        Break;
                       end;
                   end;
               end;
@@ -402,7 +408,7 @@ end;
 procedure TfrmExcelFactory.RzBitBtn1Click(Sender: TObject);
 begin
   inherited;
-  if rzPage.ActivePageIndex = 0 then
+   if rzPage.ActivePageIndex = 0 then
     begin
       OpenExecl(FilePath);
       IsHeader;

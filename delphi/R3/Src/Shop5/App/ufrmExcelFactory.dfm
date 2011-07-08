@@ -1,6 +1,6 @@
 inherited frmExcelFactory: TfrmExcelFactory
-  Left = 409
-  Top = 161
+  Left = 618
+  Top = 160
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Excel'#23548#20837#22522#31867
   Color = clWhite
@@ -15,7 +15,7 @@ inherited frmExcelFactory: TfrmExcelFactory
     Top = 0
     Width = 549
     Height = 336
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     BoldCurrentTab = True
     FlatColor = clWhite
@@ -25,7 +25,7 @@ inherited frmExcelFactory: TfrmExcelFactory
     TabColors.HighlightBar = clMoneyGreen
     TabColors.Shadow = 12947783
     TabHeight = 20
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 0
     FixedDimension = 20
     object TabSheet3: TRzTabSheet
@@ -607,7 +607,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           Height = 21
           Anchors = [akTop, akRight]
           Properties.DisplayUnchecked = 'False'
-          Properties.Caption = #26159#21542#21551#29992#21015#22836#21517
+          Properties.Caption = #26159#21542#21551#29992#26631#39064#34892
           State = cbsChecked
           TabOrder = 0
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

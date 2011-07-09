@@ -3,7 +3,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
   Top = 104
   Width = 984
   Height = 667
-  Caption = #30408#21033#20998#26512
+  Caption = #30408#21033#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -388,7 +388,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
           end
         end
         object TabSheet3: TRzTabSheet [1]
-          Caption = #28508#21147#20998#26512#34920
+          Caption = #28508#21147#20998#26512
           object RzPanel11: TRzPanel
             Left = 0
             Top = 0

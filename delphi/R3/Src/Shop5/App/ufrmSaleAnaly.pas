@@ -543,7 +543,12 @@ begin
   P3_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
   //默认第一分页
-  RzPage.ActivePage:=TabSheet1;
+  if TabSheet2.TabVisible then
+    RzPage.ActivePage:=TabSheet2
+  else if TabSheet3.TabVisible then
+    RzPage.ActivePage:=TabSheet3
+  else if TabSheet1.TabVisible then
+    RzPage.ActivePage:=TabSheet1;
   EdtvType.ItemIndex:=0;
 end;
 

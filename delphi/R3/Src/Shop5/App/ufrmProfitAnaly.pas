@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,  ExtCtrls, TeEngine, Series, TeeProcs, Chart, Grids, DBGridEh,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset,DB;
+  StdCtrls,ZAbstractRODataset, ZAbstractDataset, ZDataset,DB, RzPanel;
 
 type
   TfrmProfitAnaly = class(TFrame)
@@ -26,8 +26,6 @@ type
     vType: TcxComboBox;
     Splitter1: TSplitter;
     Pnl_Right: TPanel;
-    Chart1: TChart;
-    BarSeries1: TBarSeries;
     Panel3: TPanel;
     ChartTitle: TPanel;
     Panel4: TPanel;
@@ -35,6 +33,9 @@ type
     ButtomPnl: TPanel;
     Panel5: TPanel;
     RihtPnl: TPanel;
+    RzPanel15: TRzPanel;
+    Chart1: TChart;
+    BarSeries1: TBarSeries;
     procedure edtOrderNoPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);

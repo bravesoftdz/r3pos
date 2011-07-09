@@ -262,68 +262,23 @@ object frmProfitAnaly: TfrmProfitAnaly
     object Pnl_Right: TPanel
       Left = 484
       Top = 0
-      Width = 531
+      Width = 528
       Height = 237
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2
-      object Chart1: TChart
-        Left = 0
-        Top = 28
-        Width = 531
-        Height = 209
-        BackWall.Brush.Color = clWhite
-        BackWall.Brush.Style = bsClear
-        MarginBottom = 0
-        MarginLeft = 0
-        MarginRight = 1
-        MarginTop = 0
-        Title.Font.Charset = DEFAULT_CHARSET
-        Title.Font.Color = clBlue
-        Title.Font.Height = -16
-        Title.Font.Name = 'Arial'
-        Title.Font.Style = [fsBold]
-        Title.Text.Strings = (
-          '')
-        Title.Visible = False
-        Legend.Alignment = laBottom
-        Legend.TextStyle = ltsRightValue
-        Legend.Visible = False
-        View3D = False
-        Align = alClient
-        BevelOuter = bvNone
-        Color = clWhite
-        TabOrder = 0
-        object BarSeries1: TBarSeries
-          ColorEachPoint = True
-          Marks.ArrowLength = 20
-          Marks.Style = smsValue
-          Marks.Visible = False
-          SeriesColor = clRed
-          Title = #38144#37327
-          MultiBar = mbNone
-          XValues.DateTime = False
-          XValues.Name = 'X'
-          XValues.Multiplier = 1.000000000000000000
-          XValues.Order = loAscending
-          YValues.DateTime = False
-          YValues.Name = 'Bar'
-          YValues.Multiplier = 1.000000000000000000
-          YValues.Order = loNone
-        end
-      end
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 531
+        Width = 528
         Height = 28
         Align = alTop
         BevelOuter = bvNone
-        TabOrder = 1
+        TabOrder = 0
         object ChartTitle: TPanel
           Left = 0
           Top = 0
-          Width = 422
+          Width = 419
           Height = 28
           Align = alClient
           BevelOuter = bvNone
@@ -338,7 +293,7 @@ object frmProfitAnaly: TfrmProfitAnaly
           TabOrder = 0
         end
         object Panel4: TPanel
-          Left = 422
+          Left = 419
           Top = 0
           Width = 109
           Height = 28
@@ -365,6 +320,61 @@ object frmProfitAnaly: TfrmProfitAnaly
           end
         end
       end
+      object RzPanel15: TRzPanel
+        Left = 0
+        Top = 28
+        Width = 528
+        Height = 209
+        Align = alClient
+        BorderOuter = fsGroove
+        Color = clWhite
+        TabOrder = 1
+        object Chart1: TChart
+          Left = 2
+          Top = 2
+          Width = 524
+          Height = 205
+          BackWall.Brush.Color = clWhite
+          BackWall.Brush.Style = bsClear
+          MarginBottom = 0
+          MarginLeft = 1
+          MarginRight = 1
+          MarginTop = 1
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clBlue
+          Title.Font.Height = -16
+          Title.Font.Name = 'Arial'
+          Title.Font.Style = [fsBold]
+          Title.Text.Strings = (
+            '')
+          Title.Visible = False
+          Legend.Alignment = laBottom
+          Legend.TextStyle = ltsRightValue
+          Legend.Visible = False
+          View3D = False
+          Align = alClient
+          BevelOuter = bvNone
+          Color = clWhite
+          TabOrder = 0
+          object BarSeries1: TBarSeries
+            ColorEachPoint = True
+            Marks.ArrowLength = 20
+            Marks.Style = smsValue
+            Marks.Visible = False
+            SeriesColor = clRed
+            Title = #38144#37327
+            MultiBar = mbNone
+            XValues.DateTime = False
+            XValues.Name = 'X'
+            XValues.Multiplier = 1.000000000000000000
+            XValues.Order = loAscending
+            YValues.DateTime = False
+            YValues.Name = 'Bar'
+            YValues.Multiplier = 1.000000000000000000
+            YValues.Order = loNone
+          end
+        end
+      end
     end
     object Panel5: TPanel
       Left = 475
@@ -383,9 +393,9 @@ object frmProfitAnaly: TfrmProfitAnaly
       TabOrder = 3
     end
     object RihtPnl: TPanel
-      Left = 1015
+      Left = 1012
       Top = 0
-      Width = 1
+      Width = 4
       Height = 237
       Align = alRight
       BevelOuter = bvNone

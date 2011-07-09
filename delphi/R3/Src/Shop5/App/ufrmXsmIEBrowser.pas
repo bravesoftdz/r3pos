@@ -43,6 +43,8 @@ type
     procedure DoMsgFilter(var Msg: TMsg; var Handled: Boolean);
     procedure SetCommandTimeOut(const Value: integer);
     procedure SetConnectTimeOut(const Value: integer);
+    procedure LoadFormat;override;
+    procedure SaveFormat;override;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -488,6 +490,18 @@ end;
 procedure TfrmXsmIEBrowser.SetConnectTimeOut(const Value: integer);
 begin
   FConnectTimeOut := Value;
+end;
+
+procedure TfrmXsmIEBrowser.LoadFormat;
+begin
+//  inherited;
+
+end;
+
+procedure TfrmXsmIEBrowser.SaveFormat;
+begin
+//  inherited;
+
 end;
 
 end.

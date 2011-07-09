@@ -1126,6 +1126,7 @@ begin
       w := i;
       CreateRck;
     end;
+//  Factor.ExecSQL('update STO_STORAGE set ');     
 end;
 
 procedure TfrmCostCalc.SeteDate(const Value: TDate);

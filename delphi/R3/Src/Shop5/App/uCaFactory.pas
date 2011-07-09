@@ -804,6 +804,7 @@ var
   ErrXml:string;
   w:integer;
 begin
+  if Global.debug then LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try
     if xml<>'' then

@@ -27,6 +27,8 @@ type
     procedure SetLogined(const Value: boolean);
     { Private declarations }
     procedure DoAction(actionname:string);
+    procedure LoadFormat;override;
+    procedure SaveFormat;override;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -301,6 +303,18 @@ begin
            Exit;
          end;
     end;
+end;
+
+procedure TfrmRimIEBrowser.LoadFormat;
+begin
+//  inherited;
+
+end;
+
+procedure TfrmRimIEBrowser.SaveFormat;
+begin
+//  inherited;
+
 end;
 
 end.

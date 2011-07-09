@@ -280,7 +280,7 @@ end;
 procedure TfrmStorageTracking.LoadTree(Tree:TRzTreeView);
 var rs:TZQuery;
     i,j:Integer;
-    Aobj:TRecord_;
+    Aobj,CurObj:TRecord_;
 begin
   ClearTree(Tree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
@@ -288,18 +288,31 @@ begin
   j:=-1;
   rs.First;
   while not rs.Eof do
+  begin
+    if (j <> rs.FieldByName('RELATION_ID').AsInteger) then
     begin
-      if (j <> rs.FieldByName('RELATION_ID').AsInteger) then
-        begin
-          Aobj := TRecord_.Create;
-          Aobj.ReadFromDataSet(rs);
-          Aobj.FieldByName('LEVEL_ID').AsString := '';
-          Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
-          Tree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
-          j := Aobj.FieldbyName('RELATION_ID').AsInteger;
-        end;
-      rs.Next;
+      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then //自主经营
+      begin
+        CurObj := TRecord_.Create;
+        CurObj.ReadFromDataSet(rs);
+        CurObj.FieldByName('LEVEL_ID').AsString := '';
+        CurObj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
+        j := CurObj.FieldbyName('RELATION_ID').AsInteger;
+      end else
+      begin
+        Aobj := TRecord_.Create;
+        Aobj.ReadFromDataSet(rs);
+        Aobj.FieldByName('LEVEL_ID').AsString := '';
+        Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
+        Tree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
+        j := Aobj.FieldbyName('RELATION_ID').AsInteger;
+      end;
     end;
+    rs.Next;
+  end;
+  if CurObj<>nil then
+    Tree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
+
   for i:=Tree.Items.Count-1 downto 0 do
     begin
       rs.Filtered := False;

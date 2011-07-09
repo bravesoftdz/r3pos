@@ -557,7 +557,7 @@ procedure TframeSelectGoods.LoadTree;
 var
   rs:TZQuery;
   w,i:integer;
-  AObj:TRecord_;
+  AObj,CurObj:TRecord_;
 begin
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
@@ -565,19 +565,30 @@ begin
   w := -1;
   rs.First;
   while not rs.Eof do
+  begin
+    if InttoStr(w)<>rs.FieldByName('RELATION_ID').AsString then
     begin
-      if w<>rs.FieldByName('RELATION_ID').AsInteger then
-         begin
-           AObj := TRecord_.Create;
-           AObj.ReadFromDataSet(rs);
-           //2011.03.12 Add 可选择[供应链节点]的作为查询条件
-           AObj.FieldByName('LEVEL_ID').AsString:='';
-           AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
-           rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
-           w := rs.FieldByName('RELATION_ID').AsInteger;
-         end;
-      rs.Next;
+      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then //自主经营
+      begin
+        CurObj:=TRecord_.Create;
+        CurObj.ReadFromDataSet(rs);
+        // 2011.03.12 Add 可选择[供应链节点]的作为查询条件
+        CurObj.FieldByName('LEVEL_ID').AsString:='';
+        CurObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
+      end else
+      begin
+        AObj := TRecord_.Create;
+        AObj.ReadFromDataSet(rs);
+        // 2011.03.12 Add 可选择[供应链节点]的作为查询条件
+        AObj.FieldByName('LEVEL_ID').AsString:='';
+        AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
+        rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+        w := rs.FieldByName('RELATION_ID').AsInteger;
+      end;
     end;
+    rs.Next;
+  end;
+
   for i:=rzTree.Items.Count-1 downto 0 do
     begin
       rs.Filtered := false;

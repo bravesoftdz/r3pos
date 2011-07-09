@@ -52,7 +52,7 @@ procedure TfrmSelectGoodSort.LoadGoodSortTree;
 var
   rs:TZQuery;
   w,i:integer;
-  AObj,CurObj:TRecord_;
+  AObj,CurObj,vObj:TRecord_;
 begin
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
@@ -63,22 +63,34 @@ begin
     rs.First;
     while not rs.Eof do
     begin
-      CurObj.ReadFromDataSet(rs); 
+      CurObj.ReadFromDataSet(rs);
       if w<>CurObj.FieldByName('RELATION_ID').AsInteger then
       begin
-        AObj := TRecord_.Create;
-        AObj.ReadFromDataSet(rs);
-        AObj.FieldByName('LEVEL_ID').AsString:='';
-        AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
-        rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+        if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then  //自主经营
+        begin
+          vObj := TRecord_.Create;
+          vObj.ReadFromDataSet(rs);
+          vObj.FieldByName('LEVEL_ID').AsString:='';
+          vObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
+        end else
+        begin
+          AObj := TRecord_.Create;
+          AObj.ReadFromDataSet(rs);
+          AObj.FieldByName('LEVEL_ID').AsString:='';
+          AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
+          rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+        end;
         w := CurObj.FieldByName('RELATION_ID').AsInteger;
       end;
       rs.Next;
     end;
+    if vObj<>nil then
+      rzTree.Items.AddObject(nil,vObj.FieldbyName('SORT_NAME').AsString,vObj);
   finally
     CurObj.Free;
   end;
-  
+
+
   for i:=rzTree.Items.Count-1 downto 0 do
   begin
     rs.Filtered := false;

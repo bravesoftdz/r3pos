@@ -6,17 +6,6 @@ inherited frmSelectGoodSort: TfrmSelectGoodSort
   inherited bgPanel: TRzPanel
     inherited RzPage: TRzPageControl
       FixedDimension = 20
-      inherited TabSheet1: TRzTabSheet
-        inherited RzPanel2: TRzPanel
-          inherited fndPanel: TPanel
-            inherited RzPanel5: TRzPanel
-              inherited RzBitBtn4: TRzBitBtn
-                OnClick = RzBitBtn4Click
-              end
-            end
-          end
-        end
-      end
     end
   end
 end

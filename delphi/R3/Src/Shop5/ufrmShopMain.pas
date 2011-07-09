@@ -3435,6 +3435,7 @@ var
   vData: OleVariant;
   Aobj: TRecord_;
   Form: TfrmBasic;
+  SaveFactor:TdbFactory;
 begin
   inherited;
   if not Logined then
@@ -3442,6 +3443,22 @@ begin
     PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
+  if not Global.RemoteFactory.Connected then 
+     begin
+       if MessageBox(Handle,'当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       SaveFactor := uGlobal.Factor;
+       try
+         Global.MoveToRemate;
+         try
+           Global.Connect;
+         except
+           MessageBox(Handle,'无法连接到远程服务器，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
+           Exit;
+         end;
+       finally
+         uGlobal.Factor := SaveFactor;
+       end;
+     end;
 
   Application.Restore;
   frmShopDesk.SaveToFront;

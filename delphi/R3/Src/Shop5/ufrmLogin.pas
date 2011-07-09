@@ -168,6 +168,7 @@ begin
         cxedtUsers.Enabled := not Locked;
         edtOPER_DATE.Enabled := not Locked;
         cxcbSave.Visible := not Locked;
+        RzLabel1.Visible := not Locked;
         if Locked then
            begin
              cxedtUsers.Text := Global.UserID;

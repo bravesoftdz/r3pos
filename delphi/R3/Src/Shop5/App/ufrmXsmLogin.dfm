@@ -5,16 +5,17 @@ inherited frmXsmLogin: TfrmXsmLogin
   BorderStyle = bsDialog
   Caption = #29992#25143#30331#24405
   ClientHeight = 253
-  ClientWidth = 363
+  ClientWidth = 372
   OldCreateOrder = True
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 363
-    Height = 62
+    Width = 372
+    Height = 67
     Align = alTop
     BorderOuter = fsNone
     BorderColor = clWhite
@@ -23,8 +24,8 @@ inherited frmXsmLogin: TfrmXsmLogin
     object imgLogin: TImage
       Left = 0
       Top = 0
-      Width = 363
-      Height = 64
+      Width = 372
+      Height = 67
       Align = alTop
       Picture.Data = {
         0A544A504547496D616765C98A0000FFD8FFE000104A46494600010201004800
@@ -1138,14 +1139,13 @@ inherited frmXsmLogin: TfrmXsmLogin
         775304D7B7704D74F6F233078E38260A0877211DC661C447893297BF87A717A2
         C6EC31BDF952C32D977AE051006B84408389DE046834DE1B0E1E191660C6E7F6
         E6D8DDDB973BB8081C23BADD042E25C0BC83AB748D75FFD9}
-      Stretch = True
     end
   end
   object RzPanel2: TRzPanel [1]
     Left = 0
-    Top = 62
-    Width = 363
-    Height = 191
+    Top = 67
+    Width = 372
+    Height = 186
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -1153,8 +1153,8 @@ inherited frmXsmLogin: TfrmXsmLogin
     object RzBackground1: TRzBackground
       Left = 0
       Top = 0
-      Width = 363
-      Height = 191
+      Width = 372
+      Height = 186
       Active = True
       Align = alClient
       GradientColorStart = clWhite
@@ -1207,7 +1207,7 @@ inherited frmXsmLogin: TfrmXsmLogin
     end
     object cxBtnOk: TRzBitBtn
       Left = 150
-      Top = 146
+      Top = 138
       Caption = #30331#24405'(&O)'
       Color = 14341020
       HighlightColor = 16026986
@@ -1270,7 +1270,7 @@ inherited frmXsmLogin: TfrmXsmLogin
     end
     object cxbtnCancel: TRzBitBtn
       Left = 238
-      Top = 146
+      Top = 138
       Cancel = True
       ModalResult = 2
       Caption = #20851#38381'(&C)'

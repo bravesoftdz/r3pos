@@ -13,9 +13,9 @@ inherited frmLogin: TfrmLogin
   TextHeight = 12
   object RzBackground1: TRzBackground [0]
     Left = 0
-    Top = 64
+    Top = 70
     Width = 372
-    Height = 199
+    Height = 193
     Active = True
     Align = alClient
     GradientColorStart = clWhite
@@ -29,7 +29,7 @@ inherited frmLogin: TfrmLogin
     Left = 0
     Top = 0
     Width = 372
-    Height = 64
+    Height = 70
     Align = alTop
     Picture.Data = {
       0A544A504547496D616765C98A0000FFD8FFE000104A46494600010201004800
@@ -1217,7 +1217,7 @@ inherited frmLogin: TfrmLogin
   end
   object Label1: TLabel [8]
     Left = 51
-    Top = 77
+    Top = 80
     Width = 60
     Height = 12
     Caption = #20225#19994#21517#31216#65306
@@ -1391,7 +1391,7 @@ inherited frmLogin: TfrmLogin
   end
   object cbxTenant: TcxComboBox [15]
     Left = 111
-    Top = 73
+    Top = 76
     Width = 184
     Height = 20
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

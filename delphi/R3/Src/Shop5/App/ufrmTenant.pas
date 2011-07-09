@@ -486,7 +486,14 @@ begin
   Login := CaFactory.coLogin(id,CaFactory.DesEncode(id,CaFactory.pubpwd),2);
   result := login.RET='1';
   if not result then Exit;
-  if not isnew then Exit;
+  if not isnew then
+     begin
+       if Login.TENANT_ID<>Global.TENANT_ID then
+          begin
+            Raise Exception.Create('当前登录账号跟原账号不属于同一企业,请联系客服人员'); 
+          end; 
+       Exit;
+     end;
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
   with TfrmTenant.Create(nil) do
@@ -527,6 +534,7 @@ begin
       Global.SHOP_NAME := Tenant.TENANT_NAME;
       Global.UserID := inttostr(Tenant.TENANT_ID)+'0001';
       Global.UserName := Tenant.SHORT_TENANT_NAME;
+      Global.Roles := 'xsm';
       TENANT_ID := Tenant.TENANT_ID;
       SaveParams;
       result := true;

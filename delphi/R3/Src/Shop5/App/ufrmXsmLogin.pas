@@ -26,6 +26,7 @@ type
     procedure cxBtnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure cxbtnCancelClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     Fflag: integer;
     procedure Setflag(const Value: integer);
@@ -184,6 +185,14 @@ end;
 procedure TfrmXsmLogin.Setflag(const Value: integer);
 begin
   Fflag := Value;
+end;
+
+procedure TfrmXsmLogin.FormCreate(Sender: TObject);
+begin
+  inherited;
+  if FileExists(ExtractFilePath(ParamStr(0))+'login.jpg') then
+     imgLogin.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'login.jpg');
+
 end;
 
 end.

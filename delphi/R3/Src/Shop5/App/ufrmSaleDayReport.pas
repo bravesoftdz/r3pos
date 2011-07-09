@@ -165,6 +165,8 @@ type
     fndP5_DEPT_ID: TzrComboBoxList;
     RzPanel21: TRzPanel;
     DBGridEh5: TDBGridEh;
+    Label38: TLabel;
+    fndP5_RPTTYPE: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
@@ -206,6 +208,10 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
@@ -229,14 +235,16 @@ type
     //按商品销售流水表
     function GetGlideSQL(chk:boolean=true): string;  //6666
     function GetUnitIDIdx: integer;
+    function GetP5_SortIdx: string; //
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
-    procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override; //
+    procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override;
   public
     procedure SingleReportParams(ParameStr: string='');override; //简单报表调用参数
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
+    property P5_SortIdx: string read GetP5_SortIdx; //统计类型 
   end;
 
 const
@@ -611,7 +619,7 @@ begin
         adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
         dsadoReport5.DataSet:=nil;
-        DoGodsGroupBySort(adoReport5,'SORT_ID1','GODS_NAME',
+        DoGodsGroupBySort(adoReport5,P5_SortIdx,'SORT_ID','GODS_NAME',
                           ['SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF'],
                           ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
         dsadoReport5.DataSet:=adoReport5;
@@ -925,7 +933,7 @@ end;
 
 function TfrmSaleDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  UnitCalc: string;  //单位计算关系
+  UnitCalc,SORT_ID: string;  //单位计算关系
   strSql,strCnd,ShopCnd,strWhere,GoodTab,SQLData: string;
 begin
   strCnd:='';
@@ -1013,12 +1021,17 @@ begin
       ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
   end;
+  case StrToInt(P5_SortIdx) of
+   0: SORT_ID:='C.RELATION_ID';
+   else
+      SORT_ID:='C.SORT_ID'+P5_SortIdx+' ';
+  end;
 
   UnitCalc:=GetUnitTO_CALC(fndP5_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',C.SORT_ID1'+
+    ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+    //销售数量
     ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
@@ -1033,7 +1046,7 @@ begin
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,C.SORT_ID1,A.GODS_ID';
+    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
 
   strSql :=
     'select j.* '+
@@ -1599,6 +1612,35 @@ begin
   fndP5_SORT_ID.Top:=fndP5_SHOP_TYPE.Top;
   RzPanel15.Height:=RzPanel15.Height-22;
   BtnSaleSum.Top:=BtnSaleSum.Top-22;
+end;
+
+function TfrmSaleDayReport.GetP5_SortIdx: string;
+var
+  AObj: TRecord_;
+begin
+  AObj:=TRecord_(fndP5_RPTTYPE.Properties.Items.Objects[fndP5_RPTTYPE.ItemIndex]);
+  result:=AObj.fieldbyName('SORT_ID').AsString;
+  if result='' then result:='0';
+end;
+
+procedure TfrmSaleDayReport.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  ColName: string;
+begin
+  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+  if SumRecord.Count<=0 then Exit;
+  ColName:=trim(UpperCase(Column.FieldName));
+  if ColName = 'SORT_NAME' then
+    Text := '合计:'+SumRecord.fieldbyName('GODS_NAME').AsString+'笔'
+  else
+  begin
+    if (Copy(ColName,1,5)='SALE_') and (SumRecord.FindField(ColName)<>nil) then
+    begin
+      Text:=FormatFloat(Column.DisplayFormat,SumRecord.FindField(ColName).AsFloat);
+    end;
+  end;
 end;
 
 end.

@@ -143,6 +143,7 @@ type
     //2011.06.30 Am Add 导出Excel前表头
     function  DoBeforeExport: boolean; override;
     procedure SingleReportParams(ParameStr: string='');virtual; //简单报表调用参数
+    procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String); //分组报表
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -1349,6 +1350,131 @@ end;
 procedure TframeBaseReport.SingleReportParams(ParameStr: string);
 begin
 
+end;
+
+procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String);
+ procedure CalcValue(AObj: TRecord_); //计算汇总数据
+ var i,Idx: integer; CalcField1,CalcField2,CalcValue: string;
+ begin
+   for i:=Low(CalcFields) to High(CalcFields) do
+   begin
+     CalcField2:=trim(CalcFields[i]);
+     Idx:=Pos('=',CalcField2);
+     CalcValue:=Copy(CalcField2,1,Idx-1);
+     delete(CalcField2,1,Idx);
+     Idx:=Pos('/',CalcField2);
+     CalcField1:=Copy(CalcField2,1,Idx-1);
+     delete(CalcField2,1,Idx);
+     if (AObj.FindField(CalcValue)<>nil) and (AObj.FindField(CalcField1)<>nil) and (AObj.FindField(CalcField2)<>nil) then
+     begin
+       if AObj.FindField(CalcField2).AsFloat<>0 then 
+         AObj.FindField(CalcValue).AsFloat:=AObj.FindField(CalcField1).AsFloat / AObj.FindField(CalcField2).AsFloat;
+     end;
+   end;
+ end;
+ procedure CalcSum(AllObj, SortObj, tmpObj: TRecord_); //计算汇总数据
+ var i: integer; FieldName: string;
+ begin
+   for i:=Low(SumFields) to High(SumFields) do
+   begin
+     FieldName:=trim(SumFields[i]);
+     AllObj.FieldByName(FieldName).AsFloat:=AllObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
+     SortObj.FieldByName(FieldName).AsFloat:=SortObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
+   end;
+   CalcValue(SortObj); //计算汇总数据
+ end;
+ procedure SetSortList(SortList: TStringList);
+ var SortID: string;
+ begin
+   try
+     SortList.Clear;
+     DataSet.First;
+     while not DataSet.Eof do
+     begin
+       SortID:=trim(DataSet.fieldbyname(SORT_ID).AsString);
+       if SortList.IndexOf(SortID)=-1 then
+         SortList.Add(SortID);
+       DataSet.Next;
+     end;
+   finally
+     DataSet.First;
+   end;
+ end;
+ function GetSortName(SORT_ID: string): string;
+ var SortRs: TZQuery;
+ begin
+   result:='';
+   SortRs:=Global.GetZQueryFromName('PUB_GOODSSORT');
+   if SortRs<>nil then
+   begin
+     if SortRs.Locate('SORT_ID',SORT_ID,[]) then
+       result:=trim(SortRs.fieldbyName('SORT_NAME').AsString);
+   end;
+ end;
+var
+  i: integer;
+  SID: string;
+  Rs: TZQuery;
+  SortList: TStringList;
+  AllObj, SortObj, tmpObj: TRecord_;
+begin
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.Data:=DataSet.Data;
+    SortList:=TStringList.Create;
+    AllObj:=TRecord_.Create;
+    SortObj:=TRecord_.Create;
+    tmpObj:=TRecord_.Create;
+    AllObj.ReadField(DataSet);
+    SortObj.ReadField(DataSet);
+    SetSortList(SortList); //读取分类个数
+    DataSet.EmptyDataSet;  //清空数据
+    DataSet.IndexFieldNames:='vNO';
+    DataSet.SortedFields:='vNO';
+    Rs.First;
+    for i:=0 to SortList.Count-1 do  //逐个分类循环处理
+    begin
+      SID:=trim(SortList.Strings[i]);
+      while not Rs.Eof do
+      begin
+        if SID=trim(Rs.fieldbyname(SORT_ID).AsString) then
+        begin
+          tmpObj.ReadFromDataSet(Rs);
+          CalcSum(AllObj,SortObj,tmpObj); //计算汇总数据
+          DataSet.Append;
+          tmpObj.WriteToDataSet(DataSet);  //写入数据集
+          DataSet.FieldByName(SORT_NAME).AsString:='      '+DataSet.FieldByName(SORT_NAME).AsString; 
+          DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
+          Rs.Next;
+        end else
+        begin
+          //插入当前SortID的汇总数
+          DataSet.Append;
+          SortObj.WriteToDataSet(DataSet);  //写入数据集   
+          DataSet.FieldByName(SORT_NAME).AsString:=GetSortName(SID)+' (合计)';
+          DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
+          SortObj.Clear;
+          SortObj.ReadField(DataSet);
+          Break;  //不相等则退出循环
+        end;
+      end;
+    end;
+    if not DataSet.IsEmpty then
+    begin
+      //插入总合计
+      CalcValue(AllObj); //计算汇总数据
+      DataSet.Append;
+      AllObj.WriteToDataSet(DataSet);  //写入数据集
+      DataSet.FieldByName(SORT_NAME).AsString:='总   计: ';
+      DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
+    end;
+  finally
+    Rs.Free;
+    SortList.Free;
+    AllObj.Free;
+    SortObj.Free;
+    tmpObj.Free;
+  end;
 end;
 
 end.

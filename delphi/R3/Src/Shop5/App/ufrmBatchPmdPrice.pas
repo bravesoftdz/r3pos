@@ -79,7 +79,7 @@ end;}
 procedure TfrmBatchPmdPrice.LoadLevelSort;
 var
   w,i:integer;
-  AObj,CurObj:TRecord_;
+  AObj,CurObj,vObj:TRecord_;
 begin
   ClearTree(rzChkTree);
   try
@@ -89,20 +89,30 @@ begin
     PUB_GODSSORT.First;
     while not PUB_GODSSORT.Eof do
     begin
-      CurObj.ReadFromDataSet(PUB_GODSSORT); 
+      CurObj.ReadFromDataSet(PUB_GODSSORT);
       if w<>CurObj.FieldByName('RELATION_ID').AsInteger then
       begin
-        AObj := TRecord_.Create;
-        AObj.ReadFromDataSet(PUB_GODSSORT);
-        rzChkTree.Items.AddObject(nil,AObj.FieldbyName('RELATION_NAME').AsString,AObj);
-        w := CurObj.FieldByName('RELATION_ID').AsInteger;
+        if trim(CurObj.FieldByName('RELATION_ID').AsString)='0' then
+        begin
+          vObj := TRecord_.Create;
+          vObj.ReadFromDataSet(PUB_GODSSORT);
+          w := vObj.FieldByName('RELATION_ID').AsInteger;
+        end else
+        begin
+          AObj := TRecord_.Create;
+          AObj.ReadFromDataSet(PUB_GODSSORT);
+          rzChkTree.Items.AddObject(nil,AObj.FieldbyName('RELATION_NAME').AsString,AObj);
+          w := CurObj.FieldByName('RELATION_ID').AsInteger;
+        end;
       end;
       PUB_GODSSORT.Next;
     end;
+    if vObj<>nil then
+      rzChkTree.Items.AddObject(nil,vObj.FieldbyName('RELATION_NAME').AsString,vObj);
   finally
     CurObj.Free;
   end;
-  
+
   for i:=rzChkTree.Items.Count-1 downto 0 do
   begin
     PUB_GODSSORT.Filtered := false;

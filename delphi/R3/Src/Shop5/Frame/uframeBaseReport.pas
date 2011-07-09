@@ -1361,8 +1361,9 @@ end;
 
 procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String);
  procedure CalcValue(AObj: TRecord_); //计算汇总数据
- var i,Idx: integer; CalcField1,CalcField2,CalcValue: string;
+ var i,Idx: integer; CalcField1,CalcField2,CalcValue: string; CalcCount: real;
  begin
+   CalcCount:=1.0;
    for i:=Low(CalcFields) to High(CalcFields) do
    begin
      CalcField2:=trim(CalcFields[i]);
@@ -1372,10 +1373,17 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
      Idx:=Pos('/',CalcField2);
      CalcField1:=Copy(CalcField2,1,Idx-1);
      delete(CalcField2,1,Idx);
+     Idx:=Pos('*',CalcField2);
+     if Idx>0 then
+     begin
+       CalcCount:=StrtoFloatDef(Copy(CalcField2,Idx+1,length(CalcField2)-Idx),1.0);
+       CalcField2:=Copy(CalcField2,1,Idx-1);
+     end;
+
      if (AObj.FindField(CalcValue)<>nil) and (AObj.FindField(CalcField1)<>nil) and (AObj.FindField(CalcField2)<>nil) then
      begin
        if AObj.FindField(CalcField2).AsFloat<>0 then 
-         AObj.FindField(CalcValue).AsFloat:=AObj.FindField(CalcField1).AsFloat / AObj.FindField(CalcField2).AsFloat;
+         AObj.FindField(CalcValue).AsFloat:=(AObj.FindField(CalcField1).AsFloat / AObj.FindField(CalcField2).AsFloat)*CalcCount;
      end;
    end;
  end;
@@ -1388,7 +1396,6 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
      AllObj.FieldByName(FieldName).AsFloat:=AllObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
      SortObj.FieldByName(FieldName).AsFloat:=SortObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
    end;
-   CalcValue(SortObj); //计算汇总数据
  end;
  procedure SetSortList(SortList: TStringList);
  var SortID: string;
@@ -1479,16 +1486,18 @@ begin
           CalcSum(FSumRecord,SortObj,tmpObj); //计算汇总数据
           DataSet.Append;
           tmpObj.WriteToDataSet(DataSet);  //写入数据集
-          DataSet.FieldByName(SORT_NAME).AsString:='    '+DataSet.FieldByName(SORT_NAME).AsString;
+          DataSet.FieldByName(SORT_NAME).AsString:=DataSet.FieldByName(SORT_NAME).AsString;
           DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
           Rs.Next;
         end else
         begin
           //插入当前SortID的汇总数
+          CalcValue(SortObj); //计算汇总数据
           DataSet.Append;
           SortObj.WriteToDataSet(DataSet);  //写入数据集
-          DataSet.FieldByName(SORT_NAME).AsString:=GetSortName(SID)+' (小计)';
+          DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID)+' (小计)';
           DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
+          DataSet.FieldByName(SORT_ID).AsString:='-1';
           SortObj.Clear;
           Break;  //不相等则退出循环
         end;
@@ -1498,10 +1507,12 @@ begin
     //最后一次分组汇总：
     if (not DataSet.IsEmpty) and (SortObj.Count>0) then
     begin
+      CalcValue(SortObj); //计算汇总数据
       DataSet.Append;
       SortObj.WriteToDataSet(DataSet);  //写入数据集
-      DataSet.FieldByName(SORT_NAME).AsString:=GetSortName(SID)+' (小计)';
+      DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID)+' (小计)';
       DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
+      DataSet.FieldByName(SORT_ID).AsString:='-1';
       SortObj.Clear;
     end;      
 

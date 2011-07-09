@@ -583,11 +583,13 @@ begin
         AObj.FieldByName('LEVEL_ID').AsString:='';
         AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
         rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
-        w := rs.FieldByName('RELATION_ID').AsInteger;
       end;
+      w := rs.FieldByName('RELATION_ID').AsInteger;
     end;
     rs.Next;
   end;
+  if CurObj<>nil then
+    rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
 
   for i:=rzTree.Items.Count-1 downto 0 do
     begin

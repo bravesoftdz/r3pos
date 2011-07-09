@@ -212,6 +212,10 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
@@ -621,7 +625,7 @@ begin
         dsadoReport5.DataSet:=nil;
         DoGodsGroupBySort(adoReport5,P5_SortIdx,'SORT_ID','GODS_NAME',
                           ['SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF'],
-                          ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
+                          ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY*100.0','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
         dsadoReport5.DataSet:=adoReport5;
       end;
     5: begin //按商品流水帐
@@ -1602,9 +1606,11 @@ begin
 
   Label25.Top:=Label21.Top;
   Label26.Top:=Label21.Top;
+  Label38.Top:=Label21.Top;
   fndP5_TYPE_ID.Top:=fndP5_SHOP_ID.Top;
   fndP5_STAT_ID.Top:=fndP5_SHOP_ID.Top;
   fndP5_UNIT_ID.Top:=fndP5_SHOP_ID.Top;
+  fndP5_RPTTYPE.Top:=fndP5_SHOP_ID.Top;
   
   Label21.Top:=Label12.Top;
   Label24.Top:=Label21.Top;
@@ -1629,10 +1635,10 @@ procedure TfrmSaleDayReport.DBGridEh5GetFooterParams(Sender: TObject;
 var
   ColName: string;
 begin
-  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
   if SumRecord.Count<=0 then Exit;
   ColName:=trim(UpperCase(Column.FieldName));
-  if ColName = 'SORT_NAME' then
+  if ColName = 'GODS_NAME' then
     Text := '合计:'+SumRecord.fieldbyName('GODS_NAME').AsString+'笔'
   else
   begin
@@ -1641,6 +1647,48 @@ begin
       Text:=FormatFloat(Column.DisplayFormat,SumRecord.FindField(ColName).AsFloat);
     end;
   end;
+end;
+
+procedure TfrmSaleDayReport.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;  
+begin
+  inherited;
+end;
+
+procedure TfrmSaleDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
+  if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
+
+  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
+     (not (gdFocused in State) or not Column.Grid.Focused) then
+  begin
+    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
+  end;
+  Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
+
+  if trim(TDBGridEh(Sender).DataSource.DataSet.fieldbyName('SORT_ID').AsString) = '-1' then
+  begin
+    if trim(Column.FieldName)<>'SEQNO' then
+    begin
+      TDBGridEh(Sender).Canvas.Brush.Color := $00A5A5A5;
+      TDBGridEh(Sender).Canvas.Font.Style:=[fsBold];
+      TDBGridEh(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    end;
+  end;
+
 end;
 
 end.

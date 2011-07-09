@@ -1014,7 +1014,7 @@ begin
   begin
     if InttoStr(w)<>rs.FieldByName('RELATION_ID').AsString then
     begin
-      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then
+      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then  //自主经营
       begin
         CurObj:=TRecord_.Create;
         CurObj.ReadFromDataSet(rs);
@@ -1029,8 +1029,8 @@ begin
         AObj.FieldByName('LEVEL_ID').AsString:='';
         AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
         rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
-        w := rs.FieldByName('RELATION_ID').AsInteger;
       end;
+      w := rs.FieldByName('RELATION_ID').AsInteger;
     end;
     rs.Next;
   end;

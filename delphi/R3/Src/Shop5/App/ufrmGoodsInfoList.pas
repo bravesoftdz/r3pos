@@ -1001,7 +1001,7 @@ var
   rs:TZQuery;
   w,i:integer;
   Root,P:TTreeNode;
-  AObj,Obj:TRecord_;
+  AObj,Obj,CurObj:TRecord_;
 begin
   rzTree.OnChange:=nil;
   ClearTree(rzTree);
@@ -1014,17 +1014,29 @@ begin
   begin
     if InttoStr(w)<>rs.FieldByName('RELATION_ID').AsString then
     begin
-      AObj := TRecord_.Create;
-      AObj.ReadFromDataSet(rs);
-      // 2011.03.12 Add 可选择[供应链节点]的作为查询条件
-      AObj.FieldByName('LEVEL_ID').AsString:='';
-      AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
-      rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
-      w := rs.FieldByName('RELATION_ID').AsInteger;
+      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then
+      begin
+        CurObj:=TRecord_.Create;
+        CurObj.ReadFromDataSet(rs);
+        // 2011.03.12 Add 可选择[供应链节点]的作为查询条件
+        CurObj.FieldByName('LEVEL_ID').AsString:='';
+        CurObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
+      end else
+      begin
+        AObj := TRecord_.Create;
+        AObj.ReadFromDataSet(rs);
+        // 2011.03.12 Add 可选择[供应链节点]的作为查询条件
+        AObj.FieldByName('LEVEL_ID').AsString:='';
+        AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
+        rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
+        w := rs.FieldByName('RELATION_ID').AsInteger;
+      end;
     end;
     rs.Next;
   end;
-  
+  if CurObj<>nil then
+    rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
+ 
   for i:=rzTree.Items.Count-1 downto 0 do
   begin
     rs.Filtered := false;

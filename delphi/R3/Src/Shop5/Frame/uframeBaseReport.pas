@@ -143,7 +143,9 @@ type
     //2011.06.30 Am Add 导出Excel前表头
     function  DoBeforeExport: boolean; override;
     procedure SingleReportParams(ParameStr: string='');virtual; //简单报表调用参数
-    procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String); //分组报表
+    //添加报表分组类型: RptType
+    procedure AddReportTypeList(RptType: TcxComboBox);
+    procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID, SORT_NAME: string; SumFields,CalcFields: Array of String); //分组报表
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -434,6 +436,11 @@ begin
           Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
           Cbx.ItemIndex:=0;
         end;
+        if RightStr(CmpName,8)='_RPTTYPE' then //商品指标
+        begin
+          AddReportTypeList(Cbx);
+          Cbx.ItemIndex:=0;
+        end;  
       end;
     end;
 
@@ -1352,7 +1359,7 @@ begin
 
 end;
 
-procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String);
+procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String);
  procedure CalcValue(AObj: TRecord_); //计算汇总数据
  var i,Idx: integer; CalcField1,CalcField2,CalcValue: string;
  begin
@@ -1400,15 +1407,44 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_ID,SORT_NAME
      DataSet.First;
    end;
  end;
+
  function GetSortName(SORT_ID: string): string;
  var SortRs: TZQuery;
  begin
    result:='';
-   SortRs:=Global.GetZQueryFromName('PUB_GOODSSORT');
-   if SortRs<>nil then
-   begin
-     if SortRs.Locate('SORT_ID',SORT_ID,[]) then
-       result:=trim(SortRs.fieldbyName('SORT_NAME').AsString);
+   case strtoInt(SORT_IDX) of
+   0:
+    begin
+      if trim(SORT_ID)='0' then
+        result:='自主经营'
+      else
+      begin
+        SortRs:=Global.GetZQueryFromName('CA_RELATIONS');
+        if SortRs<>nil then
+        begin
+          if SortRs.Locate('RELATION_ID',SORT_ID,[]) then
+            result:=trim(SortRs.fieldbyName('RELATION_NAME').AsString);
+        end;
+      end;
+    end;
+   1:
+    begin
+      SortRs:=Global.GetZQueryFromName('PUB_GOODSSORT');
+      if SortRs<>nil then
+      begin
+        if SortRs.Locate('SORT_ID',SORT_ID,[]) then
+          result:=trim(SortRs.fieldbyName('SORT_NAME').AsString);
+      end;
+    end;
+   2:
+    begin
+      SortRs:=Global.GetZQueryFromName('PUB_STAT_INFO');
+      if SortRs<>nil then
+      begin
+        if SortRs.Locate('CODE_ID',SORT_ID,[]) then
+          result:=trim(SortRs.fieldbyName('CODE_NAME').AsString);
+      end;
+    end;
    end;
  end;
 var
@@ -1416,17 +1452,16 @@ var
   SID: string;
   Rs: TZQuery;
   SortList: TStringList;
-  AllObj, SortObj, tmpObj: TRecord_;
+  SortObj, tmpObj: TRecord_;
 begin
   try
     Rs:=TZQuery.Create(nil);
     Rs.Data:=DataSet.Data;
     SortList:=TStringList.Create;
-    AllObj:=TRecord_.Create;
     SortObj:=TRecord_.Create;
     tmpObj:=TRecord_.Create;
-    AllObj.ReadField(DataSet);
-    SortObj.ReadField(DataSet);
+    FSumRecord.Clear;
+    FSumRecord.ReadField(DataSet);
     SetSortList(SortList); //读取分类个数
     DataSet.EmptyDataSet;  //清空数据
     DataSet.IndexFieldNames:='vNO';
@@ -1435,45 +1470,102 @@ begin
     for i:=0 to SortList.Count-1 do  //逐个分类循环处理
     begin
       SID:=trim(SortList.Strings[i]);
+      SortObj.ReadField(DataSet);
       while not Rs.Eof do
       begin
         if SID=trim(Rs.fieldbyname(SORT_ID).AsString) then
         begin
           tmpObj.ReadFromDataSet(Rs);
-          CalcSum(AllObj,SortObj,tmpObj); //计算汇总数据
+          CalcSum(FSumRecord,SortObj,tmpObj); //计算汇总数据
           DataSet.Append;
           tmpObj.WriteToDataSet(DataSet);  //写入数据集
-          DataSet.FieldByName(SORT_NAME).AsString:='      '+DataSet.FieldByName(SORT_NAME).AsString; 
+          DataSet.FieldByName(SORT_NAME).AsString:='    '+DataSet.FieldByName(SORT_NAME).AsString;
           DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
           Rs.Next;
         end else
         begin
           //插入当前SortID的汇总数
           DataSet.Append;
-          SortObj.WriteToDataSet(DataSet);  //写入数据集   
-          DataSet.FieldByName(SORT_NAME).AsString:=GetSortName(SID)+' (合计)';
+          SortObj.WriteToDataSet(DataSet);  //写入数据集
+          DataSet.FieldByName(SORT_NAME).AsString:=GetSortName(SID)+' (小计)';
           DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
           SortObj.Clear;
-          SortObj.ReadField(DataSet);
           Break;  //不相等则退出循环
         end;
       end;
     end;
-    if not DataSet.IsEmpty then
+
+    //最后一次分组汇总：
+    if (not DataSet.IsEmpty) and (SortObj.Count>0) then
     begin
-      //插入总合计
-      CalcValue(AllObj); //计算汇总数据
       DataSet.Append;
-      AllObj.WriteToDataSet(DataSet);  //写入数据集
-      DataSet.FieldByName(SORT_NAME).AsString:='总   计: ';
+      SortObj.WriteToDataSet(DataSet);  //写入数据集
+      DataSet.FieldByName(SORT_NAME).AsString:=GetSortName(SID)+' (小计)';
       DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
-    end;
+      SortObj.Clear;
+    end;      
+
+    //返回记录数
+    FSumRecord.FieldByName(SORT_NAME).AsString:=InttoStr(Rs.RecordCount);
+    //插入总合计
+    if not DataSet.IsEmpty then
+      CalcValue(FSumRecord); //计算汇总数据
   finally
     Rs.Free;
     SortList.Free;
-    AllObj.Free;
     SortObj.Free;
     tmpObj.Free;
+  end;
+end;
+
+procedure TframeBaseReport.AddReportTypeList(RptType: TcxComboBox);
+var
+  i: integer;
+  CurObj: TRecord_;
+  rs,StatInfo: TZQuery;
+begin
+  try
+    rs:=TZQuery.Create(nil);
+    rs.Close;
+    rs.FieldDefs.Add('SORT_ID',ftInteger,0,true);
+    rs.FieldDefs.Add('SORT_NAME',ftstring,50,true);
+    rs.FieldDefs.Add('GROUP_NAME',ftstring,50,true);
+    rs.CreateDataSet;
+    //供应链分组统计
+    rs.Append;
+    rs.FieldByName('SORT_ID').AsInteger:=0;
+    rs.FieldByName('SORT_NAME').AsString:='供应链';
+    rs.FieldByName('GROUP_NAME').AsString:='供应链分组统计';
+    rs.Post;
+    //货品分类分组统计
+    {rs.Append;
+    rs.FieldByName('SORT_ID').AsInteger:=1;
+    rs.FieldByName('SORT_NAME').AsString:='商品分类';
+    rs.FieldByName('GROUP_NAME').AsString:='商品分类分组统计';
+    rs.Post;
+    }
+    StatInfo:=Global.GetZQueryFromName('PUB_STAT_INFO');
+    StatInfo.First;
+    while not StatInfo.Eof do
+    begin
+      rs.Append;
+      rs.FieldByName('SORT_ID').AsString:=StatInfo.fieldbyName('CODE_ID').AsString;
+      rs.FieldByName('SORT_NAME').AsString:=StatInfo.fieldbyName('CODE_NAME').AsString;
+      rs.FieldByName('GROUP_NAME').AsString:=StatInfo.fieldbyName('CODE_NAME').AsString+'分组统计';
+      rs.Post;
+      StatInfo.Next;
+    end;
+    ClearCbxPickList(RptType);  //清除节点及Object对象
+    rs.First;
+    while not rs.Eof do
+    begin
+      CurObj:=TRecord_.Create;
+      CurObj.ReadFromDataSet(rs);
+      RptType.Properties.Items.AddObject(CurObj.fieldbyName('GROUP_NAME').AsString,CurObj);
+      rs.Next;
+    end;
+  finally
+    rs.Free;
   end;
 end;
 

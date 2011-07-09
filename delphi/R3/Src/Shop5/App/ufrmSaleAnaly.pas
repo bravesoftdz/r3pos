@@ -94,7 +94,6 @@ type
     fndP3_DEPT_ID: TzrComboBoxList;
     P3_D1: TcxDateEdit;
     P3_D2: TcxDateEdit;
-    SB3: TScrollBox;
     adoReport3: TZQuery;
     dsadoReport3: TDataSource;
     Label11: TLabel;
@@ -104,14 +103,12 @@ type
     RB_PRF: TcxRadioButton;
     CB_Color: TCheckBox;
     EdtvType: TcxComboBox;
-    RzPanel12: TRzPanel;
+    PnlSB2: TRzPanel;
+    PnlS: TRzPanel;
+    PnlSB3: TRzPanel;
+    PnlSB: TRzPanel;
     SB2: TScrollBox;
-    RzPanel13: TRzPanel;
-    ScrollBox1: TScrollBox;
-    RzPanel14: TRzPanel;
-    RzPanel15: TRzPanel;
-    ScrollBox3: TScrollBox;
-    ScrollBox2: TScrollBox;
+    SB3: TScrollBox;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzPanel7Resize(Sender: TObject);
@@ -173,34 +170,32 @@ procedure TfrmSaleAnaly.actFindExecute(Sender: TObject);
 var
   strSql: string;
 begin
-  case rzPage.ActivePageIndex of
-    0:
-      begin //按销售分析
-        if adoReport1.Active then adoReport1.Close;
-        strSql := GetMarketAnalySQL;
-        if strSql='' then Exit;
-        adoReport1.SQL.Text:= strSql;
-        Factor.Open(adoReport1);
-        AddFillChat1;
-      end;
-    1:
-      begin //按盈利分析
-        if adoReport2.Active then adoReport2.Close;
-        strSql := GetProfitAnalySQL;
-        if strSql='' then Exit;
-        adoReport2.SQL.Text:= strSql;
-        Factor.Open(adoReport2);
-        ShowFrameProfitAnaly;
-      end;
-    2:
-      begin //按潜力分析
-        if adoReport3.Active then adoReport3.Close;
-        strSql := self.GetPotenAnalySQL;
-        if strSql='' then Exit;
-        adoReport3.SQL.Text:= strSql;
-        Factor.Open(adoReport3);
-        ShowFramePotenAnaly;
-      end;
+  if RzPage.ActivePage=TabSheet1 then
+  begin //经营状况
+    if adoReport1.Active then adoReport1.Close;
+    strSql := GetMarketAnalySQL;
+    if strSql='' then Exit;
+    adoReport1.SQL.Text:= strSql;
+    Factor.Open(adoReport1);
+    AddFillChat1;
+  end else
+  if RzPage.ActivePage=TabSheet2 then
+  begin //按潜力分析
+    if adoReport2.Active then adoReport2.Close;
+    strSql := GetProfitAnalySQL;
+    if strSql='' then Exit;
+    adoReport2.SQL.Text:= strSql;
+    Factor.Open(adoReport2);
+    ShowFrameProfitAnaly;
+  end else
+  if RzPage.ActivePage=TabSheet3 then
+  begin //按盈利分析
+    if adoReport3.Active then adoReport3.Close;
+    strSql := self.GetPotenAnalySQL;
+    if strSql='' then Exit;
+    adoReport3.SQL.Text:= strSql;
+    Factor.Open(adoReport3);
+    ShowFramePotenAnaly;
   end;
 end;
 
@@ -818,7 +813,7 @@ begin
 end;
 
 procedure TfrmSaleAnaly.ShowFrameProfitAnaly;
-  procedure ShowFrameDetail(Relation_ID, RelCount,vNo: integer);
+  procedure ShowFrameDetail(Relation_ID, RelCount,vNo: integer; var vHeight: integer);
   var
     Spilt: TSplitter; frmAnaly: TfrmProfitAnaly; AnalyType: integer;
   begin
@@ -832,7 +827,6 @@ procedure TfrmSaleAnaly.ShowFrameProfitAnaly;
       Spilt.Align:=alBottom;
       Spilt.Align:=alTop;
     end;
-
     try
       frmAnaly:=TfrmProfitAnaly.Create(self);
       frmAnaly.Name:='frmProfitAnaly'+InttoStr(vNo);
@@ -843,29 +837,35 @@ procedure TfrmSaleAnaly.ShowFrameProfitAnaly;
       else if P2_RB_PRF.Checked then AnalyType:=2
       else if P2_RB_AMT.Checked then AnalyType:=3;
       frmAnaly.InitData(AnalyType,Relation_ID,adoReport2.Data);
-      if RelCount * (frmAnaly.Height+8)-8>SB2.Height then
+      if vHeight=0 then vHeight:=frmAnaly.Height;
+      if RelCount=1 then //只有一条
       begin
-        SB2.Align:=alNone;
-        SB2.Top:=RzPnl2.Top+RzPnl2.Height;
-        SB2.Left:=0;
-        SB2.Height:=(frmAnaly.Height+8)* RelCount-8;
-      end else
-      if RelCount * (frmAnaly.Height+8)-8<SB2.Height then
-      begin
-        SB2.Align:=alClient;
-        frmAnaly.Height:=(SB2.Height-RelCount*8+8) div RelCount-2;
         frmAnaly.Align:=alClient;
+      end else
+      begin
+        if (Relation_ID=1000006) and (RelCount * (frmAnaly.Height+8)-8>SB2.Height) then //第一次运行才进行设置
+        begin
+          SB2.Top:=0;
+          SB2.Left:=0;
+          SB2.Height:=(frmAnaly.Height+8)* RelCount-2;
+        end else
+        if (Relation_ID=1000006) and (RelCount * (frmAnaly.Height+8)-8<=SB2.Height) then //第一次运行才进行设置
+        begin
+          vHeight:=(SB2.Height-RelCount*8+8) div RelCount-2;
+        end;
+        frmAnaly.Height:=vHeight;
       end;
     except
       frmAnaly.Free;
     end;
   end;
 var
-  i,vHeigh,vNo: integer;
+  i,vHeight,vNo: integer;
   RelID: string;
   ReList: TStringList;
 begin
   vNo:=1;
+  vHeight:=0;
   //创建前释放上次创建
   FreeFrameObj(1);
 
@@ -884,7 +884,7 @@ begin
       adoReport2.Next;
     end;
     //卷烟供应链:
-    ShowFrameDetail(1000006, ReList.Count+1,vNo);
+    ShowFrameDetail(1000006, ReList.Count+1,vNo,vHeight);
 
     //非卷烟供应链
     for i:=0 to ReList.Count-1 do
@@ -892,7 +892,7 @@ begin
       RelID:=trim(ReList.Strings[i]);
       if RelID = '1000006' then continue;
       Inc(vNo); //序号+1
-      ShowFrameDetail(StrtoInt(RelID), ReList.Count+1, vNo); 
+      ShowFrameDetail(StrtoInt(RelID), ReList.Count+1, vNo,vHeight);
     end;
   finally
     ReList.Free;
@@ -900,13 +900,13 @@ begin
 end;
 
 procedure TfrmSaleAnaly.ShowFramePotenAnaly;
-  procedure ShowFrameDetail(Relation_ID, RelCount,vNo: integer);
+  procedure ShowFrameDetail(Relation_ID, RelCount,vNo: integer; var vHeight: integer);
   var
     Spilt: TSplitter; frmPoten: TfrmPotenAnaly; AnalyType: integer;
   begin
     if Relation_ID<>1000006 then //不是卷烟都创建分割栏
     begin
-      Spilt:=TSplitter.Create(self);     
+      Spilt:=TSplitter.Create(self);
       Spilt.Name:='frmPotenAnalysplt'+InttoStr(vNo-1);
       Spilt.Parent:=SB3;
       Spilt.Height:=8;
@@ -921,30 +921,38 @@ procedure TfrmSaleAnaly.ShowFramePotenAnaly;
       frmPoten.Align:=alBottom;
       frmPoten.Align:=alTop;
       frmPoten.InitData(Relation_ID,adoReport3.Data);
-      if RelCount * (frmPoten.Height+8)-8>SB3.Height then
+      if vHeight=0 then vHeight:=frmPoten.Height;
+      if RelCount=1 then
       begin
-        SB3.Align:=alNone;
-        SB3.Top:=RzPnl3.Top+RzPnl3.Height;
-        SB3.Left:=0;
-        SB3.Height:=(frmPoten.Height+8)* RelCount-8;
-      end else
-      if RelCount * (frmPoten.Height+8)-8<SB3.Height  then
-      begin
-        SB3.Align:=alClient;
-        frmPoten.Height:=(SB3.Height-RelCount*8+8) div RelCount-2;
         frmPoten.Align:=alClient;
+      end else
+      begin
+        if (Relation_ID=1000006) and (RelCount * (frmPoten.Height+8)-8>SB3.Height) then //放在第一次执行语句
+        begin
+          {SB3.Align:=alNone;
+          SB3.Top:=0;
+          SB3.Left:=0;
+          }
+          SB3.Height:=(frmPoten.Height+8)* RelCount-2;
+        end else
+        if (Relation_ID=1000006) and (RelCount * (frmPoten.Height+8)-8<=SB3.Height) then //放在第一次执行语句
+        begin
+          vHeight:=(SB3.Height-RelCount*8+8) div RelCount-2;
+        end;
+        //在范围内调整 Fram高度
+        frmPoten.Height:=vHeight;
       end;
     except
       frmPoten.Free;
     end;
   end;
 var
-  IsFlag: Boolean;
-  i,vHeigh,vNo: integer;
+  i,vHeight,vNo: integer;
   RelID: string;
   ReList: TStringList;
 begin
   vNo:=1;
+  vHeight:=0;
   //创建前释放上次创建
   FreeFrameObj(2);
 
@@ -963,7 +971,7 @@ begin
       adoReport3.Next;
     end;
     //卷烟供应链:
-    ShowFrameDetail(1000006, ReList.Count+1,vNo);
+    ShowFrameDetail(1000006,ReList.Count+1,vNo,vHeight);
     
     //非卷烟供应链
     for i:=0 to ReList.Count-1 do
@@ -971,7 +979,7 @@ begin
       RelID:=trim(ReList.Strings[i]);
       if RelID = '1000006' then continue;
       Inc(vNo); //序号+1
-      ShowFrameDetail(StrtoInt(RelID), ReList.Count+1, vNo);
+      ShowFrameDetail(StrtoInt(RelID),ReList.Count+1,vNo,vHeight);
     end;
   finally
     ReList.Free;

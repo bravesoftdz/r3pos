@@ -10,39 +10,57 @@ uses
 
 type
   TfrmPotenAnaly = class(TFrame)
-    Pnl_Left: TPanel;
-    Panel1: TPanel;
-    DBGridEh1: TDBGridEh;
     dsMaxAnaly: TDataSource;
     adoReport: TZQuery;
-    Pnl_Right: TPanel;
-    Panel4: TPanel;
-    DBGridEh2: TDBGridEh;
-    Splitter1: TSplitter;
     MaxAnaly: TZQuery;
     MinAnaly: TZQuery;
     dsMinAnaly: TDataSource;
+    ButtomPnl: TPanel;
+    MainPnl: TPanel;
+    Right_Pnl: TPanel;
+    Pnl_Left: TPanel;
+    LLeft_Pnl: TPanel;
+    Pnl_Left_main: TPanel;
+    Panel1: TPanel;
+    DBGridEh1: TDBGridEh;
     Panel2: TPanel;
     PnlTop1: TPanel;
     RightPnl: TPanel;
     Label1: TLabel;
-    edtMaxNo: TcxComboBox;
     Label2: TLabel;
-    Panel3: TPanel;
+    edtMaxNo: TcxComboBox;
+    LRight_Pnl: TPanel;
+    Splitter1: TSplitter;
+    RLeft_Pnl: TPanel;
+    Pnl_Right_main: TPanel;
+    Panel4: TPanel;
+    DBGridEh2: TDBGridEh;
+    RRight_Top: TPanel;
     Panel5: TPanel;
     Label3: TLabel;
-    edtMinNo: TcxComboBox;
     Label4: TLabel;
+    edtMinNo: TcxComboBox;
     PnlTop2: TPanel;
     Panel6: TPanel;
     CB_NotSale: TcxCheckBox;
-    Panel7: TPanel;
+    RRight_Pnl: TPanel;
     procedure edtOrderNoPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FrameResize(Sender: TObject);
     procedure edtMinNoPropertiesChange(Sender: TObject);
     procedure CB_NotSalePropertiesChange(Sender: TObject);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
+    Max_MNY,Max_PRF,Max_AMT: real;
+    Min_MNY,Min_PRF,Min_AMT: real;
+    FRelation_ID: integer;
   public
     procedure ShowOrderData(vType: Integer); //刷新显示多少条
     procedure InitData(const Relation_ID: integer; const vData: OleVariant);
@@ -68,6 +86,7 @@ var
   RelName: string;
   Rs: TZQuery;
 begin
+  FRelation_ID:=Relation_ID;
   Rs:=ShopGlobal.GetZQueryFromName('CA_RELATIONS');
   RelName:='';
   if Relation_ID=0 then
@@ -82,12 +101,6 @@ begin
   
   adoReport.Close;
   adoReport.Data:=vData;
-  if adoReport.Active then
-  begin
-    adoReport.Filtered:=false;
-    adoReport.Filter:='Relation_ID='+InttoStr(Relation_ID);
-    adoReport.Filtered:=true;
-  end;
   //最大潜力
   MaxAnaly.Close;
   MaxAnaly.FieldDefs.Add('GODS_CODE',ftstring,20,true);  //商品编码
@@ -114,13 +127,16 @@ procedure TfrmPotenAnaly.ShowOrderData(vType: Integer);
 var
   i,j,vmax,vmin,ReIdx: integer;
 begin
+  Max_MNY:=0;
+  Max_PRF:=0;
+  Max_AMT:=0;
   if (vType=1) or (vType=11) then
   begin
     if not MaxAnaly.IsEmpty then MaxAnaly.EmptyDataSet;
     vmax:=StrtoIntDef(edtMaxNo.Text,5);
     try
       adoReport.Filtered:=False;
-      adoReport.Filter:='vType=4';
+      adoReport.Filter:='vType=4 and Relation_ID='+InttoStr(FRelation_ID);
       adoReport.Filtered:=true;
       for i:=1 to vmax do
       begin  //表格显示
@@ -135,6 +151,9 @@ begin
           MaxAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
           MaxAnaly.fieldbyName('ORDERNO').AsInteger:=i;
           MaxAnaly.Post;
+          Max_MNY:=Max_MNY+adoReport.fieldByName('MNY_SUM').AsFloat;
+          Max_PRF:=Max_PRF+adoReport.fieldByName('PRF_SUM').AsFloat;
+          Max_AMT:=Max_AMT+adoReport.fieldByName('AMT_SUM').AsFloat;
         end;
       end;
     finally
@@ -143,6 +162,9 @@ begin
     end;
   end;
 
+  Min_MNY:=0;
+  Min_PRF:=0;
+  Min_AMT:=0;
   if (vType=10) or (vType=11) then
   begin
     if not MinAnaly.IsEmpty then MinAnaly.EmptyDataSet;
@@ -150,7 +172,7 @@ begin
     try
       ReIdx:=0;
       adoReport.Filtered:=False;
-      adoReport.Filter:='vType=1';
+      adoReport.Filter:='vType=1 and Relation_ID='+InttoStr(FRelation_ID);
       adoReport.Filtered:=true;
       ReIdx:=adoReport.RecordCount;
       for i:=ReIdx downto 1 do
@@ -168,6 +190,9 @@ begin
           MinAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
           MinAnaly.fieldbyName('ORDERNO').AsInteger:=MinAnaly.RecordCount+1;
           MinAnaly.Post;
+          Min_MNY:=Min_MNY+adoReport.fieldByName('MNY_SUM').AsFloat;
+          Min_PRF:=Min_PRF+adoReport.fieldByName('PRF_SUM').AsFloat;
+          Min_AMT:=Min_AMT+adoReport.fieldByName('AMT_SUM').AsFloat;
         end;
       end;
     finally
@@ -214,6 +239,34 @@ end;
 procedure TfrmPotenAnaly.CB_NotSalePropertiesChange(Sender: TObject);
 begin
   ShowOrderData(10);
+end;
+
+procedure TfrmPotenAnaly.DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+  Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+begin
+  if Column.FieldName = 'GODS_CODE' then
+    Text := '合 计'
+  else if UpperCase(Column.FieldName)='MNY_SUM' then
+    Text:=FormatFloat(Column.DisplayFormat,Max_MNY)
+  else if UpperCase(Column.FieldName)='PRF_SUM' then
+    Text:=FormatFloat(Column.DisplayFormat,Max_PRF)
+  else if UpperCase(Column.FieldName)='AMT_SUM' then
+    Text:=FormatFloat(Column.DisplayFormat,Max_AMT);
+end;
+
+procedure TfrmPotenAnaly.DBGridEh2GetFooterParams(Sender: TObject; DataCol,
+  Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+begin
+  if Column.FieldName = 'GODS_CODE' then
+    Text := '合 计'
+  else if UpperCase(Column.FieldName)='MNY_SUM' then
+    Text:=FormatFloat(Column.DisplayFormat,Min_MNY)
+  else if UpperCase(Column.FieldName)='PRF_SUM' then
+    Text:=FormatFloat(Column.DisplayFormat,Min_PRF)
+  else if UpperCase(Column.FieldName)='AMT_SUM' then
+    Text:=FormatFloat(Column.DisplayFormat,Min_AMT);
 end;
 
 end.

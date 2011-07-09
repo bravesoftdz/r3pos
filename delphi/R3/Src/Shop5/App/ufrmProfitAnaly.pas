@@ -10,33 +10,42 @@ uses
 
 type
   TfrmProfitAnaly = class(TFrame)
-    Pnl_Left: TPanel;
-    Pnl_Right: TPanel;
-    Panel1: TPanel;
-    DBGridEh1: TDBGridEh;
-    Chart1: TChart;
-    BarSeries1: TBarSeries;
     adoAnaly: TZQuery;
     dsAnaly: TDataSource;
     adoReport: TZQuery;
-    Splitter1: TSplitter;
+    MainPnl: TPanel;
+    Panel7: TPanel;
+    Pnl_Left: TPanel;
+    Panel1: TPanel;
+    DBGridEh1: TDBGridEh;
     Panel2: TPanel;
     PnlTop: TPanel;
     RightPnl: TPanel;
     Label2: TLabel;
     edtOrderNo: TcxComboBox;
     vType: TcxComboBox;
+    Splitter1: TSplitter;
+    Pnl_Right: TPanel;
+    Chart1: TChart;
+    BarSeries1: TBarSeries;
     Panel3: TPanel;
     ChartTitle: TPanel;
     Panel4: TPanel;
     CB_Color: TCheckBox;
-    Panel7: TPanel;
+    ButtomPnl: TPanel;
+    Panel5: TPanel;
+    RihtPnl: TPanel;
     procedure edtOrderNoPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FrameResize(Sender: TObject);
     procedure CB_ColorClick(Sender: TObject);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
+    FSumValue: Real; //累计值
     FTtileName: string;
     FAnalyType: integer;
     function FindColumn(DBGrid:TDBGridEh; FieldName:string):TColumnEh;
@@ -127,10 +136,12 @@ begin
 
   if not adoAnaly.IsEmpty then
     adoAnaly.EmptyDataSet;
+    
   if Chart1.Series[0].Count>0 then
     Chart1.Series[0].Clear;
   vmax:=StrtoIntDef(edtOrderNo.Text,5);
   allReCount:=adoReport.RecordCount;
+  FSumValue:=0;
   for i:=1 to vmax do
   begin
     case vType.ItemIndex of
@@ -158,6 +169,7 @@ begin
     adoAnaly.Post;
     //图表显示
     Chart1.Series[0].Add(adoReport.fieldByName('ANALYSUM').AsFloat,trim(adoReport.fieldByName('GODS_NAME').AsString));
+    FSumValue:=FSumValue+adoReport.fieldByName('ANALYSUM').AsFloat;
   end;
 end;
 
@@ -207,6 +219,17 @@ end;
 procedure TfrmProfitAnaly.CB_ColorClick(Sender: TObject);
 begin
   BarSeries1.ColorEachPoint:=CB_Color.Checked;
+end;
+
+procedure TfrmProfitAnaly.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  if Column.FieldName = 'GODS_CODE' then
+    Text := '合 计'
+  else if UpperCase(Column.FieldName)='ANALYSUM' then
+    Text:=FormatFloat(Column.DisplayFormat,FSumValue);
 end;
 
 end.

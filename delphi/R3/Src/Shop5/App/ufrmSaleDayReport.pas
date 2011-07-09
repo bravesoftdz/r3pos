@@ -190,10 +190,6 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
-      Row: Integer; Column: TColumnEh; AFont: TFont;
-      var Background: TColor; var Alignment: TAlignment;
-      State: TGridDrawState; var Text: String);
     procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -614,6 +610,11 @@ begin
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
+        dsadoReport5.DataSet:=nil;
+        DoGodsGroupBySort(adoReport5,'SORT_ID1','GODS_NAME',
+                          ['SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF'],
+                          ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
+        dsadoReport5.DataSet:=adoReport5;
       end;
     5: begin //按商品流水帐
         if adoReport6.Active then adoReport6.Close;
@@ -1017,6 +1018,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
+    ',C.SORT_ID1'+
     ',A.GODS_ID '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+    //销售数量
     ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
@@ -1024,14 +1026,14 @@ begin
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //零售金额，暂时没使用
-    ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利    
+    ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID';
+    'group by A.TENANT_ID,C.SORT_ID1,A.GODS_ID';
 
   strSql :=
     'select j.* '+
@@ -1039,7 +1041,7 @@ begin
     'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
   strSql :=
-    'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+    'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
     ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
     ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
@@ -1358,15 +1360,6 @@ procedure TfrmSaleDayReport.DBGridEh6GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
-end;
-
-procedure TfrmSaleDayReport.DBGridEh5GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
-begin
-  inherited;
-  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmSaleDayReport.DBGridEh4GetFooterParams(Sender: TObject;

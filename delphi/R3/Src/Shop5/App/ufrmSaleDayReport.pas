@@ -239,7 +239,7 @@ type
     //按商品销售流水表
     function GetGlideSQL(chk:boolean=true): string;  //6666
     function GetUnitIDIdx: integer;
-    function GetP5_SortIdx: string; //
+    function GetGodsSortIdx: string; //
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
     procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override;
@@ -248,7 +248,7 @@ type
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
-    property P5_SortIdx: string read GetP5_SortIdx; //统计类型 
+    property GodsSortIdx: string read GetGodsSortIdx; //统计类型 
   end;
 
 const
@@ -623,7 +623,7 @@ begin
         adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
         dsadoReport5.DataSet:=nil;
-        DoGodsGroupBySort(adoReport5,P5_SortIdx,'SORT_ID','GODS_NAME',
+        DoGodsGroupBySort(adoReport5,GodsSortIdx,'SORT_ID','GODS_NAME',
                           ['SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF'],
                           ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY*100.0','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
         dsadoReport5.DataSet:=adoReport5;
@@ -1025,10 +1025,11 @@ begin
       ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
   end;
-  case StrToInt(P5_SortIdx) of
+  //分组字段
+  case StrToInt(GodsSortIdx) of
    0: SORT_ID:='C.RELATION_ID';
    else
-      SORT_ID:='C.SORT_ID'+P5_SortIdx+' ';
+      SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
   end;
 
   UnitCalc:=GetUnitTO_CALC(fndP5_UNIT_ID.ItemIndex,'C');
@@ -1062,7 +1063,7 @@ begin
     ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
     ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' order by j.GODS_CODE';
+    ' order by j.SORT_ID,j.GODS_CODE';
     
   result:=ParseSQL(Factor.iDbType,strSql);
 end;
@@ -1620,7 +1621,7 @@ begin
   BtnSaleSum.Top:=BtnSaleSum.Top-22;
 end;
 
-function TfrmSaleDayReport.GetP5_SortIdx: string;
+function TfrmSaleDayReport.GetGodsSortIdx: string;
 var
   AObj: TRecord_;
 begin
@@ -1658,37 +1659,10 @@ begin
   inherited;
 end;
 
-procedure TfrmSaleDayReport.DBGridEh5DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-var ARect:TRect;
+procedure TfrmSaleDayReport.DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumnEh;State: TGridDrawState);
 begin
-  if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
-  if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
-
-  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
-     (not (gdFocused in State) or not Column.Grid.Focused) then
-  begin
-    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
-  end;
-  Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
-
-  if Column.FieldName = 'SEQNO' then
-  begin
-    ARect := Rect;
-    DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-  end;
-
-  if trim(TDBGridEh(Sender).DataSource.DataSet.fieldbyName('SORT_ID').AsString) = '-1' then
-  begin
-    if trim(Column.FieldName)<>'SEQNO' then
-    begin
-      TDBGridEh(Sender).Canvas.Brush.Color := $00A5A5A5;
-      TDBGridEh(Sender).Canvas.Font.Style:=[fsBold];
-      TDBGridEh(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    end;
-  end;
-
+  GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
 end;
 
 end.

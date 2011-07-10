@@ -8,28 +8,28 @@ inherited frmChangeDayReport: TfrmChangeDayReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 892
-    Height = 526
+    Height = 525
     inherited RzPanel2: TRzPanel
       Width = 882
-      Height = 516
+      Height = 515
       inherited RzPage: TRzPageControl
         Width = 677
-        Height = 510
-        ActivePage = TabSheet5
+        Height = 509
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#35843#25972#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 675
-            Height = 483
+            Height = 482
             BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 665
-              Height = 473
+              Height = 472
               inherited w1: TRzPanel
                 Width = 665
                 Height = 86
@@ -256,10 +256,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               inherited RzPanel7: TRzPanel
                 Top = 86
                 Width = 665
-                Height = 387
+                Height = 386
                 inherited DBGridEh1: TDBGridEh
                   Width = 661
-                  Height = 383
+                  Height = 382
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -1115,7 +1115,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 483
+            Height = 482
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1124,7 +1124,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 473
+              Height = 472
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1139,6 +1139,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 Color = clWhite
                 TabOrder = 0
+                DesignSize = (
+                  665
+                  107)
                 object RzLabel8: TRzLabel
                   Left = 24
                   Top = 14
@@ -1188,6 +1191,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label38: TLabel
+                  Left = 524
+                  Top = 80
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #32479#35745#31867#22411
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
@@ -1407,12 +1418,26 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #31649#29702#32676#32452)
                   TabOrder = 9
                 end
+                object fndP4_RPTTYPE: TcxComboBox
+                  Left = 575
+                  Top = 76
+                  Width = 81
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #38376#24215#36827#38144#23384#32479#35745#34920
+                    #21830#21697#36827#38144#23384#32479#35745#34920
+                    #32676#32452#36827#38144#23384#32479#35745#34920
+                    #20379#24212#21830#36827#38144#23384#32479#35745#34920)
+                  TabOrder = 10
+                end
               end
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 107
                 Width = 665
-                Height = 366
+                Height = 365
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1421,7 +1446,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 362
+                  Height = 361
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1462,7 +1487,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh4DblClick
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
@@ -1476,18 +1501,18 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'BARCODE'
-                      Footers = <>
-                      Title.Caption = #26465#30721
-                      Width = 82
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 82
                     end
                     item
                       EditButtons = <>
@@ -1568,7 +1593,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 483
+            Height = 482
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1577,7 +1602,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 473
+              Height = 472
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1846,7 +1871,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 81
                 Width = 665
-                Height = 392
+                Height = 391
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1855,7 +1880,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 388
+                  Height = 387
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2062,7 +2087,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       end
       inherited PanelColumnS: TPanel
         Left = 680
-        Height = 510
+        Height = 509
         inherited Panel2: TPanel
           Height = 466
           inherited RzPanel1: TRzPanel [3]

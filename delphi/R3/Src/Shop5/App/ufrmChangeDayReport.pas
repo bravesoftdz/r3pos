@@ -121,6 +121,8 @@ type
     adoReport3: TZQuery;
     adoReport4: TZQuery;
     adoReport5: TZQuery;
+    Label38: TLabel;
+    fndP4_RPTTYPE: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -158,6 +160,8 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -184,7 +188,8 @@ type
     procedure SetCodeId(const Value: string); //设置调整单的单据类型ID
     function  GetRCKFields: string;  //根据CodeId返回台账表的查询字段:
     function  GetVIWFields: string;  //根据CodeId返回Change视图的查询字段:
-    function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function  AddReportReport(TitleList: TStringList; PageNo: string): string; override;
+    function  GetGodsSortIdx: string; //添加Title
   public
     procedure PrintBefore;override;
     function GetRowType:integer;override;
@@ -192,6 +197,7 @@ type
     property CodeName: string read FCodeName;     //调整单: 类型名称
     property RCKFields: string read GetRCKFields;  //根据CodeId返回台账表的查询字段:
     property VIWFields: string read GetVIWFields;  //根据CodeId返回Change视图的查询字段:
+    property GodsSortIdx: string read GetGodsSortIdx;
   end;
 
 const
@@ -435,6 +441,11 @@ begin
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+        dsadoReport4.DataSet:=nil;
+        DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME',
+                          ['AMOUNT','APRICE','AMONEY','COST_MONEY','PROFIT_MONEY'],
+                          ['APRICE=AMONEY/AMOUNT']);
+        dsadoReport4.DataSet:=adoReport4;
       end;
     4: begin //按商品流水帐
         if adoReport5.Active then adoReport5.Close;
@@ -693,7 +704,7 @@ end;
 
 function TfrmChangeDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  UnitCalc: string;  //单位计算关系
+  UnitCalc,SORT_ID: string;  //单位计算关系
   strSql,strWhere,strCnd,ShopCnd,GoodTab,SQLData: string;
 begin
   vBegDate:=0;
@@ -774,11 +785,18 @@ begin
       ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+' '+
       ')';
   end;
+  //分组字段
+  case StrToInt(GodsSortIdx) of
+   0: SORT_ID:='C.RELATION_ID';
+   else
+      SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
+  end;
 
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');  
   strSql :=
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
+    ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID as GODS_ID '+
     ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
     ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
@@ -787,20 +805,36 @@ begin
     ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID';
+    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
 
   strSql :=
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
     'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
-  strSql :=
-    'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
-    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-    'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' order by j.GODS_CODE ';
-
+  case StrToInt(GodsSortIdx) of
+   0:
+    begin
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE ';
+    end;
+   else
+    begin
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' left outer join '+
+        '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+        ' on j.SORT_ID=s.SORT_ID '+
+        ' order by s.OrderNo,j.GODS_CODE';
+    end;
+  end;
   Result :=  ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -1170,9 +1204,24 @@ procedure TfrmChangeDayReport.DBGridEh4GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
+var
+  ColName: string;
 begin
-  inherited;
   if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+  if SumRecord.Count<=0 then Exit;
+  ColName:=trim(UpperCase(Column.FieldName));
+  if ColName = 'GODS_NAME' then
+    Text := '合计:'+SumRecord.fieldbyName('GODS_NAME').AsString+'笔'
+  else
+  begin
+    if SumRecord.FindField(ColName)<>nil then
+    begin
+      if (ColName='AMOUNT') or (ColName='APRICE') or (ColName='AMONEY') or (ColName='COST_MONEY') or (ColName='PROFIT_MONEY') then
+      begin
+        Text:=FormatFloat(Column.DisplayFormat,SumRecord.FindField(ColName).AsFloat);
+      end;
+    end;
+  end;
 end;
 
 procedure TfrmChangeDayReport.DBGridEh3GetFooterParams(Sender: TObject;
@@ -1215,6 +1264,22 @@ procedure TfrmChangeDayReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmChangeDayReport.DBGridEh4DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+function TfrmChangeDayReport.GetGodsSortIdx: string;
+var
+  AObj: TRecord_;
+begin
+  AObj:=TRecord_(fndP4_RPTTYPE.Properties.Items.Objects[fndP4_RPTTYPE.ItemIndex]);
+  result:=AObj.fieldbyName('SORT_ID').AsString;
+  if result='' then result:='0';  
 end;
 
 end.

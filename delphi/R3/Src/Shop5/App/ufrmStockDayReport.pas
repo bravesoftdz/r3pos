@@ -130,6 +130,8 @@ type
     fndP5_ALL: TcxRadioButton;
     fndP5_InStock: TcxRadioButton;
     fndP5_ReturnStock: TcxRadioButton;
+    Label38: TLabel;
+    fndP4_RPTTYPE: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -168,6 +170,8 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -188,11 +192,13 @@ type
     function GetGodsSQL(chk:boolean=true): string;
     //5、按商品销售流水表
     function GetGlideSQL(chk:boolean=true): string;
-    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; override;
+    function GetGodsSortIdx: string; //添加Title
   public
     procedure PrintBefore;override;
     function  DoBeforeExport:boolean;override;
     function  GetRowType:integer;override;
+    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型     
   end;
 
 const
@@ -423,6 +429,11 @@ begin
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+        dsadoReport4.DataSet:=nil;
+        DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME',
+                          ['STOCK_AMT','STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_RTL','STOCK_RATE','STOCK_AGO','AVG_AGIO','STOCK_MNY_TAX_AGO'],
+                          ['STOCK_PRC=STOCK_TTL/STOCK_AMT','STOCK_RATE=STOCK_TTL/STOCK_MNY_TAX_AGO*100','AVG_AGIO=STOCK_AGO/STOCK_AMT']);
+        dsadoReport4.DataSet:=adoReport4;
       end;
     4: begin //按商品流水帐
         if adoReport5.Active then adoReport5.Close;
@@ -700,7 +711,7 @@ end;
 
 function TfrmStockDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  UnitCalc: string; //统计单位换算计算关系
+  UnitCalc,SORT_ID: string; //统计单位换算计算关系
   strSql,StrCnd,strWhere,GoodTab,SQLData: string;
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
@@ -735,8 +746,6 @@ begin
   if trim(fndP4_SHOP_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' and B.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' ';
 
-
-
   //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
      begin
@@ -762,6 +771,12 @@ begin
   end else
     GoodTab:='VIW_GOODSPRICE';
 
+  //分组字段
+  case StrToInt(GodsSortIdx) of
+   0: SORT_ID:='C.RELATION_ID';
+   else
+      SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
+  end;
 
   //取日结帐最大日期:
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
@@ -783,6 +798,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
+    ','+SORT_ID+' as SORT_ID '+    
     ',A.GODS_ID '+
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as STOCK_PRC '+
@@ -790,25 +806,42 @@ begin
     ',sum(STOCK_MNY) as STOCK_MNY '+
     ',sum(STOCK_TAX) as STOCK_TAX '+
     ',sum(STOCK_RTL) as STOCK_RTL '+
+    ',(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO)) as STOCK_MNY_TAX_AGO '+
     ',case when (sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO))<>0 then cast(sum(STOCK_MNY)+sum(STOCK_TAX)as decimal(18,3))*100.00/cast(sum(STOCK_MNY)+sum(STOCK_TAX)+sum(STOCK_AGO) as decimal(18,3)) else 0 end as STOCK_RATE '+
     ',case when sum(STOCK_AMT)<>0 then cast(sum(STOCK_AGO) as decimal(18,3))*1.00/cast(sum(STOCK_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as AVG_AGIO '+
     ',sum(STOCK_AGO) as STOCK_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID';
+    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
 
   strSql :=
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
     'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
-  strSql :=
-    'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
-    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-    'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' order by j.GODS_CODE ';
-    
+  case StrtoInt(GodsSortIdx) of
+   0: //供应链
+    begin
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE ';
+    end;
+   else
+    begin
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' left outer join '+
+        '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+        ' on  j.SORT_ID=s.SORT_ID '+
+        ' order by s.OrderNo,j.GODS_CODE';
+    end;
+  end;
   Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
@@ -1190,12 +1223,26 @@ begin
 end;
 
 procedure TfrmStockDayReport.DBGridEh4GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  ColName: string;
 begin
-  inherited;
   if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+  if SumRecord.Count<=0 then Exit;
+  ColName:=trim(UpperCase(Column.FieldName));
+  if ColName = 'GODS_NAME' then
+    Text := '合计:'+SumRecord.fieldbyName('GODS_NAME').AsString+'笔'
+  else
+  begin
+    if SumRecord.FindField(ColName)<>nil then
+    begin
+      if (Copy(ColName,1,6)='STOCK_') or (Copy(ColName,1,4)='AVG_') then
+      begin
+        Text:=FormatFloat(Column.DisplayFormat,SumRecord.FindField(ColName).AsFloat);
+      end;
+    end;
+  end;
 end;
 
 procedure TfrmStockDayReport.DBGridEh5GetFooterParams(Sender: TObject;
@@ -1210,6 +1257,22 @@ end;
 function TfrmStockDayReport.DoBeforeExport: boolean;
 begin
 
+end;
+
+function TfrmStockDayReport.GetGodsSortIdx: string;
+var
+  AObj: TRecord_;
+begin
+  AObj:=TRecord_(fndP4_RPTTYPE.Properties.Items.Objects[fndP4_RPTTYPE.ItemIndex]);
+  result:=AObj.fieldbyName('SORT_ID').AsString;
+  if result='' then result:='0';   
+end;
+
+procedure TfrmStockDayReport.DBGridEh4DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
 end;
 
 end.

@@ -98,6 +98,8 @@ type
     adoReport2: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
+    Label38: TLabel;
+    fndP4_RPTTYPE: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -128,6 +130,8 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位  
     sid1,sid2,sid4:string;
@@ -144,11 +148,13 @@ type
     function GetSortSQL(chk:boolean=true): string;
     //按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
-    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; override;
+    function GetGodsSortIdx: string; //添加Title
   public
     procedure CreateGrid;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
+    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型     
   end;
 
 const
@@ -377,6 +383,12 @@ begin
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+        dsadoReport4.DataSet:=nil;
+        DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME',
+                          ['ORG_AMT','ORG_CST','ORG_RTL','STOCK_AMT','STOCK_TTL','STOCK_MNY','STOCK_TAX','SALE_AMT','SALE_TTL','SALE_MNY',
+                           'SALE_TAX','SALE_CST','SALE_PRF','SALE_RATE','DBIN_AMT','DBIN_CST','DBOUT_AMT','DBOUT_CST','BAL_AMT','BAL_CST','BAL_RTL'],
+                          ['SALE_RATE=SALE_PRF/SALE_MNY*100.0']);
+        dsadoReport4.DataSet:=adoReport4;
       end;
   end;
 end;
@@ -525,12 +537,12 @@ begin
   if fndP3_REPORT_FLAG.ItemIndex < 0 then Raise Exception.Create('请选择报表类型...');
   //商品分类:
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-  1:begin
-      GoodTab:='VIW_GOODSPRICE_SORTEXT';
-      lv := ',C.LEVEL_ID';
-    end;
-  else
-  GoodTab:='VIW_GOODSPRICE';
+   1:begin
+       GoodTab:='VIW_GOODSPRICE_SORTEXT';
+       lv := ',C.LEVEL_ID';
+     end;
+   else
+     GoodTab:='VIW_GOODSPRICE';
   end;
   //检测是否计算
   CheckCalc(strtoInt(P3_D1.asString),StrtoInt(P3_D2.asString));
@@ -581,7 +593,7 @@ begin
        case Factor.iDbType of
         4: JoinCnd:=' and r.LEVEL_ID=substr(j.LEVEL_ID,1,length(r.LEVEL_ID)) '
         else
-          JoinCnd:=' and r.LEVEL_ID like j.LEVEL_ID '+GetStrJoin(Factor.iDbType)+'''%'' ';
+           JoinCnd:=' and r.LEVEL_ID like j.LEVEL_ID '+GetStrJoin(Factor.iDbType)+'''%'' ';
        end;
 
        Result :=  ParseSQL(Factor.iDbType,
@@ -722,8 +734,8 @@ end;
 
 function TfrmJxcTotalReport.GetGodsSQL(chk:boolean=true): string;
 var
+  mx,SORT_ID:string;
   strSql,strWhere,GoodTab:widestring;
-  mx:string;
 begin
   result:='';
   if P4_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
@@ -732,31 +744,31 @@ begin
 
   //月份日期:
   if (P4_D1.asString<>'') and (P4_D1.asString=P4_D2.asString) then
-     strWhere:=strWhere+' and A.MONTH='+P4_D1.asString
+    strWhere:=strWhere+' and A.MONTH='+P4_D1.asString
   else if P4_D1.asString<P4_D2.asString then
-     strWhere:=strWhere+' and A.MONTH>='+P4_D1.asString+' and A.MONTH<='+P4_D2.asString+' '
+    strWhere:=strWhere+' and A.MONTH>='+P4_D1.asString+' and A.MONTH<='+P4_D2.asString+' '
   else
-     Raise Exception.Create('结束月结不能小于开始月份...');
+    Raise Exception.Create('结束月结不能小于开始月份...');
 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
-    begin
-      case fndP4_SHOP_TYPE.ItemIndex of
+  begin
+    case fndP4_SHOP_TYPE.ItemIndex of
       0:strWhere:=strWhere+' and B.REGION_ID='''+fndP4_SHOP_VALUE.AsString+''' ';
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
-      end;
     end;
+  end;
   //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP4_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP4_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP4_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP4_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP4_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+     2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP4_STAT_ID.AsString+''' ';
+     3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP4_STAT_ID.AsString+''' ';
+     4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP4_STAT_ID.AsString+''' ';
+     5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP4_STAT_ID.AsString+''' ';
+     6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP4_STAT_ID.AsString+''' ';
+    end;
+  end;
 
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
@@ -774,9 +786,16 @@ begin
     
   //门店条件
   if (fndP4_SHOP_ID.AsString<>'') then
-    begin
-      strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
-    end;
+  begin
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
+  end;
+
+  //分组字段
+  case StrToInt(GodsSortIdx) of
+   0: SORT_ID:='C.RELATION_ID';
+   else
+      SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
+  end;
 
   //检测是否计算
   CheckCalc(strtoInt(P4_D1.asString),StrtoInt(P4_D2.asString));
@@ -784,6 +803,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
+    ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_AMT*1.00/'+GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C')+' else 0 end) as ORG_AMT '+
     ',sum(case when A.MONTH='+P4_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+
@@ -821,20 +841,37 @@ begin
     ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+
     'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID';
+    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
 
   strSql :=
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
     'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
-  strSql :=
-    'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
-    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-    'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-    'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' order by j.GODS_CODE ';
+  case StrToInt(GodsSortIdx) of
+   0:
+    begin 
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE ';
 
+    end;
+   else
+    begin
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' left outer join '+
+        '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+        ' on  j.SORT_ID=s.SORT_ID '+
+        ' order by s.OrderNo,j.GODS_CODE';
+    end;
+  end;
   Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
 
@@ -1226,12 +1263,44 @@ begin
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh4GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  ColName: string;
 begin
-  inherited;
   if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+  if SumRecord.Count<=0 then Exit;
+  ColName:=trim(UpperCase(Column.FieldName));
+  if ColName = 'GODS_NAME' then
+    Text := '合计:'+SumRecord.fieldbyName('GODS_NAME').AsString+'笔'
+  else
+  begin
+    if SumRecord.FindField(ColName)<>nil then
+    begin
+      if (Copy(ColName,1,4)='ORG_') or (Copy(ColName,1,6)='STOCK_') or
+         (Copy(ColName,1,5)='SALE_') or (Copy(ColName,1,5)='DBIN_') or
+         (Copy(ColName,1,6)='DBOUT_') or (Copy(ColName,1,4)='BAL_') then
+      begin
+        Text:=FormatFloat(Column.DisplayFormat,SumRecord.FindField(ColName).AsFloat);
+      end
+    end;
+  end;
+end;
+
+function TfrmJxcTotalReport.GetGodsSortIdx: string;
+var
+  AObj: TRecord_;
+begin
+  AObj:=TRecord_(fndP4_RPTTYPE.Properties.Items.Objects[fndP4_RPTTYPE.ItemIndex]);
+  result:=AObj.fieldbyName('SORT_ID').AsString;
+  if result='' then result:='0';   
+end;
+
+procedure TfrmJxcTotalReport.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
 end;
 
 end.

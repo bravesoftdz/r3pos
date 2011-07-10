@@ -15,8 +15,10 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
       inherited RzPage: TRzPageControl
         Width = 736
         Height = 545
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1704,6 +1706,9 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 Color = clWhite
                 TabOrder = 0
+                DesignSize = (
+                  724
+                  105)
                 object Label21: TLabel
                   Left = 24
                   Top = 57
@@ -1753,6 +1758,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label38: TLabel
+                  Left = 584
+                  Top = 80
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #32479#35745#31867#22411
                 end
                 object RzBitBtn3: TRzBitBtn
                   Left = 480
@@ -1986,6 +1999,20 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     #31649#29702#32676#32452)
                   TabOrder = 9
                 end
+                object fndP4_RPTTYPE: TcxComboBox
+                  Left = 635
+                  Top = 76
+                  Width = 81
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #38376#24215#36827#38144#23384#32479#35745#34920
+                    #21830#21697#36827#38144#23384#32479#35745#34920
+                    #32676#32452#36827#38144#23384#32479#35745#34920
+                    #20379#24212#21830#36827#38144#23384#32479#35745#34920)
+                  TabOrder = 10
+                end
               end
               object RzPanel15: TRzPanel
                 Left = 0
@@ -2054,6 +2081,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footer.ValueType = fvtCount
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 153
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
                       Title.Caption = #26465#30721
@@ -2065,14 +2100,6 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                       Footers = <>
                       Title.Caption = #36135#21495
                       Width = 70
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'GODS_NAME'
-                      Footer.ValueType = fvtCount
-                      Footers = <>
-                      Title.Caption = #21830#21697#21517#31216
-                      Width = 153
                     end
                     item
                       EditButtons = <>

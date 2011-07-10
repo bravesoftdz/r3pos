@@ -146,6 +146,8 @@ type
     //添加报表分组类型: RptType
     procedure AddReportTypeList(RptType: TcxComboBox);
     procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID, SORT_NAME: string; SumFields,CalcFields: Array of String); //分组报表
+    procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    function  GetRelation_ID(Relation_ID: string): string; //供应链排序
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -1360,6 +1362,24 @@ begin
 end;
 
 procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String);
+ //取SortList:
+ procedure SetSortList(SortList: TStringList);
+ var SortID: string;
+ begin
+   try
+     SortList.Clear;
+     DataSet.First;
+     while not DataSet.Eof do
+     begin
+       SortID:=trim(DataSet.fieldbyname(SORT_ID).AsString);
+       if SortList.IndexOf(SortID)=-1 then
+         SortList.Add(SortID);
+       DataSet.Next;
+     end;
+   finally
+     DataSet.First;
+   end;
+ end;
  procedure CalcValue(AObj: TRecord_); //计算汇总数据
  var i,Idx: integer; CalcField1,CalcField2,CalcValue: string; CalcCount: real;
  begin
@@ -1397,23 +1417,6 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
      SortObj.FieldByName(FieldName).AsFloat:=SortObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
    end;
  end;
- procedure SetSortList(SortList: TStringList);
- var SortID: string;
- begin
-   try
-     SortList.Clear;
-     DataSet.First;
-     while not DataSet.Eof do
-     begin
-       SortID:=trim(DataSet.fieldbyname(SORT_ID).AsString);
-       if SortList.IndexOf(SortID)=-1 then
-         SortList.Add(SortID);
-       DataSet.Next;
-     end;
-   finally
-     DataSet.First;
-   end;
- end;
 
  function GetSortName(SORT_ID: string): string;
  var SortRs: TZQuery;
@@ -1443,13 +1446,13 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
           result:=trim(SortRs.fieldbyName('SORT_NAME').AsString);
       end;
     end;
-   2:
+   else
     begin
-      SortRs:=Global.GetZQueryFromName('PUB_STAT_INFO');
+      SortRs:=Global.GetZQueryFromName('PUB_GOODS_INDEXS');
       if SortRs<>nil then
       begin
-        if SortRs.Locate('CODE_ID',SORT_ID,[]) then
-          result:=trim(SortRs.fieldbyName('CODE_NAME').AsString);
+        if SortRs.Locate('SORT_ID',SORT_ID,[]) then
+          result:=trim(SortRs.fieldbyName('SORT_NAME').AsString);
       end;
     end;
    end;
@@ -1486,7 +1489,6 @@ begin
           CalcSum(FSumRecord,SortObj,tmpObj); //计算汇总数据
           DataSet.Append;
           tmpObj.WriteToDataSet(DataSet);  //写入数据集
-          DataSet.FieldByName(SORT_NAME).AsString:=DataSet.FieldByName(SORT_NAME).AsString;
           DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
           Rs.Next;
         end else
@@ -1546,7 +1548,7 @@ begin
     rs.Append;
     rs.FieldByName('SORT_ID').AsInteger:=0;
     rs.FieldByName('SORT_NAME').AsString:='供应链';
-    rs.FieldByName('GROUP_NAME').AsString:='供应链分组统计';
+    rs.FieldByName('GROUP_NAME').AsString:='供应链';
     rs.Post;
     //货品分类分组统计
     {rs.Append;
@@ -1562,7 +1564,7 @@ begin
       rs.Append;
       rs.FieldByName('SORT_ID').AsString:=StatInfo.fieldbyName('CODE_ID').AsString;
       rs.FieldByName('SORT_NAME').AsString:=StatInfo.fieldbyName('CODE_NAME').AsString;
-      rs.FieldByName('GROUP_NAME').AsString:=StatInfo.fieldbyName('CODE_NAME').AsString+'分组统计';
+      rs.FieldByName('GROUP_NAME').AsString:=StatInfo.fieldbyName('CODE_NAME').AsString;
       rs.Post;
       StatInfo.Next;
     end;
@@ -1577,6 +1579,48 @@ begin
     end;
   finally
     rs.Free;
+  end;
+end;
+
+procedure TframeBaseReport.GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var
+  ARect:TRect;
+begin
+  if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
+  if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
+
+  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
+     (not (gdFocused in State) or not Column.Grid.Focused) then
+  begin
+    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
+  end;
+  Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
+
+  if trim(TDBGridEh(Sender).DataSource.DataSet.fieldbyName('SORT_ID').AsString) = '-1' then
+  begin
+    if trim(Column.FieldName)<>'SEQNO' then
+    begin
+      TDBGridEh(Sender).Canvas.Brush.Color := $00E7E2E3; //$00A5A5A5;
+      TDBGridEh(Sender).Canvas.Font.Style:=[fsBold];
+      TDBGridEh(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    end;
+  end;
+end;
+
+function TframeBaseReport.GetRelation_ID(Relation_ID: string): string;
+begin
+  case Factor.iDbType of
+   0,1,4:
+      result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
+   5: result:='(case when '+Relation_ID+'=''0'' then ''9999999'' else '+Relation_ID+' end)';
+   else
+      result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
   end;
 end;
 

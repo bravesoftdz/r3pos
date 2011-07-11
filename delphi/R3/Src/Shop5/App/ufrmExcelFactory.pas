@@ -277,7 +277,8 @@ begin
      end
   else if rzPage.ActivePageIndex = 3 then
      begin
-       //CreateColumn;
+       RzStatus1.Caption := '';
+       RzStatus1.Update;
        rzPage.ActivePageIndex := 2;
        RzBitBtn1.Caption := 'Á¢¼´Ö´ÐÐ';
        cdsExcel.Filtered := False;

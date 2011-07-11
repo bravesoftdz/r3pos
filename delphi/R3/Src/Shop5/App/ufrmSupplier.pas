@@ -535,6 +535,7 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
@@ -552,13 +553,14 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                 if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
                   begin
                     Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                    Result := True;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的地区代码...');
               end
             else
               Dest.FieldByName('REGION_ID').AsString := '#';
+            Result := True;
+            Exit;
           end;
 
         //*******************供应商类别*****************
@@ -566,11 +568,10 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
           begin
             if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
               begin
-                rs := Global.GetZQueryFromName('PUB_CLIENTSORT');
+                rs := Global.GetZQueryFromName('PUB_SUPPERSORT');
                 if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
                   begin
                     Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                    Result := True;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的供应商类别代码...');
@@ -580,6 +581,8 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                 Dest.FieldByName('SORT_ID').AsString := '#';
                 //Raise Exception.Create('客户类别不能为空!');
               end;
+            Result := True;
+            Exit;
           end;
 
         //*******************结算方式*****************
@@ -592,6 +595,7 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的结算方式代码...');
@@ -603,27 +607,35 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
         //*******************开户银行*****************
         if DFieldName = 'BANK_ID' then
           begin
-            rs := Global.GetZQueryFromName('PUB_BANK_INFO');
-            if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            if Source.FieldByName(SFieldName).AsString <> '' then
               begin
-                Dest.FieldByName('BANK_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                Result := True;
-              end
-            else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的开户银行代码...');
+                rs := Global.GetZQueryFromName('PUB_BANK_INFO');
+                if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('BANK_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
+                    Result := True;
+                    Exit;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的开户银行代码...');
+              end;
           end;
 
         //*******************发票类型*****************
         if DFieldName = 'INVOICE_FLAG' then
           begin
-            rs := Global.GetZQueryFromName('PUB_PARAMS');
-            if rs.Locate('TYPE_CODE;CODE_NAME',VarArrayOf(['INVOICE_FLAG',Trim(Source.FieldByName(SFieldName).AsString)]),[]) then
+            if Source.FieldByName(SFieldName).AsString <> '' then
               begin
-                Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
-                Result := True;
-              end
-            else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的发票类型代码...');
+                rs := Global.GetZQueryFromName('PUB_PARAMS');
+                if rs.Locate('TYPE_CODE;CODE_NAME',VarArrayOf(['INVOICE_FLAG',Trim(Source.FieldByName(SFieldName).AsString)]),[]) then
+                  begin
+                    Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
+                    Result := True;
+                    Exit;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的发票类型代码...');
+              end;
           end;
 
         //供应商编号
@@ -641,7 +653,6 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                     else
                       begin
                         Dest.FieldbyName('CLIENT_CODE').AsString := Source.FieldByName(SFieldName).AsString;
-                        Result := True;
                       end;
                   end;
               end
@@ -649,6 +660,8 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
               begin
                 Dest.FieldbyName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
               end;
+            Result := True;
+            Exit;
           end;
 
         //供应商名称
@@ -662,6 +675,7 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('CLIENT_NAME').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end
             else
@@ -679,6 +693,7 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end;
           end;
@@ -691,19 +706,15 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
       begin
         CdsExcel.Edit;
         CdsExcel.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        CdsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
-        CdsExcel.FieldByName('UNION_ID').AsString := '#';
+        CdsExcel.FieldByName('CLIENT_ID').AsString  := TSequence.NewId;
         CdsExcel.FieldByName('CLIENT_TYPE').AsString := '1';
-        CdsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
-        CdsExcel.FieldByName('CREA_USER').AsString := Global.UserID;
-        //CdsExcel.FieldByName('IC_STATUS').AsString := '0';
         if CdsExcel.FieldByName('CLIENT_SPELL').AsString = '' then
           CdsExcel.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CLIENT_NAME').AsString),3);
 
         CdsExcel.Post;
         CdsExcel.Next;
       end;
-    Result := Factor.UpdateBatch(CdsExcel,'TCustomer',nil);
+    Result := Factor.UpdateBatch(CdsExcel,'TSupplier',nil);
   end;
   function FindColumn(CdsCol:TDataSet):Boolean;
   begin
@@ -732,7 +743,6 @@ begin
   rs := TZQuery.Create(nil);
   try
     Params.ParamByName('CLIENT_ID').asString := '';
-    Params.ParamByName('UNION_ID').AsString := '#';
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(rs,'TSupplier',Params);
 

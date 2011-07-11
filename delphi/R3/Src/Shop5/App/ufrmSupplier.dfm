@@ -11,19 +11,19 @@ inherited frmSupplier: TfrmSupplier
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 734
-    Height = 427
+    Height = 426
     inherited RzPanel2: TRzPanel
       Width = 724
-      Height = 417
+      Height = 416
       inherited RzPage: TRzPageControl
         Width = 718
-        Height = 411
+        Height = 410
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20379#24212#21830#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 716
-            Height = 384
+            Height = 383
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
@@ -136,7 +136,7 @@ inherited frmSupplier: TfrmSupplier
               Left = 5
               Top = 66
               Width = 706
-              Height = 313
+              Height = 312
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -145,7 +145,7 @@ inherited frmSupplier: TfrmSupplier
                 Left = 5
                 Top = 5
                 Width = 696
-                Height = 284
+                Height = 283
                 Align = alClient
                 DataSource = Ds_Client
                 Flat = True
@@ -317,7 +317,7 @@ inherited frmSupplier: TfrmSupplier
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 289
+                Top = 288
                 Width = 696
                 Height = 19
                 Align = alBottom

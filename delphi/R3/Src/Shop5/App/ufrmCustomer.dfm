@@ -11,19 +11,19 @@ inherited frmCustomer: TfrmCustomer
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 797
-    Height = 471
+    Height = 470
     inherited RzPanel2: TRzPanel
       Width = 787
-      Height = 461
+      Height = 460
       inherited RzPage: TRzPageControl
         Width = 781
-        Height = 455
+        Height = 454
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20250#21592#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 779
-            Height = 428
+            Height = 427
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
@@ -345,7 +345,7 @@ inherited frmCustomer: TfrmCustomer
               Left = 5
               Top = 113
               Width = 769
-              Height = 310
+              Height = 309
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -354,7 +354,7 @@ inherited frmCustomer: TfrmCustomer
                 Left = 5
                 Top = 5
                 Width = 759
-                Height = 281
+                Height = 280
                 Align = alClient
                 DataSource = Ds_Customer
                 Flat = True
@@ -531,7 +531,7 @@ inherited frmCustomer: TfrmCustomer
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 286
+                Top = 285
                 Width = 759
                 Height = 19
                 Align = alBottom

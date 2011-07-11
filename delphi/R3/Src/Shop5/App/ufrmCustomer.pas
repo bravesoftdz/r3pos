@@ -973,6 +973,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
@@ -991,6 +992,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的会员等级代码...');
@@ -1011,6 +1013,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的地区代码...');
@@ -1030,6 +1033,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的会员类别代码...');
@@ -1050,12 +1054,18 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                   Raise Exception.Create('会员性别在4个字符以内!')
                 else
                   begin
-                    Dest.FieldbyName('SEX').AsString := Source.FieldByName(SFieldName).AsString;
-                    Result := True;
+                    if Source.FieldByName(SFieldName).AsString = '女' then
+                      Dest.FieldbyName('SEX').AsString := '0'
+                    else if Source.FieldByName(SFieldName).AsString = '男' then
+                      Dest.FieldbyName('SEX').AsString := '1'
+                    else
+                      Dest.FieldbyName('SEX').AsString := '2';
                   end;
               end
             else
-              Raise Exception.Create('会员性别不能为空!');
+              Dest.FieldbyName('SEX').AsString := '2';
+            Result := True;
+            Exit;
           end;
 
         //会员编号
@@ -1073,7 +1083,6 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                     else
                       begin
                         Dest.FieldbyName('CUST_CODE').AsString := Source.FieldByName(SFieldName).AsString;
-                        Result := True;
                       end;
                   end;
               end
@@ -1081,6 +1090,8 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
               begin
                 Dest.FieldbyName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
               end;
+            Result := True;
+            Exit;
           end;
 
         //会员名称
@@ -1094,6 +1105,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('CUST_NAME').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end
             else
@@ -1111,6 +1123,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('CUST_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end;
           end;
@@ -1126,7 +1139,6 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         CdsExcel.FieldByName('CUST_ID').AsString  := TSequence.NewId;
         CdsExcel.FieldByName('UNION_ID').AsString := '#';
-        CdsExcel.FieldByName('CLIENT_TYPE').AsString := '2';
         CdsExcel.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date());
         CdsExcel.FieldByName('CREA_USER').AsString := Global.UserID;
         CdsExcel.FieldByName('IC_INFO').AsString := '企业卡';
@@ -1134,6 +1146,8 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('IC_TYPE').AsString := '0';
         if CdsExcel.FieldByName('CUST_SPELL').AsString = '' then
           CdsExcel.FieldByName('CUST_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CUST_NAME').AsString),3);
+        if CdsExcel.FieldByName('CUST_CODE').AsString = '' then
+          CdsExcel.FieldByName('CUST_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(fnString.TrimRight(Global.SHOP_ID,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
         CdsExcel.Post;
         CdsExcel.Next;
       end;

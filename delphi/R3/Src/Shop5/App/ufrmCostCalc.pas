@@ -2148,9 +2148,10 @@ end;
 //判断是否月结账
 class function TfrmCostCalc.CheckMonthReck(Owner: TForm): boolean;
 var
+  RckDay: TDate;
   Rs,tmp: TZQuery;
-  str,CurDay: string;
-  CurMonth,MaxMonth,vYear,vMonth: Integer;
+  CurDay: string;
+  CurMonth,RckMonth: Integer;
 begin
   result:=False;
   with TfrmCostCalc.Create(Owner) do
@@ -2160,29 +2161,40 @@ begin
         CurMonth:=strtoint(Copy(CurDay,1,6));
         CurDay:=Copy(CurDay,7,2);   //当前日期（本月第几天）
         tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
-        if (tmp.Active) and (tmp.RecordCount=1) and (CurDay>'05') then //是单店
+        if (tmp.Active) and (tmp.RecordCount=1) and (StrToInt(CurDay)>5) then //是单店并且本月5日以后
         begin
           Rs:=TZQuery.Create(nil);
-          Rs.SQL.Text:='select Max(MONTH) as MaxMONTH from RCK_MONTH_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID);
+          Rs.SQL.Text:='select Max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID);
           Factor.Open(Rs);
-          vYear:=strtoInt(Copy(Rs.FieldByName('MaxMONTH').AsString,1,4));
-          vMonth:=strtoInt(Copy(Rs.FieldByName('MaxMONTH').AsString,5,2));  //+1月
-          vYear:=vYear+(vMonth+1) div 12;
-          vMonth:=(vMonth+1) mod 12;
-          MaxMonth:=StrtoInt(Inttostr(vYear)+FormatFloat('00',vMonth));
-        end;
-        
-        if CurMonth>MaxMonth then //当前月份 > 结帐月份+1 就显示:
-        begin
-          flag := 2;
-          Caption := '月结账';
-          eDate := Date()-1;
-          Prepare;
-          Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
-          if eDate>Date() then Raise Exception.Create('没有到本月结账日，无法执行月结操作。');
-          result :=(ShowModal=MROK);
-        end;
+          if Rs.RecordCount=1 then  //有月结帐
+          begin
+            RckDay:=FnTime.fnStrtoDate(Rs.fieldbyName('END_DATE').AsString);
+          end else  //无月结帐[取启用日期]
+          begin
+             rs.Close;
+             rs.SQL.Text:='select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
+             Factor.Open(rs);
+             if rs.Fields[0].asString<>'' then
+               RckDay:=fnTime.fnStrtoDate(rs.Fields[0].asString)
+             else
+               RckDay:=Date();
+          end;
+          RckDay:=IncMonth(RckDay,1); //当前月份 +1月
+          RckMonth:=StrtoInt(FormatDatetime('YYYYMM',RckDay));  //取+1月后的 年月
+
+          if CurMonth>RckMonth then //当前月份 > 结帐月份+1 就显示:
+          begin
+            flag := 2;
+            Caption := '月结账';
+            eDate := Date()-1;
+            Prepare;
+            Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
+            if eDate>Date() then Raise Exception.Create('没有到本月结账日，无法执行月结操作。');
+            result :=(ShowModal=MROK);
+          end;
+        end
       finally
+        Rs.Free;
         free;
       end;
     end;

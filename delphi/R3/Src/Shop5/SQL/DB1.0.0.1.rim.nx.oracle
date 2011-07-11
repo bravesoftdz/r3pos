@@ -1,0 +1,432 @@
+﻿--//////////////////////////////// 【 第三步： 创建对接用到Rim视图和中间表 】   ////////////////////////////////////
+--创建视图：RIM_PUB_ORGAN
+create view RIM_PUB_ORGAN as
+select  
+ ORGAN_ID,    --公司ID
+ ORGAN_CODE,  --登录名(对应R3: Ca_TENANT.LOGIN_NAME)
+ ORGAN_NAME   --公司名称
+from PUB_ORGAN
+
+
+--创建视图：RIM_GOODS_RELATION
+
+create view RIM_GOODS_RELATION
+as
+select
+  e.com_id as TENANT_ID,      --企业（公司）ID（包括省级、地市公司）
+  a.item_id as GODS_ID,       --商品内码
+  a.item_code as GODS_CODE,   --商品编码
+  a.item_name as GODS_NAME,   --商品名称
+  a.short_name as GODS_SNAME, --商品简称 
+  b.kind as SORT_ID2,         --烟分类（1：一类烟..6:无价类）
+  b.IS_IMPORTED as SORT_ID6,  --省内外烟 
+  b.spec as GODS_SPEC,        --商品规格
+  '条' as CALC_UNIT,          --单位
+  PACK_BAR as PACK_BARCODE,   --条条码
+  BOX_BAR as BOX_BARCODE,     --盒条码
+  um2.UM_ID as PACK_UNIT_ID,  --条单位ID
+  um1.UM_ID as BOX_UNIT_ID,   --盒单位ID
+  um2.um_size/um1.um_size as CAlC_AMT, --条换算成合的换算关系
+  c.pri as PACK_INPRICE,      --批发价
+  d.pri as PACK_OUTPRICE      --零售价
+from sd_item a,sd_item_tobacco b,
+     (SELECT A.ITEM_ID,A.UM_ID,COALESCE(B.UM_SIZE,A.UM_SIZE) UM_SIZE FROM (SELECT I.ITEM_ID,U.UM_ID,U.UM_SIZE FROM SD_ITEM I,SD_UM U) A 
+       LEFT JOIN SD_ITEM_UM B ON A.ITEM_ID=B.ITEM_ID AND A.UM_ID=B.UM_ID )um1,
+     (SELECT A.ITEM_ID,A.UM_ID,COALESCE(B.UM_SIZE,A.UM_SIZE) UM_SIZE FROM (SELECT I.ITEM_ID,U.UM_ID,U.UM_SIZE FROM SD_ITEM I,SD_UM U) A 
+       LEFT JOIN SD_ITEM_UM B ON A.ITEM_ID=B.ITEM_ID AND A.UM_ID=B.UM_ID)um2,
+     sd_item_pri c,
+     sd_item_pri d,
+     sd_item_com e
+where e.com_id=d.com_id and e.com_id=c.com_id and c.com_id=d.com_id and a.item_id=b.item_id and a.item_id=um1.item_id and a.item_id=um2.item_id 
+      and um1.UM_ID='02' and um2.UM_ID='03' and
+      a.item_id=c.item_id and a.item_id=d.item_id and a.item_id=e.item_id and  c.pri_type='03' and d.pri_type='04' and a.is_mrb='1' and 
+      c.is_mrb='1' and e.is_mrb='1';    
+
+
+--创建视图：RIM_RM_CUST(零售户档案)
+create view RIM_RM_CUST
+as
+select 
+  CUST_ID     --零售户内码
+  CUST_CODE , --零售户编码
+  CORPORATION_NAME,  --企业名称
+  CUST_SHORT_NAME,   --零售户简称 
+  CUST_SHORT_ID,     --助记码 
+  COM_ID, 	    --公司内码
+  REGIE_ID,     --专卖局内码
+  LICENSE_CODE  --许可证号
+from RM_CUST;
+
+--创建视图：RIM_SD_CO (订单主表)
+create view RIM_SD_CO
+as
+select 
+  CO_NUM,      --订单号ID
+  COM_ID,      --供应商公司ID
+  CUST_ID,     --客户编号（零售户）ID
+  CRT_DATE,    --创建日期
+  BORN_DATE,   --生效日期 为客户保留库存
+  ARR_DATE,    --送达日期, 承诺订单的商品送达到客户手中的日期
+  QTY_SUM,     --数量合计  
+  AMT_SUM,     --应收金额合计
+  STATUS       --单据状态		
+from SD_CO;
+
+--创建视图：RIM_SD_CO_LINE ( 订单明明细表)
+create view RIM_SD_CO_LINE
+as
+select 
+  CO_NUM,   --订单编号
+  LINE_NUM, --行号
+  ITEM_ID,  --商品编号
+  UM_ID,    --计量单位
+  QTY_NEED, --需求数量
+  QTY_VFY,  --审核数量
+  QTY_ORD,  --订购数量
+  PRI,      --折扣价格
+  PRI3,     --三级批发价
+  AMT,      --含税金额, 金额=订购数量*折扣价格
+  RET_AMT,  --折扣额
+  NOTE as NOTE   --备注					
+from SD_CO_LINE;
+
+ 
+--2011.05.26 PM创建消息视图：
+Create VIEW RIM_MESSAGE as 
+select 
+  COM_ID,MSG_ID,TYPE,TITLE,CONTENT,USE_DATE,INVALID_DATE,OPERATOR,REC_TYPE,RECEIVER,STATUS,UPD_DATE,UPD_TIME,RECEIVER_TYPE
+from RIM_MESSAGE@RIMLINK;
+   
+--日台帐：RIM_CUST_DAY
+--月台帐：RIM_CUST_MONTH 
+--销售单：RIM_RETAIL_INFO、RIM_RETAIL_DETAIL
+--调拨单：RIM_CUST_TRN、   RIM_CUST_TRN_LINE
+--入库单：RIM_VOUCHER、    RIM_VOUCHER_LINE 
+--调整单：RIM_ADJUST_INFO、RIM_ADJUST_DETAIL
+--销售汇总：RIM_RETAIL_CO、RIM_RETAIL_CO_LINE
+--零售户库：RIM_CUST_ITEM_SWHSE、 RIM_CUST_ITEM_WHSE
+ 
+create table RIM_CUST_DAY
+(
+  COM_ID                VARCHAR2(30) not null,     --公司代码
+  CUST_ID               VARCHAR2(30) not null,     --零售户代码
+  ITEM_ID               VARCHAR2(30) not null,     --商品
+  DATE1                 CHAR(8) not null,
+  TERM_ID               VARCHAR2(10) default '1' not null,
+  PRI3                  NUMBER(18,6) default 0 not null,
+  PRI4                  NUMBER(18,6) default 0 not null,
+  PRI_SOLD              NUMBER(18,6) default 0 not null,
+  AMT_GROSS_PROFIT_THEO NUMBER(18,6) default 0 not null,
+  QTY_EOD               NUMBER(18,6) default 0 not null,
+  AMT_IOD               NUMBER(18,6) default 0 not null,
+  QTY_PURCH             NUMBER(18,6) default 0 not null,
+  AMT_PURCH             NUMBER(18,6) default 0 not null,
+  QTY_SOLD              NUMBER(18,6) default 0 not null,
+  AMT_SOLD_WITH_TAX     NUMBER(18,6) default 0 not null,
+  QTY_PROFIT            NUMBER(18,6) default 0 not null,
+  AMT_PROFIT            NUMBER(18,6) default 0 not null,
+  QTY_LOSS              NUMBER(18,6) default 0 not null,
+  AMT_LOSS              NUMBER(18,6) default 0 not null,
+  QTY_TAKE              NUMBER(18,6) default 0 not null,
+  AMT_TAKE              NUMBER(18,6) default 0 not null,
+  QTY_TRN_IN            NUMBER(18,6) default 0 not null,
+  AMT_TRN_IN            NUMBER(18,6) default 0 not null,
+  QTY_TRN_OUT           NUMBER(18,6) default 0 not null,
+  AMT_TRN_OUT           NUMBER(18,6) default 0 not null,
+  QTY_IOD               NUMBER(18,6) default 0 not null,
+  AMT_EOD               NUMBER(18,6) default 0 not null,
+  UNIT_COST             NUMBER(18,8) default 0 not null,
+  SUMCOST_SOLD          NUMBER(18,6) default 0 not null,
+  AMT_GROSS_PROFIT      NUMBER(18,6) default 0 not null,
+  AMT_PROFIT_COM        NUMBER(18,6) default 0 not null
+);
+ 
+alter table RIM_CUST_DAY
+  add constraint CC1242897530888 primary key (COM_ID, CUST_ID, ITEM_ID, DATE1, TERM_ID);
+  
+  
+create table RIM_CUST_MONTH
+(
+  COM_ID                VARCHAR2(30) not null,
+  CUST_ID               VARCHAR2(30) not null,
+  ITEM_ID               VARCHAR2(30) not null,
+  MONTH                 CHAR(6) not null,
+  TERM_ID               VARCHAR2(10) not null,
+  PRI3                  NUMBER(18,6) default 0 not null,
+  PRI4                  NUMBER(18,6) default 0 not null,
+  PRI_SOLD              NUMBER(18,6) default 0 not null,
+  AMT_GROSS_PROFIT_THEO NUMBER(18,6) default 0 not null,
+  QTY_EOM               NUMBER(18,6) default 0 not null,
+  AMT_IOM               NUMBER(18,6) default 0 not null,
+  QTY_PURCH             NUMBER(18,6) default 0 not null,
+  AMT_PURCH             NUMBER(18,6) default 0 not null,
+  QTY_SOLD              NUMBER(18,6) default 0 not null,
+  AMT_SOLD_WITH_TAX     NUMBER(18,6) default 0 not null,
+  QTY_PROFIT            NUMBER(18,6) default 0 not null,
+  AMT_PROFIT            NUMBER(18,6) default 0 not null,
+  QTY_LOSS              NUMBER(18,6) default 0 not null,
+  AMT_LOSS              NUMBER(18,6) default 0 not null,
+  QTY_TAKE              NUMBER(18,6) default 0 not null,
+  AMT_TAKE              NUMBER(18,6) default 0 not null,
+  QTY_TRN_IN            NUMBER(18,6) default 0 not null,
+  AMT_TRN_IN            NUMBER(18,6) default 0 not null,
+  QTY_TRN_OUT           NUMBER(18,6) default 0 not null,
+  AMT_TRN_OUT           NUMBER(18,6) default 0 not null,
+  QTY_IOM               NUMBER(18,6) default 0 not null,
+  AMT_EOM               NUMBER(18,6) default 0 not null,
+  UNIT_COST             NUMBER(18,8) default 0 not null,
+  SUMCOST_SOLD          NUMBER(18,6) default 0 not null,
+  AMT_GROSS_PROFIT      NUMBER(18,6) default 0 not null,
+  AMT_PROFIT_COM        NUMBER(18,6) default 0 not null
+);
+
+alter table RIM_CUST_MONTH
+  add constraint CC1242892530888 primary key (COM_ID, CUST_ID, ITEM_ID, MONTH);
+
+
+create table RIM_RETAIL_INFO
+(
+  RETAIL_NUM       VARCHAR2(50) not null,
+  CONSUMER_CARD_ID VARCHAR2(32),
+  CONSUMER_ID      VARCHAR2(30),
+  CUST_ID          VARCHAR2(30) not null,
+  TERM_ID          VARCHAR2(10) not null,
+  R3_NUM           VARCHAR2(5) not null,
+  COM_ID           VARCHAR2(30) not null,
+  QTY_SUM          NUMBER(18,6) default 0 not null,
+  AMT_SUM          NUMBER(18,6) default 0 not null,
+  SCORE            NUMBER(15) default 0 not null,
+  SCORE_DATE       VARCHAR2(20),
+  VIP_RTL_CARD_ID  VARCHAR2(16),
+  PUH_DATE         CHAR(8) not null,
+  PUH_TIME         CHAR(8) not null,
+  CRT_USER_ID      VARCHAR2(30),
+  TYPE             CHAR(2) not null,
+  UPDATE_TIME      VARCHAR2(20)
+);
+
+alter table RIM_RETAIL_INFO
+  add constraint CC1242887443923 primary key (RETAIL_NUM);
+
+create index RIMRETAILINFOIDX1 on RIM_RETAIL_INFO (RETAIL_NUM, COM_ID, PUH_DATE);   
+ 
+ 
+create table RIM_RETAIL_DETAIL
+(
+  RETAIL_NUM      VARCHAR2(50) not null,
+  LINE_NUM        NUMBER default 0 not null,
+  COM_ID          VARCHAR2(30) not null,
+  PUH_DATE        CHAR(8) not null,
+  ITEM_ID         VARCHAR2(30) not null,
+  UM_ID           CHAR(2) not null,
+  UNIT_COST       NUMBER(18,8) default 0 not null,
+  WHOLESALE_PRICE NUMBER(18,6) default 0 not null,
+  RETAIL_PRICE    NUMBER(18,6) default 0 not null,
+  QTY_SALE        NUMBER(18,6) default 0 not null,
+  QTY_MINI_UM     NUMBER(18,6) default 0 not null,
+  AMT             NUMBER(18,6) default 0 not null,
+  NOTE            VARCHAR2(100),
+  TREND_ID        VARCHAR2(20)
+);
+ 
+alter table RIM_RETAIL_DETAIL
+  add constraint CC1242887732798 primary key (RETAIL_NUM, LINE_NUM);
+  
+create index RETAILdetailindex1 on RIM_RETAIL_DETAIL (RETAIL_NUM, COM_ID, PUH_DATE);
+ 
+ 
+create table RIM_CUST_TRN
+(
+  TRN_NUM     VARCHAR2(50) not null,
+  CUST_ID     VARCHAR2(30) not null,
+  TYPE        CHAR(2) not null,
+  COM_ID      VARCHAR2(30) not null,
+  TERM_ID     VARCHAR2(10) not null,
+  R3_NUM      VARCHAR2(5) not null,
+  STATUS      CHAR(2) not null,
+  CRT_DATE    CHAR(8) not null,
+  CRT_USER_ID VARCHAR2(30) not null,
+  POST_DATE   CHAR(8),
+  UPDATE_TIME VARCHAR2(20)
+);
+
+alter table RIM_CUST_TRN
+  add constraint CC1242887443927 primary key (TRN_NUM);
+  
+ 
+create table RIM_CUST_TRN_LINE
+(
+  TRN_NUM     VARCHAR2(50) not null,
+  LINE_NUM    NUMBER default 0 not null,
+  COM_ID      VARCHAR2(30) not null,
+  ITEM_ID     VARCHAR2(30) not null,
+  QTY_TRN     NUMBER(18,6) default 0 not null,
+  QTY_MINI_UM NUMBER(18,6) default 0 not null,
+  AMT_TRN     NUMBER(18,6) default 0 not null,
+  UM_ID       CHAR(2) not null,
+  NOTE        VARCHAR2(100)
+);
+
+alter table RIM_CUST_TRN_LINE
+  add constraint CC1242887742799 primary key (TRN_NUM, LINE_NUM);
+
+ 
+create table RIM_VOUCHER
+(
+  VOUCHER_NUM VARCHAR2(50) not null,
+  RETAIL_NUM  VARCHAR2(30),
+  CUST_ID     VARCHAR2(30) not null,
+  COM_ID      VARCHAR2(30) not null,
+  TERM_ID     VARCHAR2(10) not null,
+  R3_NUM      VARCHAR2(5) not null,
+  STATUS      CHAR(2) not null,
+  CRT_DATE    CHAR(8) not null,
+  CRT_USER_ID VARCHAR2(30),
+  POST_DATE   CHAR(8),
+  TYPE        CHAR(2) not null,
+  UPDATE_TIME VARCHAR2(20)
+);
+
+alter table RIM_VOUCHER
+  add constraint CC1242987444927 primary key (VOUCHER_NUM);
+ 
+
+create table RIM_VOUCHER_LINE
+(
+  VOUCHER_NUM  VARCHAR2(50) not null,
+  VOUCHER_LINE NUMBER default 0 not null,
+  COM_ID       VARCHAR2(30) not null,
+  ITEM_ID      VARCHAR2(30) not null,
+  QTY_INCEPT   NUMBER(18,6) default 0 not null,
+  QTY_MINI_UM  NUMBER(18,6) default 0 not null,
+  AMT_INCEPT   NUMBER(18,6) default 0 not null,
+  UM_ID        CHAR(2) not null
+);
+
+alter table RIM_VOUCHER_LINE
+  add constraint CC1343887732799 primary key (VOUCHER_NUM, VOUCHER_LINE);
+  
+ 
+create table RIM_ADJUST_INFO
+(
+  ADJUST_NUM  VARCHAR2(50) not null,
+  CUST_ID     VARCHAR2(30) not null,
+  COM_ID      VARCHAR2(30) not null,
+  TERM_ID     VARCHAR2(10) not null,
+  R3_NUM      VARCHAR2(5) not null,
+  TYPE        CHAR(2) not null,
+  STATUS      CHAR(2) not null,
+  CRT_DATE    CHAR(8) not null,
+  CRT_USER_ID VARCHAR2(30),
+  POST_DATE   CHAR(8),
+  UPDATE_TIME VARCHAR2(20)
+);
+
+alter table RIM_ADJUST_INFO
+  add constraint CC1242937444927 primary key (ADJUST_NUM);
+  
+create table RIM_ADJUST_DETAIL
+(
+  ADJUST_NUM  VARCHAR2(50) not null,
+  ADJUST_LINE NUMBER default 0 not null,
+  COM_ID      VARCHAR2(30) not null,
+  ITEM_ID     VARCHAR2(30) not null,
+  QTY_ADJUST  NUMBER(18,6) default 0 not null,
+  QTY_MINI_UM NUMBER(18,6) default 0 not null,
+  AMT_ADJUST  NUMBER(18,6) default 0 not null,
+  UM_ID       CHAR(2) not null
+);
+
+alter table RIM_ADJUST_DETAIL
+  add constraint CC13438877327992 primary key (ADJUST_NUM, ADJUST_LINE);
+ 
+ 
+create table RIM_RETAIL_CO
+(
+  CO_NUM           VARCHAR2(50) not null,
+  CONSUMER_CARD_ID VARCHAR2(32),
+  CONSUMER_ID      VARCHAR2(32),
+  CUST_ID          VARCHAR2(30) not null,
+  COM_ID           VARCHAR2(30) not null,
+  QTY_SUM          NUMBER(18,6) default 0 not null,
+  AMT_SUM          NUMBER(18,6) default 0 not null,
+  TERM_ID          VARCHAR2(30),
+  SCORE            VARCHAR2(10),
+  SCORE_DATE       VARCHAR2(24),
+  VIP_RTL_CARD_ID  VARCHAR2(16),
+  PUH_DATE         CHAR(8) not null,
+  PUH_TIME         CHAR(10),
+  STATUS           CHAR(2) not null,
+  UPD_DATE         CHAR(8),
+  UPD_TIME         CHAR(8),
+  CRT_USER_ID      VARCHAR2(30),
+  NOTE             VARCHAR2(100),
+  RECHANGE         NUMBER(18,6) default 0 not null
+);
+
+alter table RIM_RETAIL_CO
+  add constraint CC1213319884153 primary key (CO_NUM); 
+  
+create table RIM_RETAIL_CO_LINE
+(
+  CO_NUM   VARCHAR2(50) not null,
+  LINE_NUM NUMBER default 0 not null,
+  ITEM_ID  VARCHAR2(30) not null,
+  PRICE    NUMBER(18,6) default 0 not null,
+  UM_ID    CHAR(2),
+  QTY_ORD  NUMBER(18,6) default 0 not null,
+  AMT      NUMBER(18,6) default 0 not null,
+  NOTE     VARCHAR2(100)
+);
+
+alter table RIM_RETAIL_CO_LINE
+  add constraint CC1213320600012 primary key (CO_NUM, LINE_NUM, ITEM_ID);
+ 
+ 
+create table RIM_CUST_ITEM_SWHSE
+(
+  COM_ID  VARCHAR2(30) not null,
+  CUST_ID VARCHAR2(30) not null,
+  TERM_ID VARCHAR2(20) not null,
+  ITEM_ID VARCHAR2(60) not null,
+  QTY     NUMBER(18,6) not null,
+  DATE1   CHAR(8) not null,
+  TIME1   CHAR(8) not null,
+  IS_MRB  CHAR(1) not null,
+  NOTE    VARCHAR2(30)
+);
+
+alter table RIM_CUST_ITEM_SWHSE
+  add constraint RIMCUSTITEMSWHS_PK primary key (COM_ID, CUST_ID, TERM_ID, ITEM_ID);
+  
+create table RIM_CUST_ITEM_WHSE
+(
+  CUST_ID           VARCHAR2(30) not null,
+  ITEM_ID           VARCHAR2(30) not null,
+  COM_ID            VARCHAR2(30) not null,
+  QTY               NUMBER(18,6) default 0,
+  QTY_ALLOCCO       NUMBER(18,6) default 0,
+  QTY_REORD_MAX     NUMBER(18,6) default 0,
+  QTY_REORD_MIN     NUMBER(18,6) default 0,
+  QTY_LOCKED        NUMBER(18,6) default 0,
+  DATE1             VARCHAR2(8),
+  UPPER_DATE        NUMBER default 0,
+  LOWER_DATE        NUMBER default 0,
+  QTY_WARNING       NUMBER(18,6) default 0,
+  WARNING_DATE      NUMBER,
+  IS_MRB            CHAR(1),
+  NOTE              VARCHAR2(30),
+  UPD_TIME          VARCHAR2(8),
+  QTY_REORD_MAX_ARG NUMBER(18,2) default 1,
+  PO_TAX            NUMBER(18,6) default 0,
+  SOLD_TAX          NUMBER(18,2) default 0,
+  CUST_QTY_MAX_ARG  NUMBER(18,6) default 1 not null
+);
+
+alter table RIM_CUST_ITEM_WHSE
+  add primary key (CUST_ID, ITEM_ID, COM_ID);      
+
+
+  
+
+ 

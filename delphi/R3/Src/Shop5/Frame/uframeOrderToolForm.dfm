@@ -11,13 +11,13 @@ inherited frameOrderToolForm: TframeOrderToolForm
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 846
-    Height = 448
+    Height = 447
     inherited RzPanel2: TRzPanel
       Width = 836
-      Height = 438
+      Height = 437
       inherited RzPage: TRzPageControl
         Width = 830
-        Height = 432
+        Height = 431
         Color = clWindow
         FlatColor = clBtnFace
         ParentColor = False
@@ -33,7 +33,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
           Caption = #21333#25454#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
             Width = 828
-            Height = 405
+            Height = 404
             BorderShadow = clWindow
             Color = clWindow
             FlatColor = clWindow
@@ -51,7 +51,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
               Left = 5
               Top = 78
               Width = 818
-              Height = 322
+              Height = 321
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -112,10 +112,11 @@ inherited frameOrderToolForm: TframeOrderToolForm
           FixedSize = True
           ImageIndex = -1
           MinHeight = 522
-          Width = 48
+          Width = 36
         end>
       inherited ToolBar1: TToolBar
         Width = 522
+        Height = 36
         ButtonWidth = 43
         object ToolButton1: TToolButton
           Left = 0

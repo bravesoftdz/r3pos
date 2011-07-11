@@ -25,10 +25,10 @@ inherited frmShopDesk: TfrmShopDesk
       Top = 0
       Width = 942
       Height = 520
-      ActivePage = TabSheet1
+      ActivePage = TabSheet2
       Align = alClient
       ShowCardFrame = False
-      TabIndex = 0
+      TabIndex = 1
       TabOrder = 0
       FixedDimension = 18
       object TabSheet1: TRzTabSheet

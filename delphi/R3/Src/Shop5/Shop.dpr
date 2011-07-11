@@ -15,8 +15,6 @@ uses
   uframeMDForm in 'Frame\uframeMDForm.pas' {frameMDForm},
   uframeDialogForm in 'Frame\uframeDialogForm.pas' {frameDialogForm},
   uShopUtil in 'Frame\uShopUtil.pas',
-  ufrmShopMain in 'ufrmShopMain.pas' {frmShopMain},
-  ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk},
   uXDictFactory in 'Frame\uXDictFactory.pas',
   uframeToolForm in 'Frame\uframeToolForm.pas' {frameToolForm},
   ObjCommon in 'Obj\ObjCommon.pas',
@@ -237,7 +235,9 @@ uses
   ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet},
   ufrmFieldSort in 'App\ufrmFieldSort.pas' {frmFieldSort},
   ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
-  ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights};
+  ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
+  ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk},
+  ufrmShopMain in 'ufrmShopMain.pas' {frmShopMain};
 
 {$R *.res}
 var

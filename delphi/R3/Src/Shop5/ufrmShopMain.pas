@@ -203,14 +203,9 @@ type
     Image24: TImage;
     Image25: TImage;
     ImageList3: TImageList;
-    Panel25: TPanel;
+    PagePanel: TPanel;
     Image18: TImage;
     toolButton: TRzBmpButton;
-    Page1: TRzBmpButton;
-    Page2: TRzBmpButton;
-    Page3: TRzBmpButton;
-    Page4: TRzBmpButton;
-    Page5: TRzBmpButton;
     Panel24: TPanel;
     Image26: TImage;
     Panel26: TPanel;
@@ -228,9 +223,24 @@ type
     actfrmMessage: TAction;
     actfrmNewPaperReader: TAction;
     actfrmQuestionnaire: TAction;
-    rzLogo: TRzPageControl;
-    TabSheet1: TRzTabSheet;
-    TabSheet2: TRzTabSheet;
+    RzLabel1: TRzLabel;
+    actfrmInLocusOrderList: TAction;
+    actfrmOutLocusOrderList: TAction;
+    actfrmDownIndeOrder: TAction;
+    actfrmRecvForDay: TAction;
+    actfrmImpeach: TAction;
+    actfrmClearData: TAction;
+    actfrmSaleAnaly: TAction;
+    actfrmNetForOrder: TAction;
+    actfrmSaleManSaleReport: TAction;
+    actfrmClientSaleReport: TAction;
+    actfrmSaleTotalReport: TAction;
+    actfrmStgTotalReport: TAction;
+    actfrmStockTotalReport: TAction;
+    RzTrayIcon1: TRzTrayIcon;
+    actfrmSaleMonthTotalReport: TAction;
+    CA_MODULE: TZQuery;
+    PageButton: TRzBmpButton;
     RzPanel1: TRzPanel;
     Panel1: TPanel;
     Panel4: TPanel;
@@ -277,73 +287,6 @@ type
     Panel20: TPanel;
     Image12: TImage;
     Panel9: TPanel;
-    RzPanel2: TRzPanel;
-    Panel27: TPanel;
-    Panel28: TPanel;
-    Image29: TImage;
-    Image30: TImage;
-    Panel29: TPanel;
-    Image31: TImage;
-    Label3: TLabel;
-    Panel30: TPanel;
-    Panel31: TPanel;
-    Panel32: TPanel;
-    Image33: TImage;
-    Panel33: TPanel;
-    Image34: TImage;
-    Image35: TImage;
-    RzBmpButton7: TRzBmpButton;
-    RzBmpButton11: TRzBmpButton;
-    RzBmpButton12: TRzBmpButton;
-    s2_Page1: TRzBmpButton;
-    s2_Page2: TRzBmpButton;
-    s2_Page4: TRzBmpButton;
-    sDeskPage: TRzBmpButton;
-    s2_Page3: TRzBmpButton;
-    Panel34: TPanel;
-    Image36: TImage;
-    Panel35: TPanel;
-    Image37: TImage;
-    Panel36: TPanel;
-    Image38: TImage;
-    Panel37: TPanel;
-    Image39: TImage;
-    Panel38: TPanel;
-    Image40: TImage;
-    Image41: TImage;
-    RzLabel3: TRzLabel;
-    Panel39: TPanel;
-    Panel40: TPanel;
-    rzs2ToolButton: TPanel;
-    Panel42: TPanel;
-    Image44: TImage;
-    Panel43: TPanel;
-    s2_Page5: TRzBmpButton;
-    Image32: TImage;
-    Image45: TImage;
-    Image42: TImage;
-    Image43: TImage;
-    RzBmpButton13: TRzBmpButton;
-    RzBmpButton14: TRzBmpButton;
-    RzBmpButton15: TRzBmpButton;
-    rzUserInfo: TRzLabel;
-    RzLabel1: TRzLabel;
-    actfrmInLocusOrderList: TAction;
-    actfrmOutLocusOrderList: TAction;
-    actfrmDownIndeOrder: TAction;
-    actfrmRecvForDay: TAction;
-    actfrmImpeach: TAction;
-    actfrmClearData: TAction;
-    actfrmSaleAnaly: TAction;
-    actfrmNetForOrder: TAction;
-    actfrmSaleManSaleReport: TAction;
-    actfrmClientSaleReport: TAction;
-    actfrmSaleTotalReport: TAction;
-    actfrmStgTotalReport: TAction;
-    actfrmStockTotalReport: TAction;
-    RzTrayIcon1: TRzTrayIcon;
-    actfrmSaleMonthTotalReport: TAction;
-    CA_MODULE: TZQuery;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -405,8 +348,6 @@ type
     procedure actfrmAccountExecute(Sender: TObject);
     procedure actfrmTransOrderListExecute(Sender: TObject);
     procedure actfrmDevFactoryExecute(Sender: TObject);
-    procedure CA_MODULEFilterRecord(DataSet: TDataSet;
-      var Accept: Boolean);
     procedure actfrmIoroOrderList1Execute(Sender: TObject);
     procedure actfrmIoroOrderList2Execute(Sender: TObject);
     procedure actfrmCheckTablePrintExecute(Sender: TObject);
@@ -421,7 +362,6 @@ type
     procedure actfrmRckDayReportExecute(Sender: TObject);
     procedure actfrmRelationExecute(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
-    procedure Page1Click(Sender: TObject);
     procedure actfrmRecvDayReportExecute(Sender: TObject);
     procedure actfrmPayDayReportExecute(Sender: TObject);
     procedure actfrmRecvAbleReportExecute(Sender: TObject);
@@ -443,7 +383,6 @@ type
     procedure RzBmpButton13Click(Sender: TObject);
     procedure RzBmpButton14Click(Sender: TObject);
     procedure RzBmpButton15Click(Sender: TObject);
-    procedure s2_Page1Click(Sender: TObject);
     procedure sDeskPageClick(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
     procedure actfrmInLocusOrderListExecute(Sender: TObject);
@@ -497,10 +436,11 @@ type
     procedure SetLoging(const Value: boolean);
     procedure SetSystemShutdown(const Value: boolean);
     procedure InitTenant;
+    procedure DoPageClick(Sender:TObject);
   public
     { Publicdeclarations }
     procedure LoadPic32;
-    procedure LoadMenu;
+    procedure LoadMenu(Sender:TObject);
     procedure LoadFrame;
     procedure InitVersioin;
     function GetDeskFlag:string;
@@ -556,10 +496,9 @@ var
 begin
   inherited;
   IsXsm := false;
-  for i:=0 to rzLogo.PageCount -1 do rzLogo.Pages[i].TabVisible := false;
   LoadPic32;
   FList := TList.Create;
-  Panel25.Visible := (sflag='s1_');
+  PagePanel.Visible := (sflag='s1_');
   PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
   frmPrgBar := TfrmPrgBar.Create(nil);
@@ -604,10 +543,7 @@ begin
   button.Tag := Integer(Pointer(form));
   button.OnClick := DoActiveForm;
   button.Visible := true;
-  if sflag='s1_' then
-    button.Parent := rzToolButton
-  else
-    button.Parent := rzs2ToolButton;
+  button.Parent := rzToolButton;
   button.PopupMenu := tlbPage;
   FList.Add(button);
   SortToolButton;
@@ -800,7 +736,7 @@ begin
          ShopGlobal.LoadRight;
          CheckEnabled;
          CA_MODULE.Close;
-         LoadMenu;
+         LoadMenu(nil);
          ShopGlobal.SyncTimeStamp;
          if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and (ParamStr(1)<>'-xsm') and ShopGlobal.GetChkRight('500028') then
          begin
@@ -809,6 +745,7 @@ begin
        finally
          frmLogo.Close;
        end;
+       TfrmCostCalc.CheckMonthReck(self); 
      end
   else
      begin
@@ -890,12 +827,10 @@ var s:string;
 begin
   FLogined := Value;
   if not Value then Timer1.Enabled := Value;
-//  if ShopGlobal.offline then s := '【脱机使用】' else s := '【联机使用】';
   if Value then
      lblUserInfo.Caption := '用户名:'+Global.UserName
   else
      lblUserInfo.Caption := '未登录...';
-  rzUserInfo.Caption := lblUserInfo.Caption;
 end;
 
 procedure TfrmShopMain.miCloseClick(Sender: TObject);
@@ -1039,26 +974,20 @@ begin
   if MsgFactory.Count > 0 then
      begin
        lblUserInfo.Caption := ShopGlobal.UserName + ' 您有('+inttostr(MsgFactory.UnRead)+')条消息';
-       rzUserInfo.Caption := lblUserInfo.Caption;
        case Timer1.Tag mod 2 of
        0:begin
            lblUserInfo.Font.Color := clRed;
            lblUserInfo.Font.Style := [fsBold];
-           rzUserInfo.Font.Color := clRed;
-           rzUserInfo.Font.Style := [fsBold];
          end;
        1:begin
            lblUserInfo.Font.Color := clWhite;
            lblUserInfo.Font.Style := [];
-           rzUserInfo.Font.Color := clWhite;
-           rzUserInfo.Font.Style := [];
          end;
        end;
      end
   else
      begin
        lblUserInfo.Caption := ShopGlobal.UserName + ' 您没有消息';
-       rzUserInfo.Caption := lblUserInfo.Caption;
      end;
   if (MsgFactory.Loaded and ((Timer1.Tag mod 120)=0)) then
      begin
@@ -1133,7 +1062,7 @@ begin
 
 end;
 
-procedure TfrmShopMain.LoadMenu;
+procedure TfrmShopMain.LoadMenu(Sender:TObject);
 function FindAction(cName:string):TAction;
 var i:integer;
 begin
@@ -1147,18 +1076,19 @@ begin
          end;
     end;
 end;
-function CheckRight:boolean;
+function CheckRight(btn:TRzBmpButton):boolean;
 var
   rs:TZQuery;
+  lvid:string;
 begin
   result := false;
   rs := CA_MODULE;
-  rs.Filtered := false;
-  rs.Filtered := true;
+  if not rs.Locate('MODU_ID',inttostr(btn.Tag),[]) then Exit;
+  lvid := rs.FieldbyName('LEVEL_ID').AsString;
   rs.First;
   while not rs.Eof do
     begin
-      if rs.FieldbyName('LEVEL_NUM').AsInteger =3 then
+      if (copy(rs.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid) and (rs.FieldbyName('LEVEL_NUM').AsInteger =3) then
          begin
            if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
            begin
@@ -1169,74 +1099,49 @@ begin
       rs.Next;
     end;
 end;
-procedure CreatePageMenu;
-var i:integer;
+procedure CreatePageButton(Id,Title:string);
+var
+  btn:TRzBmpButton;
+  w:widestring;
+  i:integer;
 begin
-  Page1.Visible := false;
-  Page2.Visible := false;
-  Page3.Visible := false;
-  Page4.Visible := false;
-  Page5.Visible := false;
-  s2_Page1.Visible := false;
-  s2_Page2.Visible := false;
-  s2_Page3.Visible := false;
-  s2_Page4.Visible := false;
-  s2_Page5.Visible := false;
+  btn := TRzBmpButton.Create(PagePanel);
+  btn.Parent := PagePanel;
+  btn.OnClick := DoPageClick;
+  btn.Left := 5;
+  btn.Bitmaps.Up.Assign(PageButton.Bitmaps.Up);
+  btn.Bitmaps.Down.Assign(PageButton.Bitmaps.Down);
+  btn.GroupIndex := 2;
+  btn.Tag := StrtoInt(Id);
+//  w := titie;
+//  for i:=1 to length(w) do
+  btn.Caption := copy(Title,1,2)+#10+copy(Title,3,2)+#10+copy(Title,5,2);
+  PageList.Add(btn);
+end;
+procedure CreatePageMenu;
+var
+  i:integer;
+begin
+  for i:=0 to PageList.Count-1 do TObject(PageList[i]).Free;
   PageList.Clear;
   CA_MODULE.First;
   while not CA_MODULE.Eof do
     begin
       if CA_MODULE.FieldbyName('LEVEL_NUM').AsInteger =1 then
       begin
-        case strtoint(copy(CA_MODULE.Fields[0].asString,1,1)) of
-        1:begin
-            if sflag='s1_' then
-               PageList.Add(Page1)
-            else
-               PageList.Add(s2_Page1);
-          end;
-        2:begin
-            if sflag='s1_' then
-               PageList.Add(Page2)
-            else
-               PageList.Add(s2_Page2);
-          end;
-        3:begin
-            if sflag='s1_' then
-               PageList.Add(Page3)
-            else
-               PageList.Add(s2_Page3);
-          end;
-        4:begin
-            if sflag='s1_' then
-               PageList.Add(Page4)
-            else
-               PageList.Add(s2_Page4);
-          end;
-        9:begin
-            if sflag='s1_' then
-               PageList.Add(Page5)
-            else
-               PageList.Add(s2_Page5);
-          end;
-        end;
+        CreatePageButton(CA_MODULE.FieldbyName('MODU_ID').AsString,CA_MODULE.FieldbyName('MODU_NAME').AsString);
       end;
       CA_MODULE.Next;
     end;
   for i:=0 to PageList.Count -1 do
      begin
-       TrzBmpButton(PageList[i]).OnClick := nil;
-       try
-         TrzBmpButton(PageList[i]).Down := true;
-         TrzBmpButton(PageList[i]).Visible := CheckRight;
-       finally
-         if sflag='s1_' then
-            TrzBmpButton(PageList[i]).OnClick := Page1Click
-         else
-            TrzBmpButton(PageList[i]).OnClick := s2_Page1Click;
-       end;
+       CheckRight(TrzBmpButton(PageList[i]));
      end;
-  if PageList.Count >0 then TrzBmpButton(PageList[0]).down := true;
+  if PageList.Count >0 then
+     begin
+       TrzBmpButton(PageList[0]).down := true;
+       LoadMenu(TrzBmpButton(PageList[0]));
+     end;
   SortPageButton;
 end;
 var
@@ -1244,12 +1149,13 @@ var
   g:TrzGroup;
   b:TrzGroupItem;
   i,r:integer;
+  lvid:string;
 begin
   if not CA_MODULE.Active then
      begin
        CA_MODULE.Filtered := false;
        CA_MODULE.Close;
-       CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL_NUM from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
+       CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL_NUM,LEVEL_ID from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
        Factor.Open(CA_MODULE);
        CreatePageMenu;
      end;
@@ -1257,15 +1163,15 @@ begin
     begin
       RzGroupBar1.RemoveGroup(RzGroupBar1.Groups[i]);
     end;
+  if Sender=nil then Exit;
   rs := CA_MODULE;
-  CA_MODULE.OnFilterRecord := CA_MODULEFilterRecord;
   try
-  rs.Filtered := false;
-  rs.Filtered := true;
+  if not rs.Locate('MODU_ID',inttostr(TRzBmpButton(Sender).Tag),[]) then Exit;
+  lvid := rs.FieldbyName('LEVEL_ID').AsString;
   rs.First;
   while not rs.Eof do
     begin
-      if rs.FieldbyName('LEVEL_NUM').AsInteger =2 then
+      if (copy(rs.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid) and (rs.FieldbyName('LEVEL_NUM').AsInteger =2) then
          begin
            g := TrzGroup.Create(RzGroupBar1);
            g.Caption := rs.FieldbyName('MODU_NAME').AsString;
@@ -1280,7 +1186,7 @@ begin
            // if r>3 then g.Close;
          end
       else
-      if rs.FieldbyName('LEVEL_NUM').AsInteger =3 then
+      if (copy(rs.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid) and (rs.FieldbyName('LEVEL_NUM').AsInteger =3) then
          begin
            if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
            begin
@@ -1294,7 +1200,6 @@ begin
       rs.Next;
     end;
   finally
-    CA_MODULE.OnFilterRecord := nil;
   end;
   for i:=RzGroupBar1.GroupCount -1 downto 0 do
     begin
@@ -1312,8 +1217,8 @@ end;
 procedure TfrmShopMain.RzTabChange(Sender: TObject);
 begin
   inherited;
-  if rzLeft.Width = 33 then rzLeft.Width := 172;
-  if Logined then LoadMenu;
+//  if rzLeft.Width = 33 then rzLeft.Width := 172;
+//  if Logined then LoadMenu;
 end;
 
 procedure TfrmShopMain.Image19Click(Sender: TObject);
@@ -2409,52 +2314,6 @@ begin
     end;
 end;
 
-procedure TfrmShopMain.CA_MODULEFilterRecord(DataSet: TDataSet;
-  var Accept: Boolean);
-function GetFlag:integer;
-begin
-  if sflag = 's1_' then
-  begin
-  result := 0;
-  if Page1.Down then
-     result := 1
-  else
-  if Page2.Down then
-     result := 2
-  else
-  if Page3.Down then
-     result := 3
-  else
-  if Page4.Down then
-     result := 4
-  else
-  if Page5.Down then
-     result := 9;
-  end;
-  if sflag = 's2_' then
-  begin
-  result := 0;
-  if s2_Page1.Down then
-     result := 1
-  else
-  if s2_Page2.Down then
-     result := 2
-  else
-  if s2_Page3.Down then
-     result := 3
-  else
-  if s2_Page4.Down then
-     result := 4
-  else
-  if s2_Page5.Down then
-     result := 9;
-  end;
-end;
-begin
-  inherited;
-  Accept := copy(CA_MODULE.Fields[0].AsString,1,1)=inttostr(GetFlag);
-end;
-
 procedure TfrmShopMain.actfrmIoroOrderList1Execute(Sender: TObject);
 var Form:TfrmBasic;
 begin
@@ -2750,12 +2609,6 @@ begin
   frmMain.OnResize(nil);
   frmShopDesk.Locked := true;
   frmShopDesk.BringToFront;
-end;
-
-procedure TfrmShopMain.Page1Click(Sender: TObject);
-begin
-  inherited;
-  LoadMenu;
 end;
 
 procedure TfrmShopMain.actfrmRecvDayReportExecute(Sender: TObject);
@@ -3151,12 +3004,7 @@ begin
   sflag := 's'+GetResString(1)+'_';
   if DllHandle > 0 then 
   try
-    rzUserInfo.Visible := (sflag='s2_');
     //logo
-    if sflag='s1_' then
-    begin
-    rzLogo.ActivePageIndex := 0;
-    rzLogo.Height := 105;
     Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
     Image6.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
     Image20.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
@@ -3205,84 +3053,6 @@ begin
     RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'help');
     RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'help_hot');
 
-    Page1.Bitmaps.Up := GetBitmap(sflag+'page1');
-    Page1.Bitmaps.Down := GetBitmap(sflag+'page1_hot');
-    Page2.Bitmaps.Up := GetBitmap(sflag+'page2');
-    Page2.Bitmaps.Down := GetBitmap(sflag+'page2_hot');
-    Page3.Bitmaps.Up := GetBitmap(sflag+'page3');
-    Page3.Bitmaps.Down := GetBitmap(sflag+'page3_hot');
-    Page4.Bitmaps.Up := GetBitmap(sflag+'page4');
-    Page4.Bitmaps.Down := GetBitmap(sflag+'page4_hot');
-    Page5.Bitmaps.Up := GetBitmap(sflag+'page9');
-    Page5.Bitmaps.Down := GetBitmap(sflag+'page9_hot');
-    end
-    else
-    begin
-    rzLogo.ActivePageIndex := 1;
-    rzLogo.Height := 105;
-    Image29.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
-    Image30.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
-    Image32.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
-    Image33.Picture.Graphic  := GetJpeg(sflag+'logo_r2');
-    Image35.Picture.Graphic  := GetJpeg(sflag+'logo_r3');
-    Image34.Picture.Graphic  := GetJpeg(sflag+'logo_r4');
-
-    Image37.Picture.Graphic  := GetJpeg(sflag+'menu_title');
-
-    Image41.Picture.Graphic  := GetJpeg(sflag+'tool_01');
-    Image40.Picture.Graphic  := GetJpeg(sflag+'tool_02');
-    Image42.Picture.Graphic  := GetJpeg(sflag+'tool_03');
-    Image43.Picture.Graphic  := GetJpeg(sflag+'tool_04');
-    Image36.Picture.Graphic  := GetJpeg(sflag+'tool_05');
-
-    Image45.Picture.Graphic  := GetJpeg(sflag+'page_bg');
-    Image19.Picture.Graphic  := GetJpeg(sflag+'split');
-
-    Image22.Picture.Graphic  := GetJpeg(sflag+'foot_1');
-    Image15.Picture.Graphic  := GetJpeg(sflag+'foot_2');
-    Image23.Picture.Graphic  := GetJpeg(sflag+'foot_3');
-    Image24.Picture.Graphic  := GetJpeg(sflag+'foot_4');
-    Image25.Picture.Graphic  := GetJpeg(sflag+'foot_bg');
-
-
-    toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
-    toolButton.Bitmaps.Down := GetBitmap(sflag+'toolbutton_hot');
-    sDeskPage.Bitmaps.Up := GetBitmap(sflag+'desktop');
-    sDeskPage.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
-
-    RzBmpButton11.Bitmaps.Up := GetBitmap(sflag+'password');
-    RzBmpButton11.Bitmaps.Hot := GetBitmap(sflag+'password_hot');
-//    RzBmpButton9.Bitmaps.Up := GetBitmap(sflag+'logout');
-//    RzBmpButton9.Bitmaps.Hot := GetBitmap(sflag+'logout_hot');
-    RzBmpButton12.Bitmaps.Up := GetBitmap(sflag+'exit');
-    RzBmpButton12.Bitmaps.Hot := GetBitmap(sflag+'exit_hot');
-
-//    RzBmpButton6.Bitmaps.Up := GetBitmap(sflag+'home');
-//    RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'home_hot');
-//    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
-//    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
-    RzBmpButton13.Bitmaps.Up := GetBitmap(sflag+'down');
-    RzBmpButton13.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
-    RzBmpButton7.Bitmaps.Up := GetBitmap(sflag+'upload');
-    RzBmpButton7.Bitmaps.Hot := GetBitmap(sflag+'upload_hot');
-//    RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'help');
-//    RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'help_hot');
-    RzBmpButton14.Bitmaps.Up := GetBitmap(sflag+'question');
-    RzBmpButton14.Bitmaps.Hot := GetBitmap(sflag+'question_hot');
-    RzBmpButton15.Bitmaps.Up := GetBitmap(sflag+'message');
-    RzBmpButton15.Bitmaps.Hot := GetBitmap(sflag+'message_hot');
-
-    s2_Page1.Bitmaps.Up := GetBitmap(sflag+'page1');
-    s2_Page1.Bitmaps.Down := GetBitmap(sflag+'page1_hot');
-    s2_Page2.Bitmaps.Up := GetBitmap(sflag+'page2');
-    s2_Page2.Bitmaps.Down := GetBitmap(sflag+'page2_hot');
-    s2_Page3.Bitmaps.Up := GetBitmap(sflag+'page3');
-    s2_Page3.Bitmaps.Down := GetBitmap(sflag+'page3_hot');
-    s2_Page4.Bitmaps.Up := GetBitmap(sflag+'page4');
-    s2_Page4.Bitmaps.Down := GetBitmap(sflag+'page4_hot');
-    s2_Page5.Bitmaps.Up := GetBitmap(sflag+'page9');
-    s2_Page5.Bitmaps.Down := GetBitmap(sflag+'page9_hot');
-    end;
   finally
     if DllHandle > 0 then FreeLibrary(DllHandle);
   end;
@@ -3333,13 +3103,6 @@ procedure TfrmShopMain.RzBmpButton15Click(Sender: TObject);
 begin
   inherited;
   actfrmMessage.OnExecute(actfrmMessage);
-end;
-
-procedure TfrmShopMain.s2_Page1Click(Sender: TObject);
-begin
-  inherited;
-  LoadMenu;
-
 end;
 
 procedure TfrmShopMain.sDeskPageClick(Sender: TObject);
@@ -3403,7 +3166,6 @@ var
   i,n:integer;
 begin
   n := 0;
-  if sflag='s2_' then PageList.Insert(0,sDeskPage); 
   for i:=PageList.Count -1 downto 0 do
     begin
       if not TRzBmpButton(PageList[i]).Visible then
@@ -3411,15 +3173,10 @@ begin
     end;
   for i:=0 to PageList.Count -1 do
     begin
-      if sflag='s1_' then
-         begin
-           if i=0 then
-              TRzBmpButton(PageList[i]).Top := 1
-           else
-              TRzBmpButton(PageList[i]).Top := TRzBmpButton(PageList[i-1]).top + TRzBmpButton(PageList[i-1]).height + 1;
-         end
+      if i=0 then
+         TRzBmpButton(PageList[i]).Top := 1
       else
-         TRzBmpButton(PageList[i]).Left := Panel30.Width -((PageList.Count-n)*TRzBmpButton(PageList[i]).Width + 1)-10;
+         TRzBmpButton(PageList[i]).Top := TRzBmpButton(PageList[i-1]).top + TRzBmpButton(PageList[i-1]).height + 1;
       inc(n);
     end;
 end;
@@ -4056,6 +3813,11 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.DoPageClick(Sender: TObject);
+begin
+  LoadMenu(Sender);
 end;
 
 end.

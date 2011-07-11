@@ -43,6 +43,7 @@ type
     procedure DBLock;
     procedure DBUnLock;
     function GetTmpSQL(tb:string):string;
+    function CheckReckMonthDay: Boolean;  //判断是否到了月结帐日
   public
     { Public declarations }
     pt,pc:integer;
@@ -2157,32 +2158,10 @@ begin
   with TfrmCostCalc.Create(Owner) do
     begin
       try
-        CurDay:=FormatDatetime('YYYYMMDD',Date());
-        CurMonth:=strtoint(Copy(CurDay,1,6));
-        CurDay:=Copy(CurDay,7,2);   //当前日期（本月第几天）
         tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
-        if (tmp.Active) and (tmp.RecordCount=1) and (StrToInt(CurDay)>5) then //是单店并且本月5日以后
+        if (tmp.Active) and (tmp.RecordCount=1) then //是单店并且本月5日以后
         begin
-          Rs:=TZQuery.Create(nil);
-          Rs.SQL.Text:='select Max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID);
-          Factor.Open(Rs);
-          if Rs.RecordCount=1 then  //有月结帐
-          begin
-            RckDay:=FnTime.fnStrtoDate(Rs.fieldbyName('END_DATE').AsString);
-          end else  //无月结帐[取启用日期]
-          begin
-             rs.Close;
-             rs.SQL.Text:='select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
-             Factor.Open(rs);
-             if rs.Fields[0].asString<>'' then
-               RckDay:=fnTime.fnStrtoDate(rs.Fields[0].asString)
-             else
-               RckDay:=Date();
-          end;
-          RckDay:=IncMonth(RckDay,1); //当前月份 +1月
-          RckMonth:=StrtoInt(FormatDatetime('YYYYMM',RckDay));  //取+1月后的 年月
-
-          if CurMonth>RckMonth then //当前月份 > 结帐月份+1 就显示:
+          if CheckReckMonthDay then 
           begin
             flag := 2;
             Caption := '月结账';
@@ -2199,5 +2178,62 @@ begin
       end;
     end;
 end;
+
+function TfrmCostCalc.CheckReckMonthDay: Boolean;
+var
+  rs:TZQuery;
+  vbDate,veDate,e: TDate;
+  vReck_flag,vReck_day: integer;  //结帐类型、指定月结日
+  vYear,vMonth,vDay: Word;  //分解日期使用
+begin
+  result:=False;
+  vReck_flag := StrtoIntDef(ShopGlobal.GetParameter('RECK_OPTION'),1);  //结帐类型[月底结帐|指定日期结帐]
+  vReck_day := StrtoIntDef(ShopGlobal.GetParameter('RECK_DAY'),28); //指定结账日；
+
+  rs:= TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+    Factor.Open(rs);
+    if rs.Fields[0].asString<>'' then  //已有月结帐
+      vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
+    else
+    begin  //从未月结帐
+      rs.Close;
+      rs.SQL.Text:='select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
+      Factor.Open(rs);
+      if rs.Fields[0].asString<>'' then
+        vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
+      else
+        vbDate := Date()-1;
+    end;
+
+    //月结时检测结账月份
+    if vReck_flag=1 then //月底结帐
+    begin
+      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),1))+'01')-1;
+      if e>date() then //还没到结账日
+        veDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
+      else
+        veDate := e;
+    end else   //指定日结帐
+    begin
+      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',vReck_day));
+      if e>date() then //还没到结账日
+        veDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',reck_day))
+      else
+        veDate := e;
+    end;
+
+    DecodeDate(Date(),vYear,vMonth,vDay);
+    if (veDate>vbDate) and (vDay>5) then
+    begin
+      result:=true;
+    end;
+  finally
+    rs.free;
+  end;
+end;
+
 
 end.

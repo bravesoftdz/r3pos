@@ -2146,45 +2146,11 @@ begin
   end;
 end;
 
-//判断是否月结账
-class function TfrmCostCalc.CheckMonthReck(Owner: TForm): boolean;
-var
-  RckDay: TDate;
-  Rs,tmp: TZQuery;
-  CurDay: string;
-  CurMonth,RckMonth: Integer;
-begin
-  result:=False;
-  with TfrmCostCalc.Create(Owner) do
-    begin
-      try
-        tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
-        if (tmp.Active) and (tmp.RecordCount=1) then //是单店并且本月5日以后
-        begin
-          if CheckReckMonthDay then 
-          begin
-            flag := 2;
-            Caption := '月结账';
-            eDate := Date()-1;
-            Prepare;
-            Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
-            if eDate>Date() then Raise Exception.Create('没有到本月结账日，无法执行月结操作。');
-            result :=(ShowModal=MROK);
-          end;
-        end
-      finally
-        Rs.Free;
-        free;
-      end;
-    end;
-end;
-
 function TfrmCostCalc.CheckReckMonthDay: Boolean;
 var
   rs:TZQuery;
-  vbDate,veDate,e: TDate;
+  vbDate,e: TDate;
   vReck_flag,vReck_day: integer;  //结帐类型、指定月结日
-  vYear,vMonth,vDay: Word;  //分解日期使用
 begin
   result:=False;
   vReck_flag := StrtoIntDef(ShopGlobal.GetParameter('RECK_OPTION'),1);  //结帐类型[月底结帐|指定日期结帐]
@@ -2211,22 +2177,21 @@ begin
     //月结时检测结账月份
     if vReck_flag=1 then //月底结帐
     begin
-      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),1))+'01')-1;
-      if e>date() then //还没到结账日
-        veDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
+      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),1))+'01')-1; //本月最后一天为结账日
+      if (e>date()) and (FormatDatetime('YYYYMM',Date())=FormatDatetime('YYYYMM',e)) then //在同一月还没到结账日
+        eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
       else
-        veDate := e;
+        eDate :=e;
     end else   //指定日结帐
     begin
-      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',vReck_day));
-      if e>date() then //还没到结账日
-        veDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',reck_day))
+      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',vReck_day)); //本月的指定日为结帐日
+      if (e>date()) and (FormatDatetime('YYYYMM',Date())=FormatDatetime('YYYYMM',e)) then //还没到结账日
+        eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',vReck_day))
       else
-        veDate := e;
+        eDate := e;
     end;
 
-    DecodeDate(Date(),vYear,vMonth,vDay);
-    if (veDate>vbDate) and (vDay>5) then
+    if (eDate>vbDate) and (Date()>eDate+5) then
     begin
       result:=true;
     end;
@@ -2235,5 +2200,33 @@ begin
   end;
 end;
 
+//判断是否月结账
+class function TfrmCostCalc.CheckMonthReck(Owner: TForm): boolean;
+var
+  tmp: TZQuery;
+begin
+  result:=False;
+  with TfrmCostCalc.Create(Owner) do
+    begin
+      try
+        tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
+        if (tmp.Active) and (tmp.RecordCount=1) then //是单店并且本月5日以后
+        begin
+          if CheckReckMonthDay then 
+          begin
+            flag := 2;
+            Caption := '月结账';
+            eDate := Date()-1;
+            Prepare;
+            Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
+            if eDate>Date() then Raise Exception.Create('没有到本月结账日，无法执行月结操作。');
+            result :=(ShowModal=MROK);
+          end;
+        end
+      finally
+        free;
+      end;
+    end;
+end;
 
 end.

@@ -120,7 +120,7 @@ begin
       on E:Exception do
         begin
           Factor.RollbackTrans;
-          Raise E.Create('初始化角色权限出错了,错误:'+E.Message);
+          Raise Exception.Create('初始化角色权限出错了,错误:'+E.Message);
         end;
     end;
   finally

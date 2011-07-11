@@ -3077,6 +3077,7 @@ try
         Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         Params.ParamByName('TABLE_NAME').AsString := 'CA_MODULE';
         Params.ParamByName('KEY_FIELDS').AsString := 'PROD_ID;MODU_ID';
+        Params.ParamByName('PROD_ID').AsString := rs.FieldByName('PROD_ID').AsString;
         Params.ParamByName('COMM_LOCK').AsString := '1';
         Params.ParamByName('TIME_STAMP').Value := TimeStamp;
         Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;

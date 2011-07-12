@@ -59,7 +59,7 @@ begin
           begin
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
             Sql := Sql + ' select ''actfrmStockOrderList'' as ID,4 as MSG_CLASS,''进货入库'' as MSG_TITLE,count(STOCK_TYPE) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,2 as sFlag '+
-            'from STK_STOCKORDER where CHK_USER is null and STOCK_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'')';
+            'from STK_STOCKORDER where CHK_USER is null and STOCK_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and LOCUS_STATUS=''3'' ';
           end;
 
         if ShopGlobal.GetChkRight('11300001',5) then                //采购退货单的审核权限   actfrmStkRetuOrderList   表   STK_STOCKORDER
@@ -80,7 +80,7 @@ begin
           begin
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
             Sql := Sql + 'select ''actfrmSalesOrderList'' as ID,4 as MSG_CLASS,''销售出库'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,5 as sFlag '+
-            'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+            'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''1'' or LOCUS_STATUS is null)';
           end;
 
         if ShopGlobal.GetChkRight('12500001',7) then                //销售退货单的审核权限   actfrmSalRetuOrderList    表   SAL_SALESORDER
@@ -148,14 +148,14 @@ begin
           begin
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
             Sql := Sql + 'select ''actfrmSalIndentOrderList'' as ID,4 as MSG_CLASS,''销售订单'' as MSG_TITLE,sum(case when SALBILL_STATUS=0 then 100000 else 1 end) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,11 as sFlag '+
-            'from SAL_INDENTORDER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and SALBILL_STATUS in (0,1) ';
+            'from SAL_INDENTORDER where CHK_USER is not null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and SALBILL_STATUS in (0,1) ';
           end;
 
         if ShopGlobal.GetChkRight('11200001',2) then                //进货订单未生成进货入库单   actfrmStkIndentOrderList   表   STK_INDENTORDER
           begin
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';
             Sql := Sql + 'select ''actfrmStkIndentOrderList'' as ID,4 as MSG_CLASS,''进货订单'' as MSG_TITLE,sum(case when STKBILL_STATUS=0 then 100000 else 1 end) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,12 as sFlag '+
-            'from STK_INDENTORDER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and STKBILL_STATUS in (0,1)';
+            'from STK_INDENTORDER where CHK_USER is not null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and STKBILL_STATUS in (0,1)';
           end;
       end;
 

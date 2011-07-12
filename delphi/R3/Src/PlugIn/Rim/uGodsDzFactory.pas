@@ -24,7 +24,7 @@ implementation
 function TGodsDzSyncFactory.InsertData_INF_GOODS_RELATION(COM_ID: string; UpdateMode: integer): Integer;
 var
   iRet: integer;    //返回更改记录数
-  Sort_ID2, Sort_ID6, CALC_UNIT, TENANT_ID: string; //价格分类 、是否是省内外　、计量单位
+  Sort_ID2,Sort_ID4,Sort_ID6,CALC_UNIT,TENANT_ID: string; //价格分类 、是否是省内外　、计量单位
   Box_InPrice, Box_OutPrice, BarCode: string;    //包的入库价、包的零售价、条码
   StrSQL,RimSQL: Pchar;
   AObj: TRecord_;
@@ -42,6 +42,10 @@ begin
          ' when SORT_ID2=''5'' then ''B82B26CF-E0D3-499C-808C-C074B0240881'''+
          ' when SORT_ID2=''6'' then ''70EC2D50-6CA7-4730-8362-D76909D3BFF2'''+
          ' else ''#'' end) as SORT_ID2';
+  //增加是否重点品牌:
+  Sort_ID4:=
+    '(case when SORT_ID4=''1'' then ''01072169-2F03-42C1-9EAB-541D031647AF'''+  //是否省内外、国外烟
+         ' else ''15CD1495-B3C7-42C7-8709-5376FC061305'' end) as SORT_ID4';
   Sort_ID6:=
     '(case when SORT_ID6=''0'' then ''635E6FB4-8B94-4996-95E1-A77401323560'''+  //是否省内外、国外烟
          ' when SORT_ID6=''1'' then ''E76D1A2A-1423-42E1-B827-8B268AF92CCD'''+
@@ -74,7 +78,7 @@ begin
       ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' ';
     Open(RsBarPub);
     RsRim.Close;
-    RsRim.SQL.Text:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+COM_ID+''' ';
+    RsRim.SQL.Text:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID4+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+COM_ID+''' ';
     Open(RsRim);
     RsInf.SQL.Text:='select A.*,0 as UpdateMode,0 as FLAG from INF_GOODS_RELATION A where A.TENANT_ID='+TENANT_ID;
     Open(RsInf);

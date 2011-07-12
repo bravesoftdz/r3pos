@@ -69,7 +69,7 @@ var
 begin
   try
     Ca_Modle.Close;
-    Ca_Modle.SQL.Text:='select MODU_ID,MODU_NAME,LEVEL_ID,SEQNO,0 as Tag,0 as CheckFlag from CA_MODULE where PROD_ID=:PROD_ID and COMM not in (''02'',''12'') order by LEVEL_ID';
+    Ca_Modle.SQL.Text:='select MODU_ID,MODU_TYPE,MODU_NAME,LEVEL_ID,SEQNO,0 as Tag,0 as CheckFlag from CA_MODULE where PROD_ID=:PROD_ID and COMM not in (''02'',''12'') order by LEVEL_ID';
     if Ca_Modle.Params.FindParam('PROD_ID')<>nil then
       Ca_Modle.ParamByName('PROD_ID').AsString:=ProductID;
     Factor.Open(Ca_Modle);
@@ -273,15 +273,17 @@ procedure TfrmRoleRights.SaveRight;
     end;
   end;
 var
-  c,ID:string; 
-  i,j, vCheck,SEQUNo:integer;
+  c,ID:string;
+  pTreeNode: TTreeNode;
+  i,j, vCheck,SEQUNo,MODU_TYPE:integer;
 begin
   if ModiRight then
   begin       
     for i:=0 to rzCheckTree.Items.Count -1 do
     begin
       SEQUNo:=TRecord_(rzCheckTree.Items[i].Data).FieldByName('SEQNo').AsInteger;
-      if SEQUNo>0 then
+      MODU_TYPE:=TRecord_(rzCheckTree.Items[i].Data).FieldByName('MODU_TYPE').AsInteger;
+      if (SEQUNo>0) and (MODU_TYPE=2) then
       begin
         SEQUNo:=SEQUNo-1;
         ID:= TRecord_(rzCheckTree.Items[i].Data).FieldbyName('MODU_ID').AsString;
@@ -293,17 +295,21 @@ begin
           Ca_Modle.Post;
         end;
 
-        ID:= TRecord_(rzCheckTree.Items[i].Parent.Data).FieldbyName('MODU_ID').AsString;
-        if not RoleRight.Locate('ROLE_ID;MODU_ID',VarArrayOf([Role_ID,ID]),[]) then
+        //有父级才具备权限
+        if rzCheckTree.Items[i].Parent<>nil then
         begin
-          RoleRight.Append;
-          RoleRight.FieldByName('ROWS_ID').AsString:=TSequence.NewId;
-          RoleRight.FieldByName('MODU_ID').AsString:=ID;
-          RoleRight.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-          RoleRight.FieldByName('ROLE_ID').AsString:=Role_ID; 
-          RoleRight.FieldByName('ROLE_TYPE').AsInteger:=1;
-          RoleRight.FieldByName('CHK').AsInteger:=0;
-          RoleRight.Post;
+          ID:= TRecord_(rzCheckTree.Items[i].Parent.Data).FieldbyName('MODU_ID').AsString;
+          if not RoleRight.Locate('ROLE_ID;MODU_ID',VarArrayOf([Role_ID,ID]),[]) then
+          begin
+            RoleRight.Append;
+            RoleRight.FieldByName('ROWS_ID').AsString:=TSequence.NewId;
+            RoleRight.FieldByName('MODU_ID').AsString:=ID;
+            RoleRight.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+            RoleRight.FieldByName('ROLE_ID').AsString:=Role_ID;
+            RoleRight.FieldByName('ROLE_TYPE').AsInteger:=1;
+            RoleRight.FieldByName('CHK').AsInteger:=0;
+            RoleRight.Post;
+          end;
         end;
       end;
     end;

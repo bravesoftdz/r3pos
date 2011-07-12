@@ -706,6 +706,13 @@ inherited frmUsers: TfrmUsers
     object N2: TMenuItem
       Action = actPasswordReset
     end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object Excel1: TMenuItem
+      Caption = 'Excel'#23548#20837
+      OnClick = Excel1Click
+    end
   end
   object Cds_Users: TZQuery
     FieldDefs = <>

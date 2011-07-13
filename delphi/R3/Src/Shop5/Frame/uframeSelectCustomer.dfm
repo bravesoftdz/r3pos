@@ -1,6 +1,6 @@
 inherited frameSelectCustomer: TframeSelectCustomer
-  Left = 250
-  Top = 197
+  Left = 608
+  Top = 214
   ActiveControl = edtSearch
   Caption = #26597#25214#23458#25143'...'
   ClientHeight = 398

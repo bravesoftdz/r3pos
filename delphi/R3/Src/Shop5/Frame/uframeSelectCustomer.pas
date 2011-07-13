@@ -61,6 +61,7 @@ type
     function EncodeSQL(id:string):string;
     procedure SetMultiSelect(const Value: boolean);
     procedure SetCustType(const Value: integer);
+    function CheckCanExport:boolean;
   public
     { Public declarations }
     procedure Open(Id:string);
@@ -72,7 +73,7 @@ type
   end;
 
 implementation
-uses uCtrlUtil, uGlobal, uTreeUtil, ObjCommon;
+uses uCtrlUtil, uGlobal, uTreeUtil, ObjCommon, uShopGlobal;
 {$R *.dfm}
 
 { TframeSelectGoods }
@@ -132,12 +133,30 @@ begin
 end;
 
 function TframeSelectCustomer.EncodeSQL(id: string): string;
-var w:string;
+var w,Str_Sign:string;
 begin
   w := 'where COMM not in (''12'',''02'') and TENANT_ID='+inttostr(Global.TENANT_ID);
   case CustType of
-  1:w := w + ' and FLAG in (0)';
-  2:w := w + ' and FLAG in (2)';
+  0:begin
+    if (ShopGlobal.GetChkRight('33400001',1)) and (ShopGlobal.GetChkRight('33300001',1)) then
+      Str_Sign := 'like'
+    else
+      Str_Sign := '=';
+  end;
+  1:begin
+    w := w + ' and FLAG in (0)';
+    if ShopGlobal.GetChkRight('33300001',1) then
+      Str_Sign := 'like'
+    else
+      Str_Sign := '=';
+  end;
+  2:begin
+    w := w + ' and FLAG in (2)';
+    if ShopGlobal.GetChkRight('33400001',1) then
+      Str_Sign := 'like'
+    else
+      Str_Sign := '=';
+  end;
   end;
   if id<>'' then
      begin
@@ -145,18 +164,17 @@ begin
       w := w + 'CLIENT_ID>'''+id+'''';
      end;
 
-  if trim(edtSearch.Text)<>'' then
-     begin
-      if w<>'' then w := w + ' and ';
-      case  edtFIND_FLAG.ItemIndex of
-      0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-      1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
-      2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
-      3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
-      4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
-      5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-      end;
-     end;
+
+  if w<>'' then w := w + ' and ';
+  case  edtFIND_FLAG.ItemIndex of
+  0:w := w + '(CLIENT_NAME '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or IC_CARDNO '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or TELEPHONE2 '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or ADDRESS '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
+  1:w := w + '(IC_CARDNO '+Str_Sign+' ''%'+Str_Sign+trim(edtSearch.Text)+Str_Sign+'%'')';
+  2:w := w + '(CLIENT_NAME '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
+  3:w := w + '(TELEPHONE2 '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
+  4:w := w + '(LICENSE_CODE '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
+  5:w := w + '(ADDRESS '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
+  end;
+
 
   result :=
            'select jp.*,p.PRICE_NAME from ( '+
@@ -445,6 +463,16 @@ begin
   inherited;
   if Column.FieldName='A' then
     N2Click(nil);
+end;
+
+function TframeSelectCustomer.CheckCanExport: boolean;
+begin
+  if CustType = 0 then
+    Result := (ShopGlobal.GetChkRight('33400001',6)) and (ShopGlobal.GetChkRight('33300001',6))
+  else if CustType = 1 then
+    Result := ShopGlobal.GetChkRight('33300001',6)
+  else if CustType = 2 then
+    Result := ShopGlobal.GetChkRight('33400001',6);
 end;
 
 end.

@@ -78,9 +78,11 @@ end;}
 //ÉÌÆ·Ê÷ÐÎ:
 procedure TfrmBatchPmdPrice.LoadLevelSort;
 var
+  IsRoot: Boolean;
   w,i:integer;
   AObj,CurObj,vObj:TRecord_;
 begin
+  IsRoot:=False;
   ClearTree(rzChkTree);
   try
     PUB_GODSSORT.SortedFields := 'RELATION_ID';
@@ -97,6 +99,7 @@ begin
           vObj := TRecord_.Create;
           vObj.ReadFromDataSet(PUB_GODSSORT);
           w := vObj.FieldByName('RELATION_ID').AsInteger;
+          IsRoot:=true;
         end else
         begin
           AObj := TRecord_.Create;
@@ -107,7 +110,7 @@ begin
       end;
       PUB_GODSSORT.Next;
     end;
-    if vObj<>nil then
+    if (IsRoot) and (vObj<>nil) and (vObj.FindField('RELATION_ID')<>nil) then
       rzChkTree.Items.AddObject(nil,vObj.FieldbyName('RELATION_NAME').AsString,vObj);
   finally
     CurObj.Free;

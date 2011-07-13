@@ -278,10 +278,12 @@ begin
 end;
 
 procedure TfrmStorageTracking.LoadTree(Tree:TRzTreeView);
-var rs:TZQuery;
+var IsRoot: Boolean;
+    rs:TZQuery;
     i,j:Integer;
     Aobj,CurObj:TRecord_;
 begin
+  IsRoot:=False;
   ClearTree(Tree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   rs.SortedFields := 'RELATION_ID';
@@ -298,6 +300,7 @@ begin
         CurObj.FieldByName('LEVEL_ID').AsString := '';
         CurObj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
         j := CurObj.FieldbyName('RELATION_ID').AsInteger;
+        IsRoot:=true;
       end else
       begin
         Aobj := TRecord_.Create;
@@ -310,7 +313,7 @@ begin
     end;
     rs.Next;
   end;
-  if CurObj<>nil then
+  if IsRoot and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
     Tree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
 
   for i:=Tree.Items.Count-1 downto 0 do

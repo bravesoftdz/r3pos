@@ -1271,15 +1271,15 @@ begin
   if SumRecord.Count<=0 then Exit;
   ColName:=trim(UpperCase(Column.FieldName));
   if ColName = 'GODS_NAME' then
-    Text := '合计:'+SumRecord.fieldbyName('GODS_NAME').AsString+'笔'
+    Text := '合计:'+AllRecord.fieldbyName('GODS_NAME').AsString+'笔'
   else
   begin
-    if SumRecord.FindField(ColName)<>nil then
+    if AllRecord.FindField(ColName)<>nil then
     begin
       if (ColName='DBIN_AMT') or (ColName='DBIN_PRC') or (ColName='DBIN_CST') or (ColName='DBIN_RTL') or
          (ColName='DBOUT_AMT') or (ColName='DBOUT_PRC') or (ColName='DBOUT_CST') or (ColName='DBOUT_RTL') then
       begin
-        Text:=FormatFloat(Column.DisplayFormat,SumRecord.FindField(ColName).AsFloat);
+        Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end;
     end;
   end;

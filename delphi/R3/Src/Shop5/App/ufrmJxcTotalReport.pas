@@ -1269,19 +1269,19 @@ var
   ColName: string;
 begin
   if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
-  if SumRecord.Count<=0 then Exit;
+  if AllRecord.Count<=0 then Exit;
   ColName:=trim(UpperCase(Column.FieldName));
   if ColName = 'GODS_NAME' then
-    Text := '合计:'+SumRecord.fieldbyName('GODS_NAME').AsString+'笔'
+    Text := '合计:'+AllRecord.fieldbyName('GODS_NAME').AsString+'笔'
   else
   begin
-    if SumRecord.FindField(ColName)<>nil then
+    if AllRecord.FindField(ColName)<>nil then
     begin
       if (Copy(ColName,1,4)='ORG_') or (Copy(ColName,1,6)='STOCK_') or
          (Copy(ColName,1,5)='SALE_') or (Copy(ColName,1,5)='DBIN_') or
          (Copy(ColName,1,6)='DBOUT_') or (Copy(ColName,1,4)='BAL_') then
       begin
-        Text:=FormatFloat(Column.DisplayFormat,SumRecord.FindField(ColName).AsFloat);
+        Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end
     end;
   end;

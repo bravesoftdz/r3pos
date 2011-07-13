@@ -653,7 +653,7 @@ begin
   if P5_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
   if fndP5_SHOP_ID.AsString<>'' then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
 
@@ -781,6 +781,7 @@ begin
     'left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '
     );
   result := result +  ' order by j.SALES_DATE,r.GODS_CODE';
+  if FileExists('show.sql') then SHowmessage(result);
 end;
 
 function TfrmClientSaleReport.GetGodsSQL(chk: boolean): string;

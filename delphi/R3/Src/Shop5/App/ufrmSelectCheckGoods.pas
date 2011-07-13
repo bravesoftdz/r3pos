@@ -606,10 +606,12 @@ end;
 
 procedure TfrmSelectCheckGoods.LoadTree;
 var
+  IsRoot: Boolean;
   rs:TZQuery;
   w,i:integer;
   AObj,CurObj:TRecord_;
 begin
+  IsRoot:=False;
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   rs.SortedFields := 'RELATION_ID';
@@ -626,6 +628,7 @@ begin
         // 2011.03.12 Add 可选择[供应链节点]的作为查询条件
         CurObj.FieldByName('LEVEL_ID').AsString:='';
         CurObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
+        IsRoot:=true;
       end else
       begin
         AObj := TRecord_.Create;
@@ -639,7 +642,7 @@ begin
     end;
     rs.Next;
   end;
-  if CurObj<>nil then
+  if (IsRoot) and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
     rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
 
   for i:=rzTree.Items.Count-1 downto 0 do

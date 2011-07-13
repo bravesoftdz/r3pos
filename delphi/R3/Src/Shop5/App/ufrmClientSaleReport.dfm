@@ -6,26 +6,26 @@ inherited frmClientSaleReport: TfrmClientSaleReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1085
+    Width = 1093
     inherited RzPanel2: TRzPanel
-      Width = 1075
+      Width = 1083
       inherited RzPage: TRzPageControl
-        Width = 870
-        ActivePage = TabSheet2
+        Width = 878
+        ActivePage = TabSheet5
         Color = clWhite
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
           Caption = #22320#21306#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 868
+            Width = 876
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 858
+              Width = 866
               inherited w1: TRzPanel
-                Width = 858
+                Width = 866
                 Height = 122
                 object RzLabel1: TRzLabel
                   Left = 24
@@ -406,11 +406,11 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 122
-                Width = 858
-                Height = 311
+                Width = 866
+                Height = 321
                 inherited DBGridEh1: TDBGridEh
-                  Width = 854
-                  Height = 307
+                  Width = 862
+                  Height = 317
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
@@ -516,8 +516,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 868
-            Height = 443
+            Width = 876
+            Height = 453
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -525,7 +525,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             object RzPanel9: TRzPanel
               Left = 5
               Top = 5
-              Width = 858
+              Width = 866
               Height = 117
               Align = alTop
               Alignment = taRightJustify
@@ -917,8 +917,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             object RzPanel10: TRzPanel
               Left = 5
               Top = 122
-              Width = 858
-              Height = 316
+              Width = 866
+              Height = 326
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -926,8 +926,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               object DBGridEh2: TDBGridEh
                 Left = 2
                 Top = 2
-                Width = 854
-                Height = 312
+                Width = 862
+                Height = 322
                 Align = alClient
                 AllowedOperations = []
                 BorderStyle = bsNone
@@ -1607,8 +1607,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 868
-            Height = 443
+            Width = 876
+            Height = 453
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1616,8 +1616,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 858
-              Height = 433
+              Width = 866
+              Height = 443
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1625,7 +1625,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 858
+                Width = 866
                 Height = 122
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2003,8 +2003,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 122
-                Width = 858
-                Height = 311
+                Width = 866
+                Height = 321
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2012,8 +2012,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 854
-                  Height = 307
+                  Width = 862
+                  Height = 317
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2200,8 +2200,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 868
-            Height = 443
+            Width = 876
+            Height = 453
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -2209,8 +2209,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 858
-              Height = 433
+              Width = 866
+              Height = 443
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2218,7 +2218,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 858
+                Width = 866
                 Height = 127
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2627,8 +2627,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 127
-                Width = 858
-                Height = 306
+                Width = 866
+                Height = 316
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2636,8 +2636,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 854
-                  Height = 302
+                  Width = 862
+                  Height = 312
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2888,20 +2888,20 @@ inherited frmClientSaleReport: TfrmClientSaleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 873
+        Left = 881
       end
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1085
+    Width = 1093
     inherited Image1: TImage
-      Width = 711
+      Width = 723
     end
     inherited Image3: TImage
-      Width = 711
+      Width = 723
     end
     inherited Image14: TImage
-      Left = 1065
+      Left = 1073
     end
   end
   inherited mmMenu: TMainMenu

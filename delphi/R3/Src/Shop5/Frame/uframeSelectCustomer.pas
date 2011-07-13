@@ -168,7 +168,7 @@ begin
   if w<>'' then w := w + ' and ';
   case  edtFIND_FLAG.ItemIndex of
   0:w := w + '(CLIENT_NAME '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or IC_CARDNO '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or TELEPHONE2 '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or ADDRESS '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
-  1:w := w + '(IC_CARDNO '+Str_Sign+' ''%'+Str_Sign+trim(edtSearch.Text)+Str_Sign+'%'')';
+  1:w := w + '(IC_CARDNO '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
   2:w := w + '(CLIENT_NAME '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
   3:w := w + '(TELEPHONE2 '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
   4:w := w + '(LICENSE_CODE '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';

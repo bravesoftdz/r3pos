@@ -53,7 +53,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
               Width = 818
               Height = 321
               Align = alClient
-              AllowedOperations = []
+              AllowedOperations = [alopUpdateEh]
               Color = clWhite
               DataSource = dsList
               Flat = True
@@ -64,7 +64,7 @@ inherited frameOrderToolForm: TframeOrderToolForm
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+              Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               ReadOnly = True
               RowHeight = 20

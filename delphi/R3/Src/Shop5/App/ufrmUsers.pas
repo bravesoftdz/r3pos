@@ -111,18 +111,16 @@ begin
     str := str + ' and a.DEPT_ID = '+QuotedStr(fndDEPT_ID.AsString);
   if fndDEGREES.Text <> '' then
     str := str + ' and a.DEGREES = '+QuotedStr(TRecord_(fndDEGREES.Properties.Items.Objects[fndDEGREES.ItemIndex]).FieldbyName('CODE_ID').AsString);
-  if fndSEX.ItemIndex <> -1 then
-    if fndSEX.ItemIndex <> 3 then
-      str := str + ' and a.SEX = '+QuotedStr(IntToStr(fndSEX.ItemIndex));
-  if fndState.ItemIndex <> -1 then
-    if fndState.ItemIndex <> 3 then
-      begin
-        case fndState.ItemIndex of
-          0:str := str + ' and a.STATUS = 0 ';
-          1:str := str + ' and a.STATUS = 1 ';
-          2:str := str + ' and a.STATUS = 2 ';
-        end;
+  if (fndSEX.ItemIndex <> -1) and (fndSEX.ItemIndex <> 3) then
+    str := str + ' and a.SEX = '+QuotedStr(IntToStr(fndSEX.ItemIndex));
+  if (fndState.ItemIndex <> -1) and (fndState.ItemIndex <> 3) then
+    begin
+      case fndState.ItemIndex of
+        0:str := str + ' and a.STATUS = 0 ';
+        1:str := str + ' and a.STATUS = 1 ';
+        2:str := str + ' and a.STATUS = 2 ';
       end;
+    end;
 
   if edtKey.Text<>'' then
      str:= str + ' and ( a.USER_NAME LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+

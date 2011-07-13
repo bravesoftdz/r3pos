@@ -1,29 +1,31 @@
 inherited frmSaleManSaleReport: TfrmSaleManSaleReport
-  Left = 265
-  Top = 119
+  Left = 194
+  Top = 107
   Width = 1101
   Caption = #20154#21592#38144#21806#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1085
+    Width = 1093
     inherited RzPanel2: TRzPanel
-      Width = 1075
+      Width = 1083
       inherited RzPage: TRzPageControl
-        Width = 870
+        Width = 878
+        ActivePage = TabSheet4
         Color = clWhite
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
           Caption = #37096#38376#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 868
+            Width = 876
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 858
+              Width = 866
               inherited w1: TRzPanel
-                Width = 858
+                Width = 866
                 Height = 122
                 object RzLabel1: TRzLabel
                   Left = 24
@@ -452,11 +454,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 122
-                Width = 858
-                Height = 319
+                Width = 866
+                Height = 321
                 inherited DBGridEh1: TDBGridEh
-                  Width = 854
-                  Height = 315
+                  Width = 862
+                  Height = 317
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
@@ -1725,8 +1727,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 868
-            Height = 451
+            Width = 876
+            Height = 453
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1734,8 +1736,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 858
-              Height = 441
+              Width = 866
+              Height = 443
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1743,13 +1745,16 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 858
+                Width = 866
                 Height = 122
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 Color = clWhite
                 TabOrder = 0
+                DesignSize = (
+                  866
+                  122)
                 object RzLabel8: TRzLabel
                   Left = 24
                   Top = 14
@@ -1814,6 +1819,14 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #23548#36141#21592
+                end
+                object Label6: TLabel
+                  Left = 726
+                  Top = 99
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #32479#35745#31867#22411
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
@@ -2116,21 +2129,36 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                object fndP4_RPTTYPE: TcxComboBox
+                  Left = 777
+                  Top = 95
+                  Width = 81
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #38376#24215#36827#38144#23384#32479#35745#34920
+                    #21830#21697#36827#38144#23384#32479#35745#34920
+                    #32676#32452#36827#38144#23384#32479#35745#34920
+                    #20379#24212#21830#36827#38144#23384#32479#35745#34920)
+                  TabOrder = 12
+                end
               end
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 122
-                Width = 858
-                Height = 319
+                Width = 866
+                Height = 321
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh4: TDBGridEh
+                  Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 854
-                  Height = 315
+                  Width = 862
+                  Height = 317
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2172,7 +2200,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh4DblClick
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
@@ -2186,18 +2214,18 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'BARCODE'
-                      Footers = <>
-                      Title.Caption = #26465#30721
-                      Width = 95
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 95
                     end
                     item
                       EditButtons = <>
@@ -2218,6 +2246,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2229,6 +2258,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_PRC'
+                      Footer.Alignment = taRightJustify
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 65
@@ -2238,6 +2268,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2249,6 +2280,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2260,6 +2292,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2271,6 +2304,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2282,6 +2316,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_ALLPRF'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2293,6 +2328,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
+                      Footer.Alignment = taRightJustify
                       Footers = <>
                       Title.Caption = #27611#21033#29575
                       Width = 49
@@ -2302,6 +2338,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
+                      Footer.Alignment = taRightJustify
                       Footers = <>
                       Title.Caption = #21333#20301#27611#21033
                       Width = 67
@@ -3004,20 +3041,20 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 873
+        Left = 881
       end
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1085
+    Width = 1093
     inherited Image1: TImage
-      Width = 711
+      Width = 723
     end
     inherited Image3: TImage
-      Width = 711
+      Width = 723
     end
     inherited Image14: TImage
-      Left = 1065
+      Left = 1073
     end
   end
   inherited mmMenu: TMainMenu

@@ -9,19 +9,19 @@ inherited frmCheckOrderList: TfrmCheckOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 883
-    Height = 508
+    Height = 507
     inherited RzPanel2: TRzPanel
       Width = 873
-      Height = 498
+      Height = 497
       inherited RzPage: TRzPageControl
         Width = 867
-        Height = 492
+        Height = 491
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #30424#28857#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 865
-            Height = 465
+            Height = 464
             inherited RzPanel1: TRzPanel
               Width = 855
               Height = 91
@@ -235,7 +235,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 96
               Width = 855
-              Height = 364
+              Height = 363
               OnDblClick = actInfoExecute
               Columns = <
                 item

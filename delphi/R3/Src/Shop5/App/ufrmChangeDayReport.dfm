@@ -1443,6 +1443,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh4: TDBGridEh
+                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 661

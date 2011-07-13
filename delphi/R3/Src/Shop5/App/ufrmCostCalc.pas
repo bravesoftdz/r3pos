@@ -2149,7 +2149,7 @@ end;
 function TfrmCostCalc.CheckReckMonthDay: Boolean;
 var
   rs:TZQuery;
-  vbDate,e: TDate;
+  vbDate,e,NextDay: TDate;
   vReck_flag,vReck_day: integer;  //结帐类型、指定月结日
 begin
   result:=False;
@@ -2182,6 +2182,7 @@ begin
         eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
       else
         eDate :=e;
+      NextDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+'01')-1; //本月最后一天为结账日  
     end else   //指定日结帐
     begin
       e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',vReck_day)); //本月的指定日为结帐日
@@ -2189,9 +2190,10 @@ begin
         eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',vReck_day))
       else
         eDate := e;
+      NextDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day)); //本月的指定日为结帐日  
     end;
 
-    if (eDate>vbDate) and (Date()>eDate+5) then
+    if (eDate>vbDate) and (Date()>NextDay+5) then
     begin
       result:=true;
     end;

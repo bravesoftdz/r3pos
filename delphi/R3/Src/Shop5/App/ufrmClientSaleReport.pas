@@ -150,6 +150,8 @@ type
     fndP5_CLIENT_ID: TzrComboBoxList;
     RzPanel18: TRzPanel;
     DBGridEh5: TDBGridEh;
+    Label6: TLabel;
+    fndP4_RPTTYPE: TcxComboBox;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -189,6 +191,8 @@ type
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
     procedure FormCreate(Sender: TObject);
+    procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     //数据集；
     vBegDate,            //查询开始日期
@@ -216,12 +220,14 @@ type
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
     procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override;
     function etShopSQL(chk: boolean): string;
+    function GetGodsSortIdx: string;
 
   public
     { Public declarations }
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
+    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型    
   end;
 
 const
@@ -307,6 +313,11 @@ begin
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+        dsadoReport4.DataSet:=nil;
+        DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME',
+                          ['SALE_AMT','SALE_PRC','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF'],
+                          ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY*100','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
+        dsadoReport4.DataSet:=adoReport4;
       end;
     4: begin //按商品流水帐
         if adoReport5.Active then adoReport5.Close;
@@ -507,9 +518,24 @@ procedure TfrmClientSaleReport.DBGridEh4GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
+var
+  ColName: string;
 begin
-  inherited;
   if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+  if AllRecord.Count<=0 then Exit;
+  ColName:=trim(UpperCase(Column.FieldName));
+  if ColName = 'GODS_NAME' then
+    Text := '合计:'+AllRecord.fieldbyName('GODS_NAME').AsString+'笔'
+  else
+  begin
+    if AllRecord.FindField(ColName)<>nil then
+    begin
+      if Copy(ColName,1,5)='SALE_' then
+      begin
+        Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
+      end;
+    end;
+  end;
 end;
 
 procedure TfrmClientSaleReport.fndP5_SORT_IDKeyPress(Sender: TObject;
@@ -786,7 +812,7 @@ end;
 
 function TfrmClientSaleReport.GetGodsSQL(chk: boolean): string;
 var
-  UnitCalc: string;  //单位计算关系
+  UnitCalc,SORT_ID: string;  //单位计算关系
   strSql,strCnd,ShopCnd,strWhere,GoodTab,SQLData: string;
 begin
   strCnd:='';
@@ -890,10 +916,17 @@ begin
       ')';
   end;
 
+  //分组字段
+  case StrToInt(GodsSortIdx) of
+   0: SORT_ID:='C.RELATION_ID';
+   else
+      SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
+  end;
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
+    ','+SORT_ID+' as SORT_ID '+      
     ',A.GODS_ID '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+    //销售数量
     ',case when sum(SALE_AMT)<>0 then cast(isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+')as decimal(18,3)) else 0 end as SALE_PRC '+
@@ -911,19 +944,36 @@ begin
     ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
     ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
     '  '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID';
+    'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
 
   strSql :=
     'select j.* '+
     ',r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
     'from ('+strSql+') j left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
-  strSql :=
-    'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
-    ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-    ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-    ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' order by j.GODS_CODE';
+  case StrtoInt(GodsSortIdx) of
+   0: //供应链
+    begin
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE';
+    end;
+   else
+    begin
+      strSql :=
+        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+        ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+        ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+        ' left outer join '+
+        '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+        ' on j.SORT_ID=s.SORT_ID '+
+        ' order by s.OrderNo,j.GODS_CODE';
+    end;
+  end;
     
   result:=ParseSQL(Factor.iDbType,strSql);
 end;
@@ -1473,6 +1523,23 @@ begin
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
     ' on j.REGION_ID=r.CODE_ID order by j.REGION_ID '
     );
+end;
+
+procedure TfrmClientSaleReport.DBGridEh4DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  inherited;
+  GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+function TfrmClientSaleReport.GetGodsSortIdx: string;
+var
+  AObj: TRecord_;
+begin
+  AObj:=TRecord_(fndP4_RPTTYPE.Properties.Items.Objects[fndP4_RPTTYPE.ItemIndex]);
+  result:=AObj.fieldbyName('SORT_ID').AsString;
+  if result='' then result:='0';   
 end;
 
 end.

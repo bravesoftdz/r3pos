@@ -98,6 +98,8 @@ type
     fndP1_ReckType: TcxComboBox;
     Label4: TLabel;
     fndP4_STOR_AMT: TcxComboBox;
+    Label38: TLabel;
+    fndP4_RPTTYPE: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -127,6 +129,8 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     IsOnDblClick: Boolean;
     BAL_Date: integer;  //查询库存日期[查询库存日期，查询当前天的下一天期初]
@@ -146,10 +150,13 @@ type
     //4、按商品销售汇总表
     function GetGodsSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string;override; //添加Title
-    procedure DoReckTypeOnChange(Sender: TObject); //
+    procedure DoReckTypeOnChange(Sender: TObject);
+    function GetGodsSortIdx: string; //
   public
     procedure PrintBefore;override;
     function GetRowType:integer;override;
+    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型
+    
   end;
 
 const
@@ -364,6 +371,11 @@ begin
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+        dsadoReport4.DataSet:=nil;
+        DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME',
+                          ['BAL_AMT','BAL_PRC','BAL_CST','BAL_OUTPRC','BAL_RTL'],
+                          ['BAL_PRC=BAL_CST/BAL_AMT','BAL_OUTPRC=BAL_RTL/BAL_AMT']);
+        dsadoReport4.DataSet:=adoReport4;
       end;
   end;
 end;
@@ -611,7 +623,7 @@ end;
 
 function TfrmStorageDayReport.GetGodsSQL(chk:boolean=true): string;
 var
-  UnitCalc: string;
+  UnitCalc,SORT_ID: string;
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
@@ -669,13 +681,20 @@ begin
   end else
     GoodTab:='VIW_GOODSPRICE';
 
+  //分组字段
+  case StrToInt(GodsSortIdx) of
+   0: SORT_ID:='C.RELATION_ID';
+   else
+      SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
+  end;
+
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C');
   //日期条件
   if fndP4_ReckType.ItemIndex=0 then //直接查询库存表:
   begin
     strSql :=
       'select '+
-      ' TENANT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID  '+
+      ' TENANT_ID,SORT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID  '+
       ',sum(BAL_AMT) as BAL_AMT'+
       ',sum(BAL_CST) as BAL_CST'+
       ',sum(BAL_RTL) as BAL_RTL'+
@@ -683,27 +702,43 @@ begin
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ' from '+
        '(SELECT '+
-       ' A.TENANT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
+       ' A.TENANT_ID,'+SORT_ID+' as SORT_ID,A.GODS_ID,c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,'+
        ' ''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID '+
        ',AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+     //库存数量
        ',AMONEY as BAL_CST '+     //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
-      ' group by TENANT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID ';
+      ' group by TENANT_ID,SORT_ID,GODS_ID,CALC_BARCODE,GODS_CODE,GODS_NAME,PROPERTY_01,BATCH_NO,PROPERTY_02,UNIT_ID ';
 
-    strSql :=
-        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
-        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-        'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-        'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-        ' order by j.GODS_CODE';
-
+    case StrtoInt(GodsSortIdx) of
+     0:
+      begin
+        strSql :=
+          'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+          'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+          'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+          'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+          ' order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE';
+      end;
+     else
+      begin
+        strSql :=
+          'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+          'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+          'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+          'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+          ' left outer join '+
+          '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+          ' on  j.SORT_ID=s.SORT_ID '+
+          ' order by s.OrderNo,j.GODS_CODE';
+      end;
+    end;
     result:=ParseSQL(Factor.iDbType, strSql);
   end else
-  if fndP4_ReckType.ItemIndex=1 then //直接查询库存表:  
+  if fndP4_ReckType.ItemIndex=1 then //直接查询库存表:
   begin
-    if P4_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');      
+    if P4_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');
     BAL_Date:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));
     //检测是否计算
     CheckCalc(BAL_Date);
@@ -711,6 +746,7 @@ begin
     strSql :=
       'SELECT '+
       ' A.TENANT_ID '+
+      ','+SORT_ID+' as SORT_ID '+
       ',A.GODS_ID '+
       ',c.BARCODE as CALC_BARCODE,c.GODS_CODE,c.GODS_NAME,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' as UNIT_ID  '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
@@ -719,18 +755,36 @@ begin
       ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as BAL_OUTPRC '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID  and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-      'group by A.TENANT_ID,A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
+      'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID,c.BARCODE,c.GODS_CODE,c.GODS_NAME,'+GetUnitID(fndP4_UNIT_ID.ItemIndex,'C')+' ';
 
-    strSql :=
-      'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from '+
-      ' ('+strSql+') j '+
-      ' left outer join '+
-      ' (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-      '   on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
-      ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-      '  order by j.GODS_CODE ';
-     
-     result:=ParseSQL(Factor.iDbType, strSql);
+    case StrtoInt(GodsSortIdx) of
+     0:
+      begin
+        strSql :=
+          'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from '+
+          ' ('+strSql+') j '+
+          ' left outer join '+
+          ' (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+          '   on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+          ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+          '  order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE ';
+      end;
+     else
+      begin
+        strSql :=
+          'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from '+
+          ' ('+strSql+') j '+
+          ' left outer join '+
+          ' (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+          '   on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+          ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+          ' left outer join '+
+          '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+          ' on  j.SORT_ID=s.SORT_ID '+
+          ' order by s.OrderNo,j.GODS_CODE';
+      end;
+    end;
+    result:=ParseSQL(Factor.iDbType, strSql);
   end;
 end;
 
@@ -1032,12 +1086,43 @@ begin
 end;
 
 procedure TfrmStorageDayReport.DBGridEh4GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  ColName: string;
+begin
+  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+  if AllRecord.Count<=0 then Exit;
+  ColName:=trim(UpperCase(Column.FieldName));
+  if ColName = 'GODS_NAME' then
+    Text := '合计:'+AllRecord.fieldbyName('GODS_NAME').AsString+'笔'
+  else
+  begin
+    if AllRecord.FindField(ColName)<>nil then
+    begin
+      if Copy(ColName,1,4)='BAL_' then
+      begin
+        Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
+      end;
+    end;
+  end;
+end;
+
+function TfrmStorageDayReport.GetGodsSortIdx: string;
+var
+  AObj: TRecord_;
+begin
+  AObj:=TRecord_(fndP4_RPTTYPE.Properties.Items.Objects[fndP4_RPTTYPE.ItemIndex]);
+  result:=AObj.fieldbyName('SORT_ID').AsString;
+  if result='' then result:='0';   
+end;
+
+procedure TfrmStorageDayReport.DBGridEh4DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
 begin
   inherited;
-  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
+  GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
 end;
 
 end.

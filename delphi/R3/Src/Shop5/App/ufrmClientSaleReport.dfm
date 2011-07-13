@@ -1,6 +1,6 @@
 inherited frmClientSaleReport: TfrmClientSaleReport
-  Left = 503
-  Top = 170
+  Left = 196
+  Top = 106
   Width = 1101
   Caption = #23458#25143#38144#21806#25253#34920
   PixelsPerInch = 96
@@ -11,10 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
-        ActivePage = TabSheet5
+        ActivePage = TabSheet4
         Color = clWhite
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -1632,6 +1632,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 Color = clWhite
                 TabOrder = 0
+                DesignSize = (
+                  866
+                  122)
                 object RzLabel8: TRzLabel
                   Left = 24
                   Top = 14
@@ -1695,6 +1698,14 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#21517#31216
+                end
+                object Label6: TLabel
+                  Left = 726
+                  Top = 102
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #32479#35745#31867#22411
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
@@ -1999,6 +2010,20 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                object fndP4_RPTTYPE: TcxComboBox
+                  Left = 777
+                  Top = 98
+                  Width = 81
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #38376#24215#36827#38144#23384#32479#35745#34920
+                    #21830#21697#36827#38144#23384#32479#35745#34920
+                    #32676#32452#36827#38144#23384#32479#35745#34920
+                    #20379#24212#21830#36827#38144#23384#32479#35745#34920)
+                  TabOrder = 12
+                end
               end
               object RzPanel21: TRzPanel
                 Left = 0
@@ -2010,6 +2035,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh4: TDBGridEh
+                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 862
@@ -2055,7 +2081,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDblClick = DBGridEh4DblClick
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
@@ -2069,18 +2095,18 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'BARCODE'
-                      Footers = <>
-                      Title.Caption = #26465#30721
-                      Width = 95
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 153
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 95
                     end
                     item
                       EditButtons = <>
@@ -2101,6 +2127,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2112,6 +2139,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'SALE_PRC'
+                      Footer.Alignment = taRightJustify
                       Footers = <>
                       Title.Caption = #22343#20215
                       Width = 65
@@ -2121,6 +2149,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2132,6 +2161,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2143,6 +2173,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2154,6 +2185,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2165,6 +2197,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_ALLPRF'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -2176,6 +2209,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'SALE_RATE'
+                      Footer.Alignment = taRightJustify
                       Footers = <>
                       Title.Caption = #27611#21033#29575
                       Width = 49
@@ -2185,6 +2219,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_PRF'
+                      Footer.Alignment = taRightJustify
                       Footers = <>
                       Title.Caption = #21333#20301#27611#21033
                       Width = 67

@@ -78,6 +78,7 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     FSumRecord: TRecord_;  //汇总记录值
+    FAllRecord: TRecord_;  //汇总记录值
     procedure Dofnd_CUST_TYPEChange(Sender: TObject);   //客户群体OnChange
     procedure Dofnd_SHOP_TYPEChange(Sender: TObject);   //门店管理群组OnChange
     procedure Dofnd_TYPE_IDChange(Sender: TObject);     //商品统计指标OnChange
@@ -152,6 +153,7 @@ type
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
     property  SumRecord: TRecord_ read FSumRecord;  //汇总记录值
+    property  AllRecord: TRecord_ read FAllRecord;  //汇总记录值
   end;
 
 implementation
@@ -403,6 +405,7 @@ begin
   inherited;
   //汇总记录值
   FSumRecord:=TRecord_.Create;
+  FAllRecord:=TRecord_.Create;  //汇总记录值
 
   //初始化参数:
   for i:=0 to self.ComponentCount -1 do
@@ -1469,8 +1472,8 @@ begin
     SortList:=TStringList.Create;
     SortObj:=TRecord_.Create;
     tmpObj:=TRecord_.Create;
-    FSumRecord.Clear;
-    FSumRecord.ReadField(DataSet);
+    FAllRecord.Clear;
+    FAllRecord.ReadField(DataSet);
     SetSortList(SortList); //读取分类个数
     DataSet.EmptyDataSet;  //清空数据
     DataSet.IndexFieldNames:='vNO';
@@ -1485,7 +1488,7 @@ begin
         if SID=trim(Rs.fieldbyname(SORT_ID).AsString) then
         begin
           tmpObj.ReadFromDataSet(Rs);
-          CalcSum(FSumRecord,SortObj,tmpObj); //计算汇总数据
+          CalcSum(FAllRecord,SortObj,tmpObj); //计算汇总数据
           DataSet.Append;
           tmpObj.WriteToDataSet(DataSet);  //写入数据集
           DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
@@ -1518,10 +1521,10 @@ begin
     end;      
 
     //返回记录数
-    FSumRecord.FieldByName(SORT_NAME).AsString:=InttoStr(Rs.RecordCount);
+    FAllRecord.FieldByName(SORT_NAME).AsString:=InttoStr(Rs.RecordCount);
     //插入总合计
     if not DataSet.IsEmpty then
-      CalcValue(FSumRecord); //计算汇总数据
+      CalcValue(FAllRecord); //计算汇总数据
   finally
     Rs.Free;
     SortList.Free;

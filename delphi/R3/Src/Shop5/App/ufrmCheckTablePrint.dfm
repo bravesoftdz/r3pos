@@ -8,13 +8,13 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 1070
-    Height = 562
+    Height = 561
     inherited RzPanel2: TRzPanel
       Width = 1060
-      Height = 552
+      Height = 551
       inherited RzPage: TRzPageControl
         Width = 855
-        Height = 546
+        Height = 545
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -23,12 +23,12 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
           Caption = #30424#28857#23545#29031#34920
           inherited RzPanel3: TRzPanel
             Width = 853
-            Height = 519
+            Height = 518
             BorderColor = clBtnFace
             Caption = '`'
             inherited Panel4: TPanel
               Width = 843
-              Height = 509
+              Height = 508
               inherited w1: TRzPanel
                 Width = 843
                 Height = 76
@@ -270,10 +270,10 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
               inherited RzPanel7: TRzPanel
                 Top = 76
                 Width = 843
-                Height = 433
+                Height = 432
                 inherited DBGridEh1: TDBGridEh
                   Width = 839
-                  Height = 429
+                  Height = 428
                   FrozenCols = 3
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
@@ -285,6 +285,13 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Footers = <>
                       Title.Caption = #24207#21495
                       Width = 30
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 62
                     end
                     item
                       EditButtons = <>
@@ -307,13 +314,6 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Footers = <>
                       Title.Caption = #25209#21495
                       Width = 66
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'GODS_CODE'
-                      Footers = <>
-                      Title.Caption = #36135#21495
-                      Width = 62
                     end
                     item
                       EditButtons = <>
@@ -407,7 +407,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
       end
       inherited PanelColumnS: TPanel
         Left = 858
-        Height = 546
+        Height = 545
         inherited Panel2: TPanel
           Height = 502
           inherited Image5: TImage

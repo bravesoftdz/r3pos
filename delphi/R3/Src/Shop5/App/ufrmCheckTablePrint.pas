@@ -217,7 +217,8 @@ begin
     'select M.*,isnull(Bar.BARCODE,M.DEF_BARCODE) as BARCODE from ('+strSql+') M '+
     ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) Bar '+
     ' on M.TENANT_ID=Bar.TENANT_ID and Bar.TENANT_ID='+inttostr(Global.TENANT_ID)+' and M.GODS_ID=Bar.GODS_ID and M.UNIT_ID=Bar.UNIT_ID and '+
-    ' M.BATCH_NO=Bar.BATCH_NO and M.PROPERTY_01=Bar.PROPERTY_01 and M.PROPERTY_02=Bar.PROPERTY_02  ';
+    ' M.BATCH_NO=Bar.BATCH_NO and M.PROPERTY_01=Bar.PROPERTY_01 and M.PROPERTY_02=Bar.PROPERTY_02  '+
+    ' order by M.GODS_CODE ';
 
   result:=ParseSQL(Factor.iDbType, strSql);
 end;

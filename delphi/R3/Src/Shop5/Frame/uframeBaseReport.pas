@@ -1417,11 +1417,10 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
      SortObj.FieldByName(FieldName).AsFloat:=SortObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
    end;
  end;
-
- function GetSortName(SORT_ID: string): string;
+ function GetSortName(SORT_ID: string): string; //返回小计名称:
  var SortRs: TZQuery;
  begin
-   result:='';
+   result:='无';
    case strtoInt(SORT_IDX) of
    0:
     begin

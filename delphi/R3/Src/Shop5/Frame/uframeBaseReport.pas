@@ -1366,27 +1366,26 @@ end;
 
 procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String);
  //取SortList:
- procedure SetSortList(SortList: TStringList);
+ procedure SetSortList(InDataSet: TZQuery; SortList: TStringList);
  var SortID: string;
  begin
    try
      SortList.Clear;
-     DataSet.First;
-     while not DataSet.Eof do
+     InDataSet.First;
+     while not InDataSet.Eof do
      begin
-       SortID:=trim(DataSet.fieldbyname(SORT_ID).AsString);
+       SortID:=trim(InDataSet.fieldbyname(SORT_ID).AsString);
        if SortList.IndexOf(SortID)=-1 then
          SortList.Add(SortID);
-       DataSet.Next;
+       InDataSet.Next;
      end;
    finally
-     DataSet.First;
+     InDataSet.First;
    end;
  end;
  procedure CalcValue(AObj: TRecord_); //计算汇总数据
  var i,Idx: integer; CalcField1,CalcField2,CalcValue: string; CalcCount: real;
  begin
-   CalcCount:=1.0;
    for i:=Low(CalcFields) to High(CalcFields) do
    begin
      CalcField2:=trim(CalcFields[i]);
@@ -1401,7 +1400,8 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
      begin
        CalcCount:=StrtoFloatDef(Copy(CalcField2,Idx+1,length(CalcField2)-Idx),1.0);
        CalcField2:=Copy(CalcField2,1,Idx-1);
-     end;
+     end else
+       CalcCount:=1.0;
 
      if (AObj.FindField(CalcValue)<>nil) and (AObj.FindField(CalcField1)<>nil) and (AObj.FindField(CalcField2)<>nil) then
      begin
@@ -1461,7 +1461,7 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
  end;
 var
   i: integer;
-  SID: string;
+  SID,str: string;
   Rs: TZQuery;
   SortList: TStringList;
   SortObj, tmpObj: TRecord_;
@@ -1474,7 +1474,7 @@ begin
     tmpObj:=TRecord_.Create;
     FAllRecord.Clear;
     FAllRecord.ReadField(DataSet);
-    SetSortList(SortList); //读取分类个数
+    SetSortList(Rs,SortList); //读取分类个数
     DataSet.EmptyDataSet;  //清空数据
     DataSet.IndexFieldNames:='vNO';
     DataSet.SortedFields:='vNO';

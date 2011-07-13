@@ -152,6 +152,7 @@ begin
            TDBGridEh(Components[i]).ImeName := '';
            TDBGridEh(Components[i]).OptionsEh := TDBGridEh(Components[i]).OptionsEh + [dghDialogFind];
            TDBGridEh(Components[i]).Options := TDBGridEh(Components[i]).Options - [dgRowSelect];
+           TDBGridEh(Components[i]).Options := TDBGridEh(Components[i]).Options + [dgEditing];
            if TDBGridEh(Components[i]).AllowedOperations = [alopInsertEh, alopUpdateEh, alopDeleteEh, alopAppendEh] then
               TDBGridEh(Components[i]).AllowedOperations := [alopUpdateEh, alopAppendEh];
            //if FormBgk then TDBGridEh(Components[i]).FixedColor := GridHeaderColor;
@@ -284,7 +285,7 @@ begin
   BeforeFreeForm;
   if Assigned(OnFreeForm) then OnFreeForm(self);
   try
-  SaveFormat;
+  //SaveFormat;
   for i:=0 to ComponentCount -1 do
     begin
       try
@@ -350,8 +351,8 @@ begin
       if Components[i] is TDataSet then
          TDataSet(Components[i]).Close;
       except
-        on E:Exception do
-          LogFile.AddLogFile(0,E.Message);
+        //on E:Exception do
+        //  LogFile.AddLogFile(0,E.Message);
       end;
     end;
 //  if sysLogFile and Assigned(Factor) and Factor.Connected then
@@ -359,8 +360,8 @@ begin
   TDbGridEhExport.FreeForm(self);
   TDbGridEhMark.FreeForm(self);
   except
-    on E:Exception do
-       LogFile.AddLogFile(0,E.Message);
+    //on E:Exception do
+    //   LogFile.AddLogFile(0,E.Message);
   end;
   inherited;
 end;
@@ -623,7 +624,10 @@ begin
       end;
     end;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

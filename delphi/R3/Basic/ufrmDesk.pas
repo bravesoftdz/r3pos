@@ -112,11 +112,11 @@ begin
   Result := 0;
   if Code>=0 then
      begin
-       if frmDesk.Waited then
-          begin
-            result := 1;
-            exit;
-          end;
+//       if frmDesk.Waited then
+//          begin
+//            result := 1;
+//            exit;
+//          end;
        Result := CallNextHookEx(whKeyboard, Code, Msg, KeyboardHook);
        if Assigned(frmDesk) then frmDesk.KeyboardHook(Code, Msg, KeyboardHook);
      end;

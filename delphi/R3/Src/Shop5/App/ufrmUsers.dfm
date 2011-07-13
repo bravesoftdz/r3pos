@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 160
-  Top = 125
+  Left = 289
+  Top = 112
   Width = 948
   Height = 580
   Caption = #29992#25143#26723#26696#31649#29702
@@ -401,13 +401,14 @@ inherited frmUsers: TfrmUsers
                 object fndSEX: TRadioGroup
                   Left = 490
                   Top = 2
-                  Width = 189
+                  Width = 230
                   Height = 29
-                  Columns = 3
+                  Columns = 4
                   Items.Strings = (
                     #22899
                     #30007
-                    #20445#23494)
+                    #20445#23494
+                    #25152#26377)
                   TabOrder = 2
                 end
                 object fndDEPT_ID: TzrComboBoxList
@@ -457,7 +458,7 @@ inherited frmUsers: TfrmUsers
                   AutoFitColWidth = True
                   ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = [zbNew]
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
@@ -499,20 +500,21 @@ inherited frmUsers: TfrmUsers
                   AutoFitColWidth = True
                   ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = [zbNew]
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
                 object fndState: TRadioGroup
                   Left = 490
                   Top = 31
-                  Width = 189
+                  Width = 230
                   Height = 29
-                  Columns = 3
+                  Columns = 4
                   Items.Strings = (
                     #26410#20837#32844
                     #22312#32844
-                    #31163#32844)
+                    #31163#32844
+                    #25152#26377)
                   TabOrder = 6
                 end
                 object fndSHOP_ID: TzrComboBoxList
@@ -554,7 +556,7 @@ inherited frmUsers: TfrmUsers
                   AutoFitColWidth = True
                   ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = [zbNew]
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end

@@ -61,7 +61,7 @@ type
     function EncodeSQL(id:string):string;
     procedure SetMultiSelect(const Value: boolean);
     procedure SetCustType(const Value: integer);
-    function CheckCanExport:boolean;
+    function CheckCanExport:boolean;override;
   public
     { Public declarations }
     procedure Open(Id:string);
@@ -133,29 +133,47 @@ begin
 end;
 
 function TframeSelectCustomer.EncodeSQL(id: string): string;
-var w,Str_Sign:string;
+var w,Str_Sign,Str_Sign1:string;
 begin
   w := 'where COMM not in (''12'',''02'') and TENANT_ID='+inttostr(Global.TENANT_ID);
   case CustType of
   0:begin
     if (ShopGlobal.GetChkRight('33400001',1)) and (ShopGlobal.GetChkRight('33300001',1)) then
-      Str_Sign := 'like'
+      begin
+        Str_Sign := 'like';
+        Str_Sign1 := '%';
+      end
     else
+      begin
       Str_Sign := '=';
+      Str_Sign1 := '';
+      end;
   end;
   1:begin
     w := w + ' and FLAG in (0)';
     if ShopGlobal.GetChkRight('33300001',1) then
-      Str_Sign := 'like'
+      begin
+        Str_Sign := 'like';
+        Str_Sign1 := '%';
+      end
     else
-      Str_Sign := '=';
+      begin
+        Str_Sign := '=';
+        Str_Sign1 := '';
+      end;
   end;
   2:begin
     w := w + ' and FLAG in (2)';
     if ShopGlobal.GetChkRight('33400001',1) then
-      Str_Sign := 'like'
+      begin
+        Str_Sign := 'like';
+        Str_Sign1 := '%';
+      end
     else
-      Str_Sign := '=';
+      begin
+        Str_Sign := '=';
+        Str_Sign1 := '';
+      end;
   end;
   end;
   if id<>'' then
@@ -167,12 +185,14 @@ begin
 
   if w<>'' then w := w + ' and ';
   case  edtFIND_FLAG.ItemIndex of
-  0:w := w + '(CLIENT_NAME '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or IC_CARDNO '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or TELEPHONE2 '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or ADDRESS '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
-  1:w := w + '(IC_CARDNO '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
-  2:w := w + '(CLIENT_NAME '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
-  3:w := w + '(TELEPHONE2 '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
-  4:w := w + '(LICENSE_CODE '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
-  5:w := w + '(ADDRESS '+Str_Sign+' ''%'+trim(edtSearch.Text)+'%'')';
+  0:w := w + '(CLIENT_NAME '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''' or CLIENT_SPELL '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+
+  ''' or IC_CARDNO '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''' or LICENSE_CODE '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+
+  ''' or TELEPHONE2 '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''' or ADDRESS '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
+  1:w := w + '(IC_CARDNO '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
+  2:w := w + '(CLIENT_NAME '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''' or CLIENT_SPELL '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
+  3:w := w + '(TELEPHONE2 '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
+  4:w := w + '(LICENSE_CODE '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
+  5:w := w + '(ADDRESS '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
   end;
 
 

@@ -991,6 +991,7 @@ begin
         ' order by s.OrderNo,j.GODS_CODE';
     end;
   end;
+
     
   result:=ParseSQL(Factor.iDbType,strSql);
 end;

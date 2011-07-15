@@ -482,7 +482,7 @@ begin
     else InternalUpdate;
 
     {BUG-FIX: bangfauzan addition}
-    if (SortedFields<>'') then begin
+    if (SortedFields<>'') and not ControlsDisabled then begin
       FreeFieldBuffers;
       SetState(dsBrowse);
       Resync([]);

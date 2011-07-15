@@ -11,7 +11,6 @@ TZLogFilePool=class
     FThreadLock:TRTLCriticalSection;
     FDefaultPath: string;
     F:TextFile;
-    NoLog:boolean;
     Ffilename: string;
     procedure Enter;
     procedure Leave;
@@ -21,6 +20,7 @@ TZLogFilePool=class
     function OpenLogFile:boolean;
     procedure CloseLogFile;
   public
+    NoLog:boolean;
     procedure Clear;
     procedure AddLogFile(InfoType: Integer;Information:string;InfoSource:string='';Operation:string='';InfoID:Integer=-1;ComputerName:string='');
     function ReadLogFile:string;
@@ -35,12 +35,24 @@ uses Forms;
 { TZLogFilePool }
 
 procedure TZLogFilePool.AddLogFile(InfoType: Integer;Information:string;InfoSource:string;Operation:string;InfoID:Integer;ComputerName:string);
+var myFile:string;
 begin
+   if NoLog then Exit;
    Enter;
    try
      //if FindCmdLineSwitch('DEBUG',['-','+'],false) then //µ÷ÊÔÄ£Ê½
-     if not OpenLogFile then Exit;
-     Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
+     //if not OpenLogFile then Exit;
+     try
+       myFile := DefaultPath+'log\log'+formatDatetime('YYYYMMDD',date)+'.log';
+       AssignFile(F,myFile);
+       if FileExists(myFile) then Append(F) else rewrite(F);
+       try
+         Writeln(F,'<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
+       finally
+         CloseFile(F);
+       end;
+     except
+     end;
      if MainFormHandle>0 then
         begin
           Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
@@ -64,7 +76,7 @@ end;
 
 procedure TZLogFilePool.CloseLogFile;
 begin
-  if FileName<>'' then CloseFile(F);
+//  if FileName<>'' then CloseFile(F);
   FileName := '';
 end;
 
@@ -121,6 +133,7 @@ begin
     if FileExists(myFile) then Append(F) else rewrite(F);
     FileName := myFile;
     NoLog := false;
+    result := true;
   except
     NoLog := true;
     result := not NoLog;

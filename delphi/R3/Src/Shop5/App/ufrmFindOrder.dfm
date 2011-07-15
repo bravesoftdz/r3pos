@@ -11,18 +11,18 @@ inherited frmFindOrder: TfrmFindOrder
     inherited RzPage: TRzPageControl
       Top = 91
       Width = 482
-      Height = 251
+      Height = 240
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Caption = #26597#35810#21015#34920
         inherited RzPanel2: TRzPanel
           Width = 478
-          Height = 224
+          Height = 213
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 468
-            Height = 214
+            Height = 203
             Align = alClient
             AllowedOperations = []
             DataSource = dsList

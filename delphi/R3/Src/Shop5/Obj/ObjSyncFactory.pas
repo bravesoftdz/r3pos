@@ -702,12 +702,14 @@ begin
     (pos('unique',lowercase(s))>0)
     or
     (pos('primary',lowercase(s))>0)
-    or
+    or                                                      
     (pos('sql0803',lowercase(s))>0)
     or
     (pos('Ö÷½¡',s)>0)
     or
     (pos('¹Ø½¡×Ö',s)>0)
+    or
+    (pos('ÖØ¸´¼ü',s)>0)
     or
     (pos('Î¨Ò»Ô¼Êø',s)>0);
 end;

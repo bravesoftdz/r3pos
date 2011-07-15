@@ -236,8 +236,8 @@ uses
   ufrmFieldSort in 'App\ufrmFieldSort.pas' {frmFieldSort},
   ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
-  ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk},
-  ufrmShopMain in 'ufrmShopMain.pas' {frmShopMain};
+  ufrmShopMain in 'ufrmShopMain.pas' {frmShopMain},
+  ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk};
 
 {$R *.res}
 var
@@ -246,7 +246,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.1.4';
+  DBVersion := '1.0.1.5';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

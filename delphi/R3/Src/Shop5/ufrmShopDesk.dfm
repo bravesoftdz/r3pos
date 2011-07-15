@@ -20,220 +20,112 @@ inherited frmShopDesk: TfrmShopDesk
     Color = clWhite
     FlatColor = 14588523
     TabOrder = 0
-    object rsDesk: TRzPageControl
-      Left = 0
-      Top = 0
-      Width = 942
-      Height = 520
-      ActivePage = TabSheet2
-      Align = alClient
-      ShowCardFrame = False
-      TabIndex = 1
+    object dgdesk: TPanel
+      Left = 130
+      Top = 64
+      Width = 598
+      Height = 415
+      AutoSize = True
+      BevelOuter = bvNone
+      Color = clWhite
       TabOrder = 0
-      FixedDimension = 18
-      object TabSheet1: TRzTabSheet
-        Color = clWhite
-        Caption = '1'
-        object dgdesk: TPanel
-          Left = 130
-          Top = 64
-          Width = 598
-          Height = 415
-          AutoSize = True
-          BevelOuter = bvNone
-          Color = clWhite
-          TabOrder = 0
-          object Image1: TImage
-            Left = 2
-            Top = 0
-            Width = 595
-            Height = 415
-            AutoSize = True
-            Transparent = True
-          end
-          object RzBmpButton6: TRzBmpButton
-            Left = 0
-            Top = 96
-            Width = 94
-            Height = 91
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 0
-            OnClick = RzBmpButton6Click
-          end
-          object RzBmpButton7: TRzBmpButton
-            Left = 454
-            Top = 61
-            Width = 92
-            Height = 90
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 1
-            OnClick = RzBmpButton7Click
-          end
-          object RzBmpButton8: TRzBmpButton
-            Left = 210
-            Top = 148
-            Width = 140
-            Height = 141
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 2
-            OnClick = RzBmpButton8Click
-          end
-          object RzBmpButton1: TRzBmpButton
-            Left = 123
-            Top = 3
-            Width = 91
-            Height = 98
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 3
-            OnClick = RzBmpButton1Click
-          end
-          object RzBmpButton3: TRzBmpButton
-            Left = 341
-            Top = 315
-            Width = 90
-            Height = 86
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 4
-            OnClick = RzBmpButton3Click
-          end
-          object RzBmpButton2: TRzBmpButton
-            Left = 302
-            Top = 0
-            Width = 91
-            Height = 96
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 5
-            OnClick = RzBmpButton2Click
-          end
-          object RzBmpButton5: TRzBmpButton
-            Left = 142
-            Top = 327
-            Width = 90
-            Height = 88
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 6
-            OnClick = RzBmpButton5Click
-          end
-          object RzBmpButton4: TRzBmpButton
-            Left = 4
-            Top = 249
-            Width = 92
-            Height = 89
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 7
-            OnClick = RzBmpButton4Click
-          end
-          object RzBmpButton9: TRzBmpButton
-            Left = 509
-            Top = 197
-            Width = 89
-            Height = 91
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 8
-            OnClick = RzBmpButton9Click
-          end
-        end
+      object Image1: TImage
+        Left = 2
+        Top = 0
+        Width = 595
+        Height = 415
+        AutoSize = True
+        Transparent = True
       end
-      object TabSheet2: TRzTabSheet
-        Color = clWhite
-        Caption = '2'
-        object Panel1: TPanel
-          Left = 130
-          Top = 64
-          Width = 502
-          Height = 422
-          AutoSize = True
-          BevelOuter = bvNone
-          Color = clWhite
-          TabOrder = 0
-          object Image2: TImage
-            Left = 0
-            Top = 0
-            Width = 502
-            Height = 422
-            AutoSize = True
-            Transparent = True
-          end
-          object RzBmpButton10: TRzBmpButton
-            Left = 25
-            Top = 75
-            Width = 130
-            Height = 48
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 0
-            OnClick = RzBmpButton6Click
-          end
-          object RzBmpButton11: TRzBmpButton
-            Left = 352
-            Top = 76
-            Width = 130
-            Height = 48
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 1
-            OnClick = RzBmpButton7Click
-          end
-          object RzBmpButton12: TRzBmpButton
-            Left = 204
-            Top = 153
-            Width = 98
-            Height = 98
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 2
-            OnClick = RzBmpButton8Click
-          end
-          object RzBmpButton13: TRzBmpButton
-            Left = 190
-            Top = 14
-            Width = 130
-            Height = 48
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 3
-            OnClick = RzBmpButton1Click
-          end
-          object RzBmpButton16: TRzBmpButton
-            Left = 191
-            Top = 334
-            Width = 130
-            Height = 48
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 4
-            OnClick = RzBmpButton5Click
-          end
-          object RzBmpButton17: TRzBmpButton
-            Left = 24
-            Top = 256
-            Width = 130
-            Height = 48
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 5
-            OnClick = RzBmpButton4Click
-          end
-          object RzBmpButton18: TRzBmpButton
-            Left = 352
-            Top = 256
-            Width = 130
-            Height = 48
-            Bitmaps.TransparentColor = clOlive
-            Color = clBtnFace
-            TabOrder = 6
-            OnClick = RzBmpButton9Click
-          end
-        end
+      object RzBmpButton6: TRzBmpButton
+        Left = 0
+        Top = 96
+        Width = 94
+        Height = 91
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 0
+        OnClick = RzBmpButton6Click
+      end
+      object RzBmpButton7: TRzBmpButton
+        Left = 454
+        Top = 61
+        Width = 92
+        Height = 90
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 1
+        OnClick = RzBmpButton7Click
+      end
+      object RzBmpButton8: TRzBmpButton
+        Left = 210
+        Top = 148
+        Width = 140
+        Height = 141
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 2
+        OnClick = RzBmpButton8Click
+      end
+      object RzBmpButton1: TRzBmpButton
+        Left = 123
+        Top = 3
+        Width = 91
+        Height = 98
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 3
+        OnClick = RzBmpButton1Click
+      end
+      object RzBmpButton3: TRzBmpButton
+        Left = 341
+        Top = 315
+        Width = 90
+        Height = 86
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 4
+        OnClick = RzBmpButton3Click
+      end
+      object RzBmpButton2: TRzBmpButton
+        Left = 302
+        Top = 0
+        Width = 91
+        Height = 96
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 5
+        OnClick = RzBmpButton2Click
+      end
+      object RzBmpButton5: TRzBmpButton
+        Left = 142
+        Top = 327
+        Width = 90
+        Height = 88
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 6
+        OnClick = RzBmpButton5Click
+      end
+      object RzBmpButton4: TRzBmpButton
+        Left = 4
+        Top = 249
+        Width = 92
+        Height = 89
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 7
+        OnClick = RzBmpButton4Click
+      end
+      object RzBmpButton9: TRzBmpButton
+        Left = 509
+        Top = 197
+        Width = 89
+        Height = 91
+        Bitmaps.TransparentColor = clOlive
+        Color = clBtnFace
+        TabOrder = 8
+        OnClick = RzBmpButton9Click
       end
     end
   end

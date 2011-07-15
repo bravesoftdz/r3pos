@@ -105,9 +105,11 @@ var
   Rim_CustId:string = 'GX00000004392';
   //跟新商蝟通读参数
   xsm_url:string;
+  xsm_center:string;
   xsm_username:string;
   xsm_password:string;
   xsm_signature:string; //令牌
+  xsm_challenge:string; //校验码
 implementation
 uses uFnUtil;
 {$R *.dfm}

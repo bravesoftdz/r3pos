@@ -536,7 +536,7 @@ CREATE TABLE [SAL_SALESORDER] (
         --业务员<导购员>
 	[GUIDE_USER] [varchar] (36) NULL ,
         --销售方式
-	[SALES_STYLE] [varchar] (21) NULL ,
+	[SALES_STYLE] [varchar] (36) NULL ,
         --送货日期
 	[PLAN_DATE] [varchar] (10) NULL ,
         --联系人

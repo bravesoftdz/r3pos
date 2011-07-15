@@ -1,8 +1,8 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 223
-  Top = 106
-  Height = 616
+  Left = 188
+  Top = 0
+  Height = 560
   Width = 819
   object SYS_DEFINE: TZQuery
     FieldDefs = <>

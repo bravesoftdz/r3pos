@@ -42,7 +42,7 @@ type
 var
   AdvFactory:TAdvFactory;
 implementation
-uses IniFiles,uCaFactory,ufrmDesk;
+uses IniFiles,uCaFactory,ufrmDesk,uGlobal;
 var
   Rim_Url:string;
   Rim_ComId:string;
@@ -116,6 +116,7 @@ var
   ErrXml:string;
   w:integer;
 begin
+  if Global.debug then LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try
     if xml<>'' then
@@ -188,7 +189,10 @@ begin
     for i:=0 to 20 do
       begin
         if AdvInfo.urlList[i]<>'' then
-           GetUrlFile(AdvInfo.urlList[i],ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i]));
+           begin
+             if not FileExists(ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i])) then
+                GetUrlFile(AdvInfo.urlList[i],ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i]));
+           end;
       end;
     adv.Add('<html>');
     adv.Add('<title>¹ã¸æ</title>');

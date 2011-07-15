@@ -387,7 +387,10 @@ begin
 //       s := s+'  ¿Í·þ£º'+F.ReadString('soft','telephone','');
     RzStatusPane2.Caption := s;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'temp\sft.'+Global.UserID);
   try
@@ -395,7 +398,10 @@ begin
     if rzHelp.Visible then
        rzHelp.Top := RzPanel3.Top + RzPanel3.Height-rzHelp.Height+10;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 
   if (Screen.DesktopRect.Bottom-Screen.DesktopRect.Top)/(Screen.DesktopRect.Right-Screen.DesktopRect.Left)<600/800 then

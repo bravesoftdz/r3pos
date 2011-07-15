@@ -593,8 +593,11 @@ try
                       end;
                    end;
               finally
-                f.Free;
-                r.Free;
+                try
+                  f.Free;
+                  r.Free;
+                except
+                end;
               end;
             end;
        end

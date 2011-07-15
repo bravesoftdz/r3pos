@@ -37,7 +37,7 @@ this._timer = null;//定时器
 this._count = Math.abs(count);//切换数量
 this._target = 0;//目标值
 this._t = this._b = this._c = 0;//tween参数
-
+this.bVertical = false;
 this.Index = 0;//当前索引
 
 this.SetOptions(options);
@@ -50,8 +50,8 @@ this.Tween = this.options.Tween;
 this.onStart = this.options.onStart;
 this.onFinish = this.options.onFinish;
 
-var bVertical = !!this.options.Vertical;
-this._css = bVertical ? "top" : "left";//方向
+this.bVertical = !!this.options.Vertical;
+this._css = this.bVertical ? "top" : "left";//方向
 
 //样式设置
 var p = CurrentStyle(this._container).position;
@@ -60,7 +60,7 @@ this._container.style.overflow = "hidden";
 this._slider.style.position = "absolute";
 
 this.Change = this.options.Change ? this.options.Change :
-this._slider[bVertical ? "offsetHeight" : "offsetWidth"] / this._count;
+this._slider[this.bVertical ? "offsetHeight" : "offsetWidth"] / this._count;
 };
 SlideTrans.prototype = {
 //设置默认属性
@@ -84,6 +84,8 @@ Run: function(index) {
 index == undefined && (index = this.Index);
 index < 0 && (index = this._count - 1) || index >= this._count && (index = 0);
 //设置参数
+this.Change = this.options.Change ? this.options.Change :
+this._slider[this.bVertical ? "offsetHeight" : "offsetWidth"] / this._count;
 this._target = -Math.abs(this.Change) * (this.Index = index);
 this._t = 0;
 this._b = parseInt(CurrentStyle(this._slider)[this.options.Vertical ? "top" : "left"]);

@@ -1,6 +1,6 @@
 inherited frmRoleRights: TfrmRoleRights
-  Left = 381
-  Top = 122
+  Left = 383
+  Top = 123
   Caption = #32844#21153#25480#26435
   ClientHeight = 385
   ClientWidth = 385

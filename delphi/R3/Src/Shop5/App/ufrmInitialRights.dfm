@@ -1,6 +1,6 @@
 inherited frmInitialRights: TfrmInitialRights
-  Left = 457
-  Top = 258
+  Left = 459
+  Top = 259
   BorderStyle = bsNone
   Caption = #21021#22987#21270#35282#33394
   ClientHeight = 70

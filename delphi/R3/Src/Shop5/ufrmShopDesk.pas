@@ -14,9 +14,6 @@ type
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     ImageList1: TImageList;
-    rsDesk: TRzPageControl;
-    TabSheet1: TRzTabSheet;
-    TabSheet2: TRzTabSheet;
     dgdesk: TPanel;
     Image1: TImage;
     RzBmpButton6: TRzBmpButton;
@@ -28,15 +25,6 @@ type
     RzBmpButton5: TRzBmpButton;
     RzBmpButton4: TRzBmpButton;
     RzBmpButton9: TRzBmpButton;
-    Panel1: TPanel;
-    Image2: TImage;
-    RzBmpButton10: TRzBmpButton;
-    RzBmpButton11: TRzBmpButton;
-    RzBmpButton12: TRzBmpButton;
-    RzBmpButton13: TRzBmpButton;
-    RzBmpButton16: TRzBmpButton;
-    RzBmpButton17: TRzBmpButton;
-    RzBmpButton18: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure N1Click(Sender: TObject);
@@ -135,10 +123,6 @@ begin
   sflag := 's'+GetResString(1)+'_';
   if DllHandle > 0 then
   try
-    //logo
-    if sflag='s1_' then
-    begin
-    rsDesk.ActivePageIndex := 0;
     Image1.Picture.Graphic  := GetJpeg(sflag+'desk_bg');
 
     RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'db_btn');
@@ -159,33 +143,6 @@ begin
     RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'stk_btn_hot');
     RzBmpButton8.Bitmaps.Up := GetBitmap(sflag+'pos_btn');
     RzBmpButton8.Bitmaps.Hot := GetBitmap(sflag+'pos_btn_hot');
-    end
-    else
-    begin
-    rsDesk.ActivePageIndex := 1;
-    Image2.Picture.Graphic  := GetJpeg(sflag+'desk_bg');
-
-    RzBmpButton13.Bitmaps.Up := GetBitmap(sflag+'db_btn');
-    RzBmpButton13.Bitmaps.Hot := GetBitmap(sflag+'db_btn_hot');
-//    RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'c1_btn');
-//    RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'c1_btn_hot');
-    RzBmpButton11.Bitmaps.Up := GetBitmap(sflag+'sale_btn');
-    RzBmpButton11.Bitmaps.Hot := GetBitmap(sflag+'sale_btn_hot');
-    RzBmpButton18.Bitmaps.Up := GetBitmap(sflag+'slr_btn');
-    RzBmpButton18.Bitmaps.Hot := GetBitmap(sflag+'slr_btn_hot');
-//    RzBmpButton3.Bitmaps.Up := GetBitmap(sflag+'c2_btn');
-//    RzBmpButton3.Bitmaps.Hot := GetBitmap(sflag+'c2_btn_hot');
-    RzBmpButton16.Bitmaps.Up := GetBitmap(sflag+'sfd_btn');
-    RzBmpButton16.Bitmaps.Hot := GetBitmap(sflag+'sfd_btn_hot');
-    RzBmpButton17.Bitmaps.Up := GetBitmap(sflag+'str_btn');
-    RzBmpButton17.Bitmaps.Hot := GetBitmap(sflag+'str_btn_hot');
-    RzBmpButton10.Bitmaps.Up := GetBitmap(sflag+'stk_btn');
-    RzBmpButton10.Bitmaps.Hot := GetBitmap(sflag+'stk_btn_hot');
-    RzBmpButton12.Bitmaps.Up := GetBitmap(sflag+'pos_btn');
-    RzBmpButton12.Bitmaps.Hot := GetBitmap(sflag+'pos_btn_hot');
-    end;
-
-
   finally
     FreeLibrary(DllHandle);
   end;
@@ -202,7 +159,6 @@ var
   i:integer;
 begin
   inherited;
-  for i:=0 to rsDesk.PageCount -1 do rsDesk.Pages[i].TabVisible := false;
   LoadRes;
   Locked := false;
 end;

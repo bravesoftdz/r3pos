@@ -5,11 +5,15 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmIEWebForm, ActnList, Menus, OleCtrls, SHDocVw, ExtCtrls,
-  RzPanel, RzTabs, ImgList,LCContrllerLib, ZDataSet, StdCtrls;
+  RzPanel, RzTabs, ImgList,LCContrllerLib, ZDataSet, StdCtrls, msxml, ActiveX, ComObj,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+  IdCookieManager;
 
 type
   TfrmXsmIEBrowser = class(TfrmIEWebForm)
     LCObject: TLCObject;
+    IdHTTP1: TIdHTTP;
+    IdCookieManager1: TIdCookieManager;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -45,6 +49,12 @@ type
     procedure SetConnectTimeOut(const Value: integer);
     procedure LoadFormat;override;
     procedure SaveFormat;override;
+
+    //新商盟登录
+    function CreateXML(xml:string):IXMLDomDocument;
+    function GetChallenge:boolean;
+    function DoForLogin(checked:boolean=false):boolean;
+    function GetSignature:boolean;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -55,9 +65,10 @@ type
     procedure Send2(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString);
     procedure Send3(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString;const szPara3: WideString);
     function WaitRun(WaitOutTime:integer=20000):boolean;
-    procedure DoInit;
+    procedure DoInit(Wait:boolean=false);
     procedure ReadInfo(checked:boolean=false);
     function DoLogin(Hinted:boolean=false):boolean;
+    function XsmLogin(checked:boolean=false):boolean;
     procedure ClearResource;
     function Open(sid,oid:string;hHandle:THandle):boolean;
     property Logined:boolean read FLogined write SetLogined;
@@ -82,6 +93,7 @@ var
   F:TIniFile;
 begin
   inherited;
+  SessionFail := true;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     ConnectTimeOut := F.ReadInteger('xsm','connectTimeout',60000);
@@ -122,13 +134,20 @@ var
   _Start:Int64;
   SaveLog:Boolean;
 begin
-  if not ready then Raise Exception.Create('系统装载新商盟运行环境无效.');
+  result := false;
+  if not ready then
+     begin
+       MessageBox(Handle,'系统装载新商盟运行环境无效,请稍候再试.','友情提示...',MB_OK+MB_ICONWARNING);
+       Exit;
+     end;
   SaveLog := frmLogo.Visible;
   if not SaveLog then frmLogo.Show;
   frmLogo.ShowTitle := '正在登录新商盟...';
   try
-    SessionFail := false;
-    Send2('login',xsm_username,xsm_password);
+    GetSignature;
+//    SessionFail := false;
+//    Send2('login',xsm_username,xsm_password);
+    Send('login',xsm_signature);
     if not WaitRun(commandTimeout) then Logined := false;
     result := Logined;
     if Hinted and not result then
@@ -183,7 +202,6 @@ begin
      begin
        PageHandle := 0;
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
-
      end;
   if szMethodName='finish' then
      begin
@@ -275,28 +293,40 @@ end;
 
 function TfrmXsmIEBrowser.Open(sid, oid: string;hHandle:THandle):boolean;
 begin
-  if Runed then Raise Exception.Create('正在等待新商盟响应...');
   SaveHandle := PageHandle;
   try
   PageHandle := hHandle;
   WindowState := wsMaximized;
   BringToFront;
   result := false;
+  if Runed then 
+     begin
+       MessageBox(Handle,'正在等待新商盟响应...','友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
   if not CaFactory.Audited then
      begin
        MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
-  if not Logined then
+  if SessionFail then XsmLogin(false);
+  if SessionFail then
      begin
-       if SessionFail then DoLogin;
-       if not Logined and TfrmXsmLogin.XsmRegister then
+       if TfrmXsmLogin.XsmRegister then
           begin
-            if not DoLogin(True) then
+            if not XsmLogin(false) then
                Open(sid,oid,hHandle);
           end
        else
           Exit;
+     end;
+  if not Logined then
+     begin
+        if not DoLogin(True) then
+           begin
+             if SessionFail then Open(sid,oid,hHandle);
+             Exit;
+           end;
      end;
   finish := false;
   confirm := false;
@@ -326,14 +356,13 @@ begin
   Fready := Value;
 end;
 
-procedure TfrmXsmIEBrowser.DoInit;
+procedure TfrmXsmIEBrowser.DoInit(Wait:boolean=false);
 var
   _Start,W:Int64;
   F:TIniFile;
   List:TStringList;
 begin
   ready := false;
-  SessionFail := false;
   Runed := true;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   List := TStringList.Create;
@@ -351,33 +380,36 @@ begin
     List.free;
     F.Free;
   end;
-  if not WaitRun(commandTimeout) then Exit;
-  frmDesk.Waited := true;
-  try
-  _Start := GetTickCount;
-  frmLogo.Show;
-  frmLogo.ProgressBar1.Position := 0;
-  frmLogo.ProgressBar1.Update;
-  while not ready do
+  if Wait then
      begin
-//       windows.WaitForSingleObject(FhEvent,500);
-       Application.ProcessMessages;
-       W := (GetTickCount-_Start);
-//       if (W mod 1000)=0 then
-//          begin
-       frmLogo.ProgressBar1.Position := (W div 500);
-       frmLogo.ProgressBar1.Update;
-//          end;
-       if W>ConnectTimeOut then
-          begin
-            ready := false;
-            Exit;
-          end;
+        if not WaitRun(commandTimeout) then Exit;
+        frmDesk.Waited := true;
+        try
+        _Start := GetTickCount;
+        frmLogo.Show;
+        frmLogo.ProgressBar1.Position := 0;
+        frmLogo.ProgressBar1.Update;
+        while not ready do
+           begin
+      //       windows.WaitForSingleObject(FhEvent,500);
+             Application.ProcessMessages;
+             W := (GetTickCount-_Start);
+      //       if (W mod 1000)=0 then
+      //          begin
+             frmLogo.ProgressBar1.Position := (W div 500);
+             frmLogo.ProgressBar1.Update;
+      //          end;
+             if W>ConnectTimeOut then
+                begin
+                  ready := false;
+                  Exit;
+                end;
+           end;
+        frmLogo.ProgressBar1.Position := 100;
+        finally
+          frmDesk.Waited := false;
+        end;
      end;
-  frmLogo.ProgressBar1.Position := 100;
-  finally
-    frmDesk.Waited := false;
-  end;
 end;
 
 function TfrmXsmIEBrowser.WaitRun(WaitOutTime:integer=20000):boolean;
@@ -502,6 +534,133 @@ procedure TfrmXsmIEBrowser.SaveFormat;
 begin
 //  inherited;
 
+end;
+
+function TfrmXsmIEBrowser.GetChallenge: boolean;
+var
+  F:TIniFile;
+  List:TStringList;
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;
+  xml:string;
+begin
+  result := false;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  List := TStringList.Create;
+  try
+    xsm_center := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
+    if xsm_center='' then xsm_center := 'http://preview.xinshangmeng.com/st/' 
+       else
+       begin
+         List.CommaText := xsm_center;
+         xsm_center := List.Values['xsmc'];
+       end;
+    xml := IdHTTP1.Get(xsm_center+'users/forlogin');
+    xml := Utf8ToAnsi(xml);
+    Doc := CreateXML(xml);
+    if not Assigned(doc) then Raise Exception.Create('请求登录失败...');
+    Root :=  doc.DocumentElement;
+    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求校验码失败...');
+    if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求校验码失败...');
+    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求校验码失败,错误:'+Root.attributes.getNamedItem('msg').text);
+    xsm_challenge := Root.childNodes[0].text;
+    result := true;
+  finally
+    List.free;
+    F.Free;
+  end;
+end;
+
+function TfrmXsmIEBrowser.DoForLogin(checked:boolean=false): boolean;
+const
+  dec='{1#2$3%4(5)6@7!poeeww$3%4(5)djjkkldss}';
+function md5(s:string):string;
+begin
+  result := md5Encode(s+dec);
+end;
+var
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;    
+  xml:string;
+begin
+  xsm_signature := IdHTTP1.Get(xsm_center+'users/dologin/up?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+xsm_challenge));
+  xml := Utf8ToAnsi(xsm_signature);
+  Doc := CreateXML(xml);
+  xsm_signature := xml;
+  if not Assigned(doc) then Raise Exception.Create('请求登录失败...');
+  Root :=  doc.DocumentElement;
+  if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
+  if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
+  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
+  result := true;
+end;
+
+function TfrmXsmIEBrowser.CreateXML(xml: string): IXMLDomDocument;
+var
+  ErrXml:string;
+  w:integer;
+begin
+  if Global.debug then LogFile.AddLogFile(0,xml);
+  result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
+  try
+    if xml<>'' then
+       begin
+         if not result.loadXML(xml) then
+            begin
+              ErrXml :=xml;
+              w := pos('?>',ErrXml);
+              delete(ErrXml,1,w+1);
+              if not result.loadXML(ErrXml) then Raise Exception.Create('loadxml出错了,xml='+xml);
+            end;
+       end
+    else
+       Raise Exception.Create('xml字符串不能为空...');
+  except
+    result := nil;
+    Raise;
+  end;
+end;
+
+function TfrmXsmIEBrowser.XsmLogin(checked:boolean=false): boolean;
+begin
+  try
+    if not checked then ReadInfo(checked);
+    SessionFail := true;
+    result := GetChallenge;
+    result := DoForLogin(checked);
+    SessionFail := not result;
+  except
+    on E:Exception do
+       begin
+         SessionFail := true;
+         Logined := false;
+         result := false;
+         MessageBox(Handle,Pchar('登录新商盟'+E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
+       end;
+  end;
+end;
+
+function TfrmXsmIEBrowser.GetSignature: boolean;
+var
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;    
+  xml:string;
+begin
+  try
+    xsm_signature := IdHTTP1.Get(xsm_center+'users/gettoken');
+    xml := Utf8ToAnsi(xsm_signature);
+    Doc := CreateXML(xml);
+    xsm_signature := xml;
+    if not Assigned(doc) then Raise Exception.Create('请求令牌失败...');
+    Root :=  doc.DocumentElement;
+    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
+    if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
+    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
+    result := true;
+  except
+    SessionFail := true;
+    Raise;
+  end;
 end;
 
 end.

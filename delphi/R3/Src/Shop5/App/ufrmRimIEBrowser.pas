@@ -72,18 +72,14 @@ begin
         MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
         Exit;
       end;
-    if xsmed and not logined then frmXsmIEBrowser.Logined := false;
-    if xsmed and not frmXsmIEBrowser.Logined then
+    if xsmed and not logined then frmXsmIEBrowser.SessionFail := true;
+    if xsmed and frmXsmIEBrowser.SessionFail then
     with frmXsmIEBrowser do
      begin
-       if SessionFail then DoLogin;
-       if not Logined and TfrmXsmLogin.XsmRegister then
+       if TfrmXsmLogin.XsmRegister then
           begin
-            if not DoLogin(True) then
-               begin
-                 OpenUrl(url,hHandle,xsmed);
-                 Exit;
-               end;
+            if not XsmLogin(true) then
+               OpenUrl(url,hHandle,xsmed);
           end
        else
           Exit;
@@ -206,7 +202,7 @@ begin
            Params.Free;
          end;
       end;
-    if frmXsmIEBrowser.Logined then
+    if not frmXsmIEBrowser.SessionFail then
        begin
          Runed := true;
          _Start := GetTickCount;

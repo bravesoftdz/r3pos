@@ -175,12 +175,9 @@ procedure TfrmIEWebForm.FormCreate(Sender: TObject);
 begin
   inherited;
   FhEvent := CreateEvent(nil, True, False, nil);
-  xsm_url := ShopGlobal.GetParameter('XSM_URL');
-  if xsm_url='' then xsm_url := '';
-  xsm_username := ShopGlobal.GetParameter('XSM_USERNAME');
-  if xsm_username='' then xsm_username := '';
-  xsm_password := DecStr(ShopGlobal.GetParameter('XSM_PASSWORD'),ENC_KEY);
-  if xsm_password='' then xsm_password := '';
+  if xsm_url='' then xsm_url := ShopGlobal.GetParameter('XSM_URL');
+  if xsm_username='' then xsm_username := ShopGlobal.GetParameter('XSM_USERNAME');
+  if xsm_password='' then xsm_password := DecStr(ShopGlobal.GetParameter('XSM_PASSWORD'),ENC_KEY);
   ResetEvent(FhEvent);
 end;
 

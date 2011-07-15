@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 289
-  Top = 112
+  Left = 314
+  Top = 167
   Width = 948
   Height = 580
   Caption = #29992#25143#26723#26696#31649#29702
@@ -110,7 +110,7 @@ inherited frmUsers: TfrmUsers
                     EditButtons = <>
                     FieldName = 'ROLE_IDS_TEXT'
                     Footers = <>
-                    Title.Caption = #32844#21153#26435#38480
+                    Title.Caption = #35282#33394
                     Width = 100
                   end
                   item
@@ -241,7 +241,7 @@ inherited frmUsers: TfrmUsers
                   902
                   102)
                 object Label1: TLabel
-                  Left = 7
+                  Left = 21
                   Top = 61
                   Width = 247
                   Height = 12
@@ -254,14 +254,14 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object Bevel1: TBevel
-                  Left = 262
-                  Top = 65
-                  Width = 623
+                  Left = 277
+                  Top = 66
+                  Width = 607
                   Height = 2
                   Anchors = [akLeft, akTop, akRight]
                 end
                 object Label3: TLabel
-                  Left = 10
+                  Left = 21
                   Top = 80
                   Width = 65
                   Height = 12
@@ -280,7 +280,7 @@ inherited frmUsers: TfrmUsers
                   Height = 12
                   Alignment = taRightJustify
                   AutoSize = False
-                  Caption = #38376#24215
+                  Caption = #25152#23646#38376#24215
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
@@ -289,7 +289,7 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object RzLabel13: TRzLabel
-                  Left = 443
+                  Left = 411
                   Top = 15
                   Width = 37
                   Height = 12
@@ -310,7 +310,7 @@ inherited frmUsers: TfrmUsers
                   Height = 12
                   Alignment = taRightJustify
                   AutoSize = False
-                  Caption = #37096#38376
+                  Caption = #25152#23646#37096#38376
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
@@ -319,7 +319,7 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object labDEGREES: TRzLabel
-                  Left = 233
+                  Left = 217
                   Top = 42
                   Width = 45
                   Height = 12
@@ -334,7 +334,7 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object lab_DUTY_IDS: TRzLabel
-                  Left = 239
+                  Left = 223
                   Top = 13
                   Width = 40
                   Height = 12
@@ -349,13 +349,13 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object RzLabel1: TRzLabel
-                  Left = 429
+                  Left = 397
                   Top = 44
                   Width = 51
                   Height = 12
                   Alignment = taRightJustify
                   AutoSize = False
-                  Caption = #32844#19994#29366#24577
+                  Caption = #29366#24577
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
@@ -364,15 +364,15 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                 end
                 object edtKey: TcxTextEdit
-                  Left = 80
+                  Left = 91
                   Top = 76
                   Width = 196
                   Height = 20
-                  TabOrder = 0
+                  TabOrder = 6
                   OnKeyDown = edtKeyKeyDown
                 end
                 object btnOk: TRzBitBtn
-                  Left = 290
+                  Left = 301
                   Top = 74
                   Width = 67
                   Height = 24
@@ -391,7 +391,7 @@ inherited frmUsers: TfrmUsers
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 1
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -399,17 +399,18 @@ inherited frmUsers: TfrmUsers
                   Spacing = 5
                 end
                 object fndSEX: TRadioGroup
-                  Left = 490
+                  Left = 458
                   Top = 2
                   Width = 230
                   Height = 29
                   Columns = 4
+                  ItemIndex = 0
                   Items.Strings = (
+                    #25152#26377
                     #22899
                     #30007
-                    #20445#23494
-                    #25152#26377)
-                  TabOrder = 2
+                    #20445#23494)
+                  TabOrder = 4
                 end
                 object fndDEPT_ID: TzrComboBoxList
                   Left = 81
@@ -422,7 +423,7 @@ inherited frmUsers: TfrmUsers
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 1
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_ID;DEPT_NAME;DEPT_SPELL'
@@ -463,14 +464,14 @@ inherited frmUsers: TfrmUsers
                   MultiSelect = False
                 end
                 object fndDEGREES: TcxComboBox
-                  Left = 289
+                  Left = 273
                   Top = 38
                   Width = 121
                   Height = 20
-                  TabOrder = 4
+                  TabOrder = 3
                 end
                 object fndDUTY_IDS: TzrComboBoxList
-                  Left = 289
+                  Left = 273
                   Top = 9
                   Width = 121
                   Height = 20
@@ -480,7 +481,7 @@ inherited frmUsers: TfrmUsers
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DUTY_NAME;DUTY_ID;DUTY_SPELL'
@@ -505,17 +506,18 @@ inherited frmUsers: TfrmUsers
                   MultiSelect = False
                 end
                 object fndState: TRadioGroup
-                  Left = 490
+                  Left = 458
                   Top = 31
                   Width = 230
                   Height = 29
                   Columns = 4
+                  ItemIndex = 0
                   Items.Strings = (
+                    #25152#26377
                     #26410#20837#32844
                     #22312#32844
-                    #31163#32844
-                    #25152#26377)
-                  TabOrder = 6
+                    #31163#32844)
+                  TabOrder = 5
                 end
                 object fndSHOP_ID: TzrComboBoxList
                   Left = 81
@@ -528,7 +530,7 @@ inherited frmUsers: TfrmUsers
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 0
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_NAME;SHOP_ID;SHOP_SPELL'

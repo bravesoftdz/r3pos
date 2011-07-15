@@ -111,14 +111,14 @@ begin
     str := str + ' and a.DEPT_ID = '+QuotedStr(fndDEPT_ID.AsString);
   if fndDEGREES.Text <> '' then
     str := str + ' and a.DEGREES = '+QuotedStr(TRecord_(fndDEGREES.Properties.Items.Objects[fndDEGREES.ItemIndex]).FieldbyName('CODE_ID').AsString);
-  if (fndSEX.ItemIndex <> -1) and (fndSEX.ItemIndex <> 3) then
-    str := str + ' and a.SEX = '+QuotedStr(IntToStr(fndSEX.ItemIndex));
-  if (fndState.ItemIndex <> -1) and (fndState.ItemIndex <> 3) then
+  if (fndSEX.ItemIndex <> -1) and (fndSEX.ItemIndex <> 0) then
+    str := str + ' and a.SEX = '+QuotedStr(IntToStr(fndSEX.ItemIndex-1));
+  if (fndState.ItemIndex <> -1) and (fndState.ItemIndex <> 0) then
     begin
       case fndState.ItemIndex of
-        0:str := str + ' and a.STATUS = 0 ';
-        1:str := str + ' and a.STATUS = 1 ';
-        2:str := str + ' and a.STATUS = 2 ';
+        1:str := str + ' and a.STATUS = 0 ';
+        2:str := str + ' and a.STATUS = 1 ';
+        3:str := str + ' and a.STATUS = 2 ';
       end;
     end;
 

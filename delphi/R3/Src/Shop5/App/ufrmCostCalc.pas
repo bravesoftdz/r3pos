@@ -465,6 +465,7 @@ end;
 procedure TfrmCostCalc.btnStartClick(Sender: TObject);
 begin
   inherited;
+  Label1.Caption:='正在核算需要较长的时间,请稍候....';
   if flag in [1,2] then
      begin
        if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
@@ -2209,26 +2210,26 @@ var
 begin
   result:=False;
   with TfrmCostCalc.Create(Owner) do
-    begin
-      try
-        tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
-        if (tmp.Active) and (tmp.RecordCount=1) then //是单店并且本月5日以后
+  begin
+    try
+      tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
+      if (tmp.Active) and (tmp.RecordCount=1) then //是单店并且上次结账第5天以后
+      begin
+        if CheckReckMonthDay then 
         begin
-          if CheckReckMonthDay then 
-          begin
-            flag := 2;
-            Caption := '月结账';
-            eDate := Date()-1;
-            Prepare;
-            Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
-            if eDate>Date() then Raise Exception.Create('没有到本月结账日，无法执行月结操作。');
-            result :=(ShowModal=MROK);
-          end;
-        end
-      finally
-        free;
-      end;
+          flag := 2;
+          Caption := '月结账';
+          eDate := Date()-1;
+          Prepare;
+          Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
+          Label1.Caption:='请点击〖执行〗开始月结帐 ';
+          result :=(ShowModal=MROK);
+        end;
+      end
+    finally
+      free;
     end;
+  end;
 end;
 
 end.

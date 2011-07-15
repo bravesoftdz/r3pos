@@ -379,6 +379,7 @@ begin
       end;
     3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
+        adoReport4.SortedFields:='';
         strSql := GetGodsSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
@@ -852,7 +853,7 @@ begin
    0:
     begin 
       strSql :=
-        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
@@ -862,7 +863,7 @@ begin
    else
     begin
       strSql :=
-        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
@@ -1063,96 +1064,107 @@ var
   Column: TColumnEh;
   CostPriceRight: Boolean;  //查看成本价权限
 begin
-  CostPriceRight:=ShopGlobal.GetChkRight('14500001',2);
-  rs := Global.GetZQueryFromName('STO_CHANGECODE');
-  rs.First;
-  while not rs.Eof do
-  begin
-    Column := DBGridEh1.Columns.Add;
-    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-    Column.Width := 61;
-    Column.Index := DBGridEh1.Columns.Count -4;
-    Column.DisplayFormat:='#0.00';
-    Column.Footer.ValueType:=fvtSum;
-    Column.Footer.DisplayFormat:='#0.00';
-
-    if CostPriceRight then  //判断只有查看成本才可以创建列
+  DBGridEh1.Columns.BeginUpdate;
+  DBGridEh2.Columns.BeginUpdate;
+  DBGridEh3.Columns.BeginUpdate;
+  DBGridEh4.Columns.BeginUpdate;    
+  try
+    CostPriceRight:=ShopGlobal.GetChkRight('14500001',2);
+    rs := Global.GetZQueryFromName('STO_CHANGECODE');
+    rs.First;
+    while not rs.Eof do
     begin
       Column := DBGridEh1.Columns.Add;
-      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-      Column.Width := 74;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+      Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+      Column.Width := 61;
       Column.Index := DBGridEh1.Columns.Count -4;
       Column.DisplayFormat:='#0.00';
       Column.Footer.ValueType:=fvtSum;
       Column.Footer.DisplayFormat:='#0.00';
-    end;
 
-    Column := DBGridEh2.Columns.Add;
-    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-    Column.Width := 61;
-    Column.Index := DBGridEh2.Columns.Count -4;
-    Column.DisplayFormat:='#0.00';
-    Column.Footer.ValueType:=fvtSum;
-    Column.Footer.DisplayFormat:='#0.00';        
+      if CostPriceRight then  //判断只有查看成本才可以创建列
+      begin
+        Column := DBGridEh1.Columns.Add;
+        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+        Column.Width := 74;
+        Column.Index := DBGridEh1.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+      end;
 
-    if CostPriceRight then  //判断只有查看成本才可以创建列
-    begin        
       Column := DBGridEh2.Columns.Add;
-      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-      Column.Width := 74;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+      Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+      Column.Width := 61;
       Column.Index := DBGridEh2.Columns.Count -4;
       Column.DisplayFormat:='#0.00';
       Column.Footer.ValueType:=fvtSum;
-      Column.Footer.DisplayFormat:='#0.00';
-    end;
+      Column.Footer.DisplayFormat:='#0.00';        
 
-    Column := DBGridEh3.Columns.Add;
-    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-    Column.Width := 61;
-    Column.Index := DBGridEh3.Columns.Count -4;
-    Column.DisplayFormat:='#0.00';
-    Column.Footer.ValueType:=fvtSum;
-    Column.Footer.DisplayFormat:='#0.00';
+      if CostPriceRight then  //判断只有查看成本才可以创建列
+      begin        
+        Column := DBGridEh2.Columns.Add;
+        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+        Column.Width := 74;
+        Column.Index := DBGridEh2.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+      end;
 
-    if CostPriceRight then  //判断只有查看成本才可以创建列
-    begin
       Column := DBGridEh3.Columns.Add;
-      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-      Column.Width := 74;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+      Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+      Column.Width := 61;
       Column.Index := DBGridEh3.Columns.Count -4;
       Column.DisplayFormat:='#0.00';
       Column.Footer.ValueType:=fvtSum;
       Column.Footer.DisplayFormat:='#0.00';
-    end;
-        
-    Column := DBGridEh4.Columns.Add;
-    Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
-    Column.Title.Caption := rs.Fields[1].AsString+'|数量';
-    Column.Width := 61;
-    Column.Index := DBGridEh4.Columns.Count -4;
-    Column.DisplayFormat:='#0.00';
-    Column.Footer.ValueType:=fvtSum;
-    Column.Footer.DisplayFormat:='#0.00';
 
-    if CostPriceRight then  //判断只有查看成本才可以创建列
-    begin
+      if CostPriceRight then  //判断只有查看成本才可以创建列
+      begin
+        Column := DBGridEh3.Columns.Add;
+        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+        Column.Width := 74;
+        Column.Index := DBGridEh3.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+      end;
+        
       Column := DBGridEh4.Columns.Add;
-      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
-      Column.Title.Caption := rs.Fields[1].AsString+'|金额';
-      Column.Width := 74;
+      Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_AMT';
+      Column.Title.Caption := rs.Fields[1].AsString+'|数量';
+      Column.Width := 61;
       Column.Index := DBGridEh4.Columns.Count -4;
       Column.DisplayFormat:='#0.00';
       Column.Footer.ValueType:=fvtSum;
       Column.Footer.DisplayFormat:='#0.00';
+
+      if CostPriceRight then  //判断只有查看成本才可以创建列
+      begin
+        Column := DBGridEh4.Columns.Add;
+        Column.FieldName := 'CHANGE'+rs.Fields[0].AsString+'_CST';
+        Column.Title.Caption := rs.Fields[1].AsString+'|金额';
+        Column.Width := 74;
+        Column.Index := DBGridEh4.Columns.Count -4;
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Footer.DisplayFormat:='#0.00';
+      end;
+      rs.Next;
     end;
-    rs.Next;
-  end;     
+  finally
+    DBGridEh1.Columns.EndUpdate;
+    DBGridEh2.Columns.EndUpdate;
+    DBGridEh3.Columns.EndUpdate;
+    DBGridEh4.Columns.EndUpdate;
+  end;
 end;
 
 procedure TfrmJxcTotalReport.CheckCalc(b, e: integer);

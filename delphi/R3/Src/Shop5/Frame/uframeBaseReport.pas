@@ -148,6 +148,7 @@ type
     procedure AddReportTypeList(RptType: TcxComboBox);
     procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID, SORT_NAME: string; SumFields,CalcFields: Array of String); //分组报表
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string); //点列标题排序
     function  GetRelation_ID(Relation_ID: string): string; //供应链排序
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
@@ -1419,6 +1420,12 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
      AllObj.FieldByName(FieldName).AsFloat:=AllObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
      SortObj.FieldByName(FieldName).AsFloat:=SortObj.FieldByName(FieldName).AsFloat+tmpObj.FieldByName(FieldName).AsFloat;
    end;
+   if SortObj.FindField(SORT_ID)<>nil then
+   begin
+     i:=StrtoIntDef(tmpObj.FieldByName(SORT_ID).AsString,0);
+     if i>100000 then 
+       SortObj.FieldByName(SORT_ID).AsString:=InttoStr(i+1);
+   end;
  end;
  function GetSortName(SORT_ID: string): string; //返回小计名称:
  var SortRs: TZQuery;
@@ -1476,8 +1483,6 @@ begin
     FAllRecord.ReadField(DataSet);
     SetSortList(Rs,SortList); //读取分类个数
     DataSet.EmptyDataSet;  //清空数据
-    DataSet.IndexFieldNames:='vNO';
-    DataSet.SortedFields:='vNO';
     Rs.First;
     for i:=0 to SortList.Count-1 do  //逐个分类循环处理
     begin
@@ -1488,10 +1493,10 @@ begin
         if SID=trim(Rs.fieldbyname(SORT_ID).AsString) then
         begin
           tmpObj.ReadFromDataSet(Rs);
+          tmpObj.FieldByName(SORT_ID).AsString:=InttoStr(100000+(10*(i+1)));
           CalcSum(FAllRecord,SortObj,tmpObj); //计算汇总数据
           DataSet.Append;
           tmpObj.WriteToDataSet(DataSet);  //写入数据集
-          DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
           Rs.Next;
         end else
         begin
@@ -1500,8 +1505,6 @@ begin
           DataSet.Append;
           SortObj.WriteToDataSet(DataSet);  //写入数据集
           DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID)+' (小计)';
-          DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
-          DataSet.FieldByName(SORT_ID).AsString:='-1';
           SortObj.Clear;
           Break;  //不相等则退出循环
         end;
@@ -1515,8 +1518,6 @@ begin
       DataSet.Append;
       SortObj.WriteToDataSet(DataSet);  //写入数据集
       DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID)+' (小计)';
-      DataSet.FieldByName('VNO').AsString:=inttoStr(10000000+DataSet.RecordCount);
-      DataSet.FieldByName(SORT_ID).AsString:='-1';
       SortObj.Clear;
     end;      
 
@@ -1623,6 +1624,23 @@ begin
    5: result:='(case when '+Relation_ID+'=''0'' then ''9999999'' else '+Relation_ID+' end)';
    else
       result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
+  end;
+end;
+
+procedure TframeBaseReport.DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string);
+begin
+  if Column.Field = nil then Exit;
+  if (GridDataSet=nil) or (GridDataSet.IsEmpty) then Exit;
+  if Column.Title.SortMarker= smNoneEh then
+    Column.Title.SortMarker := smUpEh
+  else if Column.Title.SortMarker= smUpEh then
+    Column.Title.SortMarker := smDownEh
+  else
+    Column.Title.SortMarker := smNoneEh;
+  case Column.Title.SortMarker of
+   smNoneEh: GridDataSet.SortedFields:=SORT_ID+' ASC';
+   smDownEh: GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC'; 
+   smUpEh: GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';
   end;
 end;
 

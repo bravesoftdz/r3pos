@@ -337,10 +337,11 @@ begin
       cdsBrowser.SortedFields:='GODS_CODE';
       if rs.RecordCount <600 then rcAmt:=rs.RecordCount
       else rcAmt:=GetReCount(Cnd);
-      GetNo; 
+      GetNo;
     end else
       cdsBrowser.AddFromStream(StrmData);
     if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
+    if Id='' then cdsBrowser.First;  //重新查询指针指向第一条
   finally
     cdsBrowser.EnableControls;
     StrmData.Free;

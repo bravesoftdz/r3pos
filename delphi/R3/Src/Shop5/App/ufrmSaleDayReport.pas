@@ -216,6 +216,7 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh5TitleClick(Column: TColumnEh);
   private
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
@@ -618,6 +619,7 @@ begin
       end;
     4: begin //按商品汇总表
         if adoReport5.Active then adoReport5.Close;
+        adoReport5.SortedFields:='';
         strSql := GetGodsSQL;
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
@@ -1062,7 +1064,7 @@ begin
    0: //供应链
     begin
       strSql :=
-        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
@@ -1071,7 +1073,7 @@ begin
    else
     begin
       strSql :=
-        'select ''                '' as vNO,j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
@@ -1679,6 +1681,11 @@ procedure TfrmSaleDayReport.DBGridEh5DrawColumnCell(Sender: TObject; const Rect:
   DataCol: Integer; Column: TColumnEh;State: TGridDrawState);
 begin
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+procedure TfrmSaleDayReport.DBGridEh5TitleClick(Column: TColumnEh);
+begin
+  DBGridTitleClick(adoReport5,Column,GodsSortIdx);
 end;
 
 end.

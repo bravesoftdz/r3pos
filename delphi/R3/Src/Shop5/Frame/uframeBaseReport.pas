@@ -1587,6 +1587,7 @@ end;
 
 procedure TframeBaseReport.GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 var
+  SORT_ID: string;
   ARect:TRect;
 begin
   if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
@@ -1605,7 +1606,8 @@ begin
     DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
 
-  if trim(TDBGridEh(Sender).DataSource.DataSet.fieldbyName('SORT_ID').AsString) = '-1' then
+  SORT_ID:=trim(TDBGridEh(Sender).DataSource.DataSet.fieldbyName('SORT_ID').AsString);
+  if Copy(SORT_ID,length(SORT_ID),1) = '1' then
   begin
     if trim(Column.FieldName)<>'SEQNO' then
     begin
@@ -1628,6 +1630,8 @@ begin
 end;
 
 procedure TframeBaseReport.DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string);
+var
+  SortFields: string;
 begin
   if Column.Field = nil then Exit;
   if (GridDataSet=nil) or (GridDataSet.IsEmpty) then Exit;
@@ -1638,10 +1642,11 @@ begin
   else
     Column.Title.SortMarker := smNoneEh;
   case Column.Title.SortMarker of
-   smNoneEh: GridDataSet.SortedFields:=SORT_ID+' ASC';
-   smDownEh: GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC'; 
-   smUpEh: GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';
+   smNoneEh: SortFields:=SORT_ID+' ASC';
+   smDownEh: SortFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC';
+   smUpEh:   SortFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';
   end;
+  GridDataSet.SortedFields:=SortFields;
 end;
 
 end.

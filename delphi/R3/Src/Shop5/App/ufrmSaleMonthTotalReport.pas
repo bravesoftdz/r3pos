@@ -274,24 +274,24 @@ begin
   
   mx := GetMaxDate(StrtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
 
+  //同期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))) then
+    strWhere_y:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_y:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))+' ';
+
+  //上期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))) then
+    strWhere_m:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_m:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))+' ';
+    
   //日期:
   if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',P1_D1.Date)=formatDatetime('YYYYMMDD',P1_D2.Date)) then
     strWhere:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)
   else if P1_D1.Date<P1_D2.Date then
     strWhere:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
 
-  //同期:
-  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))) then
-    strWhere_y:=strWhere_y+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))
-  else if P1_D1.Date<P1_D2.Date then
-    strWhere_y:=strWhere_y+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))+' ';
-
-  //上期:
-  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))) then
-    strWhere_m:=strWhere_m+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))
-  else if P1_D1.Date<P1_D2.Date then
-    strWhere_m:=strWhere_m+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))+' ';
-    
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
@@ -365,10 +365,10 @@ begin
     ',0 as STOCK_TTL '+  //进货金额
 
 
-    ',sum(YEAR_STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
-    ',sum(YEAR_STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
-    ',sum(YEAR_STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
-    ',isnull(sum(YEAR_STOCK_MNY),0)+isnull(sum(YEAR_STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
 
 
     ',0 as PRIOR_STOCK_AMT '+   //进货数量
@@ -383,19 +383,19 @@ begin
     ',0 as SALE_CST '+   //销售成本
     ',0 as SALE_PRF '+   //销售毛利
 
-    ',sum(PRIOR_YEAR_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
-    ',sum(PRIOR_YEAR_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
-    ',sum(PRIOR_YEAR_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
-    ',isnull(sum(PRIOR_YEAR_MNY),0)+isnull(sum(PRIOR_YEAR_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
-    ',sum(PRIOR_YEAR_CST) as PRIOR_YEAR_CST '+   //去年同期销售成本
-    ',isnull(sum(PRIOR_YEAR_MNY),0)-isnull(sum(PRIOR_YEAR_CST),0) as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',sum(SALE_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',sum(SALE_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',sum(SALE_CST) as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',sum(SALE_PRF) as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
     ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
     ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
     ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
     ',0 as PRIOR_MONTH_TTL '+  //上月销售金额
     ',0 as PRIOR_MONTH_CST '+   //上月销售成本
-    ',0) as PRIOR_MONTH_PRF '+   //上月销售毛利
+    ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
 
     ',0 as BAL_AMT '+ //结存数量
     ',0 as BAL_MNY '+   //进项金额<按当时进价>
@@ -428,10 +428,10 @@ begin
     ',0 as YEAR_STOCK_TTL '+  //进货金额
 
 
-    ',sum(PRIOR_STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
-    ',sum(PRIOR_STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
-    ',sum(PRIOR_STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
-    ',isnull(sum(PRIOR_STOCK_MNY),0)+isnull(sum(PRIOR_STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
 
     ',0 as SALE_AMT '+   //销售数量
     ',0 as SALE_MNY '+   //销售金额<末税>
@@ -447,12 +447,12 @@ begin
     ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
     ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
-    ',sum(PRIOR_MONTH_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
-    ',sum(PRIOR_MONTH_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
-    ',sum(PRIOR_MONTH_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
-    ',isnull(sum(PRIOR_MONTH_MNY),0)+isnull(sum(PRIOR_MONTH_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
-    ',sum(PRIOR_MONTH_CST) as PRIOR_MONTH_CST '+   //上月销售成本
-    ',isnull(sum(PRIOR_MONTH_MNY),0)-isnull(sum(PRIOR_MONTH_CST),0) as PRIOR_MONTH_PRF '+   //上月销售毛利
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',sum(SALE_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',sum(SALE_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',sum(SALE_CST) as PRIOR_MONTH_CST '+   //上月销售成本
+    ',sum(SALE_PRF) as PRIOR_MONTH_PRF '+   //上月销售毛利
 
     ',0 as BAL_AMT '+ //结存数量
     ',0 as BAL_MNY '+   //进项金额<按当时进价>

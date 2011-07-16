@@ -699,14 +699,15 @@ begin
   if DsReportTemplate.RecNo = 1 then Exit;
   if DsReportTemplate.FieldByName('CELL_ROW').AsInteger = 1 then Exit;
   if DsReportTemplate.State in [dsEdit,dsInsert] then DsReportTemplate.Post;
+  ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+  DsReportTemplate.Prior;
+  ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+
   DsReportTemplate.DisableControls;
   try
-    ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-    DsReportTemplate.Prior;
-    ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-
+    DsReportTemplate.SortedFields := 'ROWS_ID';
     if DsReportTemplate.Locate('ROWS_ID',ROWS_ID1,[]) then
       begin
         DsReportTemplate.Edit;
@@ -720,6 +721,7 @@ begin
         DsReportTemplate.Post;
       end;
   finally
+    DsReportTemplate.SortedFields := 'CELL_COL;CELL_ROW';
     DsReportTemplate.EnableControls;
   end;
   //DsReportTemplate.IndexFieldNames := 'DISPLAY_NAME';
@@ -735,17 +737,18 @@ begin
   if DsReportTemplate.IsEmpty then Exit;
   if DsReportTemplate.RecordCount = 1 then Exit;
 
+  COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
+  ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+
+  DsReportTemplate.Next;
+  COL1 := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
+  ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
+
   DsReportTemplate.DisableControls;
   try
-    COL := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
-    ROW := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-
-    DsReportTemplate.Next;
-    COL1 := DsReportTemplate.FieldByName('CELL_COL').AsInteger;
-    ROW1 := DsReportTemplate.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID1 := DsReportTemplate.FieldByName('ROWS_ID').AsString;
-
+    DsReportTemplate.SortedFields := 'ROWS_ID';
     if COL <> COL1 then
       begin
         DsReportTemplate.Locate('ROWS_ID',ROWS_ID,[]);
@@ -766,6 +769,7 @@ begin
         DsReportTemplate.Post;
       end;
   finally
+    DsReportTemplate.SortedFields := 'CELL_COL;CELL_ROW';
     DsReportTemplate.EnableControls;
   end;
   //DsReportTemplate.IndexFieldNames := 'DISPLAY_NAME';
@@ -1353,16 +1357,17 @@ begin
   if DsReportTemplate1.FieldByName('CELL_COL').AsInteger = 1 then Exit;
   if DsReportTemplate1.State in [dsEdit,dsInsert] then DsReportTemplate1.Post;
 
+  COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+  ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+  DsReportTemplate1.Prior;
+  COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+  ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+
   DsReportTemplate1.DisableControls;
   try
-    COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
-    ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
-    DsReportTemplate1.Prior;
-    COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
-    ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
-
+    DsReportTemplate1.SortedFields := 'ROWS_ID';
     if ROW <> ROW1 then
       begin
         DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]);
@@ -1383,6 +1388,7 @@ begin
         DsReportTemplate1.Post;
       end;
   finally
+    DsReportTemplate1.SortedFields := 'CELL_ROW;CELL_COL';
     DsReportTemplate1.EnableControls;
   end;
 end;
@@ -1397,17 +1403,18 @@ begin
   if DsReportTemplate1.IsEmpty then Exit;
   if DsReportTemplate1.RecordCount = 1 then Exit;
 
+  COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+  ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+
+  DsReportTemplate1.Next;
+  COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
+  ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
+  ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
+
   DsReportTemplate1.DisableControls;
   try
-    COL := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
-    ROW := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
-
-    DsReportTemplate1.Next;
-    COL1 := DsReportTemplate1.FieldByName('CELL_COL').AsInteger;
-    ROW1 := DsReportTemplate1.FieldByName('CELL_ROW').AsInteger;
-    ROWS_ID1 := DsReportTemplate1.FieldByName('ROWS_ID').AsString;
-
+    DsReportTemplate1.SortedFields := 'ROWS_ID';
     if ROW <> ROW1 then
       begin
         DsReportTemplate1.Locate('ROWS_ID',ROWS_ID,[]);
@@ -1428,6 +1435,7 @@ begin
         DsReportTemplate1.Post;
       end;
   finally
+    DsReportTemplate1.SortedFields := 'CELL_ROW;CELL_COL';
     DsReportTemplate1.EnableControls;
   end;
 end;

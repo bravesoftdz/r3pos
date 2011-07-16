@@ -137,7 +137,7 @@ begin
   result := false;
   if not ready then
      begin
-       MessageBox(Handle,'系统装载新商盟运行环境无效,请稍候再试.','友情提示...',MB_OK+MB_ICONWARNING);
+       MessageBox(Handle,'系统正在装载新商盟环境,请稍候再试.','友情提示...',MB_OK+MB_ICONWARNING);
        Exit;
      end;
   SaveLog := frmLogo.Visible;

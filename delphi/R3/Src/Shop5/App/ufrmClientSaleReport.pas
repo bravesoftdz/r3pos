@@ -661,6 +661,9 @@ begin
   //增加单位显示：
   SetUnitIDList(DBGridEh4,'UNIT_ID');
   SetUnitIDList(DBGridEh5,'UNIT_ID');
+
+  //2011.07.16 释放掉明细
+  SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
 end;
 
 function TfrmClientSaleReport.AddReportReport(TitleList: TStringList;

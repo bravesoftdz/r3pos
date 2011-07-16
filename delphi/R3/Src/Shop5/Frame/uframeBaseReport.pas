@@ -7,7 +7,7 @@
       单价用:   #0.00#
       金额用:   #0.00
       毛利率用: #0.00%
-      折扣率用: #0% 
+      折扣率用: #0%
 
 }                     
 
@@ -110,6 +110,9 @@ type
     procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
     //添加统计单位Items
     procedure AddTongjiUnitList(TJUnit: TcxComboBox);
+    //添加销售类型ItemsList: ItemsIdx: 对应：PUB_PARAMS.TYPE_CODE='TYPE_CODE'; AddAll:是否添加“全部”
+    procedure AddCBxItemsList(SetCbx: TcxComboBox; TYPE_CODE: string; AddAll: Boolean=False);
+
     //选择商品类别[带供应链] 返回名称[类别名称]
     function SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
     //不同数据库类型转换：输入字段名称，返回转化后表达式:
@@ -446,7 +449,12 @@ begin
         begin
           AddReportTypeList(Cbx);
           Cbx.ItemIndex:=0;
-        end;  
+        end;
+        if RightStr(CmpName,11)='_SALES_TYPE' then //销售类型
+        begin
+          AddCBxItemsList(Cbx,'IS_PRESENT',true);
+          Cbx.ItemIndex:=0;
+        end;
       end;
     end;
 
@@ -795,6 +803,38 @@ begin
   TJUnit.Properties.Items.Add('包装1');
   TJUnit.Properties.Items.Add('包装2');
   TJUnit.ItemIndex:=0;
+end;
+
+//添加销售类型ItemsList: ItemsIdx: 对应：PUB_PARAMS.TYPE_CODE='TYPE_CODE'; AddAll:是否添加“全部”
+procedure TframeBaseReport.AddCBxItemsList(SetCbx: TcxComboBox; TYPE_CODE: string; AddAll: Boolean);
+var
+  Rs: TZQuery;
+  CurObj: TRecord_;
+begin
+  ClearCbxPickList(SetCbx);
+  Rs:=Global.GetZQueryFromName('PUB_PARAMS');
+  try
+    Rs.Filtered:=False;
+    Rs.Filter:='TYPE_CODE='''+TYPE_CODE+''' ';
+    Rs.Filtered:=true;
+    if AddAll then  //添加全部
+    begin
+      CurObj:=TRecord_.Create;
+      CurObj.ReadField(Rs);
+      SetCbx.Properties.Items.AddObject('全部',CurObj);
+    end;
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      CurObj:=TRecord_.Create;
+      CurObj.ReadFromDataSet(Rs);
+      SetCbx.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
+      Rs.Next;
+    end;
+  finally
+    Rs.Filtered:=False;
+    Rs.Filter:='';
+  end;
 end;
 
 function TframeBaseReport.SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
@@ -1232,12 +1272,19 @@ begin
     TitleList.Add('商品名称：'+TzrComboBoxList(FindCmp1).Text);
   end;
 
-  // 9、计量单位
+  // 9、销售类型
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SALES_TYPE');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex>0)  then
+  begin
+    TitleList.add('销售类型：'+TcxComboBox(FindCmp1).Text);
+  end;
+
+  // 10、计量单位
   FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
 
-  // 10、业务员、导购员
+  // 11、业务员、导购员
   FindCmp1:=FindComponent('fndP'+PageNo+'_GUIDE_USER');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).AsString<>'') then
   begin
@@ -1247,7 +1294,14 @@ begin
       TitleList.Add('业务员：'+TzrComboBoxList(FindCmp1).Text);
   end;
 
-  // 11、单据类型:[全部命名规则]
+  // 12、统计类型：     
+  FindCmp1:=FindComponent('fndP'+PageNo+'_RPTTYPE');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
+  begin
+    TitleList.add('统计类型：'+TcxComboBox(FindCmp1).Text);
+  end;
+
+  // 13、单据类型:[全部命名规则]
   FindCmp1:=FindComponent('fndP'+PageNo+'_ALL');
   if (FindCmp1<>nil) and (FindCmp1 is TcxRadioButton) and (not TcxRadioButton(FindCmp1).Checked) then //所有:
   begin
@@ -1637,7 +1691,6 @@ begin
     smNoneEh,smDownEh:     begin       Column.Title.SortMarker := smUpEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';     end;    smUpEh:     begin       Column.Title.SortMarker := smDownEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC';     end;
   end;
 end;
-
 
 
 

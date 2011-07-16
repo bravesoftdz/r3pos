@@ -1630,23 +1630,15 @@ begin
 end;
 
 procedure TframeBaseReport.DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string);
-var
-  SortFields: string;
 begin
   if Column.Field = nil then Exit;
   if (GridDataSet=nil) or (GridDataSet.IsEmpty) then Exit;
-  if Column.Title.SortMarker= smNoneEh then
-    Column.Title.SortMarker := smUpEh
-  else if Column.Title.SortMarker= smUpEh then
-    Column.Title.SortMarker := smDownEh
-  else
-    Column.Title.SortMarker := smNoneEh;
   case Column.Title.SortMarker of
-   smNoneEh: SortFields:=SORT_ID+' ASC';
-   smDownEh: SortFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC';
-   smUpEh:   SortFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';
+    smNoneEh,smDownEh:     begin       Column.Title.SortMarker := smUpEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';     end;    smUpEh:     begin       Column.Title.SortMarker := smDownEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC';     end;
   end;
-  GridDataSet.SortedFields:=SortFields;
 end;
+
+
+
 
 end.

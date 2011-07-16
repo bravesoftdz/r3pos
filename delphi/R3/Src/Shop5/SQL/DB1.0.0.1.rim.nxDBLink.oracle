@@ -45,3 +45,240 @@ CREATE SYNONYM RIM_ADJUST_DETAIL FOR RIM_ADJUST_DETAIL@RIMLINK;
 CREATE SYNONYM RIM_CUST_DAY FOR RIM_CUST_DAY@RIMLINK;
  
  
+--以下是创建中间表：
+--////2011.05.25 PM ：创建对接中间表：INF_GOODS_RELATION （国家烟草供应链：1000006）
+CREATE TABLE INF_GOODS_RELATION (
+     --GUID号
+	ROWS_ID char (36) NOT NULL ,
+     --企业代码 
+	TENANT_ID NUMBER(9,0) NOT NULL ,
+     --供应链
+	RELATION_ID NUMBER(9,0) NOT NULL ,
+     --货品代码
+	GODS_ID char (36) NOT NULL , 
+     --行业内码<第三方系统内码>
+	SECOND_ID varchar2 (36), 
+     --货号<识别码>
+	GODS_CODE varchar2 (36), 
+     --品名+规格
+	GODS_NAME varchar2 (50) ,
+     --拼音码
+	GODS_SPELL varchar2 (50) ,
+     --分类1
+	SORT_ID1 varchar2 (36),
+     --分类2
+	SORT_ID2 varchar2 (36),
+     --分类3
+	SORT_ID3 varchar2 (36),
+     --分类4
+	SORT_ID4 varchar2 (36),
+     --分类5
+	SORT_ID5 varchar2 (36),
+     --分类6
+	SORT_ID6 varchar2 (36),
+     --颜色组
+	SORT_ID7 varchar2 (36),
+     --尺码组
+	SORT_ID8 varchar2 (36),
+     --自定义9
+	SORT_ID9 varchar2 (36),
+     --自定义10
+	SORT_ID10 varchar2 (36),
+     --自定义11
+	SORT_ID11 varchar2 (36),
+     --自定义12
+	SORT_ID12 varchar2 (36),
+     --自定义13
+	SORT_ID13 varchar2 (36),
+     --自定义14
+	SORT_ID14 varchar2 (36),
+     --自定义15
+	SORT_ID15 varchar2 (36),
+     --自定义16
+	SORT_ID16 varchar2 (36),
+     --自定义17
+	SORT_ID17 varchar2 (36),
+     --自定义18
+	SORT_ID18 varchar2 (36),
+     --自定义19
+	SORT_ID19 varchar2 (36),
+     --自定义20
+	SORT_ID20 varchar2 (36),
+     --标准进价
+	NEW_INPRICE decimal(18, 3),
+     --标准售价
+	NEW_OUTPRICE decimal(18, 3),
+     --最低售价
+	NEW_LOWPRICE decimal(18, 3),
+     --是否启用折扣率 1启用,2禁用
+	USING_PRICE NUMBER(9,0),
+     --是否参考积分
+	HAS_INTEGRAL NUMBER(9,0),
+     --是否使用批号管制
+	USING_BATCH_NO NUMBER(9,0),
+     --是否管制积分换购
+	USING_BARTER NUMBER(9,0),
+     --是否管制物流跟踪码
+	USING_LOCUS_NO NUMBER(9,0),
+     --积分换购积分
+	BARTER_INTEGRAL NUMBER(9,0),
+	   --条条码
+  PACK_BARCODE varchar2 (30),
+     --更新标记位(0:表示没有更新对应; 1:表示修改; 2: 表示插入)、
+  UPDATE_FLAG NUMBER(9,0) NOT NULL,
+  CONSTRAINT PK_INF_G_RELATION  PRIMARY KEY (ROWS_ID)  --广西柳州（PK_INF_G_RELATION）创建
+);
+
+
+--2011.05.25 PM：创建下载订单中间表主表：
+CREATE TABLE INF_INDEORDER (
+        --企业ID(对应：Rim供应商:CLIENT_ID)
+	TENANT_ID NUMBER(9,0)NOT NULL ,
+        --门店ID(对应：零售户代码:CUST_ID)
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --订单单号
+	INDE_ID varchar2 (50) NOT NULL ,
+        --入库日期
+	INDE_DATE varchar2 (10) NOT NULL ,
+        --入库数量      
+	INDE_AMT decimal(18, 6) ,
+        --需求数量（下载订单导入）      
+	NEED_AMT decimal(18, 6) ,
+        --入库金额
+	INDE_MNY decimal(18, 6) ,
+	 --单据状态	
+  STATUS varchar2(4), 		
+	CONSTRAINT PK_INF_INDEORDER PRIMARY KEY (TENANT_ID,INDE_ID)
+);
+--创建索引
+CREATE INDEX IX_INF_INDEORDER_TENANT_ID ON INF_INDEORDER(TENANT_ID);
+CREATE INDEX IX_INF_INDEORDER_STOCK_DATE ON INF_INDEORDER(INDE_DATE);
+
+--2011.05.25 PM：创建入库单中间表明细表：[此数量宽度参考Rim数据长度]
+ CREATE TABLE INF_INDEDATA (
+     --企业ID(对应：Rim供应商:CLIENT_ID)
+ 	TENANT_ID NUMBER(9,0) NOT NULL , 
+ 	   --订单编号
+  INDE_ID varchar2 (50) NOT NULL ,
+     --商品编号(R3)  
+  GODS_ID varchar2 (50) ,   
+     --商品编号(第三方)
+  SECOND_ID varchar2 (50) ,   
+     --计量单位
+  UNIT_ID char (36) ,         
+     --需求数量
+  NEED_AMT decimal(18, 6) ,    
+     --审核数量
+  CHK_AMT decimal(18, 6) ,   
+     --订购数量 
+  AMOUNT decimal(18, 6) ,    
+     --折扣价格
+  APRICE decimal(18, 6),     
+     --三级批发价  
+  PRI3 decimal(18, 6) ,      
+     --折扣金额	
+  AGIO_MONEY decimal(18, 6),  
+     --含税金额, 金额=订购数量*折扣价格
+  AMONEY decimal(18, 6),      
+     --计量单位数据						
+	CALC_AMOUNT decimal(18, 6)  
+  );
+--创建索引 
+CREATE INDEX IX_INF_INDEDATA_GODS_ID ON INF_INDEDATA(TENANT_ID,INDE_ID);
+ 
+--2011.05.25 PM添加：Rim系统Oracle版本创建中间临时表：
+--Rim系统Oracle
+--上报月台帐：
+CREATE GLOBAL TEMPORARY TABLE INF_RECKMONTH (
+    TENANT_ID NUMBER(9,0) NOT NULL,      --R3企业ID
+    LICENSE_CODE VARCHAR2(50) NOT NULL,  --R3门店许可证号
+    SHORT_SHOP_ID VARCHAR(4) NOT NULL,   --R3门店ID后4位
+    COM_ID VARCHAR(30) NOT NULL,         --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,        --RIM零售户ID
+    ITEM_ID VARCHAR(30) NOT NULL,        --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,           --R3商品ID
+    UNIT_CALC DECIMAL (18,6),            --单位换算值
+    RECK_MONTH VARCHAR(8) NOT NULL       --台账月份
+   ) ON COMMIT PRESERVE ROWS; 
+
+--上报销售汇总
+CREATE GLOBAL TEMPORARY TABLE INF_SALESUM(
+    TENANT_ID NUMBER(9,0) NOT NULL,     --R3企业ID
+    SHOP_ID VARCHAR(20) NOT NULL,       --R3门店ID
+    SHORT_SHOP_ID VARCHAR(4) NOT NULL,  --R3门店ID后4位
+    COM_ID VARCHAR(30) NOT NULL,        --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,       --RIM零售户ID
+    ITEM_ID VARCHAR(30) NOT NULL,       --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,          --R3商品ID
+    UNIT_ID CHAR(36) NOT NULL,          --单位ID
+    SALES_DATE  VARCHAR(8) NOT NULL,    --销售日期
+    QTY_ORD DECIMAL (18,6),             --台账销售数量
+    AMT DECIMAL (18,6),                 --台账销售金额
+    CO_NUM VARCHAR(50) NOT NULL         --单据号（组合字段）
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报销售单
+CREATE GLOBAL TEMPORARY TABLE INF_SALE(
+   TENANT_ID NUMBER(9,0) NOT NULL,      --R3企业ID
+   SHOP_ID VARCHAR(20) NOT NULL,        --R3门店ID
+   SHORT_SHOP_ID VARCHAR(4) NOT NULL,   --R3门店ID后4位    
+   COM_ID VARCHAR(30) NOT NULL,         --RIM烟草公司ID
+   CUST_ID VARCHAR(30) NOT NULL,        --RIM零售户ID
+   SALES_ID CHAR(36) NOT NULL,          --RIM零售销售单ID
+   SALE_DATE CHAR (8) NOT NULL,         --RIM零售销售单日期
+   CUST_CODE varchar (20)               --会员号
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报调拨单
+CREATE GLOBAL TEMPORARY TABLE INF_DB(
+   TENANT_ID NUMBER(9,0) NOT NULL,      --R3企业ID
+   SHOP_ID VARCHAR(20) NOT NULL,        --R3门店ID
+   SHORT_SHOP_ID VARCHAR(4) NOT NULL,   --R3门店ID后四位
+   COM_ID VARCHAR(30) NOT NULL,         --RIM烟草公司ID
+   CUST_ID VARCHAR(30) NOT NULL,        --RIM零售户ID
+   DB_ID CHAR(36) NOT NULL,             --R3调拨ID[入库、销售单]
+   DB_NEWID VARCHAR(40) NOT NULL,       --RIM调拨ID
+   DB_DATE CHAR(8) NOT NULL
+   ) ON COMMIT PRESERVE ROWS;
+
+--上报入库存单
+CREATE GLOBAL TEMPORARY TABLE INF_STOCK(   
+     TENANT_ID NUMBER(9,0) NOT NULL,    --R3企业ID
+     SHOP_ID VARCHAR(20) NOT NULL,      --R3门店ID
+     SHORT_SHOP_ID VARCHAR(4) NOT NULL, --R3门店ID后四位
+     COM_ID VARCHAR(30) NOT NULL,       --RIM烟草公司ID
+     CUST_ID VARCHAR(30) NOT NULL,      --RIM零售户ID
+     STOCK_ID CHAR(36) NOT NULL,        --RIM入库单ID
+     STOCK_DATE CHAR(8) NOT NULL        --入库日期  
+     ) ON COMMIT PRESERVE ROWS;
+
+--上报调整单临时表
+CREATE GLOBAL TEMPORARY TABLE INF_CHANGE( 
+    TENANT_ID NUMBER(9,0) NOT NULL,       --R3企业ID
+    SHOP_ID VARCHAR(20) NOT NULL,         --R3门店ID
+    SHORT_SHOP_ID VARCHAR(4) NOT NULL,    --R3门店ID后四位 
+    COM_ID VARCHAR(30) NOT NULL,          --RIM烟草公司ID
+    CUST_ID VARCHAR(30) NOT NULL,         --RIM零售户ID
+    CHANGE_ID CHAR(36) NOT NULL,          --RIM调整单ID
+    CHANGE_DATE CHAR(8) NOT NULL          --调整单日期       
+    ) ON COMMIT PRESERVE ROWS;
+ 
+--2011.06.13重建日台账表：
+CREATE GLOBAL TEMPORARY TABLE INF_RECKDAY (
+    TENANT_ID NUMBER(9,0) NOT NULL,      --R3企业ID
+    LICENSE_CODE VARCHAR2(50) NOT NULL,  --R3门店许可证号
+    SHORT_SHOP_ID VARCHAR2(4) NOT NULL,  --R3门店ID后4位
+    COM_ID VARCHAR2(30) NOT NULL,        --RIM烟草公司ID
+    CUST_ID VARCHAR2(30) NOT NULL,       --RIM零售户ID
+    ITEM_ID VARCHAR2(30) NOT NULL,       --RIM商品ID
+    GODS_ID CHAR(36) NOT NULL,           --R3商品ID
+    UNIT_CALC DECIMAL (18,6),            --商品计量单位换算管理单位换算值
+    NEW_INPIRCE DECIMAL (18,6),          --商品最新进价[批发价]
+    NEW_OUTPIRCE DECIMAL (18,6),         --商品门店零售价
+    RECK_DATE VARCHAR2(8) NOT NULL       --台账日期
+   ) ON COMMIT PRESERVE ROWS;
+
+  
+ 
+ 
+ 

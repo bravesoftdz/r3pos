@@ -1685,7 +1685,7 @@ end;
 
 procedure TfrmSaleDayReport.DBGridEh5TitleClick(Column: TColumnEh);
 begin
-  DBGridTitleClick(adoReport5,Column,GodsSortIdx);
+  DBGridTitleClick(adoReport5,Column,'SORT_ID');
 end;
 
 end.

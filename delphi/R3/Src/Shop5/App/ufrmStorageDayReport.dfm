@@ -1506,6 +1506,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh4GetFooterParams
+                  OnTitleClick = DBGridEh4TitleClick
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1514,6 +1515,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footers = <>
                       Title.Caption = #24207#21495
                       Width = 30
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'SORT_ID'
+                      Footers = <>
                     end
                     item
                       EditButtons = <>
@@ -1542,7 +1548,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       FieldName = 'UNIT_NAME'
                       Footers = <>
                       Title.Caption = #21333#20301
-                      Width = 22
+                      Width = 30
                     end
                     item
                       Alignment = taRightJustify

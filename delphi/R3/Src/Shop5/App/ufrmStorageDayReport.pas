@@ -131,6 +131,7 @@ type
       State: TGridDrawState; var Text: String);
     procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh4TitleClick(Column: TColumnEh);
   private
     IsOnDblClick: Boolean;
     BAL_Date: integer;  //查询库存日期[查询库存日期，查询当前天的下一天期初]
@@ -1124,6 +1125,12 @@ procedure TfrmStorageDayReport.DBGridEh4DrawColumnCell(Sender: TObject;
 begin
   inherited;
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+procedure TfrmStorageDayReport.DBGridEh4TitleClick(Column: TColumnEh);
+begin
+  inherited;
+ // DBGridTitleClick(adoReport4,Column,'SORT_ID');
 end;
 
 end.

@@ -132,6 +132,7 @@ type
       State: TGridDrawState; var Text: String);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh4TitleClick(Column: TColumnEh);
   private
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位  
     sid1,sid2,sid4:string;
@@ -1313,6 +1314,12 @@ procedure TfrmJxcTotalReport.DBGridEh1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+procedure TfrmJxcTotalReport.DBGridEh4TitleClick(Column: TColumnEh);
+begin
+  inherited;
+  DBGridTitleClick(adoReport4,Column,'SORT_ID');
 end;
 
 end.

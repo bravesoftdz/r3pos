@@ -197,6 +197,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh4TitleClick(Column: TColumnEh);
   private
     { Private declarations }
     vBegDate,            //查询开始日期
@@ -1543,6 +1544,12 @@ procedure TfrmSaleManSaleReport.DBGridEh4DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+procedure TfrmSaleManSaleReport.DBGridEh4TitleClick(Column: TColumnEh);
+begin
+  inherited;
+  DBGridTitleClick(adoReport4,Column,'SORT_ID');
 end;
 
 end.

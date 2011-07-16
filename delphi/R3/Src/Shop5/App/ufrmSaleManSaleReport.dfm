@@ -2194,7 +2194,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TitleFont.Name = #23435#20307
                   TitleFont.Style = [fsBold]
                   TitleHeight = 22
-                  UseMultiTitle = True
                   IsDrawNullRow = False
                   CurrencySymbol = #65509
                   DecimalNumber = 2
@@ -2203,6 +2202,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh4GetFooterParams
+                  OnTitleClick = DBGridEh4TitleClick
                   Columns = <
                     item
                       Alignment = taCenter

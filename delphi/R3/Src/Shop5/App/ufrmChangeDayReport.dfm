@@ -1491,6 +1491,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh4GetFooterParams
+                  OnTitleClick = DBGridEh4TitleClick
                   Columns = <
                     item
                       Alignment = taCenter

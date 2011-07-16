@@ -166,6 +166,7 @@ type
     procedure fndP6_DBINClick(Sender: TObject);
     procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh4TitleClick(Column: TColumnEh);
   private
     vBegDate,          //查询开始日期
     vEndDate: integer; //查询结束日期
@@ -1327,6 +1328,12 @@ procedure TfrmDbDayReport.DBGridEh4DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+procedure TfrmDbDayReport.DBGridEh4TitleClick(Column: TColumnEh);
+begin
+  inherited;
+  DBGridTitleClick(adoReport4,Column,'SORT_ID');
 end;
 
 end.

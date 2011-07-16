@@ -193,6 +193,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh4TitleClick(Column: TColumnEh);
   private
     //数据集；
     vBegDate,            //查询开始日期
@@ -1540,6 +1541,12 @@ begin
   AObj:=TRecord_(fndP4_RPTTYPE.Properties.Items.Objects[fndP4_RPTTYPE.ItemIndex]);
   result:=AObj.fieldbyName('SORT_ID').AsString;
   if result='' then result:='0';   
+end;
+
+procedure TfrmClientSaleReport.DBGridEh4TitleClick(Column: TColumnEh);
+begin
+  inherited;
+  DBGridTitleClick(adoReport4,Column,'SORT_ID');
 end;
 
 end.

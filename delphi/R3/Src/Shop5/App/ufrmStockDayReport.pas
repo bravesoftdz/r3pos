@@ -1279,7 +1279,6 @@ end;
 
 procedure TfrmStockDayReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
-  inherited;
   DBGridTitleClick(adoReport4,Column,'SORT_ID');
 end;
 

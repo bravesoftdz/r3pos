@@ -1460,6 +1460,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh4: TDBGridEh
+                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 844
@@ -1515,11 +1516,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                       Footers = <>
                       Title.Caption = #24207#21495
                       Width = 30
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SORT_ID'
-                      Footers = <>
                     end
                     item
                       EditButtons = <>
@@ -1704,23 +1700,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
     Left = 185
     Top = 354
   end
-  object dsadoReport5: TDataSource
-    DataSet = adoReport5
-    Left = 233
-    Top = 354
-  end
   object adoReport2: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 89
-    Top = 321
-  end
-  object adoReport5: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 233
     Top = 321
   end
   object adoReport3: TZQuery

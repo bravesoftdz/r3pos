@@ -45,7 +45,6 @@ type
     RzPanel15: TRzPanel;
     DBGridEh4: TDBGridEh;
     dsadoReport4: TDataSource;
-    dsadoReport5: TDataSource;
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
@@ -89,7 +88,6 @@ type
     fndP4_SHOP_VALUE: TzrComboBoxList;
     fndP4_SHOP_TYPE: TcxComboBox;
     adoReport2: TZQuery;
-    adoReport5: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
     fndP4_ReckType: TcxComboBox;
@@ -1129,8 +1127,7 @@ end;
 
 procedure TfrmStorageDayReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
-  inherited;
- // DBGridTitleClick(adoReport4,Column,'SORT_ID');
+  DBGridTitleClick(adoReport4,Column,'SORT_ID');
 end;
 
 end.

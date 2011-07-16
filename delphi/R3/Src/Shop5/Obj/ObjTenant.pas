@@ -225,7 +225,24 @@ try
   ' values(:TENANT_ID,''F58DD749-7059-4F81-8933-0CEE71F0B88F'',''网络销售'',''WLXS'',''2'',4,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
 
-  //收支项目 CODE_TYPE=3        
+  //用途 CODE_TYPE=16
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''01'',''自用'',''ZY'',''16'',1,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''02'',''馈赠礼品'',''JTXS'',''16'',2,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''03'',''团体消费'',''DHXS'',''16'',3,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''04'',''婚丧嫁娶'',''WLXS'',''16'',4,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''05'',''其他'',''WLXS'',''16'',4,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+
+  //收支项目 CODE_TYPE=3
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
   ' values(:TENANT_ID,''1EB4EFEB-2CF5-4CF0-99AF-1F07410A7E90'',''销售收入'',''XSSR'',''3'',1,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);

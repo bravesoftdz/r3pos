@@ -374,39 +374,21 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   NumGlyphs = 2
                   Spacing = 5
                 end
-                object P1_D1: TzrMonthEdit
-                  Left = 73
-                  Top = 10
-                  Width = 84
+                object P1_D1: TcxDateEdit
+                  Left = 72
+                  Top = 9
+                  Width = 85
                   Height = 20
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   TabOrder = 12
-                  Text = '2010-01'
-                  Year = 0
-                  Month = 0
-                  asString = '000000'
-                  asFormatString = '0000-00'
                 end
-                object P1_D2: TzrMonthEdit
-                  Left = 181
-                  Top = 10
-                  Width = 84
+                object P1_D2: TcxDateEdit
+                  Left = 180
+                  Top = 9
+                  Width = 85
                   Height = 20
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   TabOrder = 13
-                  Text = '2010-01'
-                  Year = 0
-                  Month = 0
-                  asString = '000000'
-                  asFormatString = '0000-00'
                 end
               end
               inherited RzPanel7: TRzPanel
@@ -451,7 +433,13 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
       Left = 922
     end
   end
+  inherited mmMenu: TMainMenu
+    Left = 112
+    Top = 224
+  end
   inherited actList: TActionList
+    Left = 144
+    Top = 224
     inherited actFind: TAction
       OnExecute = actFindExecute
     end

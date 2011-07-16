@@ -34,8 +34,8 @@ type
     Label21: TLabel;
     fndP1_SHOP_ID: TzrComboBoxList;
     btnDelete: TRzBitBtn;
-    P1_D1: TzrMonthEdit;
-    P1_D2: TzrMonthEdit;
+    P1_D1: TcxDateEdit;
+    P1_D2: TcxDateEdit;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -55,7 +55,7 @@ type
     { Private declarations }
     sid1,srid1,SortName:string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
-    function GetMaxMonth(E:integer):string;
+    function GetMaxDate(E:integer):string;
     procedure CheckCalc(b, e:integer); //开始月份| 结束月份    
   public
     { Public declarations }
@@ -130,8 +130,8 @@ procedure TfrmSaleMonthTotalReport.FormCreate(Sender: TObject);
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false);
-  P1_D1.asString := FormatDateTime('YYYYMM', date); //默认当月
-  P1_D2.asString := FormatDateTime('YYYYMM', date); //默认当月
+  P1_D1.date := date; //默认当月
+  P1_D2.date := date; //默认当月
   
   Factory := TReportFactory.Create('4');
   Factory.DataSet := TZQuery.Create(nil);
@@ -216,21 +216,15 @@ end;
 function TfrmSaleMonthTotalReport.GetGodsSQL(chk: boolean): string;
 var
   mx, UnitCalc: string;  //单位计算关系
-  strSql,strWhere,GoodTab: widestring;
+  strSql,strWhere,strWhere_y,strWhere_m,GoodTab: widestring;
   Day:integer;
 begin
   result:='';
-  if P1_D1.EditValue = null then Raise Exception.Create('销售月份条件不能为空');
-  if P1_D2.EditValue = null then Raise Exception.Create('销售月份条件不能为空');
-  if P1_D1.asString>P1_D2.asString then Raise Exception.Create('结束月份不能小于开始月份...');
+  if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P1_D1.Date>P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
-
-  //月份日期:
-  if (P1_D1.asString<>'') and (P1_D1.asString=P1_D2.asString) then
-    strWhere:=strWhere+' and A.MONTH='+P1_D1.asString
-  else if P1_D1.asString<P1_D2.asString then
-    strWhere:=strWhere+' and A.MONTH>='+P1_D1.asString+' and A.MONTH<='+P1_D2.asString+' ';
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
@@ -252,7 +246,7 @@ begin
      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
     end;
   end;
-  Day := trunc(incMonth(fnTime.fnStrtoDate(P1_D2.asString+'01'),1) - fnTime.fnStrtoDate(P1_D1.asString+'01'));
+  Day := round(P1_D2.Date - P1_D1.Date) + 1;
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
@@ -274,18 +268,39 @@ begin
   //计量单位换算:
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   //检测是否计算
-  CheckCalc(strtoInt(P1_D1.asString),StrtoInt(P1_D2.asString));
-  mx := GetMaxMonth(StrtoInt(P1_D2.asString));
+  CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date)),
+            strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date))
+           );
   
+  mx := GetMaxDate(StrtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
+
+  //日期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',P1_D1.Date)=formatDatetime('YYYYMMDD',P1_D2.Date)) then
+    strWhere:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
+
+  //同期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))) then
+    strWhere_y:=strWhere_y+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_y:=strWhere_y+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))+' ';
+
+  //上期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))) then
+    strWhere_m:=strWhere_m+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_m:=strWhere_m+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))+' ';
+    
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
 
-    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
-    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
-    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
-    ',sum(case when A.MONTH='+P1_D1.asString+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
 
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as STOCK_MNY '+   //进货金额<末税>
@@ -293,16 +308,16 @@ begin
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
 
 
-    ',sum(YEAR_STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
-    ',sum(YEAR_STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
-    ',sum(YEAR_STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
-    ',isnull(sum(YEAR_STOCK_MNY),0)+isnull(sum(YEAR_STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
+    ',0 as YEAR_STOCK_AMT '+   //进货数量
+    ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as YEAR_STOCK_TAX '+   //进项税额
+    ',0 as YEAR_STOCK_TTL '+  //进货金额
 
 
-    ',sum(PRIOR_STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
-    ',sum(PRIOR_STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
-    ',sum(PRIOR_STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
-    ',isnull(sum(PRIOR_STOCK_MNY),0)+isnull(sum(PRIOR_STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
+    ',0 as PRIOR_STOCK_AMT '+   //进货数量
+    ',0 as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as PRIOR_STOCK_TAX '+   //进项税额
+    ',0 as PRIOR_STOCK_TTL '+  //进货金额
 
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
     ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
@@ -311,12 +326,126 @@ begin
     ',sum(SALE_CST) as SALE_CST '+   //销售成本
     ',sum(SALE_PRF) as SALE_PRF '+   //销售毛利
 
+    ',0 as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',0 as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',0 as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',0 as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',0 as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',0 as PRIOR_MONTH_CST '+   //上月销售成本
+    ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
+    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
+
+  strSql := strSql + ' union all '+
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
+
+    ',0 as ORG_AMT '+ //期初数量
+    ',0 as ORG_MNY '+   //进项金额<按当时进价>
+    ',0 as ORG_RTL '+   //可销售额<按零售价>
+    ',0 as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',0 as STOCK_AMT '+   //进货数量
+    ',0 as STOCK_MNY '+   //进货金额<末税>
+    ',0 as STOCK_TAX '+   //进项税额
+    ',0 as STOCK_TTL '+  //进货金额
+
+
+    ',sum(YEAR_STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(YEAR_STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(YEAR_STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(YEAR_STOCK_MNY),0)+isnull(sum(YEAR_STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
+
+
+    ',0 as PRIOR_STOCK_AMT '+   //进货数量
+    ',0 as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as PRIOR_STOCK_TAX '+   //进项税额
+    ',0 as PRIOR_STOCK_TTL '+  //进货金额
+
+    ',0 as SALE_AMT '+   //销售数量
+    ',0 as SALE_MNY '+   //销售金额<末税>
+    ',0 as SALE_TAX '+   //销项税额
+    ',0 as SALE_TTL '+  //销售金额
+    ',0 as SALE_CST '+   //销售成本
+    ',0 as SALE_PRF '+   //销售毛利
+
     ',sum(PRIOR_YEAR_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
     ',sum(PRIOR_YEAR_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
     ',sum(PRIOR_YEAR_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
     ',isnull(sum(PRIOR_YEAR_MNY),0)+isnull(sum(PRIOR_YEAR_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
     ',sum(PRIOR_YEAR_CST) as PRIOR_YEAR_CST '+   //去年同期销售成本
     ',isnull(sum(PRIOR_YEAR_MNY),0)-isnull(sum(PRIOR_YEAR_CST),0) as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',0 as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',0 as PRIOR_MONTH_CST '+   //上月销售成本
+    ',0) as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',0 as BAL_AMT '+ //结存数量
+    ',0 as BAL_MNY '+   //进项金额<按当时进价>
+    ',0 as BAL_RTL '+   //可销售额<按零售价>
+    ',0 as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
+    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere_y + ' '+
+    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
+
+  strSql := strSql + ' union all '+
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
+
+    ',0 as ORG_AMT '+ //期初数量
+    ',0 as ORG_MNY '+   //进项金额<按当时进价>
+    ',0 as ORG_RTL '+   //可销售额<按零售价>
+    ',0 as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',0 as STOCK_AMT '+   //进货数量
+    ',0 as STOCK_MNY '+   //进货金额<末税>
+    ',0 as STOCK_TAX '+   //进项税额
+    ',0 as STOCK_TTL '+  //进货金额
+
+
+    ',0 as YEAR_STOCK_AMT '+   //进货数量
+    ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as YEAR_STOCK_TAX '+   //进项税额
+    ',0 as YEAR_STOCK_TTL '+  //进货金额
+
+
+    ',sum(PRIOR_STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(PRIOR_STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(PRIOR_STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(PRIOR_STOCK_MNY),0)+isnull(sum(PRIOR_STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
+
+    ',0 as SALE_AMT '+   //销售数量
+    ',0 as SALE_MNY '+   //销售金额<末税>
+    ',0 as SALE_TAX '+   //销项税额
+    ',0 as SALE_TTL '+  //销售金额
+    ',0 as SALE_CST '+   //销售成本
+    ',0 as SALE_PRF '+   //销售毛利
+
+    ',0 as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',0 as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',0 as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',0 as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
     ',sum(PRIOR_MONTH_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
     ',sum(PRIOR_MONTH_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
@@ -325,15 +454,15 @@ begin
     ',sum(PRIOR_MONTH_CST) as PRIOR_MONTH_CST '+   //上月销售成本
     ',isnull(sum(PRIOR_MONTH_MNY),0)-isnull(sum(PRIOR_MONTH_CST),0) as PRIOR_MONTH_PRF '+   //上月销售毛利
 
-    ',sum(case when A.MONTH='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
-    ',sum(case when A.MONTH='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
-    ',sum(case when A.MONTH='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
-    ',sum(case when A.MONTH='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
+    ',0 as BAL_AMT '+ //结存数量
+    ',0 as BAL_MNY '+   //进项金额<按当时进价>
+    ',0 as BAL_RTL '+   //可销售额<按零售价>
+    ',0 as BAL_CST '+   //结存成本<移动加权成本>
     ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
-    'from RCK_GOODS_MONTH A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere_m + ' '+
     'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
-
+        
   strSql :=
     'select j.*,'+
     'r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME as GODS_ID_TEXT,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID,'+
@@ -420,9 +549,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH>=:END_MONTH';
+    rs.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and CREA_DATE>=:CREA_DATE';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('END_MONTH').AsInteger := e;
+    rs.ParamByName('CREA_DATE').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
       TfrmCostCalc.TryCalcMthGods(self);
@@ -431,15 +560,15 @@ begin
   end;
 end;
 
-function TfrmSaleMonthTotalReport.GetMaxMonth(E: integer): string;
+function TfrmSaleMonthTotalReport.GetMaxDate(E: integer): string;
 var
   rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select max(MONTH) from RCK_GOODS_MONTH where TENANT_ID=:TENANT_ID and MONTH<=:END_MONTH';
+    rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('END_MONTH').AsInteger := e;
+    rs.ParamByName('CREA_DATE').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsString='' then
        result := inttostr(e)

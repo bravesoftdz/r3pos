@@ -242,7 +242,8 @@ begin
      end;
   if szMethodName='error' then
      begin
-        s := szPara2;
+        s := utf8toAnsi(szPara2);
+        frmDesk.Waited := false;
         MessageBox(Handle,Pchar('<新商盟>'+ s +'<code='+szPara1+'>'),'友情提示...',MB_OK+MB_ICONWARNING);
      end;
   runed := false;

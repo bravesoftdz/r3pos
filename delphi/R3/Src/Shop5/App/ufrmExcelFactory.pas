@@ -465,7 +465,7 @@ begin
             try
               if Save(DataSet) then
                 begin
-                  MessageBox(Handle,'数据已经导入数据库中！','友情提示...',MB_OK+MB_ICONINFORMATION);
+                  MessageBox(Handle,'数据导入成功！','友情提示...',MB_OK+MB_ICONINFORMATION);
                   ModalResult := mrOk;
                 end
               else
@@ -473,9 +473,13 @@ begin
             finally
               Screen.Cursor := crDefault;
             end;
-          end;
+          end
+          else
+            MessageBox(Handle,'方法不能提交！','友情提示...',MB_OK+MB_ICONWARNING);
         end;
-      end;
+      end
+      else
+        MessageBox(Handle,'方法不能提交！','友情提示...',MB_OK+MB_ICONWARNING);
     end;
   //RzPageChange(nil);
 end;
@@ -648,8 +652,9 @@ begin
       begin
         DBGridEh1.Columns[i].Title.Caption := cdsExcel.FieldbyName(Char(64+i)).AsString;
       end;
+    cdsExcel.Delete;
   end;
-  cdsExcel.Delete;
+
 end;
 
 procedure TfrmExcelFactory.FormShow(Sender: TObject);

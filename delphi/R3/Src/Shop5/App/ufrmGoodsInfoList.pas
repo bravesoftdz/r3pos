@@ -531,7 +531,7 @@ end;
 procedure TfrmGoodsInfoList.actDeleteExecute(Sender: TObject);
 var
   i,n:integer;
-  tmpGlobal: TZQuery;
+  tmpGlobal,GodsList: TZQuery;
 begin
   inherited;
   if not cdsBrowser.Active then exit;
@@ -542,60 +542,62 @@ begin
 
   //2011.03.18 Add 判断是否选择非自主经营的商品:
   try
-    cdsBrowser.Filtered := false;
-    cdsBrowser.Filter := 'selFlag=''1'' '; //and (RELATION_ID=''0'')
-    cdsBrowser.Filtered := true;
-    if cdsBrowser.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
-    cdsBrowser.First;
-    while not cdsBrowser.Eof do
+    GodsList:=TZQuery.Create(nil);
+    GodsList.Data:=cdsBrowser.Data; 
+    GodsList.Filtered := false;
+    GodsList.Filter := 'selFlag=''1'' '; //and (RELATION_ID=''0'')
+    GodsList.Filtered := true;
+    if GodsList.IsEmpty then Raise Exception.Create('请选择要删除的商品...');
+    GodsList.First;
+    while not GodsList.Eof do
     begin
-      if trim(cdsBrowser.FieldByName('RELATION_ID').AsString)<>'0' then //只有等于0才能删除
+      if trim(GodsList.FieldByName('RELATION_ID').AsString)<>'0' then //只有等于0才能删除
       begin
-        Raise Exception.Create('商品 "'+cdsBrowser.FieldByName('GODS_NAME').AsString+'"'+'是加盟经营不删除！ ');
+        Raise Exception.Create('商品 "'+GodsList.FieldByName('GODS_NAME').AsString+'"'+'是加盟经营不删除！ ');
       end;
-      cdsBrowser.Next;
+      GodsList.Next;
     end;
+  finally
+    GodsList.Free;
+  end;
 
+  try
+    cdsBrowser.DisableControls;
     i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
     if i=6 then
     begin
       tmpGlobal := Global.GetZQueryFromName('PUB_GOODSINFO');
       tmpGlobal.Filtered :=false;
       cdsBrowser.CommitUpdates;
-      cdsBrowser.DisableControls;
-      try
-        n := 0;
-        tmpGlobal.CommitUpdates;
-        cdsBrowser.First;
-        while not cdsBrowser.Eof do //缓存删除记录
+      n := 0;
+      tmpGlobal.CommitUpdates;
+      cdsBrowser.First;
+      while not cdsBrowser.Eof do //缓存删除记录
+      begin
+        if (trim(cdsBrowser.FieldByName('selflag').AsString)='1') and (trim(cdsBrowser.FieldByName('RELATION_ID').AsString)='0') then
         begin
-          if (trim(cdsBrowser.FieldByName('selflag').AsString)='1') and (trim(cdsBrowser.FieldByName('RELATION_ID').AsString)='0') then
-          begin
-            if tmpGlobal.Locate('GODS_ID',cdsBrowser.FieldByName('GODS_ID').AsString,[]) then
-              tmpGlobal.Delete;
-            inc(n);
-            cdsBrowser.Delete;
-          end else cdsBrowser.Next;
-        end;
-        //提交数据保存
-        try
-          Factor.UpdateBatch(cdsBrowser,'TGoodsInfo');
-          rcAmt := rcAmt - n;
-          tmpGlobal.CommitUpdates;
-        except
-          cdsBrowser.CancelUpdates;
-          tmpGlobal.CancelUpdates;
-          Raise;
-        end;
-      finally
-        cdsBrowser.EnableControls;
+          if tmpGlobal.Locate('GODS_ID',cdsBrowser.FieldByName('GODS_ID').AsString,[]) then
+            tmpGlobal.Delete;
+          inc(n);
+          cdsBrowser.Delete;
+        end else cdsBrowser.Next;
+      end;
+
+      //提交数据保存
+      try
+        Factor.UpdateBatch(cdsBrowser,'TGoodsInfo');
+        rcAmt := rcAmt - n;
+        tmpGlobal.CommitUpdates;
+      except
+        cdsBrowser.CancelUpdates;
+        tmpGlobal.CancelUpdates;
+        Raise;
       end;
     end;
   finally
-    cdsBrowser.Filtered := false;
-    cdsBrowser.Filter:='';
     cdsBrowser.EnableControls;
   end;
+
   GetNo;
   //删除代码别做，要支持批量删除，同时也要删除条码库
 end;

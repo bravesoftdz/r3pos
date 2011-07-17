@@ -594,14 +594,14 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
                 if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
                   begin
                     Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
-                    Result := True;
-                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的结算方式代码...');
               end
             else
-              Raise Exception.Create('结算方式不能为空!');
+              Dest.FieldByName('SETTLE_CODE').AsString := '#';
+            Result := True;
+            Exit;
           end;
 
         //*******************开户银行*****************
@@ -710,6 +710,8 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('CLIENT_TYPE').AsString := '1';
         if CdsExcel.FieldByName('CLIENT_SPELL').AsString = '' then
           CdsExcel.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CLIENT_NAME').AsString),3);
+        if CdsExcel.FieldByName('CLIENT_CODE').AsString = '' then
+          CdsExcel.FieldByName('CLIENT_CODE').AsString := FnString.GetCodeFlag(inttostr(strtoint(copy(Global.SHOP_ID,8,4))+1000)+TSequence.GetSequence('CID_'+Global.SHOP_ID,inttostr(Global.TENANT_ID),'',8));
 
         CdsExcel.Post;
         CdsExcel.Next;

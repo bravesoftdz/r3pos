@@ -720,6 +720,7 @@ procedure TfrmSupplier.Excel1Click(Sender: TObject);
   end;
   function FindColumn(CdsCol:TDataSet):Boolean;
   begin
+    Result := True;
     if not CdsCol.Locate('FieldName','SHOP_ID',[]) then
       begin
         Result := False;

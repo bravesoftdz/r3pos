@@ -3374,6 +3374,21 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               Raise Exception.Create('单位不能为空...');
           end;
 
+        // *******************数量********************
+        if DFieldName = 'AMOUNT' then
+          begin
+            if Source.FieldByName(SFieldName).AsString = '' then
+              Raise Exception.Create('数量不能为空...')
+            else
+              begin
+                try
+                  StrToFloat(Source.FieldByName(SFieldName).AsString);
+                except
+                  Raise Exception.Create('数据格式错误...');
+                end;
+              end;
+          end;
+
         // *******************赠品********************
         if DFieldName = 'IS_PRESENT' then
           begin
@@ -3434,28 +3449,6 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
             if Dest.FieldByName('GODS_CODE').AsString = '' then
               Raise Exception.Create('货号不能为空...');
           end;
-        // *******************数量********************
-        Field := Dest.FindField('AMOUNT');
-        if Field <> nil then
-          begin
-            if Field.AsString = '' then
-              Raise Exception.Create('数量不能为空...')
-            else
-              begin
-                try
-                  StrToFloat(Field.AsString);
-                except
-                  Raise Exception.Create('数据格式错误...');
-                end;
-              end;
-          end;
-        // *******************单位********************
-        Field := Dest.FindField('UNIT_ID');
-        if Field <> nil then
-          begin
-            if Field.AsString = '' then
-              Raise Exception.Create('单位不能为空...');
-          end;
 
         //实入量
         Field := Dest.FindField('FNSH_AMOUNT');
@@ -3496,12 +3489,13 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
             except
               Raise Exception.Create('"让利金额"数据格式错误...');
             end;
-          end;
+          end;          
       end;
   end;
 
   function FindFieldColumn(CdsCol: TDataSet): Boolean;
   begin
+    Result := True;
     if not CdsCol.Locate('FieldName','GODS_NAME',[]) then
       begin
         Result := False;
@@ -3553,8 +3547,8 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
           if not tmp.IsEmpty then
             begin
               GID := tmp.FieldByName('GODS_ID').AsString;
-              P1 := tmp.FieldByName('PROPERTY_01').AsString;
-              P2 := tmp.FieldByName('PROPERTY_02').AsString;
+              //P1 := tmp.FieldByName('PROPERTY_01').AsString;
+              //P2 := tmp.FieldByName('PROPERTY_02').AsString;
             end
           else
             begin
@@ -3568,8 +3562,8 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               if not tmp.IsEmpty then
                 begin
                   GID := tmp.FieldByName('GODS_ID').AsString;
-                  P1 := tmp.FieldByName('SORT_ID7').AsString;
-                  P2 := tmp.FieldByName('SORT_ID8').AsString;
+                  //P1 := tmp.FieldByName('SORT_ID7').AsString;
+                  //P2 := tmp.FieldByName('SORT_ID8').AsString;
 
                   RecordObj.ReadField(tmp);
                   RecordObj.ReadFromDataSet(tmp,False);
@@ -3663,7 +3657,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               ExportForm.edtTable.Post;
             end;
           Field := CdsExcel.FindField('ORG_PRICE');  //零售价
-          if (Field <> nil) and (Field.AsString <> '') then
+          if (Field <> nil) and (Field.AsString <> '') and (Field.AsString <> '0') then
             begin
               ExportForm.edtTable.Edit;
               ExportForm.edtTable.FieldByName('ORG_PRICE').AsFloat := Field.AsFloat;

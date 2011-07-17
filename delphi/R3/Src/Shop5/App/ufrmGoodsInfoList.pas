@@ -1169,6 +1169,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('CALC_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的计量单位...');
@@ -1187,6 +1188,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SMALL_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的包装1单位...');
@@ -1203,6 +1205,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('BIG_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的包装2单位...');
@@ -1219,6 +1222,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SORT_ID1').AsString := rs.FieldbyName('SORT_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的商品分类...');
@@ -1237,6 +1241,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SORT_ID7').AsString := rs.FieldbyName('COLOR_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的颜色...');
@@ -1253,6 +1258,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SORT_ID8').AsString := rs.FieldbyName('SIZE_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的尺码...');
@@ -1269,14 +1275,14 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                 else
                   begin
                     Dest.FieldbyName('GODS_CODE').AsString := Source.FieldByName(SFieldName).AsString;
-                    Result := True;
                   end;
               end
             else
               begin     
                 Dest.FieldbyName('GODS_CODE').AsString := TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
-                Result := True;
               end;
+            Result := True;
+            Exit;
           end;
 
         //条形码1
@@ -1294,13 +1300,14 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                       raise Exception.Create('计量单位的条码不能和大包装条码一样!');
 
                     Dest.FieldbyName('BARCODE1').AsString := Source.FieldByName(SFieldName).AsString;
-                    Result := True;
                   end;
               end
             else
               begin
                 Dest.FieldbyName('BARCODE1').AsString := GetBarCode(TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6),'#','#');
               end;
+            Result := True;
+            Exit;
           end;
 
         //条形码2
@@ -1308,14 +1315,6 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           begin
             if (Trim(Source.FieldByName(SFieldName).AsString) <> '') then
               begin
-                {if (Dest.FieldByName('SMALL_UNITS').AsString = '') then
-                  begin
-                    raise Exception.Create('小包装条码不能和大包装条码一样!');
-                  end;
-                if (Dest.FieldByName('SMALLTO_CALC').AsString = '') then
-                  begin
-                    raise Exception.Create('小包装条码不能和大包装条码一样!');
-                  end;}
                 if Length(Source.FieldByName(SFieldName).AsString) > 30 then
                   Raise Exception.Create('条形码应在30个字符以内!')
                 else
@@ -1327,6 +1326,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
 
                     Dest.FieldbyName('BARCODE2').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end;
           end;
@@ -1347,6 +1347,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
 
                     Dest.FieldbyName('BARCODE3').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end;
           end;
@@ -1362,6 +1363,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('GODS_NAME').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end
             else
@@ -1379,6 +1381,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('GODS_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end;
           end;
@@ -1559,16 +1562,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
 
   function FindColumn(CdsCol:TDataSet):Boolean;
   begin
-    {if not CdsCol.Locate('FieldName','BARCODE1',[]) then
-      begin
-        Result := False;
-        Raise Exception.Create('缺少条形码字段!');
-      end;
-    if not CdsCol.Locate('FieldName','GODS_CODE',[]) then
-      begin
-        Result := False;
-        Raise Exception.Create('缺少货号字段!'); 
-      end; }
+    Result := True;
     if not CdsCol.Locate('FieldName','GODS_NAME',[]) then
       begin
         Result := False;

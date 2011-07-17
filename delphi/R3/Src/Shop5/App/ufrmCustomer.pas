@@ -8,7 +8,7 @@ uses
   RzTabs, ExtCtrls, RzPanel, RzButton, DB, Grids, uGlobal, DBGridEh, cxControls,
   cxContainer, cxEdit, cxTextEdit, zBase, cxMaskEdit, cxDropDownEdit, cxCalendar,
   cxButtonEdit, zrComboBoxList, FR_Class, PrnDbgeh, jpeg, ZAbstractRODataset, 
-  ZAbstractDataset, ZDataset, ObjCommon;
+  ZAbstractDataset, ZDataset, ObjCommon, EncDec;
 
 type
   TfrmCustomer = class(TframeToolForm)
@@ -1003,6 +1003,83 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
               end;
           end;
 
+        // *******************会员移动电话*****************
+        if DFieldName = 'MOVE_TELE' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              Dest.FieldByName('MOVE_TELE').AsString := Source.FieldByName(SFieldName).AsString
+            else
+              Dest.FieldByName('MOVE_TELE').AsString := '#';
+            Result := True;
+            Exit;
+          end;
+
+        // *******************会员生日*****************
+        if DFieldName = 'BIRTHDAY' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) = 10 then
+                  Dest.FieldByName('BIRTHDAY').AsString := Source.FieldByName(SFieldName).AsString
+                else if Length(Source.FieldByName(SFieldName).AsString) = 8 then
+                  Dest.FieldByName('BIRTHDAY').AsString := FormatDateTime('YYYY-MM-DD',FnTime.fnStrtoDate(Source.FieldByName(SFieldName).AsString))
+                else
+                  Raise Exception.CreateFmt('%s无效日期型字符串。',[Source.FieldByName(SFieldName).AsString]);
+              end
+            else
+              Dest.FieldByName('BIRTHDAY').AsString := '1900-01-01';
+            Result := True;
+            Exit;
+          end;
+
+        // *******************会员入会日期*****************
+        if DFieldName = 'SND_DATE' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) = 10 then
+                  Dest.FieldByName('SND_DATE').AsString := Source.FieldByName(SFieldName).AsString
+                else if Length(Source.FieldByName(SFieldName).AsString) = 8 then
+                  Dest.FieldByName('SND_DATE').AsString := FormatDateTime('YYYY-MM-DD',FnTime.fnStrtoDate(Source.FieldByName(SFieldName).AsString))
+                else
+                  Raise Exception.CreateFmt('%s无效日期型字符串。',[Source.FieldByName(SFieldName).AsString]);
+              end;
+            Result := True;
+            Exit;
+          end;
+
+        // *******************会员续会日期*****************
+        if DFieldName = 'CON_DATE' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) = 10 then
+                  Dest.FieldByName('CON_DATE').AsString := Source.FieldByName(SFieldName).AsString
+                else if Length(Source.FieldByName(SFieldName).AsString) = 8 then
+                  Dest.FieldByName('CON_DATE').AsString := FormatDateTime('YYYY-MM-DD',FnTime.fnStrtoDate(Source.FieldByName(SFieldName).AsString))
+                else
+                  Raise Exception.CreateFmt('%s无效日期型字符串。',[Source.FieldByName(SFieldName).AsString]);
+              end;
+            Result := True;
+            Exit;
+          end;
+
+        // *******************会员有效截止日期*****************
+        if DFieldName = 'END_DATE' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                if Length(Source.FieldByName(SFieldName).AsString) = 10 then
+                  Dest.FieldByName('END_DATE').AsString := Source.FieldByName(SFieldName).AsString
+                else if Length(Source.FieldByName(SFieldName).AsString) = 8 then
+                  Dest.FieldByName('END_DATE').AsString := FormatDateTime('YYYY-MM-DD',FnTime.fnStrtoDate(Source.FieldByName(SFieldName).AsString))
+                else
+                  Raise Exception.CreateFmt('%s无效日期型字符串。',[Source.FieldByName(SFieldName).AsString]);
+              end;
+            Result := True;
+            Exit;
+          end;
+
         //*******************地区*****************
         if DFieldName = 'REGION_ID' then   
           begin
@@ -1021,6 +1098,40 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
             else
               //Raise Exception.Create('地区不能为空!');
               Dest.FieldByName('REGION_ID').AsString := '#';
+          end;
+
+        //*******************月收入*****************
+        if DFieldName = 'MONTH_PAY' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_MONTH_PAY_INFO');
+                if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('MONTH_PAY').AsString := rs.FieldbyName('CODE_ID').AsString;
+                    Result := True;
+                    Exit;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的月收入...');
+              end;
+          end;
+
+        //*******************学历*****************
+        if DFieldName = 'DEGREES' then
+          begin
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
+              begin
+                rs := Global.GetZQueryFromName('PUB_DEGREES_INFO');
+                if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('DEGREES').AsString := rs.FieldbyName('CODE_ID').AsString;
+                    Result := True;
+                    Exit;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的学历...');
+              end;
           end;
 
         //*******************会员类别*****************
@@ -1144,6 +1255,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('IC_INFO').AsString := '企业卡';
         CdsExcel.FieldByName('IC_STATUS').AsString := '0';
         CdsExcel.FieldByName('IC_TYPE').AsString := '0';
+        CdsExcel.FieldByName('PASSWRD').AsString := EncStr('1234',ENC_KEY);
         if CdsExcel.FieldByName('CUST_SPELL').AsString = '' then
           CdsExcel.FieldByName('CUST_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CUST_NAME').AsString),3);
         if CdsExcel.FieldByName('CUST_CODE').AsString = '' then

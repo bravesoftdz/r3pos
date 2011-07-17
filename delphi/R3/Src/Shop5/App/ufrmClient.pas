@@ -108,7 +108,7 @@ type
 implementation
 uses ufrmClientInfo, uShopGlobal,uCtrlUtil,ufrmEhLibReport, ufrmIntegralGlide, ufrmExcelFactory,
      ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmCancelCard, ufrmReturn, ufrmPassWord,
-     ufrmLossCard, ufrmBasic;//,ufrmSendGsm
+     ufrmLossCard, ufrmBasic, EncDec;//,ufrmSendGsm
 {$R *.dfm}
 
 procedure TfrmClient.actNewExecute(Sender: TObject);
@@ -674,6 +674,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldByName('SHOP_ID').AsString := rs.FieldByName('SHOP_ID').AsString;
                     Result := True;
+                    Exit;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的门店代码...');
@@ -685,14 +686,20 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
         //*******************客户等级*****************
         if DFieldName = 'PRICE_ID' then
           begin
-            rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
-            if rs.Locate('PRICE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+            if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
               begin
-                Dest.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
-                Result := True;
+                rs := Global.GetZQueryFromName('PUB_PRICEGRADE');
+                if rs.Locate('PRICE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                  begin
+                    Dest.FieldByName('PRICE_ID').AsString := rs.FieldbyName('PRICE_ID').AsString;
+                    Result := True;
+                    Exit;
+                  end
+                else
+                  Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户等级代码...');
               end
             else
-              Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户等级代码...');
+              Raise Exception.Create('客户等级不能为空!');
           end;
 
         //*******************地区*****************
@@ -704,13 +711,14 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
                   begin
                     Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                    Result := True;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的地区代码...');
               end
             else
               Dest.FieldByName('REGION_ID').AsString := '#';
+            Result := True;
+            Exit;
           end;
 
         //*******************客户类别*****************
@@ -722,7 +730,6 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
                   begin
                     Dest.FieldByName('SORT_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                    Result := True;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的客户类别代码...');
@@ -732,6 +739,8 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 Dest.FieldByName('SORT_ID').AsString := '#';
                 //Raise Exception.Create('客户类别不能为空!');
               end;
+            Result := True;
+            Exit;
           end;
 
         //*******************结算方式*****************
@@ -743,13 +752,14 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                 if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
                   begin
                     Dest.FieldByName('SETTLE_CODE').AsString := rs.FieldbyName('CODE_ID').AsString;
-                    Result := True;
                   end
                 else
                   Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的结算方式代码...');
               end
             else
-              Raise Exception.Create('结算方式不能为空!');
+              Dest.FieldByName('SETTLE_CODE').AsString := '#';
+            Result := True;
+            Exit;
           end;
 
         //*******************开户银行*****************
@@ -773,6 +783,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
               begin
                 Dest.FieldByName('INVOICE_FLAG').AsString := rs.FieldbyName('CODE_ID').AsString;
                 Result := True;
+                Exit;
               end
             else
               Raise Exception.Create('没找到"'+Source.FieldByName(SFieldName).AsString+'"对应的发票类型代码...');
@@ -794,6 +805,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                       begin
                         Dest.FieldbyName('CLIENT_CODE').AsString := Source.FieldByName(SFieldName).AsString;
                         Result := True;
+                        Exit;
                       end;
                   end;
               end;
@@ -810,6 +822,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('CLIENT_NAME').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end
             else
@@ -827,6 +840,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
                   begin
                     Dest.FieldbyName('CLIENT_SPELL').AsString := Source.FieldByName(SFieldName).AsString;
                     Result := True;
+                    Exit;
                   end;
               end;
           end;
@@ -847,6 +861,7 @@ procedure TfrmClient.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('IC_INFO').AsString := '企业卡';
         CdsExcel.FieldByName('IC_STATUS').AsString := '0';
         CdsExcel.FieldByName('IC_TYPE').AsString := '0';
+        CdsExcel.FieldByName('PASSWRD').AsString := EncStr('1234',ENC_KEY);
         if CdsExcel.FieldByName('CLIENT_SPELL').AsString = '' then
           CdsExcel.FieldByName('CLIENT_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('CLIENT_NAME').AsString),3);
         if CdsExcel.FieldByName('CLIENT_CODE').AsString = '' then

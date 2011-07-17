@@ -680,7 +680,7 @@ procedure TfrmUsers.Excel1Click(Sender: TObject);
         CdsExcel.FieldByName('USER_ID').AsString  := TSequence.NewId;
         CdsExcel.FieldByName('ROLE_IDS').AsString := '#';
         CdsExcel.FieldByName('ROLE_IDS_TEXT').AsString := '#';
-        {CdsExcel.FieldByName('CLIENT_TYPE').AsString := '1';}
+        CdsExcel.FieldByName('PASS_WRD').AsString := EncStr('1234',ENC_KEY);
         if CdsExcel.FieldByName('USER_SPELL').AsString = '' then
           CdsExcel.FieldByName('USER_SPELL').AsString := fnString.GetWordSpell(Trim(CdsExcel.FieldByName('USER_NAME').AsString),3);
 

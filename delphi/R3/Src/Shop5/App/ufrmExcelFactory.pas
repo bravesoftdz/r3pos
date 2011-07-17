@@ -461,16 +461,19 @@ begin
         begin
           if Assigned(Save) then
           begin
-            if Save(DataSet) then
-              begin
-                MessageBox(Handle,'数据已经导入数据库中！','友情提示...',MB_OK+MB_ICONINFORMATION);
-                ModalResult := mrOk;
-              end
-            else
-              MessageBox(Handle,'数据导入失败！','友情提示...',MB_OK+MB_ICONWARNING);
-          end
-          else
-            ModalResult := mrOk;
+            Screen.Cursor := crSQLWait;
+            try
+              if Save(DataSet) then
+                begin
+                  MessageBox(Handle,'数据已经导入数据库中！','友情提示...',MB_OK+MB_ICONINFORMATION);
+                  ModalResult := mrOk;
+                end
+              else
+                MessageBox(Handle,'数据导入失败！','友情提示...',MB_OK+MB_ICONWARNING);
+            finally
+              Screen.Cursor := crDefault;
+            end;
+          end;
         end;
       end;
     end;

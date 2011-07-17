@@ -1274,7 +1274,7 @@ begin
 
   // 9、销售类型
   FindCmp1:=FindComponent('fndP'+PageNo+'_SALES_TYPE');
-  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex>0)  then
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex>-1)  then
   begin
     TitleList.add('销售类型：'+TcxComboBox(FindCmp1).Text);
   end;

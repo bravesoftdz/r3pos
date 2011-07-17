@@ -46,10 +46,9 @@ var rs:TZQuery;
 begin  
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) from CA_USERS where COMM not in (''02'',''12'') and ACCOUNT=:ACCOUNT and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.SQL.Text := 'select count(*) from CA_USERS where COMM not in (''02'',''12'') and ACCOUNT=:ACCOUNT and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('ACCOUNT').AsString := FieldByName('ACCOUNT').AsString;
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
-    rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
       Raise Exception.Create(FieldbyName('ACCOUNT').AsString+'登录名已经被其他用户使用，请重取新的登录名...');

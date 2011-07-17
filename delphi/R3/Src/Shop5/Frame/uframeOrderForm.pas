@@ -3539,8 +3539,8 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               CdsExcel.Next;
               Continue;
             end;
-          P1 := '#';
-          P2 := '#';
+          //P1 := '#';
+          //P2 := '#';
           tmp.Close;
           tmp.SQL.Text := 'select * from VIW_BARCODE where BARCODE='''+trim(cdsExcel.FieldByName('BARCODE').AsString)+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
           Factor.Open(tmp);
@@ -3650,7 +3650,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
 
 
           Field := CdsExcel.FindField('FNSH_AMOUNT'); //实入量
-          if (Field <> nil) and (Field.AsString <> '') then
+          if (Field <> nil) and (Field.AsString <> '') and (Field.AsString <> '0') then
             begin
               ExportForm.edtTable.Edit;
               ExportForm.edtTable.FieldByName('FNSH_AMOUNT').AsFloat := Field.AsFloat;
@@ -3664,21 +3664,21 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               ExportForm.edtTable.Post;
             end;
           Field := CdsExcel.FindField('RTL_MONEY');  //销售额
-          if (Field <> nil) and (Field.AsString <> '') then
+          if (Field <> nil) and (Field.AsString <> '') and (Field.AsString <> '0') then
             begin
               ExportForm.edtTable.Edit;
               ExportForm.edtTable.FieldByName('RTL_MONEY').AsFloat := Field.AsFloat;
               ExportForm.edtTable.Post;
             end;
           Field := CdsExcel.FindField('AGIO_MONEY'); //折扣金(让利金额)
-          if (Field <> nil) and (Field.AsString <> '') then
+          if (Field <> nil) and (Field.AsString <> '') and (Field.AsString <> '0') then
             begin
               ExportForm.edtTable.Edit;
               ExportForm.edtTable.FieldByName('AGIO_MONEY').AsFloat := Field.AsFloat;
               ExportForm.edtTable.Post;
             end;
           Field := CdsExcel.FindField('BATCH_NO');  //批号
-          if (Field <> nil) and (Field.AsString <> '') then
+          if (Field <> nil) and (Field.AsString <> '') and (Field.AsString <> '0') then
             begin
               ExportForm.edtTable.Edit;
               ExportForm.edtTable.FieldByName('BATCH_NO').AsString := Field.AsString;

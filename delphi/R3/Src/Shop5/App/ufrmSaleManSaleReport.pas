@@ -294,6 +294,7 @@ begin
 
   fndP2_SHOP_ID.KeyValue := fndP1_SHOP_ID.KeyValue;
   fndP2_SHOP_ID.Text := fndP1_SHOP_ID.Text;
+  fndP2_SALES_TYPE.ItemIndex:=fndP1_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
@@ -391,6 +392,7 @@ begin
 
   fndP3_GUIDE_USER.KeyValue := fndP2_GUIDE_USER.KeyValue;
   fndP3_GUIDE_USER.Text := fndP2_GUIDE_USER.Text;
+  fndP3_SALES_TYPE.ItemIndex:=fndP2_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
@@ -491,6 +493,7 @@ begin
 
   fndP4_SHOP_ID.KeyValue:=fndP3_SHOP_ID.KeyValue;
   fndP4_SHOP_ID.Text:=fndP3_SHOP_ID.Text;
+  fndP4_SALES_TYPE.ItemIndex:=fndP3_SALES_TYPE.ItemIndex;
 
   fndP4_GUIDE_USER.KeyValue := fndP3_GUIDE_USER.KeyValue;
   fndP4_GUIDE_USER.Text := fndP3_GUIDE_USER.Text;
@@ -534,6 +537,7 @@ begin
 
   fndP5_GUIDE_USER.KeyValue := fndP4_GUIDE_USER.KeyValue;
   fndP5_GUIDE_USER.Text := fndP4_GUIDE_USER.Text;
+  fndP5_SALES_TYPE.ItemIndex:=fndP4_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);

@@ -1742,8 +1742,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 289
-                  Top = 78
+                  Left = 728
+                  Top = 100
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
@@ -1770,7 +1770,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Caption = #23458#25143#21517#31216
                 end
                 object Label6: TLabel
-                  Left = 726
+                  Left = 289
                   Top = 100
                   Width = 48
                   Height = 12
@@ -1779,7 +1779,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object Label7: TLabel
                   Left = 289
-                  Top = 100
+                  Top = 78
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1843,10 +1843,11 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   TabOrder = 6
                 end
                 object fndP4_UNIT_ID: TcxComboBox
-                  Left = 343
-                  Top = 74
-                  Width = 121
+                  Left = 778
+                  Top = 96
+                  Width = 81
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
@@ -2089,9 +2090,9 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   MultiSelect = False
                 end
                 object fndP4_RPTTYPE: TcxComboBox
-                  Left = 777
+                  Left = 343
                   Top = 96
-                  Width = 81
+                  Width = 121
                   Height = 20
                   Anchors = [akTop, akRight]
                   Properties.DropDownListStyle = lsFixedList
@@ -2104,7 +2105,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object fndP4_SALES_TYPE: TcxComboBox
                   Left = 343
-                  Top = 96
+                  Top = 74
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

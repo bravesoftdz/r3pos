@@ -1859,10 +1859,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 289
-                  Top = 80
+                  Left = 715
+                  Top = 102
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label12: TLabel
@@ -1888,16 +1889,15 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Caption = #23548#36141#21592
                 end
                 object Label6: TLabel
-                  Left = 718
-                  Top = 99
+                  Left = 289
+                  Top = 102
                   Width = 48
                   Height = 12
-                  Anchors = [akTop, akRight]
                   Caption = #32479#35745#31867#22411
                 end
                 object Label7: TLabel
                   Left = 289
-                  Top = 102
+                  Top = 81
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1922,8 +1922,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TabOrder = 1
                 end
                 object BtnSaleSum: TRzBitBtn
-                  Left = 470
-                  Top = 91
+                  Left = 474
+                  Top = 90
                   Width = 67
                   Height = 27
                   Action = actFind
@@ -1961,10 +1961,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TabOrder = 6
                 end
                 object fndP4_UNIT_ID: TcxComboBox
-                  Left = 343
-                  Top = 76
-                  Width = 121
+                  Left = 769
+                  Top = 98
+                  Width = 81
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
@@ -2205,11 +2206,10 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   MultiSelect = False
                 end
                 object fndP4_RPTTYPE: TcxComboBox
-                  Left = 769
-                  Top = 95
-                  Width = 81
+                  Left = 343
+                  Top = 98
+                  Width = 121
                   Height = 20
-                  Anchors = [akTop, akRight]
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #38376#24215#36827#38144#23384#32479#35745#34920
@@ -2220,7 +2220,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 end
                 object fndP4_SALES_TYPE: TcxComboBox
                   Left = 343
-                  Top = 98
+                  Top = 76
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

@@ -287,6 +287,7 @@ begin
 
   fndP2_SHOP_ID.KeyValue := fndP1_SHOP_ID.KeyValue;
   fndP2_SHOP_ID.Text := fndP1_SHOP_ID.Text;
+  fndP2_SALES_TYPE.ItemIndex:=fndP1_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
@@ -381,6 +382,7 @@ begin
 
   fndP3_CLIENT_ID.KeyValue := adoReport2.FieldByName('CLIENT_ID').AsString;
   fndP3_CLIENT_ID.Text := adoReport2.FieldByName('CLIENT_NAME').AsString;
+  fndP3_SALES_TYPE.ItemIndex:=fndP2_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
@@ -481,6 +483,7 @@ begin
 
   fndP4_CLIENT_ID.KeyValue := fndP3_CLIENT_ID.KeyValue;
   fndP4_CLIENT_ID.Text := fndP3_CLIENT_ID.Text;
+  fndP4_SALES_TYPE.ItemIndex:=fndP3_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
@@ -521,6 +524,7 @@ begin
 
   fndP5_CLIENT_ID.KeyValue := fndP4_CLIENT_ID.KeyValue;
   fndP5_CLIENT_ID.Text := fndP4_CLIENT_ID.Text;
+  fndP5_SALES_TYPE.ItemIndex:=fndP4_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);

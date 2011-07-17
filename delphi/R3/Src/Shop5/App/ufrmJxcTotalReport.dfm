@@ -2070,7 +2070,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetFooterParams = DBGridEh4GetFooterParams
                   OnTitleClick = DBGridEh4TitleClick
                   Columns = <

@@ -1300,6 +1300,7 @@ begin
   Copy_ParamsValue(fndP4_SHOP_ID, fndP5_SHOP_ID);  //门店名称
   Copy_ParamsValue(fndP4_DEPT_ID, fndP5_DEPT_ID);  //部门名称
   fndP5_UNIT_ID.ItemIndex:=fndP4_UNIT_ID.ItemIndex; //显示单位
+  fndP5_SALES_TYPE.ItemIndex:=fndP4_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
@@ -1327,6 +1328,8 @@ begin
   Copy_ParamsValue(fndP5_SHOP_ID,fndP6_SHOP_ID);  //门店名称
   Copy_ParamsValue('SHOP_TYPE',5,6); //管理群组
   Copy_ParamsValue('TYPE_ID',5,6);   //商品指标
+  fndP6_SALES_TYPE.ItemIndex:=fndP5_SALES_TYPE.ItemIndex;
+
   
   RzPage.ActivePageIndex:=5;
   actFindExecute(nil);
@@ -1521,7 +1524,7 @@ begin
   Copy_ParamsValue('TYPE_ID',1,2);   //商品指标
   Copy_ParamsValue(fndP1_GODS_ID,fndP2_GODS_ID); //商品名称
   fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex;
-
+  fndP2_SALES_TYPE.ItemIndex:=fndP1_SALES_TYPE.ItemIndex; 
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
 end;
@@ -1542,6 +1545,7 @@ begin
   fndP3_SHOP_TYPE.ItemIndex:=0;  //管理群组
   fndP3_SHOP_VALUE.KeyValue:=adoReport2.fieldbyName('REGION_ID').AsString;
   fndP3_SHOP_VALUE.Text:=adoReport2.fieldbyName('CODE_NAME').AsString;
+  fndP3_SALES_TYPE.ItemIndex:=fndP2_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=2;
   actFindExecute(nil);
@@ -1556,6 +1560,7 @@ begin
   Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID); //部门名称
   Copy_ParamsValue('SHOP_TYPE',3,4);   //管理群组
   fndP4_UNIT_ID.ItemIndex:=fndP3_UNIT_ID.ItemIndex; //显示单位
+  fndP4_SALES_TYPE.ItemIndex:=fndP3_SALES_TYPE.ItemIndex;
 
   fndP4_SHOP_ID.KeyValue:=trim(adoReport3.fieldbyName('SHOP_ID').AsString);
   fndP4_SHOP_ID.Text:=trim(adoReport3.fieldbyName('SHOP_NAME').AsString);

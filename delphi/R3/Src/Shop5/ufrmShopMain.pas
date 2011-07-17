@@ -12,6 +12,7 @@ uses
   DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
+  WM_CHECK_MSG=WM_USER+2565;
 type
   TfrmShopMain = class(TfrmMain)
     mnuWindow: TMenuItem;
@@ -422,6 +423,7 @@ type
     procedure wm_Login(var Message: TMessage); message WM_LOGIN_REQUEST;
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
     procedure wm_message(var Message: TMessage); message MSC_MESSAGE;
+    procedure wm_check(var Message: TMessage); message WM_CHECK_MSG;
     procedure SetLogined(const Value: boolean);
     function  CheckVersion:boolean;
     function  ConnectToDb:boolean;
@@ -439,6 +441,7 @@ type
     procedure DoPageClick(Sender:TObject);
   public
     { Publicdeclarations }
+    destructor Destroy; override;
     procedure LoadPic32;
     procedure LoadMenu(Sender:TObject);
     procedure LoadFrame;
@@ -745,7 +748,7 @@ begin
        finally
          frmLogo.Close;
        end;
-       TfrmCostCalc.CheckMonthReck(self); 
+       PostMessage(Handle,WM_CHECK_MSG,0,0);
      end
   else
      begin
@@ -1235,6 +1238,7 @@ procedure TfrmShopMain.RzBmpButton9Click(Sender: TObject);
 var i:integer;
 begin
   inherited;
+  if FindChildForm(TfrmPosMain)<>nil then Raise Exception.Create('收款机模块没有退出不能切换用户...');
   if FList.Count > 0 then
      begin
        if MessageBox(Handle,'是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
@@ -3436,7 +3440,7 @@ begin
   try
     Form.Name := 'frmNetForOrder';
     if rimurl[length(rimurl)]<>'/' then rimurl := rimurl + '/';
-    TfrmIEWebForm(Form).Open(rimurl+'rim_check/up?j_username='+rimuid+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
+    TfrmIEWebForm(Form).Open(rimurl+'rim_check/up?j_username='+rimpwd+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
     Form.Show;
     Form.BringToFront;
   except
@@ -3819,6 +3823,21 @@ begin
   for i:=0 to rzPage.Tabs.Count -1 do rzPage.Tabs[i].ImageIndex := 0;
   LoadMenu(rzPage.Tabs[rzPage.TabIndex]);
   rzPage.Tabs[rzPage.TabIndex].ImageIndex := 1;
+end;
+
+destructor TfrmShopMain.Destroy;
+var Form:TForm;
+begin
+  Form := FindChildForm(TfrmPosMain);
+  if Form<>nil then Form.free;
+  inherited;
+end;
+
+procedure TfrmShopMain.wm_check(var Message: TMessage);
+begin
+  if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and ShopGlobal.offline then Exit;
+  TfrmCostCalc.CheckMonthReck(self);
+
 end;
 
 end.

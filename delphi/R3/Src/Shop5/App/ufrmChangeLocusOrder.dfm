@@ -370,7 +370,7 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
         Top = 31
         Width = 81
         Height = 17
-        Brush.Color = 16185078
+        Brush.Color = 13686755
       end
       object Label13: TLabel
         Left = 51
@@ -513,7 +513,7 @@ inherited frmChangeLocusOrder: TfrmChangeLocusOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #36827#36135#25968#37327
+          Title.Caption = #21457#36135#25968#37327
           Width = 56
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
         end

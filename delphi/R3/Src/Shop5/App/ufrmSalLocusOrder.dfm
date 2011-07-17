@@ -1,16 +1,16 @@
 inherited frmSalLocusOrder: TfrmSalLocusOrder
   Left = 195
   Top = 49
-  Width = 786
-  Height = 523
+  Width = 855
+  Height = 621
   Caption = #38144#21806#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 770
-    Height = 485
+    Width = 839
+    Height = 583
     inherited RzPanel2: TRzPanel
-      Width = 760
+      Width = 829
       Height = 139
       Enabled = False
       TabStop = True
@@ -457,8 +457,8 @@ inherited frmSalLocusOrder: TfrmSalLocusOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 376
-      Width = 760
+      Top = 474
+      Width = 829
       Height = 61
       TabOrder = 2
       object Label4: TLabel
@@ -521,7 +521,7 @@ inherited frmSalLocusOrder: TfrmSalLocusOrder
         Top = 31
         Width = 81
         Height = 17
-        Brush.Color = 16185078
+        Brush.Color = 13686755
       end
       object Label13: TLabel
         Left = 51
@@ -610,8 +610,8 @@ inherited frmSalLocusOrder: TfrmSalLocusOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 178
-      Width = 760
-      Height = 198
+      Width = 829
+      Height = 296
       Color = clWhite
       TabOrder = 3
       OnKeyDown = nil
@@ -664,7 +664,7 @@ inherited frmSalLocusOrder: TfrmSalLocusOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #36827#36135#25968#37327
+          Title.Caption = #38144#21806#25968#37327
           Width = 56
           OnEditButtonClick = DBGridEh1Columns4EditButtonClick
         end
@@ -716,17 +716,17 @@ inherited frmSalLocusOrder: TfrmSalLocusOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 144
-      Width = 760
+      Width = 829
       Height = 34
       Visible = False
     end
     inherited stbHint: TRzPanel
-      Top = 437
-      Width = 760
+      Top = 535
+      Width = 829
     end
     inherited rzHelp: TRzPanel
-      Top = 461
-      Width = 760
+      Top = 559
+      Width = 829
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

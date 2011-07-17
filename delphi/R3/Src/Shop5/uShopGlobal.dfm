@@ -1,9 +1,9 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 188
-  Top = 0
-  Height = 560
-  Width = 819
+  Left = 215
+  Top = 90
+  Height = 738
+  Width = 909
   object SYS_DEFINE: TZQuery
     FieldDefs = <>
     CachedUpdates = True
@@ -1043,6 +1043,28 @@ inherited ShopGlobal: TShopGlobal
       end>
     Left = 664
     Top = 8
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object PUB_TREND_INFO: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where TEN' +
+        'ANT_ID=:TENANT_ID and CODE_TYPE='#39'16'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 504
+    Top = 520
     ParamData = <
       item
         DataType = ftUnknown

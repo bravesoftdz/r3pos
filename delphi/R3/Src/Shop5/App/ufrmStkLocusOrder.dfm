@@ -406,7 +406,7 @@ inherited frmStkLocusOrder: TfrmStkLocusOrder
         Top = 31
         Width = 81
         Height = 17
-        Brush.Color = 16185078
+        Brush.Color = 13686755
       end
       object Label13: TLabel
         Left = 51

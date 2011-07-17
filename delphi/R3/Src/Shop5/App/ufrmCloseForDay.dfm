@@ -42,13 +42,13 @@ inherited frmCloseForDay: TfrmCloseForDay
         Height = 26
         Anchors = [akTop, akRight]
         Caption = #31245#21518#32467#36134'(&C)'
-        Color = clSilver
+        Color = 16744576
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
         Font.Name = #23435#20307
         Font.Style = [fsBold]
-        HighlightColor = 16026986
+        HighlightColor = clMaroon
         HotTrack = True
         HotTrackColor = 3983359
         HotTrackColorType = htctActual
@@ -69,7 +69,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Height = 26
         Anchors = [akTop, akRight]
         Caption = #31435#21363#32467#36134'(&S)'
-        Color = clSilver
+        Color = 16744576
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12

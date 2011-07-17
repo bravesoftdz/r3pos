@@ -556,6 +556,7 @@ begin
     13: Str_Table := 'PUB_MONTH_PAY_INFO';
     14: Str_Table := 'PUB_DEGREES_INFO';
     15: Str_Table := 'PUB_OCCUPATION_INFO';
+    16: Str_Table := 'PUB_TREND_INFO';
   end;
   if Str_Table<>'' then Global.RefreshTable(Str_Table);
 end;

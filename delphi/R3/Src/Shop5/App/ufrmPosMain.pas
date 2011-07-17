@@ -131,6 +131,7 @@ type
     DBGridEh2: TDBGridEh;
     RzClockStatus1: TRzClockStatus;
     cdsLocusNo: TZQuery;
+    Label3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -188,6 +189,7 @@ type
     procedure Label23Click(Sender: TObject);
     procedure Label24Click(Sender: TObject);
     procedure Label9Click(Sender: TObject);
+    procedure Label3Click(Sender: TObject);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -209,6 +211,7 @@ type
     procedure OpenDialogProperty;
     function  OpenDialogCustomer(KeyString:string;C_T:Integer=0):boolean;
     procedure OpenDialogGuide;
+    procedure OpenDialogTrend;
     procedure AddFromDialog(AObj:TRecord_);
     procedure SetgRepeat(const Value: boolean);
     procedure Setoid(const Value: string);
@@ -473,6 +476,14 @@ begin
     begin
       DBGridEh1.Columns[7].KeyList.Add(rs.Fields[0].asString);
       DBGridEh1.Columns[7].PickList.Add(rs.Fields[1].asString);
+      rs.Next;
+    end;
+  rs := Global.GeTZQueryFromName('PUB_TREND_INFO');
+  rs.First;
+  while not rs.Eof do
+    begin
+      DBGridEh1.Columns[14].KeyList.Add(rs.Fields[0].asString);
+      DBGridEh1.Columns[14].PickList.Add(rs.Fields[1].asString);
       rs.Next;
     end;
   inherited;
@@ -948,7 +959,7 @@ end;
 
 procedure TfrmPosMain.InitPrice(GODS_ID, UNIT_ID: string;CalcAll:boolean=false);
 var
-  rs,bs:TZQuery;
+  rs,bs,ts:TZQuery;
   Params:TftParamList;
   str,OutLevel:string;
 begin
@@ -985,6 +996,10 @@ begin
          cdsTable.FieldByName('IS_PRESENT').AsInteger := 0;
          cdsTable.FieldByName('BARTER_INTEGRAL').AsInteger := 0;
        end;
+
+    ts := Global.GetZQueryFromName('PUB_TREND_INFO');
+    ts.First;
+    cdsTable.FieldByName('TREND_ID').AsString := ts.FieldbyName('CODE_ID').AsString;
   finally
     Params.Free;
     rs.Free;
@@ -1647,7 +1662,7 @@ begin
     try
       cdsTable.Edit;
       op := cdsTable.FieldbyName('APRICE').AsFloat;
-      if StrToCurr(s) < agioLower then Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折');
+      if StrToCurr(s) < agioLower then Raise Exception.Create('最低售价不能低于'+formatFloat('#0.000',agioLower)+'%折');
       Field.AsFloat := StrToCurr(s);
       cdsTable.FieldbyName('POLICY_TYPE').AsInteger := 4;
       AgioToCalc(Field.AsFloat);
@@ -1659,7 +1674,7 @@ begin
              cdsTable.Edit;
              cdsTable.FieldbyName('APRICE').AsFloat := op;
              PriceToCalc(op);
-             Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
+             Raise Exception.Create('最低售价不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
            end;
          end;
     finally
@@ -1679,7 +1694,7 @@ begin
   s := trim(id);
   try
     StrToFloat(s);
-    if StrToFloat(s)>999999 then Raise Exception.Create('输入的单价值过大，请确认是否输入正确');
+    if StrToFloat(s)>999999999 then Raise Exception.Create('输入的单价值过大，请确认是否输入正确');
   except
     Raise Exception.Create('输入的单价无效，请正确输入');
   end;
@@ -1695,7 +1710,7 @@ begin
        cdsTable.Edit;
        Field.AsFloat := op;
        PriceToCalc(Field.AsFloat);
-       Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',agioLower)+'%折');
+       Raise Exception.Create('最低售价不能低于'+formatFloat('#0.000',agioLower)+'%折');
      end;
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if bs.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) and (cdsTable.FieldByName('CALC_AMOUNT').AsCurrency<>0) then
@@ -1705,7 +1720,7 @@ begin
          cdsTable.Edit;
          Field.AsFloat := op;
          PriceToCalc(op);
-         Raise Exception.Create('调价最低不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
+         Raise Exception.Create('最低售价不能低于'+formatFloat('#0.000',bs.FieldByName('NEW_LOWPRICE').AsFloat)+'元');
        end;
      end;
   cdsTable.Edit;
@@ -2031,7 +2046,7 @@ begin
        PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
        Exit;
      end;
-  if amt>999999 then Raise Exception.Create('输入的数量值过大，请确认是否正确输入...'); 
+  if amt>999999999 then Raise Exception.Create('输入的数量值过大，请确认是否正确输入...');
   cdsTable.Edit;
   if Appended then
      cdsTable.FieldbyName('AMOUNT').AsFloat := cdsTable.FieldbyName('AMOUNT').AsFloat + amt
@@ -2354,7 +2369,7 @@ begin
 
   if (Shift = []) and (Key = VK_F2) then
      begin
-       PopupMenu;
+       OpenDialogTrend;
        Exit;
      end;   
 
@@ -2422,6 +2437,11 @@ end;
 
 procedure TfrmPosMain.FormKeyPress(Sender: TObject; var Key: Char);
 begin
+  if Key = '/' then
+     begin
+       PopupMenu;
+       Key := #0;
+     end;
   if Key = '+' then
      begin
        if cdsTable.IsEmpty then exit;
@@ -3091,7 +3111,7 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
-  MessageBox(Handle,'挂单成功，取单请按F2键->8键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  MessageBox(Handle,'挂单成功，取单请按/键->8键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   NewOrder;
   LoadFile('H');
 end;
@@ -3580,6 +3600,7 @@ begin
   end;
   8:HangUp;
   9:PickUp;
+  9999999:;
   else
     Raise Exception.Create('暂时不支持此项功能...'); 
   end;
@@ -4059,6 +4080,33 @@ begin
     GodsQry.Free;
     RelQry.Free;
   end;
+end;
+
+procedure TfrmPosMain.OpenDialogTrend;
+var
+  SObj:TRecord_;
+  SQL:string;
+begin
+  if dbState = dsBrowse then Exit;
+  if cdsTable.FieldbyName('GODS_ID').AsString = '' then Exit;
+  SObj := TRecord_.Create;
+  try
+    SQL := 'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CODE_TYPE=''16'' and COMM not in (''02'',''12'')';
+    if TframeListDialog.FindDialog(self,SQL,'CODE_NAME=名称,CODE_SPELL=拼音码,SEQ_NO=序号',SObj) then
+       begin
+         cdsTable.Edit;
+         cdsTable.FieldByName('TREND_ID').AsString := SObj.FieldbyName('CODE_ID').AsString;
+         cdsTable.Post;
+       end;
+  finally
+    SObj.Free;
+  end;
+end;
+
+procedure TfrmPosMain.Label3Click(Sender: TObject);
+begin
+  inherited;
+  OpenDialogTrend;
 end;
 
 end.

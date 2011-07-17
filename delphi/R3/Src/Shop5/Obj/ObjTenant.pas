@@ -239,7 +239,7 @@ try
   ' values(:TENANT_ID,''04'',''婚丧嫁娶'',''WLXS'',''16'',4,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''05'',''其他'',''WLXS'',''16'',4,''00'',5497000)';
+  ' values(:TENANT_ID,''05'',''其他'',''WLXS'',''16'',5,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
 
   //收支项目 CODE_TYPE=3

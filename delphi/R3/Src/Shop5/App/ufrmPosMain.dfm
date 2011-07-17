@@ -1,11 +1,11 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 544
-  Top = 96
+  Left = 202
+  Top = 146
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
   ClientHeight = 550
-  ClientWidth = 800
+  ClientWidth = 795
   Color = clBlack
   OldCreateOrder = True
   Position = poDesigned
@@ -18,7 +18,7 @@ inherited frmPosMain: TfrmPosMain
   object RzPanel3: TRzPanel [0]
     Left = 0
     Top = 255
-    Width = 800
+    Width = 795
     Height = 199
     Align = alBottom
     BorderOuter = fsFlat
@@ -30,7 +30,7 @@ inherited frmPosMain: TfrmPosMain
     object RzPanel2: TRzPanel
       Left = 1
       Top = 0
-      Width = 798
+      Width = 793
       Height = 198
       Align = alClient
       BorderOuter = fsNone
@@ -555,7 +555,7 @@ inherited frmPosMain: TfrmPosMain
       object RzGroupBox1: TRzGroupBox
         Left = 410
         Top = 5
-        Width = 383
+        Width = 378
         Height = 188
         Align = alClient
         Caption = #25805#20316
@@ -720,7 +720,7 @@ inherited frmPosMain: TfrmPosMain
         object pnlBarCode: TRzPanel
           Left = 1
           Top = 150
-          Width = 381
+          Width = 376
           Height = 37
           Align = alBottom
           BorderOuter = fsFlat
@@ -745,6 +745,12 @@ inherited frmPosMain: TfrmPosMain
             Top = 14
             Width = 6
             Height = 12
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clLime
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
           end
           object edtInput: TcxTextEdit
             Tag = -1
@@ -831,7 +837,7 @@ inherited frmPosMain: TfrmPosMain
   object RzPanel6: TRzPanel [1]
     Left = 0
     Top = 26
-    Width = 800
+    Width = 795
     Height = 229
     Align = alClient
     BorderOuter = fsFlat
@@ -842,7 +848,7 @@ inherited frmPosMain: TfrmPosMain
     object DBGridEh1: TDBGridEh
       Left = 1
       Top = 1
-      Width = 798
+      Width = 793
       Height = 228
       Align = alClient
       AllowedOperations = [alopUpdateEh]
@@ -910,14 +916,14 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'GODS_CODE'
           Footers = <>
           Title.Caption = #36135#21495
-          Width = 67
+          Width = 54
         end
         item
           EditButtons = <>
           FieldName = 'BARCODE'
           Footers = <>
           Title.Caption = #26465#30721
-          Width = 88
+          Width = 78
         end
         item
           Alignment = taCenter
@@ -967,8 +973,8 @@ inherited frmPosMain: TfrmPosMain
           EditButtons = <>
           FieldName = 'AGIO_RATE'
           Footers = <>
-          Title.Caption = #25240#25187#29575
-          Width = 44
+          Title.Caption = #25240#25187
+          Width = 36
         end
         item
           Alignment = taRightJustify
@@ -992,21 +998,28 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'BATCH_NO'
           Footers = <>
           Title.Caption = #25209#21495
-          Width = 68
+          Width = 62
         end
         item
           EditButtons = <>
           FieldName = 'LOCUS_NO'
           Footers = <>
-          Title.Caption = #29289#27969#36319#36394#30721
-          Width = 77
+          Title.Caption = #29289#27969#30721
+          Width = 62
+        end
+        item
+          EditButtons = <>
+          FieldName = 'TREND_ID'
+          Footers = <>
+          Title.Caption = #29992#36884
+          Width = 55
         end>
     end
   end
   object RzPanel7: TRzPanel [2]
     Left = 0
     Top = 0
-    Width = 800
+    Width = 795
     Height = 26
     Align = alTop
     BorderOuter = fsFlat
@@ -1033,7 +1046,7 @@ inherited frmPosMain: TfrmPosMain
     object RzStatusPane2: TRzStatusPane
       Left = 101
       Top = 1
-      Width = 604
+      Width = 599
       Height = 25
       Align = alClient
       Color = 8404992
@@ -1047,7 +1060,7 @@ inherited frmPosMain: TfrmPosMain
       Alignment = taCenter
     end
     object RzStatusPane5: TRzStatusPane
-      Left = 752
+      Left = 747
       Top = 1
       Width = 47
       Height = 25
@@ -1066,7 +1079,7 @@ inherited frmPosMain: TfrmPosMain
       Caption = #36864#20986
     end
     object RzStatusPane7: TRzStatusPane
-      Left = 705
+      Left = 700
       Top = 1
       Width = 47
       Height = 25
@@ -1088,7 +1101,7 @@ inherited frmPosMain: TfrmPosMain
   object RzPanel8: TRzPanel [3]
     Left = 0
     Top = 524
-    Width = 800
+    Width = 795
     Height = 26
     Align = alBottom
     BorderOuter = fsFlat
@@ -1099,7 +1112,7 @@ inherited frmPosMain: TfrmPosMain
     object lblHint: TRzStatusPane
       Left = 201
       Top = 0
-      Width = 482
+      Width = 477
       Height = 25
       Align = alClient
       Color = 8404992
@@ -1145,7 +1158,7 @@ inherited frmPosMain: TfrmPosMain
       Caption = #25346#21333#25968':5'#21333
     end
     object RzClockStatus1: TRzClockStatus
-      Left = 683
+      Left = 678
       Top = 0
       Width = 116
       Height = 25
@@ -1163,7 +1176,7 @@ inherited frmPosMain: TfrmPosMain
   object rzHelp: TRzPanel [4]
     Left = 0
     Top = 454
-    Width = 800
+    Width = 795
     Height = 70
     Align = alBottom
     BorderOuter = fsFlat
@@ -1187,7 +1200,7 @@ inherited frmPosMain: TfrmPosMain
     end
     object h6: TLabel
       Left = 21
-      Top = 28
+      Top = 8
       Width = 84
       Height = 12
       Cursor = crHandPoint
@@ -1337,7 +1350,7 @@ inherited frmPosMain: TfrmPosMain
     end
     object Label21: TLabel
       Left = 21
-      Top = 48
+      Top = 28
       Width = 84
       Height = 12
       Cursor = crHandPoint
@@ -1426,12 +1439,12 @@ inherited frmPosMain: TfrmPosMain
       OnClick = Label26Click
     end
     object Label27: TLabel
-      Left = 21
+      Left = 700
       Top = 8
-      Width = 84
+      Width = 66
       Height = 12
       Cursor = crHandPoint
-      Caption = #21151#33021#33756#21333'  [F2]'
+      Caption = #33756#21333'  [ / ]'
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
@@ -1469,6 +1482,21 @@ inherited frmPosMain: TfrmPosMain
       Font.Style = []
       ParentFont = False
       OnClick = Label11Click
+    end
+    object Label3: TLabel
+      Left = 21
+      Top = 47
+      Width = 84
+      Height = 12
+      Cursor = crHandPoint
+      Caption = #36141#20080#29992#36884'  [F2]'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+      OnClick = Label3Click
     end
   end
   inherited actList: TActionList

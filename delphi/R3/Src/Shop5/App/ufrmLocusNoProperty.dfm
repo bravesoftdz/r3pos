@@ -3,17 +3,19 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
   Top = 264
   ActiveControl = edtInput
   Caption = #25195#30721#35760#24405
-  ClientHeight = 433
+  ClientHeight = 365
   ClientWidth = 491
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 491
-    Height = 433
+    Height = 365
     inherited RzPage: TRzPageControl
       Width = 481
-      Height = 383
+      Height = 315
       TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -21,13 +23,13 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
         Caption = #25195#30721#35760#24405
         inherited RzPanel2: TRzPanel
           Width = 477
-          Height = 379
+          Height = 311
           BorderInner = fsFlat
           object DBGridEh1: TDBGridEh
             Left = 6
             Top = 41
             Width = 327
-            Height = 332
+            Height = 264
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             AutoFitColWidths = True
@@ -76,7 +78,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #29289#27969#36319#36394#30721
-                Width = 242
+                Width = 222
               end
               item
                 Alignment = taCenter
@@ -86,6 +88,13 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
                 Title.Caption = #21333#20301
                 Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
                 Width = 26
+              end
+              item
+                EditButtons = <>
+                FieldName = 'AMOUNT'
+                Footers = <>
+                Title.Caption = #25968#37327
+                Width = 40
               end>
           end
           object pnlBarCode: TRzPanel
@@ -157,21 +166,21 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             Left = 333
             Top = 41
             Width = 138
-            Height = 332
+            Height = 264
             Align = alRight
             BevelOuter = bvNone
             TabOrder = 2
             object RzLEDDisplay: TRzLEDDisplay
               Left = 8
-              Top = 40
+              Top = 90
               Width = 121
             end
             object Label1: TLabel
               Left = 8
-              Top = 19
-              Width = 48
+              Top = 69
+              Width = 24
               Height = 12
-              Caption = #24050#25195#35745#25968
+              Caption = #24050#25195
               Font.Charset = GB2312_CHARSET
               Font.Color = clRed
               Font.Height = -12
@@ -181,10 +190,10 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             end
             object Label2: TLabel
               Left = 8
-              Top = 83
-              Width = 48
+              Top = 133
+              Width = 24
               Height = 12
-              Caption = #24453#25195#35745#25968
+              Caption = #24453#25195
               Font.Charset = GB2312_CHARSET
               Font.Color = clRed
               Font.Height = -12
@@ -194,7 +203,25 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             end
             object RzLEDDisplay2: TRzLEDDisplay
               Left = 8
-              Top = 104
+              Top = 154
+              Width = 121
+            end
+            object Label3: TLabel
+              Left = 8
+              Top = 11
+              Width = 24
+              Height = 12
+              Caption = #21512#35745
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clRed
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object RzLEDDisplay1: TRzLEDDisplay
+              Left = 8
+              Top = 32
               Width = 121
             end
           end
@@ -202,7 +229,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
       end
     end
     inherited btPanel: TRzPanel
-      Top = 388
+      Top = 320
       Width = 481
       Visible = False
     end
@@ -240,5 +267,22 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
     object N2: TMenuItem
       Action = actImport
     end
+  end
+  object cdsImport: TZQuery
+    FieldDefs = <
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftString
+        Size = 50
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 150
+    Top = 222
   end
 end

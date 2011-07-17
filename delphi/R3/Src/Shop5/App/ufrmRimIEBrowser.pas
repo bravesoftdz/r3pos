@@ -206,6 +206,7 @@ begin
        begin
          Runed := true;
          _Start := GetTickCount;
+         frmXsmIEBrowser.GetSignature;
          IEBrowser.Navigate(rim_url+'xsmReg/reg.action?CTOKEN='+HTTPEncode(xsm_signature)+'&CUST_ID='+Rim_CustId);
          while not (IEBrowser.ReadyState in [READYSTATE_COMPLETE]) do
             begin

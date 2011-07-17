@@ -54,12 +54,12 @@ type
     function CreateXML(xml:string):IXMLDomDocument;
     function GetChallenge:boolean;
     function DoForLogin(checked:boolean=false):boolean;
-    function GetSignature:boolean;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     procedure Connect;
+    function GetSignature:boolean;
     function EncodeXml(objectId:string):string;
     procedure Send(const szMethodName: WideString;const szPara: WideString);
     procedure Send2(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString);

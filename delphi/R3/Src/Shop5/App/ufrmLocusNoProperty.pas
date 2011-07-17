@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, Grids, DBGridEh,
-  RzButton, DB, ZDataSet, uframeOrderForm, RzBorder;
+  RzButton, DB, ZDataSet, uframeOrderForm, RzBorder,ZBase,
+  ZAbstractRODataset, ZAbstractDataset;
 
 type
   TfrmLocusNoProperty = class(TframeDialogForm)
@@ -29,6 +30,9 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     actDeleteAll: TAction;
+    Label3: TLabel;
+    RzLEDDisplay1: TRzLEDDisplay;
+    cdsImport: TZQuery;
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -43,28 +47,38 @@ type
     procedure actDeleteExecute(Sender: TObject);
     procedure actDeleteAllExecute(Sender: TObject);
     procedure actImportExecute(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     FDataSet: TDataSet;
     FdbState: TDataSetState;
     FForm: TframeOrderForm;
     FWait: integer;
+    AObj:TRecord_;
+    UNIT_ID,MNG_UNIT_ID:string;
+    CONV_RATE,MNG_CONV_RATE:real;
+    FShopId: string;
+    wait:currency;
     procedure SetDataSet(const Value: TDataSet);
     { Private declarations }
     procedure InitGrid;
+    procedure Calc;
     procedure SetdbState(const Value: TDataSetState);
     procedure SetForm(const Value: TframeOrderForm);
-    procedure SetWait(const Value: integer);
+    function GodsToLocusNo(id: string;lct:integer=1): boolean;
+    procedure SetShopId(const Value: string);
   public
     { Public declarations }
+    procedure LocusNo(DataSet:TDataSet);
     property DataSet:TDataSet read FDataSet write SetDataSet;
     property dbState:TDataSetState read FdbState write SetdbState;
     property Form:TframeOrderForm read FForm write SetForm;
-    property Wait:integer read FWait write SetWait;
+    property ShopId:string read FShopId write SetShopId;
   end;
 
 implementation
 
-uses uGlobal,ufrmExcelFactory;
+uses uGlobal,ufrmExcelFactory,uFnUtil, uShopGlobal;
 var frmLocusNoProperty:TfrmLocusNoProperty;
 {$R *.dfm}
 
@@ -84,8 +98,6 @@ procedure TfrmLocusNoProperty.SetDataSet(const Value: TDataSet);
 begin
   FDataSet := Value;
   DataSource1.DataSet := Value;
-  RzLEDDisplay.Caption := inttostr(DataSet.RecordCount);
-  RzLEDDisplay2.Caption := inttostr(Wait-DataSet.RecordCount);
 end;
 
 procedure TfrmLocusNoProperty.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -150,6 +162,7 @@ begin
   inherited;
   InitGrid;
   frmLocusNoProperty := self;
+  AObj := TRecord_.Create;
 end;
 
 procedure TfrmLocusNoProperty.btnExitClick(Sender: TObject);
@@ -161,7 +174,7 @@ end;
 procedure TfrmLocusNoProperty.RzBitBtn1Click(Sender: TObject);
 begin
   inherited;
-  if DataSet.RecordCount <> Wait then Raise Exception.Create('系统检测扫码没有结束,请扫码完毕后再操作');
+  if wait<>0 then Raise Exception.Create('扫码没有完成,请确认扫完再确认');
   self.ModalResult := MROK;
 end;
 
@@ -169,8 +182,6 @@ procedure TfrmLocusNoProperty.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
   pnlBarCode.Visible := (Value<>dsBrowse);
-
-
 end;
 
 procedure TfrmLocusNoProperty.SetForm(const Value: TframeOrderForm);
@@ -185,23 +196,9 @@ begin
   if trim(edtInput.Text)='' then Exit;
   if Key=#13 then
      begin
-       try
-         TframeOrderForm(Form).GodsToLocusNo(trim(edtInput.Text));
-       finally
-         //DataSet.Filtered := false;
-         //DataSet.Filtered := true;
-       end;
-       RzLEDDisplay.Caption := inttostr(DataSet.RecordCount);
-       RzLEDDisplay2.Caption := floattostr(Wait-DataSet.RecordCount);
+       if GodsToLocusNo(trim(trim(edtInput.Text))) then Calc;
        edtInput.Text := '';
      end;
-end;
-
-procedure TfrmLocusNoProperty.SetWait(const Value: integer);
-begin
-  FWait := Value;
-  if DataSet<>nil then
-     RzLEDDisplay2.Caption := floattostr(Value-DataSet.RecordCount);
 end;
 
 procedure TfrmLocusNoProperty.FormKeyPress(Sender: TObject; var Key: Char);
@@ -216,9 +213,7 @@ begin
   if DataSet.IsEmpty then Exit;
   if MessageBox(Handle,pchar('是否确认删除'+DataSet.FieldbyName('LOCUS_NO').AsString+'，重新扫码？'),'友情提示...',MB_YESNO+MB_ICONINFORMATION)<>6 then Exit;
   DataSet.Delete;
-  RzLEDDisplay.Caption := inttostr(DataSet.RecordCount);
-  RzLEDDisplay2.Caption := floattostr(Wait-DataSet.RecordCount);
-
+  Calc;
 end;
 
 procedure TfrmLocusNoProperty.actDeleteAllExecute(Sender: TObject);
@@ -228,28 +223,201 @@ begin
   if DataSet.IsEmpty then Exit;
   DataSet.First;
   while not DataSet.Eof do DataSet.Delete;
-  RzLEDDisplay.Caption := inttostr(DataSet.RecordCount);
-  RzLEDDisplay2.Caption := floattostr(Wait-DataSet.RecordCount);
-
+  Calc;
 end;
 
 procedure TfrmLocusNoProperty.actImportExecute(Sender: TObject);
+function Save(CdsTable:TDataSet):Boolean;
+begin
+  result := true;
+end;
+function FindColumn(CdsCol:TDataSet):Boolean;
+begin
+  result := true;
+  if not CdsCol.Locate('FieldName','LOCUS_NO',[]) then
+    begin
+      Result := False;
+      Raise Exception.Create('缺少"物流跟踪码"字段!');
+    end;
+end;
 function ImportLocusNo(Source, Dest: TDataSet;
   SFieldName, DFieldName: string): Boolean;
+var amt:integer;  
 begin
-  if DFieldName='LOCUS_NO' then
+  result := false;
+  if (SFieldName='') and (DFieldName='') then
      begin
-       TframeOrderForm(frmLocusNoProperty.Form).GodsToLocusNo(Source.FieldbyName(SFieldName).AsString);
-       Dest.Edit;
-       frmLocusNoProperty.RzLEDDisplay.Caption := inttostr(frmLocusNoProperty.DataSet.RecordCount);
-       frmLocusNoProperty.RzLEDDisplay2.Caption := floattostr(frmLocusNoProperty.Wait-frmLocusNoProperty.DataSet.RecordCount);
+       if Dest.FieldbyName('LOCUS_NO').AsString='' then Exit;
+       amt := StrtoIntDef(Dest.FieldbyName('AMOUNT').AsString,1);
+       frmLocusNoProperty.GodsToLocusNo(Dest.FieldbyName('LOCUS_NO').AsString,amt);
        result := true;
      end;
 end;
 begin
   inherited;
   if not DataSet.IsEmpty then Raise Exception.Create('已经存在扫码记录，不能导入');
-  TfrmExcelFactory.ExcelFactory(DataSet,'LOCUS_NO=物流跟踪码',@ImportLocusNo,nil,nil,'0=LOCUS_NO',1);
+  cdsImport.Close;
+  cdsImport.CreateDataSet;
+  TfrmExcelFactory.ExcelFactory(cdsImport,'LOCUS_NO=物流跟踪码,AMOUNT=数量',@ImportLocusNo,@Save,@FindColumn,'0=LOCUS_NO,1=AMOUNT',1);
+end;
+
+procedure TfrmLocusNoProperty.FormDestroy(Sender: TObject);
+begin
+  AObj.Free;
+  inherited;
+end;
+
+procedure TfrmLocusNoProperty.LocusNo(DataSet: TDataSet);
+var
+  bs:TZQuery;
+  r:currency;
+begin
+  AObj.ReadFromDataSet(DataSet);
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not bs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营商品中没找到，当前扫码商品，请重新登录系统再重试..');
+  MNG_UNIT_ID := bs.FieldbyName('UNIT_ID').AsString;
+  UNIT_ID := AObj.FieldbyName('UNIT_ID').AsString;
+  if bs.FieldByName('BIG_UNITS').AsString=bs.FieldbyName('UNIT_ID').AsString then
+     begin
+       MNG_CONV_RATE := bs.FieldbyName('BIGTO_CALC').AsFloat;
+     end
+  else
+  if bs.FieldByName('SMALL_UNITS').AsString=bs.FieldbyName('UNIT_ID').AsString then
+     begin
+       MNG_CONV_RATE := bs.FieldbyName('SMALLTO_CALC').AsFloat;
+     end
+  else
+     MNG_CONV_RATE := 1;
+  if bs.FieldByName('BIG_UNITS').AsString=AObj.FieldbyName('UNIT_ID').AsString then
+     begin
+       CONV_RATE := bs.FieldbyName('BIGTO_CALC').AsFloat;
+     end
+  else
+  if bs.FieldByName('SMALL_UNITS').AsString=AObj.FieldbyName('UNIT_ID').AsString then
+     begin
+       CONV_RATE := bs.FieldbyName('SMALLTO_CALC').AsFloat;
+     end
+  else
+     CONV_RATE := 1;
+  if CONV_RATE>MNG_CONV_RATE then
+     begin
+       UNIT_ID := MNG_UNIT_ID;
+       CONV_RATE := MNG_CONV_RATE;
+     end;
+  r := AObj.FieldbyName('CALC_AMOUNT').AsFloat/CONV_RATE;
+  RzLEDDisplay1.Caption := floattostr(trunc(r));
+  Calc;
+end;
+
+function TfrmLocusNoProperty.GodsToLocusNo(id: string;lct:integer=1): boolean;
+var
+  rs:TZQuery;
+  r:boolean;
+  sr:real;
+begin
+  if (length(id)<=4) and (FnString.IsNumberChar(id)) then
+     begin
+       if DataSet.IsEmpty then Raise Exception.Create('请扫码重，再输入数量...');
+       if UNIT_ID=MNG_UNIT_ID then
+          begin
+            if Strtofloat(id)>1 then Raise Exception.Create('管理单位只能一个物流码只能对应一个商品');  
+          end;
+       DataSet.Edit;
+       DataSet.FieldByName('AMOUNT').AsFloat := Strtofloat(id);
+       DataSet.FieldByName('CALC_AMOUNT').AsFloat := DataSet.FieldByName('AMOUNT').AsFloat*CONV_RATE;
+       DataSet.Post;
+       result := true;
+       Exit;
+     end;
+  if id = '' then Raise Exception.Create('输入的物流跟踪号无效');
+  if UNIT_ID=MNG_UNIT_ID then
+     begin
+       if lct>1 then Raise Exception.Create('管理单位只能一个物流码只能对应一个商品');
+     end;
+  result := false;
+  rs := TZQuery.Create(nil);
+  try
+    if (ShopGlobal.GetParameter('LOCUS_NO_MT')<>'1')  then  //不能强制出库
+     begin
+       rs.SQL.Text :=
+       'select distinct LOCUS_NO from STK_LOCUS_FORSTCK A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.GODS_ID='''+AObj.FieldbyName('GODS_ID').AsString+''' and A.SHOP_ID='''+ShopId+''' and A.LOCUS_NO='''+id+''' ';
+       Factor.Open(rs);
+       if rs.IsEmpty then
+          begin
+            windows.beep(2000,500);
+            Exit;
+          end;
+     end;
+     r := DataSet.Locate('GODS_ID;BATCH_NO;UNIT_ID;PROPERTY_01,PROPERTY_02;LOCUS_NO',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,AObj.FieldbyName('PROPERTY_01').AsString,AObj.FieldbyName('PROPERTY_02').AsString,id]),[]);
+     if not r then
+     begin
+        DataSet.Append;
+        AObj.WriteToDataSet(DataSet,false);
+        DataSet.FieldByName('UNIT_ID').AsString := UNIT_ID;
+        DataSet.FieldByName('AMOUNT').AsFloat := lct;
+        DataSet.FieldByName('CALC_AMOUNT').AsFloat := lct*CONV_RATE;
+        DataSet.FieldByName('LOCUS_NO').AsString := id;
+        DataSet.Post;
+        MessageBeep(0);
+     end else
+     begin
+        if UNIT_ID=MNG_UNIT_ID then
+           begin
+             windows.beep(2000,500);
+             Exit;
+           end
+        else
+           begin
+             DataSet.Edit;
+             DataSet.FieldByName('AMOUNT').AsFloat := DataSet.FieldByName('AMOUNT').AsFloat + lct;
+             DataSet.FieldByName('CALC_AMOUNT').AsFloat := DataSet.FieldByName('AMOUNT').AsFloat*CONV_RATE;
+             if DataSet.FieldByName('CALC_AMOUNT').AsFloat>MNG_CONV_RATE then Raise Exception.Create('一个物流码对应的发货量大太了，请确认是否输错了.');
+             DataSet.Post;
+             MessageBeep(0);
+           end;
+     end;
+    result := true;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmLocusNoProperty.SetShopId(const Value: string);
+begin
+  FShopId := Value;
+end;
+
+procedure TfrmLocusNoProperty.Calc;
+var
+  r,t:currency;
+begin
+  t := AObj.FieldbyName('CALC_AMOUNT').asFloat/CONV_RATE;
+  r := 0;
+  DataSet.First;
+  while not DataSet.Eof do
+    begin
+      r := r + DataSet.FieldbyName('CALC_AMOUNT').asFloat;
+      DataSet.Next;
+    end;
+  r := r / CONV_RATE;
+  RzLEDDisplay.Caption := floattostr(trunc(r));
+  wait := trunc(t)-trunc(r);
+  RzLEDDisplay2.Caption := floattostr(wait);
+end;
+
+procedure TfrmLocusNoProperty.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+var
+  t:currency;
+begin
+  t := AObj.FieldbyName('CALC_AMOUNT').asFloat/CONV_RATE;
+  inherited;
+  if (wait<>0) and (wait<>trunc(t)) then
+     begin
+       CanClose := false;
+       Raise Exception.Create('扫码没有完成,请确认扫完再确认');
+     end;
+
 end;
 
 end.

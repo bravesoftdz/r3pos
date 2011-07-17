@@ -697,8 +697,7 @@ end;
 function TfrmOutLocusOrderList.EncodeSQL2(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 '+
-       ' and isnull(A.CHK_DATE,'''')<>'''' and isnull(A.CHK_USE,'''')<>'''' '; //Ôö¼Ó¹ýÂËÉóºË
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 ';
   if fndP2_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndP2_SHOP_ID.AsString <> '' then

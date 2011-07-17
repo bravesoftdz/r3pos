@@ -73,12 +73,9 @@ type
   public
     { Public declarations }
     function  Calc:real;
-    function  CalcCurr:real;
     procedure ReadFrom(DataSet:TDataSet);override;
     function PriorLocusNo:boolean;
     function NextLocusNo(flag:integer=0):boolean;
-    //输入跟踪号
-    function GodsToLocusNo(id:string):boolean;override;
     procedure NewOrder;override;
     procedure EditOrder;override;
     procedure DeleteOrder;override;
@@ -120,7 +117,7 @@ begin
          dbState := self.dbState;
          DataSet := cdsLocusNo;
          Form := self;
-         Wait := round(FnNumber.ConvertToFight(self.edtTable.FieldbyName('AMOUNT').asFloat,4,0));
+         LocusNo(edtTable);
          ShowModal;
          if dbState <> dsBrowse then
             Calc;
@@ -244,6 +241,7 @@ var
   jh:real;
   sm:real;
   wt:real;
+  convRate:real;
   bs:TZQuery;
 begin
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
@@ -270,12 +268,19 @@ begin
               cdsLocusNo.First;
               while not cdsLocusNo.Eof do
                 begin
-                  amt := amt + cdsLocusNo.FieldbyName('AMOUNT').AsInteger;
+                  amt := amt + cdsLocusNo.FieldbyName('CALC_AMOUNT').AsInteger;
                   cdsLocusNo.Next;
                 end;
+              if bs.FieldByName('BIG_UNITS').AsString=edtTable.FieldbyName('UNIT_ID').AsString then
+                 convRate := bs.FieldbyName('BIGTO_CALC').AsFloat
+              else
+              if bs.FieldByName('SMALL_UNITS').AsString=edtTable.FieldbyName('UNIT_ID').AsString then
+                 convRate := bs.FieldbyName('SMALLTO_CALC').AsFloat
+              else
+                 convRate := 1;
               edtTable.Edit;
-              edtTable.FieldByName('BAL_AMT').asFloat := edtTable.FieldbyName('AMOUNT').AsFloat-amt;
-              edtTable.FieldByName('LOCUS_AMT').asFloat := amt;
+              edtTable.FieldByName('LOCUS_AMT').asFloat := amt / convRate;
+              edtTable.FieldByName('BAL_AMT').asFloat := edtTable.FieldbyName('AMOUNT').AsFloat-edtTable.FieldbyName('LOCUS_AMT').AsFloat;
               edtTable.Post;
               if edtTable.FieldByName('BAL_AMT').asFloat=0 then
                  begin
@@ -395,60 +400,6 @@ begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
 
-end;
-
-function TfrmStkLocusOrder.GodsToLocusNo(id: string): boolean;
-var
-  rs,bs:TZQuery;
-  AObj:TRecord_;
-  r:boolean;
-  sr:real;
-begin
-  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
-  if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营品牌中没找到.');
-  if bs.FieldbyName('USING_LOCUS_NO').asInteger<>1 then Raise Exception.Create('当前商品没有启用物流跟踪码...');
-  if id = '' then Raise Exception.Create('输入的物流跟踪号无效');
-  result := false;
-  rs := TZQuery.Create(nil);
-  AObj := TRecord_.Create;
-  try
-     AObj.ReadFromDataSet(edtTable);
-     r := false;//cdsLocusNo.Locate('GODS_ID;BATCH_NO;UNIT_ID;PROPERTY_01,PROPERTY_02;LOCUS_NO',VarArrayOf([AObj.FieldbyName('GODS_ID').AsString,AObj.FieldbyName('BATCH_NO').AsString,AObj.FieldbyName('UNIT_ID').AsString,AObj.FieldbyName('PROPERTY_01').AsString,AObj.FieldbyName('PROPERTY_02').AsString,id]),[]);
-     if not r then
-     begin
-        cdsLocusNo.Append;
-        AObj.WriteToDataSet(cdsLocusNo,false);
-        cdsLocusNo.FieldByName('AMOUNT').AsFloat := 1;
-        if cdsLocusNo.FieldByName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').asString then
-           sr := bs.FieldbyName('SMALLTO_CALC').AsFloat
-        else
-        if cdsLocusNo.FieldByName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').asString then
-           sr := bs.FieldbyName('BIGTO_CALC').AsFloat
-        else
-           sr := 1;
-        cdsLocusNo.FieldByName('CALC_AMOUNT').AsFloat := 1*sr;
-        cdsLocusNo.FieldByName('LOCUS_NO').AsString := id;
-        cdsLocusNo.Post;
-        CalcCurr;
-        if edtTable.FieldbyName('BAL_AMT').asFloat<0 then
-           begin
-              windows.beep(2000,500);
-              lblHint.Caption := '当前商品已经扫码完毕了。';
-           end
-        else
-           begin
-             lblHint.Caption := '扫码成功,数量:'+edtTable.FieldbyName('LOCUS_AMT').asString;
-             MessageBeep(0);
-           end;
-     end else
-        begin
-          windows.beep(2000,500);
-          lblHint.Caption := '当前物流跟踪号已经输入，不能重复输入,跟踪号为:'+id;
-        end;
-  finally
-    AObj.Free;
-    rs.Free;
-  end;
 end;
 
 function TfrmStkLocusOrder.CheckInput: boolean;
@@ -644,17 +595,6 @@ begin
            if edtTable.Bof then Exit;
          end else begin result := true;break;end;
     end;
-end;
-
-function TfrmStkLocusOrder.CalcCurr: real;
-var
-  amt:integer;
-begin
-  amt := cdsLocusNo.RecordCount;
-  edtTable.Edit;
-  edtTable.FieldByName('BAL_AMT').asFloat := edtTable.FieldbyName('AMOUNT').AsFloat-amt;
-  edtTable.FieldByName('LOCUS_AMT').asFloat := amt;
-  edtTable.Post;
 end;
 
 end.

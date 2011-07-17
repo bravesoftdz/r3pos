@@ -52,6 +52,7 @@ type
     PUB_STAT_INFO: TZQuery;
     PUB_GOODS_INDEXS: TZQuery;
     CA_RELATIONS: TZQuery;
+    PUB_TREND_INFO: TZQuery;
   private
     Fokline: boolean;
     FLimit: integer;

@@ -61,7 +61,7 @@ begin
            result := rgMenu.Row; 
          end
       else
-         result := 0;
+         result := 9999999;
     end;
 end;
 

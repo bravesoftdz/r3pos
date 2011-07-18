@@ -1,10 +1,10 @@
 object SocketForm: TSocketForm
   Left = 745
-  Top = 375
+  Top = 376
   AlphaBlendValue = 0
   AutoScroll = False
   Caption = #36890#35759#26381#21153#22120
-  ClientHeight = 327
+  ClientHeight = 326
   ClientWidth = 519
   Color = clBtnFace
   Constraints.MinHeight = 373
@@ -28,7 +28,7 @@ object SocketForm: TSocketForm
     Left = 0
     Top = 0
     Width = 519
-    Height = 327
+    Height = 326
     ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
@@ -36,7 +36,7 @@ object SocketForm: TSocketForm
       Caption = ' '#36873#39033
       DesignSize = (
         511
-        300)
+        299)
       object PortGroup: TGroupBox
         Left = 104
         Top = 5
@@ -243,7 +243,7 @@ object SocketForm: TSocketForm
         Left = 0
         Top = 0
         Width = 511
-        Height = 281
+        Height = 280
         Align = alClient
         Columns = <
           item
@@ -272,7 +272,7 @@ object SocketForm: TSocketForm
       end
       object UserStatus: TStatusBar
         Left = 0
-        Top = 281
+        Top = 280
         Width = 511
         Height = 19
         Panels = <>
@@ -286,7 +286,7 @@ object SocketForm: TSocketForm
         Left = 0
         Top = 0
         Width = 511
-        Height = 300
+        Height = 299
         Align = alClient
         Columns = <
           item
@@ -319,7 +319,7 @@ object SocketForm: TSocketForm
         Left = 0
         Top = 0
         Width = 511
-        Height = 300
+        Height = 299
         Align = alClient
         Columns = <
           item
@@ -355,7 +355,7 @@ object SocketForm: TSocketForm
         Left = 0
         Top = 25
         Width = 511
-        Height = 275
+        Height = 274
         Align = alClient
         Color = clNavy
         Font.Charset = GB2312_CHARSET
@@ -392,7 +392,7 @@ object SocketForm: TSocketForm
       ImageIndex = 5
       DesignSize = (
         511
-        300)
+        299)
       object GroupBox1: TGroupBox
         Left = 8
         Top = 13

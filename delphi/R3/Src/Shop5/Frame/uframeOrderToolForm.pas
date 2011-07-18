@@ -588,23 +588,23 @@ begin
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport1.Name+'1.frf') then
      mnmFormer1.Caption := '自定义一(空置)'
   else
-     mnmFormer1.Caption := F.ReadString('s1','name','自定义一');
+     mnmFormer1.Caption := F.ReadString('s1_'+frReport1.Name,'name','自定义一');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport1.Name+'2.frf') then
      mnmFormer2.Caption := '自定义二(空置)'
   else
-     mnmFormer2.Caption := F.ReadString('s2','name','自定义二');
+     mnmFormer2.Caption := F.ReadString('s2_'+frReport1.Name,'name','自定义二');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport1.Name+'3.frf') then
      mnmFormer3.Caption := '自定义三(空置)'
   else
-     mnmFormer3.Caption := F.ReadString('s3','name','自定义三');
+     mnmFormer3.Caption := F.ReadString('s3_'+frReport1.Name,'name','自定义三');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport1.Name+'4.frf') then
      mnmFormer4.Caption := '自定义四(空置)'
   else
-     mnmFormer4.Caption := F.ReadString('s4','name','自定义四');
+     mnmFormer4.Caption := F.ReadString('s4_'+frReport1.Name,'name','自定义四');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport1.Name+'5.frf') then
      mnmFormer5.Caption := '自定义五(空置)'
   else
-     mnmFormer5.Caption := F.ReadString('s5','name','自定义五');
+     mnmFormer5.Caption := F.ReadString('s5_'+frReport1.Name,'name','自定义五');
   finally
     F.Free;
   end;

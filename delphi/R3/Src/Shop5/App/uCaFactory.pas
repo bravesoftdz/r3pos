@@ -434,7 +434,7 @@ var
   code,hsname,srvrId,cstr,defSrvrId,defStr:string;
   h:rsp;
   f,r:TIniFile;
-  finded:boolean;
+  finded,isSrvr:boolean;
 begin
 try
   Audited := false;
@@ -550,6 +550,7 @@ try
                      r.WriteString('soft','name',GetNodeValue(caTenantLoginResp,'prodName'));
                      ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
                      ServerInfo := ServerInfo.firstChild;
+                     isSrvr := false;
                      while ServerInfo<>nil do
                        begin
                          f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrName',GetNodeValue(ServerInfo,'srvrName'));
@@ -567,6 +568,7 @@ try
                          else
                             f.WriteString('H_'+GetNodeValue(ServerInfo,'srvrId'),'srvrStatus','正常');
                          end;
+                         if srvrId=GetNodeValue(ServerInfo,'srvrId') then isSrvr := true;
                          if not finded then
                             begin
                               if srvrId=GetNodeValue(ServerInfo,'srvrId') then
@@ -581,7 +583,7 @@ try
                             end;
                          ServerInfo := ServerInfo.nextSibling;
                        end;
-                     if not finded then //一直没找到设置，默认第一个
+                     if not finded or not isSrvr then //一直没找到设置，默认第一个
                        begin
                          ServerInfo := FindNode(doc,'body\caTenantLoginResp\servers');
                          ServerInfo := ServerInfo.firstChild;

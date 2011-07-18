@@ -3835,7 +3835,7 @@ end;
 
 procedure TfrmShopMain.wm_check(var Message: TMessage);
 begin
-  if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and ShopGlobal.offline then Exit;
+  if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) then Exit;
   TfrmCostCalc.CheckMonthReck(self);
 
 end;

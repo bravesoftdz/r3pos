@@ -244,7 +244,7 @@ begin
    4:
     begin
       Session:='session.';
-      ReckMonth:='trim(char(A.MONTH)) ';
+      ReckMonth:='ltrim(rtrim(char(A.MONTH))) ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_RECKMONTH ('+
              'TENANT_ID INTEGER NOT NULL,'+         //R3企业ID
@@ -399,7 +399,7 @@ begin
    4:
     begin
       Session:='session.';
-      SALES_DATE:='trim(char(A.SALES_DATE)) as SALES_DATE ';
+      SALES_DATE:='ltrim(rtrim(char(A.SALES_DATE))) as SALES_DATE ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALE( '+
              'TENANT_ID INTEGER NOT NULL,'+     //R3企业ID
@@ -491,7 +491,7 @@ begin
    4:
     begin
       Session:='session.';
-      BillDate:='trim(char(STOCK_DATE)) as STOCK_DATE ';
+      BillDate:='ltrim(rtrim(char(STOCK_DATE))) as STOCK_DATE ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_DB( '+
              'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
@@ -577,7 +577,7 @@ begin
    4:
     begin
       Session:='session.';
-      BillDate:='trim(char(SALES_DATE)) as SALES_DATE ';
+      BillDate:='ltrim(rtrim(char(SALES_DATE))) as SALES_DATE ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_DB( '+
              'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID
@@ -662,7 +662,7 @@ begin
    4:
     begin
       Session:='session.';
-      BillDate:='trim(char(STOCK_DATE)) as STOCK_DATE ';
+      BillDate:='ltrim(rtrim(char(STOCK_DATE))) as STOCK_DATE ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_STOCK( '+
              'TENANT_ID INTEGER NOT NULL,'+         //R3企业ID
@@ -747,7 +747,7 @@ begin
    4:
     begin
       Session:='session.';
-      BillDate:='trim(char(CHANGE_DATE)) as CHANGE_DATE ';
+      BillDate:='ltrim(rtrim(char(CHANGE_DATE))) as CHANGE_DATE ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_CHANGE( '+
              'TENANT_ID INTEGER NOT NULL,'+       //R3企业ID

@@ -191,9 +191,9 @@ begin
       vSALES_DATE:='to_char(A.SALES_DATE)';    //台账日期 转成 varchar
     end;
    4:
-    begin
+    begin              
       Session:='session.';
-      vSALES_DATE:='trim(char(A.SALES_DATE))';   //台账日期 转成 varchar
+      vSALES_DATE:='ltrim(rtrim(char(A.SALES_DATE)))';   //台账日期 转成 varchar
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_SALESUM( '+
              ' TENANT_ID INTEGER NOT NULL,'+     //R3企业ID

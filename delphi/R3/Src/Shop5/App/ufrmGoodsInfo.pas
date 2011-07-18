@@ -1795,7 +1795,8 @@ begin
           if edtNEW_OUTPRICE.CanFocus then edtNEW_OUTPRICE.SetFocus;
         end else
         begin
-          if edtNEW_LOWPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
+          if (not edtNEW_LOWPRICE.Properties.ReadOnly) and (edtNEW_LOWPRICE.CanFocus) then
+             edtNEW_LOWPRICE.SetFocus;
         end;
       end;
     end;
@@ -1810,7 +1811,8 @@ begin
           if edtMY_OUTPRICE.CanFocus then edtMY_OUTPRICE.SetFocus;
         end else
         begin
-          if edtNEW_LOWPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
+          if (not edtNEW_LOWPRICE.Properties.ReadOnly) and (edtNEW_LOWPRICE.CanFocus) then
+            edtNEW_LOWPRICE.SetFocus;
         end;
       end;
     end;
@@ -1829,6 +1831,7 @@ begin
           if edtNEW_OUTPRICE.CanFocus then edtNEW_LOWPRICE.SetFocus;
         end;
       end;
+      
       // [最低售价] 与 [本店售价]
       if (StrToFloatDef(edtMY_OUTPRICE.Text,0)>=0) and (StrToFloatDef(edtNEW_LOWPRICE.Text,0)>=0) and
          (StrToFloatDef(edtMY_OUTPRICE.Text,0)<StrToFloatDef(edtNEW_LOWPRICE.Text,0)) then
@@ -2145,9 +2148,8 @@ begin
     GB_Big.Top:=116;
   end;
 end;
-
-procedure TfrmGoodsInfo.edtSORT_ID1PropertiesButtonClick(Sender: TObject;
-  AButtonIndex: Integer);
+                      
+procedure TfrmGoodsInfo.edtSORT_ID1PropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
 var
   rs:TRecord_;
   Qry: TZQuery;

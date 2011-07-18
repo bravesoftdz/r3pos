@@ -1115,7 +1115,7 @@ begin
    4:
     begin
       Session:='session.';
-      ReckDate:='trim(char(A.CREA_DATE)) ';
+      ReckDate:='ltrim(rtrim(char(A.CREA_DATE))) ';
       Str:=
         'DECLARE GLOBAL TEMPORARY TABLE session.INF_RECKDAY('+
              'TENANT_ID INTEGER NOT NULL,'+         //R3∆Û“µID

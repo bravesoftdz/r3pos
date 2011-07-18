@@ -117,7 +117,7 @@ type
 
   end;
 implementation
-uses uGlobal,uFnUtil,uShopGlobal,ObjCommon,uSyncFactory;
+uses uGlobal,uFnUtil,uShopGlobal,ObjCommon,uSyncFactory,ufrmMain;
 {$R *.dfm}
 
 { TfrmCostCalc }
@@ -2209,6 +2209,9 @@ var
   tmp: TZQuery;
 begin
   result:=False;
+  //先判断有月结账权限
+  if not frmMain.FindAction('actfrmMonthClose').Enabled then Exit;
+
   with TfrmCostCalc.Create(Owner) do
   begin
     try

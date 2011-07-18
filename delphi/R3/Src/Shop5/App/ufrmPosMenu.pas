@@ -13,6 +13,7 @@ type
     rgMenu: TRzStringGrid;
     procedure FormCreate(Sender: TObject);
     procedure rgMenuKeyPress(Sender: TObject; var Key: Char);
+    procedure rgMenuClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -73,6 +74,12 @@ begin
        if Key in ['0'..'9'] then rgMenu.Row := StrtoInt(Key);
        ModalResult := MROK;
      end;
+end;
+
+procedure TfrmPosMenu.rgMenuClick(Sender: TObject);
+begin
+  inherited;
+  ModalResult := mrOk;
 end;
 
 end.

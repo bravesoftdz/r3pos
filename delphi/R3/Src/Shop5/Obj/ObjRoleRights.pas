@@ -24,11 +24,11 @@ begin
          ' values(:ROWS_ID,:TENANT_ID,:MODU_ID,:ROLE_ID,:ROLE_TYPE,:CHK,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add(Str);
 
-  Str:='update CA_RIGHTS set TENANT_ID=:TENANT_ID,MODU_ID=:MODU_ID,ROLE_ID=:ROLE_ID,ROLE_TYPE=:ROLE_TYPE,CHK=:CHK,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
-    ' where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID ';
+  Str:='update CA_RIGHTS set ROWS_ID=:ROWS_ID,TENANT_ID=:TENANT_ID,MODU_ID=:MODU_ID,ROLE_ID=:ROLE_ID,ROLE_TYPE=:ROLE_TYPE,CHK=:CHK,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+    ' where TENANT_ID=:OLD_TENANT_ID and MODU_ID=:OLD_MODU_ID and ROLE_ID=:OLD_ROLE_ID and ROLE_TYPE=:OLD_ROLE_TYPE ';
   UpdateSQL.Add(Str);
 
-  DeleteSQL.Add('update CA_RIGHTS set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID ');
+  DeleteSQL.Add('update CA_RIGHTS set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and MODU_ID=:OLD_MODU_ID and ROLE_ID=:OLD_ROLE_ID and ROLE_TYPE=:OLD_ROLE_TYPE ');
 end;
 
 initialization

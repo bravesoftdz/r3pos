@@ -8,7 +8,7 @@ alter table CA_DEPT_INFO add SHOP_ID varchar(13);
 alter table CA_DEPT_INFO add DEPT_TYPE char(1);
 --历史数据默认成（营销部）
 update CA_DEPT_INFO set DEPT_TYPE='1';
-update CA_DEPT_INFO set SHOP_ID=trim(char(TENANT_ID))||'0001';
+update CA_DEPT_INFO set SHOP_ID=ltrim(rtrim(char(TENANT_ID)))||'0001';
 
 --添加营销部门
 alter table STK_STOCKORDER add DEPT_ID varchar(12);
@@ -22,21 +22,21 @@ alter table SAL_SALESORDER add BANK_ID varchar(36);
 --刷卡卡号
 alter table SAL_SALESORDER add BANK_CODE varchar(36);
 
-update STK_STOCKORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
-update STK_INDENTORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
-update SAL_SALESORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
-update SAL_INDENTORDER set DEPT_ID=trim(char(TENANT_ID))||'001';
+update STK_STOCKORDER set DEPT_ID=ltrim(rtrim(char(TENANT_ID)))||'001';
+update STK_INDENTORDER set DEPT_ID=ltrim(rtrim(char(TENANT_ID)))||'001';
+update SAL_SALESORDER set DEPT_ID=ltrim(rtrim(char(TENANT_ID)))||'001';
+update SAL_INDENTORDER set DEPT_ID=ltrim(rtrim(char(TENANT_ID)))||'001';
 
 drop view VIW_USERS;
 CREATE view VIW_USERS
 as
 select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,USER_NAME,USER_SPELL,DUTY_IDS,ROLE_IDS,QQ,MM,MSN,PASS_WRD,DEPT_ID,COMM from CA_USERS
 union all
-select TENANT_ID,trim(char(TENANT_ID))||'0001' as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLE_IDS,'' as QQ,'' as MM,'' as MSN,
-VALUE as PASS_WRD,trim(char(TENANT_ID))||'001' as DEPT_ID, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD' and TENANT_ID<>0
+select TENANT_ID,ltrim(rtrim(char(TENANT_ID)))||'0001' as SHOP_ID,'admin' as USER_ID,'admin' as ACCOUNT,'管理员' as USER_NAME,'gly' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLE_IDS,'' as QQ,'' as MM,'' as MSN,
+VALUE as PASS_WRD,ltrim(rtrim(char(TENANT_ID)))||'001' as DEPT_ID, '00' as COMM from SYS_DEFINE where DEFINE='PASSWRD' and TENANT_ID<>0
 union all
-select B.TENANT_ID,trim(char(B.TENANT_ID))||'0001' as SHOP_ID,'system' as USER_ID,'system' as ACCOUNT,'系统用户' as USER_NAME,'xtyf' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLE_IDS,'' as QQ,'' as MM,'' as MSN,
-VALUE as PASS_WRD,trim(char(B.TENANT_ID))||'001' as DEPT_ID, '00' as COMM from SYS_DEFINE A,CA_TENANT B where DEFINE='PASSWRD' and A.TENANT_ID=0;
+select B.TENANT_ID,ltrim(rtrim(char(B.TENANT_ID)))||'0001' as SHOP_ID,'system' as USER_ID,'system' as ACCOUNT,'系统用户' as USER_NAME,'xtyf' as USER_SPELL,'#' as DUTY_IDS,'#' as ROLE_IDS,'' as QQ,'' as MM,'' as MSN,
+VALUE as PASS_WRD,ltrim(rtrim(char(B.TENANT_ID)))||'001' as DEPT_ID, '00' as COMM from SYS_DEFINE A,CA_TENANT B where DEFINE='PASSWRD' and A.TENANT_ID=0;
 
 --企业客户
 --送货资料

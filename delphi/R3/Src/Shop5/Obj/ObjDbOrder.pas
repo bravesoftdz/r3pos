@@ -524,7 +524,7 @@ begin
   end;
    AGlobal.BeginTrans; 
    try
-    Str := 'update SAL_SALESORDER set CHK_DATE=null,CHK_USER=null where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
+    Str := 'update SAL_SALESORDER set CHK_DATE=null,CHK_USER=null where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')
@@ -532,7 +532,7 @@ begin
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
 
-    Str := 'update STK_STOCKORDER set CHK_DATE=null,CHK_USER=null where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
+    Str := 'update STK_STOCKORDER set CHK_DATE=null,CHK_USER=null where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
@@ -681,7 +681,7 @@ var Str:string;
 begin
    AGlobal.BeginTrans;
    try
-    Str := 'update SAL_SALESORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null,LOCUS_STATUS=''1'' where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
+    Str := 'update SAL_SALESORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null,LOCUS_STATUS=''1'' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')
@@ -689,7 +689,7 @@ begin
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
 
-    Str := 'update STK_STOCKORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null where TENANT_ID='''+Params.FindParam('TENANT_ID').asString +''' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
+    Str := 'update STK_STOCKORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null,LOCUS_STATUS=''1'' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     AGlobal.CommitTrans;
     MSG := '反审核单据成功。';

@@ -22,7 +22,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
           object RzPanel4: TRzPanel
             Left = 5
             Top = 5
-            Width = 525
+            Width = 517
             Height = 334
             Align = alClient
             BorderOuter = fsFlatRounded
@@ -30,7 +30,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
             object DBGridEh1: TDBGridEh
               Left = 2
               Top = 42
-              Width = 521
+              Width = 513
               Height = 290
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -43,6 +43,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
               FooterFont.Name = #23435#20307
               FooterFont.Style = []
               FrozenCols = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
               OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
               PopupMenu = PopupMenu1
@@ -141,7 +142,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
             object fndPanel: TPanel
               Left = 2
               Top = 2
-              Width = 521
+              Width = 513
               Height = 40
               Align = alTop
               BevelOuter = bvLowered
@@ -150,7 +151,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
               object RzPanel5: TRzPanel
                 Left = 1
                 Top = 1
-                Width = 519
+                Width = 511
                 Height = 38
                 Align = alClient
                 BorderOuter = fsNone
@@ -196,6 +197,7 @@ inherited frameSelectCustomer: TframeSelectCustomer
                   Top = 9
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #33258#21160#25628#32034

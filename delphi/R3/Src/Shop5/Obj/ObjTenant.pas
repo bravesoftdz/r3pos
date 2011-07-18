@@ -227,19 +227,19 @@ try
 
   //用途 CODE_TYPE=16
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''01'',''自用'',''ZY'',''16'',1,''00'',5497000)';
+  ' values(:TENANT_ID,''01'',''自用'',''ZY'',''17'',1,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''02'',''馈赠礼品'',''JTXS'',''16'',2,''00'',5497000)';
+  ' values(:TENANT_ID,''02'',''馈赠礼品'',''JTXS'',''17'',2,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''03'',''团体消费'',''DHXS'',''16'',3,''00'',5497000)';
+  ' values(:TENANT_ID,''03'',''团体消费'',''DHXS'',''17'',3,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''04'',''婚丧嫁娶'',''WLXS'',''16'',4,''00'',5497000)';
+  ' values(:TENANT_ID,''04'',''婚丧嫁娶'',''WLXS'',''17'',4,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
-  ' values(:TENANT_ID,''05'',''其他'',''WLXS'',''16'',5,''00'',5497000)';
+  ' values(:TENANT_ID,''05'',''其他'',''WLXS'',''17'',5,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
 
   //收支项目 CODE_TYPE=3

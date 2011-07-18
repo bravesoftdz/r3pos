@@ -417,7 +417,7 @@ begin
   case AGlobal.iDbType of
    0,5: result:='cast('+FieldName+' as varchar)';
    1: result:='cast('+FieldName+' as varchar(10))';
-   4: result:='trim(char('+FieldName+'))';
+   4: result:='ltrim(rtrim(char('+FieldName+')))';
   end;
 end;
 

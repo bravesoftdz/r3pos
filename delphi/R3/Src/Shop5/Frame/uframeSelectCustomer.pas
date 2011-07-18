@@ -206,10 +206,10 @@ begin
   0:result := 'select top 600 * from ('+result+') j order by CLIENT_ID';
   1:result :=
        'select * from ('+
-       'select * from ('+result+') order by CLIENT_ID) t where rownum<=600';
+       'select * from ('+result+') s order by CLIENT_ID) t where rownum<=600';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') order by CLIENT_ID) t fetch first 600  rows only';
+       'select * from ('+result+') s order by CLIENT_ID) t fetch first 600  rows only';
   5:result := 'select * from ('+result+') order by CLIENT_ID limit 600';
   else
     result := 'select * from ('+result+') order by CLIENT_ID';

@@ -24,7 +24,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select OUT_MNY,IN_MNY,BALANCE from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID and SHOP_ID=:SHOP_ID';
-    rs.ParamByName('TENANT_ID').AsString := FieldByName('TENANT_ID').AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsOldInteger;
     rs.ParamByName('ACCOUNT_ID').AsString := FieldByName('ACCOUNT_ID').AsOldString;
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsOldString;
     AGlobal.Open(rs);
@@ -50,13 +50,13 @@ begin
     rs.ParamByName('SHOP_ID').AsString := FieldByName('SHOP_ID').AsString;
     AGlobal.Open(rs);
     if rs.FieldByName('ACCT_NAME').AsString <> '' then
-      Raise Exception.Create('此账户名已经存在,请重新输入..');
+       Raise Exception.Create('此账户名已经存在,请重新输入..');
     //检测有结账，期初余额只能为0
     if FieldbyName('ORG_MNY').AsFloat<>0 then
        begin
          rs.Close;
-         rs.SQL.Text := 'select max(MONTH) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID ';
-         rs.ParamByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsString;
+         rs.SQL.Text := 'select max(CLSE_DATE) as CLSE_DATE from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID ';
+         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
          AGlobal.Open(rs);
          if rs.Fields[0].AsString <> '' then Raise Exception.Create('已经存在结账记录时期初金额只能是0...');
        end;
@@ -120,7 +120,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select * from ACC_RECVORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and ACCOUNT_ID=:ACCOUNT_ID';
-    rs.FieldByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.FieldByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
     rs.FieldByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     rs.FieldByName('ACCOUNT_ID').AsString := FieldbyName('ACCOUNT_ID').AsOldString;
     AGlobal.Open(rs);
@@ -128,7 +128,7 @@ begin
       Raise Exception.Create('此账户在收款单据中有使用,不能删除!');
 
     rs.SQL.Text := 'select * from ACC_PAYORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and ACCOUNT_ID=:ACCOUNT_ID';
-    rs.FieldByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.FieldByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
     rs.FieldByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     rs.FieldByName('ACCOUNT_ID').AsString := FieldbyName('ACCOUNT_ID').AsOldString;
     AGlobal.Open(rs);
@@ -136,7 +136,7 @@ begin
       Raise Exception.Create('此账户在付款单据中有使用,不能删除!');
 
     rs.SQL.Text := 'select * from ACC_TRANSORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and IN_ACCOUNT_ID=:ACCOUNT_ID or OUT_ACCOUNT_ID=:ACCOUNT_ID';
-    rs.FieldByName('TENANT_ID').AsString := FieldbyName('TENANT_ID').AsOldString;
+    rs.FieldByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
     rs.FieldByName('SHOP_ID').AsString := FieldbyName('SHOP_ID').AsOldString;
     rs.FieldByName('ACCOUNT_ID').AsString := FieldbyName('ACCOUNT_ID').AsOldString;
     AGlobal.Open(rs);

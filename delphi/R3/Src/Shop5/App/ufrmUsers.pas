@@ -116,9 +116,9 @@ begin
   if (fndState.ItemIndex <> -1) and (fndState.ItemIndex <> 0) then
     begin
       case fndState.ItemIndex of
-        1:str := str + ' and a.STATUS = 0 ';
-        2:str := str + ' and a.STATUS = 1 ';
-        3:str := str + ' and a.STATUS = 2 ';
+        1:str := str + ' and a.WORK_DATE>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
+        2:str := str + ' and a.WORK_DATE<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
+        3:str := str + ' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
       end;
    //这里组条件
 //  ' case when (WORK_DATE>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 0 '+
@@ -136,7 +136,6 @@ begin
   ParseSQL(Factor.iDbType,
   'select jb.*,b.SHOP_NAME as SHOP_ID_TEXT from( '+
   'select ja.*,a.DEPT_NAME as DEPT_ID_TEXT from('+
-  'select a.* from ('+
   'select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,ENCODE,USER_NAME,USER_SPELL,PASS_WRD,DEPT_ID,DUTY_IDS,DUTY_NAMES as DUTY_IDS_TEXT,'+
   'ROLE_IDS,ROLE_NAMES as ROLE_IDS_TEXT,SEX,BIRTHDAY,DEGREES,MOBILE,OFFI_TELE,FAMI_TELE,EMAIL,QQ,'+
   'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK,COMM from CA_USERS a '+

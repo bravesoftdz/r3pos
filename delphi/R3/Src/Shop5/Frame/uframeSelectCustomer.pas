@@ -140,39 +140,96 @@ begin
   0:begin
     if (ShopGlobal.GetChkRight('33400001',1)) and (ShopGlobal.GetChkRight('33300001',1)) then
       begin
-        Str_Sign := 'like';
-        Str_Sign1 := '%';
+        if w<>'' then w := w + ' and ';
+        case  edtFIND_FLAG.ItemIndex of
+          0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
+          '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
+          '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+          1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
+          2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
+          3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
+          4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
+          5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+        end;
       end
     else
       begin
-      Str_Sign := '=';
-      Str_Sign1 := '';
+        if Trim(edtSearch.Text) = '' then Raise Exception.Create('请输入查询条件..');
+        if w<>'' then w := w + ' and ';
+        case  edtFIND_FLAG.ItemIndex of
+          0:w := w + '(CLIENT_NAME = '''+trim(edtSearch.Text)+''' or CLIENT_SPELL = '''+trim(edtSearch.Text)+
+          ''' or IC_CARDNO = '''+trim(edtSearch.Text)+''' or LICENSE_CODE = '''+trim(edtSearch.Text)+
+          ''' or TELEPHONE2 = '''+trim(edtSearch.Text)+''' or ADDRESS = '''+trim(edtSearch.Text)+''')';
+          1:w := w + '(IC_CARDNO = '''+trim(edtSearch.Text)+''')';
+          2:w := w + '(CLIENT_NAME = '''+trim(edtSearch.Text)+''' or CLIENT_SPELL = '''+trim(edtSearch.Text)+''')';
+          3:w := w + '(TELEPHONE2 = '''+trim(edtSearch.Text)+''')';
+          4:w := w + '(LICENSE_CODE = '''+trim(edtSearch.Text)+''')';
+          5:w := w + '(ADDRESS = '''+trim(edtSearch.Text)+''')';
+        end;
       end;
   end;
   1:begin
     w := w + ' and FLAG in (0)';
     if ShopGlobal.GetChkRight('33300001',1) then
       begin
-        Str_Sign := 'like';
-        Str_Sign1 := '%';
+        if w<>'' then w := w + ' and ';
+        case  edtFIND_FLAG.ItemIndex of
+          0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
+          '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
+          '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+          1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
+          2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
+          3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
+          4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
+          5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+        end;
       end
     else
       begin
-        Str_Sign := '=';
-        Str_Sign1 := '';
+        if Trim(edtSearch.Text) = '' then Raise Exception.Create('请输入查询条件..');
+        if w<>'' then w := w + ' and ';
+        case  edtFIND_FLAG.ItemIndex of
+          0:w := w + '(CLIENT_NAME = '''+trim(edtSearch.Text)+''' or CLIENT_SPELL = '''+trim(edtSearch.Text)+
+          ''' or IC_CARDNO = '''+trim(edtSearch.Text)+''' or LICENSE_CODE = '''+trim(edtSearch.Text)+
+          ''' or TELEPHONE2 = '''+trim(edtSearch.Text)+''' or ADDRESS = '''+trim(edtSearch.Text)+''')';
+          1:w := w + '(IC_CARDNO = '''+trim(edtSearch.Text)+''')';
+          2:w := w + '(CLIENT_NAME = '''+trim(edtSearch.Text)+''' or CLIENT_SPELL = '''+trim(edtSearch.Text)+''')';
+          3:w := w + '(TELEPHONE2 = '''+trim(edtSearch.Text)+''')';
+          4:w := w + '(LICENSE_CODE = '''+trim(edtSearch.Text)+''')';
+          5:w := w + '(ADDRESS = '''+trim(edtSearch.Text)+''')';
+        end;
       end;
   end;
   2:begin
     w := w + ' and FLAG in (2)';
     if ShopGlobal.GetChkRight('33400001',1) then
       begin
-        Str_Sign := 'like';
-        Str_Sign1 := '%';
+        if w<>'' then w := w + ' and ';
+        case  edtFIND_FLAG.ItemIndex of
+          0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
+          '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
+          '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+          1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
+          2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
+          3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
+          4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
+          5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+        end;
       end
     else
       begin
-        Str_Sign := '=';
-        Str_Sign1 := '';
+        if Trim(edtSearch.Text) = '' then Raise Exception.Create('请输入查询条件..');
+        if w<>'' then w := w + ' and ';
+        case  edtFIND_FLAG.ItemIndex of
+          0:w := w + '(CLIENT_NAME = '''+trim(edtSearch.Text)+''' or CLIENT_SPELL = '''+trim(edtSearch.Text)+
+          ''' or IC_CARDNO = '''+trim(edtSearch.Text)+''' or LICENSE_CODE = '''+trim(edtSearch.Text)+
+          ''' or TELEPHONE2 = '''+trim(edtSearch.Text)+''' or ADDRESS = '''+trim(edtSearch.Text)+''')';
+          1:w := w + '(IC_CARDNO = '''+trim(edtSearch.Text)+''')';
+          2:w := w + '(CLIENT_NAME = '''+trim(edtSearch.Text)+''' or CLIENT_SPELL = '''+trim(edtSearch.Text)+''')';
+          3:w := w + '(TELEPHONE2 = '''+trim(edtSearch.Text)+''')';
+          4:w := w + '(LICENSE_CODE = '''+trim(edtSearch.Text)+''')';
+          5:w := w + '(ADDRESS = '''+trim(edtSearch.Text)+''')';
+        end;
       end;
   end;
   end;
@@ -183,7 +240,7 @@ begin
      end;
 
 
-  if w<>'' then w := w + ' and ';
+  {if w<>'' then w := w + ' and ';
   case  edtFIND_FLAG.ItemIndex of
   0:w := w + '(CLIENT_NAME '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''' or CLIENT_SPELL '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+
   ''' or IC_CARDNO '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''' or LICENSE_CODE '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+
@@ -193,7 +250,7 @@ begin
   3:w := w + '(TELEPHONE2 '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
   4:w := w + '(LICENSE_CODE '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
   5:w := w + '(ADDRESS '+Str_Sign+' '''+Str_Sign1+trim(edtSearch.Text)+Str_Sign1+''')';
-  end;
+  end; }
 
 
   result :=

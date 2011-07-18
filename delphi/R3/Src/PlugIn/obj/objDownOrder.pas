@@ -40,6 +40,9 @@ begin
 
   //下载Rim订单ID: 1002
   PlugIn := PlugInList.Find(1002);
+  //插件不存在作判断:
+  if PlugIn=nil then Raise Exception.Create('Rsp服务器没有找到〖下载订单〗插件');
+
   try
     vParamStr:=Params.Encode(Params); //格式化字符串参数列表;
     //执行插件将RIM_SD_CO 对接到 中间表[INF_INDEORDER]:

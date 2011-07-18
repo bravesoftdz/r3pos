@@ -7,14 +7,14 @@ inherited frmIORODayReport: TfrmIORODayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1014
-    Height = 548
+    Width = 1006
+    Height = 536
     inherited RzPanel2: TRzPanel
-      Width = 1004
-      Height = 538
+      Width = 996
+      Height = 526
       inherited RzPage: TRzPageControl
-        Width = 799
-        Height = 532
+        Width = 791
+        Height = 520
         ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
@@ -24,14 +24,14 @@ inherited frmIORODayReport: TfrmIORODayReport
           Color = clCream
           Caption = #22320#21306#25910#25903#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 797
-            Height = 505
+            Width = 789
+            Height = 493
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 787
-              Height = 495
+              Width = 779
+              Height = 483
               inherited w1: TRzPanel
-                Width = 787
+                Width = 779
                 Height = 60
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -60,6 +60,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -68,6 +69,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 86
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -103,6 +105,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 32
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -154,11 +157,11 @@ inherited frmIORODayReport: TfrmIORODayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 60
-                Width = 787
-                Height = 435
+                Width = 779
+                Height = 423
                 inherited DBGridEh1: TDBGridEh
-                  Width = 783
-                  Height = 431
+                  Width = 775
+                  Height = 419
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -272,6 +275,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -280,6 +284,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 87
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -357,6 +362,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 32
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -479,8 +485,8 @@ inherited frmIORODayReport: TfrmIORODayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 797
-            Height = 505
+            Width = 789
+            Height = 493
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -488,8 +494,8 @@ inherited frmIORODayReport: TfrmIORODayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 787
-              Height = 495
+              Width = 779
+              Height = 483
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -497,7 +503,7 @@ inherited frmIORODayReport: TfrmIORODayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 787
+                Width = 779
                 Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
@@ -552,6 +558,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -560,6 +567,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 87
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -637,6 +645,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 32
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -690,6 +699,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 31
                   Width = 120
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #25910#25903#31185#30446
@@ -743,8 +753,8 @@ inherited frmIORODayReport: TfrmIORODayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 82
-                Width = 787
-                Height = 413
+                Width = 779
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -753,8 +763,8 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 783
-                  Height = 409
+                  Width = 775
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -946,6 +956,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 85
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 0
                 end
@@ -954,6 +965,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 10
                   Width = 86
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
@@ -1031,6 +1043,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Top = 32
                   Width = 73
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
@@ -1329,6 +1342,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   FooterFont.Style = []
                   FooterRowCount = 1
                   FrozenCols = 2
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                   ReadOnly = True
@@ -1491,8 +1505,8 @@ inherited frmIORODayReport: TfrmIORODayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 802
-        Height = 532
+        Left = 794
+        Height = 520
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -1508,15 +1522,15 @@ inherited frmIORODayReport: TfrmIORODayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1014
+    Width = 1006
     inherited Image1: TImage
-      Width = 644
+      Width = 632
     end
     inherited Image3: TImage
-      Width = 644
+      Width = 632
     end
     inherited Image14: TImage
-      Left = 994
+      Left = 986
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

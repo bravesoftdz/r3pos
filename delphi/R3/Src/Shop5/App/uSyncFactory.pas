@@ -655,8 +655,7 @@ begin
   frmLogo.ProgressBar1.Max := FList.Count;
   for i:=0 to FList.Count -1 do
     begin
-      frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
-      frmLogo.Label1.Update;
+      frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       case PSynTableInfo(FList[i])^.synFlag of
       0,1,2,3,4,10,20,21,22,23:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);

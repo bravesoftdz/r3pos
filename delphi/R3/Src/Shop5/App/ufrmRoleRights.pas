@@ -318,6 +318,8 @@ begin
     while not RoleRight.Eof do
     begin
       RoleRight.Edit;
+      //因为权限表里没有产品ID号。原ID可能跟原产品代码的id相同，每次变动都改成最新的。
+      RoleRight.FieldByName('ROWS_ID').AsString:=TSequence.NewId;
       RoleRight.FieldByName('CHK').AsInteger:=GetRightValue(Ca_Modle,trim(RoleRight.fieldbyName('MODU_ID').AsString));
       RoleRight.Post;
       RoleRight.Next;

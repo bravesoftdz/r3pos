@@ -289,9 +289,10 @@ begin
   begin
     JoinStr:=GetStrJoin(Factor.iDbType);
     case Factor.iDbType of
-     0: SALE_DATE_GODS:='CONVERT(varchar(8),A.SALES_DATE) '+JoinStr+' ''#'' '+JoinStr+' A.GODS_ID'; 
+     0: SALE_DATE_GODS:='convert(varchar(8),A.SALES_DATE) '+JoinStr+' ''#'' '+JoinStr+' A.GODS_ID'; 
      1: SALE_DATE_GODS:='to_char(A.SALES_DATE) '+JoinStr+' ''#'' '+JoinStr+' A.GODS_ID';
      4: SALE_DATE_GODS:='ltrim(rtrim(char(A.SALES_DATE))) '+JoinStr+' ''#'' '+JoinStr+' A.GODS_ID';
+     5: SALE_DATE_GODS:='cast(A.SALES_DATE as varchar(8))'+JoinStr+'''#'''+JoinStr+'A.GODS_ID';
      else
         SALE_DATE_GODS:='cast(A.SALES_DATE as varchar(8))'+JoinStr+'''#'''+JoinStr+'A.GODS_ID';
     end;

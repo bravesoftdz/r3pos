@@ -1329,7 +1329,7 @@ begin
       result:='cast('+FieldName+' as varchar)';
    1: result:='cast('+FieldName+' as varchar(30))';
    3: result:='str('+FieldName+')';
-   4: result:='trim(char('+FieldName+'))';
+   4: result:='ltrim(rtrim(char('+FieldName+')))';
   end;
 end;
 

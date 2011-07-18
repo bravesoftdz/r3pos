@@ -522,7 +522,7 @@ begin
   result:=trim(FieldName);
   case Factor.iDbType of
    0,1,5: result:='cast('+FieldName+' as varchar(36))';
-   4:   result:='trim(char('+FieldName+'))';
+   4:   result:='ltrim(rtrim(char('+FieldName+')))';
   end;
 end;
 

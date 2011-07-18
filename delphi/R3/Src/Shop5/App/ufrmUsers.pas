@@ -117,7 +117,7 @@ begin
     begin
       case fndState.ItemIndex of
         1:str := str + ' and ifnull(a.WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
-        2:str := str + ' and ifnull(a.WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
+        2:str := str + ' and ifnull(a.WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
         3:str := str + ' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
       end;
    //这里组条件

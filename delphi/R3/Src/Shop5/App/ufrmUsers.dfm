@@ -10,25 +10,25 @@ inherited frmUsers: TfrmUsers
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 940
-    Height = 516
+    Width = 932
+    Height = 505
     inherited RzPanel2: TRzPanel
-      Width = 930
-      Height = 506
+      Width = 922
+      Height = 495
       inherited RzPage: TRzPageControl
-        Width = 924
-        Height = 500
+        Width = 916
+        Height = 489
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #29992#25143#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 922
-            Height = 473
+            Width = 914
+            Height = 462
             object RzPanel1: TRzPanel
               Left = 5
               Top = 106
-              Width = 912
-              Height = 362
+              Width = 904
+              Height = 351
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -36,8 +36,8 @@ inherited frmUsers: TfrmUsers
               object DBGridEh1: TDBGridEh
                 Left = 5
                 Top = 5
-                Width = 902
-                Height = 333
+                Width = 894
+                Height = 322
                 Align = alClient
                 DataSource = Ds_Users
                 Flat = True
@@ -49,6 +49,7 @@ inherited frmUsers: TfrmUsers
                 FooterFont.Style = []
                 FooterRowCount = 1
                 FrozenCols = 1
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
                 PopupMenu = PopupMenu1
@@ -191,8 +192,8 @@ inherited frmUsers: TfrmUsers
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 338
-                Width = 902
+                Top = 327
+                Width = 894
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -215,7 +216,7 @@ inherited frmUsers: TfrmUsers
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
-              Width = 912
+              Width = 904
               Height = 101
               Align = alTop
               BorderOuter = fsNone
@@ -224,7 +225,7 @@ inherited frmUsers: TfrmUsers
               object Panel2: TPanel
                 Left = 5
                 Top = 5
-                Width = 902
+                Width = 894
                 Height = 91
                 Align = alClient
                 Alignment = taLeftJustify
@@ -238,7 +239,7 @@ inherited frmUsers: TfrmUsers
                 ParentFont = False
                 TabOrder = 0
                 DesignSize = (
-                  902
+                  894
                   91)
                 object Label1: TLabel
                   Left = 21
@@ -369,6 +370,7 @@ inherited frmUsers: TfrmUsers
                   Width = 196
                   Height = 20
                   TabOrder = 6
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   OnKeyDown = edtKeyKeyDown
                 end
                 object btnOk: TRzBitBtn
@@ -468,6 +470,7 @@ inherited frmUsers: TfrmUsers
                   Top = 32
                   Width = 111
                   Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   TabOrder = 3
                 end
                 object fndDUTY_IDS: TzrComboBoxList
@@ -570,17 +573,17 @@ inherited frmUsers: TfrmUsers
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 940
+    Width = 932
     inherited Image1: TImage
       Left = 371
-      Width = 549
+      Width = 541
     end
     inherited Image3: TImage
       Left = 371
-      Width = 549
+      Width = 541
     end
     inherited Image14: TImage
-      Left = 920
+      Left = 912
     end
     inherited rzPanel5: TPanel
       Left = 371

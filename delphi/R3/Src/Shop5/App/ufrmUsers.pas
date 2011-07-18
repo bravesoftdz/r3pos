@@ -120,6 +120,12 @@ begin
         2:str := str + ' and a.STATUS = 1 ';
         3:str := str + ' and a.STATUS = 2 ';
       end;
+   //这里组条件
+//  ' case when (WORK_DATE>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 0 '+
+//  '     when (WORK_DATE<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 1'+
+//  '     when (ifnull(DIMI_DATE,'''')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 2'+
+//  '     else -1 end) as STATUS from CA_USERS a '+
+
     end;
 
   if edtKey.Text<>'' then
@@ -133,12 +139,7 @@ begin
   'select a.* from ('+
   'select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,ENCODE,USER_NAME,USER_SPELL,PASS_WRD,DEPT_ID,DUTY_IDS,DUTY_NAMES as DUTY_IDS_TEXT,'+
   'ROLE_IDS,ROLE_NAMES as ROLE_IDS_TEXT,SEX,BIRTHDAY,DEGREES,MOBILE,OFFI_TELE,FAMI_TELE,EMAIL,QQ,'+
-  'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK,COMM,(select '+
-  ' case when (WORK_DATE>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 0 '+
-  '     when (WORK_DATE<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 1'+
-  '     when (ifnull(DIMI_DATE,'''')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 2'+
-  '     else -1 end) as STATUS from CA_USERS '+
-  ') as a '+
+  'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK,COMM from CA_USERS a '+
   'where a.COMM not in (''12'',''02'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+str+') ja '+
   'left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID) jb '+
   'left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID ORDER BY jb.USER_ID'

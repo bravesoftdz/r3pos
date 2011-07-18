@@ -137,7 +137,7 @@ begin
    0,1,5:
       CLIENT_Tab:=' select TENANT_ID,cast(TENANT_ID as varchar(36)) as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
    3: CLIENT_Tab:=' select TENANT_ID,str(TENANT_ID) as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
-   4: CLIENT_Tab:=' select TENANT_ID,trim(char(TENANT_ID))as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
+   4: CLIENT_Tab:=' select TENANT_ID,ltrim(rtrim(char(TENANT_ID)))as CLIENT_ID,TENANT_NAME as CLIENT_NAME from CA_TENANT ';
   end;
   CLIENT_Tab:=
      ' select TENANT_ID,CLIENT_ID,CLIENT_NAME from PUB_CLIENTINFO '+  //供应商表

@@ -201,7 +201,7 @@ end;
 
 function TfrmSaleAnaly.GetMarketAnalySQL(vType: integer=0): string;
 var
-  TYPE_ID,SaleCnd,JoinStr: string;  //单位计算关系
+  TYPE_ID,SaleCnd,JoinStr,SALE_DATE_GODS: string;  //单位计算关系
   strSql,strWhere,GoodTab,SQLData: string;
 begin
   if P1_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
@@ -288,10 +288,18 @@ begin
   if vType=1 then
   begin
     JoinStr:=GetStrJoin(Factor.iDbType);
+    case Factor.iDbType of
+     0: SALE_DATE_GODS:='CONVERT(varchar(8),A.SALES_DATE) '+JoinStr+' ''#'' '+JoinStr+' A.GODS_ID'; 
+     1: SALE_DATE_GODS:='to_char(A.SALES_DATE) '+JoinStr+' ''#'' '+JoinStr+' A.GODS_ID';
+     4: SALE_DATE_GODS:='ltrim(rtrim(char(A.SALES_DATE))) '+JoinStr+' ''#'' '+JoinStr+' A.GODS_ID';
+     else
+        SALE_DATE_GODS:='cast(A.SALES_DATE as varchar(8))'+JoinStr+'''#'''+JoinStr+'A.GODS_ID';
+    end;
+
     //返回总单数
     strSql :=
       'select sum(A.SALE_RTL) as SALE_RTL,count(distinct A.SALES_ID) as BILLCOUNT,count(distinct A.SALES_DATE) as DayCOUNT,count(distinct A.GODS_ID) as PXCOUNT,'+
-      ' count(distinct cast(A.SALES_DATE as varchar(8))'+JoinStr+'''#'''+JoinStr+'A.GODS_ID) as SALE_DATE_GODS_Count,count(distinct A.SALES_ID'+JoinStr+'''#'''+JoinStr+'A.GODS_ID) as SALE_ID_GODS_COUNT,0 as GODSCOUNT,0 as STORG_COUNT from '+
+      ' count(distinct '+SALE_DATE_GODS+') as SALE_DATE_GODS_Count,count(distinct A.SALES_ID'+JoinStr+'''#'''+JoinStr+'A.GODS_ID) as SALE_ID_GODS_COUNT,0 as GODSCOUNT,0 as STORG_COUNT from '+
       ' (select TENANT_ID,SHOP_ID,SALES_ID,SALES_DATE,GODS_ID,(CALC_MONEY+AGIO_MONEY) as SALE_RTL from VIW_SALESDATA '+SaleCnd+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere +'  ';
     Result :=  ParseSQL(Factor.iDbType,strSql);

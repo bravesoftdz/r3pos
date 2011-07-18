@@ -1327,7 +1327,7 @@ begin
   case Factor.iDbType of
    0,5:
       result:='cast('+FieldName+' as varchar)';
-   1: result:='cast('+FieldName+' as varchar(30))';
+   1: result:='to_char('+FieldName+')';
    3: result:='str('+FieldName+')';
    4: result:='ltrim(rtrim(char('+FieldName+')))';
   end;

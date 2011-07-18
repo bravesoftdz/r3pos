@@ -521,7 +521,8 @@ function TframeBaseAnaly.IntToVarchar(FieldName: string): string;
 begin
   result:=trim(FieldName);
   case Factor.iDbType of
-   0,1,5: result:='cast('+FieldName+' as varchar(36))';
+   0,5: result:='cast('+FieldName+' as varchar(36))';
+   1:   result:='to_char('+FieldName+')';
    4:   result:='ltrim(rtrim(char('+FieldName+')))';
   end;
 end;
@@ -529,9 +530,9 @@ end;
 function TframeBaseAnaly.GetWeekID(FieldDate: string): string;
 begin
   case Factor.iDbType of
-   0: result:='datepart(weekday,convert(Datetime,cast('+FieldDate+' as varchar),112))-1 ';  //返回值-1 刚好是：从0开始
-   1: result:='cast(to_char(TO_DATE(cast('+FieldDate+' as varchar(8)),''yyyy-mm-dd''),''day'') as int)-1 ';
-   4: result:='dayofweek(TO_DATE(cast('+FieldDate+' as varchar(8)),''yyyy-mm-dd''),''day'')-1 ';
+   0: result:='datepart(weekday,convert(Datetime,convert(varchar(8),'+FieldDate+')),112))-1 ';  //返回值-1 刚好是：从0开始
+   1: result:='cast(to_char(TO_DATE(to_char('+FieldDate+'),''yyyy-mm-dd''),''day'') as int)-1 ';
+   4: result:='dayofweek(TO_DATE(ltrim(rtrim(char('+FieldDate+'))),''yyyy-mm-dd''),''day'')-1 ';
    5: result:='strftime(''%w'',substr(SALES_DATE,1,4)||''-''||substr(SALES_DATE,5,2)||''-''||substr(SALES_DATE,7,2),''localtime'') ';
   end;
 end;

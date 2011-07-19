@@ -50,7 +50,7 @@ begin
         if ShowModal=MROK then
            begin
              result.ret := true;
-             result.CardNo := edtCardNo.Text;
+             result.CardNo := GetCheckNo;
            end
         else
            result.ret := false;

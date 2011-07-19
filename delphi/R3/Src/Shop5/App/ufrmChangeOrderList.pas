@@ -186,7 +186,7 @@ begin
       fndSHOP_ID.Properties.ReadOnly := True;
     end;
   if not ShopGlobal.GetChkRight('14500001',2) then
-     DBGridEh1.Columns[6].Free;
+    FindColumn('AMONEY').Free;
 
   if ShopGlobal.GetProdFlag = 'E' then
     begin

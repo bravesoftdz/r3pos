@@ -243,6 +243,7 @@ begin
   finally
     Params.free;
   end;
+  Open(oid);
   dbState := dsBrowse;
 end;
 
@@ -407,6 +408,8 @@ begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
+  dbState := dsBrowse;
 end;
 
 procedure TfrmDbLocusOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);

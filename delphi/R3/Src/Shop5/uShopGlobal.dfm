@@ -1056,7 +1056,7 @@ inherited ShopGlobal: TShopGlobal
     SQL.Strings = (
       
         'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where TEN' +
-        'ANT_ID=:TENANT_ID and CODE_TYPE='#39'16'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
+        'ANT_ID=:TENANT_ID and CODE_TYPE='#39'17'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown

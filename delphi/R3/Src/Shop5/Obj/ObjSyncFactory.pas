@@ -979,7 +979,7 @@ begin
      rs := TZQuery.Create(nil);
      try
        rs.SQL.Text :=
-         'update ACC_PAYABLE_INFO set ACCT_MNY=:STOCK_MNY,REVE_MNY=:ADVA_MNY,RECK_MNY=:RECK_MNY-PAYM_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:STOCK_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+         'update ACC_PAYABLE_INFO set ACCT_MNY=:STOCK_MNY,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:STOCK_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
        + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and ABLE_TYPE=:ABLE_TYPE';
        CopyToParams(rs.Params);
        rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
@@ -1209,7 +1209,7 @@ begin
        rs := TZQuery.Create(nil);
        try
          rs.SQL.Text :=
-           'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=:RECK_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+           'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-RECV_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
          + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and RECV_TYPE=:RECV_TYPE';
          CopyToParams(rs.Params);
          rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
@@ -1583,7 +1583,7 @@ begin
    rs := TZQuery.Create(nil);
    try
      rs.SQL.Text :=
-       'update ACC_PAYABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-PAYM_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+       'update ACC_PAYABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=round(:ADVA_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
      + 'where TENANT_ID=:TENANT_ID and STOCK_ID=:INDE_ID and ABLE_TYPE=''6''';
      CopyToParams(rs.Params);
      AGlobal.ExecQuery(rs);
@@ -1780,7 +1780,7 @@ begin
    rs := TZQuery.Create(nil);
    try
      rs.SQL.Text :=
-       'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=:ADVA_MNY-RECV_MNY,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+       'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=round(:ADVA_MNY-RECV_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
      + 'where TENANT_ID=:TENANT_ID and SALES_ID=:INDE_ID and RECV_TYPE=''3''';
      CopyToParams(rs.Params);
      AGlobal.ExecQuery(rs);
@@ -1982,14 +1982,14 @@ begin
   1:
   AGlobal.ExecSQL(
         ParseSQL(AGlobal.iDbType,
-        'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)+:IORO_MNY,BALANCE=isnull(BALANCE,0)+:IORO_MNY,'
+        'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)+:IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)+:IORO_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),self);
   2:
   AGlobal.ExecSQL(
         ParseSQL(AGlobal.iDbType,
-        'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)+:IORO_MNY,BALANCE=isnull(BALANCE,0)-:IORO_MNY,'
+        'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)+:IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)-:IORO_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),self);
@@ -2040,14 +2040,14 @@ begin
         1:
         AGlobal.ExecSQL(
               ParseSQL(AGlobal.iDbType,
-              'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)-:IORO_MNY,BALANCE=isnull(BALANCE,0)-:IORO_MNY,'
+              'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)-:IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)-:IORO_MNY,2),'
             + 'COMM=' + GetCommStr(iDbType) + ','
             + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
             + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),ftParams);
         2:
         AGlobal.ExecSQL(
               ParseSQL(AGlobal.iDbType,
-              'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)-:IORO_MNY,BALANCE=isnull(BALANCE,0)+:IORO_MNY,'
+              'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)-:IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)+:IORO_MNY,2),'
             + 'COMM=' + GetCommStr(iDbType) + ','
             + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
             + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),ftParams);
@@ -2077,11 +2077,11 @@ function TSyncTransOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 procedure InsertAccountInfo;
 var Str:string;
 begin
-  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=round(:TRANS_MNY+ifnull(IN_MNY,0),2),BALANCE=round(:TRANS_MNY+ifnull(BALANCE,0),2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID  ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
-  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=round(:TRANS_MNY+ifnull(OUT_MNY,0),2),BALANCE=round(ifnull(BALANCE,0)-:TRANS_MNY,2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
@@ -2089,11 +2089,11 @@ end;
 function UpdateAccountInfo:boolean;
 var Str:string;
 begin
-  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=round(:TRANS_MNY+ifnull(IN_MNY,0),2),BALANCE=round(:TRANS_MNY+ifnull(BALANCE,0),2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID  ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
-  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=round(:TRANS_MNY+ifnull(OUT_MNY,0),2),BALANCE=round(ifnull(BALANCE,0)-:TRANS_MNY,2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
@@ -2260,15 +2260,17 @@ end;
 function TSyncRecvData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 procedure InsertAccountInfo;
 begin
+  if VarIsNull(FieldbyName('RECV_MNY').NewValue) then FieldbyName('RECV_MNY').AsFloat := 0;
+
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType ,
-     'update ACC_RECVABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',RECV_MNY=isnull(RECV_MNY,0)+isnull(:RECV_MNY,0),'+
-     'RECK_MNY=isnull(RECK_MNY,0)-isnull(:RECV_MNY,0),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID')
+     'update ACC_RECVABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',RECV_MNY=round(isnull(RECV_MNY,0)+:RECV_MNY,2),'+
+     'RECK_MNY=round(isnull(RECK_MNY,0)-:RECV_MNY,2),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID')
      ,self);
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-        'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)+:RECV_MNY,BALANCE=isnull(BALANCE,0)+:RECV_MNY,'
+        'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)+:RECV_MNY,2),BALANCE=round(isnull(BALANCE,0)+:RECV_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where ACCOUNT_ID=:ACCOUNT_ID and TENANT_ID=:TENANT_ID'),self);
@@ -2315,12 +2317,12 @@ begin
         ftParams.ParamByName('RECV_MNY').AsFloat := rs.FieldbyName('RECV_MNY').AsFloat;
         
         AGlobal.ExecSQL(
-          ParseSQL(AGlobal.iDbType,'update ACC_RECVABLE_INFO set RECV_MNY=isnull(RECV_MNY,0)-isnull(:RECV_MNY,0),RECK_MNY=isnull(RECK_MNY,0)+isnull(:RECV_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID')
+          ParseSQL(AGlobal.iDbType,'update ACC_RECVABLE_INFO set RECV_MNY=round(isnull(RECV_MNY,0)-:RECV_MNY,2),RECK_MNY=round(isnull(RECK_MNY,0)+:RECV_MNY,2) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID')
           ,self);
 
         AGlobal.ExecSQL(
             ParseSQL(AGlobal.iDbType,
-            'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)- :RECV_MNY,BALANCE=isnull(BALANCE,0)- :RECV_MNY,'
+            'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)- :RECV_MNY,2),BALANCE=round(isnull(BALANCE,0)- :RECV_MNY,2),'
             + 'COMM=' + GetCommStr(iDbType) + ','
             + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
             + 'where ACCOUNT_ID=:ACCOUNT_ID and TENANT_ID=:TENANT_ID')
@@ -2424,15 +2426,17 @@ end;
 function TSyncPayData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 procedure InsertAccountInfo;
 begin
+  if VarIsNull(FieldbyName('PAY_MNY').NewValue) then FieldbyName('PAY_MNY').AsFloat := 0;
+  
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-     'update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=isnull(PAYM_MNY,0)+isnull(:PAY_MNY,0),'+
-        'RECK_MNY=isnull(RECK_MNY,0)-isnull(:PAY_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID'),self);
+     'update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=round(isnull(PAYM_MNY,0)+:PAY_MNY,2),'+
+        'RECK_MNY=round(isnull(RECK_MNY,0)-:PAY_MNY,2) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID'),self);
 
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-     'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)+:PAY_MNY,BALANCE=isnull(BALANCE,0)- :PAY_MNY,'
+     'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)+:PAY_MNY,2),BALANCE=round(isnull(BALANCE,0)- :PAY_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where ACCOUNT_ID=:ACCOUNT_ID and TENANT_ID=:TENANT_ID'),self);
@@ -2481,12 +2485,12 @@ begin
         
         AGlobal.ExecSQL(
            ParseSQL(AGlobal.iDbType,
-           'update ACC_PAYABLE_INFO set PAYM_MNY=isnull(PAYM_MNY,0)-isnull(:PAY_MNY,0),RECK_MNY=isnull(RECK_MNY,0)+isnull(:PAY_MNY,0),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID')
+           'update ACC_PAYABLE_INFO set PAYM_MNY=round(isnull(PAYM_MNY,0)-:PAY_MNY,2),RECK_MNY=round(isnull(RECK_MNY,0)+:PAY_MNY,2),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID')
            ,ftParams);
 
         AGlobal.ExecSQL(
            ParseSQL(AGlobal.iDbType,
-              'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)- :PAY_MNY,BALANCE=isnull(BALANCE,0)+ :PAY_MNY,'
+              'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)- :PAY_MNY,2),BALANCE=round(isnull(BALANCE,0)+ :PAY_MNY,2),'
             + 'COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
               'where ACCOUNT_ID=:ACCOUNT_ID and TENANT_ID=:TENANT_ID ')
            ,ftParams);
@@ -3144,7 +3148,7 @@ begin
      end;
   InitSQL(AGlobal,false);
   UpdateQuery.SQL.Text := 
-    'update ACC_RECVABLE_INFO set RECK_MNY=:ACCT_MNY-RECV_MNY,ABLE_DATE=:ABLE_DATE,ACCT_MNY=:ACCT_MNY,ACCT_INFO=:ACCT_INFO,CREA_USER=:CREA_USER,CREA_DATE=:CREA_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
+    'update ACC_RECVABLE_INFO set RECK_MNY=round(:ACCT_MNY-RECV_MNY,2),ABLE_DATE=:ABLE_DATE,ACCT_MNY=:ACCT_MNY,ACCT_INFO=:ACCT_INFO,CREA_USER=:CREA_USER,CREA_DATE=:CREA_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
     'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID';
   FillParams(InsertQuery);
   UpdateQuery.Params.AssignValues(InsertQuery.Params); 

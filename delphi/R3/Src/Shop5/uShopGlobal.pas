@@ -111,6 +111,9 @@ var
   xsm_password:string;
   xsm_signature:string; //令牌
   xsm_challenge:string; //校验码
+
+  //
+  defaultRelatin:string='其他商品';
 implementation
 uses uFnUtil;
 {$R *.dfm}

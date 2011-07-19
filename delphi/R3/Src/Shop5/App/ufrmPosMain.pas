@@ -525,11 +525,13 @@ begin
         else
            cdsTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
         cdsTable.FieldbyName('BATCH_NO').AsString := '#';
+        cdsTable.Post;
      end;
   finally
      cdsTable.EnableControls;
   end;
   InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
+  if cdsTable.Recordcount=1 then ShowHeader;
 end;
 procedure TfrmPosMain.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
@@ -1985,10 +1987,8 @@ begin
     rs.OnFilterRecord := nil;
     rs.filtered := false;
     end;
-//    rs.Free;
   end;
   end;
-
   rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   AObj := TRecord_.Create;
   try
@@ -2012,7 +2012,8 @@ end;
 
 procedure TfrmPosMain.DelRecord(AObj: TRecord_);
 begin
-  if not cdsTable.IsEmpty then cdsTable.Delete; 
+  if not cdsTable.IsEmpty then cdsTable.Delete;
+  Calc;
 end;
 
 function TfrmPosMain.OpenDialogCustomer(KeyString:string;C_T:Integer=0):boolean;
@@ -2940,29 +2941,31 @@ begin
   RzGroupBox1.tag := flag;
   if flag=0 then
   begin
-  RzGroupBox1.Caption := '结算';
-  fndCLIENT_ID_TEXT.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
-  fndGLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
-  fndCREA_USER.Text := AObj.FieldbyName('CREA_USER_TEXT').AsString;
-  fndGUIDE_USER.Text := AObj.FieldbyName('GUIDE_USER_TEXT').AsString;
-  fndCLIENT_CODE.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
-  fndCLIENT_ID_TEXT.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
-  fndBALANCE.Text := AObj.FieldbyName('BALANCE').AsString;
-  if AObj.FieldbyName('PRICE_ID').AsString='' then
-     fndPRICE_ID.Text := ''
-  else
-     fndPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',AObj.FieldbyName('PRICE_ID').AsString);
-  edtINTEGRAL.Text := AObj.FieldbyName('INTEGRAL').AsString;
-  if edtINTEGRAL.Text='' then edtINTEGRAL.Text := '0';
-  fndACCU_INTEGRAL.Text := AObj.FieldbyName('ACCU_INTEGRAL').AsString;
-  if fndACCU_INTEGRAL.Text='' then fndACCU_INTEGRAL.Text := '0';
-  if AObj.FieldbyName('SALES_DATE').AsString='' then
-    fndSALES_DATE.Text := ''
-  else
-    fndSALES_DATE.Text := formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(AObj.FieldbyName('SALES_DATE').AsString));
+    RzGroupBox1.Caption := '结算';
+    fndCLIENT_ID_TEXT.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
+    fndGLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
+    fndCREA_USER.Text := AObj.FieldbyName('CREA_USER_TEXT').AsString;
+    fndGUIDE_USER.Text := AObj.FieldbyName('GUIDE_USER_TEXT').AsString;
+    fndCLIENT_CODE.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
+    fndCLIENT_ID_TEXT.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
+    fndBALANCE.Text := AObj.FieldbyName('BALANCE').AsString;
+    if AObj.FieldbyName('PRICE_ID').AsString='' then
+       fndPRICE_ID.Text := ''
+    else
+       fndPRICE_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_PRICEGRADE'),'PRICE_ID','PRICE_NAME',AObj.FieldbyName('PRICE_ID').AsString);
+    edtINTEGRAL.Text := AObj.FieldbyName('INTEGRAL').AsString;
+    if edtINTEGRAL.Text='' then edtINTEGRAL.Text := '0';
+    fndACCU_INTEGRAL.Text := AObj.FieldbyName('ACCU_INTEGRAL').AsString;
+    if fndACCU_INTEGRAL.Text='' then fndACCU_INTEGRAL.Text := '0';
+    if AObj.FieldbyName('SALES_DATE').AsString='' then
+      fndSALES_DATE.Text := ''
+    else
+      fndSALES_DATE.Text := formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(AObj.FieldbyName('SALES_DATE').AsString));
+    AObj.FieldbyName('CASH_MNY').asFloat := 0;
+    AObj.FieldbyName('PAY_ZERO').asFloat := 0;
   end
   else
-  RzGroupBox1.Caption := '上单结算';
+    RzGroupBox1.Caption := '上单结算';
   MyAObj := AObj;
   if flag=1 then AObj := SaveAObj;
   try
@@ -4091,7 +4094,7 @@ begin
   if cdsTable.FieldbyName('GODS_ID').AsString = '' then Exit;
   SObj := TRecord_.Create;
   try
-    SQL := 'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CODE_TYPE=''16'' and COMM not in (''02'',''12'')';
+    SQL := 'select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from PUB_CODE_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CODE_TYPE=''17'' and COMM not in (''02'',''12'')';
     if TframeListDialog.FindDialog(self,SQL,'CODE_NAME=名称,CODE_SPELL=拼音码,SEQ_NO=序号',SObj) then
        begin
          cdsTable.Edit;

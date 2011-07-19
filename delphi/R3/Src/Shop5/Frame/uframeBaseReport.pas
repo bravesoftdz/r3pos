@@ -1489,7 +1489,7 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
    0:
     begin
       if trim(SORT_ID)='0' then
-        result:='自主经营'
+        result:=defaultRelatin
       else
       begin
         SortRs:=Global.GetZQueryFromName('CA_RELATIONS');
@@ -1558,7 +1558,7 @@ begin
           CalcValue(SortObj); //计算汇总数据
           DataSet.Append;
           SortObj.WriteToDataSet(DataSet);  //写入数据集
-          DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID)+' (小计)';
+          DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID);
           SortObj.Clear;
           Break;  //不相等则退出循环
         end;
@@ -1571,7 +1571,7 @@ begin
       CalcValue(SortObj); //计算汇总数据
       DataSet.Append;
       SortObj.WriteToDataSet(DataSet);  //写入数据集
-      DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID)+' (小计)';
+      DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID);
       SortObj.Clear;
     end;      
 
@@ -1677,7 +1677,7 @@ begin
   case Factor.iDbType of
    0,1,4:
       result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
-   5: result:='(case when '+Relation_ID+'=''0'' then ''9999999'' else '+Relation_ID+' end)';
+   5: result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
    else
       result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
   end;

@@ -734,7 +734,7 @@ inherited frmPosMain: TfrmPosMain
             Height = 20
             Caption = #26465#30721#36755#20837
             Font.Charset = GB2312_CHARSET
-            Font.Color = clWhite
+            Font.Color = clLime
             Font.Height = -20
             Font.Name = #40657#20307
             Font.Style = [fsBold]
@@ -746,7 +746,7 @@ inherited frmPosMain: TfrmPosMain
             Width = 6
             Height = 12
             Font.Charset = GB2312_CHARSET
-            Font.Color = clLime
+            Font.Color = clWhite
             Font.Height = -12
             Font.Name = #23435#20307
             Font.Style = []

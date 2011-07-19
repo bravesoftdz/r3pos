@@ -230,6 +230,7 @@ begin
     Factor.CancelBatch;
     Raise;
   end;
+  Open(oid);
   dbState := dsBrowse;
 end;
 
@@ -394,6 +395,8 @@ begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
+  dbState := dsBrowse;
 end;
 
 procedure TfrmStkRetuLocusOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);

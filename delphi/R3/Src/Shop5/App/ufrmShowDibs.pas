@@ -64,7 +64,7 @@ type
     function Calc:Currency;
     procedure InitForm;
     function DoPayB(mny:Currency):boolean;
-    procedure DoPayC(mny:Currency);
+    function DoPayC(mny:Currency):boolean;
   public
     { Public declarations }
     class function ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency):Boolean;
@@ -207,7 +207,7 @@ begin
   if Key in ['C','c'] then
      begin
        if (edtTakeFee.Text = '') then Exit;
-       DoPayC(GetFee(edtTakeFee.Text));
+       if not DoPayC(GetFee(edtTakeFee.Text)) then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_C').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_C').AsFloat<0 then
@@ -656,55 +656,43 @@ begin
   end;
 end;
 
-procedure TfrmShowDibs.DoPayC(mny:Currency);
+function TfrmShowDibs.DoPayC(mny:Currency):boolean;
 var
   s,cardno,pwd:string;
-  bal:real;
+  bal:currency;
   rs:TZQuery;
+  cr:TCardNoReset;
 begin
+  result := false;
   Raise Exception.Create('对不起，您没有开通储值卡支付功能...');
-{  if ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
-  if MainRecord.FieldByName('CLIENT_ID').AsString = '' then
-     begin
-       s := TfrmCardNoInput.GetCardNo(self);
-       rs := TZQuery.Create(nil);
-       try
-         rs.SQL.Text := 'select IC_CARDNO,PASSWRD,BALANCE,IC_STATUS from PUB_IC_INFO where TENANT_ID=:TENANT_ID and IC_CARDNO='''+s+''' and UNION_ID=''#'' and COMM not in (''02'',''12'')';
-         Factor.Open(rs);
-         if rs.IsEmpty then Raise Exception.Create('你输入的会员卡号无效...');
-         case rs.FieldbyName('IC_STATUS').asInteger of
-         2:Raise Exception.Create('当前会员卡号在挂失状态,无法完成支付...');
-         9:Raise Exception.Create('当前会员卡号在注销状态,无法完成支付...');
-         end;
-         MainRecord.FieldByName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
-         MainRecord.FieldByName('CLIENT_ID_TEXT').AsString := rs.FieldbyName('CLIENT_ID_TEXT').AsString;
-         cardno := rs.FieldbyName('IC_CARDNO').AsString;
-         pwd := rs.FieldbyName('PASSWRD').AsString;
-         bal := rs.FieldbyName('BALANCE').asFloat;
-       finally
-         rs.Free;
+  if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
+  cr := TfrmCardNoInput.GetCardNo(self);
+  if not cr.ret then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select IC_CARDNO,PASSWRD,BALANCE,IC_STATUS,CLIENT_ID,IC_TYPE from PUB_IC_INFO where TENANT_ID=:TENANT_ID and IC_CARDNO=:IC_CARDNO and UNION_ID=''#'' and IC_TYPE in (''0'',''2'') and COMM not in (''02'',''12'')';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('IC_CARDNO').AsString := cr.CardNo;
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('你输入的会员卡号无效...');
+    case rs.FieldbyName('IC_STATUS').asInteger of
+    2:Raise Exception.Create('当前卡号在挂失状态,无法完成支付...');
+    9:Raise Exception.Create('当前卡号在注销状态,无法完成支付...');
+    end;
+    cardno := rs.FieldbyName('IC_CARDNO').AsString;
+    pwd := rs.FieldbyName('PASSWRD').AsString;
+    bal := rs.FieldbyName('BALANCE').asFloat;
+    if rs.FieldbyName('IC_TYPE').AsString='0' then
+       begin
+         cr := TfrmCardNoInput.GetPassWrd(self);
+         if not cr.ret then Exit;
+         if (EncStr(cr.PassWrd,ENC_KEY)<>pwd) then Raise Exception.Create('你输入的密码无效...');
        end;
-     end
-  else
-     begin
-       rs := TZQuery.Create(nil);
-       try
-         rs.SQL.Text := 'select IC_CARDNO,PASSWRD,BALANCE from VIW_CUSTOMER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLIENT_ID='''+MainRecord.FieldByName('CLIENT_ID').AsString+'''';
-         Factor.Open(rs);
-         cardno := rs.FieldbyName('IC_CARDNO').AsString;
-         pwd := rs.FieldbyName('PASSWRD').AsString;
-         bal := rs.FieldbyName('BALANCE').asFloat;
-       finally
-         rs.Free;
-       end;
-     end;
-  if cardno<>'' then
-     begin
-       s := TfrmCardNoInput.GetPassWrd(self);
-       if EncStr(s,ENC_KEY)<>pwd then Raise Exception.Create('你输入的密码无效...');
-       if bal<mny then Raise Exception.Create('储值卡余额为'+formatFloat('#0.0##',rs.Fields[1].AsFloat)+',余额不足不能完成支付');
-     end;
-}     
+    if bal<mny then Raise Exception.Create('储值卡余额为'+formatFloat('#0.0##',bal)+',余额不足不能完成支付');
+  finally
+    rs.Free;
+  end;
+  result := true;
 end;
 
 function TfrmShowDibs.DoPayB(mny: Currency):boolean;

@@ -61,6 +61,8 @@ type
     { Public declarations }
     Factory:TReportFactory;
     Lock:boolean;
+    LCK_Index:integer;
+    function CheckRowColor:boolean;
     //按商品销售汇总表
     function  GetGodsSQL(chk:boolean=true): string;   //5555
     procedure Open(id:string);
@@ -123,6 +125,7 @@ end;
 procedure TfrmSaleMonthTotalReport.Open(id: string);
 begin
   Factory.Open(id,DBGridEh1);
+  CheckRowColor;
   RefreshColumn;
 end;
 
@@ -487,6 +490,9 @@ begin
   inherited;
   if adoReport1.Fields[2].AsInteger = 1 then
      Background := $00E7E2E3;
+  if LCK_Index<0 then Exit;
+  if adoReport1.Fields[LCK_Index].AsString<>'' then
+     Background := $00C080FF;
 end;
 
 procedure TfrmSaleMonthTotalReport.DBGridEh1GetFooterParams(Sender: TObject;
@@ -577,6 +583,20 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TfrmSaleMonthTotalReport.CheckRowColor: boolean;
+var
+  i:Integer;
+begin
+  LCK_Index := -1;
+  for i:=0 to DBGridEh1.Columns.Count -1 do
+    begin
+      if DBGridEh1.Columns[i].Title.Caption = '库存建议' then
+         begin
+           LCK_Index := i;
+         end;
+    end;
 end;
 
 end.

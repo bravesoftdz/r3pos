@@ -235,6 +235,7 @@ begin
     Factor.CancelBatch;
     Raise;
   end;
+  Open(oid);
   dbState := dsBrowse;
 end;
 
@@ -399,6 +400,8 @@ begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
+  dbState := dsBrowse;
 end;
 
 function TfrmChangeLocusOrder.CheckInput: boolean;

@@ -49,6 +49,7 @@ inherited frmIoroOrder: TfrmIoroOrder
             FooterFont.Style = []
             FooterRowCount = 1
             FrozenCols = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             PopupMenu = PopupMenu1
@@ -341,6 +342,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         Top = 4
         Width = 141
         Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtIORO_DATEPropertiesChange
         TabOrder = 0
       end
@@ -394,6 +396,7 @@ inherited frmIoroOrder: TfrmIoroOrder
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 5
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtITEM_ID: TzrComboBoxList
         Left = 92

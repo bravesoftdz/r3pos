@@ -963,6 +963,7 @@ var
   P:PMsgInfo;
 begin
   inherited;
+  if PrainpowerJudge.Locked>0 then Exit;
   if SystemShutdown then Exit;
   if not Logined then Exit;
   if not Visible then Exit;

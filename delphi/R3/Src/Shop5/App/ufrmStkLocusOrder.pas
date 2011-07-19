@@ -118,6 +118,7 @@ begin
          DataSet := cdsLocusNo;
          Form := self;
          LocusNo(edtTable);
+         CheckLocusNo := false;
          ShowModal;
          if dbState <> dsBrowse then
             Calc;
@@ -229,6 +230,8 @@ begin
     Factor.CancelBatch;
     Raise;
   end;
+  dbState := dsBrowse;
+  Open(oid);
   dbState := dsBrowse;
 end;
 
@@ -393,6 +396,8 @@ begin
          Raise Exception.Create(E.Message);
        end;
   end;
+  Open(oid);
+  dbState := dsBrowse;
 end;
 
 procedure TfrmStkLocusOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);

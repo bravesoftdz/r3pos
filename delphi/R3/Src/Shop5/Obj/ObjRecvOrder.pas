@@ -189,12 +189,12 @@ begin
   AGlobal.ExecSQL(Str,self);
   if (FieldbyName('RECV_MNY').AsOldFloat=0)  then Exit;
   AGlobal.ExecSQL(
-    ParseSQL(AGlobal.iDbType,'update ACC_RECVABLE_INFO set RECV_MNY=isnull(RECV_MNY,0)-isnull(:OLD_RECV_MNY,0),RECK_MNY=isnull(RECK_MNY,0)+isnull(:OLD_RECV_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID')
+    ParseSQL(AGlobal.iDbType,'update ACC_RECVABLE_INFO set RECV_MNY=round(isnull(RECV_MNY,0)-:OLD_RECV_MNY,2),RECK_MNY=round(isnull(RECK_MNY,0)+:OLD_RECV_MNY,2) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID')
     ,self);
 
   AGlobal.ExecSQL(
       ParseSQL(AGlobal.iDbType,
-      'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)- :OLD_RECV_MNY,BALANCE=isnull(BALANCE,0)- :OLD_RECV_MNY,'
+      'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)- :OLD_RECV_MNY,2),BALANCE=round(isnull(BALANCE,0)- :OLD_RECV_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where ACCOUNT_ID=:OLD_ACCOUNT_ID and TENANT_ID=:OLD_TENANT_ID')
@@ -215,13 +215,13 @@ begin
   AGlobal.ExecSQL(Str,self);
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType ,
-     'update ACC_RECVABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',RECV_MNY=isnull(RECV_MNY,0)+isnull(:RECV_MNY,0),'+
-     'RECK_MNY=isnull(RECK_MNY,0)-isnull(:RECV_MNY,0),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID')
+     'update ACC_RECVABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',RECV_MNY=round(isnull(RECV_MNY,0)+:RECV_MNY,2),'+
+     'RECK_MNY=round(isnull(RECK_MNY,0)-:RECV_MNY,2),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID')
      ,self);
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-        'update ACC_ACCOUNT_INFO set IN_MNY=isnull(IN_MNY,0)+:RECV_MNY,BALANCE=isnull(BALANCE,0)+:RECV_MNY,'
+        'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)+:RECV_MNY,2),BALANCE=round(isnull(BALANCE,0)+:RECV_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where ACCOUNT_ID=:ACCOUNT_ID and TENANT_ID=:TENANT_ID'),self);

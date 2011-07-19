@@ -6,31 +6,31 @@ inherited frmStockDayReport: TfrmStockDayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1075
-    Height = 558
+    Width = 1067
+    Height = 547
     inherited RzPanel2: TRzPanel
-      Width = 1065
-      Height = 548
+      Width = 1057
+      Height = 537
       inherited RzPage: TRzPageControl
-        Width = 860
-        Height = 542
-        ActivePage = TabSheet4
+        Width = 852
+        Height = 531
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#36135#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 858
-            Height = 515
+            Width = 850
+            Height = 504
             BorderColor = clBtnFace
             inherited Panel4: TPanel
-              Width = 848
-              Height = 505
+              Width = 840
+              Height = 494
               inherited w1: TRzPanel
-                Width = 848
+                Width = 840
                 Height = 79
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -316,11 +316,11 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 79
-                Width = 848
-                Height = 426
+                Width = 840
+                Height = 415
                 inherited DBGridEh1: TDBGridEh
-                  Width = 844
-                  Height = 422
+                  Width = 836
+                  Height = 411
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -943,8 +943,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 516
+            Width = 850
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -952,8 +952,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 506
+              Width = 840
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -961,7 +961,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
+                Width = 840
                 Height = 79
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1181,8 +1181,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 79
-                Width = 848
-                Height = 427
+                Width = 840
+                Height = 415
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1191,8 +1191,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 423
+                  Width = 836
+                  Height = 411
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1359,8 +1359,8 @@ inherited frmStockDayReport: TfrmStockDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 858
-            Height = 515
+            Width = 850
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1368,8 +1368,8 @@ inherited frmStockDayReport: TfrmStockDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 848
-              Height = 505
+              Width = 840
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1377,7 +1377,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 848
+                Width = 840
                 Height = 103
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1385,7 +1385,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Color = clWhite
                 TabOrder = 0
                 DesignSize = (
-                  848
+                  840
                   103)
                 object RzLabel8: TRzLabel
                   Left = 24
@@ -1673,6 +1673,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Width = 81
                   Height = 20
                   Anchors = [akTop, akRight]
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #38376#24215#36827#38144#23384#32479#35745#34920
@@ -1685,8 +1686,8 @@ inherited frmStockDayReport: TfrmStockDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 103
-                Width = 848
-                Height = 402
+                Width = 840
+                Height = 391
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1695,8 +1696,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 844
-                  Height = 398
+                  Width = 836
+                  Height = 387
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2457,8 +2458,8 @@ inherited frmStockDayReport: TfrmStockDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 863
-        Height = 542
+        Left = 855
+        Height = 531
         inherited Panel2: TPanel
           Height = 499
           inherited RzPanel1: TRzPanel [3]
@@ -2474,15 +2475,15 @@ inherited frmStockDayReport: TfrmStockDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1075
+    Width = 1067
     inherited Image1: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image3: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image14: TImage
-      Left = 1055
+      Left = 1047
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

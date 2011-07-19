@@ -171,6 +171,7 @@ inherited frmPassWord: TfrmPassWord
             Properties.EchoMode = eemPassword
             Properties.MaxLength = 25
             TabOrder = 0
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPASSWRD: TcxTextEdit
             Left = 120
@@ -180,6 +181,7 @@ inherited frmPassWord: TfrmPassWord
             Properties.EchoMode = eemPassword
             Properties.MaxLength = 25
             TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPASSWRD1: TcxTextEdit
             Left = 120
@@ -189,6 +191,7 @@ inherited frmPassWord: TfrmPassWord
             Properties.EchoMode = eemPassword
             Properties.MaxLength = 25
             TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtIC_CARDNO: TcxTextEdit
             Left = 120
@@ -196,6 +199,7 @@ inherited frmPassWord: TfrmPassWord
             Width = 166
             Height = 20
             TabOrder = 3
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtCLIENT_NAME: TcxTextEdit
             Left = 120
@@ -203,12 +207,14 @@ inherited frmPassWord: TfrmPassWord
             Width = 121
             Height = 20
             TabOrder = 4
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtUNION_ID: TcxComboBox
             Left = 120
             Top = 26
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtUNION_IDPropertiesChange
             TabOrder = 5

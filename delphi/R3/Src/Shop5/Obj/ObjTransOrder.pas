@@ -34,11 +34,11 @@ function TTransOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
 begin
   if not lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
-  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:OLD_TRANS_MNY-ifnull(IN_MNY,0),BALANCE=:OLD_TRANS_MNY-ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=round(:OLD_TRANS_MNY-ifnull(IN_MNY,0),2),BALANCE=round(:OLD_TRANS_MNY-ifnull(BALANCE,0),2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_IN_ACCOUNT_ID  ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
-  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:OLD_TRANS_MNY-ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)+:OLD_TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=round(:OLD_TRANS_MNY-ifnull(OUT_MNY,0),2),BALANCE=round(ifnull(BALANCE,0)+:OLD_TRANS_MNY,2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_OUT_ACCOUNT_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
@@ -54,11 +54,11 @@ begin
          FieldbyName('GLIDE_NO').AsString := trimright(FieldbyName('SHOP_ID').AsString,4)+GetSequence(AGlobal,'GNO_9_'+FieldbyName('SHOP_ID').AsString,FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      end;
      
-  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=:TRANS_MNY+ifnull(IN_MNY,0),BALANCE=:TRANS_MNY+ifnull(BALANCE,0),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set IN_MNY=round(:TRANS_MNY+ifnull(IN_MNY,0),2),BALANCE=round(:TRANS_MNY+ifnull(BALANCE,0),2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID  ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
-  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=:TRANS_MNY+ifnull(OUT_MNY,0),BALANCE=ifnull(BALANCE,0)-:TRANS_MNY,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=round(:TRANS_MNY+ifnull(OUT_MNY,0),2),BALANCE=round(ifnull(BALANCE,0)-:TRANS_MNY,2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 

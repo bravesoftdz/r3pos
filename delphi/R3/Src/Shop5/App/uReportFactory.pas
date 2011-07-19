@@ -358,7 +358,7 @@ begin
            end;
          new(node);
          node^.id := '0';
-         node^.title := '自主经营';
+         node^.title := defaultRelatin;
          node^.FieldName := 'SORT_ID'+sid;
          for i:=0 to 30 do node^.Relation[i] := nil;
          result.add(node);

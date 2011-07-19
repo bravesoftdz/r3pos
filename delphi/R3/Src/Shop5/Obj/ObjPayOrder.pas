@@ -166,11 +166,11 @@ begin
   if (FieldbyName('PAY_MNY').AsOldFloat=0) then Exit;
   AGlobal.ExecSQL(
     ParseSQL(AGlobal.iDbType,
-    'update ACC_PAYABLE_INFO set PAYM_MNY=isnull(PAYM_MNY,0)-isnull(:OLD_PAY_MNY,0),RECK_MNY=isnull(RECK_MNY,0)+isnull(:OLD_PAY_MNY,0),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID'),self);
+    'update ACC_PAYABLE_INFO set PAYM_MNY=round(isnull(PAYM_MNY,0)-:OLD_PAY_MNY,2),RECK_MNY=round(isnull(RECK_MNY,0)+:OLD_PAY_MNY,2),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID'),self);
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-     'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)- :OLD_PAY_MNY,BALANCE=isnull(BALANCE,0)+ :OLD_PAY_MNY,'
+     'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)- :OLD_PAY_MNY,2),BALANCE=round(isnull(BALANCE,0)+ :OLD_PAY_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
         'where ACCOUNT_ID=:OLD_ACCOUNT_ID and TENANT_ID=:OLD_TENANT_ID '),self);
   result := true;
@@ -187,16 +187,17 @@ begin
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-     'update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=isnull(PAYM_MNY,0)+isnull(:PAY_MNY,0),'+
-        'RECK_MNY=isnull(RECK_MNY,0)-isnull(:PAY_MNY,0) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID'),self);
+     'update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=round(isnull(PAYM_MNY,0)+:PAY_MNY,2),'+
+        'RECK_MNY=round(isnull(RECK_MNY,0)-:PAY_MNY,2) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID'),self);
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-     'update ACC_ACCOUNT_INFO set OUT_MNY=isnull(OUT_MNY,0)+:PAY_MNY,BALANCE=isnull(BALANCE,0)- :PAY_MNY,'
+     'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)+:PAY_MNY,2),BALANCE=round(isnull(BALANCE,0)- :PAY_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where ACCOUNT_ID=:ACCOUNT_ID and TENANT_ID=:TENANT_ID'),self);
   result := true;
+  
 end;
 
 function TPayData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;

@@ -9,14 +9,14 @@ inherited frmPayOrderList: TfrmPayOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 537
+    Width = 892
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 527
+      Width = 882
+      Height = 515
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 521
+        Width = 876
+        Height = 509
         ActivePage = TabSheet2
         TabIndex = 1
         OnChange = RzPageChange
@@ -24,13 +24,13 @@ inherited frmPayOrderList: TfrmPayOrderList
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#20184#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 494
+            Width = 874
+            Height = 482
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -233,16 +233,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel3: TPanel
               Left = 6
               Top = 90
-              Width = 870
-              Height = 398
+              Width = 862
+              Height = 386
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 396
+                Width = 860
+                Height = 384
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = PayListDs
@@ -391,15 +391,18 @@ inherited frmPayOrderList: TfrmPayOrderList
           object Panel1: TPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 494
+            Width = 874
+            Height = 482
             Align = alClient
+            BevelInner = bvLowered
+            BevelOuter = bvNone
+            BorderWidth = 5
             Caption = ' '
             TabOrder = 0
             object RzPanel7: TRzPanel
-              Left = 1
-              Top = 1
-              Width = 880
+              Left = 6
+              Top = 6
+              Width = 862
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -773,18 +776,18 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
             end
             object Panel2: TPanel
-              Left = 1
-              Top = 124
-              Width = 880
-              Height = 369
+              Left = 6
+              Top = 129
+              Width = 862
+              Height = 347
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 878
-                Height = 367
+                Width = 860
+                Height = 345
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -932,17 +935,17 @@ inherited frmPayOrderList: TfrmPayOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image1: TImage
       Left = 374
-      Width = 506
+      Width = 498
     end
     inherited Image3: TImage
       Left = 374
-      Width = 506
+      Width = 498
     end
     inherited Image14: TImage
-      Left = 880
+      Left = 872
     end
     inherited rzPanel5: TPanel
       Left = 374
@@ -1076,7 +1079,7 @@ inherited frmPayOrderList: TfrmPayOrderList
     Left = 488
     Top = 201
     ReportForm = {
-      180000005F190000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      1800000066190000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -1279,7 +1282,7 @@ inherited frmPayOrderList: TfrmPayOrderList
       726961626C6573000000000200736C0014006364735F436867426F64792E2253
       4C30303030220002006A650014006364735F436867426F64792E224A45303030
       30220004006B68796800000000040079687A68000000000200647A0000000000
-      00000000000000}
+      00000000000000FDFF0100000000}
   end
   object CdsPayList: TZQuery
     FieldDefs = <>

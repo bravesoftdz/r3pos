@@ -59,6 +59,7 @@ type
     CONV_RATE,MNG_CONV_RATE:real;
     FShopId: string;
     wait:currency;
+    FCheckLocusNo: boolean;
     procedure SetDataSet(const Value: TDataSet);
     { Private declarations }
     procedure InitGrid;
@@ -67,6 +68,7 @@ type
     procedure SetForm(const Value: TframeOrderForm);
     function GodsToLocusNo(id: string;lct:integer=1): boolean;
     procedure SetShopId(const Value: string);
+    procedure SetCheckLocusNo(const Value: boolean);
   public
     { Public declarations }
     procedure LocusNo(DataSet:TDataSet);
@@ -74,6 +76,7 @@ type
     property dbState:TDataSetState read FdbState write SetdbState;
     property Form:TframeOrderForm read FForm write SetForm;
     property ShopId:string read FShopId write SetShopId;
+    property CheckLocusNo:boolean read FCheckLocusNo write SetCheckLocusNo;
   end;
 
 implementation
@@ -160,6 +163,7 @@ end;
 procedure TfrmLocusNoProperty.FormCreate(Sender: TObject);
 begin
   inherited;
+  CheckLocusNo := true;
   InitGrid;
   frmLocusNoProperty := self;
   AObj := TRecord_.Create;
@@ -322,6 +326,7 @@ begin
           begin
             if Strtofloat(id)>1 then Raise Exception.Create('管理单位只能一个物流码只能对应一个商品');  
           end;
+       if (Strtofloat(id)*CONV_RATE)>MNG_CONV_RATE then Raise Exception.Create('一个物流码对应的发货量大太了，请确认是否输错了.');
        DataSet.Edit;
        DataSet.FieldByName('AMOUNT').AsFloat := Strtofloat(id);
        DataSet.FieldByName('CALC_AMOUNT').AsFloat := DataSet.FieldByName('AMOUNT').AsFloat*CONV_RATE;
@@ -337,7 +342,7 @@ begin
   result := false;
   rs := TZQuery.Create(nil);
   try
-    if (ShopGlobal.GetParameter('LOCUS_NO_MT')<>'1')  then  //不能强制出库
+     if (ShopGlobal.GetParameter('LOCUS_NO_MT')<>'1') and CheckLocusNo then  //不能强制出库
      begin
        rs.SQL.Text :=
        'select distinct LOCUS_NO from STK_LOCUS_FORSTCK A where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.GODS_ID='''+AObj.FieldbyName('GODS_ID').AsString+''' and A.SHOP_ID='''+ShopId+''' and A.LOCUS_NO='''+id+''' ';
@@ -368,10 +373,10 @@ begin
            end
         else
            begin
+             if ((DataSet.FieldByName('AMOUNT').AsFloat + lct)*CONV_RATE)>MNG_CONV_RATE then Raise Exception.Create('一个物流码对应的发货量大太了，请确认是否输错了.');
              DataSet.Edit;
              DataSet.FieldByName('AMOUNT').AsFloat := DataSet.FieldByName('AMOUNT').AsFloat + lct;
              DataSet.FieldByName('CALC_AMOUNT').AsFloat := DataSet.FieldByName('AMOUNT').AsFloat*CONV_RATE;
-             if DataSet.FieldByName('CALC_AMOUNT').AsFloat>MNG_CONV_RATE then Raise Exception.Create('一个物流码对应的发货量大太了，请确认是否输错了.');
              DataSet.Post;
              MessageBeep(0);
            end;
@@ -418,6 +423,11 @@ begin
        Raise Exception.Create('扫码没有完成,请确认扫完再确认');
      end;
 
+end;
+
+procedure TfrmLocusNoProperty.SetCheckLocusNo(const Value: boolean);
+begin
+  FCheckLocusNo := Value;
 end;
 
 end.

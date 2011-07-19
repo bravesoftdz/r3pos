@@ -1,24 +1,3 @@
---RIM系统Oracle版(2011.05.25 星期一)：
---DB_R3创建Oracle的DBLink链接RIMDB创建过程：(根据实际情况替换参数) (原理类似DB2联邦)，请先在Oracle网络配置设置：Net Manager](参考监听文件：listener.ora)
---参数说明：(1)固定参数：A、远程服务器名: RIMLINK)
---          (2)RIM库：   A、库名：RIMDB; B、登录名：RIM_Loginname C、登陆密码：RIM_Password; D、RIM数据库服务器IP：Rim_IP   E、端口号：Rim_Port (系统默认：1521)
---          (3)DB_R3库： A、库名：DB_R3; B、登陆名：R3_loginname  C、登陆密码：R3_Password; 
-
---//////////////////////////////// 【 第一步：  先创建RIMLINK   】  //////////////////////////////////// 
---创建Oracle的DBLink：RIMLINK(原理类似DB2联邦)：[特别说明：下面语句创建无法连接，
-CREATE DATABASE LINK RIMLINK CONNECT TO rim IDENTIFIED BY rim 
-USING '
-  (DESCRIPTION =
-    (ADDRESS_LIST =
-      (ADDRESS = (PROTOCOL = TCP)(HOST = Rim_IP)(PORT = Rim_Port))     --例如：(ADDRESS = (PROTOCOL = TCP)(HOST = 10.160.11.2)(PORT = 1521)) 
-    )
-    (CONNECT_DATA =
-      (SERVICE_NAME = RIMDB)                                           --例如： bjyctd  
-    )
-  )';
-  
-
---//////////////////////////////// 【 第二步： 创建Rim的同义词[SYNONYM]  】  //////////////////////////////////// 
 --2011.05.25 AM：创建RIM烟草公司表:(PUB_ORGAN);
 CREATE SYNONYM PUB_ORGAN FOR PUB_ORGAN@RIMLINK;
 --2011.05.25 PM：下载订单创建远程：零售户、订单表头、订单表体：
@@ -73,10 +52,7 @@ CREATE SYNONYM CC_MYINVEST_SUBJECT FOR CC_MYINVEST_SUBJECT@RIMLINK;
 --2011.06.09 PM 销售日台账：
 CREATE SYNONYM RIM_CUST_DAY FOR RIM_CUST_DAY@RIMLINK;
  
-
-
-
---//////////////////////////////// 【 第三步： 创建对接用到Rim视图和中间表 】   ////////////////////////////////////
+ 
 --创建视图：RIM_PUB_ORGAN
 create view RIM_PUB_ORGAN as select * from PUB_ORGAN;
 
@@ -198,7 +174,7 @@ CREATE TABLE INF_GOODS_RELATION (
 );
 
 -- 表上创建索引
-CREATE INDEX IX_INF_RELATION_TENANT_ID ON INF_GOODS_RELATION(TENANT_ID,RELATION_ID,GODS_ID);
+CREATE INDEX IX_INF_R_T_ID ON INF_GOODS_RELATION(TENANT_ID,RELATION_ID,GODS_ID);
  
 --创建视图：RIM_RM_CUST(零售户档案)
 create view RIM_RM_CUST
@@ -268,8 +244,8 @@ CREATE TABLE INF_INDEORDER (
 	CONSTRAINT PK_INF_INDEORDER PRIMARY KEY (TENANT_ID,INDE_ID)
 );
 --创建索引
-CREATE INDEX IX_INF_INDEORDER_TENANT_ID ON INF_INDEORDER(TENANT_ID);
-CREATE INDEX IX_INF_INDEORDER_STOCK_DATE ON INF_INDEORDER(INDE_DATE);
+CREATE INDEX IX_INF_ORDER_TID ON INF_INDEORDER(TENANT_ID);
+CREATE INDEX IX_INF_ORDER_DATE ON INF_INDEORDER(INDE_DATE);
 
 --2011.05.25 PM：创建入库单中间表明细表：[此数量宽度参考Rim数据长度]
  CREATE TABLE INF_INDEDATA (
@@ -301,7 +277,7 @@ CREATE INDEX IX_INF_INDEORDER_STOCK_DATE ON INF_INDEORDER(INDE_DATE);
 	CALC_AMOUNT decimal(18, 6)  
   );
 --创建索引 
-CREATE INDEX IX_INF_INDEDATA_GODS_ID ON INF_INDEDATA(TENANT_ID,INDE_ID);
+CREATE INDEX IX_INF_INDE_GID ON INF_INDEDATA(TENANT_ID,INDE_ID);
  
 --2011.05.25 PM添加：Rim系统Oracle版本创建中间临时表：
 --Rim系统Oracle

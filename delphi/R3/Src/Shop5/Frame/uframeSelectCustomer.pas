@@ -140,17 +140,20 @@ begin
   0:begin
     if (ShopGlobal.GetChkRight('33400001',1)) and (ShopGlobal.GetChkRight('33300001',1)) then
       begin
-        if w<>'' then w := w + ' and ';
-        case  edtFIND_FLAG.ItemIndex of
-          0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
-          '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
-          '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-          1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
-          2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
-          3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
-          4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
-          5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-        end;
+        if Trim(edtSearch.Text) <> '' then
+          begin
+            if w<>'' then w := w + ' and ';
+            case  edtFIND_FLAG.ItemIndex of
+              0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
+              '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
+              '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+              1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
+              2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
+              3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
+              4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
+              5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+            end;
+          end;
       end
     else
       begin
@@ -172,17 +175,20 @@ begin
     w := w + ' and FLAG in (0)';
     if ShopGlobal.GetChkRight('33300001',1) then
       begin
-        if w<>'' then w := w + ' and ';
-        case  edtFIND_FLAG.ItemIndex of
-          0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
-          '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
-          '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-          1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
-          2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
-          3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
-          4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
-          5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-        end;
+        if Trim(edtSearch.Text) <> '' then
+          begin
+            if w<>'' then w := w + ' and ';
+            case  edtFIND_FLAG.ItemIndex of
+              0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
+              '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
+              '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+              1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
+              2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
+              3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
+              4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
+              5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+            end;
+          end;
       end
     else
       begin
@@ -204,17 +210,20 @@ begin
     w := w + ' and FLAG in (2)';
     if ShopGlobal.GetChkRight('33400001',1) then
       begin
-        if w<>'' then w := w + ' and ';
-        case  edtFIND_FLAG.ItemIndex of
-          0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
-          '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
-          '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-          1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
-          2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
-          3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
-          4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
-          5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
-        end;
+        if Trim(edtSearch.Text) <> '' then
+          begin
+            if w<>'' then w := w + ' and ';
+            case  edtFIND_FLAG.ItemIndex of
+              0:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+
+              '%'' or IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'' or LICENSE_CODE like ''%'+trim(edtSearch.Text)+
+              '%'' or TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'' or ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+              1:w := w + '(IC_CARDNO like ''%'+trim(edtSearch.Text)+'%'')';
+              2:w := w + '(CLIENT_NAME like ''%'+trim(edtSearch.Text)+'%'' or CLIENT_SPELL like ''%'+trim(edtSearch.Text)+'%'')';
+              3:w := w + '(TELEPHONE2 like ''%'+trim(edtSearch.Text)+'%'')';
+              4:w := w + '(LICENSE_CODE like ''%'+trim(edtSearch.Text)+'%'')';
+              5:w := w + '(ADDRESS like ''%'+trim(edtSearch.Text)+'%'')';
+            end;
+          end;
       end
     else
       begin

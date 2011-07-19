@@ -11,8 +11,10 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
       Width = 1075
       inherited RzPage: TRzPageControl
         Width = 870
+        ActivePage = TabSheet5
         Color = clWhite
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -1289,6 +1291,9 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 Color = clWhite
                 TabOrder = 0
+                DesignSize = (
+                  858
+                  100)
                 object RzLabel6: TRzLabel
                   Left = 24
                   Top = 12
@@ -1324,6 +1329,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Top = 78
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label11: TLabel
@@ -1459,6 +1465,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Top = 74
                   Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (

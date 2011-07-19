@@ -83,7 +83,7 @@ type
     function GetUnitID(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位UNIT_ID
     function GetUnitTO_CALC(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string; //返回统计单位换算关系
     //根据统计条件关联查询数据（参数以上的返回字段）
-    function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;   
+    function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
     //返回输入日期的星期几
     function GetWeekID(FieldDate: string): string;
     function GetWeekName(WeekIdx: integer; WeekName: string='周'): string;  //返回周
@@ -531,8 +531,13 @@ function TframeBaseAnaly.GetWeekID(FieldDate: string): string;
 begin
   case Factor.iDbType of
    0: result:='datepart(weekday,convert(Datetime,convert(varchar(8),'+FieldDate+')),112))-1 ';  //返回值-1 刚好是：从0开始
-   1: result:='cast(to_char(TO_DATE(to_char('+FieldDate+'),''yyyy-mm-dd''),''day'') as int)-1 ';
-   4: result:='dayofweek(TO_DATE(ltrim(rtrim(char('+FieldDate+'))),''yyyy-mm-dd''),''day'')-1 ';
+   1: result:='to_number(to_char(TO_DATE(to_char('+FieldDate+'),''yyyymmdd''),''d''))-1 ';
+   4:
+    begin
+     result:='dayofweek(DATE(substr(ltrim(rtrim(char('+FieldDate+'))),1,4) || ''-'' || '+
+                           ' substr(ltrim(rtrim(char('+FieldDate+'))),5,2) || ''-'' || '+
+                           ' substr(ltrim(rtrim(char('+FieldDate+'))),7,2)))-1 ';
+    end;
    5: result:='strftime(''%w'',substr(SALES_DATE,1,4)||''-''||substr(SALES_DATE,5,2)||''-''||substr(SALES_DATE,7,2),''localtime'') ';
   end;
 end;

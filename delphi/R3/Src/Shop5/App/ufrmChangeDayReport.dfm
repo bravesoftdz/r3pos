@@ -32,10 +32,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Height = 472
               inherited w1: TRzPanel
                 Width = 665
-                Height = 86
+                Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -43,42 +43,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label6: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label7: TLabel
                   Left = 24
-                  Top = 57
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label8: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 55
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -86,7 +86,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 10
+                  Top = 8
                   Width = 86
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -94,7 +94,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 478
-                  Top = 41
+                  Top = 37
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -121,7 +121,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP1_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 53
+                  Top = 52
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -132,7 +132,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 344
-                  Top = 53
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -145,7 +145,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 53
+                  Top = 52
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -186,7 +186,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 32
+                  Top = 30
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -201,7 +201,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -213,7 +213,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 30
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -254,12 +254,12 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 86
+                Top = 78
                 Width = 665
-                Height = 386
+                Height = 394
                 inherited DBGridEh1: TDBGridEh
                   Width = 661
-                  Height = 382
+                  Height = 390
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -354,7 +354,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 483
+            Height = 482
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -363,7 +363,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 473
+              Height = 472
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -372,7 +372,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 0
                 Width = 665
-                Height = 80
+                Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -380,7 +380,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 TabOrder = 0
                 object RzLabel4: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -388,21 +388,21 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzLabel5: TRzLabel
                   Left = 170
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label10: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object Label13: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -423,7 +423,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -431,7 +431,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object P2_D2: TcxDateEdit
                   Left = 186
-                  Top = 10
+                  Top = 8
                   Width = 87
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -440,7 +440,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 31
+                  Top = 30
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -481,7 +481,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzBitBtn1: TRzBitBtn
                   Left = 478
-                  Top = 41
+                  Top = 39
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -573,7 +573,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 32
+                  Top = 31
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -588,7 +588,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 31
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -600,9 +600,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 80
+                Top = 78
                 Width = 665
-                Height = 393
+                Height = 394
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -611,7 +611,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 389
+                  Height = 390
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -745,7 +745,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
             Left = 0
             Top = 0
             Width = 675
-            Height = 483
+            Height = 482
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -754,7 +754,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               Left = 5
               Top = 5
               Width = 665
-              Height = 473
+              Height = 472
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -763,7 +763,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 0
                 Width = 665
-                Height = 85
+                Height = 79
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -771,7 +771,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 TabOrder = 0
                 object RzLabel6: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -779,42 +779,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzLabel7: TRzLabel
                   Left = 170
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label9: TLabel
                   Left = 24
-                  Top = 58
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label19: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
                   Left = 288
-                  Top = 58
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label11: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P3_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -822,7 +822,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object P3_D2: TcxDateEdit
                   Left = 186
-                  Top = 10
+                  Top = 8
                   Width = 87
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -831,7 +831,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 54
+                  Top = 53
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -872,7 +872,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
-                  Top = 32
+                  Top = 31
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -884,7 +884,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP3_UNIT_ID: TcxComboBox
                   Left = 344
-                  Top = 54
+                  Top = 53
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -897,7 +897,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 31
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -938,7 +938,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 31
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -949,7 +949,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzBitBtn2: TRzBitBtn
                   Left = 478
-                  Top = 40
+                  Top = 38
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -977,9 +977,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 85
+                Top = 79
                 Width = 665
-                Height = 388
+                Height = 393
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -989,7 +989,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 384
+                  Height = 389
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1133,7 +1133,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 0
                 Width = 665
-                Height = 107
+                Height = 101
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1141,10 +1141,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 TabOrder = 0
                 DesignSize = (
                   665
-                  107)
+                  101)
                 object RzLabel8: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1152,49 +1152,49 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzLabel9: TRzLabel
                   Left = 171
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label21: TLabel
                   Left = 24
-                  Top = 57
+                  Top = 55
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label24: TLabel
-                  Left = 288
-                  Top = 57
+                  Left = 289
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label25: TLabel
                   Left = 24
-                  Top = 79
+                  Top = 78
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 288
-                  Top = 80
+                  Left = 289
+                  Top = 78
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label12: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 33
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object Label38: TLabel
                   Left = 524
-                  Top = 80
+                  Top = 78
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -1202,7 +1202,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -1210,7 +1210,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object P4_D2: TcxDateEdit
                   Left = 187
-                  Top = 10
+                  Top = 8
                   Width = 86
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -1218,7 +1218,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzBitBtn3: TRzBitBtn
                   Left = 478
-                  Top = 64
+                  Top = 59
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1245,7 +1245,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP4_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 76
+                  Top = 74
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1256,7 +1256,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP4_UNIT_ID: TcxComboBox
                   Left = 344
-                  Top = 76
+                  Top = 74
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1269,7 +1269,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP4_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 76
+                  Top = 74
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1310,7 +1310,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 54
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -1326,7 +1326,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP4_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 54
+                  Top = 52
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -1368,7 +1368,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP4_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 30
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1409,7 +1409,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP4_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1420,7 +1420,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP4_RPTTYPE: TcxComboBox
                   Left = 575
-                  Top = 76
+                  Top = 74
                   Width = 81
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -1435,9 +1435,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 107
+                Top = 101
                 Width = 665
-                Height = 365
+                Height = 371
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1447,7 +1447,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 361
+                  Height = 367
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1613,7 +1613,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 0
                 Width = 665
-                Height = 81
+                Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1621,7 +1621,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 TabOrder = 0
                 object RzLabel10: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1629,42 +1629,42 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzLabel11: TRzLabel
                   Left = 167
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label17: TLabel
                   Left = 288
-                  Top = 38
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label18: TLabel
                   Left = 288
-                  Top = 60
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label22: TLabel
                   Left = 24
-                  Top = 58
+                  Top = 55
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label28: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P5_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 83
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -1672,7 +1672,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object RzBitBtn4: TRzBitBtn
                   Left = 478
-                  Top = 41
+                  Top = 38
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1699,7 +1699,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object P5_D2: TcxDateEdit
                   Left = 183
-                  Top = 10
+                  Top = 8
                   Width = 90
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -1707,7 +1707,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP5_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 55
+                  Top = 52
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1719,7 +1719,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 55
+                  Top = 52
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1760,7 +1760,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP5_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 55
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -1776,7 +1776,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 344
-                  Top = 33
+                  Top = 30
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -1818,7 +1818,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 object fndP5_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 30
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1859,7 +1859,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP5_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 30
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -1871,9 +1871,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               object RzPanel18: TRzPanel
                 Left = 0
-                Top = 81
+                Top = 78
                 Width = 665
-                Height = 391
+                Height = 394
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1882,7 +1882,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 387
+                  Height = 390
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

@@ -540,8 +540,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 726
-            Height = 506
+            Width = 734
+            Height = 517
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -549,8 +549,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 716
-              Height = 496
+              Width = 724
+              Height = 507
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -558,7 +558,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 716
+                Width = 724
                 Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
@@ -802,8 +802,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 716
-                Height = 415
+                Width = 724
+                Height = 426
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -811,8 +811,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 712
-                  Height = 411
+                  Width = 720
+                  Height = 422
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1118,8 +1118,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 726
-            Height = 506
+            Width = 734
+            Height = 517
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1127,8 +1127,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 716
-              Height = 496
+              Width = 724
+              Height = 507
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1136,7 +1136,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 716
+                Width = 724
                 Height = 84
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1369,8 +1369,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 84
-                Width = 716
-                Height = 412
+                Width = 724
+                Height = 423
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1379,8 +1379,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 712
-                  Height = 408
+                  Width = 720
+                  Height = 419
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1700,7 +1700,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 Left = 0
                 Top = 0
                 Width = 724
-                Height = 105
+                Height = 103
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1708,7 +1708,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 TabOrder = 0
                 DesignSize = (
                   724
-                  105)
+                  103)
                 object Label21: TLabel
                   Left = 24
                   Top = 57
@@ -2017,9 +2017,9 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 105
+                Top = 103
                 Width = 724
-                Height = 402
+                Height = 404
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2029,7 +2029,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Left = 2
                   Top = 2
                   Width = 720
-                  Height = 398
+                  Height = 400
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

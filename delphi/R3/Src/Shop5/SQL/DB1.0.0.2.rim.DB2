@@ -57,5 +57,14 @@ where e.com_id=d.com_id and e.com_id=c.com_id and c.com_id=d.com_id and a.item_i
       c.is_mrb='1' and e.is_mrb='1';    
 
 
+--–ﬁ∏ƒ ”Õº£∫RIM_MESSAGE
+DROP NICKNAME RIM_MESSAGE_TAB;
+CREATE NICKNAME RIM_MESSAGE_TAB FOR RIMLINK.DB2ADMIN.RIM_MESSAGE;
+Create VIEW RIM_MESSAGE as   
+select
+  COM_ID,MSG_ID,TYPE,TITLE,CONTENT,USE_DATE,INVALID_DATE,OPERATOR,REC_TYPE,RECEIVER,STATUS,UPD_DATE,UPD_TIME,RECEIVER_TYPE, saleorg_id, 
+  slsman_id,sale_center_id   
+from RIM_MESSAGE_TAB
+
   
  

@@ -1,36 +1,3 @@
---RIM系统DB2版：
-
---关于NICKNAME后可以直接访问到远程对象表，创建视图是为了以后数据库优化、物化视图做好准备;
---使用环境：Window平台 
---创建前(创建中出错时)，请详细阅读[DB2联邦(DB2使用联邦功能链接DB2).doc(url:http://loveseaside.iteye.com/blog/663110)]
---创建前的准备工作：
---(1)RIMDB库与DB_R3库不在同一机器上，请先设置RIMDB远程机器的在本地的编目（catalog)，;
---  A、局域网内可以通过DB2的控制中心(〖所有系统〗==>〖添加系统〗);
---  B、广域网、局域网均可通过设置ODBC配置;
---  C、也可以通过DB2命令配置;
-
---DB_R3使用联邦功能链接RIMDB创建过程：(根据实际情况替换参数) 
---参数说明：(1)固定参数：A、安装包名称：DRDA; B、远程服务器名: RIMLINK)
---          (2)RIM库：   A、库名：RIMDB;      B、登录名：RIM_loginname   C、登陆密码：RIM_Password; 
---          (3)DB_R3库： A、库名：DB_R3;      B、登陆名：R3_loginname    C、登陆密码：R3_Password; 
-
-
---//////////////////////////////// 【 第一步：  先创建RIMLINK   】  ////////////////////////////////////
-------------以下语句在【DB2控制中心】用【管理员用户】登陆【DB_R3】,在【命令编辑器】中运行------------------------------------------------------------
---1、创建前准备配置参数(以下语句请一条一条运行)： 
-UPDATE DBM CFG USING FEDERATED YES;  --执行后需要执行重启实例才生效; 
-DB2STOP FORCE;
-DB2START;
-CONNECT TO DB_R3 USER R3_loginname USING R3_Password;
---2、创建安装包：(若存在先删除：DROP WRAPPER DRDA)
-CREATE WRAPPER DRDA LIBRARY 'db2drda.dll' OPTIONS (ADD DB2_FENCED 'N');
---3、创建服务器定义：
-CREATE SERVER RIMLINK TYPE DB2/UDB VERSION '9.1' WRAPPER DRDA AUTHID "RIM_loginname" PASSWORD "RIM_Password" OPTIONS(ADD DBNAME 'RIMDB');
---4、创建用户映射：
-CREATE USER MAPPING FOR R3_loginname SERVER RIMLINK OPTIONS (ADD REMOTE_AUTHID 'RIM_loginname', ADD REMOTE_PASSWORD 'RIM_Password');
- 
- 
---//////////////////////////////// 【 第二步： 创建Rim的同义词[SYNONYM]  】  //////////////////////////////////// 
 --2011.04.07 PM：创建RIM烟草公司表(PUB_ORGAN)：
 CREATE NICKNAME PUB_ORGAN FOR RIMLINK.DB2ADMIN.PUB_ORGAN; 
 --////2011.04.07 PM：对照经营供应链商品， 创建远程对象表NICKNAME：
@@ -96,28 +63,6 @@ CREATE NICKNAME RIM_MESSAGE_TAB FOR RIMLINK.DB2ADMIN.RIM_MESSAGE;
 CREATE NICKNAME RIM_CUST_DAY FOR RIMLINK.DB2ADMIN.RIM_CUST_DAY;
 
 
-
-
-
---//////////////////////////////// 【 第三步： 创建对接用到Rim视图和中间表 】   ////////////////////////////////////
---2011.05.27 Add 修改RIM系统的字段：
---1、零售表(RIM_RETAIL_DETAIL)：泰安测试库和提供脚本均还没加门店字段：TREND_ID  (注：老软件是在2011.04.03增加 [流向功能])
---ALTER TABLE RIM_RETAIL_DETAIL ADD TREND_ID varchar(13);  
-
---2、修改RIM系统原定义门店字段长度（R3的门店编号长度：SHOP_ID varchar (13)）
-ALTER TABLE RIM_R3_NUM ALTER column TERM_ID SET DATA TYPE VARCHAR(13);   
-
---3.修改会员同步字段长度为：36位；(协调后做修改)
-ALTER TABLE RIM_VIP_CONSUMER ALTER column CONSUMER_ID SET DATA TYPE CHAR(36);  
-
---4、修改销售汇总单据号长度：CO_NUM (2011.01月中旬协调后修改)
-ALTER TABLE RIM_RETAIL_CO      ALTER column CO_NUM SET DATA TYPE VARCHAR(50); 
-ALTER TABLE RIM_RETAIL_CO_LINE ALTER column CO_NUM SET DATA TYPE VARCHAR(50);
- 
---DB_R3上报RIMDB数据注意事项：
---(1)、RIM系统创建RIM_R3_NUM同步时间戳表[以后老系统升级需要对此表时间初始值进行处理])： 
---(2)、使用临时表，需要有用户临时表空间存在，创建用户临时表空间：（在V9安装后默认创建：SYSTOOLSTMPSPACE，根据情况创建）
---CREATE USER TEMPORARY TABLESPACE USERTMPSPACE PAGESIZE 4 K MANAGED BY SYSTEM USING ('[CURDIR]\TEMP'); 
 
 --创建视图：RIM_PUB_ORGAN
 create view RIM_PUB_ORGAN as select * from PUB_ORGAN;

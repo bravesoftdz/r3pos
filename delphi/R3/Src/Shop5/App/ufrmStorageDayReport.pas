@@ -589,7 +589,7 @@ begin
           ' and SORT_TYPE=1 and COMM not in (''02'',''12'')) j '+
           'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
           ' group by j.A,j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME '+
-          ' order by j.RELATION_ID,j.A,j.LEVEL_ID'
+          ' order by '+GetRelation_ID('j.RELATION_ID')+',j.A,j.LEVEL_ID'
        );
       end;
     3:begin

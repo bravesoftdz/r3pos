@@ -1,6 +1,6 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 199
-  Top = 112
+  Left = 216
+  Top = 135
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696
   ClientHeight = 429
@@ -49,13 +49,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
-      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 1
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

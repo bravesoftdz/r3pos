@@ -11,10 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
-        ActivePage = TabSheet5
+        ActivePage = TabSheet4
         Color = clWhite
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -1746,6 +1746,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Top = 100
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label12: TLabel
@@ -1774,7 +1775,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Top = 100
                   Width = 48
                   Height = 12
-                  Anchors = [akTop, akRight]
                   Caption = #32479#35745#31867#22411
                 end
                 object Label7: TLabel
@@ -2094,7 +2094,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Top = 96
                   Width = 121
                   Height = 20
-                  Anchors = [akTop, akRight]
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #38376#24215#36827#38144#23384#32479#35745#34920

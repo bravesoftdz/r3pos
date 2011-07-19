@@ -641,7 +641,8 @@ begin
           'union all '+
           'select distinct 1 as A,RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')) j '+
           'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
-          ' group by j.A,j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME order by j.RELATION_ID,j.A,j.LEVEL_ID'
+          ' group by j.A,j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME '+
+          ' order by '+GetRelation_ID('j.RELATION_ID')+',j.A,j.LEVEL_ID'
        );
       end;
     3:begin

@@ -96,6 +96,72 @@ begin
             Sql := Sql + 'select ''actfrmDbOrderList'' as ID,4 as MSG_CLASS,''调拨单'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,7 as sFlag '+
             'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=2 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'')';
           end;
+
+
+
+        if ShopGlobal.GetChkRight('14700001',2) then                //出库发货单的新增权限   actfrmOutLocusOrderList   表  ,
+          begin
+            {if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //销售单出库  SAL_SALESORDER
+            Sql := Sql + 'select ''actfrmOutLocusOrderList'' as ID,4 as MSG_CLASS,''销售出库发货单'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(SALES_DATE) as MIN_DATE,13 as sFlag '+
+            'from SAL_SALESORDER where CHK_DATE is not null and SALES_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''1'' or LOCUS_STATUS is null)';
+
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //调拔单出库  SAL_SALESORDER
+            Sql := Sql + 'select ''actfrmOutLocusOrderList'' as ID,4 as MSG_CLASS,''调拔出库发货单'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(SALES_DATE) as MIN_DATE,14 as sFlag '+
+            'from SAL_SALESORDER where CHK_DATE is not null and SALES_TYPE=2 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''1'' or LOCUS_STATUS is null)';
+
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //调整单出库  STO_CHANGEORDER
+            Sql := Sql + 'select ''actfrmOutLocusOrderList'' as ID,4 as MSG_CLASS,''进货入库发货单'' as MSG_TITLE,count(CHANGE_ID) as SUM_ORDER,min(CHANGE_DATE) as MIN_DATE,15 as sFlag '+
+            'from STO_CHANGEORDER where CHK_DATE is not null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''1'' or LOCUS_STATUS is null)';
+
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //采购退货单出库  SAL_SALESORDER
+            Sql := Sql + 'select ''actfrmOutLocusOrderList'' as ID,4 as MSG_CLASS,''采购退货发货单'' as MSG_TITLE,count(STOCK_TYPE) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,16 as sFlag '+
+            'from STK_STOCKORDER where CHK_DATE is not null and STOCK_TYPE=3 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''1'' or LOCUS_STATUS is null)';
+             }
+          end;
+
+        if ShopGlobal.GetChkRight('14600001',2) then                //入库收货单的新增权限   actfrmInLocusOrderList   表
+          begin
+            {if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //进货单入库  STK_STOCKORDER
+            Sql := Sql + 'select ''actfrmInLocusOrderList'' as ID,4 as MSG_CLASS,''进货入库收货单'' as MSG_TITLE,count(STOCK_TYPE) as SUM_ORDER,min(STOCK_DATE) as MIN_DATE,17 as sFlag '+
+            'from STK_STOCKORDER where STOCK_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
+
+            if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //销售退货单入库  SAL_SALESORDER
+            Sql := Sql + 'select ''actfrmInLocusOrderList'' as ID,4 as MSG_CLASS,''销售退货收货单'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,18 as sFlag '+
+            'from SAL_SALESORDER where SALES_TYPE=3 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
+            }
+          end;
+
+        if ShopGlobal.GetChkRight('21300001',2) then                //应收款新增权限   actfrmRecvOrderList   表   ACC_RECVABLE_INFO
+          begin
+            {if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //预收款单RECV_TYPE = '3'\应收款单RECV_TYPE = '1'   ACC_RECVABLE_INFO
+            Sql := Sql + 'select ''actfrmRecvOrderList'' as ID,4 as MSG_CLASS,''预收/应收款单'' as MSG_TITLE,count(case when ABLE_TYPE = ''3'' then 100000 when ABLE_TYPE = ''1'' then 1 end) as SUM_ORDER,min(ABLE_DATE) as MIN_DATE,19 as sFlag '+
+            'from ACC_RECVABLE_INFO where isnull(RECK_MNY,0)<>0  and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+            }
+          end;
+
+        if ShopGlobal.GetChkRight('21400001',2) then                //应付款新增权限   actfrmPayOrderList   表   ACC_PAYABLE_INFO
+          begin
+            {if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //预付款单ABLE_TYPE = '6'\应付款单ABLE_TYPE = '4'   ACC_PAYABLE_INFO
+            Sql := Sql + 'select ''actfrmPayOrderList'' as ID,4 as MSG_CLASS,''预付/应付款单'' as MSG_TITLE,count(case when ABLE_TYPE = ''6'' then 100000 when ABLE_TYPE = ''4'' then 1 end) as SUM_ORDER,min(ABLE_DATE) as MIN_DATE,20 as sFlag '+
+            'from ACC_PAYABLE_INFO where isnull(RECK_MNY,0)<>0  and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+            }
+          end;
+
+        if ShopGlobal.GetChkRight('21300001',5) then                //应收款审核权限   actfrmRecvOrderList   表   ACC_RECVORDER
+          begin
+            {if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //收款单   ACC_RECVORDER
+            Sql := Sql + 'select ''actfrmRecvOrderList'' as ID,4 as MSG_CLASS,''收款单'' as MSG_TITLE,count(RECV_FLAG) as SUM_ORDER,min(RECV_DATE) as MIN_DATE,21 as sFlag '+
+            'from ACC_RECVORDER where RECV_FLAG=''0'' and CHK_DATE is null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+            }
+          end;
+
+        if ShopGlobal.GetChkRight('21400001',5) then                //应付款审核权限   actfrmPayOrderList   表   ACC_PAYORDER
+          begin
+            {if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //付款单   ACC_PAYORDER
+            Sql := Sql + 'select ''actfrmPayOrderList'' as ID,4 as MSG_CLASS,''付款单'' as MSG_TITLE,count(PAY_ID) as SUM_ORDER,min(PAY_DATE) as MIN_DATE,22 as sFlag '+
+            'from ACC_PAYORDER where CHK_DATE is null and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') ';
+            }
+          end;
       end;
 
     if ShopGlobal.GetChkRight('33400001',1) then                //会员生日提醒     actfrmCustomer  表  PUB_CUSTOMER
@@ -198,8 +264,24 @@ begin
         Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')单待发货、('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')单发货中'
       else if List.FieldbyName('sFlag').AsInteger = 12 then
         Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')单待入库、('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')单入库中'
+      else if List.FieldbyName('sFlag').AsInteger = 13 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待扫码发货！'
+      else if List.FieldbyName('sFlag').AsInteger = 14 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待扫码发货！'
+      else if List.FieldbyName('sFlag').AsInteger = 15 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待扫码发货！'
+      else if List.FieldbyName('sFlag').AsInteger = 16 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待扫码发货！'
+      else if List.FieldbyName('sFlag').AsInteger = 17 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待扫码收货！'
+      else if List.FieldbyName('sFlag').AsInteger = 18 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待扫码收货！'
+      else if List.FieldbyName('sFlag').AsInteger = 19 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待收款！'
+      else if List.FieldbyName('sFlag').AsInteger = 20 then
+        Msg^.Contents := '您有 ('+IntToStr(List.FieldbyName('SUM_ORDER').AsInteger)+')张"'+List.FieldbyName('MSG_TITLE').AsString+'"待付款！'
       else
-        Msg^.Contents := ' 你有('+List.FieldbyName('SUM_ORDER').AsString+')张 "'+List.FieldbyName('MSG_TITLE').AsString+'" 没有审核！';
+        Msg^.Contents := ' 您有('+List.FieldbyName('SUM_ORDER').AsString+')张 "'+List.FieldbyName('MSG_TITLE').AsString+'" 没有审核！';
       Msg^.sFlag := List.FieldbyName('sFlag').AsInteger;
       Msg^.Msg_Class := List.FieldbyName('MSG_CLASS').AsInteger;
       MsgFactory.Add(Msg);

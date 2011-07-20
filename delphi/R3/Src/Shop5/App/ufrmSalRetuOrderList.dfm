@@ -9,19 +9,19 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 828
-    Height = 544
+    Height = 543
     inherited RzPanel2: TRzPanel
       Width = 818
-      Height = 534
+      Height = 533
       inherited RzPage: TRzPageControl
         Width = 812
-        Height = 528
+        Height = 527
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#36864#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 810
-            Height = 501
+            Height = 500
             inherited RzPanel1: TRzPanel
               Width = 800
               Height = 118
@@ -313,7 +313,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 123
               Width = 800
-              Height = 373
+              Height = 372
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -347,6 +347,13 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                   Footers = <>
                   Title.Caption = #23458#25143#21517#31216
                   Width = 150
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_ID_TEXT'
+                  Footers = <>
+                  Title.Caption = #38376#24215#21517#31216
+                  Width = 120
                 end
                 item
                   EditButtons = <>
@@ -465,7 +472,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 604
-          Width = 48
+          Width = 36
         end>
       inherited ToolBar1: TToolBar
         Width = 604

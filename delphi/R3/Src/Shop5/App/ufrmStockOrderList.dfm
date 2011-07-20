@@ -349,7 +349,7 @@ inherited frmStockOrderList: TfrmStockOrderList
                   EditButtons = <>
                   FieldName = 'SHOP_ID_TEXT'
                   Footers = <>
-                  Title.Caption = #38376#24215
+                  Title.Caption = #38376#24215#21517#31216
                   Width = 120
                 end
                 item

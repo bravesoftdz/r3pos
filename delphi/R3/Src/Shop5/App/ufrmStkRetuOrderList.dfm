@@ -9,19 +9,19 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 802
-    Height = 533
+    Height = 532
     inherited RzPanel2: TRzPanel
       Width = 792
-      Height = 523
+      Height = 522
       inherited RzPage: TRzPageControl
         Width = 786
-        Height = 517
+        Height = 516
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #37319#36141#36864#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 784
-            Height = 490
+            Height = 489
             inherited RzPanel1: TRzPanel
               Width = 774
               Height = 109
@@ -312,7 +312,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 114
               Width = 774
-              Height = 371
+              Height = 370
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -344,6 +344,13 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
                   Footers = <>
                   Title.Caption = #20379#24212#21830
                   Width = 160
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_ID_TEXT'
+                  Footers = <>
+                  Title.Caption = #38376#24215#21517#31216
+                  Width = 120
                 end
                 item
                   EditButtons = <>
@@ -442,7 +449,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 612
-          Width = 48
+          Width = 36
         end>
       inherited ToolBar1: TToolBar
         Width = 612

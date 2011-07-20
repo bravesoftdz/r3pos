@@ -22,6 +22,7 @@ type
     OPcds: TZQuery;
     Ca_Modle: TZQuery;
     Label3: TLabel;
+    TabSheet2: TRzTabSheet;
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);

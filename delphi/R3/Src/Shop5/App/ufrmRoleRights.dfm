@@ -1,6 +1,6 @@
 inherited frmRoleRights: TfrmRoleRights
-  Left = 383
-  Top = 123
+  Left = 456
+  Top = 197
   Caption = #32844#21153#25480#26435
   ClientHeight = 385
   ClientWidth = 385
@@ -15,14 +15,16 @@ inherited frmRoleRights: TfrmRoleRights
     inherited RzPage: TRzPageControl
       Width = 375
       Height = 346
+      ActivePage = TabSheet2
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #32844#21153#26435#38480
+        Caption = #25805#20316#26435#38480
         inherited RzPanel2: TRzPanel
           Width = 371
           Height = 319
@@ -147,6 +149,10 @@ inherited frmRoleRights: TfrmRoleRights
             TabOrder = 1
           end
         end
+      end
+      object TabSheet2: TRzTabSheet
+        Color = clWhite
+        Caption = #25968#25454#26435#38480
       end
     end
     inherited btPanel: TRzPanel

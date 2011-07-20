@@ -1,6 +1,6 @@
 object SocketForm: TSocketForm
-  Left = 745
-  Top = 376
+  Left = 377
+  Top = 192
   AlphaBlendValue = 0
   AutoScroll = False
   Caption = #36890#35759#26381#21153#22120
@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 326
-    ActivePage = TabSheet2
+    ActivePage = PropPage
     Align = alClient
     TabOrder = 0
     object PropPage: TTabSheet

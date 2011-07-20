@@ -1079,6 +1079,10 @@ end;
 procedure TSocketForm.ZSQLMonitor1Trace(Sender: TObject;
   Event: TZLoggingEvent; var LogTrace: Boolean);
 begin
+  if (Event.ErrorCode <>0) or (Event.Error<>'') then
+     begin
+       LogFile.AddLogFile(0,Event.AsString);
+     end;
   Memo1.Lines.Add(Event.AsString); 
 end;
 

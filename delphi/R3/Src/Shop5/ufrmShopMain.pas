@@ -1400,7 +1400,7 @@ begin
                     if Global.RemoteFactory.ConnString<>Global.LocalFactory.ConnString then //调试模式时，不同步
                     begin
                       SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
-                      SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
+                      SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
                       SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
                       SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
                       SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
@@ -3837,6 +3837,12 @@ end;
 procedure TfrmShopMain.wm_check(var Message: TMessage);
 begin
   if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) then Exit;
+  if SyncFactory.firsted and CaFactory.Audited then
+     begin
+       if not Global.RemoteFactory.Connected then Exit;
+       if MessageBox(Handle,'系统第一次初始化，将从服务器恢复业务数据，是否立即执行？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       SyncFactory.SyncAll;
+     end;
   TfrmCostCalc.CheckMonthReck(self);
 
 end;

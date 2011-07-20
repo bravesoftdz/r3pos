@@ -44,6 +44,7 @@ type
     //新商盟接口
     function GetForLogin(Url:string):string;
   public
+    htmlTitle:string;
     { Public declarations }
     function GetDoLogin(Url:string):string;
     function Open(Url:string):boolean;virtual;
@@ -241,7 +242,7 @@ procedure TfrmIEWebForm.IEBrowserTitleChange(Sender: TObject;
   const Text: WideString);
 begin
   inherited;
-  Caption := Text;
+  htmlTitle := Text;
 end;
 procedure TfrmIEWebForm.DoLogin;
 begin

@@ -216,19 +216,19 @@ begin
     begin
       if rzPage.Pages[i].Data <> nil then
          begin
-           if (TframeOrderForm(rzPage.Pages[i].Data).dbState = dsBrowse)
-              or
-              TframeOrderForm(rzPage.Pages[i].Data).IsNull
-              or
-              not TframeOrderForm(rzPage.Pages[i].Data).edtTable.Changed
-           then
-              begin
+           //if (TframeOrderForm(rzPage.Pages[i].Data).dbState = dsBrowse)
+           //   or
+           //   TframeOrderForm(rzPage.Pages[i].Data).IsNull
+           //   or
+           //   not TframeOrderForm(rzPage.Pages[i].Data).edtTable.Changed
+           //then
+           //   begin
                 TframeOrderForm(rzPage.Pages[i].Data).Free;
-              end
-           else
-              begin
-                Raise Exception.Create('"'+rzPage.Pages[i].Caption+'"录入的数据没有保存，不能关闭');
-              end;
+           //   end
+           //else
+           //   begin
+           //     Raise Exception.Create('"'+rzPage.Pages[i].Caption+'"录入的数据没有保存，不能关闭');
+           //   end;
          end;
     end;
 end;

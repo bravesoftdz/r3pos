@@ -828,13 +828,22 @@ end;
 
 function TSyncCaRelationInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
-  Str:string;
+  Str,ComStr:string;
 begin
-  Str :=
-  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
-  'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)';
   if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+     ComStr := ParseSQL(AGlobal.iDbType,' and substring(i.COMM,1,1)<>''1''');
+  Str :=
+  'select i.* from '+Params.ParambyName('TABLE_NAME').AsString+ ' i,'+
+  '(select j.TENANT_ID as TENANT_ID,s.TIME_STAMP as TIME_STAMP from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID '+
+  ' ) r where i.TENANT_ID=r.TENANT_ID and (i.TIME_STAMP>:TIME_STAMP or r.TIME_STAMP>:TIME_STAMP) '+ComStr +
+  ' union all '+
+  'select i.* from '+Params.ParambyName('TABLE_NAME').AsString+ ' i where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+ComStr;
+
+//  Str :=
+//  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
+//  'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)';
+//  if Params.ParamByName('SYN_COMM').AsBoolean then
+//     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
   SelectSQL.Text := Str;
 end;
@@ -3098,27 +3107,45 @@ begin
   0:js := '+';
   1,4,5:js := '||';
   end;
-  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) '+
-        'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID) '+
-        ' or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)'+
-        ' or TENANT_ID in (select TENANT_ID from CA_RELATIONS s where s.RELATI_ID=:TENANT_ID)'+
-        ' or TENANT_ID in (select RELATI_ID from CA_RELATIONS s where s.TENANT_ID=:TENANT_ID)'
-        ));
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,
+        'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) '+
+        'where TENANT_ID in ( '+
+        'select j.TENANT_ID as TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID '+
+        'union all '+
+        'select TENANT_ID from CA_RELATIONS s where s.RELATI_ID=:TENANT_ID '+
+        'union all '+
+        'select RELATI_ID as TENANT_ID from CA_RELATIONS s where s.TENANT_ID=:TENANT_ID '+
+        ') or TENANT_ID=:TENANT_ID'));
 end;
 
 function TSyncCaTenant.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
-  Str:string;
+  Str,ComStr:string;
 begin
-  Str :=
-  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
-  'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) '+
-        ' or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)'+
-        ' or TENANT_ID in (select TENANT_ID from CA_RELATIONS s where s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP))'+
-        ' or TENANT_ID in (select RELATI_ID from CA_RELATIONS s where s.TENANT_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP))'
-        ;
+//  Str :=
+//  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
+//  'where TENANT_ID in (select j.TENANT_ID from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) '+
+//        ' or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)'+
+//        ' or TENANT_ID in (select TENANT_ID from CA_RELATIONS s where s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP))'+
+//        ' or TENANT_ID in (select RELATI_ID from CA_RELATIONS s where s.TENANT_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP))'
+//        ;
+//  if Params.ParamByName('SYN_COMM').AsBoolean then
+//     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+// 优化后的SQL
+
   if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+     ComStr := ParseSQL(AGlobal.iDbType,' and substring(i.COMM,1,1)<>''1''');
+
+  Str :=
+  'select i.* from '+Params.ParambyName('TABLE_NAME').AsString+ ' i,( '+
+  '   select j.TENANT_ID as TENANT_ID,s.TIME_STAMP as TIME_STAMP from CA_RELATION j,CA_RELATIONS s where j.RELATION_ID=s.RELATION_ID and s.RELATI_ID=:TENANT_ID '+
+  '   union all '+
+  '   select TENANT_ID,TIME_STAMP from CA_RELATIONS s where s.RELATI_ID=:TENANT_ID '+
+  '   union all '+
+  '   select RELATI_ID as TENANT_ID,TIME_STAMP from CA_RELATIONS s where s.TENANT_ID=:TENANT_ID '+
+  '   ) r where i.TENANT_ID=r.TENANT_ID and (i.TIME_STAMP>:TIME_STAMP or r.TIME_STAMP>:TIME_STAMP) '+ComStr +
+  ' union all '+
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+ComStr;
 
   SelectSQL.Text := Str;
 end;
@@ -3203,13 +3230,22 @@ end;
 
 function TSyncGodsRelation.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
-  Str:string;
+  Str,ComStr:string;
 begin
-  Str :=
-  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
-  'where TENANT_ID in (select s.TENANT_ID from CA_RELATIONS s where s.RELATION_ID=i.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)';
   if Params.ParamByName('SYN_COMM').AsBoolean then
-     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+     ComStr := ParseSQL(AGlobal.iDbType,' and substring(i.COMM,1,1)<>''1''');
+  Str :=
+  'select i.* from '+Params.ParambyName('TABLE_NAME').AsString+ ' i,'+
+  '(select s.TENANT_ID as TENANT_ID,s.RELATION_ID as RELATION_ID,s.TIME_STAMP as TIME_STAMP from CA_RELATIONS s where s.RELATI_ID=:TENANT_ID '+
+  ' ) r where i.TENANT_ID=r.TENANT_ID and i.RELATION_ID=r.RELATION_ID and (i.TIME_STAMP>:TIME_STAMP or r.TIME_STAMP>:TIME_STAMP) '+ComStr+
+  ' union all '+
+  'select i.* from '+Params.ParambyName('TABLE_NAME').AsString+ ' i where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP '+ComStr;
+
+//  Str :=
+//  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' i '+
+//  'where TENANT_ID in (select s.TENANT_ID from CA_RELATIONS s where s.RELATION_ID=i.RELATION_ID and s.RELATI_ID=:TENANT_ID and (s.TIME_STAMP>:TIME_STAMP or i.TIME_STAMP>:TIME_STAMP)) or (TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP)';
+//  if Params.ParamByName('SYN_COMM').AsBoolean then
+//     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
   SelectSQL.Text := Str;
 end;

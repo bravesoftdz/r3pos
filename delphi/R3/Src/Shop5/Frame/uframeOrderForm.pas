@@ -3519,7 +3519,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
   end;
 
   function SaveExcel(CdsExcel: TDataSet): Boolean;
-  var rs,us,tmp:TZQuery; i: integer;
+  var rs,us,bs,tmp:TZQuery; i: integer;
     RecordObj:TRecord_;
     IsPt:Boolean;
     GID,P1,P2,ErrorInfo,str:string;
@@ -3528,6 +3528,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
     Result := False;
     rs := Global.GetZQueryFromName('PUB_GOODSINFO');
     us := Global.GetZQueryFromName('PUB_MEAUNITS');
+    bs := Global.GetZQueryFromName('PUB_BARCODE');
     tmp := TZQuery.Create(nil);
     RecordObj := TRecord_.Create;
     try
@@ -3541,44 +3542,50 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
             end;
           //P1 := '#';
           //P2 := '#';
-          tmp.Close;
-          tmp.SQL.Text := 'select * from VIW_BARCODE where BARCODE='''+trim(cdsExcel.FieldByName('BARCODE').AsString)+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
-          Factor.Open(tmp);
-          if not tmp.IsEmpty then
+          //tmp.Close;
+          //tmp.SQL.Text := 'select * from VIW_BARCODE where BARCODE='''+trim(cdsExcel.FieldByName('BARCODE').AsString)+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
+          //Factor.Open(tmp);
+          if bs.Locate('BARCODE',cdsExcel.FieldByName('BARCODE').AsString,[]) then
             begin
-              GID := tmp.FieldByName('GODS_ID').AsString;
+              GID := bs.FieldByName('GODS_ID').AsString;
               //P1 := tmp.FieldByName('PROPERTY_01').AsString;
               //P2 := tmp.FieldByName('PROPERTY_02').AsString;
             end
           else
             begin
-              GID := CdsExcel.FieldByName('GODS_CODE').AsString;
+              if rs.Locate('GODS_CODE',CdsExcel.FieldByName('GODS_CODE').AsString,[]) then
+                 GID := rs.FieldByName('GODS_ID').AsString
+              else
+                 Raise Exception.Create(CdsExcel.FieldByName('GODS_CODE').AsString+'货号没有找到...');
             end;
-          if not rs.Locate('GODS_ID',GID,[]) then
+          if rs.Locate('GODS_ID',GID,[]) then
             begin
-              tmp.Close;
-              tmp.SQL.Text := 'select * from VIW_GOODSPRICEEXT where GODS_CODE='''+GID+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
-              Factor.Open(tmp);
-              if not tmp.IsEmpty then
-                begin
-                  GID := tmp.FieldByName('GODS_ID').AsString;
+              RecordObj.ReadFromDataSet(rs,False);
+              //tmp.Close;
+              //tmp.SQL.Text := 'select * from VIW_GOODSPRICEEXT where GODS_CODE='''+GID+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
+              //Factor.Open(tmp);
+              //if not tmp.IsEmpty then
+              //  begin
+              //    GID := tmp.FieldByName('GODS_ID').AsString;
                   //P1 := tmp.FieldByName('SORT_ID7').AsString;
                   //P2 := tmp.FieldByName('SORT_ID8').AsString;
 
-                  RecordObj.ReadField(tmp);
-                  RecordObj.ReadFromDataSet(tmp,False);
-                end
-              else
-                begin
-                 MessageBox(Handle,Pchar(GID+'为无效货品编号'),'提示...',MB_OK+MB_ICONINFORMATION);
-                 cdsExcel.Next;
-                 Continue;
-                end;
+              //    RecordObj.ReadField(tmp);
+              //    RecordObj.ReadFromDataSet(tmp,False);
+              //  end
+              //else
+              //  begin
+              //   MessageBox(Handle,Pchar(GID+'为无效货品编号'),'提示...',MB_OK+MB_ICONINFORMATION);
+              //   cdsExcel.Next;
+              //   Continue;
+              //  end;
             end
           else
             begin
-              RecordObj.ReadField(rs);
-              RecordObj.ReadFromDataSet(rs,False);
+              Raise Exception.Create(CdsExcel.FieldByName('GODS_CODE').AsString+'货号没有找到...');
+              //if not rs.Locate('GODS_CODE',GID,[]) then
+              //RecordObj.ReadField(rs);
+              //RecordObj.ReadFromDataSet(rs,False);
             end;
           if us.Locate('UNIT_NAME',CdsExcel.FieldByName('UNIT_ID').AsString,[]) then
             begin
@@ -3604,8 +3611,9 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
                       else
                         ErrorInfo := ErrorInfo+'商品货号为"'+CdsExcel.FieldByName('GODS_CODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在;'+#13#10;
                     end;
-                  CdsExcel.Next;
-                  Continue;
+                  Raise Exception.Create(ErrorInfo);
+                  //CdsExcel.Next;
+                  //Continue;
                 end;
 
             end;

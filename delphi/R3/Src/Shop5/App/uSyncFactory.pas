@@ -19,9 +19,11 @@ type
     _Start:Int64;
     FSyncTimeStamp: int64;
     FSyncComm: boolean;
+    Ffirsted: boolean;
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetSyncComm(const Value: boolean);
+    procedure Setfirsted(const Value: boolean);
   protected
     procedure SetTicket;
     function GetTicket:Int64;
@@ -97,6 +99,7 @@ type
     property Params:TftParamList read FParams write SetParams;
     property SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
     property SyncComm:boolean read FSyncComm write SetSyncComm;
+    property firsted:boolean read Ffirsted write Setfirsted;
   end;
 var
   SyncFactory:TSyncFactory;
@@ -145,15 +148,20 @@ function TSyncFactory.CheckRemeteData: boolean;
 var
   rs:TZQuery;
 begin
-  if not SyncComm then Exit;
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID);
+    rs.Close;
+    rs.SQL.Text := 'select TENANT_ID from SYS_SYNC_CTRL where TENANT_ID='+inttostr(Global.TENANT_ID);
     Global.RemoteFactory.Open(rs);
-    result := not rs.IsEmpty; 
+    SyncComm := not rs.IsEmpty;
+    rs.Close;
+    rs.SQL.Text := 'select TENANT_ID from SYS_SYNC_CTRL where TENANT_ID='+inttostr(Global.TENANT_ID)+ ' and SHOP_ID<>''#'' and not (TABLE_NAME like ''RSP_%'')';
+    Global.LocalFactory.Open(rs);
+    firsted := rs.IsEmpty;   //没有同步过业务数据
   finally
     rs.free;
   end;
+  result := SyncComm;
 end;
 
 constructor TSyncFactory.Create;
@@ -162,6 +170,7 @@ begin
   FParams := TftParamList.Create(nil);
   FList := TList.Create;
   SyncComm := true;
+  firsted := false;
 end;
 
 destructor TSyncFactory.Destroy;
@@ -597,6 +606,11 @@ begin
   FList.Add(n);
 end;
 
+procedure TSyncFactory.Setfirsted(const Value: boolean);
+begin
+  Ffirsted := Value;
+end;
+
 procedure TSyncFactory.SetParams(const Value: TftParamList);
 begin
   FParams := Value;
@@ -676,7 +690,7 @@ begin
       26:SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
-      frmLogo.ProgressBar1.Update;
+      frmLogo.Update;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
     SyncRim;
@@ -694,7 +708,7 @@ var
 begin
   InterlockedIncrement(Locked);
   try
-  SyncComm := CheckRemeteData;
+  if gbl then SyncComm := CheckRemeteData;
   frmLogo.Show;
   try
   SyncTimeStamp := CaFactory.TimeStamp;

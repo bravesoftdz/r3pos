@@ -491,8 +491,11 @@ begin
   if adoReport1.Fields[2].AsInteger = 1 then
      Background := $00E7E2E3;
   if LCK_Index<0 then Exit;
-  if adoReport1.Fields[LCK_Index].AsString<>'' then
-     Background := $00C080FF;
+  if adoReport1.FieldbyName(DBGridEh1.Columns[LCK_Index].FieldName).AsString='建议补货' then
+     Background := $00C080FF
+  else
+  if adoReport1.FieldbyName(DBGridEh1.Columns[LCK_Index].FieldName).AsString='加强促销' then
+     Background := $0080FFFF;
 end;
 
 procedure TfrmSaleMonthTotalReport.DBGridEh1GetFooterParams(Sender: TObject;

@@ -262,6 +262,7 @@ var
   i:integer;
 begin
   inherited;
+  if cdsList.State in [dsEdit,dsInsert] then cdsList.Post;
   cdsList.DisableControls;
   try
     if not MultiSelect then SetCurrent;

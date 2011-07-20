@@ -272,8 +272,8 @@ end;
 
 function TfrmRimIEBrowser.CheckError: boolean;
 begin
-  result := (copy(Caption,1,6)='<0000>');
-  LogFile.AddLogFile(0,Caption);
+  result := (copy(htmlTitle,1,6)='<0000>');
+  LogFile.AddLogFile(0,htmlTitle);
 end;
 
 procedure TfrmRimIEBrowser.IEBrowserTitleChange(Sender: TObject;
@@ -284,7 +284,11 @@ begin
   s := Text;
   if length(s)>=6 then
      begin
-       if (s[1]='<') and (s[6]='>') then Logined := CheckError;
+       if (s[1]='<') and (s[6]='>') then
+          begin
+            Logined := CheckError;
+            LogFile.AddLogFile(0,IEBrowser.LocationURL);
+          end;
      end;
 end;
 

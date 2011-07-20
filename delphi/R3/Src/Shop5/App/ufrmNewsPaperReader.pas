@@ -81,7 +81,7 @@ type
 implementation
 uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uFnUtil, uPrainpowerJudge, ufrmHintMsg, ufrmQuestionnaire,
      ufrmStkIndentOrderList, ufrmStockOrderList, ufrmStkRetuOrderList, ufrmSalIndentOrderList, ufrmSalesOrderList,
-     ufrmSalRetuOrderList, ufrmDbOrderList, ufrmCustomer;
+     ufrmSalRetuOrderList, ufrmDbOrderList, ufrmCustomer, ufrmPayOrderList, ufrmRecvOrderList, ufrmInLocusOrderList, ufrmOutLocusOrderList;
 {$R *.dfm}
 
 { TfrmNewPaperReader }
@@ -132,7 +132,7 @@ begin
         btnRead.Visible := True;
       GetInfomation(CdsNewsPaper.FieldbyName('MSG_ID').AsString);
     end
-  else if CdsNewsPaper.FieldByName('sFlag').AsInteger in [1,2,3,4,5,6,7,9,10,11,12] then
+  else if CdsNewsPaper.FieldByName('sFlag').AsInteger in [1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22] then
     begin
       if DoActionExecute(CdsNewsPaper.FieldByName('MSG_ID').AsString,CdsNewsPaper.FieldByName('sFlag').AsInteger) then
          Close;
@@ -587,6 +587,116 @@ begin
                     TfrmStkIndentOrderList(Form).fndSTATUS.ItemIndex := 4;
                    TfrmStkIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmStkIndentOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             13:begin
+               if PrainpowerJudge.List.Locate('sFlag',13,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmOutLocusOrderList);
+                   TfrmOutLocusOrderList(Form).RzPage.ActivePageIndex := 0;
+                   TfrmOutLocusOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmOutLocusOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmOutLocusOrderList(Form).D2.Date := Date();
+                   TfrmOutLocusOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             14:begin
+               if PrainpowerJudge.List.Locate('sFlag',14,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmOutLocusOrderList);
+                   TfrmOutLocusOrderList(Form).RzPage.ActivePageIndex := 1;
+                   TfrmOutLocusOrderList(Form).fndP2_STATUS.ItemIndex := 1;
+                   TfrmOutLocusOrderList(Form).fndP2_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmOutLocusOrderList(Form).fndP2_D2.Date := Date();
+                   TfrmOutLocusOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             15:begin
+               if PrainpowerJudge.List.Locate('sFlag',15,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmOutLocusOrderList);
+                   TfrmOutLocusOrderList(Form).RzPage.ActivePageIndex := 2;
+                   TfrmOutLocusOrderList(Form).fndP3_STATUS.ItemIndex := 1;
+                   TfrmOutLocusOrderList(Form).fndP3_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmOutLocusOrderList(Form).fndP3_D2.Date := Date();
+                   TfrmOutLocusOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             16:begin
+               if PrainpowerJudge.List.Locate('sFlag',16,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmOutLocusOrderList);
+                   TfrmOutLocusOrderList(Form).RzPage.ActivePageIndex := 3;
+                   TfrmOutLocusOrderList(Form).fndP4_STATUS.ItemIndex := 1;
+                   TfrmOutLocusOrderList(Form).fndP4_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmOutLocusOrderList(Form).fndP4_D2.Date := Date();
+                   TfrmOutLocusOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             17:begin
+               if PrainpowerJudge.List.Locate('sFlag',17,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmInLocusOrderList);
+                   TfrmInLocusOrderList(Form).RzPage.ActivePageIndex := 0;
+                   TfrmInLocusOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmInLocusOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmInLocusOrderList(Form).D2.Date := Date();
+                   TfrmInLocusOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             18:begin
+               if PrainpowerJudge.List.Locate('sFlag',18,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmInLocusOrderList);
+                   TfrmInLocusOrderList(Form).RzPage.ActivePageIndex := 1;
+                   TfrmInLocusOrderList(Form).fndP2_STATUS.ItemIndex := 1;
+                   TfrmInLocusOrderList(Form).fndP2_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmInLocusOrderList(Form).fndP2_D2.Date := Date();
+                   TfrmInLocusOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             19:begin
+               if PrainpowerJudge.List.Locate('sFlag',19,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmRecvOrderList);
+                   TfrmRecvOrderList(Form).RzPage.ActivePageIndex := 0;
+                   TfrmRecvOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmRecvOrderList(Form).P1_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmRecvOrderList(Form).P1_D2.Date := Date();
+                   TfrmRecvOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             20:begin
+               if PrainpowerJudge.List.Locate('sFlag',20,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmPayOrderList);
+                   TfrmPayOrderList(Form).RzPage.ActivePageIndex := 0;
+                   TfrmPayOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmPayOrderList(Form).P1_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmPayOrderList(Form).P1_D2.Date := Date();
+                   TfrmPayOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             21:begin
+               if PrainpowerJudge.List.Locate('sFlag',21,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmRecvOrderList);
+                   TfrmRecvOrderList(Form).RzPage.ActivePageIndex := 1;
+                   TfrmRecvOrderList(Form).fndOrderStatus.ItemIndex := 1;
+                   TfrmRecvOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmRecvOrderList(Form).D2.Date := Date();
+                   TfrmRecvOrderList(Form).actFindExecute(nil);
+                 end;
+             end;
+             22:begin
+               if PrainpowerJudge.List.Locate('sFlag',22,[]) then
+                 begin
+                   Form := frmMain.FindChildForm(TfrmPayOrderList);
+                   TfrmPayOrderList(Form).RzPage.ActivePageIndex := 1;
+                   TfrmPayOrderList(Form).fndSTATUS.ItemIndex := 1;
+                   TfrmPayOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+                   TfrmPayOrderList(Form).D2.Date := Date();
+                   TfrmPayOrderList(Form).actFindExecute(nil);
                  end;
              end;
            end;

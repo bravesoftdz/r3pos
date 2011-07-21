@@ -202,6 +202,7 @@ begin
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label40.Caption := 'ÍË»õ²Ö¿â';
+      DBGridEh1.Columns[4].Title.Caption := '²Ö¿âÃû³Æ';
     end;
 end;
 

@@ -61,9 +61,11 @@ type
     procedure ppmReportPopup(Sender: TObject);
     procedure mnmFormer5Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure actExitExecute(Sender: TObject);
   private
     { Private declarations }
     idx:integer;
+    Freed:boolean;
     function CheckNewOrder:integer;
     function CheckNoSaveOrder:integer;
     function GetCurOrder: TframeOrderForm;
@@ -196,6 +198,7 @@ end;
 constructor TframeOrderToolForm.Create(AOwner: TComponent);
 begin
   inherited;
+  Freed := true;
   TDbGridEhSort.InitForm(self);
   BtnStatus;
   LoadFormRes(self);
@@ -204,6 +207,7 @@ end;
 
 destructor TframeOrderToolForm.Destroy;
 begin
+  Freed := true;
   Clear;
   TDbGridEhSort.FreeForm(self); 
   inherited;
@@ -528,7 +532,7 @@ begin
        if rzPage.Pages[i].Data <> nil then
           begin
             form := TframeOrderForm(rzPage.Pages[i].Data);
-            if not form.isNull and (form.dbState <> dsBrowse) and form.Modifyed then
+            if not form.isNull and (form.dbState <> dsBrowse) then
                begin
                  result := i;
                  Exit;
@@ -543,13 +547,17 @@ var n:integer;
 begin
   inherited;
   if Application.Terminated then Exit;
+  if not Freed then
+  begin
   n := CheckNoSaveOrder;
   if n>=0 then
      begin
+       Freed := true;
        CanClose := false;
        rzPage.ActivePageIndex := n;
-       MessageBox(Handle,'存在未保存的单据，请选择保存或取消单据后才能退出？',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+       MessageBox(Handle,pchar('存在未保存的<'+Caption+'>单据，请选择保存或取消后才能退出？'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
      end;
+  end;
 end;
 
 procedure TframeOrderToolForm.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -651,6 +659,13 @@ begin
          end;
     end;
 }    
+end;
+
+procedure TframeOrderToolForm.actExitExecute(Sender: TObject);
+begin
+  Freed := false;
+  inherited;
+
 end;
 
 end.

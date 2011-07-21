@@ -311,21 +311,26 @@ begin
   + INTERNET_CONNECTION_PROXY;
   Result := InternetGetConnectedState(@dwConnectionTypes, 0);
 end;
-//var
-//  Icmp:TIdIcmpClient;
+function CheckIsNetworkAlive:boolean;
+var
+  flags : DWORD;
 begin
-  result := InternetConnected;
-//  Exit;
-{  Icmp := TIdIcmpClient.Create(nil);
+  result := true;
+//  result := IsNetworkAlive(flags);
+end;
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    Icmp.OnReply := ICMPReply;
-    Icmp.ReceiveTimeout := 500;
-    Icmp.Host := 'www.163.com';
-    Icmp.Ping('12345678901234567890'); 
-    result:= (Icmp.ReplyStatus.BytesReceived > 0);
+    case F.ReadInteger('soft','network',0) of
+    0:result := true;
+    1:result := CheckIsNetworkAlive;
+    2:result := InternetConnected;
+    end;
   finally
-    Icmp.Free;
-  end;  }
+    F.Free;
+  end;
 end;
 
 function TCaFactory.coGetList(TENANT_ID: string): TCaTenant;

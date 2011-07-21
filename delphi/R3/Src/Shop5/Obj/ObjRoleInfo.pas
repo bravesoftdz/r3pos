@@ -25,14 +25,14 @@ var Str:string;
 begin
   KeyFields:='ROLE_ID';
   //初始化查询
-  SelectSQL.Text:='select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK From CA_ROLE_INFO '+
+  SelectSQL.Text:='select ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,RIGHT_FORDATA,REMARK From CA_ROLE_INFO '+
                   ' where TENANT_ID=:TENANT_ID and ROLE_ID=:ROLE_ID';
   //初始化更新逻辑
-  Str :='insert into CA_ROLE_INFO (ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK,COMM,TIME_STAMP)'+
-        ' values (:ROLE_ID,:ROLE_NAME,:ROLE_SPELL,:TENANT_ID,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
+  Str :='insert into CA_ROLE_INFO (ROLE_ID,ROLE_NAME,ROLE_SPELL,TENANT_ID,REMARK,RIGHT_FORDATA,COMM,TIME_STAMP)'+
+        ' values (:ROLE_ID,:ROLE_NAME,:ROLE_SPELL,:TENANT_ID,:REMARK,''00'',''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add(Str);
 
-  Str :='update CA_ROLE_INFO set ROLE_ID=:ROLE_ID,ROLE_NAME=:ROLE_NAME,ROLE_SPELL=:ROLE_SPELL,TENANT_ID=:TENANT_ID,REMARK=:REMARK,COMM='+ GetCommStr(iDbType)+','+ 'TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str :='update CA_ROLE_INFO set ROLE_ID=:ROLE_ID,ROLE_NAME=:ROLE_NAME,ROLE_SPELL=:ROLE_SPELL,TENANT_ID=:TENANT_ID,REMARK=:REMARK,RIGHT_FORDATA=:RIGHT_FORDATA,COMM='+ GetCommStr(iDbType)+','+ 'TIME_STAMP='+GetTimeStamp(iDbType)+
         ' where TENANT_ID=:OLD_TENANT_ID and ROLE_ID=:OLD_ROLE_ID';
   UpdateSQL.Add(Str);
   Str := ' update CA_ROLE_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:OLD_TENANT_ID and ROLE_ID=:OLD_ROLE_ID';

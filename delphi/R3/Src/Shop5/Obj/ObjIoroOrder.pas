@@ -144,14 +144,14 @@ begin
   1:
   AGlobal.ExecSQL(
         ParseSQL(AGlobal.iDbType,
-        'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)-:OLD_IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)-:OLD_IORO_MNY,2),'
+        'update ACC_ACCOUNT_INFO set IN_MNY=round(isnull(IN_MNY,0)- :OLD_IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)- :OLD_IORO_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID'),self);
   2:
   AGlobal.ExecSQL(
         ParseSQL(AGlobal.iDbType,
-        'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)-:OLD_IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)+:OLD_IORO_MNY,2),'
+        'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)- :OLD_IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)+ :OLD_IORO_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where TENANT_ID=:OLD_TENANT_ID and ACCOUNT_ID=:OLD_ACCOUNT_ID'),self);
@@ -172,7 +172,7 @@ begin
   2:
   AGlobal.ExecSQL(
         ParseSQL(AGlobal.iDbType,
-        'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)+:IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)-:IORO_MNY,2),'
+        'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)+:IORO_MNY,2),BALANCE=round(isnull(BALANCE,0)- :IORO_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:ACCOUNT_ID'),self);

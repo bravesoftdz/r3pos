@@ -257,7 +257,7 @@ begin
     if FieldByName('INTEGRAL_FLAG').AsString = '1' then
       Str := 'update PUB_IC_INFO set INTEGRAL=ifnull(INTEGRAL,0)+:INTEGRAL,ACCU_INTEGRAL=ifnull(ACCU_INTEGRAL,0)+:INTEGRAL where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO '
     else
-      Str := 'update PUB_IC_INFO set INTEGRAL=ifnull(INTEGRAL,0)-:INTEGRAL,RULE_INTEGRAL=ifnull(RULE_INTEGRAL,0)+:INTEGRAL where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO ';
+      Str := 'update PUB_IC_INFO set INTEGRAL=ifnull(INTEGRAL,0)- :INTEGRAL,RULE_INTEGRAL=ifnull(RULE_INTEGRAL,0)+:INTEGRAL where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and IC_CARDNO=:IC_CARDNO ';
     AGlobal.ExecSQL(ParseSQL(iDbType,Str),self);
     rs.Close;
     rs.SQL.Text := 'select INTEGRAL from PUB_IC_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and CLIENT_ID='''+FieldbyName('CLIENT_ID').AsString+'''';

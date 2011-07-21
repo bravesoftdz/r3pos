@@ -569,7 +569,7 @@ inherited frmPosMain: TfrmPosMain
         TabOrder = 2
         object lblPAY_1: TLabel
           Left = 19
-          Top = 59
+          Top = 47
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -584,7 +584,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object Label12: TLabel
           Left = 19
-          Top = 28
+          Top = 24
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -598,7 +598,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblDIBS: TLabel
           Left = 198
-          Top = 108
+          Top = 96
           Width = 93
           Height = 29
           Caption = #25214#38646#65306
@@ -611,7 +611,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblCASH: TLabel
           Left = 198
-          Top = 68
+          Top = 56
           Width = 93
           Height = 29
           Caption = #29616#37329#65306
@@ -624,7 +624,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblPAY_2: TLabel
           Left = 19
-          Top = 80
+          Top = 68
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -639,7 +639,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblPAY_3: TLabel
           Left = 19
-          Top = 101
+          Top = 89
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -654,7 +654,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblPAY_4: TLabel
           Left = 19
-          Top = 123
+          Top = 111
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -669,7 +669,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblACCT_MNY: TLabel
           Left = 198
-          Top = 18
+          Top = 14
           Width = 93
           Height = 29
           Caption = #32467#31639#65306
@@ -683,7 +683,7 @@ inherited frmPosMain: TfrmPosMain
         object rckPAY_1: TcxTextEdit
           Tag = 1
           Left = 77
-          Top = 55
+          Top = 43
           Width = 104
           Height = 20
           Enabled = False
@@ -702,7 +702,7 @@ inherited frmPosMain: TfrmPosMain
         object priPAY_DIBS: TcxTextEdit
           Tag = 1
           Left = 77
-          Top = 24
+          Top = 20
           Width = 104
           Height = 20
           Enabled = False
@@ -719,9 +719,9 @@ inherited frmPosMain: TfrmPosMain
         end
         object pnlBarCode: TRzPanel
           Left = 1
-          Top = 150
+          Top = 133
           Width = 376
-          Height = 37
+          Height = 54
           Align = alBottom
           BorderOuter = fsFlat
           BorderSides = [sdTop]
@@ -741,9 +741,9 @@ inherited frmPosMain: TfrmPosMain
             ParentFont = False
           end
           object rzHint: TLabel
-            Left = 246
+            Left = 248
             Top = 14
-            Width = 6
+            Width = 4
             Height = 12
             Font.Charset = GB2312_CHARSET
             Font.Color = clWhite
@@ -751,6 +751,21 @@ inherited frmPosMain: TfrmPosMain
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
+          end
+          object lblInputHimt: TLabel
+            Left = 14
+            Top = 38
+            Width = 6
+            Height = 12
+            Cursor = crHandPoint
+            Alignment = taCenter
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clFuchsia
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+            OnClick = Label28Click
           end
           object edtInput: TcxTextEdit
             Tag = -1
@@ -777,7 +792,7 @@ inherited frmPosMain: TfrmPosMain
         object rckPAY_2: TcxTextEdit
           Tag = 1
           Left = 77
-          Top = 76
+          Top = 64
           Width = 104
           Height = 20
           Enabled = False
@@ -796,7 +811,7 @@ inherited frmPosMain: TfrmPosMain
         object rckPAY_3: TcxTextEdit
           Tag = 1
           Left = 77
-          Top = 97
+          Top = 85
           Width = 104
           Height = 20
           Enabled = False
@@ -815,7 +830,7 @@ inherited frmPosMain: TfrmPosMain
         object rckPAY_4: TcxTextEdit
           Tag = 1
           Left = 77
-          Top = 119
+          Top = 107
           Width = 104
           Height = 20
           Enabled = False
@@ -1395,7 +1410,7 @@ inherited frmPosMain: TfrmPosMain
     end
     object Label24: TLabel
       Left = 451
-      Top = 47
+      Top = 55
       Width = 114
       Height = 12
       Cursor = crHandPoint

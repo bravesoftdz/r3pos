@@ -397,8 +397,8 @@ begin
      if (FieldbyName('PAY_C').AsFloat <> 0) and (FieldbyName('IC_CARDNO').AsString<>'') then
        begin
          case AGlobal.iDbType of
-         0:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=isnull(BALANCE,0)-:PAY_C where IC_CARDNO=:IC_CARDNO',self);
-         3:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=iif(isnull(BALANCE),0,BALANCE)-:PAY_C where IC_CARDNO=:IC_CARDNO',self);
+         0:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=isnull(BALANCE,0)- :PAY_C where IC_CARDNO=:IC_CARDNO',self);
+         3:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=iif(isnull(BALANCE),0,BALANCE)- :PAY_C where IC_CARDNO=:IC_CARDNO',self);
          end;
          rs := TADODataSet.Create(nil);
          try

@@ -52,7 +52,6 @@ type
     PrintDBGridEh1: TPrintDBGridEh;
     edtProperty: TZQuery;
     ToolButton3: TToolButton;
-    ToolButton6: TToolButton;
     actDefineState: TAction;
     Excel1: TMenuItem;
     ToolButton11: TToolButton;
@@ -130,7 +129,14 @@ var
   GODS_ID,SORT:string;
   EditObj: TRecord_;
 begin
-  SORT:='';
+  //SORT:='';   //zhangsenrong 不刷新树就代表不需要OPEN数据集，树结点不会改变，所以可以不要。
+  //if rzTree.Selected<>nil then
+  //  SORT:=TRecord_(rzTree.Selected.Data).FieldByName('SORT_ID').AsString;
+  //进入商品资料修改没有维护到分类，不需刷新Tree
+  // LoadTree;
+  //if SORT<>'' THEN FindNode(SORT).Selected:=True;
+  cdsBrowser.DisableControls;
+  try
   if not cdsBrowser.Active then Exit;
   if cdsBrowser.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then
   begin
@@ -177,13 +183,10 @@ begin
     Inc(rcAmt); //新插入增加一条
     GetNo; //刷新显示记录数
   end;
-
+  finally
+    cdsBrowser.EnableControls;
+  end;
   InitGrid;
-  if rzTree.Selected<>nil then
-    SORT:=TRecord_(rzTree.Selected.Data).FieldByName('SORT_ID').AsString;
-  //进入商品资料修改没有维护到分类，不需刷新Tree
-  // LoadTree;
-  if SORT<>'' THEN FindNode(SORT).Selected:=True;
 end;
 
 procedure TfrmGoodsInfoList.DBGridEh1DrawColumnCell(Sender: TObject;

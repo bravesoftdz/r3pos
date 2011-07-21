@@ -132,6 +132,7 @@ type
     RzClockStatus1: TRzClockStatus;
     cdsLocusNo: TZQuery;
     Label3: TLabel;
+    lblInputHimt: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -492,10 +493,15 @@ begin
   LoadFile('H');
 
   DBGridEh2.Options := DBGridEh2.Options + [dgRowSelect];
+
+  lblInputHimt.Visible := ShopGlobal.GetChkRight('14500001',1); 
 end;
 
 procedure TfrmPosMain.AddRecord(AObj: TRecord_; UNIT_ID,P1,P2: string;IsPresent:boolean=false);
-var Pt:integer;
+var
+  Pt:integer;
+  rs:TZQuery;
+  bs:TZQuery;
 begin
   if IsPresent then pt := 1 else pt := 0;
   cdsTable.DisableControls;
@@ -532,6 +538,16 @@ begin
   end;
   InitPrice(AObj.FieldbyName('GODS_ID').AsString,UNIT_ID);
   if cdsTable.Recordcount=1 then ShowHeader;
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not bs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(AObj.FieldbyName('GODS_NAME').AsString+'在经营商品中没找到，请退出系统重试.');
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select sum(AMOUNT) from STO_STORAGE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and GODS_ID='''+AObj.FieldbyName('GODS_ID').AsString+'''';
+    Factor.Open(rs);
+    lblInputHimt.Caption := '库存：'+formatFloat('#0.###',rs.Fields[0].asFloat)+TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',bs.FieldbyName('CALC_UNITS').AsString)+'  品名：'+AObj.FieldbyName('GODS_NAME').AsString;
+  finally
+    rs.Free;
+  end;
 end;
 procedure TfrmPosMain.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;

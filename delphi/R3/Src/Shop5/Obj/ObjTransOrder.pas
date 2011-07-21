@@ -58,7 +58,7 @@ begin
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:IN_ACCOUNT_ID  ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 
-  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=round(:TRANS_MNY+ifnull(OUT_MNY,0),2),BALANCE=round(ifnull(BALANCE,0)-:TRANS_MNY,2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str := 'update ACC_ACCOUNT_INFO set OUT_MNY=round(:TRANS_MNY+ifnull(OUT_MNY,0),2),BALANCE=round(ifnull(BALANCE,0)- :TRANS_MNY,2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:TENANT_ID and ACCOUNT_ID=:OUT_ACCOUNT_ID ';
   AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
 

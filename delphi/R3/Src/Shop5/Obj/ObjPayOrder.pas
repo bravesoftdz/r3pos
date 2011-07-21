@@ -166,7 +166,7 @@ begin
   if (FieldbyName('PAY_MNY').AsOldFloat=0) then Exit;
   AGlobal.ExecSQL(
     ParseSQL(AGlobal.iDbType,
-    'update ACC_PAYABLE_INFO set PAYM_MNY=round(isnull(PAYM_MNY,0)-:OLD_PAY_MNY,2),RECK_MNY=round(isnull(RECK_MNY,0)+:OLD_PAY_MNY,2),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID'),self);
+    'update ACC_PAYABLE_INFO set PAYM_MNY=round(isnull(PAYM_MNY,0)- :OLD_PAY_MNY,2),RECK_MNY=round(isnull(RECK_MNY,0)+ :OLD_PAY_MNY,2),COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where TENANT_ID=:OLD_TENANT_ID and ABLE_ID=:OLD_ABLE_ID'),self);
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
@@ -187,12 +187,12 @@ begin
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-     'update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=round(isnull(PAYM_MNY,0)+:PAY_MNY,2),'+
-        'RECK_MNY=round(isnull(RECK_MNY,0)-:PAY_MNY,2) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID'),self);
+     'update ACC_PAYABLE_INFO set NEAR_DATE='''+formatDatetime('YYYY-MM-DD',now())+''',PAYM_MNY=round(isnull(PAYM_MNY,0)+ :PAY_MNY,2),'+
+        'RECK_MNY=round(isnull(RECK_MNY,0)- :PAY_MNY,2) ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)+'  where ABLE_ID=:ABLE_ID and TENANT_ID=:TENANT_ID'),self);
 
   AGlobal.ExecSQL(
      ParseSQL(AGlobal.iDbType,
-     'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)+:PAY_MNY,2),BALANCE=round(isnull(BALANCE,0)- :PAY_MNY,2),'
+     'update ACC_ACCOUNT_INFO set OUT_MNY=round(isnull(OUT_MNY,0)+ :PAY_MNY,2),BALANCE=round(isnull(BALANCE,0)- :PAY_MNY,2),'
       + 'COMM=' + GetCommStr(iDbType) + ','
       + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
       + 'where ACCOUNT_ID=:ACCOUNT_ID and TENANT_ID=:TENANT_ID'),self);

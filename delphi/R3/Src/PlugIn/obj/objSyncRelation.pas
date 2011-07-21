@@ -115,6 +115,15 @@ begin
   UpdateMode:=FieldbyName('UpdateMode').AsInteger;  //从数据集传过来，每一条记录都一样
   if (UpdateMode<0) or (UpdateMode>3) then UpdateMode:=1;  //默认为1
 
+  //2011.06. 29
+  UpSQL:='update INF_GOODS_RELATION a set '+
+  ' (a.NEW_INPRICE,a.NEW_OUTPRICE)='+
+  ' (select (case when b.SMALLTO_CALC>0 then (a.NEW_INPRICE*1.00)/(b.SMALLTO_CALC*1.0) else a.NEW_INPRICE end) as NEW_INPRICE,'+
+  ' (case when b.SMALLTO_CALC>0 then (a.NEW_OUTPRICE*1.00)/(b.SMALLTO_CALC*1.0) else a.NEW_OUTPRICE end) as NEW_OUTPRICE '+
+  ' from PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001) '+
+  ' where exists(select GODS_ID from PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001) ';
+  iRet:=AGlobal.ExecSQL(UpSQL);
+
   Comm:=GetCommStr(AGlobal.iDbType);
   TimeStp:=GetTimeStamp(AGlobal.iDbType);
   InFields:=

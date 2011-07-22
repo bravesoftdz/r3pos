@@ -260,6 +260,11 @@ inherited frmRoleRights: TfrmRoleRights
             AllowedOperations = [alopUpdateEh]
             DataSource = DsDataRight
             Flat = True
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
             FooterColor = clWindow
             FooterFont.Charset = GB2312_CHARSET
             FooterFont.Color = clWindowText
@@ -269,6 +274,7 @@ inherited frmRoleRights: TfrmRoleRights
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+            ParentFont = False
             RowHeight = 20
             TabOrder = 0
             TitleFont.Charset = GB2312_CHARSET

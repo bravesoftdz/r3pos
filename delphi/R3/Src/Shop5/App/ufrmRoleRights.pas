@@ -384,6 +384,12 @@ begin
             inc(i);
           end;
       end;
+
+    if not IsRight then
+      DBGridEh3.Font.Color := clGray
+    else
+      DBGridEh3.Font.Color := clBlack;
+
     ChkRights.Checked := IsRight;
   finally
     rs.Free;
@@ -430,6 +436,10 @@ procedure TfrmRoleRights.ChkRightsPropertiesChange(Sender: TObject);
 begin
   inherited;
   DBGridEh3.Enabled := ChkRights.Checked;
+  if not ChkRights.Checked then
+    DBGridEh3.Font.Color := clGray
+  else
+    DBGridEh3.Font.Color := clBlack;
 end;
 
 end.

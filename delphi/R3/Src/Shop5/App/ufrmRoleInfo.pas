@@ -168,6 +168,7 @@ begin
   if not IsEdit(Aobj, cdsTable) then Exit;
   
   AObj.WriteToDataSet(cdsTable);
+  cdsTable.FieldByName('RIGHT_FORDATA').AsString := '00000000000';
   cdsTable.Post;
 
   if Factor.UpdateBatch(cdsTable,'TRoleInfo',nil) then

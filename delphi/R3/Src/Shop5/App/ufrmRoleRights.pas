@@ -44,6 +44,7 @@ type
       NewState: TRzCheckState);
   private
     Role_ID:string;
+    RIGHTData:String;
     FModiRight: boolean;
     procedure SetModiRight(const Value: boolean);
     procedure GetOPRight;  //返回当前操作员的所拥有权限数据包 [ 限制他能授权的在其所拥有权限范围内 ]
@@ -55,7 +56,7 @@ type
     procedure InitialParams(InRole_ID,Role_NAME,REMARK:string); //初始化参数
     procedure OpenRight;  //传入DutyID返回Role的权限List
     procedure SaveRight;
-    procedure OpneDataRight;
+    procedure OpenDataRight;
     procedure SaveDataRight;
     property ModiRight:boolean read FModiRight write SetModiRight;
   end;
@@ -151,10 +152,11 @@ end;
 procedure TfrmRoleRights.FormShow(Sender: TObject);
 begin
   inherited;
+  RIGHTData := '';
   GetOPRight;     //返回当前操作员的所拥有权限数据包 [ 限制他能授权的在其所拥有权限范围内 ]
   InitCheckTree;
   OpenRight;
-  OpneDataRight;
+  OpenDataRight;
   rzCheckTree.SetFocus;
   if rzCheckTree.Items.Count>0 then rzCheckTree.TopItem.Selected:=True;
   RzPage.ActivePageIndex := 0;
@@ -347,7 +349,7 @@ begin
   end;
 end;
 
-procedure TfrmRoleRights.OpneDataRight;
+procedure TfrmRoleRights.OpenDataRight;
 var i:Integer;
     rs:TZQuery;
 begin
@@ -362,14 +364,15 @@ begin
     Factor.Open(rs);
 
 
-    if rs.FieldByName('RIGHT_FORDATA').AsString <> '' then
+    if Trim(rs.FieldByName('RIGHT_FORDATA').AsString) <> '' then
       begin
         i := 1;
+        RIGHTData := rs.FieldByName('RIGHT_FORDATA').AsString;
         CdsDataRight.First;
         while not CdsDataRight.Eof do
           begin
             CdsDataRight.Edit;
-            CdsDataRight.FieldByName('selflag').AsInteger := StrToInt(Copy(rs.FieldByName('RIGHT_FORDATA').AsString,i,1));
+            CdsDataRight.FieldByName('selflag').AsInteger := StrToInt(Copy(RIGHTData,i,1));
             CdsDataRight.Post;
             CdsDataRight.Next;
             inc(i);
@@ -400,9 +403,12 @@ begin
         DataRight := DataRight + CdsDataRight.FieldByName('selflag').AsString;
         CdsDataRight.Next;
       end;
-
+    if RIGHTData <> '' then
+      RIGHTData := DataRight + Copy(RIGHTData,3,50)
+    else
+      RIGHTData := DataRight + '00000000';
     rs.Edit;
-    rs.FieldByName('RIGHT_FORDATA').AsString := DataRight;
+    rs.FieldByName('RIGHT_FORDATA').AsString := RIGHTData;
     rs.Post;
 
     Factor.UpdateBatch(rs,'TRoleInfo',nil)

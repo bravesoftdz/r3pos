@@ -232,9 +232,9 @@ inherited frmRoleRights: TfrmRoleRights
           object Label5: TLabel
             Left = 123
             Top = 41
-            Width = 228
+            Width = 180
             Height = 12
-            Caption = #21551#29992#21518#65292#35831#21040#21592#24037#26723#26696#37324#20998#37197#29992#25143#25968#25454#26435#38480
+            Caption = '['#21246#25321']'#26159#21542#21551#29992#25968#25454#26435#38480#31649#21046#21151#33021
           end
           object Label6: TLabel
             Left = 88
@@ -295,7 +295,7 @@ inherited frmRoleRights: TfrmRoleRights
                 PickList.Strings = (
                   '0'
                   '1')
-                Title.Caption = #26159#21542#21551#29992
+                Title.Caption = #21551#29992
                 Title.Color = clWhite
                 Width = 55
               end

@@ -743,7 +743,7 @@ inherited frmPosMain: TfrmPosMain
           object rzHint: TLabel
             Left = 248
             Top = 14
-            Width = 4
+            Width = 6
             Height = 12
             Font.Charset = GB2312_CHARSET
             Font.Color = clWhite

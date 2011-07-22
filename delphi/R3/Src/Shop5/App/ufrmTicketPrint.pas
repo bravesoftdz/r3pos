@@ -114,7 +114,7 @@ begin
         'left outer join VIW_GOODSINFO b on  jb.GODS_ID=b.GODS_ID  and jb.TENANT_ID=b.TENANT_ID) jc '+
         'left outer join VIW_SIZE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.PROPERTY_01=c.SIZE_ID) jd '+
         'left outer join VIW_COLOR_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.PROPERTY_02=d.COLOR_ID ) je '+
-        'left outer join VIW_BARCODE e on je.TENANT_ID=e.TENANT_ID and je.PROPERTY_02=e.PROPERTY_02 and je.PROPERTY_01=e.PROPERTY_01 and je.GODS_ID=e.GODS_ID and je.UNIT_ID=e.UNIT_ID ');
+        'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) e on je.TENANT_ID=e.TENANT_ID and je.PROPERTY_02=e.PROPERTY_02 and je.PROPERTY_01=e.PROPERTY_01 and je.GODS_ID=e.GODS_ID and je.UNIT_ID=e.UNIT_ID ');
 
         case QueryType of
           1:begin

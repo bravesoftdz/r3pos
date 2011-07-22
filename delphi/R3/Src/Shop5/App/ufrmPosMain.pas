@@ -1195,10 +1195,10 @@ end;
 procedure TfrmPosMain.FormShow(Sender: TObject);
 begin
   inherited;
-  if ShopGlobal.OffLine then
-     RzStatusPane1.Caption := 'ÀëÏß×´Ì¬'
-  else
-     RzStatusPane1.Caption := 'Áª»ú×´Ì¬';
+//  if ShopGlobal.OffLine then
+//     RzStatusPane1.Caption := 'ÀëÏß×´Ì¬'
+//  else
+//     RzStatusPane1.Caption := 'Áª»ú×´Ì¬';
   LoadFile('H');
 end;
 
@@ -1206,6 +1206,11 @@ procedure TfrmPosMain.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
   DBGridEh1.ReadOnly := true;
+  case dbState of
+  dsInsert:RzStatusPane1.Caption := 'ÐÂµ¥×´Ì¬';
+  dsEdit:RzStatusPane1.Caption := 'ÐÞ¸Ä×´Ì¬';
+  else RzStatusPane1.Caption := 'ä¯ÀÀ×´Ì¬';
+  end;
 end;
 
 procedure TfrmPosMain.FormDestroy(Sender: TObject);

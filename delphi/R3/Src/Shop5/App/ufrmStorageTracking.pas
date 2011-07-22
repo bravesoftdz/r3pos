@@ -468,7 +468,7 @@ begin
   'select ja.*,round(ja.NEW_OUTPRICE*ja.AMOUNT,2) as SALE_MNY,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
   'left outer join VIW_SIZE_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.PROPERTY_01=a.SIZE_ID) jb '+
   'left outer join VIW_COLOR_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.PROPERTY_02=b.COLOR_ID) jc '+
-  'left outer join VIW_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
   'order by jc.SHOP_ID,jc.GODS_CODE ';
   
 end;
@@ -870,7 +870,7 @@ begin
   'cast(case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as STOCK_AMT,'+
   'case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end*F.NEW_INPRICE as STOCK_MNY '+
   'from ('+StrSql+') jc left outer join VIW_GOODSINFO F on jc.TENANT_ID=F.TENANT_ID and jc.GODS_ID=F.GODS_ID '+
-  'left outer join VIW_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and '+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+'=c.UNIT_ID '+
+  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and '+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+'=c.UNIT_ID '+
   'order by f.GODS_CODE ';
 
 end;
@@ -1011,7 +1011,7 @@ begin
   'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.0,1) else 0 end as CAN_SALE_DAY,'+
   'case when isnull(jc.MTH_SALE_AMT,0)<>0 then cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.MTH_SALE_AMT,0) as decimal(18,3))*1.0 else 0 end as RATE '+
   'from ('+StrSql+') jc '+
-  'left outer join VIW_BARCODE c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
   'order by jc.GODS_CODE ';
 
 end;

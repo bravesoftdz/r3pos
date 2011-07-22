@@ -1196,6 +1196,7 @@ inherited frmXsmLogin: TfrmXsmLogin
       Properties.EchoMode = eemPassword
       TabOrder = 2
       ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
+      OnKeyPress = edtPasswordKeyPress
     end
     object edtUsername: TcxTextEdit
       Left = 119

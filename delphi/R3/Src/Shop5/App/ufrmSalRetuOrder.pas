@@ -184,8 +184,8 @@ begin
   while not cdsDetail.Eof do cdsDetail.Delete;
   Factor.BeginBatch;
   try
-    Factor.AddBatch(cdsHeader,'TSalesOrder');
-    Factor.AddBatch(cdsDetail,'TSalesData');
+    Factor.AddBatch(cdsHeader,'TSalRetuOrder');
+    Factor.AddBatch(cdsDetail,'TSalRetuData');
     Factor.CommitBatch;
     Saved := true;
   except

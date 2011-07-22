@@ -27,6 +27,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure cxbtnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure edtPasswordKeyPress(Sender: TObject; var Key: Char);
   private
     Fflag: integer;
     procedure Setflag(const Value: integer);
@@ -193,6 +194,12 @@ begin
   if FileExists(ExtractFilePath(ParamStr(0))+'login.jpg') then
      imgLogin.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'login.jpg');
 
+end;
+
+procedure TfrmXsmLogin.edtPasswordKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then cxBtnOk.OnClick(cxBtnOk);
 end;
 
 end.

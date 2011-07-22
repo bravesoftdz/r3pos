@@ -164,12 +164,12 @@ begin
      ',BATCH_NO'+
      ',LOCUS_NO'+
      ',APRICE'+
-     ',(case when ORDER_TYPE in (11,12,21,22,24) then AMOUNT else -AMOUNT end) as AMOUNT'+
-     ',(case when ORDER_TYPE in (11,12,21,22,24) then CALC_MONEY else -CALC_MONEY end) as AMONEY '+
-    'from VIW_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSINFO C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-    ' '+ strWhere + ' ';
-    
+     ',(case when ORDER_TYPE in (21,22,23,24) then -AMOUNT else AMOUNT end) as AMOUNT'+  //销售的转成负数
+     ',(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as AMONEY '+
+     ' from VIW_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSINFO C '+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+     ' '+ strWhere + ' ';
+
   //关联商品表：
   strSql :=
     'select j.*'+

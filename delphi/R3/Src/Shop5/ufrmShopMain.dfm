@@ -4413,6 +4413,8 @@ inherited frmShopMain: TfrmShopMain
   object RzTrayIcon1: TRzTrayIcon
     HideOnMinimize = False
     PopupMenu = PopupMenu
+    OnMinimizeApp = RzTrayIcon1MinimizeApp
+    OnRestoreApp = RzTrayIcon1RestoreApp
     OnLButtonDblClick = RzTrayIcon1LButtonDblClick
     Left = 296
     Top = 216

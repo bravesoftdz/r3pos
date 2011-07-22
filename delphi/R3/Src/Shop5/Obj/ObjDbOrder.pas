@@ -98,7 +98,7 @@ begin
               'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.PROPERTY_01,A.PROPERTY_02,A.BATCH_NO,B.IS_PRESENT,B.LOCUS_NO,B.BOM_ID from STO_STORAGE A,SAL_SALESDATA B '+
               'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=B.GODS_ID and A.PROPERTY_01=B.PROPERTY_01 and A.PROPERTY_02=B.PROPERTY_02 and A.BATCH_NO=B.BATCH_NO '+
               ' and A.AMOUNT<0 and B.SALES_ID=:SALES_ID and B.SHOP_ID=:SHOP_ID and B.TENANT_ID=:TENANT_ID '+
-              ') j left outer join VIW_GOODSINFO b on j.GODS_ID=b.GODS_ID and j.TENANT_ID=b.TENANT_ID '+
+              ') j inner join VIW_GOODSINFO b on j.GODS_ID=b.GODS_ID and j.TENANT_ID=b.TENANT_ID '+
               ') jp1 left outer join VIW_SIZE_INFO p1 on jp1.PROPERTY_01=p1.SIZE_ID and jp1.TENANT_ID=p1.TENANT_ID'+
               ') jp2 left outer join VIW_COLOR_INFO p2 on jp2.PROPERTY_02=p2.COLOR_ID and jp2.TENANT_ID=p2.TENANT_ID';
           rs.Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
@@ -276,7 +276,7 @@ begin
                'j.COST_PRICE/case when J.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when J.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as COST_APRICE,'+
                'round(j.COST_PRICE*j.CALC_AMOUNT,2)/case when J.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when J.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as COST_MONEY,'+
                'j.HAS_INTEGRAL,j.REMARK,b.BARCODE from SAL_SALESDATA j inner join SAL_SALESORDER j1 on j.TENANT_ID=j1.TENANT_ID and j.SALES_ID=j1.SALES_ID '+
-               ' left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.SALES_ID=:SALES_ID order by SEQNO';
+               ' inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.SALES_ID=:SALES_ID order by SEQNO';
   IsSQLUpdate := True;
   Str := 'insert into SAL_SALESDATA(TENANT_ID,SHOP_ID,SALES_ID,SEQNO,GODS_ID,PROPERTY_01,PROPERTY_02,BATCH_NO,LOCUS_NO,BOM_ID,UNIT_ID,AMOUNT,ORG_PRICE,'+
       'POLICY_TYPE,IS_PRESENT,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,BARTER_INTEGRAL,HAS_INTEGRAL,REMARK,COST_PRICE) '

@@ -1371,6 +1371,7 @@ inherited frmLogin: TfrmLogin
     Properties.EchoMode = eemPassword
     TabOrder = 3
     ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
+    OnKeyPress = cxedtPasswrdKeyPress
   end
   object edtOPER_DATE: TcxDateEdit [13]
     Left = 111

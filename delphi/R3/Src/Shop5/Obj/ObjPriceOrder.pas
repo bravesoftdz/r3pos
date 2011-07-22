@@ -178,7 +178,7 @@ begin
     '(select j.TENANT_ID,j.PROM_ID,j.SEQNO,j.GODS_ID,''#'' as BATCH_NO,0 as IS_PRESENT,b.CALC_UNITS as UNIT_ID,''#'' as PROPERTY_01,''#'' as PROPERTY_02,'+
     'j.NEW_OUTPRICE as OUT_PRICE,j.NEW_OUTPRICE1 as OUT_PRICE1,j.NEW_OUTPRICE2 as OUT_PRICE2,j.AGIO_RATE,j.RATE_OFF,j.ISINTEGRAL,b.GODS_NAME,b.GODS_CODE,b.SMALL_UNITS,b.CALC_UNITS,b.BIG_UNITS,b.NEW_OUTPRICE   '+
     ' from SAL_PRICEDATA j '+
-    ' left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
+    ' inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID '+
     //' left outer join VIW_GOODSPRICE c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID '+
     'where j.TENANT_ID=:TENANT_ID and j.PROM_ID=:PROM_ID) tmp order by SEQNO ';
     

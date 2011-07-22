@@ -403,6 +403,8 @@ type
     procedure RzTrayIcon1LButtonDblClick(Sender: TObject);
     procedure actfrmSaleMonthTotalReportExecute(Sender: TObject);
     procedure rzPageChange(Sender: TObject);
+    procedure RzTrayIcon1MinimizeApp(Sender: TObject);
+    procedure RzTrayIcon1RestoreApp(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -3424,7 +3426,7 @@ begin
     rimurl := trim(Params.ParambyName('rimurl').AsString);
     rimuid := Params.ParambyName('rimuid').AsString;
     rimpwd := Params.ParambyName('rimpwd').AsString;
-    if rimurl='' then Raise Exception.Create('无法连接到RIM服务主机，请和实施人员联系.'); 
+    if rimurl='' then Raise Exception.Create('无法连接到零售终端服务主机，请和实施人员联系.'); 
     if rimuid='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.'); 
   finally
     Params.Free;
@@ -3845,6 +3847,22 @@ begin
      end;
   TfrmCostCalc.CheckMonthReck(self);
 
+end;
+
+procedure TfrmShopMain.RzTrayIcon1MinimizeApp(Sender: TObject);
+var Form:TForm;
+begin
+  inherited;
+  Form := FindChildForm(TfrmPosMain);
+  if Form<>nil then Form.WindowState := wsMinimized;
+end;
+
+procedure TfrmShopMain.RzTrayIcon1RestoreApp(Sender: TObject);
+var Form:TForm;
+begin
+  inherited;
+  Form := FindChildForm(TfrmPosMain);
+  if Form<>nil then Form.WindowState := wsMaximized;
 end;
 
 end.

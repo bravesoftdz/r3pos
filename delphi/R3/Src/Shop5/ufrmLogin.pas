@@ -45,6 +45,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure RzLabel1Click(Sender: TObject);
     procedure cbxTenantPropertiesChange(Sender: TObject);
+    procedure cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
   private
     FLoginParam:TLoginParam;
     FSysID: TGuid;
@@ -402,6 +403,12 @@ begin
        Global.LocalFactory.ExecSQL('update SYS_DEFINE set VALUE='''+TRecord_(cbxTenant.Properties.Items.Objects[cbxTenant.ItemIndex]).FieldByName('TENANT_ID').AsString+''' where TENANT_ID=0 and DEFINE=''TENANT_ID''');
        self.ModalResult := mrRetry;
      end;
+end;
+
+procedure TfrmLogin.cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key=#13 then cxBtnOk.OnClick(cxBtnOk);
 end;
 
 end.

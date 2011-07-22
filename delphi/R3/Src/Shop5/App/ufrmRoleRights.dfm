@@ -1,6 +1,6 @@
 inherited frmRoleRights: TfrmRoleRights
-  Left = 456
-  Top = 197
+  Left = 179
+  Top = 160
   Caption = #35282#33394#25480#26435
   ClientHeight = 385
   ClientWidth = 385
@@ -173,8 +173,8 @@ inherited frmRoleRights: TfrmRoleRights
           object Image2: TImage
             Left = 8
             Top = 8
-            Width = 73
-            Height = 49
+            Width = 51
+            Height = 48
             Picture.Data = {
               0A544A504547496D61676568060000FFD8FFE000104A46494600010101006000
               600000FFDB0043000302020302020303030304030304050805050404050A0707
@@ -232,9 +232,9 @@ inherited frmRoleRights: TfrmRoleRights
           object Label5: TLabel
             Left = 123
             Top = 41
-            Width = 180
-            Height = 12
-            Caption = '['#21246#25321']'#26159#21542#21551#29992#25968#25454#26435#38480#31649#21046#21151#33021
+            Width = 240
+            Height = 24
+            Caption = #25968#25454#26435#38480#26159#23545#20851#38190#24615#25968#25454#30340#26597#30475#25511#21046#65281#13#21551#29992#21518#65292#35831#21040#29992#25143#26723#26696#27169#22359#35774#32622#25968#25454#26597#30475#26435#38480
           end
           object Label6: TLabel
             Left = 88
@@ -253,9 +253,9 @@ inherited frmRoleRights: TfrmRoleRights
           end
           object DBGridEh3: TDBGridEh
             Left = 0
-            Top = 76
+            Top = 95
             Width = 371
-            Height = 243
+            Height = 224
             Align = alBottom
             AllowedOperations = [alopUpdateEh]
             DataSource = DsDataRight
@@ -310,10 +310,20 @@ inherited frmRoleRights: TfrmRoleRights
           end
           object Panel2: TPanel
             Left = -11
-            Top = 65
+            Top = 70
             Width = 382
             Height = 2
             TabOrder = 1
+          end
+          object ChkRights: TcxCheckBox
+            Left = 11
+            Top = 73
+            Width = 170
+            Height = 21
+            Properties.DisplayUnchecked = 'False'
+            Properties.OnChange = ChkRightsPropertiesChange
+            Properties.Caption = #26159#21542#21551#29992#25968#25454#26435#38480#31649#21046#21151#33021
+            TabOrder = 2
           end
         end
       end

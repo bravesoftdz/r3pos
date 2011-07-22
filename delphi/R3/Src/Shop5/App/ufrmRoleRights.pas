@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   jpeg, StdCtrls, RzButton, ComCtrls, RzTreeVw,ADODB,DB, zBase, DBClient,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset, Grids, DBGridEh;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, Grids, DBGridEh,
+  cxControls, cxContainer, cxEdit, cxCheckBox;
 
 type
   TfrmRoleRights = class(TframeDialogForm)
@@ -33,6 +34,7 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Panel2: TPanel;
+    ChkRights: TcxCheckBox;
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -42,6 +44,7 @@ type
       NewState: TRzCheckState; var AllowChange: Boolean);
     procedure rzCheckTreeStateChange(Sender: TObject; Node: TTreeNode;
       NewState: TRzCheckState);
+    procedure ChkRightsPropertiesChange(Sender: TObject);
   private
     Role_ID:string;
     RIGHTData:String;
@@ -158,6 +161,7 @@ begin
   OpenRight;
   OpenDataRight;
   rzCheckTree.SetFocus;
+  DBGridEh3.Enabled := False;
   if rzCheckTree.Items.Count>0 then rzCheckTree.TopItem.Selected:=True;
   RzPage.ActivePageIndex := 0;
 end;
@@ -352,9 +356,11 @@ end;
 procedure TfrmRoleRights.OpenDataRight;
 var i:Integer;
     rs:TZQuery;
+    IsRight:Boolean;
 begin
   rs := TZQuery.Create(nil);
-    CdsDataRight.DisableControls;
+  CdsDataRight.DisableControls;
+  IsRight := False;
   try
     CdsDataRight.SQL.Text := ' select 0 as selflag,CODE_NAME from PUB_PARAMS where TYPE_CODE=''DATA_TYPE'' order by CODE_ID ';
     Factor.Open(CdsDataRight);
@@ -362,7 +368,6 @@ begin
     rs.Close;
     rs.SQL.Text := 'select RIGHT_FORDATA from CA_ROLE_INFO where ROLE_ID='+QuotedStr(Role_ID);
     Factor.Open(rs);
-
 
     if Trim(rs.FieldByName('RIGHT_FORDATA').AsString) <> '' then
       begin
@@ -374,10 +379,12 @@ begin
             CdsDataRight.Edit;
             CdsDataRight.FieldByName('selflag').AsInteger := StrToInt(Copy(RIGHTData,i,1));
             CdsDataRight.Post;
+            if CdsDataRight.FieldByName('selflag').AsInteger = 1 then IsRight := True;
             CdsDataRight.Next;
             inc(i);
           end;
       end;
+    ChkRights.Checked := IsRight;
   finally
     rs.Free;
     CdsDataRight.EnableControls;
@@ -403,6 +410,7 @@ begin
         DataRight := DataRight + CdsDataRight.FieldByName('selflag').AsString;
         CdsDataRight.Next;
       end;
+    if not ChkRights.Checked then DataRight := '00';
     if RIGHTData <> '' then
       RIGHTData := DataRight + Copy(RIGHTData,3,50)
     else
@@ -416,6 +424,12 @@ begin
     rs.Free;
     Params.Free;
   end;
+end;
+
+procedure TfrmRoleRights.ChkRightsPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  DBGridEh3.Enabled := ChkRights.Checked;
 end;
 
 end.

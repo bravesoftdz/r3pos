@@ -359,7 +359,7 @@ begin
     'isnull(a.REGION_ID,''#'') as CREGION_ID,'+
     'j.SREGION_ID as SREGION_ID1,j.SREGION_ID as SREGION_ID2 '+
     'from ('+strSql+') j '+
-    'left outer join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
+    'inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
     'left outer join VIW_CUSTOMER a on j.TENANT_ID=a.TENANT_ID and j.CLIENT_ID=a.CLIENT_ID ';
 
   strSql :=

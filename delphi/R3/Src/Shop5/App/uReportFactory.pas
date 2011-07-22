@@ -802,6 +802,7 @@ begin
     end;
     rs.Post;
   end;
+  rs.First;
 end;
 
 procedure TReportFactory.InitCondi(RCondi: pRCondi);

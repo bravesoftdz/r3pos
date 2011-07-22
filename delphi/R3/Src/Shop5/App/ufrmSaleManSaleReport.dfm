@@ -11,10 +11,10 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
       Width = 1075
       inherited RzPage: TRzPageControl
         Width = 870
-        ActivePage = TabSheet5
+        ActivePage = TabSheet3
         Color = clWhite
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite

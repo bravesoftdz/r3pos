@@ -516,7 +516,7 @@ begin
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:begin
       GoodTab:='VIW_GOODSPRICE_SORTEXT';
-      lv := ',C.LEVEL_ID';
+      lv := ',((case when C.RELATION_ID=0 then ''9999999'' else '+IntToVarchar('C.RELATION_ID')+' end)'+GetStrJoin(Factor.iDbType)+'isnull(C.LEVEL_ID,''''))';
       lv1 := ',LEVEL_ID';
     end;
   else
@@ -538,7 +538,7 @@ begin
       ',sum(BAL_RTL) as BAL_RTL'+
       ' from '+
        '(SELECT '+
-       ' A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID '+
+       ' A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+' as LEVEL_ID,C.RELATION_ID '+
        ',AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+    //库存数量
        ',AMONEY as BAL_CST '+                 //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
@@ -581,11 +581,11 @@ begin
           ',case when sum(nvl(BAL_AMT,0))<>0 then cast(sum(nvl(BAL_RTL,0)) as decimal(18,3))*1.00/cast(sum(nvl(BAL_AMT,0)) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
           ',sum(nvl(BAL_RTL,0)) as BAL_RTL '+
           ',j.LEVEL_ID as LEVEL_ID '+
-          ',substring(''                       '',1,len(j.LEVEL_ID)+1)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
+          ',substring(''                       '',1,len(j.LEVEL_ID)-6)'+GetStrJoin(Factor.iDbType)+'j.SORT_NAME as SORT_NAME,j.RELATION_ID as SORT_ID '+
           'from ('+
-          'select 2 as A,RELATION_ID,SORT_ID,SORT_NAME,isnull(LEVEL_ID,'' '') as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')'+
+          'select 2 as A,RELATION_ID,SORT_ID,SORT_NAME,((case when RELATION_ID=0 then ''9999999'' else '+IntToVarchar('RELATION_ID')+' end)'+GetStrJoin(Factor.iDbType)+'isnull(LEVEL_ID,'''')) as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1 and COMM not in (''02'',''12'')'+
           'union all '+
-          'select distinct 1 as A,RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,'''' as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+
+          'select distinct 1 as A,RELATION_ID,'+IntToVarchar('RELATION_ID')+' as SORT_ID,RELATION_NAME as SORT_NAME,(case when RELATION_ID=0 then ''9999999'' else '+IntToVarchar('RELATION_ID')+' end) as LEVEL_ID from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+
           ' and SORT_TYPE=1 and COMM not in (''02'',''12'')) j '+
           'left outer join ('+strSql+') r on j.RELATION_ID=r.RELATION_ID '+JoinCnd+
           ' group by j.A,j.RELATION_ID,j.LEVEL_ID,j.SORT_NAME '+
@@ -847,7 +847,7 @@ begin
   case CodeID of
    1:  //商品分类[带供应链接]
     begin
-      sid4:=trim(adoReport3.fieldbyName('LEVEL_ID').AsString);
+      sid4:=Copy(trim(adoReport3.fieldbyName('LEVEL_ID').AsString),8,200);
       srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
       fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
     end;

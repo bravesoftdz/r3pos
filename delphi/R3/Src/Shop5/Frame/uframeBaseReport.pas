@@ -1139,7 +1139,7 @@ begin
         RsGrid.First;
         while not RsGrid.Eof do
         begin
-          if trim(RsGrid.FieldByName('LEVEL_ID').AsString)='' then
+          if length(RsGrid.FieldByName('LEVEL_ID').AsString)=7 then
           begin
             for i:=Low(AryFields) to High(AryFields) do
             begin
@@ -1691,7 +1691,5 @@ begin
     smNoneEh,smDownEh:     begin       Column.Title.SortMarker := smUpEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';     end;    smUpEh:     begin       Column.Title.SortMarker := smDownEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC';     end;
   end;
 end;
-
-
 
 end.

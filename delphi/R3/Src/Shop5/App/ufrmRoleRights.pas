@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   jpeg, StdCtrls, RzButton, ComCtrls, RzTreeVw,ADODB,DB, zBase, DBClient,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, Grids, DBGridEh;
 
 type
   TfrmRoleRights = class(TframeDialogForm)
@@ -23,6 +23,16 @@ type
     Ca_Modle: TZQuery;
     Label3: TLabel;
     TabSheet2: TRzTabSheet;
+    RzPanel1: TRzPanel;
+    DBGridEh3: TDBGridEh;
+    CdsDataRight: TZQuery;
+    DsDataRight: TDataSource;
+    Label4: TLabel;
+    Image2: TImage;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Panel2: TPanel;
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -45,6 +55,8 @@ type
     procedure InitialParams(InRole_ID,Role_NAME,REMARK:string); //初始化参数
     procedure OpenRight;  //传入DutyID返回Role的权限List
     procedure SaveRight;
+    procedure OpneDataRight;
+    procedure SaveDataRight;
     property ModiRight:boolean read FModiRight write SetModiRight;
   end;
 
@@ -53,7 +65,7 @@ var
 
 implementation
 
-uses uDsUtil,uGlobal,uTreeUtil,uShopGlobal;
+uses uDsUtil,uGlobal,uTreeUtil,uShopGlobal, ufrmBasic;
 
 {$R *.dfm}
 
@@ -86,6 +98,8 @@ procedure TfrmRoleRights.InitialParams(InRole_ID, Role_NAME, REMARK: string);
 begin
   ROLE_ID:=InRole_ID;
   Label1.Caption:=Role_NAME;
+  Label7.Caption := Role_NAME;
+
   Label2.Caption:=REMARK;
   {
   ccid:=ShopGlobal.GetCOMP_ID(Global.UserID);
@@ -99,6 +113,7 @@ procedure TfrmRoleRights.btnOkClick(Sender: TObject);
 begin
   inherited;
   SaveRight;
+  SaveDataRight;
   ModalResult:=MROK;
 end;
 
@@ -139,8 +154,10 @@ begin
   GetOPRight;     //返回当前操作员的所拥有权限数据包 [ 限制他能授权的在其所拥有权限范围内 ]
   InitCheckTree;
   OpenRight;
+  OpneDataRight;
   rzCheckTree.SetFocus;
   if rzCheckTree.Items.Count>0 then rzCheckTree.TopItem.Selected:=True;
+  RzPage.ActivePageIndex := 0;
 end;
 
 procedure TfrmRoleRights.rzCheckTreeCustomDrawItem(Sender: TCustomTreeView;
@@ -327,6 +344,71 @@ begin
     end;
     //判断是否存在没有在RoleRight内的模块功能
     Factor.UpdateBatch(RoleRight,'TRoleRigths',nil);
+  end;
+end;
+
+procedure TfrmRoleRights.OpneDataRight;
+var i:Integer;
+    rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+    CdsDataRight.DisableControls;
+  try
+    CdsDataRight.SQL.Text := ' select 0 as selflag,CODE_NAME from PUB_PARAMS where TYPE_CODE=''DATA_TYPE'' order by CODE_ID ';
+    Factor.Open(CdsDataRight);
+
+    rs.Close;
+    rs.SQL.Text := 'select RIGHT_FORDATA from CA_ROLE_INFO where ROLE_ID='+QuotedStr(Role_ID);
+    Factor.Open(rs);
+
+
+    if rs.FieldByName('RIGHT_FORDATA').AsString <> '' then
+      begin
+        i := 1;
+        CdsDataRight.First;
+        while not CdsDataRight.Eof do
+          begin
+            CdsDataRight.Edit;
+            CdsDataRight.FieldByName('selflag').AsInteger := StrToInt(Copy(rs.FieldByName('RIGHT_FORDATA').AsString,i,1));
+            CdsDataRight.Post;
+            CdsDataRight.Next;
+            inc(i);
+          end;
+      end;
+  finally
+    rs.Free;
+    CdsDataRight.EnableControls;
+  end;
+end;
+
+procedure TfrmRoleRights.SaveDataRight;
+var rs:TZQuery;
+    Params:TftParamList;
+    DataRight:String;
+begin
+  rs := TZQuery.Create(nil);
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger :=ShopGlobal.TENANT_ID;
+    Params.ParamByName('ROLE_ID').AsString := Role_ID;
+    rs.Close;
+    Factor.Open(rs,'TRoleInfo',Params);
+
+    CdsDataRight.First;
+    while not CdsDataRight.Eof do
+      begin
+        DataRight := DataRight + CdsDataRight.FieldByName('selflag').AsString;
+        CdsDataRight.Next;
+      end;
+
+    rs.Edit;
+    rs.FieldByName('RIGHT_FORDATA').AsString := DataRight;
+    rs.Post;
+
+    Factor.UpdateBatch(rs,'TRoleInfo',nil)
+  finally
+    rs.Free;
+    Params.Free;
   end;
 end;
 

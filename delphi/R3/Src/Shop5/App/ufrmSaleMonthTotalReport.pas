@@ -575,7 +575,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE';
+    rs.SQL.Text := 'select max(CREA_DATE) from RCK_GOODS_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('CREA_DATE').AsInteger := e;
     Factor.Open(rs);

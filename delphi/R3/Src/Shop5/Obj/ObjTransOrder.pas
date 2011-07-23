@@ -31,7 +31,8 @@ implementation
 { TTransOrder }
 
 function TTransOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-var Str:String;
+var
+  Str:String;
 begin
   if not lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前帐款已经被另一用户修改，你不能再保存。');
   Str := 'update ACC_ACCOUNT_INFO set IN_MNY=round(:OLD_TRANS_MNY-ifnull(IN_MNY,0),2),BALANCE=round(:OLD_TRANS_MNY-ifnull(BALANCE,0),2),COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+

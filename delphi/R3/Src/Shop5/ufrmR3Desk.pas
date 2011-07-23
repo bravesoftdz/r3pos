@@ -55,6 +55,7 @@ type
     Image13: TImage;
     btnSaleDayReport: TRzBmpButton;
     btnSaleMonthReport: TRzBmpButton;
+    mnuAcct: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnDownOrderClick(Sender: TObject);
@@ -79,6 +80,7 @@ type
     procedure Image10Click(Sender: TObject);
     procedure btnSaleDayReportClick(Sender: TObject);
     procedure btnSaleMonthReportClick(Sender: TObject);
+    procedure mnuAcctClick(Sender: TObject);
   private
     FHookLocked: boolean;
     FCA_MODULE: TZQuery;
@@ -340,11 +342,23 @@ begin
        if rc>0 then AddLine;
        AddPopupMenu(FindAction('actfrmDbOrderList'));
      end;
+  if btn=mnuAcct then
+     begin
+       AddPopupMenu(FindAction('actfrmAccount'));
+       AddPopupMenu(FindAction('actfrmCodeInfo3'));
+       if rc>0 then AddLine;
+       AddPopupMenu(FindAction('actfrmPayOrderList'));
+       AddPopupMenu(FindAction('actfrmRecvOrderList'));
+       AddPopupMenu(FindAction('actfrmRecvForDay'));
+       AddPopupMenu(FindAction('actfrmTransOrderList'));
+       if rc>0 then AddLine;
+       AddPopupMenu(FindAction('actfrmMonthClose'));
+       AddPopupMenu(FindAction('actfrmRckMng'));
+     end;
   if btn=mnuBase then
      begin
        AddPopupMenu(FindAction('actfrmGoodsSort'));
        AddPopupMenu(FindAction('actfrmMeaUnits'));
-//       AddPopupMenu(FindAction('actfrmDefineStateInfo'));
        AddPopupMenu(FindAction('actfrmGoodsInfoList'));
        AddPopupMenu(FindAction('actfrmRelation'));
        if rc>0 then AddLine;
@@ -364,9 +378,6 @@ begin
      begin
        AddPopupMenu(FindAction('actfrmSysDefine'));
        AddPopupMenu(FindAction('actfrmDevFactory'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmMonthClose'));
-       AddPopupMenu(FindAction('actfrmRckMng'));
        if rc>0 then AddLine;
        AddPopupMenu(FindAction('actfrmMessage'));
        AddPopupMenu(FindAction('actfrmLockScreen'));
@@ -551,6 +562,13 @@ begin
   if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
   if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
   Action.OnExecute(Action);
+end;
+
+procedure TfrmR3Desk.mnuAcctClick(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,MSC_POPUP,integer(mnuAcct),0);
+
 end;
 
 end.

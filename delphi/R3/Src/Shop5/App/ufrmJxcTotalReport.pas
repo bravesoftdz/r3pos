@@ -1198,7 +1198,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select max(MONTH) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH<=:END_MONTH';
+    rs.SQL.Text := 'select max(MONTH) from RCK_GOODS_MONTH where TENANT_ID=:TENANT_ID and MONTH<=:END_MONTH';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('END_MONTH').AsInteger := e;
     Factor.Open(rs);

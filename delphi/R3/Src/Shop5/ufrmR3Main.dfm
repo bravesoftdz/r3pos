@@ -20804,13 +20804,13 @@ inherited frmR3Main: TfrmR3Main
     end
     object actfrmRecvOrderList: TAction
       Tag = 21300001
-      Caption = #25910#27454#21333
+      Caption = #24212#25910#36134#27454
       Enabled = False
       OnExecute = actfrmRecvOrderListExecute
     end
     object actfrmPayOrderList: TAction
       Tag = 21400001
-      Caption = #20184#27454#21333
+      Caption = #24212#20184#36134#27454
       Enabled = False
       OnExecute = actfrmPayOrderListExecute
     end

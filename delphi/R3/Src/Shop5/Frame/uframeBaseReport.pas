@@ -1369,6 +1369,7 @@ begin
     if SetCol<>nil then
       SetCol.Free;
   end;
+  RefreshColumn;
 end;
 
 procedure TframeBaseReport.FormDestroy(Sender: TObject);

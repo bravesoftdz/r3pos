@@ -59,7 +59,7 @@ public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
 const
-  ComVersion='3.0.1.21';
+  ComVersion='3.0.1.22';
 var
   FldXdict:TZReadonlyQuery;
   SyncTimeStamp,LastUpdateTimeStamp:Int64;

@@ -58,18 +58,19 @@ select
 from RM_CUST;
 
 --创建视图：RIM_SD_CO (订单主表)
+drop view RIM_SD_CO;
 create view RIM_SD_CO
 as
 select 
   CO_NUM,      --订单号ID
   COM_ID,      --供应商公司ID
   CUST_ID,     --客户编号（零售户）ID
-  CRT_DATE,    --创建日期
-  BORN_DATE,   --生效日期 为客户保留库存
-  ARR_DATE,    --送达日期, 承诺订单的商品送达到客户手中的日期
+  to_char(CRT_DATE,'yyyymmdd')as CRT_DATE,  --创建日期
+  to_char(BORN_DATE,'yyyymmdd')as BORN_DATE,  --生效日期 为客户保留库存
+  to_char(ARR_DATE,'yyyymmdd')as ARR_DATE,  --送达日期, 承诺订单的商品送达到客户手中的日期
   QTY_SUM,     --数量合计  
   AMT_SUM,     --应收金额合计
-  STATUS       --单据状态		
+  (case when STATUS='00' then '05' else STATUS end) as STATUS       --单据状态		
 from SD_CO;
 
 --创建视图：RIM_SD_CO_LINE ( 订单明明细表)

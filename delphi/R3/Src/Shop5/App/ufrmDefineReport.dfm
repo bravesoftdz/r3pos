@@ -12,7 +12,7 @@ inherited frmDefineReport: TfrmDefineReport
     Color = clWhite
     inherited RzPage: TRzPageControl
       Top = 91
-      Height = 240
+      Height = 251
       ActivePage = TabSheet2
       TabIndex = 1
       FixedDimension = 20
@@ -20,14 +20,14 @@ inherited frmDefineReport: TfrmDefineReport
         Color = clWhite
         Caption = #34920#22836#34892
         inherited RzPanel2: TRzPanel
-          Height = 213
+          Height = 224
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 439
-            Height = 203
+            Width = 447
+            Height = 214
             Align = alClient
             AutoFitColWidths = True
             DataSource = CdsReportTemplate
@@ -130,10 +130,10 @@ inherited frmDefineReport: TfrmDefineReport
               end>
           end
           object RzPanel1: TRzPanel
-            Left = 444
+            Left = 452
             Top = 5
             Width = 78
-            Height = 203
+            Height = 214
             Align = alRight
             BorderOuter = fsNone
             Color = clWhite
@@ -329,8 +329,8 @@ inherited frmDefineReport: TfrmDefineReport
         object RzPanel5: TRzPanel
           Left = 0
           Top = 0
-          Width = 527
-          Height = 213
+          Width = 535
+          Height = 224
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -338,10 +338,10 @@ inherited frmDefineReport: TfrmDefineReport
           Color = clWhite
           TabOrder = 0
           object RzPanel4: TRzPanel
-            Left = 444
+            Left = 452
             Top = 5
             Width = 78
-            Height = 203
+            Height = 214
             Align = alRight
             BorderOuter = fsNone
             Color = clWhite
@@ -506,8 +506,8 @@ inherited frmDefineReport: TfrmDefineReport
           object DBGridEh2: TDBGridEh
             Left = 5
             Top = 5
-            Width = 439
-            Height = 203
+            Width = 447
+            Height = 214
             Align = alClient
             DataSource = CdsReportTemplate1
             Flat = True
@@ -711,7 +711,7 @@ inherited frmDefineReport: TfrmDefineReport
     object RzPanel3: TRzPanel
       Left = 5
       Top = 5
-      Width = 531
+      Width = 539
       Height = 86
       Align = alTop
       BorderOuter = fsNone

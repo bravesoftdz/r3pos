@@ -265,13 +265,14 @@ procedure TGlobal.LoadBasic(Saveed:Boolean=false;Opened:Boolean=true);
 var i:Integer;
 begin
   frmLogo.Label1.Caption := '初始化数据,请稍候...';
-  frmLogo.Label1.Update;
+  frmLogo.Update;
   frmLogo.ProgressBar1.Max := ComponentCount;
   for i:=0 to ComponentCount -1 do
     begin
       frmLogo.ProgressBar1.Position := i;
       if Components[i] Is TZQuery then
          begin
+           frmLogo.ShowTitle := '正在准备数据>'+Components[i].Name;
            Sleep(0);
            TZQuery(Components[i]).Close;
            TZQuery(Components[i]).Filtered := false;
@@ -499,6 +500,7 @@ begin
        if Trim(TZQuery(Result).SQL.Text) = '' then Exit; 
           Factor.Open(Result);
      end;
+  Result.OnFilterRecord := nil;
   if Result.Filtered then Result.Filtered := false;
   Result.CommitUpdates;
 end;

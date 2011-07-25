@@ -39,8 +39,10 @@ type
     procedure SetWaited(const Value: Boolean);
   protected
     Saved:boolean;
+    id:integer;
     procedure MouseHook(Code: integer; Msg: word;MouseHook: longint);virtual;
     procedure KeyBoardHook(Code: integer; Msg: word;KeyboardHook: longint);virtual;
+    procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -163,11 +165,15 @@ begin
 {$ELSE}
    GetCurrentTask
 {$ENDIF});
+  id:=GlobalAddAtom('AppStore');//'Hotkey'名字可以随便取
+  RegisterHotKey(Handle,id,MOD_CONTROL,VK_F12);
 
 end;
 
 destructor TfrmDesk.Destroy;
 begin
+  UnRegisterHotKey(handle,id);
+  GlobalDeleteAtom(id);
   Clear;
   FButtons.Free;
   FDeletes.Free;
@@ -501,6 +507,17 @@ end;
 procedure TfrmDesk.SetWaited(const Value: Boolean);
 begin
   FWaited := Value;
+end;
+
+procedure TfrmDesk.WMHotKey(var Msg: TWMHotKey);
+begin
+  if msg.HotKey = id then
+     begin
+       if IsIconic(Application.Handle) then
+          Application.Restore
+       else
+          Application.Minimize;
+     end;
 end;
 
 { THsBmButton }

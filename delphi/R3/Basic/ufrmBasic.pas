@@ -285,7 +285,7 @@ begin
   BeforeFreeForm;
   if Assigned(OnFreeForm) then OnFreeForm(self);
   try
-  //SaveFormat;
+  SaveFormat;
   for i:=0 to ComponentCount -1 do
     begin
       try

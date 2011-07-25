@@ -49,9 +49,11 @@ end;
 
 procedure TfrmLogo.SetShowTitle(const Value: string);
 begin
+  if not Visible then Show;
+  BringToFront;
   FShowTitle := Value;
   Label1.Caption := Value;
-  Label1.Update;
+  Update;
 end;
 
 initialization

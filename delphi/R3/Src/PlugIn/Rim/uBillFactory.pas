@@ -119,6 +119,7 @@ begin
           except
             on E:Exception do
             begin
+              LogInfo.AddBillMsg('月台帐',-1);
               WriteRunErrorMsg(E.Message);
               if not ErrorFlag then ErrorFlag:=true;
             end;
@@ -131,6 +132,7 @@ begin
           except
             on E:Exception do
             begin
+              LogInfo.AddBillMsg('销售单',-1);
               WriteRunErrorMsg(E.Message);
               if not ErrorFlag then ErrorFlag:=true;
             end;
@@ -143,6 +145,7 @@ begin
           except
             on E:Exception do
             begin
+              LogInfo.AddBillMsg('调拨单(入)',-1);
               WriteRunErrorMsg(E.Message);
               if not ErrorFlag then ErrorFlag:=true;
             end;
@@ -155,6 +158,7 @@ begin
           except
             on E:Exception do
             begin
+              LogInfo.AddBillMsg('调拨单(出)',-1);
               WriteRunErrorMsg(E.Message);
               if not ErrorFlag then ErrorFlag:=true;
             end;
@@ -167,6 +171,7 @@ begin
           except
             on E:Exception do
             begin
+              LogInfo.AddBillMsg('入库单',-1);
               WriteRunErrorMsg(E.Message);
               if not ErrorFlag then ErrorFlag:=true;
             end;
@@ -179,6 +184,7 @@ begin
           except
             on E:Exception do
             begin
+              LogInfo.AddBillMsg('调整单',-1);
               WriteRunErrorMsg(E.Message);
               if not ErrorFlag then ErrorFlag:=true;
             end;
@@ -256,7 +262,7 @@ begin
              'GODS_ID CHAR(36) NOT NULL,'+          //R3商品ID
              'UNIT_CALC DECIMAL (18,6),'+           //商品计量单位换算管理单位换算值
              'RECK_MONTH VARCHAR(8) NOT NULL'+      //台账月份
-        ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建月台帐临时表出错：'+PlugIntf.GetLastError);
     end;
   end;
@@ -286,7 +292,7 @@ begin
   //第三步: 先删除历史在插入:
   //1、先删除RIM月台账表掉需要重新上报记录:
   Str:='delete from RIM_CUST_MONTH A where A.COM_ID='''+RimParam.ComID+''' and A.CUST_ID='''+RimParam.CustID+''' and '+
-       ' exists(select 1 from '+Session+'INF_RECKMONTH B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.ITEM_ID=B.ITEM_ID and A.MONTH=B.RECK_MONTH)';
+       ' MONTH in (select distinct MONTH from '+Session+'INF_RECKMONTH where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''')';
   if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除月台账历史数据出错：'+PlugIntf.GetLastError);
 
   //2、插入上报记录:
@@ -346,9 +352,10 @@ begin
         '(case when B.UNIT_CALC>0 then DBIN_AMT/B.UNIT_CALC else DBIN_AMT end)as DBIN_AMT,DBIN_MNY,'+      //8: 调入数量、金额
         '(case when B.UNIT_CALC>0 then DBOUT_AMT/B.UNIT_CALC else DBOUT_AMT end)as DBOUT_AMT,DBOUT_MNY,'+  //9: 调出数量、金额
         '(case when B.UNIT_CALC>0 then BAL_AMT/B.UNIT_CALC else BAL_AMT end)as BAL_AMT,BAL_MNY,'+          //10: 期末数量、金额
-        'ADJ_CST,SALE_CST,'+            //11: 单位成本、销售成本
+        '(case when (case when B.UNIT_CALC>0 then SALE_AMT/B.UNIT_CALC else SALE_AMT end)>0 then SALE_CST*1.0/cast((case when B.UNIT_CALC>0 then SALE_AMT/B.UNIT_CALC else SALE_AMT end) as decimal(18,3)) else SALE_CST end) as PJ_CST,'+ //单位成本[]
+        'SALE_CST,'+            //11: 单位成本、销售成本
         'SALE_PRF,0 '+                  //12: 毛利额、贡献毛利
-    'from RCK_GOODS_MONTH A,'+Session+'INF_RECKMONTH B '+
+    'from ('+MonthTab+') A,'+Session+'INF_RECKMONTH B '+   //RCK_GOODS_MONTH
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+ReckMonth+'=B.RECK_MONTH ';
   if PlugIntf.ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('上报月台账数据出错:'+PlugIntf.GetLastError);
 
@@ -356,12 +363,13 @@ begin
   try
     BeginTrans;
     //将月台帐上报的标记位:COMM的第1位设置为：1
-    Str:='update RCK_GOODS_MONTH A set COMM='+GetUpCommStr(DbType)+'  '+
-         ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and '+
-         ' exists(select 1 from '+Session+'INF_RECKMONTH INF where A.TENANT_ID=INF.TENANT_ID and '+ReckMonth+'=INF.RECK_MONTH and A.GODS_ID=INF.GODS_ID)';
+    Str:='update RCK_MONTH_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
+         ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and '+ReckMonth+' in '+
+         ' (select distinct RECK_MONTH from '+Session+'INF_RECKMONTH INF where INF.TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''')';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新月台帐通信标记:'+PlugIntf.GetLastError);
     
-    Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''00'' and TERM_ID='''+RimParam.ShopID+''' ';
+    Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' '+
+         ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''00'' and TERM_ID='''+RimParam.ShopID+''' ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新月台帐上报时间戳出错:'+PlugIntf.GetLastError);
     CommitTrans; //提交事务
     result:=UpiRet;
@@ -410,7 +418,7 @@ begin
              'SALES_ID CHAR(36) NOT NULL,'+     //RIM零售销售单ID
              'SALE_DATE CHAR (8) NOT NULL,'+    //RIM零售销售单日期
              'CUST_CODE varchar (20)'+         //会员号
-             ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建零售单[INF_SALE]错误:'+PlugIntf.GetLastError);
     end;
   end;
@@ -502,7 +510,7 @@ begin
              'DB_ID CHAR(36) NOT NULL,'+       //RIM调拨ID
              'DB_NEWID VARCHAR(40) NOT NULL,'+       //RIM调拨ID(原单据+"_1")
              'DB_DATE CHAR(8) NOT NULL'+         //RIM调拨日期
-             ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售单临时[INF_SALE]错误！');
     end;
   end;
@@ -588,7 +596,7 @@ begin
              'DB_ID CHAR(36) NOT NULL,'+       //RIM调拨ID
              'DB_NEWID VARCHAR(40) NOT NULL,'+       //RIM调拨ID(原单据+"_1")
              'DB_DATE CHAR(8) NOT NULL'+         //RIM调拨日期
-             ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建销售单临时[INF_SALE]错误！');
     end;
   end;
@@ -672,7 +680,7 @@ begin
              'CUST_ID VARCHAR(30) NOT NULL,'+       //零售户ID
              'STOCK_ID CHAR(36) NOT NULL,'+         //入库单ID
              'STOCK_DATE CHAR(8) NOT NULL'+         //入库日期
-             ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建进货入库单临时表[INF_STOCK]错误！');
     end;
   end;
@@ -757,7 +765,7 @@ begin
              'CUST_ID VARCHAR(30) NOT NULL,'+     //RIM零售户ID
              'CHANGE_ID CHAR(36) NOT NULL,'+      //RIM调整单ID
              'CHANGE_DATE CHAR(8) NOT NULL'+         //入库日期
-             ') ON COMMIT PRESERVE ROWS NOT LOGGED ON ROLLBACK PRESERVE ROWS WITH REPLACE ';
+        ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
       if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建〖调整单〗临时[INF_CHANGE]错误！');
     end;
   end;
@@ -865,12 +873,12 @@ begin
     on E:Exception do
     begin
       RollbackTrans;
-      WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE, RimParam.CustID, '01','上报销售单出错！','02');  //写日志
+      WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE, RimParam.CustID, BillType ,'上报销售单出错！','02');  //写日志
       Raise Exception.Create(E.Message);
     end;
   end;
   //执行成功写日志:
-  WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE, RimParam.CustID, '01','上报P销售单成功！','01');
+  WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE, RimParam.CustID, BillType ,'上报销售单成功！','01');
 end;
 
 procedure TBillSyncFactory.SetINFKeyField(const Value: string);

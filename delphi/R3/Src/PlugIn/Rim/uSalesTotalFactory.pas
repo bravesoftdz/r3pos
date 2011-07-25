@@ -82,6 +82,7 @@ begin
           except
             on E:Exception do
             begin
+              LogInfo.AddBillMsg('日销售汇总',-1);
               WriteRunErrorMsg(E.Message);
               if not ErrorFlag then ErrorFlag:=true;
             end;
@@ -94,9 +95,7 @@ begin
       except
         on E:Exception do
         begin
-          sleep(1);
-          //AddLogMsg(0,'R3门店:'+RimParam.ShopID+' —'+RimParam.ShopName+' 许可证号'+RimParam.LICENSE_CODE+' 上报出错：'+'  '+E.Message);
-          Raise Exception.Create(E.Message);
+          PlugIntf.WriteLogFile(Pchar('<810>'+E.Message));
         end;
       end;
       R3ShopList.Next;

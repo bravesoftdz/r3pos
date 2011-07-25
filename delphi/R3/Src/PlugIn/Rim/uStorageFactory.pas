@@ -68,9 +68,6 @@ begin
 
     PlugIntf.CommitTrans;
     result:=iRet1+iRet2+iRet3;
-
-    //上报成功写日志：
-    WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库存成功！','02');
   except
     on E:Exception do
     begin
@@ -79,6 +76,8 @@ begin
       Raise Exception.Create(E.Message);
     end;
   end;
+    //上报成功写日志：
+  WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库存成功！','01');
 end;
 
 function TStorageSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer;
@@ -110,33 +109,41 @@ begin
     R3ShopList.First;
     while not R3ShopList.Eof do
     begin
-      ErrorFlag:=False;
-      RimParam.TenID  :=trim(R3ShopList.fieldbyName('TENANT_ID').AsString);      //R3企业ID (Field: TENANT_ID)
-      RimParam.TenName:=trim(R3ShopList.fieldbyName('TENANT_NAME').AsString);    //R3企业名称 (Field: TENANT_NAME)
-      RimParam.ShopID :=trim(R3ShopList.fieldbyName('SHOP_ID').AsString);        //R3门店ID (Field: SHOP_ID)
-      RimParam.ShopName:=trim(R3ShopList.fieldbyName('SHOP_NAME').AsString);     //R3门店名称 (Field: SHOP_NAME)
-      RimParam.LICENSE_CODE:=trim(R3ShopList.fieldbyName('LICENSE_CODE').AsString);   //R3门店许可证号 (Field: LICENSE_CODE)
-      SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID);  //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
+      try
+        ErrorFlag:=False;
+        RimParam.TenID  :=trim(R3ShopList.fieldbyName('TENANT_ID').AsString);      //R3企业ID (Field: TENANT_ID)
+        RimParam.TenName:=trim(R3ShopList.fieldbyName('TENANT_NAME').AsString);    //R3企业名称 (Field: TENANT_NAME)
+        RimParam.ShopID :=trim(R3ShopList.fieldbyName('SHOP_ID').AsString);        //R3门店ID (Field: SHOP_ID)
+        RimParam.ShopName:=trim(R3ShopList.fieldbyName('SHOP_NAME').AsString);     //R3门店名称 (Field: SHOP_NAME)
+        RimParam.LICENSE_CODE:=trim(R3ShopList.fieldbyName('LICENSE_CODE').AsString);   //R3门店许可证号 (Field: LICENSE_CODE)
+        SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID);  //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
 
-      //if ='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
-      if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
-      begin
-        LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
+        //if ='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
+        if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
+        begin
+          LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
 
-        //开始上零售户库存
-        try
-          iRet:=SendCustStorage;
-          LogInfo.AddBillMsg('零售户库存',iRet);
-        except
-          on E:Exception do
-          begin
-            WriteRunErrorMsg(E.Message);
-            if not ErrorFlag then ErrorFlag:=true;
+          //开始上零售户库存
+          try
+            iRet:=SendCustStorage;
+            LogInfo.AddBillMsg('零售户库存',iRet);
+          except
+            on E:Exception do
+            begin
+              LogInfo.AddBillMsg('零售户库存',-1);
+              WriteRunErrorMsg(E.Message);
+              if not ErrorFlag then ErrorFlag:=true;
+            end;
           end;
+          WriteToLogList(True,ErrorFlag);
+        end else
+          WriteToLogList(False); //对应不上门店日志
+      except
+        on E: Exception do
+        begin
+          PlugIntf.WriteLogFile(Pchar('<1003>'+E.Message));
         end;
-        WriteToLogList(True,ErrorFlag);
-      end else
-        WriteToLogList(False); //对应不上门店日志
+      end;
       R3ShopList.Next;
     end;
   finally

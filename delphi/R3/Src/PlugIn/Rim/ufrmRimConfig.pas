@@ -13,6 +13,7 @@ type
     Label2: TLabel;
     Button1: TButton;
     Button2: TButton;
+    chkTWO_PHASE_COMMIT: TCheckBox;
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -37,6 +38,7 @@ begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
   try
     F.WriteString('rim','url',Edit1.Text);
+    F.WriteBool('rim','TWO_PHASE_COMMIT',chkTWO_PHASE_COMMIT.Checked);
   finally
     F.free;
   end;
@@ -50,6 +52,7 @@ begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
   try
     Edit1.Text := F.ReadString('rim','url','');
+    chkTWO_PHASE_COMMIT.Checked := F.ReadBool('rim','TWO_PHASE_COMMIT',true); 
   finally
     F.free;
   end;

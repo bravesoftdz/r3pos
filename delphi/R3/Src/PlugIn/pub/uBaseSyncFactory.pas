@@ -11,7 +11,7 @@ unit uBaseSyncFactory;
 interface
 
 uses
-  SysUtils, Windows, Variants, Classes, DB, zDataSet, zBase;
+  SysUtils, Windows, Variants, Classes, Forms, Dialogs, DB, zDataSet, zBase;
 
 const
   //国家烟草供应链ID:1000006
@@ -111,27 +111,29 @@ type
     FLogList: TStringList;
     FHasError: boolean;
     FErrorMsg: string;
+    FDBTrans: Boolean;
     procedure SetPlugIntf(const Value: IPlugIn);
     procedure SetParams(const Value: TftParamList);
     procedure SetDbType(const Value: Integer);
-    function  GetUpdateTime: string;
     procedure SetHasError(const Value: boolean);
-    procedure SetErrorMsg(const Value: string); //最新更新时间[YYYY-MM-DD_HH:MM:SS]
+    procedure SetErrorMsg(const Value: string);
+    procedure SetDBTrans(const Value: Boolean); //最新更新时间[YYYY-MM-DD_HH:MM:SS]
+    function  GetUpdateTime: string;
   public
     FRunInfo: TRunInfo; //日志信息
     constructor Create; virtual;
     destructor Destroy;override;
-    function CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer; virtual; {==返回：0执行成功==}
+    function  CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer; virtual; {==返回：0执行成功==}
     //锁定数据库
-    function DBLock(Locked: Boolean):Boolean; //锁定数据库连接
+    function  DBLock(Locked: Boolean):Boolean; //锁定数据库连接
     //返回数据库类型
-    function GetDBType: integer;
+    function  GetDBType: integer;
 
     //事务控制
-    function BeginTrans(TimeOut:integer=-1): Boolean; //开始事务
-    function CommitTrans: Boolean;   //提交事务
-    function RollbackTrans: Boolean; //回滚事务
-    function Open(DataSet: TDataSet):Boolean;  //取数据
+    function  BeginTrans(TimeOut:integer=-1): Boolean; //开始事务
+    function  CommitTrans: Boolean;   //提交事务
+    function  RollbackTrans: Boolean; //回滚事务
+    function  Open(DataSet: TDataSet):Boolean;  //取数据
     procedure WriteRunErrorMsg(Msg: string);  //写日志
 
     //返回类函数
@@ -144,6 +146,8 @@ type
     class function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
     class function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
+    class function ReadConfig(Header,Ident:string; IniFile: string=''):string;  //读配置文件
+    class function WriteConfig(Header,Ident,Value:string; IniFile: string=''):Boolean; //写配置文件
 
     //数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase 3: access  4: db2
     property DbType:Integer read FDbType write SetDbType;
@@ -153,6 +157,7 @@ type
     property UpdateTime: string read GetUpdateTime; //最新更新时间[YYYY-MM-DD_HH:MM:SS]
     property HasError: boolean read FHasError write SetHasError;   //插件运行是否错误
     property ErrorMsg: string read FErrorMsg write SetErrorMsg;    //插件运行第一错误消息
+    property DBTrans: Boolean read FDBTrans write SetDBTrans;      //是否启用事务[默认启用事务] 
   end;
 
 
@@ -162,6 +167,9 @@ var
   GLastError:string;
 
 implementation
+
+uses
+  IniFiles;
 
 
 { TLogShopInfo }
@@ -274,6 +282,8 @@ begin
   inherited;
   FParams := TftParamList.Create(nil);
   FLogList:= TStringList.Create;
+  //读取配置参数
+  DBTrans:=trim(ReadConfig('DB2','NOTTRANS'))<>'1';
 end;
 
 function TBaseSyncFactory.DBLock(Locked: Boolean): Boolean;
@@ -614,6 +624,40 @@ begin
   //永远只记录第一个错误消息
   HasError:=true;
   ErrorMsg:=Msg; 
+end;
+
+procedure TBaseSyncFactory.SetDBTrans(const Value: Boolean);
+begin
+  FDBTrans := Value;
+end;
+
+class function TBaseSyncFactory.ReadConfig(Header,Ident:string; IniFile: string=''): string;
+var F: TIniFile; FileName: string; 
+begin
+  result:='';
+  if trim(IniFile)='' then
+    FileName:=ExtractFilePath(Application.ExeName)+'Seting.Ini';
+  F:=TIniFile.Create(FileName);
+  try
+    result:=trim(F.ReadString(Header,Ident,'0'));
+  finally
+    F.Free;
+  end;
+end;
+
+class function TBaseSyncFactory.WriteConfig(Header,Ident,Value:string; IniFile: string=''): Boolean;
+var F: TIniFile; FileName: string; 
+begin
+  result:=False;
+  if trim(IniFile)='' then
+    FileName:=ExtractFilePath(Application.ExeName)+'Seting.Ini';
+  F:=TIniFile.Create(FileName);
+  try
+    F.WriteString(Header,Ident,Value);
+    result:=true;
+  finally
+    F.Free;
+  end;
 end;
 
 end.

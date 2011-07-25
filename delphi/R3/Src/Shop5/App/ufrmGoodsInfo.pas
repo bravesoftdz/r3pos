@@ -1282,10 +1282,14 @@ begin
             begin
               edtGODS_NAME.Text:=Default;
             end
-            else if not ReadBarCode_INFO(Default) then
-            begin
-              edtGODS_CODE.Text:=Default;
-            end;
+            else if fnString.IsBarCode(Default) then
+              begin
+                edtBARCODE1.Text:=Default;
+              end
+              else
+              begin
+                edtGODS_CODE.Text:=Default;
+              end;
           end;
         end;
         if ShowModal=MROK then

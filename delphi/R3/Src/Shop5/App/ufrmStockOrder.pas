@@ -538,7 +538,9 @@ var
   r:integer;
   TotalFee:real;
   TotalAmt:real;
+  Controls:boolean;
 begin
+  Controls := edtTable.ControlsDisabled;
   edtTable.DisableControls;
   try
     r := edtTable.FieldbyName('SEQNO').AsInteger;
@@ -553,7 +555,7 @@ begin
     result := TotalFee;
   finally
     edtTable.Locate('SEQNO',r,[]); 
-    edtTable.EnableControls;
+    if not Controls then edtTable.EnableControls;
   end;
 //  edtCALC_MONEY.Text := formatFloat('#0.00',TotalFee);
   edtTAX_MONEY.Text := formatFloat('#0.00',(TotalFee/(1+AObj.FieldbyName('TAX_RATE').AsFloat))*AObj.FieldbyName('TAX_RATE').AsFloat);
@@ -1220,7 +1222,9 @@ begin
   edtSHOP_ID.KeyValue:=Global.SHOP_ID;
   edtSHOP_ID.Text:=Global.SHOP_NAME;
   edtSTOCK_DATE.Date:=fnTime.fnStrtoDate(AObj.fieldbyName('INDE_DATE').AsString); //订单日期
-
+  DBGridEh1.ReadOnly:=true;     //明细Grid
+  fndGODS_ID.Visible := false;
+//  edtTable.DisableControls;
   try
     Rs:=TZQuery.Create(nil);
     Rs.Data:=vData;
@@ -1284,6 +1288,8 @@ begin
     end;
     rowid := rs.RecordCount;
   finally
+    edtTable.First;
+//    edtTable.EnableControls;
     Rs.Free;
   end;
   //控制控件不可修改属性:

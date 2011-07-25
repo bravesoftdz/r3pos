@@ -2120,6 +2120,12 @@ var
 begin
   inherited;
   Open('');
+  STGID := '';
+  STGNM := '';
+  STGGNM := '';
+  STGAMT := 0;
+  STGAMOUNT := 0;
+  lblInputHimt.Caption := '';
   if not ShopGlobal.GetChkRight('13100001',2) then
      Raise Exception.Create('  您没有新增权限，请联系管理员！  '); 
   dbState := dsInsert;

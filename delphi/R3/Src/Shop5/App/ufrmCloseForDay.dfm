@@ -42,13 +42,13 @@ inherited frmCloseForDay: TfrmCloseForDay
         Height = 26
         Anchors = [akTop, akRight]
         Caption = #31245#21518#32467#36134'(&C)'
-        Color = 16744576
+        Color = clWhite
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
         Font.Name = #23435#20307
         Font.Style = [fsBold]
-        HighlightColor = clMaroon
+        HighlightColor = clLime
         HotTrack = True
         HotTrackColor = 3983359
         HotTrackColorType = htctActual
@@ -59,7 +59,8 @@ inherited frmCloseForDay: TfrmCloseForDay
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = Btn_CloseClick
-        NumGlyphs = 2
+        Margin = 4
+        NumGlyphs = 4
         Spacing = 5
       end
       object Btn_Save: TRzBitBtn
@@ -69,13 +70,13 @@ inherited frmCloseForDay: TfrmCloseForDay
         Height = 26
         Anchors = [akTop, akRight]
         Caption = #31435#21363#32467#36134'(&S)'
-        Color = 16744576
+        Color = clWhite
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
         Font.Name = #23435#20307
         Font.Style = [fsBold]
-        HighlightColor = 16026986
+        HighlightColor = clLime
         HotTrack = True
         HotTrackColor = 3983359
         HotTrackColorType = htctActual
@@ -86,7 +87,8 @@ inherited frmCloseForDay: TfrmCloseForDay
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = Btn_SaveClick
-        NumGlyphs = 2
+        Margin = 4
+        NumGlyphs = 4
         Spacing = 5
       end
     end

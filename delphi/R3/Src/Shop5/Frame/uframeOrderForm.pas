@@ -577,10 +577,15 @@ begin
 end;
 
 procedure TframeOrderForm.ClearInvaid;
-var Field:TField;
+var
+  Field:TField;
+  Controls:boolean;
+  r:integer;
 begin
   if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
-  Field := edtTable.FindField('AMOUNT'); 
+  Field := edtTable.FindField('AMOUNT');
+  Controls := edtTable.ControlsDisabled;
+  r := edtTable.RecNo;
   edtTable.DisableControls;
   try
   edtTable.First;
@@ -595,7 +600,8 @@ begin
          edtTable.Next;
     end;
   finally
-    edtTable.EnableControls;
+    if r>0 then edtTable.RecNo := r;
+    if not Controls then  edtTable.EnableControls;
   end;
 end;
 
@@ -2061,10 +2067,12 @@ procedure TframeOrderForm.CheckInvaid;
 var
   bs:TZQuery;
   r:integer;
+  Controls:boolean;
 begin
   if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
   bs := Global.GetZQueryFromName('PUB_GOODSINFO');
   r := edtTable.RecNo;
+  Controls := edtTable.ControlsDisabled;
   edtTable.DisableControls;
   try
     edtTable.First;
@@ -2077,7 +2085,7 @@ begin
       end;
     if r>0 then edtTable.RecNo := r;
   finally
-    edtTable.EnableControls;
+    if not Controls then edtTable.EnableControls;
   end;
 end;
 

@@ -1026,7 +1026,7 @@ inherited frmPosMain: TfrmPosMain
           EditButtons = <>
           FieldName = 'TREND_ID'
           Footers = <>
-          Title.Caption = #29992#36884
+          Title.Caption = #36141#20080#29992#36884
           Width = 55
         end>
     end

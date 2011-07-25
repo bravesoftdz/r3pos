@@ -88,3 +88,13 @@ select
   COM_ID,MSG_ID,TYPE,TITLE,CONTENT,USE_DATE,INVALID_DATE,OPERATOR,REC_TYPE,RECEIVER,STATUS,UPD_DATE,UPD_TIME,RECEIVER_TYPE, saleorg_id, 
   slsman_id,sale_center_id   
 from RIM_MESSAGE@RIMLINK;
+
+
+--ÐÞ¸Ä´´½¨£ºRIM_RM_CUST
+drop view RIM_RM_CUST;
+create view RIM_RM_CUST
+as
+select 
+ *
+from RM_CUST; 
+  

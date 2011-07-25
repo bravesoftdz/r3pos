@@ -278,6 +278,13 @@ CREATE GLOBAL TEMPORARY TABLE INF_RECKDAY (
     RECK_DATE VARCHAR2(8) NOT NULL       --台账日期
    ) ON COMMIT PRESERVE ROWS;
 
+--修改创建：RIM_RM_CUST
+drop view RIM_RM_CUST
+create view RIM_RM_CUST
+as
+select 
+ *
+from RM_CUST; 
   
  
  

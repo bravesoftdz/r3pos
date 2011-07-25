@@ -66,5 +66,12 @@ select
   slsman_id,sale_center_id   
 from RIM_MESSAGE_TAB
 
+--ÐÞ¸Ä´´½¨£ºRIM_RM_CUST
+drop view RIM_RM_CUST;
+create view RIM_RM_CUST
+as
+select 
+ *
+from RM_CUST; 
   
  

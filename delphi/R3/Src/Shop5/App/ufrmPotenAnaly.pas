@@ -90,7 +90,7 @@ begin
   Rs:=ShopGlobal.GetZQueryFromName('CA_RELATIONS');
   RelName:='';
   if Relation_ID=0 then
-    RelName:='自主经营'
+    RelName:=defaultRelatin  // '自主经营'
   else
   begin
     if Rs.Locate('RELATION_ID',Relation_ID,[]) then

@@ -218,9 +218,9 @@ begin
   Str:='';
   TitleStr:=NumStr+'门店('+FShopName+') 运行时间：'+FormatFloat('#0.00',FBegTickCount/1000)+'秒';
   if FErrorState then //没有全部上报成功
-    TitleStr:=TitleStr+'，上报结果：〖存在上报异常〗，共上报'+inttoStr(FRuniRet)+'笔;'
+    TitleStr:=TitleStr+'，上报结果：〖存在上报异常〗，上报(更新)成功：'+inttoStr(FRuniRet)+'笔;'
   else
-    TitleStr:=TitleStr+'，上报结果：〖全部上报成功〗，共上报'+inttoStr(FRuniRet)+'笔;';
+    TitleStr:=TitleStr+'，上报结果：〖全部上报成功〗，共上报(更新)：'+inttoStr(FRuniRet)+'笔;';
 
   if FBillList.Count=1 then
   begin

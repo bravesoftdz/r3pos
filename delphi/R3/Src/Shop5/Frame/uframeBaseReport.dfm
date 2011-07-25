@@ -24,7 +24,6 @@ inherited frameBaseReport: TframeBaseReport
           inherited RzPanel3: TRzPanel
             Width = 565
             Height = 442
-            BorderColor = clWhite
             object Panel4: TPanel
               Left = 5
               Top = 5
@@ -40,9 +39,8 @@ inherited frameBaseReport: TframeBaseReport
                 Width = 555
                 Height = 81
                 Align = alTop
-                BorderOuter = fsGroove
+                BorderOuter = fsNone
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
               end
               object RzPanel7: TRzPanel

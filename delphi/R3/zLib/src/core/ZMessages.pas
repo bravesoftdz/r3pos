@@ -1588,7 +1588,7 @@ resourcestring
   SUnsupportedProtocol = 'Unsupported protocol: %s';
   SUnsupportedByDriver    = 'Driver can not support this feature natively: [%s]';
 
-  SConnectionIsNotOpened = 'Connection is not opened yet';
+  SConnectionIsNotOpened = '数据库连接断开了，请重试吧';
   SInvalidOpInAutoCommit = 'Invalid operation in AutoCommit mode';
   SInvalidOpInNonAutoCommit = 'Invalid operation in non AutoCommit mode';
   SInvalidOpPrepare = 'Prepare transaction only possible on matching first(!) Starttransaction';

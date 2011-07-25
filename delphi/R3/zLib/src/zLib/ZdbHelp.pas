@@ -216,7 +216,13 @@ end;
 
 function TdbHelp.CheckError(s:string): boolean;
 begin
-  result := not ZConn.InTransaction and ((pos('ÍøÂç´íÎó',s)>0) or (pos('ORA-12170',s)>0) );
+  result := not ZConn.InTransaction and (
+     (pos('ÍøÂç´íÎó',s)>0) or
+     (pos('Á¬½Ó¶Ï¿ª',s)>0) or
+     (pos('ORA-12170',s)>0) or
+     (pos('SQL0952N',s)>0) or
+     (pos('SQL30081N',s)>0)
+  );
 end;
 
 procedure TdbHelp.CommitTrans;

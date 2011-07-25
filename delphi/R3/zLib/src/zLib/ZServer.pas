@@ -180,7 +180,7 @@ type
     function CreatedbResolver(dbid:Integer):TdbResolver;
     procedure FreeCache(i:integer);
     procedure CheckConnected(Conn:TdbResolver);
-
+    procedure Clear;
   public
 
     constructor Create;
@@ -733,11 +733,12 @@ end;
 procedure TDoInvokeDispatch.PushCache;
 begin
   if not Assigned(Session) then Raise Exception.Create('dbid连接参数没有设置，无法找到对应的Session');
-  if not assigned(Session.dbResolver) then Exit;
-  if not Session.dbResolver.InTransaction and not dbLock then
+  if not Assigned(Session.dbResolver) then Exit;
+  if (not Session.dbResolver.InTransaction and not dbLock) or not Session.dbResolver.Connected then
      begin
        ConnCache.Push(Session.dbResolver);
        Session.dbResolver := nil;
+       dbLock := false;
      end;
 end;
 
@@ -1092,14 +1093,19 @@ procedure TZConnCache.Push(Conn: TdbResolver);
 begin
   Enter;
   try
-    if (FList.Count>=MaxCache) or (not Conn.Connected) then
+    if not Conn.Connected then
+       begin
+         Clear;
+         Exit;
+       end;
+    if (FList.Count>=MaxCache) then
        begin
          Conn.Free;
        end
     else
        FList.Add(Conn);
-    InterlockedDecrement(FDBCacheLockCount);
   finally
+    InterlockedDecrement(FDBCacheLockCount);
     Leave;
   end;
   if MainFormHandle>0 then PostMessage(MainFormHandle,WM_DB_CACHE_UPDATE,0,0);
@@ -1118,10 +1124,7 @@ var i:integer;
 begin
   Enter;
   try
-     for i:=FList.Count-1 downto 0 do
-        begin
-          FreeCache(i);
-        end;
+     Clear;
      FList.Free;
      inherited;
   finally
@@ -1149,19 +1152,25 @@ begin
   Enter;
   try
     result := nil;
-    for i:=0 to FList.Count-1 do
-       begin
-         if TdbResolver(FList[i]).dbid = dbid then
-            begin
-              result := TdbResolver(FList[i]);
-              FList.Delete(i);
-              break;
-            end;
-       end;
-    if result=nil then
-       result := CreatedbResolver(dbid);
-    CheckConnected(result);
-    InterlockedIncrement(FDBCacheLockCount);
+    try
+      for i:=FList.Count-1 downto 0 do
+         begin
+           if TdbResolver(FList[i]).dbid = dbid then
+              begin
+                result := TdbResolver(FList[i]);
+                FList.Delete(i);
+                break;
+              end;
+         end;
+      if result=nil then
+         result := CreatedbResolver(dbid)
+      else
+         CheckConnected(result);
+      InterlockedIncrement(FDBCacheLockCount);
+    except
+      if result<>nil then FreeAndNil(result);
+      Raise;
+    end;
   finally
     Leave;
   end;
@@ -1203,7 +1212,22 @@ end;
 
 procedure TZConnCache.CheckConnected(Conn: TdbResolver);
 begin
-  if not Conn.Connected then Conn.Connect;
+  if not Conn.Connected then
+     begin
+       Conn.DisConnect;
+       Conn.Initialize(DecStr(F.ReadString('db'+inttostr(Conn.dbid),'connstr',''),ENC_KEY));
+       Conn.Connect;
+     end;
+end;
+
+procedure TZConnCache.Clear;
+var
+  i:integer;
+begin
+  for i:=FList.Count -1 downto 0 do
+    begin
+      FreeCache(i);
+    end;
 end;
 
 initialization

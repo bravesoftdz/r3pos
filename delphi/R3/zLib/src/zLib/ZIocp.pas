@@ -110,7 +110,7 @@ type
     constructor Create(ASocket: TSocket;ASocketDispatcher:TSocketDispatcher);
     destructor Destroy; override;
 
-    procedure Close;
+    procedure Close(locked:boolean=true);
     procedure AddBlock(DataBlock:IDataBlock);
     procedure StartListen;
     function Connected:boolean;
@@ -810,22 +810,26 @@ begin
   end;
 end;
 
-procedure TServerClientSocket.Close;
+procedure TServerClientSocket.Close(locked:boolean=true);
 var
   skt: TSocket;
 begin
-  if (FSocket = INVALID_SOCKET) then exit;
-  RecvEnter;
-  try
-    skt := FSocket;
-    FSocket := INVALID_SOCKET;
-    CheckError(closesocket(skt), 'closesocket');
-    FRecvBuffer^.Buffer := nil;
-    FSendBuffer^.Buffer := nil;
-  finally
-    RecvLeave;
+  if (FSocket <> INVALID_SOCKET) then
+  begin
+    RecvEnter;
+    SendEnter;
+    try
+      skt := FSocket;
+      FSocket := INVALID_SOCKET;
+      CheckError(closesocket(skt), 'closesocket');
+      FRecvBuffer^.Buffer := nil;
+      FSendBuffer^.Buffer := nil;
+    finally
+      RecvLeave;
+      SendLeave;
+    end;
   end;
-  SocketDispatcher.AddBlock(nil,self);
+  if locked then SocketDispatcher.AddBlock(nil,self);
 
 end;
 
@@ -960,7 +964,7 @@ end;
 function TServerClientSocket.Send(const Data: IDataBlock;
   WaitForResult: Boolean): IDataBlock;
 begin
-  if FSocket=INVALID_SOCKET then Exit;
+  if FSocket=INVALID_SOCKET then Raise Exception.Create('Send数据失败，客户端已经断开连接了.');
   GZip.DataOut(Data);
   SendEnter;
   try
@@ -968,6 +972,7 @@ begin
       begin
         SendLeave;
         try
+          if FSocket=INVALID_SOCKET then Raise Exception.Create('Send数据失败，客户端已经断开连接了.');
           WaitForSingleObject(FhEvent, 500);
         finally
           SendEnter;
@@ -1177,36 +1182,37 @@ begin
   while not Terminated do
     begin
       FWorking := true;
-//      SocketDispatcher.CheckWorker;
       sdb := SocketDispatcher.GetBlock;
       try
-        while (sdb<>nil) and not Terminated do
+        while (sdb<>nil) do
           begin
             InterlockedIncrement(ExecThreadCount);
             _Start := GetTickCount;
             if ExecThreadCount + WaitDataBlockCount> MaxSyncRequestCount then MaxSyncRequestCount := ExecThreadCount + WaitDataBlockCount;
             try
-              SocketDispatcher.LockClient(sdb.SessionId);
-              try
-                 if sdb^.Data = nil then //为空时，代表关闭SOCKET请求包
-                    begin
-                      TServerClientSocket(sdb^.SessionId).Close;
-                    end
-                 else
-                    begin
-                      if SocketDispatcher.FindClient(sdb^.SessionId)<>nil then
-                         begin
-                            TServerClientSocket(sdb^.SessionId).FInterpreter.InterpretData(sdb^.Data);
-                         end
-                      else
-                         TServerClientSocket(sdb^.SessionId).Close;
-                    end;
-              except
-                 on E:Exception do
-                 begin
-                   TServerClientSocket(sdb^.SessionId).Close;
-                   LogFile.AddLogFile(0,E.Message,'WorkerThread','InterpretData');
-                 end;
+              if SocketDispatcher.LockClient(sdb.SessionId) then
+              begin
+                try
+                   if sdb^.Data = nil then //为空时，代表关闭SOCKET请求包
+                      begin
+                        TServerClientSocket(sdb^.SessionId).Close(false);
+                      end
+                   else
+                      begin
+                        if not Terminated then
+                           begin
+                              TServerClientSocket(sdb^.SessionId).FInterpreter.InterpretData(sdb^.Data);
+                           end
+                        else
+                           TServerClientSocket(sdb^.SessionId).Close(false);
+                      end;
+                except
+                   on E:Exception do
+                   begin
+                     TServerClientSocket(sdb^.SessionId).Close(false);
+                     LogFile.AddLogFile(0,E.Message,'WorkerThread','InterpretData');
+                   end;
+                end;
               end;
             finally
                InterlockedDecrement(ExecThreadCount);
@@ -1214,7 +1220,6 @@ begin
                sdb.Data := nil;
                dispose(sdb);
             end;
-//            SocketDispatcher.CheckWorker;
             sdb := SocketDispatcher.GetBlock;
           end;
       finally
@@ -1253,14 +1258,24 @@ var
 begin
   Lock;
   try
-    if (SocketCache.IndexOf(Pointer(SessionId))>=0) and (TServerClientSocket(SessionId).Connected) then
-       TServerClientSocket(SessionId).LockThread := false
-    else
+    if (SocketCache.IndexOf(Pointer(SessionId))>=0) then
        begin
+          if (TServerClientSocket(SessionId).Connected) then
+             TServerClientSocket(SessionId).LockThread := false
+          else
+            begin
+              DataCache.Delete(SessionId);
+              Sessions.Delete(TServerClientSocket(SessionId).Session);
+              TServerClientSocket(SessionId).Free;
+              SocketCache.Remove(Pointer(SessionId));
+            end;
+       end
+    else
+       begin  //早就清除了
          DataCache.Delete(SessionId);
          SocketCache.Remove(Pointer(SessionId));
-         Sessions.Delete(TServerClientSocket(SessionId).Session);
-         TServerClientSocket(SessionId).Free;
+//         Sessions.Delete(TServerClientSocket(SessionId).Session);
+//         TServerClientSocket(SessionId).Free;
        end;
   finally
     UnLock;

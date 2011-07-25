@@ -388,10 +388,11 @@ end;
 procedure TPlugIn.PushCache;
 begin
   if not assigned(dbResolver) then Exit;
-  if not dbResolver.InTransaction and not dbLocked then
+  if (not dbResolver.InTransaction and not dbLocked) or not dbResolver.Connected then
      begin
        ConnCache.Push(dbResolver);
        dbResolver := nil;
+       dbLocked := false;
      end;
 end;
 
@@ -408,6 +409,7 @@ end;
 function TPlugIn.DbLock(Locked: boolean): integer;
 begin
   DbLocked := Locked;
+  if not Locked then PushCache; 
   result := 0;
 end;
 

@@ -1279,6 +1279,11 @@ var
   p7:TBcd;
   param:TParam;
 begin
+  if str='' then
+     begin
+       Params.Clear;
+       Exit;
+     end;
   ss := TStringStream.Create(DecodeString(str));
   try
     ss.Position := 0;

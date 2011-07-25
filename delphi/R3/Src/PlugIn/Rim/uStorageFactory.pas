@@ -27,7 +27,7 @@ var
 begin
   result := -1;
   try
-    BeginTrans;
+    if DBTrans then BeginTrans;
     ShortID:=Copy(RimParam.ShopID,length(RimParam.ShopID)-3,4); //门店代码后4位
     
     //1、先插入不存在商品:
@@ -66,12 +66,12 @@ begin
     if PlugIntf.ExecSQL(pchar(Str), iRet3)<>0 then
       Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE新记录出错:'+PlugIntf.GetLastError);
 
-    PlugIntf.CommitTrans;
+    if DBTrans then CommitTrans;
     result:=iRet1+iRet2+iRet3;
   except
     on E:Exception do
     begin
-      PlugIntf.RollbackTrans;
+      if DBTrans then RollbackTrans;
       WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库错误！','02');  //上报出错写日志
       Raise Exception.Create(E.Message);
     end;

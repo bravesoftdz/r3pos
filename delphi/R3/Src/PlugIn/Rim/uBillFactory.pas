@@ -361,7 +361,7 @@ begin
 
   //3、更新月台帐标记和上报时间戳:[]
   try
-    BeginTrans;
+    if DBTrans then BeginTrans;
     //将月台帐上报的标记位:COMM的第1位设置为：1
     Str:='update RCK_MONTH_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
          ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and '+ReckMonth+' in '+
@@ -371,12 +371,12 @@ begin
     Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' '+
          ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''00'' and TERM_ID='''+RimParam.ShopID+''' ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新月台帐上报时间戳出错:'+PlugIntf.GetLastError);
-    CommitTrans; //提交事务
+    if DBTrans then CommitTrans; //提交事务
     result:=UpiRet;
   except
     on E:Exception do
     begin
-      RollbackTrans;
+      if DBTrans then RollbackTrans;
       WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'00','上报月台帐错误！','02'); //写日志
       Raise Exception.Create(E.Message);
     end;
@@ -855,7 +855,7 @@ var
 begin
   result:=false;
   try
-    BeginTrans; //开始一个批次事务:
+    if DBTrans then BeginTrans; //开始一个批次事务:
     //1、将单据上报的标记位:COMM的第1位设置为：1
     Str:='update '+BillMainTable+' set COMM='+GetUpCommStr(DbType)+' '+
          ' where TENANT_ID='+RimParam.TenID+' and SHOP_ID='''+RimParam.ShopID+''' and '+
@@ -867,12 +867,12 @@ begin
          ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE='''+BillType+''' and TERM_ID='''+RimParam.ShopID+''' ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新上报时间戳出错:'+PlugIntf.GetLastError);
 
-    CommitTrans;  //提交事务
+    if DBTrans then CommitTrans;  //提交事务
     result:=true;
   except
     on E:Exception do
     begin
-      RollbackTrans;
+      if DBTrans then RollbackTrans;
       WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE, RimParam.CustID, BillType ,'上报销售单出错！','02');  //写日志
       Raise Exception.Create(E.Message);
     end;

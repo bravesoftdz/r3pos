@@ -243,7 +243,7 @@ begin
   end;
   //第三步: 每一次执行作为一个事务提交
   try
-    BeginTrans;
+    if DBTrans then BeginTrans;
     //1、删除销售历史数据(先删除表体在删除表头):
     Str:='delete from RIM_RETAIL_CO_LINE A '+
          ' where exists(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_SALESUM C '+
@@ -267,12 +267,12 @@ begin
     Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''10'' and TERM_ID='''+RimParam.ShopID+''' ';
     if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新上报时间戳出错:'+PlugIntf.GetLastError);
 
-    CommitTrans;  //提交事务
+    if DBTrans then CommitTrans;
     result:=UpiRet;
   except
     on E:Exception do
     begin
-      RollbackTrans;
+      if DBTrans then RollbackTrans;
       sleep(1);
       WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'10','上报日销售错误！','02'); //写日志
       Raise Exception.Create(E.Message);

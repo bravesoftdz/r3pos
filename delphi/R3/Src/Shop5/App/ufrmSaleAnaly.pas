@@ -593,15 +593,15 @@ begin
   strWhere:='';
 
   //企业ID过滤
-  SaleCnd:=' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  SaleCnd:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
   //销售日期条件
   if P2_D1.Date=P2_D2.Date then
-    SaleCnd:=SaleCnd+' and SALES_DATE='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' '
+    SaleCnd:=SaleCnd+' and A.SALES_DATE='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' '
   else if P2_D1.Date<P2_D2.Date then
-    SaleCnd:=SaleCnd+' and SALES_DATE>='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' and SALES_DATE<='+FormatDatetime('YYYYMMDD',P2_D2.Date)+' ';
+    SaleCnd:=SaleCnd+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P2_D2.Date)+' ';
   //部门条件
   if fndP2_DEPT_ID.AsString<>'' then
-    SaleCnd:=SaleCnd+' and DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
+    SaleCnd:=SaleCnd+' and A.DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
   begin
@@ -644,25 +644,43 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   if P2_RB_Money.Checked then  //销售额
-    TYPE_ID:='(CALC_MONEY+AGIO_MONEY) as ANALYSUM '
+    TYPE_ID:='isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0)'
   else if P2_RB_PRF.Checked then //毛利
-    TYPE_ID:='(NOTAX_MONEY-COST_MONEY) as ANALYSUM '
+    TYPE_ID:='isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0)'
   else if P2_RB_AMT.Checked then //销量
-    TYPE_ID:='CALC_AMOUNT as ANALYSUM ';
+    TYPE_ID:='isnull(CALC_AMOUNT,0)';
 
   //销售SQL
-  SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,'+TYPE_ID+' from VIW_SALESDATA '+SaleCnd;
+  // SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,'+TYPE_ID+' from VIW_SALESDATA '+SaleCnd;
   strSql :=
     'select * from '+
-    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(ANALYSUM)as ANALYSUM from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and '+
-    ' A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+')as ANALYSUM from '+
+    ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+' '+strWhere + ' '+
     'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
     'order by RELATION_ID asc,ANALYSUM desc ';
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
 function TfrmSaleAnaly.GetPotenAnalySQL(vType: integer): string;  //潜力分析
+  function GetSumField(Qry:TZQuery; SumField1,SumField2: string): string;
+  var
+    Str,SubStr,MaxValue1,MaxValue2: string;
+  begin
+    result:='';
+    Str:=',(case ';
+    Qry.First;
+    while not Qry.Eof do
+    begin
+      MaxValue1:=FloatToStr(Qry.fieldbyName('SUM1').AsFloat*0.50);
+      MaxValue2:=FloatToStr(Qry.fieldbyName('SUM2').AsFloat*0.50);
+      SubStr:='(case when ('+SumField1+'<'+MaxValue1+' and '+SumField2+'<'+MaxValue2+') then 1 when ('+SumField1+'>='+MaxValue1+' and '+SumField2+'>='+MaxValue2+') then 4 else 2 end)';
+      Str:=Str+' when C.RELATION_ID='+Qry.fieldbyName('RELATION_ID').AsString+' then '+SubStr+'  ';
+      Qry.Next;
+    end;
+    Str:=Str+' else 2 end) as vType ';
+    result:=Str;    
+  end;
 var
   Qry: TZQuery;
   SaleCnd,JoinStr,OrderBy: string;  //单位计算关系
@@ -675,15 +693,15 @@ begin
   strWhere:='';
 
   //企业ID过滤
-  SaleCnd:=' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  SaleCnd:=' and SAL.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
   //销售日期条件
   if P3_D1.Date=P3_D2.Date then
-    SaleCnd:=SaleCnd+' and SALES_DATE='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' '
+    SaleCnd:=SaleCnd+' and SAL.SALES_DATE='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' '
   else if P3_D1.Date<P3_D2.Date then
-    SaleCnd:=SaleCnd+' and SALES_DATE>='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' and SALES_DATE<='+FormatDatetime('YYYYMMDD',P3_D2.Date)+' ';
+    SaleCnd:=SaleCnd+' and SAL.SALES_DATE>='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' and SAL.SALES_DATE<='+FormatDatetime('YYYYMMDD',P3_D2.Date)+' ';
   //部门条件
   if fndP3_DEPT_ID.AsString<>'' then
-    SaleCnd:=SaleCnd+' and DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+    SaleCnd:=SaleCnd+' and SAL.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
   //门店所属行政区域|门店类型:
   if (fndP3_SHOP_VALUE.AsString<>'') then
   begin
@@ -724,28 +742,46 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  //销售SQL
-  SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as AMT_SUM,(CALC_MONEY+AGIO_MONEY) as MNY_SUM,(NOTAX_MONEY-COST_MONEY) as PRF_SUM from VIW_SALESDATA '+SaleCnd;
-
+  //销售: SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as AMT_SUM,(CALC_MONEY+AGIO_MONEY) as MNY_SUM,(NOTAX_MONEY-COST_MONEY) as PRF_SUM from VIW_SALESDATA '+SaleCnd;
   //分类取出Max(字段)
   case EdtvType.ItemIndex of
    0: FieldStr:=' max(MNY_SUM) as SUM1,max(PRF_SUM) as SUM2 ';   //销售额 毛利
    1: FieldStr:=' max(AMT_SUM) as SUM1,max(PRF_SUM) as SUM2 ';   //销量 、毛利
    2: FieldStr:=' max(AMT_SUM) as SUM1,max(MNY_SUM) as SUM2 ';   //销量 、销售额
   end;
-  MaxSQL:=
-    'select '+FieldStr+' from '+
-    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(AMT_SUM) as AMT_SUM,sum(MNY_SUM)as MNY_SUM,sum(PRF_SUM)as PRF_SUM from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    ' group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp ';
+  MaxSQL:=ParseSQL(Factor.iDbType,
+    'select RELATION_ID,'+FieldStr+' from '+
+    ' (SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(CALC_AMOUNT) as AMT_SUM,'+
+    '   sum(isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0))as MNY_SUM,sum(isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0))as PRF_SUM '+
+    '  from VIW_SALESDATA SAL,CA_SHOP_INFO B,'+GoodTab+' C '+
+    '  where SAL.TENANT_ID=B.TENANT_ID and SAL.SHOP_ID=B.SHOP_ID and SAL.TENANT_ID=C.TENANT_ID and SAL.GODS_ID=C.GODS_ID '+SaleCnd+' '+ strWhere + ' '+
+    '  group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
+    ' group by RELATION_ID');
+    
+  //分类取出Max(字段)
   try
     Qry:=TZQuery.Create(nil);
     Qry.SQL.Text:=MaxSQL;
     Factor.Open(Qry);
     if Qry.Active then
     begin
-      MaxValue1:=FloatToStr(Qry.fieldbyName('SUM1').AsFloat*0.50);
-      MaxValue2:=FloatToStr(Qry.fieldbyName('SUM2').AsFloat*0.50);
+      case EdtvType.ItemIndex of
+       0: //销售额 毛利
+        begin
+          FieldStr:=GetSumField(Qry, 'sum(MNY_SUM)', 'sum(PRF_SUM)');
+          OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,MNY_SUM desc,AMT_SUM desc '
+        end;
+       1: //销售量 毛利
+        begin
+          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM)', 'sum(PRF_SUM)');
+          OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,AMT_SUM desc,MNY_SUM desc'
+        end;
+       2: //销售量 销售额
+        begin
+          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM)', 'sum(MNY_SUM)');
+          OrderBy:='order by RELATION_ID asc,vType asc,MNY_SUM desc,AMT_SUM desc,PRF_SUM desc ';
+        end;
+      end;
     end;
   finally
     Qry.Free;
@@ -754,37 +790,17 @@ begin
   //销售SQL
   SQLData:=
      'select STO.TENANT_ID,STO.SHOP_ID,STO.GODS_ID,isnull(SAL.CALC_AMOUNT,0) as AMT_SUM,(isnull(SAL.CALC_MONEY,0)+isnull(SAL.AGIO_MONEY,0)) as MNY_SUM,(isnull(SAL.NOTAX_MONEY,0)-isnull(SAL.COST_MONEY,0)) as PRF_SUM '+
-     ' from STO_STORAGE STO left outer join '+
-     ' (select * from VIW_SALESDATA '+SaleCnd+') SAL '+
-     'on STO.TENANT_ID=SAL.TENANT_ID and STO.SHOP_ID=SAL.SHOP_ID and STO.GODS_ID=SAL.GODS_ID ';
+     ' from STO_STORAGE STO left outer join VIW_SALESDATA SAL '+
+     'on STO.TENANT_ID=SAL.TENANT_ID and STO.SHOP_ID=SAL.SHOP_ID and STO.GODS_ID=SAL.GODS_ID '+
+     ' where 1=1 '+SaleCnd;
 
-  //分类取出Max(字段)
-  case EdtvType.ItemIndex of
-   0: //销售额 毛利
-    begin
-      FieldStr:=',(case when (sum(MNY_SUM)<'+MaxValue1+' and sum(PRF_SUM)<'+MaxValue2+') then 1 when (sum(MNY_SUM)>='+MaxValue1+' and sum(PRF_SUM)>='+MaxValue2+') then 4 else 2 end) vType ';
-      OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,MNY_SUM desc,AMT_SUM desc '
-    end;
-   1: //销售量 毛利
-    begin
-      FieldStr:=',(case when (sum(AMT_SUM)<'+MaxValue1+' and sum(PRF_SUM)<'+MaxValue2+') then 1 when (sum(AMT_SUM)>='+MaxValue1+' and sum(PRF_SUM)>='+MaxValue2+') then 4 else 2 end) vType ';
-      OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,AMT_SUM desc,MNY_SUM desc'
-    end;
-   2: //销售量 销售额
-    begin
-      FieldStr:=',(case when (sum(AMT_SUM)<'+MaxValue1+' and sum(MNY_SUM)<'+MaxValue2+') then 1 when (sum(AMT_SUM)>='+MaxValue1+' and sum(MNY_SUM)>='+MaxValue2+') then 4 else 2 end) vType ';
-      OrderBy:='order by RELATION_ID asc,vType asc,MNY_SUM desc,AMT_SUM desc,PRF_SUM desc ';
-    end;
-  end;
- 
   strSql :=
     'select * from '+
     '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(AMT_SUM) as AMT_SUM,sum(MNY_SUM)as MNY_SUM,sum(PRF_SUM)as PRF_SUM '+FieldStr+' '+
     ' from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and '+
     ' A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
-    OrderBy;
+    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+OrderBy;
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 

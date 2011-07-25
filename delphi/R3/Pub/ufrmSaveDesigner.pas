@@ -74,15 +74,15 @@ begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'frf\frfFile.cfg');
   try
     if (pos('自定义',frfGrid.Cells[0,1])=0) then
-       F.WriteString('s1','name',frfGrid.Cells[0,1]);
+       F.WriteString('s1_'+frfFileName,'name',frfGrid.Cells[0,1]);
     if (pos('自定义',frfGrid.Cells[0,2])=0) then
-       F.WriteString('s2','name',frfGrid.Cells[0,2]);
+       F.WriteString('s2_'+frfFileName,'name',frfGrid.Cells[0,2]);
     if (pos('自定义',frfGrid.Cells[0,3])=0) then
-       F.WriteString('s3','name',frfGrid.Cells[0,3]);
+       F.WriteString('s3_'+frfFileName,'name',frfGrid.Cells[0,3]);
     if (pos('自定义',frfGrid.Cells[0,4])=0) then
-       F.WriteString('s4','name',frfGrid.Cells[0,4]);
+       F.WriteString('s4_'+frfFileName,'name',frfGrid.Cells[0,4]);
     if (pos('自定义',frfGrid.Cells[0,5])=0) then
-       F.WriteString('s5','name',frfGrid.Cells[0,5]);
+       F.WriteString('s5_'+frfFileName,'name',frfGrid.Cells[0,5]);
   finally
     F.Free;
   end;
@@ -104,23 +104,23 @@ begin
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frfFileName+'1.frf') then
      frfGrid.Cells[0,1] := '自定义一(空置)'
   else
-     frfGrid.Cells[0,1] := F.ReadString('s1','name','自定义一');
+     frfGrid.Cells[0,1] := F.ReadString('s1_'+frfFileName,'name','自定义一');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frfFileName+'2.frf') then
      frfGrid.Cells[0,2] := '自定义二(空置)'
   else
-     frfGrid.Cells[0,2] := F.ReadString('s2','name','自定义二');
+     frfGrid.Cells[0,2] := F.ReadString('s2_'+frfFileName,'name','自定义二');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frfFileName+'3.frf') then
      frfGrid.Cells[0,3] := '自定义三(空置)'
   else
-     frfGrid.Cells[0,3] := F.ReadString('s3','name','自定义三');
+     frfGrid.Cells[0,3] := F.ReadString('s3_'+frfFileName,'name','自定义三');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frfFileName+'4.frf') then
      frfGrid.Cells[0,4] := '自定义四(空置)'
   else
-     frfGrid.Cells[0,4] := F.ReadString('s4','name','自定义四');
+     frfGrid.Cells[0,4] := F.ReadString('s4_'+frfFileName,'name','自定义四');
   if not FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frfFileName+'5.frf') then
      frfGrid.Cells[0,5] := '自定义五(空置)'
   else
-     frfGrid.Cells[0,5] := F.ReadString('s5','name','自定义五');
+     frfGrid.Cells[0,5] := F.ReadString('s5_'+frfFileName,'name','自定义五');
   finally
     F.Free;
   end;

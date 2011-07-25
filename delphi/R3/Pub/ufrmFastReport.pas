@@ -605,6 +605,7 @@ var
 //  Temp :TZQuery;
 //  sm:TMemoryStream;
   s:string;
+  logo:TfrPictureView;
 begin
   if Index<=0 then s := '' else s:=Inttostr(Index);
   if FileExists(ExtractFilePath(ParamStr(0))+'frf\'+frReport.Name+s+'.frf') then
@@ -636,6 +637,10 @@ begin
     end; }
   end;
   if not Desgn then SaveIndex := -1;
+  logo := TfrPictureView(frReport.FindObject('logo'));
+  if (logo<>nil) and FileExists(ExtractFilePath(ParamStr(0))+'logo.jpg') then
+     logo.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo.jpg');
+
 end;
 
 

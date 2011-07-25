@@ -248,6 +248,9 @@ type
     //检测数据合法性
     procedure CheckInvaid;virtual;
     
+    //检测是否是汇总字段
+    function CheckSumField(FieldName:string):boolean;virtual;
+
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);virtual;
     procedure UpdateRecord(AObj:TRecord_;UNIT_ID:string;pt:boolean=false);virtual;
     procedure DelRecord(AObj:TRecord_);virtual;
@@ -1914,11 +1917,10 @@ begin
           begin
             if DataSet.FindField(edtTable.Fields[i].FieldName)<>nil then
             begin
-              case edtTable.Fields[i].Tag of
-              1:edtTable.Fields[i].Value := edtTable.Fields[i].Value + DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
+              if CheckSumField(edtTable.Fields[i].FieldName) then
+                edtTable.Fields[i].Value := edtTable.Fields[i].Value + DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value
               else
                 edtTable.Fields[i].Value := DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
-              end;
             end;
           end;
         edtTable.Post;
@@ -2018,7 +2020,7 @@ begin
                   begin
                     if DataSet.FindField(edtTable.Fields[i].FieldName)<>nil then
                     begin
-                      if edtTable.Fields[i].Tag <> 1 then
+                      if not CheckSumField(edtTable.Fields[i].FieldName) then
                          DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value := edtTable.Fields[i].Value
                       else
                          CalcWriteTo(edtTable,DataSet,edtProperty.FindField(edtTable.Fields[i].FieldName));
@@ -3732,6 +3734,14 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TframeOrderForm.CheckSumField(FieldName: string): boolean;
+var s:string;
+begin
+  s := uppercase(FieldName);
+  result := (s='AMOUNT') or (s='CALC_AMOUNT') or (s='AMONEY') or (s='CALC_MONEY') or (s='AGIO_MONEY') or
+            (s='RCK_AMOUNT') or (s='PAL_AMOUNT') or (s='PAL_INAMONEY') or (s='PAL_OUTAMONEY');
 end;
 
 end.

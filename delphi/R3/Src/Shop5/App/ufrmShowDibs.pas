@@ -153,6 +153,7 @@ var r:Currency;
 begin
   if (Key=#13) or (Key in ['+']) then
      begin
+       Key := #0;
        if (edtTakeFee.Text = '') then
           begin
              if TotalFee>=0 then

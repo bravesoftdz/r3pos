@@ -257,12 +257,13 @@ type
     RtlPSTFlag:integer;
     RtlGDPC_ID:string;
     Dibs,Cash:Currency;
-    GUID,GUNM:string;
+    GUID,GUNM,STGID,STGNM,STGGNM:string;
     AObj:TRecord_;
     SaveAObj:TRecord_;
     RowID:integer;
     Saved:boolean;
     basInfo:TZQuery;
+    STGAMT,STGAMOUNT:Currency;
     //多条件定位
     FndStr:string;
     //打印设置
@@ -544,7 +545,12 @@ begin
   try
     rs.SQL.Text := 'select sum(AMOUNT) from STO_STORAGE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and GODS_ID='''+AObj.FieldbyName('GODS_ID').AsString+'''';
     Factor.Open(rs);
-    lblInputHimt.Caption := '库存：'+formatFloat('#0.###',rs.Fields[0].asFloat)+TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',bs.FieldbyName('CALC_UNITS').AsString)+'  品名：'+AObj.FieldbyName('GODS_NAME').AsString;
+    STGID := AObj.FieldbyName('GODS_ID').AsString;
+    STGAMT := cdsTable.FieldbyName('CALC_AMOUNT').asFloat;
+    STGAMOUNT := rs.Fields[0].AsFloat;
+    STGNM := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',bs.FieldbyName('CALC_UNITS').AsString);
+    STGGNM := AObj.FieldbyName('GODS_NAME').AsString;
+    lblInputHimt.Caption := '库存:'+formatFloat('#0.###',STGAMOUNT)+' 销售:'+floattostr(STGAMT)+' '+TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',bs.FieldbyName('CALC_UNITS').AsString)+'  品名:'+STGGNM;
   finally
     rs.Free;
   end;
@@ -662,11 +668,11 @@ begin
       case InputMode of
       0:begin
          lblInput.Caption := '条码输入';
-         rzHint.Caption := '切换"货号"输入按tab健';
+         rzHint.Caption := '切换"货号"输入按[Tab]健';
         end;
       1:begin
          lblInput.Caption := '货号输入';
-         rzHint.Caption := '切换"条码"输入按tab健';
+         rzHint.Caption := '切换"条码"输入按[Tab]健';
         end;
       end;
     end;
@@ -2317,6 +2323,7 @@ begin
     prf := 0;
     mny := 0;
     ago := 0;
+    STGAMT := 0;
     cdsTable.First;
     while not cdsTable.Eof do
       begin
@@ -2332,12 +2339,15 @@ begin
         end;
         if cdsTable.FieldbyName('IS_PRESENT').AsInteger = 2 then
            TotalBarter := TotalBarter + trunc(cdsTable.FieldbyName('CALC_AMOUNT').AsFloat*cdsTable.FieldbyName('BARTER_INTEGRAL').AsFloat);
+        if cdsTable.FieldbyName('GODS_ID').asString=STGID then
+           STGAMT := STGAMT + cdsTable.FieldbyName('CALC_AMOUNT').asFloat;
         cdsTable.Next;
       end;
   finally
     cdsTable.Locate('SEQNO',r,[]);
     cdsTable.EnableControls;
   end;
+  lblInputHimt.Caption := '库存:'+formatFloat('#0.###',STGAMOUNT)+' 销售:'+floattostr(STGAMT)+' '+STGNM+'  品名:'+STGGNM;
   if (amt<>0) and (dbState<>dsBrowse) then
      begin
        case t of

@@ -3,7 +3,7 @@ inherited frmCloseForDay: TfrmCloseForDay
   Top = 230
   BorderStyle = bsNone
   Caption = #20132#29677#32467#36134
-  ClientHeight = 258
+  ClientHeight = 266
   ClientWidth = 435
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -15,7 +15,7 @@ inherited frmCloseForDay: TfrmCloseForDay
     Left = 0
     Top = 0
     Width = 435
-    Height = 258
+    Height = 266
     Align = alClient
     BorderInner = fsGroove
     BorderOuter = fsFlatRounded
@@ -25,7 +25,7 @@ inherited frmCloseForDay: TfrmCloseForDay
     TabOrder = 0
     object RzPanel2: TRzPanel
       Left = 7
-      Top = 197
+      Top = 205
       Width = 421
       Height = 54
       Align = alBottom
@@ -94,7 +94,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       Left = 7
       Top = 7
       Width = 421
-      Height = 49
+      Height = 50
       Align = alTop
       BorderOuter = fsFlat
       Color = clDefault
@@ -164,9 +164,9 @@ inherited frmCloseForDay: TfrmCloseForDay
     end
     object RzPanel3: TRzPanel
       Left = 7
-      Top = 56
+      Top = 57
       Width = 421
-      Height = 141
+      Height = 148
       Align = alClient
       BorderOuter = fsFlat
       Color = clDefault
@@ -332,7 +332,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Left = 208
         Top = 10
         Width = 1
-        Height = 124
+        Height = 128
       end
       object Label1: TLabel
         Left = 227

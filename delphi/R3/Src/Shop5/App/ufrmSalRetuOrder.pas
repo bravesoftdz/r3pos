@@ -322,7 +322,7 @@ begin
   gid := '..ÐÂÔö..';// AObj.FieldbyName('GLIDE_NO').asString;
   edtSALES_DATE.Date := Global.SysDate;
 
-  rs := TZQuery.Create(nil);
+{  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select MAX(CLSE_DATE) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER';
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -333,7 +333,7 @@ begin
        edtSALES_DATE.Date := fnTime.fnStrtoDate(rs.Fields[0].AsString)+1;
   finally
     rs.Free;
-  end;
+  end;  }
 
   edtPLAN_DATE.Date := edtSALES_DATE.Date+1;
   

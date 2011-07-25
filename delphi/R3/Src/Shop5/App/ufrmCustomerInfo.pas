@@ -878,6 +878,7 @@ var
   Instance: TWinControl;
   frame:TfrmCustomerExt;
   i,j:integer;
+  rs:TZQuery;
 begin
   for i:=0 to FList.Count -1 do
     begin
@@ -892,7 +893,8 @@ begin
         end;
     end;
   FList.Clear;
-
+  rs := TZQuery.Create(nil);
+  try
   cdsUnionCard.First;
   while not cdsUnionCard.Eof do
     begin
@@ -901,22 +903,31 @@ begin
          (cdsUnionCard.FieldbyName('IC_CARDNO').AsString<>'')
       then
          begin
-           tab := TrzTabSheet.Create(RzPage);
-           tab.PageControl := RzPage;
-           tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
-           frame := TfrmCustomerExt.Create(tab);
-           FList.Add(frame);
-           frame.Parent:=tab;
-           frame.DataSet := cdsCustomerExt;
-           frame.IsRecordChange := IsExtChange;
-           frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
-           frame.Cust_Id := cdsUnionCard.FieldbyName('CLIENT_ID').AsString;
-           frame.UnionName := cdsUnionCard.FieldbyName('UNION_NAME').AsString;
-           frame.DataState := dbState;
-           frame.ReadFrom;
+           rs.Close;
+           rs.SQL.Text := 'select INDEX_FLAG from PUB_UNION_INFO where UNION_ID='''+cdsUnionCard.FieldbyName('UNION_ID').AsString+'''';
+           Factor.Open(rs);
+           if rs.Fields[0].AsString = '1' then
+           begin
+             tab := TrzTabSheet.Create(RzPage);
+             tab.PageControl := RzPage;
+             tab.Caption :=  cdsUnionCard.FieldbyName('UNION_NAME').AsString;
+             frame := TfrmCustomerExt.Create(tab);
+             FList.Add(frame);
+             frame.Parent:=tab;
+             frame.DataSet := cdsCustomerExt;
+             frame.IsRecordChange := IsExtChange;
+             frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
+             frame.Cust_Id := cdsUnionCard.FieldbyName('CLIENT_ID').AsString;
+             frame.UnionName := cdsUnionCard.FieldbyName('UNION_NAME').AsString;
+             frame.DataState := dbState;
+             frame.ReadFrom;
+           end;
          end;
       cdsUnionCard.Next;
     end;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmCustomerInfo.cmbCUST_CODEPropertiesChange(Sender: TObject);

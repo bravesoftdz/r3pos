@@ -1150,7 +1150,7 @@ inherited frmLogin: TfrmLogin
     Top = 127
     Width = 60
     Height = 12
-    Caption = #29992#25143#24080#21495#65306
+    Caption = #29992' '#25143' '#21517#65306
     Transparent = True
   end
   object lblPass: TLabel [3]
@@ -1158,7 +1158,7 @@ inherited frmLogin: TfrmLogin
     Top = 150
     Width = 60
     Height = 12
-    Caption = #25805#20316#21475#20196#65306
+    Caption = #30331#24405#23494#30721#65306
     Transparent = True
   end
   object Label3: TLabel [4]

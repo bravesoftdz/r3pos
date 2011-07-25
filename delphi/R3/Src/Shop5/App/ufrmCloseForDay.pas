@@ -8,7 +8,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmBasic, ActnList, Menus, cxControls, cxContainer, cxEdit, ZIntf,
   cxTextEdit, StdCtrls, ExtCtrls, RzPanel, RzButton, DB, ZBase, ObjCommon,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, cxRadioGroup;
 
 type
   TfrmCloseForDay = class(TfrmBasic)
@@ -66,6 +66,7 @@ type
     LastTime:integer;
     Is_Print: Boolean;
     MainRecord: TRecord_;
+    function reckDate:TDate;
     function CheckStatus:boolean;
     //检查是否有离线数据，必须上传后才能结账
     procedure CheckOffData;
@@ -114,10 +115,10 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     rs.ParamByName('CREA_USER').AsString := Global.UserID;
-    rs.ParamByName('SALES_DATE').AsInteger := StrtoInt(FormatDateTime('YYYYMMDD',Date()));
+    rs.ParamByName('SALES_DATE').AsInteger := StrtoInt(FormatDateTime('YYYYMMDD',reckDate));
     Factor.Open(rs);
 }
-    Is_Print := cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',Date())),'1']),[]);
+    Is_Print := cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',reckDate)),'1']),[]);
     if Is_Print then
        MainRecord.ReadFromDataSet(cdsTable)
     else
@@ -126,12 +127,12 @@ begin
     //获得储值卡充值金额
 //    rs.Close;
 //    rs.SQL.Text := 'select sum(PAY_A) as PAY_A from SAL_IC_GLIDE A where IC_GLIDE_TYPE=''1'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
-//    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',Date())+' ';
+//    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and CREA_USER='+QuotedStr(Global.UserID)+' and CREA_DATE='+FormatDateTime('YYYYMMDD',reckDate)+' ';
 //    Factor.Open(rs);
 //    if rs.Fields[0].AsString<>'' then
 //      Is_Print := True;
 //    edtPAY_MNY.Text := rs.Fields[0].AsString;
-    if cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',Date())),'2']),[]) then
+    if cdsTable.Locate('CLSE_DATE;CLSE_TYPE',VarArrayOf([StrtoInt(FormatDateTime('YYYYMMDD',reckDate)),'2']),[]) then
        begin
          edtPAY_MNY.Text := formatfloat('#0.00',cdsTable.FieldbyName('PAY_A').asFloat);
          Is_Print := true;
@@ -144,7 +145,7 @@ begin
     //获得批发金额
     rs.Close;
     rs.SQL.Text := 'select sum(RECV_MNY) as RECV_MNY from VIW_RECVDATA A where PAYM_ID=''A'' and RECV_FLAG=''0'' and TENANT_ID='+IntToStr(Global.TENANT_ID)+
-    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',Date())+' and RECV_USER='+QuotedStr(Global.UserID)+' ';
+    ' and SHOP_ID='+QuotedStr(Global.SHOP_ID)+' and RECV_DATE='+FormatDateTime('YYYYMMDD',reckDate)+' and RECV_USER='+QuotedStr(Global.UserID)+' ';
     Factor.Open(rs);
     if rs.Fields[0].AsString<>'' then
       Is_Print := True;
@@ -385,7 +386,7 @@ begin
     sv := TZQuery.Create(nil);
     AObj := TRecord_.Create;
     try
-//      GetEverydayAcc(rs,StrToInt(FormatDateTime('YYYYMMDD',Date())));
+//      GetEverydayAcc(rs,StrToInt(FormatDateTime('YYYYMMDD',reckDate)));
 //      if not rs.IsEmpty then  //当天没数据可以补0了
         begin
           //把未结账日期值 赋给 动态数组
@@ -403,12 +404,12 @@ begin
               Inc(i);
               rs.Next;
             end;
-          if not sv.Locate('CLSE_DATE',strtoint(formatDatetime('YYYYMMDD',Date())),[]) then //如果当前没有数据补结0记录
+          if not sv.Locate('CLSE_DATE',strtoint(formatDatetime('YYYYMMDD',reckDate)),[]) then //如果当前没有数据补结0记录
              begin
-              DateArr[i]:=strtoint(formatDatetime('YYYYMMDD',Date()));
+              DateArr[i]:=strtoint(formatDatetime('YYYYMMDD',reckDate));
               sv.Append;
               sv.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-              sv.FieldByName('CLSE_DATE').AsInteger := strtoint(formatDatetime('YYYYMMDD',Date()));
+              sv.FieldByName('CLSE_DATE').AsInteger := strtoint(formatDatetime('YYYYMMDD',reckDate));
               sv.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
               sv.FieldbyName('CREA_USER').AsString := Global.UserID; 
               sv.FieldbyName('CLSE_MNY').AsFloat := 0;
@@ -454,7 +455,7 @@ begin
       CheckOffData;
       if not ShopGlobal.GetChkRight('13200001',2) then Raise Exception.Create('您没有结账权限,请联系管理员!');
       if not Is_Print and (MessageBox(Handle,'你今天没有营业数据是否继续结账？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then Exit;
-      if MessageBox(Handle,'结账后你将不能进行销售开单了，是否确认继续结账？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+      if MessageBox(Handle,pchar('结账后【'+fndCLSE_DATE.Text+'】你将不能进行销售开单了，是否确认继续结账？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
       Save;
       Btn_Save.Caption := '打印小票(&P)';
       Btn_Save.Tag := 1;
@@ -479,7 +480,7 @@ begin
     begin
       if not ShopGlobal.GetChkRight('13200001',5) then  Raise Exception.Create('您没有打印权限,请联系管理员!');
       if MessageBox(Handle,Pchar('是否打印小票!'),Pchar(Caption),MB_YESNO+MB_ICONQUESTION)=6 then
-         TfrmTicketPrint.ShowTicketPrint(Self,1,FormatDateTime('YYYYMMDD',Date()));
+         TfrmTicketPrint.ShowTicketPrint(Self,1,FormatDateTime('YYYYMMDD',reckDate));
       ModalResult := mrOk;
     end;
 
@@ -562,7 +563,7 @@ end;
 function TfrmCloseForDay.GetBalance: Boolean;
 var toDay:integer;
 begin
-  toDay := StrToInt(FormatDateTime('YYYYMMDD',Date()));
+  toDay := StrToInt(FormatDateTime('YYYYMMDD',reckDate));
   GetEverydayAcc(cdsTable,toDay); //合并操作，当它只是打开一次即可
   result := cdsTable.IsEmpty;
   Balance := 0;
@@ -598,6 +599,14 @@ begin
   finally
     rs.free;
   end;
+end;
+
+function TfrmCloseForDay.reckDate: TDate;
+begin
+  if Global.SysDate = (date()-1) then
+     result := Global.SysDate
+  else
+     result := Date();
 end;
 
 end.

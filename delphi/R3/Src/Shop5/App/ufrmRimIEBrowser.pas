@@ -243,6 +243,7 @@ begin
     if vList.Count<>2 then Raise Exception.Create('无效活动连接...'); 
     sid := DecodeString(vList[0]);
     xml := DecodeString(vList[1]);
+    frmXsmIEBrowser.Caption := Caption;
     if not frmXsmIEBrowser.Open(sid,xml,PageHandle) then MessageBox(Handle,'无法打开活动详情','友情提示...',MB_OK+MB_ICONINFORMATION);
   finally
     vList.Free;

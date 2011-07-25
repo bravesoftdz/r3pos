@@ -475,11 +475,10 @@ begin
           begin
             if DataSet.FindField(edtTable.Fields[i].FieldName)<>nil then
             begin
-              case edtTable.Fields[i].Tag of
-              1:edtTable.Fields[i].Value := edtTable.Fields[i].Value + DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
+              if CheckSumField(edtTable.Fields[i].FieldName) then
+                edtTable.Fields[i].Value := edtTable.Fields[i].Value + DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value
               else
                 edtTable.Fields[i].Value := DataSet.FieldbyName(edtTable.Fields[i].FieldName).Value;
-              end;
             end;
           end;
         edtTable.Post;

@@ -66,7 +66,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #25152#23646#26376#20221
+                  Caption = #25152#23646#26085#26399
                 end
                 object RzLabel12: TRzLabel
                   Left = 162

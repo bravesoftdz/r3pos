@@ -6058,7 +6058,7 @@ CREATE TABLE SAL_INDENTORDER (
         --业务员<导购员>
 	GUIDE_USER varchar (36) ,
         --销售方式
-	SALES_STYLE varchar (21) ,
+	SALES_STYLE varchar (36) ,
         --客户
 	CLIENT_ID varchar (36) NOT NULL ,
         --IC卡号

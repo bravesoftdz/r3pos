@@ -2035,7 +2035,7 @@ inherited frmN26Main: TfrmN26Main
         object Image6: TImage
           Left = 451
           Top = 0
-          Width = 2
+          Width = 398
           Height = 69
           Align = alClient
           AutoSize = True

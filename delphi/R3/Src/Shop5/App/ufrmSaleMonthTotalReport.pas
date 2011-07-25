@@ -504,7 +504,7 @@ procedure TfrmSaleMonthTotalReport.DBGridEh1GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if (Column.Field.Index>2) and not VarIsNull(Factory.Footer[Column.Field.Index-3].Value) and not VarIsClear(Factory.Footer[Column.Field.Index-3].Value) then
+  if (Column.Field.Index>2) and not VarIsNull(Factory.Footer[Column.Field.Index-3].Value) and not VarIsClear(Factory.Footer[Column.Field.Index-3].Value) and VarIsNumeric(Factory.Footer[Column.Field.Index-3].Value) and VarIsNumeric(Factory.Footer[Column.Field.Index-3].Value) then
      Text := formatFloat(Column.Footer.DisplayFormat,Factory.Footer[Column.Field.Index-3].Value);
 end;
 
@@ -547,7 +547,7 @@ begin
   FindCmp2:=FindComponent('P'+PageNo+'_D2');
   if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
      (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
-    TitleList.add('月份：'+P1_D1.Text+' 至 '+P1_D2.Text);
+    TitleList.add('日期：'+P1_D1.Text+' 至 '+P1_D2.Text);
 
   inherited AddReportReport(TitleList,PageNo);
 end;

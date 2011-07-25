@@ -10,20 +10,20 @@ inherited frmRckMng: TfrmRckMng
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 775
-    Height = 503
+    Height = 502
     inherited RzPanel2: TRzPanel
       Width = 765
-      Height = 493
+      Height = 492
       inherited RzPage: TRzPageControl
         Width = 759
-        Height = 487
+        Height = 486
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#38134#21592#20132#29677#32467#36134
           inherited RzPanel3: TRzPanel
             Width = 757
-            Height = 460
+            Height = 459
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
@@ -169,7 +169,7 @@ inherited frmRckMng: TfrmRckMng
               Left = 6
               Top = 76
               Width = 745
-              Height = 378
+              Height = 377
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -177,7 +177,7 @@ inherited frmRckMng: TfrmRckMng
                 Left = 1
                 Top = 1
                 Width = 743
-                Height = 376
+                Height = 375
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -872,7 +872,7 @@ inherited frmRckMng: TfrmRckMng
       OnExecute = actNewExecute
     end
     inherited actDelete: TAction
-      Caption = #25764#28040
+      Caption = #25764#38144
       OnExecute = actDeleteExecute
     end
     inherited actPrint: TAction

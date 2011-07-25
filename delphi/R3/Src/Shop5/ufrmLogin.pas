@@ -143,6 +143,7 @@ begin
      FLoginParam.UserID := temp.FieldbyName('USER_ID').asString;
      FLoginParam.ShopId := temp.FieldbyName('SHOP_ID').asString;
      FLoginParam.UserName  := temp.FieldbyName('USER_NAME').asString;
+     if FLoginParam.UserName='' then FLoginParam.UserName  := cxedtUsers.Text;
      FLoginParam.ShopName := temp.FieldbyName('SHOP_NAME').asString;
      FLoginParam.Roles := temp.FieldbyName('ROLE_IDS').AsString;
      Factor.GqqLogin(FLoginParam.UserID,FLoginParam.ShopName+'('+FLoginParam.UserName+')');

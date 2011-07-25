@@ -1,6 +1,5 @@
 inherited frameToolForm: TframeToolForm
-  Left = 336
-  Top = 254
+  Left = 337
   Width = 650
   Caption = #24037#20855#26465#29238#23376#31383#20307#27169#29256
   OnActivate = FormActivate

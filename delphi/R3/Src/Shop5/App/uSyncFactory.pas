@@ -716,8 +716,7 @@ begin
   frmLogo.ProgressBar1.Max := FList.Count;
   for i:=0 to FList.Count -1 do
     begin
-      frmLogo.Label1.Caption := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
-      frmLogo.Label1.Update;
+      frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       case PSynTableInfo(FList[i])^.synFlag of
       0,1,2,3,4,10,20,21,22,23:
         begin
@@ -2973,17 +2972,18 @@ begin
 
          cs_h.SyncDelta := rs_h.SyncDelta;
          cs_d.SyncDelta := rs_d.SyncDelta;
-
-         Global.LocalFactory.BeginBatch;
-         try
-           Global.LocalFactory.AddBatch(cs_h,'TSyncSysReport',Params);
-           Global.LocalFactory.AddBatch(cs_d,'TSyncSysReportTemplate',Params);
-           Global.LocalFactory.CommitBatch;
-         except
-           Global.LocalFactory.CancelBatch;
-           Raise;
+         if not cs_h.IsEmpty then
+         begin
+           Global.LocalFactory.BeginBatch;
+           try
+             Global.LocalFactory.AddBatch(cs_h,'TSyncSysReport',Params);
+             Global.LocalFactory.AddBatch(cs_d,'TSyncSysReportTemplate',Params);
+             Global.LocalFactory.CommitBatch;
+           except
+             Global.LocalFactory.CancelBatch;
+             Raise;
+           end;
          end;
-
          ls.Next;
        end;
   finally
@@ -3024,17 +3024,18 @@ begin
 
          rs_h.SyncDelta := cs_h.SyncDelta;
          rs_d.SyncDelta := cs_d.SyncDelta;
-
-         Global.RemoteFactory.BeginBatch;
-         try
-           Global.RemoteFactory.AddBatch(rs_h,'TSyncSysReport',Params);
-           Global.RemoteFactory.AddBatch(rs_d,'TSyncSysReportTemplate',Params);
-           Global.RemoteFactory.CommitBatch;
-         except
-           Global.RemoteFactory.CancelBatch;
-           Raise;
+         if not rs_h.IsEmpty then
+         begin
+           Global.RemoteFactory.BeginBatch;
+           try
+             Global.RemoteFactory.AddBatch(rs_h,'TSyncSysReport',Params);
+             Global.RemoteFactory.AddBatch(rs_d,'TSyncSysReportTemplate',Params);
+             Global.RemoteFactory.CommitBatch;
+           except
+             Global.RemoteFactory.CancelBatch;
+             Raise;
+           end;
          end;
-
          ls.Next;
        end;
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);

@@ -739,6 +739,8 @@ begin
                    if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(false);
                  end;
             end;
+         frmLogo.Show;
+         frmLogo.BringToFront;
          Global.LoadBasic();
          frmLogo.ShowTitle := '初始化权限,请稍候...';
          ShopGlobal.LoadRight;

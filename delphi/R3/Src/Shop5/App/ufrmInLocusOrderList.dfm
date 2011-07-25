@@ -902,7 +902,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
       Caption = #23436#25104
     end
     inherited actCancel: TAction
-      Caption = #25764#28040
+      Caption = #25764#38144
     end
     inherited actPrint: TAction
       Visible = False

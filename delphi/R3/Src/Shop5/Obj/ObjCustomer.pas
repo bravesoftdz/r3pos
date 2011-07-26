@@ -12,24 +12,24 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  
   TPubIcInfo=class(TZFactory)
   private
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  
   TCustomerExt=class(TZFactory)
   private
     procedure InitClass; override;
   end;
+  
   TIntegralGlide=class(TZFactory)
   private
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
-  TSelectIntegralGlide=class(TZFactory)
-  private
-    procedure InitClass; override;
-  end;
+  
   TNewCard=class(TZFactory)
   private
     procedure InitClass; override;
@@ -37,11 +37,7 @@ type
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-
-  TNewCardUpdate=class(TZProcFactory)
-  public
-    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
-  end;
+  
   TDeposit=class(TZFactory)
   private
     procedure InitClass; override;
@@ -55,17 +51,13 @@ type
   public
     //function AfterUpdateBatch(AGlobal:IdbHelp):Boolean;override;
   end;
+  
   TUnionIndex=class(TZFactory)
   private
     procedure InitClass; override;
   end;
-  TCustomerSalesData=class(TZFactory)
-  private
-    procedure InitClass;override;
-  end;
+
 implementation
-
-
 
 { TCustomer }
 
@@ -276,15 +268,6 @@ begin
   
 end;
 
-{ TSelectIntegralGlide }
-
-procedure TSelectIntegralGlide.InitClass;
-begin
-  inherited;
-  SelectSQL.Text:='select CREA_DATE,INTEGRAL_FLAG,FLAG_AMT,INTEGRAL,GLIDE_INFO from RCK_INTEGRAL_GLIDE where CUST_ID=:CUST_ID';
-  IsSQLUpdate:=True;
-end;
-
 { TNewCard }
 
 function TNewCard.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -430,68 +413,6 @@ begin
   InsertSQL.Text := SQL;
 end;
 
-{ TCustomerSalesData }
-
-procedure TCustomerSalesData.InitClass;
-begin
-  inherited;
-  SelectSQL.Text:='select ji.*,J.GODS_NAME from '+
-  '(select jh.*,I.COMP_NAME from  '+
-  '(select jf.*,H.CUST_NAME from   '+
-  '(select je.*,F.CODE_NAME COLORNAME from    '+
-  '(select jd.*,E.CODE_NAME SIZENAME from   '+
-  '(select jc.*,D.UNIT_NAME from     '+
-  '(select A.SALES_TYPE,A.COMP_ID,A.GLIDE_NO,A.SALES_DATE,A.CUST_ID,B.AMOUNT,B.GODS_ID,   '+
-  'B.APRICE,B.AMONEY,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID from SAL_SALESORDER A,SAL_SALESDATA B      '+
-  ' where A.SALES_ID=B.SALES_ID and A.SALES_TYPE<>2  and A.CUST_ID=:CUST_ID)jc  '+
-  'left outer join (select UNIT_ID,UNIT_NAME from PUB_MEAUNITS)D on jc.UNIT_ID=D.UNIT_ID)jd    '+
-  'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO    '+
-  'where  CODE_TYPE=''2'' and len(CODE_ID)=3)E on jd.PROPERTY_01=E.CODE_ID)je    '+
-  'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO   '+
-  'where CODE_TYPE=''4'' and len(CODE_ID)=3)F on je.PROPERTY_02=F.CODE_ID)jf    '+
-  'left outer join VIW_CUSTOMER H on jf.CUST_ID=H.CUST_ID)jh   '+
-  'left outer join CA_COMPANY I on jh.COMP_ID=I.COMP_ID)ji '+
-  'left outer join VIW_GOODSINFO J on ji.COMP_ID=J.COMP_ID and ji.GODS_ID=J.GODS_ID order by ji.SALES_DATE DESC';
-  IsSQLUpdate:=true;
-end;
-
-{ TNewCardUpdate }
-
-function TNewCardUpdate.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
-begin
-  Result:=False;
-  AGlobal.BeginTrans;
-  try
-      if Params.ParamByName('TYPE').asString='1' then
-      begin
-        AGlobal.ExecSQL('update RCK_IC_INFO set IC_STATUS=''1'',BALANCE=''0'''
-        + ',COMM=' + GetCommStr(AGlobal.iDbType) + ','
-        + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where IC_CARDNO='''+Params.ParamByName('IC_CARDNO').asString+'''');
-        AGlobal.ExecSQL('update BAS_CUSTOMER set IC_CARDNO='''+Params.ParamByName('IC_CARDNO').asString+''' '
-        + ',COMM=' + GetCommStr(AGlobal.iDbType) + ','
-        + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where CUST_ID='''+Params.ParamByName('CUST_ID').asString+'''');
-      end;
-      if Params.ParamByName('TYPE').asString='2' then
-      begin
-        AGlobal.ExecSQL('update RCK_IC_INFO set IC_STATUS=''2'' '
-        + ',COMM=' + GetCommStr(AGlobal.iDbType) + ','
-        + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where IC_CARDNO='''+Params.ParamByName('IC_CARDNO').asString+'''');
-        AGlobal.ExecSQL('update BAS_CUSTOMER set IC_CARDNO='''' '
-        + ',COMM=' + GetCommStr(AGlobal.iDbType) + ','
-        + 'TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where CUST_ID='''+Params.ParamByName('CUST_ID').asString+'''');
-      end;
-      AGlobal.CommitTrans;
-      Result:=True;
-  except
-    on E:Exception do
-       begin
-         Msg := E.Message;
-         AGlobal.RollBackTrans;
-       end;
-  end;
-end;
-
 { TRenew }
 
 procedure TRenew.InitClass;
@@ -520,7 +441,7 @@ begin
   IsSQLUpdate := true;
 
   Str :=
-  'insert into PUB_CUSTOMER_EXT(TENANT_ID,UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL,COMM,STAMP_TIME) '+
+  'insert into PUB_UNION_INDEX(TENANT_ID,UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL,COMM,STAMP_TIME) '+
   'values(:TENANT_ID,:UNION_ID,:INDEX_ID,:INDEX_NAME,:INDEX_SPELL,:INDEX_TYPE,:INDEX_OPTION,:INDEX_ISNULL,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str :=
@@ -631,23 +552,17 @@ end;
 initialization
   RegisterClass(TCustomer);
   RegisterClass(TIntegralGlide);
-  RegisterClass(TSelectIntegralGlide);
   RegisterClass(TNewCard);
   RegisterClass(TDeposit);
   RegisterClass(TRenew);
-  RegisterClass(TCustomerSalesData);
-  RegisterClass(TNewCardUpdate);
   RegisterClass(TPubIcInfo);
   RegisterClass(TCustomerExt);
 finalization
   UnRegisterClass(TCustomer);
   UnRegisterClass(TIntegralGlide);
-  UnRegisterClass(TSelectIntegralGlide);
   UnRegisterClass(TNewCard);
   UnRegisterClass(TDeposit);
   UnRegisterClass(TRenew);
-  UnRegisterClass(TCustomerSalesData);
-  UnRegisterClass(TNewCardUpdate);
   UnRegisterClass(TPubIcInfo);
   UnRegisterClass(TCustomerExt);
 end.

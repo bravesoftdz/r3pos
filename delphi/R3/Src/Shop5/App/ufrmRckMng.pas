@@ -363,6 +363,7 @@ begin
   inherited;
   if RzPage.TabIndex = 0 then
     begin
+      if cdsBrowser.IsEmpty then Exit;
       if TfrmBatchCloseForDay.EditDialog(Self) then
         Open;
     end

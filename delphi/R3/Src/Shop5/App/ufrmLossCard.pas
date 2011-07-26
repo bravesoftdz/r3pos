@@ -65,7 +65,6 @@ end;
 procedure TfrmLossCard.Btn_SaveClick(Sender: TObject);
 begin
   inherited;
-  //if StrToFloatDef(edtBALANCE.Text,0)>0 then Raise Exception.Create('卡上有余额,不能注销,请先退款！');
   cdsTable.Edit;
   cdsTable.FieldByName('IC_STATUS').AsString := '2';
   cdsTable.Post;
@@ -130,7 +129,7 @@ begin
 
     edtCLIENT_NAME.Enabled := False;
     edtIC_CARDNO.Enabled := False;
-    if cdsTable.FieldByName('IC_STATUS').AsString = '2' then
+    if (cdsTable.FieldByName('IC_STATUS').AsString = '2') or (cdsTable.FieldByName('IC_STATUS').AsString = '') then
       Btn_Save.Enabled := False
     else
       Btn_Save.Enabled := True;

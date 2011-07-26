@@ -37,10 +37,7 @@ type
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-  TSelectCard=class(TZFactory)
-  private
-    procedure InitClass; override;
-  end;
+
   TNewCardUpdate=class(TZProcFactory)
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
@@ -51,10 +48,7 @@ type
   public
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-  TSelectDeposit=class(TZFactory)
-  private
-    procedure InitClass;override;
-  end;
+
   TRenew=class(TZFactory)
   private
     procedure InitClass; override;
@@ -436,20 +430,6 @@ begin
   InsertSQL.Text := SQL;
 end;
 
-{ TSelectDeposit }
-
-procedure TSelectDeposit.InitClass;
-var SQL:string;
-begin
-  inherited;
-  SelectSQL.Text:=
-  ' select A.*,B.USER_NAME OPER_USER_TEXT from (select IC_CARDNO,PAY_CASH,PAY_A,OPER_USER,CREA_DATE, '+
-  ' GLIDE_INFO,IC_AMONEY from RCK_IC_GLIDE '+
-  ' where IC_GLIDE_TYPE=''1'' and CUST_ID=:CUST_ID ) A  '+
-  ' left outer join VIW_USERS B on A.OPER_USER=B.USER_ID  order by CREA_DATE DESC ';
-  IsSQLUpdate:=true;
-end;
-
 { TCustomerSalesData }
 
 procedure TCustomerSalesData.InitClass;
@@ -511,22 +491,8 @@ begin
        end;
   end;
 end;
-procedure TSelectCard.InitClass;
-begin
-  inherited;
-  SelectSQL.Text := 'select CREA_DATE,IC_INFO,B.USER_NAME,BALANCE from RCK_IC_INFO A,VIW_USERS B where A.IC_CARDNO=:IC_CARDNO and A.CREA_USER=B.USER_ID';
-  IsSQLUpdate := true;
-end;
 
 { TRenew }
-
-{function TRenew.AfterUpdateBatch(AGlobal: IdbHelp): Boolean;
-begin
-  AGlobal.ExecSQL('update BAS_CUSTOMER set INTEGRAL=:INTEGRAL2,END_DATE=:END_DATE2,CON_DATE=:CREA_DATE '
-   + ',COMM=' + GetCommStr(iDbType) + ','
-   + 'TIME_STAMP='+GetTimeStamp(iDbType)+' where CUST_ID=:CUST_ID ',SELF);
-  Result:=True;
-end;  }
 
 procedure TRenew.InitClass;
 var SQL:string;
@@ -667,9 +633,7 @@ initialization
   RegisterClass(TIntegralGlide);
   RegisterClass(TSelectIntegralGlide);
   RegisterClass(TNewCard);
-  RegisterClass(TSelectCard);
   RegisterClass(TDeposit);
-  RegisterClass(TSelectDeposit);
   RegisterClass(TRenew);
   RegisterClass(TCustomerSalesData);
   RegisterClass(TNewCardUpdate);
@@ -680,9 +644,7 @@ finalization
   UnRegisterClass(TIntegralGlide);
   UnRegisterClass(TSelectIntegralGlide);
   UnRegisterClass(TNewCard);
-  UnRegisterClass(TSelectCard);  
   UnRegisterClass(TDeposit);
-  UnRegisterClass(TSelectDeposit);
   UnRegisterClass(TRenew);
   UnRegisterClass(TCustomerSalesData);
   UnRegisterClass(TNewCardUpdate);

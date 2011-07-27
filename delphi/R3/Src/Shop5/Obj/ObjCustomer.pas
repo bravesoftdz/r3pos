@@ -44,13 +44,6 @@ type
   public
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-
-  TRenew=class(TZFactory)
-  private
-    procedure InitClass; override;
-  public
-    //function AfterUpdateBatch(AGlobal:IdbHelp):Boolean;override;
-  end;
   
   TUnionIndex=class(TZFactory)
   private
@@ -413,23 +406,6 @@ begin
   InsertSQL.Text := SQL;
 end;
 
-{ TRenew }
-
-procedure TRenew.InitClass;
-var SQL:string;
-begin
-  inherited;
-  SelectSQL.Text := 'select COMP_ID,PAY_A,GLIDE_ID,CUST_ID,CREA_DATE,GLIDE_INFO,OPER_USER   '+
-  '   ,AMONEY,ACCU_INTEGRAL,INTEGRAL1,INTEGRAL2,END_DATE1  '+
-  '   ,END_DATE2 from RCK_RENEW_GLIDE where GLIDE_ID=:GLIDE_ID';
-  IsSQLUpdate := true;
-  SQL := 'insert into RCK_RENEW_GLIDE(COMP_ID,PAY_A,GLIDE_ID,CUST_ID,CREA_DATE,GLIDE_INFO,OPER_USER   '+
-  '   ,AMONEY,ACCU_INTEGRAL,INTEGRAL1,INTEGRAL2,END_DATE1,END_DATE2,COMM,TIME_STAMP) '+
-  '  values(:COMP_ID,:PAY_A,newid(),:CUST_ID,:CREA_DATE,:GLIDE_INFO,:OPER_USER,:AMONEY,:ACCU_INTEGRAL,:INTEGRAL1,:INTEGRAL2,'+
-  ' :END_DATE1,:END_DATE2,''00'','+GetTimeStamp(iDbType)+')';
-  InsertSQL.Text := SQL;
-end;
-
 { TUnionIndex }
 
 procedure TUnionIndex.InitClass;
@@ -465,7 +441,7 @@ begin
    try
      Tmp := TZQuery.Create(nil);
      Tmp.Close;
-     Tmp.SQL.Text := 'Select COMM,CLIENT_ID From PUB_IC_INFO Where IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
+     Tmp.SQL.Text := 'Select COMM,CLIENT_ID From PUB_IC_INFO Where IC_CARDNO=:IC_CARDNO and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID ';
      Tmp.ParamByName('IC_CARDNO').AsString := FieldbyName('IC_CARDNO').AsString;
      Tmp.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
      Tmp.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsString;
@@ -519,7 +495,7 @@ begin
   'select  '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,'+Params.ParambyName('TENANT_ID').asString+' as TENANT_ID,''#'' as UNION_ID,''企业会员'' as UNION_NAME from CA_TENANT where TENANT_ID=:TENANT_ID '+
   'union all '+
   'select '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,TENANT_ID,PRICE_ID as UNION_ID,PRICE_NAME as UNION_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_TYPE=''2'' '+
-  ') j left outer join PUB_IC_INFO ic on j.TENANT_ID=ic.TENANT_ID and j.UNION_ID=ic.UNION_ID and j.CLIENT_ID=ic.CLIENT_ID';
+  ') j left outer join PUB_IC_INFO ic on j.TENANT_ID=ic.TENANT_ID and j.UNION_ID=ic.UNION_ID and j.CLIENT_ID=ic.CLIENT_ID ';
   IsSQLUpdate := true;
 end;
 
@@ -531,7 +507,7 @@ begin
   inherited;
   SelectSQL.Text :=
   'select ROWS_ID,TENANT_ID,UNION_ID,CUST_ID,INDEX_ID,INDEX_NAME,INDEX_TYPE,INDEX_VALUE from PUB_CUSTOMER_EXT where TENANT_ID=:TENANT_ID and'+
-  ' CUST_ID=:CUST_ID';
+  ' CUST_ID=:CUST_ID and COMM not in (''02'',''12'') ';
   IsSQLUpdate := true;
 
   Str :=
@@ -554,7 +530,6 @@ initialization
   RegisterClass(TIntegralGlide);
   RegisterClass(TNewCard);
   RegisterClass(TDeposit);
-  RegisterClass(TRenew);
   RegisterClass(TPubIcInfo);
   RegisterClass(TCustomerExt);
 finalization
@@ -562,7 +537,6 @@ finalization
   UnRegisterClass(TIntegralGlide);
   UnRegisterClass(TNewCard);
   UnRegisterClass(TDeposit);
-  UnRegisterClass(TRenew);
   UnRegisterClass(TPubIcInfo);
   UnRegisterClass(TCustomerExt);
 end.

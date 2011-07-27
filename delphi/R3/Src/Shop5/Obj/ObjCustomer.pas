@@ -44,11 +44,6 @@ type
   public
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-  
-  TUnionIndex=class(TZFactory)
-  private
-    procedure InitClass; override;
-  end;
 
 implementation
 
@@ -404,25 +399,6 @@ begin
   'values(:GLIDE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,:IC_CARDNO,:SALES_ID,:CREA_USER,:CREA_DATE,:GLIDE_INFO,:IC_GLIDE_TYPE,:PAY_A,:PAY_B,:PAY_C,'+
   ':PAY_D,:PAY_E,:PAY_F,:PAY_G,:PAY_H,:PAY_I,:PAY_J,:GLIDE_MNY,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := SQL;
-end;
-
-{ TUnionIndex }
-
-procedure TUnionIndex.InitClass;
-var Str:String;
-begin
-  inherited;
-  SelectSQL.Text := 'select TENANT_ID,UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL from PUB_UNION_INDEX '+
-  ' where TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID and INDEX_ID=:INDEX_ID ';
-  IsSQLUpdate := true;
-
-  Str :=
-  'insert into PUB_UNION_INDEX(TENANT_ID,UNION_ID,INDEX_ID,INDEX_NAME,INDEX_SPELL,INDEX_TYPE,INDEX_OPTION,INDEX_ISNULL,COMM,STAMP_TIME) '+
-  'values(:TENANT_ID,:UNION_ID,:INDEX_ID,:INDEX_NAME,:INDEX_SPELL,:INDEX_TYPE,:INDEX_OPTION,:INDEX_ISNULL,''00'','+GetTimeStamp(iDbType)+')';
-  InsertSQL.Text := Str;
-  Str :=
-  'update PUB_UNION_INDEX set TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,INDEX_ID=:INDEX_ID,INDEX_NAME=:INDEX_NAME,INDEX_SPELL=:INDEX_SPELL,INDEX_TYPE=:,INDEX_OPTION=:,INDEX_ISNULL=:,COMM=:,STAMP_TIME=: where ';
-  UpdateSQL.Text := Str;
 end;
 
 { TPubIcInfo }

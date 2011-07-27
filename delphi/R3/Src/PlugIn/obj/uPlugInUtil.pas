@@ -89,7 +89,7 @@ function GetTimeStamp(iDbType:Integer):string;
 var
   GPlugIn: IPlugIn;
   GLastError:string;
-
+  GdbType:integer;
 implementation
 
 

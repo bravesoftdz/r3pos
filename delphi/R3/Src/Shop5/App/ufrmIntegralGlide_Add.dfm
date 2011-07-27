@@ -214,7 +214,7 @@ inherited frmIntegralGlide_Add: TfrmIntegralGlide_Add
       object btnOK: TRzBitBtn
         Left = 302
         Top = 14
-        Caption = #20817#25442'(&O)'
+        Caption = #22686#36865'(&O)'
         Color = 15791348
         HighlightColor = 16026986
         HotTrack = True

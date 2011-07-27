@@ -494,7 +494,7 @@ begin
   'ic.ACCU_INTEGRAL,ic.RULE_INTEGRAL,ic.INTEGRAL,ic.BALANCE from ('+
   'select  '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,'+Params.ParambyName('TENANT_ID').asString+' as TENANT_ID,''#'' as UNION_ID,''企业会员'' as UNION_NAME from CA_TENANT where TENANT_ID=:TENANT_ID '+
   'union all '+
-  'select '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,TENANT_ID,PRICE_ID as UNION_ID,PRICE_NAME as UNION_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_TYPE=''2'' '+
+  'select '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,TENANT_ID,PRICE_ID as UNION_ID,PRICE_NAME as UNION_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_TYPE=''2'' and COMM not in (''02'',''12'') '+
   ') j left outer join PUB_IC_INFO ic on j.TENANT_ID=ic.TENANT_ID and j.UNION_ID=ic.UNION_ID and j.CLIENT_ID=ic.CLIENT_ID ';
   IsSQLUpdate := true;
 end;

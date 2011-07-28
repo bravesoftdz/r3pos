@@ -85,6 +85,7 @@ type
     procedure DoRBDate(Sender: TObject);   //暂时没用
     procedure DoCxDateOnCloseUp(Sender: TObject); //暂时没用
     function  GetHasChild: Boolean;
+    function  GetGodsStateValue(DefineState: string='11111111111111111111'): string; //返回商品指标的启用情况
   public
     PUB_CLIENT_ID: TZQuery; //客户群体数据集
 
@@ -402,7 +403,7 @@ end;
 procedure TframeBaseReport.FormCreate(Sender: TObject);
 var
   i:integer;
-  CmpName,FName,vName: string;
+  CmpName,FName,vName,DefState: string;
   Cbx: TcxComboBox;
   Column:TColumnEh;
 begin
@@ -426,7 +427,8 @@ begin
           AddTongjiUnitList(Cbx)
         else if RightStr(CmpName,12)='_REPORT_FLAG' then  //统计类型
         begin
-          AddGoodSortTypeItems(Cbx,'11111100');
+          DefState:=GetGodsStateValue;
+          AddGoodSortTypeItems(Cbx,DefState);
           Cbx.ItemIndex:=0;
         end else
         if RightStr(CmpName,10)='_SHOP_TYPE' then //管理群组
@@ -441,7 +443,8 @@ begin
         end else
         if RightStr(CmpName,8)='_TYPE_ID' then //商品指标
         begin
-          AddGoodSortTypeItems(Cbx);
+          DefState:=GetGodsStateValue('01111111111111111111');        
+          AddGoodSortTypeItems(Cbx,DefState);
           Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
           Cbx.ItemIndex:=0;
         end;
@@ -1691,6 +1694,33 @@ begin
   case Column.Title.SortMarker of
     smNoneEh,smDownEh:     begin       Column.Title.SortMarker := smUpEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';     end;    smUpEh:     begin       Column.Title.SortMarker := smDownEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC';     end;
   end;
+end;
+
+function TframeBaseReport.GetGodsStateValue(DefineState: string): string;
+var
+  ReStr: string;
+  PosIdx: integer;
+  RsState: TZQuery;
+begin
+  ReStr:='00000000000000000000';
+  RsState:=Global.GetZQueryFromName('PUB_STAT_INFO');
+  RsState.First;
+  while not RsState.Eof do
+  begin
+    PosIdx:=StrToIntDef(RsState.fieldbyName('CODE_ID').AsString,0);
+    if PosIdx>0 then
+    begin
+      if CLVersion='FIG' then  //服装版全部
+        ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
+      else
+      begin
+        if (PosIdx<7) or (PosIdx>8) then
+          ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
+      end;
+    end;
+    RsState.Next;
+  end;
+  result:=ReStr;
 end;
 
 end.

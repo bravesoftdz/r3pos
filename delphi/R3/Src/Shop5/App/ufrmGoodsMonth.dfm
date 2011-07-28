@@ -1,6 +1,6 @@
 inherited frmGoodsMonth: TfrmGoodsMonth
-  Left = 201
-  Top = 153
+  Left = 213
+  Top = 140
   Width = 1046
   Height = 597
   Caption = #26376#25104#26412#35843#25972
@@ -165,7 +165,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footers = <>
                           ReadOnly = True
                           Title.Caption = #21830#21697#21517#31216
-                          Width = 122
+                          Width = 150
                         end
                         item
                           EditButtons = <>
@@ -660,7 +660,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
     Left = 682
     Top = 311
     object N1: TMenuItem
-      Caption = #25209#37327#24405#20837
+      Caption = #25209#37327#24405#20837'...'
       OnClick = N1Click
     end
   end

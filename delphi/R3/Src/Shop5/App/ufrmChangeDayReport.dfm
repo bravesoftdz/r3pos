@@ -26,7 +26,6 @@ inherited frmChangeDayReport: TfrmChangeDayReport
           inherited RzPanel3: TRzPanel
             Width = 675
             Height = 482
-            BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 665
               Height = 472

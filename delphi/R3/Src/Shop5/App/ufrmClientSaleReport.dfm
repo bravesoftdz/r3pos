@@ -21,7 +21,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
           Caption = #22320#21306#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 876
-            BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 866
               inherited w1: TRzPanel

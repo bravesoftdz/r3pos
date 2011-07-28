@@ -25,7 +25,6 @@ inherited frmStockDayReport: TfrmStockDayReport
           inherited RzPanel3: TRzPanel
             Width = 858
             Height = 515
-            BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 848
               Height = 505

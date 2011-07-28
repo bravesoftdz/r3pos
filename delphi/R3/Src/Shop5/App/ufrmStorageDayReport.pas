@@ -731,7 +731,7 @@ begin
           ' left outer join '+
           '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
           ' on  j.SORT_ID=s.SORT_ID '+
-          ' order by s.OrderNo,j.GODS_CODE';
+          ' order by s.OrderNo,s.SORT_ID,j.GODS_CODE';
       end;
     end;
     result:=ParseSQL(Factor.iDbType, strSql);
@@ -781,7 +781,7 @@ begin
           ' left outer join '+
           '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
           ' on  j.SORT_ID=s.SORT_ID '+
-          ' order by s.OrderNo,j.GODS_CODE';
+          ' order by s.OrderNo,s.SORT_ID,j.GODS_CODE';
       end;
     end;
     result:=ParseSQL(Factor.iDbType, strSql);

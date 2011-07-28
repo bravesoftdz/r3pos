@@ -24,7 +24,6 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
           inherited RzPanel3: TRzPanel
             Width = 734
             Height = 518
-            BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 724
               Height = 508
@@ -310,7 +309,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #21333#25454#26085#26399
-                      Width = 72
+                      Width = 69
                     end
                     item
                       EditButtons = <>
@@ -324,7 +323,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
-                      Width = 76
+                      Width = 107
                     end
                     item
                       EditButtons = <>
@@ -339,7 +338,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 69
+                      Width = 75
                     end
                     item
                       EditButtons = <>
@@ -359,7 +358,16 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       FieldName = 'UNIT_NAME'
                       Footers = <>
                       Title.Caption = #21333#20301
-                      Width = 34
+                      Width = 22
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = ' #0.###'
+                      EditButtons = <>
+                      FieldName = 'ORG_AMT'
+                      Footers = <>
+                      Title.Caption = #26399#21021#25968#37327
+                      Width = 69
                     end
                     item
                       Alignment = taRightJustify
@@ -381,7 +389,6 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #21333#20215
-                      Width = 80
                     end
                     item
                       Alignment = taRightJustify
@@ -393,6 +400,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Footers = <>
                       Title.Caption = #37329#39069
                       Width = 85
+                    end
+                    item
+                      Alignment = taRightJustify
+                      EditButtons = <>
+                      FieldName = 'BAL_AMT'
+                      Footers = <>
+                      Title.Caption = #32467#23384#25968#37327
+                      Width = 72
                     end
                     item
                       EditButtons = <>

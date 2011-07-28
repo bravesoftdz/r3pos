@@ -34,13 +34,16 @@ type
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
-    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-       var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
   private
-    function  GetGoodDetailSQL(chk:boolean=true): widestring;
+    IsCalcReck: Boolean; //是否试算过日台账
+    FReckAmt: Real;  //期初数量
     procedure AddBillTypeItems; //添加帐单类型Items
 
-    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function  GetGoodStorageAmt: Boolean; //返回当前查询期初数量
+    procedure CalcGoodAmount; //循环累计数量
+    function  GetGoodDetailSQL(chk:boolean=true): widestring;
+    function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
@@ -81,7 +84,8 @@ begin
   if not ShopGlobal.GetChkRight('14500001',2) then
   begin
     SetNotShowCostPrice(DBGridEh1, ['APRICE','AMONEY']);
-  end;    
+  end;
+  IsCalcReck:=False;   
 end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;
@@ -94,6 +98,10 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create(' 日期条件不能为空！ ');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('  查询开始日期不能大于结束日期条件不能为空！ ');
   if trim(fndP1_GODS_ID.AsString)='' then Raise Exception.Create('  请选择要查询商品！  '); 
+
+  //读取台账的期初数量:
+  FReckAmt:=0;
+  if not GetGoodStorageAmt then Raise Exception.Create('  读取期初数量错误！  ');
 
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
@@ -163,6 +171,8 @@ begin
      ',A.PROPERTY_02'+
      ',BATCH_NO'+
      ',LOCUS_NO'+
+     ',0 as ORG_AMT'+
+     ',0 as BAL_AMT'+
      ',APRICE'+
      ',(case when ORDER_TYPE in (21,22,23,24) then -AMOUNT else AMOUNT end) as AMOUNT'+  //销售的转成负数
      ',(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as AMONEY '+
@@ -204,6 +214,7 @@ begin
         if strSql='' then Exit;
         adoReport1.SQL.Text := strSql;
         Factor.Open(adoReport1);
+        CalcGoodAmount; //循环累计数量
       end;
     1: begin //按门店汇总表
  
@@ -337,6 +348,60 @@ begin
     end;
   end;
 end;                                                      
+
+function TfrmGodsRunningReport.GetGoodStorageAmt: Boolean;
+var
+  rs:TZQuery;
+  Str,GodsID,ReckDate: string;
+begin
+  result:=False;
+  GodsID:=trim(fndP1_GODS_ID.AsString);
+  ReckDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1);
+  //判断开始时间点是否已日结账：
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) as ReSum from RCK_DAYS_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and CREA_DATE>='+ReckDate+' ';
+    Factor.Open(rs);
+    if (rs.Fields[0].AsInteger=0) and (not IsCalcReck) then
+    begin
+      if TfrmCostCalc.TryCalcDayGods(self) then
+        IsCalcReck:=true
+      else
+        Abort;
+    end;
+    //读取台账期初数量:
+    Str:='select sum(BAL_AMT) as BAL_AMT from RCK_GOODS_DAYS where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and CREA_DATE='+ReckDate+' ';
+    if trim(fndP1_SHOP_ID.AsString)<>'' then
+      Str:=Str+' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
+    rs.Close;
+    rs.SQL.Text:=Str;
+    Factor.Open(rs);
+    if rs.Active then
+    begin
+      FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
+      result:=true;
+    end;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmGodsRunningReport.CalcGoodAmount;
+var
+  ORG_AMT: Real;
+begin
+  if (not adoReport1.Active) or (adoReport1.IsEmpty) then Exit;
+  ORG_AMT:=FReckAmt;
+  adoReport1.First;
+  while not adoReport1.Eof do
+  begin
+    adoReport1.Edit;
+    adoReport1.FieldByName('ORG_AMT').AsFloat:=ORG_AMT; //期初数量
+    ORG_AMT:=ORG_AMT+adoReport1.FieldByName('AMOUNT').AsFloat; //结存数量
+    adoReport1.FieldByName('BAL_AMT').AsFloat:=ORG_AMT;
+    adoReport1.Next;
+  end;            
+end;
 
 end.
 

@@ -1812,6 +1812,7 @@ end;
 
 class function TfrmCostCalc.TryCalcDayGods(Owner: TForm): boolean;
 begin
+  result:=False;
   with TfrmCostCalc.Create(Owner) do
     begin
       try
@@ -1819,6 +1820,7 @@ begin
         Label2.Caption := 'º∆À„Ã®’À:'+formatDatetime('YYYY-MM-DD',date());
         Show;
         btnStartClick(nil);
+        result:=true;
       finally
         free;
       end;

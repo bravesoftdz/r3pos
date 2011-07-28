@@ -11,10 +11,10 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
       Width = 1075
       inherited RzPage: TRzPageControl
         Width = 870
-        ActivePage = TabSheet3
+        ActivePage = TabSheet2
         Color = clWhite
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -26,6 +26,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               inherited w1: TRzPanel
                 Width = 858
                 Height = 122
+                Color = clWhite
                 object RzLabel1: TRzLabel
                   Left = 24
                   Top = 12
@@ -714,6 +715,14 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 Alignment = taRightJustify
                 Caption = #38144#21806#31867#22411
               end
+              object Label46: TLabel
+                Left = 288
+                Top = 14
+                Width = 48
+                Height = 12
+                Caption = #20154#21592#31867#21035
+                Visible = False
+              end
               object P2_D1: TcxDateEdit
                 Left = 80
                 Top = 8
@@ -1078,6 +1087,36 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   #34892#25919#22320#21306
                   #31649#29702#32676#32452)
                 TabOrder = 13
+              end
+              object RzGroupBox1: TRzGroupBox
+                Left = 345
+                Top = 4
+                Width = 120
+                Height = 25
+                Color = clWindow
+                GroupStyle = gsStandard
+                TabOrder = 14
+                ThemeAware = False
+                Visible = False
+                object RB_SYY: TcxRadioButton
+                  Left = 62
+                  Top = 6
+                  Width = 55
+                  Height = 17
+                  Caption = #25910#38134#21592
+                  TabOrder = 0
+                end
+                object RB_DGY: TcxRadioButton
+                  Left = 2
+                  Top = 6
+                  Width = 55
+                  Height = 17
+                  Caption = #23548#36141#21592
+                  Checked = True
+                  TabOrder = 1
+                  TabStop = True
+                  OnClick = RB_DGYClick
+                end
               end
             end
             object RzPanel10: TRzPanel

@@ -1602,10 +1602,11 @@ end;
 procedure TfrmSaleManSaleReport.RB_DGYClick(Sender: TObject);
 begin
   inherited;
-  if RB_SYY.Checked then
+ { if RB_SYY.Checked then
     TabSheet2.Caption:='导购员销售汇总表'
   else
     TabSheet2.Caption:='收银员销售汇总表';
+  }
 end;
 
 end.

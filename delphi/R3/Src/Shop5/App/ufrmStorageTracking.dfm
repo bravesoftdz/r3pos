@@ -215,7 +215,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footer.DisplayFormat = '#0.00#'
                         Footers = <>
                         Title.Caption = #24403#21069#21806#20215
-                        Width = 66
+                        Width = 55
                       end
                       item
                         Alignment = taRightJustify
@@ -226,8 +226,25 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Footer.DisplayFormat = '#0.00'
                         Footer.ValueType = fvtSum
                         Footers = <>
-                        Title.Caption = #24211#23384#37329#39069
-                        Width = 67
+                        Title.Caption = #38144#21806#37329#39069
+                        Width = 63
+                      end
+                      item
+                        DisplayFormat = '#0.00#'
+                        EditButtons = <>
+                        FieldName = 'NEW_INPRICE'
+                        Footers = <>
+                        Title.Caption = #26368#26032#36827#20215
+                        Width = 57
+                      end
+                      item
+                        DisplayFormat = '#0.00'
+                        EditButtons = <>
+                        FieldName = 'STOCK_MNY'
+                        Footer.ValueType = fvtSum
+                        Footers = <>
+                        Title.Caption = #36827#36135#25104#26412
+                        Width = 59
                       end
                       item
                         EditButtons = <>
@@ -661,15 +678,15 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel4: TPanel
                 Left = 0
                 Top = 0
-                Width = 718
-                Height = 419
+                Width = 710
+                Height = 408
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel5: TPanel
                   Left = 1
-                  Top = 388
-                  Width = 716
+                  Top = 377
+                  Width = 708
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -737,8 +754,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 716
-                  Height = 387
+                  Width = 708
+                  Height = 376
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsdemand
@@ -963,7 +980,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel7: TPanel
                 Left = 178
                 Top = 0
-                Width = 720
+                Width = 712
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -1319,15 +1336,15 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel8: TPanel
                 Left = 0
                 Top = 0
-                Width = 718
-                Height = 419
+                Width = 710
+                Height = 408
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel9: TPanel
                   Left = 1
-                  Top = 388
-                  Width = 716
+                  Top = 377
+                  Width = 708
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -1387,8 +1404,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh2: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 716
-                  Height = 387
+                  Width = 708
+                  Height = 376
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsRate
@@ -1580,7 +1597,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel11: TPanel
                 Left = 178
                 Top = 0
-                Width = 720
+                Width = 712
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify

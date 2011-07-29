@@ -13,7 +13,8 @@ type
     rgMenu: TRzStringGrid;
     procedure FormCreate(Sender: TObject);
     procedure rgMenuKeyPress(Sender: TObject; var Key: Char);
-    procedure rgMenuClick(Sender: TObject);
+    procedure rgMenuMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -37,7 +38,7 @@ end;
 begin
   rgMenu.Cells[0,0] := space(10)+ '0.交班结账';
   rgMenu.Cells[0,1] := space(10)+ '1.窗口最小化';
-  rgMenu.Cells[0,2] := space(10)+ '2.入会';
+  rgMenu.Cells[0,2] := space(10)+ '2.新增会员';
   rgMenu.Cells[0,3] := space(10)+ '3.发卡';
   rgMenu.Cells[0,4] := space(10)+ '4.充值';
   rgMenu.Cells[0,5] := space(10)+ '5.退款';
@@ -76,10 +77,12 @@ begin
      end;
 end;
 
-procedure TfrmPosMenu.rgMenuClick(Sender: TObject);
+procedure TfrmPosMenu.rgMenuMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   inherited;
   ModalResult := mrOk;
+
 end;
 
 end.

@@ -148,6 +148,7 @@ var
   function EnCodeBarcode(cdsTable:TDataSet): string;
   var b,id:string;
   begin
+    basInfo.Filtered := false;
     if basInfo.Locate('GODS_ID',cdsTable.FieldbyName('GODS_ID').AsString,[]) then
     begin
       b := basInfo.FieldbyName('BARCODE').asString;

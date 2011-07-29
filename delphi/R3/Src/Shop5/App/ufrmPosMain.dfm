@@ -1,6 +1,6 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 202
-  Top = 146
+  Left = 287
+  Top = 106
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
@@ -57,7 +57,7 @@ inherited frmPosMain: TfrmPosMain
         ThemeAware = False
         object Label2: TLabel
           Left = 17
-          Top = 110
+          Top = 65
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -70,8 +70,8 @@ inherited frmPosMain: TfrmPosMain
           ParentFont = False
         end
         object Label6: TLabel
-          Left = 209
-          Top = 110
+          Left = 207
+          Top = 65
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -84,11 +84,10 @@ inherited frmPosMain: TfrmPosMain
           ParentFont = False
         end
         object Label1: TLabel
-          Left = 18
-          Top = 25
+          Left = 17
+          Top = 21
           Width = 52
           Height = 12
-          Alignment = taRightJustify
           Caption = #38144#21806#21333#21495
           Font.Charset = GB2312_CHARSET
           Font.Color = clWhite
@@ -98,12 +97,12 @@ inherited frmPosMain: TfrmPosMain
           ParentFont = False
         end
         object Label5: TLabel
-          Left = 209
-          Top = 25
+          Left = 207
+          Top = 21
           Width = 52
           Height = 12
           Alignment = taRightJustify
-          Caption = #38144#21806#26085#26399
+          Caption = #32467#36134#26085#26399
           Font.Charset = GB2312_CHARSET
           Font.Color = clWhite
           Font.Height = -12
@@ -113,7 +112,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object Label17: TLabel
           Left = 17
-          Top = 79
+          Top = 132
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -126,8 +125,8 @@ inherited frmPosMain: TfrmPosMain
           ParentFont = False
         end
         object Label7: TLabel
-          Left = 209
-          Top = 79
+          Left = 207
+          Top = 132
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -141,7 +140,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object Label4: TLabel
           Left = 17
-          Top = 48
+          Top = 43
           Width = 53
           Height = 12
           Alignment = taRightJustify
@@ -154,8 +153,8 @@ inherited frmPosMain: TfrmPosMain
           ParentFont = False
         end
         object Label30: TLabel
-          Left = 209
-          Top = 155
+          Left = 207
+          Top = 108
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -169,7 +168,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object Label31: TLabel
           Left = 17
-          Top = 155
+          Top = 108
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -182,8 +181,8 @@ inherited frmPosMain: TfrmPosMain
           ParentFont = False
         end
         object Label32: TLabel
-          Left = 208
-          Top = 48
+          Left = 17
+          Top = 161
           Width = 53
           Height = 12
           Alignment = taRightJustify
@@ -196,8 +195,8 @@ inherited frmPosMain: TfrmPosMain
           ParentFont = False
         end
         object Label19: TLabel
-          Left = 209
-          Top = 132
+          Left = 207
+          Top = 86
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -211,7 +210,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object Label18: TLabel
           Left = 17
-          Top = 132
+          Top = 86
           Width = 52
           Height = 12
           Alignment = taRightJustify
@@ -223,10 +222,76 @@ inherited frmPosMain: TfrmPosMain
           Font.Style = [fsBold]
           ParentFont = False
         end
+        object Label13: TLabel
+          Left = 207
+          Top = 42
+          Width = 52
+          Height = 12
+          Alignment = taRightJustify
+          Caption = #21046#21333#26102#38388
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWhite
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label15: TLabel
+          Left = 208
+          Top = 161
+          Width = 52
+          Height = 12
+          Cursor = crHandPoint
+          Alignment = taRightJustify
+          Caption = #22791#27880#35828#26126
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWhite
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object fndCREA_DATE: TcxTextEdit
+          Tag = 1
+          Left = 264
+          Top = 38
+          Width = 121
+          Height = 20
+          Enabled = False
+          ParentFont = False
+          Style.Color = 14671839
+          Style.Font.Charset = GB2312_CHARSET
+          Style.Font.Color = clNavy
+          Style.Font.Height = -12
+          Style.Font.Name = #23435#20307
+          Style.Font.Style = [fsBold]
+          TabOrder = 14
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          OnEnter = fndCLIENT_CODEEnter
+        end
+        object edtREMARK: TcxTextEdit
+          Tag = 1
+          Left = 264
+          Top = 157
+          Width = 121
+          Height = 20
+          Enabled = False
+          ParentFont = False
+          Style.Color = 14671839
+          Style.Font.Charset = GB2312_CHARSET
+          Style.Font.Color = clNavy
+          Style.Font.Height = -12
+          Style.Font.Name = #23435#20307
+          Style.Font.Style = [fsBold]
+          TabOrder = 15
+          Text = #36755#20837#22791#27880#25353'[\]'#38190
+          ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          OnEnter = fndBARCODEEnter
+        end
         object fndCLIENT_CODE: TcxTextEdit
           Tag = 1
           Left = 75
-          Top = 106
+          Top = 61
           Width = 116
           Height = 20
           Enabled = False
@@ -243,9 +308,9 @@ inherited frmPosMain: TfrmPosMain
         end
         object fndCLIENT_ID_TEXT: TcxTextEdit
           Tag = 1
-          Left = 267
-          Top = 106
-          Width = 116
+          Left = 264
+          Top = 61
+          Width = 121
           Height = 20
           Enabled = False
           ParentFont = False
@@ -262,7 +327,7 @@ inherited frmPosMain: TfrmPosMain
         object fndGLIDE_NO: TcxTextEdit
           Tag = 1
           Left = 75
-          Top = 21
+          Top = 17
           Width = 116
           Height = 20
           Enabled = False
@@ -279,9 +344,9 @@ inherited frmPosMain: TfrmPosMain
         end
         object fndSALES_DATE: TcxTextEdit
           Tag = 1
-          Left = 267
-          Top = 21
-          Width = 116
+          Left = 264
+          Top = 17
+          Width = 121
           Height = 20
           Enabled = False
           ParentFont = False
@@ -298,16 +363,16 @@ inherited frmPosMain: TfrmPosMain
         object edtAMONEY: TcxTextEdit
           Tag = 1
           Left = 75
-          Top = 75
+          Top = 129
           Width = 116
           Height = 20
           Enabled = False
           ParentFont = False
-          Style.Color = 14671839
+          Style.Color = clBlack
           Style.Font.Charset = GB2312_CHARSET
           Style.Font.Color = clLime
           Style.Font.Height = -12
-          Style.Font.Name = #23435#20307
+          Style.Font.Name = #40657#20307
           Style.Font.Style = [fsBold]
           TabOrder = 4
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -315,9 +380,9 @@ inherited frmPosMain: TfrmPosMain
         end
         object edtAGIO_MONEY: TcxTextEdit
           Tag = 1
-          Left = 267
-          Top = 75
-          Width = 116
+          Left = 264
+          Top = 128
+          Width = 121
           Height = 20
           Enabled = False
           ParentFont = False
@@ -334,7 +399,7 @@ inherited frmPosMain: TfrmPosMain
         object fndCREA_USER: TcxTextEdit
           Tag = 1
           Left = 75
-          Top = 44
+          Top = 39
           Width = 116
           Height = 20
           Enabled = False
@@ -351,9 +416,9 @@ inherited frmPosMain: TfrmPosMain
         end
         object fndACCU_INTEGRAL: TcxTextEdit
           Tag = 1
-          Left = 267
-          Top = 151
-          Width = 116
+          Left = 264
+          Top = 104
+          Width = 121
           Height = 20
           Enabled = False
           ParentFont = False
@@ -370,7 +435,7 @@ inherited frmPosMain: TfrmPosMain
         object edtINTEGRAL: TcxTextEdit
           Tag = 1
           Left = 75
-          Top = 151
+          Top = 104
           Width = 116
           Height = 20
           Enabled = False
@@ -387,8 +452,8 @@ inherited frmPosMain: TfrmPosMain
         end
         object fndGUIDE_USER: TcxTextEdit
           Tag = 1
-          Left = 267
-          Top = 44
+          Left = 75
+          Top = 157
           Width = 116
           Height = 20
           Enabled = False
@@ -405,9 +470,9 @@ inherited frmPosMain: TfrmPosMain
         end
         object fndBALANCE: TcxTextEdit
           Tag = 1
-          Left = 267
-          Top = 128
-          Width = 116
+          Left = 264
+          Top = 82
+          Width = 121
           Height = 20
           Enabled = False
           ParentFont = False
@@ -424,7 +489,7 @@ inherited frmPosMain: TfrmPosMain
         object fndPRICE_ID: TcxTextEdit
           Tag = 1
           Left = 75
-          Top = 128
+          Top = 82
           Width = 116
           Height = 20
           Enabled = False
@@ -450,11 +515,10 @@ inherited frmPosMain: TfrmPosMain
           TabOrder = 12
         end
         object DBGridEh2: TDBGridEh
-          Left = 1
-          Top = 20
+          Left = 9
+          Top = 100
           Width = 398
           Height = 167
-          Align = alClient
           AllowedOperations = []
           AutoFitColWidths = True
           Color = clBlack
@@ -514,7 +578,7 @@ inherited frmPosMain: TfrmPosMain
               ReadOnly = True
               Title.Caption = #21830#21697#21517#31216
               Title.Color = clBlack
-              Width = 122
+              Width = 128
             end
             item
               EditButtons = <>
@@ -598,7 +662,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblDIBS: TLabel
           Left = 198
-          Top = 96
+          Top = 98
           Width = 93
           Height = 29
           Caption = #25214#38646#65306
@@ -611,7 +675,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblCASH: TLabel
           Left = 198
-          Top = 56
+          Top = 58
           Width = 93
           Height = 29
           Caption = #29616#37329#65306
@@ -669,7 +733,7 @@ inherited frmPosMain: TfrmPosMain
         end
         object lblACCT_MNY: TLabel
           Left = 198
-          Top = 14
+          Top = 18
           Width = 93
           Height = 29
           Caption = #32467#31639#65306
@@ -916,7 +980,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'SEQNO'
           Footers = <>
           Title.Caption = #24207#21495
-          Width = 31
+          Width = 24
         end
         item
           EditButtons = <>
@@ -938,7 +1002,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'BARCODE'
           Footers = <>
           Title.Caption = #26465#30721
-          Width = 78
+          Width = 91
         end
         item
           Alignment = taCenter
@@ -1027,7 +1091,7 @@ inherited frmPosMain: TfrmPosMain
           FieldName = 'TREND_ID'
           Footers = <>
           Title.Caption = #36141#20080#29992#36884
-          Width = 55
+          Width = 56
         end>
     end
   end
@@ -1410,7 +1474,7 @@ inherited frmPosMain: TfrmPosMain
     end
     object Label24: TLabel
       Left = 451
-      Top = 55
+      Top = 47
       Width = 114
       Height = 12
       Cursor = crHandPoint
@@ -1444,6 +1508,7 @@ inherited frmPosMain: TfrmPosMain
       Width = 66
       Height = 12
       Cursor = crHandPoint
+      Hint = #30452#25509#36755#20837'[=]+['#25968#37327']'#20063#21487#23436#25104#36755#20837
       Caption = #25968#37327'  [F3] '
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
@@ -1451,6 +1516,8 @@ inherited frmPosMain: TfrmPosMain
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
       OnClick = Label26Click
     end
     object Label27: TLabel
@@ -1581,15 +1648,21 @@ inherited frmPosMain: TfrmPosMain
     Top = 218
   end
   object dsGodsInfo: TDataSource
-    Left = 198
-    Top = 392
+    Left = 102
+    Top = 376
   end
   object cdsLocusNo: TZQuery
     FieldDefs = <>
     CachedUpdates = True
-    AfterPost = cdsTableAfterPost
     Params = <>
     Left = 144
+    Top = 253
+  end
+  object cdsICGlide: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 208
     Top = 253
   end
 end

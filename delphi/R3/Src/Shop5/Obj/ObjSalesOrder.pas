@@ -35,6 +35,18 @@ type
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass;override;
   end;
+  TSalesICData=class(TZFactory)
+  private
+    lock:boolean;
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集修改检测函数，返回值是True 测可以修改当前记录
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集删除检测函数，返回值是True 测可以删除当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure InitClass;override;
+  end;
   TSalesForLocusNoHeader=class(TZFactory)
   private
   public
@@ -324,17 +336,6 @@ begin
        end;
        AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_SALES_ID and RECV_TYPE=''1''',self);
      end;
-{
-  if (FieldbyName('PAY_C').AsOldFloat <> 0) and (FieldbyName('IC_CARDNO').AsOldString<>'') then
-     begin
-       case AGlobal.iDbType of
-       0:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=isnull(BALANCE,0)+:OLD_PAY_C where IC_CARDNO=:OLD_IC_CARDNO',self);
-       3:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=iif(isnull(BALANCE),0,BALANCEs)+:OLD_PAY_C where IC_CARDNO=:OLD_IC_CARDNO',self);
-       end;
-       AGlobal.ExecSQL('insert into RCK_IC_GLIDE(GLIDE_ID,CREA_DATE,GLIDE_INFO,IC_GLIDE_TYPE,IC_AMONEY,SALES_ID,COMM,TIME_STAMP,CREA_USER,CUST_ID,COMP_ID,PAY_CASH,PAY_A,ACCT_ID,IC_CARDNO) '+
-                       'values(newid(),convert(varchar(10),getdate(),120),''结账(改)'',2,:OLD_PAY_C,:SALES_ID,''00'','+GetTimeStamp(iDbType)+',:OLD_SHROFF,:OLD_CUST_ID,:OLD_COMP_ID,0,0,null,:OLD_IC_CARDNO)',self);
-     end;
-}
 //  if not lock then
 //     WriteLogInfo(AGlobal,FieldbyName('CREA_USER').AsString,2,'500026','删除【单号'+FieldbyName('GLIDE_NO').asString+'】',EncodeLogInfo(self,'SAL_SALESORDER',usDeleted));
   result := true;
@@ -393,25 +394,6 @@ begin
        end;
        end;
      end;
-     {
-     if (FieldbyName('PAY_C').AsFloat <> 0) and (FieldbyName('IC_CARDNO').AsString<>'') then
-       begin
-         case AGlobal.iDbType of
-         0:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=isnull(BALANCE,0)- :PAY_C where IC_CARDNO=:IC_CARDNO',self);
-         3:AGlobal.ExecSQL('update RCK_IC_INFO set BALANCE=iif(isnull(BALANCE),0,BALANCE)- :PAY_C where IC_CARDNO=:IC_CARDNO',self);
-         end;
-         rs := TADODataSet.Create(nil);
-         try
-           rs.CommandText := 'select BALANCE from RCK_IC_INFO where IC_CARDNO='''+FieldbyName('IC_CARDNO').AsString+'''';
-           AGlobal.Open(rs);
-           if rs.Fields[0].AsFloat <0 then Raise Exception.Create('储值卡余额不足，不能支付..');  
-         finally
-           rs.Free;
-         end;
-         AGlobal.ExecSQL('insert into RCK_IC_GLIDE(GLIDE_ID,CREA_DATE,GLIDE_INFO,IC_GLIDE_TYPE,IC_AMONEY,SALES_ID,COMM,TIME_STAMP,CREA_USER,CUST_ID,COMP_ID,PAY_CASH,PAY_A,ACCT_ID,IC_CARDNO) '+
-                       'values(newid(),convert(varchar(10),getdate(),120),''结账'',2,- :PAY_C,:SALES_ID,''00'','+GetTimeStamp(iDbType)+',:SHROFF,:CUST_ID,:COMP_ID,0,0,null,:IC_CARDNO)',self);
-       end;
-     }
   end;
   //更新积分
   if length(FieldbyName('CLIENT_ID').AsString)>0 then
@@ -468,7 +450,7 @@ begin
           rs.Params.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('SALES_DATE').AsOldInteger;
           rs.Params.ParamByName('CREA_USER').asString := FieldbyName('CREA_USER').AsString;
           AGlobal.Open(rs);
-          if not rs.IsEmpty then Raise Exception.Create('当前收银员在'+FieldbyName('SALES_DATE').AsString+'已经结账不能再开单.');
+          if not rs.IsEmpty then Raise Exception.Create('当前收银员['+FieldbyName('SALES_DATE').AsString+']号已经结账不能再开单了'+#13+'取消结账请到[财务管理]->[结账管理]中撤销.');
         finally
           rs.Free;
         end;
@@ -809,9 +791,77 @@ begin
   end;
 end;
 
+{ TSalesICData }
+
+function TSalesICData.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+begin
+  if FieldbyName('PAY_C').AsOldFloat <>0 then
+  begin
+    r := AGlobal.ExecSQL('update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) + :OLD_PAY_C where TENANT_ID=:OLD_TENANT_ID and IC_CARDNO=:OLD_IC_CARDNO and UNION_ID=''#'' and IC_STATUS in (''0'',''1'')');
+    if r=0 then Raise Exception.Create(FieldbyName('IC_CARDNO').asOldString+'卡号无效,无法执行相关操作..'); 
+  end;
+end;
+
+function TSalesICData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+  rs:TZQuery;
+begin
+  if FieldbyName('PAY_C').AsFloat <>0 then
+  begin
+    r := AGlobal.ExecSQL('update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) - :PAY_C where TENANT_ID=:TENANT_ID and IC_CARDNO=:IC_CARDNO and UNION_ID=''#'' and IC_STATUS in (''0'',''1'')');
+    if r=0 then Raise Exception.Create(FieldbyName('IC_CARDNO').asString+'卡号无效,无法执行相关操作..');
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select BALANCE from PUB_IC_INFO where TENANT_ID=:TENANT_ID and IC_CARDNO=:IC_CARDNO and UNION_ID=''#'' ';
+      rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+      rs.ParamByName('IC_CARDNO').AsString := FieldbyName('IC_CARDNO').AsString;
+      AGlobal.Open(rs);
+      if rs.Fields[0].AsFloat<0 then Raise Exception.Create(FieldbyName('IC_CARDNO').AsString+'的储值卡余额不足，不能完成支付');
+    finally
+      rs.Free;
+    end;
+  end;
+end;
+
+function TSalesICData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+begin
+  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeInsertRecord(AGlobal);
+end;
+
+procedure TSalesICData.InitClass;
+var Str:string;
+begin
+  inherited;
+  SelectSQL.Text := 'select * from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+  IsSQLUpdate := true;
+  
+  Str :=
+    'insert into SAL_IC_GLIDE(GLIDE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,IC_CARDNO,SALES_ID,CREA_USER,CREA_DATE,GLIDE_INFO,IC_GLIDE_TYPE,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,GLIDE_MNY,CHK_DATE,CHK_USER,COMM,TIME_STAMP) '+
+    'values(:GLIDE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,:IC_CARDNO,:SALES_ID,:CREA_USER,:CREA_DATE,:GLIDE_INFO,:IC_GLIDE_TYPE,0,0,:PAY_C,0,0,0,0,0,0,0,:GLIDE_MNY,:CHK_DATE,:CHK_USER,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Text := Str;
+
+  Str :=
+    'update SAL_IC_GLIDE set GLIDE_ID=:GLIDE_ID,TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,IC_CARDNO=:IC_CARDNO,SALES_ID=:SALES_ID,CREA_USER=:CREA_USER,CREA_DATE=:CREA_DATE,GLIDE_INFO=:GLIDE_INFO,IC_GLIDE_TYPE=:IC_GLIDE_TYPE,'+
+    'PAY_A=0,PAY_B=0,PAY_C=:PAY_C,PAY_D=0,PAY_E=0,PAY_F=0,PAY_G=0,PAY_H=0,PAY_I=0,PAY_J=0,GLIDE_MNY=:GLIDE_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,'+
+    'COMM=' + GetCommStr(iDbType) + ','
+  + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+  + 'where GLIDE_ID=:OLD_GLIDE_ID';
+  UpdateSQL.Text := Str;
+  
+  Str :=
+    'update SAL_IC_GLIDE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' from SAL_IC_GLIDE where GLIDE_ID=:OLD_GLIDE_ID';
+  DeleteSQL.Text := Str;
+
+end;
+
 initialization
   RegisterClass(TSalesOrder);
   RegisterClass(TSalesData);
+  RegisterClass(TSalesICData);
   RegisterClass(TSalesOrderAudit);
   RegisterClass(TSalesOrderUnAudit);
   RegisterClass(TSalesOrderGetPrior);
@@ -823,6 +873,7 @@ initialization
 finalization
   UnRegisterClass(TSalesOrder);
   UnRegisterClass(TSalesData);
+  UnRegisterClass(TSalesICData);
   UnRegisterClass(TSalesOrderAudit);
   UnRegisterClass(TSalesOrderUnAudit);
   UnRegisterClass(TSalesOrderGetPrior);

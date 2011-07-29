@@ -20681,7 +20681,6 @@ inherited frmR3Main: TfrmR3Main
       Caption = #31383#20307
       object fdsfds1: TMenuItem
         Caption = #31383#20307#37325#25490
-        OnClick = fdsfds1Click
       end
     end
     object N1: TMenuItem

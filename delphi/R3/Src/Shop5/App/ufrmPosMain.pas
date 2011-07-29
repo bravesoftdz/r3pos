@@ -120,7 +120,6 @@ type
     Label11: TLabel;
     Label18: TLabel;
     fndPRICE_ID: TcxTextEdit;
-    lblACCT_MNY: TLabel;
     cdsHeader: TZQuery;
     cdsTable: TZQuery;
     RzStatusPane3: TRzStatusPane;
@@ -133,6 +132,12 @@ type
     cdsLocusNo: TZQuery;
     Label3: TLabel;
     lblInputHimt: TLabel;
+    Label13: TLabel;
+    fndCREA_DATE: TcxTextEdit;
+    lblACCT_MNY: TLabel;
+    Label15: TLabel;
+    edtREMARK: TcxTextEdit;
+    cdsICGlide: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -430,7 +435,7 @@ begin
   InputMode := StrtoIntDef(ShopGlobal.GetParameter('INPUT_MODE'),0);
   InputFlag := 0;
 
-  RzStatusPane4.Caption := '收银员：'+Global.UserID;
+  RzStatusPane4.Caption := '收银员：'+Global.UserName;
 
   // 散装条码定义
   BulkiFlag := ShopGlobal.GetParameter('BUIK_FLAG');
@@ -550,7 +555,7 @@ begin
     STGAMOUNT := rs.Fields[0].AsFloat;
     STGNM := TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',bs.FieldbyName('CALC_UNITS').AsString);
     STGGNM := AObj.FieldbyName('GODS_NAME').AsString;
-    lblInputHimt.Caption := '库存:'+formatFloat('#0.###',STGAMOUNT)+' 销售:'+floattostr(STGAMT)+' '+TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_MEAUNITS'),'UNIT_ID','UNIT_NAME',bs.FieldbyName('CALC_UNITS').AsString)+'  品名:'+STGGNM;
+    lblInputHimt.Caption := '库存:'+formatFloat('#0.###',STGAMOUNT)+''+STGNM+' 销售:'+floattostr(STGAMT)+''+STGNM+'  品名:'+STGGNM;
   finally
     rs.Free;
   end;
@@ -728,6 +733,10 @@ begin
   11:begin
       lblInput.Caption := '商品批号';
       lblHint.Caption := '请输入商品批号后按“回车”';
+    end;
+  12:begin
+      lblInput.Caption := '输入备注';
+      lblHint.Caption := '请输入备注后按“回车”';
     end;
   end;
   FInputFlag := Value;
@@ -1252,6 +1261,7 @@ end;
 
 procedure TfrmPosMain.AddFromDialog(AObj: TRecord_);
 begin
+  basInfo.Filtered := false;
   if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"'); 
   AddRecord(AObj,basInfo.FieldbyName('CALC_UNITS').AsString,'#','#',True);
   if not PropertyEnabled then
@@ -1519,6 +1529,14 @@ begin
          end;
       if InputFlag=6 then //赠品
          begin
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           Exit;
+         end;
+      if InputFlag=12 then //备注
+         begin
+           if s='' then Exit;
+           edtREMARK.Text := s;
            InputFlag := 0;
            DBGridEh1.Col := 1;
            Exit;
@@ -2134,6 +2152,7 @@ begin
   oid := AObj.FieldbyName('SALES_ID').asString;
   gid := AObj.FieldbyName('GLIDE_NO').asString;
   AObj.FieldbyName('SALES_DATE').asInteger := strtoint(formatDatetime('YYYYMMDD',Global.SysDate));
+  AObj.FieldbyName('CREA_DATE').AsString := formatDatetime('YYYYMMDD HH:NN:SS',now());
 
   rs := ShopGlobal.GetDeptInfo;
   AObj.FieldbyName('DEPT_ID').AsString := rs.FieldbyName('DEPT_ID').AsString;
@@ -2148,6 +2167,7 @@ begin
   end;
   InputFlag := 0;
   RowId := 0;
+  edtREMARK.Text := '输入备注按[\]键';
   ShowHeader;
 end;
 
@@ -2165,6 +2185,7 @@ begin
       Factor.AddBatch(cdsHeader,'TSalesOrder',Params);
       Factor.AddBatch(cdsTable,'TSalesData',Params);
       Factor.AddBatch(cdsLocusNo,'TSalesForLocusNo',Params);
+      Factor.AddBatch(cdsIcGlide,'TSalesICData',Params);
       Factor.OpenBatch;
     except
       Factor.CancelBatch;
@@ -2231,11 +2252,15 @@ begin
   AObj.FieldByName('CHK_USER').AsString := Global.UserID;
   AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
+  if edtREMARK.Text='输入备注按[\]键' then
+     AObj.FieldByName('REMARK').AsString := ''
+  else
+     AObj.FieldByName('REMARK').AsString := edtREMARK.Text;
 
   if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.');
   Printed := DevFactory.SavePrint;
   //结算对话框
-  if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs) then Exit;
+  if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs,cdsICGlide) then Exit;
   //end
   Factor.BeginBatch;
   cdsTable.DisableControls;
@@ -2270,9 +2295,22 @@ begin
     finally
        ls.Free;
     end;
+    cdsICGlide.DisableControls;
+    try
+      cdsICGlide.First;
+      while not cdsICGlide.Eof do
+        begin
+          if cdsICGlide.FieldByName('SALES_ID').AsString='' then
+             cdsICGlide.FieldByName('SALES_ID').AsString := cdsHeader.FieldbyName('SALES_ID').AsString;
+          cdsICGlide.Next;
+        end;
+    finally
+      cdsICGlide.EnableControls;
+    end;
     Factor.AddBatch(cdsHeader,'TSalesOrder');
     Factor.AddBatch(cdsTable,'TSalesData');
     Factor.AddBatch(cdsLocusNo,'TSalesForLocusNo');
+    Factor.AddBatch(cdsICGlide,'TSalesICData');
     Factor.CommitBatch;
     cdsTable.EnableControls;
     Saved := true;
@@ -2353,7 +2391,7 @@ begin
     cdsTable.Locate('SEQNO',r,[]);
     cdsTable.EnableControls;
   end;
-  lblInputHimt.Caption := '库存:'+formatFloat('#0.###',STGAMOUNT)+' 销售:'+floattostr(STGAMT)+' '+STGNM+'  品名:'+STGGNM;
+  lblInputHimt.Caption := '库存:'+formatFloat('#0.###',STGAMOUNT)+''+STGNM+' 销售:'+floattostr(STGAMT)+''+STGNM+'  品名:'+STGGNM;
   if (amt<>0) and (dbState<>dsBrowse) then
      begin
        case t of
@@ -2478,6 +2516,11 @@ begin
   if Key = '/' then
      begin
        PopupMenu;
+       Key := #0;
+     end;
+  if Key = '\' then
+     begin
+       InputFlag := 12;
        Key := #0;
      end;
   if Key = '+' then
@@ -2986,6 +3029,9 @@ begin
     fndCLIENT_CODE.Text := AObj.FieldbyName('CLIENT_CODE').AsString;
     fndCLIENT_ID_TEXT.Text := AObj.FieldbyName('CLIENT_ID_TEXT').AsString;
     fndBALANCE.Text := AObj.FieldbyName('BALANCE').AsString;
+    edtREMARK.Text := AObj.FieldbyName('REMARK').AsString;
+    if edtREMARK.Text='' then edtREMARK.Text := '输入备注按[\]键';
+    fndCREA_DATE.Text := StringReplace(AObj.FieldbyName('CREA_DATE').AsString,'-','',[rfReplaceAll]);
     if AObj.FieldbyName('PRICE_ID').AsString='' then
        fndPRICE_ID.Text := ''
     else
@@ -3679,11 +3725,13 @@ begin
 end;
 
 procedure TfrmPosMain.edtInputPropertiesChange(Sender: TObject);
+var s:string;
 begin
   inherited;
   if (InputFlag=0) and (InputMode=1) then
      begin
-       DBGridEh2.Visible := trim(edtInput.Text)<>'';
+       s := trim(edtInput.Text);
+       DBGridEh2.Visible := (s<>'') and (s[1]<>'=');
        if not DBGridEh2.Visible then Exit;
        basInfo.OnFilterRecord := BasInfoFilterRecord;
        try

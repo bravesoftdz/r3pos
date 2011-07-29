@@ -3,7 +3,7 @@ inherited frmCardNoInput: TfrmCardNoInput
   Top = 261
   BorderStyle = bsNone
   Caption = ''
-  ClientHeight = 122
+  ClientHeight = 136
   ClientWidth = 330
   OldCreateOrder = True
   OnDestroy = FormDestroy
@@ -13,7 +13,7 @@ inherited frmCardNoInput: TfrmCardNoInput
     Left = 0
     Top = 0
     Width = 330
-    Height = 122
+    Height = 136
     Align = alClient
     BorderOuter = fsFlatBold
     BorderShadow = clActiveCaption

@@ -486,17 +486,12 @@ end;
 
 function TfrmStorageDayReport.GetSortSQL(chk:boolean=true): string;
 var
-  GodsStateIdx: integer; //表表统计指标Idx
   UnitCalc,JoinCnd: string;
   strSql,strWhere,GoodTab,lv,lv1: string;
 begin
   lv:='';
   lv1:='';
   result:='';
-  //商品指标:
-  if fndP3_REPORT_FLAG.ItemIndex < 0 then Raise Exception.Create('请选择报表类型...');
-  GodsStateIdx:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
-
   //过滤企业ID和查询日期:
   strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
 
@@ -515,11 +510,13 @@ begin
       strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
     end;
 
+  //商品指标:
+  if fndP3_REPORT_FLAG.ItemIndex < 0 then Raise Exception.Create('请选择报表类型...');
   //商品分类:
-  case GodsStateIdx of
+  case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
   1:begin
       GoodTab:='VIW_GOODSPRICE_SORTEXT';
-      lv := ',((case when C.RELATION_ID=0 then ''9999999'' else '+IntToVarchar('C.RELATION_ID')+' end)'+GetStrJoin(Factor.iDbType)+'isnull(C.LEVEL_ID,'''')) as LEVEL_ID ';
+      lv := ',((case when C.RELATION_ID=0 then ''9999999'' else '+IntToVarchar('C.RELATION_ID')+' end)'+GetStrJoin(Factor.iDbType)+'isnull(C.LEVEL_ID,''''))';
       lv1 := ',LEVEL_ID';
     end;
   else
@@ -535,37 +532,37 @@ begin
     strSql :=
       'select '+
       ' TENANT_ID'+
-      ',GODS_ID,SORT_ID'+InttoStr(GodsStateIdx)+lv1+',RELATION_ID '+
+      ',GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID '+
       ',sum(BAL_AMT) as BAL_AMT'+
       ',sum(BAL_CST) as BAL_CST'+
       ',sum(BAL_RTL) as BAL_RTL'+
       ' from '+
        '(SELECT '+
-       ' A.TENANT_ID,A.GODS_ID,C.SORT_ID'+IntToStr(GodsStateIdx)+lv+' ,C.RELATION_ID '+
+       ' A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+' as LEVEL_ID,C.RELATION_ID '+
        ',AMOUNT*1.00/'+UnitCalc+' as BAL_AMT '+    //库存数量
        ',AMONEY as BAL_CST '+                 //库存金额
        ',AMOUNT*C.NEW_OUTPRICE as BAL_RTL '+  //零售金额
        'from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
        ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ') tp '+
-      'group by TENANT_ID,GODS_ID,SORT_ID'+InttoStr(GodsStateIdx)+lv1+',RELATION_ID';
+      'group by TENANT_ID,GODS_ID,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6'+lv1+',RELATION_ID';
   end else
-  if fndP3_ReckType.ItemIndex=1 then //直接查询库存表:
+  if fndP3_ReckType.ItemIndex=1 then
   begin
     //检测是否计算
-    if P3_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');    
+    if P3_D1.EditValue = null then Raise Exception.Create(' 库存日期不能为空！  ');
     BAL_Date:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //库存日期=+1天取期初
     CheckCalc(BAL_Date);
     strWhere:=strWhere+' and A.CREA_DATE in (select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where A.TENANT_ID=DD.TENANT_ID and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
     strSql :=
       'SELECT '+
       ' A.TENANT_ID '+
-      ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv1+',C.RELATION_ID '+
+      ',A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+' as LEVEL_ID,C.RELATION_ID '+
       ',sum(BAL_AMT*1.00/'+UnitCalc+') as BAL_AMT '+
       ',sum(BAL_CST) as BAL_CST '+
       ',sum(BAL_RTL) as BAL_RTL '+
       'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-      'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
+      'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6'+lv+',C.RELATION_ID';
   end;
 
   case TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -602,7 +599,7 @@ begin
           ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_PRC '+
           ',sum(BAL_CST) as BAL_CST '+
           ',case when sum(BAL_AMT)<>0 then cast(sum(BAL_RTL) as decimal(18,3))*1.00/cast(sum(BAL_AMT) as decimal(18,3)) else 0 end as BAL_OUTPRC '+
-          ',sum(BAL_RTL) as BAL_RTL '+  
+          ',sum(BAL_RTL) as BAL_RTL '+
           ',r.CLIENT_CODE as SORT_ID,isnull(r.CLIENT_NAME,''无厂家'') as SORT_NAME from ('+strSql+') j left outer join VIW_CLIENTINFO r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID3=r.CLIENT_ID group by r.CLIENT_ID,r.CLIENT_CODE,r.CLIENT_NAME order by r.CLIENT_CODE'
          );
       end;
@@ -617,9 +614,8 @@ begin
           ',sum(BAL_RTL) as BAL_RTL '+
           ',isnull(r.SORT_ID,''#'') as SID '+
           ',r.SEQ_NO as SORT_ID,isnull(r.SORT_NAME,''无'') as SORT_NAME from ('+strSql+') j left outer join ('+
-          'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='+InttoStr(GodsStateIdx)+' '+
-        ') r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+InttoStr(GodsStateIdx)+'=r.SORT_ID '+
-        ' group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
+          'select TENANT_ID,SORT_ID,SORT_NAME,SEQ_NO from VIW_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE='+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+' '+
+        ') r on j.TENANT_ID=r.TENANT_ID and j.SORT_ID'+TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').asString+'=r.SORT_ID group by r.SEQ_NO,r.SORT_NAME,r.SORT_ID order by r.SEQ_NO'
          );
       end;
   end;
@@ -735,7 +731,7 @@ begin
           ' left outer join '+
           '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
           ' on  j.SORT_ID=s.SORT_ID '+
-          ' order by s.OrderNo,s.SORT_ID,j.GODS_CODE';
+          ' order by s.OrderNo,j.GODS_CODE';
       end;
     end;
     result:=ParseSQL(Factor.iDbType, strSql);
@@ -785,7 +781,7 @@ begin
           ' left outer join '+
           '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
           ' on  j.SORT_ID=s.SORT_ID '+
-          ' order by s.OrderNo,s.SORT_ID,j.GODS_CODE';
+          ' order by s.OrderNo,j.GODS_CODE';
       end;
     end;
     result:=ParseSQL(Factor.iDbType, strSql);

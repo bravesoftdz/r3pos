@@ -128,13 +128,12 @@ begin
     SvcMgr.Application.Title := '通讯服务器';
     SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
-  SvcMgr.Application.Run;
+    SvcMgr.Application.Run;
   end else
   begin
     Forms.Application.Initialize;
     SocketService := nil;
-//    Forms.Application.ShowMainForm := False;
-    Forms.Application.Title := '数据访问服务组件(DAS)';
+    Forms.Application.Title := '通讯服务器';
     Forms.Application.CreateForm(TSocketForm, SocketForm);
     SocketForm.Initialize(False);
     Forms.Application.Run;

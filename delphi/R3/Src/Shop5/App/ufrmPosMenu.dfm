@@ -61,8 +61,8 @@ inherited frmPosMenu: TfrmPosMenu
       ParentFont = False
       ScrollBars = ssNone
       TabOrder = 1
-      OnClick = rgMenuClick
       OnKeyPress = rgMenuKeyPress
+      OnMouseDown = rgMenuMouseDown
     end
   end
 end

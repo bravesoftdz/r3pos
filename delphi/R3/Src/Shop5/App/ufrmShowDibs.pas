@@ -60,6 +60,7 @@ type
     MainRecord:TRecord_;
     TotalFee:Currency;
     PayKey:string;
+    PayDs:TZQuery;
     procedure ShowFee;
     function Calc:Currency;
     procedure InitForm;
@@ -67,11 +68,11 @@ type
     function DoPayC(mny:Currency):boolean;
   public
     { Public declarations }
-    class function ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency):Boolean;
+    class function ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency;var zPayDs:TZQuery):Boolean;
   end;
 
 implementation
-uses uGlobal,ufnUtil,uExpression,ufrmDibsOption,uShopGlobal,ufrmLogin,ufrmCardNoInput,EncDec;
+uses uGlobal,ufnUtil,uDsUtil,uExpression,ufrmDibsOption,uShopGlobal,ufrmLogin,ufrmCardNoInput,EncDec;
 {$R *.dfm}
 
 function MyRoundTo(const AValue: Double; const ADigit: TRoundToRange = -2): Currency;
@@ -85,35 +86,37 @@ begin
 end;
 { TfrmShowDibs }
 
-class function TfrmShowDibs.ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency): Boolean;
+class function TfrmShowDibs.ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency;var zPayDs:TZQuery): Boolean;
 var r:Currency;
 begin
   with TfrmShowDibs.Create(Owner) do
     begin
       try
+        PayDs := zPayDs;
         r := MyRoundTo(_TotalFee,Digit);
         MainRecord := _MainRecord;
-        if MainRecord.FieldByName('PAY_DIBS').AsString = '' then
+        //2011-07-25 为简单操作，去掉保留收款数据功能 zhangsr
+        //if MainRecord.FieldByName('PAY_DIBS').AsString = '' then
            MainRecord.FieldByName('PAY_DIBS').asFloat := (_TotalFee-r);
-        if MainRecord.FieldByName('PAY_A').AsString = '' then
+        //if MainRecord.FieldByName('PAY_A').AsString = '' then
            MainRecord.FieldByName('PAY_A').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_B').AsString = '' then
+        //if MainRecord.FieldByName('PAY_B').AsString = '' then
            MainRecord.FieldByName('PAY_B').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_C').AsString = '' then
+        //if MainRecord.FieldByName('PAY_C').AsString = '' then
            MainRecord.FieldByName('PAY_C').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_D').AsString = '' then
+        //if MainRecord.FieldByName('PAY_D').AsString = '' then
            MainRecord.FieldByName('PAY_D').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_E').AsString = '' then
+        //if MainRecord.FieldByName('PAY_E').AsString = '' then
            MainRecord.FieldByName('PAY_E').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_F').AsString = '' then
+        //if MainRecord.FieldByName('PAY_F').AsString = '' then
            MainRecord.FieldByName('PAY_F').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_G').AsString = '' then
+        //if MainRecord.FieldByName('PAY_G').AsString = '' then
            MainRecord.FieldByName('PAY_G').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_H').AsString = '' then
+        //if MainRecord.FieldByName('PAY_H').AsString = '' then
            MainRecord.FieldByName('PAY_H').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_I').AsString = '' then
+        //if MainRecord.FieldByName('PAY_I').AsString = '' then
            MainRecord.FieldByName('PAY_I').AsFloat := 0;
-        if MainRecord.FieldByName('PAY_J').AsString = '' then
+        //if MainRecord.FieldByName('PAY_J').AsString = '' then
            MainRecord.FieldByName('PAY_J').AsFloat := 0;
         TotalFee := _TotalFee;
         ShowFee;
@@ -210,12 +213,7 @@ begin
        if (edtTakeFee.Text = '') then Exit;
        if not DoPayC(GetFee(edtTakeFee.Text)) then Exit;
        //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
-       MainRecord.FieldByName('PAY_C').AsFloat := GetFee(edtTakeFee.Text);
-       if MainRecord.FieldByName('PAY_C').AsFloat<0 then
-          begin
-            MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
-            MainRecord.FieldByName('PAY_C').AsFloat := 0;
-          end;
+       //MainRecord.FieldByName('PAY_C').AsFloat := GetFee(edtTakeFee.Text);
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -659,13 +657,25 @@ end;
 
 function TfrmShowDibs.DoPayC(mny:Currency):boolean;
 var
-  s,cardno,pwd:string;
-  bal:currency;
+  s,cardno,pwd,csid:string;
+  bal,payc:currency;
   rs:TZQuery;
   cr:TCardNoReset;
 begin
+  if PayDs=nil then Raise Exception.Create('对不起，您没有开通储值卡支付功能...');
+  if mny<0 then
+     begin
+       MessageBox(handle,'此支持方式不能退款.','友情提示..',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end;
   result := false;
-  Raise Exception.Create('对不起，您没有开通储值卡支付功能...');
+  if mny=0 then //清除储值卡支付
+     begin
+       PayDs.First;
+       while not PayDs.Eof do PayDs.Delete;
+       MainRecord.FieldByName('PAY_C').AsFloat := 0;
+       Exit;
+     end;
   if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and ShopGlobal.offline then Raise Exception.Create('脱机状态不能使用储值卡支付...');
   cr := TfrmCardNoInput.GetCardNo(self);
   if not cr.ret then Exit;
@@ -683,6 +693,7 @@ begin
     cardno := rs.FieldbyName('IC_CARDNO').AsString;
     pwd := rs.FieldbyName('PASSWRD').AsString;
     bal := rs.FieldbyName('BALANCE').asFloat;
+    csid := rs.FieldbyName('CLIENT_ID').AsString;
     if rs.FieldbyName('IC_TYPE').AsString='0' then
        begin
          cr := TfrmCardNoInput.GetPassWrd(self);
@@ -693,6 +704,31 @@ begin
   finally
     rs.Free;
   end;
+  if PayDs.Locate('IC_CARDNO',cardno,[]) then
+     PayDs.edit else
+  begin
+    PayDs.Append;
+    PayDs.FieldbyName('GLIDE_ID').AsString := TSequence.NewId();
+    PayDs.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    PayDs.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
+    PayDs.FieldbyName('CLIENT_ID').AsString := csid;
+    PayDs.FieldbyName('IC_GLIDE_TYPE').AsString := '2';
+    PayDs.FieldbyName('GLIDE_INFO').AsString := '刷新支付';
+    PayDs.FieldbyName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PayDs.FieldbyName('CREA_USER').AsString := Global.UserID;
+  end;
+  PayDs.FieldbyName('IC_CARDNO').AsString := cardno;
+  PayDs.FieldbyName('PAY_C').asFloat := mny;
+  PayDs.FieldbyName('GLIDE_MNY').asFloat := mny;
+  PayDs.Post;
+  payc := 0;
+  PayDs.first;
+  while not PayDs.eof do
+    begin
+      payc := payc + PayDs.FieldbyName('PAY_C').asFloat;
+      PayDs.Next;
+    end;
+  MainRecord.FieldByName('PAY_C').AsFloat := payc;
   result := true;
 end;
 

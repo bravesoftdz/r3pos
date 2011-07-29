@@ -274,7 +274,6 @@ type
     lblUserInfo: TLabel;
     imgOffline: TImage;
     procedure FormActivate(Sender: TObject);
-    procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
@@ -479,6 +478,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin;
+  
 {$R *.dfm}
 
 procedure TfrmR3Main.FormActivate(Sender: TObject);
@@ -486,13 +486,6 @@ begin
   inherited;
   //if not systemShutdown and not Application.Terminated then WindowState := wsMaximized;
 end;
-
-procedure TfrmR3Main.fdsfds1Click(Sender: TObject);
-begin
-  inherited;
-  self.Cascade;
-end;
-
 
 procedure TfrmR3Main.FormCreate(Sender: TObject);
 var

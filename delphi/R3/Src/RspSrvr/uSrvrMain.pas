@@ -65,17 +65,13 @@ type
     Panel1: TPanel;
     ApplyButton: TButton;
     TabSheet1: TTabSheet;
-    ImageList1: TImageList;
     actRegistryService: TAction;
     actRemoveSerivce: TAction;
     pmuLogFile: TPopupMenu;
-    MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     actClearLogFile: TAction;
     actOpenLogFile: TAction;
     actSaveLogFile: TAction;
-    N6: TMenuItem;
-    N7: TMenuItem;
     actLogFileSaveAs: TAction;
     actSetConfig: TAction;
     edtKeepAlive: TCheckBox;
@@ -132,6 +128,7 @@ type
     chkDebug: TCheckBox;
     N12: TMenuItem;
     N13: TMenuItem;
+    N6: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -171,6 +168,8 @@ type
     procedure ZSQLMonitor1Trace(Sender: TObject; Event: TZLoggingEvent;
       var LogTrace: Boolean);
     procedure chkDebugClick(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
+    procedure N6Click(Sender: TObject);
   private
     FTaskMessage: DWord;
     FIconData: TNotifyIconData;
@@ -212,6 +211,8 @@ type
     procedure ReadDbList;
     //读取任务插件
     procedure ReadPlugIn;
+    procedure MinimizeAppHandler( Sender: TObject );
+    procedure RestoreAppHandler( Sender: TObject );
   public
     procedure Initialize(FromService: Boolean);
     property ItemIndex: Integer read GetItemIndex write SetItemIndex;
@@ -253,33 +254,34 @@ begin
   FSortCol := -1;
   SystemShutDown := false;
   MainFormHandle := Handle;
+  Pages.ActivePageIndex := 0;
 end;
 
 procedure TSocketForm.WndProc(var Message: TMessage);
 begin
-//  if Message.Msg = FTaskMessage then
-//  begin
-//    AddIcon;
-//    Refresh;
-//  end;
+  if Message.Msg = FTaskMessage then
+  begin
+    AddIcon;
+    Refresh;
+  end;
   inherited WndProc(Message);
 end;
 
 procedure TSocketForm.UpdateTimerTimer(Sender: TObject);
 var
-//  Found: Boolean;
+  Found: Boolean;
   i:integer;
   Timer:TTaskTimer;
   F:TIniFile;
   s:string;
 begin
-//  Found := FindWindow('Progman', nil) <> 0;
-//  if Found <> FProgmanOpen then
-//  begin
-//    FProgmanOpen := Found;
-//    if Found then AddIcon;
-//    Refresh;
-//  end;
+  Found := FindWindow('Progman', nil) <> 0;
+  if Found <> FProgmanOpen then
+  begin
+    FProgmanOpen := Found;
+    if Found then AddIcon;
+    Refresh;
+  end;
   if Pages.ActivePageIndex = 3 then
      begin
        Timer := TTaskTimer.Create;
@@ -399,7 +401,10 @@ begin
     BorderIcons := BorderIcons + [biMinimize];
     BorderStyle := bsSingle;
   end;
+
   ReadSettings;
+  Application.OnMinimize := MinimizeAppHandler;
+  Application.OnRestore := RestoreAppHandler;
   if FromService then
   begin
     miClose.Visible := False;
@@ -542,18 +547,14 @@ begin
   case Message.LParam of
     WM_RBUTTONUP:
     begin
-      if not Visible then
-      begin
-        SetForegroundWindow(Handle);
-        GetCursorPos(pt);
-        pmuSystem.Popup(pt.x, pt.y);
-      end else
-        SetForegroundWindow(Handle);
+      GetCursorPos(pt);
+      pmuSystem.Popup(pt.x, pt.y);
     end;
     WM_LBUTTONDBLCLK:
-      if Visible then
-        SetForegroundWindow(Handle) else
-        miPropertiesClick(nil);
+      begin
+        Application.Restore;
+        //SetForegroundWindow(Handle);
+      end;
   end;
 end;
 
@@ -920,6 +921,17 @@ begin
   
 end;
 
+procedure TSocketForm.MinimizeAppHandler(Sender: TObject);
+begin
+    ShowWindow( Application.Handle, sw_Hide );
+end;
+
+procedure TSocketForm.RestoreAppHandler(Sender: TObject);
+begin
+    ShowWindow( Application.Handle, sw_Restore );
+    SetForegroundWindow( Application.Handle );
+end;
+
 { TSocketService }
 
 procedure ServiceController(CtrlCode: DWord); stdcall;
@@ -1089,6 +1101,16 @@ end;
 procedure TSocketForm.chkDebugClick(Sender: TObject);
 begin
   ZSQLMonitor1.Active := chkDebug.Checked;
+end;
+
+procedure TSocketForm.MenuItem2Click(Sender: TObject);
+begin
+  Memo1.Clear;
+end;
+
+procedure TSocketForm.N6Click(Sender: TObject);
+begin
+  Memo1.CopyToClipboard;
 end;
 
 initialization

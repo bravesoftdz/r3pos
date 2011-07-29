@@ -36,8 +36,8 @@ inherited frmCloseForDay: TfrmCloseForDay
         421
         54)
       object Btn_Close: TRzBitBtn
-        Left = 219
-        Top = 16
+        Left = 251
+        Top = 15
         Width = 87
         Height = 26
         Anchors = [akTop, akRight]
@@ -64,12 +64,12 @@ inherited frmCloseForDay: TfrmCloseForDay
         Spacing = 5
       end
       object Btn_Save: TRzBitBtn
-        Left = 111
-        Top = 16
+        Left = 95
+        Top = 15
         Width = 87
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #31435#21363#32467#36134'(&S)'
+        Caption = #20132#29677#32467#36134'(&S)'
         Color = clWhite
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack

@@ -164,6 +164,7 @@ type
     function TransCalcRate(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function TransUnit(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function TransPrice(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
+    function TransInPrice(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function EncodeSql(ID:String):String;
     function EncodeSql2(ID:String):String;
     function EncodeSql3(ID:String):String;
@@ -342,6 +343,11 @@ begin
       Grid.Columns.Items[7].free;
       Grid.Columns.Items[6].free;
     end;
+  if not ShopGlobal.GetChkRight('14500001',2) then
+     begin
+       Grid.Columns[13].Free;
+       Grid.Columns[12].Free;
+     end;
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     edtSHOP_ID.Properties.ReadOnly := False;
@@ -456,7 +462,7 @@ begin
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
   StrSql :=
-  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT,cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as ROAD_AMT,'+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT,cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as ROAD_AMT,'+TransInPrice(edtUNIT_ID.ItemIndex,'C','NEW_INPRICE')+','+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
   ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+' '+
   ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
   ' left join VIW_SR_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.GODS_ID=D.GODS_ID and A.PROPERTY_01=D.PROPERTY_01 and A.PROPERTY_02=D.PROPERTY_02 and A.BATCH_NO=D.BATCH_NO '+
@@ -465,7 +471,7 @@ begin
   Result :=
   'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE from ('+
   'select jb.*,b.COLOR_NAME as PROPERTY_02_TEXT from ('+
-  'select ja.*,round(ja.NEW_OUTPRICE*ja.AMOUNT,2) as SALE_MNY,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
+  'select ja.*,round(ja.NEW_OUTPRICE*ja.AMOUNT,2) as SALE_MNY,round(ja.NEW_INPRICE*ja.AMOUNT,2) as STOCK_MNY,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
   'left outer join VIW_SIZE_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.PROPERTY_01=a.SIZE_ID) jb '+
   'left outer join VIW_COLOR_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.PROPERTY_02=b.COLOR_ID) jc '+
   'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
@@ -1184,6 +1190,24 @@ begin
   end;
   DBGridEh.DBGridHeader.Text:=Str;
   DBGridEh.DBGridFooter.Add(' '+#13+' 操作员：'+Global.UserName+'  导出时间：'+formatDatetime('YYYY-MM-DD HH:NN:SS',now()));
+end;
+
+function TfrmStorageTracking.TransInPrice(CalcIdx: Integer; AliasTabName,
+  AliasFileName: string): string;
+var
+  AliasTab: string;
+begin
+  AliasTab:='';
+  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
+  case CalcIdx of
+   0: result:=
+      '(case when isnull('+AliasTab+'UNIT_ID,'''')='+AliasTab+'SMALL_UNITS then '+AliasTab+'NEW_INPRICE1 when isnull('+AliasTab+'UNIT_ID,'''')='+AliasTab+'BIG_UNITS then '+AliasTab+'NEW_INPRICE2 else '+AliasTab+'NEW_INPRICE end) ';  //若[默认单位]为空则 取 [计量单位]
+   1: result:=' '+AliasTab+'NEW_INPRICE ';   //[计量单位]  不能为空
+   2: result:='(case when isnull('+AliasTab+'SMALL_UNITS,'''')='''' then '+AliasTab+'NEW_INPRICE else '+AliasTab+'NEW_INPRICE1 end) ';  //小包装单位
+   3: result:='(case when isnull('+AliasTab+'BIG_UNITS,'''')='''' then '+AliasTab+'NEW_INPRICE else '+AliasTab+'NEW_INPRICE2 end) ';      //大包装单位
+  end;
+  if AliasFileName<>'' then
+    result:=result+' as '+AliasFileName+' ';
 end;
 
 end.

@@ -263,6 +263,7 @@ begin
   cdsImport.Close;
   cdsImport.CreateDataSet;
   TfrmExcelFactory.ExcelFactory(cdsImport,'LOCUS_NO=物流跟踪码,AMOUNT=数量',@ImportLocusNo,@Save,@FindColumn,'0=LOCUS_NO,1=AMOUNT',1);
+  Calc;
 end;
 
 procedure TfrmLocusNoProperty.FormDestroy(Sender: TObject);

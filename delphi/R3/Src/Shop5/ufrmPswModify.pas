@@ -120,7 +120,7 @@ begin
   end;
 
   ANEWPSW := UpperCase(edtNEWPSW.Text);
-  if (lowercase(userid)<>'admin') and (lowercase(userid)<>'system') then
+  if (lowercase(userid)<>'admin') then
     sSqlTxt := 'update CA_USERS set PASS_WRD=''' + EncStr(ANEWPSW,ENC_KEY) + ''',COMM=' + GetCommStr(Factor.iDbType) +
   ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'USER_ID=''' + USERID + ''''
@@ -129,7 +129,7 @@ begin
   ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'DEFINE=''PASSWRD''';
   try
-    Factor.ExecSQL(sSqlTxt);
+    if Factor.ExecSQL(sSqlTxt)<>0 then Raise Exception.Create('无法修改'+edtACOUNT.Text+'账户的密码');
     Close;
   except           
     raise Exception.Create('保存失败！');

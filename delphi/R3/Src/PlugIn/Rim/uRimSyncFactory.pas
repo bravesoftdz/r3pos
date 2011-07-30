@@ -273,7 +273,7 @@ begin
   LogDir:=ExtractShortPathName(ExtractFilePath(Application.ExeName))+'log\REPORT';
   //默认保留最近1个月的日志文件
   try
-    for i:=1 to 1000 do
+    for i:=30 to 1000 do
     begin
       LogFile:=LogDir+FormatDatetime('YYYYMMDD',Date()-i)+'.log';
       if FileExists(LogFile) then

@@ -566,7 +566,7 @@ begin
          'from PUB_CUSTOMER A,PUB_IC_INFO B where A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.SHOP_ID<>''#'' and B.UNION_ID='''+pid+''' and A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID';
       if today then rs.SQL.Text := rs.SQL.Text + ' and A.SND_DATE='''+formatDatetime('YYYY-MM-DD',date())+'''';
       OpenData(GPlugIn, rs);
-      if rs.IsEmpty then Exit;
+//      if rs.IsEmpty then Exit;
       rs.First;
       while not rs.Eof do
       begin

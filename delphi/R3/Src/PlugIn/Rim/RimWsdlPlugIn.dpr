@@ -60,7 +60,8 @@ begin
       if ParamList.FindParam('SHOP_ID')=nil then ParamList.ParambyName('SHOP_ID').asString := ParamList.ParambyName('TENANT_ID').asString+'0001';
       rs.SQL.Text:='select A.CUST_ID,A.COM_ID,A.CUST_CODE from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+ParamList.ParambyName('TENANT_ID').asString+' and B.SHOP_ID='''+ParamList.ParambyName('SHOP_ID').asString+''' ';
       OpenData(GPlugIn, rs);
-      ParamList.ParamByName('rimuid').AsString := rs.Fields[0].AsString;
+      ParamList.ParamByName('xsmuid').AsString := rs.Fields[0].AsString;
+      ParamList.ParamByName('rimuid').AsString := rs.Fields[2].AsString;
       ParamList.ParamByName('rimpwd').AsString := rs.Fields[2].AsString;
       ParamList.ParamByName('rimcid').AsString := rs.Fields[1].AsString;
       ParamList.ParamByName('rimurl').AsString := F.readString('rim','url','');

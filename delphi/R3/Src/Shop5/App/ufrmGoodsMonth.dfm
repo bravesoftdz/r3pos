@@ -39,14 +39,14 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                 TabOrder = 0
                 object Splitter1: TSplitter
                   Left = 177
-                  Top = 68
-                  Height = 412
+                  Top = 41
+                  Height = 439
                 end
                 object RzPanel7: TRzPanel
                   Left = 0
-                  Top = 68
+                  Top = 41
                   Width = 177
-                  Height = 412
+                  Height = 439
                   Align = alLeft
                   BorderOuter = fsNone
                   TabOrder = 0
@@ -54,7 +54,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     Left = 0
                     Top = 0
                     Width = 177
-                    Height = 412
+                    Height = 439
                     SelectionPen.Color = clBtnShadow
                     Align = alClient
                     FrameSides = [sdLeft, sdRight, sdBottom]
@@ -70,9 +70,9 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                 end
                 object RzPanel8: TRzPanel
                   Left = 180
-                  Top = 68
+                  Top = 41
                   Width = 830
-                  Height = 412
+                  Height = 439
                   Align = alClient
                   BorderOuter = fsNone
                   TabOrder = 1
@@ -80,7 +80,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     Left = 0
                     Top = 0
                     Width = 830
-                    Height = 412
+                    Height = 439
                     Align = alClient
                     Caption = 'Panel1'
                     TabOrder = 0
@@ -88,7 +88,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       Left = 1
                       Top = 1
                       Width = 828
-                      Height = 410
+                      Height = 437
                       Align = alClient
                       AllowedOperations = [alopUpdateEh]
                       DataSource = DsGoodsMonth
@@ -244,7 +244,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                   Left = 0
                   Top = 0
                   Width = 1010
-                  Height = 68
+                  Height = 41
                   Align = alTop
                   BorderOuter = fsNone
                   BorderSides = [sdBottom]
@@ -253,7 +253,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     Left = 0
                     Top = 0
                     Width = 178
-                    Height = 68
+                    Height = 41
                     Align = alLeft
                     BevelInner = bvLowered
                     Caption = #25104#26412#35843#25972
@@ -270,28 +270,15 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     Left = 178
                     Top = 0
                     Width = 832
-                    Height = 68
+                    Height = 41
                     Align = alClient
                     Alignment = taLeftJustify
                     BevelInner = bvLowered
                     ParentColor = True
                     TabOrder = 1
-                    object Label21: TLabel
-                      Left = 263
-                      Top = 13
-                      Width = 48
-                      Height = 12
-                      Caption = #38376#24215#21517#31216
-                      Font.Charset = GB2312_CHARSET
-                      Font.Color = clWindowText
-                      Font.Height = -12
-                      Font.Name = #23435#20307
-                      Font.Style = []
-                      ParentFont = False
-                    end
                     object Label25: TLabel
-                      Left = 10
-                      Top = 42
+                      Left = 8
+                      Top = 16
                       Width = 48
                       Height = 12
                       Caption = #21830#21697#25351#26631
@@ -302,38 +289,12 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       Font.Style = []
                       ParentFont = False
                     end
-                    object Label12: TLabel
-                      Left = 10
-                      Top = 13
-                      Width = 48
-                      Height = 12
-                      Caption = #38376#24215#32676#32452
-                      Font.Charset = GB2312_CHARSET
-                      Font.Color = clWindowText
-                      Font.Height = -12
-                      Font.Name = #23435#20307
-                      Font.Style = []
-                      ParentFont = False
-                    end
-                    object Label2: TLabel
-                      Left = 263
-                      Top = 42
-                      Width = 48
-                      Height = 12
-                      Caption = #21830#21697#21517#31216
-                      Font.Charset = GB2312_CHARSET
-                      Font.Color = clWindowText
-                      Font.Height = -12
-                      Font.Name = #23435#20307
-                      Font.Style = []
-                      ParentFont = False
-                    end
                     object Label1: TLabel
-                      Left = 472
-                      Top = 13
-                      Width = 48
+                      Left = 272
+                      Top = 16
+                      Width = 24
                       Height = 12
-                      Caption = #35843#25972#26376#20221
+                      Caption = #26376#20221
                       Font.Charset = GB2312_CHARSET
                       Font.Color = clWindowText
                       Font.Height = -12
@@ -342,8 +303,8 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       ParentFont = False
                     end
                     object btnOk: TRzBitBtn
-                      Left = 558
-                      Top = 36
+                      Left = 424
+                      Top = 10
                       Width = 67
                       Height = 24
                       Action = actFind
@@ -369,8 +330,8 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       Spacing = 5
                     end
                     object edtGoods_Type: TcxComboBox
-                      Left = 62
-                      Top = 38
+                      Left = 64
+                      Top = 12
                       Width = 73
                       Height = 20
                       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -382,7 +343,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     object edtGoods_ID: TzrComboBoxList
                       Tag = -1
                       Left = 136
-                      Top = 38
+                      Top = 12
                       Width = 119
                       Height = 20
                       ParentFont = False
@@ -415,147 +376,9 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       DropListStyle = lsFixed
                       MultiSelect = False
                     end
-                    object edtSHOP_ID: TzrComboBoxList
-                      Tag = -1
-                      Left = 315
-                      Top = 9
-                      Width = 149
-                      Height = 20
-                      ParentFont = False
-                      Properties.AutoSelect = False
-                      Properties.Buttons = <
-                        item
-                          Default = True
-                        end>
-                      Properties.ReadOnly = False
-                      TabOrder = 3
-                      InGrid = False
-                      KeyValue = Null
-                      FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
-                      KeyField = 'SHOP_ID'
-                      ListField = 'SHOP_NAME'
-                      Columns = <
-                        item
-                          EditButtons = <>
-                          FieldName = 'SHOP_NAME'
-                          Footers = <>
-                          Title.Caption = #21517#31216
-                          Width = 145
-                        end>
-                      DropWidth = 185
-                      DropHeight = 180
-                      ShowTitle = True
-                      AutoFitColWidth = True
-                      ShowButton = True
-                      LocateStyle = lsDark
-                      Buttons = [zbClear]
-                      DropListStyle = lsFixed
-                      MultiSelect = False
-                    end
-                    object edtSHOP_VALUE: TzrComboBoxList
-                      Tag = -1
-                      Left = 136
-                      Top = 9
-                      Width = 119
-                      Height = 20
-                      ParentFont = False
-                      Properties.AutoSelect = False
-                      Properties.Buttons = <
-                        item
-                          Default = True
-                        end>
-                      Properties.ReadOnly = False
-                      TabOrder = 4
-                      InGrid = False
-                      KeyValue = Null
-                      FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                      KeyField = 'CODE_ID'
-                      ListField = 'CODE_NAME'
-                      Columns = <
-                        item
-                          EditButtons = <>
-                          FieldName = 'CODE_NAME'
-                          Footers = <>
-                          Title.Caption = #21517#31216
-                          Width = 115
-                        end>
-                      DropWidth = 185
-                      DropHeight = 180
-                      ShowTitle = True
-                      AutoFitColWidth = True
-                      ShowButton = True
-                      LocateStyle = lsDark
-                      Buttons = [zbClear]
-                      DropListStyle = lsFixed
-                      MultiSelect = False
-                    end
-                    object edtSHOP_TYPE: TcxComboBox
-                      Left = 62
-                      Top = 9
-                      Width = 73
-                      Height = 20
-                      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                      ParentFont = False
-                      Properties.DropDownListStyle = lsEditFixedList
-                      Properties.Items.Strings = (
-                        #34892#25919#21306#22495
-                        #31649#29702#32676#32452)
-                      Properties.OnChange = edtSHOP_TYPEPropertiesChange
-                      TabOrder = 5
-                    end
-                    object edtGoodsName: TzrComboBoxList
-                      Left = 315
-                      Top = 38
-                      Width = 149
-                      Height = 20
-                      TabStop = False
-                      Properties.AutoSelect = False
-                      Properties.Buttons = <
-                        item
-                          Default = True
-                        end>
-                      Properties.ReadOnly = False
-                      TabOrder = 6
-                      InGrid = True
-                      KeyValue = Null
-                      FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
-                      KeyField = 'GODS_ID'
-                      ListField = 'GODS_NAME'
-                      Columns = <
-                        item
-                          EditButtons = <>
-                          FieldName = 'GODS_NAME'
-                          Footers = <>
-                          Title.Caption = #21830#21697#21517#31216
-                          Width = 150
-                        end
-                        item
-                          EditButtons = <>
-                          FieldName = 'GODS_CODE'
-                          Footers = <>
-                          Title.Caption = #36135#21495
-                          Width = 50
-                        end
-                        item
-                          EditButtons = <>
-                          FieldName = 'BARCODE'
-                          Footers = <>
-                          Title.Caption = #26465#30721
-                          Width = 65
-                        end>
-                      DropWidth = 380
-                      DropHeight = 250
-                      ShowTitle = True
-                      AutoFitColWidth = True
-                      ShowButton = True
-                      LocateStyle = lsDark
-                      Buttons = [zbClear]
-                      DropListStyle = lsFixed
-                      MultiSelect = False
-                    end
                     object edtMonth: TzrMonthEdit
-                      Left = 524
-                      Top = 9
+                      Left = 304
+                      Top = 12
                       Width = 101
                       Height = 20
                       Properties.Buttons = <
@@ -563,7 +386,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Default = True
                         end>
                       Properties.ReadOnly = False
-                      TabOrder = 7
+                      TabOrder = 3
                       Text = '2011-07'
                       Year = 0
                       Month = 0

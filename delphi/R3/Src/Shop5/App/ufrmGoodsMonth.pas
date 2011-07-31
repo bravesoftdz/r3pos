@@ -23,17 +23,10 @@ type
     RzPanel9: TRzPanel;
     Panel3: TPanel;
     Panel2: TPanel;
-    Label21: TLabel;
     Label25: TLabel;
-    Label12: TLabel;
-    Label2: TLabel;
     btnOk: TRzBitBtn;
     edtGoods_Type: TcxComboBox;
     edtGoods_ID: TzrComboBoxList;
-    edtSHOP_ID: TzrComboBoxList;
-    edtSHOP_VALUE: TzrComboBoxList;
-    edtSHOP_TYPE: TcxComboBox;
-    edtGoodsName: TzrComboBoxList;
     DsGoodsMonth: TDataSource;
     CdsGoodsMonth: TZQuery;
     edtMonth: TzrMonthEdit;
@@ -45,7 +38,6 @@ type
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
     procedure FormCreate(Sender: TObject);
-    procedure edtSHOP_TYPEPropertiesChange(Sender: TObject);
     procedure edtGoods_TypePropertiesChange(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
@@ -66,7 +58,6 @@ type
     function TransPrice(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     procedure InitGrid;
     function FindColumn(DBGrid:TDBGridEh;FieldName:String):TColumnEh;
-    procedure Shop_Type_Change(edtSHOP_VALUE:TzrComboBoxList);
     procedure AddGoodsIDItems(edtGoods_ID:TzrComboboxList);
     procedure AdjpriceToAdjCst(Aprice:Real);
     procedure BatchWrite;
@@ -133,21 +124,7 @@ begin
   StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
   if ID <> '' then
     StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);
-  if edtSHOP_TYPE.ItemIndex = 0 then
-    begin
-      if edtSHOP_VALUE.asString <> '' then
-         begin
-           if FnString.TrimRight(edtSHOP_VALUE.asString,2)<>'00' then
-              StrWhere := StrWhere + ' and B.REGION_ID = '+QuotedStr(edtSHOP_VALUE.AsString+'')
-           else
-              StrWhere := StrWhere + ' and B.REGION_ID like '+QuotedStr(GetRegionId(edtSHOP_VALUE.AsString)+'%');
-         end;
-    end
-  else
-    begin
-      if edtSHOP_VALUE.asString <> '' then
-        StrWhere := StrWhere + ' and B.SHOP_TYPE='+QuotedStr(edtSHOP_VALUE.AsString);    
-    end;
+
 
   if rzTree.Selected <> nil then
     begin
@@ -180,10 +157,6 @@ begin
         StrWhere := StrWhere + ' and C.SORT_ID6='+QuotedStr(edtGoods_ID.AsString);
     end;
   end;
-  if edtGoodsName.AsString<>'' then
-    StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
-  if edtSHOP_ID.AsString<>'' then
-    StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
 
   if edtMonth.asString <> '' then
     StrWhere := StrWhere + ' and A.MONTH='+edtMonth.asString
@@ -270,29 +243,9 @@ begin
   edtMonth.asString := FormatDateTime('YYYYMM',Date);
   RzPage.ActivePageIndex := 0;
   AddGoodTypeItems(edtGoods_Type);
-  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
-  edtGoodsName.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
   edtGoods_Type.ItemIndex := 0;
-  edtSHOP_TYPE.ItemIndex := 0;
-  edtSHOP_ID.KeyValue := Global.SHOP_ID;
-  edtSHOP_ID.Text := Global.SHOP_NAME;
   LoadTree(rzTree);
   InitGrid;
-
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-  begin
-    edtSHOP_ID.Properties.ReadOnly := False;
-    edtSHOP_ID.KeyValue := Global.SHOP_ID;
-    edtSHOP_ID.Text := Global.SHOP_NAME;
-    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
-    edtSHOP_ID.Properties.ReadOnly := True;
-  end;
-
-  if ShopGlobal.GetProdFlag = 'E' then
-    begin
-      Label12.Caption := '²Ö¿âÈº×é';
-      Label21.Caption := '²Ö¿âÃû³Æ';
-    end;
 
 end;
 
@@ -384,22 +337,6 @@ begin
   end;
   if AliasFileName<>'' then
     result:=result+' as '+AliasFileName+' ';
-end;
-
-procedure TfrmGoodsMonth.Shop_Type_Change(edtSHOP_VALUE: TzrComboBoxList);
-begin
-  case edtSHOP_TYPE.ItemIndex of
-    0:edtSHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_REGION_INFO');
-    1:edtSHOP_VALUE.DataSet := Global.GetZQueryFromName('PUB_SHOP_TYPE');
-  end;
-  edtSHOP_VALUE.KeyValue := null;
-  edtSHOP_VALUE.Text := '';
-end;
-
-procedure TfrmGoodsMonth.edtSHOP_TYPEPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  Shop_Type_Change(edtSHOP_VALUE);
 end;
 
 procedure TfrmGoodsMonth.AddGoodsIDItems(edtGoods_ID: TzrComboboxList);

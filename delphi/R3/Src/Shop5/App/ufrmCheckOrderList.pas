@@ -63,7 +63,7 @@ type
     { Public declarations }
     IsEnd: boolean;
     MaxId:string;
-    function PrintSQL(tenantid,id:string):string;
+    function PrintSQL(tenantid,shopid,printdate:string):string;
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
@@ -377,12 +377,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfCheckOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid,CurOrder.gid),frfCheckOrder);
            end
         else
            begin
-             if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SALES_ID').AsString),frfCheckOrder);
+             if cdsList.IsEmpty then Exit;                     
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString,cdsList.FieldbyName('PRINT_DATE').AsString),frfCheckOrder);
            end;
       finally
          free;
@@ -449,45 +449,40 @@ begin
      end;
 end;
 
-function TfrmCheckOrderList.PrintSQL(tenantid, id: string): string;
+function TfrmCheckOrderList.PrintSQL(tenantid,shopid,printdate: string): string;
 begin
   result :=
-   'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT ,'+
-   '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+') as TOTAL_OWE_MNY,'+
-   '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+' and SALES_ID='''+id+''') as ORDER_OWE_MNY,'+
-   'case when j.INVOICE_FLAG=1 then ''收款收据'' when j.INVOICE_FLAG=2 then ''普通发票'' else ''增值税票'' end as INVOICE_FLAG_TEXT '+
-   'from ('+
-   'select jn.*,n.DEPT_NAME as DEPT_ID_TEXT from ('+
-   'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
-   'select jl.*,l.CODE_NAME as SALES_STYLE_TEXT from ( '+
-   'select jk.*,k.UNIT_NAME from ('+
-   'select jj.*,j.COLOR_NAME as PROPERTY_02_TEXT from ('+
-   'select ji.*,i.SIZE_NAME as PROPERTY_01_TEXT from ('+
-   'select jh.*,h.GODS_NAME,h.GODS_CODE,h.BARCODE from ('+
-   'select jg.*,g.SHOP_NAME,g.ADDRESS as SHOP_ADDR,g.TELEPHONE as SHOP_TELE,g.FAXES from ('+
-   'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
-   'select je.*,e.GLIDE_NO as GLIDE_NO_FROM from ('+
-   'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
-   'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
-   'select jb.*,b.CLIENT_NAME,b.CLIENT_CODE,b.SETTLE_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE2 as MOVE_TELE,b.INTEGRAL as ACCU_INTEGRAL,b.FAXES as CLIENT_FAXES from ('+
-   'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
-   'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.SALE_AMT,A.SALE_MNY,A.CASH_MNY,A.PAY_ZERO,A.PAY_DIBS,A.PAY_A,A.PAY_B,A.PAY_C,A.PAY_D,'+
-   'A.PAY_E,A.PAY_F,A.PAY_G,A.PAY_H,A.PAY_I,A.PAY_J,A.INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
-   'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,A.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from SAL_SALESORDER A,SAL_SALESDATA B '+
-   'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' ) jb '+
-   'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
-   'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
-   'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
-   'left outer join SAL_INDENTORDER e on je.TENANT_ID=e.TENANT_ID and je.FROM_ID=e.INDE_ID ) jf '+
-   'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
-   'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+
-   'left outer join VIW_GOODSINFO h on jh.TENANT_ID=h.TENANT_ID and jh.GODS_ID=h.GODS_ID ) ji '+
-   'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
-   'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and  jj.PROPERTY_02=j.COLOR_ID ) jk '+
-   'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
-   'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
-   'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j order by SEQNO';
+   'select jj.*,i.SHOP_NAME from ( '+
+   'select ji.*,h.UNIT_NAME from ( '+
+   'select jh.*,g.COLOR_NAME as PROPERTY_02_TEXT from ( '+
+   'select jg.*,f.SIZE_NAME as PROPERTY_01_TEXT from ( '+
+   'select jf.*,e.GODS_NAME,e.GODS_CODE,e.BARCODE from ( '+
+   'select je.*,d.USER_NAME as CHK_USER_TEXT from ( '+
+   'select jd.*,c.USER_NAME as CREA_USER_TEXT from ( '+
+   'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,'+
+   'jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,B.UNIT_ID,'+
+   'jc.RCK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as RCK_AMOUNT,'+
+   'jc.RCK_AMOUNT as RCK_CALC_AMOUNT,'+
+   'jc.CHK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as AMOUNT,'+
+   'jc.CHK_AMOUNT as CALC_AMOUNT,'+
+   ' (case when ifnull(jc.RCK_AMOUNT,0)>ifnull(jc.CHK_AMOUNT,0) then ifnull(jc.RCK_AMOUNT,0)-ifnull(jc.CHK_AMOUNT,0) else 0 end)*1.00/case when '+
+   'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as LOSS_AMOUNT,'+
+   ' (case when ifnull(jc.CHK_AMOUNT,0)>ifnull(jc.RCK_AMOUNT,0) then ifnull(jc.CHK_AMOUNT,0)-ifnull(jc.RCK_AMOUNT,0) else 0 end)*1.00/case when '+
+   'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as PROFIT_AMOUNT,'+
+   'b.GODS_NAME,b.GODS_CODE,'+
+   'b.NEW_OUTPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE from ( '+
+   'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,'+
+   'A.CHK_USER,A.CHK_DATE,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,B.RCK_AMOUNT,B.CHK_AMOUNT '+
+   ' from STO_PRINTORDER A,STO_PRINTDATA B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID '+
+   ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+'  ) jc '+
+   ' inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID ) jd '+
+   ' left join VIW_USERS c on jd.TENANT_ID=c.TENANT_ID and jd.CREA_USER=c.USER_ID ) je '+
+   ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CREA_USER=d.USER_ID ) jf '+
+   ' left join VIW_GOODSINFO e on jf.TENANT_ID=e.TENANT_ID and jf.GODS_ID=e.GODS_ID ) jg '+
+   ' left join VIW_SIZE_INFO f on jg.TENANT_ID=f.TENANT_ID and jg.PROPERTY_01=f.SIZE_ID ) jh '+
+   ' left join VIW_COLOR_INFO g on jh.TENANT_ID=g.TENANT_ID and jh.PROPERTY_02=g.COLOR_ID ) ji '+
+   ' left join VIW_MEAUNITS h on ji.TENANT_ID=h.TENANT_ID and ji.UNIT_ID=h.UNIT_ID ) jj '+
+   ' left join CA_SHOP_INFO i on jj.TENANT_ID=i.TENANT_ID AND JJ.SHOP_ID=I.SHOP_ID;
 end;
 
 end.

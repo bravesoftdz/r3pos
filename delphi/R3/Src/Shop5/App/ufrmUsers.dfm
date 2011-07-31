@@ -1,6 +1,6 @@
 inherited frmUsers: TfrmUsers
-  Left = 217
-  Top = 100
+  Left = 524
+  Top = 139
   Width = 948
   Height = 580
   Caption = #29992#25143#26723#26696#31649#29702
@@ -741,7 +741,7 @@ inherited frmUsers: TfrmUsers
     PageFooter.Font.Name = 'MS Sans Serif'
     PageFooter.Font.Style = []
     PageHeader.CenterText.Strings = (
-      #35843#25972#27719#24635#34920)
+      #29992#25143#26723#26696#34920)
     PageHeader.Font.Charset = GB2312_CHARSET
     PageHeader.Font.Color = clWindowText
     PageHeader.Font.Height = -16

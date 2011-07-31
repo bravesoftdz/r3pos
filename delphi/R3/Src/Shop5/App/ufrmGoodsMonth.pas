@@ -8,7 +8,7 @@ uses
   RzLabel, ExtCtrls, jpeg, RzTabs, RzPanel, cxButtonEdit, zrComboBoxList,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   RzButton, Grids, DBGridEh, RzTreeVw, DB, ZAbstractRODataset, zBase,
-  ZAbstractDataset, ZDataset, zrMonthEdit;
+  ZAbstractDataset, ZDataset, zrMonthEdit, PrnDbgeh;
 
 type
   TfrmGoodsMonth = class(TframeToolForm)
@@ -37,6 +37,11 @@ type
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    PrintDBGridEh1: TPrintDBGridEh;
+    ToolButton8: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure edtGoods_TypePropertiesChange(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -49,23 +54,32 @@ type
     procedure dbGoodsMonthDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumnEh;
       State: TGridDrawState);
+    procedure actCancelExecute(Sender: TObject);
+    procedure dbGoodsMonthColumns10UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure actPrintExecute(Sender: TObject);
+    procedure actPreviewExecute(Sender: TObject);
   private
+    FIsModify: Boolean;
+    Locked: Boolean;
     { Private declarations }
     procedure LoadTree(Tree:TRzTreeView);
     procedure AddGoodTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
-    function TransCalcRate(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     function TransUnit(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
-    function TransPrice(CalcIdx: Integer;AliasTabName: string; AliasFileName: string=''): string;
     procedure InitGrid;
     function FindColumn(DBGrid:TDBGridEh;FieldName:String):TColumnEh;
     procedure AddGoodsIDItems(edtGoods_ID:TzrComboboxList);
     procedure AdjpriceToAdjCst(Aprice:Real);
+    procedure AdjCstToAdjprice(Acst:Real);
     procedure BatchWrite;
+    procedure SetIsModify(const Value: Boolean);
+    procedure PrintView;
   public
     { Public declarations }
     function EncodeSql(ID:String):String;
     procedure Open(ID:String);
     procedure Save;
+    property IsModify:Boolean read FIsModify write SetIsModify;
   end;
 
 implementation
@@ -246,7 +260,7 @@ begin
   edtGoods_Type.ItemIndex := 0;
   LoadTree(rzTree);
   InitGrid;
-
+  ToolButton5.Enabled := False;
 end;
 
 procedure TfrmGoodsMonth.InitGrid;
@@ -277,49 +291,6 @@ begin
           Exit;
         end;
     end;
-end;
-
-function TfrmGoodsMonth.TransCalcRate(CalcIdx: Integer; AliasTabName,
-  AliasFileName: string): string;
-var
-  str,AliasTab,SmallCalc,BigCalc: string;
-begin
-  AliasTab:='';
-  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
-  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.0 else '+AliasTab+'SMALLTO_CALC end';
-  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC end';
-
-  str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+   //默认单位为 计量单位
-       ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
-       ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+   //默认单位为 大单位
-       ' else 1.0 end ';
-
-  case CalcIdx of
-   0: result:=str;       //默认单位
-   1: result:=' 1.0 ';   //计量单位
-   2: result:=SmallCalc; //小包装单位
-   3: result:=BigCalc;   //大包装单位
-  end;
-  if AliasFileName<>'' then
-    result:=result+' as '+AliasFileName+' ';
-end;
-
-function TfrmGoodsMonth.TransPrice(CalcIdx: Integer; AliasTabName,
-  AliasFileName: string): string;
-var
-  AliasTab: string;
-begin
-  AliasTab:='';
-  if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
-  case CalcIdx of
-   0: result:=
-      '(case when isnull('+AliasTab+'UNIT_ID,'''')='+AliasTab+'SMALL_UNITS then '+AliasTab+'NEW_OUTPRICE1 when isnull('+AliasTab+'UNIT_ID,'''')='+AliasTab+'BIG_UNITS then '+AliasTab+'NEW_OUTPRICE2 else '+AliasTab+'NEW_OUTPRICE end) ';  //若[默认单位]为空则 取 [计量单位]
-   1: result:=' '+AliasTab+'NEW_OUTPRICE ';   //[计量单位]  不能为空
-   2: result:='(case when isnull('+AliasTab+'SMALL_UNITS,'''')='''' then '+AliasTab+'NEW_OUTPRICE else '+AliasTab+'NEW_OUTPRICE1 end) ';  //小包装单位
-   3: result:='(case when isnull('+AliasTab+'BIG_UNITS,'''')='''' then '+AliasTab+'NEW_OUTPRICE else '+AliasTab+'NEW_OUTPRICE2 end) ';      //大包装单位
-  end;
-  if AliasFileName<>'' then
-    result:=result+' as '+AliasFileName+' ';
 end;
 
 function TfrmGoodsMonth.TransUnit(CalcIdx: Integer; AliasTabName,
@@ -393,9 +364,12 @@ end;
 
 procedure TfrmGoodsMonth.dbGoodsMonthColumns9UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var Org_Adj_Price:String;
 begin
   inherited;
-  if (Text = '') or (Text = '0') then Exit;
+  if (Text = '') then Text := '0';
+  Org_Adj_Price := CdsGoodsMonth.FieldByName('ADJ_PRICE').AsString;
+  if Org_Adj_Price <> Text then IsModify := True;
   AdjpriceToAdjCst(StrToFloat(Text));
 end;
 
@@ -447,44 +421,47 @@ procedure TfrmGoodsMonth.actSaveExecute(Sender: TObject);
 begin
   inherited;
   Save;
+  actCancelExecute(Sender);
 end;
 
 procedure TfrmGoodsMonth.Save;
 var Str_TenantID,Str_ShopID,Str_BatchNO,Str_Month,Str_SQL:String;
     SumRecord,CurRecord:Integer;
 begin
+  if not IsModify then Exit;
   frmPrgBar.Show;
   frmPrgBar.Update;
   frmPrgBar.WaitHint := '开始提交数据...';
   frmPrgBar.Precent := 0;
 
   CdsGoodsMonth.DisableControls;
-  if Factor.iDbType <> 5 then Factor.BeginTrans;
+  //if Factor.iDbType <> 5 then Factor.BeginTrans;
   try
-    Str_TenantID := CdsGoodsMonth.FieldByName('TENANT_ID').AsString;
-    Str_ShopID := CdsGoodsMonth.FieldByName('SHOP_ID').AsString;
-    Str_BatchNO := CdsGoodsMonth.FieldByName('BATCH_NO').AsString;
-    Str_Month := CdsGoodsMonth.FieldByName('MONTH').AsString;
-    SumRecord := CdsGoodsMonth.RecordCount;
-    CdsGoodsMonth.First;
-    while not CdsGoodsMonth.Eof do
-      begin
-        Str_SQL := 'update RCK_GOODS_MONTH set ADJ_CST='+CdsGoodsMonth.FieldByName('ADJ_CST').AsString+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+
-        ' where TENANT_ID='+Str_TenantID+' and SHOP_ID='+QuotedStr(Str_ShopID)+' and MONTH='+Str_Month+' and GODS_ID='+QuotedStr(CdsGoodsMonth.FieldByName('GODS_ID').AsString)+
-        ' and BATCH_NO='+QuotedStr(Str_BatchNO);
-        frmPrgBar.Precent := (CdsGoodsMonth.RecNo*100) div SumRecord;
-        Factor.ExecSQL(Str_SQL);
-        CdsGoodsMonth.Next;
-      end;
-    if Factor.iDbType <> 5 then Factor.CommitTrans;
-
+    //Str_TenantID := CdsGoodsMonth.FieldByName('TENANT_ID').AsString;
+    //Str_ShopID := CdsGoodsMonth.FieldByName('SHOP_ID').AsString;
+    //Str_BatchNO := CdsGoodsMonth.FieldByName('BATCH_NO').AsString;
+    //Str_Month := CdsGoodsMonth.FieldByName('MONTH').AsString;
+    //SumRecord := CdsGoodsMonth.RecordCount;
+    //CdsGoodsMonth.First;
+    //while not CdsGoodsMonth.Eof do
+      //begin
+       // Str_SQL := 'update RCK_GOODS_MONTH set ADJ_CST='+CdsGoodsMonth.FieldByName('ADJ_CST').AsString+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+
+        //' where TENANT_ID='+Str_TenantID+' and SHOP_ID='+QuotedStr(Str_ShopID)+' and MONTH='+Str_Month+' and GODS_ID='+QuotedStr(CdsGoodsMonth.FieldByName('GODS_ID').AsString)+
+        //' and BATCH_NO='+QuotedStr(Str_BatchNO);
+        //frmPrgBar.Precent := (CdsGoodsMonth.RecNo*100) div SumRecord;
+        //Factor.ExecSQL(Str_SQL);
+        //CdsGoodsMonth.Next;
+     // end;
+    //if Factor.iDbType <> 5 then Factor.CommitTrans;
+    Factor.UpdateBatch(CdsGoodsMonth,'TGoodsMonth',nil);
   except
-    if Factor.iDbType <> 5 then Factor.RollbackTrans;
+    //if Factor.iDbType <> 5 then Factor.RollbackTrans;
     CdsGoodsMonth.EnableControls;
     frmPrgBar.Close;
     Raise Exception.Create('数据提交失败!');
   end;
   CdsGoodsMonth.EnableControls;
+  
   frmPrgBar.Close; 
 end;
 
@@ -506,6 +483,87 @@ begin
       dbGoodsMonth.canvas.FillRect(ARect);
       DrawText(dbGoodsMonth.Canvas.Handle,pchar(Inttostr(CdsGoodsMonth.RecNo)),length(Inttostr(CdsGoodsMonth.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+end;
+
+procedure TfrmGoodsMonth.SetIsModify(const Value: Boolean);
+begin
+  FIsModify := Value;
+  if Value then
+    begin
+      rzTree.Enabled := False;
+      btnOk.Enabled := False;
+      ToolButton5.Enabled := True;
+    end;
+end;
+
+procedure TfrmGoodsMonth.actCancelExecute(Sender: TObject);
+begin
+  inherited;
+  if IsModify then
+    begin
+      rzTree.Enabled := True;
+      btnOk.Enabled := True;
+      ToolButton5.Enabled := False;
+    end;
+  IsModify := False;
+end;
+
+procedure TfrmGoodsMonth.AdjCstToAdjprice(Acst: Real);
+begin
+  if Locked then Exit;
+  try
+    Locked := True;
+    if not (CdsGoodsMonth.State in [dsEdit,dsInsert]) then CdsGoodsMonth.Edit;
+    CdsGoodsMonth.FieldByName('ADJ_MNY').AsFloat := Acst;
+    CdsGoodsMonth.FieldByName('ADJ_PRICE').AsFloat := Acst/CdsGoodsMonth.FieldByName('BAL_AMT').AsFloat;
+    CdsGoodsMonth.FieldByName('ADJ_CST').AsFloat := Acst - CdsGoodsMonth.FieldByName('BAL_CST').AsFloat;
+    CdsGoodsMonth.Post;
+    CdsGoodsMonth.Edit;
+  finally
+    Locked := False;
+  end;
+end;
+
+procedure TfrmGoodsMonth.dbGoodsMonthColumns10UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var Org_Adj_Cst:String;
+begin
+  inherited;
+  if (Text = '') then Text := '0';
+  Org_Adj_Cst := CdsGoodsMonth.FieldByName('ADJ_CST').AsString;
+  if Org_Adj_Cst <> Text then IsModify := True;
+  AdjCstToAdjprice(StrToFloat(Text));
+end;
+
+procedure TfrmGoodsMonth.PrintView;
+begin
+  PrintDBGridEh1.PageHeader.CenterText.Text := '月成本调整';
+
+  PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+  PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
+  dbGoodsMonth.DataSource.DataSet.Filtered := False;
+  PrintDBGridEh1.DBGridEh := dbGoodsMonth;
+end;
+
+procedure TfrmGoodsMonth.actPrintExecute(Sender: TObject);
+begin
+  inherited;
+  PrintView;
+  PrintDBGridEh1.Print;
+end;
+
+procedure TfrmGoodsMonth.actPreviewExecute(Sender: TObject);
+begin
+  inherited;
+  PrintView;
+  with TfrmEhLibReport.Create(self) do
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
+    end;
+  end;
 end;
 
 end.

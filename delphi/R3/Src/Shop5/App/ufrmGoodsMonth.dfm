@@ -1,6 +1,6 @@
 inherited frmGoodsMonth: TfrmGoodsMonth
-  Left = 213
-  Top = 140
+  Left = 237
+  Top = 141
   Width = 1046
   Height = 597
   Caption = #26376#25104#26412#35843#25972
@@ -185,7 +185,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.ValueType = fvtSum
                           Footers = <>
                           ReadOnly = True
-                          Title.Caption = #32467#20313#25968#37327
+                          Title.Caption = #32467#23384'|'#25968#37327
                           Width = 60
                         end
                         item
@@ -196,7 +196,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.Alignment = taRightJustify
                           Footers = <>
                           ReadOnly = True
-                          Title.Caption = #32467#23384#21333#20215
+                          Title.Caption = #32467#23384'|'#21333#20215
                           Width = 67
                         end
                         item
@@ -207,14 +207,14 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.ValueType = fvtSum
                           Footers = <>
                           ReadOnly = True
-                          Title.Caption = #32467#23384#25104#26412
+                          Title.Caption = #32467#23384'|'#25104#26412
                         end
                         item
                           DisplayFormat = '#0.00'
                           EditButtons = <>
                           FieldName = 'ADJ_PRICE'
                           Footers = <>
-                          Title.Caption = #35843#25972#21518#21333#20215
+                          Title.Caption = #35843#25972'|'#21333#20215
                           OnUpdateData = dbGoodsMonthColumns9UpdateData
                         end
                         item
@@ -224,8 +224,8 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.DisplayFormat = '#0.00'
                           Footer.ValueType = fvtSum
                           Footers = <>
-                          ReadOnly = True
-                          Title.Caption = #35843#25972#21518#37329#39069
+                          Title.Caption = #35843#25972'|'#37329#39069
+                          OnUpdateData = dbGoodsMonthColumns10UpdateData
                         end
                         item
                           DisplayFormat = '#0.00'
@@ -235,7 +235,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.ValueType = fvtSum
                           Footers = <>
                           ReadOnly = True
-                          Title.Caption = #35843#25972#21518#25104#26412
+                          Title.Caption = #35843#25972'|'#25104#26412
                         end>
                     end
                   end
@@ -405,54 +405,76 @@ inherited frmGoodsMonth: TfrmGoodsMonth
   inherited RzPanel4: TRzPanel
     Width = 1038
     inherited Image1: TImage
-      Left = 158
-      Width = 860
+      Left = 296
+      Width = 722
     end
     inherited Image3: TImage
-      Left = 158
-      Width = 860
+      Left = 296
+      Width = 722
     end
     inherited Image14: TImage
       Left = 1018
     end
     inherited rzPanel5: TPanel
-      Left = 158
+      Left = 296
     end
     inherited CoolBar1: TCoolBar
-      Width = 138
+      Width = 276
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 138
+          MinHeight = 276
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 138
+        Width = 276
         ButtonWidth = 43
-        object ToolButton1: TToolButton
-          Left = 0
-          Top = 0
-          Action = actSave
-          Caption = #25552#20132
-        end
         object ToolButton3: TToolButton
-          Left = 43
+          Left = 0
           Top = 0
           Action = actFind
         end
+        object ToolButton8: TToolButton
+          Left = 43
+          Top = 0
+          Width = 9
+          Caption = 'ToolButton8'
+          ImageIndex = 14
+          Style = tbsDivider
+        end
+        object ToolButton1: TToolButton
+          Left = 52
+          Top = 0
+          Action = actSave
+        end
+        object ToolButton5: TToolButton
+          Left = 95
+          Top = 0
+          Action = actCancel
+        end
         object ToolButton4: TToolButton
-          Left = 86
+          Left = 138
           Top = 0
           Width = 9
           Caption = 'ToolButton4'
           ImageIndex = 14
           Style = tbsDivider
         end
+        object ToolButton6: TToolButton
+          Left = 147
+          Top = 0
+          Action = actPrint
+        end
+        object ToolButton7: TToolButton
+          Left = 190
+          Top = 0
+          Action = actPreview
+        end
         object ToolButton2: TToolButton
-          Left = 95
+          Left = 233
           Top = 0
           Action = actExit
         end
@@ -462,6 +484,15 @@ inherited frmGoodsMonth: TfrmGoodsMonth
   inherited actList: TActionList
     inherited actSave: TAction
       OnExecute = actSaveExecute
+    end
+    inherited actCancel: TAction
+      OnExecute = actCancelExecute
+    end
+    inherited actPrint: TAction
+      OnExecute = actPrintExecute
+    end
+    inherited actPreview: TAction
+      OnExecute = actPreviewExecute
     end
     inherited actFind: TAction
       OnExecute = actFindExecute
@@ -486,5 +517,35 @@ inherited frmGoodsMonth: TfrmGoodsMonth
       Caption = #25209#37327#24405#20837'...'
       OnClick = N1Click
     end
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #25104#26412#35843#25972#34920)
+    PageHeader.Font.Charset = DEFAULT_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -11
+    PageHeader.Font.Name = 'MS Sans Serif'
+    PageHeader.Font.Style = []
+    Units = MM
+    Left = 322
+    Top = 212
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
   end
 end

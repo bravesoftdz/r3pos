@@ -320,38 +320,24 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GLIDE_NO'
-                      Footers = <>
-                      Title.Caption = #21333#21495
-                      Width = 107
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CLIENT_NAME'
-                      Footer.ValueType = fvtCount
-                      Footers = <>
-                      Title.Caption = #23458#25143'/'#20379#24212#21830
-                      Width = 112
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'GODS_CODE'
                       Footers = <>
                       Title.Caption = #36135#21495
-                      Width = 75
+                      Width = 70
                     end
                     item
                       EditButtons = <>
                       FieldName = 'GODS_NAME'
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
-                      Width = 128
+                      Width = 118
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BARCODE'
                       Footers = <>
                       Title.Caption = #26465#30721
+                      Width = 93
                     end
                     item
                       EditButtons = <>
@@ -359,15 +345,6 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Footers = <>
                       Title.Caption = #21333#20301
                       Width = 22
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = ' #0.###'
-                      EditButtons = <>
-                      FieldName = 'ORG_AMT'
-                      Footers = <>
-                      Title.Caption = #26399#21021#25968#37327
-                      Width = 69
                     end
                     item
                       Alignment = taRightJustify
@@ -402,19 +379,25 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Width = 85
                     end
                     item
-                      Alignment = taRightJustify
-                      EditButtons = <>
-                      FieldName = 'BAL_AMT'
-                      Footers = <>
-                      Title.Caption = #32467#23384#25968#37327
-                      Width = 72
-                    end
-                    item
                       EditButtons = <>
                       FieldName = 'BATCH_NO'
                       Footers = <>
                       Title.Caption = #25209#21495
                       Width = 104
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GLIDE_NO'
+                      Footers = <>
+                      Title.Caption = #21333#21495
+                      Width = 107
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CLIENT_NAME'
+                      Footers = <>
+                      Title.Caption = #23458#25143'/'#20379#24212#21830
+                      Width = 112
                     end
                     item
                       EditButtons = <>

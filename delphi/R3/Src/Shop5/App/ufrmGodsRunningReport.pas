@@ -36,12 +36,11 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
   private
-    IsCalcReck: Boolean; //是否试算过日台账
     FReckAmt: Real;  //期初数量
+    FReckMny: Real;  //期初金额
     procedure AddBillTypeItems; //添加帐单类型Items
 
-    function  GetGoodStorageAmt: Boolean; //返回当前查询期初数量
-    procedure CalcGoodAmount; //循环累计数量
+    function  GetGoodStorageORG: Boolean; //返回当前查询期初数量
     function  GetGoodDetailSQL(chk:boolean=true): widestring;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
   public
@@ -85,13 +84,12 @@ begin
   begin
     SetNotShowCostPrice(DBGridEh1, ['APRICE','AMONEY']);
   end;
-  IsCalcReck:=False;   
 end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;
 var
   mx: string;
-  strSql,strWhere,CLIENT_Tab: widestring;
+  strSql,strWhere,CLIENT_Tab,ORG_Tab: widestring;
 begin
   result:='';
   if P1_D1.EditValue = null then Raise Exception.Create(' 日期条件不能为空！ ');
@@ -101,7 +99,8 @@ begin
 
   //读取台账的期初数量:
   FReckAmt:=0;
-  if not GetGoodStorageAmt then Raise Exception.Create('  读取期初数量错误！  ');
+  FReckMny:=0;
+  if not GetGoodStorageORG then Raise Exception.Create('  读取期初错误！  ');
 
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
@@ -153,7 +152,7 @@ begin
      ' union all '+CLIENT_Tab+' ';  //企业表
 
   strSql :=
-    'select A.TENANT_ID'+
+    ' select A.TENANT_ID'+
      ',A.SHOP_ID'+
      ',A.ORDER_ID'+
      ',B.SHOP_NAME'+
@@ -163,7 +162,7 @@ begin
      ',A.GODS_ID'+
      ',C.GODS_CODE as GODS_CODE'+
      ',C.GODS_NAME as GODS_NAME'+
-     ',C.BARCODE as BARCODE'+
+     ',C.BARCODE as DefBARCODE'+
      ',A.CLIENT_ID'+
      ',A.CREA_USER'+
      ',A.UNIT_ID'+
@@ -171,20 +170,19 @@ begin
      ',A.PROPERTY_02'+
      ',BATCH_NO'+
      ',LOCUS_NO'+
-     ',0 as ORG_AMT'+
-     ',0 as BAL_AMT'+
      ',APRICE'+
      ',(case when ORDER_TYPE in (21,22,23,24) then -AMOUNT else AMOUNT end) as AMOUNT'+  //销售的转成负数
      ',(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as AMONEY '+
      ' from VIW_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSINFO C '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-     ' '+ strWhere + ' ';
+     ' '+ strWhere + '  ';
 
   //关联商品表：
   strSql :=
-    'select j.*'+
+    'select '+
+    'isnull(i.BARCODE,j.DefBARCODE) as BARCODE'+
+    ',j.*'+
     ',h.CLIENT_NAME as CLIENT_NAME'+
-    ',isnull(i.BARCODE,j.BARCODE) as BARCODE'+
     ',u.UNIT_NAME as UNIT_NAME'+
     ',e.USER_NAME as CREA_USER_TXT from '+
     ' ('+strSql+') j '+
@@ -194,6 +192,37 @@ begin
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
     ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
     ' order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
+
+  //关联期初：
+  ORG_Tab:=
+    ' select BARCODE '+
+     ',TENANT_ID'+
+     ','''+fndP1_SHOP_ID.AsString+''' as SHOP_ID'+
+     ',''00'' as ORDER_ID'+
+     ','''+fndP1_SHOP_ID.Text+''' as SHOP_NAME'+
+     ','+FormatDatetime('YYYYMMDD',P1_D1.Date-1)+' as CREA_DATE'+
+     ',''  '' as GLIDE_NO'+
+     ',''00'' as ORDER_TYPE'+
+     ',GODS_ID'+
+     ',GODS_CODE'+
+     ',GODS_NAME'+
+     ',BARCODE as DefBARCODE'+
+     ',''  '' as CLIENT_ID'+
+     ',''  '' as CREA_USER'+
+     ',CALC_UNITS as UNIT_ID'+
+     ',''  '' as PROPERTY_01'+
+     ',''  '' as PROPERTY_02'+
+     ',''  '' as BATCH_NO'+
+     ',''  '' as LOCUS_NO'+
+     ',(case when '+FloattoStr(FReckAmt)+'<>0 then cast('+FloattoStr(FReckMny)+' as decimal(18,3))/cast('+FloattoStr(FReckAmt)+' as decimal(18,3)) else '+FloattoStr(FReckMny)+' end) as  APRICE'+
+     ','+FloattoStr(FReckAmt)+' as AMOUNT '+
+     ','+FloattoStr(FReckMny)+' as AMONEY '+
+     ',''  '' as CLIENT_NAME'+
+     ',''  '' as UNIT_NAME'+
+     ',''  '' as CREA_USER_TXT'+     
+     ' from VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and GODS_ID='''+trim(fndP1_GODS_ID.AsString)+'''  ';
+
+  strSql :='select * from ('+ORG_Tab+' union all '+strSql+')tmp order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
 
   Result :=  ParseSQL(Factor.iDbType, strSql);
 end;
@@ -214,7 +243,6 @@ begin
         if strSql='' then Exit;
         adoReport1.SQL.Text := strSql;
         Factor.Open(adoReport1);
-        CalcGoodAmount; //循环累计数量
       end;
     1: begin //按门店汇总表
  
@@ -306,7 +334,7 @@ procedure TfrmGodsRunningReport.DBGridEh1GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'ORDER_TYPE' then Text :='期末结存';//'合计:'+Text+'笔';
 end;
 
 procedure TfrmGodsRunningReport.AddBillTypeItems;
@@ -323,7 +351,8 @@ begin
   SetCol:=FindColumn(DBGridEh1,'ORDER_TYPE');
   if SetCol=nil then Exit;
   SetCol.KeyList.Clear;
-  SetCol.PickList.Clear;   
+  SetCol.PickList.Clear;
+  AddSingeItems(SetCol,'00','期  初');
   //入库单据:
   AddSingeItems(SetCol,'11','入库单');
   AddSingeItems(SetCol,'12','调入单');
@@ -349,59 +378,77 @@ begin
   end;
 end;                                                      
 
-function TfrmGodsRunningReport.GetGoodStorageAmt: Boolean;
+function TfrmGodsRunningReport.GetGoodStorageORG: Boolean;
 var
   rs:TZQuery;
-  Str,GodsID,ReckDate: string;
+  Str,GodsID,ReckDate,MaxReckDate,Shop_Cnd: string;
+  Rck_SQL1,Rck_SQL2,RCK_DAYS_CLOSE: string;
 begin
   result:=False;
   GodsID:=trim(fndP1_GODS_ID.AsString);
   ReckDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1);
+  RCK_DAYS_CLOSE:='select Max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID);
+  if trim(fndP1_SHOP_ID.AsString)<>'' then
+  begin
+    Shop_Cnd:=' and A.SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
+    RCK_DAYS_CLOSE:=RCK_DAYS_CLOSE+' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
+  end;
+  Rck_SQL1:='select A.CREA_DATE,sum(A.BAL_AMT) as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and '+
+            ' A.CREA_DATE=C.CREA_DATE and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+ReckDate+' '+
+            ' group by A.CREA_DATE ';
+  
+  Rck_SQL2:='select A.CREA_DATE,sum(A.BAL_AMT) as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,('+RCK_DAYS_CLOSE+') C '+
+            ' where A.CREA_DATE=C.CREA_DATE and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and A.GODS_ID='''+GodsID+''' ';
+  
   //判断开始时间点是否已日结账：
+  Str:='select CREA_DATE,BAL_AMT,BAL_RTL from ('+Rck_SQL1+'  union all  '+Rck_SQL2+')tmp where CREA_DATE>0 ';
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) as ReSum from RCK_DAYS_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and CREA_DATE>='+ReckDate+' ';
+    rs.SQL.Text :=Str;
     Factor.Open(rs);
-    if (rs.Fields[0].AsInteger=0) and (not IsCalcReck) then
-    begin
-      if TfrmCostCalc.TryCalcDayGods(self) then
-        IsCalcReck:=true
-      else
-        Abort;
-    end;
-    //读取台账期初数量:
-    Str:='select sum(BAL_AMT) as BAL_AMT from RCK_GOODS_DAYS where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and CREA_DATE='+ReckDate+' ';
-    if trim(fndP1_SHOP_ID.AsString)<>'' then
-      Str:=Str+' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
-    rs.Close;
-    rs.SQL.Text:=Str;
-    Factor.Open(rs);
-    if rs.Active then
+    if rs.Locate('CREA_DATE',ReckDate,[]) then  //定位到已日结账
     begin
       FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
-      result:=true;
+      FReckMny:=rs.fieldbyName('BAL_RTL').AsFloat;
+    end else
+    begin
+      if rs.RecordCount>0 then
+      begin
+        rs.First;
+        MaxReckDate:=trim(rs.fieldbyName('CREA_DATE').AsString);
+        while not rs.Eof do
+        begin
+          if MaxReckDate<trim(rs.fieldbyName('CREA_DATE').AsString) then
+            MaxReckDate:=trim(rs.fieldbyName('CREA_DATE').AsString);
+          rs.Next;
+        end;
+        if rs.Locate('CREA_DATE',MaxReckDate,[]) then  //定位最大结帐日
+        begin
+          FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
+          FReckMny:=rs.fieldbyName('BAL_RTL').AsFloat;
+        end;
+      end else
+        MaxReckDate:='00000000';
+      //查询台账视图: 大于最大结账日期  小于查询日期
+      Str:='select sum(case when ORDER_TYPE in (21,22,23,24) then -AMOUNT else AMOUNT end) as BAL_AMT,sum((case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end)) as BAL_RTL '+
+           'from VIW_GOODS_DAYS where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CREA_DATE>'+MaxReckDate+' and CREA_DATE<='+ReckDate+' and GODS_ID='''+GodsID+''' ';
+      if trim(fndP1_SHOP_ID.AsString)<>'' then
+        Str:=Str+' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
+      rs.Close;
+      rs.SQL.Text:=Str;
+      Factor.Open(rs);
+      if Rs.RecordCount=1 then
+      begin
+        FReckAmt:=FReckAmt+rs.fieldbyName('BAL_AMT').AsFloat;
+        FReckMny:=FReckMny+rs.fieldbyName('BAL_RTL').AsFloat; 
+      end;
     end;
+    result:=true;
   finally
     rs.Free;
   end;
 end;
 
-procedure TfrmGodsRunningReport.CalcGoodAmount;
-var
-  ORG_AMT: Real;
-begin
-  if (not adoReport1.Active) or (adoReport1.IsEmpty) then Exit;
-  ORG_AMT:=FReckAmt;
-  adoReport1.First;
-  while not adoReport1.Eof do
-  begin
-    adoReport1.Edit;
-    adoReport1.FieldByName('ORG_AMT').AsFloat:=ORG_AMT; //期初数量
-    ORG_AMT:=ORG_AMT+adoReport1.FieldByName('AMOUNT').AsFloat; //结存数量
-    adoReport1.FieldByName('BAL_AMT').AsFloat:=ORG_AMT;
-    adoReport1.Next;
-  end;            
-end;
 
 end.
 

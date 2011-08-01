@@ -377,7 +377,7 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid,CurOrder.gid),frfCheckOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),TfrmCheckOrder(CurOrder).edtSHOP_ID.AsString,CurOrder.gid),frfCheckOrder);
            end
         else
            begin
@@ -456,7 +456,6 @@ begin
    'select ji.*,h.UNIT_NAME from ( '+
    'select jh.*,g.COLOR_NAME as PROPERTY_02_TEXT from ( '+
    'select jg.*,f.SIZE_NAME as PROPERTY_01_TEXT from ( '+
-   'select jf.*,e.GODS_NAME,e.GODS_CODE,e.BARCODE from ( '+
    'select je.*,d.USER_NAME as CHK_USER_TEXT from ( '+
    'select jd.*,c.USER_NAME as CREA_USER_TEXT from ( '+
    'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,'+
@@ -469,7 +468,7 @@ begin
    'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as LOSS_AMOUNT,'+
    ' (case when ifnull(jc.CHK_AMOUNT,0)>ifnull(jc.RCK_AMOUNT,0) then ifnull(jc.CHK_AMOUNT,0)-ifnull(jc.RCK_AMOUNT,0) else 0 end)*1.00/case when '+
    'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as PROFIT_AMOUNT,'+
-   'b.GODS_NAME,b.GODS_CODE,'+
+   'b.GODS_NAME,b.GODS_CODE,b.BARCODE,'+
    'b.NEW_OUTPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE from ( '+
    'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,'+
    'A.CHK_USER,A.CHK_DATE,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,B.RCK_AMOUNT,B.CHK_AMOUNT '+
@@ -477,8 +476,7 @@ begin
    ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+'  ) jc '+
    ' inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID ) jd '+
    ' left join VIW_USERS c on jd.TENANT_ID=c.TENANT_ID and jd.CREA_USER=c.USER_ID ) je '+
-   ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CREA_USER=d.USER_ID ) jf '+
-   ' left join VIW_GOODSINFO e on jf.TENANT_ID=e.TENANT_ID and jf.GODS_ID=e.GODS_ID ) jg '+
+   ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CREA_USER=d.USER_ID ) jg '+
    ' left join VIW_SIZE_INFO f on jg.TENANT_ID=f.TENANT_ID and jg.PROPERTY_01=f.SIZE_ID ) jh '+
    ' left join VIW_COLOR_INFO g on jh.TENANT_ID=g.TENANT_ID and jh.PROPERTY_02=g.COLOR_ID ) ji '+
    ' left join VIW_MEAUNITS h on ji.TENANT_ID=h.TENANT_ID and ji.UNIT_ID=h.UNIT_ID ) jj '+

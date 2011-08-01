@@ -214,7 +214,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           EditButtons = <>
                           FieldName = 'ADJ_PRICE'
                           Footers = <>
-                          Title.Caption = #35843#25972'|'#21333#20215
+                          Title.Caption = #35843#25972#21518'|'#21333#20215
                           OnUpdateData = dbGoodsMonthColumns9UpdateData
                         end
                         item
@@ -224,7 +224,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.DisplayFormat = '#0.00'
                           Footer.ValueType = fvtSum
                           Footers = <>
-                          Title.Caption = #35843#25972'|'#37329#39069
+                          Title.Caption = #35843#25972#21518'|'#37329#39069
                           OnUpdateData = dbGoodsMonthColumns10UpdateData
                         end
                         item

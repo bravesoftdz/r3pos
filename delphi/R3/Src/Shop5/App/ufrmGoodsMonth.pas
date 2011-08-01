@@ -425,8 +425,6 @@ begin
 end;
 
 procedure TfrmGoodsMonth.Save;
-var Str_TenantID,Str_ShopID,Str_BatchNO,Str_Month,Str_SQL:String;
-    SumRecord,CurRecord:Integer;
 begin
   if not IsModify then Exit;
   frmPrgBar.Show;
@@ -435,34 +433,16 @@ begin
   frmPrgBar.Precent := 0;
 
   CdsGoodsMonth.DisableControls;
-  //if Factor.iDbType <> 5 then Factor.BeginTrans;
   try
-    //Str_TenantID := CdsGoodsMonth.FieldByName('TENANT_ID').AsString;
-    //Str_ShopID := CdsGoodsMonth.FieldByName('SHOP_ID').AsString;
-    //Str_BatchNO := CdsGoodsMonth.FieldByName('BATCH_NO').AsString;
-    //Str_Month := CdsGoodsMonth.FieldByName('MONTH').AsString;
-    //SumRecord := CdsGoodsMonth.RecordCount;
-    //CdsGoodsMonth.First;
-    //while not CdsGoodsMonth.Eof do
-      //begin
-       // Str_SQL := 'update RCK_GOODS_MONTH set ADJ_CST='+CdsGoodsMonth.FieldByName('ADJ_CST').AsString+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+
-        //' where TENANT_ID='+Str_TenantID+' and SHOP_ID='+QuotedStr(Str_ShopID)+' and MONTH='+Str_Month+' and GODS_ID='+QuotedStr(CdsGoodsMonth.FieldByName('GODS_ID').AsString)+
-        //' and BATCH_NO='+QuotedStr(Str_BatchNO);
-        //frmPrgBar.Precent := (CdsGoodsMonth.RecNo*100) div SumRecord;
-        //Factor.ExecSQL(Str_SQL);
-        //CdsGoodsMonth.Next;
-     // end;
-    //if Factor.iDbType <> 5 then Factor.CommitTrans;
+
     Factor.UpdateBatch(CdsGoodsMonth,'TGoodsMonth',nil);
   except
-    //if Factor.iDbType <> 5 then Factor.RollbackTrans;
     CdsGoodsMonth.EnableControls;
     frmPrgBar.Close;
     Raise Exception.Create('数据提交失败!');
   end;
   CdsGoodsMonth.EnableControls;
-  
-  frmPrgBar.Close; 
+  frmPrgBar.Close;
 end;
 
 procedure TfrmGoodsMonth.dbGoodsMonthDrawColumnCell(Sender: TObject;

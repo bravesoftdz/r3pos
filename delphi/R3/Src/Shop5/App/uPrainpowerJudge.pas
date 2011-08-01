@@ -277,7 +277,9 @@ begin
       new(Msg);
       Msg^.ID := List.FieldbyName('ID').AsString;
       msg^.Title := List.FieldbyName('MSG_TITLE').AsString;
-      if List.FieldbyName('sFlag').AsInteger = 9 then
+      if List.FieldbyName('sFlag').AsInteger = 8 then
+        Msg^.Contents := '"'+List.FieldbyName('MSG_TITLE').AsString+'" 待您答复！'
+      else if List.FieldbyName('sFlag').AsInteger = 9 then
         Msg^.Contents := '您有 '+List.FieldbyName('SUM_ORDER').AsString+' 位客户近期过生日！'
       else if List.FieldbyName('sFlag').AsInteger = 10 then
         Msg^.Contents := '您有 '+List.FieldbyName('SUM_ORDER').AsString+' 位客户近期要继会！'
@@ -294,7 +296,7 @@ begin
       List.Next;
     end;
 
-  {Sql_Str := EncodeSql1;
+  Sql_Str := EncodeSql1;
   if Sql_Str <> '' then
     begin
       try
@@ -351,7 +353,7 @@ begin
       finally
         rs.Free;
       end;
-    end;}
+    end;
 end;
 
 procedure TPrainpowerJudge.SyncMsgc;

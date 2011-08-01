@@ -1,6 +1,6 @@
 inherited frmGoodsMonth: TfrmGoodsMonth
-  Left = 237
-  Top = 141
+  Left = 227
+  Top = 120
   Width = 1046
   Height = 597
   Caption = #26376#25104#26412#35843#25972
@@ -224,7 +224,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.DisplayFormat = '#0.00'
                           Footer.ValueType = fvtSum
                           Footers = <>
-                          Title.Caption = #35843#25972#21518'|'#37329#39069
+                          Title.Caption = #35843#25972#21518'|'#25104#26412
                           OnUpdateData = dbGoodsMonthColumns10UpdateData
                         end
                         item
@@ -235,7 +235,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.ValueType = fvtSum
                           Footers = <>
                           ReadOnly = True
-                          Title.Caption = #35843#25972'|'#25104#26412
+                          Title.Caption = #35843#25972#21518'|'#24046#39069
                         end>
                     end
                   end
@@ -277,7 +277,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     ParentColor = True
                     TabOrder = 1
                     object Label25: TLabel
-                      Left = 8
+                      Left = 160
                       Top = 16
                       Width = 48
                       Height = 12
@@ -290,7 +290,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       ParentFont = False
                     end
                     object Label1: TLabel
-                      Left = 272
+                      Left = 16
                       Top = 16
                       Width = 24
                       Height = 12
@@ -330,7 +330,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       Spacing = 5
                     end
                     object edtGoods_Type: TcxComboBox
-                      Left = 64
+                      Left = 216
                       Top = 12
                       Width = 73
                       Height = 20
@@ -342,7 +342,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     end
                     object edtGoods_ID: TzrComboBoxList
                       Tag = -1
-                      Left = 136
+                      Left = 288
                       Top = 12
                       Width = 119
                       Height = 20
@@ -377,7 +377,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       MultiSelect = False
                     end
                     object edtMonth: TzrMonthEdit
-                      Left = 304
+                      Left = 48
                       Top = 12
                       Width = 101
                       Height = 20

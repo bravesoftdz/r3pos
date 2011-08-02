@@ -247,8 +247,14 @@ begin
     Params:=TftParamList.Create(nil);
     Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
     Params.ParamByName('USER_ID').AsString:=User_ID;
-    Params.ParamByName('ROLE_IDS').asString:=self.ROLE_IDS;
-    Params.ParamByName('ROLE_NAMES').asString:=self.ROLE_NAMES;
+    if Self.ROLE_IDS <> '' then
+      Params.ParamByName('ROLE_IDS').asString:=self.ROLE_IDS
+    else
+      Params.ParamByName('ROLE_IDS').asString:='#';
+    if Self.ROLE_NAMES <> '' then
+      Params.ParamByName('ROLE_NAMES').asString:=self.ROLE_NAMES
+    else
+      Params.ParamByName('ROLE_NAMES').asString:='#';
     FReROLE_IDS:=Params.ParamByName('ROLE_IDS').asString;
     Factor.ExecProc('TUserRolesList',Params);
   finally

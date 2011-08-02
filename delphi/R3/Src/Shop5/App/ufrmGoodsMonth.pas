@@ -84,7 +84,7 @@ type
 
 implementation
 uses uTreeUtil,uGlobal,uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,
-     uDsUtil,ObjCommon,ufrmPrgBar, ufrmBasic;
+     uDsUtil,ObjCommon,ufrmPrgBar, ufrmBasic, Math;
 {$R *.dfm}
 
 { TfrmGoodsMonth }
@@ -180,10 +180,11 @@ begin
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
   StrSql :=
-  'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,A.BAL_AMT,(case when A.BAL_CST = 0 then A.BAL_MNY else A.BAL_CST end) as BAL_CST,'+
-  '(case when A.BAL_CST = 0 then A.BAL_MNY else A.BAL_CST end)/A.BAL_AMT as BAL_PRICE,A.ADJ_CST,(A.ADJ_CST+(case when A.BAL_CST = 0 then A.BAL_MNY else A.BAL_CST end))/A.BAL_AMT as ADJ_PRICE,'+
-  'A.ADJ_CST+(case when A.BAL_CST = 0 then A.BAL_MNY else A.BAL_CST end) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
-  ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere;
+  'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(A.BAL_AMT) as BAL_AMT,'+
+  'sum(A.BAL_CST) as BAL_CST,sum(A.BAL_CST)/sum(A.BAL_AMT) as BAL_PRICE,sum(A.ADJ_CST) as ADJ_CST,sum(A.ADJ_CST+A.BAL_CST)/sum(A.BAL_AMT) as ADJ_PRICE,'+
+  'sum(A.ADJ_CST+A.BAL_CST) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
+  ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
+  ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
 
   Result :=
   'select ja.*,isnull(a.BARCODE,ja.CALC_BARCODE) as BARCODE  from ('+StrSql+') ja '+
@@ -396,7 +397,10 @@ begin
     while not CdsGoodsMonth.Eof do
       begin
         if rs.Locate('GODS_ID',CdsGoodsMonth.FieldByName('GODS_ID').AsString,[]) then
-          AdjpriceToAdjCst(rs.FieldByName('NEW_INPRICE').AsFloat);
+          begin
+            if not IsModify then IsModify := True;
+            AdjpriceToAdjCst(rs.FieldByName('NEW_INPRICE').AsFloat);
+          end;
         CdsGoodsMonth.Next;
       end;
     CdsGoodsMonth.Locate('GODS_ID',GoodsId,[]);

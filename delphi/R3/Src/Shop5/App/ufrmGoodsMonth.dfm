@@ -1,6 +1,6 @@
 inherited frmGoodsMonth: TfrmGoodsMonth
-  Left = 227
-  Top = 120
+  Left = 88
+  Top = 129
   Width = 1046
   Height = 597
   Caption = #26376#25104#26412#35843#25972

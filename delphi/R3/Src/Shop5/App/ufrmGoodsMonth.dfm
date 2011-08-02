@@ -1,6 +1,6 @@
 inherited frmGoodsMonth: TfrmGoodsMonth
-  Left = 88
-  Top = 129
+  Left = 222
+  Top = 128
   Width = 1046
   Height = 597
   Caption = #26376#25104#26412#35843#25972
@@ -8,45 +8,45 @@ inherited frmGoodsMonth: TfrmGoodsMonth
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1030
-    Height = 522
+    Width = 1038
+    Height = 533
     inherited RzPanel2: TRzPanel
-      Width = 1020
-      Height = 512
+      Width = 1028
+      Height = 523
       inherited RzPage: TRzPageControl
-        Width = 1014
-        Height = 506
+        Width = 1022
+        Height = 517
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
-            Width = 1012
-            Height = 479
+            Width = 1020
+            Height = 490
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 1002
-              Height = 469
+              Width = 1010
+              Height = 480
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 0
               object RzPanel6: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 1002
-                Height = 469
+                Width = 1010
+                Height = 480
                 Align = alClient
                 BorderOuter = fsNone
                 TabOrder = 0
                 object Splitter1: TSplitter
                   Left = 177
                   Top = 41
-                  Height = 428
+                  Height = 439
                 end
                 object RzPanel7: TRzPanel
                   Left = 0
                   Top = 41
                   Width = 177
-                  Height = 428
+                  Height = 439
                   Align = alLeft
                   BorderOuter = fsNone
                   TabOrder = 0
@@ -54,7 +54,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     Left = 0
                     Top = 0
                     Width = 177
-                    Height = 428
+                    Height = 439
                     SelectionPen.Color = clBtnShadow
                     Align = alClient
                     FrameSides = [sdLeft, sdRight, sdBottom]
@@ -66,29 +66,30 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     RowSelect = True
                     TabOrder = 0
                     OnChange = rzTreeChange
+                    OnChanging = rzTreeChanging
                   end
                 end
                 object RzPanel8: TRzPanel
                   Left = 180
                   Top = 41
-                  Width = 822
-                  Height = 428
+                  Width = 830
+                  Height = 439
                   Align = alClient
                   BorderOuter = fsNone
                   TabOrder = 1
                   object Panel1: TPanel
                     Left = 0
                     Top = 0
-                    Width = 822
-                    Height = 428
+                    Width = 830
+                    Height = 439
                     Align = alClient
                     Caption = 'Panel1'
                     TabOrder = 0
-                    object uca: TDBGridEh
+                    object dbGoodsMonth: TDBGridEh
                       Left = 1
                       Top = 1
-                      Width = 820
-                      Height = 426
+                      Width = 828
+                      Height = 437
                       Align = alClient
                       AllowedOperations = [alopUpdateEh]
                       DataSource = DsGoodsMonth
@@ -118,7 +119,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       CurrencySymbol = #65509
                       DecimalNumber = 2
                       DigitalNumber = 12
-                      OnDrawColumnCell = ucaDrawColumnCell
+                      OnDrawColumnCell = dbGoodsMonthDrawColumnCell
                       Columns = <
                         item
                           Checkboxes = True
@@ -210,7 +211,8 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Title.Caption = #32467#23384'|'#25104#26412
                         end
                         item
-                          DisplayFormat = '#0.00'
+                          Alignment = taRightJustify
+                          DisplayFormat = '#0.00####'
                           EditButtons = <>
                           FieldName = 'ADJ_PRICE'
                           Footers = <>
@@ -243,7 +245,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                 object RzPanel9: TRzPanel
                   Left = 0
                   Top = 0
-                  Width = 1002
+                  Width = 1010
                   Height = 41
                   Align = alTop
                   BorderOuter = fsNone
@@ -269,7 +271,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                   object Panel2: TPanel
                     Left = 178
                     Top = 0
-                    Width = 824
+                    Width = 832
                     Height = 41
                     Align = alClient
                     Alignment = taLeftJustify
@@ -403,17 +405,17 @@ inherited frmGoodsMonth: TfrmGoodsMonth
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1030
+    Width = 1038
     inherited Image1: TImage
       Left = 296
-      Width = 714
+      Width = 722
     end
     inherited Image3: TImage
       Left = 296
-      Width = 714
+      Width = 722
     end
     inherited Image14: TImage
-      Left = 1010
+      Left = 1018
     end
     inherited rzPanel5: TPanel
       Left = 296

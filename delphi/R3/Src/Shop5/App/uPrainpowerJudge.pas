@@ -214,7 +214,7 @@ begin
             'from STK_STOCKORDER where STOCK_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
 
             if Trim(Sql) <> '' then Sql := Sql + ' union all ';     //销售退货单入库  SAL_SALESORDER
-            Sql := Sql + 'select ''actfrmInLocusOrderList'' as ID,4 as MSG_CLASS,''销售退货收货单'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,18 as sFlag '+
+            Sql := Sql + 'select ''actfrmInLocusOrderList'' as ID,4 as MSG_CLASS,''销售退货收货单'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(SALES_DATE) as MIN_DATE,18 as sFlag '+
             'from SAL_SALESORDER where SALES_TYPE=3 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
           end;
 

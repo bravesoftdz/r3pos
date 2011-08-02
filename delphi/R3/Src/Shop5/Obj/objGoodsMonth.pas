@@ -22,7 +22,7 @@ begin
   //初始化更新逻辑
   IsSQLUpdate := true;
 
-  Str :='update RCK_GOODS_MONTH set ADJ_CST=:ADJ_CST,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+  Str :='update RCK_GOODS_MONTH set ADJ_CST=:ADJ_PRICE*BAL_AMT-BAL_CST,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
   ' where TENANT_ID=:OLD_TENANT_ID and MONTH=:OLD_MONTH and GODS_ID=:OLD_GODS_ID and BATCH_NO=:OLD_BATCH_NO';
   UpdateSQL.Text :=  Str;
 

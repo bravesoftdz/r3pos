@@ -8,10 +8,20 @@ uses
   RzPanel, RzTabs, ImgList,LCContrllerLib, ZDataSet, StdCtrls, msxml, ActiveX, ComObj,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
   IdCookieManager;
-
+const
+  WM_XSM_CALL=WM_USER+1058;
+  WM_XSM_ERROR=WM_USER+1059;
 type
+  TLC_Config=procedure(callMsgId:integer;errMsgId:integer;errMsgHwnd:integer);stdcall;
+  TLC_Create=function(szName:pchar;hwnd:integer):integer;stdcall;
+  TLC_Close=function(szName:pchar):integer;stdcall;
+  TLC_Send=function(szName:pchar;szMethod:pchar;para1:pchar):integer;stdcall;
+  TLC_Send2=function(szName:pchar;szMethod:pchar;para1:pchar;para2:pchar):integer;stdcall;
+  TLC_Send3=function(szName:pchar;szMethod:pchar;para1:pchar;para2:pchar;para3:pchar):integer;stdcall;
+  TLC_FreeMsgMem=function(wparam:integer;lparam:integer):integer;stdcall;
+
+
   TfrmXsmIEBrowser = class(TfrmIEWebForm)
-    LCObject: TLCObject;
     IdHTTP1: TIdHTTP;
     IdCookieManager1: TIdCookieManager;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -29,6 +39,18 @@ type
     SaveHandle:THandle;
     FConnectTimeOut: integer;
     FCommandTimeOut: integer;
+
+
+    DLLHandle:THandle;
+    DLLLC_Config:TLC_Config;
+    DLLLC_Create:TLC_Create;
+    DLLLC_Close:TLC_Close;
+    DLLLC_Send:TLC_Send;
+    DLLLC_Send2:TLC_Send2;
+    DLLLC_Send3:TLC_Send3;
+    DLLLC_FreeMsgMem:TLC_FreeMsgMem;
+
+
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
                                                    const szPara: WideString);
@@ -39,6 +61,12 @@ type
                                                    const szPara1: WideString;
                                                    const szPara2: WideString;
                                                    const szPara3: WideString);
+
+    //接收组件返回的消息                                               
+    procedure DoMsg(var Message: TMessage);
+    procedure XSM_CALL_FUNC(var Message: TMessage); message WM_XSM_CALL;
+    procedure XSM_CALL_ERROR(var Message: TMessage); message WM_XSM_ERROR;
+
     procedure SetLogined(const Value: boolean);
     procedure Setready(const Value: boolean);
     procedure SetSessionFail(const Value: boolean);
@@ -61,9 +89,11 @@ type
     procedure Connect;
     function GetSignature:boolean;
     function EncodeXml(objectId:string):string;
-    procedure Send(const szMethodName: WideString;const szPara: WideString);
-    procedure Send2(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString);
-    procedure Send3(const szMethodName: WideString;const szPara1: WideString;const szPara2: WideString;const szPara3: WideString);
+
+    procedure Send(const szMethodName: string;const szPara: string);
+    procedure Send2(const szMethodName: string;const szPara1: string;const szPara2: string);
+    procedure Send3(const szMethodName: string;const szPara1: string;const szPara2: string;const szPara3: string);
+    
     function WaitRun(WaitOutTime:integer=20000):boolean;
     procedure DoInit(Wait:boolean=false);
     procedure ReadInfo(checked:boolean=false);
@@ -104,9 +134,25 @@ begin
   FormStyle := fsMDIChild;
   left := -9000;
   try
-    LCObject.OnFuncCall := DoFuncCall;
-    LCObject.OnFuncCall2 := DoFuncCall2;
-    LCObject.OnFuncCall3 := DoFuncCall3;
+    DLLHandle := LoadLibrary(Pchar(ExtractFilePath(ParamStr(0))+'LCControlDll.dll'));
+    if DLLHandle=0 then Raise Exception.Create('没找到LCControlDll.dll');
+    @DLLLC_Config := GetProcAddress(DLLHandle, 'LC_Config');
+    if @DLLLC_Config=nil then Raise Exception.Create('LC_Config方法没有实现');
+    @DLLLC_Create := GetProcAddress(DLLHandle, 'LC_Create');
+    if @DLLLC_Create=nil then Raise Exception.Create('LC_Create方法没有实现');
+    @DLLLC_Close := GetProcAddress(DLLHandle, 'LC_Close');
+    if @DLLLC_Close=nil then Raise Exception.Create('LC_Close方法没有实现');
+    @DLLLC_Send := GetProcAddress(DLLHandle, 'LC_Send');
+    if @DLLLC_Send=nil then Raise Exception.Create('LC_Send方法没有实现');
+    @DLLLC_Send2 := GetProcAddress(DLLHandle, 'LC_Send2');
+    if @DLLLC_Send2=nil then Raise Exception.Create('LC_Send2方法没有实现');
+    @DLLLC_Send3 := GetProcAddress(DLLHandle, 'LC_Send3');
+    if @DLLLC_Send3=nil then Raise Exception.Create('LC_Send3方法没有实现');
+    @DLLLC_FreeMsgMem := GetProcAddress(DLLHandle, 'LC_FreeMsgMem');
+    if @DLLLC_FreeMsgMem=nil then Raise Exception.Create('LC_FreeMsgMem方法没有实现');
+//    LCObject.OnFuncCall := DoFuncCall;
+//    LCObject.OnFuncCall2 := DoFuncCall2;
+//    LCObject.OnFuncCall3 := DoFuncCall3;
     Connect;
   except
     MessageBox(Handle,'系统没有检测到"新商盟接口组件",请检查软件是否正确安装?','友情提示...',MB_OK+MB_ICONWARNING);
@@ -116,6 +162,7 @@ end;
 destructor TfrmXsmIEBrowser.Destroy;
 begin
   runed := false;
+  FreeLibrary(DLLHandle);
   IEBrowser.Free;
 //  LCObject.Close;
   inherited;
@@ -253,35 +300,46 @@ end;
 procedure TfrmXsmIEBrowser.Connect;
 var r:integer;
 begin
-  LCObject.UnRegisterLC('_R3_XSM');
-  LCObject.UnRegisterLC('_XSM_R3');
-  r := LCObject.Connect('_XSM_R3');
-  if r<>0 then LogFile.AddLogFile(0,'初始化新商盟LCObject失败，失败代码:'+inttostr(r));
+//  LCObject.UnRegisterLC('_R3_XSM');
+//  LCObject.UnRegisterLC('_XSM_R3');
+//  r := LCObject.Connect('_XSM_R3');
+//  if r<>0 then LogFile.AddLogFile(0,'初始化新商盟LCObject失败，失败代码:'+inttostr(r));
+
+  DLLLC_Config(WM_XSM_CALL,WM_XSM_ERROR,Handle);
+
+  r := DLLLC_Close('_R3_XSM');
+  r := DLLLC_Close('_XSM_R3');
+
+  r := DLLLC_Create('_XSM_R3',Handle);
+  if r<>0 then LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
 end;
 
-procedure TfrmXsmIEBrowser.Send(const szMethodName, szPara: WideString);
+procedure TfrmXsmIEBrowser.Send(const szMethodName, szPara:String);
 var r:integer;
 begin
   runed := true;
-  r := LCObject.Send('_R3_XSM',szMethodName,szPara);
+//  r := LCObject.Send('_R3_XSM',szMethodName,szPara);
+  r := DLLLC_Send('_R3_XSM',pchar(szMethodName),Pchar(szPara));
   LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara+'，代码:'+inttostr(r))
 end;
 
 procedure TfrmXsmIEBrowser.Send2(const szMethodName, szPara1,
-  szPara2: WideString);
+  szPara2: string);
 var r:integer;
 begin
   runed := true;
-  r := LCObject.Send2('_R3_XSM',szMethodName,szPara1,szPara2);
+//  r := LCObject.Send2('_R3_XSM',szMethodName,szPara1,szPara2);
+  r := DLLLC_Send2('_R3_XSM',pchar(szMethodName),Pchar(szPara1),Pchar(szPara2));
   LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+'，代码:'+inttostr(r));
 end;
 
 procedure TfrmXsmIEBrowser.Send3(const szMethodName, szPara1, szPara2,
-  szPara3: WideString);
+  szPara3: string);
 var r:integer;
 begin
   runed := true;
-  r := LCObject.Send3('_R3_XSM',szMethodName,szPara1,szPara2,szPara3);
+//  r := LCObject.Send3('_R3_XSM',szMethodName,szPara1,szPara2,szPara3);
+  r := DLLLC_Send3('_R3_XSM',pchar(szMethodName),Pchar(szPara1),Pchar(szPara2),Pchar(szPara3));
   LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+',p3='+szPara3+'，代码:'+inttostr(r));
 end;
 
@@ -661,6 +719,56 @@ begin
   except
     SessionFail := true;
     Raise;
+  end;
+end;
+
+procedure TfrmXsmIEBrowser.XSM_CALL_FUNC(var Message: TMessage);
+begin
+  DoMsg(Message);
+end;
+
+procedure TfrmXsmIEBrowser.XSM_CALL_ERROR(var Message: TMessage);
+begin
+  DoMsg(Message);
+end;
+
+procedure TfrmXsmIEBrowser.DoMsg(var Message: TMessage);
+type
+  PLParam=^TLParam;
+  TLParam=record
+     LocName:Pchar;
+     szMethodName:Pchar;
+     szPara1:Pchar;
+     szPara2:Pchar;
+     szPara3:Pchar;
+    end;
+var
+  w:integer;
+//  i:integer;
+  pBuf:PLParam;
+//  arr:array [0..3] of Byte;
+//  pDword:^DWord;
+//  Addr:array [0..4] of integer;
+begin
+  try
+    w := Message.WParam;
+    pBuf:=PLParam(Message.LParam);
+//    for i:=0 to w-1 do
+//      begin
+//          arr[0]:=Ord(pBuf[(i*4)+4]);
+//          arr[1]:=Ord(pBuf[(i*4)+3]);
+//          arr[2]:=Ord(pBuf[(i*4)+2]);
+//          arr[3]:=Ord(pBuf[(i*4)+1]);
+//          pDword := @arr;
+//          Addr[i] := pDword^;
+//      end;
+    case Message.WParam-2 of
+    1: DoFuncCall(nil,StrPas(pBuf^.szMethodName),StrPas(pBuf^.szPara1));
+    2: DoFuncCall2(nil,StrPas(pBuf^.szMethodName),StrPas(pBuf^.szPara1),StrPas(pBuf^.szPara2));
+    3: DoFuncCall3(nil,StrPas(pBuf^.szMethodName),StrPas(pBuf^.szPara1),StrPas(pBuf^.szPara2),StrPas(pBuf^.szPara3));
+    end;
+  finally
+    DLLLC_FreeMsgMem(Message.WParam,Message.LParam);
   end;
 end;
 

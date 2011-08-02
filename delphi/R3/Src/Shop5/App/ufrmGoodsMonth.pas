@@ -19,7 +19,7 @@ type
     rzTree: TRzTreeView;
     RzPanel8: TRzPanel;
     Panel1: TPanel;
-    dbGoodsMonth: TDBGridEh;
+    uca: TDBGridEh;
     RzPanel9: TRzPanel;
     Panel3: TPanel;
     Panel2: TPanel;
@@ -51,7 +51,7 @@ type
     procedure N1Click(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actSaveExecute(Sender: TObject);
-    procedure dbGoodsMonthDrawColumnCell(Sender: TObject;
+    procedure ucaDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumnEh;
       State: TGridDrawState);
     procedure actCancelExecute(Sender: TObject);
@@ -449,7 +449,7 @@ begin
   frmPrgBar.Close;
 end;
 
-procedure TfrmGoodsMonth.dbGoodsMonthDrawColumnCell(Sender: TObject;
+procedure TfrmGoodsMonth.ucaDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var ARect:TRect;

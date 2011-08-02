@@ -3184,6 +3184,8 @@ begin
     begin
       try
         FillParams(InsertQuery);
+        InsertQuery.ParambyName('RECV_MNY').asFloat := 0;
+        InsertQuery.ParambyName('RECK_MNY').asFloat := InsertQuery.ParambyName('ACCT_MNY').asFloat;
         AGlobal.ExecQuery(InsertQuery);
       except
          on E:Exception do

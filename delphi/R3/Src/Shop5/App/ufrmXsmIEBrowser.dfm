@@ -22,14 +22,6 @@ inherited frmXsmIEBrowser: TfrmXsmIEBrowser
     inherited RzPanel1: TRzPanel
       Width = 441
     end
-    object LCObject: TLCObject
-      Left = -112
-      Top = -8
-      Width = 81
-      Height = 41
-      TabOrder = 2
-      ControlData = {100700005F0800003D040000}
-    end
   end
   inherited RzPanel2: TRzPanel
     Width = 441

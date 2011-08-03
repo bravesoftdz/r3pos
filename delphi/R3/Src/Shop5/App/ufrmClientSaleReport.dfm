@@ -11,10 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
-        ActivePage = TabSheet3
+        ActivePage = TabSheet5
         Color = clWhite
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -552,7 +552,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Alignment = taRightJustify
               BorderOuter = fsGroove
               BorderSides = [sdLeft, sdTop, sdRight]
-              Color = clWhite
               TabOrder = 0
               DesignSize = (
                 866
@@ -1168,7 +1167,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 DesignSize = (
                   866
@@ -1701,7 +1699,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 DesignSize = (
                   866
@@ -2350,7 +2347,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 object RzLabel10: TRzLabel
                   Left = 24
@@ -2641,7 +2637,6 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Top = 93
                   Width = 383
                   Height = 27
-                  Color = clWindow
                   GroupStyle = gsStandard
                   TabOrder = 10
                   ThemeAware = False

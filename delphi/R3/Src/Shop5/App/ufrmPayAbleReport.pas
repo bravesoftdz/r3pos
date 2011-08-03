@@ -71,9 +71,6 @@ type
     fndP5_SHOP_VALUE: TzrComboBoxList;
     fndP5_SHOP_TYPE: TcxComboBox;
     fndP5_SHOP_ID: TzrComboBoxList;
-    Panel6: TPanel;
-    RzPanel15: TRzPanel;
-    DBGridEh5: TDBGridEh;
     RzPanel16: TRzPanel;
     RzLabel1: TRzLabel;
     RzLabel10: TRzLabel;
@@ -93,6 +90,8 @@ type
     fndP5_USER_ID: TzrComboBoxList;
     Label8: TLabel;
     fndP5_GLIDE_ID: TzrComboBoxList;
+    RzPanel15: TRzPanel;
+    DBGridEh5: TDBGridEh;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);

@@ -8,13 +8,13 @@ inherited frmPayAbleReport: TfrmPayAbleReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 1014
-    Height = 548
+    Height = 547
     inherited RzPanel2: TRzPanel
       Width = 1004
-      Height = 538
+      Height = 537
       inherited RzPage: TRzPageControl
         Width = 799
-        Height = 532
+        Height = 531
         ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
@@ -25,11 +25,10 @@ inherited frmPayAbleReport: TfrmPayAbleReport
           Caption = #22320#21306#24212#20184#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 797
-            Height = 505
-            BorderColor = clBtnFace
+            Height = 504
             inherited Panel4: TPanel
               Width = 787
-              Height = 495
+              Height = 494
               inherited w1: TRzPanel
                 Width = 787
                 Height = 60
@@ -155,10 +154,10 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               inherited RzPanel7: TRzPanel
                 Top = 60
                 Width = 787
-                Height = 435
+                Height = 434
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 431
+                  Height = 430
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -243,7 +242,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 505
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -252,7 +251,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 495
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -265,7 +264,6 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 object RzLabel4: TRzLabel
                   Left = 24
@@ -390,7 +388,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 0
                 Top = 60
                 Width = 787
-                Height = 435
+                Height = 434
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -399,7 +397,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 431
+                  Height = 430
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -524,7 +522,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 505
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -533,7 +531,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 495
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -546,7 +544,6 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 object RzLabel6: TRzLabel
                   Left = 24
@@ -720,7 +717,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 0
                 Top = 82
                 Width = 787
-                Height = 413
+                Height = 412
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -730,7 +727,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 409
+                  Height = 408
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -849,7 +846,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 505
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -862,7 +859,6 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Align = alTop
               BorderOuter = fsGroove
               BorderSides = [sdLeft, sdTop, sdRight]
-              Color = clWhite
               TabOrder = 0
               object RzLabel1: TRzLabel
                 Left = 24
@@ -1036,7 +1032,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Left = 5
               Top = 87
               Width = 787
-              Height = 413
+              Height = 412
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1046,7 +1042,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 2
                 Top = 2
                 Width = 783
-                Height = 409
+                Height = 408
                 Align = alClient
                 AllowedOperations = []
                 BorderStyle = bsNone
@@ -1169,11 +1165,10 @@ inherited frmPayAbleReport: TfrmPayAbleReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 100
+            Height = 80
             Align = alTop
             BorderOuter = fsGroove
             BorderSides = [sdLeft, sdTop, sdRight]
-            Color = clWhite
             TabOrder = 0
             object RzLabel8: TRzLabel
               Left = 24
@@ -1441,255 +1436,245 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               MultiSelect = False
             end
           end
-          object Panel6: TPanel
+          object RzPanel15: TRzPanel
             Left = 0
-            Top = 100
+            Top = 80
             Width = 797
-            Height = 405
+            Height = 424
             Align = alClient
-            BevelOuter = bvNone
+            BorderOuter = fsGroove
             Color = clWhite
             TabOrder = 1
-            object RzPanel15: TRzPanel
-              Left = 0
-              Top = 0
-              Width = 797
-              Height = 405
+            object DBGridEh5: TDBGridEh
+              Left = 2
+              Top = 2
+              Width = 793
+              Height = 420
               Align = alClient
-              BorderOuter = fsGroove
-              Color = clWhite
+              AllowedOperations = []
+              DataSource = dsadoReport4
+              Flat = True
+              FooterColor = clWindow
+              FooterFont.Charset = GB2312_CHARSET
+              FooterFont.Color = clWindowText
+              FooterFont.Height = -12
+              FooterFont.Name = #23435#20307
+              FooterFont.Style = []
+              FooterRowCount = 1
+              FrozenCols = 3
+              Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+              RowHeight = 20
+              SumList.Active = True
               TabOrder = 0
-              object DBGridEh5: TDBGridEh
-                Left = 2
-                Top = 2
-                Width = 793
-                Height = 401
-                Align = alClient
-                AllowedOperations = []
-                DataSource = dsadoReport4
-                Flat = True
-                FooterColor = clWindow
-                FooterFont.Charset = GB2312_CHARSET
-                FooterFont.Color = clWindowText
-                FooterFont.Height = -12
-                FooterFont.Name = #23435#20307
-                FooterFont.Style = []
-                FooterRowCount = 1
-                FrozenCols = 3
-                Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-                OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-                RowHeight = 20
-                SumList.Active = True
-                TabOrder = 0
-                TitleFont.Charset = GB2312_CHARSET
-                TitleFont.Color = clWindowText
-                TitleFont.Height = -12
-                TitleFont.Name = #23435#20307
-                TitleFont.Style = []
-                TitleHeight = 20
-                UseMultiTitle = True
-                IsDrawNullRow = False
-                CurrencySymbol = #65509
-                DecimalNumber = 2
-                DigitalNumber = 12
-                OnDrawColumnCell = DBGridEh1DrawColumnCell
-                OnGetCellParams = DBGridEh1GetCellParams
-                OnGetFooterParams = DBGridEh5GetFooterParams
-                Columns = <
-                  item
-                    Color = clBtnFace
-                    EditButtons = <>
-                    FieldName = 'SEQNO'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #24207#21495
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 32
-                  end
-                  item
-                    DisplayFormat = '0000-00-00'
-                    EditButtons = <>
-                    FieldName = 'ABLE_DATE'
-                    Footer.ValueType = fvtStaticText
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #36134#27454#26085#26399
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CLIENT_NAME'
-                    Footer.ValueType = fvtCount
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #23458#25143#21517#31216
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 139
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'ABLE_TYPE'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #36134#27454#31867#22411
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 63
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'ACCT_INFO'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #25688#35201
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 208
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'ACCT_MNY'
-                    Footer.DisplayFormat = '#0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #21512#35745#37329#39069
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 72
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PAYM_MNY'
-                    Footer.DisplayFormat = '#0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #32467#20313#37329#39069
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 66
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'REVE_MNY'
-                    Footer.DisplayFormat = '#0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #20914#24080#37329#39069
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 66
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'RECK_MNY'
-                    Footer.DisplayFormat = '#0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #32467#20313#37329#39069
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 66
-                  end
-                  item
-                    Alignment = taRightJustify
-                    EditButtons = <>
-                    FieldName = 'NEAR_DATE'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #26368#26032#20184#27454#26085#26399
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 105
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'SHOP_ID_TEXT'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #25152#23646#38376#24215
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                    Width = 97
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'GUIDE_USER_NAME'
-                    Footers = <>
-                    Title.Caption = #39564#36135#20154
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CREA_USER_NAME'
-                    Footers = <>
-                    Title.Caption = #21046#21333#20154
-                    Title.Font.Charset = GB2312_CHARSET
-                    Title.Font.Color = clWindowText
-                    Title.Font.Height = -12
-                    Title.Font.Name = #23435#20307
-                    Title.Font.Style = [fsBold]
-                  end>
-              end
+              TitleFont.Charset = GB2312_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = #23435#20307
+              TitleFont.Style = []
+              TitleHeight = 20
+              UseMultiTitle = True
+              IsDrawNullRow = False
+              CurrencySymbol = #65509
+              DecimalNumber = 2
+              DigitalNumber = 12
+              OnDrawColumnCell = DBGridEh1DrawColumnCell
+              OnGetCellParams = DBGridEh1GetCellParams
+              OnGetFooterParams = DBGridEh5GetFooterParams
+              Columns = <
+                item
+                  Color = clBtnFace
+                  EditButtons = <>
+                  FieldName = 'SEQNO'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #24207#21495
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 32
+                end
+                item
+                  DisplayFormat = '0000-00-00'
+                  EditButtons = <>
+                  FieldName = 'ABLE_DATE'
+                  Footer.ValueType = fvtStaticText
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #36134#27454#26085#26399
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 70
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CLIENT_NAME'
+                  Footer.ValueType = fvtCount
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #23458#25143#21517#31216
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 139
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'ABLE_TYPE'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #36134#27454#31867#22411
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 63
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'ACCT_INFO'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #25688#35201
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 208
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'ACCT_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #21512#35745#37329#39069
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 72
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'PAYM_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #32467#20313#37329#39069
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 66
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'REVE_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #20914#24080#37329#39069
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 66
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'RECK_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #32467#20313#37329#39069
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 66
+                end
+                item
+                  Alignment = taRightJustify
+                  EditButtons = <>
+                  FieldName = 'NEAR_DATE'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #26368#26032#20184#27454#26085#26399
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 105
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_ID_TEXT'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #25152#23646#38376#24215
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                  Width = 97
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'GUIDE_USER_NAME'
+                  Footers = <>
+                  Title.Caption = #39564#36135#20154
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CREA_USER_NAME'
+                  Footers = <>
+                  Title.Caption = #21046#21333#20154
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clWindowText
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = [fsBold]
+                end>
             end
           end
         end
       end
       inherited PanelColumnS: TPanel
         Left = 802
-        Height = 532
+        Height = 531
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]

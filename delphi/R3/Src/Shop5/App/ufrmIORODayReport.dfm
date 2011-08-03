@@ -15,10 +15,10 @@ inherited frmIORODayReport: TfrmIORODayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet3
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -26,7 +26,6 @@ inherited frmIORODayReport: TfrmIORODayReport
           inherited RzPanel3: TRzPanel
             Width = 797
             Height = 504
-            BorderColor = clBtnFace
             inherited Panel4: TPanel
               Width = 787
               Height = 494
@@ -224,7 +223,7 @@ inherited frmIORODayReport: TfrmIORODayReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 505
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -233,7 +232,7 @@ inherited frmIORODayReport: TfrmIORODayReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 495
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -246,7 +245,6 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 object RzLabel4: TRzLabel
                   Left = 24
@@ -374,7 +372,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Left = 0
                 Top = 60
                 Width = 787
-                Height = 435
+                Height = 434
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -383,7 +381,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 431
+                  Height = 430
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -508,7 +506,6 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 object RzLabel6: TRzLabel
                   Left = 24
@@ -860,7 +857,7 @@ inherited frmIORODayReport: TfrmIORODayReport
             Left = 0
             Top = 0
             Width = 797
-            Height = 505
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -869,7 +866,7 @@ inherited frmIORODayReport: TfrmIORODayReport
               Left = 5
               Top = 5
               Width = 787
-              Height = 495
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -882,7 +879,6 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
                 object RzLabel8: TRzLabel
                   Left = 24
@@ -1320,7 +1316,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Left = 0
                 Top = 103
                 Width = 787
-                Height = 392
+                Height = 391
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1329,7 +1325,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 388
+                  Height = 387
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsadoReport4

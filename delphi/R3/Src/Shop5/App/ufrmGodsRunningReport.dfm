@@ -1,20 +1,20 @@
 inherited frmGodsRunningReport: TfrmGodsRunningReport
-  Left = 194
-  Top = 104
+  Left = 199
+  Top = 115
   Width = 959
   Height = 625
   Caption = #21830#21697#27969#27700#24080#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 943
-    Height = 550
+    Width = 951
+    Height = 561
     inherited RzPanel2: TRzPanel
-      Width = 933
-      Height = 540
+      Width = 941
+      Height = 551
       inherited RzPage: TRzPageControl
-        Width = 728
-        Height = 534
+        Width = 736
+        Height = 545
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,13 +22,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
           Color = clCream
           Caption = #21830#21697#27969#27700#24080#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 726
-            Height = 507
+            Width = 734
+            Height = 518
             inherited Panel4: TPanel
-              Width = 716
-              Height = 497
+              Width = 724
+              Height = 508
+              Color = clBtnFace
               inherited w1: TRzPanel
-                Width = 716
+                Width = 724
                 Height = 82
                 object RzLabel2: TRzLabel
                   Left = 22
@@ -73,9 +74,17 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Height = 12
                   Caption = #26465' '#24418' '#30721
                 end
+                object Label8: TLabel
+                  Left = 583
+                  Top = 58
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #26174#31034#21333#20301
+                end
                 object btnOk: TRzBitBtn
-                  Left = 582
-                  Top = 42
+                  Left = 571
+                  Top = 41
                   Width = 73
                   Height = 32
                   Action = actFind
@@ -283,14 +292,29 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                object fndP1_UNIT_ID: TcxComboBox
+                  Left = 633
+                  Top = 54
+                  Width = 80
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #35745#37327#21333#20301
+                    #21253#35013'1'
+                    #21253#35013'2')
+                  TabOrder = 9
+                end
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 716
-                Height = 415
+                Width = 724
+                Height = 426
+                Color = clBtnFace
                 inherited DBGridEh1: TDBGridEh
-                  Width = 712
-                  Height = 411
+                  Width = 720
+                  Height = 422
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -304,12 +328,18 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Width = 30
                     end
                     item
-                      DisplayFormat = '0000-00-00'
                       EditButtons = <>
-                      FieldName = 'CREA_DATE'
+                      FieldName = 'GODS_CODE'
                       Footers = <>
-                      Title.Caption = #21333#25454#26085#26399
-                      Width = 69
+                      Title.Caption = #36135#21495
+                      Width = 65
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 113
                     end
                     item
                       EditButtons = <>
@@ -319,42 +349,60 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Width = 58
                     end
                     item
+                      DisplayFormat = '0000-00-00'
                       EditButtons = <>
-                      FieldName = 'GODS_CODE'
+                      FieldName = 'CREA_DATE'
                       Footers = <>
-                      Title.Caption = #36135#21495
-                      Width = 70
+                      Title.Caption = #21333#25454#26085#26399
+                      Width = 69
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GODS_NAME'
+                      FieldName = 'CLIENT_NAME'
                       Footers = <>
-                      Title.Caption = #21830#21697#21517#31216
-                      Width = 118
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'BARCODE'
-                      Footers = <>
-                      Title.Caption = #26465#30721
-                      Width = 93
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'UNIT_NAME'
-                      Footers = <>
-                      Title.Caption = #21333#20301
-                      Width = 22
+                      Title.Caption = #23458#25143'/'#20379#24212#21830
+                      Width = 103
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = ' #0.###'
                       EditButtons = <>
-                      FieldName = 'AMOUNT'
+                      FieldName = 'ORG_AMT'
+                      Footers = <>
+                      Title.Caption = #26399#21021#25968#37327
+                      Width = 70
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = ' #0.###'
+                      EditButtons = <>
+                      FieldName = 'IN_AMT'
+                      Footer.Alignment = taRightJustify
                       Footer.DisplayFormat = ' #0.###'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #25968#37327
+                      Title.Caption = #25910#20837#25968#37327
+                      Width = 70
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = ' #0.###'
+                      EditButtons = <>
+                      FieldName = 'OUT_AMT'
+                      Footer.Alignment = taRightJustify
+                      Footer.DisplayFormat = ' #0.###'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #21457#20986#25968#37327
+                      Width = 70
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = ' #0.###'
+                      EditButtons = <>
+                      FieldName = 'BAL_AMT'
+                      Footers = <>
+                      Title.Caption = #32467#23384#25968#37327
                       Width = 80
                     end
                     item
@@ -387,17 +435,17 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 93
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'GLIDE_NO'
                       Footers = <>
                       Title.Caption = #21333#21495
                       Width = 107
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CLIENT_NAME'
-                      Footers = <>
-                      Title.Caption = #23458#25143'/'#20379#24212#21830
-                      Width = 112
                     end
                     item
                       EditButtons = <>
@@ -420,8 +468,8 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 731
-        Height = 534
+        Left = 739
+        Height = 545
         inherited Panel2: TPanel
           Height = 502
           inherited RzPanel1: TRzPanel [3]
@@ -437,15 +485,15 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 943
+    Width = 951
     inherited Image1: TImage
-      Width = 569
+      Width = 581
     end
     inherited Image3: TImage
-      Width = 569
+      Width = 581
     end
     inherited Image14: TImage
-      Left = 923
+      Left = 931
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

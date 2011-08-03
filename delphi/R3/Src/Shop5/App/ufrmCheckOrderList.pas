@@ -74,7 +74,7 @@ implementation
 
 uses
   ufrmCheckOrder,uGlobal,uShopUtil,uXDictFactory, uShopGlobal,uDsUtil,ufrmFastReport,uFnUtil,
-  ufrmCheckTask, ufrmCheckTablePrint;
+  ufrmCheckTask, ufrmCheckTablePrint,objCommon;
 
  {$R *.dfm}
 
@@ -499,6 +499,7 @@ begin
    ' left join VIW_COLOR_INFO g on jh.TENANT_ID=g.TENANT_ID and jh.PROPERTY_02=g.COLOR_ID ) ji '+
    ' left join VIW_MEAUNITS h on ji.TENANT_ID=h.TENANT_ID and ji.UNIT_ID=h.UNIT_ID ) jj '+
    ' left join CA_SHOP_INFO i on jj.TENANT_ID=i.TENANT_ID AND JJ.SHOP_ID=I.SHOP_ID ';
+  Result := ParseSQL(Factor.iDbType,Result);
 end;
 
 end.

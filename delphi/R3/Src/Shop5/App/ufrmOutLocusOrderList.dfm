@@ -1,6 +1,6 @@
 inherited frmOutLocusOrderList: TfrmOutLocusOrderList
-  Left = 198
-  Top = 108
+  Left = 422
+  Top = 122
   Width = 868
   Height = 575
   Caption = #21457#36135#21333
@@ -8,22 +8,24 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 852
-    Height = 500
+    Width = 860
+    Height = 511
     inherited RzPanel2: TRzPanel
-      Width = 842
-      Height = 490
+      Width = 850
+      Height = 501
       inherited RzPage: TRzPageControl
-        Width = 836
-        Height = 484
+        Width = 844
+        Height = 495
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 834
-            Height = 457
+            Width = 842
+            Height = 468
             inherited RzPanel1: TRzPanel
-              Width = 824
+              Width = 832
               Height = 112
               object RzLabel2: TRzLabel
                 Left = 33
@@ -304,8 +306,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 117
-              Width = 824
-              Height = 335
+              Width = 832
+              Height = 346
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -1077,6 +1079,13 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'SHOP_NAME_TEXT'
+                  Footers = <>
+                  Title.Caption = #38376#24215#21517#31216
+                  Width = 120
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'DEPT_NAME'
                   Footers = <>
                   Title.Caption = #37096#38376
@@ -1574,39 +1583,39 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 852
+    Width = 860
     inherited Image1: TImage
-      Left = 593
-      Width = 239
+      Left = 589
+      Width = 251
     end
     inherited Image3: TImage
-      Left = 593
-      Width = 239
+      Left = 589
+      Width = 251
     end
     inherited Image14: TImage
-      Left = 832
+      Left = 840
     end
     inherited rzPanel5: TPanel
-      Left = 593
+      Left = 589
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#20837#24211
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 573
+      Width = 569
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 573
+          MinHeight = 569
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 573
+        Width = 569
         object ToolButton17: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -1615,7 +1624,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
           Visible = False
         end
         object ToolButton11: TToolButton
-          Left = 530
+          Left = 526
           Top = 0
           Action = actExit
         end
@@ -1624,9 +1633,10 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
   end
   inherited mmMenu: TMainMenu
     Left = 208
-    Top = 144
+    Top = 192
   end
   inherited actList: TActionList
+    Top = 192
     inherited actNew: TAction
       Caption = #21457#36135
     end

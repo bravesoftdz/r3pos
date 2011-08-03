@@ -812,7 +812,8 @@ begin
   result := 'select ja.*,a.DEPT_NAME from ('+result+') ja left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID';
   result := 'select jb.*,b.USER_NAME as DUTY_USER_TEXT from ('+result+') jb left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.DUTY_USER=b.USER_ID';
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID';
-  result := 'select je.*,e.USER_NAME as LOCUS_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.LOCUS_USER=e.USER_ID '+w1;
+  result := 'select je.*,e.USER_NAME as LOCUS_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.LOCUS_USER=e.USER_ID ';
+  result := 'select jf.*,f.SHOP_NAME as SHOP_NAME_TEXT from ('+result+') jf left outer join CA_SHOP_INFO f on je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID '+w1;
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by CHANGE_ID';
   1:result := 'select * from ('+result+' order by CHANGE_ID) where ROWNUM<=600';

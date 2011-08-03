@@ -77,7 +77,7 @@ type
     edtKeepAlive: TCheckBox;
     actRefreshComponment: TAction;
     mnuMgr: TMenuItem;
-    TabSheet2: TTabSheet;
+    TabLog: TTabSheet;
     Memo1: TMemo;
     TaskList: TListView;
     OpenDialog1: TOpenDialog;
@@ -170,6 +170,7 @@ type
     procedure chkDebugClick(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure N6Click(Sender: TObject);
+    procedure PagesChange(Sender: TObject);
   private
     FTaskMessage: DWord;
     FIconData: TNotifyIconData;
@@ -1111,6 +1112,14 @@ end;
 procedure TSocketForm.N6Click(Sender: TObject);
 begin
   Memo1.CopyToClipboard;
+end;
+
+procedure TSocketForm.PagesChange(Sender: TObject);
+begin
+  if Pages.ActivePage = TabLog then
+     LogFile.Showing := true
+  else
+     LogFile.Showing := false;
 end;
 
 initialization

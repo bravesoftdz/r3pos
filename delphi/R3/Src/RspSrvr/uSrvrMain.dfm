@@ -1,6 +1,6 @@
 object SocketForm: TSocketForm
-  Left = 377
-  Top = 192
+  Left = 379
+  Top = 193
   AlphaBlendValue = 0
   AutoScroll = False
   Caption = #36890#35759#26381#21153#22120
@@ -29,9 +29,10 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 326
-    ActivePage = TabSheet3
+    ActivePage = TabLog
     Align = alClient
     TabOrder = 0
+    OnChange = PagesChange
     object PropPage: TTabSheet
       Caption = ' '#36873#39033
       DesignSize = (
@@ -348,7 +349,7 @@ object SocketForm: TSocketForm
         OnCompare = ConnectionListCompare
       end
     end
-    object TabSheet2: TTabSheet
+    object TabLog: TTabSheet
       Caption = ' '#26085#24535
       ImageIndex = 4
       object Memo1: TMemo

@@ -29,6 +29,8 @@ type
     fndP1_BarType_ID: TcxComboBox;
     fndP1_BarCode: TcxTextEdit;
     fndP1_SHOP_ID: TzrComboBoxList;
+    Label8: TLabel;
+    fndP1_UNIT_ID: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -36,16 +38,22 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
   private
+    FQryType: integer;
     FReckAmt: Real;  //期初数量
     FReckMny: Real;  //期初金额
+    FBalAmt:  Real;  //结存数量
     procedure AddBillTypeItems; //添加帐单类型Items
 
+    procedure CreateGrid;  
+    procedure CalcStorageInfo;  //累计计算库存
     function  GetGoodStorageORG: Boolean; //返回当前查询期初数量
     function  GetGoodDetailSQL(chk:boolean=true): widestring;
-    function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function  AddReportReport(TitleList: TStringList; PageNo: string): string; override;
+    function  GetQryType: integer; //添加Title
   public
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
+    property  QryType: integer read FQryType;
   end;
 
 implementation
@@ -88,31 +96,25 @@ end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;
 var
-  mx: string;
+  mx,UnitCalc: string; 
   strSql,strWhere,CLIENT_Tab,ORG_Tab: widestring;
 begin
   result:='';
   if P1_D1.EditValue = null then Raise Exception.Create(' 日期条件不能为空！ ');
   if P1_D2.EditValue = null then Raise Exception.Create(' 日期条件不能为空！ ');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('  查询开始日期不能大于结束日期条件不能为空！ ');
-  if trim(fndP1_GODS_ID.AsString)='' then Raise Exception.Create('  请选择要查询商品！  '); 
-
-  //读取台账的期初数量:
-  FReckAmt:=0;
-  FReckMny:=0;
-  if not GetGoodStorageORG then Raise Exception.Create('  读取期初错误！  ');
+  if trim(fndP1_GODS_ID.AsString)='' then Raise Exception.Create('  请选择要查询商品！  ');
 
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
   //门店条件:
-  if fndP1_SHOP_ID.AsString <>'' then
-    strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+  if fndP1_SHOP_ID.AsString <>'' then strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
   //商品名称
-  if fndP1_GODS_ID.AsString <>'' then
-    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+  if fndP1_GODS_ID.AsString <>'' then strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
 
   //条形码（ 物流跟踪号|批号）:
-  if trim(fndP1_BarCode.Text)<>'' then
+  FQryType:=GetQryType;
+  if trim(fndP1_BarCode.Text)<>'' then //条码不为空时
   begin
     case fndP1_BarType_ID.ItemIndex of
      0: begin
@@ -122,6 +124,9 @@ begin
         end;
      1: strWhere:=strWhere+' and BATCH_NO='''+trim(fndP1_BarCode.Text)+''' '
     end;
+  end else
+  begin //读取台账的期初数量:
+    if not GetGoodStorageORG then Raise Exception.Create('  读取期初错误！  ');
   end;
 
   //门店所属行政区域|门店类型:
@@ -151,6 +156,9 @@ begin
      ' union all select TENANT_ID,CUST_ID as CLIENT_ID,CUST_NAME as CLIENT_NAME from PUB_CUSTOMER '+  //客户表
      ' union all '+CLIENT_Tab+' ';  //企业表
 
+  //统计单位
+  UnitCalc:='('+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+')*1.0';
+  
   strSql :=
     ' select A.TENANT_ID'+
      ',A.SHOP_ID'+
@@ -170,9 +178,13 @@ begin
      ',A.PROPERTY_02'+
      ',BATCH_NO'+
      ',LOCUS_NO'+
-     ',APRICE'+
-     ',(case when ORDER_TYPE in (21,22,23,24) then -AMOUNT else AMOUNT end) as AMOUNT'+  //销售的转成负数
-     ',(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as AMONEY '+
+     ',STOCK_AMT as ORG_AMT'+
+     ',STOCK_AMT as BAL_AMT'+
+     ',(case when ORDER_TYPE in (11,13) then STOCK_AMT*1.0/'+UnitCalc+' when ORDER_TYPE=12 then DBIN_AMT*1.0/'+UnitCalc+' else 0 end) as IN_AMT'+
+     ',(case when ORDER_TYPE in (21,23,24) then SALE_AMT*1.0/'+UnitCalc+' when ORDER_TYPE=22 then DBOUT_AMT*1.0/'+UnitCalc+' when ORDER_TYPE>30 then -(CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)/'+UnitCalc+' else 0 end) as OUT_AMT '+
+     ',(case when ORDER_TYPE=11 then STOCK_RTL when ORDER_TYPE=12 then DBIN_RTL when ORDER_TYPE=13 then STKRT_MNY '+
+           ' when ORDER_TYPE in (21,24) then SALE_RTL when ORDER_TYPE=22 then DBOUT_CST  when ORDER_TYPE=23 then SALRT_MNY '+
+           ' when ORDER_TYPE>30 then -(CHANGE1_CST+CHANGE2_CST+CHANGE3_CST+CHANGE4_CST+CHANGE5_CST) else 0 end) as AMONEY '+
      ' from VIW_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSINFO C '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
      ' '+ strWhere + '  ';
@@ -182,49 +194,19 @@ begin
     'select '+
     'isnull(i.BARCODE,j.DefBARCODE) as BARCODE'+
     ',j.*'+
+    ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.0/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.0/OUT_AMT else AMONEY end) end) as APRICE'+
     ',h.CLIENT_NAME as CLIENT_NAME'+
     ',u.UNIT_NAME as UNIT_NAME'+
     ',e.USER_NAME as CREA_USER_TXT from '+
     ' ('+strSql+') j '+
-    ' left outer join ('+CLIENT_Tab+') h on j.CLIENT_ID=h.CLIENT_ID '+ //j.TENANT_ID=h.TENANT_ID and  //供应商  //j.BATCH_NO=bar.BATCH_NO and
+    ' left outer join ('+CLIENT_Tab+') h on j.CLIENT_ID=h.CLIENT_ID '+
     ' inner join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) i '+
     '  on j.TENANT_ID=i.TENANT_ID and j.GODS_ID=i.GODS_ID and j.PROPERTY_01=i.PROPERTY_01 and j.PROPERTY_02=i.PROPERTY_02 and j.UNIT_ID=i.UNIT_ID '+
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
     ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
     ' order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
 
-  //关联期初：
-  ORG_Tab:=
-    ' select BARCODE '+
-     ',TENANT_ID'+
-     ','''+fndP1_SHOP_ID.AsString+''' as SHOP_ID'+
-     ',''00'' as ORDER_ID'+
-     ','''+fndP1_SHOP_ID.Text+''' as SHOP_NAME'+
-     ','+FormatDatetime('YYYYMMDD',P1_D1.Date-1)+' as CREA_DATE'+
-     ',''  '' as GLIDE_NO'+
-     ',''00'' as ORDER_TYPE'+
-     ',GODS_ID'+
-     ',GODS_CODE'+
-     ',GODS_NAME'+
-     ',BARCODE as DefBARCODE'+
-     ',''  '' as CLIENT_ID'+
-     ',''  '' as CREA_USER'+
-     ',CALC_UNITS as UNIT_ID'+
-     ',''  '' as PROPERTY_01'+
-     ',''  '' as PROPERTY_02'+
-     ',''  '' as BATCH_NO'+
-     ',''  '' as LOCUS_NO'+
-     ',(case when '+FloattoStr(FReckAmt)+'<>0 then cast('+FloattoStr(FReckMny)+' as decimal(18,3))/cast('+FloattoStr(FReckAmt)+' as decimal(18,3)) else '+FloattoStr(FReckMny)+' end) as  APRICE'+
-     ','+FloattoStr(FReckAmt)+' as AMOUNT '+
-     ','+FloattoStr(FReckMny)+' as AMONEY '+
-     ',''  '' as CLIENT_NAME'+
-     ',''  '' as UNIT_NAME'+
-     ',''  '' as CREA_USER_TXT'+     
-     ' from VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and GODS_ID='''+trim(fndP1_GODS_ID.AsString)+'''  ';
-
-  strSql :='select * from ('+ORG_Tab+' union all '+strSql+')tmp order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
-
-  Result :=  ParseSQL(Factor.iDbType, strSql);
+  Result:= ParseSQL(Factor.iDbType, strSql);
 end;
 
 function TfrmGodsRunningReport.GetRowType: integer;
@@ -241,8 +223,11 @@ begin
         if adoReport1.Active then adoReport1.Close;
         strSql := GetGoodDetailSQL;
         if strSql='' then Exit;
+        CreateGrid;
         adoReport1.SQL.Text := strSql;
         Factor.Open(adoReport1);
+        if QryType=1 then
+          CalcStorageInfo;
       end;
     1: begin //按门店汇总表
  
@@ -330,11 +315,11 @@ end;
                               
 procedure TfrmGodsRunningReport.DBGridEh1GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 begin
-  inherited;
-  if Column.FieldName = 'ORDER_TYPE' then Text :='期末结存';//'合计:'+Text+'笔';
+  if Column.FieldName = 'ORDER_TYPE' then Text :='期末结存'; //'合计:'+Text+'笔';
+  if Column.FieldName = 'ORG_AMT' then Text :=FloattoStr(FReckAmt)
+  else if Column.FieldName = 'BAL_AMT' then Text :=FloattoStr(FBalAmt);
 end;
 
 procedure TfrmGodsRunningReport.AddBillTypeItems;
@@ -381,10 +366,14 @@ end;
 function TfrmGodsRunningReport.GetGoodStorageORG: Boolean;
 var
   rs:TZQuery;
+  UnitCalc: string; 
   Str,GodsID,ReckDate,MaxReckDate,Shop_Cnd: string;
   Rck_SQL1,Rck_SQL2,RCK_DAYS_CLOSE: string;
 begin
   result:=False;
+  FReckAmt:=0;
+  FReckMny:=0;
+  FBalAmt:=0;
   GodsID:=trim(fndP1_GODS_ID.AsString);
   ReckDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1);
   RCK_DAYS_CLOSE:='select Max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID);
@@ -393,18 +382,22 @@ begin
     Shop_Cnd:=' and A.SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
     RCK_DAYS_CLOSE:=RCK_DAYS_CLOSE+' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
   end;
-  Rck_SQL1:='select A.CREA_DATE,sum(A.BAL_AMT) as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and '+
-            ' A.CREA_DATE=C.CREA_DATE and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+ReckDate+' '+
+  UnitCalc:='('+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'D')+')*1.0';
+  Rck_SQL1:='select A.CREA_DATE,sum(A.BAL_AMT/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C,VIW_GOODSINFO D '+
+            ' where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.CREA_DATE=C.CREA_DATE and A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
+            ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+ReckDate+' '+
             ' group by A.CREA_DATE ';
-  
-  Rck_SQL2:='select A.CREA_DATE,sum(A.BAL_AMT) as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,('+RCK_DAYS_CLOSE+') C '+
-            ' where A.CREA_DATE=C.CREA_DATE and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and A.GODS_ID='''+GodsID+''' ';
-  
+
+  Rck_SQL2:='select A.CREA_DATE,sum(A.BAL_AMT/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,('+RCK_DAYS_CLOSE+')C,VIW_GOODSINFO D '+
+            ' where A.CREA_DATE=C.CREA_DATE and A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
+            ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' '+
+            ' group by A.CREA_DATE';
+
   //判断开始时间点是否已日结账：
-  Str:='select CREA_DATE,BAL_AMT,BAL_RTL from ('+Rck_SQL1+'  union all  '+Rck_SQL2+')tmp where CREA_DATE>0 ';
+  Str:='select CREA_DATE,BAL_AMT,BAL_RTL from ('+Rck_SQL1+' union all '+Rck_SQL2+')tmp where CREA_DATE>0 ';
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text :=Str;
+    rs.SQL.Text := ParseSQL(Factor.iDbType, Str);
     Factor.Open(rs);
     if rs.Locate('CREA_DATE',ReckDate,[]) then  //定位到已日结账
     begin
@@ -430,12 +423,19 @@ begin
       end else
         MaxReckDate:='00000000';
       //查询台账视图: 大于最大结账日期  小于查询日期
-      Str:='select sum(case when ORDER_TYPE in (21,22,23,24) then -AMOUNT else AMOUNT end) as BAL_AMT,sum((case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end)) as BAL_RTL '+
-           'from VIW_GOODS_DAYS where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CREA_DATE>'+MaxReckDate+' and CREA_DATE<='+ReckDate+' and GODS_ID='''+GodsID+''' ';
+      Str:='select sum(case when ORDER_TYPE in (11,13) then STOCK_AMT '+
+                          ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
+                          ' when ORDER_TYPE=12 then DBIN_AMT '+
+                          ' when ORDER_TYPE=22 then -DBOUT_AMT '+
+                          ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)/'+UnitCalc+' as BAL_AMT,'+
+                 ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
+           'from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
+           ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
+           ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.CREA_DATE>'+MaxReckDate+' and A.CREA_DATE<='+ReckDate+' and A.GODS_ID='''+GodsID+''' ';
       if trim(fndP1_SHOP_ID.AsString)<>'' then
-        Str:=Str+' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
+        Str:=Str+' and A.SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
       rs.Close;
-      rs.SQL.Text:=Str;
+      rs.SQL.Text:=ParseSQL(Factor.iDbType, Str);;
       Factor.Open(rs);
       if Rs.RecordCount=1 then
       begin
@@ -449,6 +449,91 @@ begin
   end;
 end;
 
+procedure TfrmGodsRunningReport.CreateGrid;
+var
+  ColIdx: integer;
+  Column: TColumnEh;
+begin
+  Column:=FindColumn(DBGridEh1,'ORG_AMT');
+  if Column<>nil then Column.Free;
+  Column:=FindColumn(DBGridEh1,'BAL_AMT');
+  if Column<>nil then Column.Free;
+
+  if QryType=1 then
+  begin
+    DBGridEh1.Columns.BeginUpdate;
+    try
+      Column:=FindColumn(DBGridEh1,'IN_AMT');
+      ColIdx:=Column.Index;
+      Column := DBGridEh1.Columns.Add;
+      Column.FieldName := 'ORG_AMT';
+      Column.Title.Caption :='期初数量';
+      Column.Width := 70;
+      if ColIdx+1<=DBGridEh1.Columns.Count then
+        Column.Index := ColIdx;
+      Column.DisplayFormat:='#0.###';
+      Column.Footer.ValueType:=fvtNon;
+      Column.Footer.Alignment:=taRightJustify;
+      Column.Alignment:=taRightJustify;
+
+      Column:=FindColumn(DBGridEh1,'OUT_AMT');
+      ColIdx:=Column.Index;
+      Column := DBGridEh1.Columns.Add;
+      Column.FieldName := 'BAL_AMT';
+      Column.Title.Caption :='结存数量';
+      Column.Width := 70;
+      if ColIdx+1<=DBGridEh1.Columns.Count then
+        Column.Index := ColIdx+1;
+      Column.DisplayFormat:='#0.###';
+      Column.Footer.ValueType:=fvtNon;
+      Column.Footer.Alignment:=taRightJustify;      
+      Column.Alignment:=taRightJustify;
+    finally
+       DBGridEh1.Columns.EndUpdate;
+    end;
+  end;
+end;
+
+procedure TfrmGodsRunningReport.CalcStorageInfo;
+begin
+  try
+    adoReport1.DisableControls;
+    if adoReport1.Active then
+    begin
+      FBalAmt:=FReckAmt;
+      adoReport1.First;
+      while not adoReport1.Eof do
+      begin
+        adoReport1.Edit;
+        adoReport1.FieldByName('ORG_AMT').AsFloat:=FReckAmt;
+        if adoReport1.RecNo=1 then
+        begin
+          adoReport1.FieldByName('BAL_AMT').AsFloat:=FReckAmt;
+          adoReport1.FieldByName('AMONEY').AsFloat:=FReckMny;
+          if FReckAmt<>0 then
+            adoReport1.FieldByName('APRICE').AsFloat:=FReckMny/FReckAmt;
+        end else
+        begin
+          FBalAmt:=FBalAmt+adoReport1.fieldbyName('IN_AMT').AsFloat-adoReport1.fieldbyName('OUT_AMT').AsFloat;
+          adoReport1.FieldByName('BAL_AMT').AsFloat:=FBalAmt;
+        end;
+        adoReport1.Post;
+        adoReport1.Next;
+      end;
+    end;
+    adoReport1.First;
+  finally
+    adoReport1.EnableControls;
+  end;
+end;
+
+function TfrmGodsRunningReport.GetQryType: integer;
+begin
+  if (fndP1_BarType_ID.ItemIndex>-1) and (trim(fndP1_BarCode.Text)<>'') then
+    result:=0
+  else
+    result:=1;
+end;
 
 end.
 

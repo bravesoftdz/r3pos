@@ -1,6 +1,6 @@
 inherited frmShowDibs: TfrmShowDibs
-  Left = 417
-  Top = 149
+  Left = 419
+  Top = 151
   BorderStyle = bsNone
   Caption = #32467#31639#23545#35805#26694
   ClientHeight = 373

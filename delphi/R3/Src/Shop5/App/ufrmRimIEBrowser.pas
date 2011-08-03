@@ -197,6 +197,7 @@ begin
            Params.Decode(Params,Msg);
            Rim_ComId := Params.ParambyName('rimcid').AsString;
            Rim_CustId := Params.ParambyName('xsmuid').AsString;
+           if Rim_CustId='' then Rim_CustId := Params.ParambyName('rimuid').AsString;
            if Rim_CustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
          finally
            Params.Free;

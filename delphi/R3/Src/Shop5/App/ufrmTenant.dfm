@@ -1,6 +1,6 @@
 inherited frmTenant: TfrmTenant
-  Left = 335
-  Top = 200
+  Left = 336
+  Top = 201
   ActiveControl = cxedtLOGIN_NAME
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog

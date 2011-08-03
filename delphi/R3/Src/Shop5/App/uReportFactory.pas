@@ -945,6 +945,22 @@ begin
       for i:=0 to TLate.Count-1 do
         begin
           if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and (PRTemplate(TLate[i])^.Data=nil) then PRTemplate(TLate[i])^.Data := TList.Create;
+          //商品指标
+          if not IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and not CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+             begin
+               DataSet.Edit;
+               DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+               DataSet.Post;
+               if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                  begin
+                     new(node);
+                     node^.id := '#';
+                     node^.title := '无定义';
+                     node^.FieldName := 'SORT_ID'+PRTemplate(TLate[i])^.INDEX_ID;
+                     for j:=0 to 30 do node^.Relation[j] := nil;
+                     TList(PRTemplate(TLate[i])^.Data).add(node);
+                  end;
+             end;
           if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and not CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
              begin
                 new(node);

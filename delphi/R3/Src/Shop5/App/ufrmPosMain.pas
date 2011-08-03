@@ -1604,6 +1604,7 @@ begin
     end;
   if Key='-' then
     begin
+      if dbState = dsBrowse then Exit;
       if MessageBox(Handle,'请确认是否删除当前选中的商品?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
       AObj := TRecord_.Create;
       try
@@ -2119,7 +2120,7 @@ begin
        NewOrder;
        Exit;
      end;
-  if cdsTable.IsEmpty then Raise Exception.Create('已经是一张空单，不能再执行清屏操作');
+//  if cdsTable.IsEmpty then Raise Exception.Create('已经是一张空单，不能再执行清屏操作');
   if MessageBox(Handle,'是否删除当前未结帐单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then Exit;
   NewOrder;
 end;
@@ -2301,7 +2302,12 @@ begin
       while not cdsICGlide.Eof do
         begin
           if cdsICGlide.FieldByName('SALES_ID').AsString='' then
-             cdsICGlide.FieldByName('SALES_ID').AsString := cdsHeader.FieldbyName('SALES_ID').AsString;
+             begin
+               cdsICGlide.Edit;
+               cdsICGlide.FieldByName('SALES_ID').AsString := cdsHeader.FieldbyName('SALES_ID').AsString;
+               cdsICGlide.FieldByName('CREA_DATE').asInteger := cdsHeader.FieldbyName('SALES_DATE').asInteger;
+               cdsICGlide.Post;
+             end;
           cdsICGlide.Next;
         end;
     finally
@@ -2445,6 +2451,7 @@ begin
 
   if (Shift = []) and (Key = VK_F2) then
      begin
+       if dbState = dsBrowse then Exit;
        OpenDialogTrend;
        Exit;
      end;   
@@ -3839,6 +3846,7 @@ end;
 procedure TfrmPosMain.h9Click(Sender: TObject);
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   InputFlag := 10;
   if edtInput.CanFocus then edtInput.SetFocus;
 end;
@@ -3846,6 +3854,7 @@ end;
 procedure TfrmPosMain.h10Click(Sender: TObject);
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   InputFlag := 11;
   if edtInput.CanFocus then edtInput.SetFocus;
 end;
@@ -3873,6 +3882,7 @@ end;
 procedure TfrmPosMain.Label26Click(Sender: TObject);
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   if cdsTable.FieldbyName('GODS_ID').asString='' then Exit;
   InputFlag := 9;
   if edtInput.CanFocus then edtInput.SetFocus;
@@ -3882,6 +3892,7 @@ procedure TfrmPosMain.Label8Click(Sender: TObject);
 var AObj_1:TRecord_;
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   if MessageBox(Handle,'请确认是否删除当前选中的商品?','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   AObj_1 := TRecord_.Create;
   try
@@ -3902,6 +3913,7 @@ end;
 procedure TfrmPosMain.Label11Click(Sender: TObject);
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   InputFlag := 2;
   if edtInput.CanFocus then edtInput.SetFocus;
 end;
@@ -3977,7 +3989,12 @@ procedure TfrmPosMain.DepositExecute;
 var BALANCE:string;
 begin
   inherited;
-  TfrmDeposit.Open(AObj.FieldbyName('CLIENT_ID').AsString,BALANCE);
+  if TfrmDeposit.Open(AObj.FieldbyName('CLIENT_ID').AsString,BALANCE) then
+     begin
+       AObj.FieldbyName('BALANCE').AsFloat := StrtoFloatDef(BALANCE,0);
+       fndBALANCE.Text := AObj.FieldbyName('BALANCE').asString;
+     end;
+
 end;
 
 procedure TfrmPosMain.LossCardExecute;
@@ -4017,8 +4034,8 @@ begin
       else
         begin
           MessageBox(Handle,'发新卡成功！',pchar(Application.Title),MB_OK);
-          if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
-            with TfrmCustomerInfo.Create(self) do
+          if not ShopGlobal.GetChkRight('33400001',3) then Exit;// 属自动弹出功能，没有就不弹出，不用提醒 Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+          with TfrmCustomerInfo.Create(self) do
               begin
                 try
                   Edit(ClientId);
@@ -4040,7 +4057,11 @@ procedure TfrmPosMain.ReturnExecute;
 var BALANCE:String;
 begin
   inherited;
-  TfrmReturn.Open(AObj.FieldbyName('CLIENT_ID').AsString,BALANCE);
+  if TfrmReturn.Open(AObj.FieldbyName('CLIENT_ID').AsString,BALANCE) then
+     begin
+       AObj.FieldbyName('BALANCE').AsFloat := StrtoFloatDef(BALANCE,0);
+       fndBALANCE.Text := AObj.FieldbyName('BALANCE').asString;
+     end;
 end;
 
 procedure TfrmPosMain.Setxsm(const Value: boolean);
@@ -4194,6 +4215,7 @@ end;
 procedure TfrmPosMain.Label3Click(Sender: TObject);
 begin
   inherited;
+  if dbState = dsBrowse then Exit;
   OpenDialogTrend;
 end;
 

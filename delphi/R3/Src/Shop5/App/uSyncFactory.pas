@@ -61,6 +61,8 @@ type
     procedure SyncIoroOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //存取款单单据
     procedure SyncTransOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //IC卡流水记录
+    procedure SyncIcGlideOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //收款单单据
     procedure SyncRecvOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //付款单单据
@@ -211,6 +213,7 @@ begin
   23:result := 'TSyncSequence';
   25:result := 'TSyncCaModule';
   26:result := 'TSyncSysReportList';
+  27:result := 'TSyncICGlideInfo';
   else
     result := 'TSyncSingleTable';
   end;
@@ -532,6 +535,14 @@ begin
   FList.Add(n);
 
   new(n);
+  n^.tbname := 'SAL_IC_GLIDE';
+  n^.keyFields := 'TENANT_ID;GLIDE_ID';
+  n^.synFlag := 27;
+  n^.KeyFlag := 0;
+  n^.tbtitle := 'IC卡流水';
+  FList.Add(n);
+  
+  new(n);
   n^.tbname := 'ACC_CLOSE_FORDAY';
   n^.keyFields := 'TENANT_ID;SHOP_ID;CLSE_DATE;CLSE_TYPE;CREA_USER';
   n^.synFlag := 17;
@@ -688,6 +699,7 @@ begin
       19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       25:SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       26:SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      27:SyncIcGlideOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
       frmLogo.Update;
@@ -747,6 +759,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('PROD_ID').AsString := ProductId;
@@ -819,6 +832,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -833,6 +847,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<调整单据>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -894,6 +909,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<调整单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -953,6 +969,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -965,6 +982,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<盘点单据>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1017,6 +1035,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<盘点单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1069,6 +1088,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1082,6 +1102,7 @@ begin
     while not ls.Eof do
        begin
          //以服务器为优先下载
+         frmLogo.ShowTitle := '正在下载<交班结账>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1134,6 +1155,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<交班结账>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1187,6 +1209,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1201,6 +1224,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<日台账>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1262,6 +1286,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<日台账>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1310,6 +1335,12 @@ begin
   end;
 end;
 
+procedure TSyncFactory.SyncIcGlideOrder(tbName, KeyFields,
+  ZClassName: string; KeyFlag: integer);
+begin
+  SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag,false,0);
+end;
+
 procedure TSyncFactory.SyncIoroOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 var
@@ -1321,6 +1352,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1333,6 +1365,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<收入支出>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1385,6 +1418,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<收入支出>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1437,6 +1471,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1448,6 +1483,7 @@ begin
     while not ls.Eof do
        begin
          //以服务器为优先下载
+         frmLogo.ShowTitle := '正在下载<发货单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          rs_h.Close;
 
@@ -1490,6 +1526,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<发货单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          rs_h.Close;
 
@@ -1535,6 +1572,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1545,6 +1583,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<发货单据>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          rs_h.Close;
@@ -1588,6 +1627,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<发货单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          rs_h.Close;
 
@@ -1633,6 +1673,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1643,6 +1684,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<收货单据>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          rs_h.Close;
@@ -1686,6 +1728,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<收货单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          rs_h.Close;
 
@@ -1731,6 +1774,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1745,6 +1789,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<月台账>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1806,6 +1851,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<月台账>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1864,6 +1910,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1876,6 +1923,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<付款单>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1928,6 +1976,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<付款单>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1980,6 +2029,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1994,6 +2044,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<促销单据>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2055,6 +2106,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<促销单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2114,6 +2166,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2126,6 +2179,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<问卷调查>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2178,6 +2232,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<问卷调查>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2230,6 +2285,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2242,6 +2298,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<收款单>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2294,6 +2351,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<收款单>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2370,6 +2428,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2385,6 +2444,7 @@ begin
     while not ls.Eof do
        begin
          //以服务器为优先下载
+         frmLogo.ShowTitle := '正在下载<出库单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -2445,6 +2505,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<出库单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -2504,6 +2565,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2516,6 +2578,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<销售订单>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2568,6 +2631,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<销售订单>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2618,6 +2682,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('PROD_ID').AsString := ProductId;
@@ -2692,6 +2757,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2704,6 +2770,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<采购订单>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2756,6 +2823,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<采购订单>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2807,6 +2875,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2821,6 +2890,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<入库单据>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2882,6 +2952,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<入库单据>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -2941,6 +3012,7 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2953,6 +3025,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在下载<报表模版>'+inttostr(ls.RecNo)+'笔';
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -3006,6 +3079,7 @@ begin
     ls.First;
     while not ls.Eof do
        begin
+         frmLogo.ShowTitle := '正在上传<报表模版>'+inttostr(ls.RecNo)+'笔';
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;

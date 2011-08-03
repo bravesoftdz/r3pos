@@ -153,6 +153,7 @@ inherited frmReturn: TfrmReturn
             Width = 100
             Height = 20
             TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtGLIDE_INFO: TcxMemo
             Left = 112
@@ -160,6 +161,7 @@ inherited frmReturn: TfrmReturn
             Width = 249
             Height = 65
             TabOrder = 6
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtIC_AMONEY: TcxTextEdit
             Left = 112
@@ -174,6 +176,7 @@ inherited frmReturn: TfrmReturn
             Style.Font.Name = #23435#20307
             Style.Font.Style = [fsBold]
             TabOrder = 4
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             OnExit = edtIC_AMONEYExit
           end
           object edtNewBALANCE: TcxTextEdit
@@ -183,6 +186,7 @@ inherited frmReturn: TfrmReturn
             Width = 100
             Height = 20
             TabOrder = 3
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtCUST_CODE: TcxTextEdit
             Tag = 1
@@ -191,6 +195,7 @@ inherited frmReturn: TfrmReturn
             Width = 121
             Height = 20
             TabOrder = 0
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtCUST_NAME: TcxTextEdit
             Tag = 1
@@ -199,6 +204,7 @@ inherited frmReturn: TfrmReturn
             Width = 121
             Height = 20
             TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPAY: TcxTextEdit
             Left = 112
@@ -207,12 +213,14 @@ inherited frmReturn: TfrmReturn
             Height = 20
             Properties.OnChange = edtPAYPropertiesChange
             TabOrder = 5
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtPAY_CASH: TcxComboBox
             Left = 112
             Top = 88
             Width = 121
             Height = 20
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtPAY_CASHPropertiesChange
             TabOrder = 7

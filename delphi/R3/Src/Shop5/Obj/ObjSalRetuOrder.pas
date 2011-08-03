@@ -497,18 +497,7 @@ function TSalRetuOrderAudit.Execute(AGlobal: IdbHelp;
 var
   Str:string;
   n:Integer;
-  rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text :=
-      'select LOCUS_STATUS from SAL_SALESORDER A where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' '+
-      ' and Exists(select * from SAL_SALESDATA B,VIW_GOODSINFO C where B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and C.USING_LOCUS_NO=1 and B.TENANT_ID=A.TENANT_ID and B.SALES_ID=A.SALES_ID)';
-    AGlobal.Open(rs);
-    if not rs.IsEmpty and (rs.Fields[0].AsString<>'3') then Raise Exception.Create('没有扫码入库完毕，不能审核..');
-  finally
-    rs.Free;
-  end;
   try
     Str := 'update SAL_SALESORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
@@ -534,7 +523,18 @@ function TSalRetuOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select LOCUS_STATUS from SAL_SALESORDER A where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' '+
+      ' and Exists(select * from SAL_SALESDATA B,VIW_GOODSINFO C where B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and C.USING_LOCUS_NO=1 and B.TENANT_ID=A.TENANT_ID and B.SALES_ID=A.SALES_ID)';
+    AGlobal.Open(rs);
+    if not rs.IsEmpty and (rs.Fields[0].AsString<>'3') then Raise Exception.Create('已经扫码入库完毕，不能弃审..');
+  finally
+    rs.Free;
+  end;
    try
     Str := 'update SAL_SALESORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and SALES_ID='''+Params.FindParam('SALES_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);

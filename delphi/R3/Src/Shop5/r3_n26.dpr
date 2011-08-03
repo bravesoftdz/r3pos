@@ -238,8 +238,7 @@ uses
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
   ufrmN26Main in 'ufrmN26Main.pas' {frmN26Main},
   ufrmN26Desk in 'ufrmN26Desk.pas' {frmN26Desk},
-  ufrmN26Browser in 'App\ufrmN26Browser.pas' {frmN26Browser},
-  ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth};
+  ufrmN26Browser in 'App\ufrmN26Browser.pas' {frmN26Browser};
 
 {$R *.res}
 var

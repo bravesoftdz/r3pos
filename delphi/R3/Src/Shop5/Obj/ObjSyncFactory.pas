@@ -550,6 +550,16 @@ type
      //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //27 IC卡流水信息
+  TSyncICGlideInfo=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -627,8 +637,8 @@ begin
          begin
            if ZQuery.Params[i].Value>2808566734 then
               ZQuery.Params[i].Value := 5497000;
-           if (Params.FindParam('TIME_STAMP_NOCHG')<>nil) and (Params.ParamByName('TIME_STAMP_NOCHG').AsInteger = 0) and (ZQuery.Params[i].Value < Params.ParamByName('TIME_STAMP').Value) then
-              ZQuery.Params[i].Value := Params.ParamByName('TIME_STAMP').Value;
+           if (Params.FindParam('TIME_STAMP_NOCHG')<>nil) and (Params.ParamByName('TIME_STAMP_NOCHG').AsInteger = 0) and (ZQuery.Params[i].Value < Params.ParamByName('SYN_TIME_STAMP').Value) then
+              ZQuery.Params[i].Value := Params.ParamByName('SYN_TIME_STAMP').Value;
          end;
       if WasNull then ZQuery.Params[i].Value := null;
     end;
@@ -3633,6 +3643,115 @@ begin
   AGlobal.ExecSQL('delete from SYS_REPORT_TEMPLATE where TENANT_ID=:TENANT_ID and REPORT_ID=:REPORT_ID',Params);
 end;
 
+{ TSyncICGlideInfo }
+
+function TSyncICGlideInfo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+procedure InsertAccountInfo;
+var Str:string;
+begin
+  if FieldbyName('IC_GLIDE_TYPE').AsInteger = 1 then
+     Str := 'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) + :GLIDE_MNY where TENANT_ID=:TENANT_ID and IC_CARDNO=:IC_CARDNO and UNION_ID=''#'''
+  else
+     Str := 'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) - :GLIDE_MNY where TENANT_ID=:TENANT_ID and IC_CARDNO=:IC_CARDNO and UNION_ID=''#''';
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
+end;
+
+function UpdateAccountInfo:boolean;
+var
+  Str:string;
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select IC_GLIDE_TYPE,GLIDE_MNY,IC_CARDNO from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and GLIDE_ID=:GLIDE_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('GLIDE_ID').AsString := FieldbyName('GLIDE_ID').AsString;  
+    AGlobal.Open(rs);
+    result := not rs.IsEmpty;
+    if not rs.IsEmpty then
+       begin
+         if rs.FieldbyName('IC_GLIDE_TYPE').AsInteger = 1 then
+            Str := 'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) - '+formatFloat('#0.000',rs.FieldbyName('GLIDE_MNY').asFloat)+' where TENANT_ID=:TENANT_ID and IC_CARDNO='''+rs.FieldbyName('IC_CARDNO').AsString+''' and UNION_ID=''#'''
+         else
+            Str := 'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) + '+formatFloat('#0.000',rs.FieldbyName('GLIDE_MNY').asFloat)+' where TENANT_ID=:TENANT_ID and IC_CARDNO='''+rs.FieldbyName('IC_CARDNO').AsString+''' and UNION_ID=''#''';
+         AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,Str),Self);
+         InsertAccountInfo;
+       end;
+  finally
+    rs.Free;
+  end;
+end;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SAL_IC_GLIDE';
+     end;
+  InitSQL(AGlobal,false);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger=0) then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+         InsertAccountInfo;
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   if UpdateAccountInfo then
+                   begin
+                     FillParams(UpdateQuery);
+                     AGlobal.ExecQuery(UpdateQuery);
+                   end
+                   else
+                     Raise;
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       if UpdateAccountInfo then
+       begin
+         FillParams(UpdateQuery);
+         r := AGlobal.ExecQuery(UpdateQuery);
+       end
+       else
+         r := 0;
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+              InsertAccountInfo;
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncICGlideInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  result := inherited BeforeOpenRecord(AGlobal);
+end;
+
+function TSyncICGlideInfo.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  result := inherited BeforeUpdateRecord(AGlobal);
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3689,6 +3808,7 @@ initialization
   RegisterClass(TSyncCloseForDayList);
   RegisterClass(TSyncCloseForDay);
   RegisterClass(TSyncCloseForDayAble);
+  RegisterClass(TSyncICGlideInfo);
 
   RegisterClass(TSyncLocusForStckData);
   RegisterClass(TSyncLocusForSaleData);
@@ -3757,6 +3877,7 @@ finalization
   UnRegisterClass(TSyncCloseForDayList);
   UnRegisterClass(TSyncCloseForDay);
   UnRegisterClass(TSyncCloseForDayAble);
+  UnRegisterClass(TSyncICGlideInfo);
 
   UnRegisterClass(TSyncLocusForStckData);
   UnRegisterClass(TSyncLocusForSaleData);

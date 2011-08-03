@@ -185,11 +185,10 @@ begin
        ShowFee;
        edtTakeFee.Text := '';
      end;
-  if pos(uppercase(Key),uppercase(PayKey))>0 then
+  if (pos(uppercase(Key),uppercase(PayKey))>0) and (trim(edtTakeFee.Text) <> '') then
   begin
   if Key in ['A','a'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
        MainRecord.FieldByName('CASH_MNY').AsFloat := GetFee(edtTakeFee.Text);
        MainRecord.FieldByName('PAY_A').AsFloat := MainRecord.FieldByName('CASH_MNY').AsFloat;
        ShowFee;
@@ -197,8 +196,7 @@ begin
      end;
   if Key in ['B','b'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       if not DoPayB(GetFee(edtTakeFee.Text)) then Exit;
+       DoPayB(GetFee(edtTakeFee.Text));
        MainRecord.FieldByName('PAY_B').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_B').AsFloat<0 then
           begin
@@ -210,19 +208,14 @@ begin
      end;
   if Key in ['C','c'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       if not DoPayC(GetFee(edtTakeFee.Text)) then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
-       //MainRecord.FieldByName('PAY_C').AsFloat := GetFee(edtTakeFee.Text);
+       DoPayC(GetFee(edtTakeFee.Text));
        ShowFee;
        edtTakeFee.Text := '';
      end;
   if Key in ['D','d'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
        if MainRecord.FieldByName('CLIENT_ID').AsString = '' then Raise Exception.Create('不是会员购买不能记账...');
        if ShopGlobal.offline then Raise Exception.Create('脱机操作不能记账...');
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_D').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_D').AsFloat<0 then
           begin
@@ -234,8 +227,6 @@ begin
      end;
   if Key in ['E','e'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_E').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_E').AsFloat<0 then
           begin
@@ -247,8 +238,6 @@ begin
      end;
   if Key in ['F','f'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_F').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_F').AsFloat<0 then
           begin
@@ -260,8 +249,6 @@ begin
      end;
   if Key in ['G','g'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_G').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_G').AsFloat<0 then
           begin
@@ -273,8 +260,6 @@ begin
      end;
   if Key in ['H','h'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_H').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_H').AsFloat<0 then
           begin
@@ -286,8 +271,6 @@ begin
      end;
   if Key in ['I','i'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_I').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_I').AsFloat<0 then
           begin
@@ -299,8 +282,6 @@ begin
      end;
   if Key in ['J','j'] then
      begin
-       if (edtTakeFee.Text = '') then Exit;
-       //MainRecord.FieldByName('PAY_CASH').AsFloat := 0;
        MainRecord.FieldByName('PAY_J').AsFloat := GetFee(edtTakeFee.Text);
        if MainRecord.FieldByName('PAY_J').AsFloat<0 then
           begin
@@ -312,7 +293,7 @@ begin
      end;
   end;
   if Key=#27 then Close ;
-  if not (Key in ['1','2','3','4','5','6','7','8','9','0','-','.','*']) and ((Key in ['a'..'z']) or (Key in ['A'..'Z'])) then
+  if not (Key in ['1','2','3','4','5','6','7','8','9','0','-','.','*']) then
      Key := #0;
 end;
 
@@ -713,8 +694,7 @@ begin
     PayDs.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
     PayDs.FieldbyName('CLIENT_ID').AsString := csid;
     PayDs.FieldbyName('IC_GLIDE_TYPE').AsString := '2';
-    PayDs.FieldbyName('GLIDE_INFO').AsString := '刷新支付';
-    PayDs.FieldbyName('CREA_DATE').AsString := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
+    PayDs.FieldbyName('GLIDE_INFO').AsString := '刷卡支付';
     PayDs.FieldbyName('CREA_USER').AsString := Global.UserID;
   end;
   PayDs.FieldbyName('IC_CARDNO').AsString := cardno;
@@ -736,7 +716,11 @@ function TfrmShowDibs.DoPayB(mny: Currency):boolean;
 var
   CardNoReset:TCardNoReset;
 begin
-  if mny=0 then Raise Exception.Create('请输入刷卡金额后再按B健..');
+  if mny=0 then
+     begin
+       result := true;
+       Exit;
+     end;
   if ShopGlobal.GetParameter('BANK_CODE')<>'1' then Exit; 
   CardNoReset := TfrmCardNoInput.GetBank(self);
   if CardNoReset.ret then

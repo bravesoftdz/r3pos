@@ -19,6 +19,7 @@ type
   TLC_Send2=function(szName:pchar;szMethod:pchar;para1:pchar;para2:pchar):integer;stdcall;
   TLC_Send3=function(szName:pchar;szMethod:pchar;para1:pchar;para2:pchar;para3:pchar):integer;stdcall;
   TLC_FreeMsgMem=function(wparam:integer;lparam:integer):integer;stdcall;
+  TLC_FreeLibrary=procedure();
 
 
   TfrmXsmIEBrowser = class(TfrmIEWebForm)
@@ -49,6 +50,7 @@ type
     DLLLC_Send2:TLC_Send2;
     DLLLC_Send3:TLC_Send3;
     DLLLC_FreeMsgMem:TLC_FreeMsgMem;
+    DLLLC_FreeLibrary:TLC_FreeLibrary;
 
 
     { Private declarations }
@@ -150,6 +152,8 @@ begin
     if @DLLLC_Send3=nil then Raise Exception.Create('LC_Send3方法没有实现');
     @DLLLC_FreeMsgMem := GetProcAddress(DLLHandle, 'LC_FreeMsgMem');
     if @DLLLC_FreeMsgMem=nil then Raise Exception.Create('LC_FreeMsgMem方法没有实现');
+    @DLLLC_FreeLibrary := GetProcAddress(DLLHandle, 'LC_FreeLibrary');
+    if @DLLLC_FreeLibrary=nil then Raise Exception.Create('LC_FreeLibrary方法没有实现');
 //    LCObject.OnFuncCall := DoFuncCall;
 //    LCObject.OnFuncCall2 := DoFuncCall2;
 //    LCObject.OnFuncCall3 := DoFuncCall3;
@@ -162,6 +166,7 @@ end;
 destructor TfrmXsmIEBrowser.Destroy;
 begin
   runed := false;
+  DLLLC_FreeLibrary();
   FreeLibrary(DLLHandle);
   IEBrowser.Free;
 //  LCObject.Close;

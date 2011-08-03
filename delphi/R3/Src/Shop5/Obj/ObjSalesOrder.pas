@@ -799,7 +799,7 @@ var
 begin
   if FieldbyName('PAY_C').AsOldFloat <>0 then
   begin
-    r := AGlobal.ExecSQL('update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) + :OLD_PAY_C where TENANT_ID=:OLD_TENANT_ID and IC_CARDNO=:OLD_IC_CARDNO and UNION_ID=''#'' and IC_STATUS in (''0'',''1'')');
+    r := AGlobal.ExecSQL(ParseSQL(iDbType,'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) + :OLD_PAY_C where TENANT_ID=:OLD_TENANT_ID and IC_CARDNO=:OLD_IC_CARDNO and UNION_ID=''#'' and IC_STATUS in (''0'',''1'')'),self);
     if r=0 then Raise Exception.Create(FieldbyName('IC_CARDNO').asOldString+'卡号无效,无法执行相关操作..'); 
   end;
 end;
@@ -811,7 +811,7 @@ var
 begin
   if FieldbyName('PAY_C').AsFloat <>0 then
   begin
-    r := AGlobal.ExecSQL('update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) - :PAY_C where TENANT_ID=:TENANT_ID and IC_CARDNO=:IC_CARDNO and UNION_ID=''#'' and IC_STATUS in (''0'',''1'')');
+    r := AGlobal.ExecSQL(ParseSQL(iDbType,'update PUB_IC_INFO set BALANCE=isnull(BALANCE,0) - :PAY_C where TENANT_ID=:TENANT_ID and IC_CARDNO=:IC_CARDNO and UNION_ID=''#'' and IC_STATUS in (''0'',''1'')'),self);
     if r=0 then Raise Exception.Create(FieldbyName('IC_CARDNO').asString+'卡号无效,无法执行相关操作..');
     rs := TZQuery.Create(nil);
     try
@@ -836,7 +836,7 @@ procedure TSalesICData.InitClass;
 var Str:string;
 begin
   inherited;
-  SelectSQL.Text := 'select * from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID';
+  SelectSQL.Text := 'select * from SAL_IC_GLIDE where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID and IC_GLIDE_TYPE=''2''';
   IsSQLUpdate := true;
   
   Str :=
@@ -849,11 +849,11 @@ begin
     'PAY_A=0,PAY_B=0,PAY_C=:PAY_C,PAY_D=0,PAY_E=0,PAY_F=0,PAY_G=0,PAY_H=0,PAY_I=0,PAY_J=0,GLIDE_MNY=:GLIDE_MNY,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,'+
     'COMM=' + GetCommStr(iDbType) + ','
   + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
-  + 'where GLIDE_ID=:OLD_GLIDE_ID';
+  + 'where TENANT_ID=:OLD_TENANT_ID and GLIDE_ID=:OLD_GLIDE_ID';
   UpdateSQL.Text := Str;
   
   Str :=
-    'update SAL_IC_GLIDE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' from SAL_IC_GLIDE where GLIDE_ID=:OLD_GLIDE_ID';
+    'update SAL_IC_GLIDE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' from SAL_IC_GLIDE where TENANT_ID=:OLD_TENANT_ID and GLIDE_ID=:OLD_GLIDE_ID';
   DeleteSQL.Text := Str;
 
 end;

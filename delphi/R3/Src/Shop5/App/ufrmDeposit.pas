@@ -155,6 +155,16 @@ begin
   cdsTable1.FieldByName('IC_GLIDE_TYPE').AsString:='1';
   cdsTable1.FieldByName('GLIDE_MNY').AsFloat :=StrToFloat(edtIC_AMONEY.Text);
   cdsTable1.FieldByName('GLIDE_INFO').AsString :=Trim(edtGLIDE_INFO.Text);
+  cdsTable1.FieldByName('PAY_A').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_B').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_C').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_D').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_E').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_F').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_G').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_H').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_I').AsFloat :=0;
+  cdsTable1.FieldByName('PAY_J').AsFloat :=0;
   cdsTable1.FieldByName(Str_Pay).AsFloat :=StrToFloatDef(edtPAY.Text,0);
   cdsTable1.Post;
   if Factor.UpdateBatch(cdsTable1,'TDeposit',nil) then

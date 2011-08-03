@@ -242,7 +242,8 @@ uses
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
   uAdvFactory in 'App\uAdvFactory.pas',
   CDO_TLB in '..\..\Pub\CDO_TLB.pas',
-  ufrmNetLogin in 'App\ufrmNetLogin.pas' {frmNetLogin};
+  ufrmNetLogin in 'App\ufrmNetLogin.pas' {frmNetLogin},
+  objGoodsMonth in 'Obj\objGoodsMonth.pas';
 
 {$R *.res}
 var

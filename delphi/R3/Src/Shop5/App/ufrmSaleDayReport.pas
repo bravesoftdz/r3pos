@@ -1286,18 +1286,18 @@ begin
       fndP5_TYPE_ID.ItemIndex:=-1;
       for i:=0 to fndP5_TYPE_ID.Properties.Items.Count-1 do
       begin
-        Aobj:=TRecord_(fndP4_REPORT_FLAG.Properties.Items.Objects[fndP4_REPORT_FLAG.ItemIndex]);
+        Aobj:=TRecord_(fndP5_TYPE_ID.Properties.Items.Objects[i]);
         if (Aobj<>nil) and (Aobj.FieldByName('CODE_ID').AsInteger=CodeID) then
         begin
           fndP5_TYPE_ID.ItemIndex:=i;
+          case CodeID of
+           3: fndP5_STAT_ID.KeyValue:=trim(adoReport4.fieldbyName('SORT_ID').AsString)
+           else
+              fndP5_STAT_ID.KeyValue:=trim(adoReport4.fieldbyName('SID').AsString);
+          end;
+          fndP5_STAT_ID.Text:=trim(adoReport4.fieldbyName('SORT_NAME').AsString);
           break;
         end;
-      end;
-      if fndP5_TYPE_ID.ItemIndex<>-1 then
-      begin
-        if CodeID=3 then fndP5_STAT_ID.KeyValue:=trim(adoReport4.fieldbyName('SORT_ID').AsString)
-        else fndP5_STAT_ID.KeyValue:=trim(adoReport4.fieldbyName('SID').AsString);
-        fndP5_STAT_ID.Text:=trim(adoReport4.fieldbyName('SORT_NAME').AsString);
       end;
     end;
   end;  

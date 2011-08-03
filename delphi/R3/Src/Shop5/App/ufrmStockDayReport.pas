@@ -1025,7 +1025,7 @@ begin
       srid4:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
       fndP4_SORT_ID.Text:=trim(adoReport3.FieldByName('SORT_NAME').AsString);
     end;
-    else
+   else
     begin
       fndP4_TYPE_ID.ItemIndex:=-1;
       for i:=0 to fndP4_TYPE_ID.Properties.Items.Count-1 do
@@ -1036,7 +1036,8 @@ begin
           fndP4_TYPE_ID.ItemIndex:=i;
           case CodeID of
            3: fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SORT_ID').AsString);
-           else fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
+           else
+              fndP4_STAT_ID.KeyValue:=trim(adoReport3.fieldbyName('SID').AsString);
           end;
           fndP4_STAT_ID.Text:=trim(adoReport3.fieldbyName('SORT_NAME').AsString);
           break;

@@ -1472,13 +1472,13 @@ begin
   //不是自主经营则退出
   if cdsGoods.FieldByName('RELATION_ID').AsString<>'0' then Exit;
   try
-    //判断单位是否改商品的单位
+    //判断单位是否是商品的单位
     Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
     ExtBarCode.First;
     while not ExtBarCode.Eof do
     begin
       Unit_ID:=trim(ExtBarCode.fieldbyName('UNIT_ID').AsString);
-      if (Unit_ID<>trim(edtCALC_UNITS.AsString)) and (Unit_ID<>trim(edtSMALL_UNITS.AsString)) and (Unit_ID<>trim(edtBIG_UNITS.AsString)) then
+      if (Unit_ID<>'')and (Unit_ID<>trim(edtCALC_UNITS.AsString)) and (Unit_ID<>trim(edtSMALL_UNITS.AsString)) and (Unit_ID<>trim(edtBIG_UNITS.AsString)) then
       begin
         if Rs.Locate('UNIT_ID',Unit_ID,[]) then
           Raise Exception.Create('单位〖'+Rs.fieldbyName('UNIT_NAME').AsString+'〗不是商品的单位，请重新选择！')

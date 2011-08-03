@@ -420,6 +420,7 @@ begin
    'select j.*,case when j.IS_PRESENT=2 then ''(¶Ò»»)'' when j.IS_PRESENT=1 then ''(ÔùËÍ)'' else '''' end as IS_PRESENT_TEXT,'+
    '(select sum(CALC_MONEY) from STO_CHANGEDATA where TENANT_ID='+tenantid+' and CHANGE_ID=j.CHANGE_ID) as TOTAL_RTL_MNY '+
    'from ('+
+   'select jm.*,m.USER_NAME as LOCUS_USER_TEXT from ('+
    'select jl.*,l.DEPT_NAME from ('+
    'select jk.*,k.UNIT_NAME from ('+
    'select jj.*,j.COLOR_NAME as PROPERTY_02_TEXT from ('+
@@ -441,7 +442,8 @@ begin
    'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
    'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and jj.PROPERTY_02=j.COLOR_ID ) jk '+
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl '+
-   'left outer join CA_DEPT_INFO l on jl.TENANT_ID=l.TENANT_ID and jl.DEPT_ID=l.DEPT_ID ) j order by SEQNO';
+   'left outer join CA_DEPT_INFO l on jl.TENANT_ID=l.TENANT_ID and jl.DEPT_ID=l.DEPT_ID ) jm '+
+   'left outer join VIW_USERS m on jm.TENANT_ID=m.TENANT_ID and jm.LOCUS_USER=m.USER_ID ) j order by SEQNO';
 
 end;
 

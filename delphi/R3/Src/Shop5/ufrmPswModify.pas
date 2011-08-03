@@ -129,7 +129,7 @@ begin
   ',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '
        + 'DEFINE=''PASSWRD''';
   try
-    if Factor.ExecSQL(sSqlTxt)<>0 then Raise Exception.Create('无法修改'+edtACOUNT.Text+'账户的密码');
+    if Factor.ExecSQL(sSqlTxt)<>1 then Raise Exception.Create('无法修改'+edtACOUNT.Text+'账户的密码');
     Close;
   except           
     raise Exception.Create('保存失败！');

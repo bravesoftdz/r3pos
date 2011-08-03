@@ -391,17 +391,35 @@ begin
 end;
 
 procedure TfrmCheckOrderList.actPreviewExecute(Sender: TObject);
-var Aobj: TRecord_;
+//var Aobj: TRecord_;
 begin
   if not ShopGlobal.GetChkRight('14400001',6) then Raise Exception.Create('你没有打印盘点单的权限,请和管理员联系.');
   //调用打印报表
-  try
+  {try
     Aobj:=TRecord_.Create;
     Aobj.ReadFromDataSet(cdsList);
     TfrmCheckTablePrint.frmCheckTablePrint(Aobj);
   finally
     Aobj.Free;
-  end;
+  end;}
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+        if CurOrder<>nil then
+           begin
+             if CurOrder.oid = '' then Exit;
+             if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),TfrmCheckOrder(CurOrder).edtSHOP_ID.AsString,CurOrder.gid),frfCheckOrder,nil,true);
+           end
+        else
+           begin
+             if cdsList.IsEmpty then Exit;
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString,cdsList.FieldbyName('PRINT_DATE').AsString),frfCheckOrder,nil,true);
+           end;
+      finally
+         free;
+       end;
+    end;
 end;
 
 function TfrmCheckOrderList.CheckCanExport: boolean;
@@ -473,7 +491,7 @@ begin
    'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,'+
    'A.CHK_USER,A.CHK_DATE,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,B.RCK_AMOUNT,B.CHK_AMOUNT '+
    ' from STO_PRINTORDER A,STO_PRINTDATA B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID '+
-   ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+'  ) jc '+
+   ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+' and A.COMM not in (''02'',''12'') ) jc '+
    ' inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID ) jd '+
    ' left join VIW_USERS c on jd.TENANT_ID=c.TENANT_ID and jd.CREA_USER=c.USER_ID ) je '+
    ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CREA_USER=d.USER_ID ) jg '+

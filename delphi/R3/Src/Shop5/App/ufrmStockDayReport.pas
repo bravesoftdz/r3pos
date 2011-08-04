@@ -259,11 +259,11 @@ begin
   //2011.04.22 Add 判断成本价权限:
   if not ShopGlobal.GetChkRight('14500001',2) then
   begin
-    SetNotShowCostPrice(DBGridEh1, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
-    SetNotShowCostPrice(DBGridEh2, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
-    SetNotShowCostPrice(DBGridEh3, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
-    SetNotShowCostPrice(DBGridEh4, ['STOCK_PRC','STOCK_TTL','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
-    SetNotShowCostPrice(DBGridEh5, ['APRICE','CALC_MONEY','TAX_MONEY','NOTAX_MONEY','AGIO_MONEY']);
+    SetNotShowCostPrice(DBGridEh1, ['STOCK_PRC','STOCK_TTL','STOCK_RATE','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh2, ['STOCK_PRC','STOCK_TTL','STOCK_RATE','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh3, ['STOCK_PRC','STOCK_TTL','STOCK_RATE','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh4, ['STOCK_PRC','STOCK_TTL','STOCK_RATE','STOCK_TAX','STOCK_MNY','STOCK_AGO','AVG_AGIO']);
+    SetNotShowCostPrice(DBGridEh5, ['APRICE','CALC_MONEY','TAX_MONEY','NOTAX_MONEY','AGIO_RATE','AGIO_MONEY']);
   end;
 
   if ShopGlobal.GetProdFlag = 'E' then

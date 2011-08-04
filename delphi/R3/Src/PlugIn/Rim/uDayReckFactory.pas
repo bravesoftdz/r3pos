@@ -25,6 +25,7 @@ type
     FuDate: TDate;
     FTENANT_ID: string;
     FDBFactory: TRimSyncFactory;
+    FdbResoler: Integer;
     procedure Setcflag(const Value: integer);
     procedure SetcDate(const Value: TDate);
     procedure SetbDate(const Value: TDate);
@@ -51,7 +52,8 @@ type
     function BeginTrans(TimeOut:integer=-1): Boolean; //开始事务
     function CommitTrans: Boolean;   //提交事务
     function RollbackTrans: Boolean; //回滚事务
-    function Open(DataSet: TDataSet):Boolean;  //取数据
+    function Open(DataSet: TDataSet):Boolean;
+    procedure SetdbResoler(const Value: Integer);  //取数据
   public
     //计算日台账过程:
     procedure CalcDayReck(TENANT_ID: string);
@@ -75,7 +77,9 @@ type
     //企业ID
     property TENANT_ID: string Read FTENANT_ID write SetTENANT_ID;
     //调用访问数据对象
-    property DBFactory: TRimSyncFactory read FDBFactory write SetDBFactory; 
+    property DBFactory: TRimSyncFactory read FDBFactory write SetDBFactory;
+    //连接
+    property dbResoler:Integer read FdbResoler write SetdbResoler;
   end;
 
 //第三方系统数据对接的基类
@@ -314,20 +318,20 @@ begin
   end;
   if DbType in [0,4] then
   begin
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then
-      Raise Exception.Create('创建临时表错误：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then
+      Raise Exception.Create('创建临时表错误：'+DBFactory.GetLastError);
   end;
 
   case DbType of
   0,1:
    begin
-     if PlugIntf.ExecSQL(Pchar('truncate table '+tempTableName),iRet)<>0 then
-       Raise Exception.Create('清空临时表错误：'+PlugIntf.GetLastError);
+     if DBFactory.ExecSQL(Pchar('truncate table '+tempTableName),iRet)<>0 then
+       Raise Exception.Create('清空临时表错误：'+DBFactory.GetLastError);
    end;
   5:
    begin
-     if PlugIntf.ExecSQL(Pchar('delete table '+tempTableName),iRet)<>0 then
-       Raise Exception.Create('清空临时表错误：'+PlugIntf.GetLastError);
+     if DBFactory.ExecSQL(Pchar('delete table '+tempTableName),iRet)<>0 then
+       Raise Exception.Create('清空临时表错误：'+DBFactory.GetLastError);
    end;
   end;
 end;
@@ -404,13 +408,13 @@ begin
     'from VIW_GOODS_DAYS A,VIW_GOODSPRICEEXT B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
     'and A.TENANT_ID='+TENANT_ID+' and A.CREA_DATE>'+formatDatetime('YYYYMMDD',myDate)+' '+
     'group by A.TENANT_ID,A.SHOP_ID,A.CREA_DATE,A.GODS_ID,A.BATCH_NO ';
-  if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then
-    Raise Exception.Create('插入临时表出错：'+PlugIntf.GetLastError);
+  if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then
+    Raise Exception.Create('插入临时表出错：'+DBFactory.GetLastError);
 
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select max(CREA_DATE) from '+tempTableName+' where TENANT_ID='+TENANT_ID+' ';
-    if not Open(rs) then Raise Exception.Create('获取最大日期出错：'+PlugIntf.GetLastError);
+    if not Open(rs) then Raise Exception.Create('获取最大日期出错：'+DBFactory.GetLastError);
     if rs.Fields[0].asString<>'' then
       myDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
     if (myDate>eDate) and (eDate=0) then eDate := myDate;
@@ -474,7 +478,7 @@ begin
     'A.BAL_AMT,A.BAL_MNY,A.BAL_RTL,A.BAL_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
     'where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID='+TENANT_ID+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
-  if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('初始化期初出错：'+PlugIntf.GetLastError);
+  if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('初始化期初出错：'+DBFactory.GetLastError);
 
   for i:= 1 to pt do
     begin
@@ -541,7 +545,7 @@ begin
         '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
         'from '+tempTableName+' A where A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i-1)+' '+
         ') j group by TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO ';
-      if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('生成数据出错：'+PlugIntf.GetLastError);
+      if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('生成数据出错：'+DBFactory.GetLastError);
 
       //计算结余
       SQL :=
@@ -552,13 +556,13 @@ begin
         'BAL_CST=ORG_CST+STOCK_MNY-SALE_CST+DBIN_CST-DBOUT_CST+'+
         'CHANGE1_CST+CHANGE2_CST+CHANGE3_CST+CHANGE4_CST+CHANGE5_CST '+
         'where TENANT_ID=0 and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+'';
-      if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+PlugIntf.GetLastError);
+      if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+DBFactory.GetLastError);
     end;
 
   if DbType <> 5 then BeginTrans;
   try
     SQL:='delete from RCK_GOODS_DAYS where TENANT_ID='+TENANT_ID+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate);
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+DBFactory.GetLastError);
     SQL :=
         'insert into RCK_GOODS_DAYS('+
         'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
@@ -590,7 +594,7 @@ begin
         'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
         'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,''00'','+DBFactory.GetTimeStamp(DbType)+' '+
         'from '+tempTableName+' where TENANT_ID=0 and CREA_DATE>'+formatDatetime('YYYYMMDD',bDate);
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入日台账出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入日台账出错：'+DBFactory.GetLastError);
     if DbType <> 5 then CommitTrans;
   except
     if DbType <> 5 then RollbackTrans;
@@ -616,7 +620,7 @@ begin
     'A.BAL_AMT,A.BAL_MNY,A.BAL_RTL,A.BAL_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
     'where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID='+TENANT_ID+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
-  if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('初始化期初出错：'+PlugIntf.GetLastError);
+  if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('初始化期初出错：'+DBFactory.GetLastError);
 
   for i:= 1 to pt do
   begin
@@ -682,7 +686,7 @@ begin
       '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
       'from '+tempTableName+' A where A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i-1)+' '+
       ') j group by TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO ';
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('生成数据出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('生成数据出错：'+DBFactory.GetLastError);
 
     //计算成本
     SQL :=
@@ -690,7 +694,7 @@ begin
       'COST_PRICE=(select case when sum(ORG_AMT+STOCK_AMT)<>0 then round(cast(sum(ORG_CST+STOCK_MNY) as decimal(18,3))/(cast(sum(ORG_AMT+STOCK_AMT) as decimal(18,3))*1.0),6) else 0 end '+
       'from '+tempTableName+' A where A.TENANT_ID='+tempTableName+'.TENANT_ID and A.GODS_ID='+tempTableName+'.GODS_ID and A.BATCH_NO='+tempTableName+'.BATCH_NO and A.CREA_DATE='+tempTableName+'.CREA_DATE) '+
       'where TENANT_ID=0 and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+'';
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算成本出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算成本出错：'+DBFactory.GetLastError);
 
     //计算结余
     SQL :=
@@ -710,13 +714,13 @@ begin
       'BAL_CST=ORG_CST+STOCK_MNY-round(SALE_AMT*COST_PRICE,2)+round(DBIN_AMT*COST_PRICE,2)-round(DBOUT_AMT*COST_PRICE,2)+'+
       'round(CHANGE1_AMT*COST_PRICE,2)+round(CHANGE2_AMT*COST_PRICE,2)+round(CHANGE3_AMT*COST_PRICE,2)+round(CHANGE4_AMT*COST_PRICE,2)+round(CHANGE5_AMT*COST_PRICE,2) '+
       'where TENANT_ID=0 and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+i)+'';
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+DBFactory.GetLastError);
   end;
 
   if DbType <> 5 then BeginTrans;
   try
     SQL:='delete from RCK_GOODS_DAYS where TENANT_ID='+TENANT_ID+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate);
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('删除历史日台账出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('删除历史日台账出错：'+DBFactory.GetLastError);
     SQL :=
         'insert into RCK_GOODS_DAYS('+
         'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
@@ -748,7 +752,7 @@ begin
         'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
         'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,''00'','+DBFactory.GetTimeStamp(DbType)+' '+
         'from '+tempTableName+' where TENANT_ID=0 and CREA_DATE>'+formatDatetime('YYYYMMDD',bDate);
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入日台账出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入日台账出错：'+DBFactory.GetLastError);
     if DbType <> 5 then CommitTrans;
   except
     if DbType <> 5 then RollbackTrans;
@@ -775,7 +779,7 @@ begin
     'A.BAL_AMT,A.BAL_MNY,A.BAL_RTL,A.BAL_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
     'where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID='+TENANT_ID+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate)+' ';
-  if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入期初出错：'+PlugIntf.GetLastError);
+  if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入期初出错：'+DBFactory.GetLastError);
 
   b := 1;
   while true do
@@ -805,7 +809,7 @@ begin
       ''+TENANT_ID+' as TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',bDate+b)+' as CREA_DATE,GODS_ID,BATCH_NO,'+
       'BAL_AMT as ORG_AMT,BAL_MNY as ORG_MNY,BAL_RTL as ORG_RTL,BAL_CST as ORG_CST '+
       'from '+tempTableName+' A where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+b-1)+' ';
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入期初出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入期初出错：'+DBFactory.GetLastError);
 
     //计算成本
     SQL :=
@@ -814,7 +818,7 @@ begin
       'from '+tempTableName+' A where A.TENANT_ID='+tempTableName+'.TENANT_ID and A.GODS_ID='+tempTableName+'.GODS_ID and A.BATCH_NO='+tempTableName+'.BATCH_NO and A.CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',e)+') '+
       'where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+formatDatetime('YYYYMMDD',bDate+b)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',e)+'';
     SQL:=DBFactory.ParseSQL(DbType,SQL);
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算成本出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算成本出错：'+DBFactory.GetLastError);
   end;
 
   for i:= b to pt do
@@ -882,7 +886,7 @@ begin
       '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
       'from '+tempTableName+' A where A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i-1)+' '+
       ') j group by TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO ';
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算成本出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算成本出错：'+DBFactory.GetLastError);
 
       //计算结余
     SQL :=
@@ -902,7 +906,7 @@ begin
       'BAL_CST=ORG_CST+STOCK_MNY-round(SALE_AMT*COST_PRICE,2)+round(DBIN_AMT*COST_PRICE,2)-round(DBOUT_AMT*COST_PRICE,2)+'+
       'round(CHANGE1_AMT*COST_PRICE,2)+round(CHANGE2_AMT*COST_PRICE,2)+round(CHANGE3_AMT*COST_PRICE,2)+round(CHANGE4_AMT*COST_PRICE,2)+round(CHANGE5_AMT*COST_PRICE,2) '+
       'where TENANT_ID=0 and CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i)+'';
-      if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+PlugIntf.GetLastError);
+      if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('计算结余出错：'+DBFactory.GetLastError);
     end;
     if e>=mDate then break;
     b := b +round(e-(bDate+b))+1;
@@ -911,7 +915,7 @@ begin
   if DbType <> 5 then BeginTrans;
   try
     SQL:='delete from RCK_GOODS_DAYS where TENANT_ID='+TENANT_ID+' and CREA_DATE>'+formatDatetime('YYYYMMDD',bDate);
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('删除历史数据出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('删除历史数据出错：'+DBFactory.GetLastError);
     SQL :=
         'insert into RCK_GOODS_DAYS('+
         'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
@@ -943,7 +947,7 @@ begin
         'CHANGE5_AMT,CHANGE5_MNY,CHANGE5_RTL,CHANGE5_CST,'+
         'BAL_AMT,BAL_MNY,BAL_RTL,BAL_CST,''00'','+DBFactory.GetTimeStamp(DbType)+' '+
         'from '+tempTableName+' where TENANT_ID=0 and CREA_DATE>'+formatDatetime('YYYYMMDD',bDate);
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入日台账出错：'+PlugIntf.GetLastError);
+    if DBFactory.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create('插入日台账出错：'+DBFactory.GetLastError);
     if DbType <> 5 then CommitTrans;
   except
     if DbType <> 5 then RollbackTrans;
@@ -989,6 +993,11 @@ end;
 function TGodsDayReck.GetPlugIntf: IPlugIn;
 begin
   result:=DBFactory.PlugIntf;
+end;
+
+procedure TGodsDayReck.SetdbResoler(const Value: Integer);
+begin
+  FdbResoler := Value;
 end;
 
 {TDayReckSyncFactory}
@@ -1072,7 +1081,7 @@ begin
       except
         on E:Exception do
         begin
-          PlugIntf.WriteLogFile(Pchar('<1005> <'+RimParam.ShopID+'>'+E.Message));
+          WriteLogFile(Pchar('<1005> <'+RimParam.ShopID+'>'+E.Message));
         end;
       end;
       R3ShopList.Next;
@@ -1120,7 +1129,7 @@ begin
     begin
       Session:='';
       ReckDate:='to_char(A.CREA_DATE) ';
-      if PlugIntf.ExecSQL(PChar('truncate table INF_RECKDAY'),iRet)<>0 then Raise Exception.Create('清除临时表INF_CHANGE错误:'+PlugIntf.GetLastError);
+      if ExecSQL(PChar('truncate table INF_RECKDAY'),iRet)<>0 then Raise Exception.Create('清除临时表INF_CHANGE错误:'+GetLastError);
     end;
    4:
     begin
@@ -1140,7 +1149,7 @@ begin
              'NEW_OUTPIRCE DECIMAL (18,6),'+         //商品门店零售价
              'RECK_DATE VARCHAR(8) NOT NULL'+        //台账日期
         ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
-      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日台帐临时表出错：'+PlugIntf.GetLastError);
+      if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建日台帐临时表出错：'+GetLastError);
     end;
   end;  
 
@@ -1148,7 +1157,7 @@ begin
   MaxStmp:=GetMaxNUM('09',RimParam.ComID, RimParam.CustID, RimParam.ShopID); //返回时间戳和更新时间戳
   //第二步:删除历史数据:
   Str:='delete from '+Session+'INF_RECKDAY where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''' ';
-  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除临时表出错:'+PlugIntf.GetLastError);
+  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除临时表出错:'+GetLastError);
 
   //日台账表
   {
@@ -1167,7 +1176,7 @@ begin
        'B.SECOND_ID,A.GODS_ID,('+GetDefaultUnitCalc+') as UNIT_CALC,B.NEW_OUTPRICE,B.NEW_INPRICE,'+ReckDate+' as RECK_DATE '+
        ' from '+DayTab+' A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
-  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日台帐临时表出错:'+PlugIntf.GetLastError);
+  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日台帐临时表出错:'+GetLastError);
   if iRet=0 then
   begin
     result:=0; //返回没有可上报数据
@@ -1177,7 +1186,7 @@ begin
   //先删除RIM日台账表掉需要重新上报记录:
   Str:='delete from RIM_CUST_DAY A where A.COM_ID='''+RimParam.ComID+''' and A.CUST_ID='''+RimParam.CustID+''' and DATE1 in '+
        ' (select distinct RECK_DATE from '+Session+'INF_RECKDAY where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''')';
-  if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除日台账历史数据出错：'+PlugIntf.GetLastError);
+  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除日台账历史数据出错：'+GetLastError);
 
   UpiRet:=0; //影响记录数据
   SumFields:='cast(sum(ORG_AMT) as decimal(18,3)) as ORG_AMT,'+
@@ -1247,7 +1256,7 @@ begin
         ',SALE_PRF,0 '+                    //12: 毛利额、贡献毛利
     'from ('+DayTab+') A,'+Session+'INF_RECKDAY B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+ReckDate+'=B.RECK_DATE ';
-  if PlugIntf.ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('上报日台账数据出错:'+PlugIntf.GetLastError);
+  if ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('上报日台账数据出错:'+GetLastError);
  
   //3、更新月台帐标记和上报时间戳:[]
   if TWO_PHASE_COMMIT then //分布式事务
@@ -1258,11 +1267,11 @@ begin
       Str:='update RCK_DAYS_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
            ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and  A.CREA_DATE<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and '+
            ' '+ReckDate+' in (select distinct RECK_DATE from '+Session+'INF_RECKDAY where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''')';
-      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐通信标记:'+PlugIntf.GetLastError);
+      if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐通信标记:'+GetLastError);
 
       Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' '+
            ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''09'' and TERM_ID='''+RimParam.ShopID+''' ';
-      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐上报时间戳出错:'+PlugIntf.GetLastError);
+      if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐上报时间戳出错:'+GetLastError);
 
       CommitTrans; //提交事务
       result:=UpiRet;

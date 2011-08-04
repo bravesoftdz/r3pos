@@ -81,7 +81,7 @@ begin
   try
     {== 中间表是作为接口，相应系统共用，此处处理: 主表作为查询显示下载列表显示使用 ==}
     //1、先删除中间表历史数据:
-    if PlugIntf.ExecSQL(Pchar('delete from INF_INDEORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '),iRet)<>0 then
+    if ExecSQL(Pchar('delete from INF_INDEORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '),iRet)<>0 then
        Raise Exception.Create('1、删除INF_INDEORDER失败！〖条件：企业ID='+TENANT_ID+',门店ID='+SHOP_ID+'〗'+PlugIntf.GetLastError);
 
     //2、插入最近30天且已确认的订单表头:
@@ -90,7 +90,7 @@ begin
       ' from RIM_SD_CO A,RIM_SD_CO_LINE B '+
       ' where A.CO_NUM=B.CO_NUM and A.STATUS in (''05'',''06'') and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+COM_ID+''' and A.CUST_ID='''+CUST_ID+''' '+
       ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.STATUS ';
-     if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+PlugIntf.GetLastError);
+     if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+PlugIntf.GetLastError);
      result:=true;
   except
     on E:Exception do
@@ -112,7 +112,7 @@ begin
   try
     //1、删除订单表体历史数据：
     Str:='delete from INF_INDEDATA where TENANT_ID='+TENANT_ID+' and INDE_ID='''+INDE_ID+''' ';
-    if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('1、删除订单表体历史数据出错！（SQL='+Str+'）');
+    if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('1、删除订单表体历史数据出错！（SQL='+Str+'）');
 
     case DbType of
      1: //Oracle
@@ -155,7 +155,7 @@ begin
          ' on A.ITEM_ID=B.SECOND_ID '+  //加条件：
          ' where A.CO_NUM='''+INDE_ID+''' ';
    }
-    if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入订单表体出错:'+PlugIntf.GetLastError);
+    if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入订单表体出错:'+PlugIntf.GetLastError);
     result:=true;
   except
     on E:Exception do

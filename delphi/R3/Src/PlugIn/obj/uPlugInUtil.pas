@@ -239,7 +239,7 @@ begin
   result:=False;
   try
     Qry.Close;
-    ReRun:=GPlugIn.Open(Pchar(Qry.SQL.Text),vData);
+    ReRun:=GPlugIn.Open(Pchar(Qry.SQL.Text),vData,dbResoler);
     if ReRun<>0 then Raise Exception.Create(GPlugIn.GetLastError);
     Qry.Data:=vData;
     Result:=Qry.Active;

@@ -126,7 +126,7 @@ begin
     if Rs.IsEmpty then
     begin
       str:='insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values ('''+COM_ID+''','''+Cust_ID+''','''+BillType+''','''+SHOP_ID+''',''0'')';
-      if PlugIntf.ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('RIM_R3_NUM执行插入初值错误！（'+str+'）');
+      if ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('RIM_R3_NUM执行插入初值错误！（'+str+'）');
 
       //重新在取一次：最大时间戳：
       Rs.Close;                      // GetTimeStamp(DbType)
@@ -259,7 +259,7 @@ begin
   sleep(1);
   Str:='insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values '+
        '('''+LICENSE_CODE+Formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''','''+LogType+''','''+CustID+''','''+Formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','''+LogNote+''',''auto'','''+LogStatus+''')' ;
-  if PlugIntf.ExecSQL(Pchar(Str),iRet)<>0 then
+  if ExecSQL(Pchar(Str),iRet)<>0 then
    Raise Exception.Create('写日志执行失败:'+PlugIntf.GetLastError);  
 end;
 
@@ -416,7 +416,7 @@ begin
   iRet:=-1;
   try
     BeginTrans;  //开始事务
-    if PlugIntf.ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create(Msg+PlugIntf.GetLastError); 
+    if ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create(Msg+PlugIntf.GetLastError); 
     CommitTrans; //提交事务
     result:=true;
   except

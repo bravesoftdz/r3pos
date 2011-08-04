@@ -65,7 +65,7 @@ begin
     if IsComTrans then
       IsComTrans:=ExecTransSQL(Str,iRet2,'插入RIM_CUST_ITEM_WHSE新记录出错:');
 
-    if PlugIntf.ExecSQL(pchar(Str), iRet3)<>0 then
+    if ExecSQL(pchar(Str), iRet3)<>0 then
       Raise Exception.Create(''+PlugIntf.GetLastError);
     result:=iRet1+iRet2+iRet3;
   except

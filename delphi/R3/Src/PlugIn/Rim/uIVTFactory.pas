@@ -130,11 +130,11 @@ begin
   begin
     try
       BeginTrans;
-      if PlugIntf.ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+      if ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
       if r>0 then
       begin
-        if PlugIntf.ExecSQL(pchar(RimSQL2),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-        if PlugIntf.ExecSQL(pchar(R3SQL),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+        if ExecSQL(pchar(RimSQL2),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+        if ExecSQL(pchar(R3SQL),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
       end;
       CommitTrans;
     except
@@ -147,11 +147,11 @@ begin
     try
       BeginTrans;
       if FileExists('debug.bug') then LogList.Add(' BeginTrans    ');
-      if PlugIntf.ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+      if ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
       if FileExists('debug.bug') then LogList.Add(' ExecSQL1    '+PlugIntf.GetLastError);
       if r>0 then
       begin
-        if PlugIntf.ExecSQL(pchar(RimSQL2),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+        if ExecSQL(pchar(RimSQL2),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
         if FileExists('debug.bug') then LogList.Add(' ExecSQL2    '+PlugIntf.GetLastError);
       end;
       IsComTrans:=CommitTrans;
@@ -229,7 +229,7 @@ begin
           'select '+tid+','''+mid+''',''1'','+Beg_Date+',0,A.INVEST_NAME,''system'',B.VOLUME_NAME,'''+IS_REPEAT+''',0,B.VOLUME_NOTE,'''+END_Date+''',A.INVEST_ID,''00'','+GetTimeStamp(DbType)+' '+
           'from CC_INVESTIGATE A,CC_VOLUME B where A.VOLUME_ID=B.VOLUME_ID and A.ORGAN_ID=B.ORGAN_ID '+
           'and A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+RimParam.ComID+''' and not Exists(select * from MSC_QUESTION where TENANT_ID='+tid+' and COMM_ID=A.INVEST_ID) ';
-        if PlugIntf.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+        if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
         if r>0 then //初始化题目[一张问卷有多个题目]
         begin
           tmp.Close;
@@ -249,16 +249,16 @@ begin
             str :=
               'insert into MSC_QUESTION_ITEM(TENANT_ID,QUESTION_ID,QUESTION_ITEM_ID,SEQ_NO,QUESTION_ITEM_TYPE,QUESTION_IS_MUST,QUESTION_INFO,QUESTION_OPTIONS,COMM_ID)'+
               'values('+tid+','''+mid+''','''+newid(sid)+''','+inttostr(tmp.RecNo)+','''+inttostr(tmp.Fields[2].asInteger+1)+''','''+imust+''','''+tmp.Fields[1].AsString+''','''+s+''','''+tmp.Fields[0].AsString+''')';
-            if PlugIntf.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+            if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
             tmp.Next;
           end;
           str := 'update MSC_QUESTION set QUESTION_ITEM_AMT='+inttostr(tmp.recordCount)+' where TENANT_ID='+tid+' and QUESTION_ID='''+mid+'''';
-          if PlugIntf.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+          if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
         end;
 
         str:='insert into MSC_INVEST_LIST(TENANT_ID,QUESTION_ID,SHOP_ID,QUESTION_FEEDBACK_STATUS,QUESTION_ANSWER_STATUS,COMM_ID,COMM,TIME_STAMP) '+
              'values('+tid+','''+mid+''','''+sid+''',1,2,'''+rs.Fields[0].AsString+''',''00'','+GetTimeStamp(DbType)+')';
-        if PlugIntf.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+        if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
         CommitTrans;
       except
         RollbackTrans;

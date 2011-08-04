@@ -62,7 +62,7 @@ begin
   
   //1、先删除供应关系中间表:
   StrSQL:=PChar('delete from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' ');
-  if PlugIntf.ExecSQL(StrSQL,iRet)<>0 then Raise Exception.Create('1、先删除供应关系中间表:');
+  if ExecSQL(StrSQL,iRet)<>0 then Raise Exception.Create('1、先删除供应关系中间表:');
 
   //2、插入传入企业商品供应链:
   try
@@ -147,7 +147,7 @@ begin
         //提交数据库
         if RsInf.Changed then
         begin
-          result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation');
+          result:=PlugIntf.UpdateBatch(RsInf.Data, 'TInf_Goods_Relation',dbResoler);
           if result<>0 then
             Raise Exception.Create('提交中间表[Inf_Goods_Relation]数据错误！'); 
         end else

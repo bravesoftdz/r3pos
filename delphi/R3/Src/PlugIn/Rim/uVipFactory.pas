@@ -316,14 +316,14 @@ begin
        end;
     if Str<>'' then
        begin            
-         if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+         if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
          if IcStr<>'' then
             begin
-              if PlugIntf.ExecSQL(Pchar(IcStr),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-              if PlugIntf.ExecSQL(Pchar(IcStr1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+              if ExecSQL(Pchar(IcStr),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+              if ExecSQL(Pchar(IcStr1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
             end;
          Str := 'delete from PUB_CUSTOMER_EXT where TENANT_ID='+tid+' and CUST_ID='''+ctid+'''';
-         if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+         if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
 
          //开始更新指标
          idx.Close;
@@ -346,7 +346,7 @@ begin
                         'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                         formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(icStr))
                         +''',''00'','+GetTimeStamp(DbType)+')';
-                       if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                       if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                      end;
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '职业' then
@@ -356,7 +356,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('DEGREES').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '月收入' then
                 begin
@@ -365,7 +365,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('MONTH_PAY').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '人口类型' then
                 begin
@@ -374,7 +374,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('POP_TYPE').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '焦油含量' then
                 begin
@@ -383,7 +383,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('TAR_CONT').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '吸食口味' then
                 begin
@@ -392,7 +392,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('FAVOR').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '乐意购买新品') or (idx.FieldbyName('INDEX_NAME').AsString = '是否购买新品') or (idx.FieldbyName('INDEX_NAME').AsString = '购买新品') then
                 begin
@@ -401,7 +401,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('is_buynewitem').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if idx.FieldbyName('INDEX_NAME').AsString = '每日吸烟量' then
                 begin
@@ -410,7 +410,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('DAILY_USE').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '喜好厂家') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜好厂家') then
                 begin
@@ -419,7 +419,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('DAILY_USE').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '喜爱卷烟') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜爱卷烟') then
                 begin
@@ -428,7 +428,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   GetR3Id(rs.FieldbyName('ITEM_ID').AsString,0)
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '喜爱品牌') or (idx.FieldbyName('INDEX_NAME').AsString = '最喜爱品牌') then
                 begin
@@ -437,7 +437,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   GetR3Id(rs.FieldbyName('BRAND_ID').AsString,4)
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '价位结构') or (idx.FieldbyName('INDEX_NAME').AsString = '常抽价位') then
                 begin
@@ -446,7 +446,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('STRUCT').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              if (idx.FieldbyName('INDEX_NAME').AsString = '城农网') or (idx.FieldbyName('INDEX_NAME').AsString = '地址类型') then
                 begin
@@ -455,7 +455,7 @@ begin
                   'values('''+newid(sid)+''','+tid+','''+pid+''','''+ctid+''','''+idx.FieldbyName('INDEX_ID').AsString+''','''+idx.FieldbyName('INDEX_NAME').AsString+''','''+idx.FieldbyName('INDEX_TYPE').AsString+''','''+
                   rs.FieldbyName('ADDRESS_TYPE').AsString
                   +''',''00'','+GetTimeStamp(DbType)+')';
-                  if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+                  if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
                 end;
              idx.Next;
            end; //while not idx.Eof do
@@ -536,7 +536,7 @@ begin
        end;
     if Str<>'' then
        begin
-         if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+         if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
          //开始更新指标
          idx.Close;
          idx.SQL.Text := 'select INDEX_ID,INDEX_NAME,INDEX_VALUE from PUB_CUSTOMER_EXT where TENANT_ID='+tid+' and CUST_ID='''+rs.FieldbyName('CUST_ID').AsString+'''';
@@ -654,7 +654,7 @@ begin
         if Str<>'' then
            begin
              Str := 'update RIM_VIP_CONSUMER set '+Str+' where CONSUMER_ID='''+ctid+'''';
-             if PlugIntf.ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+             if ExecSQL(Pchar(Str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
              result:=1;
            end;
        end;

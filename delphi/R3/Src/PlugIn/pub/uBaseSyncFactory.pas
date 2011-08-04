@@ -148,7 +148,10 @@ type
     function  CommitTrans: Boolean;   //提交事务
     function  RollbackTrans: Boolean; //回滚事务
     function  Open(DataSet: TDataSet):Boolean;  //取数据
+    function  ExecSQL(SQL:Pchar;var iRet:integer):integer;
     procedure WriteRunErrorMsg(Msg: string);  //写日志
+    function GetLastError:string;
+    procedure WriteLogFile(s:Pchar);
 
     //返回类函数
     class function newId(id:string=''): string; //获取GUID
@@ -351,13 +354,13 @@ begin
     ErrMsg:='锁定数据库连接错误:'
   else
     ErrMsg:='解锁数据库连接错误:'; 
-  if PlugIntf.DbLock(Locked)<>0 then
+  if PlugIntf.DbLock(Locked,dbResoler)<>0 then
     Raise Exception.Create(ErrMsg+PlugIntf.GetLastError);
 end;
 
 function TBaseSyncFactory.GetDBType: Integer;
 begin
-  Result:=PlugIntf.iDbType(FDbType);
+  Result:=PlugIntf.iDbType(FDbType,dbResoler);
   if Result<>0 then
     Raise Exception.Create('返回数据库类型错误：'+PlugIntf.GetLastError);
 end;
@@ -735,6 +738,22 @@ end;
 procedure TBaseSyncFactory.SetdbResoler(const Value: Integer);
 begin
   FdbResoler := Value;
+end;
+
+function TBaseSyncFactory.ExecSQL(SQL: Pchar; var iRet: integer): integer;
+begin
+  result := PlugIntf.ExecSQL(SQL,iRet,dbResoler);
+  if result<>0 then Raise Exception.Create(StrPas(PlugIntf.GetLastError));
+end;
+
+function TBaseSyncFactory.GetLastError: string;
+begin
+  result := StrPas(PlugIntf.GetLastError);
+end;
+
+procedure TBaseSyncFactory.WriteLogFile(s: Pchar);
+begin
+  if PlugIntf.WriteLogFile(s)<>0 then Raise Exception.Create(StrPas(PlugIntf.GetLastError));  
 end;
 
 end.

@@ -342,6 +342,7 @@ begin
                 Continue;
               end;
          end;
+      if PlugIn=nil then Continue;
       Working := true;
       try
         StartTime := GetTickCount;

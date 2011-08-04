@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="gb2312" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="./V3_Schema.xsl"?>
+<!DOCTYPE app-data SYSTEM "./V3_Schema.dtd">
+<app-data>
+	<database>	
+		<subsystem id="RIM">
+			<module id="SALEINFO" name="销售信息">
+			<submodule id="SALEINFO" name="销售信息">
+			  <table id="RIM_RETAIL_CO" name="零售单表" pkg="rim.sale.consumerco" jspPath="rim/sale/consumerco">
+					<rem> ==================================================================== </rem>
+					<rem> 零售单表                              </rem>
+					<rem> ==================================================================== </rem>
+  				<column id="CO_NUM" primaryKey="true" required="true" type="VARCHAR" size="30" name="订单号"/>
+          <column id="CONSUMER_CARD_ID" required="false" type="VARCHAR" size="32" name="VIP消费者卡号"/>
+					<column id="CONSUMER_ID" required="false" type="VARCHAR" size="32" name="VIP消费者编号"/>
+					<column id="CUST_ID" required="true" type="VARCHAR" size="30" name="零售户编号" queryShow="true"/>
+					<column id="COM_ID" required="true" type="VARCHAR" size="30" name="公司编号" queryShow="true"/>
+					<column	id="QTY_SUM" required="true" type="NUMERIC" default="0" size="18,6" name="数量合计"/>
+					<column	id="AMT_SUM" required="true" type="NUMERIC" default="0" size="18,6" name="金额合计"/>
+					<column id="TERM_ID" required="false" type="VARCHAR" size="30" name="终端标志"  queryShow="true" searchShow="false" note="终端IP地址或终端设备编号"/>
+					<column id="SCORE" required="false" type="NUMBER" size="15" name="积分" queryShow="true"/>
+					<column id="SCORE_DATE" required="false" type="VARCHAR" size="24" name="积分时间"  queryShow="true"/>
+					<column id="VIP_RTL_CARD_ID" type="VARCHAR" size="16" name="VIP零售户卡号" queryShow="true"/>										
+					<column id="PUH_DATE" required="true" type="CHAR" size="8" name="购买日期"/>
+          <column id="PUH_TIME" required="true" type="CHAR" size="8" name="购买时间"/>
+          <column id="CRT_USER_ID" required="true" type="VARCHAR" size="30" name="创建人内码" queryShow="true"/>
+          <column id="STATUS" required="true" type="CHAR" size="2" name="状态" enumValue="01:销售,02:退货" queryShow="true" searchShow="false"/>                    																																			
+					<column id="UPD_DATE" required="false" type="CHAR" size="8" name="更新日期" queryShow="true" searchShow="false"/>
+					<column id="UPD_TIME" required="false" type="CHAR" size="8" name="更新时间" queryShow="true" searchShow="false"/>
+				</table>
+        <table id="RIM_RETAIL_CO_LINE" name="零售单行表" pkg="rim.sale.consumerco" jspPath="rim/sale/consumerco">
+					<rem> ==================================================================== </rem>
+					<rem> 零售单行表						                                   </rem>
+					<rem>       </rem>					
+					<rem>  </rem>
+					<rem> ==================================================================== </rem>
+  			  <column id="CO_NUM" primaryKey="true" required="true" type="VARCHAR" size="30" name="订单号"/>
+  			  <column id="COM_ID" required="true" type="VARCHAR" size="30" name="公司编号" />
+  			  <column id="PUH_DATE" required="true" type="CHAR" size="8" name="购买日期"/>
+					<column id="LINE_NUM" required="true" type="INTEGER" default="0" name="订单行号" />
+					<column id="ITEM_ID" primaryKey="true" required="true" type="CHAR" size="13" name="商品编号" />	
+					<column id="UM_ID" required="true" type="CHAR" size="2" name="计量单位" />					
+					<column id="PRICE" required="true" type="NUMERIC" default="0" size="6,2" name="订购单价" queryShow="true" searchShow="false" note="单位：盒"/>
+					<column id="QTY_ORD" required="true" type="NUMBER" size="18,6" default="0"  name="定购数量" queryShow="true" readOnlyU="true"/>
+					<column id="AMT" required="true" type="NUMBER" size="18,6" default="0" name="金额" queryShow="true" readOnlyU="true"/>
+				  <column id="NOTE"  required="false" type="VARCHAR" size="100" name="备注"/>
+				</table>
+					
+					<table id="RIM_RETAIL_INFO" name="零售流水账单" pkg="rim.sale.consumerco" jspPath="rim/sale/consumerco">
+					<rem> ==================================================================== </rem>
+					<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+					<rem> 零售流水账单                              </rem>
+					<rem> ==================================================================== </rem>
+  				<column id="RETAIL_NUM" primaryKey="true" required="true" type="VARCHAR" size="50" name="订单号"/>
+          <column id="CONSUMER_CARD_ID" required="false" type="VARCHAR" size="32" name="VIP消费者卡号"/>
+					<column id="CONSUMER_ID" required="false" type="VARCHAR" size="32" name="VIP消费者编号"/>
+					<column id="CUST_ID" required="true" type="VARCHAR" size="30" name="零售户编号" queryShow="true"/>
+					<column id="TERM_ID" required="true" type="VARCHAR" size="10" name="终端企业代码"  queryShow="true" searchShow="false" note="终端企业代码"/>
+					<column id="R3_NUM" required="true" type="VARCHAR" size="5" name="R3单号"   note="R3单号"/>
+					<column id="COM_ID" required="true" type="VARCHAR" size="30" name="公司编号" queryShow="true"/>
+					<column	id="QTY_SUM" required="true" type="NUMERIC" default="0" size="18,6" name="数量合计" note="换算成条的数量"/>
+					<column	id="AMT_SUM" required="true" type="NUMERIC" default="0" size="18,6" name="金额合计" note="单位：元" />
+					<column id="SCORE" required="false" type="NUMBER" size="15" name="积分" queryShow="true"/>
+					<column id="SCORE_DATE" required="false" type="VARCHAR" size="24" name="积分时间"  queryShow="true"/>
+					<column id="VIP_RTL_CARD_ID" type="VARCHAR" size="16" name="VIP零售户卡号" queryShow="true"/>										
+					<column id="PUH_DATE" required="true" type="CHAR" size="8" name="购买日期"/>
+          <column id="PUH_TIME" required="true" type="CHAR" size="8" name="购买时间"/>
+          <column id="CRT_USER_ID" required="true" type="VARCHAR" size="30" name="创建人内码" queryShow="true"/>
+          <column id="TYPE" required="true" type="CHAR" size="2" name="类型" enumValue="01:销售,02:退货" />                    																																			
+					<column id="UPDATE_TIME" required="false" type="CHAR" size="20" name="更新时间" note="2009-05-14 15:49:34 格式"/>
+				</table>
+        <table id="RIM_RETAIL_DETAIL" name="零售流水账单明细" pkg="rim.sale.consumerco" jspPath="rim/sale/consumerco">
+					<rem> ==================================================================== </rem>
+					<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+					<rem> 零售流水账单明细						                                         </rem>				
+					<rem>  </rem>
+					<rem> ==================================================================== </rem>
+  			  <column id="RETAIL_NUM" primaryKey="true" required="true" type="VARCHAR" size="50" name="订单号"/>
+  			  <column id="COM_ID" required="true" type="VARCHAR" size="30" name="公司编号" />
+  			  <column id="PUH_DATE" required="true" type="CHAR" size="8" name="购买日期"/>
+					<column id="LINE_NUM" primaryKey="true" required="true" type="INTEGER" default="0" name="订单行号" />
+					<column id="ITEM_ID"  required="true" type="CHAR" size="30" name="商品编号" />	
+					<column id="UM_ID" required="true" type="CHAR" size="2" name="计量单位" />
+					<column	id="UNIT_COST" required="true" type="NUMERIC" size="18,8" default="0" name="单位成本"/>
+					<column id="WHOLESALE_PRICE" required="true" type="NUMERIC" default="0" size="18,6" name="采购价"/>					
+					<column id="RETAIL_PRICE" required="true" type="NUMERIC" default="0" size="18,6" name="零售价"  />
+					<column id="QTY_SALE" required="true" type="NUMBER" size="18,6" default="0"  name="零售数量" note="计量单位对应的数量"/>
+					<column id="QTY_MINI_UM" required="true" type="NUMBER" size="18,6" default="0"  name="最小计量单位数量" note="一般是指盒数量"/>
+					<column id="AMT" required="true" type="NUMBER" size="18,6" default="0" name="金额" />
+				  <column id="NOTE"  required="false" type="VARCHAR" size="100" name="备注"/>
+				</table>
+					<table id="RIM_CUST_TRN" name="零售户调拨单" >
+						<rem> ==================================================================== </rem>
+						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> 零售户调拨单																</rem>
+						<rem> ==================================================================== </rem>
+						<column	id="TRN_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="调拨单号"/>
+						<column	id="CUST_ID" required="true" type="VARCHAR" size="30"	name="客户内码" />
+						<column	id="TYPE" required="true" type="CHAR"	size="2" name="类型" enumValue="01：调入,02:调出"	/>
+						<column	id="COM_ID"	required="true"	type="VARCHAR" size="30" name="公司"/>
+						<column id="TERM_ID" required="true" type="VARCHAR" size="10" name="终端企业代码"   note="终端企业代码"/>
+						<column id="R3_NUM" required="true" type="VARCHAR" size="5" name="R3单号"   note="R3单号"/>
+						<column	id="STATUS"	required="true"	type="VARCHAR" size="2"	name="状态"	enumValue="01:新增,02:完成"	/>
+						<column	id="CRT_DATE" required="true" type="CHAR" size="8" format="date8" name="创建日期"/>
+						<column	id="CRT_USER_ID" required="false" type="VARCHAR" size="15" default="" name="创建人"/>
+						<column	id="POST_DATE" type="CHAR" size="8"	format="date8" name="出入库日期" note=""/>
+						<column id="UPDATE_TIME" required="false" type="CHAR" size="20" name="更新时间" note="2009-05-14 15:49:34 格式"/>
+					</table>
+					<table id="RIM_CUST_TRN_LINE"	name="零售户调拨单行"	>
+						<rem> ==================================================================== </rem>
+						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> 零售户调拨单行																												</rem>
+						<rem> 																																	</rem>
+						<rem> ==================================================================== </rem>
+						<column	id="TRN_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="调拨单号"/>
+						<column	id="TRN_LINE" primaryKey="true"	required="true"	type="INTEGER"  name="行号"/>
+						<column id="COM_ID" required="true" type="VARCHAR" size="30" name="公司编号" />
+						<column	id="ITEM_ID" required="true" type="VARCHAR"	size="30" name="商品内码" note=""/>
+						<column	id="QTY_TRN" required="true" type="NUMERIC"	size="18,6"	default="0"	name="调拨数量"/>
+						<column id="QTY_MINI_UM" required="true" type="NUMBER" size="18,6" default="0"  name="最小计量单位数量" note="一般是指盒数量"/>
+						<column	id="AMT_TRN" required="true" type="NUMERIC"	size="18,6"	default="0"	name="调拨金额"/>
+						<column	id="UM_ID" required="true" type="VARCHAR" size="30"	default="0"	name="计量单位"/>
+						<column	id="NOTE" required="false" type="VARCHAR" size="30"	name="备注"/>
+					</table>
+					<table id="RIM_VOUCHER" name="入库单" javaid="Voucher" line="VOUCHERLine">
+						<rem> ==================================================================== </rem>
+						<rem> 入库单															 </rem>
+						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						
+						<rem> ==================================================================== </rem>
+						<column	id="VOUCHER_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="入库单编号"/>
+						<column	id="RETAIL_NUM"	required="false" type="VARCHAR"	size="30" name="采购单编号"	note="入库单对应的采购单，现在没有对应关系，可以不写"/>
+						<column	id="CUST_ID" required="true" type="VARCHAR"	size="30" name="客户内码"/>
+						<column id="TERM_ID" required="true" type="VARCHAR" size="10" name="终端企业代码"  note="终端企业代码"/>
+						<column id="R3_NUM" required="true" type="VARCHAR" size="5" name="R3单号"   note="R3单号"/>
+						<column	id="STATUS"	required="true"	type="VARCHAR" size="2"	name="状态"	enumValue="01:新增,02:完成"	note=""/>
+						<column	id="COM_ID"	required="true"	type="VARCHAR" size="30" name="公司内码"/>
+						<column	id="CRT_USER_ID" required="true" type="VARCHAR"	size="30" name="创建人"	note=""/>
+						<column	id="CRT_DATE" required="true" type="CHAR" size="8" format="date8" name="采购单订货日期" note="对应RIM中采购单的创建日期" />
+						<column	id="POST_DATE" required="false" type="CHAR" size="8" format="date8" name="入库日期" note=""/>
+						<column	id="TYPE"	required="true"	type="VARCHAR" size="2"	name="类型"	enumValue="01:入库单，02：退货单"/>
+					  <column id="UPDATE_TIME" required="false" type="CHAR" size="20" name="更新时间" note="2009-05-14 15:49:34 格式"/>
+					</table>
+					<table id="RIM_VOUCHER_LINE"	name="入库单行"	javaid="VoucherLine" head="VOUCHER">
+						<rem> ==================================================================== </rem>
+						<rem> 入库单行															   </rem>
+						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> ==================================================================== </rem>
+						<column	id="VOUCHER_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="入库单编号"/>
+						<column	id="VOUCHER_LINE" primaryKey="true"	required="true"	type="INTEGER" name="行号"/>
+						<column id="COM_ID" required="true" type="VARCHAR" size="30" name="公司编号" />
+						<column	id="ITEM_ID" required="true" type="VARCHAR"	size="30" name="商品内码" note=""/>
+						<column	id="QTY_INCEPT"	required="true"	type="NUMERIC" size="18,6" default="0" name="入库数量" />
+						<column id="QTY_MINI_UM" required="true" type="NUMBER" size="18,6" default="0"  name="最小计量单位数量" note="一般是指盒数量"/>
+						<column	id="AMT_INCEPT"	required="true"	type="NUMERIC" size="18,6" default="0" name="入库金额" />
+						<column	id="UM_ID" required="true" type="VARCHAR" size="30"	name="计量单位"/>
+						
+						
+					</table>
+					<table id="RIM_ADJUST_INFO" name="调整单">
+						<rem> ==================================================================== </rem>
+						<rem> 调整单															 </rem>
+						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> ==================================================================== </rem>
+						<column	id="ADJUST_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="调整单编号"/>
+						<column	id="CUST_ID" required="true" type="VARCHAR"	size="30" name="客户内码"/>
+						<column	id="STATUS"	required="true"	type="VARCHAR" size="2"	name="状态"	enumValue="01:新增,02:完成"	note=""/>
+						<column	id="COM_ID"	required="true"	type="VARCHAR" size="30" name="公司内码"/>
+						<column id="TERM_ID" required="true" type="VARCHAR" size="10" name="终端企业代码"   note="终端企业代码"/>
+						<column id="R3_NUM" required="true" type="VARCHAR" size="5" name="R3单号"   note="R3单号"/>
+						<column	id="TYPE" required="true" type="CHAR" size="2" name="类型" enumValue="01:预留，02:盘点单，03：其它" note="盘点后如果是损就填负数，如果是溢就填正数"/>
+						<column	id="CRT_DATE" required="true" type="CHAR" size="8" format="date8" name="创建日期" note="" />
+						<column	id="CRT_USER_ID" required="true" type="VARCHAR"	size="30" name="创建人"	note=""/>
+						<column	id="POST_DATE" required="false" type="CHAR" size="8" format="date8" name="入库日期" note=""/>
+					  <column id="UPDATE_TIME" required="false" type="CHAR" size="20" name="更新时间" note="2009-05-14 15:49:34 格式"/>
+					</table>
+					<table id="RIM_ADJUST_DETAIL"	name="调整单明细"	>
+						<rem> ==================================================================== </rem>
+						<rem> 调整单明细															   </rem>
+						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> ==================================================================== </rem>
+						<column	id="ADJUST_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="入库单编号"/>
+						<column	id="ADJUST_LINE" primaryKey="true"	required="true"	type="INTEGER" name="行号"/>
+						<column id="COM_ID" required="true" type="VARCHAR" size="30" name="公司编号" />
+						<column	id="ITEM_ID" required="true" type="VARCHAR"	size="30" name="商品内码" note=""/>
+						<column	id="QTY_ADJUST"	required="true"	type="NUMERIC" size="18,6" default="0" name="入库数量" note="如果是负数就填负数" />
+						<column id="QTY_MINI_UM" required="true" type="NUMBER" size="18,6" default="0"  name="最小计量单位数量" note="一般是指盒数量"/>
+						<column	id="AMT_ADJUST"	required="true"	type="NUMERIC" size="18,6" default="0" name="入库金额" note="如果是负数就填负数"/>
+						<column	id="UM_ID" required="true" type="VARCHAR" size="30"	name="计量单位"/>
+					</table>					
+				<table id="RIM_CUST_DAY" name="零售户商品日账" javaid="RIM_CUST_DAY">
+				
+				<rem> ==================================================================== </rem>
+						<rem> 零售户商品日账															   </rem>
+						<rem>							 输入人：靳奉宝 2009-05-07			   </rem>
+			<rem> ==================================================================== </rem>
+						<column	id="COM_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="公司编号"/>
+						<column	id="CUST_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="零售户ID"/>
+						<column	id="ITEM_ID" primaryKey="true" required="true" type="VARCHAR" size="30"	name="商品编号"/>
+						<column	id="DATE1" primaryKey="true" required="true" type="CHAR" size="8" format="" name="日期"/>
+						<column id="TERM_ID" primaryKey="true" required="true" type="VARCHAR" size="10" name="终端企业代码"  queryShow="true" searchShow="false" note="终端企业代码"/>
+						<column	id="PRI3" required="true" type="NUMERIC" size="18,6" default="0" name="批发价格"/>
+						<column	id="PRI4" required="true" type="NUMERIC" size="18,6" default="0" name="建议零售价"/>
+						<column	id="PRI_SOLD" required="true" type="NUMERIC" size="18,6" default="0" name="实际销售均价" note="默认为建议零售价"/>
+						<column	id="AMT_GROSS_PROFIT_THEO" required="true" type="NUMERIC" size="18,6" default="0" name="理论毛利额" NOTE=" 理论（theoretic）毛利，根据建议零售价计算所得"/>
+						<column	id="QTY_IOD" required="true" type="NUMERIC"	size="18,6"	default="0"	name="日初库存数量"/>
+						<column	id="AMT_IOD" required="true" type="NUMERIC"	size="18,6"	default="0"	name="日初库存金额"	note="不含税"/>
+						<column	id="QTY_PURCH" required="true" type="NUMERIC" size="18,6" default="0" name="当日购进数量"/>
+						<column	id="AMT_PURCH" required="true" type="NUMERIC" size="18,6" default="0" name="当日购进金额"/>
+						<column	id="QTY_SOLD" required="true" type="NUMERIC" size="18,6" default="0" name="当日销售数量"/>
+						<column	id="AMT_SOLD_WITH_TAX" required="true" type="NUMERIC" size="18,6" default="0" name="当日销售含税金额"/>
+						<column	id="QTY_PROFIT"	required="true"	type="NUMERIC" size="18,6" default="0" name="当日溢余数量"/>
+						<column	id="AMT_PROFIT"	required="true"	type="NUMERIC" size="18,6" default="0" name="当日溢余金额"/>
+						<column	id="QTY_LOSS" required="true" type="NUMERIC" size="18,6" default="0" name="当日损耗数量"/>
+						<column	id="AMT_LOSS" required="true" type="NUMERIC" size="18,6" default="0" name="当日损耗金额"/>
+						<column	id="QTY_TAKE" required="true" type="NUMERIC" size="18,6" default="0" name="当日调整数量"/>
+						<column	id="AMT_TAKE" required="true" type="NUMERIC" size="18,6" default="0" name="当日调整金额"/>
+						<column	id="QTY_TRN_IN"	required="true"	type="NUMERIC" size="18,6" default="0" name="当日调入数量"/>
+						<column	id="AMT_TRN_IN"	required="true"	type="NUMERIC" size="18,6" default="0" name="当日调入金额"/>
+						<column	id="QTY_TRN_OUT" required="true" type="NUMERIC"	size="18,6"	default="0"	name="当日调出数量"/>
+						<column	id="AMT_TRN_OUT" required="true" type="NUMERIC"	size="18,6"	default="0"	name="当日调出金额"/>
+						<column	id="QTY_EOD" required="true" type="NUMERIC"	size="18,6"	default="0"	name="日末库存数量"/>
+						<column	id="AMT_EOD" required="true" type="NUMERIC"	size="18,6"	default="0"	name="日末库存金额"/>
+						<column	id="UNIT_COST" required="true" type="NUMERIC" size="18,8" default="0" name="单位成本"/>
+						<column	id="SUMCOST_SOLD" required="true" type="NUMERIC" size="18,6" default="0" name="销售成本"/>
+						<column	id="AMT_GROSS_PROFIT" required="true" type="NUMERIC" size="18,6" default="0" name="毛利额"/>
+						<column	id="AMT_PROFIT_COM" required="true" type="NUMERIC" size="18,6" default="0" name="贡献毛利"/>
+	    </table>
+     	<table id="RIM_CUST_MONTH" name="零售户商品月账" javaid="RIM_CUST_MONTH">
+      <rem> ==================================================================== </rem>
+						<rem> 零售户商品月账															   </rem>
+						<rem>							 输入人：靳奉宝 2009-05-07			   </rem>
+			<rem> ==================================================================== </rem>
+						<column	id="COM_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="公司编号"/>
+						<column	id="CUST_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="零售户ID"/>
+						<column	id="ITEM_ID" primaryKey="true" required="true" type="VARCHAR" size="30"	name="商品编号"/>
+						<column	id="MONTH" primaryKey="true" required="true" type="CHAR" size="6" format="" name="月份"/>
+						<column id="TERM_ID" primaryKey="true" required="true" type="VARCHAR" size="10" name="终端企业代码"  queryShow="true" searchShow="false" note="终端企业代码"/>
+						<column	id="PRI3" required="true" type="NUMERIC" size="18,6" default="0" name="批发价格"/>
+						<column	id="PRI4" required="true" type="NUMERIC" size="18,6" default="0" name="建议零售价"/>
+						<column	id="PRI_SOLD" required="true" type="NUMERIC" size="18,6" default="0" name="实际销售均价" note="默认为建议零售价"/>
+						<column	id="AMT_GROSS_PROFIT_THEO" required="true" type="NUMERIC" size="18,6" default="0" name="理论毛利额" NOTE=" 理论（theoretic）毛利，根据建议零售价计算所得"/>
+						<column	id="QTY_IOM" required="true" type="NUMERIC"	size="18,6"	default="0"	name="月初库存数量"/>
+						<column	id="AMT_IOM" required="true" type="NUMERIC"	size="18,6"	default="0"	name="月初库存金额"	note="不含税"/>
+						<column	id="QTY_PURCH" required="true" type="NUMERIC" size="18,6" default="0" name="当月购进数量"/>
+						<column	id="AMT_PURCH" required="true" type="NUMERIC" size="18,6" default="0" name="当月购进金额"/>
+						<column	id="QTY_SOLD" required="true" type="NUMERIC" size="18,6" default="0" name="当月销售数量"/>
+						<column	id="AMT_SOLD_WITH_TAX" required="true" type="NUMERIC" size="18,6" default="0" name="当月销售含税金额"/>
+						<column	id="QTY_PROFIT"	required="true"	type="NUMERIC" size="18,6" default="0" name="当月溢余数量"/>
+						<column	id="AMT_PROFIT"	required="true"	type="NUMERIC" size="18,6" default="0" name="当月溢余金额"/>
+						<column	id="QTY_LOSS" required="true" type="NUMERIC" size="18,6" default="0" name="当月损耗数量"/>
+						<column	id="AMT_LOSS" required="true" type="NUMERIC" size="18,6" default="0" name="当月损耗金额"/>
+						<column	id="QTY_TAKE" required="true" type="NUMERIC" size="18,6" default="0" name="当月调整数量"/>
+						<column	id="AMT_TAKE" required="true" type="NUMERIC" size="18,6" default="0" name="当月调整金额"/>
+						<column	id="QTY_TRN_IN"	required="true"	type="NUMERIC" size="18,6" default="0" name="当月调入数量"/>
+						<column	id="AMT_TRN_IN"	required="true"	type="NUMERIC" size="18,6" default="0" name="当月调入金额"/>
+						<column	id="QTY_TRN_OUT" required="true" type="NUMERIC"	size="18,6"	default="0"	name="当月调出数量"/>
+						<column	id="AMT_TRN_OUT" required="true" type="NUMERIC"	size="18,6"	default="0"	name="当月调出金额"/>
+						<column	id="QTY_EOM" required="true" type="NUMERIC"	size="18,6"	default="0"	name="月末库存数量"/>
+						<column	id="AMT_EOM" required="true" type="NUMERIC"	size="18,6"	default="0"	name="月末库存金额"/>
+						<column	id="UNIT_COST" required="true" type="NUMERIC" size="18,8" default="0" name="单位成本"/>
+						<column	id="SUMCOST_SOLD" required="true" type="NUMERIC" size="18,6" default="0" name="销售成本"/>
+						<column	id="AMT_GROSS_PROFIT" required="true" type="NUMERIC" size="18,6" default="0" name="毛利额"/>
+						<column	id="AMT_PROFIT_COM" required="true" type="NUMERIC" size="18,6" default="0" name="贡献毛利"/>
+				</table>				 
+				<table id="RIM_CUST_ITEM_WHSE" name="零售户库存表" javaid="rim_cust_item_whse">
+				<column id="CUST_ID" name="零售户内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="ITEM_ID" name="商品内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="COM_ID" name="公司内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="QTY" name="库存量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="QTY_ALLOCCO" name="分配量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="QTY_REORD_MAX" name="合理库存上线" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="QTY_REORD_MIN" name="合理库存下线" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="QTY_LOCKED" name="锁定数量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="DATE1" name="更新日期" primaryKey="false" required="false" type="VARCHAR" size="8" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="UPPER_DATE" name="UPPER_DATE" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="LOWER_DATE" name="LOWER_DATE" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="QTY_WARNING" name="预警库存量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="WARNING_DATE" name="预警日期" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="IS_MRB" name="是否使用" primaryKey="false" required="false" type="CHAR" size="1" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="NOTE" name="备注" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="UPD_TIME" name="更新时间" primaryKey="false" required="false" type="VARCHAR" size="8" queryShow="true" searchShow="true" default="" note="note" />
+				<column id="QTY_REORD_MAX_ARG" name="合理库存上线参数" primaryKey="false" required="false" type="DECIMAL" size="18,2" queryShow="true" searchShow="true" default="" note="note" />
+				</table>
+			<table id="RIM_CUST_ITEM_SWHSE" name="库存中间表" javaid="Category">
+						<rem> ==================================================================== </rem>
+						<rem>库存中间表</rem>
+						<rem> 修改人: 朱晓明	      修改时间: 2009.07.07                         </rem>
+						<rem> 这里设置的主键不包括DATE,TIME如果做为库存历史表使用，可以将其加上                      </rem>
+						<rem> ==================================================================== </rem>
+						<column id="COM_ID" name="公司内码" primaryKey="true" required="true" type="VARCHAR" size="30" note=""/>
+						<column id="CUST_ID" name="客户内码" primaryKey="true" required="true" type="VARCHAR" size="30" note=""/>
+						<column id="TERM_ID" name="终端企业代码" primaryKey="true" required="true" type="VARCHAR" size="20" note=""/>
+						<column id="ITEM_ID" name="商品内码" primaryKey="true" required="true" type="VARCHAR" size="60" note=""/>
+						<column id="QTY" name="库存数量" primaryKey="false" required="true" type="DECIMAL" size="18,6" note=""/>
+						<column id="DATE" name="更新日期" primaryKey="false" required="true" type="CHAR" size="8" format="date8" note=""/>
+						<column id="TIME" name="更新时间" primaryKey="false" required="true" type="CHAR" size="8" note=""/>
+						<column id="IS_MRB" name="是否使用" primaryKey="false" required="true" type="CHAR" size="1" enumValue="0:是,1:否" note=""/>
+						<column id="NOTE" name="备注" primaryKey="false" required="false" type="VARCHAR" size="30" note=""/>
+						<foreign-key foreignTable="ORGAN" noSql="true">
+							<reference local="COM_ID" foreign="ORGAN_ID"/>
+						</foreign-key>
+						<foreign-key foreignTable="RM_CUST" noSql="true">
+							<reference local="CUST_ID" foreign="CUST_ID"/>
+						</foreign-key>
+						<foreign-key foreignTable="SD_ITEM" noSql="true">
+							<reference local="ITEM_ID" foreign="ITEM_ID"/>
+						</foreign-key>
+					</table>
+			 
+				</submodule>
+			</module>
+	</subsystem>					
+	</database>
+</app-data>

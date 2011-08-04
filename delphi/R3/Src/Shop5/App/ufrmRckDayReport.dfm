@@ -1,6 +1,6 @@
 inherited frmRckDayReport: TfrmRckDayReport
-  Left = 96
-  Top = 46
+  Left = 171
+  Top = 95
   Width = 1022
   Height = 611
   Caption = #33829#19994#32467#36134#25253#34920
@@ -2261,7 +2261,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                       FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #21046#21333#26102#38388
-                      Width = 111
+                      Width = 126
                     end>
                 end
               end

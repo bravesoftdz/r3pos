@@ -171,7 +171,7 @@ type
 
 implementation
 uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon,
-  ufrmCostCalc, uframeToolForm;
+  ufrmCostCalc, uframeToolForm, Math;
 {$R *.dfm}
 
 procedure TfrmRckDayReport.FormCreate(Sender: TObject);
@@ -549,6 +549,7 @@ begin
      1: AddReportReport(Title,'2');
      2: AddReportReport(Title,'3');
      3: AddReportReport(Title,'4');
+     4: AddReportReport(Title,'5');
     end;
     ReStr:=FormatReportHead(Title,4);
     PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
@@ -562,13 +563,34 @@ function TfrmRckDayReport.AddReportReport(TitleList: TStringList; PageNo: string
 var
   FindCmp1,FindCmp2: TComponent;
 begin
-  //日期
-  FindCmp1:=FindComponent('P'+PageNo+'_D1');
-  FindCmp2:=FindComponent('P'+PageNo+'_D2');
-  if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
-     (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
-    TitleList.add('收款日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
-
+ case RzPage.ActivePageIndex of
+   0,1,2,3:
+    begin
+      //日期
+      FindCmp1:=FindComponent('P'+PageNo+'_D1');
+      FindCmp2:=FindComponent('P'+PageNo+'_D2');
+      if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
+         (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
+        TitleList.add('收款日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
+    end;
+   4:
+    begin
+      //日期
+      FindCmp1:=FindComponent('P'+PageNo+'_D1');
+      FindCmp2:=FindComponent('P'+PageNo+'_D2');
+      if (FindCmp1<>nil) and (FindCmp2<>nil) and (FindCmp1 is TcxDateEdit) and (FindCmp2 is TcxDateEdit) and
+         (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
+        TitleList.add('销售日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
+      if trim(fndP5_CREA_USER.Text)<>'' then
+        TitleList.add('收银员：'+trim(fndP5_CREA_USER.Text));
+      {if fndP5_POSMAIN.Checked then
+        TitleList.add('单据类型：'+trim(fndP5_POSMAIN.Caption))
+      else if fndP5_SALEORDER.Checked then
+        TitleList.add('单据类型：'+trim(fndP5_SALEORDER.Caption))
+      else if fndP5_SALRETU.Checked then
+        TitleList.add('单据类型：'+trim(fndP5_SALRETU.Caption));}
+    end;
+  end;
   inherited AddReportReport(TitleList,PageNo);
 end;
 

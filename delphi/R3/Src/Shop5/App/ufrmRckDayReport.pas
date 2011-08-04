@@ -143,7 +143,7 @@ type
     SortName: string; //临时变量
     sid5:string;
     srid5:string;
-
+    procedure SetUnitIDList(DBGrid: TDBGridEh; ColName: string);
     //计算日台账:
     procedure CheckCalc(EndDate: integer); //开始月份| 结束月份
     //按管理收款汇总表
@@ -196,6 +196,9 @@ begin
 
   SetRzPageActivePage; //设置PzPage.Activepage
   fndP5_CREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+
+  //增加单位显示：
+  SetUnitIDList(DBGridEh5,'UNIT_ID');
 
   InitGrid;
   RefreshColumn;
@@ -850,6 +853,26 @@ begin
   fndP5_CREA_USER.Text := adoReport4.FieldByName('USER_NAME').AsString;
   RzPage.ActivePageIndex := 4;
   actFindExecute(nil);
+end;
+
+procedure TfrmRckDayReport.SetUnitIDList(DBGrid: TDBGridEh;
+  ColName: string);
+var
+  Rs: TZQuery;
+  SetCol: TColumnEh;
+begin
+  Rs:=Global.GetZQueryFromName('PUB_MEAUNITS');
+  SetCol:=FindColumn(DBGrid,ColName); 
+  if (Rs<>nil) and (Rs.Active) and (SetCol<>nil) then
+  begin
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      SetCol.KeyList.Add(Rs.fieldByName('UNIT_ID').AsString);
+      SetCol.PickList.Add(Rs.fieldByName('UNIT_NAME').AsString);
+      Rs.Next;
+    end;
+  end;
 end;
 
 end.

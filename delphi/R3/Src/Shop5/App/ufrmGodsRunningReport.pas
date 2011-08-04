@@ -471,10 +471,11 @@ begin
       Column.Width := 70;
       if ColIdx+1<=DBGridEh1.Columns.Count then
         Column.Index := ColIdx;
+      Column.Alignment:=taRightJustify;
       Column.DisplayFormat:='#0.###';
       Column.Footer.ValueType:=fvtNon;
+      Column.Footer.DisplayFormat:='#0.###';
       Column.Footer.Alignment:=taRightJustify;
-      Column.Alignment:=taRightJustify;
 
       Column:=FindColumn(DBGridEh1,'OUT_AMT');
       ColIdx:=Column.Index;
@@ -484,10 +485,11 @@ begin
       Column.Width := 70;
       if ColIdx+1<=DBGridEh1.Columns.Count then
         Column.Index := ColIdx+1;
+      Column.Alignment:=taRightJustify;
       Column.DisplayFormat:='#0.###';
       Column.Footer.ValueType:=fvtNon;
-      Column.Footer.Alignment:=taRightJustify;      
-      Column.Alignment:=taRightJustify;
+      Column.Footer.DisplayFormat:='#0.###';
+      Column.Footer.Alignment:=taRightJustify;
     finally
        DBGridEh1.Columns.EndUpdate;
     end;

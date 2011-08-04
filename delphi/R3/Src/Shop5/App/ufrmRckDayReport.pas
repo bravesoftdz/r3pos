@@ -216,6 +216,12 @@ begin
     fndP4_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
     fndP4_SHOP_ID.Properties.ReadOnly := True;
+
+    fndP5_SHOP_ID.Properties.ReadOnly := False;
+    fndP5_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP5_SHOP_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
+    fndP5_SHOP_ID.Properties.ReadOnly := True;
   end;
 
   if ShopGlobal.GetProdFlag = 'E' then
@@ -228,6 +234,9 @@ begin
 
       Label12.Caption := '仓库群组';
       Label3.Caption := '仓库名称';
+
+      Label28.Caption := '仓库群组';
+      Label17.Caption := '仓库名称';
     end;
 
 end;

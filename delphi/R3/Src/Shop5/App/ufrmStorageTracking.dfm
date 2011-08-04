@@ -1,6 +1,6 @@
 inherited frmStorageTracking: TfrmStorageTracking
-  Left = 189
-  Top = 131
+  Left = 29
+  Top = 171
   Width = 934
   Height = 604
   Caption = #21830#21697#24211#23384

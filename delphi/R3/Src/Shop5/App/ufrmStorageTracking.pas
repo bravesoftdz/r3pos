@@ -338,16 +338,21 @@ begin
   AddGoodTypeItems(edtP2_Goods_Type);
   AddGoodTypeItems(edtP3_Goods_Type);
   InitGrid;
-  if ShopGlobal.GetVersionFlag <> 1 then
-    begin
-      Grid.Columns.Items[7].free;
-      Grid.Columns.Items[6].free;
-    end;
+  
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
        Grid.Columns[13].Free;
        Grid.Columns[12].Free;
+       DBGridEh1.Columns[15].Free;
+       DBGridEh1.Columns[14].Free;
      end;
+
+  if ShopGlobal.GetVersionFlag <> 1 then
+     begin
+       Grid.Columns.Items[7].free;
+       Grid.Columns.Items[6].free;
+     end;
+     
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     edtSHOP_ID.Properties.ReadOnly := False;

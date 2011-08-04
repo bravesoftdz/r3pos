@@ -329,6 +329,7 @@ begin
       WaitForSingleObject(FhEvent, 5000);
       ResetEvent(FhEvent);
       if Stoped then continue;
+      if PlugInList.Count=0 then continue;
       if PlugIn=nil then
          begin
            if n>(PlugInList.Count-1) then n := 0;

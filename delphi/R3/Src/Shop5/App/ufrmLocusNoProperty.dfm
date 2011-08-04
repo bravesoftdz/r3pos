@@ -31,7 +31,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             Width = 327
             Height = 264
             Align = alClient
-            AllowedOperations = [alopUpdateEh]
+            AllowedOperations = []
             AutoFitColWidths = True
             DataSource = DataSource1
             Flat = True
@@ -68,6 +68,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
                 EditButtons = <>
                 FieldName = 'SEQNO'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #24207#21495
                 Width = 31
               end
@@ -85,6 +86,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
                 EditButtons = <>
                 FieldName = 'UNIT_ID'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #21333#20301
                 Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
                 Width = 26
@@ -93,6 +95,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
                 EditButtons = <>
                 FieldName = 'AMOUNT'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #25968#37327
                 Width = 40
               end>

@@ -462,7 +462,6 @@ type
 
 var
   frmR3Main: TfrmR3Main;
-
 implementation
 uses
   uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmR3Desk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
@@ -481,6 +480,13 @@ uses
   
 {$R *.dfm}
 
+function CheckXsmPassWord(uid, pwd: string): boolean;
+begin
+  xsm_username := uid;
+  xsm_password := pwd;
+  result := frmXsmIEBrowser.XsmLogin(true);
+end;
+
 procedure TfrmR3Main.FormActivate(Sender: TObject);
 begin
   inherited;
@@ -495,6 +501,7 @@ begin
   inherited;
   frmXsmIEBrowser := nil;
   frmRimIEBrowser := nil;
+  XsmCheckPassWord := CheckXsmPassWord;
   IsXsm := false;
   FormBgk := true;
   LoadPic32;
@@ -4050,7 +4057,6 @@ begin
      begin
        frmLogo.ShowTitle := '正在初始化新商盟...';
        frmLogo.Show;
-       //Application.CreateForm(TfrmXsmIEBrowser, frmXsmIEBrowser);
        while true do
        begin
          if TfrmXsmLogin.XsmRegister then
@@ -4058,12 +4064,6 @@ begin
               Chk := CaFactory.DesEncode(xsm_username,CaFactory.pubpwd);
               CaFactory.coLogin(xsm_username,chk,2);
               InitXsm;
-              //frmXsmIEBrowser.DoInit;
-              //if not frmXsmIEBrowser.ready then
-              //   begin
-              //     MessageBox(Handle,'初始化新商盟环境失败，退出软件后请重试','友情提示...',MB_OK+MB_ICONINFORMATION);
-              //     Exit;
-              //   end;
               if frmXsmIEBrowser.XsmLogin(true) then break;
             end
          else
@@ -4085,6 +4085,7 @@ begin
      end
   else
      begin
+       if not Logined then Raise Exception.Create('首次注册必须使用在线模式...'); 
        if Network then
        begin
          try
@@ -4105,7 +4106,6 @@ begin
      else
        begin
          InitXsm;
-         //Application.CreateForm(TfrmXsmIEBrowser, frmXsmIEBrowser);
        end;
      end;
  InitRim;

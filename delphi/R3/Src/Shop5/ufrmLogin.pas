@@ -19,7 +19,9 @@ type
     AccountName:string;
     RemoteConnnect:boolean;
   end;
+
 type
+  TXsmCheckPassWord=function(uid,pwd:string):boolean;
   TfrmLogin = class(TfrmBasic)
     imgLogin: TImage;
     cxBtnOk: TRzBitBtn;
@@ -60,9 +62,10 @@ type
     property SysID:TGuid read FSysID write SetSysID;
     { Public declarations }
   end;
-
+var
+  XsmCheckPassWord:TXsmCheckPassWord;
 implementation
-uses uCaFactory,ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
+uses uCaFactory,ObjCommon,ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
 {$R *.dfm}
 
 { TfrmLogin }
@@ -119,9 +122,9 @@ begin
   temp := TZQuery.Create(nil);
   try
      if not cxedtUsers.Enabled then
-        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.USER_ID='''+Global.UserID+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID)
+        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.USER_ID='''+Global.UserID+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID)
      else
-        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID);
+        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID);
      Factor.Open(temp);
      if temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
      if cxedtUsers.Text='system' then
@@ -134,11 +137,26 @@ begin
         end
      else
         begin
-           if UpperCase(cxedtPasswrd.Text) <> UpperCase(DecStr(temp.FieldbyName('PASS_WRD').AsString,ENC_KEY)) then
-              begin
+          if UpperCase(cxedtPasswrd.Text) <> UpperCase(DecStr(temp.FieldbyName('PASS_WRD').AsString,ENC_KEY)) then
+             begin
                 cxedtPasswrd.SetFocus;
-                Raise Exception.Create('输入的密码无效,请重新输入。');
-              end;
+                if (temp.FieldbyName('ROLE_IDS').AsString='xsm') and Assigned(XsmCheckPassWord) then
+                   begin
+                     if CaFactory.Audited then
+                        begin
+                          if XsmCheckPassWord(temp.FieldbyName('ACCOUNT').asString,cxedtPasswrd.Text) then
+                             begin
+                               Factor.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(cxedtPasswrd.Text,ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+temp.FieldbyName('SHOP_ID').asString+'''');
+                             end
+                          else
+                             Raise Exception.Create('输入的密码无效,请重新输入。');
+                        end
+                     else
+                        Raise Exception.Create('输入的密码无效,请使用在线模式重试。');
+                   end
+                else
+                   Raise Exception.Create('输入的密码无效,请重新输入。');
+             end;
         end;
      FLoginParam.UserID := temp.FieldbyName('USER_ID').asString;
      FLoginParam.ShopId := temp.FieldbyName('SHOP_ID').asString;
@@ -412,4 +430,8 @@ begin
   if Key=#13 then cxBtnOk.OnClick(cxBtnOk);
 end;
 
+initialization
+  XsmCheckPassWord := nil;
+finalization
+  XsmCheckPassWord := nil;
 end.

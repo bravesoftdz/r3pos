@@ -55,7 +55,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar; var Data:oleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data:oleVariant;dbResoler:integer):Integer; stdcall;
 var
   OrderFactory: TOrderDownSyncFactory;
 begin
@@ -64,6 +64,7 @@ begin
   try
     try
       OrderFactory:=TOrderDownSyncFactory.Create;
+      OrderFactory.dbResoler := dbResoler;
       OrderFactory.CallSyncData(GPlugIn,StrPas(Params));
       if not  OrderFactory.HasError then
         result:=0

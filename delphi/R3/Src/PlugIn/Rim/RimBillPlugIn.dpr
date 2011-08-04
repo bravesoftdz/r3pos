@@ -55,7 +55,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data: oleVariant; dbResoler:integer):Integer; stdcall;
 var
   BillFactory: TBillSyncFactory;
 begin
@@ -64,6 +64,7 @@ begin
   try
     try
       BillFactory:=TBillSyncFactory.Create;
+      BillFactory.dbResoler := dbResoler;
       BillFactory.CallSyncData(GPlugIn,StrPas(Params));
       if not BillFactory.HasError then //运行正常
         result:=0

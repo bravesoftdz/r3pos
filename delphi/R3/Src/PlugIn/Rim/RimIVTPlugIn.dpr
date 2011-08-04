@@ -51,7 +51,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data: oleVariant;dbResoler:integer):Integer; stdcall;
 var
   IVTFactory: TIVTSyncFactory;
 begin
@@ -60,6 +60,7 @@ begin
   try
     try
       IVTFactory:=TIVTSyncFactory.Create;
+      IVTFactory.dbResoler := dbResoler;
       IVTFactory.CallSyncData(GPlugIn,StrPas(Params));
       if not IVTFactory.HasError then //运行正常：
         result:=0

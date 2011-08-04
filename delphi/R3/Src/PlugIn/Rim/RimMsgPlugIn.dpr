@@ -42,7 +42,7 @@ begin
 end;
 //RSP调用插件时执行此方法
 //由R3程序调用，只同步本门店的
-function DoExecute(Params:Pchar;var Data:OleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar;var Data:OleVariant;dbResoler:integer):Integer; stdcall;
 //tid 企业号
 //sid 门店号
 procedure SyncMessage(tid,sid:string);
@@ -55,13 +55,13 @@ begin
   rs:=TZQuery.Create(nil);
   try
       rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+tid+' and B.SHOP_ID='''+sid+''' ';
-      if OpenData(GPlugIn, rs) then
+      if OpenData(GPlugIn, rs,dbResoler) then
       begin
         ComID:=trim(rs.fieldbyName('COM_ID').AsString);
         CustID:=trim(rs.fieldbyName('CUST_ID').AsString);
       end;
       if rs.IsEmpty then Raise Exception.Create('在RIM中没找到此客户');
-      GPlugIn.iDbType(iDbType);
+      GPlugIn.iDbType(iDbType,dbResoler);
       rs.Close;
       case iDbType of
       4:rs.SQL.Text :=
@@ -83,18 +83,18 @@ begin
          'and STATUS=''02'' and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and invalid_date>='''+formatDatetime('YYYYMMDD',Date())+''' '+
          'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+sid+''' and B.TENANT_ID='+tid+' and B.COMM_ID=A.MSG_ID)';
       end;
-      OpenData(GPlugIn, rs);
+      OpenData(GPlugIn, rs,dbResoler);
       rs.First;                                  
       while not rs.Eof do
       begin
-        if GPlugIn.BeginTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+        if GPlugIn.BeginTrans(dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
         try
-          GPlugIn.iDbType(iDbType);
+          GPlugIn.iDbType(iDbType,dbResoler);
           mid := newid(sid);
           str :=
            'insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,MSG_FEEDBACK_STATUS,MSG_READ_STATUS,COMM,TIME_STAMP) '+
            'values('+tid+','''+mid+''','''+sid+''',1,1,''00'','+GetTimeStamp(iDbType)+')';
-          if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+          if GPlugIn.ExecSQL(pchar(str),r,dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
           if rs.Fields[1].asString='01' then
              s := '促销信息'
           else
@@ -122,10 +122,10 @@ begin
            'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
            'select '+tid+','''+mid+''',''0'',to_number(USE_DATE),'+tid+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(iDbType)+' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
           end;
-          if GPlugIn.ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
-          if GPlugIn.CommitTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+          if GPlugIn.ExecSQL(pchar(str),r,dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+          if GPlugIn.CommitTrans(dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
         except
-          if GPlugIn.RollbackTrans<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+          if GPlugIn.RollbackTrans(dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
           Raise
         end;
       rs.Next;

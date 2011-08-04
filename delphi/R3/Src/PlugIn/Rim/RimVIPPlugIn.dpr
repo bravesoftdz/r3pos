@@ -47,7 +47,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data: oleVariant;dbResoler:integer):Integer; stdcall;
 var
   VipFactory: TVipSyncFactory;
 begin
@@ -56,6 +56,7 @@ begin
   try
     try
       VipFactory:=TVipSyncFactory.Create;
+      VipFactory.dbResoler := dbResoler;
       VipFactory.CallSyncData(GPlugIn,StrPas(Params));
       if not VipFactory.HasError then //运行正常：
         result:=0

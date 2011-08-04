@@ -56,7 +56,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data: oleVariant;dbResoler:integer):Integer; stdcall;
 var
   SalesFactory: TSalesTotalSyncFactory;
 begin
@@ -65,6 +65,7 @@ begin
   try
     try                                 
       SalesFactory:=TSalesTotalSyncFactory.Create;
+      SalesFactory.dbResoler := dbResoler;
       SalesFactory.CallSyncData(GPlugIn,StrPas(Params));
       if not SalesFactory.HasError then //运行正常：
         result:=0

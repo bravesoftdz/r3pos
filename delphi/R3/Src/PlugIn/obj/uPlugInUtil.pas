@@ -22,31 +22,26 @@ const
 type
   IPlugIn = Interface(IUnknown)
     ['{34E06C0E-34E5-4BB8-A10F-3F1ECB983AD8}']
-    
     //设置当前插件参数,指定连锁ID号
     function SetParams(DbID:integer):integer; stdcall;
     //读取执行出错信息说明
     function GetLastError:Pchar; stdcall;
-
     //开始事务, 超时设置 单位秒
-    function BeginTrans(TimeOut:integer=-1):integer; stdcall;
+    function BeginTrans(TimeOut:integer=-1;dbResoler:integer=0):integer; stdcall;
     //提交事务
-    function CommitTrans:integer; stdcall;
+    function CommitTrans(dbResoler:integer=0):integer; stdcall;
     //回滚事务
-    function RollbackTrans:integer; stdcall;
-
+    function RollbackTrans(dbResoler:integer=0):integer; stdcall;
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
-    function iDbType(var dbType:integer):integer; stdcall;
-
+    function iDbType(var dbType:integer;dbResoler:integer=0):integer; stdcall;
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;var Data:OleVariant):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0):integer;stdcall;
     //提交数据集
-    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar):integer;stdcall;
+    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0):integer;stdcall;
     //返回执行影响记录数
-    function ExecSQL(SQL:Pchar;var iRet:integer):integer;stdcall;
-
+    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0):integer;stdcall;
     //锁定连接
-    function DbLock(Locked:boolean):integer;stdcall;
+    function DbLock(Locked:boolean;dbResoler:integer=0):integer;stdcall;
     //日志服务
     function WriteLogFile(s:Pchar):integer;stdcall;
   end;
@@ -70,18 +65,18 @@ type
     ErrorStr: string;     //运行错误Str
   end;
 
-function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string; var UpMaxStmp: string): string; //2011.04.14 获取上报最大编号(MaxNum)
-function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string): string;  //2011.05.25 获取Rim零售户IDCust_ID
-function GetRimOrgan_ID(PlugIntf:IPlugIn; R3_TENANT_ID: string): string;  //2011.05.25 获取Rim烟草公司ORGANID(COM_ID)
-function GetR3ReportShopList(PlugIntf:IPlugIn; ShopList: TZQuery; InParams: string): Boolean;
+function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string; var UpMaxStmp: string;dbResoler:integer): string; //2011.04.14 获取上报最大编号(MaxNum)
+function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string;dbResoler:integer): string;  //2011.05.25 获取Rim零售户IDCust_ID
+function GetRimOrgan_ID(PlugIntf:IPlugIn; R3_TENANT_ID: string;dbResoler:integer): string;  //2011.05.25 获取Rim烟草公司ORGANID(COM_ID)
+function GetR3ReportShopList(PlugIntf:IPlugIn; ShopList: TZQuery; InParams: string;dbResoler:integer): Boolean;
 
 //插件常用函数
 function NewId(id:string=''): string; //获取GUID
-function OpenData(GPlugIn: IPlugIn; Qry: TZQuery): Boolean;    //查询数据
-function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string=''): string; //返回某个字段值
+function OpenData(GPlugIn: IPlugIn; Qry: TZQuery;dbResoler:integer): Boolean;    //查询数据
+function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string='';dbResoler:integer=0): string; //返回某个字段值
 function WriteToRIM_BAL_LOG(PlugIntf:IPlugIn; LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean; //返回插入语句执行返回值;
 function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
-procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);  //锁定数据连接
+procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean;dbResoler:integer);  //锁定数据连接
 function ParseSQL(iDbType:integer;SQL:string):string;
 function GetTimeStamp(iDbType:Integer):string;
 
@@ -94,14 +89,14 @@ implementation
 
 
 //2011.05.25 获取Rim零售户IDCust_ID
-function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string): string;
+function GetRimCust_ID(PlugIntf:IPlugIn; Rim_ORGAN_ID,LICENSE_CODE: string;dbResoler:integer): string;
 var
   Rs: TZQuery;
 begin
   try
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:='select CUST_ID from RM_CUST where COM_ID='''+Rim_ORGAN_ID+''' and LICENSE_CODE='''+LICENSE_CODE+'''';
-    if OpenData(PlugIntf,Rs) then
+    if OpenData(PlugIntf,Rs,dbResoler) then
       result:=trim(Rs.Fields[0].AsString);
   finally
     Rs.Free;
@@ -110,21 +105,21 @@ end;
 
 
 //2011.05.25 获取Rim烟草公司ORGANID(COM_ID)
-function GetRimOrgan_ID(PlugIntf:IPlugIn; R3_TENANT_ID: string): string;
+function GetRimOrgan_ID(PlugIntf:IPlugIn; R3_TENANT_ID: string;dbResoler:integer): string;
 var
   Rs: TZQuery;
 begin
   try
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:='select A.ORGAN_ID from PUB_ORGAN A,CA_TENANT B where B.LOGIN_NAME=A.ORGAN_CODE and B.TENANT_ID='+R3_TENANT_ID+' ';
-    if OpenData(PlugIntf,Rs) then
+    if OpenData(PlugIntf,Rs,dbResoler) then
       result:=trim(Rs.Fields[0].AsString);
   finally
     Rs.Free;
   end;
 end;
 
-function GetR3ReportShopList(PlugIntf:IPlugIn; ShopList: TZQuery; InParams: string): Boolean;
+function GetR3ReportShopList(PlugIntf:IPlugIn; ShopList: TZQuery; InParams: string;dbResoler:integer): Boolean;
 var
   Str: string;
   IsFlag: Boolean;
@@ -152,14 +147,14 @@ begin
     
     ShopList.Close;
     ShopList.SQL.Text:=Str;
-    result:=OpenData(PlugIntf, ShopList); 
+    result:=OpenData(PlugIntf, ShopList,dbResoler); 
   finally
     vParam.Free;
   end;  
 end;
 
 //2011.04.14 获取上报最大编号(MaxNum)
-function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string; var UpMaxStmp: string): string;
+function GetMaxNUM(PlugIntf:IPlugIn; BillType,SHOP_ID,ORGAN_ID,CustID: string; var UpMaxStmp: string;dbResoler:integer): string;
 var
   iRet,DBType: integer;
   Str: string;
@@ -167,10 +162,10 @@ var
 begin
   result:='';
   try
-    if PlugIntf.iDbType(DBType)<>0 then Raise Exception.Create('返回数据库类型出错：'+PlugIntf.GetLastError);
+    if PlugIntf.iDbType(DBType,dbResoler)<>0 then Raise Exception.Create('返回数据库类型出错：'+PlugIntf.GetLastError);
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:='select MAX_NUM,'+GetTimeStamp(DBType)+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+ORGAN_ID+''' and CUST_ID='''+CustID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+'''';
-    if OpenData(PlugIntf, Rs) then
+    if OpenData(PlugIntf, Rs,dbResoler) then
     begin
       result:=trim(Rs.Fields[0].AsString);
       UpMaxStmp:=trim(Rs.Fields[1].AsString);
@@ -179,7 +174,7 @@ begin
     if Rs.IsEmpty then
     begin
       str:='insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values ('''+ORGAN_ID+''','''+CustID+''','''+BillType+''','''+SHOP_ID+''',''0'')';
-      if PlugIntf.ExecSQL(Pchar(str),iRet)<>0 then
+      if PlugIntf.ExecSQL(Pchar(str),iRet,dbResoler)<>0 then
         Raise Exception.Create('RIM_R3_NUM执行插入初值错误！（'+str+'）');
     end;
   finally
@@ -236,7 +231,7 @@ begin
          ' else 1.0 end ';                                                        //都不是则默认为换算为1;
 end;
 
-function OpenData(GPlugIn: IPlugIn; Qry: TZQuery): Boolean;
+function OpenData(GPlugIn: IPlugIn; Qry: TZQuery;dbResoler:integer): Boolean;
 var
   ReRun: integer;
   vData: OleVariant;
@@ -257,7 +252,7 @@ begin
 end;
 
 //返回某个字段值
-function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string=''): string;
+function GetValue(GPlugIn: IPlugIn; SQL: string; FieldName: string='';dbResoler:integer=0): string;
 var
   FName: string;
   Rs: TZQuery;
@@ -267,7 +262,7 @@ begin
     FName:=trim(FieldName);
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:=SQL;
-    OpenData(GPlugIn, Rs);
+    OpenData(GPlugIn, Rs,dbResoler);
     if Rs.Active then
     begin
       if FName<>'' then
@@ -281,9 +276,9 @@ begin
 end;
 
 //锁定（解锁）数据库连接
-procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean);
+procedure DBLock(GPlugIn: IPlugIn; Locked: Boolean;dbResoler:integer);
 begin
-  if GPlugIn.DbLock(Locked)<>0 then Raise Exception.Create(GPlugIn.GetLastError); //缩定连接
+  if GPlugIn.DbLock(Locked,dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError); //缩定连接
 end;
 
 function ParseSQL(iDbType:integer;SQL:string):string;

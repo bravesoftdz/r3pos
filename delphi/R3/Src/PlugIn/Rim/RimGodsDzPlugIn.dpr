@@ -57,7 +57,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data: oleVariant;dbResoler:integer):Integer; stdcall;
 var
   DzFactory: TGodsDzSyncFactory;
 begin
@@ -66,6 +66,7 @@ begin
   try
     try
       DzFactory:=TGodsDzSyncFactory.Create;
+      DzFactory.dbResoler := dbResoler;
       DzFactory.CallSyncData(GPlugIn,StrPas(Params));
       if not DzFactory.HasError then
         result:=0

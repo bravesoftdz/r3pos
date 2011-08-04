@@ -59,21 +59,21 @@ type
     //读取执行出错信息说明
     function GetLastError:Pchar; stdcall;
     //开始事务, 超时设置 单位秒
-    function BeginTrans(TimeOut:integer=-1):integer; stdcall;
+    function BeginTrans(TimeOut:integer=-1;dbResoler:integer=0):integer; stdcall;
     //提交事务
-    function CommitTrans:integer; stdcall;
+    function CommitTrans(dbResoler:integer=0):integer; stdcall;
     //回滚事务
-    function RollbackTrans:integer; stdcall;
+    function RollbackTrans(dbResoler:integer=0):integer; stdcall;
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
-    function iDbType(var dbType:integer):integer; stdcall; 
+    function iDbType(var dbType:integer;dbResoler:integer=0):integer; stdcall;
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;var Data:OleVariant):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0):integer;stdcall;
     //提交数据集
-    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar):integer;stdcall;
+    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0):integer;stdcall;
     //返回执行影响记录数
-    function ExecSQL(SQL:Pchar;var iRet:integer):integer;stdcall;
+    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0):integer;stdcall;
     //锁定连接
-    function DbLock(Locked:boolean):integer;stdcall;
+    function DbLock(Locked:boolean;dbResoler:integer=0):integer;stdcall;
     //日志服务
     function WriteLogFile(s:Pchar):integer;stdcall;
   end;
@@ -121,6 +121,7 @@ type
     FKeepLogDay: integer;
     FLogKind: integer;
     FPlugInID: string;
+    FdbResoler: Integer;
     procedure SetPlugIntf(const Value: IPlugIn);
     procedure SetParams(const Value: TftParamList);
     procedure SetDbType(const Value: Integer);
@@ -131,6 +132,7 @@ type
     procedure SetKeepLogDay(const Value: integer);
     procedure SetLogKind(const Value: integer);
     procedure SetPlugInID(const Value: string);
+    procedure SetdbResoler(const Value: Integer);
   public
     FRunInfo: TRunInfo; //日志信息
     constructor Create; virtual;
@@ -152,7 +154,7 @@ type
     class function newId(id:string=''): string; //获取GUID
     class function newRandomId: string;        //返回时间+随机编号ID
     class function GetTickTime: string;   //返回当前时间
-    class function OpenData(GPlugIn: IPlugIn; Qry: TZQuery):Boolean;  //取数据（暂时兼容以前使用）
+    class function OpenData(GPlugIn: IPlugIn; Qry: TZQuery;dbResoler:integer):Boolean;  //取数据（暂时兼容以前使用）
     class function GetCommStr(iDbType:integer;alias:string=''):string;
     class function GetUpCommStr(iDbType:integer;alias:string=''):string;
     class function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
@@ -175,6 +177,7 @@ type
     property HasError: boolean read FHasError write SetHasError;   //插件运行是否错误
     property ErrorMsg: string read FErrorMsg write SetErrorMsg;    //插件运行第一错误消息
     property TWO_PHASE_COMMIT: Boolean read FTWO_PHASE_COMMIT write SetTWO_PHASE_COMMIT; //是否启用分布式事务[默认启用事务] [0:不启用]
+    property dbResoler:Integer read FdbResoler write SetdbResoler;
   end;
 
 
@@ -544,7 +547,7 @@ begin
   begin
     try
       TZQuery(DataSet).Close;
-      ReRun:=PlugIntf.Open(Pchar(TZQuery(DataSet).SQL.Text),vData);
+      ReRun:=PlugIntf.Open(Pchar(TZQuery(DataSet).SQL.Text),vData,dbResoler);
       if ReRun<>0 then Raise Exception.Create(PlugIntf.GetLastError);
       TZQuery(DataSet).Data:=vData;
       Result:=TZQuery(DataSet).Active;
@@ -582,21 +585,21 @@ end;
 function TBaseSyncFactory.BeginTrans(TimeOut: integer): Boolean;
 begin
   result:=false;
-  if PlugIntf.BeginTrans(TimeOut)<>0 then Raise Exception.Create('启动事务：'+PlugIntf.GetLastError);
+  if PlugIntf.BeginTrans(TimeOut,dbResoler)<>0 then Raise Exception.Create('启动事务：'+PlugIntf.GetLastError);
   result:=true;
 end;
 
 function TBaseSyncFactory.CommitTrans: Boolean;
 begin
   result:=false;
-  if PlugIntf.CommitTrans<>0 then Raise Exception.Create('提交事务：'+PlugIntf.GetLastError);
+  if PlugIntf.CommitTrans(dbResoler)<>0 then Raise Exception.Create('提交事务：'+PlugIntf.GetLastError);
   result:=true;
 end;
 
 function TBaseSyncFactory.RollbackTrans: Boolean;
 begin
   result:=false;
-  if PlugIntf.RollbackTrans<>0 then Raise Exception.Create('回滚事务：'+PlugIntf.GetLastError);
+  if PlugIntf.RollbackTrans(dbResoler)<>0 then Raise Exception.Create('回滚事务：'+PlugIntf.GetLastError);
   result:=true;
 end;
 
@@ -631,7 +634,7 @@ begin
   result:=FormatFloat('00',Hour)+':'+FormatFloat('00',Min)+':'+FormatFloat('00',Sec)+':'+FormatFloat('00',MSec);
 end;
 
-class function TBaseSyncFactory.OpenData(GPlugIn: IPlugIn; Qry: TZQuery): Boolean;
+class function TBaseSyncFactory.OpenData(GPlugIn: IPlugIn; Qry: TZQuery;dbResoler:integer): Boolean;
 var
   ReRun: integer;
   vData: OleVariant;
@@ -639,7 +642,7 @@ begin
   result:=False;
   try
     Qry.Close;
-    ReRun:=GPlugIn.Open(Pchar(Qry.SQL.Text),vData);
+    ReRun:=GPlugIn.Open(Pchar(Qry.SQL.Text),vData,dbResoler);
     if ReRun<>0 then Raise Exception.Create(GPlugIn.GetLastError);
     Qry.Data:=vData;
     Result:=Qry.Active;
@@ -727,6 +730,11 @@ end;
 procedure TBaseSyncFactory.SetPlugInID(const Value: string);
 begin
   FPlugInID := Value;
+end;
+
+procedure TBaseSyncFactory.SetdbResoler(const Value: Integer);
+begin
+  FdbResoler := Value;
 end;
 
 end.

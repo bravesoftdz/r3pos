@@ -60,7 +60,7 @@ begin
 end;
 
 //RSP调用插件时执行此方法
-function DoExecute(Params:Pchar; var Data: oleVariant):Integer; stdcall;
+function DoExecute(Params:Pchar; var Data: oleVariant;dbResoler:integer):Integer; stdcall;
 var
   StorageFactory: TStorageSyncFactory;
 begin
@@ -69,6 +69,7 @@ begin
   try
     try
       StorageFactory:=TStorageSyncFactory.Create;
+      StorageFactory.dbResoler := dbResoler;
       //上报库存
       StorageFactory.CallSyncData(GPlugIn, StrPas(Params));
       if not StorageFactory.HasError then //运行正常

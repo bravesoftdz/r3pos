@@ -102,8 +102,8 @@ var
   ShopGlobal: TShopGlobal;
   //跟Rim通讯参数
   Rim_Url:string;
-  Rim_ComId:string = 'LZ0000000000001';
-  Rim_CustId:string = 'GX00000004392';
+  Rim_ComId:string;
+  Rim_CustId:string;
   //跟新商蝟通读参数
   xsm_url:string;
   xsm_center:string;

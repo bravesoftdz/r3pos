@@ -73,6 +73,41 @@ type
     adoReport4: TZQuery;
     fndP4_SHOP_ID: TzrComboBoxList;
     fndP3_SHOP_ID: TzrComboBoxList;
+    TabSheet5: TRzTabSheet;
+    RzPanel16: TRzPanel;
+    Panel7: TPanel;
+    RzPanel17: TRzPanel;
+    RzLabel10: TRzLabel;
+    RzLabel11: TRzLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label22: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    Label37: TLabel;
+    Label44: TLabel;
+    Label45: TLabel;
+    P5_D1: TcxDateEdit;
+    BtnDetail: TRzBitBtn;
+    P5_D2: TcxDateEdit;
+    fndP5_TYPE_ID: TcxComboBox;
+    fndP5_STAT_ID: TzrComboBoxList;
+    fndP5_SORT_ID: TcxButtonEdit;
+    fndP5_SHOP_VALUE: TzrComboBoxList;
+    fndP5_SHOP_TYPE: TcxComboBox;
+    fndP5_SHOP_ID: TzrComboBoxList;
+    RzGB: TRzGroupBox;
+    fndP5_ALL: TcxRadioButton;
+    fndP5_SALEORDER: TcxRadioButton;
+    fndP5_POSMAIN: TcxRadioButton;
+    fndP5_SALRETU: TcxRadioButton;
+    fndP5_DEPT_ID: TzrComboBoxList;
+    fndP5_CREA_USER: TzrComboBoxList;
+    fndP5_SALES_TYPE: TcxComboBox;
+    RzPanel18: TRzPanel;
+    DBGridEh5: TDBGridEh;
+    adoReport5: TZQuery;
+    dsadoReport5: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -95,8 +130,20 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure fndP5_SORT_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure fndP5_SORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+    procedure DBGridEh4DblClick(Sender: TObject);
   private
     IsOnDblClick: Boolean;  //是双击DBGridEh标记位
+    SortName: string; //临时变量
+    sid5:string;
+    srid5:string;
+
     //计算日台账:
     procedure CheckCalc(EndDate: integer); //开始月份| 结束月份
     //按管理收款汇总表
@@ -107,6 +154,7 @@ type
     function GetSortSQL(chk:boolean=true): string;
     //按商品收款汇总表
     function GetGodsSQL(chk:boolean=true): string;
+    function GetGlideSQL(chk:boolean=true): string;
 
     //输入查询条件最大值日期，返回台帐表的最大结帐日期
     function GetRckMaxDate(EndDate: integer): Integer;
@@ -123,7 +171,7 @@ type
 
 implementation
 uses uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon,
-  ufrmCostCalc;
+  ufrmCostCalc, uframeToolForm;
 {$R *.dfm}
 
 procedure TfrmRckDayReport.FormCreate(Sender: TObject);
@@ -143,7 +191,11 @@ begin
   P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P4_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
 
+  P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));  
+
   SetRzPageActivePage; //设置PzPage.Activepage
+  fndP5_CREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
 
   InitGrid;
   RefreshColumn;
@@ -252,6 +304,14 @@ begin
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
+      end;
+    4: begin
+        if adoReport5.Active then adoReport5.Close;
+        //if Sender<>nil then self.GodsID:='';
+        strSql := GetGlideSQL;
+        if strSql='' then Exit;
+        adoReport5.SQL.Text := strSql;
+        Factor.Open(adoReport5);
       end;
   end;
 end;
@@ -612,6 +672,184 @@ procedure TfrmRckDayReport.DBGridEh4GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'USER_NAME' then Text := '合计:'+Text+'笔';   
+end;
+
+function TfrmRckDayReport.GetGlideSQL(chk: boolean): string;
+var
+  strSql,strWhere,GoodTab,SQLData: string;
+begin
+  if P5_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P5_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+
+  //过滤企业ID
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+
+  //销售类型:
+  if fndP5_SALES_TYPE.ItemIndex>0 then
+    strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP5_SALES_TYPE.Properties.Items.Objects[fndP5_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
+
+  //门店条件:
+  if fndP5_SHOP_ID.AsString<>'' then
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
+
+  //GodsID不为空：
+  //if trim(GodsID)<>'' then
+  //  strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
+
+  //月份日期:
+  if (P5_D1.Text<>'') and (P5_D1.Date=P5_D2.Date) then
+     strWhere:=strWhere+' and A.SALES_DATE='+FormatDatetime('YYYYMMDD',P5_D1.Date)
+  else if P5_D1.Date<P5_D2.Date then
+     strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P5_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P5_D2.Date)+' '
+  else
+    Raise Exception.Create('结束日期不能小于开始日期...');
+
+  //门店所属行政区域|门店类型:
+  if (fndP5_SHOP_VALUE.AsString<>'') then
+    begin
+      case fndP5_SHOP_TYPE.ItemIndex of
+        0:
+         begin
+           if FnString.TrimRight(trim(fndP5_SHOP_VALUE.AsString),2)='00' then //非末级区域
+             strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP5_SHOP_VALUE.AsString)+'%'' '
+           else
+             strWhere:=strWhere+' and B.REGION_ID='''+fndP5_SHOP_VALUE.AsString+''' ';
+         end;
+        1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
+      end;
+    end;
+
+  //商品指标:
+  if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
+     begin
+      case TRecord_(fndP5_TYPE_ID.Properties.Items.Objects[fndP5_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP5_STAT_ID.AsString+''' ';
+      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP5_STAT_ID.AsString+''' ';
+      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP5_STAT_ID.AsString+''' ';
+      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP5_STAT_ID.AsString+''' ';
+      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP5_STAT_ID.AsString+''' ';
+      end;
+     end;
+  //商品分类:
+  if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
+  begin
+    GoodTab:='VIW_GOODSPRICE_SORTEXT';
+    case Factor.iDbType of
+     4: strWhere:=strWhere+' and C.RELATION_ID='+srid5+' ';
+     else
+        strWhere:=strWhere+' and C.RELATION_ID='''+srid5+''' ';
+    end;
+    if trim(sid5)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid5+'%'' ';
+  end else
+    GoodTab:='VIW_GOODSPRICE';
+
+  //2011.05.11 Add 部门名称:
+  if trim(fndP5_DEPT_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';
+
+  //收银员
+  if Trim(fndP5_CREA_USER.Text) <> '' then
+    strWhere := strWhere + ' and A.CREA_USER='''+fndP5_CREA_USER.AsString+''' ';
+
+  if fndP5_SALEORDER.Checked then //销售单:1
+    strWhere := strWhere+' and SALES_TYPE=1 '
+  else if fndP5_POSMAIN.Checked then //零售单:4
+    strWhere := strWhere+' and SALES_TYPE=4 '
+  else if fndP5_SALRETU.Checked then //销售退货:3
+    strWhere := strWhere+' and SALES_TYPE=3 ';
+
+  SQLData := 'VIW_SALESDATA';
+
+  strSql :=
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GLIDE_NO '+
+    ',A.GODS_ID '+
+    ',A.BATCH_NO '+
+    ',A.LOCUS_NO '+
+    ',A.UNIT_ID '+
+    ',A.SALES_DATE '+
+    ',A.PROPERTY_01 '+
+    ',A.PROPERTY_02 '+
+    ',A.IS_PRESENT '+
+    ',A.CLIENT_ID '+
+    ',A.CREA_DATE '+
+    ',A.CREA_USER '+
+    ',A.SHOP_ID '+
+    ',A.GUIDE_USER '+
+    ',A.SALES_TYPE '+
+    ',A.AMOUNT '+
+    ',A.ORG_PRICE as APRICE '+   //销售时间成本价
+    ',A.CALC_MONEY as AMONEY '+ 
+    ',A.NOTAX_MONEY '+  //不含税
+    ',A.TAX_MONEY '+    //税项
+    ',A.AGIO_MONEY '+   //折扣金额
+    ',A.AGIO_RATE '+    //折扣率（让利率）
+    ',A.COST_MONEY '+   //销售成本
+    ',A.NOTAX_MONEY-A.COST_MONEY as PROFIT_MONEY'+  //毛利 = 不含税金额-销售成本
+    ',(case when A.NOTAX_MONEY<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/cast(A.NOTAX_MONEY as decimal(18,3)) else 0 end) as PROFIT_RATE '+  //不含税金额-销售成本
+    ',(case when A.NOTAX_MONEY*A.AMOUNT<>0 then cast(A.PRF_MONEY as decimal(18,3))*100.00/A.AMOUNT else 0 end) as AVG_PROFIT'+    //--单位毛利
+    ',B.SHOP_NAME '+
+    'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' ';
+
+  Result := ParseSQL(Factor.iDbType,
+    'select j.* '+
+    ',e.USER_NAME as CREA_USER_TEXT '+
+    ',d.USER_NAME as GUIDE_USER_TEXT '+
+    ',c.CLIENT_NAME as CLIENT_NAME '+
+    ',u.UNIT_NAME as UNIT_NAME '+
+    ',isnull(b.BARCODE,r.BARCODE) as BARCODE,r.GODS_CODE as GODS_CODE,r.GODS_NAME as GODS_NAME '+
+    'from ('+strSql+') j inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
+    ' inner join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+    ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
+    ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+    ' left outer join VIW_CUSTOMER c on j.TENANT_ID=c.TENANT_ID and j.CLIENT_ID=c.CLIENT_ID '+
+    ' left outer join VIW_USERS d on j.TENANT_ID=d.TENANT_ID and j.GUIDE_USER=d.USER_ID '+
+    ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '
+    );
+  result := result +  ' order by j.SALES_DATE,r.GODS_CODE';
+end;
+
+procedure TfrmRckDayReport.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmRckDayReport.fndP5_SORT_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  sid5 := '';
+  srid5 := '';
+  fndP5_SORT_ID.Text := '';
+end;
+
+procedure TfrmRckDayReport.fndP5_SORT_IDPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+begin
+  inherited;
+  if SelectGoodSortType(sid5,srid5,SortName) then
+    fndP5_SORT_ID.Text:=SortName;
+end;
+
+procedure TfrmRckDayReport.DBGridEh4DblClick(Sender: TObject);
+begin
+  inherited;
+  if adoReport4.IsEmpty then Exit;
+  P5_D1.Date := P4_D1.Date;
+  P5_D2.Date := P4_D2.Date;
+  Copy_ParamsValue('SHOP_TYPE',4,5); //管理群组
+  Copy_ParamsValue(fndP4_SHOP_ID,fndP5_SHOP_ID);  //门店名称
+  fndP5_CREA_USER.KeyValue := adoReport4.FieldByName('CREA_USER').AsString;
+  fndP5_CREA_USER.Text := adoReport4.FieldByName('USER_NAME').AsString;
+  RzPage.ActivePageIndex := 4;
+  actFindExecute(nil);
 end;
 
 end.

@@ -113,7 +113,7 @@ begin
   if fndP1_GODS_ID.AsString <>'' then strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
 
   //条形码（ 物流跟踪号|批号）:
-  FQryType:=GetQryType;
+  FQryType:=GetQryType; {0:条码头查询; 1:期初数量、结存数量}
   if trim(fndP1_BarCode.Text)<>'' then //条码不为空时
   begin
     case fndP1_BarType_ID.ItemIndex of
@@ -170,7 +170,7 @@ begin
      ',A.GODS_ID'+
      ',C.GODS_CODE as GODS_CODE'+
      ',C.GODS_NAME as GODS_NAME'+
-     ',C.BARCODE as DefBARCODE'+
+     ',C.BARCODE '+
      ',A.CLIENT_ID'+
      ',A.CREA_USER'+
      ',A.UNIT_ID'+
@@ -189,22 +189,37 @@ begin
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
      ' '+ strWhere + '  ';
 
-  //关联商品表：
-  strSql :=
-    'select '+
-    'isnull(i.BARCODE,j.DefBARCODE) as BARCODE'+
-    ',j.*'+
-    ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.0/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.0/OUT_AMT else AMONEY end) end) as APRICE'+
-    ',h.CLIENT_NAME as CLIENT_NAME'+
-    ',u.UNIT_NAME as UNIT_NAME'+
-    ',e.USER_NAME as CREA_USER_TXT from '+
-    ' ('+strSql+') j '+
-    ' left outer join ('+CLIENT_Tab+') h on j.CLIENT_ID=h.CLIENT_ID '+
-    ' inner join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) i '+
-    '  on j.TENANT_ID=i.TENANT_ID and j.GODS_ID=i.GODS_ID and j.PROPERTY_01=i.PROPERTY_01 and j.PROPERTY_02=i.PROPERTY_02 and j.UNIT_ID=i.UNIT_ID '+
-    ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-    ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
-    ' order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
+  case QryType of
+   0:  //保留原来查询
+    begin
+      //关联商品表：
+      strSql :=
+        'select '+
+        'isnull(i.BARCODE,j.BARCODE) as BARCODE'+
+        ',j.*'+
+        ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.0/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.0/OUT_AMT else AMONEY end) end) as APRICE'+
+        ',h.CLIENT_NAME as CLIENT_NAME'+
+        ',e.USER_NAME as CREA_USER_TXT from '+
+        ' ('+strSql+') j '+
+        ' left outer join ('+CLIENT_Tab+') h on j.CLIENT_ID=h.CLIENT_ID '+
+        ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) i '+
+        '  on j.TENANT_ID=i.TENANT_ID and j.GODS_ID=i.GODS_ID and j.PROPERTY_01=i.PROPERTY_01 and j.PROPERTY_02=i.PROPERTY_02 and j.UNIT_ID=i.UNIT_ID '+
+        ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
+        ' order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
+    end;
+   1: //有期初和期末查询
+    begin
+      strSql :=
+        'select j.*'+
+        ',(case when ORDER_TYPE in (11,12,13) then (case when IN_AMT<>0 then AMONEY*1.0/IN_AMT else AMONEY end) else (case when OUT_AMT<>0 then AMONEY*1.0/OUT_AMT else AMONEY end) end) as APRICE'+
+        ',h.CLIENT_NAME as CLIENT_NAME'+
+        ',e.USER_NAME as CREA_USER_TXT from '+
+        ' ('+strSql+') j '+
+        ' left outer join ('+CLIENT_Tab+') h on j.CLIENT_ID=h.CLIENT_ID '+
+        ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID '+
+        ' order by CREA_DATE,ORDER_TYPE,GLIDE_NO ';
+    end;
+  end;
 
   Result:= ParseSQL(Factor.iDbType, strSql);
 end;
@@ -368,82 +383,72 @@ var
   rs:TZQuery;
   UnitCalc: string; 
   Str,GodsID,ReckDate,MaxReckDate,Shop_Cnd: string;
-  Rck_SQL1,Rck_SQL2,RCK_DAYS_CLOSE: string;
 begin
   result:=False;
   FReckAmt:=0;
   FReckMny:=0;
   FBalAmt:=0;
+  MaxReckDate:='';
   GodsID:=trim(fndP1_GODS_ID.AsString);
   ReckDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1);
-  RCK_DAYS_CLOSE:='select Max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID);
-  if trim(fndP1_SHOP_ID.AsString)<>'' then
-  begin
-    Shop_Cnd:=' and A.SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
-    RCK_DAYS_CLOSE:=RCK_DAYS_CLOSE+' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
-  end;
   UnitCalc:='('+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'D')+')*1.0';
-  Rck_SQL1:='select A.CREA_DATE,sum(A.BAL_AMT/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C,VIW_GOODSINFO D '+
-            ' where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.CREA_DATE=C.CREA_DATE and A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
-            ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+ReckDate+' '+
-            ' group by A.CREA_DATE ';
-
-  Rck_SQL2:='select A.CREA_DATE,sum(A.BAL_AMT/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL from RCK_GOODS_DAYS A,('+RCK_DAYS_CLOSE+')C,VIW_GOODSINFO D '+
-            ' where A.CREA_DATE=C.CREA_DATE and A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
-            ' A.TENANT_ID='+InttoStr(Global.TENANT_ID)+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' '+
-            ' group by A.CREA_DATE';
-
-  //判断开始时间点是否已日结账：
-  Str:='select CREA_DATE,BAL_AMT,BAL_RTL from ('+Rck_SQL1+' union all '+Rck_SQL2+')tmp where CREA_DATE>0 ';
+  if trim(fndP1_SHOP_ID.AsString)<>'' then
+    Shop_Cnd:=' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
   rs := TZQuery.Create(nil);
   try
+    Str:='select Max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+Shop_Cnd;
+    rs.Close;
     rs.SQL.Text := ParseSQL(Factor.iDbType, Str);
     Factor.Open(rs);
-    if rs.Locate('CREA_DATE',ReckDate,[]) then  //定位到已日结账
+    if rs.Active then MaxReckDate:=trim(rs.fieldbyName('CREA_DATE').AsString);
+
+    if MaxReckDate='' then //未结账全部走视图:
     begin
-      FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
-      FReckMny:=rs.fieldbyName('BAL_RTL').AsFloat;
+      Str:=
+        'select sum((case when ORDER_TYPE in (11,13) then STOCK_AMT '+
+                         ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
+                         ' when ORDER_TYPE=12 then DBIN_AMT '+
+                         ' when ORDER_TYPE=22 then -DBOUT_AMT '+
+                         ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)*1.0/'+UnitCalc+')as BAL_AMT,'+
+               ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
+         'from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
+         ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' '+
+         ' and A.CREA_DATE<='+ReckDate+' and A.GODS_ID='''+GodsID+''' ';
     end else
+    if MaxReckDate>ReckDate then  //已结账，全部走台账表
     begin
-      if rs.RecordCount>0 then
-      begin
-        rs.First;
-        MaxReckDate:=trim(rs.fieldbyName('CREA_DATE').AsString);
-        while not rs.Eof do
-        begin
-          if MaxReckDate<trim(rs.fieldbyName('CREA_DATE').AsString) then
-            MaxReckDate:=trim(rs.fieldbyName('CREA_DATE').AsString);
-          rs.Next;
-        end;
-        if rs.Locate('CREA_DATE',MaxReckDate,[]) then  //定位最大结帐日
-        begin
-          FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
-          FReckMny:=rs.fieldbyName('BAL_RTL').AsFloat;
-        end;
-      end else
-        MaxReckDate:='00000000';
-      //查询台账视图: 大于最大结账日期  小于查询日期
-      Str:='select sum(case when ORDER_TYPE in (11,13) then STOCK_AMT '+
+      Str:='select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
+           ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
+           ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.CREA_DATE='+ReckDate+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+           ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+ReckDate+' ';
+    end else //走两部分联合[union]
+    begin
+      Str:=
+         'select sum(BAL_AMT) as BAL_AMT,sum(BAL_RTL) as BAL_RTL from '+
+         '(select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
+         ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
+         ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.CREA_DATE='+ReckDate+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+         ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+MaxReckDate+' '+
+         '  union all  '+
+         ' select sum((case when ORDER_TYPE in (11,13) then STOCK_AMT '+
                           ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
                           ' when ORDER_TYPE=12 then DBIN_AMT '+
                           ' when ORDER_TYPE=22 then -DBOUT_AMT '+
-                          ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)/'+UnitCalc+' as BAL_AMT,'+
-                 ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
-           'from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
-           ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
-           ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.CREA_DATE>'+MaxReckDate+' and A.CREA_DATE<='+ReckDate+' and A.GODS_ID='''+GodsID+''' ';
-      if trim(fndP1_SHOP_ID.AsString)<>'' then
-        Str:=Str+' and A.SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
-      rs.Close;
-      rs.SQL.Text:=ParseSQL(Factor.iDbType, Str);;
-      Factor.Open(rs);
-      if Rs.RecordCount=1 then
-      begin
-        FReckAmt:=FReckAmt+rs.fieldbyName('BAL_AMT').AsFloat;
-        FReckMny:=FReckMny+rs.fieldbyName('BAL_RTL').AsFloat; 
-      end;
+                          ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)*1.0/'+UnitCalc+')as BAL_AMT,'+
+               ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
+         ' from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
+         ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' and '+
+         '  A.CREA_DATE<='+ReckDate+' and A.GODS_ID='''+GodsID+''')tmp';
     end;
-    result:=true;
+    rs.Close;
+    rs.SQL.Text:=ParseSQL(Factor.iDbType, Str);
+    Factor.Open(rs);
+    if (Rs.Active) and (Rs.RecordCount=1) then
+    begin
+      FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
+      FReckMny:=rs.fieldbyName('BAL_RTL').AsFloat;
+      result:=true;
+    end;
   finally
     rs.Free;
   end;
@@ -507,17 +512,13 @@ begin
       while not adoReport1.Eof do
       begin
         adoReport1.Edit;
-        adoReport1.FieldByName('ORG_AMT').AsFloat:=FReckAmt;
-        if adoReport1.RecNo=1 then
+        adoReport1.FieldByName('ORG_AMT').AsFloat:=FReckAmt; //本条期初数量
+        FBalAmt:=FBalAmt+adoReport1.fieldbyName('IN_AMT').AsFloat-adoReport1.fieldbyName('OUT_AMT').AsFloat;
+        adoReport1.FieldByName('BAL_AMT').AsFloat:=FBalAmt;  //本条期末数量
+        if adoReport1.RecNo=1 then //计算期初单价
         begin
-          adoReport1.FieldByName('BAL_AMT').AsFloat:=FReckAmt;
           adoReport1.FieldByName('AMONEY').AsFloat:=FReckMny;
-          if FReckAmt<>0 then
-            adoReport1.FieldByName('APRICE').AsFloat:=FReckMny/FReckAmt;
-        end else
-        begin
-          FBalAmt:=FBalAmt+adoReport1.fieldbyName('IN_AMT').AsFloat-adoReport1.fieldbyName('OUT_AMT').AsFloat;
-          adoReport1.FieldByName('BAL_AMT').AsFloat:=FBalAmt;
+          if FReckAmt<>0 then adoReport1.FieldByName('APRICE').AsFloat:=FReckMny/FReckAmt;
         end;
         adoReport1.Post;
         adoReport1.Next;

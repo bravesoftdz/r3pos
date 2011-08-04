@@ -1,6 +1,6 @@
 inherited frmRckDayReport: TfrmRckDayReport
-  Left = 536
-  Top = 87
+  Left = 96
+  Top = 46
   Width = 1022
   Height = 611
   Caption = #33829#19994#32467#36134#25253#34920

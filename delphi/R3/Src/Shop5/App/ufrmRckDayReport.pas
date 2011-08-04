@@ -224,6 +224,12 @@ begin
     fndP5_SHOP_ID.Properties.ReadOnly := True;
   end;
 
+  //Add 设置查看成本价权限
+  if not ShopGlobal.GetChkRight('14500001',2) then
+  begin
+    SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
+  end;
+
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label5.Caption := '仓库群组';

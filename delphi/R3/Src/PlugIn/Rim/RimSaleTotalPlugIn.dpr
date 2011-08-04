@@ -63,7 +63,7 @@ begin
   result:=-1;
   GLastError:='';
   try
-    try
+    try                                 
       SalesFactory:=TSalesTotalSyncFactory.Create;
       SalesFactory.CallSyncData(GPlugIn,StrPas(Params));
       if not SalesFactory.HasError then //运行正常：
@@ -73,7 +73,6 @@ begin
     finally
       SalesFactory.Free;
     end;
-
   except
     on E:Exception do
       begin

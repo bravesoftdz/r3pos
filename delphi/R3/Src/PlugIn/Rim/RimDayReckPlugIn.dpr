@@ -62,19 +62,23 @@ var
   DayReckFactory: TDayReckSyncFactory;
 begin
   result:=-1;
+  GLastError:='';
   try
     try
       DayReckFactory:=TDayReckSyncFactory.Create;
       DayReckFactory.CallSyncData(GPlugIn,StrPas(Params));
-      result:=0;
+      if not DayReckFactory.HasError then //运行正常：
+        result:=0
+      else
+        GLastError:='<810>'+DayReckFactory.ErrorMsg;  
     finally
       DayReckFactory.Free;
     end;
   except
     on E:Exception do
     begin
-      GLastError := E.Message;
-      GPlugIn.WriteLogFile(PChar(GLastError));
+      if GLastError='' then
+        GLastError := E.Message;
       result := 2001;
     end;
   end;

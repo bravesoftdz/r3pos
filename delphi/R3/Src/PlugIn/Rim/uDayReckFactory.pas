@@ -1012,6 +1012,7 @@ var
   ErrorFlag: Boolean; 
 begin
   result:=-1;
+  PlugInID:='1005';
   {------初始化参数------}
   PlugIntf:=GPlugIn;
   //1、返回数据库类型
@@ -1051,7 +1052,7 @@ begin
 
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
-          LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
+          LogInfo.BeginLog(RimParam.ShopName); //开始日志
 
           //开始上报日台帐：
           try
@@ -1071,16 +1072,19 @@ begin
       except
         on E:Exception do
         begin
-          PlugIntf.WriteLogFile(Pchar('<1005>'+E.Message));
+          PlugIntf.WriteLogFile(Pchar('<1005> <'+RimParam.ShopID+'>'+E.Message));
         end;
       end;
       R3ShopList.Next;
     end;
+    result:=1;
   finally
-    FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
     DBLock(False);
     if SyncType<>3 then  //调度运行才写日志
-      WriteLogRun('零售户日台帐');  //输出到文本日志 
+    begin
+      FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
+      WriteLogRun('零售户日台帐');  //输出到文本日志
+    end;
   end;
 end;
 
@@ -1094,6 +1098,7 @@ end;
  ------------------------------------------------------------------------------}
 function TDayReckSyncFactory.GodsDayReckSync: integer;
 var
+  ComTrans: Boolean; //事务提交成功
   LastReckDate: TDate;   //最后结账日期
   iRet,UpiRet: integer;  //返回ExeSQL影响多少行记录
   Session: string;    //session前缀表名
@@ -1115,6 +1120,7 @@ begin
     begin
       Session:='';
       ReckDate:='to_char(A.CREA_DATE) ';
+      if PlugIntf.ExecSQL(PChar('truncate table INF_RECKDAY'),iRet)<>0 then Raise Exception.Create('清除临时表INF_CHANGE错误:'+PlugIntf.GetLastError);
     end;
    4:
     begin
@@ -1244,28 +1250,55 @@ begin
   if PlugIntf.ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('上报日台账数据出错:'+PlugIntf.GetLastError);
  
   //3、更新月台帐标记和上报时间戳:[]
-  try
-    if DBTrans then BeginTrans;
-    //将月台帐上报的标记位:COMM的第1位设置为：1
-    Str:='update RCK_DAYS_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
-         ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and  A.CREA_DATE<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and '+
-         ' '+ReckDate+' in (select distinct RECK_DATE from '+Session+'INF_RECKDAY where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''')';
-    if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐通信标记:'+PlugIntf.GetLastError);
+  if TWO_PHASE_COMMIT then //分布式事务
+  begin
+    try
+      BeginTrans;
+      //将月台帐上报的标记位:COMM的第1位设置为：1
+      Str:='update RCK_DAYS_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
+           ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and  A.CREA_DATE<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and '+
+           ' '+ReckDate+' in (select distinct RECK_DATE from '+Session+'INF_RECKDAY where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''')';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐通信标记:'+PlugIntf.GetLastError);
 
-    Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' '+
-         ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''09'' and TERM_ID='''+RimParam.ShopID+''' ';
-    if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐上报时间戳出错:'+PlugIntf.GetLastError);
+      Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' '+
+           ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''09'' and TERM_ID='''+RimParam.ShopID+''' ';
+      if PlugIntf.ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新日台帐上报时间戳出错:'+PlugIntf.GetLastError);
 
-    if DBTrans then CommitTrans; //提交事务
-    result:=UpiRet;
-  except
-    on E:Exception do
-    begin
-      if DBTrans then RollbackTrans;
-      WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐错误！','02'); //写日志
-      Raise Exception.Create(E.Message);
+      CommitTrans; //提交事务
+      result:=UpiRet;
+    except
+      on E:Exception do
+      begin
+        RollbackTrans;
+        WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐错误！','02'); //写日志
+        Raise Exception.Create(E.Message);
+      end;
+    end;
+  end else  //单向提交事务
+  begin
+    try
+      //将月台帐上报的标记位:COMM的第1位设置为：1
+      Str:='update RCK_DAYS_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
+           ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and  A.CREA_DATE<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and '+
+           ' '+ReckDate+' in (select distinct RECK_DATE from '+Session+'INF_RECKDAY where TENANT_ID='+RimParam.TenID+' and LICENSE_CODE='''+RimParam.LICENSE_CODE+''')';
+      ComTrans:=self.ExecTransSQL(Str,iRet,'更新日台帐通信标记:');
+
+      if ComTrans then
+      begin
+        Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' '+
+             ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''09'' and TERM_ID='''+RimParam.ShopID+''' ';
+        ExecTransSQL(Str,iRet,'更新日台帐上报时间戳出错:');
+      end;
+      result:=UpiRet;
+    except
+      on E:Exception do
+      begin
+        WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐错误！','02'); //写日志
+        Raise Exception.Create(E.Message);
+      end;
     end;
   end;
+  
   //执行成功写日志:
   WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐成功','01');
 end;

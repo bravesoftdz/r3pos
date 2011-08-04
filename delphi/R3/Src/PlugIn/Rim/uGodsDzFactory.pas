@@ -44,7 +44,7 @@ begin
          ' else ''#'' end) as SORT_ID2';
   //增加是否重点品牌:
   Sort_ID5:=
-    '(case when SORT_ID4=''1'' then ''01072169-2F03-42C1-9EAB-541D031647AF'''+  //是否省内外、国外烟
+    '(case when SORT_ID4=''1'' then ''01072169-2F03-42C1-9EAB-541D031647AF'''+  //是否重点品牌
          ' else ''15CD1495-B3C7-42C7-8709-5376FC061305'' end) as SORT_ID5 ';
   Sort_ID6:=
     '(case when SORT_ID6=''0'' then ''635E6FB4-8B94-4996-95E1-A77401323560'''+  //是否省内外、国外烟

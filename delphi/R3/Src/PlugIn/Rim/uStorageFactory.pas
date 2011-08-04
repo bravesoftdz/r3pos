@@ -22,22 +22,21 @@ implementation
 //上报一个门店库存 
 function TStorageSyncFactory.SendCustStorage: integer;
 var
+  IsComTrans: Boolean; //提交事务返回
   iRet,iRet1,iRet2,iRet3: integer;    //返回ExeSQL影响多少行记录
   Str,StoreTab,ShortID: string;
 begin
+  IsComTrans:=False;
   result := -1;
   try
-    if DBTrans then BeginTrans;
     ShortID:=Copy(RimParam.ShopID,length(RimParam.ShopID)-3,4); //门店代码后4位
-    
-    //1、先插入不存在商品:
+    //1、先插入不存在商品[中间库存表]:
     Str:='insert into RIM_CUST_ITEM_SWHSE(CUST_ID,ITEM_ID,COM_ID,TERM_ID,QTY,DATE1,TIME1,IS_MRB) '+
          ' select '''+RimParam.CustID+''' as CUST_ID,B.SECOND_ID,'''+RimParam.ComID+''' as COM_ID,'''+ShortID+''' as TERM_ID,0 as QRY,'''+FormatDatetime('YYYYMMDD',Date())+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME,''0'' '+
          ' from STO_STORAGE A,VIW_GOODSINFO B '+
          ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'') and A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID='''+RimParam.ShopID+''' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
          ' and not exists(select ITEM_ID from RIM_CUST_ITEM_SWHSE C where C.COM_ID='''+RimParam.ComID+''' and C.CUST_ID='''+RimParam.CustID+''' and C.TERM_ID='''+ShortID+''' and C.ITEM_ID=B.SECOND_ID) ';
-    if PlugIntf.ExecSQL(pchar(Str), iRet)<>0 then
-      Raise Exception.Create('插入不存在商品RIM_CUST_ITEM_SWHSE出错：'+PlugIntf.GetLastError);
+    IsComTrans:=ExecTransSQL(Str,iRet,'插入不存在商品RIM_CUST_ITEM_SWHSE出错：');
 
     //2、插入: RIM_CUST_ITEM_SWHSE
     Str:=ParseSQL(DbType,
@@ -47,31 +46,32 @@ begin
            ' B.COMM not in (''02'',''12'') and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID),0)'+
            ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TERM_ID='''+ShortID+''' ');
          // ' and exists(select B.SECOND_ID from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TENANT_ID+' and A.SHOP_ID='''+SHOP_ID+''' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)';
-    if PlugIntf.ExecSQL(pchar(Str), iRet1)<>0 then
-      Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE记录出错:'+PlugIntf.GetLastError);
+    if IsComTrans then 
+      IsComTrans:=ExecTransSQL(Str,iRet1,'插入RIM_CUST_ITEM_SWHSE记录出错:');
 
-    //3、先更新当前当天的中间库存中间表：[RIM_CUST_ITEM_SWHSE]:
+    //3、先更新当前当天的中间库存到零售户库存表：[RIM_CUST_ITEM_WHSE]:
     str:=' update RIM_CUST_ITEM_WHSE '+
          '  set QTY=coalesce((select sum(QTY) from RIM_CUST_ITEM_SWHSE A where RIM_CUST_ITEM_WHSE.COM_ID=A.COM_ID and RIM_CUST_ITEM_WHSE.CUST_ID=A.CUST_ID and RIM_CUST_ITEM_WHSE.ITEM_ID=A.ITEM_ID),0) '+
          ' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' ';
     str:=ParseSQL(DbType,str);
-    if PlugIntf.ExecSQL(pchar(Str), iRet2)<>0 then
-      Raise Exception.Create('更新RIM_CUST_ITEM_SWHSE出错:'+PlugIntf.GetLastError);
-
+    if IsComTrans then
+      IsComTrans:=ExecTransSQL(Str,iRet2,'更新RIM_CUST_ITEM_WHSE出错:');
+      
     //4、没有更新到记录插入中间表：[RIM_CUST_ITEM_WHSE]:
     str:='insert into RIM_CUST_ITEM_WHSE(COM_ID,CUST_ID,ITEM_ID,QTY) '+
          ' select COM_ID,CUST_ID,ITEM_ID,sum(QTY) from RIM_CUST_ITEM_SWHSE A where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and '+
          ' not Exists(select COM_ID from RIM_CUST_ITEM_WHSE where COM_ID=A.COM_ID and CUST_ID=A.CUST_ID and ITEM_ID=A.ITEM_ID) '+
          ' group by COM_ID,CUST_ID,ITEM_ID ';
-    if PlugIntf.ExecSQL(pchar(Str), iRet3)<>0 then
-      Raise Exception.Create('插入RIM_CUST_ITEM_SWHSE新记录出错:'+PlugIntf.GetLastError);
+    if IsComTrans then
+      IsComTrans:=ExecTransSQL(Str,iRet2,'插入RIM_CUST_ITEM_WHSE新记录出错:');
 
-    if DBTrans then CommitTrans;
+    if PlugIntf.ExecSQL(pchar(Str), iRet3)<>0 then
+      Raise Exception.Create(''+PlugIntf.GetLastError);
     result:=iRet1+iRet2+iRet3;
   except
     on E:Exception do
     begin
-      if DBTrans then RollbackTrans;
+      RollbackTrans;
       WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库错误！','02');  //上报出错写日志
       Raise Exception.Create(E.Message);
     end;
@@ -85,6 +85,8 @@ var
   iRet: integer;
   ErrorFlag: Boolean;
 begin
+  result:=-1;
+  PlugInID:='810';
   {------初始化参数------}
   PlugIntf:=GPlugIn;
   //1、返回数据库类型
@@ -121,7 +123,7 @@ begin
         //if ='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
-          LogInfo.BeginLog(RimParam.TenName+'-'+RimParam.ShopName); //开始日志
+          LogInfo.BeginLog(RimParam.ShopName); //开始门店日志
 
           //开始上零售户库存
           try
@@ -141,16 +143,19 @@ begin
       except
         on E: Exception do
         begin
-          PlugIntf.WriteLogFile(Pchar('<1003>'+E.Message));
+          PlugIntf.WriteLogFile(Pchar('<805> <'+RimParam.ShopID+'>'+E.Message));
         end;
       end;
       R3ShopList.Next;
     end;
+    result:=1;
   finally
-    FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
     DBLock(False);
     if SyncType<>3 then
+    begin
+      FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
       WriteLogRun('零售户库存'); //输出到文本日志
+    end;
   end;
 end;
 

@@ -78,12 +78,12 @@ type
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure Excel1Click(Sender: TObject);
   private
-    //IsCompany:Boolean;
-    //ccid:string;
     { Private declarations }
     function CheckCanExport:Boolean;
     procedure PrintView;
     procedure IniDegrees;
+    procedure AddMenuItem;
+    procedure ResetSysPswClick(Sender:TObject);
   public
     { Public declarations }
     procedure InitGrid;
@@ -120,12 +120,6 @@ begin
         2:str := str + ' and ifnull(a.WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
         3:str := str + ' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
       end;
-   //这里组条件
-//  ' case when (WORK_DATE>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 0 '+
-//  '     when (WORK_DATE<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 1'+
-//  '     when (ifnull(DIMI_DATE,'''')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+') then 2'+
-//  '     else -1 end) as STATUS from CA_USERS a '+
-
     end;
 
   if edtKey.Text<>'' then
@@ -322,6 +316,8 @@ end;
 procedure TfrmUsers.FormShow(Sender: TObject);
 begin
   inherited;
+  if UpperCase(Global.UserID) = UpperCase('ADMIN') then
+    AddMenuItem;
   actFindExecute(nil);
   if edtKey.CanFocus then
   edtKey.SetFocus;
@@ -438,9 +434,10 @@ var Str_Sql:String;
 begin
   inherited;
   if not Cds_Users.Active then exit;
-  if Cds_Users.IsEmpty then exit;  
+  if Cds_Users.IsEmpty then exit;
   if not ShopGlobal.GetChkRight('31500001',8) then
     Raise Exception.Create('你没有密码重置的权限,请和管理员联系.');
+  if MessageBox(Handle,'确认重置该用户密码！',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;    
 
   Str_Sql :=
   'update CA_USERS set PASS_WRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where USER_ID='''+Cds_Users.FieldbyName('USER_ID').AsString+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
@@ -748,6 +745,28 @@ begin
     Params.Free;
     rs.Free;
   end;
+end;
+
+procedure TfrmUsers.AddMenuItem;
+var Item:TMenuItem;
+begin
+  PopupMenu1.Items.Add(NewLine);
+  PopupMenu1.Items.Add(NewItem('重置管理员密码',0,False,True,ResetSysPswClick,0,'ResetSysPsw'));
+
+end;
+
+procedure TfrmUsers.ResetSysPswClick(Sender: TObject);
+var Str_Sql:String;
+    i:Integer;
+begin
+  if MessageBox(Handle,'确认重置当前"管理员"密码！',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  Str_Sql :=
+  'update SYS_DEFINE set VALUE='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where DEFINE=''PASSWRD'' and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  i := Factor.ExecSQL(Str_Sql);
+  if i = 0 then
+    MessageBox(handle,Pchar('提示:管理员密码重置失败!'),Pchar(Caption),MB_OK)
+  else if i > 0 then
+    MessageBox(handle,Pchar('提示:管理员密码重置成功!'),Pchar(Caption),MB_OK);
 end;
 
 end.

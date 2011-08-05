@@ -420,7 +420,7 @@ begin
       Str:='select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
            ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
            ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.CREA_DATE='+ReckDate+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-           ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+ReckDate+' ';
+           ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and A.CREA_DATE='+ReckDate+' ';
     end else //走两部分联合[union]
     begin
       Str:=
@@ -428,7 +428,7 @@ begin
          '(select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
          ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
          ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.CREA_DATE='+ReckDate+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-         ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and C.CREA_DATE='+MaxReckDate+' '+
+         ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and A.CREA_DATE='+MaxReckDate+' '+
          '  union all  '+
          ' select sum((case when ORDER_TYPE in (11,13) then STOCK_AMT '+
                           ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+

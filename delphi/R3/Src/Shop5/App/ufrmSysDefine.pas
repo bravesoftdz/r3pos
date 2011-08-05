@@ -124,6 +124,9 @@ type
     edtDAY_SALE_STAND: TcxSpinEdit;
     edtREAS_DAY: TcxSpinEdit;
     edtSMT_RATE: TcxComboBox;
+    Label29: TLabel;
+    IntervalTime: TcxSpinEdit;
+    Label30: TLabel;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -237,6 +240,14 @@ begin
             BirthDays.Value := StrToIntDef(Value, 0);
           end;
       end;
+
+    if Define = 'INTERVALTIME' then
+    begin
+      if StrToIntDef(Value,0) < 0 then
+        IntervalTime.Value := 0
+      else if StrToIntDef(Value,0) >= 0 then
+        IntervalTime.Value := StrToIntDef(Value,0);
+    end;
 
     if Define = 'CUSTCONTINU' then
     begin
@@ -449,6 +460,8 @@ begin
   SetValue('SAFE_DAY', edtSAFE_DAY.Value);
   SetValue('REAS_DAY', edtREAS_DAY.Value);
   SetValue('DAY_SALE_STAND', edtDAY_SALE_STAND.Value);
+  SetValue('INTERVALTIME',IntervalTime.Value);
+
   if IsBirthDay.Checked then
     SetValue('BIRTHDAY', BirthDays.Value)
   else

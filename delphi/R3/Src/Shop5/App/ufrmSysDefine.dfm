@@ -1,6 +1,6 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 708
-  Top = 185
+  Left = 328
+  Top = 178
   Width = 434
   Height = 323
   BorderIcons = [biSystemMenu]
@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 418
-    Height = 242
-    ActivePage = TabSheet3
+    Width = 426
+    Height = 253
+    ActivePage = tabStock
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -219,6 +219,20 @@ inherited frmSysDefine: TfrmSysDefine
         Height = 12
         Caption = #21551#29992#20250#21592#32493#20250#25552#37266
       end
+      object Label29: TLabel
+        Left = 166
+        Top = 153
+        Width = 12
+        Height = 12
+        Caption = #20998
+      end
+      object Label30: TLabel
+        Left = 14
+        Top = 153
+        Width = 96
+        Height = 12
+        Caption = #26234#33021#25552#37266#38388#38548#26102#38388
+      end
       object BirthDays: TcxSpinEdit
         Left = 186
         Top = 9
@@ -304,6 +318,16 @@ inherited frmSysDefine: TfrmSysDefine
         TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
+      object IntervalTime: TcxSpinEdit
+        Left = 114
+        Top = 149
+        Width = 50
+        Height = 20
+        Properties.MaxValue = 100.000000000000000000
+        TabOrder = 8
+        Value = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
     end
     object TabSheet1: TTabSheet
       Caption = #26465#30721#35774#32622
@@ -311,8 +335,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel5: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -701,8 +725,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel4: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -975,8 +999,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 242
-    Width = 418
+    Top = 253
+    Width = 426
     Height = 43
     Align = alBottom
     BevelOuter = bvNone
@@ -1007,11 +1031,12 @@ inherited frmSysDefine: TfrmSysDefine
     end
   end
   inherited mmMenu: TMainMenu
-    Top = 112
+    Left = 384
+    Top = 216
   end
   inherited actList: TActionList
-    Left = 160
-    Top = 48
+    Left = 384
+    Top = 152
     object acComfir: TAction
       Caption = #30830#23450'(&O)'
       OnExecute = acComfirExecute
@@ -1025,7 +1050,7 @@ inherited frmSysDefine: TfrmSysDefine
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 160
-    Top = 79
+    Left = 384
+    Top = 183
   end
 end

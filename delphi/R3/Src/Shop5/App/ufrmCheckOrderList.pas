@@ -470,7 +470,7 @@ end;
 function TfrmCheckOrderList.PrintSQL(tenantid,shopid,printdate: string): string;
 begin
   result :=
-   'select jj.*,i.SHOP_NAME from ( '+
+   'select jj.*,i.SHOP_NAME from ( '+                         
    'select ji.*,h.UNIT_NAME from ( '+
    'select jh.*,g.COLOR_NAME as PROPERTY_02_TEXT from ( '+
    'select jg.*,f.SIZE_NAME as PROPERTY_01_TEXT from ( '+
@@ -480,12 +480,13 @@ begin
    'jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,B.UNIT_ID,'+
    'jc.RCK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as RCK_AMOUNT,'+
    'jc.RCK_AMOUNT as RCK_CALC_AMOUNT,'+
-   'jc.CHK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as AMOUNT,'+
-   'jc.CHK_AMOUNT as CALC_AMOUNT,'+
-   ' (case when ifnull(jc.RCK_AMOUNT,0)>ifnull(jc.CHK_AMOUNT,0) then ifnull(jc.RCK_AMOUNT,0)-ifnull(jc.CHK_AMOUNT,0) else 0 end)*1.00/case when '+
-   'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as LOSS_AMOUNT,'+
+   'case when len(ifnull(jc.CHK_USER,''''))<=0 then null else (jc.CHK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end) end as AMOUNT,'+
+   'case when len(ifnull(jc.CHK_USER,''''))<=0 then null else ( '+
+   '(case when ifnull(jc.RCK_AMOUNT,0)>ifnull(jc.CHK_AMOUNT,0) then ifnull(jc.RCK_AMOUNT,0)-ifnull(jc.CHK_AMOUNT,0) else 0 end)*1.00/case when '+
+   'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end) end as LOSS_AMOUNT,'+
+   'case when len(ifnull(jc.CHK_USER,''''))<=0 then null else ( '+
    ' (case when ifnull(jc.CHK_AMOUNT,0)>ifnull(jc.RCK_AMOUNT,0) then ifnull(jc.CHK_AMOUNT,0)-ifnull(jc.RCK_AMOUNT,0) else 0 end)*1.00/case when '+
-   'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as PROFIT_AMOUNT,'+
+   'B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end) end as PROFIT_AMOUNT,'+
    'b.GODS_NAME,b.GODS_CODE,b.BARCODE,'+
    'b.NEW_OUTPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE from ( '+
    'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,'+
@@ -494,7 +495,7 @@ begin
    ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+' and A.COMM not in (''02'',''12'') ) jc '+
    ' inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID ) jd '+
    ' left join VIW_USERS c on jd.TENANT_ID=c.TENANT_ID and jd.CREA_USER=c.USER_ID ) je '+
-   ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CREA_USER=d.USER_ID ) jg '+
+   ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CHK_USER=d.USER_ID ) jg '+
    ' left join VIW_SIZE_INFO f on jg.TENANT_ID=f.TENANT_ID and jg.PROPERTY_01=f.SIZE_ID ) jh '+
    ' left join VIW_COLOR_INFO g on jh.TENANT_ID=g.TENANT_ID and jh.PROPERTY_02=g.COLOR_ID ) ji '+
    ' left join VIW_MEAUNITS h on ji.TENANT_ID=h.TENANT_ID and ji.UNIT_ID=h.UNIT_ID ) jj '+

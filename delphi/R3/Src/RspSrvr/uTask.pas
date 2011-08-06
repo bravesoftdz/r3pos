@@ -336,7 +336,7 @@ begin
            if PlugInList.Items[n].Working=0 then
               PlugIn := PlugInList.Items[n];
            inc(n);
-           if (PlugIn<>nil) and not CheckTimer(PlugIn) then
+           if (PlugIn<>nil) and false then///not CheckTimer(PlugIn) then
               begin
                 PlugIn := nil;
                 Continue;

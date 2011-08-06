@@ -613,6 +613,7 @@ object SocketForm: TSocketForm
     end
     object actClearLogFile: TAction
       Caption = #28165#38500#26085#24535
+      OnExecute = actClearLogFileExecute
     end
     object actOpenLogFile: TAction
       Caption = #25171#24320#26085#24535
@@ -660,6 +661,10 @@ object SocketForm: TSocketForm
     object actPlugInLoad: TAction
       Caption = #35013#36733#25554#20214
       OnExecute = actPlugInLoadExecute
+    end
+    object actPlugInThreadRun: TAction
+      Caption = #21518#21488#25191#34892
+      OnExecute = actPlugInThreadRunExecute
     end
   end
   object pmuLogFile: TPopupMenu

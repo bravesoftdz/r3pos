@@ -129,6 +129,7 @@ type
     N12: TMenuItem;
     N13: TMenuItem;
     N6: TMenuItem;
+    actPlugInThreadRun: TAction;
     procedure FormCreate(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure miPropertiesClick(Sender: TObject);
@@ -168,9 +169,10 @@ type
     procedure ZSQLMonitor1Trace(Sender: TObject; Event: TZLoggingEvent;
       var LogTrace: Boolean);
     procedure chkDebugClick(Sender: TObject);
-    procedure MenuItem2Click(Sender: TObject);
     procedure N6Click(Sender: TObject);
     procedure PagesChange(Sender: TObject);
+    procedure actClearLogFileExecute(Sender: TObject);
+    procedure actPlugInThreadRunExecute(Sender: TObject);
   private
     FTaskMessage: DWord;
     FIconData: TNotifyIconData;
@@ -1054,7 +1056,7 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsString := TaskThread.TenantId;
       Params.ParamByName('flag').AsInteger := -1;
-      if PlugIn.Working > 0 then Raise Exception.Create('插件正在执行中，不能重复执行...'); 
+      if PlugIn.Working > 0 then Raise Exception.Create('插件正在执行中，不能重复执行...');
       PlugIn.DLLDoExecute(TftParamList.Encode(Params),V);
     finally
       Params.free;
@@ -1104,11 +1106,6 @@ begin
   ZSQLMonitor1.Active := chkDebug.Checked;
 end;
 
-procedure TSocketForm.MenuItem2Click(Sender: TObject);
-begin
-  Memo1.Clear;
-end;
-
 procedure TSocketForm.N6Click(Sender: TObject);
 begin
   Memo1.CopyToClipboard;
@@ -1120,6 +1117,43 @@ begin
      LogFile.Showing := true
   else
      LogFile.Showing := false;
+end;
+
+procedure TSocketForm.actClearLogFileExecute(Sender: TObject);
+begin
+  Memo1.Clear;
+end;
+
+procedure TSocketForm.actPlugInThreadRunExecute(Sender: TObject);
+var
+  PlugIn:TPlugIn;
+  F:TIniFile;
+  V:OleVariant;
+  Params:TftParamList;
+begin
+  if TaskList.Selected = nil then Raise Exception.Create('请在列表中选择任务名称');
+  PlugIn := PlugInList.Find(StrtoInt(TaskList.Selected.Caption));
+  if PlugIn=nil then Raise Exception.Create('没找到对应插件...');
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsString := TaskThread.TenantId;
+      Params.ParamByName('flag').AsInteger := -1;
+      if PlugIn.Working > 0 then Raise Exception.Create('插件正在执行中，不能重复执行...');
+      PlugIn.DLLDoExecute(TftParamList.Encode(Params),V);
+    finally
+      Params.free;
+    end;
+    F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'rsp.cfg');
+    try
+      F.WriteString('PlugIn'+TaskList.Selected.Caption,'NearTime',formatdatetime('YYYYMMDDHHNNSS',now()));
+    finally
+      F.Free;
+    end;
+  except
+    on E:Exception do
+       MessageBox(Handle,Pchar(E.Message),'错误提示..',MB_OK+MB_ICONERROR);
+  end;
 end;
 
 initialization

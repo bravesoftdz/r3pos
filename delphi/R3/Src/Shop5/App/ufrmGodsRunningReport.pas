@@ -478,7 +478,7 @@ begin
         Column.Index := ColIdx;
       Column.Alignment:=taRightJustify;
       Column.DisplayFormat:='#0.###';
-      Column.Footer.ValueType:=fvtNon;
+      Column.Footer.ValueType:=fvtSum;
       Column.Footer.DisplayFormat:='#0.###';
       Column.Footer.Alignment:=taRightJustify;
 
@@ -492,7 +492,7 @@ begin
         Column.Index := ColIdx+1;
       Column.Alignment:=taRightJustify;
       Column.DisplayFormat:='#0.###';
-      Column.Footer.ValueType:=fvtNon;
+      Column.Footer.ValueType:=fvtSum;
       Column.Footer.DisplayFormat:='#0.###';
       Column.Footer.Alignment:=taRightJustify;
     finally
@@ -504,22 +504,25 @@ end;
 procedure TfrmGodsRunningReport.CalcStorageInfo;
 begin
   try
+    FBalAmt:=FReckAmt;   
     adoReport1.DisableControls;
     if adoReport1.Active then
     begin
-      FBalAmt:=FReckAmt;
       adoReport1.First;
       while not adoReport1.Eof do
       begin
         adoReport1.Edit;
-        adoReport1.FieldByName('ORG_AMT').AsFloat:=FReckAmt; //本条期初数量
-        FBalAmt:=FBalAmt+adoReport1.fieldbyName('IN_AMT').AsFloat-adoReport1.fieldbyName('OUT_AMT').AsFloat;
-        adoReport1.FieldByName('BAL_AMT').AsFloat:=FBalAmt;  //本条期末数量
         if adoReport1.RecNo=1 then //计算期初单价
         begin
+          adoReport1.FieldByName('ORG_AMT').AsFloat:=FReckAmt; //本条期初数量
           adoReport1.FieldByName('AMONEY').AsFloat:=FReckMny;
           if FReckAmt<>0 then adoReport1.FieldByName('APRICE').AsFloat:=FReckMny/FReckAmt;
+        end else
+        begin
+          adoReport1.FieldByName('ORG_AMT').AsFloat:=FBalAmt; //本条期初数量
         end;
+        FBalAmt:=FBalAmt+adoReport1.fieldbyName('IN_AMT').AsFloat-adoReport1.fieldbyName('OUT_AMT').AsFloat;
+        adoReport1.FieldByName('BAL_AMT').AsFloat:=FBalAmt;  //本条期末数量
         adoReport1.Post;
         adoReport1.Next;
       end;

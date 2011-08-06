@@ -12,10 +12,12 @@ TZLogFilePool=class
     FDefaultPath: string;
     F:TextFile;
     Ffilename: string;
+    FShowing: boolean;
     procedure Enter;
     procedure Leave;
     procedure SetDefaultPath(const Value: string);
     procedure Setfilename(const Value: string);
+    procedure SetShowing(const Value: boolean);
   protected
     function OpenLogFile:boolean;
     procedure CloseLogFile;
@@ -28,6 +30,7 @@ TZLogFilePool=class
     destructor Destroy; override;
     property DefaultPath:string read FDefaultPath write SetDefaultPath;
     property filename:string read Ffilename write Setfilename;
+    property Showing:boolean read FShowing write SetShowing;
   end;
 var LogFile:TZLogFilePool;
 implementation
@@ -53,7 +56,7 @@ begin
        end;
      except
      end;
-     if MainFormHandle>0 then
+     if (MainFormHandle>0) and Showing then
         begin
           Flist.Add('<'+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+'>'+Information);
           PostMessage(MainFormHandle,WM_LOGFILE_UPDATE,0,0);
@@ -90,6 +93,7 @@ begin
 //    rewrite(f);
 //  end;
 //  OpenLogFile;
+  Showing := false;
   NoLog := false;
   InitializeCriticalSection(FThreadLock);
   FList := TStringList.Create;
@@ -163,6 +167,11 @@ end;
 procedure TZLogFilePool.Setfilename(const Value: string);
 begin
   Ffilename := Value;
+end;
+
+procedure TZLogFilePool.SetShowing(const Value: boolean);
+begin
+  FShowing := Value;
 end;
 
 initialization

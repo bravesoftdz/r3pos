@@ -82,7 +82,11 @@ type
   TCustomdbResolver=class(TInterfacedPersistent)
   private
     Fdbid: integer;
+    FThreadId: Integer;
+    FdbLocked: boolean;
     procedure Setdbid(const Value: integer);
+    procedure SetThreadId(const Value: Integer);
+    procedure SetdbLocked(const Value: boolean);
   public
     //设置连接参数
     function  Initialize(Const ConnStr:WideString):boolean;virtual;abstract;
@@ -135,6 +139,10 @@ type
     procedure DBLock(Locked:boolean);virtual;abstract;
 
     property dbid:integer read Fdbid write Setdbid;
+    //锁定线程ID号
+    property ThreadId:Integer read FThreadId write SetThreadId;
+    //连接是否锁定
+    property dbLocked:boolean read FdbLocked;
   end;
   TdbResolver=class(TCustomdbResolver)
   private
@@ -219,9 +227,11 @@ begin
   result := not ZConn.InTransaction and (
      (pos('网络错误',s)>0) or
      (pos('连接断开',s)>0) or
+     (pos('连接关闭',s)>0) or
      (pos('ORA-12170',s)>0) or
      (pos('SQL0952N',s)>0) or
-     (pos('SQL30081N',s)>0)
+     (pos('SQL30081N',s)>0) or
+     (pos('CLI0106E',s)>0)
   );
 end;
 
@@ -855,7 +865,7 @@ end;
 procedure TdbResolver.DBLock(Locked: boolean);
 begin
   inherited;
-
+  FdbLocked := Locked;
 end;
 
 { TZdbUpdate }
@@ -1069,6 +1079,16 @@ end;
 procedure TCustomdbResolver.Setdbid(const Value: integer);
 begin
   Fdbid := Value;
+end;
+
+procedure TCustomdbResolver.SetdbLocked(const Value: boolean);
+begin
+  FdbLocked := Value;
+end;
+
+procedure TCustomdbResolver.SetThreadId(const Value: Integer);
+begin
+  FThreadId := Value;
 end;
 
 end.

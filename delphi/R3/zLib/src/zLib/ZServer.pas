@@ -291,6 +291,7 @@ begin
      begin
        try
          DBLock := OleVariant(PDispParams(@Params).rgvarg^[0]);
+         Session.dbResolver.DBLock(dbLock);
        finally
          PushCache;
        end;
@@ -1103,7 +1104,10 @@ begin
          Conn.Free;
        end
     else
-       FList.Add(Conn);
+       begin
+         FList.Add(Conn);
+         Conn.ThreadId := 0;
+       end;
   finally
     InterlockedDecrement(FDBCacheLockCount);
     Leave;

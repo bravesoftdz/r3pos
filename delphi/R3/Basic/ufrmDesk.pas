@@ -511,7 +511,7 @@ end;
 
 procedure TfrmDesk.WMHotKey(var Msg: TWMHotKey);
 begin
-  if msg.HotKey = id then
+  if (msg.HotKey = id) and not (fsModal in Screen.ActiveForm.FormState) then
      begin
        if IsIconic(Application.Handle) then
           Application.Restore

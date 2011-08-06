@@ -15,24 +15,24 @@ type
     function GetLastError:Pchar; stdcall;
 
     //开始事务  超时设置 单位秒
-    function BeginTrans(TimeOut:integer=-1):integer; stdcall;
+    function BeginTrans(TimeOut:integer=-1;dbResoler:integer=0):integer; stdcall;
     //提交事务
-    function CommitTrans:integer; stdcall;
+    function CommitTrans(dbResoler:integer=0):integer; stdcall;
     //回滚事务
-    function RollbackTrans:integer; stdcall;
+    function RollbackTrans(dbResoler:integer=0):integer; stdcall;
 
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
-    function iDbType(var dbType:integer):integer; stdcall;
+    function iDbType(var dbType:integer;dbResoler:integer=0):integer; stdcall;
 
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;var Data:OleVariant):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0):integer;stdcall;
     //提交数据集
-    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar):integer;stdcall;
+    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0):integer;stdcall;
     //返回执行影响记录数
-    function ExecSQL(SQL:Pchar;var iRet:integer):integer;stdcall;
+    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0):integer;stdcall;
 
     //锁定连接
-    function DbLock(Locked:boolean):integer;stdcall;
+    function DbLock(Locked:boolean;dbResoler:integer=0):integer;stdcall;
     //日志服务
     function WriteLogFile(s:Pchar):integer;stdcall;
 
@@ -42,16 +42,15 @@ type
    private
     FPlugInId: integer;
     FHandle: THandle;
-    FdbResolver: TdbResolver;
     Fdbid: integer;
-    dbLocked: boolean;
     FPlugInDisplayName: string;
     FLastError: string;
     FData: Pointer;
     FWorking: integer;
+    LockConn:TList;
+    FThreadLock:TRTLCriticalSection;
     procedure SetHandle(const Value: THandle);
     procedure SetPlugInId(const Value: integer);
-    procedure SetdbResolver(const Value: TdbResolver);
     procedure Setdbid(const Value: integer);
     procedure SetPlugInDisplayName(const Value: string);
     procedure SetLastError(const Value: string);
@@ -65,33 +64,35 @@ type
     function GetLastError:Pchar; stdcall;
 
     //开始事务  超时设置 单位秒
-    function BeginTrans(TimeOut:integer=-1):integer; stdcall;
+    function BeginTrans(TimeOut:integer=-1;dbResoler:integer=0):integer; stdcall;
     //提交事务
-    function CommitTrans:integer; stdcall;
+    function CommitTrans(dbResoler:integer=0):integer; stdcall;
     //回滚事务
-    function RollbackTrans:integer; stdcall;
+    function RollbackTrans(dbResoler:integer=0):integer; stdcall;
 
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
-    function iDbType(var dbType:integer):integer; stdcall;
+    function iDbType(var dbType:integer;dbResoler:integer=0):integer; stdcall;
 
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;var Data:OleVariant):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0):integer;stdcall;
     //提交数据集
-    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar):integer;stdcall;
+    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0):integer;stdcall;
     //返回执行影响记录数
-    function ExecSQL(SQL:Pchar;var iRet:integer):integer;stdcall;
+    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0):integer;stdcall;
     //锁定连接
-    function DbLock(Locked:boolean):integer;stdcall;
+    function DbLock(Locked:boolean;dbResoler:integer=0):integer;stdcall;
 
     //日志服务
     function WriteLogFile(s:Pchar):integer;stdcall;
 
-    function CheckIdTransact:boolean;
-    procedure PushCache;
-
+    function CheckIdTransact:TdbResolver;
+    procedure PushCache(dbResolver:TdbResolver);
    public
     constructor Create(FileName:string);
     destructor Destroy; override;
+
+    procedure Enter;
+    procedure Leave;
 
     function DLLGetLastError:string;
     procedure DLLDoExecute(Params:string;var Data:OleVariant);
@@ -100,7 +101,6 @@ type
     property Handle:THandle read FHandle write SetHandle;
     property PlugInId:integer read FPlugInId write SetPlugInId;
     property PlugInDisplayName:string read FPlugInDisplayName write SetPlugInDisplayName;
-    property dbResolver:TdbResolver read FdbResolver write SetdbResolver;
     property dbid:integer read Fdbid write Setdbid;
     property LastError:string read FLastError write SetLastError;
     property Data:Pointer read FData write SetData;
@@ -109,8 +109,11 @@ type
   TPlugInList=class
    private
     FList:TList;
+    FThreadLock:TRTLCriticalSection;
     function GetItems(ItemIndex: Integer): TPlugIn;
     function GetCount: Integer;
+    procedure Enter;
+    procedure Leave;
    public
     constructor Create;
     destructor Destroy; override;
@@ -132,46 +135,49 @@ implementation
 uses IniFiles;
 { TPlugIn }
 
-function TPlugIn.BeginTrans(TimeOut: integer): integer;
+function TPlugIn.BeginTrans(TimeOut: integer=-1;dbResoler:integer=0): integer;
+var
+  dbResolver:TdbResolver;
 begin
-  try
-  if CheckIdTransact then
-     begin
-       try
-         dbResolver.BeginTrans(TimeOut);
-       finally
-         PushCache;
-       end;
-     end;
-     result := 0;
-  except
-    on E:Exception do
-       begin
-         LastError := E.Message;
-         result := 10001;
-       end;
-  end;
+//  Enter;
+//  try
+    try
+       dbResolver := TdbResolver(dbResoler);
+       if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
+       dbResolver.BeginTrans(TimeOut);
+       result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError :='<BeginTrans>'+  E.Message;
+           result := 10001;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
 end;
 
-function TPlugIn.CommitTrans: integer;
+function TPlugIn.CommitTrans(dbResoler:integer=0): integer;
+var dbResolver:TdbResolver;
 begin
-  try
-  if CheckIdTransact then
-     begin
-       try
-         dbResolver.CommitTrans;
-       finally
-         PushCache;
-       end;
-     end;
-     result := 0;
-  except
-    on E:Exception do
-       begin
-         LastError := E.Message;
-         result := 10002;
-       end;
-  end;
+//  Enter;
+//  try
+    try
+       dbResolver := TdbResolver(dbResoler);
+       if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
+       dbResolver.CommitTrans;
+       result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError := '<CommitTrans>'+  E.Message;
+           result := 10002;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
 end;
 
 constructor TPlugIn.Create(FileName: string);
@@ -181,7 +187,8 @@ var
   DLLSetParams:function(PlugIn:IPlugIn) :Integer; stdcall;
   f:TiniFile;
 begin
-  dbResolver := nil;
+  InitializeCriticalSection(FThreadLock);
+  LockConn := TList.Create;
   FData := nil;
   Handle := LoadLibrary(Pchar(FileName));
   if Handle=0 then Raise Exception.Create('无效插件文件'+FileName);
@@ -215,30 +222,34 @@ destructor TPlugIn.Destroy;
 var
   DLLSetParams:function(PlugIn:IPlugIn) :Integer; stdcall;
 begin
-  if assigned(dbResolver) then
-     begin
-       ConnCache.Push(dbResolver);
-       dbResolver := nil;
-     end;
-  @DLLSetParams := GetProcAddress(Handle, 'SetParams');
-  if @DLLSetParams=nil then Raise Exception.Create('SetParams方法没有实现');
-  DLLSetParams(nil);
-  IParams := nil;
-  FreeLibrary(Handle);
+  Enter;
+  try
+    @DLLSetParams := GetProcAddress(Handle, 'SetParams');
+    if @DLLSetParams=nil then Raise Exception.Create('SetParams方法没有实现');
+    DLLSetParams(nil);
+    IParams := nil;
+    LockConn.Free;
+    FreeLibrary(Handle);
+  finally
+    Leave;
+    DeleteCriticalSection(FThreadLock);
+  end;
   inherited;
 end;
 
 procedure TPlugIn.DLLDoExecute(Params:string;var Data:OleVariant);
 var
-  _DLLDoExecute:function(Params:Pchar;var Data:OleVariant) :integer; stdcall;
+  _DLLDoExecute:function(Params:Pchar;var Data:OleVariant;dbResoler:integer=0) :integer; stdcall;
+  dbResolver:TdbResolver;
 begin
   InterlockedIncrement(FWorking);
+  dbResolver := CheckIdTransact;
   try
     try
       @_DLLDoExecute := GetProcAddress(Handle, 'DoExecute');
       if @_DLLDoExecute=nil then Raise Exception.Create('DoExecute方法没有实现');
-      if _DLLDoExecute(Pchar(Params),Data)<>0 then
-         Raise Exception.Create(DLLGetLastError);
+      if _DLLDoExecute(Pchar(Params),Data,Integer(dbResolver))<>0 then
+         Raise Exception.Create('执行插件出错了，去看看日志吧！');//DLLGetLastError);
     except
       on E:Exception do
          begin
@@ -248,106 +259,120 @@ begin
     end;
   finally
     InterlockedDecrement(FWorking);
+    PushCache(dbResolver);
   end;
 end;
 
-function TPlugIn.ExecSQL(SQL: Pchar; var iRet: integer): integer;
+function TPlugIn.ExecSQL(SQL: Pchar; var iRet: integer;dbResoler:integer=0): integer;
+var dbResolver:TdbResolver;
 begin
-  try
-  if CheckIdTransact then
-     begin
-       try
-         iRet := dbResolver.ExecSQL(SQL);
-       finally
-         PushCache;
-       end;
-     end;
-     result := 0;
-  except
-    on E:Exception do
-       begin
-         LastError := E.Message;
-         result := 10003;
-       end;
-  end;
+//  Enter;
+//  try
+    try
+       dbResolver := TdbResolver(dbResoler);
+       if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
+       iRet := dbResolver.ExecSQL(SQL);
+       result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError := '<SQL='+StrPas(SQL)+'>'+E.Message;
+           result := 10003;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
 end;
 
 function TPlugIn.DLLGetLastError: string;
 var
   _DLLGetLastError:function :Pchar; stdcall;
 begin
-  @_DLLGetLastError := GetProcAddress(Handle, 'GetLastError');
-  if @_DLLGetLastError=nil then Raise Exception.Create('GetLastError方法没有实现');
-  result := StrPas(_DLLGetLastError);
-end;
-
-function TPlugIn.iDbType(var dbType: integer): integer;
-begin
+  Enter;
   try
-  if CheckIdTransact then
-     begin
-       try
-         dbType := dbResolver.iDbType;
-       finally
-         PushCache;
-       end;
-     end;
-     result := 0;
-  except
-    on E:Exception do
-       begin
-         LastError := E.Message;
-         result := 10004;
-       end;
+    @_DLLGetLastError := GetProcAddress(Handle, 'GetLastError');
+    if @_DLLGetLastError=nil then Raise Exception.Create('GetLastError方法没有实现');
+    result := 'Plug->'+StrPas(_DLLGetLastError);
+  finally
+    Leave;
   end;
 end;
 
-function TPlugIn.Open(SQL: Pchar;var Data: OleVariant): integer;
+function TPlugIn.iDbType(var dbType: integer;dbResoler:integer=0): integer;
+var dbResolver:TdbResolver;
+begin
+//  Enter;
+//  try
+    try
+       dbResolver := TdbResolver(dbResoler);
+       if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
+       dbType := dbResolver.iDbType;
+       result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError := '<iDbType>'+  E.Message;
+           result := 10004;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
+end;
+
+function TPlugIn.Open(SQL: Pchar;var Data: OleVariant;dbResoler:integer=0): integer;
 var
   rs:TZQuery;
+  dbResolver:TdbResolver;
 begin
-  try
-  if CheckIdTransact then
-     begin
+//  Enter;
+//  try
+    try
+       dbResolver := TdbResolver(dbResoler);
+       if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
        rs := TZQuery.Create(nil);
        try
          rs.SQL.Text := SQL;
          dbResolver.Open(rs);
          Data := rs.Data;
        finally
-         PushCache;
          rs.Free;
        end;
-     end;
-     result := 0;
-  except
-    on E:Exception do
-       begin
-         LastError := E.Message;
-         result := 10005;
-       end;
-  end;
+       result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError := '<SQL='+StrPas(SQL)+'>'+E.Message;
+           result := 10005;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
 end;
 
-function TPlugIn.RollbackTrans: integer;
+function TPlugIn.RollbackTrans(dbResoler:integer=0): integer;
+var
+  dbResolver:TdbResolver;
 begin
-  try
-  if CheckIdTransact then
-     begin
-       try
-         dbResolver.RollbackTrans;
-       finally
-         PushCache;
-       end;
-     end;
-     result := 0;
-  except
-    on E:Exception do
-       begin
-         LastError := E.Message;
-         result := 10006;
-       end;
-  end;
+//  Enter;
+//  try
+    try
+       dbResolver := TdbResolver(dbResoler);
+       if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
+       dbResolver.RollbackTrans;
+       result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError := '<RollbackTrans>'+  E.Message;
+           result := 10006;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
 end;
 
 procedure TPlugIn.SetHandle(const Value: THandle);
@@ -367,38 +392,37 @@ end;
 
 function TPlugIn.WriteLogFile(s: Pchar): integer;
 begin
-  LogFile.AddLogFile(0,s,PlugInDisplayName);
+//  Enter;
+//  try
+    try
+      LogFile.AddLogFile(0,s,PlugInDisplayName);
+      result := 0;
+    except
+      on E:Exception do
+         begin
+           result := 2000;
+           LastError := 'WriteLogFile'+E.Message;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
 end;
 
 function TPlugIn.GetLastError: Pchar;
 begin
-  result := Pchar(LastError);
+  result := Pchar('RSP->'+LastError);
 end;
 
-function TPlugIn.CheckIdTransact: boolean;
+function TPlugIn.CheckIdTransact: TdbResolver;
 begin
-  if not assigned(dbResolver) then
-     begin
-       dbResolver := ConnCache.Get(dbid);
-     end;
-  if dbResolver=nil then Raise Exception.Create('无效连接字符串...');
-  result := true;
+  result := ConnCache.Get(dbid);
+  if result=nil then Raise Exception.Create('无效连接字符串...');
 end;
 
-procedure TPlugIn.PushCache;
+procedure TPlugIn.PushCache(dbResolver:TdbResolver);
 begin
-  if not assigned(dbResolver) then Exit;
-  if (not dbResolver.InTransaction and not dbLocked) or not dbResolver.Connected then
-     begin
-       ConnCache.Push(dbResolver);
-       dbResolver := nil;
-       dbLocked := false;
-     end;
-end;
-
-procedure TPlugIn.SetdbResolver(const Value: TdbResolver);
-begin
-  FdbResolver := Value;
+  ConnCache.Push(dbResolver);
 end;
 
 procedure TPlugIn.Setdbid(const Value: integer);
@@ -406,11 +430,27 @@ begin
   Fdbid := Value;
 end;
 
-function TPlugIn.DbLock(Locked: boolean): integer;
+function TPlugIn.DbLock(Locked: boolean;dbResoler:integer=0): integer;
+var
+  dbResolver:TdbResolver;
 begin
-  DbLocked := Locked;
-  if not Locked then PushCache; 
-  result := 0;
+//  Enter;
+//  try
+    try
+      dbResolver := TdbResolver(dbResoler);
+      if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
+      dbResolver.DBLock(Locked);
+      result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError := '<DbLock>'+  E.Message;
+           result := 10005;
+         end;
+    end;
+//  finally
+//    Leave;
+// end;
 end;
 
 procedure TPlugIn.SetPlugInDisplayName(const Value: string);
@@ -424,30 +464,34 @@ begin
 end;
 
 function TPlugIn.UpdateBatch(Delta: OleVariant;
-  ZClassName: Pchar): integer;
+  ZClassName: Pchar;dbResoler:integer=0): integer;
 var
   rs:TZQuery;
+  dbResolver:TdbResolver;
 begin
-  try
-  if CheckIdTransact then
-     begin
+//  Enter;
+//  try
+    try
+       dbResolver := TdbResolver(dbResoler);
+       if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
        rs := TZQuery.Create(nil);
        try
          rs.Delta := Delta;
          dbResolver.UpdateBatch(rs,StrPas(ZClassName));
        finally
-         PushCache;
          rs.Free;
        end;
-     end;
-     result := 0;
-  except
-    on E:Exception do
-       begin
-         LastError := E.Message;
-         result := 10007;
-       end;
-  end;
+       result := 0;
+    except
+      on E:Exception do
+         begin
+           LastError := '<ZClassName='+StrPas(ZClassName)+'>'+ E.Message;
+           result := 10007;
+         end;
+    end;
+//  finally
+//    Leave;
+//  end;
 end;
 
 procedure TPlugIn.DLLShowPlugIn;
@@ -478,6 +522,16 @@ begin
   FWorking := Value;
 end;
 
+procedure TPlugIn.Enter;
+begin
+  EnterCriticalSection(FThreadLock);
+end;
+
+procedure TPlugIn.Leave;
+begin
+  LeaveCriticalSection(FThreadLock);
+end;
+
 { TPlugInList }
 
 procedure TPlugInList.Clear;
@@ -493,6 +547,7 @@ end;
 
 constructor TPlugInList.Create;
 begin
+  InitializeCriticalSection(FThreadLock);
   FList := TList.Create;
   LoadAll;
 end;
@@ -501,37 +556,58 @@ procedure TPlugInList.Delete(id:integer);
 var
   i:integer;
 begin
-  for i:=0 to FList.Count -1 do
-    begin
-      if TPlugIn(FList[i]).PlugInId = id then
-         begin
-           TObject(FList[i]).Free;
-           FList.Delete(i); 
-           break;
-         end;
-    end;
+  Enter;
+  try
+    for i:=0 to FList.Count -1 do
+      begin
+        if TPlugIn(FList[i]).PlugInId = id then
+           begin
+             TObject(FList[i]).Free;
+             FList.Delete(i);
+             break;
+           end;
+      end;
+  finally
+    Leave;
+  end;
 end;
 
 destructor TPlugInList.Destroy;
 begin
-  Clear;
-  FList.Free;
+  Enter;
+  try
+    Clear;
+    FList.Free;
+  finally
+    Leave;
+    DeleteCriticalSection(FThreadLock);
+  end;
   inherited;
+end;
+
+procedure TPlugInList.Enter;
+begin
+  EnterCriticalSection(FThreadLock);
 end;
 
 function TPlugInList.Find(id: integer): TPlugIn;
 var
   i:integer;
 begin
-  result := nil;
-  for i:=0 to Count-1 do
-    begin
-      if Items[i].PlugInId = id then
-         begin
-           result := Items[i];
-           break;
-         end;
-    end;
+  Enter;
+  try
+    result := nil;
+    for i:=0 to Count-1 do
+      begin
+        if Items[i].PlugInId = id then
+           begin
+             result := Items[i];
+             break;
+           end;
+      end;
+  finally
+    Leave;
+  end;
 end;
 
 function TPlugInList.GetCount: Integer;
@@ -544,12 +620,22 @@ begin
   result := TPlugIn(FList[ItemIndex]);
 end;
 
+procedure TPlugInList.Leave;
+begin
+  LeaveCriticalSection(FThreadLock);
+end;
+
 procedure TPlugInList.Load(FileName: string);
 var
   PlugIn:TPlugIn;
 begin
-  PlugIn := TPlugIn.Create(FileName);
-  FList.Add(PlugIn);
+  Enter;
+  try
+    PlugIn := TPlugIn.Create(FileName);
+    FList.Add(PlugIn);
+  finally
+    Leave;
+  end;
 end;
 
 procedure TPlugInList.LoadAll;

@@ -39,7 +39,13 @@ begin
   try
     if PlugIn<>nil then
        begin
-         PlugIn.DLLDoExecute(vParamStr,vData);
+         PlugIn.Enter;
+         try
+            if PlugIn.Working=0 then
+            PlugIn.DLLDoExecute(vParamStr,vData);
+         finally
+            PlugIn.Leave;
+         end;
          msg := 'succ';
        end
     else
@@ -65,7 +71,13 @@ begin
   try
     if PlugIn<>nil then
        begin
-         PlugIn.DLLDoExecute(vParamStr,vData);
+         PlugIn.Enter;
+         try
+            if PlugIn.Working=0 then
+            PlugIn.DLLDoExecute(vParamStr,vData);
+         finally
+            PlugIn.Leave;
+         end;
          msg := vData;
        end
     else
@@ -92,7 +104,13 @@ begin
     PlugIn := PlugInList.Find(805);
     if PlugIn<>nil then
        begin
-         PlugIn.DLLDoExecute(vParamStr,vData);
+         PlugIn.Enter;
+         try
+            if PlugIn.Working=0 then
+            PlugIn.DLLDoExecute(vParamStr,vData);
+         finally
+            PlugIn.Leave;
+         end;
          msg := 'succ';
        end
     else
@@ -102,7 +120,13 @@ begin
     PlugIn := PlugInList.Find(803);
     if PlugIn<>nil then
        begin
-         PlugIn.DLLDoExecute(vParamStr,vData);
+         PlugIn.Enter;
+         try
+            if PlugIn.Working=0 then
+            PlugIn.DLLDoExecute(vParamStr,vData);
+         finally
+            PlugIn.Leave;
+         end;
          msg := 'succ';
        end
     else
@@ -112,7 +136,13 @@ begin
     PlugIn := PlugInList.Find(810);
     if PlugIn<>nil then
        begin
-         PlugIn.DLLDoExecute(vParamStr,vData);
+         PlugIn.Enter;
+         try
+            if PlugIn.Working=0 then
+            PlugIn.DLLDoExecute(vParamStr,vData);
+         finally
+            PlugIn.Leave;
+         end;
          msg := 'succ';
        end
     else
@@ -143,7 +173,13 @@ begin
   try
     if PlugIn<>nil then
        begin
-         PlugIn.DLLDoExecute(vParamStr,vData);
+         PlugIn.Enter;
+         try
+            if PlugIn.Working=0 then
+            PlugIn.DLLDoExecute(vParamStr,vData);
+         finally
+            PlugIn.Leave;
+         end;
          msg := 'succ';
        end
     else

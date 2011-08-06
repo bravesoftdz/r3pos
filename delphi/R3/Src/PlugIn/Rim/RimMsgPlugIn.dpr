@@ -68,8 +68,8 @@ begin
          'select MSG_ID,TYPE,INVALID_DATE from RIM_MESSAGE A where COM_ID='''+ComID+''' and '+
          '('+
          ' (POSSTR(RECEIVER,'''+CustID+','')>0) or ('+
-         ' (slsman_id in (select slsman_id from rm_cust where cust_id='''+CustID+''') or slsman_id is null or slsman_id='''') '+
-         ' and ( saleorg_id in (select saleorg_id from rm_cust where cust_id='''+CustID+''') or saleorg_id is null or saleorg_id='''') '+         ' and (sale_center_id in (select sale_center_id from rm_cust where cust_id='''+CustID+''') or sale_center_id is null or sale_center_id='''') '+         ' and (receiver is null or receiver =''''  or receiver ='','') '+         ' )'+
+         ' (slsman_id in (select slsman_id from rm_cust where cust_id='''+CustID+''') or slsman_id is null or slsman_id=''all'' or slsman_id='''') '+
+         ' and ( saleorg_id in (select saleorg_id from rm_cust where cust_id='''+CustID+''') or saleorg_id is null or saleorg_id=''all'' or saleorg_id='''') '+         ' and (sale_center_id in (select sale_center_id from rm_cust where cust_id='''+CustID+''') or sale_center_id is null or sale_center_id=''all'' or sale_center_id='''') '+         ' and (receiver is null or receiver ='''' or receiver ='','') '+         ' )'+
          ')'+ 
          'and STATUS=''02'' and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and invalid_date>='''+formatDatetime('YYYYMMDD',Date())+''' '+
          'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+sid+''' and B.TENANT_ID='+tid+' and B.COMM_ID=A.MSG_ID)';
@@ -77,8 +77,8 @@ begin
          'select MSG_ID,TYPE,INVALID_DATE from RIM_MESSAGE A where COM_ID='''+ComID+''' and '+
          '('+
          ' (INSTR(RECEIVER,'''+CustID+','')>0) or ('+
-         ' (slsman_id in (select slsman_id from rm_cust where cust_id='''+CustID+''') or slsman_id is null or slsman_id='''') '+
-         ' and ( saleorg_id in (select saleorg_id from rm_cust where cust_id='''+CustID+''') or saleorg_id is null or saleorg_id='''') '+         ' and (sale_center_id in (select sale_center_id from rm_cust where cust_id='''+CustID+''') or sale_center_id is null or sale_center_id='''') '+         ' and (receiver is null or receiver =''''  or receiver ='','') '+         ' )'+
+         ' (slsman_id in (select slsman_id from rm_cust where cust_id='''+CustID+''') or slsman_id is null or slsman_id=''all'' or slsman_id='''') '+
+         ' and ( saleorg_id in (select saleorg_id from rm_cust where cust_id='''+CustID+''') or saleorg_id is null or saleorg_id=''all'' or saleorg_id='''') '+         ' and (sale_center_id in (select sale_center_id from rm_cust where cust_id='''+CustID+''') or sale_center_id is null or sale_center_id=''all'' or sale_center_id='''') '+         ' and (receiver is null or receiver ='''' or receiver ='','') '+         ' )'+
          ')'+ 
          'and STATUS=''02'' and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and invalid_date>='''+formatDatetime('YYYYMMDD',Date())+''' '+
          'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+sid+''' and B.TENANT_ID='+tid+' and B.COMM_ID=A.MSG_ID)';

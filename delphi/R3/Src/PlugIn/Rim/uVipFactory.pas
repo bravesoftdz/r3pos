@@ -275,10 +275,10 @@ begin
              'MONTH_PAY='''+inttostr(StrtoIntDef(rs.FieldbyName('MONTH_PAY').AsString,0))+''','+
              'OCCUPATION='''+inttostr(StrtoIntDef(rs.FieldbyName('OCCUPATION').AsString,99))+''','+
              'JOBUNIT='''+rs.FieldbyName('JOBUNIT').AsString+''','+
-             'TIME_STAMP='+inttostr(GetStamp(rs.FieldbyName('UPD_DATE').AsString,rs.FieldbyName('UPD_TIME').AsString))+' '+
+             'TIME_STAMP='+TBaseSyncFactory.GetTimeStamp(DbType)+' '+
              'where TENANT_ID='+tid+' and CUST_ID='''+ctid+'''';
-             IcStr := 'update PUB_IC_INFO set IC_CARDNO='''+rs.FieldbyName('CONSUMER_CARD_ID').AsString+''' where TENANT_ID='+tid+' and CLIENT_ID='''+ctid+''' and UNION_ID='''+pid+'''';
-             IcStr1 := 'update PUB_IC_INFO set IC_CARDNO='''+rs.FieldbyName('CONSUMER_CARD_ID').AsString+''' where TENANT_ID='+tid+' and CLIENT_ID='''+ctid+''' and UNION_ID=''#''';
+             IcStr := 'update PUB_IC_INFO set IC_CARDNO='''+rs.FieldbyName('CONSUMER_CARD_ID').AsString+''',TIME_STAMP='+TBaseSyncFactory.GetTimeStamp(DbType)+' where TENANT_ID='+tid+' and CLIENT_ID='''+ctid+''' and UNION_ID='''+pid+'''';
+             IcStr1 := 'update PUB_IC_INFO set IC_CARDNO='''+rs.FieldbyName('CONSUMER_CARD_ID').AsString+''',TIME_STAMP='+TBaseSyncFactory.GetTimeStamp(DbType)+' where TENANT_ID='+tid+' and CLIENT_ID='''+ctid+''' and UNION_ID=''#''';
          end;
      end
     else
@@ -303,7 +303,7 @@ begin
            ''''+inttostr(StrtoIntDef(rs.FieldbyName('OCCUPATION').AsString,99))+''','+
            ''''+rs.FieldbyName('JOBUNIT').AsString+''','+
            ''''+rid+''','+
-           '''00'','+inttostr(GetStamp(rs.FieldbyName('UPD_DATE').AsString,rs.FieldbyName('UPD_TIME').AsString))+')';
+           '''00'','+TBaseSyncFactory.GetTimeStamp(DbType)+')';
 
            IcStr :=
              'insert into PUB_IC_INFO(TENANT_ID,CLIENT_ID,UNION_ID,IC_CARDNO,CREA_DATE,END_DATE,IC_INFO,CREA_USER,IC_STATUS,IC_TYPE,COMM,TIME_STAMP) '+

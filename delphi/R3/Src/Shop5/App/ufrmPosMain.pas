@@ -196,6 +196,7 @@ type
     procedure Label24Click(Sender: TObject);
     procedure Label9Click(Sender: TObject);
     procedure Label3Click(Sender: TObject);
+    procedure edtInputEnter(Sender: TObject);
   private
     FInputFlag: integer;
     Locked:boolean;
@@ -4222,6 +4223,12 @@ begin
   inherited;
   if dbState = dsBrowse then Exit;
   OpenDialogTrend;
+end;
+
+procedure TfrmPosMain.edtInputEnter(Sender: TObject);
+begin
+  inherited;
+  SetImeMode(edtInput.Handle,imClose);
 end;
 
 end.

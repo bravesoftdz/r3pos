@@ -54,6 +54,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure edtTakeFeeKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure edtTakeFeeEnter(Sender: TObject);
   private
     { Private declarations }
     Digit:integer;
@@ -729,6 +730,13 @@ begin
        MainRecord.FieldByName('BANK_ID').AsString := CardNoReset.BankId;
      end;
   result := CardNoReset.ret;
+end;
+
+procedure TfrmShowDibs.edtTakeFeeEnter(Sender: TObject);
+begin
+  inherited;
+  SetImeMode(edtTakeFee.Handle,imClose);
+
 end;
 
 end.

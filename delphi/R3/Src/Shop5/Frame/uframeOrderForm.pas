@@ -3302,6 +3302,7 @@ end;
 procedure TframeOrderForm.edtInputEnter(Sender: TObject);
 begin
   inherited;
+  SetImeMode(edtInput.Handle,imClose);
   edtInput.SelectAll;
 end;
 

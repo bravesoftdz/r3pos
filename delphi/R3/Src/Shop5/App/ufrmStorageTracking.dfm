@@ -397,7 +397,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ParentFont = False
                     TextShadowColor = clWhite
                     TextShadowDepth = 4
-                    TabOrder = 0
+                    TabOrder = 8
                     TextStyle = tsRaised
                     ThemeAware = False
                     ImageIndex = 12
@@ -417,7 +417,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       #35745#37327#21333#20301
                       #21253#35013'1'
                       #21253#35013'2')
-                    TabOrder = 1
+                    TabOrder = 7
                   end
                   object edtGoods_Type: TcxComboBox
                     Left = 62
@@ -428,7 +428,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     ParentFont = False
                     Properties.DropDownListStyle = lsEditFixedList
                     Properties.OnChange = edtGoods_TypePropertiesChange
-                    TabOrder = 2
+                    TabOrder = 4
                   end
                   object edtGoods_ID: TzrComboBoxList
                     Tag = -1
@@ -443,7 +443,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Default = True
                       end>
                     Properties.ReadOnly = False
-                    TabOrder = 3
+                    TabOrder = 5
                     InGrid = False
                     KeyValue = Null
                     FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -479,7 +479,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Default = True
                       end>
                     Properties.ReadOnly = False
-                    TabOrder = 4
+                    TabOrder = 2
                     InGrid = False
                     KeyValue = Null
                     FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -516,7 +516,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Default = True
                       end>
                     Properties.ReadOnly = False
-                    TabOrder = 5
+                    TabOrder = 1
                     InGrid = False
                     KeyValue = Null
                     FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -552,7 +552,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       #34892#25919#21306#22495
                       #31649#29702#32676#32452)
                     Properties.OnChange = edtSHOP_TYPEPropertiesChange
-                    TabOrder = 6
+                    TabOrder = 0
                   end
                   object edtGoodsName: TzrComboBoxList
                     Left = 315
@@ -566,7 +566,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Default = True
                       end>
                     Properties.ReadOnly = False
-                    TabOrder = 7
+                    TabOrder = 6
                     InGrid = True
                     KeyValue = Null
                     FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -618,7 +618,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       #22823#20110#38646
                       #31561#20110#38646
                       #23567#20110#38646)
-                    TabOrder = 8
+                    TabOrder = 3
                   end
                 end
               end
@@ -1072,7 +1072,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1092,7 +1092,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 1
+                  TabOrder = 6
                 end
                 object edtP2_Goods_Type: TcxComboBox
                   Left = 62
@@ -1103,7 +1103,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ParentFont = False
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.OnChange = edtP2_Goods_TypePropertiesChange
-                  TabOrder = 2
+                  TabOrder = 3
                 end
                 object edtP2_Goods_ID: TzrComboBoxList
                   Tag = -1
@@ -1118,7 +1118,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1154,7 +1154,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1191,7 +1191,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 1
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1227,7 +1227,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
                   Properties.OnChange = edtP2_SHOP_TYPEPropertiesChange
-                  TabOrder = 6
+                  TabOrder = 0
                 end
                 object edtP2_GoodsName: TzrComboBoxList
                   Left = 315
@@ -1241,7 +1241,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 5
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -1689,7 +1689,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1709,7 +1709,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 1
+                  TabOrder = 6
                 end
                 object edtP3_Goods_Type: TcxComboBox
                   Left = 62
@@ -1720,7 +1720,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   ParentFont = False
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.OnChange = edtP3_Goods_TypePropertiesChange
-                  TabOrder = 2
+                  TabOrder = 3
                 end
                 object edtP3_Goods_ID: TzrComboBoxList
                   Tag = -1
@@ -1735,7 +1735,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1771,7 +1771,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1808,7 +1808,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 1
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1844,7 +1844,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
                   Properties.OnChange = edtP3_SHOP_TYPEPropertiesChange
-                  TabOrder = 6
+                  TabOrder = 0
                 end
                 object edtP3_GoodsName: TzrComboBoxList
                   Left = 315
@@ -1858,7 +1858,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 5
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'

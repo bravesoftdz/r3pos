@@ -13,8 +13,8 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 426
-    Height = 253
+    Width = 418
+    Height = 242
     ActivePage = tabStock
     Align = alClient
     TabOrder = 0
@@ -165,8 +165,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -221,14 +221,14 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object Label29: TLabel
         Left = 166
-        Top = 153
+        Top = 161
         Width = 12
         Height = 12
         Caption = #20998
       end
       object Label30: TLabel
         Left = 14
-        Top = 153
+        Top = 161
         Width = 96
         Height = 12
         Caption = #26234#33021#25552#37266#38388#38548#26102#38388
@@ -320,12 +320,12 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object IntervalTime: TcxSpinEdit
         Left = 114
-        Top = 149
+        Top = 157
         Width = 50
         Height = 20
         Properties.MaxValue = 100.000000000000000000
         TabOrder = 8
-        Value = 2
+        Value = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
@@ -335,8 +335,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel5: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -708,7 +708,7 @@ inherited frmSysDefine: TfrmSysDefine
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object chkBankCode: TcxCheckBox
-        Left = 230
+        Left = 200
         Top = 155
         Width = 171
         Height = 21
@@ -725,8 +725,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel4: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -893,7 +893,7 @@ inherited frmSysDefine: TfrmSysDefine
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object GroupBox9: TGroupBox
-        Left = 227
+        Left = 219
         Top = 9
         Width = 177
         Height = 136
@@ -999,8 +999,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 253
-    Width = 426
+    Top = 242
+    Width = 418
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

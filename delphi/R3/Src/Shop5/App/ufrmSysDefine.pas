@@ -246,7 +246,7 @@ begin
       if StrToIntDef(Value,0) < 0 then
         IntervalTime.Value := 0
       else if StrToIntDef(Value,0) >= 0 then
-        IntervalTime.Value := StrToIntDef(Value,0);
+        IntervalTime.Value := StrToIntDef(Value,10);
     end;
 
     if Define = 'CUSTCONTINU' then

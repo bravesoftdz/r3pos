@@ -885,7 +885,7 @@ begin
      end;
   finally
      LoadFrame;
-     if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,120000);
+     if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60000);
      Timer1.Enabled := true;
   end;
 end;
@@ -1088,8 +1088,10 @@ end;
 procedure TfrmR3Main.Timer1Timer(Sender: TObject);
 var
   P:PMsgInfo;
+  w:integer;
 begin
   inherited;
+  w := StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60;
   if PrainpowerJudge.Locked>0 then Exit;
   if SystemShutdown then Exit;
   if not Logined then Exit;
@@ -1097,12 +1099,12 @@ begin
   if not Factor.Connected then Exit;
 
   if (not MsgFactory.Loaded and (Timer1.Tag>5)) or (MsgFactory.Loaded and (Timer1.Tag>0) and
-     (MsgFactory.UnRead=0) and ((Timer1.Tag mod 120)=0)
+     (MsgFactory.UnRead=0) and ((Timer1.Tag mod w)=0)
      )
   then
    MsgFactory.Load;
 
-  if Timer1.Tag >= 120 then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
+  if Timer1.Tag >= w then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
   if MsgFactory.Count > 0 then
      begin
        if MsgFactory.UnRead>0 then
@@ -1128,7 +1130,7 @@ begin
      begin
          lblUserInfo.Caption := '尊敬的<'+Global.TENANT_NAME+'>客户,您有('+inttostr(MsgFactory.UnRead)+')条消息';
      end;
-  if (MsgFactory.Loaded and ((Timer1.Tag mod 120)=0)) then
+  if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) then
      begin
        P := MsgFactory.ReadMsg;
        if P<>nil then MsgFactory.HintMsg(P);

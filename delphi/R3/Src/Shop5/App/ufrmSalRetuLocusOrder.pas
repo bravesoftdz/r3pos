@@ -148,7 +148,7 @@ procedure TfrmSalRetuLocusOrder.NewOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if not IsAudit then Raise Exception.Create('没有审核的单据不能收货.');
+  if IsAudit then Raise Exception.Create('没有审核的单据不能收货.');
   edtInput.Properties.ReadOnly := false;
   edtInput.Style.Color := clWhite;
   if Visible and edtInput.CanFocus then edtInput.SetFocus;

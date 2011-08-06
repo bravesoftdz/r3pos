@@ -83,6 +83,8 @@ begin
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if trim(fndSALES_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+'''';
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+     w := w +' and (A.CLIENT_ID=:SHOP_ID or A.SHOP_ID=:SHOP_ID)';
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of

@@ -773,10 +773,9 @@ begin
   finally
     KeyFields.Free;
   end;
-
-  InsertQuery := TZQuery.Create(nil);
+  if InsertQuery=nil then InsertQuery := TZQuery.Create(nil);
   InsertQuery.SQL.Text := 'insert into '+Params.ParambyName('TABLE_NAME').AsString+'('+InsertFld+') values('+ValueFld+')';
-  UpdateQuery := TZQuery.Create(nil);
+  if InsertQuery=nil then UpdateQuery := TZQuery.Create(nil);
   if TimeStamp and (Params.ParambyName('KEY_FLAG').AsInteger=0) then
      begin
        if WhereStr<>'' then WhereStr :=WhereStr+' and ';

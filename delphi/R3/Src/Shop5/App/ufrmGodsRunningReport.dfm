@@ -1,20 +1,20 @@
 inherited frmGodsRunningReport: TfrmGodsRunningReport
-  Left = 199
-  Top = 115
-  Width = 959
-  Height = 625
+  Left = -8
+  Top = -8
+  Width = 1292
+  Height = 776
   Caption = #21830#21697#27969#27700#24080#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 951
-    Height = 561
+    Width = 1276
+    Height = 701
     inherited RzPanel2: TRzPanel
-      Width = 941
-      Height = 551
+      Width = 1266
+      Height = 691
       inherited RzPage: TRzPageControl
-        Width = 736
-        Height = 545
+        Width = 1061
+        Height = 685
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,14 +22,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
           Color = clCream
           Caption = #21830#21697#27969#27700#24080#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 734
-            Height = 518
+            Width = 1059
+            Height = 658
             inherited Panel4: TPanel
-              Width = 724
-              Height = 508
+              Width = 1049
+              Height = 648
               Color = clBtnFace
               inherited w1: TRzPanel
-                Width = 724
+                Width = 1049
                 Height = 82
                 object RzLabel2: TRzLabel
                   Left = 22
@@ -75,7 +75,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Caption = #26465' '#24418' '#30721
                 end
                 object Label8: TLabel
-                  Left = 583
+                  Left = 920
                   Top = 58
                   Width = 48
                   Height = 12
@@ -293,7 +293,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   MultiSelect = False
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 633
+                  Left = 970
                   Top = 54
                   Width = 80
                   Height = 20
@@ -309,12 +309,12 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 724
-                Height = 426
+                Width = 1049
+                Height = 566
                 Color = clBtnFace
                 inherited DBGridEh1: TDBGridEh
-                  Width = 720
-                  Height = 422
+                  Width = 1045
+                  Height = 562
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -368,6 +368,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       DisplayFormat = ' #0.###'
                       EditButtons = <>
                       FieldName = 'ORG_AMT'
+                      Footer.DisplayFormat = ' #0.###'
                       Footers = <>
                       Title.Caption = #26399#21021#25968#37327
                       Width = 70
@@ -401,6 +402,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       DisplayFormat = ' #0.###'
                       EditButtons = <>
                       FieldName = 'BAL_AMT'
+                      Footer.DisplayFormat = ' #0.###'
                       Footers = <>
                       Title.Caption = #32467#23384#25968#37327
                       Width = 80
@@ -468,16 +470,16 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 739
-        Height = 545
+        Left = 1064
+        Height = 685
         inherited Panel2: TPanel
-          Height = 502
+          Height = 653
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 387
+            Height = 538
             inherited rzShowColumns: TRzCheckList
-              Height = 383
+              Height = 534
             end
           end
         end
@@ -485,15 +487,15 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 951
+    Width = 1276
     inherited Image1: TImage
-      Width = 581
+      Width = 902
     end
     inherited Image3: TImage
-      Width = 581
+      Width = 902
     end
     inherited Image14: TImage
-      Left = 931
+      Left = 1256
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

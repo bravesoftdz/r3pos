@@ -34,6 +34,8 @@ end;
 
 function TfrmN26Browser.OpenUrl(url: string): boolean;
 begin
+  WindowState := wsMaximized;
+  BringToFront;
   Open(url);
 end;
 

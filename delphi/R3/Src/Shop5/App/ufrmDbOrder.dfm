@@ -7,10 +7,10 @@ inherited frmDbOrder: TfrmDbOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 877
-    Height = 525
+    Width = 869
+    Height = 514
     inherited RzPanel2: TRzPanel
-      Width = 867
+      Width = 859
       Height = 116
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -94,7 +94,7 @@ inherited frmDbOrder: TfrmDbOrder
       end
       inherited RzPanel4: TRzPanel
         Height = 83
-        TabOrder = 7
+        TabOrder = 11
         inherited Shape1: TShape
           Top = 33
         end
@@ -118,14 +118,14 @@ inherited frmDbOrder: TfrmDbOrder
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 5
+        TabOrder = 7
       end
       object edtREMARK: TcxTextEdit
         Left = 251
         Top = 89
         Width = 313
         Height = 20
-        TabOrder = 4
+        TabOrder = 6
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGUIDE_USER: TzrComboBoxList
@@ -217,7 +217,7 @@ inherited frmDbOrder: TfrmDbOrder
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 6
+        TabOrder = 9
       end
       object edtSTOCK_USER: TzrComboBoxList
         Left = 636
@@ -230,7 +230,7 @@ inherited frmDbOrder: TfrmDbOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 3
+        TabOrder = 8
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -322,7 +322,7 @@ inherited frmDbOrder: TfrmDbOrder
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 8
+        TabOrder = 10
         TextStyle = tsRaised
         ThemeAware = False
         NumGlyphs = 2
@@ -333,7 +333,7 @@ inherited frmDbOrder: TfrmDbOrder
         Top = 68
         Width = 313
         Height = 20
-        TabOrder = 9
+        TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtTELEPHONE: TcxTextEdit
@@ -341,7 +341,7 @@ inherited frmDbOrder: TfrmDbOrder
         Top = 47
         Width = 313
         Height = 20
-        TabOrder = 10
+        TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtLINKMAN: TcxTextEdit
@@ -349,13 +349,13 @@ inherited frmDbOrder: TfrmDbOrder
         Top = 25
         Width = 89
         Height = 20
-        TabOrder = 11
+        TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 421
-      Width = 867
+      Top = 410
+      Width = 859
       Height = 62
       TabOrder = 2
       object Label8: TLabel
@@ -451,8 +451,8 @@ inherited frmDbOrder: TfrmDbOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 154
-      Width = 867
-      Height = 267
+      Width = 859
+      Height = 256
       TabOrder = 3
       Columns = <
         item
@@ -573,15 +573,15 @@ inherited frmDbOrder: TfrmDbOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 121
-      Width = 867
+      Width = 859
     end
     inherited stbHint: TRzPanel
-      Top = 483
-      Width = 867
+      Top = 472
+      Width = 859
     end
     inherited rzHelp: TRzPanel
-      Top = 507
-      Width = 867
+      Top = 496
+      Width = 859
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox

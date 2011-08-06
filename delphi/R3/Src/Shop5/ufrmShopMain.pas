@@ -1010,13 +1010,13 @@ begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    Caption :=  F.ReadString('soft','name','云盟软件R3')+' 版本:'+RzVersionInfo.FileVersion;
+    Caption :=  F.ReadString('soft','name','rspcn.com')+' 版本:'+RzVersionInfo.FileVersion;
     if ShopGlobal.offline then
        Caption := Caption +'【脱机使用】门店：'+ Global.SHOP_NAME
     else
        Caption := Caption +'【联机使用】门店：'+ Global.SHOP_NAME;
-    Application.Title :=  F.ReadString('soft','name','云盟软件R3');
-    RzLabel1.Caption := F.ReadString('soft','copyright','')+' | 使用单位:'+Global.TENANT_NAME;
+    Application.Title :=  F.ReadString('soft','name','rspcn.com');
+    RzLabel1.Caption := F.ReadString('soft','copyright','rspcn.com')+' | 使用单位:'+Global.TENANT_NAME;
     if not FindCmdLineSwitch('rsp',['-','+'],false) then
        begin
           SFVersion := F.ReadString('soft','SFVersion','.NET');

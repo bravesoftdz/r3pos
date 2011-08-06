@@ -612,6 +612,12 @@ begin
            rzChildTitle.Caption := '当前位置->'+Screen.ActiveForm.Caption;
            break;
          end;
+      if TrzBmpButton(FList[i]).tag=integer(Pointer(Sender)) then
+         begin
+           TrzBmpButton(FList[i]).Caption :=  TForm(Sender).Caption;
+           TrzBmpButton(FList[i]).Down := true;
+           rzChildTitle.Caption := '当前位置->'+TForm(Sender).Caption;
+         end;
     end;
 end;
 
@@ -1018,13 +1024,13 @@ begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    Caption :=  F.ReadString('soft','name','云盟软件R3')+' 版本:'+RzVersionInfo.FileVersion;
+    Caption :=  F.ReadString('soft','name','rspcn.com')+' 版本:'+RzVersionInfo.FileVersion;
     if ShopGlobal.offline then
        Caption := Caption +'【脱机使用】门店：'+ Global.SHOP_NAME
     else
        Caption := Caption +'【联机使用】门店：'+ Global.SHOP_NAME;
-    Application.Title :=  F.ReadString('soft','name','云盟软件R3');
-    RzLabel1.Caption := F.ReadString('soft','copyright','')+' | 使用单位:'+Global.TENANT_NAME;
+    Application.Title :=  F.ReadString('soft','name','rspcn.com');
+    RzLabel1.Caption := F.ReadString('soft','copyright','rspcn.com')+' | 使用单位:'+Global.TENANT_NAME;
     if not FindCmdLineSwitch('rsp',['-','+'],false) then
        begin
           SFVersion := F.ReadString('soft','SFVersion','.NET');
@@ -2968,7 +2974,7 @@ begin
   if DllHandle > 0 then 
   try
     //logo
-    Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
+    //Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
     Image6.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
     Image20.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
     Image17.Picture.Graphic  := GetJpeg(sflag+'logo_r2');
@@ -3836,6 +3842,7 @@ begin
     Form.Caption := CA_MODULE.FieldbyName('MODU_NAME').asString;
     sl.CommaText := s;
     TfrmN26Browser(Form).OpenUrl(ExtractFilePath(ParamStr(0))+sl.values['url']);
+    Form.SetFocus;
     DoActiveChange(Form);
   except
     sl.free;
@@ -3877,6 +3884,7 @@ begin
           Form.Caption := CA_MODULE.FieldbyName('MODU_NAME').asString;
           sl.CommaText := s;
           TfrmN26Browser(Form).OpenUrl(ExtractFilePath(ParamStr(0))+sl.values['url']);
+          Form.SetFocus;
           DoActiveChange(Form);
         except
           sl.free;

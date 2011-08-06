@@ -1,7 +1,7 @@
 unit uTimerFactory;
 
 interface
-uses Classes,Windows;
+uses Classes,SysUtils,Windows;
 type
   TTimerFactory=class(TThread)
   private
@@ -45,7 +45,7 @@ begin
   ResetEvent(hEvent);
   while not Terminated do
     begin
-      Proc(nil);
+      if StrtoIntDef(formatDatetime('hh',now()),0) in [8..20] then Proc(nil);
       WaitForSingleObject(hEvent, TimeOut);
       if not Terminated then
          begin

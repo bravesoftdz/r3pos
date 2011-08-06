@@ -115,7 +115,7 @@ var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
 uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uShopGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
-  ufrmDesk, uGlobal, MultInst;
+  ufrmDesk, uGlobal, MultInst, ObjCommon;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -613,7 +613,7 @@ begin
   List := TStringList.Create;
   try
     xsm_center := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
-    if xsm_center='' then xsm_center := 'http://preview.xinshangmeng.com/st/' 
+    if xsm_center='' then xsm_center := '' 
        else
        begin
          List.CommaText := xsm_center;
@@ -657,6 +657,7 @@ begin
   if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('UrlµØÖ··µ»ØÎÞÐ§XMLÎÄµµ£¬ÇëÇóµÇÂ¼Ê§°Ü...');
   if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('ÇëÇóµÇÂ¼Ê§°Ü,´íÎó:'+Root.attributes.getNamedItem('msg').text);
   result := true;
+  if result then Factor.ExecSQL('update CA_SHOP_INFO set XSM_CODE='''+xsm_username+''',XSM_PSWD='''+EncStr(xsm_password,ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
 end;
 
 function TfrmXsmIEBrowser.CreateXML(xml: string): IXMLDomDocument;

@@ -150,7 +150,7 @@ begin
   result := false;
   if url='' then Exit;
   Runed := true;
-  IEBrowser.Navigate(url);
+//  IEBrowser.Navigate(url);
   frmDesk.Waited := true;
   try
     frmLogo.ProgressBar1.Position := 1;

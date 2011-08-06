@@ -437,6 +437,11 @@ procedure TframeOrderForm.FocusNextColumn;
 var i:Integer;
 begin
   i:=DbGridEh1.Col;
+  if edtTable.RecordCount>edtTable.RecNo then
+     begin
+       edtTable.Next;
+       Exit;
+     end;
   Inc(i);
   while True do
     begin
@@ -2079,8 +2084,8 @@ begin
     while not edtTable.eof do
       begin
         if not bs.Locate('GODS_ID',edtTable.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'在经营商品中没有找到.');
-        if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (edtTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
-        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (edtTable.FieldbyName('AMOUNT').AsCurrency<>edtTable.FieldbyName('AMOUNT').AsInteger) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品不能输入小数的数量。');
+        if (bs.FieldByName('USING_BATCH_NO').AsString = '1') and (edtTable.FindField('BATCH_NO')<>nil) and (edtTable.FieldbyName('BATCH_NO').AsString='#') then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品必须输入商品批号。');
+        if (bs.FieldByName('USING_LOCUS_NO').AsString = '1') and (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FieldbyName('AMOUNT').AsCurrency<>edtTable.FieldbyName('AMOUNT').AsInteger) then Raise Exception.Create(edtTable.FieldbyName('GODS_NAME').asString+'商品不能输入小数的数量。');
         edtTable.Next;
       end;
     if r>0 then edtTable.RecNo := r;

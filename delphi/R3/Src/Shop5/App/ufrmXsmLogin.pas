@@ -100,7 +100,8 @@ begin
       Factor.UpdateBatch(cdsUnion,'TSysDefine');
     end;
   1:begin
-      Factor.ExecSQL('update CA_SHOP_INFO set XSM_CODE='''+Trim(edtUsername.Text)+''',XSM_PSWD='''+EncStr(Trim(edtPassword.Text),ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
+//修改成只有认证功能后才会保存设置  
+//      Factor.ExecSQL('update CA_SHOP_INFO set XSM_CODE='''+Trim(edtUsername.Text)+''',XSM_PSWD='''+EncStr(Trim(edtPassword.Text),ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
     end;
   end;
 end;

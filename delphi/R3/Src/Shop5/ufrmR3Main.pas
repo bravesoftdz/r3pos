@@ -1143,7 +1143,7 @@ begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     {
-    Caption :=  F.ReadString('soft','name','云盟软件')+' 版本:'+RzVersionInfo.FileVersion;
+    Caption :=  F.ReadString('soft','name','rspcn.com')+' 版本:'+RzVersionInfo.FileVersion;
     if ShopGlobal.offline then
        begin
           Caption := Caption +'【脱机使用】门店：'+ Global.SHOP_NAME;
@@ -1157,7 +1157,7 @@ begin
     }
     if CaFactory.Audited then lblNetStatus.Caption := '我在线上' else lblNetStatus.Caption := '我在线下';
     imgOffline.Visible := not CaFactory.Audited;
-    Application.Title :=  F.ReadString('soft','name','云盟软件');
+    Application.Title :=  F.ReadString('soft','name','rspcn.com');
     lblDayInfo.Caption := '当前日期:'+formatDatetime('YYYY-MM-DD',date());
     if not FindCmdLineSwitch('rsp',['-','+'],false) then
        begin

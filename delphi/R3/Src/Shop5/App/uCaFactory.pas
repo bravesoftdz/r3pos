@@ -383,7 +383,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -479,7 +479,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -742,7 +742,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1024,7 +1024,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1116,7 +1116,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1197,7 +1197,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1295,7 +1295,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1450,7 +1450,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1622,7 +1622,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1752,7 +1752,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -1917,7 +1917,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -2051,7 +2051,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -2255,7 +2255,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -2385,7 +2385,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -2628,7 +2628,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -2826,7 +2826,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally
@@ -3047,7 +3047,7 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise;
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
     finally

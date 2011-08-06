@@ -946,7 +946,7 @@ begin
         begin
           if IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and (PRTemplate(TLate[i])^.Data=nil) then PRTemplate(TLate[i])^.Data := TList.Create;
           //商品指标
-          if not IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and not CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+          if not IsDSIndex(PRTemplate(TLate[i])^.INDEX_ID) and (PRTemplate(TLate[i])^.FieldIndex>=0) and not CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
              begin
                DataSet.Edit;
                DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';

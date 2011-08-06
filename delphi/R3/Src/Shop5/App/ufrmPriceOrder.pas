@@ -742,12 +742,15 @@ end;
 procedure TfrmPriceOrder.AddRecord(AObj: TRecord_; UNIT_ID: string; Located, IsPresent: boolean);
 var
   RelID: string;
+  rs:TZQuery;
 begin
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('在经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"'); 
   //判断当前商品是否允许改价若
-  RelID:= AObj.FieldbyName('RELATION_ID').AsString;
+  RelID:= rs.FieldbyName('RELATION_ID').AsString;
   if CheckNotChangePrice(RelID) then
   begin
-    MessageBox(Handle,pchar('商品”'+fndGODS_ID.DataSet.FieldbyName('GODS_NAME').AsString+'“是统一定价，不能促销！'),'友情提示',MB_OK+MB_ICONINFORMATION);
+    MessageBox(Handle,pchar('商品”'+rs.FieldbyName('GODS_NAME').AsString+'“是统一定价，不能促销！'),'友情提示',MB_OK+MB_ICONINFORMATION);
     Exit;
   end;
 

@@ -2160,6 +2160,11 @@ begin
 
   AObj.FieldbyName('CREA_USER').AsString := Global.UserID;
   AObj.FieldbyName('CREA_USER_TEXT').AsString := Global.UserName;
+  if ShopGlobal.GetParameter('GUIDE_USER')<>'0' then
+  begin
+     AObj.FieldByName('GUIDE_USER').AsString := Global.UserId;
+     AObj.FieldByName('GUIDE_USER_TEXT').AsString := Global.UserName;
+  end;
   AObj.FieldbyName('INVOICE_FLAG').AsInteger := DefInvFlag;
   case DefInvFlag of
   1:AObj.FieldbyName('TAX_RATE').AsFloat := 0;
@@ -3204,7 +3209,7 @@ begin
     Raise;
   end;
   dbState := dsBrowse;
-  MessageBox(Handle,'挂单成功，取单请按/键->8键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  MessageBox(Handle,'挂单成功，取单请按/键->9键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   NewOrder;
   LoadFile('H');
 end;

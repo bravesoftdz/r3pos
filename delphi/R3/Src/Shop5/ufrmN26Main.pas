@@ -899,6 +899,7 @@ begin
           begin
             if TimerFactory<>nil then FreeAndNil(TimerFactory);
             SyncFactory.SyncAll;
+            Exit;
           end;
      end;
   if not SystemShutdown and (MessageBox(Handle,'是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then

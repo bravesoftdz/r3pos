@@ -7,30 +7,30 @@ inherited frmRckDayReport: TfrmRckDayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1014
-    Height = 547
+    Width = 1006
+    Height = 536
     inherited RzPanel2: TRzPanel
-      Width = 1004
-      Height = 537
+      Width = 996
+      Height = 526
       inherited RzPage: TRzPageControl
-        Width = 799
-        Height = 531
-        ActivePage = TabSheet5
+        Width = 791
+        Height = 520
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 797
-            Height = 504
+            Width = 789
+            Height = 493
             inherited Panel4: TPanel
-              Width = 787
-              Height = 494
+              Width = 779
+              Height = 483
               inherited w1: TRzPanel
-                Width = 787
+                Width = 779
                 Height = 64
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -156,11 +156,11 @@ inherited frmRckDayReport: TfrmRckDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 64
-                Width = 787
-                Height = 430
+                Width = 779
+                Height = 419
                 inherited DBGridEh1: TDBGridEh
-                  Width = 783
-                  Height = 426
+                  Width = 775
+                  Height = 415
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -1145,8 +1145,8 @@ inherited frmRckDayReport: TfrmRckDayReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 797
-            Height = 504
+            Width = 789
+            Height = 493
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1154,8 +1154,8 @@ inherited frmRckDayReport: TfrmRckDayReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 787
-              Height = 494
+              Width = 779
+              Height = 483
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1163,7 +1163,7 @@ inherited frmRckDayReport: TfrmRckDayReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 787
+                Width = 779
                 Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1343,8 +1343,8 @@ inherited frmRckDayReport: TfrmRckDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 82
-                Width = 787
-                Height = 412
+                Width = 779
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1352,8 +1352,8 @@ inherited frmRckDayReport: TfrmRckDayReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 783
-                  Height = 408
+                  Width = 775
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1565,8 +1565,8 @@ inherited frmRckDayReport: TfrmRckDayReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 797
-            Height = 504
+            Width = 789
+            Height = 493
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1574,8 +1574,8 @@ inherited frmRckDayReport: TfrmRckDayReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 787
-              Height = 494
+              Width = 779
+              Height = 483
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1583,7 +1583,7 @@ inherited frmRckDayReport: TfrmRckDayReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 787
+                Width = 779
                 Height = 127
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2009,8 +2009,8 @@ inherited frmRckDayReport: TfrmRckDayReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 127
-                Width = 787
-                Height = 367
+                Width = 779
+                Height = 356
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2018,8 +2018,8 @@ inherited frmRckDayReport: TfrmRckDayReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 783
-                  Height = 363
+                  Width = 775
+                  Height = 352
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2270,8 +2270,8 @@ inherited frmRckDayReport: TfrmRckDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 802
-        Height = 531
+        Left = 794
+        Height = 520
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -2287,15 +2287,15 @@ inherited frmRckDayReport: TfrmRckDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1014
+    Width = 1006
     inherited Image1: TImage
-      Width = 644
+      Width = 632
     end
     inherited Image3: TImage
-      Width = 644
+      Width = 632
     end
     inherited Image14: TImage
-      Left = 994
+      Left = 986
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

@@ -403,6 +403,7 @@ begin
     except
     end;
   end;
+  DBGridEh2.Align := alClient;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'temp\sft.'+Global.UserID);
   try
     rzHelp.Visible := F.ReadBool('收款机界面','Help',true);

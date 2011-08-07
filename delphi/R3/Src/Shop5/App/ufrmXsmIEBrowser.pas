@@ -166,8 +166,13 @@ end;
 destructor TfrmXsmIEBrowser.Destroy;
 begin
   runed := false;
-  DLLLC_FreeLibrary();
-  FreeLibrary(DLLHandle);
+  try
+    DLLLC_FreeLibrary();
+    FreeLibrary(DLLHandle);
+  except
+    on E:Exception do
+       LogFile.AddLogFile(0,'释放新商盟组件->'+E.Message);
+  end;
   IEBrowser.Free;
 //  LCObject.Close;
   inherited;

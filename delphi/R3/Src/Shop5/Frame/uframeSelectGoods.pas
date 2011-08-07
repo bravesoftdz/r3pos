@@ -158,6 +158,7 @@ begin
     cdsList.AddFromStream(sm);
     if rs.RecordCount <600 then IsEnd := True else IsEnd := false;
   finally
+    if cdsList.SortedFields='' then cdsList.SortedFields := 'GODS_CODE';
     cdsList.EnableControls;
     sm.Free;
     rs.Free;

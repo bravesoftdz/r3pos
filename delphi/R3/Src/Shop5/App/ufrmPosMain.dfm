@@ -516,10 +516,11 @@ inherited frmPosMain: TfrmPosMain
           TabOrder = 12
         end
         object DBGridEh2: TDBGridEh
-          Left = 345
-          Top = 164
+          Left = 1
+          Top = 20
           Width = 398
           Height = 167
+          Align = alClient
           AllowedOperations = []
           AutoFitColWidths = True
           Color = clBlack

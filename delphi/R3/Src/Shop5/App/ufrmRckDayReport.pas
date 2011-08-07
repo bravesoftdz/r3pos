@@ -262,21 +262,21 @@ begin
   MaxDate:=GetRckMaxDate(EndDate);
   //按根据条件门店汇总:
   ViwSql:=
-     'select B.REGION_ID as REGION_ID,A.SHOP_ID as SHOP_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
+     'select A.TENANT_ID,B.REGION_ID as REGION_ID,A.SHOP_ID as SHOP_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
      'sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetDateCnd(P1_D1,P1_D2,'RECV_DATE')+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
-     ' group by B.REGION_ID,A.SHOP_ID ';
+     ' group by A.TENANT_ID,B.REGION_ID,A.SHOP_ID ';
 
   //台账表
-  RCKRData:='select SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
+  RCKRData:='select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
   //关联
   strSql:=
     'select j.REGION_ID as REGION_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
     'sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY,sum(TRN_MNY) as TRN_MNY, sum(BAL_MNY) as TRN_REST_MNY from '+
     '('+ViwSql+') j '+
-    ' left outer join ('+RCKRData+')c on j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
+    ' left outer join ('+RCKRData+')c on j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
   strSql:=
     'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
@@ -428,14 +428,14 @@ begin
 
   //收银员最后一天的零钱
   RMNYData:=
-    ' select AA.CREA_USER as CREA_USER,isnull(BALANCE,0) as BALANCE from ACC_CLOSE_FORDAY AA, '+
-    '(select max(CLSE_DATE) as CLSE_DATE,CREA_USER from ACC_CLOSE_FORDAY where CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' group by CREA_USER) BB '+
-    ' where AA.CREA_USER=BB.CREA_USER and AA.CLSE_DATE=BB.CLSE_DATE and AA.CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' ';
+    ' select AA.TENANT_ID,AA.CREA_USER as CREA_USER,max(isnull(BALANCE,0)) as BALANCE from ACC_CLOSE_FORDAY AA, '+
+    '(select max(CLSE_DATE) as CLSE_DATE,TENANT_ID,CREA_USER from ACC_CLOSE_FORDAY where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' group by TENANT_ID,CREA_USER) BB '+
+    ' where AA.TENANT_ID=BB.TENANT_ID and AA.CREA_USER=BB.CREA_USER and AA.CLSE_DATE=BB.CLSE_DATE and AA.TENANT_ID='+inttostr(Global.TENANT_ID)+' and AA.CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' group by AA.TENANT_ID,AA.CREA_USER';
   //关联
   strSql:=
     'select jc.*,u.ACCOUNT as ACCOUNT,u.USER_NAME as USER_NAME from'+
     ' (select j.*,BALANCE from ('+ViwSql+')j '+
-    '  left outer join ('+RMNYData+')c on j.CREA_USER=c.CREA_USER)jc '+
+    '  left outer join ('+RMNYData+') c on j.TENANT_ID=c.TENANT_ID and j.CREA_USER=c.CREA_USER)jc '+
     ' left outer join VIW_Users u on jc.TENANT_ID=u.TENANT_ID and jc.CREA_USER=u.USER_ID '+
     ' order by jc.CREA_USER '; 
   Result := ParseSQL(Factor.iDbType,strSql);

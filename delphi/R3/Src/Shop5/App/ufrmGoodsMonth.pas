@@ -185,7 +185,7 @@ begin
     0:begin
       StrSql :=
         'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(isnull(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(isnull(A.BAL_CST,0)) as BAL_CST,sum(isnull(A.BAL_CST,0))/sum(isnull(A.BAL_AMT,0)) as BAL_PRICE,sum(isnull(A.ADJ_CST,0)) as ADJ_CST,sum(isnull(A.ADJ_CST,0)+isnull(A.BAL_CST,0))/sum(isnull(A.BAL_AMT,0)) as ADJ_PRICE,'+
+        'sum(isnull(A.BAL_CST,0)) as BAL_CST,sum(isnull(A.BAL_CST,0))*1.00/sum(isnull(A.BAL_AMT,0)) as BAL_PRICE,sum(isnull(A.ADJ_CST,0)) as ADJ_CST,sum(isnull(A.ADJ_CST,0)+isnull(A.BAL_CST,0))*1.00/sum(isnull(A.BAL_AMT,0)) as ADJ_PRICE,'+
         'sum(isnull(A.ADJ_CST,0)+isnull(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
         ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
         ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
@@ -198,7 +198,7 @@ begin
     1:begin
       StrSql :=
         'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(nvl(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(nvl(A.BAL_CST,0)) as BAL_CST,sum(nvl(A.BAL_CST,0))/sum(nvl(A.BAL_AMT,0)) as BAL_PRICE,sum(nvl(A.ADJ_CST,0)) as ADJ_CST,sum(nvl(A.ADJ_CST,0)+nvl(A.BAL_CST,0))/sum(nvl(A.BAL_AMT,0)) as ADJ_PRICE,'+
+        'sum(nvl(A.BAL_CST,0)) as BAL_CST,sum(nvl(A.BAL_CST,0))*1.00/sum(nvl(A.BAL_AMT,0)) as BAL_PRICE,sum(nvl(A.ADJ_CST,0)) as ADJ_CST,sum(nvl(A.ADJ_CST,0)+nvl(A.BAL_CST,0))*1.00/sum(nvl(A.BAL_AMT,0)) as ADJ_PRICE,'+
         'sum(nvl(A.ADJ_CST,0)+nvl(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
         ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
         ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
@@ -211,8 +211,8 @@ begin
     3:begin
       StrSql :=
         'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as BAL_AMT,'+
-        'sum(iif(isnull(A.BAL_CST),0,A.BAL_CST)) as BAL_CST,sum(iif(isnull(A.BAL_CST),0,A.BAL_CST))/sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as BAL_PRICE,'+
-        'sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)A.ADJ_CST) as ADJ_CST,sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)+iif(isnull(A.BAL_CST),0,A.BAL_CST))/sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as ADJ_PRICE,'+
+        'sum(iif(isnull(A.BAL_CST),0,A.BAL_CST)) as BAL_CST,sum(iif(isnull(A.BAL_CST),0,A.BAL_CST))*1.00/sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as BAL_PRICE,'+
+        'sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)A.ADJ_CST) as ADJ_CST,sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)+iif(isnull(A.BAL_CST),0,A.BAL_CST))*1.00/sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as ADJ_PRICE,'+
         'sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)+iif(isnull(A.BAL_CST),0,A.BAL_CST)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
         ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
         ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
@@ -225,7 +225,7 @@ begin
     4:begin
       StrSql :=
         'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(coalesce(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(coalesce(A.BAL_CST,0)) as BAL_CST,sum(coalesce(A.BAL_CST,0))/sum(coalesce(A.BAL_AMT,0)) as BAL_PRICE,sum(coalesce(A.ADJ_CST,0)) as ADJ_CST,sum(coalesce(A.ADJ_CST,0)+coalesce(A.BAL_CST,0))/sum(coalesce(A.BAL_AMT,0)) as ADJ_PRICE,'+
+        'sum(coalesce(A.BAL_CST,0)) as BAL_CST,sum(coalesce(A.BAL_CST,0))*1.00/sum(coalesce(A.BAL_AMT,0)) as BAL_PRICE,sum(coalesce(A.ADJ_CST,0)) as ADJ_CST,sum(coalesce(A.ADJ_CST,0)+coalesce(A.BAL_CST,0))*1.00/sum(coalesce(A.BAL_AMT,0)) as ADJ_PRICE,'+
         'sum(coalesce(A.ADJ_CST,0)+coalesce(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
         ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
         ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
@@ -238,7 +238,7 @@ begin
     5:begin
       StrSql :=
         'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(IfNull(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(IfNull(A.BAL_CST,0)) as BAL_CST,sum(IfNull(A.BAL_CST,0))/sum(IfNull(A.BAL_AMT,0)) as BAL_PRICE,sum(IfNull(A.ADJ_CST,0)) as ADJ_CST,sum(IfNull(A.ADJ_CST,0)+IfNull(A.BAL_CST,0))/sum(IfNull(A.BAL_AMT,0)) as ADJ_PRICE,'+
+        'sum(IfNull(A.BAL_CST,0)) as BAL_CST,sum(IfNull(A.BAL_CST,0))*1.00/sum(IfNull(A.BAL_AMT,0)) as BAL_PRICE,sum(IfNull(A.ADJ_CST,0)) as ADJ_CST,sum(IfNull(A.ADJ_CST,0)+IfNull(A.BAL_CST,0))*1.00/sum(IfNull(A.BAL_AMT,0)) as ADJ_PRICE,'+
         'sum(IfNull(A.ADJ_CST,0)+IfNull(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
         ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
         ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';

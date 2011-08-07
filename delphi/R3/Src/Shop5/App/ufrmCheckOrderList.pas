@@ -514,7 +514,7 @@ begin
      'select jd.*,c.USER_NAME as CREA_USER_TEXT from ( '+
      'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,B.UNIT_ID,'+
      ' isnull(jc.RCK_AMOUNT,0)*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as RCK_AMOUNT,'+
-     ' (isnull(jc.RCK_AMOUNT,0)+isnull(jc.AMOUNT,0))*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end) as AMOUNT, '+
+     ' (isnull(jc.RCK_AMOUNT,0)-isnull(jc.AMOUNT,0))*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end) as AMOUNT, '+
      'case when isnull(jc.AMOUNT,0)>0 then isnull(jc.AMOUNT,0)*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end) else null end as LOSS_AMOUNT, '+
      'case when isnull(jc.AMOUNT,0)<0 then isnull(jc.AMOUNT,0)*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end) else null end as PROFIT_AMOUNT, '+
      'b.GODS_NAME,b.GODS_CODE,b.BARCODE from ( '+

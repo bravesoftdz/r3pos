@@ -6,11 +6,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1085
+    Width = 1077
     inherited RzPanel2: TRzPanel
-      Width = 1075
+      Width = 1067
       inherited RzPage: TRzPageControl
-        Width = 870
+        Width = 862
         ActivePage = TabSheet5
         ParentColor = False
         TabIndex = 4
@@ -18,11 +18,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
         inherited TabSheet1: TRzTabSheet
           Caption = #37096#38376#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 868
+            Width = 860
             inherited Panel4: TPanel
-              Width = 858
+              Width = 850
               inherited w1: TRzPanel
-                Width = 858
+                Width = 850
                 Height = 122
                 object RzLabel1: TRzLabel
                   Left = 24
@@ -473,11 +473,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 122
-                Width = 858
-                Height = 321
+                Width = 850
+                Height = 310
                 inherited DBGridEh1: TDBGridEh
-                  Width = 854
-                  Height = 317
+                  Width = 846
+                  Height = 306
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
@@ -623,7 +623,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               BorderSides = [sdLeft, sdTop, sdRight]
               TabOrder = 0
               DesignSize = (
-                858
+                850
                 122)
               object RzLabel4: TRzLabel
                 Left = 24
@@ -664,7 +664,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 Caption = #21830#21697#25351#26631
               end
               object Label15: TLabel
-                Left = 720
+                Left = 712
                 Top = 100
                 Width = 48
                 Height = 12
@@ -818,7 +818,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 TabOrder = 7
               end
               object fndP2_UNIT_ID: TcxComboBox
-                Left = 770
+                Left = 762
                 Top = 96
                 Width = 80
                 Height = 20
@@ -1116,8 +1116,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
             object RzPanel10: TRzPanel
               Left = 5
               Top = 127
-              Width = 858
-              Height = 321
+              Width = 850
+              Height = 310
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1322,7 +1322,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  858
+                  850
                   100)
                 object RzLabel6: TRzLabel
                   Left = 24
@@ -1355,7 +1355,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
-                  Left = 715
+                  Left = 707
                   Top = 78
                   Width = 48
                   Height = 12
@@ -1491,7 +1491,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TabOrder = 4
                 end
                 object fndP3_UNIT_ID: TcxComboBox
-                  Left = 771
+                  Left = 763
                   Top = 74
                   Width = 80
                   Height = 20
@@ -1652,8 +1652,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 100
-                Width = 858
-                Height = 343
+                Width = 850
+                Height = 332
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1853,7 +1853,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  858
+                  850
                   122)
                 object RzLabel8: TRzLabel
                   Left = 24
@@ -1892,7 +1892,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 715
+                  Left = 707
                   Top = 100
                   Width = 48
                   Height = 12
@@ -1994,7 +1994,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   TabOrder = 6
                 end
                 object fndP4_UNIT_ID: TcxComboBox
-                  Left = 769
+                  Left = 761
                   Top = 96
                   Width = 81
                   Height = 20
@@ -2267,8 +2267,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 122
-                Width = 858
-                Height = 321
+                Width = 850
+                Height = 310
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2473,8 +2473,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 868
-            Height = 453
+            Width = 860
+            Height = 442
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -2482,8 +2482,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 858
-              Height = 443
+              Width = 850
+              Height = 432
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2491,7 +2491,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 858
+                Width = 850
                 Height = 127
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2917,8 +2917,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 127
-                Width = 858
-                Height = 316
+                Width = 850
+                Height = 305
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2926,8 +2926,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 854
-                  Height = 312
+                  Width = 846
+                  Height = 301
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -3178,20 +3178,20 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 873
+        Left = 865
       end
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1085
+    Width = 1077
     inherited Image1: TImage
-      Width = 715
+      Width = 703
     end
     inherited Image3: TImage
-      Width = 715
+      Width = 703
     end
     inherited Image14: TImage
-      Left = 1065
+      Left = 1057
     end
   end
   inherited mmMenu: TMainMenu

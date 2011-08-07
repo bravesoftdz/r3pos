@@ -111,7 +111,7 @@ begin
   List := TStringList.Create;
   try
     Rim_Url := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
-    if Rim_Url='' then Rim_Url := 'http://220.173.61.110:9080/rimweb/'
+    if Rim_Url='' then Rim_Url := ''
        else
        begin
          List.CommaText := Rim_Url;

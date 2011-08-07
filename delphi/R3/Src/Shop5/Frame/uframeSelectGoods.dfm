@@ -359,9 +359,11 @@ inherited frameSelectGoods: TframeSelectGoods
     end
   end
   object cdsList: TZQuery
+    SortedFields = 'GODS_CODE'
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
+    IndexFieldNames = 'GODS_CODE Asc'
     Left = 346
     Top = 193
   end

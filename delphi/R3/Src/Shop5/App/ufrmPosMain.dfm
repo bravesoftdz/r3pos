@@ -1,6 +1,7 @@
 inherited frmPosMain: TfrmPosMain
   Left = 287
   Top = 106
+  ActiveControl = edtInput
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
@@ -254,10 +255,10 @@ inherited frmPosMain: TfrmPosMain
         object fndCREA_DATE: TcxTextEdit
           Tag = 1
           Left = 264
-          Top = 38
+          Top = 39
           Width = 121
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -275,7 +276,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 157
           Width = 121
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -294,7 +295,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 61
           Width = 116
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -312,7 +313,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 61
           Width = 121
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -330,7 +331,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 17
           Width = 116
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -348,7 +349,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 17
           Width = 121
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -366,9 +367,9 @@ inherited frmPosMain: TfrmPosMain
           Top = 129
           Width = 116
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
-          Style.Color = clBlack
+          Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
           Style.Font.Color = clLime
           Style.Font.Height = -12
@@ -384,7 +385,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 128
           Width = 121
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -402,7 +403,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 39
           Width = 116
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -420,7 +421,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 104
           Width = 121
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -438,7 +439,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 104
           Width = 116
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -456,7 +457,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 157
           Width = 116
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -474,7 +475,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 82
           Width = 121
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -492,7 +493,7 @@ inherited frmPosMain: TfrmPosMain
           Top = 82
           Width = 116
           Height = 20
-          Enabled = False
+          TabStop = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -515,8 +516,8 @@ inherited frmPosMain: TfrmPosMain
           TabOrder = 12
         end
         object DBGridEh2: TDBGridEh
-          Left = 9
-          Top = 100
+          Left = 345
+          Top = 164
           Width = 398
           Height = 167
           AllowedOperations = []
@@ -750,7 +751,6 @@ inherited frmPosMain: TfrmPosMain
           Top = 43
           Width = 104
           Height = 20
-          Enabled = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -769,7 +769,6 @@ inherited frmPosMain: TfrmPosMain
           Top = 20
           Width = 104
           Height = 20
-          Enabled = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -859,7 +858,6 @@ inherited frmPosMain: TfrmPosMain
           Top = 64
           Width = 104
           Height = 20
-          Enabled = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -878,7 +876,6 @@ inherited frmPosMain: TfrmPosMain
           Top = 85
           Width = 104
           Height = 20
-          Enabled = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET
@@ -897,7 +894,6 @@ inherited frmPosMain: TfrmPosMain
           Top = 107
           Width = 104
           Height = 20
-          Enabled = False
           ParentFont = False
           Style.Color = 14671839
           Style.Font.Charset = GB2312_CHARSET

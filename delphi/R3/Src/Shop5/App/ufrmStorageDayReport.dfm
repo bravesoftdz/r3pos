@@ -7,14 +7,14 @@ inherited frmStorageDayReport: TfrmStorageDayReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1075
-    Height = 558
+    Width = 1067
+    Height = 547
     inherited RzPanel2: TRzPanel
-      Width = 1065
-      Height = 548
+      Width = 1057
+      Height = 537
       inherited RzPage: TRzPageControl
-        Width = 860
-        Height = 542
+        Width = 852
+        Height = 531
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,13 +22,13 @@ inherited frmStorageDayReport: TfrmStorageDayReport
           Color = clCream
           Caption = #22320#21306#24211#23384#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 858
-            Height = 515
+            Width = 850
+            Height = 504
             inherited Panel4: TPanel
-              Width = 848
-              Height = 505
+              Width = 840
+              Height = 494
               inherited w1: TRzPanel
-                Width = 848
+                Width = 840
                 Height = 87
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -253,11 +253,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 87
-                Width = 848
-                Height = 418
+                Width = 840
+                Height = 407
                 inherited DBGridEh1: TDBGridEh
-                  Width = 844
-                  Height = 414
+                  Width = 836
+                  Height = 403
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -1124,7 +1124,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  848
+                  840
                   106)
                 object RzLabel8: TRzLabel
                   Left = 24
@@ -1183,7 +1183,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   ParentFont = False
                 end
                 object Label38: TLabel
-                  Left = 707
+                  Left = 699
                   Top = 80
                   Width = 48
                   Height = 12
@@ -1430,7 +1430,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 10
                 end
                 object fndP4_RPTTYPE: TcxComboBox
-                  Left = 758
+                  Left = 750
                   Top = 76
                   Width = 81
                   Height = 20
@@ -1448,8 +1448,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 106
-                Width = 848
-                Height = 399
+                Width = 840
+                Height = 388
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1604,8 +1604,8 @@ inherited frmStorageDayReport: TfrmStorageDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 863
-        Height = 542
+        Left = 855
+        Height = 531
         inherited Panel2: TPanel
           Height = 499
           inherited RzPanel1: TRzPanel [3]
@@ -1621,15 +1621,15 @@ inherited frmStorageDayReport: TfrmStorageDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1075
+    Width = 1067
     inherited Image1: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image3: TImage
-      Width = 705
+      Width = 693
     end
     inherited Image14: TImage
-      Left = 1055
+      Left = 1047
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

@@ -468,8 +468,10 @@ begin
 end;
 
 function TfrmCheckOrderList.PrintSQL(tenantid,shopid,printdate: string): string;
+var isAudit:boolean;
 begin
-  if cdsList.FieldByName('CHK_USER').AsString = '' then
+  if CurOrder<>nil then isAudit := CurOrder.IsAudit else isAudit := (cdsList.FieldByName('CHK_USER').AsString <> '');
+  if not isAudit then
   begin
     result :=
      'select jj.*,i.SHOP_NAME from ( '+                         

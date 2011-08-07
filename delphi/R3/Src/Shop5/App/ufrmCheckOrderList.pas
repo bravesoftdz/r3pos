@@ -491,7 +491,7 @@ begin
      'A.CHK_USER,A.CHK_DATE,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,B.RCK_AMOUNT,B.CHK_AMOUNT '+
      ' from STO_PRINTORDER A,STO_PRINTDATA B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID '+
      ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+' and A.COMM not in (''02'',''12'') ) jc '+
-     ' inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID ) jd '+
+     ' inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID and b.COMM not in (''02'',''12'') ) jd '+
      ' left join VIW_USERS c on jd.TENANT_ID=c.TENANT_ID and jd.CREA_USER=c.USER_ID ) je '+
      ' left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CHK_USER=d.USER_ID ) jg '+
      ' left join VIW_SIZE_INFO f on jg.TENANT_ID=f.TENANT_ID and jg.PROPERTY_01=f.SIZE_ID ) jh '+
@@ -520,7 +520,7 @@ begin
      'from STO_CHANGEORDER C,STO_CHANGEDATA D where C.TENANT_ID=D.TENANT_ID and C.SHOP_ID=D.SHOP_ID and C.CHANGE_ID=D.CHANGE_ID and C.TENANT_ID='+tenantid+' and C.SHOP_ID='+QuotedStr(shopid)+' and C.FROM_ID='+printdate+' and C.CHANGE_CODE=''1'' ) E on '+
      'A.TENANT_ID=E.TENANT_ID and A.SHOP_ID=E.SHOP_ID and A.PRINT_DATE=E.FROM_ID and B.GODS_ID=E.GODS_ID and B.BATCH_NO=E.BATCH_NO and B.PROPERTY_01=E.PROPERTY_01 and B.PROPERTY_02=E.PROPERTY_02 '+
      'where A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+' and A.COMM not in (''02'',''12'') '+
-     ') jc  inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID '+
+     ') jc  inner join VIW_GOODSPRICEEXT b on jc.TENANT_ID=b.TENANT_ID and jc.SHOP_ID=b.SHOP_ID and jc.GODS_ID=b.GODS_ID and b.COMM not in (''02'',''12'') '+
      ') jd  left join VIW_USERS c on jd.TENANT_ID=c.TENANT_ID and jd.CREA_USER=c.USER_ID '+
      ') je  left join VIW_USERS d on je.TENANT_ID=d.TENANT_ID and je.CHK_USER=d.USER_ID '+           
      ') jg  left join VIW_SIZE_INFO f on jg.TENANT_ID=f.TENANT_ID and jg.PROPERTY_01=f.SIZE_ID '+

@@ -87,7 +87,7 @@ begin
       rs.First;                                  
       while not rs.Eof do
       begin
-        if GPlugIn.BeginTrans(dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
+        if GPlugIn.BeginTrans(-1,dbResoler)<>0 then Raise Exception.Create(GPlugIn.GetLastError);
         try
           GPlugIn.iDbType(iDbType,dbResoler);
           mid := newid(sid);

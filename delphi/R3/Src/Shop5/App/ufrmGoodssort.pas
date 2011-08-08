@@ -78,6 +78,11 @@ procedure TfrmGoodssort.DBGridEh1Columns1UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
+  if Length(Text) > 30 then
+  begin
+    cdsGoodsSort.FieldByName('SORT_SPELL').AsString:='';
+    Raise Exception.Create('分类名称不能超出15个汉字或30个字符');
+  end;
   cdsGoodsSort.FieldByName('SORT_SPELL').AsString:=Fnstring.GetWordSpell(Text,3);
   btnSave.Enabled:=True;
 end;

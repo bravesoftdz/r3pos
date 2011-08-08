@@ -68,6 +68,11 @@ procedure TfrmClientSort.DBGridEh1Columns1UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
+  if Length(Text) > 10 then
+  begin
+    cdsClientSort.FieldByName('CODE_SPELL').AsString:='';
+    Raise Exception.Create('类别名称不能超出5个汉字或10个字符');
+  end;
   cdsClientSort.FieldByName('CODE_SPELL').AsString:=Fnstring.GetWordSpell(Text,3);
   btnSave.Enabled:=True;  
 end;

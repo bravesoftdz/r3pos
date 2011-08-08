@@ -72,6 +72,11 @@ procedure TfrmMeaUnits.DBGridEh1Columns1UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
+  if Length(Text) > 10 then
+    begin
+      cdsUnit.FieldByName('UNIT_NAME').AsString:='';
+      Raise Exception.Create('单位名称不能超出5个汉字或10个字符');
+    end;
   cdsUnit.FieldByName('UNIT_SPELL').AsString:=Fnstring.GetWordSpell(Text,3);
   btnSave.Enabled:=True;
 end;

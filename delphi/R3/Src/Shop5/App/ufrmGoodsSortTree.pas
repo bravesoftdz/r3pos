@@ -260,6 +260,11 @@ begin
   if locked then Exit;
   if dbState=dsBrowse then Exit;
   if rzTree.Selected = nil then Exit;
+  if Length(Trim(edtSORT_NAME.Text)) > 30 then
+  begin
+    edtSORT_NAME.Text:='';
+    Raise Exception.Create('分类名称不能超出15个汉字或30个字符');
+  end;
   rzTree.Selected.Text := edtSORT_NAME.Text;
   AObj := TRecord_(rzTree.Selected.Data);
   AObj.FieldbyName('SORT_NAME').asString := Trim(edtSORT_NAME.Text);

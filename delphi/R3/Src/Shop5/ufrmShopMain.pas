@@ -556,6 +556,13 @@ begin
   TfrmBasic(Form).OnFreeForm := DoFreeForm;
   TfrmBasic(Form).PageHandle := Integer(Button);
   rzChildTitle.Caption := 'µ±Ç°Î»ÖÃ->'+form.Caption;
+  if Screen.width<=800 then
+  begin
+    rzLeft.Width := 29;
+    Panel12.Width := 31;
+    Panel24.Width := 23;
+    frmMain.OnResize(nil);
+  end;
 end;
 
 procedure TfrmShopMain.RemoveFrom(form: TForm);

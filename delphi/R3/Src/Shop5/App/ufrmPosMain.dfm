@@ -1,6 +1,6 @@
 inherited frmPosMain: TfrmPosMain
-  Left = 287
-  Top = 106
+  Left = 168
+  Top = 112
   ActiveControl = edtInput
   BorderIcons = []
   BorderStyle = bsNone

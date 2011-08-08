@@ -28,6 +28,7 @@ type
     FLoaded: Boolean;
     FShowing: Boolean;
     FUnRead: Integer;
+    FThreadLock:TRTLCriticalSection;
     function GetCount: integer;
     function GetMsgInfo(itemindex: integer): PMsgInfo;
     procedure SetLoaded(const Value: Boolean);
@@ -38,6 +39,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
+    procedure Enter;
+    procedure Leave;
     function EncodeSQL:String;
     function Load:Boolean;
     procedure Add(MsgInfo:PMsgInfo);
@@ -96,22 +100,28 @@ var
 procedure TMsgFactory.Add(MsgInfo: PMsgInfo);
 begin
   //MsgInfo^.sFlag := 1;
-  FList.Add(MsgInfo); 
+  FList.Add(MsgInfo);
 end;
 
 procedure TMsgFactory.Clear;
 var i:integer;
 begin
-  for i:=0 to FList.Count -1 do
+  Enter;
+  try
+    for i:=FList.Count -1 downto 0 do
     begin
       Dispose(FList[i]);
     end;
-  FList.Clear;
+    FList.Clear;
+  finally
+    Enter;
+  end;
 end;
 
 constructor TMsgFactory.Create;
 begin
   inherited;
+  InitializeCriticalSection(FThreadLock);
   FList := TList.Create;
   FMsgInfo := nil;
 end;
@@ -120,6 +130,7 @@ destructor TMsgFactory.Destroy;
 begin
   Clear;
   FList.Free;
+  DeleteCriticalSection(FThreadLock);
   inherited;
 end;
 
@@ -141,6 +152,8 @@ function TMsgFactory.FindMsg(ID: string): PMsgInfo;
 var i:integer;
 begin
   result := nil;
+  Enter;
+  try
   for i:=0 to FList.Count -1 do
     begin
       if PMsgInfo(FList[i]).ID = ID then
@@ -149,6 +162,9 @@ begin
            Exit;
          end;
     end;
+  finally
+    Leave;
+  end;
 end;
 
 function TMsgFactory.GetCount: integer;
@@ -177,6 +193,8 @@ begin
     try
       rs.SQL.Text := EncodeSQL;
       Factor.Open(rs);
+      Enter;
+      try
       rs.First;
       while not rs.Eof do
         begin
@@ -197,6 +215,9 @@ begin
           FList.Add(MsgInfo);
           rs.Next;
         end;
+      finally
+        Leave;
+      end;
       GetUnRead;
     finally
       rs.free;
@@ -212,6 +233,8 @@ var i:integer;
 begin
   result := nil;
   if ShowIng then Exit;
+  Enter;
+  try
   for i:=count - 1 downto 0 do
     begin
       if not MsgInfo[i]^.Rdd then
@@ -220,6 +243,9 @@ begin
            Exit;
          end;
     end;
+  finally
+    Leave;
+  end;
 end;
 
 procedure TMsgFactory.SetUnRead(const Value: Integer);
@@ -322,11 +348,16 @@ procedure TMsgFactory.GetUnRead;
 var i:Integer;
 begin
   UnRead := 0;
-  for i := 0 to FList.Count - 1 do
+  Enter;
+  try
+    for i := 0 to FList.Count - 1 do
     begin
       if not PMsgInfo(FList[i]).Rdd then
         UnRead := UnRead + 1;
     end;
+  finally
+    Leave;
+  end;
 end;
 
 function TMsgFactory.GetMsgRead(Msg: PMsgInfo): boolean;
@@ -346,7 +377,9 @@ end;
 procedure TMsgFactory.ClearType(C_Type: Integer);
 var i:integer;
 begin
-  for i:=FList.Count -1 downto 0 do
+  Enter;
+  try
+    for i:=FList.Count -1 downto 0 do
     begin
       if PMsgInfo(FList[i]).Msg_Class = C_Type then
          begin
@@ -354,7 +387,21 @@ begin
            FList.Delete(i);
          end;
     end;
+  finally
+    Leave;
+  end;
   GetUnRead;
+end;
+
+procedure TMsgFactory.Enter;
+begin
+  EnterCriticalSection(FThreadLock);
+
+end;
+
+procedure TMsgFactory.Leave;
+begin
+  LeaveCriticalSection(FThreadLock);
 end;
 
 initialization

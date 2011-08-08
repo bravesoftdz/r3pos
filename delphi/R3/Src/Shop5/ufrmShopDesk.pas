@@ -167,7 +167,7 @@ procedure TfrmShopDesk.KeyBoardHook(Code: integer; Msg: word;
   KeyboardHook: Integer);
 begin
   inherited;
-  if (Msg=VK_HOME) and not Locked then
+  if (Msg=VK_HOME) and not HookLocked then
      DevFactory.OpenCashBox;
 end;
 

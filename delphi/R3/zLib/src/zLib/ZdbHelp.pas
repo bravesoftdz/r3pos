@@ -228,6 +228,7 @@ begin
      (pos('网络错误',s)>0) or
      (pos('连接断开',s)>0) or
      (pos('连接关闭',s)>0) or
+     (pos('通信链路故障',s)>0) or
      (pos('ORA-12170',s)>0) or
      (pos('SQL0952N',s)>0) or
      (pos('SQL30081N',s)>0) or

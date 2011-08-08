@@ -2777,11 +2777,11 @@ begin
        MessageBox(Handle,'你没有打印小票的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
-  if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
-  if cdsTable.Changed and not cdsTable.IsEmpty then
-     begin
-       Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
-     end;
+//  if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
+//  if cdsTable.Changed and not cdsTable.IsEmpty then
+//    begin
+//       Raise Exception.Create('当前单据没有结帐，请结帐后再新增');
+//     end;
   if DevFactory.LPT <=0 then Exit;
   PWidth := DevFactory.Width;
 

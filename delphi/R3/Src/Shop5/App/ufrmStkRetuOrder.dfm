@@ -356,6 +356,7 @@ inherited frmStkRetuOrder: TfrmStkRetuOrder
         TextShadowColor = clWhite
         TextShadowDepth = 4
         TabOrder = 10
+        TabStop = False
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = RzBitBtn1Click

@@ -479,6 +479,7 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
         TextShadowColor = clWhite
         TextShadowDepth = 4
         TabOrder = 15
+        TabStop = False
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = RzBitBtn1Click

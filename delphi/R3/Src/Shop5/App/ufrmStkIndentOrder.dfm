@@ -376,6 +376,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         TextShadowColor = clWhite
         TextShadowDepth = 4
         TabOrder = 10
+        TabStop = False
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = RzBitBtn1Click
@@ -572,7 +573,6 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       Top = 135
       Width = 828
       Height = 250
-      ImeName = ''
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
       Columns = <

@@ -154,6 +154,7 @@ type
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string); //点列标题排序
     function  GetRelation_ID(Relation_ID: string): string; //供应链排序
+    function  GetGodsSTAT_ID(fndP_TYPE_ID: TcxComboBox): string;  //返回指标: CODE_ID
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -424,8 +425,11 @@ begin
       if FName='FNDP' then
       begin
         if RightStr(CmpName,8)='_UNIT_ID' then    //统计单位
-          AddTongjiUnitList(Cbx)
-        else if RightStr(CmpName,12)='_REPORT_FLAG' then  //统计类型
+        begin
+          AddTongjiUnitList(Cbx);
+          Cbx.Properties.DropDownListStyle:=lsFixedList;
+        end else
+        if RightStr(CmpName,12)='_REPORT_FLAG' then  //统计类型
         begin
           DefState:=GetGodsStateValue;
           AddGoodSortTypeItems(Cbx,DefState);
@@ -1721,6 +1725,14 @@ begin
     RsState.Next;
   end;
   result:=ReStr;
+end;
+
+function TframeBaseReport.GetGodsSTAT_ID(fndP_TYPE_ID: TcxComboBox): string;
+var
+  Aobj: TRecord_;
+begin
+  Aobj:=TRecord_(fndP_TYPE_ID.Properties.Items.Objects[fndP_TYPE_ID.ItemIndex]);
+  result:=Aobj.FieldByName('CODE_ID').asString;
 end;
 
 end.

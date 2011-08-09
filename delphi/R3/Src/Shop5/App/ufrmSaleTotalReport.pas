@@ -264,6 +264,8 @@ begin
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
+  //取日结帐最大日期:
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
     strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
@@ -271,10 +273,10 @@ begin
   end else
   if vBegDate<vEndDate then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    //strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
-  
+
   //门店所属行政区域|门店类型:
   if trim(fndP1_SHOP_VALUE.AsString)<>'' then
   begin
@@ -289,7 +291,7 @@ begin
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
     end;
   end;
-    
+
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
     case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
@@ -314,14 +316,12 @@ begin
   end else
     GoodTab:='VIW_GOODSPRICE';
 
-  //取日结帐最大日期:
-  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
     SQLData:='(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,CLIENT_ID,GUIDE_USER,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,'+
              'TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
              ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  end else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  end else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_C_GOODS_DAYS'
   //  SQLData := '(select TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_C_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]

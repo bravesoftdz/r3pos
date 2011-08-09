@@ -16,8 +16,6 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 844
         Height = 495
-        ActivePage = TabSheet4
-        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
@@ -419,7 +417,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   FieldName = 'LOCUS_CHK_DATE'
                   Footers = <>
                   Title.Caption = #23457#26680#26085#26399
-                  Width = 120
+                  Width = 80
                 end>
             end
           end
@@ -811,7 +809,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   FieldName = 'LOCUS_CHK_DATE'
                   Footers = <>
                   Title.Caption = #23457#26680#26085#26399
-                  Width = 120
+                  Width = 80
                 end>
             end
           end
@@ -1208,7 +1206,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   FieldName = 'LOCUS_CHK_DATE'
                   Footers = <>
                   Title.Caption = #23457#26680#26085#26399
-                  Width = 120
+                  Width = 80
                 end>
             end
           end
@@ -1658,7 +1656,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   FieldName = 'LOCUS_CHK_DATE'
                   Footers = <>
                   Title.Caption = #23457#26680#26085#26399
-                  Width = 120
+                  Width = 80
                 end>
             end
           end

@@ -77,14 +77,28 @@ function TfrmDbOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
-  if fndSHOP_ID.AsString <> '' then
-     w := w +' and A.SHOP_ID=:SHOP_ID';
-  if fndCLIENT_ID.AsString <> '' then
-     w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      if (fndSHOP_ID.AsString = '' ) and (fndCLIENT_ID.AsString = '') then
+        w := w + ' and (A.SHOP_ID = '+QuotedStr(Global.SHOP_ID)+' or A.CLIENT_ID ='+QuotedStr(Global.SHOP_ID)+' ) '
+      else
+        begin
+          if fndSHOP_ID.AsString <> '' then
+             w := w +' and A.SHOP_ID=:SHOP_ID';
+          if fndCLIENT_ID.AsString <> '' then
+             w := w +' and A.CLIENT_ID=:CLIENT_ID';
+        end;
+    end
+  else
+    begin
+      if fndSHOP_ID.AsString <> '' then
+         w := w +' and A.SHOP_ID=:SHOP_ID';
+      if fndCLIENT_ID.AsString <> '' then
+         w := w +' and A.CLIENT_ID=:CLIENT_ID';
+    end;
   if trim(fndSALES_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+'''';
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-     w := w +' and (A.CLIENT_ID=:SHOP_ID or A.SHOP_ID=:SHOP_ID)';
+
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
@@ -181,11 +195,6 @@ begin
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   D1.Date := date();
   D2.Date := date();
-//  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-//    begin
-//      SetEditStyle(dsBrowse,fndSHOP_ID.Style);
-//      fndSHOP_ID.Properties.ReadOnly := True;
-//    end;
 
   if ShopGlobal.GetProdFlag = 'E' then
     begin
@@ -371,6 +380,24 @@ end;
 procedure TfrmDbOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+    begin
+      if (fndSHOP_ID.AsString <> Global.SHOP_ID) and (fndCLIENT_ID.AsString <> Global.SHOP_ID) and (fndSHOP_ID.AsString <> '') and (fndCLIENT_ID.AsString <> '') then
+        begin
+          fndSHOP_ID.Text := Global.SHOP_NAME;
+          fndSHOP_ID.KeyValue := Global.SHOP_ID;
+        end
+      else if (fndSHOP_ID.AsString = '') and (fndCLIENT_ID.AsString <> Global.SHOP_ID) and (fndCLIENT_ID.AsString <> '') then
+        begin
+          fndSHOP_ID.Text := Global.SHOP_NAME;
+          fndSHOP_ID.KeyValue := Global.SHOP_ID;
+        end
+      else if (fndSHOP_ID.AsString <> Global.SHOP_ID) and (fndSHOP_ID.AsString <> '') and (fndCLIENT_ID.AsString = '') then
+        begin
+          fndCLIENT_ID.Text := Global.SHOP_NAME;
+          fndCLIENT_ID.KeyValue := Global.SHOP_ID;
+        end;
+    end;
   Open('');
 end;
 

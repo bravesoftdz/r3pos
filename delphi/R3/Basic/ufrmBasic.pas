@@ -82,7 +82,9 @@ type
     property OnFreeForm:TNotifyEvent read FOnFreeForm write SetOnFreeForm;
     property PageHandle:THandle read FPageHandle write SetPageHandle;
   end;
-var FormBgk:boolean;
+var
+  FormBgk:boolean;
+  myHKL: HKL;
 implementation
 uses IniFiles,uCtrlUtil;
 {$R *.dfm}
@@ -677,8 +679,23 @@ procedure TfrmBasic.SetPageHandle(const Value: THandle);
 begin
   FPageHandle := Value;
 end;
-
+const
+  nHKL_LIST = 20;
+var
+  kl,iImeCount:integer;
+  hImeList: array[1..nHKL_LIST] of HKL;
 initialization
   FormBgk := false;
+  iImeCount := GetKeyboardLayoutList(nHKL_LIST, hImeList);
+  myHKL:=GetKeyBoardLayOut(0);
+//  if Imm32IsIME(myHKL) then Exit;
+//  for kl:=1 to iImeCount do
+//    begin
+//       if Imm32IsIME(hImeList[kl]) then
+//          begin
+//            myHKL := hImeList[kl];
+//            Exit;
+//          end;
+//    end;
 end.
 

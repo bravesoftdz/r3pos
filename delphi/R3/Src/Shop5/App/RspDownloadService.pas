@@ -90,7 +90,6 @@ function GetRspDownloadWebServiceImpl(UseWSDL: Boolean=System.False; Addr: strin
 
 
 implementation
-
 function GetRspDownloadWebServiceImpl(UseWSDL: Boolean; Addr: string; HTTPRIO: THTTPRIO): RspDownloadWebServiceImpl;
 const
   defWSDL = 'http://jerry/rsp/services/RspDownloadService?wsdl';

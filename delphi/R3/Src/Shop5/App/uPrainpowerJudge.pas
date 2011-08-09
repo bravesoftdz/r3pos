@@ -266,8 +266,6 @@ begin
   List.Close;
   List.SQL.Text := EncodeSQL;
   uGlobal.Factor.Open(List);
-  MsgFactory.Enter;
-  try
   List.First;
   while not List.Eof do
     begin
@@ -297,9 +295,6 @@ begin
       MsgFactory.MsgRead[Msg] := False;
       List.Next;
     end;
-  finally
-    MsgFactory.Leave;
-  end;
 
   Sql_Str := EncodeSql1;
   if Sql_Str <> '' then
@@ -311,8 +306,6 @@ begin
 
       uGlobal.Factor.Open(rs);
 
-      MsgFactory.Enter;
-      try
       rs.First;
       while not rs.Eof do
         begin
@@ -358,9 +351,6 @@ begin
 
           rs.Next;
         end;
-      finally
-        MsgFactory.Leave;
-      end;
       finally
         rs.Free;
       end;

@@ -230,17 +230,21 @@ inherited frmStorageTracking: TfrmStorageTracking
                         Width = 63
                       end
                       item
+                        Alignment = taRightJustify
                         DisplayFormat = '#0.00#'
                         EditButtons = <>
                         FieldName = 'NEW_INPRICE'
+                        Footer.Alignment = taRightJustify
                         Footers = <>
                         Title.Caption = #26368#26032#36827#20215
                         Width = 57
                       end
                       item
+                        Alignment = taRightJustify
                         DisplayFormat = '#0.00'
                         EditButtons = <>
                         FieldName = 'STOCK_MNY'
+                        Footer.Alignment = taRightJustify
                         Footer.ValueType = fvtSum
                         Footers = <>
                         Title.Caption = #36827#36135#25104#26412

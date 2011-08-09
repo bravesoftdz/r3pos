@@ -1440,7 +1440,7 @@ begin
       if (dbState = dsBrowse) then Exit;
       s := trim(edtInput.Text);
       edtInput.SelectAll;
-      edtInput.SetFocus;
+      if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       Key := #0;
       try
       if InputFlag=1 then //»áÔ±¿¨ºÅ
@@ -1612,7 +1612,8 @@ begin
         Key := #0;
       end;
   finally
-    edtInput.SetFocus;
+     if edtInput.CanFocus and not edtInput.Focused then
+        if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 end;
 
@@ -1720,7 +1721,10 @@ begin
        end;
   finally
     AObj.Free;
-    if fcsInput then edtInput.SetFocus else DBGridEh1.SetFocus;
+    if fcsInput then
+       begin
+         if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
+       end else DBGridEh1.SetFocus;
   end;
 end;
 
@@ -1800,7 +1804,10 @@ begin
       end;
     end;
   finally
-    if fcsInput then edtInput.SetFocus else DBGridEh1.SetFocus;
+    if fcsInput then
+       begin
+         if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
+       end else DBGridEh1.SetFocus;
   end;
 end;
 
@@ -2396,19 +2403,19 @@ begin
   inherited;
   if (Shift=[]) and (Key = VK_F2) then
      begin
-       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
        InputFlag := 0;
        Exit;
      end;
   if (Shift=[]) and (Key = VK_F5) then
      begin
-       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
        InputFlag := 1;
        Exit;
      end;
   if (Shift=[]) and (Key = VK_F6) then
      begin
-       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
        InputFlag := 2;
        Exit;
      end;
@@ -2422,7 +2429,7 @@ begin
 
   if (Shift=[]) and (Key = VK_F12) then
      begin
-       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
        InputFlag := 3;
        Exit;
      end;
@@ -2436,7 +2443,7 @@ begin
 
   if (Shift=[]) and (Key = VK_F3) then
      begin
-       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
        InputFlag := 9;
        Exit;
      end;
@@ -2450,7 +2457,7 @@ begin
 
   if (Shift=[]) and (Key = VK_F8) then
      begin
-       if edtInput.CanFocus and Visible then edtInput.SetFocus;
+       if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
        InputFlag := 8;
        Exit;
      end;
@@ -2624,7 +2631,7 @@ begin
      begin
        edtTable.Next;
        if edtTable.Eof then PostMessage(Handle,WM_INIT_RECORD,0,0);
-       if edtInput.CanFocus then edtInput.SetFocus;
+       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
      end;
   if (Key = VK_TAB) and (InputFlag=5) then
      begin
@@ -2648,7 +2655,7 @@ begin
           PostMessage(GetToolHandle,WM_EXEC_ORDER,0,7);
      end;
   finally
-     if edtInput.CanFocus then edtInput.SetFocus;
+     if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 end;
 
@@ -3262,7 +3269,7 @@ end;
 procedure TframeOrderForm.actLocusNoExecute(Sender: TObject);
 begin
   inherited;
-  if edtInput.CanFocus and Visible then edtInput.SetFocus;
+  if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
   InputFlag := 7;
 end;
 
@@ -3270,7 +3277,7 @@ procedure TframeOrderForm.actBatchNoExecute(Sender: TObject);
 begin
   inherited;
   if DBGridEh1.ReadOnly then Exit;
-  if edtInput.CanFocus and Visible then edtInput.SetFocus;
+  if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
   InputFlag := 8;
 
 end;
@@ -3302,8 +3309,9 @@ end;
 procedure TframeOrderForm.edtInputEnter(Sender: TObject);
 begin
   inherited;
-  SetImeMode(edtInput.Handle,imClose);
   edtInput.SelectAll;
+  if myHKL>0 then
+     ActivateKeyBoardLayOut(myHKL,KLF_ACTIVATE);
 end;
 
 procedure TframeOrderForm.CheckLowerPrice(aprc: Currency);

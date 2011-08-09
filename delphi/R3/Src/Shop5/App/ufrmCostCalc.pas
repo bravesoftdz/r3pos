@@ -521,6 +521,7 @@ begin
     Label11.Update;
     ClseRck;
     PrgPercent := 100;
+    if (flag in [1,2]) then CalcAnaly;
   finally
     DBUnLock;
   end;

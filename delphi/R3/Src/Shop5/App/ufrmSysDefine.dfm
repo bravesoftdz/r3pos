@@ -324,6 +324,7 @@ inherited frmSysDefine: TfrmSysDefine
         Width = 50
         Height = 20
         Properties.MaxValue = 100.000000000000000000
+        Properties.MinValue = 2.000000000000000000
         TabOrder = 8
         Value = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861

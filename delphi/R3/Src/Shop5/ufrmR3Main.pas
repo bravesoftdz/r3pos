@@ -4138,7 +4138,10 @@ begin
      begin
        MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
      end;
-  if ShopGlobal.offline and not Global.RemoteFactory.Connected then
+  frmLogo.Show;
+  frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
+  try
+    if ShopGlobal.offline and not Global.RemoteFactory.Connected then
      begin
        Global.MoveToRemate;
        try
@@ -4151,10 +4154,8 @@ begin
          Global.MoveToLocal;
        end;
      end;
-  if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
-  SyncFactory.SyncAll;
-  frmLogo.Show;
-  try
+    if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+    SyncFactory.SyncAll;
     Global.LoadBasic;
     ShopGlobal.LoadRight;
   finally

@@ -1445,7 +1445,7 @@ begin
                    AObj.ReadFromDataSet(BasInfo);
                    AddFromDialog(AObj);
                    edtInput.Text := '';
-                   edtInput.SetFocus;
+                   if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
                    Key := #0;
                 finally
                    AObj.Free;
@@ -1456,7 +1456,7 @@ begin
       s := trim(edtInput.Text);
       try
       edtInput.Text := '';
-      edtInput.SetFocus;
+      if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       Key := #0;
       KeyStr := s;
       if InputFlag=1 then //»áÔ±¿¨ºÅ
@@ -2466,14 +2466,14 @@ begin
   if (Shift = []) and (Key = VK_F7) then
      begin
        InputFlag := 10;
-       if edtInput.CanFocus then edtInput.SetFocus;
+       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
        //HangUp;
       // LoadFile('H');
      end;
   if (Shift = []) and (Key = VK_F8) then
      begin
        InputFlag := 11;
-       if edtInput.CanFocus then edtInput.SetFocus;
+       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       // PickUp;
       // LoadFile('H');
      end;
@@ -2488,7 +2488,7 @@ begin
   if (Shift = []) and (Key = VK_F6) then
      begin
        InputFlag := 2;
-       if edtInput.CanFocus then edtInput.SetFocus;
+       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
      end;
   if (Shift = []) and (Key = VK_PAUSE) then
      begin
@@ -2497,13 +2497,13 @@ begin
   if (Shift = []) and (Key=VK_F5) then
      begin
        InputFlag := 1;
-       if edtInput.CanFocus then edtInput.SetFocus;
+       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
      end;
   if (Shift = []) and (Key=VK_F3) then
      begin
        if cdsTable.FieldbyName('GODS_ID').asString='' then Exit;
        InputFlag := 9;
-       if edtInput.CanFocus then edtInput.SetFocus;
+       if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
      end;
 end;
 
@@ -2966,19 +2966,19 @@ end;
 procedure TfrmPosMain.fndBARCODEEnter(Sender: TObject);
 begin
   inherited;
-  edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.fndCLIENT_CODEEnter(Sender: TObject);
 begin
   inherited;
-  edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.rckPAY_1Enter(Sender: TObject);
 begin
   inherited;
-  edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.ShowHeader(flag:integer=0);
@@ -3840,7 +3840,7 @@ procedure TfrmPosMain.h6Click(Sender: TObject);
 begin
   inherited;
   InputFlag := 1;
-  if edtInput.CanFocus then edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.Label21Click(Sender: TObject);
@@ -3855,7 +3855,7 @@ begin
   inherited;
   if dbState = dsBrowse then Exit;
   InputFlag := 10;
-  if edtInput.CanFocus then edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.h10Click(Sender: TObject);
@@ -3863,7 +3863,7 @@ begin
   inherited;
   if dbState = dsBrowse then Exit;
   InputFlag := 11;
-  if edtInput.CanFocus then edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.Label22Click(Sender: TObject);
@@ -3892,7 +3892,7 @@ begin
   if dbState = dsBrowse then Exit;
   if cdsTable.FieldbyName('GODS_ID').asString='' then Exit;
   InputFlag := 9;
-  if edtInput.CanFocus then edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.Label8Click(Sender: TObject);
@@ -3922,7 +3922,7 @@ begin
   inherited;
   if dbState = dsBrowse then Exit;
   InputFlag := 2;
-  if edtInput.CanFocus then edtInput.SetFocus;
+  if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
 end;
 
 procedure TfrmPosMain.h5Click(Sender: TObject);
@@ -4229,7 +4229,8 @@ end;
 procedure TfrmPosMain.edtInputEnter(Sender: TObject);
 begin
   inherited;
-  SetImeMode(edtInput.Handle,imClose);
+  if myHKL>0 then
+  ActivateKeyBoardLayOut(myHKL,KLF_ACTIVATE);
 end;
 
 end.

@@ -1,7 +1,6 @@
 inherited frmPosMain: TfrmPosMain
   Left = 168
   Top = 112
-  ActiveControl = edtInput
   BorderIcons = []
   BorderStyle = bsNone
   Caption = #30005#23376#25910#27454#26426
@@ -847,7 +846,6 @@ inherited frmPosMain: TfrmPosMain
             Style.Font.Name = #40657#20307
             Style.Font.Style = [fsBold]
             TabOrder = 0
-            ImeMode = imClose
             OnEnter = edtInputEnter
             OnKeyDown = edtInputKeyDown
             OnKeyPress = edtInputKeyPress

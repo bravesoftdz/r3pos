@@ -735,8 +735,8 @@ end;
 procedure TfrmShowDibs.edtTakeFeeEnter(Sender: TObject);
 begin
   inherited;
-  SetImeMode(edtTakeFee.Handle,imClose);
-
+  if myHKL>0 then
+  ActivateKeyBoardLayOut(myHKL,KLF_ACTIVATE);
 end;
 
 end.

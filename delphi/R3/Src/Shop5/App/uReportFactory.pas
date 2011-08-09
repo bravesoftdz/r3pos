@@ -951,7 +951,7 @@ begin
                DataSet.Edit;
                DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
                DataSet.Post;
-               if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+               if not CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
                   begin
                      new(node);
                      node^.id := '#';

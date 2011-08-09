@@ -84,7 +84,6 @@ function GetCaProductWebServiceImpl(UseWSDL: Boolean=System.False; Addr: string=
 
 
 implementation
-
 function GetCaProductWebServiceImpl(UseWSDL: Boolean; Addr: string; HTTPRIO: THTTPRIO): CaProductWebServiceImpl;
 const
   defWSDL = 'http://jerry/rsp/services/CaProductService?wsdl';

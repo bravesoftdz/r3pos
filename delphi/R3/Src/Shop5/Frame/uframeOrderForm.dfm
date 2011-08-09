@@ -504,7 +504,6 @@ inherited frameOrderForm: TframeOrderForm
         Style.Font.Name = #40657#20307
         Style.Font.Style = [fsBold]
         TabOrder = 0
-        ImeMode = imClose
         OnEnter = edtInputEnter
         OnExit = edtInputExit
         OnKeyDown = edtInputKeyDown

@@ -188,7 +188,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #35745#37327#21333#20301
                     #21253#35013'1'

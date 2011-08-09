@@ -100,7 +100,12 @@ var
 procedure TMsgFactory.Add(MsgInfo: PMsgInfo);
 begin
   //MsgInfo^.sFlag := 1;
-  FList.Add(MsgInfo);
+  Enter;
+  try
+    FList.Add(MsgInfo);
+  finally
+    Leave;
+  end;
 end;
 
 procedure TMsgFactory.Clear;

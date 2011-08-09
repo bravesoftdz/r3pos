@@ -1,6 +1,6 @@
 inherited frmOutLocusOrderList: TfrmOutLocusOrderList
-  Left = 530
-  Top = 118
+  Left = 298
+  Top = 112
   Width = 868
   Height = 575
   Caption = #21457#36135#21333
@@ -16,6 +16,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 844
         Height = 495
+        ActivePage = TabSheet4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
@@ -116,6 +118,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 Width = 145
                 Height = 86
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -125,6 +128,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   end
                   item
                     Caption = #24050#21457#36135
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
                   end>
                 TabOrder = 0
                 Caption = ''
@@ -397,6 +406,20 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
                   Width = 131
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
+                  Width = 120
                 end>
             end
           end
@@ -536,6 +559,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 Width = 145
                 Height = 90
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -545,6 +569,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   end
                   item
                     Caption = #24050#21457#36135
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
                   end>
                 TabOrder = 3
                 Caption = ''
@@ -768,6 +798,20 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
                   Width = 119
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
+                  Width = 120
                 end>
             end
           end
@@ -906,6 +950,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 Width = 129
                 Height = 83
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -915,6 +960,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   end
                   item
                     Caption = #24050#21457#36135
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -1144,6 +1195,20 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
                   Width = 137
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
+                  Width = 120
                 end>
             end
           end
@@ -1359,6 +1424,7 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 Width = 145
                 Height = 86
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -1368,6 +1434,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   end
                   item
                     Caption = #24050#21457#36135
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -1573,6 +1645,20 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
                   Width = 131
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
+                  Width = 120
                 end>
             end
           end

@@ -286,6 +286,7 @@ begin
   fndP3_SHOP_ID.KeyValue := Global.SHOP_ID;
   fndP3_SHOP_ID.Text := Global.SHOP_NAME;
   fndP3_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndP3_DUTY_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   fndP3_D1.Date := date();
   fndP3_D2.Date := date();
 

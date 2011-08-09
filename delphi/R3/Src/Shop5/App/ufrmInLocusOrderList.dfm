@@ -8,22 +8,22 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 852
-    Height = 500
+    Width = 860
+    Height = 511
     inherited RzPanel2: TRzPanel
-      Width = 842
-      Height = 490
+      Width = 850
+      Height = 501
       inherited RzPage: TRzPageControl
-        Width = 836
-        Height = 484
+        Width = 844
+        Height = 495
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36827#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 834
-            Height = 457
+            Width = 842
+            Height = 468
             inherited RzPanel1: TRzPanel
-              Width = 824
+              Width = 832
               Height = 110
               object RzLabel2: TRzLabel
                 Left = 33
@@ -212,6 +212,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                 Width = 145
                 Height = 86
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -221,6 +222,12 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                   end
                   item
                     Caption = #24050#25910#36135
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
                   end>
                 TabOrder = 4
                 Caption = ''
@@ -304,8 +311,8 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 115
-              Width = 824
-              Height = 337
+              Width = 832
+              Height = 348
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -397,6 +404,20 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
                   Width = 131
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
+                  Width = 80
                 end>
             end
           end
@@ -407,8 +428,8 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 834
-            Height = 457
+            Width = 842
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderShadow = clWindow
@@ -419,7 +440,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
             object RzPanel7: TRzPanel
               Left = 5
               Top = 5
-              Width = 824
+              Width = 832
               Height = 112
               Align = alTop
               BorderOuter = fsNone
@@ -516,6 +537,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                 Width = 145
                 Height = 86
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -525,6 +547,12 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                   end
                   item
                     Caption = #24050#25910#36135
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
                   end>
                 TabOrder = 0
                 Caption = ''
@@ -705,8 +733,8 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
             object DBGridEh2: TDBGridEh
               Left = 5
               Top = 117
-              Width = 824
-              Height = 335
+              Width = 832
+              Height = 346
               Align = alClient
               AllowedOperations = []
               Color = clWhite
@@ -826,6 +854,20 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
                   Width = 131
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
+                  Width = 80
                 end>
             end
           end
@@ -834,39 +876,39 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 852
+    Width = 860
     inherited Image1: TImage
-      Left = 593
-      Width = 239
+      Left = 589
+      Width = 251
     end
     inherited Image3: TImage
-      Left = 593
-      Width = 239
+      Left = 589
+      Width = 251
     end
     inherited Image14: TImage
-      Left = 832
+      Left = 840
     end
     inherited rzPanel5: TPanel
-      Left = 593
+      Left = 589
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#20837#24211
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 573
+      Width = 569
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 573
+          MinHeight = 569
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 573
+        Width = 569
         object ToolButton17: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -875,7 +917,7 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
           Visible = False
         end
         object ToolButton11: TToolButton
-          Left = 530
+          Left = 526
           Top = 0
           Action = actExit
         end

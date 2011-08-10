@@ -653,6 +653,9 @@ begin
     ItemsIdx:=StrtoIntDef(CodeID,0);
   end;
   if ItemsIdx<=0 then Exit;
+  //清除上次选项
+  SortTypeList.Text:='';
+  SortTypeList.KeyValue:='';
   case ItemsIdx of
    3:
     begin
@@ -671,14 +674,18 @@ begin
   if SortTypeList.Columns.Count>1 then
     SortTypeList.Columns[1].FieldName:=SortTypeList.KeyField;
   case ItemsIdx of
-   //1: fndP1_STAT_ID.DataSet:=Global.GetZQueryFromName('PUB_GOODSSORT');    //分类[大类][在供应链中]
-   2: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');    //类别[烟草:一类烟、二类烟、三类烟]
-   3: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');   //主供应商
-   4: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_BRAND_INFO');   //品牌
-   5: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_IMPT_INFO');    //重点品牌
-   6: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_AREA_INFO');    //省内外
-   7: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_COLOR_GROUP');  //颜色
-   8: SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_SIZE_GROUP');   //尺码
+   3: //主供应商;
+    begin
+      SortTypeList.RangeField:='';
+      SortTypeList.RangeValue:='';
+      SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');
+    end;
+   else
+    begin
+      SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_GOODS_INDEXS');
+      SortTypeList.RangeField:='SORT_TYPE';
+      SortTypeList.RangeValue:=InttoStr(ItemsIdx);
+    end;
   end;
 end;
 

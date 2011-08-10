@@ -88,6 +88,7 @@ type
     function GetWeekID(FieldDate: string): string;
     function GetWeekName(WeekIdx: integer; WeekName: string='周'): string;  //返回周
     function ConStr(Fields,begIdx,endIdx: string): string;  //返回[Constr]SQL字符函数
+    function  GetGodsSTAT_ID(fndP_TYPE_ID: TcxComboBox): string;  //返回指标: CODE_ID
 
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
@@ -570,6 +571,14 @@ end;
 procedure TframeBaseAnaly.SingleReportParams(ParameStr: string);
 begin
  
+end;
+
+function TframeBaseAnaly.GetGodsSTAT_ID(fndP_TYPE_ID: TcxComboBox): string;
+var
+  Aobj: TRecord_;
+begin
+  Aobj:=TRecord_(fndP_TYPE_ID.Properties.Items.Objects[fndP_TYPE_ID.ItemIndex]);
+  result:=Aobj.FieldByName('CODE_ID').asString;
 end;
 
 end.

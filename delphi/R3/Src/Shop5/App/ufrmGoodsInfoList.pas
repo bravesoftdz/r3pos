@@ -1503,12 +1503,12 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
               WriteToBarcode(DsBarcode,GodsId,CdsExcel.FieldByName('BIG_UNITS').AsString,CdsExcel.FieldByName('BARCODE3').AsString,'2');
             end;
 
-          DsGoods.FieldByName('NEW_INPRICE').AsString := CdsExcel.FieldByName('NEW_INPRICE').AsString;
-          DsGoods.FieldByName('RTL_OUTPRICE').AsString := CdsExcel.FieldByName('NEW_OUTPRICE').AsString;
-          DsGoods.FieldByName('NEW_LOWPRICE').AsString := CdsExcel.FieldByName('NEW_LOWPRICE').AsString;
-          DsGoods.FieldByName('NEW_OUTPRICE').AsString := CdsExcel.FieldByName('MY_OUTPRICE').AsString;
-          DsGoods.FieldByName('NEW_OUTPRICE1').AsString := CdsExcel.FieldByName('MY_OUTPRICE1').AsString;
-          DsGoods.FieldByName('NEW_OUTPRICE2').AsString := CdsExcel.FieldByName('MY_OUTPRICE2').AsString;
+          DsGoods.FieldByName('NEW_INPRICE').AsFloat := CdsExcel.FieldByName('NEW_INPRICE').AsFloat;
+          DsGoods.FieldByName('RTL_OUTPRICE').AsFloat := CdsExcel.FieldByName('NEW_OUTPRICE').AsFloat;
+          DsGoods.FieldByName('NEW_LOWPRICE').AsFloat := CdsExcel.FieldByName('NEW_LOWPRICE').AsFloat;
+          DsGoods.FieldByName('NEW_OUTPRICE').AsFloat := CdsExcel.FieldByName('MY_OUTPRICE').AsFloat;
+          DsGoods.FieldByName('NEW_OUTPRICE1').AsFloat := CdsExcel.FieldByName('MY_OUTPRICE1').AsFloat;
+          DsGoods.FieldByName('NEW_OUTPRICE2').AsFloat := CdsExcel.FieldByName('MY_OUTPRICE2').AsFloat;
           DsGoods.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
 
           DsGoods.FieldByName('USING_PRICE').AsInteger := 1;

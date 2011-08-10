@@ -383,11 +383,11 @@ begin
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID '+
     ',B.REGION_ID as REGION_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+   //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
-    ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
-    ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
+    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+   //数量
+    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
+    ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.REGION_ID';
@@ -539,11 +539,11 @@ begin
     'SELECT '+
     ' A.TENANT_ID as TENANT_ID'+
     ',B.SHOP_ID as SHOP_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
-    ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
-    ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
+    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(-sum(CHANGE'+CodeId+'_RTL) as decimal(10,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
+    ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,B.SHOP_ID';
@@ -643,11 +643,11 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+LvField+',C.RELATION_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
-    ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
-    ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
+    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
+    ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,C.SORT_ID'+InttoStr(GodsStateIdx)+lv+',C.RELATION_ID';
@@ -809,11 +809,11 @@ begin
     ' A.TENANT_ID as TENANT_ID '+
     ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID as GODS_ID '+
-    ',sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
-    ',sum(CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
-    ',sum(CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
-    ',sum(CHANGE'+CodeId+'_RTL)-sum(CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
+    ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
+    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
+    ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
+    ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and B.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,'+SORT_ID+',A.GODS_ID';
@@ -1173,12 +1173,12 @@ end;
 function TfrmChangeDayReport.GetRCKFields: string;
 begin
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
-  result:=' TENANT_ID,SHOP_ID,GODS_ID,CREA_DATE,-CHANGE'+CodeId+'_AMT,-CHANGE'+CodeId+'_RTL,-CHANGE'+CodeId+'_CST ';
+  result:=' TENANT_ID,SHOP_ID,GODS_ID,CREA_DATE,CHANGE'+CodeId+'_AMT,CHANGE'+CodeId+'_RTL,CHANGE'+CodeId+'_CST ';
 end;
 
 function TfrmChangeDayReport.GetVIWFields: string;
 begin
-  result:=' TENANT_ID,SHOP_ID,GODS_ID,CHANGE_DATE as CREA_DATE,-PARM'+CodeId+'_AMOUNT as CHANGE'+CodeId+'_AMT,-PARM'+CodeId+'_RTL as CHANGE'+CodeId+'_RTL,-PARM'+CodeId+'_MONEY as CHANGE'+CodeId+'_CST ';
+  result:=' TENANT_ID,SHOP_ID,GODS_ID,CHANGE_DATE as CREA_DATE,PARM'+CodeId+'_AMOUNT as CHANGE'+CodeId+'_AMT,PARM'+CodeId+'_RTL as CHANGE'+CodeId+'_RTL,PARM'+CodeId+'_MONEY as CHANGE'+CodeId+'_CST ';
 end;
 
 procedure TfrmChangeDayReport.fndP3_REPORT_FLAGPropertiesChange(Sender: TObject);

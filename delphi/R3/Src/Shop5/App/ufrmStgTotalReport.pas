@@ -250,32 +250,31 @@ begin
   //门店条件
   if (fndP1_SHOP_ID.AsString<>'') then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+
   if fndP1_ReckType.ItemIndex=0 then
-  case fndP1_STOR_AMT.ItemIndex of
-  1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
-  2: StrWhere := StrWhere + ' and A.AMOUNT>0';
-  3: StrWhere := StrWhere + ' and A.AMOUNT=0';
-  4: StrWhere := StrWhere + ' and A.AMOUNT<0';
-  end
-  else
-  case fndP1_STOR_AMT.ItemIndex of
-  1: StrWhere := StrWhere + ' and A.BAL_AMT<>0';
-  2: StrWhere := StrWhere + ' and A.BAL_AMT>0';
-  3: StrWhere := StrWhere + ' and A.BAL_AMT=0';
-  4: StrWhere := StrWhere + ' and A.BAL_AMT<0';
+  begin
+    case fndP1_STOR_AMT.ItemIndex of
+     1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
+     2: StrWhere := StrWhere + ' and A.AMOUNT>0';
+     3: StrWhere := StrWhere + ' and A.AMOUNT=0';
+     4: StrWhere := StrWhere + ' and A.AMOUNT<0';
+    end
+  end else
+  begin
+    case fndP1_STOR_AMT.ItemIndex of
+     1: StrWhere := StrWhere + ' and A.BAL_AMT<>0';
+     2: StrWhere := StrWhere + ' and A.BAL_AMT>0';
+     3: StrWhere := StrWhere + ' and A.BAL_AMT=0';
+     4: StrWhere := StrWhere + ' and A.BAL_AMT<0';
+    end;
   end;
 
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP1_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP1_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP1_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP1_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
+  end;
+
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin

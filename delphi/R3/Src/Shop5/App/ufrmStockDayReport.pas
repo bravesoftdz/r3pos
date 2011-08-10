@@ -298,14 +298,20 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate);
+      StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
   begin
     StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
@@ -459,14 +465,20 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate);
+      StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
   begin
     StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
@@ -574,14 +586,20 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
+      StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
   begin
     StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
@@ -735,18 +753,24 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate);
+      StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
   begin
     StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
-
+ 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
   begin
@@ -794,7 +818,8 @@ begin
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
+  else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
   else  
   begin
@@ -879,7 +904,7 @@ begin
 
   //门店所属行政区域|门店类型:
   if (fndP5_SHOP_VALUE.AsString<>'') then
-    begin
+  begin
     case fndP5_SHOP_TYPE.ItemIndex of
       0:
        begin
@@ -890,7 +915,7 @@ begin
        end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP5_SHOP_VALUE.AsString+''' ';
     end;
-    end;
+  end;
   //门店条件
   if trim(fndP5_SHOP_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP5_SHOP_ID.AsString)+''' and B.SHOP_ID='''+trim(fndP5_SHOP_ID.AsString)+''' ';

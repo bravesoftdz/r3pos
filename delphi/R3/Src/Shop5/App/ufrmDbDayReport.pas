@@ -289,16 +289,22 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);    //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate);
+      StrCnd:=StrCnd+' and MOVE_DATE>='+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
   begin
-    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  begin
+    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(RckMaxDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -443,16 +449,22 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);    //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate);
+      StrCnd:=StrCnd+' and MOVE_DATE>='+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
   begin
-    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  begin
+    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(RckMaxDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -488,7 +500,8 @@ begin
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          
     SQLData:='(select TENANT_ID,SHOP_ID,MOVE_DATE as CREA_DATE,GODS_ID,DBIN_AMT,DBIN_CST,DBIN_RTL,DBOUT_AMT,DBOUT_CST,DBOUT_RTL from VIW_MOVEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
+  else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
   else  
   begin
@@ -548,16 +561,22 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);    //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate);
+      StrCnd:=StrCnd+' and MOVE_DATE>='+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
   begin
-    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  begin
+    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(RckMaxDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -705,18 +724,24 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);    //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
-      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate)+' '  //子条件
     else
-      StrCnd:=StrCnd+' and MOVE_DATE='+InttoStr(vBegDate);
+      StrCnd:=StrCnd+' and MOVE_DATE>='+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
+  if RckMaxDate >= vEndDate then 
   begin
-    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(vBegDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
+    if vBegDate=vEndDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  begin
+    StrCnd:=StrCnd+' and MOVE_DATE>'+InttoStr(RckMaxDate)+' and MOVE_DATE<='+InttoStr(vEndDate)+' ';
   end;
-
+ 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
   begin

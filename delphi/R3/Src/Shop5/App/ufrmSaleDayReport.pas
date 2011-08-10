@@ -327,7 +327,7 @@ begin
     SetNotShowCostPrice(DBGridEh3, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
     SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
     SetNotShowCostPrice(DBGridEh5, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh6, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
+    SetNotShowCostPrice(DBGridEh6, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']); 
   end;
 
   if ShopGlobal.GetProdFlag = 'E' then
@@ -351,7 +351,7 @@ begin
   SetUnitIDList(DBGridEh5,'UNIT_ID');
   SetUnitIDList(DBGridEh6,'UNIT_ID');
 
-  //2011.07.16 释放掉明细
+  //2011.07.16 释放掉明细 
   SetNotShowCostPrice(DBGridEh6, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
 end;
 
@@ -374,16 +374,22 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then //20110731 20110800
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //子查询条件
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -431,9 +437,10 @@ begin
        '(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,'+
        ' AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF from VIW_SALESDATA '+
        ' where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  end else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
+  end else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_C_GOODS_DAYS'
-  else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期查询视图]
+  else  
   begin
     SQLData :=
       '(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_C_GOODS_DAYS '+
@@ -491,14 +498,20 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
@@ -553,7 +566,6 @@ begin
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
   begin
     SQLData:='RCK_C_GOODS_DAYS'
-     //  SQLData := '(select TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_C_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   end else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData :=
@@ -685,14 +697,20 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
@@ -743,9 +761,9 @@ begin
   begin
     SQLData:='(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,'+
               'AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  end else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
+  end else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_C_GOODS_DAYS'
-  //  SQLData := '(select TENANT_ID,SHOP_ID,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO from RCK_C_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData :=
@@ -825,14 +843,20 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);    //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
@@ -1005,14 +1029,20 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P5_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P5_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
@@ -1671,8 +1701,9 @@ begin
     else
       RzPage.ActivePageIndex:=4;
   end;
-  //不显示Grid列:
-  SetNotShowCostPrice(DBGridEh5, ['SALE_TAX','SALE_MNY','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
+  //不显示Grid列:  [2011.08.10 modif: 去掉：'SALE_ALLPRF','SALE_RATE',]
+  SetNotShowCostPrice(DBGridEh5, ['SALE_TAX','SALE_MNY','SALE_PRF']);
+
   //设置控件上移：
   Label12.Visible:=False;
   fndP5_SHOP_TYPE.Visible:=False;

@@ -251,13 +251,7 @@ begin
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
-    case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP1_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP1_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndp1_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP1_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
-    end;
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
@@ -620,13 +614,7 @@ begin
   //商品指标:
   if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
   begin
-    case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP2_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP2_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndp2_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP2_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
-    end;
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
@@ -669,14 +657,21 @@ function TfrmSaleAnaly.GetPotenAnalySQL(vType: integer): string;  //潜力分析
   begin
     result:='';
     Str:=',(case ';
-    Qry.First;
-    while not Qry.Eof do
+    if Qry.IsEmpty then
     begin
-      MaxValue1:=FloatToStr(Qry.fieldbyName('SUM1').AsFloat*0.50);
-      MaxValue2:=FloatToStr(Qry.fieldbyName('SUM2').AsFloat*0.50);
-      SubStr:='(case when ('+SumField1+'<'+MaxValue1+' and '+SumField2+'<'+MaxValue2+') then 1 when ('+SumField1+'>='+MaxValue1+' and '+SumField2+'>='+MaxValue2+') then 4 else 2 end)';
-      Str:=Str+' when C.RELATION_ID='+Qry.fieldbyName('RELATION_ID').AsString+' then '+SubStr+'  ';
-      Qry.Next;
+      SubStr:='(case when ('+SumField1+'<0 and '+SumField2+'<0) then 1 when ('+SumField1+'>=0 and '+SumField2+'>=0) then 4 else 2 end)';
+      Str:=Str+' when C.RELATION_ID=0 then '+SubStr+' ';
+    end else
+    begin
+      Qry.First;
+      while not Qry.Eof do
+      begin
+        MaxValue1:=FloatToStr(Qry.fieldbyName('SUM1').AsFloat*0.50);
+        MaxValue2:=FloatToStr(Qry.fieldbyName('SUM2').AsFloat*0.50);
+        SubStr:='(case when ('+SumField1+'<'+MaxValue1+' and '+SumField2+'<'+MaxValue2+') then 1 when ('+SumField1+'>='+MaxValue1+' and '+SumField2+'>='+MaxValue2+') then 4 else 2 end)';
+        Str:=Str+' when C.RELATION_ID='+Qry.fieldbyName('RELATION_ID').AsString+' then '+SubStr+'  ';
+        Qry.Next;
+      end;
     end;
     Str:=Str+' else 2 end) as vType ';
     result:=Str;    
@@ -719,13 +714,7 @@ begin
   //商品指标:
   if (fndP3_STAT_ID.AsString <> '') and (fndP3_TYPE_ID.ItemIndex>=0) then
   begin
-    case TRecord_(fndP3_TYPE_ID.Properties.Items.Objects[fndP3_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP3_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP3_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndp3_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP3_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP3_STAT_ID.AsString+''' ';
-    end;
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP3_TYPE_ID)+'='''+fndP3_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:

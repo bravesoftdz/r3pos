@@ -394,7 +394,7 @@ begin
 
   fndP3_SHOP_ID.KeyValue:=fndP2_SHOP_ID.KeyValue;
   fndP3_SHOP_ID.Text:=fndP2_SHOP_ID.Text;
-
+ 
   fndP3_GUIDE_USER.KeyValue := fndP2_GUIDE_USER.KeyValue;
   fndP3_GUIDE_USER.Text := fndP2_GUIDE_USER.Text;
   fndP3_SALES_TYPE.ItemIndex:=fndP2_SALES_TYPE.ItemIndex;
@@ -664,7 +664,7 @@ begin
     SetNotShowCostPrice(DBGridEh1, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
     SetNotShowCostPrice(DBGridEh2, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
     SetNotShowCostPrice(DBGridEh3, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']); 
     SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
   end;
 
@@ -792,7 +792,7 @@ begin
 
   //业务员
   if Trim(fndP5_GUIDE_USER.Text) <> '' then
-    strWhere := strWhere + ' and A.GUIDE_USER='''+fndP5_GUIDE_USER.AsString+''' ';
+    strWhere := strWhere + ' and isnull(A.GUIDE_USER,'''')='''+fndP5_GUIDE_USER.AsString+''' ';
 
   if fndP5_SALEORDER.Checked then //销售单:1
     strWhere := strWhere+' and SALES_TYPE=1 '
@@ -882,18 +882,24 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
-  
+
   //门店所属行政区域|门店类型:
   if trim(fndP4_SHOP_VALUE.AsString)<>'' then
   begin
@@ -941,13 +947,14 @@ begin
 
   //业务员
   if Trim(fndP4_GUIDE_USER.Text) <> '' then
-    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP4_GUIDE_USER.AsString+''' ';
+    StrCnd := StrCnd + ' and isnull(GUIDE_USER,'''')='''+fndP4_GUIDE_USER.AsString+''' ';
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
     SQLData:='(select TENANT_ID,SHOP_ID,GUIDE_USER,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,'+
              'COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF  from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  end else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
+  end else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_C_GOODS_DAYS'
   else  
   begin
@@ -1049,16 +1056,22 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -1093,13 +1106,14 @@ begin
 
   //业务员
   if Trim(fndP3_GUIDE_USER.Text) <> '' then
-    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP3_GUIDE_USER.AsString+''' ';
+    StrCnd := StrCnd + ' and isnull(GUIDE_USER,'''')='''+fndP3_GUIDE_USER.AsString+''' ';
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
     SQLData:='(select TENANT_ID,SHOP_ID,GUIDE_USER,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,'+
              'COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF  from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  end else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
+  end else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData:='RCK_C_GOODS_DAYS'
   else
   begin
@@ -1317,16 +1331,22 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
@@ -1379,11 +1399,11 @@ begin
 
   //业务员
   if Trim(fndP2_GUIDE_USER.Text) <> '' then
-    StrCnd := StrCnd + ' and GUIDE_USER='''+fndP2_GUIDE_USER.AsString+''' ';
+    StrCnd := StrCnd + ' and isnull(GUIDE_USER,'''')='''+fndP2_GUIDE_USER.AsString+''' ';
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
-    SQLData:='(select TENANT_ID,SHOP_ID,GUIDE_USER,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,'+
+    SQLData:='(select TENANT_ID,SHOP_ID,isnull(GUIDE_USER,''#'')as GUIDE_USER,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,'+
              'COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF  from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   end else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
@@ -1393,7 +1413,7 @@ begin
     SQLData :=
       '(select TENANT_ID,SHOP_ID,GUIDE_USER,DEPT_ID,IS_PRESENT,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_C_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select TENANT_ID,SHOP_ID,GUIDE_USER,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,'+
+      ' select TENANT_ID,SHOP_ID,isnull(GUIDE_USER,''#'')as GUIDE_USER,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,'+
       'COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF  from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
   end;
@@ -1402,7 +1422,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GUIDE_USER '+
+    ',A.GUIDE_USER'+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
@@ -1444,18 +1464,24 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
-
+  
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
   begin

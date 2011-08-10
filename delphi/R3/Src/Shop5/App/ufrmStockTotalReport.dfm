@@ -6,18 +6,18 @@ inherited frmStockTotalReport: TfrmStockTotalReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Height = 468
+    Height = 479
     inherited RzPanel2: TRzPanel
-      Height = 458
+      Height = 469
       inherited RzPage: TRzPageControl
-        Height = 452
+        Height = 463
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36827#36135#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
-            Height = 425
+            Height = 436
             inherited Panel4: TPanel
-              Height = 415
+              Height = 426
               inherited w1: TRzPanel
                 Height = 106
                 object Label3: TLabel
@@ -388,9 +388,9 @@ inherited frmStockTotalReport: TfrmStockTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 106
-                Height = 309
+                Height = 320
                 inherited DBGridEh1: TDBGridEh
-                  Height = 305
+                  Height = 316
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end
@@ -399,7 +399,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Height = 452
+        Height = 463
         Visible = False
         inherited Panel2: TPanel
           Height = 429

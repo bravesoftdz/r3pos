@@ -255,18 +255,18 @@ begin
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
-    begin
-      case fndP1_SHOP_TYPE.ItemIndex of
-      0:
+  begin
+    case fndP1_SHOP_TYPE.ItemIndex of
+     0:
        begin
          if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //非末级区域
            strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP1_SHOP_VALUE.AsString)+'%'' '
          else
            strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
-      end;
+     1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
     end;
+  end;
 
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then

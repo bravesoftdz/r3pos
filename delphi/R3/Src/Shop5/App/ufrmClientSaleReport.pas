@@ -646,7 +646,7 @@ begin
     SetNotShowCostPrice(DBGridEh2, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
     SetNotShowCostPrice(DBGridEh3, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
     SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
+    SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);  
   end;
 
   if ShopGlobal.GetProdFlag = 'E' then
@@ -666,7 +666,7 @@ begin
   SetUnitIDList(DBGridEh4,'UNIT_ID');
   SetUnitIDList(DBGridEh5,'UNIT_ID');
 
-  //2011.07.16 释放掉明细
+  //2011.07.16 释放掉明细[暂先去掉]
   SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
 end;
 
@@ -852,18 +852,24 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
-  
+
   //客户群体所属行政区域|客户等级\客户分类:
   if trim(fndP4_CUST_VALUE.AsString)<>'' then
   begin
@@ -907,7 +913,7 @@ begin
   //客户名称
   if Trim(fndP4_CLIENT_ID.Text) <> '' then
   begin
-    strWhere := strWhere + ' and D.CLIENT_ID='''+fndP4_CLIENT_ID.AsString+''' ';
+    strWhere := strWhere + ' and isnull(A.CLIENT_ID,'''')='''+fndP4_CLIENT_ID.AsString+''' ';
   end;
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
@@ -1020,18 +1026,24 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
-
+  
   //客户群体所属行政区域|客户等级\客户分类:
   if (fndP3_CUST_VALUE.AsString<>'') then
   begin
@@ -1067,7 +1079,7 @@ begin
   //客户名称
   if Trim(fndP3_CLIENT_ID.Text) <> '' then
   begin
-    strWhere := strWhere + ' and D.CLIENT_ID='''+fndP3_CLIENT_ID.AsString+''' ';
+    strWhere := strWhere + ' and isnull(A.CLIENT_ID,'''')='''+fndP3_CLIENT_ID.AsString+''' ';
   end;
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
@@ -1303,18 +1315,24 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
-  
+
   //客户群体所属行政区域|客户等级\客户分类:
   if (fndP2_CUST_VALUE.AsString<>'') then
   begin
@@ -1431,16 +1449,22 @@ begin
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if (vBegDate>0) and (vBegDate=vEndDate) then
+  if RckMaxDate < vBegDate then
   begin
-    if RckMaxDate>=vBegDate then
+    if vBegDate=vEndDate then
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' '  //子条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE>='+InttoStr(vBegDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //总条件
+  end else
+  if RckMaxDate >= vEndDate then 
+  begin
+    if vBegDate=vEndDate then
       strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
     else
-      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
+      strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';  //总条件
   end else
-  if vBegDate<vEndDate then
   begin
-    StrCnd:=' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //客户群体所属行政区域|客户等级\客户分类:

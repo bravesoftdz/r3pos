@@ -762,7 +762,7 @@ begin
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
   begin
-    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP5TYPE_ID)+'='''+fndP5_STAT_ID.AsString+''' ';
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP5_TYPE_ID)+'='''+fndP5_STAT_ID.AsString+''' ';
   end;
   //商品分类:
   if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then

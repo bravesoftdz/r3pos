@@ -297,43 +297,40 @@ begin
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date));  //结束日期
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    else
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate);
   end else
   if vBegDate<vEndDate then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
-    begin
-      case fndP1_SHOP_TYPE.ItemIndex of
-      0:
+  begin
+    case fndP1_SHOP_TYPE.ItemIndex of
+     0:
        begin
          if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //非末级区域
            strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP1_SHOP_VALUE.AsString)+'%'' '
          else
            strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
-      end;
+     1:
+       strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
     end;
+  end;
 
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP1_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP1_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP1_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP1_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
+  end;
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
@@ -352,14 +349,12 @@ begin
   if trim(fndP1_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
 
-  //取日结帐最大日期:
-  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
+  if RckMaxDate < vBegDate then      //--[全部查询视图]  
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
+  else
   begin
     SQLData:=
       '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
@@ -463,20 +458,22 @@ begin
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D2.Date));  //结束日期
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    else
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate);
   end else
   if vBegDate<vEndDate then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
-    begin
+  begin
     case fndP2_SHOP_TYPE.ItemIndex of
       0:
        begin
@@ -485,21 +482,16 @@ begin
          else
            strWhere:=strWhere+' and B.REGION_ID='''+fndP2_SHOP_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
     end;
-    end;
+  end;
 
   //商品指标:
   if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP2_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP2_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP2_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP2_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
+  end;
+
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
@@ -517,15 +509,13 @@ begin
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
-        
-  //取日结帐最大日期:
-  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
-  if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
+
+  if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
+  else
   begin
     SQLData:=
       '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
@@ -583,57 +573,58 @@ begin
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D2.Date));  //结束日期
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    else
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
   end else
   if vBegDate<vEndDate then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
   if (fndP3_SHOP_VALUE.AsString<>'') then
-    begin
+  begin
     case fndP3_SHOP_TYPE.ItemIndex of
-      0:
+     0:
        begin
          if FnString.TrimRight(trim(fndP3_SHOP_VALUE.AsString),2)='00' then //非末级区域
            strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP3_SHOP_VALUE.AsString)+'%'' '
          else
            strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
+     1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
     end;
-    end;
+  end;
 
   //门店条件
   if (fndP3_SHOP_ID.AsString<>'') then
-    begin
-      strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
-    end;
+  begin
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+  end;
 
   //商品分类:
   case GodsStateIdx of
-  1:begin
+   1:
+    begin
       GoodTab:='VIW_GOODSPRICE_SORTEXT';
       lv := ',((case when C.RELATION_ID=0 then ''9999999'' else '+IntToVarchar('C.RELATION_ID')+' end)'+GetStrJoin(Factor.iDbType)+'isnull(C.LEVEL_ID,''''))';
       LvField:=lv+' as LEVEL_ID ';
     end;
-  else
-    GoodTab:='VIW_GOODSPRICE';
+   else
+     GoodTab:='VIW_GOODSPRICE';
   end;
 
-  //取日结帐最大日期:
-  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  else
+  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
+  else
   begin
     SQLData:=
       '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
@@ -743,20 +734,22 @@ begin
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
   vEndDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D2.Date));  //结束日期
+  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate)
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '
+    else
+      StrCnd:=StrCnd+' and STOCK_DATE='+InttoStr(vBegDate);
   end else
   if vBegDate<vEndDate then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+InttoStr(vEndDate)+' ';
-    StrCnd:=StrCnd+' and STOCK_DATE>='+InttoStr(vBegDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
+    StrCnd:=StrCnd+' and STOCK_DATE>'+InttoStr(RckMaxDate)+' and STOCK_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
-    begin
+  begin
     case fndP4_SHOP_TYPE.ItemIndex of
       0:
        begin
@@ -767,22 +760,17 @@ begin
        end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
     end;
-    end;
+  end;
   //门店条件
   if trim(fndP4_SHOP_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' and B.SHOP_ID='''+trim(fndP4_SHOP_ID.AsString)+''' ';
 
   //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP4_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP4_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP4_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP4_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP4_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP4_TYPE_ID)+'='''+fndP4_STAT_ID.AsString+''' ';
+  end;
+  
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin
@@ -804,14 +792,11 @@ begin
       SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
   end;
 
-  //取日结帐最大日期:
-  RckMaxDate:=CheckAccDate(vBegDate,vEndDate);
   if RckMaxDate < vBegDate then      //--[全部查询视图]  SQLData:='VIW_STOCKDATA'          //CALC_MONEY+AGIO_MONEY
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else if RckMaxDate > vEndDate then //--[全部查询台帐表]
+  else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
-    //SQLData:='(select TENANT_ID,SHOP_ID,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
-  else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
+  else  
   begin
     SQLData:=
       '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
@@ -912,15 +897,10 @@ begin
 
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP5_TYPE_ID.Properties.Items.Objects[fndP5_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP5_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP5_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP5_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP5_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP5_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP5_TYPE_ID)+'='''+fndP5_STAT_ID.AsString+''' ';
+  end;
+  
   //商品分类:
   if (trim(fndP5_SORT_ID.Text)<>'') and (trim(srid5)<>'') then
   begin

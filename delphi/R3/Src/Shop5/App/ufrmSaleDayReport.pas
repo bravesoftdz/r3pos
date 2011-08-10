@@ -376,12 +376,13 @@ begin
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';  //总条件
-    StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';       //子查询条件
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
   end else
   if vBegDate<vEndDate then
   begin
-    // strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';  //子查询条件
   end;
 
@@ -492,12 +493,13 @@ begin
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
   end else
   if vBegDate<vEndDate then
   begin
-    //strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
     
@@ -685,12 +687,13 @@ begin
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
   end else
   if vBegDate<vEndDate then
   begin
-    // strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
@@ -824,12 +827,13 @@ begin
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);    //取日结帐最大日期:
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';  //总查询条件
-    StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';       //视图子查询条件
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
   end else
   if vBegDate<vEndDate then
   begin
-    //strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
   
@@ -1003,12 +1007,13 @@ begin
   RckMaxDate:=CheckAccDate(vBegDate,vEndDate);   //取日结帐最大日期:
   if (vBegDate>0) and (vBegDate=vEndDate) then
   begin
-    strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' ';
-    StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';
+    if RckMaxDate>=vBegDate then
+      strWhere:=strWhere+' and A.CREA_DATE='+InttoStr(vBegDate)+' '  //总条件
+    else
+      StrCnd:=StrCnd+' and SALES_DATE='+InttoStr(vBegDate)+' ';      //子查询条件
   end else
   if vBegDate<vEndDate then
   begin
-    //strWhere:=strWhere+' and A.CREA_DATE>='+InttoStr(vBegDate)+' and A.CREA_DATE<='+inttoStr(vEndDate)+' ';
     StrCnd:=StrCnd+' and SALES_DATE>'+InttoStr(RckMaxDate)+' and SALES_DATE<='+InttoStr(vEndDate)+' ';
   end;
 
@@ -1034,13 +1039,7 @@ begin
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
   begin
-    case TRecord_(fndP5_TYPE_ID.Properties.Items.Objects[fndP5_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-     2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP5_STAT_ID.AsString+''' ';
-     3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP5_STAT_ID.AsString+''' ';
-     4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP5_STAT_ID.AsString+''' ';
-     5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP5_STAT_ID.AsString+''' ';
-     6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP5_STAT_ID.AsString+''' ';
-    end;
+     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP5_TYPE_ID)+'='''+fndP5_STAT_ID.AsString+''' ';
   end;
   //商品分类:
   if (trim(fndP5_SORT_ID.Text)<>'')  and (trim(srid5)<>'') then
@@ -1179,15 +1178,9 @@ begin
 
   //商品指标:
   if (fndP6_STAT_ID.AsString <> '') and (fndP6_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP6_TYPE_ID.Properties.Items.Objects[fndP6_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP6_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP6_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP6_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP6_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP6_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP6_TYPE_ID)+'='''+fndP6_STAT_ID.AsString+''' ';
+  end;
   //商品分类:
   if (trim(fndP6_SORT_ID.Text)<>'') and (trim(srid6)<>'') then
   begin

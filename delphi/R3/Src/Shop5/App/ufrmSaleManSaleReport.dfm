@@ -6,11 +6,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1077
+    Width = 1085
     inherited RzPanel2: TRzPanel
-      Width = 1067
+      Width = 1075
       inherited RzPage: TRzPageControl
-        Width = 862
+        Width = 870
         ActivePage = TabSheet5
         ParentColor = False
         TabIndex = 4
@@ -18,11 +18,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
         inherited TabSheet1: TRzTabSheet
           Caption = #37096#38376#38144#21806#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 860
+            Width = 868
             inherited Panel4: TPanel
-              Width = 850
+              Width = 858
               inherited w1: TRzPanel
-                Width = 850
+                Width = 858
                 Height = 122
                 object RzLabel1: TRzLabel
                   Left = 24
@@ -473,11 +473,11 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 122
-                Width = 850
-                Height = 310
+                Width = 858
+                Height = 321
                 inherited DBGridEh1: TDBGridEh
-                  Width = 846
-                  Height = 306
+                  Width = 854
+                  Height = 317
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
@@ -623,7 +623,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               BorderSides = [sdLeft, sdTop, sdRight]
               TabOrder = 0
               DesignSize = (
-                850
+                858
                 122)
               object RzLabel4: TRzLabel
                 Left = 24
@@ -1116,8 +1116,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
             object RzPanel10: TRzPanel
               Left = 5
               Top = 127
-              Width = 850
-              Height = 310
+              Width = 858
+              Height = 321
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1322,7 +1322,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  850
+                  858
                   100)
                 object RzLabel6: TRzLabel
                   Left = 24
@@ -1652,8 +1652,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 100
-                Width = 850
-                Height = 332
+                Width = 858
+                Height = 343
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1853,7 +1853,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  850
+                  858
                   122)
                 object RzLabel8: TRzLabel
                   Left = 24
@@ -2267,8 +2267,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 122
-                Width = 850
-                Height = 310
+                Width = 858
+                Height = 321
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2473,8 +2473,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 860
-            Height = 442
+            Width = 868
+            Height = 453
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -2482,8 +2482,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 850
-              Height = 432
+              Width = 858
+              Height = 443
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2491,7 +2491,7 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel17: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 850
+                Width = 858
                 Height = 127
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2917,8 +2917,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
               object RzPanel18: TRzPanel
                 Left = 0
                 Top = 127
-                Width = 850
-                Height = 305
+                Width = 858
+                Height = 316
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2926,8 +2926,8 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 846
-                  Height = 301
+                  Width = 854
+                  Height = 312
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -3178,20 +3178,20 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 865
+        Left = 873
       end
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1077
+    Width = 1085
     inherited Image1: TImage
-      Width = 703
+      Width = 715
     end
     inherited Image3: TImage
-      Width = 703
+      Width = 715
     end
     inherited Image14: TImage
-      Left = 1057
+      Left = 1065
     end
   end
   inherited mmMenu: TMainMenu

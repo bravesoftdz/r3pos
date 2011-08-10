@@ -251,15 +251,9 @@ begin
     end;
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP1_TYPE_ID.Properties.Items.Objects[fndP1_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP1_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP1_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP1_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP1_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP1_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
+  end;
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
   begin
@@ -390,7 +384,7 @@ begin
 
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
-    begin
+  begin
     case fndP2_SHOP_TYPE.ItemIndex of
       0:
        begin
@@ -401,19 +395,13 @@ begin
        end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
     end;
-    end;
-    
+  end;
+
   //商品指标:
   if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP2_TYPE_ID.Properties.Items.Objects[fndP2_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP2_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP2_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP2_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP2_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP2_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
+  end;
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
@@ -647,7 +635,7 @@ begin
 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
-    begin
+  begin
     case fndP4_SHOP_TYPE.ItemIndex of
       0:
        begin
@@ -658,37 +646,36 @@ begin
        end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP4_SHOP_VALUE.AsString+''' ';
     end;
-    end;
+  end;
 
   //门店条件
   if (fndP4_SHOP_ID.AsString<>'') then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP4_SHOP_ID.AsString+''' ';
 
   if fndP4_ReckType.ItemIndex=0 then
-  case fndP4_STOR_AMT.ItemIndex of
-  1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
-  2: StrWhere := StrWhere + ' and A.AMOUNT>0';
-  3: StrWhere := StrWhere + ' and A.AMOUNT=0';
-  4: StrWhere := StrWhere + ' and A.AMOUNT<0';
-  end
-  else
-  case fndP4_STOR_AMT.ItemIndex of
-  1: StrWhere := StrWhere + ' and A.BAL_AMT<>0';
-  2: StrWhere := StrWhere + ' and A.BAL_AMT>0';
-  3: StrWhere := StrWhere + ' and A.BAL_AMT=0';
-  4: StrWhere := StrWhere + ' and A.BAL_AMT<0';
+  begin
+    case fndP4_STOR_AMT.ItemIndex of
+     1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
+     2: StrWhere := StrWhere + ' and A.AMOUNT>0';
+     3: StrWhere := StrWhere + ' and A.AMOUNT=0';
+     4: StrWhere := StrWhere + ' and A.AMOUNT<0';
+    end;
+  end else
+  begin
+    case fndP4_STOR_AMT.ItemIndex of
+     1: StrWhere := StrWhere + ' and A.BAL_AMT<>0';
+     2: StrWhere := StrWhere + ' and A.BAL_AMT>0';
+     3: StrWhere := StrWhere + ' and A.BAL_AMT=0';
+     4: StrWhere := StrWhere + ' and A.BAL_AMT<0';
+    end;
   end;
+  
   //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
-     begin
-      case TRecord_(fndP4_TYPE_ID.Properties.Items.Objects[fndP4_TYPE_ID.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-      2:strWhere:=strWhere+' and C.SORT_ID2='''+fndP4_STAT_ID.AsString+''' ';
-      3:strWhere:=strWhere+' and C.SORT_ID3='''+fndP4_STAT_ID.AsString+''' ';
-      4:strWhere:=strWhere+' and C.SORT_ID4='''+fndP4_STAT_ID.AsString+''' ';
-      5:strWhere:=strWhere+' and C.SORT_ID5='''+fndP4_STAT_ID.AsString+''' ';
-      6:strWhere:=strWhere+' and C.SORT_ID6='''+fndP4_STAT_ID.AsString+''' ';
-      end;
-     end;
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP4_TYPE_ID)+'='''+fndP4_STAT_ID.AsString+''' ';
+  end;
+
   //商品分类:
   if (trim(fndP4_SORT_ID.Text)<>'') and (trim(srid4)<>'') then
   begin

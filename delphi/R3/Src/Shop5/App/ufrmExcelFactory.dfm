@@ -2,7 +2,7 @@ inherited frmExcelFactory: TfrmExcelFactory
   Left = 618
   Top = 160
   BorderIcons = [biSystemMenu, biMaximize]
-  Caption = 'Excel'#23548#20837#22522#31867
+  Caption = 'Excel'#25968#25454#23548#20837
   Color = clWhite
   OldCreateOrder = True
   OnCreate = FormCreate

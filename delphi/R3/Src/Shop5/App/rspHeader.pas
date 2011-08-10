@@ -24,8 +24,8 @@ type
     HTTPRIO : THTTPRIO;
     Addr:string;
     flag:integer;
-    function Encode(inxml:String;Key:string):String;
-    function Decode(inxml:String;Key:string):String;
+    function Encode(inxml:Ansistring;Key:Ansistring):Ansistring;
+    function Decode(inxml:Ansistring;Key:Ansistring):Ansistring;
     procedure doAfterExecute(const MethodName: string;
       SOAPResponse: TStream);
     function SendHeader(rio: THTTPRIO; flag: integer=1):rsp;
@@ -36,7 +36,7 @@ type
     //还回异常
     function ErrorEncode(Err:string):string;
     //企业服务
-    function coLogin(inxml:string):string;
+    function coLogin(inxml:AnsiString):string;
     function coRegister(inxml:string):string;
     function getTenantInfo(inxml:string):string;
     //产品服务
@@ -61,8 +61,9 @@ type
   end;
 var
   SessionId: string;
-  pubpwd:string;
-  sslpwd:string;
+  pubpwd:String;
+  sslpwd:String;
+  encryptType:integer;
 implementation
 uses ZLibExGZ,Des,encddecd,PubMemberService,RspDownloadService,CaProductService,CaServiceLineService,CaTenantService;
 { rsp }
@@ -94,12 +95,18 @@ function TRspFactory.applyRelation(inxml: string): string;
 var
   r:rsp;
   intf:CaServiceLineWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetCaServiceLineWebServiceImpl(true,Addr+'CaServiceLineService?wsdl',HTTPRIO);
-    result := intf.applyRelation(inxml);
+    outXml := intf.applyRelation(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -110,28 +117,41 @@ function TRspFactory.checkUpgrade(inxml: string): string;
 var
   r:rsp;
   intf:CaProductWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetCaProductWebServiceImpl(true,Addr+'CaProductService?wsdl',HTTPRIO);
-    result := intf.checkUpgrade(inxml);
+    outXml := intf.checkUpgrade(Encode(inxml,pubpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
   end;
 end;
 
-function TRspFactory.coLogin(inxml: string): string;
+function TRspFactory.coLogin(inxml: AnsiString): string;
 var
   r:rsp;
   intf:CaTenantWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
+    Decode(Encode('ksdjfkdsf','11111111'),'11111111');
     intf := GetCaTenantWebServiceImpl(true,Addr+'CaTenantService?wsdl',HTTPRIO);
-    result := intf.login(inxml);
+    outXml := intf.login(Encode(inxml,pubpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -142,12 +162,18 @@ function TRspFactory.coRegister(inxml: string): string;
 var
   r:rsp;
   intf:CaTenantWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetCaTenantWebServiceImpl(true,Addr+'CaTenantService?wsdl',HTTPRIO);
-    result := intf.register(inxml);
+    outXml := intf.register(Encode(inxml,pubpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -171,22 +197,28 @@ function TRspFactory.createServiceLine(inxml: string): string;
 var
   r:rsp;
   intf:CaServiceLineWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetCaServiceLineWebServiceImpl(true,Addr+'CaServiceLineService?wsdl',HTTPRIO);
-    result := intf.createServiceLine(inxml);
+    outXml := intf.createServiceLine(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
   end;
 end;
 
-function TRspFactory.Decode(inxml, Key: string): String;
+function TRspFactory.Decode(inxml, Key: Ansistring): Ansistring;
 var
   gzip:RawByteString;
-  DecStr:string;
+  DecStr:Ansistring;
 begin
   DecStr := encddecd.DecodeString(inxml);
   if Key='' then
@@ -227,12 +259,18 @@ function TRspFactory.downloadBarcode(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadBarcode(inxml);
+    outXml := intf.downloadBarcode(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -243,12 +281,18 @@ function TRspFactory.downloadDeployGoods(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadDeployGoods(inxml);
+    outXml := intf.downloadDeployGoods(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -259,12 +303,18 @@ function TRspFactory.downloadGoods(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadGoods(inxml);
+    outXml := intf.downloadGoods(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -275,12 +325,18 @@ function TRspFactory.downloadRelations(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadRelations(inxml);
+    outXml := intf.downloadRelations(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -291,12 +347,18 @@ function TRspFactory.downloadServiceLines(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadServiceLines(inxml);
+    outXml := intf.downloadServiceLines(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -307,12 +369,18 @@ function TRspFactory.downloadSort(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadSort(inxml);
+    outXml := intf.downloadSort(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -323,12 +391,18 @@ function TRspFactory.downloadTenants(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadTenants(inxml);
+    outXml := intf.downloadTenants(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -339,22 +413,28 @@ function TRspFactory.downloadUnit(inxml: string): string;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetRspDownloadWebServiceImpl(true,Addr+'RspDownloadService?wsdl',HTTPRIO);
-    result := intf.downloadUnit(inxml);
+    outXml := intf.downloadUnit(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
   end;
 end;
 
-function TRspFactory.Encode(inxml, Key: string): String;
+function TRspFactory.Encode(inxml, Key: Ansistring): Ansistring;
 var
   gzip:RawByteString;
-  EncStr:String;
+  EncStr:Ansistring;
 begin
   GZCompressString(gzip,inxml);
   if Key='' then
@@ -374,7 +454,7 @@ begin
   r := rsp(rio.SOAPHeaders.Get(rsp));
   try
     SessionId := r.rspSessionId;
-    sslpwd := r.encryptType;
+    encryptType := r.encryptType;
   finally
     r.Free;
   end;
@@ -385,12 +465,18 @@ function TRspFactory.getTenantInfo(inxml: string): string;
 var
   r:rsp;
   intf:CaTenantWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetCaTenantWebServiceImpl(true,Addr+'CaTenantService?wsdl',HTTPRIO);
-    result := intf.getTenantInfo(inxml);
+    outXml := intf.getTenantInfo(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -401,12 +487,18 @@ function TRspFactory.listModules(inxml: string): string;
 var
   r:rsp;
   intf:CaProductWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetCaProductWebServiceImpl(true,Addr+'CaProductService?wsdl',HTTPRIO);
-    result := intf.listModules(inxml);
+    outXml := intf.listModules(Encode(inxml,pubpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -417,12 +509,18 @@ function TRspFactory.queryServiceLines(inxml: string): string;
 var
   r:rsp;
   intf:CaServiceLineWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetCaServiceLineWebServiceImpl(true,Addr+'CaServiceLineService?wsdl',HTTPRIO);
-    result := intf.queryServiceLines(inxml);
+    outXml := intf.queryServiceLines(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;
@@ -433,12 +531,18 @@ function TRspFactory.queryUnion(inxml: string): string;
 var
   r:rsp;
   intf:PubMemberWebServiceImpl;
+  outXml:string;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
     intf := GetPubMemberWebServiceImpl(true,Addr+'PubMemberService?wsdl',HTTPRIO);
-    result := intf.queryUnion(inxml);
+    outXml := intf.queryUnion(Encode(inxml,sslpwd));
     GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
   finally
     intf := nil;
     r.Free;

@@ -77,7 +77,7 @@ function listModules(xml:widestring;url:widestring;flag:integer):widestring;stdc
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.listModules(xml);
@@ -157,7 +157,7 @@ function downloadTenants(xml:widestring;url:widestring;flag:integer):widestring;
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadTenants(xml);
@@ -173,7 +173,7 @@ function downloadServiceLines(xml:widestring;url:widestring;flag:integer):widest
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadServiceLines(xml);
@@ -189,7 +189,7 @@ function downloadRelations(xml:widestring;url:widestring;flag:integer):widestrin
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadRelations(xml);
@@ -205,7 +205,7 @@ function downloadSort(xml:widestring;url:widestring;flag:integer):widestring;std
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadSort(xml);
@@ -221,7 +221,7 @@ function downloadUnit(xml:widestring;url:widestring;flag:integer):widestring;std
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadUnit(xml);
@@ -237,7 +237,7 @@ function downloadGoods(xml:widestring;url:widestring;flag:integer):widestring;st
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadGoods(xml);
@@ -253,7 +253,7 @@ function downloadDeployGoods(xml:widestring;url:widestring;flag:integer):widestr
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadDeployGoods(xml);
@@ -269,7 +269,7 @@ function downloadBarcode(xml:widestring;url:widestring;flag:integer):widestring;
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.downloadBarcode(xml);
@@ -285,7 +285,7 @@ function queryUnion(xml:widestring;url:widestring;flag:integer):widestring;stdca
 var
   rsp:TRspFactory;
 begin
- rsp := TRspFactory.Create(20000,url,flag);
+ rsp := TRspFactory.Create(120000,url,flag);
  try
    try
      result := rsp.queryUnion(xml);

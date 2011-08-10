@@ -95,7 +95,7 @@ type
     property rspSessionId:string read FrspSessionId write SetrspSessionId;
     property encryptType:integer read FencryptType write SetencryptType;
   end;
-
+  TRspFunction=function(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
   TCaFactory=class
   private
     FSSL: string;
@@ -123,10 +123,30 @@ type
     procedure SetRspFlag(const Value: integer);
     procedure SetDownModule(const Value: boolean);
   protected
+    RspHandle:THandle;
+    RspcoLogin:TRspFunction;
+    RspcoRegister:TRspFunction;
+    RspgetTenantInfo:TRspFunction;
+    RsplistModules:TRspFunction;
+    RspcheckUpgrade:TRspFunction;
+    RspcreateServiceLine:TRspFunction;
+    RspqueryServiceLines:TRspFunction;
+    RspapplyRelation:TRspFunction;
+    RspdownloadTenants:TRspFunction;
+    RspdownloadServiceLines:TRspFunction;
+    RspdownloadRelations:TRspFunction;
+    RspdownloadSort:TRspFunction;
+    RspdownloadUnit:TRspFunction;
+    RspdownloadGoods:TRspFunction;
+    RspdownloadDeployGoods:TRspFunction;
+    RspdownloadBarcode:TRspFunction;
+    RspqueryUnion:TRspFunction;
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
     procedure SetTicket;
     function GetTicket:Int64;
+    procedure LoadRspFactory;
+    procedure FreeRspFactory;
   public
     auto:boolean;
     constructor Create;
@@ -359,8 +379,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(20000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspgetTenantInfo(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(20000);
     h := SendHeader(rio,2);
     try
       try
@@ -389,6 +412,7 @@ try
     finally
       h.Free;
     end;
+  end;
     CheckRecAck(doc);
     caTenant := FindNode(doc,'body\caTenant');
     result.TENANT_ID := StrtoInt(GetNodeValue(caTenant,'tenantId'));
@@ -414,9 +438,6 @@ try
     result.PROD_ID := GetNodeValue(caTenant,'prodId');
     result.DB_ID := GetNodeValue(caTenant,'dbId');
     result.AUDIT_STATUS := GetNodeValue(caTenant,'auditStatus');
-  finally
-   // rio.Free;
-  end;    
 except
   on E:Exception do
   begin
@@ -461,8 +482,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(20000);
-  try
+  if rspHandle>0 then
+     CreateXML(rsplistModules(inxml,URL,1))
+  else
+  begin
+    rio := CreateRio(20000);
     h := SendHeader(rio,1);
     try
       try
@@ -485,7 +509,7 @@ try
     finally
       h.Free;
     end;
-
+  end;
     CheckRecAck(doc);
     GetHeader(rio).free;
     caTenantLoginResp := FindNode(doc,'body\caTenantLoginResp');
@@ -610,10 +634,6 @@ try
        end
     else
        Raise Exception.Create(GetNodeValue(caTenantLoginResp,'desc'));
-
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -723,8 +743,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(20000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspcoregister(inxml,URL,1))
+  else
+  begin
+    rio := CreateRio(20000);
     h := SendHeader(rio,1);
     try
       try
@@ -748,6 +771,7 @@ try
     finally
       h.Free;
     end;
+  end;
     CheckRecAck(doc);
     GetHeader(rio).free;
     caTenantRegisterResp := FindNode(doc,'body\caTenantRegisterResp');
@@ -758,10 +782,6 @@ try
        end
     else
        Raise Exception.Create(GetNodeValue(caTenantRegisterResp,'desc'));
-
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -780,6 +800,7 @@ var
   s:string;
 begin
   auto := false;
+  LoadRspFactory;
   DownModule := false;
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
@@ -814,6 +835,7 @@ var
   ErrXml:string;
   w:integer;
 begin
+  if copy(xml,1,6)='<Err>:' then Raise Exception.Create(xml); 
   if Global.debug then LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try
@@ -849,6 +871,7 @@ end;
 
 destructor TCaFactory.Destroy;
 begin
+  FreeRspFactory;
   inherited;
 end;
 
@@ -998,9 +1021,11 @@ try
   FindNode(doc,'body\caProductCheckUpgradeReq').appendChild(Node);
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
-
-  rio := CreateRio(20000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspcheckUpgrade(inxml,URL,1))
+  else
+  begin
+    rio := CreateRio(20000);
     h := SendHeader(rio,1);
     try
       try
@@ -1015,7 +1040,7 @@ try
           end;
         finally
           r.Free;
-        end;
+        end; 
       except
         on E:Exception do
            begin
@@ -1030,15 +1055,12 @@ try
     finally
       h.Free;
     end;
+  end;
     CheckRecAck(doc);
     caProductCheckUpgradeResp := FindNode(doc,'body\caProductCheckUpgradeResp');
     result.UpGrade := StrtoInt(GetNodeValue(caProductCheckUpgradeResp,'upgradeType'));
     result.URL := GetNodeValue(caProductCheckUpgradeResp,'pkgDownloadUrl');
     result.Version := GetNodeValue(caProductCheckUpgradeResp,'newVersion');
-  finally
-    RioImpl := nil;
-//    rio.Free;
-  end;
 except
   if doc<>nil then
      LogFile.AddLogFile(0,'升级<版本检测>xml='+doc.xml)
@@ -1092,8 +1114,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(20000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspcreateServiceLine(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(20000);
     h := SendHeader(rio,2);
     try
       try
@@ -1122,7 +1147,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     caServiceLineCreateResp := FindNode(doc,'body\caServiceLineCreateResp');
     code := GetNodeValue(caServiceLineCreateResp,'code');
@@ -1133,9 +1158,6 @@ try
        end
     else
        Raise Exception.Create(GetNodeValue(caServiceLineCreateResp,'desc'));
-  finally
-    //rio.Free;
-  end;
 except
   if doc<>nil then
      LogFile.AddLogFile(0,'读取<供应链资料>xml='+doc.xml)
@@ -1173,8 +1195,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(20000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspqueryServiceLines(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(20000);
     h := SendHeader(rio,2);
     try
       try
@@ -1203,7 +1228,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     caServiceLineQueryResp := Node.firstChild;
@@ -1217,9 +1242,6 @@ try
          List.Add(line);
          caServiceLineQueryResp := caServiceLineQueryResp.nextSibling;
        end;
-  finally
-    //rio.Free;
-  end;
 except
   if doc<>nil then
      LogFile.AddLogFile(0,'读取<供应链列表>xml='+doc.xml)
@@ -1271,8 +1293,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(20000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspapplyRelation(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(20000);
     h := SendHeader(rio,2);
     try
       try
@@ -1301,7 +1326,7 @@ try
     finally
       h.Free;
     end;
-
+  end;
     CheckRecAck(doc);
     caRelationApplyResp := FindNode(doc,'body\caRelationApplyResp');
     code := GetNodeValue(caRelationApplyResp,'code');
@@ -1322,9 +1347,6 @@ try
     else
        Raise Exception.Create(GetNodeValue(caRelationApplyResp,'desc'));
 
-  finally
-    //rio.Free;
-  end;
 except
   if doc<>nil then
      LogFile.AddLogFile(0,'申请<供应链申请>xml='+doc.xml)
@@ -1426,8 +1448,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadRelations(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -1456,7 +1481,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<供应关系>打开时长:'+inttostr(GetTicket));
@@ -1513,9 +1538,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -1598,8 +1620,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadServiceLines(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -1628,7 +1653,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<供应链>打开时长:'+inttostr(GetTicket));
@@ -1678,9 +1703,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -1728,8 +1750,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadTenants(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -1757,6 +1782,7 @@ try
       end;
     finally
       h.Free;
+    end;
     end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
@@ -1843,9 +1869,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -1893,8 +1916,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadSort(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -1923,7 +1949,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<商品分类>打开时长:'+inttostr(GetTicket));
@@ -1977,9 +2003,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -2027,8 +2050,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadGoods(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -2057,7 +2083,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<商品资料>打开时长:'+inttostr(GetTicket));
@@ -2181,9 +2207,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -2231,8 +2254,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadUnit(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -2261,7 +2287,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<计量单位>打开时长:'+inttostr(GetTicket));
@@ -2311,9 +2337,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -2361,8 +2384,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadDeployGoods(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -2391,7 +2417,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<供应链商品>打开时长:'+inttostr(GetTicket));
@@ -2554,9 +2580,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -2604,8 +2627,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspdownloadBarcode(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -2634,7 +2660,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<商品条码>打开时长:'+inttostr(GetTicket));
@@ -2691,9 +2717,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -2802,8 +2825,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rspqueryUnion(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,2);
     try
       try
@@ -2831,6 +2857,7 @@ try
       end;
     finally
       h.Free;
+    end;
     end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
@@ -2971,9 +2998,6 @@ try
       idx.Free;
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -3022,8 +3046,11 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
-  rio := CreateRio(120000);
-  try
+  if rspHandle>0 then
+     CreateXML(rsplistModules(inxml,URL,1))
+  else
+  begin
+    rio := CreateRio(120000);
     h := SendHeader(rio,1);
     try
       try
@@ -3053,7 +3080,7 @@ try
     finally
       h.Free;
     end;
-
+    end;
     CheckRecAck(doc);
     Node := FindNode(doc,'body');
     LogFile.AddLogFile(0,'下载<功能模块>打开时长:'+inttostr(GetTicket));
@@ -3110,9 +3137,6 @@ try
     finally
       rs.Free;
     end;
-  finally
-    //rio.Free;
-  end;
 except
   on E:Exception do
   begin
@@ -3136,6 +3160,51 @@ end;
 procedure TCaFactory.SetDownModule(const Value: boolean);
 begin
   FDownModule := Value;
+end;
+
+procedure TCaFactory.LoadRspFactory;
+begin
+  RspHandle := LoadLibrary(Pchar(ExtractFilePath(ParamStr(0))+'rspFactory.dll'));
+  if RspHandle=0 then Exit;
+  @RspcoLogin := GetProcAddress(RspHandle, 'coLogin');
+  if @RspcoLogin=nil then Raise Exception.Create('无效Rsp插件包，没有实现coLogin方法'); 
+  @RspcoRegister := GetProcAddress(RspHandle, 'coRegister');
+  if @RspcoRegister=nil then Raise Exception.Create('无效Rsp插件包，没有实现coRegister方法');
+  @RspgetTenantInfo := GetProcAddress(RspHandle, 'getTenantInfo');
+  if @RspgetTenantInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getTenantInfo方法');
+  @RsplistModules := GetProcAddress(RspHandle, 'listModules');
+  if @RsplistModules=nil then Raise Exception.Create('无效Rsp插件包，没有实现listModules方法');
+  @RspcheckUpgrade := GetProcAddress(RspHandle, 'checkUpgrade');
+  if @RspcheckUpgrade=nil then Raise Exception.Create('无效Rsp插件包，没有实现checkUpgrade方法');
+  @RspcreateServiceLine := GetProcAddress(RspHandle, 'createServiceLine');
+  if @RspcreateServiceLine=nil then Raise Exception.Create('无效Rsp插件包，没有实现createServiceLine方法');
+  @RspqueryServiceLines := GetProcAddress(RspHandle, 'queryServiceLines');
+  if @RspqueryServiceLines=nil then Raise Exception.Create('无效Rsp插件包，没有实现queryServiceLines方法');
+  @RspapplyRelation := GetProcAddress(RspHandle, 'applyRelation');
+  if @RspapplyRelation=nil then Raise Exception.Create('无效Rsp插件包，没有实现applyRelation方法');
+  @RspdownloadTenants := GetProcAddress(RspHandle, 'downloadTenants');
+  if @RspdownloadTenants=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadTenants方法');
+  @RspdownloadServiceLines := GetProcAddress(RspHandle, 'downloadServiceLines');
+  if @RspdownloadServiceLines=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadServiceLines方法');
+  @RspdownloadRelations := GetProcAddress(RspHandle, 'downloadRelations');
+  if @RspdownloadRelations=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadRelations方法');
+  @RspdownloadSort := GetProcAddress(RspHandle, 'downloadSort');
+  if @RspdownloadSort=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadSort方法');
+  @RspdownloadUnit := GetProcAddress(RspHandle, 'downloadUnit');
+  if @RspdownloadUnit=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadUnit方法');
+  @RspdownloadGoods := GetProcAddress(RspHandle, 'downloadGoods');
+  if @RspdownloadGoods=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadGoods方法');
+  @RspdownloadDeployGoods := GetProcAddress(RspHandle, 'downloadDeployGoods');
+  if @RspdownloadDeployGoods=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadDeployGoods方法');
+  @RspdownloadBarcode := GetProcAddress(RspHandle, 'downloadBarcode');
+  if @RspdownloadBarcode=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadBarcode方法');
+  @RspqueryUnion := GetProcAddress(RspHandle, 'queryUnion');
+  if @RspqueryUnion=nil then Raise Exception.Create('无效Rsp插件包，没有实现queryUnion方法');
+end;
+
+procedure TCaFactory.FreeRspFactory;
+begin
+  FreeLibrary(RspHandle);
 end;
 
 { rsp }

@@ -2575,8 +2575,8 @@ begin
     except
       MessageBox(Handle,'打印小票出错，请确定纸张是否安装，小票打印电源是否打开？',pchar(Application.Title),MB_OK+MB_ICONQUESTION);
     end;
-    NewOrder;
     DevFactory.OpenCashBox;
+    NewOrder;
     ShowHeader(1);
   end;
 end;

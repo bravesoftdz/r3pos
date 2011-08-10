@@ -173,7 +173,7 @@ begin
    0: sc := '+';
    1,4,5: sc := '||';
   end;
-  w := 'and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
+  w := 'j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') ';
   if id<>'' then
   begin
     if w<>'' then w := w + ' and ';
@@ -196,28 +196,37 @@ begin
   if trim(edtSearch.Text)<>'' then
      begin
       if w<>'' then w := w + ' and ';
-      w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or (Exists(select GODS_ID from VIW_BARCODE br where br.TENANT_ID=j.TENANT_ID and br.GODS_ID=j.GODS_ID and br.BARCODE like ''%'''+sc+':KEYVALUE )) )';
+      w := w + '(j.GODS_CODE like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_NAME like ''%'''+sc+':KEYVALUE '+sc+'''%'' or j.GODS_SPELL like ''%'''+sc+':KEYVALUE '+sc+'''%'' or br.BARCODE like ''%'''+sc+':KEYVALUE )';
      end;
+  if w<>'' then w := ' where '+w;
   case Factor.iDbType of
    0:
-     result := 'select top 600 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+     result := 'select top 600 0 as A,l.*,r.AMOUNT from(select distinct j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE '+
+            'from VIW_GOODSINFO j inner join VIW_GOODSSORT b on j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID left join VIW_BARCODE br '+
+            'on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
    1:
      result := 'select * from ('+
-            'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+            'select 0 as A,l.*,r.AMOUNT from(select distinct j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE '+
+            'from VIW_GOODSINFO j inner join VIW_GOODSSORT b on j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID left join VIW_BARCODE br '+
+            'on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) where ROWNUM<=600';
    4:
      result := 'select tp.* from ('+
-            'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+            'select 0 as A,l.*,r.AMOUNT from(select distinct j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE '+
+            'from VIW_GOODSINFO j inner join VIW_GOODSSORT b on j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID left join VIW_BARCODE br '+
+            'on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID) tp fetch first 600  rows only';
    5:
-     result := 'select 0 as A,l.*,r.AMOUNT from(select j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE from VIW_GOODSINFO j,VIW_GOODSSORT b where j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+w+') l '+
+     result := 'select 0 as A,l.*,r.AMOUNT from(select distinct j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS as UNIT_ID,j.NEW_OUTPRICE '+
+            'from VIW_GOODSINFO j inner join VIW_GOODSSORT b on j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID left join VIW_BARCODE br '+
+            'on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+w+') l '+
             'left outer join '+
             '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
             'on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600';

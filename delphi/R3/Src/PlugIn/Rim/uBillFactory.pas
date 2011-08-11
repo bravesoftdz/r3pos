@@ -19,7 +19,8 @@ uses
 type
   TBillSyncFactory=class(TRimSyncFactory)
   private
-    ComTrans: Boolean;  //事务是否提交成功
+    FAutoCheckReport: Boolean; //是否启用自动检测上报情况
+    ComTrans: Boolean;   //事务是否提交成功
     FBillType: string;
     FTempTableName: string;
     FBillMainTable: string;
@@ -30,7 +31,13 @@ type
     procedure SetBillKeyField(const Value: string);
     procedure SetBillMainTable(const Value: string);
     procedure SetINFKeyField(const Value: string);
+    procedure SetAutoCheckReport(const Value: Boolean);  //自动检测未上报[]
 
+    //返回最近的结帐日:
+    function GetMaxReckDay: string; 
+    //检查是否存在漏报情况:
+    function CheckReportBill: Boolean;
+    
     //上报月台账
     function SendMonthReck: integer;
     //上报销售单[零售、批发、退货]
@@ -51,18 +58,27 @@ type
 
     function Test(SQL: string): integer;
   public
+    constructor Create; override;
     function CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer; override; //调用上报
     property BillType: string read FBillType write SetBillType;                 //单据类型
     property TempTableName: string read FTempTableName write SetTempTableName;  //单据类型
     property BillMainTable: string read FBillMainTable write SetBillMainTable;  //单据主表表名
     property BillKeyField: string read FBillKeyField write SetBillKeyField;     //单据关联关键字
-    property INFKeyField: string read FINFKeyField write SetINFKeyField;     //单据关联关键字
+    property INFKeyField: string read FINFKeyField write SetINFKeyField;        //单据关联关键字
+    property AutoCheckReport: Boolean read FAutoCheckReport write SetAutoCheckReport;  //自动检测未上报[]
   end;
 
 
 implementation
 
 { TSalesTotalSyncFactory }
+
+constructor TBillSyncFactory.Create;
+begin
+  inherited;
+  //读取配置参数[默认不启用]
+  AutoCheckReport:=trim(ReadConfig('PARAMS','AUTO_CHECK_REPORT','1'))='0';
+end;
 
 function TBillSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer;
 var
@@ -368,8 +384,8 @@ begin
   //3、更新月台帐标记和上报时间戳:[]
   if TWO_PHASE_COMMIT then //分布式事务提交
   begin
+    BeginTrans;
     try
-      BeginTrans;
       //将月台帐上报的标记位:COMM的第1位设置为：1
       Str:='update RCK_MONTH_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
            ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and '+ReckMonth+' in '+
@@ -895,8 +911,8 @@ begin
 
   if TWO_PHASE_COMMIT then //分布式事务提交
   begin
+    BeginTrans; //开始一个批次事务:
     try
-      BeginTrans; //开始一个批次事务:
       //1、将单据上报的标记位:COMM的第1位设置为：1
       Str:='update '+BillMainTable+' set COMM='+GetUpCommStr(DbType)+' '+
            ' where TENANT_ID='+RimParam.TenID+' and SHOP_ID='''+RimParam.ShopID+''' and '+
@@ -951,6 +967,22 @@ end;
 procedure TBillSyncFactory.SetINFKeyField(const Value: string);
 begin
   FINFKeyField := Value;
+end;
+
+procedure TBillSyncFactory.SetAutoCheckReport(const Value: Boolean);
+begin
+  FAutoCheckReport:=Value;
+end;
+
+
+function TBillSyncFactory.CheckReportBill: Boolean;
+begin
+
+end;
+
+function TBillSyncFactory.GetMaxReckDay: string;
+begin
+
 end;
 
 end.

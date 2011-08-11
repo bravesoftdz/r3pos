@@ -149,8 +149,9 @@ begin
 
   try
     BeginLogRun; //日志
+
+    BeginTrans;  //开始事务
     try
-      BeginTrans;  //开始事务
       if ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('下载Rim零售户限价数参数出错：'+PlugIntf.GetLastError);
       IsRun:=CommitTrans; //提交事务
 
@@ -271,8 +272,8 @@ begin
   Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_SALESUM B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.SALES_DATE) and A.COM_ID='''+RimParam.ComID+''' and A.TERM_ID='''+Short_ID+''' and A.CUST_ID='''+RimParam.CustID+''' ';
   if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表头出错：'+PlugIntf.GetLastError);
 
-  try    
-    BeginTrans;
+  BeginTrans;
+  try
     //2、插入日销售台账(先插表头在插入表体):
     Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,TERM_ID,PUH_DATE,STATUS,PUH_TIME,UPD_DATE,UPD_TIME,QTY_SUM,AMT_SUM) '+
          'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,SALES_DATE,''01'' as STATUS,'''+TimetoStr(time())+''','''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+

@@ -75,12 +75,11 @@ begin
   except
     on E:Exception do
     begin
-      RollbackTrans;
       WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库错误！','02');  //上报出错写日志
       Raise Exception.Create(E.Message);
     end;
   end;
-    //上报成功写日志：
+  //上报成功写日志：
   WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库存成功！','01');
 end;
 

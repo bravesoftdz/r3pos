@@ -22,9 +22,9 @@ uses
 type
   TRimSyncFactory=class(TBaseSyncFactory)
   private
-    FMaxStmp: string;    //最大时间戳
-    FUpMaxStmp: string;  //更新最大时间戳
-    FSyncType: integer;  //同步类型
+    FMaxStmp: string;     //最大时间戳
+    FUpMaxStmp: string;   //更新最大时间戳
+    FSyncType: integer;   //同步类型
     FLogInfo: TLogShopInfo; //门店日志
     procedure SetMaxStmp(const Value: string);
     procedure SetSyncType(const Value: Integer);
@@ -253,12 +253,16 @@ end;
 
 function TRimSyncFactory.WriteToRIM_BAL_LOG(LICENSE_CODE, CustID, LogType, LogNote, LogStatus, USER_ID: string): Boolean;
 var
-  str: string;
+  str,LOG_SEQ,UserID,LogText: string;
   iRet: integer;
 begin
   sleep(1);
+  LOG_SEQ:=LICENSE_CODE+Formatdatetime('YYYYMMDDHHNNSSZZZ',now());
+  LogText:=Copy(trim(LogNote),1,40);
+  UserID:='auto';
+  if SyncType=3 then USER_ID:='R3'; //终端执行日志
   Str:='insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values '+
-       '('''+LICENSE_CODE+Formatdatetime('YYYYMMDDHHNNSSZZZ',now())+''','''+LogType+''','''+CustID+''','''+Formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','''+LogNote+''',''auto'','''+LogStatus+''')' ;
+       '('''+LOG_SEQ+''','''+LogType+''','''+CustID+''','''+Formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','''+LogText+''','''+UserID+''','''+LogStatus+''')' ;
   if ExecSQL(Pchar(Str),iRet)<>0 then
    Raise Exception.Create('写日志执行失败:'+PlugIntf.GetLastError);  
 end;
@@ -414,9 +418,9 @@ function TRimSyncFactory.ExecTransSQL(SQL: string; var iRet: Integer; Msg: strin
 begin
   result:=False;
   iRet:=-1;
+  BeginTrans;  //开始事务
   try
-    BeginTrans;  //开始事务
-    if ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create(Msg+PlugIntf.GetLastError); 
+    if ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create(Msg+PlugIntf.GetLastError);
     CommitTrans; //提交事务
     result:=true;
   except

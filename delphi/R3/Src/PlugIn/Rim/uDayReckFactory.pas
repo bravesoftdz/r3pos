@@ -87,6 +87,8 @@ type
   TDayReckSyncFactory=class(TRimSyncFactory)
   private
     DayReck: TGodsDayReck;
+    //系统检查是否存在漏上报情况
+    function CheckNotReportBill: Boolean;
     //上报1个零售户的日销售台账数据
     function GodsDayReckSync: integer;
   public
@@ -1031,10 +1033,11 @@ begin
   //3、返回同步类型标记
   GetSyncType;
 
+  
   {------开始运行日志------}
   BeginLogRun;
   try
-    DBLock(true);  //锁定数据库链接 
+    DBLock(true);  //锁定数据库链接
     //返回R3的上报ShopList
     GetR3ReportShopList(R3ShopList);
     if R3ShopList.RecordCount=0 then
@@ -1098,19 +1101,19 @@ begin
 end;
 
 {------------------------------------------------------------------------------
- 上报规则:         
+ 上报规则:
    (1)自动计算日台账，只是试算，并不生成日结表，计算上次结账日到当天;
    (2)上报所有未报的日台账，已经结账部份，按日结表的时间戳为准，未结账部份，
       每天重报。
    (3)日台帐上报规则根据传入的门店(SHOP_ID)，取出许可证号，用符合该许可证号的
-      的门店一起上报。  
+      的门店一起上报。
  ------------------------------------------------------------------------------}
 function TDayReckSyncFactory.GodsDayReckSync: integer;
 var
-  ComTrans: Boolean; //事务提交成功
+  ComTrans: Boolean;     //事务提交成功
   LastReckDate: TDate;   //最后结账日期
   iRet,UpiRet: integer;  //返回ExeSQL影响多少行记录
-  Session: string;    //session前缀表名
+  Session: string;       //session前缀表名
   Str,DayTab,ReckDate,SHOP_IDS,SumFields: string;
 begin
   result:=-1;
@@ -1261,8 +1264,8 @@ begin
   //3、更新月台帐标记和上报时间戳:[]
   if TWO_PHASE_COMMIT then //分布式事务
   begin
+    BeginTrans;
     try
-      BeginTrans;
       //将月台帐上报的标记位:COMM的第1位设置为：1
       Str:='update RCK_DAYS_CLOSE A set COMM='+GetUpCommStr(DbType)+'  '+
            ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and  A.CREA_DATE<='+FormatDatetime('YYYYMMDD',LastReckDate)+' and '+
@@ -1312,5 +1315,9 @@ begin
   WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐成功','01');
 end;
 
+function TDayReckSyncFactory.CheckNotReportBill: Boolean;
+begin
+
+end;
 
 end.

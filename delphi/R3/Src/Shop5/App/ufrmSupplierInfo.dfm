@@ -1012,16 +1012,16 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             FieldName = 'CODE_NAME'
             Footers = <>
             Title.Caption = #21517#31216
-            Width = 80
+            Width = 150
           end
           item
             EditButtons = <>
             FieldName = 'CODE_ID'
             Footers = <>
             Title.Caption = #32534#30721
-            Width = 30
+            Width = 50
           end>
-        DropWidth = 122
+        DropWidth = 200
         DropHeight = 160
         ShowTitle = True
         AutoFitColWidth = True

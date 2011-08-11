@@ -48,7 +48,7 @@
 					
 					<table id="RIM_RETAIL_INFO" name="零售流水账单" pkg="rim.sale.consumerco" jspPath="rim/sale/consumerco">
 					<rem> ==================================================================== </rem>
-					<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+					<rem>                                           </rem>
 					<rem> 零售流水账单                              </rem>
 					<rem> ==================================================================== </rem>
   				<column id="RETAIL_NUM" primaryKey="true" required="true" type="VARCHAR" size="50" name="订单号"/>
@@ -71,7 +71,7 @@
 				</table>
         <table id="RIM_RETAIL_DETAIL" name="零售流水账单明细" pkg="rim.sale.consumerco" jspPath="rim/sale/consumerco">
 					<rem> ==================================================================== </rem>
-					<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+					<rem>                                                                      </rem>
 					<rem> 零售流水账单明细						                                         </rem>				
 					<rem>  </rem>
 					<rem> ==================================================================== </rem>
@@ -91,7 +91,7 @@
 				</table>
 					<table id="RIM_CUST_TRN" name="零售户调拨单" >
 						<rem> ==================================================================== </rem>
-						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem>                                                                      </rem>
 						<rem> 零售户调拨单																</rem>
 						<rem> ==================================================================== </rem>
 						<column	id="TRN_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="调拨单号"/>
@@ -108,7 +108,7 @@
 					</table>
 					<table id="RIM_CUST_TRN_LINE"	name="零售户调拨单行"	>
 						<rem> ==================================================================== </rem>
-						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem>                                                        						   </rem>
 						<rem> 零售户调拨单行																												</rem>
 						<rem> 																																	</rem>
 						<rem> ==================================================================== </rem>
@@ -125,8 +125,7 @@
 					<table id="RIM_VOUCHER" name="入库单" javaid="Voucher" line="VOUCHERLine">
 						<rem> ==================================================================== </rem>
 						<rem> 入库单															 </rem>
-						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
-						
+						<rem>                                       </rem>						
 						<rem> ==================================================================== </rem>
 						<column	id="VOUCHER_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="入库单编号"/>
 						<column	id="RETAIL_NUM"	required="false" type="VARCHAR"	size="30" name="采购单编号"	note="入库单对应的采购单，现在没有对应关系，可以不写"/>
@@ -143,8 +142,8 @@
 					</table>
 					<table id="RIM_VOUCHER_LINE"	name="入库单行"	javaid="VoucherLine" head="VOUCHER">
 						<rem> ==================================================================== </rem>
-						<rem> 入库单行															   </rem>
-						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> 入库单行														                            	   </rem>
+						<rem>                                                             			   </rem>
 						<rem> ==================================================================== </rem>
 						<column	id="VOUCHER_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="入库单编号"/>
 						<column	id="VOUCHER_LINE" primaryKey="true"	required="true"	type="INTEGER" name="行号"/>
@@ -159,8 +158,8 @@
 					</table>
 					<table id="RIM_ADJUST_INFO" name="调整单">
 						<rem> ==================================================================== </rem>
-						<rem> 调整单															 </rem>
-						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> 调整单														                                	 </rem>
+						<rem>                                                         					   </rem>
 						<rem> ==================================================================== </rem>
 						<column	id="ADJUST_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="调整单编号"/>
 						<column	id="CUST_ID" required="true" type="VARCHAR"	size="30" name="客户内码"/>
@@ -176,8 +175,8 @@
 					</table>
 					<table id="RIM_ADJUST_DETAIL"	name="调整单明细"	>
 						<rem> ==================================================================== </rem>
-						<rem> 调整单明细															   </rem>
-						<rem> 输入人:靳奉宝		 输入时间:2009.05.20						   </rem>
+						<rem> 调整单明细											                          				   </rem>
+						<rem>                                  		                       				   </rem>
 						<rem> ==================================================================== </rem>
 						<column	id="ADJUST_NUM" primaryKey="true" required="true" type="VARCHAR" size="50"	name="入库单编号"/>
 						<column	id="ADJUST_LINE" primaryKey="true"	required="true"	type="INTEGER" name="行号"/>
@@ -191,8 +190,8 @@
 				<table id="RIM_CUST_DAY" name="零售户商品日账" javaid="RIM_CUST_DAY">
 				
 				<rem> ==================================================================== </rem>
-						<rem> 零售户商品日账															   </rem>
-						<rem>							 输入人：靳奉宝 2009-05-07			   </rem>
+						<rem> 零售户商品日账													                  		   </rem>
+						<rem>			                                                    			   </rem>
 			<rem> ==================================================================== </rem>
 						<column	id="COM_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="公司编号"/>
 						<column	id="CUST_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="零售户ID"/>
@@ -228,8 +227,8 @@
 	    </table>
      	<table id="RIM_CUST_MONTH" name="零售户商品月账" javaid="RIM_CUST_MONTH">
       <rem> ==================================================================== </rem>
-						<rem> 零售户商品月账															   </rem>
-						<rem>							 输入人：靳奉宝 2009-05-07			   </rem>
+						<rem> 零售户商品月账													                		   </rem>
+						<rem>							                                          			   </rem>
 			<rem> ==================================================================== </rem>
 						<column	id="COM_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="公司编号"/>
 						<column	id="CUST_ID"	primaryKey="true" required="true" type="VARCHAR" size="30" name="零售户ID"/>
@@ -262,31 +261,13 @@
 						<column	id="SUMCOST_SOLD" required="true" type="NUMERIC" size="18,6" default="0" name="销售成本"/>
 						<column	id="AMT_GROSS_PROFIT" required="true" type="NUMERIC" size="18,6" default="0" name="毛利额"/>
 						<column	id="AMT_PROFIT_COM" required="true" type="NUMERIC" size="18,6" default="0" name="贡献毛利"/>
-				</table>				 
-				<table id="RIM_CUST_ITEM_WHSE" name="零售户库存表" javaid="rim_cust_item_whse">
-				<column id="CUST_ID" name="零售户内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="ITEM_ID" name="商品内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="COM_ID" name="公司内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="QTY" name="库存量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="QTY_ALLOCCO" name="分配量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="QTY_REORD_MAX" name="合理库存上线" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="QTY_REORD_MIN" name="合理库存下线" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="QTY_LOCKED" name="锁定数量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="DATE1" name="更新日期" primaryKey="false" required="false" type="VARCHAR" size="8" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="UPPER_DATE" name="UPPER_DATE" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="LOWER_DATE" name="LOWER_DATE" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="QTY_WARNING" name="预警库存量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="WARNING_DATE" name="预警日期" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="IS_MRB" name="是否使用" primaryKey="false" required="false" type="CHAR" size="1" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="NOTE" name="备注" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="UPD_TIME" name="更新时间" primaryKey="false" required="false" type="VARCHAR" size="8" queryShow="true" searchShow="true" default="" note="note" />
-				<column id="QTY_REORD_MAX_ARG" name="合理库存上线参数" primaryKey="false" required="false" type="DECIMAL" size="18,2" queryShow="true" searchShow="true" default="" note="note" />
-				</table>
+				</table>			
+					 
+
 			<table id="RIM_CUST_ITEM_SWHSE" name="库存中间表" javaid="Category">
 						<rem> ==================================================================== </rem>
-						<rem>库存中间表</rem>
-						<rem> 修改人: 朱晓明	      修改时间: 2009.07.07                         </rem>
-						<rem> 这里设置的主键不包括DATE,TIME如果做为库存历史表使用，可以将其加上                      </rem>
+						<rem>库存中间表                                                            </rem>
+						<rem>                                                                      </rem>
 						<rem> ==================================================================== </rem>
 						<column id="COM_ID" name="公司内码" primaryKey="true" required="true" type="VARCHAR" size="30" note=""/>
 						<column id="CUST_ID" name="客户内码" primaryKey="true" required="true" type="VARCHAR" size="30" note=""/>
@@ -307,6 +288,30 @@
 							<reference local="ITEM_ID" foreign="ITEM_ID"/>
 						</foreign-key>
 					</table>
+					
+  	 <table id="RIM_CUST_ITEM_WHSE" name="零售户库存表" javaid="rim_cust_item_whse">
+						<rem> ==================================================================== </rem>
+						<rem>库存中间表                                                            </rem>
+						<rem>                                                                      </rem>
+						<rem> ==================================================================== </rem>
+			    	<column id="CUST_ID" name="零售户内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="ITEM_ID" name="商品内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="COM_ID" name="公司内码" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="QTY" name="库存量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="QTY_ALLOCCO" name="分配量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="QTY_REORD_MAX" name="合理库存上线" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="QTY_REORD_MIN" name="合理库存下线" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="QTY_LOCKED" name="锁定数量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="DATE1" name="更新日期" primaryKey="false" required="false" type="VARCHAR" size="8" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="UPPER_DATE" name="UPPER_DATE" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="LOWER_DATE" name="LOWER_DATE" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="QTY_WARNING" name="预警库存量" primaryKey="false" required="false" type="DECIMAL" size="18,6" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="WARNING_DATE" name="预警日期" primaryKey="false" required="false" type="INTEGER" size="10" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="IS_MRB" name="是否使用" primaryKey="false" required="false" type="CHAR" size="1" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="NOTE" name="备注" primaryKey="false" required="false" type="VARCHAR" size="30" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="UPD_TIME" name="更新时间" primaryKey="false" required="false" type="VARCHAR" size="8" queryShow="true" searchShow="true" default="" note="note" />
+						<column id="QTY_REORD_MAX_ARG" name="合理库存上线参数" primaryKey="false" required="false" type="DECIMAL" size="18,2" queryShow="true" searchShow="true" default="" note="note" />
+				</table>					
 			 
 				</submodule>
 			</module>

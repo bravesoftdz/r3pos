@@ -18,9 +18,11 @@ type
   private
     //返回OPTION_IDS
     function GetOPTION_IDS(SUBJECT_ID: string): string;
+    //下载写入一个问卷[]
+    function Write_Question_Page(Volume_ID,tid,sid,Mid: string): string;
 
     //同步调查
-    function SyncInvest(tid,sid,qid:string): integer; 
+    function SyncInvest(tid,sid,qid:string): integer;
     //同步问卷: tid 企业号  sid 门店号
     function SyncQuestion(tid,sid:string): integer; //问卷
   public
@@ -80,8 +82,7 @@ begin
           LogList.Clear;
         end;
       end;
-    end
-    else  //下载问卷
+    end else  //下载问卷
       SyncQuestion(RimParam.TenID,RimParam.ShopID);
   end;
 end;
@@ -196,25 +197,25 @@ end;
 //从Rim同步问答卷到R3:  全部插入R3库，直接启动单向连接事务
 function TIVTSyncFactory.SyncQuestion(tid, sid: string): integer;
 var
-  r:integer;
-  mid:string;
-  str,s,imust: string;
-  rs,tmp: TZQuery;
-  Beg_Date,END_Date,IS_REPEAT,Msg: string;
+  r,vCount:integer;
+  str,mid,Msg:string;
+  rs: TZQuery;
+  Beg_Date,END_Date,IS_REPEAT: string;
 begin
+  vCount:=0;
+  Msg:='';
   rs:=TZQuery.Create(nil);
-  tmp:=TZQuery.Create(nil);
   try
     rs.Close;
     rs.SQL.Text:=
-       'select INVEST_ID,VOLUME_ID,BEGIN_DATE,END_DATE,IS_REPEAT from CC_INVESTIGATE A where INVEST_GROUP=''01'' '+
+       'select INVEST_ID,VOLUME_ID,BEGIN_DATE,END_DATE,IS_REPEAT from CC_INVESTIGATE A where INVEST_GROUP=''01'' and END_DATE>='''+FormatDatetime('YYYYMMDD',Now())+''' '+
        'and not Exists(select * from MSC_INVEST_LIST B where B.TENANT_ID='+tid+' and B.SHOP_ID='''+sid+''' and B.COMM_ID=A.INVEST_ID)';
     Open(rs); 
     rs.First;
     while not rs.Eof do
     begin
-      BeginTrans; //开始事务
       try
+        BeginTrans; //开始事务
         mid := newid(sid);
         Beg_Date:=rs.fieldbyName('BEGIN_DATE').AsString;
         END_Date:=trim(rs.fieldbyName('END_DATE').AsString);
@@ -228,47 +229,67 @@ begin
           'insert into MSC_QUESTION(TENANT_ID,QUESTION_ID,QUESTION_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,QUESTION_SOURCE,ISSUE_USER,QUESTION_TITLE,ANSWER_FLAG,QUESTION_ITEM_AMT,REMARK,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
           'select '+tid+','''+mid+''',''1'','+Beg_Date+',0,A.INVEST_NAME,''system'',B.VOLUME_NAME,'''+IS_REPEAT+''',0,B.VOLUME_NOTE,'''+END_Date+''',A.INVEST_ID,''00'','+GetTimeStamp(DbType)+' '+
           'from CC_INVESTIGATE A,CC_VOLUME B where A.VOLUME_ID=B.VOLUME_ID and A.ORGAN_ID=B.ORGAN_ID '+
-          'and A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+RimParam.ComID+''' and not Exists(select * from MSC_QUESTION where TENANT_ID='+tid+' and COMM_ID=A.INVEST_ID) ';
+          ' and A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+RimParam.ComID+''' and not Exists(select * from MSC_QUESTION where TENANT_ID='+tid+' and COMM_ID=A.INVEST_ID) ';
         if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-        if r>0 then //初始化题目[一张问卷有多个题目]
-        begin
-          tmp.Close;
-          tmp.SQL.Text := 'select SUBJECT_ID,SUBJECT_TITLE,SUBJECT_TYPE,IS_MUST,NOTE from CC_INVEST_ITEM where VOLUME_ID='''+rs.Fields[1].AsString+'''';
-          Open(tmp); 
-          tmp.First;
-          while not tmp.Eof do
-          begin            
-            S:=GetOPTION_IDS(tmp.fieldbyName('SUBJECT_ID').AsString);
-            if trim(S)='' then
-            begin
-              Msg:='<题目：'+tmp.FieldByName('SUBJECT_TITLE').AsString+'['+tmp.FieldByName('SUBJECT_ID').AsString+']>没有答案选项';
-              PlugIntf.WriteLogFile(Pchar(Msg));
-              Raise Exception.Create(Msg);
-            end;
-            if tmp.Fields[3].AsString ='Y' then imust := '1' else imust := '2';
-            str :=
-              'insert into MSC_QUESTION_ITEM(TENANT_ID,QUESTION_ID,QUESTION_ITEM_ID,SEQ_NO,QUESTION_ITEM_TYPE,QUESTION_IS_MUST,QUESTION_INFO,QUESTION_OPTIONS,COMM_ID)'+
-              'values('+tid+','''+mid+''','''+newid(sid)+''','+inttostr(tmp.RecNo)+','''+inttostr(tmp.Fields[2].asInteger+1)+''','''+imust+''','''+tmp.Fields[1].AsString+''','''+s+''','''+tmp.Fields[0].AsString+''')';
-            if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-            tmp.Next;
-          end;
-          str := 'update MSC_QUESTION set QUESTION_ITEM_AMT='+inttostr(tmp.recordCount)+' where TENANT_ID='+tid+' and QUESTION_ID='''+mid+'''';
-          if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-        end;
+
+        //初始化[一张问卷]题目
+        if r>0 then
+          Write_Question_Page(rs.Fields[1].AsString,tid,sid,Mid);  //VOLUME_ID
 
         str:='insert into MSC_INVEST_LIST(TENANT_ID,QUESTION_ID,SHOP_ID,QUESTION_FEEDBACK_STATUS,QUESTION_ANSWER_STATUS,COMM_ID,COMM,TIME_STAMP) '+
              'values('+tid+','''+mid+''','''+sid+''',1,2,'''+rs.Fields[0].AsString+''',''00'','+GetTimeStamp(DbType)+')';
         if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
         CommitTrans;
+        Inc(vCount);
       except
-        RollbackTrans;
-        Raise
+        on E:Exception do
+        begin
+          RollbackTrans;
+          if Msg='' then Msg:=E.Message else Msg:=Msg+'; '+E.Message;
+        end;
       end;
       rs.Next;
     end;
   finally
-    tmp.Free;
+    if FileExists('debug.bug') then
+    begin
+      if vCount=rs.RecordCount then
+        PlugIntf.WriteLogFile(Pchar('<'+sid+'>下载了<'+InttoStr(vCount)+'>'))
+      else if vCount<rs.RecordCount then
+        PlugIntf.WriteLogFile(Pchar('<'+sid+'>下载了<'+InttoStr(vCount)+'> Error='+Msg));
+    end;
     rs.Free;
+  end;
+end;
+
+function TIVTSyncFactory.Write_Question_Page(Volume_ID,tid,sid,Mid: string): string;
+var
+  r: integer;
+  str,S,imust: string;
+  tmp: TZQuery;
+begin
+  tmp:=TZQuery.Create(nil);
+  try
+    tmp.Close;
+    tmp.SQL.Text := 'select SUBJECT_ID,SUBJECT_TITLE,SUBJECT_TYPE,IS_MUST,NOTE from CC_INVEST_ITEM where VOLUME_ID='''+Volume_ID+'''';
+    Open(tmp);
+    tmp.First;
+    while not tmp.Eof do
+    begin
+      S:=GetOPTION_IDS(tmp.fieldbyName('SUBJECT_ID').AsString); //返回答案的选项
+      if trim(S)='' then
+        Raise Exception.Create('<题目：'+tmp.FieldByName('SUBJECT_TITLE').AsString+'['+tmp.FieldByName('SUBJECT_ID').AsString+']>没有答案选项');
+      if tmp.Fields[3].AsString ='Y' then imust := '1' else imust := '2';
+      str :=
+        'insert into MSC_QUESTION_ITEM(TENANT_ID,QUESTION_ID,QUESTION_ITEM_ID,SEQ_NO,QUESTION_ITEM_TYPE,QUESTION_IS_MUST,QUESTION_INFO,QUESTION_OPTIONS,COMM_ID)'+
+        'values('+tid+','''+mid+''','''+newid(sid)+''','+inttostr(tmp.RecNo)+','''+inttostr(tmp.Fields[2].asInteger+1)+''','''+imust+''','''+tmp.Fields[1].AsString+''','''+s+''','''+tmp.Fields[0].AsString+''')';
+      if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+      tmp.Next;
+    end;
+    str := 'update MSC_QUESTION set QUESTION_ITEM_AMT='+inttostr(tmp.recordCount)+' where TENANT_ID='+tid+' and QUESTION_ID='''+mid+'''';
+    if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+  finally
+    tmp.Free;
   end;
 end;
 

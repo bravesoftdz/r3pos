@@ -886,6 +886,7 @@ begin
     end;
   finally
     Params.Free;
+    frmLogo.Close;
   end;
 end;
 

@@ -131,9 +131,9 @@ type
     //procedure Create
   public
     { Public declarations }
-    procedure SyncQuestion(flag:integer);
+    procedure SyncQuestion(flag: integer);
     function  CreateHtml:String;
-    function GetRow:String;
+    function  GetRow:String;
     procedure GetQuestionList;
     procedure WriteBrowser;
     procedure BrowserRead;
@@ -149,7 +149,7 @@ type
   end;
 
 implementation
-uses uShopUtil, uShopGlobal, uSyncFactory, uCaFactory, uGlobal, uDsUtil, ActiveX, mshtml, DateUtils;
+uses ufrmLogo,uShopUtil, uShopGlobal, uSyncFactory, uCaFactory, uGlobal, uDsUtil, ActiveX, mshtml, DateUtils;
 {$R *.dfm}
 
 { TfrmQuestionnaire }
@@ -653,7 +653,12 @@ end;
 procedure TfrmQuestionnaire.DBGridEh1CellClick(Column: TColumnEh);
 begin
   inherited;
-  if Column.FieldName = 'ANSWER' then DBGridEh1DblClick(nil);
+  //20110813 modif: Col:=0
+  if Column.FieldName = 'ANSWER' then
+  begin
+    DBGridEh1.Col:=0;
+    DBGridEh1DblClick(nil);
+  end;
 end;
 
 procedure TfrmQuestionnaire.btnLookClick(Sender: TObject);

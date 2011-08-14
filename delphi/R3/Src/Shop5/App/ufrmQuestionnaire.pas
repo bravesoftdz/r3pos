@@ -506,6 +506,8 @@ begin
     end;
   end;
 
+  cdsAnswer.Filtered := False;
+  cdsAnswer.Filter:='';
   if cdsAnswer.Locate('QUESTION_ITEM_ID',cdsQuestion.FieldbyName('QUESTION_ITEM_ID').AsString,[]) then
     begin
       cdsAnswer.Edit;

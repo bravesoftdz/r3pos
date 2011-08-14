@@ -47,6 +47,8 @@ type
     procedure SetSynTimeStamp(tbName:string;TimeStamp:int64;SHOP_ID:string='#');
     //双同同步
     procedure SyncSingleTable(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0;onlyDown:boolean=false;timeStampNoChg:integer=1);
+    //只上传同步
+    procedure SendSingleTable(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0;onlyDown:boolean=false;timeStampNoChg:integer=1);
     //同步入库类单据
     procedure SyncStockOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步出库类单据
@@ -615,6 +617,56 @@ begin
   n^.KeyFlag := 0;
   n^.tbtitle := '报表模版';
   FList.Add(n);
+end;
+
+procedure TSyncFactory.SendSingleTable(tbName, KeyFields,
+  ZClassName: string; KeyFlag: integer; onlyDown: boolean;
+  timeStampNoChg: integer);
+var
+  cs,rs:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := timeStampNoChg;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('PROD_ID').AsString := ProductId;
+  cs := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    //上传本机数据
+    cs.Close;
+    rs.Close;
+    Global.LocalFactory.BeginTrans;
+    try
+      SetTicket;
+      Global.LocalFactory.Open(cs,ZClassName,Params);
+      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+      SetSynTimeStamp(tbName,SyncTimeStamp);
+      if not cs.IsEmpty then
+      begin
+        SetTicket;
+        rs.SyncDelta := cs.SyncDelta;
+        cs.Delete;
+        if not cs.IsEmpty then
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+        if not rs.IsEmpty then
+        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+      end;
+      Global.LocalFactory.CommitTrans;
+    except
+      Global.LocalFactory.RollbackTrans;
+      Raise;
+    end;
+  finally
+    rs.Free;
+    cs.Free;
+  end;
 end;
 
 procedure TSyncFactory.Setfirsted(const Value: boolean);

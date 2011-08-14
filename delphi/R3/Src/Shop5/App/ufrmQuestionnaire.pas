@@ -869,11 +869,10 @@ begin
     //同步到本地
     if not ShopGlobal.ONLVersion and (flag=2) then
     begin
-      sleep(1000);
-      SyncFactory.SyncTimeStamp := CaFactory.RspTimeStamp;
+      SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
       SyncFactory.SyncQuestion('MSC_QUESTION','TENANT_ID;QUESTION_ID','TSyncSingleTable',1);
-      SyncFactory.SyncSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1);
-      SyncFactory.SyncSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1);
+      SyncFactory.SendSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1);
+      SyncFactory.SendSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1);
     end;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Params.ParamByName('QUESTION_ID').AsString := QID;
@@ -887,11 +886,10 @@ begin
     //同步到本地
     if not ShopGlobal.ONLVersion and (flag=1) then
     begin
-      sleep(1000);
-      SyncFactory.SyncTimeStamp := CaFactory.RspTimeStamp;
+      SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
       SyncFactory.SyncQuestion('MSC_QUESTION','TENANT_ID;QUESTION_ID','TSyncSingleTable',1);
-      SyncFactory.SyncSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1);
-      SyncFactory.SyncSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1);
+      SyncFactory.SyncSingleTable('MSC_INVEST_LIST','TENANT_ID;QUESTION_ID;SHOP_ID','TSyncSingleTable',1,true);
+      SyncFactory.SyncSingleTable('MSC_INVEST_ANSWER','TENANT_ID;QUESTION_ID;SHOP_ID;QUESTION_ITEM_ID','TSyncSingleTable',1,true);
     end;
   finally
     Params.Free;

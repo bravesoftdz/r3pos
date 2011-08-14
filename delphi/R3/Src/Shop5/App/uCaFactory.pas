@@ -123,6 +123,7 @@ type
     procedure SetTenantType(const Value: integer);
     procedure SetRspFlag(const Value: integer);
     procedure SetDownModule(const Value: boolean);
+    function GetRspTimeStamp: int64;
   protected
     RspHandle:THandle;
     RspcoLogin:TRspFunction;
@@ -212,6 +213,8 @@ type
     property Audited:boolean read FAudited write SetAudited;
     //认证时的时间戳
     property TimeStamp:int64 read FTimeStamp write SetTimeStamp;
+    //取服务器上当前时间戳
+    property RspTimeStamp:int64 read GetRspTimeStamp;
     //是否是零售商
     property TenantType:integer read FTenantType write SetTenantType;
     //0不是Rsp调用 1是
@@ -222,7 +225,7 @@ type
 var CaFactory:TCaFactory;
 implementation
 uses ufrmLogo,uShopGlobal,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,PubMemberService,
-     IniFiles;
+     IniFiles,ObjCommon;
 { TCaFactory }
 
 function TCaFactory.CheckInitSync: boolean;
@@ -3213,6 +3216,20 @@ end;
 procedure TCaFactory.FreeRspFactory;
 begin
   FreeLibrary(RspHandle);
+end;
+
+function TCaFactory.GetRspTimeStamp: int64;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select '+GetTimeStamp(Global.RemoteFactory.iDbType)+' from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.RemoteFactory.Open(rs);
+    result := StrtoInt64(rs.Fields[0].asString); 
+  finally
+    rs.Free;
+  end;
 end;
 
 { rsp }

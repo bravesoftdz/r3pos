@@ -1619,8 +1619,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   object labREMARK: TLabel
                     Left = 0
                     Top = 0
-                    Width = 294
-                    Height = 95
+                    Width = 36
+                    Height = 12
                     Align = alClient
                     Caption = 'REMARK'
                     Font.Charset = GB2312_CHARSET

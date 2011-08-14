@@ -388,8 +388,9 @@ begin
     //同步到本地
     if not ShopGlobal.ONLVersion and ShopGlobal.offline then
     begin
+      sleep(1000);
       if TimerFactory.Terminated then Exit;
-      SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+      SyncFactory.SyncTimeStamp := CaFactory.RspTimeStamp;
       SyncFactory.SyncSingleTable('MSC_MESSAGE','TENANT_ID;MSG_ID','TSyncSingleTable',0,true);
       if TimerFactory.Terminated then Exit;
       SyncFactory.SyncSingleTable('MSC_MESSAGE_LIST','TENANT_ID;MSG_ID;SHOP_ID','TSyncSingleTable',0,true);

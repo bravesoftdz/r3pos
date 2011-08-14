@@ -660,7 +660,7 @@ begin
   Root :=  doc.DocumentElement;
   if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
   if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
+  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('新商盟请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
   result := true;
   if result then Factor.ExecSQL('update CA_SHOP_INFO set XSM_CODE='''+xsm_username+''',XSM_PSWD='''+EncStr(xsm_password,ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
 end;

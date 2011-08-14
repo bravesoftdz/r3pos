@@ -2,19 +2,19 @@ unit rspHeader;
 
 interface
 uses
-  Windows, Messages, SysUtils, Classes,InvokeRegistry,WinInet,SOAPHTTPClient;
+  Windows, Messages, SysUtils, Classes,InvokeRegistry,WinInet,SOAPHTTPClient,des;
 type
   rsp = class(TSOAPHeader)
   private
     FencryptType: integer;
-    FrspSessionId: string;
+    FrspSessionId: ansistring;
     procedure SetencryptType(const Value: integer);
-    procedure SetrspSessionId(const Value: string);
+    procedure SetrspSessionId(const Value: ansistring);
   public
     constructor Create; override;
     destructor Destroy; override;
   published
-    property rspSessionId:string read FrspSessionId write SetrspSessionId;
+    property rspSessionId: ansistring read FrspSessionId write SetrspSessionId;
     property encryptType:integer read FencryptType write SetencryptType;
   end;
 
@@ -22,7 +22,7 @@ type
   private
     timeout:integer;
     HTTPRIO : THTTPRIO;
-    Addr:string;
+    Addr: ansistring;
     flag:integer;
     function Encode(inxml:Ansistring;Key:Ansistring):Ansistring;
     function Decode(inxml:Ansistring;Key:Ansistring):Ansistring;
@@ -31,41 +31,41 @@ type
     function SendHeader(rio: THTTPRIO; flag: integer=1):rsp;
     function GetHeader(rio: THTTPRIO):boolean;
   public
-    constructor Create(_timeOut:integer;url:string;_flag:integer);
+    constructor Create(_timeOut:integer;url: ansistring;_flag:integer);
     destructor Destroy;override;
     //还回异常
-    function ErrorEncode(Err:string):string;
+    function ErrorEncode(Err: ansistring): ansistring;
     //企业服务
-    function coLogin(inxml:AnsiString):string;
-    function coRegister(inxml:string):string;
-    function getTenantInfo(inxml:string):string;
+    function coLogin(inxml:AnsiString): ansistring;
+    function coRegister(inxml: ansistring): ansistring;
+    function getTenantInfo(inxml: ansistring): ansistring;
     //产品服务
-    function checkUpgrade(inxml:string):string;
-    function listModules(inxml:string):string;
+    function checkUpgrade(inxml: ansistring): ansistring;
+    function listModules(inxml: ansistring): ansistring;
     //供应链服务
-    function createServiceLine(inxml:string):string;
-    function queryServiceLines(inxml:string):string;
-    function applyRelation(inxml:string):string;
+    function createServiceLine(inxml: ansistring): ansistring;
+    function queryServiceLines(inxml: ansistring): ansistring;
+    function applyRelation(inxml: ansistring): ansistring;
     //数据下载服务
-    function downloadTenants(inxml:string):string;
-    function downloadServiceLines(inxml:string):string;
-    function downloadRelations(inxml:string):string;
-    function downloadSort(inxml:string):string;
-    function downloadUnit(inxml:string):string;
-    function downloadGoods(inxml:string):string;
-    function downloadDeployGoods(inxml:string):string;
-    function downloadBarcode(inxml:string):string;
+    function downloadTenants(inxml: ansistring): ansistring;
+    function downloadServiceLines(inxml: ansistring): ansistring;
+    function downloadRelations(inxml: ansistring): ansistring;
+    function downloadSort(inxml: ansistring): ansistring;
+    function downloadUnit(inxml: ansistring): ansistring;
+    function downloadGoods(inxml: ansistring): ansistring;
+    function downloadDeployGoods(inxml: ansistring): ansistring;
+    function downloadBarcode(inxml: ansistring): ansistring;
     //消费者服务
-    function queryUnion(inxml:string):string;
+    function queryUnion(inxml: ansistring): ansistring;
 
   end;
 var
-  SessionId: string;
-  pubpwd:String;
-  sslpwd:String;
+  SessionId: ansistring;
+  pubpwd: ansistring;
+  sslpwd: ansistring;
   encryptType:integer;
 implementation
-uses ZLibExGZ,Des,encddecd,PubMemberService,RspDownloadService,CaProductService,CaServiceLineService,CaTenantService;
+uses ZLibExGZ,DCPbase64,PubMemberService,RspDownloadService,CaProductService,CaServiceLineService,CaTenantService;
 { rsp }
 
 constructor rsp.Create;
@@ -84,18 +84,18 @@ begin
   FencryptType := Value;
 end;
 
-procedure rsp.SetrspSessionId(const Value: string);
+procedure rsp.SetrspSessionId(const Value: ansistring);
 begin
   FrspSessionId := Value;
 end;
 
 { TRspFactory }
 
-function TRspFactory.applyRelation(inxml: string): string;
+function TRspFactory.applyRelation(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:CaServiceLineWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -113,11 +113,11 @@ begin
   end;
 end;
 
-function TRspFactory.checkUpgrade(inxml: string): string;
+function TRspFactory.checkUpgrade(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:CaProductWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -135,15 +135,14 @@ begin
   end;
 end;
 
-function TRspFactory.coLogin(inxml: AnsiString): string;
+function TRspFactory.coLogin(inxml: AnsiString): ansistring;
 var
   r:rsp;
   intf:CaTenantWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
-    Decode(Encode('ksdjfkdsf','11111111'),'11111111');
     intf := GetCaTenantWebServiceImpl(true,Addr+'CaTenantService?wsdl',HTTPRIO);
     outXml := intf.login(Encode(inxml,pubpwd));
     GetHeader(HTTPRIO);
@@ -158,11 +157,11 @@ begin
   end;
 end;
 
-function TRspFactory.coRegister(inxml: string): string;
+function TRspFactory.coRegister(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:CaTenantWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -180,7 +179,7 @@ begin
   end;
 end;
 
-constructor TRspFactory.Create(_timeOut:integer;url:string;_flag:integer);
+constructor TRspFactory.Create(_timeOut:integer;url: ansistring;_flag:integer);
 begin
   pubpwd := 'SaRi0+jf';
   timeOut := _timeOut;
@@ -193,11 +192,11 @@ begin
      HTTPRIO.OnAfterExecute := nil;
 end;
 
-function TRspFactory.createServiceLine(inxml: string): string;
+function TRspFactory.createServiceLine(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:CaServiceLineWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -217,10 +216,10 @@ end;
 
 function TRspFactory.Decode(inxml, Key: Ansistring): Ansistring;
 var
-  gzip:RawByteString;
+  gzip:Ansistring;
   DecStr:Ansistring;
 begin
-  DecStr := encddecd.DecodeString(inxml);
+  DecStr := Base64DecodeStr(inxml);
   if Key='' then
   gzip := DecStr else
   gzip := DecryStr(DecStr,Key);
@@ -255,11 +254,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadBarcode(inxml: string): string;
+function TRspFactory.downloadBarcode(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -277,11 +276,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadDeployGoods(inxml: string): string;
+function TRspFactory.downloadDeployGoods(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -299,11 +298,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadGoods(inxml: string): string;
+function TRspFactory.downloadGoods(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -321,11 +320,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadRelations(inxml: string): string;
+function TRspFactory.downloadRelations(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -343,11 +342,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadServiceLines(inxml: string): string;
+function TRspFactory.downloadServiceLines(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -365,11 +364,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadSort(inxml: string): string;
+function TRspFactory.downloadSort(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -387,11 +386,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadTenants(inxml: string): string;
+function TRspFactory.downloadTenants(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -409,11 +408,11 @@ begin
   end;
 end;
 
-function TRspFactory.downloadUnit(inxml: string): string;
+function TRspFactory.downloadUnit(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:RspDownloadWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -440,10 +439,10 @@ begin
   if Key='' then
   EncStr := gzip else
   EncStr := EncryStr(gzip,Key);
-  result := encddecd.EncodeString(EncStr);
+  result := Base64EncodeStr(EncStr);
 end;
 
-function TRspFactory.ErrorEncode(Err: string): string;
+function TRspFactory.ErrorEncode(Err: ansistring): ansistring;
 begin
   result := '<Err>:'+Err;
 end;
@@ -461,11 +460,11 @@ begin
   result := true;
 end;
 
-function TRspFactory.getTenantInfo(inxml: string): string;
+function TRspFactory.getTenantInfo(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:CaTenantWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -483,11 +482,11 @@ begin
   end;
 end;
 
-function TRspFactory.listModules(inxml: string): string;
+function TRspFactory.listModules(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:CaProductWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -505,11 +504,11 @@ begin
   end;
 end;
 
-function TRspFactory.queryServiceLines(inxml: string): string;
+function TRspFactory.queryServiceLines(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:CaServiceLineWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try
@@ -527,11 +526,11 @@ begin
   end;
 end;
 
-function TRspFactory.queryUnion(inxml: string): string;
+function TRspFactory.queryUnion(inxml: ansistring): ansistring;
 var
   r:rsp;
   intf:PubMemberWebServiceImpl;
-  outXml:string;
+  outXml: ansistring;
 begin
   r := SendHeader(HTTPRIO,flag);
   try

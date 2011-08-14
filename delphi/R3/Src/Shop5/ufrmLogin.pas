@@ -147,9 +147,7 @@ begin
                           if XsmCheckPassWord(temp.FieldbyName('ACCOUNT').asString,cxedtPasswrd.Text) then
                              begin
                                Factor.ExecSQL('update CA_SHOP_INFO set XSM_PSWD='''+EncStr(cxedtPasswrd.Text,ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+temp.FieldbyName('SHOP_ID').asString+'''');
-                             end
-                          else
-                             Raise Exception.Create('输入的密码无效,请重新输入。');
+                             end;
                         end
                      else
                         Raise Exception.Create('输入的密码无效,请使用在线模式重试。');

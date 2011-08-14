@@ -91,7 +91,7 @@ type
 var
   MsgFactory:TMsgFactory;
 implementation
-uses uGlobal,ufrmMain,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge,ObjCommon;  //ufrmShowMsg
+uses uGlobal,ufrmMain,ZLogFile,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge,ObjCommon;  //ufrmShowMsg
 {$R *.dfm}
 var
   frmMsg: TfrmHintMsg;
@@ -192,6 +192,7 @@ var Str_where:String;
     rs:TZQuery;
     MsgInfo:PMsgInfo;
 begin
+  LogFile.AddLogFile(0,'开始LoadMsg');
   try
     Clear;
     rs := TZQuery.Create(nil);
@@ -227,9 +228,15 @@ begin
     finally
       rs.free;
     end;
+  finally
+    LogFile.AddLogFile(0,'结束LoadMsg');
+    Loaded := true;
+  end;
+  LogFile.AddLogFile(0,'开始LoadJudge');
+  try
     PrainpowerJudge.Load;
   finally
-    Loaded := true;
+    LogFile.AddLogFile(0,'结束LoadJudge');
   end;
 end;
 

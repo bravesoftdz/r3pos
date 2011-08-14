@@ -51,10 +51,11 @@
 			<DCCReference Include="App\PubMemberService.pas"/>
 			<DCCReference Include="App\RspDownloadService.pas"/>
 			<DCCReference Include="App\rspHeader.pas"/>
+			<DCCReference Include="..\..\Pub\des.pas"/>
 			<DCCReference Include="E:\soft\控件\Gzip125\ZLibEx.pas"/>
 			<DCCReference Include="E:\soft\控件\Gzip125\ZLibExApi.pas"/>
 			<DCCReference Include="E:\soft\控件\Gzip125\ZLibExGZ.pas"/>
-			<DCCReference Include="..\..\Pub\des.pas"/>
+			<DCCReference Include="..\..\Pub\DCPbase64.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -80,7 +81,7 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
-						<Parameters Name="HostApplication">D:\Delphi\R3\Src\Shop5\Project1.exe</Parameters>
+						<Parameters Name="HostApplication">D:\Delphi\R3\Src\Shop5\r3_xsm.exe</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>

@@ -3,5 +3,36 @@
 	<Transactions>
     <Transaction>2011/08/08 23:24:07.067.dproj,C:\Users\IBM\Documents\RAD Studio\Projects\Project1.dproj=D:\Delphi\R3\Src\Shop5\rspFactory.dproj</Transaction>
     <Transaction>2011/08/08 23:28:03.619.pas,D:\Delphi\R3\Src\Shop5\Unit1.pas=D:\Delphi\R3\Src\Shop5\App\rspHeader.pas</Transaction>
+    <Transaction>2011/08/11 11:13:47.335.pas,D:\Delphi\R3\Pub\des.pas=</Transaction>
+    <Transaction>2011/08/11 11:26:02.785.pas,D:\Delphi\R3\Pub\DCPdes.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:15.085.pas,E:\soft\控件\dcpcrypt2-2010\DCPbase64.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:17.962.pas,E:\soft\控件\dcpcrypt2-2010\DCPblockciphers.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:20.954.pas,E:\soft\控件\dcpcrypt2-2010\DCPconst.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:23.547.pas,E:\soft\控件\dcpcrypt2-2010\DCPcrypt2.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:44.491.pas,E:\soft\控件\Gzip125\ZLibEx.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:47.137.pas,E:\soft\控件\Gzip125\ZLibExApi.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:49.692.pas,E:\soft\控件\Gzip125\ZLibExGZ.pas=</Transaction>
+    <Transaction>2011/08/11 17:41:54.479.pas,E:\soft\控件\dcpcrypt2-2010\Ciphers\DCPdes.pas=</Transaction>
+    <Transaction>2011/08/12 17:53:20.941.pas,D:\Delphi\R3\Pub\EncdDecd2010.pas=</Transaction>
   </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="..\..\..\R3"/>
+    <File Path="..\..\Pub"/>
+    <File Path="..\..\Pub\des.pas"/>
+    <File Path="..\..\Pub\DCPbase64.pas"/>
+    <File Path="App"/>
+    <File Path="App\CaProductService.pas"/>
+    <File Path="App\CaServiceLineService.pas"/>
+    <File Path="App\CaTenantService.pas"/>
+    <File Path="App\PubMemberService.pas"/>
+    <File Path="App\RspDownloadService.pas"/>
+    <File Path="App\rspHeader.pas"/>
+    <File Path="E:"/>
+    <File Path="E:\soft"/>
+    <File Path="E:\soft\控件"/>
+    <File Path="E:\soft\控件\Gzip125"/>
+    <File Path="E:\soft\控件\Gzip125\ZLibEx.pas"/>
+    <File Path="E:\soft\控件\Gzip125\ZLibExApi.pas"/>
+    <File Path="E:\soft\控件\Gzip125\ZLibExGZ.pas"/>
+  </ProjectSortOrder>
 </BorlandProject>

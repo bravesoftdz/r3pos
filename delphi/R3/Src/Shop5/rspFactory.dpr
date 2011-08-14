@@ -19,10 +19,11 @@ uses
   PubMemberService in 'App\PubMemberService.pas',
   RspDownloadService in 'App\RspDownloadService.pas',
   rspHeader in 'App\rspHeader.pas',
+  des in '..\..\Pub\des.pas',
   ZLibEx in 'E:\soft\¿Ø¼þ\Gzip125\ZLibEx.pas',
   ZLibExApi in 'E:\soft\¿Ø¼þ\Gzip125\ZLibExApi.pas',
   ZLibExGZ in 'E:\soft\¿Ø¼þ\Gzip125\ZLibExGZ.pas',
-  des in '..\..\Pub\des.pas';
+  DCPbase64 in '..\..\Pub\DCPbase64.pas';
 
 {$R *.res}
 function coLogin(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
@@ -298,10 +299,15 @@ begin
  end;
 end;
 
+function SetParams(_sslpwd:pansichar):boolean;stdcall;
+begin
+  sslpwd := '        ';
+  move(_sslpwd^,sslpwd[1],8);
+end;
 exports
   coLogin,coRegister,getTenantInfo,listModules,checkUpgrade,
   createServiceLine,queryServiceLines,applyRelation,
   downloadTenants,downloadServiceLines,downloadRelations,downloadSort,downloadUnit,downloadGoods,downloadDeployGoods,downloadBarcode,
-  queryUnion;
+  queryUnion,SetParams;
 begin
 end.

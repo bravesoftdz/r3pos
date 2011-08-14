@@ -96,6 +96,7 @@ type
     property encryptType:integer read FencryptType write SetencryptType;
   end;
   TRspFunction=function(xml:widestring;url:widestring;flag:integer):widestring;stdcall;
+  TRspSetParams=function(_sslpwd:pansichar):boolean;stdcall;
   TCaFactory=class
   private
     FSSL: string;
@@ -141,6 +142,7 @@ type
     RspdownloadDeployGoods:TRspFunction;
     RspdownloadBarcode:TRspFunction;
     RspqueryUnion:TRspFunction;
+    RspSetParams:TRspSetParams;
     function Encode(inxml:String;Key:string):String;
     function Decode(inxml:String;Key:string):String;
     procedure SetTicket;
@@ -380,7 +382,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspgetTenantInfo(inxml,URL,2))
+     doc := CreateXML(rspgetTenantInfo(inxml,URL,2))
   else
   begin
     rio := CreateRio(20000);
@@ -483,7 +485,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rsplistModules(inxml,URL,1))
+     doc := CreateXML(RspcoLogin(inxml,URL,1))
   else
   begin
     rio := CreateRio(20000);
@@ -506,12 +508,12 @@ try
                 Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
+      GetHeader(rio).free;
     finally
       h.Free;
     end;
   end;
     CheckRecAck(doc);
-    GetHeader(rio).free;
     caTenantLoginResp := FindNode(doc,'body\caTenantLoginResp');
     code := GetNodeValue(caTenantLoginResp,'code');
     result.RET := code;
@@ -521,6 +523,10 @@ try
          result.TENANT_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'tenantId'));
          sslpwd := encddecd.DecodeString(GetNodeValue(caTenantLoginResp,'keyStr'));
          result.SLL := sslpwd;
+         if RspHandle>0 then
+            begin
+              RspSetParams(pansichar(sslpwd));
+            end;
          if code = '1' then
             begin
               f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
@@ -744,7 +750,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspcoregister(inxml,URL,1))
+     doc := CreateXML(rspcoregister(inxml,URL,1))
   else
   begin
     rio := CreateRio(20000);
@@ -768,12 +774,12 @@ try
                 Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
            end;
       end;
+    GetHeader(rio).free;
     finally
       h.Free;
     end;
   end;
     CheckRecAck(doc);
-    GetHeader(rio).free;
     caTenantRegisterResp := FindNode(doc,'body\caTenantRegisterResp');
     code := GetNodeValue(caTenantRegisterResp,'code');
     if StrtoIntDef(code,0) in [1] then //注册成功
@@ -1022,7 +1028,7 @@ try
 
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
   if rspHandle>0 then
-     CreateXML(rspcheckUpgrade(inxml,URL,1))
+     doc := CreateXML(rspcheckUpgrade(inxml,URL,1))
   else
   begin
     rio := CreateRio(20000);
@@ -1115,7 +1121,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspcreateServiceLine(inxml,URL,2))
+     doc := CreateXML(rspcreateServiceLine(inxml,URL,2))
   else
   begin
     rio := CreateRio(20000);
@@ -1196,7 +1202,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspqueryServiceLines(inxml,URL,2))
+     doc := CreateXML(rspqueryServiceLines(inxml,URL,2))
   else
   begin
     rio := CreateRio(20000);
@@ -1294,7 +1300,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspapplyRelation(inxml,URL,2))
+     doc := CreateXML(rspapplyRelation(inxml,URL,2))
   else
   begin
     rio := CreateRio(20000);
@@ -1449,7 +1455,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadRelations(inxml,URL,2))
+     doc := CreateXML(rspdownloadRelations(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -1621,7 +1627,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadServiceLines(inxml,URL,2))
+     doc := CreateXML(rspdownloadServiceLines(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -1751,7 +1757,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadTenants(inxml,URL,2))
+     doc := CreateXML(rspdownloadTenants(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -1917,7 +1923,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadSort(inxml,URL,2))
+     doc := CreateXML(rspdownloadSort(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -2051,7 +2057,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadGoods(inxml,URL,2))
+     doc := CreateXML(rspdownloadGoods(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -2255,7 +2261,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadUnit(inxml,URL,2))
+     doc := CreateXML(rspdownloadUnit(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -2385,7 +2391,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadDeployGoods(inxml,URL,2))
+     doc := CreateXML(rspdownloadDeployGoods(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -2628,7 +2634,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspdownloadBarcode(inxml,URL,2))
+     doc := CreateXML(rspdownloadBarcode(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -2826,7 +2832,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rspqueryUnion(inxml,URL,2))
+     doc := CreateXML(rspqueryUnion(inxml,URL,2))
   else
   begin
     rio := CreateRio(120000);
@@ -3047,7 +3053,7 @@ try
   inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
 
   if rspHandle>0 then
-     CreateXML(rsplistModules(inxml,URL,1))
+     doc := CreateXML(rsplistModules(inxml,URL,1))
   else
   begin
     rio := CreateRio(120000);
@@ -3200,6 +3206,8 @@ begin
   if @RspdownloadBarcode=nil then Raise Exception.Create('无效Rsp插件包，没有实现downloadBarcode方法');
   @RspqueryUnion := GetProcAddress(RspHandle, 'queryUnion');
   if @RspqueryUnion=nil then Raise Exception.Create('无效Rsp插件包，没有实现queryUnion方法');
+  @RspSetParams := GetProcAddress(RspHandle, 'SetParams');
+  if @RspSetParams=nil then Raise Exception.Create('无效Rsp插件包，没有实现SetParams方法');
 end;
 
 procedure TCaFactory.FreeRspFactory;

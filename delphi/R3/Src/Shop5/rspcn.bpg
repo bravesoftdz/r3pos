@@ -9,10 +9,10 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = Shop.exe r3_xsm.exe r3_n26.exe RSPScktSrvr.exe RimBillPlugIn.dll \
+PROJECTS = Shop.exe r3_xsm2.exe r3_n26.exe RSPScktSrvr.exe RimBillPlugIn.dll \
   RimDayReckPlugIn.dll RimGodsDzPlugIn.dll RimIVTPlugIn.dll RimMsgPlugIn.dll \
   RimOrderDownPlugIn.dll RimSaleTotalPlugIn.dll RimStoragePlugIn.dll \
-  RimVIPPlugIn.dll RimWsdlPlugIn.dll
+  RimVIPPlugIn.dll RimWsdlPlugIn.dll r3_xsm.exe
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ default: $(PROJECTS)
 Shop.exe: Shop.dpr
   $(DCC)
 
-r3_xsm.exe: r3_xsm.dpr
+r3_xsm2.exe: r3_xsm2.dpr
   $(DCC)
 
 r3_n26.exe: r3_n26.dpr
@@ -57,6 +57,9 @@ RimVIPPlugIn.dll: ..\PlugIn\Rim\RimVIPPlugIn.dpr
   $(DCC)
 
 RimWsdlPlugIn.dll: ..\PlugIn\Rim\RimWsdlPlugIn.dpr
+  $(DCC)
+
+r3_xsm.exe: r3_xsm.dpr
   $(DCC)
 
 

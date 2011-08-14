@@ -457,7 +457,7 @@ end;
 procedure TfrmR3Desk.FormActivate(Sender: TObject);
 begin
   inherited;
-  PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);//  tbDesktopClick(tbDesktop);
+  //PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);//  tbDesktopClick(tbDesktop);
 end;
 
 procedure TfrmR3Desk.IEDesktopBeforeNavigate2(Sender: TObject;

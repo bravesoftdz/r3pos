@@ -454,17 +454,23 @@ begin
     Sql_Str :=
     'select SHOP_ID,SHOP_NAME,LEVEL_ID from ('+
     'select distinct a.CODE_ID as SHOP_ID,a.CODE_NAME as SHOP_NAME, '+
-    'case when substr(a.CODE_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+
+    'case when a.CODE_ID=''#'' then ''0099'''+
+    '     when substr(a.CODE_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+
     '     when substr(a.CODE_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2) '+
     '     else ''00'''+Join_Str+'substr(a.CODE_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) end as LEVEL_ID '+
-    ' from PUB_CODE_INFO a,CA_SHOP_INFO b '+
-    ' where a.TENANT_ID=0 and b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and a.CODE_TYPE=''8'' and b.COMM not in (''02'',''12'') and '+
+    ' from ( '+
+    ' select CODE_ID,CODE_NAME,LEVEL_ID from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' '+
+    ' union all '+
+    ' select ''#'' as CODE_ID,''нч'' as CODE_NAME,'''' as LEVEL_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID)+
+    ' ) a,CA_SHOP_INFO b '+
+    ' where b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and b.COMM not in (''02'',''12'') and '+
     ' (case when substr(a.CODE_ID,3,4)=''0000'' then substr(a.CODE_ID,1,2)=substr(b.REGION_ID,1,2) '+
     '       when substr(a.CODE_ID,5,2)=''00'' then substr(a.CODE_ID,1,4)=substr(b.REGION_ID,1,4) '+
     '       else a.CODE_ID=B.REGION_ID end) '+
     ' union all ' +
     ' select SHOP_ID,SHOP_NAME,'+
-    '    case when substring(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+IntToVarchar('SEQ_NO')+
+    '    case when REGION_ID=''#'' then ''0099'''+Join_Str+IntToVarchar('SEQ_NO')+
+    '         when substring(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+IntToVarchar('SEQ_NO')+
     '         when substring(REGION_ID,5,2)=''00''   then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+IntToVarchar('SEQ_NO')+
     '         else ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,5,2)'+Join_Str+'''0001'' end as LEVEL_ID '+
     '  from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+

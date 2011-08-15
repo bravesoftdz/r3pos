@@ -19,11 +19,18 @@ type
     function Execute(AGlobal:IdbHelp; Params:TftParamList):Boolean;override;
   end;
 
+  TUserRightsData=class(TZFactory)
+  public
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure InitClass;override;
+  end;
+
 
 
 implementation
 
 { TRigths }
+
 procedure TUserRights.InitClass;
 var Str:string;
 begin
@@ -63,10 +70,61 @@ begin
   end;  
 end;
 
+{ TUserRightsData }
+
+function TUserRightsData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
+    Str:String;
+begin
+  Result := False;
+  rs := TZQuery.Create(nil);
+  try
+    //¼ì²âÊÇ·ñµÄ¼ÇÂ¼
+    rs.Close;
+    rs.SQL.Text := 'select count(ROWS_ID) as SumNum from CA_RIGHT_FORDATA where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and USER_ID=:USER_ID ';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.FieldByName('SumNum').AsInteger > 0 then
+      begin
+        case iDbType of
+        1: Str:= 'delete CA_RIGHT_FORDATA where TENANT_ID='+FieldByName('TENANT_ID').AsString+' and USER_ID='+QuotedStr(FieldByName('USER_ID').AsString);
+        0,3,4,5:
+           Str:= 'delete from CA_RIGHT_FORDATA where TENANT_ID='+FieldByName('TENANT_ID').AsString+' and USER_ID='+QuotedStr(FieldByName('USER_ID').AsString);
+        end;
+        AGlobal.ExecSQL(Str,Self);
+      end;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TUserRightsData.InitClass;
+var Str:string;
+begin
+  inherited;
+  SelectSQL.Text:=' select ROWS_ID,TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID=:TENANT_ID and USER_ID=:USER_ID and COMM not in (''02'',''12'')';
+  Str:='insert into CA_RIGHT_FORDATA(ROWS_ID,TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT,COMM,TIME_STAMP) '
+     + 'VALUES(:ROWS_ID,:TENANT_ID,:DATA_TYPE,:USER_ID,:DATA_OBJECT,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Add(Str);
+  IsSQLUpdate := true;
+  Str:='update CA_RIGHT_FORDATA set DATA_OBJECT=:DATA_OBJECT,'
+  + 'COMM=' + GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)
+  + ' where ROWS_ID=:OLD_ROWS_ID and COMM not in (''02'',''12'')';
+  UpdateSQL.Add(Str);
+  Str:='update CA_RIGHT_FORDATA set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)
+  + ' where ROWS_ID=:OLD_ROWS_ID and COMM not in (''02'',''12'')';
+  DeleteSQL.Add(Str);
+end;
+
 initialization
   RegisterClass(TUserRights);
   RegisterClass(TUserRolesList);
+  RegisterClass(TUserRightsData);
+
 finalization
   UnRegisterClass(TUserRights);
   UnRegisterClass(TUserRolesList);
+  UnRegisterClass(TUserRightsData);
+  
 end.

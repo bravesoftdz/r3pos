@@ -170,6 +170,7 @@ type
   Tsqlite_column_bytes = function(db: Psqlite; iCol: Integer): Pchar; cdecl;
   Tsqlite_column_name = function(db: Psqlite; iCol: Integer): Pchar; cdecl;
   Tsqlite_column_decltype = function(db: Psqlite; iCol: Integer): Pchar; cdecl;
+  Tsqlite_column_type = function(db: Psqlite; iCol: Integer): integer; cdecl;
   Tsqlite_exec = function(db: Psqlite; const sql: PChar;
     sqlite_callback: Tsqlite_callback; arg: Pointer;
     var errmsg: PChar): Integer; cdecl;
@@ -256,6 +257,7 @@ var
   sqlite_column_bytes: Tsqlite_column_bytes;
   sqlite_column_name: Tsqlite_column_name;
   sqlite_column_decltype: Tsqlite_column_decltype;
+  sqlite_column_type: Tsqlite_column_type;
   sqlite_exec: Tsqlite_exec;
   sqlite_errmsg: Tsqlite_errmsg;
   sqlite_last_insert_rowid: Tsqlite_last_insert_rowid;
@@ -322,6 +324,7 @@ begin
 {!}        @sqlite_column_bytes           := GetAddress('sqlite3_column_text');
 {!}        @sqlite_column_name            := GetAddress('sqlite3_column_name');
 {!}        @sqlite_column_decltype        := GetAddress('sqlite3_column_decltype');
+{!}        @sqlite_column_type            := GetAddress('sqlite3_column_type');
 {!}        @sqlite_exec                   := GetAddress('sqlite3_exec');
 {!}        @sqlite_last_insert_rowid      := GetAddress('sqlite3_last_insert_rowid');
 {!}        @sqlite_changes                := GetAddress('sqlite3_changes');

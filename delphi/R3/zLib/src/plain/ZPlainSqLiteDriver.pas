@@ -374,6 +374,7 @@ type
     function ReKey(db: Psqlite; const pKey: Pointer; nKey: Integer): Integer;
     function Key(db: Psqlite; const pKey: Pointer; nKey: Integer): Integer;
   end;
+//处理SQLITE并发问题清加线程保护 zhangsr 2011-08-14
 
 implementation
 

@@ -482,6 +482,9 @@ begin
     else InternalUpdate;
 
     {BUG-FIX: bangfauzan addition}
+
+    //我们在使用过程中不需要重排
+    Exit;
     if (SortedFields<>'') and not ControlsDisabled then begin
       FreeFieldBuffers;
       SetState(dsBrowse);

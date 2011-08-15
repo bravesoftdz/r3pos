@@ -76,27 +76,7 @@ function TUserRightsData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
     Str:String;
 begin
-  {Result := False;
-  rs := TZQuery.Create(nil);
-  try
-    //¼ì²âÊÇ·ñµÄ¼ÇÂ¼
-    rs.Close;
-    rs.SQL.Text := 'select count(ROWS_ID) as SumNum from CA_RIGHT_FORDATA where COMM not in (''02'',''12'') and TENANT_ID=:TENANT_ID and USER_ID=:USER_ID ';
-    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
-    rs.ParamByName('USER_ID').AsString := FieldByName('USER_ID').AsString;
-    AGlobal.Open(rs);
-    if rs.FieldByName('SumNum').AsInteger > 0 then
-      begin
-        case iDbType of
-        1: Str:= 'delete CA_RIGHT_FORDATA where TENANT_ID='+FieldByName('TENANT_ID').AsString+' and USER_ID='+QuotedStr(FieldByName('USER_ID').AsString);
-        0,3,4,5:
-           Str:= 'delete from CA_RIGHT_FORDATA where TENANT_ID='+FieldByName('TENANT_ID').AsString+' and USER_ID='+QuotedStr(FieldByName('USER_ID').AsString);
-        end;
-        AGlobal.ExecSQL(Str,Self);
-      end;
-  finally
-    rs.Free;
-  end; }
+
 end;
 
 procedure TUserRightsData.InitClass;

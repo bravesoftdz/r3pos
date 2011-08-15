@@ -76,7 +76,7 @@ function TUserRightsData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
     Str:String;
 begin
-  Result := False;
+  {Result := False;
   rs := TZQuery.Create(nil);
   try
     //¼ì²âÊÇ·ñµÄ¼ÇÂ¼
@@ -96,7 +96,7 @@ begin
       end;
   finally
     rs.Free;
-  end;
+  end; }
 end;
 
 procedure TUserRightsData.InitClass;
@@ -112,8 +112,11 @@ begin
   + 'COMM=' + GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)
   + ' where ROWS_ID=:OLD_ROWS_ID and COMM not in (''02'',''12'')';
   UpdateSQL.Add(Str);
-  Str:='update CA_RIGHT_FORDATA set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)
-  + ' where ROWS_ID=:OLD_ROWS_ID and COMM not in (''02'',''12'')';
+  case iDbType of
+  1: Str:= 'delete CA_RIGHT_FORDATA where ROWS_ID=:OLD_ROWS_ID ';
+  0,3,4,5:
+     Str:= 'delete from CA_RIGHT_FORDATA where ROWS_ID=:OLD_ROWS_ID ';
+  end;
   DeleteSQL.Add(Str);
 end;
 

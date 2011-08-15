@@ -2858,7 +2858,7 @@ begin
      WriteAndEnter(DevFactory.EncodeDivStr);
      if rs.FieldbyName('CASH_MNY').AsFloat <> 0 then
         begin
-          WriteAndEnter('实收:'+FormatFloat('#0.0##',rs.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+FormatFloat('#0.0##',rs.FieldbyName('PAY_DIBS').AsFloat));
+          WriteAndEnter('实收:'+FormatFloat('#0.0##',rs.FieldbyName('CASH_MNY').AsFloat)+'  找零:'+FormatFloat('#0.0##',rs.FieldbyName('PAY_ZERO').AsFloat));
           WriteAndEnter(DevFactory.EncodeDivStr);
         end;
      if DevFactory.Footer <> '' then

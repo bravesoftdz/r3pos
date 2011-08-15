@@ -245,9 +245,11 @@ inherited frmRckMng: TfrmRckMng
                     Width = 80
                   end
                   item
+                    Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'CLSE_MNY'
+                    Footer.Alignment = taRightJustify
                     Footers = <>
                     Title.Caption = #33829#19994#37329#39069
                     Width = 70
@@ -285,7 +287,7 @@ inherited frmRckMng: TfrmRckMng
             Left = 0
             Top = 0
             Width = 757
-            Height = 460
+            Height = 459
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -295,7 +297,7 @@ inherited frmRckMng: TfrmRckMng
               Left = 6
               Top = 79
               Width = 745
-              Height = 375
+              Height = 374
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -304,7 +306,7 @@ inherited frmRckMng: TfrmRckMng
                 Left = 0
                 Top = 0
                 Width = 745
-                Height = 375
+                Height = 374
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseMonth

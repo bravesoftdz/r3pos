@@ -634,7 +634,10 @@ begin
       if Components[i] is TzrComboBoxList then
          begin
            //if TzrComboBoxList(Components[i]).Properties.ReadOnly then continue;
-           AObj.FieldbyName(fldname).AsString := TzrComboBoxList(Components[i]).AsString;
+           if TzrComboBoxList(Components[i]).Text='' then
+              AObj.FieldbyName(fldname).AsString := ''
+           else
+              AObj.FieldbyName(fldname).AsString := TzrComboBoxList(Components[i]).AsString;
            if AObj.FindField(fldname+'_TEXT')<>nil then AObj.FieldbyName(fldname+'_TEXT').asString := TzrComboBoxList(Components[i]).Text;
 
          end;

@@ -326,7 +326,7 @@ begin
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
           Temp := TZQuery.Create(nil);
           try
-             Factor.Open(Temp,'TSalesOrderGetPrior',Params);
+             Factor.Open(Temp,'TSalIndentOrderGetPrior',Params);
              if Temp.Fields[0].asString<>'' then
                 CurOrder.Open(Temp.Fields[0].asString);
           finally
@@ -362,7 +362,7 @@ begin
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
           Temp := TZQuery.Create(nil);
           try
-             Factor.Open(Temp,'TSalesOrderGetNext',Params);
+             Factor.Open(Temp,'TSalIndentOrderGetNext',Params);
              if Temp.Fields[0].asString<>'' then
                 CurOrder.Open(Temp.Fields[0].asString);
           finally

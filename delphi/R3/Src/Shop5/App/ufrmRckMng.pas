@@ -312,6 +312,8 @@ begin
       Column.Title.Caption := '收款方式|'+rs.FieldbyName('CODE_NAME').AsString;
       Column.Index := DBGridEh1.Columns.Count - 4;
       Column.Width := 60;
+      Column.Alignment := taRightJustify;
+      Column.Footer.Alignment := taRightJustify;
       rs.Next;
     end;
 end;

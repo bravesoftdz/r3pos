@@ -119,6 +119,10 @@ begin
            MainRecord.FieldByName('PAY_I').AsFloat := 0;
         //if MainRecord.FieldByName('PAY_J').AsString = '' then
            MainRecord.FieldByName('PAY_J').AsFloat := 0;
+
+        //¸´Î»
+           MainRecord.FieldByName('CASH_MNY').AsFloat := 0;
+           MainRecord.FieldByName('PAY_ZERO').AsFloat := 0;
         TotalFee := _TotalFee;
         ShowFee;
         edtTakeFee.Text := edtPAY_WAIT.Text;

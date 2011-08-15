@@ -160,8 +160,8 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     Factor.Open(rs);
-    labMNY.Caption := '店内现金:'+FloatToStr(Balance+rs.FieldbyName('BALANCE').AsFloat);
-    lblCASH.Caption :='当日现金:'+FloatToStr(StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
+    labMNY.Caption := '店内现金:'+formatFloat('#0.0#',Balance+rs.FieldbyName('BALANCE').AsFloat);
+    lblCASH.Caption :='当日现金:'+formatFloat('#0.0#',StrToFloatDef(edtPAY_A.Text,0.00)+StrToFloatDef(edtPAY_MNY.Text,0.00)+StrToFloatDef(edtRECV_MNY.Text,0.00));
   finally
     rs.Free;
   end;

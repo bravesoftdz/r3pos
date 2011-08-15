@@ -207,6 +207,7 @@ type
     KeyStr:string;
     FInputMode: integer;
     Fxsm: boolean;
+    FIsReck: boolean;
     //判断当前记录是否有颜色尺管制
     function  PropertyEnabled:boolean;
     procedure SetInputFlag(const Value: integer);
@@ -230,6 +231,7 @@ type
     procedure BarcodeFilterRecord(DataSet: TDataSet;
       var Accept: Boolean);
     procedure Setxsm(const Value: boolean);
+    procedure SetIsReck(const Value: boolean);
   protected
     //进位法则
     CarryRule:integer;
@@ -364,6 +366,7 @@ type
     property oid:string read Foid write Setoid;
     property gid:string read Fgid write Setgid;
     property xsm:boolean read Fxsm write Setxsm;
+    property IsReck:boolean read FIsReck write SetIsReck;
   end;
 
 implementation
@@ -1276,6 +1279,7 @@ procedure TfrmPosMain.OpenDialogGoods;
 var AObj:TRecord_;
 begin
   if dbState = dsBrowse then Exit;
+  if IsReck then Raise Exception.Create('你已经做了交班结账了不能再收银，请到结账管理撤销结账后再操作。'); 
   with TframeSelectGoods.Create(self) do
     begin
       try
@@ -1912,6 +1916,7 @@ var
   mny:Currency;
   Pri:Currency;
 begin
+  if IsReck then Raise Exception.Create('你已经做了交班结账了不能再收银，请到结账管理撤销结账后再操作。'); 
   result := 2;
   if BarCode='' then Exit;
   fndStr := BarCode;
@@ -2172,6 +2177,21 @@ begin
   1:AObj.FieldbyName('TAX_RATE').AsFloat := 0;
   2:AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate2;
   3:AObj.FieldbyName('TAX_RATE').AsFloat := RtlRate3;
+  end;
+
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select MAX(CLSE_DATE) from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER';
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    rs.Params.ParamByName('CREA_USER').AsString := Global.UserID;
+    Factor.Open(rs);
+    if rs.Fields[0].AsString >= formatDatetime('YYYYMMDD',Global.SysDate) then
+       IsReck := true
+    else
+       IsReck := false;
+  finally
+    rs.Free;
   end;
   InputFlag := 0;
   RowId := 0;
@@ -4231,6 +4251,11 @@ begin
   inherited;
   if myHKL>0 then
   ActivateKeyBoardLayOut(myHKL,KLF_ACTIVATE);
+end;
+
+procedure TfrmPosMain.SetIsReck(const Value: boolean);
+begin
+  FIsReck := Value;
 end;
 
 end.

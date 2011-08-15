@@ -263,7 +263,7 @@ implementation
 uses
   DBGrids,uShopUtil,uTreeUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, ufrmMeaUnits,
   uShopGlobal,ufrmGoodssort, ufrmGoodsSortTree, uframeTreeFindDialog, ufrmClientInfo,
-  ufrmSupplierInfo;
+  ufrmSupplierInfo,uGodsFactory;
 
 {$R *.dfm}
 
@@ -827,7 +827,10 @@ begin
   AObj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
 
   //写入商品分类:
-  AObj.FieldByName('SORT_ID1').AsString:=SORT_ID1_KeyValue; 
+  if trim(edtSORT_ID1.Text)='' then
+     AObj.FieldByName('SORT_ID1').AsString:= ''
+  else
+     AObj.FieldByName('SORT_ID1').AsString:=SORT_ID1_KeyValue;
   //写入商品类别[edtSORT_ID1.KeyValue ..  edtSORT_ID8.KeyValue]
   for i:=0 to ComponentCount-1 do
   begin
@@ -1285,6 +1288,7 @@ begin
             else if fnString.IsBarCode(Default) then
               begin
                 edtBARCODE1.Text:=Default;
+                ReadBarCode_INFO(Default);
               end
               else
               begin
@@ -1660,24 +1664,15 @@ end;
 
 function TfrmGoodsInfo.ReadBarCode_INFO(BarCode: string):boolean;
 var
-  tmp: TZQuery;
+  GObj:TRecord_;
 begin
-    result := false;
-    tmp:=TZQuery.Create(nil);
-    try
-      tmp.Close;
-      tmp.SQL.Text:='select GODS_ID,UNIT_ID,BARCODE_TYPE,BATCH_NO,BARCODE from PUB_BARCODE '+
-        ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and (BARCODE ='+QuotedStr(BarCode)+') ';
-      tmp.Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
-      Factor.Open(tmp);
-      if not tmp.IsEmpty then
-      begin
-        result := true;
-        ReadGoodsBarCode(tmp);  
-      end;
-   finally
-     tmp.Free;
-   end;
+  result := false;
+  GObj := GodsFactory.Check(BarCode);
+  if GObj<>nil then
+     begin
+      ReadFromObject(GObj);
+      result := true;
+     end;
 end;
 
 procedure TfrmGoodsInfo.OpenCopyNew(code: string);
@@ -1956,7 +1951,11 @@ begin
     raise Exception.Create('积分换算关系的不能为0！');
   end;
 
-  if Trim(edtCALC_UNITS.AsString)='' then
+  if (Trim(edtCALC_UNITS.Text)='') then edtCALC_UNITS.KeyValue := null;
+  if (Trim(edtSMALL_UNITS.Text)='') then edtSMALL_UNITS.KeyValue := null;
+  if (Trim(edtBIG_UNITS.Text)='') then edtBIG_UNITS.KeyValue := null;
+
+  if (Trim(edtCALC_UNITS.AsString)='') or (Trim(edtCALC_UNITS.Text)='') then
   begin
     if edtCALC_UNITS.CanFocus then edtCALC_UNITS.SetFocus;
     raise Exception.Create('计量单位不能为空！');

@@ -75,7 +75,8 @@ type
     User_NAME:string;
     DataType:String;
     FModiRight: boolean;
-    FLastRole_IDS: string;  //最后一次打开: Role_IDS
+    FLastRole_IDS: string;
+    FDataRightState: Boolean;  //最后一次打开: Role_IDS
     procedure Init(InUserID,InUser_NAME,User_ACCOUNT: string; ROLE_IDS: String); //初始化显示数据(RoleGird和CheckeTree)
     procedure SaveRight;
     procedure SaveDataRight;
@@ -86,6 +87,8 @@ type
     procedure InitShopTree;
     procedure InitDeptTree;
     procedure GetShop_DeptRight;
+    procedure SetDataRightState(const Value: Boolean);
+    function IntToVarchar(FieldName: string): string;    
   public
     FReROLE_IDS: string;
     ccid:string;
@@ -97,6 +100,7 @@ type
     property  ModiRight:boolean read FModiRight write SetModiRight;
     property  ROLE_IDS: string read GetROLE_IDS;  //当前的角色List: ROLE_IDS
     property  ROLE_NAMES: string read GetROLE_NAMES;  //当前的角色List: ROLE_NAMES
+    property  DataRightState: Boolean read FDataRightState write SetDataRightState;
   end;
 
 var
@@ -119,7 +123,6 @@ procedure TfrmUserRights.Init(InUserID,InUser_NAME,User_ACCOUNT: string; ROLE_ID
 var
   i:integer;
   Str,Cnd: string;
-  RightData:Integer;
   adoRs: TZQuery;
 begin
   //初始化显示
@@ -139,21 +142,6 @@ begin
   RoleList.SQL.Text:=str;
   RoleList.Params.ParamByName('TENANT_ID').AsInteger:=shopGlobal.TENANT_ID;
   Factor.Open(RoleList);
-  RightData := 0;
-  DataType := '00';
-  RoleList.First;
-  while not RoleList.Eof do
-    begin
-      if RoleList.FieldByName('selflag').AsString = '1' then
-        RightData := (Trunc(Bintoint(RoleList.FieldByName('RIGHT_FORDATA').AsString)) or RightData);
-      RoleList.Next;
-    end;
-  DataType := inttoBin(RightData);
-  if Length(DataType) <> Length(RoleList.FieldByName('RIGHT_FORDATA').AsString) then
-    begin
-      for i := 1 to Length(RoleList.FieldByName('RIGHT_FORDATA').AsString)-Length(DataType) do
-        DataType := '0'+DataType;
-    end;
 
   try
     adoRs:=TZQuery.Create(nil);
@@ -171,8 +159,8 @@ begin
   InitShopTree;
   InitDeptTree;
   GetShop_DeptRight;
-  OpenShopRights('');
-  OpenDeptRights('');
+
+  DataRightState:=true;
   //读取当前角色IDS的Checked值
   OpenRight(ROLE_IDS);
   RzPage.OnChange:=DoRzPageChange;
@@ -223,6 +211,7 @@ end;
 procedure TfrmUserRights.btnOkClick(Sender: TObject);
 begin
   inherited;
+  if not DataRightState then DataRightState:=true;
   SaveRight;
   ModalResult:=MROK;
 end;
@@ -393,6 +382,10 @@ begin
   CurIDS:=ROLE_IDS;
   if (trim(FLastRole_IDS)<>trim(CurIDS)) and (RzPage.ActivePage=TabSheet2) then
     OpenRight(CurIDS);
+  if (RzPage.ActivePage=TabSheet3) and (not DataRightState) then
+  begin
+    DataRightState:=true;
+  end;
 end;
 
 class function TfrmUserRights.ShowUserRight(InUserID, InUser_NAME,User_ACCOUNT: string; var ROLE_IDS: string): Boolean;
@@ -421,11 +414,23 @@ end;
 
 procedure TfrmUserRights.InitDeptTree;
 var CdsDept:TZQuery;
+    Join_Str:String;
 begin
+  CdsDept:=TZQuery.Create(nil);
+  if Factor.iDbType = 5 then
+    Join_Str := '||'
+  else
+    Join_Str := '+';
   try
-    CdsDept:=TZQuery.Create(nil);     
+
     CdsDept.Close;
-    CdsDept.SQL.Text:='select DEPT_ID,DEPT_NAME,LEVEL_ID,SEQ_NO,0 Tag from CA_DEPT_INFO where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and DEPT_TYPE=''1'' and COMM not in (''02'',''12'') order by LEVEL_ID';
+    CdsDept.SQL.Text:=
+    'select * from ('+
+    'select DEPT_ID,DEPT_NAME,''001'''+Join_Str+'LEVEL_ID as LEVEL_ID,SEQ_NO,0 Tag from CA_DEPT_INFO where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+
+    ' and DEPT_TYPE=''1'' and COMM not in (''02'',''12'') '+
+    ' union all '+
+    ' select ''0'' as DEPT_ID,''营销部'' as DEPT_NAME,''001'' as LEVEL_ID,'''' as SEQ_NO,0 Tag from CA_TENANT where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+
+    ' ) order by LEVEL_ID';
     Factor.Open(CdsDept);
     CreateLevelTree(CdsDept,ChkDeptTree,'333333','DEPT_ID','DEPT_NAME','LEVEL_ID');
     if ChkDeptTree.Items.Count>0 then ChkDeptTree.TopItem.Selected:=True;
@@ -439,33 +444,36 @@ procedure TfrmUserRights.InitShopTree;
 var CdsShop:TZQuery;
     Sql_Str,Join_Str:String;
 begin
+  if Factor.iDbType = 5 then
+    Join_Str := '||'
+  else
+    Join_Str := '+';
+  CdsShop:=TZQuery.Create(nil);
   try
-    if Factor.iDbType = 5 then
-      Join_Str := '||'
-    else
-      Join_Str := '+';
-    CdsShop:=TZQuery.Create(nil);
     CdsShop.Close;
     Sql_Str :=
-    'select SHOP_ID,SHOP_NAME,LEVEL_ID from '+
-    '(select distinct a.CODE_ID as SHOP_ID,a.CODE_NAME as SHOP_NAME,'+
-    '    case when substring(a.CODE_ID,3,4)=''0000'' then ''0'''+Join_Str+'substring(a.CODE_ID,1,2) '+
-    '         when substring(a.CODE_ID,5,2)=''00''   then ''0'''+Join_Str+'substring(a.CODE_ID,1,2)'+Join_Str+'''0'''+Join_Str+'substring(a.CODE_ID,3,2) '+
-    '         else ''0'''+Join_Str+'substring(a.CODE_ID,1,2)'+Join_Str+'''0'''+Join_Str+'substring(a.CODE_ID,3,2)'+Join_Str+'''0'''+Join_Str+'substring(a.CODE_ID,5,2) end as LEVEL_ID '+
-    'from PUB_CODE_INFO a,CA_SHOP_INFO b '+
-    '  where a.CODE_ID=b.REGION_ID and a.TENANT_ID=0 and b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and a.CODE_TYPE=''8'' and b.COMM not in (''02'',''12'') '+
+    'select SHOP_ID,SHOP_NAME,LEVEL_ID from ('+
+    'select distinct a.CODE_ID as SHOP_ID,a.CODE_NAME as SHOP_NAME, '+
+    'case when substr(a.CODE_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+
+    '     when substr(a.CODE_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2) '+
+    '     else ''00'''+Join_Str+'substr(a.CODE_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) end as LEVEL_ID '+
+    ' from PUB_CODE_INFO a,CA_SHOP_INFO b '+
+    ' where a.TENANT_ID=0 and b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and a.CODE_TYPE=''8'' and b.COMM not in (''02'',''12'') and '+
+    ' (case when substr(a.CODE_ID,3,4)=''0000'' then substr(a.CODE_ID,1,2)=substr(b.REGION_ID,1,2) '+
+    '       when substr(a.CODE_ID,5,2)=''00'' then substr(a.CODE_ID,1,4)=substr(b.REGION_ID,1,4) '+
+    '       else a.CODE_ID=B.REGION_ID end) '+
     ' union all ' +
     ' select SHOP_ID,SHOP_NAME,'+
-    '    case when substring(REGION_ID,3,4)=''0000'' then ''0'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''050'' '+
-    '         when substring(REGION_ID,5,2)=''00''   then ''0'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''0'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+'''050'' '+
-    '         else ''0'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''0'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+'''0'''+Join_Str+'substring(REGION_ID,5,2)'+Join_Str+'''001'' end as LEVEL_ID '+
+    '    case when substring(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+IntToVarchar('SEQ_NO')+
+    '         when substring(REGION_ID,5,2)=''00''   then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+IntToVarchar('SEQ_NO')+
+    '         else ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,5,2)'+Join_Str+'''0001'' end as LEVEL_ID '+
     '  from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+
     '  )tmp '+
     ' order by LEVEL_ID';
     CdsShop.SQL.Text:=ParseSQL(Factor.iDbType,Sql_Str);
 
     Factor.Open(CdsShop);
-    CreateLevelTree(CdsShop,ChkShopTree,'333333','SHOP_ID','SHOP_NAME','LEVEL_ID');
+    CreateLevelTree(CdsShop,ChkShopTree,'444444','SHOP_ID','SHOP_NAME','LEVEL_ID');
     if ChkShopTree.Items.Count>0 then ChkShopTree.TopItem.Selected:=True;
   finally
     CdsShop.Free;
@@ -623,37 +631,55 @@ begin
   end;
 end;
 
-procedure TfrmUserRights.DbGridEh1Columns0UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+procedure TfrmUserRights.SetDataRightState(const Value: Boolean);
 var RightData,i:Integer;
     Name:String;
 begin
-  inherited;
-  if UnLock then Exit;
-  UnLock := True;
-  if RoleList.State = dsEdit then RoleList.Post;
-  try
-    RightData := 0;
-    Name := RoleList.FieldByName('ROLE_NAME').AsString;
-    RoleList.First;
-    while not RoleList.Eof do
-      begin
-        if RoleList.FieldByName('selflag').AsString = '1' then
-          RightData := (Trunc(Bintoint(RoleList.FieldByName('RIGHT_FORDATA').AsString)) or RightData);
-        RoleList.Next;
-      end;
-    DataType := inttoBin(RightData);
-    RoleList.Locate('ROLE_NAME',Name,[]);
-    if Length(DataType) <> Length(RoleList.FieldByName('RIGHT_FORDATA').AsString) then
-      begin
-        for i := 1 to Length(RoleList.FieldByName('RIGHT_FORDATA').AsString)-Length(DataType) do
-          DataType := '0'+DataType;
-      end;
-    OpenShopRights('');
-    OpenDeptRights('');
-  finally
-    UnLock := False;
-    RoleList.Edit;
+  FDataRightState := Value;
+  if Value then //true
+  begin
+    if RoleList.State = dsEdit then RoleList.Post;
+    try
+      RightData := 0;
+      Name := RoleList.FieldByName('ROLE_NAME').AsString;
+      RoleList.DisableControls;
+      RoleList.First;
+      while not RoleList.Eof do
+        begin
+          if RoleList.FieldByName('selflag').AsString = '1' then
+            RightData := (Trunc(Bintoint(RoleList.FieldByName('RIGHT_FORDATA').AsString)) or RightData);
+          RoleList.Next;
+        end;
+      DataType := inttoBin(RightData);
+      RoleList.Locate('ROLE_NAME',Name,[]);
+      if Length(DataType) <> Length(RoleList.FieldByName('RIGHT_FORDATA').AsString) then
+        begin
+          for i := 1 to Length(RoleList.FieldByName('RIGHT_FORDATA').AsString)-Length(DataType) do
+            DataType := '0'+DataType;
+        end;
+      OpenShopRights('');
+      OpenDeptRights('');
+    finally
+      RoleList.EnableControls;
+    end;
+  end;
+end;
+
+procedure TfrmUserRights.DbGridEh1Columns0UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  DataRightState:=False;
+end;
+
+function TfrmUserRights.IntToVarchar(FieldName: string): string;
+begin
+  result:=trim(FieldName);
+  case Factor.iDbType of
+   0,5:
+      result:='cast('+FieldName+' as varchar)';
+   1: result:='to_char('+FieldName+')';
+   3: result:='str('+FieldName+')';
+   4: result:='ltrim(rtrim(char('+FieldName+')))';
   end;
 end;
 

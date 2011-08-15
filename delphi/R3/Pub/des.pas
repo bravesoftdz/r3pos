@@ -10,13 +10,13 @@ type
   TKeyByte = array[0..5] of Byte;
   TDesMode = (dmEncry, dmDecry);
 
-  function EncryStr(Str, Key: String): String;
-  function DecryStr(Str, Key: String): String;
-  function EncryStrHex(Str, Key: String): String;
-  function DecryStrHex(StrHex, Key: String): String;
+  function EncryStr(Str, Key: AnsiString): AnsiString;
+  function DecryStr(Str, Key: AnsiString): AnsiString;
+  function EncryStrHex(Str, Key: AnsiString): AnsiString;
+  function DecryStrHex(StrHex, Key: AnsiString): AnsiString;
 
-  function EncryFile(filename:string;Key:string):boolean;
-  function DecryFile(filename:string;Key:string):boolean;
+  function EncryFile(filename: AnsiString;Key: AnsiString):boolean;
+  function DecryFile(filename: AnsiString;Key: AnsiString):boolean;
 
 const
   BitIP: array[0..63] of Byte =
@@ -114,12 +114,43 @@ var
 
 implementation
 
+function MyOrd(v:AnsiChar):Byte;
+var
+  sm:TStringStream;
+  s:AnsiString;
+begin
+  s := '';
+  sm := TStringStream.Create(s);
+  try
+    sm.Write(v,sizeof(AnsiChar));
+    sm.Position := 0;
+    sm.Read(result,sizeof(byte));
+  finally
+    sm.Free;
+  end;
+end;
+function MyChr(v:byte):Ansichar;
+var
+  sm:TStringStream;
+  s:AnsiString;
+begin
+  s := '';
+  sm := TStringStream.Create(s);
+  try
+    sm.Write(v,sizeof(byte));
+    sm.Position := 0;
+    sm.Read(result,sizeof(ansichar));
+  finally
+    sm.Free;
+  end;
+end;
 procedure initPermutation(var inData: array of Byte);
 var
   newData: array[0..7] of Byte;
   i: Integer;
 begin
-  FillChar(newData, 8, 0);
+  for i:=0 to 7 do newData[i] := 0;
+//  FillChar(newData, 8, 0);
   for i := 0 to 63 do
     if (inData[BitIP[i] shr 3] and (1 shl (7- (BitIP[i] and $07)))) <> 0 then
       newData[i shr 3] := newData[i shr 3] or (1 shl (7-(i and $07)));
@@ -131,7 +162,8 @@ var
   newData: array[0..7] of Byte;
   i: Integer;
 begin
-  FillChar(newData, 8, 0);
+  for i:=0 to 7 do newData[i] := 0;
+//  FillChar(newData, 8, 0);
   for i := 0 to 63 do
     if (inData[BitCP[i] shr 3] and (1 shl (7-(BitCP[i] and $07)))) <> 0 then
       newData[i shr 3] := newData[i shr 3] or (1 shl (7-(i and $07)));
@@ -142,7 +174,8 @@ procedure expand(inData: array of Byte; var outData: array of Byte);
 var
   i: Integer;
 begin
-  FillChar(outData, 6, 0);
+  for i:=0 to 5 do outData[i] := 0;
+//  FillChar(outData, 6, 0);
   for i := 0 to 47 do
     if (inData[BitExp[i] shr 3] and (1 shl (7-(BitExp[i] and $07)))) <> 0 then
       outData[i shr 3] := outData[i shr 3] or (1 shl (7-(i and $07)));
@@ -153,7 +186,8 @@ var
   newData: array[0..3] of Byte;
   i: Integer;
 begin
-  FillChar(newData, 4, 0);
+  for i:=0 to 3 do newData[i] := 0;
+//  FillChar(newData, 4, 0);
   for i := 0 to 31 do
     if (inData[BitPM[i] shr 3] and (1 shl (7-(BitPM[i] and $07)))) <> 0 then
       newData[i shr 3] := newData[i shr 3] or (1 shl (7-(i and $07)));
@@ -174,7 +208,8 @@ procedure permutationChoose1(inData: array of Byte;
 var
   i: Integer;
 begin
-  FillChar(outData, 7, 0);
+  for i:=0 to 6 do outData[i] := 0;
+//  FillChar(outData, 7, 0);
   for i := 0 to 55 do
     if (inData[BitPMC1[i] shr 3] and (1 shl (7-(BitPMC1[i] and $07)))) <> 0 then
       outData[i shr 3] := outData[i shr 3] or (1 shl (7-(i and $07)));
@@ -185,7 +220,8 @@ procedure permutationChoose2(inData: array of Byte;
 var
   i: Integer;
 begin
-  FillChar(outData, 6, 0);
+  for i:=0 to 5 do outData[i] := 0;
+//  FillChar(outData, 6, 0);
   for i := 0 to 47 do
     if (inData[BitPMC2[i] shr 3] and (1 shl (7-(BitPMC2[i] and $07)))) <> 0 then
       outData[i shr 3] := outData[i shr 3] or (1 shl (7-(i and $07)));
@@ -308,31 +344,31 @@ end;
 
 //////////////////////////////////////////////////////////////
 
-function EncryStr(Str, Key: String): String;
+function EncryStr(Str, Key: AnsiString): AnsiString;
 var
   StrByte, OutByte, KeyByte: array[0..7] of Byte;
-  StrResult: String;
+  StrResult: AnsiString;
   I, J: Integer;
   strLength:integer;
 begin
-//  if (Length(Str) > 0) and (Ord(Str[Length(Str)]) = 0) then
+//  if (Length(Str) > 0) and (MyOrd(Str[Length(Str)]) = 0) then
 //    raise Exception.Create('Error: the last char is NULL char.');
   if Length(Key) < 8 then
-    while Length(Key) < 8 do Key := Key + Chr(0);
+    while Length(Key) < 8 do Key := Key + #0;
 
   strLength:=Length(Str) mod 8;
 
-  //while Length(Str) mod 8 <> 0 do Str := Str + Chr(0);
+  //while Length(Str) mod 8 <> 0 do Str := Str + DesChr(0);
   if Length(Str) mod 8 = 0 then
   begin
-    Str := Str + Chr(8);
-    Str := Str + Chr(8);
-    Str := Str + Chr(8);
-    Str := Str + Chr(8);
-    Str := Str + Chr(8);
-    Str := Str + Chr(8);
-    Str := Str + Chr(8);
-    Str := Str + Chr(8);
+    Str := Str + #8;
+    Str := Str + #8;
+    Str := Str + #8;
+    Str := Str + #8;
+    Str := Str + #8;
+    Str := Str + #8;
+    Str := Str + #8;
+    Str := Str + #8;
   end
   else
   begin
@@ -340,135 +376,137 @@ begin
   while Length(Str) mod 8 <> 0 do
   begin
     if strLength=1 then
-      Str := Str + Chr(7)
+      Str := Str + #7
     else if strLength=2 then
-      Str := Str + Chr(6)
+      Str := Str + #6
     else if strLength=3 then
-      Str := Str + Chr(5)
+      Str := Str + #5
     else if strLength=4 then
-      Str := Str + Chr(4)
+      Str := Str + #4
     else if strLength=5 then
-      Str := Str + Chr(3)
+      Str := Str + #3
     else if strLength=6 then
-      Str := Str + Chr(2)
+      Str := Str + #2
     else
-      Str := Str + Chr(1)
+      Str := Str + #1
   end;
   end;
 
-  for J := 0 to 7 do KeyByte[J] := Ord(Key[J + 1]);
+  for J := 0 to 7 do KeyByte[J] := MyOrd(Key[J + 1]);
   makeKey(keyByte, subKey);
 
   StrResult := '';
-
   for I := 0 to Length(Str) div 8 - 1 do
   begin
     for J := 0 to 7 do
-      StrByte[J] := Ord(Str[I * 8 + J + 1]);
+      StrByte[J] := MyOrd(Str[I * 8 + J + 1]);
     desData(dmEncry, StrByte, OutByte);
     for J := 0 to 7 do
-      StrResult := StrResult + Chr(OutByte[J]);
+      StrResult := StrResult + MyChr(OutByte[J]);
   end;
-
   Result := StrResult;
 end;
 
-function DecryStr(Str, Key: String): String;
+function DecryStr(Str, Key: AnsiString): AnsiString;
 var
   StrByte, OutByte, KeyByte: array[0..7] of Byte;
-  StrResult: String;
+  StrResult: AnsiString;
   I, J: Integer;
+  b:byte;
 begin
   if Length(Key) < 8 then
-    while Length(Key) < 8 do Key := Key + Chr(0);
+    while Length(Key) < 8 do Key := Key + #0;
 
-  for J := 0 to 7 do KeyByte[J] := Ord(Key[J + 1]);
+  for J := 0 to 7 do KeyByte[J] := MyOrd(Key[J + 1]);
   makeKey(keyByte, subKey);
 
   StrResult := '';
-
   for I := 0 to Length(Str) div 8 - 1 do
   begin
-    for J := 0 to 7 do StrByte[J] := Ord(Str[I * 8 + J + 1]);
+    for J := 0 to 7 do
+       begin
+         StrByte[J] := MyOrd(Str[I * 8 + J + 1]);
+       end;
     desData(dmDecry, StrByte, OutByte);
     for J := 0 to 7 do
-      StrResult := StrResult + Chr(OutByte[J]);
+      StrResult := StrResult + MyChr(OutByte[J]);
   end;
 //  while (Length(StrResult) > 0) and (
-//      (Ord(StrResult[Length(StrResult)]) = 8) or
-//      (Ord(StrResult[Length(StrResult)]) = 7) or
-//      (Ord(StrResult[Length(StrResult)]) = 6) or
-//      (Ord(StrResult[Length(StrResult)]) = 5) or
-//      (Ord(StrResult[Length(StrResult)]) = 4) or
-//      (Ord(StrResult[Length(StrResult)]) = 3) or
-//      (Ord(StrResult[Length(StrResult)]) = 2) or
-//      (Ord(StrResult[Length(StrResult)]) = 1)
-//      or (Ord(StrResult[Length(StrResult)]) = 0)
+//      (MyOrd(StrResult[Length(StrResult)]) = 8) or
+//      (MyOrd(StrResult[Length(StrResult)]) = 7) or
+//      (MyOrd(StrResult[Length(StrResult)]) = 6) or
+//      (MyOrd(StrResult[Length(StrResult)]) = 5) or
+//      (MyOrd(StrResult[Length(StrResult)]) = 4) or
+//      (MyOrd(StrResult[Length(StrResult)]) = 3) or
+//      (MyOrd(StrResult[Length(StrResult)]) = 2) or
+//      (MyOrd(StrResult[Length(StrResult)]) = 1)
+//      or (MyOrd(StrResult[Length(StrResult)]) = 0)
 //      ) do
   if (Length(StrResult) > 0) then
   begin
-    Delete(StrResult, Length(StrResult)-Ord(StrResult[Length(StrResult)])+1, Ord(StrResult[Length(StrResult)]));
+    Delete(StrResult, Length(StrResult)-MyOrd(StrResult[Length(StrResult)])+1, MyOrd(StrResult[Length(StrResult)]));
   end;
+
   Result := StrResult;
 end;
 
 ///////////////////////////////////////////////////////////
 
-function EncryStrHex(Str, Key: String): String;
+function EncryStrHex(Str, Key: AnsiString): AnsiString;
 var
-  StrResult, TempResult, Temp: String;
+  StrResult, TempResult, Temp: AnsiString;
   I: Integer;
 begin
   TempResult := EncryStr(Str, Key);
   StrResult := '';
   for I := 0 to Length(TempResult) - 1 do
   begin
-    Temp := Format('%x', [Ord(TempResult[I + 1])]);
+    Temp := Format('%x', [MyOrd(TempResult[I + 1])]);
     if Length(Temp) = 1 then Temp := '0' + Temp;
     StrResult := StrResult + Temp;
   end;
   Result := StrResult;
 end;
 
-function DecryStrHex(StrHex, Key: String): String;
-  function HexToInt(Hex: String): Integer;
+function DecryStrHex(StrHex, Key: AnsiString): AnsiString;
+  function HexToInt(Hex: AnsiString): Integer;
   var
     I, Res: Integer;
-    ch: Char;
+    ch: AnsiChar;
   begin
     Res := 0;
     for I := 0 to Length(Hex) - 1 do
     begin
       ch := Hex[I + 1];
       if (ch >= '0') and (ch <= '9') then
-        Res := Res * 16 + Ord(ch) - Ord('0')
+        Res := Res * 16 + MyOrd(ch) - MyOrd('0')
       else if (ch >= 'A') and (ch <= 'F') then
-        Res := Res * 16 + Ord(ch) - Ord('A') + 10
+        Res := Res * 16 + MyOrd(ch) - MyOrd('A') + 10
       else if (ch >= 'a') and (ch <= 'f') then
-        Res := Res * 16 + Ord(ch) - Ord('a') + 10
+        Res := Res * 16 + MyOrd(ch) - MyOrd('a') + 10
       else raise Exception.Create('Error: not a Hex String');
     end;
     Result := Res;
   end;
 
 var
-  Str, Temp: String;
+  Str, Temp: AnsiString;
   I: Integer;
 begin
   Str := '';
   for I := 0 to Length(StrHex) div 2 - 1 do
   begin
     Temp := Copy(StrHex, I * 2 + 1, 2);
-    Str := Str + Chr(HexToInt(Temp));
+    Str := Str + MyChr(HexToInt(Temp));
   end;
   Result := DecryStr(Str, Key);
 end;
 
-function EncryFile(filename:string;Key:string):boolean;
+function EncryFile(filename: AnsiString;Key: AnsiString):boolean;
 var
   mm:TMemoryStream;
   ss:TStringStream;
-  s:string;
+  s: AnsiString;
 begin
   mm := TMemoryStream.Create;
   ss := TStringStream.Create('');
@@ -477,7 +515,7 @@ begin
     ss.CopyFrom(mm,mm.Size);
     s := EncryStr(ss.DataString,Key);
     mm.Clear;
-    mm.Write(Pchar(s)^,length(s));
+    mm.Write(PAnsichar(s)^,length(s));
     mm.Position := 0;
     mm.SaveToFile(filename);
     result := true; 
@@ -486,11 +524,11 @@ begin
     mm.Free;
   end;
 end;
-function DecryFile(filename:string;Key:string):boolean;
+function DecryFile(filename: AnsiString;Key: AnsiString):boolean;
 var
   mm:TMemoryStream;
   ss:TStringStream;
-  s:string;
+  s: AnsiString;
 begin
   mm := TMemoryStream.Create;
   ss := TStringStream.Create('');
@@ -499,7 +537,7 @@ begin
     ss.CopyFrom(mm,mm.Size);
     s := DecryStr(ss.DataString,Key);
     mm.Clear;
-    mm.Write(Pchar(s)^,length(s));
+    mm.Write(PAnsichar(s)^,length(s));
     mm.Position := 0;
     mm.SaveToFile(filename);
     result := true;

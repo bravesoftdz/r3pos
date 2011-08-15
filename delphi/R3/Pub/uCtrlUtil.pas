@@ -230,17 +230,17 @@ begin
     smNoneEh:begin
         TZQuery(DataSet).SortedFields  := ADOSort + '';
       end;
-    smDownEh:begin
+    smUpEh:begin
         if ADOSort='' then
            TZQuery(DataSet).SortedFields  := Column.FieldName +' ASC'
         else
-           TZQuery(DataSet).SortedFields  := ADOSort + ';' +Column.FieldName +' DESC';
+           TZQuery(DataSet).SortedFields  := ADOSort + ';' +Column.FieldName +' ASC';
       end;
-    smUpEh:begin
+    smDownEh:begin
         if ADOSort='' then
            TZQuery(DataSet).SortedFields  := Column.FieldName +' DESC'
         else
-           TZQuery(DataSet).SortedFields  := ADOSort + ';' +Column.FieldName +' ASC';
+           TZQuery(DataSet).SortedFields  := ADOSort + ';' +Column.FieldName +' DESC';
       end;
   end;
 end;

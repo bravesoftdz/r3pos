@@ -129,15 +129,10 @@ begin
 
     edtCLIENT_NAME.Enabled := False;
     edtIC_CARDNO.Enabled := False;
-    if (cdsTable.FieldByName('IC_STATUS').AsString = '9') then
-      Btn_Save.Enabled := False
+    if (cdsTable.FieldByName('IC_STATUS').AsInteger in [0,1]) and (cdsTable.FieldByName('IC_CARDNO').AsString <> '') then
+      Btn_Save.Enabled := True
     else
-      begin
-        if cdsTable.FieldbyName('IC_CARDNO').AsString <> '' then
-          Btn_Save.Enabled := True
-        else
-          Btn_Save.Enabled := False;
-      end;
+      Btn_Save.Enabled := False;
 
   finally
     Param.Free;

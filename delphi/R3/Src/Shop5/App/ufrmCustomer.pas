@@ -655,6 +655,7 @@ var  card,union:string;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
+  if not ShopGlobal.GetChkRight('33500001',3) then Raise Exception.Create('你没有"发卡"的权限,请和管理员联系.');
 
   if TfrmNewCard.SelectSendCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',Cds_Customer.FieldByName('CUST_NAME').AsString,1,card,union) then
     begin
@@ -673,6 +674,7 @@ procedure TfrmCustomer.actPasswordExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_Customer.Active) and (Cds_Customer.IsEmpty) then exit;
+  if not ShopGlobal.GetChkRight('33500001',2) then Raise Exception.Create('你没有"修改密码"的权限,请和管理员联系.');
   TfrmPassWord.SelectCard(Self,Cds_Customer.FieldByName('CUST_ID').AsString,IntToStr(Global.TENANT_ID));
 end;
 
@@ -682,6 +684,7 @@ begin
   inherited;
   if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
+  if not ShopGlobal.GetChkRight('33500001',4) then Raise Exception.Create('你没有"充值"的权限,请和管理员联系.');
   //if Cds_Customer.FieldByName('CUST_CODE').AsString='' then  Raise Exception.Create('此会员没有会员卡！');
   if TfrmDeposit.Open(Cds_Customer.FieldByName('CUST_ID').AsString,BALANCE) then
   begin
@@ -720,7 +723,7 @@ begin
   inherited;
   if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
-
+  if not ShopGlobal.GetChkRight('33500001',7) then Raise Exception.Create('你没有"注销卡"的权限,请和管理员联系.');
   if TfrmCancelCard.SelectCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',CardNo,CardName) then
     begin
       MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"注销成功！'),pchar(Application.Title),MB_OK);
@@ -733,6 +736,7 @@ begin
   inherited;
   if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
+  if not ShopGlobal.GetChkRight('33500001',5) then Raise Exception.Create('你没有"退款"的权限,请和管理员联系.');
   //if Cds_Customer.FieldByName('CUST_CODE').AsString='' then  Raise Exception.Create('此会员没有会员卡！');
   if TfrmReturn.Open(Cds_Customer.FieldByName('CUST_ID').AsString,BALANCE) then
   begin
@@ -902,6 +906,7 @@ var Aobj_Integral:TRecord_;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
+  if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有"赠送积分"的权限,请和管理员联系.');
   Aobj_Integral := TRecord_.Create;
   try
     if TfrmIntegralGlide_Add.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then
@@ -922,6 +927,7 @@ var Aobj_Integral:TRecord_;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
+  if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有"积分兑换"的权限,请和管理员联系.');
   Aobj_Integral := TRecord_.Create;
   try
     if TfrmIntegralGlide.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then
@@ -949,7 +955,7 @@ begin
   inherited;
   if not Cds_Customer.Active then exit;
   if Cds_Customer.IsEmpty then exit;
-
+  if not ShopGlobal.GetChkRight('33500001',6) then Raise Exception.Create('你没有"挂失卡"的权限,请和管理员联系.');
   if TfrmLossCard.SelectCard(Self,Cds_Customer.FieldbyName('CUST_ID').AsString,'#',CardNo,CardName) then
     begin
       MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"挂失成功！'),pchar(Application.Title),MB_OK);

@@ -3711,7 +3711,6 @@ begin
       LossCardExecute;
   end;
   7:begin
-    if not ShopGlobal.GetChkRight('33500001',2) then Raise Exception.Create('你没有"修改密码"的权限,请和管理员联系.');
     if AObj.FindField('CLIENT_ID')=nil then NewOrder;
     if AObj.FieldByName('CLIENT_ID').AsString = '' then
       begin

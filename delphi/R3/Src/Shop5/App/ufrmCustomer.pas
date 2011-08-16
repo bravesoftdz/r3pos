@@ -678,7 +678,6 @@ procedure TfrmCustomer.actPasswordExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_Customer.Active) and (Cds_Customer.IsEmpty) then exit;
-  if not ShopGlobal.GetChkRight('33500001',2) then Raise Exception.Create('你没有"修改密码"的权限,请和管理员联系.');
   TfrmPassWord.SelectCard(Self,Cds_Customer.FieldByName('CUST_ID').AsString,IntToStr(Global.TENANT_ID));
 end;
 

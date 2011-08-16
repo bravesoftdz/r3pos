@@ -73,6 +73,11 @@ begin
           edtCUST_NAME.Text := cdsTable.FieldByName('CLIENT_NAME').AsString;
           edtBALANCE.Text := cdsTable.FieldByName('BALANCE').AsString;
           edtNewBALANCE.Text:=edtBALANCE.Text;
+          if (cdsTable.FieldByName('IC_STATUS').AsInteger in [0,1]) and (cdsTable.FieldbyName('IC_CARDNO').AsString <> '') then
+            btnOk.Enabled := True
+          else
+            btnOk.Enabled := False;
+
           Params1:=TftParamlist.Create(nil);
           try
             Params1.ParamByName('GLIDE_ID').asString := '';

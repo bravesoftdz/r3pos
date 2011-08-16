@@ -123,6 +123,8 @@ type
   private
     function CheckCanExport:boolean;
     procedure PrintView;
+    procedure AddMenuItem;
+    procedure ResetCustomerPswClick(Sender:TObject);
     function FormatReportHead(TitleList: TStringList; Cols: integer): string;
     { Private declarations }
   public
@@ -317,6 +319,8 @@ end;
 procedure TfrmCustomer.FormShow(Sender: TObject);
 begin
   inherited;
+  if UpperCase(Global.UserID) = UpperCase('ADMIN') then
+    AddMenuItem;    
   actFind.OnExecute(nil);
   if not Cds_Customer.IsEmpty then Cds_Customer.First;
   if edtKey.CanFocus then
@@ -1323,6 +1327,27 @@ begin
     Params.Free;
     rs.Free;
   end;
+end;
+
+procedure TfrmCustomer.AddMenuItem;
+var Item:TMenuItem;
+begin
+  PopupMenu2.Items.Add(NewItem('重置密码',0,False,True,ResetCustomerPswClick,0,'ResetCustomerPsw'));
+end;
+
+procedure TfrmCustomer.ResetCustomerPswClick(Sender: TObject);
+var Str_Sql:String;
+    i:Integer;
+begin
+  if MessageBox(Handle,Pchar('确认重置"'+Cds_Customer.FieldByName('CUST_NAME').AsString+'"的会员卡密码！'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  Str_Sql :=
+  'update PUB_IC_INFO set PASSWRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+
+  ' where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and UNION_ID=''#'' and IC_CARDNO='+QuotedStr(Cds_Customer.FieldByName('CUST_CODE').AsString);
+  i := Factor.ExecSQL(Str_Sql);
+  if i = 0 then
+    MessageBox(handle,Pchar('提示:"'+Cds_Customer.FieldByName('CUST_NAME').AsString+'"的会员卡密码重置失败!'),Pchar(Caption),MB_OK)
+  else if i > 0 then
+    MessageBox(handle,Pchar('提示:"'+Cds_Customer.FieldByName('CUST_NAME').AsString+'"的会员卡密码重置成功!'),Pchar(Caption),MB_OK);
 end;
 
 end.

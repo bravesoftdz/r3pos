@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, uFnUtil,
-  Dialogs, uframeToolForm, ActnList, Menus, ComCtrls, ToolWin, StdCtrls, RzLabel,
+  Dialogs, uframeToolForm, ActnList, Menus, ComCtrls, ToolWin, StdCtrls, RzLabel, ObjCommon,
   RzTabs, ExtCtrls, RzPanel, DB, Grids, DBGridEh, uGlobal, cxControls, cxContainer,
   cxEdit, cxTextEdit, RzButton, ZBase, cxMaskEdit, cxButtonEdit, zrComboBoxList, uDsUtil,
   FR_Class, cxDropDownEdit, PrnDbgeh, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset;
@@ -98,6 +98,8 @@ type
     sqlstring:string;
     function CheckCanExport:boolean;
     procedure PrintView;
+    procedure AddMenuItem;
+    procedure ResetClientPswClick(Sender:TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -316,6 +318,8 @@ end;
 procedure TfrmClient.FormShow(Sender: TObject);
 begin
   inherited;
+  if UpperCase(Global.UserID) = UpperCase('ADMIN') then
+    AddMenuItem;  
   actFindExecute(nil);
   if edtKey.CanFocus then
     edtKey.SetFocus;
@@ -978,6 +982,27 @@ begin
     begin
       MessageBox(Handle,pchar(CardName+'卡"'+CardNo+'"注销成功！'),pchar(Application.Title),MB_OK);
     end;
+end;
+
+procedure TfrmClient.AddMenuItem;
+var Item:TMenuItem;
+begin
+  PopupMenu2.Items.Add(NewItem('重置密码',0,False,True,ResetClientPswClick,0,'ResetClientPsw'));
+end;
+
+procedure TfrmClient.ResetClientPswClick(Sender: TObject);
+var Str_Sql:String;
+    i:Integer;
+begin
+  if MessageBox(Handle,Pchar('确认重置"'+Cds_Client.FieldByName('CLIENT_NAME').AsString+'"的会员卡密码！'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  Str_Sql :=
+  'update PUB_IC_INFO set PASSWRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+
+  ' where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and UNION_ID=''#'' and IC_CARDNO='+QuotedStr(Cds_Client.FieldByName('CLIENT_CODE').AsString);
+  i := Factor.ExecSQL(Str_Sql);
+  if i = 0 then
+    MessageBox(handle,Pchar('提示:"'+Cds_Client.FieldByName('CLIENT_NAME').AsString+'"的会员卡密码重置失败!'),Pchar(Caption),MB_OK)
+  else if i > 0 then
+    MessageBox(handle,Pchar('提示:"'+Cds_Client.FieldByName('CLIENT_NAME').AsString+'"的会员卡密码重置成功!'),Pchar(Caption),MB_OK);
 end;
 
 end.

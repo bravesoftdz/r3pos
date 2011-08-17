@@ -48,6 +48,7 @@ TDevFactory=class
     procedure SetCloseDayPrinted(const Value: boolean);
     procedure SetCloseDayPrintFlag(const Value: integer);
     procedure SetCopys(const Value: integer);
+    function GetWidth: integer;
   protected
     
   public
@@ -97,7 +98,7 @@ TDevFactory=class
     property Title:string read GetTitle write SetTitle;
 
     //小打印机可以打印字符数
-    property Width:integer read FWidth write SetWidth;
+    property Width:integer read GetWidth write SetWidth;
     //补空行数
     property PrintNull:integer read FPrintNull write SetPrintNull;
 
@@ -179,6 +180,11 @@ begin
   s := StringReplace(DevFactory.FTitle,'[企业简称]',Global.SHORT_TENANT_NAME,[rfReplaceAll]);
   if s='' then s := Global.TENANT_NAME;
   result := s;
+end;
+
+function TDevFactory.GetWidth: integer;
+begin
+  result := FWidth-3;
 end;
 
 procedure TDevFactory.InitComm;

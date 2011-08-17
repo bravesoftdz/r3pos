@@ -90,13 +90,10 @@ begin
   IsSQLUpdate := true;
   Str:='update CA_RIGHT_FORDATA set DATA_OBJECT=:DATA_OBJECT,'
   + 'COMM=' + GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)
-  + ' where ROWS_ID=:OLD_ROWS_ID and COMM not in (''02'',''12'')';
+  + ' where ROWS_ID=:OLD_ROWS_ID';
   UpdateSQL.Add(Str);
-  case iDbType of
-  1: Str:= 'delete CA_RIGHT_FORDATA where ROWS_ID=:OLD_ROWS_ID ';
-  0,3,4,5:
-     Str:= 'delete from CA_RIGHT_FORDATA where ROWS_ID=:OLD_ROWS_ID ';
-  end;
+
+  Str:= 'update CA_RIGHT_FORDATA set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where ROWS_ID=:OLD_ROWS_ID ';
   DeleteSQL.Add(Str);
 end;
 

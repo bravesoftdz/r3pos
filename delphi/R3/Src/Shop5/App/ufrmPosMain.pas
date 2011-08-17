@@ -2822,15 +2822,15 @@ begin
        end;
     WriteAndEnter('收银员:'+rs.FieldbyName('CREA_USER_TEXT').AsString+'  导购员:'+rs.FieldbyName('GUIDE_USER_TEXT').AsString);
     WriteAndEnter(DevFactory.EncodeDivStr);
-    if PWidth=33 then
+    if PWidth=30 then
        begin
-         WriteAndEnter('商品        原价 单价 数量  金额');
-         WriteAndEnter('--------------------------------');
+         WriteAndEnter('商品     原价 单价 数量  金额');
+         WriteAndEnter('-----------------------------');
        end
     else
        begin
-         WriteAndEnter('商品              原价 现价 数量  金额');
-         WriteAndEnter('--------------------------------------');
+         WriteAndEnter('商品           原价 现价 数量  金额');
+         WriteAndEnter('-----------------------------------');
        end;
      total := 0;
      rs.First;

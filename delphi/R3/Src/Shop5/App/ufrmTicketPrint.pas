@@ -80,7 +80,7 @@ begin
       1:begin
       DevFactory.WritePrint('');
       DevFactory.WritePrint('店名:'+Global.SHOP_NAME);
-      DevFactory.WritePrint(FormatText('收银:'+Global.UserName,DevFactory.Width-16)+'日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
+      DevFactory.WritePrint(FormatText('收银:'+Global.UserName,DevFactory.Width-13)+' 日期:'+Copy(QueryDate,1,4)+'-'+Copy(QueryDate,5,2)+'-'+Copy(QueryDate,7,2));
       WhereStr := ' B.TENANT_ID=:TENANT_ID and B.SHOP_ID=:SHOP_ID and B.CREA_USER=:CREA_USER ';
       end;
       2:begin
@@ -135,10 +135,10 @@ begin
             end;
         end;
         Factor.Open(rs);
-        if DevFactory.Width = 38 then
-          DevFactory.WritePrint('商品名称                数量     金额')
+        if DevFactory.Width = 35 then
+          DevFactory.WritePrint('商品名称             数量     金额')
         else
-          DevFactory.WritePrint('商品名称           数量     金额');
+          DevFactory.WritePrint('商品名称        数量     金额');
         DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
         Sum_Goods := 0;
         Sum_Money := 0;
@@ -152,10 +152,10 @@ begin
           end;
         DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
 
-        if DevFactory.Width = 38 then
-          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',13)+FormatText(FloatToStr(Sum_Goods),8,false)+' '+FormatText(FloatToStr(Sum_Money),8,false))
+        if DevFactory.Width = 35 then
+          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',10)+FormatText(FloatToStr(Sum_Goods),8,false)+' '+FormatText(FloatToStr(Sum_Money),8,false))
         else
-          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',11)+FormatText(FloatToStr(Sum_Goods),7,false)+' '+FormatText(FloatToStr(Sum_Money),8,false));
+          DevFactory.WritePrint('合计:'+RepeatCharacter(' ',8)+FormatText(FloatToStr(Sum_Goods),7,false)+' '+FormatText(FloatToStr(Sum_Money),8,false));
         DevFactory.WritePrint('');
         DevFactory.WritePrint(RepeatCharacter('-',DevFactory.Width-1));
       end;

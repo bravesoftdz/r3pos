@@ -909,7 +909,7 @@ var Aobj_Integral:TRecord_;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有"赠送积分"的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33600001',2) then Raise Exception.Create('你没有"赠送积分"的权限,请和管理员联系.');
   Aobj_Integral := TRecord_.Create;
   try
     if TfrmIntegralGlide_Add.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then
@@ -930,7 +930,7 @@ var Aobj_Integral:TRecord_;
 begin
   inherited;
   if Cds_Customer.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('33400001',3) then Raise Exception.Create('你没有"积分兑换"的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('33600001',5) then Raise Exception.Create('你没有"积分兑换"的权限,请和管理员联系.');
   Aobj_Integral := TRecord_.Create;
   try
     if TfrmIntegralGlide.IntegralGlide(self,Cds_Customer.FieldbyName('CUST_ID').AsString,Aobj_Integral) then

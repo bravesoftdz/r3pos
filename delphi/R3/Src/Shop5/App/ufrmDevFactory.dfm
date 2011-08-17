@@ -48,7 +48,7 @@ object frmDevFactory: TfrmDevFactory
     Top = 0
     Width = 337
     Height = 193
-    ActivePage = TabSheet4
+    ActivePage = TabSheet1
     Align = alTop
     TabOrder = 2
     object TabSheet4: TTabSheet
@@ -244,6 +244,7 @@ object frmDevFactory: TfrmDevFactory
           'COM23'
           'COM24'
           'COM25'
+          'Windows'#39537#21160
           #35843#35797#27169#24335)
         TabOrder = 2
       end

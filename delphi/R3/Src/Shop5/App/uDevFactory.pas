@@ -1,7 +1,7 @@
 unit uDevFactory;
 
 interface
-uses Windows,Classes,spComm,SysUtils;
+uses Windows,Classes,spComm,SysUtils,zPrinters;
 type
 TDevFactory=class
   private
@@ -120,10 +120,16 @@ begin
   if DevFactory.LPT<5 then
      AssignFile(F,'LPT'+inttostr(DevFactory.LPT))
   else
-  if DevFactory.LPT>29 then
-     AssignFile(F,ExtractFilePath(ParamStr(0))+'debug\prt.txt')
+  if DevFactory.LPT in [5..29] then
+     AssignFile(F,'COM'+inttostr(DevFactory.LPT-4))
   else
-     AssignFile(F,'COM'+inttostr(DevFactory.LPT-4));
+  if DevFactory.LPT in [30] then
+     begin
+       AssignPrn(F);
+       Printer.Canvas.Font := Application.MainForm.Font;
+     end
+  else
+     AssignFile(F,ExtractFilePath(ParamStr(0))+'debug\prt.txt');
   rewrite(F);
 end;
 

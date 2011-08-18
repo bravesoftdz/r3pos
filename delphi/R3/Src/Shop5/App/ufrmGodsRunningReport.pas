@@ -42,9 +42,12 @@ type
     FReckAmt: Real;  //期初数量
     FReckMny: Real;  //期初金额
     FBalAmt:  Real;  //结存数量
+    FSumAmt:  Real;  //本次统计销量
+    FSumMny:  Real;  //本次统计销额
     procedure AddBillTypeItems; //添加帐单类型Items
 
-    procedure CreateGrid;  
+    procedure CreateGrid;
+    function  FormatStr(SetValue:Real; Format: string=''): string; //返回格式数量
     procedure CalcStorageInfo;  //累计计算库存
     function  GetGoodStorageORG: Boolean; //返回当前查询期初数量
     function  GetGoodDetailSQL(chk:boolean=true): widestring;
@@ -333,8 +336,12 @@ procedure TfrmGodsRunningReport.DBGridEh1GetFooterParams(Sender: TObject;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 begin
   if Column.FieldName = 'ORDER_TYPE' then Text :='期末结存'; //'合计:'+Text+'笔';
-  if Column.FieldName = 'ORG_AMT' then Text :=FloattoStr(FReckAmt)
-  else if Column.FieldName = 'BAL_AMT' then Text :=FloattoStr(FBalAmt);
+  if Column.FieldName = 'ORG_AMT' then Text :=FormatStr(FReckAmt,'#0.###');
+  if Column.FieldName = 'BAL_AMT' then Text :=FormatStr(FBalAmt,'#0.###');
+  if Column.FieldName = 'APRICE' then
+  begin
+    if FSumAmt<>0 then Text :=FormatStr(FSumMny/FSumAmt,'#0.00#') else Text :=FormatStr(FSumMny,'#0.00#');
+  end;
 end;
 
 procedure TfrmGodsRunningReport.AddBillTypeItems;
@@ -388,6 +395,9 @@ begin
   FReckAmt:=0;
   FReckMny:=0;
   FBalAmt:=0;
+  FSumAmt:=0;
+  FSumMny:=0;
+
   MaxReckDate:='';
   GodsID:=trim(fndP1_GODS_ID.AsString);
   ReckDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1);
@@ -511,12 +521,14 @@ begin
       adoReport1.First;
       while not adoReport1.Eof do
       begin
+        FSumAmt:=FSumAmt+adoReport1.FieldByName('IN_AMT').AsFloat+adoReport1.FieldByName('OUT_AMT').AsFloat;
+        FSumMny:=FSumMny+adoReport1.FieldByName('AMONEY').AsFloat;
         adoReport1.Edit;
         if adoReport1.RecNo=1 then //计算期初单价
         begin
           adoReport1.FieldByName('ORG_AMT').AsFloat:=FReckAmt; //本条期初数量
-          adoReport1.FieldByName('AMONEY').AsFloat:=FReckMny;
-          if FReckAmt<>0 then adoReport1.FieldByName('APRICE').AsFloat:=FReckMny/FReckAmt;
+          //adoReport1.FieldByName('AMONEY').AsFloat:=FReckMny;
+          //if FReckAmt<>0 then adoReport1.FieldByName('APRICE').AsFloat:=FReckMny/FReckAmt;
         end else
         begin
           adoReport1.FieldByName('ORG_AMT').AsFloat:=FBalAmt; //本条期初数量
@@ -539,6 +551,18 @@ begin
     result:=0
   else
     result:=1;
+end;
+
+function TfrmGodsRunningReport.FormatStr(SetValue: Real; Format: string): string;
+var
+  ReValue: Real;
+begin
+  Revalue:=Round(SetValue*1000);
+  Revalue:=Revalue*0.001;
+  if Format<>'' then 
+    result:=FormatFloat(Format,Revalue)
+  else
+    result:=FloatToStr(Revalue);
 end;
 
 end.

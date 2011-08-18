@@ -301,7 +301,7 @@ begin
   try
     rs.Close;
     rs.SQL.Text := 'select SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO,TENANT_ID from PUB_GOODSSORT '+
-    'where COMM not in (''02'',''12'') and TENANT_ID=110000001 and SORT_TYPE=1 order by LEVEL_ID';
+    'where COMM not in (''02'',''12'') and TENANT_ID=0 and SORT_TYPE=1 order by LEVEL_ID';
     GodsFactory.Db.Open(rs);
     ClearTree(rzCheckTree);
     CreateLevelTree(rs,rzCheckTree,'4444444444','SORT_ID','SORT_NAME','LEVEL_ID');
@@ -355,7 +355,7 @@ begin
       cs.SQL.Text :=
       'select UNIT_ID,'+IntToStr(Global.TENANT_ID)+' as TENANT_ID,UNIT_NAME,UNIT_SPELL,SEQ_NO from PUB_MEAUNITS where UNIT_ID in '+
       ' (select distinct B.UNIT_ID from PUB_GOODSINFO A,PUB_BARCODE B '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'') and B.TENANT_ID=110000001 and A.SORT_ID1 in ('+Sort_Str+')) ';
+      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'') and B.TENANT_ID=0 and A.SORT_ID1 in ('+Sort_Str+')) ';
       GodsFactory.Db.Open(cs);
       rs1.SyncDelta := cs.SyncDelta;
       

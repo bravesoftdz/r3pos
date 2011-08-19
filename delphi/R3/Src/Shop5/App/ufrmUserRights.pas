@@ -4,9 +4,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
-  RzButton, ComCtrls, RzTreeVw, StdCtrls, DB, ADODB, zBase, jpeg, DBClient,
-  Grids, DBGridEh, ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel, uFnUtil,
+  RzButton, ComCtrls, RzTreeVw, StdCtrls, DB, ADODB, zBase, jpeg, DBClient,ObjCommon,
+  Grids, DBGridEh, ZAbstractRODataset, ZAbstractDataset, ZDataset, RzCmboBx,
+  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit;
 
 type
   TfrmUserRights = class(TframeDialogForm)
@@ -26,14 +27,26 @@ type
     btnClose: TRzBitBtn;
     RzPnl_Price: TRzPanel;
     DbGridEh1: TDBGridEh;
-    adoRs: TZQuery;
-    adoRs1: TZQuery;
     RoleList: TZQuery;
-    rs1: TZQuery;
     OPcds: TZQuery;
     RoleDs: TDataSource;
     Label6: TLabel;
     Label7: TLabel;
+    tabDataRight: TRzTabSheet;
+    RzPanel1: TRzPanel;
+    RzPanel3: TRzPanel;
+    Panel3: TPanel;
+    Image3: TImage;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    RzPanel4: TRzPanel;
+    DataRightTree: TRzCheckTree;
+    RzPanel5: TRzPanel;
+    Label12: TLabel;
+    edtDataRight: TcxComboBox;
+    CdsShop_DeptRight: TZQuery;
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure rzCheckTreeStateChange(Sender: TObject; Node: TTreeNode; NewState: TRzCheckState);
@@ -46,26 +59,40 @@ type
     procedure DbGridEh1DblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure edtDataRightPropertiesChange(Sender: TObject);
   private
     User_ID:string;
     User_NAME:string;
     FModiRight: boolean;
-    FLastRole_IDS: string;  //最后一次打开: Role_IDS
+    FLastRole_IDS: string;
+    FDataRightState: Boolean;
+    FDataFlag: string;  //最后一次打开: Role_IDS
     procedure Init(InUserID,InUser_NAME,User_ACCOUNT: string; ROLE_IDS: String); //初始化显示数据(RoleGird和CheckeTree)
     procedure SaveRight;
+    procedure InitDataRight;
+    procedure ReadDataRight;
+    procedure WriteDataRight;
     procedure SetModiRight(const Value: boolean);
     function  GetROLE_IDS: string;
     function  GetROLE_NAMES: string;  //当前的角色List: ROLE_NAMES
     procedure DoRzPageChange(Sender: Tobject);  //Onchange
+    procedure InitShopTree;
+    procedure InitDeptTree;
+    procedure GetShop_DeptRight;
+    function IntToVarchar(FieldName: string): string;
+    procedure SetDataFlag(const Value: string);
+    procedure SetDataRightState(const Value: Boolean);
   public
     FReROLE_IDS: string;
     ccid:string;
-    locked:Boolean;
+    locked,UnLock:Boolean;
     procedure OpenRight(ROLE_IDS: string);
     class function ShowUserRight(InUserID,InUser_NAME,User_ACCOUNT: string; var ROLE_IDS: string): Boolean;
     property  ModiRight:boolean read FModiRight write SetModiRight;
     property  ROLE_IDS: string read GetROLE_IDS;  //当前的角色List: ROLE_IDS
     property  ROLE_NAMES: string read GetROLE_NAMES;  //当前的角色List: ROLE_NAMES
+    //当前用户所拥有的数据权限类型;
+    property DataFlag:string read FDataFlag write SetDataFlag;
   end;
 
 var
@@ -74,7 +101,7 @@ var
 implementation
 
 uses
-  uGlobal,uTreeUtil,uframeTreeFindDialog,ufrmUsers,uShopGlobal;
+  uGlobal,uTreeUtil,uframeTreeFindDialog,uShopGlobal, ufrmBasic, uDsUtil;
 
 {$R *.dfm}
 
@@ -94,17 +121,19 @@ begin
   User_ID:=InUserID;
   Label1.Caption:=InUser_NAME;
   Label2.Caption:=InUser_NAME;
+  Label11.Caption := InUser_NAME;
+  Label9.Caption := User_ACCOUNT;
   Label3.Caption:=User_ACCOUNT;
   Label5.Caption:=User_ACCOUNT;
 
   Cnd:='Select ROLE_ID as ROLE_ID1  From CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and ROLE_ID in ('''+StringReplace(ROLE_IDS,',',''',''',[rfReplaceAll])+''')';
   Str:='Select (case when B.ROLE_ID1 is null then 0 else 1 end) as selflag,A.* from  '+
-       ' (select ROLE_ID,ROLE_NAME,REMARK from CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
+       ' (select ROLE_ID,ROLE_NAME,RIGHT_FORDATA,REMARK from CA_ROLE_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')) A '+
        ' Left Join ('+Cnd+')B On A.ROLE_ID=B.ROLE_ID1 order by ROLE_ID ';
   RoleList.Close;
   RoleList.SQL.Text:=str;
   RoleList.Params.ParamByName('TENANT_ID').AsInteger:=shopGlobal.TENANT_ID;
-  Factor.Open(RoleList); 
+  Factor.Open(RoleList);
 
   try
     adoRs:=TZQuery.Create(nil);
@@ -118,9 +147,11 @@ begin
   finally
     adoRs.Free;
   end;
-  
+
   //读取当前角色IDS的Checked值
   OpenRight(ROLE_IDS);
+  GetShop_DeptRight;
+  RzPage.ActivePageIndex := 0;
   RzPage.OnChange:=DoRzPageChange;
   locked:=false;
 end;
@@ -247,10 +278,26 @@ begin
     Params:=TftParamList.Create(nil);
     Params.ParamByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
     Params.ParamByName('USER_ID').AsString:=User_ID;
-    Params.ParamByName('ROLE_IDS').asString:=self.ROLE_IDS;
-    Params.ParamByName('ROLE_NAMES').asString:=self.ROLE_NAMES;
+    if Self.ROLE_IDS <> '' then
+      Params.ParamByName('ROLE_IDS').asString:=self.ROLE_IDS
+    else
+      Params.ParamByName('ROLE_IDS').asString:='#';
+    if Self.ROLE_NAMES <> '' then
+      Params.ParamByName('ROLE_NAMES').asString:=self.ROLE_NAMES
+    else
+      Params.ParamByName('ROLE_NAMES').asString:='#';
     FReROLE_IDS:=Params.ParamByName('ROLE_IDS').asString;
-    Factor.ExecProc('TUserRolesList',Params);
+
+    WriteDataRight;
+    Factor.BeginTrans;
+    try
+      Factor.ExecProc('TUserRolesList',Params);
+      Factor.UpdateBatch(CdsShop_DeptRight,'TUserRightsData');
+      Factor.CommitTrans;
+    except
+      Factor.RollbackTrans;
+      Raise;
+    end;
   finally
     Params.Free;
   end;
@@ -323,6 +370,11 @@ begin
   CurIDS:=ROLE_IDS;
   if (trim(FLastRole_IDS)<>trim(CurIDS)) and (RzPage.ActivePage=TabSheet2) then
     OpenRight(CurIDS);
+  if (RzPage.ActivePage=tabDataRight) then
+  begin
+    InitDataRight;
+    ReadDataRight;
+  end;
 end;
 
 class function TfrmUserRights.ShowUserRight(InUserID, InUser_NAME,User_ACCOUNT: string; var ROLE_IDS: string): Boolean;
@@ -347,6 +399,212 @@ procedure TfrmUserRights.FormClose(Sender: TObject;
 begin
   inherited;
   RzPage.OnChange:=nil;
+end;
+
+procedure TfrmUserRights.InitDeptTree;
+var CdsDept:TZQuery;
+    Sql_Str,Join_Str:String;
+begin
+  Join_Str := GetStrJoin(Factor.iDbType);
+  CdsDept:=TZQuery.Create(nil);
+  try
+    CdsDept.Close;
+    CdsDept.SQL.Text:=
+    'select DEPT_ID as DATA_OBJECT,DEPT_NAME as DATA_NAME,''001'' as LEVEL_ID from CA_DEPT_INFO where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+
+    ' and DEPT_TYPE=''1'' and COMM not in (''02'',''12'') order by DEPT_ID';
+    Factor.Open(CdsDept);
+    CreateLevelTree(CdsDept,DataRightTree,'333333','DATA_OBJECT','DATA_NAME','LEVEL_ID');
+    if DataRightTree.Items.Count>0 then DataRightTree.TopItem.Selected:=True;
+  finally
+    CdsDept.Free;
+  end;
+
+end;
+
+procedure TfrmUserRights.InitShopTree;
+var CdsShop:TZQuery;
+    Sql_Str,Join_Str:String;
+begin
+  Join_Str := GetStrJoin(Factor.iDbType);
+  CdsShop:=TZQuery.Create(nil);
+  try
+    CdsShop.Close;
+    Sql_Str :=
+    'select DATA_OBJECT,DATA_NAME,LEVEL_ID from ('+
+    'select distinct a.CODE_ID as DATA_OBJECT,a.CODE_NAME as DATA_NAME, '+
+    'case when a.CODE_ID=''#'' then ''0099'''+
+    '     when substr(a.CODE_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+
+    '     when substr(a.CODE_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2) '+
+    '     else ''00'''+Join_Str+'substr(a.CODE_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) end as LEVEL_ID '+
+    ' from ( '+
+    ' select CODE_ID,CODE_NAME,LEVEL_ID from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' '+
+    ' union all '+
+    ' select ''#'' as CODE_ID,''无'' as CODE_NAME,'''' as LEVEL_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID)+
+    ' ) a,CA_SHOP_INFO b '+
+    ' where b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and b.COMM not in (''02'',''12'') and '+
+    ' (case when substr(a.CODE_ID,3,4)=''0000'' then substr(a.CODE_ID,1,2)=substr(b.REGION_ID,1,2) '+
+    '       when substr(a.CODE_ID,5,2)=''00'' then substr(a.CODE_ID,1,4)=substr(b.REGION_ID,1,4) '+
+    '       else a.CODE_ID=B.REGION_ID end) '+
+    ' union all ' +
+    ' select SHOP_ID,SHOP_NAME,'+
+    '    case when REGION_ID=''#'' then ''0099'''+Join_Str+IntToVarchar('SEQ_NO')+
+    '         when substring(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+IntToVarchar('SEQ_NO')+
+    '         when substring(REGION_ID,5,2)=''00''   then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+IntToVarchar('SEQ_NO')+
+    '         else ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,5,2)'+Join_Str+'''0001'' end as LEVEL_ID '+
+    '  from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+
+    '  )tmp '+
+    ' order by LEVEL_ID';
+    CdsShop.SQL.Text:=ParseSQL(Factor.iDbType,Sql_Str);
+
+    Factor.Open(CdsShop);
+    CreateLevelTree(CdsShop,DataRightTree,'444444','DATA_OBJECT','DATA_NAME','LEVEL_ID');
+    if DataRightTree.Items.Count>0 then DataRightTree.TopItem.Selected:=True;
+  finally
+    CdsShop.Free;
+  end;
+end;
+
+procedure TfrmUserRights.GetShop_DeptRight;
+var Str:String;
+    Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('USER_ID').AsString := Global.UserID;
+    Factor.Open(CdsShop_DeptRight,'TUserRightsData',Params);
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TfrmUserRights.WriteDataRight;
+var i,r:Integer;
+    ID:String;
+begin
+  if edtDataRight.Properties.Items.Count < 0 then Exit;
+  if edtDataRight.ItemIndex<0 then Exit;
+  r := TRecord_(edtDataRight.Properties.Items.Objects[edtDataRight.ItemIndex]).FieldByName('CODE_ID').AsInteger;
+
+  for i := 0 to DataRightTree.Items.Count - 1 do
+    begin
+      if DataRightTree.Items[i].hasChildren then continue;
+      ID := TRecord_(DataRightTree.Items[i].Data).FieldByName('DATA_OBJECT').AsString;
+      if DataRightTree.ItemState[i] in [csChecked] then
+        begin
+          if Length(ID) <> 13 then Continue;
+          if not CdsShop_DeptRight.Locate('TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT',VarArrayOf([IntToStr(Global.TENANT_ID),inttostr(r),Global.UserID,ID]),[]) then
+            begin
+              CdsShop_DeptRight.Append;
+              CdsShop_DeptRight.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+              CdsShop_DeptRight.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+              CdsShop_DeptRight.FieldByName('DATA_TYPE').AsString := inttostr(r);
+              CdsShop_DeptRight.FieldByName('USER_ID').AsString := Global.UserID;
+              CdsShop_DeptRight.FieldByName('DATA_OBJECT').AsString := ID;
+              CdsShop_DeptRight.Post;
+            end;
+        end
+      else
+        begin
+          if CdsShop_DeptRight.Locate('TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT',VarArrayOf([IntToStr(Global.TENANT_ID),inttostr(r),Global.UserID,ID]),[]) then
+            CdsShop_DeptRight.Delete;
+        end;
+    end;
+end;
+
+function TfrmUserRights.IntToVarchar(FieldName: string): string;
+begin
+  result:=trim(FieldName);
+  case Factor.iDbType of
+   0,5:
+      result:='cast('+FieldName+' as varchar)';
+   1: result:='to_char('+FieldName+')';
+   3: result:='str('+FieldName+')';
+   4: result:='ltrim(rtrim(char('+FieldName+')))';
+  end;
+end;
+
+procedure TfrmUserRights.ReadDataRight;
+var i,r:Integer;
+    SId:String;
+begin
+  WriteDataRight;
+  ClearTree(DataRightTree);
+  if edtDataRight.Properties.Items.Count < 0 then Exit;
+  if edtDataRight.ItemIndex<0 then Exit;
+  r := TRecord_(edtDataRight.Properties.Items.Objects[edtDataRight.ItemIndex]).FieldByName('CODE_ID').AsInteger;
+  case r of
+  1:InitShopTree;
+  2:InitDeptTree;
+  end;
+  if Copy(DataFlag,r,1) = '1' then
+    begin
+      for i := 0 to ChkShopTree.Items.Count - 1 do
+        begin
+          SId := TRecord_(ChkShopTree.Items[i].Data).FieldbyName('DATA_OBJECT').AsString;
+          if CdsShop_DeptRight.Locate('DATA_OBJECT;DATA_TYPE',varArrayOf([SId,inttostr(r)]),[]) then
+            ChkShopTree.ItemState[i] := csChecked
+          else
+            ChkShopTree.ItemState[i] := csUnchecked;
+        end;
+    end
+  else
+    begin
+      for i := 0 to ChkShopTree.Items.Count - 1 do
+        ChkShopTree.ItemState[i] := csUnchecked;
+    end;
+end;
+
+procedure TfrmUserRights.SetDataRightState(const Value: Boolean);
+begin
+  FDataRightState := Value;
+end;
+
+procedure TfrmUserRights.InitDataRight;
+var
+  v,i:integer;
+  rStr:string;
+  rs:TZQuery;
+  AObj:TRecord_;
+begin
+  locked := true;
+  try
+    TdsItems.ClearItems(edtDataRight.Properties.Items);
+    v := 0;
+    RoleList.First;
+    while not RoleList.Eof do
+      begin
+        v := (v or StrtoIntDef(RoleList.FieldbyName('RIGHT_FORDATA').AsString,0));
+        RoleList.Next;
+      end;
+    rStr := inttoBin(v);
+    DataFlag := rStr;
+    rs := Global.GetZQueryFromName('PUB_PARAMS');
+    for i:=1 to length(rStr) do
+      begin
+        if rs.Locate('CODE_ID;CODE_TYPE',varArrayOf([inttostr(i),'DATA_TYPE']),[]) then
+           begin
+             AObj := TRecord_.Create;
+             AObj.ReadFromDataSet('PUB_PARAMS');
+             edtDataRight.Properties.Items.AddObject(rs.FieldbyName('CODE_NAME').AsString,AObj);
+           end;
+      end;
+    if edtDataRight.Properties.Items.Count > 0 then edtDataRight.ItemIndex := 0;
+  finally
+    locked := false;
+  end;
+end;
+
+procedure TfrmUserRights.SetDataFlag(const Value: string);
+begin
+  FDataFlag := Value;
+end;
+
+procedure TfrmUserRights.edtDataRightPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if Locked then Exit;
+  ReadDataRight;
 end;
 
 end.

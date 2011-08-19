@@ -393,8 +393,8 @@ begin
   if length(rStr)<DataFlag then Exit;
   if rStr[DataFlag]<>'1' then Exit;
   case DataFlag of
-  1:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''')';
-  2:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''')';
+  1:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12''))';
+  2:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12''))';
   end;
 end;
 

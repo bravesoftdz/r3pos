@@ -3,8 +3,8 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   Top = 115
   BorderStyle = bsDialog
   Caption = #21040#36135#30830#35748
-  ClientHeight = 330
-  ClientWidth = 499
+  ClientHeight = 347
+  ClientWidth = 556
   OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -12,8 +12,8 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 33
-    Width = 499
-    Height = 250
+    Width = 556
+    Height = 267
     Align = alClient
     BorderInner = fsFlat
     BorderOuter = fsLowered
@@ -26,8 +26,8 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object DBGridEh1: TDBGridEh
       Left = 3
       Top = 3
-      Width = 493
-      Height = 244
+      Width = 550
+      Height = 261
       Align = alClient
       AutoFitColWidths = True
       DataSource = Ds
@@ -62,7 +62,14 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           FieldName = 'SEQNO'
           Footers = <>
           Title.Caption = #24207#21495
-          Width = 31
+          Width = 28
+        end
+        item
+          EditButtons = <>
+          FieldName = 'ARR_DATE'
+          Footers = <>
+          Title.Caption = #39044#35745#36865#36798#26085#26399
+          Width = 78
         end
         item
           DisplayFormat = '0000-00-00'
@@ -84,28 +91,28 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           FieldName = 'INDE_AMT'
           Footers = <>
           Title.Caption = #35746#36135#25968#37327
-          Width = 68
+          Width = 55
         end
         item
           EditButtons = <>
           FieldName = 'INDE_MNY'
           Footers = <>
           Title.Caption = #35746#36135#37329#39069
-          Width = 66
+          Width = 63
         end
         item
           EditButtons = <>
           FieldName = 'NEED_AMT'
           Footers = <>
           Title.Caption = #38656#27714#25968#37327
-          Width = 62
+          Width = 56
         end>
     end
   end
   object TitlePanel: TPanel [1]
     Left = 0
     Top = 0
-    Width = 499
+    Width = 556
     Height = 33
     Align = alTop
     BevelOuter = bvNone
@@ -127,7 +134,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object Bevel2: TBevel
       Left = 0
       Top = 31
-      Width = 499
+      Width = 556
       Height = 2
       Align = alBottom
     end
@@ -160,8 +167,8 @@ inherited frmDownStockOrder: TfrmDownStockOrder
   end
   object BottonPanel: TPanel [2]
     Left = 0
-    Top = 283
-    Width = 499
+    Top = 300
+    Width = 556
     Height = 47
     Align = alBottom
     BevelOuter = bvNone
@@ -170,7 +177,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
     object Bevel1: TBevel
       Left = 1
       Top = 1
-      Width = 497
+      Width = 554
       Height = 2
       Align = alTop
     end

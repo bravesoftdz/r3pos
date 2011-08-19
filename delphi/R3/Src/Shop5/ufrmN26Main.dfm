@@ -3812,13 +3812,6 @@ inherited frmN26Main: TfrmN26Main
             end
           end
         end
-        object RzButton1: TRzButton
-          Left = 296
-          Top = 24
-          Caption = 'RzButton1'
-          TabOrder = 1
-          OnClick = RzButton1Click
-        end
       end
     end
     object rzTool: TPanel

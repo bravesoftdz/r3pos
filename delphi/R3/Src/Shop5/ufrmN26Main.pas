@@ -288,7 +288,6 @@ type
     rzPage: TRzTabControl;
     Panel25: TPanel;
     actfrmN26Net: TAction;
-    RzButton1: TRzButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

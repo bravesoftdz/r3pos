@@ -354,6 +354,11 @@ type
     procedure LoadFile(cName: string);
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
     function  CheckSale_Limit: Boolean; //2011.06.12判断是否限量
+
+
+    //断电保护功能
+    procedure SaveToFile;
+    procedure LoadFromFile;
   public
     { Public declarations }
     // 最近输的货品
@@ -2129,6 +2134,7 @@ begin
      end;
 //  if cdsTable.IsEmpty then Raise Exception.Create('已经是一张空单，不能再执行清屏操作');
   if MessageBox(Handle,'是否删除当前未结帐单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then Exit;
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
   NewOrder;
 end;
 
@@ -2197,6 +2203,8 @@ begin
   RowId := 0;
   edtREMARK.Text := '输入备注按[\]键';
   ShowHeader;
+
+  LoadFromFile;
 end;
 
 procedure TfrmPosMain.Open(id: string);
@@ -2352,6 +2360,7 @@ begin
     cdsTable.EnableControls;
     Raise;
   end;
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
   AObj.CopyTo(SaveAObj);
   ShowHeader;
   dbState := dsBrowse;
@@ -2959,7 +2968,11 @@ end;
 procedure TfrmPosMain.cdsTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
-  if not cdsTable.ControlsDisabled then Calc;
+  if not cdsTable.ControlsDisabled then
+     begin
+       SaveToFile;
+       Calc;
+     end;
 end;
 
 procedure TfrmPosMain.OpenDialogGuide;
@@ -4260,6 +4273,39 @@ end;
 procedure TfrmPosMain.SetIsReck(const Value: boolean);
 begin
   FIsReck := Value;
+end;
+
+procedure TfrmPosMain.LoadFromFile;
+var
+  sm:TMemoryStream;
+begin
+  if not FileExists(ExtractFilePath(ParamStr(0))+'temp\pos.dat') then Exit;
+  if MessageBox(Handle,'系统检测存在没有保存的异常数据，是否恢复?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+     begin
+        sm := TMemoryStream.Create;
+        try
+          sm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
+          cdsTable.LoadFromStream(sm);
+          Calc;
+        finally
+          sm.Free;
+        end;
+     end;
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
+end;
+
+procedure TfrmPosMain.SaveToFile;
+var
+  sm:TMemoryStream;
+begin
+  if cdsTable.IsEmpty then Exit;
+  sm := TMemoryStream.Create;
+  try
+    cdsTable.SaveToStream(sm);
+    sm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
+  finally
+    sm.Free;
+  end;
 end;
 
 end.

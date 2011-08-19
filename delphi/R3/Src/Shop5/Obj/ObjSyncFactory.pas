@@ -642,6 +642,8 @@ begin
          end;
       if WasNull then ZQuery.Params[i].Value := null;
     end;
+  if ZQuery.Params.FindParam('LAST_TIME_STAMP')<>nil then
+     ZQuery.Params.FindParam('LAST_TIME_STAMP').Value := Params.ParamByName('TIME_STAMP').Value;
 end;
 function TSyncSingleTable.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
@@ -781,7 +783,7 @@ begin
   if TimeStamp and (Params.ParambyName('KEY_FLAG').AsInteger=0) then
      begin
        if WhereStr<>'' then WhereStr :=WhereStr+' and ';
-       WhereStr :=WhereStr+'TIME_STAMP<=:TIME_STAMP';
+       WhereStr :=WhereStr+'TIME_STAMP<=:LAST_TIME_STAMP';
      end;
   UpdateQuery.SQL.Text := 'update '+Params.ParambyName('TABLE_NAME').AsString+' set '+UpdateFld+' where '+WhereStr;
 

@@ -52,6 +52,8 @@ type
     DLLLC_FreeMsgMem:TLC_FreeMsgMem;
     DLLLC_FreeLibrary:TLC_FreeLibrary;
 
+    SenceId:string;
+    FSenceReady: boolean;
 
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
@@ -84,6 +86,7 @@ type
     function CreateXML(xml:string):IXMLDomDocument;
     function GetChallenge:boolean;
     function DoForLogin(checked:boolean=false):boolean;
+    procedure SetSenceReady(const Value: boolean);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -110,6 +113,7 @@ type
     property confirm:boolean read Fconfirm write Setconfirm;
     property ConnectTimeOut:integer read FConnectTimeOut write SetConnectTimeOut;
     property CommandTimeOut:integer read FCommandTimeOut write SetCommandTimeOut;
+    property SenceReady:boolean read FSenceReady write SetSenceReady;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
@@ -158,6 +162,8 @@ begin
 //    LCObject.OnFuncCall2 := DoFuncCall2;
 //    LCObject.OnFuncCall3 := DoFuncCall3;
     Connect;
+    SenceReady := false;
+    SenceId := 'CS';
   except
     MessageBox(Handle,'系统没有检测到"新商盟接口组件",请检查软件是否正确安装?','友情提示...',MB_OK+MB_ICONWARNING);
   end;
@@ -202,9 +208,9 @@ begin
   frmLogo.ShowTitle := '正在登录新商盟...';
   try
     GetSignature;
-//    SessionFail := false;
-//    Send2('login',xsm_username,xsm_password);
-    Send('login',xsm_signature);
+//  修改成带场景的    
+//    Send('login',xsm_signature);
+    Send2('login',xsm_signature,SenceId);
     if not WaitRun(commandTimeout) then Logined := false;
     result := Logined;
     if Hinted and not result then
@@ -248,6 +254,7 @@ begin
           LoginError := '无效信息,代码:'+szPara
        else
           LoginError := '返回未知错误...';
+       SenceReady := Logined;
      end;
   if szMethodName='sessionFail' then
      begin
@@ -262,8 +269,8 @@ begin
      end;
   if szMethodName='finish' then
      begin
-       finish := (szPara = 'finish');
-       confirm := (szPara = 'confirm');
+       finish := (szPara = 'finish') or (szPara = 'ready');
+       confirm := (szPara = 'refuse');
      end;
   if szMethodName='kickOut' then
      begin
@@ -399,7 +406,10 @@ begin
      end;
   finish := false;
   confirm := false;
-  Send3('getModule',sid,EncodeXml(oid),'clear');
+  if oid='' then
+     Send('getScene',sid)
+  else
+     Send2('getModule',sid,EncodeXml(oid));
   if not WaitRun(commandTimeout) then Exit;
   if SessionFail then //失效了，自动重新请求
      begin
@@ -408,12 +418,17 @@ begin
      end;
   if confirm then
      begin
-       if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
-          begin
-            Send3('getModule',sid,EncodeXml(oid),'force');
-            if not WaitRun(commandTimeout) then Exit;
-          end;
+       MessageBox(Handle,'当前模块正在操作状态，请完成操作后再切换模块?','友情提示...',MB_OK+MB_ICONQUESTION);
+       Exit;
      end;
+//  if confirm then
+//     begin
+//       if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+//          begin
+//            Send3('getModule',sid,EncodeXml(oid),'force');
+//            if not WaitRun(commandTimeout) then Exit;
+//          end;
+//     end;
   result := true;
   finally
     if not result then PageHandle := SaveHandle;
@@ -490,7 +505,8 @@ begin
   result := true;
   _Start := GetTickCount;
   s := frmLogo.Visible;
-  if not s then frmLogo.Show;
+  // XSM有进度了，不需要我加了
+//  if not s then frmLogo.Show;
   frmLogo.ProgressBar1.Position := 1;
   frmLogo.ProgressBar1.Update;
 //  Application.OnMessage := DoMsgFilter;
@@ -501,7 +517,7 @@ begin
 //       windows.MsgWaitForMultipleObjects(1,FhEvent,False,500,QS_ALLINPUT);
        Application.ProcessMessages;
        W := (GetTickCount-_Start);
-       frmLogo.BringToFront;
+//       frmLogo.BringToFront;
        frmLogo.ProgressBar1.Position := (W div 500);
        frmLogo.ProgressBar1.Update;
        if (GetTickCount-_Start)>WaitOutTime then
@@ -781,6 +797,11 @@ begin
   finally
     DLLLC_FreeMsgMem(Message.WParam,Message.LParam);
   end;
+end;
+
+procedure TfrmXsmIEBrowser.SetSenceReady(const Value: boolean);
+begin
+  FSenceReady := Value;
 end;
 
 end.

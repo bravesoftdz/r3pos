@@ -60,6 +60,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtDataRightPropertiesChange(Sender: TObject);
+    procedure DataRightTreeStateChange(Sender: TObject; Node: TTreeNode;
+      NewState: TRzCheckState);
   private
     User_ID:string;
     User_NAME:string;
@@ -492,7 +494,6 @@ begin
       ID := TRecord_(DataRightTree.Items[i].Data).FieldByName('DATA_OBJECT').AsString;
       if DataRightTree.ItemState[i] in [csChecked] then
         begin
-          if Length(ID) <> 13 then Continue;
           if not CdsShop_DeptRight.Locate('TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT',VarArrayOf([IntToStr(Global.TENANT_ID),inttostr(r),Global.UserID,ID]),[]) then
             begin
               CdsShop_DeptRight.Append;
@@ -528,7 +529,6 @@ procedure TfrmUserRights.ReadDataRight;
 var i,r:Integer;
     SId:String;
 begin
-  WriteDataRight;
   ClearTree(DataRightTree);
   if edtDataRight.Properties.Items.Count < 0 then Exit;
   if edtDataRight.ItemIndex<0 then Exit;
@@ -537,22 +537,27 @@ begin
   1:InitShopTree;
   2:InitDeptTree;
   end;
+  locked := true;
+  try
   if Copy(DataFlag,r,1) = '1' then
     begin
-      for i := 0 to ChkShopTree.Items.Count - 1 do
+      for i := 0 to DataRightTree.Items.Count - 1 do
         begin
-          SId := TRecord_(ChkShopTree.Items[i].Data).FieldbyName('DATA_OBJECT').AsString;
+          SId := TRecord_(DataRightTree.Items[i].Data).FieldbyName('DATA_OBJECT').AsString;
           if CdsShop_DeptRight.Locate('DATA_OBJECT;DATA_TYPE',varArrayOf([SId,inttostr(r)]),[]) then
-            ChkShopTree.ItemState[i] := csChecked
+            DataRightTree.ItemState[i] := csChecked
           else
-            ChkShopTree.ItemState[i] := csUnchecked;
+            DataRightTree.ItemState[i] := csUnchecked;
         end;
     end
   else
     begin
-      for i := 0 to ChkShopTree.Items.Count - 1 do
-        ChkShopTree.ItemState[i] := csUnchecked;
+      for i := 0 to DataRightTree.Items.Count - 1 do
+        DataRightTree.ItemState[i] := csUnchecked;
     end;
+  finally
+    locked := false;
+  end;
 end;
 
 procedure TfrmUserRights.SetDataRightState(const Value: Boolean);
@@ -574,7 +579,8 @@ begin
     RoleList.First;
     while not RoleList.Eof do
       begin
-        v := (v or StrtoIntDef(RoleList.FieldbyName('RIGHT_FORDATA').AsString,0));
+        if RoleList.FieldbyName('selflag').asInteger=1 then
+        v := (v or round(BintoInt(RoleList.FieldbyName('RIGHT_FORDATA').AsString)));
         RoleList.Next;
       end;
     rStr := inttoBin(v);
@@ -582,14 +588,16 @@ begin
     rs := Global.GetZQueryFromName('PUB_PARAMS');
     for i:=1 to length(rStr) do
       begin
-        if rs.Locate('CODE_ID;CODE_TYPE',varArrayOf([inttostr(i),'DATA_TYPE']),[]) then
+        if rs.Locate('CODE_ID;TYPE_CODE',varArrayOf([inttostr(i),'DATA_TYPE']),[]) then
            begin
              AObj := TRecord_.Create;
-             AObj.ReadFromDataSet('PUB_PARAMS');
+             AObj.ReadFromDataSet(rs);
              edtDataRight.Properties.Items.AddObject(rs.FieldbyName('CODE_NAME').AsString,AObj);
            end;
       end;
     if edtDataRight.Properties.Items.Count > 0 then edtDataRight.ItemIndex := 0;
+    edtDataRight.Enabled := (edtDataRight.Properties.Items.Count>0);
+    if not edtDataRight.Enabled then edtDataRight.Text := '√ª∆Ù”√'; 
   finally
     locked := false;
   end;
@@ -605,6 +613,14 @@ begin
   inherited;
   if Locked then Exit;
   ReadDataRight;
+end;
+
+procedure TfrmUserRights.DataRightTreeStateChange(Sender: TObject;
+  Node: TTreeNode; NewState: TRzCheckState);
+begin
+  inherited;
+  if Locked then Exit;
+  WriteDataRight;
 end;
 
 end.

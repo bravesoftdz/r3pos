@@ -386,7 +386,7 @@ begin
   while not rs.Eof do
     begin
       if pos(','+rs.FieldByName('').AsString+',',','+roles+',')>0 then
-      r := (r or StrtoIntDef(rs.FieldbyName('RIGHT_FORDATA').AsString,0));
+      r := (r or Round(BintoInt(rs.FieldbyName('RIGHT_FORDATA').AsString)));
       rs.Next;
     end;
   rStr := inttoBin(r);

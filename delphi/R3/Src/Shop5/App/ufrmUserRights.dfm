@@ -15,8 +15,6 @@ inherited frmUserRights: TfrmUserRights
     inherited RzPage: TRzPageControl
       Width = 388
       Height = 363
-      ActivePage = tabDataRight
-      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -456,6 +454,7 @@ inherited frmUserRights: TfrmUserRights
               Top = 34
               Width = 364
               Height = 221
+              OnStateChange = DataRightTreeStateChange
               Align = alClient
               Font.Charset = GB2312_CHARSET
               Font.Color = clWindowText
@@ -485,7 +484,7 @@ inherited frmUserRights: TfrmUserRights
                 Top = 7
                 Width = 60
                 Height = 12
-                Caption = #25968#25454#31867#22411#65306
+                Caption = #26435#38480#31867#22411#65306
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -12
@@ -498,6 +497,7 @@ inherited frmUserRights: TfrmUserRights
                 Top = 4
                 Width = 121
                 Height = 20
+                Properties.DropDownListStyle = lsFixedList
                 Properties.OnChange = edtDataRightPropertiesChange
                 TabOrder = 0
               end

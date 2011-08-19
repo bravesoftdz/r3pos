@@ -68,7 +68,7 @@ type
     { Public declarations }
     function GetOperRight(CdsRight: TDataSet; SEQUNo: integer; Filter:string=''): Boolean;
     function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean; overload;
-    //数据权限  DataFlag 按权限定义项走
+    //数据权限  DataFlag 按权限定义项走 1门店 2部门
     function GetDataRight(FieldName:string;DataFlag:integer):string;
     procedure LoadRight;
     //1.操作日志 2.数据日志

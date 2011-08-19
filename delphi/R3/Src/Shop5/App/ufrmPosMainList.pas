@@ -32,6 +32,8 @@ type
     procedure btnSearchClick(Sender: TObject);
     procedure CdsSalesAfterScroll(DataSet: TDataSet);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure dbGridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
   public
@@ -163,6 +165,27 @@ begin
        Raise Exception.Create('没有选中你要查询的单据...');
      end;
   self.ModalResult := MROK;
+end;
+
+procedure TfrmPosMainList.dbGridDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect: TRect;
+begin
+  inherited;
+  if (Rect.Top = dbGrid.CellRect(dbGrid.Col, dbGrid.Row).Top) and (not
+    (gdFocused in State) or not dbGrid.Focused) then
+  begin
+    dbGrid.Canvas.Brush.Color := clAqua;
+  end;
+  dbGrid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      dbGrid.canvas.FillRect(ARect);
+      DrawText(dbGrid.Canvas.Handle,pchar(Inttostr(CdsSales.RecNo)),length(Inttostr(CdsSales.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
 end;
 
 end.

@@ -305,7 +305,7 @@ type
     procedure HangUp;
     procedure PickUp;
     procedure Check;
-
+    procedure LookOrder;
     procedure PopupMenu;
 
     function EnCodeBarcode:string;
@@ -378,7 +378,7 @@ implementation
 uses ufrmMain, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
      ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
-     ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard;
+     ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList;
 {$R *.dfm}
 
 procedure TfrmPosMain.FormCreate(Sender: TObject);
@@ -2159,7 +2159,7 @@ begin
   STGAMOUNT := 0;
   lblInputHimt.Caption := '';
   if not ShopGlobal.GetChkRight('13100001',2) then
-     Raise Exception.Create('  您没有新增权限，请联系管理员！  '); 
+     Raise Exception.Create('  您没有新增权限，请联系管理员！  ');
   dbState := dsInsert;
   AObj.FieldbyName('SALES_ID').asString := TSequence.NewId();
   AObj.FieldbyName('GLIDE_NO').asString := '..新增..';
@@ -2466,6 +2466,10 @@ begin
   if (Shift = [ssCtrl]) and (Key in [ord('P'),ord('p')]) then
      begin
        PostMessage(Handle,WM_EXEC_ORDER,0,3);
+     end;
+  if (Shift = [ssCtrl]) and (Key in [ord('F'),ord('f')]) then
+     begin
+       LookOrder;
      end;
   if (Shift = []) and (Key = VK_INSERT) then
      begin
@@ -4306,6 +4310,15 @@ begin
   finally
     sm.Free;
   end;
+end;
+
+procedure TfrmPosMain.LookOrder;
+var SalesId:String;
+begin
+  if dbState in [dsInsert,dsEdit] then Raise Exception.Create('在开单状态下,不能进行销售单查询!');
+  SalesId := TfrmPosMainList.FindDialog(Self);
+  if SalesId = '' then Exit;
+  Open(SalesId);
 end;
 
 end.

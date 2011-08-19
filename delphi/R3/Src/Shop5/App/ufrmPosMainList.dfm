@@ -1,35 +1,31 @@
 inherited frmPosMainList: TfrmPosMainList
-  Left = 414
-  Top = 174
+  Left = 322
+  Top = 165
   Caption = #38144#21806#21333#26597#35810
   ClientHeight = 421
-  ClientWidth = 505
+  ClientWidth = 596
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 505
+    Width = 596
     Height = 421
-    BorderColor = clWhite
-    Color = clWhite
     inherited RzPage: TRzPageControl
-      Top = 83
-      Width = 495
-      Height = 293
+      Top = 76
+      Width = 586
+      Height = 300
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
-        Color = clWhite
         Caption = #38144#21806#21333#21015#34920
         inherited RzPanel2: TRzPanel
-          Width = 491
-          Height = 266
-          BorderColor = clWhite
+          Width = 582
+          Height = 273
           Color = clWhite
           object dbGrid: TDBGridEh
             Left = 5
             Top = 5
-            Width = 481
-            Height = 256
+            Width = 572
+            Height = 263
             Align = alClient
             AllowedOperations = []
             DataSource = DsSales
@@ -57,7 +53,15 @@ inherited frmPosMainList: TfrmPosMainList
             CurrencySymbol = #65509
             DecimalNumber = 2
             DigitalNumber = 12
+            OnDrawColumnCell = dbGridDrawColumnCell
             Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SEQNO'
+                Footers = <>
+                Title.Caption = #24207#21495
+                Width = 30
+              end
               item
                 EditButtons = <>
                 FieldName = 'GLIDE_NO'
@@ -104,8 +108,7 @@ inherited frmPosMainList: TfrmPosMainList
     end
     inherited btPanel: TRzPanel
       Top = 376
-      Width = 495
-      Color = clWhite
+      Width = 586
       object btnClose: TRzBitBtn
         Left = 419
         Top = 10
@@ -154,11 +157,10 @@ inherited frmPosMainList: TfrmPosMainList
     object RzPanel1: TRzPanel
       Left = 5
       Top = 5
-      Width = 495
-      Height = 78
+      Width = 586
+      Height = 71
       Align = alTop
       BorderOuter = fsNone
-      Color = clWhite
       TabOrder = 2
       object RzLabel1: TRzLabel
         Left = 16
@@ -169,20 +171,20 @@ inherited frmPosMainList: TfrmPosMainList
       end
       object RzLabel2: TRzLabel
         Left = 16
-        Top = 56
+        Top = 51
         Width = 48
         Height = 12
         Caption = #38144#21806#21333#21495
       end
       object RzLabel3: TRzLabel
         Left = 16
-        Top = 30
+        Top = 28
         Width = 48
         Height = 12
         Caption = #20250#21592#22995#21517
       end
       object RzLabel4: TRzLabel
-        Left = 197
+        Left = 185
         Top = 8
         Width = 12
         Height = 12
@@ -190,41 +192,41 @@ inherited frmPosMainList: TfrmPosMainList
       end
       object RzLabel5: TRzLabel
         Left = 200
-        Top = 56
-        Width = 84
+        Top = 51
+        Width = 91
         Height = 12
-        Caption = #36755#20837#21518#22235#20301#26597#35810
+        Caption = #25903#25345#21518#22235#20301#26597#35810
         Font.Charset = GB2312_CHARSET
-        Font.Color = clBlue
+        Font.Color = clNavy
         Font.Height = -12
         Font.Name = #23435#20307
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
       end
       object D1: TcxDateEdit
         Left = 72
         Top = 4
-        Width = 121
+        Width = 110
         Height = 20
         TabOrder = 0
       end
       object D2: TcxDateEdit
-        Left = 213
+        Left = 201
         Top = 4
-        Width = 121
+        Width = 110
         Height = 20
         TabOrder = 1
       end
       object edtSALES_ID: TcxTextEdit
         Left = 72
-        Top = 51
+        Top = 46
         Width = 121
         Height = 20
         TabOrder = 2
       end
       object btnSearch: TRzBitBtn
         Left = 340
-        Top = 48
+        Top = 43
         Height = 26
         Caption = #26597#35810'(&F)'
         Color = clSilver
@@ -247,8 +249,8 @@ inherited frmPosMainList: TfrmPosMainList
       end
       object edtCustomerID: TzrComboBoxList
         Left = 72
-        Top = 27
-        Width = 262
+        Top = 25
+        Width = 238
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <

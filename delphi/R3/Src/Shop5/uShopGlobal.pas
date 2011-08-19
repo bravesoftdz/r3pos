@@ -385,7 +385,7 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      if pos(','+rs.FieldByName('').AsString+',',','+roles+',')>0 then
+      if pos(','+rs.FieldByName('ROLE_ID').AsString+',',','+roles+',')>0 then
       r := (r or Round(BintoInt(rs.FieldbyName('RIGHT_FORDATA').AsString)));
       rs.Next;
     end;

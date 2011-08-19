@@ -3014,7 +3014,7 @@ begin
   if DllHandle > 0 then 
   try
     //logo
-    Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
+    //Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
     Image6.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
     Image20.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
     Image17.Picture.Graphic  := GetJpeg(sflag+'logo_r2');

@@ -239,7 +239,8 @@ uses
   ufrmN26Main in 'ufrmN26Main.pas' {frmN26Main},
   ufrmN26Desk in 'ufrmN26Desk.pas' {frmN26Desk},
   ufrmN26Browser in 'App\ufrmN26Browser.pas' {frmN26Browser},
-  uGodsFactory in 'App\uGodsFactory.pas';
+  uGodsFactory in 'App\uGodsFactory.pas',
+  ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide};
 
 {$R *.res}
 var

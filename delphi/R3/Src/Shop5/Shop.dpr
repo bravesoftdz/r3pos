@@ -237,7 +237,8 @@ uses
   ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
   ufrmShopMain in 'ufrmShopMain.pas' {frmShopMain},
-  ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk};
+  ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk},
+  ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide};
 
 {$R *.res}
 var

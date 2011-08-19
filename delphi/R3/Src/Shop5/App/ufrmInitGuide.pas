@@ -99,12 +99,13 @@ type
   public
     { Public declarations }
     procedure LoadParameter;
-    procedure WriteParameter;    
+    procedure WriteParameter;
+    class function InitGuide(AOwner:TForm):boolean;
   end;
 
 
 implementation
-uses uShopGlobal,uGlobal;
+uses uShopGlobal,uGlobal,uDevFactory;
 {$R *.dfm}
 
 procedure TfrmInitGuide.FormCreate(Sender: TObject);
@@ -291,6 +292,7 @@ begin
   finally
      F.Free;
   end;
+  DevFactory.InitComm;
 end;
 
 procedure TfrmInitGuide.LoadTree;
@@ -303,7 +305,6 @@ begin
     rs.SQL.Text := 'select SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO,TENANT_ID from PUB_GOODSSORT '+
     'where COMM not in (''02'',''12'') and TENANT_ID=0 and SORT_TYPE=1 order by LEVEL_ID';
     GodsFactory.Db.Open(rs);
-    ClearTree(rzCheckTree);
     CreateLevelTree(rs,rzCheckTree,'4444444444','SORT_ID','SORT_NAME','LEVEL_ID');
   finally
     rs.Free;
@@ -320,8 +321,12 @@ begin
   cs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO,TENANT_ID from PUB_GOODSSORT where 1<>1';
+    rs.SQL.Text := 'select SORT_ID,LEVEL_ID,SORT_NAME,SORT_TYPE,SORT_SPELL,SEQ_NO,TENANT_ID from PUB_GOODSSORT where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SORT_TYPE=1';
     Factor.Open(rs);
+    if not rs.IsEmpty then
+       begin
+         if MessageBox(Handle,'此账套已经初化了，是否重初始化？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       end;
     j := 1;
     for i := 0 to rzCheckTree.Items.Count - 1 do
       begin
@@ -344,22 +349,24 @@ begin
           end;
       end;
 
-
+    if Trim(Sort_Str) = '' then Exit;
+    Factor.BeginTrans();
     try
       Sql_Str := 'delete from PUB_MEAUNITS where TENANT_ID='+IntToStr(Global.TENANT_ID);
       Factor.ExecSQL(Sql_Str);
       Sql_Str := 'delete from PUB_GOODSSORT where SORT_TYPE=1 and TENANT_ID='+IntToStr(Global.TENANT_ID);
       Factor.ExecSQL(Sql_Str);
       
-      if Trim(Sort_Str) = '' then Exit;
       cs.SQL.Text :=
       'select UNIT_ID,'+IntToStr(Global.TENANT_ID)+' as TENANT_ID,UNIT_NAME,UNIT_SPELL,SEQ_NO from PUB_MEAUNITS where UNIT_ID in '+
-      ' (select distinct B.UNIT_ID from PUB_GOODSINFO A,PUB_BARCODE B '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'') and B.TENANT_ID=0 and A.SORT_ID1 in ('+Sort_Str+')) ';
+      '('+
+      'select A.CALC_UNITS from PUB_GOODSINFO A where A.COMM not in (''02'',''12'') and A.TENANT_ID=0 and A.SORT_ID1 in ('+Sort_Str+') union all '+
+      'select A.SMALL_UNITS from PUB_GOODSINFO A where A.COMM not in (''02'',''12'') and A.TENANT_ID=0 and A.SORT_ID1 in ('+Sort_Str+') union all '+
+      'select A.BIG_UNITS from PUB_GOODSINFO A where A.COMM not in (''02'',''12'') and A.TENANT_ID=0 and A.SORT_ID1 in ('+Sort_Str+') '+
+      ') ';
       GodsFactory.Db.Open(cs);
       rs1.SyncDelta := cs.SyncDelta;
       
-      Factor.BeginTrans();
       Factor.UpdateBatch(rs1,'TMeaUnits');
       Factor.UpdateBatch(rs,'TGoodsSort');
       Factor.CommitTrans;
@@ -411,6 +418,18 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+class function TfrmInitGuide.InitGuide(AOwner: TForm): boolean;
+begin
+  with TfrmInitGuide.Create(AOwner) do
+    begin
+      try
+        result := (ShowModal=MROK);
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

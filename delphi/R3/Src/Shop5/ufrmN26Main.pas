@@ -288,6 +288,7 @@ type
     rzPage: TRzTabControl;
     Panel25: TPanel;
     actfrmN26Net: TAction;
+    RzButton1: TRzButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -407,6 +408,7 @@ type
     procedure RzBmpButton1Click(Sender: TObject);
     procedure RzTrayIcon1MinimizeApp(Sender: TObject);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
+    procedure RzButton1Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -479,7 +481,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmN26Browser;
+  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide;
 {$R *.dfm}
 
 procedure TfrmN26Main.FormActivate(Sender: TObject);
@@ -3933,6 +3935,12 @@ begin
   inherited;
   Form := FindChildForm(TfrmPosMain);
   if Form<>nil then Form.WindowState := wsMaximized;
+end;
+
+procedure TfrmN26Main.RzButton1Click(Sender: TObject);
+begin
+  inherited;
+  TfrmInitGuide.InitGuide(self); 
 end;
 
 end.

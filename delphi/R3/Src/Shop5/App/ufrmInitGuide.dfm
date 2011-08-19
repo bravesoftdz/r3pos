@@ -2458,10 +2458,12 @@ inherited frmInitGuide: TfrmInitGuide
           Top = 2
           Width = 547
           Height = 261
-          ActivePage = TabSheet2
+          ActivePage = TabSheet1
           Align = alClient
           FlatColor = clWhite
-          TabIndex = 1
+          ShowFullFrame = False
+          ShowShadow = False
+          TabIndex = 0
           TabOrder = 0
           FixedDimension = 18
           object TabSheet1: TRzTabSheet
@@ -2487,8 +2489,8 @@ inherited frmInitGuide: TfrmInitGuide
             object RzPanel7: TRzPanel
               Left = 0
               Top = 0
-              Width = 543
-              Height = 239
+              Width = 547
+              Height = 242
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -2548,8 +2550,8 @@ inherited frmInitGuide: TfrmInitGuide
             object RzPanel8: TRzPanel
               Left = 0
               Top = 0
-              Width = 543
-              Height = 239
+              Width = 547
+              Height = 242
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -2565,8 +2567,8 @@ inherited frmInitGuide: TfrmInitGuide
                 object RzLabel3: TRzLabel
                   Left = 4
                   Top = 5
-                  Width = 285
-                  Height = 223
+                  Width = 48
+                  Height = 12
                   Caption = #35828#26126#25991#23383
                 end
               end
@@ -2580,6 +2582,7 @@ inherited frmInitGuide: TfrmInitGuide
                 Font.Height = -12
                 Font.Name = #23435#20307
                 Font.Style = []
+                FrameVisible = True
                 Indent = 19
                 ParentFont = False
                 RowSelect = True
@@ -2595,8 +2598,8 @@ inherited frmInitGuide: TfrmInitGuide
             object RzPanel6: TRzPanel
               Left = 0
               Top = 0
-              Width = 543
-              Height = 239
+              Width = 547
+              Height = 242
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite

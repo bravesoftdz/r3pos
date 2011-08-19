@@ -314,6 +314,8 @@ begin
       Column.Width := 60;
       Column.Alignment := taRightJustify;
       Column.Footer.Alignment := taRightJustify;
+      Column.DisplayFormat := '#0.00';
+      Column.Footer.DisplayFormat := '#0.00';
       rs.Next;
     end;
 end;

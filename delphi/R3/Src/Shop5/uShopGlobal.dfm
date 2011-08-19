@@ -108,8 +108,8 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select ROLE_ID,ROLE_SPELL,ROLE_NAME from CA_ROLE_INFO where COMM' +
-        ' not in ('#39'02'#39','#39'12'#39')'
+        'select ROLE_ID,ROLE_SPELL,ROLE_NAME,RIGHT_FORDATA from CA_ROLE_I' +
+        'NFO where COMM not in ('#39'02'#39','#39'12'#39')'
       'and TENANT_ID=:TENANT_ID order by ROLE_ID')
     Params = <
       item

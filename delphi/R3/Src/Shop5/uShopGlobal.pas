@@ -68,7 +68,8 @@ type
     { Public declarations }
     function GetOperRight(CdsRight: TDataSet; SEQUNo: integer; Filter:string=''): Boolean;
     function GetChkRight(MID: string; SequNo: integer=1; userid:string=''):boolean; overload;
-
+    //数据权限  DataFlag 按权限定义项走
+    function GetDataRight(FieldName:string;DataFlag:integer):string;
     procedure LoadRight;
     //1.操作日志 2.数据日志
     procedure WriteLogInfo(LogType:integer;ModId:string;LogName:string;LogInfo:string);
@@ -364,6 +365,37 @@ end;
 function TShopGlobal.GetProdFlag: Char;
 begin
   result := ProductId[1];
+end;
+
+function TShopGlobal.GetDataRight(FieldName: string;
+  DataFlag: integer): string;
+var
+  r:integer;
+  rs:TZQuery;
+  uid,rStr:string;
+begin
+  result := '';
+  uid := Global.UserID;
+  if (uid = 'admin') or (uid='system') or (roles='xsm') then
+  begin
+    Exit;
+  end;
+  r := 0;
+  rs := Global.GetZQueryFromName('CA_ROLE_INFO');
+  rs.First;
+  while not rs.Eof do
+    begin
+      if pos(','+rs.FieldByName('').AsString+',',','+roles+',')>0 then
+      r := (r or StrtoIntDef(rs.FieldbyName('RIGHT_FORDATA').AsString,0));
+      rs.Next;
+    end;
+  rStr := inttoBin(r);
+  if length(rStr)<DataFlag then Exit;
+  if rStr[DataFlag]<>'1' then Exit;
+  case DataFlag of
+  1:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''')';
+  2:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''')';
+  end;
 end;
 
 initialization

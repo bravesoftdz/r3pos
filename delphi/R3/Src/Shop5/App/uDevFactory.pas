@@ -184,7 +184,7 @@ end;
 
 function TDevFactory.GetWidth: integer;
 begin
-  result := FWidth-3;
+  result := FWidth;
 end;
 
 procedure TDevFactory.InitComm;
@@ -205,7 +205,7 @@ begin
      LPTType := F.ReadInteger('SYS_DEFINE','PRINT_TYPE',1);
      TicketPrintName := F.ReadInteger('SYS_DEFINE','TICKET_PRINT_NAME',0);
 
-     Width := F.ReadInteger('SYS_DEFINE','PRINTERWIDTH',33);
+     Width := F.ReadInteger('SYS_DEFINE','PRINTERWIDTH',33)-3;
      PrintNull :=  F.ReadInteger('SYS_DEFINE','PRINTNULL',0);
 
      CloseDayPrinted :=  F.ReadBool('SYS_DEFINE','CLOSEDAYPRINTED',false);

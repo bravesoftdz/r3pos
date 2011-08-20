@@ -232,13 +232,14 @@ type
     procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override;
     function etShopSQL(chk: boolean): string;
     function GetGodsSortIdx: string;
-
+    function GetDataRight: string; //返回查看数据权限
   public
     { Public declarations }
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
     property  GodsSortIdx: string read GetGodsSortIdx; //统计类型    
+    property DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 const
@@ -698,7 +699,7 @@ begin
   if P5_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
 
   //过滤企业ID
-  strWhere:=' where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttostr(Global.TENANT_ID)+DataRight;
   //门店条件
   if fndP5_SHOP_ID.AsString<>'' then
     strWhere:=strWhere+' and A.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' and B.SHOP_ID='''+fndP5_SHOP_ID.AsString+''' ';
@@ -760,8 +761,8 @@ begin
 
   //客户名称
   if Trim(fndP5_CLIENT_ID.Text) <> '' then
-  begin
-    strWhere := strWhere + ' and D.CLIENT_ID='''+fndP5_CLIENT_ID.AsString+''' ';
+  begin                   
+    strWhere := strWhere + ' and isnull(D.CLIENT_ID,'''')='''+fndP5_CLIENT_ID.AsString+''' ';
   end;
 
   if fndP5_SALEORDER.Checked then //销售单:1
@@ -837,7 +838,7 @@ begin
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+DataRight;
   //门店条件
   if (fndP4_SHOP_ID.AsString<>'') then
   begin
@@ -1012,7 +1013,7 @@ begin
   GodsStateIdx:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   
   //过滤企业ID
-  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+DataRight;
   //门店条件
   if (fndP3_SHOP_ID.AsString<>'') then
   begin
@@ -1298,7 +1299,7 @@ begin
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+DataRight;
 
   //门店名称
   if Trim(fndP2_SHOP_ID.Text) <> '' then
@@ -1434,7 +1435,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+DataRight;
   //门店名称
   if Trim(fndP1_SHOP_ID.Text) <> '' then
   begin
@@ -1580,6 +1581,12 @@ procedure TfrmClientSaleReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
   inherited;
   DBGridTitleClick(adoReport4,Column,'SORT_ID');
+end;
+
+function TfrmClientSaleReport.GetDataRight: string;
+begin
+  //主数据：RCK_C_GOODS_DAYS、VIW_SALESDATA  A
+  result:=' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

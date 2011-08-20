@@ -188,10 +188,12 @@ type
     function GetGlideSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override;
     function GetGodsSortIdx: string; //添加Title
+    function GetDataRight: string; //返回查看数据权限
   public
     procedure PrintBefore;override;
     function GetRowType:integer;override;
-    property GodsSortIdx: string read GetGodsSortIdx; //统计类型     
+    property GodsSortIdx: string read GetGodsSortIdx; //统计类型
+    property  DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 const
@@ -283,7 +285,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('调拨日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //日期条件
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
@@ -350,7 +352,7 @@ begin
       ' union all '+
       ' select TENANT_ID,SHOP_ID,MOVE_DATE as CREA_DATE,GODS_ID,DBIN_AMT,DBIN_CST,DBIN_RTL,DBOUT_AMT,DBOUT_CST,DBOUT_RTL from VIW_MOVEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ') ';
-  end;
+  end;      
 
   UnitCalc:=GetUnitTO_CALC(fndP2_UNIT_ID.ItemIndex,'C');
   strSql :=
@@ -443,7 +445,7 @@ begin
   if P2_D2.EditValue = null then Raise Exception.Create('调拨日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //日期条件
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
@@ -555,7 +557,7 @@ begin
   GodsStateIdx:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
@@ -714,7 +716,7 @@ begin
   if P4_D2.EditValue = null then Raise Exception.Create('调拨日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
   //门店条件
   if (fndP4_SHOP_ID.AsString<>'') then
   begin
@@ -856,7 +858,7 @@ begin
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //GodsID不为空：
   if trim(GodsID)<>'' then strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
@@ -1375,6 +1377,12 @@ procedure TfrmDbDayReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
   inherited;
   DBGridTitleClick(adoReport4,Column,'SORT_ID');
+end;
+
+function TfrmDbDayReport.GetDataRight: string;
+begin
+  //主数据: RCK_GOODS_DAYS、VIW_MOVEDATA A
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

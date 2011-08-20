@@ -151,11 +151,13 @@ type
     function GetGodsSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override;
     function GetGodsSortIdx: string; //添加Title
+    function GetDataRight: string; //返回查看数据权限    
   public
     procedure CreateGrid;
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
-    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型     
+    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型
+    property  DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 const
@@ -1310,6 +1312,12 @@ procedure TfrmJxcTotalReport.DBGridEh4DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+function TfrmJxcTotalReport.GetDataRight: string;
+begin
+  //主数据：RCK_GOODS_MONTH A
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

@@ -133,9 +133,11 @@ type
     //初始化DBGrid
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function  GetDataRight: string; //返回查看数据权限
   public
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
+    property  DataRight: string read GetDataRight; //返回查看数据权限     
   end;
 
 implementation
@@ -215,7 +217,7 @@ begin
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
   //过滤日期
   strWhere:=strWhere+' '+GetDateCnd(P1_D1,P1_D2,'IORO_DATE');
   //门店群主及时门店名称条件
@@ -286,7 +288,7 @@ begin
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
   //过滤日期
   strWhere:=strWhere+' '+GetDateCnd(P2_D1,P2_D2,'IORO_DATE');
   //门店群主及时门店名称条件
@@ -310,7 +312,7 @@ begin
   if P3_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //过滤日期
   strWhere:=strWhere+' '+GetDateCnd(P3_D1,P3_D2,'A.IORO_DATE');
@@ -358,7 +360,7 @@ begin
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
   //过滤日期
   strWhere:=strWhere+' '+GetDateCnd(P4_D1,P4_D2,'A.IORO_DATE');
   //门店群主及时门店名称条件
@@ -732,6 +734,12 @@ begin
   PUB_CLient.Close;
   PUB_CLient.SQL.Text:=Sql;
   Factor.Open(PUB_CLient);
+end;
+
+function TfrmIORODayReport.GetDataRight: string;
+begin
+  //VIW_IORODATA A
+  result:=' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

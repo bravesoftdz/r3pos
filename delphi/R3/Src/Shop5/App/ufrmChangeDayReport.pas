@@ -191,6 +191,7 @@ type
     function  GetVIWFields: string;  //根据CodeId返回Change视图的查询字段:
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override;
     function  GetGodsSortIdx: string; //添加Title
+    function  GetDataRight: string; //返回查看数据权限
   public
     procedure PrintBefore;override;
     function GetRowType:integer;override;
@@ -199,6 +200,7 @@ type
     property RCKFields: string read GetRCKFields;  //根据CodeId返回台账表的查询字段:
     property VIWFields: string read GetVIWFields;  //根据CodeId返回Change视图的查询字段:
     property GodsSortIdx: string read GetGodsSortIdx;
+    property  DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 const
@@ -311,7 +313,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create(CodeName+'日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+'  ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //日期条件
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
@@ -382,7 +384,7 @@ begin
       ' union all '+
       ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+'  and CHANGE_CODE='''+CodeId+''' '+StrCnd+' '+
       ')';
-  end;
+  end;                                  
 
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');  
   //备注: MNY: 当时进货的金额; RTL: 零售金额; CST: 成本价
@@ -476,7 +478,7 @@ begin
   if P2_D1.Date>P2_D2.Date  then  Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //查询主数据:
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
@@ -587,7 +589,7 @@ begin
   GodsStateIdx:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
 
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
   //门店条件
   if (fndP3_SHOP_ID.AsString<>'') then
   begin
@@ -683,7 +685,7 @@ begin
        Result :=  ParseSQL(Factor.iDbType,
           'select '+
           ' sum(nvl(AMOUNT,0)) as AMOUNT '+      //数量
-          ',case when sum(nvl(AMOUNT,0))<>0 then sum(nvl(AMONEY,0))/sum(nvl(AMOUNT,0)) else 0 end as APRICE '+  //--均价
+          ',case when sum(nvl(AMOUNT,0))<>0 then sum(nvl(AMONEY,0))/sum(nvl(AMOUNT,0)) else sum(nvl(AMONEY,0)) end as APRICE '+  //--均价
           ',sum(nvl(AMONEY,0)) as AMONEY '+      //--可销售额
           ',sum(nvl(COST_MONEY,0)) as COST_MONEY '+  //--进货成本
           ',sum(nvl(AMONEY,0))-sum(nvl(COST_MONEY,0)) as PROFIT_MONEY '+  //差额毛利
@@ -703,7 +705,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(AMOUNT) as AMOUNT '+      //数量
-          ',case when sum(AMOUNT)<>0 then sum(AMONEY)/sum(AMOUNT) else 0 end as APRICE '+  //--均价
+          ',case when sum(AMOUNT)<>0 then sum(AMONEY)/sum(AMOUNT) else sum(AMONEY) end as APRICE '+  //--均价
           ',sum(AMONEY) as AMONEY '+      //--可销售额
           ',sum(COST_MONEY) as COST_MONEY '+  //--进货成本
           ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
@@ -717,7 +719,7 @@ begin
         Result :=  ParseSQL(Factor.iDbType,
         'select '+
           ' sum(AMOUNT) as AMOUNT '+      //数量
-          ',case when sum(AMOUNT)<>0 then sum(AMONEY)/sum(AMOUNT) else 0 end as APRICE '+  //--均价
+          ',case when sum(AMOUNT)<>0 then sum(AMONEY)/sum(AMOUNT) else sum(AMONEY) end as APRICE '+  //--均价
           ',sum(AMONEY) as AMONEY '+      //--可销售额
           ',sum(COST_MONEY) as COST_MONEY '+    //--进货成本
           ',sum(AMONEY)-sum(COST_MONEY) as PROFIT_MONEY '+  //差额毛利
@@ -746,7 +748,7 @@ begin
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
   //门店条件
   if (fndP4_SHOP_ID.AsString<>'') then
   begin
@@ -837,7 +839,7 @@ begin
     ','+SORT_ID+' as SORT_ID '+
     ',A.GODS_ID as GODS_ID '+
     ',sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as AMOUNT '+      //数量
-    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
+    ',case when sum(-CHANGE'+CodeId+'_AMT)<>0 then cast(sum(-CHANGE'+CodeId+'_RTL) as decimal(18,3))*1.00/cast(sum(-CHANGE'+CodeId+'_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as APRICE '+  //--均价
     ',sum(-CHANGE'+CodeId+'_RTL) as AMONEY '+      //--可销售额
     ',sum(-CHANGE'+CodeId+'_CST) as COST_MONEY '+  //--进货成本
     ',sum(-CHANGE'+CodeId+'_RTL)-sum(-CHANGE'+CodeId+'_CST) as PROFIT_MONEY '+  //差额毛利
@@ -885,7 +887,7 @@ begin
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('调整日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CHANGE_CODE='''+CodeId+''' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CHANGE_CODE='''+CodeId+''' '+DataRight;
   //GodsID不为空(DBGridEh4双击查看明细数据显示)
   if trim(GodsID)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
@@ -1325,6 +1327,12 @@ procedure TfrmChangeDayReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
   inherited;
   DBGridTitleClick(adoReport4,Column,'SORT_ID');
+end;
+
+function TfrmChangeDayReport.GetDataRight: string;
+begin
+  //主数据:RCK_GOODS_DAYS、VIW_CHANGEDATA A
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

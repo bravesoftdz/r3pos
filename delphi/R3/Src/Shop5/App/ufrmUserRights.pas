@@ -81,7 +81,8 @@ type
     procedure InitShopTree;
     procedure InitDeptTree;
     procedure GetShop_DeptRight;
-    function IntToVarchar(FieldName: string): string;
+    function  IntToVarchar(FieldName: string): string;
+    function  GetShopNo(AliasTabName: string=''): string; //返回门店的排序号
     procedure SetDataFlag(const Value: string);
     procedure SetDataRightState(const Value: Boolean);
   public
@@ -425,39 +426,48 @@ end;
 
 procedure TfrmUserRights.InitShopTree;
 var CdsShop:TZQuery;
-    Sql_Str,Join_Str:String;
+    Sql_Str,Join_Str,zxTab:String;
 begin
   Join_Str := GetStrJoin(Factor.iDbType);
   CdsShop:=TZQuery.Create(nil);
   try
-    CdsShop.Close;
-    Sql_Str :=
-    'select DATA_OBJECT,DATA_NAME,LEVEL_ID from ('+
-    'select distinct a.CODE_ID as DATA_OBJECT,a.CODE_NAME as DATA_NAME, '+
-    'case when a.CODE_ID=''#'' then ''0099'''+
-    '     when substr(a.CODE_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+
-    '     when substr(a.CODE_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2) '+
-    '     else ''00'''+Join_Str+'substr(a.CODE_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) end as LEVEL_ID '+
-    ' from ( '+
-    ' select CODE_ID,CODE_NAME,LEVEL_ID from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' '+
-    ' union all '+
-    ' select ''#'' as CODE_ID,''无'' as CODE_NAME,'''' as LEVEL_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID)+
-    ' ) a,CA_SHOP_INFO b '+
-    ' where b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and b.COMM not in (''02'',''12'') and '+
-    ' (case when substr(a.CODE_ID,3,4)=''0000'' then substr(a.CODE_ID,1,2)=substr(b.REGION_ID,1,2) '+
-    '       when substr(a.CODE_ID,5,2)=''00'' then substr(a.CODE_ID,1,4)=substr(b.REGION_ID,1,4) '+
-    '       else a.CODE_ID=B.REGION_ID end) '+
-    ' union all ' +
-    ' select SHOP_ID,SHOP_NAME,'+
-    '    case when REGION_ID=''#'' then ''0099'''+Join_Str+IntToVarchar('SEQ_NO')+
-    '         when substring(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+IntToVarchar('SEQ_NO')+
-    '         when substring(REGION_ID,5,2)=''00''   then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+IntToVarchar('SEQ_NO')+
-    '         else ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,5,2)'+Join_Str+'''0001'' end as LEVEL_ID '+
-    '  from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') '+
-    '  )tmp '+
-    ' order by LEVEL_ID';
-    CdsShop.SQL.Text:=ParseSQL(Factor.iDbType,Sql_Str);
+    zxTab:=
+      'select distinct substr(CODE_ID,1,2) as CODE_ID from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' and COMM not in (''02'',''12'') and substr(CODE_ID,3,4)=''0000'' '+
+      ' and substr(CODE_ID,1,2) not in(select distinct substr(CODE_ID,1,2) from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' and COMM not in (''02'',''12'') and substr(CODE_ID,3,2)<>''00'' and substr(CODE_ID,5,2)=''00'' and substr(CODE_ID,3,4)<>''0000'')';
 
+    Sql_Str :=
+      'select DATA_OBJECT,DATA_NAME,LEVEL_ID from '+
+        '(select distinct a.CODE_ID as DATA_OBJECT,a.CODE_NAME as DATA_NAME, '+
+        '  case when a.CODE_ID=''#'' then ''0099'''+
+        '       when substr(a.CODE_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+
+        '       when substr(a.CODE_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2) '+
+        '       when substr(a.CODE_ID,5,2)<>''00''  and zt.CODE_ID is not null then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) '+
+        '       else ''00'''+Join_Str+'substr(a.CODE_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) end as LEVEL_ID '+
+        ' from '+
+        '  (select CODE_ID,CODE_NAME,LEVEL_ID from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' '+
+        '   union all '+
+        '   select ''#'' as CODE_ID,''无'' as CODE_NAME,'''' as LEVEL_ID from CA_TENANT where TENANT_ID='+IntToStr(Global.TENANT_ID)+
+        '   ) a,CA_SHOP_INFO b '+
+        '  left outer join ('+zxTab+') zt on substr(b.REGION_ID,1,2)=zt.CODE_ID  '+
+        ' where b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and b.COMM not in (''02'',''12'') and '+
+        '    (case when substr(a.CODE_ID,3,4)=''0000'' then substr(a.CODE_ID,1,2)=substr(b.REGION_ID,1,2) '+
+        '          when substr(a.CODE_ID,5,2)=''00'' then substr(a.CODE_ID,1,4)=substr(b.REGION_ID,1,4) '+
+        '       else a.CODE_ID=B.REGION_ID end'+
+        ' ) '+
+       ' union all ' +
+        ' select SHOP_ID,SHOP_NAME,'+
+        '    case when REGION_ID=''#'' then ''0099'''+Join_Str+GetShopNo+
+        '         when substr(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+GetShopNo+
+        '         when substr(REGION_ID,5,2)=''00''   then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+GetShopNo+
+        '         when substr(REGION_ID,5,2)<>''00'' and zt.CODE_ID is not null  then ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'substring(REGION_ID,5,2)'+Join_Str+GetShopNo+  //直辖市直（2级）
+        '         else ''00'''+Join_Str+'substring(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substring(REGION_ID,5,2)'+Join_Str+'''0001'' end as LEVEL_ID '+
+        '  from CA_SHOP_INFO sh left outer join ('+zxTab+') zt on substr(sh.REGION_ID,1,2)=zt.CODE_ID '+
+        '  where sh.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and sh.COMM not in (''02'',''12'') '+
+        '  )tmp '+
+      ' order by LEVEL_ID';
+
+    CdsShop.Close;
+    CdsShop.SQL.Text:=ParseSQL(Factor.iDbType,Sql_Str);
     Factor.Open(CdsShop);
     CreateLevelTree(CdsShop,DataRightTree,'444444','DATA_OBJECT','DATA_NAME','LEVEL_ID');
     if DataRightTree.Items.Count>0 then DataRightTree.TopItem.Selected:=True;
@@ -621,6 +631,35 @@ begin
   inherited;
   if Locked then Exit;
   WriteDataRight;
+end;
+
+function TfrmUserRights.GetShopNo(AliasTabName: string=''): string;
+var
+  AliasName,SEQ_NO,SHOP_ID: string;
+begin
+  result:='';
+  AliasName:='';
+  if AliasTabName<>'' then
+  begin
+    if pos('.',AliasTabName)>0 then
+      AliasName:=AliasTabName
+    else
+      AliasName:=AliasTabName+'.';
+  end;
+
+  SEQ_NO:=AliasName+'SEQ_NO';
+  SHOP_ID:=AliasName+'SHOP_ID';
+
+  case Factor.iDbType of
+   0,5:
+      SEQ_NO:='cast('+SEQ_NO+' as varchar)';
+   1: SEQ_NO:='to_char('+SEQ_NO+')';
+   3: SEQ_NO:='str('+SEQ_NO+')';
+   4: SEQ_NO:='ltrim(rtrim(char('+SEQ_NO+')))';
+  end;
+
+  SEQ_NO:='isnull('+SEQ_NO+','+'substr('+SHOP_ID+',10,4))';
+  result:=ParseSQL(Factor.iDbType,SEQ_NO);
 end;
 
 end.

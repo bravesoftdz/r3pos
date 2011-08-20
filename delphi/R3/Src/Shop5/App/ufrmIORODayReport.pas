@@ -739,7 +739,7 @@ end;
 function TfrmIORODayReport.GetDataRight: string;
 begin
   //VIW_IORODATA A
-  result:=' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1); //ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '
 end;
 
 end.

@@ -1655,6 +1655,7 @@ begin
     except
       Raise Exception.Create('输入的折扣率无效，请正确输入；如:9折录入 9');
     end;
+    if StrToFloat(s)>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确');
     Field := cdsTable.FindField('AGIO_RATE');
     if Field=nil then Exit;
     cdsTable.DisableControls;
@@ -1715,6 +1716,7 @@ begin
     except
       Raise Exception.Create('输入的折扣率无效，请正确输入；如:9折录入 9');
     end;
+    if StrToFloat(s)>100 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确');
     Field := cdsTable.FindField('AGIO_RATE');
     if Field=nil then Exit;
     cdsTable.DisableControls;

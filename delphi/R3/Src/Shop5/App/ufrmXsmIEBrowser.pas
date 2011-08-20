@@ -506,7 +506,7 @@ begin
   _Start := GetTickCount;
   s := frmLogo.Visible;
   // XSM有进度了，不需要我加了
-//  if not s then frmLogo.Show;
+  if not s then frmLogo.Show;
   frmLogo.ProgressBar1.Position := 1;
   frmLogo.ProgressBar1.Update;
 //  Application.OnMessage := DoMsgFilter;
@@ -517,7 +517,7 @@ begin
 //       windows.MsgWaitForMultipleObjects(1,FhEvent,False,500,QS_ALLINPUT);
        Application.ProcessMessages;
        W := (GetTickCount-_Start);
-//       frmLogo.BringToFront;
+       frmLogo.BringToFront;
        frmLogo.ProgressBar1.Position := (W div 500);
        frmLogo.ProgressBar1.Update;
        if (GetTickCount-_Start)>WaitOutTime then

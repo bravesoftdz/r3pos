@@ -1,6 +1,6 @@
 inherited frmPosMainList: TfrmPosMainList
-  Left = 322
-  Top = 165
+  Left = 394
+  Top = 174
   Caption = #38144#21806#21333#26597#35810
   ClientHeight = 421
   ClientWidth = 596

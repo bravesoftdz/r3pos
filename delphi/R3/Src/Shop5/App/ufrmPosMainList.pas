@@ -35,6 +35,7 @@ type
     procedure dbGridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormShow(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -193,6 +194,21 @@ procedure TfrmPosMainList.FormShow(Sender: TObject);
 begin
   inherited;
   if not D1.Focused then D1.SetFocus;
+end;
+
+procedure TfrmPosMainList.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+    begin
+      if dbGrid.Focused then
+        begin
+          if CdsSales.RecordCount = 0 then
+            btnClose.SetFocus
+          else
+            RzBitBtn1Click(Sender);
+        end;
+    end;
 end;
 
 end.

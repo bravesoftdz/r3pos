@@ -163,10 +163,12 @@ type
     function GetShopGroupCnd(SHOP_TYPE: TcxComboBox; TYPE_VALUE: TzrComboBoxList; AliasName: string): string; //门店所属行政区域|门店类型:
     //初始化DBGrid
     procedure InitGrid;
-    function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function GetDataRight: string; //返回查看数据权限  
   public
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
+    property  DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 implementation
@@ -264,19 +266,23 @@ begin
   ViwSql:=
      'select A.TENANT_ID,B.REGION_ID as REGION_ID,A.SHOP_ID as SHOP_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
      'sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight+
      ' '+GetDateCnd(P1_D1,P1_D2,'RECV_DATE')+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' group by A.TENANT_ID,B.REGION_ID,A.SHOP_ID ';
 
   //台账表
-  RCKRData:='select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
+  RCKRData:=
+    'select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS '+
+    ' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' '+' '+ShopGlobal.GetDataRight('SHOP_ID',1);
+
   //关联
   strSql:=
     'select j.REGION_ID as REGION_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
     'sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY,sum(TRN_MNY) as TRN_MNY, sum(BAL_MNY) as TRN_REST_MNY from '+
     '('+ViwSql+') j '+
     ' left outer join ('+RCKRData+')c on j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID group by j.REGION_ID ';
+    
   strSql:=
     'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
     ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0) r '+
@@ -351,13 +357,15 @@ begin
   ViwSql:=
      'select A.TENANT_ID,A.SHOP_ID as SHOP_ID,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,'+
      ' sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J, sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight+
      ' '+GetDateCnd(P2_D1,P2_D2,'RECV_DATE')+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
   //台账表
-  RCKRData:='select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' ';
+  RCKRData:=
+    'select TENANT_ID,SHOP_ID,isnull(TRN_OUT_MNY,0)-isnull(TRN_IN_MNY,0) as TRN_MNY,BAL_MNY from RCK_ACCT_DAYS '+
+    ' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+InttoStr(MaxDate)+' and SHOP_ID<>''#'' '+' '+ShopGlobal.GetDataRight('SHOP_ID',1);
   //关联
   strSql:=
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY from ('+ViwSql+') j left outer join ('+RCKRData+')c '+
@@ -388,16 +396,18 @@ begin
   ViwSql:=
      'select A.RECV_DATE as RECV_DATE,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
      ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight+
      ' '+GetDateCnd(P3_D1,P3_D2,'RECV_DATE')+
      ' '+GetShopIDCnd(fndP3_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
      ' group by A.RECV_DATE ';
 
   //台账表
-  RCKRData:='select CREA_DATE,isnull(sum(TRN_OUT_MNY),0)-isnull(sum(TRN_IN_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY '+
-            ' from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+
-            ' '+GetDateCnd(P3_D1,P3_D2,'CREA_DATE')+' and SHOP_ID<>''#'' group by CREA_DATE ';
+  RCKRData:=
+    'select CREA_DATE,isnull(sum(TRN_OUT_MNY),0)-isnull(sum(TRN_IN_MNY),0) as TRN_MNY,sum(BAL_MNY) as BAL_MNY '+
+    ' from RCK_ACCT_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('SHOP_ID',1)+
+    ' '+GetDateCnd(P3_D1,P3_D2,'CREA_DATE')+' and SHOP_ID<>''#'' group by CREA_DATE ';
+
   //关联
   strSql:=
     'select j.*,TRN_MNY,BAL_MNY as TRN_REST_MNY '+
@@ -420,7 +430,7 @@ begin
   ViwSql:=
      'select a.TENANT_ID as TENANT_ID,A.CREA_USER as CREA_USER,sum(PAY_A) as PAY_A,sum(PAY_B) as PAY_B,sum(PAY_C) as PAY_C,sum(PAY_D) as PAY_D,sum(PAY_E) as PAY_E,sum(PAY_F) as PAY_F,'+
      ' sum(PAY_G) as PAY_G,sum(PAY_H) as PAY_H,sum(PAY_I) as PAY_I,sum(PAY_J) as PAY_J,sum(RECV_MNY) as RECV_MNY from VIW_RCKDATA A,CA_SHOP_INFO B '+
-     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight+
      ' '+GetDateCnd(P4_D1,P4_D2,'RECV_DATE')+
      ' '+GetShopIDCnd(fndP4_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+
@@ -428,9 +438,12 @@ begin
 
   //收银员最后一天的零钱
   RMNYData:=
-    ' select AA.TENANT_ID,AA.CREA_USER as CREA_USER,max(isnull(BALANCE,0)) as BALANCE from ACC_CLOSE_FORDAY AA, '+
-    '(select max(CLSE_DATE) as CLSE_DATE,TENANT_ID,CREA_USER from ACC_CLOSE_FORDAY where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' group by TENANT_ID,CREA_USER) BB '+
-    ' where AA.TENANT_ID=BB.TENANT_ID and AA.CREA_USER=BB.CREA_USER and AA.CLSE_DATE=BB.CLSE_DATE and AA.TENANT_ID='+inttostr(Global.TENANT_ID)+' and AA.CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' group by AA.TENANT_ID,AA.CREA_USER';
+    'select AA.TENANT_ID,AA.CREA_USER as CREA_USER,max(isnull(BALANCE,0)) as BALANCE from ACC_CLOSE_FORDAY AA, '+
+    ' (select max(CLSE_DATE) as CLSE_DATE,TENANT_ID,CREA_USER from ACC_CLOSE_FORDAY where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+' group by TENANT_ID,CREA_USER) BB '+
+    ' where AA.TENANT_ID=BB.TENANT_ID and AA.CREA_USER=BB.CREA_USER and AA.CLSE_DATE=BB.CLSE_DATE and '+
+    ' AA.TENANT_ID='+inttostr(Global.TENANT_ID)+' and AA.CLSE_DATE<='+FormatDatetime('YYYYMMDD',P4_D2.Date)+
+    ' '+ShopGlobal.GetDataRight('AA.SHOP_ID',1)+
+    ' group by AA.TENANT_ID,AA.CREA_USER';
   //关联
   strSql:=
     'select jc.*,u.ACCOUNT as ACCOUNT,u.USER_NAME as USER_NAME from'+
@@ -722,7 +735,7 @@ begin
   if P5_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //销售类型:
   if fndP5_SALES_TYPE.ItemIndex>0 then
@@ -904,6 +917,12 @@ begin
       Rs.Next;
     end;
   end;
+end;
+
+function TfrmRckDayReport.GetDataRight: string;
+begin
+  //VIW_RCKDATA  A 
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

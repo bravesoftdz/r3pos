@@ -220,7 +220,7 @@ begin
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
   //门店条件
   if trim(fndP1_SHOP_ID.AsString)<>'' then
   begin

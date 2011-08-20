@@ -227,7 +227,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date>P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);;
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
@@ -272,9 +272,7 @@ begin
   //计量单位换算:
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   //检测是否计算
-  CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date)),
-            strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date))
-           );
+  CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
   
   mx := GetMaxDate(StrtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
 
@@ -289,7 +287,7 @@ begin
     strWhere_m:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))
   else if P1_D1.Date<P1_D2.Date then
     strWhere_m:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))+' ';
-    
+
   //日期:
   if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',P1_D1.Date)=formatDatetime('YYYYMMDD',P1_D2.Date)) then
     strWhere:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)

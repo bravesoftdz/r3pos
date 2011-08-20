@@ -195,11 +195,13 @@ type
     function GetGlideSQL(chk:boolean=true): string;
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override;
     function GetGodsSortIdx: string; //添加Title
+    function GetDataRight: string; //返回查看数据权限
   public
     procedure PrintBefore;override;
     function  DoBeforeExport:boolean;override;
     function  GetRowType:integer;override;
-    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型     
+    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型
+    property  DataRight: string read GetDataRight; //返回查看数据权限     
   end;
 
 const
@@ -292,7 +294,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date));  //开始日期
@@ -360,7 +362,7 @@ begin
   else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
-  else
+  else                                
   begin
     SQLData:=
       '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
@@ -459,7 +461,7 @@ begin
   if P2_D2.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P2_D1.Date));  //开始日期
@@ -580,7 +582,7 @@ begin
   GodsStateIdx:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P3_D1.Date));  //开始日期
@@ -747,7 +749,7 @@ begin
   if P4_D2.EditValue = null then Raise Exception.Create('进货日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //查询主数据: 过滤企业ID
   vBegDate:=strtoInt(formatDatetime('YYYYMMDD',P4_D1.Date));  //开始日期
@@ -890,7 +892,7 @@ begin
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //GodsID不为空：
   if trim(GodsID)<>'' then
@@ -1317,6 +1319,12 @@ end;
 procedure TfrmStockDayReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
   DBGridTitleClick(adoReport4,Column,'SORT_ID');
+end;
+
+function TfrmStockDayReport.GetDataRight: string;
+begin
+  // RCK_GOODS_DAYS、VIW_STOCKDATA A
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

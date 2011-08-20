@@ -256,12 +256,14 @@ type
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
     procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override;
+    function GetDataRight: string; //返回查看数据权限
   public
     procedure SingleReportParams(ParameStr: string='');override; //简单报表调用参数
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
     property GodsSortIdx: string read GetGodsSortIdx; //统计类型
+    property DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 const
@@ -365,7 +367,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',1)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',2);
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
   //销售类型:
   if fndP1_SALES_TYPE.ItemIndex>0 then
     strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP1_SALES_TYPE.Properties.Items.Objects[fndP1_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
@@ -489,7 +491,7 @@ begin
   if P2_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',1)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',2);
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
   //销售类型:
   if fndP2_SALES_TYPE.ItemIndex>0 then
     strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP2_SALES_TYPE.Properties.Items.Objects[fndP2_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
@@ -565,7 +567,7 @@ begin
   end else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
   begin
-    SQLData:='RCK_C_GOODS_DAYS'
+    SQLData:='RCK_C_GOODS_DAYS'   
   end else //--[开始日期到 台账最大日期 查询台账表]  Union  [台帐最大日期  到 结束日期]
   begin
     SQLData :=
@@ -688,7 +690,7 @@ begin
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',1)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',2);
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
   //销售类型:
   if fndP3_SALES_TYPE.ItemIndex>0 then
     strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP3_SALES_TYPE.Properties.Items.Objects[fndP3_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
@@ -827,7 +829,7 @@ begin
   GodsStateIdx:=TRecord_(fndP4_REPORT_FLAG.Properties.Items.Objects[fndP4_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',1)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',2);
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+DataRight;
   //销售类型:
   if fndP4_SALES_TYPE.ItemIndex>0 then
     strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP4_SALES_TYPE.Properties.Items.Objects[fndP4_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
@@ -1013,7 +1015,7 @@ begin
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',1)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',2);
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
   //销售类型:
   if fndP5_SALES_TYPE.ItemIndex>0 then
     strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP5_SALES_TYPE.Properties.Items.Objects[fndP5_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
@@ -1171,7 +1173,7 @@ begin
   if P6_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',1)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',2);
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+GetDataRight;
   //销售类型:
   if fndP6_SALES_TYPE.ItemIndex>0 then
     strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP6_SALES_TYPE.Properties.Items.Objects[fndP6_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
@@ -1773,6 +1775,12 @@ end;
 procedure TfrmSaleDayReport.DBGridEh5TitleClick(Column: TColumnEh);
 begin
   DBGridTitleClick(adoReport5,Column,'SORT_ID');
+end;
+
+function TfrmSaleDayReport.GetDataRight: string;
+begin
+  //主数据：RCK_C_GOODS_DAYS、VIW_SALESDATA  A
+  result:=' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

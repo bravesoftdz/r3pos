@@ -143,7 +143,8 @@ var
 implementation
 
 uses                                                   
-  uGlobal,uFnUtil,uShopUtil, ObjCommon,ufrmProfitAnaly,ufrmPotenAnaly;
+  uGlobal,uFnUtil,uShopUtil, ObjCommon,ufrmProfitAnaly,ufrmPotenAnaly,
+  uShopGlobal;
 
 {$R *.dfm}
 
@@ -271,7 +272,7 @@ begin
   if vType=0 then //返回查询语句   
   begin
     //销售SQL
-    SQLData:='select TENANT_ID,SHOP_ID,'+TYPE_ID+'GODS_ID,CALC_AMOUNT as SALE_AMT,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,(NOTAX_MONEY-COST_MONEY) as SALE_PRF  from VIW_SALESDATA '+SaleCnd;
+    SQLData:='select TENANT_ID,SHOP_ID,'+TYPE_ID+'GODS_ID,CALC_AMOUNT as SALE_AMT,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,(NOTAX_MONEY-COST_MONEY) as SALE_PRF  from VIW_SALESDATA '+SaleCnd+' '+ShopGlobal.GetDataRight('SHOP_ID',1);
     strSql :=
       'SELECT A.TYPE_ID,sum(SALE_AMT) as SALE_AMT,sum(SALE_RTL) as SALE_RTL,sum(SALE_PRF) as SALE_PRF from '+ //销售额
       ' ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
@@ -295,7 +296,7 @@ begin
     strSql :=
       'select sum(A.SALE_RTL) as SALE_RTL,count(distinct A.SALES_ID) as BILLCOUNT,count(distinct A.SALES_DATE) as DayCOUNT,count(distinct A.GODS_ID) as PXCOUNT,'+
       ' count(distinct '+SALE_DATE_GODS+') as SALE_DATE_GODS_Count,count(distinct A.SALES_ID'+JoinStr+'''#'''+JoinStr+'A.GODS_ID) as SALE_ID_GODS_COUNT,0 as GODSCOUNT,0 as STORG_COUNT from '+
-      ' (select TENANT_ID,SHOP_ID,SALES_ID,SALES_DATE,GODS_ID,(CALC_MONEY+AGIO_MONEY) as SALE_RTL from VIW_SALESDATA '+SaleCnd+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' (select TENANT_ID,SHOP_ID,SALES_ID,SALES_DATE,GODS_ID,(CALC_MONEY+AGIO_MONEY) as SALE_RTL from VIW_SALESDATA '+SaleCnd+' '+ShopGlobal.GetDataRight('SHOP_ID',1)+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere +'  ';
     Result :=  ParseSQL(Factor.iDbType,strSql);
   end else
@@ -303,7 +304,8 @@ begin
   begin
     strSql :=
       'select count(distinct A.GODS_ID) as STORGCOUNT from STO_STORAGE A,CA_SHOP_INFO B,'+GoodTab+' C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere +'  ';
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+      ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
     Result :=  ParseSQL(Factor.iDbType,strSql);
   end;
 end;
@@ -644,7 +646,8 @@ begin
     'select * from '+
     '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+')as ANALYSUM from '+
     ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+' '+strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
+    ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
     'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
     'order by RELATION_ID asc,ANALYSUM desc ';
   Result := ParseSQL(Factor.iDbType,strSql);
@@ -743,7 +746,8 @@ begin
     ' (SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(CALC_AMOUNT) as AMT_SUM,'+
     '   sum(isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0))as MNY_SUM,sum(isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0))as PRF_SUM '+
     '  from VIW_SALESDATA SAL,CA_SHOP_INFO B,'+GoodTab+' C '+
-    '  where SAL.TENANT_ID=B.TENANT_ID and SAL.SHOP_ID=B.SHOP_ID and SAL.TENANT_ID=C.TENANT_ID and SAL.GODS_ID=C.GODS_ID '+SaleCnd+' '+ strWhere + ' '+
+    '  where SAL.TENANT_ID=B.TENANT_ID and SAL.SHOP_ID=B.SHOP_ID and SAL.TENANT_ID=C.TENANT_ID and SAL.GODS_ID=C.GODS_ID '+SaleCnd+
+    ' '+ strWhere + ' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1)+
     '  group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
     ' group by RELATION_ID');
     
@@ -781,7 +785,7 @@ begin
      'select STO.TENANT_ID,STO.SHOP_ID,STO.GODS_ID,isnull(SAL.CALC_AMOUNT,0) as AMT_SUM,(isnull(SAL.CALC_MONEY,0)+isnull(SAL.AGIO_MONEY,0)) as MNY_SUM,(isnull(SAL.NOTAX_MONEY,0)-isnull(SAL.COST_MONEY,0)) as PRF_SUM '+
      ' from STO_STORAGE STO left outer join VIW_SALESDATA SAL '+
      'on STO.TENANT_ID=SAL.TENANT_ID and STO.SHOP_ID=SAL.SHOP_ID and STO.GODS_ID=SAL.GODS_ID '+
-     ' where 1=1 '+SaleCnd;
+     ' where 1=1 '+SaleCnd+' '+ShopGlobal.GetDataRight('STO.SHOP_ID',1)+' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1);
 
   strSql :=
     'select * from '+

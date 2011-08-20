@@ -138,9 +138,11 @@ type
     //初始化DBGrid
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function  GetDataRight: string; //返回查看数据权限
   public
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
+    property  DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 implementation
@@ -227,7 +229,7 @@ begin
      ',sum(REVE_MNY) as REVE_MNY '+
      ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P1_D1,P1_D2,'ABLE_DATE')+
+     ' '+GetDateCnd(P1_D1,P1_D2,'ABLE_DATE')+' '+GetDataRight+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' group by B.REGION_ID ';
 
@@ -304,7 +306,7 @@ begin
      ',sum(REVE_MNY) as REVE_MNY '+
      ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE')+
+     ' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE')+' '+GetDataRight+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
      ' group by A.TENANT_ID,A.SHOP_ID ';
 
@@ -334,7 +336,7 @@ begin
      ',sum(REVE_MNY) as REVE_MNY '+
      ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE')+
+     ' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE')+' '+GetDataRight+
      ' '+GetShopIDCnd(fndP3_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
      ' group by ABLE_DATE ';
@@ -366,7 +368,7 @@ begin
      ',B.SHOP_NAME as SHOP_ID_TEXT '+
      ' from ACC_RECVABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+
+     ' '+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' '+GetDataRight+
      ' '+GetShopIDCnd(fndP5_SHOP_ID,'A.SHOP_ID')+
      ' '+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'')+' ';
 
@@ -553,7 +555,7 @@ begin
   if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+GetDataRight;
 
   //门店名称:
   strWhere:=strWhere+GetShopIDCnd(fndP4_SHOP_ID,'A.SHOP_ID');
@@ -644,6 +646,12 @@ procedure TfrmRecvAbleReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';  
+end;
+
+function TfrmRecvAbleReport.GetDataRight: string;
+begin
+  //ACC_RECVABLE_INFO A
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

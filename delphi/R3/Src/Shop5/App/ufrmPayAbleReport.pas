@@ -139,9 +139,11 @@ type
     //初始化DBGrid
     procedure InitGrid;
     function  AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
+    function  GetDataRight: string; //返回查看数据权限
   public
     procedure PrintBefore;override;
     function  GetRowType:integer;override;
+    property  DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 implementation
@@ -244,7 +246,7 @@ begin
      ',sum(REVE_MNY) as REVE_MNY '+
      ' from ACC_PAYABLE_INFO A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-     ' '+GetDateCnd(P1_D1,P1_D2,'ABLE_DATE')+
+     ' '+GetDateCnd(P1_D1,P1_D2,'ABLE_DATE')+' '+DataRight+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' group by B.REGION_ID ';
 
@@ -313,7 +315,7 @@ begin
   if P2_D1.Date > P2_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //时间条件:
   strWhere:=strWhere+' '+GetDateCnd(P2_D1,P2_D2,'ABLE_DATE');
@@ -352,7 +354,7 @@ begin
   if P3_D1.Date > P3_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
 
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //日期条件:
   strWhere:=strWhere+' '+GetDateCnd(P3_D1,P3_D2,'ABLE_DATE');
@@ -383,7 +385,7 @@ begin
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
   GLIDE_Cnd:='';
   //企业ID
-  strWhere:='and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:='and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
   //日期：
   strWhere:=strWhere+GetDateCnd(P5_D1,P5_D2,'ABLE_DATE')+' ';
   //门店管理群组
@@ -607,7 +609,7 @@ begin
   if P4_D2.EditValue = null then Raise Exception.Create('收款日期条件不能为空');
   if P4_D1.Date > P4_D2.Date then Raise Exception.Create('结束日期不能大于开始日期');
   //过滤企业ID:
-  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' '+DataRight;
 
   //查询时间条件
   strWhere:=strWhere+GetDateCnd(P4_D1,P4_D2,'ABLE_DATE');
@@ -700,6 +702,12 @@ procedure TfrmPayAbleReport.DBGridEh5GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
+end;
+
+function TfrmPayAbleReport.GetDataRight: string;
+begin
+  //ACC_PAYABLE_INFO A
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

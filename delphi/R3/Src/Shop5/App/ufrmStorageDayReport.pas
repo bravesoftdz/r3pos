@@ -151,11 +151,12 @@ type
     function AddReportReport(TitleList: TStringList; PageNo: string): string;override; //添加Title
     procedure DoReckTypeOnChange(Sender: TObject);
     function GetGodsSortIdx: string; //
+    function GetDataRight: string; //返回查看数据权限
   public
     procedure PrintBefore;override;
-    function GetRowType:integer;override;
+    function  GetRowType:integer;override;
     property  GodsSortIdx: string read GetGodsSortIdx; //统计类型
-    
+    property  DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
 const
@@ -233,12 +234,12 @@ var
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
-    begin
-      case fndP1_SHOP_TYPE.ItemIndex of
+  begin
+    case fndP1_SHOP_TYPE.ItemIndex of
       0:
        begin
          if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //非末级区域
@@ -247,8 +248,8 @@ begin
            strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
        end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
-      end;
     end;
+  end;
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
@@ -304,7 +305,7 @@ begin
     CheckCalc(BAL_Date);
     strWhere:=strWhere+' and A.CREA_DATE in (select Max(CREA_DATE) as CREA_DATE from RCK_GOODS_DAYS DD where A.TENANT_ID=DD.TENANT_ID and DD.CREA_DATE<='+InttoStr(BAL_Date)+') ';
 
-    strSql :=
+    strSql :=        
       'SELECT '+
       ' A.TENANT_ID '+
       ',B.REGION_ID '+
@@ -380,7 +381,7 @@ var
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
@@ -493,11 +494,11 @@ begin
   GodsStateIdx:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
 
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //门店所属行政区域|门店类型:
   if (fndP3_SHOP_VALUE.AsString<>'') then
-    begin
+  begin
     case fndP3_SHOP_TYPE.ItemIndex of
       0:
        begin
@@ -508,7 +509,7 @@ begin
        end;
       1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
     end;
-    end;
+  end;
 
   //门店条件
   if (fndP3_SHOP_ID.AsString<>'') then
@@ -631,7 +632,7 @@ var
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //门店所属行政区域|门店类型:
   if (fndP4_SHOP_VALUE.AsString<>'') then
@@ -1138,6 +1139,12 @@ end;
 procedure TfrmStorageDayReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
   DBGridTitleClick(adoReport4,Column,'SORT_ID');
+end;
+
+function TfrmStorageDayReport.GetDataRight: string;
+begin
+  //主数据：STO_STORAGE、RCK_GOODS_DAYS
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 end.

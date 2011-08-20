@@ -231,7 +231,7 @@ var
   strSql,strWhere,GoodTab: string;
 begin
   //过滤企业ID和查询日期:
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);;
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then

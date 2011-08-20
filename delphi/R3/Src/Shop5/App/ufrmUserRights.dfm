@@ -15,6 +15,8 @@ inherited frmUserRights: TfrmUserRights
     inherited RzPage: TRzPageControl
       Width = 388
       Height = 363
+      ActivePage = tabDataRight
+      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite

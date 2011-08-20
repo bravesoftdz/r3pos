@@ -37,7 +37,7 @@ begin
 end;
 begin
   rgMenu.Cells[0,0] := space(10)+ '0.交班结账';
-  rgMenu.Cells[0,1] := space(10)+ '1.窗口最小化';
+  rgMenu.Cells[0,1] := space(10)+ '1.零售单查询';
   rgMenu.Cells[0,2] := space(10)+ '2.新增会员';
   rgMenu.Cells[0,3] := space(10)+ '3.发卡';
   rgMenu.Cells[0,4] := space(10)+ '4.充值';

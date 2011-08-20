@@ -192,8 +192,8 @@ inherited frmPosMainList: TfrmPosMainList
         Caption = #33267
       end
       object RzLabel5: TRzLabel
-        Left = 200
-        Top = 51
+        Left = 216
+        Top = 52
         Width = 91
         Height = 12
         Caption = #25903#25345#21518#22235#20301#26597#35810
@@ -221,12 +221,12 @@ inherited frmPosMainList: TfrmPosMainList
       object edtSALES_ID: TcxTextEdit
         Left = 72
         Top = 46
-        Width = 121
+        Width = 133
         Height = 20
         TabOrder = 3
       end
       object btnSearch: TRzBitBtn
-        Left = 340
+        Left = 316
         Top = 43
         Height = 26
         Caption = #26597#35810'(&F)'
@@ -251,7 +251,7 @@ inherited frmPosMainList: TfrmPosMainList
       object edtCustomerID: TzrComboBoxList
         Left = 72
         Top = 25
-        Width = 238
+        Width = 239
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -271,45 +271,17 @@ inherited frmPosMainList: TfrmPosMainList
             FieldName = 'CLIENT_CODE'
             Footers = <>
             Title.Caption = #23458#25143#21495
-            Width = 60
+            Width = 100
           end
           item
             EditButtons = <>
             FieldName = 'CLIENT_NAME'
             Footers = <>
             Title.Caption = #23458#25143#21517#31216
-            Width = 150
-          end
-          item
-            EditButtons = <>
-            FieldName = 'LINKMAN'
-            Footers = <>
-            Title.Caption = #32852#31995#20154
-            Width = 70
-          end
-          item
-            EditButtons = <>
-            FieldName = 'TELEPHONE2'
-            Footers = <>
-            Title.Caption = #32852#31995#30005#35805
-            Width = 70
-          end
-          item
-            EditButtons = <>
-            FieldName = 'LICENSE_CODE'
-            Footers = <>
-            Title.Caption = #35777#20214#21495
-            Width = 70
-          end
-          item
-            EditButtons = <>
-            FieldName = 'ADDRESS'
-            Footers = <>
-            Title.Caption = #22320#22336
-            Width = 150
+            Width = 130
           end>
         DropWidth = 314
-        DropHeight = 281
+        DropHeight = 239
         ShowTitle = True
         AutoFitColWidth = False
         ShowButton = True

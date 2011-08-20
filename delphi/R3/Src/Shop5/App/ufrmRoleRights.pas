@@ -159,9 +159,9 @@ begin
   GetOPRight;     //返回当前操作员的所拥有权限数据包 [ 限制他能授权的在其所拥有权限范围内 ]
   InitCheckTree;
   OpenRight;
+  DBGridEh3.Enabled := False;
   OpenDataRight;
   rzCheckTree.SetFocus;
-  DBGridEh3.Enabled := False;
   if rzCheckTree.Items.Count>0 then rzCheckTree.TopItem.Selected:=True;
   RzPage.ActivePageIndex := 0;
 end;

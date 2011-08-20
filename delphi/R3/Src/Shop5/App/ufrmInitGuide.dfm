@@ -2458,29 +2458,140 @@ inherited frmInitGuide: TfrmInitGuide
           Top = 2
           Width = 547
           Height = 261
-          ActivePage = TabSheet1
+          ActivePage = TabSheet3
           Align = alClient
           FlatColor = clWhite
           ShowFullFrame = False
           ShowShadow = False
-          TabIndex = 0
+          TabIndex = 2
           TabOrder = 0
           FixedDimension = 18
           object TabSheet1: TRzTabSheet
             Color = clWhite
             Caption = #24320#22987#21521#23548
-            object Label2: TLabel
-              Left = 144
-              Top = 32
-              Width = 273
-              Height = 20
-              Caption = #27426#36814#24744#29992#25143#31995#32479#21021#22987#21270#21521#23548#65281
-              Font.Charset = GB2312_CHARSET
-              Font.Color = 7446527
-              Font.Height = -20
-              Font.Name = #24188#22278
-              Font.Style = [fsBold]
-              ParentFont = False
+            object Panel1: TPanel
+              Left = 0
+              Top = 0
+              Width = 547
+              Height = 242
+              Align = alClient
+              BevelOuter = bvNone
+              Color = clWhite
+              TabOrder = 0
+              object Label2: TLabel
+                Left = 88
+                Top = 16
+                Width = 378
+                Height = 20
+                Caption = #27426#36814#20351#29992#38646#21806#32456#31471#31649#29702#31995#32479#21021#22987#21270#21521#23548#65281
+                Font.Charset = GB2312_CHARSET
+                Font.Color = 7446527
+                Font.Height = -20
+                Font.Name = #24188#22278
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label17: TLabel
+                Left = 56
+                Top = 50
+                Width = 456
+                Height = 24
+                Caption = 
+                  #38646#21806#32456#31471#31649#29702#31995#32479#26159#19968#22871#29992#20110#20179#24211#12289#38376#24215#12289#36830#38145#20225#19994#30340#36827#38144#23384#31649#29702#30340#36719#20214#12290#13#23427#36866#29992#20110#21508#20225#20107#19994#21333#20301#31649#29702#21830#21697#12289#29289#26009#30340#37319#36141#12289#38646#21806#12289#20998#38144#12289#35843#25320#12289 +
+                  #39046#29992#31561#26085#24120#24037#20316#12290
+                WordWrap = True
+              end
+              object Label18: TLabel
+                Left = 90
+                Top = 85
+                Width = 210
+                Height = 14
+                Caption = #30028#38754#21451#22909#12289#21151#33021#24378#22823#12289#26131#23398#26131#29992
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label19: TLabel
+                Left = 90
+                Top = 105
+                Width = 255
+                Height = 14
+                Caption = #22522#30784#36164#26009#25209#37327#32500#25252#12289#25968#25454#20998#32423#20998#31867#31649#29702
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label20: TLabel
+                Left = 90
+                Top = 124
+                Width = 279
+                Height = 14
+                Caption = #19987#19994#30340'POS'#19994#21153#24212#29992#65292#23436#21892#30340#23458#25143#20851#31995#31649#29702
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label21: TLabel
+                Left = 90
+                Top = 144
+                Width = 345
+                Height = 14
+                Caption = #38598#20013#30340#21830#21697#20215#26684#19982#38144#21806#31574#30053#31649#29702#65292#25552#21319#20225#19994#33829#38144#33021#21147
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label22: TLabel
+                Left = 90
+                Top = 164
+                Width = 270
+                Height = 14
+                Caption = #20808#36827#30340#31649#29702#29702#24565#65292#24110#21161#20225#19994#35268#33539#19994#21153#27969#31243
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label23: TLabel
+                Left = 90
+                Top = 183
+                Width = 360
+                Height = 14
+                Caption = #22810#23618#26234#33021#25253#34920#19982#33258#23450#20041#25253#34920#20998#26512#65292#20026#32463#33829#20915#31574#25552#20379#25903#25745
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label24: TLabel
+                Left = 90
+                Top = 203
+                Width = 360
+                Height = 14
+                Caption = #36719#20214#35774#32622#28789#27963#65292#21151#33021#33258#30001#32452#21512#65292#36866#24212#21508#34892#21508#19994#23454#38469#24212#29992
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
             end
           end
           object TabSheet2: TRzTabSheet
@@ -2505,33 +2616,45 @@ inherited frmInitGuide: TfrmInitGuide
               object RzLabel1: TRzLabel
                 Left = 109
                 Top = 111
-                Width = 48
+                Width = 377
                 Height = 12
-                Caption = #35828#26126#25991#23383
+                Caption = #22522#30784#36164#26009#25968#25454#21253#25324#65306#32500#25252#33258#32463#33829#21830#21697#36164#26009#12289#19979#36733#20379#24212#38142#21830#21697#36164#26009#31561
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
               end
               object RzLabel2: TRzLabel
                 Left = 108
                 Top = 175
-                Width = 48
+                Width = 286
                 Height = 12
-                Caption = #35828#26126#25991#23383
+                Caption = #22806#25509#35774#22791#21253#25324#65306#23567#31080#25171#21360#26426#12289#39038#23458#26174#31034#23631#12289#38065#31665#31561
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
               end
               object edtIsData: TcxCheckBox
                 Left = 88
                 Top = 88
-                Width = 121
+                Width = 156
                 Height = 21
                 Properties.DisplayUnchecked = 'False'
-                Properties.Caption = #26159#21542#23548#20837#36164#26009#24211
+                Properties.Caption = #26159#21542#21021#22987#21270#22522#30784#21830#21697#36164#26009
                 TabOrder = 0
               end
               object edtIsDevice: TcxCheckBox
                 Left = 88
                 Top = 152
-                Width = 121
+                Width = 161
                 Height = 21
                 Properties.DisplayUnchecked = 'False'
-                Properties.Caption = #26159#21542#23433#35013#25910#38134#35774#22791
+                Properties.Caption = #26159#21542#21021#22987#21270#22806#25509#35774#22791#21442#25968
                 TabOrder = 1
               end
               object edtUSING_DATE: TcxDateEdit
@@ -2557,9 +2680,9 @@ inherited frmInitGuide: TfrmInitGuide
               Color = clWhite
               TabOrder = 0
               object RzPanel9: TRzPanel
-                Left = 2
-                Top = 4
-                Width = 295
+                Left = 5
+                Top = 3
+                Width = 274
                 Height = 234
                 BorderOuter = fsFlatRounded
                 Color = clWhite
@@ -2567,15 +2690,15 @@ inherited frmInitGuide: TfrmInitGuide
                 object RzLabel3: TRzLabel
                   Left = 4
                   Top = 5
-                  Width = 48
-                  Height = 12
-                  Caption = #35828#26126#25991#23383
+                  Width = 228
+                  Height = 36
+                  Caption = #35774#32622#20225#19994#36164#26009#24211#13#13#35831#21246#36873#21015#34920#20013#30340#21830#21697#25968#25454#65292#21021#22987#21270#21830#21697#36164#26009
                 end
               end
               object rzCheckTree: TRzCheckTree
-                Left = 309
-                Top = 5
-                Width = 230
+                Left = 285
+                Top = 4
+                Width = 258
                 Height = 232
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clWindowText

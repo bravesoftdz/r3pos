@@ -29,7 +29,6 @@ type
     RzPanel5: TRzPanel;
     Rz_page: TRzPageControl;
     TabSheet1: TRzTabSheet;
-    Label2: TLabel;
     TabSheet2: TRzTabSheet;
     TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
@@ -85,6 +84,16 @@ type
     RzLabel1: TRzLabel;
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
+    Panel1: TPanel;
+    Label2: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btn_StartClick(Sender: TObject);
     procedure btn_PrevClick(Sender: TObject);
@@ -184,14 +193,14 @@ begin
       Bmp_3.Enabled := False;
     end;
     2:begin
+      if edtIsData.Checked then
+        WriteUnitSort;    
       Rz_page.ActivePage := TabSheet4;
       if not edtIsDevice.Checked then
         begin
           btn_NextClick(Sender);
           Exit;
         end;
-      if edtIsData.Checked then
-        WriteUnitSort;
       cxDisplay.ItemIndex := 0;
       cxCashBox.ItemIndex := 0;
       edtTICKET_PRINT_NAME.ItemIndex := 0;

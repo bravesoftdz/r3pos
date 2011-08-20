@@ -5,6 +5,7 @@ inherited frmPosMainList: TfrmPosMainList
   ClientHeight = 421
   ClientWidth = 596
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -37,8 +38,8 @@ inherited frmPosMainList: TfrmPosMainList
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
             FrozenCols = 2
-            Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-            OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             ReadOnly = True
             RowHeight = 20
             TabOrder = 0
@@ -222,7 +223,7 @@ inherited frmPosMainList: TfrmPosMainList
         Top = 46
         Width = 121
         Height = 20
-        TabOrder = 2
+        TabOrder = 3
       end
       object btnSearch: TRzBitBtn
         Left = 340
@@ -242,7 +243,7 @@ inherited frmPosMainList: TfrmPosMainList
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 3
+        TabOrder = 4
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnSearchClick
@@ -258,7 +259,7 @@ inherited frmPosMainList: TfrmPosMainList
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 4
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'

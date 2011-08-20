@@ -157,7 +157,7 @@ inherited frmCustomer: TfrmCustomer
                 Top = 87
                 Width = 196
                 Height = 20
-                TabOrder = 0
+                TabOrder = 8
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 OnKeyDown = edtKeyKeyDown
                 OnKeyPress = edtKeyKeyPress
@@ -196,7 +196,7 @@ inherited frmCustomer: TfrmCustomer
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
-                TabOrder = 7
+                TabOrder = 5
               end
               object edtDate2: TcxDateEdit
                 Left = 444
@@ -205,7 +205,7 @@ inherited frmCustomer: TfrmCustomer
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
-                TabOrder = 8
+                TabOrder = 6
               end
               object cmbSHOP_ID: TzrComboBoxList
                 Left = 79
@@ -218,7 +218,7 @@ inherited frmCustomer: TfrmCustomer
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 2
+                TabOrder = 1
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -249,7 +249,7 @@ inherited frmCustomer: TfrmCustomer
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
-                TabOrder = 5
+                TabOrder = 3
               end
               object cmbPRICE_ID: TzrComboBoxList
                 Left = 79
@@ -262,7 +262,7 @@ inherited frmCustomer: TfrmCustomer
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 1
+                TabOrder = 0
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'PRICE_ID;PRICE_NAME;PRICE_SPELL'
@@ -293,14 +293,14 @@ inherited frmCustomer: TfrmCustomer
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
-                TabOrder = 6
+                TabOrder = 4
               end
               object fndINTEGRAL: TcxTextEdit
                 Left = 299
                 Top = 42
                 Width = 117
                 Height = 20
-                TabOrder = 3
+                TabOrder = 7
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 OnKeyDown = edtKeyKeyDown
               end
@@ -316,7 +316,7 @@ inherited frmCustomer: TfrmCustomer
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'

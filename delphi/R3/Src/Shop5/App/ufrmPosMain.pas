@@ -3659,7 +3659,9 @@ begin
     1:Close;
     2:Close;
     end;
-  1:self.WindowState := wsMinimized;
+  1:begin
+    LookOrder;
+  end;
   2:begin
     if not ShopGlobal.GetChkRight('33400001',2) then Raise Exception.Create('你没有新增"会员档案"的权限,请和管理员联系.');
     With TfrmCustomerInfo.Create(self) do
@@ -4317,7 +4319,8 @@ end;
 procedure TfrmPosMain.LookOrder;
 var SalesId:String;
 begin
-  if dbState in [dsInsert,dsEdit] then Raise Exception.Create('在开单状态下,不能进行销售单查询!');
+  if dbState in [dsInsert,dsEdit] then
+    if not cdsTable.IsEmpty then Raise Exception.Create('在开单状态下,不能进行销售单查询!');
   SalesId := TfrmPosMainList.FindDialog(Self);
   if SalesId = '' then Exit;
   Open(SalesId);

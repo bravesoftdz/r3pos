@@ -34,6 +34,7 @@ type
     procedure RzBitBtn1Click(Sender: TObject);
     procedure dbGridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -186,6 +187,12 @@ begin
       dbGrid.canvas.FillRect(ARect);
       DrawText(dbGrid.Canvas.Handle,pchar(Inttostr(CdsSales.RecNo)),length(Inttostr(CdsSales.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+end;
+
+procedure TfrmPosMainList.FormShow(Sender: TObject);
+begin
+  inherited;
+  if not D1.Focused then D1.SetFocus;
 end;
 
 end.

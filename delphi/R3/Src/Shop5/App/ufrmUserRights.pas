@@ -452,7 +452,7 @@ begin
         '  left outer join ('+zxTab+') zt on substr(b.REGION_ID,1,2)=zt.CODE_ID  '+
         ' where b.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and b.COMM not in (''02'',''12'') and ((a.CODE_ID=b.REGION_ID)or(a.FID=substr(b.REGION_ID,1,2))or(a.SID=substr(b.REGION_ID,1,4)))  '+
        ' union all ' +
-        ' select SHOP_IDas DATA_OBJECT,SHOP_NAME as DATA_NAME,'+
+        ' select SHOP_ID as DATA_OBJECT,SHOP_NAME as DATA_NAME,'+
         '    case when REGION_ID=''#'' then ''0099'''+Join_Str+GetShopNo+
         '         when substr(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(REGION_ID,1,2)'+Join_Str+GetShopNo+
         '         when substr(REGION_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(REGION_ID,3,2)'+Join_Str+GetShopNo+

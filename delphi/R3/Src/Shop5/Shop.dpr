@@ -238,7 +238,8 @@ uses
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
   ufrmShopMain in 'ufrmShopMain.pas' {frmShopMain},
   ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk},
-  ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide};
+  ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide},
+  uLoginFactory in 'App\uLoginFactory.pas';
 
 {$R *.res}
 var

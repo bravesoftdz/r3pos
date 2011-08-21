@@ -48,6 +48,7 @@ type
     procedure RzLabel1Click(Sender: TObject);
     procedure cbxTenantPropertiesChange(Sender: TObject);
     procedure cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
+    procedure cxbtnCancelClick(Sender: TObject);
   private
     FLoginParam:TLoginParam;
     FSysID: TGuid;
@@ -65,7 +66,7 @@ type
 var
   XsmCheckPassWord:TXsmCheckPassWord;
 implementation
-uses uCaFactory,ObjCommon,ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
+uses uCaFactory,ObjCommon,ZBase,uLoginFactory,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
 {$R *.dfm}
 
 { TfrmLogin }
@@ -163,8 +164,8 @@ begin
      FLoginParam.ShopName := temp.FieldbyName('SHOP_NAME').asString;
      FLoginParam.Roles := temp.FieldbyName('ROLE_IDS').AsString;
      Factor.GqqLogin(FLoginParam.UserID,FLoginParam.ShopName+'('+FLoginParam.UserName+')');
-     ModalResult := MROK;
      if trim(cxedtPasswrd.Text)='1234' then TfrmPswModify.ShowExecute(FLoginParam.UserID,cxedtUsers.Text);
+     ModalResult := MROK;
   finally
      temp.Free;
   end;
@@ -179,7 +180,9 @@ var
     _ok:boolean;
     rs:TZQuery;
 begin
-  result := false;
+result := false;
+LoginFactory.Logout;
+try
   with TfrmLogin.Create(Application) do
     begin
       try
@@ -223,7 +226,9 @@ begin
         Free;
       end;
     end;
-
+finally
+   if result then LoginFactory.Login(LoginParam.UserID,LoginParam.ShopId);
+end;
 end;
 
 procedure TfrmLogin.SetSysID(const Value: TGuid);
@@ -426,6 +431,12 @@ procedure TfrmLogin.cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then cxBtnOk.OnClick(cxBtnOk);
+end;
+
+procedure TfrmLogin.cxbtnCancelClick(Sender: TObject);
+begin
+  inherited;
+  Close;
 end;
 
 initialization

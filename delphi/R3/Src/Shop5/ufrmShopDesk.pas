@@ -43,6 +43,7 @@ type
     FHookLocked: boolean;
     procedure SetHookLocked(const Value: boolean);
     { Private declarations }
+    function FindAction(id: string): TAction;
   protected
     procedure MouseHook(Code: integer; Msg: word;MouseHook: longint);override;
     procedure KeyBoardHook(Code: integer; Msg: word;KeyboardHook: longint);override;
@@ -231,65 +232,92 @@ begin
 end;
 
 procedure TfrmShopDesk.RzBmpButton8Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmPosMain.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmPosMain.OnExecute(nil);
+  Action := FindAction('actfrmPosMain');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 end;
 
 procedure TfrmShopDesk.RzBmpButton7Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmSalesOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmSalesOrderList.OnExecute(nil);
+  Action := FindAction('actfrmSalesOrderList');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 
 end;
 
 procedure TfrmShopDesk.RzBmpButton6Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmStockOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmStockOrderList.OnExecute(nil);
-
+  Action := FindAction('actfrmStockOrderList');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 end;
 
 procedure TfrmShopDesk.RzBmpButton1Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmDbOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmDbOrderList.OnExecute(nil);
-
+  Action := FindAction('actfrmDbOrderList');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 end;
 
 procedure TfrmShopDesk.RzBmpButton2Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmChangeOrderList2.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmChangeOrderList2.OnExecute(nil);
-
+  Action := FindAction('actfrmChangeOrderList2');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 end;
 
 procedure TfrmShopDesk.RzBmpButton3Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmChangeOrderList1.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmChangeOrderList1.OnExecute(nil);
-
+  Action := FindAction('actfrmChangeOrderList1');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 end;
 
 procedure TfrmShopDesk.RzBmpButton4Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmStkRetuOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmStkRetuOrderList.OnExecute(nil);
-
+  Action := FindAction('actfrmStkRetuOrderList');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 end;
 
 procedure TfrmShopDesk.RzBmpButton5Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmStorageTracking.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmStorageTracking.OnExecute(nil);
+  Action := FindAction('actfrmStorageTracking');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 
 end;
 
@@ -300,11 +328,29 @@ begin
 end;
 
 procedure TfrmShopDesk.RzBmpButton9Click(Sender: TObject);
+var
+  Action:TAction;
 begin
   inherited;
-  if not frmShopMain.actfrmSalRetuOrderList.Enabled then Raise Exception.Create('您没有操作此模块的权限，请和管理员联系...');
-  frmShopMain.actfrmSalRetuOrderList.OnExecute(nil);
+  Action := FindAction('actfrmSalRetuOrderList');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
+end;
 
+function TfrmShopDesk.FindAction(id: string): TAction;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to frmMain.actList.ActionCount - 1 do
+    begin
+      if lowercase(frmMain.actList.Actions[i].name) = lowercase(id) then
+         begin
+           result := TAction(frmMain.actList.Actions[i]);
+           Exit;
+         end;
+    end;
 end;
 
 end.

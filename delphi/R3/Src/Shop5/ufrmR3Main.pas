@@ -476,7 +476,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin;
+  ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,uLoginFactory;
   
 {$R *.dfm}
 
@@ -532,6 +532,7 @@ procedure TfrmR3Main.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
+  LoginFactory.Logout;
   Timer1.Enabled := false;
   UpdateTimer.Enabled := false;
   if frmXsmIEBrowser<>nil then freeandnil(frmXsmIEBrowser);
@@ -886,7 +887,7 @@ begin
   finally
      LoadFrame;
      if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60000);
-     Timer1.Enabled := true;
+     Timer1.Enabled := Logined;
   end;
 end;
 
@@ -1090,6 +1091,7 @@ procedure TfrmR3Main.Timer1Timer(Sender: TObject);
 var
   P:PMsgInfo;
   w:integer;
+  IsFirst:boolean;
 begin
   inherited;
   w := StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60;
@@ -1103,7 +1105,10 @@ begin
      (MsgFactory.UnRead=0) and ((Timer1.Tag mod w)=0)
      )
   then
-   MsgFactory.Load;
+     begin
+       MsgFactory.Load;
+       IsFirst := true;
+     end;
 
   if Timer1.Tag >= w then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
   if MsgFactory.Count > 0 then
@@ -1131,7 +1136,7 @@ begin
      begin
          lblUserInfo.Caption := '尊敬的<'+Global.TENANT_NAME+'>客户,您有('+inttostr(MsgFactory.UnRead)+')条消息';
      end;
-  if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) then
+  if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) or IsFirst then
      begin
        P := MsgFactory.ReadMsg;
        if P<>nil then MsgFactory.HintMsg(P);
@@ -4215,6 +4220,7 @@ end;
 
 procedure TfrmR3Main.wm_check(var Message: TMessage);
 begin
+  try
   if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) then Exit;
   if SyncFactory.firsted and CaFactory.Audited then
      begin
@@ -4222,7 +4228,10 @@ begin
        if MessageBox(Handle,'系统第一次初始化，将从服务器恢复业务数据，是否立即执行？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        SyncFactory.SyncAll;
      end;
-  TfrmCostCalc.CheckMonthReck(self);
+    TfrmCostCalc.CheckMonthReck(self);
+  finally
+    TfrmInitGuide.InitGuide(self);
+  end;
 end;
 
 destructor TfrmR3Main.Destroy;

@@ -16,7 +16,6 @@ type
     RzPanel2: TRzPanel;
     Image1: TImage;
     Image2: TImage;
-    Label1: TLabel;
     RzFormShape1: TRzFormShape;
     RzPanel3: TRzPanel;
     btn_Start: TRzBmpButton;
@@ -34,11 +33,6 @@ type
     TabSheet4: TRzTabSheet;
     TabSheet5: TRzTabSheet;
     Label6: TLabel;
-    Bmp_1: TRzBmpButton;
-    Bmp_2: TRzBmpButton;
-    Bmp_3: TRzBmpButton;
-    Bmp_4: TRzBmpButton;
-    Bmp_5: TRzBmpButton;
     RzPanel6: TRzPanel;
     RzGroupBox1: TRzGroupBox;
     RzGroupBox2: TRzGroupBox;
@@ -88,12 +82,6 @@ type
     Label2: TLabel;
     Label17: TLabel;
     Label18: TLabel;
-    Label19: TLabel;
-    Label20: TLabel;
-    Label21: TLabel;
-    Label22: TLabel;
-    Label23: TLabel;
-    Label24: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btn_StartClick(Sender: TObject);
     procedure btn_PrevClick(Sender: TObject);
@@ -126,7 +114,6 @@ begin
       Rz_page.Pages[i].TabVisible := False;
     end;
   Rz_page.ActivePageIndex := 0;
-  Bmp_1.Enabled := False;
   btn_Prev.Visible := False;
   btn_Next.Visible := False;
   btn_End.Visible := False;
@@ -137,8 +124,6 @@ begin
   inherited;
   Rz_page.ActivePage := TabSheet2;
   LoadUsingDate;
-  Bmp_1.Enabled := True;
-  Bmp_2.Enabled := False;
   btn_Prev.Visible := True;
   btn_Next.Visible := True;
   btn_Start.Visible := False;
@@ -150,17 +135,12 @@ begin
   case Rz_page.ActivePageIndex of
     1:begin
       Rz_page.ActivePage := TabSheet1;
-      Bmp_2.Enabled := True;
-      Bmp_1.Enabled := False;
       btn_Prev.Visible := False;
       btn_Next.Visible := False;
       btn_Start.Visible := True;
     end;
     2:begin
       Rz_page.ActivePage := TabSheet2;
-      Bmp_4.Enabled := True;
-      Bmp_3.Enabled := True;
-      Bmp_2.Enabled := False;
     end;
     3:begin
       Rz_page.ActivePage := TabSheet3;
@@ -169,8 +149,6 @@ begin
           btn_PrevClick(Sender);
           Exit;
         end;
-      Bmp_4.Enabled := True;
-      Bmp_3.Enabled := False;
     end;
   end;
 end;
@@ -189,8 +167,6 @@ begin
           Exit;
         end;
       LoadTree;
-      Bmp_2.Enabled := True;
-      Bmp_3.Enabled := False;
     end;
     2:begin
       if edtIsData.Checked then
@@ -205,18 +181,11 @@ begin
       cxCashBox.ItemIndex := 0;
       edtTICKET_PRINT_NAME.ItemIndex := 0;
       LoadParameter;
-      Bmp_2.Enabled := True;
-      Bmp_3.Enabled := True;
-      Bmp_4.Enabled := False;
     end;
     3:begin
       if edtIsDevice.Checked then
         WriteParameter;
       Rz_page.ActivePage := TabSheet5;
-      Bmp_2.Enabled := True;
-      Bmp_3.Enabled := True;
-      Bmp_4.Enabled := True;
-      Bmp_5.Enabled := False;
       btn_Prev.Visible := False;
       btn_Next.Visible := False;
       btn_End.Visible := True;
@@ -308,6 +277,7 @@ procedure TfrmInitGuide.LoadTree;
 var Sql_Str:String;
     rs:TZQuery;
 begin
+  if not GodsFactory.Db.Connected then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;
@@ -325,6 +295,7 @@ var Sort_Str,Sql_Str:String;
     i,j:Integer;
     rs,rs1,cs:TZQuery;
 begin
+  if not GodsFactory.Db.Connected then Exit;
   rs := TZQuery.Create(nil);
   rs1 := TZQuery.Create(nil);
   cs := TZQuery.Create(nil);
@@ -430,7 +401,17 @@ begin
 end;
 
 class function TfrmInitGuide.InitGuide(AOwner: TForm): boolean;
+var
+  rs:TZQuery;
 begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from VIW_MEAUNITS where TENANT_ID='+inttostr(Global.TENANT_ID);
+    uGlobal.Factor.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then Exit; 
+  finally
+    rs.Free;
+  end;
   with TfrmInitGuide.Create(AOwner) do
     begin
       try

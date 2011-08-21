@@ -240,7 +240,8 @@ uses
   ufrmN26Desk in 'ufrmN26Desk.pas' {frmN26Desk},
   ufrmN26Browser in 'App\ufrmN26Browser.pas' {frmN26Browser},
   uGodsFactory in 'App\uGodsFactory.pas',
-  ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide};
+  ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide},
+  uLoginFactory in 'App\uLoginFactory.pas';
 
 {$R *.res}
 var
@@ -249,7 +250,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.1.8';
+  DBVersion := '1.0.1.9';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

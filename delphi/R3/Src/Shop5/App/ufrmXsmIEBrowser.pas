@@ -244,7 +244,7 @@ begin
 //  修改成带场景的    
 //    Send('login',xsm_signature);
     Send2('login',xsm_signature,SenceId);
-    if not WaitRun(commandTimeout) then Logined := false;
+    if not WaitRun(ConnectTimeOut) then Logined := false;
     result := Logined;
     if Hinted and not result then
        begin

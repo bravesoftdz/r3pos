@@ -91,6 +91,8 @@ type
     procedure SyncCaModule(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步自定义报表
     procedure SyncSysReport(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //同步日志
+    procedure SyncCaLoginInfo(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //开始同步数据
     procedure SyncAll;
     //开始基础数据
@@ -216,6 +218,7 @@ begin
   25:result := 'TSyncCaModule';
   26:result := 'TSyncSysReportList';
   27:result := 'TSyncICGlideInfo';
+  28:result := 'TSyncSingleTable';
   else
     result := 'TSyncSingleTable';
   end;
@@ -617,6 +620,14 @@ begin
   n^.KeyFlag := 0;
   n^.tbtitle := '报表模版';
   FList.Add(n);
+
+  new(n);
+  n^.tbname := 'CA_LOGIN_INFO';
+  n^.keyFields := 'TENANT_ID;LOGIN_ID';
+  n^.synFlag := 28;
+  n^.KeyFlag := 0;
+  n^.tbtitle := '登录日志';
+  FList.Add(n);
 end;
 
 procedure TSyncFactory.SendSingleTable(tbName, KeyFields,
@@ -752,6 +763,7 @@ begin
       25:SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       26:SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       27:SyncIcGlideOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      28:SyncCaLoginInfo(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.ProgressBar1.Position := i;
       frmLogo.Update;
@@ -799,6 +811,13 @@ begin
   finally
     InterlockedDecrement(Locked);
   end;
+end;
+
+procedure TSyncFactory.SyncCaLoginInfo(tbName, KeyFields,
+  ZClassName: string; KeyFlag: integer);
+begin
+  SendSingleTable('CA_LOGIN_INFO','TENANT_ID;LOGIN_ID',ZClassName);
+  SendSingleTable('CA_MODULE_CLICK','TENANT_ID;ROWS_ID',ZClassName);
 end;
 
 procedure TSyncFactory.SyncCaModule(tbName, KeyFields, ZClassName: string;

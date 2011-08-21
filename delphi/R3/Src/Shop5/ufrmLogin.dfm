@@ -1290,13 +1290,13 @@ inherited frmLogin: TfrmLogin
     Left = 254
     Top = 224
     Cancel = True
-    ModalResult = 2
     Caption = #36864#20986'(&C)'
     Color = 14341020
     HighlightColor = 16026986
     HotTrack = True
     HotTrackColor = 3983359
     TabOrder = 6
+    OnClick = cxbtnCancelClick
     Glyph.Data = {
       36060000424D3606000000000000360400002800000020000000100000000100
       0800000000000002000000000000000000000001000000000000000000003300

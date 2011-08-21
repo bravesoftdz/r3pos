@@ -819,11 +819,12 @@ begin
   else if RB_USING_BARTER2.Checked then  //换购:
     AObj.FieldbyName('USING_BARTER').AsInteger :=3;
   ////积分换购商品(换算关系):        
-  if edtBARTER_INTEGRAL.Enabled then
+  if edtBARTER_INTEGRAL.Enabled then //积分兑换
     AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=edtBARTER_INTEGRAL.Value
-  else if edtBARTER_INTEGRAL2.Enabled then
+  else if edtBARTER_INTEGRAL2.Enabled then //积分换购
     AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=edtBARTER_INTEGRAL2.Value
-  else AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=0;
+  else
+    AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=0;
   AObj.FieldByName('TENANT_ID').AsInteger:=ShopGlobal.TENANT_ID;
 
   //写入商品分类:
@@ -1944,12 +1945,20 @@ begin
   end;
   }
 
-  //积分换算关系
+  //积分兑换关系
   if (RB_USING_BARTER.Checked) and (edtBARTER_INTEGRAL.Enabled) and (edtBARTER_INTEGRAL.Value=0)  then
   begin
     if edtBARTER_INTEGRAL.CanFocus then edtBARTER_INTEGRAL.SetFocus;
-    raise Exception.Create('积分换算关系的不能为0！');
+    raise Exception.Create('积分兑换关系的不能为0！');
   end;
+
+  //2011.08.20 Add 积分换购换算关系
+  if (RB_USING_BARTER2.Checked) and (edtBARTER_INTEGRAL2.Enabled) and (edtBARTER_INTEGRAL2.Value=0)  then
+  begin
+    if edtBARTER_INTEGRAL2.CanFocus then edtBARTER_INTEGRAL2.SetFocus;
+    raise Exception.Create('积分换购关系的不能为0！');
+  end;
+
 
   if (Trim(edtCALC_UNITS.Text)='') then edtCALC_UNITS.KeyValue := null;
   if (Trim(edtSMALL_UNITS.Text)='') then edtSMALL_UNITS.KeyValue := null;

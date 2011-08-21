@@ -369,6 +369,7 @@ begin
   end;
 
   InitRecord;
+  
 end;
 
 procedure TfrmGoodsInfo.FormCreate(Sender: TObject);
@@ -749,7 +750,7 @@ begin
   RB_USING_BARTER2.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=3);     //启用积分换购
   if RB_USING_BARTER.Checked then edtBARTER_INTEGRAL.Value:=AObj.FieldbyName('BARTER_INTEGRAL').AsInteger;
   if RB_USING_BARTER2.Checked then edtBARTER_INTEGRAL2.Value:=AObj.FieldbyName('BARTER_INTEGRAL').AsInteger;
-
+  
   //商品分类：
   SORT_ID1_KeyValue:=trim(AObj.FieldbyName('SORT_ID1').AsString);
   edtSORT_ID1.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_GOODSSORT'),'SORT_ID','SORT_NAME',SORT_ID1_KeyValue);
@@ -819,9 +820,9 @@ begin
   else if RB_USING_BARTER2.Checked then  //换购:
     AObj.FieldbyName('USING_BARTER').AsInteger :=3;
   ////积分换购商品(换算关系):        
-  if edtBARTER_INTEGRAL.Enabled then //积分兑换
+  if (RB_USING_BARTER.Checked) and (edtBARTER_INTEGRAL.Enabled) then //积分兑换
     AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=edtBARTER_INTEGRAL.Value
-  else if edtBARTER_INTEGRAL2.Enabled then //积分换购
+  else if (RB_USING_BARTER2.Checked) and (edtBARTER_INTEGRAL2.Enabled) then //积分换购
     AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=edtBARTER_INTEGRAL2.Value
   else
     AObj.FieldbyName('BARTER_INTEGRAL').AsInteger:=0;
@@ -866,8 +867,7 @@ begin
     if CLVersion='OHR' then
     begin
       if edtBARCODE1.CanFocus then edtBARCODE1.SetFocus;
-    end
-    else
+    end else
     begin
       if edtGODS_CODE.CanFocus then  edtGODS_CODE.SetFocus;
     end;
@@ -1240,6 +1240,8 @@ begin
     begin
       Caption := '商品档案--(修改)';
       edtPROFIT_RATE.Enabled:=True;
+      edtBARTER_INTEGRAL.Enabled:=RB_USING_BARTER.Checked;
+      edtBARTER_INTEGRAL2.Enabled:=RB_USING_BARTER2.Checked;
     end;
   else
     begin

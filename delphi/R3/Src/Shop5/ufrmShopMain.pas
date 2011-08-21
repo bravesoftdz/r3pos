@@ -3409,6 +3409,7 @@ begin
   if Message.WParam = 99 then //执行自动到货确认
   begin
      if Global.UserID='system' then Exit;
+     if not ShopGlobal.SyncCheck then Exit;
      TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
   end;
 end;

@@ -19,6 +19,8 @@ type
     
     Msg_Class:Integer;
     sFlag:integer;
+    SenceId:string;
+    Action:string;
   end;
   PMsgInfo=^TMsgInfo;
   TMsgFactory=class
@@ -278,7 +280,10 @@ end;
 
 procedure TMsgFactory.ShowMsg(MsgInfo: PMsgInfo);
 begin
-  TfrmNewPaperReader.ShowNewsPaper(MsgInfo^.ID,MsgInfo^.Msg_Class,MsgInfo^.sFlag);
+  if MsgInfo^.sFlag<>100 then
+     TfrmNewPaperReader.ShowNewsPaper(MsgInfo^.ID,MsgInfo^.Msg_Class,MsgInfo^.sFlag)
+  else
+     SendMessage(frmMain.Handle,MSC_MESSAGE,100,integer(MsgInfo));
 end;
 
 { TfrmMsg }

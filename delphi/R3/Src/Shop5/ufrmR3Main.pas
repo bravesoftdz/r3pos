@@ -3193,10 +3193,15 @@ begin
   if Message.WParam = 99 then //执行自动到货确认
   begin
      if Global.UserID='system' then Exit;
+     if not ShopGlobal.SyncCheck then Exit;
      TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
   end;
+  if Message.WParam = 100 then //新商盟消息
+  begin
+     if frmXsmIEBrowser=nil then Exit;
+     frmXsmIEBrowser.Open(PMsgInfo(Message.WParam)^.SenceId,PMsgInfo(Message.WParam)^.Action,0);
+  end;
 end;
-
 procedure TfrmR3Main.actfrmNetForOrderExecute(Sender: TObject);
 var
   Form:TfrmBasic;

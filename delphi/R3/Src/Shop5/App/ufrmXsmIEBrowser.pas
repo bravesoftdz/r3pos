@@ -84,6 +84,8 @@ type
 
     //新商盟登录
     function CreateXML(xml:string):IXMLDomDocument;
+    function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
+
     function GetChallenge:boolean;
     function DoForLogin(checked:boolean=false):boolean;
     procedure SetSenceReady(const Value: boolean);
@@ -119,7 +121,7 @@ var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
 uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uShopGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
-  ufrmDesk, uGlobal, MultInst, ObjCommon;
+  ufrmDesk, uGlobal, MultInst, ObjCommon,ufrmHintMsg;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -187,8 +189,39 @@ end;
 
 procedure TfrmXsmIEBrowser.DoFuncCall3(ASender: TObject;
   const szMethodName, szPara1, szPara2, szPara3: WideString);
+var
+  Msg:PMsgInfo;
+  Doc:IXMLDomDocument;
+  Node:IXMLDOMNode;
 begin
   runed := false;
+  if szMethodName='MsgNotify' then //接收消息
+     begin
+       Doc := CreateXml(szPara3);
+       if Doc=nil then Exit;
+       Node := Doc.documentElement;
+       if Node=nil then Exit;
+       try
+          Msg := MsgFactory.FindMsg(FindElement(Node,'id').text);
+          if Msg=nil then
+          begin
+            new(Msg);
+            Msg^.SenceId := szPara1;
+            Msg^.Action := szPara2;
+            Msg^.ID := FindElement(Node,'id').text;
+            Msg^.Title := FindElement(Node,'title').text;
+            Msg^.Contents := FindElement(Node,'content').text;
+            Msg^.SndDate := FindElement(Node,'sendDate').text;
+            Msg^.Msg_Class := 0;
+            Msg^.sFlag := 99;
+            MsgFactory.Add(Msg);
+            MsgFactory.MsgRead[Msg] := False;
+          end
+       except
+          on E:Exception do
+             LogFile.AddLogFile(0,'处理消息出错了'+e.Message);
+       end;
+     end;
   LogFile.AddLogFile(0,'FuncCall3:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2+' 参数3='+szPara3);
 end;
 
@@ -278,8 +311,8 @@ begin
      end;
   if szMethodName='loginReady' then
      Logined := true;
-  runed := false;
   LogFile.AddLogFile(0,'FuncCall:方法='+szMethodName+' 参数1='+szPara);
+  runed := false;
 end;
 
 procedure TfrmXsmIEBrowser.DoFuncCall2(ASender: TObject;
@@ -306,9 +339,11 @@ begin
      end;
   if szMethodName='error' then
      begin
-        s := utf8toAnsi(szPara2);
         frmDesk.Waited := false;
-        MessageBox(Handle,Pchar('<新商盟>'+ s +'<code='+szPara1+'>'),'友情提示...',MB_OK+MB_ICONWARNING);
+        if (szPara1='9901') or (szPara1='9001') then
+           MessageBox(Handle,'<新商盟>网络连接异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING)
+        else
+           MessageBox(Handle,'<新商盟>其他错误异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING);
      end;
   runed := false;
   LogFile.AddLogFile(0,'FuncCall2:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2);
@@ -702,8 +737,11 @@ begin
     else
        Raise Exception.Create('xml字符串不能为空...');
   except
-    result := nil;
-    Raise;
+    on E:Exception do
+       begin
+         result := nil;
+         LogFile.AddLogFile(0,e.Message);
+       end;
   end;
 end;
 
@@ -804,4 +842,17 @@ begin
   FSenceReady := Value;
 end;
 
+function TfrmXsmIEBrowser.FindElement(root: IXMLDOMNode;
+  s: string): IXMLDOMNode;
+var
+  i:integer;
+begin
+  result := root.firstChild;
+  while result<>nil do
+    begin
+      if result.nodeName=s then exit;
+      result := result.nextSibling;
+    end;
+  result := nil;
+end;
 end.

@@ -82,6 +82,9 @@ type
     function GetDeptInfo:TZQuery;
     //刷新最近同步时间
     procedure SyncTimeStamp;
+
+    //检测是否合法的客户端DB
+    function SyncCheck:boolean;
     //读取产品标识符
     function GetProdFlag:Char;
     function GetParameter(ParamName:string):string;
@@ -372,7 +375,7 @@ function TShopGlobal.GetDataRight(FieldName: string;
 var
   r:integer;
   rs:TZQuery;
-  uid,rStr:string;
+  uid,rStr,deptId:string;
 begin
   result := '';
   uid := Global.UserID;
@@ -392,10 +395,30 @@ begin
   rStr := inttoBin(r);
   if length(rStr)<DataFlag then Exit;
   if rStr[DataFlag]<>'1' then Exit;
+  if DataFlag=1 then
+     deptId := GetDeptInfo.FieldbyName('DEPT_ID').AsString;
   case DataFlag of
-  1:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12''))';
-  2:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12''))';
+  1:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12'') union all select '''+deptId+''' as DATA_OBJECT from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' )';
+  2:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12'') union all select '''+Global.SHOP_ID+''' as DATA_OBJECT from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' )';
   end;
+end;
+
+function TShopGlobal.SyncCheck: boolean;
+var
+  rs:TZQuery;
+begin
+{
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+Global.SHOP_ID+''' and TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.LocalFactory.Open(rs);
+    if rs.IsEmpty then
+       Global.LocalFactory.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+'DBKEY_'+Global.SHOP_ID+''','''++''',0,''00'','''+GetTimeStamp()+''')');
+  finally
+    rs.Free;
+  end;
+}  
+  result := true;
 end;
 
 initialization

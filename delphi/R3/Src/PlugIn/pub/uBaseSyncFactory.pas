@@ -90,7 +90,7 @@ type
     FBillList: TStringList;
     FLogKind: integer;
     FSyncType: integer; //上报单据列表
-    function GetTickTime: string;
+    function  GetTickTime: string;
     procedure SetLogKind(const Value: integer);
     procedure SetSyncType(const Value: integer);
   public
@@ -148,10 +148,12 @@ type
     function  CommitTrans: Boolean;   //提交事务
     function  RollbackTrans: Boolean; //回滚事务
     function  Open(DataSet: TDataSet):Boolean;  //取数据
-    function  ExecSQL(SQL:Pchar;var iRet:integer):integer;
-    procedure WriteRunErrorMsg(Msg: string);  //写日志
-    function GetLastError:string;
-    procedure WriteLogFile(s:Pchar);
+    function  ExecSQL(SQL:Pchar;var iRet:integer):integer; overload;
+    function  ExecSQL(SQLList: TStringList;var iRet:integer):integer; overload;
+    function  GetLastError:string;  //返回PlugIntf.GetLastError
+    function  WriteLogFile(ErrMsg: string):Boolean; //写入PlugIntf.WriteLogFile
+    function  GetLogHead: string; //日志头部
+    function  GetMsg(Msg: string): string; //根据日志类型返回字符长度
 
     //返回类函数
     class function newId(id:string=''): string; //获取GUID
@@ -170,6 +172,7 @@ type
     property PlugInID: string read FPlugInID write SetPlugInID; //插件ID号
     property KeepLogDay: integer read FKeepLogDay write SetKeepLogDay;  //保留最近上报日志数，默认：30
     property LogKind: integer read FLogKind write SetLogKind;    //日志类型[0:简单；1:详细]
+    property LogHead: string read GetLogHead; //日志头部
     
     //数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase 3: access  4: db2
     property DbType:Integer read FDbType write SetDbType;
@@ -299,7 +302,7 @@ begin
         end;
       end;
     end;
-   else
+   else //简单模式
     begin
       for i:=0 to FBillList.Count-1 do
       begin
@@ -338,6 +341,8 @@ end;
 constructor TBaseSyncFactory.Create;
 begin
   inherited;
+  FHasError:=False;
+  FErrorMsg:=''; 
   FParams := TftParamList.Create(nil);
   FLogList:= TStringList.Create;
   //读取配置参数
@@ -355,14 +360,14 @@ begin
   else
     ErrMsg:='解锁数据库连接错误:'; 
   if PlugIntf.DbLock(Locked,dbResoler)<>0 then
-    Raise Exception.Create(ErrMsg+PlugIntf.GetLastError);
+    Raise Exception.Create(ErrMsg+GetLastError);
 end;
 
 function TBaseSyncFactory.GetDBType: Integer;
 begin
   Result:=PlugIntf.iDbType(FDbType,dbResoler);
   if Result<>0 then
-    Raise Exception.Create('返回数据库类型错误：'+PlugIntf.GetLastError);
+    Raise Exception.Create('返回数据库类型错误：'+GetLastError);
 end;
 
 destructor TBaseSyncFactory.Destroy;
@@ -557,9 +562,7 @@ begin
     except
       on E:Exception do
       begin
-        HasError:=true;
-        ErrorMsg:=PlugIntf.GetLastError;
-        Raise Exception.Create(Pchar('<'+PlugInID+'>Open'+TZQuery(DataSet).SQL.Text+' Error：'+E.Message));
+        Raise Exception.Create(Pchar('<Open>['+GetMsg(TZQuery(DataSet).SQL.Text)+'] Error：'+E.Message));
       end;
     end;
   end
@@ -588,21 +591,21 @@ end;
 function TBaseSyncFactory.BeginTrans(TimeOut: integer): Boolean;
 begin
   result:=false;
-  if PlugIntf.BeginTrans(TimeOut,dbResoler)<>0 then Raise Exception.Create('启动事务：'+PlugIntf.GetLastError);
+  if PlugIntf.BeginTrans(TimeOut,dbResoler)<>0 then Raise Exception.Create('<启动事务> 错误:'+GetLastError);
   result:=true;
 end;
 
 function TBaseSyncFactory.CommitTrans: Boolean;
 begin
   result:=false;
-  if PlugIntf.CommitTrans(dbResoler)<>0 then Raise Exception.Create('提交事务：'+PlugIntf.GetLastError);
+  if PlugIntf.CommitTrans(dbResoler)<>0 then Raise Exception.Create('<提交事务> 错误:'+GetLastError);
   result:=true;
 end;
 
 function TBaseSyncFactory.RollbackTrans: Boolean;
 begin
   result:=false;
-  if PlugIntf.RollbackTrans(dbResoler)<>0 then Raise Exception.Create('回滚事务：'+PlugIntf.GetLastError);
+  if PlugIntf.RollbackTrans(dbResoler)<>0 then Raise Exception.Create('<回滚事务> 出错:'+GetLastError);
   result:=true;
 end;
 
@@ -678,14 +681,6 @@ begin
   FErrorMsg := Value;
 end;
 
-procedure TBaseSyncFactory.WriteRunErrorMsg(Msg: string);
-begin
-  if HasError then Exit;
-  //永远只记录第一个错误消息
-  HasError:=true;
-  ErrorMsg:=Msg; 
-end;
-
 procedure TBaseSyncFactory.SetTWO_PHASE_COMMIT(const Value: Boolean);
 begin
   FTWO_PHASE_COMMIT := Value;
@@ -743,17 +738,102 @@ end;
 function TBaseSyncFactory.ExecSQL(SQL: Pchar; var iRet: integer): integer;
 begin
   result := PlugIntf.ExecSQL(SQL,iRet,dbResoler);
-  if result<>0 then Raise Exception.Create(StrPas(PlugIntf.GetLastError));
+  if result<>0 then
+    Raise Exception.Create('<ExecSQL>['+GetMsg(StrPas(SQL))+']Error:'+GetLastError);
+end;
+
+function TBaseSyncFactory.ExecSQL(SQLList: TStringList;var iRet:integer):integer;
+var
+  SQLStr: string;
+  i,ReRun,RunCount,vCount: integer;
+begin
+  result:=-1;
+  vCount:=0;
+  RunCount:=0;
+  for i:=0 to SQLList.Count-1 do
+  begin
+    SQLStr:=trim(SQlList.Strings[i]);
+    if SQlStr<>'' then
+    begin
+      iRet:=0;
+      ReRun:=PlugIntf.ExecSQL(Pchar(SQLStr),vCount,dbResoler);
+      if ReRun=0 then //正常
+      begin
+        iRet:=iRet+vCount; //影响行数
+        Inc(RunCount);  //累计正常数
+      end else
+      begin
+        Raise Exception.Create('<ExecSQL>['+GetMsg(SQLStr)+']Error:'+GetLastError);  
+      end;
+    end;
+  end;
+  if RunCount=SQLList.Count then
+    Result:=0;
 end;
 
 function TBaseSyncFactory.GetLastError: string;
 begin
   result := StrPas(PlugIntf.GetLastError);
+  if not HasError then //永远只记录第一个错误消息
+  begin
+    HasError:=true;
+    ErrorMsg:='[重]'+LogHead+'['+result+']';
+  end;
 end;
 
-procedure TBaseSyncFactory.WriteLogFile(s: Pchar);
+
+function TBaseSyncFactory.WriteLogFile(ErrMsg: string): Boolean;
 begin
-  if PlugIntf.WriteLogFile(s)<>0 then Raise Exception.Create(StrPas(PlugIntf.GetLastError));  
+  if not HasError then //永远只记录第一个错误消息
+  begin
+    HasError:=true;
+    ErrorMsg:='[重]'+LogHead+'['+ErrMsg+']';
+  end;  
+  if PlugIntf.WriteLogFile(Pchar(LogHead+'['+ErrMsg+']'))<>0 then Raise Exception.Create(GetLastError);
 end;
+
+function TBaseSyncFactory.GetLogHead: string;
+begin
+  result:='';
+  if PlugInID<>'' then
+    result:='<'+PlugInID+'>';
+  //判断企业ID是否
+  if Params.FindParam('TENANT_ID')<>nil then
+    result:=result+'<'+Params.FindParam('TENANT_ID').AsString+'>';  
+end;
+
+function TBaseSyncFactory.GetMsg(Msg: string): string;
+ function GetTempTableName(SQLMsg: string): string; //若是创建临时表返回临时表名
+ var i,j: integer; Str: string;
+ begin
+   Str:=UpperCase(SQLMsg);
+   result:='';
+   i:=Pos('TEMPORARY TABLE',Str);
+   j:=Pos(UpperCase('session.'),Str);
+   if (i>0) and (j>i) then
+   begin
+     i:=Pos('(',Str);
+     result:='DECLARE GLOBAL TEMPORARY TABLE session.'+Copy(Str,j+8,i-1);
+   end;
+ end;
+var
+  vLen: integer; ReStr,SQLMsg: string;
+begin
+  result:=trim(SQLMsg);
+  ReStr:='';
+  SQLMsg:=trim(Msg);
+  if LogKind=0 then  //简单日志返回前20个字符...
+  begin
+    vLen:=length(SQLMsg);
+    if vLen<=120 then  //小于100个字符全部日志
+      ReStr:=SQLMsg;
+    if ReStr='' then
+      ReStr:=GetTempTableName(SQLMsg);  //判断是创建临时表
+    if ReStr='' then
+      ReStr:=Copy(trim(SQLMsg),1,50)+' ... '+Copy(trim(SQLMsg),vLen-19,20);
+    result:=ReStr;
+  end;
+end;
+
 
 end.

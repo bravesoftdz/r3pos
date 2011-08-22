@@ -75,7 +75,7 @@ begin
       if not StorageFactory.HasError then //运行正常
         result:=0
       else
-        GLastError:='<805>'+StorageFactory.ErrorMsg;
+        GLastError:=StorageFactory.ErrorMsg;
     finally
       StorageFactory.Free;
     end;

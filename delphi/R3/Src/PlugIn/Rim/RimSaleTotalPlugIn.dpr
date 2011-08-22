@@ -70,7 +70,7 @@ begin
       if not SalesFactory.HasError then //运行正常：
         result:=0
       else
-        GLastError:='<810>'+SalesFactory.ErrorMsg;
+        GLastError:=SalesFactory.ErrorMsg;
     finally
       SalesFactory.Free;
     end;

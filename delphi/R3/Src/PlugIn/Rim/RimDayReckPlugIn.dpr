@@ -71,7 +71,7 @@ begin
       if not DayReckFactory.HasError then //运行正常：
         result:=0
       else
-        GLastError:='<810>'+DayReckFactory.ErrorMsg;  
+        GLastError:=DayReckFactory.ErrorMsg;  
     finally
       DayReckFactory.Free;
     end;

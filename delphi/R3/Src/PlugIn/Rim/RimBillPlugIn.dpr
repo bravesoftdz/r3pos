@@ -69,7 +69,7 @@ begin
       if not BillFactory.HasError then //运行正常
         result:=0
       else
-        GLastError:='<1003>'+BillFactory.ErrorMsg;
+        GLastError:=BillFactory.ErrorMsg;
     finally
       BillFactory.Free;
     end;

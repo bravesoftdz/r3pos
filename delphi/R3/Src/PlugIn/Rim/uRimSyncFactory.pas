@@ -25,9 +25,10 @@ type
     FMaxStmp: string;     //最大时间戳
     FUpMaxStmp: string;   //更新最大时间戳
     FSyncType: integer;   //同步类型
-    FLogInfo: TLogShopInfo; //门店日志
+    FShopLog: TLogShopInfo; //门店日志
     procedure SetMaxStmp(const Value: string);
     procedure SetSyncType(const Value: Integer);
+    procedure TreatLogFile(LogDir: string); //处理日志文件
   public
     R3ShopList: TZQuery;  //上报门店List
     RimParam: TRimParams; //上报参数记录
@@ -52,19 +53,25 @@ type
     //8、执行单向的连接库语句开启事务:
     function ExecTransSQL(SQL: string; var iRet: Integer; Msg: string=''): Boolean;  //返回是否事务是否执行成功
 
-    //9、写上报日志
-    procedure TreatLogFile(LogDir: string); //处理日志文件
-    procedure BeginLogRun; virtual;  //开始上报
-    procedure WriteLogRun(ReportName: string=''); virtual;  //结束上报
-    procedure WriteToLogList(RelationFlag: Boolean; RunFlag: Boolean=False); overload;  //写入LogList
-    procedure WriteToLogList(Msg: string; RelationFlag: Boolean; RunFlag: Boolean=False); overload;  //写入LogList
-    //10、写RIM_BAL_LOG日志
+    //9、企业开始上报:
+    procedure BeginLogReport; virtual;  //企业开始上报
+    //10、企业上报后写入Log文件:
+    procedure WriteToReportLogFile(ReportName: string=''); virtual;  //写入LogFile
+    //11、门店开始上报:
+    procedure BeginLogShopReport; virtual;  //门店开始上报
+    //12、门店上报完成写Msg:
+    procedure EndLogShopReport(RelationFlag: Boolean; RunFlag: Boolean=False); overload; //门店完成上报
+    //13、门店上报完成写Msg:
+    procedure EndLogShopReport(Msg: string; RelationFlag: Boolean; RunFlag: Boolean=False); overload; //门店完成上报
+    //14、单据上报写Msg：vType: 1:表示成功; 0:表示错误;
+    procedure AddBillMsg(BillName: string; iRect: integer; Msg: string='');  //一个单据上报
+
+    //16、写RIM_BAL_LOG日志
     function WriteToRIM_BAL_LOG(LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean;
 
     property MaxStmp: string read FMaxStmp write SetMaxStmp;              //最大时间戳
     property UpMaxStmp: string read FUpMaxStmp;                           //更新最大时间戳
     property SyncType: integer read FSyncType write SetSyncType;          //上报方式:（0: 调度执行； 3：前台传入执行)
-    property LogInfo: TLogShopInfo read FLogInfo;
   end;
 
 implementation
@@ -79,24 +86,25 @@ constructor TRimSyncFactory.Create;
 begin
   inherited;
   R3ShopList:=TZQuery.Create(nil);
-  FLogInfo:=TLogShopInfo.Create;
-  FLogInfo.LogKind:=LogKind; //日志方式
+  FShopLog:=TLogShopInfo.Create;
+  FShopLog.LogKind:=LogKind; //日志方式
 end;
 
 destructor TRimSyncFactory.Destroy;
 begin
   R3ShopList.Free;
-  FLogInfo.Free;
+  FShopLog.Free;
   inherited;
 end;
 
 function TRimSyncFactory.GetSyncType: integer; //同步类型
 begin
   result:=0;
+  FSyncType:=0;
   if (Params.FindParam('FLAG')<>nil) then
     FSyncType:=Params.FindParam('FLAG').AsInteger;
   result:=FSyncType;
-  LogInfo.SyncType:=FSyncType;  
+  FShopLog.SyncType:=result;  
 end;
 
 function TRimSyncFactory.GetMaxNUM(BillType, COM_ID, CUST_ID, SHOP_ID: string): string;
@@ -106,16 +114,18 @@ var
   Rs: TZQuery;
 begin
   result:='';
+  Rs:=TZQuery.Create(nil);   
   try
+    //返回当天0时0分0秒0刻的时间戳
     case DbType of
-     0: TimeStamp := 'convert(bigint,(convert(float,Convert(datetime,Convert(varchar(10),GetDate(),23)))-40542.0)*86400)';
-     1: TimeStamp := '86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))';
-     4: TimeStamp := '86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))';
-     
-     else TimeStamp := 'convert(bigint,(convert(float,getdate())-40542.0)*86400)';
+     0: TimeStamp:='convert(bigint,(convert(float,Convert(datetime,Convert(varchar(10),GetDate(),23)))-40542.0)*86400)';
+     1: TimeStamp:='86400*floor(sysdate - to_date(''20110101'',''yyyymmdd''))';
+     4: TimeStamp:='86400*(DAYS(CURRENT DATE)-DAYS(DATE(''2011-01-01'')))';  
+     else
+        TimeStamp:='convert(bigint,(convert(float,getdate())-40542.0)*86400)';
     end;
 
-    Rs:=TZQuery.Create(nil);       // GetTimeStamp(DbType)
+    Rs.Close;
     Rs.SQL.Text:='select MAX_NUM,'+TimeStamp+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+COM_ID+''' and CUST_ID='''+Cust_ID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+''' ';
     if Open(Rs) then
     begin
@@ -126,10 +136,10 @@ begin
     if Rs.IsEmpty then
     begin
       str:='insert into RIM_R3_NUM(COM_ID,CUST_ID,TYPE,TERM_ID,MAX_NUM) values ('''+COM_ID+''','''+Cust_ID+''','''+BillType+''','''+SHOP_ID+''',''0'')';
-      if ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('RIM_R3_NUM执行插入初值错误！（'+str+'）');
+      if ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('RIM_R3_NUM初始化['+str+']错误:'+GetLastError);
 
-      //重新在取一次：最大时间戳：
-      Rs.Close;                      // GetTimeStamp(DbType)
+      //重新时间戳：
+      Rs.Close;
       Rs.SQL.Text:='select MAX_NUM,'+TimeStamp+' as UPMAX_NUM  from RIM_R3_NUM where COM_ID='''+COM_ID+''' and CUST_ID='''+Cust_ID+''' and TYPE='''+BillType+''' and TERM_ID='''+SHOP_ID+''' ';
       if Open(Rs) then
       begin
@@ -145,7 +155,6 @@ end;
 function TRimSyncFactory.GetR3ReportShopList(var ShopList: TZQuery): Boolean;
 var
   Str: string;
-  IsFlag: Boolean;
 begin
   result:=False;
   if SyncType=3 then  //前台门店终端提交上报
@@ -173,7 +182,6 @@ end;
 
 function TRimSyncFactory.SetRimORGAN_CUST_ID(const InTENANT_ID, InSHOP_ID: string; var InCOM_ID,InCUST_ID: string): Boolean;
 var
-  str: string;
   Rs: TZQuery;
 begin
   result:=False;
@@ -182,8 +190,9 @@ begin
   try
     Rs:=TZQuery.Create(nil);
     try
-      Rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B '+
-                   ' where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+InTENANT_ID+' and B.SHOP_ID='''+InSHOP_ID+''' ';
+      Rs.SQL.Text:=
+         'select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B '+
+         ' where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+InTENANT_ID+' and B.SHOP_ID='''+InSHOP_ID+''' ';
       if Open(Rs) then
       begin
         InCOM_ID:=trim(Rs.fieldbyName('COM_ID').AsString);
@@ -192,8 +201,7 @@ begin
     except
       on E:Exception do
       begin
-        str:='企业ID('+InTENANT_ID+'),门店ID('+InSHOP_ID+')，返回Rim的供应商ID、零售户ID出错：'+E.Message;
-        Raise Exception.Create(Pchar(str));
+        Raise Exception.Create(Pchar('传入<SHOP_ID='+InSHOP_ID+'> 返回Rim.COM_ID,CUST_ID出错：'+E.Message));
       end;
     end;
   finally
@@ -233,17 +241,20 @@ begin
         Rs.SQL.Text:='select TENANT_ID from CA_RELATIONS where RELATION_ID=1000006 and RELATI_ID ='+TENANT_ID+' ';
         if Open(Rs) then
           TenID:=trim(Rs.Fields[0].AsString);
-        if TenID='' then Raise Exception.Create('传入[零售户]企业ID:('+TENANT_ID+') 没有加盟烟草企业');
+        if TenID='' then Raise Exception.Create('传入<零售户>企业ID:('+TENANT_ID+') 没有加盟上级烟草企业');
       end else
         TenID:=TENANT_ID;  
       Rs.Close;
       Rs.SQL.Text:='select A.ORGAN_ID as ORGAN_ID from RIM_PUB_ORGAN A,CA_TENANT B where B.LOGIN_NAME=A.ORGAN_CODE and B.TENANT_ID='+TenID+' ';
       if Open(Rs) then
-        result:=trim(Rs.Fields[0].AsString)
+        result:=trim(Rs.Fields[0].AsString);
     except
       on E:Exception do
       begin
-        Raise Exception.Create('传入R3企业ID:('+TENANT_ID+') 返回Rim烟草公司ID出错：'+E.Message);
+        if pos('传入<零售户>企业ID:',E.Message)>0 then
+          Raise
+        else
+          Raise Exception.Create('传入<TENANT_ID='+TENANT_ID+'> 返回Rim烟草公司ID出错：'+E.Message);
       end;
     end;
   finally
@@ -264,7 +275,7 @@ begin
   Str:='insert into RIM_BAL_LOG(LOG_SEQ,REF_TYPE,REF_ID,BAL_DATE,BAL_TIME,NOTE,USER_ID,STATUS) values '+
        '('''+LOG_SEQ+''','''+LogType+''','''+CustID+''','''+Formatdatetime('YYYYMMDD',date())+''','''+formatdatetime('HH:NN:SS',now())+''','''+LogText+''','''+UserID+''','''+LogStatus+''')' ;
   if ExecSQL(Pchar(Str),iRet)<>0 then
-   Raise Exception.Create('写日志执行失败:'+PlugIntf.GetLastError);  
+   Raise Exception.Create('写日志执行失败:'+GetLastError);  
 end;
 
 procedure TRimSyncFactory.SetSyncType(const Value: Integer);
@@ -324,13 +335,29 @@ begin
   end;
 end;
 
-procedure TRimSyncFactory.WriteLogRun(ReportName: string);
+procedure TRimSyncFactory.BeginLogReport;
+begin
+  if SyncType=3 then Exit; //前台传入执行不日志
+
+  LogList.Clear;
+  FRunInfo.BegTime:=GetTickTime;
+  FRunInfo.BegTick:=GetTickCount;
+  FRunInfo.AllCount:=0;
+  FRunInfo.RunCount:=0;
+  FRunInfo.NotCount:=0;
+  FRunInfo.ErrorCount:=0;
+  FRunInfo.ErrorStr:=''
+end;
+
+procedure TRimSyncFactory.WriteToReportLogFile(ReportName: string);
 var
   i,KeepDay: integer;
   LogDir,LogFile,Str,ReportTitle: string;
   LogFileList: TStringList;
 begin
   if SyncType=3 then Exit; //前台传入执行不日志
+  if R3ShopList.Active then
+    FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
 
   LogDir:=ExtractShortPathName(ExtractFilePath(Application.ExeName))+'log\REPORT';
   TreatLogFile(LogDir); //处理日志文件
@@ -371,20 +398,71 @@ begin
   end;
 end;
 
-procedure TRimSyncFactory.BeginLogRun;
+procedure TRimSyncFactory.BeginLogShopReport;
 begin
-  if SyncType=3 then Exit; //前台传入执行不日志
-
-  LogList.Clear;
-  FRunInfo.BegTime:=GetTickTime;
-  FRunInfo.BegTick:=GetTickCount;
-  FRunInfo.AllCount:=0;
-  FRunInfo.RunCount:=0;
-  FRunInfo.NotCount:=0;
-  FRunInfo.ErrorCount:=0;
-  FRunInfo.ErrorStr:=''
+  FShopLog.BeginLog(RimParam.ShopName);
 end;
 
+procedure TRimSyncFactory.EndLogShopReport(RelationFlag, RunFlag: Boolean);
+var
+  Msg: string;
+begin
+  if not RelationFlag then
+  begin
+    Msg:='门店<'+RimParam.ShopName+'>许可证号<'+RimParam.LICENSE_CODE+'>在Rim系统中没对应上';
+    if PlugIntf.WriteLogFile(Pchar(LogHead+'['+Msg+']'))<>0 then Raise Exception.Create(GetLastError);
+    //WriteLogFile(Msg); //写入Rsp日志面板
+  end;
+
+  if SyncType=3 then Exit; //前台传入执行不日志
+
+  if RelationFlag then //R3门店与Rim零售户有对应上
+  begin
+    if R3ShopList.RecordCount=1 then
+      FShopLog.SetLogMsg(LogList)  //添加本次执行日志
+    else
+      FShopLog.SetLogMsg(LogList,R3ShopList.RecNo); //添加本次执行日志
+
+    if RunFlag then
+      Inc(FRunInfo.ErrorCount)  //执行异常！
+    else
+      Inc(FRunInfo.RunCount);   //执行成功！
+  end else
+  begin
+    Inc(FRunInfo.NotCount);  //对应不上
+    if R3ShopList.RecordCount=1 then
+      Msg:='     '+Msg
+    else
+      Msg:='  ('+InttoStr(R3ShopList.RecNo)+')门店<'+RimParam.TenName+'>许可证号<'+RimParam.LICENSE_CODE+'> 在Rim系统中没对应上零售户！';
+  end;
+end;
+
+procedure TRimSyncFactory.EndLogShopReport(Msg: string; RelationFlag, RunFlag: Boolean);
+begin
+  if SyncType=3 then Exit; //前台传入执行不日志
+  
+  if RelationFlag then //有对应Rim许可证号:
+  begin
+    if RunFlag then
+      Inc(FRunInfo.ErrorCount)  //执行异常！
+    else
+      Inc(FRunInfo.RunCount);   //执行成功！
+  end else
+    Inc(FRunInfo.NotCount);    //未对应许可证号！
+
+  LogList.Add('  '+Msg);
+end;
+
+procedure TRimSyncFactory.AddBillMsg(BillName: string; iRect: integer; Msg: string);
+begin
+  if iRect=-1 then  //写日志Rsp日志面板
+  begin
+    WriteLogFile('<'+BillName+'>'+Msg);
+  end;
+
+  if SyncType<>3 then
+    FShopLog.AddBillMsg(BillName,iRect);
+end;
 
 function TRimSyncFactory.GetShop_IDS(TenID,LICENSE_CODE: string): string;
 var
@@ -420,54 +498,13 @@ begin
   iRet:=-1;
   BeginTrans;  //开始事务
   try
-    if ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create(Msg+PlugIntf.GetLastError);
+    if ExecSQL(Pchar(SQL),iRet)<>0 then Raise Exception.Create(Msg+GetLastError);
     CommitTrans; //提交事务
     result:=true;
   except
     RollbackTrans;
     Raise
   end;
-end;
-
-procedure TRimSyncFactory.WriteToLogList(RelationFlag, RunFlag: Boolean);
-begin
-  if SyncType=3 then Exit; //前台传入执行不日志
-  
-  if RelationFlag then //R3门店与Rim零售户有对应上
-  begin
-    if R3ShopList.RecordCount=1 then
-      LogInfo.SetLogMsg(LogList)  //添加本次执行日志
-    else
-      LogInfo.SetLogMsg(LogList,R3ShopList.RecNo); //添加本次执行日志
-
-    if RunFlag then
-      Inc(FRunInfo.ErrorCount)  //执行异常！
-    else
-      Inc(FRunInfo.RunCount);   //执行成功！
-  end else
-  begin
-    Inc(FRunInfo.NotCount);  //对应不上
-    if R3ShopList.RecordCount=1 then
-      LogList.Add('   门店<'+RimParam.ShopName+'>许可证号<'+RimParam.LICENSE_CODE+'>在Rim系统中没对应上')
-    else
-      LogList.Add('  ('+InttoStr(R3ShopList.RecNo)+')门店<'+RimParam.TenName+'>许可证号<'+RimParam.LICENSE_CODE+'> 在Rim系统中没对应上零售户！');
-  end;
-end;
-
-procedure TRimSyncFactory.WriteToLogList(Msg: string; RelationFlag: Boolean; RunFlag: Boolean);
-begin
-  if SyncType=3 then Exit; //前台传入执行不日志
-  
-  if RelationFlag then //有对应Rim许可证号:
-  begin
-    if RunFlag then
-      Inc(FRunInfo.ErrorCount)  //执行异常！
-    else
-      Inc(FRunInfo.RunCount);   //执行成功！
-  end else
-    Inc(FRunInfo.NotCount);    //未对应许可证号！
-
-  LogList.Add('  '+Msg);
 end;
 
 function TRimSyncFactory.GetR3ToRimUnit_ID(iDbType: integer; UNIT_ID: string): string;
@@ -485,12 +522,8 @@ begin
       Result:=' DECODE('+UNIT_ID+',''13F817A7-9472-48CF-91CD-27125E077FEB'',''02'',''95331F4A-7AD6-45C2-B853-C278012C5525'',''03'',''93996CD7-B043-4440-9037-4B82BB5207DA'',''04'',''01'')';
     end;
   end;
-   {  Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then ''02'' '+
-               ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then ''03'' '+
-               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then ''04'' '+
-               ' else ''01'' end)';
-  }
 end;
- 
+
+
 
 end.

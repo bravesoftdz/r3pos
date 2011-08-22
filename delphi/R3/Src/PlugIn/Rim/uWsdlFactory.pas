@@ -62,7 +62,7 @@ begin
     except
       on E:Exception do
       begin
-        WriteRunErrorMsg(E.Message);
+        PlugIntf.WriteLogFile(Pchar(E.Message));
         Raise;
       end;
     end;

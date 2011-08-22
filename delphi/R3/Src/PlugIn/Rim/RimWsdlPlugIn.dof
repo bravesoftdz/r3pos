@@ -94,7 +94,7 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
+SearchPath=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;cxLibraryVCLD7;cxEditorsVCLD7;cxGridVCLD7;dxThemeD7;cxDataD7;cxGridUtilsVCLD7;Rz30Ctls70;Rz30DBCtls70;VCLZipD7_3;asgd7;EhLib70;FR7;llPDFLibD7;zsr;inetdb
 Conditionals=
 DebugSourceDirs=
@@ -144,9 +144,9 @@ Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
 Count=9
-Item0=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
-Item1=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
-Item2=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
+Item0=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
+Item1=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
+Item2=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
 Item3=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\core;D:\Delphi\R3\zLib\src\parsesql;D:\Delphi\R3\zLib\src\plain
 Item4=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc
 Item5=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc

@@ -966,6 +966,7 @@ end;
 function TBillSyncFactory.CheckReportBill: Boolean;
 begin
 
+
 end;
 
 function TBillSyncFactory.GetMaxReckDay: string;

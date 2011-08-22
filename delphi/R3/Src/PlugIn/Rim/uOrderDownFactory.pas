@@ -67,9 +67,9 @@ var
 begin
   result:=False;
   NearDate:=FormatDatetime('YYYYMMDD',Date()-30); //获取最近30天的订单日期
-  // UseDate:=vParam.ParamByName('USING_DATE').AsString;
+  UseDate:=Params.ParamByName('USING_DATE').AsString;
   //判断启用日期与最近30天关系
-  //if NearDate < UseDate then NearDate:=UseDate;
+ if NearDate < UseDate then NearDate:=UseDate;
 
   TENANT_ID:=trim(Params.ParamByName('TENANT_ID').AsString);
   SHOP_ID:=trim(Params.ParamByName('SHOP_ID').AsString);    //R3门店ID
@@ -82,11 +82,11 @@ begin
     {== 中间表是作为接口，相应系统共用，此处处理: 主表作为查询显示下载列表显示使用 ==}
     //1、先删除中间表历史数据:
     if ExecSQL(Pchar('delete from INF_INDEORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' '),iRet)<>0 then
-       Raise Exception.Create('1、删除INF_INDEORDER失败！〖条件：企业ID='+TENANT_ID+',门店ID='+SHOP_ID+'〗'+PlugIntf.GetLastError);
+      Raise Exception.Create('1、除INF_INDEORDER失败！〖条件：企业ID='+TENANT_ID+',门店ID='+SHOP_ID+'〗'+PlugIntf.GetLastError);
 
     //2、插入最近30天且已确认的订单表头:
-    Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,NEED_AMT,STATUS) '+
-      ' select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,sum(QTY_NEED) as NEED_AMT,A.STATUS '+
+    Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,NEED_AMT,STATUS,ARR_DATE) '+
+      ' select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,sum(QTY_NEED) as NEED_AMT,A.STATUS,A.ARR_DATE '+
       ' from RIM_SD_CO A,RIM_SD_CO_LINE B '+
       ' where A.CO_NUM=B.CO_NUM and A.STATUS in (''05'',''06'') and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+COM_ID+''' and A.CUST_ID='''+CUST_ID+''' '+
       ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.STATUS ';

@@ -24,13 +24,14 @@ function TStorageSyncFactory.SendCustStorage: integer;
 var
   IsComTrans: Boolean; //提交事务返回
   iRet,iRet1,iRet2,iRet3: integer;    //返回ExeSQL影响多少行记录
-  Str,StoreTab,ShortID,Up_Date: string;
+  Str,ShortID,Up_Date: string;
 begin
-  IsComTrans:=False;
   result := -1;
+  IsComTrans:=False;
   try
     Up_Date:=FormatDatetime('YYYYMMDD',Date());
     ShortID:=Copy(RimParam.ShopID,length(RimParam.ShopID)-3,4); //门店代码后4位
+
     //1、先插入不存在商品[中间库存表]:
     Str:='insert into RIM_CUST_ITEM_SWHSE(CUST_ID,ITEM_ID,COM_ID,TERM_ID,QTY,DATE1,TIME1,IS_MRB) '+
          ' select '''+RimParam.CustID+''' as CUST_ID,B.SECOND_ID,'''+RimParam.ComID+''' as COM_ID,'''+ShortID+''' as TERM_ID,0 as QRY,'''+Up_Date+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME,''0'' '+
@@ -67,18 +68,17 @@ begin
            ' not Exists(select COM_ID from RIM_CUST_ITEM_WHSE where COM_ID=A.COM_ID and CUST_ID=A.CUST_ID and ITEM_ID=A.ITEM_ID) '+
          ' group by COM_ID,CUST_ID,ITEM_ID ';
     if IsComTrans then
-      IsComTrans:=ExecTransSQL(Str,iRet2,'插入RIM_CUST_ITEM_WHSE新记录出错:');
+      IsComTrans:=ExecTransSQL(Str,iRet3,'插入RIM_CUST_ITEM_WHSE新记录出错:');
 
-    if ExecSQL(pchar(Str), iRet3)<>0 then
-      Raise Exception.Create(''+PlugIntf.GetLastError);
     result:=iRet1+iRet2+iRet3;
   except
     on E:Exception do
     begin
-      WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库错误！','02');  //上报出错写日志
-      Raise Exception.Create(E.Message);
+      WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库存错误！','02');  //上报出错写日志
+      Raise;
     end;
   end;
+
   //上报成功写日志：
   WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'11','上报零售户库存成功！','01');
 end;
@@ -90,6 +90,7 @@ var
 begin
   result:=-1;
   PlugInID:='810';
+  
   {------初始化参数------}
   PlugIntf:=GPlugIn;
   //1、返回数据库类型
@@ -99,15 +100,14 @@ begin
   GetSyncType;  //返回同步类型标记[SyncType=3从前台传入执行]
 
   {------开始运行日志------}
-  BeginLogRun;
+  BeginLogReport;
   try
     DBLock(true); //锁定连接
     //返回R3的上报ShopList
     GetR3ReportShopList(R3ShopList);
     if R3ShopList.RecordCount=0 then
     begin
-      FRunInfo.ErrorStr:='企业ID('+RimParam.TenID+')没有对应可上报门店(上报退出执行)！';
-      Exit;
+      Raise Exception.Create('<'+PlugInID+'>'+'[企业ID('+RimParam.TenID+')没有可上报门店(退出)！]');
     end;
 
     //按门店ID排序循环上报
@@ -123,30 +123,27 @@ begin
         RimParam.LICENSE_CODE:=trim(R3ShopList.fieldbyName('LICENSE_CODE').AsString);   //R3门店许可证号 (Field: LICENSE_CODE)
         SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID);  //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
 
-        //if ='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
-          LogInfo.BeginLog(RimParam.ShopName); //开始门店日志
-
+          BeginLogShopReport; //开始门店日志
           //开始上零售户库存
           try
             iRet:=SendCustStorage;
-            LogInfo.AddBillMsg('零售户库存',iRet);
+            AddBillMsg('零售户库存',iRet);
           except
             on E:Exception do
             begin
-              LogInfo.AddBillMsg('零售户库存',-1);
-              WriteRunErrorMsg(E.Message);
-              if not ErrorFlag then ErrorFlag:=true;
+              AddBillMsg('零售户库存',-1,E.Message);
+              ErrorFlag:=true;
             end;
           end;
-          WriteToLogList(True,ErrorFlag);
+          EndLogShopReport(True,ErrorFlag); //写入门店上报情况
         end else
-          WriteToLogList(False); //对应不上门店日志
+          EndLogShopReport(False); //对应不上门店日志
       except
         on E: Exception do
         begin
-          PlugIntf.WriteLogFile(Pchar('<805> <'+RimParam.ShopID+'>'+E.Message));
+          WriteLogFile(E.Message); 
         end;
       end;
       R3ShopList.Next;
@@ -154,11 +151,7 @@ begin
     result:=1;
   finally
     DBLock(False);
-    if SyncType<>3 then
-    begin
-      FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
-      WriteLogRun('零售户库存'); //输出到文本日志
-    end;
+    WriteToReportLogFile('零售户库存'); //输出到文本日志
   end;
 end;
 

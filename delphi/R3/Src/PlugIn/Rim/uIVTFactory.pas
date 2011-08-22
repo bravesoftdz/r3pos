@@ -16,6 +16,10 @@ uses
 type
   TIVTSyncFactory=class(TRimSyncFactory)
   private
+    DeubugFlag: Boolean;
+    //写调试日志
+    function WriteToDebuLog(DebugText: string): Boolean; overload; //调试用
+
     //返回OPTION_IDS
     function GetOPTION_IDS(SUBJECT_ID: string): string;
     //下载写入一个问卷[]
@@ -41,6 +45,7 @@ var
 begin
   result:=-1;
   PlugInID:='807';
+  DeubugFlag:=FileExists('debug.bug');
   {------初始化参数------}
   PlugIntf:=GPlugIn;
   //1、返回数据库类型
@@ -59,7 +64,7 @@ begin
     RimParam.TenID:=trim(Params.ParambyName('TENANT_ID').asString);
     RimParam.ShopID:=trim(Params.ParambyName('SHOP_ID').asString);
     try
-      rs:=TZQuery.Create(nil); 
+      rs:=TZQuery.Create(nil);
       rs.SQL.Text:='select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID from RM_CUST A,CA_SHOP_INFO B where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+RimParam.TenID+' and B.SHOP_ID='''+RimParam.ShopID+''' ';
       if Open(rs) then
       begin
@@ -74,13 +79,9 @@ begin
     if SyncType=2 then  //提交问卷
     begin
       try
+        WriteToDebuLog('RimParam.ComID='+RimParam.ComID+';  RimParam.CustID='+RimParam.CustID);
         SyncInvest(RimParam.TenID,RimParam.ShopID,Params.ParambyName('QUESTION_ID').asString)
       finally
-        if FileExists('debug.bug') then
-        begin
-          LogList.SaveToFile('IVT.SQL');
-          LogList.Clear;
-        end;
       end;
     end else  //下载问卷
       SyncQuestion(RimParam.TenID,RimParam.ShopID);
@@ -90,80 +91,112 @@ end;
 //从R3提交问答卷到Rim:
 function TIVTSyncFactory.SyncInvest(tid, sid, qid: string): integer;
 var
-  r: integer;
-  mid:string;
+  r,vCount,Idx: integer;
   IsComTrans: Boolean; //是否正常提交事务
-  RimSQL1,RimSQL2,R3SQL: string;
+  mid,An_Value: string;
+  RimSQL1,R3SQL,Str: string;
+  DetailQry: TZQuery;   //明细查询Qry
+  DetailSQlList: TStringList; //明细语句List
 begin
+  result:=-1;
+  Str:='';
+  vCount:=0;
   IsComTrans:=False;
-  mid := formatDatetime('YYYYMMDDHHNNSS',now())+inttostr(Random(9999999999999999));
-  //插入Rim我的调查表
-  RimSQL1 :=
-    'insert into CC_MYINVESTIGATE(MYINVEST_ID,INVEST_ID,VOLUME_ID,INVEST_DATE,INVEST_TIME,CUST_ID) '+
-    'select '''+mid+''',A.INVEST_ID,A.VOLUME_ID,'''+formatDatetime('YYYYMMDD',date())+''','''+formatDatetime('HH:NN:SS',now())+''','''+RimParam.CustID+''' '+
-    ' from CC_INVESTIGATE A,MSC_QUESTION B,MSC_INVEST_LIST C where B.TENANT_ID='+tid+' and B.COMM_ID=A.INVEST_ID '+
-    ' and B.QUESTION_ID='''+qid+''' and B.TENANT_ID=C.TENANT_ID and B.QUESTION_ID=C.QUESTION_ID and C.QUESTION_FEEDBACK_STATUS=1 and C.QUESTION_ANSWER_STATUS=1 and C.SHOP_ID='''+sid+''' '+
-    ' and not Exists(select * from CC_MYINVESTIGATE where INVEST_ID=A.INVEST_ID and CUST_ID='''+RimParam.CustID+''') ';
+  DetailQry:= TZQuery.Create(nil); //明细Qry
+  DetailSQlList:=TStringList.Create; //明细SQL.List
+  try
+    mid := formatDatetime('YYYYMMDDHHNNSS',now())+inttostr(Random(9999999999999999));
+    //插入Rim我的调查表
+    RimSQL1 :=
+      'insert into CC_MYINVESTIGATE(MYINVEST_ID,INVEST_ID,VOLUME_ID,INVEST_DATE,INVEST_TIME,CUST_ID) '+
+      'select '''+mid+''',A.INVEST_ID,A.VOLUME_ID,'''+formatDatetime('YYYYMMDD',date())+''','''+formatDatetime('HH:NN:SS',now())+''','''+RimParam.CustID+''' '+
+      ' from CC_INVESTIGATE A,MSC_QUESTION B,MSC_INVEST_LIST C where B.TENANT_ID='+tid+' and B.COMM_ID=A.INVEST_ID '+
+      ' and B.QUESTION_ID='''+qid+''' and B.TENANT_ID=C.TENANT_ID and B.QUESTION_ID=C.QUESTION_ID and C.QUESTION_FEEDBACK_STATUS=1 and C.QUESTION_ANSWER_STATUS=1 and C.SHOP_ID='''+sid+''' '+
+      ' and not Exists(select * from CC_MYINVESTIGATE D where A.INVEST_ID=D.INVEST_ID and D.CUST_ID='''+RimParam.CustID+''')';
 
-  //插入Rim我的调查行表
-  RimSQL2 :=
-    'insert into CC_MYINVEST_SUBJECT(MYSUBJECT_ID,MYINVEST_ID,SUBJECT_ID,MYOPTION_ID) '+
-    'select '''+formatDatetime('YYYYMMDDHHNNSS',now())+inttostr(Random(9999999999999999))+''','''+mid+''',B.COMM_ID,A.ANSWER_VALUE from MSC_INVEST_ANSWER A,MSC_QUESTION_ITEM B '+
-    'where A.TENANT_ID=B.TENANT_ID and A.QUESTION_ID=B.QUESTION_ID and A.QUESTION_ITEM_ID=B.QUESTION_ITEM_ID and A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.QUESTION_ID='''+qid+'''';
-
-  //更新R3提交状态
-  R3SQL:='update MSC_INVEST_LIST set QUESTION_FEEDBACK_STATUS=2 where TENANT_ID='+tid+' and SHOP_ID='''+sid+''' and QUESTION_ID='''+qid+''' ';
-
-  if FileExists('debug.bug') then
-  begin
-    LogList.Clear;
-    if FileExists('IVT.SQL') then LogList.LoadFromFile('IVT.SQL');
-    LogList.Add('-------- '+TimeToStr(Time())+' TWO_PHASE_COMMIT='+BoolToStr(TWO_PHASE_COMMIT)+' --------');
-    LogList.Add(RimSQL1);
-    LogList.Add('     ');
-    LogList.Add(RimSQL2);
-    LogList.Add('     ');
-    LogList.Add(R3SQL);
-    LogList.Add('     ');
-  end;
-
-  if TWO_PHASE_COMMIT then //启用分布式事务同时更新
-  begin
-    try
-      BeginTrans;
-      if ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-      if r>0 then
+    WriteToDebuLog('RimSQL1='+RimSQL1);  
+    //插入Rim我的调查行表
+    DetailQry.Close;
+    DetailQry.SQL.Text:=
+      'select B.COMM_ID,A.ANSWER_VALUE from MSC_INVEST_ANSWER A,MSC_QUESTION_ITEM B '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.QUESTION_ID=B.QUESTION_ID and  A.QUESTION_ITEM_ID=B.QUESTION_ITEM_ID and A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.QUESTION_ID='''+qid+'''';
+    if Open(DetailQry) then //明细List
+    begin
+      WriteToDebuLog('After Open... Recout:'+InttoStr(DetailQry.RecordCount));
+      DetailQry.First;
+      while not DetailQry.Eof do
       begin
-        if ExecSQL(pchar(RimSQL2),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-        if ExecSQL(pchar(R3SQL),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+        WriteToDebuLog('while not DetailQry.Eof do... CurRecNo:'+InttoStr(DetailQry.RecNo));
+        An_Value:=trim(DetailQry.fieldbyName('ANSWER_VALUE').AsString);
+        while length(trim(An_Value))>5 do
+        begin
+          Idx:=Pos(',',An_Value);
+          if Idx>0 then //多个有豆号间隔
+          begin
+            Str:='insert into CC_MYINVEST_SUBJECT(MYSUBJECT_ID,MYINVEST_ID,SUBJECT_ID,MYOPTION_ID) values '+
+                 '('''+TBaseSyncFactory.newRandomId()+''','''+mid+''','''+DetailQry.fieldbyName('COMM_ID').AsString+''','''+Copy(An_Value,1,Idx-1)+''')';
+            DetailSQlList.Add(Str);
+            An_Value:=Copy(An_Value,Idx+1,Length(An_Value)-Idx-1); //删除前面字符
+          end else
+          begin //单个情况
+            Str:='insert into CC_MYINVEST_SUBJECT(MYSUBJECT_ID,MYINVEST_ID,SUBJECT_ID,MYOPTION_ID) values '+
+                 '('''+TBaseSyncFactory.newRandomId()+''','''+mid+''','''+DetailQry.fieldbyName('COMM_ID').AsString+''','''+An_Value+''')';
+            DetailSQlList.Add(Str);
+            An_Value:='';
+          end;
+        end;
+        DetailQry.Next;
+      end;             
+    end else
+      WriteToDebuLog(' not Open...');
+
+    WriteToDebuLog(DetailSQlList.CommaText);
+    //更新R3提交状态
+    R3SQL:='update MSC_INVEST_LIST set QUESTION_FEEDBACK_STATUS=2 where TENANT_ID='+tid+' and SHOP_ID='''+sid+''' and QUESTION_ID='''+qid+''' ';
+
+    if TWO_PHASE_COMMIT then //启用分布式事务同时更新
+    begin
+      try
+        BeginTrans;
+        if ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(GetLastError);
+        if r>0 then
+        begin
+         if ExecSQL(DetailSQlList,r)<>0 then Raise Exception.Create(GetLastError); 
+         if ExecSQL(pchar(R3SQL),r)<>0 then Raise Exception.Create(GetLastError);
+        end;
+        CommitTrans;
+      except
+        RollbackTrans;
+        Raise
       end;
-      CommitTrans;
-    except
-      RollbackTrans;
-      Raise
-    end;
-  end else
-  begin
-    //开始写Rim事务
-    try
-      BeginTrans;
-      if FileExists('debug.bug') then LogList.Add(' BeginTrans    ');
-      if ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-      if FileExists('debug.bug') then LogList.Add(' ExecSQL1    '+PlugIntf.GetLastError);
-      if r>0 then
-      begin
-        if ExecSQL(pchar(RimSQL2),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
-        if FileExists('debug.bug') then LogList.Add(' ExecSQL2    '+PlugIntf.GetLastError);
+    end else
+    begin
+      //开始写Rim事务
+      try
+        BeginTrans;
+        if ExecSQL(PChar(RimSQL1),r)<>0 then Raise Exception.Create(GetLastError);
+        WriteToDebuLog('RimSQL1 Execte 影响记录数：'+InttoStr(r));
+        vCount:=r;
+        if r>0 then
+        begin
+          WriteToDebuLog('DetailSQlList Before ');
+          if ExecSQL(DetailSQlList,r)<>0 then Raise Exception.Create(GetLastError);
+          WriteToDebuLog('DetailSQlList After ');
+          vCount:=vCount+r;
+        end;
+        IsComTrans:=CommitTrans;
+      except
+        RollbackTrans;
+        Raise
       end;
-      IsComTrans:=CommitTrans;
-      if FileExists('debug.bug') then LogList.Add(' CommitTrans    '+PlugIntf.GetLastError);
-    except
-      RollbackTrans;
-      Raise
+      //开始写R3事务
+      WriteToDebuLog('ExecTransSQL  总影响记录数：'+IntToStr(vCount));
+      if IsComTrans and (vCount>0) then ExecTransSQL(R3SQL,r);
+      WriteToDebuLog('R3SQL  总影响记录数：'+IntToStr(r));
     end;
-    //开始写R3事务
-    if IsComTrans then ExecTransSQL(R3SQL,r);
-    if FileExists('debug.bug') then LogList.Add(' ExecTransSQL    '+PlugIntf.GetLastError);
+  finally
+    DetailQry.Free;
+    DetailSQlList.Free;
   end;
 end;
 
@@ -208,9 +241,9 @@ begin
   try
     rs.Close;
     rs.SQL.Text:=
-       'select INVEST_ID,VOLUME_ID,BEGIN_DATE,END_DATE,IS_REPEAT from CC_INVESTIGATE A where INVEST_GROUP=''01'' and END_DATE>='''+FormatDatetime('YYYYMMDD',Now())+''' '+
-       'and not Exists(select * from MSC_INVEST_LIST B where B.TENANT_ID='+tid+' and B.SHOP_ID='''+sid+''' and B.COMM_ID=A.INVEST_ID)';
-    Open(rs); 
+       'select INVEST_ID,VOLUME_ID,BEGIN_DATE,END_DATE,IS_REPEAT from CC_INVESTIGATE A where A.INVEST_GROUP=''01'' and A.END_DATE>='''+FormatDatetime('YYYYMMDD',Now())+''' '+
+       'and not exists(select * from MSC_INVEST_LIST B where A.INVEST_ID=B.COMM_ID and B.TENANT_ID='+tid+' and B.SHOP_ID='''+sid+''')';
+    Open(rs);
     rs.First;
     while not rs.Eof do
     begin
@@ -228,9 +261,9 @@ begin
         str :=
           'insert into MSC_QUESTION(TENANT_ID,QUESTION_ID,QUESTION_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,QUESTION_SOURCE,ISSUE_USER,QUESTION_TITLE,ANSWER_FLAG,QUESTION_ITEM_AMT,REMARK,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
           'select '+tid+','''+mid+''',''1'','+Beg_Date+',0,A.INVEST_NAME,''system'',B.VOLUME_NAME,'''+IS_REPEAT+''',0,B.VOLUME_NOTE,'''+END_Date+''',A.INVEST_ID,''00'','+GetTimeStamp(DbType)+' '+
-          'from CC_INVESTIGATE A,CC_VOLUME B where A.VOLUME_ID=B.VOLUME_ID and A.ORGAN_ID=B.ORGAN_ID '+
-          ' and A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+RimParam.ComID+''' and not Exists(select * from MSC_QUESTION where TENANT_ID='+tid+' and COMM_ID=A.INVEST_ID) ';
-        if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+          'from CC_INVESTIGATE A,CC_VOLUME B where A.VOLUME_ID=B.VOLUME_ID and A.ORGAN_ID=B.ORGAN_ID and '+
+          ' A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+RimParam.ComID+''' and not exists(select * from MSC_QUESTION B where A.INVEST_ID=B.COMM_ID and B.TENANT_ID='+tid+')';
+        if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GetLastError);
 
         //初始化[一张问卷]题目
         if r>0 then
@@ -238,7 +271,7 @@ begin
 
         str:='insert into MSC_INVEST_LIST(TENANT_ID,QUESTION_ID,SHOP_ID,QUESTION_FEEDBACK_STATUS,QUESTION_ANSWER_STATUS,COMM_ID,COMM,TIME_STAMP) '+
              'values('+tid+','''+mid+''','''+sid+''',1,2,'''+rs.Fields[0].AsString+''',''00'','+GetTimeStamp(DbType)+')';
-        if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+        if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GetLastError);
         CommitTrans;
         Inc(vCount);
       except
@@ -251,12 +284,12 @@ begin
       rs.Next;
     end;
   finally
-    if FileExists('debug.bug') then
+    if DeubugFlag then
     begin
       if vCount=rs.RecordCount then
         PlugIntf.WriteLogFile(Pchar('<'+sid+'>下载了<'+InttoStr(vCount)+'>'))
       else if vCount<rs.RecordCount then
-        PlugIntf.WriteLogFile(Pchar('<'+sid+'>下载了<'+InttoStr(vCount)+'> Error='+Msg));
+        PlugIntf.WriteLogFile(Pchar('<'+sid+'>下载了<'+InttoStr(vCount)+'> Error=['+Msg+']'));
     end;
     rs.Free;
   end;
@@ -283,13 +316,31 @@ begin
       str :=
         'insert into MSC_QUESTION_ITEM(TENANT_ID,QUESTION_ID,QUESTION_ITEM_ID,SEQ_NO,QUESTION_ITEM_TYPE,QUESTION_IS_MUST,QUESTION_INFO,QUESTION_OPTIONS,COMM_ID)'+
         'values('+tid+','''+mid+''','''+newid(sid)+''','+inttostr(tmp.RecNo)+','''+inttostr(tmp.Fields[2].asInteger+1)+''','''+imust+''','''+tmp.Fields[1].AsString+''','''+s+''','''+tmp.Fields[0].AsString+''')';
-      if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+      if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GetLastError);
       tmp.Next;
     end;
     str := 'update MSC_QUESTION set QUESTION_ITEM_AMT='+inttostr(tmp.recordCount)+' where TENANT_ID='+tid+' and QUESTION_ID='''+mid+'''';
-    if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(PlugIntf.GetLastError);
+    if ExecSQL(pchar(str),r)<>0 then Raise Exception.Create(GetLastError);
   finally
     tmp.Free;
+  end;
+end;
+
+function TIVTSyncFactory.WriteToDebuLog(DebugText: string): Boolean;
+var
+  SaveList: TStringList;
+begin
+  if DeubugFlag then
+  begin
+    try
+      SaveList:=TStringList.Create;
+      if FileExists('debug.log') then
+        SaveList.LoadFromFile('debug.log');   
+      SaveList.Add(DebugText);
+      SaveList.SaveToFile('debug.log'); 
+    finally
+      SaveList.Free;
+    end;
   end;
 end;
 

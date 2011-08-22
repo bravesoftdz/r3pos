@@ -16,8 +16,9 @@ uses
 type
   TSalesTotalSyncFactory=class(TRimSyncFactory)
   private
+    procedure WriteDownLoadToReportLog(LogMsg: string); //下载参数写日志
     //从Rim的零售户表同步参数[single_sale_limit、sale_limit、IS_CHG_PRI]
-    function DownRimParamsToR3: Boolean;
+    function  DownRimParamsToR3: Boolean;
     //上报日台帐
     function SendDaySaleTotal: integer;
   public
@@ -49,16 +50,14 @@ begin
     //2011.06.12 Add从Rim下载销售限价、限量定义参数值
     DownRimParamsToR3;
 
-    BeginLogRun; {------开始运行日志------}
+    BeginLogReport; {------开始上报日志------}
     //返回R3的上报ShopList
     GetR3ReportShopList(R3ShopList);
     if R3ShopList.RecordCount=0 then
     begin
-      FRunInfo.ErrorStr:='企业ID('+RimParam.TenID+')没有对应可上报门店(上报退出执行)！';
-      result:=0;
-      Exit;
+      Raise Exception.Create('<'+PlugInID+'>'+'[企业ID('+RimParam.TenID+')没有可上报门店(退出)！]');
     end;
-
+    
     //按门店ID排序循环上报
     R3ShopList.First;
     while not R3ShopList.Eof do
@@ -73,31 +72,28 @@ begin
         RimParam.LICENSE_CODE:=trim(R3ShopList.fieldbyName('LICENSE_CODE').AsString);  //R3门店许可证号 (Field: LICENSE_CODE)
         SetRimORGAN_CUST_ID(RimParam.TenID, RimParam.ShopID, RimParam.ComID, RimParam.CustID);  //传入R3门店ID,返回RIM的烟草公司ComID,零售户CustID;
 
-        //if RimParam.ComID='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
-          LogInfo.BeginLog(RimParam.ShopName); //开始日志
+          BeginLogShopReport; //开始门店日志           
           //开始上报日销售汇总：
           try
             iRet:=SendDaySaleTotal;
-            LogInfo.AddBillMsg('日销售汇总',iRet);
+            AddBillMsg('日销售汇总',iRet);
           except
             on E:Exception do
             begin
-              LogInfo.AddBillMsg('日销售汇总',-1);
-              WriteRunErrorMsg(E.Message);
-              if not ErrorFlag then ErrorFlag:=true;
+              AddBillMsg('日销售汇总',-1,E.Message);
+              ErrorFlag:=true;
             end;
           end;
-
-          //写日志LogList
-          WriteToLogList(true, ErrorFlag);
+          //写门店上报结果日志
+          EndLogShopReport(true, ErrorFlag);
         end else
-          WriteToLogList(False); //对应不上门店
+          EndLogShopReport(False); //对应不上门店 
       except
         on E:Exception do
         begin
-          PlugIntf.WriteLogFile(Pchar('<810> <'+RimParam.ShopID+'>'+E.Message));
+          WriteLogFile(E.Message);
         end;
       end;
       R3ShopList.Next;
@@ -105,26 +101,23 @@ begin
     result:=1;
   finally
     DBLock(False);
-    if SyncType<>3 then  //调度运行才写日志
-    begin
-      FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
-      WriteLogRun('日销售汇总');  //输出到文本日志
-    end;
+    WriteToReportLogFile('日销售汇总');  //调度才写日志
   end;
 end;
 
-//从Rim的零售户表同步参数[single_sale_limit、sale_limit、IS_CHG_PRI]
-//Rim的单位：条，R3单位：盒，默认关系为:10;
+//从Rim的零售户表同步参数[single_sale_limit、sale_limit、IS_CHG_PRI]  Rim的单位：条，R3单位：盒，默认关系为:10;
 function TSalesTotalSyncFactory.DownRimParamsToR3: Boolean;
 var
   IsRun: Boolean;
   iRet: integer;
   CustCnd,UpCnd,Msg: string; //门店上报更新
-  Str,COM_ID,LogFile,CHANGE_PRICE,CHGCnd: string;
-  LogFileList: TStringList;
+  Str,COM_ID,CHANGE_PRICE,CHGCnd: string;
 begin
+  Str:='';
+  UpCnd:='';
   CustCnd:='';
   COM_ID:=GetRimCOM_ID(trim(Params.ParamByName('TENANT_ID').AsString));
+
   if SyncType=3 then //门店同步[只同步本门店]
   begin
     CustCnd:=' and C.TENANT_ID='+Params.ParamByName('TENANT_ID').AsString+' and C.SHOP_ID='''+Params.ParamByName('SHOP_ID').AsString+''' ';
@@ -148,39 +141,30 @@ begin
     ' and exists(select 1 from RM_CUST B,CA_SHOP_INFO C where B.LICENSE_CODE=C.LICENSE_CODE and A.RELATI_ID=C.TENANT_ID '+CustCnd+' and ('+CHGCnd+'))';
 
   try
-    BeginLogRun; //日志
-
-    BeginTrans;  //开始事务
+    BeginLogReport; //开始上报日志
     try
-      if ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('下载Rim零售户限价数参数出错：'+PlugIntf.GetLastError);
-      IsRun:=CommitTrans; //提交事务
-
-      if IsRun and (SyncType<>3) then //批量才写日志
+      if COM_ID<>'' then
       begin
-        FRunInfo.BegTick:=GetTickCount-FRunInfo.BegTick;  //总执行多少秒
-        Msg:='---- RSP调度【Rim零售户限价量参数】 同步：'+InttoStr(iRet)+'笔，运行'+FormatFloat('#0.00',FRunInfo.BegTick/1000)+'秒-------';
+        IsRun:=ExecTransSQL(Str,iRet,'下载Rim零售户限价限量出错：');
+        if IsRun and (SyncType<>3) then //批量才写日志
+        begin
+          FRunInfo.BegTick:=GetTickCount-FRunInfo.BegTick;  //总执行多少秒
+          Msg:='---- RSP调度【Rim零售户限价量参数】 同步：'+InttoStr(iRet)+'笔，运行'+FormatFloat('#0.00',FRunInfo.BegTick/1000)+'秒-------';
+        end;
+      end else
+      begin
+        if SyncType<>3 then Msg:='---- RSP调度【Rim零售户限价量参数】 出错: 没找到对应Rim.COM_ID！-------'; //写入[REPORT]
+        WriteLogFile('<Rim零售户限价量参数> 出错: 没找到对应Rim.COM_ID！'); 
       end;
     except
       on E:Exception do
       begin
-        RollbackTrans; //回滚事务
-        Msg:='---- RSP调度【Rim零售户限价量参数】 同步出错！-------';
-        PlugIntf.WriteLogFile(Pchar(Msg));
+        Msg:='---- RSP调度【Rim零售户限价量参数】 同步出错（'+E.Message+'）！-------';
+        WriteLogFile(Msg);
       end;    
     end;
   finally
-    if SyncType<>3 then
-    begin
-      LogFile := ExtractShortPathName(ExtractFilePath(Application.ExeName))+'log\REPORT'+FormatDatetime('YYYYMMDD',Date())+'.log';
-      LogFileList:=TStringList.Create;
-      if FileExists(LogFile) then
-      begin
-        LogFileList.LoadFromFile(LogFile);
-        LogFileList.Add('    ');
-      end;
-      LogFileList.Add(Msg); 
-      LogFileList.SaveToFile(LogFile);
-    end;
+    WriteDownLoadToReportLog(Msg); //写入REPORT文件
   end;
 end;
 
@@ -208,7 +192,7 @@ begin
     begin
       Session:='';
       vSALES_DATE:='to_char(A.SALES_DATE)';    //台账日期 转成 varchar
-      if ExecSQL(PChar('truncate table INF_SALESUM'),iRet)<>0 then Raise Exception.Create('清除临时表INF_SALESUM错误:'+PlugIntf.GetLastError);
+      if ExecSQL(PChar('truncate table INF_SALESUM'),iRet)<>0 then Raise Exception.Create('清除临时表INF_SALESUM错误:'+GetLastError);
     end;
    4:
     begin              
@@ -229,7 +213,7 @@ begin
              ' AMT DECIMAL (18,6),'+             //台账销售金额
              ' CO_NUM VARCHAR(30) NOT NULL '+    //单据号[台账日期 + 零售户ID+ R3_门店ID后4位]
              ') ON COMMIT PRESERVE ROWS NOT LOGGED WITH REPLACE ';
-      if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建临时表INF_SALESUM错误:'+PlugIntf.GetLastError);
+      if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('创建临时表INF_SALESUM错误:'+GetLastError);
     end;
   end;
 
@@ -250,13 +234,13 @@ begin
     ' M.SALES_DATE=C.SALES_DATE and M.SALES_TYPE in (1,3,4) and M.COMM not in (''02'',''12'') and M.TENANT_ID='+RimParam.TenID+' and M.SHOP_ID='''+RimParam.ShopID+''' '+
     ' group by M.TENANT_ID,M.SHOP_ID,M.SALES_DATE,S.GODS_ID';
 
-  if ExecSQL(PChar('delete from '+Session+'INF_SALESUM'),iRet)<>0 then Raise Exception.Create('删除中间表出错:'+PlugIntf.GetLastError);
+  if ExecSQL(PChar('delete from '+Session+'INF_SALESUM'),iRet)<>0 then Raise Exception.Create('删除中间表出错:'+GetLastError);
   Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_ID,SALES_DATE,QTY_ORD,AMT,CO_NUM) '+
     'select A.TENANT_ID,A.SHOP_ID,'''+Short_ID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,B.UNIT_ID,'+vSALES_DATE+' as SALES_DATE,'+
     ' (case when '+GetDefaultUnitCalc+'<>0 then cast(A.CALC_AMOUNT as decimal(18,3))/('+GetDefaultUnitCalc+') else A.CALC_AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+RimParam.CustID+''' ||''_'' || '''+Short_ID+''') as CO_NUM '+
     ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
-  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售汇总中间表出错:'+PlugIntf.GetLastError);
+  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售汇总中间表出错:'+GetLastError);
   if iRet=0 then
   begin
     result:=0; //返回没有可上报数据
@@ -268,9 +252,9 @@ begin
   Str:='delete from RIM_RETAIL_CO_LINE A '+
        ' where exists(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_SALESUM C '+
                     ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.SALES_DATE and B.COM_ID='''+RimParam.ComID+'''and B.TERM_ID='''+Short_ID+''' and B.CUST_ID='''+RimParam.CustID+''' and A.CO_NUM=B.CO_NUM)';
-  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表体出错：'+PlugIntf.GetLastError);
+  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表体出错：'+GetLastError);
   Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_SALESUM B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.SALES_DATE) and A.COM_ID='''+RimParam.ComID+''' and A.TERM_ID='''+Short_ID+''' and A.CUST_ID='''+RimParam.CustID+''' ';
-  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表头出错：'+PlugIntf.GetLastError);
+  if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除历史日销售表头出错：'+GetLastError);
 
   BeginTrans;
   try
@@ -278,16 +262,16 @@ begin
     Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,TERM_ID,PUH_DATE,STATUS,PUH_TIME,UPD_DATE,UPD_TIME,QTY_SUM,AMT_SUM) '+
          'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,SALES_DATE,''01'' as STATUS,'''+TimetoStr(time())+''','''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+
          ' from '+Session+'INF_SALESUM group by COM_ID,CUST_ID,SHORT_SHOP_ID,CO_NUM,SALES_DATE';
-    if ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('插入日销售表头[RIM_RETAIL_CO]出错:'+PlugIntf.GetLastError);
+    if ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('插入日销售表头[RIM_RETAIL_CO]出错:'+GetLastError);
 
     Str:='insert into RIM_RETAIL_CO_LINE(CO_NUM,ITEM_ID,QTY_ORD,AMT,UM_ID,PRICE) '+
          'select CO_NUM,ITEM_ID,QTY_ORD,AMT,'+GetR3ToRimUnit_ID(DbType,'UNIT_ID')+' as UNIT_ID,'+
          '(case when QTY_ORD<>0 then cast(AMT as decimal(18,3))/cast(QTY_ORD as decimal(18,3)) else cast(AMT as decimal(18,3)) end) as PRICE from '+Session+'INF_SALESUM ';
-    if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表体[RIM_RETAIL_CO_LINE]出错:'+PlugIntf.GetLastError);
+    if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日销售表体[RIM_RETAIL_CO_LINE]出错:'+GetLastError);
 
     //3、更新上报时间戳:
     Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and TYPE=''10'' and TERM_ID='''+RimParam.ShopID+''' ';
-    if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新上报时间戳出错:'+PlugIntf.GetLastError);
+    if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('更新上报时间戳出错:'+GetLastError);
 
     CommitTrans;
     result:=UpiRet;
@@ -295,14 +279,35 @@ begin
     on E:Exception do
     begin
       RollbackTrans;
-      sleep(1);
       WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'10','上报日销售错误！','02'); //写日志
-      Raise Exception.Create(E.Message);
+      Raise;
     end;
   end;
 
   //执行成功写日志:
   WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'10','上报日销售成功！','01');
+end;
+
+procedure TSalesTotalSyncFactory.WriteDownLoadToReportLog(LogMsg: string);
+var
+  LogFile: string;
+  LogFileList: TStringList;
+begin
+  if SyncType=3 then Exit; //前台执行不写日志
+
+  try
+    LogFile := ExtractShortPathName(ExtractFilePath(Application.ExeName))+'log\REPORT'+FormatDatetime('YYYYMMDD',Date())+'.log';
+    LogFileList:=TStringList.Create;
+    if FileExists(LogFile) then
+    begin
+      LogFileList.LoadFromFile(LogFile);
+      LogFileList.Add('    ');
+    end;
+    LogFileList.Add(LogMsg);
+    LogFileList.SaveToFile(LogFile);
+  finally
+    LogFileList.Free;
+  end;
 end;
 
 end.

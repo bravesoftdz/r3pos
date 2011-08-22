@@ -26,6 +26,7 @@ type
     FTENANT_ID: string;
     FDBFactory: TRimSyncFactory;
     FdbResoler: Integer;
+    FUseCalcRckDay: Boolean;
     procedure Setcflag(const Value: integer);
     procedure SetcDate(const Value: TDate);
     procedure SetbDate(const Value: TDate);
@@ -53,7 +54,8 @@ type
     function CommitTrans: Boolean;   //提交事务
     function RollbackTrans: Boolean; //回滚事务
     function Open(DataSet: TDataSet):Boolean;
-    procedure SetdbResoler(const Value: Integer);  //取数据
+    procedure SetdbResoler(const Value: Integer);
+    procedure SetUseCalcRckDay(const Value: Boolean);  //取数据
   public
     //计算日台账过程:
     procedure CalcDayReck(TENANT_ID: string);
@@ -80,12 +82,15 @@ type
     property DBFactory: TRimSyncFactory read FDBFactory write SetDBFactory;
     //连接
     property dbResoler:Integer read FdbResoler write SetdbResoler;
+    //是否启用试算日台账
+    property UseCalcRckDay: Boolean read FUseCalcRckDay write SetUseCalcRckDay;
   end;
 
 //第三方系统数据对接的基类
 type
   TDayReckSyncFactory=class(TRimSyncFactory)
   private
+    FUseCalcRckDay: Boolean;  //是否启用试用算日台账
     DayReck: TGodsDayReck;
     //系统检查是否存在漏上报情况
     function CheckNotReportBill: Boolean;
@@ -347,27 +352,27 @@ begin
   Prepare;
 
   //2011.07.21 关闭掉计算日台账
- {
-  DBFactory.DBLock(true); //锁定数据连接
-  try
-    if DbType=5 then BeginTrans; //对SQLite启动事务，减少IO [SQLITE事务写在外层，其它库写在子过程内]
+  if UseCalcRckDay then
+  begin
+    DBFactory.DBLock(true); //锁定数据连接
     try
-      CreateTempTable; //创建临时表
-      PrepareDataForRck;  //数据准备
-      //计算成本
-      case calc_flag of
-       0: Calc0;
-       1: Calc1;
-       2: Calc2;
+      if DbType=5 then BeginTrans; //对SQLite启动事务，减少IO [SQLITE事务写在外层，其它库写在子过程内]
+      try
+        CreateTempTable; //创建临时表
+        PrepareDataForRck;  //数据准备
+        //计算成本
+        case calc_flag of
+         0: Calc0;
+         1: Calc1;
+         2: Calc2;
+        end;
+      finally
+        if DbType=5 then CommitTrans;  //对SQLite启动事务，减少IO
       end;
     finally
-      if DbType=5 then CommitTrans;  //对SQLite启动事务，减少IO
+      DBFactory.DBLock(False); //解锁数据连接
     end;
-  finally
-    DBFactory.DBLock(False); //解锁数据连接
   end;
- }
-
 end;
 
 procedure TGodsDayReck.PrepareDataForRck;
@@ -1002,13 +1007,20 @@ begin
   FdbResoler := Value;
 end;
 
+procedure TGodsDayReck.SetUseCalcRckDay(const Value: Boolean);
+begin
+  FUseCalcRckDay := Value;
+end;
+
 {TDayReckSyncFactory}
 
 constructor TDayReckSyncFactory.Create;
 begin
   inherited;
+  FUseCalcRckDay:=trim(ReadConfig('PARAMS','USE_CALC_RCKDAY','0'))='1'; //默认不启用
   DayReck:=TGodsDayReck.Create;
   DayReck.DBFactory:=self;
+  DayReck.UseCalcRckDay:=FUseCalcRckDay;
 end;
 
 destructor TDayReckSyncFactory.Destroy;
@@ -1035,7 +1047,7 @@ begin
 
   
   {------开始运行日志------}
-  BeginLogRun;
+  BeginLogReport;
   try
     DBLock(true);  //锁定数据库链接
     //返回R3的上报ShopList
@@ -1064,27 +1076,26 @@ begin
 
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
-          LogInfo.BeginLog(RimParam.ShopName); //开始日志
+          BeginLogShopReport; //开始门店日志
 
           //开始上报日台帐：
           try
             iRet:=GodsDayReckSync;
-            LogInfo.AddBillMsg('零售户日台帐',iRet);
+            AddBillMsg('零售户日台帐',iRet);
           except
             on E:Exception do
             begin
-              LogInfo.AddBillMsg('零售户日台帐',-1);
-              WriteRunErrorMsg(E.Message); //写第一次错误作为插件Error返回
               ErrorFlag:=true;
+              AddBillMsg('零售户日台帐',-1,E.Message);
             end;
           end;
-          WriteToLogList(true,ErrorFlag); //写本门店总体上报情况
+          EndLogShopReport(true,ErrorFlag); //写本门店总体上报情况
         end else
-          WriteToLogList(False);  //写本门店对应不上日志
+          EndLogShopReport(False);  //写本门店对应不上日志
       except
         on E:Exception do
         begin
-          WriteLogFile(Pchar('<1005> <'+RimParam.ShopID+'>'+E.Message));
+          WriteLogFile(E.Message);
         end;
       end;
       R3ShopList.Next;
@@ -1092,11 +1103,7 @@ begin
     result:=1;
   finally
     DBLock(False);
-    if SyncType<>3 then  //调度运行才写日志
-    begin
-      FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
-      WriteLogRun('零售户日台帐');  //输出到文本日志
-    end;
+    WriteToReportLogFile('日台帐');  //输出到文本日志
   end;
 end;
 
@@ -1283,7 +1290,7 @@ begin
       begin
         RollbackTrans;
         WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐错误！','02'); //写日志
-        Raise Exception.Create(E.Message);
+        Raise;
       end;
     end;
   end else  //单向提交事务
@@ -1306,7 +1313,7 @@ begin
       on E:Exception do
       begin
         WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'09','上报日台帐错误！','02'); //写日志
-        Raise Exception.Create(E.Message);
+        Raise;
       end;
     end;
   end;

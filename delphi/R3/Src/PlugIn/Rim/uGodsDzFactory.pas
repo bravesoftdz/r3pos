@@ -108,7 +108,7 @@ begin
               RsInf.FieldByName('ROWS_ID').AsString:=NewId();
               RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
               RsInf.FieldByName('RELATION_ID').AsInteger:=NT_RELATION_ID;  //国家卷烟供应链1000006
-              RsInf.FieldByName('GODS_ID').AsString:=RsBarPub.fieldbyName('GODS_ID').AsString; //国家卷烟供应链
+              RsInf.FieldByName('GODS_ID').AsString:=RsBarPub.fieldbyName('GODS_ID').AsString;
               RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
               RsInf.FieldByName('UPDATE_FLAG').AsInteger:=4;       //状态[4: 重复条码]
               RsInf.FieldByName('UpdateMode').AsInteger:=UpdateMode; //更新模式

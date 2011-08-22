@@ -10,6 +10,9 @@ type
   TInf_Goods_Relation=class(TZFactory)
   private
     function GetUpdateTime: string;
+    //Rim到R3单位换算和手工对照
+    function DoChangeUnit_DB2_Oracle(AGlobal:IdbHelp): Integer;
+
     //根据中间表[INF_GOODS_RELATION]更新关系表[PUB_GOODS_RELATION]
     function DoUpdateRelation_MSSQL(AGlobal:IdbHelp): Integer;
     function DoUpdateRelation_DB2_Oracle(AGlobal:IdbHelp): Integer;
@@ -50,19 +53,7 @@ begin
     InParams:=Params.Encode(Params);
     PlugIn.DLLDoExecute(InParams, vData);
 
-    //第二步：处理手工对照:[]
-    case AGlobal.iDbType of
-     1:
-       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=5 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
-             ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0)';
-     4:
-       Str:=' update INF_GOODS_RELATION A set UPDATE_FLAG=5 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
-             ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and locate('','' || A.SECOND_ID || '','',B.COMM_ID)>0)';
-    end;
-    AGlobal.ExecSQL(Str);
-
-
-    //第三步：返回查询结果:
+    //第二步：返回查询结果:
     case UpdateMode of
      1:
       begin
@@ -115,14 +106,8 @@ begin
   UpdateMode:=FieldbyName('UpdateMode').AsInteger;  //从数据集传过来，每一条记录都一样
   if (UpdateMode<0) or (UpdateMode>3) then UpdateMode:=1;  //默认为1
 
-  //2011.06. 29
-  UpSQL:='update INF_GOODS_RELATION a set '+
-  ' (a.NEW_INPRICE,a.NEW_OUTPRICE)='+
-  ' (select (case when b.SMALLTO_CALC>0 then (a.NEW_INPRICE*1.00)/(b.SMALLTO_CALC*1.0) else a.NEW_INPRICE end) as NEW_INPRICE,'+
-  ' (case when b.SMALLTO_CALC>0 then (a.NEW_OUTPRICE*1.00)/(b.SMALLTO_CALC*1.0) else a.NEW_OUTPRICE end) as NEW_OUTPRICE '+
-  ' from PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001) '+
-  ' where exists(select GODS_ID from PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001) ';
-  iRet:=AGlobal.ExecSQL(UpSQL);
+  //单位换算和手工对照更新
+  DoChangeUnit_DB2_Oracle(AGlobal);
 
   Comm:=GetCommStr(AGlobal.iDbType);
   TimeStp:=GetTimeStamp(AGlobal.iDbType);
@@ -135,7 +120,7 @@ begin
   case UpdateMode of
    1: //刷新所有条件:
     begin
-      //更新存在记录:                                           
+      //更新存在记录:
       UpSQL:=
         'update PUB_GOODS_RELATION A set ('+UpFields+',COMM,TIME_STAMP)= '+
         ' (select '+UpFields+','+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1 and A.TENANT_ID='+TENANT_ID+')'+
@@ -149,6 +134,15 @@ begin
         'select '+InFields+',''00'','+TimeStp+' from INF_GOODS_RELATION A where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG=2 and  '+
         ' not exists(select 1 from PUB_GOODS_RELATION B where B.TENANT_ID='+TENANT_ID+' and A.GODS_ID=B.GODS_ID) ';
       iRet:=iRet+AGlobal.ExecSQL(UpSQL);
+
+      //2011.08.18更新手工对照：
+      UpSQL:=
+         'update PUB_GOODS_RELATION A set ('+UpFields+',COMM,TIME_STAMP)= '+
+         ' (select '+UpFields+','+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and a.SECOND_ID=b.SECOND_ID and B.UPDATE_FLAG=5 and A.TENANT_ID='+TENANT_ID+')'+
+         ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and nvl(A.COMM_ID,'''')<>'''' and '+
+         ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SECOND_ID=B.SECOND_ID and B.UPDATE_FLAG=5)';
+      UpSQL:=ParseSQL(AGlobal.iDbType,UpSQL);
+      iRet:=AGlobal.ExecSQL(UpSQL);
     end;
    2: //刷新新品:
     begin
@@ -171,7 +165,16 @@ begin
         ' (select NEW_INPRICE,NEW_OUTPRICE,'+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+') '+
         ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and '+
         ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+')';
+      iRet:=AGlobal.ExecSQL(UpSQL);
 
+      //2011.08.18更新手工对照：
+      UpSQL:=
+        'update PUB_GOODS_RELATION A '+
+        ' set (NEW_INPRICE,NEW_OUTPRICE,COMM,TIME_STAMP)= '+
+        ' (select NEW_INPRICE,NEW_OUTPRICE,'+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SECOND_ID=B.SECOND_ID and B.UPDATE_FLAG=5 and B.TENANT_ID='+TENANT_ID+') '+
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and nvl(A.COMM_ID,'''')<>'''' and  '+
+        ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SECOND_ID=B.SECOND_ID and B.UPDATE_FLAG=5 and B.TENANT_ID='+TENANT_ID+')';
+      UpSQL:=ParseSQL(AGlobal.iDbType,UpSQL);
       iRet:=AGlobal.ExecSQL(UpSQL);
     end;
   end;
@@ -322,6 +325,39 @@ begin
   result:=FormatFloat('0000',vYear)+FormatFloat('00',vMonth)+FormatFloat('00',vDay);
   DecodeTime(Time(), vHour, vMin, vSec, vMSec);
   result:=result+'_'+FormatFloat('00',vHour)+':'+FormatFloat('00',vMin)+':'+FormatFloat('00',vSec);
+end;
+
+function TInf_Goods_Relation.DoChangeUnit_DB2_Oracle(AGlobal: IdbHelp): Integer;
+var
+  iRet: integer;
+  UpSQL: string;
+  TENANT_ID: string;
+begin
+  result:=-1;
+  iRet:=0;
+  TENANT_ID:=FieldbyName('TENANT_ID').AsString;     //从数据集传过来，每一条记录都一样
+
+  //2011.06. 29 Add 单位换算：
+  UpSQL:=
+    'update INF_GOODS_RELATION a set '+
+    ' (a.NEW_INPRICE,a.NEW_OUTPRICE)='+
+    ' (select (case when b.SMALLTO_CALC>0 then (a.NEW_INPRICE*1.00)/(b.SMALLTO_CALC*1.0) else a.NEW_INPRICE end) as NEW_INPRICE,'+
+    ' (case when b.SMALLTO_CALC>0 then (a.NEW_OUTPRICE*1.00)/(b.SMALLTO_CALC*1.0) else a.NEW_OUTPRICE end) as NEW_OUTPRICE '+
+    ' from PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001) '+
+    ' where exists(select GODS_ID from PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001) ';
+  iRet:=AGlobal.ExecSQL(UpSQL);
+
+  //2011.08.16 调整位置；
+  case AGlobal.iDbType of
+   1:
+    UpSQL:=' update INF_GOODS_RELATION A set UPDATE_FLAG=5 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
+           ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and INSTR(B.COMM_ID,'','' || A.SECOND_ID || '','', 1, 1)>0)';
+   4:
+    UpSQL:=' update INF_GOODS_RELATION A set UPDATE_FLAG=5 where A.TENANT_ID='+TENANT_ID+' and A.UPDATE_FLAG in (0,4) and '+
+           ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and locate('','' || A.SECOND_ID || '','',B.COMM_ID)>0)';
+  end;
+  AGlobal.ExecSQL(UpSQL);
+  result:=iRet;
 end;
 
 initialization

@@ -68,10 +68,9 @@ from RIM_MESSAGE_TAB
 
 --修改创建：RIM_RM_CUST
 drop view RIM_RM_CUST;
-create view RIM_RM_CUST
-as
-select 
- *
-from RM_CUST; 
+create view RIM_RM_CUST as select * from RM_CUST; 
+
+--2011.08.17 PM：订单中间主表增加预计到货日期：
+alter table INF_INDEORDER Add ARR_DATE varchar(10);
   
  

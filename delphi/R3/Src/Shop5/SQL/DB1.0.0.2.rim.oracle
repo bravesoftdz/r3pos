@@ -85,16 +85,15 @@ where e.com_id=d.com_id and e.com_id=c.com_id and c.com_id=d.com_id and a.item_i
 DROP VIEW RIM_MESSAGE;
 Create VIEW RIM_MESSAGE as 
 select 
-  COM_ID,MSG_ID,TYPE,TITLE,CONTENT,USE_DATE,INVALID_DATE,OPERATOR,REC_TYPE,RECEIVER,STATUS,UPD_DATE,UPD_TIME,RECEIVER_TYPE, saleorg_id, 
-  slsman_id,sale_center_id   
+  COM_ID,MSG_ID,TYPE,TITLE,CONTENT,USE_DATE,INVALID_DATE,OPERATOR,REC_TYPE,RECEIVER,STATUS,UPD_DATE,UPD_TIME,RECEIVER_TYPE, 
+  saleorg_id,slsman_id,sale_center_id   
 from RIM_MESSAGE@RIMLINK;
 
 
 --修改创建：RIM_RM_CUST
 drop view RIM_RM_CUST;
-create view RIM_RM_CUST
-as
-select 
- *
-from RM_CUST; 
+create view RIM_RM_CUST as select * from RM_CUST; 
+
+--2011.08.17 PM：订单中间主表增加预计到货日期：
+alter table INF_INDEORDER add ARR_DATE varchar2(10);
   

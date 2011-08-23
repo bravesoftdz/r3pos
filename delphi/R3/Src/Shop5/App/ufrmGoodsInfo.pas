@@ -745,8 +745,8 @@ begin
     edtBARTER_INTEGRAL.Value:=null;
 
   //是否管制积分换购:
-  RB_NotUSING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=1);   //禁用
-  RB_USING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=2);      //启用积分兑换
+  RB_NotUSING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=2);   //禁用
+  RB_USING_BARTER.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=1);      //启用积分兑换
   RB_USING_BARTER2.Checked:=(AObj.FieldbyName('USING_BARTER').AsInteger=3);     //启用积分换购
   if RB_USING_BARTER.Checked then edtBARTER_INTEGRAL.Value:=AObj.FieldbyName('BARTER_INTEGRAL').AsInteger;
   if RB_USING_BARTER2.Checked then edtBARTER_INTEGRAL2.Value:=AObj.FieldbyName('BARTER_INTEGRAL').AsInteger;
@@ -814,9 +814,9 @@ begin
 
   //是否管制积分换购:
   if RB_NotUSING_BARTER.Checked then     //禁用:
-    AObj.FieldbyName('USING_BARTER').AsInteger :=1
+    AObj.FieldbyName('USING_BARTER').AsInteger :=2
   else if RB_USING_BARTER.Checked then   //兑换:
-    AObj.FieldbyName('USING_BARTER').AsInteger:=2
+    AObj.FieldbyName('USING_BARTER').AsInteger:=1
   else if RB_USING_BARTER2.Checked then  //换购:
     AObj.FieldbyName('USING_BARTER').AsInteger :=3;
   ////积分换购商品(换算关系):        

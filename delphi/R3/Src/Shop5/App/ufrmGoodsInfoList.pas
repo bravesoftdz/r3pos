@@ -96,7 +96,7 @@ type
      procedure DoTreeChange(Sender: TObject; Node: TTreeNode);  //
      function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
      function  CheckCanExport: boolean; override;
-     function  GetReCount(Cnd: string): integer;
+     function  GetReCount: integer;
   public
     { Public declarations }
     IsEnd: boolean;  //cdsBrowser.Active
@@ -106,7 +106,7 @@ type
     procedure LoadTree;  //刷新SortTree树
     procedure AddRecord(AObj:TRecord_);
     procedure InitGrid;
-    function  EncodeSQL(id:string;var Cnd:string):string;
+    function  EncodeSQL(id:string; QryType: integer=0):string; {QryType: 0表示取数据查询; 1表示取总记录数}
     procedure Open(Id:string);
     function  FindNode(ID: string): TTreeNode;
     function  PropertyEnabled:boolean;
@@ -220,97 +220,136 @@ begin
 //     Background := clBtnFace;
 end;
 
-function TfrmGoodsInfoList.EncodeSQL(id: string;var Cnd:string): string;
+function TfrmGoodsInfoList.EncodeSQL(id: string; QryType: integer): string;
 var
-  w,vCnd,GodsFields,OperChar,vLike,LikeCnd:string;
+  w,GodsFields,OperChar:string;
 begin
-  vCnd:='';
   GodsFields:='';
   OperChar:=GetStrJoin(Factor.iDbType); //字符连接操作符
 
   w := ' and j.TENANT_ID=:TENANT_ID and j.SHOP_ID=:SHOP_ID and j.COMM not in (''02'',''12'') ';
+
   if id<>'' then w := w + ' and j.GODS_ID>:MAXID';
 
   if rzTree.Selected<>nil then
   begin
     w :=w+' and b.RELATION_ID=:RELATION_ID ';
-    vCnd:=' and b.RELATION_ID=:RELATION_ID ';
     if rzTree.Selected.Level>0 then
     begin
       w :=w+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
-      vCnd:=vCnd+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
     end;
   end;
 
   if trim(edtKey.Text)<>'' then
   begin
-    LikeCnd:=' and '+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','br.BARCODE'],':KEYVALUE','')+' ';
-    w := w+LikeCnd;
-    vCnd:=vCnd+LikeCnd;
+    w := w+' and '+GetLikeCnd(Factor.iDbType,['j.GODS_CODE','j.GODS_NAME','j.GODS_SPELL','br.BARCODE'],':KEYVALUE','')+' ';
   end;
 
-  Cnd:=vCnd; //返回查询记录数的条件;
   GodsFields:=
     ' b.RELATION_Flag,j.TENANT_ID,j.RELATION_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS,j.RTL_OUTPRICE,j.NEW_LOWPRICE,j.NEW_OUTPRICE,j.NEW_INPRICE,'+
-    '(case when j.NEW_OUTPRICE<>0 then cast(Round((j.NEW_INPRICE*100.0)/(j.NEW_OUTPRICE*1.0),0) as int) else null end) as PROFIT_RATE ';
+    '(case when j.NEW_OUTPRICE<>0 then cast(Round((j.NEW_INPRICE*100.0)/(j.NEW_OUTPRICE*1.0),0) as int) else null end) as PROFIT_RATE,SORT_ID3,SORT_ID4,GODS_TYPE ';
   case Factor.iDbType of
    0:
     begin
-      result :=
-        'select top 600 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
-        '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
-        '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
-        '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
-        ' where b.SORT_TYPE=1 '+w+') l '+
-        'left outer join '+
-        '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-        'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
+      if QryType=0 then
+      begin
+        result :=
+          'select top 600 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
+          '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+') l '+
+          'left outer join '+
+          '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
+          'on l.GODS_ID=r.GODS_ID order by l.GODS_ID';
+      end else
+      if QryType=1 then
+      begin
+        result :=
+          ' select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+' ';
+      end;
     end;
   1:
     begin
-      result :=
-        'select * from ('+
-        'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
-        '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
-        '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
-        '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
-        ' where b.SORT_TYPE=1 '+w+') l '+
-        'left outer join '+
-        '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-        ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) where ROWNUM<=600 ';
+      if QryType=0 then
+      begin
+        result :=
+          'select * from ('+
+          'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
+          '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+') l '+
+          'left outer join '+
+          '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
+          ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID) where ROWNUM<=600 ';
+      end else
+      if QryType=1 then
+      begin
+        result :=
+          'select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+' ';
+      end;
     end;
   4:
     begin
-      result :=
-        'select tp.* from ('+
-        'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
-        '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
-        ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
-        ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
-        ' where b.SORT_TYPE=1 '+w+') l '+
-        'left outer join '+
-        '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-        ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID)tp fetch first 600 rows only ';
+      if QryType=0 then
+      begin
+        result :=
+          'select tp.* from ('+
+          'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
+          ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+') l '+
+          'left outer join '+
+          '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
+          ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID)tp fetch first 600 rows only ';
+      end else
+      if QryType=1 then
+      begin
+        result :=
+          ' select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+' ';
+      end;
     end;
   5:
     begin
-      result :=
-        'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
-        '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
-        ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
-        ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
-        ' where b.SORT_TYPE=1 '+w+') l '+
-        'left outer join '+
-        '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
-        ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600 ';
-   end;
+      if QryType=0 then
+      begin
+        result :=
+          'select 0 as selflag,l.*,r.AMOUNT as AMOUNT from '+
+          '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
+          ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+') l '+
+          'left outer join '+
+          '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
+          ' on l.GODS_ID=r.GODS_ID order by l.GODS_ID limit 600 ';
+      end else
+      if QryType=1 then
+      begin
+        result :=
+          ' select Count(*) as ReSum from VIW_GOODSPRICEEXT j '+
+          ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
+          ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' where b.SORT_TYPE=1 '+w+' ';
+      end;
+    end;
   end;
 end;
 
 procedure TfrmGoodsInfoList.Open(Id: string);
 var
   StrmData: TStream;
-  Cnd: string; rs:TZQuery;
+  rs:TZQuery;
 begin
   if not Visible then Exit;
   if rzTree.Selected=nil then Exit;
@@ -320,7 +359,7 @@ begin
   cdsBrowser.DisableControls;
   try
     StrmData:=TMemoryStream.Create;
-    rs.SQL.Text:=EncodeSQL(Id,Cnd);
+    rs.SQL.Text:=EncodeSQL(Id);
     if rs.Params.FindParam('TENANT_ID')<>nil then rs.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
     if rs.Params.FindParam('SHOP_ID_ROOT')<>nil then rs.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
@@ -342,7 +381,7 @@ begin
       if rs.RecordCount <600 then
         rcAmt:=rs.RecordCount
       else
-        rcAmt:=GetReCount(Cnd);
+        rcAmt:=GetReCount;
       GetNo;
     end else
       cdsBrowser.AddFromStream(StrmData);
@@ -1109,35 +1148,22 @@ begin
   LoadTree;
 end;
 
-function TfrmGoodsInfoList.GetReCount(Cnd: string): integer;
-var str,GoodTab: string; Qry:TZQuery;
+function TfrmGoodsInfoList.GetReCount: integer;
+var
+  Qry:TZQuery;
 begin
   result:=0;
   Qry:=TZQuery.Create(nil);
   try
-    GoodTab:=
-      '(select * from VIW_GOODSPRICE where COMM not in (''02'',''12'') and POLICY_TYPE=2 and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID '+
-      ' union all '+
-      ' select A.* from VIW_GOODSPRICE A,VIW_GOODSPRICE B '+
-      ' where A.COMM not in (''02'',''12'') and B.POLICY_TYPE=1 and A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.SHOP_ID=:SHOP_ID and '+
-      ' A.SHOP_ID=:SHOP_ID_ROOT and A.TENANT_ID=:TENANT_ID)';
-
-    str:='Select count(*) as RESUM from '+GoodTab+' j,VIW_GOODSSORT b '+
-         ' where b.SORT_TYPE=1 and j.TENANT_ID=:TENANT_ID and j.COMM not in (''02'',''12'') and j.SORT_ID1=b.SORT_ID and j.TENANT_ID=b.TENANT_ID '+Cnd+' ';
     Qry.Close;
-    Qry.SQL.Text:=str;
-    if Qry.Params.FindParam('TENANT_ID')<>nil then
-      Qry.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
-    if Qry.Params.FindParam('SHOP_ID_ROOT')<>nil then
-      Qry.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
-    if Qry.Params.FindParam('SHOP_ID')<>nil then
-      Qry.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
-    if Qry.Params.FindParam('KEYVALUE')<>nil then
-      Qry.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
-    if Qry.Params.FindParam('LEVEL_ID')<>nil then
-      Qry.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
-    if Qry.Params.FindParam('RELATION_ID')<>nil then
-      Qry.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    Qry.SQL.Text:=EncodeSQL('',1);
+    if Qry.Params.FindParam('TENANT_ID')<>nil then Qry.ParamByName('TENANT_ID').AsInteger:=SHopGlobal.TENANT_ID;
+    if Qry.Params.FindParam('SHOP_ID')<>nil then Qry.ParamByName('SHOP_ID').AsString:=SHopGlobal.SHOP_ID;
+    if Qry.Params.FindParam('SHOP_ID_ROOT')<>nil then Qry.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
+    if Qry.Params.FindParam('MAXID')<>nil then Qry.ParamByName('MAXID').AsString := MaxId;
+    if Qry.Params.FindParam('KEYVALUE')<>nil then Qry.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
+    if Qry.Params.FindParam('LEVEL_ID')<>nil then Qry.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if Qry.Params.FindParam('RELATION_ID')<>nil then Qry.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     Factor.Open(Qry);
     Result := Qry.Fields[0].AsInteger;
   finally

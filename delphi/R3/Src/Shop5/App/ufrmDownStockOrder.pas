@@ -236,8 +236,7 @@ var
   vParam: TftParamList;
 begin
   try
-    //启用日期  
-    {
+    //启用日期
     Rs:=Global.GetZQueryFromName('SYS_DEFINE');
     if (Rs<>nil) and (Rs.Active) then
     begin
@@ -246,9 +245,9 @@ begin
         UseDate:=trim(Rs.fieldbyName('VALUE').AsString);
         UseDate:=FormatDateTime('YYYYMMDD', fnTime.fnStrtoDate(UseDate));
       end else
-        UseDate:='';
+        UseDate:=FormatDateTime('YYYYMMDD', Date()); //默认今天
     end;
-    }
+
     Rs:=TZQuery.Create(nil);
     vParam:=TftParamList.Create(nil);
     vParam.ParamByName('ExeType').AsInteger:=1;

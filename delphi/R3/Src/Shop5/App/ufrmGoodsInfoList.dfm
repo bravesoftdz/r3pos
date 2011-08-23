@@ -317,8 +317,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                     FieldName = 'GODS_TYPE'
                     Footers = <>
                     KeyList.Strings = (
-                      '0'
-                      '1')
+                      '1'
+                      '2')
                     PickList.Strings = (
                       #21542' '
                       #26159' '

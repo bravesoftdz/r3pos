@@ -85,6 +85,7 @@ implementation
 constructor TRimSyncFactory.Create;
 begin
   inherited;
+  FUpMaxStmp:='';
   R3ShopList:=TZQuery.Create(nil);
   FShopLog:=TLogShopInfo.Create;
   FShopLog.LogKind:=LogKind; //日志方式
@@ -381,14 +382,22 @@ begin
       end;
 
       if SyncType=3 then  //客户端单个门店日志
-        LogFileList.Add('---- <R3终端> '+ReportTitle+' ------')
+        LogFileList.Add('〖---- <R3终端> '+ReportTitle+' ----〗')
       else
-        LogFileList.Add('---- <Rsp调度> '+ReportTitle+' -------');
+        LogFileList.Add('〖---- <Rsp调度> '+ReportTitle+' ----〗');
       for i:=0 to LogList.Count-1 do
       begin
         LogFileList.Add(LogList.Strings[i]);
       end;
-      LogFileList.Add('--- [结束] <运行：'+FormatFloat('#0.00',FRunInfo.BegTick/1000)+'>秒 时间戳<'+UpMaxStmp+'><Trans='+BooltoStr(TWO_PHASE_COMMIT)+'> ----');
+      ReportTitle:='〖---- [结束] <运行：'+FormatFloat('#0.00',FRunInfo.BegTick/1000)+'秒> ';
+      if UpMaxStmp<>'' then
+        ReportTitle:=ReportTitle+' <TIMESTAMP='+UpMaxStmp+'> ';
+      if TWO_PHASE_COMMIT then
+        ReportTitle:=ReportTitle+' <DBTran=TWO_COMMIT>'
+      else
+        ReportTitle:=ReportTitle+' <DBTran=SINGLE_COMMIT>';
+      ReportTitle:=ReportTitle+'  ----〗';
+      LogFileList.Add(ReportTitle);
       LogFileList.Add('  ');
       LogFileList.SaveToFile(LogFile);
     finally
@@ -434,6 +443,7 @@ begin
       Msg:='     '+Msg
     else
       Msg:='  ('+InttoStr(R3ShopList.RecNo)+')门店<'+RimParam.TenName+'>许可证号<'+RimParam.LICENSE_CODE+'> 在Rim系统中没对应上零售户！';
+    LogList.Add(Msg);
   end;
 end;
 

@@ -1054,7 +1054,7 @@ begin
     GetR3ReportShopList(R3ShopList);
     if R3ShopList.RecordCount=0 then
     begin
-      FRunInfo.ErrorStr:='企业ID('+RimParam.TenID+')没有对应可上报门店(上报退出执行)！';
+      FRunInfo.ErrorStr:='<'+PlugInID+'> <'+RimParam.TenID+'> 没有对应可上报门店(上报退出执行)！';
       result:=0;
       Exit;
     end;

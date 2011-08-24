@@ -65,6 +65,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           Width = 28
         end
         item
+          DisplayFormat = '0000-00-00'
           EditButtons = <>
           FieldName = 'ARR_DATE'
           Footers = <>
@@ -182,7 +183,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
       Align = alTop
     end
     object btnOK: TRzBitBtn
-      Left = 302
+      Left = 377
       Top = 13
       Width = 79
       Caption = #21040#36135#30830#35748'(&O)'
@@ -194,7 +195,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
       OnClick = btnOKClick
     end
     object RzBitBtn1: TRzBitBtn
-      Left = 385
+      Left = 460
       Top = 13
       Width = 64
       Caption = #21462#28040'(&C)'

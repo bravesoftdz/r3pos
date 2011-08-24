@@ -48,7 +48,7 @@ object frmDevFactory: TfrmDevFactory
     Top = 0
     Width = 337
     Height = 193
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Align = alTop
     TabOrder = 2
     object TabSheet4: TTabSheet
@@ -115,7 +115,6 @@ object frmDevFactory: TfrmDevFactory
         Top = 71
         Width = 79
         Height = 20
-        Enabled = False
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (

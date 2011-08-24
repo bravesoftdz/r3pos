@@ -82,7 +82,7 @@ begin
     edtTicketCopy.Value := StrtoIntDef(F.ReadString('SYS_DEFINE','TICKETCOPY','1'),1);
     cxPrintFormat.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTFORMAT','0'),0);
     edtCloseDayPrintFlag.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','CLOSEDAYPRINTFLAG','0'),0);
-    edtTicketPrintComm.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTERCOMM','1'),1);
+    edtTicketPrintComm.ItemIndex := StrtoIntDef(F.ReadString('SYS_DEFINE','PRINTERCOMM','0'),0);
     if F.ReadString('SYS_DEFINE','PRINTERWIDTH','33')='38' then
        edtPRINTERWIDTH.ItemIndex := 1
     else

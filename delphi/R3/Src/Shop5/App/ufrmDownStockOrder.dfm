@@ -68,7 +68,7 @@ inherited frmDownStockOrder: TfrmDownStockOrder
           EditButtons = <>
           FieldName = 'ARR_DATE'
           Footers = <>
-          Title.Caption = #39044#35745#36865#36798#26085#26399
+          Title.Caption = #36865#36798#26085#26399
           Width = 78
         end
         item

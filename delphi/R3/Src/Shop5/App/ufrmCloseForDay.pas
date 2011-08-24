@@ -373,7 +373,7 @@ procedure TfrmCloseForDay.FormShow(Sender: TObject);
 begin
   inherited;
   fndCREA_USER.Text := Global.UserName;
-  fndCLSE_DATE.Text := FormatDateTime('YYYY-MM-DD',Date);
+  fndCLSE_DATE.Text := FormatDateTime('YYYY-MM-DD',reckDate());
 
 end;
 

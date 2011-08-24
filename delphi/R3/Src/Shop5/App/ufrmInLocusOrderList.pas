@@ -55,6 +55,25 @@ type
     DBGridEh2: TDBGridEh;
     cdsP2List: TZQuery;
     dsP2List: TDataSource;
+    TabSheet3: TRzTabSheet;
+    cdsP3List: TZQuery;
+    dsP3List: TDataSource;
+    RzPanel8: TRzPanel;
+    RzPanel9: TRzPanel;
+    RzLabel9: TRzLabel;
+    RzLabel10: TRzLabel;
+    RzLabel11: TRzLabel;
+    RzLabel12: TRzLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    fndP3_D1: TcxDateEdit;
+    fndP3_D2: TcxDateEdit;
+    RzBitBtn2: TRzBitBtn;
+    fndP3_SALES_ID: TcxTextEdit;
+    fndP3_STATUS: TcxRadioGroup;
+    fndP3_SHOP_ID: TzrComboBoxList;
+    fndP3_CLIENT_ID: TzrComboBoxList;
+    DBGridEh3: TDBGridEh;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -79,6 +98,9 @@ type
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure cdsP2ListAfterScroll(DataSet: TDataSet);
+    procedure cdsP3ListAfterScroll(DataSet: TDataSet);
+    procedure DBGridEh3DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     oid:string;
     function  CheckCanExport: boolean; override;
@@ -88,16 +110,20 @@ type
     MaxId:string;
     IsEnd2: boolean;
     MaxId2:string;
+    IsEnd3: boolean;
+    MaxId3:string;
     function PrintSQL(tenantid,id:string):string;
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
     function EncodeSQL2(id:string):string;
+    function EncodeSQL3(id:string):string;
     procedure Open2(Id:string);
+    procedure Open3(Id:string);
   end;
 
 implementation
-uses ufrmStkLocusOrder, ufrmSalRetuLocusOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport,uShopGlobal;
+uses ufrmStkLocusOrder, ufrmSalRetuLocusOrder, ufrmDbInLocusOrder, uDsUtil, ObjCommon, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport,uShopGlobal;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -117,7 +143,7 @@ begin
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
-       1:w :=w +' and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
+       1:w :=w +' and (LOCUS_STATUS<>''3'' or LOCUS_STATUS is null)';
        2:w :=w +' and LOCUS_STATUS=''3''';
        3:w :=w +' and A.LOCUS_CHK_USER is null ';
        4:w :=w +' and A.LOCUS_CHK_USER is not null ';
@@ -151,6 +177,7 @@ begin
   case rzPage.ActivePageIndex of
   0:result := TfrmStkLocusOrder;
   1:result := TfrmSalRetuLocusOrder;
+  2:result := TfrmDbInLocusOrder;
   end;
 end;
 
@@ -208,6 +235,7 @@ begin
   inherited;
   InitGridPickList(DBGridEh1);
   InitGridPickList(DBGridEh2);
+  InitGridPickList(DBGridEh3);
 
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
@@ -230,6 +258,11 @@ begin
   fndP2_D1.Date := date();
   fndP2_D2.Date := date();
 
+  fndP3_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndP3_CLIENT_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndP3_D1.Date := date();
+  fndP3_D2.Date := date();
+
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndSHOP_ID.KeyValue := Global.SHOP_ID;
@@ -241,6 +274,12 @@ begin
     fndP2_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP2_SHOP_ID.Style);
     fndP2_SHOP_ID.Properties.ReadOnly := True;
+
+    fndP3_CLIENT_ID.KeyValue := Global.SHOP_ID;
+    fndP3_CLIENT_ID.Text := Global.SHOP_NAME;
+    SetEditStyle(dsBrowse,fndP3_CLIENT_ID.Style);
+    fndP3_CLIENT_ID.Properties.ReadOnly := True;
+    
   end;
 
     if ShopGlobal.GetProdFlag = 'E' then
@@ -261,11 +300,12 @@ end;
 
 procedure TfrmInLocusOrderList.actFindExecute(Sender: TObject);
 begin
-  if rzPage.ActivePageIndex > 1 then
+  if rzPage.ActivePageIndex > 2 then
      inherited;
   case rzPage.ActivePageIndex of
   0:Open('');
   1:Open2('');
+  2:Open3('');
   end;
 
 end;
@@ -502,6 +542,10 @@ begin
            if cdsP2List.IsEmpty then Exit;
            OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
          end;
+       2:begin
+           if cdsP3List.IsEmpty then Exit;
+           OpenForm(cdsP3List.FieldbyName('SALES_ID').AsString,cdsP3List.FieldbyName('SHOP_ID').AsString);
+         end;
        end;
      end;
   if CurOrder<>nil then CurOrder.NewOrder;
@@ -576,7 +620,7 @@ begin
   if fndP2_STATUS.ItemIndex > 0 then
      begin
        case fndP2_STATUS.ItemIndex of
-       1:w :=w +' and (LOCUS_STATUS=''2'' or LOCUS_STATUS is null)';
+       1:w :=w +' and (LOCUS_STATUS<>''3'' or LOCUS_STATUS is null)';
        2:w :=w +' and LOCUS_STATUS=''3''';
        3:w :=w +' and A.LOCUS_CHK_USER is null ';
        4:w :=w +' and A.LOCUS_CHK_USER is not null ';
@@ -673,6 +717,125 @@ begin
   if cdsP2List.ControlsDisabled then Exit;
   Open(MaxId2);
 
+end;
+
+function TfrmInLocusOrderList.EncodeSQL3(id: string): string;
+var w,w1:string;
+begin
+  w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 and A.LOCUS_STATUS=''3'' ';
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+     w := w +' and A.CLIENT_ID='''+Global.SHOP_ID+'''';
+  if fndP3_CLIENT_ID.AsString <> '' then
+     w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  if fndP3_SHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
+  if trim(fndP3_SALES_ID.Text) <> '' then
+     w := w +' and A.GLIDE_NO like ''%'+trim(fndP3_SALES_ID.Text)+'''';
+  if fndP3_STATUS.ItemIndex > 0 then
+     begin
+       case fndP3_STATUS.ItemIndex of
+       1:w1 :=' where (f.LOCUS_STATUS<>''3'' or f.LOCUS_STATUS is null) ';
+       2:w1 :=' where f.LOCUS_STATUS=''3'' ';
+       3:w1 :=' where f.LOCUS_CHK_USER is null ';
+       4:w1 :=' where f.LOCUS_CHK_USER is not null ';
+       end;
+     end;
+  if id<>'' then
+     w := w +' and A.SALES_ID>'''+id+'''';
+
+  result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.SALES_TYPE,A.PLAN_DATE,A.REMARK,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,'+
+            'A.SALE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT,A.LOCUS_CHK_DATE,A.LOCUS_CHK_USER '+
+            'from SAL_SALESORDER A '+w+' ';
+  result := 'select ja.*,a.SHOP_NAME as CLIENT_NAME from ('+result+') ja left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.SHOP_ID';
+  result := 'select jc.*,c.SHOP_NAME as SHOP_NAME from ('+result+') jc left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
+  result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
+  result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID ';
+  result := 'select jf.*,f.GUIDE_USER as STOCK_USER from ('+result+') jf left outer join STK_STOCKORDER f on jf.TENANT_ID=f.TENANT_ID and jf.SALES_ID=f.STOCK_ID and jf.SALES_TYPE=f.STOCK_TYPE '+w1;
+  result := 'select jg.*,g.USER_NAME as STOCK_USER_TEXT from ('+result+') jg left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.GUIDE_USER=g.USER_ID ';
+  result := 'select jh.*,h.USER_NAME as LOCUS_USER_TEXT from ('+result+') jh left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.LOCUS_USER=h.USER_ID ';
+  result := 'select ji.*,i.USER_NAME as LOCUS_CHK_USER_TEXT from ('+result+') ji left outer join VIW_USERS i on ji.TENANT_ID=i.TENANT_ID and ji.LOCUS_CHK_USER=i.USER_ID ';
+  case Factor.iDbType of
+  0:result := 'select top 600 * from ('+result+') jp order by SALES_ID';
+  1:result :=
+       'select * from ('+
+       'select * from ('+result+') j order by SALES_ID) where ROWNUM<=600';  
+  4:result :=
+       'select * from ('+
+       'select * from ('+result+') j order by SALES_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') j order by SALES_ID limit 600';
+  else
+    result := 'select * from ('+result+') j order by SALES_ID';
+  end;
+  result:=ParseSQL(Factor.iDbType, result);
+end;
+
+procedure TfrmInLocusOrderList.Open3(Id: string);
+var
+  rs:TZQuery;
+  sm:TMemoryStream;
+begin
+  if not Visible then Exit;
+  if Id='' then cdsList.close;
+  rs := TZQuery.Create(nil);
+  sm := TMemoryStream.Create;
+  cdsP3List.DisableControls;
+  try
+    rs.SQL.Text := EncodeSQL3(Id);
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP3_D1.Date));
+    rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',fndP3_D2.Date));
+    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndP3_CLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndP3_SHOP_ID.AsString;
+    Factor.Open(rs);
+    rs.Last;
+    MaxId3 := rs.FieldbyName('SALES_ID').AsString;
+    if Id='' then
+    begin
+       rs.SaveToStream(sm);
+       cdsP3List.LoadFromStream(sm);
+       cdsP3List.IndexFieldNames := 'GLIDE_NO';
+    end
+    else
+    begin
+       rs.SaveToStream(sm);
+       cdsP3List.AddFromStream(sm);
+    end;
+    if rs.RecordCount <600 then IsEnd3 := True else IsEnd3 := false;
+  finally
+    cdsP3List.EnableControls;
+    sm.Free;
+    rs.Free;
+  end;
+end;
+
+procedure TfrmInLocusOrderList.cdsP3ListAfterScroll(DataSet: TDataSet);
+begin
+  inherited;
+  if IsEnd3 or not DataSet.Eof then Exit;
+  if cdsP3List.ControlsDisabled then Exit;
+  Open(MaxId3);
+
+end;
+
+procedure TfrmInLocusOrderList.DBGridEh3DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  if (Rect.Top = DBGridEh3.CellRect(DBGridEh3.Col, DBGridEh3.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh3.Focused) then
+  begin
+    //DBGridEh1.Canvas.Font.Color := clWhite;
+    DBGridEh3.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh3.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh3.canvas.Brush.Color := $0000F2F2;
+      DBGridEh3.canvas.FillRect(ARect);
+      DrawText(DBGridEh3.Canvas.Handle,pchar(Inttostr(cdsP3List.RecNo)),length(Inttostr(cdsP3List.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
 end;
 
 end.

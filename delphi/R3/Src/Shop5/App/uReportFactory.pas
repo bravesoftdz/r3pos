@@ -16,7 +16,7 @@ const
      'PRIOR_YEAR_CST_DIFF=成本(同期差),PRIOR_YEAR_PRF=毛利(同期),PRIOR_YEAR_PRF_DIFF=毛利(同期差),'+
      'PRIOR_MONTH_AMT=销量(上期),PRIOR_MONTH_AMT_DIFF=销量(上期差),PRIOR_MONTH_MNY=销售金额(上期),PRIOR_MONTH_TTL=销售总额(上期),PRIOR_MONTH_TTL_DIFF=销售总额(上期差),PRIOR_MONTH_TAX=销项税额(上期),PRIOR_MONTH_CST=成本(上期),'+
      'PRIOR_MONTH_CST_DIFF=成本(上期差),PRIOR_MONTH_PRF=毛利(上期),PRIOR_MONTH_PRF_DIFF=毛利(上期差),'+
-     'BAL_AMT=结存数量,BAL_CST=结存成本,DAYS_AMT=销售周期,AVG_SALE_AMT=日均销量,'+
+     'ORG_AMT=期初数量,ORG_CST=期初成本,BAL_AMT=结存数量,BAL_CST=结存成本,DAYS_AMT=销售周期,AVG_SALE_AMT=日均销量,'+
      'CURR_SALE_PRF_RATE=毛利率,YEAR_SALE_PRF_RATE=毛利率(同期),PRIOR_SALE_PRF_RATE=毛利率(上期),YEAR_SALE_PRF_DIFF_RATE=毛利率(同期差),PRIOR_SALE_PRF_DIFF_RATE=毛利率(上期差),HINT_DAYS_AMT=库存建议';
 type
 

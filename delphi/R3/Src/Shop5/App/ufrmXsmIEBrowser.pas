@@ -213,9 +213,10 @@ begin
             Msg^.Contents := FindElement(Node,'content').text;
             Msg^.SndDate := FindElement(Node,'sendDate').text;
             Msg^.Msg_Class := 0;
-            Msg^.sFlag := 99;
+            Msg^.sFlag := 100;
             MsgFactory.Add(Msg);
             MsgFactory.MsgRead[Msg] := False;
+            MsgFactory.Opened := true;
           end
        except
           on E:Exception do
@@ -361,6 +362,7 @@ begin
 
   r := DLLLC_Close('_R3_XSM');
   r := DLLLC_Close('_XSM_R3');
+  r := DLLLC_Close('xsmapp');
 
   r := DLLLC_Create('_XSM_R3',Handle);
   if r<>0 then LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
@@ -439,6 +441,7 @@ begin
              Exit;
            end;
      end;
+  frmLogo.ShowTitle := '正在打开新商盟...';
   finish := false;
   confirm := false;
   if oid='' then
@@ -467,6 +470,7 @@ begin
   result := true;
   finally
     if not result then PageHandle := SaveHandle;
+    frmLogo.Close;
   end;
 end;
 
@@ -750,6 +754,7 @@ begin
   try
     if not checked then ReadInfo(checked);
     SessionFail := true;
+    frmLogo.ShowTitle := '正在登录新商盟...';
     result := GetChallenge;
     result := DoForLogin(checked);
     SessionFail := not result;

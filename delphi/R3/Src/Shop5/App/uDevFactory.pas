@@ -25,6 +25,7 @@ TDevFactory=class
     FCloseDayPrinted: boolean;
     FCloseDayPrintFlag: integer;
     FCopys: integer;
+    FPrintFormat: integer;
     procedure SetPrepared(const Value: Boolean);
     procedure SetDisplayComm(const Value: Integer);
     procedure SetScanComm(const Value: Integer);
@@ -49,6 +50,7 @@ TDevFactory=class
     procedure SetCloseDayPrintFlag(const Value: integer);
     procedure SetCopys(const Value: integer);
     function GetWidth: integer;
+    procedure SetPrintFormat(const Value: integer);
   protected
     
   public
@@ -108,6 +110,8 @@ TDevFactory=class
     property CloseDayPrintFlag:integer read FCloseDayPrintFlag write SetCloseDayPrintFlag;
     //复制
     property Copys:integer read FCopys write SetCopys;
+    //0 打印小票 1 打印单据
+    property PrintFormat:integer read FPrintFormat write SetPrintFormat;
 end;
 var
   DevFactory:TDevFactory;
@@ -208,6 +212,7 @@ begin
      Width := F.ReadInteger('SYS_DEFINE','PRINTERWIDTH',33)-3;
      PrintNull :=  F.ReadInteger('SYS_DEFINE','PRINTNULL',0);
 
+     PrintFormat := F.ReadInteger('SYS_DEFINE','PRINTFORMAT',0);
      CloseDayPrinted :=  F.ReadBool('SYS_DEFINE','CLOSEDAYPRINTED',false);
      CloseDayPrintFlag :=  F.ReadInteger('SYS_DEFINE','CLOSEDAYPRINTFLAG',0);
 
@@ -352,6 +357,11 @@ end;
 procedure TDevFactory.SetPrepared(const Value: Boolean);
 begin
   FPrepared := Value;
+end;
+
+procedure TDevFactory.SetPrintFormat(const Value: integer);
+begin
+  FPrintFormat := Value;
 end;
 
 procedure TDevFactory.SetPrintNull(const Value: integer);

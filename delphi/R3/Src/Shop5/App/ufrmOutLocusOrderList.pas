@@ -170,7 +170,7 @@ begin
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
-       1:w :=w +' and (A.LOCUS_STATUS=''1'' or A.LOCUS_STATUS is null)';
+       1:w :=w +' and (A.LOCUS_STATUS<>''3'' or A.LOCUS_STATUS is null)';
        2:w :=w +' and A.LOCUS_STATUS=''3''';
        3:w :=w +' and A.LOCUS_CHK_USER is null ';
        4:w :=w +' and A.LOCUS_CHK_USER is not null ';
@@ -602,15 +602,15 @@ begin
          end;
        1:begin
            if cdsP2List.IsEmpty then Exit;
-           SendMan := Global.UserId;
-           SendDate := Date();
-           if TfrmDbOkDialog.DBOkDialog(self,SendDate,SendMan) then
-           begin
-             OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
-             TfrmDbLocusOrder(CurOrder).edtGUIDE_USER.KeyValue:=SendMan;
-             TfrmDbLocusOrder(CurOrder).edtGUIDE_USER.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',SendMan);
-             TfrmDbLocusOrder(CurOrder).edtSALES_DATE.Date:=SendDate;
-           end;
+//           SendMan := Global.UserId;
+//           SendDate := Date();
+//           if TfrmDbOkDialog.DBOkDialog(self,SendDate,SendMan) then
+//           begin
+           OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
+//             TfrmDbLocusOrder(CurOrder).edtGUIDE_USER.KeyValue:=SendMan;
+//             TfrmDbLocusOrder(CurOrder).edtGUIDE_USER.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',SendMan);
+//             TfrmDbLocusOrder(CurOrder).edtSALES_DATE.Date:=SendDate;
+//           end;
          end;
        2:begin
            if cdsP3List.IsEmpty then Exit;
@@ -705,6 +705,8 @@ function TfrmOutLocusOrderList.EncodeSQL2(id: string): string;
 var w,w1:string;
 begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 ';
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+     w := w +' and A.SHOP_ID='''+Global.SHOP_ID+'''';
   if fndP2_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndP2_SHOP_ID.AsString <> '' then
@@ -714,7 +716,7 @@ begin
   if fndP2_STATUS.ItemIndex > 0 then
      begin
        case fndP2_STATUS.ItemIndex of
-       1:w :=w +' and (A.LOCUS_STATUS=''1'' or A.LOCUS_STATUS is null)';
+       1:w :=w +' and (A.LOCUS_STATUS<>''3'' or A.LOCUS_STATUS is null)';
        2:w :=w +' and A.LOCUS_STATUS=''3''';
        3:w :=w +' and A.LOCUS_CHK_USER is null ';
        4:w :=w +' and A.LOCUS_CHK_USER is not null ';
@@ -810,7 +812,7 @@ begin
   if fndP3_STATUS.ItemIndex > 0 then
      begin
        case fndP3_STATUS.ItemIndex of
-       1:w :=w +' and (LOCUS_STATUS=''1'' or LOCUS_STATUS is null)';
+       1:w :=w +' and (LOCUS_STATUS<>''3'' or LOCUS_STATUS is null)';
        2:w :=w +' and LOCUS_STATUS=''3''';
        3:w :=w +' and A.LOCUS_CHK_USER is null ';
        4:w :=w +' and A.LOCUS_CHK_USER is not null ';
@@ -923,7 +925,7 @@ begin
   if fndP4_STATUS.ItemIndex > 0 then
      begin
        case fndP4_STATUS.ItemIndex of
-       1:w :=w +' and (A.LOCUS_STATUS=''1'' or A.LOCUS_STATUS is null)';
+       1:w :=w +' and (A.LOCUS_STATUS<>''3'' or A.LOCUS_STATUS is null)';
        2:w :=w +' and A.LOCUS_STATUS=''3''';
        3:w :=w +' and A.LOCUS_CHK_USER is null ';
        4:w :=w +' and A.LOCUS_CHK_USER is not null ';       

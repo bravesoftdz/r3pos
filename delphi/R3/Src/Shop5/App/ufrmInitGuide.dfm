@@ -2442,12 +2442,12 @@ inherited frmInitGuide: TfrmInitGuide
           Top = 2
           Width = 542
           Height = 261
-          ActivePage = TabSheet5
+          ActivePage = TabSheet4
           Align = alClient
           FlatColor = clWhite
           ShowFullFrame = False
           ShowShadow = False
-          TabIndex = 4
+          TabIndex = 3
           TabOrder = 0
           FixedDimension = 18
           object TabSheet1: TRzTabSheet
@@ -2957,7 +2957,6 @@ inherited frmInitGuide: TfrmInitGuide
                   Top = 61
                   Width = 79
                   Height = 20
-                  Enabled = False
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (

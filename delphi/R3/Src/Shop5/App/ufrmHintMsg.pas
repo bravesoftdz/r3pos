@@ -31,6 +31,7 @@ type
     FShowing: Boolean;
     FUnRead: Integer;
     FThreadLock:TRTLCriticalSection;
+    FOpened: boolean;
     function GetCount: integer;
     function GetMsgInfo(itemindex: integer): PMsgInfo;
     procedure SetLoaded(const Value: Boolean);
@@ -38,6 +39,7 @@ type
     procedure SetUnRead(const Value: Integer);
     function GetMsgRead(Msg: PMsgInfo): boolean;
     procedure SetMsgRead(Msg: PMsgInfo; const Value: boolean);
+    procedure SetOpened(const Value: boolean);
   public
     constructor Create;
     destructor Destroy; override;
@@ -61,6 +63,7 @@ type
     property Showing:Boolean read FShowing write SetShowing;
     property UnRead:Integer read FUnRead write SetUnRead;
     property MsgRead[Msg:PMsgInfo]:boolean read GetMsgRead write SetMsgRead;
+    property Opened:boolean read FOpened write SetOpened;
   end;
   TfrmHintMsg = class(TForm)
     RzPanel1: TRzPanel;
@@ -131,6 +134,7 @@ begin
   InitializeCriticalSection(FThreadLock);
   FList := TList.Create;
   FMsgInfo := nil;
+  Opened := false;
 end;
 
 destructor TMsgFactory.Destroy;
@@ -254,6 +258,7 @@ begin
       if not MsgInfo[i]^.Rdd then
          begin
            result := MsgInfo[i];
+           Opened := false;
            Exit;
          end;
     end;
@@ -419,6 +424,11 @@ end;
 procedure TMsgFactory.Leave;
 begin
   LeaveCriticalSection(FThreadLock);
+end;
+
+procedure TMsgFactory.SetOpened(const Value: boolean);
+begin
+  FOpened := Value;
 end;
 
 initialization

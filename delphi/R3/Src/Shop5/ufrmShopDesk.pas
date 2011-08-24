@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmDesk, ImgList, ExtCtrls, StdCtrls, Buttons, jpeg, RzPanel,
   RzBmpBtn, RzLine, RzLabel, Menus,ShlObj,ComObj,ShellApi,ActiveX,
-  RzGroupBar, RzTabs;
+  RzGroupBar, RzTabs, ActnList;
 
 type
   TfrmShopDesk = class(TfrmDesk)
@@ -57,7 +57,7 @@ var
   frmShopDesk: TfrmShopDesk;
 
 implementation
-uses ufrmShopMain,udmIcon,uShopGlobal,uDevFactory,Registry;
+uses ufrmShopMain,udmIcon,uShopGlobal,uDevFactory,Registry, ufrmMain;
 {$R *.dfm}
 
 procedure TfrmShopDesk.LoadRes;

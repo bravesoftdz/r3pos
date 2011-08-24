@@ -193,7 +193,7 @@ uses
   ufrmStkRetuLocusOrder in 'App\ufrmStkRetuLocusOrder.pas' {frmStkRetuLocusOrder},
   ufrmIntegralGlide in 'App\ufrmIntegralGlide.pas' {frmIntegralGlide},
   ufrmSalRetuLocusOrder in 'App\ufrmSalRetuLocusOrder.pas' {frmSalRetuLocusOrder},
-  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},
+  ufrmDbInLocusOrder in 'App\ufrmDbInLocusOrder.pas' {frmDbInLocusOrder},
   ufrmStkLocusOrder in 'App\ufrmStkLocusOrder.pas' {frmStkLocusOrder},
   ufrmSalLocusOrder in 'App\ufrmSalLocusOrder.pas' {frmSalLocusOrder},
   ufrmIntegralGlide_Add in 'App\ufrmIntegralGlide_Add.pas' {frmIntegralGlide_Add},

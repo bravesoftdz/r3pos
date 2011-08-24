@@ -142,9 +142,9 @@ Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
 Count=9
-Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
-Item1=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
-Item2=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
+Item0=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
+Item1=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
+Item2=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
 Item3=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\core;D:\Delphi\R3\zLib\src\parsesql;D:\Delphi\R3\zLib\src\plain
 Item4=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc
 Item5=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc

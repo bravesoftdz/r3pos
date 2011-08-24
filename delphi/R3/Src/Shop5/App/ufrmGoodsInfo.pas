@@ -1673,7 +1673,8 @@ begin
   GObj := GodsFactory.Check(BarCode);
   if GObj<>nil then
      begin
-      ReadFromObject(GObj);
+      AObj.ReadFromDataSet(GObj,false);
+      ReadFromObject(AObj);
       result := true;
      end;
 end;

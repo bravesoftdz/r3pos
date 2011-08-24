@@ -31,7 +31,7 @@ begin
     rs.SQL.Text :=
       'select * from PUB_GOODSINFO where TENANT_ID=0 and GODS_ID in (select GODS_ID from PUB_BARCODE where TENANT_ID=0 and BARCODE='''+bcode+''')';
     db.Open(rs);
-    if rs.IsEmpty then
+    if not rs.IsEmpty then
        begin
          result := TRecord_.Create;
          result.ReadFromDataSet(rs); 

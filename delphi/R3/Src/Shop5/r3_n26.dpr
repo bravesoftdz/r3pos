@@ -193,7 +193,7 @@ uses
   ufrmStkRetuLocusOrder in 'App\ufrmStkRetuLocusOrder.pas' {frmStkRetuLocusOrder},
   ufrmIntegralGlide in 'App\ufrmIntegralGlide.pas' {frmIntegralGlide},
   ufrmSalRetuLocusOrder in 'App\ufrmSalRetuLocusOrder.pas' {frmSalRetuLocusOrder},
-  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},
+  ufrmDbInLocusOrder in 'App\ufrmDbInLocusOrder.pas' {frmDbInLocusOrder},
   ufrmStkLocusOrder in 'App\ufrmStkLocusOrder.pas' {frmStkLocusOrder},
   ufrmSalLocusOrder in 'App\ufrmSalLocusOrder.pas' {frmSalLocusOrder},
   ufrmIntegralGlide_Add in 'App\ufrmIntegralGlide_Add.pas' {frmIntegralGlide_Add},
@@ -241,7 +241,8 @@ uses
   ufrmN26Browser in 'App\ufrmN26Browser.pas' {frmN26Browser},
   uGodsFactory in 'App\uGodsFactory.pas',
   ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide},
-  uLoginFactory in 'App\uLoginFactory.pas';
+  uLoginFactory in 'App\uLoginFactory.pas',
+  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder};
 
 {$R *.res}
 var

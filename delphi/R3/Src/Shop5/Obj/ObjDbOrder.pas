@@ -38,6 +38,12 @@ type
   public
     procedure InitClass;override;
   end;
+  TDbForInLocusNoHeader=class(TDbOrder)
+  public
+    //记录行集修改检测函数，返回值是True 测可以修改当前记录
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure InitClass;override;
+  end;
   TDbForLocusNo=class(TZFactory)
   private
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -70,6 +76,14 @@ type
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
   TDbLocusNoUnAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  TDbInLocusNoAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  TDbInLocusNoUnAudit=class(TZProcFactory)
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
@@ -656,8 +670,6 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
-    Str := 'update STK_STOCKORDER set LOCUS_CHK_DATE='''+Params.FindParam('LOCUS_CHK_DATE').asString+''',LOCUS_CHK_USER='''+Params.FindParam('LOCUS_CHK_USER').asString+''' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NULL';
-    n := AGlobal.ExecSQL(Str);
     Result := true;
     AGlobal.CommitTrans;
     Msg := '审核单据成功';
@@ -688,9 +700,116 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    AGlobal.CommitTrans;
+    MSG := '反审核单据成功。';
+    Result := True;
+  except
+    on E:Exception do
+       begin
+         Result := False;
+         Msg := '反审核错误:'+E.Message;
+         AGlobal.RollbackTrans;
+       end;
+  end;
+end;
 
+{ TDbForInLocusNoHeader }
+
+function TDbForInLocusNoHeader.BeforeModifyRecord(
+  AGlobal: IdbHelp): Boolean;
+var
+  Str: string;
+begin
+  if FieldbyName('PLAN_DATE').AsOldString='' then result := inherited BeforeModifyRecord(AGlobal);
+  Str :=
+      'update STK_STOCKORDER set LOCUS_STATUS=:LOCUS_STATUS,LOCUS_USER=:LOCUS_USER,LOCUS_DATE=:LOCUS_DATE,LOCUS_AMT=:LOCUS_AMT,LOCUS_CHK_DATE=:LOCUS_CHK_DATE,LOCUS_CHK_USER=:LOCUS_CHK_USER,'
+    + 'COMM=' + GetCommStr(iDbType) + ','
+    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
+    + 'where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID';
+  AGlobal.ExecSQL(Str,self);
+  result := true; 
+end;
+
+procedure TDbForInLocusNoHeader.InitClass;
+begin
+  inherited;
+  SelectSQL.Text :=
+               'select jh.*,h.USER_NAME as STOCK_USER_TEXT from ('+
+               'select jg.*,g.GUIDE_USER as STOCK_USER,g.STOCK_MNY,g.LOCUS_STATUS,g.LOCUS_USER,g.LOCUS_DATE,g.LOCUS_AMT,g.LOCUS_CHK_DATE,g.LOCUS_CHK_USER from ('+
+               'select jf.*,f.USER_NAME as GUIDE_USER_TEXT from ('+
+               'select je.*,e.SHOP_NAME as SHOP_ID_TEXT from ('+
+               'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
+               'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+
+               'select jb.*,b.SHOP_NAME as CLIENT_ID_TEXT from '+
+               '(select TENANT_ID,SHOP_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,LINKMAN,TELEPHONE,SEND_ADDR,CLIENT_ID,PLAN_DATE,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,'+
+               'ADVA_MNY,PAY_A,PAY_B,PAY_C,PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,SALES_STYLE,IC_CARDNO,UNION_ID,COMM,CREA_DATE,CREA_USER,'+
+               'TIME_STAMP from SAL_SALESORDER where TENANT_ID=:TENANT_ID and SALES_ID=:SALES_ID) jb '+
+               ' left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.SHOP_ID ) jc '+
+               ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ) jd '+
+               ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
+               ' left outer join CA_SHOP_INFO e on je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
+               ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.GUIDE_USER=f.USER_ID ) jg '+
+               ' left outer join STK_STOCKORDER g on jg.TENANT_ID=g.TENANT_ID and jg.SALES_ID=g.STOCK_ID and jg.SALES_TYPE=g.STOCK_TYPE ) jh '+
+               ' left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.STOCK_USER=h.USER_ID ';
+  IsSQLUpdate := True;
+end;
+
+{ TDbInLocusNoAudit }
+
+function TDbInLocusNoAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var Str:string;
+    n:Integer;
+    rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :=
+      'select LOCUS_STATUS from STK_STOCKORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+'''';
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsString<>'3' then Raise Exception.Create('没有发货完毕，不能审核..');
+  finally
+    rs.Free;
+  end;
+  AGlobal.BeginTrans;
+  try
+    Str := 'update STK_STOCKORDER set LOCUS_CHK_DATE='''+Params.FindParam('LOCUS_CHK_DATE').asString+''',LOCUS_CHK_USER='''+Params.FindParam('LOCUS_CHK_USER').asString+''' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NULL';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    Result := true;
+    AGlobal.CommitTrans;
+    Msg := '审核单据成功';
+  except
+    on E:Exception do
+      begin
+        Result := false;
+        Msg := '审核错误'+E.Message;
+        AGlobal.RollbackTrans;
+      end;
+  end;
+end;
+
+{ TDbInLocusNoUnAudit }
+
+function TDbInLocusNoUnAudit.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var Str:string;
+    n:Integer;
+  rs:TZQuery;
+begin
+   AGlobal.BeginTrans;
+   try
     Str := 'update STK_STOCKORDER set LOCUS_CHK_DATE=null,LOCUS_CHK_USER=null,LOCUS_STATUS=''1'' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and STOCK_ID='''+Params.FindParam('SALES_ID').asString+''' and LOCUS_CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到已审核单据，是否被另一用户删除或反审核。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
     AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
     Result := True;
@@ -713,8 +832,11 @@ initialization
   RegisterClass(TDbOrderGetNext);
   RegisterClass(TDbForLocusNo);
   RegisterClass(TDbForLocusNoHeader);
+  RegisterClass(TDbForInLocusNoHeader);
   RegisterClass(TDbLocusNoAudit);
   RegisterClass(TDbLocusNoUnAudit);
+  RegisterClass(TDbInLocusNoAudit);
+  RegisterClass(TDbInLocusNoUnAudit);
 finalization
   UnRegisterClass(TDbOrder);
   UnRegisterClass(TDbData);
@@ -724,6 +846,9 @@ finalization
   UnRegisterClass(TDbOrderGetNext);
   UnRegisterClass(TDbForLocusNo);
   UnRegisterClass(TDbForLocusNoHeader);
+  UnRegisterClass(TDbForInLocusNoHeader);
   UnRegisterClass(TDbLocusNoAudit);
   UnRegisterClass(TDbLocusNoUnAudit);
+  UnRegisterClass(TDbInLocusNoAudit);
+  UnRegisterClass(TDbInLocusNoUnAudit);
 end.

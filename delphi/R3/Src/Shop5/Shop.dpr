@@ -193,7 +193,7 @@ uses
   ufrmStkRetuLocusOrder in 'App\ufrmStkRetuLocusOrder.pas' {frmStkRetuLocusOrder},
   ufrmIntegralGlide in 'App\ufrmIntegralGlide.pas' {frmIntegralGlide},
   ufrmSalRetuLocusOrder in 'App\ufrmSalRetuLocusOrder.pas' {frmSalRetuLocusOrder},
-  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},
+  ufrmDbInLocusOrder in 'App\ufrmDbInLocusOrder.pas' {frmDbInLocusOrder},
   ufrmStkLocusOrder in 'App\ufrmStkLocusOrder.pas' {frmStkLocusOrder},
   ufrmSalLocusOrder in 'App\ufrmSalLocusOrder.pas' {frmSalLocusOrder},
   ufrmIntegralGlide_Add in 'App\ufrmIntegralGlide_Add.pas' {frmIntegralGlide_Add},
@@ -248,7 +248,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.1.8';
+  DBVersion := '1.0.1.9';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

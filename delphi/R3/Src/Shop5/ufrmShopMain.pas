@@ -887,20 +887,16 @@ begin
   result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
 end;
 begin
-  inherited;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
-     begin
-       if MessageBox(Handle,'为你的数据安全，请在退出前上报业务数据，是否立即执行？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then
-          begin
-            if TimerFactory<>nil then FreeAndNil(TimerFactory);
-            SyncFactory.SyncAll;
-            Exit;
-          end;
-     end;
-  if not SystemShutdown and (MessageBox(Handle,'是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+  if not SystemShutdown and (MessageBox(Handle,'为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        CanClose := false;
+       Exit;
        //Application.Minimize;
+     end;
+  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
+     begin
+        SyncFactory.SyncAll;
      end;
 end;
 

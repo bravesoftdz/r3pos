@@ -128,7 +128,7 @@ type
     function UpdateBatch(DataSet:TDataSet):Boolean;overload;virtual;abstract;
 
     //返回执行影响记录数
-    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;virtual;abstract;
+    function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;virtual;abstract;
 
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;virtual;abstract;
@@ -194,7 +194,7 @@ type
     function UpdateBatch(DataSet:TDataSet):Boolean;overload;override;
 
     //返回执行影响记录数
-    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;override;
+    function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;override;
 
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;override;
@@ -593,10 +593,10 @@ begin
 end;
 
 function TdbResolver.ExecSQL(const SQL: WideString;
-  ObjectFactory: TZFactory): Integer;
+  ObjectFactory: TObject): Integer;
 begin
   if Assigned(ObjectFactory) then
-     result := dbHelp.ExecSQL(SQL,TObject(TZFactory))
+     result := dbHelp.ExecSQL(SQL,TObject(ObjectFactory))
   else
      result := dbHelp.ExecSQL(SQL);
 end;

@@ -25,11 +25,11 @@ type
     function iDbType(var dbType:integer;dbResoler:integer=0):integer; stdcall;
 
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //提交数据集
-    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0):integer;stdcall;
+    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //返回执行影响记录数
-    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0):integer;stdcall;
+    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
 
     //锁定连接
     function DbLock(Locked:boolean;dbResoler:integer=0):integer;stdcall;
@@ -74,11 +74,11 @@ type
     function iDbType(var dbType:integer;dbResoler:integer=0):integer; stdcall;
 
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //提交数据集
-    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0):integer;stdcall;
+    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //返回执行影响记录数
-    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0):integer;stdcall;
+    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //锁定连接
     function DbLock(Locked:boolean;dbResoler:integer=0):integer;stdcall;
 
@@ -263,15 +263,20 @@ begin
   end;
 end;
 
-function TPlugIn.ExecSQL(SQL: Pchar; var iRet: integer;dbResoler:integer=0): integer;
-var dbResolver:TdbResolver;
+function TPlugIn.ExecSQL(SQL: Pchar; var iRet: integer;dbResoler:integer=0;ParamStr:Pchar=nil): integer;
+var
+  dbResolver:TdbResolver;
+  params:TftParamList;
 begin
+  params := nil;
 //  Enter;
-//  try
+  if ParamStr<>nil then params := TftParamList.Create(nil);
+  try
     try
+       if ParamStr<>nil then TftParamList.Decode(params,strpas(ParamStr));
        dbResolver := TdbResolver(dbResoler);
        if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
-       iRet := dbResolver.ExecSQL(SQL);
+       iRet := dbResolver.ExecSQL(SQL,params);
        result := 0;
     except
       on E:Exception do
@@ -280,9 +285,10 @@ begin
            result := 10003;
          end;
     end;
-//  finally
+  finally
+    if ParamStr<>nil then params.free;
 //    Leave;
-//  end;
+  end;
 end;
 
 function TPlugIn.DLLGetLastError: string;
@@ -321,10 +327,11 @@ begin
 //  end;
 end;
 
-function TPlugIn.Open(SQL: Pchar;var Data: OleVariant;dbResoler:integer=0): integer;
+function TPlugIn.Open(SQL: Pchar;var Data: OleVariant;dbResoler:integer=0;ParamStr:Pchar=nil): integer;
 var
   rs:TZQuery;
   dbResolver:TdbResolver;
+  params:TftParamList;
 begin
 //  Enter;
 //  try
@@ -334,6 +341,7 @@ begin
        rs := TZQuery.Create(nil);
        try
          rs.SQL.Text := SQL;
+         if ParamStr<>nil then TftParamList.Decode(rs.Params,strpas(ParamStr));
          dbResolver.Open(rs);
          Data := rs.Data;
        finally
@@ -464,20 +472,24 @@ begin
 end;
 
 function TPlugIn.UpdateBatch(Delta: OleVariant;
-  ZClassName: Pchar;dbResoler:integer=0): integer;
+  ZClassName: Pchar;dbResoler:integer=0;ParamStr:Pchar=nil): integer;
 var
   rs:TZQuery;
   dbResolver:TdbResolver;
+  params:TftParamList;
 begin
+  params := nil;
 //  Enter;
-//  try
+  if ParamStr<>nil then params := TftParamList.Create(nil);
+  try
     try
        dbResolver := TdbResolver(dbResoler);
        if dbResolver=nil then Raise Exception.Create('传连接号无效:'+inttostr(dbResoler));
        rs := TZQuery.Create(nil);
        try
+         if ParamStr<>nil then TftParamList.Decode(params,strpas(ParamStr));
          rs.Delta := Delta;
-         dbResolver.UpdateBatch(rs,StrPas(ZClassName));
+         dbResolver.UpdateBatch(rs,StrPas(ZClassName),params);
        finally
          rs.Free;
        end;
@@ -489,9 +501,10 @@ begin
            result := 10007;
          end;
     end;
-//  finally
+  finally
+    if ParamStr<>nil then params.Free;
 //    Leave;
-//  end;
+  end;
 end;
 
 procedure TPlugIn.DLLShowPlugIn;

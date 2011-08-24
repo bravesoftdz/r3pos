@@ -120,7 +120,7 @@ type
     function UpdateBatch(DataSet:TDataSet):Boolean;overload;override;
 
     //返回执行影响记录数
-    function ExecSQL(const SQL:WideString;ObjectFactory:TZFactory=nil):Integer;override;
+    function ExecSQL(const SQL:WideString;ObjectFactory:TObject=nil):Integer;override;
 
     //执行远程方式，返回结果
     function ExecProc(AClassName:String;Params:TftParamList=nil):String;override;
@@ -636,7 +636,7 @@ begin
 end;
 
 function TZClient.ExecSQL(const SQL: WideString;
-  ObjectFactory: TZFactory): Integer;
+  ObjectFactory: TObject): Integer;
 var
   ExcepInfo: TExcepInfo;
   DispParams: TDispParams;

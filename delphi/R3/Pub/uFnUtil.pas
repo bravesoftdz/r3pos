@@ -79,7 +79,7 @@ FnSystem=Class
 //十六进制(S)-->>十进制(I)  [重写:Jey]
 function hextoint(s: string): Integer;
 //二进制(S)-->>十进制(D)    [重写:Jey]
-function Bintoint(s: string): Double;
+function Bintoint(s: string): double;
 //十进制转换为二进制字符串  [重写:Jey]
 function inttoBin(i: integer): string;
 implementation
@@ -103,8 +103,9 @@ begin
 end;
 
 //二进制(S)-->>十进制(D)    [重写:Jey]
-function Bintoint(s: string): Double;
+function Bintoint(s: string): double;
 begin
+  result := 0;
   while Length(s) <>0 do
   begin          //2^(长度-1)次方
     if s[1]='1' then  Result:=Result+power(2,Length(s)-1);

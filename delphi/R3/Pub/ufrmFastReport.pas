@@ -124,9 +124,9 @@ type
 
     procedure LoaddbReport(frReport:TfrReport;Index:Integer=-1);
     function ShowReport(CommandText:string;AfrReport:TfrReport;AFilterRecord:TRecord_=nil;IsShowModal:Boolean=True): Boolean;overload;
-    function PrintReport(CommandText:string;AfrReport:TfrReport): Boolean;overload;
+    function PrintReport(CommandText:string;AfrReport:TfrReport;ShowDialog:boolean=true): Boolean;overload;
     function ShowReport(CommandText:string;FileName:string;AFilterRecord:TRecord_=nil;IsShowModal:Boolean=True): Boolean;overload;
-    function PrintReport(CommandText:string;FileName:string): Boolean;overload;
+    function PrintReport(CommandText:string;FileName:string;ShowDialog:boolean=true): Boolean;overload;
 
     procedure Preview(AfrReport:TfrReport);
     procedure Print(AfrReport:TfrReport);
@@ -189,7 +189,7 @@ begin
      end;
 end;
 function TfrmFastReport.PrintReport(CommandText: string;
-  AfrReport: TfrReport): Boolean;
+  AfrReport: TfrReport;ShowDialog:boolean=true): Boolean;
 var
   Pages: String;
 begin
@@ -207,6 +207,8 @@ begin
     if frReport.PrepareReport then
        begin
           if (frReport.EMFPages = nil) then Exit;
+          if ShowDialog then
+          begin
           with TfrPrintForm.Create(Application) do
           begin
             E1.Text := IntToStr(frReport.DefaultCopies);
@@ -227,7 +229,9 @@ begin
             end;
             Free;
           end;
-         //frReport.PrintPreparedReport('', 1, True, frAll);
+         end
+         else
+            frReport.PrintPreparedReport('', 1, True, frAll);
        end;
   except
     on E:Exception do
@@ -358,7 +362,7 @@ begin
   inherited;
 end;
 
-function TfrmFastReport.PrintReport(CommandText, FileName: string): Boolean;
+function TfrmFastReport.PrintReport(CommandText, FileName: string;ShowDialog:boolean=true): Boolean;
 var
   Pages: String;
 begin
@@ -376,6 +380,8 @@ begin
     if frReport.PrepareReport then
        begin
           if (frReport.EMFPages = nil) then Exit;
+          if ShowDialog then
+          begin
           with TfrPrintForm.Create(Application) do
           begin
             E1.Text := IntToStr(frReport.DefaultCopies);
@@ -396,7 +402,9 @@ begin
             end;
             Free;
           end;
-         //frReport.PrintPreparedReport('', 1, True, frAll);
+         end
+         else
+            frReport.PrintPreparedReport('', 1, True, frAll);
        end;
   except
     on E:Exception do

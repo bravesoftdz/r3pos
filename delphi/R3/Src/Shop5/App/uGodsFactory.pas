@@ -7,12 +7,18 @@ type
   TGodsFactory=class
   private
     FDb: TdbFactory;
+    FMeaUnit: TZQuery;
+    FSortInfo: TZQuery;
     procedure SetDb(const Value: TdbFactory);
+    procedure SetMeaUnit(const Value: TZQuery);
+    procedure SetSortInfo(const Value: TZQuery);
   public
     constructor Create;
     destructor Destroy;override;
     function Check(bcode:string):TRecord_;
     property Db:TdbFactory read FDb write SetDb;
+    property MeaUnit:TZQuery read FMeaUnit write SetMeaUnit;
+    property SortInfo:TZQuery read FSortInfo write SetSortInfo;
   end;
 var
   GodsFactory:TGodsFactory;
@@ -29,7 +35,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-      'select * from PUB_GOODSINFO where TENANT_ID=0 and GODS_ID in (select GODS_ID from PUB_BARCODE where TENANT_ID=0 and BARCODE='''+bcode+''')';
+      'select * from PUB_GOODSINFO where TENANT_ID=0 and BARCODE='''+bcode+'''';
     db.Open(rs);
     if not rs.IsEmpty then
        begin
@@ -43,16 +49,27 @@ end;
 
 constructor TGodsFactory.Create;
 begin
+  MeaUnit := TZQuery.Create(nil);
+  SortInfo := TZQuery.Create(nil);
   Db := TdbFactory.Create;
   if FileExists(ExtractShortPathName(ExtractFilePath(ParamStr(0)))+'basic.db') then
      begin
        Db.Initialize('provider=sqlite-3;databasename='+ExtractShortPathName(ExtractFilePath(ParamStr(0)))+'basic.db');
        Db.Connect;
+       MeaUnit.close;
+       MeaUnit.SQL.Text := 'select * from PUB_MEAUNITS where TENANT_ID=0';
+       Db.Open(MeaUnit);
+       SortInfo.close;
+       SortInfo.SQL.Text := 'select * from PUB_GOODSSORT where TENANT_ID=0 and SORT_TYPE=1';
+       Db.Open(SortInfo);
      end;
+
 end;
 
 destructor TGodsFactory.Destroy;
 begin
+  MeaUnit.free;
+  SortInfo.Free;
   Db.Free;
   inherited;
 end;
@@ -60,6 +77,16 @@ end;
 procedure TGodsFactory.SetDb(const Value: TdbFactory);
 begin
   FDb := Value;
+end;
+
+procedure TGodsFactory.SetMeaUnit(const Value: TZQuery);
+begin
+  FMeaUnit := Value;
+end;
+
+procedure TGodsFactory.SetSortInfo(const Value: TZQuery);
+begin
+  FSortInfo := Value;
 end;
 
 initialization

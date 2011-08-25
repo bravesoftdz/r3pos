@@ -67,9 +67,9 @@ var
 begin
   result:=False;
   NearDate:=FormatDatetime('YYYYMMDD',Date()-30); //获取最近30天的订单日期
-  UseDate:=Params.ParamByName('USING_DATE').AsString;
+  //UseDate:=Params.ParamByName('USING_DATE').AsString;
   //判断启用日期与最近30天关系
- if NearDate < UseDate then NearDate:=UseDate;
+  //if NearDate < UseDate then NearDate:=UseDate;
 
   TENANT_ID:=trim(Params.ParamByName('TENANT_ID').AsString);
   SHOP_ID:=trim(Params.ParamByName('SHOP_ID').AsString);    //R3门店ID

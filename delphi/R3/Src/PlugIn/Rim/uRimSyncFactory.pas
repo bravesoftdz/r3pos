@@ -37,7 +37,7 @@ type
 
     function GetR3ToRimUnit_ID(iDbType:integer; UNIT_ID: string): string;     //返回单位换算
     // 同步类型
-    function GetSyncType: integer; //同步类型   
+    function GetSyncType: integer; virtual; //同步类型   
     //1、返回RIM_R3_NUM表的上次时间戳和当前最大时间戳:
     function GetMaxNUM(BillType, COM_ID,CUST_ID, SHOP_ID: string): string;
     //2、返回Rim烟草公司ID(COM_ID):
@@ -72,6 +72,7 @@ type
     property MaxStmp: string read FMaxStmp write SetMaxStmp;              //最大时间戳
     property UpMaxStmp: string read FUpMaxStmp;                           //更新最大时间戳
     property SyncType: integer read FSyncType write SetSyncType;          //上报方式:（0: 调度执行； 3：前台传入执行)
+    property ShopLog: TLogShopInfo read FShopLog;  //门店日志
   end;
 
 implementation

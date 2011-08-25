@@ -19,6 +19,9 @@ type
     //下载订单表头
     OrderQry: TZQuery;
 
+    //返回同步类型
+    function GetSyncType: integer; override; //同步类型     
+
     //同步会员：tid 企业号
     function SyncMessage: Boolean;
 
@@ -150,7 +153,7 @@ begin
   finally
     rs.Free;
   end;
-end; 
+end;
 
 function TMsgSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): integer;
 begin
@@ -185,6 +188,19 @@ begin
   end;
 end;
 
+function TMsgSyncFactory.GetSyncType: integer;
+begin
+  result:=0;
+  SyncType:=0;
+  if (Params.FindParam('SHOP_ID')<>nil) then
+  begin
+    if Length(Params.FindParam('SHOP_ID').AsString)>10 then
+      SyncType:=3;
+  end;
+  result:=SyncType;
+  ShopLog.SyncType:=result;
+end;
+
 function TMsgSyncFactory.FormatDay(InDay: string): string;
 var
   CurValue: string;
@@ -197,7 +213,6 @@ begin
   CurValue:=InttoStr(StrtoIntDef(CurValue,0)); //天数
   result:=result+CurValue+'日';
 end;
-
 
 function TMsgSyncFactory.GetR3UsedDateList: Boolean;
 var
@@ -235,7 +250,7 @@ begin
   if NearDate<UseDate then NearDate:=UseDate; //对比比启用日期还小则从启用日期开始取消息
   
   try
-    Str:='select distinct ARR_DATE from RIM_SD_CO where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and '+
+    Str:='select distinct ARR_DATE,CRT_DATE from RIM_SD_CO where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and '+
          ' STATUS in (''05'',''06'') and ARR_DATE<='''+CurDay+''' and ARR_DATE>='''+NearDate+''' and '+
          ' not CO_NUM in(select COMM_ID from STK_STOCKORDER where TENANT_ID='+RimParam.TenID+' and COMM_ID is not null and COMM not in (''02'',''12'') )'+
          ' order by ARR_DATE ';
@@ -305,7 +320,7 @@ function TMsgSyncFactory.DoShopDownOrderMessage: integer;
 var
   iRet,vCount: integer;
   mid,s,Title,Content: string; //消息单据号
-  CurDay,ArrDay,Str,COMM_ID: string; //启用日期
+  CurDay,ArrDay,OrderDay,Str,COMM_ID: string; //启用日期
 begin
   result:=-1;
   try
@@ -317,6 +332,7 @@ begin
     begin
       mid:= TBaseSyncFactory.newid(RimParam.ShopID);
       ArrDay:=trim(OrderQry.FieldByName('ARR_DATE').AsString);
+      OrderDay:=trim(OrderQry.FieldByName('CRT_DATE').AsString);
       COMM_ID:='AUTODOWN'+ArrDay+'_'+CurDay;
       if CheckMessageExists(ArrDay, Title, s, Content) then
       begin
@@ -327,7 +343,7 @@ begin
           if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create(GetLastError);
 
           str:='insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP)'+
-               ' values('+RimParam.TenID+','''+mid+''',''0'','+CurDay+','+RimParam.TenID+','''+s+''',''system'','''+Title+''','''+Content+''','''+CurDay+''','''+COMM_ID+''',''00'','+GetTimeStamp(DbType)+')';
+               ' values('+RimParam.TenID+','''+mid+''',''0'','+OrderDay+','+RimParam.TenID+','''+s+''',''system'','''+Title+''','''+Content+''','''+CurDay+''','''+COMM_ID+''',''00'','+GetTimeStamp(DbType)+')';
           if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create(GetLastError);
           CommitTrans;
           Inc(vCount);
@@ -419,7 +435,7 @@ begin
   finally
     DBLock(False);
     WriteToReportLogFile('到货消息');  //输出到文本日志
-  end;        
+  end;
 end;
 
 

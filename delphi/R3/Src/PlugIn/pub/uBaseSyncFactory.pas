@@ -67,11 +67,11 @@ type
     //得到数据库类型 0:SQL Server ;1 Oracle ; 2 Sybase; 3 ACCESS; 4 DB2;  5 Sqlite
     function iDbType(var dbType:integer;dbResoler:integer=0):integer; stdcall;
     //HRESULT 返回值说明 =0表示执行成功 否则为错误代码
-    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0):integer;stdcall;
+    function Open(SQL:Pchar;var Data:OleVariant;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //提交数据集
-    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0):integer;stdcall;
+    function UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //返回执行影响记录数
-    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0):integer;stdcall;
+    function ExecSQL(SQL:Pchar;var iRet:integer;dbResoler:integer=0;ParamStr:Pchar=nil):integer;stdcall;
     //锁定连接
     function DbLock(Locked:boolean;dbResoler:integer=0):integer;stdcall;
     //日志服务
@@ -147,9 +147,11 @@ type
     function  BeginTrans(TimeOut:integer=-1): Boolean; //开始事务
     function  CommitTrans: Boolean;   //提交事务
     function  RollbackTrans: Boolean; //回滚事务
-    function  Open(DataSet: TDataSet):Boolean;  //取数据
-    function  ExecSQL(SQL:Pchar;var iRet:integer):integer; overload;
-    function  ExecSQL(SQLList: TStringList;var iRet:integer):integer; overload;
+    function  Open(DataSet: TDataSet; Params: TftParamList=nil):Boolean;  //取数据
+    function  ExecSQL(SQL:Pchar;var iRet:integer; Params: TftParamList=nil):integer; overload;
+    function  ExecSQL(SQLList: TStringList;var iRet:integer; Params: TftParamList=nil):integer; overload;
+    function  UpdateBatch(Delta:OleVariant;ZClassName:Pchar;dbResoler:integer=0;Params:TftParamList=nil):integer;overload;
+    function  UpdateBatch(DataSet: TZQuery;ZClassName:Pchar;dbResoler:integer=0;Params:TftParamList=nil):integer;overload;
     function  GetLastError:string;  //返回PlugIntf.GetLastError
     function  WriteLogFile(ErrMsg: string):Boolean; //写入PlugIntf.WriteLogFile
     function  GetLogHead: string; //日志头部
@@ -545,17 +547,23 @@ begin
   end;
 end;
 
-function TBaseSyncFactory.Open(DataSet: TDataSet): Boolean;
+function TBaseSyncFactory.Open(DataSet: TDataSet; Params: TftParamList=nil): Boolean;
 var
   ReRun: integer;
   vData: OleVariant;
+  InParamsStr: Pchar;
 begin
   result:=False;
+  InParamsStr:=nil;
+  if Params<>nil then
+  begin
+    InParamsStr:=Pchar(Params.Encode(Params));
+  end;
   if DataSet.ClassNameIs('TZQuery') then //TZQuery
   begin
     try
       TZQuery(DataSet).Close;
-      ReRun:=PlugIntf.Open(Pchar(TZQuery(DataSet).SQL.Text),vData,dbResoler);
+      ReRun:=PlugIntf.Open(Pchar(TZQuery(DataSet).SQL.Text),vData,dbResoler,InParamsStr);
       if ReRun<>0 then Raise Exception.Create(PlugIntf.GetLastError);
       TZQuery(DataSet).Data:=vData;
       Result:=TZQuery(DataSet).Active;
@@ -735,19 +743,35 @@ begin
   FdbResoler := Value;
 end;
 
-function TBaseSyncFactory.ExecSQL(SQL: Pchar; var iRet: integer): integer;
+function TBaseSyncFactory.ExecSQL(SQL: Pchar; var iRet: integer; Params: TftParamList): integer;
+var
+  InParamsStr: Pchar;
 begin
-  result := PlugIntf.ExecSQL(SQL,iRet,dbResoler);
+  result:=-1;
+  InParamsStr:=nil;
+  if Params<>nil then
+  begin
+    InParamsStr:=Pchar(Params.Encode(Params));
+  end;
+
+  result := PlugIntf.ExecSQL(SQL,iRet,dbResoler,InParamsStr);
   if result<>0 then
     Raise Exception.Create('<ExecSQL>['+GetMsg(StrPas(SQL))+']Error:'+GetLastError);
 end;
 
-function TBaseSyncFactory.ExecSQL(SQLList: TStringList;var iRet:integer):integer;
+function TBaseSyncFactory.ExecSQL(SQLList: TStringList;var iRet:integer; Params: TftParamList):integer;
 var
   SQLStr: string;
   i,ReRun,RunCount,vCount: integer;
+  InParamsStr: Pchar;
 begin
   result:=-1;
+  InParamsStr:=nil;
+  if Params<>nil then
+  begin
+    InParamsStr:=Pchar(Params.Encode(Params));
+  end;
+
   vCount:=0;
   RunCount:=0;
   for i:=0 to SQLList.Count-1 do
@@ -756,7 +780,7 @@ begin
     if SQlStr<>'' then
     begin
       iRet:=0;
-      ReRun:=PlugIntf.ExecSQL(Pchar(SQLStr),vCount,dbResoler);
+      ReRun:=PlugIntf.ExecSQL(Pchar(SQLStr),vCount,dbResoler,InParamsStr);
       if ReRun=0 then //正常
       begin
         iRet:=iRet+vCount; //影响行数
@@ -769,6 +793,37 @@ begin
   end;
   if RunCount=SQLList.Count then
     Result:=0;
+end;
+
+function TBaseSyncFactory.UpdateBatch(Delta: OleVariant; ZClassName: Pchar;  dbResoler: integer; Params:TftParamList): integer;
+var
+  InParamsStr: Pchar;
+begin
+  result:=-1;
+  InParamsStr:=nil;
+  if Params<>nil then
+  begin
+    InParamsStr:=Pchar(Params.Encode(Params));
+  end;
+  result:=PlugIntf.UpdateBatch(Delta,ZClassName,dbResoler,InParamsStr);
+  if result<>0 then
+    Raise Exception.Create('<UpdateBatch> <Error='+GetLastError+'>');
+end;
+
+function TBaseSyncFactory.UpdateBatch(DataSet: TZQuery; ZClassName: Pchar; dbResoler: integer; Params: TftParamList): integer;
+var
+  InParamsStr: Pchar;
+begin
+  result:=-1;
+  InParamsStr:=nil;
+  if Params<>nil then
+  begin
+    InParamsStr:=Pchar(Params.Encode(Params));
+  end;
+
+  result:=PlugIntf.UpdateBatch(DataSet.Data,ZClassName,dbResoler,InParamsStr);
+  if result<>0 then
+    Raise Exception.Create('<UpdateBatch> <Error='+GetLastError+'>');
 end;
 
 function TBaseSyncFactory.GetLastError: string;
@@ -834,6 +889,5 @@ begin
     result:=ReStr;
   end;
 end;
-
 
 end.

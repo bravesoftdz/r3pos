@@ -458,10 +458,10 @@ begin
       Date2 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate2.Date));
       if Date1 < Date2 then
         Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date))
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))
       else if Date1 > Date2 then
         Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date))
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))
       else
         Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
     end;
@@ -477,10 +477,10 @@ begin
       Date2 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate4.Date));
       if Date1 < Date2 then
         Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate2.Date))
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))
       else if Date1 > Date2 then
         Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',edtDate1.Date))
+        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))
       else
         Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
     end;

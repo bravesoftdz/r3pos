@@ -969,6 +969,7 @@ procedure TfrmGoodsInfo.IsBarCodeSame(Aobj: TRecord_);
   var Str,Cnd: string;
   begin
     result:=False;
+    if trim(BarCode)='' then Exit; //条码为则不判断
     Cnd:='';
     if trim(GODS_ID)<>'' then Cnd:=' and  GODS_ID<>'''+GODS_ID+''' ';
     Str:='select A.BARCODE as BARCODE,A.GODS_ID as GODS_ID,B.GODS_NAME as GODS_NAME,B.GODS_CODE as GODS_CODE from '+

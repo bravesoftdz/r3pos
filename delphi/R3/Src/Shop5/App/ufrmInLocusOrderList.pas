@@ -78,8 +78,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure actPriorExecute(Sender: TObject);
-    procedure actNextExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
@@ -310,78 +308,6 @@ begin
 
 end;
 
-procedure TfrmInLocusOrderList.actPriorExecute(Sender: TObject);
-var
-  Temp:TZQuery;
-  Params:TftParamList;
-begin
-  inherited;
-  if CurOrder <> nil then
-     begin
-        Params := TftParamList.Create(nil);
-        try
-          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-          Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
-          Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('STOCK_TYPE').asString := '1';
-          if (CurOrder.gid = '') or (CurOrder.gid='..新增..') then
-             Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
-          else
-             Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
-          Temp := TZQuery.Create(nil);
-          try
-             Factor.Open(Temp,'TStockOrderGetPrior',Params);
-             if Temp.Fields[0].asString<>'' then
-                CurOrder.Open(Temp.Fields[0].asString);
-          finally
-             Temp.Free;
-          end;
-        finally
-          Params.Free;
-        end;
-     end
-  else
-     begin
-        cdsList.Prior;
-     end;
-end;
-
-procedure TfrmInLocusOrderList.actNextExecute(Sender: TObject);
-var
-  Temp:TZQuery;
-  Params:TftParamList;
-begin
-  inherited;
-  if CurOrder <> nil then
-     begin
-        Params := TftParamList.Create(nil);
-        try
-          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-          Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
-          Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('STOCK_TYPE').asString := '1';
-          if CurOrder.gid = '' then
-             Params.ParamByName('GLIDE_NO').asString := '00000000000000'
-          else
-             Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
-          Temp := TZQuery.Create(nil);
-          try
-             Factor.Open(Temp,'TStockOrderGetNext',Params);
-             if Temp.Fields[0].asString<>'' then
-                CurOrder.Open(Temp.Fields[0].asString);
-          finally
-             Temp.Free;
-          end;
-        finally
-          Params.Free;
-        end;
-     end
-  else
-     begin
-        cdsList.Next;
-     end;
-end;
-
 procedure TfrmInLocusOrderList.actEditExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('14600001',3) then Raise Exception.Create('你没有重扫的权限,请和管理员联系.');
@@ -419,6 +345,10 @@ begin
        1:begin
            if cdsP2List.IsEmpty then Exit;
            OpenForm(cdsP2List.FieldbyName('SALES_ID').AsString,cdsP2List.FieldbyName('SHOP_ID').AsString);
+         end;
+       2:begin
+           if cdsP3List.IsEmpty then Exit;
+           OpenForm(cdsP3List.FieldbyName('SALES_ID').AsString,cdsP3List.FieldbyName('SHOP_ID').AsString);
          end;
        end;
      end;

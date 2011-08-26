@@ -909,6 +909,7 @@ begin
        //Application.Minimize;
      end;
   if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if Global.UserID='system' then exit;
   if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
      begin
         SyncFactory.SyncAll;

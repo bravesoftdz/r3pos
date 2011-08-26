@@ -1251,7 +1251,10 @@ begin
   try
     F.WriteBool('收款机界面','Help',rzHelp.Visible);
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   SaveAObj.Free;
   AObj.free;
@@ -1611,6 +1614,10 @@ begin
              0: MessageBox(Handle,pchar('输入的“'+trim(s)+'”是无效条码...'),'友情提示...',MB_OK+MB_ICONINFORMATION);
              1: MessageBox(Handle,pchar('输入的“'+trim(s)+'”是无效货号...'),'友情提示...',MB_OK+MB_ICONINFORMATION);
              end;
+           3:begin
+               edtInput.Text := '';
+               Exit;
+             end;
            end;
          end;
       except
@@ -1761,7 +1768,7 @@ begin
   s := trim(id);
   try
     StrToFloat(s);
-    if StrToFloat(s)>999999999 then Raise Exception.Create('输入的单价值过大，请确认是否输入正确');
+    if abs(StrToFloat(s))>999999999 then Raise Exception.Create('输入的单价值过大，请确认是否输入正确');
   except
     Raise Exception.Create('输入的单价无效，请正确输入');
   end;
@@ -2013,10 +2020,10 @@ begin
                begin
                  Exit;
                end;
-            if rs.RecordCount > 1 then
+            if (rs.RecordCount > 1) and not TframeListDialog.FindDSDialog(self,rs,'GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价',nil) then
                begin
-                 fndStr := BarCode;
-                 result := 1;
+                 fndStr := '';
+                 result := 3;
                  Exit;
                end
             else
@@ -2030,13 +2037,31 @@ begin
          end
       else
          begin
-            if rs.RecordCount > 1 then
+            if (rs.RecordCount > 1) then
                begin
-                 fndStr := BarCode;
-                 result := 1;
-                 Exit;
-               end
-            else
+                  fndStr := '';
+                  rs.first;
+                  while not rs.eof do
+                    begin
+                      if fndStr<>'' then fndStr := fndStr+',';
+                      fndStr := fndStr + ''''+rs.FieldbyName('GODS_ID').asString+'''';
+                      rs.next;
+                    end;
+                  AObj := TRecord_.Create;
+                  try
+                    if not TframeListDialog.FindDialog(self,'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and GODS_ID in ('+fndStr+') and COMM not in (''02'',''12'')','GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价',AObj) then
+                       begin
+                         fndStr := '';
+                         result := 3;
+                         Exit;
+                       end
+                    else
+                       rs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]);
+                  finally
+                    AObj.free;
+                  end;
+               end;
+            if result <> 3 then
                begin
                  vgds := rs.FieldbyName('GODS_ID').AsString;
                  vP1 := rs.FieldbyName('PROPERTY_01').AsString;
@@ -2113,7 +2138,7 @@ begin
        PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
        Exit;
      end;
-  if amt>999999999 then Raise Exception.Create('输入的数量值过大，请确认是否正确输入...');
+  if abs(amt)>999999999 then Raise Exception.Create('输入的数量值过大，请确认是否正确输入...');
   cdsTable.Edit;
   if Appended then
      cdsTable.FieldbyName('AMOUNT').AsFloat := cdsTable.FieldbyName('AMOUNT').AsFloat + amt
@@ -3489,7 +3514,10 @@ begin
           b := basInfo.FieldbyName('BARCODE').asString
        else
           begin
-            if pbar.Locate('GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02,BATCH_NO',VarArrayOf([cdsTable.FieldbyName('GODS_ID').asString,cdsTable.FieldbyName('UNIT_ID').asString,cdsTable.FieldbyName('PROPERTY_01').asString,cdsTable.FieldbyName('PROPERTY_02').asString,cdsTable.FieldbyName('BATCH_NO').asString]),[]) then
+            if pbar.Locate('GODS_ID,UNIT_ID,PROPERTY_01,PROPERTY_02',VarArrayOf([cdsTable.FieldbyName('GODS_ID').asString,cdsTable.FieldbyName('UNIT_ID').asString,cdsTable.FieldbyName('PROPERTY_01').asString,cdsTable.FieldbyName('PROPERTY_02').asString]),[]) then
+               b := pbar.FieldbyName('BARCODE').asString
+            else
+            if pbar.Locate('GODS_ID,UNIT_ID',VarArrayOf([cdsTable.FieldbyName('GODS_ID').asString,cdsTable.FieldbyName('UNIT_ID').asString]),[]) then
                b := pbar.FieldbyName('BARCODE').asString
             else
                b := basInfo.FieldbyName('BARCODE').asString;
@@ -4328,6 +4356,7 @@ begin
   try
     cdsTable.SaveToStream(sm);
     sm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
+    DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
   finally
     sm.Free;
   end;

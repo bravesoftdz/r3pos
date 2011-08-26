@@ -38,6 +38,7 @@ begin
   SetEvent(hEvent);
   inherited;
   if hEvent<>0 then CloseHandle(hEvent);
+  TimerFactory := nil;
 end;
 
 procedure TTimerFactory.Execute;
@@ -46,10 +47,10 @@ begin
   while not Terminated do
     begin
       if StrtoIntDef(formatDatetime('hh',now()),0) in [8..20] then Proc(nil);
-      WaitForSingleObject(hEvent, TimeOut);
       if not Terminated then
          begin
            ResetEvent(hEvent);
+           WaitForSingleObject(hEvent, TimeOut);
          end;
     end;
 end;

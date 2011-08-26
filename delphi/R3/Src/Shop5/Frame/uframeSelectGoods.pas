@@ -328,16 +328,18 @@ procedure TframeSelectGoods.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  edtSearch.SetFocus;
+  if edtSearch.Text = '' then edtSearch.SetFocus;
 end;
 
 procedure TframeSelectGoods.edtSearchKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   inherited;
+  if Key=VK_UP then cdsList.Prior;
+  if Key=VK_DOWN then cdsList.Next;
    if Key=VK_RETURN then
      begin
-       Open('');
+       if cdsList.RecNo=1 then Open('');
        DBGridEh1.SetFocus;
      end;
 

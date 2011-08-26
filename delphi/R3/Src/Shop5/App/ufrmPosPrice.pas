@@ -112,6 +112,7 @@ begin
      begin
        if trim(edtAPRICE.Text)<>'' then
           begin
+            if StrToFloatDef(edtAGIO_RATE.Text,0)>200 then Raise Exception.Create('输入的折扣率过大，请确认是否输入正确');
             self.ModalResult := MROK;
             Exit;
           end;

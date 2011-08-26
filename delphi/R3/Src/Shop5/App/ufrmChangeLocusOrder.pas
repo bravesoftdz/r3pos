@@ -67,8 +67,10 @@ type
       Shift: TShiftState);
     procedure DBGridEh1DblClick(Sender: TObject);
   private
+    FCodeId: string;
     { Private declarations }
     function  CheckCanExport: boolean; override;
+    procedure SetCodeId(const Value: string);
   protected
     function CheckInput:boolean;override;
     procedure SetInputFlag(const Value: integer);override;
@@ -86,6 +88,7 @@ type
     procedure CancelOrder;override;
     procedure AuditOrder;override;
     procedure Open(id:string);override;
+    property CodeId:string read FCodeId write SetCodeId;
   end;
 
 implementation
@@ -181,6 +184,7 @@ begin
     oid := AObj.FieldbyName('CHANGE_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
+    if AObj.FieldbyName('CHANGE_CODE').AsString <> '' then CodeId := AObj.FieldbyName('CHANGE_CODE').AsString;
     Calc;
     edtTable.First;
   finally
@@ -617,6 +621,11 @@ begin
            if edtTable.Bof then Exit;
          end else begin result := true;break;end;
     end;
+end;
+
+procedure TfrmChangeLocusOrder.SetCodeId(const Value: string);
+begin
+  FCodeId := Value;
 end;
 
 end.

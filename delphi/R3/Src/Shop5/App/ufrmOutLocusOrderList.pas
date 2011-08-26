@@ -97,8 +97,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure actPriorExecute(Sender: TObject);
-    procedure actNextExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
@@ -358,78 +356,6 @@ begin
   3:Open4('');
   end;
 
-end;
-
-procedure TfrmOutLocusOrderList.actPriorExecute(Sender: TObject);
-var
-  Temp:TZQuery;
-  Params:TftParamList;
-begin
-  inherited;
-  if CurOrder <> nil then
-     begin
-        Params := TftParamList.Create(nil);
-        try
-          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-          Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
-          Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('SALES_TYPE').asString := '1';
-          if (CurOrder.gid = '') or (CurOrder.gid='..ÐÂÔö..') then
-             Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
-          else
-             Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
-          Temp := TZQuery.Create(nil);
-          try
-             Factor.Open(Temp,'TSalesOrderGetPrior',Params);
-             if Temp.Fields[0].asString<>'' then
-                CurOrder.Open(Temp.Fields[0].asString);
-          finally
-             Temp.Free;
-          end;
-        finally
-          Params.Free;
-        end;
-     end
-  else
-     begin
-        cdsList.Prior;
-     end;
-end;
-
-procedure TfrmOutLocusOrderList.actNextExecute(Sender: TObject);
-var
-  Temp:TZQuery;
-  Params:TftParamList;
-begin
-  inherited;
-  if CurOrder <> nil then
-     begin
-        Params := TftParamList.Create(nil);
-        try
-          Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-          Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
-          Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('SALES_TYPE').asString := '1';
-          if CurOrder.gid = '' then
-             Params.ParamByName('GLIDE_NO').asString := '00000000000000'
-          else
-             Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
-          Temp := TZQuery.Create(nil);
-          try
-             Factor.Open(Temp,'TSalesOrderGetNext',Params);
-             if Temp.Fields[0].asString<>'' then
-                CurOrder.Open(Temp.Fields[0].asString);
-          finally
-             Temp.Free;
-          end;
-        finally
-          Params.Free;
-        end;
-     end
-  else
-     begin
-        cdsList.Next;
-     end;
 end;
 
 procedure TfrmOutLocusOrderList.actEditExecute(Sender: TObject);

@@ -84,7 +84,10 @@ begin
          F.WriteBool('Login','SaveLogin',cxcbSave.Checked);
 //         F.WriteBool('Login','Locked',edtLocked.Checked);
        finally
-         F.Free;
+          try
+            F.Free;
+          except
+          end;
        end;
      end;
 
@@ -154,7 +157,9 @@ begin
                         Raise Exception.Create('输入的密码无效,请使用在线模式重试。');
                    end
                 else
-                   Raise Exception.Create('输入的密码无效,请重新输入。');
+                   begin
+                     Raise Exception.Create('输入的密码无效,请重新输入。');
+                   end;
              end;
         end;
      FLoginParam.UserID := temp.FieldbyName('USER_ID').asString;
@@ -346,7 +351,10 @@ begin
              end;
         finally
           Lock := false;
-          F.Free;
+          try
+            F.Free;
+          except
+          end;
         end;
      end;
 

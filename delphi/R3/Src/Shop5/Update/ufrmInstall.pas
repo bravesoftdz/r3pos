@@ -239,7 +239,10 @@ begin
     Label10.Caption :=  F.ReadString('home','url','www.rspcn.com');
     Label12.Caption :=  F.ReadString('home','qq','30355701');
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

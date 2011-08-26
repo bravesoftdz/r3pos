@@ -137,7 +137,10 @@ begin
     ConnectTimeOut := F.ReadInteger('xsm','connectTimeout',60000);
     CommandTimeOut := F.ReadInteger('xsm','commandTimeout',30000);
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   FormStyle := fsMDIChild;
   left := -9000;
@@ -165,7 +168,7 @@ begin
 //    LCObject.OnFuncCall3 := DoFuncCall3;
     Connect;
     SenceReady := false;
-    SenceId := 'CS';
+    SenceId := 'GWGC';
   except
     MessageBox(Handle,'系统没有检测到"新商盟接口组件",请检查软件是否正确安装?','友情提示...',MB_OK+MB_ICONWARNING);
   end;
@@ -235,6 +238,8 @@ begin
   if not ready then
      begin
        MessageBox(Handle,'系统正在装载新商盟环境,请稍候再试.','友情提示...',MB_OK+MB_ICONWARNING);
+       PageHandle := 0;
+       PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
        Exit;
      end;
   SaveLog := frmLogo.Visible;
@@ -362,8 +367,7 @@ begin
 
   r := DLLLC_Close('_R3_XSM');
   r := DLLLC_Close('_XSM_R3');
-  r := DLLLC_Close('xsmapp');
-
+  r := DLLLC_Close('xinshangmeng.com:xsmapp');
   r := DLLLC_Create('_XSM_R3',Handle);
   if r<>0 then LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
 end;
@@ -467,7 +471,7 @@ begin
 //            if not WaitRun(commandTimeout) then Exit;
 //          end;
 //     end;
-  result := true;
+    result := true;
   finally
     if not result then PageHandle := SaveHandle;
     frmLogo.Close;
@@ -501,7 +505,10 @@ begin
     IEBrowser.Navigate(xsm_url);
   finally
     List.free;
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   if Wait then
      begin
@@ -691,7 +698,10 @@ begin
     result := true;
   finally
     List.free;
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

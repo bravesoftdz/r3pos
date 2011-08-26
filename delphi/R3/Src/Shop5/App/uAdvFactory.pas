@@ -475,10 +475,11 @@ begin
        end;
   finally
     List.free;
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
-  Rim_ComId := 'LZ0000000000001';
-  Rim_CustId := 'GX00000004392';
 end;
 
 function TAdvFactory.WBSaveAsMht(mUrl:string;

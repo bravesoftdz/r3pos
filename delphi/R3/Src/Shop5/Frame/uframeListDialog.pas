@@ -46,6 +46,8 @@ type
     procedure edtSearchPropertiesChange(Sender: TObject);
     procedure DBGridEh1TitleClick(Column: TColumnEh);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
     FMultiSelect: boolean;
@@ -62,6 +64,8 @@ type
     class function FindMDialog(AOwner:TForm;SQL:string;Fields:string;vList:TRecordList):boolean;
     //单选对话框
     class function FindDialog(AOwner:TForm;SQL:string;Fields:string;AObj: TRecord_):boolean;
+    //显示数据集
+    class function FindDSDialog(AOwner:TForm;DataSet:TZQuery;Fields:string;AObj: TRecord_):boolean;
     property MultiSelect:boolean read FMultiSelect write SetMultiSelect;
   end;
 
@@ -427,6 +431,47 @@ procedure TframeListDialog.LoadFormat;
 begin
 //  inherited;
 
+end;
+
+class function TframeListDialog.FindDSDialog(AOwner: TForm; DataSet: TZQuery;
+  Fields: string; AObj: TRecord_): boolean;
+var sList:TZQuery;
+begin
+  with TframeListDialog.Create(AOwner) do
+    begin
+      try
+        MultiSelect := false;
+        ParserField(Fields);
+        sList := cdsList;
+        cdsList := DataSet;
+        dsList.DataSet := cdsList;
+        if cdsList.Filtered then fndPanel.Visible := false;
+        result := (ShowModal=MROK);
+        if result then
+           begin
+             if AObj<>nil then
+                AObj.ReadFromDataSet(cdsList);
+           end;
+      finally
+        cdsList := sList;
+        free;
+      end;
+    end;
+end;
+
+procedure TframeListDialog.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 end.

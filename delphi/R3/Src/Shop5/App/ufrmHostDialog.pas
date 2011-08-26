@@ -72,7 +72,10 @@ begin
       end;
   finally
     Host.Free;
-    f.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 
@@ -93,7 +96,10 @@ begin
     f.WriteString('db','Connstr','connmode=2;hostname='+rzDbList.Selected.SubItems[2]+';port='+rzDbList.Selected.SubItems[3]+';dbid='+f.ReadString('db','dbid','0'));
     f.WriteString('db','srvrId',rzDbList.Selected.Caption);
   finally
-    f.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   self.ModalResult := MROK;
 end;

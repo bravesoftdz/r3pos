@@ -340,6 +340,7 @@ inherited frameOrderForm: TframeOrderForm
       TitleFont.Style = []
       TitleHeight = 20
       UseMultiTitle = True
+      VertScrollBar.VisibleMode = sbAlwaysShowEh
       IsDrawNullRow = False
       CurrencySymbol = #65509
       DecimalNumber = 2

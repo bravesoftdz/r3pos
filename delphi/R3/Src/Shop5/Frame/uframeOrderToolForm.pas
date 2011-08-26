@@ -614,7 +614,10 @@ begin
   else
      mnmFormer5.Caption := F.ReadString('s5_'+frReport1.Name,'name','自定义五');
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

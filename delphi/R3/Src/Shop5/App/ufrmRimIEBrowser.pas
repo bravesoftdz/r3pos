@@ -123,7 +123,10 @@ begin
        end;
   finally
     List.free;
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

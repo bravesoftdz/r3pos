@@ -35,7 +35,8 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-      'select * from PUB_GOODSINFO where TENANT_ID=0 and BARCODE='''+bcode+'''';
+      'select BARCODE,GODS_NAME,GODS_SPELL,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_OUTPRICE,NEW_INPRICE,SORT_ID1,UNIT_ID '+
+      'from PUB_GOODSINFO where TENANT_ID=0 and BARCODE='''+bcode+'''';
     db.Open(rs);
     if not rs.IsEmpty then
        begin

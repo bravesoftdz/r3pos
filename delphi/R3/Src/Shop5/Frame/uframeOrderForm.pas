@@ -935,10 +935,10 @@ begin
                begin
                  Exit;
                end;
-            if rs.RecordCount > 1 then
+            if (rs.RecordCount > 1) and not TframeListDialog.FindDSDialog(self,rs,'GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价',nil) then
                begin
-                 fndStr := BarCode;
-                 result := 1;
+                 fndStr := '';
+                 result := 3;
                  Exit;
                end
             else
@@ -952,13 +952,31 @@ begin
          end
       else
          begin
-            if rs.RecordCount > 1 then
+            if (rs.RecordCount > 1) then
                begin
-                 fndStr := BarCode;
-                 result := 1;
-                 Exit;
-               end
-            else
+                  fndStr := '';
+                  rs.first;
+                  while not rs.eof do
+                    begin
+                      if fndStr<>'' then fndStr := fndStr+',';
+                      fndStr := fndStr + ''''+rs.FieldbyName('GODS_ID').asString+'''';
+                      rs.next;
+                    end;
+                  AObj := TRecord_.Create;
+                  try
+                    if not TframeListDialog.FindDialog(self,'select GODS_ID,GODS_CODE,GODS_NAME,NEW_OUTPRICE from VIW_GOODSINFO where TENANT_ID='+inttostr(Global.TENANT_ID)+' and GODS_ID in ('+fndStr+') and COMM not in (''02'',''12'')','GODS_CODE=货号,GODS_NAME=商品名称,NEW_OUTPRICE=标准售价',AObj) then
+                       begin
+                         fndStr := '';
+                         result := 3;
+                         Exit;
+                       end
+                    else
+                       rs.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]);
+                  finally
+                    AObj.free;
+                  end;
+               end;
+            if result <> 3 then
                begin
                  vgds := rs.FieldbyName('GODS_ID').AsString;
                  vP1 := rs.FieldbyName('PROPERTY_01').AsString;
@@ -1588,7 +1606,11 @@ begin
                    end
                 else
                    if not CanAppend then MessageBox(Handle,'输入的条码无效..','友情提示...',MB_OK+MB_ICONQUESTION);//PostMessage(Handle,WM_DIALOG_PULL,FIND_GOODS_DIALOG,1);
-               end
+               end;
+             3:begin
+                 edtInput.Text := '';
+                 Exit;
+               end;
            else
               edtInput.Text := '';
            end;
@@ -2775,7 +2797,7 @@ begin
   except
     Raise Exception.Create('输入的单价无效，请正确输入');
   end;
-  if StrToFloat(s)>99999999 then Raise Exception.Create('输入的单价过大，请确认是否输入正确');
+  if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的单价过大，请确认是否输入正确');
   Field := edtTable.FindField('APRICE');
   if Field=nil then Exit;
   edtTable.Edit;
@@ -2968,7 +2990,7 @@ begin
           b := basInfo.FieldbyName('BARCODE').asString
        else
           begin
-            if pbar.Locate('GODS_ID,UNIT_ID,BATCH_NO',VarArrayOf([edtTable.FieldbyName('GODS_ID').asString,edtTable.FieldbyName('UNIT_ID').asString,edtTable.FieldbyName('BATCH_NO').asString]),[]) then
+            if pbar.Locate('GODS_ID,UNIT_ID',VarArrayOf([edtTable.FieldbyName('GODS_ID').asString,edtTable.FieldbyName('UNIT_ID').asString]),[]) then
                b := pbar.FieldbyName('BARCODE').asString
             else
                b := basInfo.FieldbyName('BARCODE').asString;
@@ -3257,7 +3279,7 @@ begin
   except
     Raise Exception.Create('输入的数量无效，请正确输入');
   end;
-  if StrToFloat(s)>99999999 then Raise Exception.Create('输入的数量过大，请确认是否输入正确');
+  if abs(StrToFloat(s))>99999999 then Raise Exception.Create('输入的数量过大，请确认是否输入正确');
   Field := edtTable.FindField('AMOUNT');
   if Field=nil then Exit;
   edtTable.Edit;

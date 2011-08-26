@@ -1745,6 +1745,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
     inherited actInfo: TAction
       OnExecute = actInfoExecute
     end
+    inherited actPrior: TAction
+      Visible = False
+    end
+    inherited actNext: TAction
+      Visible = False
+    end
   end
   inherited cdsList: TZQuery
     AfterScroll = cdsListAfterScroll

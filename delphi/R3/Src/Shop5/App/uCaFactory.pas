@@ -354,7 +354,10 @@ begin
     2:result := InternetConnected;
     end;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 
@@ -823,7 +826,10 @@ begin
        url := s;
     pubpwd := 'SaRi0+jf';
   finally
-    f.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   RspFlag := 0;
   timeout:= 2000000;
@@ -844,7 +850,15 @@ var
   ErrXml:string;
   w:integer;
 begin
-  if copy(xml,1,6)='<Err>:' then Raise Exception.Create(xml); 
+  if copy(xml,1,6)='<Err>:' then
+     begin
+       if pos('Empty document',xml)>0 then
+          begin
+            Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+          end
+       else
+          Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
+     end;
   if Global.debug then LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try

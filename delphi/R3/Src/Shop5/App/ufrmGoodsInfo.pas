@@ -1642,7 +1642,7 @@ begin
     if trim(edtBARCODE1.Text)='' then exit;
     if ReadBarCode_INFO(trim(edtBARCODE1.Text)) then
     begin
-      if (self.SORT_ID1_KeyValue<>'') and (trim(edtSORT_ID1.Text)<>'') then edtNEW_OUTPRICE.SetFocus else edtSORT_ID1.SetFocus;
+      //if (self.SORT_ID1_KeyValue<>'') and (trim(edtSORT_ID1.Text)<>'') then edtNEW_OUTPRICE.SetFocus else edtSORT_ID1.SetFocus;
     end;
   end;
   //  if not(Key in ['0'..'9']) then Key := #0;
@@ -1719,16 +1719,18 @@ begin
          end;
       if (edtSORT_ID1.Text = '') and (GObj.FieldbyName('SORT_ID1').AsString<>'') then
          begin
-           if GodsFactory.SortInfo.Locate('SORT_ID',GObj.FieldbyName('SORT_NAME').AsString,[]) then
+           if GodsFactory.SortInfo.Locate('SORT_ID',GObj.FieldbyName('SORT_ID1').AsString,[]) then
               begin
                 rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-                if rs.Locate('SORT_NAME',GodsFactory.MeaUnit.FieldbyName('SORT_NAME').asString,[]) then
+                if rs.Locate('SORT_NAME',GodsFactory.SortInfo.FieldbyName('SORT_NAME').asString,[]) then
                    begin
                      SORT_ID1 := rs.FieldbyName('SORT_ID').AsString;
                      edtSORT_ID1.Text := rs.FieldbyName('SORT_NAME').AsString;
                    end;
               end;
          end;
+      edtGODS_CODE.Text := '自动编号';
+      edtNEW_OUTPRICEPropertiesChange(nil);
       result := true;
      end;
 end;
@@ -2296,6 +2298,7 @@ procedure TfrmGoodsInfo.edtSORT_ID1KeyPress(Sender: TObject;
 begin
   inherited;
   Key:=#0;
+  if trim(edtSORT_ID1.Text)='' then
   self.edtSORT_ID1.Properties.OnButtonClick(Sender,1);
 end;
 
@@ -2599,7 +2602,7 @@ begin
         Exit;
       end;
   end;
-  if r>999999999 then Raise Exception.Create('输入的数值不能100，无效');
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值不能100，无效');
 
   if (VarIsNull(Value)) then r:=0 else r:=Value;
 

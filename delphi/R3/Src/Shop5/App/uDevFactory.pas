@@ -218,7 +218,10 @@ begin
 
      Copys := F.ReadInteger('SYS_DEFINE','TICKETCOPY',1);
   finally
-     F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 
@@ -281,7 +284,10 @@ begin
   try
     result := F.ReadString('SYS_DEFINE',Define,Def);
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

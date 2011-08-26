@@ -374,7 +374,6 @@ begin
         Exit;
       end;
      end;
-  if TimerFactory.Terminated then Exit;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

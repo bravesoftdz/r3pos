@@ -16,6 +16,7 @@ uses
   Windows,
   Forms,
   zBase,
+  Dialogs,
   uBaseSyncFactory;
 
 //第三方系统数据对接的基类
@@ -184,6 +185,7 @@ end;
 
 function TRimSyncFactory.SetRimORGAN_CUST_ID(const InTENANT_ID, InSHOP_ID: string; var InCOM_ID,InCUST_ID: string): Boolean;
 var
+  Msg: string;
   Rs: TZQuery;
 begin
   result:=False;
@@ -200,6 +202,7 @@ begin
         InCOM_ID:=trim(Rs.fieldbyName('COM_ID').AsString);
         InCUST_ID:=trim(Rs.fieldbyName('CUST_ID').AsString);
       end;
+      Msg:=InCOM_ID;
     except
       on E:Exception do
       begin

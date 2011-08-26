@@ -88,7 +88,7 @@ begin
     Str:='insert into INF_INDEORDER (TENANT_ID,SHOP_ID,INDE_ID,INDE_DATE,INDE_AMT,INDE_MNY,NEED_AMT,STATUS,ARR_DATE) '+
       ' select '+TENANT_ID+' as TENANT_ID,'''+SHOP_ID+''' as SHOP_ID,A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,sum(QTY_NEED) as NEED_AMT,A.STATUS,A.ARR_DATE '+
       ' from RIM_SD_CO A,RIM_SD_CO_LINE B '+
-      ' where A.CO_NUM=B.CO_NUM and A.STATUS in (''05'',''06'') and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+COM_ID+''' and A.CUST_ID='''+CUST_ID+''' '+
+      ' where A.CO_NUM=B.CO_NUM and A.STATUS in (''04'',''05'',''06'') and A.CRT_DATE>='''+NearDate+''' and A.COM_ID='''+COM_ID+''' and A.CUST_ID='''+CUST_ID+''' '+
       ' group by A.CO_NUM,A.CRT_DATE,A.QTY_SUM,A.AMT_SUM,A.ARR_DATE,A.STATUS ';
      if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create('2、插入最近30天订单表头出错！'+PlugIntf.GetLastError);
      result:=true;

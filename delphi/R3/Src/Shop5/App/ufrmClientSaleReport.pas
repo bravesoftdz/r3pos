@@ -608,7 +608,7 @@ begin
   RefreshColumn;
 
   //设置门店查看数据所属门店权限
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+ {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP1_SHOP_ID.Properties.ReadOnly := False;
     fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
@@ -639,7 +639,8 @@ begin
     fndP5_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
     fndP5_SHOP_ID.Properties.ReadOnly := True;
-  end;
+  end;}
+  
   //Add 设置查看成本价权限
   if not ShopGlobal.GetChkRight('14500001',2) then
   begin

@@ -40,7 +40,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     FXsm: boolean;
-    procedure SetINDEOrderMsg;//设置记录信息
+    procedure SetINDEOrderMsg; //设置记录信息
     function CheckIsOrderDown: Boolean; //判断本地是否已下载过
     function FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function GetOrderDate: TDate;
@@ -54,7 +54,7 @@ type
   public
     FAobj: TRecord_;
     FReData: OleVariant; //返回数据包
-    procedure OpenIndeOrderList;  //查询订单主表数据
+    procedure OpenIndeOrderList(DownType: integer=0);  //查询订单主表数据
     procedure DoCopyIndeOrderData;    //将选中的订单明细处理到中间表
     class function DownStockOrder(var Aobj: TRecord_;var vData: Olevariant):boolean;
     class function AutoDownStockOrder(const IndeDate: string):Boolean; //自动到货确认[IndeDate='YYYYMMDD']
@@ -86,7 +86,7 @@ begin
     try
       FAobj:=TRecord_.Create;
       //1、调用原取Orade列表过程，返回近30天订单
-      OpenIndeOrderList;  //查询订单主表数据
+      OpenIndeOrderList(1);  //查询订单主表数据
       if cdsTable.IsEmpty then
       begin
         LogFile.AddLogFile(0,'自动下载订单<没有订单>');  //自动订单写日志
@@ -229,9 +229,10 @@ begin
     result:=trim(CdsTable.fieldbyName('INDE_ID').AsString);
 end;
 
-procedure TfrmDownStockOrder.OpenIndeOrderList;
+//下载类型:
+procedure TfrmDownStockOrder.OpenIndeOrderList(DownType: integer);
 var
-  whereCnd, UseDate: string; //启用日期
+  whereCnd, UseDate,OrderStatus: string; //启用日期,到达日期
   Rs: TZQuery;
   vParam: TftParamList;
 begin
@@ -276,11 +277,34 @@ begin
       while not Rs.Eof do
       begin
         if CdsTable.Locate('INDE_ID',trim(Rs.fieldbyName('COMM_ID').AsString),[]) then
-          CdsTable.Delete;
-        Rs.Next;
+           CdsTable.Delete;
+      Rs.Next;
       end;
+
+      //2011.08.25 Add过滤到货日期小于启用日期：
       CdsTable.First;
+      while not CdsTable.Eof do
+      begin
+        if trim(CdsTable.FieldByName('ARR_DATE').AsString) < UseDate then  //到货日期小于启用日期过滤掉
+          CdsTable.Delete
+        else
+          CdsTable.Next; 
+      end;
+      //过滤掉状态为:
+      if DownType=1 then
+      begin
+        CdsTable.First;
+        while not CdsTable.Eof do
+        begin
+          OrderStatus:=trim(CdsTable.FieldByName('STATUS').AsString);
+          if (OrderStatus='05') or (OrderStatus='06') then  //不是0
+            CdsTable.Next 
+          else
+            CdsTable.Delete;
+        end;
+      end;
     end;
+    CdsTable.First;
     SetINDEOrderMsg; //显示订单数
   finally
     CdsTable.EnableControls;
@@ -635,7 +659,7 @@ begin
   try
     FrmObj.Xsm := true;
     FrmObj.Show;
-    FrmObj.OpenIndeOrderList;  //查询订单的主表数据
+    FrmObj.OpenIndeOrderList(1);  //查询订单的主表数据
     result:=true;
   except
     FrmObj.free;

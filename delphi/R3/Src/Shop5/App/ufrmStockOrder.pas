@@ -94,6 +94,7 @@ type
     //增值税率
     InRate3:real;
     FDownOrderID: string; //下载订单ID
+    FOrderStatus: string; //订单状态
     function  CheckCanExport: boolean; override;
   protected
     procedure ReadHeader;
@@ -325,6 +326,7 @@ var mny,amt:real;
 begin
   inherited;
   Saved := false;
+  if (not edtCLIENT_ID.Enabled) and (FDownOrderID<>'') and (FOrderStatus='0') then Raise Exception.Create('订货单<'+FDownOrderID+'>[状态:未确认] 不能保存！');
   if edtSTOCK_DATE.EditValue = null then Raise Exception.Create('入库日期不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
   if edtINVOICE_FLAG.ItemIndex = -1 then Raise Exception.Create('票据类型不能为空');
@@ -1212,6 +1214,8 @@ begin
   result:=False;
   //根据传入的AObj填充主表字段；
   FDownOrderID:=trim(AObj.fieldbyName('INDE_ID').AsString);
+  FOrderStatus:=trim(AObj.fieldbyName('STATUS').AsString);
+  if (FOrderStatus='05') or(FOrderStatus='06') then FOrderStatus:='1' else FOrderStatus:='0';
   TenantID:=trim(Aobj.FieldbyName('TENANT_ID').AsString); //企业ID
 
   ShopID:=trim(Aobj.FieldbyName('SHOP_ID').AsString);     //门店ID

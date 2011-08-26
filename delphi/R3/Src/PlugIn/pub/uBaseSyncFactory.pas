@@ -83,7 +83,7 @@ type
   TLogShopInfo=class
   private
     FRuniRet: integer;  //总上报记录数
-    FBegTickCount: integer; //开始上报时间点
+    FBegTickCount: int64; //开始上报时间点
     FBegTime: string;   //开始上报时间点
     FShopName: string;  //当前上报门店
     FErrorState: Boolean;  //全部执行成功状态
@@ -645,7 +645,7 @@ var
   Hour, Min, Sec, MSec: Word;
 begin
   DecodeTime(time(), Hour, Min, Sec, MSec);
-  result:=FormatFloat('00',Hour)+':'+FormatFloat('00',Min)+':'+FormatFloat('00',Sec)+':'+FormatFloat('00',MSec);
+  result:=FormatFloat('00',Hour)+':'+FormatFloat('00',Min)+':'+FormatFloat('00',Sec)+'.'+FormatFloat('00',MSec);
 end;
 
 class function TBaseSyncFactory.OpenData(GPlugIn: IPlugIn; Qry: TZQuery;dbResoler:integer): Boolean;

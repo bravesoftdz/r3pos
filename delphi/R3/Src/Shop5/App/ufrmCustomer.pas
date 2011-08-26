@@ -450,40 +450,40 @@ begin
   
   //  对会员生日日期进行条件查询
   if (edtDate1.EditValue=NULL) and (edtDate2.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate2.Date));
+     Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate2.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue=NULL) then
-     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate1.Date));
+     Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate1.Date));
   if (edtDate1.EditValue<>NULL) and (edtDate2.EditValue<>NULL) then
     begin
       Date1 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate1.Date));
       Date2 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate2.Date));
       if Date1 < Date2 then
-        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))
+        Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
+        ' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))
       else if Date1 > Date2 then
-        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))
+        Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
+        ' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))
       else
-        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
+        Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(BIRTHDAY,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
     end;
 
   // 对会员入会日期进行条件查询
   if (edtDate3.EditValue=NULL) and (edtDate4.EditValue<>NULL) then
-     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate4.Date));
+     Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate4.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue=NULL) then
-     Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate3.Date));
+     Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate3.Date));
   if (edtDate3.EditValue<>NULL) and (edtDate4.EditValue<>NULL) then
     begin
       Date1 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate3.Date));
       Date2 := FnTime.fnStrtoDate(FormatDateTime(FormatDateTime('YYYY',Date())+'-MM-DD',edtDate4.Date));
       if Date1 < Date2 then
-        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))
+        Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))+
+        ' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))
       else if Date1 > Date2 then
-        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
-        ' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))
+        Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2))+
+        ' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date1))
       else
-        Str_Where:=Str_Where+' and '+FormatDateTime('YYYY',Date())+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
+        Str_Where:=Str_Where+' and '+QuotedStr(FormatDateTime('YYYY',Date()))+Str_Join+'substring(isnull(CON_DATE,''          ''),5,6)='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date2));
     end;
 
   if cmbSHOP_ID.AsString<>'' then

@@ -140,10 +140,11 @@ begin
   Factory.DataSet := TZQuery.Create(nil);
   load;
   if ShopGlobal.GetProdFlag = 'E' then
-    begin
-      Label23.Caption := '仓库群组';
-      Label21.Caption := '仓库名称';
-    end;
+  begin
+    Label23.Caption := '仓库群组';
+    Label21.Caption := '仓库名称';
+  end;
+  {2011.08.25 加了DataRight后关闭
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP1_SHOP_ID.Properties.ReadOnly := False;
@@ -151,7 +152,7 @@ begin
     fndP1_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
     fndP1_SHOP_ID.Properties.ReadOnly := True;
-  end;
+  end;}
   btnNew.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
   btnEdit.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
   btnDelete.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');

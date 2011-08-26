@@ -608,7 +608,8 @@ begin
   RefreshColumn;
 
   //设置门店查看数据所属门店权限
- {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  {2011.08.25 加了DataRight后关闭
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP1_SHOP_ID.Properties.ReadOnly := False;
     fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;

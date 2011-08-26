@@ -208,6 +208,7 @@ begin
   CreateGrid;
   RefreshColumn;
 
+  {2011.08.25 加了DataRight后关闭
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     begin
       fndP3_SHOP_ID.Properties.ReadOnly := False;
@@ -221,7 +222,7 @@ begin
       fndP4_SHOP_ID.Text := Global.SHOP_NAME;
       SetEditStyle(dsBrowse,fndP4_TYPE_ID.Style);
       fndP4_SHOP_ID.Properties.ReadOnly := True;
-    end;
+    end;}
 
   if ShopGlobal.GetProdFlag = 'E' then
     begin

@@ -168,7 +168,7 @@ begin
   FDisp := TDoInvokeClientDispatch.Create;
   FDisp.Parant := Self;
   FInterpreter.DoInvokeDispatch := FDisp;
-  FSupportCallbacks := true;
+  FSupportCallbacks := false;
   FInWorking := 0;
   LocaliDbType := -1;
 end;
@@ -423,7 +423,7 @@ begin
     Dispatch(Message);
   except
     if Assigned(ApplicationHandleException) then
-      ApplicationHandleException(Self);
+       ApplicationHandleException(Self);
   end;
 end;
 

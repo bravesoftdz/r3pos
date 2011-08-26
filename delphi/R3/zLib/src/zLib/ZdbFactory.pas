@@ -6,7 +6,7 @@
 unit ZdbFactory;
 
 interface
-uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase,ZAbstractDataset,ZClient,Forms;
+uses SysUtils,Classes,Windows,DB,ZIntf,ZdbHelp,ZBase,ZAbstractDataset,ZClient,Forms,ZLogFile;
 type
   TdbFactory = class(TComponent)
   private
@@ -200,6 +200,7 @@ end;
 function TdbFactory.Connect: boolean;
 begin
   DisConnect;
+  LogFile.AddLogFile(0,'<dbFactory.Connect> to '+ConnString);
   Enter;
   try
     if FConnStr='' then Raise Exception.Create('连接字符串不能为空..'); 
@@ -212,6 +213,7 @@ begin
     result := dbResolver.Connect;
   finally
     Leave;
+    LogFile.AddLogFile(0,'<dbFactory.Connect> finish');
   end;
 end;
 

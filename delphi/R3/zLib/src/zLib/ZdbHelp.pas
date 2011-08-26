@@ -596,7 +596,7 @@ function TdbResolver.ExecSQL(const SQL: WideString;
   ObjectFactory: TObject): Integer;
 begin
   if Assigned(ObjectFactory) then
-     result := dbHelp.ExecSQL(SQL,TObject(ObjectFactory))
+     result := dbHelp.ExecSQL(SQL,ObjectFactory)
   else
      result := dbHelp.ExecSQL(SQL);
 end;

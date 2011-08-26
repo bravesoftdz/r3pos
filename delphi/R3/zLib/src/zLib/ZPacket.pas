@@ -734,7 +734,7 @@ begin
   try
     Result := nil;
     if not CheckClientsocket(FSocket.SocketHandle)  then
-       raise ESocketConnectionError.CreateRes(@SSocketReadError);
+       raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
     TimeVal := nil;
     FD_ZERO(FDSet);
     FD_SET(FSocket.SocketHandle, FDSet);
@@ -772,12 +772,11 @@ begin
       0:begin
          if not CheckClientsocket(FSocket.SocketHandle)  then
             begin
-              FSocket.Close;
-              raise ESocketConnectionError.CreateRes(@SSocketReadError);
+              raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
             end;
         end;
       -1:begin
-           if ((GetTickCount-_Start)>30000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
+           if ((GetTickCount-_Start)>5000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
         end;
       else
         begin
@@ -805,7 +804,7 @@ begin
   try
      Result := 0;
      if not CheckClientsocket(FSocket.SocketHandle)  then
-        raise ESocketConnectionError.CreateRes(@SSocketReadError);
+        raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
      InterceptOutgoing(Data);
      P := Data.Memory;
      Amount := Data.Size + Data.BytesReserved;
@@ -818,13 +817,12 @@ begin
             begin
                if not CheckClientsocket(FSocket.SocketHandle)  then
                   begin
-                    FSocket.Close;
-                    raise ESocketConnectionError.CreateRes(@SSocketReadError);
+                    raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
                   end;
             end;
          -1:
             begin
-               if ((GetTickCount-_Start)>30000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
+               if ((GetTickCount-_Start)>5000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
             end
          else
             begin
@@ -985,6 +983,7 @@ begin
     Chk := IoCtlSocket(FdSet.Fd_Array[0], FIONREAD, Size);
     if Chk < 0 then Result := False else if Size = 0 then Result := False else Result := true;
   end else if Chk = 0 then Result := true else Result := False;
+  if not result then SetConnected(false);
 end;
 
 function TZSocketTransport.GetSocketHandle: THandle;

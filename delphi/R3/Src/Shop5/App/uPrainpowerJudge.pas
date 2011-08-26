@@ -151,7 +151,7 @@ begin
           if ShopGlobal.GetChkRight('12400001',7) then                //销售单的审核权限       actfrmSalesOrderList    表   SAL_SALESORDER
             begin
               if Trim(Sql) <> '' then Sql := Sql + ' union all ';
-              Sql := Sql + 'select ''actfrmSalesOrderList'' as ID,4 as MSG_CLASS,''销售出库'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(CREA_DATE) as MIN_DATE,5 as sFlag '+
+              Sql := Sql + 'select ''actfrmSalesOrderList'' as ID,4 as MSG_CLASS,''销售出库'' as MSG_TITLE,count(SALES_TYPE) as SUM_ORDER,min(SALES_DATE) as MIN_DATE,5 as sFlag '+
               'from SAL_SALESORDER where CHK_USER is null and SALES_TYPE=1 and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') '; //and LOCUS_STATUS=''3'' and LOCUS_CHK_USER is not null
             end;
 
@@ -271,7 +271,7 @@ begin
                              ' ('''+FormatDateTime('YYYY-MM-DD',Date()+Birthday_Num)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(BIRTHDAY,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(BIRTHDAY,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
               end;
               if Trim(Sql) <> '' then Sql := Sql + ' union all ';
-              Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(CUST_ID) as SUM_ORDER,'''+IntToStr(Birthday_Num)+''' as MIN_DATE,9 as sFlag '+
+              Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员生日'' as MSG_TITLE,count(CUST_ID) as SUM_ORDER,'+IntToStr(Birthday_Num)+' as MIN_DATE,9 as sFlag '+
               ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and BIRTHDAY is not null and ' + Str_Bir;
             end;
 
@@ -287,13 +287,13 @@ begin
                              ' ('''+FormatDateTime('YYYY-MM-DD',Date()+CustContinu_Num)+'''>='''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(CON_DATE,''          ''),5,6) and '''+FormatDateTime('YYYY',IncYear(Date()))+'''||substr(ifnull(CON_DATE,''          ''),5,6)>='''+FormatDateTime('YYYY-MM-DD',Date())+'''))';
               end;
               if Trim(Sql) <> '' then Sql := Sql + ' union all ';
-              Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员续会'' as MSG_TITLE,count(CUST_ID) as SUM_ORDER,'''+IntToStr(CustContinu_Num)+''' as MIN_DATE,10 as sFlag '+
+              Sql := Sql + ' select ''actfrmCustomer'' as ID,4 as MSG_CLASS,''会员续会'' as MSG_TITLE,count(CUST_ID) as SUM_ORDER,'+IntToStr(CustContinu_Num)+' as MIN_DATE,10 as sFlag '+
               ' from PUB_CUSTOMER where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and COMM not in (''02'',''12'') and CON_DATE is not null and '+ Str_Bir;
             end;
           Inc(FNumeration);
         end;
         11:begin
-          Sql := Sql + ' select a.QUESTION_ID as ID,1 as MSG_CLASS,b.QUESTION_TITLE as MSG_TITLE,sum(a.QUESTION_ID) as SUM_ORDER,'''' as MIN_DATE,8 as sFlag '+
+          Sql := Sql + ' select a.QUESTION_ID as ID,1 as MSG_CLASS,b.QUESTION_TITLE as MSG_TITLE,sum(a.QUESTION_ID) as SUM_ORDER,0 as MIN_DATE,8 as sFlag '+
           ' from MSC_INVEST_LIST a,MSC_QUESTION b where a.TENANT_ID=b.TENANT_ID and a.QUESTION_ID=b.QUESTION_ID '+
           ' and a.TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and a.SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID)+' and a.QUESTION_ANSWER_STATUS=2 group by a.QUESTION_ID,b.QUESTION_TITLE';
 

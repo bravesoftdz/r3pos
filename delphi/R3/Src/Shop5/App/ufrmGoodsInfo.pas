@@ -1653,6 +1653,8 @@ var
   rs:TZQuery;
 begin
   result := false;
+  if self.dbState<>dsInsert then Exit; //2011.08.27 Add不是新增状态退出
+
   GObj := GodsFactory.Check(BarCode);
   if GObj<>nil then
      begin
@@ -1662,8 +1664,8 @@ begin
              AObj.FindField(GObj.Fields[i].FieldName).NewValue := GObj.Fields[i].NewValue;
         end;
       ReadFromObject(AObj);
-      //2011.08.27 Add 判断: 新增状态才默认值:
-      if self.dbState=dsInsert then GodsDefaultValue;
+      GodsDefaultValue; //2011.08.27 Add 判断: 新增状态才默认值
+      
       if edtCALC_UNITS.Text = '' then
          begin
            if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('CALC_UNITS').AsString,[]) then

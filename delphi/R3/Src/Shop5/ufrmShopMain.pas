@@ -897,7 +897,12 @@ begin
   if Global.UserID='system' then exit;
   if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
      begin
-        SyncFactory.SyncAll;
+        try
+          SyncFactory.SyncAll;
+        except
+          on E:Exception do
+             MessageBox(Handle,Pchar(E.Message),'”—«ÈÃ· æ...',MB_OK+MB_ICONINFORMATION);
+        end;
      end;
 end;
 

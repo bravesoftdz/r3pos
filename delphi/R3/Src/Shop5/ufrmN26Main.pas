@@ -912,7 +912,12 @@ begin
   if Global.UserID='system' then exit;
   if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
      begin
-        SyncFactory.SyncAll;
+        try
+          SyncFactory.SyncAll;
+        except
+          on E:Exception do
+             MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+        end;
      end;
 end;
 
@@ -3574,11 +3579,11 @@ begin
   if chk<>md5Encode(mm+dec) then Raise Exception.Create('系统传入的校验码无效..');
 
   tid := ParamStr(5);
-  if copy(tid,1,3)<>'-id' then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
+//  if copy(tid,1,3)<>'-id' then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
   tid := copy(tid,5,255);
 
   fn := ParamStr(4);
-  if copy(fn,1,3)<>'-fn' then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
+//  if copy(fn,1,3)<>'-fn' then Raise Exception.Create('传的参数无效，请认真阅读通讯协议文档');
   fn := copy(fn,5,255);
   result := true;
 
@@ -3598,7 +3603,7 @@ begin
   try
     rs.SQL.Text := 'select Value from SYS_DEFINE Where Define = ''TENANT_ID'' and TENANT_ID=0 ';
     Factor.Open(rs);
-    if rs.Fields[0].asString<>tid then //不相同要自动注册
+    if (rs.Fields[0].asString<>tid) and (tid<>'') then //不相同要自动注册
        begin
          Global.TENANT_ID := 0;
          result := TfrmTenant.coAutoRegister(tid);
@@ -3764,8 +3769,9 @@ begin
       Global.UserName := '管理员';
       result := true;
     end;
-  IsXsm := true;
-  PostMessage(Handle,WM_DESKTOP_REQUEST,StrtoIntDef(fn,0),1);
+//  IsXsm := true;
+  if fn<>'' then
+    PostMessage(Handle,WM_DESKTOP_REQUEST,StrtoIntDef(fn,0),1);
 end;
 
 procedure TfrmN26Main.RzTrayIcon1LButtonDblClick(Sender: TObject);

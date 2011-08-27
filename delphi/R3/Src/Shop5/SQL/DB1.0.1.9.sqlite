@@ -28,7 +28,7 @@ CREATE TABLE CA_LOGIN_INFO(
 	      --在线时长<分钟> 默认-1
 	CONNECT_TIMES int NOT NULL,
         --通讯标志
-	COMM varchar (2) NOT NULL DEFAULT '00',
+	COMM varchar(2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_CA_LOGIN_INFO PRIMARY KEY   
@@ -54,7 +54,7 @@ CREATE TABLE CA_MODULE_CLICK(
 	      --点击时间
 	CLICK_DATE varchar(19) NOT NULL,
         --通讯标志
-	COMM varchar (2) NOT NULL DEFAULT '00',
+	COMM varchar(2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_CA_MODULE_CLICK PRIMARY KEY   

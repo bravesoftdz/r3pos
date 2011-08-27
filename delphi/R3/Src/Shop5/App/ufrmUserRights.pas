@@ -595,7 +595,7 @@ begin
     rs := Global.GetZQueryFromName('PUB_PARAMS');
     for i:=1 to length(rStr) do
       begin
-        if rs.Locate('CODE_ID;TYPE_CODE',varArrayOf([inttostr(i),'DATA_TYPE']),[]) then
+        if (rStr[i]='1') and rs.Locate('CODE_ID;TYPE_CODE',varArrayOf([inttostr(i),'DATA_TYPE']),[]) then
            begin
              AObj := TRecord_.Create;
              AObj.ReadFromDataSet(rs);

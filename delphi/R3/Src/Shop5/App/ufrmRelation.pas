@@ -264,7 +264,7 @@ var
 begin
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-  rs.SortedFields := 'RELATION_ID';
+  //rs.SortedFields := 'RELATION_ID';  //2011.08.27 ≈≈–Ú¥Ì¬“πÿ±’
   w := -1;
   rs.First;
   while not rs.Eof do
@@ -287,7 +287,7 @@ begin
       rs.Filtered := false;
       rs.filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
       rs.Filtered := true;
-      rs.SortedFields := 'LEVEL_ID';
+      //rs.SortedFields := 'LEVEL_ID';  //2011.08.27 ≈≈–Ú¥Ì¬“πÿ±’
       CreateLevelTree(rs,rzTree,'4444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
     end;
   if rzTree.TopItem<>nil then rzTree.TopItem.Selected := true;

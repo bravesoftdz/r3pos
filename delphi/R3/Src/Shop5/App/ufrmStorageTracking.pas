@@ -287,7 +287,7 @@ begin
   IsRoot:=False;
   ClearTree(Tree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-  rs.SortedFields := 'RELATION_ID';
+  //rs.SortedFields := 'RELATION_ID';  //2011.08.27 排序错乱关闭
   j:=-1;
   rs.First;
   while not rs.Eof do
@@ -322,7 +322,7 @@ begin
       rs.Filtered := False;
       rs.Filter := 'RELATION_ID='+TRecord_(Tree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
       rs.Filtered := True;
-      rs.SortedFields := 'LEVEL_ID';
+      //rs.SortedFields := 'LEVEL_ID';  //2011.08.27 排序错乱关闭
       CreateLevelTree(rs,Tree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',Tree.Items[i]);
     end;
   AddRoot(Tree,'所有分类');

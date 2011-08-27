@@ -98,12 +98,11 @@ type
      function  CheckCanExport: boolean; override;
      function  GetReCount: integer;
   public
-    { Public declarations }
-    IsEnd: boolean;  //cdsBrowser.Active
+    IsEnd: boolean;  
     MaxId:string;
     locked:boolean;
     rcAmt:integer;
-    procedure LoadTree;  //刷新SortTree树
+    procedure LoadTree; //刷新SortTree树
     procedure AddRecord(AObj:TRecord_);
     procedure InitGrid;
     function  EncodeSQL(id:string; QryType: integer=0):string; {QryType: 0表示取数据查询; 1表示取总记录数}
@@ -1057,7 +1056,7 @@ begin
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   str:='';
-  rs.SortedFields := 'RELATION_ID';
+ // rs.SortedFields := 'RELATION_ID';  //2011.08.27 排序错乱关闭
   w := -1;
   rs.First;
   while not rs.Eof do
@@ -1087,13 +1086,13 @@ begin
   end;
   if (IsRoot) and (CurObj<>nil) and (CurObj.FindField('SORT_NAME')<>nil) then
     rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
- 
+
   for i:=rzTree.Items.Count-1 downto 0 do
   begin
     rs.Filtered := false;
     rs.filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
     rs.Filtered := true;
-    rs.SortedFields := 'LEVEL_ID';      //'33333333'
+    //rs.SortedFields := 'LEVEL_ID';    //2011.08.27 排序错乱关闭
     CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
   end;
   rzTree.FullExpand; //展开树

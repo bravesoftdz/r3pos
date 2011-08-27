@@ -235,6 +235,7 @@ type
      //截小数
      function  FindColumn(DBGrid: TDBGridEh; FieldName:string):TColumnEh;
      function  ConvertToFight(value: Currency; deci: Integer): real;
+     procedure GodsDefaultValue; //商品默认选项参数
      procedure Append(Sort_ID:string; Sort_Name:string; GODS_ID:string);
      procedure Edit(code: string);
      procedure Open(code: string);
@@ -288,28 +289,7 @@ begin
       SORT_ID1_KeyValue:=SaveSid;
       edtSORT_ID1.Text:=Savesname;
     end;
-    edtUSING_PRICE.ItemIndex := 0;
-    edtHAS_INTEGRAL.ItemIndex := 0;
-    edtGODS_TYPE.ItemIndex := 0;
-    edtUSING_BATCH_NO.ItemIndex:=1;
-    edtUSING_LOCUS_NO.ItemIndex:=1;
-    RB_NotUSING_BARTER.Checked:=true;
-    //统计指标默认值:
-    // SetZrCbxDefaultValue(edtSORT_ID2);
-    // SetZrCbxDefaultValue(edtSORT_ID3);  主供应商 改为  允许为空
-    // SetZrCbxDefaultValue(edtSORT_ID4);
-    // SetZrCbxDefaultValue(edtSORT_ID5);
-    // SetZrCbxDefaultValue(edtSORT_ID6);
-    if not edtCALC_UNITS.DataSet.IsEmpty then
-    begin
-      edtCALC_UNITS.KeyValue := edtCALC_UNITS.DataSet.FieldbyName('UNIT_ID').AsString;
-      edtCALC_UNITS.Text := edtCALC_UNITS.DataSet.FieldbyName('UNIT_NAME').AsString;
-      if not TabGoodPrice.TabVisible then CheckTabGoodPriceVisible; //判断会员价格是否显示
-    end;
-    edtSORT_ID7.KeyValue:='#';
-    edtSORT_ID7.Text:='无';
-    edtSORT_ID8.KeyValue:='#';
-    edtSORT_ID8.Text:='无';
+    GodsDefaultValue; //默认值
   end;
   edtGODS_CODE.Text := '自动编号';
   edtBARCODE1.Text := '自编条码';
@@ -1682,6 +1662,8 @@ begin
              AObj.FindField(GObj.Fields[i].FieldName).NewValue := GObj.Fields[i].NewValue;
         end;
       ReadFromObject(AObj);
+      //2011.08.27 Add 判断: 新增状态才默认值:
+      if self.dbState=dsInsert then GodsDefaultValue;
       if edtCALC_UNITS.Text = '' then
          begin
            if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('CALC_UNITS').AsString,[]) then
@@ -3094,6 +3076,32 @@ begin
   inherited;
   if ExtBarCode.Active then
     ExtBarCode.Delete;
+end;
+
+procedure TfrmGoodsInfo.GodsDefaultValue;
+begin
+  edtUSING_PRICE.ItemIndex := 0;
+  edtHAS_INTEGRAL.ItemIndex := 0;
+  edtGODS_TYPE.ItemIndex := 0;
+  edtUSING_BATCH_NO.ItemIndex:=1;
+  edtUSING_LOCUS_NO.ItemIndex:=1;
+  RB_NotUSING_BARTER.Checked:=true;
+  //统计指标默认值:
+  // SetZrCbxDefaultValue(edtSORT_ID2);
+  // SetZrCbxDefaultValue(edtSORT_ID3);  主供应商 改为  允许为空
+  // SetZrCbxDefaultValue(edtSORT_ID4);
+  // SetZrCbxDefaultValue(edtSORT_ID5);
+  // SetZrCbxDefaultValue(edtSORT_ID6);
+  if not edtCALC_UNITS.DataSet.IsEmpty then
+  begin
+    edtCALC_UNITS.KeyValue := edtCALC_UNITS.DataSet.FieldbyName('UNIT_ID').AsString;
+    edtCALC_UNITS.Text := edtCALC_UNITS.DataSet.FieldbyName('UNIT_NAME').AsString;
+    if not TabGoodPrice.TabVisible then CheckTabGoodPriceVisible; //判断会员价格是否显示
+  end;
+  edtSORT_ID7.KeyValue:='#';
+  edtSORT_ID7.Text:='无';
+  edtSORT_ID8.KeyValue:='#';
+  edtSORT_ID8.Text:='无';
 end;
 
 end.

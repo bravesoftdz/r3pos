@@ -1,35 +1,35 @@
-﻿--登录日志
+--��¼��־
 CREATE TABLE CA_LOGIN_INFO(
   LOGIN_ID char(36) NOT NULL,
-        --企业代码
+        --��ҵ����
 	TENANT_ID int NOT NULL ,
-    --门店代码 企业代码+4位序号
+    --�ŵ���� ��ҵ����+4λ���
 	SHOP_ID varchar(13) NOT NULL,
-	      --用户ID号
+	      --�û�ID��
 	USER_ID varchar(36) NOT NULL,
-	      --登录IP
+	      --��¼IP
 	IP_ADDR varchar(15),
-	      --计算机名
+	      --�������
 	COMPUTER_NAME varchar(100),
-	      --网卡地址
+	      --������ַ
 	MAC_ADDR varchar(15),
-	      --操作系统信息
+	      --����ϵͳ��Ϣ
 	SYSTEM_INFO varchar(100),
-	      --使用软件
+	      --ʹ������
 	PRODUCT_ID varchar(30) NOT NULL,
-	      --1 在线操作  2 离线操作
+	      --1 ���߲���  2 ���߲���
 	NETWORK_STATUS varchar(1) NOT NULL,
-	      --连接服务器
+	      --���ӷ�����
 	CONNECT_TO varchar(100),
-	      --登录日期
+	      --��¼����
 	LOGIN_DATE varchar(19) NOT NULL,
-	      --退出日期
+	      --�˳�����
 	LOGOUT_DATE varchar(19),
-	      --在线时长<分钟> 默认-1
+	      --����ʱ��<����> Ĭ��-1
 	CONNECT_TIMES int NOT NULL,
-        --通讯标志
+        --ͨѶ��־
 	COMM varchar(2) NOT NULL DEFAULT '00',
-        --时间戳 
+        --ʱ��� 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_CA_LOGIN_INFO PRIMARY KEY   
 	(
@@ -40,22 +40,22 @@ CREATE TABLE CA_LOGIN_INFO(
 CREATE INDEX IX_CLGN_TENANT_ID ON CA_LOGIN_INFO(TENANT_ID);
 CREATE INDEX IX_CLGN_TIME_STAMP ON CA_LOGIN_INFO(TENANT_ID,TIME_STAMP);
 
---模块点击日志
+--ģ������־
 CREATE TABLE CA_MODULE_CLICK(
   ROWS_ID char(36) NOT NULL,
-        --登录ID
+        --��¼ID
   LOGIN_ID char(36) NOT NULL,
-        --企业代码
+        --��ҵ����
 	TENANT_ID int NOT NULL ,
-	      --用户ID号
+	      --�û�ID��
 	USER_ID varchar(36) NOT NULL,
-	      --模块ID号
+	      --ģ��ID��
 	MODU_ID varchar(36) NOT NULL,
-	      --点击时间
+	      --���ʱ��
 	CLICK_DATE varchar(19) NOT NULL,
-        --通讯标志
+        --ͨѶ��־
 	COMM varchar(2) NOT NULL DEFAULT '00',
-        --时间戳 
+        --ʱ��� 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_CA_MODULE_CLICK PRIMARY KEY   
 	(

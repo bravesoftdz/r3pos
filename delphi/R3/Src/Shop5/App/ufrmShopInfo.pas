@@ -434,9 +434,9 @@ var rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select RELATION_ID from CA_RELATIONS where RELATION_STATUS=''2'' and RELATI_ID='+IntToStr(Global.TENANT_ID);
+    rs.SQL.Text := 'select * from CA_RELATIONS where RELATION_STATUS=''2'' and RELATI_ID='+IntToStr(Global.TENANT_ID)+' and RELATION_ID=1000006 and COMM not in (''12'',''02'') ';
     Factor.Open(rs);
-    if rs.FieldByName('RELATION_ID').AsString = '1000006' then
+    if rs.RecordCount > 0 then
       Result := True
     else
       Result := False;

@@ -44,6 +44,12 @@ type
     Label25: TLabel;
     edtREGION_ID: TzrComboBoxList;
     Label10: TLabel;
+    TabSheet2: TRzTabSheet;
+    RzPanel3: TRzPanel;
+    Label11: TLabel;
+    Label12: TLabel;
+    edtXSM_CODE: TcxTextEdit;
+    edtXSM_PSWD: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -53,7 +59,10 @@ type
     procedure FormShow(Sender: TObject);
     procedure edtSHOP_TYPEAddClick(Sender: TObject);
   private
+    FIsRelation: Boolean;
     { Private declarations }
+    function CheckRelation:Boolean;
+    procedure SetIsRelation(const Value: Boolean);
   public
     { Public declarations }
     AObj:TRecord_;
@@ -68,9 +77,10 @@ type
     class function EditDialog(Owner:TForm;id:string;var _AObj:TRecord_):boolean;
     class function ShowDialog(Owner:TForm;id:string):boolean;
     function  IsEdit(Aobj:TRecord_;cdsTable:TZQuery):Boolean;//判断门店资料是否有修改
+    property IsRelation:Boolean read FIsRelation write SetIsRelation;
   end;
 implementation
-uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, uShopGlobal,ufrmCodeInfo,
+uses uShopUtil,uDsUtil,uFnUtil,uGlobal,uXDictFactory, uShopGlobal,ufrmCodeInfo,EncDec,
   ufrmBasic;
 {$R *.dfm}
 
@@ -100,6 +110,7 @@ begin
   edtSHOP_TYPE.DataSet:=Global.GetZQueryFromName('PUB_SHOP_TYPE');
   edtREGION_ID.DataSet:=Global.GetZQueryFromName('PUB_REGION_INFO');
   AObj := TRecord_.Create;
+  IsRelation := CheckRelation;
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label1.Caption := '仓库代码';
@@ -125,6 +136,7 @@ begin
     Factor.Open(cdsTable,'TShop',Params);
     AObj.ReadFromDataSet(cdsTable);
     ReadFromObject(AObj,self);
+    edtXSM_PSWD.Text := DecStr(AObj.FieldByName('XSM_PSWD').AsString,ENC_KEY);
     if Aobj.FieldByName('REGION_ID').AsString <> '' then
       begin
         edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
@@ -187,6 +199,14 @@ begin
     if edtLICENSE_CODE.CanFocus then edtLICENSE_CODE.SetFocus;
     raise Exception.Create('经营许可证不能为空!');
   end;
+  if IsRelation then
+    begin
+      if trim(edtLINKMAN.Text)='' then
+      begin
+        if edtLINKMAN.CanFocus then edtLINKMAN.SetFocus;
+        raise Exception.Create('存在新商盟账号,负责人不能为空!');
+      end;
+    end;
 
   try
     tmp := TZQuery.Create(nil);
@@ -362,6 +382,7 @@ procedure TfrmShopInfo.WriteTo(AObj: TRecord_);
 begin
   WriteToObject(AObj,self);
   Aobj.FieldByName('SHOP_ID').AsString:=edtSHOP_ID.Text;
+  Aobj.FieldByName('XSM_PSWD').AsString:=EncStr(edtXSM_PSWD.Text,ENC_KEY);
   Aobj.FieldByName('SEQ_NO').AsInteger:=StrToInt(copy(AObj.FieldByName('SHOP_ID').AsString,Length(AObj.FieldByName('SHOP_ID').AsString)-3,4))+1000;
 end;
 
@@ -369,6 +390,9 @@ procedure TfrmShopInfo.FormShow(Sender: TObject);
 begin
   inherited;
   if edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
+  if not IsRelation then
+    RzPage.Pages[1].TabVisible := False;
+  RzPage.ActivePageIndex := 0;
 end;
 
 class function TfrmShopInfo.ShowDialog(Owner: TForm;
@@ -403,6 +427,27 @@ begin
   finally
     Aobj_.Free;
   end;
+end;
+
+function TfrmShopInfo.CheckRelation: Boolean;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select RELATION_ID from CA_RELATIONS where RELATION_STATUS=''2'' and RELATI_ID='+IntToStr(Global.TENANT_ID);
+    Factor.Open(rs);
+    if rs.FieldByName('RELATION_ID').AsString = '1000006' then
+      Result := True
+    else
+      Result := False;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmShopInfo.SetIsRelation(const Value: Boolean);
+begin
+  FIsRelation := Value;
 end;
 
 end.

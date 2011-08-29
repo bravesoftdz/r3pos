@@ -1,6 +1,6 @@
 inherited frmShopInfo: TfrmShopInfo
-  Left = 581
-  Top = 248
+  Left = 525
+  Top = 245
   Caption = #38376#24215#26723#26696
   ClientHeight = 348
   ClientWidth = 534
@@ -134,6 +134,57 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             Properties.MaxLength = 6
+            TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+        end
+      end
+      object TabSheet2: TRzTabSheet
+        Color = clWhite
+        Caption = #26032#21830#30431
+        object RzPanel3: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 520
+          Height = 158
+          Align = alClient
+          BorderOuter = fsNone
+          Color = clWhite
+          TabOrder = 0
+          object Label11: TLabel
+            Left = 111
+            Top = 53
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #24080'    '#21495
+          end
+          object Label12: TLabel
+            Left = 111
+            Top = 93
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #23494'    '#30721
+          end
+          object edtXSM_CODE: TcxTextEdit
+            Left = 202
+            Top = 49
+            Width = 187
+            Height = 20
+            Properties.MaxLength = 50
+            TabOrder = 0
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object edtXSM_PSWD: TcxTextEdit
+            Left = 202
+            Top = 89
+            Width = 187
+            Height = 20
+            Properties.EchoMode = eemPassword
+            Properties.MaxLength = 50
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end

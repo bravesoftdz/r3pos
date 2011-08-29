@@ -24,6 +24,7 @@ type
     edtPASSWRD: TcxTextEdit;
     RzLabel3: TRzLabel;
     edtPASSWRD1: TcxTextEdit;
+    RzLabel4: TRzLabel;
     procedure btnOkClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure FormShow(Sender: TObject);

@@ -105,6 +105,20 @@ inherited frmNewCard: TfrmNewCard
             Font.Style = []
             ParentFont = False
           end
+          object RzLabel4: TRzLabel
+            Left = 223
+            Top = 72
+            Width = 92
+            Height = 12
+            AutoSize = False
+            Caption = #40664#35748#23494#30721':1234'
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
           object edtIC_CARDNO: TcxTextEdit
             Left = 99
             Top = 46

@@ -649,6 +649,18 @@ begin
     cmbPRICE_ID.OnAddClick(nil);
     Exit;
   end;
+
+  if Trim(cmbPRICE_ID.Text) <> '' then
+    begin
+      if cmbPRICE_ID.DataSet.FieldByName('PRICE_TYPE').AsString = '2' then
+        begin
+          if cdsUnionCard.Locate('UNION_ID',cmbPRICE_ID.DataSet.FieldByName('PRICE_ID').AsString,[]) then
+            begin
+              if cdsUnionCard.FieldByName('IC_CARDNO').AsString = '' then
+                DBGridEh1CellClick(DBGridEh1.FieldColumns['IC_CARDNO']);
+            end;
+        end;
+    end;
 end;
 
 procedure TfrmCustomerInfo.RzPageChange(Sender: TObject);
@@ -825,7 +837,7 @@ begin
       if cdsUnionCard.FieldbyName('IC_CARDNO').AsString = '' then
         begin
           UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
-          if TfrmNewCard.GetSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,UnionID,cmbCUST_NAME.Text,CardNo,Pwd,0) then
+          if TfrmNewCard.GetSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,UnionID,cmbCUST_NAME.Text,cmbCUST_CODE.Text,CardNo,Pwd,0) then
             begin
               if cdsUnionCard.Locate('UNION_ID',UnionID,[]) then
                 begin
@@ -855,7 +867,7 @@ begin
       then
         begin
           UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
-          if TfrmNewCard.GetSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,UnionID,cmbCUST_NAME.Text,CardNo,Pwd,0) then
+          if TfrmNewCard.GetSendCard(Self,cdsUnionCard.FieldbyName('CLIENT_ID').AsString,UnionID,cmbCUST_NAME.Text,cmbCUST_CODE.Text,CardNo,Pwd,0) then
             begin
               if cdsUnionCard.Locate('UNION_ID',UnionID,[]) then
                 begin

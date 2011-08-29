@@ -232,7 +232,7 @@ end;
 //下载类型:
 procedure TfrmDownStockOrder.OpenIndeOrderList(DownType: integer);
 var
-  whereCnd, UseDate,OrderStatus: string; //启用日期,到达日期
+  whereCnd, UseDate,Arr_Day,OrderStatus: string; //启用日期,到达日期
   Rs: TZQuery;
   vParam: TftParamList;
 begin
@@ -285,7 +285,8 @@ begin
       CdsTable.First;
       while not CdsTable.Eof do
       begin
-        if trim(CdsTable.FieldByName('ARR_DATE').AsString) < UseDate then  //到货日期小于启用日期过滤掉
+        Arr_Day:=trim(CdsTable.FieldByName('ARR_DATE').AsString);
+        if (Arr_Day<>'') and (Arr_Day < UseDate) then  //到货日期不为空，并且小于启用日期过滤掉
           CdsTable.Delete
         else
           CdsTable.Next; 

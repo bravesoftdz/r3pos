@@ -50,7 +50,7 @@ type
     property Cust_Id:String read FCust_Id write SetCust_Id;
     property ShowModel:Integer read FShowModel write SetShowModel;
     class function SelectSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;Model:integer;var CUSTCODE,UN_ID:String):boolean;
-    class function GetSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME:string;var CardNo,PWD:String;Model:integer):boolean;
+    class function GetSendCard(Owner:TForm;CUSTID,UNION_ID,CUSTNAME,CUSTCARD:string;var CardNo,PWD:String;Model:integer):boolean;
     { Public declarations }
   end;
 
@@ -303,7 +303,7 @@ begin
 end;
 
 class function TfrmNewCard.GetSendCard(Owner: TForm; CUSTID, UNION_ID,
-  CUSTNAME: string; var CardNo, PWD: String; Model: integer): boolean;
+  CUSTNAME,CUSTCARD: string; var CardNo, PWD: String; Model: integer): boolean;
 begin
   with TfrmNewCard.Create(Owner) do
     begin
@@ -312,6 +312,7 @@ begin
         Cust_Id := CUSTID;
         edtCLIENT_NAME.Text := CUSTNAME;
         edtUNION_ID.ItemIndex := TdsItems.FindItems(edtUNION_ID.Properties.Items,'UNION_ID',UNION_ID);
+        edtIC_CARDNO.Text := CUSTCARD;
         //Open(Cust_Id,UNION_ID);
         if ShowModal = mrOk then
           begin

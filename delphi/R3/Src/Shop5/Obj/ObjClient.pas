@@ -45,7 +45,7 @@ begin
       else
         begin
           Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-          ' where CLIENT_ID=:CLIENT_ID and TENANT_ID=:TENANT_ID';
+          ' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID';
           AGlobal.ExecSQL(Str,Self);
         end;
   finally
@@ -120,7 +120,7 @@ begin
 
       Str := 'update PUB_IC_INFO set CLIENT_ID=:CLIENT_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:CLIENT_CODE,'+
           'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+
-          GetTimeStamp(AGlobal.iDbType)+' where CLIENT_ID=:CLIENT_ID and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
+          GetTimeStamp(AGlobal.iDbType)+' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
       n := AGlobal.ExecSQL(Str,Self);
 
       if n = 0 then

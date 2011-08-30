@@ -33,11 +33,11 @@ begin
     if rs.Fields[0].AsInteger > 0 then
       Raise Exception.Create('客户"'+FieldbyName('CLIENT_NAME').AsString+'"在销售单据中有使用,不能删除!');
 
-    rs.SQL.Text := 'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and UNION_ID=:UNION_ID and IC_CARDNO=:IC_CARDNO'+
+    rs.SQL.Text := 'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and UNION_ID=:UNION_ID and CLIENT_ID=:CLIENT_ID'+
     ' and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
-    rs.ParamByName('IC_CARDNO').AsString := FieldbyName('CLIENT_CODE').AsOldString;
+    rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.RecordCount > 0 then
       if rs.FieldByName('BALANCE').AsFloat > 0 then
@@ -45,7 +45,7 @@ begin
       else
         begin
           Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-          ' where IC_CARDNO=:CLIENT_CODE and UNION_ID=:OLD_UNION_ID and TENANT_ID=:OLD_TENANT_ID';
+          ' where CLIENT_ID=:CLIENT_ID and TENANT_ID=:TENANT_ID';
           AGlobal.ExecSQL(Str,Self);
         end;
   finally
@@ -120,7 +120,7 @@ begin
 
       Str := 'update PUB_IC_INFO set CLIENT_ID=:CLIENT_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:IC_CARDNO,'+
           'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+
-          GetTimeStamp(AGlobal.iDbType)+' where IC_CARDNO=:OLD_CLIENT_CODE and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+          GetTimeStamp(AGlobal.iDbType)+' where CLIENT_ID=:CLIENT_ID and TENANT_ID=:TENANT_ID and UNION_ID=:UNION_ID';
       n := AGlobal.ExecSQL(Str,Self);
 
       if n = 0 then

@@ -65,11 +65,11 @@ begin
       Raise Exception.Create('会员"'+FieldbyName('CUST_NAME').AsString+'"存在消费记录,不能删除!');
 
     rs.SQL.Text :=
-    'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and UNION_ID=:UNION_ID and IC_CARDNO=:IC_CARDNO'+
+    'select BALANCE from PUB_IC_INFO where COMM not in (''02'',''12'') and UNION_ID=:UNION_ID and CLIENT_ID=:CLIENT_ID'+
     ' and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
     rs.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
-    rs.ParamByName('IC_CARDNO').AsString := FieldbyName('CUST_CODE').AsOldString;
+    rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.RecordCount > 0 then
       if rs.FieldByName('BALANCE').AsFloat > 0 then
@@ -77,7 +77,7 @@ begin
       else
         begin
           Str := 'update PUB_IC_INFO set COMM=''02'',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-          ' where CLIENT_ID=:OLD_CUST_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+          ' where CLIENT_ID=:OLD_CUST_ID and TENANT_ID=:OLD_TENANT_ID ';
           AGlobal.ExecSQL(Str,Self);
         end;
   finally
@@ -160,9 +160,9 @@ begin
              r := 0;
            end;
         Str :=
-          'update PUB_IC_INFO set CLIENT_ID=:CUST_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:IC_CARDNO,CREA_DATE=:CREA_DATE,'+
+          'update PUB_IC_INFO set CLIENT_ID=:CUST_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:CUST_CODE,CREA_DATE=:CREA_DATE,'+
           'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+
-          GetTimeStamp(AGlobal.iDbType)+' where IC_CARDNO=:OLD_CUST_CODE and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+          GetTimeStamp(AGlobal.iDbType)+' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
         r := AGlobal.ExecSQL(Str,Self);
         if r = 0 then
           begin

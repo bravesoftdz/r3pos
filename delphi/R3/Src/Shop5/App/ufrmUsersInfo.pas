@@ -304,6 +304,13 @@ begin
     Aobj.FieldByName('ROLE_IDS').AsString := '#';
     Aobj.FieldByName('ROLE_IDS_TEXT').AsString := '#';
     Aobj.FieldByName('PASS_WRD').AsString := EncStr('1234',ENC_KEY);
+  end
+  else
+  begin
+    if Trim(Aobj.FieldByName('ROLE_IDS').AsString) = '' then
+      Aobj.FieldByName('ROLE_IDS').AsString := '#';
+    if Trim(Aobj.FieldByName('ROLE_IDS_TEXT').AsString) = '' then
+      Aobj.FieldByName('ROLE_IDS_TEXT').AsString := '#';
   end;
   if dbState=dsInsert then
     cdsTable.Append

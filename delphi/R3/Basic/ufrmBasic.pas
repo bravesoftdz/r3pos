@@ -538,7 +538,10 @@ begin
          end;
     end;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 
@@ -594,7 +597,10 @@ begin
          end;
     end;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 
@@ -656,7 +662,10 @@ begin
       end;
     end;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

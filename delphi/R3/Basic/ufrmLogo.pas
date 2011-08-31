@@ -15,12 +15,15 @@ type
     procedure FormCreate(Sender: TObject);
   private
     FShowTitle: string;
+    FPosition: integer;
     procedure SetShowTitle(const Value: string);
+    procedure SetPosition(const Value: integer);
   public
     procedure ShowPostion(Postion:Integer;Caption:String);
     { Public declarations }
     procedure Show;
     property ShowTitle:string read FShowTitle write SetShowTitle;
+    property Position:integer read FPosition write SetPosition;
   end;
 var frmLogo:TfrmLogo;
 implementation
@@ -35,6 +38,7 @@ end;
 
 procedure TfrmLogo.ShowPostion(Postion: Integer; Caption: String);
 begin
+  BringToFront;
   ProgressBar1.Visible := True;
   ProgressBar1.Position := Postion;
   Label1.Caption := Caption;
@@ -53,6 +57,15 @@ begin
   BringToFront;
   FShowTitle := Value;
   Label1.Caption := Value;
+  Update;
+end;
+
+procedure TfrmLogo.SetPosition(const Value: integer);
+begin
+  FPosition := Value;
+  BringToFront;
+  ProgressBar1.Visible := True;
+  ProgressBar1.Position := Value;
   Update;
 end;
 

@@ -411,7 +411,10 @@ begin
     try
        F.EraseSection(Action.Name);
     finally
-       F.Free;
+      try
+        F.Free;
+      except
+      end;
     end;
     i := FButtons.IndexOf(Action);
     if i<0 then Exit;

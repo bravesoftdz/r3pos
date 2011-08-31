@@ -352,7 +352,10 @@ begin
       ASysId := F.ReadString('SYSTEM','SysId','');
       Caption := F.ReadString('SYSTEM','SysName',Application.Title);
     finally
-      F.Free;
+      try
+        F.Free;
+      except
+      end;
     end;
   end;
   if ASysId='' then Exit;

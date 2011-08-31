@@ -251,6 +251,7 @@ begin
   LocalFactory := TdbFactory.Create;
   RemoteFactory := TdbFactory.Create;
   Factor := LocalFactory;
+  Global := self;
 end;
 
 destructor TGlobal.Destroy;
@@ -269,7 +270,7 @@ begin
   frmLogo.ProgressBar1.Max := ComponentCount;
   for i:=0 to ComponentCount -1 do
     begin
-      frmLogo.ProgressBar1.Position := i;
+      frmLogo.Position := i;
       if Components[i] Is TZQuery then
          begin
            frmLogo.ShowTitle := '正在准备数据>'+Components[i].Name;
@@ -555,7 +556,10 @@ begin
        end;
     Factor.Connect;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

@@ -573,7 +573,6 @@ begin
 
   if (AObj.FieldbyName('GODS_CODE').AsString='') or (pos('×Ô¶¯±àºÅ',AObj.FieldbyName('GODS_CODE').AsString)>0) then
   begin
-    //AObj.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('BCODE').AsString;
     edtGODS_CODE.Text:=AObj.FieldbyName('GODS_CODE').AsString;
   end;
 

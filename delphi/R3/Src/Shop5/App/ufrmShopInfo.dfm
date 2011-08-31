@@ -20,6 +20,8 @@ inherited frmShopInfo: TfrmShopInfo
       Top = 113
       Width = 524
       Height = 185
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -152,8 +154,8 @@ inherited frmShopInfo: TfrmShopInfo
           Color = clWhite
           TabOrder = 0
           object Label11: TLabel
-            Left = 111
-            Top = 53
+            Left = 15
+            Top = 21
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -161,17 +163,31 @@ inherited frmShopInfo: TfrmShopInfo
             Caption = #24080'    '#21495
           end
           object Label12: TLabel
-            Left = 111
-            Top = 93
+            Left = 15
+            Top = 69
             Width = 80
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
             Caption = #23494'    '#30721
           end
+          object Label13: TLabel
+            Left = 108
+            Top = 42
+            Width = 132
+            Height = 12
+            Caption = #30331#24405#26032#21830#30431#26102#29992#21040#30340#24080#21495
+          end
+          object Label14: TLabel
+            Left = 108
+            Top = 90
+            Width = 132
+            Height = 12
+            Caption = #30331#24405#26032#21830#30431#26102#29992#21040#30340#23494#30721
+          end
           object edtXSM_CODE: TcxTextEdit
-            Left = 202
-            Top = 49
+            Left = 106
+            Top = 17
             Width = 187
             Height = 20
             Properties.MaxLength = 50
@@ -179,8 +195,8 @@ inherited frmShopInfo: TfrmShopInfo
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtXSM_PSWD: TcxTextEdit
-            Left = 202
-            Top = 89
+            Left = 106
+            Top = 65
             Width = 187
             Height = 20
             Properties.EchoMode = eemPassword

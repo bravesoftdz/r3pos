@@ -50,6 +50,8 @@ type
     Label12: TLabel;
     edtXSM_CODE: TcxTextEdit;
     edtXSM_PSWD: TcxTextEdit;
+    Label13: TLabel;
+    Label14: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);

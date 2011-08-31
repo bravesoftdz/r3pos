@@ -206,6 +206,7 @@ type
   end;
 
 implementation
+uses ZLogFile;
 { TdbHelp }
 
 procedure TdbHelp.BeginTrans(TimeOut: integer);
@@ -224,6 +225,8 @@ end;
 
 function TdbHelp.CheckError(s:string): boolean;
 begin
+  result := false;
+  if ZConn.Protocol='sqlite-3' then exit;
   result := not ZConn.InTransaction and (
      (pos('ÍøÂç´íÎó',s)>0) or
      (pos('Á¬½Ó¶Ï¿ª',s)>0) or
@@ -252,7 +255,9 @@ end;
 
 function TdbHelp.Connect: boolean;
 begin
+  LogFile.AddLogFile(0,'ZConn.Connect to '+ZConn.Database);
   ZConn.Connect;
+  LogFile.AddLogFile(0,'ZConn.Connect finish');
 end;
 
 function TdbHelp.Connected: boolean;

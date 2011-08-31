@@ -168,7 +168,7 @@ begin
   FDisp := TDoInvokeClientDispatch.Create;
   FDisp.Parant := Self;
   FInterpreter.DoInvokeDispatch := FDisp;
-  FSupportCallbacks := false;
+  FSupportCallbacks := true;
   FInWorking := 0;
   LocaliDbType := -1;
 end;

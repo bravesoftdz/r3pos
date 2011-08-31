@@ -187,33 +187,33 @@ begin
         if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·<待答>'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=9 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')位客户近期过生日！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')位客户近期过生日！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=10 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')位客户近期要续会！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')位客户近期要续会！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=11 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+IntToStr(PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger div 100000)+')单待发货、('+
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger div 100000)+')单待发货、('+
            IntToStr(PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger mod 100000)+')单发货中'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=12 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+IntToStr(PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger div 100000)+')单待入库、('+
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger div 100000)+')单待入库、('+
            IntToStr(PrainpowerJudge.List.FieldByName('SUM_ORDER').AsInteger mod 100000)+')单入库中'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=13 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=14 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=15 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=16 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码发货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=17 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码收货！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码收货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=18 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码收货！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码收货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=19 then
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')预收款单、('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')应收款单！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=20 then
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')预付款单、('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')应付款单！'
         else
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张"'+ PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'"没有审核';
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+ PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 没有审核';
         if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then
           begin
            CdsNewsPaper.FieldByName('MSG_SOURCE').AsString := '问卷调查';

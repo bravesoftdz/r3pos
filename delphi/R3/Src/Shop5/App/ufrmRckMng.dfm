@@ -557,7 +557,7 @@ inherited frmRckMng: TfrmRckMng
             Left = 0
             Top = 0
             Width = 757
-            Height = 460
+            Height = 459
             Align = alClient
             BorderInner = fsGroove
             BorderOuter = fsNone
@@ -567,7 +567,7 @@ inherited frmRckMng: TfrmRckMng
               Left = 7
               Top = 81
               Width = 743
-              Height = 372
+              Height = 371
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -576,7 +576,7 @@ inherited frmRckMng: TfrmRckMng
                 Left = 0
                 Top = 0
                 Width = 743
-                Height = 372
+                Height = 371
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseDay

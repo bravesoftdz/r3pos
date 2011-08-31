@@ -429,7 +429,7 @@ begin
   if SessionFail then XsmLogin(false);
   if SessionFail then
      begin
-       if TfrmXsmLogin.XsmRegister then
+       if TfrmXsmLogin.XsmRegister(true) then
           begin
             if not XsmLogin(false) then
                Open(sid,oid,hHandle);
@@ -517,8 +517,7 @@ begin
         try
         _Start := GetTickCount;
         frmLogo.Show;
-        frmLogo.ProgressBar1.Position := 0;
-        frmLogo.ProgressBar1.Update;
+        frmLogo.Position := 0;
         while not ready do
            begin
       //       windows.WaitForSingleObject(FhEvent,500);
@@ -526,8 +525,7 @@ begin
              W := (GetTickCount-_Start);
       //       if (W mod 1000)=0 then
       //          begin
-             frmLogo.ProgressBar1.Position := (W div 500);
-             frmLogo.ProgressBar1.Update;
+             frmLogo.Position := (W div 500);
       //          end;
              if W>ConnectTimeOut then
                 begin
@@ -535,7 +533,7 @@ begin
                   Exit;
                 end;
            end;
-        frmLogo.ProgressBar1.Position := 100;
+        frmLogo.Position := 100;
         finally
           frmDesk.Waited := false;
         end;
@@ -553,8 +551,7 @@ begin
   s := frmLogo.Visible;
   // XSM有进度了，不需要我加了
   if not s then frmLogo.Show;
-  frmLogo.ProgressBar1.Position := 1;
-  frmLogo.ProgressBar1.Update;
+  frmLogo.Position := 1;
 //  Application.OnMessage := DoMsgFilter;
   frmDesk.Waited := true;
   try
@@ -563,9 +560,7 @@ begin
 //       windows.MsgWaitForMultipleObjects(1,FhEvent,False,500,QS_ALLINPUT);
        Application.ProcessMessages;
        W := (GetTickCount-_Start);
-       frmLogo.BringToFront;
-       frmLogo.ProgressBar1.Position := (W div 500);
-       frmLogo.ProgressBar1.Update;
+       frmLogo.Position := (W div 500);
        if (GetTickCount-_Start)>WaitOutTime then
           begin
             Runed := false;

@@ -73,6 +73,8 @@ type
     procedure CalcSpz;
     //生成月账
     procedure CalcMth;
+    //生成日账记录
+    procedure ClseDay;
     //生成结账记录
     procedure ClseRck;
     //计算账户日台账
@@ -97,7 +99,6 @@ type
     property uDate:TDate read FuDate write SetuDate;
     //结账类型 0 试算， 1 日结  2 月结
     property flag:integer read Fflag write Setflag;
-//    class function StartCalc(Owner:TForm):boolean;
     //计算日账户台账
     class function TryCalcDayAcct(Owner:TForm):boolean;
     //计算日商品台账
@@ -484,16 +485,15 @@ begin
       Label11.Update;
       PrgPercent := 1;
       CheckForRck;
-      if flag in [1,2,4,6] then CreateTempTable;
+      CreateTempTable;
       Label11.Caption := '准备核算数据...';
       Label11.Update;
       //数据准备
-      if flag in [1,2,4,6] then PrepareDataForRck;
+      PrepareDataForRck;
       Label11.Caption := '正在核算成本...';
       Label11.Update;
       PrgPercent := 5;
       //计算成本
-      if flag in [1,2,4,6] then
       case calc_flag of
       0:Calc0;
       1:Calc1;
@@ -501,16 +501,18 @@ begin
       end;
       Label11.Caption := '正在计算客户商品台账...';
       Label11.Update;
-      if flag in [1,2,4,6] then CalcSpz;
+      CalcSpz;
       Label11.Caption := '正在计算商品月台账...';
       Label11.Update;
       if flag in [1,2,6] then CalcMth;
+
+
       Label11.Caption := '正在计算账户日台账...';
       Label11.Update;
       AutoPosReck;
       //数据准备
-      if flag in [1,2,3,5] then PrepareDataForAcct;
-      if flag in [1,2,3,5] then CalcAcctDay;
+      PrepareDataForAcct;
+      CalcAcctDay;
       Label11.Caption := '正在计算账户月台账...';
       Label11.Update;
       if flag in [1,2,5] then CalcAcctMth;
@@ -519,6 +521,7 @@ begin
     end;
     Label11.Caption := '输出数据中...';
     Label11.Update;
+    ClseDay;
     ClseRck;
     PrgPercent := 100;
     if (flag in [1,2]) then CalcAnaly;
@@ -528,19 +531,6 @@ begin
   ModalResult := MROK;
 end;
 
-{class function TfrmCostCalc.StartCalc(Owner: TForm): boolean;
-begin
-  with TfrmCostCalc.Create(Owner) do
-    begin
-      try
-        Label2.Caption := '成本核算:'+formatDatetime('YYYY-MM-DD',date());
-        result :=(ShowModal=MROK);
-      finally
-        free;
-      end;
-    end;
-end;
-}
 procedure TfrmCostCalc.Calc2;
 var
   i,b:integer;
@@ -1323,17 +1313,6 @@ begin
   if not (flag in [1,2]) then Exit;
   Factor.BeginTrans;
   try
-    if pt>0 then PrgPercent := (b*100 div pt) div 3+90;
-    for i:=1 to pt do
-       begin
-         if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
-         begin
-         Factor.ExecSQL('insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
-                        'select TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+' from CA_SHOP_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)
-                        );
-         end;
-       end;
-       
     if flag=2 then
     begin
       b := 1;
@@ -2153,11 +2132,8 @@ end;
 function TfrmCostCalc.CheckReckMonthDay: Boolean;
 var
   rs:TZQuery;
-  e: TDate;            //当前月份结账日
-  vbDate: TDate;       //最近一次结账日
-  NextRckDay: TDate;   //下一次结账日
-  vReck_flag: integer; //结帐类型:[月底结账、指定日期结账]
-  vReck_day: integer;  //vReck_flag=2时有效:指定月结日
+  vbDate,e,NextDay: TDate;
+  vReck_flag,vReck_day: integer;  //结帐类型、指定月结日
 begin
   result:=False;
   vReck_flag := StrtoIntDef(ShopGlobal.GetParameter('RECK_OPTION'),1);  //结帐类型[月底结帐|指定日期结帐]
@@ -2169,14 +2145,8 @@ begin
     rs.SQL.Text := 'select max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
     Factor.Open(rs);
     if rs.Fields[0].asString<>'' then  //已有月结帐
-    begin
-      vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
-      //2011.08.31 PM 修改:计算下一月结账日:
-      if vReck_flag=1 then
-        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,2))+'01')-1
-      else
-        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+formatfloat('00',vReck_day));
-    end else
+      vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
+    else
     begin  //从未月结帐
       rs.Close;
       rs.SQL.Text:='select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
@@ -2185,19 +2155,6 @@ begin
         vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
       else
         vbDate := Date()-1;
-        
-      //2011.08.31 PM 修改:计算下一月结账日:
-      if vReck_flag=1 then
-      begin
-        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+'01')-1
-      end else
-      begin
-        //启用的日期 大于 本月结帐日
-        if vbDate < fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day)) then
-          NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day))  //启用本月结账
-        else
-          NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+formatfloat('00',vReck_day)); //启用后下月结账
-      end;
     end;
 
     //月结时检测结账月份
@@ -2208,16 +2165,18 @@ begin
         eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
       else
         eDate :=e;
-    end else  //指定日结帐
+      NextDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+'01')-1; //本月最后一天为结账日  
+    end else   //指定日结帐
     begin
       e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',vReck_day)); //本月的指定日为结帐日
       if (e>date()) and (FormatDatetime('YYYYMM',Date())=FormatDatetime('YYYYMM',e)) then //还没到结账日
         eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',vReck_day))
       else
         eDate := e;
+      NextDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day)); //本月的指定日为结帐日  
     end;
 
-    if (eDate>vbDate) and (Date()>NextRckDay+5) then
+    if (eDate>vbDate) and (Date()>NextDay+5) then
     begin
       result:=true;
     end;
@@ -2255,6 +2214,32 @@ begin
     finally
       free;
     end;
+  end;
+end;
+
+procedure TfrmCostCalc.ClseDay;
+var
+  i:integer;
+begin
+  if not (flag in [1,2]) then
+     begin
+       if (ShopGlobal.NetVersion) and ShopGlobal.offline then Exit;
+     end;
+  Factor.BeginTrans;
+  try
+    for i:=1 to pt do
+       begin
+         if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
+         begin
+         Factor.ExecSQL('insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+                        'select TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+' from CA_SHOP_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)
+                        );
+         end;
+       end;
+    Factor.CommitTrans;
+  except
+    Factor.RollbackTrans;
+    raise;
   end;
 end;
 

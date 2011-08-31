@@ -483,7 +483,7 @@ var
   Login: TCaLogin;
 begin
   result := false;
-  Login := CaFactory.coLogin(id,CaFactory.DesEncode(id,CaFactory.pubpwd),2);
+  Login := CaFactory.coLogin(id,CaFactory.DesEncode(id,CaFactory.pubpwd),3);
   result := login.RET='1';
   if not result then Exit;
   if not isnew then
@@ -492,9 +492,11 @@ begin
           begin
             Raise Exception.Create('当前登录账号跟原账号不属于同一企业,请联系客服人员'); 
           end; 
+       //保存门店信息
+       CaFactory.downloadShopInfo(Tenant.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
        Exit;
      end;
-  //
+  //保存企业信息
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
   with TfrmTenant.Create(nil) do
   begin
@@ -542,6 +544,8 @@ begin
       free;
     end;
   end;
+  //保存门店信息
+  CaFactory.downloadShopInfo(Tenant.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
 end;
 
 end.

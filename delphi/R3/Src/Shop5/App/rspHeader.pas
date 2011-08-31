@@ -39,6 +39,7 @@ type
     function coLogin(inxml:AnsiString): ansistring;
     function coRegister(inxml: ansistring): ansistring;
     function getTenantInfo(inxml: ansistring): ansistring;
+    function getShopInfo(inxml: ansistring): ansistring;
     //产品服务
     function checkUpgrade(inxml: ansistring): ansistring;
     function listModules(inxml: ansistring): ansistring;
@@ -458,6 +459,28 @@ begin
     r.Free;
   end;
   result := true;
+end;
+
+function TRspFactory.getShopInfo(inxml: ansistring): ansistring;
+var
+  r:rsp;
+  intf:CaTenantWebServiceImpl;
+  outXml: ansistring;
+begin
+  r := SendHeader(HTTPRIO,flag);
+  try
+    intf := GetCaTenantWebServiceImpl(true,Addr+'CaTenantService?wsdl',HTTPRIO);
+    outXml := intf.getShopInfo(Encode(inxml,sslpwd));
+    GetHeader(HTTPRIO);
+    case encryptType of
+    2:result := Decode(outXml,sslpwd);
+    1:result := Decode(outXml,Pubpwd);
+    else result := Decode(outXml,'');
+    end;
+  finally
+    intf := nil;
+    r.Free;
+  end;
 end;
 
 function TRspFactory.getTenantInfo(inxml: ansistring): ansistring;

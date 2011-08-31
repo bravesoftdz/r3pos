@@ -592,7 +592,7 @@ begin
     rs.SQL.Text := 'select CLSE_DATE from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE=:CLSE_DATE and CREA_USER=:CREA_USER';
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('SHOP_ID').asString := Global.SHOP_ID;
-    rs.Params.ParamByName('CLSE_DATE').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',Date));
+    rs.Params.ParamByName('CLSE_DATE').AsInteger := StrtoInt(formatDatetime('YYYYMMDD',reckDate));
     rs.Params.ParamByName('CREA_USER').asString := Global.UserId;
     Factor.Open(rs);
     result := not rs.IsEmpty;

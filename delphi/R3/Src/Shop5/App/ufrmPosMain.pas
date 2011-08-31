@@ -381,7 +381,7 @@ type
   end;
 
 implementation
-uses ufrmMain, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
+uses ufrmMain, ZLogFile, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
      ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
      ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList,ufrmFastReport;
@@ -756,6 +756,7 @@ begin
     end;
   end;
   FInputFlag := Value;
+  DBGridEh2.Visible := false;
 end;
 
 procedure TfrmPosMain.AgioToCalc(Agio: Currency);
@@ -1859,11 +1860,11 @@ begin
            begin
              if rs.FieldByName('UNION_ID').AsString <> '#' then
                 begin
-                  SObj.ReadFromDataSet(rs);
-                  break; 
+                  break;
                 end;
              rs.Next;
            end;
+         SObj.ReadFromDataSet(rs);
        end
     else
        if not TframeListDialog.FindDialog(self,rs.SQL.Text,'IC_CARDNO=卡号,CLIENT_NAME=客户名称,UNION_NAME=商盟',SObj) then Exit;
@@ -2340,6 +2341,7 @@ begin
     cdsLocusNo.First;
     while not cdsLocusNo.Eof do cdsLocusNo.Delete;
     ls := TRecord_.Create;
+    cdsTable.DisableControls;
     try
     cdsTable.First;
     while not cdsTable.Eof do
@@ -2362,6 +2364,7 @@ begin
          cdsTable.Next;
        end;
     finally
+       cdsTable.EnableControls;
        ls.Free;
     end;
     cdsICGlide.DisableControls;
@@ -3246,7 +3249,7 @@ var
 begin
   inherited;
   if dbState = dsBrowse then Exit;
-  if dbState = dsEdit then Raise Exception.Create('修改单据状态不能挂单...'); 
+  if dbState = dsEdit then Raise Exception.Create('修改单据状态不能挂单...');
   if cdsTable.IsEmpty then Raise Exception.Create('不能保存挂一张空单据...');
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
@@ -3255,7 +3258,7 @@ begin
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   AObj.FieldByName('SALE_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('SALE_MNY').AsFloat := TotalFee;
-  
+
   cdsTable.DisableControls;
   try
     cdsHeader.Edit;
@@ -3291,6 +3294,7 @@ begin
     cdsTable.EnableControls;
     Raise;
   end;
+  DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
   dbState := dsBrowse;
   MessageBox(Handle,'挂单成功，取单请按/键->9键',pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   NewOrder;
@@ -4350,15 +4354,24 @@ end;
 procedure TfrmPosMain.SaveToFile;
 var
   sm:TMemoryStream;
+  code:integer;
 begin
   if cdsTable.IsEmpty then Exit;
-  sm := TMemoryStream.Create;
+  code := 0;
   try
-    cdsTable.SaveToStream(sm);
-    sm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
-    DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
-  finally
-    sm.Free;
+    sm := TMemoryStream.Create;
+    try
+      inc(code);
+      cdsTable.SaveToStream(sm);
+      sm.Position := 0;
+      inc(code);
+      sm.SaveToFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
+    finally
+      sm.Free;
+    end;
+  except
+    on E:Exception do
+       LogFile.AddLogFile(0,'PosMain.SaveToFile error<'+inttostr(code)+'>:'+E.Message); 
   end;
 end;
 

@@ -439,7 +439,7 @@ begin
   
   new(n);
   n^.tbname := 'PUB_IC_INFO';
-  n^.keyFields := 'TENANT_ID;UNION_ID;IC_CARDNO';
+  n^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
   n^.synFlag := 4;
   n^.KeyFlag := 0;
   n^.tbtitle := 'IC档案';
@@ -764,9 +764,8 @@ begin
       26:SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       27:SyncIcGlideOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       28:SyncCaLoginInfo(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      end;
-      frmLogo.ProgressBar1.Position := i;
-      frmLogo.Update;
+      end;      
+      frmLogo.Position := i;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
     SyncRim;
@@ -802,7 +801,7 @@ begin
       25:if gbl then SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       26:if gbl then SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
-      frmLogo.ProgressBar1.Position := i;
+      frmLogo.Position := i;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
   finally
@@ -1343,6 +1342,11 @@ begin
     cs_s.Free;
   end;
 
+  if ShopGlobal.NetVersion then //连锁版只下载日账，不上传
+     begin
+       SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+       Exit;
+     end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1908,6 +1912,11 @@ begin
     cs_s.Free;
   end;
 
+  if ShopGlobal.NetVersion then //连锁版只下载月账，不上传
+     begin
+       SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+       Exit;
+     end;
   //下传
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);

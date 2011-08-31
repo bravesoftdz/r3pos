@@ -153,16 +153,13 @@ begin
 //  IEBrowser.Navigate(url);
   frmDesk.Waited := true;
   try
-    frmLogo.ProgressBar1.Position := 1;
-    frmLogo.ProgressBar1.Update;
+    frmLogo.Position := 1;
     _Start := GetTickCount;
     IEBrowser.Navigate(Url);
     while Runed do
       begin
         W := (GetTickCount-_Start);
-        frmLogo.BringToFront;
-        frmLogo.ProgressBar1.Position := (W div 500);
-        frmLogo.ProgressBar1.Update;
+        frmLogo.Position := (W div 500);
         if W>20000 then break;
         Application.ProcessMessages;
       end;

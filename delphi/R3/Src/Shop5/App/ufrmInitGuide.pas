@@ -226,7 +226,10 @@ begin
     edtFOOTER.Text := DecStr(F.ReadString('SYS_DEFINE','FOOTER',EncStr('敬请保留小票,以作售后依据',ENC_KEY)),ENC_KEY);
     edtTITLE.Text := DecStr(F.ReadString('SYS_DEFINE','TITLE',EncStr('[企业简称]',ENC_KEY)),ENC_KEY);
   finally
+    try
      F.Free;
+    except
+    end;
   end;
 end;
 
@@ -268,7 +271,10 @@ begin
     F.WriteString('SYS_DEFINE','FOOTER',EncStr(edtFOOTER.Text,ENC_KEY));
     F.WriteString('SYS_DEFINE','TITLE',EncStr(edtTitle.Text,ENC_KEY));
   finally
+    try
      F.Free;
+    except
+    end;
   end;
   DevFactory.InitComm;
 end;

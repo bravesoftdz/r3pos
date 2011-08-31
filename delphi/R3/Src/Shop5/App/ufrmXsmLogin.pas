@@ -39,7 +39,7 @@ type
     procedure WriteTo;
     procedure SetValue(ID,Value:String);
     class function XsmLogin:Boolean;
-    class function XsmRegister:Boolean;
+    class function XsmRegister(Locked:boolean=false):Boolean;
     property flag:integer read Fflag write Setflag;
   end;
 
@@ -163,7 +163,7 @@ begin
   Close;
 end;
 
-class function TfrmXsmLogin.XsmRegister: Boolean;
+class function TfrmXsmLogin.XsmRegister(Locked:boolean=false): Boolean;
 begin
   with TfrmXsmLogin.Create(nil) do
     begin
@@ -173,6 +173,7 @@ begin
           begin
             xsm_url := 'http://'+Trim(edtUrl.Text)+'/';
             xsm_UserName := Trim(edtUsername.Text);
+            edtUsername.Enabled := not Locked;
             xsm_Password := Trim(edtPassword.Text);
             Result := True;
           end

@@ -1110,11 +1110,11 @@ begin
            begin
              if rs.FieldByName('UNION_ID').AsString <> '#' then
                 begin
-                  SObj.ReadFromDataSet(rs);
-                  break; 
+                  break;
                 end;
              rs.Next;
            end;
+         SObj.ReadFromDataSet(rs);
        end
     else
        if not TframeListDialog.FindDialog(self,rs.SQL.Text,'IC_CARDNO=卡号,CLIENT_NAME=客户名称,UNION_NAME=商盟',SObj) then Exit;

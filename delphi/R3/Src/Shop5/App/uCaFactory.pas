@@ -39,6 +39,7 @@ type
     SRVR_PORT:integer;
     DB_ID:integer;
     SRVR_PATH:string;
+    SHOP_ID:string;
   end;
   
   TCaUpgrade=record
@@ -129,6 +130,7 @@ type
     RspcoLogin:TRspFunction;
     RspcoRegister:TRspFunction;
     RspgetTenantInfo:TRspFunction;
+    RspgetShopInfo:TRspFunction;
     RsplistModules:TRspFunction;
     RspcheckUpgrade:TRspFunction;
     RspcreateServiceLine:TRspFunction;
@@ -200,6 +202,8 @@ type
     function coLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
     function coRegister(Info:TCaTenant):TCaTenant;
     function coGetList(TENANT_ID:string):TCaTenant;
+    //保存门店
+    function downloadShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
 
     property SSL:string read FSSL write SetSSL;
     property URL:string read FURL write SetURL;
@@ -541,6 +545,8 @@ try
                  srvrId := f.readString('db','srvrId','');
                  result.DB_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
                  defSrvrId := GetNodeValue(caTenantLoginResp,'srvrId');
+                 if flag=3 then
+                 result.SHOP_ID := GetNodeValue(caTenantLoginResp,'shopId');
                  f.WriteString('db','dbid',inttostr(result.DB_ID));
                  if StrtointDef(GetNodeValue(caTenantLoginResp,'databasePort'),0)=0 then
                     hsname := GetNodeValue(caTenantLoginResp,'dbHostName')
@@ -1384,52 +1390,52 @@ begin
   AutoCoLogo;
   frmLogo.Show;
   try
-    frmLogo.ProgressBar1.Max := 9;
+    frmLogo.ProgressBar1.Max := 11;
     frmLogo.Label1.Caption := '下载企业关系...';
     frmLogo.Label1.Update;
     downloadRelations(Global.TENANT_ID,flag);
-    frmLogo.ProgressBar1.Position := 1;
+    frmLogo.Position := 1;
     frmLogo.Label1.Caption := '下载供应链...';
     frmLogo.Label1.Update;
     downloadServiceLines(Global.TENANT_ID,flag);
-    frmLogo.ProgressBar1.Position := 2;
+    frmLogo.Position := 2;
     frmLogo.Label1.Caption := '下载企业资料...';
     frmLogo.Label1.Update;
     downloadTenants(Global.TENANT_ID,flag);
     if TenantType <> 3 then //零售商不需要下载
     begin
-    frmLogo.ProgressBar1.Position := 3;
+    frmLogo.Position := 3;
     frmLogo.Label1.Caption := '下载商品分类...';
     frmLogo.Label1.Update;
     downloadSort(Global.TENANT_ID,flag);
-    frmLogo.ProgressBar1.Position := 4;
+    frmLogo.Position := 4;
     frmLogo.Label1.Caption := '下载计量单位...';
     frmLogo.Label1.Update;
     downloadUnit(Global.TENANT_ID,flag);
-    frmLogo.ProgressBar1.Position := 5;
+    frmLogo.Position := 5;
     frmLogo.Label1.Caption := '下载商品资料...';
     frmLogo.Label1.Update;
     downloadGoods(Global.TENANT_ID,flag);
-    frmLogo.ProgressBar1.Position := 6;
+    frmLogo.Position := 6;
     frmLogo.Label1.Caption := '下载供应链商品...';
     frmLogo.Label1.Update;
     downloadDeployGoods(Global.TENANT_ID,flag);
-    frmLogo.ProgressBar1.Position := 7;
+    frmLogo.Position := 7;
     frmLogo.Label1.Caption := '下载条码信息...';
     frmLogo.Label1.Update;
     downloadBarcode(Global.TENANT_ID,flag);
     end;
-    frmLogo.ProgressBar1.Position := 8;
+    frmLogo.Position := 8;
     frmLogo.Label1.Caption := '下载商盟信息...';
     frmLogo.Label1.Update;
     downloadUnion(Global.TENANT_ID);
-    frmLogo.ProgressBar1.Position := 9;
+    frmLogo.Position := 9;
     SetSynTimeStamp('#',TimeStamp,'#');
-    frmLogo.ProgressBar1.Position := 8;
+    frmLogo.Position := 10;
     frmLogo.Label1.Caption := '下载功能模块...';
     frmLogo.Label1.Update;
     downloadCaModule(Global.TENANT_ID,flag);
-    frmLogo.ProgressBar1.Position := 9;
+    frmLogo.Position := 11;
     SetSynTimeStamp('#',TimeStamp,'#');
   finally
     frmLogo.Close;
@@ -3195,6 +3201,8 @@ begin
   if @RspcoRegister=nil then Raise Exception.Create('无效Rsp插件包，没有实现coRegister方法');
   @RspgetTenantInfo := GetProcAddress(RspHandle, 'getTenantInfo');
   if @RspgetTenantInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getTenantInfo方法');
+  @RspgetShopInfo := GetProcAddress(RspHandle, 'getShopInfo');
+  if @RspgetShopInfo=nil then Raise Exception.Create('无效Rsp插件包，没有实现getShopInfo方法');
   @RsplistModules := GetProcAddress(RspHandle, 'listModules');
   if @RsplistModules=nil then Raise Exception.Create('无效Rsp插件包，没有实现listModules方法');
   @RspcheckUpgrade := GetProcAddress(RspHandle, 'checkUpgrade');
@@ -3244,6 +3252,125 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TCaFactory.downloadShopInfo(TenantId: integer; shopId,xsmCode,xsmPswd: string;
+  flag: integer): boolean;
+var
+  rs:TZQuery;
+  Params:TftParamList;
+  inxml:string;
+  doc:IXMLDomDocument;
+  rio:THTTPRIO;
+  caShopInfo:IXMLDOMNode;
+  Node:IXMLDOMNode;
+  code:string;
+  h,r:rsp;
+  OutXml:widestring;
+begin
+try
+  doc := CreateRspXML;
+  Node := doc.createElement('flag');
+  Node.text := '1';
+  FindNode(doc,'header\pub').appendChild(Node);
+  
+  Node := doc.createElement('caShopInfo');
+  FindNode(doc,'body').appendChild(Node);
+
+  Node := doc.createElement('tenantId');
+  Node.text := inttostr(TenantId);
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+  Node := doc.createElement('shopId');
+  Node.text := shopId;
+  FindNode(doc,'body\caShopInfo').appendChild(Node);
+
+  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
+
+  if rspHandle>0 then
+     doc := CreateXML(rspgetShopInfo(inxml,URL,2))
+  else
+  begin
+    rio := CreateRio(20000);
+    h := SendHeader(rio,2);
+    try
+      try
+        OutXml := GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).getShopInfo(Encode(inxml,sslpwd));
+        r := GetHeader(rio);
+        try
+          case r.encryptType of
+          2:doc := CreateXML(Decode(OutXml,sslpwd) );
+          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
+          else doc := CreateXML(Decode(OutXml,''));
+          end;
+        finally
+          r.Free;
+        end;
+      except
+        on E:Exception do
+           begin
+             if pos('Empty document',E.Message)>0 then
+                begin
+                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
+                end
+             else
+                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
+           end;
+      end;
+    finally
+      h.Free;
+    end;
+  end;
+  CheckRecAck(doc);
+  caShopInfo := FindNode(doc,'body\caShopInfo');
+  rs := TZQuery.Create(nil);
+  Params := TftParamList.Create;
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := TenantId;
+    Params.ParamByName('SHOP_ID').AsString := shopId;
+    Factor.Open(rs,'TShop',Params);
+    if not rs.IsEmpty then
+    begin
+      rs.Edit;
+      rs.FieldByName('XSM_CODE').asString := xsmCode;
+      rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+      rs.Post;
+      Factor.UpdateBatch(rs,'TShop',Params);
+    end
+    else
+    begin
+      rs.Edit;
+      rs.FieldByName('TENANT_ID').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'tenantId'));
+      rs.FieldByName('SHOP_ID').asString := GetNodeValue(caShopInfo,'shopId');
+      rs.FieldByName('SHOP_NAME').asString := GetNodeValue(caShopInfo,'shopName');
+      rs.FieldByName('SHOP_SPELL').asString := GetNodeValue(caShopInfo,'shopSpell');
+      rs.FieldByName('LICENSE_CODE').asString := GetNodeValue(caShopInfo,'licenseCode');
+      rs.FieldByName('LINKMAN').asString := GetNodeValue(caShopInfo,'linkman');
+      rs.FieldByName('TELEPHONE').asString := GetNodeValue(caShopInfo,'telephone');
+      rs.FieldByName('FAXES').asString := GetNodeValue(caShopInfo,'faxes');
+      rs.FieldByName('ADDRESS').asString := GetNodeValue(caShopInfo,'address');
+      rs.FieldByName('POSTALCODE').asString := GetNodeValue(caShopInfo,'postalcode');
+      rs.FieldByName('XSM_CODE').asString := xsmCode;
+      rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+      rs.FieldByName('REGION_ID').asString := GetNodeValue(caShopInfo,'regionId');
+      rs.FieldByName('SHOP_TYPE').asString := GetNodeValue(caShopInfo,'shopType');
+      rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'seqNo'));
+      rs.Post;
+      Factor.UpdateBatch(rs,'TShop',Params);
+    end;
+  finally
+    Params.Free;
+    rs.Free;
+  end;
+except
+  on E:Exception do
+  begin
+    if doc<>nil then
+       LogFile.AddLogFile(0,'读取<企业资料>失败xml='+doc.xml+';原因:'+E.Message)
+    else
+       LogFile.AddLogFile(0,'读取<企业资料>失败xml=无;原因:'+E.Message);
+    Raise;
+  end;
+end;
 end;
 
 { rsp }

@@ -150,7 +150,7 @@ object frmPotenAnaly: TfrmPotenAnaly
                 Footers = <>
                 Title.Caption = #21830#21697#21517#31216
                 Title.Color = clWhite
-                Width = 130
+                Width = 126
               end
               item
                 DisplayFormat = '#0.###'
@@ -167,7 +167,7 @@ object frmPotenAnaly: TfrmPotenAnaly
                 Footers = <>
                 Title.Caption = #27611#21033
                 Title.Color = clWhite
-                Width = 65
+                Width = 60
               end
               item
                 EditButtons = <>
@@ -175,7 +175,15 @@ object frmPotenAnaly: TfrmPotenAnaly
                 Footers = <>
                 Title.Caption = #21806#37327
                 Title.Color = clWhite
-                Width = 70
+                Width = 66
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_NAME'
+                Footers = <>
+                Title.Caption = #21333#20301
+                Title.Color = clWhite
+                Width = 30
               end
               item
                 EditButtons = <>
@@ -430,7 +438,7 @@ object frmPotenAnaly: TfrmPotenAnaly
                 Footers = <>
                 Title.Caption = #21830#21697#21517#31216
                 Title.Color = clWhite
-                Width = 130
+                Width = 126
               end
               item
                 DisplayFormat = '#0.###'
@@ -448,7 +456,7 @@ object frmPotenAnaly: TfrmPotenAnaly
                 Footers = <>
                 Title.Caption = #27611#21033
                 Title.Color = clWhite
-                Width = 65
+                Width = 60
               end
               item
                 EditButtons = <>
@@ -456,7 +464,15 @@ object frmPotenAnaly: TfrmPotenAnaly
                 Footers = <>
                 Title.Caption = #38144#37327
                 Title.Color = clWhite
-                Width = 70
+                Width = 66
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_NAME'
+                Footers = <>
+                Title.Caption = #21333#20301
+                Title.Color = clWhite
+                Width = 30
               end
               item
                 EditButtons = <>

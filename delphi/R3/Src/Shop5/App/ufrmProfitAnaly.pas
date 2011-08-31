@@ -123,6 +123,7 @@ begin
   adoAnaly.FieldDefs.Add('GODS_CODE',ftstring,20,true);  //商品编码
   adoAnaly.FieldDefs.Add('GODS_NAME',ftstring,50,true);  //商品名称
   adoAnaly.FieldDefs.Add('ANALYSUM',ftFloat,0,true);     //汇总数量
+  adoAnaly.FieldDefs.Add('UNIT_NAME',ftstring,20,true);  //汇总数量
   adoAnaly.FieldDefs.Add('ORDERNO',ftInteger,0,true);    //排序号
   adoAnaly.CreateDataSet;
   ShowOrderData(nil);
@@ -166,6 +167,7 @@ begin
     adoAnaly.fieldbyName('GODS_CODE').AsString:=adoReport.fieldByName('GODS_CODE').AsString;
     adoAnaly.fieldbyName('GODS_NAME').AsString:=adoReport.fieldByName('GODS_NAME').AsString;
     adoAnaly.fieldbyName('ANALYSUM').AsFloat:=adoReport.fieldByName('ANALYSUM').AsFloat;
+    adoAnaly.fieldbyName('UNIT_NAME').AsString:=adoReport.fieldByName('UNIT_NAME').AsString;
     adoAnaly.fieldbyName('ORDERNO').AsInteger:=i;
     adoAnaly.Post;
     //图表显示

@@ -119,7 +119,7 @@ object frmProfitAnaly: TfrmProfitAnaly
               Footers = <>
               Title.Caption = #36135#21495
               Title.Color = clWhite
-              Width = 96
+              Width = 102
             end
             item
               EditButtons = <>
@@ -138,7 +138,15 @@ object frmProfitAnaly: TfrmProfitAnaly
               Footers = <>
               Title.Caption = #38144#21806#39069
               Title.Color = clWhite
-              Width = 122
+              Width = 108
+            end
+            item
+              EditButtons = <>
+              FieldName = 'UNIT_NAME'
+              Footers = <>
+              Title.Caption = #21333#20301
+              Title.Color = clWhite
+              Width = 31
             end
             item
               EditButtons = <>
@@ -146,7 +154,7 @@ object frmProfitAnaly: TfrmProfitAnaly
               Footers = <>
               Title.Caption = #25490#21517
               Title.Color = clWhite
-              Width = 56
+              Width = 32
             end>
         end
       end

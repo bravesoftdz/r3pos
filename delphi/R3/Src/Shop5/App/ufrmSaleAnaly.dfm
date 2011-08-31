@@ -47,8 +47,10 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
+                DesignSize = (
+                  948
+                  74)
                 object Label8: TLabel
                   Left = 17
                   Top = 32
@@ -102,6 +104,14 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Width = 48
                   Height = 12
                   Caption = #25130#27490#26085#26399
+                end
+                object Label17: TLabel
+                  Left = 811
+                  Top = 54
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #26174#31034#21333#20301
                 end
                 object fndP2_TYPE_ID: TcxComboBox
                   Left = 69
@@ -273,6 +283,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     Checked = True
                     TabOrder = 0
                     TabStop = True
+                    OnClick = P2_RB_MoneyClick
                   end
                   object P2_RB_PRF: TcxRadioButton
                     Left = 78
@@ -281,6 +292,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     Height = 17
                     Caption = #27611#21033
                     TabOrder = 1
+                    OnClick = P2_RB_PRFClick
                   end
                   object P2_RB_AMT: TcxRadioButton
                     Left = 142
@@ -289,6 +301,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     Height = 17
                     Caption = #38144#37327
                     TabOrder = 2
+                    OnClick = P2_RB_AMTClick
                   end
                 end
                 object fndP2_DEPT_ID: TzrComboBoxList
@@ -344,6 +357,20 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
                   TabOrder = 9
+                end
+                object fndP1UNIT_ID: TcxComboBox
+                  Left = 861
+                  Top = 50
+                  Width = 80
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #35745#37327#21333#20301
+                    #21253#35013'1'
+                    #21253#35013'2')
+                  TabOrder = 10
                 end
               end
               object PnlSB2: TRzPanel
@@ -417,8 +444,10 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
-                Color = clWhite
                 TabOrder = 0
+                DesignSize = (
+                  948
+                  74)
                 object Label13: TLabel
                   Left = 17
                   Top = 32
@@ -472,6 +501,22 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #32479#35745#31867#22411
+                end
+                object Label19: TLabel
+                  Left = 811
+                  Top = 54
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #26174#31034#21333#20301
+                end
+                object Label20: TLabel
+                  Left = 811
+                  Top = 31
+                  Width = 48
+                  Height = 12
+                  Anchors = [akTop, akRight]
+                  Caption = #37329#39069#21333#20301
                 end
                 object fndP3_TYPE_ID: TcxComboBox
                   Left = 69
@@ -690,6 +735,30 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     #38144#37327' '#8212' '#38144#21806#39069)
                   TabOrder = 9
                 end
+                object fndP2UNIT_ID: TcxComboBox
+                  Left = 861
+                  Top = 50
+                  Width = 80
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  TabOrder = 10
+                end
+                object edtMoneyUnit: TcxComboBox
+                  Left = 861
+                  Top = 27
+                  Width = 80
+                  Height = 20
+                  Anchors = [akTop, akRight]
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #20803
+                    #19975#20803)
+                  Properties.OnChange = fndP1_Sale_UNITPropertiesChange
+                  TabOrder = 11
+                end
               end
               object PnlSB3: TRzPanel
                 Left = 0
@@ -746,6 +815,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               inherited w1: TRzPanel
                 Width = 948
                 Height = 97
+                Color = clBtnFace
                 object RzLabel2: TRzLabel
                   Left = 25
                   Top = 12

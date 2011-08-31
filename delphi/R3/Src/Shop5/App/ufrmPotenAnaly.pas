@@ -108,6 +108,7 @@ begin
   MaxAnaly.FieldDefs.Add('MNY_SUM',ftFloat,0,true);      //销售额
   MaxAnaly.FieldDefs.Add('PRF_SUM',ftFloat,0,true);      //毛利
   MaxAnaly.FieldDefs.Add('AMT_SUM',ftFloat,0,true);      //售量
+  MaxAnaly.FieldDefs.Add('UNIT_NAME',ftstring,20,true);  //显示单位  
   MaxAnaly.FieldDefs.Add('ORDERNO',ftInteger,0,true);    //排序号
   MaxAnaly.CreateDataSet;
   //最小潜力
@@ -117,6 +118,7 @@ begin
   MinAnaly.FieldDefs.Add('MNY_SUM',ftFloat,0,true);      //销售额
   MinAnaly.FieldDefs.Add('PRF_SUM',ftFloat,0,true);      //毛利
   MinAnaly.FieldDefs.Add('AMT_SUM',ftFloat,0,true);      //售量
+  MinAnaly.FieldDefs.Add('UNIT_NAME',ftstring,20,true);  //显示单位
   MinAnaly.FieldDefs.Add('ORDERNO',ftInteger,0,true);    //排序号
   MinAnaly.CreateDataSet;
   //刷新显示
@@ -149,6 +151,7 @@ begin
           MaxAnaly.fieldbyName('MNY_SUM').AsFloat:=adoReport.fieldByName('MNY_SUM').AsFloat;
           MaxAnaly.fieldbyName('PRF_SUM').AsFloat:=adoReport.fieldByName('PRF_SUM').AsFloat;
           MaxAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
+          MaxAnaly.fieldbyName('UNIT_NAME').AsString:=adoReport.fieldByName('UNIT_NAME').AsString;
           MaxAnaly.fieldbyName('ORDERNO').AsInteger:=i;
           MaxAnaly.Post;
           Max_MNY:=Max_MNY+adoReport.fieldByName('MNY_SUM').AsFloat;
@@ -188,6 +191,7 @@ begin
           MinAnaly.fieldbyName('MNY_SUM').AsFloat:=adoReport.fieldByName('MNY_SUM').AsFloat;
           MinAnaly.fieldbyName('PRF_SUM').AsFloat:=adoReport.fieldByName('PRF_SUM').AsFloat;
           MinAnaly.fieldbyName('AMT_SUM').AsFloat:=adoReport.fieldByName('AMT_SUM').AsFloat;
+          MinAnaly.fieldbyName('UNIT_NAME').AsString:=adoReport.fieldByName('UNIT_NAME').AsString;
           MinAnaly.fieldbyName('ORDERNO').AsInteger:=MinAnaly.RecordCount+1;
           MinAnaly.Post;
           Min_MNY:=Min_MNY+adoReport.fieldByName('MNY_SUM').AsFloat;

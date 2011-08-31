@@ -109,6 +109,12 @@ type
     PnlSB: TRzPanel;
     SB2: TScrollBox;
     SB3: TScrollBox;
+    Label17: TLabel;
+    fndP1UNIT_ID: TcxComboBox;
+    Label19: TLabel;
+    fndP2UNIT_ID: TcxComboBox;
+    Label20: TLabel;
+    edtMoneyUnit: TcxComboBox;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzPanel7Resize(Sender: TObject);
@@ -121,6 +127,9 @@ type
     procedure CB_ColorClick(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure P2_RB_MoneyClick(Sender: TObject);
+    procedure P2_RB_PRFClick(Sender: TObject);
+    procedure P2_RB_AMTClick(Sender: TObject);
   private
     SortName: string;  //商品分类名称
     sid1,sid2,sid3: string;        //商品分类ID
@@ -131,6 +140,7 @@ type
     function  GetProfitAnalySQL(vType: integer=0): string; //盈利分析
     function  GetPotenAnalySQL(vType: integer=0): string;  //潜力分析
     procedure FreeFrameObj(vType: integer); //释放掉Frame对象
+    procedure AddUnitItemList(SetUnitID: TcxComboBox; SetType: integer);
   public
     procedure SingleReportParams(ParameStr: string='');override; //简单报表调用参数
     procedure ShowFrameProfitAnaly; //盈利分析
@@ -555,6 +565,10 @@ begin
   else if TabSheet1.TabVisible then
     RzPage.ActivePage:=TabSheet1;
   EdtvType.ItemIndex:=0;
+  edtMoneyUnit.ItemIndex:=0;
+  fndP2UNIT_ID.ItemIndex:=0;
+  AddUnitItemList(fndP1UNIT_ID, 2);
+  AddTongjiUnitList(fndP2UNIT_ID);
 end;
 
 procedure TfrmSaleAnaly.RB_SaleMoneyClick(Sender: TObject);
@@ -580,13 +594,29 @@ end;
 
 function TfrmSaleAnaly.GetProfitAnalySQL(vType: integer): string; //盈利分析
 var
-  TYPE_ID,SaleCnd,JoinStr: string;  //单位计算关系
+  TYPE_ID,SaleCnd,JoinStr,UnitID,UnitName: string;  //单位计算关系
   strSql,strWhere,GoodTab,SQLData: string;
 begin
   if P2_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
   if P2_D2.EditValue=null then Raise Exception.Create('截止日期不能为空！');
   SaleCnd:='';
   strWhere:='';
+  if P2_RB_AMT.Checked then //销量
+  begin
+    UnitID:='/'+GetUnitTO_CALC(fndP1UNIT_ID.ItemIndex,'C');
+    UnitName:=GetUnitID(fndP1UNIT_ID.ItemIndex,'C');
+  end else
+  begin
+    if fndP1UNIT_ID.ItemIndex=0 then
+    begin
+      UnitID:='';
+      UnitName:='''元''';
+    end else
+    begin
+      UnitID:='/10000.00';
+      UnitName:='''万元''';
+    end;
+  end;
 
   //企业ID过滤
   SaleCnd:=' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
@@ -634,22 +664,34 @@ begin
     GoodTab:='VIW_GOODSINFO';
 
   if P2_RB_Money.Checked then  //销售额
-    TYPE_ID:='isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0)'
+    TYPE_ID:='(isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0))'
   else if P2_RB_PRF.Checked then //毛利
-    TYPE_ID:='isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0)'
+    TYPE_ID:='(isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0))'
   else if P2_RB_AMT.Checked then //销量
     TYPE_ID:='isnull(CALC_AMOUNT,0)';
 
-  //销售SQL
-  // SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,'+TYPE_ID+' from VIW_SALESDATA '+SaleCnd;
-  strSql :=
-    'select * from '+
-    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+')as ANALYSUM from '+
-    ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
-    ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
-    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
-    'order by RELATION_ID asc,ANALYSUM desc ';
+  if P2_RB_AMT.Checked then //销量
+  begin
+    strSql :=
+      'select tmp.*,unit.UNIT_NAME as UNIT_NAME from '+
+      '(SELECT A.TENANT_ID as TENANT_ID,C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+UnitID+')as ANALYSUM,'+UnitName+' as UNIT_ID from '+
+      ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
+      ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
+      ' group by A.TENANT_ID,C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
+      ' left outer join VIW_MEAUNITS unit on tmp.TENANT_ID=unit.TENANT_ID and tmp.UNIT_ID=unit.UNIT_ID '+
+      'order by RELATION_ID asc,ANALYSUM desc ';
+  end else
+  begin
+    strSql :=
+      'select * from '+
+      '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+')'+UnitID+' as ANALYSUM,'+UnitName+' as UNIT_NAME from '+
+      ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
+      ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
+      'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
+      'order by RELATION_ID asc,ANALYSUM desc ';
+  end;
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -681,14 +723,18 @@ function TfrmSaleAnaly.GetPotenAnalySQL(vType: integer): string;  //潜力分析
   end;
 var
   Qry: TZQuery;
-  SaleCnd,JoinStr,OrderBy: string;  //单位计算关系
+  SaleCnd,JoinStr,OrderBy,UnitID,AmtUnitID,MnyUnitID: string;  //单位计算关系
   FieldStr,MaxSQL,MaxValue1,MaxValue2: string;
   strSql,strWhere,GoodTab,SQLData: string;
 begin
-  if P3_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
-  if P3_D2.EditValue=null then Raise Exception.Create('截止日期不能为空！');
+  result:='';
   SaleCnd:='';
   strWhere:='';
+  if P3_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
+  if P3_D2.EditValue=null then Raise Exception.Create('截止日期不能为空！');
+  if edtMoneyUnit.ItemIndex=0 then MnyUnitID:='' else  MnyUnitID:='/10000.0';
+  AmtUnitID:='('+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'C')+')';
+  UnitID:=GetUnitID(fndP2UNIT_ID.ItemIndex,'C');
 
   //企业ID过滤
   SaleCnd:=' and SAL.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
@@ -734,7 +780,6 @@ begin
   end else
     GoodTab:='VIW_GOODSINFO';
 
-  //销售: SQLData:='select TENANT_ID,SHOP_ID,GODS_ID,CALC_AMOUNT as AMT_SUM,(CALC_MONEY+AGIO_MONEY) as MNY_SUM,(NOTAX_MONEY-COST_MONEY) as PRF_SUM from VIW_SALESDATA '+SaleCnd;
   //分类取出Max(字段)
   case EdtvType.ItemIndex of
    0: FieldStr:=' max(MNY_SUM) as SUM1,max(PRF_SUM) as SUM2 ';   //销售额 毛利
@@ -743,8 +788,10 @@ begin
   end;
   MaxSQL:=ParseSQL(Factor.iDbType,
     'select RELATION_ID,'+FieldStr+' from '+
-    ' (SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(CALC_AMOUNT) as AMT_SUM,'+
-    '   sum(isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0))as MNY_SUM,sum(isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0))as PRF_SUM '+
+    ' (SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,'+
+      'cast(case when '+AmtUnitID+'<>0 then sum(CALC_AMOUNT/'+AmtUnitID+') else sum(CALC_AMOUNT) end as decimal(18,3)) as AMT_SUM,'+
+      'cast((sum(isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0))'+MnyUnitID+') as decimal(18,3))as MNY_SUM,'+
+      'cast((sum(isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0))'+MnyUnitID+') as decimal(18,3))as PRF_SUM '+
     '  from VIW_SALESDATA SAL,CA_SHOP_INFO B,'+GoodTab+' C '+
     '  where SAL.TENANT_ID=B.TENANT_ID and SAL.SHOP_ID=B.SHOP_ID and SAL.TENANT_ID=C.TENANT_ID and SAL.GODS_ID=C.GODS_ID '+SaleCnd+
     ' '+ strWhere + ' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1)+
@@ -761,17 +808,17 @@ begin
       case EdtvType.ItemIndex of
        0: //销售额 毛利
         begin
-          FieldStr:=GetSumField(Qry, 'sum(MNY_SUM)', 'sum(PRF_SUM)');
+          FieldStr:=GetSumField(Qry, 'sum(MNY_SUM'+MnyUnitID+')', 'sum(PRF_SUM'+MnyUnitID+')');
           OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,MNY_SUM desc,AMT_SUM desc '
         end;
        1: //销售量 毛利
         begin
-          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM)', 'sum(PRF_SUM)');
+          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM/'+AmtUnitID+')', 'sum(PRF_SUM'+MnyUnitID+')');
           OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,AMT_SUM desc,MNY_SUM desc'
         end;
        2: //销售量 销售额
         begin
-          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM)', 'sum(MNY_SUM)');
+          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM/'+AmtUnitID+')', 'sum(MNY_SUM'+MnyUnitID+')');
           OrderBy:='order by RELATION_ID asc,vType asc,MNY_SUM desc,AMT_SUM desc,PRF_SUM desc ';
         end;
       end;
@@ -782,18 +829,24 @@ begin
 
   //销售SQL
   SQLData:=
-     'select STO.TENANT_ID,STO.SHOP_ID,STO.GODS_ID,isnull(SAL.CALC_AMOUNT,0) as AMT_SUM,(isnull(SAL.CALC_MONEY,0)+isnull(SAL.AGIO_MONEY,0)) as MNY_SUM,(isnull(SAL.NOTAX_MONEY,0)-isnull(SAL.COST_MONEY,0)) as PRF_SUM '+
+     'select STO.TENANT_ID,STO.SHOP_ID,STO.GODS_ID,SAL.CALC_AMOUNT as AMT_SUM,'+
+     ' (isnull(SAL.CALC_MONEY,0)+isnull(SAL.AGIO_MONEY,0)) as MNY_SUM,'+
+     ' (isnull(SAL.NOTAX_MONEY,0)-isnull(SAL.COST_MONEY,0)) as PRF_SUM '+
      ' from STO_STORAGE STO left outer join VIW_SALESDATA SAL '+
      'on STO.TENANT_ID=SAL.TENANT_ID and STO.SHOP_ID=SAL.SHOP_ID and STO.GODS_ID=SAL.GODS_ID '+
      ' where 1=1 '+SaleCnd+' '+ShopGlobal.GetDataRight('STO.SHOP_ID',1)+' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1);
 
   strSql :=
-    'select * from '+
-    '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum(AMT_SUM) as AMT_SUM,sum(MNY_SUM)as MNY_SUM,sum(PRF_SUM)as PRF_SUM '+FieldStr+' '+
+    'select tmp.*,unit.UNIT_NAME from '+
+    '(SELECT A.TENANT_ID,C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,'+
+     'cast(case when '+AmtUnitID+'<>0 then sum(AMT_SUM/'+AmtUnitID+') else sum(AMT_SUM) end as decimal(18,3)) as AMT_SUM,'+
+     'cast(sum(MNY_SUM)'+MnyUnitID+' as decimal(18,3))as MNY_SUM,'+
+     'cast(sum(PRF_SUM)'+MnyUnitID+' as decimal(18,3))as PRF_SUM '+FieldStr+','+UnitID+' as UNIT_ID '+
     ' from ('+SQLData+')A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and '+
     ' A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+OrderBy;
+    'group by A.TENANT_ID,C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
+    ' left outer join VIW_MEAUNITS unit on tmp.TENANT_ID=unit.TENANT_ID and tmp.UNIT_ID=unit.UNIT_ID '+OrderBy;
   Result := ParseSQL(Factor.iDbType,strSql);
 end;
 
@@ -1053,6 +1106,39 @@ begin
   inherited;
   TabSheet1.PageIndex:=2;
   RzPage.ActivePage:=TabSheet2;
+end;
+
+procedure TfrmSaleAnaly.AddUnitItemList(SetUnitID: TcxComboBox; SetType: integer);
+begin
+  if SetType=1 then //数量单位
+  begin
+    AddTongjiUnitList(SetUnitID);
+  end else
+  if SetType=2 then //金额单位
+  begin
+    SetUnitID.Properties.Items.Clear;
+    SetUnitID.Properties.Items.Add('元');
+    SetUnitID.Properties.Items.Add('万元');
+  end;
+  SetUnitID.ItemIndex:=0;
+end;
+
+procedure TfrmSaleAnaly.P2_RB_MoneyClick(Sender: TObject);
+begin
+  inherited;
+  AddUnitItemList(fndP1UNIT_ID, 2);
+end;
+
+procedure TfrmSaleAnaly.P2_RB_PRFClick(Sender: TObject);
+begin
+  inherited;
+  AddUnitItemList(fndP1UNIT_ID, 2);
+end;
+
+procedure TfrmSaleAnaly.P2_RB_AMTClick(Sender: TObject);
+begin
+  inherited;
+  AddUnitItemList(fndP1UNIT_ID, 1);
 end;
 
 end.

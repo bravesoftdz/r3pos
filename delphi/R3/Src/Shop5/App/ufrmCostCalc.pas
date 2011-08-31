@@ -43,7 +43,7 @@ type
     procedure DBLock;
     procedure DBUnLock;
     function GetTmpSQL(tb:string):string;
-    function CheckReckMonthDay: Boolean;  //判断是否到了月结帐日
+    // function CheckReckMonthDay: Boolean;  //暂时不用 判断是否到了月结帐日
   public
     { Public declarations }
     pt,pc:integer;
@@ -2129,7 +2129,67 @@ begin
   end;
 end;
 
-function TfrmCostCalc.CheckReckMonthDay: Boolean;
+
+//判断是否月结账
+class function TfrmCostCalc.CheckMonthReck(Owner: TForm): boolean;
+var
+  tmp: TZQuery;
+begin
+  result:=False;
+  //先判断有月结账权限
+  if not frmMain.FindAction('actfrmMonthClose').Enabled then Exit;
+
+  with TfrmCostCalc.Create(Owner) do
+  begin
+    try
+      tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
+      if (tmp.Active) and (tmp.RecordCount=1) then //是单店并且上次结账第5天以后
+      begin
+        if 1=1 then //CheckReckMonthDay 
+        begin
+          flag := 2;
+          Caption := '月结账';
+          eDate := Date()-1;
+          Prepare;
+          if Date() <= (eDate+5) then Exit;
+          Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
+          Label1.Caption:='请点击〖执行〗开始月结帐 ';
+          result :=(ShowModal=MROK);
+        end;
+      end
+    finally
+      free;
+    end;
+  end;
+end;
+
+procedure TfrmCostCalc.ClseDay;
+var
+  i:integer;
+begin
+  if not (flag in [1,2]) then
+     begin
+       if (ShopGlobal.NetVersion) and ShopGlobal.offline then Exit;
+     end;
+  Factor.BeginTrans;
+  try
+    for i:=1 to pt do
+       begin
+         if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
+         begin
+         Factor.ExecSQL('insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+                        'select TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+' from CA_SHOP_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)
+                        );
+         end;
+       end;
+    Factor.CommitTrans;
+  except
+    Factor.RollbackTrans;
+    raise;
+  end;
+end;
+
+{function TfrmCostCalc.CheckReckMonthDay: Boolean;
 var
   rs:TZQuery;
   e: TDate;            //当前月份结账日
@@ -2204,63 +2264,8 @@ begin
     rs.free;
   end;
 end;
-
-//判断是否月结账
-class function TfrmCostCalc.CheckMonthReck(Owner: TForm): boolean;
-var
-  tmp: TZQuery;
-begin
-  result:=False;
-  //先判断有月结账权限
-  if not frmMain.FindAction('actfrmMonthClose').Enabled then Exit;
-
-  with TfrmCostCalc.Create(Owner) do
-  begin
-    try
-      tmp:=Global.GetZQueryFromName('CA_SHOP_INFO');
-      if (tmp.Active) and (tmp.RecordCount=1) then //是单店并且上次结账第5天以后
-      begin
-        if CheckReckMonthDay then 
-        begin
-          flag := 2;
-          Caption := '月结账';
-          eDate := Date()-1;
-          Prepare;
-          Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
-          Label1.Caption:='请点击〖执行〗开始月结帐 ';
-          result :=(ShowModal=MROK);
-        end;
-      end
-    finally
-      free;
-    end;
-  end;
-end;
-
-procedure TfrmCostCalc.ClseDay;
-var
-  i:integer;
-begin
-  if not (flag in [1,2]) then
-     begin
-       if (ShopGlobal.NetVersion) and ShopGlobal.offline then Exit;
-     end;
-  Factor.BeginTrans;
-  try
-    for i:=1 to pt do
-       begin
-         if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
-         begin
-         Factor.ExecSQL('insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
-                        'select TENANT_ID,SHOP_ID,'+formatDatetime('YYYYMMDD',cDate+i)+','''+Global.UserID+''',''00'','+GetTimeStamp(Factor.iDbType)+' from CA_SHOP_INFO where TENANT_ID='+inttostr(Global.TENANT_ID)
-                        );
-         end;
-       end;
-    Factor.CommitTrans;
-  except
-    Factor.RollbackTrans;
-    raise;
-  end;
-end;
+}
 
 end.
+
+

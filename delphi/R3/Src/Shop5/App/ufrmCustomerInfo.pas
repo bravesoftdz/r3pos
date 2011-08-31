@@ -650,7 +650,7 @@ begin
     Exit;
   end;
 
-  if (Trim(cmbPRICE_ID.Text) <> '') and (Trim(cmbCUST_CODE.Text) <> '×Ô¶¯±àºÅ..') then
+  if (Trim(cmbPRICE_ID.Text) <> '') then
     begin
       if cmbPRICE_ID.DataSet.FieldByName('PRICE_TYPE').AsString = '2' then
         begin

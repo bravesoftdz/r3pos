@@ -69,7 +69,7 @@ begin
       if edtIC_CARDNO.CanFocus then edtIC_CARDNO.SetFocus;
       Raise Exception.Create('会员卡号不能为空！');
     end;
-  if not FnString.IsCodeString(Trim(edtIC_CARDNO.Text)) then
+  if (not FnString.IsCodeString(Trim(edtIC_CARDNO.Text))) and (ShowModel = 1) then
     begin
       if edtIC_CARDNO.CanFocus then edtIC_CARDNO.SetFocus;
       Raise Exception.Create('会员卡号中有错误字符！');    

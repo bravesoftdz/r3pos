@@ -407,6 +407,7 @@ begin
        cdsUnionCard.Edit;
        cdsUnionCard.FieldByName('TENANT_ID').AsString := AObj.FieldbyName('TENANT_ID').AsString;
        cdsUnionCard.FieldByName('CLIENT_ID').AsString := AObj.FieldbyName('CUST_ID').AsString;
+       if cdsUnionCard.FieldbyName('IC_CARDNO').AsString = '×Ô¶¯±àºÅ..' then cdsUnionCard.FieldbyName('IC_CARDNO').AsString := Aobj.FieldByName('IC_CARDNO').AsString;
        cdsUnionCard.Post;
        cdsUnionCard.Next;
      end;

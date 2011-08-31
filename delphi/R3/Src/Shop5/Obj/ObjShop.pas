@@ -74,7 +74,7 @@ begin
   DeleteSQL.Text := Str;
 end;
 
-
+                         
 
 initialization
   RegisterClass(TShop);

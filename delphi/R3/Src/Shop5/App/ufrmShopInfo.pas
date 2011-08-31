@@ -403,7 +403,7 @@ begin
    with TfrmShopInfo.Create(Owner) do
     begin
       try
-        Open(id);//
+        Open(id);
         if ShowModal=MROK then
           result :=True
         else

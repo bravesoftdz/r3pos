@@ -2153,8 +2153,11 @@ end;
 function TfrmCostCalc.CheckReckMonthDay: Boolean;
 var
   rs:TZQuery;
-  vbDate,e,NextDay: TDate;
-  vReck_flag,vReck_day: integer;  //结帐类型、指定月结日
+  e: TDate;            //当前月份结账日
+  vbDate: TDate;       //最近一次结账日
+  NextRckDay: TDate;   //下一次结账日
+  vReck_flag: integer; //结帐类型:[月底结账、指定日期结账]
+  vReck_day: integer;  //vReck_flag=2时有效:指定月结日
 begin
   result:=False;
   vReck_flag := StrtoIntDef(ShopGlobal.GetParameter('RECK_OPTION'),1);  //结帐类型[月底结帐|指定日期结帐]
@@ -2166,8 +2169,14 @@ begin
     rs.SQL.Text := 'select max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
     Factor.Open(rs);
     if rs.Fields[0].asString<>'' then  //已有月结帐
-      vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString)
-    else
+    begin
+      vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
+      //2011.08.31 PM 修改:计算下一月结账日:
+      if vReck_flag=1 then
+        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,2))+'01')-1
+      else
+        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+formatfloat('00',vReck_day));
+    end else
     begin  //从未月结帐
       rs.Close;
       rs.SQL.Text:='select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
@@ -2176,6 +2185,19 @@ begin
         vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
       else
         vbDate := Date()-1;
+        
+      //2011.08.31 PM 修改:计算下一月结账日:
+      if vReck_flag=1 then
+      begin
+        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+'01')-1
+      end else
+      begin
+        //启用的日期 大于 本月结帐日
+        if vbDate < fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day)) then
+          NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day))  //启用本月结账
+        else
+          NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+formatfloat('00',vReck_day)); //启用后下月结账
+      end;
     end;
 
     //月结时检测结账月份
@@ -2186,18 +2208,16 @@ begin
         eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
       else
         eDate :=e;
-      NextDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+'01')-1; //本月最后一天为结账日  
-    end else   //指定日结帐
+    end else  //指定日结帐
     begin
       e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',vReck_day)); //本月的指定日为结帐日
       if (e>date()) and (FormatDatetime('YYYYMM',Date())=FormatDatetime('YYYYMM',e)) then //还没到结账日
         eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',vReck_day))
       else
         eDate := e;
-      NextDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day)); //本月的指定日为结帐日  
     end;
 
-    if (eDate>vbDate) and (Date()>NextDay+5) then
+    if (eDate>vbDate) and (Date()>NextRckDay+5) then
     begin
       result:=true;
     end;

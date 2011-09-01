@@ -162,7 +162,7 @@ begin
      ' union all '+CLIENT_Tab+' ';  //企业表
 
   //统计单位
-  UnitCalc:='('+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C')+')*1.0';
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
   
   strSql :=
     ' select A.TENANT_ID'+

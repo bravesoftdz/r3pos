@@ -774,12 +774,12 @@ var
 begin
   AliasTab:='';
   if trim(AliasTabName)<>'' then AliasTab:=AliasTabName+'.';
-  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.0 else '+AliasTab+'SMALLTO_CALC end';
-  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC end';
+  SmallCalc:='case when isnull('+AliasTab+'SMALLTO_CALC,0)=0 then 1.0 else '+AliasTab+'SMALLTO_CALC*1.0 end';
+  BigCalc  :='case when isnull('+AliasTab+'BIGTO_CALC,0)=0 then 1.0 else '+AliasTab+'BIGTO_CALC*1.0 end';
 
   str:=' case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.0 '+            //默认单位为 计量单位
-            ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC '+  //默认单位为 小单位
-            ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC '+      //默认单位为 大单位
+            ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then '+AliasTab+'SMALLTO_CALC*1.0 '+  //默认单位为 小单位
+            ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then '+AliasTab+'BIGTO_CALC*1.0 '+      //默认单位为 大单位
             ' else 1.0 end ';
 
   case CalcIdx of 

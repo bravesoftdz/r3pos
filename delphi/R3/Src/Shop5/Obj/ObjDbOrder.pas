@@ -36,10 +36,12 @@ type
   end;
   TDbForLocusNoHeader=class(TZFactory)
   public
+    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     procedure InitClass;override;
   end;
   TDbForInLocusNoHeader=class(TDbOrder)
   public
+    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass;override;
@@ -374,14 +376,16 @@ var
    rs:TZQuery;
    cDate:string;
 begin
-//  Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
-//  if FieldbyName('SALES_DATE').AsOldString <> '' then
-//     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
-
-//  if FieldbyName('PLAN_DATE').AsString<>'' then
-//     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString)),FieldbyName('TIME_STAMP').AsString);
-//  if FieldbyName('PLAN_DATE').AsOldString <> '' then
-//     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsOldString)),FieldbyName('TIME_STAMP').AsOldString);
+  if Params.FindParam('OK_DIALOG')=nil then
+  begin
+     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
+     if FieldbyName('SALES_DATE').AsOldString <> '' then
+        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
+  end;
+  if FieldbyName('PLAN_DATE').AsString<>'' then
+     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString)),FieldbyName('TIME_STAMP').AsString);
+  if FieldbyName('PLAN_DATE').AsOldString <> '' then
+     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsOldString)),FieldbyName('TIME_STAMP').AsOldString);
   result := true;
 end;
 
@@ -599,6 +603,11 @@ end;
 
 { TDbForLocusNoHeader }
 
+function TDbForLocusNoHeader.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  result := true;
+end;
+
 procedure TDbForLocusNoHeader.InitClass;
 var
   Str: string;
@@ -716,6 +725,16 @@ begin
     + 'where TENANT_ID=:OLD_TENANT_ID and STOCK_ID=:OLD_SALES_ID';
   AGlobal.ExecSQL(Str,self);
   result := true; 
+end;
+
+function TDbForInLocusNoHeader.BeforeUpdateRecord(
+  AGlobal: IdbHelp): Boolean;
+begin
+  if FieldbyName('PLAN_DATE').AsOldString='' then
+  begin
+     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString)),FieldbyName('TIME_STAMP').AsString);
+  end;
+  result := true;
 end;
 
 procedure TDbForInLocusNoHeader.InitClass;

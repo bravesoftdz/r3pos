@@ -91,6 +91,9 @@ type
     RtlRate3:real;
     //赠品处理,
     RtlPSTFlag:integer;
+
+    //只做到货确认
+    OK_DIALOG:boolean;
     RtlGDPC_ID:string;
     Dibs,Cash:Currency;
     procedure ShowInfo;
@@ -296,6 +299,7 @@ begin
               TabSheet.Caption := gid;
             end;
        end;
+    OK_DIALOG := false;
   finally
     Params.Free;
   end;
@@ -304,6 +308,7 @@ end;
 procedure TfrmDbOrder.SaveOrder;
 var
   Printed:boolean;
+  Params:TftParamList;
 begin
   inherited;
   if dbState = dsBrowse then Exit;
@@ -375,8 +380,16 @@ begin
          cdsDetail.Post;
          cdsDetail.Next;
        end;
-    Factor.AddBatch(cdsHeader,'TDbOrder');
-    Factor.AddBatch(cdsDetail,'TDbData');
+    if OK_DIALOG then
+       begin
+         Params := TftParamList.Create;
+         Params.ParamByName('OK_DIALOG').AsInteger := 1; 
+       end
+    else
+       Params := nil;
+    Factor.AddBatch(cdsHeader,'TDbOrder',Params);
+    Factor.AddBatch(cdsDetail,'TDbData',Params);
+    if Params<>nil then Params.Free;
     Factor.CommitBatch;
   except
     Factor.CancelBatch;
@@ -739,7 +752,12 @@ begin
        if dbState = dsBrowse then
           begin
             dbState := dsEdit;
-            SaveOrder;
+            OK_DIALOG := true;
+            try
+               SaveOrder;
+            finally
+               OK_DIALOG := false;
+            end;
             if Saved then MessageBox(Handle,'到货确认完毕','友情提示..',MB_OK+MB_ICONINFORMATION);
           end;
      end;

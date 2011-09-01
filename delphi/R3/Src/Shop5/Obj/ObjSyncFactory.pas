@@ -1739,6 +1739,8 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 

@@ -27,8 +27,8 @@ W=0
 X=1
 Y=1
 Z=1
-ShowHints=0
-ShowWarnings=0
+ShowHints=1
+ShowWarnings=1
 UnitAliases=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 NamespacePrefix=
 SymbolDeprecated=1
@@ -93,14 +93,14 @@ ExeDescription=
 OutputDir=
 UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
-PackageDCPOutputDir=D:\Delphi\R3\Src\Shop5\temp
+PackageDCPOutputDir=
 SearchPath=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
-Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;Rz30Ctls70;Rz30DBCtls70;cxLibraryVCLD7;cxEditorsVCLD7;cxGridVCLD7;dxThemeD7;cxDataD7;cxGridUtilsVCLD7;FR7;zsr;DirectX9_D7;DSPack_D7;ActiveXPacket;llPDFLibD7;asgd7;inetdb
+Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;cxLibraryVCLD7;cxEditorsVCLD7;cxGridVCLD7;dxThemeD7;cxDataD7;cxGridUtilsVCLD7;Rz30Ctls70;Rz30DBCtls70;VCLZipD7_3;asgd7;EhLib70;FR7;llPDFLibD7;zsr;inetdb
 Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=-xsm -mm=15 -chk=1b4c8e14221054975f9389211e7d079f
+RunParams=
 HostApplication=
 Launcher=
 UseLauncher=0
@@ -114,8 +114,8 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=3
 MinorVer=0
-Release=1
-Build=26
+Release=0
+Build=0
 Debug=0
 PreRelease=0
 Special=0
@@ -125,13 +125,13 @@ Locale=2052
 CodePage=936
 [Version Info Keys]
 CompanyName=
-FileDescription=R3
-FileVersion=3.0.1.26
+FileDescription=MM
+FileVersion=3.0.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=R3
+ProductName=
 ProductVersion=3.0.0.0
 Comments=
 [HistoryLists\hlUnitAliases]

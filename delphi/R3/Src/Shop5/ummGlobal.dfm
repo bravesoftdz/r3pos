@@ -1,0 +1,2 @@
+inherited mmGlobal: TmmGlobal
+end

@@ -374,27 +374,15 @@ var
    rs:TZQuery;
    cDate:string;
 begin
-   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then  //不是同步状态
-      begin
-        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
-        if FieldbyName('SALES_DATE').AsOldString <> '' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
-        if FieldbyName('PLAN_DATE').AsString<>'' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString)),FieldbyName('TIME_STAMP').AsString);
-        if FieldbyName('PLAN_DATE').AsOldString <> '' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsOldString)),FieldbyName('TIME_STAMP').AsOldString);
-        result := true;
-      end
-   else
-      begin
-        cDate := GetReckDate(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString);
-        if FieldbyName('SALES_DATE').asString < cDate then
-           begin
-             FieldbyName('NOTE').asString := '开单日期:'+FieldbyName('SALES_DATE').asString+'上传至最近结帐日:'+cDate;
-             FieldbyName('SALES_DATE').asString := cDate;
-           end;
-        Result := true;
-      end;
+//  Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
+//  if FieldbyName('SALES_DATE').AsOldString <> '' then
+//     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
+
+//  if FieldbyName('PLAN_DATE').AsString<>'' then
+//     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsString)),FieldbyName('TIME_STAMP').AsString);
+//  if FieldbyName('PLAN_DATE').AsOldString <> '' then
+//     Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('PLAN_DATE').AsOldString)),FieldbyName('TIME_STAMP').AsOldString);
+  result := true;
 end;
 
 function TDbOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;comm:boolean=true): boolean;

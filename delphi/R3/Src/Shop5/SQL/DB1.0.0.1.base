@@ -528,6 +528,10 @@ CREATE TABLE [CA_SHOP_INFO](
 	[REGION_ID] [varchar](10) NULL,
     --门店类型(原管理群组 对应PUB_CODE_INFO)
 	[SHOP_TYPE] [varchar](36) NULL,
+	  --新商盟账号
+	[XSM_CODE] [varchar](50) NULL,
+	  --新商盟密码
+	[XSM_PSWD] [varchar](50) NULL,
     --排序号
   [SEQ_NO] int NULL,
     --通讯标志 00 新增 01修改 02 删除 第一位为0待同步,1已同步

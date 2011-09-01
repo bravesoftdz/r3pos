@@ -1,4 +1,4 @@
-unit ufrmShopMain;
+unit ufrmXsm2Main;
 
 interface
 
@@ -9,12 +9,13 @@ uses
   RzButton, ZBase, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
-  DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg;
+  DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg, RzSplit, Mask,
+  RzEdit, RzListVw;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
   WM_CHECK_MSG=WM_USER+2565;
 type
-  TfrmShopMain = class(TfrmMain)
+  TfrmXsm2Main = class(TfrmMain)
     mnuWindow: TMenuItem;
     Panel5: TPanel;
     Image3: TImage;
@@ -22,7 +23,6 @@ type
     N2: TMenuItem;
     N3: TMenuItem;
     fdsfds1: TMenuItem;
-    rzLeft: TRzPanel;
     N4: TMenuItem;
     N5: TMenuItem;
     N6: TMenuItem;
@@ -123,14 +123,8 @@ type
     N100: TMenuItem;
     N101: TMenuItem;
     N102: TMenuItem;
-    Panel7: TPanel;
     Panel8: TPanel;
-    Panel10: TPanel;
-    Panel11: TPanel;
-    Image15: TImage;
-    ImageList1: TImageList;
-    Image19: TImage;
-    RzGroupBar1: TRzGroupBar;
+    ImageList2: TImageList;
     actfrmMeaUnits: TAction;
     actfrmDutyInfoList: TAction;
     actfrmRoleInfoList: TAction;
@@ -192,21 +186,8 @@ type
     actfrmRecvDayReport: TAction;
     actfrmRckDayReport: TAction;
     actfrmRelation: TAction;
-    Label2: TLabel;
-    Panel21: TPanel;
-    Image2: TImage;
-    Panel22: TPanel;
-    Image13: TImage;
-    Image22: TImage;
-    Panel23: TPanel;
-    Image23: TImage;
-    Image24: TImage;
-    Image25: TImage;
+    ImageList3: TImageList;
     toolButton: TRzBmpButton;
-    Panel24: TPanel;
-    Image26: TImage;
-    Panel26: TPanel;
-    Image28: TImage;
     actfrmPayDayReport: TAction;
     actfrmPayAbleReport: TAction;
     actfrmRecvAbleReport: TAction;
@@ -220,7 +201,6 @@ type
     actfrmMessage: TAction;
     actfrmNewPaperReader: TAction;
     actfrmQuestionnaire: TAction;
-    RzLabel1: TRzLabel;
     actfrmInLocusOrderList: TAction;
     actfrmOutLocusOrderList: TAction;
     actfrmDownIndeOrder: TAction;
@@ -236,59 +216,64 @@ type
     actfrmStockTotalReport: TAction;
     RzTrayIcon1: TRzTrayIcon;
     actfrmSaleMonthTotalReport: TAction;
-    CA_MODULE: TZQuery;
     RzPanel1: TRzPanel;
-    Panel1: TPanel;
     Panel4: TPanel;
     Image5: TImage;
     Image6: TImage;
     Panel2: TPanel;
     Image4: TImage;
-    Label1: TLabel;
-    Panel6: TPanel;
-    Panel19: TPanel;
-    Image20: TImage;
-    lblUserInfo: TRzLabel;
-    Panel18: TPanel;
-    Image17: TImage;
-    Panel17: TPanel;
-    Image7: TImage;
-    Image8: TImage;
-    RzBmpButton10: TRzBmpButton;
+    Image2: TImage;
     RzBmpButton9: TRzBmpButton;
-    RzBmpButton8: TRzBmpButton;
-    RzBmpButton1: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
-    RzBmpButton5: TRzBmpButton;
-    RzBmpButton6: TRzBmpButton;
-    RzBmpButton4: TRzBmpButton;
+    RzBmpButton10: TRzBmpButton;
+    RzEdit1: TRzEdit;
+    lblDayInfo: TRzLabel;
+    Image9: TImage;
+    lblNetStatus: TRzLabel;
+    RzPanel9: TRzPanel;
+    Panel9: TPanel;
     rzTool: TPanel;
     Image21: TImage;
     Panel12: TPanel;
     Image14: TImage;
-    Panel14: TPanel;
-    Image9: TImage;
-    Panel13: TPanel;
-    Image1: TImage;
-    Panel15: TPanel;
-    Image10: TImage;
-    Image11: TImage;
-    rzChildTitle: TRzLabel;
-    RzBmpButton3: TRzBmpButton;
     Panel3: TPanel;
-    Panel16: TPanel;
-    Image16: TImage;
     rzToolButton: TPanel;
-    Image27: TImage;
-    Panel20: TPanel;
+    actfrmXsmNet: TAction;
+    Panel1: TPanel;
     Image12: TImage;
-    Panel9: TPanel;
-    ImageList4: TImageList;
+    rzLeft: TRzPanel;
+    rzLeft_1: TRzPanel;
+    Bar1: TRzPanel;
+    RzPanel5: TRzPanel;
+    page_01: TRzBmpButton;
+    page_02: TRzBmpButton;
+    page_03: TRzBmpButton;
+    page_04: TRzBmpButton;
+    Bar2: TRzPanel;
+    RzPanel10: TRzPanel;
+    page_11: TRzBmpButton;
+    page_12: TRzBmpButton;
+    page_13: TRzBmpButton;
+    page_14: TRzBmpButton;
     RzPanel2: TRzPanel;
-    rzPage: TRzTabControl;
-    Panel25: TPanel;
+    Panel11: TPanel;
+    split: TImage;
+    CA_MODULE: TZQuery;
+    actfrmRimNet: TAction;
+    RzPanel3: TRzPanel;
+    RzPanel4: TRzPanel;
+    Image1: TImage;
+    Panel10: TPanel;
+    tbDesktop: TRzBmpButton;
+    Image10: TImage;
+    actfrmDefineStateInfo: TAction;
+    actfrmOpenDesk: TAction;
+    actfrmSyncAll: TAction;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    RzBmpButton3: TRzBmpButton;
+    lblUserInfo: TLabel;
+    imgOffline: TImage;
     procedure FormActivate(Sender: TObject);
-    procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
@@ -297,13 +282,8 @@ type
     procedure N68Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure N90Click(Sender: TObject);
-    procedure UpdateTimerTimer(Sender: TObject);
     procedure RzBmpButton10Click(Sender: TObject);
-    procedure RzBmpButton8Click(Sender: TObject);
-    procedure RzTabChange(Sender: TObject);
-    procedure Image19Click(Sender: TObject);
     procedure RzBmpButton9Click(Sender: TObject);
-    procedure toolButtonClick(Sender: TObject);
     procedure actfrmMeaUnitsExecute(Sender: TObject);
     procedure actfrmDutyInfoListExecute(Sender: TObject);
     procedure actfrmRoleInfoListExecute(Sender: TObject);
@@ -361,7 +341,6 @@ type
     procedure actfrmStorageDayReportExecute(Sender: TObject);
     procedure actfrmRckDayReportExecute(Sender: TObject);
     procedure actfrmRelationExecute(Sender: TObject);
-    procedure RzBmpButton3Click(Sender: TObject);
     procedure actfrmRecvDayReportExecute(Sender: TObject);
     procedure actfrmPayDayReportExecute(Sender: TObject);
     procedure actfrmRecvAbleReportExecute(Sender: TObject);
@@ -369,8 +348,6 @@ type
     procedure actfrmStorageTrackingExecute(Sender: TObject);
     procedure actfrmDbDayReportExecute(Sender: TObject);
     procedure actfrmGodsRunningReportExecute(Sender: TObject);
-    procedure RzBmpButton4Click(Sender: TObject);
-    procedure RzBmpButton2Click(Sender: TObject);
     procedure tlbCloseClick(Sender: TObject);
     procedure N103Click(Sender: TObject);
     procedure actfrmIoroDayReportExecute(Sender: TObject);
@@ -379,12 +356,9 @@ type
     procedure actfrmQuestionnaireExecute(Sender: TObject);
     procedure RzBmpButton11Click(Sender: TObject);
     procedure RzBmpButton12Click(Sender: TObject);
-    procedure RzBmpButton7Click(Sender: TObject);
     procedure RzBmpButton13Click(Sender: TObject);
     procedure RzBmpButton14Click(Sender: TObject);
     procedure RzBmpButton15Click(Sender: TObject);
-    procedure sDeskPageClick(Sender: TObject);
-    procedure RzBmpButton6Click(Sender: TObject);
     procedure actfrmInLocusOrderListExecute(Sender: TObject);
     procedure actfrmOutLocusOrderListExecute(Sender: TObject);
     procedure lblUserInfoClick(Sender: TObject);
@@ -402,7 +376,28 @@ type
     procedure actfrmStockTotalReportExecute(Sender: TObject);
     procedure RzTrayIcon1LButtonDblClick(Sender: TObject);
     procedure actfrmSaleMonthTotalReportExecute(Sender: TObject);
-    procedure rzPageChange(Sender: TObject);
+    procedure rzSizeLeft_1Resize(Sender: TObject);
+    procedure actfrmXsmNetExecute(Sender: TObject);
+    procedure splitClick(Sender: TObject);
+    procedure page_03Click(Sender: TObject);
+    procedure page_04Click(Sender: TObject);
+    procedure page_02Click(Sender: TObject);
+    procedure page_12Click(Sender: TObject);
+    procedure page_13Click(Sender: TObject);
+    procedure page_14Click(Sender: TObject);
+    procedure tbDesktopClick(Sender: TObject);
+    procedure page_11Click(Sender: TObject);
+    procedure page_01Click(Sender: TObject);
+    procedure actfrmRimNetExecute(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure actfrmCalcStorageExecute(Sender: TObject);
+    procedure actfrmStorageOptionDefineExecute(Sender: TObject);
+    procedure actfrmOpenDeskExecute(Sender: TObject);
+    procedure actfrmSyncAllExecute(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure Image9Click(Sender: TObject);
     procedure RzTrayIcon1MinimizeApp(Sender: TObject);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
   private
@@ -415,12 +410,11 @@ type
     FSystemShutdown: boolean;
     sflag:string;
     IsXsm:Boolean;
+    FCA_MODULE: TZQuery;
     procedure DoLoadMsg(Sender:TObject);
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
-    procedure SortToolButton;
-    procedure SortPageButton;
     procedure WMQUERYENDSESSION(var msg:Tmessage);Message  WM_QUERYENDSESSION;
     procedure wm_Login(var Message: TMessage); message WM_LOGIN_REQUEST;
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
@@ -428,24 +422,28 @@ type
     procedure wm_check(var Message: TMessage); message WM_CHECK_MSG;
     procedure SetLogined(const Value: boolean);
     function  CheckVersion:boolean;
+    function  XsmRegister:boolean;
     function  ConnectToDb:boolean;
     //p1 -rsp
     //p2 连接串
     //p3 企业号
     //p4 产品号
     //p5 行业号
+    procedure InitXsm;
+    procedure InitRim;
     function  ConnectToRsp:boolean;
     function  ConnectToXsm:boolean;
     function  UpdateDbVersion:boolean;
     procedure SetLoging(const Value: boolean);
     procedure SetSystemShutdown(const Value: boolean);
     procedure InitTenant;
-    procedure DoPageClick(Sender:TObject);
+    function SortToolButton:boolean;
+    procedure UnSelect;
   public
     { Publicdeclarations }
     destructor Destroy; override;
+    procedure LoadMenu(subname:string='');
     procedure LoadPic32;
-    procedure LoadMenu(Sender:TObject);
     procedure LoadFrame;
     procedure InitVersioin;
     function GetDeskFlag:string;
@@ -454,18 +452,19 @@ type
     function Login(Locked:boolean=false;Exited:boolean=true):boolean;
     procedure WriteAction(s:string;flag:integer);
     procedure AddFrom(form:TForm);
+    procedure AddModule(mid:string;Action:TAction);
     procedure RemoveFrom(form:TForm);
+    procedure Clear;
     property Logined:boolean read FLogined write SetLogined;
     property Loging:boolean read FLoging write SetLoging;
     property SystemShutdown:boolean read FSystemShutdown write SetSystemShutdown;
   end;
 
 var
-  frmShopMain: TfrmShopMain;
-
+  frmXsm2Main: TfrmXsm2Main;
 implementation
 uses
-  uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmXsm2Desk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -477,97 +476,109 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmInitGuide,uLoginFactory
-  ;
+  ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,uLoginFactory;
+  
 {$R *.dfm}
 
-procedure TfrmShopMain.FormActivate(Sender: TObject);
+function CheckXsmPassWord(uid, pwd: string): boolean;
+begin
+  xsm_username := uid;
+  xsm_password := pwd;
+  result := frmXsmIEBrowser.XsmLogin(true);
+end;
+
+procedure TfrmXsm2Main.FormActivate(Sender: TObject);
 begin
   inherited;
   //if not systemShutdown and not Application.Terminated then WindowState := wsMaximized;
 end;
 
-procedure TfrmShopMain.fdsfds1Click(Sender: TObject);
-begin
-  inherited;
-  self.Cascade;
-end;
-
-
-procedure TfrmShopMain.FormCreate(Sender: TObject);
+procedure TfrmXsm2Main.FormCreate(Sender: TObject);
 var
   F:TextFile;
   i:integer;
 begin
   inherited;
+  frmXsmIEBrowser := nil;
+  frmRimIEBrowser := nil;
+  XsmCheckPassWord := CheckXsmPassWord;
   IsXsm := false;
+  FormBgk := true;
   LoadPic32;
-  FList := TList.Create;
-//  PagePanel.Visible := (sflag='s1_');
   PageList := TList.Create;
   frmLogo := TfrmLogo.Create(nil);
   frmPrgBar := TfrmPrgBar.Create(nil);
+  FList := TList.Create;
   ForceDirectories(ExtractFilePath(ParamStr(0))+'temp');
   ForceDirectories(ExtractFilePath(ParamStr(0))+'debug');
   SystemShutdown := false;
   Loging :=false;
   frmInstall := TfrmInstall.Create(self);
   screen.OnActiveFormChange := DoActiveChange;
+  AssignFile(F,ExtractFilePath(ParamStr(0))+'hook.cfg');
+  rewrite(f);
+  try
+    writeln(f,handle);
+    writeln(f,WM_DESKTOP_REQUEST);
+  finally
+    closefile(f);
+  end;
   RzVersionInfo.FilePath := ParamStr(0);
   LoadFrame;
   TimerFactory := nil;
-
 end;
 
-procedure TfrmShopMain.FormDestroy(Sender: TObject);
+procedure TfrmXsm2Main.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
   LoginFactory.Logout;
   Timer1.Enabled := false;
-  if TimerFactory<>nil then TimerFactory.free;
+  UpdateTimer.Enabled := false;
+  if frmXsmIEBrowser<>nil then frmXsmIEBrowser.free;
+  if frmRimIEBrowser<>nil then frmRimIEBrowser.free;
+  if TimerFactory<>nil then TimerFactory.Free;
   frmLogo.Free;
   frmPrgBar.Free;
   if frmInstall<>nil then frmInstall.free;
   screen.OnActiveFormChange := nil;
-  for i:=0 to FList.Count - 1 do TObject(FList[i]).Free;
+  for i:=0 to FList.Count -1 do
+    begin
+      TRzBmpButton(FList[i]).OnClick := nil;
+      TObject(FList[i]).Free;
+    end;
   inherited;
   FList.Free;
   PageList.Free;
 end;
 
-procedure TfrmShopMain.AddFrom(form: TForm);
+procedure TfrmXsm2Main.AddFrom(form: TForm);
 var
   button:TrzBmpButton;
 begin
-//  if FList.Count > 5 then Exit;
   button := TrzBmpButton.Create(rzToolButton);
   button.GroupIndex := 999;
+  button.AllowAllUp := true;
   button.Bitmaps.Up.Assign(toolButton.Bitmaps.Up);
   button.Bitmaps.Down.Assign(toolButton.Bitmaps.Down);
   button.Font.Assign(toolButton.Font);
-  button.Caption := form.Caption;
   button.Tag := Integer(Pointer(form));
   button.OnClick := DoActiveForm;
-  button.Visible := true;
+  button.Visible := false;
   button.Parent := rzToolButton;
-  button.PopupMenu := tlbPage;
+//  button.PopupMenu := tlbPage;
+  button.Top := 3;
   FList.Add(button);
+  Clear;
+  page_11.down := true;
   SortToolButton;
-  button.Down := true;
+  button.Caption := form.Caption;
   TfrmBasic(Form).OnFreeForm := DoFreeForm;
-  TfrmBasic(Form).PageHandle := Integer(Button);
-  rzChildTitle.Caption := '当前位置->'+form.Caption;
-  if Screen.width<=800 then
-  begin
-    rzLeft.Width := 29;
-    Panel12.Width := 31;
-    Panel24.Width := 23;
-    frmMain.OnResize(nil);
-  end;
+  TfrmBasic(Form).PageHandle := Integer(button);
+  button.Down := true;
 end;
 
-procedure TfrmShopMain.RemoveFrom(form: TForm);
+procedure TfrmXsm2Main.RemoveFrom(form: TForm);
 var
   i:integer;
 begin
@@ -583,46 +594,119 @@ begin
   SortToolButton;
 end;
 
-procedure TfrmShopMain.DoActiveForm(Sender: TObject);
+procedure TfrmXsm2Main.DoActiveForm(Sender: TObject);
 begin
+  if TrzBmpButton(Sender).tag=0 then Exit;
   TForm(TrzBmpButton(Sender).tag).WindowState := wsMaximized;
   TForm(TrzBmpButton(Sender).tag).BringToFront;
   TrzBmpButton(Sender).Down := true;
 end;
-
-procedure TfrmShopMain.SortToolButton;
-var
-  i:Integer;
-  button:TrzBmpButton;
+function ToolSort(Item1, Item2: Pointer): Integer;
 begin
+  if TrzBmpButton(Item1).Tag > TrzBmpButton(Item2).Tag then
+     result := 1
+  else
+  if TrzBmpButton(Item1).Tag < TrzBmpButton(Item2).Tag then
+     result := -1
+  else
+     result := 0;
+end;
+function TfrmXsm2Main.SortToolButton:boolean;
+var
+  i,w,wl:Integer;
+  button,DefButton:TrzBmpButton;
+begin
+  w := 0;
+  wl:= 0;
+  DefButton := nil;
   for i:=0 to FList.Count -1 do
     begin
       button := TrzBmpButton(FList[i]);
-      button.Top := 0;
-      if i=0 then
+      button.Visible := false;
+    end;
+//  FList.Sort(@ToolSort);
+  for i:=0 to FList.Count -1 do
+    begin
+      button := TrzBmpButton(FList[i]);
+      if page_11.Down and (button.GroupIndex <> 999) then continue;
+      if not page_11.Down and (button.GroupIndex <> 888) then continue;
+      button.Visible := false;
+      button.Top := 3;
+      if w=0 then
          button.Left := 0
       else
-         button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+5;
+         button.Left := TrzBmpButton(FList[wl]).Left+TrzBmpButton(FList[wl]).width+5;
+      button.Visible := true;
+      if w=0 then DefButton := button;
+      wl := i;
+      inc(w);
+    end;
+  if DefButton=nil then
+    begin
+      PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);//  tbDesktopClick(tbDesktop);
+      result := false;
+    end
+  else
+    begin
+      if page_11.Down then Exit;
+      DefButton.onClick(DefButton);
+      result := true;
+      DefButton.Down := true;
     end;
 end;
 
-procedure TfrmShopMain.DoActiveChange(Sender: TObject);
+procedure TfrmXsm2Main.DoActiveChange(Sender: TObject);
 var
   i:integer;
   SOn:TNotifyEvent;
 begin
+  if not Logined then Exit;
+  if screen.ActiveForm = nil then Exit;
+  if screen.ActiveForm = frmMain then Exit;
+  if screen.ActiveForm = frmDesk then Exit;
+  if (screen.ActiveForm.FormStyle=fsMDIChild) then
+  begin
   for i:=0 to FList.Count -1 do
     begin
-      if TrzBmpButton(FList[i]).tag=integer(pointer(screen.ActiveForm)) then
+      if (Integer(FList[i])=TfrmBasic(screen.ActiveForm).PageHandle) then
          begin
            TrzBmpButton(FList[i]).Down := true;
-           rzChildTitle.Caption := '当前位置->'+Screen.ActiveForm.Caption;
-           break;
+           Exit;
          end;
     end;
+  end;
 end;
 
-procedure TfrmShopMain.DoFreeForm(Sender: TObject);
+procedure TfrmXsm2Main.DoFreeForm(Sender: TObject);
+function SortR3Button:boolean;
+var
+  i,w,wl:Integer;
+  button:TrzBmpButton;
+begin
+  if not page_11.Down then Exit;
+  for i:=0 to FList.Count -1 do
+    begin
+      button := TrzBmpButton(FList[i]);
+      button.Visible := false;
+    end;
+  w := 0;
+  wl:= 0;
+  for i:=0 to FList.Count -1 do
+    begin
+      button := TrzBmpButton(FList[i]);
+      if page_11.Down and (button.GroupIndex <> 999) then continue;
+      if not page_11.Down and (button.GroupIndex <> 888) then continue;
+      button.Visible := false;
+      button.Top := 3;
+      if w=0 then
+         button.Left := 0
+      else
+         button.Left := TrzBmpButton(FList[wl]).Left+TrzBmpButton(FList[wl]).width+5;
+      button.Visible := true;
+      wl := i;
+      inc(w);
+    end;
+end;
 var
   i:integer;
 begin
@@ -636,10 +720,11 @@ begin
            break;
          end;
     end;
-  SortToolButton;
+  SortR3Button;
+  if not Closeing then PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);
 end;
 
-function TfrmShopMain.CheckVersion:boolean;
+function TfrmXsm2Main.CheckVersion:boolean;
 function GetFileNameFromURL(url: string): string;
 var ts : TStrings;
 begin
@@ -708,7 +793,7 @@ begin
        end;
   end;
 end;
-function TfrmShopMain.Login(Locked:boolean=false;Exited:boolean=true):boolean;
+function TfrmXsm2Main.Login(Locked:boolean=false;Exited:boolean=true):boolean;
 var
   Params:ufrmLogin.TLoginParam;
   lDate:TDate;
@@ -716,7 +801,7 @@ var
 begin
   if TimerFactory<>nil then TimerFactory.Free;
   try
-  if not Logined or Locked then
+  if (not Logined or frmXsmIEBrowser.SessionFail) or Locked then
      begin
        Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
        if Logined then
@@ -732,7 +817,10 @@ begin
        end;
      end
   else
-     result := true;
+     begin
+       Logined := true;
+       result := true;
+     end;
   if Locked then Exit;
   if Logined then
      begin
@@ -746,12 +834,33 @@ begin
                    if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then SyncFactory.SyncBasic(false);
                  end;
             end;
+         frmLogo.ShowTitle := '正在初始化基础数据...';
          Global.LoadBasic();
+         frmLogo.ShowTitle := '正在初始化权限数据...';
          ShopGlobal.LoadRight;
          CheckEnabled;
-         CA_MODULE.Close;
-         LoadMenu(nil);
+         frmXsm2Desk.CA_MODULE := CA_MODULE;
+         frmLogo.ShowTitle := '正在初始化同步数据...';
          ShopGlobal.SyncTimeStamp;
+         if CaFactory.Audited and frmXsmIEBrowser.SessionFail then
+            begin
+              frmLogo.ShowTitle := '正在登录新商盟...';
+              frmXsmIEBrowser.XsmLogin(false);
+            end;
+         if CaFactory.Audited and Global.RemoteFactory.Connected and not frmXsmIEBrowser.SessionFail then
+            begin
+              frmLogo.ShowTitle := '正在登录零售终端管理平台...';
+              frmLogo.Show;
+              frmLogo.BringToFront;
+              frmRimIEBrowser.ReadParam;
+              frmRimIEBrowser.DoLogin(false,true);
+            end;
+         frmLogo.ShowTitle := '正在初始化广告数据...';
+         frmLogo.Show;
+         frmLogo.BringToFront;
+         if frmRimIEBrowser.Logined then AdvFactory.LoadAdv;
+         frmLogo.ShowTitle := '正在初始化桌面数据...';
+         frmXsm2Desk.loadDesk;
          if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and (ParamStr(1)<>'-xsm') and ShopGlobal.GetChkRight('500028') then
          begin
             PostMessage(Handle,WM_DESKTOP_REQUEST,13100001,0);
@@ -767,7 +876,7 @@ begin
        result := Logined;
        if Global.TENANT_ID = 0 then
           begin
-            PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,1,1);
+            PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,1,1);
             Exit;
           end
        else
@@ -782,11 +891,10 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.wm_Login(var Message: TMessage);
+procedure TfrmXsm2Main.wm_Login(var Message: TMessage);
 var prm:string;
 begin
   if Logined then Exit;
-  CaFactory.DownModule := true;
   try
     if (ParamStr(1)='-rsp') then
        begin
@@ -811,20 +919,21 @@ begin
        end
     else
        begin
+         Logined := false;
          if not ConnectToDb then
            begin
              Application.Terminate;
              Exit;
            end
          else
-           Logined := false;
+           Logined := not frmXsmIEBrowser.SessionFail;
        end;
     Logined := Login(false);
-    if not frmShopMain.Visible and Logined and not IsXsm then
+    if not frmXsm2Main.Visible and Logined and not IsXsm then
     begin
       Application.Minimize;
-      frmShopMain.Show;
-      frmShopMain.WindowState := wsMaximized;
+      frmXsm2Main.Show;
+      frmXsm2Main.WindowState := wsMaximized;
       Application.Restore;
     end;
   except
@@ -837,39 +946,48 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.SetLogined(const Value: boolean);
-var s:string;
+procedure TfrmXsm2Main.SetLogined(const Value: boolean);
+var
+  s:string;
 begin
   FLogined := Value;
   if not Value then Timer1.Enabled := Value;
-  if Value then
-     lblUserInfo.Caption := '用户名:'+Global.UserName
-  else
-     lblUserInfo.Caption := '未登录...';
+//  if Value then
+//     lblUserInfo.Caption := '用户名:'+Global.UserName
+//  else
+//     lblUserInfo.Caption := '未登录...';
 end;
 
-procedure TfrmShopMain.miCloseClick(Sender: TObject);
+procedure TfrmXsm2Main.miCloseClick(Sender: TObject);
 begin
   inherited;
   Close;
 end;
 
-procedure TfrmShopMain.FormShow(Sender: TObject);
+procedure TfrmXsm2Main.FormShow(Sender: TObject);
 begin
   inherited;
   UpdateTimer.Enabled := true;
 end;
 
-procedure TfrmShopMain.CheckEnabled;
+procedure TfrmXsm2Main.CheckEnabled;
 var
   i:integer;
   rs:TZQuery;
 begin
+  CA_MODULE.Close;
+  CA_MODULE.SQL.Text := 'select * from CA_MODULE where PROD_ID='''+ProductID+''' order by LEVEL_ID';
+  Factor.Open(CA_MODULE);
+  rs := CA_MODULE;
   for i:=0 to actList.ActionCount -1 do
     begin
       TAction(actList.Actions[i]).Enabled := (TAction(actList.Actions[i]).Tag=0);
       if TAction(actList.Actions[i]).Tag > 0 then
-         TAction(actList.Actions[i]).Enabled := ShopGlobal.GetChkRight(inttostr(TAction(actList.Actions[i]).tag),1);
+         begin
+           TAction(actList.Actions[i]).Enabled := ShopGlobal.GetChkRight(inttostr(TAction(actList.Actions[i]).tag),1);
+           if rs.Locate('MODU_ID',inttostr(TAction(actList.Actions[i]).tag),[]) then
+              TAction(actList.Actions[i]).Caption := rs.FieldbyName('MODU_NAME').AsString;
+         end;
     end;
   actfrmDbOrderList.Enabled := actfrmDbOrderList.Enabled and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion);
   actfrmDbDayReport.Enabled := actfrmDbDayReport.Enabled and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion);
@@ -880,7 +998,7 @@ begin
      actfrmRelation.Enabled := false;
 end;
 
-procedure TfrmShopMain.FormCloseQuery(Sender: TObject;
+procedure TfrmXsm2Main.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 function CheckUpdateStatus:boolean;
 begin
@@ -906,32 +1024,32 @@ begin
      end;
 end;
 
-procedure TfrmShopMain.N68Click(Sender: TObject);
+procedure TfrmXsm2Main.N68Click(Sender: TObject);
 begin
   inherited;
   if Logined then
   begin
-    frmShopMain.Show;
-    frmShopMain.WindowState := wsMaximized;
+    frmXsm2Main.Show;
+    frmXsm2Main.WindowState := wsMaximized;
     Application.Restore;
   end;
 end;
 
-procedure TfrmShopMain.wm_desktop(var Message: TMessage);
+procedure TfrmXsm2Main.wm_desktop(var Message: TMessage);
 var
   i:integer;
   Form:TfrmBasic;
 begin
-  if not Logined then
-     begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
-       Exit;
-     end;
+  if not Logined then Exit;
+//     begin
+//       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
+//       Exit;
+//     end;
   Form := FindChildForm(TfrmPosMain);
   if Form<>nil then Form.WindowState := wsMinimized;
   if Message.WParam=0 then
      begin
-       RzBmpButton3Click(nil);
+       actfrmOpenDesk.OnExecute(actfrmOpenDesk);
        Exit;
      end;
   IsXsm := (Message.LParam=1);
@@ -950,7 +1068,7 @@ begin
     end;   
 end;
 
-procedure TfrmShopMain.WMQUERYENDSESSION(var msg: Tmessage);
+procedure TfrmXsm2Main.WMQUERYENDSESSION(var msg: Tmessage);
 begin
   SystemShutdown := true;
   if frmInstall<>nil then FreeAndNil(frmInstall);
@@ -958,7 +1076,7 @@ begin
   inherited;
 end;
 
-function TfrmShopMain.UpdateDbVersion: boolean;
+function TfrmXsm2Main.UpdateDbVersion: boolean;
 var
   Factory:TCreateDbFactory;
 begin
@@ -972,7 +1090,7 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.Timer1Timer(Sender: TObject);
+procedure TfrmXsm2Main.Timer1Timer(Sender: TObject);
 var
   P:PMsgInfo;
   w:integer;
@@ -985,7 +1103,7 @@ begin
   if not Logined then Exit;
   if not Visible then Exit;
   if not Factor.Connected then Exit;
-
+  
   IsFirst := false;
   if (not MsgFactory.Loaded and (Timer1.Tag>5)) or (MsgFactory.Loaded and (Timer1.Tag>0) and
      (MsgFactory.UnRead=0) and ((Timer1.Tag mod w)=0)
@@ -999,21 +1117,28 @@ begin
   if Timer1.Tag >= w then Timer1.Tag := 0 else Timer1.Tag := Timer1.Tag + 1;
   if MsgFactory.Count > 0 then
      begin
-       lblUserInfo.Caption := ShopGlobal.UserName + ' 您有('+inttostr(MsgFactory.UnRead)+')条消息';
-       case Timer1.Tag mod 2 of
-       0:begin
-           lblUserInfo.Font.Color := clRed;
-           lblUserInfo.Font.Style := [fsBold];
+       if MsgFactory.UnRead>0 then
+       begin
+         lblUserInfo.Caption := '尊敬的<'+Global.TENANT_NAME+'>客户,您有('+inttostr(MsgFactory.UnRead)+')条消息';
+         case Timer1.Tag mod 2 of
+         0:begin
+             lblUserInfo.Font.Color := clRed;
+             lblUserInfo.Font.Style := [fsBold];
+           end;
+         1:begin
+             lblUserInfo.Font.Color := clWhite;
+             lblUserInfo.Font.Style := [];
+           end;
          end;
-       1:begin
-           lblUserInfo.Font.Color := clWhite;
-           lblUserInfo.Font.Style := [];
-         end;
-       end;
+       end
+       else
+       begin
+         lblUserInfo.Caption := '尊敬的<'+Global.TENANT_NAME+'>客户,您有('+inttostr(MsgFactory.UnRead)+')条消息';
+       end
      end
   else
      begin
-       lblUserInfo.Caption := ShopGlobal.UserName + ' 您没有消息';
+         lblUserInfo.Caption := '尊敬的<'+Global.TENANT_NAME+'>客户,您有('+inttostr(MsgFactory.UnRead)+')条消息';
      end;
   if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) or IsFirst or MsgFactory.Opened then
      begin
@@ -1022,20 +1147,30 @@ begin
      end;
 end;
 
-procedure TfrmShopMain.LoadFrame;
+procedure TfrmXsm2Main.LoadFrame;
 var
   F:TIniFile;
 begin
   inherited;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
+    {
     Caption :=  F.ReadString('soft','name','rspcn.com')+' 版本:'+RzVersionInfo.FileVersion;
     if ShopGlobal.offline then
-       Caption := Caption +'【脱机使用】门店：'+ Global.SHOP_NAME
+       begin
+          Caption := Caption +'【脱机使用】门店：'+ Global.SHOP_NAME;
+          lblNetStatus.Caption := '我在线下';
+       end
     else
-       Caption := Caption +'【联机使用】门店：'+ Global.SHOP_NAME;
+       begin
+          Caption := Caption +'【联机使用】门店：'+ Global.SHOP_NAME;
+          lblNetStatus.Caption := '我在线上';
+       end;
+    }
+    if CaFactory.Audited then lblNetStatus.Caption := '我在线上' else lblNetStatus.Caption := '我在线下';
+    imgOffline.Visible := not CaFactory.Audited;
     Application.Title :=  F.ReadString('soft','name','rspcn.com');
-    RzLabel1.Caption := F.ReadString('soft','copyright','rspcn.com')+' | 使用单位:'+Global.TENANT_NAME;
+    lblDayInfo.Caption := '当前日期:'+formatDatetime('YYYY-MM-DD',date());
     if not FindCmdLineSwitch('rsp',['-','+'],false) then
        begin
           SFVersion := F.ReadString('soft','SFVersion','.NET');
@@ -1043,28 +1178,31 @@ begin
           ProductID := F.ReadString('soft','ProductID','R3_RYC');
        end;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
-    Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
+     Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
 end;
 
-procedure TfrmShopMain.SetLoging(const Value: boolean);
+procedure TfrmXsm2Main.SetLoging(const Value: boolean);
 begin
   FLoging := Value;
 end;
 
-procedure TfrmShopMain.SetSystemShutdown(const Value: boolean);
+procedure TfrmXsm2Main.SetSystemShutdown(const Value: boolean);
 begin
   FSystemShutdown := Value;
 end;
 
-procedure TfrmShopMain.InitVersioin;
+procedure TfrmXsm2Main.InitVersioin;
 begin
 
 end;
 
-procedure TfrmShopMain.N90Click(Sender: TObject);
+procedure TfrmXsm2Main.N90Click(Sender: TObject);
 var
   HWndCalculator : HWnd;
 begin
@@ -1075,20 +1213,14 @@ begin
 
 end;
 
-procedure TfrmShopMain.UpdateTimerTimer(Sender: TObject);
-begin
-  inherited;
-  Label2.Caption := '当前时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
-end;
-
-procedure TfrmShopMain.RzBmpButton10Click(Sender: TObject);
+procedure TfrmXsm2Main.RzBmpButton10Click(Sender: TObject);
 begin
   inherited;
   TfrmPswModify.ShowExecute(Global.UserId,Global.UserName);
 
 end;
 
-procedure TfrmShopMain.LoadMenu(Sender:TObject);
+procedure TfrmXsm2Main.LoadMenu(subname:string='');
 function FindAction(cName:string):TAction;
 var i:integer;
 begin
@@ -1102,165 +1234,46 @@ begin
          end;
     end;
 end;
-function CheckRight(btn:TRzTabCollectionItem):boolean;
 var
-  rs:TZQuery;
-  lvid:string;
+  lvid,doStr:string;
+  Action:TAction;
+  isRight:boolean;
 begin
-  result := false;
-  rs := CA_MODULE;
-  if not rs.Locate('MODU_ID',inttostr(btn.Tag),[]) then Exit;
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  rs.First;
-  while not rs.Eof do
-    begin
-      if (copy(rs.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid) and (rs.FieldbyName('LEVEL_NUM').AsInteger =3) then
-         begin
-           if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
-           begin
-             result := true;
-             Exit;
-           end;
-         end;
-      rs.Next;
-    end;
-end;
-procedure CreatePageButton(Id,Title:string);
-var
-  btn:TRzTabCollectionItem;
-  w:widestring;
-  i:integer;
-begin
-  btn := rzPage.Tabs.Add;
-  btn.ImageIndex := 0;
-  btn.Tag := StrtoInt(Id);
-  btn.Caption := ' '+Title;
-end;
-procedure CreatePageMenu;
-var
-  i:integer;
-begin
-  rzPage.Tabs.Clear;
+  Clear;
+  CA_MODULE.Filtered := false;
   CA_MODULE.First;
   while not CA_MODULE.Eof do
     begin
-      if CA_MODULE.FieldbyName('LEVEL_NUM').AsInteger =1 then
-      begin
-        CreatePageButton(CA_MODULE.FieldbyName('MODU_ID').AsString,CA_MODULE.FieldbyName('MODU_NAME').AsString);
-      end;
+      if (CA_MODULE.FieldByName('MODU_NAME').AsString=subname) and (length(CA_MODULE.FieldByName('MODU_ID').AsString)=9) then
+         begin
+           lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString;
+           break;
+         end;
       CA_MODULE.Next;
     end;
-  for i:=0 to rzPage.Tabs.Count -1 do
-     begin
-       CheckRight(rzPage.Tabs.Items[i]);
-     end;
-  if rzPage.Tabs.Count >0 then
-     begin
-       rzPage.TabIndex := 0;
-       rzPage.OnChange(rzPage);
-     end;
-end;
-var
-  rs:TZQuery;
-  g:TrzGroup;
-  b:TrzGroupItem;
-  i,r:integer;
-  lvid:string;
-begin
-  for i:=RzGroupBar1.GroupCount -1 downto 0 do
+  isRight := false;
+  CA_MODULE.SortedFields := 'LEVEL_ID';
+  CA_MODULE.First;
+  while not CA_MODULE.Eof do
     begin
-      RzGroupBar1.RemoveGroup(RzGroupBar1.Groups[i]);
-    end;
-  if not CA_MODULE.Active then
-     begin
-       CA_MODULE.Filtered := false;
-       CA_MODULE.Close;
-       CA_MODULE.SQL.Text := ParseSQL(Factor.iDbType,'select MODU_ID,MODU_NAME,ACTION_NAME,len(LEVEL_ID)/3 as LEVEL_NUM,LEVEL_ID from CA_MODULE where PROD_ID='''+ProductID+''' and MODU_TYPE in (1,3) and COMM not in (''02'',''12'') order by LEVEL_ID');
-       Factor.Open(CA_MODULE);
-       CreatePageMenu;
-     end;
-  if Sender=nil then Exit;
-  rs := CA_MODULE;
-  try
-  if not rs.Locate('MODU_ID',inttostr(TRzTabCollectionItem(Sender).Tag),[]) then Exit;
-  lvid := rs.FieldbyName('LEVEL_ID').AsString;
-  rs.First;
-  while not rs.Eof do
-    begin
-      if (copy(rs.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid) and (rs.FieldbyName('LEVEL_NUM').AsInteger =2) then
+      if (copy(CA_MODULE.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid) and (length(CA_MODULE.FieldbyName('LEVEL_ID').AsString)=(length(lvid)+3)) then
          begin
-           g := TrzGroup.Create(RzGroupBar1);
-           g.Caption := rs.FieldbyName('MODU_NAME').AsString;
-           g.CaptionColor := clWhite;
-           g.Color := clWhite;
-//           g.CaptionColor := $00E4D2AD;
-           g.CaptionHeight := 35;
-           g.DividerVisible := true;
-           g.CaptionImageIndex := 0;
-           RzGroupBar1.AddGroup(g);
-           inc(r);
-           // if r>3 then g.Close;
-         end
-      else
-      if (copy(rs.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid) and (rs.FieldbyName('LEVEL_NUM').AsInteger =3) then
-         begin
-           if FindAction(rs.FieldbyName('ACTION_NAME').AsString)<>nil then
-           begin
-             b := g.Items.Add;
-             b.Caption := rs.FieldbyName('MODU_NAME').AsString;
-             b.Action := FindAction(rs.FieldbyName('ACTION_NAME').AsString);
-             TAction(b.Action).Caption := rs.FieldbyName('MODU_NAME').AsString;
-             b.ImageIndex := 1;
-           end;
+           Action := FindAction(CA_MODULE.FieldbyName('ACTION_NAME').AsString);
+           if Assigned(Action) and ShopGlobal.GetChkRight(CA_MODULE.FieldbyName('MODU_ID').AsString,1) then
+              begin
+                AddModule(CA_MODULE.FieldbyName('MODU_ID').AsString,Action);
+                isRight := true;
+              end;
          end;
-      rs.Next;
+      CA_MODULE.Next;
     end;
-  finally
-  end;
-  for i:=RzGroupBar1.GroupCount -1 downto 0 do
-    begin
-      if RzGroupBar1.Groups[i].Items.Count =0 then
-         RzGroupBar1.RemoveGroup(RzGroupBar1.Groups[i]);
-    end;
+  if not isRight then MessageBox(Handle,'你没有操作此模块的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);     
 end;
 
-procedure TfrmShopMain.RzBmpButton8Click(Sender: TObject);
-begin
-  inherited;
-  Close;
-end;
-
-procedure TfrmShopMain.RzTabChange(Sender: TObject);
-begin
-  inherited;
-//  if rzLeft.Width = 33 then rzLeft.Width := 172;
-//  if Logined then LoadMenu;
-end;
-
-procedure TfrmShopMain.Image19Click(Sender: TObject);
-begin
-  inherited;
-  if rzLeft.Width = 29 then
-     begin
-       rzLeft.Width := 172;
-       Panel12.Width := 174;
-       Panel24.Width := 166;
-     end
-  else
-     begin
-       rzLeft.Width := 29;
-       Panel12.Width := 31;
-       Panel24.Width := 23;
-     end;
-
-  frmMain.OnResize(nil);
-end;
-
-procedure TfrmShopMain.RzBmpButton9Click(Sender: TObject);
+procedure TfrmXsm2Main.RzBmpButton9Click(Sender: TObject);
 var i:integer;
 begin
   inherited;
-  if FindChildForm(TfrmPosMain)<>nil then Raise Exception.Create('收款机模块没有退出不能切换用户...');
   if FList.Count > 0 then
      begin
        if MessageBox(Handle,'是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
@@ -1278,25 +1291,17 @@ begin
      end;
 end;
 
-procedure TfrmShopMain.toolButtonClick(Sender: TObject);
-begin
-  inherited;
-  frmDesk.ForeBringtoFront;
-  rzLeft.Width := 147;
-  frmDesk.OnResize(nil);
-end;
-
-procedure TfrmShopMain.DoConnectError(Sender: TObject);
+procedure TfrmXsm2Main.DoConnectError(Sender: TObject);
 begin
 
 end;
 
-function TfrmShopMain.GetDeskFlag: string;
+function TfrmXsm2Main.GetDeskFlag: string;
 begin
 
 end;
 
-procedure TfrmShopMain.InitTenant;
+procedure TfrmXsm2Main.InitTenant;
 var
   Params:TftParamList;
 begin
@@ -1306,13 +1311,17 @@ begin
     frmLogo.Label1.Update;
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.ExecProc('TTenantInit',Params);
+    
+    frmLogo.Label1.Caption := '正在初始化权限数据...';
+    frmLogo.Label1.Update;
     TfrmInitialRights.Rights(self);
   finally
     Params.Free;
   end;
 end;
-function TfrmShopMain.ConnectToDb:boolean;
-var RspComVersion:string;
+function TfrmXsm2Main.ConnectToDb:boolean;
+var
+  RspComVersion:string;
 begin
   frmLogo.Show;
   try
@@ -1327,7 +1336,7 @@ begin
        result := false;
        Exit;
      end;
-  result := TfrmTenant.coRegister(self);
+  result := XsmRegister;// TfrmTenant.coRegister(self);
   if result then LoadFrame;
   if result and CaFactory.Audited then result := CheckVersion;
   if not result then Exit;
@@ -1446,16 +1455,16 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.actfrmMeaUnitsExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmMeaUnitsExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  Application.Restore;
-  frmShopDesk.SaveToFront;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
   with TfrmMeaUnits.Create(self) do
     begin
       try
@@ -1467,18 +1476,17 @@ begin
 
 end;
 
-procedure TfrmShopMain.actfrmDutyInfoListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmDutyInfoListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-//  Application.Restore;
-  frmShopDesk.SaveToFront;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmDutyInfoList);
   if not Assigned(Form) then
      begin
@@ -1489,18 +1497,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmRoleInfoListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRoleInfoListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-//  Application.Restore;
-  frmShopDesk.SaveToFront;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRoleInfoList);
   if not Assigned(Form) then
      begin
@@ -1511,18 +1518,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmDeptInfoListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmDeptInfoListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-//  Application.Restore;
-  frmShopDesk.SaveToFront;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmDeptInfoList);
   if not Assigned(Form) then
      begin
@@ -1533,18 +1540,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmUsersExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmUsersExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-//  Application.Restore;
-  frmShopDesk.SaveToFront;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmUsers);
   if not Assigned(Form) then
      begin
@@ -1555,76 +1561,72 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmBrandInfoExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmBrandInfoExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  Application.Restore;
-  frmShopDesk.SaveToFront;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
   TfrmGoodsSort.ShowDialog(self,4);
 end;
 
-procedure TfrmShopMain.actfrmStockOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStockOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
-//  Application.Restore;
-  frmShopDesk.SaveToFront;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStockOrderList);
   if not Assigned(Form) then
      begin
        Form := TfrmStockOrderList.Create(self);
        AddFrom(Form);
-//       if ShopGlobal.GetChkRight('400020') then TfrmStockOrderList(Form).actNew.OnExecute(nil);
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmSalesOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSalesOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSalesOrderList);
   if not Assigned(Form) then
      begin
        Form := TfrmSalesOrderList.Create(self);
        AddFrom(Form);
-//       if ShopGlobal.GetChkRight('400020') then TfrmSalesOrderList(Form).actNew.OnExecute(nil);
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmChangeOrderList1Execute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmChangeOrderList1Execute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmChangeOrderList1');
   if not Assigned(Form) then
      begin
@@ -1638,17 +1640,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmChangeOrderList2Execute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmChangeOrderList2Execute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmChangeOrderList2');
   if not Assigned(Form) then
      begin
@@ -1662,18 +1664,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmGoodsInfoListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmGoodsInfoListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmGoodsInfoList);
   if not Assigned(Form) then
      begin
@@ -1684,17 +1686,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmGoodsSortExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmGoodsSortExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   if TfrmGoodsSortTree.ShowDialog(self,1) then
   begin
     Form:=FindChildForm(TfrmGoodsInfoList);
@@ -1703,109 +1705,109 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.actfrmCodeInfo3Execute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmCodeInfo3Execute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmCodeInfo.ShowDialog(self,3);
 end;
 
-procedure TfrmShopMain.actfrmSortInfoExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSortInfoExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmGoodsSort.ShowDialog(self,2);
 end;
 
-procedure TfrmShopMain.actfrmImplInfoExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmImplInfoExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmGoodsSort.ShowDialog(self,5);
 end;
 
-procedure TfrmShopMain.actfrmAreaInfoExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmAreaInfoExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmGoodsSort.ShowDialog(self,6);
 end;
 
-procedure TfrmShopMain.actfrmSaleStyleExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSaleStyleExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmCodeInfo.ShowDialog(self,2);
 end;
 
-procedure TfrmShopMain.actfrmSettleCodeExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSettleCodeExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmCodeInfo.ShowDialog(self,6);
 end;
 
-procedure TfrmShopMain.actfrmShopGroupExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmShopGroupExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmCodeInfo.ShowDialog(self,12);
 end;
 
-procedure TfrmShopMain.actfrmRecvOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRecvOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRecvOrderList);
   if not Assigned(Form) then
      begin
@@ -1816,18 +1818,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmPayOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmPayOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmPayOrderList);
   if not Assigned(Form) then
      begin
@@ -1838,18 +1840,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmClientExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmClientExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
 // Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmClient);
   if not Assigned(Form) then
      begin
@@ -1860,18 +1862,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmSupplierExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSupplierExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSupplier);
   if not Assigned(Form) then
      begin
@@ -1882,18 +1884,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmSalRetuOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSalRetuOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSalRetuOrderList);
   if not Assigned(Form) then
      begin
@@ -1904,18 +1906,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmStkRetuOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStkRetuOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
 //  if ShopGlobal.offline then Raise Exception.Create('暂不支持离线使用,开发中,请多关注...');
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStkRetuOrderList);
   if not Assigned(Form) then
      begin
@@ -1926,17 +1928,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmPosMainExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmPosMainExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmPosMain);
   if not Assigned(Form) then
      begin
@@ -1948,31 +1950,31 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmPriceGradeInfoExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmPriceGradeInfoExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmPriceGradeInfo.ShowDialog(self);
 
 end;
 
-procedure TfrmShopMain.actfrmSalIndentOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSalIndentOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSalIndentOrderList);
   if not Assigned(Form) then
      begin
@@ -1983,17 +1985,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmStkIndentOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStkIndentOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStkIndentOrderList);
   if not Assigned(Form) then
      begin
@@ -2004,17 +2006,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmInvoiceExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmInvoiceExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmInvoice);
   if not Assigned(Form) then
      begin
@@ -2025,17 +2027,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmCustomerExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmCustomerExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmCustomer);
   if not Assigned(Form) then
      begin
@@ -2059,29 +2061,29 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmCostCalcExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmCostCalcExecute(Sender: TObject);
 begin
   inherited;
 {  if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmCostCalc.StartCalc(self); }
 end;
 
-procedure TfrmShopMain.actfrmSysDefineExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSysDefineExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   with TfrmSysDefine.Create(self) do
     begin
       try
@@ -2092,57 +2094,57 @@ begin
     end;
 end;
 
-procedure TfrmShopMain.actfrmDaysCloseExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmDaysCloseExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmCostCalc.StartDayReck(self);
 end;
 
-procedure TfrmShopMain.actfrmMonthCloseExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmMonthCloseExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmCostCalc.StartMonthReck(self);
 
 end;
 
-procedure TfrmShopMain.actfrmCloseForDayExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmCloseForDayExecute(Sender: TObject);
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
-  if TfrmCloseForDay.ShowClDy(self)=2 then ;// MessageBox(Handle,'当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
+  frmXsm2Desk.SaveToFront;
+  if TfrmCloseForDay.ShowClDy(self)=2 then ;//MessageBox(Handle,'当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
-procedure TfrmShopMain.actfrmPriceOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmPriceOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmPriceOrderList);
   if not Assigned(Form) then
      begin
@@ -2154,17 +2156,17 @@ begin
 
 end;
 
-procedure TfrmShopMain.actfrmCheckOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmCheckOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmCheckOrderList);
   if not Assigned(Form) then
      begin
@@ -2177,17 +2179,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmDbOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmDbOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmDbOrderList);
   if not Assigned(Form) then
      begin
@@ -2198,7 +2200,7 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmShopInfoListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmShopInfoListExecute(Sender: TObject);
 var
   Form:TfrmBasic;
   AObj:TRecord_;
@@ -2206,11 +2208,11 @@ begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   if SFVersion='.LCL' then
      begin
        AObj := TRecord_.Create;
@@ -2233,17 +2235,17 @@ begin
      end;
 end;
 
-procedure TfrmShopMain.actfrmXsmBrowserExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmXsmBrowserExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmXsmWebForm');
   if not Assigned(Form) then
      begin
@@ -2253,6 +2255,7 @@ begin
      end;
   try
     Form.Name := 'frmXsmWebForm';
+    xsm_url := 'http://test.xinshangmeng.com/';
     if copy(ParamStr(3),1,8)='-xsmurl=' then
        TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
     else
@@ -2276,17 +2279,17 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.actfrmAccountExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmAccountExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmAccount);
   if not Assigned(Form) then
      begin
@@ -2297,17 +2300,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmTransOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmTransOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmTransOrderList);
   if not Assigned(Form) then
      begin
@@ -2318,7 +2321,7 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmDevFactoryExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmDevFactoryExecute(Sender: TObject);
 begin
   inherited;
   with TfrmDevFactory.Create(self) do
@@ -2331,17 +2334,17 @@ begin
     end;
 end;
 
-procedure TfrmShopMain.actfrmIoroOrderList1Execute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmIoroOrderList1Execute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmIoroOrderList1');
   if not Assigned(Form) then
      begin
@@ -2355,17 +2358,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmIoroOrderList2Execute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmIoroOrderList2Execute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmIoroOrderList2');
   if not Assigned(Form) then
      begin
@@ -2379,18 +2382,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmCheckTablePrintExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmCheckTablePrintExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmCheckTablePrint);
   if not Assigned(Form) then
   begin
@@ -2403,18 +2406,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmRckMngExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRckMngExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRckMng);
   if not Assigned(Form) then
   begin
@@ -2425,18 +2428,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmJxcTotalReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmJxcTotalReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmJxcTotalReport);
   if not Assigned(Form) then
   begin
@@ -2447,18 +2450,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmStockDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStockDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStockDayReport);
   if not Assigned(Form) then
   begin
@@ -2469,18 +2472,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmSaleDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSaleDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSaleDayReport);
   if not Assigned(Form) then
   begin
@@ -2491,17 +2494,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmChange1DayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmChange1DayReportExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmChange1DayReport');
   if not Assigned(Form) then
      begin
@@ -2515,17 +2518,17 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmChange2DayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmChange2DayReportExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmChange2DayReport');
   if not Assigned(Form) then
      begin
@@ -2539,30 +2542,30 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmLockScreenExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmLockScreenExecute(Sender: TObject);
 begin
   inherited;
-  frmShopDesk.HookLocked := true;
+  frmXsm2Desk.HookLocked := true;
   try
     Login(true);
   finally
-    frmShopDesk.HookLocked := false;
+    frmXsm2Desk.HookLocked := false;
   end;
 
 end;
 
-procedure TfrmShopMain.actfrmStorageDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStorageDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStorageDayReport);
   if not Assigned(Form) then
   begin
@@ -2573,18 +2576,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmRckDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRckDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRckDayReport);
   if not Assigned(Form) then
   begin
@@ -2595,18 +2598,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmRelationExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRelationExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRelation);
   if not Assigned(Form) then
   begin
@@ -2617,29 +2620,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.RzBmpButton3Click(Sender: TObject);
-begin
-  inherited;
-  if rzLeft.Width = 29 then rzLeft.Width := 172;
-  if Panel12.Width = 31 then Panel12.Width := 174;
-  if Panel24.Width = 23 then Panel24.Width := 166;
-  frmMain.OnResize(nil);
-  frmShopDesk.Locked := true;
-  frmShopDesk.BringToFront;
-end;
-
-procedure TfrmShopMain.actfrmRecvDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRecvDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRecvDayReport);
   if not Assigned(Form) then
   begin
@@ -2650,18 +2642,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmPayDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmPayDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmPayDayReport);
   if not Assigned(Form) then
   begin
@@ -2672,18 +2664,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmRecvAbleReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRecvAbleReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRecvAbleReport);
   if not Assigned(Form) then
   begin
@@ -2694,18 +2686,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmPayAbleReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmPayAbleReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmPayAbleReport);
   if not Assigned(Form) then
   begin
@@ -2716,18 +2708,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmStorageTrackingExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStorageTrackingExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStorageTracking);
   if not Assigned(Form) then
   begin
@@ -2751,18 +2743,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmDbDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmDbDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmDbDayReport);
   if not Assigned(Form) then
   begin
@@ -2773,18 +2765,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmGodsRunningReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmGodsRunningReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmGodsRunningReport);
   if not Assigned(Form) then
   begin
@@ -2795,68 +2787,20 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.RzBmpButton4Click(Sender: TObject);
-begin
-  inherited;
-  if CaFactory.Audited then
-     begin
-       CaFactory.SyncAll(1);
-       if ShopGlobal.ONLVersion then Exit;
-     end
-  else
-     begin
-       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
-     end;
-  if PrainpowerJudge.Locked>0 then
-     begin
-       MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
-     end;
-  frmLogo.Show;
-  frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
-  try
-    if ShopGlobal.offline and not Global.RemoteFactory.Connected then
-     begin
-       Global.MoveToRemate;
-       try
-         try
-           Global.Connect;
-         except
-           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...');
-         end;
-       finally
-         Global.MoveToLocal;
-       end;
-     end;
-    if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
-    SyncFactory.SyncAll;
-    Global.LoadBasic;
-    ShopGlobal.LoadRight;
-  finally
-    frmLogo.Close;
-  end;
-end;
-
-procedure TfrmShopMain.RzBmpButton13Click(Sender: TObject);
+procedure TfrmXsm2Main.RzBmpButton13Click(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('14100001',5) then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
   actfrmDownIndeOrder.Execute;
 end;
 
-procedure TfrmShopMain.RzBmpButton2Click(Sender: TObject);
-begin
-  inherited;
-  if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
-  actfrmDownIndeOrder.OnExecute(actfrmDownIndeOrder);
-end;
-
-procedure TfrmShopMain.tlbCloseClick(Sender: TObject);
+procedure TfrmXsm2Main.tlbCloseClick(Sender: TObject);
 var
   i:integer;
 begin
   for i:=0 to FList.Count -1 do
     begin
-      if TrzBmpButton(FList[i]).Down and (TrzBmpButton(FList[i]).Tag>0) then
+      if TrzBmpButton(FList[i]).Down and (TrzBmpButton(FList[i]).Tag>0) and (TrzBmpButton(FList[i]).GroupIndex=999) then
          begin
            TfrmBasic(TrzBmpButton(FList[i]).Tag).Close;
            break;
@@ -2864,24 +2808,24 @@ begin
     end;
 end;
 
-procedure TfrmShopMain.N103Click(Sender: TObject);
+procedure TfrmXsm2Main.N103Click(Sender: TObject);
 begin
   inherited;
   self.Cascade;
 end;
 
-procedure TfrmShopMain.actfrmIoroDayReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmIoroDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmIoroDayReport);
   if not Assigned(Form) then
   begin
@@ -2892,18 +2836,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmMessageExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmMessageExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmMessage);
   if not Assigned(Form) then
   begin
@@ -2914,22 +2858,22 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmNewPaperReaderExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmNewPaperReaderExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmNewPaperReader.ShowNewsPaper('');
 end;
 
-procedure TfrmShopMain.WriteAction(s: string;flag:integer);
+procedure TfrmXsm2Main.WriteAction(s: string;flag:integer);
 var
   F:TIniFile;
 begin
@@ -2940,213 +2884,66 @@ begin
     else
        F.WriteInteger('MenuReport',s,F.ReadInteger('Menu',s,0)+1);
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 
-procedure TfrmShopMain.actfrmQuestionnaireExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmQuestionnaireExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   TfrmQuestionnaire.ShowForm(self);
 end;
 
-procedure TfrmShopMain.LoadPic32;
-var
-  DllHandle: THandle;
-function GetBitmap(ResName:string):TBITMAP;
-var
-  Stream: TStream;
-begin
-  result := nil;
-  //装载Logo
-  if FindResource(DllHandle, PChar(ResName), 'BMP') <> 0 then
-  begin
-    Stream := TResourceStream.Create(DllHandle, ResName, 'BMP');
-    try
-      result := TBITMAP.Create;
-      try
-        Stream.Position := 0;
-        result.LoadFromStream(Stream);
-      except
-        freeandnil(result);
-      end;
-    finally
-      Stream.Free;
-    end;
-  end;
-end;
-function GetJpeg(ResName:string):TJPEGImage;
-var
-  Stream: TStream;
-begin
-  result := nil;
-  //装载Logo
-  if FindResource(DllHandle, PChar(ResName), 'JPG') <> 0 then
-  begin
-    Stream := TResourceStream.Create(DllHandle, ResName, 'JPG');
-    try
-      result := TJPEGImage.Create;
-      try
-        Stream.Position := 0;
-        result.LoadFromStream(Stream);
-      except
-        freeandnil(result);
-      end;
-    finally
-      Stream.Free;
-    end;
-  end;
-end;
-function GetResString(ResName:integer):string;
-var
-  iRet:array[0..254] of char;
-begin
-  result := '';
-  LoadString(DllHandle, ResName, iRet, 254);
-  result := StrPas(iRet);
-end;
-
-var
-  pic:TGraphic;
-begin
-  DllHandle := LoadLibrary('Pic32.dll');
-  sflag := 's'+GetResString(1)+'_';
-  if DllHandle > 0 then 
-  try
-    //logo
-    //Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
-    Image6.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
-    Image20.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
-    Image17.Picture.Graphic  := GetJpeg(sflag+'logo_r2');
-    Image8.Picture.Graphic  := GetJpeg(sflag+'logo_r3');
-    Image7.Picture.Graphic  := GetJpeg(sflag+'logo_r4');
-    
-    Image14.Picture.Graphic  := GetJpeg(sflag+'menu_title');
-
-    Image11.Picture.Graphic  := GetJpeg(sflag+'tool_01');
-    Image10.Picture.Graphic  := GetJpeg(sflag+'tool_02');
-    Image16.Picture.Graphic  := GetJpeg(sflag+'tool_03');
-    Image27.Picture.Graphic  := GetJpeg(sflag+'tool_04');
-    Image21.Picture.Graphic  := GetJpeg(sflag+'tool_05');
-
-//    Image18.Picture.Graphic  := GetJpeg(sflag+'page_bg');
-    Image19.Picture.Graphic  := GetJpeg(sflag+'split');
-
-    Image22.Picture.Graphic  := GetJpeg(sflag+'foot_1');
-    Image15.Picture.Graphic  := GetJpeg(sflag+'foot_2');
-    Image23.Picture.Graphic  := GetJpeg(sflag+'foot_3');
-    Image24.Picture.Graphic  := GetJpeg(sflag+'foot_4');
-    Image25.Picture.Graphic  := GetJpeg(sflag+'foot_bg');
-
-
-    toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
-    toolButton.Bitmaps.Down := GetBitmap(sflag+'toolbutton_hot');
-    RzBmpButton3.Bitmaps.Up := GetBitmap(sflag+'desktop');
-    RzBmpButton3.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
-
-    RzBmpButton10.Bitmaps.Up := GetBitmap(sflag+'password');
-    RzBmpButton10.Bitmaps.Hot := GetBitmap(sflag+'password_hot');
-    RzBmpButton9.Bitmaps.Up := GetBitmap(sflag+'logout');
-    RzBmpButton9.Bitmaps.Hot := GetBitmap(sflag+'logout_hot');
-    RzBmpButton8.Bitmaps.Up := GetBitmap(sflag+'exit');
-    RzBmpButton8.Bitmaps.Hot := GetBitmap(sflag+'exit_hot');
-
-    RzBmpButton6.Bitmaps.Up := GetBitmap(sflag+'home');
-    RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'home_hot');
-    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
-    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
-    RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'down');
-    RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
-    RzBmpButton4.Bitmaps.Up := GetBitmap(sflag+'upload');
-    RzBmpButton4.Bitmaps.Hot := GetBitmap(sflag+'upload_hot');
-    RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'help');
-    RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'help_hot');
-
-  finally
-    if DllHandle > 0 then FreeLibrary(DllHandle);
-  end;
-end;
-
-procedure TfrmShopMain.RzBmpButton11Click(Sender: TObject);
+procedure TfrmXsm2Main.RzBmpButton11Click(Sender: TObject);
 begin
   inherited;
   TfrmPswModify.ShowExecute(Global.UserId,Global.UserName);
 
 end;
 
-procedure TfrmShopMain.RzBmpButton12Click(Sender: TObject);
+procedure TfrmXsm2Main.RzBmpButton12Click(Sender: TObject);
 begin
   inherited;
   Close;
 
 end;
 
-procedure TfrmShopMain.RzBmpButton7Click(Sender: TObject);
-begin
-  inherited;
-  if ShopGlobal.offline and not Global.RemoteFactory.Connected then
-     begin
-       Global.MoveToRemate;
-       try
-         try
-           Global.Connect;
-         except
-           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...'); 
-         end;
-       finally
-         Global.MoveToLocal;
-       end;
-     end;
-  if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
-  SyncFactory.SyncAll;
-  Global.LoadBasic;
-end;
-
-procedure TfrmShopMain.RzBmpButton14Click(Sender: TObject);
+procedure TfrmXsm2Main.RzBmpButton14Click(Sender: TObject);
 begin
   inherited;
   actfrmQuestionnaire.OnExecute(actfrmQuestionnaire);
 end;
 
-procedure TfrmShopMain.RzBmpButton15Click(Sender: TObject);
+procedure TfrmXsm2Main.RzBmpButton15Click(Sender: TObject);
 begin
   inherited;
   actfrmMessage.OnExecute(actfrmMessage);
 end;
 
-procedure TfrmShopMain.sDeskPageClick(Sender: TObject);
-begin
-  inherited;
-  RzBmpButton3Click(nil);
-end;
-
-procedure TfrmShopMain.RzBmpButton6Click(Sender: TObject);
-begin
-  inherited;
-  MessageBox(Handle,'谢谢你的关注，网站正在更新中...','友情提示..',MB_OK+MB_ICONINFORMATION);
-end;
-
-procedure TfrmShopMain.actfrmInLocusOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmInLocusOrderListExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmInLocusOrderList);
   if not Assigned(Form) then
   begin
@@ -3157,18 +2954,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmOutLocusOrderListExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmOutLocusOrderListExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
  // Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmOutLocusOrderList);
   if not Assigned(Form) then
   begin
@@ -3179,46 +2976,32 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.SortPageButton;
-var
-  i,n:integer;
-begin
-  n := 0;
-  for i:=PageList.Count -1 downto 0 do
-    begin
-      if not TRzBmpButton(PageList[i]).Visible then
-         PageList.Delete(i); 
-    end;
-  for i:=0 to PageList.Count -1 do
-    begin
-      if i=0 then
-         TRzBmpButton(PageList[i]).Top := 1
-      else
-         TRzBmpButton(PageList[i]).Top := TRzBmpButton(PageList[i-1]).top + TRzBmpButton(PageList[i-1]).height + 1;
-      inc(n);
-    end;
-end;
-
-procedure TfrmShopMain.lblUserInfoClick(Sender: TObject);
+procedure TfrmXsm2Main.lblUserInfoClick(Sender: TObject);
 begin
   inherited;
   actfrmNewPaperReader.OnExecute(nil);
 end;
 
-procedure TfrmShopMain.actfrmDownIndeOrderExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmDownIndeOrderExecute(Sender: TObject);
 var
   vData: OleVariant;
   Aobj: TRecord_;
   Form: TfrmBasic;
   SaveFactor:TdbFactory;
+  Desk:boolean;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
-  if not Global.RemoteFactory.Connected then 
+  Application.Restore;
+  frmXsm2Desk.ForeBringtoFront;
+  Desk := true;
+  frmXsm2Desk.SaveToFront;
+  try
+     if not Global.RemoteFactory.Connected then 
      begin
        if MessageBox(Handle,'当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        SaveFactor := uGlobal.Factor;
@@ -3234,60 +3017,58 @@ begin
          uGlobal.Factor := SaveFactor;
        end;
      end;
-
-  Application.Restore;
-  frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmDownStockOrder);
-  if (Form<>nil) and TfrmDownStockOrder(Form).Xsm and not Application.MainForm.Visible then
-     begin
-       Form.Show;
-       Form.WindowState := wsNormal;
-       Form.BringToFront;
-       Exit;
-     end;
-  if (Form<>nil) then Form.Free;
-  if not Application.MainForm.Visible then
-     begin
-       TfrmDownStockOrder.XsmShow;
-       Exit;
-     end;
-  try
-    Aobj:=TRecord_.Create;
-    if TfrmDownStockOrder.DownStockOrder(AObj,vData) then
-    begin
-      if trim(AObj.fieldbyName('INDE_ID').AsString)<>'' then
+    Form := FindChildForm(TfrmDownStockOrder);
+    if (Form<>nil) and TfrmDownStockOrder(Form).Xsm and not Application.MainForm.Visible then
+       begin
+         Form.Show;
+         Form.WindowState := wsNormal;
+         Form.BringToFront;
+         Exit;
+       end;
+    if (Form<>nil) then Form.Free;
+    if not Application.MainForm.Visible then
+       begin
+         TfrmDownStockOrder.XsmShow;
+         Exit;
+       end;
+    try
+      Aobj:=TRecord_.Create;
+      if TfrmDownStockOrder.DownStockOrder(AObj,vData) then
       begin
-        //Application.Restore;
-        frmShopDesk.SaveToFront;
-        Form := FindChildForm(TfrmStockOrderList);
-        if not Assigned(Form) then
+        if trim(AObj.fieldbyName('INDE_ID').AsString)<>'' then
         begin
-          Form := TfrmStockOrderList.Create(self);
-          AddFrom(Form);
+          Form := FindChildForm(TfrmStockOrderList);
+          if not Assigned(Form) then
+          begin
+            Form := TfrmStockOrderList.Create(self);
+            AddFrom(Form);
+          end;
+          TfrmStockOrderList(Form).DoIndeOrderWriteToStock(Aobj,vData);
+          Form.WindowState := wsMaximized;
+          Form.BringToFront;
+          Desk := false;
         end;
-        TfrmStockOrderList(Form).DoIndeOrderWriteToStock(Aobj,vData);
-        Form.WindowState := wsMaximized;
-        Form.BringToFront;
       end;
+    finally
+      Aobj.Free;
     end;
   finally
-    Aobj.Free;
+    if Desk then  SendMessage(Handle,WM_DESKTOP_REQUEST,0,0);//  tbDesktopClick(tbDesktop);
   end;
-  
 end;
 
-procedure TfrmShopMain.actfrmRecvForDayExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmRecvForDayExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
   begin
-    PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
     Exit;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmRecvPosList);
   if not Assigned(Form) then
   begin
@@ -3298,26 +3079,26 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.rzUserInfoClick(Sender: TObject);
+procedure TfrmXsm2Main.rzUserInfoClick(Sender: TObject);
 begin
   inherited;
   actfrmNewPaperReader.OnExecute(nil);
 end;
 
-procedure TfrmShopMain.actfrmImpeachExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmImpeachExecute(Sender: TObject);
 begin
   inherited;
   TfrmImpeach.ShowImpeach(self); 
 end;
 
-procedure TfrmShopMain.actfrmClearDataExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmClearDataExecute(Sender: TObject);
 begin
   inherited;
   TfrmClearData.DeleteDB(self);
 
 end;
 
-function TfrmShopMain.ConnectToRsp: boolean;
+function TfrmXsm2Main.ConnectToRsp: boolean;
 var
   rs:TZQuery;
   rspComVersion:string;
@@ -3355,6 +3136,11 @@ begin
         free;
      end;
    end;
+  if CaFactory.Audited then
+     begin
+       InitXsm;
+       InitRim;
+     end;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select TENANT_ID,TENANT_NAME,SHORT_TENANT_NAME from CA_TENANT where TENANT_ID='+ParamStr(3);
@@ -3380,18 +3166,18 @@ begin
   result := true;
 end;
 
-procedure TfrmShopMain.actfrmSaleAnalyExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSaleAnalyExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSaleAnaly);
   if not Assigned(Form) then
      begin
@@ -3410,10 +3196,15 @@ begin
      begin
        Form.FormStyle :=  fsMDIChild;
        Form.WindowState := wsMaximized;
+     end
+  else
+     begin
+       Form.WindowState := wsMaximized;
+       Form.BringToFront;
      end;
 end;
 
-procedure TfrmShopMain.wm_message(var Message: TMessage);
+procedure TfrmXsm2Main.wm_message(var Message: TMessage);
 begin
   if Message.WParam = 99 then //执行自动到货确认
   begin
@@ -3421,9 +3212,14 @@ begin
      if not ShopGlobal.SyncCheck then Exit;
      TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
   end;
+  if Message.WParam = 100 then //新商盟消息
+  begin
+     if frmXsmIEBrowser=nil then Exit;
+     frmXsmIEBrowser.Open(PMsgInfo(Message.LParam)^.SenceId,PMsgInfo(Message.LParam)^.Action,0);
+  end;
 end;
 
-procedure TfrmShopMain.actfrmNetForOrderExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmNetForOrderExecute(Sender: TObject);
 var
   Form:TfrmBasic;
   rimurl:string;
@@ -3435,7 +3231,7 @@ begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Params := TftParamList.Create(nil);
@@ -3447,13 +3243,13 @@ begin
     rimurl := trim(Params.ParambyName('rimurl').AsString);
     rimuid := Params.ParambyName('rimuid').AsString;
     rimpwd := Params.ParambyName('rimpwd').AsString;
-    if rimurl='' then Raise Exception.Create('无法连接到零售终端服务主机，请和实施人员联系.'); 
-    if rimuid='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.'); 
+    if rimurl='' then Raise Exception.Create('无法连接到零售终端服务主机，请和实施人员联系.');
+    if rimuid='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
   finally
     Params.Free;
   end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmNetForOrder');
   if not Assigned(Form) then
      begin
@@ -3464,7 +3260,7 @@ begin
   try
     Form.Name := 'frmNetForOrder';
     if rimurl[length(rimurl)]<>'/' then rimurl := rimurl + '/';
-    TfrmIEWebForm(Form).Open(rimurl+'rim_check/up?j_username='+rimpwd+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
+    TfrmIEWebForm(Form).Open(rimurl+'rim_check/up?j_username='+rimuid+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
     Form.Show;
     Form.BringToFront;
   except
@@ -3473,18 +3269,18 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.actfrmSaleManSaleReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSaleManSaleReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSaleManSaleReport);
   if not Assigned(Form) then
      begin
@@ -3495,18 +3291,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmClientSaleReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmClientSaleReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmClientSaleReport);
   if not Assigned(Form) then
      begin
@@ -3517,25 +3313,25 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.DoLoadMsg(Sender: TObject);
+procedure TfrmXsm2Main.DoLoadMsg(Sender: TObject);
 begin
   if not Visible then Exit;
   if SyncFactory.Locked > 0 then Exit;
   PrainpowerJudge.SyncMsgc;
 end;
 
-procedure TfrmShopMain.actfrmSaleTotalReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSaleTotalReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSaleTotalReport);
   if not Assigned(Form) then
      begin
@@ -3546,18 +3342,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmStgTotalReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStgTotalReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStgTotalReport);
   if not Assigned(Form) then
      begin
@@ -3568,18 +3364,18 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmStockTotalReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmStockTotalReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmStockTotalReport);
   if not Assigned(Form) then
      begin
@@ -3590,7 +3386,7 @@ begin
   Form.BringToFront;
 end;
 
-function TfrmShopMain.ConnectToXsm: boolean;
+function TfrmXsm2Main.ConnectToXsm: boolean;
 const
   dec='{1#2$3%4(5)6@7!poeeww$3%4(5)djjkkldss}';
 var
@@ -3669,6 +3465,11 @@ begin
   if not result then Exit;
   if result then
      begin
+      if CaFactory.Audited then
+         begin
+           InitXsm;
+           InitRim;
+         end;
       if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
          begin
            frmLogo.Show;
@@ -3754,7 +3555,7 @@ begin
                if ShopGlobal.ONLVersion then //在线版只需同步注册数据
                   begin
                     SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
-                    SyncFactory.SyncComm := not SyncFactory.CheckRemeteData;
+                    SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
                     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
                     SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
                     SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
@@ -3802,28 +3603,28 @@ begin
   PostMessage(Handle,WM_DESKTOP_REQUEST,StrtoIntDef(fn,0),1);
 end;
 
-procedure TfrmShopMain.RzTrayIcon1LButtonDblClick(Sender: TObject);
+procedure TfrmXsm2Main.RzTrayIcon1LButtonDblClick(Sender: TObject);
 begin
   inherited;
   if Logined then
   begin
-    frmShopMain.Show;
-    frmShopMain.WindowState := wsMaximized;
+    frmXsm2Main.Show;
+    frmXsm2Main.WindowState := wsMaximized;
   end;
 end;
 
-procedure TfrmShopMain.actfrmSaleMonthTotalReportExecute(Sender: TObject);
+procedure TfrmXsm2Main.actfrmSaleMonthTotalReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmXsm2Desk.SaveToFront;
   Form := FindChildForm(TfrmSaleMonthTotalReport);
   if not Assigned(Form) then
      begin
@@ -3834,30 +3635,602 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.DoPageClick(Sender: TObject);
+procedure TfrmXsm2Main.rzSizeLeft_1Resize(Sender: TObject);
 begin
-  LoadMenu(Sender);
+  inherited;
+  frmMain.OnResize(nil);
 end;
 
-procedure TfrmShopMain.rzPageChange(Sender: TObject);
+procedure TfrmXsm2Main.LoadPic32;
+var
+  DllHandle: THandle;
+function GetBitmap(ResName:string):TBITMAP;
+var
+  Stream: TStream;
+begin
+  result := nil;
+  //装载Logo
+  if FindResource(DllHandle, PChar(ResName), 'BMP') <> 0 then
+  begin
+    Stream := TResourceStream.Create(DllHandle, ResName, 'BMP');
+    try
+      result := TBITMAP.Create;
+      try
+        Stream.Position := 0;
+        result.LoadFromStream(Stream);
+      except
+        freeandnil(result);
+      end;
+    finally
+      Stream.Free;
+    end;
+  end;
+end;
+function GetJpeg(ResName:string):TJPEGImage;
+var
+  Stream: TStream;
+begin
+  result := nil;
+  //装载Logo
+  if FindResource(DllHandle, PChar(ResName), 'JPG') <> 0 then
+  begin
+    Stream := TResourceStream.Create(DllHandle, ResName, 'JPG');
+    try
+      result := TJPEGImage.Create;
+      try
+        Stream.Position := 0;
+        result.LoadFromStream(Stream);
+      except
+        freeandnil(result);
+      end;
+    finally
+      Stream.Free;
+    end;
+  end;
+end;
+function GetResString(ResName:integer):string;
+var
+  iRet:array[0..254] of char;
+begin
+  result := '';
+  LoadString(DllHandle, ResName, iRet, 254);
+  result := StrPas(iRet);
+end;
+
+var
+  pic:TGraphic;
+begin
+  DllHandle := LoadLibrary('Pic32.dll');
+  if DllHandle > 0 then
+  try
+
+  finally
+    if DllHandle > 0 then FreeLibrary(DllHandle);
+  end;
+end;
+
+procedure TfrmXsm2Main.actfrmXsmNetExecute(Sender: TObject);
+var
+  s:string;
+  Form:TfrmBasic;
+  sl:TStringList;
+begin
+  inherited;
+  if not CA_MODULE.Locate('MODU_ID',inttostr(TrzBmpButton(Sender).Tag),[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
+  s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
+  delete(s,1,4);
+  delete(s,length(s),1);
+  if not Logined then
+     begin
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
+  Form := FindChildForm('frmXsmIEBrowser');
+  if Form=nil then Raise Exception.Create('脱机状态不能打开新商盟相关模块...'); 
+  if TfrmBasic(Form).PageHandle = Integer(Sender) then
+     begin
+       Form.WindowState := wsMaximized;
+       Form.BringToFront;
+       Exit;
+     end;
+  Form.Caption := TrzBmpButton(Sender).Caption;
+  Form.Name := 'frmXsmIEBrowser';
+  sl := TStringList.Create;
+  try
+    sl.CommaText := s;
+//    if Screen.Width <= 1024 then
+//       begin
+//         rzLeft.Width := 35;
+//         lblUserInfo.Visible := (rzLeft.Width <> 35);
+//         frmMain.OnResize(frmMain);
+//       end;
+    if TfrmXsmIEBrowser(Form).open(sl.Values['sceneId'],sl.Values['objectId'],Integer(Sender)) then
+       begin
+         TfrmBasic(Form).PageHandle := Integer(Sender);
+       end
+    else
+       DoActiveChange(nil);
+  finally
+    sl.free;
+  end;
+end;
+
+procedure TfrmXsm2Main.splitClick(Sender: TObject);
+begin
+  inherited;
+  Exit;
+  if rzLeft.Width = 35 then
+     rzLeft.Width := 171
+  else
+     rzLeft.Width := 35;
+  lblUserInfo.Visible := (rzLeft.Width <> 35);
+  frmMain.OnResize(frmMain);
+end;
+
+procedure TfrmXsm2Main.Clear;
+var
+  i:integer;
+  Form:TForm;
+begin
+  UnSelect;
+  for i:=FList.Count -1 downto 0 do
+    begin
+      if TRzBmpButton(FList[i]).GroupIndex=888 then
+         begin
+           TRzBmpButton(FList[i]).OnClick := nil;
+           TObject(FList[i]).Free;
+           FList.Delete(i);
+         end;
+    end;
+  Form := FindChildForm('frmRimIEBrowser');
+  if Assigned(Form) then
+     TfrmBasic(Form).PageHandle := 0;
+  Form := FindChildForm('frmXsmIEBrowser');
+  if Assigned(Form) then
+     TfrmBasic(Form).PageHandle := 0;
+end;
+
+procedure TfrmXsm2Main.page_03Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu('网上配货');
+  page_03.Down  := SortToolButton;
+//  Button2Click(page_03);
+end;
+
+procedure TfrmXsm2Main.page_04Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu('网上结算');
+  page_04.Down := SortToolButton;
+end;
+
+procedure TfrmXsm2Main.page_02Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu('网上订货');
+  page_02.Down := SortToolButton;
+end;
+
+procedure TfrmXsm2Main.page_12Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu('品牌培育');
+  page_12.Down := SortToolButton;
+end;
+
+procedure TfrmXsm2Main.page_13Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu('信息互通');
+  page_13.Down := SortToolButton;
+end;
+
+procedure TfrmXsm2Main.page_14Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu('我的社区');
+  page_14.Down := SortToolButton;
+end;
+
+procedure TfrmXsm2Main.tbDesktopClick(Sender: TObject);
+begin
+  inherited;
+  actfrmOpenDeskExecute(nil);
+end;
+
+procedure TfrmXsm2Main.page_11Click(Sender: TObject);
+begin
+  inherited;
+  Clear;
+  tbDesktopClick(nil);
+  page_11.Down := true;
+  SortToolButton;
+end;
+
+procedure TfrmXsm2Main.AddModule(mid: string;Action:TAction);
+var
+  button:TrzBmpButton;
+begin
+  button := TrzBmpButton.Create(rzToolButton);
+  button.AllowAllUp := true;
+  button.GroupIndex := 888;
+  button.Bitmaps.Up.Assign(toolButton.Bitmaps.Up);
+  button.Bitmaps.Down.Assign(toolButton.Bitmaps.Down);
+  button.Font.Assign(toolButton.Font);
+  button.Tag := StrtoInt(mid);
+  button.OnClick := Action.OnExecute;
+  button.Visible := true;
+  button.Parent := rzToolButton;
+//  button.PopupMenu := tlbPage;
+  button.Top := 3;
+  button.Down := false;
+  FList.Add(button);
+  if CA_MODULE.Locate('MODU_ID',mid,[]) then
+    begin
+      button.Caption := CA_MODULE.FieldbyName('MODU_NAME').AsString;
+    end;
+end;
+
+procedure TfrmXsm2Main.page_01Click(Sender: TObject);
+begin
+  inherited;
+  LoadMenu('网上营销');
+  page_01.Down := SortToolButton;
+end;
+
+procedure TfrmXsm2Main.UnSelect;
+var i:integer;
+begin
+  page_01.Down := false;
+  page_02.Down := false;
+  page_03.Down := false;
+  page_04.Down := false;
+  page_11.Down := false;
+  page_12.Down := false;
+  page_13.Down := false;
+  page_14.Down := false;
+  tbDesktop.Down := false;
+  for i:= FList.Count-1 downto 0 do TRzBmpButton(FList[i]).Down := false;
+end;
+
+procedure TfrmXsm2Main.actfrmRimNetExecute(Sender: TObject);
+var
+  s:string;
+  Form:TfrmBasic;
+  sl:TStringList;
+begin
+  inherited;
+  if not CA_MODULE.Locate('MODU_ID',inttostr(TrzBmpButton(Sender).Tag),[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
+  s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
+  delete(s,1,4);
+  delete(s,length(s),1);
+  if not Logined then
+     begin
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
+  Form := FindChildForm('frmRimIEBrowser');
+  if not Assigned(Form) then
+     Form := TfrmRimIEBrowser.Create(self);
+  sl := TStringList.Create;
+  try
+    if TfrmBasic(Form).PageHandle = Integer(Sender) then
+       begin
+         Form.WindowState := wsMaximized;
+         Form.BringToFront;
+         Exit;
+       end;
+    Form.Caption := TrzBmpButton(Sender).Caption;
+    Form.Name := 'frmRimIEBrowser';
+    sl.CommaText := s;
+    if TfrmRimIEBrowser(Form).OpenUrl(sl.values['url'],Integer(Sender),(sl.values['xsm']='true')) then
+       begin
+         TfrmBasic(Form).PageHandle := Integer(Sender);
+       end
+    else
+       DoActiveChange(nil);
+  except
+    sl.free;
+    Raise;
+  end;
+end;
+
+procedure TfrmXsm2Main.InitXsm;
+begin
+  frmLogo.ShowTitle := '正在初始化新商盟...';
+  frmLogo.Show;
+  if frmXsmIEBrowser=nil then Application.CreateForm(TfrmXsmIEBrowser, frmXsmIEBrowser);
+  frmXsmIEBrowser.DoInit;
+end;
+
+procedure TfrmXsm2Main.FormResize(Sender: TObject);
+var
+  bh:integer;
+  br:integer;
+begin
+  inherited;
+  bh := (ClientHeight- 46- 31) div 2;//- (66*8);
+  Bar1.Height := bh;
+  Bar2.Height := bh;
+  br := bh - (66*4);
+  br := br div 5;
+
+  page_01.Top := br;
+  page_02.Top := page_01.Top + page_01.Height + br;
+  page_03.Top := page_02.Top + page_02.Height + br;
+  page_04.Top := page_03.Top + page_03.Height + br;
+
+  page_11.Top := br;
+  page_12.Top := page_11.Top + page_11.Height + br;
+  page_13.Top := page_12.Top + page_12.Height + br;
+  page_14.Top := page_13.Top + page_13.Height + br;
+  
+end;
+
+procedure TfrmXsm2Main.actfrmCalcStorageExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmCostCalc.CalcAnalyLister(self);
+  MessageBox(Handle,'动销测算完毕','友情提示...',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmXsm2Main.actfrmStorageOptionDefineExecute(Sender: TObject);
+begin
+  inherited;
+  with TfrmOptionDefine.Create(self) do
+    begin
+      try
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
+
+end;
+
+procedure TfrmXsm2Main.actfrmOpenDeskExecute(Sender: TObject);
+begin
+  inherited;
+  if frmXsmIEBrowser<>nil then
+     begin
+       frmXsmIEBrowser.WindowState := wsNormal;
+       frmXsmIEBrowser.Left := - 9000;
+     end;
+  if frmRimIEBrowser<>nil then
+     begin
+       frmRimIEBrowser.WindowState := wsNormal;
+       frmRimIEBrowser.Left := - 9000;
+     end;
+  frmXsm2Desk.Locked := true;
+  frmXsm2Desk.BringToFront;
+//  rzLeft.Width := 171;
+//  lblUserInfo.Visible := (rzLeft.Width <> 35);
+//  frmMain.OnResize(frmMain);
+  UnSelect;
+  frmRimIEBrowser.PageHandle := 0;
+  frmXsmIEBrowser.PageHandle := 0;
+  page_11.Down := true;
+end;
+
+procedure TfrmXsm2Main.InitRim;
+begin
+  if frmRimIEBrowser=nil then Application.CreateForm(TfrmRimIEBrowser,frmRimIEBrowser);
+end;
+
+function TfrmXsm2Main.XsmRegister: boolean;
+var
+  rs:TZQuery;
+  Logined,Network:boolean;
+  Chk,tid:string;
+begin
+  result := false;
+  CaFactory.DownModule := true;
+  CaFactory.Auto := true;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''';
+    Global.LocalFactory.Open(rs);
+    if rs.Fields[0].AsString='' then
+       begin
+         Logined := false;
+       end
+    else
+       begin
+         tid := rs.Fields[0].AsString;
+         Global.TENANT_ID := strtoint(tid);
+         Global.SHOP_ID := tid+'0001';
+         rs.Close;
+         rs.SQL.Text := 'select A.XSM_CODE,A.XSM_PSWD,B.TENANT_NAME,B.SHORT_TENANT_NAME,A.SHOP_ID from CA_SHOP_INFO A,CA_TENANT B where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.SHOP_ID='''+Global.SHOP_ID+'''';
+         Global.LocalFactory.Open(rs); 
+         xsm_username := rs.Fields[0].AsString;
+         xsm_password := DecStr(rs.Fields[1].AsString,ENC_KEY);
+         Global.TENANT_NAME := rs.Fields[2].AsString;
+         Global.SHORT_TENANT_NAME := rs.Fields[3].AsString;
+         Global.UserID := rs.Fields[4].AsString;
+         Global.UserName := rs.Fields[3].AsString;
+         Global.Roles := 'xsm';
+         Logined := (xsm_username<>'');
+       end;
+  finally
+    rs.Free;
+  end;
+  Network := CAFactory.CheckNetwork;
+  if not Logined and not Network then
+     begin
+       MessageBox(Handle,'初始登录必须在线状态，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
+       Exit;
+     end
+  else
+     begin
+       if Network and (Global.TENANT_ID>0) then
+          begin
+            case TfrmNetLogin.NetLogin(true) of
+            1:;
+            2:Network := false;
+             else
+              Exit;
+            end;
+           end;
+     end;
+  try
+  if not Logined and Network then //没有注册过，登录新商盟检测注册
+     begin
+       frmLogo.ShowTitle := '正在初始化新商盟...';
+       frmLogo.Show;
+       while true do
+       begin
+         if TfrmXsmLogin.XsmRegister then
+            begin
+              Chk := CaFactory.DesEncode(xsm_username,CaFactory.pubpwd);
+              CaFactory.coLogin(xsm_username,chk,2);
+              InitXsm;
+              if frmXsmIEBrowser.XsmLogin(true) then break;
+            end
+         else
+            Exit;
+       end;
+       try
+         if not TfrmTenant.coAutoRegister(xsm_username,true) then
+         begin
+            MessageBox(Handle,pchar('R3平台没有检测到'+xsm_username+'用户，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+            Exit;
+         end;
+       except
+         on E:Exception do
+         begin
+            MessageBox(Handle,pchar('R3用户认证失败,错误:'+E.Message+'，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+            Exit;
+         end;
+       end;
+     end
+  else
+     begin
+       if not Logined then Raise Exception.Create('首次注册必须使用在线模式...'); 
+       if Network then
+       begin
+         try
+           if not TfrmTenant.coAutoRegister(xsm_username,false) then
+           begin
+              MessageBox(Handle,pchar('R3平台没有检测到'+xsm_username+'用户，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+              Exit;
+           end;
+         except
+           on E:Exception do
+           begin
+             if MessageBox(Handle,pchar('RSP服务认证失败，是否转脱网操作？'+#13+'原因：'+E.Message),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+                Exit;
+           end;
+         end;
+         InitXsm;
+       end
+     else
+       begin
+         InitXsm;
+       end;
+     end;
+ InitRim;
+ result := true;
+ except
+   on E:Exception do
+     begin
+       result := false;
+       MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+     end;
+ end;
+end;
+
+procedure TfrmXsm2Main.actfrmSyncAllExecute(Sender: TObject);
+begin
+  inherited;
+  if CaFactory.Audited then
+     begin
+       CaFactory.SyncAll(1);
+       if ShopGlobal.ONLVersion then Exit;
+     end
+  else
+     begin
+       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
+     end;
+  if PrainpowerJudge.Locked>0 then
+     begin
+       MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
+     end;
+  frmLogo.Show;
+  frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
+  try
+    if ShopGlobal.offline and not Global.RemoteFactory.Connected then
+     begin
+       Global.MoveToRemate;
+       try
+         try
+           Global.Connect;
+         except
+           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...');
+         end;
+       finally
+         Global.MoveToLocal;
+       end;
+     end;
+    if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+    SyncFactory.SyncAll;
+    Global.LoadBasic;
+    ShopGlobal.LoadRight;
+  finally
+    frmLogo.Close;
+  end;
+end;
+
+procedure TfrmXsm2Main.RzBmpButton2Click(Sender: TObject);
+begin
+  inherited;
+  Close;
+
+end;
+
+procedure TfrmXsm2Main.RzBmpButton1Click(Sender: TObject);
 var i:integer;
 begin
   inherited;
-  if rzPage.TabIndex<0 then Exit;
-  for i:=0 to rzPage.Tabs.Count -1 do rzPage.Tabs[i].ImageIndex := 0;
-  LoadMenu(rzPage.Tabs[rzPage.TabIndex]);
-  rzPage.Tabs[rzPage.TabIndex].ImageIndex := 1;
+  if FindChildForm(TfrmPosMain)<>nil then Raise Exception.Create('收款机模块没有退出不能切换用户...');
+  if FList.Count > 0 then
+     begin
+       if MessageBox(Handle,'是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       for i:= FList.Count -1 downto 0 do
+         begin
+           if TrzBmpButton(FList[i]).GroupIndex=999 then
+              TForm(TrzBmpButton(FList[i]).tag).free;
+         end;
+     end;
+  Clear;
+  actfrmOpenDesk.OnExecute(actfrmOpenDesk); 
+  if PrainpowerJudge.Locked>0 then
+     begin
+       MessageBox(Handle,'正在执行消息同步，请稍等切换用户..','友情提示..',MB_OK+MB_ICONINFORMATION);
+     end;
+  Logined := false;
+  Login(false,false);
+  Logined := true;
 end;
 
-destructor TfrmShopMain.Destroy;
-var Form:TForm;
+procedure TfrmXsm2Main.RzBmpButton3Click(Sender: TObject);
 begin
-  Form := FindChildForm(TfrmPosMain);
-  if Form<>nil then Form.free;
   inherited;
+  actfrmSyncAll.OnExecute(actfrmSyncAll);
 end;
 
-procedure TfrmShopMain.wm_check(var Message: TMessage);
+procedure TfrmXsm2Main.Image9Click(Sender: TObject);
+begin
+  inherited;
+  if CaFactory.Audited then Exit;
+  ConnectToDb;  
+end;
+
+procedure TfrmXsm2Main.wm_check(var Message: TMessage);
 begin
   try
   if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) then Exit;
@@ -3873,7 +4246,15 @@ begin
   end;
 end;
 
-procedure TfrmShopMain.RzTrayIcon1MinimizeApp(Sender: TObject);
+destructor TfrmXsm2Main.Destroy;
+var Form:TForm;
+begin
+  Form := FindChildForm(TfrmPosMain);
+  if Form<>nil then Form.free;
+  inherited;
+end;
+
+procedure TfrmXsm2Main.RzTrayIcon1MinimizeApp(Sender: TObject);
 var Form:TForm;
 begin
   inherited;
@@ -3881,7 +4262,7 @@ begin
   if Form<>nil then Form.WindowState := wsMinimized;
 end;
 
-procedure TfrmShopMain.RzTrayIcon1RestoreApp(Sender: TObject);
+procedure TfrmXsm2Main.RzTrayIcon1RestoreApp(Sender: TObject);
 var Form:TForm;
 begin
   inherited;
@@ -3890,10 +4271,4 @@ begin
 end;
 
 end.
-
-
-
-
-
-
 

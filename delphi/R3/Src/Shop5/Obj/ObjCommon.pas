@@ -391,8 +391,8 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
-         'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' '+
+         'select max(END_DATE) from ('+
+         'select max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
@@ -406,8 +406,9 @@ begin
               B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
-        B := Temp.Fields[0].AsString;
+        B := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.Fields[0].AsString));
      Result := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(B)+1);
+     AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+Result);
   finally
      Temp.Free;
   end;
@@ -422,8 +423,8 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
-         'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' '+
+         'select max(END_DATE) from ('+
+         'select max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
@@ -437,9 +438,10 @@ begin
               B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
-        B := Temp.Fields[0].AsString;
+        B := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.Fields[0].AsString));
      Result := (pDate>B);
      if not Result then Raise Exception.Create('系统已经结帐到'+b+'号，不能对此之前的单据进行操作');
+     AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+pDate);
   finally
      Temp.Free;
   end;
@@ -469,15 +471,17 @@ begin
               B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
-        B := Temp.Fields[0].AsString;
+        B := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.Fields[0].AsString));
      Result := (pDate>B);
      if not Result then Raise Exception.Create('系统已经结帐到'+b+'号，不能对此之前的单据进行操作');
+     AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+pDate);
   finally
      Temp.Free;
   end;
 end;
 function GetReckOning(AGlobal:IdbHelp;TENANT_ID,SHOP_ID,pDate,timestamp:string):Boolean;
-var Temp:TZQuery;
+var
+  Temp:TZQuery;
   B:string;
 begin
   Result := False;
@@ -486,10 +490,8 @@ begin
   Temp := TZQuery.Create(nil);
   try
      Temp.SQL.Text :=
-         'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' '+
-         'union all '+
-         'select max(PRINT_DATE) as CREA_DATE from STO_PRINTORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and TIME_STAMP>'+timestamp+' '+
+         'select max(END_DATE) from ('+
+         'select max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+TENANT_ID+' '+
          ') j';
      AGlobal.Open(Temp);
      if Temp.Fields[0].AsString = '' then
@@ -503,9 +505,21 @@ begin
               B := FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(Temp.Fields[0].AsString)-1);
         end
      else
-        B := Temp.Fields[0].AsString;
+        begin
+           B := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.Fields[0].AsString));
+        end;
      Result := (pDate>B);
      if not Result then Raise Exception.Create('系统已经结帐到'+b+'号，不能对此之前的单据进行操作');
+     Temp.Close;
+     Temp.SQL.Text := 'select max(PRINT_DATE) as END_DATE from STO_PRINTORDER where TENANT_ID='+TENANT_ID+' and SHOP_ID='''+SHOP_ID+''' and TIME_STAMP>'+timestamp+' ';
+     AGlobal.Open(Temp);
+     if Temp.Fields[0].AsString <>'' then
+        begin
+          B := formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(Temp.Fields[0].AsString));
+          Result := (pDate>B);
+          if not Result then Raise Exception.Create('系统已经结帐到'+b+'号，不能对此之前的单据进行操作');
+        end;
+     AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID+' and CREA_DATE>='+pDate);
   finally
      Temp.Free;
   end;

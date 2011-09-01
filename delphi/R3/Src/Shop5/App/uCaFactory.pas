@@ -167,7 +167,7 @@ type
     function CreateXML(xml:string):IXMLDomDocument;
     function CreateRspXML:IXMLDomDocument;
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
-    function FindNode(doc:IXMLDomDocument;tree:string):IXMLDOMNode;
+    function FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
     function GetNodeValue(root:IXMLDOMNode;s:string):string;
     procedure CheckRecAck(doc:IXMLDomDocument);
     function CheckNetwork(addr:string=''):boolean;
@@ -529,7 +529,7 @@ try
     result.RET := code;
     if StrtoIntDef(code,0) in [1,5] then //认证成功
        begin
-         Auto := (flag=2);
+         Auto := (flag<>1);
          result.TENANT_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'tenantId'));
          sslpwd := encddecd.DecodeString(GetNodeValue(caTenantLoginResp,'keyStr'));
          result.SLL := sslpwd;
@@ -950,7 +950,7 @@ begin
 end;
 
 function TCaFactory.FindNode(doc: IXMLDomDocument;
-  tree: string): IXMLDOMNode;
+  tree: string;CheckExists:boolean=true): IXMLDOMNode;
 var
   s:TStringList;
   i:integer;
@@ -965,7 +965,7 @@ begin
         if result <>nil then
            result := FindElement(result,s[i]);
       end;
-    if result = nil then Raise Exception.Create('在文档中没找到结点'+tree); 
+    if CheckExists and (result = nil) then Raise Exception.Create('在文档中没找到结点'+tree); 
   finally
     s.Free;
   end;
@@ -3321,20 +3321,21 @@ try
     end;
   end;
   CheckRecAck(doc);
-  caShopInfo := FindNode(doc,'body\caShopInfo');
+  caShopInfo := FindNode(doc,'body\caShopInfo',false);
+  if caShopInfo=nil then Exit;
   rs := TZQuery.Create(nil);
   Params := TftParamList.Create;
   try
     Params.ParamByName('TENANT_ID').AsInteger := TenantId;
     Params.ParamByName('SHOP_ID').AsString := shopId;
-    Factor.Open(rs,'TShop',Params);
+    Global.LocalFactory.Open(rs,'TShop',Params);
     if not rs.IsEmpty then
     begin
       rs.Edit;
       rs.FieldByName('XSM_CODE').asString := xsmCode;
       rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
       rs.Post;
-      Factor.UpdateBatch(rs,'TShop',Params);
+      Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
     end
     else
     begin
@@ -3355,7 +3356,7 @@ try
       rs.FieldByName('SHOP_TYPE').asString := GetNodeValue(caShopInfo,'shopType');
       rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'seqNo'));
       rs.Post;
-      Factor.UpdateBatch(rs,'TShop',Params);
+      Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
     end;
   finally
     Params.Free;
@@ -3365,9 +3366,9 @@ except
   on E:Exception do
   begin
     if doc<>nil then
-       LogFile.AddLogFile(0,'读取<企业资料>失败xml='+doc.xml+';原因:'+E.Message)
+       LogFile.AddLogFile(0,'读取<门店资料>失败xml='+doc.xml+';原因:'+E.Message)
     else
-       LogFile.AddLogFile(0,'读取<企业资料>失败xml=无;原因:'+E.Message);
+       LogFile.AddLogFile(0,'读取<门店资料>失败xml=无;原因:'+E.Message);
     Raise;
   end;
 end;

@@ -535,9 +535,9 @@ begin
   LoginFactory.Logout;
   Timer1.Enabled := false;
   UpdateTimer.Enabled := false;
-  if frmXsmIEBrowser<>nil then freeandnil(frmXsmIEBrowser);
-  if frmRimIEBrowser<>nil then freeandnil(frmRimIEBrowser);
-  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if frmXsmIEBrowser<>nil then frmXsmIEBrowser.Free;
+  if frmRimIEBrowser<>nil then frmRimIEBrowser.Free;
+  if TimerFactory<>nil then TimerFactory.Free;
   frmLogo.Free;
   frmPrgBar.Free;
   if frmInstall<>nil then frmInstall.free;
@@ -799,7 +799,7 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
-  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if TimerFactory<>nil then TimerFactory.Free;
   try
   if (not Logined or frmXsmIEBrowser.SessionFail) or Locked then
      begin
@@ -1010,7 +1010,7 @@ begin
        Exit;
        //Application.Minimize;
      end;
-  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
   if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
      begin
@@ -1103,6 +1103,7 @@ begin
   if not Visible then Exit;
   if not Factor.Connected then Exit;
 
+  IsFirst := false;
   if (not MsgFactory.Loaded and (Timer1.Tag>5)) or (MsgFactory.Loaded and (Timer1.Tag>0) and
      (MsgFactory.UnRead=0) and ((Timer1.Tag mod w)=0)
      )
@@ -1138,7 +1139,7 @@ begin
      begin
          lblUserInfo.Caption := '尊敬的<'+Global.TENANT_NAME+'>客户,您有('+inttostr(MsgFactory.UnRead)+')条消息';
      end;
-  if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) or IsFirst then
+  if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) or IsFirst or MsgFactory.Opened then
      begin
        P := MsgFactory.ReadMsg;
        if P<>nil then MsgFactory.HintMsg(P);

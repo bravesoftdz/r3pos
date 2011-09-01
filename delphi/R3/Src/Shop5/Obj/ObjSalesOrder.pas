@@ -436,54 +436,23 @@ var
    rs:TZQuery;
    cDate:string;
 begin
-   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then  //不是同步状态
-      begin
-        Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
-        if FieldbyName('SALES_DATE').AsOldString <> '' then
-           Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
-        rs := TZQuery.Create(nil);
-        try
-          rs.SQL.Text := 'select * from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE in (:CLSE_DATE ,:OLD_CLSE_DATE ) and CREA_USER=:CREA_USER';
-          rs.Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-          rs.Params.ParamByName('SHOP_ID').asString := FieldbyName('SHOP_ID').AsString;
-          rs.Params.ParamByName('CLSE_DATE').AsInteger := FieldbyName('SALES_DATE').AsInteger;
-          rs.Params.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('SALES_DATE').AsOldInteger;
-          rs.Params.ParamByName('CREA_USER').asString := FieldbyName('CREA_USER').AsString;
-          AGlobal.Open(rs);
-          if not rs.IsEmpty then Raise Exception.Create('当前收银员['+FieldbyName('SALES_DATE').AsString+']号已经结账不能再开单了'+#13+'取消结账请到[财务管理]->[结账管理]中撤销.');
-        finally
-          rs.Free;
-        end;
-        result := true;
-      end
-   else
-      begin
-        cDate := GetReckDate(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString);
-        if FieldbyName('SALES_DATE').asString < cDate then
-           begin
-             FieldbyName('NOTE').asString := '开单日期:'+FieldbyName('SALES_DATE').asString+'上传至最近结帐日:'+cDate;
-             FieldbyName('SALES_DATE').asString := cDate;
-           end;
-        Result := true;
-      end;
-  //检测订单是否重复入库
-  {
-  if FieldbyName('FROM_ID').asString<>'' then
-     begin
-       rs := TZQuery.Create(nil);
-       try
-         rs.SQL.Text := 'select count(*) from SAL_SALESORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID and SALES_ID<>:SALES_ID';
-         rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-         rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
-         rs.ParamByName('SALES_ID').AsString := FieldbyName('SALES_ID').AsString;
-         AGlobal.Open(rs);
-         if rs.Fields[0].AsInteger<>0 then Raise Exception.Create('当前订单已经出库了，不能重复出库了');  
-       finally
-         rs.Free;
-       end;
-     end;
-  }
-
+   Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').asString,FieldbyName('SHOP_ID').asString,FieldbyName('SALES_DATE').AsString,FieldbyName('TIME_STAMP').AsString);
+   if FieldbyName('SALES_DATE').AsOldString <> '' then
+      Result := GetReckOning(AGlobal,FieldbyName('TENANT_ID').AsOldString,FieldbyName('SHOP_ID').AsOldString,FieldbyName('SALES_DATE').AsOldString,FieldbyName('TIME_STAMP').AsOldString);
+   rs := TZQuery.Create(nil);
+   try
+     rs.SQL.Text := 'select * from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CLSE_DATE in (:CLSE_DATE ,:OLD_CLSE_DATE ) and CREA_USER=:CREA_USER';
+     rs.Params.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+     rs.Params.ParamByName('SHOP_ID').asString := FieldbyName('SHOP_ID').AsString;
+     rs.Params.ParamByName('CLSE_DATE').AsInteger := FieldbyName('SALES_DATE').AsInteger;
+     rs.Params.ParamByName('OLD_CLSE_DATE').AsInteger := FieldbyName('SALES_DATE').AsOldInteger;
+     rs.Params.ParamByName('CREA_USER').asString := FieldbyName('CREA_USER').AsString;
+     AGlobal.Open(rs);
+     if not rs.IsEmpty then Raise Exception.Create('当前收银员['+FieldbyName('SALES_DATE').AsString+']号已经结账不能再开单了'+#13+'取消结账请到[财务管理]->[结账管理]中撤销.');
+   finally
+     rs.Free;
+   end;
+   result := true;
 end;
 
 function TSalesOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;comm:boolean=true): boolean;

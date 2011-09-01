@@ -527,7 +527,7 @@ var
 begin
   LoginFactory.Logout;
   Timer1.Enabled := false;
-  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if TimerFactory<>nil then TimerFactory.Free;
   frmLogo.Free;
   frmPrgBar.Free;
   if frmInstall<>nil then frmInstall.free;
@@ -723,7 +723,7 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
-  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if TimerFactory<>nil then TimerFactory.Free;
   try
   if not Logined or Locked then
      begin
@@ -908,7 +908,7 @@ begin
        Exit;
        //Application.Minimize;
      end;
-  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
   if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
      begin
@@ -1029,7 +1029,7 @@ begin
      begin
        lblUserInfo.Caption := ShopGlobal.UserName + ' 您没有消息';
      end;
-  if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) or IsFirst then
+  if (MsgFactory.Loaded and ((Timer1.Tag mod w)=0)) or IsFirst or MsgFactory.Opened then
      begin
        P := MsgFactory.ReadMsg;
        if P<>nil then MsgFactory.HintMsg(P);
@@ -1057,7 +1057,10 @@ begin
           ProductID := F.ReadString('soft','ProductID','R3_RYC');
        end;
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
   if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
     Image5.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
@@ -2911,7 +2914,10 @@ begin
     else
        F.WriteInteger('MenuReport',s,F.ReadInteger('Menu',s,0)+1);
   finally
-    F.Free;
+    try
+      F.Free;
+    except
+    end;
   end;
 end;
 

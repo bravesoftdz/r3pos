@@ -134,7 +134,7 @@ var StrSql,StrWhere,StrJoin:String;
     Item_Index:Integer;
 begin
   case Factor.iDbType of
-    0: StrJoin := '+';
+    0,2,3: StrJoin := '+';
     1,4,5: StrJoin := '||';
   end;
   StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
@@ -496,15 +496,15 @@ begin
 
   CdsGoodsMonth.DisableControls;
   try
-
-    Factor.UpdateBatch(CdsGoodsMonth,'TGoodsMonth',nil);
-  except
+    try
+      Factor.UpdateBatch(CdsGoodsMonth,'TGoodsMonth',nil);
+    except
+      Raise Exception.Create('数据提交失败!');
+    end;
+  finally
     CdsGoodsMonth.EnableControls;
     frmPrgBar.Close;
-    Raise Exception.Create('数据提交失败!');
   end;
-  CdsGoodsMonth.EnableControls;
-  frmPrgBar.Close;
 end;
 
 procedure TfrmGoodsMonth.dbGoodsMonthDrawColumnCell(Sender: TObject;

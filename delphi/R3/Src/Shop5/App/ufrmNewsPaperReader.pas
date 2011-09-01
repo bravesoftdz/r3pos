@@ -209,9 +209,9 @@ begin
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=18 then
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码收货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=19 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')预收款单、('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')应收款单！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsString+')预收、应收、应退款单！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=20 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 100000)+')预付款单、('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger mod 100000)+')应付款单！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsString+')预付、应付、应退款单！'
         else
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+ PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 没有审核';
         if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then

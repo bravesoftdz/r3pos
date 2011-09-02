@@ -336,11 +336,8 @@ begin
         Exit;
       end;
       inKeepAlive.onoff:=1;
-      //设置３秒钟时间间隔
-
-      inKeepAlive.keepalivetime:=10000;
-      //设置每３秒中发送１次的心跳
-      inKeepAlive.keepaliveinterval:=3;
+      inKeepAlive.keepalivetime:=1000;
+      inKeepAlive.keepaliveinterval:=1000;
       insize:=sizeof(TTCP_KEEPALIVE);
       outsize:=sizeof(TTCP_KEEPALIVE);
       if WSAIoctl(ClientWinSocket,SIO_KEEPALIVE_VALS,@inKeepAlive,insize,@outKeepAlive,outsize,@opt,nil,nil)=SOCKET_ERROR then

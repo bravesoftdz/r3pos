@@ -20,10 +20,12 @@ type
     FSyncTimeStamp: int64;
     FSyncComm: boolean;
     Ffirsted: boolean;
+    FEndTimeStamp: int64;
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetSyncComm(const Value: boolean);
     procedure Setfirsted(const Value: boolean);
+    procedure SetEndTimeStamp(const Value: int64);
   protected
     procedure SetTicket;
     function GetTicket:Int64;
@@ -97,20 +99,29 @@ type
     procedure SyncAll;
     //开始基础数据
     procedure SyncBasic(gbl:boolean=true);
+    //添加定义同步方法
+    procedure SyncThread;
     //数据同步到Rim
     procedure SyncRim;
+
+    //检测锁定数据
+    function SyncLockCheck:boolean;
+    function SyncLockDb:boolean;
+    function SyncUnLockDb:boolean;
 
     //检测服务端是否没有数据？
     function CheckRemeteData:boolean;
     property Params:TftParamList read FParams write SetParams;
     property SyncTimeStamp:int64 read FSyncTimeStamp write SetSyncTimeStamp;
+    //控制结束日期
+    property EndTimeStamp:int64 read FEndTimeStamp write SetEndTimeStamp;
     property SyncComm:boolean read FSyncComm write SetSyncComm;
     property firsted:boolean read Ffirsted write Setfirsted;
   end;
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,uCaFactory,uShopGlobal;
+uses uGlobal,ufrmLogo,uDsUtil,uCaFactory,uShopGlobal;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -680,6 +691,11 @@ begin
   end;
 end;
 
+procedure TSyncFactory.SetEndTimeStamp(const Value: int64);
+begin
+  FEndTimeStamp := Value;
+end;
+
 procedure TSyncFactory.Setfirsted(const Value: boolean);
 begin
   Ffirsted := Value;
@@ -705,6 +721,8 @@ var
   r:integer;
 begin
   if TimeStamp=0 then TimeStamp := round((now()-40542.0)*86400);
+  //如果有截止时间，要写入截止时间不能用当前时间
+  if EndTimeStamp>0 then TimeStamp := EndTimeStamp;
   if SHOP_ID='' then SHOP_ID:='#';
   r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
   if r=0 then
@@ -724,6 +742,7 @@ procedure TSyncFactory.SyncAll;
 var
   i:integer;
 begin
+  EndTimeStamp := 0;
   InterlockedIncrement(Locked);
   try
   frmLogo.Show;
@@ -781,6 +800,7 @@ procedure TSyncFactory.SyncBasic(gbl:boolean=true);
 var
   i:integer;
 begin
+  EndTimeStamp := 0;
   InterlockedIncrement(Locked);
   try
   if gbl then SyncComm := CheckRemeteData;
@@ -902,8 +922,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1532,6 +1560,64 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+  end;
+end;
+
+function TSyncFactory.SyncLockCheck: boolean;
+var
+  rs:TZQuery;
+  rid,cid:string;
+begin
+  result := true;
+  if ShopGlobal.ONLVersion then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+Global.SHOP_ID+''' and TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.LocalFactory.Open(rs);
+    cid := rs.Fields[0].AsString;
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+Global.SHOP_ID+''' and TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.RemoteFactory.Open(rs);
+    rid := rs.Fields[0].AsString;
+    result := (rid=cid);
+  finally
+    rs.Free;
+  end;
+end;
+
+function TSyncFactory.SyncLockDb: boolean;
+var
+  id:string;
+  rs:TZQuery;
+begin
+  result := true;
+  if ShopGlobal.ONLVersion then Exit;
+  if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库锁定功能。');
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+Global.SHOP_ID+''' and TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.RemoteFactory.Open(rs);
+    if rs.Fields[0].AsString<>'' then Exit;
+  finally
+    rs.Free;
+  end;
+  if MessageBox(Application.MainForm.Handle,'是否锁定当前电脑为本门店专用电脑？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  id := TSequence.NewId;
+  Global.RemoteFactory.BeginTrans;
+  Global.LocalFactory.BeginTrans;
+  try
+    Global.RemoteFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE = '''+'DBKEY_'+Global.SHOP_ID+'''');
+    Global.RemoteFactory.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+'DBKEY_'+Global.SHOP_ID+''','''+id+''',0,''00'',0)');
+    Global.LocalFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE = '''+'DBKEY_'+Global.SHOP_ID+'''');
+    Global.LocalFactory.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+'DBKEY_'+Global.SHOP_ID+''','''+id+''',0,''00'',0)');
+    Global.RemoteFactory.CommitTrans;
+    Global.LocalFactory.CommitTrans;
+  except
+    Global.RemoteFactory.RollbackTrans;
+    Global.LocalFactory.RollbackTrans;
+    Raise;
   end;
 end;
 
@@ -3202,10 +3288,25 @@ begin
   end;
 end;
 
+procedure TSyncFactory.SyncThread;
+begin
+
+end;
+
 procedure TSyncFactory.SyncTransOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 begin
   SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag,false,0);
+end;
+
+function TSyncFactory.SyncUnLockDb: boolean;
+begin
+  if ShopGlobal.ONLVersion then Exit;
+  if Global.UserID<>'system' then Raise Exception.Create('只有超级管理员才能远程数据库进行解锁');
+  if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库解锁功能。');
+  if MessageBox(Application.MainForm.Handle,'你是否真要对本企业的所有门店账套进行解锁？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  Global.RemoteFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE like ''DBKEY_%''');
+  MessageBox(Application.MainForm.Handle,'解锁成功。','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 initialization

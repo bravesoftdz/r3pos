@@ -239,7 +239,9 @@ uses
   ufrmShopMain in 'ufrmShopMain.pas' {frmShopMain},
   ufrmShopDesk in 'ufrmShopDesk.pas' {frmShopDesk},
   ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide},
-  uLoginFactory in 'App\uLoginFactory.pas';
+  uLoginFactory in 'App\uLoginFactory.pas',
+  objGoodsMonth in 'Obj\objGoodsMonth.pas',
+  ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth};
 
 {$R *.res}
 var

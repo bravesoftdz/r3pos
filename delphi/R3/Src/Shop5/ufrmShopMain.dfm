@@ -5247,6 +5247,10 @@ inherited frmShopMain: TfrmShopMain
       Caption = #38144#21806#26376#20998#26512#34920
       OnExecute = actfrmSaleMonthTotalReportExecute
     end
+    object actfrmGoodsMonth: TAction
+      Caption = #25104#26412#35843#25972
+      OnExecute = actfrmGoodsMonthExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

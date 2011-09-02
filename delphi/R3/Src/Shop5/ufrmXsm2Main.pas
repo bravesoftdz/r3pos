@@ -273,6 +273,7 @@ type
     RzBmpButton3: TRzBmpButton;
     lblUserInfo: TLabel;
     imgOffline: TImage;
+    actfrmGoodsMonth: TAction;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -400,6 +401,7 @@ type
     procedure Image9Click(Sender: TObject);
     procedure RzTrayIcon1MinimizeApp(Sender: TObject);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
+    procedure actfrmGoodsMonthExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -476,7 +478,8 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,uLoginFactory;
+  ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
+  uLoginFactory,ufrmGoodsMonth;
   
 {$R *.dfm}
 
@@ -1013,7 +1016,7 @@ begin
      end;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
+  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
      begin
         try
           SyncFactory.SyncAll;
@@ -3209,7 +3212,7 @@ begin
   if Message.WParam = 99 then //执行自动到货确认
   begin
      if Global.UserID='system' then Exit;
-     if not ShopGlobal.SyncCheck then Exit;
+     if not SyncFactory.SyncLockCheck then Exit;
      TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
   end;
   if Message.WParam = 100 then //新商盟消息
@@ -4177,6 +4180,18 @@ begin
        end;
      end;
     if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+    SyncFactory.SyncLockDb;
+    if not SyncFactory.SyncLockCheck then
+       begin
+         if Global.UserID='system' then
+            begin
+              if MessageBox(Handle,'当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+              SyncFactory.SyncUnLockDb;
+              Exit;
+            end
+         else
+         Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
+       end;
     SyncFactory.SyncAll;
     Global.LoadBasic;
     ShopGlobal.LoadRight;
@@ -4238,6 +4253,8 @@ begin
      begin
        if not Global.RemoteFactory.Connected then Exit;
        if MessageBox(Handle,'系统第一次初始化，将从服务器恢复业务数据，是否立即执行？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       SyncFactory.SyncLockDb;
+       if not SyncFactory.SyncLockCheck then Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。'); 
        SyncFactory.SyncAll;
      end;
     TfrmCostCalc.CheckMonthReck(self);
@@ -4268,6 +4285,28 @@ begin
   inherited;
   Form := FindChildForm(TfrmPosMain);
   if Form<>nil then Form.WindowState := wsMaximized;
+end;
+
+procedure TfrmXsm2Main.actfrmGoodsMonthExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
+  Form := FindChildForm(TfrmGoodsMonth);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmGoodsMonth.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

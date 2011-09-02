@@ -7,7 +7,8 @@ uses
   uLoginFactory in 'App\uLoginFactory.pas',
   ummGlobal in 'ummGlobal.pas' {mmGlobal: TDataModule},
   ObjCommon in 'Obj\ObjCommon.pas',
-  ummFactory in 'MM\ummFactory.pas';
+  ummFactory in 'MM\ummFactory.pas',
+  uCaFactory in 'App\uCaFactory.pas';
 
 {$R *.res}
 

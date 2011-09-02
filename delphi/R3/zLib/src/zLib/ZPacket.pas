@@ -776,7 +776,11 @@ begin
             end;
         end;
       -1:begin
-           if ((GetTickCount-_Start)>5000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
+           if ((GetTickCount-_Start)>5000) then
+            begin
+              SetConnected(false);
+              raise ESocketConnectionError.CreateRes(@SSocketReadError);
+            end;
         end;
       else
         begin
@@ -822,7 +826,11 @@ begin
             end;
          -1:
             begin
-               if ((GetTickCount-_Start)>5000) then raise ESocketConnectionError.CreateRes(@SSocketReadError);
+               if ((GetTickCount-_Start)>5000) then
+               begin
+                  SetConnected(false);
+                  raise ESocketConnectionError.CreateRes(@SSocketReadError);
+               end;
             end
          else
             begin

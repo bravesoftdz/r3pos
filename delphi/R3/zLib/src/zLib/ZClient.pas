@@ -1096,7 +1096,6 @@ var
   inKeepAlive,OutKeepAlive:TTCP_KEEPALIVE;
   opt ,insize,outsize: Integer;
 begin
-  Exit;
   //加入心跳代码
   opt:=1;
   if setsockopt(Socket,SOL_SOCKET,SO_KEEPALIVE,@opt,sizeof(opt))=SOCKET_ERROR then
@@ -1104,11 +1103,8 @@ begin
     Exit;
   end;
   inKeepAlive.onoff:=1;
-  //设置３秒钟时间间隔
-
-  inKeepAlive.keepalivetime:=10000;
-  //设置每３秒中发送１次的心跳
-  inKeepAlive.keepaliveinterval:=3;
+  inKeepAlive.keepalivetime:=1000;
+  inKeepAlive.keepaliveinterval:=1000;
   insize:=sizeof(TTCP_KEEPALIVE);
   outsize:=sizeof(TTCP_KEEPALIVE);
   if WSAIoctl(Socket,SIO_KEEPALIVE_VALS,@inKeepAlive,insize,@outKeepAlive,outsize,@opt,nil,nil)=SOCKET_ERROR then

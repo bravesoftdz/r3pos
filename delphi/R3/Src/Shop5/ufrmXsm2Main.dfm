@@ -1,6 +1,6 @@
 inherited frmXsm2Main: TfrmXsm2Main
-  Left = -8
-  Top = -8
+  Left = -38
+  Top = 224
   Width = 1292
   Height = 776
   Caption = ''
@@ -21181,6 +21181,10 @@ inherited frmXsm2Main: TfrmXsm2Main
     object actfrmSyncAll: TAction
       Caption = #25968#25454#21516#27493
       OnExecute = actfrmSyncAllExecute
+    end
+    object actfrmGoodsMonth: TAction
+      Caption = #25104#26412#35843#25972
+      OnExecute = actfrmGoodsMonthExecute
     end
   end
   inherited PopupMenu: TPopupMenu

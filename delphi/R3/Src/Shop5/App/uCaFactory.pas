@@ -228,7 +228,7 @@ type
   end;
 var CaFactory:TCaFactory;
 implementation
-uses ufrmLogo,uShopGlobal,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,PubMemberService,
+uses ufrmLogo,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,PubMemberService,
      IniFiles,ObjCommon;
 { TCaFactory }
 

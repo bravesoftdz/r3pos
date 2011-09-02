@@ -5714,6 +5714,10 @@ inherited frmN26Main: TfrmN26Main
       Caption = #31532#19977#26041#25509#21475
       OnExecute = actfrmN26NetExecute
     end
+    object actfrmGoodsMonth: TAction
+      Caption = #25104#26412#35843#25972
+      OnExecute = actfrmGoodsMonthExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

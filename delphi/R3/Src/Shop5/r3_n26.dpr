@@ -242,7 +242,9 @@ uses
   uGodsFactory in 'App\uGodsFactory.pas',
   ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide},
   uLoginFactory in 'App\uLoginFactory.pas',
-  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder};
+  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},
+  ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth},
+  objGoodsMonth in 'Obj\objGoodsMonth.pas';
 
 {$R *.res}
 var

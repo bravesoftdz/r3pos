@@ -13,7 +13,11 @@ type
     function GetMacAddr:string;
     function GetIpAddr:string;
     procedure SetId(const Value: string);
+  protected
+    function UpdateDbVersion:boolean;
   public
+    function ConnectTo():boolean;
+
     procedure Login(uid,sid:string);
     procedure Logout;
     procedure OpenModule(mId:string);
@@ -23,8 +27,22 @@ type
 var
   LoginFactory:TLoginFactory;
 implementation
-uses uGlobal,uFnUtil,uDsUtil,uCaFactory,ObjCommon;
+uses uGlobal,uFnUtil,uDsUtil,uCaFactory,ObjCommon,udbUtil,ufrmDbUpgrade;
 { TLoginFactory }
+
+function TLoginFactory.ConnectTo(): boolean;
+var
+  Factory:TCreateDbFactory;
+begin
+  result := false;
+  Global.MoveToLocal;
+  Global.Connect;
+  if not UpdateDbVersion then
+     begin
+       result := false;
+       Exit;
+     end;
+end;
 
 function TLoginFactory.GetComputerName: string;
 var
@@ -168,6 +186,20 @@ end;
 procedure TLoginFactory.SetId(const Value: string);
 begin
   FId := Value;
+end;
+
+function TLoginFactory.UpdateDbVersion: boolean;
+var
+  Factory:TCreateDbFactory;
+begin
+  result := true;
+  Factory := TCreateDbFactory.Create;
+  try
+    if Factory.CheckVersion(DBVersion,Global.LocalFactory) then
+       result := TfrmDbUpgrade.DbUpgrade(Factory,Global.LocalFactory);
+  finally
+    Factory.Free;
+  end;
 end;
 
 initialization

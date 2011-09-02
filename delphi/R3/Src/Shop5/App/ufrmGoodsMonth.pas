@@ -181,7 +181,8 @@ begin
   StrSql :=
     'select distinct A.*,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,(case when C.UNIT_ID is null then C.CALC_UNITS else C.UNIT_ID end) as UNIT_ID from ('+
     'select MONTH,TENANT_ID,GODS_ID,BATCH_NO,sum(isnull(BAL_AMT,0)) as BAL_AMT,sum(isnull(BAL_CST,0)) as BAL_CST,'+
-    'sum(isnull(BAL_CST,0))*1.00/(case when sum(isnull(BAL_AMT,0))=0 then 1 end) as BAL_PRICE,sum(isnull(ADJ_CST,0)) as ADJ_CST,sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0))*1.00/(case when sum(isnull(BAL_AMT,0))=0 then 1 end) as ADJ_PRICE,'+
+    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(BAL_CST,0))*1.00/sum(isnull(BAL_AMT,0)) end) as BAL_PRICE,sum(isnull(ADJ_CST,0)) as ADJ_CST,'+
+    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0))*1.00/sum(isnull(BAL_AMT,0)) end) as ADJ_PRICE,'+
     'sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0)) as ADJ_MNY from RCK_GOODS_MONTH where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrMonth+' group by MONTH,TENANT_ID,GODS_ID,BATCH_NO ) '+
     ' A inner join VIW_GOODSPRICE_SORTEXT C '+
     ' on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' ';

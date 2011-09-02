@@ -1251,7 +1251,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
             if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
               begin
                 rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-                if rs.Locate('SORT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                if rs.Locate('SORT_NAME,RELATION_ID',VarArrayOf([Trim(Source.FieldByName(SFieldName).AsString),'0']),[]) then
                   begin
                     Dest.FieldByName('SORT_ID1').AsString := rs.FieldbyName('SORT_ID').AsString;
                     Result := True;

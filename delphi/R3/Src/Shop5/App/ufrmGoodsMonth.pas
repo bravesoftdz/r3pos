@@ -130,7 +130,7 @@ begin
 end;
 
 function TfrmGoodsMonth.EncodeSql(ID: String): String;
-var StrSql,StrWhere,StrJoin:String;
+var StrSql,StrWhere,StrMonth,StrJoin:String;
     Item_Index:Integer;
 begin
   case Factor.iDbType of
@@ -138,9 +138,10 @@ begin
     1,4,5: StrJoin := '||';
   end;
   StrWhere := ' A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'') ';
-  if ID <> '' then
-    StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);
 
+
+  {if ID <> '' then
+    StrWhere := StrWhere + ' and A.GODS_ID>'+QuotedStr(ID);   }
 
   if rzTree.Selected <> nil then
     begin
@@ -175,80 +176,24 @@ begin
   end;
 
   if edtMonth.asString <> '' then
-    StrWhere := StrWhere + ' and A.MONTH='+edtMonth.asString
+    StrMonth := ' and MONTH='+edtMonth.asString
   else
-    StrWhere := StrWhere + ' and A.MONTH='+FormatDateTime('YYYYMM',Date);
+    StrMonth := ' and MONTH='+FormatDateTime('YYYYMM',Date);
 
-  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
+  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;   //TransUnit(0,'C','UNIT_ID')+ C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,
 
-  case Factor.iDbType of
-    0:begin
-      StrSql :=
-        'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(isnull(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(isnull(A.BAL_CST,0)) as BAL_CST,sum(isnull(A.BAL_CST,0))*1.00/sum(isnull(A.BAL_AMT,0)) as BAL_PRICE,sum(isnull(A.ADJ_CST,0)) as ADJ_CST,sum(isnull(A.ADJ_CST,0)+isnull(A.BAL_CST,0))*1.00/sum(isnull(A.BAL_AMT,0)) as ADJ_PRICE,'+
-        'sum(isnull(A.ADJ_CST,0)+isnull(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
-        ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
-        ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
-      Result :=
-      'select ja.*,isnull(a.BARCODE,ja.CALC_BARCODE) as BARCODE  from ('+StrSql+') ja '+
-      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+
-      ' and BARCODE_TYPE in (''0'',''1'',''2'')) a on ja.TENANT_ID=a.TENANT_ID and ja.GODS_ID=a.GODS_ID and ja.UNIT_ID=a.UNIT_ID '+
-      'order by ja.SHOP_ID,ja.GODS_CODE ';
-    end;
-    1:begin
-      StrSql :=
-        'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(nvl(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(nvl(A.BAL_CST,0)) as BAL_CST,sum(nvl(A.BAL_CST,0))*1.00/sum(nvl(A.BAL_AMT,0)) as BAL_PRICE,sum(nvl(A.ADJ_CST,0)) as ADJ_CST,sum(nvl(A.ADJ_CST,0)+nvl(A.BAL_CST,0))*1.00/sum(nvl(A.BAL_AMT,0)) as ADJ_PRICE,'+
-        'sum(nvl(A.ADJ_CST,0)+nvl(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
-        ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
-        ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
-      Result :=
-      'select ja.*,nvl(a.BARCODE,ja.CALC_BARCODE) as BARCODE  from ('+StrSql+') ja '+
-      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+
-      ' and BARCODE_TYPE in (''0'',''1'',''2'')) a on ja.TENANT_ID=a.TENANT_ID and ja.GODS_ID=a.GODS_ID and ja.UNIT_ID=a.UNIT_ID '+
-      'order by ja.SHOP_ID,ja.GODS_CODE ';
-    end;
-    3:begin
-      StrSql :=
-        'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as BAL_AMT,'+
-        'sum(iif(isnull(A.BAL_CST),0,A.BAL_CST)) as BAL_CST,sum(iif(isnull(A.BAL_CST),0,A.BAL_CST))*1.00/sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as BAL_PRICE,'+
-        'sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)A.ADJ_CST) as ADJ_CST,sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)+iif(isnull(A.BAL_CST),0,A.BAL_CST))*1.00/sum(iif(isnull(A.BAL_AMT),0,A.BAL_AMT)) as ADJ_PRICE,'+
-        'sum(iif(isnull(A.ADJ_CST),0,A.ADJ_CST)+iif(isnull(A.BAL_CST),0,A.BAL_CST)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
-        ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
-        ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
-      Result :=
-      'select ja.*,iif(isnull(a.BARCODE),ja.CALC_BARCODE,a.BARCODE) as BARCODE  from ('+StrSql+') ja '+
-      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+
-      ' and BARCODE_TYPE in (''0'',''1'',''2'')) a on ja.TENANT_ID=a.TENANT_ID and ja.GODS_ID=a.GODS_ID and ja.UNIT_ID=a.UNIT_ID '+
-      'order by ja.SHOP_ID,ja.GODS_CODE ';
-    end;
-    4:begin
-      StrSql :=
-        'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(coalesce(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(coalesce(A.BAL_CST,0)) as BAL_CST,sum(coalesce(A.BAL_CST,0))*1.00/sum(coalesce(A.BAL_AMT,0)) as BAL_PRICE,sum(coalesce(A.ADJ_CST,0)) as ADJ_CST,sum(coalesce(A.ADJ_CST,0)+coalesce(A.BAL_CST,0))*1.00/sum(coalesce(A.BAL_AMT,0)) as ADJ_PRICE,'+
-        'sum(coalesce(A.ADJ_CST,0)+coalesce(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
-        ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
-        ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
-      Result :=
-      'select ja.*,coalesce(a.BARCODE,ja.CALC_BARCODE) as BARCODE  from ('+StrSql+') ja '+
-      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+
-      ' and BARCODE_TYPE in (''0'',''1'',''2'')) a on ja.TENANT_ID=a.TENANT_ID and ja.GODS_ID=a.GODS_ID and ja.UNIT_ID=a.UNIT_ID '+
-      'order by ja.SHOP_ID,ja.GODS_CODE ';
-    end;
-    5:begin
-      StrSql :=
-        'select A.MONTH,A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,sum(IfNull(A.BAL_AMT,0)) as BAL_AMT,'+
-        'sum(IfNull(A.BAL_CST,0)) as BAL_CST,sum(IfNull(A.BAL_CST,0))*1.00/sum(IfNull(A.BAL_AMT,0)) as BAL_PRICE,sum(IfNull(A.ADJ_CST,0)) as ADJ_CST,sum(IfNull(A.ADJ_CST,0)+IfNull(A.BAL_CST,0))*1.00/sum(IfNull(A.BAL_AMT,0)) as ADJ_PRICE,'+
-        'sum(IfNull(A.ADJ_CST,0)+IfNull(A.BAL_CST,0)) as ADJ_MNY,'+TransUnit(0,'C','UNIT_ID')+
-        ' from RCK_GOODS_MONTH A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C '+
-        ' on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' group by A.GODS_ID,A.BATCH_NO ';
-      Result :=
-      'select ja.*,IfNull(a.BARCODE,ja.CALC_BARCODE) as BARCODE  from ('+StrSql+') ja '+
-      'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+
-      ' and BARCODE_TYPE in (''0'',''1'',''2'')) a on ja.TENANT_ID=a.TENANT_ID and ja.GODS_ID=a.GODS_ID and ja.UNIT_ID=a.UNIT_ID '+
-      'order by ja.SHOP_ID,ja.GODS_CODE ';
-    end;
-  end;
+  StrSql :=
+    'select distinct A.*,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,(case when C.UNIT_ID is null then C.CALC_UNITS else C.UNIT_ID end) as UNIT_ID from ('+
+    'select MONTH,TENANT_ID,GODS_ID,BATCH_NO,sum(isnull(BAL_AMT,0)) as BAL_AMT,sum(isnull(BAL_CST,0)) as BAL_CST,'+
+    'sum(isnull(BAL_CST,0))*1.00/sum(isnull(BAL_AMT,0)) as BAL_PRICE,sum(isnull(ADJ_CST,0)) as ADJ_CST,sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0))*1.00/sum(isnull(BAL_AMT,0)) as ADJ_PRICE,'+
+    'sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0)) as ADJ_MNY from RCK_GOODS_MONTH where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrMonth+' group by MONTH,TENANT_ID,GODS_ID,BATCH_NO ) '+
+    ' A inner join VIW_GOODSPRICE_SORTEXT C '+
+    ' on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' ';
+  Result :=
+  'select ja.*,isnull(a.BARCODE,ja.CALC_BARCODE) as BARCODE  from ('+StrSql+') ja '+
+  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+
+  ' and BARCODE_TYPE in (''0'',''1'',''2'')) a on ja.TENANT_ID=a.TENANT_ID and ja.GODS_ID=a.GODS_ID and ja.UNIT_ID=a.UNIT_ID '+
+  'order by ja.GODS_CODE ';
   
 end;
 

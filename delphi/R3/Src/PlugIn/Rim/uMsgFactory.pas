@@ -20,7 +20,7 @@ type
     OrderQry: TZQuery;
 
     //返回同步类型
-    function GetSyncType: integer; override; //同步类型     
+    function GetSyncType: integer; override; //同步类型
 
     //同步会员：tid 企业号
     function SyncMessage: Boolean;
@@ -32,7 +32,7 @@ type
     //返回一个门店的订单
     function GetINDEOrderList: Boolean;
     //判断是否已存在，并返回消息标题
-    function CheckMessageExists(const ArrDay: string; var Title, s, Content: string): Boolean;
+    function CheckMessageExists(const ArrDay: string; var Title, s, Content,COMM_ID: string): Boolean;
     //生成一个门店到货确认消息
     function DoShopDownOrderMessage: integer;
     //生成到货确认消息
@@ -266,23 +266,29 @@ begin
   end;
 end;
 
-function TMsgSyncFactory.CheckMessageExists(const ArrDay: string; var Title, s, Content: string): Boolean;
+function TMsgSyncFactory.CheckMessageExists(const ArrDay: string; var Title, s, Content,COMM_ID: string): Boolean;
 var
   Qry: TZQuery;
   NotExist: Boolean;
-  CurDay,COMM_ID: string;  
-begin
+  CurDay: string;
+  Msg: string;  
+begin             
   //1、先判断今天是否有生成消息；2、没有生成消息则生成消息相关:Title、Source、Content;
   result:=False;
+  if trim(ArrDay)='' then Exit;
   NotExist:=False;
   CurDay:=FormatDatetime('YYYYMMDD',Date()); //今天日期格式化
-  COMM_ID:='AUTODOWN'+ArrDay+'_'+CurDay;
+  if ArrDay=CurDay then //当天提醒
+    COMM_ID:='MESSAGE_'+ArrDay
+  else
+    COMM_ID:='AUTODOWN_'+ArrDay;
+
   Qry:=TZQuery.Create(nil);
   try
     Qry.SQL.Text:=
       'select count(*) as ReSum from MSC_MESSAGE A,MSC_MESSAGE_LIST B '+
       ' where A.TENANT_ID=B.TENANT_ID and A.MSG_ID=B.MSG_ID and A.TENANT_ID='+RimParam.TenID+' and B.SHOP_ID='''+RimParam.ShopID+''' and '+
-      ' A.ISSUE_DATE='+CurDay+' and A.END_DATE='''+CurDay+''' and A.COMM_ID='''+COMM_ID+''' ';
+      ' A.ISSUE_DATE='+ArrDay+' and A.COMM_ID='''+COMM_ID+''' ';
     if Open(Qry) then
     begin
       NotExist:=(Qry.FieldbyName('ReSum').AsInteger=0);
@@ -296,19 +302,19 @@ begin
     if ArrDay=CurDay then //当天提醒
     begin
       s := '通知';
-      Title:='到货提醒';
+      Title:=FormatDay(ArrDay)+'到货提醒';
       Content:='您'+FormatDay(ArrDay)+'的订单，预计今天送达，请及时进行到货确认，谢谢合作！';
     end else
     begin
       if AUTO_DOWN_ORDER then
       begin
         s:='到货通知';
-        Title:='自动到货提醒';
+        Title:=FormatDay(ArrDay)+'自动到货提醒';
         Content:='您'+FormatDay(ArrDay)+'的订单，可能未进行手工到货确认，系统将进行自动到货确认，如果已经到货确认，忽略此信息，谢谢合作！ ';
       end else
       begin
-        s := '通知';
-        Title:='到货提醒';
+        s :='通知';
+        Title:=FormatDay(ArrDay)+'到货提醒';
         Content:='您'+FormatDay(ArrDay)+'的订单，请及时进行到货确认，如果已经到货确认，忽略此消息，谢谢合作！ ';
       end;
     end;
@@ -320,12 +326,13 @@ function TMsgSyncFactory.DoShopDownOrderMessage: integer;
 var
   iRet,vCount: integer;
   mid,s,Title,Content: string; //消息单据号
-  CurDay,ArrDay,OrderDay,Str,COMM_ID: string; //启用日期
+  CurDay,ArrDay,EndDay,OrderDay,Str,COMM_ID: string; //启用日期
 begin
   result:=-1;
   try
     vCount:=0;
     CurDay:=FormatDatetime('YYYYMMDD',Date());
+    EndDay:=FormatDatetime('YYYYMMDD',Date()+7); //有效日期格式化
     GetINDEOrderList;
     OrderQry.First;
     while not OrderQry.Eof do
@@ -333,8 +340,8 @@ begin
       mid:= TBaseSyncFactory.newid(RimParam.ShopID);
       ArrDay:=trim(OrderQry.FieldByName('ARR_DATE').AsString);
       OrderDay:=trim(OrderQry.FieldByName('CRT_DATE').AsString);
-      COMM_ID:='AUTODOWN'+ArrDay+'_'+CurDay;
-      if CheckMessageExists(ArrDay, Title, s, Content) then
+
+      if CheckMessageExists(OrderDay, Title, s, Content,COMM_ID) then
       begin
         BeginTrans;
         try
@@ -343,7 +350,7 @@ begin
           if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create(GetLastError);
 
           str:='insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP)'+
-               ' values('+RimParam.TenID+','''+mid+''',''0'','+OrderDay+','+RimParam.TenID+','''+s+''',''system'','''+Title+''','''+Content+''','''+CurDay+''','''+COMM_ID+''',''00'','+GetTimeStamp(DbType)+')';
+               ' values('+RimParam.TenID+','''+mid+''',''0'','+OrderDay+','+RimParam.TenID+','''+s+''',''system'','''+Title+''','''+Content+''','''+EndDay+''','''+COMM_ID+''',''00'','+GetTimeStamp(DbType)+')';
           if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create(GetLastError);
           CommitTrans;
           Inc(vCount);
@@ -369,7 +376,8 @@ end;
 function TMsgSyncFactory.DownOrderMessage: Integer;
 var
   iRet: integer; //返回运行消息 
-  ErrorFlag: Boolean; 
+  ErrorFlag: Boolean;
+  SaveLog: TStringList;
 begin
   result:=-1;
   //读取自动到货的标记，默认不启用
@@ -437,7 +445,6 @@ begin
     WriteToReportLogFile('到货消息');  //输出到文本日志
   end;
 end;
-
 
 end.
 

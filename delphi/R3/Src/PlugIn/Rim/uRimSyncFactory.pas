@@ -41,8 +41,8 @@ type
     function GetSyncType: integer; virtual; //同步类型   
     //1、返回RIM_R3_NUM表的上次时间戳和当前最大时间戳:
     function GetMaxNUM(BillType, COM_ID,CUST_ID, SHOP_ID: string): string;
-    //2、返回Rim烟草公司ID(COM_ID):
-    function GetRimCOM_ID(TENANT_ID: string): string;
+    //2、返回Rim烟草公司ID(COM_ID): [IsTobaccoFlag=true是烟草公司，不需要查询关系表]         
+    function GetRimCOM_ID(TENANT_ID: string; IsTobaccoFlag: Boolean=False): string; virtual;
     //4、返回Rim零售户CUST_ID:
     function GetRimCUST_ID(COM_ID,LICENSE_CODE: string): string;
     //5、返回Rim零售户CUST_ID及零售户所属的COM_ID:
@@ -230,7 +230,7 @@ begin
   end;
 end;
 
-function TRimSyncFactory.GetRimCOM_ID(TENANT_ID: string): string;
+function TRimSyncFactory.GetRimCOM_ID(TENANT_ID: string; IsTobaccoFlag: Boolean): string;
 var
   TenID: string;
   Rs: TZQuery;
@@ -240,7 +240,7 @@ begin
   try
     try
       Rs:=TZQuery.Create(nil);
-      if SyncType=3 then  //前台门店终端提交上报[先将门店的企业ID 根据供应链ID换成 烟草公司的企业ID]
+      if (SyncType=3) and (IsTobaccoFlag=False) then  //前台门店终端提交上报[先将门店的企业ID 根据供应链ID换成 烟草公司的企业ID]
       begin
         Rs.Close;
         Rs.SQL.Text:='select TENANT_ID from CA_RELATIONS where RELATION_ID=1000006 and RELATI_ID ='+TENANT_ID+' ';

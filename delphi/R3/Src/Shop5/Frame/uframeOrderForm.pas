@@ -3641,7 +3641,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
               //RecordObj.ReadField(rs);
               //RecordObj.ReadFromDataSet(rs,False);
             end;
-          if us.Locate('UNIT_NAME',CdsExcel.FieldByName('UNIT_ID').AsString,[]) then
+          if us.Locate('UNIT_NAME,RELATION_FLAG',VarArrayOf([CdsExcel.FieldByName('UNIT_ID').AsString,RelationFlag]),[]) then
             begin
               if us.FieldByName('UNIT_ID').AsString = RecordObj.FieldByName('CALC_UNITS').AsString then
                 RecordObj.FieldByName('UNIT_ID').AsString := RecordObj.FieldByName('CALC_UNITS').AsString

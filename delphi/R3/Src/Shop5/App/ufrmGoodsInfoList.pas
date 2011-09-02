@@ -1270,7 +1270,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
             if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
               begin
                 rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
-                if rs.Locate('COLOR_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                if rs.Locate('COLOR_NAME,RELATION_FLAG',VarArrayOf([Trim(Source.FieldByName(SFieldName).AsString),'2']),[]) then
                   begin
                     Dest.FieldByName('SORT_ID7').AsString := rs.FieldbyName('COLOR_ID').AsString;
                     Result := True;
@@ -1287,7 +1287,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
             if Trim(Source.FieldByName(SFieldName).AsString) <> '' then
               begin
                 rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
-                if rs.Locate('SIZE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                if rs.Locate('SIZE_NAME,RELATION_FLAG',VarArrayOf([Trim(Source.FieldByName(SFieldName).AsString),'2']),[]) then
                   begin
                     Dest.FieldByName('SORT_ID8').AsString := rs.FieldbyName('SIZE_ID').AsString;
                     Result := True;

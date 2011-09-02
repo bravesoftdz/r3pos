@@ -1,7 +1,7 @@
 inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
-  Left = 215
-  Top = 90
+  Left = 267
+  Top = 112
   Height = 738
   Width = 909
   object SYS_DEFINE: TZQuery
@@ -543,8 +543,8 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select COLOR_ID,COLOR_NAME,COLOR_SPELL,SORT_ID7S,SEQ_NO from VIW' +
-        '_COLOR_INFO '
+        'select COLOR_ID,COLOR_NAME,COLOR_SPELL,SORT_ID7S,SEQ_NO,RELATION' +
+        '_FLAG from VIW_COLOR_INFO '
       'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') '
       'order  by SEQ_NO')
     Params = <
@@ -567,8 +567,8 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     SQL.Strings = (
       
-        'select SIZE_ID,SIZE_NAME,SIZE_SPELL,SORT_ID8S,SEQ_NO from VIW_SI' +
-        'ZE_INFO '
+        'select SIZE_ID,SIZE_NAME,SIZE_SPELL,SORT_ID8S,SEQ_NO,RELATION_FL' +
+        'AG from VIW_SIZE_INFO '
       'where  TENANT_ID=:TENANT_ID and  COMM not in ('#39'02'#39','#39'12'#39') '
       'order  by SEQ_NO')
     Params = <

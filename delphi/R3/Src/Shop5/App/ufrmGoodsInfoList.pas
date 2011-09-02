@@ -1198,7 +1198,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
             if Source.FieldByName(SFieldName).AsString <> '' then
               begin
                 rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-                if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                if rs.Locate('UNIT_NAME,RELATION_FLAG',VarArrayOf([Trim(Source.FieldByName(SFieldName).AsString),'2']),[]) then
                   begin
                     Dest.FieldByName('CALC_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                     Result := True;
@@ -1217,7 +1217,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
             if Source.FieldByName(SFieldName).AsString <> '' then
               begin
                 rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-                if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                if rs.Locate('UNIT_NAME,RELATION_FLAG',VarArrayOf([Trim(Source.FieldByName(SFieldName).AsString),'2']),[]) then
                   begin
                     Dest.FieldByName('SMALL_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                     Result := True;
@@ -1234,7 +1234,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
             if Source.FieldByName(SFieldName).AsString <> '' then
               begin
                 rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-                if rs.Locate('UNIT_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
+                if rs.Locate('UNIT_NAME,RELATION_FLAG',VarArrayOf([Trim(Source.FieldByName(SFieldName).AsString),'2']),[]) then
                   begin
                     Dest.FieldByName('BIG_UNITS').AsString := rs.FieldByName('UNIT_ID').AsString;
                     Result := True;

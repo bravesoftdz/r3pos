@@ -46,7 +46,7 @@ end;
 //返回当前插件说明
 function GetPlugInDisplayName:Pchar; stdcall;
 begin
-  result := 'RSP上报RIM日销售汇总';
+  result := '下载RIM参数';
 end;
 
 //为每个插件定义一个唯一标识号，范围1000-9999

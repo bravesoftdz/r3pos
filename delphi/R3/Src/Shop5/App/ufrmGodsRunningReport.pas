@@ -403,7 +403,7 @@ begin
   MaxReckDate:='';
   GodsID:=trim(fndP1_GODS_ID.AsString);
   ReckDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1);
-  UnitCalc:='('+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'D')+')*1.0';
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'D');
   if trim(fndP1_SHOP_ID.AsString)<>'' then
     Shop_Cnd:=' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
   rs := TZQuery.Create(nil);
@@ -418,10 +418,10 @@ begin
     begin
       Str:=
         'select sum((case when ORDER_TYPE in (11,13) then STOCK_AMT '+
-                         ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
-                         ' when ORDER_TYPE=12 then DBIN_AMT '+
-                         ' when ORDER_TYPE=22 then -DBOUT_AMT '+
-                         ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)*1.0/'+UnitCalc+')as BAL_AMT,'+
+                        ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
+                        ' when ORDER_TYPE=12 then DBIN_AMT '+
+                        ' when ORDER_TYPE=22 then -DBOUT_AMT '+
+                        ' else (CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*1.0 end)*1.0/'+UnitCalc+')as BAL_AMT,'+
                ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
          'from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
          ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' '+

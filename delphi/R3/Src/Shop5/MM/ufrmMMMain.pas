@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMMBasic, ImgList, RzTray, Menus, ExtCtrls, RzForms,
-  RzBckgnd, RzPanel;
+  RzBckgnd, RzPanel, RzBmpBtn, StdCtrls;
 
 type
   TfrmMMMain = class(TfrmMMBasic)

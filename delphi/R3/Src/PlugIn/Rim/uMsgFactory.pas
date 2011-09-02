@@ -32,7 +32,7 @@ type
     //返回一个门店的订单
     function GetINDEOrderList: Boolean;
     //判断是否已存在，并返回消息标题
-    function CheckMessageExists(const ArrDay: string; var Title, s, Content,COMM_ID: string): Boolean;
+    function CheckMessageExists(const OrderDay,ArrDay: string; var Title, s, Content,COMM_ID: string): Boolean;
     //生成一个门店到货确认消息
     function DoShopDownOrderMessage: integer;
     //生成到货确认消息
@@ -248,12 +248,13 @@ begin
   end;
   if trim(UseDate)='' then UseDate:=FormatDatetime('YYYYMMDD',Date());  //启用默认今天
   if NearDate<UseDate then NearDate:=UseDate; //对比比启用日期还小则从启用日期开始取消息
-  
-  try
-    Str:='select distinct ARR_DATE,CRT_DATE from RIM_SD_CO where COM_ID='''+RimParam.ComID+''' and CUST_ID='''+RimParam.CustID+''' and '+
-         ' STATUS in (''05'',''06'') and ARR_DATE<='''+CurDay+''' and ARR_DATE>='''+NearDate+''' and '+
-         ' not CO_NUM in(select COMM_ID from STK_STOCKORDER where TENANT_ID='+RimParam.TenID+' and COMM_ID is not null and COMM not in (''02'',''12'') )'+
-         ' order by ARR_DATE ';
+
+  try                   
+    Str:='select A.ARR_DATE,A.CRT_DATE,sum(B.QTY_ORD) as QTY_SUM,sum(B.AMT) as AMT_SUM,Count(distinct B.ITEM_ID) as PZSUM '+
+         ' from RIM_SD_CO A,RIM_SD_CO_LINE B where A.CO_NUM=B.CO_NUM and A.COM_ID='''+RimParam.ComID+''' and A.CUST_ID='''+RimParam.CustID+''' and '+
+         ' A.STATUS in (''05'',''06'') and A.ARR_DATE<='''+CurDay+''' and A.ARR_DATE>='''+NearDate+''' and '+
+         ' not A.CO_NUM in(select COMM_ID from STK_STOCKORDER where TENANT_ID='+RimParam.TenID+' and COMM_ID is not null and COMM not in (''02'',''12'') )'+
+         ' Group by A.ARR_DATE,A.CRT_DATE ';
     OrderQry.close;
     OrderQry.SQL.Text:=Str;
     Open(OrderQry);
@@ -266,11 +267,11 @@ begin
   end;
 end;
 
-function TMsgSyncFactory.CheckMessageExists(const ArrDay: string; var Title, s, Content,COMM_ID: string): Boolean;
+function TMsgSyncFactory.CheckMessageExists(const OrderDay,ArrDay: string; var Title, s, Content,COMM_ID: string): Boolean;
 var
   Qry: TZQuery;
   NotExist: Boolean;
-  CurDay: string;
+  CurDay,ISSUE_DATE: string;
   Msg: string;  
 begin             
   //1、先判断今天是否有生成消息；2、没有生成消息则生成消息相关:Title、Source、Content;
@@ -278,17 +279,22 @@ begin
   if trim(ArrDay)='' then Exit;
   NotExist:=False;
   CurDay:=FormatDatetime('YYYYMMDD',Date()); //今天日期格式化
-  if ArrDay=CurDay then //当天提醒
-    COMM_ID:='MESSAGE_'+ArrDay
-  else
+  if OrderDay=CurDay then //当天提醒
+  begin
+    COMM_ID:='MESSAGE_'+ArrDay;
+    ISSUE_DATE:=CurDay;
+  end else
+  begin
     COMM_ID:='AUTODOWN_'+ArrDay;
+    ISSUE_DATE:=OrderDay;
+  end;
 
   Qry:=TZQuery.Create(nil);
   try
     Qry.SQL.Text:=
       'select count(*) as ReSum from MSC_MESSAGE A,MSC_MESSAGE_LIST B '+
       ' where A.TENANT_ID=B.TENANT_ID and A.MSG_ID=B.MSG_ID and A.TENANT_ID='+RimParam.TenID+' and B.SHOP_ID='''+RimParam.ShopID+''' and '+
-      ' A.ISSUE_DATE='+ArrDay+' and A.COMM_ID='''+COMM_ID+''' ';
+      ' A.ISSUE_DATE='+ISSUE_DATE+' and A.COMM_ID='''+COMM_ID+''' ';
     if Open(Qry) then
     begin
       NotExist:=(Qry.FieldbyName('ReSum').AsInteger=0);
@@ -299,23 +305,29 @@ begin
 
   if (NotExist) and (ArrDay<>'') then
   begin
-    if ArrDay=CurDay then //当天提醒
+    if OrderDay=CurDay then //当天提醒
     begin
       s := '通知';
-      Title:=FormatDay(ArrDay)+'到货提醒';
-      Content:='您'+FormatDay(ArrDay)+'的订单，预计今天送达，请及时进行到货确认，谢谢合作！';
+      Title:=FormatDay(OrderDay)+'到货提醒';          
+      Content:='您<'+FormatDay(OrderDay)+'>订的订单（'+Content+'），预计<'+FormatDay(ArrDay)+'>送达，请及时到货确认。';
+
+      //Content:='您'+FormatDay(OrderDay)+'的订单，预计今天送达，请及时进行到货确认，谢谢合作！';
     end else
     begin
       if AUTO_DOWN_ORDER then
       begin
         s:='到货通知';
-        Title:=FormatDay(ArrDay)+'自动到货提醒';
-        Content:='您'+FormatDay(ArrDay)+'的订单，可能未进行手工到货确认，系统将进行自动到货确认，如果已经到货确认，忽略此信息，谢谢合作！ ';
+        Title:=FormatDay(OrderDay)+'自动到货提醒';
+        Content:='您<'+FormatDay(OrderDay)+'>订的订单（'+Content+'），应已于<'+FormatDay(ArrDay)+'>送达，系统将对此订单进行自动到货确认。';
+
+        //Content:='您'+FormatDay(OrderDay)+'的订单，可能未进行手工到货确认，系统将进行自动到货确认，如果已经到货确认，忽略此信息，谢谢合作！ ';
       end else
       begin
         s :='通知';
-        Title:=FormatDay(ArrDay)+'到货提醒';
-        Content:='您'+FormatDay(ArrDay)+'的订单，请及时进行到货确认，如果已经到货确认，忽略此消息，谢谢合作！ ';
+        Title:=FormatDay(OrderDay)+'到货提醒';
+        Content:='您<'+FormatDay(OrderDay)+'>订的订单（'+Content+'），应已于<'+FormatDay(ArrDay)+'>送达，请及时到货确认。';
+
+        //Content:='您'+FormatDay(OrderDay)+'的订单，请及时进行到货确认，如果已经到货确认，忽略此消息，谢谢合作！ ';
       end;
     end;
     result:=true;
@@ -325,7 +337,7 @@ end;
 function TMsgSyncFactory.DoShopDownOrderMessage: integer;
 var
   iRet,vCount: integer;
-  mid,s,Title,Content: string; //消息单据号
+  mid,s,Title,Content,ISSUE_DATE: string; //消息单据号
   CurDay,ArrDay,EndDay,OrderDay,Str,COMM_ID: string; //启用日期
 begin
   result:=-1;
@@ -340,8 +352,15 @@ begin
       mid:= TBaseSyncFactory.newid(RimParam.ShopID);
       ArrDay:=trim(OrderQry.FieldByName('ARR_DATE').AsString);
       OrderDay:=trim(OrderQry.FieldByName('CRT_DATE').AsString);
-
-      if CheckMessageExists(OrderDay, Title, s, Content,COMM_ID) then
+      if ArrDay=FormatDatetime('YYYYMMDD',Date()) then //当天日期
+        ISSUE_DATE:=FormatDatetime('YYYYMMDD',Date())  
+      else
+        ISSUE_DATE:=OrderDay;
+      Content:='品种：'+InttoStr(OrderQry.fieldbyName('PZSUM').asInteger)+'，'+
+               '数量：'+FormatFloat('#0.00',OrderQry.fieldbyName('QTY_SUM').asFloat)+'条，'+
+               '总金额：'+FormatFloat('#0.00',OrderQry.fieldbyName('AMT_SUM').asFloat)+' ';
+      
+      if CheckMessageExists(OrderDay,ArrDay, Title, s, Content,COMM_ID) then
       begin
         BeginTrans;
         try
@@ -350,7 +369,7 @@ begin
           if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create(GetLastError);
 
           str:='insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP)'+
-               ' values('+RimParam.TenID+','''+mid+''',''0'','+OrderDay+','+RimParam.TenID+','''+s+''',''system'','''+Title+''','''+Content+''','''+EndDay+''','''+COMM_ID+''',''00'','+GetTimeStamp(DbType)+')';
+               ' values('+RimParam.TenID+','''+mid+''',''0'','+ISSUE_DATE+','+RimParam.TenID+','''+s+''',''system'','''+Title+''','''+Content+''','''+EndDay+''','''+COMM_ID+''',''00'','+GetTimeStamp(DbType)+')';
           if ExecSQL(Pchar(Str),iRet)<>0 then Raise Exception.Create(GetLastError);
           CommitTrans;
           Inc(vCount);

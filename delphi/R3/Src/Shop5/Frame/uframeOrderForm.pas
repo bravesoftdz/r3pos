@@ -3612,9 +3612,9 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
             begin
               RecordObj.ReadFromDataSet(rs,False);
               if rs.FieldByName('RELATION_ID').AsString = '0' then
-                RelationFlag = '2'
+                RelationFlag := '2'
               else
-                RelationFlag = '1';
+                RelationFlag := '1';
               //tmp.Close;
               //tmp.SQL.Text := 'select * from VIW_GOODSPRICEEXT where GODS_CODE='''+GID+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);
               //Factor.Open(tmp);

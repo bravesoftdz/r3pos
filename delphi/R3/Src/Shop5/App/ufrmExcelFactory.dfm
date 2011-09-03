@@ -15,7 +15,7 @@ inherited frmExcelFactory: TfrmExcelFactory
     Top = 0
     Width = 549
     Height = 336
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     BoldCurrentTab = True
     FlatColor = clWhite
@@ -25,7 +25,7 @@ inherited frmExcelFactory: TfrmExcelFactory
     TabColors.HighlightBar = clMoneyGreen
     TabColors.Shadow = 12947783
     TabHeight = 20
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     FixedDimension = 20
     object TabSheet3: TRzTabSheet

@@ -137,6 +137,7 @@ begin
   try
     try
     HasError := false;
+    cdsExcel.Filtered := False;
     cdsExcel.First;
     while not cdsExcel.Eof do
       begin

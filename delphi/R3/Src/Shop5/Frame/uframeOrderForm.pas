@@ -3654,22 +3654,24 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
                   if Trim(ErrorInfo) = '' then
                     begin
                       if CdsExcel.FieldByName('BARCODE').AsString <> '' then
-                        ErrorInfo := '商品条码为"'+CdsExcel.FieldByName('BARCODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在;'+#13#10
+                        ErrorInfo := '商品条码为"'+CdsExcel.FieldByName('BARCODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"为非法单位;'+#13#10
                       else
-                        ErrorInfo := '商品货号为"'+CdsExcel.FieldByName('GODS_CODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在;'+#13#10;
+                        ErrorInfo := '商品货号为"'+CdsExcel.FieldByName('GODS_CODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"为非法单位;'+#13#10;
                     end
                   else
                     begin
                       if CdsExcel.FieldByName('BARCODE').AsString <> '' then
-                        ErrorInfo := ErrorInfo+'商品条码为"'+CdsExcel.FieldByName('BARCODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在;'+#13#10
+                        ErrorInfo := ErrorInfo+'商品条码为"'+CdsExcel.FieldByName('BARCODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"为非法单位;'+#13#10
                       else
-                        ErrorInfo := ErrorInfo+'商品货号为"'+CdsExcel.FieldByName('GODS_CODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在;'+#13#10;
+                        ErrorInfo := ErrorInfo+'商品货号为"'+CdsExcel.FieldByName('GODS_CODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"为非法单位;'+#13#10;
                     end;
                   Raise Exception.Create(ErrorInfo);
-                  //CdsExcel.Next;
-                  //Continue;
                 end;
-
+            end
+          else
+            begin
+              ErrorInfo := '单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在';
+              Raise Exception.Create(ErrorInfo);
             end;
           if CdsExcel.FieldByName('IS_PRESENT').AsInteger = 1 then
             IsPt := True

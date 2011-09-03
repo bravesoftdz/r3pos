@@ -284,7 +284,7 @@ begin
       if Tobject(FList[i]) is TcxComboBox then
         begin
           if (TcxComboBox(FList[i]).Tag = 1) and (Trim(TcxComboBox(FList[i]).Text) = '') then
-            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
+            raise Exception.Create('"'+UnionName+'"分页中有必填项没有填写!');
           Index_Id := copy(TcxComboBox(FList[i]).Name,5,50);
           Index_Id := AnsiReplaceText(Index_Id,'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then

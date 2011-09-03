@@ -981,6 +981,7 @@ begin
       frame.IsRecordChange := IsExtChange;
       frame.UnionID := cdsUnionCard.FieldbyName('UNION_ID').AsString;
       frame.Cust_Id := cdsUnionCard.FieldbyName('CLIENT_ID').AsString;
+      frame.UnionName := cdsUnionCard.FieldbyName('UNION_NAME').AsString;
       frame.DataState := dbState;
       frame.ReadFrom;
     end;

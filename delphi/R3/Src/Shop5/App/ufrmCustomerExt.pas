@@ -300,7 +300,7 @@ begin
       else if Tobject(FList[i]) is TcxSpinEdit then
         begin
           if (TcxSpinEdit(FList[i]).Tag = 1) and (Trim(TcxSpinEdit(FList[i]).Text) = '') then
-            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
+            raise Exception.Create('"'+UnionName+'"分页中有必填项没有填写!');
           Index_Id := AnsiReplaceText(copy(TcxSpinEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
@@ -312,7 +312,7 @@ begin
       else if Tobject(FList[i]) is TcxDateEdit then
         begin
           if (TcxDateEdit(FList[i]).Tag = 1) and (TcxDateEdit(FList[i]).EditValue = null) then
-            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
+            raise Exception.Create('"'+UnionName+'"分页中有必填项没有填写!');
           Index_Id := AnsiReplaceText(copy(TcxDateEdit(FList[i]).Name,5,50),'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then
             begin
@@ -327,7 +327,7 @@ begin
       else if TObject(FList[i]) is TzrComboBoxList then
         begin
           if (TzrComboBoxList(FList[i]).Tag = 1) and (Trim(TzrComboBoxList(FList[i]).Text) = '') then
-            raise Exception.Create('"'+UnionName+'"中有必填项没有填写!');
+            raise Exception.Create('"'+UnionName+'"分页中有必填项没有填写!');
           Index_Id := copy(TzrComboBoxList(FList[i]).Name,5,50);
           Index_Id := AnsiReplaceText(Index_Id,'_','-');
           if DataSet.Locate('INDEX_ID',Index_Id,[]) then

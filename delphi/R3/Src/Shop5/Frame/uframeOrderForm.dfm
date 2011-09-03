@@ -593,7 +593,7 @@ inherited frameOrderForm: TframeOrderForm
     object munInsertRow: TMenuItem
       Caption = #25554#20837#26032#34892
       ShortCut = 8237
-      OnClick = munInsertRowClick
+      OnClick = uf
     end
     object munAppendRow: TMenuItem
       Caption = #28155#21152#26032#34892

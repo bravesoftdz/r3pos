@@ -110,7 +110,7 @@ type
     procedure mnuGodsPropertyClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actCopyToNewClick(Sender: TObject);
-    procedure munInsertRowClick(Sender: TObject);
+    procedure uf(Sender: TObject);
     procedure munAppendRowClick(Sender: TObject);
     procedure actLocusNoExecute(Sender: TObject);
     procedure actBatchNoExecute(Sender: TObject);
@@ -3137,7 +3137,7 @@ begin
   if edtTable.Active then edtTable.Prior;
 end;
 
-procedure TframeOrderForm.munInsertRowClick(Sender: TObject);
+procedure TframeOrderForm.uf(Sender: TObject);
 var
   r,sr:integer;
 begin
@@ -3670,7 +3670,7 @@ procedure TframeOrderForm.Excel1Click(Sender: TObject);
             end
           else
             begin
-              ErrorInfo := '单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在';
+              ErrorInfo := '商品条码为"'+CdsExcel.FieldByName('BARCODE').AsString+'"的单位"'+CdsExcel.FieldByName('UNIT_ID').AsString+'"不存在';
               Raise Exception.Create(ErrorInfo);
             end;
           if CdsExcel.FieldByName('IS_PRESENT').AsInteger = 1 then

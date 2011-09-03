@@ -143,7 +143,7 @@ inherited frmShopInfo: TfrmShopInfo
       end
       object TabSheet2: TRzTabSheet
         Color = clWhite
-        Caption = #26032#21830#30431
+        Caption = #32593#19978#35746#36135
         object RzPanel3: TRzPanel
           Left = 0
           Top = 0

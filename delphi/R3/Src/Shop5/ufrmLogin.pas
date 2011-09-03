@@ -108,7 +108,7 @@ begin
   end;
 end;
 var
-  temp:TZQuery;
+  temp,rs:TZQuery;
   cId,cName:string;
    st: TSYSTEMTIME;
 begin
@@ -124,6 +124,7 @@ begin
        Raise Exception.Create('请输入用户账号。');
      end;
   temp := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
   try
      if not cxedtUsers.Enabled then
         temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.USER_ID='''+Global.UserID+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID)
@@ -131,6 +132,17 @@ begin
         temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID);
      Factor.Open(temp);
      if temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
+     
+//  Begin
+     if not ((temp.FieldByName('ACCOUNT').AsString = 'admin') or (temp.FieldByName('ACCOUNT').AsString = 'system')) then
+        begin
+          rs.SQL.Text := 'select DIMI_DATE from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(temp.FieldByName('ACCOUNT').AsString)+
+          ' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.DIMI_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()))+' and A.DIMI_DATE<>'''' ';
+          Factor.Open(rs);
+          if not rs.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'用户账号已经离职。');
+        end;
+//  End; 2011-09-03 17 时 ： 加入对已经离职用户的判断
+
      if cxedtUsers.Text='system' then
         begin
           if lowerCase(cxedtPasswrd.Text)<>('rspcn.com@'+formatdatetime('YYMMDD',date())+inttostr(strtoint(formatDatetime('DD',Date())) mod 7 )) then

@@ -69,7 +69,7 @@ begin
     ' and TENANT_ID=:TENANT_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsOldInteger;
     rs.ParamByName('UNION_ID').AsString := FieldbyName('UNION_ID').AsOldString;
-    rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsOldString;
+    rs.ParamByName('CLIENT_ID').AsString := FieldbyName('CUST_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.RecordCount > 0 then
       if rs.FieldByName('BALANCE').AsFloat > 0 then

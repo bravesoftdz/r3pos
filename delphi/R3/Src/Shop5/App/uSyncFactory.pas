@@ -1299,7 +1299,7 @@ end;
 procedure TSyncFactory.SyncDaysCloseOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 var
-  ls,cs_h,cs_d,cs_s,rs_h,rs_d,rs_s:TZQuery;
+  ls,cs_h,cs_d,cs_s,cs_c,rs_h,rs_d,rs_s,rs_c:TZQuery;
 begin
   Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
@@ -1316,6 +1316,8 @@ begin
   rs_d := TZQuery.Create(nil);
   cs_s := TZQuery.Create(nil);
   rs_s := TZQuery.Create(nil);
+  cs_c := TZQuery.Create(nil);
+  rs_c := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
@@ -1330,6 +1332,8 @@ begin
          rs_d.Close;
          cs_s.Close;
          rs_s.Close;
+         cs_c.Close;
+         rs_c.Close;
 
          Params.ParamByName('CREA_DATE').AsInteger := ls.FieldbyName('CREA_DATE').AsInteger;
          Global.RemoteFactory.BeginBatch;
@@ -1337,6 +1341,7 @@ begin
            Global.RemoteFactory.AddBatch(rs_h,'TSyncRckDaysClose',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncRckGodsDaysOrder',Params);
            Global.RemoteFactory.AddBatch(rs_s,'TSyncRckAcctDaysOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_c,'TSyncRckCGodsDays',Params);
            Global.RemoteFactory.OpenBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -1346,12 +1351,14 @@ begin
          cs_h.SyncDelta := rs_h.SyncDelta;
          cs_d.SyncDelta := rs_d.SyncDelta;
          cs_s.SyncDelta := rs_s.SyncDelta;
+         cs_c.SyncDelta := rs_c.SyncDelta;
 
          Global.LocalFactory.BeginBatch;
          try
            Global.LocalFactory.AddBatch(cs_h,'TSyncRckDaysClose',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncRckGodsDaysOrder',Params);
            Global.LocalFactory.AddBatch(cs_s,'TSyncRckAcctDaysOrder',Params);
+           Global.LocalFactory.AddBatch(cs_c,'TSyncRckCGodsDays',Params);
            Global.LocalFactory.CommitBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -1368,6 +1375,8 @@ begin
     cs_d.Free;
     rs_s.Free;
     cs_s.Free;
+    rs_c.Free;
+    cs_c.Free;
   end;
 
   if ShopGlobal.NetVersion then //连锁版只下载日账，不上传
@@ -1383,6 +1392,8 @@ begin
   rs_d := TZQuery.Create(nil);
   cs_s := TZQuery.Create(nil);
   rs_s := TZQuery.Create(nil);
+  cs_c := TZQuery.Create(nil);
+  rs_c := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
@@ -1396,6 +1407,8 @@ begin
          rs_d.Close;
          cs_s.Close;
          rs_s.Close;
+         cs_c.Close;
+         rs_c.Close;
 
          Params.ParamByName('CREA_DATE').AsInteger := ls.FieldbyName('CREA_DATE').AsInteger;
          Global.LocalFactory.BeginBatch;
@@ -1403,6 +1416,7 @@ begin
            Global.LocalFactory.AddBatch(cs_h,'TSyncRckDaysClose',Params);
            Global.LocalFactory.AddBatch(cs_d,'TSyncRckGodsDaysOrder',Params);
            Global.LocalFactory.AddBatch(cs_s,'TSyncRckAcctDaysOrder',Params);
+           Global.LocalFactory.AddBatch(cs_c,'TSyncRckCGodsDays',Params);
            Global.LocalFactory.OpenBatch;
          except
            Global.LocalFactory.CancelBatch;
@@ -1412,12 +1426,14 @@ begin
          rs_h.SyncDelta := cs_h.SyncDelta;
          rs_d.SyncDelta := cs_d.SyncDelta;
          rs_s.SyncDelta := cs_s.SyncDelta;
+         rs_c.SyncDelta := cs_c.SyncDelta;
 
          Global.RemoteFactory.BeginBatch;
          try
            Global.RemoteFactory.AddBatch(rs_h,'TSyncRckDaysClose',Params);
            Global.RemoteFactory.AddBatch(rs_d,'TSyncRckGodsDaysOrder',Params);
            Global.RemoteFactory.AddBatch(rs_s,'TSyncRckAcctDaysOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_c,'TSyncRckCGodsDays',Params);
            Global.RemoteFactory.CommitBatch;
          except
            Global.RemoteFactory.CancelBatch;
@@ -1435,6 +1451,8 @@ begin
     cs_d.Free;
     rs_s.Free;
     cs_s.Free;
+    rs_c.Free;
+    cs_c.Free;
   end;
 end;
 
@@ -1580,7 +1598,7 @@ begin
     rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+Global.SHOP_ID+''' and TENANT_ID='+inttostr(Global.TENANT_ID);
     Global.RemoteFactory.Open(rs);
     rid := rs.Fields[0].AsString;
-    result := (rid=cid);
+    result := (rid=cid) or (rid='');
   finally
     rs.Free;
   end;

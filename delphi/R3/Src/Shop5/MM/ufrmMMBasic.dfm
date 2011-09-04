@@ -6,14 +6,16 @@ object frmMMBasic: TfrmMMBasic
   ClientHeight = 454
   ClientWidth = 256
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
+  Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Height = -12
+  Font.Name = #23435#20307
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 12
   object RzPanel1: TRzPanel
     Left = 0
     Top = 0
@@ -94,7 +96,13 @@ object frmMMBasic: TfrmMMBasic
       ParentFont = False
       Transparent = True
     end
-    object RzBmpButton3: TRzBmpButton
+    object RzFormShape1: TRzFormShape
+      Left = 0
+      Top = 0
+      Width = 256
+      Height = 38
+    end
+    object sysClose: TRzBmpButton
       Left = 215
       Top = 0
       Width = 37
@@ -333,6 +341,7 @@ object frmMMBasic: TfrmMMBasic
         F7DC99F1D89CDECDA600}
       Color = clBtnFace
       TabOrder = 0
+      OnClick = sysCloseClick
     end
   end
   object RzPanel2: TRzPanel

@@ -23462,6 +23462,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     end
   end
   object RzTrayIcon1: TRzTrayIcon
+    Enabled = False
     HideOnMinimize = False
     PopupMenu = PopupMenu
     OnMinimizeApp = RzTrayIcon1MinimizeApp

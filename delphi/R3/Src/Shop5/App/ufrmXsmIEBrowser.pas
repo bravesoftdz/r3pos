@@ -10,6 +10,7 @@ uses
   IdCookieManager;
 const
   WM_XSM_CALL=WM_USER+1058;
+  WM_DESKTOP_REQUEST=WM_USER+11;
   WM_XSM_ERROR=WM_USER+1059;
 type
   TLC_Config=procedure(callMsgId:integer;errMsgId:integer;errMsgHwnd:integer);stdcall;
@@ -54,6 +55,7 @@ type
 
     SenceId:string;
     FSenceReady: boolean;
+    Fmmc: boolean;
 
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
@@ -66,7 +68,7 @@ type
                                                    const szPara2: WideString;
                                                    const szPara3: WideString);
 
-    //接收组件返回的消息                                               
+    //接收组件返回的消息
     procedure DoMsg(var Message: TMessage);
     procedure XSM_CALL_FUNC(var Message: TMessage); message WM_XSM_CALL;
     procedure XSM_CALL_ERROR(var Message: TMessage); message WM_XSM_ERROR;
@@ -89,6 +91,7 @@ type
     function GetChallenge:boolean;
     function DoForLogin(checked:boolean=false):boolean;
     procedure SetSenceReady(const Value: boolean);
+    procedure Setmmc(const Value: boolean);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -96,6 +99,7 @@ type
     procedure Connect;
     function GetSignature:boolean;
     function EncodeXml(objectId:string):string;
+    procedure FreeLcControl;
 
     procedure Send(const szMethodName: string;const szPara: string);
     procedure Send2(const szMethodName: string;const szPara1: string;const szPara2: string);
@@ -116,12 +120,13 @@ type
     property ConnectTimeOut:integer read FConnectTimeOut write SetConnectTimeOut;
     property CommandTimeOut:integer read FCommandTimeOut write SetCommandTimeOut;
     property SenceReady:boolean read FSenceReady write SetSenceReady;
+    property mmc:boolean read Fmmc write Setmmc;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
 uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uShopGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
-  ufrmDesk, uGlobal, MultInst, ObjCommon,ufrmHintMsg;
+  ufrmDesk, uGlobal, ObjCommon,ufrmHintMsg, uMMClient;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -131,6 +136,7 @@ var
   F:TIniFile;
 begin
   inherited;
+  mmc := false;
   SessionFail := true;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
@@ -177,13 +183,7 @@ end;
 destructor TfrmXsmIEBrowser.Destroy;
 begin
   runed := false;
-  try
-    DLLLC_FreeLibrary();
-    FreeLibrary(DLLHandle);
-  except
-    on E:Exception do
-       LogFile.AddLogFile(0,'释放新商盟组件->'+E.Message);
-  end;
+  FreeLcControl;
   IEBrowser.Free;
 //  LCObject.Close;
   inherited;
@@ -297,6 +297,7 @@ begin
      end;
   if szMethodName='sessionFail' then
      begin
+       DoInit(false);
        Logined := false;
        SessionFail := true;
        LoginError := 'Session失效了，请重新点击...';
@@ -366,10 +367,33 @@ begin
   DLLLC_Config(WM_XSM_CALL,WM_XSM_ERROR,Handle);
 
   r := DLLLC_Close('_R3_XSM');
+  if r>1 then
+     begin
+       LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
+       FreeLcControl;
+       Exit;
+     end;
   r := DLLLC_Close('_XSM_R3');
+  if r>1 then
+     begin
+       LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
+       FreeLcControl;
+       Exit;
+     end;
   r := DLLLC_Close('xinshangmeng.com:xsmapp');
+  if r>1 then
+     begin
+       LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
+       FreeLcControl;
+       Exit;
+     end;
   r := DLLLC_Create('_XSM_R3',Handle);
-  if r<>0 then LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
+  if r>2 then
+     begin
+       LogFile.AddLogFile(0,'初始化新商盟DLLLC_Create失败，失败代码:'+inttostr(r));
+       FreeLcControl;
+       Exit;
+     end;
 end;
 
 procedure TfrmXsmIEBrowser.Send(const szMethodName, szPara:String);
@@ -410,6 +434,7 @@ end;
 
 function TfrmXsmIEBrowser.Open(sid, oid: string;hHandle:THandle):boolean;
 begin
+  if DLLHandle=0 then Raise Exception.Create('系统装载LCControl.dll组件失败，新商盟相关模块将不能使用，请重启系统再重试'); 
   SaveHandle := PageHandle;
   try
   PageHandle := hHandle;
@@ -429,6 +454,12 @@ begin
   if SessionFail then XsmLogin(false);
   if SessionFail then
      begin
+       PageHandle := 0;
+       PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+       Exit;
+     end;
+{  if SessionFail then
+     begin
        if TfrmXsmLogin.XsmRegister(true) then
           begin
             if not XsmLogin(false) then
@@ -437,11 +468,13 @@ begin
        else
           Exit;
      end;
+}     
   if not Logined then
      begin
         if not DoLogin(True) then
            begin
-             if SessionFail then Open(sid,oid,hHandle);
+             PageHandle := 0;
+             PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
              Exit;
            end;
      end;
@@ -455,7 +488,8 @@ begin
   if not WaitRun(commandTimeout) then Exit;
   if SessionFail then //失效了，自动重新请求
      begin
-       result := Open(sid,oid,hHandle);
+       PageHandle := 0;
+       PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
        Exit;
      end;
   if confirm then
@@ -757,12 +791,21 @@ end;
 function TfrmXsmIEBrowser.XsmLogin(checked:boolean=false): boolean;
 begin
   try
+    if mmc then
+       begin
+         result := MMClient.sessionFail;
+         Exit;
+       end;
     if not checked then ReadInfo(checked);
     SessionFail := true;
     frmLogo.ShowTitle := '正在登录新商盟...';
-    result := GetChallenge;
-    result := DoForLogin(checked);
-    SessionFail := not result;
+    try
+      result := GetChallenge;
+      result := DoForLogin(checked);
+      SessionFail := not result;
+    finally
+      frmLogo.Close;
+    end;
   except
     on E:Exception do
        begin
@@ -780,6 +823,12 @@ var
   Root:IXMLDOMElement;    
   xml:string;
 begin
+  if mmc then 
+     begin
+       xsm_signature := MMClient.getSignature;
+       result := true;
+       Exit;
+     end;
   try
     xsm_signature := IdHTTP1.Get(xsm_center+'users/gettoken');
     xml := Utf8ToAnsi(xsm_signature);
@@ -809,8 +858,21 @@ end;
 
 procedure TfrmXsmIEBrowser.DoMsg(var Message: TMessage);
 type
-  PLParam=^TLParam;
-  TLParam=record
+  PLParam1=^TLParam1;
+  TLParam1=record
+     LocName:Pchar;
+     szMethodName:Pchar;
+     szPara1:Pchar;
+    end;
+  PLParam2=^TLParam2;
+  TLParam2=record
+     LocName:Pchar;
+     szMethodName:Pchar;
+     szPara1:Pchar;
+     szPara2:Pchar;
+    end;
+  PLParam3=^TLParam3;
+  TLParam3=record
      LocName:Pchar;
      szMethodName:Pchar;
      szPara1:Pchar;
@@ -819,28 +881,25 @@ type
     end;
 var
   w:integer;
-//  i:integer;
-  pBuf:PLParam;
-//  arr:array [0..3] of Byte;
-//  pDword:^DWord;
-//  Addr:array [0..4] of integer;
+  pBuf1:PLParam1;
+  pBuf2:PLParam2;
+  pBuf3:PLParam3;
 begin
   try
     w := Message.WParam;
-    pBuf:=PLParam(Message.LParam);
-//    for i:=0 to w-1 do
-//      begin
-//          arr[0]:=Ord(pBuf[(i*4)+4]);
-//          arr[1]:=Ord(pBuf[(i*4)+3]);
-//          arr[2]:=Ord(pBuf[(i*4)+2]);
-//          arr[3]:=Ord(pBuf[(i*4)+1]);
-//          pDword := @arr;
-//          Addr[i] := pDword^;
-//      end;
     case Message.WParam-2 of
-    1: DoFuncCall(nil,StrPas(pBuf^.szMethodName),StrPas(pBuf^.szPara1));
-    2: DoFuncCall2(nil,StrPas(pBuf^.szMethodName),StrPas(pBuf^.szPara1),StrPas(pBuf^.szPara2));
-    3: DoFuncCall3(nil,StrPas(pBuf^.szMethodName),StrPas(pBuf^.szPara1),StrPas(pBuf^.szPara2),StrPas(pBuf^.szPara3));
+    1:begin
+        pBuf1:=PLParam1(Message.LParam);
+        DoFuncCall(nil,StrPas(pBuf1^.szMethodName),StrPas(pBuf1^.szPara1));
+      end;
+    2:begin
+        pBuf2:=PLParam2(Message.LParam);
+        DoFuncCall2(nil,StrPas(pBuf2^.szMethodName),StrPas(pBuf2^.szPara1),StrPas(pBuf2^.szPara2));
+      end;
+    3:begin
+        pBuf3:=PLParam3(Message.LParam);
+        DoFuncCall3(nil,StrPas(pBuf3^.szMethodName),StrPas(pBuf3^.szPara1),StrPas(pBuf3^.szPara2),StrPas(pBuf3^.szPara3));
+      end;
     end;
   finally
     DLLLC_FreeMsgMem(Message.WParam,Message.LParam);
@@ -865,4 +924,27 @@ begin
     end;
   result := nil;
 end;
+procedure TfrmXsmIEBrowser.FreeLcControl;
+begin
+  try
+    if DLLHandle >0 then
+       begin
+         DLLLC_FreeLibrary();
+         FreeLibrary(DLLHandle);
+         DLLHandle := 0;
+       end;
+  except
+    on E:Exception do
+       begin
+         DLLHandle := 0;
+         LogFile.AddLogFile(0,'释放新商盟组件->'+E.Message);
+       end;
+  end;
+end;
+
+procedure TfrmXsmIEBrowser.Setmmc(const Value: boolean);
+begin
+  Fmmc := Value;
+end;
+
 end.

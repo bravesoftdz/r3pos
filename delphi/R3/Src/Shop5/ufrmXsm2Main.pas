@@ -5,14 +5,15 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, StdCtrls, jpeg,
-  RzBmpBtn, RzLabel,MultInst, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
+  RzBmpBtn, RzLabel, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
   RzButton, ZBase, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
   DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg, RzSplit, Mask,
-  RzEdit, RzListVw;
+  RzEdit, RzListVw, uMMClient, uMMUtil;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
+  WM_DESKTOP_REQUEST=WM_USER+11;
   WM_CHECK_MSG=WM_USER+2565;
 type
   TfrmXsm2Main = class(TfrmMain)
@@ -422,10 +423,13 @@ type
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
     procedure wm_message(var Message: TMessage); message MSC_MESSAGE;
     procedure wm_check(var Message: TMessage); message WM_CHECK_MSG;
+    procedure mc_login(var Message: TMessage); message MM_LOGIN;
+    procedure mc_quit(var Message: TMessage); message MM_QUIT;
     procedure SetLogined(const Value: boolean);
     function  CheckVersion:boolean;
     function  XsmRegister:boolean;
     function  ConnectToDb:boolean;
+    function  mmcInit:boolean;
     //p1 -rsp
     //p2 连接串
     //p3 企业号
@@ -895,10 +899,16 @@ begin
 end;
 
 procedure TfrmXsm2Main.wm_Login(var Message: TMessage);
-var prm:string;
+var
+  prm:string;
+  Params:TftParamList;
 begin
   if Logined then Exit;
   try
+     if (ParamStr(1)='-mmc') then {已经安装盟盟的}
+     begin
+       Exit;
+     end;
     if (ParamStr(1)='-rsp') then
        begin
          if not ConnectToRsp then
@@ -3948,6 +3958,7 @@ begin
   frmLogo.ShowTitle := '正在初始化新商盟...';
   frmLogo.Show;
   if frmXsmIEBrowser=nil then Application.CreateForm(TfrmXsmIEBrowser, frmXsmIEBrowser);
+  frmXsmIEBrowser.mmc := false;
   frmXsmIEBrowser.DoInit;
 end;
 
@@ -4307,6 +4318,181 @@ begin
   end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+function TfrmXsm2Main.mmcInit: boolean;
+var
+  RspComVersion:string;
+begin
+  frmLogo.Show;
+  try
+    result := false;
+    Global.MoveToLocal;
+    Global.Connect;
+  finally
+    frmLogo.Close;
+  end;
+  if not UpdateDbVersion then Exit;
+  LoadFrame;
+  if CaFactory.Audited then
+     begin
+      if not CheckVersion then Exit;
+     end;
+
+  if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
+     begin
+       frmLogo.Show;
+       try
+         frmLogo.ShowTitle := '检测远程应用服务器...';
+         Global.MoveToRemate;
+         try
+           Global.Connect;
+           with TCreateDbFactory.Create do
+           begin
+             try
+                RspComVersion := Factor.ExecProc('TGetComVersion');
+                if CheckVersion(DBVersion,Global.RemoteFactory) or CompareVersion(ComVersion,RspComVersion) then
+                begin
+                  if ShopGlobal.ONLVersion then
+                     begin
+                       MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                       result := false;
+                       Exit;
+                     end;
+                  result := (MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+                  if result then
+                    begin
+                      Global.MoveToLocal;
+                      Global.Connect;
+                    end;
+                end;
+             finally
+                free;
+             end;
+           end;
+         except
+           if ShopGlobal.ONLVersion then
+              begin
+                MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常?','友情提示...',MB_OK+MB_ICONQUESTION);
+                result := false;
+                Exit;
+              end;
+           result := (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+           if result then
+              begin
+                Global.MoveToLocal;
+                Global.Connect;
+              end;
+         end;
+       finally
+         frmLogo.Close;
+       end;
+     end;
+  try
+    frmLogo.Show;
+    try
+     if CaFactory.Audited and not ShopGlobal.ONLVersion then
+        begin
+          if not Global.RemoteFactory.Connected and not ShopGlobal.NetVersion then
+             begin
+               frmLogo.Label1.Caption := '正在连接远程服务...';
+               frmLogo.Label1.Update;
+               Global.MoveToRemate;
+               try
+                 try
+                   Global.Connect;
+                 except
+                   MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+                 end;
+               finally
+                 Global.MoveToLocal;
+               end;
+             end;
+          if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
+             begin
+               InitTenant;
+             end;
+        end
+     else
+        begin
+          InitTenant;
+        end;
+    finally
+      frmLogo.Close;
+    end;
+   Logined := true;
+   InitXsm;
+   InitRim;
+   frmXsmIEBrowser.mmc := true;
+   frmXsmIEBrowser.SessionFail := (xsm_signature='');
+   frmLogo.Show;
+   try
+     frmLogo.ShowTitle := '正在初始化基础数据...';
+     Global.LoadBasic();
+     frmLogo.ShowTitle := '正在初始化权限数据...';
+     ShopGlobal.LoadRight;
+     CheckEnabled;
+     frmXsm2Desk.CA_MODULE := CA_MODULE;
+     frmLogo.ShowTitle := '正在初始化同步数据...';
+     ShopGlobal.SyncTimeStamp;
+     if CaFactory.Audited and Global.RemoteFactory.Connected and not frmXsmIEBrowser.SessionFail then
+        begin
+          frmLogo.ShowTitle := '正在登录零售终端管理平台...';
+          frmLogo.Show;
+          frmLogo.BringToFront;
+          frmRimIEBrowser.ReadParam;
+          frmRimIEBrowser.DoLogin(false,true);
+        end;
+     frmLogo.ShowTitle := '正在初始化广告数据...';
+     if frmRimIEBrowser.Logined then AdvFactory.LoadAdv;
+     frmLogo.ShowTitle := '正在初始化桌面数据...';
+     frmXsm2Desk.loadDesk;
+   finally
+     frmLogo.Close;
+   end;
+   PostMessage(Handle,WM_CHECK_MSG,0,0);
+   Application.Minimize;
+   frmXsm2Main.Show;
+   frmXsm2Main.WindowState := wsMaximized;
+   Application.Restore;
+   result := true;
+  except
+    on E:Exception do
+      begin
+        MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
+        result := false;
+      end;
+  end;
+end;
+
+procedure TfrmXsm2Main.mc_login(var Message: TMessage);
+begin
+   Global.TENANT_ID := MMClient.MMLogin.tenantId;
+   Global.TENANT_NAME := MMClient.MMLogin.tenantName;
+   Global.SHORT_TENANT_NAME := MMClient.MMLogin.shortTenantName;
+   Global.SHOP_ID := MMClient.MMLogin.shopId;
+   Global.SHOP_NAME := MMClient.MMLogin.shopName;
+   Global.UserID := MMClient.MMLogin.userId;
+   Global.UserName := MMClient.MMLogin.userName;
+   CaFactory.Audited := (MMClient.MMLogin.loginStatus=1);
+   xsm_username := MMClient.MMLogin.xsmUserName;
+   xsm_password := MMClient.MMLogin.xsmPassword;
+   xsm_signature := MMClient.MMLogin.xsmSignature;
+   xsm_challenge := MMClient.MMLogin.xsmSignature;
+   if MMClient.MMLogin.xsmStatus = 2 then
+      xsm_challenge := '';
+   CaFactory.auto := true;
+   if not mmcInit then Application.Terminate;
+end;
+
+procedure TfrmXsm2Main.mc_quit(var Message: TMessage);
+begin
+  if frmXSMIEBrowser<>nil then
+     begin
+       frmXsmIEBrowser.mmc := false;
+       frmXsmIEBrowser.SessionFail := true;
+     end;
+  if not Logined then Application.Terminate;
 end;
 
 end.

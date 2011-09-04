@@ -2761,6 +2761,7 @@ end;
 function TCaFactory.AutoCoLogo: boolean;
 var Temp:TZQuery;
 begin
+  result:= false;
   Temp := TZQuery.Create(nil);
   try
     Temp.Close;
@@ -2771,6 +2772,7 @@ begin
     else
        coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY),1);
     TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
+    result := true;
   finally
     Temp.Free;
   end;

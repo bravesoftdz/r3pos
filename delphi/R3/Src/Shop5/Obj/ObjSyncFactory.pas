@@ -303,6 +303,15 @@ type
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  TSyncRckCGodsDays=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
   TSyncRckAcctDaysOrder=class(TSyncSingleTable)
   public
     //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
@@ -2569,7 +2578,7 @@ var
   Str:string;
 begin
   Str := 'delete from RCK_GOODS_DAYS where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE';
-  AGlobal.ExecSQL(Str,Params); 
+  AGlobal.ExecSQL(Str,Params);
 end;
 
 { TSyncRckAcctDaysOrder }
@@ -3757,6 +3766,35 @@ begin
   result := inherited BeforeUpdateRecord(AGlobal);
 end;
 
+{ TSyncRckCGodsDays }
+
+function TSyncRckCGodsDays.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'RCK_C_GOODS_DAYS';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncRckCGodsDays.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from RCK_C_GOODS_DAYS where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE';
+  SelectSQL.Text := Str;
+end;
+
+function TSyncRckCGodsDays.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'delete from RCK_C_GOODS_DAYS where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_DATE=:CREA_DATE';
+  AGlobal.ExecSQL(Str,Params);
+end;
+
 initialization
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
@@ -3805,6 +3843,7 @@ initialization
   RegisterClass(TSyncRckDaysCloseList);
   RegisterClass(TSyncRckDaysClose);
   RegisterClass(TSyncRckGodsDaysOrder);
+  RegisterClass(TSyncRckCGodsDays);
   RegisterClass(TSyncRckAcctDaysOrder);
   RegisterClass(TSyncRckMonthCloseList);
   RegisterClass(TSyncRckMonthClose);
@@ -3874,6 +3913,7 @@ finalization
   UnRegisterClass(TSyncRckDaysCloseList);
   UnRegisterClass(TSyncRckDaysClose);
   UnRegisterClass(TSyncRckGodsDaysOrder);
+  UnRegisterClass(TSyncRckCGodsDays);
   UnRegisterClass(TSyncRckAcctDaysOrder);
   UnRegisterClass(TSyncRckMonthCloseList);
   UnRegisterClass(TSyncRckMonthClose);

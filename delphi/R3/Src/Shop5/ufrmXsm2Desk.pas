@@ -113,7 +113,7 @@ var
   frmXsm2Desk: TfrmXsm2Desk;
 
 implementation
-uses ufrmXsm2Main,uShopGlobal,uDevFactory,uCaFactory,Registry, ufrmMain, uAdvFactory, MultInst, ufrmRimIEBrowser,
+uses ufrmXsm2Main,uShopGlobal,uDevFactory,uCaFactory,Registry, ufrmMain, uAdvFactory, ufrmRimIEBrowser,
   ufrmXsmIEBrowser,ufrmSaleDayReport;
 {$R *.dfm}
 

@@ -174,10 +174,11 @@ begin
     while not ps.Eof do
        begin
          MyPrice := ps.FieldbyName('NEW_OUTPRICE'+uFlag).asFloat;
-         case ps.FieldbyName('RATE_OFF').AsInteger of
-         1:MyPrice := CalcPrice(MyPrice,rs);
-         2:MyPrice := FnNumber.ConvertToFight(StrtoFloat(formatfloat('#0.000',MyPrice*ps.FieldbyName('AGIO_RATE').AsFloat/100)),Params.ParambyName('CarryRule').asInteger,Params.ParambyName('Deci').asInteger);
-         end;
+         if Params.ParamByName('CLIENT_ID').AsString <> '' then
+           case ps.FieldbyName('RATE_OFF').AsInteger of
+           1:MyPrice := CalcPrice(MyPrice,rs);
+           2:MyPrice := FnNumber.ConvertToFight(StrtoFloat(formatfloat('#0.000',MyPrice*ps.FieldbyName('AGIO_RATE').AsFloat/100)),Params.ParambyName('CarryRule').asInteger,Params.ParambyName('Deci').asInteger);
+           end;
          if MyPrice<MinPrice then //È¡×îµÍ¼Û
             begin
               MinPrice := MyPrice;

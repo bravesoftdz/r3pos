@@ -1012,7 +1012,7 @@ begin
      end;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion then
+  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
      begin
         try
           SyncFactory.SyncAll;
@@ -3201,7 +3201,7 @@ begin
   if Message.WParam = 99 then //执行自动到货确认
   begin
      if Global.UserID='system' then Exit;
-     if not ShopGlobal.SyncCheck then Exit;
+     if not SyncFactory.SyncLockCheck then Exit;
      TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
   end;
   if Message.WParam = 100 then //新商盟消息
@@ -4229,6 +4229,8 @@ begin
      begin
        if not Global.RemoteFactory.Connected then Exit;
        if MessageBox(Handle,'系统第一次初始化，将从服务器恢复业务数据，是否立即执行？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       SyncFactory.SyncLockDb;
+       if not SyncFactory.SyncLockCheck then Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。'); 
        SyncFactory.SyncAll;
      end;
     TfrmCostCalc.CheckMonthReck(self);

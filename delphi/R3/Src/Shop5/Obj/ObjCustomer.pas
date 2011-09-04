@@ -162,7 +162,7 @@ begin
         Str :=
           'update PUB_IC_INFO set CLIENT_ID=:CUST_ID,TENANT_ID=:TENANT_ID,UNION_ID=:UNION_ID,IC_CARDNO=:CUST_CODE,CREA_DATE=:CREA_DATE,'+
           'CREA_USER=:CREA_USER,IC_INFO=:IC_INFO,IC_STATUS=:IC_STATUS,IC_TYPE=:IC_TYPE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+
-          GetTimeStamp(AGlobal.iDbType)+' where CLIENT_ID=:OLD_CLIENT_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
+          GetTimeStamp(AGlobal.iDbType)+' where CLIENT_ID=:OLD_CUST_ID and TENANT_ID=:OLD_TENANT_ID and UNION_ID=:OLD_UNION_ID';
         r := AGlobal.ExecSQL(Str,Self);
         if r = 0 then
           begin

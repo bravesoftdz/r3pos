@@ -1650,73 +1650,111 @@ var
   GObj:TRecord_;
   i:integer;
   rs:TZQuery;
+  IsExist: Boolean;
 begin
   result := false;
   if self.dbState<>dsInsert then Exit; //2011.08.27 Add不是新增状态退出
 
   GObj := GodsFactory.Check(BarCode);
   if GObj<>nil then
-     begin
-      for i:=0 to GObj.Count -1 do
+  begin
+    for i:=0 to GObj.Count -1 do
+    begin
+      if AObj.FindField(GObj.Fields[i].FieldName)<>nil then
+        AObj.FindField(GObj.Fields[i].FieldName).NewValue := GObj.Fields[i].NewValue;
+    end;
+
+    ReadFromObject(AObj);
+    GodsDefaultValue; //2011.08.27 Add 判断: 新增状态才默认值
+
+    //判断计量单位
+    IsExist:=False;
+    if edtCALC_UNITS.Text = '' then
+    begin
+      if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('CALC_UNITS').AsString,[]) then
+      begin
+        rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+        if rs.Locate('UNIT_NAME',GodsFactory.MeaUnit.FieldbyName('UNIT_NAME').asString,[]) then
         begin
-          if AObj.FindField(GObj.Fields[i].FieldName)<>nil then
-             AObj.FindField(GObj.Fields[i].FieldName).NewValue := GObj.Fields[i].NewValue;
+          edtCALC_UNITS.KeyValue := rs.FieldbyName('UNIT_ID').AsString;
+          edtCALC_UNITS.Text := rs.FieldbyName('UNIT_NAME').AsString;
+          IsExist:=true;
         end;
-      ReadFromObject(AObj);
-      GodsDefaultValue; //2011.08.27 Add 判断: 新增状态才默认值
-      
-      if edtCALC_UNITS.Text = '' then
-         begin
-           if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('CALC_UNITS').AsString,[]) then
-              begin
-                rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-                if rs.Locate('UNIT_NAME',GodsFactory.MeaUnit.FieldbyName('UNIT_NAME').asString,[]) then
-                   begin
-                     edtCALC_UNITS.KeyValue := rs.FieldbyName('UNIT_ID').AsString;
-                     edtCALC_UNITS.Text := rs.FieldbyName('UNIT_NAME').AsString;
-                   end;
-              end;
-         end;
-      if (edtSMALL_UNITS.Text = '') and (GObj.FieldbyName('SMALL_UNITS').AsString<>'') then
-         begin
-           if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('SMALL_UNITS').AsString,[]) then
-              begin
-                rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-                if rs.Locate('UNIT_NAME',GodsFactory.MeaUnit.FieldbyName('UNIT_NAME').asString,[]) then
-                   begin
-                     edtSMALL_UNITS.KeyValue := rs.FieldbyName('UNIT_ID').AsString;
-                     edtSMALL_UNITS.Text := rs.FieldbyName('UNIT_NAME').AsString;
-                   end;
-              end;
-         end;
-      if (edtBIG_UNITS.Text = '') and (GObj.FieldbyName('BIG_UNITS').AsString<>'') then
-         begin
-           if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('BIG_UNITS').AsString,[]) then
-              begin
-                rs := Global.GetZQueryFromName('PUB_MEAUNITS');
-                if rs.Locate('UNIT_NAME',GodsFactory.MeaUnit.FieldbyName('UNIT_NAME').asString,[]) then
-                   begin
-                     edtBIG_UNITS.KeyValue := rs.FieldbyName('UNIT_ID').AsString;
-                     edtBIG_UNITS.Text := rs.FieldbyName('UNIT_NAME').AsString;
-                   end;
-              end;
-         end;
-      if (edtSORT_ID1.Text = '') and (GObj.FieldbyName('SORT_ID1').AsString<>'') then
-         begin
-           if GodsFactory.SortInfo.Locate('SORT_ID',GObj.FieldbyName('SORT_ID1').AsString,[]) then
-              begin
-                rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-                if rs.Locate('SORT_NAME',GodsFactory.SortInfo.FieldbyName('SORT_NAME').asString,[]) then
-                   begin
-                     SORT_ID1 := rs.FieldbyName('SORT_ID').AsString;
-                     edtSORT_ID1.Text := rs.FieldbyName('SORT_NAME').AsString;
-                   end;
-              end;
-         end;
-      edtGODS_CODE.Text := '自动编号';
-      edtNEW_OUTPRICEPropertiesChange(nil);
-      result := true;
-     end;
+      end;
+    end;
+    if not IsExist then
+    begin
+      edtCALC_UNITS.KeyValue := '';
+      edtCALC_UNITS.Text := '';
+    end;
+
+    //判断小件单位
+    IsExist:=False;
+    if (edtSMALL_UNITS.Text = '') and (GObj.FieldbyName('SMALL_UNITS').AsString<>'') then
+    begin
+      if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('SMALL_UNITS').AsString,[]) then
+      begin
+        rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+        if rs.Locate('UNIT_NAME',GodsFactory.MeaUnit.FieldbyName('UNIT_NAME').asString,[]) then
+        begin
+          edtSMALL_UNITS.KeyValue := rs.FieldbyName('UNIT_ID').AsString;
+          edtSMALL_UNITS.Text := rs.FieldbyName('UNIT_NAME').AsString;
+          IsExist:=true;
+        end;
+      end
+    end;
+    if not IsExist then
+    begin
+      edtSMALL_UNITS.KeyValue := '';
+      edtSMALL_UNITS.Text := '';
+    end;
+
+    //判断大件单位
+    IsExist:=False;
+    if (edtBIG_UNITS.Text = '') and (GObj.FieldbyName('BIG_UNITS').AsString<>'') then
+    begin
+      if GodsFactory.MeaUnit.Locate('UNIT_ID',GObj.FieldbyName('BIG_UNITS').AsString,[]) then
+      begin
+        rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+        if rs.Locate('UNIT_NAME',GodsFactory.MeaUnit.FieldbyName('UNIT_NAME').asString,[]) then
+        begin
+          edtBIG_UNITS.KeyValue := rs.FieldbyName('UNIT_ID').AsString;
+          edtBIG_UNITS.Text := rs.FieldbyName('UNIT_NAME').AsString;
+          IsExist:=True;
+        end;
+      end;
+    end;
+    if not IsExist then
+    begin
+      edtBIG_UNITS.KeyValue := '';
+      edtBIG_UNITS.Text := '';
+    end;
+
+    //判断商品分类1：
+    IsExist:=False;    
+    if (edtSORT_ID1.Text = '') and (GObj.FieldbyName('SORT_ID1').AsString<>'') then
+    begin
+      if GodsFactory.SortInfo.Locate('SORT_ID',GObj.FieldbyName('SORT_ID1').AsString,[]) then
+      begin
+        rs := Global.GetZQueryFromName('PUB_GOODSSORT');
+        if rs.Locate('SORT_NAME',GodsFactory.SortInfo.FieldbyName('SORT_NAME').asString,[]) then
+        begin
+          SORT_ID1 := rs.FieldbyName('SORT_ID').AsString;
+          edtSORT_ID1.Text := rs.FieldbyName('SORT_NAME').AsString;
+          IsExist:=True;
+        end;
+      end;
+    end;
+    if not IsExist then
+    begin
+      SORT_ID1 := '';
+      edtSORT_ID1.Text := '';
+    end;
+    
+    edtGODS_CODE.Text := '自动编号';
+    edtNEW_OUTPRICEPropertiesChange(nil);
+    result := true;
+  end;
 end;
 
 procedure TfrmGoodsInfo.OpenCopyNew(code: string);

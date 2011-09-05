@@ -60,7 +60,6 @@ type
     procedure SetdbState(const Value: TDataSetState);
     function CheckCanExport:boolean;
   public
-    procedure RefreshTable;
     procedure Open;
     procedure Save;
     { Public declarations }
@@ -231,6 +230,7 @@ begin
   finally
     cdsGoodsSort.EnableControls;
   end;
+
   try
     Factor.UpdateBatch(cdsGoodsSort,'TGoodsSort');
   except
@@ -245,7 +245,7 @@ begin
     btnSave.Enabled:=False;
     raise;    
   end;
-  RefreshTable;
+  Global.RefreshTable('PUB_GOODS_INDEXS'); //刷新指标表
   if not cdsGoodsSort.IsEmpty then
   begin
     if i=0 then i:=1;
@@ -533,23 +533,6 @@ procedure TfrmGoodssort.cdsGoodsSortBeforeInsert(DataSet: TDataSet);
 begin
   inherited;
   btnSave.Enabled := True;
-end;
-
-procedure TfrmGoodssort.RefreshTable;
-var Str_Table: String;
-begin
-  case Sort_Type of
-    1: Str_Table := 'PUB_GOODSSORT';
-    2: Str_Table := 'PUB_CATE_INFO';
-    3: Str_Table := '';
-    4: Str_Table := 'PUB_BRAND_INFO';
-    5: Str_Table := 'PUB_IMPT_INFO';
-    6: Str_Table := 'PUB_AREA_INFO';
-    7: Str_Table := 'PUB_COLOR_GROUP';
-    8: Str_Table := 'PUB_SIZE_GROUP';
-  end;
-  if Str_Table <> '' then
-    Global.RefreshTable(Str_Table);
 end;
 
 procedure TfrmGoodssort.SetdbState(const Value: TDataSetState);

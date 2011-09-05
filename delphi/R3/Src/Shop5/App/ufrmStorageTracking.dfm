@@ -17,6 +17,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 910
         Height = 524
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -668,7 +670,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 ReadOnly = True
                 RowSelect = True
                 TabOrder = 0
-                OnChange = rzTreeChange
+                OnChange = rzP2_TreeChange
               end
             end
             object RzPanel11: TRzPanel
@@ -682,15 +684,15 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel4: TPanel
                 Left = 0
                 Top = 0
-                Width = 710
-                Height = 408
+                Width = 718
+                Height = 419
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel5: TPanel
                   Left = 1
-                  Top = 377
-                  Width = 708
+                  Top = 388
+                  Width = 716
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -758,8 +760,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 708
-                  Height = 376
+                  Width = 716
+                  Height = 387
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsdemand
@@ -984,7 +986,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel7: TPanel
                 Left = 178
                 Top = 0
-                Width = 712
+                Width = 720
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify
@@ -1326,7 +1328,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                 ReadOnly = True
                 RowSelect = True
                 TabOrder = 0
-                OnChange = rzTreeChange
+                OnChange = rzP3_TreeChange
               end
             end
             object RzPanel15: TRzPanel
@@ -1340,15 +1342,15 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel8: TPanel
                 Left = 0
                 Top = 0
-                Width = 710
-                Height = 408
+                Width = 718
+                Height = 419
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 0
                 object Panel9: TPanel
                   Left = 1
-                  Top = 377
-                  Width = 708
+                  Top = 388
+                  Width = 716
                   Height = 30
                   Align = alBottom
                   BevelOuter = bvNone
@@ -1408,8 +1410,8 @@ inherited frmStorageTracking: TfrmStorageTracking
                 object DBGridEh2: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 708
-                  Height = 376
+                  Width = 716
+                  Height = 387
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsRate
@@ -1601,7 +1603,7 @@ inherited frmStorageTracking: TfrmStorageTracking
               object Panel11: TPanel
                 Left = 178
                 Top = 0
-                Width = 712
+                Width = 720
                 Height = 68
                 Align = alClient
                 Alignment = taLeftJustify

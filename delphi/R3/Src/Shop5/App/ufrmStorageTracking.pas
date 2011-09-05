@@ -152,8 +152,9 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
+    procedure rzP2_TreeChange(Sender: TObject; Node: TTreeNode);
+    procedure rzP3_TreeChange(Sender: TObject; Node: TTreeNode);
   private
-    { Private declarations }
     IsEnd: boolean;
     MaxId:string;
     procedure LoadTree(Tree:TRzTreeView);
@@ -168,8 +169,9 @@ type
     function EncodeSql(ID:String):String;
     function EncodeSql2(ID:String):String;
     function EncodeSql3(ID:String):String;
+    function  GetGodsStateValue(DefineState: string='11111111111111111111'): string; //返回商品指标的启用情况
     procedure AddGoodTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
-    procedure AddGoodsIDItems(edtGoods_ID:TzrComboboxList);
+    procedure AddGoodsIDItems(Sender: TObject; SortTypeList:TzrComboboxList);
     procedure Open(ID:String);
     procedure Open2(ID:String);
     procedure Open3(ID:String);
@@ -329,14 +331,17 @@ begin
 end;
 
 procedure TfrmStorageTracking.FormCreate(Sender: TObject);
+var
+  DefStateIDS: string;
 begin
   inherited;
   RzPage.ActivePageIndex := 0;
   edtSTOR_AMT.ItemIndex := 0;
   TDbGridEhSort.InitForm(Self);
-  AddGoodTypeItems(edtGoods_Type);
-  AddGoodTypeItems(edtP2_Goods_Type);
-  AddGoodTypeItems(edtP3_Goods_Type);
+  DefStateIDS:=GetGodsStateValue; 
+  AddGoodTypeItems(edtGoods_Type,DefStateIDS);
+  AddGoodTypeItems(edtP2_Goods_Type,DefStateIDS);
+  AddGoodTypeItems(edtP3_Goods_Type,DefStateIDS);
   InitGrid;
   
   if not ShopGlobal.GetChkRight('14500001',2) then
@@ -430,28 +435,11 @@ begin
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
   Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-  case Item_Index of
-    2:begin
-      if edtGoods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID2='+QuotedStr(edtGoods_ID.AsString);
-    end;
-    3:begin
-      if edtGoods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID3='+QuotedStr(edtGoods_ID.AsString);
-    end;
-    4:begin
-      if edtGoods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID4='+QuotedStr(edtGoods_ID.AsString);
-    end;
-    5:begin
-      if edtGoods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID5='+QuotedStr(edtGoods_ID.AsString);
-    end;
-    6:begin
-      if edtGoods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID6='+QuotedStr(edtGoods_ID.AsString);
-    end;
+  if (edtGoods_ID.Text <> '') and (Item_Index>0) then
+  begin
+    StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
   end;
+
   if edtGoodsName.AsString<>'' then
     StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtGoodsName.AsString);
   if edtSHOP_ID.AsString<>'' then
@@ -554,37 +542,52 @@ begin
   end;
 end;
 
-procedure TfrmStorageTracking.AddGoodsIDItems(edtGoods_ID:TzrComboboxList);
-var Item_Index:Integer;
+procedure TfrmStorageTracking.AddGoodsIDItems(Sender: TObject; SortTypeList:TzrComboboxList);
+var
+  CodeID: string;
+  ItemsIdx: integer;
+  Cbx: TcxComboBox;
 begin
-  if Trim(edtGoods_ID.Text)<>'' then
+  if (Sender is TcxComboBox) and (TcxComboBox(Sender).ItemIndex<>-1) then
+  begin
+    Cbx:=TcxComboBox(Sender);
+    CodeID:=trim(TRecord_(Cbx.Properties.Items.Objects[Cbx.ItemIndex]).fieldbyName('CODE_ID').AsString);
+    ItemsIdx:=StrtoIntDef(CodeID,0);
+  end;
+  if ItemsIdx<=0 then Exit;
+  //清除上次选项
+  SortTypeList.Text:='';
+  SortTypeList.KeyValue:='';
+  case ItemsIdx of
+   3:
     begin
-      edtGoods_ID.Text := '';
-      edtGoods_ID.KeyValue := '';
+      SortTypeList.KeyField:='CLIENT_ID';
+      SortTypeList.ListField:='CLIENT_NAME';
+      SortTypeList.FilterFields:='CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
     end;
-  Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-  if Item_Index = 3 then
+   else
     begin
-      edtGoods_ID.Columns[0].FieldName := 'CLIENT_NAME';
-      edtGoods_ID.KeyField := 'CLIENT_ID';
-      edtGoods_ID.ListField := 'CLIENT_NAME';
-      edtGoods_ID.FilterFields := 'CLIENT_ID;CLIENT_NAME;CLIENT_SPELL';
-    end
-  else
-    begin
-      edtGoods_ID.Columns[0].FieldName := 'SORT_NAME';
-      edtGoods_ID.KeyField := 'SORT_ID';
-      edtGoods_ID.ListField := 'SORT_NAME';
-      edtGoods_ID.FilterFields := 'SORT_ID;SORT_NAME;SORT_SPELL';
+      SortTypeList.KeyField:='SORT_ID';
+      SortTypeList.ListField:='SORT_NAME';
+      SortTypeList.FilterFields:='SORT_ID;SORT_NAME;SORT_SPELL';
     end;
-  case Item_Index of
-    2: edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_CATE_INFO');    //类别[烟草:一类烟、二类烟、三类烟]    
-    3: edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');   //主供应商
-    4: edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_BRAND_INFO');   //品牌
-    5: edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_IMPT_INFO');    //重点品牌
-    6: edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_AREA_INFO');    //省内外
-    7: edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_COLOR_GROUP');  //颜色
-    8: edtGoods_ID.DataSet:=Global.GetZQueryFromName('PUB_SIZE_GROUP');   //尺码
+  end;
+  SortTypeList.Columns[0].FieldName:=SortTypeList.ListField;
+  if SortTypeList.Columns.Count>1 then
+    SortTypeList.Columns[1].FieldName:=SortTypeList.KeyField;
+  case ItemsIdx of
+   3: //主供应商;
+    begin
+      SortTypeList.RangeField:='';
+      SortTypeList.RangeValue:='';
+      SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_CLIENTINFO');
+    end;
+   else
+    begin
+      SortTypeList.DataSet:=Global.GetZQueryFromName('PUB_GOODS_INDEXS');
+      SortTypeList.RangeField:='SORT_TYPE';
+      SortTypeList.RangeValue:=InttoStr(ItemsIdx);
+    end;
   end;
 end;
 
@@ -599,7 +602,7 @@ procedure TfrmStorageTracking.edtGoods_TypePropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  AddGoodsIDItems(edtGoods_Id);
+  AddGoodsIDItems(Sender,edtGoods_Id);
 end;
 
 function TfrmStorageTracking.TransUnit(CalcIdx: Integer;
@@ -820,28 +823,11 @@ begin
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP2_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
   Item_Index := StrToIntDef(Trim(TRecord_(edtP2_Goods_Type.Properties.Items.Objects[edtP2_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-  case Item_Index of
-    2:begin
-      if edtP2_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID2='+QuotedStr(edtP2_Goods_ID.AsString);
-    end;
-    3:begin
-      if edtP2_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID3='+QuotedStr(edtP2_Goods_ID.AsString);
-    end;
-    4:begin
-      if edtP2_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID4='+QuotedStr(edtP2_Goods_ID.AsString);
-    end;
-    5:begin
-      if edtP2_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID5='+QuotedStr(edtP2_Goods_ID.AsString);
-    end;
-    6:begin
-      if edtP2_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID6='+QuotedStr(edtP2_Goods_ID.AsString);
-    end;
+  if (edtP2_Goods_ID.Text <> '') and (Item_Index>0) then
+  begin
+    StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtP2_Goods_ID.AsString);
   end;
+
   if edtP2_GoodsName.AsString<>'' then
     StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtP2_GoodsName.AsString);
   if edtP2_SHOP_ID.AsString<>'' then
@@ -973,28 +959,11 @@ begin
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP3_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
   Item_Index := StrToIntDef(Trim(TRecord_(edtP3_Goods_Type.Properties.Items.Objects[edtP3_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-  case Item_Index of
-    2:begin
-      if edtP3_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID2='+QuotedStr(edtP3_Goods_ID.AsString);
-    end;
-    3:begin
-      if edtP3_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID3='+QuotedStr(edtP3_Goods_ID.AsString);
-    end;
-    4:begin
-      if edtP3_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID4='+QuotedStr(edtP3_Goods_ID.AsString);
-    end;
-    5:begin
-      if edtP3_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID5='+QuotedStr(edtP3_Goods_ID.AsString);
-    end;
-    6:begin
-      if edtP3_Goods_ID.Text <> '' then
-        StrWhere := StrWhere + ' and C.SORT_ID6='+QuotedStr(edtP3_Goods_ID.AsString);
-    end;
+  if (edtP3_Goods_ID.Text <> '') and (Item_Index>0) then
+  begin
+    StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtP3_Goods_ID.AsString);
   end;
+
   if edtP3_GoodsName.AsString<>'' then
     StrWhere := StrWhere + ' and A.GODS_ID='+QuotedStr(edtP3_GoodsName.AsString);
   if edtP3_SHOP_ID.AsString<>'' then
@@ -1082,7 +1051,7 @@ procedure TfrmStorageTracking.edtP2_Goods_TypePropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  AddGoodsIDItems(edtP2_Goods_Id);
+  AddGoodsIDItems(Sender,edtP2_Goods_Id);
 
 end;
 
@@ -1090,8 +1059,7 @@ procedure TfrmStorageTracking.edtP3_Goods_TypePropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  AddGoodsIDItems(edtP3_Goods_Id);
-
+  AddGoodsIDItems(Sender,edtP3_Goods_Id); 
 end;
 
 procedure TfrmStorageTracking.edtP2_SHOP_TYPEPropertiesChange(
@@ -1213,6 +1181,46 @@ begin
   end;
   if AliasFileName<>'' then
     result:=result+' as '+AliasFileName+' ';
+end;
+
+function TfrmStorageTracking.GetGodsStateValue(DefineState: string): string;
+var
+  ReStr: string;
+  PosIdx: integer;
+  RsState: TZQuery;
+begin
+  ReStr:='00000000000000000000';
+  RsState:=Global.GetZQueryFromName('PUB_STAT_INFO');
+  RsState.First;
+  while not RsState.Eof do
+  begin
+    PosIdx:=StrToIntDef(RsState.fieldbyName('CODE_ID').AsString,0);
+    if PosIdx>0 then
+    begin
+      if CLVersion='FIG' then  //服装版全部
+        ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
+      else
+      begin
+        if (PosIdx<7) or (PosIdx>8) then
+          ReStr:=Copy(ReStr,1,PosIdx-1)+Copy(DefineState,PosIdx,1)+Copy(ReStr,PosIdx+1,20)
+      end;
+    end;
+    RsState.Next;
+  end;
+  result:=ReStr;
+end;
+
+procedure TfrmStorageTracking.rzP2_TreeChange(Sender: TObject; Node: TTreeNode);
+begin
+  inherited;
+  Open2('');
+end;
+
+procedure TfrmStorageTracking.rzP3_TreeChange(Sender: TObject;
+  Node: TTreeNode);
+begin
+  inherited;
+  Open3('');
 end;
 
 end.

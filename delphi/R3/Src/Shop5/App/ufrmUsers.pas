@@ -316,7 +316,7 @@ end;
 procedure TfrmUsers.FormShow(Sender: TObject);
 begin
   inherited;
-  if UpperCase(Global.UserID) = UpperCase('ADMIN') then
+  if UpperCase(Global.UserID) = UpperCase('SYSTEM') then  //当为 system 管理员时，为 admin 管理员 显示密码重置
     AddMenuItem;
   actFindExecute(nil);
   if edtKey.CanFocus then

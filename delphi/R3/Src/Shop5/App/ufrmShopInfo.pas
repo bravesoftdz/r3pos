@@ -186,12 +186,12 @@ begin
     if edtSHOP_SPELL.CanFocus then edtSHOP_SPELL.SetFocus;
     raise Exception.Create('拼音码不能为空!');
   end;
-  if trim(edtSHOP_TYPE.Text)='' then
+  if trim(edtSHOP_TYPE.AsString)='' then
   begin
     if edtSHOP_TYPE.CanFocus then edtSHOP_TYPE.SetFocus;
     raise Exception.Create('管理群组不能为空!');
   end;
-  if trim(edtREGION_ID.Text)='' then
+  if trim(edtREGION_ID.AsString)='' then
   begin
     if edtREGION_ID.CanFocus then edtREGION_ID.SetFocus;
     raise Exception.Create('所属区域不能为空!');

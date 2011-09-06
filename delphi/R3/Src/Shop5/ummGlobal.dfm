@@ -1,8 +1,7 @@
 inherited mmGlobal: TmmGlobal
-  OldCreateOrder = True
   object IdCookieManager1: TIdCookieManager
-    Left = 88
-    Top = 41
+    Left = 208
+    Top = 545
   end
   object IdHTTP1: TIdHTTP
     MaxLineAction = maException
@@ -20,7 +19,7 @@ inherited mmGlobal: TmmGlobal
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
     HTTPOptions = [hoForceEncodeParams]
     CookieManager = IdCookieManager1
-    Left = 40
-    Top = 41
+    Left = 160
+    Top = 545
   end
 end

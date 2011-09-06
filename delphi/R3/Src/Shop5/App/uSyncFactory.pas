@@ -104,6 +104,8 @@ type
     //数据同步到Rim
     procedure SyncRim;
 
+    procedure ReadTimeStamp;
+
     //检测锁定数据
     function SyncLockCheck:boolean;
     function SyncLockDb:boolean;
@@ -121,7 +123,7 @@ type
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,uDsUtil,uCaFactory,uShopGlobal;
+uses uGlobal,ufrmLogo,uDsUtil,uCaFactory;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -450,7 +452,7 @@ begin
   
   new(n);
   n^.tbname := 'PUB_IC_INFO';
-  n^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
+  n^.keyFields := 'TENANT_ID;UNION_ID;IC_CARDNO';
   n^.synFlag := 4;
   n^.KeyFlag := 0;
   n^.tbtitle := 'IC档案';
@@ -641,6 +643,20 @@ begin
   FList.Add(n);
 end;
 
+procedure TSyncFactory.ReadTimeStamp;
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    if not (Factor=Global.LocalFactory) then Global.LocalFactory.ExecProc('TGetSyncTimeStamp',Params); 
+    Factor.ExecProc('TGetSyncTimeStamp',Params);
+  finally
+    Params.free;
+  end;
+end;
+
 procedure TSyncFactory.SendSingleTable(tbName, KeyFields,
   ZClassName: string; KeyFlag: integer; onlyDown: boolean;
   timeStampNoChg: integer);
@@ -730,7 +746,6 @@ begin
   r := Global.RemoteFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(TimeStamp)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+tbName+'''');
   if r=0 then
      Global.RemoteFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+SHOP_ID+''','''+tbName+''','+inttostr(TimeStamp)+')');
-  ShopGlobal.SyncTimeStamp;
 end;
 
 procedure TSyncFactory.SetTicket;
@@ -793,6 +808,7 @@ begin
   end;
   finally
     InterlockedDecrement(Locked);
+    ReadTimeStamp;
   end;
 end;
 
@@ -829,6 +845,7 @@ begin
   end;
   finally
     InterlockedDecrement(Locked);
+    ReadTimeStamp;
   end;
 end;
 
@@ -853,7 +870,7 @@ begin
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
   Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   Params.ParamByName('PROD_ID').AsString := ProductId;
-  if not ShopGlobal.offline then
+  if not (Factor=Global.LocalFactory) then
   begin
     LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
     cs := TZQuery.Create(nil);
@@ -876,7 +893,7 @@ begin
       cs.Free;
     end;
   end;
-  if ShopGlobal.offline then
+  if (Factor=Global.LocalFactory) then
   begin
     cs := TZQuery.Create(nil);
     rs := TZQuery.Create(nil);
@@ -1379,7 +1396,7 @@ begin
     cs_c.Free;
   end;
 
-  if ShopGlobal.NetVersion then //连锁版只下载日账，不上传
+  if (SFVersion='.NET') and not Global.Debug then //连锁版只下载日账，不上传
      begin
        SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
        Exit;
@@ -1587,7 +1604,7 @@ var
   rid,cid:string;
 begin
   result := true;
-  if ShopGlobal.ONLVersion then Exit;
+  if (SFVersion='.ONL') or Global.Debug then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;
@@ -1610,7 +1627,7 @@ var
   rs:TZQuery;
 begin
   result := true;
-  if ShopGlobal.ONLVersion then Exit;
+  if (SFVersion='.ONL') or Global.Debug then Exit;
   if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库锁定功能。');
   rs := TZQuery.Create(nil);
   try
@@ -2016,7 +2033,7 @@ begin
     cs_s.Free;
   end;
 
-  if ShopGlobal.NetVersion then //连锁版只下载月账，不上传
+  if (SFVersion='.NET') and not Global.Debug then //连锁版只下载月账，不上传
      begin
        SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
        Exit;
@@ -3319,7 +3336,7 @@ end;
 
 function TSyncFactory.SyncUnLockDb: boolean;
 begin
-  if ShopGlobal.ONLVersion then Exit;
+  if (SFVersion='.ONL') or Global.Debug then Exit;
   if Global.UserID<>'system' then Raise Exception.Create('只有超级管理员才能远程数据库进行解锁');
   if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库解锁功能。');
   if MessageBox(Application.MainForm.Handle,'你是否真要对本企业的所有门店账套进行解锁？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;

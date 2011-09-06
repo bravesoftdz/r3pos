@@ -491,7 +491,7 @@ begin
        if Login.TENANT_ID<>Global.TENANT_ID then
           begin
             Raise Exception.Create('当前登录账号跟原账号不属于同一企业,请联系客服人员'); 
-          end; 
+          end;
        //保存门店信息
        CaFactory.downloadShopInfo(Login.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
        Exit;

@@ -4,46 +4,42 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ufrmMMBasic, ImgList, RzTray, Menus, ExtCtrls, RzForms,ZBase,
-  RzBckgnd, RzPanel, RzBmpBtn, StdCtrls, uMMUtil, uMMServer ,ShellApi,
-  RzButton;
+  Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, uMMUtil, uMMServer ,ShellApi,
+  ZBase, RzTray;
+
 type
-  TfrmMMMain = class(TfrmMMBasic)
+  TfrmMMMain = class(TfrmMain)
     RzTrayIcon1: TRzTrayIcon;
-    ImageList1: TImageList;
-    PopupMenu1: TPopupMenu;
-    RzButton1: TRzButton;
+    procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure FormDestroy(Sender: TObject);
-    procedure RzButton1Click(Sender: TObject);
+    procedure RzTrayIcon1RestoreApp(Sender: TObject);
+    procedure RzTrayIcon1MinimizeApp(Sender: TObject);
+    procedure RzTrayIcon1LButtonDown(Sender: TObject);
   private
     { Private declarations }
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
     procedure wm_Sign(var Message: TMessage); message MM_SIGN;
+    procedure wm_SessionFail(var Message: TMessage); message MM_SESSION_FAIL;
   public
     { Public declarations }
     procedure ConnectToSQLite;
+    function CreateMMLogin: TftParamList;
     procedure Init;
-    function CreateMMLogin:TftParamList;
-    procedure OpenMc(pid:string;mid:integer=0);
-    function Login:boolean;
+    function Login: boolean;
+    procedure OpenMc(pid: string; mid:integer=0);
+    procedure ShowMMList;
+    procedure HideMMList;
   end;
 
 var
   frmMMMain: TfrmMMMain;
 
 implementation
-uses ufrmMMLogin, uCaFactory, ummGlobal, uGlobal, ufrmLogo;
+uses
+  ufrmMMLogin, uCaFactory, ummGlobal, uGlobal, ufrmLogo, uSyncFactory, ufrmMMList;
+
 {$R *.dfm}
-
-{ TfrmMMMain }
-
-procedure TfrmMMMain.ConnectToSQLite;
-begin
-  Global.MoveToLocal;
-  Global.Connect;
-end;
 
 function TfrmMMMain.Login: boolean;
 begin
@@ -57,33 +53,6 @@ begin
     end;
 end;
 
-procedure TfrmMMMain.wm_Login(var Message: TMessage);
-begin
-  if Login then
-     begin
-        Show;
-        Init;
-     end
-  else
-     Application.Terminate;
-end;
-
-procedure TfrmMMMain.FormCreate(Sender: TObject);
-begin
-  inherited;
-  frmLogo := TfrmLogo.create(self);
-  ConnectToSQLite;
-  left := Screen.Width-width-1;
-  top := (Screen.Height - Height) div 2 -1;
-end;
-
-procedure TfrmMMMain.FormCloseQuery(Sender: TObject;
-  var CanClose: Boolean);
-begin
-  inherited;
-  if MessageBox(Handle,'是否退出盟盟？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-end;
-
 procedure TfrmMMMain.FormDestroy(Sender: TObject);
 begin
   freeandnil(frmLogo);
@@ -91,10 +60,88 @@ begin
 
 end;
 
+procedure TfrmMMMain.FormCreate(Sender: TObject);
+begin
+  inherited;
+  frmLogo := TfrmLogo.create(self);
+  ConnectToSQLite;
+
+end;
+
+procedure TfrmMMMain.ConnectToSQLite;
+begin
+  Global.MoveToLocal;
+  Global.Connect;
+end;
+procedure TfrmMMMain.wm_Login(var Message: TMessage);
+begin
+  if Login then
+     begin
+        Init;
+     end
+  else
+     Application.Terminate;
+end;
+procedure TfrmMMMain.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  inherited;
+  CanClose := (MessageBox(Handle,'是否退出盟盟？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+
+end;
+
 procedure TfrmMMMain.Init;
 begin
-  if FileExists(ExtractFilePath(ParamStr(0))+'shop.exe') then //检测是否有安装终端系统。
-     OpenMc('shop.exe');
+  try
+   if CaFactory.Audited and not mmGlobal.ONLVersion then
+      begin
+        if not Global.RemoteFactory.Connected and not mmGlobal.NetVersion then
+           begin
+             frmLogo.Label1.Caption := '正在连接远程服务...';
+             frmLogo.Label1.Update;
+             Global.MoveToRemate;
+             try
+               try
+                 Global.Connect;
+               except
+                 MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+               end;
+             finally
+               Global.MoveToLocal;
+             end;
+           end;
+        if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
+        if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
+           begin
+             if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
+           end;
+      end
+   else
+      begin
+        if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
+        if CaFactory.Audited and Global.RemoteFactory.Connected then //管理什么版本，有连接到服务器时，必须先同步数据
+           begin
+             if mmGlobal.ONLVersion then //在线版只需同步注册数据
+                begin
+                  if Global.RemoteFactory.ConnString<>Global.LocalFactory.ConnString then //调试模式时，不同步
+                  begin
+                    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+                    SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
+                    SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
+                    SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
+                    SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
+                  end;
+                end
+             else
+                begin
+                  if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
+                end;
+           end;
+     end;
+
+  finally
+    ShowMMList;
+  end;
 end;
 
 procedure TfrmMMMain.OpenMc(pid: string;mid:integer=0);
@@ -116,21 +163,16 @@ begin
          inc(w);
          if w>4 then Raise Exception.Create('打开目标应用超时...');
        end;
-     Params.ParamByName('fn').AsInteger := mid; 
+     Params.ParamByName('fn').AsInteger := mid;
      MMServer.coLogin(Params);
    finally
      Params.free;
    end;
 end;
 
-procedure TfrmMMMain.RzButton1Click(Sender: TObject);
-begin
-  inherited;
-  openmc('shop.exe');
-end;
-
 function TfrmMMMain.CreateMMLogin: TftParamList;
-var Params:TftParamList;
+var
+   Params:TftParamList;
 begin
    Params := TftParamList.Create(nil);
    result := Params;
@@ -170,6 +212,50 @@ begin
   finally
     Params.Free;
   end;
+end;
+
+procedure TfrmMMMain.wm_SessionFail(var Message: TMessage);
+var Params:TftParamList;
+begin
+  if not mmGlobal.coLogin(mmGlobal.xsm_username,mmGlobal.xsm_password) then Exit;
+  Params := CreateMMLogin;
+  try
+    MMServer.coSessionFail(Params);
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TfrmMMMain.HideMMList;
+begin
+  frmMMList.Close;
+end;
+
+procedure TfrmMMMain.ShowMMList;
+begin
+  frmMMList.Show;
+  frmMMList.BringToFront;
+end;
+
+procedure TfrmMMMain.RzTrayIcon1RestoreApp(Sender: TObject);
+begin
+  inherited;
+  Visible := true;
+end;
+
+procedure TfrmMMMain.RzTrayIcon1MinimizeApp(Sender: TObject);
+begin
+  inherited;
+  Visible := false;
+  ShowMMList;
+
+end;
+
+procedure TfrmMMMain.RzTrayIcon1LButtonDown(Sender: TObject);
+begin
+  inherited;
+  ShowMMList;
+
 end;
 
 end.

@@ -1318,6 +1318,7 @@ begin
                  cdsList.Next;
                end;
              finally
+               SaveToFile;
                cdsTable.EnableControls;
              end;
              Calc;
@@ -2105,6 +2106,7 @@ end;
 procedure TfrmPosMain.DelRecord(AObj: TRecord_);
 begin
   if not cdsTable.IsEmpty then cdsTable.Delete;
+  SaveToFile;
   Calc;
 end;
 
@@ -4343,6 +4345,8 @@ begin
         try
           sm.LoadFromFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
           cdsTable.LoadFromStream(sm);
+          cdsTable.Last;
+          RowId := cdsTable.FieldbyName('SEQNO').AsInteger;
           Calc;
         finally
           sm.Free;
@@ -4356,7 +4360,11 @@ var
   sm:TMemoryStream;
   code:integer;
 begin
-  if cdsTable.IsEmpty then Exit;
+  if cdsTable.IsEmpty then
+     begin
+       DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
+       Exit;
+     end;
   code := 0;
   try
     sm := TMemoryStream.Create;

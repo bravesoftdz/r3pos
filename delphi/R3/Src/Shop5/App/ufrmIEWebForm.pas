@@ -151,7 +151,7 @@ begin
   if url='' then Exit;
   Runed := true;
 //  IEBrowser.Navigate(url);
-  frmDesk.Waited := true;
+  frmDesk.Waited := false;
   try
     frmLogo.Position := 1;
     _Start := GetTickCount;

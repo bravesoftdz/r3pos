@@ -942,12 +942,13 @@ begin
            Logined := not frmXsmIEBrowser.SessionFail;
        end;
     Logined := Login(false);
-    if not frmXsm2Main.Visible and Logined and not IsXsm then
+    if not frmXsm2Main.Visible and Logined then
     begin
-      Application.Minimize;
+//      Application.Minimize;
       frmXsm2Main.Show;
       frmXsm2Main.WindowState := wsMaximized;
-      Application.Restore;
+      frmXsm2Main.BringToFront;
+//      Application.Restore;
     end;
   except
     on E:Exception do
@@ -3739,6 +3740,7 @@ begin
        Exit;
      end;
   Application.Restore;
+  frmXsm2Desk.Locked := false;
   frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmXsmIEBrowser');
   if Form=nil then Raise Exception.Create('脱机状态不能打开新商盟相关模块...'); 
@@ -3926,6 +3928,7 @@ begin
        Exit;
      end;
   Application.Restore;
+  frmXsm2Desk.Locked := false;
   frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmRimIEBrowser');
   if not Assigned(Form) then
@@ -4270,6 +4273,7 @@ begin
      end;
     TfrmCostCalc.CheckMonthReck(self);
   finally
+    frmLogo.Close;
     TfrmInitGuide.InitGuide(self);
   end;
 end;
@@ -4329,16 +4333,15 @@ begin
     result := false;
     Global.MoveToLocal;
     Global.Connect;
-  finally
-    frmLogo.Close;
-  end;
   if not UpdateDbVersion then Exit;
   LoadFrame;
   if CaFactory.Audited then
      begin
       if not CheckVersion then Exit;
      end;
-
+  finally
+    frmLogo.Close;
+  end;
   if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
      begin
        frmLogo.Show;
@@ -4455,6 +4458,8 @@ begin
    frmXsm2Main.Show;
    frmXsm2Main.WindowState := wsMaximized;
    Application.Restore;
+   BringToFront;
+   LoadFrame;
    result := true;
   except
     on E:Exception do
@@ -4487,7 +4492,7 @@ end;
 
 procedure TfrmXsm2Main.mc_quit(var Message: TMessage);
 begin
-  if frmXSMIEBrowser<>nil then
+  if frmXsmIEBrowser<>nil then
      begin
        frmXsmIEBrowser.mmc := false;
        frmXsmIEBrowser.SessionFail := true;

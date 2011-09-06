@@ -30,7 +30,10 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure IEBrowserTitleChange(Sender: TObject;
+      const Text: WideString);
   private
+    XsmTitle:string;
     FLogined: boolean;
     Fready: boolean;
     LoginError:string;
@@ -92,6 +95,7 @@ type
     function DoForLogin(checked:boolean=false):boolean;
     procedure SetSenceReady(const Value: boolean);
     procedure Setmmc(const Value: boolean);
+    function CheckInited:boolean;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -104,8 +108,9 @@ type
     procedure Send(const szMethodName: string;const szPara: string);
     procedure Send2(const szMethodName: string;const szPara1: string;const szPara2: string);
     procedure Send3(const szMethodName: string;const szPara1: string;const szPara2: string;const szPara3: string);
-    
+
     function WaitRun(WaitOutTime:integer=20000):boolean;
+    procedure DoRefresh;
     procedure DoInit(Wait:boolean=false);
     procedure ReadInfo(checked:boolean=false);
     function DoLogin(Hinted:boolean=false):boolean;
@@ -235,18 +240,21 @@ var
   SaveLog:Boolean;
 begin
   result := false;
+  if not CheckInited then DoInit(true);
   if not ready then
      begin
-       MessageBox(Handle,'系统正在装载新商盟环境,请稍候再试.','友情提示...',MB_OK+MB_ICONWARNING);
-       PageHandle := 0;
-       PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+       if MessageBox(Handle,'系统正在装载新商盟环境,是否继续？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+       begin
+         PageHandle := 0;
+         PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+       end;
        Exit;
      end;
   SaveLog := frmLogo.Visible;
   if not SaveLog then frmLogo.Show;
   frmLogo.ShowTitle := '正在登录新商盟...';
   try
-    GetSignature;
+    if not GetSignature then Exit;
 //  修改成带场景的    
 //    Send('login',xsm_signature);
     Send2('login',xsm_signature,SenceId);
@@ -297,9 +305,10 @@ begin
      end;
   if szMethodName='sessionFail' then
      begin
-       DoInit(false);
+       DoRefresh;
        Logined := false;
        SessionFail := true;
+       PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
        LoginError := 'Session失效了，请重新点击...';
      end;
   if szMethodName='windowClose' then
@@ -315,6 +324,9 @@ begin
   if szMethodName='kickOut' then
      begin
        Logined := false;
+       ready := false;
+       DoRefresh;
+       PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
      end;
   if szMethodName='loginReady' then
      Logined := true;
@@ -350,7 +362,19 @@ begin
         if (szPara1='9901') or (szPara1='9001') then
            MessageBox(Handle,'<新商盟>网络连接异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING)
         else
-           MessageBox(Handle,'<新商盟>其他错误异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING);
+        if (szPara1='9902') then
+           MessageBox(Handle,'<新商盟>请关闭IE版的新商盟再重试','友情提示...',MB_OK+MB_ICONWARNING)
+        else
+           begin
+             if szPara1='9904' then
+                begin
+                   Logined := false;
+                   ready := false;
+                   DoRefresh;
+                   PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+                end;
+             MessageBox(Handle,'<新商盟>其他错误异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING);
+           end;
      end;
   runed := false;
   LogFile.AddLogFile(0,'FuncCall2:方法='+szMethodName+' 参数1='+szPara1+' 参数2='+szPara2);
@@ -434,13 +458,14 @@ end;
 
 function TfrmXsmIEBrowser.Open(sid, oid: string;hHandle:THandle):boolean;
 begin
-  if DLLHandle=0 then Raise Exception.Create('系统装载LCControl.dll组件失败，新商盟相关模块将不能使用，请重启系统再重试'); 
+  if DLLHandle=0 then Raise Exception.Create('系统装载LCControl.dll组件失败，新商盟相关模块将不能使用，请重启系统再重试');
   SaveHandle := PageHandle;
   try
   PageHandle := hHandle;
   WindowState := wsMaximized;
   BringToFront;
   result := false;
+  if not CheckInited then DoInit(true);
   if Runed then 
      begin
        MessageBox(Handle,'正在等待新商盟响应...','友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -451,10 +476,21 @@ begin
        MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
+  if not ready then
+     begin
+       if MessageBox(Handle,'系统正在装载新商盟环境,是否继续？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+       begin
+         PageHandle := 0;
+         SaveHandle := 0;
+         PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+       end;
+       Exit;
+     end;
   if SessionFail then XsmLogin(false);
   if SessionFail then
      begin
        PageHandle := 0;
+       SaveHandle := 0;
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
        Exit;
      end;
@@ -474,6 +510,7 @@ begin
         if not DoLogin(True) then
            begin
              PageHandle := 0;
+             SaveHandle := 0;
              PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
              Exit;
            end;
@@ -489,6 +526,7 @@ begin
   if SessionFail then //失效了，自动重新请求
      begin
        PageHandle := 0;
+       SaveHandle := 0;
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
        Exit;
      end;
@@ -525,6 +563,8 @@ var
 begin
   ready := false;
   Runed := true;
+  Logined := false;
+  SessionFail := true;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   List := TStringList.Create;
   try
@@ -547,7 +587,7 @@ begin
   if Wait then
      begin
         if not WaitRun(commandTimeout) then Exit;
-        frmDesk.Waited := true;
+        frmDesk.Waited := false;
         try
         _Start := GetTickCount;
         frmLogo.Show;
@@ -587,7 +627,7 @@ begin
   if not s then frmLogo.Show;
   frmLogo.Position := 1;
 //  Application.OnMessage := DoMsgFilter;
-  frmDesk.Waited := true;
+  frmDesk.Waited := false;
   try
   while Runed do
      begin
@@ -794,6 +834,14 @@ begin
     if mmc then
        begin
          result := MMClient.sessionFail;
+         if result then
+            begin
+              xsm_username := MMClient.MMLogin.xsmUserName;
+              xsm_Password := MMClient.MMLogin.xsmPassword;
+              xsm_Challenge := MMClient.MMLogin.xsmChallenge;
+              xsm_Signature := MMClient.MMLogin.xsmSignature;
+              SessionFail := false;
+            end;
          Exit;
        end;
     if not checked then ReadInfo(checked);
@@ -801,6 +849,7 @@ begin
     frmLogo.ShowTitle := '正在登录新商盟...';
     try
       result := GetChallenge;
+      if not result then Exit;
       result := DoForLogin(checked);
       SessionFail := not result;
     finally
@@ -945,6 +994,26 @@ end;
 procedure TfrmXsmIEBrowser.Setmmc(const Value: boolean);
 begin
   Fmmc := Value;
+end;
+
+procedure TfrmXsmIEBrowser.IEBrowserTitleChange(Sender: TObject;
+  const Text: WideString);
+begin
+  inherited;
+  XsmTitle := Text;
+end;
+
+function TfrmXsmIEBrowser.CheckInited: boolean;
+begin
+  result := (pos('新商盟',xsmTitle)>0);
+end;
+
+procedure TfrmXsmIEBrowser.DoRefresh;
+begin
+  ready := false;
+  Runed := true;
+  Logined := false;
+  IEBrowser.Refresh;
 end;
 
 end.

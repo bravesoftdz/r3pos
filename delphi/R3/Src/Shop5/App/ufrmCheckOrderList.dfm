@@ -300,7 +300,7 @@ inherited frmCheckOrderList: TfrmCheckOrderList
                   FieldName = 'CHK_DATE'
                   Footers = <>
                   Title.Caption = #23457#26680#26085#26399
-                  Width = 58
+                  Width = 73
                 end
                 item
                   EditButtons = <>

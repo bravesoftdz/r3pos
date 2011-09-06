@@ -5,11 +5,11 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uGlobal, IdBaseComponent, IdComponent, IdTCPConnection, msxml,
-  IdTCPClient, IdHTTP, ZLogFile, ComObj, IdCookieManager, ZDataSet, ZBase
-  ;
+  IdTCPClient, IdHTTP, ZLogFile, ComObj, IdCookieManager, ZDataSet, ZBase, uShopGlobal,
+  DB, ZAbstractRODataset, ZAbstractDataset, ummFactory;
 
 type
-  TmmGlobal = class(TGlobal)
+  TmmGlobal = class(TShopGlobal)
     IdCookieManager1: TIdCookieManager;
     IdHTTP1: TIdHTTP;
     procedure DataModuleCreate(Sender: TObject);
@@ -24,6 +24,7 @@ type
     procedure Setxsm_username(const Value: string);
     procedure SetLogined(const Value: boolean);
     procedure Setxsm_signature(const Value: string);
+    function getFriends: boolean;
     { Private declarations }
   protected
     function CreateXML(xml:string):IXMLDomDocument;
@@ -32,11 +33,24 @@ type
     function GetONLVersion: boolean;
   public
     { Public declarations }
+    mmFactory:TmmFactory;
+    
+    constructor Create;
+    destructor Destroy;override;
     function getChallenge:boolean;
     function doLogin:boolean;
     function getSignature:boolean;
     procedure InitLoad;
 
+    //读我的好友
+    function getAllfriends:boolean;
+    //读我的黑名单
+    function getBlackFriends:boolean;
+    //读我所在黑名单
+    function getBeBlackFriends:boolean;
+
+
+    function getUrlPath:string;
     function coLogin(uid,pwd:string):boolean;
     function CheckRegister:boolean;
     function AutoRegister(isnew:boolean):boolean;
@@ -57,9 +71,9 @@ var
   mmGlobal: TmmGlobal;
 
 implementation
-uses EncDec,uCaFactory,IniFiles;
+uses EncDec,uCaFactory,ummFactory,IniFiles;
 {$R *.dfm}
-var xsmc:string;
+var xsmc,xsmurl:string;
 { TmmGlobal }
 
 function TmmGlobal.CheckRegister: boolean;
@@ -231,6 +245,7 @@ begin
        begin
          List.CommaText := xsmc;
          xsmc := List.Values['xsmc'];
+         xsmurl := List.Values['xsm'];
        end;
     xml := IdHTTP1.Get(xsmc+'users/forlogin');
     xml := Utf8ToAnsi(xml);
@@ -282,21 +297,25 @@ end;
 procedure TmmGlobal.Setxsm_challenge(const Value: string);
 begin
   Fxsm_challenge := Value;
+  uShopGlobal.xsm_challenge := value;
 end;
 
 procedure TmmGlobal.Setxsm_password(const Value: string);
 begin
   Fxsm_password := Value;
+  uShopGlobal.xsm_password := value;
 end;
 
 procedure TmmGlobal.Setxsm_signature(const Value: string);
 begin
   Fxsm_signature := Value;
+  uShopGlobal.xsm_signature := value;
 end;
 
 procedure TmmGlobal.Setxsm_username(const Value: string);
 begin
   Fxsm_username := Value;
+  uShopGlobal.xsm_username := value;
 end;
 
 procedure TmmGlobal.SaveParams;
@@ -361,6 +380,56 @@ procedure TmmGlobal.DataModuleCreate(Sender: TObject);
 begin
   inherited;
   Logined := false;
+end;
+
+function TmmGlobal.getFriends: boolean;
+begin
+
+end;
+
+function TmmGlobal.getUrlPath: string;
+var
+  vList:TStringList;
+begin
+  vList := TStringList.Create;
+  try
+    vList.Delimiter := '/';
+    vList.DelimitedText := xsmurl;
+    vList.Delete(vList.Count-1);
+    result := vList.DelimitedText;
+  finally
+    vList.Free;
+  end;
+end;
+
+constructor TmmGlobal.Create;
+begin
+  inherited;
+  mmFactory := TmmFactory.Create;
+  mmFactory.idHttp := IdHTTP1;
+end;
+
+destructor TmmGlobal.Destroy;
+begin
+  mmFactory.free;
+  inherited;
+end;
+
+function TmmGlobal.getAllfriends: boolean;
+var
+  url:string;
+begin
+  url := getUrlPath+'';
+end;
+
+function TmmGlobal.getBeBlackFriends: boolean;
+begin
+
+end;
+
+function TmmGlobal.getBlackFriends: boolean;
+begin
+
 end;
 
 end.

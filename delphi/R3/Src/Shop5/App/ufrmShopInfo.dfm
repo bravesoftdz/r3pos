@@ -143,7 +143,7 @@ inherited frmShopInfo: TfrmShopInfo
       end
       object TabSheet2: TRzTabSheet
         Color = clWhite
-        Caption = #32593#35746#35774#32622
+        Caption = #32593#19978#35746#36135
         object RzPanel3: TRzPanel
           Left = 0
           Top = 0
@@ -155,39 +155,51 @@ inherited frmShopInfo: TfrmShopInfo
           TabOrder = 0
           object Label11: TLabel
             Left = 15
-            Top = 21
+            Top = 29
             Width = 80
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #24080'    '#21495
+            Caption = #30331#24405#36134#21495
           end
           object Label12: TLabel
             Left = 15
-            Top = 69
+            Top = 85
             Width = 80
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #23494'    '#30721
+            Caption = #30331#24405#23494#30721
           end
           object Label13: TLabel
             Left = 108
-            Top = 42
-            Width = 132
+            Top = 50
+            Width = 144
             Height = 12
-            Caption = #30331#24405#26032#21830#30431#26102#29992#21040#30340#24080#21495
+            Caption = #36827#20837#21367#28895#35746#36135#31995#32479#26102#30340#24080#21495
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clRed
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
           end
           object Label14: TLabel
             Left = 108
-            Top = 90
-            Width = 132
+            Top = 106
+            Width = 144
             Height = 12
-            Caption = #30331#24405#26032#21830#30431#26102#29992#21040#30340#23494#30721
+            Caption = #36827#20837#21367#28895#35746#36135#31995#32479#26102#30340#23494#30721
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clRed
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
           end
           object edtXSM_CODE: TcxTextEdit
             Left = 106
-            Top = 17
+            Top = 25
             Width = 187
             Height = 20
             Properties.MaxLength = 50
@@ -196,7 +208,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object edtXSM_PSWD: TcxTextEdit
             Left = 106
-            Top = 65
+            Top = 81
             Width = 187
             Height = 20
             Properties.EchoMode = eemPassword

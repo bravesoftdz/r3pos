@@ -53,6 +53,7 @@ type
     PUB_GOODS_INDEXS: TZQuery;
     CA_RELATIONS: TZQuery;
     PUB_TREND_INFO: TZQuery;
+    procedure DataModuleCreate(Sender: TObject);
   private
     Fokline: boolean;
     FLimit: integer;
@@ -400,6 +401,13 @@ begin
   end;
 end;
 
+procedure TShopGlobal.DataModuleCreate(Sender: TObject);
+begin
+  inherited;
+  ShopGlobal := self;
+end;
+
 initialization
+  ShopGlobal := nil;
 finalization
 end.

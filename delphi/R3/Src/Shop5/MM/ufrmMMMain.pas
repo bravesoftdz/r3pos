@@ -5,17 +5,63 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, uMMUtil, uMMServer ,ShellApi,
-  ZBase, RzTray;
+  ZBase, RzTray, StdCtrls, Mask, RzEdit, RzBmpBtn, RzLabel, jpeg, RzPanel;
 
 type
   TfrmMMMain = class(TfrmMain)
     RzTrayIcon1: TRzTrayIcon;
+    RzPanel1: TRzPanel;
+    Panel4: TPanel;
+    Image5: TImage;
+    Image6: TImage;
+    Panel2: TPanel;
+    Image4: TImage;
+    Image2: TImage;
+    lblDayInfo: TRzLabel;
+    Image9: TImage;
+    lblNetStatus: TRzLabel;
+    lblUserInfo: TLabel;
+    imgOffline: TImage;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton2: TRzBmpButton;
+    RzBmpButton3: TRzBmpButton;
+    RzPanel9: TRzPanel;
+    Panel9: TPanel;
+    rzTool: TPanel;
+    Image21: TImage;
+    Panel12: TPanel;
+    Image14: TImage;
+    Panel3: TPanel;
+    rzToolButton: TPanel;
+    Image12: TImage;
+    RzPanel3: TRzPanel;
+    Image10: TImage;
+    tbDesktop: TRzBmpButton;
+    Panel1: TPanel;
+    RzPanel4: TRzPanel;
+    Image1: TImage;
+    Panel10: TPanel;
+    rzLeft: TRzPanel;
+    RzPanel2: TRzPanel;
+    split: TImage;
+    Panel11: TPanel;
+    RzPanel5: TRzPanel;
+    page_01: TRzBmpButton;
+    page_02: TRzBmpButton;
+    page_03: TRzBmpButton;
+    page_04: TRzBmpButton;
+    page_11: TRzBmpButton;
+    page_12: TRzBmpButton;
+    page_13: TRzBmpButton;
+    page_14: TRzBmpButton;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure RzTrayIcon1MinimizeApp(Sender: TObject);
     procedure RzTrayIcon1LButtonDown(Sender: TObject);
+    procedure miCloseClick(Sender: TObject);
+    procedure RzBmpButton2Click(Sender: TObject);
   private
     { Private declarations }
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
@@ -255,6 +301,19 @@ procedure TfrmMMMain.RzTrayIcon1LButtonDown(Sender: TObject);
 begin
   inherited;
   ShowMMList;
+
+end;
+
+procedure TfrmMMMain.miCloseClick(Sender: TObject);
+begin
+  inherited;
+  Close;
+end;
+
+procedure TfrmMMMain.RzBmpButton2Click(Sender: TObject);
+begin
+  inherited;
+  Close;
 
 end;
 

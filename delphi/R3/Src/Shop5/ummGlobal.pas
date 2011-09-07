@@ -35,7 +35,7 @@ type
     { Public declarations }
     mmFactory:TmmFactory;
     
-    constructor Create;
+    constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     function getChallenge:boolean;
     function doLogin:boolean;
@@ -71,7 +71,7 @@ var
   mmGlobal: TmmGlobal;
 
 implementation
-uses EncDec,uCaFactory,ummFactory,IniFiles;
+uses EncDec,uCaFactory,IniFiles;
 {$R *.dfm}
 var xsmc,xsmurl:string;
 { TmmGlobal }
@@ -402,11 +402,10 @@ begin
   end;
 end;
 
-constructor TmmGlobal.Create;
+constructor TmmGlobal.Create(AOwner: TComponent); 
 begin
   inherited;
   mmFactory := TmmFactory.Create;
-  mmFactory.idHttp := IdHTTP1;
 end;
 
 destructor TmmGlobal.Destroy;

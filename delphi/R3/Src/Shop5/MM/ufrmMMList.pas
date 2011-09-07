@@ -6,14 +6,16 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMMBasic, ImgList, RzTray, Menus, ExtCtrls, RzForms,ZBase,
   RzBckgnd, RzPanel, RzBmpBtn, StdCtrls, uMMUtil, uMMServer ,ShellApi,
-  RzButton;
+  RzButton, ummFactory;
 type
   TfrmMMList = class(TfrmMMBasic)
     ImageList1: TImageList;
     PopupMenu1: TPopupMenu;
     RzButton1: TRzButton;
+    RzButton2: TRzButton;
     procedure FormCreate(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
+    procedure RzButton2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -52,6 +54,12 @@ begin
   inherited;
   frmMMMain.WindowState := wsMaximized;
   frmMMMain.Show;
+end;
+
+procedure TfrmMMList.RzButton2Click(Sender: TObject);
+begin
+  inherited;
+  mmFactory.ConnectTo;
 end;
 
 end.

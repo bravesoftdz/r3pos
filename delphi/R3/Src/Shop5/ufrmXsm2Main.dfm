@@ -1,8 +1,8 @@
 inherited frmXsm2Main: TfrmXsm2Main
-  Left = -38
-  Top = 224
+  Left = -204
+  Top = 164
   Width = 1292
-  Height = 776
+  Height = 812
   Caption = ''
   Menu = nil
   Position = poDefault
@@ -12,7 +12,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   PixelsPerInch = 96
   TextHeight = 12
   inherited stbBottom: TStatusBar
-    Top = 737
+    Top = 773
     Width = 1276
     Height = 1
     Panels = <
@@ -32,7 +32,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   end
   object Panel5: TPanel [1]
     Left = 0
-    Top = 737
+    Top = 773
     Width = 1276
     Height = 0
     Align = alBottom
@@ -442,7 +442,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     Left = 1275
     Top = 77
     Width = 1
-    Height = 660
+    Height = 696
     Align = alRight
     BevelOuter = bvNone
     Color = 12300436
@@ -7808,7 +7808,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     Left = 0
     Top = 77
     Width = 115
-    Height = 660
+    Height = 696
     Align = alLeft
     BorderOuter = fsNone
     TabOrder = 6
@@ -7816,7 +7816,7 @@ inherited frmXsm2Main: TfrmXsm2Main
       Left = 0
       Top = 0
       Width = 115
-      Height = 660
+      Height = 696
       Align = alClient
       BorderOuter = fsNone
       BorderSides = [sdLeft, sdRight]
@@ -13877,7 +13877,7 @@ inherited frmXsm2Main: TfrmXsm2Main
         Left = 0
         Top = 295
         Width = 115
-        Height = 365
+        Height = 401
         Align = alClient
         BorderOuter = fsNone
         BorderSides = [sdTop]
@@ -13888,7 +13888,7 @@ inherited frmXsm2Main: TfrmXsm2Main
           Left = 1
           Top = 1
           Width = 113
-          Height = 363
+          Height = 399
           Align = alClient
           BorderOuter = fsFlat
           BorderSides = [sdTop, sdRight, sdBottom]
@@ -19928,7 +19928,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     Left = 115
     Top = 77
     Width = 1
-    Height = 660
+    Height = 696
     Align = alLeft
     BorderOuter = fsFlat
     BorderSides = [sdRight]

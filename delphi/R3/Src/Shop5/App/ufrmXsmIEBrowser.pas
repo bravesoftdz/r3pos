@@ -183,6 +183,7 @@ begin
   except
     MessageBox(Handle,'系统没有检测到"新商盟接口组件",请检查软件是否正确安装?','友情提示...',MB_OK+MB_ICONWARNING);
   end;
+  Set8087CW(Longword($133f));
 end;
 
 destructor TfrmXsmIEBrowser.Destroy;
@@ -282,7 +283,11 @@ procedure TfrmXsmIEBrowser.DoFuncCall(ASender: TObject; const szMethodName,
 var Action:TAction;
 begin
   if szMethodName='ready' then
-     ready := true;
+     begin
+       ready := true;
+       if SessionFail then Exit;
+       Send2('login',xsm_signature,SenceId);
+     end;
   if szMethodName='loginReady' then
      ready := true;
   if szMethodName='loginStatus' then
@@ -302,6 +307,11 @@ begin
        else
           LoginError := '返回未知错误...';
        SenceReady := Logined;
+       if not Logined then
+         begin
+           PageHandle := 0;
+           PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+         end;
      end;
   if szMethodName='sessionFail' then
      begin

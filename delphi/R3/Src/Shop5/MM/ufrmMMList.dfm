@@ -31,12 +31,19 @@ inherited frmMMList: TfrmMMList
     Width = 255
     Height = 363
     object RzButton1: TRzButton
-      Left = 56
-      Top = 168
+      Left = 104
+      Top = 312
       Caption = 'RzButton1'
       TabOrder = 0
       OnClick = RzButton1Click
     end
+  end
+  object RzButton2: TRzButton
+    Left = 104
+    Top = 256
+    Caption = 'RzButton1'
+    TabOrder = 3
+    OnClick = RzButton2Click
   end
   object ImageList1: TImageList
     Left = 88

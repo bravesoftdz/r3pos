@@ -30,6 +30,7 @@ type
     FrspConnected: boolean;
     FRemoteFactory: TdbFactory;
     FLocalFactory: TdbFactory;
+    FLoginPswd: string;
     { Private declarations }
     function  GetUserID: string;
     function  GetUserName: string;
@@ -50,6 +51,7 @@ type
     procedure SetLocalFactory(const Value: TdbFactory);
     procedure SetRemoteFactory(const Value: TdbFactory);
     function Getdebug: boolean;
+    procedure SetLoginPswd(const Value: string);
   protected
     function GetSysDate: TDate;virtual;
   public
@@ -111,6 +113,8 @@ type
     property RemoteFactory:TdbFactory read FRemoteFactory write SetRemoteFactory;
     //是否调试模式
     property debug:boolean read Getdebug;
+    //最新登录密码加密后的串
+    property LoginPswd:string read FLoginPswd write SetLoginPswd;
   end;
   
 function CopyScreen(SaveAndFree:Boolean=True): TBitmap;
@@ -576,6 +580,11 @@ end;
 function TGlobal.Getdebug: boolean;
 begin
   result := FindCmdLineSwitch('DEBUG',['-','+'],false);
+end;
+
+procedure TGlobal.SetLoginPswd(const Value: string);
+begin
+  FLoginPswd := Value;
 end;
 
 initialization

@@ -690,7 +690,7 @@ end;
 
 function TZSocketTransport.GetConnected: Boolean;
 begin
-  Result := (FSocket <> nil) and (FSocket.Connected);
+  Result := (FSocket <> nil) and (FSocket.Connected);// and CheckClientSocket(FSocket.SocketHandle);
 end;
 
 procedure TZSocketTransport.SetConnected(Value: Boolean);
@@ -733,8 +733,6 @@ begin
   Enter;
   try
     Result := nil;
-    if not CheckClientsocket(FSocket.SocketHandle)  then
-       raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
     TimeVal := nil;
     FD_ZERO(FDSet);
     FD_SET(FSocket.SocketHandle, FDSet);
@@ -746,7 +744,7 @@ begin
     end;
     RetVal := select(0, @FDSet, nil, nil, TimeVal);
     if Assigned(TimeVal) then
-      FreeMem(TimeVal);
+       FreeMem(TimeVal);
     if RetVal = SOCKET_ERROR then
       raise ESocketConnectionError.Create(SysErrorMessage(WSAGetLastError));
     if (RetVal = 0) then Exit;
@@ -769,17 +767,11 @@ begin
     begin
       RetLen := FSocket.ReceiveBuf(P^, StreamLen);
       case RetLen of
-      0:begin
-         if not CheckClientsocket(FSocket.SocketHandle)  then
-            begin
-              raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
-            end;
-        end;
-      -1:begin
+      -1,0:begin
            if ((GetTickCount-_Start)>5000) then
             begin
-              SetConnected(false);
-              raise ESocketConnectionError.CreateRes(@SSocketReadError);
+              FSocket.Close;
+              raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
             end;
         end;
       else
@@ -807,8 +799,6 @@ begin
   Enter;
   try
      Result := 0;
-     if not CheckClientsocket(FSocket.SocketHandle)  then
-        raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
      InterceptOutgoing(Data);
      P := Data.Memory;
      Amount := Data.Size + Data.BytesReserved;
@@ -817,19 +807,12 @@ begin
        begin
          AmountSent := FSocket.SendBuf(P^, Amount);
          case AmountSent of
-         0:
-            begin
-               if not CheckClientsocket(FSocket.SocketHandle)  then
-                  begin
-                    raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
-                  end;
-            end;
-         -1:
+         -1,0:
             begin
                if ((GetTickCount-_Start)>5000) then
                begin
-                  SetConnected(false);
-                  raise ESocketConnectionError.CreateRes(@SSocketReadError);
+                  FSocket.Close;
+                  raise ESocketConnectionError.Create('Socket连接被断开了，请重试吧');
                end;
             end
          else
@@ -991,7 +974,6 @@ begin
     Chk := IoCtlSocket(FdSet.Fd_Array[0], FIONREAD, Size);
     if Chk < 0 then Result := False else if Size = 0 then Result := False else Result := true;
   end else if Chk = 0 then Result := true else Result := False;
-  if not result then SetConnected(false);
 end;
 
 function TZSocketTransport.GetSocketHandle: THandle;

@@ -656,9 +656,9 @@ begin
   else
     begin
       if page_11.Down then Exit;
-      DefButton.onClick(DefButton);
+      if DefButton<>nil then DefButton.onClick(DefButton);
       result := true;
-      DefButton.Down := true;
+      if DefButton<>nil then DefButton.Down := true;
     end;
 end;
 
@@ -669,8 +669,10 @@ var
 begin
   if not Logined then Exit;
   if screen.ActiveForm = nil then Exit;
-  if screen.ActiveForm = frmMain then Exit;
-  if screen.ActiveForm = frmDesk then Exit;
+  if screen.ActiveForm = frmMain then
+     Exit;
+  if screen.ActiveForm = frmDesk then
+     Exit;
   if (screen.ActiveForm.FormStyle=fsMDIChild) then
   begin
   for i:=0 to FList.Count -1 do
@@ -3741,7 +3743,7 @@ begin
      end;
   Application.Restore;
   frmXsm2Desk.Locked := false;
-  frmXsm2Desk.SaveToFront;
+//  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmXsmIEBrowser');
   if Form=nil then Raise Exception.Create('脱机状态不能打开新商盟相关模块...'); 
   if TfrmBasic(Form).PageHandle = Integer(Sender) then
@@ -3929,7 +3931,6 @@ begin
      end;
   Application.Restore;
   frmXsm2Desk.Locked := false;
-  frmXsm2Desk.SaveToFront;
   Form := FindChildForm('frmRimIEBrowser');
   if not Assigned(Form) then
      Form := TfrmRimIEBrowser.Create(self);

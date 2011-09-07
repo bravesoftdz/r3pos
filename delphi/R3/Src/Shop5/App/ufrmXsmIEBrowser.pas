@@ -59,6 +59,7 @@ type
     SenceId:string;
     FSenceReady: boolean;
     Fmmc: boolean;
+    Ferror: boolean;
 
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
@@ -96,6 +97,7 @@ type
     procedure SetSenceReady(const Value: boolean);
     procedure Setmmc(const Value: boolean);
     function CheckInited:boolean;
+    procedure Seterror(const Value: boolean);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -126,6 +128,7 @@ type
     property CommandTimeOut:integer read FCommandTimeOut write SetCommandTimeOut;
     property SenceReady:boolean read FSenceReady write SetSenceReady;
     property mmc:boolean read Fmmc write Setmmc;
+    property error:boolean read Ferror write Seterror;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
@@ -174,9 +177,6 @@ begin
     if @DLLLC_FreeMsgMem=nil then Raise Exception.Create('LC_FreeMsgMem方法没有实现');
     @DLLLC_FreeLibrary := GetProcAddress(DLLHandle, 'LC_FreeLibrary');
     if @DLLLC_FreeLibrary=nil then Raise Exception.Create('LC_FreeLibrary方法没有实现');
-//    LCObject.OnFuncCall := DoFuncCall;
-//    LCObject.OnFuncCall2 := DoFuncCall2;
-//    LCObject.OnFuncCall3 := DoFuncCall3;
     Connect;
     SenceReady := false;
     SenceId := 'GWGC';
@@ -191,7 +191,6 @@ begin
   runed := false;
   FreeLcControl;
   IEBrowser.Free;
-//  LCObject.Close;
   inherited;
   frmXsmIEBrowser := nil;
 end;
@@ -369,11 +368,15 @@ begin
   if szMethodName='error' then
      begin
         frmDesk.Waited := false;
+        error := true;
         if (szPara1='9901') or (szPara1='9001') then
            MessageBox(Handle,'<新商盟>网络连接异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING)
         else
         if (szPara1='9902') then
-           MessageBox(Handle,'<新商盟>请关闭IE版的新商盟再重试','友情提示...',MB_OK+MB_ICONWARNING)
+           begin
+             xsmTitle := 'error';
+             MessageBox(Handle,'<新商盟>请关闭IE版的新商盟再重试','友情提示...',MB_OK+MB_ICONWARNING);
+           end
         else
            begin
              if szPara1='9904' then
@@ -393,10 +396,6 @@ end;
 procedure TfrmXsmIEBrowser.Connect;
 var r:integer;
 begin
-//  LCObject.UnRegisterLC('_R3_XSM');
-//  LCObject.UnRegisterLC('_XSM_R3');
-//  r := LCObject.Connect('_XSM_R3');
-//  if r<>0 then LogFile.AddLogFile(0,'初始化新商盟LCObject失败，失败代码:'+inttostr(r));
 
   DLLLC_Config(WM_XSM_CALL,WM_XSM_ERROR,Handle);
 
@@ -434,7 +433,6 @@ procedure TfrmXsmIEBrowser.Send(const szMethodName, szPara:String);
 var r:integer;
 begin
   runed := true;
-//  r := LCObject.Send('_R3_XSM',szMethodName,szPara);
   r := DLLLC_Send('_R3_XSM',pchar(szMethodName),Pchar(szPara));
   LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara+'，代码:'+inttostr(r))
 end;
@@ -444,7 +442,6 @@ procedure TfrmXsmIEBrowser.Send2(const szMethodName, szPara1,
 var r:integer;
 begin
   runed := true;
-//  r := LCObject.Send2('_R3_XSM',szMethodName,szPara1,szPara2);
   r := DLLLC_Send2('_R3_XSM',pchar(szMethodName),Pchar(szPara1),Pchar(szPara2));
   LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+'，代码:'+inttostr(r));
 end;
@@ -454,7 +451,6 @@ procedure TfrmXsmIEBrowser.Send3(const szMethodName, szPara1, szPara2,
 var r:integer;
 begin
   runed := true;
-//  r := LCObject.Send3('_R3_XSM',szMethodName,szPara1,szPara2,szPara3);
   r := DLLLC_Send3('_R3_XSM',pchar(szMethodName),Pchar(szPara1),Pchar(szPara2),Pchar(szPara3));
   LogFile.AddLogFile(0,'发送<'+szMethodName+'>p1='+szPara1+',p2='+szPara2+',p3='+szPara3+'，代码:'+inttostr(r));
 end;
@@ -475,12 +471,12 @@ begin
   WindowState := wsMaximized;
   BringToFront;
   result := false;
-  if not CheckInited then DoInit(true);
   if Runed then 
      begin
        MessageBox(Handle,'正在等待新商盟响应...','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
+  if not CheckInited then DoInit(true);
   if not CaFactory.Audited then
      begin
        MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -504,7 +500,8 @@ begin
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
        Exit;
      end;
-{  if SessionFail then
+{
+  if SessionFail then
      begin
        if TfrmXsmLogin.XsmRegister(true) then
           begin
@@ -514,7 +511,7 @@ begin
        else
           Exit;
      end;
-}     
+}
   if not Logined then
      begin
         if not DoLogin(True) then
@@ -574,6 +571,7 @@ begin
   ready := false;
   Runed := true;
   Logined := false;
+  error := false;
   SessionFail := true;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   List := TStringList.Create;
@@ -596,21 +594,18 @@ begin
   end;
   if Wait then
      begin
+        frmLogo.ShowTitle := '正在初始化新商盟环境...';
         if not WaitRun(commandTimeout) then Exit;
         frmDesk.Waited := false;
         try
         _Start := GetTickCount;
         frmLogo.Show;
         frmLogo.Position := 0;
-        while not ready do
+        while not ready and not error do
            begin
-      //       windows.WaitForSingleObject(FhEvent,500);
              Application.ProcessMessages;
              W := (GetTickCount-_Start);
-      //       if (W mod 1000)=0 then
-      //          begin
              frmLogo.Position := (W div 500);
-      //          end;
              if W>ConnectTimeOut then
                 begin
                   ready := false;
@@ -636,12 +631,10 @@ begin
   // XSM有进度了，不需要我加了
   if not s then frmLogo.Show;
   frmLogo.Position := 1;
-//  Application.OnMessage := DoMsgFilter;
   frmDesk.Waited := false;
   try
   while Runed do
      begin
-//       windows.MsgWaitForMultipleObjects(1,FhEvent,False,500,QS_ALLINPUT);
        Application.ProcessMessages;
        W := (GetTickCount-_Start);
        frmLogo.Position := (W div 500);
@@ -653,7 +646,6 @@ begin
           end;
      end;
   finally
-//    Application.OnMessage := nil;
     frmDesk.Waited := false;
     if not s then frmLogo.Close;
     Runed := false;
@@ -1024,6 +1016,11 @@ begin
   Runed := true;
   Logined := false;
   IEBrowser.Refresh;
+end;
+
+procedure TfrmXsmIEBrowser.Seterror(const Value: boolean);
+begin
+  Ferror := Value;
 end;
 
 end.

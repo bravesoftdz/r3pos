@@ -1,6 +1,6 @@
 inherited frmXsm2Main: TfrmXsm2Main
-  Left = -204
-  Top = 164
+  Left = 287
+  Top = 189
   Width = 1292
   Height = 812
   Caption = ''

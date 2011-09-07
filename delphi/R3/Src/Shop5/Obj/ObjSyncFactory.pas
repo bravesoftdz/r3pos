@@ -1720,6 +1720,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -1734,6 +1737,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -1765,6 +1771,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -1780,6 +1789,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -1933,6 +1945,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -2201,6 +2216,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -2215,6 +2233,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -2381,6 +2402,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -2547,6 +2571,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -2828,6 +2855,9 @@ begin
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -2889,6 +2919,9 @@ begin
          'and CHK_DATE is not null and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(j.COMM,1,1)<>''1''');
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -3023,6 +3056,9 @@ begin
   Str := 'select TENANT_ID,SHOP_ID,PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -3183,6 +3219,9 @@ begin
   Str := 'select distinct TENANT_ID,SHOP_ID,CLSE_DATE,CREA_USER from ACC_CLOSE_FORDAY where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
   SelectSQL.Text := Str;
 end;
 
@@ -3757,8 +3796,18 @@ begin
 end;
 
 function TSyncICGlideInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
 begin
-  result := inherited BeforeOpenRecord(AGlobal);
+  Str :=
+  'select * from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
+  SelectSQL.Text := Str;
 end;
 
 function TSyncICGlideInfo.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;

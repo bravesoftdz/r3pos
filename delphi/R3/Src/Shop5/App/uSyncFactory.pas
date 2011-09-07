@@ -21,11 +21,15 @@ type
     FSyncComm: boolean;
     Ffirsted: boolean;
     FEndTimeStamp: int64;
+    FStoped: boolean;
+    FWorking: boolean;
     procedure SetParams(const Value: TftParamList);
     procedure SetSyncTimeStamp(const Value: int64);
     procedure SetSyncComm(const Value: boolean);
     procedure Setfirsted(const Value: boolean);
     procedure SetEndTimeStamp(const Value: int64);
+    procedure SetStoped(const Value: boolean);
+    procedure SetWorking(const Value: boolean);
   protected
     procedure SetTicket;
     function GetTicket:Int64;
@@ -81,12 +85,6 @@ type
     procedure SyncPriceOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //盘点单
     procedure SyncCheckOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
-    //扫码入库
-    procedure SyncLocusForStck(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
-    //扫码出库
-    procedure SyncLocusForSale(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
-    //扫码盘点
-    procedure SyncLocusForChag(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步问答卷
     procedure SyncQuestion(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步模块表
@@ -119,6 +117,9 @@ type
     property EndTimeStamp:int64 read FEndTimeStamp write SetEndTimeStamp;
     property SyncComm:boolean read FSyncComm write SetSyncComm;
     property firsted:boolean read Ffirsted write Setfirsted;
+    //为自动上传的相关控制变量
+    property Stoped:boolean read FStoped write SetStoped;
+    property Working:boolean read FWorking write SetWorking;
   end;
 var
   SyncFactory:TSyncFactory;
@@ -722,6 +723,11 @@ begin
   FParams := Value;
 end;
 
+procedure TSyncFactory.SetStoped(const Value: boolean);
+begin
+  FStoped := Value;
+end;
+
 procedure TSyncFactory.SetSyncComm(const Value: boolean);
 begin
   FSyncComm := Value;
@@ -751,6 +757,11 @@ end;
 procedure TSyncFactory.SetTicket;
 begin
   _Start := GetTickCount;
+end;
+
+procedure TSyncFactory.SetWorking(const Value: boolean);
+begin
+  FWorking := Value;
 end;
 
 procedure TSyncFactory.SyncAll;
@@ -1084,8 +1095,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1203,8 +1222,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1324,8 +1351,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1475,8 +1510,80 @@ end;
 
 procedure TSyncFactory.SyncIcGlideOrder(tbName, KeyFields,
   ZClassName: string; KeyFlag: integer);
+var
+  cs,rs:TZQuery;
 begin
-  SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag,false,0);
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('PROD_ID').AsString := ProductId;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
+  cs := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    //以服务器为优先下载
+    cs.Close;
+    rs.Close;
+    SetTicket;
+    Global.RemoteFactory.Open(rs,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
+    SetTicket;
+    cs.SyncDelta := rs.SyncDelta;
+    if not cs.IsEmpty then
+    Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    rs.Free;
+    cs.Free;
+  end;
+
+  cs := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    //上传本机数据
+    cs.Close;
+    rs.Close;
+    Global.LocalFactory.BeginTrans;
+    try
+      SetTicket;
+      Global.LocalFactory.Open(cs,ZClassName,Params);
+      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+      SetSynTimeStamp(tbName,SyncTimeStamp);
+      if not cs.IsEmpty then
+      begin
+        SetTicket;
+        rs.SyncDelta := cs.SyncDelta;
+        cs.Delete;
+        if not cs.IsEmpty then
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+        if not rs.IsEmpty then
+        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+      end;
+      Global.LocalFactory.CommitTrans;
+    except
+      Global.LocalFactory.RollbackTrans;
+      Raise;
+    end;
+  finally
+    rs.Free;
+    cs.Free;
+  end;
 end;
 
 procedure TSyncFactory.SyncIoroOrder(tbName, KeyFields,
@@ -1490,8 +1597,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1656,309 +1771,6 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncLocusForChag(tbName, KeyFields,
-  ZClassName: string; KeyFlag: integer);
-var
-  ls,cs_h,rs_h:TZQuery;
-begin
-  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
-  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
-  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  ls := TZQuery.Create(nil);
-  cs_h := TZQuery.Create(nil);
-  rs_h := TZQuery.Create(nil);
-  try
-    Params.ParamByName('SYN_COMM').AsBoolean := false;
-    Global.RemoteFactory.Open(ls,ZClassName,Params);
-    ls.First;
-    while not ls.Eof do
-       begin
-         //以服务器为优先下载
-         frmLogo.ShowTitle := '正在下载<发货单据>'+inttostr(ls.RecNo)+'笔';
-         cs_h.Close;
-         rs_h.Close;
-
-         Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
-         Global.RemoteFactory.BeginBatch;
-         try
-           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForChagData',Params);
-           Global.RemoteFactory.OpenBatch;
-         except
-           Global.RemoteFactory.CancelBatch;
-           Raise;
-         end;
-
-         cs_h.SyncDelta := rs_h.SyncDelta;
-
-         Global.LocalFactory.BeginBatch;
-         try
-           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForChagData',Params);
-           Global.LocalFactory.CommitBatch;
-         except
-           Global.LocalFactory.CancelBatch;
-           Raise;
-         end;
-
-         ls.Next;
-       end;
-  finally
-    ls.Free;
-    rs_h.Free;
-    cs_h.Free;
-  end;
-
-  //下传
-  ls := TZQuery.Create(nil);
-  cs_h := TZQuery.Create(nil);
-  rs_h := TZQuery.Create(nil);
-  try
-    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
-    Global.LocalFactory.Open(ls,ZClassName,Params);
-    ls.First;
-    while not ls.Eof do
-       begin
-         frmLogo.ShowTitle := '正在上传<发货单据>'+inttostr(ls.RecNo)+'笔';
-         cs_h.Close;
-         rs_h.Close;
-
-         Params.ParamByName('CHANGE_ID').AsString := ls.FieldbyName('CHANGE_ID').AsString;
-         Global.LocalFactory.BeginBatch;
-         try
-           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForChagData',Params);
-           Global.LocalFactory.OpenBatch;
-         except
-           Global.LocalFactory.CancelBatch;
-           Raise;
-         end;
-
-         rs_h.SyncDelta := cs_h.SyncDelta;
-
-         Global.RemoteFactory.BeginBatch;
-         try
-           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForChagData',Params);
-           Global.RemoteFactory.CommitBatch;
-         except
-           Global.RemoteFactory.CancelBatch;
-           Raise;
-         end;
-
-         ls.Next;
-       end;
-    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
-  finally
-    ls.Free;
-    rs_h.Free;
-    cs_h.Free;
-  end;
-end;
-
-procedure TSyncFactory.SyncLocusForSale(tbName, KeyFields,
-  ZClassName: string; KeyFlag: integer);
-var
-  ls,cs_h,rs_h:TZQuery;
-begin
-  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
-  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
-  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  ls := TZQuery.Create(nil);
-  cs_h := TZQuery.Create(nil);
-  rs_h := TZQuery.Create(nil);
-  try
-    Params.ParamByName('SYN_COMM').AsBoolean := false;
-    Global.RemoteFactory.Open(ls,ZClassName,Params);
-    ls.First;
-    while not ls.Eof do
-       begin
-         frmLogo.ShowTitle := '正在下载<发货单据>'+inttostr(ls.RecNo)+'笔';
-         //以服务器为优先下载
-         cs_h.Close;
-         rs_h.Close;
-
-         Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
-         Global.RemoteFactory.BeginBatch;
-         try
-           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForSaleData',Params);
-           Global.RemoteFactory.OpenBatch;
-         except
-           Global.RemoteFactory.CancelBatch;
-           Raise;
-         end;
-
-         cs_h.SyncDelta := rs_h.SyncDelta;
-
-         Global.LocalFactory.BeginBatch;
-         try
-           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForSaleData',Params);
-           Global.LocalFactory.CommitBatch;
-         except
-           Global.LocalFactory.CancelBatch;
-           Raise;
-         end;
-
-         ls.Next;
-       end;
-  finally
-    ls.Free;
-    rs_h.Free;
-    cs_h.Free;
-  end;
-
-  //下传
-  ls := TZQuery.Create(nil);
-  cs_h := TZQuery.Create(nil);
-  rs_h := TZQuery.Create(nil);
-  try
-    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
-    Global.LocalFactory.Open(ls,ZClassName,Params);
-    ls.First;
-    while not ls.Eof do
-       begin
-         frmLogo.ShowTitle := '正在上传<发货单据>'+inttostr(ls.RecNo)+'笔';
-         cs_h.Close;
-         rs_h.Close;
-
-         Params.ParamByName('SALES_ID').AsString := ls.FieldbyName('SALES_ID').AsString;
-         Global.LocalFactory.BeginBatch;
-         try
-           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForSaleData',Params);
-           Global.LocalFactory.OpenBatch;
-         except
-           Global.LocalFactory.CancelBatch;
-           Raise;
-         end;
-
-         rs_h.SyncDelta := cs_h.SyncDelta;
-
-         Global.RemoteFactory.BeginBatch;
-         try
-           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForSaleData',Params);
-           Global.RemoteFactory.CommitBatch;
-         except
-           Global.RemoteFactory.CancelBatch;
-           Raise;
-         end;
-
-         ls.Next;
-       end;
-    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
-  finally
-    ls.Free;
-    rs_h.Free;
-    cs_h.Free;
-  end;
-end;
-
-procedure TSyncFactory.SyncLocusForStck(tbName, KeyFields,
-  ZClassName: string; KeyFlag: integer);
-var
-  ls,cs_h,rs_h:TZQuery;
-begin
-  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
-  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-  Params.ParamByName('TABLE_NAME').AsString := tbName;
-  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
-  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
-  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-  ls := TZQuery.Create(nil);
-  cs_h := TZQuery.Create(nil);
-  rs_h := TZQuery.Create(nil);
-  try
-    Params.ParamByName('SYN_COMM').AsBoolean := false;
-    Global.RemoteFactory.Open(ls,ZClassName,Params);
-    ls.First;
-    while not ls.Eof do
-       begin
-         frmLogo.ShowTitle := '正在下载<收货单据>'+inttostr(ls.RecNo)+'笔';
-         //以服务器为优先下载
-         cs_h.Close;
-         rs_h.Close;
-
-         Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
-         Global.RemoteFactory.BeginBatch;
-         try
-           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForStckData',Params);
-           Global.RemoteFactory.OpenBatch;
-         except
-           Global.RemoteFactory.CancelBatch;
-           Raise;
-         end;
-
-         cs_h.SyncDelta := rs_h.SyncDelta;
-
-         Global.LocalFactory.BeginBatch;
-         try
-           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForStckData',Params);
-           Global.LocalFactory.CommitBatch;
-         except
-           Global.LocalFactory.CancelBatch;
-           Raise;
-         end;
-
-         ls.Next;
-       end;
-  finally
-    ls.Free;
-    rs_h.Free;
-    cs_h.Free;
-  end;
-
-  //下传
-  ls := TZQuery.Create(nil);
-  cs_h := TZQuery.Create(nil);
-  rs_h := TZQuery.Create(nil);
-  try
-    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
-    Global.LocalFactory.Open(ls,ZClassName,Params);
-    ls.First;
-    while not ls.Eof do
-       begin
-         frmLogo.ShowTitle := '正在上传<收货单据>'+inttostr(ls.RecNo)+'笔';
-         cs_h.Close;
-         rs_h.Close;
-
-         Params.ParamByName('STOCK_ID').AsString := ls.FieldbyName('STOCK_ID').AsString;
-         Global.LocalFactory.BeginBatch;
-         try
-           Global.LocalFactory.AddBatch(cs_h,'TSyncLocusForStckData',Params);
-           Global.LocalFactory.OpenBatch;
-         except
-           Global.LocalFactory.CancelBatch;
-           Raise;
-         end;
-
-         rs_h.SyncDelta := cs_h.SyncDelta;
-
-         Global.RemoteFactory.BeginBatch;
-         try
-           Global.RemoteFactory.AddBatch(rs_h,'TSyncLocusForStckData',Params);
-           Global.RemoteFactory.CommitBatch;
-         except
-           Global.RemoteFactory.CancelBatch;
-           Raise;
-         end;
-
-         ls.Next;
-       end;
-    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
-  finally
-    ls.Free;
-    rs_h.Free;
-    cs_h.Free;
-  end;
-end;
-
 procedure TSyncFactory.SyncMonthCloseOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 var
@@ -1970,8 +1782,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2111,8 +1931,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2230,8 +2058,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2486,8 +2322,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2629,8 +2473,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2766,8 +2618,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2958,8 +2818,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -3076,8 +2944,16 @@ begin
   Params.ParamByName('TABLE_NAME').AsString := tbName;
   Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
-  Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -3324,14 +3200,137 @@ begin
 end;
 
 procedure TSyncFactory.SyncThread;
+var
+  i:integer;
 begin
-
+  Stoped := false;
+  Working := true;
+  EndTimeStamp := round((date()-40542)*86400);
+  InterlockedIncrement(Locked);
+  frmLogo.Show;
+  try
+    try
+      CaFactory.AutoCoLogo;
+    except
+      on E:Exception do
+        begin
+          LogFile.AddLogFile(0,'同步请求认证失败,错误:'+E.Message);
+          Raise;
+        end;
+    end;
+  SyncComm := CheckRemeteData;
+  SyncTimeStamp := CaFactory.TimeStamp;
+  SyncFactory.InitList;
+  frmLogo.ProgressBar1.Max := FList.Count;
+  for i:=0 to FList.Count -1 do
+    begin
+      if Stoped then Exit;
+      frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+      case PSynTableInfo(FList[i])^.synFlag of
+      5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      8:SyncStkIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      9:SyncSalIndentOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      11:SyncIoroOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      12:SyncTransOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      13:SyncRecvOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      14:SyncPayOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      15:SyncDaysCloseOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      16:SyncMonthCloseOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      17:SyncCloseForDay(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      18:SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      27:SyncIcGlideOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      end;      
+      frmLogo.Position := i;
+    end;
+    SetSynTimeStamp('#',EndTimeStamp,'#');
+  finally
+    frmLogo.Close;
+    InterlockedDecrement(Locked);
+    ReadTimeStamp;
+    Working := false;
+    EndTimeStamp := 0;
+  end;
 end;
 
 procedure TSyncFactory.SyncTransOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
+var
+  cs,rs:TZQuery;
 begin
-  SyncSingleTable(tbName,KeyFields,ZClassName,KeyFlag,false,0);
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('PROD_ID').AsString := ProductId;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
+  cs := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    //以服务器为优先下载
+    cs.Close;
+    rs.Close;
+    SetTicket;
+    Global.RemoteFactory.Open(rs,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
+    SetTicket;
+    cs.SyncDelta := rs.SyncDelta;
+    if not cs.IsEmpty then
+    Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    rs.Free;
+    cs.Free;
+  end;
+
+  cs := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    //上传本机数据
+    cs.Close;
+    rs.Close;
+    Global.LocalFactory.BeginTrans;
+    try
+      SetTicket;
+      Global.LocalFactory.Open(cs,ZClassName,Params);
+      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+      SetSynTimeStamp(tbName,SyncTimeStamp);
+      if not cs.IsEmpty then
+      begin
+        SetTicket;
+        rs.SyncDelta := cs.SyncDelta;
+        cs.Delete;
+        if not cs.IsEmpty then
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+        if not rs.IsEmpty then
+        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+      end;
+      Global.LocalFactory.CommitTrans;
+    except
+      Global.LocalFactory.RollbackTrans;
+      Raise;
+    end;
+  finally
+    rs.Free;
+    cs.Free;
+  end;
 end;
 
 function TSyncFactory.SyncUnLockDb: boolean;

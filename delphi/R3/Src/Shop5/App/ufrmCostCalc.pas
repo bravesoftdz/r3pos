@@ -2151,6 +2151,7 @@ begin
           Caption := '月结账';
           eDate := Date()-1;
           Prepare;
+          if not btnStart.Enabled then Exit;
           if Date() <= (eDate+5) then Exit;
           Label2.Caption := '月结日期:'+formatDatetime('YYYY-MM-DD',eDate);
           Label1.Caption:='请点击〖执行〗开始月结帐 ';

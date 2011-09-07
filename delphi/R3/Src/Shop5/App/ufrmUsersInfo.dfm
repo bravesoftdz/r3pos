@@ -169,10 +169,10 @@ inherited frmUsersInfo: TfrmUsersInfo
     object RzLabel5: TRzLabel [10]
       Left = 247
       Top = 17
-      Width = 100
+      Width = 160
       Height = 12
       AutoSize = False
-      Caption = #20363#65306'zhangsan'
+      Caption = #20363#65306'zhangsan '#40664#35748#23494#30721' 1234'
       Font.Charset = GB2312_CHARSET
       Font.Color = clBlack
       Font.Height = -12

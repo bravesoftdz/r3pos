@@ -412,6 +412,7 @@ begin
   inherited;
    if rzPage.ActivePageIndex = 0 then
     begin
+      if Trim(FilePath)='' then Raise Exception.Create('请选择要导入的文件!');
       OpenExecl(FilePath);
       IsHeader;
       rzPage.ActivePageIndex := 1;

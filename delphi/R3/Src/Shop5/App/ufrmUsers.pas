@@ -437,7 +437,7 @@ begin
   if Cds_Users.IsEmpty then exit;
   if not ShopGlobal.GetChkRight('31500001',8) then
     Raise Exception.Create('你没有密码重置的权限,请和管理员联系.');
-  if MessageBox(Handle,'确认重置该用户密码！',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;    
+  if MessageBox(Handle,'是否确认把当前选中用户的登录密码，重置密码为1234?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;    
 
   Str_Sql :=
   'update CA_USERS set PASS_WRD='''+EncStr('1234',ENC_KEY)+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where USER_ID='''+Cds_Users.FieldbyName('USER_ID').AsString+''' and TENANT_ID='+IntToStr(Global.TENANT_ID);

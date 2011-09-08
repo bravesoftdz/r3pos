@@ -1280,7 +1280,7 @@ begin
         edtTable.FieldbyName('APRICE').AsString := formatFloat('#0.000', Rs.FieldbyName('AMONEY').AsFloat / Rs.FieldbyName('AMOUNT').AsFloat);
 
       AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
-      Remark:='<订单号:'+FDownOrderID+'><订货日期:'+AObj.fieldbyName('INDE_DATE').AsString+'>';
+      Remark:='<订单号:'+FDownOrderID+'><订货日期:'+AObj.fieldbyName('INDE_DATE').AsString+'>  ';
       if Rs.FieldbyName('NEED_AMT').AsFloat<>0 then
         Remark :=Remark + '需求量:'+Rs.FieldbyName('NEED_AMT').AsString;
       if Rs.FieldbyName('CHK_AMT').AsFloat<>0 then

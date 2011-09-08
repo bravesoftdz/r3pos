@@ -1209,7 +1209,7 @@ function TfrmStockOrder.IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant)
 var
   i: integer;
   Rs, RsGods, RsUnit: TZQuery;
-  TenantID,ShopID,CurName: string;
+  TenantID,ShopID,CurName,Remark: string;
 begin
   result:=False;
   //根据传入的AObj填充主表字段；
@@ -1225,10 +1225,12 @@ begin
   //读取门店ID
   edtSHOP_ID.KeyValue:=Global.SHOP_ID;
   edtSHOP_ID.Text:=Global.SHOP_NAME;
-  edtSTOCK_DATE.Date:=fnTime.fnStrtoDate(AObj.fieldbyName('INDE_DATE').AsString); //订单日期
+  //2011.09.08修改为取系统时间:
+  edtSTOCK_DATE.Date:=Global.SysDate;  //订单日期
+  //edtSTOCK_DATE.Date:=fnTime.fnStrtoDate(AObj.fieldbyName('INDE_DATE').AsString); //订单日期
   DBGridEh1.ReadOnly:=true;     //明细Grid
   fndGODS_ID.Visible := false;
-//  edtTable.DisableControls;
+  //edtTable.DisableControls;
   try
     Rs:=TZQuery.Create(nil);
     Rs.Data:=vData;
@@ -1278,11 +1280,14 @@ begin
         edtTable.FieldbyName('APRICE').AsString := formatFloat('#0.000', Rs.FieldbyName('AMONEY').AsFloat / Rs.FieldbyName('AMOUNT').AsFloat);
 
       AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
-      edtTable.FieldbyName('REMARK').AsString := '';
+      Remark:='<订单号:'+FDownOrderID+'><订货日期:'+AObj.fieldbyName('INDE_DATE').AsString+'>';
       if Rs.FieldbyName('NEED_AMT').AsFloat<>0 then
-         edtTable.FieldbyName('REMARK').AsString := '需求量:'+Rs.FieldbyName('NEED_AMT').AsString;
+        Remark :=Remark + '需求量:'+Rs.FieldbyName('NEED_AMT').AsString;
       if Rs.FieldbyName('CHK_AMT').AsFloat<>0 then
-         edtTable.FieldbyName('REMARK').AsString := edtTable.FieldbyName('REMARK').AsString+'审核量:'+Rs.FieldbyName('CHK_AMT').AsString;
+        Remark :=Remark + '审核量:'+Rs.FieldbyName('CHK_AMT').AsString;
+      edtTable.FieldbyName('REMARK').AsString :=Remark;
+      edtREMARK.Text:=Remark;  
+
       //处理不为空字段:
       edtTable.FieldbyName('BATCH_NO').AsString:='#';
       edtTable.FieldbyName('IS_PRESENT').AsInteger:=0;

@@ -27,7 +27,7 @@ uses
   cxRadioGroup, Buttons;
 
 
-type
+type                        
   TframeBaseReport = class(TframeToolForm)
     dsadoReport1: TDataSource;
     ToolButton1: TToolButton;
@@ -108,7 +108,7 @@ type
     //添加商品指标的ItemsList[SetFlag对应位数，1..20位，若为1表添加，若为0表不添加]
     procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
     //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
-    procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
+    procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);    
     //添加统计单位Items
     procedure AddTongjiUnitList(TJUnit: TcxComboBox);
     //添加销售类型ItemsList: ItemsIdx: 对应：PUB_PARAMS.TYPE_CODE='TYPE_CODE'; AddAll:是否添加“全部”

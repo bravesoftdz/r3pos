@@ -228,7 +228,7 @@ type
      RowID:integer;
 
      AObj:TRecord_;
-     SORT_ID1,flag:string;
+     flag:string;
      Saved,IsCompany:Boolean;
      CarryRule,Deci:integer;
      locked:boolean;
@@ -1681,11 +1681,11 @@ begin
           IsExist:=true;
         end;
       end;
-    end;
-    if not IsExist then
-    begin
-      edtCALC_UNITS.KeyValue := '';
-      edtCALC_UNITS.Text := '';
+      if not IsExist then
+      begin
+        edtCALC_UNITS.KeyValue := '';
+        edtCALC_UNITS.Text := '';
+      end;
     end;
 
     //判断小件单位
@@ -1701,12 +1701,12 @@ begin
           edtSMALL_UNITS.Text := rs.FieldbyName('UNIT_NAME').AsString;
           IsExist:=true;
         end;
-      end
-    end;
-    if not IsExist then
-    begin
-      edtSMALL_UNITS.KeyValue := '';
-      edtSMALL_UNITS.Text := '';
+      end;
+      if not IsExist then
+      begin
+        edtSMALL_UNITS.KeyValue := '';
+        edtSMALL_UNITS.Text := '';
+      end;
     end;
 
     //判断大件单位
@@ -1723,11 +1723,11 @@ begin
           IsExist:=True;
         end;
       end;
-    end;
-    if not IsExist then
-    begin
-      edtBIG_UNITS.KeyValue := '';
-      edtBIG_UNITS.Text := '';
+      if not IsExist then
+      begin
+        edtBIG_UNITS.KeyValue := '';
+        edtBIG_UNITS.Text := '';
+      end;
     end;
 
     //判断商品分类1：
@@ -1739,7 +1739,7 @@ begin
         rs := Global.GetZQueryFromName('PUB_GOODSSORT');
         if rs.Locate('SORT_NAME',GodsFactory.SortInfo.FieldbyName('SORT_NAME').asString,[]) then
         begin
-          SORT_ID1 := rs.FieldbyName('SORT_ID').AsString;
+          SORT_ID1_KeyValue:=rs.FieldbyName('SORT_ID').AsString;
           edtSORT_ID1.Text := rs.FieldbyName('SORT_NAME').AsString;
           IsExist:=True;
         end;
@@ -1747,7 +1747,7 @@ begin
     end;
     if not IsExist then
     begin
-      SORT_ID1 := '';
+      SORT_ID1_KeyValue:='';
       edtSORT_ID1.Text := '';
     end;
     

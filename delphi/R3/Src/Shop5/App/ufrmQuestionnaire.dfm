@@ -135,7 +135,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
         TabOrder = 1
         object Label9: TLabel
           Left = 8
-          Top = 21
+          Top = 22
           Width = 52
           Height = 12
           Caption = #38382#21367#25968#65306
@@ -174,7 +174,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
         end
         object QUESTION_SUM: TLabel
           Left = 57
-          Top = 21
+          Top = 22
           Width = 72
           Height = 12
           Caption = 'QUESTION_SUM'
@@ -1619,8 +1619,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   object labREMARK: TLabel
                     Left = 0
                     Top = 0
-                    Width = 36
-                    Height = 12
+                    Width = 294
+                    Height = 95
                     Align = alClient
                     Caption = 'REMARK'
                     Font.Charset = GB2312_CHARSET

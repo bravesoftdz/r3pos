@@ -439,6 +439,7 @@ end;
 
 procedure TfrmQuestionnaire.btnPreviousClick(Sender: TObject);
 begin
+
   inherited;
   if cdsQuestion.FieldByName('SEQ_NO').AsInteger = 1 then
     raise Exception.Create('这已经是第一题了');

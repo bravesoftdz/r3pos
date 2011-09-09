@@ -106,6 +106,7 @@ procedure TXsmCacheFactory.Loader(Url: String);
 begin
   try
     if Url = 'http://gx.xinshangmeng.com/xsm2/resource/sound/11650001/newyear.mp3?v=2011-09-02_00' then Exit;
+    //ÉÏÃæÓï¾äÒªÉ¾³ı
     labInfo.Caption := Url;
     Complete := 0;
     StartDateTime := Now();

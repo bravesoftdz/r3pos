@@ -493,7 +493,8 @@ begin
             Raise Exception.Create('当前登录账号跟原账号不属于同一企业,请联系客服人员'); 
           end;
        //保存门店信息
-       CaFactory.downloadShopInfo(Login.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
+       if Login.SHOP_ID<>'' then
+          CaFactory.downloadShopInfo(Login.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
        Exit;
      end;
   //保存企业信息
@@ -545,7 +546,8 @@ begin
     end;
   end;
   //保存门店信息
-  CaFactory.downloadShopInfo(Login.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
+  if Login.SHOP_ID<>'' then
+     CaFactory.downloadShopInfo(Login.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
 end;
 
 end.

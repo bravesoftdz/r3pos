@@ -482,7 +482,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth;
+  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread;
 {$R *.dfm}
 
 procedure TfrmN26Main.FormActivate(Sender: TObject);
@@ -795,6 +795,7 @@ begin
   finally
      LoadFrame;
      if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60000);
+     if Logined then StartSyncTask;
      Timer1.Enabled := Logined;
   end;
 end;
@@ -910,6 +911,7 @@ begin
        Exit;
        //Application.Minimize;
      end;
+  StopSyncTask;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
   if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then

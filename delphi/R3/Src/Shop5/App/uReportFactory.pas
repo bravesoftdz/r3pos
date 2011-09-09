@@ -147,6 +147,7 @@ begin
   TLate := TList.Create;
   Fields := TStringList.Create;
   Func := TStringList.Create;
+  DataSet := TZQuery.Create(nil);
   if sourid='1' then Fields.CommaText := RF_DATA_SOURCE1;
   if sourid='2' then Fields.CommaText := RF_DATA_SOURCE2;
   if sourid='3' then Fields.CommaText := RF_DATA_SOURCE3;
@@ -157,6 +158,7 @@ end;
 
 destructor TReportFactory.Destroy;
 begin
+  DataSet.Free;
   TLate.Free;
   Cols.Free;
   Rows.Free;
@@ -706,7 +708,7 @@ begin
         Column.Footer.Alignment := taRightJustify;
       end;
     end;
-  tb.CreateDataSet;
+    tb.CreateDataSet;
   finally
     Grid.Columns.EndUpdate;
   end;
@@ -732,7 +734,7 @@ begin
                   end
                else
                   begin
-                    if VarIsNull(PRowR(Rows[i])^.Buffer[j].Value) then
+                    if VarIsNull(PRowR(Rows[i])^.Buffer[j].Value) or VarIsClear(PRowR(Rows[i])^.Buffer[j].Value) then
                        PRowR(Rows[i])^.Buffer[j].Value := DataSet.Fields[PColumnR(Cols[j])^.Idx].asFloat
                     else
                        PRowR(Rows[i])^.Buffer[j].Value := PRowR(Rows[i])^.Buffer[j].Value + DataSet.Fields[PColumnR(Cols[j])^.Idx].asFloat;
@@ -799,6 +801,8 @@ begin
     for j:=0 to Cols.Count -1 do
     begin
       rs.Fields[j+3].Value := PRowR(Rows[i])^.Buffer[j].Value;
+      if VarIsNumeric(rs.Fields[j+3].Value) and (rs.Fields[j+3].AsFloat=0) then
+         rs.Fields[j+3].Value := null;
     end;
     rs.Post;
   end;

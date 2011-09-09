@@ -1,7 +1,7 @@
 unit ObjCommon;
 
 interface
-uses SysUtils,ZBase,Classes,DB,uFnUtil,ZIntf,Variants,ZDataSet;
+uses Windows,SysUtils,ZBase,Classes,DB,uFnUtil,ZIntf,Variants,ZDataSet;
 //COMM控制SQL
 function GetCommStr(iDbType:integer;alias:string=''):string;
 //处理简单SQL
@@ -50,6 +50,10 @@ TGetSyncTimeStamp=class(TZProcFactory)
 public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
+TSyncSystemTimeStamp=class(TZProcFactory)
+public
+  function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+end;
 TGetLastUpdateStatus=class(TZProcFactory)
 public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
@@ -59,9 +63,10 @@ public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
 const
-  ComVersion='3.0.1.26';
+  ComVersion='3.0.1.28';
 var
   FldXdict:TZReadonlyQuery;
+  NearSyncDate:TDatetime;
   SyncTimeStamp,LastUpdateTimeStamp:Int64;
 implementation
 function NewId(id:string): string;
@@ -770,18 +775,54 @@ begin
   result := true;
 end;
 
+{ TSyncSystemTimeStamp }
+
+function TSyncSystemTimeStamp.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  st:Tdatetime;
+  ts:int64;
+  v:_SYSTEMTIME;
+  Y,M,D,H,N,S,MS:word;
+begin
+  ts := Params.ParamByName('TIME_STAMP').AsInteger;
+  st := ts / 86400.0+40542.0 +2;  //delphi 下地date是重01开始算，所以要加2
+  if formatDatetime('YYYYMMDD',NearSyncDate)<>formatDatetime('YYYYMMDD',st) then
+  begin
+    NearSyncDate := st;
+    DecodeDate(st,Y,M,D);
+    DecodeTime(st,H,N,S,MS);
+    v.wYear :=  Y;
+    v.wMonth := M;
+    v.wDay := D;
+    v.wHour := H;
+    v.wMinute := N;
+    v.wSecond := S+1;
+    v.wMilliseconds := MS;
+    try
+      SetLocalTime(v);
+    except
+    end;
+  end;
+  msg := 'succ';
+  result := true;
+end;
+
 initialization
   RegisterClass(TGetXDictInfo);
   RegisterClass(TGetSyncTimeStamp);
   RegisterClass(TGetLastUpdateStatus);
+  RegisterClass(TSyncSystemTimeStamp);
   RegisterClass(TGetComVersion);
   FldXdict := nil;
   LastUpdateTimeStamp := 0;
+  NearSyncDate := 0;
 finalization
 
   if FldXdict<>nil then FldXdict.Free;
   UnRegisterClass(TGetXDictInfo);
   UnRegisterClass(TGetSyncTimeStamp);
   UnRegisterClass(TGetLastUpdateStatus);
+  UnRegisterClass(TSyncSystemTimeStamp);
   UnRegisterClass(TGetComVersion);
 end.

@@ -244,7 +244,9 @@ uses
   uLoginFactory in 'App\uLoginFactory.pas',
   ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},
   ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth},
-  objGoodsMonth in 'Obj\objGoodsMonth.pas';
+  objGoodsMonth in 'Obj\objGoodsMonth.pas',
+  uSyncThread in 'App\uSyncThread.pas',
+  OleCtrls in '..\..\Pub\OleCtrls.pas';
 
 {$R *.res}
 var
@@ -253,7 +255,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.1.9';
+  DBVersion := '1.0.2.0';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

@@ -98,7 +98,7 @@ type
     //开始基础数据
     procedure SyncBasic(gbl:boolean=true);
     //添加定义同步方法
-    procedure SyncThread;
+    procedure SyncThread(Sender: TObject);
     //数据同步到Rim
     procedure SyncRim;
 
@@ -121,10 +121,11 @@ type
     property Stoped:boolean read FStoped write SetStoped;
     property Working:boolean read FWorking write SetWorking;
   end;
+  
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,uDsUtil,uCaFactory;
+uses uGlobal,ufrmLogo,uDsUtil,uCaFactory,uSyncThread;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -453,7 +454,7 @@ begin
   
   new(n);
   n^.tbname := 'PUB_IC_INFO';
-  n^.keyFields := 'TENANT_ID;UNION_ID;IC_CARDNO';
+  n^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
   n^.synFlag := 4;
   n^.KeyFlag := 0;
   n^.tbtitle := 'IC档案';
@@ -768,6 +769,7 @@ procedure TSyncFactory.SyncAll;
 var
   i:integer;
 begin
+  StopSyncTask;
   EndTimeStamp := 0;
   InterlockedIncrement(Locked);
   try
@@ -3199,7 +3201,7 @@ begin
   end;
 end;
 
-procedure TSyncFactory.SyncThread;
+procedure TSyncFactory.SyncThread(Sender: TObject);
 var
   i:integer;
 begin
@@ -3207,7 +3209,6 @@ begin
   Working := true;
   EndTimeStamp := round((date()-40542)*86400);
   InterlockedIncrement(Locked);
-  frmLogo.Show;
   try
     try
       CaFactory.AutoCoLogo;
@@ -3225,7 +3226,6 @@ begin
   for i:=0 to FList.Count -1 do
     begin
       if Stoped then Exit;
-      frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       case PSynTableInfo(FList[i])^.synFlag of
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
@@ -3247,7 +3247,6 @@ begin
     end;
     SetSynTimeStamp('#',EndTimeStamp,'#');
   finally
-    frmLogo.Close;
     InterlockedDecrement(Locked);
     ReadTimeStamp;
     Working := false;

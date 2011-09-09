@@ -60,6 +60,7 @@ type
     FSenceReady: boolean;
     Fmmc: boolean;
     Ferror: boolean;
+    FOpening: boolean;
 
     { Private declarations }
     procedure DoFuncCall(ASender: TObject; const szMethodName: WideString;
@@ -98,6 +99,7 @@ type
     procedure Setmmc(const Value: boolean);
     function CheckInited:boolean;
     procedure Seterror(const Value: boolean);
+    procedure SetOpening(const Value: boolean);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -129,6 +131,7 @@ type
     property SenceReady:boolean read FSenceReady write SetSenceReady;
     property mmc:boolean read Fmmc write Setmmc;
     property error:boolean read Ferror write Seterror;
+    property Opening:boolean read FOpening write SetOpening;
   end;
 var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
@@ -145,6 +148,7 @@ var
 begin
   inherited;
   mmc := false;
+  Opening := false;
   SessionFail := true;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
@@ -463,19 +467,23 @@ begin
 end;
 
 function TfrmXsmIEBrowser.Open(sid, oid: string;hHandle:THandle):boolean;
+var Hinted:boolean;
 begin
   if DLLHandle=0 then Raise Exception.Create('系统装载LCControl.dll组件失败，新商盟相关模块将不能使用，请重启系统再重试');
+  Hinted := Runed or Opening;
+  if Hinted then
+     begin
+       MessageBox(Handle,'新商盟正在执行中,请稍候再试...','友情提示...',MB_OK+MB_ICONINFORMATION);
+       if Runed or Opening then frmLogo.Show;
+       Exit;
+     end;
   SaveHandle := PageHandle;
+  Opening := true;
   try
   PageHandle := hHandle;
   WindowState := wsMaximized;
   BringToFront;
   result := false;
-  if Runed then 
-     begin
-       MessageBox(Handle,'正在等待新商盟响应...','友情提示...',MB_OK+MB_ICONINFORMATION);
-       Exit;
-     end;
   if not CheckInited then DoInit(true);
   if not CaFactory.Audited then
      begin
@@ -554,6 +562,7 @@ begin
   finally
     if not result then PageHandle := SaveHandle;
     frmLogo.Close;
+    Opening := false;
   end;
 end;
 
@@ -1021,6 +1030,11 @@ end;
 procedure TfrmXsmIEBrowser.Seterror(const Value: boolean);
 begin
   Ferror := Value;
+end;
+
+procedure TfrmXsmIEBrowser.SetOpening(const Value: boolean);
+begin
+  FOpening := Value;
 end;
 
 end.

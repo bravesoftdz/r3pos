@@ -120,12 +120,14 @@ type
       AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure btnRetrun_MainClick(Sender: TObject);
+    procedure WebBrowser1DownloadComplete(Sender: TObject);
   private
     { Private declarations }
     QID:String;
     Already_Num,Sum_Num:Integer;
     BeginDateTime:TDateTime;
     IsEnable:Boolean;
+    waiting:boolean;
     procedure InitAnswerInfo;
     procedure AlreadyAnswerInfo;
     //procedure Create
@@ -149,7 +151,8 @@ type
   end;
 
 implementation
-uses ufrmLogo,uShopUtil, uShopGlobal, uSyncFactory, uCaFactory, uGlobal, uDsUtil, ActiveX, mshtml, DateUtils;
+uses ufrmLogo,uShopUtil, uShopGlobal, uSyncFactory, uCaFactory, uGlobal, uDsUtil, ActiveX, mshtml, DateUtils,
+  ufrmDesk;
 {$R *.dfm}
 
 { TfrmQuestionnaire }
@@ -300,17 +303,25 @@ end;
 procedure TfrmQuestionnaire.WriteBrowser;
 var Stream_Str:TStringStream;
     Html_Str:String;
+    _Start:Int64;
 begin
   Html_Str := CreateHtml;
   Stream_Str := TStringStream.Create(Html_Str);
+  waiting := true;
   try
     WebBrowser1.Navigate('about:blank');
-    while WebBrowser1.ReadyState < READYSTATE_INTERACTIVE do
-      Application.ProcessMessages;
-      
+    frmDesk.Waited := true;
+    _Start := GetTickCount;
+    while waiting do
+      begin
+        if (GetTickCount - _Start) > 10000 then break;
+        Application.ProcessMessages;
+      end;
+    if WebBrowser1.Document=nil then Raise Exception.Create('打开IE插件失败了...'); 
     Stream_Str.Position := 0;
     (WebBrowser1.Document as IPersistStreamInit).Load(TStreamAdapter.Create(Stream_Str));
   finally
+    frmDesk.Waited := false;
     Stream_Str.Free;
   end;
 end;
@@ -896,6 +907,12 @@ begin
     Params.Free;
     frmLogo.Close;
   end;
+end;
+
+procedure TfrmQuestionnaire.WebBrowser1DownloadComplete(Sender: TObject);
+begin
+  inherited;
+  waiting := false;
 end;
 
 end.

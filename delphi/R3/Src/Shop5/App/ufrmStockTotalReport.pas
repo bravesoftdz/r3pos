@@ -128,8 +128,7 @@ begin
   TDbGridEhSort.InitForm(self,false);
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  Factory := TReportFactory.Create('2');
-  Factory.DataSet := TZQuery.Create(nil);
+  Factory := nil;
   load;
   if ShopGlobal.GetProdFlag = 'E' then
     begin
@@ -153,8 +152,7 @@ end;
 procedure TfrmStockTotalReport.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
-  Factory.DataSet.Free;
-  Factory.Free;
+  if Factory<>nil then Factory.Free;
   inherited;
 
 end;
@@ -164,15 +162,18 @@ var strSql:string;
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;
-  if Factory.DataSet.Active then Factory.DataSet.Close;
-  strSql := GetGodsSQL;
-  if strSql='' then Exit;
-  TZQuery(Factory.DataSet).SQL.Text:= strSql;
-  frmPrgBar.Show;
-  frmPrgBar.Update;
-  frmPrgBar.WaitHint := '准备数据源...';
-  frmPrgBar.Precent := 0;
+  adoReport1.Close;
+  if Factory<>nil then Factory.Free;
+  Factory := TReportFactory.Create('2');
   try
+    if Factory.DataSet.Active then Factory.DataSet.Close;
+    strSql := GetGodsSQL;
+    if strSql='' then Exit;
+    TZQuery(Factory.DataSet).SQL.Text:= strSql;
+    frmPrgBar.Show;
+    frmPrgBar.Update;
+    frmPrgBar.WaitHint := '准备数据源...';
+    frmPrgBar.Precent := 0;
     Factor.Open(TZQuery(Factory.DataSet));
     Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
   finally

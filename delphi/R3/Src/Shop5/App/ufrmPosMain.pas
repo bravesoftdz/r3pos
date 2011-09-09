@@ -2039,7 +2039,7 @@ begin
          end
       else
          begin
-            if (rs.RecordCount > 1) then
+            if (rs.RecordCount > 1) and not rs.Locate('BARCODE',BarCode,[]) then
                begin
                   fndStr := '';
                   rs.first;
@@ -3890,7 +3890,10 @@ end;
 procedure TfrmPosMain.BarcodeFilterRecord(DataSet: TDataSet;
   var Accept: Boolean);
 begin
-  Accept := copy(DataSet.FieldbyName('BARCODE').AsString,length(DataSet.FieldbyName('BARCODE').AsString)-length(fndStr)+1,length(fndStr))=fndStr;
+  if length(fndStr)=6 then
+     Accept := copy(DataSet.FieldbyName('BARCODE').AsString,length(DataSet.FieldbyName('BARCODE').AsString)-5,6)=fndStr
+  else
+     Accept := DataSet.FieldbyName('BARCODE').AsString=fndStr;
 
 end;
 

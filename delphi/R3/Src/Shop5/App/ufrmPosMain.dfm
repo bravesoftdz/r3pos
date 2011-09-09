@@ -1308,7 +1308,7 @@ inherited frmPosMain: TfrmPosMain
       Width = 72
       Height = 12
       Cursor = crHandPoint
-      Caption = #32467#24080'  [ + ] '
+      Caption = #25910#38134'  [ + ] '
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12

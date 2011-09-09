@@ -143,8 +143,7 @@ begin
       TcxComboBox(Components[i]).ItemIndex:=0;
     end;
   end;
-  Factory := TReportFactory.Create('3');
-  Factory.DataSet := TZQuery.Create(nil);
+  Factory := nil;
   load;
   if ShopGlobal.GetProdFlag = 'E' then
     begin
@@ -168,8 +167,7 @@ end;
 procedure TfrmStgTotalReport.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
-  Factory.DataSet.Free;
-  Factory.Free;
+  if Factory<>nil then Factory.Free;
   inherited;
 
 end;
@@ -179,15 +177,18 @@ var strSql:string;
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;
-  if Factory.DataSet.Active then Factory.DataSet.Close;
-  strSql := GetGodsSQL;
-  if strSql='' then Exit;
-  TZQuery(Factory.DataSet).SQL.Text:= strSql;
-  frmPrgBar.Show;
-  frmPrgBar.Update;
-  frmPrgBar.WaitHint := '准备数据源...';
-  frmPrgBar.Precent := 0;
+  adoReport1.Close;
+  if Factory<>nil then Factory.Free;
+  Factory := TReportFactory.Create('3');
   try
+    if Factory.DataSet.Active then Factory.DataSet.Close;
+    strSql := GetGodsSQL;
+    if strSql='' then Exit;
+    TZQuery(Factory.DataSet).SQL.Text:= strSql;
+    frmPrgBar.Show;
+    frmPrgBar.Update;
+    frmPrgBar.WaitHint := '准备数据源...';
+    frmPrgBar.Precent := 0;
     Factor.Open(TZQuery(Factory.DataSet));
     Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
   finally

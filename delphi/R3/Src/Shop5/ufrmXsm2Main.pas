@@ -275,6 +275,7 @@ type
     lblUserInfo: TLabel;
     imgOffline: TImage;
     actfrmGoodsMonth: TAction;
+    RzBmpButton4: TRzBmpButton;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -403,6 +404,7 @@ type
     procedure RzTrayIcon1MinimizeApp(Sender: TObject);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure actfrmGoodsMonthExecute(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -483,7 +485,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
-  uLoginFactory,ufrmGoodsMonth;
+  uLoginFactory,ufrmGoodsMonth,uSyncThread;
   
 {$R *.dfm}
 
@@ -656,9 +658,9 @@ begin
   else
     begin
       if page_11.Down then Exit;
+      if DefButton<>nil then DefButton.Down := true;
       if DefButton<>nil then DefButton.onClick(DefButton);
       result := true;
-      if DefButton<>nil then DefButton.Down := true;
     end;
 end;
 
@@ -896,6 +898,7 @@ begin
   finally
      LoadFrame;
      if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60000);
+     if Logined then StartSyncTask;
      Timer1.Enabled := Logined;
   end;
 end;
@@ -1027,6 +1030,7 @@ begin
        Exit;
        //Application.Minimize;
      end;
+  StopSyncTask;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
   if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
@@ -4499,6 +4503,12 @@ begin
        frmXsmIEBrowser.SessionFail := true;
      end;
   if not Logined then Application.Terminate;
+end;
+
+procedure TfrmXsm2Main.RzBmpButton4Click(Sender: TObject);
+begin
+  inherited;
+  ShellExecute(0,'open',pchar(ExtractFilePath(ParamStr(0))+'¼òÒ×²Ù×÷ÊÖ²á.chm'),nil,pchar(ExtractFileDir(ParamStr(0))),1);
 end;
 
 end.

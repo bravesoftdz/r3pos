@@ -1136,12 +1136,12 @@ inherited frmQuestionnaire: TfrmQuestionnaire
           Top = 5
           Width = 554
           Height = 403
-          ActivePage = TabSheet1
+          ActivePage = TabContents
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 0
+          TabIndex = 2
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -1619,8 +1619,8 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                   object labREMARK: TLabel
                     Left = 0
                     Top = 0
-                    Width = 294
-                    Height = 95
+                    Width = 36
+                    Height = 12
                     Align = alClient
                     Caption = 'REMARK'
                     Font.Charset = GB2312_CHARSET
@@ -2596,6 +2596,7 @@ inherited frmQuestionnaire: TfrmQuestionnaire
                 Align = alClient
                 DragMode = dmAutomatic
                 TabOrder = 0
+                OnDownloadComplete = WebBrowser1DownloadComplete
                 ControlData = {
                   4C000000D8380000612700000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800

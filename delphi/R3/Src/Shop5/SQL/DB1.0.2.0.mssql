@@ -15,3 +15,8 @@ sum(case when A.SALES_TYPE=3 then round(A.CALC_AMOUNT*B.COST_PRICE,2) else 0 end
 '00',convert(bigint,(convert(float,getdate())-40542.0)*86400) from VIW_SALESDATA A,RCK_GOODS_DAYS B 
 where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.SALES_DATE=B.CREA_DATE and A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO  
 group by A.TENANT_ID,A.SHOP_ID,A.GUIDE_USER,A.DEPT_ID,A.CLIENT_ID,A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT;
+
+
+alter table MSC_QUESTION alter column REMARK varchar(260);
+
+alter table MSC_QUESTION_ITEM alter column QUESTION_OPTIONS varchar(960);

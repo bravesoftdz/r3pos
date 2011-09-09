@@ -391,7 +391,7 @@ inherited frmShowDibs: TfrmShowDibs
         Top = 24
         Width = 67
         Height = 12
-        Caption = '1'#12289#32467#24080'(+)'
+        Caption = '1'#12289#25910#38134'(+)'
         Font.Charset = GB2312_CHARSET
         Font.Color = clWhite
         Font.Height = -12

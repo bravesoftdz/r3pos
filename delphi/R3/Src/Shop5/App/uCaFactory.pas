@@ -202,6 +202,8 @@ type
     function coLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
     function coRegister(Info:TCaTenant):TCaTenant;
     function coGetList(TENANT_ID:string):TCaTenant;
+    
+    function SyncSystemTimeStamp:boolean;
     //±£¥Ê√≈µÍ
     function downloadShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
 
@@ -524,6 +526,7 @@ try
     end;
   end;
     CheckRecAck(doc);
+    SyncSystemTimeStamp;
     caTenantLoginResp := FindNode(doc,'body\caTenantLoginResp');
     code := GetNodeValue(caTenantLoginResp,'code');
     result.RET := code;
@@ -652,6 +655,7 @@ try
        end
     else
        Raise Exception.Create(GetNodeValue(caTenantLoginResp,'desc'));
+
 except
   on E:Exception do
   begin
@@ -3374,6 +3378,21 @@ except
     Raise;
   end;
 end;
+end;
+
+function TCaFactory.SyncSystemTimeStamp: boolean;
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TIME_STAMP').Value := timeStamp;
+    if Global.RemoteFactory.Connected then
+       Global.RemoteFactory.ExecProc('TSyncSystemTimeStamp',Params);
+    Global.LocalFactory.ExecProc('TSyncSystemTimeStamp',Params);
+  finally
+    Params.Free;
+  end;
 end;
 
 { rsp }

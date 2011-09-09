@@ -136,8 +136,7 @@ begin
   P1_D1.date := date; //默认当月
   P1_D2.date := date; //默认当月
   
-  Factory := TReportFactory.Create('4');
-  Factory.DataSet := TZQuery.Create(nil);
+  Factory := nil;
   load;
   if ShopGlobal.GetProdFlag = 'E' then
   begin
@@ -161,8 +160,7 @@ end;
 procedure TfrmSaleMonthTotalReport.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
-  Factory.DataSet.Free;
-  Factory.Free;
+  if Factory<>nil then Factory.Free;
   inherited;
 
 end;
@@ -172,15 +170,19 @@ var strSql:string;
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;
-  if Factory.DataSet.Active then Factory.DataSet.Close;
-  strSql := GetGodsSQL;
-  if strSql='' then Exit;
-  TZQuery(Factory.DataSet).SQL.Text:= strSql;
-  frmPrgBar.Show;
-  frmPrgBar.Update;
-  frmPrgBar.WaitHint := '准备数据源...';
-  frmPrgBar.Precent := 0;
+  adoReport1.Close;
+  if Factory<>nil then Factory.Free;
+  Factory := TReportFactory.Create('4');
   try
+    if Factory.DataSet.Active then Factory.DataSet.Close;
+    strSql := GetGodsSQL;
+    if strSql='' then Exit;
+    TZQuery(Factory.DataSet).SQL.Text:= strSql;
+    frmPrgBar.Show;
+    frmPrgBar.Update;
+    frmPrgBar.WaitHint := '准备数据源...';
+    frmPrgBar.Precent := 0;
+
     Factor.Open(TZQuery(Factory.DataSet));
     Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
   finally
@@ -488,13 +490,13 @@ procedure TfrmSaleMonthTotalReport.DBGridEh1GetCellParams(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-  if adoReport1.Fields[2].AsInteger = 1 then
+  if DBGridEh1.DataSource.DataSet.Fields[2].AsInteger = 1 then
      Background := $00E7E2E3;
   if LCK_Index<0 then Exit;
-  if adoReport1.FieldbyName(DBGridEh1.Columns[LCK_Index].FieldName).AsString='建议补货' then
+  if DBGridEh1.DataSource.DataSet.FieldbyName(DBGridEh1.Columns[LCK_Index].FieldName).AsString='建议补货' then
      Background := $00C080FF
   else
-  if adoReport1.FieldbyName(DBGridEh1.Columns[LCK_Index].FieldName).AsString='加强促销' then
+  if DBGridEh1.DataSource.DataSet.FieldbyName(DBGridEh1.Columns[LCK_Index].FieldName).AsString='加强促销' then
      Background := $0080FFFF;
 end;
 

@@ -168,7 +168,7 @@ begin
   cmbCUST_CODE.Text := '×Ô¶¯±àºÅ..';
   cmbBIRTHDAY.Date := FnTime.fnStrtoDate(FormatDateTime('1900-01-01',Date));
   cmbSND_DATE.Date := Date;
-  cmbSEX.ItemIndex := 0;
+  cmbSEX.ItemIndex := 1;
   cmbSHOP_ID.KeyValue := Global.SHOP_ID;
   cmbSHOP_ID.Text := Global.SHOP_NAME;
   edtREGION_ID.KeyValue := '#';

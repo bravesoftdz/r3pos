@@ -45,7 +45,7 @@ begin
     rs.SQL.Text := 'select count(*) from PUB_PRICEGRADE where PRICE_ID<>:PRICE_ID and TENANT_ID=:TENANT_ID and INTEGRAL=:INTEGRAL and INTEGRAL<>0 and COMM not in (''02'',''12'')';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('PRICE_ID').AsString := FieldByName('PRICE_ID').AsString;
-    rs.ParamByName('INTEGRAL').AsInteger := FieldByName('INTEGRAL').AsInteger;
+    rs.ParamByName('INTEGRAL').AsFloat := FieldByName('INTEGRAL').AsFloat;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
       Raise Exception.Create('在客户等级中,有积分设置相同的情况.请检查..');
@@ -83,7 +83,7 @@ begin
     rs.SQL.Text := 'select count(*) from PUB_PRICEGRADE where PRICE_ID<>:PRICE_ID and TENANT_ID=:TENANT_ID and INTEGRAL=:INTEGRAL and INTEGRAL<>0 and COMM not in (''02'',''12'')';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('PRICE_ID').AsString := FieldByName('PRICE_ID').AsString;
-    rs.ParamByName('INTEGRAL').AsInteger := FieldByName('INTEGRAL').AsInteger;
+    rs.ParamByName('INTEGRAL').AsFloat := FieldByName('INTEGRAL').AsFloat;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
       Raise Exception.Create('在客户等级中,有积分设置相同的情况.请检查..');

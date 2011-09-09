@@ -357,7 +357,7 @@ begin
       Inc(FNumeration);
     end;
     11:begin
-      Sql := Sql + ' select a.QUESTION_ID as ID,1 as MSG_CLASS,b.QUESTION_TITLE as MSG_TITLE,sum(a.QUESTION_ID) as SUM_ORDER,0 as MIN_DATE,8 as sFlag '+
+      Sql := Sql + ' select a.QUESTION_ID as ID,1 as MSG_CLASS,b.QUESTION_TITLE as MSG_TITLE,count(a.QUESTION_ID) as SUM_ORDER,0 as MIN_DATE,8 as sFlag '+
       ' from MSC_INVEST_LIST a,MSC_QUESTION b where a.TENANT_ID=b.TENANT_ID and a.QUESTION_ID=b.QUESTION_ID '+
       ' and a.TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and a.QUESTION_ANSWER_STATUS=2 group by a.QUESTION_ID,b.QUESTION_TITLE';
 

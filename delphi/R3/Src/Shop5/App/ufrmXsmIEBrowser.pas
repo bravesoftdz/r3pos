@@ -78,6 +78,7 @@ type
     procedure XSM_CALL_FUNC(var Message: TMessage); message WM_XSM_CALL;
     procedure XSM_CALL_ERROR(var Message: TMessage); message WM_XSM_ERROR;
 
+    function getUrlPath:string;
     procedure SetLogined(const Value: boolean);
     procedure Setready(const Value: boolean);
     procedure SetSessionFail(const Value: boolean);
@@ -796,6 +797,7 @@ var
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;    
   xml:string;
+  F:TIniFile;
 begin
   xsm_signature := IdHTTP1.Get(xsm_center+'users/dologin/up?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+xsm_challenge));
   xml := Utf8ToAnsi(xsm_signature);
@@ -805,7 +807,18 @@ begin
   Root :=  doc.DocumentElement;
   if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
   if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('新商盟请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
+  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+    F.WriteString('xsm','xsmrt',getUrlPath);
+    F.WriteString('xsm','code1',Root.selectSingleNode('parentComId').text);
+    F.WriteString('xsm','code2',Root.selectSingleNode('comId').text);
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
   result := true;
   if result then Factor.ExecSQL('update CA_SHOP_INFO set XSM_CODE='''+xsm_username+''',XSM_PSWD='''+EncStr(xsm_password,ENC_KEY)+''',COMM='+GetCommStr(Factor.idbType)+',TIME_STAMP='+GetTimeStamp(Factor.idbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+'''');
 end;
@@ -872,7 +885,7 @@ begin
          SessionFail := true;
          Logined := false;
          result := false;
-         MessageBox(Handle,Pchar('登录新商盟'+E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
+         MessageBox(Handle,Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
        end;
   end;
 end;
@@ -1035,6 +1048,21 @@ end;
 procedure TfrmXsmIEBrowser.SetOpening(const Value: boolean);
 begin
   FOpening := Value;
+end;
+
+function TfrmXsmIEBrowser.getUrlPath: string;
+var
+  vList:TStringList;
+begin
+  vList := TStringList.Create;
+  try
+    vList.Delimiter := '/';
+    vList.DelimitedText := xsm_url;
+    vList.Delete(vList.Count-1);
+    result := vList.DelimitedText+'/';
+  finally
+    vList.Free;
+  end;
 end;
 
 end.

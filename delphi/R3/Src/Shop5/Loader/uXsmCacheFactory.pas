@@ -27,14 +27,10 @@ type
     RzLabel3: TRzLabel;
     labInfo: TRzLabel;
     ActionList1: TActionList;
-    actLoad: TAction;
-    actStop: TAction;
-    actCancel: TAction;
     Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure actCancelExecute(Sender: TObject);
     procedure actStopExecute(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure WebBrowser1DownloadComplete(Sender: TObject);
@@ -44,6 +40,7 @@ type
     Complete:Integer;  // 判断是否加载完成
     UrlAddr,xsmrt,code1,code2: String;
     FLoadNum: Integer;
+    FStoped: boolean;
     function createXml(Xml:String):IXMLDOMDocument;
     procedure WM_LOADER(var Message:TMessage); Message WM_LOADER_REQUEST;
     procedure Loader(Url:String);
@@ -54,6 +51,7 @@ type
     function GetVersionPath:String;
     procedure LoadFiles;
     procedure ReadIni;
+    procedure SetStoped(const Value: boolean);
   public
     { Public declarations }
     //分别对应 顶级、省级、市级 的购物广场、超市
@@ -61,6 +59,7 @@ type
     //判断 购物广场及超市 加载 成功与否
     ChildLoad:Boolean;
     property LoadNum:Integer read FLoadNum;
+    property Stoped:boolean read FStoped write SetStoped;
   end;
 
 var
@@ -77,7 +76,7 @@ var
   ErrXml:string;
   w:integer;
 begin
-  if Global.debug then LogFile.AddLogFile(0,xml);
+  LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try
     if xml<>'' then
@@ -103,21 +102,22 @@ begin
 end;
 
 procedure TXsmCacheFactory.Loader(Url: String);
+var _Start:Int64;
 begin
   try
-    if Url = 'http://gx.xinshangmeng.com/xsm2/resource/sound/11650001/newyear.mp3?v=2011-09-02_00' then Exit;
+    _Start :=  GetTickCount;
     //上面语句要删除
     labInfo.Caption := Url;
     Complete := 0;
     StartDateTime := Now();
     WebBrowser1.Navigate(Url);
-    {while Complete < 6 do  //速度很慢
-      Application.ProcessMessages}
-    while WebBrowser1.ReadyState < READYSTATE_COMPLETE do
-      Application.ProcessMessages;
+    while (Complete < 6) and not Stoped do  //速度很慢
+      begin
+         if (GetTickCount-_Start)>20000 then break;
+         Application.ProcessMessages
+      end;
   except
     Raise;
-    Exit;
   end;
   Inc(FLoadNum);
 end;
@@ -130,6 +130,7 @@ var Root:IXMLDOMElement;
 begin
   for i := 0 to Nodes.length - 1 do
     begin
+      if Stoped then Exit;
       if not (Nodes.item[i].nodeType = NODE_ELEMENT) then Continue;
       Root := Nodes.item[i] as IXMLDOMElement;
       ChildUrl := xsmrt+Str+VarToStr(Root.getAttribute('id'));
@@ -158,6 +159,7 @@ begin
     RzProgressBar1.Percent := 0;
     for i := 0 to sum - 1 do
       begin
+        if Stoped then Exit;
         if not (Nodes.item[i].nodeType = NODE_ELEMENT) then Continue;
         if (Nodes.item[i].nodeName = 'background') or (Nodes.item[i].nodeName = 'ItemDefinitions') then
         begin
@@ -193,6 +195,7 @@ var Root:IXMLDOMElement;
 begin
   for i := 0 to Nodes.length - 1 do
     begin
+      if Stoped then Exit;
       if not (Nodes.item[i].nodeType = NODE_ELEMENT) then Continue;
       Root := Nodes.item[i] as IXMLDOMElement;
       AttributeValue := UpperCase(VarToStr(Root.getAttribute('id')));
@@ -247,6 +250,7 @@ begin
     RzProgressBar1.Percent := 0;
     for i := 0 to sum - 1 do
       begin
+        if Stoped then Exit;
         if not (Nodes.item[i].nodeType = NODE_ELEMENT) then Continue;
         if Nodes.item[i].nodeName = 'f' then
         begin
@@ -273,25 +277,18 @@ end;
 procedure TXsmCacheFactory.FormCreate(Sender: TObject);
 begin
   FLoadNum := 0;
+  Stoped := false;
 end;
 
 procedure TXsmCacheFactory.actCancelExecute(Sender: TObject);
 begin
-  if btnCancel.Tag = 0 then actStopExecute(Sender);
+  Stoped := true;
   Close;
 end;
 
 procedure TXsmCacheFactory.actStopExecute(Sender: TObject);
 begin
-  WebBrowser1.Stop;
   RzLabel3.Caption := '已经停止加载图片';
-end;
-
-procedure TXsmCacheFactory.FormClose(Sender: TObject;
-  var Action: TCloseAction);
-begin
-  actStopExecute(Sender);
-  Close;
 end;
 
 procedure TXsmCacheFactory.WM_LOADER(var Message: TMessage);
@@ -356,11 +353,11 @@ begin
     Load_String := xsmrt+'VersionFiles.xml?v='+IntToStr(gettickcount);
     RzLabel1.Caption := '正在加载主"VersionFiles.xml"文件...';
     LoadVersionXml(Load_String);
-
+    if Stoped then Exit;
     Load_String := GetVersionPath;
     RzLabel1.Caption := '正在加载地市"VersionFiles.xml"文件...';
     LoadVersionXml(Load_String);
-
+    if Stoped then Exit;
     RzLabel1.Caption := '正在加载"GWGC.xml"文件...';
     for i := 0 to 2 do
     begin
@@ -411,16 +408,18 @@ begin
       end;
     end;
     RzLabel3.Caption := '文件加载已经完成!';
-    btnCancel.Caption := '完成';
-    btnCancel.Tag := 1;
-  end
-  else
-    Close;
+  end;
+  Close;
 end;
 
 procedure TXsmCacheFactory.WebBrowser1DownloadComplete(Sender: TObject);
 begin
   Complete := 6;
+end;
+
+procedure TXsmCacheFactory.SetStoped(const Value: boolean);
+begin
+  FStoped := Value;
 end;
 
 end.

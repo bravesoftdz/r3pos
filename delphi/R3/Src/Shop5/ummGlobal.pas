@@ -19,12 +19,22 @@ type
     Fxsm_challenge: string;
     FLogined: boolean;
     Fxsm_signature: string;
+    Fchat_port: integer;
+    Fchat_addr: string;
+    Fhttp_addr: string;
+    Fxsm_parentComId: string;
+    Fxsm_comId: string;
     procedure Setxsm_challenge(const Value: string);
     procedure Setxsm_password(const Value: string);
     procedure Setxsm_username(const Value: string);
     procedure SetLogined(const Value: boolean);
     procedure Setxsm_signature(const Value: string);
     function getFriends: boolean;
+    procedure Setchat_addr(const Value: string);
+    procedure Setchat_port(const Value: integer);
+    procedure Sethttp_addr(const Value: string);
+    procedure Setxsm_parentComId(const Value: string);
+    procedure Setxsm_comId(const Value: string);
     { Private declarations }
   protected
     function CreateXML(xml:string):IXMLDomDocument;
@@ -40,6 +50,7 @@ type
     function getChallenge:boolean;
     function doLogin:boolean;
     function getSignature:boolean;
+    function getConfig:boolean;
     procedure InitLoad;
 
     //读我的好友
@@ -60,6 +71,11 @@ type
     property xsm_password:string read Fxsm_password write Setxsm_password;
     property xsm_challenge:string read Fxsm_challenge write Setxsm_challenge;
     property xsm_signature:string read Fxsm_signature write Setxsm_signature;
+    property xsm_comId:string read Fxsm_comId write Setxsm_comId;
+    property xsm_parentComId:string read Fxsm_parentComId write Setxsm_parentComId;
+    property chat_addr:string read Fchat_addr write Setchat_addr;
+    property chat_port:integer read Fchat_port write Setchat_port;
+    property http_addr:string read Fhttp_addr write Sethttp_addr;
     property Logined:boolean read FLogined write SetLogined;
     //判断是否连锁版
     property NetVersion:boolean read GetNetVersion;
@@ -99,6 +115,7 @@ begin
   xsm_username := uid;
   xsm_password := pwd;
   result := doLogin;
+  result := getConfig;
   Logined := result;
 end;
 
@@ -214,6 +231,7 @@ var
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;    
   xml:string;
+  F:TIniFile;
 begin
   xsm_signature := IdHTTP1.Get(xsmc+'users/dologin/up?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+xsm_challenge));
   xml := Utf8ToAnsi(xsm_signature);
@@ -224,6 +242,19 @@ begin
   if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
   if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
   if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('新商盟请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+    F.WriteString('xsm','xsmrt',getUrlPath);
+    xsm_parentComId := Root.selectSingleNode('parentComId').text;
+    F.WriteString('xsm','code1',xsm_parentComId);
+    xsm_comId := Root.selectSingleNode('comId').text;
+    F.WriteString('xsm','code2',xsm_comId);
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
   result := true;
 end;
 
@@ -396,7 +427,7 @@ begin
     vList.Delimiter := '/';
     vList.DelimitedText := xsmurl;
     vList.Delete(vList.Count-1);
-    result := vList.DelimitedText;
+    result := vList.DelimitedText+'/';
   finally
     vList.Free;
   end;
@@ -429,6 +460,58 @@ end;
 function TmmGlobal.getBlackFriends: boolean;
 begin
 
+end;
+
+function TmmGlobal.getConfig: boolean;
+var
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;    
+  xml:string;
+begin
+  try
+    xml := IdHTTP1.Get(xsmc+'navi/donavi/a?userId='+xsm_username+'&isFirst=0&comId='+xsm_comId+'&zoneId=GWGC');
+    xml := Utf8ToAnsi(xml);
+    Doc := CreateXML(xml);
+    if not Assigned(doc) then Raise Exception.Create('请求令牌失败...');
+    Root :=  doc.DocumentElement;
+    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
+    if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
+    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
+
+    chat_addr := Root.selectSingleNode('<chat_server').attributes.getNamedItem('ip').text;
+    chat_port := StrtoInt(Root.selectSingleNode('<chat_server').attributes.getNamedItem('port').text);
+    http_addr := Root.selectSingleNode('<web_server').attributes.getNamedItem('web_url').text;
+    
+    result := true;
+  except
+    logined := false;
+    Raise;
+  end;
+end;
+
+procedure TmmGlobal.Setchat_addr(const Value: string);
+begin
+  Fchat_addr := Value;
+end;
+
+procedure TmmGlobal.Setchat_port(const Value: integer);
+begin
+  Fchat_port := Value;
+end;
+
+procedure TmmGlobal.Sethttp_addr(const Value: string);
+begin
+  Fhttp_addr := Value;
+end;
+
+procedure TmmGlobal.Setxsm_parentComId(const Value: string);
+begin
+  Fxsm_parentComId := Value;
+end;
+
+procedure TmmGlobal.Setxsm_comId(const Value: string);
+begin
+  Fxsm_comId := Value;
 end;
 
 end.

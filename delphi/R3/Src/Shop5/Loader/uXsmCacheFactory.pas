@@ -76,7 +76,6 @@ var
   ErrXml:string;
   w:integer;
 begin
-  LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try
     if xml<>'' then
@@ -116,7 +115,9 @@ begin
          if (GetTickCount-_Start)>20000 then break;
          Application.ProcessMessages
       end;
+    LogFile.AddLogFile(0,'<成功>:'+Url);
   except
+    LogFile.AddLogFile(0,'<失败>:'+Url);
     Raise;
   end;
   Inc(FLoadNum);
@@ -146,6 +147,7 @@ var
   i,sum:Integer;
   xml,GWGCUrl,MapDir:string;
 begin
+  LogFile.AddLogFile(0,'<开始>'+Url);
   try
     xml := IdHTTP1.Get(Url);
     xml := Utf8ToAnsi(xml);
@@ -181,9 +183,11 @@ begin
     //if Root.attributes.getNamedItem('id').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
     //result := true;
     RzProgressBar1.Percent := 100;
+    LogFile.AddLogFile(0,'<完毕>'+Url);
   except
     ChildLoad := False;
-    LogFile.AddLogFile(0,Url);
+    LogFile.AddLogFile(0,'<失败>'+Url);
+    Raise;
   end;
 end;
 
@@ -238,6 +242,7 @@ var
   i,sum:Integer;
   xml,Str_url:string;
 begin
+  LogFile.AddLogFile(0,'<开始>'+Url);
   try
     xml := IdHTTP1.Get(Url);
     xml := Utf8ToAnsi(xml);
@@ -269,8 +274,10 @@ begin
     //if Root.attributes.getNamedItem('id').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
     //result := true;
     RzProgressBar1.Percent := 100;
+    LogFile.AddLogFile(0,'<完毕>'+Url);
   except
-    LogFile.AddLogFile(0,Url);
+    LogFile.AddLogFile(0,'<失败>'+Url);
+    Raise;
   end;
 end;
 
@@ -354,7 +361,7 @@ begin
     RzLabel1.Caption := '正在加载主"VersionFiles.xml"文件...';
     LoadVersionXml(Load_String);
     if Stoped then Exit;
-    Load_String := GetVersionPath;
+    Load_String := xsmrt+GetVersionPath;
     RzLabel1.Caption := '正在加载地市"VersionFiles.xml"文件...';
     LoadVersionXml(Load_String);
     if Stoped then Exit;

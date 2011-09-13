@@ -70,20 +70,20 @@ begin
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     Whe_Str := Whe_Str + ' and SHOP_ID='+QuotedStr(Global.SHOP_ID);
 
-  Sql_Str := ' select TENANT_ID,SALES_ID,GLIDE_NO,SALES_DATE,CLIENT_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,CREA_USER from SAL_SALESORDER where '+Whe_Str+' order by GLIDE_NO ';
+  Sql_Str := ' select TENANT_ID,SALES_ID,GLIDE_NO,SALES_DATE,CLIENT_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,CREA_USER from SAL_SALESORDER where '+Whe_Str;
   Result := 'select ja.*,a.CLIENT_NAME as CLIENT_ID_TEXT from ('+Sql_Str+') ja left join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID ';
   Result := 'select jb.*,b.USER_NAME as CREA_USER_TEXT from ('+Result+') jb left join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.CREA_USER=b.USER_ID ';
   case Factor.iDbType of
-  0:result := 'select top 100 * from ('+result+') j order by SALES_ID';
+  0:result := 'select top 100 * from ('+result+') j order by GLIDE_NO';
   1:result :=
        'select * from ('+
-       'select * from ('+result+') j order by SALES_ID) where ROWNUM<=100';
+       'select * from ('+result+') j order by GLIDE_NO) where ROWNUM<=100';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') j order by SALES_ID) tp fetch first 100  rows only';
-  5:result := 'select * from ('+result+') j order by SALES_ID limit 100';
+       'select * from ('+result+') j order by GLIDE_NO) tp fetch first 100  rows only';
+  5:result := 'select * from ('+result+') j order by GLIDE_NO limit 100';
   else
-    result := 'select * from ('+result+') j order by SALES_ID';
+    result := 'select * from ('+result+') j order by GLIDE_NO';
   end;
 end;
 

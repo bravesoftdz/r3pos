@@ -213,6 +213,7 @@ type
     FInputMode: integer;
     Fxsm: boolean;
     FIsReck: boolean;
+    FbasInfo: TZQuery;
     //判断当前记录是否有颜色尺管制
     function  PropertyEnabled:boolean;
     procedure SetInputFlag(const Value: integer);
@@ -237,6 +238,8 @@ type
       var Accept: Boolean);
     procedure Setxsm(const Value: boolean);
     procedure SetIsReck(const Value: boolean);
+    procedure SetbasInfo(const Value: TZQuery);
+    function GetbasInfo: TZQuery;
   protected
     //进位法则
     CarryRule:integer;
@@ -275,7 +278,6 @@ type
     SaveAObj:TRecord_;
     RowID:integer;
     Saved:boolean;
-    basInfo:TZQuery;
     STGAMT,STGAMOUNT:Currency;
     //多条件定位
     FndStr:string;
@@ -378,6 +380,7 @@ type
     property gid:string read Fgid write Setgid;
     property xsm:boolean read Fxsm write Setxsm;
     property IsReck:boolean read FIsReck write SetIsReck;
+    property basInfo:TZQuery read GetbasInfo write SetbasInfo;
   end;
 
 implementation
@@ -4427,6 +4430,18 @@ begin
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
 
+end;
+
+procedure TfrmPosMain.SetbasInfo(const Value: TZQuery);
+begin
+  FbasInfo := Value;
+  dsGodsInfo.DataSet := Value;
+end;
+
+function TfrmPosMain.GetbasInfo: TZQuery;
+begin
+  result := FBasInfo;
+  if not FBasInfo.Active then BasInfo := Global.GetZQueryFromName('PUB_GOODSINFO');  
 end;
 
 end.

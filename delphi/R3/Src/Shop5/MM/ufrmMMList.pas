@@ -9,7 +9,7 @@ uses
   RzButton, ummFactory, RzGroupBar, RzTabs, ComCtrls, RzTreeVw, ZDataSet;
 type
   TfrmMMList = class(TfrmMMBasic)
-    ImageList1: TImageList;
+    FlagImage: TImageList;
     PopupMenu1: TPopupMenu;
     RzPanel4: TRzPanel;
     RzPanel5: TRzPanel;
@@ -17,7 +17,8 @@ type
     RzPageControl1: TRzPageControl;
     TabSheet1: TRzTabSheet;
     TabSheet2: TRzTabSheet;
-    RzTreeView1: TRzTreeView;
+    rzUsers: TRzTreeView;
+    StateImage: TImageList;
     procedure FormCreate(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
     procedure RzButton2Click(Sender: TObject);
@@ -35,7 +36,7 @@ var
   frmMMList: TfrmMMList;
 implementation
 {$R *.dfm}
-uses ufrmMMMain,ummGlobal;
+uses ufrmMMMain,ummGlobal,uTreeUtil;
 
 { TfrmMMList }
 
@@ -59,17 +60,13 @@ end;
 
 procedure TfrmMMList.LoadFriends;
 var
-  g:TrzGroup;
-  b:TrzGroupItem;
+  g,b:TTreeNode;
   i:integer;
   rs:TZQuery;
   us:TZQuery;
   Params:TftParamList;
 begin
-{  for i:=treeUsers.GroupCount -1 downto 0 do
-    begin
-      treeUsers.RemoveGroup(treeUsers.Groups[i]);
-    end;
+  ClearTree(rzUsers);
   rs := TZQuery.Create(nil);
   us := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
@@ -80,24 +77,16 @@ begin
     rs.first;
     while not rs.eof do
       begin
-         g := TrzGroup.Create(treeUsers);
-         g.Caption := rs.FieldbyName('I_SHOW_NAME').AsString;
-         g.CaptionColor := clWhite;
-         g.Color := clWhite;
-         g.DividerVisible := false;
-         g.CaptionImageIndex := 0;
-         treeUsers.AddGroup(g);
+         g := rzUsers.Items.Add(nil,rs.FieldbyName('I_SHOW_NAME').AsString);
+         g.StateIndex := 0;
          us.Filtered := false;
          us.Filter := 'S_GROUP_ID='''+rs.FieldbyName('S_GROUP_ID').AsString+'''';
          us.Filtered := true;
          us.First;
          while not us.Eof do
            begin
-             b := g.Items.Add;
-             b.OnClick := nil;
+             b := rzUsers.Items.AddChild(g,rs.FieldbyName('U_SHOW_NAME').AsString);
              b.ImageIndex := 1;
-             b.Caption := us.FieldbyName('U_SHOW_NAME').AsString;
-             b.Data := nil;
              us.Next;
            end;
          rs.Next;
@@ -106,7 +95,7 @@ begin
     Params.Free;
     us.Free;
     rs.Free;
-  end;     }
+  end;    
 end;
 
 procedure TfrmMMList.RzButton1Click(Sender: TObject);

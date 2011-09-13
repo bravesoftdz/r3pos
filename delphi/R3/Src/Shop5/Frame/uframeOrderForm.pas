@@ -177,6 +177,7 @@ type
     procedure SetisZero(const Value: boolean);
     procedure SetIsDefault(const Value: boolean);
     procedure Setrs(const Value: TZQuery);
+    function GetbasInfo: TDataSet;
     { Private declarations }
   protected
     // 最近输的货品
@@ -294,7 +295,7 @@ type
     property InputFlag:integer read FInputFlag write SetInputFlag;
     property InputMode:integer read FInputMode write SetInputMode;
     property gid:string read Fgid write Setgid;
-    property basInfo:TDataSet read FbasInfo write SetbasInfo;
+    property basInfo:TDataSet read GetbasInfo write SetbasInfo;
     property HasPrice:boolean read GetHasPrice;
     property CanAppend:boolean read FCanAppend write SetCanAppend;
     property isZero:boolean read FisZero write SetisZero;
@@ -3800,6 +3801,12 @@ begin
   s := uppercase(FieldName);
   result := (s='AMOUNT') or (s='CALC_AMOUNT') or (s='AMONEY') or (s='CALC_MONEY') or (s='AGIO_MONEY') or
             (s='RCK_AMOUNT') or (s='PAL_AMOUNT') or (s='PAL_INAMONEY') or (s='PAL_OUTAMONEY');
+end;
+
+function TframeOrderForm.GetbasInfo: TDataSet;
+begin
+  result := FBasInfo;
+  if not FBasInfo.Active then BasInfo := Global.GetZQueryFromName('PUB_GOODSINFO');  
 end;
 
 end.

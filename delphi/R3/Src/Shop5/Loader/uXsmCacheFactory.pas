@@ -27,12 +27,10 @@ type
     RzLabel3: TRzLabel;
     labInfo: TRzLabel;
     ActionList1: TActionList;
-    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure actCancelExecute(Sender: TObject);
     procedure actStopExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
     procedure WebBrowser1DownloadComplete(Sender: TObject);
   private
     { Private declarations }
@@ -56,8 +54,6 @@ type
     { Public declarations }
     //分别对应 顶级、省级、市级 的购物广场、超市
     GWGC_Ver,CS_Ver,Parent_GWGC_Ver,Parent_CS_Ver,Com_GWGC_Ver,Com_CS_Ver:String;
-    //判断 购物广场及超市 加载 成功与否
-    ChildLoad:Boolean;
     property LoadNum:Integer read FLoadNum;
     property Stoped:boolean read FStoped write SetStoped;
   end;
@@ -110,11 +106,13 @@ begin
     Complete := 0;
     StartDateTime := Now();
     WebBrowser1.Navigate(Url);
+    {while WebBrowser1.ReadyState = READYSTATE_COMPLETE do
+      Application.ProcessMessages;}
     while (Complete < 6) and not Stoped do  //速度很慢
       begin
          if (GetTickCount-_Start)>20000 then break;
          Application.ProcessMessages
-      end;
+      end;   
     LogFile.AddLogFile(0,'<成功>:'+Url);
   except
     LogFile.AddLogFile(0,'<失败>:'+Url);
@@ -178,14 +176,12 @@ begin
         end;
         RzProgressBar1.Percent := i*100 div sum;
       end;
-    ChildLoad := True;
     //if Root.attributes.getNamedItem('Versionfiles')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
     //if Root.attributes.getNamedItem('id').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
     //result := true;
     RzProgressBar1.Percent := 100;
     LogFile.AddLogFile(0,'<完毕>'+Url);
   except
-    ChildLoad := False;
     LogFile.AddLogFile(0,'<失败>'+Url);
     Raise;
   end;
@@ -210,7 +206,7 @@ begin
           GWGC_Ver := ChildUrl;
         if UpperCase(Str+'/'+VarToStr(Root.getAttribute('id'))) = UpperCase('resource/map/CS.xml') then
           CS_Ver := ChildUrl;
-          
+
         if (code1 <> '') and (code2 <> '') then
         begin
           if UpperCase(Str+'/'+VarToStr(Root.getAttribute('id')))=UpperCase('resource/map/'+code1+'/GWGC.xml') then
@@ -312,17 +308,6 @@ begin
   RzLabel1.Visible := False;
 end;
 
-procedure TXsmCacheFactory.Timer1Timer(Sender: TObject);
-var Time_D:Double;
-begin
-  {Time_D := Now()-StartDateTime;
-  if Time_D > 30 then
-    begin
-      WebBrowser1.Stop;
-      Complete := 6;
-    end; }
-end;
-
 procedure TXsmCacheFactory.ReadIni;
 var F: TIniFile;
 begin
@@ -366,7 +351,9 @@ begin
     LoadVersionXml(Load_String);
     if Stoped then Exit;
     RzLabel1.Caption := '正在加载"GWGC.xml"文件...';
-    for i := 0 to 2 do
+    Load_GWGCorCs_Xml(GWGC_Ver);
+
+    for i := 0 to 1 do
     begin
       case i of
         0:begin
@@ -378,20 +365,15 @@ begin
         end;
         1:begin
           if Parent_GWGC_Ver <> '' then
-          begin
             Load_GWGCorCs_Xml(Parent_GWGC_Ver);
-            Break;
-          end;
-        end;
-        2:begin
-          if GWGC_Ver <> '' then
-            Load_GWGCorCs_Xml(GWGC_Ver);
         end;
       end;
     end;
 
     RzLabel1.Caption := '正在加载"CS.xml"文件...';
-    for i := 0 to 2 do
+    Load_GWGCorCs_Xml(GWGC_Ver);
+
+    for i := 0 to 1 do
     begin
       case i of
         0:begin
@@ -403,14 +385,7 @@ begin
         end;
         1:begin
           if Parent_GWGC_Ver <> '' then
-          begin
             Load_GWGCorCs_Xml(Parent_GWGC_Ver);
-            Break;
-          end;
-        end;
-        2:begin
-          if GWGC_Ver <> '' then
-            Load_GWGCorCs_Xml(GWGC_Ver);
         end;
       end;
     end;

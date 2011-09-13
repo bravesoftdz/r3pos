@@ -1,6 +1,6 @@
 object XsmCacheFactory: TXsmCacheFactory
-  Left = 344
-  Top = 287
+  Left = 571
+  Top = 251
   Width = 496
   Height = 363
   BorderIcons = [biSystemMenu, biMinimize]
@@ -19,16 +19,16 @@ object XsmCacheFactory: TXsmCacheFactory
   object RzPanel1: TRzPanel
     Left = 0
     Top = 0
-    Width = 480
-    Height = 325
+    Width = 488
+    Height = 336
     Align = alClient
     BorderOuter = fsFlatRounded
     TabOrder = 0
     object RzPanel2: TRzPanel
       Left = 2
       Top = 57
-      Width = 476
-      Height = 266
+      Width = 484
+      Height = 277
       Align = alClient
       BorderOuter = fsNone
       TabOrder = 0
@@ -116,7 +116,7 @@ object XsmCacheFactory: TXsmCacheFactory
     object RzPanel3: TRzPanel
       Left = 2
       Top = 2
-      Width = 476
+      Width = 484
       Height = 55
       Align = alTop
       Anchors = []
@@ -174,12 +174,6 @@ object XsmCacheFactory: TXsmCacheFactory
   end
   object ActionList1: TActionList
     Left = 74
-    Top = 281
-  end
-  object Timer1: TTimer
-    Enabled = False
-    OnTimer = Timer1Timer
-    Left = 106
     Top = 281
   end
 end

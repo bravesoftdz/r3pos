@@ -234,10 +234,10 @@ begin
      begin
         DevFactory.BeginPrint;
         try
-          if not DevFactory.LPT in [30] then
+          if not (DevFactory.LPT in [30]) then
              DevFactory.WritePrintNoEnter(CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255))
           else
-             DevFactory.WritePrintNoEnter('');
+             DevFactory.WritePrintNoEnter(' ');
         finally
           DevFactory.EndPrint;
         end;

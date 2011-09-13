@@ -107,7 +107,13 @@ begin
     rs.SQL.Text := 'select TIME_STAMP,COMM from ACC_RECVORDER where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and RECV_ID='''+FieldbyName('RECV_ID').AsString+'''';
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s);
-    if comm and result and (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('已经同步的数据不能删除..');
+    if comm and result and
+    (
+       (copy(rs.Fields[1].asString,1,1)='1')
+       or
+       (copy(rs.Fields[1].asString,2,1)<>'0')
+    )
+    then Raise Exception.Create('已经同步的数据不能删除..');
   finally
     rs.Free;
   end;

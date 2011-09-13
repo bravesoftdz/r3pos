@@ -139,6 +139,13 @@ end;
 procedure TfrmMMMain.Init;
 begin
   try
+   try
+     if mmGlobal.Logined then mmGlobal.getAllfriends;
+   except
+     on E:Exception do
+        MessageBox(Handle,Pchar(E.Message),'”—«ÈÃ· æ...',MB_OK+MB_ICONINFORMATION);
+   end;
+   frmMMList.LoadFriends;
    if CaFactory.Audited and not mmGlobal.ONLVersion then
       begin
         if not Global.RemoteFactory.Connected and not mmGlobal.NetVersion then

@@ -1,5 +1,6 @@
 inherited mmGlobal: TmmGlobal
   object IdCookieManager1: TIdCookieManager
+    OnNewCookie = IdCookieManager1NewCookie
     Left = 208
     Top = 545
   end
@@ -17,7 +18,7 @@ inherited mmGlobal: TmmGlobal
     Request.Accept = 'text/html, */*'
     Request.BasicAuthentication = False
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    HTTPOptions = [hoForceEncodeParams]
+    HTTPOptions = [hoKeepOrigProtocol, hoForceEncodeParams]
     CookieManager = IdCookieManager1
     Left = 160
     Top = 545

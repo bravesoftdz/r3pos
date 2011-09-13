@@ -1,6 +1,6 @@
 object frmMMBasic: TfrmMMBasic
-  Left = 433
-  Top = 187
+  Left = 434
+  Top = 189
   BorderStyle = bsNone
   Caption = 'frmMMBasic'
   ClientHeight = 454

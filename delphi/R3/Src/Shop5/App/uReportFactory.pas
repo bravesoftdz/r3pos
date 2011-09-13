@@ -135,7 +135,7 @@ begin
      result := 1
   else
   if PIdxNode(Item1)^.seqid<PIdxNode(Item2)^.seqid then
-     result := 2
+     result := -1
   else
      result := 0;
 end;

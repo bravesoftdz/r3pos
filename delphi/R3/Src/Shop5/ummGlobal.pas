@@ -6,13 +6,15 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uGlobal, IdBaseComponent, IdComponent, IdTCPConnection, msxml,
   IdTCPClient, IdHTTP, ZLogFile, ComObj, IdCookieManager, ZDataSet, ZBase, uShopGlobal,
-  DB, ZAbstractRODataset, ZAbstractDataset, ummFactory;
+  DB, ZAbstractRODataset, ZAbstractDataset, ummFactory,IdCookie;
 
 type
   TmmGlobal = class(TShopGlobal)
     IdCookieManager1: TIdCookieManager;
     IdHTTP1: TIdHTTP;
     procedure DataModuleCreate(Sender: TObject);
+    procedure IdCookieManager1NewCookie(ASender: TObject;
+      ACookie: TIdCookieRFC2109; var VAccept: Boolean);
   private
     Fxsm_password: string;
     Fxsm_username: string;
@@ -41,6 +43,10 @@ type
     procedure SaveParams;
     function GetNetVersion: boolean;
     function GetONLVersion: boolean;
+
+    function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
+    function FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
+
   public
     { Public declarations }
     mmFactory:TmmFactory;
@@ -241,7 +247,7 @@ begin
   Root :=  doc.DocumentElement;
   if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
   if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('新商盟请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
+  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   try
     F.WriteString('xsm','xsmrt',getUrlPath);
@@ -397,7 +403,7 @@ begin
     Global.LocalFactory.Open(Temp);
     if Temp.Fields[0].asString<>'' then
        begin
-         coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[0].AsString,ENC_KEY));
+         coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY));
          result := true;
        end
     else
@@ -448,8 +454,74 @@ end;
 function TmmGlobal.getAllfriends: boolean;
 var
   url:string;
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;
+  Node,Child:IXMLDOMNode;
+  xml:string;
+  gs,us:TZQuery;
+  Params:TftParamList;
 begin
-  url := getUrlPath+'';
+  try
+    url := http_addr+'/user/scusersocial/getAllfriends/'+uppercase(xsm_username);
+    xml := IdHTTP1.Get(url);
+    xml := Utf8ToAnsi(xml);
+    Doc := CreateXML(xml);
+    if not Assigned(doc) then Raise Exception.Create('请求好友失败...');
+    Root :=  doc.DocumentElement;
+    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求好友失败...');
+    Node := FindNode(Doc,'PUB',true);
+    if Node.attributes.getNamedItem('RTN_CODE').text<>'0000' then Raise Exception.Create('请求好友失败,错误:'+Node.attributes.getNamedItem('RTN_MSG').text);
+    gs := TZQuery.Create(nil);
+    us := TZQuery.Create(nil);
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+      LocalFactory.Open(gs,'TmqqGrouping',Params);
+      LocalFactory.Open(us,'TmqqFriends',Params);
+      //开始保存数据
+      Node := FindNode(Doc,'OUT_INFO',true);
+      Child := Node.firstChild;
+      while Child<>nil do
+        begin
+          if Child.attributes.getNamedItem('itemType').text = 'group' then
+             begin
+               gs.Append;
+               gs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+               gs.FieldByName('S_GROUP_ID').AsString := Child.attributes.getNamedItem('groupId').text;
+               gs.FieldByName('G_USER_ID').AsString := xsm_username;
+               gs.FieldByName('I_SHOW_NAME').AsString := Child.attributes.getNamedItem('itemShowName').text;
+               gs.FieldByName('I_GROUP_NAME').AsString := Child.attributes.getNamedItem('itemShowName').text;
+               gs.Post;
+             end
+          else
+             begin
+               us.Append;
+               us.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+               us.FieldByName('S_GROUP_ID').AsString := Child.attributes.getNamedItem('groupId').text;
+               us.FieldByName('FRIEND_ID').AsString := Child.attributes.getNamedItem('friendId').text;
+               us.FieldByName('F_USER_ID').AsString := xsm_username;
+               us.FieldByName('FRIEND_NAME').AsString := Child.attributes.getNamedItem('friendName').text;
+               us.FieldByName('U_SHOW_NAME').AsString := Child.attributes.getNamedItem('itemShowName').text;
+               us.FieldByName('IS_BE_BLACK').AsString := Child.attributes.getNamedItem('isBeBlack').text;
+               us.FieldByName('IS_ONLINE').AsString := '0';
+               us.FieldByName('REF_ID').AsString := Child.attributes.getNamedItem('refId').text;
+               us.FieldByName('NOTE').AsString := Child.attributes.getNamedItem('note').text;
+               us.Post;
+             end;
+          Child := Child.nextSibling;
+        end;
+      LocalFactory.UpdateBatch(gs,'TmqqGrouping',Params);
+      LocalFactory.UpdateBatch(us,'TmqqFriends',Params);
+    finally
+      Params.Free;
+      us.Free;
+      gs.Free;
+    end;
+    result := true;
+  except
+    logined := false;
+    Raise;
+  end;
 end;
 
 function TmmGlobal.getBeBlackFriends: boolean;
@@ -466,21 +538,24 @@ function TmmGlobal.getConfig: boolean;
 var
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;    
+  Node:IXMLDOMNode;
   xml:string;
 begin
   try
     xml := IdHTTP1.Get(xsmc+'navi/donavi/a?userId='+xsm_username+'&isFirst=0&comId='+xsm_comId+'&zoneId=GWGC');
     xml := Utf8ToAnsi(xml);
     Doc := CreateXML(xml);
-    if not Assigned(doc) then Raise Exception.Create('请求令牌失败...');
+    if not Assigned(doc) then Raise Exception.Create('模拟导航失败...');
     Root :=  doc.DocumentElement;
-    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
-    if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
-    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
+    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，模拟导航失败...');
+    if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，模拟导航失败...');
+    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('模拟导航失败,错误:'+Root.attributes.getNamedItem('msg').text);
 
-    chat_addr := Root.selectSingleNode('<chat_server').attributes.getNamedItem('ip').text;
-    chat_port := StrtoInt(Root.selectSingleNode('<chat_server').attributes.getNamedItem('port').text);
-    http_addr := Root.selectSingleNode('<web_server').attributes.getNamedItem('web_url').text;
+    Node := FindNode(doc,'server_info\chat_server');
+    chat_addr := Node.attributes.getNamedItem('ip').text;
+    chat_port := StrtoInt(Node.attributes.getNamedItem('port').text);
+    Node := FindNode(doc,'server_info\web_server');
+    http_addr := Node.attributes.getNamedItem('web_url').text;
     
     result := true;
   except
@@ -512,6 +587,50 @@ end;
 procedure TmmGlobal.Setxsm_comId(const Value: string);
 begin
   Fxsm_comId := Value;
+end;
+
+function TmmGlobal.FindElement(root: IXMLDOMNode; s: string): IXMLDOMNode;
+var
+  i:integer;
+begin
+  result := root.firstChild;
+  while result<>nil do
+    begin
+      if result.nodeName=s then exit;
+      result := result.nextSibling;
+    end;
+  result := nil;
+end;
+
+function TmmGlobal.FindNode(doc: IXMLDomDocument; tree: string;
+  CheckExists: boolean): IXMLDOMNode;
+var
+  s:TStringList;
+  i:integer;
+begin
+  s := TStringList.Create;
+  try
+    s.Delimiter := '\';
+    s.DelimitedText := tree;
+    result := doc.documentElement;
+    for i:=0 to s.Count -1 do
+      begin
+        if result <>nil then
+           result := FindElement(result,s[i]);
+      end;
+    if CheckExists and (result = nil) then Raise Exception.Create('在文档中没找到结点'+tree); 
+  finally
+    s.Free;
+  end;
+end;
+
+procedure TmmGlobal.IdCookieManager1NewCookie(ASender: TObject;
+  ACookie: TIdCookieRFC2109; var VAccept: Boolean);
+begin
+  inherited;
+  LogFile.AddLogFile(0,'MaxAge:'+inttostr(ACookie.MaxAge));
+  LogFile.AddLogFile(0,'MaCookieName:'+ACookie.CookieName);
+  LogFile.AddLogFile(0,'Value:'+ACookie.Value);
 end;
 
 end.

@@ -43,6 +43,8 @@ type
 
     //检测启动时是否同步
     function CheckInitSync:boolean;
+    //检测启动时是否同步
+    function CheckThreadSync:boolean;
 
     //检测数据库版本.
     function CheckDBVersion:boolean;
@@ -183,6 +185,22 @@ begin
     rs.free;
   end;
   result := SyncComm;
+end;
+
+function TSyncFactory.CheckThreadSync: boolean;
+var
+  timestamp:int64;
+  cDate:Currency;
+  CurDate:Currency;
+begin
+  result := true;
+  if Global.debug then Exit;
+  timestamp := GetSynTimeStamp('AUTO','#');
+  if timestamp=0 then Exit;
+  cDate := trunc(timestamp/86400.0+40542.0);
+  CurDate := date();
+  CurDate := trunc(CurDate)-2;
+  result := cDate<CurDate;
 end;
 
 constructor TSyncFactory.Create;
@@ -960,7 +978,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1105,7 +1123,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1232,7 +1250,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1361,7 +1379,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1530,7 +1548,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   cs := TZQuery.Create(nil);
@@ -1607,7 +1625,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1792,7 +1810,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1941,7 +1959,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2068,7 +2086,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2332,7 +2350,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2483,7 +2501,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2628,7 +2646,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2828,7 +2846,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2954,7 +2972,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -3245,7 +3263,7 @@ begin
       end;      
       frmLogo.Position := i;
     end;
-    SetSynTimeStamp('#',EndTimeStamp,'#');
+    SetSynTimeStamp('AUTO',EndTimeStamp,'#');
   finally
     InterlockedDecrement(Locked);
     ReadTimeStamp;
@@ -3274,7 +3292,7 @@ begin
      Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
-  if Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp then Exit;
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   cs := TZQuery.Create(nil);

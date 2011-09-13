@@ -1,6 +1,6 @@
 inherited frmMMMain: TfrmMMMain
-  Left = 581
-  Top = 293
+  Left = 583
+  Top = 294
   Caption = #30431#30431
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
@@ -1251,7 +1251,7 @@ inherited frmMMMain: TfrmMMMain
       object Image6: TImage
         Left = 346
         Top = 0
-        Width = 416
+        Width = 4
         Height = 46
         Align = alClient
         AutoSize = True
@@ -18714,7 +18714,7 @@ inherited frmMMMain: TfrmMMMain
     object split: TImage
       Left = 0
       Top = 272
-      Width = 0
+      Width = 6
       Height = 53
       Cursor = crHandPoint
       Align = alTop

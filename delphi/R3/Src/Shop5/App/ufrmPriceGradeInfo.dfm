@@ -196,6 +196,7 @@ inherited frmPriceGradeInfo: TfrmPriceGradeInfo
             Top = 37
             Width = 121
             Height = 20
+            Properties.MaxLength = 15
             Properties.OnChange = edtINTEGRALPropertiesChange
             TabOrder = 1
           end

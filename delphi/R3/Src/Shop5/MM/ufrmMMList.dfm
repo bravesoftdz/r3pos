@@ -91,6 +91,7 @@ inherited frmMMList: TfrmMMList
           HideSelection = False
           Images = FlagImage
           Indent = 24
+          ReadOnly = True
           RightClickSelect = True
           RowSelect = True
           ShowButtons = False

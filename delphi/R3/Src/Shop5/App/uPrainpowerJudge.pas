@@ -501,9 +501,9 @@ begin
           else if rs.FieldbyName('sFlag').AsInteger in [17,18] then
             Msg^.Contents := '您有 ('+rs.FieldbyName('SUM_ORDER').AsString+')张 "'+rs.FieldbyName('MSG_TITLE').AsString+'" 待扫码收货！'
           else if rs.FieldbyName('sFlag').AsInteger = 19 then
-            Msg^.Contents := '您有 ('+rs.FieldbyName('SUM_ORDER').AsString+')预收、应收、应退款单！'
+            Msg^.Contents := '您有 ('+rs.FieldbyName('SUM_ORDER').AsString+')张 预收、应收、应退款单！'
           else if rs.FieldbyName('sFlag').AsInteger = 20 then
-            Msg^.Contents := '您有 ('+rs.FieldbyName('SUM_ORDER').AsString+')预付、应付、应退款单！'
+            Msg^.Contents := '您有 ('+rs.FieldbyName('SUM_ORDER').AsString+')张 预付、应付、应退款单！'
           else
             Msg^.Contents := ' 您有 ('+rs.FieldbyName('SUM_ORDER').AsString+')张 "'+rs.FieldbyName('MSG_TITLE').AsString+'" 没有审核！';
 

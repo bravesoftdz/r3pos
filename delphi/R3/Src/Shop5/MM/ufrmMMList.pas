@@ -85,7 +85,7 @@ begin
          us.First;
          while not us.Eof do
            begin
-             b := rzUsers.Items.AddChild(g,rs.FieldbyName('U_SHOW_NAME').AsString);
+             b := rzUsers.Items.AddChild(g,us.FieldbyName('U_SHOW_NAME').AsString);
              b.ImageIndex := 1;
              us.Next;
            end;

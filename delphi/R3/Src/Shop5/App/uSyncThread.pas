@@ -1,7 +1,7 @@
 unit uSyncThread;
 
 interface
-uses Classes,SysUtils,Windows;
+uses Classes,SysUtils,Windows,ActiveX;
 type
   TSyncThread=class(TThread)
   private
@@ -32,6 +32,7 @@ begin
   if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then Exit;
   if not SyncFactory.CheckThreadSync then Exit;
   if not SyncFactory.SyncLockCheck then Exit;
+  if ShopGlobal.GetParameter('AUTO_SYNC')='0' then Exit; 
   SyncThread := TSyncThread.Create(SyncFactory.SyncThread,random(999999));
 end;
 //结束同步任务
@@ -74,9 +75,19 @@ end;
 
 procedure TSyncThread.Execute;
 begin
-  WaitForSingleObject(hEvent, TimeOut);
-  if not SyncFactory.Stoped then
-     Proc(nil);
+  CoInitialize(nil);
+  try
+    WaitForSingleObject(hEvent, TimeOut+60*1000*30);
+    if not SyncFactory.Stoped then
+       begin
+         try
+           Proc(nil);
+         except
+         end;
+       end;
+  finally
+    CoUninitialize;
+  end;
 end;
 
 procedure TSyncThread.SetTimeOut(const Value: int64);

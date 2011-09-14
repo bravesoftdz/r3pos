@@ -1,7 +1,7 @@
 unit uTimerFactory;
 
 interface
-uses Classes,SysUtils,Windows;
+uses Classes,SysUtils,Windows,ActiveX;
 type
   TTimerFactory=class(TThread)
   private
@@ -43,16 +43,21 @@ end;
 
 procedure TTimerFactory.Execute;
 begin
-  ResetEvent(hEvent);
-  while not Terminated do
-    begin
-      if StrtoIntDef(formatDatetime('hh',now()),0) in [8..20] then Proc(nil);
-      if not Terminated then
-         begin
-           ResetEvent(hEvent);
-           WaitForSingleObject(hEvent, TimeOut);
-         end;
-    end;
+  CoInitialize(nil);
+  try
+    ResetEvent(hEvent);
+    while not Terminated do
+      begin
+        if StrtoIntDef(formatDatetime('hh',now()),0) in [8..20] then Proc(nil);
+        if not Terminated then
+           begin
+             ResetEvent(hEvent);
+             WaitForSingleObject(hEvent, TimeOut);
+           end;
+      end;
+  finally
+    CoUninitialize;
+  end;
 end;
 
 procedure TTimerFactory.SetTimeOut(const Value: int64);

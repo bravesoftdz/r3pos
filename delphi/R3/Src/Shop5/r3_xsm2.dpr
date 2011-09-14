@@ -1,9 +1,8 @@
-program r3_n26;
+program r3_xsm2;
 uses
   Forms,
   Windows,
   SysUtils,
-  MultInst,
   uGlobal in '..\..\BASIC\uGlobal.pas' {Global: TDataModule},
   ufrmMain in '..\..\BASIC\ufrmMain.pas' {frmMain},
   ufrmDesk in '..\..\BASIC\ufrmDesk.pas' {frmDesk},
@@ -15,6 +14,8 @@ uses
   uframeMDForm in 'Frame\uframeMDForm.pas' {frameMDForm},
   uframeDialogForm in 'Frame\uframeDialogForm.pas' {frameDialogForm},
   uShopUtil in 'Frame\uShopUtil.pas',
+  ufrmXsm2Main in 'ufrmXsm2Main.pas' {frmXsm2Main},
+  ufrmXsm2Desk in 'ufrmXsm2Desk.pas' {frmXsm2Desk},
   uXDictFactory in 'Frame\uXDictFactory.pas',
   uframeToolForm in 'Frame\uframeToolForm.pas' {frameToolForm},
   ObjCommon in 'Obj\ObjCommon.pas',
@@ -132,7 +133,6 @@ uses
   ufrmDbOkDialog in 'App\ufrmDbOkDialog.pas' {frmDbOkDialog},
   ufrmShopInfo in 'App\ufrmShopInfo.pas' {frmShopInfo},
   ufrmShopInfoList in 'App\ufrmShopInfoList.pas' {frmShopInfoList},
-  ufrmIEWebForm in 'App\ufrmIEWebForm.pas' {frmIEWebForm},
   ufrmAccount in 'App\ufrmAccount.pas' {frmAccount},
   ufrmAccountInfo in 'App\ufrmAccountInfo.pas' {frmAccountInfo},
   ObjAccount in 'Obj\ObjAccount.pas',
@@ -168,7 +168,6 @@ uses
   ufrmFindOrder in 'App\ufrmFindOrder.pas' {frmFindOrder},
   ufrmDbDayReport in 'App\ufrmDbDayReport.pas' {frmDbDayReport},
   ufrmGodsRunningReport in 'App\ufrmGodsRunningReport.pas' {frmGodsRunningReport},
-  CaProductService in 'App\CaProductService.pas',
   CaTenantService in 'App\CaTenantService.pas',
   CaServiceLineService in 'App\CaServiceLineService.pas',
   ufrmBarCodePrint in 'App\ufrmBarCodePrint.pas' {frmBarCodePrint},
@@ -235,37 +234,40 @@ uses
   ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet},
   ufrmFieldSort in 'App\ufrmFieldSort.pas' {frmFieldSort},
   ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
+  ufrmIEWebForm in 'App\ufrmIEWebForm.pas' {frmIEWebForm},
+  ufrmXsmIEBrowser in 'App\ufrmXsmIEBrowser.pas' {frmXsmIEBrowser},
+  LCContrllerLib in 'App\LCContrllerLib.pas',
+  ufrmRimIEBrowser in 'App\ufrmRimIEBrowser.pas' {frmRimIEBrowser},
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
-  ufrmN26Main in 'ufrmN26Main.pas' {frmN26Main},
-  ufrmN26Desk in 'ufrmN26Desk.pas' {frmN26Desk},
-  ufrmN26Browser in 'App\ufrmN26Browser.pas' {frmN26Browser},
-  uGodsFactory in 'App\uGodsFactory.pas',
-  ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide},
-  uLoginFactory in 'App\uLoginFactory.pas',
-  ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},
-  ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth},
+  uAdvFactory in 'App\uAdvFactory.pas',
+  CDO_TLB in '..\..\Pub\CDO_TLB.pas',
+  ufrmNetLogin in 'App\ufrmNetLogin.pas' {frmNetLogin},
   objGoodsMonth in 'Obj\objGoodsMonth.pas',
-  uSyncThread in 'App\uSyncThread.pas',
+  uLoginFactory in 'App\uLoginFactory.pas',
+  SHDocVw in '..\..\Pub\SHDocVw.pas',
+  IniFiles in '..\..\Pub\IniFiles.pas',
   OleCtrls in '..\..\Pub\OleCtrls.pas',
-  ufrmPosMainList in 'App\ufrmPosMainList.pas' {frmPosMainList};
+  ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth},
+  uMMClient in 'MM\uMMClient.pas',
+  uMMUtil in 'MM\uMMUtil.pas',
+  uSyncThread in 'App\uSyncThread.pas',
+  ufrmPosMainList in 'app\ufrmPosMainList.pas' {frmPosMainList};
 
 {$R *.res}
 var
-  f:TextFile;
   handle:THandle;
-  Msg:Integer;
 begin
   Application.Initialize;
   DBVersion := '1.0.2.0';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);
-  Application.CreateForm(TfrmN26Main, frmN26Main);
-  Application.CreateForm(TfrmN26Desk, frmN26Desk);
+  Application.CreateForm(TfrmXsm2Main, frmXsm2Main);
+  Application.CreateForm(TfrmXsm2Desk, frmXsm2Desk);
   Application.ShowMainForm := false;
-  if not Runed then //如果已经运行
+  if not MMClient.MCExists then //如果已经运行
   begin
-    PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,1,1);
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,1,1);
   end;
   Application.Run;
 

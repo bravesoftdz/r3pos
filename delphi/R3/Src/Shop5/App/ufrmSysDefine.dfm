@@ -15,7 +15,7 @@ inherited frmSysDefine: TfrmSysDefine
     Top = 0
     Width = 418
     Height = 242
-    ActivePage = tabStock
+    ActivePage = tabBasic
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 418
-        Height = 226
+        Width = 410
+        Height = 215
         Align = alClient
         Shape = bsFrame
       end
@@ -112,7 +112,7 @@ inherited frmSysDefine: TfrmSysDefine
         Left = 226
         Top = 36
         Width = 169
-        Height = 165
+        Height = 117
         Caption = #36755#20837#36873#39033
         TabOrder = 3
         object Label18: TLabel
@@ -157,6 +157,17 @@ inherited frmSysDefine: TfrmSysDefine
           TabOrder = 2
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
+      end
+      object chkAUTO_SYNC: TcxCheckBox
+        Left = 222
+        Top = 168
+        Width = 156
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.ReadOnly = False
+        Properties.Caption = #26159#21542#21551#29992#33258#21160#25968#25454#19978#25253
+        State = cbsChecked
+        TabOrder = 4
       end
     end
     object tabStock: TTabSheet

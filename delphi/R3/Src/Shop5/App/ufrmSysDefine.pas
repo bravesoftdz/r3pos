@@ -127,6 +127,7 @@ type
     Label29: TLabel;
     IntervalTime: TcxSpinEdit;
     Label30: TLabel;
+    chkAUTO_SYNC: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -275,6 +276,13 @@ begin
         chkBankCode.Checked := False
       else if Value = '1' then
         chkBankCode.Checked := True;
+    end;
+    if Define = 'AUTO_SYNC' then
+    begin
+      if Value = '0' then
+        chkAUTO_SYNC.Checked := False
+      else if Value = '1' then
+        chkAUTO_SYNC.Checked := True;
     end;
     if Define = 'LOCUS_NO_MT' then
     begin
@@ -480,7 +488,12 @@ begin
     SetValue('BANK_CODE', '1')
   else
     SetValue('BANK_CODE', '0');
-    
+
+  if chkAUTO_SYNC.Checked then
+    SetValue('AUTO_SYNC', '1')
+  else
+    SetValue('AUTO_SYNC', '0');
+
   if chkLOCUS_NO_MT.Checked then
     SetValue('LOCUS_NO_MT', '1')
   else

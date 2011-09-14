@@ -2763,8 +2763,11 @@ end;
 end;
 
 function TCaFactory.AutoCoLogo: boolean;
-var Temp:TZQuery;
+var
+  Temp:TZQuery;
+  SaveAudited:boolean;
 begin
+  SaveAudited := Audited;
   result:= false;
   Temp := TZQuery.Create(nil);
   try
@@ -2778,6 +2781,7 @@ begin
     TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
     result := true;
   finally
+    Audited := (Audited or SaveAudited);
     Temp.Free;
   end;
 end;

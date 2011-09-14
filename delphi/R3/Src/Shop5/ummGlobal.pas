@@ -456,9 +456,10 @@ var
   url:string;
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;
-  Node,Child:IXMLDOMNode;
-  xml:string;
+  Node,Child,MyFriends:IXMLDOMNode;
+  xml,gid:string;
   gs,us:TZQuery;
+  gx,ux:integer;
   Params:TftParamList;
 begin
   try
@@ -478,6 +479,7 @@ begin
       Params.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
       LocalFactory.Open(gs,'TmqqGrouping',Params);
       LocalFactory.Open(us,'TmqqFriends',Params);
+      gx := 0;
       //开始保存数据
       Node := FindNode(Doc,'OUT_INFO',true);
       Child := Node.firstChild;
@@ -486,27 +488,35 @@ begin
           if Child.attributes.getNamedItem('itemType').text = 'group' then
              begin
                gs.Append;
+               gid := Child.attributes.getNamedItem('groupId').text;
                gs.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
                gs.FieldByName('S_GROUP_ID').AsString := Child.attributes.getNamedItem('groupId').text;
                gs.FieldByName('G_USER_ID').AsString := xsm_username;
                gs.FieldByName('I_SHOW_NAME').AsString := Child.attributes.getNamedItem('itemShowName').text;
                gs.FieldByName('I_GROUP_NAME').AsString := Child.attributes.getNamedItem('itemShowName').text;
+               inc(gx);
+               gs.FieldByName('SEQ_NO').asInteger := gx;
                gs.Post;
-             end
-          else
-             begin
-               us.Append;
-               us.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-               us.FieldByName('S_GROUP_ID').AsString := Child.attributes.getNamedItem('groupId').text;
-               us.FieldByName('FRIEND_ID').AsString := Child.attributes.getNamedItem('friendId').text;
-               us.FieldByName('F_USER_ID').AsString := xsm_username;
-               us.FieldByName('FRIEND_NAME').AsString := Child.attributes.getNamedItem('friendName').text;
-               us.FieldByName('U_SHOW_NAME').AsString := Child.attributes.getNamedItem('itemShowName').text;
-               us.FieldByName('IS_BE_BLACK').AsString := Child.attributes.getNamedItem('isBeBlack').text;
-               us.FieldByName('IS_ONLINE').AsString := '0';
-               us.FieldByName('REF_ID').AsString := Child.attributes.getNamedItem('refId').text;
-               us.FieldByName('NOTE').AsString := Child.attributes.getNamedItem('note').text;
-               us.Post;
+               ux := 0;
+               MyFriends := Child.firstChild;
+               while MyFriends<>nil do
+                  begin
+                     us.Append;
+                     us.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+                     us.FieldByName('S_GROUP_ID').AsString := gid;
+                     us.FieldByName('FRIEND_ID').AsString := MyFriends.attributes.getNamedItem('friendId').text;
+                     us.FieldByName('F_USER_ID').AsString := xsm_username;
+                     us.FieldByName('FRIEND_NAME').AsString := MyFriends.attributes.getNamedItem('friendName').text;
+                     us.FieldByName('U_SHOW_NAME').AsString := MyFriends.attributes.getNamedItem('itemShowName').text;
+                     us.FieldByName('IS_BE_BLACK').AsString := MyFriends.attributes.getNamedItem('isBeBlack').text;
+                     us.FieldByName('IS_ONLINE').AsString := '0';
+                     us.FieldByName('REF_ID').AsString := MyFriends.attributes.getNamedItem('refId').text;
+                     us.FieldByName('NOTE').AsString := MyFriends.attributes.getNamedItem('note').text;
+                     inc(ux);
+                     us.FieldByName('SEQ_NO').asInteger := ux;
+                     us.Post;
+                     MyFriends := MyFriends.nextSibling;
+                  end;
              end;
           Child := Child.nextSibling;
         end;

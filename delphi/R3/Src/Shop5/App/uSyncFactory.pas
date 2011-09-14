@@ -790,6 +790,7 @@ begin
   StopSyncTask;
   EndTimeStamp := 0;
   InterlockedIncrement(Locked);
+  Working := true;
   try
   frmLogo.Show;
   try
@@ -838,6 +839,7 @@ begin
     frmLogo.Close;
   end;
   finally
+    Working := false;
     InterlockedDecrement(Locked);
     ReadTimeStamp;
   end;
@@ -848,6 +850,7 @@ var
   i:integer;
 begin
   EndTimeStamp := 0;
+  Working := true;
   InterlockedIncrement(Locked);
   try
   if gbl then SyncComm := CheckRemeteData;
@@ -877,6 +880,7 @@ begin
   finally
     InterlockedDecrement(Locked);
     ReadTimeStamp;
+    Working := false;
   end;
 end;
 
@@ -1763,7 +1767,6 @@ var
 begin
   result := true;
   if (SFVersion='.ONL') or Global.Debug then Exit;
-  if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库锁定功能。');
   rs := TZQuery.Create(nil);
   try
     rs.Close;
@@ -1773,6 +1776,7 @@ begin
   finally
     rs.Free;
   end;
+  if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库锁定功能。');
   if MessageBox(Application.MainForm.Handle,'是否锁定当前电脑为本门店专用电脑？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   id := TSequence.NewId;
   Global.RemoteFactory.BeginTrans;
@@ -3223,6 +3227,7 @@ procedure TSyncFactory.SyncThread(Sender: TObject);
 var
   i:integer;
 begin
+  if Working then Exit;
   Stoped := false;
   Working := true;
   EndTimeStamp := round((date()-40542)*86400);

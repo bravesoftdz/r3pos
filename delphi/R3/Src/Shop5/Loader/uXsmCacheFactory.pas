@@ -3,16 +3,33 @@ unit uXsmCacheFactory;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Variants, ActiveX, Classes, Graphics, Controls, Forms,
   Dialogs, msxml, ZLogFile, IdBaseComponent, IdComponent, IdTCPConnection,
   IdTCPClient, IdHTTP, OleCtrls, SHDocVw, uGlobal, ComObj, ComCtrls, IniFiles,
   ToolWin, RzBmpBtn, ExtCtrls, RzBckgnd, RzPanel, Menus, RzButton,
-  ActnList, StdCtrls, RzLabel, RzPrgres;
+  ActnList, StdCtrls, RzLabel, RzPrgres, UrlMon;
 
 const
   WM_LOADER_REQUEST = WM_USER+10;
     
 type
+
+    TDownLoadMonitor = class( TInterfacedObject, IBindStatusCallback )
+     private
+     protected
+        function OnStartBinding( dwReserved: DWORD; pib: IBinding ): HResult; stdcall;
+        function GetPriority( out nPriority ): HResult; stdcall;
+        function OnLowResource( reserved: DWORD ): HResult; stdcall;
+        function OnProgress( ulProgress, ulProgressMax, ulStatusCode: ULONG;
+             szStatusText: LPCWSTR): HResult; stdcall;
+        function OnDataAvailable(grfBSCF: DWORD; dwSize: DWORD; formatetc: PFormatEtc;
+             stgmed: PStgMedium): HResult; stdcall;
+        function OnStopBinding( hresult: HResult; szError: LPCWSTR ): HResult; stdcall;
+        function GetBindInfo( out grfBINDF: DWORD; var bindinfo: TBindInfo ): HResult; stdcall;
+        function OnObjectAvailable( const iid: TGUID; punk: IUnknown ): HResult; stdcall;
+    end;
+
+
   TXsmCacheFactory = class(TForm)
     IdHTTP1: TIdHTTP;
     RzPanel1: TRzPanel;
@@ -33,7 +50,9 @@ type
     procedure FormShow(Sender: TObject);
     procedure WebBrowser1DownloadComplete(Sender: TObject);
   private
+
     { Private declarations }
+    BindStatus:IBindStatusCallback;
     StartDateTime:TDateTime;
     Complete:Integer;  // 判断是否加载完成
     UrlAddr,xsmrt,code1,code2: String;
@@ -64,6 +83,51 @@ var
 implementation
 
 {$R *.dfm}
+
+function TDownLoadMonitor.GetBindInfo( out grfBINDF: DWORD; var bindinfo: TBindInfo ): HResult;
+begin
+     result := S_OK;
+end;
+
+function TDownLoadMonitor.GetPriority( out nPriority ): HResult;
+begin
+     Result := S_OK;
+end;
+
+function TDownLoadMonitor.OnDataAvailable(grfBSCF, dwSize: DWORD;
+  formatetc: PFormatEtc; stgmed: PStgMedium): HResult;
+begin
+     Result := S_OK;
+end;
+
+function TDownLoadMonitor.OnLowResource( reserved: DWORD ): HResult;
+begin
+     Result := S_OK;
+end;
+
+function TDownLoadMonitor.OnObjectAvailable( const iid: TGUID; punk: IInterface ): HResult;
+begin
+     Result := S_OK;
+end;
+
+function TDownLoadMonitor.OnProgress( ulProgress, ulProgressMax, ulStatusCode: ULONG; szStatusText: LPCWSTR ): HResult;
+begin
+    Application.ProcessMessages;
+    if XsmCacheFactory.Stoped then
+         Result := E_ABORT
+    else
+         Result := S_OK;
+end;
+
+function TDownLoadMonitor.OnStartBinding( dwReserved: DWORD; pib: IBinding ): HResult;
+begin
+     Result := S_OK;
+end;
+
+function TDownLoadMonitor.OnStopBinding( hresult: HResult; szError: LPCWSTR ): HResult;
+begin
+     Result := S_OK;
+end;
 
 { TXsmCacheFactory }
 
@@ -97,9 +161,12 @@ begin
 end;
 
 procedure TXsmCacheFactory.Loader(Url: String);
-var _Start:Int64;
+var
+  _Start:Int64;
 begin
   try
+    UrlDownloadToFile(nil, PChar(Url), PChar(ExtractFilePath(ParamStr(0))+'temp\aa.dd'), 0, BindStatus);
+    Exit;
     _Start :=  GetTickCount;
     //上面语句要删除
     labInfo.Caption := Url;
@@ -116,7 +183,7 @@ begin
     LogFile.AddLogFile(0,'<成功>:'+Url);
   except
     LogFile.AddLogFile(0,'<失败>:'+Url);
-    Raise;
+//    Raise;
   end;
   Inc(FLoadNum);
 end;
@@ -281,6 +348,7 @@ procedure TXsmCacheFactory.FormCreate(Sender: TObject);
 begin
   FLoadNum := 0;
   Stoped := false;
+  BindStatus := TDownLoadMonitor.Create()
 end;
 
 procedure TXsmCacheFactory.actCancelExecute(Sender: TObject);

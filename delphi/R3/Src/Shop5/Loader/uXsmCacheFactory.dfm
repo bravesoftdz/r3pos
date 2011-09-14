@@ -19,16 +19,16 @@ object XsmCacheFactory: TXsmCacheFactory
   object RzPanel1: TRzPanel
     Left = 0
     Top = 0
-    Width = 488
-    Height = 336
+    Width = 480
+    Height = 325
     Align = alClient
     BorderOuter = fsFlatRounded
     TabOrder = 0
     object RzPanel2: TRzPanel
       Left = 2
       Top = 57
-      Width = 484
-      Height = 277
+      Width = 476
+      Height = 266
       Align = alClient
       BorderOuter = fsNone
       TabOrder = 0
@@ -116,7 +116,7 @@ object XsmCacheFactory: TXsmCacheFactory
     object RzPanel3: TRzPanel
       Left = 2
       Top = 2
-      Width = 484
+      Width = 476
       Height = 55
       Align = alTop
       Anchors = []

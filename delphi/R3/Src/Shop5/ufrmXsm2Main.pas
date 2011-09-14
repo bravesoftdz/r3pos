@@ -4102,12 +4102,13 @@ begin
   try
   if not Logined and Network then //没有注册过，登录新商盟检测注册
      begin
-       frmLogo.ShowTitle := '正在初始化新商盟...';
-       frmLogo.Show;
        while true do
        begin
+         frmLogo.Close;
          if TfrmXsmLogin.XsmRegister then
             begin
+              frmLogo.ShowTitle := '正在初始化新商盟...';
+              frmLogo.Show;
               Chk := CaFactory.DesEncode(xsm_username,CaFactory.pubpwd);
               CaFactory.coLogin(xsm_username,chk,2);
               InitXsm;
@@ -4117,6 +4118,8 @@ begin
             Exit;
        end;
        try
+         frmLogo.ShowTitle := '正在初始化新商盟...';
+         frmLogo.Show;
          if not TfrmTenant.coAutoRegister(xsm_username,true) then
          begin
             MessageBox(Handle,pchar('R3平台没有检测到'+xsm_username+'用户，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -4135,6 +4138,8 @@ begin
        if not Logined then Raise Exception.Create('首次注册必须使用在线模式...'); 
        if Network then
        begin
+         frmLogo.ShowTitle := '正在初始化新商盟...';
+         frmLogo.Show;
          try
            if not TfrmTenant.coAutoRegister(xsm_username,false) then
            begin

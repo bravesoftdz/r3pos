@@ -53,7 +53,7 @@ end;
 
 procedure TfrmLogo.SetShowTitle(const Value: string);
 begin
-  if not Visible then Show;
+  if not Visible then Exit;
   BringToFront;
   FShowTitle := Value;
   Label1.Caption := Value;
@@ -62,6 +62,7 @@ end;
 
 procedure TfrmLogo.SetPosition(const Value: integer);
 begin
+  if not Visible then Exit;
   FPosition := Value;
   BringToFront;
   ProgressBar1.Visible := True;

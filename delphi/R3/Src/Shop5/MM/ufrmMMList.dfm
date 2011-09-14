@@ -1,6 +1,6 @@
 inherited frmMMList: TfrmMMList
-  Left = 706
-  Top = 215
+  Left = 687
+  Top = 182
   BorderIcons = []
   Caption = 'frmMMList'
   ClientHeight = 458
@@ -69,6 +69,7 @@ inherited frmMMList: TfrmMMList
       Height = 333
       ActivePage = TabSheet1
       Align = alClient
+      CutCornerSize = 0
       FlatColor = clWhite
       ShowCardFrame = False
       ShowFocusRect = False
@@ -76,7 +77,8 @@ inherited frmMMList: TfrmMMList
       ShowShadow = False
       TabIndex = 0
       TabOrder = 3
-      FixedDimension = 18
+      TabStyle = tsCutCorner
+      FixedDimension = 19
       object TabSheet1: TRzTabSheet
         Color = 16707028
         Caption = #22909#21451
@@ -84,7 +86,7 @@ inherited frmMMList: TfrmMMList
           Left = 0
           Top = 0
           Width = 222
-          Height = 315
+          Height = 314
           SelectionPen.Color = clBtnShadow
           Align = alClient
           BorderStyle = bsNone

@@ -482,6 +482,9 @@ var
   Tenant: TCaTenant;
   Login: TCaLogin;
 begin
+  frmLogo.Show;
+  frmLogo.ShowTitle := '正在连接认证服务器...';
+  try
   result := false;
   Login := CaFactory.coLogin(id,CaFactory.DesEncode(id,CaFactory.pubpwd),3);
   result := login.RET='1';
@@ -490,7 +493,7 @@ begin
      begin
        if Login.TENANT_ID<>Global.TENANT_ID then
           begin
-            Raise Exception.Create('当前登录账号跟原账号不属于同一企业,请联系客服人员'); 
+            Raise Exception.Create('当前登录账号跟原账号不属于同一企业,请联系客服人员');
           end;
        //保存门店信息
        if Login.SHOP_ID<>'' then
@@ -548,6 +551,9 @@ begin
   //保存门店信息
   if Login.SHOP_ID<>'' then
      CaFactory.downloadShopInfo(Login.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
+  finally
+     frmLogo.Close;
+  end;
 end;
 
 end.

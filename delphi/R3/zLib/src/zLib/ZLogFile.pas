@@ -127,11 +127,14 @@ end;
 function TZLogFilePool.OpenLogFile:boolean;
 var
   myFile:string;
+  s:string;
 begin
+  s:= ExtractFileName(ParamStr(0));
+  delete(s,pos('.',s),255);
   result := not NoLog;
   if NoLog then Exit;
   try
-    myFile := DefaultPath+'log\log'+formatDatetime('YYYYMMDD',date)+'.log';
+    myFile := DefaultPath+'log\'+s+formatDatetime('YYYYMMDD',date)+'.log';
     if myFile=FileName then Exit else CloseLogFile;
     AssignFile(F,myFile);
     if FileExists(myFile) then Append(F) else rewrite(F);

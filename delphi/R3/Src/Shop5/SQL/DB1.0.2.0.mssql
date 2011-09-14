@@ -19,4 +19,4 @@ group by A.TENANT_ID,A.SHOP_ID,A.GUIDE_USER,A.DEPT_ID,A.CLIENT_ID,A.SALES_DATE,A
 
 alter table MSC_QUESTION alter column REMARK varchar(260) NULL;
 
-alter table MSC_QUESTION_ITEM alter column QUESTION_OPTIONS varchar(960)  NOT NULL;
+alter table MSC_QUESTION_ITEM alter column QUESTION_OPTIONS varchar(960) NOT NULL;

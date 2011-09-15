@@ -177,7 +177,7 @@ begin
   end;
   AObj.FieldbyName('RECV_ID').asString := TSequence.NewId();
   lblCaption.Caption :='µ¥ºÅ:..ÐÂÔö..';
-  edtPAYM_ID.ItemIndex := 0;
+  edtPAYM_ID.ItemIndex := ShopGlobal.LoadFormatIni('ufrmRecvOrderData_cache','PAYM_ID');
   edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
   edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
   edtITEM_ID.DataSet.Locate('CODE_ID','1',[]); 
@@ -279,6 +279,7 @@ procedure TfrmRecvOrder.btnOkClick(Sender: TObject);
 begin
   inherited;
   SaveOrder;
+  ShopGlobal.SaveFormatIni('ufrmRecvOrderData_cache','PAYM_ID',edtPAYM_ID.ItemIndex);
   ModalResult := MROK;
 end;
 

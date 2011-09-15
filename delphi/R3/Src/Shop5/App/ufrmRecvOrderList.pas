@@ -84,6 +84,7 @@ type
     procedure frfRecvOrderGetValue(const ParName: String; var ParValue: Variant);
     procedure CdsRecvListAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
@@ -144,7 +145,7 @@ begin
   fndRECV_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndPAYM_ID.Properties.Items,'CODE_NAME');
   fndPAYM_ID.Properties.Items.Insert(0,'全部');
-  fndPAYM_ID.ItemIndex := 0; 
+  fndPAYM_ID.ItemIndex := ShopGlobal.LoadFormatIni('ufrmRecvOrderListData_cache','PAYM_ID'); 
   InitGrid;
   //第一分页应收账款:
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
@@ -744,6 +745,13 @@ begin
     DbGridEh1.canvas.FillRect(ARect);
     DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(CdsRecvList.RecNo)),length(Inttostr(CdsRecvList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
+end;
+
+procedure TfrmRecvOrderList.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  ShopGlobal.SaveFormatIni('ufrmRecvOrderListData_cache','PAYM_ID',fndPAYM_ID.ItemIndex);
 end;
 
 end.

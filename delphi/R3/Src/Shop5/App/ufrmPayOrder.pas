@@ -173,7 +173,7 @@ begin
     end;
   AObj.FieldbyName('PAY_ID').asString := TSequence.NewId();
   lblCaption.Caption :='µ¥ºÅ:..ÐÂÔö..';
-  edtPAYM_ID.ItemIndex := 0;
+  edtPAYM_ID.ItemIndex := ShopGlobal.LoadFormatIni('ufrmPayOrderData_cache','PAYM_ID');
   edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
   edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
   edtITEM_ID.DataSet.Locate('CODE_ID','2',[]); 
@@ -270,6 +270,7 @@ procedure TfrmPayOrder.btnOkClick(Sender: TObject);
 begin
   inherited;
   SaveOrder;
+  ShopGlobal.SaveFormatIni('ufrmPayOrderData_cache','PAYM_ID',edtPAYM_ID.ItemIndex);
   ModalResult := MROK;
 end;
 

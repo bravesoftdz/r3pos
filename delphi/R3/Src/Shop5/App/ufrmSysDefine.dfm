@@ -1,6 +1,6 @@
 inherited frmSysDefine: TfrmSysDefine
-  Left = 328
-  Top = 178
+  Left = 540
+  Top = 234
   Width = 434
   Height = 323
   BorderIcons = [biSystemMenu]
@@ -13,9 +13,9 @@ inherited frmSysDefine: TfrmSysDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 418
-    Height = 242
-    ActivePage = tabBasic
+    Width = 426
+    Height = 253
+    ActivePage = tabStock
     Align = alClient
     TabOrder = 0
     object tabBasic: TTabSheet
@@ -23,8 +23,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel1: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -176,8 +176,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -190,7 +190,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object Label14: TLabel
         Left = 30
-        Top = 59
+        Top = 57
         Width = 96
         Height = 12
         Caption = #21551#29992#20179#24211#39044#35686#25552#31034
@@ -232,14 +232,14 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object Label29: TLabel
         Left = 166
-        Top = 161
+        Top = 193
         Width = 12
         Height = 12
         Caption = #20998
       end
       object Label30: TLabel
         Left = 14
-        Top = 161
+        Top = 193
         Width = 96
         Height = 12
         Caption = #26234#33021#25552#37266#38388#38548#26102#38388
@@ -290,7 +290,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object IsStorage: TcxCheckBox
         Left = 8
-        Top = 55
+        Top = 53
         Width = 21
         Height = 21
         Properties.DisplayUnchecked = 'False'
@@ -301,7 +301,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object edtAUDIT_HINT: TcxCheckBox
         Left = 8
-        Top = 81
+        Top = 121
         Width = 153
         Height = 21
         Properties.DisplayUnchecked = 'False'
@@ -311,7 +311,7 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object edtPLANDATE_HINT: TcxCheckBox
         Left = 8
-        Top = 105
+        Top = 143
         Width = 153
         Height = 21
         Properties.DisplayUnchecked = 'False'
@@ -321,23 +321,43 @@ inherited frmSysDefine: TfrmSysDefine
       end
       object edtACCOUNT_HINT: TcxCheckBox
         Left = 8
-        Top = 129
+        Top = 165
         Width = 153
         Height = 21
         Properties.DisplayUnchecked = 'False'
-        Properties.Caption = #25910#20184#24080#27454#25552#37266
+        Properties.Caption = #25910#20184#36134#27454#25552#37266
         TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object IntervalTime: TcxSpinEdit
         Left = 114
-        Top = 157
+        Top = 189
         Width = 50
         Height = 20
         Properties.MaxValue = 100.000000000000000000
         Properties.MinValue = 2.000000000000000000
         TabOrder = 8
         Value = 10
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtSEND_HINT: TcxCheckBox
+        Left = 8
+        Top = 100
+        Width = 153
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #21457#36135#29366#24577#25552#37266
+        TabOrder = 9
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtRECEIVE_HINT: TcxCheckBox
+        Left = 8
+        Top = 79
+        Width = 153
+        Height = 21
+        Properties.DisplayUnchecked = 'False'
+        Properties.Caption = #25910#36135#29366#24577#25552#37266
+        TabOrder = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
@@ -347,8 +367,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel5: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -532,8 +552,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel3: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -737,8 +757,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel4: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -859,8 +879,8 @@ inherited frmSysDefine: TfrmSysDefine
       object Bevel6: TBevel
         Left = 0
         Top = 0
-        Width = 410
-        Height = 215
+        Width = 418
+        Height = 226
         Align = alClient
         Shape = bsFrame
       end
@@ -1011,8 +1031,8 @@ inherited frmSysDefine: TfrmSysDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 242
-    Width = 418
+    Top = 253
+    Width = 426
     Height = 43
     Align = alBottom
     BevelOuter = bvNone

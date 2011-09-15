@@ -128,6 +128,8 @@ type
     IntervalTime: TcxSpinEdit;
     Label30: TLabel;
     chkAUTO_SYNC: TcxCheckBox;
+    edtSEND_HINT: TcxCheckBox;
+    edtRECEIVE_HINT: TcxCheckBox;
     procedure acComfirExecute(Sender: TObject);
     procedure acCancelExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -368,6 +370,20 @@ begin
       else if Value = '1' then
         edtAUDIT_HINT.Checked := True;
     end;
+    if Define = 'RECEIVE_HINT' then
+    begin
+      if Value = '0' then
+        edtRECEIVE_HINT.Checked := False
+      else if Value = '1' then
+        edtRECEIVE_HINT.Checked := True;
+    end;
+    if Define = 'SEND_HINT' then
+    begin
+      if Value = '0' then
+        edtSEND_HINT.Checked := False
+      else if Value = '1' then
+        edtSEND_HINT.Checked := True;
+    end;
     if Define = 'PLANDATE_HINT' then
     begin
       if Value = '0' then
@@ -554,6 +570,14 @@ begin
     SetValue('AUDIT_HINT', '1')
   else
     SetValue('AUDIT_HINT', '0');
+  if edtRECEIVE_HINT.Checked then
+    SetValue('RECEIVE_HINT', '1')
+  else
+    SetValue('RECEIVE_HINT', '0');
+  if edtSEND_HINT.Checked then
+    SetValue('SEND_HINT', '1')
+  else
+    SetValue('SEND_HINT', '0');
   if edtPLANDATE_HINT.Checked then
     SetValue('PLANDATE_HINT', '1')
   else

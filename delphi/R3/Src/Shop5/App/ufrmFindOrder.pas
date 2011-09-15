@@ -86,26 +86,26 @@ begin
   case flag of
   1:begin
      result :=
-     'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CLIENT_ID,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
-     'from STK_INDENTORDER A '+w+' ';
+     'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CLIENT_ID,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY,B.SHOP_NAME '+
+     'from STK_INDENTORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+w+' ';
      result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
     end;
   2:begin
      result :=
-     'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CLIENT_ID,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
-     'from SAL_INDENTORDER A '+w+' ';
+     'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CLIENT_ID,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY,B.SHOP_NAME '+
+     'from SAL_INDENTORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+w+' ';
      result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
     end;
   3:begin
      result :=
-     'select A.TENANT_ID,A.STOCK_ID as INDE_ID,A.GLIDE_NO,A.STOCK_DATE as INDE_DATE,A.CLIENT_ID,A.STOCK_AMT as AMOUNT,A.STOCK_MNY as AMONEY '+
-     'from STK_STOCKORDER A '+w+' ';
+     'select A.TENANT_ID,A.STOCK_ID as INDE_ID,A.GLIDE_NO,A.STOCK_DATE as INDE_DATE,A.CLIENT_ID,A.STOCK_AMT as AMOUNT,A.STOCK_MNY as AMONEY,B.SHOP_NAME '+
+     'from STK_STOCKORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+w+' ';
      result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
     end;
   4:begin
      result :=
-     'select A.TENANT_ID,A.SALES_ID AS INDE_ID,A.GLIDE_NO,A.SALES_DATE as INDE_DATE,A.CLIENT_ID,A.SALE_AMT as AMOUNT,A.SALE_MNY as AMONEY '+
-     'from SAL_SALESORDER A '+w+' ';
+     'select A.TENANT_ID,A.SALES_ID AS INDE_ID,A.GLIDE_NO,A.SALES_DATE as INDE_DATE,A.CLIENT_ID,A.SALE_AMT as AMOUNT,A.SALE_MNY as AMONEY,B.SHOP_NAME '+
+     'from SAL_SALESORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+w+' ';
      result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
     end;
   end;

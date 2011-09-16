@@ -19,16 +19,16 @@ object XsmCacheFactory: TXsmCacheFactory
   object RzPanel1: TRzPanel
     Left = 0
     Top = 0
-    Width = 480
-    Height = 325
+    Width = 488
+    Height = 336
     Align = alClient
     BorderOuter = fsFlatRounded
     TabOrder = 0
     object RzPanel2: TRzPanel
       Left = 2
       Top = 57
-      Width = 476
-      Height = 266
+      Width = 484
+      Height = 277
       Align = alClient
       BorderOuter = fsNone
       TabOrder = 0
@@ -40,7 +40,7 @@ object XsmCacheFactory: TXsmCacheFactory
       end
       object RzProgressBar1: TRzProgressBar
         Left = 35
-        Top = 39
+        Top = 28
         Width = 419
         Height = 17
         BorderOuter = fsFlatRounded
@@ -64,30 +64,9 @@ object XsmCacheFactory: TXsmCacheFactory
         Font.Style = []
         ParentFont = False
       end
-      object labInfo: TRzLabel
-        Left = 36
-        Top = 23
-        Width = 81
-        Height = 13
-        Caption = #27491#22312#21152#36733#22270#29255'...'
-      end
-      object WebBrowser1: TWebBrowser
-        Left = 36
-        Top = 60
-        Width = 417
-        Height = 163
-        TabOrder = 0
-        OnDownloadComplete = WebBrowser1DownloadComplete
-        ControlData = {
-          4C000000192B0000D91000000000000000000000000000000000000000000000
-          000000004C000000000000000000000001000000E0D057007335CF11AE690800
-          2B2E126208000000000000004C0000000114020000000000C000000000000046
-          8000000000000000000000000000000000000000000000000000000000000000
-          00000000000000000100000000000000000000000000000000000000}
-      end
       object btnCancel: TRzBitBtn
         Left = 381
-        Top = 236
+        Top = 243
         Width = 67
         Height = 24
         Caption = #21462#28040
@@ -104,7 +83,7 @@ object XsmCacheFactory: TXsmCacheFactory
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 1
+        TabOrder = 0
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = actCancelExecute
@@ -112,11 +91,24 @@ object XsmCacheFactory: TXsmCacheFactory
         NumGlyphs = 2
         Spacing = 5
       end
+      object edtInfomation: TRzMemo
+        Left = 36
+        Top = 52
+        Width = 417
+        Height = 168
+        BevelInner = bvNone
+        BevelOuter = bvNone
+        BorderStyle = bsNone
+        ScrollBars = ssVertical
+        TabOrder = 1
+        WantTabs = True
+        WordWrap = False
+      end
     end
     object RzPanel3: TRzPanel
       Left = 2
       Top = 2
-      Width = 476
+      Width = 484
       Height = 55
       Align = alTop
       Anchors = []
@@ -170,10 +162,10 @@ object XsmCacheFactory: TXsmCacheFactory
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
     HTTPOptions = [hoForceEncodeParams]
     Left = 40
-    Top = 283
+    Top = 302
   end
   object ActionList1: TActionList
     Left = 74
-    Top = 281
+    Top = 300
   end
 end

@@ -164,7 +164,7 @@ var
   _Start:Int64;
 begin
   try
-    edtInfomation.Lines.Add(Url);
+    edtInfomation.Lines.Add('<加载>'+Url);
     UrlDownloadToFile(nil, PChar(Url), PChar(ExtractFilePath(ParamStr(0))+'temp\aa.dd'), 0, BindStatus);
     {Exit;
     _Start :=  GetTickCount;
@@ -211,7 +211,7 @@ var
   i,sum:Integer;
   xml,GWGCUrl,MapDir:string;
 begin
-  edtInfomation.Lines.Add(Url);
+  edtInfomation.Lines.Add('<开始>'+Url);
 
   xml := IdHTTP1.Get(Url);
   xml := Utf8ToAnsi(xml);
@@ -246,7 +246,7 @@ begin
   //if Root.attributes.getNamedItem('id').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
   //result := true;
   RzProgressBar1.Percent := 100;
-  edtInfomation.Lines.Add(Url);
+  edtInfomation.Lines.Add('<完成>'+Url);
 
 end;
 
@@ -301,7 +301,7 @@ var
   i,sum:Integer;
   xml,Str_url:string;
 begin
-  edtInfomation.Lines.Add(Url);
+  edtInfomation.Lines.Add('<开始>'+Url);
   try
     xml := IdHTTP1.Get(Url);
     xml := Utf8ToAnsi(xml);
@@ -333,11 +333,12 @@ begin
     //if Root.attributes.getNamedItem('id').text<>'0000' then Raise Exception.Create('请求令牌失败,错误:'+Root.attributes.getNamedItem('msg').text);
     //result := true;
     RzProgressBar1.Percent := 100;
-    edtInfomation.Lines.Add(Url);
+    edtInfomation.Lines.Add('<完成>'+Url);
   except
     on Ex:Exception do
     begin
-      edtInfomation.Lines.Add(Url);
+      edtInfomation.Lines.Add('<失败>'+Url);
+      LogFile.AddLogFile(0,edtInfomation.Text);
       Raise;
     end;
   end;
@@ -479,7 +480,7 @@ begin
     end;
 
 ///////////////// 以上是加载主"VersionFiles"文件 ///////////////////////////////
-/////////////////  下面开始加载地市"VersionFiles"文件 //////////////////////////
+//////////////  下面开始加载地市"VersionFiles"文件 //////////////////////////
 
     if Stoped then Exit;
     Parent_GWGC_Ver := '';
@@ -560,7 +561,7 @@ begin
       end;
     end;
 
-  LogFile.AddLogFile(0,edtInfomation.Text);  
+  LogFile.AddLogFile(0,edtInfomation.Text);
   Close;
 end;
 
@@ -580,7 +581,11 @@ begin
       if Pos('404',Ex.Message) > 0 then
         Result := False
       else
+      begin
+        edtInfomation.Lines.Add(Ex.Message);
+        LogFile.AddLogFile(0,edtInfomation.Text);
         Raise;
+      end;
     end;
   end;
 end;

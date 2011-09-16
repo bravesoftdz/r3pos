@@ -9,14 +9,14 @@ inherited frmPayOrderList: TfrmPayOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 525
+    Width = 900
+    Height = 536
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 515
+      Width = 890
+      Height = 526
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 509
+        Width = 884
+        Height = 520
         ActivePage = TabSheet2
         TabIndex = 1
         OnChange = RzPageChange
@@ -24,13 +24,13 @@ inherited frmPayOrderList: TfrmPayOrderList
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#20184#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 482
+            Width = 882
+            Height = 493
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -233,16 +233,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel3: TPanel
               Left = 6
               Top = 90
-              Width = 862
-              Height = 386
+              Width = 870
+              Height = 397
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 384
+                Width = 868
+                Height = 395
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = PayListDs
@@ -391,8 +391,8 @@ inherited frmPayOrderList: TfrmPayOrderList
           object Panel1: TPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 482
+            Width = 882
+            Height = 493
             Align = alClient
             BevelInner = bvLowered
             BevelOuter = bvNone
@@ -402,7 +402,7 @@ inherited frmPayOrderList: TfrmPayOrderList
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -778,16 +778,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 862
-              Height = 347
+              Width = 870
+              Height = 358
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 345
+                Width = 868
+                Height = 356
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -935,17 +935,17 @@ inherited frmPayOrderList: TfrmPayOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image1: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image3: TImage
       Left = 374
-      Width = 498
+      Width = 506
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited rzPanel5: TPanel
       Left = 374

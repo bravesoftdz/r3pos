@@ -143,7 +143,7 @@ begin
   fndRECV_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndPAYM_ID.Properties.Items,'CODE_NAME');
   fndPAYM_ID.Properties.Items.Insert(0,'全部');
-  fndPAYM_ID.ItemIndex := ShopGlobal.LoadFormatIni('ufrmRecvPosListData_cache','PAYM_ID'); 
+  fndPAYM_ID.ItemIndex := TdsItems.FindItems(fndPAYM_ID.Properties.Items,'CODE_ID',ShopGlobal.LoadFormatIni('ufrmRecvPosListData_cache','PAYM_ID'));
   InitGrid;
   //第一分页应收账款:
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
@@ -747,7 +747,7 @@ procedure TfrmRecvPosList.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   inherited;
-  ShopGlobal.SaveFormatIni('ufrmRecvPosListData_cache','PAYM_ID',fndPAYM_ID.ItemIndex);
+  ShopGlobal.SaveFormatIni('ufrmRecvPosListData_cache','PAYM_ID',TRecord_(fndPAYM_ID.Properties.Items.Objects[fndPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
 end;
 
 end.

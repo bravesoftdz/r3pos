@@ -1,6 +1,6 @@
 inherited frmRecvPosList: TfrmRecvPosList
-  Left = 256
-  Top = 138
+  Left = 265
+  Top = 159
   Width = 908
   Height = 600
   Caption = #32564#27454#21333

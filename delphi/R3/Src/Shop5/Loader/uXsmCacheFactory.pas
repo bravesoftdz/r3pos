@@ -573,8 +573,8 @@ end;
 function TXsmCacheFactory.GetHttp(Url: String): Boolean;
 begin
   try
-    Result := True;
     IdHTTP1.Get(Url);
+    Result := True;
   except
     on Ex:Exception do
     begin

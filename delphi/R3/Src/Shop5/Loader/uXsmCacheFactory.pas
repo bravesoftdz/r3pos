@@ -501,8 +501,8 @@ begin
         end;
         1:begin
           Load_String := GetVersionPath(False);
-          //if Load_String = '' then Exit else Load_String := xsmrt + Load_String;
-          if GetHttp(xsmrt) then
+          if Load_String = '' then Exit else Load_String := xsmrt + Load_String;
+          if GetHttp(Load_String) then
           begin
             RzLabel1.Caption := '正在加载省级"VersionFiles.xml"文件...';
             LoadVersionXml(Load_String);

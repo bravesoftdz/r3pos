@@ -84,9 +84,9 @@ type
     //刷新最近同步时间
     procedure SyncTimeStamp;
     //存储 PAYM_ID 键值到 INI 文件中
-    procedure SaveFormatIni(Section,Key:String;Value:Integer);
+    procedure SaveFormatIni(Section,Key,Value:String);
     //从 INI 文件中读取 PAYM_ID 键值
-    function LoadFormatIni(Section,Key:String):Integer;
+    function LoadFormatIni(Section,Key:String):String;
     //读取产品标识符
     function GetProdFlag:Char;
     function GetParameter(ParamName:string):string;
@@ -411,12 +411,12 @@ begin
   ShopGlobal := self;
 end;
 
-function TShopGlobal.LoadFormatIni(Section, Key: String): Integer;
+function TShopGlobal.LoadFormatIni(Section, Key: String): String;
 var F:TIniFile;
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sft.'+UserID);
   try
-    Result := F.ReadInteger(Section,Key,0);
+    Result := F.ReadString(Section,Key,'');
   finally
     try
       F.Free;
@@ -425,13 +425,13 @@ begin
   end;
 end;
 
-procedure TShopGlobal.SaveFormatIni(Section, Key: String;Value: Integer);
+procedure TShopGlobal.SaveFormatIni(Section, Key ,Value: String);
 var
   F:TIniFile;
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sft.'+UserID);
   try
-    F.WriteInteger(Section,key,Value);
+    F.WriteString(Section,key,Value);
   finally
     try
       F.Free;

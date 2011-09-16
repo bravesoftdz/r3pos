@@ -477,7 +477,9 @@ begin
         end;
       end;
     end;
-    //RzLabel3.Caption := '文件加载已经完成!';
+
+///////////////// 以上是加载主"VersionFiles"文件 ///////////////////////////////
+/////////////////  下面开始加载地市"VersionFiles"文件 //////////////////////////
 
     if Stoped then Exit;
     Parent_GWGC_Ver := '';
@@ -497,8 +499,8 @@ begin
           end;
         end;
         1:begin
-          Load_String := xsmrt+GetVersionPath(False);
-          if Load_String = '' then Exit;
+          Load_String := GetVersionPath(False);
+          if Load_String = '' then Exit else Load_String := xsmrt + Load_String;
           if GetHttp(Load_String) then
           begin
             RzLabel1.Caption := '正在加载省级"VersionFiles.xml"文件...';
@@ -508,6 +510,7 @@ begin
       end;
     end;
 
+    if Stoped then Exit;
     RzLabel1.Caption := '正在加载"GWGC.xml"文件...';
     for j := 0 to 1 do
     begin
@@ -532,6 +535,7 @@ begin
       end;
     end;
 
+    if Stoped then Exit;
     RzLabel1.Caption := '正在加载"CS.xml"文件...';
     for j := 0 to 1 do
     begin

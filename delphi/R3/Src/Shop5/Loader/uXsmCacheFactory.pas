@@ -144,7 +144,7 @@ begin
               ErrXml :=xml;
               w := pos('?>',ErrXml);
               delete(ErrXml,1,w+1);
-              if not result.loadXML(ErrXml) then Raise Exception.Create('loadxml出错了,xml='+xml);
+              if not result.loadXML(ErrXml) then Raise Exception.Create('loadxml出错了!');
             end;
        end
     else begin
@@ -154,7 +154,7 @@ begin
     on E:Exception do
        begin
          result := nil;
-         LogFile.AddLogFile(0,e.Message);
+         edtInfomation.Lines.Add(E.Message);
        end;
   end;
 end;
@@ -501,8 +501,8 @@ begin
         end;
         1:begin
           Load_String := GetVersionPath(False);
-          if Load_String = '' then Exit else Load_String := xsmrt + Load_String;
-          if GetHttp(Load_String) then
+          //if Load_String = '' then Exit else Load_String := xsmrt + Load_String;
+          if GetHttp(xsmrt) then
           begin
             RzLabel1.Caption := '正在加载省级"VersionFiles.xml"文件...';
             LoadVersionXml(Load_String);
@@ -571,9 +571,19 @@ begin
 end;
 
 function TXsmCacheFactory.GetHttp(Url: String): Boolean;
+var
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;
+  xml:string;
 begin
   try
-    IdHTTP1.Get(Url);
+    xml := IdHTTP1.Get(Url);
+    xml := Utf8ToAnsi(xml);
+    Doc := CreateXML(xml);
+    if not Assigned(doc) then Raise Exception.Create(Url+'请求令牌失败...');
+    Root :=  doc.DocumentElement;
+    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求令牌失败...');
+
     Result := True;
   except
     on Ex:Exception do

@@ -88,7 +88,7 @@ procedure TfrmStgTotalReport.load;
 var
   rs:TZQuery;
   list:TStringList;
-  w:string;
+  w,CurRole:string;
   i:integer;
 begin
   rs := TZQuery.Create(nil);
@@ -102,7 +102,7 @@ begin
     for i:=0 to list.Count - 1 do
       begin
         if w<>'' then w := w + ' or ';
-        w := w+''',''+ROLES+'','' like ''%,'+list[i]+',%''';
+        w:=w+''','''+GetStrJoin(Factor.iDbType)+' ROLES '+GetStrJoin(Factor.iDbType)+''','' like ''%,'+list[i]+',%'' ';
       end;
     if w <> '' then w := ' and ('+w+')';
     end;

@@ -365,7 +365,7 @@ begin
       AGlobal.ExecSQL('update STO_CHANGEORDER set CHANGE_AMT='+FloattoStr(CHANGE_AMT)+',CHANGE_MNY='+FloattoStr(CHANGE_MNY)+' '+
                       ' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and CHANGE_ID='''+id+''' ');
 
-      r := AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=3,CHK_USER='''+User+''',CHK_DATE='''+CurDate+''' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+      r := AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=3,CHK_USER='''+User+''',CHK_DATE='''+CurDate+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
                            ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS<>3');
       if r=0 then Raise Exception.Create('没找到待审核的盘点单，是否由另一用户审核完毕？');
       if not IsZero(AGlobal,Params) then
@@ -487,7 +487,7 @@ begin
                       ' CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
       AGlobal.ExecSQL('delete from STO_CHANGEORDER where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
                       ' CHANGE_ID='''+rs.FieldbyName('CHANGE_ID').AsString+'''');
-      r:=AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=2,CHK_USER=null,CHK_DATE=null where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
+      r:=AGlobal.ExecSQL('update STO_PRINTORDER set CHECK_STATUS=2,CHK_USER=null,CHK_DATE=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.ParambyName('TENANT_ID').asString+' and '+
                          ' SHOP_ID='''+Params.ParambyName('SHOP_ID').asString+''' and PRINT_DATE='+Params.ParambyName('PRINT_DATE').asString+' and CHECK_STATUS=3');
       if r=0 then Raise Exception.Create('没找到已审核的盘点单，是否由另一用户审核完毕？');
       

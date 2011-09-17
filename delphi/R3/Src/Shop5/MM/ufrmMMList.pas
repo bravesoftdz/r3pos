@@ -6,7 +6,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMMBasic, ImgList, RzTray, Menus, ExtCtrls, RzForms,ZBase,
   RzBckgnd, RzPanel, RzBmpBtn, StdCtrls, uMMUtil, uMMServer ,ShellApi,
-  RzButton, ummFactory, RzGroupBar, RzTabs, ComCtrls, RzTreeVw, ZDataSet;
+  RzButton, ummFactory, RzGroupBar, RzTabs, ComCtrls, RzTreeVw, ZDataSet,
+  RzLabel, jpeg, MPlayer;
+  
 type
   TfrmMMList = class(TfrmMMBasic)
     FlagImage: TImageList;
@@ -19,24 +21,30 @@ type
     TabSheet2: TRzTabSheet;
     rzUsers: TRzTreeView;
     StateImage: TImageList;
+    Image2: TImage;
+    RzLabel1: TRzLabel;
+    MediaPlayer: TMediaPlayer;
     procedure FormCreate(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
-    procedure RzButton2Click(Sender: TObject);
     procedure RzGroup1Items0Click(Sender: TObject);
     procedure RzGroup1Items1Click(Sender: TObject);
+    procedure rzUsersDblClick(Sender: TObject);
   private
     { Private declarations }
+    procedure CreateParams(var Params: TCreateParams); override;
+    procedure wmMsgHint(var Message: TMessage); message WM_MsgHint;
   public
     { Public declarations }
     procedure LoadFriends;
-    procedure CreateParams(var Params: TCreateParams); override;
+    procedure OpenDialog(uid:string);
+    procedure PlaySend(filename:string);
   end;
 
 var
   frmMMList: TfrmMMList;
 implementation
 {$R *.dfm}
-uses ufrmMMMain,ummGlobal,uTreeUtil;
+uses ufrmMMMain,ummGlobal,uTreeUtil,ufrmMMDialog;
 
 { TfrmMMList }
 
@@ -65,8 +73,9 @@ var
   rs:TZQuery;
   us:TZQuery;
   Params:TftParamList;
+  mmUserInfo:PmmUserInfo;
 begin
-  ClearTree(rzUsers);
+  rzUsers.Items.Clear;
   rs := TZQuery.Create(nil);
   us := TZQuery.Create(nil);
   Params := TftParamList.Create(nil);
@@ -85,7 +94,19 @@ begin
          us.First;
          while not us.Eof do
            begin
-             b := rzUsers.Items.AddChild(g,us.FieldbyName('U_SHOW_NAME').AsString);
+             new(mmUserInfo);
+             mmUserInfo^.uid := us.FieldbyName('FRIEND_ID').AsString;
+             mmUserInfo^.line := false;
+             mmUserInfo^.PlayerFava := TmmPlayerFava.Create;
+             mmUserInfo^.PlayerFava.messagetype := 1003;
+             mmUserInfo^.PlayerFava.routetype := 1;
+             mmUserInfo^.PlayerFava.playerId := us.FieldbyName('FRIEND_ID').AsString;
+             mmUserInfo^.PlayerFava.nickName := us.FieldbyName('FRIEND_NAME').AsString;
+             mmUserInfo^.PlayerFava.userType := us.FieldbyName('USER_TYPE').AsString;
+             //其他信息暂缺
+             mmUserInfo^.IsBeBlack := (us.FieldbyName('IS_BE_BLACK').asString='1');
+             mmFactory.Add(mmUserInfo);
+             b := rzUsers.Items.AddChildObject(g,us.FieldbyName('U_SHOW_NAME').AsString,mmUserInfo);
              b.ImageIndex := 1;
              us.Next;
            end;
@@ -98,17 +119,45 @@ begin
   end;    
 end;
 
+procedure TfrmMMList.OpenDialog(uid: string);
+var
+  UserInfo:PmmUserInfo;
+  i:integer;
+begin
+  UserInfo := mmFactory.Find(uid);
+  for i:=0 to Screen.FormCount -1 do
+    begin
+      if UserInfo^.Handle = Screen.Forms[i].Handle then
+         begin
+           Screen.Forms[i].Show;
+           Exit;
+         end;
+    end;
+  with TfrmMMDialog.Create(Application) do
+    begin
+      Show;
+      if UserInfo<>nil then
+         begin
+           mmUserInfo := UserInfo;
+           mmUserInfo^.Handle := Handle;
+           if mmUserInfo^.Msgs.Count > 0 then PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
+         end;
+    end;
+end;
+
+procedure TfrmMMList.PlaySend(filename: string);
+begin
+  MediaPlayer.Close;
+  MediaPlayer.FileName := filename;
+  MediaPlayer.Open;
+  MediaPlayer.Play;
+end;
+
 procedure TfrmMMList.RzButton1Click(Sender: TObject);
 begin
   inherited;
   frmMMMain.WindowState := wsMaximized;
   frmMMMain.Show;
-end;
-
-procedure TfrmMMList.RzButton2Click(Sender: TObject);
-begin
-  inherited;
-  mmFactory.ConnectTo;
 end;
 
 procedure TfrmMMList.RzGroup1Items0Click(Sender: TObject);
@@ -121,6 +170,20 @@ procedure TfrmMMList.RzGroup1Items1Click(Sender: TObject);
 begin
 //  inherited;
 
+end;
+
+procedure TfrmMMList.rzUsersDblClick(Sender: TObject);
+begin
+  inherited;
+  if rzUsers.Selected = nil then Exit;
+  if rzUsers.Selected.Data = nil then Exit;
+  OpenDialog(PmmUserInfo(rzUsers.Selected.Data)^.uid);
+
+end;
+
+procedure TfrmMMList.wmMsgHint(var Message: TMessage);
+begin
+  PlaySend(ExtractFilePath(ParamStr(0))+'res\msg.mp3');
 end;
 
 end.

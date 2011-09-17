@@ -25,7 +25,8 @@ uses
   ufrmMain in '..\..\Basic\ufrmMain.pas' {frmMain},
   ufrmMMMain in 'MM\ufrmMMMain.pas' {frmMMMain},
   ufrmMMDesk in 'MM\ufrmMMDesk.pas' {frmMMDesk},
-  ObjChatInfo in 'Obj\ObjChatInfo.pas';
+  ObjChatInfo in 'Obj\ObjChatInfo.pas',
+  ufrmMMDialog in 'MM\ufrmMMDialog.pas' {frmMMDialog};
 
 {$R *.res}
 

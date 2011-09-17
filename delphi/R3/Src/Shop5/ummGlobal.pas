@@ -26,6 +26,12 @@ type
     Fhttp_addr: string;
     Fxsm_parentComId: string;
     Fxsm_comId: string;
+    Fxsm_salscentercode: string;
+    Fxsm_refId: string;
+    Fxsm_salsdeptcode: string;
+    Fxsm_salesmanid: string;
+    Fxsm_salesmanrefid: string;
+    Fxsm_userType: string;
     procedure Setxsm_challenge(const Value: string);
     procedure Setxsm_password(const Value: string);
     procedure Setxsm_username(const Value: string);
@@ -37,6 +43,12 @@ type
     procedure Sethttp_addr(const Value: string);
     procedure Setxsm_parentComId(const Value: string);
     procedure Setxsm_comId(const Value: string);
+    procedure Setxsm_refId(const Value: string);
+    procedure Setxsm_salesmanid(const Value: string);
+    procedure Setxsm_salesmanrefid(const Value: string);
+    procedure Setxsm_salscentercode(const Value: string);
+    procedure Setxsm_salsdeptcode(const Value: string);
+    procedure Setxsm_userType(const Value: string);
     { Private declarations }
   protected
     function CreateXML(xml:string):IXMLDomDocument;
@@ -50,9 +62,10 @@ type
   public
     { Public declarations }
     mmFactory:TmmFactory;
-    
+
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
+    
     function getChallenge:boolean;
     function doLogin:boolean;
     function getSignature:boolean;
@@ -66,7 +79,6 @@ type
     //读我所在黑名单
     function getBeBlackFriends:boolean;
 
-
     function getUrlPath:string;
     function coLogin(uid,pwd:string):boolean;
     function CheckRegister:boolean;
@@ -79,6 +91,14 @@ type
     property xsm_signature:string read Fxsm_signature write Setxsm_signature;
     property xsm_comId:string read Fxsm_comId write Setxsm_comId;
     property xsm_parentComId:string read Fxsm_parentComId write Setxsm_parentComId;
+
+    property xsm_refId:string read Fxsm_refId write Setxsm_refId;
+    property xsm_salesmanid:string read Fxsm_salesmanid write Setxsm_salesmanid;
+    property xsm_salesmanrefid:string read Fxsm_salesmanrefid write Setxsm_salesmanrefid;
+    property xsm_salscentercode:string read Fxsm_salscentercode write Setxsm_salscentercode;
+    property xsm_salsdeptcode:string read Fxsm_salsdeptcode write Setxsm_salsdeptcode;
+    property xsm_userType:string read Fxsm_userType write Setxsm_userType;
+    
     property chat_addr:string read Fchat_addr write Setchat_addr;
     property chat_port:integer read Fchat_port write Setchat_port;
     property http_addr:string read Fhttp_addr write Sethttp_addr;
@@ -255,6 +275,7 @@ begin
     F.WriteString('xsm','code1',xsm_parentComId);
     xsm_comId := Root.selectSingleNode('comId').text;
     F.WriteString('xsm','code2',xsm_comId);
+    xsm_userType := Root.selectSingleNode('userType').text;
   finally
     try
       F.Free;
@@ -509,6 +530,7 @@ begin
                      us.FieldByName('FRIEND_NAME').AsString := MyFriends.attributes.getNamedItem('friendName').text;
                      us.FieldByName('U_SHOW_NAME').AsString := MyFriends.attributes.getNamedItem('itemShowName').text;
                      us.FieldByName('IS_BE_BLACK').AsString := MyFriends.attributes.getNamedItem('isBeBlack').text;
+                     us.FieldByName('USER_TYPE').AsString := MyFriends.attributes.getNamedItem('userType').text;
                      us.FieldByName('IS_ONLINE').AsString := '0';
                      us.FieldByName('REF_ID').AsString := MyFriends.attributes.getNamedItem('refId').text;
                      us.FieldByName('NOTE').AsString := MyFriends.attributes.getNamedItem('note').text;
@@ -566,7 +588,22 @@ begin
     chat_port := StrtoInt(Node.attributes.getNamedItem('port').text);
     Node := FindNode(doc,'server_info\web_server');
     http_addr := Node.attributes.getNamedItem('web_url').text;
-    
+
+    xml := IdHTTP1.Get(http_addr+'/users/userext/getinfo');
+    xml := Utf8ToAnsi(xml);
+    Doc := CreateXML(xml);
+    if not Assigned(doc) then Raise Exception.Create('模拟导航失败...');
+    Root :=  doc.DocumentElement;
+    if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，模拟导航失败...');
+    if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，模拟导航失败...');
+    if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('模拟导航失败,错误:'+Root.attributes.getNamedItem('msg').text);
+    //开始保存数据
+    Node := FindNode(Doc,'userext',true);
+    xsm_salesmanid := Node.attributes.getNamedItem('salesmanid').text;
+    xsm_salesmanrefid := Node.attributes.getNamedItem('salesmanrefid').text;
+    xsm_salscentercode := Node.attributes.getNamedItem('salscentercode').text;
+    xsm_salsdeptcode := Node.attributes.getNamedItem('salsdeptcode').text;
+
     result := true;
   except
     logined := false;
@@ -641,6 +678,36 @@ begin
   LogFile.AddLogFile(0,'MaxAge:'+inttostr(ACookie.MaxAge));
   LogFile.AddLogFile(0,'MaCookieName:'+ACookie.CookieName);
   LogFile.AddLogFile(0,'Value:'+ACookie.Value);
+end;
+
+procedure TmmGlobal.Setxsm_refId(const Value: string);
+begin
+  Fxsm_refId := Value;
+end;
+
+procedure TmmGlobal.Setxsm_salesmanid(const Value: string);
+begin
+  Fxsm_salesmanid := Value;
+end;
+
+procedure TmmGlobal.Setxsm_salesmanrefid(const Value: string);
+begin
+  Fxsm_salesmanrefid := Value;
+end;
+
+procedure TmmGlobal.Setxsm_salscentercode(const Value: string);
+begin
+  Fxsm_salscentercode := Value;
+end;
+
+procedure TmmGlobal.Setxsm_salsdeptcode(const Value: string);
+begin
+  Fxsm_salsdeptcode := Value;
+end;
+
+procedure TmmGlobal.Setxsm_userType(const Value: string);
+begin
+  Fxsm_userType := Value;
 end;
 
 end.

@@ -127,7 +127,7 @@ type
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,uDsUtil,uCaFactory,uSyncThread;
+uses uGlobal,ufrmLogo,uFnUtil,uDsUtil,uCaFactory,uSyncThread;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -474,7 +474,7 @@ begin
   n^.tbname := 'PUB_IC_INFO';
   n^.keyFields := 'TENANT_ID;UNION_ID;CLIENT_ID';
   n^.synFlag := 4;
-  n^.KeyFlag := 0;
+  n^.KeyFlag := 1;
   n^.tbtitle := 'IC档案';
   FList.Add(n);
 
@@ -761,7 +761,6 @@ procedure TSyncFactory.SetSynTimeStamp(tbName: string; TimeStamp: int64;SHOP_ID:
 var
   r:integer;
 begin
-  if TimeStamp=0 then TimeStamp := round((now()-40542.0)*86400);
   //如果有截止时间，要写入截止时间不能用当前时间
   if EndTimeStamp>0 then TimeStamp := EndTimeStamp;
   if SHOP_ID='' then SHOP_ID:='#';
@@ -3226,11 +3225,12 @@ end;
 procedure TSyncFactory.SyncThread(Sender: TObject);
 var
   i:integer;
+  sdate:Tdatetime;
 begin
   if Working then Exit;
   Stoped := false;
   Working := true;
-  EndTimeStamp := round((date()-40542)*86400);
+
   InterlockedIncrement(Locked);
   try
     try
@@ -3242,6 +3242,11 @@ begin
           Raise;
         end;
     end;
+    
+  sdate := CaFactory.TimeStamp / 86400.0+40542.0 +2;  //delphi 下地date是重01开始算，所以要加2
+  sdate := fnTime.fnStrtoDate(formatDatetime('YYYYMMDD',sdate));  {下掉时间，转成零晨时间}
+  EndTimeStamp := round(( (sdate-2) -40542)*86400);
+
   SyncComm := CheckRemeteData;
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;

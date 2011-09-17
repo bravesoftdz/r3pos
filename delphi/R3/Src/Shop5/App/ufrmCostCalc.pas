@@ -2165,12 +2165,27 @@ begin
 end;
 
 procedure TfrmCostCalc.ClseDay;
+function LockCheck: boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+Global.SHOP_ID+''' and TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.LocalFactory.Open(rs);
+    result := (rs.Fields[0].AsString<>'');
+  finally
+    rs.Free;
+  end;
+end;
 var
   i:integer;
 begin
   if not (flag in [1,2]) then
      begin
        if (ShopGlobal.NetVersion) and ShopGlobal.offline then Exit;
+       if not (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) and not LockCheck then Exit;
      end;
   Factor.BeginTrans;
   try

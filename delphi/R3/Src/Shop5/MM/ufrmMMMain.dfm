@@ -19161,10 +19161,15 @@ inherited frmMMMain: TfrmMMMain
   object RzTrayIcon1: TRzTrayIcon
     HideOnMinimize = False
     PopupMenu = PopupMenu
+    Icons = ImageList1
     OnMinimizeApp = RzTrayIcon1MinimizeApp
     OnRestoreApp = RzTrayIcon1RestoreApp
     OnLButtonDown = RzTrayIcon1LButtonDown
     Left = 480
+    Top = 272
+  end
+  object ImageList1: TImageList
+    Left = 448
     Top = 272
   end
 end

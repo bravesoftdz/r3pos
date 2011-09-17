@@ -1,11 +1,12 @@
 object frmMMBasic: TfrmMMBasic
-  Left = 434
-  Top = 189
+  Left = 558
+  Top = 176
   BorderStyle = bsNone
+  BorderWidth = 2
   Caption = 'frmMMBasic'
-  ClientHeight = 454
-  ClientWidth = 256
-  Color = clBtnFace
+  ClientHeight = 450
+  ClientWidth = 397
+  Color = 12961922
   Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
@@ -14,12 +15,13 @@ object frmMMBasic: TfrmMMBasic
   KeyPreview = True
   OldCreateOrder = False
   OnKeyPress = FormKeyPress
+  OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel
     Left = 0
     Top = 0
-    Width = 256
+    Width = 397
     Height = 38
     Align = alTop
     BorderOuter = fsNone
@@ -27,7 +29,7 @@ object frmMMBasic: TfrmMMBasic
     object RzBackground3: TRzBackground
       Left = 0
       Top = 0
-      Width = 256
+      Width = 397
       Height = 38
       Active = True
       Align = alClient
@@ -99,7 +101,7 @@ object frmMMBasic: TfrmMMBasic
     object RzFormShape1: TRzFormShape
       Left = 0
       Top = 0
-      Width = 256
+      Width = 397
       Height = 38
     end
     object sysClose: TRzBmpButton
@@ -346,8 +348,8 @@ object frmMMBasic: TfrmMMBasic
   end
   object RzPanel2: TRzPanel
     Left = 0
-    Top = 428
-    Width = 256
+    Top = 424
+    Width = 397
     Height = 26
     Align = alBottom
     BorderOuter = fsNone
@@ -355,7 +357,7 @@ object frmMMBasic: TfrmMMBasic
     object RzBackground2: TRzBackground
       Left = 0
       Top = 0
-      Width = 256
+      Width = 397
       Height = 26
       Active = True
       Align = alClient
@@ -370,8 +372,8 @@ object frmMMBasic: TfrmMMBasic
   object RzPanel3: TRzPanel
     Left = 0
     Top = 38
-    Width = 256
-    Height = 390
+    Width = 397
+    Height = 386
     Align = alClient
     BorderOuter = fsNone
     Color = 16707028

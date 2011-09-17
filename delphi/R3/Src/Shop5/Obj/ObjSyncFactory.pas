@@ -66,6 +66,8 @@ type
   //4 synFlag
   TSyncPubIcInfo=class(TSyncSingleTable)
   public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //读取SelectSQL之前，通常用于处理 SelectSQL
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
   end;
@@ -939,6 +941,12 @@ begin
 end;
 
 { TSyncPubIcInfo }
+
+function TSyncPubIcInfo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  Params.ParamByName('KEY_FLAG').AsInteger := 1;
+  result := inherited BeforeInsertRecord(AGlobal);
+end;
 
 function TSyncPubIcInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
@@ -3053,7 +3061,7 @@ function TSyncCheckOrderList.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  Str := 'select TENANT_ID,SHOP_ID,PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  Str := 'select TENANT_ID,SHOP_ID,PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CHK_DATE is not null and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 

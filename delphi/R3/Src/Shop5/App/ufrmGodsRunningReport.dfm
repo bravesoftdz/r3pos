@@ -1,20 +1,20 @@
 inherited frmGodsRunningReport: TfrmGodsRunningReport
-  Left = 194
-  Top = 100
-  Width = 1292
-  Height = 776
+  Left = 0
+  Top = 0
+  Width = 1280
+  Height = 770
   Caption = #21830#21697#27969#27700#24080#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1284
-    Height = 712
+    Width = 1272
+    Height = 706
     inherited RzPanel2: TRzPanel
-      Width = 1274
-      Height = 702
+      Width = 1262
+      Height = 696
       inherited RzPage: TRzPageControl
-        Width = 1069
-        Height = 696
+        Width = 1057
+        Height = 690
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,14 +22,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
           Color = clCream
           Caption = #21830#21697#27969#27700#24080#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 1067
-            Height = 669
+            Width = 1055
+            Height = 663
             inherited Panel4: TPanel
-              Width = 1057
-              Height = 659
+              Width = 1045
+              Height = 653
               Color = clBtnFace
               inherited w1: TRzPanel
-                Width = 1057
+                Width = 1045
                 Height = 82
                 TabOrder = 1
                 object RzLabel2: TRzLabel
@@ -76,7 +76,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Caption = #26465' '#24418' '#30721
                 end
                 object Label8: TLabel
-                  Left = 920
+                  Left = 908
                   Top = 58
                   Width = 48
                   Height = 12
@@ -294,7 +294,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   MultiSelect = False
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 970
+                  Left = 958
                   Top = 54
                   Width = 80
                   Height = 20
@@ -310,13 +310,13 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 1057
-                Height = 577
+                Width = 1045
+                Height = 571
                 Color = clBtnFace
                 TabOrder = 0
                 inherited DBGridEh1: TDBGridEh
-                  Width = 1053
-                  Height = 573
+                  Width = 1041
+                  Height = 567
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -435,7 +435,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       FieldName = 'BATCH_NO'
                       Footers = <>
                       Title.Caption = #25209#21495
-                      Width = 104
+                      Width = 102
                     end
                     item
                       EditButtons = <>
@@ -472,16 +472,16 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 1072
-        Height = 696
+        Left = 1060
+        Height = 690
         inherited Panel2: TPanel
-          Height = 653
+          Height = 647
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 538
+            Height = 532
             inherited rzShowColumns: TRzCheckList
-              Height = 534
+              Height = 528
             end
           end
         end
@@ -489,15 +489,15 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1284
+    Width = 1272
     inherited Image1: TImage
-      Width = 914
+      Width = 902
     end
     inherited Image3: TImage
-      Width = 914
+      Width = 902
     end
     inherited Image14: TImage
-      Left = 1264
+      Left = 1252
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

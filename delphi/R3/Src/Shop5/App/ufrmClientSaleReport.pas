@@ -238,7 +238,7 @@ type
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
-    property  GodsSortIdx: string read GetGodsSortIdx; //统计类型    
+    property GodsSortIdx: string read GetGodsSortIdx; //统计类型    
     property DataRight: string read GetDataRight; //返回查看数据权限
   end;
 
@@ -1400,7 +1400,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',D.CLIENT_ID '+
+    ',isnull(D.CLIENT_ID,''#'')as CLIENT_ID'+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
@@ -1417,7 +1417,7 @@ begin
     ' inner join '+GoodTab+' C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
     ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
     ' '+strWhere + ' '+
-    'group by A.TENANT_ID,D.CLIENT_ID';
+    'group by A.TENANT_ID,isnull(D.CLIENT_ID,''#'')';
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+
@@ -1535,7 +1535,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',D.REGION_ID '+
+    ',isnull(D.REGION_ID,''#'')as REGION_ID '+
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+
     ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_MNY)+sum(SALE_TAX) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRC '+
     ',sum(SALE_MNY)+sum(SALE_TAX) as SALE_TTL '+ //价税合计
@@ -1552,7 +1552,7 @@ begin
     ' inner join '+GoodTab+' C on  A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
     ' left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
     ' '+ strWhere + ' '+
-    'group by A.TENANT_ID,D.REGION_ID';
+    'group by A.TENANT_ID,isnull(D.REGION_ID,''#'')';
 
   Result :=  ParseSQL(Factor.iDbType,
     'select j.* '+

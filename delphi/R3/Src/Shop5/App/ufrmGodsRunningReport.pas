@@ -163,6 +163,7 @@ begin
 
   //统计单位
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
+  UnitCalc:='case when '+UnitCalc+'=0 then 1.0 else cast('+UnitCalc+' as decimal(18,3)) end ';
   
   strSql :=
     ' select A.TENANT_ID'+
@@ -183,13 +184,15 @@ begin
      ',A.PROPERTY_02'+
      ',BATCH_NO'+
      ',LOCUS_NO'+
-     ',STOCK_AMT as ORG_AMT'+
+     ',STOCK_AMT as ORG_AMT'+                                                                     ///'+UnitCalc+'
      ',STOCK_AMT as BAL_AMT'+
-     ',(case when ORDER_TYPE in (11,13) then STOCK_AMT*1.0/'+UnitCalc+' when ORDER_TYPE=12 then DBIN_AMT*1.0/'+UnitCalc+' else 0 end) as IN_AMT'+
-     ',(case when ORDER_TYPE in (21,23,24) then SALE_AMT*1.0/'+UnitCalc+' when ORDER_TYPE=22 then DBOUT_AMT*1.0/'+UnitCalc+' when ORDER_TYPE>30 then -(CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)/'+UnitCalc+' else 0 end) as OUT_AMT '+
-     ',(case when ORDER_TYPE=11 then STOCK_RTL when ORDER_TYPE=12 then DBIN_RTL when ORDER_TYPE=13 then STKRT_MNY '+
+     ',cast(case when ORDER_TYPE in (11,13) then STOCK_AMT*1.0 when ORDER_TYPE=12 then DBIN_AMT*1.0 else 0 end as decimal(18,3))/'+UnitCalc+' as IN_AMT'+
+     ',cast(case when ORDER_TYPE in (21,23,24) then SALE_AMT*1.0 when ORDER_TYPE=22 then DBOUT_AMT*1.0 '+
+               ' when ORDER_TYPE in (31,32) then -(CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT) else 0 end as decimal(18,3))/'+UnitCalc+' as OUT_AMT '+
+     ',cast(case when ORDER_TYPE=11 then STOCK_RTL when ORDER_TYPE=12 then DBIN_RTL when ORDER_TYPE=13 then STKRT_MNY '+
            ' when ORDER_TYPE in (21,24) then SALE_RTL when ORDER_TYPE=22 then DBOUT_CST  when ORDER_TYPE=23 then SALRT_MNY '+
-           ' when ORDER_TYPE>30 then -(CHANGE1_CST+CHANGE2_CST+CHANGE3_CST+CHANGE4_CST+CHANGE5_CST) else 0 end) as AMONEY '+
+           ' when ORDER_TYPE > 30 then -(CHANGE1_CST+CHANGE2_CST+CHANGE3_CST+CHANGE4_CST+CHANGE5_CST) '+
+           ' else 0 end as decimal(18,3)) as AMONEY '+
      ' from VIW_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSINFO C '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
      ' '+ strWhere + '  ';
@@ -391,7 +394,7 @@ function TfrmGodsRunningReport.GetGoodStorageORG: Boolean;
 var
   rs:TZQuery;
   UnitCalc: string; 
-  Str,GodsID,ReckDate,MaxReckDate,Shop_Cnd: string;
+  Str,GodsID,MaxReckDate,BegDate,Shop_Cnd: string;
 begin
   result:=False;
   FReckAmt:=0;
@@ -402,7 +405,7 @@ begin
 
   MaxReckDate:='';
   GodsID:=trim(fndP1_GODS_ID.AsString);
-  ReckDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1);
+  BegDate:=FormatDatetime('YYYYMMDD',P1_D1.Date-1); //查询最大日期
   UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'D');
   if trim(fndP1_SHOP_ID.AsString)<>'' then
     Shop_Cnd:=' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
@@ -417,49 +420,59 @@ begin
     if MaxReckDate='' then //未结账全部走视图:
     begin
       Str:=
-        'select sum((case when ORDER_TYPE in (11,13) then STOCK_AMT '+
+        'select sum(cast(case when ORDER_TYPE in (11,13) then STOCK_AMT '+
                         ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
                         ' when ORDER_TYPE=12 then DBIN_AMT '+
                         ' when ORDER_TYPE=22 then -DBOUT_AMT '+
-                        ' else (CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*1.0 end)*1.0/'+UnitCalc+')as BAL_AMT,'+
-               ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
+                        ' else (CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)*1.0 end as decimal(18,3))*1.0/'+UnitCalc+')as BAL_AMT,'+
+               ' sum(cast(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end as decimal(18,3))) as BAL_RTL '+
          'from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
          ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' '+
-         ' and A.CREA_DATE<='+ReckDate+' and A.GODS_ID='''+GodsID+''' ';
+         ' and A.CREA_DATE<='+BegDate+' and A.GODS_ID='''+GodsID+''' ';
     end else
-    if MaxReckDate>ReckDate then  //已结账，全部走台账表
     begin
-      Str:='select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
+      if MaxReckDate>=BegDate then  //已结账，全部走台账表
+      begin
+        Str:='select A.BAL_AMT*1.0/'+UnitCalc+' as BAL_AMT,A.BAL_RTL as BAL_RTL from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
+             ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+' and A.GODS_ID='''+GodsID+''' '+
+             ' and A.CREA_DATE='+BegDate+' '+Shop_Cnd;
+      end else //走两部分联合[union]
+      begin
+        Str:=
+           'select sum(BAL_AMT) as BAL_AMT,sum(BAL_RTL) as BAL_RTL from '+
+           '(select (A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,A.BAL_RTL as BAL_RTL '+
            ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
-           ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.CREA_DATE='+ReckDate+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-           ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and A.CREA_DATE='+ReckDate+' ';
-    end else //走两部分联合[union]
-    begin
-      Str:=
-         'select sum(BAL_AMT) as BAL_AMT,sum(BAL_RTL) as BAL_RTL from '+
-         '(select sum(A.BAL_AMT*1.0/'+UnitCalc+') as BAL_AMT,sum(A.BAL_RTL) as BAL_RTL '+
-         ' from RCK_GOODS_DAYS A,VIW_GOODSINFO D '+
-         ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.CREA_DATE='+ReckDate+' and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
-         ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and A.CREA_DATE='+MaxReckDate+' '+
-         '  union all  '+
-         ' select sum((case when ORDER_TYPE in (11,13) then STOCK_AMT '+
-                          ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
-                          ' when ORDER_TYPE=12 then DBIN_AMT '+
-                          ' when ORDER_TYPE=22 then -DBOUT_AMT '+
-                          ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)*1.0/'+UnitCalc+')as BAL_AMT,'+
-               ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
-         ' from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
-         ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' and '+
-         '  A.CREA_DATE<='+ReckDate+' and A.GODS_ID='''+GodsID+''')tmp';
+           ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
+           ' '+Shop_Cnd+' and A.GODS_ID='''+GodsID+''' and A.CREA_DATE='+MaxReckDate+' '+
+           '  union all  '+
+           ' select sum((case when ORDER_TYPE in (11,13) then STOCK_AMT '+
+                            ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
+                            ' when ORDER_TYPE=12 then DBIN_AMT '+
+                            ' when ORDER_TYPE=22 then -DBOUT_AMT '+
+                            ' else CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)*1.0/'+UnitCalc+')as BAL_AMT,'+
+                 ' sum(case when ORDER_TYPE in (21,22,23,24) then -CALC_MONEY else CALC_MONEY end) as BAL_RTL '+
+           ' from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
+           ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+Shop_Cnd+' and '+
+           ' A.CREA_DATE>'+MaxReckDate+' and A.CREA_DATE<='+BegDate+' and A.GODS_ID='''+GodsID+''')tmp';
+      end;
     end;
     rs.Close;
     rs.SQL.Text:=ParseSQL(Factor.iDbType, Str);
     Factor.Open(rs);
-    if (Rs.Active) and (Rs.RecordCount=1) then
+    if Rs.Active then
     begin
-      FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
-      FReckMny:=rs.fieldbyName('BAL_RTL').AsFloat;
-      result:=true;
+      if Rs.RecordCount=1 then
+      begin
+        FReckAmt:=rs.fieldbyName('BAL_AMT').AsFloat;
+        FReckMny:=rs.fieldbyName('BAL_RTL').AsFloat;
+        result:=true;
+      end else
+      if Rs.RecordCount=0 then
+      begin
+        FReckAmt:=0;
+        FReckMny:=0;
+        result:=true;
+      end;
     end;
   finally
     rs.Free;

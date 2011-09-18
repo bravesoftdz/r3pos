@@ -1072,4 +1072,12 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
   end
+  object CA_MODULE: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 136
+    Top = 576
+  end
 end

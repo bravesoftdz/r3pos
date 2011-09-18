@@ -69,6 +69,8 @@ type
     procedure Calc1;
     //月加权移动平均成本核算
     procedure Calc2;
+    //更新库存表成本价
+    procedure UpdateStroage;
     //生成客户商品账
     procedure CalcSpz;
     //生成月账
@@ -499,6 +501,11 @@ begin
       1:Calc1;
       2:Calc2;
       end;
+
+      Label11.Caption := '正在更新库存成本...';
+      Label11.Update;
+      UpdateStroage;
+
       Label11.Caption := '正在计算客户商品台账...';
       Label11.Update;
       CalcSpz;
@@ -2205,82 +2212,32 @@ begin
   end;
 end;
 
-{function TfrmCostCalc.CheckReckMonthDay: Boolean;
-var
-  rs:TZQuery;
-  e: TDate;            //当前月份结账日
-  vbDate: TDate;       //最近一次结账日
-  NextRckDay: TDate;   //下一次结账日
-  vReck_flag: integer; //结帐类型:[月底结账、指定日期结账]
-  vReck_day: integer;  //vReck_flag=2时有效:指定月结日
+procedure TfrmCostCalc.UpdateStroage;
 begin
-  result:=False;
-  vReck_flag := StrtoIntDef(ShopGlobal.GetParameter('RECK_OPTION'),1);  //结帐类型[月底结帐|指定日期结帐]
-  vReck_day := StrtoIntDef(ShopGlobal.GetParameter('RECK_DAY'),28); //指定结账日；
-
-  rs:= TZQuery.Create(nil);
+  Factor.BeginTrans;
   try
-    rs.Close;
-    rs.SQL.Text := 'select max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
-    Factor.Open(rs);
-    if rs.Fields[0].asString<>'' then  //已有月结帐
-    begin
-      vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString);
-      //2011.08.31 PM 修改:计算下一月结账日:
-      if vReck_flag=1 then
-        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,2))+'01')-1
-      else
-        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+formatfloat('00',vReck_day));
-    end else
-    begin  //从未月结帐
-      rs.Close;
-      rs.SQL.Text:='select value from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE=''USING_DATE'' ';
-      Factor.Open(rs);
-      if rs.Fields[0].asString<>'' then
-        vbDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
-      else
-        vbDate := Date()-1;
-        
-      //2011.08.31 PM 修改:计算下一月结账日:
-      if vReck_flag=1 then
-      begin
-        NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+'01')-1
-      end else
-      begin
-        //启用的日期 大于 本月结帐日
-        if vbDate < fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day)) then
-          NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',vbDate)+formatfloat('00',vReck_day))  //启用本月结账
-        else
-          NextRckDay:=fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(vbDate,1))+formatfloat('00',vReck_day)); //启用后下月结账
-      end;
-    end;
-
-    //月结时检测结账月份
-    if vReck_flag=1 then //月底结帐
-    begin
-      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),1))+'01')-1; //本月最后一天为结账日
-      if (e>date()) and (FormatDatetime('YYYYMM',Date())=FormatDatetime('YYYYMM',e)) then //在同一月还没到结账日
-        eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+'01')-1
-      else
-        eDate :=e;
-    end else  //指定日结帐
-    begin
-      e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',date())+formatfloat('00',vReck_day)); //本月的指定日为结帐日
-      if (e>date()) and (FormatDatetime('YYYYMM',Date())=FormatDatetime('YYYYMM',e)) then //还没到结账日
-        eDate := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(date(),-1))+formatfloat('00',vReck_day))
-      else
-        eDate := e;
-    end;
-
-    if (eDate>vbDate) and (Date()>NextRckDay+5) then
-    begin
-      result:=true;
-    end;
-  finally
-    rs.free;
+    Factor.ExecSQL(
+       ParseSQL(Factor.iDbType,
+       'update STO_STORAGE set COST_PRICE=('+
+       'select case when sum(BAL_AMT)<>0 then round(sum(BAL_CST)*1.0/sum(BAL_AMT),6) else 0 end from RCK_GOODS_DAYS '+
+       'where TENANT_ID=STO_STORAGE.TENANT_ID and GODS_ID=STO_STORAGE.GODS_ID and BATCH_NO=STO_STORAGE.BATCH_NO and CREA_DATE='+formatDatetime('YYYYMMDD',cDate+pt)+' '+
+       ') where TENANT_ID='+inttostr(Global.TENANT_ID)
+       )
+    );
+    
+    Factor.ExecSQL(
+       ParseSQL(Factor.iDbType,
+       'update STO_STORAGE set AMONEY=round(AMOUNT*isnull(COST_PRICE,0),2),COST_PRICE=isnull(COST_PRICE,0) '+
+       'where TENANT_ID='+inttostr(Global.TENANT_ID)
+       )
+    );
+    
+    Factor.CommitTrans;
+  except
+    Factor.RollbackTrans;                      
+    raise;
   end;
 end;
-}
 
 end.
 

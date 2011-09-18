@@ -236,7 +236,6 @@ type
     actfrmStockTotalReport: TAction;
     RzTrayIcon1: TRzTrayIcon;
     actfrmSaleMonthTotalReport: TAction;
-    CA_MODULE: TZQuery;
     RzPanel1: TRzPanel;
     Panel1: TPanel;
     Panel4: TPanel;
@@ -289,6 +288,7 @@ type
     Panel25: TPanel;
     actfrmN26Net: TAction;
     actfrmGoodsMonth: TAction;
+    CA_MODULE: TZQuery;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

@@ -53,6 +53,7 @@ type
     PUB_GOODS_INDEXS: TZQuery;
     CA_RELATIONS: TZQuery;
     PUB_TREND_INFO: TZQuery;
+    CA_MODULE: TZQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     Fokline: boolean;
@@ -265,7 +266,13 @@ begin
   if userid='' then uid := Global.UserID else uid := userid;
   if (uid = 'admin') or (uid='system') or (roles='xsm') then
   begin
-    result := true;
+    if not CA_MODULE.Active then
+       begin
+         CA_MODULE.Close;
+         CA_MODULE.SQL.Text := 'select MODU_ID from CA_MODULE where PROD_ID='''+ProductId+'''';
+         Factor.Open(CA_MODULE);
+       end;
+    result := CA_MODULE.Locate('MODU_ID',mid,[]);
     Exit;
   end;
   if uid=Global.UserID then

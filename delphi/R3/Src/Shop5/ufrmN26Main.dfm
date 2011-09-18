@@ -5914,13 +5914,6 @@ inherited frmN26Main: TfrmN26Main
     Left = 296
     Top = 216
   end
-  object CA_MODULE: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 232
-    Top = 224
-  end
   object ImageList4: TImageList
     Height = 84
     Width = 24
@@ -6972,5 +6965,12 @@ inherited frmN26Main: TfrmN26Main
       000000000000003D7FF50000000000000000003D7FF50000000000000000003D
       7FF50000000000000000003D7FF5000000000000000000000000000000000000
       00000000000000000000000000000000000000000000}
+  end
+  object CA_MODULE: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 232
+    Top = 224
   end
 end

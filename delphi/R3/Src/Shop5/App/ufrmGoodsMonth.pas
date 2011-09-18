@@ -64,6 +64,12 @@ type
   private
     FIsModify: Boolean;
     Locked: Boolean;
+    //默认发票类型
+    DefInvFlag:integer;
+    //普通税率
+    InRate2:real;
+    //增值税率
+    InRate3:real;
     { Private declarations }
     procedure LoadTree(Tree:TRzTreeView);
     procedure AddGoodTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
@@ -176,22 +182,17 @@ begin
   else
     StrMonth := ' and MONTH='+FormatDateTime('YYYYMM',Date);
 
-  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;   //TransUnit(0,'C','UNIT_ID')+ C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,
+  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;  
 
   StrSql :=
-    'select distinct A.*,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,(case when C.UNIT_ID is null then C.CALC_UNITS else C.UNIT_ID end) as UNIT_ID from ('+
+    'select distinct A.*,C.GODS_CODE,C.GODS_NAME,C.BARCODE,C.CALC_UNITS as UNIT_ID from ('+
     'select MONTH,TENANT_ID,GODS_ID,BATCH_NO,sum(isnull(BAL_AMT,0)) as BAL_AMT,sum(isnull(BAL_CST,0)) as BAL_CST,'+
-    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(BAL_CST,0))*1.00/sum(isnull(BAL_AMT,0)) end) as BAL_PRICE,sum(isnull(ADJ_CST,0)) as ADJ_CST,'+
-    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0))*1.00/sum(isnull(BAL_AMT,0)) end) as ADJ_PRICE,'+
+    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(BAL_CST,0))*1.0/sum(isnull(BAL_AMT,0)) end) as BAL_PRICE,sum(isnull(ADJ_CST,0)) as ADJ_CST,'+
+    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0))*1.0/sum(isnull(BAL_AMT,0)) end) as ADJ_PRICE,'+
     'sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0)) as ADJ_MNY from RCK_GOODS_MONTH where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrMonth+' group by MONTH,TENANT_ID,GODS_ID,BATCH_NO ) '+
-    ' A inner join VIW_GOODSPRICE_SORTEXT C '+
-    ' on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' ';
-  Result :=
-  'select ja.*,isnull(a.BARCODE,ja.CALC_BARCODE) as BARCODE  from ('+StrSql+') ja '+
-  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+
-  ' and BARCODE_TYPE in (''0'',''1'',''2'')) a on ja.TENANT_ID=a.TENANT_ID and ja.GODS_ID=a.GODS_ID and ja.UNIT_ID=a.UNIT_ID '+
-  'order by ja.GODS_CODE ';
-  
+    ' A inner join VIW_GOODSINFO_SORTEXT C '+
+    ' on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' order by C.GODS_CODE';
+
 end;
 
 procedure TfrmGoodsMonth.LoadTree(Tree: TRzTreeView);
@@ -255,6 +256,10 @@ end;
 procedure TfrmGoodsMonth.FormCreate(Sender: TObject);
 begin
   inherited;
+  InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
+  InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
+  DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
+
   edtMonth.asString := FormatDateTime('YYYYMM',Date);
   RzPage.ActivePageIndex := 0;
   AddGoodTypeItems(edtGoods_Type);
@@ -377,7 +382,10 @@ end;
 procedure TfrmGoodsMonth.AdjpriceToAdjCst(Aprice: Real);
 begin
   if not (CdsGoodsMonth.State in [dsEdit,dsInsert]) then CdsGoodsMonth.Edit;
-  CdsGoodsMonth.FieldByName('ADJ_PRICE').AsFloat := Aprice;
+  if DefInvFlag=3 then
+     CdsGoodsMonth.FieldByName('ADJ_PRICE').AsFloat := Aprice - roundTo(Aprice / (1+InRate3) * InRate3,-6)
+  else
+     CdsGoodsMonth.FieldByName('ADJ_PRICE').AsFloat := Aprice;
   CdsGoodsMonth.FieldByName('ADJ_MNY').AsFloat := CdsGoodsMonth.FieldByName('BAL_AMT').AsFloat * Aprice;
   CdsGoodsMonth.FieldByName('ADJ_CST').AsFloat := (CdsGoodsMonth.FieldByName('BAL_AMT').AsFloat * Aprice) - CdsGoodsMonth.FieldByName('BAL_CST').AsFloat;
   CdsGoodsMonth.Post;
@@ -412,6 +420,7 @@ end;
 procedure TfrmGoodsMonth.N1Click(Sender: TObject);
 begin
   inherited;
+  if MessageBox(Handle,'是否把当前成本单价都调整成参考进价？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   BatchWrite;
 end;
 
@@ -429,13 +438,12 @@ begin
 end;
 
 procedure TfrmGoodsMonth.Save;
+var
+  Params:TftParamList;
 begin
   if not IsModify then Exit;
-  frmPrgBar.Show;
-  frmPrgBar.Update;
-  frmPrgBar.WaitHint := '开始提交数据...';
-  frmPrgBar.Precent := 0;
-
+  Params := TftParamList.Create(nil);
+  if CdsGoodsMonth.State in [dsEdit,dsInsert] then CdsGoodsMonth.Post;
   CdsGoodsMonth.DisableControls;
   try
     try
@@ -444,8 +452,8 @@ begin
       Raise Exception.Create('数据提交失败!');
     end;
   finally
+    Params.Free;
     CdsGoodsMonth.EnableControls;
-    frmPrgBar.Close;
   end;
 end;
 
@@ -521,7 +529,6 @@ end;
 procedure TfrmGoodsMonth.PrintView;
 begin
   PrintDBGridEh1.PageHeader.CenterText.Text := '月成本调整';
-
   PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
   dbGoodsMonth.DataSource.DataSet.Filtered := False;

@@ -65,8 +65,10 @@ begin
      if not Temp.IsEmpty then Raise Exception.Create('今天已经盘点了，不能重复盘点...');
        
      //判断今天否有结账:             
+     //2011.09.15修改成按月结账表：
+     //Temp.SQL.Text:='select max(CREA_DATE) as PRINT_DATE from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';  //'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
      Temp.Close;
-     Temp.SQL.Text:='select max(CREA_DATE) as PRINT_DATE from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';  //'select max(PRINT_DATE) as PRINT_DATE from STO_PRINTORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';     
+     Temp.SQL.Text:='select max(END_DATE) as PRINT_DATE from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
      if Temp.Params.FindParam('TENANT_ID')<>nil then Temp.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
      if Temp.Params.FindParam('SHOP_ID')<>nil then Temp.ParamByName('SHOP_ID').AsString:=SHOP_ID;
      Factor.Open(Temp);

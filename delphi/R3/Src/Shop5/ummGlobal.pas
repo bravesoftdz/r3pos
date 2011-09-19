@@ -32,6 +32,9 @@ type
     Fxsm_salesmanid: string;
     Fxsm_salesmanrefid: string;
     Fxsm_userType: string;
+    Fxsm_encodingData: string;
+    Fxsm_planText: string;
+    Fxsm_nickname: string;
     procedure Setxsm_challenge(const Value: string);
     procedure Setxsm_password(const Value: string);
     procedure Setxsm_username(const Value: string);
@@ -49,6 +52,9 @@ type
     procedure Setxsm_salscentercode(const Value: string);
     procedure Setxsm_salsdeptcode(const Value: string);
     procedure Setxsm_userType(const Value: string);
+    procedure Setxsm_encodingData(const Value: string);
+    procedure Setxsm_planText(const Value: string);
+    procedure Setxsm_nickname(const Value: string);
     { Private declarations }
   protected
     function CreateXML(xml:string):IXMLDomDocument;
@@ -71,6 +77,8 @@ type
     function getSignature:boolean;
     function getConfig:boolean;
     procedure InitLoad;
+    //连接到通讯服务器
+    procedure ConnectToMsc;
 
     //读我的好友
     function getAllfriends:boolean;
@@ -86,9 +94,12 @@ type
     function xsmLogin:boolean;
 
     property xsm_username:string read Fxsm_username write Setxsm_username;
+    property xsm_nickname:string read Fxsm_nickname write Setxsm_nickname;
     property xsm_password:string read Fxsm_password write Setxsm_password;
     property xsm_challenge:string read Fxsm_challenge write Setxsm_challenge;
     property xsm_signature:string read Fxsm_signature write Setxsm_signature;
+    property xsm_planText:string read Fxsm_planText write Setxsm_planText;
+    property xsm_encodingData:string read Fxsm_encodingData write Setxsm_encodingData;
     property xsm_comId:string read Fxsm_comId write Setxsm_comId;
     property xsm_parentComId:string read Fxsm_parentComId write Setxsm_parentComId;
 
@@ -276,6 +287,10 @@ begin
     xsm_comId := Root.selectSingleNode('comId').text;
     F.WriteString('xsm','code2',xsm_comId);
     xsm_userType := Root.selectSingleNode('userType').text;
+
+    xsm_nickname := Root.selectSingleNode('nickName').text;
+    xsm_planText := Root.selectSingleNode('planText').text;
+    xsm_encodingData := Root.selectSingleNode('signatureValue').text;
   finally
     try
       F.Free;
@@ -708,6 +723,63 @@ end;
 procedure TmmGlobal.Setxsm_userType(const Value: string);
 begin
   Fxsm_userType := Value;
+end;
+
+procedure TmmGlobal.ConnectToMsc;
+var
+  mmConnectFava:TmmConnectFava;
+  mmPlayerFava:TmmPlayerFava;
+begin
+  if not mmFactory.mmcConnectTo(chat_addr,chat_port) then Exit;
+  mmConnectFava := TmmConnectFava.Create;
+  mmPlayerFava := TmmPlayerFava.Create;
+  try
+    mmConnectFava.messagetype := 1000;
+    mmConnectFava.routetype := 1;
+    mmConnectFava.planText := xsm_planText;
+    mmConnectFava.encodingData := xsm_encodingData;
+    mmConnectFava.playerId := xsm_username;
+    mmConnectFava.status := 'no';
+    if not mmFactory.mmcConnectFava(mmConnectFava) then Exit;
+    
+    mmPlayerFava.messagetype := 1001;
+    mmPlayerFava.routetype := 1;
+    mmPlayerFava.playerId := xsm_username;
+    mmPlayerFava.nickName := xsm_nickname;
+    mmPlayerFava.userType := xsm_userType;
+    mmPlayerFava.comId := xsm_comId;
+    mmPlayerFava.provinceId := xsm_parentComId;
+    mmPlayerFava.refId := xsm_refId;
+    mmPlayerFava.saledptId := xsm_salsdeptcode;
+    mmPlayerFava.saleManId := xsm_salesmanid;
+    mmPlayerFava.saleCenterId := xsm_salscentercode;
+    mmPlayerFava.serviceId := '';
+    mmPlayerFava.sceneId := 'GWGC';
+    mmPlayerFava.diaPlayerNum := 0;
+    mmPlayerFava.playerStatus := 0;
+    mmPlayerFava.playerSkill := 0;
+    mmPlayerFava.clientType := 1;
+    
+    if not mmFactory.mmcPlayerFava(mmPlayerFava) then Exit;
+  finally
+    mmConnectFava.Free;
+    mmPlayerFava.Free;
+  end;
+end;
+
+procedure TmmGlobal.Setxsm_encodingData(const Value: string);
+begin
+  Fxsm_encodingData := Value;
+end;
+
+procedure TmmGlobal.Setxsm_planText(const Value: string);
+begin
+  Fxsm_planText := Value;
+end;
+
+procedure TmmGlobal.Setxsm_nickname(const Value: string);
+begin
+  Fxsm_nickname := Value;
 end;
 
 end.

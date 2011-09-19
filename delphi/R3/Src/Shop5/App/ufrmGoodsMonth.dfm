@@ -120,6 +120,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                       DecimalNumber = 2
                       DigitalNumber = 12
                       OnDrawColumnCell = dbGoodsMonthDrawColumnCell
+                      OnGetFooterParams = dbGoodsMonthGetFooterParams
                       Columns = <
                         item
                           Checkboxes = True
@@ -154,19 +155,19 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                         end
                         item
                           EditButtons = <>
-                          FieldName = 'BARCODE'
-                          Footers = <>
-                          Title.Caption = #26465#30721
-                          Width = 100
-                        end
-                        item
-                          EditButtons = <>
                           FieldName = 'GODS_NAME'
                           Footer.ValueType = fvtCount
                           Footers = <>
                           ReadOnly = True
                           Title.Caption = #21830#21697#21517#31216
                           Width = 150
+                        end
+                        item
+                          EditButtons = <>
+                          FieldName = 'BARCODE'
+                          Footers = <>
+                          Title.Caption = #26465#30721
+                          Width = 100
                         end
                         item
                           EditButtons = <>
@@ -216,7 +217,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           EditButtons = <>
                           FieldName = 'ADJ_PRICE'
                           Footers = <>
-                          Title.Caption = #35843#25972#21518'|'#21333#20215
+                          Title.Caption = #35843#25972'|'#21333#20215
                           OnUpdateData = dbGoodsMonthColumns9UpdateData
                         end
                         item
@@ -226,7 +227,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.DisplayFormat = '#0.00'
                           Footer.ValueType = fvtSum
                           Footers = <>
-                          Title.Caption = #35843#25972#21518'|'#25104#26412
+                          Title.Caption = #35843#25972'|'#25104#26412
                           OnUpdateData = dbGoodsMonthColumns10UpdateData
                         end
                         item
@@ -237,7 +238,7 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                           Footer.ValueType = fvtSum
                           Footers = <>
                           ReadOnly = True
-                          Title.Caption = #35843#25972#21518'|'#24046#39069
+                          Title.Caption = #35843#25972'|'#24046#39069
                         end>
                     end
                   end

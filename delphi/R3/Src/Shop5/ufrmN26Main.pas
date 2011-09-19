@@ -289,6 +289,7 @@ type
     actfrmN26Net: TAction;
     actfrmGoodsMonth: TAction;
     CA_MODULE: TZQuery;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

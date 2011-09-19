@@ -140,20 +140,30 @@ end;
 
 procedure TfrmMMMain.Init;
 begin
+  frmLogo.Show;
   try
    try
-     if mmGlobal.Logined then mmGlobal.getAllfriends;
+     frmLogo.ShowTitle := '连接聊天服务器';
+     if mmGlobal.Logined then mmGlobal.ConnectToMsc;
    except
      on E:Exception do
         MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
-   frmMMList.LoadFriends;
+
+   try
+     frmLogo.ShowTitle := '读取我的好友信息';
+     if mmGlobal.Logined then mmGlobal.getAllfriends;
+     frmMMList.LoadFriends;
+   except
+     on E:Exception do
+        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+   end;
+
    if CaFactory.Audited and not mmGlobal.ONLVersion then
       begin
         if not Global.RemoteFactory.Connected and not mmGlobal.NetVersion then
            begin
-             frmLogo.Label1.Caption := '正在连接远程服务...';
-             frmLogo.Label1.Update;
+             frmLogo.ShowTitle := '正在连接远程服务...';
              Global.MoveToRemate;
              try
                try
@@ -180,6 +190,7 @@ begin
                 begin
                   if Global.RemoteFactory.ConnString<>Global.LocalFactory.ConnString then //调试模式时，不同步
                   begin
+                    frmLogo.ShowTitle := '同步基本信息...';
                     SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
                     SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
                     SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
@@ -196,6 +207,7 @@ begin
 
   finally
     ShowMMList;
+    frmLogo.Close;
   end;
 end;
 

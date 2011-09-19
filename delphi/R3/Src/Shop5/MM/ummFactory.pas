@@ -201,6 +201,8 @@ type
     procedure AddEvent(lpData:TmmMsgFava);
     //连接服务
     function mmcConnectTo(Addr:string;Port:integer):boolean;
+    function mmcClose:boolean;
+    function mmcConnected:boolean;
     //请求认证
     function mmcConnectFava(ConnectFava:TmmConnectFava):boolean;
     //注册身份
@@ -210,19 +212,24 @@ type
 function mmcSetDataCallBack(func:Pointer):integer;stdcall;
 function mmcSetEventCallBack(func:Pointer):integer;stdcall;
 function mmcSend(flag:integer;lpData:Pointer):integer;stdcall;
+function mmcSendSync(flag:integer;lpData:Pointer):integer;stdcall;
 function mmcConnect(ipAddr:pchar;nPort:integer):integer;stdcall;
 function mmcGetSockStatus():integer;stdcall;
 function mmcSetSockClose():integer;stdcall;
+function mmcGetDescriptionFromErrorID(errCode:integer):pchar;stdcall;
 
 var mmFactory:TmmFactory;
 implementation
+
 const dllname='mmc.dll';
 function mmcSetDataCallBack;external dllname name 'SetDataCallBack';
 function mmcSetEventCallBack;external dllname name 'SetEventCallBack';
 function mmcSend;external dllname name 'Send';
+function mmcSendSync;external dllname name 'SendSync';
 function mmcConnect;external dllname name 'Connect';
 function mmcGetSockStatus;external dllname name 'GetSockStatus';
 function mmcSetSockClose;external dllname name 'SetSockClose';
+function mmcGetDescriptionFromErrorID;external dllname name 'GetDescriptionFromErrorID';
 
 function mmcRecv(flag:integer;lpData:Pointer):integer;stdcall;
 var
@@ -329,16 +336,12 @@ begin
 end;
 
 function TmmFactory.mmcConnectTo(Addr:string;Port:integer): boolean;
-var
-  ConnectFava:TConnectFava;
-  s1,s2,s3,s4:string;
+var errCode:integer;
 begin
-  s1 := 'test';
-  ConnectFava.planText := Pchar(s1);
-  ConnectFava.encodingData := Pchar(s2);
-  ConnectFava.status := Pchar(s3);
-  ConnectFava.playerId := Pchar(s4);
-  mmcSend(1,@ConnectFava);
+  errCode := mmcConnect(Pchar(Addr),Port);
+  result := (errCode=0);
+  if not result then
+     Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
 end;
 
 constructor TmmFactory.Create;
@@ -391,13 +394,41 @@ begin
 end;
 
 function TmmFactory.mmcConnectFava(ConnectFava: TmmConnectFava): boolean;
+var
+  _ConnectFava:PConnectFava;
+  errCode:integer;
 begin
-
+  _ConnectFava := ConnectFava.Encode;
+  errCode := mmcSendSync(1000,_ConnectFava);
+  result := (errCode=0);
+  if not result then
+     Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
 end;
 
 function TmmFactory.mmcPlayerFava(PlayerFava: TmmPlayerFava): boolean;
+var
+  _PlayerFava:PPlayerFava;
+  errCode:integer;
 begin
+  _PlayerFava := PlayerFava.Encode;
+  errCode := mmcSendSync(1001,_PlayerFava);
+  result := (errCode=0);
+  if not result then
+     Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
+end;
 
+function TmmFactory.mmcClose: boolean;
+var errCode:integer;
+begin
+  errCode := mmcSetSockClose();
+  result := (errCode=0);
+  if not result then
+     Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
+end;
+
+function TmmFactory.mmcConnected: boolean;
+begin
+  result := (mmcGetSockStatus=0);
 end;
 
 { TmmConnectFava }

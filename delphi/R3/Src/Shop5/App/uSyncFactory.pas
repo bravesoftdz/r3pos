@@ -2,7 +2,7 @@ unit uSyncFactory;
 
 interface
 uses
-  Windows, Messages, Forms, SysUtils, Classes,ZDataSet,ZBase,ObjCommon, ZLogFile;
+  Windows, Messages, Forms, SysUtils, Classes,ZDataSet,ZdbFactory,ZBase,ObjCommon, ZLogFile;
 type
   PSynTableInfo=^TSynTableInfo;
   TSynTableInfo=record
@@ -31,6 +31,7 @@ type
     procedure SetStoped(const Value: boolean);
     procedure SetWorking(const Value: boolean);
   protected
+    rDate,lDate:integer;
     procedure SetTicket;
     function GetTicket:Int64;
   public
@@ -50,6 +51,8 @@ type
     function CheckDBVersion:boolean;
     //初始化同步队列
     procedure InitList;
+
+    procedure SyncRckClose(DataSet:TZQuery;FieldName:string;lFactor:TdbFactory);
 
     function GetSynTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tbName:string;TimeStamp:int64;SHOP_ID:string='#');
@@ -251,7 +254,7 @@ begin
   25:result := 'TSyncCaModule';
   26:result := 'TSyncSysReportList';
   27:result := 'TSyncICGlideInfo';
-  28:result := 'TSyncSingleTable';
+  28:result := 'TSyncSysDefine';
   else
     result := 'TSyncSingleTable';
   end;
@@ -285,6 +288,8 @@ var
   n:PSynTableInfo;
   i:integer;
 begin
+  lDate := 99999999;
+  rDate := 99999999;
   for i:=0 to FList.Count -1 do Dispose(FList[i]);
   FList.Clear;
   new(n);
@@ -353,7 +358,7 @@ begin
   new(n);
   n^.tbname := 'SYS_DEFINE';
   n^.keyFields := 'TENANT_ID;DEFINE';
-  n^.synFlag := 0;
+  n^.synFlag := 28;
   n^.KeyFlag := 0;
   n^.tbtitle := '参数定义表';
   FList.Add(n);
@@ -657,7 +662,7 @@ begin
   new(n);
   n^.tbname := 'CA_LOGIN_INFO';
   n^.keyFields := 'TENANT_ID;LOGIN_ID';
-  n^.synFlag := 28;
+  n^.synFlag := 0;
   n^.KeyFlag := 0;
   n^.tbtitle := '登录日志';
   FList.Add(n);
@@ -862,7 +867,7 @@ begin
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20,21,22,23:
+      0,1,2,3,4,10,20,21,22,23,28:
         begin
           if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
         end;
@@ -993,6 +998,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'CHANGE_DATE',Global.LocalFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -1055,6 +1061,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'CHANGE_DATE',Global.RemoteFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -1638,6 +1645,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'IORO_DATE',Global.LocalFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -1691,6 +1699,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'IORO_DATE',Global.RemoteFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -1972,6 +1981,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'PAY_DATE',Global.LocalFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -2025,6 +2035,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'PAY_DATE',Global.RemoteFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -2334,6 +2345,49 @@ begin
   end;
 end;
 
+procedure TSyncFactory.SyncRckClose(DataSet: TZQuery; FieldName: string;
+  lFactor: TdbFactory);
+var isUpdate:boolean;
+begin
+    isUpdate := false;
+    DataSet.First;
+    while DataSet.Eof do
+      begin
+        if lFactor=Global.LocalFactory then
+           begin
+             if DataSet.FieldByName(FieldName).AsInteger < rDate then
+                begin
+                   rDate := DataSet.FieldByName(FieldName).AsInteger;
+                   isUpdate := true;
+                end;
+           end
+        else
+           begin
+             if DataSet.FieldByName(FieldName).AsInteger < lDate then
+                begin
+                   lDate := DataSet.FieldByName(FieldName).AsInteger;
+                   isUpdate := true;
+                end;
+           end;
+        DataSet.Next;
+      end;
+    if isUpdate then
+      begin
+        if lFactor=Global.LocalFactory then
+           begin
+             Params.ParamByName('CLSE_DATE').AsInteger := rDate;
+             Params.ParamByName('MOTH_DATE').AsString := formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(inttostr(rDate)));
+           end
+        else
+           begin
+             Params.ParamByName('CLSE_DATE').AsInteger := lDate;
+             Params.ParamByName('MOTH_DATE').AsString := formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(inttostr(lDate)));
+           end;
+        lFactor.ExecProc('TSyncDeleteRckClose',Params);
+      end;
+      
+end;
+
 procedure TSyncFactory.SyncRecvOrder(tbName, KeyFields,
   ZClassName: string;KeyFlag:integer=0);
 var
@@ -2363,6 +2417,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'RECV_DATE',Global.LocalFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -2416,6 +2471,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'RECV_DATE',Global.RemoteFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -2516,6 +2572,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'SALES_DATE',Global.LocalFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -2578,6 +2635,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'SALES_DATE',Global.RemoteFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -2987,6 +3045,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'STOCK_DATE',Global.LocalFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -3049,6 +3108,7 @@ begin
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    SyncRckClose(ls,'STOCK_DATE',Global.RemoteFactory);
     ls.First;
     while not ls.Eof do
        begin
@@ -3314,6 +3374,8 @@ begin
     rs.Close;
     SetTicket;
     Global.RemoteFactory.Open(rs,ZClassName,Params);
+    SyncRckClose(rs,'TRANS_DATE',Global.LocalFactory);
+
     LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
     SetTicket;
     cs.SyncDelta := rs.SyncDelta;
@@ -3332,27 +3394,28 @@ begin
     //上传本机数据
     cs.Close;
     rs.Close;
-    Global.LocalFactory.BeginTrans;
-    try
+    SetTicket;
+    Global.LocalFactory.Open(cs,ZClassName,Params);
+    SyncRckClose(cs,'TRANS_DATE',Global.RemoteFactory);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+    if not cs.IsEmpty then
+    begin
       SetTicket;
-      Global.LocalFactory.Open(cs,ZClassName,Params);
-      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
-      SetSynTimeStamp(tbName,SyncTimeStamp);
-      if not cs.IsEmpty then
-      begin
-        SetTicket;
-        rs.SyncDelta := cs.SyncDelta;
-        cs.Delete;
+      rs.SyncDelta := cs.SyncDelta;
+      cs.Delete;
+      Global.LocalFactory.BeginTrans;
+      try
+        SetSynTimeStamp(tbName,SyncTimeStamp);
         if not cs.IsEmpty then
         Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         if not rs.IsEmpty then
         Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+        Global.LocalFactory.CommitTrans;
+      except
+        Global.LocalFactory.RollbackTrans;
+        Raise;
       end;
-      Global.LocalFactory.CommitTrans;
-    except
-      Global.LocalFactory.RollbackTrans;
-      Raise;
     end;
   finally
     rs.Free;

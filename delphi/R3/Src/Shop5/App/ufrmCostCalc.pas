@@ -392,6 +392,11 @@ begin
             cDate := fnTime.fnStrtoDate(rs.Fields[0].asString)-1
          else
             cDate := Date()-1;
+         rs.Close;
+         rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE<='+formatDatetime('YYYYMMDD',cDate);
+         Factor.Open(rs);
+         if rs.Fields[0].AsString <> '' then
+            Raise Exception.Create('系统参数的启用日期错了，请设置到['+rs.Fields[0].AsString+']之前日期'); 
          isfirst := true;
        end;
 
@@ -871,7 +876,7 @@ begin
   Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select max(CREA_DATE) from '+tempTableName+' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+    rs.SQL.Text := 'select max(CREA_DATE) as HDate,min(CREA_DATE) as LDate from '+tempTableName+' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
     Factor.Open(rs);
     if rs.Fields[0].asString<>'' then
        begin

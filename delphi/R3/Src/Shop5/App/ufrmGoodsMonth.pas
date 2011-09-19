@@ -61,6 +61,10 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure rzTreeChanging(Sender: TObject; Node: TTreeNode;
       var AllowChange: Boolean);
+    procedure dbGoodsMonthGetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     FIsModify: Boolean;
     Locked: Boolean;
@@ -192,7 +196,7 @@ begin
     'sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0)) as ADJ_MNY from RCK_GOODS_MONTH where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrMonth+' group by MONTH,TENANT_ID,GODS_ID,BATCH_NO ) '+
     ' A inner join VIW_GOODSINFO_SORTEXT C '+
     ' on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' order by C.GODS_CODE';
-
+  result := StrSql;
 end;
 
 procedure TfrmGoodsMonth.LoadTree(Tree: TRzTreeView);
@@ -251,6 +255,7 @@ begin
   CdsGoodsMonth.Close;
   CdsGoodsMonth.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql(ID));
   Factor.Open(CdsGoodsMonth);
+  IsModify := False;
 end;
 
 procedure TfrmGoodsMonth.FormCreate(Sender: TObject);
@@ -434,7 +439,6 @@ procedure TfrmGoodsMonth.actSaveExecute(Sender: TObject);
 begin
   inherited;
   Save;
-  actCancelExecute(Sender);
 end;
 
 procedure TfrmGoodsMonth.Save;
@@ -448,6 +452,7 @@ begin
   try
     try
       Factor.UpdateBatch(CdsGoodsMonth,'TGoodsMonth',nil);
+      IsModify := False;
     except
       Raise Exception.Create('数据提交失败!');
     end;
@@ -483,20 +488,32 @@ begin
   if Value then
     begin
       //rzTree.Enabled := False;
-      btnOk.Enabled := False;
-      ToolButton5.Enabled := True;
+      actFind.Enabled := False;
+      actSave.Enabled := true;
+      actCancel.Enabled := true;
+      actPrint.Enabled := False;
+      actPreview.Enabled := False;
+      edtMonth.Properties.ReadOnly := True;
+      edtGoods_Type.Properties.ReadOnly := True;
+      edtGoods_ID.Properties.ReadOnly := True;
+    end
+  else
+    begin
+      actFind.Enabled := true;
+      actSave.Enabled := False;
+      actCancel.Enabled := False;
+      actPrint.Enabled := true;
+      actPreview.Enabled := true;
+      edtMonth.Properties.ReadOnly := false;
+      edtGoods_Type.Properties.ReadOnly := false;
+      edtGoods_ID.Properties.ReadOnly := false;
     end;
 end;
 
 procedure TfrmGoodsMonth.actCancelExecute(Sender: TObject);
 begin
   inherited;
-  if IsModify then
-    begin
-      btnOk.Enabled := True;
-      ToolButton5.Enabled := False;
-    end;
-  IsModify := False;
+  Open('');
 end;
 
 procedure TfrmGoodsMonth.AdjCstToAdjprice(Acst: Real);
@@ -528,7 +545,7 @@ end;
 
 procedure TfrmGoodsMonth.PrintView;
 begin
-  PrintDBGridEh1.PageHeader.CenterText.Text := '月成本调整';
+  PrintDBGridEh1.PageHeader.CenterText.Text := edtMonth.Text+'月份成本调整清单';
   PrintDBGridEh1.AfterGridText.Text := #13+'打印人:'+Global.UserName+'  打印时间:'+formatDatetime('YYYY-MM-DD HH:NN:SS',now());
   PrintDBGridEh1.SetSubstitutes(['%[whr]','']);
   dbGoodsMonth.DataSource.DataSet.Filtered := False;
@@ -564,6 +581,16 @@ begin
     AllowChange := True
   else
     AllowChange := False;
+end;
+
+procedure TfrmGoodsMonth.dbGoodsMonthGetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  IF Column.FieldName = 'GODS_NAME' then
+     Text := '合计:'+Text+'笔';
 end;
 
 end.

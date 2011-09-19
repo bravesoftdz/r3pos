@@ -170,6 +170,7 @@ begin
                 r :=  (TotalFee) - Calc;
              if r<0 then Raise Exception.Create('输入的实收金额不能小于应收总额');
              if StrtoFloatDef(edtDIBS.Text,0)<0 then Raise Exception.Create('找零金额不能是负数');
+             if r>=100 then Raise Exception.Create('输入的收款金额过大，请确认是否输错了。'); 
              if abs(MainRecord.FieldByName('CASH_MNY').AsFloat)<abs(StrtoFloatDef(edtDIBS.Text,0)) then Raise Exception.Create('找零金额不能大于实收现金');
 
              if TotalFee>0 then

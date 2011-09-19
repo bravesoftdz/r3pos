@@ -57,13 +57,14 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select * from TENANT_ID=:TENANT_ID and MONTH>:MONTH';
+    rs.Close;
+    rs.SQL.Text := 'select * from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH>:MONTH';
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('MONTH').AsInteger := FieldbyName('MONTH').AsInteger;
     AGlobal.Open(rs);
     if not rs.IsEmpty then Raise Exception.Create('只能对最后一个月的成本进行调整');
     rs.Close;
-    rs.SQL.Text := 'select * from TENANT_ID=:TENANT_ID and MONTH=:MONTH';
+    rs.SQL.Text := 'select * from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH=:MONTH';
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('MONTH').AsInteger := FieldbyName('MONTH').AsInteger;
     AGlobal.Open(rs);

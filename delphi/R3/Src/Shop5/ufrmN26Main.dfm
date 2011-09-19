@@ -3812,6 +3812,14 @@ inherited frmN26Main: TfrmN26Main
             end
           end
         end
+        object Button1: TButton
+          Left = 216
+          Top = 16
+          Width = 75
+          Height = 25
+          Action = actfrmGoodsMonth
+          TabOrder = 1
+        end
       end
     end
     object rzTool: TPanel

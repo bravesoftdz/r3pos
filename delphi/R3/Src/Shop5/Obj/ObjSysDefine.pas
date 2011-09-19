@@ -2,7 +2,7 @@ unit ObjSysDefine;
 
 interface
 
-uses SysUtils, ZBase, Classes, zIntf,ObjCommon;
+uses SysUtils, ZBase, Classes, zIntf,ObjCommon, zDataSet;
 
 type
   TSysDefine = class(TZFactory)
@@ -18,7 +18,7 @@ type
     procedure InitClass; override;
   end;
 implementation
-
+uses uFnUtil;
 { TSysDefine }
 
 function TSysDefine.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
@@ -43,16 +43,23 @@ begin
 end;
 
 function TSysDefine.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin
-  {if FieldbyName('DEFINE').AsString <> 'USING_DATE' then
+  if (FieldbyName('DEFINE').AsString = 'USING_DATE') and (FieldbyName('VALUE').AsOldString <> FieldbyName('VALUE').AsString) then
   begin
-  AGlobal.ExecSQL('update SYS_DEFINE set DEFINE=:DEFINE,VALUE=:VALUE,VALUE_TYPE=:VALUE_TYPE,'+
-                   'COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' '+
-                   'where DEFINE=:OLD_DEFINE and COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:OLD_COMP_ID and COMP_TYPE=2)',self);
-  AGlobal.ExecSQL('insert into SYS_DEFINE(COMP_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP)  '+
-                  'select B.COMP_ID,DEFINE,VALUE,VALUE_TYPE,''00'','+GetTimeStamp(iDbType)+' from SYS_DEFINE A,CA_COMPANY B where A.COMP_ID=:OLD_COMP_ID and B.COMP_ID in (select COMP_ID from CA_COMPANY where UPCOMP_ID=:OLD_COMP_ID and COMP_TYPE=2)'+
-                  'and not Exists(select * from SYS_DEFINE where DEFINE=A.DEFINE and COMP_ID=B.COMP_ID)',self);
-  end;}
+    rs := TZQuery.Create(nil);
+    try
+      rs.Close;
+      rs.SQL.Text := 'select min(CREA_DATE) from VIW_GOODS_DAYS where TENANT_ID=:TENANT_ID and CREA_DATE<=:CREA_DATE';
+      rs.parambyName('TENANT_ID').asInteger := FieldbyName('TENANT_ID').asInteger;
+      rs.parambyName('CREA_DATE').asInteger := StrtoInt(formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(FieldbyName('VALUE').AsString)));
+      AGlobal.Open(rs);
+      if rs.Fields[0].AsString <> '' then
+         Raise Exception.Create('系统参数的启用日期不能大于['+rs.Fields[0].AsString+']日');
+    finally
+      rs.Free;
+    end;
+  end;
   Result := True;
 end;
 

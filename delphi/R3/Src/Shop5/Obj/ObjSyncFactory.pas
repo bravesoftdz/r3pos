@@ -571,6 +571,16 @@ type
      //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
+  //28 对系统定义表
+  TSyncSysDefine=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncDeleteRckClose=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -3852,7 +3862,67 @@ begin
   AGlobal.ExecSQL(Str,Params);
 end;
 
+{ TSyncSysDefine }
+
+function TSyncSysDefine.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  rs:TZQuery;
+begin
+  if FieldbyName('DEFINE').asString='USING_DATE' then
+     begin
+        rs := TZQuery.Create(nil);
+        try
+          rs.SQL.Text := 'select * from SYS_DEFINE where TENANT_ID=:TENANT_ID and DEFINE=:DEFINE';
+          rs.Params[0].AsInteger := FieldbyName('TENANT_ID').AsInteger;
+          rs.Params[1].AsString := FieldbyName('DEFINE').AsString;
+          AGlobal.Open(rs);
+          if not rs.IsEmpty then
+             begin
+               if rs.FieldByName('VALUE').AsString<FieldbyName('VALUE').AsString then
+                  begin
+                    FieldbyName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
+                  end
+             end;
+          result := inherited BeforeInsertRecord(AGlobal);
+        finally
+          rs.Free;
+        end;
+     end
+  else
+     result := inherited BeforeInsertRecord(AGlobal);
+end;
+
+{ TSyncDeleteRckClose }
+
+function TSyncDeleteRckClose.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    AGlobal.BeginTrans;
+    try
+      AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and CREA_DATE>=:CLSE_DATE',Params);
+      AGlobal.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and END_DATE>=:MOTH_DATE',Params);
+      AGlobal.CommitTrans;
+      result := true;
+    except
+      on E:Exception do
+         begin
+           AGlobal.RollbackTrans;
+           Msg := E.Message;
+           result := false;
+           Raise;
+         end;
+    end;
+  finally
+    rs.Free;
+  end;
+end;
+
 initialization
+  RegisterClass(TSyncDeleteRckClose);
   RegisterClass(TSyncSingleTable);
   RegisterClass(TSyncCaTenant);
   RegisterClass(TSyncCaRelationInfo);
@@ -3918,11 +3988,14 @@ initialization
   RegisterClass(TSyncMscQuestion);
   RegisterClass(TSyncMscQuestionItem);
 
+  RegisterClass(TSyncSysDefine);
   RegisterClass(TSyncCaModule);
   RegisterClass(TSyncSysReportList);
   RegisterClass(TSyncSysReport);
   RegisterClass(TSyncSysReportTemplate);
+  RegisterClass(TSyncDeleteRckClose);
 finalization
+  UnRegisterClass(TSyncDeleteRckClose);
   UnRegisterClass(TSyncSingleTable);
   UnRegisterClass(TSyncCaTenant);
   UnRegisterClass(TSyncCaRelationInfo);
@@ -3989,7 +4062,9 @@ finalization
   UnRegisterClass(TSyncMscQuestionItem);
 
   UnRegisterClass(TSyncCaModule);
+  UnRegisterClass(TSyncSysDefine);
   UnRegisterClass(TSyncSysReportList);
   UnRegisterClass(TSyncSysReport);
   UnRegisterClass(TSyncSysReportTemplate);
+  UnRegisterClass(TSyncDeleteRckClose);
 end.

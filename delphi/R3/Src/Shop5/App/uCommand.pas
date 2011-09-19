@@ -7,21 +7,12 @@ uses
 type
   TCommandPush=class
   private
-    Ds: TZQuery;
-    FCommandType: Integer;
-    FCommandText: String;
-    FCommandStatus: Integer;
-    procedure SetCommandStatus(const Value: Integer);
+    List: TZQuery;
     procedure GetCommandType;
-    procedure SetCommandText(const Value: String);
-    procedure SetCommandType(const Value: Integer);
   public
     constructor Create;
     destructor Destroy; override;
     procedure ExecuteCommand;
-    property CommandStatus: Integer read FCommandStatus write SetCommandStatus;
-    property CommandType: Integer read FCommandType write SetCommandType;
-    property CommandText: String read FCommandText write SetCommandText;
   end;
 
 var CommandPush:TCommandPush;
@@ -32,79 +23,57 @@ uses uShopGlobal,uGlobal;
 
 constructor TCommandPush.Create;
 begin
-  FCommandType := 0;
-  FCommandText := '';
-  FCommandStatus := 0;
-  Ds := TZQuery.Create(nil);
+  List := TZQuery.Create(nil);
 end;
 
 destructor TCommandPush.Destroy;
 begin
+  List.Free;
   inherited;
 end;
 
 procedure TCommandPush.ExecuteCommand;
+var rs:TZQuery;
 begin
   GetCommandType;
-  if FCommandType <> 1 then Exit;     //目前只执行 SQL 语句
-  if FCommandStatus <> 1 then Exit;
+  if List.IsEmpty then Exit;
 
-  case FCommandType of
-    1:begin
-      try
-        Global.LocalFactory.ExecSQL(FCommandText);
-      except
-        Raise Exception.Create('指令类型 1 执行失败!');
-      end;
-    end;
-    2:begin
-      try
-        //Global.LocalFactory.ExecSQL(FCommandText);
-      except
-        Raise Exception.Create('指令类型 2 执行失败!');
-      end;
-    end;
-    3:begin
-      try
-        //Global.LocalFactory.ExecSQL(FCommandText);
-      except
-        Raise Exception.Create('指令类型 3 执行失败!');
-      end;
-    end;
-  end;
+  rs := TZQuery.Create(nil);
   try
-    Global.RemoteFactory.ExecSQL('update SYS_COMMAND set COMMAND_STATUS=''2'' where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID));
-  except
-    Raise;
+    Global.LocalFactory.BeginTrans;
+    Global.RemoteFactory.BeginTrans;
+    try
+      List.First;
+      while not List.Eof do
+      begin
+        if List.FieldByName('COMMAND_STATUS').AsInteger = 1 then
+        begin
+          rs.Close;
+          rs.SQL.Text := List.FieldbyName('COMMAND_TEXT').AsString;
+          if rs.Params.FindParam('TENANT_ID') <> nil then rs.Params.ParamByName('TENANT_ID').AsInteger := ShopGlobal.TENANT_ID;
+          if rs.Params.FindParam('SHOP_ID') <> nil then rs.Params.ParamByName('SHOP_ID').AsString := ShopGlobal.SHOP_ID;
+          Global.LocalFactory.UpdateBatch(rs);
+        end;
+      end;
+      Global.RemoteFactory.ExecSQL('update SYS_COMMAND set COMMAND_STATUS=''2'' where COMMAND_TYPE=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID));
+      Global.LocalFactory.CommitTrans;
+      Global.RemoteFactory.CommitTrans;
+    except
+      Global.LocalFactory.RollbackTrans;
+      Global.RemoteFactory.RollbackTrans;
+      Raise;
+    end;
+  finally
+    rs.Free;
   end;
+
 end;
 
 procedure TCommandPush.GetCommandType;
 begin
-  Ds.Close;
-  Ds.SQL.Text := 'select * from SYS_COMMAND where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID);
-  Global.RemoteFactory.Open(Ds);
-  if not Ds.IsEmpty then
-    begin
-      FCommandType := Ds.FieldbyName('COMMAND_TYPE').AsInteger;
-      FCommandText := Ds.FieldbyName('COMMAND_TEXT').AsString;
-      FCommandStatus := Ds.FieldbyName('COMMAND_STATUS').AsInteger;
-    end;
-end;
-
-procedure TCommandPush.SetCommandStatus(const Value: Integer);
-begin
-  FCommandStatus := Value;
-end;
-
-procedure TCommandPush.SetCommandText(const Value: String);
-begin
-  FCommandText := Value;
-end;
-
-procedure TCommandPush.SetCommandType(const Value: Integer);
-begin
-  FCommandType := Value;
+  List.Close;
+  List.SQL.Text := 'select * from SYS_COMMAND where COMMAND_TYPE=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID);
+  Global.RemoteFactory.Open(List);
 end;
 
 initialization

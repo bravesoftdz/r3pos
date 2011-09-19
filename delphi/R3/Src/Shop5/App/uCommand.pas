@@ -33,38 +33,30 @@ begin
 end;
 
 procedure TCommandPush.ExecuteCommand;
-var rs:TZQuery;
+var Str_Sql: String;
 begin
   GetCommandType;
   if List.IsEmpty then Exit;
 
-  rs := TZQuery.Create(nil);
+  Global.LocalFactory.BeginTrans;
+  Global.RemoteFactory.BeginTrans;
   try
-    Global.LocalFactory.BeginTrans;
-    Global.RemoteFactory.BeginTrans;
-    try
-      List.First;
-      while not List.Eof do
-      begin
-        if List.FieldByName('COMMAND_STATUS').AsInteger = 1 then
-        begin
-          rs.Close;
-          rs.SQL.Text := List.FieldbyName('COMMAND_TEXT').AsString;
-          if rs.Params.FindParam('TENANT_ID') <> nil then rs.Params.ParamByName('TENANT_ID').AsInteger := ShopGlobal.TENANT_ID;
-          if rs.Params.FindParam('SHOP_ID') <> nil then rs.Params.ParamByName('SHOP_ID').AsString := ShopGlobal.SHOP_ID;
-          Global.LocalFactory.UpdateBatch(rs);
-        end;
-      end;
-      Global.RemoteFactory.ExecSQL('update SYS_COMMAND set COMMAND_STATUS=''2'' where COMMAND_TYPE=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID));
-      Global.LocalFactory.CommitTrans;
-      Global.RemoteFactory.CommitTrans;
-    except
-      Global.LocalFactory.RollbackTrans;
-      Global.RemoteFactory.RollbackTrans;
-      Raise;
+    List.First;
+    while not List.Eof do
+    begin
+      Str_Sql := List.FieldbyName('COMMAND_TEXT').AsString;
+      Str_Sql := stringreplace(Str_Sql,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
+      Str_Sql := stringreplace(Str_Sql,':SHOP_ID',Global.SHOP_ID,[rfReplaceAll]);
+
+      Global.LocalFactory.ExecSQL(Str_Sql);
+      Global.RemoteFactory.ExecSQL('update SYS_COMMAND set COMMAND_STATUS=''2'' where ROWS_ID='+QuotedStr(List.FieldbyName('ROWS_ID').AsString);
     end;
-  finally
-    rs.Free;
+    Global.RemoteFactory.CommitTrans;
+    Global.LocalFactory.CommitTrans;
+  except
+    Global.RemoteFactory.RollbackTrans;
+    Global.LocalFactory.RollbackTrans;
+    Raise;
   end;
 
 end;
@@ -72,7 +64,7 @@ end;
 procedure TCommandPush.GetCommandType;
 begin
   List.Close;
-  List.SQL.Text := 'select * from SYS_COMMAND where COMMAND_TYPE=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID);
+  List.SQL.Text := 'select * from SYS_COMMAND where COMMAND_STATUS=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID);
   Global.RemoteFactory.Open(List);
 end;
 

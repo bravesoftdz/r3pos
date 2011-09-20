@@ -67,7 +67,7 @@ type
 implementation
 
 uses
-  uFnUtil, uDsUtil, ZLogFile, uGlobal, uShopGlobal;  //ufrmCallIntf,
+  uFnUtil, uDsUtil, ZLogFile, uGlobal, uShopGlobal,uSyncFactory;  //ufrmCallIntf,
 
 {$R *.dfm}
 
@@ -162,7 +162,7 @@ procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
 begin
   inherited;
   //2011.09.20Add 判断到货是否为锁定电脑
-  if not SyncFactory.SyncCheckLock then Raise Exception.Create('  非本门店的专用电脑不能做到货确认！ ');
+  if not SyncFactory.SyncLockCheck then Raise Exception.Create('  非本门店的专用电脑不能做到货确认！ ');
 
   if not Xsm then //手工确认
   begin

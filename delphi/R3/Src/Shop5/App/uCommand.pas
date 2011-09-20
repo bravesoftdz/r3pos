@@ -64,7 +64,7 @@ end;
 procedure TCommandPush.GetCommandType;
 begin
   List.Close;
-  List.SQL.Text := 'select * from SYS_COMMAND where COMMAND_STATUS=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID);
+  List.SQL.Text := 'select * from SYS_COMMAND where COMMAND_STATUS=''1'' and COMMAND_TYPE=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID);
   Global.RemoteFactory.Open(List);
 end;
 

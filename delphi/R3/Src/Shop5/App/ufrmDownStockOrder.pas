@@ -161,6 +161,9 @@ end;
 procedure TfrmDownStockOrder.btnOKClick(Sender: TObject);
 begin
   inherited;
+  //2011.09.20Add 判断到货是否为锁定电脑
+  if not SyncFactory.SyncCheckLock then Raise Exception.Create('  非本门店的专用电脑不能做到货确认！ ');
+
   if not Xsm then //手工确认
   begin
     if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有权限操作到货确认（生成入库单！）');

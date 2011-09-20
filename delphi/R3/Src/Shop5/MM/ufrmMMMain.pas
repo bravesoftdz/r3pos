@@ -64,6 +64,7 @@ type
     procedure RzTrayIcon1LButtonDown(Sender: TObject);
     procedure miCloseClick(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
   private
     { Private declarations }
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
@@ -336,6 +337,12 @@ begin
   inherited;
   Close;
 
+end;
+
+procedure TfrmMMMain.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  Init;
 end;
 
 end.

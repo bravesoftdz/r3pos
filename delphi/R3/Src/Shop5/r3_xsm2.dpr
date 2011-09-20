@@ -251,7 +251,8 @@ uses
   uMMClient in 'MM\uMMClient.pas',
   uMMUtil in 'MM\uMMUtil.pas',
   uSyncThread in 'App\uSyncThread.pas',
-  ufrmPosMainList in 'app\ufrmPosMainList.pas' {frmPosMainList};
+  ufrmPosMainList in 'app\ufrmPosMainList.pas' {frmPosMainList},
+  uCommand in 'App\uCommand.pas';
 
 {$R *.res}
 var

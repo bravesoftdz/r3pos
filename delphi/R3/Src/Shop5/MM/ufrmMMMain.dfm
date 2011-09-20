@@ -3666,6 +3666,7 @@ inherited frmMMMain: TfrmMMMain
           Color = clBtnFace
           Anchors = [akTop, akRight]
           TabOrder = 2
+          OnClick = RzBmpButton3Click
         end
       end
     end

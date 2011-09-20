@@ -44,6 +44,11 @@ alter table STO_PRINTORDER add PRINT_USER varchar2(36);
 alter table SAL_PRICEORDER add PRINT_TIMES number(9,0);
 alter table SAL_PRICEORDER add PRINT_USER varchar2(36);
 
+//清理日月台账，后新结转
+
+delete from RCK_DAYS_CLOSE;
+delete from RCK_MONTH_CLOSE;
+
 --指令类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','SQL','COMMAND_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','EXE','COMMAND_TYPE','00',5497000);

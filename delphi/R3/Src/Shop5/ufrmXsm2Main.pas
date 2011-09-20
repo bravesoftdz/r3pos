@@ -276,6 +276,7 @@ type
     imgOffline: TImage;
     actfrmGoodsMonth: TAction;
     RzBmpButton4: TRzBmpButton;
+    RzBmpButton5: TRzBmpButton;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -405,6 +406,7 @@ type
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure actfrmGoodsMonthExecute(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -485,7 +487,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread;
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand;
   
 {$R *.dfm}
 
@@ -835,6 +837,7 @@ begin
   if Locked then Exit;
   if Logined then
      begin
+       CommandPush.ExecuteCommand;
        Loging := false;
        frmLogo.Show;
        try
@@ -4514,6 +4517,51 @@ procedure TfrmXsm2Main.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
   ShellExecute(0,'open',pchar(ExtractFilePath(ParamStr(0))+'简易操作手册.chm'),nil,pchar(ExtractFileDir(ParamStr(0))),1);
+end;
+
+procedure TfrmXsm2Main.RzBmpButton5Click(Sender: TObject);
+var
+  s:string;
+  Form:TfrmBasic;
+  sl:TStringList;
+  Action:TAction;
+begin
+  inherited;
+  if not CA_MODULE.Locate('MODU_NAME','在线客服',[]) then Raise Exception.Create('你没有开通在线客服业务');
+  s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
+  delete(s,1,4);
+  delete(s,length(s),1);
+  if not Logined then
+     begin
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmXsm2Desk.Locked := false;
+  Form := FindChildForm('frmRimIEBrowser');
+  if not Assigned(Form) then
+     Form := TfrmRimIEBrowser.Create(self);
+  sl := TStringList.Create;
+  try
+    if TfrmBasic(Form).PageHandle = Integer(Sender) then
+       begin
+         Form.WindowState := wsMaximized;
+         Form.BringToFront;
+         Exit;
+       end;
+    Form.Caption := TrzBmpButton(Sender).Caption;
+    Form.Name := 'frmRimIEBrowser';
+    sl.CommaText := s;
+    if TfrmRimIEBrowser(Form).OpenUrl(sl.values['url'],Integer(Sender),(sl.values['xsm']='true')) then
+       begin
+         TfrmBasic(Form).PageHandle := Integer(Sender);
+       end
+    else
+       DoActiveChange(nil);
+  except
+    sl.free;
+    Raise;
+  end;
 end;
 
 end.

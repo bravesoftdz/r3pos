@@ -44,12 +44,16 @@ begin
     List.First;
     while not List.Eof do
     begin
-      Str_Sql := List.FieldbyName('COMMAND_TEXT').AsString;
-      Str_Sql := stringreplace(Str_Sql,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
-      Str_Sql := stringreplace(Str_Sql,':SHOP_ID',Global.SHOP_ID,[rfReplaceAll]);
-
-      Global.LocalFactory.ExecSQL(Str_Sql);
-      Global.RemoteFactory.ExecSQL('update SYS_COMMAND set COMMAND_STATUS=''2'' where ROWS_ID='+QuotedStr(List.FieldbyName('ROWS_ID').AsString));
+      case List.FieldByName('COMMAND_TYPE').AsInteger of
+      1:begin
+          Str_Sql := List.FieldbyName('COMMAND_TEXT').AsString;
+          Str_Sql := stringreplace(Str_Sql,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
+          Str_Sql := stringreplace(Str_Sql,':SHOP_ID',Global.SHOP_ID,[rfReplaceAll]);
+          Global.LocalFactory.ExecSQL(Str_Sql);
+          Global.RemoteFactory.ExecSQL('update SYS_COMMAND set COMMAND_STATUS=''2'' where ROWS_ID='+QuotedStr(List.FieldbyName('ROWS_ID').AsString));
+        end;
+      end;
+      List.Next;
     end;
     Global.RemoteFactory.CommitTrans;
     Global.LocalFactory.CommitTrans;
@@ -64,7 +68,9 @@ end;
 procedure TCommandPush.GetCommandType;
 begin
   List.Close;
-  List.SQL.Text := 'select * from SYS_COMMAND where COMMAND_STATUS=''1'' and COMMAND_TYPE=''1'' and TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and SHOP_ID='+QuotedStr(ShopGlobal.SHOP_ID);
+  List.SQL.Text := 'select * from SYS_COMMAND where COMMAND_STATUS=''1'' and TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+  List.ParamByName('TENANT_ID').AsInteger := ShopGlobal.TENANT_ID;
+  List.ParamByName('SHOP_ID').AsString := ShopGlobal.SHOP_ID;
   Global.RemoteFactory.Open(List);
 end;
 

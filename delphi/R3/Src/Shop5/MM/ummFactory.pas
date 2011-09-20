@@ -209,39 +209,93 @@ type
     function mmcPlayerFava(PlayerFava:TmmPlayerFava):boolean;
   end;
 
-function mmcSetDataCallBack(func:Pointer):integer;stdcall;
-function mmcSetEventCallBack(func:Pointer):integer;stdcall;
-function mmcSend(flag:integer;lpData:Pointer):integer;stdcall;
-function mmcSendSync(flag:integer;lpData:Pointer):integer;stdcall;
-function mmcConnect(ipAddr:pchar;nPort:integer):integer;stdcall;
-function mmcGetSockStatus():integer;stdcall;
-function mmcSetSockClose():integer;stdcall;
-function mmcGetDescriptionFromErrorID(errCode:integer):pchar;stdcall;
+type
+   TmmcSetDataCallBack=function(func:Pointer):integer;stdcall;
+   TmmcSetEventCallBack=function(func:Pointer):integer;stdcall;
+   TmmcSend=function(flag:integer;lpData:Pointer):integer;stdcall;
+   TmmcSendSync=function(flag:integer;lpData:Pointer):integer;stdcall;
+   TmmcConnect=function(ipAddr:pchar;nPort:integer):integer;stdcall;
+   TmmcGetSockStatus=function():integer;stdcall;
+   TmmcSetSockClose=function():integer;stdcall;
+   TmmcGetDescriptionFromErrorID=function(errCode:integer):pchar;stdcall;
 
 var mmFactory:TmmFactory;
 implementation
-
 const dllname='mmc.dll';
-function mmcSetDataCallBack;external dllname name 'SetDataCallBack';
-function mmcSetEventCallBack;external dllname name 'SetEventCallBack';
-function mmcSend;external dllname name 'Send';
-function mmcSendSync;external dllname name 'SendSync';
-function mmcConnect;external dllname name 'Connect';
-function mmcGetSockStatus;external dllname name 'GetSockStatus';
-function mmcSetSockClose;external dllname name 'SetSockClose';
-function mmcGetDescriptionFromErrorID;external dllname name 'GetDescriptionFromErrorID';
-
+var
+  DLLHandle:THandle;
+  mmcSetDataCallBack:TmmcSetDataCallBack;
+  mmcSetEventCallBack:TmmcSetEventCallBack;
+  mmcSend:TmmcSend;
+  mmcSendSync:TmmcSendSync;
+  mmcConnect:TmmcConnect;
+  mmcGetSockStatus:TmmcGetSockStatus;
+  mmcSetSockClose:TmmcSetSockClose;
+  mmcGetDescriptionFromErrorID:TmmcGetDescriptionFromErrorID;
+procedure Loadmmc;
+begin
+  DLLHandle := LoadLibrary(pchar(dllname));
+  if DLLHandle=0 then Raise Exception.Create('没找到mmc.dll文件');
+  @mmcSetDataCallBack := GetProcAddress(DLLHandle, 'SetDataCallBack');
+  @mmcSetEventCallBack := GetProcAddress(DLLHandle, 'SetEventCallBack');
+  @mmcSend := GetProcAddress(DLLHandle, 'Send');
+  @mmcSendSync := GetProcAddress(DLLHandle, 'SendSync');
+  @mmcConnect := GetProcAddress(DLLHandle, 'Connect');
+  @mmcGetSockStatus := GetProcAddress(DLLHandle, 'GetSockStatus');
+  @mmcSetSockClose := GetProcAddress(DLLHandle, 'SetSockClose');
+  @mmcGetDescriptionFromErrorID := GetProcAddress(DLLHandle, 'GetDescriptionFromErrorID');
+end;
 function mmcRecv(flag:integer;lpData:Pointer):integer;stdcall;
 var
-  ConnectFava:PConnectFava;
+  mmSingleFava:TmmSingleFava;
+  mmGroupFava:TmmGroupFava;
 begin
-  ConnectFava := lpData;
+  case flag of
+  1003:begin
+         mmSingleFava := TmmSingleFava.Create;
+         try
+            mmSingleFava.Decode(PSingleFava(lpData));
+            mmFactory.AddRecv(mmSingleFava);
+         finally
+            mmSingleFava.Free;
+         end;
+       end;
+  1002:begin
+         mmGroupFava := TmmGroupFava.Create;
+         try
+            mmGroupFava.Decode(pGroupFava(lpData));
+            mmFactory.AddRecv(mmGroupFava);
+         finally
+            mmGroupFava.Free;
+         end;
+       end;
+  end;
 end;
 function mmcEvent(Event,EFlag:integer;lpData:Pointer):integer;stdcall;
 var
-  ConnectFava:PConnectFava;
+  mmSingleFava:TmmSingleFava;
+  mmGroupFava:TmmGroupFava;
 begin
-  ConnectFava := lpData;
+  case EFlag of
+  1003:begin
+         mmSingleFava := TmmSingleFava.Create;
+         try
+            mmSingleFava.Decode(PSingleFava(lpData));
+            mmFactory.AddEvent(mmSingleFava);
+         finally
+            mmSingleFava.Free;
+         end;
+       end;
+  1002:begin
+         mmGroupFava := TmmGroupFava.Create;
+         try
+            mmGroupFava.Decode(pGroupFava(lpData));
+            mmFactory.AddEvent(mmGroupFava);
+         finally
+            mmGroupFava.Free;
+         end;
+       end;
+  end;
 end;
 
 { TmmFactory }
@@ -336,8 +390,10 @@ begin
 end;
 
 function TmmFactory.mmcConnectTo(Addr:string;Port:integer): boolean;
-var errCode:integer;
+var
+  errCode:integer;
 begin
+  result := mmcClose;
   errCode := mmcConnect(Pchar(Addr),Port);
   result := (errCode=0);
   if not result then
@@ -346,6 +402,7 @@ end;
 
 constructor TmmFactory.Create;
 begin
+  Loadmmc;
   mmFactory := self;
   mmcSetDataCallBack(@mmcRecv);
   mmcSetEventCallBack(@mmcEvent);
@@ -356,6 +413,7 @@ destructor TmmFactory.Destroy;
 begin
   Clear;
   FList.Free;
+  if DLLHandle>0 then FreeLibrary(DLLHandle);
   inherited;
 end;
 procedure TmmFactory.DisposeMsg(index: integer);

@@ -18,7 +18,7 @@ type
 var CommandPush:TCommandPush;
   
 implementation
-uses uShopGlobal,uGlobal;
+uses uShopGlobal,uGlobal,ZLogFile,ufrmLogo;
 { TCommandPush }
 
 constructor TCommandPush.Create;
@@ -36,6 +36,9 @@ procedure TCommandPush.ExecuteCommand;
 var Str_Sql: String;
 begin
   if not Global.RemoteFactory.Connected then Exit;
+  frmLogo.Show;
+  try
+  frmLogo.ShowTitle := '正在执行远程指令...';
   GetCommandType;
   if List.IsEmpty then Exit;
 
@@ -59,11 +62,18 @@ begin
     Global.RemoteFactory.CommitTrans;
     Global.LocalFactory.CommitTrans;
   except
-    Global.RemoteFactory.RollbackTrans;
-    Global.LocalFactory.RollbackTrans;
-    Raise;
+    on E:Exception do
+       begin
+          Global.RemoteFactory.RollbackTrans;
+          Global.LocalFactory.RollbackTrans;
+          LogFile.AddLogFile(0,Str_Sql+' 错误原因:'+E.Message);
+          frmLogo.Close;
+          MessageBox(Application.MainForm.Handle,'服务端的异常处理指令失败了，请联系客服人员','友情提示...',MB_OK+MB_ICONINFORMATION);
+       end;
   end;
-
+  finally
+    frmLogo.Close;
+  end;
 end;
 
 procedure TCommandPush.GetCommandType;

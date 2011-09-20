@@ -251,7 +251,7 @@ begin
   for i:= 1 to pt do
     begin
       Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
-      Label11.Update;
+      Update;
       PrgPercent := (i*100 div pt) div 3+5;
       SQL :=
         'insert into '+tempTableName1+'('+
@@ -480,7 +480,7 @@ begin
        if (ShopGlobal.NetVersion) then SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
      end;
   Label11.Caption := '读取参数...';
-  Label11.Update;
+  Update;
   //读取参数
   Prepare;
   if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
@@ -489,16 +489,16 @@ begin
     if Factor.iDbType=5 then Factor.BeginTrans; //对SQLite启动事务，减少IO
     try
       Label11.Caption := '核算前检测数据...';
-      Label11.Update;
+      Update;
       PrgPercent := 1;
       CheckForRck;
       CreateTempTable;
       Label11.Caption := '准备核算数据...';
-      Label11.Update;
+      Update;
       //数据准备
       PrepareDataForRck;
       Label11.Caption := '正在核算成本...';
-      Label11.Update;
+      Update;
       PrgPercent := 5;
       //计算成本
       case calc_flag of
@@ -508,35 +508,39 @@ begin
       end;
 
       Label11.Caption := '正在更新库存成本...';
-      Label11.Update;
+      Update;
       UpdateStroage;
 
       Label11.Caption := '正在计算客户商品台账...';
-      Label11.Update;
+      Update;
       CalcSpz;
       Label11.Caption := '正在计算商品月台账...';
-      Label11.Update;
+      Update;
       if flag in [1,2,6] then CalcMth;
 
 
       Label11.Caption := '正在计算账户日台账...';
-      Label11.Update;
+      Update;
       AutoPosReck;
       //数据准备
       PrepareDataForAcct;
       CalcAcctDay;
       Label11.Caption := '正在计算账户月台账...';
-      Label11.Update;
+      Update;
       if flag in [1,2,5] then CalcAcctMth;
     finally
       if Factor.iDbType=5 then Factor.CommitTrans;  //对SQLite启动事务，减少IO
     end;
     Label11.Caption := '输出数据中...';
-    Label11.Update;
+    Update;
     ClseDay;
     ClseRck;
     PrgPercent := 100;
-    if (flag in [1,2]) then CalcAnaly;
+    if (flag in [1,2]) then
+       begin
+         CalcAnaly;
+         MessageBox(Handle,'执行结账完毕.','友情提示..',MB_OK+MB_ICONINFORMATION);
+       end;
   finally
     DBUnLock;
   end;
@@ -687,7 +691,7 @@ begin
             e := fnTime.fnStrtoDate(formatDatetime('YYYYMM',incMonth(bDate+b-1,1))+formatfloat('00',reck_day));
        end;
     Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM',bDate+b);
-    Label11.Update;
+    Update;
 //    if (bDate+b)<=uDate then //只计算有数据部份
     begin
 
@@ -742,7 +746,7 @@ begin
       begin
         if (bDate+i)>e then break;
         Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',bDate+i);
-        Label11.Update;
+        Update;
         PrgPercent := (i*100 div pt) div 3+5;
         //生成数据
         SQL :=
@@ -1022,7 +1026,7 @@ begin
   for i:= 1 to pt do
     begin
       Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
-      Label11.Update;
+      Update;
       PrgPercent := (i*100 div pt) div 3+5;
       //准备期初
       SQL :=
@@ -2075,7 +2079,7 @@ procedure TfrmCostCalc.SetPrgPercent(const Value: integer);
 begin
   FPrgPercent := Value;
   RzProgressBar1.Percent := Value;
-  RzProgressBar1.Update;
+  Update;
 end;
 
 procedure TfrmCostCalc.TruncTable(tb: string);

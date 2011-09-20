@@ -2351,7 +2351,7 @@ var isUpdate:boolean;
 begin
     isUpdate := false;
     DataSet.First;
-    while DataSet.Eof do
+    while not DataSet.Eof do
       begin
         if lFactor=Global.LocalFactory then
            begin

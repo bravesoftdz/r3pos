@@ -71,12 +71,12 @@ CREATE TABLE SYS_COMMAND(
 	) 
 );
 
-//清理日月台账，后新结转
+--清理日月台账，后新结转
 
 delete from RCK_DAYS_CLOSE;
 delete from RCK_MONTH_CLOSE;
 
-//处理卡号重复问题
+--处理卡号重复问题
 
 Begin Transaction;
 

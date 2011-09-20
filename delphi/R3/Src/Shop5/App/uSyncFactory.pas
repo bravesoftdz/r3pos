@@ -254,7 +254,7 @@ begin
   25:result := 'TSyncCaModule';
   26:result := 'TSyncSysReportList';
   27:result := 'TSyncICGlideInfo';
-  28:result := 'TSyncSysDefine';
+  29:result := 'TSyncSysDefine';
   else
     result := 'TSyncSingleTable';
   end;
@@ -358,7 +358,7 @@ begin
   new(n);
   n^.tbname := 'SYS_DEFINE';
   n^.keyFields := 'TENANT_ID;DEFINE';
-  n^.synFlag := 28;
+  n^.synFlag := 29;
   n^.KeyFlag := 0;
   n^.tbtitle := '参数定义表';
   FList.Add(n);
@@ -815,7 +815,7 @@ begin
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20,21,22,23:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      0,1,2,3,4,10,20,21,22,23,29:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       7:SyncChangeOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
@@ -867,7 +867,7 @@ begin
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
       case PSynTableInfo(FList[i])^.synFlag of
-      0,1,2,3,4,10,20,21,22,23,28:
+      0,1,2,3,4,10,20,21,22,23,29:
         begin
           if gbl then SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
         end;

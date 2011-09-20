@@ -35,16 +35,16 @@ alter table STO_CHANGEORDER add PRINT_USER varchar(36);
 alter table SAL_INDENTORDER add PRINT_TIMES int;
 alter table SAL_INDENTORDER add PRINT_USER varchar(36);
 
-alter table STK_INDENTORDER add PRINT_TIMES int NULL;
+alter table STK_INDENTORDER add PRINT_TIMES int;
 alter table STK_INDENTORDER add PRINT_USER varchar(36);
 
-alter table STO_PRINTORDER add PRINT_TIMES int NULL;
+alter table STO_PRINTORDER add PRINT_TIMES int;
 alter table STO_PRINTORDER add PRINT_USER varchar(36);
 
-alter table SAL_PRICEORDER add PRINT_TIMES int NULL;
+alter table SAL_PRICEORDER add PRINT_TIMES int;
 alter table SAL_PRICEORDER add PRINT_USER varchar(36);
 
-//清理日月台账，后新结转
+--清理日月台账，后新结转
 
 delete from RCK_DAYS_CLOSE;
 delete from RCK_MONTH_CLOSE;
@@ -76,7 +76,7 @@ CREATE TABLE SYS_COMMAND(
 	) 
 );
 
-//处理卡号重复问题
+--处理卡号重复问题
 
 alter table PUB_IC_INFO drop CONSTRAINT PK_PUB_IC_INFO; 
 

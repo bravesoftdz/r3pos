@@ -71,7 +71,7 @@ CREATE TABLE SYS_COMMAND(
 	) 
 );
 
-//处理卡号重复问题
+--处理卡号重复问题
 
 alter table PUB_IC_INFO drop CONSTRAINT PK_PUB_IC_INFO; 
 

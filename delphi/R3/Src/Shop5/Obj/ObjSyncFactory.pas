@@ -571,7 +571,8 @@ type
      //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
   end;
-  //28 对系统定义表
+  //28 caLogin同步
+  //29 对系统定义表
   TSyncSysDefine=class(TSyncSingleTable)
   public
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -1734,7 +1735,7 @@ var
   Str:string;
 begin
   Str :=
-  'select TENANT_ID,SHOP_ID,STOCK_ID from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  'select TENANT_ID,SHOP_ID,STOCK_ID,STOCK_DATE from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -1751,7 +1752,7 @@ var
   Str:string;
 begin
   Str :=
-  'select TENANT_ID,SHOP_ID,SALES_ID from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or CLIENT_ID=:SHOP_ID) and TIME_STAMP>:TIME_STAMP';
+  'select TENANT_ID,SHOP_ID,SALES_ID,SALES_DATE from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and (SHOP_ID=:SHOP_ID or CLIENT_ID=:SHOP_ID) and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -1768,7 +1769,7 @@ var
   Str:string;
 begin
   Str :=
-  'select TENANT_ID,SHOP_ID,CHANGE_ID from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  'select TENANT_ID,SHOP_ID,CHANGE_ID,CHANGE_DATE from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -1959,7 +1960,7 @@ var
   Str:string;
 begin
   Str :=
-  'select TENANT_ID,SHOP_ID,IORO_ID from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  'select TENANT_ID,SHOP_ID,IORO_ID,IORO_DATE from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -2247,7 +2248,7 @@ var
   Str:string;
 begin
   Str :=
-  'select TENANT_ID,SHOP_ID,RECV_ID from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  'select TENANT_ID,SHOP_ID,RECV_ID,RECV_DATE from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 
@@ -2416,7 +2417,7 @@ var
   Str:string;
 begin
   Str :=
-  'select TENANT_ID,SHOP_ID,PAY_ID from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
+  'select TENANT_ID,SHOP_ID,PAY_ID,PAY_DATE from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TIME_STAMP>:TIME_STAMP';
   if Params.ParamByName('SYN_COMM').AsBoolean then
      Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
 

@@ -35,6 +35,7 @@ end;
 procedure TCommandPush.ExecuteCommand;
 var Str_Sql: String;
 begin
+  if not Global.RemoteFactory.Connected then Exit;
   GetCommandType;
   if List.IsEmpty then Exit;
 

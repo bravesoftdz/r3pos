@@ -1,18 +1,21 @@
 inherited frmMMMain: TfrmMMMain
-  Left = 583
-  Top = 294
+  Left = -8
+  Top = -8
+  Width = 1296
+  Height = 776
   Caption = #30431#30431
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 12
   inherited stbBottom: TStatusBar
-    Top = 376
+    Top = 738
+    Width = 1280
     Height = 0
   end
   object RzPanel1: TRzPanel [1]
     Left = 0
     Top = 0
-    Width = 541
+    Width = 1280
     Height = 46
     Align = alTop
     BorderOuter = fsNone
@@ -23,7 +26,7 @@ inherited frmMMMain: TfrmMMMain
     object Panel4: TPanel
       Left = 0
       Top = 0
-      Width = 541
+      Width = 1280
       Height = 46
       Align = alClient
       BevelOuter = bvNone
@@ -1251,7 +1254,7 @@ inherited frmMMMain: TfrmMMMain
       object Image6: TImage
         Left = 346
         Top = 0
-        Width = 4
+        Width = 416
         Height = 46
         Align = alClient
         AutoSize = True
@@ -1659,7 +1662,7 @@ inherited frmMMMain: TfrmMMMain
         Stretch = True
       end
       object Panel2: TPanel
-        Left = 23
+        Left = 762
         Top = 0
         Width = 518
         Height = 46
@@ -3674,7 +3677,7 @@ inherited frmMMMain: TfrmMMMain
   object RzPanel9: TRzPanel [2]
     Left = 0
     Top = 46
-    Width = 541
+    Width = 1280
     Height = 31
     Align = alTop
     BorderOuter = fsNone
@@ -3682,7 +3685,7 @@ inherited frmMMMain: TfrmMMMain
     object Panel9: TPanel
       Left = 0
       Top = 0
-      Width = 541
+      Width = 1280
       Height = 2
       Align = alTop
       BevelOuter = bvNone
@@ -3692,13 +3695,13 @@ inherited frmMMMain: TfrmMMMain
     object rzTool: TPanel
       Left = 0
       Top = 0
-      Width = 541
+      Width = 1280
       Height = 31
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
       object Image21: TImage
-        Left = 521
+        Left = 1260
         Top = 1
         Width = 20
         Height = 30
@@ -4826,7 +4829,7 @@ inherited frmMMMain: TfrmMMMain
       object Panel3: TPanel
         Left = 99
         Top = 1
-        Width = 422
+        Width = 1161
         Height = 30
         Align = alClient
         BevelOuter = bvNone
@@ -4834,7 +4837,7 @@ inherited frmMMMain: TfrmMMMain
         object rzToolButton: TPanel
           Left = 101
           Top = 0
-          Width = 321
+          Width = 1060
           Height = 30
           Align = alClient
           BevelOuter = bvNone
@@ -4842,7 +4845,7 @@ inherited frmMMMain: TfrmMMMain
           object Image12: TImage
             Left = 0
             Top = 0
-            Width = 321
+            Width = 1060
             Height = 30
             Align = alClient
             Picture.Data = {
@@ -6176,7 +6179,7 @@ inherited frmMMMain: TfrmMMMain
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 541
+        Width = 1280
         Height = 1
         Align = alTop
         BevelOuter = bvNone
@@ -6642,7 +6645,7 @@ inherited frmMMMain: TfrmMMMain
     Left = 0
     Top = 77
     Width = 99
-    Height = 299
+    Height = 661
     Align = alLeft
     BorderOuter = fsNone
     BorderSides = [sdLeft, sdRight, sdBottom]
@@ -6651,7 +6654,7 @@ inherited frmMMMain: TfrmMMMain
       Left = 0
       Top = 0
       Width = 99
-      Height = 299
+      Height = 661
       Align = alClient
       BorderOuter = fsFlat
       BorderSides = [sdLeft, sdRight, sdBottom]
@@ -18705,7 +18708,7 @@ inherited frmMMMain: TfrmMMMain
     Left = 99
     Top = 77
     Width = 0
-    Height = 299
+    Height = 661
     Align = alLeft
     BorderOuter = fsFlat
     BorderSides = [sdRight]

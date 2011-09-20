@@ -178,6 +178,7 @@ var
   login:TCaLogin;
 begin
   Global.MoveToLocal;
+  dbid := '';
   Result := False;
   try
     Temp := TZQuery.Create(nil);
@@ -281,7 +282,7 @@ begin
     stp2.Font.Style := [];
     stp3.Font.Style := [];
     stp4.Font.Style := [];
-
+    try
     stp1.Font.Style := [fsBold];
     if CheckLogin(true) then
        begin
@@ -307,6 +308,14 @@ begin
     stp3.Font.Style := [fsBold];
     if CaUpgrade.UpGrade in [1,2] then
        WinExecAndWait32V2(Pchar(ExtractFilePath(ParamStr(0))+'install\'+filename),0);
+
+    except
+      on E:Exception do
+         begin
+           if MessageBox(Handle,pchar('检测版本升级文件失败，是否继续执行？错误原因:'+E.Message),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         end;
+    end;
+
     Label27.Caption := '正在升级数据..';
     Label27.Update;
     stp4.Font.Style := [fsBold];
@@ -397,7 +406,8 @@ begin
     try
        Global.MoveToRemate;
        Factor.DisConnect;
-       Factor.Initialize(DecStr(F.ReadString('db'+dbid,'connstr',''),ENC_KEY));
+       if id='' then id := F.ReadString('db','dbid',''); 
+       Factor.Initialize(DecStr(F.ReadString('db'+id,'connstr',''),ENC_KEY));
        Factor.Connect;
        if dbFactory.CheckVersion('9.9.9.9') then
           begin

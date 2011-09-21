@@ -434,8 +434,8 @@ begin
         begin
           LStrList.Add('          '+FormateStr(xPoint+'ʱ','                  ')
                                    +FormateStr(adoReport1.Fields[1].AsString,'                  ')
-                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
-                                   +FormateStr(FloatToStr(adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
+                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
+                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
         end else
         begin
           LStrList.Add('          '+FormateStr(xPoint+'ʱ','                  ')
@@ -453,8 +453,8 @@ begin
         begin
           LStrList.Add('          '+FormateStr(xPoint,'                  ')
                                    +FormateStr(adoReport1.Fields[1].AsString,'                  ')
-                                   +FormateStr(FloatToStr(adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
-                                   +FormateStr(FloatToStr(adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
+                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
+                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
         end else
         begin
           LStrList.Add('          '+FormateStr(xPoint,'                  ')

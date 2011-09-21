@@ -130,6 +130,7 @@ object frmProfitAnaly: TfrmProfitAnaly
               Width = 158
             end
             item
+              Alignment = taRightJustify
               DisplayFormat = '#0.###'
               EditButtons = <>
               FieldName = 'ANALYSUM'

@@ -1,6 +1,6 @@
 inherited frmSaleAnaly: TfrmSaleAnaly
-  Left = 197
-  Top = 103
+  Left = 194
+  Top = 111
   Width = 984
   Height = 667
   Caption = #30408#21033#20998#26512#25253#34920

@@ -56,6 +56,7 @@ type
     page_13: TRzBmpButton;
     page_14: TRzBmpButton;
     ImageList1: TImageList;
+    toolButton: TRzBmpButton;
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -67,9 +68,19 @@ type
     procedure RzBmpButton3Click(Sender: TObject);
   private
     { Private declarations }
+    FList:TList; {导航菜单}
+
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
     procedure wm_Sign(var Message: TMessage); message MM_SIGN;
     procedure wm_SessionFail(var Message: TMessage); message MM_SESSION_FAIL;
+
+    //导航工具栏
+    procedure DoActiveForm(Sender:TObject);
+    procedure DoFreeForm(Sender:TObject);
+    procedure DoActiveChange(Sender:TObject);
+    function SortToolButton:boolean;
+    procedure AddFrom(form:TForm);
+    procedure RemoveFrom(form:TForm);
   public
     { Public declarations }
     procedure ConnectToSQLite;
@@ -87,7 +98,7 @@ var
 implementation
 uses
   ufrmMMLogin, ufrmMMList,
-  uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmXsm2Desk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -99,8 +110,8 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand;
+  ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal;
 
 {$R *.dfm}
 
@@ -117,7 +128,11 @@ begin
 end;
 
 procedure TfrmMMMain.FormDestroy(Sender: TObject);
+var
+  i:integer;
 begin
+  for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
+  FList.Free;
   freeandnil(frmLogo);
   inherited;
 
@@ -126,6 +141,7 @@ end;
 procedure TfrmMMMain.FormCreate(Sender: TObject);
 begin
   inherited;
+  FList := TList.Create;
   frmLogo := TfrmLogo.create(self);
   ConnectToSQLite;
 
@@ -158,14 +174,6 @@ begin
   frmLogo.Show;
   try
    try
-     frmLogo.ShowTitle := '连接聊天服务器';
-     if mmGlobal.Logined then mmGlobal.ConnectToMsc;
-   except
-     on E:Exception do
-        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
-   end;
-
-   try
      frmLogo.ShowTitle := '读取我的好友信息';
      if mmGlobal.Logined then mmGlobal.getAllfriends;
      frmMMList.LoadFriends;
@@ -173,6 +181,15 @@ begin
      on E:Exception do
         MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
+   
+   try
+     frmLogo.ShowTitle := '连接聊天服务器';
+     if mmGlobal.Logined then mmGlobal.ConnectToMsc;
+   except
+     on E:Exception do
+        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+   end;
+
 
    if CaFactory.Audited and not mmGlobal.ONLVersion then
       begin
@@ -357,6 +374,121 @@ procedure TfrmMMMain.RzBmpButton3Click(Sender: TObject);
 begin
   inherited;
   Init;
+end;
+
+procedure TfrmMMMain.AddFrom(form: TForm);
+function Find:TrzBmpButton;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=0 to FList.Count -1 do
+    begin
+      if TrzBmpButton(FList[i]).Tag = Integer(Pointer(form)) then
+         begin
+           result := TrzBmpButton(FList[i]);
+           break;
+         end;
+    end;
+end;
+var
+  button:TrzBmpButton;
+begin
+  button := Find;
+  if button=nil then
+     begin
+       button := TrzBmpButton.Create(rzToolButton);
+       button.GroupIndex := 999;
+       button.Bitmaps.Up.Assign(toolButton.Bitmaps.Up);
+       button.Bitmaps.Down.Assign(toolButton.Bitmaps.Down);
+       button.Font.Assign(toolButton.Font);
+     end;
+  button.Caption := form.Caption;
+  button.Tag := Integer(Pointer(form));
+  button.OnClick := DoActiveForm;
+  button.Visible := true;
+  button.Parent := rzToolButton;
+  FList.Add(button);
+  SortToolButton;
+  button.Down := true;
+end;
+
+procedure TfrmMMMain.RemoveFrom(form: TForm);
+var
+  i:integer;
+begin
+  for i:=0 to FList.Count -1 do
+    begin
+      if integer(FList[i])=integer(pointer(form)) then
+         begin
+           TObject(FList[i]).Free;
+           FList.Delete(i);
+           break;
+         end;
+    end;
+  SortToolButton;
+end;
+
+function TfrmMMMain.SortToolButton: boolean;
+var
+  i:Integer;
+  button:TrzBmpButton;
+begin
+  for i:=0 to FList.Count -1 do
+    begin
+      button := TrzBmpButton(FList[i]);
+      button.Top := 0;
+      if i=0 then
+         button.Left := 0
+      else
+         button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+5;
+    end;
+end;
+
+procedure TfrmMMMain.DoActiveChange(Sender: TObject);
+begin
+  TForm(TrzBmpButton(Sender).tag).WindowState := wsMaximized;
+  TForm(TrzBmpButton(Sender).tag).BringToFront;
+  TrzBmpButton(Sender).Down := true;
+end;
+
+procedure TfrmMMMain.DoActiveForm(Sender: TObject);
+var
+  i:integer;
+  SOn:TNotifyEvent;
+begin
+  for i:=0 to FList.Count -1 do
+    begin
+      if TrzBmpButton(FList[i]).tag=integer(pointer(screen.ActiveForm)) then
+         begin
+           TrzBmpButton(FList[i]).Caption :=  screen.ActiveForm.Caption;
+           TrzBmpButton(FList[i]).Down := true;
+           break;
+         end;
+      if TrzBmpButton(FList[i]).tag=integer(Pointer(Sender)) then
+         begin
+           TrzBmpButton(FList[i]).Caption :=  TForm(Sender).Caption;
+           TrzBmpButton(FList[i]).Down := true;
+           break;
+         end;
+    end;
+end;
+
+procedure TfrmMMMain.DoFreeForm(Sender: TObject);
+var
+  i:integer;
+begin
+  for i:=0 to FList.Count -1 do
+    begin
+      if TrzBmpButton(FList[i]).tag=integer(pointer(Sender)) then
+         begin
+           TrzBmpButton(FList[i]).Tag := 0;
+           TObject(FList[i]).Free;
+           FList.Delete(i);
+           break;
+         end;
+    end;
+  SortToolButton;
 end;
 
 end.

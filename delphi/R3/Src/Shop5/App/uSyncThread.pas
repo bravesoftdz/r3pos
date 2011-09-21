@@ -28,6 +28,7 @@ uses uGlobal,uShopGlobal,uSyncFactory,ufrmLogo;
 //开启自动同步任务
 procedure StartSyncTask;
 begin
+  Exit;
   if not Global.RemoteFactory.Connected then Exit;
   if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then Exit;
   if not SyncFactory.CheckThreadSync then Exit;

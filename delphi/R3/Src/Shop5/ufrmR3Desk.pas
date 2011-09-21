@@ -113,7 +113,7 @@ var
   frmR3Desk: TfrmR3Desk;
 
 implementation
-uses ufrmR3Main,uShopGlobal,uDevFactory,uCaFactory,Registry, ufrmMain, uAdvFactory, MultInst, ufrmRimIEBrowser,
+uses ufrmR3Main,uShopGlobal,uDevFactory,uCaFactory,Registry, ufrmMain, uAdvFactory, ufrmRimIEBrowser,
   ufrmXsmIEBrowser,ufrmSaleDayReport;
 {$R *.dfm}
 

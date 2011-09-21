@@ -35,6 +35,7 @@ type
     Fxsm_encodingData: string;
     Fxsm_planText: string;
     Fxsm_nickname: string;
+    Fxsm_comType: string;
     procedure Setxsm_challenge(const Value: string);
     procedure Setxsm_password(const Value: string);
     procedure Setxsm_username(const Value: string);
@@ -55,6 +56,7 @@ type
     procedure Setxsm_encodingData(const Value: string);
     procedure Setxsm_planText(const Value: string);
     procedure Setxsm_nickname(const Value: string);
+    procedure Setxsm_comType(const Value: string);
     { Private declarations }
   protected
     function CreateXML(xml:string):IXMLDomDocument;
@@ -101,6 +103,7 @@ type
     property xsm_planText:string read Fxsm_planText write Setxsm_planText;
     property xsm_encodingData:string read Fxsm_encodingData write Setxsm_encodingData;
     property xsm_comId:string read Fxsm_comId write Setxsm_comId;
+    property xsm_comType:string read Fxsm_comType write Setxsm_comType;
     property xsm_parentComId:string read Fxsm_parentComId write Setxsm_parentComId;
 
     property xsm_refId:string read Fxsm_refId write Setxsm_refId;
@@ -287,6 +290,7 @@ begin
     xsm_comId := Root.selectSingleNode('comId').text;
     F.WriteString('xsm','code2',xsm_comId);
     xsm_userType := Root.selectSingleNode('userType').text;
+    xsm_comType := Root.selectSingleNode('comType').text;
 
     xsm_nickname := Root.selectSingleNode('nickName').text;
     xsm_planText := Root.selectSingleNode('planText').text;
@@ -515,6 +519,10 @@ begin
       Params.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
       LocalFactory.Open(gs,'TmqqGrouping',Params);
       LocalFactory.Open(us,'TmqqFriends',Params);
+      while not gs.Eof do gs.Delete;
+      gs.CommitUpdates;
+      while not us.Eof do us.Delete;
+      us.CommitUpdates;
       gx := 0;
       //开始保存数据
       Node := FindNode(Doc,'OUT_INFO',true);
@@ -537,7 +545,8 @@ begin
                MyFriends := Child.firstChild;
                while MyFriends<>nil do
                   begin
-                     us.Append;
+                     if not us.Locate('FRIEND_ID',MyFriends.attributes.getNamedItem('friendId').text,[]) then
+                     us.Append else us.Edit;
                      us.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
                      us.FieldByName('S_GROUP_ID').AsString := gid;
                      us.FieldByName('FRIEND_ID').AsString := MyFriends.attributes.getNamedItem('friendId').text;
@@ -567,6 +576,7 @@ begin
     result := true;
   except
     logined := false;
+    LogFile.AddLogFile(0,xml); 
     Raise;
   end;
 end;
@@ -729,10 +739,12 @@ procedure TmmGlobal.ConnectToMsc;
 var
   mmConnectFava:TmmConnectFava;
   mmPlayerFava:TmmPlayerFava;
+  mmPlayerIdListFava:TmmPlayerIdListFava;
 begin
   if not mmFactory.mmcConnectTo(chat_addr,chat_port) then Exit;
   mmConnectFava := TmmConnectFava.Create;
   mmPlayerFava := TmmPlayerFava.Create;
+  mmPlayerIdListFava := TmmPlayerIdListFava.Create;
   try
     mmConnectFava.messagetype := 1000;
     mmConnectFava.routetype := 1;
@@ -748,6 +760,7 @@ begin
     mmPlayerFava.nickName := xsm_nickname;
     mmPlayerFava.userType := xsm_userType;
     mmPlayerFava.comId := xsm_comId;
+    mmPlayerFava.comType := xsm_comType;
     mmPlayerFava.provinceId := xsm_parentComId;
     mmPlayerFava.refId := xsm_refId;
     mmPlayerFava.saledptId := xsm_salsdeptcode;
@@ -761,7 +774,14 @@ begin
     mmPlayerFava.clientType := 1;
     
     if not mmFactory.mmcPlayerFava(mmPlayerFava) then Exit;
+
+    mmPlayerIdListFava.messagetype := 1010;
+    mmPlayerIdListFava.routetype := 1;
+    mmPlayerIdListFava.comId := xsm_comId;
+    mmPlayerIdListFava.ListLen := 0;
+    if not mmFactory.mmcPlayerIdListFava(mmPlayerIdListFava) then Exit;
   finally
+    mmPlayerIdListFava.Free;
     mmConnectFava.Free;
     mmPlayerFava.Free;
   end;
@@ -780,6 +800,11 @@ end;
 procedure TmmGlobal.Setxsm_nickname(const Value: string);
 begin
   Fxsm_nickname := Value;
+end;
+
+procedure TmmGlobal.Setxsm_comType(const Value: string);
+begin
+  Fxsm_comType := Value;
 end;
 
 end.

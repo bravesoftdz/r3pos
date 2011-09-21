@@ -16,8 +16,6 @@ uses
   ufrmBasic in '..\..\Basic\ufrmBasic.pas' {frmBasic},
   ObjCommon in 'Obj\ObjCommon.pas',
   ufrmLogo in '..\..\Basic\ufrmLogo.pas' {frmLogo},
-  uMMUtil in 'MM\uMMUtil.pas',
-  uMMServer in 'MM\uMMServer.pas',
   uSyncFactory in 'App\uSyncFactory.pas',
   ObjSyncFactory in 'Obj\ObjSyncFactory.pas',
   uShopGlobal in 'uShopGlobal.pas' {ShopGlobal: TDataModule},
@@ -33,7 +31,6 @@ uses
   LCContrllerLib in 'App\LCContrllerLib.pas',
   PubMemberService in 'App\PubMemberService.pas',
   RspDownloadService in 'App\RspDownloadService.pas',
-  rspHeader in 'App\rspHeader.pas',
   uAdvFactory in 'App\uAdvFactory.pas',
   uCommand in 'App\uCommand.pas',
   uDevFactory in 'App\uDevFactory.pas',
@@ -42,7 +39,6 @@ uses
   ufrmBarCodePrint in 'App\ufrmBarCodePrint.pas' {frmBarCodePrint},
   ufrmBatchCloseForDay in 'App\ufrmBatchCloseForDay.pas' {frmBatchCloseForDay},
   ufrmBatchPmdPrice in 'App\ufrmBatchPmdPrice.pas' {frmBatchPmdPrice},
-  ufrmBomOrder in 'App\ufrmBomOrder.pas' {frmBomOrder},
   ufrmBomOrderList in 'App\ufrmBomOrderList.pas' {frmBomOrderList},
   ufrmCancelCard in 'App\ufrmCancelCard.pas' {frmCancelCard},
   ufrmCardNoInput in 'App\ufrmCardNoInput.pas' {frmCardNoInput},
@@ -154,7 +150,6 @@ uses
   ufrmRelationInfo in 'App\ufrmRelationInfo.pas' {frmRelationInfo},
   ufrmRelationUpdateMode in 'App\ufrmRelationUpdateMode.pas' {frmRelationUpdateMode},
   ufrmReturn in 'App\ufrmReturn.pas' {frmReturn},
-  ufrmRimIEBrowser in 'App\ufrmRimIEBrowser.pas' {frmRimIEBrowser},
   ufrmRoleInfo in 'App\ufrmRoleInfo.pas' {frmRoleInfo},
   ufrmRoleInfoList in 'App\ufrmRoleInfoList.pas' {frmRoleInfoList},
   ufrmRoleRights in 'App\ufrmRoleRights.pas' {frmRoleRights},
@@ -200,7 +195,6 @@ uses
   ufrmUserRights in 'App\ufrmUserRights.pas' {frmUserRights},
   ufrmUsers in 'App\ufrmUsers.pas' {frmUsers},
   ufrmUsersInfo in 'App\ufrmUsersInfo.pas' {frmUsersInfo},
-  ufrmXsmIEBrowser in 'App\ufrmXsmIEBrowser.pas' {frmXsmIEBrowser},
   ufrmXsmLogin in 'App\ufrmXsmLogin.pas' {frmXsmLogin},
   uGodsFactory in 'App\uGodsFactory.pas',
   uPrainpowerJudge in 'App\uPrainpowerJudge.pas',
@@ -265,7 +259,11 @@ uses
   uframeToolForm in 'Frame\uframeToolForm.pas' {frameToolForm},
   uframeTreeFindDialog in 'Frame\uframeTreeFindDialog.pas' {frameTreeFindDialog},
   uShopUtil in 'Frame\uShopUtil.pas',
-  uXDictFactory in 'Frame\uXDictFactory.pas';
+  uXDictFactory in 'Frame\uXDictFactory.pas',
+  uDownByHttp in 'Update\uDownByHttp.pas',
+  ufrmInstall in 'Update\ufrmInstall.pas' {frmInstall},
+  uMMServer in 'MM\uMMServer.pas',
+  uMMUtil in 'MM\uMMUtil.pas';
 
 {$R *.res}
 

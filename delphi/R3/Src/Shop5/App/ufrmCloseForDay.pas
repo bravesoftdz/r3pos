@@ -82,7 +82,7 @@ type
 
 
 implementation
-uses uGlobal,uShopGlobal,uDsUtil,Math,uDevFactory,ufrmTicketPrint,uSyncFactory;
+uses uGlobal,uShopGlobal,uFnUtil,uDsUtil,Math,uDevFactory,ufrmTicketPrint,uSyncFactory;
 
 {$R *.dfm}
 
@@ -548,13 +548,12 @@ begin
   try
     rs := TZQuery.Create(nil);
     rs.Close;
-    rs.SQL.Text := 'select Max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
+    rs.SQL.Text := 'select Max(END_DATE) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID';
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
     Factor.Open(rs);
     if rs.Fields[0].AsString='' then       //获得当前收银员最近的结账日期
     LastTime := 0 else
-    LastTime := rs.Fields[0].asInteger;
+    LastTime := strtoint(formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[0].asString)));
   finally
     rs.Free;
   end;

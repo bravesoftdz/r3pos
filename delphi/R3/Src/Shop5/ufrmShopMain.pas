@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, StdCtrls, jpeg,
-  RzBmpBtn, RzLabel,MultInst, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
+  RzBmpBtn, RzLabel, RzBckgnd, Buttons, RzPanel, ufrmBasic, ToolWin,
   RzButton, ZBase, ufrmInstall, RzStatus, RzTray, ShellApi, ZdbFactory,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
@@ -13,6 +13,7 @@ uses
 const
   WM_LOGIN_REQUEST=WM_USER+10;
   WM_CHECK_MSG=WM_USER+2565;
+  WM_DESKTOP_REQUEST=WM_USER+11;
 type
   TfrmShopMain = class(TfrmMain)
     mnuWindow: TMenuItem;

@@ -45,7 +45,7 @@ type
 
 implementation
 
-uses uGlobal,uShopGlobal,ufrmBasic;
+uses uGlobal,uFnUtil,uShopGlobal,ufrmBasic;
 
 {$R *.dfm}
 
@@ -61,11 +61,14 @@ begin
   try
 
     rs.SQL.Text :=
-         'select max(CREA_DATE) from ('+
-         'select max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
+         'select max(END_DATE) from ('+
+         'select max(END_DATE) as END_DATE from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
          ') j';
     Factor.Open(rs);
-    minDate := rs.Fields[0].AsInteger;
+    if rs.Fields[0].AsString='' then       //获得当前收银员最近的结账日期
+    minDate := 0 else
+    minDate := strtoint(formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[0].asString)));
+
     Str :=
     'select 0 as selflag,A.* from ('+
     'select TENANT_ID,SHOP_ID,CREA_USER,CREA_DATE,sum(PAY_A) as PAY_A,sum(SALE_MNY) as SALE_MNY from ('+

@@ -5723,6 +5723,7 @@ inherited frmN26Main: TfrmN26Main
       OnExecute = actfrmN26NetExecute
     end
     object actfrmGoodsMonth: TAction
+      Tag = 100002095
       Caption = #25104#26412#35843#25972
       OnExecute = actfrmGoodsMonthExecute
     end

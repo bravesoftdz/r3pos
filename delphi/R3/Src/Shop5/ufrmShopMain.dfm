@@ -5248,6 +5248,7 @@ inherited frmShopMain: TfrmShopMain
       OnExecute = actfrmSaleMonthTotalReportExecute
     end
     object actfrmGoodsMonth: TAction
+      Tag = 100002095
       Caption = #25104#26412#35843#25972
       OnExecute = actfrmGoodsMonthExecute
     end

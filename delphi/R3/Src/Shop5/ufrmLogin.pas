@@ -101,11 +101,13 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    //'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID);
     rs.SQL.Text :='select max(END_DATE) as CREA_DATE from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID);
     Factor.Open(rs);
-    CurDate:=FnTime.fnStrtoDate(rs.Fields[0].AsString);
-    if FormatDatetime('YYYYMMDD',edtOPER_DATE.Date) <FormatDatetime('YYYYMMDD',CurDate) then Raise Exception.Create('业务日期不能小于已关账日期...');
+    if rs.Fields[0].asString<>'' then
+    begin
+      CurDate:=FnTime.fnStrtoDate(rs.Fields[0].AsString);
+      if FormatDatetime('YYYYMMDD',edtOPER_DATE.Date) <FormatDatetime('YYYYMMDD',CurDate) then Raise Exception.Create('业务日期不能小于已关账日期...');
+    end;
   finally
     rs.Free;
   end;

@@ -2442,12 +2442,12 @@ inherited frmInitGuide: TfrmInitGuide
           Top = 2
           Width = 542
           Height = 261
-          ActivePage = TabSheet2
+          ActivePage = TabSheet3
           Align = alClient
           FlatColor = clWhite
           ShowFullFrame = False
           ShowShadow = False
-          TabIndex = 1
+          TabIndex = 2
           TabOrder = 0
           FixedDimension = 18
           object TabSheet1: TRzTabSheet

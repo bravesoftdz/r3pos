@@ -49,13 +49,12 @@ type
     mnuBase: TRzBmpButton;
     mnuSys: TRzBmpButton;
     mnuIn: TRzBmpButton;
-    Image10: TImage;
     Image11: TImage;
-    Image12: TImage;
-    Image13: TImage;
     btnSaleDayReport: TRzBmpButton;
     btnSaleMonthReport: TRzBmpButton;
     mnuAcct: TRzBmpButton;
+    Image4: TImage;
+    RzBmpButton1: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnDownOrderClick(Sender: TObject);
@@ -81,6 +80,7 @@ type
     procedure btnSaleDayReportClick(Sender: TObject);
     procedure btnSaleMonthReportClick(Sender: TObject);
     procedure mnuAcctClick(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     FHookLocked: boolean;
     FCA_MODULE: TZQuery;
@@ -114,7 +114,7 @@ var
 
 implementation
 uses ufrmXsm2Main,uShopGlobal,uDevFactory,uCaFactory,Registry, ufrmMain, uAdvFactory, ufrmRimIEBrowser,
-  ufrmXsmIEBrowser,ufrmSaleDayReport;
+  ufrmXsmIEBrowser,ufrmSaleDayReport, uGlobal;
 {$R *.dfm}
 
 procedure TfrmXsm2Desk.RzBmpButton16Click(Sender: TObject);
@@ -354,6 +354,7 @@ begin
        if rc>0 then AddLine;
        AddPopupMenu(FindAction('actfrmMonthClose'));
        AddPopupMenu(FindAction('actfrmRckMng'));
+       AddPopupMenu(FindAction('actfrmGoodsMonth'));
      end;
   if btn=mnuBase then
      begin
@@ -381,6 +382,8 @@ begin
        if rc>0 then AddLine;
        AddPopupMenu(FindAction('actfrmMessage'));
        AddPopupMenu(FindAction('actfrmLockScreen'));
+       if Global.UserId='admin' then 
+          AddPopupMenu(FindAction('actfrmInitGuide'));
      end;
   HostP := btn.ClientToScreen(Point(0,btn.Height));
   PopupMenu.Popup(HostP.X,HostP.Y);
@@ -545,7 +548,7 @@ begin
   if not Assigned(Form) then
   begin
     Form := TfrmSaleDayReport.Create(self);
-    TfrmSaleDayReport(Form).SingleReportParams; 
+    TfrmSaleDayReport(Form).SingleReportParams;
     frmXsm2Main.AddFrom(Form);
   end;
   Form.Name := 'TfrmSimpleSaleDayReport';
@@ -569,6 +572,17 @@ begin
   inherited;
   PostMessage(Handle,MSC_POPUP,integer(mnuAcct),0);
 
+end;
+
+procedure TfrmXsm2Desk.RzBmpButton1Click(Sender: TObject);
+var
+  Action:TAction;
+begin
+  inherited;
+  Action := FindAction('actfrmCustomer');
+  if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
+  if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
+  Action.OnExecute(Action);
 end;
 
 end.

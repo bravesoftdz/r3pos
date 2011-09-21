@@ -1,6 +1,6 @@
 inherited frmMMLogin: TfrmMMLogin
-  Left = 440
-  Top = 289
+  Left = 353
+  Top = 278
   ActiveControl = cxedtUsers
   Caption = 'frmMMLogin'
   ClientHeight = 290

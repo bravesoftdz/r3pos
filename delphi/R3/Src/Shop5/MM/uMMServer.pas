@@ -120,7 +120,7 @@ begin
   //×¢²áÏûÏ¢
   MM_MsgId  := RegisterWindowMessage(MM_UNIQUE);
   MC_MsgId  := RegisterWindowMessage(MC_UNIQUE);
-  InitInstance;
+  //InitInstance;
 end;
 
 destructor TMMServer.Destroy;

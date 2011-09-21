@@ -1,6 +1,6 @@
 object frmMMBasic: TfrmMMBasic
-  Left = 558
-  Top = 176
+  Left = 447
+  Top = 170
   BorderStyle = bsNone
   BorderWidth = 1
   Caption = 'frmMMBasic'

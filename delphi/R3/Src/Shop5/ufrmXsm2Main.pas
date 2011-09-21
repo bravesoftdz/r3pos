@@ -277,6 +277,7 @@ type
     actfrmGoodsMonth: TAction;
     RzBmpButton4: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
+    actfrmInitGuide: TAction;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -407,6 +408,7 @@ type
     procedure actfrmGoodsMonthExecute(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
+    procedure actfrmInitGuideExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -4562,6 +4564,12 @@ begin
     sl.free;
     Raise;
   end;
+end;
+
+procedure TfrmXsm2Main.actfrmInitGuideExecute(Sender: TObject);
+begin
+  inherited;
+    TfrmInitGuide.InitGuide(self);
 end;
 
 end.

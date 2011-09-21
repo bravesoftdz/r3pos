@@ -66,6 +66,8 @@ implementation
 function ProcExists(UNIQUE:string):boolean;
 var MutHandle:THandle;
 begin
+  result := false;
+  exit;
   MutHandle := OpenMutex(MUTEX_ALL_ACCESS, False, pchar(UNIQUE));
   result := (MutHandle>0);
 end;

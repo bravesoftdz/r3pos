@@ -1,6 +1,6 @@
 inherited frmMMMain: TfrmMMMain
-  Left = -8
-  Top = -8
+  Left = 75
+  Top = 256
   Width = 1296
   Height = 776
   Caption = #30431#30431
@@ -19157,6 +19157,23 @@ inherited frmMMMain: TfrmMMMain
       Color = 16701853
       TabOrder = 0
     end
+  end
+  object toolButton: TRzBmpButton [5]
+    Left = 235
+    Top = 183
+    Width = 102
+    Height = 28
+    Cursor = crHandPoint
+    Bitmaps.TransparentColor = clOlive
+    Color = clBtnFace
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clBlack
+    Font.Height = -12
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 5
+    Visible = False
   end
   inherited PopupMenu: TPopupMenu
     Left = 256

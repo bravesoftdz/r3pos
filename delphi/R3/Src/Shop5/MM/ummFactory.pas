@@ -6,6 +6,8 @@ const
   WM_MsgRecv=WM_USER+3000;
   WM_MsgEvent=WM_USER+3001;
   WM_MsgHint=WM_USER+3002;
+  WM_LINE=WM_USER+3003;
+  WM_CLOSE=WM_USER+3004;
 type
 
   TmmPlayerFava=class;
@@ -39,6 +41,7 @@ type
 	  nickName:pchar;//呢称
 	  userType:pchar;//类型
 	  comId:pchar; //公司ID
+    comType:Pchar;  //公司类型，字符串，2位(00:国家局,01:省公司,02:地市公司)
 	  provinceId:pchar;//省公司号
 	  refId:pchar;//用户refID
 	  saledptId:pchar;//营销部ID
@@ -82,6 +85,16 @@ type
 	  refPlayerType:Pchar;//消息接收者用户类型
 	  playerSkill:integer;//玩家技能(0:没有技能；:客服技能，默认没有技能)
   end;
+
+  PPlayerIdListFava=^TPlayerIdListFava;
+  TPlayerIdListFava=record
+    messagetype:integer;
+	  routetype:integer;
+    ListLen:integer;
+	  comId:pchar;//发送消息者公司
+    playerIdArray:array of pchar;
+  end;
+
   TmmMsgFava=class
   private
     FmmFlag: integer;
@@ -121,6 +134,8 @@ type
 	  nickName:string;//呢称
 	  userType:string;//类型
 	  comId:string; //公司ID
+
+    comType:string;//公司类型，字符串，2位(00:国家局,01:省公司,02:地市公司)
 	  provinceId:string;//省公司号
 	  refId:string;//用户refID
 	  saledptId:string;//营销部ID
@@ -183,6 +198,21 @@ type
 
   end;
 
+  TmmPlayerIdListFava=class(TmmMsgFava)
+  private
+    PlayerIdListFava:TPlayerIdListFava;
+  public
+	  messagetype:integer;
+	  routetype:integer;
+    ListLen:integer;
+	  comId:string;
+    playerIdArray:array of string;
+
+    function Encode:PPlayerIdListFava;
+    procedure Decode(Value:PPlayerIdListFava);
+
+  end;
+
   TmmFactory=class
   private
     FList:TList;
@@ -207,6 +237,8 @@ type
     function mmcConnectFava(ConnectFava:TmmConnectFava):boolean;
     //注册身份
     function mmcPlayerFava(PlayerFava:TmmPlayerFava):boolean;
+    //取在线用户
+    function mmcPlayerIdListFava(PlayerIdListFava:TmmPlayerIdListFava):boolean;
   end;
 
 type
@@ -221,6 +253,7 @@ type
 
 var mmFactory:TmmFactory;
 implementation
+uses ummGlobal,ufrmMMList;
 const dllname='mmc.dll';
 var
   DLLHandle:THandle;
@@ -249,25 +282,34 @@ function mmcRecv(flag:integer;lpData:Pointer):integer;stdcall;
 var
   mmSingleFava:TmmSingleFava;
   mmGroupFava:TmmGroupFava;
+  mmPlayerIdListFava:TmmPlayerIdListFava;
+  mmPlayerFava:TmmPlayerFava;
 begin
   case flag of
   1003:begin
          mmSingleFava := TmmSingleFava.Create;
-         try
-            mmSingleFava.Decode(PSingleFava(lpData));
-            mmFactory.AddRecv(mmSingleFava);
-         finally
-            mmSingleFava.Free;
-         end;
+         mmSingleFava.Decode(PSingleFava(lpData));
+         mmFactory.AddRecv(mmSingleFava);
        end;
   1002:begin
          mmGroupFava := TmmGroupFava.Create;
-         try
-            mmGroupFava.Decode(pGroupFava(lpData));
-            mmFactory.AddRecv(mmGroupFava);
-         finally
-            mmGroupFava.Free;
-         end;
+         mmGroupFava.Decode(pGroupFava(lpData));
+         mmFactory.AddRecv(mmGroupFava);
+       end;
+  1010:begin
+         mmPlayerIdListFava := TmmPlayerIdListFava.Create;
+         mmPlayerIdListFava.Decode(pPlayerIdListFava(lpData));
+         mmFactory.AddRecv(mmPlayerIdListFava);
+       end;
+  1005:begin
+         mmPlayerFava := TmmPlayerFava.Create;
+         mmPlayerFava.Decode(pPlayerFava(lpData));
+         mmFactory.AddRecv(mmPlayerFava);
+       end;
+  1001:begin
+         mmPlayerFava := TmmPlayerFava.Create;
+         mmPlayerFava.Decode(pPlayerFava(lpData));
+         mmFactory.AddRecv(mmPlayerFava);
        end;
   end;
 end;
@@ -276,6 +318,8 @@ var
   mmSingleFava:TmmSingleFava;
   mmGroupFava:TmmGroupFava;
 begin
+case Event of
+3:begin
   case EFlag of
   1003:begin
          mmSingleFava := TmmSingleFava.Create;
@@ -296,6 +340,11 @@ begin
          end;
        end;
   end;
+  end;
+2:begin
+    PostMessage(frmMMList.Handle,WM_CLOSE,1,1);
+  end;
+end;
 end;
 
 { TmmFactory }
@@ -343,11 +392,12 @@ end;
 procedure TmmFactory.AddRecv(lpData: TmmMsgFava);
 var
   mmUserInfo:PmmUserInfo;
+  i:integer;
 begin
   case lpData.mmFlag of
   1003:begin
          mmUserInfo := Find(TmmSingleFava(lpData).playerId);
-         if mmUserInfo.IsBeBlack then //黑名单，直接丢去
+         if not Assigned(mmUserInfo) or mmUserInfo.IsBeBlack then //黑名单，直接丢去
             begin
               lpData.Free;
               Exit;
@@ -358,7 +408,7 @@ begin
        end;
   1002:begin
          mmUserInfo := Find(TmmGroupFava(lpData).playerId);
-         if mmUserInfo.IsBeBlack then //黑名单，直接丢去
+         if not Assigned(mmUserInfo) or mmUserInfo.IsBeBlack then //黑名单，直接丢去
             begin
               lpData.Free;
               Exit;
@@ -366,6 +416,33 @@ begin
          mmUserInfo^.Msgs.Add(lpData);
          PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
          PostMessage(mmUserInfo^.Handle,WM_MsgHint,0,0);
+       end;
+  1010:begin
+         for i:=0 to TmmPlayerIdListFava(lpData).ListLen - 1 do
+            begin
+               mmUserInfo := Find(TmmPlayerIdListFava(lpData).playerIdArray[i]);
+               if Assigned(mmUserInfo) then
+                  mmUserInfo^.line := true;
+            end;
+         lpData.Free;
+         PostMessage(frmMMList.Handle,WM_LINE,0,0);
+       end;
+  1005:begin
+         mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
+         if Assigned(mmUserInfo) then
+            mmUserInfo^.line := false;
+         lpData.Free;
+         PostMessage(frmMMList.Handle,WM_LINE,0,0);
+       end;
+  1001:begin
+         mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
+         if Assigned(mmUserInfo) then
+            mmUserInfo^.line := true;
+         if TmmPlayerFava(lpData).playerId = mmGlobal.xsm_username then
+              PostMessage(frmMMList.Handle,WM_CLOSE,0,0)
+         else
+              PostMessage(frmMMList.Handle,WM_LINE,0,0);
+         lpData.Free;
        end;
   else
        begin
@@ -489,10 +566,24 @@ begin
   result := (mmcGetSockStatus=0);
 end;
 
+function TmmFactory.mmcPlayerIdListFava(
+  PlayerIdListFava: TmmPlayerIdListFava): boolean;
+var
+  _PlayerIdListFava:PPlayerIdListFava;
+  errCode:integer;
+begin
+  _PlayerIdListFava := PlayerIdListFava.Encode;
+  errCode := mmcSend(1010,_PlayerIdListFava);
+  result := (errCode=0);
+  if not result then
+     Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
+end;
+
 { TmmConnectFava }
 
 procedure TmmConnectFava.Decode(Value: PConnectFava);
 begin
+  mmFlag := Value^.messagetype;
   messagetype := Value^.messagetype;
   routetype := Value^.routetype;
   planText := StrPas(Value^.planText);
@@ -516,12 +607,14 @@ end;
 
 procedure TmmPlayerFava.Decode(Value: PPlayerFava);
 begin
+  mmFlag := Value^.messagetype;
   messagetype := Value^.messagetype;
   routetype := Value^.routetype;
   playerId := StrPas(Value^.playerId);
   nickName := StrPas(Value^.nickName);
   userType := StrPas(Value^.userType);
   comId := StrPas(Value^.comId);
+  comType := StrPas(Value^.comType);
   provinceId := StrPas(Value^.provinceId);
   refId := StrPas(Value^.refId);
   saledptId := StrPas(Value^.saledptId);
@@ -544,6 +637,7 @@ begin
   PlayerFava.nickName := Pchar(nickName);
   PlayerFava.userType := Pchar(userType);
   PlayerFava.comId := Pchar(comId);
+  PlayerFava.comType := Pchar(comType);
   PlayerFava.provinceId := Pchar(provinceId);
   PlayerFava.refId := Pchar(refId);
   PlayerFava.saledptId := Pchar(saledptId);
@@ -563,6 +657,7 @@ end;
 
 procedure TmmSingleFava.Decode(Value: PSingleFava);
 begin
+  mmFlag := Value^.messagetype;
   messagetype := Value^.messagetype;
   routetype := Value^.routetype;
   playerId := Strpas(Value^.playerId);
@@ -621,6 +716,7 @@ end;
 
 procedure TmmGroupFava.Decode(Value: PGroupFava);
 begin
+  mmFlag := Value^.messagetype;
   messagetype := Value^.messagetype;
   routetype := Value^.routetype;
   playerId := Strpas(Value^.playerId);
@@ -642,6 +738,34 @@ begin
   GroupFava.nickName := Pchar(nickName);
   GroupFava.showChatTxt := Pchar(showChatTxt);
   result := @GroupFava;
+end;
+
+{ TmmPlayerIdListFava }
+
+procedure TmmPlayerIdListFava.Decode(Value: PPlayerIdListFava);
+var i:integer;
+begin
+  mmFlag := Value^.messagetype;
+  messagetype := Value^.messagetype;
+  routetype := Value^.routetype;
+  ListLen := Value^.ListLen;
+  comId := StrPas(Value^.comId);
+  SetLength(playerIdArray,ListLen);
+  for i:=0 to ListLen-1 do
+    playerIdArray[i] := StrPas(Value^.playerIdArray[i]);
+end;
+
+function TmmPlayerIdListFava.Encode: PPlayerIdListFava;
+var
+  i:integer;
+begin
+  PlayerIdListFava.messagetype := messagetype;
+  PlayerIdListFava.routetype := routetype;
+  PlayerIdListFava.ListLen := ListLen;
+  PlayerIdListFava.comId := Pchar(comId);
+  for i:=0 to ListLen-1 do
+    PlayerIdListFava.playerIdArray[i] := Pchar(playerIdArray[i]);
+  result := @PlayerIdListFava;
 end;
 
 end.

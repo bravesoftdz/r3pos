@@ -20,7 +20,6 @@ type
     TabSheet1: TRzTabSheet;
     TabSheet2: TRzTabSheet;
     rzUsers: TRzTreeView;
-    StateImage: TImageList;
     Image2: TImage;
     RzLabel1: TRzLabel;
     MediaPlayer: TMediaPlayer;
@@ -33,6 +32,8 @@ type
     { Private declarations }
     procedure CreateParams(var Params: TCreateParams); override;
     procedure wmMsgHint(var Message: TMessage); message WM_MsgHint;
+    procedure wmMsgLine(var Message: TMessage); message WM_LINE;
+    procedure wmMsgClose(var Message: TMessage); message WM_CLOSE;
   public
     { Public declarations }
     procedure LoadFriends;
@@ -181,9 +182,32 @@ begin
 
 end;
 
+procedure TfrmMMList.wmMsgClose(var Message: TMessage);
+begin
+  if Message.LParam = 0 then
+     MessageBox(Handle,'当前账号在另一地方登录了.','友情提示..',MB_OK+MB_ICONINFORMATION);
+  mmFactory.mmcClose;
+end;
+
 procedure TfrmMMList.wmMsgHint(var Message: TMessage);
 begin
   PlaySend(ExtractFilePath(ParamStr(0))+'res\msg.mp3');
+end;
+
+procedure TfrmMMList.wmMsgLine(var Message: TMessage);
+var
+  i:integer;
+begin
+  for i:=0 to rzUsers.Items.Count -1 do
+    begin
+      if rzUsers.Items[i].Data <> nil then
+         begin
+           if PmmUserInfo(rzUsers.Items[i].Data)^.line then
+              rzUsers.Items[i].ImageIndex := 3 {在线}
+           else
+              rzUsers.Items[i].ImageIndex := 2 {下线};
+         end;
+    end;
 end;
 
 end.

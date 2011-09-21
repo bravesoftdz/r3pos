@@ -221,7 +221,7 @@ begin
           if rs.FieldbyName('MSG_SOURCE').asString='到货通知' then
              begin
                MsgInfo^.Rdd := true;
-               Factor.ExecSQL('update MSC_MESSAGE_LIST set READ_USER='''+Global.UserId+''',READ_DATE='''+formatDatetime('YYYY-MM-DD',Date())+''',MSG_READ_STATUS=''2'',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and MSG_ID='''+MsgInfo^.ID+'''');
+               Factor.ExecSQL('update MSC_MESSAGE_LIST set READ_USER='''+Global.UserId+''',READ_DATE='''+formatDatetime('YYYY-MM-DD',Date())+''',MSG_READ_STATUS=2,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='''+Global.SHOP_ID+''' and MSG_ID='''+MsgInfo^.ID+'''');
                PostMessage(frmMain.Handle,MSC_MESSAGE,99,strtoint(MsgInfo^.SndDate));
              end;
           FList.Add(MsgInfo);

@@ -96,13 +96,16 @@ end;
 procedure TfrmLogin.cxBtnOkClick(Sender: TObject);
 procedure CheckSysDate;
 var
+  CurDate: TDate;
   rs:TZQuery;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID);
+    //'select max(CREA_DATE) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID);
+    rs.SQL.Text :='select max(END_DATE) as CREA_DATE from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID);
     Factor.Open(rs);
-    if formatDatetime('YYYYMMDD',edtOPER_DATE.Date) < rs.Fields[0].AsString then Raise Exception.Create('业务日期不能小于已关账日期...');
+    CurDate:=FnTime.fnStrtoDate(rs.Fields[0].AsString);
+    if FormatDatetime('YYYYMMDD',edtOPER_DATE.Date) <FormatDatetime('YYYYMMDD',CurDate) then Raise Exception.Create('业务日期不能小于已关账日期...');
   finally
     rs.Free;
   end;

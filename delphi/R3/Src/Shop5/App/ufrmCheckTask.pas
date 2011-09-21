@@ -84,8 +84,8 @@ begin
        if not (formatDatetime('YYYY-MM-DD',date())>B) then Raise Exception.Create('系统已经结帐到'+b+'号，不能再盘点了');
      end else
      begin
-       B := Temp.Fields[0].AsString;
-       if (formatDatetime('YYYYMMDD',date())<=B) then Raise Exception.Create('系统已经结帐到'+b+'号，不能再盘点了');
+       B :=   Temp.Fields[0].AsString;
+       if (FormatDatetime('YYYYMMDD',date())<= FormatDatetime('YYYYMMDD',FnTime.fnStrtoDate(B))) then Raise Exception.Create('系统已经结帐到'+b+'号，不能再盘点了');
      end;
 
      //检查判断是否大于今天的业务单据

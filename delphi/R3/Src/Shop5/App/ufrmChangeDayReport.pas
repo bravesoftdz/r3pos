@@ -300,7 +300,14 @@ begin
     SetNotShowCostPrice(DBGridEh3, ['COST_MONEY','PROFIT_MONEY']);
     SetNotShowCostPrice(DBGridEh4, ['COST_MONEY','PROFIT_MONEY']);
     SetNotShowCostPrice(DBGridEh5, ['COST_PRICE','COST_MONEY','PROFIT_MONEY']);      
-  end; 
+  end;
+
+  //2011.09.22 Add «ß∑÷Œª£ª
+  SetGridColumnDisplayFormat(['DBGridEh1.AMONEY','DBGridEh1.COST_MONEY','DBGridEh1.PROFIT_MONEY',
+                              'DBGridEh2.AMONEY','DBGridEh2.COST_MONEY','DBGridEh2.PROFIT_MONEY',
+                              'DBGridEh3.AMONEY','DBGridEh3.COST_MONEY','DBGridEh3.PROFIT_MONEY',
+                              'DBGridEh4.AMONEY','DBGridEh4.COST_MONEY','DBGridEh4.PROFIT_MONEY',
+                              'DBGridEh5.AMONEY','DBGridEh5.COST_PRICE','DBGridEh5.COST_MONEY','DBGridEh5.PROFIT_MONEY']);
 end;
 
 function TfrmChangeDayReport.GetGroupSQL(chk:boolean=true): string;

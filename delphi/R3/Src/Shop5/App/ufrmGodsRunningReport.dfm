@@ -1,6 +1,6 @@
 inherited frmGodsRunningReport: TfrmGodsRunningReport
-  Left = 0
-  Top = 0
+  Left = 195
+  Top = 108
   Width = 1280
   Height = 770
   Caption = #21830#21697#27969#27700#24080#25253#34920

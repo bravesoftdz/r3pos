@@ -207,6 +207,11 @@ begin
       Label3.Caption := '≤÷ø‚√˚≥∆';
     end;
 
+  //2011.09.22 Add «ß∑÷Œª£ª
+  SetGridColumnDisplayFormat(['DBGridEh1.IN_MONEY','DBGridEh1.OUT_MONEY',
+                              'DBGridEh2.IN_MONEY','DBGridEh2.OUT_MONEY',
+                              'DBGridEh3.IN_MONEY','DBGridEh3.OUT_MONEY',
+                              'DBGridEh4.IORO_MNY']);
 end;
 
 function TfrmIORODayReport.GetGroupSQL(chk:boolean=true): string;

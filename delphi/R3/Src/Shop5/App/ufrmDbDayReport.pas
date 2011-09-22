@@ -274,6 +274,13 @@ begin
       Label28.Caption := '仓库群组';
       LblShopName.Caption := '调出仓库';
     end;
+
+  //2011.09.22 Add 千分位；
+  SetGridColumnDisplayFormat(['DBGridEh1.AMONEY','DBGridEh1.COST_MONEY','DBGridEh1.PROFIT_MONEY',
+                              'DBGridEh2.AMONEY','DBGridEh2.COST_MONEY','DBGridEh2.PROFIT_MONEY',
+                              'DBGridEh3.AMONEY','DBGridEh3.COST_MONEY','DBGridEh3.PROFIT_MONEY',
+                              'DBGridEh4.AMONEY','DBGridEh4.COST_MONEY','DBGridEh4.PROFIT_MONEY',
+                              'DBGridEh5.AMONEY','DBGridEh5.COST_PRICE','DBGridEh5.COST_MONEY','DBGridEh5.PROFIT_MONEY']);    
 end;
 
 function TfrmDbDayReport.GetGroupSQL(chk:boolean=true): string;

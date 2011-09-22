@@ -96,6 +96,9 @@ begin
   begin
     SetNotShowCostPrice(DBGridEh1, ['APRICE','AMONEY']);
   end;
+
+  //2011.09.22 Add «ß∑÷Œª£ª
+  SetGridColumnDisplayFormat(['DBGridEh1.AMONEY']);
 end;
 
 function TfrmGodsRunningReport.GetGoodDetailSQL(chk:boolean=true): widestring;

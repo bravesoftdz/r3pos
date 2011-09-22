@@ -235,6 +235,14 @@ begin
       Label3.Caption := '²Ö¿âÈº×é';
       Label21.Caption := '²Ö¿âÃû³Æ';
     end;
+  SetGridColumnDisplayFormat(['DBGridEh1.ORG_CST','DBGridEh1.ORG_RTL','DBGridEh1.STOCK_TTL','DBGridEh1.STOCK_MNY','DBGridEh1.STOCK_TAX','DBGridEh1.SALE_TTL','DBGridEh1.SALE_MNY',
+                              'DBGridEh1.SALE_TAX','DBGridEh1.SALE_CST','DBGridEh1.SALE_PRF','DBGridEh1.DBIN_CST','DBGridEh1.DBOUT_CST','DBGridEh1.BAL_CST','DBGridEh1.BAL_RTL',
+                              'DBGridEh2.ORG_CST','DBGridEh2.ORG_RTL','DBGridEh2.STOCK_TTL','DBGridEh2.STOCK_MNY','DBGridEh2.STOCK_TAX','DBGridEh2.SALE_TTL','DBGridEh2.SALE_MNY',
+                              'DBGridEh2.SALE_TAX','DBGridEh2.SALE_CST','DBGridEh2.SALE_PRF','DBGridEh2.DBIN_CST','DBGridEh2.DBOUT_CST','DBGridEh2.BAL_CST','DBGridEh2.BAL_RTL',
+                              'DBGridEh3.ORG_CST','DBGridEh3.ORG_RTL','DBGridEh3.STOCK_TTL','DBGridEh3.STOCK_MNY','DBGridEh3.STOCK_TAX','DBGridEh3.SALE_TTL','DBGridEh3.SALE_MNY',
+                              'DBGridEh3.SALE_TAX','DBGridEh3.SALE_CST','DBGridEh3.SALE_PRF','DBGridEh3.DBIN_CST','DBGridEh3.DBOUT_CST','DBGridEh3.BAL_CST','DBGridEh3.BAL_RTL',
+                              'DBGridEh4.ORG_CST','DBGridEh4.ORG_RTL','DBGridEh4.STOCK_TTL','DBGridEh4.STOCK_MNY','DBGridEh4.STOCK_TAX','DBGridEh4.SALE_TTL','DBGridEh4.SALE_MNY',
+                              'DBGridEh4.SALE_TAX','DBGridEh4.SALE_CST','DBGridEh4.SALE_PRF','DBGridEh4.DBIN_CST','DBGridEh4.DBOUT_CST','DBGridEh4.BAL_CST','DBGridEh4.BAL_RTL']);
 end;
 
 function TfrmJxcTotalReport.GetGroupSQL(chk:boolean=true): widestring;

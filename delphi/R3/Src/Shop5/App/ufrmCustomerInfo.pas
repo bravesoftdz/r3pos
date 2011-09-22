@@ -302,7 +302,7 @@ begin
     if cmbBIRTHDAY.CanFocus then cmbBIRTHDAY.SetFocus;
     raise Exception.Create('会员生日不能为空！');
   end;
-  if Trim(edtREGION_ID.Text)='' then
+  if Trim(edtREGION_ID.AsString)='' then
   begin
     if edtREGION_ID.CanFocus then edtREGION_ID.SetFocus;
     raise Exception.Create('所在地区不能为空！');

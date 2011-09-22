@@ -1293,6 +1293,19 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Font.Style = []
         ParentFont = False
       end
+      object Label12: TLabel
+        Left = 199
+        Top = 31
+        Width = 138
+        Height = 12
+        Caption = '('#24314#35758#36135#21495#38271#24230#19981#23567#20110'5'#20301')'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clNavy
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object edtGODS_SPELL: TcxTextEdit
         Left = 385
         Top = 47

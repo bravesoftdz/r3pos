@@ -433,9 +433,9 @@ begin
         if adoReport1.Locate('TYPE_ID',xPoint,[]) then
         begin
           LStrList.Add('          '+FormateStr(xPoint+'时','                  ')
-                                   +FormateStr(adoReport1.Fields[1].AsString,'                  ')
-                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
-                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
+                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[1].AsFloat),'                  ')
+                                   +FormateStr(FormatFloat('#,##0.00',adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
+                                   +FormateStr(FormatFloat('#,##0.00',adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
         end else
         begin
           LStrList.Add('          '+FormateStr(xPoint+'时','                  ')
@@ -452,9 +452,9 @@ begin
         if adoReport1.Locate('TYPE_ID',inttostr(i),[]) then
         begin
           LStrList.Add('          '+FormateStr(xPoint,'                  ')
-                                   +FormateStr(adoReport1.Fields[1].AsString,'                  ')
-                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
-                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
+                                   +FormateStr(FormatFloat('#0.##',adoReport1.Fields[1].asFloat),'                  ')
+                                   +FormateStr(FormatFloat('#,##0.00',adoReport1.Fields[2].AsFloat/CalcCount)+MnyUnit,'                  ')
+                                   +FormateStr(FormatFloat('#,##0.00',adoReport1.Fields[3].AsFloat/CalcCount)+MnyUnit,'              '));
         end else
         begin
           LStrList.Add('          '+FormateStr(xPoint,'                  ')
@@ -477,10 +477,10 @@ begin
     RStrList.Clear;
     // RStrList.Add('营业情况('+formatDatetime('YYYY-MM-DD',P1_D1.Date)+'至'+formatDatetime('YYYY-MM-DD',P1_D2.Date)+')');
     // RStrList.Add('');
-    RStrList.Add('营业额:'+formatFloat('#0.00',AnalyQry1.Fields[0].asFloat/CalcCount)+MnyUnit);
+    RStrList.Add('营业额:'+formatFloat('#,##0.00',AnalyQry1.Fields[0].asFloat/CalcCount)+MnyUnit);
     RStrList.Add('--------------------------------');
     if AnalyQry1.Fields[2].asInteger<>0 then
-      RStrList.Add('日均营业额:'+formatFloat('#0.00',AnalyQry1.Fields[0].asFloat/(AnalyQry1.Fields[2].asInteger*CalcCount))+MnyUnit)
+      RStrList.Add('日均营业额:'+formatFloat('#,##0.00',AnalyQry1.Fields[0].asFloat/(AnalyQry1.Fields[2].asInteger*CalcCount))+MnyUnit)
     else
       RStrList.Add('日均营业额:'+'0'+MnyUnit);
     RStrList.Add('--------------------------------');

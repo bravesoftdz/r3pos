@@ -2986,7 +2986,7 @@ begin
    'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT ,'+
    '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+') as TOTAL_OWE_MNY,'+
    '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+' and SALES_ID='''+id+''') as ORDER_OWE_MNY,'+
-   'case when j.INVOICE_FLAG=1 then ''收款收据'' when j.INVOICE_FLAG=2 then ''普通发票'' else ''增值税票'' end as INVOICE_FLAG_TEXT '+
+   'case when j.INVOICE_FLAG=''1'' then ''收款收据'' when j.INVOICE_FLAG=''2'' then ''普通发票'' else ''增值税票'' end as INVOICE_FLAG_TEXT '+
    'from ('+
    'select jn.*,n.DEPT_NAME as DEPT_ID_TEXT from ('+
    'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+

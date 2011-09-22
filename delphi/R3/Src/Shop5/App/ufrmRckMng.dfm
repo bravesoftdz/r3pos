@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 236
-  Top = 122
+  Left = 196
+  Top = 107
   Width = 791
   Height = 577
   Caption = #32467#36134#31649#29702
@@ -9,26 +9,26 @@ inherited frmRckMng: TfrmRckMng
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 775
-    Height = 502
+    Width = 783
+    Height = 513
     inherited RzPanel2: TRzPanel
-      Width = 765
-      Height = 492
+      Width = 773
+      Height = 503
       inherited RzPage: TRzPageControl
-        Width = 759
-        Height = 486
+        Width = 767
+        Height = 497
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#38134#21592#20132#29677#32467#36134
           inherited RzPanel3: TRzPanel
-            Width = 757
-            Height = 459
+            Width = 765
+            Height = 470
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 745
+              Width = 753
               Height = 70
               Align = alTop
               BorderOuter = fsNone
@@ -168,16 +168,16 @@ inherited frmRckMng: TfrmRckMng
             object Panel1: TPanel
               Left = 6
               Top = 76
-              Width = 745
-              Height = 377
+              Width = 753
+              Height = 388
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 743
-                Height = 375
+                Width = 751
+                Height = 386
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -794,17 +794,17 @@ inherited frmRckMng: TfrmRckMng
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 775
+    Width = 783
     inherited Image1: TImage
       Left = 245
-      Width = 510
+      Width = 518
     end
     inherited Image3: TImage
       Left = 245
-      Width = 510
+      Width = 518
     end
     inherited Image14: TImage
-      Left = 755
+      Left = 763
     end
     inherited rzPanel5: TPanel
       Left = 245

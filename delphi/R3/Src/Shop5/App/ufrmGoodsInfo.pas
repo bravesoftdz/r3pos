@@ -115,6 +115,7 @@ type
     fndUNIT_ID: TzrComboBoxList;
     ExtPm: TPopupMenu;
     N1: TMenuItem;
+    Label12: TLabel;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

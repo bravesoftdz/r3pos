@@ -356,9 +356,16 @@ begin
   SetUnitIDList(DBGridEh5,'UNIT_ID');
   SetUnitIDList(DBGridEh6,'UNIT_ID');
 
-  //2011.07.16 释放掉明细 
+  //2011.07.16 释放掉明细
   SetNotShowCostPrice(DBGridEh6, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
 
+  //2011.09.21 Add 千分位；
+  SetGridColumnDisplayFormat(['DBGridEh1.SALE_TTL','DBGridEh1.SALE_TAX','DBGridEh1.SALE_MNY','DBGridEh1.SALE_CST','DBGridEh1.SALE_ALLPRF','DBGridEh1.SALE_PRF',
+                              'DBGridEh2.SALE_TTL','DBGridEh2.SALE_TAX','DBGridEh2.SALE_MNY','DBGridEh2.SALE_CST','DBGridEh2.SALE_ALLPRF','DBGridEh2.SALE_PRF',
+                              'DBGridEh3.SALE_TTL','DBGridEh3.SALE_TAX','DBGridEh3.SALE_MNY','DBGridEh3.SALE_CST','DBGridEh3.SALE_ALLPRF','DBGridEh3.SALE_PRF',
+                              'DBGridEh4.SALE_TTL','DBGridEh4.SALE_TAX','DBGridEh4.SALE_MNY','DBGridEh4.SALE_CST','DBGridEh4.SALE_ALLPRF','DBGridEh4.SALE_PRF',
+                              'DBGridEh5.SALE_TTL','DBGridEh5.SALE_TAX','DBGridEh5.SALE_MNY','DBGridEh5.SALE_CST','DBGridEh5.SALE_ALLPRF','DBGridEh5.SALE_PRF',
+                              'DBGridEh6.AMONEY','DBGridEh6.NOTAX_MONEY','DBGridEh6.TAX_MONEY','DBGridEh6.AGIO_MONEY','DBGridEh7.COST_MONEY','DBGridEh6.PROFIT_MONEY','DBGridEh6.AVG_PROFIT']);
   StrList:=TStringList.Create;
 end;
 
@@ -625,6 +632,7 @@ begin
   try
   StrList.Clear;
   if FileExists('LOG.log') then StrList.LoadFromFile('LOG.log');
+  
   StrList.Add(TimeToStr(Time)+' begin... ');
   case rzPage.ActivePageIndex of
     0: begin //按部门汇总表
@@ -695,7 +703,7 @@ begin
       end;
   end;
   finally
-   if FileExists('LOG.log') then StrList.SaveToFile('LOG.log');
+   if FileExists('DEBUG.LOG') then StrList.SaveToFile('LOG.log');
   end;
 end;
 

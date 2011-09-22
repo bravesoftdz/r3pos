@@ -87,7 +87,7 @@ type
     function  GetHasChild: Boolean;
     function  GetGodsStateValue(DefineState: string='11111111111111111111'): string; //返回商品指标的启用情况
   public
-    PUB_CLIENT_ID: TZQuery; //客户群体数据集
+    PUB_CLIENT_ID: TZQuery;  //客户群体数据集
 
     constructor Create(AOwner: TComponent); override;
     function  GetDBGridEh: TDBGridEh;virtual;
@@ -155,6 +155,9 @@ type
     procedure DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string); //点列标题排序
     function  GetRelation_ID(Relation_ID: string): string; //供应链排序
     function  GetGodsSTAT_ID(fndP_TYPE_ID: TcxComboBox): string;  //返回指标: CODE_ID
+
+    //2011.09.21 Add 金额的格式方式:
+    procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -403,10 +406,12 @@ end;
 
 procedure TframeBaseReport.FormCreate(Sender: TObject);
 var
-  i:integer;
+  i,j:integer;
+  F:TIniFile;
   CmpName,FName,vName,DefState: string;
   Cbx: TcxComboBox;
   Column:TColumnEh;
+  Grid: TDBGridEh;
 begin
   inherited;
   //汇总记录值
@@ -546,6 +551,21 @@ begin
       //DBGridEh设置为多表头
       if not TDBGridEh(Components[i]).UseMultiTitle then
         TDBGridEh(Components[i]).UseMultiTitle:=true;
+
+      Grid:=TDBGridEh(Components[i]);
+      F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'GridColumn.ini');
+      //输出列：
+      try
+        for j:=0 to Grid.Columns.Count-1 do
+        begin
+          if trim(Grid.Columns[j].DisplayFormat)<>'' then
+          begin
+            F.WriteString(self.Name,Grid.Name+Grid.Columns[j].Title.Caption,''''+Grid.Name+'.'+Grid.Columns[j].FieldName+''',');
+          end;
+        end;
+      finally
+        F.Free;
+      end;
     end;
   end;
   if Width <= 1024 then PanelColumnS.Visible := false;
@@ -1740,6 +1760,53 @@ var
 begin
   Aobj:=TRecord_(fndP_TYPE_ID.Properties.Items.Objects[fndP_TYPE_ID.ItemIndex]);
   result:=Aobj.FieldByName('CODE_ID').asString;
+end;
+
+//金额格式化的数组[Grid.ColumnName]组成
+procedure TframeBaseReport.SetGridColumnDisplayFormat(AryMnyFormat: Array of string);
+  function FindGrid(GridName: string): TDBGridEh;
+  var Grid: TComponent;
+  begin
+    result:=nil;
+    Grid:=FindComponent(GridName);
+    if (Grid<>nil) and (Grid is TDBGridEh) then
+      result:=TDBGridEh(Grid);
+  end;
+var
+  i,Idx: integer;
+  CurGrid: TDBGridEh;  //DBGridEh
+  SetColumn: TColumnEh;
+  CurName, CurGridName, NearGridName,ColName: string; //DBGridEh的名
+begin
+  CurGridName:='';
+  NearGridName:='';
+  for i:=Low(AryMnyFormat) to High(AryMnyFormat) do
+  begin
+    CurName:=trim(AryMnyFormat[i]);
+    Idx:=Pos('.',CurName);
+    ColName:=Copy(CurName,Idx+1,length(CurName)-Idx);
+    CurGridName:=Copy(CurName,1,Idx-1);
+    
+    if NearGridName<>'' then
+    begin
+      if NearGridName<>CurGridName then
+        CurGrid:=FindGrid(CurGridName);
+    end else
+    begin
+      NearGridName:=CurGridName;
+      CurGrid:=FindGrid(CurGridName);
+    end;
+    
+    if CurGrid<>nil then
+    begin
+      SetColumn:=FindColumn(CurGrid, ColName);
+      if SetColumn<>nil then
+      begin
+        SetColumn.DisplayFormat:='#,##0.00';
+        SetColumn.Footer.DisplayFormat:='#,##0.00';
+      end;
+    end;
+  end;
 end;
 
 end.

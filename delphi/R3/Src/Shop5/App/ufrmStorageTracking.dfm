@@ -17,6 +17,8 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 910
         Height = 524
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -219,11 +221,11 @@ inherited frmStorageTracking: TfrmStorageTracking
                       end
                       item
                         Alignment = taRightJustify
-                        DisplayFormat = '#0.00'
+                        DisplayFormat = '#,##0.00'
                         EditButtons = <>
                         FieldName = 'SALE_MNY'
                         Footer.Alignment = taRightJustify
-                        Footer.DisplayFormat = '#0.00'
+                        Footer.DisplayFormat = '#,##0.00'
                         Footer.ValueType = fvtSum
                         Footers = <>
                         Title.Caption = #38144#21806#37329#39069

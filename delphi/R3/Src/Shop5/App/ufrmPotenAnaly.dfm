@@ -164,7 +164,7 @@ object frmPotenAnaly: TfrmPotenAnaly
               end
               item
                 Alignment = taRightJustify
-                DisplayFormat = '#0.###'
+                DisplayFormat = '#,##0.00'
                 EditButtons = <>
                 FieldName = 'PRF_SUM'
                 Footers = <>
@@ -174,10 +174,10 @@ object frmPotenAnaly: TfrmPotenAnaly
               end
               item
                 Alignment = taRightJustify
-                DisplayFormat = '#0.###'
+                DisplayFormat = '#,##0.00'
                 EditButtons = <>
                 FieldName = 'AMT_SUM'
-                Footer.DisplayFormat = '#0.###'
+                Footer.DisplayFormat = '#,##0.00'
                 Footers = <>
                 Title.Caption = #21806#37327
                 Title.Color = clWhite
@@ -448,7 +448,7 @@ object frmPotenAnaly: TfrmPotenAnaly
               end
               item
                 Alignment = taRightJustify
-                DisplayFormat = '#0.###'
+                DisplayFormat = '#,##0.00'
                 EditButtons = <>
                 FieldName = 'MNY_SUM'
                 Footers = <>
@@ -458,7 +458,7 @@ object frmPotenAnaly: TfrmPotenAnaly
               end
               item
                 Alignment = taRightJustify
-                DisplayFormat = '#0.###'
+                DisplayFormat = '#,##0.00'
                 EditButtons = <>
                 FieldName = 'PRF_SUM'
                 Footers = <>

@@ -391,6 +391,9 @@ begin
       Label12.Caption := '仓库群组';
       Label21.Caption := '仓库名称';
     end;
+
+  //2011.09.22 Add 千分位；
+  SetGridColumnDisplayFormat(['DBGridEh1.SALE_MNY','DBGridEh1.STOCK_MNY','DBGridEh2.STOCK_MNY']);
 end;
 
 procedure TfrmStorageTracking.FormDestroy(Sender: TObject);

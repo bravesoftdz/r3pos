@@ -131,10 +131,10 @@ object frmProfitAnaly: TfrmProfitAnaly
             end
             item
               Alignment = taRightJustify
-              DisplayFormat = '#0.###'
+              DisplayFormat = '#,##0.00'
               EditButtons = <>
               FieldName = 'ANALYSUM'
-              Footer.DisplayFormat = '#0.###'
+              Footer.DisplayFormat = '#,##0.00'
               Footer.ValueType = fvtSum
               Footers = <>
               Title.Caption = #38144#21806#39069

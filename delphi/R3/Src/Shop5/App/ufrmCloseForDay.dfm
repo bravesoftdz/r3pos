@@ -231,7 +231,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
       object lblCASH: TLabel
         Left = 225
-        Top = 79
+        Top = 95
         Width = 95
         Height = 20
         Caption = #24403#26085#29616#37329':'
@@ -366,7 +366,7 @@ inherited frmCloseForDay: TfrmCloseForDay
       end
       object labMNY: TLabel
         Left = 225
-        Top = 108
+        Top = 124
         Width = 95
         Height = 20
         Caption = #24215#20869#20313#39069':'
@@ -376,6 +376,7 @@ inherited frmCloseForDay: TfrmCloseForDay
         Font.Name = #40657#20307
         Font.Style = [fsBold]
         ParentFont = False
+        Visible = False
       end
       object Label3: TLabel
         Left = 227

@@ -4,10 +4,11 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ufrmDesk;
+  Dialogs, ufrmDesk, StdCtrls;
 
 type
   TfrmMMDesk = class(TfrmDesk)
+    Button1: TButton;
   private
     { Private declarations }
   public

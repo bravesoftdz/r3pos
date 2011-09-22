@@ -553,7 +553,10 @@ begin
                      us.FieldByName('F_USER_ID').AsString := xsm_username;
                      us.FieldByName('FRIEND_NAME').AsString := MyFriends.attributes.getNamedItem('friendName').text;
                      us.FieldByName('U_SHOW_NAME').AsString := MyFriends.attributes.getNamedItem('itemShowName').text;
-                     us.FieldByName('IS_BE_BLACK').AsString := MyFriends.attributes.getNamedItem('isBeBlack').text;
+                     if MyFriends.attributes.getNamedItem('isFriend').text='1' then
+                        us.FieldByName('IS_BE_BLACK').AsString := '0'
+                     else
+                        us.FieldByName('IS_BE_BLACK').AsString := '1';
                      us.FieldByName('USER_TYPE').AsString := MyFriends.attributes.getNamedItem('userType').text;
                      us.FieldByName('IS_ONLINE').AsString := '0';
                      us.FieldByName('REF_ID').AsString := MyFriends.attributes.getNamedItem('refId').text;
@@ -753,7 +756,7 @@ begin
     mmConnectFava.playerId := xsm_username;
     mmConnectFava.status := 'no';
     if not mmFactory.mmcConnectFava(mmConnectFava) then Exit;
-    
+
     mmPlayerFava.messagetype := 1001;
     mmPlayerFava.routetype := 1;
     mmPlayerFava.playerId := xsm_username;

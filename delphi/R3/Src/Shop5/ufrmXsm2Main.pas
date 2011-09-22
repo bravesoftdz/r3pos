@@ -132,7 +132,6 @@ type
     actfrmDeptInfoList: TAction;
     actfrmUsers: TAction;
     actfrmBrandInfo: TAction;
-    actfrmFactoryInfo: TAction;
     actfrmStockOrderList: TAction;
     actfrmSalesOrderList: TAction;
     actfrmChangeOrderList1: TAction;
@@ -1659,7 +1658,6 @@ begin
        TfrmChangeOrderList(Form).CodeId := '1';
        TfrmChangeOrderList(Form).Name := 'frmChangeOrderList1';
        AddFrom(Form);
-//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
@@ -1683,7 +1681,6 @@ begin
        TfrmChangeOrderList(Form).CodeId := '2';
        TfrmChangeOrderList(Form).Name := 'frmChangeOrderList2';
        AddFrom(Form);
-       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;

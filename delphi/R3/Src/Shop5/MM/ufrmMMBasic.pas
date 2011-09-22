@@ -4,22 +4,38 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, RzForms, RzBckgnd, RzPanel,DbGridEh, RzBmpBtn, StdCtrls;
+  Dialogs, ExtCtrls, RzForms, RzBckgnd, RzPanel,DbGridEh, RzBmpBtn, StdCtrls,
+  jpeg;
 
 type
   TfrmMMBasic = class(TForm)
-    RzPanel1: TRzPanel;
-    RzPanel2: TRzPanel;
-    RzBackground2: TRzBackground;
-    RzPanel3: TRzPanel;
-    Image1: TImage;
-    labType: TLabel;
-    sysClose: TRzBmpButton;
-    RzBackground3: TRzBackground;
+    bgk_tt: TRzPanel;
+    bkg_bb: TRzPanel;
+    bkg_01: TImage;
+    RzPanel10: TRzPanel;
+    bkg_03: TImage;
+    RzPanel11: TRzPanel;
+    bkg_04: TImage;
+    bkg_top: TRzPanel;
+    bkg_bottom: TRzPanel;
+    RzSeparator3: TRzSeparator;
+    bkg_f2: TRzBackground;
+    bkg: TRzPanel;
+    bkg_pnl: TRzPanel;
     RzFormShape1: TRzFormShape;
+    sysMinimized: TRzBmpButton;
+    sysMaximized: TRzBmpButton;
+    sysClose: TRzBmpButton;
+    RzSeparator1: TRzSeparator;
+    bkg_f1: TRzBackground;
+    bkg_02: TImage;
+    Image1: TImage;
     procedure sysCloseClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormResize(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure sysMaximizedClick(Sender: TObject);
+    procedure sysMinimizedClick(Sender: TObject);
   private
     procedure OnEnterPress(CurrentForm: TForm; Key: Char);
     procedure WMNCHITTEST(var Msg: TWMNCHITTEST);  message WM_NCHITTEST;
@@ -34,7 +50,7 @@ implementation
 
 procedure TfrmMMBasic.sysCloseClick(Sender: TObject);
 begin
-  Close;
+  Close;  
 end;
 
 procedure TfrmMMBasic.OnEnterPress(CurrentForm: TForm; Key: Char);
@@ -96,6 +112,55 @@ procedure TfrmMMBasic.FormResize(Sender: TObject);
 begin
   if WindowState = wsMaximized then
      SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
+  RzFormShape1.Enabled := not (WindowState = wsMaximized);
 end;
 
+procedure TfrmMMBasic.FormCreate(Sender: TObject);
+begin
+  BorderStyle := bsNone;
+  bkg_01.Picture.Bitmap.TransparentColor := clFuchsia;
+  bkg_01.Picture.Bitmap.TransparentMode := tmFixed;
+  bkg_01.Picture.Bitmap.Transparent := true;
+  bkg_02.Picture.Bitmap.TransparentColor := clFuchsia;
+  bkg_02.Picture.Bitmap.TransparentMode := tmFixed;
+  bkg_02.Picture.Bitmap.Transparent := true;
+  bkg_03.Picture.Bitmap.TransparentColor := clFuchsia;
+  bkg_03.Picture.Bitmap.TransparentMode := tmFixed;
+  bkg_03.Picture.Bitmap.Transparent := true;
+  bkg_04.Picture.Bitmap.TransparentColor := clFuchsia;
+  bkg_04.Picture.Bitmap.TransparentMode := tmFixed;
+  bkg_04.Picture.Bitmap.Transparent := true;
+  bkg_f1.Anchors := [akTop,akRight];
+  bkg_f1.Top := 2;
+  bkg_f1.Left := bkg_top.Width - bkg_f1.Width;
+  bkg_f1.Height := BKG_top.Height;
+  sysClose.Left := bkg_top.Width - sysClose.Width -0 ;
+  RzFormShape1.Enabled := not (WindowState = wsMaximized);
+
+
+  if biMaximize in BorderIcons then
+     begin
+       sysMaximized.Left := sysClose.Left - sysMaximized.Width -1 ;
+       sysMinimized.Left := sysMaximized.Left - sysMinimized.Width -1 ;
+     end
+  else
+     begin
+       sysMaximized.Visible := false;
+       sysMinimized.Left := sysClose.Left - sysMinimized.Width -1 ;
+     end;
+  sysMinimized.Visible := (biMinimize in BorderIcons);
+end;
+
+procedure TfrmMMBasic.sysMaximizedClick(Sender: TObject);
+begin
+  if WindowState = wsMaximized then
+     WindowState := wsNormal
+  else
+     WindowState := wsMaximized;
+end;
+
+procedure TfrmMMBasic.sysMinimizedClick(Sender: TObject);
+begin
+  WindowState := wsMinimized;
+end;
 end.

@@ -225,6 +225,8 @@ type
     function Find(uid:string):PmmUserInfo;
     function GetMsg(mmUserInfo:PmmUserInfo):TmmMsgFava;
     function CheckMsg(mmUserInfo:PmmUserInfo):boolean;
+    function HasMsg:boolean;
+    function FindFirst:PmmUserInfo;
     procedure Add(mmUserInfo:PmmUserInfo);
 
     procedure AddRecv(lpData:TmmMsgFava);
@@ -233,6 +235,8 @@ type
     function mmcConnectTo(Addr:string;Port:integer):boolean;
     function mmcClose:boolean;
     function mmcConnected:boolean;
+    //发送消息
+    function mmcSingleFava(mmSingleFava:TmmSingleFava):boolean;
     //请求认证
     function mmcConnectFava(ConnectFava:TmmConnectFava):boolean;
     //注册身份
@@ -404,7 +408,7 @@ begin
             end;
          mmUserInfo^.Msgs.Add(lpData);
          PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
-         PostMessage(mmUserInfo^.Handle,WM_MsgHint,0,0);
+         PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
        end;
   1002:begin
          mmUserInfo := Find(TmmGroupFava(lpData).playerId);
@@ -415,7 +419,7 @@ begin
             end;
          mmUserInfo^.Msgs.Add(lpData);
          PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
-         PostMessage(mmUserInfo^.Handle,WM_MsgHint,0,0);
+         PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
        end;
   1010:begin
          for i:=0 to TmmPlayerIdListFava(lpData).ListLen - 1 do
@@ -435,6 +439,16 @@ begin
          PostMessage(frmMMList.Handle,WM_LINE,0,0);
        end;
   1001:begin
+         mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
+         if Assigned(mmUserInfo) then
+            mmUserInfo^.line := true;
+         if TmmPlayerFava(lpData).playerId = mmGlobal.xsm_username then
+              PostMessage(frmMMList.Handle,WM_CLOSE,0,0)
+         else
+              PostMessage(frmMMList.Handle,WM_LINE,0,0);
+         lpData.Free;
+       end;
+  1016:begin
          mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
          if Assigned(mmUserInfo) then
             mmUserInfo^.line := true;
@@ -490,7 +504,8 @@ destructor TmmFactory.Destroy;
 begin
   Clear;
   FList.Free;
-  if DLLHandle>0 then FreeLibrary(DLLHandle);
+  mmcSetSockClose;
+//  if DLLHandle>0 then FreeLibrary(DLLHandle);
   inherited;
 end;
 procedure TmmFactory.DisposeMsg(index: integer);
@@ -577,6 +592,48 @@ begin
   result := (errCode=0);
   if not result then
      Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
+end;
+
+function TmmFactory.mmcSingleFava(mmSingleFava: TmmSingleFava): boolean;
+var
+  _mmSingleFava:PSingleFava;
+  errCode:integer;
+begin
+  _mmSingleFava := mmSingleFava.Encode;
+  errCode := mmcSend(1003,_mmSingleFava);
+  result := (errCode=0);
+  if not result then
+     Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
+end;
+
+function TmmFactory.HasMsg: boolean;
+var
+  i:integer;
+begin
+  result := false;
+  for i:=FList.Count -1 downto 0 do
+    begin
+      if PmmUserInfo(FList[i]).Msgs.Count >0 then
+         begin
+           result := true;
+           break;
+         end;
+    end;
+end;
+
+function TmmFactory.FindFirst: PmmUserInfo;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=FList.Count -1 downto 0 do
+    begin
+      if PmmUserInfo(FList[i]).Msgs.Count >0 then
+         begin
+           result := PmmUserInfo(FList[i]);
+           break;
+         end;
+    end;
 end;
 
 { TmmConnectFava }

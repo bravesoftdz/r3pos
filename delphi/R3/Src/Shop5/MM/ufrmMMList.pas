@@ -13,21 +13,35 @@ type
   TfrmMMList = class(TfrmMMBasic)
     FlagImage: TImageList;
     PopupMenu1: TPopupMenu;
-    RzPanel4: TRzPanel;
     RzPanel5: TRzPanel;
     RzPanel6: TRzPanel;
-    RzPageControl1: TRzPageControl;
+    RzPage: TRzPageControl;
     TabSheet1: TRzTabSheet;
     TabSheet2: TRzTabSheet;
     rzUsers: TRzTreeView;
-    Image2: TImage;
-    RzLabel1: TRzLabel;
     MediaPlayer: TMediaPlayer;
+    Timer1: TTimer;
+    RzPanel1: TRzPanel;
+    toolDesk: TRzBmpButton;
+    RzBmpButton1: TRzBmpButton;
+    rzUserInfo: TRzLabel;
+    Image2: TImage;
+    Image3: TImage;
+    Image4: TImage;
+    Image5: TImage;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
     procedure RzGroup1Items0Click(Sender: TObject);
     procedure RzGroup1Items1Click(Sender: TObject);
     procedure rzUsersDblClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure rzUsersExpanded(Sender: TObject; Node: TTreeNode);
+    procedure rzUsersCollapsed(Sender: TObject; Node: TTreeNode);
+    procedure Timer1Timer(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
   private
     { Private declarations }
     procedure CreateParams(var Params: TCreateParams); override;
@@ -36,7 +50,9 @@ type
     procedure wmMsgClose(var Message: TMessage); message WM_CLOSE;
   public
     { Public declarations }
+    function check:boolean;
     procedure LoadFriends;
+    procedure ReadInfo;
     procedure OpenDialog(uid:string);
     procedure PlaySend(filename:string);
   end;
@@ -53,6 +69,7 @@ uses ufrmMMMain,ummGlobal,uTreeUtil,ufrmMMDialog;
 procedure TfrmMMList.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
+  Exit;
   with Params do
     begin
       if not (csDesigning in frmMMMain.ComponentState) then
@@ -61,10 +78,13 @@ begin
 end;
 
 procedure TfrmMMList.FormCreate(Sender: TObject);
+var
+  i:integer;
 begin
   inherited;
   left := Screen.Width-width-1;
   top := (Screen.Height - Height) div 2 -1;
+  for i:=0 to RzPage.PageCount-1 do RzPage.Pages[i].TabVisible := false;
 end;
 
 procedure TfrmMMList.LoadFriends;
@@ -88,7 +108,8 @@ begin
     while not rs.eof do
       begin
          g := rzUsers.Items.Add(nil,rs.FieldbyName('I_SHOW_NAME').AsString);
-         g.StateIndex := 0;
+         g.ImageIndex := 0;
+         g.SelectedIndex := 0;
          us.Filtered := false;
          us.Filter := 'S_GROUP_ID='''+rs.FieldbyName('S_GROUP_ID').AsString+'''';
          us.Filtered := true;
@@ -109,6 +130,7 @@ begin
              mmFactory.Add(mmUserInfo);
              b := rzUsers.Items.AddChildObject(g,us.FieldbyName('U_SHOW_NAME').AsString,mmUserInfo);
              b.ImageIndex := 1;
+             b.SelectedIndex := 1;
              us.Next;
            end;
          rs.Next;
@@ -141,9 +163,10 @@ begin
          begin
            mmUserInfo := UserInfo;
            mmUserInfo^.Handle := Handle;
-           if mmUserInfo^.Msgs.Count > 0 then PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
+           if mmUserInfo^.Msgs.Count > 0 then SendMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
          end;
     end;
+  check;
 end;
 
 procedure TfrmMMList.PlaySend(filename: string);
@@ -152,6 +175,11 @@ begin
   MediaPlayer.FileName := filename;
   MediaPlayer.Open;
   MediaPlayer.Play;
+end;
+
+procedure TfrmMMList.ReadInfo;
+begin
+  rzUserInfo.Caption := mmGlobal.xsm_nickname +' ('+mmGlobal.xsm_username+')';
 end;
 
 procedure TfrmMMList.RzButton1Click(Sender: TObject);
@@ -186,12 +214,15 @@ procedure TfrmMMList.wmMsgClose(var Message: TMessage);
 begin
   if Message.LParam = 0 then
      MessageBox(Handle,'当前账号在另一地方登录了.','友情提示..',MB_OK+MB_ICONINFORMATION);
+  frmMMMain.RzTrayIcon1.Animate := false;
+  frmMMMain.RzTrayIcon1.IconIndex := 0;
   mmFactory.mmcClose;
 end;
 
 procedure TfrmMMList.wmMsgHint(var Message: TMessage);
 begin
   PlaySend(ExtractFilePath(ParamStr(0))+'res\msg.mp3');
+  check;
 end;
 
 procedure TfrmMMList.wmMsgLine(var Message: TMessage);
@@ -206,8 +237,63 @@ begin
               rzUsers.Items[i].ImageIndex := 3 {在线}
            else
               rzUsers.Items[i].ImageIndex := 2 {下线};
+           rzUsers.Items[i].SelectedIndex := rzUsers.Items[i].ImageIndex;
          end;
     end;
+end;
+
+procedure TfrmMMList.FormShow(Sender: TObject);
+begin
+  inherited;
+  ReadInfo;
+end;
+
+procedure TfrmMMList.rzUsersExpanded(Sender: TObject; Node: TTreeNode);
+begin
+  inherited;
+  Node.SelectedIndex := 1;
+  Node.ImageIndex := 1;
+end;
+
+procedure TfrmMMList.rzUsersCollapsed(Sender: TObject; Node: TTreeNode);
+begin
+  inherited;
+  Node.ImageIndex := 0;
+  Node.SelectedIndex := 0;
+
+end;
+
+function TfrmMMList.check: boolean;
+begin
+  frmMMMain.RzTrayIcon1.Animate := mmFactory.HasMsg;
+  Timer1.Enabled := frmMMMain.RzTrayIcon1.Animate;
+  if not Timer1.Enabled then frmMMMain.RzTrayIcon1.IconIndex := 1;
+end;
+
+procedure TfrmMMList.Timer1Timer(Sender: TObject);
+var
+  i:integer;
+begin
+  inherited;
+  for i:=rzUsers.Items.Count -1 downto 0 do
+    begin
+      if rzUsers.Items[i].Data = nil then continue;
+      if PmmUserInfo(rzUsers.Items[i].Data).Msgs.Count > 0 then
+         begin
+           if rzUsers.Items[i].ImageIndex = 2 then
+              rzUsers.Items[i].ImageIndex := 3
+           else
+              rzUsers.Items[i].ImageIndex := 2;
+           rzUsers.Items[i].SelectedIndex := rzUsers.Items[i].ImageIndex;
+         end;
+    end;
+end;
+
+procedure TfrmMMList.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  frmMMMain.WindowState := wsMaximized;
+  frmMMMain.Show;
 end;
 
 end.

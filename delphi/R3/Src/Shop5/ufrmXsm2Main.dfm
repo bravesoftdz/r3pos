@@ -1,6 +1,6 @@
 inherited frmXsm2Main: TfrmXsm2Main
-  Left = 1
-  Top = 1
+  Left = 175
+  Top = 209
   Width = 1022
   Height = 726
   Caption = ''
@@ -21047,10 +21047,6 @@ inherited frmXsm2Main: TfrmXsm2Main
       Enabled = False
       OnExecute = actfrmBrandInfoExecute
     end
-    object actfrmFactoryInfo: TAction
-      Caption = #29983#20135#21378#23478
-      Enabled = False
-    end
     object actfrmStockOrderList: TAction
       Tag = 11200001
       Caption = #36827#36135#20837#24211
@@ -21538,6 +21534,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   end
   object Timer1: TTimer
     Enabled = False
+    Interval = 500
     OnTimer = Timer1Timer
     Left = 416
     Top = 192

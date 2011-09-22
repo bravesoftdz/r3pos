@@ -1,6 +1,6 @@
 inherited frameBaseReport: TframeBaseReport
-  Left = 220
-  Top = 110
+  Left = 216
+  Top = 0
   Width = 798
   Height = 560
   Caption = #25253#34920#22522#31867

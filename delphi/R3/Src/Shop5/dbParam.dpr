@@ -8,6 +8,6 @@ uses
 
 begin
   Application.Initialize;
-  Application.CreateForm(TfrmDBSetup, frmDbParam);
+  Application.CreateForm(TfrmDBSetup, frmDBSetup);
   Application.Run;
 end.

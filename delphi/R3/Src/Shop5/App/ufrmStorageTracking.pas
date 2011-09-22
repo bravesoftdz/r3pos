@@ -177,7 +177,10 @@ type
     procedure Open3(ID:String);
     procedure Shop_Type_Change(edtSHOP_VALUE:TzrComboBoxList);
     //2011.06.30 Am Add 导出Excel前表头
-    function  DoBeforeExport: boolean; override;    
+    function  DoBeforeExport: boolean; override;
+
+    //2011.09.21 Add 金额的格式方式:
+    procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);    
   public
     { Public declarations }
   end;
@@ -1224,6 +1227,52 @@ procedure TfrmStorageTracking.rzP3_TreeChange(Sender: TObject;
 begin
   inherited;
   Open3('');
+end;
+
+procedure TfrmStorageTracking.SetGridColumnDisplayFormat(AryMnyFormat: array of string);
+  function FindGrid(GridName: string): TDBGridEh;
+  var Grid: TComponent;
+  begin
+    result:=nil;
+    Grid:=FindComponent(GridName);
+    if (Grid<>nil) and (Grid is TDBGridEh) then
+      result:=TDBGridEh(Grid);
+  end;
+var
+  i,Idx: integer;
+  CurGrid: TDBGridEh;  //DBGridEh
+  SetColumn: TColumnEh;
+  CurName, CurGridName, NearGridName,ColName: string; //DBGridEh的名
+begin
+  CurGridName:='';
+  NearGridName:='';
+  for i:=Low(AryMnyFormat) to High(AryMnyFormat) do
+  begin
+    CurName:=trim(AryMnyFormat[i]);
+    Idx:=Pos('.',CurName);
+    ColName:=Copy(CurName,Idx+1,length(CurName)-Idx);
+    CurGridName:=Copy(CurName,1,Idx-1);
+    
+    if NearGridName<>'' then
+    begin
+      if NearGridName<>CurGridName then
+        CurGrid:=FindGrid(CurGridName);
+    end else
+    begin
+      NearGridName:=CurGridName;
+      CurGrid:=FindGrid(CurGridName);
+    end;
+    
+    if CurGrid<>nil then
+    begin
+      SetColumn:=FindColumn(CurGrid, ColName);
+      if SetColumn<>nil then
+      begin
+        SetColumn.DisplayFormat:='#,##0.00';
+        SetColumn.Footer.DisplayFormat:='#,##0.00';
+      end;
+    end;
+  end;
 end;
 
 end.

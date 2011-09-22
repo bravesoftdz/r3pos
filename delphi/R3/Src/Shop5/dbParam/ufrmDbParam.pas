@@ -111,11 +111,11 @@ begin
       MessageBox(Handle,'请选择一数据库类型！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
       Exit;
       end;
-      if edtDBID.Value < 1 then
+      {if edtDBID.Value < 1 then
       begin
       MessageBox(Handle,'请输入不重复的数据库ID号！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
       Exit;
-      end;
+      end;}
       try
         DBID := edtDBID.Value;
         if cbDbType.ItemIndex = 0 then
@@ -453,7 +453,7 @@ begin
         3: Pro := 'db2';
       end;
       SetIniParams('db'+IntToStr(DBID),'provider',Pro);
-      SetIniParams('db'+IntToStr(DBID),'dbid',IntToStr(edtDBID.Value));
+      //SetIniParams('db'+IntToStr(DBID),'dbid',IntToStr(edtDBID.Value));
 
       SetIniParams('db'+IntToStr(DBID),'connstr',EncStr(GetConnStr,ENC_KEY));
     end;

@@ -392,7 +392,7 @@ object frmDBSetup: TfrmDBSetup
         Caption = 'CS'
         object lblDbType: TLabel
           Left = 79
-          Top = 5
+          Top = 9
           Width = 72
           Height = 12
           Alignment = taRightJustify
@@ -400,7 +400,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object lbDBName: TLabel
           Left = 85
-          Top = 26
+          Top = 34
           Width = 66
           Height = 12
           Alignment = taRightJustify
@@ -408,7 +408,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object lbDBBaseName: TLabel
           Left = 79
-          Top = 47
+          Top = 59
           Width = 72
           Height = 12
           Alignment = taRightJustify
@@ -416,7 +416,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object lblUser: TLabel
           Left = 91
-          Top = 68
+          Top = 84
           Width = 60
           Height = 12
           Alignment = taRightJustify
@@ -424,7 +424,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object lblUserPW: TLabel
           Left = 91
-          Top = 89
+          Top = 109
           Width = 60
           Height = 12
           Alignment = taRightJustify
@@ -437,6 +437,7 @@ object frmDBSetup: TfrmDBSetup
           Height = 12
           Alignment = taRightJustify
           Caption = #25968#25454#24211'ID'#21495#65306
+          Visible = False
         end
         object Label4: TLabel
           Left = 282
@@ -450,10 +451,11 @@ object frmDBSetup: TfrmDBSetup
           Font.Name = #23435#20307
           Font.Style = []
           ParentFont = False
+          Visible = False
         end
         object edtDbDir: TcxButtonEdit
           Left = 151
-          Top = 22
+          Top = 30
           Width = 210
           Height = 20
           Properties.Buttons = <
@@ -467,7 +469,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object cbDbType: TcxComboBox
           Left = 151
-          Top = 1
+          Top = 5
           Width = 125
           Height = 20
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -482,7 +484,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object edtDbName: TcxTextEdit
           Left = 151
-          Top = 22
+          Top = 30
           Width = 125
           Height = 20
           TabOrder = 1
@@ -491,7 +493,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object edtDatabase: TcxTextEdit
           Left = 151
-          Top = 43
+          Top = 55
           Width = 125
           Height = 20
           TabOrder = 2
@@ -500,7 +502,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object edtUser: TcxTextEdit
           Left = 151
-          Top = 64
+          Top = 80
           Width = 125
           Height = 20
           TabOrder = 3
@@ -509,7 +511,7 @@ object frmDBSetup: TfrmDBSetup
         end
         object edtUserPw: TcxTextEdit
           Left = 151
-          Top = 85
+          Top = 105
           Width = 125
           Height = 20
           Properties.EchoMode = eemPassword
@@ -523,6 +525,7 @@ object frmDBSetup: TfrmDBSetup
           Width = 125
           Height = 20
           TabOrder = 6
+          Visible = False
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end
       end

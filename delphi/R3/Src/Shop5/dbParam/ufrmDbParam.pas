@@ -85,7 +85,7 @@ type
   end;
 
 var
-  frmDbParam: TfrmDBSetup;  
+  frmDBSetup: TfrmDBSetup;
 implementation
 var
   blnSetup: boolean;

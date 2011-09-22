@@ -1,6 +1,6 @@
 object frmDBSetup: TfrmDBSetup
-  Left = 308
-  Top = 215
+  Left = 457
+  Top = 214
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #26412#22320#25968#25454#24211#36830#25509

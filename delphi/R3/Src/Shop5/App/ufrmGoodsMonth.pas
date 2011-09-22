@@ -364,12 +364,14 @@ end;
 procedure TfrmGoodsMonth.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
   Open('');
 end;
 
 procedure TfrmGoodsMonth.rzTreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
   Open('');
 end;
 
@@ -378,6 +380,7 @@ procedure TfrmGoodsMonth.dbGoodsMonthColumns9UpdateData(Sender: TObject;
 var Org_Adj_Price:String;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',2) then Raise Exception.Create('你没有调整成本的权限,请和管理员联系.');
   if (Text = '') then Text := '0';
   Org_Adj_Price := CdsGoodsMonth.FieldByName('ADJ_PRICE').AsString;
   if Org_Adj_Price <> Text then IsModify := True;
@@ -425,6 +428,7 @@ end;
 procedure TfrmGoodsMonth.N1Click(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',2) then Raise Exception.Create('你没有调整成本的权限,请和管理员联系.');
   if MessageBox(Handle,'是否把当前成本单价都调整成参考进价？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   BatchWrite;
 end;
@@ -438,6 +442,7 @@ end;
 procedure TfrmGoodsMonth.actSaveExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',2) then Raise Exception.Create('你没有调整成本的权限,请和管理员联系.');
   Save;
 end;
 
@@ -537,6 +542,7 @@ procedure TfrmGoodsMonth.dbGoodsMonthColumns10UpdateData(Sender: TObject;
 var Org_Adj_Cst:String;
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',2) then Raise Exception.Create('你没有调整成本的权限,请和管理员联系.');
   if (Text = '') then Text := '0';
   Org_Adj_Cst := CdsGoodsMonth.FieldByName('ADJ_CST').AsString;
   if Org_Adj_Cst <> Text then IsModify := True;

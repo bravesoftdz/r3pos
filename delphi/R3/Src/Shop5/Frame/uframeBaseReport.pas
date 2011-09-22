@@ -552,6 +552,7 @@ begin
       if not TDBGridEh(Components[i]).UseMultiTitle then
         TDBGridEh(Components[i]).UseMultiTitle:=true;
 
+      {
       Grid:=TDBGridEh(Components[i]);
       F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'GridColumn.ini');
       //Êä³öÁÐ£º
@@ -566,6 +567,7 @@ begin
       finally
         F.Free;
       end;
+      }
     end;
   end;
   if Width <= 1024 then PanelColumnS.Visible := false;

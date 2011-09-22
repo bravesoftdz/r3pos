@@ -227,6 +227,13 @@ begin
       if setCol<>nil then
         SetCol.Title.Caption:='≤÷ø‚√˚≥∆';
     end;
+
+  //2011.09.22 Add «ß∑÷Œª£ª
+  SetGridColumnDisplayFormat(['DBGridEh1.ACCT_MNY','DBGridEh1.PAYM_MNY','DBGridEh1.REVE_MNY','DBGridEh1.RECK_MNY',
+                              'DBGridEh2.ACCT_MNY','DBGridEh2.PAYM_MNY','DBGridEh2.REVE_MNY','DBGridEh2.RECK_MNY',
+                              'DBGridEh3.ACCT_MNY','DBGridEh3.PAYM_MNY','DBGridEh3.REVE_MNY','DBGridEh3.RECK_MNY',
+                              'DBGridEh4.ACCT_MNY','DBGridEh4.PAYM_MNY','DBGridEh4.REVE_MNY','DBGridEh4.RECK_MNY',
+                              'DBGridEh5.ACCT_MNY','DBGridEh5.RECK_MNY','DBGridEh5.REVE_MNY']);
 end;
 
 function TfrmPayAbleReport.GetGroupSQL(chk:boolean=true): string;

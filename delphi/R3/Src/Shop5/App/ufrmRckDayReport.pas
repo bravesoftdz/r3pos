@@ -248,6 +248,12 @@ begin
       Label17.Caption := '≤÷ø‚√˚≥∆';
     end;
 
+  //2011.09.22 Add «ß∑÷Œª£ª
+  SetGridColumnDisplayFormat(['DBGridEh1.RECV_MNY','DBGridEh1.PAY_A','DBGridEh1.PAY_B','DBGridEh1.PAY_C','DBGridEh1.PAY_D','DBGridEh1.PAY_E','DBGridEh1.PAY_F','DBGridEh1.PAY_G','DBGridEh1.PAY_J','DBGridEh1.TRN_MNY','DBGridEh1.TRN_REST_MNY',
+                              'DBGridEh2.RECV_MNY','DBGridEh2.PAY_A','DBGridEh2.PAY_B','DBGridEh2.PAY_C','DBGridEh2.PAY_D','DBGridEh2.PAY_E','DBGridEh2.PAY_F','DBGridEh2.PAY_G','DBGridEh2.PAY_J','DBGridEh2.TRN_MNY','DBGridEh2.TRN_REST_MNY',
+                              'DBGridEh3.RECV_MNY','DBGridEh3.PAY_A','DBGridEh3.PAY_B','DBGridEh3.PAY_C','DBGridEh3.PAY_D','DBGridEh3.PAY_E','DBGridEh3.PAY_F','DBGridEh3.PAY_G','DBGridEh3.PAY_J','DBGridEh3.TRN_MNY','DBGridEh3.TRN_REST_MNY',
+                              'DBGridEh4.RECV_MNY','DBGridEh4.PAY_A','DBGridEh4.PAY_B','DBGridEh4.PAY_C','DBGridEh4.PAY_D','DBGridEh4.PAY_E','DBGridEh4.PAY_F','DBGridEh4.PAY_G','DBGridEh4.PAY_J','DBGridEh4.BALANCE',
+                              'DBGridEh5.AMONEY','DBGridEh5.NOTAX_MONEY','DBGridEh5.TAX_MONEY','DBGridEh5.AGIO_RATE','DBGridEh5.AGIO_MONEY','DBGridEh5.COST_MONEY','DBGridEh5.PROFIT_MONEY','DBGridEh5.AVG_PROFIT']);
 end;
 
 function TfrmRckDayReport.GetGroupSQL(chk:boolean=true): string;

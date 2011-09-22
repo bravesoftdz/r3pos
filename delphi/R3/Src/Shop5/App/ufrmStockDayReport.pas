@@ -283,7 +283,14 @@ begin
 
       Label28.Caption := '仓库群组';
       Label17.Caption := '仓库名称';
-    end;  
+    end;
+
+  //2011.09.22 Add 千分位；
+  SetGridColumnDisplayFormat(['DBGridEh1.STOCK_TTL','DBGridEh1.STOCK_TAX','DBGridEh1.STOCK_MNY','DBGridEh1.STOCK_RTL','DBGridEh1.STOCK_AGO','DBGridEh1.AVG_AGIO',
+                              'DBGridEh2.STOCK_TTL','DBGridEh2.STOCK_TAX','DBGridEh2.STOCK_MNY','DBGridEh2.STOCK_RTL','DBGridEh2.STOCK_AGO','DBGridEh2.AVG_AGIO',
+                              'DBGridEh3.STOCK_TTL','DBGridEh3.STOCK_TAX','DBGridEh3.STOCK_MNY','DBGridEh3.STOCK_RTL','DBGridEh3.STOCK_AGO','DBGridEh3.AVG_AGIO',
+                              'DBGridEh4.STOCK_TTL','DBGridEh4.STOCK_TAX','DBGridEh4.STOCK_MNY','DBGridEh4.STOCK_RTL','DBGridEh4.STOCK_AGO','DBGridEh4.AVG_AGIO',
+                              'DBGridEh5.CALC_MONEY','DBGridEh5.TAX_MONEY','DBGridEh5.NOTAX_MONEY','DBGridEh5.RTL_MONEY','DBGridEh5.AGIO_MONEY']);
 end;
 
 function TfrmStockDayReport.GetGroupSQL(chk:boolean=true): string;

@@ -228,6 +228,12 @@ begin
       Label12.Caption := '仓库群组';
       Label21.Caption := '仓库名称';
     end;
+
+  //2011.09.22 Add 千分位；
+  SetGridColumnDisplayFormat(['DBGridEh1.BAL_CST','DBGridEh1.BAL_RTL',
+                              'DBGridEh2.BAL_CST','DBGridEh2.BAL_RTL',
+                              'DBGridEh3.BAL_CST','DBGridEh3.BAL_RTL',
+                              'DBGridEh4.BAL_CST','DBGridEh4.BAL_RTL']);
 end;
 
 function TfrmStorageDayReport.GetGroupSQL(chk:boolean=true): string;

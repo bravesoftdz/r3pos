@@ -1,4 +1,6 @@
 inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
+  Left = 195
+  Top = 107
   Width = 958
   Height = 558
   Caption = #21160#38144#20998#26512#25253#34920

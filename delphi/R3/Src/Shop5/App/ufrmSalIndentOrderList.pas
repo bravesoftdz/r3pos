@@ -1,4 +1,4 @@
-{ 12300001	0	销售订单	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	审核	8	打印  10导出}
+{ 12300001	0	销售订单	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	审核	8	打印  9 导出}
 
 unit ufrmSalIndentOrderList;
 
@@ -613,7 +613,7 @@ end;
 
 function TfrmSalIndentOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('12300001',10);
+  result:=ShopGlobal.GetChkRight('12300001',9);
 end;
 
 end.

@@ -1,4 +1,4 @@
-{ 12400001	0	销售出货	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	审核	8	打印 10导出 }
+{ 12400001	0	销售出货	1	查询	2	新增	3	修改	4	删除	5	变价	6	增送	7	审核	8	打印  9 导出 }
 
 unit ufrmSalesOrderList;
 
@@ -696,7 +696,7 @@ end;
 
 function TfrmSalesOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('12400001',10);
+  result:=ShopGlobal.GetChkRight('12400001',9);
 end;
 
 end.

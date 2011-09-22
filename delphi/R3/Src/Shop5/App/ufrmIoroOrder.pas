@@ -316,6 +316,7 @@ begin
     Factor.AddBatch(cdsHeader,'TIoroOrder');
     Factor.AddBatch(cdsDetail,'TIoroData');
     Factor.CommitBatch;
+    ShopGlobal.SaveFormatIni('cache','PAYM_ID',edtPAYM_ID.AsString);
   except
     Factor.CancelBatch;
     Raise;
@@ -393,6 +394,7 @@ begin
 end;
 
 procedure TfrmIoroOrder.InitRecord;
+var tmp:TZQuery;
 begin
   if dbState = dsBrowse then Exit;
   if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
@@ -408,10 +410,22 @@ begin
       cdsDetail.FieldByName('ACCOUNT_ID').Value := null;
       if cdsDetail.FindField('SEQNO')<> nil then
          cdsDetail.FindField('SEQNO').asInteger := RowID;
+      if ShopGlobal.LoadFormatIni('cache','PAYM_ID') <> '' then
+      begin
+        tmp := Global.GetZQueryFromName('PUB_PAYMENT');
+        tmp.Filtered := False;
+        tmp.Filter := ' CODE_ID='+QuotedStr(ShopGlobal.LoadFormatIni('cache','PAYM_ID'));
+        tmp.Filtered := True;
+        cdsDetail.FieldByName('PAYM_ID').AsString := tmp.FieldbyName('CODE_ID').AsString;
+        cdsDetail.FieldByName('PAYM_ID_TEXT').AsString := tmp.FieldbyName('CODE_NAME').AsString;
+        edtPAYM_ID.KeyValue := tmp.FieldbyName('CODE_ID').AsString;
+        edtPAYM_ID.Text := tmp.FieldbyName('CODE_NAME').AsString;
+      end;
       cdsDetail.Post;
       cdsDetail.Edit;
     end;
   DbGridEh1.Col := 1 ;
+
   finally
     cdsDetail.EnableControls;
   end;

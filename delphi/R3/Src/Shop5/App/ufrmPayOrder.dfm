@@ -1,6 +1,6 @@
 inherited frmPayOrder: TfrmPayOrder
-  Left = 349
-  Top = 123
+  Left = 370
+  Top = 138
   ActiveControl = edtCLIENT_ID
   Caption = #20184#27454#21333
   ClientHeight = 465

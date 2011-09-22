@@ -159,6 +159,7 @@ end;
 procedure TfrmPayOrder.Append;
 var
   rs:TZQuery;
+  i: Integer;
 begin
   Open('');
   dbState := dsInsert;
@@ -174,7 +175,14 @@ begin
   AObj.FieldbyName('PAY_ID').asString := TSequence.NewId();
   lblCaption.Caption :='µ¥ºÅ:..ÐÂÔö..';
   //edtPAYM_ID.ItemIndex := ShopGlobal.LoadFormatIni('ufrmPayOrderData_cache','PAYM_ID');
-  edtPAYM_ID.ItemIndex := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',ShopGlobal.LoadFormatIni('ufrmPayOrderData_cache','PAYM_ID'));
+  if edtPAYM_ID.Properties.Items.Count > 0 then
+  begin
+    i := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID',ShopGlobal.LoadFormatIni('cache','PAYM_ID'));
+    if i < 0 then
+      edtPAYM_ID.ItemIndex := 0
+    else
+      edtPAYM_ID.ItemIndex := i;
+  end;
   edtACCOUNT_ID.KeyValue := edtACCOUNT_ID.DataSet.FieldbyName('ACCOUNT_ID').asString;
   edtACCOUNT_ID.Text := edtACCOUNT_ID.DataSet.FieldbyName('ACCT_NAME').asString;
   edtITEM_ID.DataSet.Locate('CODE_ID','2',[]); 
@@ -271,7 +279,7 @@ procedure TfrmPayOrder.btnOkClick(Sender: TObject);
 begin
   inherited;
   SaveOrder;
-  ShopGlobal.SaveFormatIni('ufrmPayOrderData_cache','PAYM_ID',TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  ShopGlobal.SaveFormatIni('cache','PAYM_ID',TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
   ModalResult := MROK;
 end;
 

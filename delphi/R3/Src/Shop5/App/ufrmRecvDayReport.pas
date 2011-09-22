@@ -251,6 +251,13 @@ begin
   //初始化Grid: 付款方式
   Rs:=Global.GetZQueryFromName('PUB_PAYMENT');
   AddDBGridEhColumnItems(DBGridEh5, Rs, 'PAYM_ID', 'CODE_ID', 'CODE_NAME');
+
+  //2011.09.22 Add 千分位；
+  SetGridColumnDisplayFormat(['DBGridEh1.ORG_ALL_MNY','DBGridEh1.NEW_ALL_MNY','DBGridEh1.ALL_MNY','DBGridEh1.ORG_ADVA_MNY','DBGridEh1.NEW_ADVA_MNY','DBGridEh1.ADVA_MNY','DBGridEh1.ORG_PAY_MNY','DBGridEh1.NEW_PAY_MNY','DBGridEh1.PAY_MNY','DBGridEh1.ORG_RETURN_MNY','DBGridEh1.NEW_RETURN_MNY','DBGridEh1.RETURN_MNY',
+                              'DBGridEh2.ORG_ALL_MNY','DBGridEh2.NEW_ALL_MNY','DBGridEh2.ALL_MNY','DBGridEh2.ORG_ADVA_MNY','DBGridEh2.NEW_ADVA_MNY','DBGridEh2.ADVA_MNY','DBGridEh2.ORG_PAY_MNY','DBGridEh2.NEW_PAY_MNY','DBGridEh2.PAY_MNY','DBGridEh2.ORG_RETURN_MNY','DBGridEh2.NEW_RETURN_MNY','DBGridEh2.RETURN_MNY',
+                              'DBGridEh3.ORG_ALL_MNY','DBGridEh3.NEW_ALL_MNY','DBGridEh3.ALL_MNY','DBGridEh3.ORG_ADVA_MNY','DBGridEh3.NEW_ADVA_MNY','DBGridEh3.ADVA_MNY','DBGridEh3.ORG_PAY_MNY','DBGridEh3.NEW_PAY_MNY','DBGridEh3.PAY_MNY','DBGridEh3.ORG_RETURN_MNY','DBGridEh3.NEW_RETURN_MNY','DBGridEh3.RETURN_MNY',
+                              'DBGridEh4.ORG_ALL_MNY','DBGridEh4.NEW_ALL_MNY','DBGridEh4.ALL_MNY','DBGridEh4.ORG_ADVA_MNY','DBGridEh4.NEW_ADVA_MNY','DBGridEh4.ADVA_MNY','DBGridEh4.ORG_PAY_MNY','DBGridEh4.NEW_PAY_MNY','DBGridEh4.PAY_MNY','DBGridEh4.ORG_RETURN_MNY','DBGridEh4.NEW_RETURN_MNY','DBGridEh4.RETURN_MNY',
+                              'DBGridEh5.ACCT_MNY','DBGridEh5.PAY_MNY','DBGridEh5.RECK_MNY']);  
 end;
 
 function TfrmRecvDayReport.GetGroupSQL(chk:boolean=true): string;

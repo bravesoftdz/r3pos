@@ -211,6 +211,13 @@ begin
       Label12.Caption := '仓库群组';
       Label3.Caption := '仓库名称';
     end;
+
+  //2011.09.22 Add 千分位；
+  SetGridColumnDisplayFormat(['DBGridEh1.ACCT_MNY','DBGridEh1.RECV_MNY','DBGridEh1.REVE_MNY','DBGridEh1.RECK_MNY',
+                              'DBGridEh2.ACCT_MNY','DBGridEh2.RECV_MNY','DBGridEh2.REVE_MNY','DBGridEh2.RECK_MNY',
+                              'DBGridEh3.ACCT_MNY','DBGridEh3.RECV_MNY','DBGridEh3.REVE_MNY','DBGridEh3.RECK_MNY',
+                              'DBGridEh4.ACCT_MNY','DBGridEh4.RECV_MNY','DBGridEh4.REVE_MNY','DBGridEh4.RECK_MNY',
+                              'DBGridEh5.ACCT_MNY','DBGridEh5.RECV_MNY','DBGridEh5.REVE_MNY','DBGridEh5.RECK_MNY']);
 end;
 
 function TfrmRecvAbleReport.GetGroupSQL(chk:boolean=true): string;

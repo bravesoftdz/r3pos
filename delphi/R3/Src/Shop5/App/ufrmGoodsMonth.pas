@@ -86,6 +86,7 @@ type
     procedure BatchWrite;
     procedure SetIsModify(const Value: Boolean);
     procedure PrintView;
+    function  CheckCanExport: boolean; override;  
   public
     { Public declarations }
     function EncodeSql(ID:String):String;
@@ -561,6 +562,7 @@ end;
 procedure TfrmGoodsMonth.actPrintExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',3) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
   PrintView;
   PrintDBGridEh1.Print;
 end;
@@ -568,6 +570,7 @@ end;
 procedure TfrmGoodsMonth.actPreviewExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002095',3) then Raise Exception.Create('你没有打印的权限,请和管理员联系.');
   PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
@@ -597,6 +600,11 @@ begin
   inherited;
   IF Column.FieldName = 'GODS_NAME' then
      Text := '合计:'+Text+'笔';
+end;
+
+function TfrmGoodsMonth.CheckCanExport: boolean;
+begin
+  if not ShopGlobal.GetChkRight('100002095',4) then Raise Exception.Create('你没有导出的权限,请和管理员联系.');
 end;
 
 end.

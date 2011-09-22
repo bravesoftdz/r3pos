@@ -747,7 +747,10 @@ procedure TfrmRecvPosList.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   inherited;
-  ShopGlobal.SaveFormatIni('ufrmRecvPosListData_cache','PAYM_ID',TRecord_(fndPAYM_ID.Properties.Items.Objects[fndPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  if fndPAYM_ID.ItemIndex<>-1 then //2011.09.22º”≈–∂œ
+  begin
+    ShopGlobal.SaveFormatIni('ufrmRecvPosListData_cache','PAYM_ID',TRecord_(fndPAYM_ID.Properties.Items.Objects[fndPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString);
+  end;
 end;
 
 end.

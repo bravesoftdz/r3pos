@@ -423,6 +423,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
                   Title.Caption = #21457#36135#29366#24577
+                  Width = 60
                 end
                 item
                   EditButtons = <>

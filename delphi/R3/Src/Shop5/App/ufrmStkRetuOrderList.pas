@@ -101,7 +101,7 @@ begin
      w := w +' and A.STOCK_ID>'''+id+'''';
   result :=
      'select A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,-A.STOCK_AMT as AMOUNT,-A.STOCK_MNY as AMONEY,''5'' as ABLE_TYPE, '+
-     '(case when LOCUS_STATUS = ''3'' then ''已发货'' else ''待发货'' end ) as LOCUS_STATUS_NAME from STK_STOCKORDER A '+w+' ';
+     'case when LOCUS_STATUS = ''3'' then ''已发货'' else ''待发货'' end as LOCUS_STATUS_NAME from STK_STOCKORDER A '+w+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,-c.PAYM_MNY as PAYM_MNY,-c.RECK_MNY as RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID and jc.ABLE_TYPE=c.ABLE_TYPE';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';

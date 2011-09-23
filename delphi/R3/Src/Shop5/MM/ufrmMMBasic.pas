@@ -5,10 +5,10 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, RzForms, RzBckgnd, RzPanel,DbGridEh, RzBmpBtn, StdCtrls,
-  jpeg;
+  jpeg,ufrmBasic;
 
 type
-  TfrmMMBasic = class(TForm)
+  TfrmMMBasic = class(TfrmBasic)
     bgk_tt: TRzPanel;
     bkg_bb: TRzPanel;
     bkg_01: TImage;
@@ -23,13 +23,13 @@ type
     bkg: TRzPanel;
     bkg_pnl: TRzPanel;
     RzFormShape1: TRzFormShape;
+    RzSeparator1: TRzSeparator;
+    bkg_f1: TRzBackground;
+    formLogo: TImage;
     sysMinimized: TRzBmpButton;
     sysMaximized: TRzBmpButton;
     sysClose: TRzBmpButton;
-    RzSeparator1: TRzSeparator;
-    bkg_f1: TRzBackground;
     bkg_02: TImage;
-    Image1: TImage;
     procedure sysCloseClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormResize(Sender: TObject);
@@ -42,6 +42,8 @@ type
     { Private declarations }
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy;override;
   end;
 
 implementation
@@ -134,9 +136,12 @@ begin
   bkg_f1.Top := 2;
   bkg_f1.Left := bkg_top.Width - bkg_f1.Width;
   bkg_f1.Height := BKG_top.Height;
-  sysClose.Left := bkg_top.Width - sysClose.Width -0 ;
+  sysClose.Left := bgk_tt.Width - sysClose.Width -0 ;
   RzFormShape1.Enabled := not (WindowState = wsMaximized);
-
+  
+  sysMaximized.Top := 0;
+  sysMinimized.Top := 0;
+  sysClose.Top := 0;
 
   if biMaximize in BorderIcons then
      begin
@@ -149,6 +154,8 @@ begin
        sysMinimized.Left := sysClose.Left - sysMinimized.Width -1 ;
      end;
   sysMinimized.Visible := (biMinimize in BorderIcons);
+
+  
 end;
 
 procedure TfrmMMBasic.sysMaximizedClick(Sender: TObject);
@@ -163,4 +170,15 @@ procedure TfrmMMBasic.sysMinimizedClick(Sender: TObject);
 begin
   WindowState := wsMinimized;
 end;
+constructor TfrmMMBasic.Create(AOwner: TComponent);
+begin
+  inherited;
+end;
+
+destructor TfrmMMBasic.Destroy;
+begin
+
+  inherited;
+end;
+
 end.

@@ -80,7 +80,7 @@ begin
     if doc=nil then Exit;
     Node := FindNode(doc,'header\pub');
     AdvInfo.Position := Position;
-    AdvInfo.AdvType := StrtoInt(GetNodeValue(Node,'advType'));
+    AdvInfo.AdvType := StrtoIntDef(GetNodeValue(Node,'advType'),0);
     Node := FindNode(doc,'body\advinfo');
     UrlList := Node.firstChild;
     for i:=0 to 20 do AdvInfo.urlList[i] := '';

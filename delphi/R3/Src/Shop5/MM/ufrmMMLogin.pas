@@ -10,20 +10,19 @@ uses
 
 type
   TfrmMMLogin = class(TfrmMMBasic)
-    imgLogin: TImage;
     Label4: TLabel;
     edtOPER_DATE: TcxDateEdit;
     cxedtUsers: TcxTextEdit;
     lblName: TLabel;
     cxedtPasswrd: TcxTextEdit;
-    RzBackground1: TRzBackground;
     lblPass: TLabel;
-    Label3: TLabel;
-    Label6: TLabel;
     cxcbSave: TcxCheckBox;
-    RzLabel1: TRzLabel;
-    cxBtnOk: TRzBitBtn;
-    cxbtnCancel: TRzBitBtn;
+    Image2: TImage;
+    Image3: TImage;
+    cxcbOffline: TcxCheckBox;
+    imgLogin: TImage;
+    cxBtnOk: TRzBmpButton;
+    RzBmpButton1: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxbtnCancelClick(Sender: TObject);
@@ -61,15 +60,23 @@ begin
     //认证企业合法性
     if not mmGlobal.CheckRegister then //没有注册，现在新注册一个
        begin
+         if cxcbOffline.Checked then Raise Exception.Create('第一次登录用户不能使用离线模式.'); 
          mmGlobal.xsm_username := cxedtUsers.Text;
          mmGlobal.xsm_password := cxedtPasswrd.Text;
          if not mmGlobal.coLogin(mmGlobal.xsm_username,mmGlobal.xsm_password) then Exit;
          if not mmGlobal.AutoRegister(true) then Exit;
        end
     else
-       if not CaFactory.AutoCoLogo then Exit;
+       begin
+         if not cxcbOffline.Checked then
+         begin
+            if not CaFactory.AutoCoLogo then Exit;
+         end
+         else
+            CaFactory.Audited := false;
+       end;
     mmGlobal.InitLoad;
-    if mmGlobal.NetVersion or mmGlobal.ONLVersion then
+    if (mmGlobal.NetVersion or mmGlobal.ONLVersion) and CaFactory.Audited then
        begin
          try
            mmGlobal.MoveToRemate;

@@ -823,7 +823,7 @@ var
 begin
   auto := false;
   LoadRspFactory;
-  DownModule := false;
+  DownModule := true;
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
     s := f.ReadString('soft','rsp','http://rsp.xinshangmeng.com/services/');
@@ -1434,7 +1434,6 @@ begin
     frmLogo.Label1.Update;
     downloadUnion(Global.TENANT_ID);
     frmLogo.Position := 9;
-    SetSynTimeStamp('#',TimeStamp,'#');
     frmLogo.Position := 10;
     frmLogo.Label1.Caption := '下载功能模块...';
     frmLogo.Label1.Update;
@@ -1552,20 +1551,23 @@ try
            rs.Post;
            caRelationDownloadResp := caRelationDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATIONS';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;RELATION_ID;RELATI_ID';
-        Params.ParamByName('KEY_FLAG').AsInteger := 1;
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
-        SetSynTimeStamp('CA_RELATIONS',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATIONS';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;RELATION_ID;RELATI_ID';
+          Params.ParamByName('KEY_FLAG').AsInteger := 1;
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+          SetSynTimeStamp('CA_RELATIONS',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<供应关系>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
@@ -1718,19 +1720,22 @@ try
            rs.Post;
            caServiceLineDownloadResp := caServiceLineDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATION';
-        Params.ParamByName('KEY_FIELDS').AsString := 'RELATION_ID';
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
-        SetSynTimeStamp('CA_RELATION',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'CA_RELATION';
+          Params.ParamByName('KEY_FIELDS').AsString := 'RELATION_ID';
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+          SetSynTimeStamp('CA_RELATION',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<供应链>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
@@ -1884,19 +1889,22 @@ try
            rs.Post;
            caTenantDownloadResp := caTenantDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'CA_TENANT';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID';
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
-        SetSynTimeStamp('CA_TENANT',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'CA_TENANT';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID';
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+          SetSynTimeStamp('CA_TENANT',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<企业资料>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
     finally
@@ -2018,19 +2026,22 @@ try
            rs.Post;
            pubGoodsSortDownloadResp := pubGoodsSortDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSSORT';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
-        SetSynTimeStamp('PUB_GOODSSORT',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSSORT';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;SORT_ID;SORT_TYPE';
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+          SetSynTimeStamp('PUB_GOODSSORT',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<商品分类>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
@@ -2222,19 +2233,22 @@ try
            rs.Post;
            pubGoodsDownloadResp := pubGoodsDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSINFO';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID';
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
-        SetSynTimeStamp('PUB_GOODSINFO',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODSINFO';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID';
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+          SetSynTimeStamp('PUB_GOODSINFO',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<商品资料>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
@@ -2352,19 +2366,22 @@ try
            rs.Post;
            pubGoodsUnitDownloadResp := pubGoodsUnitDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'PUB_MEAUNITS';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNIT_ID';
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
-        SetSynTimeStamp('PUB_MEAUNITS',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_MEAUNITS';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNIT_ID';
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+          SetSynTimeStamp('PUB_MEAUNITS',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<计量单位>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
@@ -2594,20 +2611,23 @@ try
            rs.Post;
            pubDeployGoodsDownloadResp := pubDeployGoodsDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODS_RELATION';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;RELATION_ID';
-        Params.ParamByName('KEY_FLAG').AsInteger := 1;
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
-        SetSynTimeStamp('PUB_GOODS_RELATION',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_GOODS_RELATION';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;RELATION_ID';
+          Params.ParamByName('KEY_FLAG').AsInteger := 1;
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
+          SetSynTimeStamp('PUB_GOODS_RELATION',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<供应链商品>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
@@ -2731,20 +2751,23 @@ try
            rs.Post;
            pubBarcodeDownloadResp := pubBarcodeDownloadResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'PUB_BARCODE';
-        Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02;BARCODE_TYPE';
-        Params.ParamByName('KEY_FLAG').AsInteger := 1;
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncPubBarcode',Params);
-        SetSynTimeStamp('PUB_BARCODE',timeStamp,'#');
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'PUB_BARCODE';
+          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;GODS_ID;UNIT_ID;PROPERTY_01;PROPERTY_02;BARCODE_TYPE';
+          Params.ParamByName('KEY_FLAG').AsInteger := 1;
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncPubBarcode',Params);
+          SetSynTimeStamp('PUB_BARCODE',timeStamp,'#');
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<下载条码>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally
@@ -3002,34 +3025,37 @@ try
              end;
            pubUnionQueryResp := pubUnionQueryResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Factor.BeginBatch;
+      if not rs.IsEmpty or not idx.IsEmpty or not prc.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
         try
-          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-          Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INFO';
-          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID';
-          Params.ParamByName('COMM_LOCK').AsString := '1';
-          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
-          Params.ParamByName('KEY_FLAG').AsString := '1';
-          Factor.AddBatch(rs,'TSyncSingleTable',Params);
-          Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INDEX';
-          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID;INDEX_ID';
-          Factor.AddBatch(idx,'TSyncSingleTable',Params);
-          Params.ParamByName('TABLE_NAME').AsString := 'PUB_PRICEGRADE';
-          Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;PRICE_ID';
-          Params.ParamByName('KEY_FLAG').AsString := '2';
-          Factor.AddBatch(prc,'TSyncSingleTable',Params);
-          Factor.CommitBatch;
-          SetSynTimeStamp('PUB_UNION_INFO',timeStamp,'#');
-        except
-          Factor.CancelBatch;
-          Raise;
+          Factor.BeginBatch;
+          try
+            Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+            Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INFO';
+            Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID';
+            Params.ParamByName('COMM_LOCK').AsString := '1';
+            Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+            Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+            Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+            Params.ParamByName('KEY_FLAG').AsString := '1';
+            Factor.AddBatch(rs,'TSyncSingleTable',Params);
+            Params.ParamByName('TABLE_NAME').AsString := 'PUB_UNION_INDEX';
+            Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;UNION_ID;INDEX_ID';
+            Factor.AddBatch(idx,'TSyncSingleTable',Params);
+            Params.ParamByName('TABLE_NAME').AsString := 'PUB_PRICEGRADE';
+            Params.ParamByName('KEY_FIELDS').AsString := 'TENANT_ID;PRICE_ID';
+            Params.ParamByName('KEY_FLAG').AsString := '2';
+            Factor.AddBatch(prc,'TSyncSingleTable',Params);
+            Factor.CommitBatch;
+            SetSynTimeStamp('PUB_UNION_INFO',timeStamp,'#');
+          except
+            Factor.CancelBatch;
+            Raise;
+          end;
+        finally
+          Params.free;
         end;
-      finally
-        Params.free;
       end;
       LogFile.AddLogFile(0,'保存<商盟资料>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(rs.RecordCount));
     finally
@@ -3157,20 +3183,23 @@ try
            rs.Post;
            listModulesResp := listModulesResp.nextSibling;
          end;
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        Params.ParamByName('TABLE_NAME').AsString := 'CA_MODULE';
-        Params.ParamByName('KEY_FIELDS').AsString := 'PROD_ID;MODU_ID';
-        Params.ParamByName('PROD_ID').AsString := rs.FieldByName('PROD_ID').AsString;
-        Params.ParamByName('COMM_LOCK').AsString := '1';
-        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
-        Factor.UpdateBatch(rs,'TSyncCaModule',Params);
-        SetSynTimeStamp('CA_MODULE',timeStamp,ProductId);
-      finally
-        Params.free;
+      if not rs.IsEmpty then
+      begin
+        Params := TftParamList.Create(nil);
+        try
+          Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          Params.ParamByName('TABLE_NAME').AsString := 'CA_MODULE';
+          Params.ParamByName('KEY_FIELDS').AsString := 'PROD_ID;MODU_ID';
+          Params.ParamByName('PROD_ID').AsString := rs.FieldByName('PROD_ID').AsString;
+          Params.ParamByName('COMM_LOCK').AsString := '1';
+          Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Factor.UpdateBatch(rs,'TSyncCaModule',Params);
+          SetSynTimeStamp('CA_MODULE',timeStamp,ProductId);
+        finally
+          Params.free;
+        end;
       end;
       LogFile.AddLogFile(0,'保存<功能模块>执行时长:'+inttostr(GetTicket)+' 记录数:'+inttostr(rs.RecordCount));
     finally

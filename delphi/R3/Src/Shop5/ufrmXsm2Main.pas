@@ -4112,7 +4112,7 @@ begin
               frmLogo.ShowTitle := '正在初始化新商盟...';
               frmLogo.Show;
               Chk := CaFactory.DesEncode(xsm_username,CaFactory.pubpwd);
-              CaFactory.coLogin(xsm_username,chk,2);
+              CaFactory.coLogin(xsm_username,chk,3);
               InitXsm;
               if frmXsmIEBrowser.XsmLogin(true) then break;
             end

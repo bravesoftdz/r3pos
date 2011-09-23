@@ -195,7 +195,6 @@ uses
   ufrmUserRights in 'App\ufrmUserRights.pas' {frmUserRights},
   ufrmUsers in 'App\ufrmUsers.pas' {frmUsers},
   ufrmUsersInfo in 'App\ufrmUsersInfo.pas' {frmUsersInfo},
-  ufrmXsmLogin in 'App\ufrmXsmLogin.pas' {frmXsmLogin},
   uGodsFactory in 'App\uGodsFactory.pas',
   uPrainpowerJudge in 'App\uPrainpowerJudge.pas',
   uReportFactory in 'App\uReportFactory.pas',
@@ -263,13 +262,16 @@ uses
   uDownByHttp in 'Update\uDownByHttp.pas',
   ufrmInstall in 'Update\ufrmInstall.pas' {frmInstall},
   uMMServer in 'MM\uMMServer.pas',
-  uMMUtil in 'MM\uMMUtil.pas';
+  uMMUtil in 'MM\uMMUtil.pas',
+  ufrmMMToolBox in 'MM\ufrmMMToolBox.pas' {frmMMToolBox};
 
 {$R *.res}
 
 begin
   Application.Initialize;
+  DBVersion := '1.0.2.1';
   Application.ShowMainForm := false;
+  Application.Title := 'MM2011';
   Application.CreateForm(TmmGlobal, mmGlobal);
   Application.CreateForm(TfrmMMMain, frmMMMain);
   Application.CreateForm(TfrmMMDesk, frmMMDesk);

@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, uMMUtil, uMMServer ,ShellApi,
   ZBase, RzTray, StdCtrls, Mask, RzEdit, RzBmpBtn, RzLabel, jpeg, RzPanel,
-  ImgList, RzBckgnd, RzForms, ToolWin, Buttons, RzButton;
+  ImgList, RzBckgnd, RzForms, ToolWin, Buttons, RzButton, ufrmBasic, ZdbFactory,
+  ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset;
 
 const
   MSC_POPUP=WM_USER+1;
@@ -31,7 +32,6 @@ type
     RzSeparator2: TRzSeparator;
     bkg_f1: TRzBackground;
     logo: TImage;
-    RzFormShape1: TRzFormShape;
     mnuSys: TRzBmpButton;
     mnuAcct: TRzBmpButton;
     mnuSk: TRzBmpButton;
@@ -46,10 +46,6 @@ type
     ADSFDSAFDSA1: TMenuItem;
     ASDFASDFADS1: TMenuItem;
     ADSFADSFDS1: TMenuItem;
-    sysMinimized: TRzBmpButton;
-    sysMaximized: TRzBmpButton;
-    sysClose: TRzBmpButton;
-    bkg_02: TImage;
     bkg: TRzPanel;
     toolMenu: TPopupMenu;
     toolDesk: TRzBmpButton;
@@ -139,7 +135,6 @@ type
     actfrmXsmNet: TAction;
     actfrmRimNet: TAction;
     actfrmDefineStateInfo: TAction;
-    actfrmOpenDesk: TAction;
     actfrmSyncAll: TAction;
     actfrmGoodsMonth: TAction;
     actfrmInitGuide: TAction;
@@ -151,13 +146,27 @@ type
     RzPanel3: TRzPanel;
     RzBmpButton2: TRzBmpButton;
     softname: TRzLabel;
+    RzBmpButton1: TRzBmpButton;
+    RzBmpButton3: TRzBmpButton;
+    RzBmpButton4: TRzBmpButton;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    RzBmpButton6: TRzBmpButton;
+    CA_MODULE: TZQuery;
+    sysHelp: TRzBmpButton;
+    sysMinimized: TRzBmpButton;
+    sysMaximized: TRzBmpButton;
+    sysClose: TRzBmpButton;
+    bkg_02: TImage;
+    RzFormShape1: TRzFormShape;
+    RzBmpButton5: TRzBmpButton;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure miCloseClick(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
-    procedure RzBmpButton3Click(Sender: TObject);
     procedure sysCloseClick(Sender: TObject);
     procedure sysMaximizedClick(Sender: TObject);
     procedure sysMinimizedClick(Sender: TObject);
@@ -170,7 +179,6 @@ type
     procedure mnuAcctClick(Sender: TObject);
     procedure mnuBaseClick(Sender: TObject);
     procedure mnuSysClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure actfrmMeaUnitsExecute(Sender: TObject);
     procedure actfrmDutyInfoListExecute(Sender: TObject);
     procedure actfrmRoleInfoListExecute(Sender: TObject);
@@ -223,6 +231,42 @@ type
     procedure actfrmChange1DayReportExecute(Sender: TObject);
     procedure actfrmChange2DayReportExecute(Sender: TObject);
     procedure actfrmLockScreenExecute(Sender: TObject);
+    procedure RzBmpButton1Click(Sender: TObject);
+    procedure sysHelpClick(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure actfrmStorageDayReportExecute(Sender: TObject);
+    procedure actfrmRecvDayReportExecute(Sender: TObject);
+    procedure actfrmRckDayReportExecute(Sender: TObject);
+    procedure actfrmRelationExecute(Sender: TObject);
+    procedure actfrmPayDayReportExecute(Sender: TObject);
+    procedure actfrmPayAbleReportExecute(Sender: TObject);
+    procedure actfrmRecvAbleReportExecute(Sender: TObject);
+    procedure actfrmDbDayReportExecute(Sender: TObject);
+    procedure actfrmGodsRunningReportExecute(Sender: TObject);
+    procedure actfrmIoroDayReportExecute(Sender: TObject);
+    procedure actfrmMessageExecute(Sender: TObject);
+    procedure actfrmNewPaperReaderExecute(Sender: TObject);
+    procedure actfrmQuestionnaireExecute(Sender: TObject);
+    procedure actfrmInLocusOrderListExecute(Sender: TObject);
+    procedure actfrmOutLocusOrderListExecute(Sender: TObject);
+    procedure actfrmDownIndeOrderExecute(Sender: TObject);
+    procedure actfrmRecvForDayExecute(Sender: TObject);
+    procedure actfrmImpeachExecute(Sender: TObject);
+    procedure actfrmClearDataExecute(Sender: TObject);
+    procedure actfrmSaleAnalyExecute(Sender: TObject);
+    procedure actfrmNetForOrderExecute(Sender: TObject);
+    procedure actfrmSaleManSaleReportExecute(Sender: TObject);
+    procedure actfrmClientSaleReportExecute(Sender: TObject);
+    procedure actfrmSaleTotalReportExecute(Sender: TObject);
+    procedure actfrmStgTotalReportExecute(Sender: TObject);
+    procedure actfrmStockTotalReportExecute(Sender: TObject);
+    procedure actfrmSaleMonthTotalReportExecute(Sender: TObject);
+    procedure actfrmSyncAllExecute(Sender: TObject);
+    procedure actfrmGoodsMonthExecute(Sender: TObject);
+    procedure actfrmInitGuideExecute(Sender: TObject);
+    procedure RzBmpButton3Click(Sender: TObject);
+    procedure toolCloseClick(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -236,7 +280,7 @@ type
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
-    function SortToolButton:boolean;
+    function  SortToolButton:boolean;
     procedure AddFrom(form:TForm);
     procedure RemoveFrom(form:TForm);
     //菜单管理
@@ -244,8 +288,14 @@ type
     procedure DropMenu(btn: TRzBmpButton);
   public
     { Public declarations }
-    procedure ConnectToSQLite;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy;override;
+
+    function ConnectToSQLite:boolean;
     function CreateMMLogin: TftParamList;
+
+    procedure LoadParams;
+    procedure CheckEnabled;
     procedure Init;
     function Login: boolean;
     procedure OpenMc(pid: string; mid:integer=0);
@@ -273,12 +323,15 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal;
-
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox;
+var
+  frmMMToolBox:TfrmMMToolBox;
 {$R *.dfm}
 
 function TfrmMMMain.Login: boolean;
 begin
+  result := ConnectToSQLite;
+  if not result then Exit;
   with TfrmMMLogin.Create(self) do
     begin
       try
@@ -411,6 +464,8 @@ procedure TfrmMMMain.FormCreate(Sender: TObject);
 begin
   inherited;
   BorderStyle := bsNone;
+  WindowState := wsMaximized;
+  SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
   bkg_01.Picture.Bitmap.TransparentColor := clFuchsia;
   bkg_01.Picture.Bitmap.TransparentMode := tmFixed;
   bkg_01.Picture.Bitmap.Transparent := true;
@@ -428,49 +483,94 @@ begin
   bkg_f1.Left := bkg_top.Width - bkg_f1.Width;
   bkg_f1.Height := BKG_top.Height;
   RzFormShape1.Enabled := not (WindowState = wsMaximized);
+  sysMaximized.Top := 0;
+  sysMinimized.Top := 0;
+  sysClose.Top := 0;
+  sysHelp.Top := 0;
 
-  sysClose.Left := bkg_top.Width - sysClose.Width-0 ;
+  sysClose.Left := bgk_tt.Width - sysClose.Width-0 ;
   if biMaximize in BorderIcons then
      begin
        sysMaximized.Left := sysClose.Left - sysMaximized.Width -1 ;
        sysMinimized.Left := sysMaximized.Left - sysMinimized.Width -1 ;
+       sysHelp.Left := sysMinimized.Left - sysHelp.Width -1 ;
      end
   else
      begin
        sysMaximized.Visible := false;
        sysMinimized.Left := sysClose.Left - sysMinimized.Width -1 ;
+       sysHelp.Left := sysMaximized.Left - sysHelp.Width -1 ;
      end;
   sysMinimized.Visible := (biMinimize in BorderIcons);
   FList := TList.Create;
   frmLogo := TfrmLogo.create(self);
   ConnectToSQLite;
 
+  Screen.OnActiveFormChange := DoActiveChange;
+
 end;
 
-procedure TfrmMMMain.ConnectToSQLite;
+function TfrmMMMain.ConnectToSQLite:boolean;
+var
+  Factory:TCreateDbFactory;
 begin
+  result := true;
   Global.MoveToLocal;
   Global.Connect;
+  Factory := TCreateDbFactory.Create;
+  try
+    if Factory.CheckVersion(DBVersion,Global.LocalFactory) then
+       result := TfrmDbUpgrade.DbUpgrade(Factory,Global.LocalFactory);
+  finally
+    Factory.Free;
+  end;
 end;
 procedure TfrmMMMain.wm_Login(var Message: TMessage);
+var uid:string;
 begin
+  uid := mmGlobal.UserID;
   if Login then
      begin
         Init;
      end
   else
-     Application.Terminate;
+     begin
+       if (Message.LParam =1) and (uid = mmGlobal.UserID) then Exit;
+       Application.Terminate;
+     end;
 end;
 procedure TfrmMMMain.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
+function CheckUpdateStatus:boolean;
 begin
-  inherited;
-  CanClose := (MessageBox(Handle,'是否退出盟盟？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
-
+  result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
+end;
+begin
+  if (MessageBox(Handle,'为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+     begin
+       CanClose := false;
+       Exit;
+       //Application.Minimize;
+     end;
+  StopSyncTask;
+  if TimerFactory<>nil then TimerFactory.Free;
+  if Global.UserID='system' then exit;
+  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
+     begin
+        try
+          SyncFactory.SyncAll;
+        except
+          on E:Exception do
+             MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+        end;
+     end;
 end;
 
 procedure TfrmMMMain.Init;
 begin
+  //读取配置文件
+  LoadParams;
+  
   frmLogo.Show;
   try
    try
@@ -545,6 +645,23 @@ begin
     ShowMMList;
     frmLogo.Close;
   end;
+  //准备数据
+   CommandPush.ExecuteCommand;
+   frmLogo.Show;
+   try
+     frmLogo.ShowTitle := '正在初始化基础数据...';
+     mmGlobal.LoadBasic();
+     frmLogo.ShowTitle := '正在初始化权限数据...';
+     mmGlobal.LoadRight;
+     CheckEnabled;
+     frmLogo.ShowTitle := '正在初始化同步数据...';
+     mmGlobal.SyncTimeStamp;
+     frmLogo.ShowTitle := '正在初始化广告数据...';
+     AdvFactory.LoadAdv;
+     frmMMDesk.LoadDesk;
+   finally
+     frmLogo.Close;
+   end;
 end;
 
 procedure TfrmMMMain.OpenMc(pid: string;mid:integer=0);
@@ -654,12 +771,6 @@ begin
 
 end;
 
-procedure TfrmMMMain.RzBmpButton3Click(Sender: TObject);
-begin
-  inherited;
-  Init;
-end;
-
 procedure TfrmMMMain.AddFrom(form: TForm);
 function Find:TrzBmpButton;
 var
@@ -693,8 +804,9 @@ begin
   button.Visible := true;
   button.Parent := bkg_top;
   FList.Add(button);
-  SortToolButton;
   button.Down := true;
+  TfrmBasic(Form).OnFreeForm := DoFreeForm;
+  SortToolButton;
 end;
 
 procedure TfrmMMMain.RemoveFrom(form: TForm);
@@ -718,28 +830,28 @@ var
   i:Integer;
   button:TrzBmpButton;
 begin
+  toolClose.Visible := false;
   for i:=0 to FList.Count -1 do
     begin
       button := TrzBmpButton(FList[i]);
-      button.Top := 0;
+      button.Top := 41;
       if i=0 then
-         button.Left := 0
+         button.Left := 140
       else
-         button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+5;
+         button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+1;
+      if button.Down then
+         begin
+           toolClose.Top := 41+3;
+           toolClose.Left := button.Left + button.Width - 20;
+           toolClose.Visible := true;
+           toolClose.BringToFront;
+         end;
     end;
 end;
 
 procedure TfrmMMMain.DoActiveChange(Sender: TObject);
-begin
-  TForm(TrzBmpButton(Sender).tag).WindowState := wsMaximized;
-  TForm(TrzBmpButton(Sender).tag).BringToFront;
-  TrzBmpButton(Sender).Down := true;
-end;
-
-procedure TfrmMMMain.DoActiveForm(Sender: TObject);
 var
   i:integer;
-  SOn:TNotifyEvent;
 begin
   for i:=0 to FList.Count -1 do
     begin
@@ -756,13 +868,22 @@ begin
            break;
          end;
     end;
+  SortToolButton;
+end;
+
+procedure TfrmMMMain.DoActiveForm(Sender: TObject);
+begin
+  TForm(TrzBmpButton(Sender).tag).WindowState := wsMaximized;
+  TForm(TrzBmpButton(Sender).tag).BringToFront;
+  TrzBmpButton(Sender).Down := true;
+  SortToolButton;
 end;
 
 procedure TfrmMMMain.DoFreeForm(Sender: TObject);
 var
   i:integer;
 begin
-  for i:=0 to FList.Count -1 do
+  for i:=FList.Count -1 downto 0 do
     begin
       if TrzBmpButton(FList[i]).tag=integer(pointer(Sender)) then
          begin
@@ -872,14 +993,6 @@ procedure TfrmMMMain.mnuSysClick(Sender: TObject);
 begin
   inherited;
   PostMessage(Handle,MSC_POPUP,integer(mnuSys),0);
-
-end;
-
-procedure TfrmMMMain.FormShow(Sender: TObject);
-begin
-  if WindowState = wsMaximized then
-     SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
-  inherited;
 
 end;
 
@@ -1551,11 +1664,640 @@ begin
   inherited;
   frmMMDesk.HookLocked := true;
   try
-    Login(true);
+    ;//Login(true);
   finally
     frmMMDesk.HookLocked := false;
   end;
 
+end;
+
+procedure TfrmMMMain.RzBmpButton1Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(frmMMMain.Handle,MM_LOGIN,0,1);
+end;
+
+procedure TfrmMMMain.sysHelpClick(Sender: TObject);
+begin
+  inherited;
+  ShellExecute(0,'open',pchar(ExtractFilePath(ParamStr(0))+'简易操作手册.chm'),nil,pchar(ExtractFileDir(ParamStr(0))),1);
+end;
+
+procedure TfrmMMMain.N2Click(Sender: TObject);
+begin
+  inherited;
+  try
+    if mmGlobal.Logined then
+       begin
+         mmGlobal.ConnectToMsc;
+         RzTrayIcon1.Animate := false;
+         RzTrayIcon1.IconIndex := 1;
+       end;
+  except
+    on E:Exception do
+       MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+  end;
+
+end;
+
+procedure TfrmMMMain.N3Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(frmMMList.Handle,WM_CLOSE,1,1);
+end;
+
+procedure TfrmMMMain.actfrmStorageDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmStorageDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmStorageDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmRecvDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmRecvDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRecvDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmRckDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmRckDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRckDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmRelationExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmRelation);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRelation.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmPayDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmPayDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmPayDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmPayAbleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmPayAbleReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmPayAbleReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmRecvAbleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmRecvAbleReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRecvAbleReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmDbDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmDbDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmDbDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmGodsRunningReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmGodsRunningReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmGodsRunningReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmIoroDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmIoroDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmIoroDayReport.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmMessageExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmMessage);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmMessage.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmNewPaperReaderExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmNewPaperReader.ShowNewsPaper('');
+end;
+
+procedure TfrmMMMain.actfrmQuestionnaireExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmQuestionnaire.ShowForm(self);
+end;
+
+procedure TfrmMMMain.actfrmInLocusOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmInLocusOrderList);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmInLocusOrderList.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmOutLocusOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmOutLocusOrderList);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmOutLocusOrderList.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmDownIndeOrderExecute(Sender: TObject);
+var
+  vData: OleVariant;
+  Aobj: TRecord_;
+  Form: TfrmBasic;
+  SaveFactor:TdbFactory;
+begin
+  inherited;
+     if not Global.RemoteFactory.Connected then
+     begin
+       if MessageBox(Handle,'当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       SaveFactor := uGlobal.Factor;
+       try
+         Global.MoveToRemate;
+         try
+           Global.Connect;
+         except
+           MessageBox(Handle,'无法连接到远程服务器，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
+           Exit;
+         end;
+       finally
+         uGlobal.Factor := SaveFactor;
+       end;
+     end;
+    try
+      Aobj:=TRecord_.Create;
+      if TfrmDownStockOrder.DownStockOrder(AObj,vData) then
+      begin
+        if trim(AObj.fieldbyName('INDE_ID').AsString)<>'' then
+        begin
+          Form := FindChildForm(TfrmStockOrderList);
+          if not Assigned(Form) then
+          begin
+            Form := TfrmStockOrderList.Create(self);
+            AddFrom(Form);
+          end;
+          TfrmStockOrderList(Form).DoIndeOrderWriteToStock(Aobj,vData);
+          Form.WindowState := wsMaximized;
+          Form.BringToFront;
+        end;
+      end;
+    finally
+      Aobj.Free;
+    end;
+end;
+
+procedure TfrmMMMain.actfrmRecvForDayExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmRecvPosList);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmRecvPosList.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmImpeachExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmImpeach.ShowImpeach(self);
+end;
+
+procedure TfrmMMMain.actfrmClearDataExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmClearData.DeleteDB(self);
+
+end;
+
+procedure TfrmMMMain.actfrmSaleAnalyExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmSaleAnaly);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleAnaly.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmNetForOrderExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+  rimurl:string;
+  rimuid:string;
+  rimpwd:string;
+  Msg:string;
+  Params:TftParamList;
+begin
+  inherited;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+    Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
+    Params.Decode(Params,Msg);
+    rimurl := trim(Params.ParambyName('rimurl').AsString);
+    rimuid := Params.ParambyName('rimuid').AsString;
+    rimpwd := Params.ParambyName('rimpwd').AsString;
+    if rimurl='' then Raise Exception.Create('无法连接到零售终端服务主机，请和实施人员联系.');
+    if rimuid='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
+  finally
+    Params.Free;
+  end;
+  Form := FindChildForm('frmNetForOrder');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmIEWebForm.Create(self);
+       Form.Caption := actfrmNetForOrder.Caption;
+       AddFrom(Form);
+     end;
+  try
+    Form.Name := 'frmNetForOrder';
+    if rimurl[length(rimurl)]<>'/' then rimurl := rimurl + '/';
+    TfrmIEWebForm(Form).Open(rimurl+'rim_check/up?j_username='+rimuid+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
+    Form.Show;
+    Form.BringToFront;
+  except
+    Form.Free;
+    Raise;
+  end;
+end;
+
+procedure TfrmMMMain.actfrmSaleManSaleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmSaleManSaleReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleManSaleReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmClientSaleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmClientSaleReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmClientSaleReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmSaleTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmSaleTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmStgTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmStgTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStgTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmStockTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmStockTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStockTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmSaleMonthTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmSaleMonthTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSaleMonthTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmSyncAllExecute(Sender: TObject);
+begin
+  if CaFactory.Audited then
+     begin
+       CaFactory.SyncAll(1);
+       if ShopGlobal.ONLVersion then Exit;
+     end
+  else
+     begin
+       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
+     end;
+  if PrainpowerJudge.Locked>0 then
+     begin
+       MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
+     end;
+  frmLogo.Show;
+  frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
+  try
+    if ShopGlobal.offline and not Global.RemoteFactory.Connected then
+     begin
+       Global.MoveToRemate;
+       try
+         try
+           Global.Connect;
+         except
+           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...');
+         end;
+       finally
+         Global.MoveToLocal;
+       end;
+     end;
+    if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+    SyncFactory.SyncLockDb;
+    if not SyncFactory.SyncLockCheck then
+       begin
+         if Global.UserID='system' then
+            begin
+              if MessageBox(Handle,'当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+              SyncFactory.SyncUnLockDb;
+              Exit;
+            end
+         else
+         Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
+       end;
+    SyncFactory.SyncAll;
+    Global.LoadBasic;
+    CheckEnabled;
+    mmGlobal.LoadRight;
+  finally
+    frmLogo.Close;
+  end;
+end;
+
+procedure TfrmMMMain.actfrmGoodsMonthExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmGoodsMonth);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmGoodsMonth.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmInitGuideExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmInitGuide.InitGuide(self);
+
+end;
+
+procedure TfrmMMMain.CheckEnabled;
+var
+  i:integer;
+  rs:TZQuery;
+begin
+  CA_MODULE.Close;
+  CA_MODULE.SQL.Text := 'select * from CA_MODULE where PROD_ID='''+ProductID+''' order by LEVEL_ID';
+  Factor.Open(CA_MODULE);
+  rs := CA_MODULE;
+  for i:=0 to actList.ActionCount -1 do
+    begin
+      TAction(actList.Actions[i]).Enabled := (TAction(actList.Actions[i]).Tag=0);
+      if TAction(actList.Actions[i]).Tag > 0 then
+         begin
+           TAction(actList.Actions[i]).Enabled := ShopGlobal.GetChkRight(inttostr(TAction(actList.Actions[i]).tag),1);
+           if rs.Locate('MODU_ID',inttostr(TAction(actList.Actions[i]).tag),[]) then
+              TAction(actList.Actions[i]).Caption := rs.FieldbyName('MODU_NAME').AsString;
+         end;
+    end;
+  actfrmDbOrderList.Enabled := actfrmDbOrderList.Enabled and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion);
+  actfrmDbDayReport.Enabled := actfrmDbDayReport.Enabled and (ShopGlobal.NetVersion or ShopGlobal.ONLVersion);
+  rs := Global.GetZQueryFromName('CA_TENANT');
+  if rs.Locate('TENANT_ID',Global.TENANT_ID,[]) then
+     actfrmRelation.Enabled := actfrmRelation.Enabled and (rs.FieldbyName('TENANT_TYPE').asInteger<>3)
+  else
+     actfrmRelation.Enabled := false;
+end;
+
+procedure TfrmMMMain.LoadParams;
+var
+  F:TIniFile;
+begin
+  inherited;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    Application.Title :=  F.ReadString('soft','name','rspcn.com');
+    if not FindCmdLineSwitch('rsp',['-','+'],false) then
+       begin
+          SFVersion := F.ReadString('soft','SFVersion','.NET');
+          CLVersion := F.ReadString('soft','CLVersion','.MKT');
+          ProductID := F.ReadString('soft','ProductID','R3_RYC');
+       end;
+    softname.Caption := Application.Title;
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+//  if FileExists(ExtractFilePath(ParamStr(0))+'logo_lt.jpg') then
+//     logo.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'logo_lt.jpg');
+end;
+
+procedure TfrmMMMain.RzBmpButton3Click(Sender: TObject);
+begin
+  inherited;
+  if actfrmSyncAll.Enabled then
+     actfrmSyncAll.OnExecute(actfrmSyncAll)
+  else
+     MessageBox(Handle,'你没有执行数据同步的权限，请跟管理员联系','友情提示...',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmMMMain.toolCloseClick(Sender: TObject);
+var
+  i:Integer;
+  button:TrzBmpButton;
+begin
+  for i:=FList.Count -1 downto 0 do
+    begin
+      button := TrzBmpButton(FList[i]);
+      if button.Down then
+         begin
+           TForm(button.Tag).Close;
+           break;
+         end;
+    end;
+end;
+
+constructor TfrmMMMain.Create(AOwner: TComponent);
+begin
+  inherited;
+  frmMMToolBox := TfrmMMToolBox.Create(self);
+end;
+
+destructor TfrmMMMain.Destroy;
+begin
+  freeAndNil(frmMMToolBox);
+  inherited;
 end;
 
 end.

@@ -216,7 +216,9 @@ type
   TmmFactory=class
   private
     FList:TList;
+    Flogined: boolean;
     procedure DisposeMsg(index:integer);
+    procedure Setlogined(const Value: boolean);
   public
     constructor Create;
     destructor Destroy;override;
@@ -243,6 +245,9 @@ type
     function mmcPlayerFava(PlayerFava:TmmPlayerFava):boolean;
     //取在线用户
     function mmcPlayerIdListFava(PlayerIdListFava:TmmPlayerIdListFava):boolean;
+    //登录状态
+    property logined:boolean read Flogined write Setlogined;
+    
   end;
 
 type
@@ -347,6 +352,7 @@ case Event of
   end;
 2:begin
     PostMessage(frmMMList.Handle,WM_CLOSE,1,1);
+    mmFactory.logined := false;
   end;
 end;
 end;
@@ -400,15 +406,40 @@ var
 begin
   case lpData.mmFlag of
   1003:begin
-         mmUserInfo := Find(TmmSingleFava(lpData).playerId);
+         case TmmSingleFava(lpData).playerSkill of
+         9996,9997,9998,9999:
+            begin
+               mmUserInfo := Find(TmmSingleFava(lpData).refId);
+               lpData.mmEvent := true;
+            end
+         else
+            begin
+               if (TmmSingleFava(lpData).playerId='') or (TmmSingleFava(lpData).playerId=mmGlobal.xsm_username) then
+                  begin
+                    mmUserInfo := Find(TmmSingleFava(lpData).refId);
+                    if (TmmSingleFava(lpData).playerId='') then
+                       begin
+                         TmmSingleFava(lpData).playerId := mmGlobal.xsm_username;
+                         lpData.mmEvent := true;
+                       end;
+                  end
+               else
+                  mmUserInfo := Find(TmmSingleFava(lpData).playerId);
+            end;
+         end;
          if not Assigned(mmUserInfo) or mmUserInfo.IsBeBlack then //黑名单，直接丢去
             begin
               lpData.Free;
               Exit;
             end;
          mmUserInfo^.Msgs.Add(lpData);
-         PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
-         PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
+         if lpData.mmEvent then
+         begin
+            PostMessage(mmUserInfo^.Handle,WM_MsgEvent,0,0);
+            PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
+         end
+         else
+            PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
        end;
   1002:begin
          mmUserInfo := Find(TmmGroupFava(lpData).playerId);
@@ -504,7 +535,7 @@ destructor TmmFactory.Destroy;
 begin
   Clear;
   FList.Free;
-  mmcSetSockClose;
+//  mmcSetSockClose;
 //  if DLLHandle>0 then FreeLibrary(DLLHandle);
   inherited;
 end;
@@ -574,6 +605,7 @@ begin
   result := (errCode=0);
   if not result then
      Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
+  logined := false;
 end;
 
 function TmmFactory.mmcConnected: boolean;
@@ -634,6 +666,11 @@ begin
            break;
          end;
     end;
+end;
+
+procedure TmmFactory.Setlogined(const Value: boolean);
+begin
+  Flogined := Value;
 end;
 
 { TmmConnectFava }

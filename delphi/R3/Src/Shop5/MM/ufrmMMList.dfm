@@ -2,7 +2,7 @@ inherited frmMMList: TfrmMMList
   Left = 687
   Top = 182
   BorderIcons = [biMinimize, biMaximize]
-  Caption = 'frmMMList'
+  Caption = #21363#26102#36890#35759
   ClientHeight = 458
   ClientWidth = 287
   OldCreateOrder = True
@@ -15,14 +15,18 @@ inherited frmMMList: TfrmMMList
     inherited bkg_01: TImage
       Height = 71
     end
+    inherited bkg_02: TImage
+      Left = 279
+      Height = 71
+    end
     inherited bkg_top: TRzPanel
-      Width = 279
+      Width = 271
       Height = 71
       DesignSize = (
-        279
+        271
         71)
       inherited bkg_f1: TRzBackground
-        Left = 33
+        Left = 25
         Top = 24
         Height = 68
       end
@@ -31,13 +35,9 @@ inherited frmMMList: TfrmMMList
         Height = 69
       end
       inherited RzSeparator1: TRzSeparator
-        Width = 279
+        Width = 271
       end
-      inherited bkg_02: TImage
-        Left = 271
-        Height = 69
-      end
-      object rzUserInfo: TRzLabel [5]
+      object rzUserInfo: TRzLabel
         Left = 60
         Top = 29
         Width = 114
@@ -45,7 +45,7 @@ inherited frmMMList: TfrmMMList
         Caption = #24352#19977'(dfsdjkfldsdfs)'
         Transparent = True
       end
-      object Image2: TImage [6]
+      object Image2: TImage
         Left = 5
         Top = 27
         Width = 47
@@ -146,7 +146,7 @@ inherited frmMMList: TfrmMMList
           D39D370B2777CCE7096896CAD1D7CEC7C4F8ABE3D61B8EF8130BC26A73AB88A1
           898D553946CBD9468D585A526EEE5CD5172E8F4BDDE8AFFFD9}
       end
-      object Image3: TImage [7]
+      object Image3: TImage
         Left = 116
         Top = 52
         Width = 14
@@ -175,7 +175,7 @@ inherited frmMMList: TfrmMMList
           85D2AA7CCDA474CA9E6BC79863C4925BC18B54BE864CFF00FFFF00FF0000}
         Transparent = True
       end
-      object Image4: TImage [8]
+      object Image4: TImage
         Left = 172
         Top = 52
         Width = 14
@@ -204,7 +204,7 @@ inherited frmMMList: TfrmMMList
           2EA7672EA7672EA7672EA7672EA7672EA7672EA7672EA7672EFF00FF0000}
         Transparent = True
       end
-      object Image5: TImage [9]
+      object Image5: TImage
         Left = 60
         Top = 51
         Width = 15
@@ -238,7 +238,7 @@ inherited frmMMList: TfrmMMList
           BF8F65BF8F65FF00FFFF00FFFF00FF000000}
         Transparent = True
       end
-      object Label1: TLabel [10]
+      object Label1: TLabel
         Left = 75
         Top = 52
         Width = 18
@@ -252,7 +252,7 @@ inherited frmMMList: TfrmMMList
         ParentFont = False
         Transparent = True
       end
-      object Label2: TLabel [11]
+      object Label2: TLabel
         Left = 131
         Top = 52
         Width = 18
@@ -266,7 +266,7 @@ inherited frmMMList: TfrmMMList
         ParentFont = False
         Transparent = True
       end
-      object Label3: TLabel [12]
+      object Label3: TLabel
         Left = 187
         Top = 52
         Width = 18
@@ -280,59 +280,56 @@ inherited frmMMList: TfrmMMList
         ParentFont = False
         Transparent = True
       end
-      inherited sysMinimized: TRzBmpButton
-        Left = 313
-      end
-      inherited sysMaximized: TRzBmpButton
-        Left = 342
-      end
-      inherited sysClose: TRzBmpButton
-        Left = 360
-      end
     end
   end
   inherited bkg_bb: TRzPanel
-    Top = 432
+    Top = 402
     Width = 287
+    Height = 56
+    inherited RzPanel10: TRzPanel
+      Height = 56
+      inherited bkg_03: TImage
+        Top = 0
+      end
+    end
     inherited RzPanel11: TRzPanel
       Left = 279
+      Height = 56
+      inherited bkg_04: TImage
+        Top = 0
+      end
     end
     inherited bkg_bottom: TRzPanel
       Width = 271
+      Height = 56
       inherited RzSeparator3: TRzSeparator
+        Top = 54
         Width = 271
+      end
+      inherited bkg_f2: TRzBackground
+        Height = 54
       end
     end
   end
   inherited bkg: TRzPanel
     Top = 71
     Width = 287
-    Height = 361
+    Height = 331
     inherited bkg_pnl: TRzPanel
       Width = 285
-      Height = 361
-      object RzPanel5: TRzPanel
-        Left = 1
-        Top = 328
-        Width = 283
-        Height = 33
-        Align = alBottom
-        BorderOuter = fsNone
-        Color = 16707028
-        TabOrder = 0
-      end
+      Height = 331
       object RzPanel6: TRzPanel
         Left = 1
         Top = 0
         Width = 283
-        Height = 31
+        Height = 65
         Align = alTop
         BorderOuter = fsNone
         Color = 16707028
-        TabOrder = 1
+        TabOrder = 0
         object RzPanel1: TRzPanel
           Left = 0
-          Top = 0
+          Top = 34
           Width = 283
           Height = 31
           Align = alBottom
@@ -342,7 +339,7 @@ inherited frmMMList: TfrmMMList
           FlatColor = clWhite
           TabOrder = 0
           object toolDesk: TRzBmpButton
-            Left = 1
+            Left = 0
             Top = 0
             Width = 64
             Height = 32
@@ -750,12 +747,11 @@ inherited frmMMList: TfrmMMList
             TabOrder = 0
           end
           object RzBmpButton1: TRzBmpButton
-            Left = 67
+            Left = 66
             Top = 0
             Width = 64
             Height = 32
             Cursor = crHandPoint
-            GroupIndex = 1
             Bitmaps.Down.Data = {
               36180000424D3618000000000000360000002800000040000000200000000100
               18000000000000180000120B0000120B00000000000000000000FEFEFEFBF7F3
@@ -1161,9 +1157,9 @@ inherited frmMMList: TfrmMMList
       end
       object RzPage: TRzPageControl
         Left = 1
-        Top = 31
+        Top = 65
         Width = 283
-        Height = 297
+        Height = 266
         ActivePage = TabSheet1
         Align = alClient
         CutCornerSize = 0
@@ -1173,7 +1169,7 @@ inherited frmMMList: TfrmMMList
         ShowFullFrame = False
         ShowShadow = False
         TabIndex = 0
-        TabOrder = 2
+        TabOrder = 1
         TabStyle = tsCutCorner
         FixedDimension = 19
         object TabSheet1: TRzTabSheet
@@ -1183,7 +1179,7 @@ inherited frmMMList: TfrmMMList
             Left = 0
             Top = 0
             Width = 283
-            Height = 278
+            Height = 247
             SelectionPen.Color = clBtnShadow
             Align = alClient
             BorderStyle = bsNone

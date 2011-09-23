@@ -13,7 +13,6 @@ type
   TfrmMMList = class(TfrmMMBasic)
     FlagImage: TImageList;
     PopupMenu1: TPopupMenu;
-    RzPanel5: TRzPanel;
     RzPanel6: TRzPanel;
     RzPage: TRzPageControl;
     TabSheet1: TRzTabSheet;
@@ -50,6 +49,8 @@ type
     procedure wmMsgClose(var Message: TMessage); message WM_CLOSE;
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy;override;
     function check:boolean;
     procedure LoadFriends;
     procedure ReadInfo;
@@ -82,8 +83,6 @@ var
   i:integer;
 begin
   inherited;
-  left := Screen.Width-width-1;
-  top := (Screen.Height - Height) div 2 -1;
   for i:=0 to RzPage.PageCount-1 do RzPage.Pages[i].TabVisible := false;
 end;
 
@@ -216,7 +215,9 @@ begin
      MessageBox(Handle,'当前账号在另一地方登录了.','友情提示..',MB_OK+MB_ICONINFORMATION);
   frmMMMain.RzTrayIcon1.Animate := false;
   frmMMMain.RzTrayIcon1.IconIndex := 0;
+  
   mmFactory.mmcClose;
+  PostMessage(frmMMList.Handle,WM_LINE,0,0);
 end;
 
 procedure TfrmMMList.wmMsgHint(var Message: TMessage);
@@ -233,7 +234,7 @@ begin
     begin
       if rzUsers.Items[i].Data <> nil then
          begin
-           if PmmUserInfo(rzUsers.Items[i].Data)^.line then
+           if PmmUserInfo(rzUsers.Items[i].Data)^.line and mmFactory.Logined then
               rzUsers.Items[i].ImageIndex := 3 {在线}
            else
               rzUsers.Items[i].ImageIndex := 2 {下线};
@@ -294,6 +295,20 @@ begin
   inherited;
   frmMMMain.WindowState := wsMaximized;
   frmMMMain.Show;
+end;
+
+destructor TfrmMMList.Destroy;
+begin
+  rzUsers.Items.Clear;
+  inherited;
+end;
+
+constructor TfrmMMList.Create(AOwner: TComponent);
+begin
+  inherited;
+  self.Position := poDesigned;
+  left := Screen.Width-width-1;
+  top := (Screen.Height - Height) div 2 -1;
 end;
 
 end.

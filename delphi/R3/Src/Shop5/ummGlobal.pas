@@ -612,8 +612,8 @@ begin
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('Ä£Äâµ¼º½Ê§°Ü,´íÎó:'+Root.attributes.getNamedItem('msg').text);
 
     Node := FindNode(doc,'server_info\chat_server');
-    chat_addr := Node.attributes.getNamedItem('ip').text;
-    chat_port := StrtoInt(Node.attributes.getNamedItem('port').text);
+    chat_addr := '192.168.1.201';// Node.attributes.getNamedItem('ip').text;
+    chat_port := 8000;//StrtoInt(Node.attributes.getNamedItem('port').text);
     Node := FindNode(doc,'server_info\web_server');
     http_addr := Node.attributes.getNamedItem('web_url').text;
 
@@ -744,6 +744,7 @@ var
   mmPlayerFava:TmmPlayerFava;
   mmPlayerIdListFava:TmmPlayerIdListFava;
 begin
+  mmFactory.logined := false;
   if not mmFactory.mmcConnectTo(chat_addr,chat_port) then Exit;
   mmConnectFava := TmmConnectFava.Create;
   mmPlayerFava := TmmPlayerFava.Create;
@@ -775,7 +776,7 @@ begin
     mmPlayerFava.playerStatus := 0;
     mmPlayerFava.playerSkill := 0;
     mmPlayerFava.clientType := 1;
-    
+
     if not mmFactory.mmcPlayerFava(mmPlayerFava) then Exit;
 
     mmPlayerIdListFava.messagetype := 1010;
@@ -783,6 +784,8 @@ begin
     mmPlayerIdListFava.comId := xsm_comId;
     mmPlayerIdListFava.ListLen := 0;
     if not mmFactory.mmcPlayerIdListFava(mmPlayerIdListFava) then Exit;
+
+    mmFactory.logined := true;
   finally
     mmPlayerIdListFava.Free;
     mmConnectFava.Free;

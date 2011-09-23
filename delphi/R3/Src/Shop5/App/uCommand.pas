@@ -35,7 +35,6 @@ end;
 procedure TCommandPush.ExecuteCommand;
 var Str_Sql: String;
 begin
-  Exit;
   if not Global.RemoteFactory.Connected then Exit;
   frmLogo.Show;
   try

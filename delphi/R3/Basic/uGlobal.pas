@@ -132,7 +132,7 @@ Var
   //²úÆ·±àÂë
   ProductID:string;
 implementation
-uses Forms,IniFiles,ufrmLogo;
+uses Forms,IniFiles,EncDec,ufrmLogo;
 {$R *.dfm}
 var
   whKeyboard: HHook;
@@ -545,7 +545,9 @@ begin
     if Factor=LocalFactory then
        begin
          if not FileExists(Global.InstallPath+'data\r3.db') then CopyFile(pchar(Global.InstallPath+'\sqlite.db'),pchar(Global.InstallPath+'data\r3.db'),false);
-         Factor.Initialize('provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db');
+         ConStr := DecStr(F.ReadString('localconnection','Connstr',''),ENC_KEY);
+         if ConStr='' then ConStr := 'provider=sqlite-3;databasename='+Global.InstallPath+'data\r3.db';
+         Factor.Initialize(ConStr);
        end
     else
        begin

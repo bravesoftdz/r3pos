@@ -2353,6 +2353,12 @@ object frmLogo: TfrmLogo
     ParentFont = False
     Transparent = True
   end
+  object RzFormShape1: TRzFormShape
+    Left = 0
+    Top = 0
+    Width = 380
+    Height = 240
+  end
   object ProgressBar1: TProgressBar
     Left = 120
     Top = 180

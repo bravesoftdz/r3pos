@@ -5,13 +5,14 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, StdCtrls, jpeg,ZdbFactory,Registry, ComCtrls;
+  ExtCtrls, StdCtrls, jpeg,ZdbFactory,Registry, ComCtrls, RzForms;
 
 type
   TfrmLogo = class(TForm)
     Label1: TLabel;
     ProgressBar1: TProgressBar;
     Image3: TImage;
+    RzFormShape1: TRzFormShape;
     procedure FormCreate(Sender: TObject);
   private
     FShowTitle: string;

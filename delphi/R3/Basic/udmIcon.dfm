@@ -3,7 +3,7 @@ object dmIcon: TdmIcon
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   Left = 760
-  Top = 337
+  Top = 339
   Height = 278
   Width = 390
   object ImgLst16: TImageList

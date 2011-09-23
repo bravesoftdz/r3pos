@@ -7,7 +7,7 @@ uses
   Dialogs,ZdbFactory,uGlobal, Menus, ActnList, cxControls, cxSpinEdit, RzSplit,RzTabs,
   cxContainer, cxEdit, cxTextEdit,ExtCtrls, cxMemo,DbGridEh,cxDropDownEdit,ZBase,FR_Class,
   ComCtrls,RzTreeVw, StdCtrls, RzButton, RzPanel, ShellApi, cxCalendar,DBGrids,cxCheckBox,
-  cxMaskEdit,cxButtonEdit,zrComboBoxList,ZLogFile;
+  cxMaskEdit,cxButtonEdit,zrComboBoxList,ZLogFile, RzBmpBtn;
 const
   RowSelectColor=clAqua;
   BtnColor = $00DAD39C;
@@ -105,6 +105,7 @@ procedure TfrmBasic.OnEnterPress(CurrentForm: TForm; Key: Char);
 begin
   with CurrentForm do
   begin
+    if not Visible then Exit;
     if (Key = #13) then
     begin
       if (ActiveControl=nil) or
@@ -142,6 +143,25 @@ begin
 
   for i:=0 to ComponentCount -1 do
     begin
+      if Components[i] is TRzBmpButton then
+         begin
+           TRzBmpButton(Components[i]).Bitmaps.TransparentColor := clFuchsia;
+           if TRzBmpButton(Components[i]).Bitmaps.Hot <> nil then
+              begin
+                TRzBmpButton(Components[i]).Bitmaps.Hot.TransparentMode := tmFixed;
+                TRzBmpButton(Components[i]).Bitmaps.Hot.Transparent := true;
+              end;
+           if TRzBmpButton(Components[i]).Bitmaps.Down <> nil then
+              begin
+                TRzBmpButton(Components[i]).Bitmaps.Down.TransparentMode := tmFixed;
+                TRzBmpButton(Components[i]).Bitmaps.Down.Transparent := true;
+              end;
+           if TRzBmpButton(Components[i]).Bitmaps.Up <> nil then
+              begin
+                TRzBmpButton(Components[i]).Bitmaps.Up.TransparentMode := tmFixed;
+                TRzBmpButton(Components[i]).Bitmaps.Up.Transparent := true;
+              end;
+         end;
       if Components[i] is TcxDateEdit then
          begin
            TcxDateEdit(Components[i]).Properties.OnValidate := DoDatePropertiesValidate;

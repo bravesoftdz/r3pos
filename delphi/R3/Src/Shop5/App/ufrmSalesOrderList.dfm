@@ -1,6 +1,6 @@
 inherited frmSalesOrderList: TfrmSalesOrderList
-  Left = 200
-  Top = 140
+  Left = 269
+  Top = 112
   Width = 836
   Height = 560
   Caption = #38144#21806#21333
@@ -417,6 +417,12 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                   Footers = <>
                   Title.Caption = #27424#25910#37329#39069
                   Width = 59
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LOCUS_STATUS_NAME'
+                  Footers = <>
+                  Title.Caption = #21457#36135#29366#24577
                 end
                 item
                   EditButtons = <>

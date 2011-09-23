@@ -1340,10 +1340,12 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 208
-    Top = 144
+    Left = 280
+    Top = 289
   end
   inherited actList: TActionList
+    Left = 312
+    Top = 289
     inherited actNew: TAction
       Caption = #25910#36135
     end

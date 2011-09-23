@@ -1601,7 +1601,7 @@ begin
                 PostMessage(Handle,WM_DIALOG_PULL,FIND_GOODS_DIALOG,1);
                end;
              2:begin
-                if ShopGlobal.GetChkRight('200036') and Assigned(fndGODS_ID.OnAddClick) and CanAppend and (MessageBox(Handle,'输入的条码或货号无效,是否新增一个新的商品?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+                if ShopGlobal.GetChkRight('32600001',2) and Assigned(fndGODS_ID.OnAddClick) and CanAppend and (MessageBox(Handle,'输入的条码或货号无效,是否新增一个新的商品?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
                    begin
                      fndGODS_ID.OnAddClick(nil);
                    end

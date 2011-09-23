@@ -16,8 +16,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 844
         Height = 495
-        ActivePage = TabSheet2
-        TabIndex = 1
+        ActivePage = TabSheet3
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
@@ -391,6 +391,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
+                  KeyList.Strings = (
+                    '1'
+                    '3')
+                  PickList.Strings = (
+                    #24453#21457#36135
+                    #24050#21457#36135)
                   Title.Caption = #21457#36135#29366#24577
                   Width = 60
                 end
@@ -790,6 +796,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
+                  KeyList.Strings = (
+                    '1'
+                    '3')
+                  PickList.Strings = (
+                    #24453#21457#36135
+                    #24050#21457#36135)
                   Title.Caption = #21457#36135#29366#24577
                   Width = 60
                 end
@@ -1193,6 +1205,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
+                  KeyList.Strings = (
+                    '1'
+                    '3')
+                  PickList.Strings = (
+                    #24453#21457#36135
+                    #24050#21457#36135)
                   Title.Caption = #21457#36135#29366#24577
                   Width = 60
                 end
@@ -1651,6 +1669,12 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
+                  KeyList.Strings = (
+                    '1'
+                    '3')
+                  PickList.Strings = (
+                    #24453#21457#36135
+                    #24050#21457#36135)
                   Title.Caption = #21457#36135#29366#24577
                   Width = 60
                 end

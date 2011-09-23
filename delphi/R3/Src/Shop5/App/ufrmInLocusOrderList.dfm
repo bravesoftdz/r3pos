@@ -391,6 +391,12 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
+                  KeyList.Strings = (
+                    '1'
+                    '3')
+                  PickList.Strings = (
+                    #24453#25910#36135
+                    #24050#25910#36135)
                   Title.Caption = #25910#36135#29366#24577
                   Width = 60
                 end
@@ -848,6 +854,12 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
+                  KeyList.Strings = (
+                    '1'
+                    '3')
+                  PickList.Strings = (
+                    #24453#25910#36135
+                    #24050#25910#36135)
                   Title.Caption = #25910#36135#29366#24577
                   Width = 60
                 end
@@ -1247,6 +1259,12 @@ inherited frmInLocusOrderList: TfrmInLocusOrderList
                   EditButtons = <>
                   FieldName = 'LOCUS_STATUS_NAME'
                   Footers = <>
+                  KeyList.Strings = (
+                    '1'
+                    '3')
+                  PickList.Strings = (
+                    #24453#25910#36135
+                    #24050#25910#36135)
                   Title.Caption = #25910#36135#29366#24577
                   Width = 60
                 end

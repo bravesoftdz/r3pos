@@ -162,6 +162,7 @@ begin
     cdsList.EnableControls;
     sm.Free;
     rs.Free;
+    cdsList.First;   //2011.09.24 add 指针默认指向第一条
   end;
 end;
 

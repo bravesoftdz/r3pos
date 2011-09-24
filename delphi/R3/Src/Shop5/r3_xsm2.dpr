@@ -252,7 +252,8 @@ uses
   uMMUtil in 'MM\uMMUtil.pas',
   uSyncThread in 'App\uSyncThread.pas',
   ufrmPosMainList in 'app\ufrmPosMainList.pas' {frmPosMainList},
-  uCommand in 'App\uCommand.pas';
+  uCommand in 'App\uCommand.pas',
+  uMsgBox in '..\..\Basic\uMsgBox.pas';
 
 {$R *.res}
 var

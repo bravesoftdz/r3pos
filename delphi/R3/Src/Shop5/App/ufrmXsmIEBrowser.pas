@@ -138,7 +138,7 @@ var
   frmXsmIEBrowser:TfrmXsmIEBrowser;
 implementation
 uses uCaFactory,ufrmMain,uCtrlUtil,IniFiles,uShopGlobal,EncDec,ufrmLogo,ZLogFile,ufrmXsmLogin,
-  ufrmDesk, uGlobal, ObjCommon,ufrmHintMsg, uMMClient;
+  ufrmDesk, uGlobal,uMsgBox, ObjCommon,ufrmHintMsg, uMMClient;
 {$R *.dfm}
 
 { TfrmXsmIEBrowser }
@@ -186,7 +186,7 @@ begin
     SenceReady := false;
     SenceId := 'GWGC';
   except
-    MessageBox(Handle,'系统没有检测到"新商盟接口组件",请检查软件是否正确安装?','友情提示...',MB_OK+MB_ICONWARNING);
+    ShowMsgBox('系统没有检测到"新商盟接口组件",请检查软件是否正确安装?','友情提示...',MB_OK+MB_ICONWARNING);
   end;
   Set8087CW(Longword($133f));
 end;
@@ -248,7 +248,7 @@ begin
   if not CheckInited then DoInit(true);
   if not ready then
      begin
-       if MessageBox(Handle,'系统正在装载新商盟环境,是否继续？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+       if ShowMsgBox('系统正在装载新商盟环境,是否继续？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
        begin
          PageHandle := 0;
          PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
@@ -269,7 +269,7 @@ begin
        begin
          if LoginError='' then LoginError := '未错误类型...';
          LoginError := '登录新商盟失败了，错误:'+LoginError;
-         MessageBox(Handle,pchar(LoginError),'友情提示...',MB_OK+MB_ICONINFORMATION);
+         ShowMsgBox(pchar(LoginError),'友情提示...',MB_OK+MB_ICONINFORMATION);
        end;
   finally
     if not SaveLog then frmLogo.Close;
@@ -375,12 +375,12 @@ begin
         frmDesk.Waited := false;
         error := true;
         if (szPara1='9901') or (szPara1='9001') then
-           MessageBox(Handle,'<新商盟>网络连接异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING)
+           ShowMsgBox('<新商盟>网络连接异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING)
         else
         if (szPara1='9902') then
            begin
              xsmTitle := 'error';
-             MessageBox(Handle,'<新商盟>请关闭IE版的新商盟再重试','友情提示...',MB_OK+MB_ICONWARNING);
+             ShowMsgBox('<新商盟>请关闭IE版的新商盟再重试','友情提示...',MB_OK+MB_ICONWARNING);
            end
         else
            begin
@@ -391,7 +391,7 @@ begin
                    DoRefresh;
                    PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
                 end;
-             MessageBox(Handle,'<新商盟>其他错误异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING);
+             ShowMsgBox('<新商盟>其他错误异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING);
            end;
      end;
   runed := false;
@@ -474,7 +474,7 @@ begin
   Hinted := Runed or Opening;
   if Hinted then
      begin
-       MessageBox(Handle,'新商盟正在执行中,请稍候再试...','友情提示...',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox('新商盟正在执行中,请稍候再试...','友情提示...',MB_OK+MB_ICONINFORMATION);
        if Runed or Opening then frmLogo.Show;
        Exit;
      end;
@@ -488,12 +488,12 @@ begin
   if not CheckInited then DoInit(true);
   if not CaFactory.Audited then
      begin
-       MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox('脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end;
   if not ready then
      begin
-       if MessageBox(Handle,'系统正在装载新商盟环境,是否继续？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+       if ShowMsgBox('系统正在装载新商盟环境,是否继续？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
        begin
          PageHandle := 0;
          SaveHandle := 0;
@@ -548,12 +548,12 @@ begin
      end;
   if confirm then
      begin
-       MessageBox(Handle,'当前模块正在操作状态，请完成操作后再切换模块?','友情提示...',MB_OK+MB_ICONQUESTION);
+       ShowMsgBox('当前模块正在操作状态，请完成操作后再切换模块?','友情提示...',MB_OK+MB_ICONQUESTION);
        Exit;
      end;
 //  if confirm then
 //     begin
-//       if MessageBox(Handle,'当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+//       if ShowMsgBox('当前窗体正在编辑状态，是否取消操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
 //          begin
 //            Send3('getModule',sid,EncodeXml(oid),'force');
 //            if not WaitRun(commandTimeout) then Exit;
@@ -888,7 +888,7 @@ begin
          if Screen.ActiveForm<>nil then
             MessageBox(Screen.ActiveForm.Handle,Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION)
          else
-            MessageBox(Handle,Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
+            ShowMsgBox(Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
        end;
   end;
 end;

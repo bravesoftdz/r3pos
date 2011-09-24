@@ -20,7 +20,10 @@ type
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
     function FindNode(doc:IXMLDomDocument;tree:string):IXMLDOMNode;
     function GetNodeValue(root:IXMLDOMNode;s:string):string;
+    procedure doAfterExecute(const MethodName: string;
+      SOAPResponse: TStream);
   public
+    timeout:Integer;
     constructor Create;
     destructor Destroy;override;
 
@@ -109,6 +112,7 @@ end;
 
 constructor TAdvFactory.Create;
 begin
+  timeout := 15000;
 end;
 
 function TAdvFactory.CreateXML(xml: string): IXMLDomDocument;
@@ -140,6 +144,21 @@ end;
 destructor TAdvFactory.Destroy;
 begin
   inherited;
+end;
+
+procedure TAdvFactory.doAfterExecute(const MethodName: string;
+  SOAPResponse: TStream);
+begin
+  try
+    InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+    InternetSetOption(nil, INTERNET_OPTION_SEND_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+    InternetSetOption(nil, INTERNET_OPTION_RECEIVE_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+  except
+    on E:Exception do
+       begin
+         Raise;
+       end;
+  end;
 end;
 
 function TAdvFactory.FindElement(root: IXMLDOMNode;
@@ -352,7 +371,7 @@ begin
     Http := TIdHttp.Create(nil);
     try
       Http.HandleRedirects := True;
-      Http.ReadTimeout := 20000;
+      Http.ReadTimeout := 15000;
       Stream.Position := 0;
       Http.Get(url,Stream);
       result := true;

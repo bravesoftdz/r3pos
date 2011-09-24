@@ -98,6 +98,7 @@ type
     procedure LoadParameter;
     procedure WriteParameter;
     class function InitGuide(AOwner:TForm):boolean;
+    class function StartGuide(AOwner:TForm):boolean;
   end;
 
 
@@ -414,10 +415,22 @@ begin
   try
     rs.SQL.Text := 'select count(*) from VIW_MEAUNITS where TENANT_ID='+inttostr(Global.TENANT_ID);
     uGlobal.Factor.Open(rs);
-    if rs.Fields[0].AsInteger > 0 then Exit; 
+    if rs.Fields[0].AsInteger > 0 then Exit;
   finally
     rs.Free;
   end;
+  with TfrmInitGuide.Create(AOwner) do
+    begin
+      try
+        result := (ShowModal=MROK);
+      finally
+        free;
+      end;
+    end;
+end;
+
+class function TfrmInitGuide.StartGuide(AOwner: TForm): boolean;
+begin
   with TfrmInitGuide.Create(AOwner) do
     begin
       try

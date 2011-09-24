@@ -46,7 +46,7 @@ begin
      //if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
      //if not OpenLogFile then Exit;
      try
-       myFile := DefaultPath+'log\log'+formatDatetime('YYYYMMDD',date)+'.log';
+       myFile := DefaultPath+'log\log'+filename+formatDatetime('YYYYMMDD',date)+'.log';
        AssignFile(F,myFile);
        if FileExists(myFile) then Append(F) else rewrite(F);
        try
@@ -87,6 +87,8 @@ constructor TZLogFilePool.Create;
 begin
   DefaultPath := ExtractShortPathName(ExtractFilePath(ParamStr(0)));
   ForceDirectories(DefaultPath+'log');
+  ffilename:= ExtractFileName(ParamStr(0));
+  delete(ffilename,pos('.',ffilename),255);
 //  if FindCmdLineSwitch('DEBUG',['-','+'],false) then //调试模式
 //  begin
 //    AssignFile(F,DefaultPath+'debug\debug.txt');

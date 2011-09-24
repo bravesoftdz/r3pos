@@ -52,7 +52,7 @@ type
     procedure DoLogin;virtual;
   end;
 implementation
-uses EncDec,ufrmDesk,uShopGlobal,ufrmLogo,ufrmXsmLogin, uGlobal, ufrmMain;
+uses EncDec,ufrmDesk,uShopGlobal,uMsgBox,ufrmLogo,ufrmXsmLogin, uGlobal, ufrmMain;
 
 {$R *.dfm}
 
@@ -84,7 +84,7 @@ begin
     except
       on E:Exception do
          begin
-           MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+           ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
            if TfrmXsmLogin.XsmLogin then
               result := GetDoLogin(xsm_url)
            else

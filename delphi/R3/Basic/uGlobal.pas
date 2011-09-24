@@ -132,7 +132,7 @@ Var
   //产品编码
   ProductID:string;
 implementation
-uses Forms,IniFiles,EncDec,ufrmLogo;
+uses Forms,IniFiles,EncDec,ufrmLogo,uMsgBox;
 {$R *.dfm}
 var
   whKeyboard: HHook;
@@ -202,13 +202,13 @@ begin
         except
           Result.Free;
           MsgString := '保存屏幕到'+FileName+'失败，请清理磁盘文件后再试。';
-          Application.MessageBox(Pchar(MsgString),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+          ShowMsgBox(Pchar(MsgString),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
           MsgString := '';
           Exit;
         end;
         Result.Free;
         MsgString := '保存屏幕到'+FileName+'成功。';
-        Application.MessageBox(Pchar(MsgString),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+        ShowMsgBox(Pchar(MsgString),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
         MsgString := '';
       end;
 end;
@@ -469,7 +469,7 @@ begin
        if @RegisterServer<>nil then
           if RegisterServer<>S_OK then
              begin
-               MessageBox(Application.Handle,Pchar('注册'+FileName+'失注，错误:'+Inttostr(GetLastError)+';可能有部份功能无法使用'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+               ShowMsgBox(Pchar('注册'+FileName+'失注，错误:'+Inttostr(GetLastError)+';可能有部份功能无法使用'),'友情提示...',MB_OK+MB_ICONINFORMATION);
              end;
      end;
   finally

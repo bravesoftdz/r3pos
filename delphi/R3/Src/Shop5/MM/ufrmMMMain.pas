@@ -335,7 +335,7 @@ var
 
 implementation
 uses
-  ufrmMMLogin, ufrmMMList,ufrmHintMsg,
+  ufrmMMLogin, ufrmMMList,ufrmHintMsg,uMsgBox,
   uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
@@ -512,7 +512,7 @@ begin
        except
          on E:Exception do
             begin
-              MessageBox(Handle,'准备基础数据失败了，请重新登录试试吧.','友情提示...',MB_OK+MB_ICONINFORMATION);
+              ShowMsgBox('准备基础数据失败了，请重新登录试试吧.','友情提示...',MB_OK+MB_ICONINFORMATION);
               Application.Terminate;
             end;
        end;
@@ -530,7 +530,7 @@ begin
   result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
 end;
 begin
-  if (MessageBox(Handle,'为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+  if (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        CanClose := false;
        Exit;
@@ -545,7 +545,7 @@ begin
           SyncFactory.SyncAll;
         except
           on E:Exception do
-             MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+             ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
         end;
      end;
 end;
@@ -565,7 +565,7 @@ begin
      frmMMList.LoadFriends;
    except
      on E:Exception do
-        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+        ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
    
    try
@@ -577,7 +577,7 @@ begin
         end;
    except
      on E:Exception do
-        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+        ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
 
    if CaFactory.Audited and not mmGlobal.ONLVersion then
@@ -618,7 +618,7 @@ begin
         end;
    except
      on E:Exception do
-        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+        ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
 
   finally
@@ -1335,7 +1335,7 @@ end;
 procedure TfrmMMMain.actfrmCloseForDayExecute(Sender: TObject);
 begin
   inherited;
-  if TfrmCloseForDay.ShowClDy(self)=2 then ;//MessageBox(Handle,'当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
+  if TfrmCloseForDay.ShowClDy(self)=2 then ;//ShowMsgBox('当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
 
 end;
 
@@ -1645,7 +1645,7 @@ begin
        end;
   except
     on E:Exception do
-       MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
   end;
 
 end;
@@ -1874,14 +1874,14 @@ begin
   inherited;
      if not Global.RemoteFactory.Connected then
      begin
-       if MessageBox(Handle,'当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if ShowMsgBox('当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        SaveFactor := uGlobal.Factor;
        try
          Global.MoveToRemate;
          try
            Global.Connect;
          except
-           MessageBox(Handle,'无法连接到远程服务器，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
+           ShowMsgBox('无法连接到远程服务器，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
            Exit;
          end;
        finally
@@ -2099,7 +2099,7 @@ begin
      end;
   if PrainpowerJudge.Locked>0 then
      begin
-       MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox('正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
      end;
   frmLogo.Show;
   frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
@@ -2123,7 +2123,7 @@ begin
        begin
          if Global.UserID='system' then
             begin
-              if MessageBox(Handle,'当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+              if ShowMsgBox('当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
               SyncFactory.SyncUnLockDb;
               Exit;
             end
@@ -2220,7 +2220,7 @@ begin
   if actfrmSyncAll.Enabled then
      actfrmSyncAll.OnExecute(actfrmSyncAll)
   else
-     MessageBox(Handle,'你没有执行数据同步的权限，请跟管理员联系','友情提示...',MB_OK+MB_ICONINFORMATION);
+     ShowMsgBox('你没有执行数据同步的权限，请跟管理员联系','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmMMMain.toolCloseClick(Sender: TObject);
@@ -2320,7 +2320,7 @@ begin
   delete(s,length(s),1);
   if not mmGlobal.Logined then
      begin
-       if MessageBox(Handle,'连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if ShowMsgBox('连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        if not mmGlobal.xsmLogin then Exit;
      end;
 
@@ -2336,15 +2336,15 @@ begin
        begin
          if frmXsmIEBrowser.xsmLCStatus = lcTimeOut then
             begin
-              if MessageBox(Handle,'打开模块超时了，是否继续？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then Exit;
+              if ShowMsgBox('打开模块超时了，是否继续？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then Exit;
             end;
          if frmXsmIEBrowser.xsmLCStatus = lcError then
             begin
-              if MessageBox(Handle,'打开模块出错了，是否继续？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then Exit;
+              if ShowMsgBox('打开模块出错了，是否继续？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then Exit;
             end;
          if frmXsmIEBrowser.xsmLCStatus = lcStoped then
             begin
-              MessageBox(Handle,'当前模块正在业务中，不能切换模块','友情提示..',MB_OK+MB_ICONQUESTION);
+              ShowMsgBox('当前模块正在业务中，不能切换模块','友情提示..',MB_OK+MB_ICONQUESTION);
               Exit;
             end;
          PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
@@ -2378,7 +2378,7 @@ begin
        begin
           if not mmGlobal.Logined then
              begin
-               if MessageBox(Handle,'连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+               if ShowMsgBox('连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
                if not mmGlobal.xsmLogin then Exit;
                frmRimIEBrowser.rimLogined := false;
              end;
@@ -2386,7 +2386,7 @@ begin
        
     if not frmRimIEBrowser.rimLogined then
        begin
-         if MessageBox(Handle,'连接已经断开了，是否重连RIM服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         if ShowMsgBox('连接已经断开了，是否重连RIM服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
          if not frmRimIEBrowser.RimLogin(true) then Exit;
        end;
 

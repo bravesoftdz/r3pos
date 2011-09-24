@@ -488,7 +488,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand;
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox;
   
 {$R *.dfm}
 
@@ -764,11 +764,11 @@ begin
   CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductId,RzVersionInfo.FileVersion);
   if CaUpgrade.UpGrade in [1,2] then
   begin
-     if (MessageBox(Application.Handle,pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
+     if (ShowMsgBox(pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        if (CaUpgrade.UpGrade=1) then
           begin
-            MessageBox(Application.Handle,pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
+            ShowMsgBox(pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
             Exit
           end else CaUpgrade.UpGrade := 3;
      end;
@@ -802,7 +802,7 @@ begin
   except
     on E:Exception do
        begin
-         MessageBox(application.Handle,pchar('升级失败,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+         ShowMsgBox(pchar('升级失败,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
          result := false;
        end;
   end;
@@ -962,7 +962,7 @@ begin
   except
     on E:Exception do
        begin
-         MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONWARNING);
+         ShowMsgBox(pchar(E.Message),'友情提示...',MB_OK+MB_ICONWARNING);
          Application.Terminate;
          Exit;
        end;
@@ -1028,7 +1028,7 @@ begin
   result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
 end;
 begin
-  if not SystemShutdown and (MessageBox(Handle,'为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+  if not SystemShutdown and (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        CanClose := false;
        Exit;
@@ -1043,7 +1043,7 @@ begin
           SyncFactory.SyncAll;
         except
           on E:Exception do
-             MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+             ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
         end;
      end;
 end;
@@ -1291,7 +1291,7 @@ begin
          end;
       CA_MODULE.Next;
     end;
-  if not isRight then MessageBox(Handle,'你没有操作此模块的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);     
+  if not isRight then ShowMsgBox('你没有操作此模块的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmXsm2Main.RzBmpButton9Click(Sender: TObject);
@@ -1300,13 +1300,13 @@ begin
   inherited;
   if FList.Count > 0 then
      begin
-       if MessageBox(Handle,'是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if ShowMsgBox('是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        for i:= FList.Count -1 downto 0 do
          TForm(TrzBmpButton(FList[i]).tag).free;
      end;
   if PrainpowerJudge.Locked>0 then
      begin
-       MessageBox(Handle,'正在执行消息同步，请稍等切换用户..','友情提示..',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox('正在执行消息同步，请稍等切换用户..','友情提示..',MB_OK+MB_ICONINFORMATION);
      end;
   if FList.Count=0 then
      begin
@@ -1382,11 +1382,11 @@ begin
                     begin
                       if ShopGlobal.ONLVersion then
                          begin
-                           MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                           ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
                            result := false;
                            Exit;
                          end;
-                      result := (MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+                      result := (ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
                       if result then
                         begin
                           Global.MoveToLocal;
@@ -1400,12 +1400,12 @@ begin
              except
                if ShopGlobal.ONLVersion then
                   begin
-                    if MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+                    if ShowMsgBox('连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
                        TfrmHostDialog.HostDialog(self);
                     result := false;
                     Exit;
                   end;
-               result := (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+               result := (ShowMsgBox('连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
                if result then
                   begin
                     Global.MoveToLocal;
@@ -1431,7 +1431,7 @@ begin
                  try
                    Global.Connect;
                  except
-                   MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+                   ShowMsgBox('连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
                  end;
                finally
                  Global.MoveToLocal;
@@ -1473,7 +1473,7 @@ begin
   except
     on E:Exception do
       begin
-        MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
+        ShowMsgBox(pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
         result := false;
       end;
   end;
@@ -2153,7 +2153,7 @@ begin
      end;
   Application.Restore;
   frmXsm2Desk.SaveToFront;
-  if TfrmCloseForDay.ShowClDy(self)=2 then ;//MessageBox(Handle,'当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
+  if TfrmCloseForDay.ShowClDy(self)=2 then ;//ShowMsgBox('当天没有营业数据，不需要结账','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmXsm2Main.actfrmPriceOrderListExecute(Sender: TObject);
@@ -2282,7 +2282,7 @@ begin
        TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
     else
        begin
-//         if MessageBox(Handle,'你没有新商盟账号无法完成登录,是否进入新商盟演示账套?','友情提示..',MB_YESNO+MB_ICONINFORMATION)<>6 then
+//         if ShowMsgBox('你没有新商盟账号无法完成登录,是否进入新商盟演示账套?','友情提示..',MB_YESNO+MB_ICONINFORMATION)<>6 then
 //            begin
 //              Form.Free;
 //              Exit;
@@ -3025,14 +3025,14 @@ begin
   try
      if not Global.RemoteFactory.Connected then 
      begin
-       if MessageBox(Handle,'当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if ShowMsgBox('当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        SaveFactor := uGlobal.Factor;
        try
          Global.MoveToRemate;
          try
            Global.Connect;
          except
-           MessageBox(Handle,'无法连接到远程服务器，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
+           ShowMsgBox('无法连接到远程服务器，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
            Exit;
          end;
        finally
@@ -3150,7 +3150,7 @@ begin
         RspComVersion := Factor.ExecProc('TGetComVersion');
         if CheckVersion(DBVersion,Global.RemoteFactory) or CompareVersion(ComVersion,RspComVersion) then
         begin
-           MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+           ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
            result := false;
            Exit;
         end;
@@ -3169,7 +3169,7 @@ begin
     Factor.Open(rs);
     if rs.IsEmpty then
        begin
-         MessageBox(Handle,'参数传入的企业号无效..','友情提示...',MB_OK+MB_ICONINFORMATION);
+         ShowMsgBox('参数传入的企业号无效..','友情提示...',MB_OK+MB_ICONINFORMATION);
          result := false;
        end;
     Global.TENANT_ID := rs.Fields[0].AsInteger;
@@ -3437,7 +3437,7 @@ begin
  except
    on E:Exception do
       begin
-        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+        ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
         result := false;
       end;
  end;
@@ -3507,11 +3507,11 @@ begin
                     begin
                       if ShopGlobal.ONLVersion then
                          begin
-                           MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                           ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
                            result := false;
                            Exit;
                          end;
-                      result := (MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+                      result := (ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
                       if result then
                         begin
                           Global.MoveToLocal;
@@ -3525,12 +3525,12 @@ begin
              except
                if ShopGlobal.ONLVersion then
                   begin
-                    if MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+                    if ShowMsgBox('连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
                        TfrmHostDialog.HostDialog(self);
                     result := false;
                     Exit;
                   end;
-               result := (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+               result := (ShowMsgBox('连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
                if result then
                   begin
                     Global.MoveToLocal;
@@ -3556,7 +3556,7 @@ begin
                  try
                    Global.Connect;
                  except
-                   MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+                   ShowMsgBox('连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
                  end;
                finally
                  Global.MoveToLocal;
@@ -3595,7 +3595,7 @@ begin
   except
     on E:Exception do
       begin
-        MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
+        ShowMsgBox(pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
         result := false;
         Exit;
       end;
@@ -4000,7 +4000,7 @@ procedure TfrmXsm2Main.actfrmCalcStorageExecute(Sender: TObject);
 begin
   inherited;
   TfrmCostCalc.CalcAnalyLister(self);
-  MessageBox(Handle,'动销测算完毕','友情提示...',MB_OK+MB_ICONINFORMATION);
+  ShowMsgBox('动销测算完毕','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmXsm2Main.actfrmStorageOptionDefineExecute(Sender: TObject);
@@ -4086,7 +4086,7 @@ begin
   Network := CAFactory.CheckNetwork;
   if not Logined and not Network then
      begin
-       MessageBox(Handle,'初始登录必须在线状态，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox('初始登录必须在线状态，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
        Exit;
      end
   else
@@ -4124,13 +4124,13 @@ begin
          frmLogo.Show;
          if not TfrmTenant.coAutoRegister(xsm_username,true) then
          begin
-            MessageBox(Handle,pchar('R3平台没有检测到'+xsm_username+'用户，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+            ShowMsgBox(pchar('R3平台没有检测到'+xsm_username+'用户，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
             Exit;
          end;
        except
          on E:Exception do
          begin
-            MessageBox(Handle,pchar('R3用户认证失败,错误:'+E.Message+'，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+            ShowMsgBox(pchar('R3用户认证失败,错误:'+E.Message+'，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
             Exit;
          end;
        end;
@@ -4145,13 +4145,13 @@ begin
          try
            if not TfrmTenant.coAutoRegister(xsm_username,false) then
            begin
-              MessageBox(Handle,pchar('R3平台没有检测到'+xsm_username+'用户，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+              ShowMsgBox(pchar('R3平台没有检测到'+xsm_username+'用户，请联系实施人员'),'友情提示...',MB_OK+MB_ICONINFORMATION);
               Exit;
            end;
          except
            on E:Exception do
            begin
-             if MessageBox(Handle,pchar('RSP服务认证失败，是否转脱网操作？'+#13+'原因：'+E.Message),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
+             if ShowMsgBox(pchar('RSP服务认证失败，是否转脱网操作？'+#13+'原因：'+E.Message),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then
                 Exit;
            end;
          end;
@@ -4168,7 +4168,7 @@ begin
    on E:Exception do
      begin
        result := false;
-       MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox(pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
      end;
  end;
 end;
@@ -4187,7 +4187,7 @@ begin
      end;
   if PrainpowerJudge.Locked>0 then
      begin
-       MessageBox(Handle,'正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox('正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
      end;
   frmLogo.Show;
   frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
@@ -4206,12 +4206,13 @@ begin
        end;
      end;
     if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+    frmLogo.ShowTitle := '正在检测数据库锁，请稍候...';
     SyncFactory.SyncLockDb;
     if not SyncFactory.SyncLockCheck then
        begin
          if Global.UserID='system' then
             begin
-              if MessageBox(Handle,'当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+              if ShowMsgBox('当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
               SyncFactory.SyncUnLockDb;
               Exit;
             end
@@ -4240,7 +4241,7 @@ begin
   if FindChildForm(TfrmPosMain)<>nil then Raise Exception.Create('收款机模块没有退出不能切换用户...');
   if FList.Count > 0 then
      begin
-       if MessageBox(Handle,'是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if ShowMsgBox('是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        for i:= FList.Count -1 downto 0 do
          begin
            if TrzBmpButton(FList[i]).GroupIndex=999 then
@@ -4251,7 +4252,7 @@ begin
   actfrmOpenDesk.OnExecute(actfrmOpenDesk); 
   if PrainpowerJudge.Locked>0 then
      begin
-       MessageBox(Handle,'正在执行消息同步，请稍等切换用户..','友情提示..',MB_OK+MB_ICONINFORMATION);
+       ShowMsgBox('正在执行消息同步，请稍等切换用户..','友情提示..',MB_OK+MB_ICONINFORMATION);
      end;
   Logined := false;
   Login(false,false);
@@ -4278,7 +4279,7 @@ begin
   if SyncFactory.firsted and CaFactory.Audited then
      begin
        if not Global.RemoteFactory.Connected then Exit;
-       if MessageBox(Handle,'系统第一次初始化，将从服务器恢复业务数据，是否立即执行？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if ShowMsgBox('系统第一次初始化，将从服务器恢复业务数据，是否立即执行？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        SyncFactory.SyncLockDb;
        if not SyncFactory.SyncLockCheck then Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。'); 
        SyncFactory.SyncAll;
@@ -4370,11 +4371,11 @@ begin
                 begin
                   if ShopGlobal.ONLVersion then
                      begin
-                       MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
+                       ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器..','友情提示...',MB_OK+MB_ICONINFORMATION);
                        result := false;
                        Exit;
                      end;
-                  result := (MessageBox(Handle,'服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
+                  result := (ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
                   if result then
                     begin
                       Global.MoveToLocal;
@@ -4388,11 +4389,11 @@ begin
          except
            if ShopGlobal.ONLVersion then
               begin
-                MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常?','友情提示...',MB_OK+MB_ICONQUESTION);
+                ShowMsgBox('连接数据库服务器失败,请检查网络是否正常?','友情提示...',MB_OK+MB_ICONQUESTION);
                 result := false;
                 Exit;
               end;
-           result := (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
+           result := (ShowMsgBox('连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
            if result then
               begin
                 Global.MoveToLocal;
@@ -4417,7 +4418,7 @@ begin
                  try
                    Global.Connect;
                  except
-                   MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
+                   ShowMsgBox('连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
                  end;
                finally
                  Global.MoveToLocal;
@@ -4476,7 +4477,7 @@ begin
   except
     on E:Exception do
       begin
-        MessageBox(Handle,pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
+        ShowMsgBox(pchar(E.Message),'友情提示...',MB_OK+MB_ICONERROR);
         result := false;
       end;
   end;
@@ -4566,7 +4567,7 @@ end;
 procedure TfrmXsm2Main.actfrmInitGuideExecute(Sender: TObject);
 begin
   inherited;
-    TfrmInitGuide.InitGuide(self);
+  TfrmInitGuide.StartGuide(self);
 end;
 
 end.

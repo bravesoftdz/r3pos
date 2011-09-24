@@ -130,7 +130,7 @@ type
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,uFnUtil,uDsUtil,uCaFactory,uSyncThread;
+uses uGlobal,ufrmLogo,uFnUtil,uMsgBox,uDsUtil,uCaFactory,uSyncThread;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -1785,7 +1785,7 @@ begin
     rs.Free;
   end;
   if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库锁定功能。');
-  if MessageBox(Application.MainForm.Handle,'是否锁定当前电脑为本门店专用电脑？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if MessageBox(Application.Handle,'是否锁定当前电脑为本门店专用电脑？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   id := TSequence.NewId;
   Global.RemoteFactory.BeginTrans;
   Global.LocalFactory.BeginTrans;
@@ -3428,9 +3428,9 @@ begin
   if (SFVersion='.ONL') or Global.Debug then Exit;
   if Global.UserID<>'system' then Raise Exception.Create('只有超级管理员才能远程数据库进行解锁');
   if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库解锁功能。');
-  if MessageBox(Application.MainForm.Handle,'你是否真要对本企业的所有门店账套进行解锁？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if ShowMsgBox('你是否真要对本企业的所有门店账套进行解锁？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   Global.RemoteFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE like ''DBKEY_%''');
-  MessageBox(Application.MainForm.Handle,'解锁成功。','友情提示...',MB_OK+MB_ICONINFORMATION);
+  ShowMsgBox('解锁成功。','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 initialization

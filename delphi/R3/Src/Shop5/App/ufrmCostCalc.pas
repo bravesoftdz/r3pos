@@ -2207,6 +2207,10 @@ begin
   try
     for i:=1 to pt do
        begin
+         if not (flag in [1,2]) then  {不是在月结状态下,不对当天以前的日期进行预算}
+            begin
+              if (cDate+i)>=Global.sysDate then continue;
+            end;
          if (cDate+i)<=eDate then //只有日结内时间要生成记录已生成日台账部份
          begin
          Factor.ExecSQL('insert into RCK_DAYS_CLOSE(TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+

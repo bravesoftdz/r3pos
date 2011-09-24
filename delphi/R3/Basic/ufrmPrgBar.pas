@@ -12,6 +12,7 @@ type
     RzPanel1: TRzPanel;
     RzLabel1: TRzLabel;
     RzProgressBar1: TRzProgressBar;
+    procedure FormCreate(Sender: TObject);
   private
     function GetPrecent: integer;
     function GetWaitHint: string;
@@ -55,4 +56,11 @@ begin
   RzLabel1.Update;
 end;
 
+procedure TfrmPrgBar.FormCreate(Sender: TObject);
+begin
+  frmPrgBar := self;
+end;
+
+initialization
+  frmPrgBar := nil;
 end.

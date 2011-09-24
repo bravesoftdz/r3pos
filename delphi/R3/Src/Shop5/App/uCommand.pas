@@ -18,7 +18,7 @@ type
 var CommandPush:TCommandPush;
   
 implementation
-uses uShopGlobal,uGlobal,ZLogFile,ufrmLogo;
+uses uShopGlobal,uGlobal,ZLogFile,uMsgBox,ufrmLogo;
 { TCommandPush }
 
 constructor TCommandPush.Create;
@@ -68,7 +68,7 @@ begin
           Global.LocalFactory.RollbackTrans;
           LogFile.AddLogFile(0,Str_Sql+' 错误原因:'+E.Message);
           frmLogo.Close;
-          MessageBox(Application.MainForm.Handle,'服务端的异常处理指令失败了，请联系客服人员','友情提示...',MB_OK+MB_ICONINFORMATION);
+          ShowMsgBox('服务端的异常处理指令失败了，请联系客服人员','友情提示...',MB_OK+MB_ICONINFORMATION);
        end;
   end;
   finally

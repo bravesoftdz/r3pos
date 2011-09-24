@@ -64,7 +64,7 @@ var
   frmMain: TfrmMain;
 
 implementation
-uses ufrmDesk,IniFiles;
+uses ufrmDesk,IniFiles,uMsgBox;
 {$R *.dfm}
 
 procedure TfrmMain.WndProc(var Message: TMessage);
@@ -210,17 +210,9 @@ begin
 end;
 
 procedure TfrmMain.ShowException(Sender: TObject; E: Exception);
-var Form:TForm;
-    PWnd:THandle;
 begin
   if E.Message = '' then Exit;
-  Form := Screen.ActiveForm;
-  if Form<>nil then
-     PWnd := Form.Handle
-  else
-     PWnd := Application.Handle;
-
-  MessageBox(PWnd,Pchar(E.Message),Pchar(Application.Title),MB_OK+MB_ICONWARNING)
+  ShowMsgBox(Pchar(E.Message),Pchar(Application.Title),MB_OK+MB_ICONWARNING)
 end;
 
 procedure TfrmMain.WMMIDASIcon(var Message: TMessage);

@@ -66,7 +66,7 @@ type
 var
   XsmCheckPassWord:TXsmCheckPassWord;
 implementation
-uses uCaFactory,ObjCommon,ZBase,uLoginFactory,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
+uses uCaFactory,ObjCommon,ZBase,uMsgBox,uLoginFactory,ufnUtil,ufrmLogo,uGlobal,EncDec,ufrmPswModify,uShopGlobal,uDsUtil,ufrmHostDialog,ufrmTenant;
 {$R *.dfm}
 
 { TfrmLogin }
@@ -423,7 +423,7 @@ procedure TfrmLogin.RzLabel1Click(Sender: TObject);
 begin
   inherited;
   case TfrmHostDialog.HostDialog(self) of
-  MROK:MessageBox(Handle,'设置连接主机成功，请退出软件重新登录后生效.','友情提示..',MB_OK+MB_ICONINFORMATION);
+  MROK:ShowMsgBox('设置连接主机成功，请退出软件重新登录后生效.','友情提示..',MB_OK+MB_ICONINFORMATION);
   mrRetry:self.ModalResult := mrRetry;
   end;
 end;

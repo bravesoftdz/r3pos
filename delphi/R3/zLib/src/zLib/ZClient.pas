@@ -55,6 +55,7 @@ type
     FList:TList;
     LocaliDbType:integer;
     LocalInTransaction:boolean;
+    KeepAlv:boolean;
     { ISendDataBlock }
     procedure Enter;
     procedure Leave;
@@ -246,6 +247,7 @@ end;
 
 procedure TZClient.InternalClose;
 begin
+  KeepAlv := false;
   if Assigned(FTransport) then
   begin
     FTransport.OnTerminate := nil;
@@ -274,14 +276,11 @@ begin
     WaitForSingleObject(FTransport.Semaphore, INFINITE);
     if FTransport.hEventMsg=THREAD_EXCEPTION then
        DoError(Exception(FTransport.GetEventData));
-    KeepAlive(FTransport.Transport.GetSocketHandle);
   end else
   begin
     FTransIntf := CreateTransport;
     FTransIntf.SetConnected(True);
-    KeepAlive(FTransIntf.GetSocketHandle);
   end;
-
 end;
 
 
@@ -369,15 +368,26 @@ begin
             end;
           end;
       end;
+    if not KeepAlv then
+       begin
+         KeepAlive(FTransport.Transport.GetSocketHandle);
+         KeepAlv := true;
+       end;
   end else
   begin
     if not Assigned(FTransIntf) then Raise Exception.CreateRes(@SIdInvalidSocketConnection);
     Context := FTransIntf.Send(Data);
     Result := FTransIntf.Receive(WaitForResult, Context);
+    if not KeepAlv then
+       begin
+         KeepAlive(FTransIntf.GetSocketHandle);
+         KeepAlv := true;
+       end;
   end;
   if Result=nil then Exception.CreateRes(@SReturnError);
   if Assigned(Result) and ((Result.Signature and asMask) = asError) then
     Interpreter.InterpretData(Result);
+
 end;
 
 procedure TZClient.SetEnabledBanlace(const Value: Boolean);

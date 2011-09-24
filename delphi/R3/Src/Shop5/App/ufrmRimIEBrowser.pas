@@ -47,7 +47,7 @@ type
 var
   frmRimIEBrowser:TfrmRimIEBrowser;
 implementation
-uses IniFiles,ufrmMain,ufrmLogo,ufrmXsmLogin,encddecd,ufrmXsmIEBrowser,uShopGlobal,uCaFactory,EncDec,uAdvFactory, uGlobal;
+uses IniFiles,ufrmMain,uMsgBox,ufrmLogo,ufrmXsmLogin,encddecd,ufrmXsmIEBrowser,uShopGlobal,uCaFactory,EncDec,uAdvFactory, uGlobal;
 {$R *.dfm}
 
 { TfrmRimIEBrowser }
@@ -69,7 +69,7 @@ begin
     BringToFront;
     if not CaFactory.Audited then
       begin
-        MessageBox(Handle,'脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
+        ShowMsgBox('脱机状态不能进入此模块...','友情提示...',MB_OK+MB_ICONINFORMATION);
         Exit;
       end;
     if xsmed and not logined then frmXsmIEBrowser.SessionFail := true;
@@ -221,12 +221,12 @@ begin
        end
     else
        begin
-         if Hinted then MessageBox(Handle,pchar('登录Rim失败了,错误:'+Caption),'友情提示..',MB_OK+MB_ICONERROR);
+         if Hinted then ShowMsgBox(pchar('登录Rim失败了,错误:'+Caption),'友情提示..',MB_OK+MB_ICONERROR);
        end;
   except
     logined := false;
     frmLogo.Close;
-    MessageBox(Handle,'登录RIM失败，请检查服务用网络是否正常.','友情提示...',MB_OK+MB_ICONINFORMATION);
+    ShowMsgBox('登录RIM失败，请检查服务用网络是否正常.','友情提示...',MB_OK+MB_ICONINFORMATION);
   end;
 end;
 
@@ -248,7 +248,7 @@ begin
     sid := DecodeString(vList[0]);
     xml := DecodeString(vList[1]);
     frmXsmIEBrowser.Caption := Caption;
-    if not frmXsmIEBrowser.Open(sid,xml,PageHandle) then MessageBox(Handle,'无法打开活动详情','友情提示...',MB_OK+MB_ICONINFORMATION);
+    if not frmXsmIEBrowser.Open(sid,xml,PageHandle) then ShowMsgBox('无法打开活动详情','友情提示...',MB_OK+MB_ICONINFORMATION);
   finally
     vList.Free;
   end;

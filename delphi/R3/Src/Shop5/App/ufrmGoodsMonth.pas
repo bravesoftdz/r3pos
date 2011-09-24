@@ -97,7 +97,7 @@ type
 
 implementation
 uses uTreeUtil,uGlobal,uShopGlobal,uCtrlUtil,uShopUtil,uFnUtil,ufrmEhLibReport,
-     uDsUtil,ObjCommon,ufrmPrgBar, ufrmBasic, Math;
+     uDsUtil,ObjCommon,ufrmPrgBar, ufrmBasic, Math ,ufrmCostCalc, uMsgBox;
 {$R *.dfm}
 
 { TfrmGoodsMonth }
@@ -462,6 +462,8 @@ begin
     except
       Raise Exception.Create('数据提交失败!');
     end;
+    if ShowMsgBox('成本已调整完毕，是否立即进行成本核算','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    TfrmCostCalc.TryCalcDayGods(self); 
   finally
     Params.Free;
     CdsGoodsMonth.EnableControls;

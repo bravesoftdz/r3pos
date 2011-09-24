@@ -205,7 +205,8 @@ begin
     end;
   Doc := IEDesktop.Document as IHTMLDocument2;
   if Doc=nil then Exit;
-  iframe := Doc.all.item('mht1',EmptyParam) as DispHTMLIFrame;
+  
+{  iframe := Doc.all.item('mht1',EmptyParam) as DispHTMLIFrame;
   if iframe<>nil then
      begin
        if CaFactory.Audited and frmRimIEBrowser.Logined then
@@ -219,6 +220,7 @@ begin
        else
           AdvFactory.LoadAllFile(IEDesktop);
      end;
+}     
   if FileExists(ExtractFilePath(ParamStr(0))+'adv\adv1.html') then
      begin
        url := ExtractFilePath(ParamStr(0))+'adv\adv1.html';

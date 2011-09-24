@@ -116,7 +116,7 @@ end;
 var
   DevFactory:TDevFactory;
 implementation
-uses IniFiles,EncDec,Forms,uGlobal;
+uses IniFiles,EncDec,Forms,uGlobal,uMsgBox;
 { TDevFactory }
 
 procedure TDevFactory.BeginPrint;
@@ -260,7 +260,7 @@ begin
      S:=CHR(27)+'p'+CHR(0)+CHR(60)+CHR(255);
      FComm.WriteCommData(Pchar(S),Length(S)) ;
   except
-     MessageBox(Application.Handle,Pchar('打开钱箱'+FComm.CommName+'端口出错,是否正确设置参数？'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+     ShowMsgBox(Pchar('打开钱箱'+FComm.CommName+'端口出错,是否正确设置参数？'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
 end;
 
@@ -276,7 +276,7 @@ begin
     S:=Chr(27)+Chr(64);
     FComm.WriteCommData(Pchar(S),Length(S)) ;
   except
-    MessageBox(Application.Handle,Pchar('打开顾客显示屏'+FComm.CommName+'端口出错,是否正确设置参数？'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    ShowMsgBox(Pchar('打开顾客显示屏'+FComm.CommName+'端口出错,是否正确设置参数？'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
   end;
 end;
 

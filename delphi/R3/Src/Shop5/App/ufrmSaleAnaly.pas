@@ -130,6 +130,10 @@ type
     procedure P2_RB_MoneyClick(Sender: TObject);
     procedure P2_RB_PRFClick(Sender: TObject);
     procedure P2_RB_AMTClick(Sender: TObject);
+    procedure fndP3_SORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
+    procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     SortName: string;  //商品分类名称
     sid1,sid2,sid3: string;        //商品分类ID
@@ -169,6 +173,22 @@ procedure TfrmSaleAnaly.fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; ABut
 begin
   if SelectGoodSortType(sid1,srid1,SortName) then
     fndP1_SORT_ID.Text:=SortName;
+end;
+
+procedure TfrmSaleAnaly.fndP2_SORT_IDPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+begin
+  inherited;
+  if SelectGoodSortType(sid2,srid2,SortName) then
+    fndP2_SORT_ID.Text:=SortName;
+end;
+
+procedure TfrmSaleAnaly.fndP3_SORT_IDPropertiesButtonClick(Sender: TObject;
+  AButtonIndex: Integer);
+begin
+  inherited;
+  if SelectGoodSortType(sid3,srid3,SortName) then
+    fndP3_SORT_ID.Text:=SortName;
 end;
 
 procedure TfrmSaleAnaly.RzPanel7Resize(Sender: TObject);
@@ -1140,5 +1160,6 @@ begin
   inherited;
   AddUnitItemList(fndP1UNIT_ID, 1);
 end;
+
 
 end.

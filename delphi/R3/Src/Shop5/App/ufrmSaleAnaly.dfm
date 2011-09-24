@@ -15,7 +15,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
       inherited RzPage: TRzPageControl
         Width = 960
         Height = 587
-        TabIndex = 2
+        ActivePage = TabSheet2
         FixedDimension = 25
         object TabSheet2: TRzTabSheet [0]
           Caption = #30408#21033#20998#26512
@@ -231,7 +231,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
+                  Properties.OnButtonClick = fndP2_SORT_IDPropertiesButtonClick
                   TabOrder = 4
                   OnKeyPress = fndP2_SORT_IDKeyPress
                 end
@@ -636,7 +636,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Kind = bkEllipsis
                     end>
                   Properties.ReadOnly = True
-                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
+                  Properties.OnButtonClick = fndP3_SORT_IDPropertiesButtonClick
                   TabOrder = 4
                   OnKeyPress = fndP3_SORT_IDKeyPress
                 end

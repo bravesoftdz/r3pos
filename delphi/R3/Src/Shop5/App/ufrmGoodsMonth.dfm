@@ -65,7 +65,6 @@ inherited frmGoodsMonth: TfrmGoodsMonth
                     ReadOnly = True
                     RowSelect = True
                     TabOrder = 0
-                    OnChange = rzTreeChange
                     OnChanging = rzTreeChanging
                   end
                 end

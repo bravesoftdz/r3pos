@@ -45,7 +45,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure edtGoods_TypePropertiesChange(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
     procedure dbGoodsMonthColumns9UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure N1Click(Sender: TObject);
@@ -187,14 +186,14 @@ begin
   else
     StrMonth := ' and MONTH='+FormatDateTime('YYYYMM',Date);
 
-  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;  
+  if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
   StrSql :=
     'select distinct A.*,C.GODS_CODE,C.GODS_NAME,C.BARCODE,C.CALC_UNITS as UNIT_ID from ('+
-    'select MONTH,TENANT_ID,GODS_ID,BATCH_NO,sum(isnull(BAL_AMT,0)) as BAL_AMT,sum(isnull(BAL_CST,0)) as BAL_CST,'+
-    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(BAL_CST,0))*1.0/sum(isnull(BAL_AMT,0)) end) as BAL_PRICE,sum(isnull(ADJ_CST,0)) as ADJ_CST,'+
-    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0))*1.0/sum(isnull(BAL_AMT,0)) end) as ADJ_PRICE,'+
-    'sum(isnull(ADJ_CST,0)+isnull(BAL_CST,0)) as ADJ_MNY from RCK_GOODS_MONTH where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrMonth+' group by MONTH,TENANT_ID,GODS_ID,BATCH_NO ) '+
+    'select MONTH,TENANT_ID,GODS_ID,BATCH_NO,sum(isnull(BAL_AMT,0)) as BAL_AMT,sum(isnull(BAL_CST,0)-isnull(ADJ_CST,0)) as BAL_CST,'+
+    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(BAL_CST,0)-isnull(ADJ_CST,0))*1.0/sum(isnull(BAL_AMT,0)) end) as BAL_PRICE,sum(isnull(ADJ_CST,0)) as ADJ_CST,'+
+    '(case when sum(isnull(BAL_AMT,0))=0 then 0 else sum(isnull(BAL_CST,0))*1.0/sum(isnull(BAL_AMT,0)) end) as ADJ_PRICE,'+
+    'sum(isnull(BAL_CST,0)) as ADJ_MNY from RCK_GOODS_MONTH where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrMonth+' group by MONTH,TENANT_ID,GODS_ID,BATCH_NO ) '+
     ' A inner join VIW_GOODSINFO_SORTEXT C '+
     ' on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+StrWhere+' order by C.GODS_CODE';
   result := StrSql;
@@ -363,16 +362,21 @@ begin
 end;
 
 procedure TfrmGoodsMonth.actFindExecute(Sender: TObject);
+var
+  rs:TZQuery;
 begin
   inherited;
   if not ShopGlobal.GetChkRight('100002095',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
-  Open('');
-end;
-
-procedure TfrmGoodsMonth.rzTreeChange(Sender: TObject; Node: TTreeNode);
-begin
-  inherited;
-  if not ShopGlobal.GetChkRight('100002095',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from RCK_MONTH_CLOSE where TENANT_ID=:TENANT_ID and MONTH=:MONTH';
+    rs.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    rs.ParambyName('MONTH').asInteger := StrtoInt(edtMonth.asString);
+    Factor.Open(rs);
+    if rs.Fields[0].asInteger=0 then Raise Exception.Create(edtMonth.Text+'没有结账不能进行成本调整。');
+  finally
+    rs.free;
+  end;
   Open('');
 end;
 

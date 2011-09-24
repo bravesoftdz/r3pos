@@ -263,6 +263,9 @@ uses
   ufrmInstall in 'Update\ufrmInstall.pas' {frmInstall},
   uMMServer in 'MM\uMMServer.pas',
   uMMUtil in 'MM\uMMUtil.pas',
+  ufrmMMFindBox in 'MM\ufrmMMFindBox.pas' {frmMMFindBox},
+  ufrmMMBrowser in 'App\ufrmMMBrowser.pas' {frmMMBrowser},
+  udmIcon in '..\..\Basic\udmIcon.pas' {dmIcon: TDataModule},
   ufrmMMToolBox in 'MM\ufrmMMToolBox.pas' {frmMMToolBox};
 
 {$R *.res}
@@ -273,6 +276,7 @@ begin
   Application.ShowMainForm := false;
   Application.Title := 'MM2011';
   Application.CreateForm(TmmGlobal, mmGlobal);
+  Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TfrmMMMain, frmMMMain);
   Application.CreateForm(TfrmMMDesk, frmMMDesk);
   Application.CreateForm(TfrmMMList, frmMMList);

@@ -7,7 +7,7 @@ uses
   Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, uMMUtil, uMMServer ,ShellApi,
   ZBase, RzTray, StdCtrls, Mask, RzEdit, RzBmpBtn, RzLabel, jpeg, RzPanel,
   ImgList, RzBckgnd, RzForms, ToolWin, Buttons, RzButton, ufrmBasic, ZdbFactory,
-  ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset;
+  ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, ufrmMMBrowser,ummFactory;
 
 const
   MSC_POPUP=WM_USER+1;
@@ -32,12 +32,6 @@ type
     RzSeparator2: TRzSeparator;
     bkg_f1: TRzBackground;
     logo: TImage;
-    mnuSys: TRzBmpButton;
-    mnuAcct: TRzBmpButton;
-    mnuSk: TRzBmpButton;
-    mnuOut: TRzBmpButton;
-    mnuIn: TRzBmpButton;
-    mnuBase: TRzBmpButton;
     A1: TMenuItem;
     C1: TMenuItem;
     C2: TMenuItem;
@@ -46,10 +40,9 @@ type
     ADSFDSAFDSA1: TMenuItem;
     ASDFASDFADS1: TMenuItem;
     ADSFADSFDS1: TMenuItem;
-    bkg: TRzPanel;
+    bkgMenu: TRzPanel;
     toolMenu: TPopupMenu;
     toolDesk: TRzBmpButton;
-    mnuReport: TRzBmpButton;
     toolClose: TRzBmpButton;
 
 
@@ -138,10 +131,7 @@ type
     actfrmSyncAll: TAction;
     actfrmGoodsMonth: TAction;
     actfrmInitGuide: TAction;
-    RzPanel1: TRzPanel;
-    RzBmpButton7: TRzBmpButton;
     toolButton: TRzBmpButton;
-    RzBackground1: TRzBackground;
     RzPanel7: TRzPanel;
     RzPanel3: TRzPanel;
     RzBmpButton2: TRzBmpButton;
@@ -152,7 +142,7 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
-    RzBmpButton6: TRzBmpButton;
+    MenuSpilt: TRzBmpButton;
     CA_MODULE: TZQuery;
     sysHelp: TRzBmpButton;
     sysMinimized: TRzBmpButton;
@@ -160,7 +150,23 @@ type
     sysClose: TRzBmpButton;
     bkg_02: TImage;
     RzFormShape1: TRzFormShape;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    copyRight: TRzLabel;
+    r3offline: TRzLabel;
+    UsersStatus: TRzBmpButton;
+    RzPanel4: TRzPanel;
+    RzPanel5: TRzPanel;
+    RzPanel1: TRzPanel;
+    RzBmpButton7: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
+    RzBmpButton8: TRzBmpButton;
+    RzBmpButton9: TRzBmpButton;
+    RzBmpButton10: TRzBmpButton;
+    RzBmpButton11: TRzBmpButton;
+    RzBmpButton12: TRzBmpButton;
+    menuButton: TRzBmpButton;
+    pageLine: TRzSeparator;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -173,12 +179,6 @@ type
     procedure FormResize(Sender: TObject);
     procedure RzTrayIcon1LButtonDown(Sender: TObject);
     procedure RzTrayIcon1LButtonDblClick(Sender: TObject);
-    procedure mnuInClick(Sender: TObject);
-    procedure mnuOutClick(Sender: TObject);
-    procedure mnuSkClick(Sender: TObject);
-    procedure mnuAcctClick(Sender: TObject);
-    procedure mnuBaseClick(Sender: TObject);
-    procedure mnuSysClick(Sender: TObject);
     procedure actfrmMeaUnitsExecute(Sender: TObject);
     procedure actfrmDutyInfoListExecute(Sender: TObject);
     procedure actfrmRoleInfoListExecute(Sender: TObject);
@@ -267,25 +267,49 @@ type
     procedure actfrmInitGuideExecute(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure toolCloseClick(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
+    procedure toolDeskClick(Sender: TObject);
+    procedure RzBmpButton8Click(Sender: TObject);
+    procedure RzBmpButton9Click(Sender: TObject);
+    procedure RzBmpButton10Click(Sender: TObject);
+    procedure actfrmXsmNetExecute(Sender: TObject);
+    procedure actfrmRimNetExecute(Sender: TObject);
+    procedure N5Click(Sender: TObject);
+    procedure UpdateTimerTimer(Sender: TObject);
+    procedure MenuSpiltClick(Sender: TObject);
+    procedure UsersStatusClick(Sender: TObject);
+    procedure RzFormShape1DblClick(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
+    FMenu:TList; {主菜单}
     rc:int64;
+    
+    frmXsmIEBrowser:TfrmMMBrowser;
+    frmRimIEBrowser:TfrmMMBrowser;
+    FLogined: boolean;
 
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
     procedure wm_Sign(var Message: TMessage); message MM_SIGN;
     procedure wm_SessionFail(var Message: TMessage); message MM_SESSION_FAIL;
+    procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
+    procedure wm_lcControl(var Message: TMessage); message WM_LCCONTROL;
 
     //导航工具栏
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
-    function  SortToolButton:boolean;
     procedure AddFrom(form:TForm);
     procedure RemoveFrom(form:TForm);
+    function  SortToolButton:boolean;
+
     //菜单管理
+    procedure CreateMenu;
+    procedure DoOpenMenu(Sender:TObject);
     procedure wm_popup(var Message: TMessage); message MSC_POPUP;
-    procedure DropMenu(btn: TRzBmpButton);
+    procedure DropMenu(mid:integer;btn:TrzBmpButton);
+    procedure PupupToolBox(Sender:TObject;s:string);
+    procedure SetLogined(const Value: boolean);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -297,11 +321,13 @@ type
     procedure LoadParams;
     procedure CheckEnabled;
     procedure Init;
-    function Login: boolean;
+    function  Login: boolean;
     procedure OpenMc(pid: string; mid:integer=0);
     procedure ShowMMList;
     procedure ShowMsgDialog;
     procedure HideMMList;
+    //软是否登录
+    property Logined:boolean read FLogined write SetLogined;
   end;
 
 var
@@ -309,7 +335,7 @@ var
 
 implementation
 uses
-  ufrmMMLogin, ufrmMMList, ummFactory,
+  ufrmMMLogin, ufrmMMList,ufrmHintMsg,
   uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
@@ -336,13 +362,14 @@ begin
     begin
       try
         result := (ShowModal=MROK);
+        Logined := result;
       finally
         free;
       end;
     end;
 end;
 
-procedure TfrmMMMain.DropMenu(btn: TRzBmpButton);
+procedure TfrmMMMain.DropMenu(mid:integer;btn:TrzBmpButton);
 procedure AddLine;
 var
   Item:TMenuItem;
@@ -364,87 +391,35 @@ begin
   toolMenu.Items.Add(Item);
   inc(rc);
 end;
-var HostP:TPoint;
+var
+  HostP:TPoint;
+  lvid:string;
+  Action:TAction;
 begin
   rc := 0;
   toolMenu.Items.Clear;
-  if btn=mnuIn then
-     begin
-       AddPopupMenu(FindAction('actfrmDownIndeOrder'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmStkIndentOrderList'));
-       AddPopupMenu(FindAction('actfrmStockOrderList'));
-       AddPopupMenu(FindAction('actfrmStkRetuOrderList'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmPayOrderList'));
-     end;
-  if btn=mnuOut then
-     begin
-       AddPopupMenu(FindAction('actfrmPriceOrderList'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmSalIndentOrderList'));
-       AddPopupMenu(FindAction('actfrmSalesOrderList'));
-       AddPopupMenu(FindAction('actfrmSalRetuOrderList'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmRecvOrderList'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmPosMain'));
-       AddPopupMenu(FindAction('actfrmCloseForDay'));
-       AddPopupMenu(FindAction('actfrmRecvForDay'));
-     end;
-  if btn=mnuSk then
-     begin
-       AddPopupMenu(FindAction('actfrmStorageTracking'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmCheckOrderList'));
-       AddPopupMenu(FindAction('actfrmChangeOrderList1'));
-       AddPopupMenu(FindAction('actfrmChangeOrderList2'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmDbOrderList'));
-     end;
-  if btn=mnuAcct then
-     begin
-       AddPopupMenu(FindAction('actfrmAccount'));
-       AddPopupMenu(FindAction('actfrmCodeInfo3'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmPayOrderList'));
-       AddPopupMenu(FindAction('actfrmRecvOrderList'));
-       AddPopupMenu(FindAction('actfrmRecvForDay'));
-       AddPopupMenu(FindAction('actfrmTransOrderList'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmMonthClose'));
-       AddPopupMenu(FindAction('actfrmRckMng'));
-       AddPopupMenu(FindAction('actfrmGoodsMonth'));
-     end;
-  if btn=mnuBase then
-     begin
-       AddPopupMenu(FindAction('actfrmGoodsSort'));
-       AddPopupMenu(FindAction('actfrmMeaUnits'));
-       AddPopupMenu(FindAction('actfrmGoodsInfoList'));
-       AddPopupMenu(FindAction('actfrmRelation'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmSupplier'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmPriceGradeInfo'));
-       AddPopupMenu(FindAction('actfrmClient'));
-       AddPopupMenu(FindAction('actfrmCustomer'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmShopInfoList'));
-       AddPopupMenu(FindAction('actfrmDeptInfoList'));
-       AddPopupMenu(FindAction('actfrmDutyInfoList'));
-       AddPopupMenu(FindAction('actfrmRoleInfoList'));
-       AddPopupMenu(FindAction('actfrmUsers'));
-     end;
-  if btn=mnuSys then
-     begin
-       AddPopupMenu(FindAction('actfrmSysDefine'));
-       AddPopupMenu(FindAction('actfrmDevFactory'));
-       if rc>0 then AddLine;
-       AddPopupMenu(FindAction('actfrmMessage'));
-       AddPopupMenu(FindAction('actfrmLockScreen'));
-       if Global.UserId='admin' then 
-          AddPopupMenu(FindAction('actfrmInitGuide'));
-     end;
+  if not CA_MODULE.Locate('MODU_ID',inttostr(mid),[]) then Exit;
+  lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString;
+  CA_MODULE.First;
+  while not CA_MODULE.Eof do
+    begin
+      if (copy(CA_MODULE.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid)
+          and
+         (length(CA_MODULE.FieldbyName('LEVEL_ID').AsString)>length(lvid))
+      then
+         begin
+           if (CA_MODULE.FieldByName('ACTION_NAME').AsString='') or (CA_MODULE.FieldByName('ACTION_NAME').AsString='#') then
+              begin
+                if (rc>0) and (CA_MODULE.FieldByName('MODU_TYPE').AsString='1') then AddLine;
+              end
+           else
+              begin
+                Action := FindAction(CA_MODULE.FieldByName('ACTION_NAME').AsString);
+                if Action.Enabled then AddPopupMenu(Action);
+              end;
+         end;
+      CA_MODULE.Next;
+    end;
   HostP := btn.ClientToScreen(Point(0,btn.Height));
   toolMenu.Popup(HostP.X,HostP.Y);
 end;
@@ -529,9 +504,18 @@ procedure TfrmMMMain.wm_Login(var Message: TMessage);
 var uid:string;
 begin
   uid := mmGlobal.UserID;
-  if Login then
+  Logined := Login;
+  if Logined then
      begin
-        Init;
+       try
+         Init;
+       except
+         on E:Exception do
+            begin
+              MessageBox(Handle,'准备基础数据失败了，请重新登录试试吧.','友情提示...',MB_OK+MB_ICONINFORMATION);
+              Application.Terminate;
+            end;
+       end;
      end
   else
      begin
@@ -568,6 +552,8 @@ end;
 
 procedure TfrmMMMain.Init;
 begin
+  if frmXsmIEBrowser=nil then frmXsmIEBrowser := TfrmMMBrowser.Create(self);
+  if frmRimIEBrowser=nil then frmRimIEBrowser := TfrmMMBrowser.Create(self);
   //读取配置文件
   LoadParams;
   
@@ -584,7 +570,7 @@ begin
    
    try
      frmLogo.ShowTitle := '连接聊天服务器';
-     if mmGlobal.Logined then
+     if mmGlobal.Logined and CaFactory.Audited then
         begin
           mmGlobal.ConnectToMsc;
           RzTrayIcon1.IconIndex := 1;
@@ -594,25 +580,10 @@ begin
         MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
 
-
    if CaFactory.Audited and not mmGlobal.ONLVersion then
       begin
-        if not Global.RemoteFactory.Connected and not mmGlobal.NetVersion then
-           begin
-             frmLogo.ShowTitle := '正在连接远程服务...';
-             Global.MoveToRemate;
-             try
-               try
-                 Global.Connect;
-               except
-                 MessageBox(Handle,'连接远程服务器失败，系统无法同步到最新资料..','友情提示...',MB_OK+MB_ICONWARNING);
-               end;
-             finally
-               Global.MoveToLocal;
-             end;
-           end;
         if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
-        if Global.RemoteFactory.Connected and SyncFactory.CheckDBVersion then
+        if SyncFactory.CheckDBVersion then
            begin
              if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
            end;
@@ -620,19 +591,16 @@ begin
    else
       begin
         if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
-        if CaFactory.Audited and Global.RemoteFactory.Connected then //管理什么版本，有连接到服务器时，必须先同步数据
+        if CaFactory.Audited then //管理什么版本，有连接到服务器时，必须先同步数据
            begin
              if mmGlobal.ONLVersion then //在线版只需同步注册数据
                 begin
-                  if Global.RemoteFactory.ConnString<>Global.LocalFactory.ConnString then //调试模式时，不同步
-                  begin
-                    frmLogo.ShowTitle := '同步基本信息...';
-                    SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
-                    SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
-                    SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
-                    SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
-                    SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
-                  end;
+                  frmLogo.ShowTitle := '同步基本信息...';
+                  SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
+                  SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
+                  SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSysDefine',0);
+                  SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
+                  SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
                 end
              else
                 begin
@@ -641,19 +609,35 @@ begin
            end;
      end;
 
+   try
+     frmLogo.ShowTitle := '登录RIM后台服务';
+     if mmGlobal.Logined and CaFactory.Audited then
+        begin
+          frmRimIEBrowser.RimLogin(true);
+          RzTrayIcon1.IconIndex := 1;
+        end;
+   except
+     on E:Exception do
+        MessageBox(Handle,Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+   end;
+
   finally
     ShowMMList;
     frmLogo.Close;
   end;
-  //准备数据
+  
+   //准备数据
    CommandPush.ExecuteCommand;
    frmLogo.Show;
    try
-     frmLogo.ShowTitle := '正在初始化基础数据...';
-     mmGlobal.LoadBasic();
      frmLogo.ShowTitle := '正在初始化权限数据...';
      mmGlobal.LoadRight;
      CheckEnabled;
+     frmLogo.ShowTitle := '正在初始化系统菜单...';
+     CreateMenu;
+
+     frmLogo.ShowTitle := '正在初始化基础数据...';
+     mmGlobal.LoadBasic();
      frmLogo.ShowTitle := '正在初始化同步数据...';
      mmGlobal.SyncTimeStamp;
      frmLogo.ShowTitle := '正在初始化广告数据...';
@@ -754,6 +738,7 @@ end;
 procedure TfrmMMMain.ShowMMList;
 begin
   frmMMList.WindowState := wsNormal;
+  frmMMList.ReadInfo;
   frmMMList.Show;
   frmMMList.BringToFront;
 end;
@@ -797,13 +782,13 @@ begin
        button.Bitmaps.Up.Assign(toolButton.Bitmaps.Up);
        button.Bitmaps.Down.Assign(toolButton.Bitmaps.Down);
        button.Font.Assign(toolButton.Font);
+       FList.Add(button);
      end;
   button.Caption := form.Caption;
   button.Tag := Integer(Pointer(form));
   button.OnClick := DoActiveForm;
   button.Visible := true;
   button.Parent := bkg_top;
-  FList.Add(button);
   button.Down := true;
   TfrmBasic(Form).OnFreeForm := DoFreeForm;
   SortToolButton;
@@ -831,22 +816,28 @@ var
   button:TrzBmpButton;
 begin
   toolClose.Visible := false;
+  toolDesk.Top := 45;
   for i:=0 to FList.Count -1 do
     begin
       button := TrzBmpButton(FList[i]);
-      button.Top := 41;
+      button.Top := 45;
       if i=0 then
-         button.Left := 140
+         button.Left := 126
       else
-         button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+1;
+         button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+2;
       if button.Down then
          begin
            toolClose.Top := 41+3;
            toolClose.Left := button.Left + button.Width - 20;
            toolClose.Visible := true;
            toolClose.BringToFront;
+           button.Top := 43;
          end;
     end;
+  if toolDesk.Down then
+     begin
+       toolDesk.Top := 43;
+     end;
 end;
 
 procedure TfrmMMMain.DoActiveChange(Sender: TObject);
@@ -951,49 +942,7 @@ end;
 
 procedure TfrmMMMain.wm_popup(var Message: TMessage);
 begin
-  DropMenu(TrzBmpButton(Message.WParam));
-end;
-
-procedure TfrmMMMain.mnuInClick(Sender: TObject);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(mnuIn),0);
-
-end;
-
-procedure TfrmMMMain.mnuOutClick(Sender: TObject);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(mnuOut),0);
-
-end;
-
-procedure TfrmMMMain.mnuSkClick(Sender: TObject);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(mnuSk),0);
-
-end;
-
-procedure TfrmMMMain.mnuAcctClick(Sender: TObject);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(mnuAcct),0);
-
-end;
-
-procedure TfrmMMMain.mnuBaseClick(Sender: TObject);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(mnuBase),0);
-
-end;
-
-procedure TfrmMMMain.mnuSysClick(Sender: TObject);
-begin
-  inherited;
-  PostMessage(Handle,MSC_POPUP,integer(mnuSys),0);
-
+  DropMenu(Message.WParam,TrzBmpButton(Message.LParam));
 end;
 
 procedure TfrmMMMain.actfrmMeaUnitsExecute(Sender: TObject);
@@ -1664,7 +1613,7 @@ begin
   inherited;
   frmMMDesk.HookLocked := true;
   try
-    ;//Login(true);
+    TfrmMMLogin.LockScreen(self);
   finally
     frmMMDesk.HookLocked := false;
   end;
@@ -1686,8 +1635,9 @@ end;
 procedure TfrmMMMain.N2Click(Sender: TObject);
 begin
   inherited;
+  if not Logined then Exit;
   try
-    if mmGlobal.Logined then
+    if CaFactory.Audited then
        begin
          mmGlobal.ConnectToMsc;
          RzTrayIcon1.Animate := false;
@@ -1703,7 +1653,8 @@ end;
 procedure TfrmMMMain.N3Click(Sender: TObject);
 begin
   inherited;
-  PostMessage(frmMMList.Handle,WM_CLOSE,1,1);
+  if not Logined then Exit;
+  PostMessage(frmMMList.Handle,WM_MMCLOSE,1,1);
 end;
 
 procedure TfrmMMMain.actfrmStorageDayReportExecute(Sender: TObject);
@@ -2291,13 +2242,338 @@ end;
 constructor TfrmMMMain.Create(AOwner: TComponent);
 begin
   inherited;
+  FMenu := TList.Create;
+  FormStyle := fsMDIForm;
   frmMMToolBox := TfrmMMToolBox.Create(self);
+  frmXsmIEBrowser := nil; //TfrmMMBrowser.Create(self);
+  frmRimIEBrowser := nil; //TfrmMMBrowser.Create(self);
+  pageLine.Top := bkg_top.Height  - 1;
+  pageLine.Left := toolDesk.Left;
+  pageLine.Width := bkg_top.Width - toolDesk.Left + 10;
 end;
 
 destructor TfrmMMMain.Destroy;
+var
+  i:integer;
 begin
+  Logined := false;
+  Screen.OnActiveFormChange := nil;
+  for i:=0 to FMenu.Count -1 do TObject(FMenu[i]).Free;
+  FMenu.Free;
+  if frmXsmIEBrowser<>nil then freeAndNil(frmXsmIEBrowser);
+  if frmRimIEBrowser<>nil then freeAndNil(frmRimIEBrowser);
   freeAndNil(frmMMToolBox);
   inherited;
+end;
+
+procedure TfrmMMMain.PupupToolBox(Sender: TObject;s:string);
+begin
+  if not CA_MODULE.Locate('MODU_NAME',s,[]) then Exit;
+  frmMMToolBox.Popup(TWinControl(Sender),CA_MODULE.FieldbyName('MODU_ID').AsString);
+end;
+
+procedure TfrmMMMain.RzBmpButton5Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'营销活动');
+end;
+
+procedure TfrmMMMain.toolDeskClick(Sender: TObject);
+begin
+  inherited;
+  frmMMDesk.Locked := true;
+  frmMMDesk.BringToFront;
+  SortToolButton;
+end;
+
+procedure TfrmMMMain.RzBmpButton8Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'网上订货');
+
+end;
+
+procedure TfrmMMMain.RzBmpButton9Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'网上配货');
+
+end;
+
+procedure TfrmMMMain.RzBmpButton10Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'网上结算');
+
+end;
+
+procedure TfrmMMMain.actfrmXsmNetExecute(Sender: TObject);
+var
+  s:string;
+  sl:TStringList;
+begin
+  inherited;
+  if not CaFactory.Audited then Raise Exception.Create('脱网登录不能使用此模块。');
+  if not CA_MODULE.Locate('MODU_ID',PMMToolBox(Sender)^.mid,[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
+  s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
+  delete(s,1,4);
+  delete(s,length(s),1);
+  if not mmGlobal.Logined then
+     begin
+       if MessageBox(Handle,'连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if not mmGlobal.xsmLogin then Exit;
+     end;
+
+  frmXsmIEBrowser.Caption := CA_MODULE.FieldbyName('MODU_NAME').AsString;
+  AddFrom(frmXsmIEBrowser);
+  frmXsmIEBrowser.WindowState := wsMaximized;
+  frmXsmIEBrowser.BringToFront;
+  if not frmXsmIEBrowser.XsmLogin(true) then Exit;
+  sl := TStringList.Create;
+  try
+    sl.CommaText := s;
+    if not frmXsmIEBrowser.LCSend(frmXsmIEBrowser.CreateOpenFava(sl.Values['sceneId'],sl.Values['objectId'])) then
+       begin
+         if frmXsmIEBrowser.xsmLCStatus = lcTimeOut then
+            begin
+              if MessageBox(Handle,'打开模块超时了，是否继续？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then Exit;
+            end;
+         if frmXsmIEBrowser.xsmLCStatus = lcError then
+            begin
+              if MessageBox(Handle,'打开模块出错了，是否继续？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6 then Exit;
+            end;
+         if frmXsmIEBrowser.xsmLCStatus = lcStoped then
+            begin
+              MessageBox(Handle,'当前模块正在业务中，不能切换模块','友情提示..',MB_OK+MB_ICONQUESTION);
+              Exit;
+            end;
+         PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
+       end;
+  finally
+    sl.free;
+  end;
+end;
+
+procedure TfrmMMMain.wm_desktop(var Message: TMessage);
+begin
+  toolDesk.down := true;
+  toolDesk.OnClick(toolDesk);
+end;
+
+procedure TfrmMMMain.actfrmRimNetExecute(Sender: TObject);
+var
+  s:string;
+  Form:TfrmBasic;
+  sl:TStringList;
+begin
+  inherited;
+  if not CaFactory.Audited then Raise Exception.Create('脱网登录不能使用此模块。');
+  if not CA_MODULE.Locate('MODU_ID',PMMToolBox(Sender)^.mid,[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
+  s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
+  delete(s,1,4);
+  delete(s,length(s),1);
+  sl := TStringList.Create;
+  try
+    if (sl.values['xsm']='true') then
+       begin
+          if not mmGlobal.Logined then
+             begin
+               if MessageBox(Handle,'连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+               if not mmGlobal.xsmLogin then Exit;
+               frmRimIEBrowser.rimLogined := false;
+             end;
+       end;
+       
+    if not frmRimIEBrowser.rimLogined then
+       begin
+         if MessageBox(Handle,'连接已经断开了，是否重连RIM服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         if not frmRimIEBrowser.RimLogin(true) then Exit;
+       end;
+
+    sl.CommaText := s;
+    frmRimIEBrowser.Caption := CA_MODULE.FieldbyName('MODU_NAME').AsString;
+    AddFrom(frmRimIEBrowser);
+    frmRimIEBrowser.WindowState := wsMaximized;
+    frmRimIEBrowser.BringToFront;
+
+    frmRimIEBrowser.IEOpen(frmRimIEBrowser.rimUrl+sl.values['url']+'?comId='+frmRimIEBrowser.rimcomId+'&custId='+frmRimIEBrowser.rimcustId);
+  except
+    sl.free;
+    Raise;
+  end;
+end;
+
+procedure TfrmMMMain.N5Click(Sender: TObject);
+begin
+  inherited;
+  if not Logined then Exit;
+  TfrmPswModify.ShowExecute(Global.UserID,Global.UserName);
+end;
+
+procedure TfrmMMMain.SetLogined(const Value: boolean);
+begin
+  FLogined := Value;
+  UpdateTimer.Enabled := true;
+  copyRight.Caption := '版权所属：山东浪潮齐鲁软件产业股份有限公司  ｜  '+mmGlobal.TENANT_NAME + '('+mmGlobal.UserName+')';
+  UsersStatus.Down := not CaFactory.Audited;
+  if CaFactory.Audited then
+     r3offline.Caption := '在线登录'
+  else
+     r3offline.Caption := '离线登录';
+end;
+
+procedure TfrmMMMain.UpdateTimerTimer(Sender: TObject);
+var
+  P:PMsgInfo;
+  w:integer;
+  IsFirst:boolean;
+begin
+  inherited;
+  w := StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60;
+  if PrainpowerJudge.Locked>0 then Exit;
+  if not Logined then Exit;
+  if not Visible then Exit;
+  if not Factor.Connected then Exit;
+  
+  IsFirst := false;
+  if (not MsgFactory.Loaded and (UpdateTimer.Tag>5)) or (MsgFactory.Loaded and (UpdateTimer.Tag>0) and
+     (MsgFactory.UnRead=0) and ((UpdateTimer.Tag mod w)=0)
+     )
+  then
+     begin
+       MsgFactory.Load;
+       IsFirst := true;
+     end;
+
+  if UpdateTimer.Tag >= w then UpdateTimer.Tag := 0 else UpdateTimer.Tag := UpdateTimer.Tag + 1;
+  if (MsgFactory.Loaded and ((UpdateTimer.Tag mod w)=0)) or IsFirst or MsgFactory.Opened then
+     begin
+       P := MsgFactory.ReadMsg;
+       if P<>nil then MsgFactory.HintMsg(P);
+     end;
+end;
+
+procedure TfrmMMMain.MenuSpiltClick(Sender: TObject);
+begin
+  inherited;
+  bkgMenu.Visible := not bkgMenu.Visible;
+  MenuSpilt.Down := not bkgMenu.Visible;
+  OnResize(self);
+end;
+
+procedure TfrmMMMain.UsersStatusClick(Sender: TObject);
+begin
+  inherited;
+  UsersStatus.Down := not CaFactory.Audited;
+
+end;
+
+procedure TfrmMMMain.CreateMenu;
+function CheckRight(mid:integer):boolean;
+var
+  lvid:string;
+  Action:TAction;
+begin
+  result := false;
+  if not CA_MODULE.Locate('MODU_ID',inttostr(mid),[]) then Exit;
+  lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString;
+  CA_MODULE.First;
+  while not CA_MODULE.Eof do
+    begin
+      if (copy(CA_MODULE.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid)
+          and
+         (length(CA_MODULE.FieldbyName('LEVEL_ID').AsString)>length(lvid))
+      then
+         begin
+           if (CA_MODULE.FieldByName('ACTION_NAME').AsString='') or (CA_MODULE.FieldByName('ACTION_NAME').AsString='#') then
+              begin
+              end
+           else
+              begin
+                Action := FindAction(CA_MODULE.FieldByName('ACTION_NAME').AsString);
+                if Assigned(Action) and Action.Enabled then
+                   begin
+                     result := true;
+                     Exit;
+                   end;
+              end;
+         end;
+      CA_MODULE.Next;
+    end;
+end;
+var
+  i:integer;
+  lvid:string;
+  button:TrzBmpButton;
+  l:integer;
+begin
+  for i:=0 to FMenu.Count -1 do
+     begin
+       TObject(FMenu[i]).Free;
+     end;
+  FMenu.Clear;
+  if not CA_MODULE.Locate('MODU_NAME,','零售终端',[]) then Exit;
+  lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString;
+  l := 0;
+  CA_MODULE.First;
+  while not CA_MODULE.Eof do
+    begin
+      if (copy(CA_MODULE.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid)
+          and
+         (length(CA_MODULE.FieldbyName('LEVEL_ID').AsString)=length(lvid)+3)
+      then
+         begin
+           button := TrzBmpButton.Create(bkg_top);
+           button.Parent := bkg_top;
+           button.Caption := CA_MODULE.FieldbyName('MODU_NAME').AsString;
+           button.Tag := CA_MODULE.FieldbyName('MODU_ID').AsInteger;
+           button.OnClick := DoOpenMenu;
+           button.Font.Color := clWhite;
+           button.Font.Style := [fsBold];
+           button.Bitmaps.Hot.Assign(menuButton.Bitmaps.Hot);
+           button.Anchors := [akTop,akRight];
+           button.width := 70;
+           FMenu.Add(button);
+           button.Top := 0;
+         end;
+      CA_MODULE.Next;
+    end;
+  l := 0;
+  for i:=FMenu.Count -1 downto 0 do
+    begin
+      if not CheckRight(TrzBmpButton(FMenu[i]).Tag) then
+         begin
+           TrzBmpButton(FMenu[i]).Free;
+           FMenu.Delete(i);
+         end
+      else
+         begin
+           inc(l);
+           button := TrzBmpButton(FMenu[i]);
+           button.Left := bkg_top.Width - ((button.Width)*l)- 120;
+         end;
+    end;
+end;
+
+procedure TfrmMMMain.DoOpenMenu(Sender: TObject);
+begin
+  PostMessage(handle,MSC_POPUP,TrzBmpButton(Sender).tag,integer(Sender));
+end;
+
+procedure TfrmMMMain.wm_lcControl(var Message: TMessage);
+begin
+  if frmXsmIEBrowser=nil then
+     begin
+       TObject(Message.WParam).Free; 
+       Exit;
+     end;
+  frmXsmIEBrowser.LCRecv(TmmLCControlFava(Message.WParam)); 
+end;
+
+procedure TfrmMMMain.RzFormShape1DblClick(Sender: TObject);
+begin
+  inherited;
+  sysMaximized.onClick(sysMaximized);
 end;
 
 end.

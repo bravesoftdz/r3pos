@@ -1,13 +1,16 @@
 unit ummFactory;
 
 interface
-uses SysUtils, Classes, Messages, Windows,Registry, Winsock, NB30, ZBase, Dialogs;
+uses SysUtils, Classes, Forms, Messages, Windows,Registry, Winsock, NB30, ZBase, Dialogs;
 const
   WM_MsgRecv=WM_USER+3000;
   WM_MsgEvent=WM_USER+3001;
   WM_MsgHint=WM_USER+3002;
   WM_LINE=WM_USER+3003;
-  WM_CLOSE=WM_USER+3004;
+  WM_MMCLOSE=WM_USER+3004;
+  WM_STATUS=WM_USER+3005;
+  WM_DESKTOP_REQUEST=WM_USER+3006;
+  WM_LCCONTROL=WM_USER+3007;
 type
 
   TmmPlayerFava=class;
@@ -95,6 +98,16 @@ type
     playerIdArray:array of pchar;
   end;
 
+  PLCControlFava=^TLCControlFava;
+  TLCControlFava=record
+    szFlag:integer;
+    szMethodName:pchar;
+    szPara1:pchar;
+    szPara2:pchar;
+    szPara3:pchar;
+  end;
+
+
   TmmMsgFava=class
   private
     FmmFlag: integer;
@@ -108,6 +121,7 @@ type
     property mmFlag:integer read FmmFlag write SetmmFlag;
     property mmEvent:boolean read FmmEvent write SetmmEvent;
   end;
+  
   TmmConnectFava=class(TmmMsgFava)
   private
     ConnectFava:TConnectFava;
@@ -213,6 +227,19 @@ type
 
   end;
 
+  TmmLCControlFava=class(TmmMsgFava)
+  private
+    LCControlFava:TLCControlFava;
+  public
+    szMethodName:string;
+    szPara1:string;
+    szPara2:string;
+    szPara3:string;
+
+    function Encode:PLCControlFava;
+    procedure Decode(Value:PLCControlFava);
+  end;
+  
   TmmFactory=class
   private
     FList:TList;
@@ -237,6 +264,8 @@ type
     function mmcConnectTo(Addr:string;Port:integer):boolean;
     function mmcClose:boolean;
     function mmcConnected:boolean;
+    //Lc插件方法
+    function mmcLcControlFava(mmLCControlFava:TmmLCControlFava):boolean;
     //发送消息
     function mmcSingleFava(mmSingleFava:TmmSingleFava):boolean;
     //请求认证
@@ -293,8 +322,14 @@ var
   mmGroupFava:TmmGroupFava;
   mmPlayerIdListFava:TmmPlayerIdListFava;
   mmPlayerFava:TmmPlayerFava;
+  mmLCControlFava:TmmLCControlFava;
 begin
   case flag of
+  1,2,3:begin
+         mmLCControlFava := TmmLCControlFava.Create;
+         mmLCControlFava.Decode(PLCControlFava(lpData));
+         mmFactory.AddRecv(mmLCControlFava);
+       end;
   1003:begin
          mmSingleFava := TmmSingleFava.Create;
          mmSingleFava.Decode(PSingleFava(lpData));
@@ -310,12 +345,7 @@ begin
          mmPlayerIdListFava.Decode(pPlayerIdListFava(lpData));
          mmFactory.AddRecv(mmPlayerIdListFava);
        end;
-  1005:begin
-         mmPlayerFava := TmmPlayerFava.Create;
-         mmPlayerFava.Decode(pPlayerFava(lpData));
-         mmFactory.AddRecv(mmPlayerFava);
-       end;
-  1001:begin
+  1005,1016,1001:begin
          mmPlayerFava := TmmPlayerFava.Create;
          mmPlayerFava.Decode(pPlayerFava(lpData));
          mmFactory.AddRecv(mmPlayerFava);
@@ -351,7 +381,7 @@ case Event of
   end;
   end;
 2:begin
-    PostMessage(frmMMList.Handle,WM_CLOSE,1,1);
+    if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,1,1);
     mmFactory.logined := false;
   end;
 end;
@@ -405,6 +435,10 @@ var
   i:integer;
 begin
   case lpData.mmFlag of
+  1,2,3:
+       begin
+         PostMessage(Application.MainForm.Handle,WM_LCControl,integer(lpData),0);
+       end;
   1003:begin
          case TmmSingleFava(lpData).playerSkill of
          9996,9997,9998,9999:
@@ -436,7 +470,7 @@ begin
          if lpData.mmEvent then
          begin
             PostMessage(mmUserInfo^.Handle,WM_MsgEvent,0,0);
-            PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
+            if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
          end
          else
             PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
@@ -450,7 +484,7 @@ begin
             end;
          mmUserInfo^.Msgs.Add(lpData);
          PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
-         PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
+         if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
        end;
   1010:begin
          for i:=0 to TmmPlayerIdListFava(lpData).ListLen - 1 do
@@ -460,33 +494,31 @@ begin
                   mmUserInfo^.line := true;
             end;
          lpData.Free;
-         PostMessage(frmMMList.Handle,WM_LINE,0,0);
+         if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_LINE,0,0);
        end;
   1005:begin
          mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
          if Assigned(mmUserInfo) then
             mmUserInfo^.line := false;
          lpData.Free;
-         PostMessage(frmMMList.Handle,WM_LINE,0,0);
+         if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_LINE,0,0);
        end;
   1001:begin
          mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
          if Assigned(mmUserInfo) then
             mmUserInfo^.line := true;
          if TmmPlayerFava(lpData).playerId = mmGlobal.xsm_username then
-              PostMessage(frmMMList.Handle,WM_CLOSE,0,0)
+             begin
+               if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,0,0);
+             end
          else
-              PostMessage(frmMMList.Handle,WM_LINE,0,0);
+             begin
+               if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_LINE,0,0);
+             end;
          lpData.Free;
        end;
   1016:begin
-         mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
-         if Assigned(mmUserInfo) then
-            mmUserInfo^.line := true;
-         if TmmPlayerFava(lpData).playerId = mmGlobal.xsm_username then
-              PostMessage(frmMMList.Handle,WM_CLOSE,0,0)
-         else
-              PostMessage(frmMMList.Handle,WM_LINE,0,0);
+         if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,0,0);
          lpData.Free;
        end;
   else
@@ -535,8 +567,8 @@ destructor TmmFactory.Destroy;
 begin
   Clear;
   FList.Free;
-//  mmcSetSockClose;
-//  if DLLHandle>0 then FreeLibrary(DLLHandle);
+  mmcSetSockClose;
+  if DLLHandle>0 then FreeLibrary(DLLHandle);
   inherited;
 end;
 procedure TmmFactory.DisposeMsg(index: integer);
@@ -599,8 +631,12 @@ begin
 end;
 
 function TmmFactory.mmcClose: boolean;
-var errCode:integer;
+var
+  errCode:integer;
+  i:integer;
 begin
+  for i:=FList.Count - 1 downto 0 do
+    PmmUserInfo(FList[i])^.line := false;
   errCode := mmcSetSockClose();
   result := (errCode=0);
   if not result then
@@ -671,6 +707,21 @@ end;
 procedure TmmFactory.Setlogined(const Value: boolean);
 begin
   Flogined := Value;
+  if frmMMList<>nil then
+     PostMessage(frmMMList.Handle,WM_STATUS,0,0);
+end;
+
+function TmmFactory.mmcLcControlFava(
+  mmLCControlFava: TmmLCControlFava): boolean;
+var
+  _mmLCControlFava:PLCControlFava;
+  errCode:integer;
+begin
+  _mmLCControlFava := mmLCControlFava.Encode;
+  errCode := mmcSend(_mmLCControlFava.szFlag,_mmLCControlFava);
+  result := (errCode=0);
+  if not result then
+     Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
 end;
 
 { TmmConnectFava }
@@ -860,6 +911,27 @@ begin
   for i:=0 to ListLen-1 do
     PlayerIdListFava.playerIdArray[i] := Pchar(playerIdArray[i]);
   result := @PlayerIdListFava;
+end;
+
+{ TmmLCControlFava }
+
+procedure TmmLCControlFava.Decode(Value: PLCControlFava);
+begin
+  mmFlag := Value^.szFlag;
+  szMethodName := StrPas(Value^.szMethodName);
+  szPara1 := StrPas(Value^.szPara1);
+  szPara2 := StrPas(Value^.szPara2);
+  szPara3 := StrPas(Value^.szPara3);
+end;
+
+function TmmLCControlFava.Encode: PLCControlFava;
+begin
+  LCControlFava.szFlag := mmFlag;
+  LCControlFava.szMethodName := Pchar(szMethodName);
+  LCControlFava.szPara1 := Pchar(szPara1);
+  LCControlFava.szPara2 := Pchar(szPara2);
+  LCControlFava.szPara3 := Pchar(szPara3);
+  result := @LCControlFava;
 end;
 
 end.

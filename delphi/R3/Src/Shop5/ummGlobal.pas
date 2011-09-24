@@ -36,6 +36,7 @@ type
     Fxsm_planText: string;
     Fxsm_nickname: string;
     Fxsm_comType: string;
+    Fxsm_note: string;
     procedure Setxsm_challenge(const Value: string);
     procedure Setxsm_password(const Value: string);
     procedure Setxsm_username(const Value: string);
@@ -57,6 +58,7 @@ type
     procedure Setxsm_planText(const Value: string);
     procedure Setxsm_nickname(const Value: string);
     procedure Setxsm_comType(const Value: string);
+    procedure Setxsm_note(const Value: string);
     { Private declarations }
   protected
     function CreateXML(xml:string):IXMLDomDocument;
@@ -81,6 +83,8 @@ type
     procedure InitLoad;
     //连接到通讯服务器
     procedure ConnectToMsc;
+    //断开服务器
+    procedure CloseMsc;
 
     //读我的好友
     function getAllfriends:boolean;
@@ -105,6 +109,7 @@ type
     property xsm_comId:string read Fxsm_comId write Setxsm_comId;
     property xsm_comType:string read Fxsm_comType write Setxsm_comType;
     property xsm_parentComId:string read Fxsm_parentComId write Setxsm_parentComId;
+    property xsm_note:string read Fxsm_note write Setxsm_note;
 
     property xsm_refId:string read Fxsm_refId write Setxsm_refId;
     property xsm_salesmanid:string read Fxsm_salesmanid write Setxsm_salesmanid;
@@ -127,7 +132,7 @@ var
   mmGlobal: TmmGlobal;
 
 implementation
-uses EncDec,uCaFactory,IniFiles;
+uses EncDec,uCaFactory,IniFiles, ufrmMMList;
 {$R *.dfm}
 var xsmc,xsmurl:string;
 { TmmGlobal }
@@ -456,7 +461,7 @@ end;
 procedure TmmGlobal.DataModuleCreate(Sender: TObject);
 begin
   inherited;
-  Logined := false;
+  FLogined := false;
 end;
 
 function TmmGlobal.getFriends: boolean;
@@ -489,6 +494,7 @@ destructor TmmGlobal.Destroy;
 begin
   mmFactory.free;
   inherited;
+  mmGlobal := nil;
 end;
 
 function TmmGlobal.getAllfriends: boolean;
@@ -811,6 +817,17 @@ end;
 procedure TmmGlobal.Setxsm_comType(const Value: string);
 begin
   Fxsm_comType := Value;
+end;
+
+procedure TmmGlobal.CloseMsc;
+begin
+  mmFactory.Logined := false;
+  mmFactory.mmcClose;
+end;
+
+procedure TmmGlobal.Setxsm_note(const Value: string);
+begin
+  Fxsm_note := Value;
 end;
 
 end.

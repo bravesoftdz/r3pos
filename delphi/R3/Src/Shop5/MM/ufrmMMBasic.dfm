@@ -1,6 +1,6 @@
 object frmMMBasic: TfrmMMBasic
-  Left = 377
-  Top = 179
+  Left = 232
+  Top = 208
   BorderIcons = [biSystemMenu]
   BorderStyle = bsNone
   Caption = 'frmMMBasic'

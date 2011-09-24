@@ -885,7 +885,10 @@ begin
          SessionFail := true;
          Logined := false;
          result := false;
-         MessageBox(Handle,Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
+         if Screen.ActiveForm<>nil then
+            MessageBox(Screen.ActiveForm.Handle,Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION)
+         else
+            MessageBox(Handle,Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
        end;
   end;
 end;

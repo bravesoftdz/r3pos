@@ -12,7 +12,6 @@ type
   TfrmMMLogin = class(TfrmMMBasic)
     Label4: TLabel;
     edtOPER_DATE: TcxDateEdit;
-    cxedtUsers: TcxTextEdit;
     lblName: TLabel;
     cxedtPasswrd: TcxTextEdit;
     lblPass: TLabel;
@@ -22,21 +21,24 @@ type
     cxcbOffline: TcxCheckBox;
     imgLogin: TImage;
     cxBtnOk: TRzBmpButton;
-    RzBmpButton1: TRzBmpButton;
+    cxBtnSetup: TRzBmpButton;
+    cxedtUsers: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxbtnCancelClick(Sender: TObject);
     procedure cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
+    locked:boolean;
   public
     { Public declarations }
     procedure LoadLogin;
     procedure SaveLogin;
+    class function LockScreen(Owner:TForm):boolean;
   end;
 
 implementation
-uses ummGlobal,uCaFactory,IniFiles,uGlobal,EncDec,ObjCommon;
+uses ummGlobal,uCaFactory,IniFiles,uFnUtil,uGlobal,EncDec,ObjCommon;
 {$R *.dfm}
 
 procedure TfrmMMLogin.FormCreate(Sender: TObject);
@@ -44,15 +46,38 @@ begin
   inherited;
   edtOPER_DATE.Date := Date();
   LoadLogin;
+  imgLogin.Picture.Bitmap.TransparentMode := tmFixed;
+  imgLogin.Picture.Bitmap.Transparent  := true;
+  imgLogin.Picture.Bitmap.TransparentColor  := clFuchsia;
 end;
 
 procedure TfrmMMLogin.cxBtnOkClick(Sender: TObject);
+procedure CheckSysDate;
+var
+  CurDate: TDate;
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text :='select max(END_DATE) as CREA_DATE from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(mmGlobal.TENANT_ID);
+    Factor.Open(rs);
+    if rs.Fields[0].asString<>'' then
+    begin
+      CurDate:=FnTime.fnStrtoDate(rs.Fields[0].AsString);
+      if FormatDatetime('YYYYMMDD',edtOPER_DATE.Date) <FormatDatetime('YYYYMMDD',CurDate) then Raise Exception.Create('业务日期不能小于已关账日期...');
+    end;
+  finally
+    rs.Free;
+  end;
+end;
 var
   rs:TZQuery;
 begin
   inherited;
   Screen.Cursor := crSQLWait;
   try
+    if not locked then
+    begin
     //连接本地库
     mmGlobal.MoveToLocal;
     mmGlobal.Connect;
@@ -76,31 +101,30 @@ begin
             CaFactory.Audited := false;
        end;
     mmGlobal.InitLoad;
-    if (mmGlobal.NetVersion or mmGlobal.ONLVersion) and CaFactory.Audited then
+    if CaFactory.Audited then
        begin
          try
            mmGlobal.MoveToRemate;
            mmGlobal.Connect;
          except
-           if mmGlobal.ONLVersion then
-              begin
-                if MessageBox(Handle,'连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
-                   ;//TfrmHostDialog.HostDialog(self);
-                Exit;
-              end;
-           if (MessageBox(Handle,'连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
-              begin
-                mmGlobal.MoveToLocal;
-                mmGlobal.Connect;
-              end
-           else
-              Exit;
+           MessageBox(Handle,'连接远程数据库失败,你可以选择脱网操作?','友情提示...',MB_OK+MB_ICONQUESTION);
+           Exit;
          end;
+       end;
+    end;
+    if not (mmGlobal.NetVersion or mmGlobal.ONLVersion) then
+       begin
+          mmGlobal.MoveToLocal;
        end;
     //开始登录了
     rs := TZQuery.Create(nil);
     try
-      rs.SQL.Text :=
+      if locked then
+        rs.SQL.Text :=
+        'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,C.TENANT_NAME,C.SHORT_TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
+        'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.USER_ID='''+Global.UserID+''' and A.TENANT_ID='+inttostr(mmGlobal.TENANT_ID)
+      else
+        rs.SQL.Text :=
         'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,C.TENANT_NAME,C.SHORT_TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
         'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(mmGlobal.TENANT_ID);
       uGlobal.Factor.open(rs);
@@ -114,7 +138,7 @@ begin
         end
       else
         begin
-          if (rs.FieldbyName('ROLE_IDS').AsString='xsm') and CaFactory.Audited then
+          if (rs.FieldbyName('ROLE_IDS').AsString='xsm') and CaFactory.Audited and not Locked then
              begin
                mmGlobal.xsm_username := cxedtUsers.Text;
                mmGlobal.xsm_password := cxedtPasswrd.Text;
@@ -132,7 +156,7 @@ begin
                   cxedtPasswrd.SetFocus;
                   Raise Exception.Create('输入的密码无效,请重新输入。');
                end;
-               if CaFactory.Audited then
+               if CaFactory.Audited and not Locked then
                   begin
                     try
                       mmGlobal.SHOP_ID := rs.FieldbyName('SHOP_ID').asString;
@@ -152,11 +176,21 @@ begin
        mmGlobal.Roles := rs.FieldbyName('ROLE_IDS').AsString;
        mmGlobal.TENANT_NAME := rs.FieldbyName('TENANT_NAME').AsString;
        mmGlobal.SHORT_TENANT_NAME := rs.FieldbyName('TENANT_NAME').AsString;
+       if not CaFactory.Audited then
+          begin
+            mmGlobal.xsm_username := rs.FieldbyName('ACCOUNT').AsString;
+            mmGlobal.xsm_nickname := mmGlobal.UserName;
+          end;
     finally
        rs.Free;
     end;
-     Factor.GqqLogin(mmGlobal.UserID,mmGlobal.SHOP_NAME+'('+mmGlobal.UserName+')');
-     SaveLogin;
+     if not locked then
+        begin
+          Factor.GqqLogin(mmGlobal.UserID,mmGlobal.SHOP_NAME+'('+mmGlobal.UserName+')');
+          SaveLogin;
+        end;
+     CheckSysDate;
+     mmGlobal.SysDate := edtOPER_DATE.Date;
      self.ModalResult := MROK;
   finally
     Screen.Cursor := crDefault;
@@ -211,6 +245,27 @@ procedure TfrmMMLogin.cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then cxBtnOk.OnClick(cxBtnOk);
+end;
+
+class function TfrmMMLogin.LockScreen(Owner:TForm): boolean;
+begin
+  with TfrmMMLogin.Create(Owner) do
+    begin
+      try
+        locked := true;
+        cxedtUsers.Enabled := false;
+        edtOPER_DATE.Enabled := false;
+        cxBtnSetup.Visible := false;
+        cxcbOffline.Visible := false;
+        cxBtnOk.Caption := '锁屏(&O)';
+        cxedtUsers.Text := Global.UserName;
+        ActiveControl := cxedtPasswrd;
+        result := (ShowModal=MROK);
+      finally
+        locked := false;
+        free;
+      end;
+    end;
 end;
 
 end.

@@ -1,10 +1,10 @@
 inherited frmMMLogin: TfrmMMLogin
   Left = 276
   Top = 227
-  ActiveControl = cxedtUsers
   Caption = 'frmMMLogin'
   ClientHeight = 272
   ClientWidth = 410
+  Color = clFuchsia
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 12
@@ -13,8 +13,16 @@ inherited frmMMLogin: TfrmMMLogin
     Height = 104
     Anchors = []
     inherited bkg_01: TImage
-      Width = 0
       Height = 104
+      Align = alNone
+      AutoSize = False
+      Visible = False
+    end
+    inherited bkg_02: TImage
+      Left = 422
+      Top = 160
+      Height = 104
+      Align = alNone
       AutoSize = False
       Visible = False
     end
@@ -24,10 +32,17 @@ inherited frmMMLogin: TfrmMMLogin
       Height = 104
       Anchors = []
       BorderOuter = fsNone
+      Transparent = True
       DesignSize = (
         410
         104)
-      object imgLogin: TImage [0]
+      inherited RzFormShape1: TRzFormShape [0]
+        Top = 0
+        Width = 410
+        Height = 104
+        AutoSize = True
+      end
+      object imgLogin: TImage [1]
         Left = 0
         Top = 0
         Width = 410
@@ -4080,40 +4095,30 @@ inherited frmMMLogin: TfrmMMLogin
           6868686868686868686868686868686868686868686868686868686868686868
           68FF00FFFF00FFFF00FFFF00FFFF00FF0000}
       end
-      inherited bkg_f1: TRzBackground
-        Left = 203
+      inherited bkg_f1: TRzBackground [2]
+        Left = 219
+        Top = 130
         Width = 280
         Visible = False
       end
-      inherited formLogo: TImage
+      inherited formLogo: TImage [3]
         Visible = False
-      end
-      inherited RzFormShape1: TRzFormShape
-        Top = 1
-        Width = 410
-        Height = 103
       end
       inherited RzSeparator1: TRzSeparator
-        Top = 0
+        Top = 192
         Width = 410
+        Align = alNone
         Visible = False
       end
-      inherited bkg_02: TImage
-        Left = 410
-        Top = 1
-        Width = 0
-        Height = 103
-        AutoSize = False
-      end
-      inherited sysMinimized: TRzBmpButton
-        Left = 81
-      end
-      inherited sysMaximized: TRzBmpButton
-        Left = 29
-      end
-      inherited sysClose: TRzBmpButton
-        Left = 377
-      end
+    end
+    inherited sysMinimized: TRzBmpButton
+      Left = 81
+    end
+    inherited sysMaximized: TRzBmpButton
+      Left = 29
+    end
+    inherited sysClose: TRzBmpButton
+      Left = 353
     end
   end
   inherited bkg_bb: TRzPanel
@@ -4596,7 +4601,7 @@ inherited frmMMLogin: TfrmMMLogin
         TabOrder = 0
         OnClick = cxBtnOkClick
       end
-      object RzBmpButton1: TRzBmpButton
+      object cxBtnSetup: TRzBmpButton
         Left = 58
         Top = 7
         Width = 78
@@ -10051,7 +10056,7 @@ inherited frmMMLogin: TfrmMMLogin
       end
       object lblPass: TLabel
         Left = 139
-        Top = 65
+        Top = 64
         Width = 60
         Height = 12
         Caption = #30331#24405#23494#30721#65306
@@ -10062,17 +10067,8 @@ inherited frmMMLogin: TfrmMMLogin
         Top = 16
         Width = 152
         Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateOnError = deToday
         TabOrder = 0
-      end
-      object cxedtUsers: TcxTextEdit
-        Left = 199
-        Top = 38
-        Width = 152
-        Height = 20
-        TabOrder = 1
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object cxedtPasswrd: TcxTextEdit
         Left = 199
@@ -10080,8 +10076,7 @@ inherited frmMMLogin: TfrmMMLogin
         Width = 152
         Height = 20
         Properties.EchoMode = eemPassword
-        TabOrder = 2
-        ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
+        TabOrder = 1
         OnKeyPress = cxedtPasswrdKeyPress
       end
       object cxcbSave: TcxCheckBox
@@ -10094,7 +10089,7 @@ inherited frmMMLogin: TfrmMMLogin
         Properties.Caption = #20445#23384#30331#24405
         State = cbsChecked
         Style.Color = 16428113
-        TabOrder = 3
+        TabOrder = 2
         ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
       end
       object cxcbOffline: TcxCheckBox
@@ -10106,8 +10101,15 @@ inherited frmMMLogin: TfrmMMLogin
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #31163#32447#30331#24405
         Style.Color = 16428113
-        TabOrder = 4
+        TabOrder = 3
         ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
+      end
+      object cxedtUsers: TcxComboBox
+        Left = 199
+        Top = 38
+        Width = 152
+        Height = 20
+        TabOrder = 4
       end
     end
   end

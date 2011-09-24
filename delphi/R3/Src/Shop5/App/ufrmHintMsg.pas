@@ -9,6 +9,7 @@ uses
 
 const
   MSC_MESSAGE=WM_USER+10000;
+  MSC_SHOW_UPDATE=WM_USER+10001;
 type
   TMsgInfo=record
     ID:string;
@@ -32,6 +33,7 @@ type
     FUnRead: Integer;
     FThreadLock:TRTLCriticalSection;
     FOpened: boolean;
+    FMMHandle: THandle;
     function GetCount: integer;
     function GetMsgInfo(itemindex: integer): PMsgInfo;
     procedure SetLoaded(const Value: Boolean);
@@ -40,6 +42,7 @@ type
     function GetMsgRead(Msg: PMsgInfo): boolean;
     procedure SetMsgRead(Msg: PMsgInfo; const Value: boolean);
     procedure SetOpened(const Value: boolean);
+    procedure SetMMHandle(const Value: THandle);
   public
     constructor Create;
     destructor Destroy; override;
@@ -64,6 +67,7 @@ type
     property UnRead:Integer read FUnRead write SetUnRead;
     property MsgRead[Msg:PMsgInfo]:boolean read GetMsgRead write SetMsgRead;
     property Opened:boolean read FOpened write SetOpened;
+    property MMHandle:THandle read FMMHandle write SetMMHandle;
   end;
   TfrmHintMsg = class(TForm)
     RzPanel1: TRzPanel;
@@ -108,6 +112,7 @@ begin
   Enter;
   try
     FList.Add(MsgInfo);
+    if MMHandle>0 then PostMessage(MMHandle,MSC_MESSAGE,0,0);
   finally
     Leave;
   end;
@@ -135,6 +140,7 @@ begin
   FList := TList.Create;
   FMsgInfo := nil;
   Opened := false;
+  MMHandle := 0;
 end;
 
 destructor TMsgFactory.Destroy;
@@ -198,6 +204,7 @@ var Str_where:String;
     rs:TZQuery;
     MsgInfo:PMsgInfo;
 begin
+  if not Factor.Connected then Exit;
   LogFile.AddLogFile(0,'开始LoadMsg');
   try
     Clear;
@@ -234,16 +241,26 @@ begin
     finally
       rs.free;
     end;
-  finally
     LogFile.AddLogFile(0,'结束LoadMsg');
     Loaded := true;
+  except
+    on E:Exception do
+       begin
+         Loaded := true;
+         LogFile.AddLogFile(0,'LoadMsg错误:'+E.Message);
+       end;
   end;
   LogFile.AddLogFile(0,'开始LoadJudge');
   try
     PrainpowerJudge.Load;
-  finally
     LogFile.AddLogFile(0,'结束LoadJudge');
+  except
+    on E:Exception do
+       begin
+         LogFile.AddLogFile(0,'LoadJudge错误:'+E.Message);
+       end;
   end;
+  if MMHandle>0 then PostMessage(MMHandle,MSC_MESSAGE,0,0);
 end;
 
 function TMsgFactory.ReadMsg: PMsgInfo;
@@ -393,6 +410,7 @@ begin
     begin
       Msg.Rdd := Value;
       GetUnRead;
+      if MMHandle>0 then PostMessage(MMHandle,MSC_MESSAGE,0,0);
     end;
 end;
 
@@ -429,6 +447,11 @@ end;
 procedure TMsgFactory.SetOpened(const Value: boolean);
 begin
   FOpened := Value;
+end;
+
+procedure TMsgFactory.SetMMHandle(const Value: THandle);
+begin
+  FMMHandle := Value;
 end;
 
 initialization

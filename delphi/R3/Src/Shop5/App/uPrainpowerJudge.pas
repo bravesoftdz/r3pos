@@ -465,6 +465,7 @@ var Msg:PMsgInfo;
     rs:TZQuery;
     Sql_Str:String;
 begin
+  if not Factor.Connected then Exit;
   MsgFactory.ClearType(4);
   if flag<>0 then Exit;
 

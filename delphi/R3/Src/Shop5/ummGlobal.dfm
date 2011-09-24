@@ -1,4 +1,10 @@
 inherited mmGlobal: TmmGlobal
+  Left = 191
+  Top = 127
+  inherited CA_MODULE: TZQuery
+    Left = 88
+    Top = 442
+  end
   object IdCookieManager1: TIdCookieManager
     OnNewCookie = IdCookieManager1NewCookie
     Left = 208

@@ -1455,7 +1455,7 @@ begin
                     begin
                       SyncFactory.SyncTimeStamp := CaFactory.TimeStamp;
                       SyncFactory.SyncComm := SyncFactory.CheckRemeteData;
-                      SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSingleTable',0);
+                      SyncFactory.SyncSingleTable('SYS_DEFINE','TENANT_ID;DEFINE','TSyncSysDefine',0);
                       SyncFactory.SyncSingleTable('CA_SHOP_INFO','TENANT_ID;SHOP_ID','TSyncSingleTable',0);
                       SyncFactory.SyncSingleTable('ACC_ACCOUNT_INFO','TENANT_ID;ACCOUNT_ID','TSyncAccountInfo',0);
                     end;

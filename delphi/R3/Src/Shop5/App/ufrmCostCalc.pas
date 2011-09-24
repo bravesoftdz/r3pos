@@ -528,8 +528,10 @@ begin
       Label11.Caption := '正在计算账户月台账...';
       Update;
       if flag in [1,2,5] then CalcAcctMth;
-    finally
       if Factor.iDbType=5 then Factor.CommitTrans;  //对SQLite启动事务，减少IO
+    except
+      if Factor.iDbType=5 then Factor.RollbackTrans;  //对SQLite启动事务，减少IO
+      Raise;
     end;
     Label11.Caption := '输出数据中...';
     Update;
@@ -2227,7 +2229,7 @@ end;
 
 procedure TfrmCostCalc.UpdateStroage;
 begin
-  Factor.BeginTrans;
+  if Factor.iDbType <> 5 then Factor.BeginTrans;
   try
     Factor.ExecSQL(
        ParseSQL(Factor.iDbType,
@@ -2245,9 +2247,9 @@ begin
        )
     );
     
-    Factor.CommitTrans;
+    if Factor.iDbType <> 5 then Factor.CommitTrans;
   except
-    Factor.RollbackTrans;                      
+    if Factor.iDbType <> 5 then Factor.RollbackTrans;                      
     raise;
   end;
 end;

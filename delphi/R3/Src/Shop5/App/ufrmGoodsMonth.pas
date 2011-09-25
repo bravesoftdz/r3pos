@@ -202,26 +202,29 @@ end;
 procedure TfrmGoodsMonth.LoadTree(Tree: TRzTreeView);
 var IsRoot: Boolean;
     rs:TZQuery;
-    i,j:Integer;
+    i:Integer;
+    Rel_ID,Rel_IDS: string;
     Aobj,CurObj:TRecord_;
 begin
+  Rel_ID:='';
+  Rel_IDS:='';
   IsRoot:=False;
   ClearTree(Tree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-  rs.SortedFields := 'RELATION_ID';
-  j:=-1;
+  //rs.SortedFields := 'RELATION_ID';  //2011.08.25 排序错乱关闭
   rs.First;
   while not rs.Eof do
   begin
-    if (j <> rs.FieldByName('RELATION_ID').AsInteger) then
+    Rel_ID:=','+InttoStr(rs.FieldByName('RELATION_ID').AsInteger)+','; //2011.09.25 add 当前供应链ID
+    if Pos(Rel_ID,Rel_IDS)<=0 then
     begin
+      Rel_IDS:=Rel_IDS+Rel_ID; //2011.09.25 add 
       if trim(rs.FieldByName('RELATION_ID').AsString)='0' then //自主经营
       begin
         CurObj := TRecord_.Create;
         CurObj.ReadFromDataSet(rs);
         CurObj.FieldByName('LEVEL_ID').AsString := '';
         CurObj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
-        j := CurObj.FieldbyName('RELATION_ID').AsInteger;
         IsRoot:=true;
       end else
       begin
@@ -230,7 +233,6 @@ begin
         Aobj.FieldByName('LEVEL_ID').AsString := '';
         Aobj.FieldByName('SORT_NAME').AsString := rs.FieldbyName('RELATION_NAME').AsString;
         Tree.Items.AddObject(nil,Aobj.FieldbyName('SORT_NAME').AsString,Aobj);
-        j := Aobj.FieldbyName('RELATION_ID').AsInteger;
       end;
     end;
     rs.Next;
@@ -243,7 +245,7 @@ begin
       rs.Filtered := False;
       rs.Filter := 'RELATION_ID='+TRecord_(Tree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
       rs.Filtered := True;
-      rs.SortedFields := 'LEVEL_ID';
+      //rs.SortedFields := 'LEVEL_ID'; //2011.08.25 排序错乱关闭
       CreateLevelTree(rs,Tree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',Tree.Items[i]);
     end;
   AddRoot(Tree,'所有分类');

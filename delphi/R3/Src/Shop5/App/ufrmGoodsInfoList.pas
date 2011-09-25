@@ -1045,24 +1045,26 @@ procedure TfrmGoodsInfoList.LoadTree;
 var
   IsRoot: Boolean;
   vType: TFieldType;
-  str: string;
   rs:TZQuery;
   w,i:integer;
   Root,P:TTreeNode;
+  Rel_ID,Rel_IDS: string;
   AObj,Obj,CurObj:TRecord_;
 begin
+  Rel_ID:='';
+  Rel_IDS:='';
   IsRoot:=False;
   rzTree.OnChange:=nil;
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
-  str:='';
- // rs.SortedFields := 'RELATION_ID';  //2011.08.27 排序错乱关闭
-  w := -1;
+  //rs.SortedFields := 'RELATION_ID';  //2011.08.27 排序错乱关闭
   rs.First;
   while not rs.Eof do
   begin
-    if InttoStr(w)<>rs.FieldByName('RELATION_ID').AsString then
+    Rel_ID:=','+InttoStr(rs.FieldByName('RELATION_ID').AsInteger)+','; //2011.09.25 add 当前供应链ID
+    if Pos(Rel_ID,Rel_IDS)<=0 then  //不存在才去加根节点
     begin
+      Rel_IDS:=Rel_IDS+Rel_ID;  //2011.09.25 add
       if trim(rs.FieldByName('RELATION_ID').AsString)='0' then  //自主经营
       begin
         CurObj:=TRecord_.Create;
@@ -1080,7 +1082,6 @@ begin
         AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
         rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
       end;
-      w := rs.FieldByName('RELATION_ID').AsInteger;
     end;
     rs.Next;
   end;
@@ -1097,20 +1098,6 @@ begin
   end;
   rzTree.FullExpand; //展开树
   rzTree.OnChange:=self.DoTreeChange;
-
-  {Obj:= TRecord_.Create;
-  try
-    Obj.ReadField(rs);
-    Root := rzTree.Items.AddObject(nil,'所有分类',Obj);
-    P := Root.getPrevSibling;
-    while P<>nil do
-    begin
-      P.MoveTo(Root,naAddChildFirst);
-      P := Root.getPrevSibling;
-    end;
-    Root.Selected := True;
-  finally
-  end;}
 end;
 
 procedure TfrmGoodsInfoList.DoTreeChange(Sender: TObject; Node: TTreeNode);

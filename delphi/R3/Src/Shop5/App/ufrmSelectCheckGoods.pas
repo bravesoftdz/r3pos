@@ -608,19 +608,23 @@ procedure TfrmSelectCheckGoods.LoadTree;
 var
   IsRoot: Boolean;
   rs:TZQuery;
-  w,i:integer;
+  i:integer;
+  Rel_ID,Rel_IDS: string;  
   AObj,CurObj:TRecord_;
 begin
+  Rel_ID:='';
+  Rel_IDS:='';
   IsRoot:=False;
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   //rs.SortedFields := 'RELATION_ID';  //2011.08.27 排序错乱关闭
-  w := -1;
   rs.First;
   while not rs.Eof do
   begin
-    if InttoStr(w)<>rs.FieldByName('RELATION_ID').AsString then
+    Rel_ID:=','+InttoStr(rs.FieldByName('RELATION_ID').AsInteger)+','; //2011.09.25 add 当前供应链ID
+    if Pos(Rel_ID,Rel_IDS)<=0 then
     begin
+      Rel_IDS:=Rel_IDS+Rel_ID; //2011.09.25 add 
       if trim(rs.FieldByName('RELATION_ID').AsString)='0' then  //自主经营
       begin
         CurObj:=TRecord_.Create;
@@ -638,7 +642,6 @@ begin
         AObj.FieldByName('SORT_NAME').AsString:=rs.FieldbyName('RELATION_NAME').AsString;
         rzTree.Items.AddObject(nil,rs.FieldbyName('RELATION_NAME').AsString,AObj);
       end;
-      w := rs.FieldByName('RELATION_ID').AsInteger;
     end;
     rs.Next;
   end;

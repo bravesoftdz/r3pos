@@ -10,7 +10,7 @@ uses
   ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, ufrmMMBrowser,ummFactory;
 
 const
-  MSC_POPUP=WM_USER+1;
+  MSC_POPUP=WM_USER+1;                                                                           
 type
   TfrmMMMain = class(TfrmMain)
     RzTrayIcon1: TRzTrayIcon;
@@ -158,15 +158,18 @@ type
     RzPanel4: TRzPanel;
     RzPanel5: TRzPanel;
     RzPanel1: TRzPanel;
-    RzBmpButton7: TRzBmpButton;
-    RzBmpButton5: TRzBmpButton;
-    RzBmpButton8: TRzBmpButton;
-    RzBmpButton9: TRzBmpButton;
-    RzBmpButton10: TRzBmpButton;
-    RzBmpButton11: TRzBmpButton;
-    RzBmpButton12: TRzBmpButton;
+    rzPage1: TRzBmpButton;
+    rzPage6: TRzBmpButton;
+    rzPage2: TRzBmpButton;
+    rzPage3: TRzBmpButton;
+    rzPage4: TRzBmpButton;
+    rzPage7: TRzBmpButton;
+    rzPage8: TRzBmpButton;
     menuButton: TRzBmpButton;
     pageLine: TRzSeparator;
+    rzPage0: TRzBmpButton;
+    rzPage5: TRzBmpButton;
+    Image1: TImage;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -267,11 +270,10 @@ type
     procedure actfrmInitGuideExecute(Sender: TObject);
     procedure RzBmpButton3Click(Sender: TObject);
     procedure toolCloseClick(Sender: TObject);
-    procedure RzBmpButton5Click(Sender: TObject);
     procedure toolDeskClick(Sender: TObject);
-    procedure RzBmpButton8Click(Sender: TObject);
-    procedure RzBmpButton9Click(Sender: TObject);
-    procedure RzBmpButton10Click(Sender: TObject);
+    procedure rzPage2Click(Sender: TObject);
+    procedure rzPage3Click(Sender: TObject);
+    procedure rzPage4Click(Sender: TObject);
     procedure actfrmXsmNetExecute(Sender: TObject);
     procedure actfrmRimNetExecute(Sender: TObject);
     procedure N5Click(Sender: TObject);
@@ -279,6 +281,12 @@ type
     procedure MenuSpiltClick(Sender: TObject);
     procedure UsersStatusClick(Sender: TObject);
     procedure RzFormShape1DblClick(Sender: TObject);
+    procedure rzPage8Click(Sender: TObject);
+    procedure rzPage0Click(Sender: TObject);
+    procedure rzPage1Click(Sender: TObject);
+    procedure rzPage6Click(Sender: TObject);
+    procedure rzPage7Click(Sender: TObject);
+    procedure rzPage5Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -294,6 +302,7 @@ type
     procedure wm_SessionFail(var Message: TMessage); message MM_SESSION_FAIL;
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
     procedure wm_lcControl(var Message: TMessage); message WM_LCCONTROL;
+    procedure wm_mmcError(var Message: TMessage); message WM_MMC_ERROR;
 
     //导航工具栏
     procedure DoActiveForm(Sender:TObject);
@@ -512,7 +521,7 @@ begin
        except
          on E:Exception do
             begin
-              ShowMsgBox('准备基础数据失败了，请重新登录试试吧.','友情提示...',MB_OK+MB_ICONINFORMATION);
+              ShowMsgBox(pchar('准备基础数据失败了，请重新登录试试吧.'+#13+'错误原因:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
               Application.Terminate;
             end;
        end;
@@ -534,19 +543,21 @@ begin
      begin
        CanClose := false;
        Exit;
-       //Application.Minimize;
      end;
-  StopSyncTask;
-  if TimerFactory<>nil then TimerFactory.Free;
-  if Global.UserID='system' then exit;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
+  if (mmGlobal.module[2]='1') then
      begin
-        try
-          SyncFactory.SyncAll;
-        except
-          on E:Exception do
-             ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
-        end;
+        StopSyncTask;
+        if TimerFactory<>nil then TimerFactory.Free;
+        if Global.UserID='system' then exit;
+        if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
+           begin
+              try
+                SyncFactory.SyncAll;
+              except
+                on E:Exception do
+                   ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+              end;
+           end;
      end;
 end;
 
@@ -561,7 +572,7 @@ begin
   try
    try
      frmLogo.ShowTitle := '读取我的好友信息';
-     if mmGlobal.Logined then mmGlobal.getAllfriends;
+     if mmGlobal.Logined and (mmGlobal.module[1]='1') then mmGlobal.getAllfriends;
      frmMMList.LoadFriends;
    except
      on E:Exception do
@@ -570,10 +581,13 @@ begin
    
    try
      frmLogo.ShowTitle := '连接聊天服务器';
-     if mmGlobal.Logined and CaFactory.Audited then
+     if mmGlobal.Logined and CaFactory.Audited and (mmGlobal.module[1]='1')  then
         begin
-          mmGlobal.ConnectToMsc;
-          RzTrayIcon1.IconIndex := 1;
+          if mmGlobal.chat_addr<>'' then
+             begin
+               mmGlobal.ConnectToMsc;
+               RzTrayIcon1.IconIndex := 1;
+             end;
         end;
    except
      on E:Exception do
@@ -582,8 +596,11 @@ begin
 
    if CaFactory.Audited and not mmGlobal.ONLVersion then
       begin
-        if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
-        if SyncFactory.CheckDBVersion then
+        if CaFactory.Audited and CaFactory.CheckInitSync then
+           begin
+             CaFactory.SyncAll(1);
+           end;
+        if SyncFactory.CheckDBVersion and (mmGlobal.module[2]='1') then
            begin
              if SyncFactory.CheckInitSync then SyncFactory.SyncBasic(true);
            end;
@@ -591,7 +608,7 @@ begin
    else
       begin
         if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
-        if CaFactory.Audited then //管理什么版本，有连接到服务器时，必须先同步数据
+        if CaFactory.Audited and (mmGlobal.module[2]='1') then //管理什么版本，有连接到服务器时，必须先同步数据
            begin
              if mmGlobal.ONLVersion then //在线版只需同步注册数据
                 begin
@@ -611,7 +628,7 @@ begin
 
    try
      frmLogo.ShowTitle := '登录RIM后台服务';
-     if mmGlobal.Logined and CaFactory.Audited then
+     if mmGlobal.Logined and CaFactory.Audited and (mmGlobal.module[4]='1') then
         begin
           frmRimIEBrowser.RimLogin(true);
           RzTrayIcon1.IconIndex := 1;
@@ -622,30 +639,34 @@ begin
    end;
 
   finally
-    ShowMMList;
     frmLogo.Close;
   end;
-  
+
    //准备数据
-   CommandPush.ExecuteCommand;
+   if CaFactory.Audited then CommandPush.ExecuteCommand;
+
    frmLogo.Show;
    try
      frmLogo.ShowTitle := '正在初始化权限数据...';
      mmGlobal.LoadRight;
      CheckEnabled;
      frmLogo.ShowTitle := '正在初始化系统菜单...';
-     CreateMenu;
+     if (mmGlobal.module[2]='1') then CreateMenu;
 
      frmLogo.ShowTitle := '正在初始化基础数据...';
-     mmGlobal.LoadBasic();
+     if (mmGlobal.module[2]='1') then mmGlobal.LoadBasic();
      frmLogo.ShowTitle := '正在初始化同步数据...';
      mmGlobal.SyncTimeStamp;
      frmLogo.ShowTitle := '正在初始化广告数据...';
-     AdvFactory.LoadAdv;
+     if (mmGlobal.module[4]='1') then AdvFactory.LoadAdv;
      frmMMDesk.LoadDesk;
    finally
      frmLogo.Close;
    end;
+   if mmFactory.logined and (mmGlobal.module[1]='1') then
+      ShowMMList
+   else
+      Show;
 end;
 
 procedure TfrmMMMain.OpenMc(pid: string;mid:integer=0);
@@ -814,9 +835,11 @@ function TfrmMMMain.SortToolButton: boolean;
 var
   i:Integer;
   button:TrzBmpButton;
+  HasForm:boolean;
 begin
   toolClose.Visible := false;
   toolDesk.Top := 45;
+  HasForm := false;
   for i:=0 to FList.Count -1 do
     begin
       button := TrzBmpButton(FList[i]);
@@ -832,8 +855,10 @@ begin
            toolClose.Visible := true;
            toolClose.BringToFront;
            button.Top := 43;
+           HasForm := true;
          end;
     end;
+  toolDesk.Down := not HasForm;
   if toolDesk.Down then
      begin
        toolDesk.Top := 43;
@@ -1639,6 +1664,7 @@ begin
   try
     if CaFactory.Audited then
        begin
+         if mmGlobal.chat_addr='' then Raise Exception.Create('当前用户没有开通聊天服务功能'); 
          mmGlobal.ConnectToMsc;
          RzTrayIcon1.Animate := false;
          RzTrayIcon1.IconIndex := 1;
@@ -2272,12 +2298,6 @@ begin
   frmMMToolBox.Popup(TWinControl(Sender),CA_MODULE.FieldbyName('MODU_ID').AsString);
 end;
 
-procedure TfrmMMMain.RzBmpButton5Click(Sender: TObject);
-begin
-  inherited;
-  PupupToolBox(Sender,'营销活动');
-end;
-
 procedure TfrmMMMain.toolDeskClick(Sender: TObject);
 begin
   inherited;
@@ -2286,21 +2306,21 @@ begin
   SortToolButton;
 end;
 
-procedure TfrmMMMain.RzBmpButton8Click(Sender: TObject);
+procedure TfrmMMMain.rzPage2Click(Sender: TObject);
 begin
   inherited;
   PupupToolBox(Sender,'网上订货');
 
 end;
 
-procedure TfrmMMMain.RzBmpButton9Click(Sender: TObject);
+procedure TfrmMMMain.rzPage3Click(Sender: TObject);
 begin
   inherited;
   PupupToolBox(Sender,'网上配货');
 
 end;
 
-procedure TfrmMMMain.RzBmpButton10Click(Sender: TObject);
+procedure TfrmMMMain.rzPage4Click(Sender: TObject);
 begin
   inherited;
   PupupToolBox(Sender,'网上结算');
@@ -2330,6 +2350,7 @@ begin
   frmXsmIEBrowser.BringToFront;
   if not frmXsmIEBrowser.XsmLogin(true) then Exit;
   sl := TStringList.Create;
+  frmLogo.Show;
   try
     sl.CommaText := s;
     if not frmXsmIEBrowser.LCSend(frmXsmIEBrowser.CreateOpenFava(sl.Values['sceneId'],sl.Values['objectId'])) then
@@ -2347,9 +2368,15 @@ begin
               ShowMsgBox('当前模块正在业务中，不能切换模块','友情提示..',MB_OK+MB_ICONQUESTION);
               Exit;
             end;
+         if frmXsmIEBrowser.xsmSessionFail then
+            begin
+              ShowMsgBox('新商盟会话失效了，请重点试吧。','友情提示..',MB_OK+MB_ICONQUESTION);
+              Exit;
+            end;
          PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
        end;
   finally
+    frmLogo.Close;
     sl.free;
   end;
 end;
@@ -2374,22 +2401,23 @@ begin
   delete(s,length(s),1);
   sl := TStringList.Create;
   try
+    sl.CommaText := s;
     if (sl.values['xsm']='true') then
-       begin
-          if not mmGlobal.Logined then
-             begin
-               if ShowMsgBox('连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-               if not mmGlobal.xsmLogin then Exit;
-               frmRimIEBrowser.rimLogined := false;
-             end;
-       end;
-       
-    if not frmRimIEBrowser.rimLogined then
-       begin
-         if ShowMsgBox('连接已经断开了，是否重连RIM服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-         if not frmRimIEBrowser.RimLogin(true) then Exit;
-       end;
+     begin
+        if not mmGlobal.Logined then
+           begin
+             if ShowMsgBox('连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+             if not mmGlobal.xsmLogin then Exit;
+             frmRimIEBrowser.rimLogined := false;
+           end;
+     end;
 
+    if not frmRimIEBrowser.rimLogined then
+     begin
+       if ShowMsgBox('连接已经断开了，是否重连RIM服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if not frmRimIEBrowser.RimLogin(true) then Exit;
+     end;
+    frmLogo.Show;
     sl.CommaText := s;
     frmRimIEBrowser.Caption := CA_MODULE.FieldbyName('MODU_NAME').AsString;
     AddFrom(frmRimIEBrowser);
@@ -2397,9 +2425,9 @@ begin
     frmRimIEBrowser.BringToFront;
 
     frmRimIEBrowser.IEOpen(frmRimIEBrowser.rimUrl+sl.values['url']+'?comId='+frmRimIEBrowser.rimcomId+'&custId='+frmRimIEBrowser.rimcustId);
-  except
+  finally
+    frmLogo.Close;
     sl.free;
-    Raise;
   end;
 end;
 
@@ -2531,6 +2559,7 @@ begin
            button.Font.Color := clWhite;
            button.Font.Style := [fsBold];
            button.Bitmaps.Hot.Assign(menuButton.Bitmaps.Hot);
+           button.Bitmaps.Up.Assign(menuButton.Bitmaps.Up);
            button.Anchors := [akTop,akRight];
            button.width := 70;
            FMenu.Add(button);
@@ -2550,13 +2579,20 @@ begin
          begin
            inc(l);
            button := TrzBmpButton(FMenu[i]);
-           button.Left := bkg_top.Width - ((button.Width)*l)- 120;
+           button.Left := bkg_top.Width - ((button.Width)*l)- 160;
          end;
     end;
 end;
 
 procedure TfrmMMMain.DoOpenMenu(Sender: TObject);
+var
+  i:integer;
 begin
+  for i:=0 to FMenu.Count-1 do
+     begin
+       if TrzBmpButton(Sender)<>TrzBmpButton(FMenu[i]) then
+          PostMessage(TrzBmpButton(FMenu[i]).handle,CM_MOUSELEAVE,0,0);
+     end;
   PostMessage(handle,MSC_POPUP,TrzBmpButton(Sender).tag,integer(Sender));
 end;
 
@@ -2574,6 +2610,49 @@ procedure TfrmMMMain.RzFormShape1DblClick(Sender: TObject);
 begin
   inherited;
   sysMaximized.onClick(sysMaximized);
+end;
+
+procedure TfrmMMMain.rzPage8Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'我的社区');
+end;
+
+procedure TfrmMMMain.rzPage0Click(Sender: TObject);
+begin
+  inherited;
+  ShowMMList;
+end;
+
+procedure TfrmMMMain.rzPage1Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'网上营销');
+
+end;
+
+procedure TfrmMMMain.rzPage6Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'品牌培育');
+end;
+
+procedure TfrmMMMain.rzPage7Click(Sender: TObject);
+begin
+  inherited;
+  PupupToolBox(Sender,'信息互通');
+
+end;
+
+procedure TfrmMMMain.rzPage5Click(Sender: TObject);
+begin
+  inherited;
+  PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);
+end;
+
+procedure TfrmMMMain.wm_mmcError(var Message: TMessage);
+begin
+  ShowMsgBox(pchar(mmFactory.LastError),'mmc',MB_OK+MB_ICONERROR);
 end;
 
 end.

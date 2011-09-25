@@ -266,7 +266,8 @@ uses
   ufrmMMFindBox in 'MM\ufrmMMFindBox.pas' {frmMMFindBox},
   ufrmMMBrowser in 'App\ufrmMMBrowser.pas' {frmMMBrowser},
   udmIcon in '..\..\Basic\udmIcon.pas' {dmIcon: TDataModule},
-  ufrmMMToolBox in 'MM\ufrmMMToolBox.pas' {frmMMToolBox};
+  ufrmMMToolBox in 'MM\ufrmMMToolBox.pas' {frmMMToolBox},
+  SHDocVw in '..\..\Pub\SHDocVw.pas';
 
 {$R *.res}
 

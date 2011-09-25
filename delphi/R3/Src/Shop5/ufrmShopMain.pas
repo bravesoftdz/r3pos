@@ -668,11 +668,11 @@ begin
   CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductId,RzVersionInfo.FileVersion);
   if CaUpgrade.UpGrade in [1,2] then
   begin
-     if (MessageBox(Application.Handle,pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
+     if (ShowMsgBox(pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        if (CaUpgrade.UpGrade=1) then
           begin
-            MessageBox(Application.Handle,pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
+            ShowMsgBox(pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
             Exit
           end else CaUpgrade.UpGrade := 3;
      end;
@@ -706,7 +706,7 @@ begin
   except
     on E:Exception do
        begin
-         MessageBox(application.Handle,pchar('升级失败,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+         ShowMsgBox(pchar('升级失败,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
          result := false;
        end;
   end;

@@ -1,21 +1,22 @@
 inherited frmMMDesk: TfrmMMDesk
-  Left = 381
-  Top = 210
+  Left = 691
+  Top = 205
   Caption = 'frmMMDesk'
-  Color = clWhite
+  ClientHeight = 372
+  ClientWidth = 550
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 12
   object IEDesktop: TWebBrowser
     Left = 0
     Top = 0
-    Width = 790
-    Height = 522
+    Width = 550
+    Height = 372
     Align = alClient
     TabOrder = 0
     OnBeforeNavigate2 = ufr
     ControlData = {
-      4C000000A6510000F33500000000000000000000000000000000000000000000
+      4C000000D8380000732600000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800
       2B2E126208000000000000004C0000000114020000000000C000000000000046
       8000000000000000000000000000000000000000000000000000000000000000

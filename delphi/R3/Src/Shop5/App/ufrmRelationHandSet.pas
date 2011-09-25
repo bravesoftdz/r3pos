@@ -344,7 +344,7 @@ begin
   //提交
   if Factor.UpdateBatch(SaveQry,'THandSetRelation',nil) then
   begin
-    MessageBox(Application.Handle,pchar('保存成功！'),'友情提示...',MB_OK+MB_ICONQUESTION);
+    MessageBox(Handle,pchar('保存成功！'),'友情提示...',MB_OK+MB_ICONQUESTION);
     Global.RefreshTable('PUB_GOODSINFO');
     ModalResult:=MROK;
     ReRun:=1;
@@ -363,7 +363,7 @@ begin
   try
    if Factor.ExecSQL(str)=1 then
    begin
-     MessageBox(Application.Handle,pchar('取消手工对照成功！'),'友情提示...',MB_OK+MB_ICONQUESTION);
+     MessageBox(Handle,pchar('取消手工对照成功！'),'友情提示...',MB_OK+MB_ICONQUESTION);
      Global.RefreshTable('PUB_GOODSINFO');
      ModalResult:=MROK;
      ReRun:=1;

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ufrmDesk, StdCtrls, OleCtrls, SHDocVw, MSHTML, ActnList;
+  Dialogs, ufrmDesk, StdCtrls, SHDocVw, MSHTML, ActnList, OleCtrls;
 
 type
   TfrmMMDesk = class(TfrmDesk)
@@ -12,6 +12,7 @@ type
     procedure ufr(Sender: TObject;
       const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
       Headers: OleVariant; var Cancel: WordBool);
+    procedure Button1Click(Sender: TObject);
   private
     FHookLocked: boolean;
     procedure SetHookLocked(const Value: boolean);
@@ -52,8 +53,9 @@ var
 begin
   if not FileExists(ExtractFilePath(ParamStr(0))+'desk.html') then Exit;
   IEDesktop.Navigate(ExtractFilePath(ParamStr(0))+'desk.html');
+  Application.ProcessMessages;
   _Start := GetTickCount;
-  while IEDesktop.ReadyState in [READYSTATE_LOADING,READYSTATE_LOADED] do
+  while IEDesktop.ReadyState <> READYSTATE_COMPLETE do
     begin
       if (GetTickCount-_Start) > 20000 then break;
       Application.ProcessMessages;
@@ -97,7 +99,7 @@ var
   Action:TAction;
 begin
   inherited;
-  Cancel := true;
+  Cancel := false;
   w := pos(s,'dsk=(');
   if w=0 then Exit;
   delete(s,1,w+5);
@@ -118,12 +120,19 @@ begin
             Action.OnExecute(TObject(Node))
          else
             Action.OnExecute(Action);
+         Cancel := true;
        end
     else Raise Exception.Create('你没有操作此模块的权限...');
   finally
     dispose(Node);
     vList.Free;
   end;
+end;
+
+procedure TfrmMMDesk.Button1Click(Sender: TObject);
+begin
+  inherited;
+  LoadDesk;
 end;
 
 end.

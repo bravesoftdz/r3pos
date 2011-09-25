@@ -12,7 +12,9 @@ type
   TdbHelp=class(TInterfacedObject, IdbHelp)
   private
     ZConn:TZConnection;
+    ZConnStr:string;
     function CheckError(s:string):boolean;
+    function CheckConnection:boolean;
   protected
     //设置连接参数
     function  Initialize(Const ConnStr:WideString):boolean;stdcall;
@@ -211,6 +213,7 @@ uses ZLogFile;
 
 procedure TdbHelp.BeginTrans(TimeOut: integer);
 begin
+  CheckConnection;
   try
     if ZConn.InTransaction then Raise Exception.Create('当前连接已经启动事务了,不能BeginTrans');
     ZConn.TransactIsolationLevel := tiReadCommitted;
@@ -224,10 +227,20 @@ begin
   end;
 end;
 
+function TdbHelp.CheckConnection: boolean;
+begin
+  result := Connected;
+  if not result then
+     begin
+       Initialize(ZConnStr);
+       result := Connect;
+     end;
+end;
+
 function TdbHelp.CheckError(s:string): boolean;
 begin
   result := false;
-  if ZConn.Protocol='sqlite-3' then exit;
+//  if ZConn.Protocol='sqlite-3' then exit;
   result := not ZConn.InTransaction and (
      (pos('网络错误',s)>0) or
      (pos('连接断开',s)>0) or
@@ -236,7 +249,8 @@ begin
      (pos('ORA-12170',s)>0) or
      (pos('SQL0952N',s)>0) or
      (pos('SQL30081N',s)>0) or
-     (pos('CLI0106E',s)>0)
+     (pos('CLI0106E',s)>0) or
+     (pos('database is locked',s)>0)
   );
 end;
 
@@ -286,6 +300,7 @@ end;
 function TdbHelp.ExecQuery(DataSet: TDataSet): Integer;
 var ZQuery:TZQuery;
 begin
+  CheckConnection;
   try
     result := -1;
     ZQuery := TZQuery(DataSet);
@@ -307,6 +322,7 @@ var
   ZQuery:TZQuery;
   i:integer;
 begin
+  CheckConnection;
   try
   result := -1;
   ZQuery := TZQuery.Create(nil);
@@ -389,6 +405,7 @@ begin
   finally
     vList.Free;
   end;
+  ZConnStr := ConnStr;
 end;
 
 function TdbHelp.InTransaction: boolean;
@@ -406,6 +423,7 @@ end;
 
 function TdbHelp.Open(DataSet: TDataSet): boolean;
 begin
+  CheckConnection;
   try
   result := false;
   DataSet.Close;
@@ -467,6 +485,7 @@ end;
 
 function TdbHelp.UpdateBatch(DataSet: TDataSet): boolean;
 begin
+  CheckConnection;
   try
   result := false;
   if DataSet.ClassNameIs('TZQuery') then

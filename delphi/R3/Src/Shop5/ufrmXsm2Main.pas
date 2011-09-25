@@ -3957,9 +3957,8 @@ begin
        end
     else
        DoActiveChange(nil);
-  except
+  finally
     sl.free;
-    Raise;
   end;
 end;
 
@@ -4558,9 +4557,8 @@ begin
        end
     else
        DoActiveChange(nil);
-  except
+  finally
     sl.free;
-    Raise;
   end;
 end;
 

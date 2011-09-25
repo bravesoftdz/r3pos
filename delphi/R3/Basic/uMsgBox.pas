@@ -16,12 +16,12 @@ begin
   if (frmLogo<>nil) and frmLogo.Visible then
      begin
        frmLogo.Close;
-       LogoVisible := true;
+//       LogoVisible := true;
      end;
   if (frmPrgBar<>nil) and frmPrgBar.Visible then
      begin
        frmPrgBar.Close;
-       PrgBarVisible := true;
+//       PrgBarVisible := true;
      end;
   try
     Form := Screen.ActiveForm;
@@ -32,8 +32,8 @@ begin
 
     result := MessageBox(PWnd,lpText,lpCaption,bType);
   finally
-    if LogoVisible then frmLogo.Show;
-    if PrgBarVisible then frmPrgBar.Show;
+//    if LogoVisible then frmLogo.Show;
+//    if PrgBarVisible then frmPrgBar.Show;
   end;
 end;
 end.

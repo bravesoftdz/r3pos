@@ -36,13 +36,7 @@ inherited frmMMLogin: TfrmMMLogin
       DesignSize = (
         410
         104)
-      inherited RzFormShape1: TRzFormShape [0]
-        Top = 0
-        Width = 410
-        Height = 104
-        AutoSize = True
-      end
-      object imgLogin: TImage [1]
+      object imgLogin: TImage [0]
         Left = 0
         Top = 0
         Width = 410
@@ -4094,6 +4088,12 @@ inherited frmMMLogin: TfrmMMLogin
           6868686868686868686868686868686868686868686868686868686868686868
           6868686868686868686868686868686868686868686868686868686868686868
           68FF00FFFF00FFFF00FFFF00FFFF00FF0000}
+      end
+      inherited RzFormShape1: TRzFormShape [1]
+        Top = 0
+        Width = 410
+        Height = 104
+        AutoSize = True
       end
       inherited bkg_f1: TRzBackground [2]
         Left = 219

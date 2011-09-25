@@ -37,6 +37,7 @@ type
     Fxsm_nickname: string;
     Fxsm_comType: string;
     Fxsm_note: string;
+    Fmodule: string;
     procedure Setxsm_challenge(const Value: string);
     procedure Setxsm_password(const Value: string);
     procedure Setxsm_username(const Value: string);
@@ -59,6 +60,7 @@ type
     procedure Setxsm_nickname(const Value: string);
     procedure Setxsm_comType(const Value: string);
     procedure Setxsm_note(const Value: string);
+    procedure Setmodule(const Value: string);
     { Private declarations }
   protected
     function CreateXML(xml:string):IXMLDomDocument;
@@ -126,6 +128,8 @@ type
     property NetVersion:boolean read GetNetVersion;
     //判断是否网络版
     property ONLVersion:boolean read GetONLVersion;
+    //第一个mm 第二位r3 第三位 xsm  第四位 rim
+    property module:string read Fmodule write Setmodule;
   end;
 
 var
@@ -488,6 +492,7 @@ constructor TmmGlobal.Create(AOwner: TComponent);
 begin
   inherited;
   mmFactory := TmmFactory.Create;
+  module := '1111';
 end;
 
 destructor TmmGlobal.Destroy;
@@ -618,8 +623,10 @@ begin
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('模拟导航失败,错误:'+Root.attributes.getNamedItem('msg').text);
 
     Node := FindNode(doc,'server_info\chat_server');
-    chat_addr := '192.168.1.201';// Node.attributes.getNamedItem('ip').text;
-    chat_port := 8000;//StrtoInt(Node.attributes.getNamedItem('port').text);
+    chat_addr := Node.attributes.getNamedItem('ip').text;
+    chat_port := StrtoInt(Node.attributes.getNamedItem('port').text);
+    //chat_addr := '192.168.1.201';
+    //chat_port := 8000;
     Node := FindNode(doc,'server_info\web_server');
     http_addr := Node.attributes.getNamedItem('web_url').text;
 
@@ -828,6 +835,11 @@ end;
 procedure TmmGlobal.Setxsm_note(const Value: string);
 begin
   Fxsm_note := Value;
+end;
+
+procedure TmmGlobal.Setmodule(const Value: string);
+begin
+  Fmodule := Value;
 end;
 
 end.

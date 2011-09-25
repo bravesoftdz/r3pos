@@ -11,6 +11,7 @@ const
   WM_STATUS=WM_USER+3005;
   WM_DESKTOP_REQUEST=WM_USER+3006;
   WM_LCCONTROL=WM_USER+3007;
+  WM_MMC_ERROR=WM_USER+3008;
 type
 
   TmmPlayerFava=class;
@@ -239,17 +240,19 @@ type
     function Encode:PLCControlFava;
     procedure Decode(Value:PLCControlFava);
   end;
-  
+
   TmmFactory=class
   private
     FList:TList;
     Flogined: boolean;
+    FLastError: string;
     procedure DisposeMsg(index:integer);
     procedure Setlogined(const Value: boolean);
+    procedure SetLastError(const Value: string);
   public
     constructor Create;
     destructor Destroy;override;
-    
+
     procedure Clear;
     function Find(uid:string):PmmUserInfo;
     function GetMsg(mmUserInfo:PmmUserInfo):TmmMsgFava;
@@ -276,7 +279,8 @@ type
     function mmcPlayerIdListFava(PlayerIdListFava:TmmPlayerIdListFava):boolean;
     //µÇÂ¼×´Ì¬
     property logined:boolean read Flogined write Setlogined;
-    
+
+    property LastError:string read FLastError write SetLastError;
   end;
 
 type
@@ -289,7 +293,8 @@ type
    TmmcSetSockClose=function():integer;stdcall;
    TmmcGetDescriptionFromErrorID=function(errCode:integer):pchar;stdcall;
 
-var mmFactory:TmmFactory;
+var
+   mmFactory:TmmFactory;
 implementation
 uses ummGlobal,ufrmMMList;
 const dllname='mmc.dll';
@@ -324,31 +329,44 @@ var
   mmPlayerFava:TmmPlayerFava;
   mmLCControlFava:TmmLCControlFava;
 begin
-  case flag of
-  1,2,3:begin
-         mmLCControlFava := TmmLCControlFava.Create;
-         mmLCControlFava.Decode(PLCControlFava(lpData));
-         mmFactory.AddRecv(mmLCControlFava);
-       end;
-  1003:begin
-         mmSingleFava := TmmSingleFava.Create;
-         mmSingleFava.Decode(PSingleFava(lpData));
-         mmFactory.AddRecv(mmSingleFava);
-       end;
-  1002:begin
-         mmGroupFava := TmmGroupFava.Create;
-         mmGroupFava.Decode(pGroupFava(lpData));
-         mmFactory.AddRecv(mmGroupFava);
-       end;
-  1010:begin
-         mmPlayerIdListFava := TmmPlayerIdListFava.Create;
-         mmPlayerIdListFava.Decode(pPlayerIdListFava(lpData));
-         mmFactory.AddRecv(mmPlayerIdListFava);
-       end;
-  1005,1016,1001:begin
-         mmPlayerFava := TmmPlayerFava.Create;
-         mmPlayerFava.Decode(pPlayerFava(lpData));
-         mmFactory.AddRecv(mmPlayerFava);
+  result := 0;
+  try
+    case flag of
+    1,2,3:begin
+           mmLCControlFava := TmmLCControlFava.Create;
+           mmLCControlFava.Decode(PLCControlFava(lpData));
+           mmFactory.AddRecv(mmLCControlFava);
+         end;
+    1003:begin
+           mmSingleFava := TmmSingleFava.Create;
+           mmSingleFava.Decode(PSingleFava(lpData));
+           mmFactory.AddRecv(mmSingleFava);
+         end;
+    1002:begin
+           mmGroupFava := TmmGroupFava.Create;
+           mmGroupFava.Decode(pGroupFava(lpData));
+           mmFactory.AddRecv(mmGroupFava);
+         end;
+    1010:begin
+           mmPlayerIdListFava := TmmPlayerIdListFava.Create;
+           mmPlayerIdListFava.Decode(pPlayerIdListFava(lpData));
+           mmFactory.AddRecv(mmPlayerIdListFava);
+         end;
+    1005,1001:begin
+           mmPlayerFava := TmmPlayerFava.Create;
+           mmPlayerFava.Decode(pPlayerFava(lpData));
+           mmFactory.AddRecv(mmPlayerFava);
+         end;
+    1016:begin
+           if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,0,0);
+         end;
+    end;
+  except
+    on E:Exception do
+       begin
+         result := 99999;
+         mmFactory.LastError := E.Message;
+         PostMessage(Application.MainForm.Handle,WM_MMC_ERROR,0,0);
        end;
   end;
 end;
@@ -357,34 +375,43 @@ var
   mmSingleFava:TmmSingleFava;
   mmGroupFava:TmmGroupFava;
 begin
-case Event of
-3:begin
-  case EFlag of
-  1003:begin
-         mmSingleFava := TmmSingleFava.Create;
-         try
-            mmSingleFava.Decode(PSingleFava(lpData));
-            mmFactory.AddEvent(mmSingleFava);
-         finally
-            mmSingleFava.Free;
-         end;
+  try
+    case Event of
+    3:begin
+      case EFlag of
+      1003:begin
+             mmSingleFava := TmmSingleFava.Create;
+             try
+                mmSingleFava.Decode(PSingleFava(lpData));
+                mmFactory.AddEvent(mmSingleFava);
+             finally
+                mmSingleFava.Free;
+             end;
+           end;
+      1002:begin
+             mmGroupFava := TmmGroupFava.Create;
+             try
+                mmGroupFava.Decode(pGroupFava(lpData));
+                mmFactory.AddEvent(mmGroupFava);
+             finally
+                mmGroupFava.Free;
+             end;
+           end;
+      end;
+      end;
+    2:begin
+        if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,1,1);
+        mmFactory.logined := false;
+      end;
+    end;
+  except
+    on E:Exception do
+       begin
+         result := 99999;
+         mmFactory.LastError := E.Message;
+         PostMessage(Application.MainForm.Handle,WM_MMC_ERROR,0,0);
        end;
-  1002:begin
-         mmGroupFava := TmmGroupFava.Create;
-         try
-            mmGroupFava.Decode(pGroupFava(lpData));
-            mmFactory.AddEvent(mmGroupFava);
-         finally
-            mmGroupFava.Free;
-         end;
-       end;
   end;
-  end;
-2:begin
-    if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,1,1);
-    mmFactory.logined := false;
-  end;
-end;
 end;
 
 { TmmFactory }
@@ -448,7 +475,7 @@ begin
             end
          else
             begin
-               if (TmmSingleFava(lpData).playerId='') or (TmmSingleFava(lpData).playerId=mmGlobal.xsm_username) then
+               if (TmmSingleFava(lpData).playerId='') or (uppercase(TmmSingleFava(lpData).playerId)=uppercase(mmGlobal.xsm_username)) then
                   begin
                     mmUserInfo := Find(TmmSingleFava(lpData).refId);
                     if (TmmSingleFava(lpData).playerId='') then
@@ -473,7 +500,13 @@ begin
             if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
          end
          else
-            PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
+            begin
+               PostMessage(mmUserInfo^.Handle,WM_MsgRecv,0,0);
+               if (uppercase(TmmSingleFava(lpData).playerId)<>uppercase(mmGlobal.xsm_username)) then
+                  begin
+                    if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MsgHint,0,0);
+                  end;
+            end;
        end;
   1002:begin
          mmUserInfo := Find(TmmGroupFava(lpData).playerId);
@@ -515,10 +548,6 @@ begin
              begin
                if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_LINE,0,0);
              end;
-         lpData.Free;
-       end;
-  1016:begin
-         if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,0,0);
          lpData.Free;
        end;
   else
@@ -592,7 +621,7 @@ begin
   result := nil;
   for i:=0 to FList.Count -1 do
     begin
-      if PmmUserInfo(FList[i])^.uid = uid then
+      if uppercase(PmmUserInfo(FList[i])^.uid) = uppercase(uid) then
          begin
            result := PmmUserInfo(FList[i]);
            break;
@@ -722,6 +751,11 @@ begin
   result := (errCode=0);
   if not result then
      Raise Exception.Create(StrPas(mmcGetDescriptionFromErrorID(errCode)));
+end;
+
+procedure TmmFactory.SetLastError(const Value: string);
+begin
+  FLastError := Value;
 end;
 
 { TmmConnectFava }

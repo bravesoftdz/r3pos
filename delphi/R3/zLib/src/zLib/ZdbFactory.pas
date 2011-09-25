@@ -182,15 +182,14 @@ begin
   try
     dbResolver.BeginTrans(TimeOut);
   finally
-    Leave;
+//    Leave;
   end;
 end;
 
 procedure TdbFactory.CommitTrans;
 begin
-  if dbResolver=nil then Connect;
-  Enter;
   try
+//  Enter;
     dbResolver.CommitTrans;
   finally
     Leave;
@@ -341,8 +340,7 @@ end;
 
 procedure TdbFactory.RollbackTrans;
 begin
-  if dbResolver=nil then Connect;
-  Enter;
+//  Enter;
   try
     dbResolver.RollbackTrans;
   finally
@@ -367,12 +365,12 @@ function TdbFactory.AddBatch(DataSet: TDataSet; AClassName: string;
   Params: TftParamList): Boolean;
 begin
   if DataSet.State in [dsEdit,dsInsert] then DataSet.Post;
-  if dbResolver=nil then Connect;
-  Enter;
+//  if dbResolver=nil then Connect;
+//  Enter;
   try
     result := dbResolver.AddBatch(DataSet,AClassName,Params);
   finally
-    Leave;
+//    Leave;
   end;
 end;
 
@@ -383,14 +381,13 @@ begin
   try
     result := dbResolver.BeginBatch;
   finally
-    Leave;
+//    Leave;
   end;
 end;
 
 function TdbFactory.CancelBatch: Boolean;
 begin
-  if dbResolver=nil then Connect;
-  Enter;
+//  Enter;
   try
     result := dbResolver.CancelBatch;
   finally
@@ -400,8 +397,7 @@ end;
 
 function TdbFactory.CommitBatch: Boolean;
 begin
-  if dbResolver=nil then Connect;
-  Enter;
+//  Enter;
   try
     result := dbResolver.CommitBatch;
   finally
@@ -411,9 +407,8 @@ end;
 
 function TdbFactory.OpenBatch: Boolean;
 begin
-  if dbResolver=nil then Connect;
-  Enter;
   try
+//  Enter;
     result := dbResolver.OpenBatch;
   finally
     Leave;

@@ -312,8 +312,11 @@ begin
     Factor.Open(rs);
     if not rs.IsEmpty then
        begin
-         if MessageBox(Handle,'此账套已经初化了，是否重初始化？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         if MessageBox(Handle,'此账套已经初始化了，是否重初始化？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        end;
+    rs.First;
+    while not rs.Eof do rs.Delete;
+    rs.CommitUpdates;
     j := 1;
     for i := 0 to rzCheckTree.Items.Count - 1 do
       begin

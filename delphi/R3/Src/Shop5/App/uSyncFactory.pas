@@ -130,7 +130,7 @@ type
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,uFnUtil,uMsgBox,uDsUtil,uCaFactory,uSyncThread;
+uses uGlobal,ufrmLogo,ufrmDesk,uFnUtil,uMsgBox,uDsUtil,uCaFactory,uSyncThread;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -704,14 +704,13 @@ begin
     //上传本机数据
     cs.Close;
     rs.Close;
-    Global.LocalFactory.BeginTrans;
-    try
-      SetTicket;
-      Global.LocalFactory.Open(cs,ZClassName,Params);
-      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
-      SetSynTimeStamp(tbName,SyncTimeStamp);
-      if not cs.IsEmpty then
-      begin
+    SetTicket;
+    Global.LocalFactory.Open(cs,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+    if not cs.IsEmpty then
+    begin
+      Global.LocalFactory.BeginTrans;
+      try
         SetTicket;
         rs.SyncDelta := cs.SyncDelta;
         cs.Delete;
@@ -720,12 +719,13 @@ begin
         if not rs.IsEmpty then
         Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+        Global.LocalFactory.CommitTrans;
+      except
+        Global.LocalFactory.RollbackTrans;
+        Raise;
       end;
-      Global.LocalFactory.CommitTrans;
-    except
-      Global.LocalFactory.RollbackTrans;
-      Raise;
     end;
+    SetSynTimeStamp(tbName,SyncTimeStamp);
   finally
     rs.Free;
     cs.Free;
@@ -797,6 +797,7 @@ begin
   Working := true;
   try
   frmLogo.Show;
+  frmDesk.Waited := true;
   try
   try
     CaFactory.AutoCoLogo;
@@ -814,6 +815,8 @@ begin
   for i:=0 to FList.Count -1 do
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+      Application.ProcessMessages;
+      frmLogo.BringToFront;
       case PSynTableInfo(FList[i])^.synFlag of
       0,1,2,3,4,10,20,21,22,23,29:SyncSingleTable(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
@@ -841,6 +844,7 @@ begin
     SyncRim;
   finally
     frmLogo.Close;
+    frmDesk.Waited := false;
   end;
   finally
     Working := false;
@@ -859,6 +863,7 @@ begin
   try
   if gbl then SyncComm := CheckRemeteData;
   frmLogo.Show;
+  frmDesk.Waited := true;
   try
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
@@ -866,6 +871,8 @@ begin
   for i:=0 to FList.Count -1 do
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+      Application.ProcessMessages;
+      frmLogo.BringToFront;
       case PSynTableInfo(FList[i])^.synFlag of
       0,1,2,3,4,10,20,21,22,23,29:
         begin
@@ -879,6 +886,7 @@ begin
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
   finally
+    frmDesk.Waited := false;
     frmLogo.Close;
   end;
   finally
@@ -941,30 +949,20 @@ begin
       //上传本机数据
       cs.Close;
       rs.Close;
-      Global.LocalFactory.BeginTrans;
-      try
-        SetTicket;
-        Global.LocalFactory.Open(cs,ZClassName,Params);
-        LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
-        SetSynTimeStamp(tbName,SyncTimeStamp);
-        if not cs.IsEmpty then
-        begin
-          SetTicket;
-          rs.SyncDelta := cs.SyncDelta;
-          if not rs.IsEmpty then
-          Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
-          LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
-        end;
-        Global.LocalFactory.CommitTrans;
-      except
-        Global.LocalFactory.RollbackTrans;
-        Raise;
-      end;
+      SetTicket;
+      Global.LocalFactory.Open(cs,ZClassName,Params);
+      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+      SetTicket;
+      rs.SyncDelta := cs.SyncDelta;
+      if not rs.IsEmpty then
+      Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+      LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     finally
       rs.Free;
       cs.Free;
     end;
   end;
+  SetSynTimeStamp(tbName,SyncTimeStamp);
 end;
 
 procedure TSyncFactory.SyncChangeOrder(tbName, KeyFields,
@@ -1785,7 +1783,7 @@ begin
     rs.Free;
   end;
   if not CaFactory.Audited then Raise Exception.Create('只有联机模式才能操作数据库锁定功能。');
-  if MessageBox(Application.Handle,'是否锁定当前电脑为本门店专用电脑？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  if ShowMsgBox('是否锁定当前电脑为本门店专用电脑？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   id := TSequence.NewId;
   Global.RemoteFactory.BeginTrans;
   Global.LocalFactory.BeginTrans;
@@ -2534,7 +2532,7 @@ begin
       Global.RemoteFactory.ExecProc('TSyncRimInfo',Params);
     except
       on E:Exception do
-         MessageBox(Application.Handle,pchar('数据无法同步的RIM平台,请通知客服人员,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+         ShowMsgBox(pchar('数据无法同步的RIM平台,请通知客服人员,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
     end;
   finally
     Params.Free;
@@ -2860,14 +2858,13 @@ begin
     //上传本机数据
     cs.Close;
     rs.Close;
-    Global.LocalFactory.BeginTrans;
-    try
-      SetTicket;
-      Global.LocalFactory.Open(cs,ZClassName,Params);
-      LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
-      SetSynTimeStamp(tbName,SyncTimeStamp);
-      if not cs.IsEmpty then
-      begin
+    SetTicket;
+    Global.LocalFactory.Open(cs,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
+    if not cs.IsEmpty then
+    begin
+      Global.LocalFactory.BeginTrans;
+      try
         SetTicket;
         rs.SyncDelta := cs.SyncDelta;
         cs.Delete;
@@ -2876,12 +2873,13 @@ begin
         if not rs.IsEmpty then
         Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+        Global.LocalFactory.CommitTrans;
+      except
+        Global.LocalFactory.RollbackTrans;
+        Raise;
       end;
-      Global.LocalFactory.CommitTrans;
-    except
-      Global.LocalFactory.RollbackTrans;
-      Raise;
     end;
+    SetSynTimeStamp(tbName,SyncTimeStamp);
   finally
     rs.Free;
     cs.Free;

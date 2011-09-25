@@ -24,7 +24,6 @@ type
     toolDesk: TRzBmpButton;
     RzBmpButton1: TRzBmpButton;
     rzUserInfo: TRzLabel;
-    Image2: TImage;
     Image1: TImage;
     Image7: TImage;
     bkg_f3: TRzBackground;
@@ -39,6 +38,7 @@ type
     RzBmpButton2: TRzBmpButton;
     UsersStatus: TRzBmpButton;
     rzUserNote: TRzLabel;
+    Image2: TImage;
     procedure FormCreate(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
     procedure RzGroup1Items0Click(Sender: TObject);
@@ -53,6 +53,8 @@ type
     procedure rzFilterChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure rzFilterExit(Sender: TObject);
+    procedure rzUsersCompare(Sender: TObject; Node1, Node2: TTreeNode;
+      Data: Integer; var Compare: Integer);
   private
     { Private declarations }
     frmMMFindBox:TfrmMMFindBox;
@@ -166,6 +168,7 @@ begin
     begin
       if UserInfo^.Handle = Screen.Forms[i].Handle then
          begin
+           Screen.Forms[i].WindowState := wsNormal;
            Screen.Forms[i].Show;
            Exit;
          end;
@@ -229,13 +232,13 @@ end;
 procedure TfrmMMList.wmMsgClose(var Message: TMessage);
 begin
   if not Assigned(mmGlobal) then Exit;
-  if Message.LParam = 0 then
-     MessageBox(Handle,'当前账号在另一地方登录了.','友情提示..',MB_OK+MB_ICONINFORMATION);
   frmMMMain.RzTrayIcon1.Animate := false;
   frmMMMain.RzTrayIcon1.IconIndex := 0;
 
   mmGlobal.CloseMsc;
   PostMessage(frmMMList.Handle,WM_LINE,0,0);
+  if Message.LParam = 0 then
+     MessageBox(Handle,'当前账号在另一地方登录了.','友情提示..',MB_OK+MB_ICONINFORMATION);
 end;
 
 procedure TfrmMMList.wmMsgHint(var Message: TMessage);
@@ -428,6 +431,24 @@ begin
   if not frmMMFindBox.Focused then
      frmMMFindBox.Close;
 
+end;
+
+procedure TfrmMMList.rzUsersCompare(Sender: TObject; Node1,
+  Node2: TTreeNode; Data: Integer; var Compare: Integer);
+begin
+  inherited;
+  if assigned(Node1.Data) and assigned(Node2.Data) then
+     begin
+       if Node1.ImageIndex>Node2.ImageIndex then
+          Compare := 1
+       else
+       if Node1.ImageIndex<Node2.ImageIndex then
+          Compare := -1
+       else
+          Compare := 0;
+     end
+  else
+     Compare := 0;
 end;
 
 end.

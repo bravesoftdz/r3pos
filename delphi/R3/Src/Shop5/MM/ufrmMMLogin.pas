@@ -181,6 +181,7 @@ begin
             mmGlobal.xsm_username := rs.FieldbyName('ACCOUNT').AsString;
             mmGlobal.xsm_nickname := mmGlobal.UserName;
           end;
+       if mmGlobal.xsm_userType <> '1000' then mmGlobal.module := '1010';
     finally
        rs.Free;
     end;

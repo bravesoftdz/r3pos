@@ -3773,7 +3773,8 @@ var i:Integer;
 begin
   inherited;
   //if not edtTable.IsEmpty then Exit;
-  if not (edtTable.State in [dsEdit,dsInsert]) then Raise Exception.Create('单据需在新增、修改、录入等状态下,才能使用导入功能！');
+  //2011.09.25 Modif: if not (edtTable.State in [dsEdit,dsInsert])
+  if not (dbState in [dsEdit,dsInsert]) then Raise Exception.Create('单据需在新增、修改、录入等状态下,才能使用导入功能！');
   for i := 0 to DBGridEh1.Columns.Count - 1 do
     begin
       if Trim(FieldsString) = '' then

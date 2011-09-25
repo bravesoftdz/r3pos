@@ -212,6 +212,7 @@ uses ZLogFile;
 procedure TdbHelp.BeginTrans(TimeOut: integer);
 begin
   try
+    if ZConn.InTransaction then Raise Exception.Create('当前连接已经启动事务了,不能BeginTrans');
     ZConn.TransactIsolationLevel := tiReadCommitted;
     ZConn.StartTransaction;
   except
@@ -242,6 +243,7 @@ end;
 procedure TdbHelp.CommitTrans;
 begin
   try
+    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能commit'); 
     ZConn.Commit;
     ZConn.TransactIsolationLevel := tiNone;
   except
@@ -451,6 +453,7 @@ end;
 procedure TdbHelp.RollbackTrans;
 begin
   try
+    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback'); 
     ZConn.Rollback;
     ZConn.TransactIsolationLevel := tiNone;
   except

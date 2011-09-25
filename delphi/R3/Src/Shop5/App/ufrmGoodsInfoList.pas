@@ -1571,7 +1571,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   Error_Info := Error_Info + '商品名称相同有"'+IntToStr(SumName)+'"条;'+#13#10;
                 Error_Info := Error_Info + '是否导入！';
 
-                if MessageBox(Handle,Pchar(Error_Info),'提示信息..',MB_YESNO+MB_ICONINFORMATION) <> 6 then
+                if MessageBox(Application.Handle,Pchar(Error_Info),'提示信息..',MB_YESNO+MB_ICONQUESTION) <> 6 then
                   begin
                     Exit;
                   end;
@@ -1601,7 +1601,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
     if not CdsCol.Locate('FieldName','GODS_NAME',[]) then
       begin
         Result := False;
-        Raise Exception.Create('缺少商品名称字段!');    
+        Raise Exception.Create('缺少商品名称字段!');
       end;
     if not CdsCol.Locate('FieldName','CALC_UNITS',[]) then
       begin

@@ -1454,6 +1454,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
   var DsGoods,DsBarcode,rs:TZQuery;
       GodsId,Bar,Code,Name,Error_Info:String;
       SumBarcode,SumCode,SumName:Integer;
+      Params:TftParamList;
   begin
     Result := False;
     DsGoods := TZQuery.Create(nil);
@@ -1461,10 +1462,19 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
     rs := Global.GetZQueryFromName('PUB_GOODSINFO');
 
     try
+      Params := TftParamList.Create(nil);
+      Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+      Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+      Params.ParamByName('GODS_ID').asString :='';
       Factor.BeginBatch;
-      Factor.AddBatch(DsGoods,'TGoodsInfo');
-      Factor.AddBatch(DsBarcode,'TPUB_BARCODE');
-      Factor.OpenBatch;
+      try
+        Factor.AddBatch(DsGoods,'TGoodsInfo',Params);
+        Factor.AddBatch(DsBarcode,'TPUB_BARCODE',Params);
+        Factor.OpenBatch;
+      except
+        Factor.CancelBatch;
+        Raise;
+      end;
 
       CdsExcel.First;
       while not CdsExcel.Eof do
@@ -1567,8 +1577,7 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
                   end;
               end;
           end;
-
-
+                   
         Factor.BeginBatch;
         try
           Factor.AddBatch(DsGoods,'TGoodsInfo');
@@ -1576,10 +1585,12 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
           Factor.CommitBatch;
         except
           Factor.CancelBatch;
+          Raise;
         end;
     finally
       DsGoods.Free;
       DsBarcode.Free;
+      Params.Free;
     end;
     Result := True;
   end;

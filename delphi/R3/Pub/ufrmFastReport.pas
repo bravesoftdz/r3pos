@@ -100,11 +100,15 @@ type
     FOnFilterEvent: TFilterEvent;
     FIsFree :Boolean;
     Desgn:boolean;
+    FBeforePrint: TNotifyEvent;
+    FAfterPrint: TNotifyEvent;
     procedure SetfrReport(const Value: TfrReport);
     procedure SetFilterText(const Value: string);
     procedure SetSelectSQL(const Value: string);
     procedure SetIsCanFilter(const Value: Boolean);
     procedure SetOnFilterEvent(const Value: TFilterEvent);
+    procedure SetAfterPrint(const Value: TNotifyEvent);
+    procedure SetBeforePrint(const Value: TNotifyEvent);
     { Private declarations }
   protected
     procedure OpenReport(SQL:string);
@@ -134,6 +138,8 @@ type
 
     property IsCanFilter:Boolean read FIsCanFilter write SetIsCanFilter;
     property OnFilterEvent:TFilterEvent read FOnFilterEvent write SetOnFilterEvent;
+    property BeforePrint:TNotifyEvent read FBeforePrint write SetBeforePrint;
+    property AfterPrint:TNotifyEvent read FAfterPrint write SetAfterPrint;
   end;
 var GlobalIndex:Integer=-1;
     Language:Integer=0;
@@ -195,6 +201,7 @@ var
 begin
   if AfrReport=nil then
      Raise Exception.Create('AfrReport参数没有Create');
+  if Assigned(FBeforePrint) then FBeforePrint(AfrReport);
   try
     FfrReport := AfrReport;
     OpenFile(AfrReport,GlobalIndex);
@@ -224,6 +231,7 @@ begin
               //ConnectBack;
               frReport.PrintPreparedReport(Pages, StrToInt(E1.Text),
                 CollateCB.Checked, TfrPrintPages(CB2.ItemIndex));
+              if Assigned(FAfterPrint) then FAfterPrint(AfrReport);
               //Connect(frReport);
               //RedrawAll(False);
             end;
@@ -370,6 +378,7 @@ begin
     frReport := frReport1;
     if not FileExists(FileName) then
        Raise Exception.Create(FileName+'文件没找到。');
+    if Assigned(FBeforePrint) then FBeforePrint(frReport);
     frReport.LoadFromFile(FileName);
     frReport.Dataset := frTable;
     frReport.Preview := frPreview1;
@@ -397,6 +406,7 @@ begin
               //ConnectBack;
               frReport.PrintPreparedReport(Pages, StrToInt(E1.Text),
                 CollateCB.Checked, TfrPrintPages(CB2.ItemIndex));
+              if Assigned(FAfterPrint) then FAfterPrint(frReport);
               //Connect(frReport);
               //RedrawAll(False);
             end;
@@ -453,8 +463,9 @@ end;
 
 procedure TfrmFastReport.actPrintExecute(Sender: TObject);
 begin
+  if Assigned(FBeforePrint) then FAfterPrint(frReport);
   frPreview1.Print;
-
+  if Assigned(FAfterPrint) then FAfterPrint(frReport);
 end;
 
 procedure TfrmFastReport.SetFilterText(const Value: string);
@@ -656,6 +667,7 @@ procedure TfrmFastReport.Print(AfrReport: TfrReport);
 var
   Pages: String;
 begin
+  if Assigned(FBeforePrint) then FBeforePrint(AfrReport);
   try
     frReport := AfrReport;
     FFilterRecord := nil;
@@ -679,6 +691,7 @@ begin
               //ConnectBack;
               frReport.PrintPreparedReport(Pages, StrToInt(E1.Text),
                 CollateCB.Checked, TfrPrintPages(CB2.ItemIndex));
+              if Assigned(FAfterPrint) then FAfterPrint(AfrReport);
               //Connect(frReport);
               //RedrawAll(False);
             end;
@@ -806,6 +819,16 @@ procedure TfrmFastReport.frReport1UserFunction(const Name: String; p1, p2,
 begin
   inherited;
   if Name='next' then adoTable.Next;
+end;
+
+procedure TfrmFastReport.SetAfterPrint(const Value: TNotifyEvent);
+begin
+  FAfterPrint := Value;
+end;
+
+procedure TfrmFastReport.SetBeforePrint(const Value: TNotifyEvent);
+begin
+  FBeforePrint := Value;
 end;
 
 end.

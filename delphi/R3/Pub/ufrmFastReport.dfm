@@ -1,6 +1,6 @@
 inherited frmFastReport: TfrmFastReport
-  Left = 1
-  Top = 1
+  Left = 423
+  Top = 182
   Width = 958
   Height = 558
   Caption = #25253#34920#25171#21360
@@ -13,7 +13,7 @@ inherited frmFastReport: TfrmFastReport
   object CoolBar1: TCoolBar [0]
     Left = 0
     Top = 20
-    Width = 942
+    Width = 950
     Height = 39
     AutoSize = True
     Bands = <
@@ -21,13 +21,13 @@ inherited frmFastReport: TfrmFastReport
         Control = ToolBar2
         ImageIndex = -1
         MinHeight = 35
-        Width = 938
+        Width = 946
       end>
     Images = dmIcon.ImgLst16
     object ToolBar2: TToolBar
       Left = 9
       Top = 0
-      Width = 925
+      Width = 933
       Height = 35
       ButtonHeight = 35
       ButtonWidth = 43
@@ -103,7 +103,7 @@ inherited frmFastReport: TfrmFastReport
         Style = tbsDropDown
       end
       object ToolButton9: TToolButton
-        Left = 419
+        Left = 415
         Top = 0
         Width = 8
         Caption = 'ToolButton9'
@@ -111,7 +111,7 @@ inherited frmFastReport: TfrmFastReport
         Style = tbsDivider
       end
       object ToolButton12: TToolButton
-        Left = 427
+        Left = 423
         Top = 0
         Action = actExit
       end
@@ -120,8 +120,8 @@ inherited frmFastReport: TfrmFastReport
   object PageControl1: TPageControl [1]
     Left = 0
     Top = 59
-    Width = 942
-    Height = 461
+    Width = 950
+    Height = 472
     ActivePage = tabPrev
     Align = alClient
     MultiLine = True
@@ -133,8 +133,8 @@ inherited frmFastReport: TfrmFastReport
       object frPreview1: TfrPreview
         Left = 0
         Top = 0
-        Width = 934
-        Height = 451
+        Width = 942
+        Height = 462
         Align = alClient
         BevelOuter = bvLowered
         TabOrder = 0
@@ -145,7 +145,7 @@ inherited frmFastReport: TfrmFastReport
   object ToolBar1: TToolBar [2]
     Left = 0
     Top = 0
-    Width = 942
+    Width = 950
     Height = 20
     ButtonHeight = 20
     ButtonWidth = 55

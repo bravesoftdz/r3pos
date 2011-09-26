@@ -203,9 +203,9 @@ begin
 
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
+       DBGridEh1.Columns[10].Free;
        DBGridEh1.Columns[9].Free;
        DBGridEh1.Columns[8].Free;
-       DBGridEh1.Columns[7].Free;
      end;
 
   if ShopGlobal.GetProdFlag = 'E' then

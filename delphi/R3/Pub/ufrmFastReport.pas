@@ -463,7 +463,7 @@ end;
 
 procedure TfrmFastReport.actPrintExecute(Sender: TObject);
 begin
-  if Assigned(FBeforePrint) then FAfterPrint(frReport);
+  if Assigned(FBeforePrint) then FBeforePrint(frReport);
   frPreview1.Print;
   if Assigned(FAfterPrint) then FAfterPrint(frReport);
 end;

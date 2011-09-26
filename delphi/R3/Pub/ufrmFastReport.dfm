@@ -1,8 +1,8 @@
 inherited frmFastReport: TfrmFastReport
-  Left = 423
-  Top = 182
-  Width = 958
-  Height = 558
+  Left = 318
+  Top = 178
+  Width = 966
+  Height = 569
   Caption = #25253#34920#25171#21360
   Menu = nil
   OldCreateOrder = True
@@ -103,7 +103,7 @@ inherited frmFastReport: TfrmFastReport
         Style = tbsDropDown
       end
       object ToolButton9: TToolButton
-        Left = 415
+        Left = 419
         Top = 0
         Width = 8
         Caption = 'ToolButton9'
@@ -111,7 +111,7 @@ inherited frmFastReport: TfrmFastReport
         Style = tbsDivider
       end
       object ToolButton12: TToolButton
-        Left = 423
+        Left = 427
         Top = 0
         Action = actExit
       end

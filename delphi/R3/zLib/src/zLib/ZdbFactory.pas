@@ -192,8 +192,8 @@ begin
   try
 //  Enter;
     dbResolver.CommitTrans;
-    Leave;
   finally
+    Leave;
   end;
 end;
 
@@ -401,8 +401,8 @@ begin
 //  Enter;
   try
     result := dbResolver.CommitBatch;
-    Leave;
   finally
+    Leave;
   end;
 end;
 
@@ -411,8 +411,8 @@ begin
   try
 //  Enter;
     result := dbResolver.OpenBatch;
-    Leave;
   finally
+    Leave;
   end;
 end;
 

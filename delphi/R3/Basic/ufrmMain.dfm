@@ -1,5 +1,5 @@
 inherited frmMain: TfrmMain
-  Left = 433
+  Left = 437
   Caption = 'frmMain'
   FormStyle = fsMDIForm
   OldCreateOrder = True
@@ -12,7 +12,7 @@ inherited frmMain: TfrmMain
   TextHeight = 12
   object stbBottom: TStatusBar [0]
     Left = 0
-    Top = 357
+    Top = 356
     Width = 541
     Height = 19
     Panels = <>

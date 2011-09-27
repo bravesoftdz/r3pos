@@ -5,7 +5,7 @@ uses Forms,Windows;
 //信息提示箱
 function ShowMsgBox(lpText:Pchar;lpCaption:Pchar;bType:integer):integer;
 implementation
-uses ufrmLogo,ufrmPrgBar;
+uses ufrmLogo,ufrmDesk,ufrmPrgBar;
 function ShowMsgBox(lpText:Pchar;lpCaption:Pchar;bType:integer):integer;
 var
   Form:TForm;
@@ -13,6 +13,7 @@ var
   LogoVisible:boolean;
   PrgBarVisible:boolean;
 begin
+  frmDesk.Waited := false;
   if (frmLogo<>nil) and frmLogo.Visible then
      begin
        frmLogo.Close;

@@ -73,6 +73,9 @@ type
     //从数据集中的Field.DisplayLabel设置Grid的Column.Title.Caption值
     //读取表字典库  TableName ;可以多个表，多表用 ，号分隔
 
+    //查找列名
+    function FindDBColumn(Grid:TDBGridEh;FieldName:string):TColumnEh;
+
     procedure SetDBGridColumn(AGrid:TDbGridEh;Tables:string);virtual;
     //锁标记，
     property Lock:Boolean read FLock write SetLock;
@@ -713,6 +716,22 @@ const
 var
   kl,iImeCount:integer;
   hImeList: array[1..nHKL_LIST] of HKL;
+function TfrmBasic.FindDBColumn(Grid: TDBGridEh;
+  FieldName: string): TColumnEh;
+var
+  i:integer;
+begin
+  result := nil;
+  for i:=Grid.Columns.Count -1 downto 0 do
+    begin
+      if lowercase(Grid.Columns[i].FieldName)=lowercase(FieldName) then
+         begin
+           result := Grid.Columns[I];
+           Exit;
+         end;
+    end;
+end;
+
 initialization
   FormBgk := false;
   iImeCount := GetKeyboardLayoutList(nHKL_LIST, hImeList);

@@ -61,7 +61,10 @@ type
   private
     { Private declarations }
     oid:string;
+    PrintTimes:Integer;
     function  CheckCanExport: boolean; override;
+    procedure PrintBefore(Sender:TObject);
+    procedure PrintAfter(Sender:TObject);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -74,7 +77,7 @@ type
 
 implementation
 uses ufrmSalRetuOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,ufrmRecvOrder,
-  uShopGlobal,uDsUtil;
+  uShopGlobal,uDsUtil,uMsgBox;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -403,7 +406,7 @@ begin
    'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
    'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
    'select jb.*,b.CLIENT_NAME,b.CLIENT_CODE,b.SETTLE_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE2 as MOVE_TELE,b.INTEGRAL as ACCU_INTEGRAL,b.FAXES as CLIENT_FAXES from ('+
-   'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
+   'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,A.PRINT_TIMES,'+
    'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,-A.SALE_AMT as SALE_AMT,-A.SALE_MNY as SALE_MNY,A.CASH_MNY,A.PAY_ZERO,-A.PAY_DIBS as PAY_DIBS,-A.PAY_A as PAY_A,-A.PAY_B as PAY_B,-A.PAY_C as PAY_C,-A.PAY_D as PAY_D,'+
    '-A.PAY_E as PAY_E,-A.PAY_F as PAY_F,-A.PAY_G as PAY_G,-A.PAY_H as PAY_H,-A.PAY_I as PAY_I,-A.PAY_J as PAY_J,-A.INTEGRAL as INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
    '-B.AMOUNT as AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,-B.CALC_MONEY as CALC_MONEY,-A.BARTER_INTEGRAL as BARTER_INTEGRAL,'+
@@ -455,11 +458,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalRetuOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;             
              PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SALES_ID').AsString),frfSalRetuOrder);
            end;
       finally
@@ -480,11 +487,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalRetuOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;             
              ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SALES_ID').AsString),frfSalRetuOrder,nil,true);
            end;
       finally
@@ -609,11 +620,50 @@ begin
   inherited;
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+  if ParName='打印人' then ParValue := ShopGlobal.UserName;
 end;
 
 function TfrmSalRetuOrderList.CheckCanExport: boolean;
 begin
   result:=ShopGlobal.GetChkRight('12500001',9);
+end;
+
+procedure TfrmSalRetuOrderList.PrintAfter(Sender: TObject);
+var Sql_Str:String;
+begin
+  if CurOrder<>nil then
+     Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_ID='+QuotedStr(CurOrder.oid)
+  else
+     Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsList.FieldbyName('SALES_ID').AsString);
+  Factor.ExecSQL(Sql_Str);
+end;
+
+procedure TfrmSalRetuOrderList.PrintBefore(Sender: TObject);
+var rs:TZQuery;
+    Sql_Str,Info:String;
+    i:Integer;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    if CurOrder<>nil then
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_ID='+QuotedStr(CurOrder.oid)
+    else
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsList.FieldbyName('SALES_ID').AsString);
+    rs.Close;
+    rs.SQL.Text := Sql_Str;
+    Factor.Open(rs);
+    PrintTimes := rs.FieldByName('PRINT_TIMES').AsInteger;
+    if PrintTimes > 0  then
+       begin
+         Info := '本单据已经打印"'+IntToStr(PrintTimes)+'"次,是否再次打印!';
+         i := ShowMsgBox(Pchar(Info),'友情提示...',MB_YESNO+MB_ICONQUESTION);
+         if i = 7 then
+          Raise Exception.Create('');
+
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

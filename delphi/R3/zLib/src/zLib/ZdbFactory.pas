@@ -11,6 +11,7 @@ type
   TdbFactory = class(TComponent)
   private
     FThreadLock:TRTLCriticalSection;
+    LockNum:integer;
     dbResolver:TCustomdbResolver;
     FConnMode: integer;
     FConnStr: string;
@@ -376,7 +377,6 @@ end;
 
 function TdbFactory.BeginBatch: Boolean;
 begin
-  if dbResolver=nil then Connect;
   Enter;
   try
     result := dbResolver.BeginBatch;
@@ -465,7 +465,9 @@ end;
 
 procedure TdbFactory.Enter;
 begin
+  if LockNum>0 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
   EnterCriticalSection(FThreadLock);
+  InterlockedIncrement(LockNum);
   if not OkKey and (Application.MainForm<>nil) then
      begin
        Application.MainForm.Caption := '欢迎使用"zLib开发平台演示系统"，请支持我们正版，缴活热线：13860431130张先生';
@@ -475,7 +477,9 @@ end;
 
 procedure TdbFactory.Leave;
 begin
-  LeaveCriticalSection(FThreadLock);
+  if LockNum>0 then LeaveCriticalSection(FThreadLock);
+  InterlockedDecrement(LockNum);
+  if LockNum<>0 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
 end;
 
 procedure TdbFactory.GqqLogin(UserId, UserName: string);

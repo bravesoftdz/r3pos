@@ -53,10 +53,13 @@ type
     { Private declarations }
     oid:string;
     FCodeId: string;
+    PrintTimes:Integer;
     procedure SetCodeId(const Value: string);
     function  CheckCanExport: boolean; override;
     function GetfrfReport:TfrReport;
     function FindColumn(FieldName:string):TColumnEh;
+    procedure PrintBefore(Sender:TObject);
+    procedure PrintAfter(Sender:TObject);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -70,7 +73,7 @@ type
 
 implementation
 uses ufrmChangeOrder,ufrmFastReport,uFnUtil,uGlobal,uDsUtil,uShopUtil,uXDictFactory,
-  uShopGlobal;
+  uShopGlobal, uMsgBox;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -465,11 +468,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),GetfrfReport);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('CHANGE_ID').AsString),GetfrfReport);
            end;
       finally
@@ -497,11 +504,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),GetfrfReport,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;             
              ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('CHANGE_ID').AsString),GetfrfReport,nil,true);
            end;
       finally
@@ -604,7 +615,7 @@ begin
   inherited;
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
-
+  if ParName='打印人' then ParValue := ShopGlobal.UserName;
 end;
 
 procedure TfrmChangeOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -671,6 +682,44 @@ begin
           Break;
         end;
     end;
+end;
+
+procedure TfrmChangeOrderList.PrintAfter(Sender: TObject);
+var Sql_Str:String;
+begin
+  if CurOrder<>nil then
+     Sql_Str := 'update STO_CHANGEORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CHANGE_ID='+QuotedStr(CurOrder.oid)
+  else
+     Sql_Str := 'update STO_CHANGEORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and CHANGE_ID='+QuotedStr(cdsList.FieldbyName('CHANGE_ID').AsString);
+  Factor.ExecSQL(Sql_Str);
+end;
+
+procedure TfrmChangeOrderList.PrintBefore(Sender: TObject);
+var rs:TZQuery;
+    Sql_Str,Info:String;
+    i:Integer;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    if CurOrder<>nil then
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from STO_CHANGEORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CHANGE_ID='+QuotedStr(CurOrder.oid)
+    else
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from STO_CHANGEORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and CHANGE_ID='+QuotedStr(cdsList.FieldbyName('CHANGE_ID').AsString);
+    rs.Close;
+    rs.SQL.Text := Sql_Str;
+    Factor.Open(rs);
+    PrintTimes := rs.FieldByName('PRINT_TIMES').AsInteger;
+    if PrintTimes > 0  then
+       begin
+         Info := '本单据已经打印"'+IntToStr(PrintTimes)+'"次,是否再次打印!';
+         i := ShowMsgBox(Pchar(Info),'友情提示...',MB_YESNO+MB_ICONQUESTION);
+         if i = 7 then
+          Raise Exception.Create('');
+
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

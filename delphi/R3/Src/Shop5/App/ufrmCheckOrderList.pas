@@ -56,9 +56,12 @@ type
       p3: Variant; var Val: Variant);
   private
     oid: string;
+    PrintTimes:Integer;
     FDoCheckPrint: TOnPrintEvent;
     function  CheckCanExport: boolean; override;
     procedure SetDoCheckPrint(const Value: TOnPrintEvent);
+    procedure PrintBefore(Sender:TObject);
+    procedure PrintAfter(Sender:TObject);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -74,7 +77,7 @@ implementation
 
 uses
   ufrmCheckOrder,uGlobal,uShopUtil,uXDictFactory, uShopGlobal,uDsUtil,ufrmFastReport,uFnUtil,
-  ufrmCheckTask, ufrmCheckTablePrint,objCommon;
+  ufrmCheckTask, ufrmCheckTablePrint,objCommon, uMsgBox;
 
  {$R *.dfm}
 
@@ -377,11 +380,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(inttostr(Global.TENANT_ID),TfrmCheckOrder(CurOrder).edtSHOP_ID.AsString,CurOrder.gid),frfCheckOrder);
            end
         else
            begin
-             if cdsList.IsEmpty then Exit;                     
+             if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString,cdsList.FieldbyName('PRINT_DATE').AsString),frfCheckOrder);
            end;
       finally
@@ -409,11 +416,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              ShowReport(PrintSQL(inttostr(Global.TENANT_ID),TfrmCheckOrder(CurOrder).edtSHOP_ID.AsString,CurOrder.gid),frfCheckOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;             
              ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString,cdsList.FieldbyName('PRINT_DATE').AsString),frfCheckOrder,nil,true);
            end;
       finally
@@ -453,6 +464,7 @@ begin
   inherited;
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+  if ParName='打印人' then ParValue := ShopGlobal.UserName;
 end;
 
 procedure TfrmCheckOrderList.frfCheckOrderUserFunction(const Name: String;
@@ -480,7 +492,7 @@ begin
      'select jg.*,f.SIZE_NAME as PROPERTY_01_TEXT from ( '+
      'select je.*,d.USER_NAME as CHK_USER_TEXT from ( '+
      'select jd.*,c.USER_NAME as CREA_USER_TEXT from ( '+
-     'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,'+
+     'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,jc.PRINT_TIMES,'+
      'jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,B.UNIT_ID,'+
      'round(jc.RCK_AMOUNT*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end,3) as RCK_AMOUNT,'+
      'jc.RCK_AMOUNT as RCK_CALC_AMOUNT,'+
@@ -489,7 +501,7 @@ begin
      ''''' as PROFIT_AMOUNT,'+
      'b.GODS_NAME,b.GODS_CODE,b.BARCODE,'+
      'b.NEW_OUTPRICE*case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as NEW_OUTPRICE from ( '+
-     'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,'+
+     'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,A.PRINT_TIMES,'+
      'A.CHK_USER,A.CHK_DATE,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,B.RCK_AMOUNT,B.CHK_AMOUNT '+
      ' from STO_PRINTORDER A,STO_PRINTDATA B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID '+
      ' and A.PRINT_DATE=B.PRINT_DATE and A.TENANT_ID='+tenantid+' and A.SHOP_ID='+QuotedStr(shopid)+' and A.PRINT_DATE='+printdate+' and A.COMM not in (''02'',''12'') ) jc '+
@@ -510,13 +522,13 @@ begin
      'select jg.*,f.SIZE_NAME as PROPERTY_01_TEXT from ( '+
      'select je.*,d.USER_NAME as CHK_USER_TEXT from ( '+
      'select jd.*,c.USER_NAME as CREA_USER_TEXT from ( '+
-     'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,B.UNIT_ID,'+
+     'select jc.TENANT_ID,jc.SHOP_ID,jc.PRINT_DATE,jc.GODS_ID,jc.PROPERTY_01,jc.PROPERTY_02,jc.BATCH_NO,jc.LOCUS_NO,jc.BOM_ID,jc.CREA_USER,jc.CREA_DATE,jc.CHK_USER,jc.CHK_DATE,jc.PRINT_TIMES,B.UNIT_ID,'+
      ' round(isnull(jc.RCK_AMOUNT,0)*1.00/case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end,3) as RCK_AMOUNT,'+
      ' round((isnull(jc.RCK_AMOUNT,0)-isnull(jc.AMOUNT,0))*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) as AMOUNT, '+
      'case when isnull(jc.AMOUNT,0)>0 then round(isnull(jc.AMOUNT,0)*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) else null end as LOSS_AMOUNT, '+
      'case when isnull(jc.AMOUNT,0)<0 then round(- isnull(jc.AMOUNT,0)*1.00/(case when B.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when B.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end),3) else null end as PROFIT_AMOUNT, '+
      'b.GODS_NAME,b.GODS_CODE,b.BARCODE from ( '+
-     'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,A.CHK_USER,A.CHK_DATE,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,'+
+     'select A.TENANT_ID,A.SHOP_ID,A.PRINT_DATE,A.CHECK_STATUS,A.CHECK_TYPE,A.CREA_USER,A.CREA_DATE,A.CHK_USER,A.CHK_DATE,A.PRINT_TIMES,B.GODS_ID,B.BATCH_NO,B.BOM_ID,B.LOCUS_NO,B.PROPERTY_01,B.PROPERTY_02,'+
      'B.RCK_AMOUNT,B.CHK_AMOUNT,isnull(E.AMOUNT,0) as AMOUNT  from STO_PRINTORDER A inner join STO_PRINTDATA B on A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.PRINT_DATE=B.PRINT_DATE left join '+
      '(select C.TENANT_ID,C.SHOP_ID,C.CHANGE_ID,C.GLIDE_NO,C.CHANGE_DATE,C.CHANGE_TYPE,C.CHANGE_CODE,C.CHANGE_AMT,C.CHANGE_MNY,C.FROM_ID,D.GODS_ID,D.PROPERTY_01,D.PROPERTY_02,D.BATCH_NO,D.AMOUNT '+
      'from STO_CHANGEORDER C,STO_CHANGEDATA D where C.TENANT_ID=D.TENANT_ID and C.SHOP_ID=D.SHOP_ID and C.CHANGE_ID=D.CHANGE_ID and C.TENANT_ID='+tenantid+' and C.SHOP_ID='+QuotedStr(shopid)+' and C.FROM_ID='+printdate+' and C.CHANGE_CODE=''1'' ) E on '+
@@ -531,6 +543,45 @@ begin
      ') jj  left join CA_SHOP_INFO i on jj.TENANT_ID=i.TENANT_ID AND JJ.SHOP_ID=I.SHOP_ID';
   end;
   Result := ParseSQL(Factor.iDbType,Result);
+end;
+
+procedure TfrmCheckOrderList.PrintAfter(Sender: TObject);
+var Sql_Str:String;
+begin
+  if CurOrder<>nil then
+     Sql_Str := 'update STO_PRINTORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(TfrmCheckOrder(CurOrder).edtSHOP_ID.AsString)+' and PRINT_DATE='+CurOrder.gid
+  else
+     Sql_Str := 'update STO_PRINTORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SHOP_ID='+QuotedStr(cdsList.FieldbyName('SHOP_ID').AsString)+' and PRINT_DATE='+cdsList.FieldbyName('PRINT_DATE').AsString;
+  Factor.ExecSQL(Sql_Str);
+end;
+
+procedure TfrmCheckOrderList.PrintBefore(Sender: TObject);
+var rs:TZQuery;
+    Sql_Str,Info:String;
+    i:Integer;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    if CurOrder<>nil then
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from STO_PRINTORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(TfrmCheckOrder(CurOrder).edtSHOP_ID.AsString)+' and PRINT_DATE='+CurOrder.gid
+    else
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from STO_PRINTORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SHOP_ID='+QuotedStr(cdsList.FieldbyName('SHOP_ID').AsString)+' and PRINT_DATE='+cdsList.FieldbyName('PRINT_DATE').AsString;
+    rs.Close;
+    rs.SQL.Text := Sql_Str;
+    Factor.Open(rs);
+    PrintTimes := rs.FieldByName('PRINT_TIMES').AsInteger;
+    if PrintTimes > 0  then
+       begin
+         Info := '本单据已经打印"'+IntToStr(PrintTimes)+'"次,是否再次打印!';
+         i := ShowMsgBox(Pchar(Info),'友情提示...',MB_YESNO+MB_ICONQUESTION);
+         if i = 7 then
+          Raise Exception.Create('');
+
+       end;
+  finally
+    rs.Free;
+  end;
+  
 end;
 
 end.

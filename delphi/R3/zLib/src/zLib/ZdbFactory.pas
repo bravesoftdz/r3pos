@@ -192,8 +192,8 @@ begin
   try
 //  Enter;
     dbResolver.CommitTrans;
-  finally
     Leave;
+  finally
   end;
 end;
 
@@ -401,8 +401,8 @@ begin
 //  Enter;
   try
     result := dbResolver.CommitBatch;
-  finally
     Leave;
+  finally
   end;
 end;
 
@@ -411,8 +411,8 @@ begin
   try
 //  Enter;
     result := dbResolver.OpenBatch;
-  finally
     Leave;
+  finally
   end;
 end;
 
@@ -466,9 +466,11 @@ end;
 
 procedure TdbFactory.Enter;
 begin
-  if LockNum>0 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
-  EnterCriticalSection(FThreadLock);
-  InterlockedIncrement(LockNum);
+  if LockNum=0 then
+     begin
+       EnterCriticalSection(FThreadLock);
+       InterlockedIncrement(LockNum);
+     end;
   if not OkKey and (Application.MainForm<>nil) then
      begin
        Application.MainForm.Caption := '欢迎使用"zLib开发平台演示系统"，请支持我们正版，缴活热线：13860431130张先生';

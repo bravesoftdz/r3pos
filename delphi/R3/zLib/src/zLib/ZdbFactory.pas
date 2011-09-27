@@ -477,8 +477,11 @@ end;
 
 procedure TdbFactory.Leave;
 begin
-  if LockNum>0 then LeaveCriticalSection(FThreadLock);
-  InterlockedDecrement(LockNum);
+  if LockNum>0 then
+     begin
+       LeaveCriticalSection(FThreadLock);
+       InterlockedDecrement(LockNum);
+     end;
   if LockNum<>0 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
 end;
 

@@ -7,22 +7,22 @@ inherited frmChangeOrderList: TfrmChangeOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 816
-    Height = 497
+    Width = 824
+    Height = 508
     inherited RzPanel2: TRzPanel
-      Width = 806
-      Height = 487
+      Width = 814
+      Height = 498
       inherited RzPage: TRzPageControl
-        Width = 800
-        Height = 481
+        Width = 808
+        Height = 492
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #35843#25972#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 798
-            Height = 454
+            Width = 806
+            Height = 465
             inherited RzPanel1: TRzPanel
-              Width = 788
+              Width = 796
               Height = 92
               object RzLabel2: TRzLabel
                 Left = 33
@@ -184,7 +184,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 AutoFitColWidth = True
                 ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbNew, zbClear]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -233,8 +233,8 @@ inherited frmChangeOrderList: TfrmChangeOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 97
-              Width = 788
-              Height = 352
+              Width = 796
+              Height = 363
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -326,36 +326,36 @@ inherited frmChangeOrderList: TfrmChangeOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 816
+    Width = 824
     inherited Image1: TImage
-      Left = 585
-      Width = 211
+      Left = 581
+      Width = 223
     end
     inherited Image3: TImage
-      Left = 585
-      Width = 211
+      Left = 581
+      Width = 223
     end
     inherited Image14: TImage
-      Left = 796
+      Left = 804
     end
     inherited rzPanel5: TPanel
-      Left = 585
+      Left = 581
     end
     inherited CoolBar1: TCoolBar
-      Width = 565
+      Width = 561
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 565
+          MinHeight = 561
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 565
+        Width = 561
         object ToolButton11: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actExit
         end

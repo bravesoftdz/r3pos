@@ -60,7 +60,10 @@ type
       var ParValue: Variant);
   private
     oid:string;
+    PrintTimes:Integer;
     function CheckCanExport: boolean; override;
+    procedure PrintBefore(Sender:TObject);
+    procedure PrintAfter(Sender:TObject);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -74,7 +77,7 @@ type
 
 implementation
 uses ufrmStockOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
-  uShopGlobal, uframeOrderForm;
+  uShopGlobal, uframeOrderForm, ufrmBasic, uMsgBox;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -424,7 +427,7 @@ begin
    'select jc.*,c.USER_NAME as GUIDE_USER_TEXT,m.USER_NAME as LOCUS_USER_TEXT from ('+
    'select jb.*,b.CLIENT_NAME,b.LINKMAN,b.TELEPHONE2 as MOVE_TELE,b.SETTLE_CODE,b.POSTALCODE,b.ADDRESS,b.FAXES CLIENT_FAXES from ('+
    'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
-   'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.STOCK_AMT,A.STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,'+
+   'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.STOCK_AMT,A.STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.PRINT_TIMES,'+
    'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.LOCUS_NO,B.CALC_MONEY,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from STK_STOCKORDER A,STK_STOCKDATA B '+
    'where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' ) jb '+
    'left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
@@ -439,7 +442,7 @@ begin
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') l on jl.SETTLE_CODE=l.CODE_ID) jm '+
    'left outer join CA_DEPT_INFO m on jm.TENANT_ID=m.TENANT_ID and jm.DEPT_ID=m.DEPT_ID ) jn '+
-   'left outer join STK_INDENTORDER n on jn.TENANT_ID=n.TENANT_ID and jn.FROM_ID=n.INDE_ID) j order by SEQNO';
+   'left outer join STK_INDENTORDER n on jn.TENANT_ID=n.TENANT_ID and jn.FROM_ID=n.INDE_ID ) j order by SEQNO';
 end;
 
 procedure TfrmStockOrderList.actPrintExecute(Sender: TObject);
@@ -453,11 +456,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;             
              PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('STOCK_ID').AsString),frfStockOrder);
            end;
       finally
@@ -477,11 +484,15 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('STOCK_ID').AsString),frfStockOrder,nil,true);
            end;
       finally
@@ -609,6 +620,7 @@ begin
   inherited;
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+  if ParName='打印人' then ParValue := ShopGlobal.UserName;
 end;
 
 function TfrmStockOrderList.CheckCanExport: boolean;
@@ -620,6 +632,45 @@ function TfrmStockOrderList.DoIndeOrderWriteToStock(AObj: TRecord_; vData: OleVa
 begin
   SendMessage(self.Handle,WM_EXEC_ORDER,0,2);
   Result:=TfrmStockOrder(CurOrder).IndeOrderWriteToStock(AObj, vData);
+end;
+
+procedure TfrmStockOrderList.PrintAfter(Sender: TObject);
+var Sql_Str:String;
+begin
+  if CurOrder<>nil then
+     Sql_Str := 'update STK_STOCKORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and STOCK_ID='+QuotedStr(CurOrder.oid)
+  else
+     Sql_Str := 'update STK_STOCKORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and STOCK_ID='+QuotedStr(cdsList.FieldbyName('STOCK_ID').AsString);
+  Factor.ExecSQL(Sql_Str);
+
+end;
+
+procedure TfrmStockOrderList.PrintBefore(Sender: TObject);
+var rs:TZQuery;
+    Sql_Str,Info:String;
+    i:Integer;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    if CurOrder<>nil then
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from STK_STOCKORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and STOCK_ID='+QuotedStr(CurOrder.oid)
+    else
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from STK_STOCKORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and STOCK_ID='+QuotedStr(cdsList.FieldbyName('STOCK_ID').AsString);
+    rs.Close;
+    rs.SQL.Text := Sql_Str;
+    Factor.Open(rs);
+    PrintTimes := rs.FieldByName('PRINT_TIMES').AsInteger;
+    if PrintTimes > 0  then
+       begin
+         Info := '本单据已经打印"'+IntToStr(PrintTimes)+'"次,是否再次打印!';
+         i := ShowMsgBox(Pchar(Info),'友情提示...',MB_YESNO+MB_ICONQUESTION);
+         if i = 7 then
+          Raise Exception.Create('');
+
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

@@ -227,6 +227,7 @@ begin
   InitializeCriticalSection(FThreadLock);
   dbResolver := nil;
   OkKey := true;
+  LockNum := 0;
 //  LoadKey;
 end;
 

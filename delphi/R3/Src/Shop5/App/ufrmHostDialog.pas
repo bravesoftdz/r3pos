@@ -25,6 +25,7 @@ type
     { Public declarations }
     procedure ReadHost;
     class function HostDialog(Owner:TForm):TModalResult;
+    class function SimpleDialog(Owner:TForm):TModalResult;
   end;
 
 implementation
@@ -111,6 +112,20 @@ begin
        ModalResult := mrRetry;
      end;
 
+end;
+
+class function TfrmHostDialog.SimpleDialog(Owner: TForm): TModalResult;
+begin
+  with TfrmHostDialog.Create(Owner) do
+    begin
+      try
+        ReadHost;
+        RzBitBtn1.Visible := false;
+        result := (ShowModal);
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmMain, ExtCtrls, Menus, ActnList, ComCtrls, uMMUtil, uMMServer ,ShellApi,
   ZBase, RzTray, StdCtrls, Mask, RzEdit, RzBmpBtn, RzLabel, jpeg, RzPanel,
   ImgList, RzBckgnd, RzForms, ToolWin, Buttons, RzButton, ufrmBasic, ZdbFactory,
-  ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, ufrmMMBrowser,ummFactory;
+  ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, ufrmMMBrowser,ummFactory,
+  ufrmHintMsg;
 
 const
   MSC_POPUP=WM_USER+1;                                                                           
@@ -143,13 +144,11 @@ type
     N2: TMenuItem;
     N3: TMenuItem;
     MenuSpilt: TRzBmpButton;
-    CA_MODULE: TZQuery;
     sysHelp: TRzBmpButton;
     sysMinimized: TRzBmpButton;
     sysMaximized: TRzBmpButton;
     sysClose: TRzBmpButton;
     bkg_02: TImage;
-    RzFormShape1: TRzFormShape;
     N4: TMenuItem;
     N5: TMenuItem;
     copyRight: TRzLabel;
@@ -170,6 +169,10 @@ type
     rzPage0: TRzBmpButton;
     rzPage5: TRzBmpButton;
     Image1: TImage;
+    actfrmSimpleSaleDayReport: TAction;
+    RzFormShape1: TRzFormShape;
+    RzLabel1: TRzLabel;
+    CA_MODULE: TZQuery;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -287,6 +290,7 @@ type
     procedure rzPage6Click(Sender: TObject);
     procedure rzPage7Click(Sender: TObject);
     procedure rzPage5Click(Sender: TObject);
+    procedure actfrmSimpleSaleDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -303,13 +307,13 @@ type
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
     procedure wm_lcControl(var Message: TMessage); message WM_LCCONTROL;
     procedure wm_mmcError(var Message: TMessage); message WM_MMC_ERROR;
+    procedure wm_message(var Message: TMessage); message MSC_MESSAGE;
 
     //导航工具栏
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
     procedure AddFrom(form:TForm);
-    procedure RemoveFrom(form:TForm);
     function  SortToolButton:boolean;
 
     //菜单管理
@@ -344,7 +348,7 @@ var
 
 implementation
 uses
-  ufrmMMLogin, ufrmMMList,ufrmHintMsg,uMsgBox,
+  ufrmMMLogin, ufrmMMList,uMsgBox,
   uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
@@ -439,7 +443,7 @@ var
 begin
   for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
   FList.Free;
-  freeandnil(frmLogo);
+  freeandnil(frmPrgBar);
   inherited;
 
 end;
@@ -487,7 +491,7 @@ begin
      end;
   sysMinimized.Visible := (biMinimize in BorderIcons);
   FList := TList.Create;
-  frmLogo := TfrmLogo.create(self);
+  frmPrgBar := TfrmPrgBar.create(self);
   ConnectToSQLite;
 
   Screen.OnActiveFormChange := DoActiveChange;
@@ -815,22 +819,6 @@ begin
   SortToolButton;
 end;
 
-procedure TfrmMMMain.RemoveFrom(form: TForm);
-var
-  i:integer;
-begin
-  for i:=0 to FList.Count -1 do
-    begin
-      if integer(FList[i])=integer(pointer(form)) then
-         begin
-           TObject(FList[i]).Free;
-           FList.Delete(i);
-           break;
-         end;
-    end;
-  SortToolButton;
-end;
-
 function TfrmMMMain.SortToolButton: boolean;
 var
   i:Integer;
@@ -906,6 +894,14 @@ begin
            TrzBmpButton(FList[i]).Tag := 0;
            TObject(FList[i]).Free;
            FList.Delete(i);
+           if Sender=frmXsmIEBrowser then
+              begin
+                TForm(Sender).Left := -9000;
+              end;
+           if Sender=frmRimIEBrowser then
+              begin
+                TForm(Sender).Left := -9000;
+              end;
            break;
          end;
     end;
@@ -1664,11 +1660,24 @@ begin
   try
     if CaFactory.Audited then
        begin
-         if mmGlobal.chat_addr='' then Raise Exception.Create('当前用户没有开通聊天服务功能'); 
-         mmGlobal.ConnectToMsc;
-         RzTrayIcon1.Animate := false;
-         RzTrayIcon1.IconIndex := 1;
-       end;
+         frmLogo.Show;
+         try
+           if not mmGlobal.Logined then
+              begin
+                frmLogo.ShowTitle := '正在登录新商盟...';
+                if not mmGlobal.xsmLogin then Exit;
+              end;
+           if mmGlobal.chat_addr='' then Raise Exception.Create('当前用户没有开通聊天服务功能');
+           frmLogo.ShowTitle := '正在登录聊天服务器...';
+           mmGlobal.ConnectToMsc;
+           RzTrayIcon1.Animate := false;
+           RzTrayIcon1.IconIndex := 1;
+         finally
+           frmLogo.Close;
+         end;
+       end
+    else
+       Raise Exception.Create('脱机登录状态不能使用即时通讯功能。');
   except
     on E:Exception do
        ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -2271,11 +2280,13 @@ begin
   FMenu := TList.Create;
   FormStyle := fsMDIForm;
   frmMMToolBox := TfrmMMToolBox.Create(self);
-  frmXsmIEBrowser := nil; //TfrmMMBrowser.Create(self);
-  frmRimIEBrowser := nil; //TfrmMMBrowser.Create(self);
+  frmXsmIEBrowser := nil;
+  frmRimIEBrowser := nil; 
   pageLine.Top := bkg_top.Height  - 1;
   pageLine.Left := toolDesk.Left;
-  pageLine.Width := bkg_top.Width - toolDesk.Left + 10;
+  pageLine.Width := bkg_top.Width - toolDesk.Left + 16;
+  r3offline.Left := bkg_bottom.Width - r3offline.width - 10;
+  UsersStatus.Left := r3offline.Left - usersStatus.Width - 5;
 end;
 
 destructor TfrmMMMain.Destroy;
@@ -2341,14 +2352,23 @@ begin
   if not mmGlobal.Logined then
      begin
        if ShowMsgBox('连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-       if not mmGlobal.xsmLogin then Exit;
+       frmLogo.Show;
+       try
+         frmLogo.ShowTitle := '正在进行身份认证读取令牌';
+         if not mmGlobal.xsmLogin then Exit;
+       finally
+         frmLogo.Close;
+       end;
      end;
 
   frmXsmIEBrowser.Caption := CA_MODULE.FieldbyName('MODU_NAME').AsString;
   AddFrom(frmXsmIEBrowser);
   frmXsmIEBrowser.WindowState := wsMaximized;
   frmXsmIEBrowser.BringToFront;
-  if not frmXsmIEBrowser.XsmLogin(true) then Exit;
+  if not frmXsmIEBrowser.xsmLogined then
+     begin
+       if not frmXsmIEBrowser.XsmLogin(true) then Exit;
+     end;
   sl := TStringList.Create;
   frmLogo.Show;
   try
@@ -2407,7 +2427,13 @@ begin
         if not mmGlobal.Logined then
            begin
              if ShowMsgBox('连接已经断开了，是否重连新商盟服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-             if not mmGlobal.xsmLogin then Exit;
+             frmLogo.Show;
+             try
+               frmLogo.ShowTitle := '正在进行身份认证读取令牌';
+               if not mmGlobal.xsmLogin then Exit;
+             finally
+               frmLogo.Close;
+             end;
              frmRimIEBrowser.rimLogined := false;
            end;
      end;
@@ -2560,6 +2586,7 @@ begin
            button.Font.Style := [fsBold];
            button.Bitmaps.Hot.Assign(menuButton.Bitmaps.Hot);
            button.Bitmaps.Up.Assign(menuButton.Bitmaps.Up);
+           button.Font.Assign(menuButton.Font);
            button.Anchors := [akTop,akRight];
            button.width := 70;
            FMenu.Add(button);
@@ -2653,6 +2680,38 @@ end;
 procedure TfrmMMMain.wm_mmcError(var Message: TMessage);
 begin
   ShowMsgBox(pchar(mmFactory.LastError),'mmc',MB_OK+MB_ICONERROR);
+end;
+
+procedure TfrmMMMain.wm_message(var Message: TMessage);
+begin
+  if Message.WParam = 99 then //执行自动到货确认
+  begin
+     if Global.UserID='system' then Exit;
+     if not SyncFactory.SyncLockCheck then Exit;
+     TfrmDownStockOrder.AutoDownStockOrder(inttostr(Message.LParam));
+  end;
+  if Message.WParam = 100 then //新商盟消息
+  begin
+     if frmXsmIEBrowser=nil then Exit;
+     if not frmXsmIEBrowser.xsmLogined then Exit;
+     frmXsmIEBrowser.LCSend(frmXsmIEBrowser.CreateOpenFava(PMsgInfo(Message.LParam)^.SenceId,PMsgInfo(Message.LParam)^.Action),1);
+  end;
+end;
+
+procedure TfrmMMMain.actfrmSimpleSaleDayReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmSaleDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmSaleDayReport.Create(self);
+    TfrmSaleDayReport(Form).SingleReportParams;
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

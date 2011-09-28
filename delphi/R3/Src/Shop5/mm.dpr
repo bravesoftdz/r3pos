@@ -281,6 +281,7 @@ begin
   Application.CreateForm(TfrmMMMain, frmMMMain);
   Application.CreateForm(TfrmMMDesk, frmMMDesk);
   Application.CreateForm(TfrmMMList, frmMMList);
+  Application.CreateForm(TfrmLogo, frmLogo);
   if not MMServer.MMExists then
      PostMessage(frmMMMain.Handle,MM_LOGIN,0,0);
   Application.Run;

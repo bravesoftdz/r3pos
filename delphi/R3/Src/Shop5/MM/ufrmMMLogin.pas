@@ -23,10 +23,12 @@ type
     cxBtnOk: TRzBmpButton;
     cxBtnSetup: TRzBmpButton;
     cxedtUsers: TcxComboBox;
+    logoStatus: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
     procedure cxbtnCancelClick(Sender: TObject);
     procedure cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
+    procedure cxBtnSetupClick(Sender: TObject);
   private
     { Private declarations }
     locked:boolean;
@@ -38,7 +40,7 @@ type
   end;
 
 implementation
-uses ummGlobal,uCaFactory,IniFiles,uFnUtil,uGlobal,EncDec,ObjCommon;
+uses ummGlobal,uCaFactory,IniFiles,ufrmHostDialog,uFnUtil,uGlobal,EncDec,ObjCommon;
 {$R *.dfm}
 
 procedure TfrmMMLogin.FormCreate(Sender: TObject);
@@ -75,6 +77,8 @@ var
 begin
   inherited;
   Screen.Cursor := crSQLWait;
+  logoStatus.Visible := true;
+  logoStatus.Update;
   try
     if not locked then
     begin
@@ -85,7 +89,7 @@ begin
     //认证企业合法性
     if not mmGlobal.CheckRegister then //没有注册，现在新注册一个
        begin
-         if cxcbOffline.Checked then Raise Exception.Create('第一次登录用户不能使用离线模式.'); 
+         if cxcbOffline.Checked then Raise Exception.Create('第一次登录用户不能使用离线模式.');
          mmGlobal.xsm_username := cxedtUsers.Text;
          mmGlobal.xsm_password := cxedtPasswrd.Text;
          if not mmGlobal.coLogin(mmGlobal.xsm_username,mmGlobal.xsm_password) then Exit;
@@ -180,11 +184,12 @@ begin
           begin
             mmGlobal.xsm_username := rs.FieldbyName('ACCOUNT').AsString;
             mmGlobal.xsm_nickname := mmGlobal.UserName;
+            mmGlobal.xsm_userType := '1000';
           end;
-       if mmGlobal.xsm_userType <> '1000' then mmGlobal.module := '1010';
-    finally
+       if mmGlobal.xsm_userType <> '1000' then mmGlobal.module := '1100';
+     finally
        rs.Free;
-    end;
+     end;
      if not locked then
         begin
           Factor.GqqLogin(mmGlobal.UserID,mmGlobal.SHOP_NAME+'('+mmGlobal.UserName+')');
@@ -194,7 +199,8 @@ begin
      mmGlobal.SysDate := edtOPER_DATE.Date;
      self.ModalResult := MROK;
   finally
-    Screen.Cursor := crDefault;
+     logoStatus.Visible := false;
+     Screen.Cursor := crDefault;
   end;
 end;
 
@@ -267,6 +273,12 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmMMLogin.cxBtnSetupClick(Sender: TObject);
+begin
+  inherited;
+  TfrmHostDialog.SimpleDialog(self);
 end;
 
 end.

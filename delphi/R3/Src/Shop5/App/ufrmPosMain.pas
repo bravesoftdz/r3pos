@@ -698,6 +698,10 @@ begin
          lblInput.Caption := '货号输入';
          rzHint.Caption := '切换"条码"输入按[Tab]健';
         end;
+      2:begin
+         InputFlag := 10;
+         Exit;
+        end;
       end;
     end;
   1:begin
@@ -1392,7 +1396,7 @@ begin
   if (Shift = []) and(Key = VK_TAB) then
      begin
        if InputMode = 0 then InputMode := 1 else InputMode := 0;
-       InputFlag := InputFlag;
+       InputFlag := 0;
        Key := 0;
      end;
   if (Shift = []) and(Key = VK_F11) then

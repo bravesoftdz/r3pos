@@ -55,6 +55,9 @@ type
     procedure rzFilterExit(Sender: TObject);
     procedure rzUsersCompare(Sender: TObject; Node1, Node2: TTreeNode;
       Data: Integer; var Compare: Integer);
+    procedure Image5Click(Sender: TObject);
+    procedure Image3Click(Sender: TObject);
+    procedure Image4Click(Sender: TObject);
   private
     { Private declarations }
     frmMMFindBox:TfrmMMFindBox;
@@ -244,7 +247,10 @@ end;
 procedure TfrmMMList.wmMsgHint(var Message: TMessage);
 begin
   if not Assigned(mmGlobal) then Exit;
-  PlaySend(ExtractFilePath(ParamStr(0))+'res\msg.mp3');
+  case Message.WParam of
+  0:PlaySend(ExtractFilePath(ParamStr(0))+'res\msg.wav');
+  1:PlaySend(ExtractFilePath(ParamStr(0))+'res\system.wav');
+  end;
   check;
 end;
 
@@ -449,6 +455,26 @@ begin
      end
   else
      Compare := 0;
+end;
+
+procedure TfrmMMList.Image5Click(Sender: TObject);
+begin
+  inherited;
+  frmMMMain.actfrmNewPaperReader.OnExecute(frmMMMain.actfrmNewPaperReader);
+end;
+
+procedure TfrmMMList.Image3Click(Sender: TObject);
+begin
+  inherited;
+  frmMMMain.actfrmNewPaperReader.OnExecute(frmMMMain.actfrmNewPaperReader);
+
+end;
+
+procedure TfrmMMList.Image4Click(Sender: TObject);
+begin
+  inherited;
+  frmMMMain.actfrmNewPaperReader.OnExecute(frmMMMain.actfrmNewPaperReader);
+
 end;
 
 end.

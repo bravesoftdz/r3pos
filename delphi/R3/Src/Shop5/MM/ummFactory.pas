@@ -65,7 +65,6 @@ type
   TGroupFava=record
 	  messagetype:integer;
 	  routetype:integer;
-
 	  playerId:pchar;
 	  refId:pchar;
 	  comId:pchar;
@@ -246,9 +245,11 @@ type
     FList:TList;
     Flogined: boolean;
     FLastError: string;
+    FmmcReady: boolean;
     procedure DisposeMsg(index:integer);
     procedure Setlogined(const Value: boolean);
     procedure SetLastError(const Value: string);
+    procedure SetmmcReady(const Value: boolean);
   public
     constructor Create;
     destructor Destroy;override;
@@ -281,10 +282,13 @@ type
     property logined:boolean read Flogined write Setlogined;
 
     property LastError:string read FLastError write SetLastError;
+    //lc是否准备就绪
+    property mmcReady:boolean read FmmcReady write SetmmcReady;
   end;
 
 type
    TmmcSetDataCallBack=function(func:Pointer):integer;stdcall;
+   TmmcLoad=function():integer;stdcall;
    TmmcSetEventCallBack=function(func:Pointer):integer;stdcall;
    TmmcSend=function(flag:integer;lpData:Pointer):integer;stdcall;
    TmmcSendSync=function(flag:integer;lpData:Pointer):integer;stdcall;
@@ -302,6 +306,7 @@ var
   DLLHandle:THandle;
   mmcSetDataCallBack:TmmcSetDataCallBack;
   mmcSetEventCallBack:TmmcSetEventCallBack;
+  mmcLoad:TmmcLoad;
   mmcSend:TmmcSend;
   mmcSendSync:TmmcSendSync;
   mmcConnect:TmmcConnect;
@@ -314,6 +319,7 @@ begin
   if DLLHandle=0 then Raise Exception.Create('没找到mmc.dll文件');
   @mmcSetDataCallBack := GetProcAddress(DLLHandle, 'SetDataCallBack');
   @mmcSetEventCallBack := GetProcAddress(DLLHandle, 'SetEventCallBack');
+  @mmcLoad := GetProcAddress(DLLHandle, 'LoadLC');
   @mmcSend := GetProcAddress(DLLHandle, 'Send');
   @mmcSendSync := GetProcAddress(DLLHandle, 'SendSync');
   @mmcConnect := GetProcAddress(DLLHandle, 'Connect');
@@ -377,6 +383,10 @@ var
 begin
   try
     case Event of
+    2:begin
+        if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,1,1);
+        mmFactory.logined := false;
+      end;
     3:begin
       case EFlag of
       1003:begin
@@ -398,10 +408,6 @@ begin
              end;
            end;
       end;
-      end;
-    2:begin
-        if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,1,1);
-        mmFactory.logined := false;
       end;
     end;
   except
@@ -547,6 +553,7 @@ begin
          else
              begin
                if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_LINE,0,0);
+               if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MsgHint,1,1);
              end;
          lpData.Free;
        end;
@@ -584,12 +591,15 @@ begin
 end;
 
 constructor TmmFactory.Create;
+var errorCode:integer;
 begin
   Loadmmc;
   mmFactory := self;
   mmcSetDataCallBack(@mmcRecv);
   mmcSetEventCallBack(@mmcEvent);
   FList := TList.Create;
+  errorCode := mmcLoad();
+  mmcReady := (errorCode=0);
 end;
 
 destructor TmmFactory.Destroy;
@@ -756,6 +766,11 @@ end;
 procedure TmmFactory.SetLastError(const Value: string);
 begin
   FLastError := Value;
+end;
+
+procedure TmmFactory.SetmmcReady(const Value: boolean);
+begin
+  FmmcReady := Value;
 end;
 
 { TmmConnectFava }

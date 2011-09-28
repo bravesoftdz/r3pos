@@ -1,8 +1,8 @@
 inherited frameBaseReport: TframeBaseReport
-  Left = 216
-  Top = 0
-  Width = 798
-  Height = 560
+  Left = 220
+  Top = 4
+  Width = 790
+  Height = 549
   Caption = #25253#34920#22522#31867
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -10,25 +10,25 @@ inherited frameBaseReport: TframeBaseReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 790
-    Height = 496
+    Width = 782
+    Height = 485
     inherited RzPanel2: TRzPanel
-      Width = 780
-      Height = 486
+      Width = 772
+      Height = 475
       inherited RzPage: TRzPageControl
-        Width = 575
-        Height = 480
+        Width = 567
+        Height = 469
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
-            Width = 573
-            Height = 453
+            Width = 565
+            Height = 442
             object Panel4: TPanel
               Left = 5
               Top = 5
-              Width = 563
-              Height = 443
+              Width = 555
+              Height = 432
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -36,7 +36,7 @@ inherited frameBaseReport: TframeBaseReport
               object w1: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 563
+                Width = 555
                 Height = 81
                 Align = alTop
                 BorderOuter = fsNone
@@ -46,8 +46,8 @@ inherited frameBaseReport: TframeBaseReport
               object RzPanel7: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 563
-                Height = 362
+                Width = 555
+                Height = 351
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -55,8 +55,8 @@ inherited frameBaseReport: TframeBaseReport
                 object DBGridEh1: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 559
-                  Height = 358
+                  Width = 551
+                  Height = 347
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -105,10 +105,10 @@ inherited frameBaseReport: TframeBaseReport
         end
       end
       object PanelColumnS: TPanel
-        Left = 578
+        Left = 570
         Top = 3
         Width = 199
-        Height = 480
+        Height = 469
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
@@ -494,17 +494,17 @@ inherited frameBaseReport: TframeBaseReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 790
+    Width = 782
     inherited Image1: TImage
       Left = 350
-      Width = 420
+      Width = 412
     end
     inherited Image3: TImage
       Left = 350
-      Width = 420
+      Width = 412
     end
     inherited Image14: TImage
-      Left = 770
+      Left = 762
     end
     inherited rzPanel5: TPanel
       Left = 350

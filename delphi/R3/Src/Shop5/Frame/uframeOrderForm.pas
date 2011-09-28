@@ -2577,7 +2577,7 @@ begin
   if (Shift = []) and(Key = VK_TAB) and (InputFlag=0) then
      begin
        if InputMode = 0 then InputMode := 1 else InputMode := 0;
-       InputFlag := InputFlag;
+       InputFlag := 0;
        Key := 0;
        Exit;
      end;
@@ -2695,6 +2695,9 @@ begin
       1:begin
          lblInput.Caption := '货号输入';
          lblHint.Caption := '切换成“条码”输入按 tab 键  <F2>激活输入框';
+        end;
+      2:begin
+         InputFlag := 10;
         end;
       end;
       Exit;

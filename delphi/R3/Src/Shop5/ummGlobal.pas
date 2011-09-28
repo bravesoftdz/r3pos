@@ -488,7 +488,7 @@ begin
   end;
 end;
 
-constructor TmmGlobal.Create(AOwner: TComponent); 
+constructor TmmGlobal.Create(AOwner: TComponent);
 begin
   inherited;
   mmFactory := TmmFactory.Create;

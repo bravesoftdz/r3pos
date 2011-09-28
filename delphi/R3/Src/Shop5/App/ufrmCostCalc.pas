@@ -253,6 +253,7 @@ begin
       Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
       Update;
       PrgPercent := (i*100 div pt) div 3+5;
+      Application.ProcessMessages;
       SQL :=
         'insert into '+tempTableName1+'('+
         'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
@@ -485,6 +486,7 @@ begin
   Prepare;
   if (calc_flag=2) and (flag=1) then Raise Exception.Create('月移动加权平均算法不支持日结账');
   DBLock;
+  btnStart.Enabled := false;
   try
     if Factor.iDbType=5 then Factor.BeginTrans; //对SQLite启动事务，减少IO
     try
@@ -544,6 +546,7 @@ begin
          MessageBox(Handle,'执行结账完毕.','友情提示..',MB_OK+MB_ICONINFORMATION);
        end;
   finally
+    btnStart.Enabled := true;
     DBUnLock;
   end;
   ModalResult := MROK;
@@ -694,6 +697,7 @@ begin
        end;
     Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM',bDate+b);
     Update;
+    Application.ProcessMessages;
 //    if (bDate+b)<=uDate then //只计算有数据部份
     begin
 
@@ -1030,6 +1034,7 @@ begin
       Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
       Update;
       PrgPercent := (i*100 div pt) div 3+5;
+      Application.ProcessMessages;
       //准备期初
       SQL :=
         'insert into '+tempTableName1+'('+
@@ -1198,6 +1203,7 @@ begin
     while true do
     begin
       if pt>0 then PrgPercent := (b*100 div pt) div 3+35;
+      Application.ProcessMessages;
       if reck_flag=1 then
          begin
            if isfirst and (b=1) then
@@ -1668,6 +1674,7 @@ begin
     while true do
     begin
       if pt>0 then PrgPercent := (b*100 div pt) div 3+80;
+      Application.ProcessMessages;
       if reck_flag=1 then
          begin
            if isfirst and (b=1) then
@@ -1742,6 +1749,7 @@ begin
     for i:= 1 to pt do
       begin
         PrgPercent := (i*100 div pt) div 3+60;
+        Application.ProcessMessages;
         SQL :=
           'insert into RCK_ACCT_DAYS('+
           'TENANT_ID,SHOP_ID,CREA_DATE,ACCOUNT_ID,'+

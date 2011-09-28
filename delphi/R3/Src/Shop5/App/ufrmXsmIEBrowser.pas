@@ -78,7 +78,7 @@ type
     procedure XSM_CALL_FUNC(var Message: TMessage); message WM_XSM_CALL;
     procedure XSM_CALL_ERROR(var Message: TMessage); message WM_XSM_ERROR;
 
-    function getUrlPath:string;
+    function  getUrlPath:string;
     procedure SetLogined(const Value: boolean);
     procedure Setready(const Value: boolean);
     procedure SetSessionFail(const Value: boolean);
@@ -885,10 +885,7 @@ begin
          SessionFail := true;
          Logined := false;
          result := false;
-         if Screen.ActiveForm<>nil then
-            MessageBox(Screen.ActiveForm.Handle,Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION)
-         else
-            ShowMsgBox(Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
+         ShowMsgBox(Pchar(E.Message),'友情提示..',MB_OK+MB_ICONINFORMATION);
        end;
   end;
 end;

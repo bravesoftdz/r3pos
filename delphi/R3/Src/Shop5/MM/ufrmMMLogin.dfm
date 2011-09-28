@@ -1,6 +1,6 @@
 inherited frmMMLogin: TfrmMMLogin
-  Left = 276
-  Top = 227
+  Left = 581
+  Top = 220
   Caption = 'frmMMLogin'
   ClientHeight = 272
   ClientWidth = 410
@@ -4970,6 +4970,7 @@ inherited frmMMLogin: TfrmMMLogin
         Color = clBtnFace
         Caption = #35774#32622'(&S)'
         TabOrder = 1
+        OnClick = cxBtnSetupClick
       end
     end
   end
@@ -10110,6 +10111,23 @@ inherited frmMMLogin: TfrmMMLogin
         Width = 152
         Height = 20
         TabOrder = 4
+      end
+      object logoStatus: TPanel
+        Left = 113
+        Top = 0
+        Width = 295
+        Height = 130
+        BevelOuter = bvNone
+        Caption = #27491#22312#30331#24405'...'
+        Color = 16621644
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clMaroon
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
+        Visible = False
       end
     end
   end

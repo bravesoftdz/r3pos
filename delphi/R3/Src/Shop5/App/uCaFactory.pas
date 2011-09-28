@@ -3058,11 +3058,11 @@ try
             Params.ParamByName('KEY_FLAG').AsString := '2';
             Factor.AddBatch(prc,'TSyncSingleTable',Params);
             Factor.CommitBatch;
-            SetSynTimeStamp('PUB_UNION_INFO',timeStamp,'#');
           except
             Factor.CancelBatch;
             Raise;
           end;
+          SetSynTimeStamp('PUB_UNION_INFO',timeStamp,'#');
         finally
           Params.free;
         end;

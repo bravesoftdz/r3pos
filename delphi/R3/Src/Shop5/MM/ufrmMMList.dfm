@@ -808,6 +808,7 @@ inherited frmMMList: TfrmMMList
             0000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             BF8F65BF8F65FF00FFFF00FFFF00FF000000}
           Transparent = True
+          OnClick = Image5Click
         end
         object lbM0: TLabel
           Left = 115
@@ -879,6 +880,7 @@ inherited frmMMList: TfrmMMList
             F6FCF8F6FCF8F6FCF8F6B6773CFF00FF0000FF00FFFF00FFDBBD98D8B78ED5B0
             85D2AA7CCDA474CA9E6BC79863C4925BC18B54BE864CFF00FFFF00FF0000}
           Transparent = True
+          OnClick = Image3Click
         end
         object Image4: TImage
           Left = 156
@@ -908,6 +910,7 @@ inherited frmMMList: TfrmMMList
             8BEFCE8BEFCE8BEFCE8BEFCE8BA7672E0000FF00FFA7672EA7672EA7672EA767
             2EA7672EA7672EA7672EA7672EA7672EA7672EA7672EA7672EFF00FF0000}
           Transparent = True
+          OnClick = Image4Click
         end
         object RzPanel1: TRzPanel
           Left = 0
@@ -1803,10 +1806,11 @@ inherited frmMMList: TfrmMMList
     end
   end
   object MediaPlayer: TMediaPlayer
-    Left = 474
-    Top = 40
-    Width = 253
+    Left = 250
+    Top = 0
+    Width = 29
     Height = 30
+    VisibleButtons = []
     Visible = False
     TabOrder = 3
   end

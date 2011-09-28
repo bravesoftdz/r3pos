@@ -29,7 +29,7 @@ var
   frmMMDesk: TfrmMMDesk;
 
 implementation
-uses uDevFactory,ufrmMMMain,ufrmMMToolBox;
+uses uDevFactory,uMsgBox,ufrmMMMain,ufrmMMToolBox;
 {$R *.dfm}
 
 { TfrmMMDesk }
@@ -62,9 +62,9 @@ begin
     end;
   Doc := IEDesktop.Document as IHTMLDocument2;
   if Doc=nil then Exit;
-  if FileExists(ExtractFilePath(ParamStr(0))+'res\desk.html') then
+  if FileExists(ExtractFilePath(ParamStr(0))+'res\desk.mht') then
      begin
-       url := ExtractFilePath(ParamStr(0))+'res\desk.html';
+       url := ExtractFilePath(ParamStr(0))+'res\desk.mht';
        iframe := Doc.all.item('mht1',EmptyParam) as DispHTMLIFrame;
        if iframe<>nil then iframe.src := url;
      end;
@@ -100,10 +100,12 @@ var
 begin
   inherited;
   Cancel := false;
-  w := pos(s,'dsk=(');
+  s := url;
+  w := pos('dsk=',s);
   if w=0 then Exit;
-  delete(s,1,w+5);
+  delete(s,1,w+4);
   if (s<>'') and (s[length(s)]=')') then delete(s,length(s),1);
+  Cancel := true;
   vList := TStringList.Create;
   new(Node);
   try
@@ -120,9 +122,8 @@ begin
             Action.OnExecute(TObject(Node))
          else
             Action.OnExecute(Action);
-         Cancel := true;
        end
-    else Raise Exception.Create('你没有操作此模块的权限...');
+    else ShowMsgBox('你没有操作此模块的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);
   finally
     dispose(Node);
     vList.Free;

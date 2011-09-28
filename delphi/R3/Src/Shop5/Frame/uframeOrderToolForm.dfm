@@ -1,8 +1,8 @@
 inherited frameOrderToolForm: TframeOrderToolForm
-  Left = 131
-  Top = 51
-  Width = 862
-  Height = 522
+  Left = 127
+  Top = 47
+  Width = 870
+  Height = 533
   Caption = 'frameOrderToolForm'
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -10,14 +10,14 @@ inherited frameOrderToolForm: TframeOrderToolForm
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 846
-    Height = 447
+    Width = 854
+    Height = 458
     inherited RzPanel2: TRzPanel
-      Width = 836
-      Height = 437
+      Width = 844
+      Height = 448
       inherited RzPage: TRzPageControl
-        Width = 830
-        Height = 431
+        Width = 838
+        Height = 442
         Color = clWindow
         FlatColor = clBtnFace
         ParentColor = False
@@ -32,15 +32,15 @@ inherited frameOrderToolForm: TframeOrderToolForm
           Color = clWindow
           Caption = #21333#25454#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
-            Width = 828
-            Height = 404
+            Width = 836
+            Height = 415
             BorderShadow = clWindow
             Color = clWindow
             FlatColor = clWindow
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 818
+              Width = 826
               Height = 73
               Align = alTop
               BorderOuter = fsNone
@@ -50,8 +50,8 @@ inherited frameOrderToolForm: TframeOrderToolForm
             object DBGridEh1: TDBGridEh
               Left = 5
               Top = 78
-              Width = 818
-              Height = 321
+              Width = 826
+              Height = 332
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               Color = clWhite
@@ -88,17 +88,17 @@ inherited frameOrderToolForm: TframeOrderToolForm
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 846
+    Width = 854
     inherited Image1: TImage
       Left = 542
-      Width = 284
+      Width = 292
     end
     inherited Image3: TImage
       Left = 542
-      Width = 284
+      Width = 292
     end
     inherited Image14: TImage
-      Left = 826
+      Left = 834
     end
     inherited rzPanel5: TPanel
       Left = 542

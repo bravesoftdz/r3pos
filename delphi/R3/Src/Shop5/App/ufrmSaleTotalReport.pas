@@ -350,8 +350,8 @@ begin
     ',sum(SALE_MNY) as SALE_MNY '+  //未税金额
     ',sum(SALE_TAX) as SALE_TAX '+  //税额
     ',sum(SALE_RTL) as SALE_RTL '+  //零售金额，暂时没使用
-    ',sum(SALE_PRF) as SALE_ALLPRF '+  //毛利    
-    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_PRF '+ //单位毛利
+    ',sum(SALE_PRF) as SALE_PRF '+  //毛利
+    ',case when sum(SALE_AMT)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*1.00/cast(sum(SALE_AMT*1.00/'+UnitCalc+') as decimal(18,3)) else 0 end as SALE_AVG_PRF '+ //单位毛利
     ',case when sum(SALE_MNY)<>0 then cast(sum(SALE_PRF) as decimal(18,3))*100.00/cast(sum(SALE_MNY) as decimal(18,3)) else 0 end as SALE_RATE '+
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+

@@ -16,6 +16,7 @@ type
     FConnMode: integer;
     FConnStr: string;
     OkKey:boolean;
+    InTrans,InBatch:boolean;
     procedure SetConnMode(const Value: integer);
     procedure SetConnStr(const Value: string);
   protected
@@ -182,6 +183,7 @@ begin
   Enter;
   try
     dbResolver.BeginTrans(TimeOut);
+    InTrans := true;
   finally
 //    Leave;
   end;
@@ -192,6 +194,7 @@ begin
   try
 //  Enter;
     dbResolver.CommitTrans;
+    InTrans := false;
   finally
     Leave;
   end;
@@ -344,6 +347,7 @@ procedure TdbFactory.RollbackTrans;
 begin
 //  Enter;
   try
+    InTrans := false;
     dbResolver.RollbackTrans;
   finally
     Leave;
@@ -381,6 +385,7 @@ begin
   Enter;
   try
     result := dbResolver.BeginBatch;
+    InBatch := result;
   finally
 //    Leave;
   end;
@@ -390,6 +395,7 @@ function TdbFactory.CancelBatch: Boolean;
 begin
 //  Enter;
   try
+    InBatch := false;
     result := dbResolver.CancelBatch;
   finally
     Leave;
@@ -401,6 +407,7 @@ begin
 //  Enter;
   try
     result := dbResolver.CommitBatch;
+    InBatch := false;
   finally
     Leave;
   end;
@@ -411,6 +418,7 @@ begin
   try
 //  Enter;
     result := dbResolver.OpenBatch;
+    InBatch := false;
   finally
     Leave;
   end;
@@ -466,11 +474,10 @@ end;
 
 procedure TdbFactory.Enter;
 begin
-  if LockNum=0 then
-     begin
-       EnterCriticalSection(FThreadLock);
-       InterlockedIncrement(LockNum);
-     end;
+  if InTrans or InBatch then Exit;
+  if LockNum<>0 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
+  EnterCriticalSection(FThreadLock);
+  InterlockedIncrement(LockNum);
   if not OkKey and (Application.MainForm<>nil) then
      begin
        Application.MainForm.Caption := '欢迎使用"zLib开发平台演示系统"，请支持我们正版，缴活热线：13860431130张先生';
@@ -480,12 +487,12 @@ end;
 
 procedure TdbFactory.Leave;
 begin
+  if InTrans or InBatch then Exit;
   if LockNum>0 then
      begin
-       LeaveCriticalSection(FThreadLock);
        InterlockedDecrement(LockNum);
+       LeaveCriticalSection(FThreadLock);
      end;
-  if LockNum<>0 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
 end;
 
 procedure TdbFactory.GqqLogin(UserId, UserName: string);

@@ -1034,7 +1034,7 @@ begin
           Move(IOData^.BytesReserved[0],Pointer(Sig),4);
           CheckSignature(Sig);
           Move(IOData^.BytesReserved[4],Pointer(StreamLen),4);
-          if StreamLen>(1024*1024*20) then
+          if StreamLen>(1024*1024*10) then
              raise ESocketConnectionError.CreateRes(@SInvalidDataPacket);
           Data := TDataBlock.Create as IDataBlock;
           Data.Size := StreamLen;

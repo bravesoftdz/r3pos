@@ -519,8 +519,10 @@ var
 begin
   inherited;
   try
-    r := StrtoFloat(Text);
-    if edtTable.FieldbyName('GODS_ID').AsString='' then Raise Exception.Create('没有选择商品不能输售价...'); 
+    r := StrtoFloatDef(Text,edtTable.FieldbyName('OUT_PRICE').AsFloat);
+    Value := r;
+    Text := floattostr(r);
+    if edtTable.FieldbyName('GODS_ID').AsString='' then Raise Exception.Create('没有选择商品不能输售价...');
     rs := TZQuery.Create(nil);
     try
        rs.SQL.Text := 'select BIGTO_CALC,SMALLTO_CALC from VIW_GOODSINFO where GODS_ID='''+edtTable.FieldbyName('GODS_ID').AsString+''' and TENANT_ID='+InttoStr(Global.TENANT_ID)+'';

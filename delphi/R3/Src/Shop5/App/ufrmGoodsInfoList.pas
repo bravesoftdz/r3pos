@@ -245,7 +245,7 @@ begin
   end;
 
   GodsFields:=
-    ' b.RELATION_Flag,j.TENANT_ID,j.RELATION_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS,j.RTL_OUTPRICE,j.NEW_LOWPRICE,j.NEW_OUTPRICE,j.NEW_INPRICE,'+
+    ' b.RELATION_Flag,j.TENANT_ID,j.RELATION_ID,j.GODS_ID,j.GODS_CODE,j.GODS_NAME,j.BARCODE,j.CALC_UNITS,m.UNIT_NAME,j.RTL_OUTPRICE,j.NEW_LOWPRICE,j.NEW_OUTPRICE,j.NEW_INPRICE,'+
     '(case when j.NEW_OUTPRICE<>0 then cast(Round((j.NEW_INPRICE*100.0)/(j.NEW_OUTPRICE*1.0),0) as int) else null end) as PROFIT_RATE,SORT_ID3,SORT_ID4,GODS_TYPE ';
   case Factor.iDbType of
    0:
@@ -257,6 +257,7 @@ begin
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' left join VIW_MEAUNITS m on j.TENANT_ID=m.TENANT_ID and j.CALC_UNITS=m.UNIT_ID '+
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
@@ -281,6 +282,7 @@ begin
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           '  inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           '  left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' left join VIW_MEAUNITS m on j.TENANT_ID=m.TENANT_ID and j.CALC_UNITS=m.UNIT_ID '+
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
@@ -305,6 +307,7 @@ begin
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' left join VIW_MEAUNITS m on j.TENANT_ID=m.TENANT_ID and j.CALC_UNITS=m.UNIT_ID '+
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
@@ -328,6 +331,7 @@ begin
           '(select distinct '+GodsFields+' from VIW_GOODSPRICEEXT j '+
           ' inner join VIW_GOODSSORT b on  j.TENANT_ID=b.TENANT_ID and j.SORT_ID1=b.SORT_ID '+
           ' left join VIW_BARCODE br on j.TENANT_ID=br.TENANT_ID and j.GODS_ID=br.GODS_ID '+
+          ' left join VIW_MEAUNITS m on j.TENANT_ID=m.TENANT_ID and j.CALC_UNITS=m.UNIT_ID '+
           ' where b.SORT_TYPE=1 '+w+') l '+
           'left outer join '+
           '(select GODS_ID,sum(AMOUNT) as AMOUNT from STO_STORAGE where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID group by GODS_ID) r '+
@@ -485,7 +489,7 @@ var
   tmp: TZQuery;
 begin
   inherited;
-  InitGrid;
+//  InitGrid;
   LoadTree;
   edtProperty1:=TZQuery.Create(nil);
   edtProperty2:=TZQuery.Create(nil);

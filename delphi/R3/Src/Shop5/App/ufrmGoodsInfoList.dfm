@@ -243,7 +243,7 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CALC_UNITS'
+                    FieldName = 'UNIT_NAME'
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #35745#37327#21333#20301

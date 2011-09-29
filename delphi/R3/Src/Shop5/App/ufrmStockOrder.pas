@@ -83,6 +83,8 @@ type
     procedure edtFROM_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure RzBitBtn1Click(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
     //结算金额
@@ -1389,6 +1391,47 @@ begin
     3:begin
       TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
     end;
+  end;
+end;
+
+procedure TfrmStockOrder.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  Rs: TZQuery;
+  CurPrice,SalePrice: real;
+  GODS_ID,UNIT_ID: string;
+begin
+  inherited;
+  try
+    if not edtTable.Active then exit;
+    SalePrice:=0;
+    if Column.FieldName = 'APRICE' then
+    begin
+      Rs:=Global.GetZQueryFromName('PUB_GOODSINFO');
+      GODS_ID:=trim(edtTable.FieldByName('GODS_ID').AsString);
+      UNIT_ID:=trim(edtTable.FieldByName('UNIT_ID').AsString);
+      CurPrice:=edtTable.FieldByName('APRICE').AsFloat;
+      if (GODS_ID='') or (UNIT_ID='') or (CurPrice=0) then Exit;
+      if Rs.Locate('GODS_ID',GODS_ID,[]) then
+      begin
+        if trim(Rs.fieldbyName('CALC_UNITS').AsString)=UNIT_ID then //计量单位的零售价
+          SalePrice:=Rs.fieldbyName('NEW_OUTPRICE').AsFloat
+        else if trim(Rs.fieldbyName('SMALL_UNITS').AsString)=UNIT_ID then //小件单位的零售价
+          SalePrice:=Rs.fieldbyName('NEW_OUTPRICE1').AsFloat
+        else if trim(Rs.fieldbyName('BIG_UNITS').AsString)=UNIT_ID then //大件单位的零售价
+          SalePrice:=Rs.fieldbyName('NEW_OUTPRICE2').AsFloat;
+
+        if (CurPrice>SalePrice) or (CurPrice<SalePrice*0.3) then //大于零售价 或小于 零售价的30%
+        begin
+          DBGridEh1.Canvas.Brush.Color := clRed;
+          DBGridEh1.Canvas.Font.Color := clwhite;
+          DBGridEh1.Canvas.Font.Style:=[fsBold];
+        end;
+      end;
+      DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    end;
+  except
   end;
 end;
 

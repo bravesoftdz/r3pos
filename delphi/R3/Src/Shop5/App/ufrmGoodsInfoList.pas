@@ -118,7 +118,7 @@ implementation
 uses
   uTreeUtil,uGlobal,ufrmGoodsInfo, uShopGlobal,uCtrlUtil, ufrmBarCodePrint, uDsUtil,
   uShopUtil,uFnUtil,ufrmEhLibReport, ufrmSelectGoodSort, ufrmDefineStateInfo,
-  ufrmGoodssortTree, ObjCommon, ufrmExcelFactory, ufrmBasic;
+  ufrmGoodssortTree, ObjCommon, ufrmExcelFactory, ufrmBasic, uMsgBox;
    
 
 {$R *.dfm}

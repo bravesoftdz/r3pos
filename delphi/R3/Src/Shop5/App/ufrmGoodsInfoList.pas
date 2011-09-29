@@ -1557,24 +1557,24 @@ procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
         rs.Filter := ' DEFINE=''DUPBARCODE'' ';
         rs.Filtered := True;
 
+        if (SumBarcode > 0 ) and (rs.FieldByName('VALUE').AsString<>'1') then
+          Raise Exception.Create('系统设置不允许条码重复使用（即一码多品）');
+
         if (SumBarcode > 0 ) or (SumCode > 0 ) or (SumName > 0) then
           begin
-            if (rs.FieldByName('VALUE').AsString='') or (rs.FieldByName('VALUE').AsString='1') then
+            Error_Info := '在导入数据中:'+#13#10;
+
+            if SumBarcode > 0 then
+              Error_Info := Error_Info + '条形码相同有"'+IntToStr(SumBarcode)+'"条;'+#13#10;
+            if SumCode > 0 then
+              Error_Info := Error_Info + '货号相同有"'+IntToStr(SumCode)+'"条;'+#13#10;
+            if SumName > 0 then
+              Error_Info := Error_Info + '商品名称相同有"'+IntToStr(SumName)+'"条;'+#13#10;
+            Error_Info := Error_Info + '是否导入！';
+
+            if ShowMsgBox(Pchar(Error_Info),'提示信息..',MB_YESNO+MB_ICONQUESTION) <> 6 then
               begin
-                Error_Info := '在导入数据中:'+#13#10;
-
-                if SumBarcode > 0 then
-                  Error_Info := Error_Info + '条形码相同有"'+IntToStr(SumBarcode)+'"条;'+#13#10;
-                if SumCode > 0 then
-                  Error_Info := Error_Info + '货号相同有"'+IntToStr(SumCode)+'"条;'+#13#10;
-                if SumName > 0 then
-                  Error_Info := Error_Info + '商品名称相同有"'+IntToStr(SumName)+'"条;'+#13#10;
-                Error_Info := Error_Info + '是否导入！';
-
-                if ShowMsgBox(Pchar(Error_Info),'提示信息..',MB_YESNO+MB_ICONQUESTION) <> 6 then
-                  begin
-                    Exit;
-                  end;
+                Exit;
               end;
           end;
 

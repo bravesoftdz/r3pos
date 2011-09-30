@@ -152,6 +152,7 @@ inherited frmStockOrder: TfrmStockOrder
         Buttons = [zbNew]
         DropListStyle = lsFixed
         MultiSelect = False
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
       end
       object edtINVOICE_FLAG: TcxComboBox
         Left = 623
@@ -245,6 +246,7 @@ inherited frmStockOrder: TfrmStockOrder
         DropListStyle = lsFixed
         OnSaveValue = edtCLIENT_IDSaveValue
         MultiSelect = False
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 250
@@ -287,6 +289,7 @@ inherited frmStockOrder: TfrmStockOrder
         DropListStyle = lsFixed
         OnSaveValue = edtSHOP_IDSaveValue
         MultiSelect = False
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
       end
       object edtINDE_GLIDE_NO: TcxButtonEdit
         Left = 623
@@ -334,6 +337,7 @@ inherited frmStockOrder: TfrmStockOrder
         Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
       end
       object RzBitBtn1: TRzBitBtn
         Left = 514

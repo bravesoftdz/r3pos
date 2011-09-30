@@ -834,7 +834,6 @@ begin
   if edtDefault1.Checked then AObj.FieldByName('UNIT_ID').AsString:=AObj.FieldByName('SMALL_UNITS').AsString
   else if edtDefault2.Checked  then AObj.FieldByName('UNIT_ID').AsString:=AObj.FieldByName('BIG_UNITS').AsString
   else AObj.FieldByName('UNIT_ID').AsString:=AObj.FieldByName('CALC_UNITS').AsString;
-  AObj.FieldByName('UNIT_NAME').AsString := edtCALC_UNITS.Text;
 end;
 
 procedure TfrmGoodsInfo.FormShow(Sender: TObject);

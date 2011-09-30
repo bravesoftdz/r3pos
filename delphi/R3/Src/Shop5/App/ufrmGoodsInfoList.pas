@@ -185,7 +185,6 @@ begin
   finally
     cdsBrowser.EnableControls;
   end;
-  InitGrid;
 end;
 
 procedure TfrmGoodsInfoList.DBGridEh1DrawColumnCell(Sender: TObject;

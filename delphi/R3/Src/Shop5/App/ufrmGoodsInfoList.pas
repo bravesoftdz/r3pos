@@ -127,6 +127,7 @@ procedure TfrmGoodsInfoList.AddRecord(AObj: TRecord_);
 var
   GODS_ID,SORT:string;
   EditObj: TRecord_;
+  rs:TZQuery;
 begin
   //SORT:='';   //zhangsenrong 不刷新树就代表不需要OPEN数据集，树结点不会改变，所以可以不要。
   //if rzTree.Selected<>nil then
@@ -134,6 +135,7 @@ begin
   //进入商品资料修改没有维护到分类，不需刷新Tree
   // LoadTree;
   //if SORT<>'' THEN FindNode(SORT).Selected:=True;
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   cdsBrowser.DisableControls;
   try
   if not cdsBrowser.Active then Exit;
@@ -141,6 +143,13 @@ begin
   begin
     try
       AObj.WriteToDataSet(cdsBrowser,false);
+
+      if rs.Locate('UNIT_ID',AObj.FieldbyName('UNIT_ID').AsString,[]) then
+         begin
+           cdsBrowser.Edit;
+           cdsBrowser.FieldByName('UNIT_NAME').AsString := rs.FieldByName('UNIT_NAME').AsString;
+           cdsBrowser.Post;
+         end;
       EditObj:=TRecord_.Create;
       EditObj.ReadFromDataSet(cdsBrowser);
       GODS_ID:=EditObj.FieldByName('GODS_ID').AsString;
@@ -151,6 +160,7 @@ begin
       EditObj.FieldByName('selflag').AsString:='0';
       cdsBrowser.Edit;
       EditObj.WriteToDataSet(cdsBrowser);
+
       if cdsBrowser.State=dsEdit then
         cdsBrowser.Post;
     finally
@@ -163,6 +173,12 @@ begin
     AObj.WriteToDataSet(cdsBrowser,false);
     if not (cdsBrowser.State in [dsInsert,dsEdit]) then cdsBrowser.Edit;
     cdsBrowser.Post;
+    if rs.Locate('UNIT_ID',AObj.FieldbyName('UNIT_ID').AsString,[]) then
+       begin
+         cdsBrowser.Edit;
+         cdsBrowser.FieldByName('UNIT_NAME').AsString := rs.FieldByName('UNIT_NAME').AsString;
+         cdsBrowser.Post;
+       end;
     try
       EditObj:=TRecord_.Create;
       EditObj.ReadFromDataSet(cdsBrowser);

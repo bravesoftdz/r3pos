@@ -131,6 +131,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Buttons = [zbNew]
             DropListStyle = lsFixed
             MultiSelect = False
+            ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
           end
           object edtSORT_ID8: TzrComboBoxList
             Left = 330
@@ -167,6 +168,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             Buttons = [zbNew]
             DropListStyle = lsFixed
             MultiSelect = False
+            ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
           end
           object GB_Small: TGroupBox
             Left = 27
@@ -278,6 +280,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               DropListStyle = lsFixed
               OnSaveValue = edtSMALL_UNITSSaveValue
               MultiSelect = False
+              ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
             end
             object edtSMALLTO_CALC: TcxTextEdit
               Left = 341
@@ -430,6 +433,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
               DropListStyle = lsFixed
               OnSaveValue = edtBIG_UNITSSaveValue
               MultiSelect = False
+              ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
             end
             object edtBIGTO_CALC: TcxTextEdit
               Left = 342
@@ -860,6 +864,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
             DropListStyle = lsFixed
             OnSaveValue = fndUNIT_IDSaveValue
             MultiSelect = False
+            ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
           end
         end
       end
@@ -936,6 +941,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Buttons = [zbNew, zbClear]
           DropListStyle = lsFixed
           MultiSelect = False
+          ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
         end
       end
       object TabSheet2: TRzTabSheet
@@ -1402,6 +1408,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         DropListStyle = lsFixed
         OnSaveValue = edtCALC_UNITSSaveValue
         MultiSelect = False
+        ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
       end
       object edtBARCODE1: TcxTextEdit
         Left = 86

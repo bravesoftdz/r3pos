@@ -1793,6 +1793,8 @@ begin
       end;
       dbState := dsBrowse;
     except
+      Factor.CancelBatch;
+      Raise;
     end;
 
     //读取条码信息:

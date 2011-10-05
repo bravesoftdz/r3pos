@@ -231,6 +231,8 @@ begin
   dbResolver := nil;
   OkKey := true;
   LockNum := 0;
+  InTrans := false;
+  InBatch := false;
 //  LoadKey;
 end;
 
@@ -475,7 +477,6 @@ end;
 procedure TdbFactory.Enter;
 begin
   if InTrans or InBatch then Exit;
-  if LockNum<>0 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
   EnterCriticalSection(FThreadLock);
   InterlockedIncrement(LockNum);
   if not OkKey and (Application.MainForm<>nil) then
@@ -488,11 +489,15 @@ end;
 procedure TdbFactory.Leave;
 begin
   if InTrans or InBatch then Exit;
-  if LockNum>0 then
-     begin
-       InterlockedDecrement(LockNum);
-       LeaveCriticalSection(FThreadLock);
-     end;
+//  if LockNum>0 then
+//     begin
+  try
+    if LockNum<>1 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
+  finally
+    InterlockedDecrement(LockNum);
+    LeaveCriticalSection(FThreadLock);
+  end;
+//     end;
 end;
 
 procedure TdbFactory.GqqLogin(UserId, UserName: string);

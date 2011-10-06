@@ -2849,6 +2849,7 @@ var PWidth:integer;
     end;
   end;
 var
+  allAmt: real; //总件数
   i,PrintNull:Integer;
   s:string;
   total:Currency;
@@ -2868,6 +2869,7 @@ begin
   if DevFactory.LPT <=0 then Exit;
   PWidth := DevFactory.Width;
 
+  allAmt:=0;
   PrintNull := DevFactory.PrintNull;
   DevFactory.BeginPrint;
   rs := TZQuery.Create(nil);
@@ -2876,7 +2878,7 @@ begin
     Factor.Open(rs);
     if iFlag<0 then WriteAndEnter(formatTitle('--整单删除--'));
     WriteAndEnter(formatTitle(DevFactory.Title));
-    WriteAndEnter('日期:'+formatFloat('0000-00-00',rs.FieldbyName('SALES_DATE').AsFloat));
+    WriteAndEnter('日期:'+formatFloat('0000-00-00',rs.FieldbyName('SALES_DATE').AsFloat)+' '+Copy(rs.FieldbyName('CREA_DATE').AsString,12,5));
     WriteAndEnter('门店:'+rs.FieldbyName('SHOP_NAME').AsString);
     WriteAndEnter('单号:'+rs.FieldbyName('GLIDE_NO').AsString);
     if rs.FieldbyName('CLIENT_CODE').AsString <>'' then
@@ -2904,6 +2906,7 @@ begin
          else
             s := rs.FieldbyName('CALC_MONEY').AsString;
          total := total + rs.FieldbyName('CALC_MONEY').AsFloat;
+         allAmt:=allAmt+rs.FieldbyName('AMOUNT').AsFloat; //累计总件数
          if rs.FieldbyName('AMOUNT').AsFloat < 0 then
             WirteGodsAndEnter(GetTicketGodsName(rs)+'(退货)',rs.FieldbyName('AMOUNT').AsString+rs.FieldbyName('UNIT_NAME').AsString,rs.FieldbyName('APRICE').asString,s,rs.FieldbyName('ORG_PRICE').asString)
          else
@@ -2912,9 +2915,13 @@ begin
        end;
      WriteAndEnter(DevFactory.EncodeDivStr);
      if rs.FieldbyName('PAY_DIBS').AsFloat<>0 then
-        WriteAndEnter('合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat)+' 抹零:'+FormatFloat('#0.000',rs.FieldbyName('PAY_DIBS').AsFloat))
-     else
-        WriteAndEnter('合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat));
+     begin
+       WriteAndEnter('件数:'+FormatFloat('#0.##',allAmt));
+       WriteAndEnter('合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat)+' 抹零:'+FormatFloat('#0.000',rs.FieldbyName('PAY_DIBS').AsFloat))
+     end else
+     begin
+       WriteAndEnter('合计:'+FormatFloat('#0.0##',rs.FieldbyName('SALE_MNY').AsFloat-rs.FieldbyName('PAY_DIBS').AsFloat)+'  件数:'+FormatFloat('#0.##',allAmt));
+     end;
      WriteAndEnter(DevFactory.EncodeDivStr);
      if rs.FieldbyName('PAY_A').AsFloat <> 0 then
         WriteAndEnter(GetPayText('A')+':'+FormatFloat('#0.0##',rs.FieldbyName('PAY_A').AsFloat));

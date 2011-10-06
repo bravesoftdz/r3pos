@@ -9,7 +9,7 @@ uses
   EncDec,cxContainer, cxEdit, cxMaskEdit, cxSpinEdit, cxMemo, cxCheckBox, 
   IniFiles, zBase, ComCtrls, RzTreeVw, uGodsFactory, uTreeUtil, zDataSet,DB,
   cxCalendar,ZAbstractRODataset, ZAbstractDataset, RzLabel, RzButton,
-  uSaleAnalyMessage, RzEdit;
+  RzEdit,uSaleAnalyMessage;
 
 const
   SpaceStr='    ';  
@@ -58,7 +58,6 @@ type
     FSaleAnaly: TSaleAnalyMsg;
     procedure SetComponentPostion; //控制2个提示内容标题显示位置
     procedure SetRTFFont(SetRTF: TRzRichEdit; BegIdx,SetLen: integer);
-    function GetRTFLength(SetRTF: TRzRichEdit; LinesIdx: integer): integer;
     procedure ShowDaysSaleInfo; //显示天天经营提醒
     procedure ShowMonthSaleInfo;   //显示月度经营情况
   public
@@ -187,7 +186,7 @@ begin
   //2、环比结果:
   Msg2:='2、您当月与上月比：销量'+GetGrowRate(FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE)+'%,'+
                          '单条值'+GetGrowRate(FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY_UP_RATE)+'%,'+
-                         '毛利环比'+GetGrowRate(FSaleAnaly.MonthMsg.TMSale_PRF_UP_RATE)+'%。';
+                       '毛利环比'+GetGrowRate(FSaleAnaly.MonthMsg.TMSale_PRF_UP_RATE)+'%。';
 
   //3、存在问题
   Msg3:='3、您当月与同期比：销量'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_AMT_UP_RATE)+'%,'+
@@ -199,6 +198,7 @@ begin
            '当月毛利额最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_PRF+','+
      '环比上月销量增长最快的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrowRate_AMT+','+
            '本月动销不理想的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MinGrowRate_AMT+'';
+  if Msg4<>'' then Msg4:=Msg4+',';
   if FSaleAnaly.MonthMsg.TMSH_RATIO < 0.6 then Msg4:=Msg4+'存销比扁低。'
   else if FSaleAnaly.MonthMsg.TMSH_RATIO>1.5 then Msg4:=Msg4+'存销比扁大。';
   if trim(Msg4)='' then Msg4:='无';
@@ -306,50 +306,6 @@ begin
   SetRTF.SelAttributes.Style:=[fsBold];
 end;
 
-function TfrmSaleAnalyMessage.GetRTFLength(SetRTF: TRzRichEdit; LinesIdx: integer): integer;
-var
-  i,vLen: integer;
-begin
-  result:=0;
-  vLen:=0;
-  for i:=0 to LinesIdx-1 do
-  begin
-    vLen:=vLen+length(SetRTF.Lines.Strings[i]);
-  end;
-  result:=vLen;
-end;
-
-
- {LTitle:='二、经营优势';
-  MonthRTF.Lines.Add('');
-  MonthRTF.Lines.Add(LTitle);
-  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
-  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
-  MonthRTF.Lines.Add(SpaceStr+Msg2);
-
-  LTitle:='三、存在问题';
-  MonthRTF.Lines.Add('');
-  MonthRTF.Lines.Add(LTitle);
-  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
-  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
-  MonthRTF.Lines.Add(SpaceStr+Msg3);}
-
-  {
-  if FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE<0 then //销量下降
-  begin
-    MonthRTF.Lines.Add(SpaceStr+'针对您存在的问题,建议如下:');
-    MonthRTF.Lines.Add(SpaceStr+'  1.分析销量下降原因');
-    MonthRTF.Lines.Add(SpaceStr+'  2.适度引导消费');
-    MonthRTF.Lines.Add(SpaceStr+'  3.关注库存情况');
-    MonthRTF.Lines.Add(SpaceStr+'  4.最后祝您生意兴隆,欢迎您经常跟客户经理联系。');
-  end else
-  begin
-    MonthRTF.Lines.Add(SpaceStr+'针对您存在的问题,建议如下:');
-    MonthRTF.Lines.Add(SpaceStr+'  1.适度引导消费');
-    MonthRTF.Lines.Add(SpaceStr+'  2.关注库存情况');
-    MonthRTF.Lines.Add(SpaceStr+'  3.最后祝您生意兴隆,欢迎您经常跟客户经理联系。');
-  end;}
-
 procedure TfrmSaleAnalyMessage.SetComponentPostion;
 begin
   //设置LblTitle控制位置
@@ -414,3 +370,36 @@ begin
 end;
 
 end.
+
+ 
+
+
+ {LTitle:='二、经营优势';
+  MonthRTF.Lines.Add('');
+  MonthRTF.Lines.Add(LTitle);
+  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
+  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
+  MonthRTF.Lines.Add(SpaceStr+Msg2);
+
+  LTitle:='三、存在问题';
+  MonthRTF.Lines.Add('');
+  MonthRTF.Lines.Add(LTitle);
+  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
+  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
+  MonthRTF.Lines.Add(SpaceStr+Msg3);}
+
+  {
+  if FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE<0 then //销量下降
+  begin
+    MonthRTF.Lines.Add(SpaceStr+'针对您存在的问题,建议如下:');
+    MonthRTF.Lines.Add(SpaceStr+'  1.分析销量下降原因');
+    MonthRTF.Lines.Add(SpaceStr+'  2.适度引导消费');
+    MonthRTF.Lines.Add(SpaceStr+'  3.关注库存情况');
+    MonthRTF.Lines.Add(SpaceStr+'  4.最后祝您生意兴隆,欢迎您经常跟客户经理联系。');
+  end else
+  begin
+    MonthRTF.Lines.Add(SpaceStr+'针对您存在的问题,建议如下:');
+    MonthRTF.Lines.Add(SpaceStr+'  1.适度引导消费');
+    MonthRTF.Lines.Add(SpaceStr+'  2.关注库存情况');
+    MonthRTF.Lines.Add(SpaceStr+'  3.最后祝您生意兴隆,欢迎您经常跟客户经理联系。');
+  end;}

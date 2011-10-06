@@ -230,7 +230,6 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh5TitleClick(Column: TColumnEh);
   private
-    StrList: TStringList;
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
     RckMaxDate: integer; //台帐最大日期
@@ -366,7 +365,6 @@ begin
                               'DBGridEh4.SALE_TTL','DBGridEh4.SALE_TAX','DBGridEh4.SALE_MNY','DBGridEh4.SALE_CST','DBGridEh4.SALE_ALLPRF','DBGridEh4.SALE_PRF',
                               'DBGridEh5.SALE_TTL','DBGridEh5.SALE_TAX','DBGridEh5.SALE_MNY','DBGridEh5.SALE_CST','DBGridEh5.SALE_ALLPRF','DBGridEh5.SALE_PRF',
                               'DBGridEh6.AMONEY','DBGridEh6.NOTAX_MONEY','DBGridEh6.TAX_MONEY','DBGridEh6.AGIO_MONEY','DBGridEh7.COST_MONEY','DBGridEh6.PROFIT_MONEY','DBGridEh6.AVG_PROFIT']);
-  StrList:=TStringList.Create;
 end;
 
 function TfrmSaleDayReport.GetDeptSQL(chk: boolean): string;
@@ -629,56 +627,42 @@ procedure TfrmSaleDayReport.actFindExecute(Sender: TObject);
 var
   strSql: string;
 begin
-  try
-  StrList.Clear;
-  if FileExists('LOG.log') then StrList.LoadFromFile('LOG.log');
-  
-  StrList.Add(TimeToStr(Time)+' begin... ');
   case rzPage.ActivePageIndex of
     0: begin //按部门汇总表
         if adoReport1.Active then adoReport1.Close;
         strSql := GetDeptSQL;
-        StrList.Add(TimeToStr(Time)+' '+strSql);
         if strSql='' then Exit;
         adoReport1.SQL.Text:= strSql;
         Factor.Open(adoReport1);
-        StrList.Add(TimeToStr(Time)+'  Factor.Open(adoReport1) ');
       end;
     1: begin //按地区汇总表
         if adoReport2.Active then adoReport2.Close;
         strSql := GetGroupSQL;
-        StrList.Add(TimeToStr(Time)+' '+strSql);
         if strSql='' then Exit;
         adoReport2.SQL.Text:= strSql;
         Factor.Open(adoReport2);
-        StrList.Add(TimeToStr(Time)+'  Factor.Open(adoReport1) ');
       end;
     2: begin //按门店汇总表
         if adoReport3.Active then adoReport3.Close;
         strSql := GetShopSQL;
-        StrList.Add(TimeToStr(Time)+' '+strSql);
 
         if strSql='' then Exit;
         adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
-        StrList.Add(TimeToStr(Time)+'  Factor.Open(adoReport1) ');
       end;
     3: begin //按分类汇总表
         if adoReport4.Active then adoReport4.Close;
         strSql := GetSortSQL;
-        StrList.Add(TimeToStr(Time)+' '+strSql);
 
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
         Do_REPORT_FLAGFooterSum(fndP4_REPORT_FLAG, adoReport4, ArySumField);
-        StrList.Add(TimeToStr(Time)+'  Factor.Open(adoReport1) ');
       end;
     4: begin //按商品汇总表
         if adoReport5.Active then adoReport5.Close;
         adoReport5.SortedFields:='';
         strSql := GetGodsSQL;
-        StrList.Add(TimeToStr(Time)+' '+strSql);
 
         if strSql='' then Exit;
         adoReport5.SQL.Text := strSql;
@@ -688,22 +672,16 @@ begin
                           ['SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF'],
                           ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY*100.0','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
         dsadoReport5.DataSet:=adoReport5;
-        StrList.Add(TimeToStr(Time)+'  Factor.Open(adoReport1) ');
       end;
     5: begin //按商品流水帐
         if adoReport6.Active then adoReport6.Close;
         if Sender<>nil then self.GodsID:='';
         strSql := GetGlideSQL;
-        StrList.Add(TimeToStr(Time)+' '+strSql);
 
         if strSql='' then Exit;
         adoReport6.SQL.Text := strSql;
         Factor.Open(adoReport6);
-        StrList.Add(TimeToStr(Time)+'  Factor.Open(adoReport1) ');
       end;
-  end;
-  finally
-   if FileExists('DEBUG.LOG') then StrList.SaveToFile('LOG.log');
   end;
 end;
 
@@ -1386,9 +1364,7 @@ end;
 procedure TfrmSaleDayReport.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
-  StrList.Free;
   inherited;
-
 end;
 
 procedure TfrmSaleDayReport.DBGridEh5DblClick(Sender: TObject);

@@ -195,8 +195,8 @@ begin
 //  Enter;
     dbResolver.CommitTrans;
     InTrans := false;
-  finally
     Leave;
+  finally
   end;
 end;
 
@@ -410,8 +410,8 @@ begin
   try
     result := dbResolver.CommitBatch;
     InBatch := false;
-  finally
     Leave;
+  finally
   end;
 end;
 
@@ -421,8 +421,8 @@ begin
 //  Enter;
     result := dbResolver.OpenBatch;
     InBatch := false;
-  finally
     Leave;
+  finally
   end;
 end;
 
@@ -489,15 +489,12 @@ end;
 procedure TdbFactory.Leave;
 begin
   if InTrans or InBatch then Exit;
-//  if LockNum>0 then
-//     begin
   try
-    if LockNum<>1 then Raise Exception.Create('兄弟try语句控制有错了，检查一下吧。'); 
+    if LockNum<>1 then Raise Exception.Create('事务包异常处理逻辑有错了，检查一下吧。');
   finally
     InterlockedDecrement(LockNum);
     LeaveCriticalSection(FThreadLock);
   end;
-//     end;
 end;
 
 procedure TdbFactory.GqqLogin(UserId, UserName: string);

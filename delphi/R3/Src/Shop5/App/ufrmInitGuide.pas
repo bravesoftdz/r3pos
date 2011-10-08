@@ -414,6 +414,7 @@ class function TfrmInitGuide.InitGuide(AOwner: TForm): boolean;
 var
   rs:TZQuery;
 begin
+  result := false;
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select count(*) from VIW_MEAUNITS where TENANT_ID='+inttostr(Global.TENANT_ID);

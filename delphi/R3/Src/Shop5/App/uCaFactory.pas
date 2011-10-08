@@ -105,7 +105,7 @@ type
     Fsslpwd: string;
     Fpubpwd: string;
     FSessionId: string;
-    timeout:Integer;
+    timeout,connectTimeOut:Integer;
     FAudited: boolean;
     FTimeStamp: int64;
     _Start:int64;
@@ -231,7 +231,7 @@ type
 var CaFactory:TCaFactory;
 implementation
 uses ufrmLogo,EncDec,ZLibExGZ,uGlobal,encddecd,CaTenantService,CaProductService,CaServiceLineService,RspDownloadService,PubMemberService,
-     IniFiles,ObjCommon;
+     IniFiles,ObjCommon,uFnUtil;
 { TCaFactory }
 
 function TCaFactory.CheckInitSync: boolean;
@@ -252,7 +252,7 @@ end;
 procedure TCaFactory.doAfterExecute(const MethodName: string; SOAPResponse: TStream);
 begin
   try
-    InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+    InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@connectTimeOut), SizeOf(connectTimeOut));
     InternetSetOption(nil, INTERNET_OPTION_SEND_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
     InternetSetOption(nil, INTERNET_OPTION_RECEIVE_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
   except
@@ -823,6 +823,7 @@ var
 begin
   auto := false;
   LoadRspFactory;
+  connectTimeOut := 20000;
   DownModule := true;
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
@@ -1031,6 +1032,7 @@ var
   h,r:rsp;
   OutXml:WideString;
   RioImpl:CaProductWebServiceImpl;
+  F:TIniFile;
 begin
 try
   doc := CreateRspXML;
@@ -1094,6 +1096,16 @@ try
     result.UpGrade := StrtoInt(GetNodeValue(caProductCheckUpgradeResp,'upgradeType'));
     result.URL := GetNodeValue(caProductCheckUpgradeResp,'pkgDownloadUrl');
     result.Version := GetNodeValue(caProductCheckUpgradeResp,'newVersion');
+  //写安装目录到临时文件夹
+  F := TIniFile.Create(FnSystem.GetWinTmp+'r3.inst');
+  try
+    F.WriteString('r3','path',ExtractFileDir(ParamStr(0))); 
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
 except
   if doc<>nil then
      LogFile.AddLogFile(0,'升级<版本检测>xml='+doc.xml)

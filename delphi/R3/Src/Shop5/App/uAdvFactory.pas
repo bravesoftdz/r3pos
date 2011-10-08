@@ -45,11 +45,11 @@ type
 var
   AdvFactory:TAdvFactory;
 implementation
-uses IniFiles,uCaFactory,ufrmDesk,uGlobal;
-var
-  Rim_Url:string;
-  Rim_ComId:string;
-  Rim_CustId:string;
+uses IniFiles,uCaFactory,ufrmDesk,uShopGlobal;
+//var
+//  Rim_Url:string;
+//  Rim_ComId:string;
+//  Rim_CustId:string;
 function GetUrlFileName(url:string):string;
 var
   list:TStringList;
@@ -120,7 +120,7 @@ var
   ErrXml:string;
   w:integer;
 begin
-  if Global.debug then LogFile.AddLogFile(0,xml);
+  if ShopGlobal.debug then LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   try
     if xml<>'' then

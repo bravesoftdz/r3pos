@@ -488,7 +488,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox;
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,ufrmSaleAnalyMessage;
   
 {$R *.dfm}
 
@@ -1037,9 +1037,13 @@ begin
   StopSyncTask;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
+  if not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then
      begin
         try
+          Global.TryRemateConnect;
+          if not SyncFactory.SyncLockCheck then Exit;
+          if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
+          if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self); 
           SyncFactory.SyncAll;
         except
           on E:Exception do
@@ -4218,6 +4222,7 @@ begin
          else
          Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
+    if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self); 
     SyncFactory.SyncAll;
     Global.LoadBasic;
     ShopGlobal.LoadRight;
@@ -4286,7 +4291,8 @@ begin
     TfrmCostCalc.CheckMonthReck(self);
   finally
     frmLogo.Close;
-    TfrmInitGuide.InitGuide(self);
+    if not TfrmInitGuide.InitGuide(self) then
+       TfrmSaleAnalyMessage.ShowSaleAnalyMsg(self); 
   end;
 end;
 

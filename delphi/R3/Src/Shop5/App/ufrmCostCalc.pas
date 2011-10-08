@@ -115,7 +115,8 @@ type
     class function CalcAnalyLister(Owner:TForm):boolean;
     //判断是否月结账
     class function CheckMonthReck(Owner:TForm):boolean;
-
+    //退出上报条件检测
+    class function CheckSyncReck(Owner:TForm):boolean;
     property PrgPercent:integer read FPrgPercent write SetPrgPercent;
 
   end;
@@ -2259,6 +2260,20 @@ begin
   except
     if Factor.iDbType <> 5 then Factor.RollbackTrans;                      
     raise;
+  end;
+end;
+
+class function TfrmCostCalc.CheckSyncReck(Owner: TForm): boolean;
+var
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE='+formatDatetime('YYYYMMDD',Date()-1);
+    uGlobal.Factor.Open(rs);
+    result := (rs.Fields[0].AsInteger=0); 
+  finally
+    rs.Free;
   end;
 end;
 

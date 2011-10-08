@@ -533,8 +533,8 @@ begin
        rs.Free;
     end;
   except
-    Value := null;
-    Text := '';
+    Value := edtTable.FieldbyName('OUT_PRICE').AsFloat;
+    Text := edtTable.FieldbyName('OUT_PRICE').AsString;
     Raise;
   end;
 end;

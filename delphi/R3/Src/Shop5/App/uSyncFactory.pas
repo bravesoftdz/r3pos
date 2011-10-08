@@ -986,6 +986,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -995,12 +996,16 @@ begin
   rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'CHANGE_DATE',Global.LocalFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<调整单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1038,6 +1043,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -1058,12 +1064,16 @@ begin
   rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'CHANGE_DATE',Global.RemoteFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<调整单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -1100,6 +1110,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -1133,6 +1144,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1140,11 +1152,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<盘点单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1177,6 +1193,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -1193,11 +1210,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<盘点单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1229,6 +1250,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -1260,6 +1282,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1267,12 +1290,16 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          //以服务器为优先下载
          frmLogo.ShowTitle := '正在下载<交班结账>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1305,6 +1332,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -1321,11 +1349,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<交班结账>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1358,6 +1390,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -1389,6 +1422,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1400,11 +1434,15 @@ begin
   rs_c := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<日台账>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1447,6 +1485,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -1476,11 +1515,15 @@ begin
   rs_c := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<日台账>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1522,6 +1565,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -1635,6 +1679,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1642,12 +1687,16 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'IORO_DATE',Global.LocalFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<收入支出>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1680,6 +1729,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -1696,12 +1746,16 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'IORO_DATE',Global.RemoteFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<收入支出>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1733,6 +1787,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -1822,6 +1877,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1831,11 +1887,15 @@ begin
   rs_s := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<月台账>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -1873,6 +1933,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -1898,11 +1959,15 @@ begin
   rs_s := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := true;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<月台账>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -1939,6 +2004,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -1971,6 +2037,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -1978,12 +2045,16 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'PAY_DATE',Global.LocalFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<付款单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2016,6 +2087,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -2032,12 +2104,16 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'PAY_DATE',Global.RemoteFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<付款单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2069,6 +2145,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -2100,6 +2177,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2109,11 +2187,15 @@ begin
   rs_s := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<促销单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2151,6 +2233,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -2171,11 +2254,15 @@ begin
   rs_s := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<促销单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2212,6 +2299,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -2237,6 +2325,7 @@ begin
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
   Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2244,11 +2333,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<问卷调查>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2281,6 +2374,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -2297,11 +2391,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<问卷调查>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2333,6 +2431,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -2407,6 +2506,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2414,12 +2514,16 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'RECV_DATE',Global.LocalFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<收款单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2452,6 +2556,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -2468,12 +2573,16 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'RECV_DATE',Global.RemoteFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<收款单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2505,6 +2614,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -2560,6 +2670,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2569,13 +2680,17 @@ begin
   rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'SALES_DATE',Global.LocalFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          //以服务器为优先下载
          frmLogo.ShowTitle := '正在下载<出库单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -2612,6 +2727,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -2632,12 +2748,16 @@ begin
   rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'SALES_DATE',Global.RemoteFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<出库单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -2674,6 +2794,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -2707,6 +2828,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2714,11 +2836,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<销售订单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2751,6 +2877,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -2767,11 +2894,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<销售订单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -2803,6 +2934,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -2907,6 +3039,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -2914,11 +3047,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<采购订单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -2951,6 +3088,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -2967,11 +3105,15 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<采购订单>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          rs_h.Close;
@@ -3003,6 +3145,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -3033,6 +3176,7 @@ begin
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
 
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -3042,12 +3186,16 @@ begin
   rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'STOCK_DATE',Global.LocalFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在下载<入库单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          //以服务器为优先下载
          cs_h.Close;
          cs_d.Close;
@@ -3085,6 +3233,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -3105,12 +3254,16 @@ begin
   rs_l := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
     SyncRckClose(ls,'STOCK_DATE',Global.RemoteFactory);
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
          frmLogo.ShowTitle := '正在上传<入库单据>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
          cs_h.Close;
          cs_d.Close;
          cs_l.Close;
@@ -3147,6 +3300,7 @@ begin
 
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;
@@ -3172,6 +3326,7 @@ begin
   Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
   Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
   Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
   rs_h := TZQuery.Create(nil);
@@ -3179,7 +3334,10 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
     Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
@@ -3217,6 +3375,7 @@ begin
          end;
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
   finally
     ls.Free;
     rs_h.Free;
@@ -3233,7 +3392,10 @@ begin
   rs_d := TZQuery.Create(nil);
   try
     Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
     Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    SetTicket;
     ls.First;
     while not ls.Eof do
        begin
@@ -3270,6 +3432,7 @@ begin
          end;
          ls.Next;
        end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
   finally
     ls.Free;

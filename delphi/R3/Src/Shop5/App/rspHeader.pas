@@ -20,7 +20,7 @@ type
 
   TRspFactory=class
   private
-    timeout:integer;
+    timeout,connectTimeOut:integer;
     HTTPRIO : THTTPRIO;
     Addr: ansistring;
     flag:integer;
@@ -184,6 +184,7 @@ constructor TRspFactory.Create(_timeOut:integer;url: ansistring;_flag:integer);
 begin
   pubpwd := 'SaRi0+jf';
   timeOut := _timeOut;
+  connectTimeOut := 20000;
   flag := _flag;
   Addr := url;
   HTTPRIO := THTTPRIO.Create(nil);
@@ -244,7 +245,7 @@ procedure TRspFactory.doAfterExecute(const MethodName: string;
   SOAPResponse: TStream);
 begin
   try
-    InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+    InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@connectTimeOut), SizeOf(connectTimeOut));
     InternetSetOption(nil, INTERNET_OPTION_SEND_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
     InternetSetOption(nil, INTERNET_OPTION_RECEIVE_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
   except

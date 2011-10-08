@@ -253,7 +253,9 @@ uses
   uSyncThread in 'App\uSyncThread.pas',
   ufrmPosMainList in 'app\ufrmPosMainList.pas' {frmPosMainList},
   uCommand in 'App\uCommand.pas',
-  uMsgBox in '..\..\Basic\uMsgBox.pas';
+  uMsgBox in '..\..\Basic\uMsgBox.pas',
+  uSaleAnalyMessage in 'App\uSaleAnalyMessage.pas',
+  ufrmSaleAnalyMessage in 'App\ufrmSaleAnalyMessage.pas' {frmSaleAnalyMessage};
 
 {$R *.res}
 var

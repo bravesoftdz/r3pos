@@ -68,12 +68,13 @@ type
     TMGods_MaxGrow_PRF: string;  //毛利最大前3个，多个之间用“;”间隔开;
 
     TMGods_MaxGrowRate_AMT: string;  //环比销量增长最快3个，多个之间用“;”间隔开;
-    TMGods_MinGrowRate_AMT: string;  //环比动销最不理想3个，多个之间用“;”间隔开;
+    TMGods_MinDongXiaoRate_AMT: string;  //环比动销最不理想3个，多个之间用“;”间隔开;
   end;
 
 type
   TSaleAnalyMsg=class
   private
+    MaxRckDay: string; //最大结账日
     MinMonth: string; //最小结账月份
     MaxMonth: string; //最大结账月份
     LM_BegDate: string; //上月第一天
@@ -84,7 +85,7 @@ type
     TopCount: integer;
     Qry: TZQuery;
     procedure InitalParam; //初始化参数
-    procedure SetRckMonth(var vMinMonth,vMaxMonth: string);  //返回月结账月份
+    procedure SetRckMonth(var vMinMonth,vMaxMonth,vMaxRckDay: string);  //返回月结账月份
 
     function GetFactor: TdbFactory; //返回
     function GetTenantID: string; //传入企业ID
@@ -92,7 +93,9 @@ type
     function GetStorage(EndDate: string): real; //本月底的库存
 
     function GetMaxGodsName(vType: integer; BegDate,EndDate: string): string; //销量、毛利最大的三个商品
-    function GetGrowRateGodsName(vType: integer): string; //销量增长最快或最不理想前三个商品
+    function GetGrowRateGodsName: string; //销量增长最快或最不理想前三个商品
+    function GetMinDongXiaoGodsName: string; //本月动销最不理想的前三位
+
     //月度经营分析
     function LastMonth_SaleInfo: Boolean; //上个月经营情况;
     function LastYearThisMonth_SaleInfo: Boolean; //去年当前月份经营情况;
@@ -101,7 +104,7 @@ type
     DayMsg: TSaleDayMsg;  //每天销售消息
     MonthMsg: TSaleMonthMsg;  //月经营情况
     constructor Create;
-    destructor  Destroy; override;
+    destructor Destroy; override;
     procedure GetSaleDayMsg;  //返回当天销售msg
     procedure GetSaleMonthMsg(vCount: integer=3);  //返回当天销售msg
     property Factor: TdbFactory read GetFactor; //从外传入
@@ -134,7 +137,7 @@ end;
 
 procedure TSaleAnalyMsg.InitalParam;
 begin
-  SetRckMonth(MinMonth,MaxMonth); //取结账月份期间
+  SetRckMonth(MinMonth,MaxMonth,MaxRckDay); //取结账月份期间
   //上月启始—结束日
   LM_BegDate:=FormatDatetime('YYYYMM',IncMonth(Date(),-2))+'01'; //上月开始日期;
   LM_EndDate:=FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-2))); //上月最后一天;
@@ -186,7 +189,30 @@ begin
   MonthMsg.TMGods_MaxGrow_PRF:='';  //环比毛利增长最快3个，多个之间用“;”间隔开;
   MonthMsg.TMGods_MaxGrow_AMT:='';  //环比销量增长最快3个，多个之间用“;”间隔开;
   MonthMsg.TMGods_MaxGrowRate_AMT:='';  //环比毛利增长最快3个，多个之间用“;”间隔开;
-  MonthMsg.TMGods_MinGrowRate_AMT:='';  //环比销量增长最快3个，多个之间用“;”间隔开;
+  MonthMsg.TMGods_MinDongXiaoRate_AMT:='';  //环比销量增长最快3个，多个之间用“;”间隔开;
+end;
+
+procedure TSaleAnalyMsg.SetRckMonth(var vMinMonth, vMaxMonth,vMaxRckDay: string);
+var
+  rs: TZQuery;
+begin
+  try
+    vMinMonth:='';
+    vMaxMonth:='';
+    vMaxRckDay:='';
+    rs:=TZQuery.create(nil);
+    rs.SQL.Text:='select min(MONTH) as minMonth,max(MONTH) as maxMonth,max(END_DATE) as maxRckDate from RCK_MONTH_CLOSE where TENANT_ID='+Tenant_ID+' ';
+    Factor.Open(rs);
+    if rs.Active then
+    begin
+      vMinMonth:=trim(rs.fieldbyName('minMonth').AsString);
+      vMaxMonth:=trim(rs.fieldbyName('maxMonth').AsString);
+      vMaxRckDay:=trim(rs.fieldbyName('maxRckDate').AsString);
+      vMaxRckDay:=Copy(vMaxRckDay,1,4)+Copy(vMaxRckDay,6,2)+Copy(vMaxRckDay,9,2); //返回日期格式(8位)
+    end;
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TSaleAnalyMsg.GetSaleDayMsg;
@@ -280,16 +306,16 @@ begin
     if MonthMsg.LYTMSale_SINGLE_MNY<>0 then
       MonthMsg.LYTMSale_SINGLE_MNY_UP_RATE:=((MonthMsg.LYTMSale_SINGLE_MNY-MonthMsg.LYTMSale_SINGLE_MNY)*100)/MonthMsg.LYTMSale_SINGLE_MNY;   //本月环比单条增长；
 
+    StorageValue:=GetStorage(TM_EndDate); //当前月底总库
+    if MonthMsg.TMSale_AMT<>0 then
+      MonthMsg.TMSH_RATIO:=FormatFloatValue(StorageValue/MonthMsg.TMSale_AMT,5); //存销比
+      
     //本月份经营销量和毛利排在前三位的商品:
     MonthMsg.TMGods_MaxGrow_AMT:=GetMaxGodsName(1,TM_BegDate,TM_EndDate);  //本月销量前三位
     MonthMsg.TMGods_MaxGrow_PRF:=GetMaxGodsName(2,TM_BegDate,TM_EndDate);  //本月毛利前三位
     //环比销量排前三位和后三位的商品:
-    MonthMsg.TMGods_MaxGrowRate_AMT:=GetGrowRateGodsName(1);  //环比销量最大的前三位
-    MonthMsg.TMGods_MinGrowRate_AMT:=GetGrowRateGodsName(2);  //环比销量最不理想的前三位
-
-    StorageValue:=GetStorage(TM_EndDate);                         //月底总库
-    if MonthMsg.TMSale_AMT<>0 then
-      MonthMsg.TMSH_RATIO:=FormatFloatValue(StorageValue/MonthMsg.TMSale_AMT,5); //存销比
+    MonthMsg.TMGods_MaxGrowRate_AMT:=GetGrowRateGodsName;  //环比销量最大的前三位
+    MonthMsg.TMGods_MinDongXiaoRate_AMT:=GetMinDongXiaoGodsName;  //本月动销最不理想的前三位 
   except
     on E:Exception do
     begin
@@ -395,7 +421,7 @@ begin
 end;
 
 //动销最小的三个商品
-function TSaleAnalyMsg.GetGrowRateGodsName(vType: integer): string;
+function TSaleAnalyMsg.GetGrowRateGodsName: string;
 var
   LMTab,TMTab,BaseTab,OrderBy,Str,ReStr: string;
   rs: TZQuery;
@@ -415,16 +441,12 @@ begin
   //关联数据 
   BaseTab:='select LM.GODS_NAME,(case when LM.SAL_AMT<>0 then TM.SAL_AMT/LM.SAL_AMT else 0 end) as GrowRate from ('+LMTab+')LM,('+TMTab+')TM where LM.GODS_ID=TM.GODS_ID ';
 
-  case vType of
-   1: OrderBy:=' order by GrowRate desc '; //环比销量增长最快:3个
-   2: OrderBy:=' order by GrowRate asc ';
-  end;
   case Factor.iDbType of
    0,2,3:
-      str:='select top '+InttoStr(TopCount)+' GODS_NAME from ('+BaseTab+')tp '+OrderBy; //降序
-   1: str:='select GODS_NAME From ('+BaseTab+')tp where rownum<='+InttoStr(TopCount)+' '+OrderBy;
-   4: str:='select GODS_NAME from (select * From ('+BaseTab+')tmp '+OrderBy+')tp fetch first '+InttoStr(TopCount)+' rows only ';
-   5: str:='select GODS_NAME from ('+BaseTab+')tp '+OrderBy+' limit '+InttoStr(TopCount);
+      str:='select top '+InttoStr(TopCount)+' GODS_NAME from ('+BaseTab+')tp order by GrowRate desc '; //降序
+   1: str:='select GODS_NAME From ('+BaseTab+')tp where rownum<='+InttoStr(TopCount)+' order by GrowRate desc';
+   4: str:='select GODS_NAME from (select * From ('+BaseTab+')tmp order by GrowRate desc)tp fetch first '+InttoStr(TopCount)+' rows only ';
+   5: str:='select GODS_NAME from ('+BaseTab+')tp order by GrowRate desc limit '+InttoStr(TopCount);
   end;
 
   rs:=TZQuery.Create(nil);
@@ -459,16 +481,16 @@ var
   Str,MaxReckDate,BegDate: string;
 begin
   result:=0.0;
-  MaxReckDate:='';
+  MaxReckDate:=MaxRckDay; 
   BegDate:=EndDate; //查询最大日期
   UnitCalc:='(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)';
   rs := TZQuery.Create(nil);
   try
-    Str:='select Max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID;
+    {Str:='select Max(CREA_DATE) as CREA_DATE from RCK_DAYS_CLOSE where TENANT_ID='+TENANT_ID;
     rs.Close;
     rs.SQL.Text := ParseSQL(Factor.iDbType, Str);
     Factor.Open(rs);
-    if rs.Active then MaxReckDate:=trim(rs.fieldbyName('CREA_DATE').AsString);
+    if rs.Active then MaxReckDate:=trim(rs.fieldbyName('CREA_DATE').AsString);}
 
     if MaxReckDate='' then //未结账全部走视图:
     begin
@@ -514,26 +536,6 @@ begin
       else if Rs.RecordCount=0 then
         result:=0;
     end;
-  finally
-    rs.Free;
-  end;
-end;
-
-procedure TSaleAnalyMsg.SetRckMonth(var vMinMonth, vMaxMonth: string);
-var
-  rs: TZQuery;
-begin
-  try
-    vMinMonth:='';
-    vMaxMonth:='';
-    rs:=TZQuery.create(nil);
-    rs.SQL.Text:='select min(MONTH) as minMonth,max(MONTH) as maxMonth from RCK_MONTH_CLOSE where TENANT_ID='+Tenant_ID+' ';
-    Factor.Open(rs);
-    if rs.Active then
-    begin
-      vMinMonth:=trim(rs.fieldbyName('minMonth').AsString);
-      vMaxMonth:=trim(rs.fieldbyName('maxMonth').AsString);;
-    end; 
   finally
     rs.Free;
   end;
@@ -696,5 +698,102 @@ begin
     end;
   end;
 end;
+
+function TSaleAnalyMsg.GetMinDongXiaoGodsName: string;
+var
+  rs: TZQuery;
+  Str,STOR_Tab,SALE_Tab,ReStr: string;
+begin
+  if TopCount<=0 then TopCount:=3;  //默认取前三个
+  result:='';
+  rs := TZQuery.Create(nil);
+
+  if (MaxRckDay>=TM_BegDate) and (MaxRckDay<>'') then  //已结账，全部走台账表
+  begin
+    STOR_Tab:=
+      'select GODS_ID,GODS_NAME,sum(STOCK_AMT) as BAL_AMT from '+
+      '(select A.GODS_ID,D.GODS_NAME,sum(A.BAL_AMT) as STOCK_AMT from RCK_GOODS_DAYS A,VIW_GOODSINFO D where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
+      ' A.TENANT_ID='+TENANT_ID+' and A.CREA_DATE='+TM_BegDate+' and D.RELATION_ID=1000006 group by A.GODS_ID,D.GODS_NAME '+
+      ' union all '+
+      ' select A.GODS_ID,D.GODS_NAME,sum(A.STOCK_AMT)as STOCK_AMT from VIW_GOODS_DAYS A,VIW_GOODSINFO D where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
+      ' A.TENANT_ID='+TENANT_ID+' and D.RELATION_ID=1000006 and '+
+      '  ORDER_TYPE in (11,13) and A.CREA_DATE>='+TM_BegDate+' and A.CREA_DATE<='+TM_EndDate+' group by A.GODS_ID,D.GODS_NAME)tp '+
+      ' group by GODS_ID,GODS_NAME ';
+  end else //走两部分联合[union]
+  begin
+    STOR_Tab:=
+      'select GODS_ID,GODS_NAME,sum(STOCK_AMT) as BAL_AMT from '+
+      '(select A.GODS_ID,D.GODS_NAME,sum(case when ORDER_TYPE in (11,13) then STOCK_AMT '+
+                                ' when ORDER_TYPE in (21,23,24) then -SALE_AMT '+
+                                ' when ORDER_TYPE=12 then DBIN_AMT '+
+                                ' when ORDER_TYPE=22 then -DBOUT_AMT '+
+                                ' else (CHANGE1_AMT+CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT) end)as STOCK_AMT '+
+      ' from VIW_GOODS_DAYS A,VIW_GOODSINFO D '+
+      ' where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.TENANT_ID='+TENANT_ID+' and D.RELATION_ID=1000006 '+
+      ' and A.CREA_DATE<'+TM_BegDate+' group by A.GODS_ID,D.GODS_NAME '+
+      '   union all '+
+      ' select A.GODS_ID,D.GODS_NAME,sum(A.STOCK_AMT)as STOCK_AMT from VIW_GOODS_DAYS A,VIW_GOODSINFO D where A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and '+
+      ' A.TENANT_ID='+TENANT_ID+' and D.RELATION_ID=1000006 and ORDER_TYPE in (11,13) and A.CREA_DATE>='+TM_BegDate+' and A.CREA_DATE<='+TM_EndDate+' group by A.GODS_ID,D.GODS_NAME)tp '+
+      ' group by GODS_ID,GODS_NAME';
+  end;
+  SALE_Tab:='select GODS_ID,cast(sum(AMOUNT) as decimal(18,3)) as SALE_AMT from VIW_SALESDATA '+
+            ' where TENANT_ID='+TENANT_ID+' and SALES_DATE>='+TM_BegDate+' and SALES_DATE<='+TM_EndDate+
+            ' group by GODS_ID ';
+
+  case Factor.iDbType of
+   0,2,3:
+    begin
+      Str:=
+        'select top '+InttoStr(TopCount)+' GODS_NAME from  '+
+        '(select STOR.GODS_ID,GODS_NAME,Round((SALE_AMT*1.0)/(BAL_AMT*1.0),4) as DX_RATE from ('+STOR_Tab+')STOR,('+SALE_Tab+') SAL '+
+        ' where STOR.GODS_ID=SAL.GODS_ID and BAL_AMT>0)tmp '+
+        ' order by DX_RATE asc';
+    end;
+   1:
+    begin
+      str:=
+        'select GODS_NAME From '+
+        ' (select STOR.GODS_ID,GODS_NAME,Round((SALE_AMT*1.0)/(BAL_AMT*1.0),4) as DX_RATE from ('+STOR_Tab+')STOR,('+SALE_Tab+') SAL '+
+        ' where STOR.GODS_ID=SAL.GODS_ID and BAL_AMT>0)tp where rownum<='+InttoStr(TopCount)+' order by DX_RATE asc';
+    end;
+   4:
+    begin
+      str:=
+        'select GODS_NAME from '+
+        ' (select * From (select STOR.GODS_ID,GODS_NAME,Round((SALE_AMT*1.0)/(BAL_AMT*1.0),4) as DX_RATE from ('+STOR_Tab+')STOR,('+SALE_Tab+') SAL '+
+        '  where STOR.GODS_ID=SAL.GODS_ID and BAL_AMT>0)tmp order by DX_RATE asc)tp fetch first '+InttoStr(TopCount)+' rows only ';
+    end;
+   5:
+    begin
+      str:=
+       'select GODS_NAME from '+
+       ' (select STOR.GODS_ID,GODS_NAME,Round((SALE_AMT*1.0)/(BAL_AMT*1.0),4) as DX_RATE from ('+STOR_Tab+')STOR,('+SALE_Tab+') SAL '+
+       ' where STOR.GODS_ID=SAL.GODS_ID and BAL_AMT>0)tmp order by DX_RATE asc limit '+InttoStr(TopCount)+'';
+    end;
+  end;
+  rs:=TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text:=ParseSQL(Factor.iDbType, Str);
+    Factor.Open(rs);
+    if rs.Active then
+    begin
+      rs.First;
+      while not rs.Eof do
+      begin
+        if ReStr='' then
+          ReStr:=rs.fieldbyName('GODS_NAME').AsString
+        else
+          ReStr:=ReStr+'、'+rs.fieldbyName('GODS_NAME').AsString;
+        rs.Next;
+      end;
+    end;
+  finally
+    rs.Free;
+  end;
+  result:=ReStr;
+  if result='' then result:='无';
+end;
+
 
 end.

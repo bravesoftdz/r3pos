@@ -197,7 +197,7 @@ begin
   Msg4:='4、您当月销量最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_AMT+','+
            '当月毛利额最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_PRF+','+
      '环比上月销量增长最快的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrowRate_AMT+','+
-           '本月动销不理想的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MinGrowRate_AMT+'';
+           '本月动销不理想的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MinDongXiaoRate_AMT+'';
   if Msg4<>'' then Msg4:=Msg4+',';
   if FSaleAnaly.MonthMsg.TMSH_RATIO < 0.6 then Msg4:=Msg4+'存销比扁低。'
   else if FSaleAnaly.MonthMsg.TMSH_RATIO>1.5 then Msg4:=Msg4+'存销比扁大。';

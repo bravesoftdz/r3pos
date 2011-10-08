@@ -36,6 +36,7 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure dbGridDblClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -211,6 +212,12 @@ begin
             RzBitBtn1Click(Sender);
         end;
     end;
+end;
+
+procedure TfrmPosMainList.dbGridDblClick(Sender: TObject);
+begin
+  inherited;
+  RzBitBtn1Click(nil);
 end;
 
 end.

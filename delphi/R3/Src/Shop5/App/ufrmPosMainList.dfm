@@ -1,6 +1,6 @@
 inherited frmPosMainList: TfrmPosMainList
-  Left = 394
-  Top = 174
+  Left = 560
+  Top = 172
   Caption = #38144#21806#21333#26597#35810
   ClientHeight = 421
   ClientWidth = 596
@@ -54,6 +54,7 @@ inherited frmPosMainList: TfrmPosMainList
             CurrencySymbol = #65509
             DecimalNumber = 2
             DigitalNumber = 12
+            OnDblClick = dbGridDblClick
             OnDrawColumnCell = dbGridDrawColumnCell
             Columns = <
               item

@@ -201,6 +201,7 @@ begin
   if Key=#13 then
      begin
        if GodsToLocusNo(trim(trim(edtInput.Text))) then Calc;
+       //if trim(edtInput.Text) <> '' then DataSet.Locate('LOCUS_NO',trim(edtInput.Text),[]);
        edtInput.Text := '';
      end;
 end;
@@ -396,19 +397,30 @@ end;
 procedure TfrmLocusNoProperty.Calc;
 var
   r,t:currency;
+  Locus_No:String;
 begin
   t := AObj.FieldbyName('CALC_AMOUNT').asFloat/CONV_RATE;
+  if trim(edtInput.Text) <> '' then
+    Locus_No := Trim(edtInput.Text)
+  else
+    Locus_No := DataSet.FieldbyName('LOCUS_NO').AsString;
   r := 0;
-  DataSet.First;
-  while not DataSet.Eof do
-    begin
-      r := r + DataSet.FieldbyName('CALC_AMOUNT').asFloat;
-      DataSet.Next;
-    end;
-  r := r / CONV_RATE;
-  RzLEDDisplay.Caption := floattostr(trunc(r));
-  wait := trunc(t)-trunc(r);
-  RzLEDDisplay2.Caption := floattostr(wait);
+  DataSet.DisableControls;
+  try
+    DataSet.First;
+    while not DataSet.Eof do
+      begin
+        r := r + DataSet.FieldbyName('CALC_AMOUNT').asFloat;
+        DataSet.Next;
+      end;
+    r := r / CONV_RATE;
+    RzLEDDisplay.Caption := floattostr(trunc(r));
+    wait := trunc(t)-trunc(r);
+    RzLEDDisplay2.Caption := floattostr(wait);
+  finally
+    if Locus_No <> '' then DataSet.Locate('LOCUS_NO',Locus_No,[]);
+    DataSet.EnableControls;
+  end;
 end;
 
 procedure TfrmLocusNoProperty.FormCloseQuery(Sender: TObject;

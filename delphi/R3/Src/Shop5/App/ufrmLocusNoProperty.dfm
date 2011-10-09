@@ -1,6 +1,6 @@
 inherited frmLocusNoProperty: TfrmLocusNoProperty
-  Left = 450
-  Top = 264
+  Left = 487
+  Top = 239
   ActiveControl = edtInput
   Caption = #25195#30721#35760#24405
   ClientHeight = 365

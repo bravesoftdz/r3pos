@@ -17,8 +17,6 @@ inherited frmStorageTracking: TfrmStorageTracking
       inherited RzPage: TRzPageControl
         Width = 910
         Height = 524
-        ActivePage = TabSheet3
-        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24211#23384#26597#35810
@@ -471,6 +469,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Buttons = [zbClear]
                     DropListStyle = lsFixed
                     MultiSelect = False
+                    ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                   end
                   object edtSHOP_ID: TzrComboBoxList
                     Tag = -1
@@ -508,6 +507,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Buttons = [zbClear]
                     DropListStyle = lsFixed
                     MultiSelect = False
+                    ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                   end
                   object edtSHOP_VALUE: TzrComboBoxList
                     Tag = -1
@@ -545,6 +545,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Buttons = [zbClear]
                     DropListStyle = lsFixed
                     MultiSelect = False
+                    ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                   end
                   object edtSHOP_TYPE: TcxComboBox
                     Left = 62
@@ -609,6 +610,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                     Buttons = [zbClear]
                     DropListStyle = lsFixed
                     MultiSelect = False
+                    ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                   end
                   object edtSTOR_AMT: TcxComboBox
                     Left = 524
@@ -1146,6 +1148,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object edtP2_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -1183,6 +1186,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object edtP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -1220,6 +1224,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object edtP2_SHOP_TYPE: TcxComboBox
                   Left = 62
@@ -1284,6 +1289,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
             end
@@ -1763,6 +1769,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object edtP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -1800,6 +1807,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object edtP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -1837,6 +1845,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object edtP3_SHOP_TYPE: TcxComboBox
                   Left = 62
@@ -1901,6 +1910,7 @@ inherited frmStorageTracking: TfrmStorageTracking
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
             end

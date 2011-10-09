@@ -240,8 +240,8 @@ begin
            2、询问客户经理或者通过终端信息平台了解近期的促销活动，积极参与，提高销售结构。
            3、加强信息平台的使用，常进入"我的社区"了解社区其他互助小组成员反馈的情况，或者发贴征求组员的意见和建议，改进经营状况。
            4、如果您有条件，可联合烟草公司组织开展消费体验活动 }
-  if ((FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY_UP_RATE<0) and //环比单条值
-      (FSaleAnaly.MonthMsg.TMSale_PRF<FSaleAnaly.MonthMsg.LMSale_PRF) and //环比毛利下降
+  if ((FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY_UP_RATE<0) or //环比单条值
+      (FSaleAnaly.MonthMsg.TMSale_PRF<FSaleAnaly.MonthMsg.LMSale_PRF) or //环比毛利下降
       (FSaleAnaly.MonthMsg.TMSale_PRF_UP_RATE<0)) or   //环比毛利率
      ((FSaleAnaly.MonthMsg.LYTMSale_SINGLE_MNY_UP_RATE<0) or
       (FSaleAnaly.MonthMsg.LYTMSale_PRF<FSaleAnaly.MonthMsg.LMSale_PRF) or //环比毛利下降
@@ -265,7 +265,7 @@ begin
   end;
 
   {条件4（四）、存销比偏大。 建议: 1、积极主动加强宣传推荐，提高卷烟动销。2、如果有滞销品种，可联系烟草公司开展相应的促销活动，加快销售。}
-  if FSaleAnaly.MonthMsg.TMSH_RATIO>1.5 then
+  if FSaleAnaly.MonthMsg.TMSH_RATIO>1.50 then
   begin
     Inc(RowNum);
     MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、积极主动加强宣传推荐，提高卷烟动销。2、如果有滞销品种，可联系烟草公司开展相应的促销活动，加快销售。');

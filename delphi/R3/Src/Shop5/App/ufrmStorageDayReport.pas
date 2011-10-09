@@ -664,18 +664,18 @@ begin
   if fndP4_ReckType.ItemIndex=0 then
   begin
     case fndP4_STOR_AMT.ItemIndex of
-     1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
-     2: StrWhere := StrWhere + ' and A.AMOUNT>0';
-     3: StrWhere := StrWhere + ' and A.AMOUNT=0';
-     4: StrWhere := StrWhere + ' and A.AMOUNT<0';
+     1: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<>0';
+     2: StrWhere := StrWhere + ' and round(A.AMOUNT,3)>0';
+     3: StrWhere := StrWhere + ' and round(A.AMOUNT,3)=0';
+     4: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<0';
     end;
   end else
   begin
     case fndP4_STOR_AMT.ItemIndex of
-     1: StrWhere := StrWhere + ' and A.BAL_AMT<>0';
-     2: StrWhere := StrWhere + ' and A.BAL_AMT>0';
-     3: StrWhere := StrWhere + ' and A.BAL_AMT=0';
-     4: StrWhere := StrWhere + ' and A.BAL_AMT<0';
+     1: StrWhere := StrWhere + ' and round(A.BAL_AMT,3)<>0';
+     2: StrWhere := StrWhere + ' and round(A.BAL_AMT,3)>0';
+     3: StrWhere := StrWhere + ' and round(A.BAL_AMT,3)=0';
+     4: StrWhere := StrWhere + ' and round(A.BAL_AMT,3)<0';
     end;
   end;
   

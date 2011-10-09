@@ -454,10 +454,10 @@ begin
     StrWhere := StrWhere + ' and A.SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
 
   case edtSTOR_AMT.ItemIndex of
-  1: StrWhere := StrWhere + ' and A.AMOUNT<>0';
-  2: StrWhere := StrWhere + ' and A.AMOUNT>0';
-  3: StrWhere := StrWhere + ' and A.AMOUNT=0';
-  4: StrWhere := StrWhere + ' and A.AMOUNT<0';
+  1: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<>0';
+  2: StrWhere := StrWhere + ' and round(A.AMOUNT,3)>0';
+  3: StrWhere := StrWhere + ' and round(A.AMOUNT,3)=0';
+  4: StrWhere := StrWhere + ' and round(A.AMOUNT,3)<0';
   end;
 
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;

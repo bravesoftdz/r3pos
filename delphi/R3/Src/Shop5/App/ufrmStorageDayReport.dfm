@@ -170,6 +170,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 344
@@ -239,6 +240,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbNew, zbClear, zbFind]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP1_ReckType: TcxComboBox
                   Left = 80
@@ -463,6 +465,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbNew, zbClear, zbFind]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object RzBitBtn1: TRzBitBtn
                   Left = 478
@@ -554,6 +557,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
                   Left = 344
@@ -873,6 +877,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
@@ -938,6 +943,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbNew, zbClear, zbFind]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
@@ -1291,6 +1297,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
                   Left = 344
@@ -1348,6 +1355,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP4_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -1390,6 +1398,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Buttons = [zbNew, zbClear, zbFind]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP4_SHOP_TYPE: TcxComboBox
                   Left = 80

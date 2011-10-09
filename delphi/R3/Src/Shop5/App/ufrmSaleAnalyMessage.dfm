@@ -4809,12 +4809,12 @@ inherited frmSaleAnalyMessage: TfrmSaleAnalyMessage
           Top = 2
           Width = 543
           Height = 390
-          ActivePage = Tab1
+          ActivePage = Tab2
           Align = alClient
           FlatColor = clWhite
           ShowFullFrame = False
           ShowShadow = False
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           FixedDimension = 18
           object Tab1: TRzTabSheet

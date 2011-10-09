@@ -191,16 +191,24 @@ begin
   //3、存在问题
   Msg3:='3、您当月与同期比：销量'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_AMT_UP_RATE)+'%,'+
                          '单条值'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_SINGLE_MNY_UP_RATE)+'%,'+
-                         '毛利环比'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_PRF_UP_RATE)+'%。';
+                       '毛利环比'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_PRF_UP_RATE)+'%。';
 
   //4、对比结果显示：
   Msg4:='4、您当月销量最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_AMT+','+
            '当月毛利额最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_PRF+','+
      '环比上月销量增长最快的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrowRate_AMT+','+
            '本月动销不理想的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MinDongXiaoRate_AMT+'';
-  if Msg4<>'' then Msg4:=Msg4+',';
-  if FSaleAnaly.MonthMsg.TMSH_RATIO < 0.6 then Msg4:=Msg4+'存销比扁低。'
-  else if FSaleAnaly.MonthMsg.TMSH_RATIO>1.5 then Msg4:=Msg4+'存销比扁大。';
+
+  if FSaleAnaly.MonthMsg.TMSH_RATIO < 0.6 then
+  begin
+    if Msg4<>'' then Msg4:=Msg4+',';
+    Msg4:=Msg4+'存销比偏低。'
+  end else
+  if FSaleAnaly.MonthMsg.TMSH_RATIO>1.5 then
+  begin
+    if Msg4<>'' then Msg4:=Msg4+',';
+    Msg4:=Msg4+'存销比偏大。';
+  end;
   if trim(Msg4)='' then Msg4:='无';
 
   //开始写入PRF
@@ -282,6 +290,8 @@ begin
     Inc(RowNum);
     MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、希望您能将销售经验和成功做法发到信息平台供大家参考。');
   end;
+  if RowNum=0 then
+    MonthRTF.Lines.Add(SpaceStr+'无。');
 end;
 
 

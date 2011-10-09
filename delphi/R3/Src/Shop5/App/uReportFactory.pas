@@ -766,8 +766,11 @@ begin
       for j:=0 to Func.Count -1 do
       begin
         w := Integer(Func.Objects[j]);
-        if w>=0 then
-           Footer[w].Value := CalcFunc(Func[j],Footer);
+        if (w>=0) then
+           begin
+             Footer[w].Value := CalcFunc(Func[j],Footer);
+             if Footer[w].Value=0 then Footer[w].Value := null;
+           end;
       end;
     end;
 end;

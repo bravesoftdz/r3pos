@@ -397,7 +397,9 @@ procedure TfrmSaleTotalReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if (Column.Field.Index>2) and not VarIsNull(Factory.Footer[Column.Field.Index-3].Value) and not VarIsClear(Factory.Footer[Column.Field.Index-3].Value) then
-     Text := formatFloat('#0.00',Factory.Footer[Column.Field.Index-3].Value);
+     Text := formatFloat('#0.00',Factory.Footer[Column.Field.Index-3].Value)
+  else
+     Text := '';
 end;
 
 procedure TfrmSaleTotalReport.btnDeleteClick(Sender: TObject);

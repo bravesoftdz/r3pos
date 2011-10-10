@@ -442,9 +442,11 @@ begin
       if rzTree.Selected.Level > 0 then
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
-  Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-  if (edtGoods_ID.Text <> '') and (Item_Index>0) then
+
+  //2011.10.10 add ÅÐ¶ÏË÷Òý
+  if (edtGoods_Type.ItemIndex>=0) and (trim(edtGoods_ID.AsString) <> '') then
   begin
+    Item_Index := StrToIntDef(Trim(TRecord_(edtGoods_Type.Properties.Items.Objects[edtGoods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
     StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtGoods_ID.AsString);
   end;
 
@@ -830,9 +832,11 @@ begin
       if rzP2_Tree.Selected.Level > 0 then
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP2_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
-  Item_Index := StrToIntDef(Trim(TRecord_(edtP2_Goods_Type.Properties.Items.Objects[edtP2_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-  if (edtP2_Goods_ID.Text <> '') and (Item_Index>0) then
+
+  //2011.10.10 add ÅÐ¶ÏË÷Òý    
+  if (edtP2_Goods_Type.ItemIndex>=0) and (trim(edtP2_Goods_ID.AsString) <> '') then
   begin
+    Item_Index := StrToIntDef(Trim(TRecord_(edtP2_Goods_Type.Properties.Items.Objects[edtP2_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
     StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtP2_Goods_ID.AsString);
   end;
 
@@ -966,9 +970,11 @@ begin
       if rzP3_Tree.Selected.Level > 0 then
         StrWhere := StrWhere + ' and C.RELATION_ID='+TRecord_(rzP3_Tree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     end;
-  Item_Index := StrToIntDef(Trim(TRecord_(edtP3_Goods_Type.Properties.Items.Objects[edtP3_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
-  if (edtP3_Goods_ID.Text <> '') and (Item_Index>0) then
+
+  //2011.10.10 add ÅÐ¶ÏË÷Òý
+  if (edtP3_Goods_Type.ItemIndex>=0) and (trim(edtP3_Goods_ID.AsString)<>'') then
   begin
+    Item_Index := StrToIntDef(Trim(TRecord_(edtP3_Goods_Type.Properties.Items.Objects[edtP3_Goods_Type.ItemIndex]).FieldByName('CODE_ID').AsString),0);
     StrWhere := StrWhere + ' and C.SORT_ID'+InttoStr(Item_Index)+'='+QuotedStr(edtP3_Goods_ID.AsString);
   end;
 

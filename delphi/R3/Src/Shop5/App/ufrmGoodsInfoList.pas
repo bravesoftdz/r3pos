@@ -198,6 +198,7 @@ begin
     Inc(rcAmt); //新插入增加一条
     GetNo; //刷新显示记录数
   end;
+  InitGrid;
   finally
     cdsBrowser.EnableControls;
   end;
@@ -438,7 +439,7 @@ var
   rs: TZQuery;
   SetCol: TColumnEh;
 begin
-  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+  {rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   SetCol:=FindColumn(DBGridEh1,'CALC_UNITS');
   if (SetCol<>nil) and (rs.Active) and (rs.RecordCount>0) then
   begin
@@ -449,13 +450,13 @@ begin
     begin
       SetCol.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
       SetCol.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-     {DBGridEh1.FieldColumns['SMALL_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-      DBGridEh1.FieldColumns['SMALL_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-      DBGridEh1.FieldColumns['BIG_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-      DBGridEh1.FieldColumns['BIG_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString); }
+     //DBGridEh1.FieldColumns['SMALL_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      //DBGridEh1.FieldColumns['SMALL_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+      //DBGridEh1.FieldColumns['BIG_UNITS'].KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      //DBGridEh1.FieldColumns['BIG_UNITS'].PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
       rs.Next;
     end;
-  end;
+  end;}
   
   //供货商[生产厂家]
   rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
@@ -504,7 +505,7 @@ var
   tmp: TZQuery;
 begin
   inherited;
-//  InitGrid;
+  InitGrid;
   LoadTree;
   edtProperty1:=TZQuery.Create(nil);
   edtProperty2:=TZQuery.Create(nil);

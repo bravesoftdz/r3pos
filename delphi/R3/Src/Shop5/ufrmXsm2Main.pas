@@ -10,7 +10,7 @@ uses
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
   DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg, RzSplit, Mask,
-  RzEdit, RzListVw, uMMClient, uMMUtil;
+  RzEdit, RzListVw, uMMClient, uMMUtil, ZLogFile;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
   WM_DESKTOP_REQUEST=WM_USER+11;
@@ -609,9 +609,14 @@ end;
 procedure TfrmXsm2Main.DoActiveForm(Sender: TObject);
 begin
   if TrzBmpButton(Sender).tag=0 then Exit;
-  TForm(TrzBmpButton(Sender).tag).WindowState := wsMaximized;
-  TForm(TrzBmpButton(Sender).tag).BringToFront;
-  TrzBmpButton(Sender).Down := true;
+  try
+    TForm(TrzBmpButton(Sender).tag).WindowState := wsMaximized;
+    TForm(TrzBmpButton(Sender).tag).BringToFront;
+    TrzBmpButton(Sender).Down := true;
+  except
+    on E:Exception do
+       LogFile.AddLogFile(0,'<DoActiveForm>:'+E.Message);
+  end;
 end;
 function ToolSort(Item1, Item2: Pointer): Integer;
 begin
@@ -672,22 +677,27 @@ var
   i:integer;
   SOn:TNotifyEvent;
 begin
-  if not Logined then Exit;
-  if screen.ActiveForm = nil then Exit;
-  if screen.ActiveForm = frmMain then
-     Exit;
-  if screen.ActiveForm = frmDesk then
-     Exit;
-  if (screen.ActiveForm.FormStyle=fsMDIChild) then
-  begin
-  for i:=0 to FList.Count -1 do
+  try
+    if not Logined then Exit;
+    if screen.ActiveForm = nil then Exit;
+    if screen.ActiveForm = frmMain then
+       Exit;
+    if screen.ActiveForm = frmDesk then
+       Exit;
+    if (screen.ActiveForm.FormStyle=fsMDIChild) then
     begin
-      if (Integer(FList[i])=TfrmBasic(screen.ActiveForm).PageHandle) then
-         begin
-           TrzBmpButton(FList[i]).Down := true;
-           Exit;
-         end;
+    for i:=0 to FList.Count -1 do
+      begin
+        if (Integer(FList[i])=TfrmBasic(screen.ActiveForm).PageHandle) then
+           begin
+             TrzBmpButton(FList[i]).Down := true;
+             Exit;
+           end;
+      end;
     end;
+  except
+    on E:Exception do
+       LogFile.AddLogFile(0,'<DoActiveChange>:'+E.Message);
   end;
 end;
 
@@ -724,18 +734,23 @@ end;
 var
   i:integer;
 begin
-  for i:=0 to FList.Count -1 do
-    begin
-      if TrzBmpButton(FList[i]).tag=integer(pointer(Sender)) then
-         begin
-           TrzBmpButton(FList[i]).Tag := 0;
-           TObject(FList[i]).Free;
-           FList.Delete(i);
-           break;
-         end;
-    end;
-  SortR3Button;
-  if not Closeing then PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);
+  try
+    for i:=0 to FList.Count -1 do
+      begin
+        if TrzBmpButton(FList[i]).tag=integer(pointer(Sender)) then
+           begin
+             TrzBmpButton(FList[i]).Tag := 0;
+             TObject(FList[i]).Free;
+             FList.Delete(i);
+             break;
+           end;
+      end;
+    SortR3Button;
+    if not Closeing then PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);
+  except
+    on E:Exception do
+       LogFile.AddLogFile(0,'<DoFreeForm>:'+E.Message);
+  end;
 end;
 
 function TfrmXsm2Main.CheckVersion:boolean;
@@ -1034,13 +1049,18 @@ begin
        Exit;
        //Application.Minimize;
      end;
+  Timer1.Enabled := false;
   StopSyncTask;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
-  if not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then
+  if not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and not CaFactory.CheckDebugSync then
      begin
         try
           Global.TryRemateConnect;
+        except
+          Exit;
+        end;
+        try
           if not SyncFactory.SyncLockCheck then Exit;
           if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
           if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self); 
@@ -1125,6 +1145,7 @@ var
   IsFirst:boolean;
 begin
   inherited;
+  try
   w := StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60;
   if PrainpowerJudge.Locked>0 then Exit;
   if SystemShutdown then Exit;
@@ -1173,6 +1194,10 @@ begin
        P := MsgFactory.ReadMsg;
        if P<>nil then MsgFactory.HintMsg(P);
      end;
+  except
+     on E:Exception do
+        LogFile.AddLogFile(0,E.Message);
+  end;
 end;
 
 procedure TfrmXsm2Main.LoadFrame;

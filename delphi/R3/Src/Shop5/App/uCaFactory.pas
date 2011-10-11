@@ -176,6 +176,7 @@ type
     procedure SetSynTimeStamp(tbName:string;_TimeStamp:int64;SHOP_ID:string='#');
 
     //产品服务
+    function CheckDebugSync:boolean;
     function CheckUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
 
     //供应链服务
@@ -476,6 +477,14 @@ var
   f,r:TIniFile;
   finded,isSrvr:boolean;
 begin
+//如果演示版直接不认证
+if CheckDebugSync then
+   begin
+     result.RET := '1';
+     result.TENANT_ID := Global.TENANT_ID;
+     Audited := true;
+     Exit;
+   end;
 try
   Audited := false;
   doc := CreateRspXML;
@@ -849,6 +858,9 @@ end;
 function TCaFactory.CreateRio(_timeOut:integer=-1): THTTPRIO;
 begin
   result := THTTPRIO.Create(nil);
+  result.HTTPWebNode.ConnectTimeout := ConnectTimeOut;
+  result.HTTPWebNode.ReceiveTimeout := _timeOut;
+  result.HTTPWebNode.SendTimeout := _timeOut;
   timeOut := _timeOut;
   if _timeOut>0 then
      result.OnAfterExecute := doAfterExecute
@@ -1034,6 +1046,12 @@ var
   RioImpl:CaProductWebServiceImpl;
   F:TIniFile;
 begin
+//如果演示版直接不认证
+if CheckDebugSync then
+   begin
+     result.UpGrade := 3;
+     Exit;
+   end;
 try
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -1404,6 +1422,7 @@ end;
 function TCaFactory.SyncAll(flag:integer): boolean;
 begin
   AutoCoLogo;
+  if CheckDebugSync then Exit;
   frmLogo.Show;
   try
     frmLogo.ProgressBar1.Max := 11;
@@ -2820,7 +2839,7 @@ begin
     Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_TYPE from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
     Global.LocalFactory.Open(Temp);
     if auto then
-       coLogin(Temp.Fields[0].AsString,DesEncode(Temp.Fields[0].AsString,pubpwd),2)
+       coLogin(Temp.Fields[0].AsString,DesEncode(Temp.Fields[0].AsString,pubpwd),3)
     else
        coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY),1);
     TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
@@ -3447,6 +3466,18 @@ begin
     Global.LocalFactory.ExecProc('TSyncSystemTimeStamp',Params);
   finally
     Params.Free;
+  end;
+end;
+
+function TCaFactory.CheckDebugSync: boolean;
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    result := (F.ReadString('r3','compiler','runing')<>'runing'); 
+  finally
+    F.Free;
   end;
 end;
 

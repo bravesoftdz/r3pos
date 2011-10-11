@@ -53,27 +53,36 @@ type
     procedure RzBmpButton1Click(Sender: TObject);
     procedure ImgCloseClick(Sender: TObject);
     procedure ImgIKnowClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     FDoAction: TAction;
     FSaleAnaly: TSaleAnalyMsg;
+    Page1ed,Page2ed:boolean;
     procedure SetComponentPostion; //控制2个提示内容标题显示位置
     procedure SetRTFFont(SetRTF: TRzRichEdit; BegIdx,SetLen: integer);
     procedure ShowDaysSaleInfo; //显示天天经营提醒
     procedure ShowMonthSaleInfo;   //显示月度经营情况
+    procedure OpenPage1;
+    procedure OpenPage2;
+    procedure SetSaleAnaly(const Value: TSaleAnalyMsg);
   public
     //DoAction:传入调用显示：销售分析表，现在要调用 
     class function ShowSaleAnalyMsg(AOwner:TForm; DoAction: TAction=nil):boolean;
+    property SaleAnaly:TSaleAnalyMsg read FSaleAnaly write SetSaleAnaly;
   end;
 
 
 implementation
-uses uShopGlobal,uGlobal;
+uses uShopGlobal,uGlobal,ufrmLogo;
 {$R *.dfm}
 
 procedure TfrmSaleAnalyMessage.FormCreate(Sender: TObject);
 var i:Integer;
 begin
   inherited;
+  Page1ed := false;
+  Page2ed := false;
+  SaleAnaly := TSaleAnalyMsg.Create;
   for i := 0 to RzPage.PageCount - 1 do
     begin
       RzPage.Pages[i].TabVisible := False;
@@ -88,32 +97,19 @@ begin
 end;
 
 class function TfrmSaleAnalyMessage.ShowSaleAnalyMsg(AOwner: TForm; DoAction: TAction): boolean;
-var
-  SaleAnaly: TSaleAnalyMsg;
 begin
-  try
-    SaleAnaly:=TSaleAnalyMsg.Create;
-    SaleAnaly.GetSaleDayMsg;
-    SaleAnaly.GetSaleMonthMsg;
-    if 1=1 then //(SaleAnaly.DayMsg.YDSale_AMT>0) or (SaleAnaly.MonthMsg.LMSale_AMT>0) //现在都显示，暂不控制
-    begin
       with TfrmSaleAnalyMessage.Create(AOwner) do
       begin
         try
           FDoAction:=DoAction;
-          FSaleAnaly:=SaleAnaly;
-          ShowDaysSaleInfo;  //显示天天经营提醒
-          ShowMonthSaleInfo; //显示月度经营情况
           SetComponentPostion; //控制2个提示内容标题显示位置
+          RzPage.ActivePageIndex := 0;
+          OpenPage1;
           result := (ShowModal=MROK);
         finally
           free;
         end;
       end;
-    end;
-  finally
-    SaleAnaly.Free;
-  end;
 end;
 
 procedure TfrmSaleAnalyMessage.Image2Click(Sender: TObject);
@@ -140,15 +136,21 @@ end;
 procedure TfrmSaleAnalyMessage.RzBmpButton2Click(Sender: TObject);
 begin
   inherited;
-  if RzPage.ActivePage<>Tab1 then
-    RzPage.ActivePage:=Tab1;
+  RzPage.ActivePageIndex := 0;
+  case rzPage.ActivePageIndex of
+  0:OpenPage1;
+  1:OpenPage2;
+  end;
 end;
 
 procedure TfrmSaleAnalyMessage.RzBmpButton1Click(Sender: TObject);
 begin
   inherited;
-  if RzPage.ActivePage<>Tab2 then
-    RzPage.ActivePage:=Tab2;
+  RzPage.ActivePageIndex := 1;
+  case rzPage.ActivePageIndex of
+  0:OpenPage1;
+  1:OpenPage2;
+  end;
 end;
 
 procedure TfrmSaleAnalyMessage.ShowMonthSaleInfo;
@@ -379,9 +381,47 @@ begin
   end;
 end;
 
+procedure TfrmSaleAnalyMessage.OpenPage1;
+begin
+  if Page1ed then Exit;
+  frmLogo.Show;
+  try
+    SaleAnaly.GetSaleDayMsg;
+    ShowDaysSaleInfo;  //显示天天经营提醒
+    Page1ed := true;
+  finally
+    frmLogo.Close;
+  end;
+end;
+
+procedure TfrmSaleAnalyMessage.OpenPage2;
+begin
+  if Page2ed then Exit;
+  frmLogo.Show;
+  try
+    SaleAnaly.GetSaleMonthMsg;
+    ShowMonthSaleInfo;
+    Page2ed := true;
+  finally
+    frmLogo.Close;
+  end;
+end;
+
+procedure TfrmSaleAnalyMessage.SetSaleAnaly(const Value: TSaleAnalyMsg);
+begin
+  FSaleAnaly := Value;
+end;
+
+procedure TfrmSaleAnalyMessage.FormDestroy(Sender: TObject);
+begin
+  SaleAnaly.Free;
+  inherited;
+
+end;
+
 end.
 
- 
+
 
 
  {LTitle:='二、经营优势';

@@ -7,7 +7,7 @@ uses
   Dialogs, uframeMDForm, ActnList, Menus, OleCtrls, SHDocVw, IdBaseComponent,
   IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, xmldom, XMLIntf,
   msxmldom, XMLDoc, MSHTML, ActiveX, ComObj, msxml, ExtCtrls,
-  RzPanel, RzTabs, ImgList, ZDataSet;
+  RzPanel, RzTabs, ImgList, ZDataSet, WinInet;
 
 type
   PIEAction=^TIEAction;
@@ -146,7 +146,20 @@ end;
 function TfrmIEWebForm.Open(Url: string):boolean;
 var W:int64;
   _Start:int64;
+  connectTimeOut,timeout:integer;
 begin
+  try
+    connectTimeOut := 20000;
+    timeout := 60000;
+    InternetSetOption(nil, INTERNET_OPTION_CONNECT_TIMEOUT, Pointer(@connectTimeOut), SizeOf(connectTimeOut));
+    InternetSetOption(nil, INTERNET_OPTION_SEND_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+    InternetSetOption(nil, INTERNET_OPTION_RECEIVE_TIMEOUT, Pointer(@timeout), SizeOf(timeout));
+  except
+    on E:Exception do
+       begin
+         Raise;
+       end;
+  end;
   result := false;
   if url='' then Exit;
   Runed := true;

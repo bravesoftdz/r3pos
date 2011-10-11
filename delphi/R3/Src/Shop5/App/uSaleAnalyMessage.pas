@@ -228,13 +228,13 @@ begin
     ToDay:=FormatDatetime('YYYYMMDD',Date()); //本月结束日期（今天）;
     //昨天销售情况
     str:=
-      'select sum(CALC_AMOUNT/'+CalcUnit+') as SAL_AMT,sum(NOTAX_MONEY) as NOTAX_MONEY,(sum(NOTAX_MONEY)+sum(TAX_MONEY)) as SALE_MNY,(sum(NOTAX_MONEY)-sum(COST_MONEY)) as SALE_PRF '+
+      'select a.SALES_DATE as SALES_DATE,sum(CALC_AMOUNT/'+CalcUnit+') as SAL_AMT,sum(NOTAX_MONEY) as NOTAX_MONEY,(sum(NOTAX_MONEY)+sum(TAX_MONEY)) as SALE_MNY,(sum(NOTAX_MONEY)-sum(COST_MONEY)) as SALE_PRF '+
       'from VIW_SALESDATA a,VIW_GOODSINFO b where a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID and b.RELATION_ID=1000006 '+
-      ' and a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE='+YsDay+' ';
+      ' and a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE in ('+YsDay+','+ToDay+') group by a.SALES_DATE ';
     Qry.Close;
     Qry.SQL.Text:=ParseSQL(Factor.iDbType, Str);
     Factor.Open(Qry);
-    if Qry.Active then
+    if Qry.Locate('SALES_DATE',YsDay,[]) then
     begin
       DayMsg.YDSale_AMT:=FormatFloatValue(Qry.fieldbyName('SAL_AMT').AsFloat,3);
       DayMsg.YDSale_MNY:=FormatFloatValue(Qry.fieldbyName('SALE_MNY').AsFloat,2);
@@ -246,14 +246,14 @@ begin
     //if (DayMsg.YDSale_AMT=0) and (DayMsg.YDSale_MNY=0) then Exit;  //昨天没有经营数据则退;
     
     //今天销售情况
-    str:=
-      'select sum(CALC_AMOUNT/'+CalcUnit+') as SAL_AMT,sum(NOTAX_MONEY) as NOTAX_MONEY,(sum(NOTAX_MONEY)+sum(TAX_MONEY)) as SALE_MNY,(sum(NOTAX_MONEY)-sum(COST_MONEY)) as SALE_PRF '+
-      'from VIW_SALESDATA a,VIW_GOODSINFO b where a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID and b.RELATION_ID=1000006 '+
-      ' and a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE='+ToDay+' ';
-    Qry.Close;
-    Qry.SQL.Text:=ParseSQL(Factor.iDbType, Str);
-    Factor.Open(Qry);
-    if Qry.Active then
+    //str:=
+    //  'select sum(CALC_AMOUNT/'+CalcUnit+') as SAL_AMT,sum(NOTAX_MONEY) as NOTAX_MONEY,(sum(NOTAX_MONEY)+sum(TAX_MONEY)) as SALE_MNY,(sum(NOTAX_MONEY)-sum(COST_MONEY)) as SALE_PRF '+
+    //  'from VIW_SALESDATA a,VIW_GOODSINFO b where a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID and b.RELATION_ID=1000006 '+
+    //  ' and a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE='+ToDay+' ';
+    //Qry.Close;
+    //Qry.SQL.Text:=ParseSQL(Factor.iDbType, Str);
+    //Factor.Open(Qry);
+    if Qry.Locate('SALES_DATE',ToDay,[]) then
     begin
       DayMsg.TDSale_AMT:=FormatFloatValue(Qry.fieldbyName('SAL_AMT').AsFloat,3);
       DayMsg.TDSale_MNY:=FormatFloatValue(Qry.fieldbyName('SALE_MNY').AsFloat,2);

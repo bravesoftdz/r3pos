@@ -7,6 +7,7 @@ inherited frmSaleAnalyMessage: TfrmSaleAnalyMessage
   ClientWidth = 569
   OldCreateOrder = True
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel [0]
@@ -4809,12 +4810,12 @@ inherited frmSaleAnalyMessage: TfrmSaleAnalyMessage
           Top = 2
           Width = 543
           Height = 390
-          ActivePage = Tab2
+          ActivePage = Tab1
           Align = alClient
           FlatColor = clWhite
           ShowFullFrame = False
           ShowShadow = False
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 0
           FixedDimension = 18
           object Tab1: TRzTabSheet

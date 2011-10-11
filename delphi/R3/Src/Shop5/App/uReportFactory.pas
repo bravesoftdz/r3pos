@@ -1752,8 +1752,6 @@ begin
   if fn='HINT_DAYS_AMT' then
      Func.AddObject(fn,TObject(idx));
 
-
-
 end;
 
 procedure TReportFactory.SetSafeDay(const Value: integer);

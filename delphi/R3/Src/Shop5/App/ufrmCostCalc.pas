@@ -2018,14 +2018,14 @@ begin
   PrgPercent := 10;
   //算近期销量
   SQL :=
-    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where SALES_DATE>='+formatDatetime('YYYYMMDD',Date-safe-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    'update PUB_GOODS_INSHOP set NEAR_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-safe-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
     ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
     'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);
   PrgPercent := 20;
   //日均销量测算
   SQL :=
-    'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select round(sum(CALC_AMOUNT)*1.0/'+GetDayDiff(Factor.iDbType,'min(SALES_DATE)','max(SALES_DATE)')+',3) from VIW_SALESDATA where SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    'update PUB_GOODS_INSHOP set DAY_SALE_AMT=(select round(sum(CALC_AMOUNT)*1.0/'+GetDayDiff(Factor.iDbType,'min(SALES_DATE)','max(SALES_DATE)')+',3) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
     ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
     'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);
@@ -2038,7 +2038,7 @@ begin
   PrgPercent := 40;
   //本月销量
   SQL :=
-    'update PUB_GOODS_INSHOP set MTH_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where SALES_DATE>='+formatDatetime('YYYYMM01',Date)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
+    'update PUB_GOODS_INSHOP set MTH_SALE_AMT=(select sum(CALC_AMOUNT) from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMM01',Date)+' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+
     ' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
     'where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   Factor.ExecSQL(SQL);

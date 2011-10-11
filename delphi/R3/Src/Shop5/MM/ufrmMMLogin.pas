@@ -92,6 +92,7 @@ begin
          if cxcbOffline.Checked then Raise Exception.Create('第一次登录用户不能使用离线模式.');
          mmGlobal.xsm_username := cxedtUsers.Text;
          mmGlobal.xsm_password := cxedtPasswrd.Text;
+         CaFactory.coLogin(mmGlobal.xsm_username,CaFactory.DesEncode(mmGlobal.xsm_username,CaFactory.pubpwd),3);
          if not mmGlobal.coLogin(mmGlobal.xsm_username,mmGlobal.xsm_password) then Exit;
          if not mmGlobal.AutoRegister(true) then Exit;
        end

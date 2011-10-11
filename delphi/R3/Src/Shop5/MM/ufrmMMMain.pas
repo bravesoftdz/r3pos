@@ -635,7 +635,6 @@ begin
      if mmGlobal.Logined and CaFactory.Audited and (mmGlobal.module[4]='1') then
         begin
           frmRimIEBrowser.RimLogin(true);
-          RzTrayIcon1.IconIndex := 1;
         end;
    except
      on E:Exception do

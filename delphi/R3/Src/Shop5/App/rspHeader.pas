@@ -188,6 +188,9 @@ begin
   flag := _flag;
   Addr := url;
   HTTPRIO := THTTPRIO.Create(nil);
+  HTTPRIO.HTTPWebNode.ConnectTimeout := ConnectTimeOut;
+  HTTPRIO.HTTPWebNode.ReceiveTimeout := _timeOut;
+  HTTPRIO.HTTPWebNode.SendTimeout := _timeOut;
   if _timeOut>0 then
      HTTPRIO.OnAfterExecute := doAfterExecute
   else

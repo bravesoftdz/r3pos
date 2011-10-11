@@ -844,6 +844,23 @@ begin
 end;
 
 function TframeOrderForm.DecodeBarcode(BarCode: string):integer;
+function CheckDupBar(rs:TZQuery):boolean;
+var
+  r:integer;
+begin
+  result := true;
+  r := 0;
+  rs.First;
+  while not rs.Eof do
+    begin
+      if rs.FieldByName('BARCODE').AsString=BarCode then
+         begin
+           inc(r);
+         end;
+      rs.Next;
+    end;
+  result := (r<>1);
+end;
 var
   rs:TZQuery;
   AObj:TRecord_;
@@ -953,7 +970,7 @@ begin
          end
       else
          begin
-            if (rs.RecordCount > 1) and not rs.Locate('BARCODE',BarCode,[]) then
+            if (rs.RecordCount > 1) and CheckDupBar(RS) then
                begin
                   fndStr := '';
                   rs.first;

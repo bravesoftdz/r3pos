@@ -792,6 +792,7 @@ var
   i:integer;
 begin
   StopSyncTask;
+  if CaFactory.CheckDebugSync then Exit;
   EndTimeStamp := 0;
   InterlockedIncrement(Locked);
   Working := true;
@@ -857,6 +858,7 @@ procedure TSyncFactory.SyncBasic(gbl:boolean=true);
 var
   i:integer;
 begin
+  if CaFactory.CheckDebugSync then Exit;
   EndTimeStamp := 0;
   Working := true;
   InterlockedIncrement(Locked);
@@ -2629,6 +2631,7 @@ procedure TSyncFactory.SyncRim;
 var
   Params:TftParamList;
 begin
+  if CaFactory.CheckDebugSync then Exit;
   //本地连接时不需同步
   if Global.RemoteFactory.ConnMode = 1 then Exit;
   if not CaFactory.Audited then Exit;

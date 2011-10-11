@@ -49,11 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
+      ActivePage = TabSheet2
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
+      TabIndex = 5
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -966,6 +968,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           Top = 13
           Width = 442
           Height = 184
+          Properties.MaxLength = 200
           TabOrder = 0
           ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         end

@@ -139,9 +139,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 525
       Height = 212
-      ActivePage = TabSheet6
       Align = alBottom
-      TabIndex = 1
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -621,6 +619,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             Top = 153
             Width = 360
             Height = 20
+            Properties.MaxLength = 50
             TabOrder = 11
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end

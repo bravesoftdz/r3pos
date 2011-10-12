@@ -1966,19 +1966,19 @@ procedure TfrmCostCalc.CalcSpz;
 var
   i:integer;
 begin
-//  for i:=1 to pt do
-//  begin
   if Factor.iDbType <> 5 then Factor.BeginTrans;
   try
      PrgPercent := PrgPercent+3;
      Factor.ExecSQL('delete from RCK_C_GOODS_DAYS where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>'+formatDatetime('YYYYMMDD',cDate)+'');
+     PrgPercent := PrgPercent+3;
      Factor.ExecSQL(
      'insert into RCK_C_GOODS_DAYS(TENANT_ID,SHOP_ID,DEPT_ID,GUIDE_USER,CLIENT_ID,CREA_DATE,GODS_ID,BATCH_NO,IS_PRESENT,'+
      'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,COMM,TIME_STAMP) '+
      'select A.TENANT_ID,A.SHOP_ID,case when A.DEPT_ID is null then ''#'' else A.DEPT_ID end,'+
      'case when A.GUIDE_USER is null then ''#'' else A.GUIDE_USER end,'+
      'case when A.CLIENT_ID is null then ''#'' else A.CLIENT_ID end,A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
-     'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,sum(A.NOTAX_MONEY) as SALE_MNY,sum(A.TAX_MONEY) as SALE_TAX, '+
+     'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,'+
+     'sum(A.NOTAX_MONEY) as SALE_MNY,sum(A.TAX_MONEY) as SALE_TAX, '+
      'sum(round(A.CALC_AMOUNT*B.COST_PRICE,2)) as SALE_CST,max(B.COST_PRICE) as COST_PRICE, '+
      'sum(A.NOTAX_MONEY-round(A.CALC_AMOUNT*B.COST_PRICE,2)) as SALE_PRF, '+
      'sum(case when A.SALES_TYPE=3 then A.CALC_AMOUNT else 0 end) as SALRT_AMT, '+
@@ -1995,7 +1995,6 @@ begin
      if Factor.iDbType <> 5 then Factor.RollbackTrans;
      Raise;
   end;
-//  end;
 
 end;
 

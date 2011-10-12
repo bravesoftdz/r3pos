@@ -81,6 +81,8 @@ type
     procedure MoveToLocal;
     procedure MoveToRemate;
 
+    procedure TryRemateConnect;
+
     //用户Acount
     property UserID:string read GetUserID write SetUserID;
     //用户名user_name
@@ -587,6 +589,22 @@ end;
 procedure TGlobal.SetLoginPswd(const Value: string);
 begin
   FLoginPswd := Value;
+end;
+
+procedure TGlobal.TryRemateConnect;
+var
+  SaveFactor:TdbFactory;
+begin
+  SaveFactor := Factor;
+  frmLogo.Show;
+  try
+    frmLogo.ShowTitle := '正在连接数据服务器...';
+    MoveToRemate;
+    Connect;
+  finally
+    frmLogo.Close;
+    Factor := SaveFactor;
+  end;
 end;
 
 initialization

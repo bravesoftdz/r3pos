@@ -12,8 +12,8 @@ inherited frmMain: TfrmMain
   TextHeight = 12
   object stbBottom: TStatusBar [0]
     Left = 0
-    Top = 356
-    Width = 541
+    Top = 357
+    Width = 540
     Height = 19
     Panels = <>
   end

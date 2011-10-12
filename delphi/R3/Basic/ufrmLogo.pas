@@ -35,6 +35,7 @@ procedure TfrmLogo.Show;
 begin
   inherited Show;
   Update;
+  BringToFront;
 end;
 
 procedure TfrmLogo.ShowPostion(Postion: Integer; Caption: String);

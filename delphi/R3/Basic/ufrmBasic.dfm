@@ -1,7 +1,7 @@
 object frmBasic: TfrmBasic
-  Left = 397
+  Left = 398
   Top = 191
-  Width = 557
+  Width = 556
   Height = 414
   Caption = 'Basic'
   Color = clBtnFace

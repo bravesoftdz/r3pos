@@ -1,6 +1,5 @@
 inherited frmSupplierInfo: TfrmSupplierInfo
   Left = 410
-  Top = 191
   Caption = #20379#24212#21830#26723#26696
   ClientHeight = 374
   ClientWidth = 528
@@ -19,10 +18,8 @@ inherited frmSupplierInfo: TfrmSupplierInfo
       Top = 121
       Width = 518
       Height = 208
-      ActivePage = TabSheet3
       Color = clWhite
       ParentColor = False
-      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -276,6 +273,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Top = 74
             Width = 121
             Height = 20
+            Properties.OnChange = edtTAX_RATEPropertiesChange
             TabOrder = 7
           end
           object edtLICENSE_CODE: TcxTextEdit

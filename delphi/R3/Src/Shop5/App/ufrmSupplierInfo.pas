@@ -105,6 +105,7 @@ type
     procedure edtSETTLE_CODEAddClick(Sender: TObject);
     procedure edtADDRESSKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure edtTAX_RATEPropertiesChange(Sender: TObject);
   private
     ccid:string;
     { Private declarations }
@@ -141,8 +142,8 @@ begin
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSORT_ID.KeyValue:='#';
   edtSORT_ID.Text:='无';
-  edtREGION_ID.KeyValue:='#';
-  edtREGION_ID.Text:='无';
+  {edtREGION_ID.KeyValue:='#';
+  edtREGION_ID.Text:='无'; }
   edtSETTLE_CODE.KeyValue:='#';
   edtSETTLE_CODE.Text:='无';
 end;
@@ -562,6 +563,12 @@ begin
         Free;
       end;
     end;
+end;
+
+procedure TfrmSupplierInfo.edtTAX_RATEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  edtTAX_RATE.Text := FloatToStr(StrToFloatDef(edtTAX_RATE.Text,0));
 end;
 
 end.

@@ -105,7 +105,6 @@ type
     procedure edtSETTLE_CODEAddClick(Sender: TObject);
     procedure edtADDRESSKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure edtTAX_RATEPropertiesChange(Sender: TObject);
   private
     ccid:string;
     { Private declarations }
@@ -142,8 +141,8 @@ begin
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSORT_ID.KeyValue:='#';
   edtSORT_ID.Text:='无';
-  {edtREGION_ID.KeyValue:='#';
-  edtREGION_ID.Text:='无'; }
+  edtREGION_ID.KeyValue:='#';
+  edtREGION_ID.Text:='无'; 
   edtSETTLE_CODE.KeyValue:='#';
   edtSETTLE_CODE.Text:='无';
 end;
@@ -169,8 +168,16 @@ begin
     ReadFromObject(Aobj,Self);
     edtSORT_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_SUPPERSORT'),'CODE_ID','CODE_NAME',Aobj.FieldByName('SORT_ID').AsString);
     edtSORT_ID.KeyValue := Aobj.FieldByName('SORT_ID').AsString;
-    edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
-    edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
+    if Aobj.FieldByName('REGION_ID').AsString = '#' then
+    begin
+      edtREGION_ID.Text:='无';
+      edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
+    end
+    else
+    begin
+      edtREGION_ID.Text:=TdsFind.GetNameByID(Global.GetZQueryFromName('PUB_REGION_INFO'),'CODE_ID','CODE_NAME',Aobj.FieldByName('REGION_ID').AsString);
+      edtREGION_ID.KeyValue := Aobj.FieldByName('REGION_ID').AsString;
+    end;
     edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldByName('SHOP_ID').AsString);
     edtSHOP_ID.KeyValue := Aobj.FieldByName('SHOP_ID').AsString;
     dbState := dsBrowse;
@@ -563,12 +570,6 @@ begin
         Free;
       end;
     end;
-end;
-
-procedure TfrmSupplierInfo.edtTAX_RATEPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  edtTAX_RATE.Text := FloatToStr(StrToFloatDef(edtTAX_RATE.Text,0));
 end;
 
 end.

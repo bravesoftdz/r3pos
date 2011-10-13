@@ -273,7 +273,6 @@ inherited frmSupplierInfo: TfrmSupplierInfo
             Top = 74
             Width = 121
             Height = 20
-            Properties.OnChange = edtTAX_RATEPropertiesChange
             TabOrder = 7
           end
           object edtLICENSE_CODE: TcxTextEdit
@@ -1110,7 +1109,7 @@ inherited frmSupplierInfo: TfrmSupplierInfo
           end
           item
             EditButtons = <>
-            FieldName = 'CODE_ID'
+            FieldName = 'CODE_SPELL'
             Footers = <>
             Title.Caption = #32534#30721
             Width = 40

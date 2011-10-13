@@ -12,7 +12,7 @@ uses
   RzEdit,uSaleAnalyMessage;
 
 const
-  SpaceStr='    ';  
+  SpaceStr='   ';  
 
 type
   TfrmSaleAnalyMessage = class(TfrmBasic)
@@ -154,149 +154,87 @@ begin
 end;
 
 procedure TfrmSaleAnalyMessage.ShowMonthSaleInfo;
- function GetGrowRate(GrowValue: real): string;
- begin
-   if GrowValue>=0 then
-     result:='增长'+FormatFloat('#0.00',GrowValue)
-   else
-     result:='下降'+FormatFloat('#0.00',GrowValue); 
- end;
 var
   BegIdx,RowNum: integer;
-  vMonth,LTitle,Msg1,Msg2,Msg3,Msg4: string;
+  vMonth,LTitle,Msg1,Msg2,Msg3,Msg4,Msg5,Msg6,Msg7,Msg8,Msg9: string;
 begin
   Msg1:='';
   Msg2:='';
   Msg3:='';
   Msg4:='';
+  Msg5:='';
+  Msg6:='';
   RowNum:=0;
   //显示月经营情况
   vMonth:=FSaleAnaly.MonthMsg.Month;
   vMonth:=InttoStr(StrtoInt(Copy(vMonth,5,2)));
-  //1、经营概况:
-  Msg1:='1、您'+vMonth+'月经营品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_AMT)+'个,'+
-       '销售数量'+FormatFloat('#0.###',FSaleAnaly.MonthMsg.TMSale_AMT)+'条,'+
-       '销售金额'+FormatFloat('#0.00',FSaleAnaly.MonthMsg.TMSale_MNY)+'元,'+
-       '单条值'+FormatFloat('#0.00',FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY)+'元,'+
-       '毛利'+FormatFloat('#0.00',FSaleAnaly.MonthMsg.TMSale_PRF)+'元,'+
-       '毛利率'+FormatFloat('#0.00',FSaleAnaly.MonthMsg.TMSale_PRF_RATE)+'%,'+
-       '存销比为'+FormatFloat('#0.00#',FSaleAnaly.MonthMsg.TMSH_RATIO)+','+
-       '拥有固定消费者'+InttoStr(FSaleAnaly.MonthMsg.TMCust_AMT)+'个,'+
-       '这些消费者消费金额'+FormatFloat('#0.00',FSaleAnaly.MonthMsg.TMCust_MNY)+'元,'+
-       '占所有卷烟消费的'+FormatFloat('#0.00',FSaleAnaly.MonthMsg.TMCust_RATE)+'%。';
+  //1、本月进货情况
+  Msg1:='烟草公司本月供应的畅销品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_SX_Count)+'个,'+
+        '您目前经营品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个（以库存为准）;'+
+        '本月烟草公司供应新品'+InttoStr(FSaleAnaly.MonthMsg.TMNEWGODS_COUNT)+'个,'+
+        '您目前经营'+InttoStr(FSaleAnaly.MonthMsg.TMNEWSTOR_COUNT)+'个（以库存为准）;'+
+        '您本月购进卷烟'+FloattoStr(FSaleAnaly.MonthMsg.TMStock_AMT)+'条,'+
+        '单条值'+FloattoStr(FSaleAnaly.MonthMsg.TMStock_SINGLE_MNY)+'元。';
 
-  //2、环比结果:
-  Msg2:='2、您当月与上月比：销量'+GetGrowRate(FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE)+'%,'+
-                         '单条值'+GetGrowRate(FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY_UP_RATE)+'%,'+
-                       '毛利环比'+GetGrowRate(FSaleAnaly.MonthMsg.TMSale_PRF_UP_RATE)+'%。';
+  //2、本月销售情况
+  Msg2:='您本月销售卷烟'+FloattoStr(FSaleAnaly.MonthMsg.TMSale_AMT)+'条,'+
+        '单条值'+FloattoStr(FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY)+'元,'+
+        '实现毛利'+FloattoStr(FSaleAnaly.MonthMsg.TMSale_PRF)+'元,毛利率'+FloattoStr(FSaleAnaly.MonthMsg.TMSale_PRF_RATE)+'%。';
+  Msg3:='您本月与上月比：销量增长'+FloattoStr(FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE)+'%,'+
+        '单条值增长'+FloattoStr(FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY_UP_RATE)+'%,'+
+        '毛利增长'+FloattoStr(FSaleAnaly.MonthMsg.TMSale_PRF_UP_RATE)+'%。';
+  Msg4:='您本月销量最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_AMT+';';
+  Msg5:='本月毛利额最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_PRF+';';
+  Msg6:='与上月销量比,增长最快的规格是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrowRate_AMT+'。';
 
-  //3、存在问题
-  Msg3:='3、您当月与同期比：销量'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_AMT_UP_RATE)+'%,'+
-                         '单条值'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_SINGLE_MNY_UP_RATE)+'%,'+
-                       '毛利环比'+GetGrowRate(FSaleAnaly.MonthMsg.LYTMSale_PRF_UP_RATE)+'%。';
+  //3、当前库存情况
+  Msg7:='您当前库存商品'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个品种,'+FloattoStr(FSaleAnaly.MonthMsg.TMStock_AMT)+'条，'+
+        '有'+InttoStr(FSaleAnaly.MonthMsg.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。';
 
-  //4、对比结果显示：
-  Msg4:='4、您当月销量最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_AMT+','+
-           '当月毛利额最大的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrow_PRF+','+
-     '环比上月销量增长最快的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MaxGrowRate_AMT+','+
-           '本月动销不理想的三个规格分别是:'+FSaleAnaly.MonthMsg.TMGods_MinDongXiaoRate_AMT+'';
-
-  if FSaleAnaly.MonthMsg.TMSH_RATIO < 0.6 then
-  begin
-    if Msg4<>'' then Msg4:=Msg4+',';
-    Msg4:=Msg4+'存销比偏低。'
-  end else
-  if FSaleAnaly.MonthMsg.TMSH_RATIO>1.5 then
-  begin
-    if Msg4<>'' then Msg4:=Msg4+',';
-    Msg4:=Msg4+'存销比偏大。';
-  end;
-  if trim(Msg4)='' then Msg4:='无';
+  //4、您的客户情况
+   Msg8:='您目前已建立消费者档案'+InttoStr(FSaleAnaly.MonthMsg.TMCust_Count)+'个,'+
+         '高档烟的消费者'+InttoStr(FSaleAnaly.MonthMsg.TMCust_HG_Count)+'名,'+
+         '本月新建'+InttoStr(FSaleAnaly.MonthMsg.TMCust_NEW_Count)+'个。';
+   Msg9:='这些消费者销售数量'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_AMT)+'条,'+
+         '占卷烟总销量的'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_AMT_RATE)+'%,'+
+         '消费金额'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_MNY)+'元,'+
+         '占卷烟总销售额的'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_MNY_RATE)+'%;客户集中在早上11-12点和下午6-8点，建议该时段加强促销。';
 
   //开始写入PRF
   Lbl_Month_Title.Caption:=vMonth+'月份月度经营分析';
-  LTitle:='一、经营概况';
-  //MonthRTF.Lines.Add('');
+  Lbl_Month_Title.Left:=(PnlTitleMonth.Width-Lbl_Month_Title.Width) div 2;
+  Lbl_Month_Title.Top:=ImgMonth.Top+8;
+    
+  LTitle:='1、本月进货情况';
   MonthRTF.Lines.Add(LTitle);
   BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
   SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
   MonthRTF.Lines.Add(SpaceStr+Msg1);
-  //MonthRTF.Lines.Add('');
-  MonthRTF.Lines.Add(SpaceStr+Msg2);
-  //MonthRTF.Lines.Add('');
-  MonthRTF.Lines.Add(SpaceStr+Msg3);
-  //MonthRTF.Lines.Add('');
-  MonthRTF.Lines.Add(SpaceStr+Msg4);
 
-  LTitle:='二、提升建议';
-  MonthRTF.Lines.Add('');
+  LTitle:='2、本月销售情况';
   MonthRTF.Lines.Add(LTitle);
   BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
   SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
+  MonthRTF.Lines.Add(SpaceStr+Msg2);
+  MonthRTF.Lines.Add(SpaceStr+Msg3);
+  MonthRTF.Lines.Add(SpaceStr+Msg4);
+  MonthRTF.Lines.Add(SpaceStr+Msg5);
+  MonthRTF.Lines.Add(SpaceStr+Msg6);
 
-  {条件1（一）、销量同比、环比下降。
-   建议: 1、了解销量下降的原因，及时与客户经理联系。（如周边是否有假、非、私烟销售，熟悉的消费者是否减少了购买次数或停止了购买，销售的品种是否有断档缺货现象等）
-         2、了解消费需求，提升服务质量，加强有效货源购进，刺激消费增长。}
-  if (FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE<0) and (FSaleAnaly.MonthMsg.LYTMSale_AMT_UP_RATE<0) then
-  begin
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、了解销量下降的原因，及时与客户经理联系。（如周边是否有假、非、私烟销售，熟悉的消费者是否减少了购买次数或停止了购买，销售的品种是否有断档缺货现象等）');
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、了解消费需求，提升服务质量，加强有效货源购进，刺激消费增长。');
-  end;
+  LTitle:='3、当前库存情况';
+  MonthRTF.Lines.Add(LTitle);
+  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
+  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
+  MonthRTF.Lines.Add(SpaceStr+Msg7);
 
-  {条件2（二）、单条值(毛利、毛利率)同比或环比下降。
-     建议: 1、提高推荐名优骨干品牌的意识，加深对品牌知识特点、卖点、亮点的掌握，积极向消费者推荐。
-           2、询问客户经理或者通过终端信息平台了解近期的促销活动，积极参与，提高销售结构。
-           3、加强信息平台的使用，常进入"我的社区"了解社区其他互助小组成员反馈的情况，或者发贴征求组员的意见和建议，改进经营状况。
-           4、如果您有条件，可联合烟草公司组织开展消费体验活动 }
-  if ((FSaleAnaly.MonthMsg.TMSale_SINGLE_MNY_UP_RATE<0) or //环比单条值
-      (FSaleAnaly.MonthMsg.TMSale_PRF<FSaleAnaly.MonthMsg.LMSale_PRF) or //环比毛利下降
-      (FSaleAnaly.MonthMsg.TMSale_PRF_UP_RATE<0)) or   //环比毛利率
-     ((FSaleAnaly.MonthMsg.LYTMSale_SINGLE_MNY_UP_RATE<0) or
-      (FSaleAnaly.MonthMsg.LYTMSale_PRF<FSaleAnaly.MonthMsg.LMSale_PRF) or //环比毛利下降
-      (FSaleAnaly.MonthMsg.LYTMSale_PRF_UP_RATE<0)) then  //环比毛利率
-  begin
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、提高推荐名优骨干品牌的意识，加深对品牌知识特点、卖点、亮点的掌握，积极向消费者推荐。');
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、询问客户经理或者通过终端信息平台了解近期的促销活动，积极参与，提高销售结构。');
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、加强信息平台的使用，常进入"我的社区"了解社区其他互助小组成员反馈的情况，或者发贴征求组员的意见和建议，改进经营状况。');
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、如果您有条件，可联合烟草公司组织开展消费体验活动。');
-  end;
-
-  {条件3（三）、存销比偏小。 建议: 1、加大购进量，备足货源，优化库存，满足消费需求。}
-  if FSaleAnaly.MonthMsg.TMSH_RATIO<0.60 then
-  begin
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、加大购进量，备足货源，优化库存，满足消费需求。');
-  end;
-
-  {条件4（四）、存销比偏大。 建议: 1、积极主动加强宣传推荐，提高卷烟动销。2、如果有滞销品种，可联系烟草公司开展相应的促销活动，加快销售。}
-  if FSaleAnaly.MonthMsg.TMSH_RATIO>1.50 then
-  begin
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、积极主动加强宣传推荐，提高卷烟动销。2、如果有滞销品种，可联系烟草公司开展相应的促销活动，加快销售。');
-  end;
-
-  {条件5 (五）、销量、结构同比、环比增长、库存合理
-      1、您做得很好，您是本月的销售能手。
-      2、希望您能将销售经验和成功做法发到信息平台供大家参考。}
-  if ((FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE>0) and (FSaleAnaly.MonthMsg.TMSale_PRF_UP_RATE>0) and (FSaleAnaly.MonthMsg.LYTMSale_AMT_UP_RATE>0) and (FSaleAnaly.MonthMsg.LYTMSale_PRF_UP_RATE>0)) and
-     ((FSaleAnaly.MonthMsg.TMSH_RATIO>=0.60) and (FSaleAnaly.MonthMsg.TMSH_RATIO<=1.50)) then
-  begin
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、您做得很好，您是本月的销售能手。');
-    Inc(RowNum);
-    MonthRTF.Lines.Add(SpaceStr+InttoStr(RowNum)+'、希望您能将销售经验和成功做法发到信息平台供大家参考。');
-  end;
-  if RowNum=0 then
-    MonthRTF.Lines.Add(SpaceStr+'无。');
+  LTitle:='4、您的客户情况';
+  MonthRTF.Lines.Add(LTitle);
+  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
+  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
+  MonthRTF.Lines.Add(SpaceStr+Msg8);
+  MonthRTF.Lines.Add(SpaceStr+Msg9);
 end;
-
-
+      
 procedure TfrmSaleAnalyMessage.ImgCloseClick(Sender: TObject);
 begin
   inherited;
@@ -332,11 +270,15 @@ end;
 
 procedure TfrmSaleAnalyMessage.ShowDaysSaleInfo;
 var
-  Msg: string;
+  Msg,vMonth: string;
   NotSaleFlag: Boolean;
 begin
-  Msg:='';
-  DayRTF.Lines.Clear;
+  vMonth:=InttoStr(StrtoInt(Copy(SaleAnaly.CurMonth,5,2)));
+  Lbl_Month_Title.Caption:=trim(vMonth)+'月份月度经营分析';
+  Lbl_Month_Title.Left:=(PnlTitleMonth.Width-Lbl_Month_Title.Width) div 2;
+  Lbl_Month_Title.Top:=ImgMonth.Top+8;
+
+  Msg:='';  DayRTF.Lines.Clear;
   DayRTF.Lines.Add(' '); 
   NotSaleFlag:=False;
   //显示日经营情况
@@ -398,9 +340,8 @@ procedure TfrmSaleAnalyMessage.OpenPage2;
 begin
   if Page2ed then Exit;
   frmLogo.Show;
-  try
-    SaleAnaly.GetSaleMonthMsg;
-    ShowMonthSaleInfo;
+  if Page2ed then Exit;
+  frmLogo.Show;  frmLogo.ShowTitle := '正在计算月度经营情况 ';  Update;  frmLogo.Update;  try    SaleAnaly.GetSaleMonthMsg;    ShowMonthSaleInfo;
     Page2ed := true;
   finally
     frmLogo.Close;
@@ -422,34 +363,3 @@ end;
 end.
 
 
-
-
- {LTitle:='二、经营优势';
-  MonthRTF.Lines.Add('');
-  MonthRTF.Lines.Add(LTitle);
-  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
-  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
-  MonthRTF.Lines.Add(SpaceStr+Msg2);
-
-  LTitle:='三、存在问题';
-  MonthRTF.Lines.Add('');
-  MonthRTF.Lines.Add(LTitle);
-  BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
-  SetRTFFont(MonthRTF, BegIdx,Length(LTitle)+2);
-  MonthRTF.Lines.Add(SpaceStr+Msg3);}
-
-  {
-  if FSaleAnaly.MonthMsg.TMSale_AMT_UP_RATE<0 then //销量下降
-  begin
-    MonthRTF.Lines.Add(SpaceStr+'针对您存在的问题,建议如下:');
-    MonthRTF.Lines.Add(SpaceStr+'  1.分析销量下降原因');
-    MonthRTF.Lines.Add(SpaceStr+'  2.适度引导消费');
-    MonthRTF.Lines.Add(SpaceStr+'  3.关注库存情况');
-    MonthRTF.Lines.Add(SpaceStr+'  4.最后祝您生意兴隆,欢迎您经常跟客户经理联系。');
-  end else
-  begin
-    MonthRTF.Lines.Add(SpaceStr+'针对您存在的问题,建议如下:');
-    MonthRTF.Lines.Add(SpaceStr+'  1.适度引导消费');
-    MonthRTF.Lines.Add(SpaceStr+'  2.关注库存情况');
-    MonthRTF.Lines.Add(SpaceStr+'  3.最后祝您生意兴隆,欢迎您经常跟客户经理联系。');
-  end;}

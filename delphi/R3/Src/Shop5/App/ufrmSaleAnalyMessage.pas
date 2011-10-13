@@ -271,7 +271,7 @@ end;
 procedure TfrmSaleAnalyMessage.ShowDaysSaleInfo;
 var
   Msg,vMonth: string;
-  NotSaleFlag: Boolean;
+  NotYSFlag,NotTDFlag: Boolean; //昨天和今天是否销售
 begin
   vMonth:=InttoStr(StrtoInt(Copy(SaleAnaly.CurMonth,5,2)));
   Lbl_Month_Title.Caption:=trim(vMonth)+'月份月度经营分析';
@@ -280,46 +280,54 @@ begin
 
   Msg:='';  DayRTF.Lines.Clear;
   DayRTF.Lines.Add(' '); 
-  NotSaleFlag:=False;
-  //显示日经营情况
-  if (FSaleAnaly.DayMsg.YDSale_AMT=0) and (FSaleAnaly.DayMsg.YDSale_MNY=0) then
-  begin
-    DayRTF.Lines.Add(SpaceStr+'您昨天没有销售卷烟。');
-    NotSaleFlag:=true;
-  end else
-  begin
-    Msg:='您昨天销售卷烟 '+FormatFloat('#0.###',FSaleAnaly.DayMsg.YDSale_AMT)+'条,'+
-         '金额 '+FormatFloat('#0.00',FSaleAnaly.DayMsg.YDSale_MNY)+'元,'+
-         '毛利 '+FormatFloat('#0.00',FSaleAnaly.DayMsg.YDSale_PRF)+'元,'+
-         '毛利率 '+FormatFloat('#0.00',FSaleAnaly.DayMsg.YDSale_PRF_RATE)+'%。';
-    DayRTF.Lines.Add(SpaceStr+Msg);
-  end;
+  NotYSFlag:=(FSaleAnaly.DayMsg.YDSale_AMT=0) and (FSaleAnaly.DayMsg.YDSale_MNY=0) and (FSaleAnaly.DayMsg.YDSale_PRF=0);
+  NotTDFlag:=(FSaleAnaly.DayMsg.TDSale_AMT=0) and (FSaleAnaly.DayMsg.TDSale_MNY=0) and (FSaleAnaly.DayMsg.TDSale_PRF=0);
 
-  DayRTF.Lines.Add('');
-  if (FSaleAnaly.DayMsg.TDSale_AMT=0) and (FSaleAnaly.DayMsg.TDSale_MNY=0) then
+  //显示日经营情况
+  if (NotYSFlag) and (NotTDFlag) then //昨天、今天没有经营
   begin
-    //Lbl_Today_Info.Caption:='今天您还没有销售卷烟。';
-    DayRTF.Lines.Add('    今天您还没有销售卷烟。');
+    DayRTF.Lines.Add(SpaceStr+'您昨天和今天都无销售，祝您生意兴隆，加油！');
   end else
+  if (NotYSFlag) and (not NotTDFlag) then //昨天没有经营,今天经营
   begin
-    Msg:='卷烟 '+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_AMT)+'条,'+
-         '金额 '+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_MNY)+'元,'+
-         '毛利 '+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_PRF)+'元,'+
-         '毛利率 '+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_PRF_RATE)+'%';
-    if NotSaleFlag then
+    Msg:=SpaceStr+'昨天您未销售卷烟，今天销售卷烟'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_AMT)+'条，'+
+                  '金额'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_MNY)+'元，'+
+                  '毛利'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_PRF)+'元，'+
+                  '毛利率'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_PRF_RATE)+'%，继续加油！';
+    DayRTF.Lines.Add(Msg);
+  end else
+  if (Not NotYSFlag) and (NotTDFlag) then //昨天经营,今天还没经营
+  begin
+    Msg:='昨天您销售卷烟'+FormatFloat('#0.###',FSaleAnaly.DayMsg.YDSale_AMT)+'条，'+
+         '金额'+FormatFloat('#0.00',FSaleAnaly.DayMsg.YDSale_MNY)+'元，'+
+         '毛利'+FormatFloat('#0.00',FSaleAnaly.DayMsg.YDSale_PRF)+'元，'+
+         '毛利率'+FormatFloat('#0.00',FSaleAnaly.DayMsg.YDSale_PRF_RATE)+'%。'+
+         '您今天还没有销售，祝您生意兴隆，加油！';
+    DayRTF.Lines.Add(Msg);
+  end else
+  if (not NotYSFlag) and (not NotTDFlag) then //昨天经营,今天还没经营
+  begin
+    Msg:='昨天您销售卷烟'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_AMT)+'条，'+
+         '金额'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_MNY)+'元，'+
+         '毛利'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_PRF)+'元，'+
+         '毛利率'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDSale_PRF_RATE)+'%。';
+    DayRTF.Lines.Add(Msg);
+    if FSaleAnaly.DayMsg.TDSale_PRF<FSaleAnaly.DayMsg.YDSale_PRF then //小于昨天
     begin
-      Msg:='今天您销售'+Msg+'。';
+      Msg:='今天您销售卷烟'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_AMT)+'条，'+
+           '金额'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_MNY)+'元，'+
+           '毛利'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_PRF)+'元，'+
+           '毛利率'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_PRF_RATE)+'%，'+
+           '您今天的销售离昨天的还有一定差距，再加把油！';
+      DayRTF.Lines.Add(Msg);
     end else
     begin
-      if FSaleAnaly.DayMsg.YDSale_PRF=FSaleAnaly.DayMsg.TDSale_PRF then //毛利相等
-        Msg:='今天您销售'+Msg+','+#13+SpaceStr+'与昨天持平,加油！'
-      else if FSaleAnaly.DayMsg.YDSale_PRF>FSaleAnaly.DayMsg.TDSale_PRF then //毛利小于昨天
-        Msg:='今天您销售'+Msg+','+#13+SpaceStr+'今天的销售离昨天还有一定距离,加油！'
-      else
-        Msg:='恭喜您,今天售已经超过昨天,'+#13+SpaceStr+'销售'+Msg+'！';
+      Msg:='恭喜您，今天销售已经超过昨天，销售卷烟'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_AMT)+'条，'+
+           '金额'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_MNY)+'元，'+
+           '毛利'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_PRF)+'元，'+
+           '毛利率'+FormatFloat('#0.###',FSaleAnaly.DayMsg.TDSale_PRF_RATE)+'%,真棒！';
+      DayRTF.Lines.Add(Msg);
     end;
-    //Lbl_Today_Info.Caption:=Msg;
-    DayRTF.Lines.Add(SpaceStr+Msg);
   end;
 end;
 

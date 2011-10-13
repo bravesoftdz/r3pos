@@ -546,7 +546,7 @@ begin
          mmUserInfo := Find(TmmPlayerFava(lpData).playerId);
          if Assigned(mmUserInfo) then
             mmUserInfo^.line := true;
-         if TmmPlayerFava(lpData).playerId = mmGlobal.xsm_username then
+         if uppercase(TmmPlayerFava(lpData).playerId) = uppercase(mmGlobal.xsm_username) then
              begin
                if frmMMList<>nil then PostMessage(frmMMList.Handle,WM_MMCLOSE,0,0);
              end

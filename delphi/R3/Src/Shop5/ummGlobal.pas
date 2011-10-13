@@ -301,6 +301,7 @@ begin
     xsm_userType := Root.selectSingleNode('userType').text;
     xsm_comType := Root.selectSingleNode('comType').text;
 
+    xsm_username := Root.selectSingleNode('userId').text;
     xsm_nickname := Root.selectSingleNode('nickName').text;
     xsm_planText := Root.selectSingleNode('planText').text;
     xsm_encodingData := Root.selectSingleNode('signatureValue').text;

@@ -131,7 +131,7 @@ begin
       else
         rs.SQL.Text :=
         'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,C.TENANT_NAME,C.SHORT_TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
-        'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='''+trim(cxedtUsers.Text)+''' and A.TENANT_ID='+inttostr(mmGlobal.TENANT_ID);
+        'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT in ('''+trim(cxedtUsers.Text)+''','''+lowercase(trim(cxedtUsers.Text))+''','''+uppercase(trim(cxedtUsers.Text))+''') and A.TENANT_ID='+inttostr(mmGlobal.TENANT_ID);
       uGlobal.Factor.open(rs);
       if cxedtUsers.Text='system' then
         begin

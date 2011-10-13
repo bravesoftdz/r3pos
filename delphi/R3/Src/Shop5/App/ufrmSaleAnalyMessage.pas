@@ -170,9 +170,9 @@ begin
   vMonth:=InttoStr(StrtoInt(Copy(vMonth,5,2)));
   //1、本月进货情况
   Msg1:='烟草公司本月供应的畅销品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_SX_Count)+'个,'+
-        '您目前经营品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个（以库存为准）;'+
+        '您目前经营品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个;'+
         '本月烟草公司供应新品'+InttoStr(FSaleAnaly.MonthMsg.TMNEWGODS_COUNT)+'个,'+
-        '您目前经营'+InttoStr(FSaleAnaly.MonthMsg.TMNEWSTOR_COUNT)+'个（以库存为准）;'+
+        '您目前经营'+InttoStr(FSaleAnaly.MonthMsg.TMNEWSTOR_COUNT)+'个;'+
         '您本月购进卷烟'+FloattoStr(FSaleAnaly.MonthMsg.TMStock_AMT)+'条,'+
         '单条值'+FloattoStr(FSaleAnaly.MonthMsg.TMStock_SINGLE_MNY)+'元。';
 
@@ -198,7 +198,7 @@ begin
    Msg9:='这些消费者销售数量'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_AMT)+'条,'+
          '占卷烟总销量的'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_AMT_RATE)+'%,'+
          '消费金额'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_MNY)+'元,'+
-         '占卷烟总销售额的'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_MNY_RATE)+'%;客户集中在早上11-12点和下午6-8点，建议该时段加强促销。';
+         '占卷烟总销售额的'+FloattoStr(FSaleAnaly.MonthMsg.TMCust_MNY_RATE)+'%;您的客户常在早上11-12点和下午6-8点买烟，该时段可以加强宣传。';
 
   //开始写入PRF
   Lbl_Month_Title.Caption:=vMonth+'月份月度经营分析';

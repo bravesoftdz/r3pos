@@ -836,8 +836,8 @@ begin
   DownModule := true;
   f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    s := f.ReadString('soft','rsp','http://rsp.xinshangmeng.com/services/');
-    if s[1]='#' then
+    s := f.ReadString('soft','rsp','');
+    if (s<>'') and (s[1]='#') then
        begin
          delete(s,1,1);
          url := DecStr(s,ENC_KEY);

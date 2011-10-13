@@ -969,7 +969,7 @@ inherited frmSaleAnalyMessage: TfrmSaleAnalyMessage
       end
       object RzBmpButton2: TRzBmpButton
         Tag = 1
-        Left = 1
+        Left = 9
         Top = 1
         Width = 130
         Height = 36

@@ -277,6 +277,7 @@ type
     RzBmpButton4: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
     actfrmInitGuide: TAction;
+    RzBmpButton6: TRzBmpButton;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -408,6 +409,7 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
     procedure actfrmInitGuideExecute(Sender: TObject);
+    procedure RzBmpButton6Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -4317,7 +4319,7 @@ begin
   finally
     frmLogo.Close;
     if not TfrmInitGuide.InitGuide(self) then
-       TfrmSaleAnalyMessage.ShowSaleAnalyMsg(self); 
+       TfrmSaleAnalyMessage.ShowSaleAnalyMsg(self);
   end;
 end;
 
@@ -4597,6 +4599,12 @@ procedure TfrmXsm2Main.actfrmInitGuideExecute(Sender: TObject);
 begin
   inherited;
   TfrmInitGuide.StartGuide(self);
+end;
+
+procedure TfrmXsm2Main.RzBmpButton6Click(Sender: TObject);
+begin
+  inherited;
+  TfrmSaleAnalyMessage.ShowSaleAnalyMsg(self);
 end;
 
 end.

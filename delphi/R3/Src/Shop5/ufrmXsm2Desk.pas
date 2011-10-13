@@ -53,7 +53,6 @@ type
     btnSaleDayReport: TRzBmpButton;
     btnSaleMonthReport: TRzBmpButton;
     mnuAcct: TRzBmpButton;
-    Image4: TImage;
     RzBmpButton1: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -220,7 +219,7 @@ begin
        else
           AdvFactory.LoadAllFile(IEDesktop);
      end;
-}     
+}
   if FileExists(ExtractFilePath(ParamStr(0))+'adv\adv1.html') then
      begin
        url := ExtractFilePath(ParamStr(0))+'adv\adv1.html';

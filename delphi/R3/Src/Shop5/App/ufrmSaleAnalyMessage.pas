@@ -9,7 +9,7 @@ uses
   EncDec,cxContainer, cxEdit, cxMaskEdit, cxSpinEdit, cxMemo, cxCheckBox, 
   IniFiles, zBase, ComCtrls, RzTreeVw, uGodsFactory, uTreeUtil, zDataSet,DB,
   cxCalendar,ZAbstractRODataset, ZAbstractDataset, RzLabel, RzButton,
-  RzEdit,uSaleAnalyMessage;
+  RzEdit,uSaleAnalyMessage, Buttons;
 
 const
   SpaceStr='   ';  
@@ -44,6 +44,8 @@ type
     Lbl_Month_Title: TLabel;
     ImgDay: TImage;
     Lbl_Day_Title: TLabel;
+    Img_left: TRzBmpButton;
+    Img_right: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure btn_EndClick(Sender: TObject);
     procedure Image2Click(Sender: TObject);
@@ -54,17 +56,32 @@ type
     procedure ImgCloseClick(Sender: TObject);
     procedure ImgIKnowClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure Img_leftClick(Sender: TObject);
+    procedure Img_rightClick(Sender: TObject);
+    procedure Img_rightMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Img_leftMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Img_rightMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Img_leftMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
+    NearMonth: string;  //最近浏览一月
+    CurMonth: string;   //当前显示一月
     FDoAction: TAction;
     FSaleAnaly: TSaleAnalyMsg;
     Page1ed,Page2ed:boolean;
+    function  HintMonthMsg(SetMonth: integer): string;
+    procedure SetMonth(var CurMonth: string; SetValue: integer);
     procedure SetComponentPostion; //控制2个提示内容标题显示位置
     procedure SetRTFFont(SetRTF: TRzRichEdit; BegIdx,SetLen: integer);
     procedure ShowDaysSaleInfo; //显示天天经营提醒
     procedure ShowMonthSaleInfo;   //显示月度经营情况
     procedure OpenPage1;
-    procedure OpenPage2;
+    procedure OpenPage2(vMonth: string='');
     procedure SetSaleAnaly(const Value: TSaleAnalyMsg);
+    procedure ShowMonthTitle;
   public
     //DoAction:传入调用显示：销售分析表，现在要调用
     class function ShowSaleAnalyMsg(AOwner:TForm; DoAction: TAction=nil):boolean;
@@ -73,13 +90,16 @@ type
 
 
 implementation
-uses uShopGlobal,uGlobal,ufrmLogo;
+uses uShopGlobal,uGlobal,ufrmLogo,uFnUtil;
 {$R *.dfm}
 
 procedure TfrmSaleAnalyMessage.FormCreate(Sender: TObject);
 var i:Integer;
 begin
   inherited;
+  NearMonth:='';  //最近浏览一月
+  CurMonth:='';   //当前显示一月
+
   Page1ed := false;
   Page2ed := false;
   SaleAnaly := TSaleAnalyMsg.Create;
@@ -166,7 +186,7 @@ begin
   Msg6:='';
   RowNum:=0;
   //显示月经营情况
-  vMonth:=FSaleAnaly.MonthMsg.Month;
+  vMonth:=FSaleAnaly.CurMonth;
   vMonth:=InttoStr(StrtoInt(Copy(vMonth,5,2)));
   //1、本月进货情况
   Msg1:='烟草公司本月供应的畅销品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_SX_Count)+'个，'+
@@ -190,7 +210,9 @@ begin
   Msg6:='与上月销量比，增长最快的规格是：'+FSaleAnaly.MonthMsg.TMGods_MaxGrowRate_AMT+'。';
 
   //3、当前库存情况
-  Msg7:='您当前库存商品'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个品种，'+FloattoStr(FSaleAnaly.MonthMsg.TMStock_AMT)+'条，'+
+  Msg7:='您当前经营卷烟'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个，'+
+        '库存品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个，'+
+        FloattoStr(FSaleAnaly.MonthMsg.TMAllStor_AMT)+'条，'+
         '有'+InttoStr(FSaleAnaly.MonthMsg.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。';
 
   //4、您的客户情况
@@ -207,7 +229,8 @@ begin
   Lbl_Month_Title.Caption:=vMonth+'月份月度经营分析';
   Lbl_Month_Title.Left:=(PnlTitleMonth.Width-Lbl_Month_Title.Width) div 2;
   Lbl_Month_Title.Top:=ImgMonth.Top+8;
-    
+
+  MonthRTF.Clear;
   LTitle:='1、本月进货情况';
   MonthRTF.Lines.Add(LTitle);
   BegIdx:=Pos(LTitle,MonthRTF.Text)-1;
@@ -272,22 +295,33 @@ begin
   ImgMonth.Left:=(PnlTitleMonth.Width-ImgMonth.Width) div 2;
   Lbl_Month_Title.Left:=(PnlTitleMonth.Width-Lbl_Month_Title.Width) div 2;
   Lbl_Month_Title.Top:=ImgMonth.Top+8;
+
+  Img_left.Left:=ImgMonth.Left- Img_left.Width-7;
+  Img_left.Top:=ImgMonth.Top+6;
+  Img_right.Left:=ImgMonth.Left+ImgMonth.width+8;
+  Img_right.Top:=ImgMonth.Top+6; 
 end;
 
 procedure TfrmSaleAnalyMessage.ShowDaysSaleInfo;
 var
-  Msg,vMonth: string;
+  BegIdx,RowNum: integer;
+  LTitle: string;
+  Msg: string;
   NotYSFlag,NotTDFlag: Boolean; //昨天和今天是否销售
 begin
-  vMonth:=InttoStr(StrtoInt(Copy(SaleAnaly.CurMonth,5,2)));
-  Lbl_Month_Title.Caption:=trim(vMonth)+'月份月度经营分析';
-  Lbl_Month_Title.Left:=(PnlTitleMonth.Width-Lbl_Month_Title.Width) div 2;
-  Lbl_Month_Title.Top:=ImgMonth.Top+8;  
+  ShowMonthTitle;
 
   Msg:='';  DayRTF.Lines.Clear;
   DayRTF.Lines.Add(' '); 
   NotYSFlag:=(FSaleAnaly.DayMsg.YDSale_AMT=0) and (FSaleAnaly.DayMsg.YDSale_MNY=0) and (FSaleAnaly.DayMsg.YDSale_PRF=0);
   NotTDFlag:=(FSaleAnaly.DayMsg.TDSale_AMT=0) and (FSaleAnaly.DayMsg.TDSale_MNY=0) and (FSaleAnaly.DayMsg.TDSale_PRF=0);
+
+  //1、销售概述
+  DayRTF.Clear;
+  LTitle:='1、销售概述';
+  DayRTF.Lines.Add(LTitle);
+  BegIdx:=Pos(LTitle,DayRTF.Text)-1;
+  SetRTFFont(DayRTF, BegIdx,Length(LTitle)+2);
 
   //显示日经营情况
   if (NotYSFlag) and (NotTDFlag) then //昨天、今天没有经营
@@ -336,6 +370,36 @@ begin
       DayRTF.Lines.Add(SpaceStr+Msg);
     end;
   end;
+  DayRTF.Lines.Add('');
+
+  //2、进货情况：
+  LTitle:='2、进货情况';
+  DayRTF.Lines.Add(LTitle);
+  BegIdx:=Pos(LTitle,DayRTF.Text)-1;
+  SetRTFFont(DayRTF, BegIdx,Length(LTitle)+2);
+  Msg:=
+    '您本次卷烟进货品种'+InttoStr(FSaleAnaly.DayMsg.TDStock_GODS_Count)+'个，'+
+    ''+FormatFloat('#0.##',FSaleAnaly.DayMsg.TDStock_AMT)+'条，'+
+    '金额'+FormatFloat('#0.##',FSaleAnaly.DayMsg.TDStock_MNY)+'元，'+
+    '单条值'+    FormatFloat('#0.##',FSaleAnaly.DayMsg.TDStock_Single_MNY)+'元。'+
+    '与上次比，'+
+    '进货量增长'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDStock_AMT_RATE)+'%，'+
+    '金额增长'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDStock_MNY_Grow)+'元，'+
+    '单条值增长'+FormatFloat('#0.00',FSaleAnaly.DayMsg.TDStock_Single_MNY_Grow)+'元。';
+  DayRTF.Lines.Add(SpaceStr+Msg);
+  DayRTF.Lines.Add(' ');
+
+  //3、库存情况；
+  LTitle:='3、库存情况';
+  DayRTF.Lines.Add(LTitle);
+  BegIdx:=Pos(LTitle,DayRTF.Text)-1;
+  SetRTFFont(DayRTF, BegIdx,Length(LTitle)+2);             
+
+  Msg:='您当前经营卷烟'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个，'+
+        '库存品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个，'+
+        ''+FloattoStr(FSaleAnaly.MonthMsg.TMAllStor_AMT)+'条，'+
+        '有'+InttoStr(FSaleAnaly.MonthMsg.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。';
+  DayRTF.Lines.Add(SpaceStr+Msg);  
 end;
 
 procedure TfrmSaleAnalyMessage.OpenPage1;
@@ -351,14 +415,36 @@ begin
   end;
 end;
 
-procedure TfrmSaleAnalyMessage.OpenPage2;
+procedure TfrmSaleAnalyMessage.ShowMonthTitle;
+var
+  vMonth: string;
 begin
-  if Page2ed then Exit;
+  vMonth:=InttoStr(StrtoInt(Copy(SaleAnaly.CurMonth,5,2)));
+  Lbl_Month_Title.Caption:=trim(vMonth)+'月份月度经营分析';
+  Lbl_Month_Title.Left:=(PnlTitleMonth.Width-Lbl_Month_Title.Width) div 2;
+  Lbl_Month_Title.Top:=ImgMonth.Top+8;
+end;
+
+
+procedure TfrmSaleAnalyMessage.OpenPage2(vMonth: string);
+begin
+  if (CurMonth<>'') and (trim(CurMonth)=trim(NearMonth)) then Exit;
+  //外面传入设置月份
+  if vMonth<>'' then
+  begin
+    FSaleAnaly.CurMonth:=vMonth;
+    ShowMonthTitle;
+  end else
+  begin
+    CurMonth:=FSaleAnaly.CurMonth;
+    NearMonth:=FSaleAnaly.CurMonth;
+  end;
+  
   frmLogo.Show;
-  if Page2ed then Exit;
-  frmLogo.Show;  frmLogo.ShowTitle := '正在计算月度经营情况...';  Update;  frmLogo.Update;  try    SaleAnaly.GetSaleMonthMsg;    ShowMonthSaleInfo;
-    Page2ed := true;
-  finally
+  frmLogo.Update;
+  frmLogo.ShowTitle:= '正在计算月度经营情况...';
+  try
+    SaleAnaly.GetSaleMonthMsg;    ShowMonthSaleInfo;  finally
     frmLogo.Close;
   end;
 end;
@@ -371,8 +457,77 @@ end;
 procedure TfrmSaleAnalyMessage.FormDestroy(Sender: TObject);
 begin
   SaleAnaly.Free;
-  inherited;
+  inherited;    
+end;
 
+procedure TfrmSaleAnalyMessage.SetMonth(var CurMonth: string; SetValue: integer);
+var
+  CurDate: TDate;
+begin
+  CurDate:=FnTime.fnStrtoDate(CurMonth+'01'); //将月份转成时间
+  CurDate:=IncMonth(CurDate,SetValue);  //月份加减
+  CurMonth:=FormatDatetime('YYYYMM',CurDate);
+end;
+
+procedure TfrmSaleAnalyMessage.Img_leftClick(Sender: TObject);
+begin
+  inherited;
+  SetMonth(CurMonth,-1);
+  if (CurMonth<>'') and (NearMonth<>CurMonth) then
+  begin
+    OpenPage2(CurMonth); //显示月度经营情况
+    NearMonth:=CurMonth;
+  end;
+end;
+
+procedure TfrmSaleAnalyMessage.Img_rightClick(Sender: TObject);
+begin
+  SetMonth(CurMonth,1);
+  if (CurMonth<>'') and (NearMonth<>CurMonth) then
+  begin
+    OpenPage2(CurMonth); //显示月度经营情况
+    NearMonth:=CurMonth;
+  end;
+end;
+
+function TfrmSaleAnalyMessage.HintMonthMsg(SetMonth: integer): string;
+var
+  vMonth: string;
+  CurDate: TDate;
+begin
+  CurDate:=FnTime.fnStrtoDate(CurMonth+'01'); //将月份转成时间
+  CurDate:=IncMonth(CurDate,SetMonth);  //月份加减
+  vMonth:=FormatDatetime('YYYYMM',CurDate);
+  vMonth:=Inttostr(StrtoInt(Copy(vMonth,5,2)));
+  result:=vMonth+'月份';    
+end;
+
+procedure TfrmSaleAnalyMessage.Img_rightMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  Img_right.Hint:=HintMonthMsg(1); 
+end;
+
+procedure TfrmSaleAnalyMessage.Img_leftMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  Img_Left.Hint:=HintMonthMsg(-1); 
+end;
+
+procedure TfrmSaleAnalyMessage.Img_rightMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  Img_right.Hint:=HintMonthMsg(1); 
+end;
+
+procedure TfrmSaleAnalyMessage.Img_leftMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  inherited;
+  Img_left.Hint:=HintMonthMsg(-1); 
 end;
 
 end.

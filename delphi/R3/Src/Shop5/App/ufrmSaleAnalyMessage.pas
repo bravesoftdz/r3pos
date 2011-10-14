@@ -396,10 +396,7 @@ begin
   SetRTFFont(DayRTF, BegIdx,Length(LTitle)+2);             
 
   Msg:='您当前经营卷烟'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个，'+
-        '库存品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个，'+
-        ''+FloattoStr(FSaleAnaly.MonthMsg.TMAllStor_AMT)+'条，'+
-        '有'+InttoStr(FSaleAnaly.MonthMsg.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。';
-  DayRTF.Lines.Add(SpaceStr+Msg);  
+       '库存品种'+InttoStr(FSaleAnaly.MonthMsg.TMGods_Count)+'个，'+       ''+FloattoStr(FSaleAnaly.MonthMsg.TMAllStor_AMT)+'条';  if FSaleAnaly.MonthMsg.TMLowStor_Count>0 then    Msg:=Msg+'，有'+InttoStr(FSaleAnaly.MonthMsg.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。'  else    Msg:=Msg+'。';        DayRTF.Lines.Add(SpaceStr+Msg);  
 end;
 
 procedure TfrmSaleAnalyMessage.OpenPage1;

@@ -1,6 +1,7 @@
 unit uSaleAnalyMessage;
 
 interface
+
 uses
   Windows, Messages, SysUtils, Classes, InvokeRegistry, Types, XSBuiltIns,
   Des, WinInet, Controls, ComObj, ObjCommon, ZDataSet, DB, ZdbFactory, ZBase,
@@ -320,9 +321,18 @@ begin
     if MonthMsg.LMSale_AMT<>0 then
       MonthMsg.TMSale_AMT_UP_RATE:=FormatFloatValue((MonthMsg.TMSale_AMT-MonthMsg.LMSale_AMT)*100.0/MonthMsg.LMSale_AMT,2);  //本月环比销量增长;
     if MonthMsg.LMSale_PRF<>0 then
-      MonthMsg.TMSale_PRF_UP_RATE:=FormatFloatValue((MonthMsg.TMSale_PRF-MonthMsg.LMSale_PRF)*100.0/MonthMsg.LMSale_PRF,2);  //本月环比毛利增长;
+      MonthMsg.TMSale_PRF_UP_RATE:=FormatFloatValue((MonthMsg.TMSale_PRF-MonthMsg.LMSale_PRF)*100.0/MonthMsg.LMSale_PRF,2);   //本月环比毛利增长;
     if MonthMsg.LMSale_SINGLE_MNY<>0 then
-      MonthMsg.TMSale_SINGLE_MNY_UP_RATE:=FormatFloatValue((MonthMsg.TMSale_SINGLE_MNY-MonthMsg.LMSale_SINGLE_MNY)*100.0/MonthMsg.LMSale_SINGLE_MNY,2);   //本月环比单条增长；
+      MonthMsg.TMSale_SINGLE_MNY_UP_RATE:=FormatFloatValue((MonthMsg.TMSale_SINGLE_MNY-MonthMsg.LMSale_SINGLE_MNY)*100.0/MonthMsg.LMSale_SINGLE_MNY,2);  //本月环比单条增长；
+
+    //上月份若没有数据（增长率默认：100）
+    if (MonthMsg.LMSale_AMT=0) and (MonthMsg.LMSale_SINGLE_MNY=0) and (MonthMsg.LMSale_PRF=0) and
+       (MonthMsg.TMSale_AMT<>0) and (MonthMsg.TMSale_SINGLE_MNY<>0) and (MonthMsg.TMSale_PRF<>0) then
+    begin
+      MonthMsg.TMSale_AMT_UP_RATE:=100.00;
+      MonthMsg.TMSale_PRF_UP_RATE:=100.00;
+      MonthMsg.TMSale_SINGLE_MNY_UP_RATE:=100.00;
+    end;
 
     //计算会员销售占比例：
     if MonthMsg.TMSale_AMT<>0 then
@@ -631,18 +641,20 @@ begin
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:=ParseSQL(Factor.iDbType,
       'select count(a.GODS_ID) as GODS_COUNT,'+  //有库存商品总数
-      ' sum(case when c.SORT_ID5=''01072169-2F03-42C1-9EAB-541D031647AF'' then 1 else 0 end) as GODS_SX_COUNT,'+  //是否是重点品牌
+      ' sum(case when c.SORT_ID10 =''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'' then 1 else 0 end) as GODS_SX_COUNT,'+  //是否是畅销品牌
+      ' sum(case when c.SORT_ID11=''5D8D7AF6-2DE3-4866-85C7-925E07F66096'' then 1 else 0 end) as GODS_NEW_COUNT,'+  //是否是新品
       ' sum(case when (a.AMOUNT<b.LOWER_AMOUNT) and (isnull(b.LOWER_AMOUNT,0)>0) then 1 else 0 end) as LOWER_COUNT, '+ //低于合理库存数量
       ' sum(AMOUNT/(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)) as STOR_SUM '+  //库存总数量[单位:条]
       ' from STO_STORAGE a '+
       ' inner join VIW_GOODSINFO c on a.GODS_ID=c.GODS_ID '+
       ' left outer join PUB_GOODS_INSHOP b on a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
-      ' where c.RELATION_ID=1000006 and a.TENANT_ID='+Tenant_ID+' ');
+      ' where round(a.AMOUNT,3)>0 and c.RELATION_ID=1000006 and a.TENANT_ID='+Tenant_ID+' ');
     Factor.Open(Rs);
     if Rs.Active then
     begin
       MonthMsg.TMGods_Count:=Rs.FieldbyName('GODS_COUNT').AsInteger;       //本月经营品种数;
       MonthMsg.TMGods_SX_Count:=Rs.FieldbyName('GODS_SX_COUNT').AsInteger; //本月畅销品种数
+      MonthMsg.TMNEWGODS_COUNT:=Rs.FieldbyName('GODS_NEW_COUNT').AsInteger; //本月畅销品种数
       MonthMsg.TMLowStor_Count:=Rs.FieldbyName('LOWER_COUNT').AsInteger; //低于合理库存商品数
       MonthMsg.TMAllStor_AMT:=FormatFloatValue(Rs.FieldbyName('STOR_SUM').AsFloat,2);        //商品总库存数
     end;
@@ -693,8 +705,7 @@ begin
     Factor.Open(Rs);
     if Rs.Active then
     begin
-      MonthMsg.TMNEWGODS_COUNT:=Rs.FieldbyName('NEWGODS_COUNT').AsInteger;
-      MonthMsg.TMNEWSTOR_COUNT:=MonthMsg.TMNEWGODS_COUNT;
+      MonthMsg.TMNEWSTOR_COUNT:=Rs.FieldbyName('NEWGODS_COUNT').AsInteger;
       result:=true;
     end;
   finally

@@ -1100,7 +1100,6 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
                 if rs.Locate('CODE_NAME',Trim(Source.FieldByName(SFieldName).AsString),[]) then
                   begin
                     Dest.FieldByName('REGION_ID').AsString := rs.FieldbyName('CODE_ID').AsString;
-                    Result := True;
                     Exit;
                   end
                 else
@@ -1109,6 +1108,7 @@ procedure TfrmCustomer.Excel1Click(Sender: TObject);
             else
               //Raise Exception.Create('地区不能为空!');
               Dest.FieldByName('REGION_ID').AsString := '#';
+            Result := True;
           end;
 
         //*******************月收入*****************

@@ -22,14 +22,24 @@ uses
   //天经营情况:
 type
   TSaleDayMsg=Record
+    YDSaleGods_Count: integer; //昨天销售品种(单位:个);
+    YDSaleBill_Count: integer; //昨天销售单据比数(单位:笔);
     YDSale_AMT: real;   //昨天销量(单位:条);
     YDSale_MNY: real;   //昨天销售额(元);
     YDSale_PRF: real;   //昨天毛利(元);
     YDSale_PRF_RATE: real;  //昨天毛利率(%);
+
+    TDSaleGods_Count: integer; //今天销售品种(单位:个);
+    TDSaleBill_Count: integer; //今天销售单据比数(单位:笔);
+    TDSale_Count: integer;  //销售品种(单位:个);
     TDSale_AMT: real;   //今天销量(单位:条);
     TDSale_MNY: real;   //今天销售额(元);
     TDSale_PRF: real;   //今天毛利(元);
     TDSale_PRF_RATE: real;  //今天毛利率(%);
+    //与前天对比:
+    TDSale_BY_AMT_Grow: real;   //今天比前天销量(单位:条);
+    TDSale_BY_MNY_Grow: real;   //今天比前天销售额(元);
+    TDSale_BY_PRF_Grow: real;   //今天毛利(元);
 
     TDStock_GODS_Count: integer;
     TDStock_AMT: real;
@@ -69,8 +79,9 @@ type
     TMGods_MaxGrowRate_AMT: string;  //环比销量增长最快3个，多个之间用“;”间隔开;
     
     //2011.10.12 库存情况:
-    TMGods_Count: integer;     //本月经营品种数;
-    TMGods_SX_Count: integer;     //本月经营品种数;
+    TMGods_All_Count: integer; //本月经营品种数;
+    TMGods_Count: integer;     //本月有库存种数;
+    TMGods_SX_Count: integer;  //本月经营品种数;
     TMAllStor_AMT: real;       //商品总库存数
     TMLowStor_Count: integer;  //低于合理库存商品数
 
@@ -111,6 +122,10 @@ type
     function GetMaxGodsName(vType: integer; BegDate,EndDate: string): string; //销量、毛利最大的三个商品
     function GetGrowRateGodsName: string; //销量增长最快或最不理想前三个商品
 
+    //日经营情况:
+    procedure GetSalesDayInfo;  //返回当天销售msg
+    procedure GetStockDayInfo;  //返回当天入库msg
+
     //月度经营分析
     function LastMonth_SaleInfo: Boolean; //上个月经营情况;
     function ThisMonth_SaleInfo: Boolean; //当前月份经营情况;
@@ -119,7 +134,6 @@ type
     function ThisMonth_StockInfo: Boolean;  //本月购进数量
     function ThisMonth_NewGodsInfo: Boolean;  //本月新品
     procedure SetCurMonth(InValue: string);
-    procedure GetStockDayMsg;  //返回当天销售msg
   public
     DayMsg: TSaleDayMsg;   //每天销售消息
     MonthMsg: TSaleMonthMsg;  //月经营情况
@@ -168,15 +182,24 @@ begin
   TM_EndDate:=FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-1)));  //本月结束日期（今天）;
 
   //初始化日经营参数
+  DayMsg.YDSaleGods_Count:=0; //昨天销售品种(单位:个);
+  DayMsg.YDSaleBill_Count:=0; //昨天销售单据比数(单位:笔);
   DayMsg.YDSale_AMT:=0;   //昨天销量(单位:条);
   DayMsg.YDSale_MNY:=0;   //昨天销售额(元);
   DayMsg.YDSale_PRF:=0;   //昨天毛利(元);
   DayMsg.YDSale_PRF_RATE:=0;  //昨天毛利率(%);
+  
+  DayMsg.TDSaleGods_Count:=0; //今天销售品种(单位:个);
+  DayMsg.TDSaleBill_Count:=0; //今天销售单据比数(单位:笔);
   DayMsg.TDSale_AMT:=0;   //今天销量(单位:条);
   DayMsg.TDSale_MNY:=0;   //今天销售额(元);
   DayMsg.TDSale_PRF:=0;   //今天毛利(元);
   DayMsg.TDSale_PRF_RATE:=0;  //今天毛利率(%);
 
+  DayMsg.TDSale_BY_AMT_Grow:=0;   //今天比前天销量(单位:条);
+  DayMsg.TDSale_BY_MNY_Grow:=0;   //今天比前天销售额(元);
+  DayMsg.TDSale_BY_PRF_Grow:=0;   //今天毛利(元);
+              
   DayMsg.TDStock_GODS_Count:=0;
   DayMsg.TDStock_AMT:=0;
   DayMsg.TDStock_MNY:=0;
@@ -216,45 +239,12 @@ begin
 end;
 
 procedure TSaleAnalyMsg.GetSaleDayMsg;
-var
-  YsDay: string; //昨天；
-  ToDay: string; //今天;
-  str,CalcUnit: string;
-  NOTAX_MONEY: Real;
 begin
   try
-    CalcUnit:='(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)';
-    YsDay:=FormatDatetime('YYYYMMDD',Date()-1); //昨天销售日期;
-    ToDay:=FormatDatetime('YYYYMMDD',Date()); //本月结束日期（今天）;
-    //昨天销售情况
-    str:=
-      'select a.SALES_DATE as SALES_DATE,sum(CALC_AMOUNT/'+CalcUnit+') as SAL_AMT,sum(NOTAX_MONEY) as NOTAX_MONEY,(sum(NOTAX_MONEY)+sum(TAX_MONEY)) as SALE_MNY,(sum(NOTAX_MONEY)-sum(COST_MONEY)) as SALE_PRF '+
-      'from VIW_SALESDATA a,PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001 '+
-      ' and a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE in ('+YsDay+','+ToDay+') group by a.SALES_DATE ';
-    Qry.Close;
-    Qry.SQL.Text:=ParseSQL(Factor.iDbType, Str);
-    Factor.Open(Qry);
-    if Qry.Locate('SALES_DATE',YsDay,[]) then
-    begin
-      DayMsg.YDSale_AMT:=FormatFloatValue(Qry.fieldbyName('SAL_AMT').AsFloat,3);
-      DayMsg.YDSale_MNY:=FormatFloatValue(Qry.fieldbyName('SALE_MNY').AsFloat,2);
-      DayMsg.YDSale_PRF:=FormatFloatValue(Qry.fieldbyName('SALE_PRF').AsFloat,2);
-      NOTAX_MONEY:=Qry.fieldbyName('NOTAX_MONEY').AsFloat; //不含税金额
-      if NOTAX_MONEY<>0 then //毛利 除 不含税金额
-        DayMsg.YDSale_PRF_RATE:=FormatFloatValue((DayMsg.YDSale_PRF*100)/NOTAX_MONEY,2);
-    end;
-
-    if Qry.Locate('SALES_DATE',ToDay,[]) then
-    begin
-      DayMsg.TDSale_AMT:=FormatFloatValue(Qry.fieldbyName('SAL_AMT').AsFloat,3);
-      DayMsg.TDSale_MNY:=FormatFloatValue(Qry.fieldbyName('SALE_MNY').AsFloat,2);
-      DayMsg.TDSale_PRF:=FormatFloatValue(Qry.fieldbyName('SALE_PRF').AsFloat,2);
-      NOTAX_MONEY:=Qry.fieldbyName('NOTAX_MONEY').AsFloat; //不含税金额 
-      if NOTAX_MONEY>0 then
-        DayMsg.TDSale_PRF_RATE:=FormatFloatValue((DayMsg.TDSale_PRF*100)/NOTAX_MONEY,2);
-    end;
-    //计算当天
-    GetStockDayMsg;
+    //计算当天和昨天销售情况
+    GetSalesDayInfo;
+    //计算当天入库情况
+    GetStockDayInfo;
     //返回库存情况
     GetStorageInfo;
   except
@@ -633,8 +623,9 @@ var
 begin
   if FCalcStor then Exit;
   //2011.10.12 库存情况:
-  MonthMsg.TMGods_Count:=0;      //本月经营品种数;
-  MonthMsg.TMGods_SX_Count:=0;   //本月经营品种数;
+  MonthMsg.TMGods_All_Count:=0;  //本月经营总品种数;
+  MonthMsg.TMGods_Count:=0;      //本月有库存品种数;
+  MonthMsg.TMGods_SX_Count:=0;   //本月畅销品种数;
   MonthMsg.TMAllStor_AMT:=0;     //商品总库存数
   MonthMsg.TMLowStor_Count:=0;   //低于合理库存商品数
 
@@ -642,19 +633,25 @@ begin
   try
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:=ParseSQL(Factor.iDbType,
-      'select count(a.GODS_ID) as GODS_COUNT,'+  //有库存商品总数
+      'select '+ 
+      ' sum(case when isnull(c.GODS_ID,'''')<>'''' then 1 else 0 end)as ALLGODS_COUNT,'+  //有商品档案数
+      ' sum(case when isnull(bb.STOR_GODS_ID,'''')<>'''' then 1 else 0 end)as GODS_COUNT,'+  //有库存商品总数
       ' sum(case when c.SORT_ID10 =''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'' then 1 else 0 end) as GODS_SX_COUNT,'+  //是否是畅销品牌
       ' sum(case when c.SORT_ID11=''5D8D7AF6-2DE3-4866-85C7-925E07F66096'' then 1 else 0 end) as GODS_NEW_COUNT,'+  //是否是新品
-      ' sum(case when (a.AMOUNT<b.LOWER_AMOUNT) and (isnull(b.LOWER_AMOUNT,0)>0) then 1 else 0 end) as LOWER_COUNT, '+ //低于合理库存数量
+      ' sum(case when (Round(bb.AMOUNT,3)<Round(bb.LOWER_AMOUNT,3)) and (isnull(Round(bb.LOWER_AMOUNT,3),0)>0) then 1 else 0 end) as LOWER_COUNT, '+ //低于合理库存数量
       ' sum(AMOUNT/(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)) as STOR_SUM '+  //库存总数量[单位:条]
-      ' from STO_STORAGE a '+
-      ' inner join VIW_GOODSINFO c on a.GODS_ID=c.GODS_ID '+
-      ' left outer join PUB_GOODS_INSHOP b on a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
-      ' where round(a.AMOUNT,3)>0 and c.RELATION_ID=1000006 and a.TENANT_ID='+Tenant_ID+' ');
+      ' from PUB_GOODSINFO c '+
+      ' left outer join '+
+      ' (select a.GODS_ID as STOR_GODS_ID,b.LOWER_AMOUNT,round(a.AMOUNT,3) as AMOUNT from STO_STORAGE a '+
+      '   left join PUB_GOODS_INSHOP b on  a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
+      '  where a.TENANT_ID='+Tenant_ID+' and round(a.AMOUNT,3)>0) bb '+
+      ' on c.GODS_ID=bb.STOR_GODS_ID '+
+      ' where c.TENANT_ID=110000001');
     Factor.Open(Rs);
     if Rs.Active then
     begin
-      MonthMsg.TMGods_Count:=Rs.FieldbyName('GODS_COUNT').AsInteger;       //本月经营品种数;
+      MonthMsg.TMGods_All_Count:=Rs.FieldbyName('ALLGODS_COUNT').AsInteger;   //本月经营总品种数;
+      MonthMsg.TMGods_Count:=Rs.FieldbyName('GODS_COUNT').AsInteger;       //本月有库存品种数;    
       MonthMsg.TMGods_SX_Count:=Rs.FieldbyName('GODS_SX_COUNT').AsInteger; //本月畅销品种数
       MonthMsg.TMNEWGODS_COUNT:=Rs.FieldbyName('GODS_NEW_COUNT').AsInteger; //本月畅销品种数
       MonthMsg.TMLowStor_Count:=Rs.FieldbyName('LOWER_COUNT').AsInteger; //低于合理库存商品数
@@ -733,21 +730,22 @@ begin
   end;
 end;
 
-procedure TSaleAnalyMsg.GetStockDayMsg;
+procedure TSaleAnalyMsg.GetStockDayInfo;
 var
-  maxID,minID: string;
   str: string;
+  maxID,minID: string;
+  LitCnd: string;
   CurAMT,CurMNY,SingleMNY: Real;
 begin
   maxID:='';
   minID:='';
-
+  LitCnd:=' and TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12'') and STOCK_DATE>='+FormatDatetime('YYYYMMDD',Date()-30); //最近30天
   case Factor.iDbType of
     0,2,3:
-       str:='select top 2  STOCK_ID from STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' and TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12'') order by STOCK_DATE desc';
-    1: str:='select STOCK_ID From STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' and TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12'') and rownum<=2 order by STOCK_DATE desc';
-    4: str:='select STOCK_ID from (select * From STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' and TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12'') order by STOCK_DATE desc)tp fetch first 2 rows only ';
-    5: str:='select STOCK_ID from STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' and TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12'') order by STOCK_DATE desc limit 2 ';
+       str:='select top 2  STOCK_ID from STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' '+LitCnd+' order by STOCK_DATE desc';
+    1: str:='select STOCK_ID From STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' '+LitCnd+' and rownum<=2 order by STOCK_DATE desc';
+    4: str:='select STOCK_ID from (select * From STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' '+LitCnd+' order by STOCK_DATE desc)tp fetch first 2 rows only ';
+    5: str:='select STOCK_ID from STK_STOCKORDER where isnull(COMM_ID,'''')<>'''' '+LitCnd+' order by STOCK_DATE desc limit 2 ';
   end;
 
   try
@@ -766,7 +764,7 @@ begin
   except
     on E:Exception do
     begin
-      Raise Exception.Create('计算日经营情况出错,错误:'+E.message);
+      Raise Exception.Create('计算日经营（库存）情况出错,错误:'+E.message);
     end;
   end;
   
@@ -806,10 +804,9 @@ begin
   except
     on E:Exception do
     begin
-      Raise Exception.Create('计算日经营情况出错,错误:'+E.message);
+      Raise Exception.Create('计算日经营（库存）情况出错,错误:'+E.message);
     end;
-  end;
-
+  end;                                        
 end;
 
 procedure TSaleAnalyMsg.InitalMonthMsg;
@@ -844,6 +841,80 @@ begin
   MonthMsg.TMCust_MNY:=0;        //消费者消费金额;
   MonthMsg.TMCust_AMT_RATE:=0;   //本月消费者消费数量占的比例;
   MonthMsg.TMCust_MNY_RATE:=0;   //本月消费者消费金额占的比例;
+end;
+
+procedure TSaleAnalyMsg.GetSalesDayInfo;
+var
+  ByDay: string; //前天；
+  YsDay: string; //昨天；
+  ToDay: string; //今天;
+  str,CalcUnit: string;
+  NOTAX_MONEY,BySale_Amt,BySale_Mny,BySale_PRF: Real;
+begin
+  try
+    CalcUnit:='(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)';
+    ByDay:=FormatDatetime('YYYYMMDD',Date()-2); //前天销售日期;
+    YsDay:=FormatDatetime('YYYYMMDD',Date()-1); //昨天销售日期;
+    ToDay:=FormatDatetime('YYYYMMDD',Date()); //本月结束日期（今天）;
+    //昨天销售情况
+    str:=
+      'select '+
+        ' a.SALES_DATE as SALES_DATE,'+
+        ' count(distinct a.GODS_ID) as SALES_GODS_COUNT,'+   //商品数
+        ' count(distinct a.SALES_ID) as SALES_BILL_COUNT, '+  //销售单笔数
+        'sum(CALC_AMOUNT/'+CalcUnit+') as SAL_AMT,'+
+        'sum(NOTAX_MONEY) as NOTAX_MONEY,'+
+        '(sum(NOTAX_MONEY)+sum(TAX_MONEY)) as SALE_MNY,'+
+        '(sum(NOTAX_MONEY)-sum(COST_MONEY)) as SALE_PRF '+
+      'from VIW_SALESDATA a,PUB_GOODSINFO b where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001 and '+
+      ' a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE in ('+YsDay+','+ToDay+','+ByDay+') '+
+      ' group by a.SALES_DATE ';
+    Qry.Close;
+    Qry.SQL.Text:=ParseSQL(Factor.iDbType, Str);
+    Factor.Open(Qry);
+    //昨天销售情况:
+    if Qry.Locate('SALES_DATE',YsDay,[]) then
+    begin
+      DayMsg.YDSaleGods_Count:=Qry.fieldbyName('SALES_GODS_COUNT').AsInteger;
+      DayMsg.YDSaleBill_Count:=Qry.fieldbyName('SALES_BILL_COUNT').AsInteger;
+      DayMsg.YDSale_AMT:=FormatFloatValue(Qry.fieldbyName('SAL_AMT').AsFloat,3);
+      DayMsg.YDSale_MNY:=FormatFloatValue(Qry.fieldbyName('SALE_MNY').AsFloat,2);
+      DayMsg.YDSale_PRF:=FormatFloatValue(Qry.fieldbyName('SALE_PRF').AsFloat,2);
+      NOTAX_MONEY:=Qry.fieldbyName('NOTAX_MONEY').AsFloat; //不含税金额
+      if NOTAX_MONEY<>0 then //毛利 除 不含税金额
+        DayMsg.YDSale_PRF_RATE:=FormatFloatValue((DayMsg.YDSale_PRF*100)/NOTAX_MONEY,2);
+    end;
+    //今天销售情况:
+    if Qry.Locate('SALES_DATE',ToDay,[]) then
+    begin
+      DayMsg.TDSaleGods_Count:=Qry.fieldbyName('SALES_GODS_COUNT').AsInteger;
+      DayMsg.TDSaleBill_Count:=Qry.fieldbyName('SALES_BILL_COUNT').AsInteger;
+      DayMsg.TDSale_AMT:=FormatFloatValue(Qry.fieldbyName('SAL_AMT').AsFloat,3);
+      DayMsg.TDSale_MNY:=FormatFloatValue(Qry.fieldbyName('SALE_MNY').AsFloat,2);
+      DayMsg.TDSale_PRF:=FormatFloatValue(Qry.fieldbyName('SALE_PRF').AsFloat,2);
+      NOTAX_MONEY:=Qry.fieldbyName('NOTAX_MONEY').AsFloat; //不含税金额 
+      if NOTAX_MONEY>0 then
+        DayMsg.TDSale_PRF_RATE:=FormatFloatValue((DayMsg.TDSale_PRF*100)/NOTAX_MONEY,2);
+    end;
+    //2011.10.15 前天销售情况：
+    if Qry.Locate('SALES_DATE',ByDay,[]) then
+    begin
+      BySale_Amt:=FormatFloatValue(Qry.fieldbyName('SAL_AMT').AsFloat,3); //前天销售数量
+      BySale_Mny:=FormatFloatValue(Qry.fieldbyName('SALE_MNY').AsFloat,3); //前天销售金额
+      BySale_PRF:=FormatFloatValue(Qry.fieldbyName('SALE_PRF').AsFloat,3); //前天销售毛利
+      if (DayMsg.YDSaleGods_Count>0) and (DayMsg.YDSaleBill_Count>0) then //今天销售
+      begin
+        DayMsg.TDSale_BY_AMT_Grow:=Abs(DayMsg.YDSale_AMT-BySale_Amt);   //今天比前天销量(单位:条);
+        DayMsg.TDSale_BY_MNY_Grow:=Abs(DayMsg.YDSale_MNY-BySale_Mny);   //今天比前天销售额(元);
+        DayMsg.TDSale_BY_PRF_Grow:=Abs(DayMsg.YDSale_PRF-BySale_PRF);   //今天毛利(元);
+      end; 
+    end;
+  except
+    on E:Exception do
+    begin
+      Raise Exception.Create('计算日经营（销售）情况出错,错误:'+E.message);
+    end;
+  end;
 end;
 
 end.

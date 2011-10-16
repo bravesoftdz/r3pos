@@ -2,15 +2,15 @@ inherited ShopGlobal: TShopGlobal
   OldCreateOrder = True
   Left = 68
   Top = 0
-  Height = 560
-  Width = 909
+  Height = 700
+  Width = 974
   object SYS_DEFINE: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     SQL.Strings = (
       
-        'select * from SYS_DEFINE where TENANT_ID=0 or TENANT_ID=:TENANT_' +
-        'ID and COMM not in ('#39'02'#39','#39'12'#39')')
+        'select * from SYS_DEFINE where (TENANT_ID=0 or TENANT_ID=:TENANT' +
+        '_ID) and COMM not in ('#39'02'#39','#39'12'#39')')
     Params = <
       item
         DataType = ftUnknown

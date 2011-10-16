@@ -308,7 +308,7 @@ begin
   //商品分类:
   if (trim(fndP1_SORT_ID.Text)<>'')  and (trim(srid1)<>'') then
   begin
-    GoodTab:='VIW_GOODSPRICE_SORTEXT';
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid1+' ';
      else
@@ -317,7 +317,7 @@ begin
     if trim(sid1)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
-    GoodTab:='VIW_GOODSPRICE';
+    GoodTab:='VIW_GOODSINFO';
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
@@ -356,7 +356,7 @@ begin
     ',sum(SALE_CST) as SALE_CST '+
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
     'group by A.TENANT_ID,A.GODS_ID,isnull(A.DEPT_ID,''#''),isnull(A.GUIDE_USER,''#''),isnull(A.CLIENT_ID,''#''),A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME,B.SHOP_TYPE';
 
   strSql :=

@@ -128,7 +128,11 @@ uses uFnUtil,IniFiles;
 { TShopGlobal }
 function TShopGlobal.GetParameter(ParamName: string): string;
 begin
-  if not SYS_DEFINE.Active then Factor.Open(SYS_DEFINE); 
+  if not SYS_DEFINE.Active then
+     begin
+       if SYS_DEFINE.Params.FindParam('TENANT_ID')<>nil then SYS_DEFINE.Params.FindParam('TENANT_ID').AsInteger := Global.TENANT_ID; 
+       Factor.Open(SYS_DEFINE);
+     end;
   if SYS_DEFINE.Locate('DEFINE',ParamName,[]) then
      Result := SYS_DEFINE.FieldbyName('VALUE').AsString
   else

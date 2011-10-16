@@ -10,7 +10,7 @@ uses
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalc, ObjCommon,RzGroupBar,ZDataSet, ImgList, RzTabs, OleCtrls, SHDocVw,
   DB, ZAbstractRODataset, ZAbstractDataset,ufrmHintMsg, RzSplit, Mask,
-  RzEdit, RzListVw, uMMClient, uMMUtil, ZLogFile;
+  RzEdit, RzListVw, uMMClient, uMMUtil, ZLogFile, ufrmWelcome;
 const
   WM_LOGIN_REQUEST=WM_USER+10;
   WM_DESKTOP_REQUEST=WM_USER+11;
@@ -444,6 +444,7 @@ type
     //p5 行业号
     procedure InitXsm;
     procedure InitRim;
+
     function  ConnectToRsp:boolean;
     function  ConnectToXsm:boolean;
     function  UpdateDbVersion:boolean;
@@ -515,6 +516,7 @@ begin
   inherited;
   frmXsmIEBrowser := nil;
   frmRimIEBrowser := nil;
+  frmWelcome := nil;
   XsmCheckPassWord := CheckXsmPassWord;
   IsXsm := false;
   FormBgk := true;
@@ -548,6 +550,7 @@ var
 begin
   LoginFactory.Logout;
   Timer1.Enabled := false;
+  if frmWelcome<>nil then frmWelcome.Free;
   UpdateTimer.Enabled := false;
   if frmXsmIEBrowser<>nil then frmXsmIEBrowser.free;
   if frmRimIEBrowser<>nil then frmRimIEBrowser.free;
@@ -929,6 +932,7 @@ var
   prm:string;
   Params:TftParamList;
 begin
+  frmWelcome := TfrmWelcome.Create(self);
   if Logined then Exit;
   try
      if (ParamStr(1)='-mmc') then {已经安装盟盟的}
@@ -4319,7 +4323,7 @@ begin
   finally
     frmLogo.Close;
     if not TfrmInitGuide.InitGuide(self) then
-       TfrmSaleAnalyMessage.ShowSaleAnalyMsg(self);
+       TfrmWelcome.Popup;
   end;
 end;
 
@@ -4604,7 +4608,7 @@ end;
 procedure TfrmXsm2Main.RzBmpButton6Click(Sender: TObject);
 begin
   inherited;
-  TfrmSaleAnalyMessage.ShowSaleAnalyMsg(self);
+  TfrmWelcome.Popup;
 end;
 
 end.

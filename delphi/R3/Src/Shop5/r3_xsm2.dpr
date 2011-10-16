@@ -254,8 +254,8 @@ uses
   ufrmPosMainList in 'app\ufrmPosMainList.pas' {frmPosMainList},
   uCommand in 'App\uCommand.pas',
   uMsgBox in '..\..\Basic\uMsgBox.pas',
-  uSaleAnalyMessage in 'App\uSaleAnalyMessage.pas',
-  ufrmSaleAnalyMessage in 'App\ufrmSaleAnalyMessage.pas' {frmSaleAnalyMessage};
+  uWelcome in 'App\uWelcome.pas',
+  ufrmWelcome in 'App\ufrmWelcome.pas' {frmWelcome};
 
 {$R *.res}
 var

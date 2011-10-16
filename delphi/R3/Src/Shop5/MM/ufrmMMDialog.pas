@@ -27,8 +27,6 @@ type
     Button2: TButton;
     procedure RzButton1Click(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure toolDeskClick(Sender: TObject);
@@ -37,6 +35,9 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure inputRTFKeyPress(Sender: TObject; var Key: Char);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FmmUserInfo: PmmUserInfo;
     procedure SetmmUserInfo(const Value: PmmUserInfo);
@@ -268,7 +269,7 @@ begin
     Msg.comId := mmGlobal.xsm_comId;
     //接收者公司ID，字符串，30位
     Msg.refPlayerComId :=  mmUserInfo^.PlayerFava.comId;
-    Msg.nickName := mmGlobal.xsm_username;
+    Msg.nickName := mmGlobal.xsm_nickname;
     Msg.refPlayerName :=  mmUserInfo^.PlayerFava.nickName;
     Msg.playerType := mmGlobal.xsm_userType;
     Msg.refPlayerType := mmUserInfo^.PlayerFava.userType;
@@ -284,17 +285,6 @@ procedure TfrmMMDialog.cxBtnOkClick(Sender: TObject);
 begin
   inherited;
   SendMsg;
-end;
-
-procedure TfrmMMDialog.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  inherited;
-  if (ssCtrl in Shift) and (Key=VK_RETURN) then
-     begin
-       Key := 0;
-       SendMsg;
-     end;
 end;
 
 procedure TfrmMMDialog.RecvMsg;
@@ -385,6 +375,28 @@ begin
   inputRTF.Text := inttostr(Timer1.Tag)+'->'+sTest;
   SendMsg;
   Timer1.Tag := Timer1.Tag + 1;
+end;
+
+procedure TfrmMMDialog.inputRTFKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if ((Key=#13) or (Key=#10)) and (trim(inputRTF.Text)='') then
+     begin
+       Key := #0;
+     end;
+end;
+
+procedure TfrmMMDialog.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key=VK_RETURN) then
+     begin
+       SendMsg;
+       Shift := [];
+       Key := 0;
+     end;
+
 end;
 
 initialization

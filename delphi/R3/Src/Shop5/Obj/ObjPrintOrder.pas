@@ -461,7 +461,7 @@ begin
     rs.SQL.Text := 'select COMM,CHANGE_ID,TENANT_ID,SHOP_ID,CHANGE_DATE from STO_CHANGEORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and FROM_ID=:PRINT_DATE and CHANGE_CODE=''1'' ';
     rs.Params.AssignValues(Params);
     AGlobal.Open(rs);
-    if copy(rs.FieldByName('COMM').AsString,1,2)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
+    if copy(rs.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
     AGlobal.BeginTrans;
     try
       Change_ID:=trim(rs.fieldbyName('CHANGE_ID').AsString);

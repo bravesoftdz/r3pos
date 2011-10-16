@@ -1057,6 +1057,7 @@ inherited frmMMDialog: TfrmMMDialog
           BorderStyle = bsNone
           ScrollBars = ssVertical
           TabOrder = 2
+          OnKeyPress = inputRTFKeyPress
           FrameVisible = True
         end
       end

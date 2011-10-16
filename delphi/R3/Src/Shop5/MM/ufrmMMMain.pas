@@ -553,9 +553,17 @@ begin
         StopSyncTask;
         if TimerFactory<>nil then TimerFactory.Free;
         if Global.UserID='system' then exit;
-        if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
+        if not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and not CaFactory.CheckDebugSync then
            begin
               try
+                Global.TryRemateConnect;
+              except
+                Exit;
+              end;
+              try
+                if not SyncFactory.SyncLockCheck then Exit;
+                if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
+                if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self);
                 SyncFactory.SyncAll;
               except
                 on E:Exception do
@@ -663,6 +671,9 @@ begin
      frmLogo.ShowTitle := '正在初始化广告数据...';
      if (mmGlobal.module[4]='1') then AdvFactory.LoadAdv;
      frmMMDesk.LoadDesk;
+
+     UpdateTimer.Enabled := true;
+     
    finally
      frmLogo.Close;
    end;
@@ -2466,7 +2477,6 @@ end;
 procedure TfrmMMMain.SetLogined(const Value: boolean);
 begin
   FLogined := Value;
-  UpdateTimer.Enabled := true;
   copyRight.Caption := '版权所属：山东浪潮齐鲁软件产业股份有限公司  ｜  '+mmGlobal.TENANT_NAME + '('+mmGlobal.UserName+')';
   UsersStatus.Down := not CaFactory.Audited;
   if CaFactory.Audited then

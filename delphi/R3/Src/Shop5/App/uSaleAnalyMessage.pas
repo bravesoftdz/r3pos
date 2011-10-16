@@ -378,11 +378,10 @@ var
 begin
   result:='';
   ReStr:='';
-  if TopCount<=0 then TopCount:=3;  //默认取前三个
-
   case vType of
    1: //销量
     begin
+      TopCount:=5;  //默认取前三个
       BaseTab:=
         'select GODS_NAME,sum(CALC_AMOUNT) as SAL_AMT from VIW_SALESDATA a,PUB_GOODSINFO b '+
         ' where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001 and a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE>='+BegDate+' and a.SALES_DATE<='+EndDate+
@@ -397,6 +396,7 @@ begin
     end;
    2: //毛利
     begin
+      TopCount:=3;  //默认取前三个
       BaseTab:=
         'select GODS_NAME,(sum(NOTAX_MONEY)-sum(COST_MONEY)) as SALE_PRF from VIW_SALESDATA a,PUB_GOODSINFO b '+
         ' where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001 and a.TENANT_ID='+Tenant_ID+' and a.SALES_DATE>='+BegDate+' and a.SALES_DATE<='+EndDate+
@@ -441,7 +441,7 @@ var
   LMTab,TMTab,BaseTab,OrderBy,Str,ReStr: string;
   rs: TZQuery;
 begin
-  if TopCount<=0 then TopCount:=3;  //默认取前三个
+  TopCount:=5;  //默认取前三个
   //上个月销售数量:
   BaseTab:=
     'select b.GODS_NAME as GODS_NAME,'+

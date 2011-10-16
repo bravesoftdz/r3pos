@@ -222,8 +222,9 @@ begin
   RzStatus.Caption := '正在打开Excel';
   RzStatus.Update;
   Excel := CreateOleObject('Excel.Application');
-  Excel.WorkBooks.open(FileName);
     try
+      Excel.Visible := false;
+      Excel.WorkBooks.open(FileName);
       r := 0;
       n := 0;
       while True do
@@ -250,7 +251,8 @@ begin
           cdsExcel.Post;
         end;
     finally
-      Excel.Quit;
+      Excel.Visible := true;
+      Excel.quit;
     end;
   finally
     cdsExcel.First;

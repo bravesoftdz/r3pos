@@ -13,8 +13,8 @@ inherited frmExcelFactory: TfrmExcelFactory
   object RzPage: TRzPageControl [0]
     Left = 0
     Top = 0
-    Width = 549
-    Height = 336
+    Width = 540
+    Height = 325
     ActivePage = TabSheet3
     Align = alClient
     BoldCurrentTab = True
@@ -34,8 +34,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel2: TRzPanel
         Left = 0
         Top = 0
-        Width = 547
-        Height = 314
+        Width = 538
+        Height = 303
         Align = alClient
         BorderInner = fsFlatRounded
         BorderOuter = fsGroove
@@ -43,8 +43,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         Color = clWhite
         TabOrder = 0
         DesignSize = (
-          547
-          314)
+          538
+          303)
         object RzLabel1: TRzLabel
           Left = 193
           Top = 61
@@ -645,8 +645,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel6: TRzPanel
         Left = 0
         Top = 0
-        Width = 547
-        Height = 314
+        Width = 538
+        Height = 303
         Align = alClient
         BevelWidth = 4
         BorderInner = fsFlatRounded
@@ -660,8 +660,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         object DBGridEh1: TDBGridEh
           Left = 5
           Top = 5
-          Width = 537
-          Height = 304
+          Width = 528
+          Height = 293
           Align = alClient
           DataSource = dsExcel
           FixedColor = 15720651
@@ -913,8 +913,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel1: TRzPanel
         Left = 0
         Top = 0
-        Width = 547
-        Height = 314
+        Width = 538
+        Height = 303
         Align = alClient
         BevelWidth = 4
         BorderInner = fsFlatRounded
@@ -927,15 +927,15 @@ inherited frmExcelFactory: TfrmExcelFactory
         TabOrder = 0
         object RzStatus1: TRzStatusPane
           Left = 5
-          Top = 289
-          Width = 537
+          Top = 278
+          Width = 528
           Align = alBottom
         end
         object DBGridEh2: TDBGridEh
           Left = 5
           Top = 5
-          Width = 537
-          Height = 284
+          Width = 528
+          Height = 273
           Align = alClient
           AllowedOperations = [alopUpdateEh]
           BorderStyle = bsNone
@@ -1013,8 +1013,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel3: TRzPanel
         Left = 0
         Top = 0
-        Width = 547
-        Height = 314
+        Width = 538
+        Height = 303
         Align = alClient
         BorderInner = fsFlatRounded
         BorderOuter = fsGroove
@@ -1024,8 +1024,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         object DBGridEh3: TDBGridEh
           Left = 5
           Top = 5
-          Width = 537
-          Height = 304
+          Width = 528
+          Height = 293
           Align = alClient
           DataSource = dsExcel
           FixedColor = 15720651
@@ -1283,8 +1283,8 @@ inherited frmExcelFactory: TfrmExcelFactory
       object RzPanel4: TRzPanel
         Left = 0
         Top = 0
-        Width = 547
-        Height = 314
+        Width = 538
+        Height = 303
         Align = alClient
         BorderInner = fsFlatRounded
         BorderOuter = fsGroove
@@ -1292,8 +1292,8 @@ inherited frmExcelFactory: TfrmExcelFactory
         Color = clWhite
         TabOrder = 0
         DesignSize = (
-          547
-          314)
+          538
+          303)
         object labImportInfo: TRzLabel
           Left = 271
           Top = 145
@@ -1840,7 +1840,7 @@ inherited frmExcelFactory: TfrmExcelFactory
           ParentFont = False
         end
         object chkignore: TcxCheckBox
-          Left = 336
+          Left = 327
           Top = 254
           Width = 122
           Height = 21
@@ -1856,8 +1856,8 @@ inherited frmExcelFactory: TfrmExcelFactory
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 336
-    Width = 549
+    Top = 325
+    Width = 540
     Height = 51
     Align = alBottom
     BevelOuter = bvNone

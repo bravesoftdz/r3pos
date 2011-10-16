@@ -46,6 +46,9 @@ type
     Lbl_Day_Title: TLabel;
     Img_left: TRzBmpButton;
     Img_right: TRzBmpButton;
+    Btn_Prior: TRzBmpButton;
+    Btn_Next: TRzBmpButton;
+    Btn_Month: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure btn_EndClick(Sender: TObject);
     procedure Image2Click(Sender: TObject);
@@ -66,7 +69,12 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure Img_leftMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure Btn_PriorClick(Sender: TObject);
+    procedure Btn_NextClick(Sender: TObject);
+    procedure Btn_MonthClick(Sender: TObject);
   private
+    MinMonth: string;   //销售最小月份
+    MaxMonth: string;   //销售最大月份
     NearMonth: string;  //最近浏览一月
     CurMonth: string;   //当前显示一月
     FDoAction: TAction;
@@ -94,7 +102,9 @@ uses uShopGlobal,uGlobal,ufrmLogo,uFnUtil;
 {$R *.dfm}
 
 procedure TfrmSaleAnalyMessage.FormCreate(Sender: TObject);
-var i:Integer;
+var
+  i:Integer;
+  Rs: TZQuery;
 begin
   inherited;
   NearMonth:='';  //最近浏览一月
@@ -104,10 +114,27 @@ begin
   Page2ed := false;
   SaleAnaly := TSaleAnalyMsg.Create;
   for i := 0 to RzPage.PageCount - 1 do
-    begin
-      RzPage.Pages[i].TabVisible := False;
-    end;
+  begin
+    RzPage.Pages[i].TabVisible := False;
+  end;
   RzPage.ActivePageIndex := 0;
+
+  //读取最小使用日期
+  MaxMonth:=FormatDatetime('YYYYMM',Date()); 
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select min(SALES_DATE) as minDate from SAl_SALESORDER where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') ';
+    Factor.Open(Rs);
+    if (Rs.Active) and (Rs.RecordCount=1) then 
+      MinMonth:=Copy(Rs.FieldbyName('minDate').AsString,1,6) 
+    else
+    begin
+      MinMonth:=ShopGlobal.GetParameter('USING_DATE');
+      MinMonth:=Copy(MinMonth,1,4)+Copy(MinMonth,5,2);
+    end;
+  finally
+    Rs.Free;
+  end;
 end;
 
 procedure TfrmSaleAnalyMessage.btn_EndClick(Sender: TObject);
@@ -541,6 +568,46 @@ procedure TfrmSaleAnalyMessage.Img_leftMouseDown(Sender: TObject;
 begin
   inherited;
   Img_left.Hint:=HintMonthMsg(-1); 
+end;
+
+procedure TfrmSaleAnalyMessage.Btn_PriorClick(Sender: TObject);
+begin
+  inherited;
+  SetMonth(CurMonth,-1);
+  if (CurMonth<>'') and (NearMonth<>CurMonth) then
+  begin
+    OpenPage2(CurMonth); //显示月度经营情况
+    NearMonth:=CurMonth;
+  end;                        
+  Btn_Prior.Visible:=(CurMonth>MinMonth);
+  Btn_Next.Visible:=(CurMonth<MaxMonth);
+  Btn_Month.Visible:=(CurMonth<MaxMonth);
+end;
+
+procedure TfrmSaleAnalyMessage.Btn_NextClick(Sender: TObject);
+begin
+  SetMonth(CurMonth,1);
+  if (CurMonth<>'') and (NearMonth<>CurMonth) then
+  begin
+    OpenPage2(CurMonth); //显示月度经营情况
+    NearMonth:=CurMonth;
+  end;
+  Btn_Prior.Visible:=(CurMonth>MinMonth);
+  Btn_Next.Visible:=(CurMonth<MaxMonth);
+  Btn_Month.Visible:=(CurMonth<MaxMonth); 
+end;
+
+procedure TfrmSaleAnalyMessage.Btn_MonthClick(Sender: TObject);
+begin
+  CurMonth:=FormatDatetime('YYYYMM',Date());  //本月
+  if (CurMonth<>'') and (NearMonth<>CurMonth) then
+  begin
+    OpenPage2(CurMonth); //显示月度经营情况
+    NearMonth:=CurMonth;
+  end;
+  Btn_Prior.Visible:=(CurMonth>MinMonth);
+  Btn_Next.Visible:=(CurMonth<MaxMonth);
+  Btn_Month.Visible:=(CurMonth<MaxMonth);   
 end;
 
 end.

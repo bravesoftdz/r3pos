@@ -174,12 +174,13 @@ end;
 procedure TSaleAnalyMsg.InitalParam;
 begin
   SetRckMonth(MinMonth,MaxMonth,MaxRckDay); //取结账月份期间
+  //2011.10.16日期: 当月是开1日到今天
   //上月启始—结束日
-  LM_BegDate:=FormatDatetime('YYYYMM',IncMonth(Date(),-2))+'01'; //上月开始日期;
-  LM_EndDate:=FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-2))); //上月最后一天;
+  LM_BegDate:=FormatDatetime('YYYYMM',IncMonth(Date(),-1))+'01'; //上月开始日期;
+  LM_EndDate:=FormatDatetime('YYYYMMDD',IncMonth(Date(),-1));    //FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-2))); //上月最后一天;
   //本月启始—结束日
-  TM_BegDate:=FormatDatetime('YYYYMM',IncMonth(Date(),-1))+'01';  //本月开始日期;
-  TM_EndDate:=FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-1)));  //本月结束日期（今天）;
+  TM_BegDate:=FormatDatetime('YYYYMM',Date())+'01';  //本月开始日期;
+  TM_EndDate:=FormatDatetime('YYYYMMDD',Date());  //FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-1)));  //本月结束日期（今天）;
 
   //初始化日经营参数
   DayMsg.YDSaleGods_Count:=0; //昨天销售品种(单位:个);
@@ -209,7 +210,7 @@ begin
   DayMsg.TDStock_MNY_Grow:=0;
   DayMsg.TDStock_Single_MNY_Grow:=0;  //今天毛利率(%);
   //初始化月经营参数
-  FCurMonth:=FormatDatetime('YYYYMM',IncMonth(Date(),-1));;
+  FCurMonth:=FormatDatetime('YYYYMM',Date());  //FormatDatetime('YYYYMM',IncMonth(Date(),-1));
 
   //初始化月参数
   InitalMonthMsg;
@@ -727,6 +728,16 @@ begin
 
     TM_BegDate:=FormatDatetime('YYYYMM',CurDate)+'01';
     TM_EndDate:=FnTime.GetLastDate(FCurMonth);
+
+  //上月启始—结束日
+  LM_BegDate:=FormatDatetime('YYYYMM',IncMonth(Date(),-1))+'01'; //上月开始日期;
+  LM_EndDate:=FormatDatetime('YYYYMMDD',IncMonth(Date(),-1));    //FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-2))); //上月最后一天;
+  //本月启始—结束日
+  TM_BegDate:=FormatDatetime('YYYYMM',Date())+'01';  //本月开始日期;
+  TM_EndDate:=FormatDatetime('YYYYMMDD',Date());  //FnTime.GetLastDate(FormatDatetime('YYYYMM',IncMonth(Date(),-1)));  //本月结束日期（今天）;
+
+
+
   end;
 end;
 

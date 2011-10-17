@@ -198,8 +198,8 @@ inherited ShopGlobal: TShopGlobal
       '       NEW_OUTPRICE2,'
       '       NEW_LOWPRICE,'
       
-        '       SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,USING_BATC' +
-        'H_NO,USING_LOCUS_NO,RELATION_ID'
+        '       SORT_ID2,SORT_ID7,SORT_ID8,USING_BARTER,BARTER_INTEGRAL,U' +
+        'SING_BATCH_NO,USING_LOCUS_NO,RELATION_ID'
       
         'from VIW_GOODSPRICEEXT where TENANT_ID=:TENANT_ID and SHOP_ID=:S' +
         'HOP_ID and COMM not in ('#39'02'#39','#39'12'#39') order by GODS_CODE')

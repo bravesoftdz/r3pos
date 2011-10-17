@@ -490,9 +490,9 @@ begin
       'select '+
       ' count(distinct c.GODS_ID) as ALLGODS_COUNT,'+  //有商品档案数
       ' sum(case when bb.STOR_GODS_ID is null then 1 else 0 end) as GODS_COUNT,'+  //有库存商品总数
-      ' sum(case when c.SORT_ID10 =''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'' then 1 else 0 end) as GODS_SX_COUNT,'+  //是否是畅销品牌
-      ' sum(case when c.SORT_ID11=''5D8D7AF6-2DE3-4866-85C7-925E07F66096'' then 1 else 0 end) as GODS_NEW_COUNT,'+  //烟草提供新品个数
-      ' sum(case when (c.SORT_ID11=''5D8D7AF6-2DE3-4866-85C7-925E07F66096'') and (bb.STOR_GODS_ID is not  null) then 1 else 0 end) as GODS_NEW_SALE_COUNT,'+  //零售户经营新品个数
+      ' sum(case when c.SORT_ID10 =''5D8D7AF6-2DE3-4866-85C7-925E07F66096'' then 1 else 0 end) as GODS_SX_COUNT,'+  //是否是畅销品牌
+      ' sum(case when c.SORT_ID10=''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'' then 1 else 0 end) as GODS_NEW_COUNT,'+  //烟草提供新品个数
+      ' sum(case when (c.SORT_ID10=''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'') and (bb.STOR_GODS_ID is not  null) then 1 else 0 end) as GODS_NEW_SALE_COUNT,'+  //零售户经营新品个数
       ' sum(case when (Round(bb.AMOUNT,3)<Round(bb.LOWER_AMOUNT,3)) and (isnull(Round(bb.LOWER_AMOUNT,3),0)>0) then 1 else 0 end) as LOWER_COUNT, '+ //低于合理库存数量
       ' sum(AMOUNT/'+CalcUnit+') as STOR_SUM '+  //库存总数量[单位:条]
       ' from PUB_GOODSINFO c '+
@@ -502,7 +502,6 @@ begin
       '  where a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and round(a.AMOUNT,3)>0) bb '+
       ' on c.GODS_ID=bb.STOR_GODS_ID '+
       ' where c.TENANT_ID=110000001 and c.COMM not in (''01'',''02'')');
-
   dayKc.Close;
   dayKc.SQL.Text:=ParseSQL(Factor.iDbType, Str);
   dayKc.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

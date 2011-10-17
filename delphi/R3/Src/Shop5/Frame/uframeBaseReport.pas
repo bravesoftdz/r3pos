@@ -444,6 +444,7 @@ begin
         begin
           Cbx.Properties.OnChange:=Dofnd_SHOP_TYPEChange;
           Cbx.ItemIndex:=0;
+          Cbx.Properties.DropDownListStyle:=lsFixedList;
         end else
         if RightStr(CmpName,10)='_CUST_TYPE' then //客户群体
         begin
@@ -456,6 +457,7 @@ begin
           AddGoodSortTypeItems(Cbx,DefState);
           Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
           Cbx.ItemIndex:=0;
+          Cbx.Properties.DropDownListStyle:=lsFixedList;
         end;
         if RightStr(CmpName,8)='_RPTTYPE' then //商品指标
         begin

@@ -583,7 +583,7 @@ begin
   //取会员情况:
   CustRs.Close;
   CustRs.SQL.Text:=
-    'select count(CUST_ID) as allCount,sum(case when SND_DATE>='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-01'' and SND_DATE<='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-'+FDay+''' then 1 else 0 end) as newCount from PUB_CUSTOMER '+
+    'select count(CUST_ID) as allCount,sum(case when SND_DATE>='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-01'' and SND_DATE<='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-'+FDay2+''' then 1 else 0 end) as newCount from PUB_CUSTOMER '+
     ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
   CustRs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   CustRs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
@@ -603,7 +603,7 @@ begin
      begin
        FDay2:=Copy(FormatDatetime('YYYYMMDD',Date()),7,2);
        if formatDatetime('DD',Date())= formatdatetime('DD',incMonth(CurDate,1)-1) then
-          FDay1:= FormatDatetime('DD',incMonth(CurDate)-1);
+          FDay1:= FormatDatetime('DD',incMonth(CurDate)-1)
        else
           FDay1:= Copy(FormatDatetime('YYYYMMDD',Date()),7,2);
      end;

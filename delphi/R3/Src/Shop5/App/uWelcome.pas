@@ -94,7 +94,8 @@ type
     dayKc:TZQuery;
     MthRs:TZQuery;
     CustRs:TZQuery;
-    FDay: string;    //当月份第几天
+    FDay1: string;    //当月份第几天
+    FDay2: string;    //当月份第几天
     FLMonth: string; //上个月
     FMonth: string;  //本月份
     QtDay:string;
@@ -495,13 +496,13 @@ begin
       ' sum(case when (c.SORT_ID10=''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'') and (bb.STOR_GODS_ID is not  null) then 1 else 0 end) as GODS_NEW_SALE_COUNT,'+  //零售户经营新品个数
       ' sum(case when (Round(bb.AMOUNT,3)<Round(bb.LOWER_AMOUNT,3)) and (isnull(Round(bb.LOWER_AMOUNT,3),0)>0) then 1 else 0 end) as LOWER_COUNT, '+ //低于合理库存数量
       ' sum(AMOUNT/'+CalcUnit+') as STOR_SUM '+  //库存总数量[单位:条]
-      ' from PUB_GOODSINFO c '+
+      ' from VIW_GOODSINFO c '+
       ' left outer join '+
       ' (select a.GODS_ID as STOR_GODS_ID,b.LOWER_AMOUNT,round(a.AMOUNT,3) as AMOUNT from STO_STORAGE a '+
       '   left join PUB_GOODS_INSHOP b on  a.TENANT_ID=b.TENANT_ID and a.SHOP_ID=b.SHOP_ID and a.GODS_ID=b.GODS_ID '+
       '  where a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and round(a.AMOUNT,3)>0) bb '+
       ' on c.GODS_ID=bb.STOR_GODS_ID '+
-      ' where c.TENANT_ID=110000001 and c.COMM not in (''01'',''02'')');
+      ' where c.TENANT_ID='+inttostr(Global.TENANT_ID)+' and c.RELATION_ID=1000006 and c.COMM not in (''01'',''02'')');
   dayKc.Close;
   dayKc.SQL.Text:=ParseSQL(Factor.iDbType, Str);
   dayKc.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -574,9 +575,9 @@ begin
   MthRs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   MthRs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
   MthRs.ParamByName('LM_BEGIN_DATE').AsInteger := StrtoInt(FLMonth+'01'); //上月第一天
-  MthRs.ParamByName('LM_END_DATE').AsInteger :=   StrtoInt(FLMonth+FDay); //上月今天
+  MthRs.ParamByName('LM_END_DATE').AsInteger :=   StrtoInt(FLMonth+FDay1); //上月今天
   MthRs.ParamByName('TM_BEGIN_DATE').AsInteger := StrtoInt(FMonth+'01');  //本月第一天
-  MthRs.ParamByName('TM_END_DATE').AsInteger :=   StrtoInt(FMonth+FDay);  //本月今天
+  MthRs.ParamByName('TM_END_DATE').AsInteger :=   StrtoInt(FMonth+FDay2);  //本月今天
   Factor.Open(MthRs);
 
   //取会员情况:
@@ -596,10 +597,16 @@ var
 begin
   FMonth := Value;
   //根据本月份计算上个月份
-  CurDate := FnTime.fnStrtoDate(FMonth+'01'); 
+  CurDate := FnTime.fnStrtoDate(FMonth+'01');
   FLMonth := FormatDatetime('YYYYMM',incMonth(CurDate,-1));
-  //当前月份的日（当月的第几天）
-  FDay:=Copy(FormatDatetime('YYYYMMDD',Date()),7,2);
+  if formatdatetime('YYYYMM',date())=Value then //本月
+     begin
+       FDay2:=Copy(FormatDatetime('YYYYMMDD',Date()),7,2);
+       if formatDatetime('DD',Date())= formatdatetime('DD',incMonth(CurDate,1)-1) then
+          FDay1:= FormatDatetime('DD',incMonth(CurDate)-1);
+       else
+          FDay1:= Copy(FormatDatetime('YYYYMMDD',Date()),7,2);
+     end;
 end;
 
 

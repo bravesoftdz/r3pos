@@ -248,11 +248,14 @@ begin
   if result.LMSale_AMT<>0 then
     result.LMSale_SINGLE_MNY:=FormatFloatValue(result.LMSale_MNY/result.LMSale_AMT,2); //上月平均每条销售额(元);
   if TM_NOTAX_MNY<>0 then
-    result.TMSale_PRF_RATE:=FormatFloatValue(result.TMSale_PRF/TM_NOTAX_MNY,2);  //本月毛率;
+    result.TMSale_PRF_RATE:=FormatFloatValue(result.TMSale_PRF*100/TM_NOTAX_MNY,2);  //本月毛率;
   if result.TMSale_AMT<>0 then
     result.TMSale_SINGLE_MNY:=FormatFloatValue(result.TMSale_MNY/result.TMSale_AMT,2); //本月平均每条销售额(元);
-  result.TMSale_AMT_UP_RATE:=result.TMSale_AMT-result.LMSale_AMT;   //本月数量增长;
-  result.TMSale_PRF_UP_RATE:=result.TMSale_PRF-result.LMSale_PRF;   //本月毛利增长;
+
+  if result.LMSale_AMT<>0 then
+     result.TMSale_AMT_UP_RATE:=(result.TMSale_AMT-result.LMSale_AMT)*100/result.LMSale_AMT;   //本月数量增长;
+  if result.LMSale_PRF<>0 then
+     result.TMSale_PRF_UP_RATE:=(result.TMSale_PRF-result.LMSale_PRF)*100/result.LMSale_PRF;   //本月毛利增长;
   if result.LMSale_SINGLE_MNY<>0 then
     result.TMSale_SINGLE_MNY_UP_RATE:=FormatFloatValue((result.TMSale_SINGLE_MNY-result.LMSale_SINGLE_MNY)*100/result.LMSale_SINGLE_MNY,2);   //本月单条金额增长率;
 
@@ -489,18 +492,18 @@ begin
   //当前库存
   str:= ParseSQL(Factor.iDbType,
       'select '+
-      ' count(distinct c.GODS_ID) as ALLGODS_COUNT,'+  //有商品档案数
-      ' sum(case when bb.STOR_GODS_ID is null then 1 else 0 end) as GODS_COUNT,'+  //有库存商品总数
+      ' sum(case when bb.STOR_GODS_ID is not null then 1 else 0 end) as ALLGODS_COUNT,'+  //经营商品总数
+      ' sum(case when bb.STOR_GODS_ID is not null and round(bb.AMOUNT,3)>0 then 1 else 0 end) as GODS_COUNT,'+  //有库存商品总数
       ' sum(case when c.SORT_ID10 =''5D8D7AF6-2DE3-4866-85C7-925E07F66096'' then 1 else 0 end) as GODS_SX_COUNT,'+  //是否是畅销品牌
       ' sum(case when c.SORT_ID10=''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'' then 1 else 0 end) as GODS_NEW_COUNT,'+  //烟草提供新品个数
-      ' sum(case when (c.SORT_ID10=''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'') and (bb.STOR_GODS_ID is not  null) then 1 else 0 end) as GODS_NEW_SALE_COUNT,'+  //零售户经营新品个数
-      ' sum(case when (Round(bb.AMOUNT,3)<Round(bb.LOWER_AMOUNT,3)) and (isnull(Round(bb.LOWER_AMOUNT,3),0)>0) then 1 else 0 end) as LOWER_COUNT, '+ //低于合理库存数量
+      ' sum(case when c.SORT_ID10=''32FD7EE2-5F01-4131-B46F-2A8A81B9C60F'' and bb.STOR_GODS_ID is not null then 1 else 0 end) as GODS_NEW_SALE_COUNT,'+  //零售户经营新品个数
+      ' sum(case when bb.STOR_GODS_ID is not null and Round(bb.AMOUNT,3)<Round(bb.LOWER_AMOUNT,3) and isnull(Round(bb.LOWER_AMOUNT,3),0)>0 then 1 else 0 end) as LOWER_COUNT, '+ //低于合理库存数量
       ' sum(AMOUNT/'+CalcUnit+') as STOR_SUM '+  //库存总数量[单位:条]
       ' from VIW_GOODSINFO c '+
       ' left outer join '+
       ' (select a.GODS_ID as STOR_GODS_ID,b.LOWER_AMOUNT,round(a.AMOUNT,3) as AMOUNT from STO_STORAGE a '+
       '   left join PUB_GOODS_INSHOP b on  a.TENANT_ID=b.TENANT_ID and a.SHOP_ID=b.SHOP_ID and a.GODS_ID=b.GODS_ID '+
-      '  where a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and round(a.AMOUNT,3)>0) bb '+
+      '  where a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID) bb '+
       ' on c.GODS_ID=bb.STOR_GODS_ID '+
       ' where c.TENANT_ID='+inttostr(Global.TENANT_ID)+' and c.RELATION_ID=1000006 and c.COMM not in (''01'',''02'')');
   dayKc.Close;

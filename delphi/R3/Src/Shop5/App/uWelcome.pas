@@ -238,7 +238,7 @@ begin
         result.TMCust_AMT:=result.TMCust_AMT+MthRs.FieldByName('SAL_AMT').AsFloat;
         result.TMCust_MNY:=result.TMCust_MNY+MthRs.FieldByName('SALE_MNY').AsFloat;
         if RsGods.Locate('GODS_ID',MthRs.FieldbyName('GODS_ID').asString,[]) and (RsGods.FieldbyName('SORT_ID2').asString='85994503-9CBC-4346-BC86-24C7F5A92BC6') then
-           result.TMCust_HG_Count := result.TMCust_HG_Count+1;
+          result.TMCust_HG_Count := result.TMCust_HG_Count+1;
       end;
     end;
     MthRs.Next;
@@ -612,6 +612,7 @@ var
   i:integer;
   list:TStringList;
   b:integer;
+  IsFlag: Boolean; //标记位
 begin
   s1 := 0;
   s2 := 0;
@@ -660,29 +661,38 @@ begin
     list.Sort;
     result := '';
     b := -1;
+    IsFlag:=False;
     for i:=0 to list.Count -1 do
-     begin
-       if b=-1 then
-       begin
-         if result <> '' then result := result + ',';
-         result := result + list[i]+'时';
-       end
-       else
-       begin
-         if (strtoint(list[i])=b+1) and (list.Count<i) then
-            begin
-              b := strtoint(list[i]);
-              continue;
-            end;
-         if b<>strtoint(list[i]) then
-            begin
-              result := result + '至'+ list[i]+'时';
-            end;
-         if result <> '' then result := result + ',';
-         result := result + list[i]+'时';
-         b := -1;
-       end;
-     end; 
+    begin
+      if b=-1 then
+      begin
+        if result <> '' then result := result + ',';
+        result := result + list[i]+'时';
+        b:= strtoint(list[i]);  //xhh add
+      end else
+      begin
+        if (strtoint(list[i])=b+1) and (i<list.Count) then
+        begin
+          b := strtoint(list[i]);
+          IsFlag:=True;
+          continue;
+        end;
+        if b<>strtoint(list[i]) then
+        begin
+          if IsFlag then
+          begin
+            result := result + '至'+ list[i-1]+'时,'+list[i]+'时';
+            IsFlag:=False;
+          end else
+          begin
+            if result <> '' then result := result + ',';
+            result := result + list[i]+'时';
+          end;
+          b:= strtoint(list[i]);
+        end;
+      end;
+    end;
+    if IsFlag then result := result + '至'+ list.Strings[List.Count-1]+'时;';
   finally
     list.Free;
   end;

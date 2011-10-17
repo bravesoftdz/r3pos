@@ -5238,7 +5238,6 @@ inherited frmWelcome: TfrmWelcome
               Width = 548
               Height = 386
               Align = alClient
-              BorderInner = fsFlatRounded
               BorderOuter = fsNone
               BorderColor = 16643821
               BorderShadow = 16643821
@@ -5248,15 +5247,15 @@ inherited frmWelcome: TfrmWelcome
               GridColor = 16643821
               TabOrder = 1
               object DayBrowser: TWebBrowser
-                Left = 10
-                Top = 10
-                Width = 528
-                Height = 366
+                Left = 8
+                Top = 8
+                Width = 532
+                Height = 370
                 Align = alClient
                 TabOrder = 0
                 OnBeforeNavigate2 = DayBrowserBeforeNavigate2
                 ControlData = {
-                  4C00000092360000D42500000000000000000000000000000000000000000000
+                  4C000000FC3600003E2600000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800
                   2B2E126208000000000000004C0000000114020000000000C000000000000046
                   8000000000000000000000000000000000000000000000000000000000000000
@@ -5860,7 +5859,6 @@ inherited frmWelcome: TfrmWelcome
               Width = 548
               Height = 387
               Align = alClient
-              BorderInner = fsFlatRounded
               BorderOuter = fsNone
               BorderColor = 16643821
               BorderShadow = 16643821
@@ -5870,15 +5868,15 @@ inherited frmWelcome: TfrmWelcome
               GridColor = 16643821
               TabOrder = 1
               object MthBrowser: TWebBrowser
-                Left = 10
-                Top = 10
-                Width = 528
-                Height = 367
+                Left = 8
+                Top = 8
+                Width = 532
+                Height = 371
                 Align = alClient
                 TabOrder = 0
                 OnBeforeNavigate2 = MthBrowserBeforeNavigate2
                 ControlData = {
-                  4C00000092360000EE2500000000000000000000000000000000000000000000
+                  4C000000FC360000582600000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800
                   2B2E126208000000000000004C0000000114020000000000C000000000000046
                   8000000000000000000000000000000000000000000000000000000000000000

@@ -160,7 +160,7 @@ begin
     //显示日经营情况
     if (NotYSFlag) and (NotTDFlag) then //昨天、今天没有经营
     begin
-      result := result + PutText(Font,'您昨天和今天都无销售，祝您生意兴隆，加油！');
+      result := result + PutText(Font,'    您昨天和今天都无销售，祝您生意兴隆，加油！');
     end else
     if (NotYSFlag) and (not NotTDFlag) then //昨天没有经营,今天经营
     begin
@@ -314,7 +314,7 @@ begin
   result := result+'  -->'+#13+#10;
   result := result+'</style>'+#13+#10;
   result := result+EncodeScript;
-  result := result+'<body border="0" scroll="no" bgcolor="#EDF6FD">'+#13+#10;
+  result := result+'<body border="0" scroll="no" bgcolor="#EDF6FD" oncontextmenu ="return false">'+#13+#10;
   result := result+EncodeDaySaleInfo;
   result := result+'<BR><BR>'+EncodeDayStockInfo;
   result := result+'<BR><BR>'+EncodeDayStorageInfo;
@@ -435,7 +435,7 @@ begin
   result := result+'  -->'+#13+#10;
   result := result+'</style>'+#13+#10;
   result := result+EncodeScript;
-  result := result+'<body border="0" scroll="no" bgcolor="#EDF6FD">'+#13+#10;
+  result := result+'<body border="0" scroll="no" bgcolor="#EDF6FD" oncontextmenu ="return false">'+#13+#10;
   result := result+EncodeMthStockInfo;
   result := result+'<BR><BR>'+EncodeMthSalesInfo;
   result := result+'<BR><BR>'+EncodeMthStgInfo;
@@ -507,18 +507,14 @@ begin
           '实现毛利'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF)+'元，毛利率'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_RATE)+'%。';
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
     
-    s:='    您本月与上月比：销量增长'+FloattoStr(MsgMthInfo.TMSale_AMT_UP_RATE)+'%，'+
-          '单条值增长'+FloattoStr(MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE)+'%，'+
-          '毛利增长'+FloattoStr(MsgMthInfo.TMSale_PRF_UP_RATE)+'%。';
+    s:='    您本月与上月比：销量增长'+formatFloat('#0.00',MsgMthInfo.TMSale_AMT_UP_RATE)+'%，'+
+          '单条值增长'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE)+'%，'+
+          '毛利增长'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_UP_RATE)+'%。';
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
 
-    s:='    您本月销量最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_AMT+'；';
+    s:='    您本月销量最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_AMT+'；本月毛利额最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_PRF+'；';    s:='本月毛利额最大的三个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_PRF+'；';
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
-    s:='    本月毛利额最大的三个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_PRF+'；';
-    result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
-    s:='    上月毛利额最大的三个规格分别是：'+MsgMthInfo.TMGods_SY_MaxGrow_PRF+'；';
-    result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
-    s:='    与上月销量比，增长最快的规格是：'+MsgMthInfo.TMGods_MaxGrowRate_AMT+'。';
+    s:='    上月毛利额最大的五个规格分别是：'+MsgMthInfo.LMGods_SY_MaxGrow_PRF+'；与上月销量比，增长最快的规格是：'+MsgMthInfo.TMGods_MaxGrowRate_AMT+'。';
     result := result + PutText(Font,s)+ #13#10;
   finally
     Font.Free;
@@ -561,8 +557,8 @@ begin
     MsgMthInfo := Welcome.EncodeMsgMthInfo;
   //4、您的客户情况
    s:='    您目前已建立消费者档案'+InttoStr(MsgMthInfo.TMCust_Count)+'个，'+
-         '高档烟的消费者'+InttoStr(MsgMthInfo.TMCust_HG_Count)+'名，'+
-         '本月新建'+InttoStr(MsgMthInfo.TMCust_NEW_Count)+'个。';
+         '本月新建'+InttoStr(MsgMthInfo.TMCust_NEW_Count)+'个，';
+         '高档烟的消费者'+InttoStr(MsgMthInfo.TMCust_HG_Count)+'名。'+
 
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
     
@@ -666,42 +662,7 @@ end;
 
 function TfrmWelcome.EncodeScript: string;
 begin
-result := 
-'<script language="JavaScript">'+
-'<!--'+
-'function key(){ '+
-'if(event.shiftKey){'+
-'window.close();}'+
-'//禁止Shift'+
-'if(event.altKey){'+
-'window.close();}'+
-'//禁止Alt'+
-'if(event.ctrlKey){'+
-'window.close();}'+
-'//禁止Ctrl'+
-'return false;}'+
-'document.onkeydown=key;'+
-'if (window.Event)'+
-'document.captureEvents(Event.MOUSEUP);'+
-'function nocontextmenu(){'+
-'event.cancelBubble = true'+
-'event.returnValue = false;'+
-'return false;}'+
-'function norightclick(e){'+
-'if (window.Event){'+
-'if (e.which == 2 || e.which == 3)'+
-'return false;}'+
-'else'+
-'if (event.button == 2 || event.button == 3){'+
-'event.cancelBubble = true'+
-'event.returnValue = false;'+
-'return false;}'+
-'}'+
-'//禁右键'+
-'document.oncontextmenu = nocontextmenu; '+  // for IE5
-'document.onmousedown = norightclick;  '+ // for all others
-'//-->'+
-'</script>';
+result := '';
 end;
 
 initialization

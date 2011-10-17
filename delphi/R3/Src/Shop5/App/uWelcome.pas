@@ -271,8 +271,6 @@ begin
   //2011.10.12 消费者(会员)情况:
   result.TMCust_Count:=CustRs.FieldByName('allCount').AsInteger;       //总的消费者个数;
   result.TMCust_NEW_Count:=CustRs.FieldByName('newCount').AsInteger;   //本月新建消费者个数;
-
-
 end;
 
 function TWelcome.FormatFloatValue(InValue: real; size: integer): real;
@@ -405,7 +403,7 @@ begin
   try
     CurValue := -9999;
     GrowRs:=TZQuery.Create(nil);
-    GrowRs.FieldDefs.Add('GODS_ID',ftstring,30,true);
+    GrowRs.FieldDefs.Add('GODS_ID',ftstring,36,true);
     GrowRs.FieldDefs.Add('TM_AMT',ftfloat,0,true);
     GrowRs.FieldDefs.Add('LM_AMT',ftfloat,0,true);
     GrowRs.FieldDefs.Add('AMT_RATE',ftfloat,0,true);
@@ -663,28 +661,28 @@ begin
     result := '';
     b := -1;
     for i:=0 to list.Count -1 do
+     begin
+       if b=-1 then
        begin
-         if b=-1 then
-         begin
-           if result <> '' then result := result + ',';
-           result := result + list[i]+'时';
-         end
-         else
-         begin
-           if (strtoint(list[i])=b+1) and (list.Count<i) then
-              begin
-                b := strtoint(list[i]);
-                continue;
-              end;
-           if b<>strtoint(list[i]) then
-              begin
-                result := result + '至'+ list[i]+'时';
-              end;
-           if result <> '' then result := result + ',';
-           result := result + list[i]+'时';
-           b := -1;
-         end;
+         if result <> '' then result := result + ',';
+         result := result + list[i]+'时';
+       end
+       else
+       begin
+         if (strtoint(list[i])=b+1) and (list.Count<i) then
+            begin
+              b := strtoint(list[i]);
+              continue;
+            end;
+         if b<>strtoint(list[i]) then
+            begin
+              result := result + '至'+ list[i]+'时';
+            end;
+         if result <> '' then result := result + ',';
+         result := result + list[i]+'时';
+         b := -1;
        end;
+     end; 
   finally
     list.Free;
   end;

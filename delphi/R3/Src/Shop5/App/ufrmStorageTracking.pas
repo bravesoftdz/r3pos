@@ -347,8 +347,11 @@ begin
   AddGoodTypeItems(edtGoods_Type,DefStateIDS);
   AddGoodTypeItems(edtP2_Goods_Type,DefStateIDS);
   AddGoodTypeItems(edtP3_Goods_Type,DefStateIDS);
-  InitGrid;
-  
+  //2011.10.15 add设置只能下来：
+  edtGoods_Type.Properties.DropDownListStyle:=lsFixedList;
+  edtP2_Goods_Type.Properties.DropDownListStyle:=lsFixedList;
+  edtP3_Goods_Type.Properties.DropDownListStyle:=lsFixedList;
+  InitGrid;                                                       
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
        Grid.Columns[13].Free;

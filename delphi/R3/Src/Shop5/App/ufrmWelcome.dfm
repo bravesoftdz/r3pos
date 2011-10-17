@@ -1,6 +1,6 @@
 inherited frmWelcome: TfrmWelcome
-  Left = 319
-  Top = 185
+  Left = 393
+  Top = 49
   Width = 570
   Height = 613
   Caption = #27426#36814
@@ -970,7 +970,7 @@ inherited frmWelcome: TfrmWelcome
       object RzBmpButton2: TRzBmpButton
         Tag = 1
         Left = 1
-        Top = 1
+        Top = 2
         Width = 130
         Height = 36
         Cursor = crHandPoint
@@ -1842,7 +1842,7 @@ inherited frmWelcome: TfrmWelcome
           9F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39
           E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F390000}
         Color = clBtnFace
-        Caption = #22825#22825#32463#33829#25552#37266
+        Caption = #27599#22825#32463#33829#25552#37266
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -1855,7 +1855,7 @@ inherited frmWelcome: TfrmWelcome
       object RzBmpButton1: TRzBmpButton
         Tag = 1
         Left = 130
-        Top = 1
+        Top = 2
         Width = 130
         Height = 36
         Cursor = crHandPoint
@@ -2726,7 +2726,7 @@ inherited frmWelcome: TfrmWelcome
           9F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F39
           E69F39E69F39E69F39E69F39E69F39E69F39E69F39E69F390000}
         Color = clBtnFace
-        Caption = #26376#24230#32463#33829#25552#37266
+        Caption = #27599#26376#32463#33829#25552#37266
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -2751,7 +2751,7 @@ inherited frmWelcome: TfrmWelcome
         Left = 0
         Top = 0
         Width = 2
-        Height = 449
+        Height = 480
         Align = alLeft
         Picture.Data = {
           0A544A504547496D616765C8210000FFD8FFE000104A46494600010201004800
@@ -3031,7 +3031,7 @@ inherited frmWelcome: TfrmWelcome
         Left = 550
         Top = 0
         Width = 2
-        Height = 449
+        Height = 480
         Align = alRight
         Picture.Data = {
           0A544A504547496D616765DB210000FFD8FFE000104A46494600010201004800
@@ -3310,9 +3310,9 @@ inherited frmWelcome: TfrmWelcome
       end
       object RzPanel3: TRzPanel
         Left = 0
-        Top = 449
+        Top = 480
         Width = 552
-        Height = 87
+        Height = 56
         Align = alBottom
         BorderOuter = fsNone
         TabOrder = 0
@@ -3320,7 +3320,7 @@ inherited frmWelcome: TfrmWelcome
           Left = 0
           Top = 0
           Width = 552
-          Height = 87
+          Height = 56
           Align = alClient
           Picture.Data = {
             0A544A504547496D616765625B0000FFD8FFE000104A46494600010201004800
@@ -4802,7 +4802,7 @@ inherited frmWelcome: TfrmWelcome
         Left = 2
         Top = 0
         Width = 548
-        Height = 449
+        Height = 480
         Align = alClient
         BorderOuter = fsNone
         Color = clWhite
@@ -4811,7 +4811,7 @@ inherited frmWelcome: TfrmWelcome
           Left = 0
           Top = 0
           Width = 548
-          Height = 449
+          Height = 480
           ActivePage = Tab2
           Align = alClient
           UseColoredTabs = True
@@ -4828,7 +4828,7 @@ inherited frmWelcome: TfrmWelcome
               Left = 0
               Top = 0
               Width = 548
-              Height = 44
+              Height = 38
               Align = alTop
               Anchors = []
               BorderOuter = fsNone
@@ -5222,7 +5222,7 @@ inherited frmWelcome: TfrmWelcome
                 Top = 15
                 Width = 78
                 Height = 13
-                Caption = #22825#22825#32463#33829#25552#37266
+                Caption = #27599#22825#32463#33829#25552#37266
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clWhite
                 Font.Height = -13
@@ -5234,9 +5234,9 @@ inherited frmWelcome: TfrmWelcome
             end
             object RzPanel7: TRzPanel
               Left = 0
-              Top = 44
+              Top = 38
               Width = 548
-              Height = 386
+              Height = 423
               Align = alClient
               BorderOuter = fsNone
               BorderColor = 16643821
@@ -5250,12 +5250,12 @@ inherited frmWelcome: TfrmWelcome
                 Left = 8
                 Top = 8
                 Width = 532
-                Height = 370
+                Height = 407
                 Align = alClient
                 TabOrder = 0
                 OnBeforeNavigate2 = DayBrowserBeforeNavigate2
                 ControlData = {
-                  4C000000FC3600003E2600000000000000000000000000000000000000000000
+                  4C000000FC360000112A00000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800
                   2B2E126208000000000000004C0000000114020000000000C000000000000046
                   8000000000000000000000000000000000000000000000000000000000000000
@@ -5270,7 +5270,7 @@ inherited frmWelcome: TfrmWelcome
               Left = 0
               Top = 0
               Width = 548
-              Height = 43
+              Height = 38
               Align = alTop
               BorderOuter = fsNone
               Color = 16643821
@@ -5855,9 +5855,9 @@ inherited frmWelcome: TfrmWelcome
             end
             object RzPanel8: TRzPanel
               Left = 0
-              Top = 43
+              Top = 38
               Width = 548
-              Height = 387
+              Height = 423
               Align = alClient
               BorderOuter = fsNone
               BorderColor = 16643821
@@ -5871,12 +5871,12 @@ inherited frmWelcome: TfrmWelcome
                 Left = 8
                 Top = 8
                 Width = 532
-                Height = 371
+                Height = 407
                 Align = alClient
                 TabOrder = 0
                 OnBeforeNavigate2 = MthBrowserBeforeNavigate2
                 ControlData = {
-                  4C000000FC360000582600000000000000000000000000000000000000000000
+                  4C000000FC360000112A00000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800
                   2B2E126208000000000000004C0000000114020000000000C000000000000046
                   8000000000000000000000000000000000000000000000000000000000000000

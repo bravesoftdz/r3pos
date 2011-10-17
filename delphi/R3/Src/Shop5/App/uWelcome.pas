@@ -665,7 +665,7 @@ begin
     begin
       if b=-1 then
       begin
-        if result <> '' then result := result + ',';
+        if result <> '' then result := result + '，';
         result := result + list[i]+'时';
         b:= strtoint(list[i]);  //xhh add
       end else
@@ -680,18 +680,18 @@ begin
         begin
           if IsFlag then
           begin
-            result := result + '至'+ list[i-1]+'时,'+list[i]+'时';
+            result := result + '至'+ list[i-1]+'时，'+list[i]+'时';
             IsFlag:=False;
           end else
           begin
-            if result <> '' then result := result + ',';
+            if result <> '' then result := result + '，';
             result := result + list[i]+'时';
           end;
           b:= strtoint(list[i]);
         end;
       end;
     end;
-    if IsFlag then result := result + '至'+ list.Strings[List.Count-1]+'时;';
+    if IsFlag then result := result + '至'+ list.Strings[List.Count-1]+'时';
   finally
     list.Free;
   end;

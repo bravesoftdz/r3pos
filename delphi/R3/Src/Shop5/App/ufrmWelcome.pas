@@ -215,8 +215,6 @@ begin
              '金额下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_MNY-MsgDayInfo.YDSale_MNY)+'元，'+
              '毛利下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_PRF-MsgDayInfo.YDSale_PRF)+'元。';
          end;
-      result := result + PutText(Font,s)+'<BR>'+#13#10;
-      s := '    您今天还没有销售，祝您生意兴隆，加油！';
       result := result + PutText(Font,s)+#13#10+'<BR>'+ #13#10;
       if MsgDayInfo.TDSale_PRF<MsgDayInfo.YDSale_PRF then //小于昨天
       begin
@@ -262,7 +260,7 @@ begin
       '金额'+FormatFloat('#0.##',MsgDayInfo.TDStock_MNY)+'元，'+
       '单条值'+ FormatFloat('#0.##',MsgDayInfo.TDStock_MNY/MsgDayInfo.TDStock_AMT)+'元。'
     else
-    s:= '  您还没有进货记录，请到卷烟到货里做到货确认吧。';
+    s:= '    您还没有进货记录，请到卷烟到货里做到货确认吧。';
     if MsgDayInfo.SCStock_AMT>0 then
       begin
           s:= s+
@@ -354,7 +352,6 @@ begin
   Stream_Str := TStringStream.Create(s);
   try
     _Start := GetTickCount;
-    IEBrowser.Navigate('about:blank');
     while IEBrowser.ReadyState <> READYSTATE_COMPLETE do
       begin
         if (GetTickCount - _Start) > 10000 then break;
@@ -454,6 +451,8 @@ begin
     RzPage.Pages[i].TabVisible := False;
   end;
   ImgClose.left := width-ImgClose.width-4;
+  DayBrowser.Navigate('about:blank');
+  MthBrowser.Navigate('about:blank');
 end;
 
 function TfrmWelcome.EncodeMthStockInfo: string;
@@ -497,24 +496,26 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmSaleAnaly)">'+PutText(Font,'1.本月销售情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    result := '<a href="dsk=(action=actfrmSaleAnaly)">'+PutText(Font,'2.本月销售情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
     Font.Style := [];
     MsgMthInfo := Welcome.EncodeMsgMthInfo;
     
     //2、本月销售情况
     s:='    您本月销售卷烟'+formatFloat('#0.0#',MsgMthInfo.TMSale_AMT)+'条，'+
-          '单条值'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY)+'元，'+
-          '实现毛利'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF)+'元，毛利率'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_RATE)+'%。';
+           '单条值'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY)+'元，'+
+           '实现毛利'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF)+'元，毛利率'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_RATE)+'%。';
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
     
     s:='    您本月与上月比：销量增长'+formatFloat('#0.00',MsgMthInfo.TMSale_AMT_UP_RATE)+'%，'+
-          '单条值增长'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE)+'%，'+
-          '毛利增长'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_UP_RATE)+'%。';
+           '单条值增长'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE)+'%，'+
+           '毛利增长'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_UP_RATE)+'%。';
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
 
-    s:='    您本月销量最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_AMT+'；本月毛利额最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_PRF+'；';    s:='本月毛利额最大的三个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_PRF+'；';
-    result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
-    s:='    上月毛利额最大的五个规格分别是：'+MsgMthInfo.LMGods_SY_MaxGrow_PRF+'；与上月销量比，增长最快的规格是：'+MsgMthInfo.TMGods_MaxGrowRate_AMT+'。';
+    s:='    您本月销量最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_AMT+'，上月销量最大的五个规格分别是：'+MsgMthInfo.LMGods_SY_MaxGrow_AMT+'。';
+    result := result + PutText(Font,s)+ '<br>'+ #13#10;
+    s:='    您本月毛利最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_PRF+'，上月毛利最大的五个规格分别是：'+MsgMthInfo.LMGods_SY_MaxGrow_PRF+'。';
+    result := result + PutText(Font,s)+ '<br>'+ #13#10;
+    s:='    您本月与上月比：销量增长最快的规格是：'+MsgMthInfo.TMGods_MaxGrowRate_AMT+'。';
     result := result + PutText(Font,s)+ #13#10;
   finally
     Font.Free;
@@ -557,8 +558,8 @@ begin
     MsgMthInfo := Welcome.EncodeMsgMthInfo;
   //4、您的客户情况
    s:='    您目前已建立消费者档案'+InttoStr(MsgMthInfo.TMCust_Count)+'个，'+
-         '本月新建'+InttoStr(MsgMthInfo.TMCust_NEW_Count)+'个，';
-         '高档烟的消费者'+InttoStr(MsgMthInfo.TMCust_HG_Count)+'名。'+
+         '本月新建'+InttoStr(MsgMthInfo.TMCust_NEW_Count)+'个，'+
+         '高档烟的消费者'+InttoStr(MsgMthInfo.TMCust_HG_Count)+'名。';
 
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
     
@@ -580,6 +581,7 @@ var
 begin
   CurDate:=FnTime.fnStrtoDate(Welcome.Month+'01'); //将月份转成时间
   CurDate:= IncMonth(CurDate,SetValue);  //月份加减
+  if formatDatetime('YYYYMM',date())<FormatDatetime('YYYYMM',CurDate) then Exit;
   Welcome.Month :=FormatDatetime('YYYYMM',CurDate);
   OpenPage2;
 end;

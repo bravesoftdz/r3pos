@@ -476,7 +476,7 @@ begin
     s:='    烟草公司本月供应的畅销品种'+InttoStr(MsgDayInfo.TMGods_SX_Count)+'个，'+
           '您目前经营品种'+InttoStr(MsgDayInfo.TMGods_All_Count)+'个；'+
           '本月烟草公司供应新品'+InttoStr(MsgDayInfo.TMGods_NEW_Count)+'个，'+
-          '您目前经营'+InttoStr(MsgDayInfo.TMGods_Count)+'个；'+
+          '您目前经营'+InttoStr(MsgDayInfo.TMGods_NEW_SALE_Count)+'个；'+
           '您本月购进卷烟'+formatFloat('#0.0#',MsgMonthInfo.TMStock_AMT)+'条，'+
           '单条值'+formatFloat('#0.00',DivText(MsgMonthInfo.TMStock_MNY,MsgMonthInfo.TMStock_AMT))+'元。';
 

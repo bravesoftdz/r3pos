@@ -44,6 +44,7 @@ type
     TMGods_Count:integer;      //本月有库存品种数;
     TMGods_SX_Count:integer;   //烟草畅销品种数;
     TMGods_NEW_Count:integer;  //经营新品种数;
+    TMGods_NEW_SALE_Count:integer;  //经营新品种数;
     TMAllStor_AMT:real;        //商品总库存数
     TMLowStor_Count:integer;   //低于合理库存商品数
   end;
@@ -199,6 +200,7 @@ begin
   result.TMGods_Count:=dayKc.FieldbyName('GODS_COUNT').AsInteger;       //本月有库存品种数;
   result.TMGods_SX_Count:=dayKc.FieldbyName('GODS_SX_COUNT').AsInteger; //本月畅销品种数
   result.TMGods_NEW_Count:=dayKc.FieldbyName('GODS_NEW_COUNT').AsInteger; //本月新品种数
+  result.TMGods_NEW_SALE_Count:=dayKc.FieldbyName('GODS_NEW_SALE_COUNT').AsInteger; //本月新品种数
   result.TMLowStor_Count:=dayKc.FieldbyName('LOWER_COUNT').AsInteger; //低于合理库存商品数
   result.TMAllStor_AMT:=dayKc.FieldbyName('STOR_SUM').AsFloat;        //商品总库存数
 end;

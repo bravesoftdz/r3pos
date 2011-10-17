@@ -321,8 +321,11 @@ begin
 end;
 
 function TWelcome.GetMaxGrowGodsName(vType, Month: integer): string;
-  function SetGodsInfo(GodsIDS: TStringList; FieldName: string ; var GODS_ID: string; var Gods_VALUE: Real):Boolean;
+  function GetGodsInfo(GodsIDS: TStringList; FieldName: string ; var GODS_ID: string; var Gods_VALUE: Real):Boolean;
   begin
+    result:=False;
+    GODS_ID:='';
+    Gods_VALUE:=0;
     MthRs.First;
     while not MthRs.Eof do
     begin
@@ -337,11 +340,12 @@ function TWelcome.GetMaxGrowGodsName(vType, Month: integer): string;
       end;
       MthRs.Next;
     end;
+    result:=(GODS_ID<>'');
   end;
 var
   i: integer;
   CurValue: Real;
-  GodsID,FieldName: string;
+  GodsID,CurID,FieldName: string;
   tmpTable: TZQuery;
   Gods_IDList: TStringList;
 begin
@@ -350,30 +354,30 @@ begin
    1: FieldName:='SAL_AMT';
    2: FieldName:='SALE_PRF';
   end;
-
   try
     tmpTable:=TZQuery.Create(nil);
     tmpTable.Data:=MthRs.Data;
     Gods_IDList:=TStringList.Create;
     for i:=1 to 5 do
     begin
-      //获取GODS_ID
-      SetGodsInfo(Gods_IDList,FieldName,GodsID, CurValue);
-
-      tmpTable.First;
-      while not tmpTable.Eof do
+      if GetGodsInfo(Gods_IDList,FieldName,GodsID, CurValue) then  //获取GODS_ID
       begin
-        if tmpTable.FieldByName('SALES_DATE').AsCurrency=Month then
+        tmpTable.First;
+        while not tmpTable.Eof do
         begin
-          if Gods_IDList.IndexOf(tmpTable.FieldByName('GODS_ID').AsString)=-1 then //不在List上
-          begin   
+          CurID:=tmpTable.FieldByName('GODS_ID').AsString;
+          if (tmpTable.FieldByName('SALES_DATE').AsCurrency=Month) and (Gods_IDList.IndexOf(CurID)=-1)then
+          begin
             if CurValue<tmpTable.FieldByName(FieldName).AsFloat then
-              GodsID:=tmpTable.FieldByName('GODS_ID').AsString;  
+            begin
+              GodsID:=tmpTable.FieldByName('GODS_ID').AsString;
+              CurValue:=tmpTable.FieldByName(FieldName).AsFloat;
+            end;
           end;
+          tmpTable.Next;
         end;
-        tmpTable.Next;
-      end;
-      if GodsID<>'' then Gods_IDList.Add(GodsID);            
+        if GodsID<>'' then Gods_IDList.Add(GodsID);
+      end;                                         
     end;
     result:=GetGodsNames(Gods_IDList);
   finally
@@ -383,30 +387,29 @@ begin
 end;
 
 function TWelcome.GetAmtGrowRateMax: string; //增长率最快
-  function SetGodsInfo(GodsIDS: TStringList; Rs: TZQuery; var GODS_ID: string; var GODS_VALUE: Real):Boolean;
+  function GetGodsInfo(GodsIDS: TStringList; Rs: TZQuery; var GODS_ID: string; var GODS_VALUE: Real):Boolean;
   begin
+    result:=False;
+    GODS_ID:='';
+    GODS_VALUE:=0;
     Rs.First;
     while not Rs.Eof do
     begin
-      if GodsIDS.IndexOf(Rs.FieldByName('GODS_ID').AsString)=-1 then
+      if (GodsIDS.IndexOf(Rs.FieldByName('GODS_ID').AsString)=-1) and (Rs.FieldByName('GODS_ID').AsString<>'') then
       begin
         GODS_ID:=Rs.FieldByName('GODS_ID').AsString;
         GODS_VALUE:=Rs.FieldByName('AMT_RATE').AsFloat;
+        result:=true;
         break;
       end;
       Rs.Next;
     end;
   end;
-var
-  i: integer;
-  CurValue: Real;
-  GodsID,FieldName: string;
-  GrowRs: TZQuery;
-  Gods_IDList: TStringList;
-begin
-  try
-    CurValue := -9999;
-    GrowRs:=TZQuery.Create(nil);
+  //创建GrowRs数据集记录
+  function CreateGrowRs(GrowRs: TZQuery):Boolean;
+  var GodsID: string;     
+  begin
+    result:=False;
     GrowRs.FieldDefs.Add('GODS_ID',ftstring,36,true);
     GrowRs.FieldDefs.Add('TM_AMT',ftfloat,0,true);
     GrowRs.FieldDefs.Add('LM_AMT',ftfloat,0,true);
@@ -442,25 +445,41 @@ begin
         GrowRs.FieldByName('AMT_RATE').AsFloat:=0;
       MthRs.Next;
     end;
-
+  end;
+var
+  i: integer;
+  CurValue: Real;
+  GrowRs: TZQuery;
+  GodsID,FieldName: string;
+  Gods_IDList: TStringList;
+begin
+  try
+    CurValue := -9999;
+    GrowRs:=TZQuery.Create(nil);
+    //创建GrowRs数据集记录 
+    CreateGrowRs(GrowRs);
+    
     //取最大5个
     Gods_IDList:=TStringList.Create;
     for i:=1 to 5 do
     begin
-      //获取GODS_ID
-      SetGodsInfo(Gods_IDList,GrowRs,GodsID, CurValue);
-
-      GrowRs.First;
-      while not GrowRs.Eof do
+      if GetGodsInfo(Gods_IDList,GrowRs,GodsID, CurValue) then //获取GODS_ID
       begin
-        if Gods_IDList.IndexOf(GrowRs.FieldByName('GODS_ID').AsString)=-1 then //不在List上
+        GrowRs.First;
+        while not GrowRs.Eof do
         begin
-          if CurValue<GrowRs.FieldByName('AMT_RATE').AsFloat then
-            GodsID:=GrowRs.FieldByName('GODS_ID').AsString;
+          if (GrowRs.FieldByName('GODS_ID').AsString<>'')and(Gods_IDList.IndexOf(GrowRs.FieldByName('GODS_ID').AsString)=-1) then
+          begin
+            if CurValue<GrowRs.FieldByName('AMT_RATE').AsFloat then
+            begin
+              GodsID:=GrowRs.FieldByName('GODS_ID').AsString;
+              CurValue:=GrowRs.FieldByName('AMT_RATE').AsFloat;
+            end;
+          end;
+          GrowRs.Next;
         end;
-        GrowRs.Next;
+        if GodsID<>'' then Gods_IDList.Add(GodsID);
       end;
-      if GodsID<>'' then Gods_IDList.Add(GodsID);            
     end;
     result:=GetGodsNames(Gods_IDList);
   finally

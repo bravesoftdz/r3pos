@@ -86,6 +86,7 @@ select
   b.kind as SORT_ID2,         --烟分类（1一类烟..6无价类）
   b.BRD_KIND as SORT_ID4,     --是否重点品牌(0否1是) 
   b.IS_IMPORTED as SORT_ID6,  --省内外烟 
+  e.BRD_TYPE as SORT_ID10,    --品牌(1是新品,2紧俏,3顺销)
   b.spec as GODS_SPEC,        --商品规格
   '条' as CALC_UNIT,          --单位
   (case when a.ITEM_KIND='4' and length(coalesce(PACK_BAR,''))>0 then 

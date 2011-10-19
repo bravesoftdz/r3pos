@@ -110,6 +110,7 @@ select
   b.kind as SORT_ID2,         --烟分类（1一类烟2二类烟6无价类）
   b.BRD_KIND as SORT_ID4,     --是否重点品牌(0否1是) 
   b.IS_IMPORTED as SORT_ID6,  --省内外烟 
+  e.BRD_TYPE as SORT_ID10,    --品牌(1是新品,2紧俏,3顺销,4其他)  
   b.spec as GODS_SPEC,        --商品规格
   '条' as CALC_UNIT,          --单位
   (case when a.ITEM_KIND='4' and length(nvl(PACK_BAR,''))>0 then DECODE(substr(PACK_BAR,1,1),'F','f'||substr(PACK_BAR,2,length(PACK_BAR)-1),'f',PACK_BAR,'f'||PACK_BAR) 

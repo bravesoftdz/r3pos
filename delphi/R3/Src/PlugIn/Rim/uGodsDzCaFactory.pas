@@ -190,11 +190,9 @@ type
 
     function GetSynTimeStamp(tbName:string;SHOP_ID:string='#'):int64;
     procedure SetSynTimeStamp(tbName:string;_TimeStamp:int64;SHOP_ID:string='#');
-
     //供应链服务
     function CreateServiceLine(var ServiceLine:TServiceLine):boolean;
     function queryServiceLines(tid:integer;List:TList):boolean;
-    function applyRelation(supTenantId,serviceLineId,subTenantId,relationType:integer):TRelationInfo;
     //商盟服务
     function downloadUnion(tid:integer):boolean;
     //数据同步
@@ -253,20 +251,6 @@ type
     //连接
     property dbResoler:Integer read FdbResoler write SetdbResoler;      
   end;
-
-//控制类  
-type
-  TDoCaFactory=class
-  private         
-    FCaFactory: TCaFactory;
-  public
-    constructor Create;
-    destructor Destroy;override;
-    function InitCaFactory: Boolean;
-    function DoCaFactory(DBFactor: TRimSyncFactory; TenID: integer; Flag: integer): Boolean;
-    property CaFactory: TCaFactory read FCaFactory;
-  end;
-
 
 var
   CaFactory: TCaFactory;  
@@ -1230,111 +1214,6 @@ except
 end;
 end;
 
-function TCaFactory.applyRelation(supTenantId, serviceLineId, subTenantId,
-  relationType: integer): TRelationInfo;
-var
-  inxml:string;
-  doc:IXMLDomDocument;
-  rio:THTTPRIO;
-  caRelationApplyResp:IXMLDOMNode;
-  Node:IXMLDOMNode;
-  line:PServiceLine;
-  h,r:rsp;
-  i:integer;
-  code:string;
-  OutXml:WideString;
-begin
-try
-  AutoCoLogo;
-  doc := CreateRspXML;
-  Node := doc.createElement('flag');
-  Node.text := '1';
-  FindNode(doc,'header\pub').appendChild(Node);
-
-  Node := doc.createElement('caRelationApplyReq');
-  FindNode(doc,'body').appendChild(Node);
-
-  Node := doc.createElement('supTenantId');
-  Node.text := inttostr(supTenantId);
-  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
-
-  Node := doc.createElement('serviceLineId');
-  Node.text := inttostr(serviceLineId);
-  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
-
-  Node := doc.createElement('subTenantId');
-  Node.text := inttostr(subTenantId);
-  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
-
-  Node := doc.createElement('relationType');
-  Node.text := inttostr(relationType);
-  FindNode(doc,'body\caRelationApplyReq').appendChild(Node);
-
-  inxml := '<?xml version="1.0" encoding="gb2312"?> '+doc.xml;
-
-  if rspHandle>0 then
-     doc := CreateXML(rspapplyRelation(inxml,URL,2))
-  else
-  begin
-    rio := CreateRio(20000);
-    h := SendHeader(rio,2);
-    try
-      try
-        OutXml :=  GetCaServiceLineWebServiceImpl(true,URL+'CaServiceLineService?wsdl',rio).applyRelation(Encode(inxml,sslpwd));
-        r := GetHeader(rio);
-        try
-          case r.encryptType of
-          2:doc := CreateXML(Decode(OutXml,sslpwd) );
-          1:doc := CreateXML(Decode(OutXml,Pubpwd) );
-          else doc := CreateXML(Decode(OutXml,''));
-          end;
-        finally
-          r.Free;
-        end;
-      except
-        on E:Exception do
-           begin
-             if pos('Empty document',E.Message)>0 then
-                begin
-                  Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
-                end
-             else
-                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
-           end;
-      end;
-    finally
-      h.Free;
-    end;
-  end;
-    CheckRecAck(doc);
-    caRelationApplyResp := FindNode(doc,'body\caRelationApplyResp');
-    code := GetNodeValue(caRelationApplyResp,'code');
-    if StrtoIntDef(code,0) in [1] then //注册成功
-       begin
-         result.RELATIONS_ID := GetNodeValue(caRelationApplyResp,'relationsId');
-         result.RELATION_ID := StrtoInt(GetNodeValue(caRelationApplyResp,'serviceLineId'));
-         result.TENANT_ID := StrtoInt(GetNodeValue(caRelationApplyResp,'supTenantId'));
-         result.RELATI_ID := StrtoInt(GetNodeValue(caRelationApplyResp,'subTenantId'));
-         result.RELATION_TYPE := GetNodeValue(caRelationApplyResp,'relationType');
-         result.LEVEL_ID := GetNodeValue(caRelationApplyResp,'levelId');
-         result.RELATION_STATUS := GetNodeValue(caRelationApplyResp,'relationStatus');
-         result.CREA_DATE := GetNodeValue(caRelationApplyResp,'creaDate');
-         result.CHK_DATE := GetNodeValue(caRelationApplyResp,'chkDate');
-         result.COMM := GetNodeValue(caRelationApplyResp,'comm');
-         result.TIME_STAMP := StrtoInt(GetNodeValue(caRelationApplyResp,'timeStamp'));
-       end
-    else
-       Raise Exception.Create(GetNodeValue(caRelationApplyResp,'desc'));
-
-except
-  if doc<>nil then
-     AddLogMsg(0,'申请<供应链申请>xml='+doc.xml)
-  else
-     AddLogMsg(0,'申请<供应链申请>xml=无');
-  Raise;
-end;
-end;
-
 function TCaFactory.SyncAll(flag:integer): boolean;
 begin
   FBeginTime:=TBaseSyncFactory.GetTickTime;
@@ -1369,7 +1248,7 @@ begin
     SetSynTimeStamp('#',TimeStamp,'#');
   finally
     //写入日志文件
-
+    WriteToReportLogFile;
   end;
 end;
 
@@ -1512,38 +1391,33 @@ end;
 
 function TCaFactory.GetSynTimeStamp(tbName, SHOP_ID: string): int64;
 var
-  rs:TZQuery;
+  rs: TZQuery;
+  TabName: string;
 begin
+  TabName:='RSP_'+tbName;
   if SHOP_ID='' then SHOP_ID:='#';
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and TABLE_NAME=:TABLE_NAME';
-    rs.ParambyName('TENANT_ID').AsInteger := TENANT_ID;
-    rs.ParamByName('SHOP_ID').AsString := SHOP_ID;
-    rs.ParamByName('TABLE_NAME').AsString := 'RSP_'+tbName;
-  //  Global.LocalFactory.Open(rs);
-  //  if rs.IsEmpty then result := 0 else result := rs.Fields[0].Value;
+    rs.SQL.Text :='select TIME_STAMP from SYS_SYNC_CTRL where TENANT_ID='+InttoStr(TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+TabName+''' ';
+    Open(rs);
+    if rs.IsEmpty then result := 0 else result := rs.Fields[0].Value;
   finally
     rs.Free;
   end;
 end;
 
-procedure TCaFactory.SetSynTimeStamp(tbName: string; _TimeStamp: int64;
-  SHOP_ID: string);
+procedure TCaFactory.SetSynTimeStamp(tbName: string; _TimeStamp: int64; SHOP_ID: string);
 var
-  r:integer;
+  r,iRet:integer;
 begin
-{  if SHOP_ID='' then SHOP_ID:='#';
-  r := Global.LocalFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(_TimeStamp)+' where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''');
-  if r=0 then
-     Global.LocalFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')');
-  if Global.RemoteFactory.Connected then
+  if SHOP_ID='' then SHOP_ID:='#';
+  r := ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(_TimeStamp)+' where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''',iRet);
+  if r<>0 then Raise Exception.Create('更新[SYS_SYNC_CTRL.TABLE_NAME='+'RSP_'+tbName+']出错:'+DBFactory.GetLastError); 
+  if iRet=0 then
   begin
-  r := Global.RemoteFactory.ExecSQL('update SYS_SYNC_CTRL set TIME_STAMP='+inttostr(_TimeStamp)+' where TENANT_ID='+inttostr(TENANT_ID)+' and SHOP_ID='''+SHOP_ID+''' and TABLE_NAME='''+'RSP_'+tbName+'''');
-  if r=0 then
-     Global.RemoteFactory.ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')');
+    r:=ExecSQL('insert into SYS_SYNC_CTRL(TENANT_ID,SHOP_ID,TABLE_NAME,TIME_STAMP) values('+inttostr(TENANT_ID)+','''+SHOP_ID+''','''+'RSP_'+tbName+''','+inttostr(_TimeStamp)+')',iRet);
+    if r<>0 then Raise Exception.Create('INSERT.[SYS_SYNC_CTRL.TABLE_NAME='+'RSP_'+tbName+']出错:'+DBFactory.GetLastError); 
   end;
-}
 end;
 
 function TCaFactory.downloadServiceLines(TenantId, flag: integer): boolean;
@@ -2691,15 +2565,13 @@ end;
 end;
 
 function TCaFactory.AutoCoLogo: boolean;
-var Temp:TZQuery; str:string;
+var Temp:TZQuery;
 begin
   Temp := TZQuery.Create(nil);
   try
     Temp.Close;
     Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_TYPE from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(TENANT_ID);
-    str:=URL;
     Open(Temp);
-    URL:=Str;
     if auto then
        coLogin(Temp.Fields[0].AsString,DesEncode(Temp.Fields[0].AsString,pubpwd),2)
     else
@@ -3180,7 +3052,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select '+GetTimeStamp(DBFactory.DbType)+' from CA_TENANT where TENANT_ID='+inttostr(TENANT_ID);
+    rs.SQL.Text := 'select '+GetTimeStamp(DBFactory.DbType)+' from CA_TENANT where TENANT_ID='+Inttostr(TENANT_ID);
     Open(rs);
     result := StrtoInt64(rs.Fields[0].asString); 
   finally
@@ -3255,7 +3127,7 @@ begin
   //错误消息写入:LogFile.AddLogFile
   if InfoType=0 then
   begin
-    AddLogMsg(0,Msg);
+    LogFile.AddLogFile(0,Msg);
   end;
 end;
 
@@ -3309,41 +3181,6 @@ begin
 end;
 
 
-{ TDoCaFactory }
-
-constructor TDoCaFactory.Create;
-begin
-  inherited;
-  FCaFactory := TCaFactory.Create;
-end;
-
-destructor TDoCaFactory.Destroy;
-begin
-  CaFactory.Free;
-  inherited;
-end;
-
-function TDoCaFactory.DoCaFactory(DBFactor: TRimSyncFactory; TenID, Flag: integer): Boolean;
-begin
-  CaFactory.DBFactory:=DBFactor;
-  CaFactory.TENANT_ID:=TenID;
-  CaFactory.SyncAll(Flag); 
-end;
-
-function TDoCaFactory.InitCaFactory: Boolean;
-begin
-  try
-    InvRegistry.RegisterInterface(TypeInfo(CaTenantWebServiceImpl), 'http://www.rspcn.com.cn/rsp', 'gb2312');
-    InvRegistry.RegisterDefaultSOAPAction(TypeInfo(CaTenantWebServiceImpl), 'http://www.rspcn.com.cn/rsp#%operationName%');
-    InvRegistry.RegisterHeaderClass(TypeInfo(CaTenantWebServiceImpl), rsp, 'rsp', 'http://www.rspcn.com.cn/rsp');
-    InvRegistry.RegisterHeaderClass(TypeInfo(CaServiceLineWebServiceImpl), rsp, 'rsp', 'http://www.rspcn.com.cn/rsp');
-    InvRegistry.RegisterHeaderClass(TypeInfo(PubMemberWebServiceImpl), rsp, 'rsp', 'http://www.rspcn.com.cn/rsp');
-    InvRegistry.RegisterHeaderClass(TypeInfo(RspDownloadWebServiceImpl), rsp, 'rsp', 'http://www.rspcn.com.cn/rsp');
-    InvRegistry.RegisterHeaderClass(TypeInfo(CaProductWebServiceImpl), rsp, 'rsp', 'http://www.rspcn.com.cn/rsp');
-    RemClassRegistry.RegisterXSClass(rsp, 'http://www.rspcn.com.cn/rsp', 'rsp');
-  except
-  end; 
-end;
 
 initialization
   CaFactory := TCaFactory.Create;

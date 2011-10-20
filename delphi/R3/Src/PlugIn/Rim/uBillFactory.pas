@@ -307,7 +307,7 @@ begin
 
   //2、插入上报记录:
   MonthTab:=
-    'select TENANT_ID,MONTH,GODS_ID,'+
+    'select a.TENANT_ID,a.MONTH,b.SECOND_ID as ITEM_ID,'+
          'cast(sum(ORG_AMT) as decimal(18,3)) as ORG_AMT,'+
          'cast(sum(ORG_MNY) as decimal(18,3)) as ORG_MNY,'+
          'cast(sum(STOCK_AMT) as decimal(18,3)) as STOCK_AMT,'+
@@ -334,9 +334,9 @@ begin
          'cast(sum(BAL_AMT) as decimal(18,3)) as BAL_AMT,'+
          'cast(sum(BAL_MNY) as decimal(18,3)) as BAL_MNY,'+
          'cast(sum(SALE_PRF) as decimal(18,3)) as SALE_PRF '+
-     ' from RCK_GOODS_MONTH '+
-     ' where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and TIME_STAMP>'+MaxStmp+' '+ 
-     ' group by TENANT_ID,MONTH,GODS_ID';
+     ' from RCK_GOODS_MONTH a,VIW_GOODSINFO b '+
+     ' where a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID and a.TENANT_ID='+RimParam.TenID+' and a.SHOP_ID in ('+SHOP_IDS+') and a.TIME_STAMP>'+MaxStmp+' '+
+     ' group by a.TENANT_ID,a.MONTH,b.SECOND_ID';
 
   Str:=
     'insert into RIM_CUST_MONTH('+
@@ -352,21 +352,21 @@ begin
         'QTY_EOM,AMT_EOM,'+              //10: 期末数量、金额
         'UNIT_COST,SUMCOST_SOLD,'+       //11: 单位成本、销售成本
         'AMT_GROSS_PROFIT,AMT_PROFIT_COM)'+  //12:毛利额、贡献毛利
-    'select B.COM_ID,B.CUST_ID,SHORT_SHOP_ID,B.ITEM_ID,B.RECK_MONTH,0,0,0,0,'+     //1:
-        '(case when B.UNIT_CALC>0 then ORG_AMT/B.UNIT_CALC else ORG_AMT end)as ORG_AMT,ORG_MNY,'+          //2:期初数量、金额
+    'select B.COM_ID,B.CUST_ID,SHORT_SHOP_ID,B.ITEM_ID,B.RECK_MONTH,0 as PRI3,0 as PRI4,0 as PRI_SOLD,0 as AMT_GROSS_PROFIT_THEO,'+     //1:
+        '(case when B.UNIT_CALC>0 then ORG_AMT/B.UNIT_CALC else ORG_AMT end)as ORG_AMT,ORG_MNY,'+           //2:期初数量、金额
         '(case when B.UNIT_CALC>0 then STOCK_AMT/B.UNIT_CALC else STOCK_AMT end)as STOCK_AMT,STOCK_MNY,'+  //3:入库数量、金额
-        '(case when B.UNIT_CALC>0 then SALE_AMT/B.UNIT_CALC else SALE_AMT end)as SALE_AMT,SALE_MNY+SALE_TAX,'+  //4:销售数量、含税金额
+        '(case when B.UNIT_CALC>0 then SALE_AMT/B.UNIT_CALC else SALE_AMT end)as SALE_AMT,(SALE_MNY+SALE_TAX)as SALE_TTL,'+  //4:销售数量、含税金额
         '(case when CHANGE1_AMT>0 then (case when B.UNIT_CALC>0 then CHANGE1_AMT/B.UNIT_CALC else CHANGE1_AMT end) else 0 end) as CHANGE1_AMT,(case when CHANGE1_AMT>0 then CHANGE1_MNY else 0 end) as CHANGE1_MNY,'+    //5: 溢余数量、金额
-        '(case when CHANGE1_AMT<0 then (case when B.UNIT_CALC>0 then -CHANGE1_AMT/B.UNIT_CALC else -CHANGE1_AMT end) else 0 end) as CHANGE1_AMT,(case when CHANGE1_AMT<0 then -CHANGE1_MNY else 0 end) as CHANGE1_MNY,'+ //6: 溢损数量、金额
+        '(case when CHANGE1_AMT<0 then (case when B.UNIT_CALC>0 then -CHANGE1_AMT/B.UNIT_CALC else -CHANGE1_AMT end) else 0 end) as CHANGE11_AMT,(case when CHANGE1_AMT<0 then -CHANGE1_MNY else 0 end) as CHANGE11_MNY,'+ //6: 溢损数量、金额
         '(case when B.UNIT_CALC>0 then (CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT)/B.UNIT_CALC else CHANGE2_AMT+CHANGE3_AMT+CHANGE4_AMT+CHANGE5_AMT end)as CHANGE_AMT,(CHANGE2_MNY+CHANGE3_MNY+CHANGE3_MNY+CHANGE4_MNY+CHANGE5_MNY) as CHANGE_MNY,'+ //7: 调整数量、金额
         '(case when B.UNIT_CALC>0 then DBIN_AMT/B.UNIT_CALC else DBIN_AMT end)as DBIN_AMT,DBIN_MNY,'+      //8: 调入数量、金额
         '(case when B.UNIT_CALC>0 then DBOUT_AMT/B.UNIT_CALC else DBOUT_AMT end)as DBOUT_AMT,DBOUT_MNY,'+  //9: 调出数量、金额
         '(case when B.UNIT_CALC>0 then BAL_AMT/B.UNIT_CALC else BAL_AMT end)as BAL_AMT,BAL_MNY,'+          //10: 期末数量、金额
         '(case when (case when B.UNIT_CALC>0 then SALE_AMT/B.UNIT_CALC else SALE_AMT end)>0 then SALE_CST*1.0/cast((case when B.UNIT_CALC>0 then SALE_AMT/B.UNIT_CALC else SALE_AMT end) as decimal(18,3)) else SALE_CST end) as PJ_CST,'+ //单位成本[]
-        'SALE_CST,'+            //11: 单位成本、销售成本
-        'SALE_PRF,0 '+                  //12: 毛利额、贡献毛利
+        'SALE_CST,'+          //11: 单位成本、销售成本
+        'SALE_PRF,0 '+        //12: 毛利额、贡献毛利
     'from ('+MonthTab+') A,'+Session+'INF_RECKMONTH B '+   //RCK_GOODS_MONTH
-    ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+ReckMonth+'=B.RECK_MONTH ';
+    ' where A.TENANT_ID=B.TENANT_ID and A.ITEM_ID=B.ITEM_ID and '+ReckMonth+'=B.RECK_MONTH ';
   if ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('上报月台账出错:'+GetLastError);
 
   //3、更新月台帐标记和上报时间戳:[]
@@ -471,7 +471,7 @@ begin
 
   str:='insert into '+Session+'INF_SALE(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,SALES_ID,SALE_DATE,CUST_CODE)'+
        'select '+RimParam.TenID+' as TENANT_ID,'''+RimParam.ShopID+''' as SHOP_ID,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,A.SALES_ID,'+SALES_DATE+',B.CUST_CODE '+
-       ' from SAL_SALESORDER A left outer join PUB_CUSTOMER B on A.IC_CARDNO=B.CUST_ID '+
+       ' from SAL_SALESORDER A left outer join PUB_CUSTOMER B on A.CLIENT_ID=B.CUST_ID '+
        ' where A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID='''+RimParam.ShopID+''' and A.SALES_TYPE in (1,3,4) and A.COMM not in (''02'',''12'') and '+
        ' A.TIME_STAMP>'+MaxStmp+' ';
   if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单临时表出错:'+GetLastError);

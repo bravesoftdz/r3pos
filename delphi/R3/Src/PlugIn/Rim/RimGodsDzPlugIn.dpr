@@ -27,11 +27,12 @@ uses
   zBase,
   uBaseSyncFactory in '..\Pub\uBaseSyncFactory.pas',
   uRimSyncFactory in 'uRimSyncFactory.pas',
-  uGodsDzFactory in 'uGodsDzFactory.pas';
+  uGodsDzFactory in 'uGodsDzFactory.pas',
+  uGodsDzCaFactory in 'uGodsDzCaFactory.pas';
 
 {$R *.res}
 
- 
+
 //RSP装载插件时调用，传插件可访问的服务接口
 function SetParams(PlugIn: IPlugIn):integer; stdcall;
 begin

@@ -305,7 +305,7 @@ begin
 
   if (NotExist) and (ArrDay<>'') then
   begin
-    if OrderDay=CurDay then //当天提醒
+    if ArrDay=CurDay then //当天提醒
     begin
       s := '通知';
       Title:=FormatDay(OrderDay)+'到货提醒';          
@@ -344,7 +344,7 @@ begin
   try
     vCount:=0;
     CurDay:=FormatDatetime('YYYYMMDD',Date());
-    EndDay:=FormatDatetime('YYYYMMDD',Date()+7); //有效日期格式化
+    EndDay:=FormatDatetime('YYYY-MM-DD',Date()+7); //有效日期格式化
     GetINDEOrderList;
     OrderQry.First;
     while not OrderQry.Eof do

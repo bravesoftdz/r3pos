@@ -16,7 +16,11 @@ uses
 type
   TVipSyncFactory=class(TRimSyncFactory)
   private
+    AutoCreateCard: Boolean;  //是否启用自动创建商盟卡
     UpLoadFlag: Boolean; //上传会员标记位[true：上传，false不上传]
+    UpLoadType: Boolean; //上传会员类型:[0:上报企业会员（默认），1:上报烟草消费者会员]
+    UP_CUST_STATUS: string; //上传给Rim的状态[Rim状态说明:01:开户;02注销;03有效]
+    PRICE_NAME: string;  //卡信息
     ShopInfo: string; //当前门店信息
     basInfo: TZQuery;
     //对照性别
@@ -34,8 +38,11 @@ type
     //覆盖原写日志：
     procedure WriteToReportLogFile(ReportName: string=''); override;  //结束上报    
 
-    //下载会员 
-    function DownLoadCustomer(tid,custid,sid,rid,pid:string;rs:TZQuery): integer; 
+    //2011.09.03 Add 会员新加商盟卡：(2011.10.08关闭掉)
+    procedure AutoCreateCardRecord(TenID,PriceID: string);
+
+    //下载会员
+    function DownLoadCustomer(tid,custid,sid,rid,pid:string;rs:TZQuery): integer;
     //上传会员：tid 企业号  cid 会员ID
     function UpLoadCustomer(tid,custid:string;rs:TZQuery):integer;
     //同步会员：tid 企业号
@@ -54,7 +61,7 @@ function TVipSyncFactory.CallSyncData(GPlugIn: IPlugIn; InParamStr: string): int
 var
   iRet: integer;
   ErrorFlag: Boolean;
-  custid,pid,SHOP_ID:string;
+  custid,pid,SHOP_ID,TenID:string;
   RsShop: TZQuery;
 begin
   result:=-1;
@@ -95,6 +102,7 @@ begin
       RsShop.First;
       while not RsShop.Eof do
       begin
+        TenID:=RsShop.FieldByName('TENANT_ID').AsString;
         SHOP_ID:= RsShop.FieldByName('SHOP_ID').AsString;
         pid := GetPriceId(RsShop.FieldbyName('TENANT_ID').asString);
         try
@@ -102,8 +110,11 @@ begin
           if RsShop.RecordCount=1 then ShopInfo:='门店<'+SHOP_ID+'>' else ShopInfo:='('+InttoStr(RsShop.RecNo)+')门店<'+SHOP_ID+'>';
 
           if pid<>'' then
+          begin
+            //2011.09.03 Add
+            //if AutoCreateCard then AutoCreateCardRecord(TenID,pid);
             SyncCustomer(RsShop.FieldbyName('TENANT_ID').asString,SHOP_ID,pid,false)
-          else
+          end else
             EndLogShopReport(ShopInfo+' 找不到价格等级', true, False);
         except
           on E:Exception do
@@ -125,7 +136,10 @@ constructor TVipSyncFactory.Create;
 begin
   inherited;
   basInfo:=TZQuery.Create(nil);
-  UpLoadFlag:=trim(ReadConfig('PARAMS','VipUpload','1'))<>'0';
+  UpLoadFlag:=trim(ReadConfig('PARAMS','VipUpload','1'))<>'0';   //不上报标记
+  UpLoadType:=ReadBool('PARAMS','USE_SM_CARD',False);  //默认商盟卡才上报
+  AutoCreateCard:=trim(ReadConfig('PARAMS','AutoCreateCard','0'))='1'; //自动上报卡
+  UP_CUST_STATUS:=trim(ReadConfig('PARAMS','UP_CUST_STATUS','03'));  //默认03：有效;  
 end;
 
 destructor TVipSyncFactory.Destroy;
@@ -226,9 +240,11 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select PRICE_ID from PUB_PRICEGRADE where TENANT_ID in (select TENANT_ID from CA_RELATIONS where RELATI_ID='+tid+' AND RELATION_ID=1000006) and PRICE_TYPE=''2''';
+    rs.SQL.Text := 'select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE where TENANT_ID in (select TENANT_ID from CA_RELATIONS where RELATI_ID='+tid+' AND RELATION_ID=1000006) and PRICE_TYPE=''2''';
     Open(rs);
     result := rs.Fields[0].AsString;
+    PRICE_NAME:=trim(rs.Fields[1].AsString);
+    if PRICE_NAME='' then PRICE_NAME:='烟草消费者'; 
   finally
     rs.Free;
   end;
@@ -531,7 +547,7 @@ begin
            ''''+fnString.FormatStringEx(rs.FieldbyName('OCCUPATION').AsString,2)+''','+
            ''''+rs.FieldbyName('JOBUNIT').AsString+''','+
            ''''+formatdatetime('YYYYMMDD',Date())+''','+
-           ''''+formatdatetime('HH:NN:SS',now())+''',''01'','+
+           ''''+formatdatetime('HH:NN:SS',now())+''','''+UP_CUST_STATUS+''','+  // ''01''
            '''#'',''#'',''#'',''#'',''#'',''#'',''#'',''#'',''#'',''#'')';
        end;
     if Str<>'' then
@@ -666,7 +682,7 @@ end;
 
 function TVipSyncFactory.SyncCustomer(tid, sid, pid: string; today: boolean): Boolean;
 var
-  str,CustID,rid,UpMsg,DownMsg: string;
+  str,CustID,rid,UpMsg,DownMsg,SQLStr: string;
   DCount,DErrCount,UCount,UErrCount,ReRun: integer;
   rs: TZQuery;
 begin
@@ -694,15 +710,27 @@ begin
     //上传消费者 [全部写Rim表直接开启事务]
     if UpLoadFlag then
     begin
+      if UpLoadType then //默认是：直接上报会员卡
+      begin
+        SQLStr:=
+          'select A.CUST_ID,A.CUST_NAME,A.IDN_TYPE,A.ID_NUMBER,A.FAMI_ADDR,A.SEX,A.BIRTHDAY,A.FAMI_TELE,A.MOVE_TELE,A.POSTALCODE,A.EMAIL,'+
+          ' B.IC_CARDNO,B.CREA_DATE,B.END_DATE,B.IC_STATUS,A.MONTH_PAY,A.DEGREES,A.OCCUPATION,A.JOBUNIT,A.TIME_STAMP '+
+          ' from PUB_CUSTOMER A,PUB_IC_INFO B '+
+          '  where A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.SHOP_ID<>''#'' and B.UNION_ID=''#'' and '+
+          '  A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and A.COMM not in (''02'',''12'') and B.COMM not in (''02'',''12'') ';
+      end else
+      begin
+        SQLStr:=
+          'select A.CUST_ID,A.CUST_NAME,A.IDN_TYPE,A.ID_NUMBER,A.FAMI_ADDR,A.SEX,A.BIRTHDAY,A.FAMI_TELE,A.MOVE_TELE,A.POSTALCODE,A.EMAIL,'+
+          ' B.IC_CARDNO,B.CREA_DATE,B.END_DATE,B.IC_STATUS,A.MONTH_PAY,A.DEGREES,A.OCCUPATION,A.JOBUNIT,A.TIME_STAMP '+
+          ' from PUB_CUSTOMER A,PUB_IC_INFO B '+
+          '  where A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.SHOP_ID<>''#'' and B.UNION_ID='''+pid+''' and '+
+          '  A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and A.COMM not in (''02'',''12'') and B.COMM not in (''02'',''12'') ';
+      end;
+      if today then SQLStr := SQLStr+ ' and A.SND_DATE='''+formatDatetime('YYYY-MM-DD',date())+'''';
+
       rs.Close;
-      rs.SQL.Text:=
-         'select A.CUST_ID,A.CUST_NAME,A.IDN_TYPE,A.ID_NUMBER,A.FAMI_ADDR,A.SEX,A.BIRTHDAY,A.FAMI_TELE,A.MOVE_TELE,A.POSTALCODE,A.EMAIL,'+
-         'B.IC_CARDNO,B.CREA_DATE,B.END_DATE,B.IC_STATUS,'+
-         'A.MONTH_PAY,A.DEGREES,A.OCCUPATION,A.JOBUNIT,A.TIME_STAMP '+
-         'from PUB_CUSTOMER A,PUB_IC_INFO B '+
-         ' where A.TENANT_ID='+tid+' and A.SHOP_ID='''+sid+''' and A.SHOP_ID<>''#'' and B.UNION_ID='''+pid+''' and '+
-         ' A.TENANT_ID=B.TENANT_ID and A.CUST_ID=B.CLIENT_ID and A.COMM not in (''02'',''12'') and B.COMM not in (''02'',''12'') ';
-      if today then rs.SQL.Text := rs.SQL.Text + ' and A.SND_DATE='''+formatDatetime('YYYY-MM-DD',date())+'''';
+      rs.SQL.Text:=SQLStr;
       Open(rs);
       rs.First;
       while not rs.Eof do
@@ -810,6 +838,30 @@ begin
   finally
     LogFileList.SaveToFile(LogFile);
   end; 
+end;
+
+procedure TVipSyncFactory.AutoCreateCardRecord(TenID,PriceID: string);
+var
+  iRet: integer;
+  Str,UNION_ID,IC_INFO: string;
+begin
+  if not AutoCreateCard then Exit;
+  UNION_ID:=' '''+PriceID+''' as UNION_ID ';
+  IC_INFO:=' '''+PRICE_NAME+''' as IC_INFO ';
+  Str:=
+    'insert into PUB_IC_INFO(CLIENT_ID,TENANT_ID,UNION_ID,IC_CARDNO,CREA_DATE,CREA_USER,IC_INFO,PASSWRD,IC_STATUS,IC_TYPE,ACCU_INTEGRAL,RULE_INTEGRAL,INTEGRAL,BALANCE,COMM,TIME_STAMP)'+
+    ' select CUST_ID,TENANT_ID,'+UNION_ID+',MOVE_TELE,SND_DATE,''admin'','+IC_INFO+',''79415A40'',''0'',''0'',0,0,0,0,''00'','+GetTimeStamp(DbType)+' '+
+    ' from PUB_CUSTOMER A where A.TENANT_ID='+TenID+' and COMM not in (''02'',''12'') '+
+    ' and CUST_ID not in (select CLIENT_ID from PUB_IC_INFO B where B.TENANT_ID='+TenID+' and B.UNION_ID='''+PriceID+''' and length(UNION_ID)=36)';
+  try
+    ExecTransSQL(Str,iRet);
+    PlugIntf.WriteLogFile(Pchar(LogHead+'[自动创建'+PRICE_NAME+'卡号：<创建'+Inttostr(iRet)+'笔>'));
+  except
+    on E:Exception do
+    begin
+      if PlugIntf.WriteLogFile(Pchar(LogHead+'[自动创建'+PRICE_NAME+'卡错误：<'+Str+'>'+E.Message+']'))<>0 then Raise Exception.Create(GetLastError); 
+    end;
+  end;
 end;
 
 end.

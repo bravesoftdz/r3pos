@@ -1221,14 +1221,15 @@ begin
              'cast(sum(SALE_PRF) as decimal(18,3)) as SALE_PRF ';
              // '(case when sum(SALE_AMT)>0 then sum(SALE_MNY)*1.00/cast(sum(SALE_AMT) as decimal(18,6)) else SALE_MNY end) as COST_PRICE ';
   DayTab:=
-    'select TENANT_ID,CREA_DATE,GODS_ID,'+SumFields+' from '+
+    'select rck.TENANT_ID,rck.CREA_DATE,gods.SECOND_ID as ITEM_ID,'+SumFields+' from '+
     '(select * from RCK_GOODS_DAYS where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
     ' union all '+
     ' select A.* from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+RimParam.TenID+' and '+
-    ' A.SHOP_ID in ('+SHOP_IDS+') and A.CREA_DATE=C.CREA_DATE and A.TIME_STAMP>'+MaxStmp+') tmp '+
-    ' group by TENANT_ID,CREA_DATE,GODS_ID ';
+    ' A.SHOP_ID in ('+SHOP_IDS+') and A.CREA_DATE=C.CREA_DATE and A.TIME_STAMP>'+MaxStmp+')rck,VIW_GOODSINFO gods '+
+    ' where rck.TENANT_ID=gods.TENANT_ID and rck.GODS_ID=gods.GODS_ID '+
+    ' group by rck.TENANT_ID,rck.CREA_DATE,gods.SECOND_ID ';
     
-  //插入上报记录:
+  //插入上报记录: 
   Str:=
     'insert into RIM_CUST_DAY('+
         'COM_ID,CUST_ID,TERM_ID,ITEM_ID,DATE1'+
@@ -1265,7 +1266,7 @@ begin
         ',(case when SALE_AMT>0 then SALE_MNY*1.00/cast(SALE_AMT as decimal(18,3)) else 0 end) as COST_PRICE,SALE_CST'+          //11: 单位成本、销售成本
         ',SALE_PRF,0 '+                    //12: 毛利额、贡献毛利
     'from ('+DayTab+') A,'+Session+'INF_RECKDAY B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+ReckDate+'=B.RECK_DATE ';
+    ' where A.TENANT_ID=B.TENANT_ID and A.ITEM_ID=B.ITEM_ID and '+ReckDate+'=B.RECK_DATE ';
   if ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('上报日台账数据出错:'+GetLastError);
  
   //3、更新月台帐标记和上报时间戳:[]

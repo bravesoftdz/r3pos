@@ -17,11 +17,13 @@ uses
   zDataSet,
   SysUtils,
   Variants,
+  Forms,
   Classes,
   zBase,
   uBaseSyncFactory in '..\Pub\uBaseSyncFactory.pas',
   uRimSyncFactory in 'uRimSyncFactory.pas',
-  uVipFactory in 'uVipFactory.pas';
+  uVipFactory in 'uVipFactory.pas',
+  ufrmRimConfig in 'ufrmRimConfig.pas' {frmRimConfig};
 
 {$R *.res}
  
@@ -78,9 +80,16 @@ end;
 //RSP调用插件自定义的管理界面,没有时直接返回0
 function ShowPlugin:Integer; stdcall;
 begin
+  //开始显示主界面窗体
   try
-    //开始显示主界面窗体
-
+    with TfrmRimConfig.Create(application) do
+      begin
+        try
+          ShowModal;
+        finally
+          free;
+        end;
+      end;
     result := 0;
   except
     on E:Exception do

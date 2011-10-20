@@ -125,7 +125,7 @@ begin
              ' (case when sum(QTY_ORD)<>0 then cast(sum(AMT)as decimal(18,3))/cast(sum(QTY_ORD) as decimal(18,3)) else 0 end) as PRI,'+
              ' sum(AMT) as AMT,'+
              ' sum(RET_AMT) as RET_AMT '+
-             ' from RIM_SD_CO_LINE A left outer join (select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+TENANT_ID+')B '+
+             ' from RIM_SD_CO_LINE A left outer join (select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12''))B '+
              ' on (A.ITEM_ID=B.SECOND_ID) or (INSTR( B.COMM_ID,'','' || A.ITEM_ID || '','', 1, 1)>0) '+  //加条件：
              ' where A.CO_NUM='''+INDE_ID+''' '+
              ' group by CO_NUM,B.GODS_ID ';  //,ITEM_ID
@@ -140,7 +140,7 @@ begin
              ' (case when sum(QTY_ORD)<>0 then cast(sum(AMT)as decimal(18,3))/cast(sum(QTY_ORD) as decimal(18,3)) else 0 end) as PRI,'+
              ' sum(AMT) as AMT,'+
              ' sum(RET_AMT) as RET_AMT '+
-             ' from RIM_SD_CO_LINE A left outer join (select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+TENANT_ID+')B '+
+             ' from RIM_SD_CO_LINE A left outer join (select GODS_ID,SECOND_ID,COMM_ID from VIW_GOODSINFO where TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12''))B '+
              ' on (A.ITEM_ID=B.SECOND_ID) or (locate('','' || A.ITEM_ID || '','',B.COMM_ID)>0) '+  //加条件：
              ' where A.CO_NUM='''+INDE_ID+''' '+
              ' group by CO_NUM,B.GODS_ID ';  //,ITEM_ID

@@ -23,6 +23,7 @@ type
     CB_USE_SM_CARD: TCheckBox;
     Label3: TLabel;
     Edt_VipStatus: TcxComboBox;
+    chkCUST_PSWD: TCheckBox;
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -58,6 +59,7 @@ begin
     F.WriteBool('PARAMS','USE_SM_CARD',CB_USE_SM_CARD.Checked);
     if trim(Edt_VipStatus.Text)<>'' then
       F.WriteString('PARAMS','UP_CUST_STATUS',Edt_VipStatus.Text);
+    F.WriteBool('rim','USING_CUST_PSWD',chkCUST_PSWD.Checked);
   finally
     F.free;
   end;
@@ -79,6 +81,7 @@ begin
     if F.ReadString('PARAMS','VipUpload','1')='0' then CB_VipUpload.Checked:=true else CB_VipUpload.Checked:=false;
     CB_USE_SM_CARD.Checked:=F.ReadBool('PARAMS','USE_SM_CARD',False);
     Edt_VipStatus.Text:=F.ReadString('PARAMS','UP_CUST_STATUS','03');
+    chkCUST_PSWD.Checked := F.ReadBool('rim','USING_CUST_PSWD',false);
   finally
     F.free;
   end;

@@ -3,7 +3,7 @@ object frmRimConfig: TfrmRimConfig
   Top = 170
   BorderStyle = bsDialog
   Caption = 'RIM'#25509#21475#21442#25968
-  ClientHeight = 232
+  ClientHeight = 240
   ClientWidth = 412
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -92,6 +92,14 @@ object frmRimConfig: TfrmRimConfig
         Height = 17
         Caption = #26159#21542#21551#29992#20998#24067#24335#20107#21153
         TabOrder = 0
+      end
+      object chkCUST_PSWD: TCheckBox
+        Left = 224
+        Top = 14
+        Width = 169
+        Height = 17
+        Caption = #21551#29992#23458#25143#23494#30721
+        TabOrder = 1
       end
     end
     object GroupBox2: TGroupBox

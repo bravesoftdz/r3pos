@@ -1,8 +1,8 @@
 inherited frmXsm2Main: TfrmXsm2Main
-  Left = 142
-  Top = 113
+  Left = 352
+  Top = 240
   Width = 928
-  Height = 633
+  Height = 478
   Caption = ''
   Menu = nil
   Position = poDefault
@@ -12,7 +12,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   PixelsPerInch = 96
   TextHeight = 12
   inherited stbBottom: TStatusBar
-    Top = 594
+    Top = 439
     Width = 912
     Height = 1
     Panels = <
@@ -32,7 +32,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   end
   object Panel5: TPanel [1]
     Left = 0
-    Top = 594
+    Top = 439
     Width = 912
     Height = 0
     Align = alBottom
@@ -442,7 +442,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     Left = 911
     Top = 77
     Width = 1
-    Height = 517
+    Height = 362
     Align = alRight
     BevelOuter = bvNone
     Color = 12300436
@@ -8440,7 +8440,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     Left = 0
     Top = 77
     Width = 115
-    Height = 517
+    Height = 362
     Align = alLeft
     BorderOuter = fsNone
     TabOrder = 6
@@ -8448,7 +8448,7 @@ inherited frmXsm2Main: TfrmXsm2Main
       Left = 0
       Top = 0
       Width = 115
-      Height = 517
+      Height = 362
       Align = alClient
       BorderOuter = fsNone
       BorderSides = [sdLeft, sdRight]
@@ -8479,9 +8479,9 @@ inherited frmXsm2Main: TfrmXsm2Main
           Color = 16576995
           FlatColor = 15711294
           TabOrder = 0
-          object page_01: TRzBmpButton
+          object page_02: TRzBmpButton
             Left = 16
-            Top = 5
+            Top = 77
             Width = 79
             Height = 66
             AllowAllUp = True
@@ -9983,11 +9983,11 @@ inherited frmXsm2Main: TfrmXsm2Main
               DDB1F3DDB1F3DDB1F4DFB6F5E3C0FAECD6FCF1E2FCF1E2000000}
             Color = clBtnFace
             TabOrder = 0
-            OnClick = page_01Click
+            OnClick = page_02Click
           end
-          object page_02: TRzBmpButton
+          object page_01: TRzBmpButton
             Left = 16
-            Top = 77
+            Top = 5
             Width = 79
             Height = 66
             AllowAllUp = True
@@ -11489,7 +11489,7 @@ inherited frmXsm2Main: TfrmXsm2Main
               DDB1F3DDB1F3DDB1F4DFB6F5E3C0FAECD6FCF1E2FCF1E2000000}
             Color = clBtnFace
             TabOrder = 1
-            OnClick = page_02Click
+            OnClick = page_01Click
           end
           object page_03: TRzBmpButton
             Left = 16
@@ -14509,7 +14509,7 @@ inherited frmXsm2Main: TfrmXsm2Main
         Left = 0
         Top = 295
         Width = 115
-        Height = 222
+        Height = 67
         Align = alClient
         BorderOuter = fsNone
         BorderSides = [sdTop]
@@ -14520,7 +14520,7 @@ inherited frmXsm2Main: TfrmXsm2Main
           Left = 1
           Top = 1
           Width = 113
-          Height = 220
+          Height = 65
           Align = alClient
           BorderOuter = fsFlat
           BorderSides = [sdTop, sdRight, sdBottom]
@@ -20560,7 +20560,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     Left = 115
     Top = 77
     Width = 1
-    Height = 517
+    Height = 362
     Align = alLeft
     BorderOuter = fsFlat
     BorderSides = [sdRight]
@@ -21818,6 +21818,11 @@ inherited frmXsm2Main: TfrmXsm2Main
     object actfrmInitGuide: TAction
       Caption = #21021#22987#21270#21521#23548
       OnExecute = actfrmInitGuideExecute
+    end
+    object actfrmSaleDaySingleReport: TAction
+      Tag = 41200001
+      Caption = #38144#21806#26085#25253
+      OnExecute = actfrmSaleDaySingleReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

@@ -127,7 +127,7 @@ begin
     UpdateGlobal(cdsStateInfo);
     btnSave.Enabled:=false;
     RunResult:=true;
-    Close;
+    self.ModalResult := MROK;
   end;
 end;
 

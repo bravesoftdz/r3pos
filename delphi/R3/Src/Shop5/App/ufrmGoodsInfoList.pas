@@ -9,7 +9,7 @@ uses
   RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, cxControls,ADODB,
   cxContainer, cxEdit, cxTextEdit, RzButton, zBase, DB, DBClient, RzTreeVw,
   FR_Class, PrnDbgeh, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  DBGrids, Buttons;
+  DBGrids, Buttons, cxMaskEdit, cxDropDownEdit;
 
 type
   TfrmGoodsInfoList = class(TframeToolForm)
@@ -19,7 +19,6 @@ type
     Label2: TLabel;
     edtKey: TcxTextEdit;
     DataSource1: TDataSource;
-    rzTree: TRzTreeView;
     Splitter1: TSplitter;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
@@ -56,6 +55,11 @@ type
     Excel1: TMenuItem;
     ToolButton11: TToolButton;
     ToolButton12: TToolButton;
+    Panel2: TPanel;
+    rzTree: TRzTreeView;
+    RzPanel6: TRzPanel;
+    Label3: TLabel;
+    fndGODS_FLAG1: TcxComboBox;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont; var Background: TColor; State: TGridDrawState);
     procedure actFindExecute(Sender: TObject);
@@ -89,6 +93,8 @@ type
     procedure actDefineStateExecute(Sender: TObject);
     procedure Excel1Click(Sender: TObject);
     procedure ToolButton11Click(Sender: TObject);
+    procedure fndGODS_FLAG1PropertiesChange(Sender: TObject);
+    procedure rzTreeChange(Sender: TObject; Node: TTreeNode);
   private
      edtProperty2,edtProperty1: TZQuery;
      procedure PrintView;
@@ -103,6 +109,8 @@ type
     locked:boolean;
     rcAmt:integer;
     procedure LoadTree; //刷新SortTree树
+    procedure LoadList;
+    procedure LoadProv;
     procedure AddRecord(AObj:TRecord_);
     procedure InitGrid;
     function  EncodeSQL(id:string; QryType: integer=0):string; {QryType: 0表示取数据查询; 1表示取总记录数}
@@ -237,8 +245,12 @@ end;
 
 function TfrmGoodsInfoList.EncodeSQL(id: string; QryType: integer): string;
 var
-  w,GodsFields,OperChar:string;
+  w,GodsFields,OperChar,sc:string;
 begin
+  case Factor.iDbType of
+   0: sc := '+';
+   1,4,5: sc := '||';
+  end;
   GodsFields:='';
   OperChar:=GetStrJoin(Factor.iDbType); //字符连接操作符
 
@@ -246,14 +258,23 @@ begin
 
   if id<>'' then w := w + ' and j.GODS_ID>:MAXID';
 
-  if rzTree.Selected<>nil then
-  begin
-    w :=w+' and b.RELATION_ID=:RELATION_ID ';
-    if rzTree.Selected.Level>0 then
-    begin
-      w :=w+' and b.LEVEL_ID like :LEVEL_ID '+OperChar+' ''%'' ';
-    end;
-  end;
+  if (rzTree.Selected<>nil) and (rzTree.Selected.Data<>nil) then //and (rzTree.Selected.Level>0)
+     begin
+      if w<>'' then w := w + ' and ';
+      case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+      1:begin
+          if rzTree.Selected.Level>0 then
+             w := w + 'b.LEVEL_ID like :LEVEL_ID '+sc+'''%'' and b.RELATION_ID=:RELATION_ID '
+          else
+             w := w + 'b.RELATION_ID=:RELATION_ID ';
+        end;
+      else
+        begin
+          if (rzTree.Selected.Level>0) then
+             w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';
+        end;
+      end;
+     end;
 
   if trim(edtKey.Text)<>'' then
   begin
@@ -371,8 +392,6 @@ var
   rs:TZQuery;
 begin
   if not Visible then Exit;
-  if rzTree.Selected=nil then Exit;
-  if TRecord_(rzTree.Selected.Data)=nil then Exit; 
   if Id='' then cdsBrowser.close;
   rs := TZQuery.Create(nil);
   cdsBrowser.DisableControls;
@@ -384,8 +403,20 @@ begin
     if rs.Params.FindParam('SHOP_ID_ROOT')<>nil then rs.ParamByName('SHOP_ID_ROOT').AsString:=InttoStr(SHopGlobal.TENANT_ID)+'0001';
     if rs.Params.FindParam('MAXID')<>nil then rs.ParamByName('MAXID').AsString := MaxId;
     if rs.Params.FindParam('KEYVALUE')<>nil then rs.ParamByName('KEYVALUE').AsString := trim(edtKey.Text);
-    if rs.Params.FindParam('LEVEL_ID')<>nil then rs.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
-    if rs.Params.FindParam('RELATION_ID')<>nil then rs.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
+    if TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger = 3 then
+      begin
+        if rs.Params.FindParam('SORT_ID')<>nil then
+           rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('CLIENT_ID').AsString;
+      end
+    else
+      begin
+        if rs.Params.FindParam('SORT_ID')<>nil then
+           rs.Params.ParamByName('SORT_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('SORT_ID').AsString;
+      end;
+    if rs.Params.FindParam('LEVEL_ID')<>nil then
+       rs.Params.ParamByName('LEVEL_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('LEVEL_ID').AsString;
+    if rs.Params.FindParam('RELATION_ID')<>nil then
+       rs.Params.ParamByName('RELATION_ID').AsString := TRecord_(rzTree.Selected.Data).FieldbyName('RELATION_ID').AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('GODS_ID').AsString;
@@ -502,11 +533,19 @@ end;
 
 procedure TfrmGoodsInfoList.FormCreate(Sender: TObject);
 var
-  tmp: TZQuery;
+  tmp,rs: TZQuery;
 begin
   inherited;
   InitGrid;
-  LoadTree;
+  Locked := true;
+  try
+    rs := Global.GetZQueryFromName('PUB_STAT_INFO');
+    TdsItems.AddDataSetToItems(rs,fndGODS_FLAG1.Properties.Items,'CODE_NAME');
+    fndGODS_FLAG1.ItemIndex := 0;
+    LoadTree;
+  finally
+    Locked := false;
+  end;
   edtProperty1:=TZQuery.Create(nil);
   edtProperty2:=TZQuery.Create(nil);
   //暂关闭Gird表头排序
@@ -532,16 +571,18 @@ begin
   SortID:='';
   SortName:='';
   if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
-  if rzTree.Selected=nil then Raise Exception.Create(' 商品分类没有节点，请先选择分类节点！');
-  CurObj:=TRecord_(rzTree.Selected.Data);
-  if CurObj=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
-  if (trim(CurObj.FieldByName('RELATION_ID').AsString)='0') and (trim(CurObj.FieldByName('LEVEL_ID').AsString)<>'') then  // RELATION_FLAG=2 自主经营
-  begin
-    //Raise Exception.Create(' 当前分类的节点是供应链的，只能在“自主经营”下新增商品！ ');
-    SortID := CurObj.FieldbyName('SORT_ID').AsString;
-    SortName := CurObj.FieldbyName('SORT_NAME').AsString;
-  end;
-  
+  if TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger=1 then
+     begin
+        if rzTree.Selected=nil then Raise Exception.Create(' 商品分类没有节点，请先选择分类节点！');
+        CurObj:=TRecord_(rzTree.Selected.Data);
+        if CurObj=nil then Raise Exception.Create(' 请选择Tree的节点！ ');
+        if (trim(CurObj.FieldByName('RELATION_ID').AsString)='0') and (trim(CurObj.FieldByName('LEVEL_ID').AsString)<>'') then  // RELATION_FLAG=2 自主经营
+        begin
+          //Raise Exception.Create(' 当前分类的节点是供应链的，只能在“自主经营”下新增商品！ ');
+          SortID := CurObj.FieldbyName('SORT_ID').AsString;
+          SortName := CurObj.FieldbyName('SORT_NAME').AsString;
+        end;
+     end;
   with TfrmGoodsInfo.Create(self) do
   begin
     try
@@ -1064,17 +1105,14 @@ end;
 procedure TfrmGoodsInfoList.LoadTree;
 var
   IsRoot: Boolean;
-  vType: TFieldType;
   rs:TZQuery;
-  w,i:integer;
-  Root,P:TTreeNode;
+  i:integer;
   Rel_ID,Rel_IDS: string;
-  AObj,Obj,CurObj:TRecord_;
+  AObj,CurObj:TRecord_;
 begin
   Rel_ID:='';
   Rel_IDS:='';
   IsRoot:=False;
-  rzTree.OnChange:=nil;
   ClearTree(rzTree);
   rs := Global.GetZQueryFromName('PUB_GOODSSORT');
   //rs.SortedFields := 'RELATION_ID';  //2011.08.27 排序错乱关闭
@@ -1082,10 +1120,10 @@ begin
   while not rs.Eof do
   begin
     Rel_ID:=','+InttoStr(rs.FieldByName('RELATION_ID').AsInteger)+','; //2011.09.25 add 当前供应链ID
-    if Pos(Rel_ID,Rel_IDS)<=0 then  //不存在才去加根节点
+    if Pos(Rel_ID,Rel_IDS)<=0 then
     begin
-      Rel_IDS:=Rel_IDS+Rel_ID;  //2011.09.25 add
-      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then  //自主经营
+      Rel_IDS:=Rel_IDS+Rel_ID;  //2011.09.25 add 
+      if trim(rs.FieldByName('RELATION_ID').AsString)='0' then //自主经营
       begin
         CurObj:=TRecord_.Create;
         CurObj.ReadFromDataSet(rs);
@@ -1109,15 +1147,13 @@ begin
     rzTree.Items.AddObject(nil,CurObj.FieldbyName('SORT_NAME').AsString,CurObj);
 
   for i:=rzTree.Items.Count-1 downto 0 do
-  begin
-    rs.Filtered := false;
-    rs.filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
-    rs.Filtered := true;
-    //rs.SortedFields := 'LEVEL_ID';    //2011.08.27 排序错乱关闭
-    CreateLevelTree(rs,rzTree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
-  end;
-  rzTree.FullExpand; //展开树
-  rzTree.OnChange:=self.DoTreeChange;
+    begin
+      rs.Filtered := false;
+      rs.filter := 'RELATION_ID='+TRecord_(rzTree.Items[i].Data).FieldbyName('RELATION_ID').AsString;
+      rs.Filtered := true;
+      //rs.SortedFields := 'LEVEL_ID';  //2011.08.27 排序错乱关闭
+      CreateLevelTree(rs,rzTree,'4444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',rzTree.Items[i]);
+    end;
 end;
 
 procedure TfrmGoodsInfoList.DoTreeChange(Sender: TObject; Node: TTreeNode);
@@ -1136,7 +1172,7 @@ begin
     if not ShopGlobal.GetChkRight('32100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
     if TfrmGoodsSortTree.AddDialog(self,CurObj,1) then
     begin
-      LoadTree;
+      fndGODS_FLAG1PropertiesChange(nil);
     end;
   finally
     CurObj.Free;
@@ -1151,7 +1187,12 @@ end;
 procedure TfrmGoodsInfoList.N10Click(Sender: TObject);
 begin
   inherited;
-  LoadTree;
+  locked := true;
+  try
+    fndGODS_FLAG1PropertiesChange(nil);
+  finally
+    locked := false;
+  end;
 end;
 
 function TfrmGoodsInfoList.GetReCount: integer;
@@ -1187,9 +1228,13 @@ begin
 end;
 
 procedure TfrmGoodsInfoList.actDefineStateExecute(Sender: TObject);
+var rs:TZQuery;
 begin
   inherited;
-  TfrmDefineStateInfo.ShowDialog(self);
+  if TfrmDefineStateInfo.ShowDialog(self) then
+     begin
+      fndGODS_FLAG1PropertiesChange(nil);
+     end;
 end;
 
 procedure TfrmGoodsInfoList.Excel1Click(Sender: TObject);
@@ -1691,6 +1736,75 @@ procedure TfrmGoodsInfoList.ToolButton11Click(Sender: TObject);
 begin
   inherited;
   N8.OnClick(Sender);
+end;
+
+procedure TfrmGoodsInfoList.LoadList;
+var
+  rs:TZQuery;
+  AObj:TRecord_;
+begin
+  ClearTree(rzTree);
+  rs := Global.GetZQueryFromName('PUB_GOODS_INDEXS');
+  rs.Filtered := false;
+  rs.Filter := 'SORT_TYPE='+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').asString;
+  rs.Filtered := true;
+  if (rs<>nil) and (rs.Active) then
+  begin
+    rs.First;
+    while not rs.Eof do
+      begin
+        AObj := TRecord_.Create(rs);
+        AObj.ReadFromDataSet(rs);
+        rzTree.Items.AddObject(nil,rs.FieldbyName('SORT_NAME').AsString,AObj);
+        rs.Next;
+      end;
+    AddRoot(rzTree,'全部商品');
+    if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
+  end;
+end;
+
+procedure TfrmGoodsInfoList.LoadProv;
+var
+  rs:TZQuery;
+  AObj:TRecord_;
+begin
+  ClearTree(RzTree);
+  rs := Global.GetZQueryFromName('PUB_CLIENTINFO'); 
+  rs.First;
+  while not rs.Eof do
+    begin
+      AObj := TRecord_.Create(rs);
+      AObj.ReadFromDataSet(rs);
+      rzTree.Items.AddObject(nil,rs.FieldbyName('CLIENT_NAME').AsString,AObj); 
+      rs.Next;
+    end;
+  AddRoot(rzTree,'全部商品');
+  if rzTree.Items.Count>0 then rzTree.Items[0].Selected:=true;
+end;
+
+procedure TfrmGoodsInfoList.fndGODS_FLAG1PropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if locked then Exit;
+  locked := true;
+  try
+    case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+    1:LoadTree;
+    3:LoadProv;
+    else LoadList;
+    end;
+    Open('');
+  finally
+    locked := false;
+  end;
+
+end;
+
+procedure TfrmGoodsInfoList.rzTreeChange(Sender: TObject; Node: TTreeNode);
+begin
+  inherited;
+  if locked then Exit;
+  Open('');
 end;
 
 end.

@@ -13,6 +13,8 @@ type
       const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
       Headers: OleVariant; var Cancel: WordBool);
     procedure Button1Click(Sender: TObject);
+    procedure IEDesktopNewWindow2(Sender: TObject; var ppDisp: IDispatch;
+      var Cancel: WordBool);
   private
     FHookLocked: boolean;
     procedure SetHookLocked(const Value: boolean);
@@ -62,6 +64,13 @@ begin
     end;
   Doc := IEDesktop.Document as IHTMLDocument2;
   if Doc=nil then Exit;
+  if FileExists(ExtractFilePath(ParamStr(0))+'res\desk.html') then
+     begin
+       url := ExtractFilePath(ParamStr(0))+'res\desk.html';
+       iframe := Doc.all.item('mht1',EmptyParam) as DispHTMLIFrame;
+       if iframe<>nil then iframe.src := url;
+     end
+  else
   if FileExists(ExtractFilePath(ParamStr(0))+'res\desk.mht') then
      begin
        url := ExtractFilePath(ParamStr(0))+'res\desk.mht';
@@ -134,6 +143,13 @@ procedure TfrmMMDesk.Button1Click(Sender: TObject);
 begin
   inherited;
   LoadDesk;
+end;
+
+procedure TfrmMMDesk.IEDesktopNewWindow2(Sender: TObject;
+  var ppDisp: IDispatch; var Cancel: WordBool);
+begin
+  inherited;
+  ppDisp := IEDesktop.Application;
 end;
 
 end.

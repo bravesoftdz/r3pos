@@ -154,7 +154,9 @@ type
       State: TGridDrawState; var Text: String);
     procedure rzP2_TreeChange(Sender: TObject; Node: TTreeNode);
     procedure rzP3_TreeChange(Sender: TObject; Node: TTreeNode);
+    procedure FormShow(Sender: TObject);
   private
+    Locked:boolean;
     IsEnd: boolean;
     MaxId:string;
     procedure LoadTree(Tree:TRzTreeView);
@@ -266,6 +268,27 @@ begin
       rs.Next;
     end;
 
+
+  rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
+  Column := FindColumn(Grid,'PROPERTY_01');
+  rs.First;
+  while not rs.Eof do
+    begin
+      Column.KeyList.Add(rs.FieldbyName('SIZE_ID').AsString);
+      Column.PickList.Add(rs.FieldbyName('SIZE_NAME').AsString);
+      rs.Next;
+    end;
+
+  rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
+  Column := FindColumn(Grid,'PROPERTY_02');
+  rs.First;
+  while not rs.Eof do
+    begin
+      Column.KeyList.Add(rs.FieldbyName('COLOR_ID').AsString);
+      Column.PickList.Add(rs.FieldbyName('COLOR_NAME').AsString);
+      rs.Next;
+    end;
+
 {  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select REGION_ID from CA_SHOP_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SHOP_ID='+QuotedStr(Global.SHOP_ID);
@@ -290,6 +313,8 @@ var IsRoot: Boolean;
     Rel_ID,Rel_IDS: string;
     Aobj,CurObj:TRecord_;
 begin
+  Locked := true;
+  try
   Rel_ID:='';
   Rel_IDS:='';
   IsRoot:=False;
@@ -333,6 +358,9 @@ begin
       CreateLevelTree(rs,Tree,'44444444','SORT_ID','SORT_NAME','LEVEL_ID',0,0,'',Tree.Items[i]);
     end;
   AddRoot(Tree,'所有分类');
+  finally
+    Locked := false;
+  end;
 end;
 
 procedure TfrmStorageTracking.FormCreate(Sender: TObject);
@@ -468,25 +496,24 @@ begin
   if StrWhere <> '' then StrWhere :=' where '+ StrWhere;
 
   StrSql :=
-  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT,cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as ROAD_AMT,'+TransInPrice(edtUNIT_ID.ItemIndex,'C','NEW_INPRICE')+','+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
+  'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,A.BATCH_NO,A.PROPERTY_01,A.PROPERTY_02,A.NEAR_INDATE,A.NEAR_OUTDATE,A.AMOUNT/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as AMOUNT,'+
+  'cast(D.AMOUNT as decimal(18,3))/(cast('+TransCalcRate(edtUNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0) as ROAD_AMT,'+TransInPrice(edtUNIT_ID.ItemIndex,'C','NEW_INPRICE')+','+TransPrice(edtUNIT_ID.ItemIndex,'C','NEW_OUTPRICE')+
   ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+' '+
   ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
   ' left join VIW_SR_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.GODS_ID=D.GODS_ID and A.PROPERTY_01=D.PROPERTY_01 and A.PROPERTY_02=D.PROPERTY_02 and A.BATCH_NO=D.BATCH_NO '+
   ' '+StrWhere;
 
   Result :=
-  'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE from ('+
-  'select jb.*,b.COLOR_NAME as PROPERTY_02_TEXT from ('+
-  'select ja.*,round(ja.NEW_OUTPRICE*ja.AMOUNT,2) as SALE_MNY,round(ja.NEW_INPRICE*ja.AMOUNT,2) as STOCK_MNY,a.SIZE_NAME as PROPERTY_01_TEXT from ('+StrSql+') ja '+
-  'left outer join VIW_SIZE_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.PROPERTY_01=a.SIZE_ID) jb '+
-  'left outer join VIW_COLOR_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.PROPERTY_02=b.COLOR_ID) jc '+
-  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,round(jc.NEW_OUTPRICE*jc.AMOUNT,2) as SALE_MNY,round(jc.NEW_INPRICE*jc.AMOUNT,2) as STOCK_MNY from ('+StrSql+') jc '+
+  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c '+
+  'on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
   'order by jc.SHOP_ID,jc.GODS_CODE ';
   
 end;
 
 procedure TfrmStorageTracking.Open(ID: String);
 begin
+  if Locked then Exit;
   CdsStorage.Close;
   CdsStorage.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql(ID));
   Factor.Open(CdsStorage);
@@ -608,6 +635,7 @@ procedure TfrmStorageTracking.rzTreeChange(Sender: TObject;
   Node: TTreeNode);
 begin
   inherited;
+  if Locked then Exit;
   Open('');
 end;
 
@@ -852,7 +880,7 @@ begin
 
   StrSql :=
   'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,sum(A.AMOUNT) as AMOUNT '+
-  ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+  ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSINFO_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
   ' '+StrWhere+' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
 
   StrSql :=
@@ -865,8 +893,8 @@ begin
   'sum(E.DAY_SALE_AMT) as DAY_SALE_AMT '+
   'from ('+StrSql+') j1 '+
   'left outer join PUB_GOODS_INSHOP E on j1.TENANT_ID=E.TENANT_ID and j1.SHOP_ID=E.SHOP_ID and j1.GODS_ID=E.GODS_ID '+
-  'left outer join (select TENANT_ID,SHOP_ID,GODS_ID,sum(AMOUNT) AS AMOUNT from VIW_SR_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' group by TENANT_ID,SHOP_ID,GODS_ID) E1 on j1.TENANT_ID=E1.TENANT_ID and j1.SHOP_ID=E1.SHOP_ID and j1.GODS_ID=E1.GODS_ID '+
-
+  'left outer join (select TENANT_ID,SHOP_ID,GODS_ID,sum(AMOUNT) AS AMOUNT from VIW_SR_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' group by TENANT_ID,SHOP_ID,GODS_ID'+
+  ') E1 on j1.TENANT_ID=E1.TENANT_ID and j1.SHOP_ID=E1.SHOP_ID and j1.GODS_ID=E1.GODS_ID '+
   'group by j1.TENANT_ID,j1.GODS_ID';
 
   result :=
@@ -881,7 +909,7 @@ begin
   'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.0,1) else 0 end as CAN_SALE_DAY,'+
   'cast(case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end as decimal(18,3))/(cast('+TransCalcRate(edtP2_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0) as STOCK_AMT,'+
   'case when isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)<isnull(jc.UPPER_AMOUNT,0) then isnull(jc.UPPER_AMOUNT,0)-(isnull(jc.AMOUNT,0)+isnull(jc.ROAD_AMT,0)) else 0 end*F.NEW_INPRICE as STOCK_MNY '+
-  'from ('+StrSql+') jc left outer join VIW_GOODSINFO F on jc.TENANT_ID=F.TENANT_ID and jc.GODS_ID=F.GODS_ID '+
+  'from ('+StrSql+') jc inner join VIW_GOODSINFO F on jc.TENANT_ID=F.TENANT_ID and jc.GODS_ID=F.GODS_ID '+
   'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and '+TransUnit(edtP2_UNIT_ID.ItemIndex,'F','')+'=c.UNIT_ID '+
   'order by f.GODS_CODE ';
 
@@ -889,7 +917,7 @@ end;
 
 procedure TfrmStorageTracking.Open2(ID: String);
 begin
-  if not Visible then Exit;
+  if Locked then Exit;
   cdsDemand.Close;
   cdsDemand.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql2(ID));
   Factor.Open(cdsDemand);
@@ -990,7 +1018,7 @@ begin
 
   StrSql :=
   'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,sum(A.AMOUNT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0)) as AMOUNT '+
-  ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
+  ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSINFO_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
   ' '+StrWhere+'  group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
 
   StrSql :=
@@ -1000,7 +1028,7 @@ begin
   'sum(E.NEAR_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as NEAR_SALE_AMT,'+
   'sum(E.DAY_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as DAY_SALE_AMT,'+
   'sum(E.MTH_SALE_AMT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'F','')+' as decimal(18,3))*1.0)) as MTH_SALE_AMT '+
-  'from ('+StrSql+') j1 left outer join VIW_GOODSINFO F on j1.TENANT_ID=F.TENANT_ID and j1.GODS_ID=F.GODS_ID left outer join PUB_GOODS_INSHOP E on j1.TENANT_ID=E.TENANT_ID and j1.SHOP_ID=E.SHOP_ID and j1.GODS_ID=E.GODS_ID '+
+  'from ('+StrSql+') j1 inner join VIW_GOODSINFO F on j1.TENANT_ID=F.TENANT_ID and j1.GODS_ID=F.GODS_ID left outer join PUB_GOODS_INSHOP E on j1.TENANT_ID=E.TENANT_ID and j1.SHOP_ID=E.SHOP_ID and j1.GODS_ID=E.GODS_ID '+
   'group by j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE';
 
   Result :=
@@ -1008,14 +1036,15 @@ begin
   'case when isnull(jc.DAY_SALE_AMT,0)<>0 then round(cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.DAY_SALE_AMT,0) as decimal(18,3))*1.0,1) else 0 end as CAN_SALE_DAY,'+
   'case when isnull(jc.MTH_SALE_AMT,0)<>0 then cast(isnull(jc.AMOUNT,0) as decimal(18,3))/cast(isnull(jc.MTH_SALE_AMT,0) as decimal(18,3))*1.0 else 0 end as RATE '+
   'from ('+StrSql+') jc '+
-  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
+  'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) c '+
+  'on jc.TENANT_ID=c.TENANT_ID and jc.GODS_ID=c.GODS_ID and jc.PROPERTY_01=c.PROPERTY_01 and jc.PROPERTY_02=c.PROPERTY_02 and jc.UNIT_ID=c.UNIT_ID '+
   'order by jc.GODS_CODE ';
 
 end;
 
 procedure TfrmStorageTracking.Open3(ID: String);
 begin
-  if not Visible then Exit;
+  if Locked then Exit;
   cdsRate.Close;
   cdsRate.SQL.Text := ParseSQL(Factor.iDbType,EncodeSql3(ID));
   Factor.Open(cdsRate);
@@ -1230,6 +1259,7 @@ end;
 procedure TfrmStorageTracking.rzP2_TreeChange(Sender: TObject; Node: TTreeNode);
 begin
   inherited;
+  if Locked then Exit;
   Open2('');
 end;
 
@@ -1237,6 +1267,7 @@ procedure TfrmStorageTracking.rzP3_TreeChange(Sender: TObject;
   Node: TTreeNode);
 begin
   inherited;
+  if Locked then Exit;
   Open3('');
 end;
 
@@ -1284,6 +1315,12 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TfrmStorageTracking.FormShow(Sender: TObject);
+begin
+  inherited;
+//  Open('');
 end;
 
 end.

@@ -219,6 +219,7 @@ type
     procedure AmountToCalc(Amount:Real);virtual;
     procedure PriceToCalc(APrice:Real);virtual;
     procedure AMoneyToCalc(AMoney:Real);virtual;
+    procedure BulkToCalc(AMoney:Real);virtual;
     procedure AgioToCalc(Agio:Real);virtual;
     procedure PresentToCalc(Present:integer);virtual;
     procedure UnitToCalc(UNIT_ID:string);virtual;
@@ -1018,10 +1019,21 @@ begin
   rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   AObj := TRecord_.Create;
   try
-    if rs.Locate('GODS_ID',vgds,[]) then
-       AObj.ReadFromDataSet(rs)
+    if bulk then
+       begin
+         if rs.Locate('GODS_CODE',vgds,[]) then
+            AObj.ReadFromDataSet(rs)
+         else
+            Exit;
+         uid := rs.FieldbyName('CALC_UNITS').asString;
+       end
     else
-       Exit;
+       begin
+         if rs.Locate('GODS_ID',vgds,[]) then
+            AObj.ReadFromDataSet(rs)
+         else
+            Exit;
+       end;
     result := 0;
     AddRecord(AObj,uid,true);
     if AObj.FieldbyName('GODS_ID').asString=edtTable.FieldbyName('GODS_ID').asString then
@@ -1235,16 +1247,7 @@ begin
                 edtTable.FieldbyName('AMONEY').AsFloat := edtTable.FieldbyName('AMONEY').AsFloat + mny
              else
                 edtTable.FieldbyName('AMONEY').AsFloat := mny;
-             if (amt=0) and (edtTable.FindField('AMOUNT')<>nil) then
-               begin
-                 if (edtTable.FindField('APRICE')<>nil) and (edtTable.FindField('APRICE').AsFloat<>0) then
-                    begin
-                      amt := RoundTo(edtTable.FieldbyName('AMONEY').AsFloat / edtTable.FieldbyName('APRICE').AsFloat,-2);
-                    end
-                 else
-                    amt := 0;
-                 edtTable.FieldbyName('AMOUNT').AsFloat := amt;
-               end;
+             BulkToCalc(edtTable.FieldbyName('AMONEY').AsFloat);
            end;
       end;
 end;
@@ -3828,6 +3831,104 @@ function TframeOrderForm.GetbasInfo: TDataSet;
 begin
   result := FBasInfo;
   if not FBasInfo.Active then BasInfo := Global.GetZQueryFromName('PUB_GOODSINFO');  
+end;
+
+procedure TframeOrderForm.BulkToCalc(AMoney: Real);
+var AMount,APrice,Agio_Rate,Agio_Money,SourceScale:currency;
+    Field:TField;
+    rs:TZQuery;
+begin
+  if Locked then Exit;
+  Locked := true;
+  try
+      if not (edtTable.State in [dsEdit,dsInsert]) then edtTable.Edit;
+      Field := edtTable.FindField('AMONEY');
+      if Field=nil then Exit;
+      Field.AsString := FormatFloat('#0.00',AMoney);
+      AMoney := Field.AsFloat;
+
+      Field := edtTable.FindField('APRICE');
+      if Field<>nil then
+         APrice := Field.AsFloat
+      else
+         APrice := 1;
+
+      Field := edtTable.FindField('AMOUNT');
+      if Field=nil then Exit;
+      //取数量
+      Field.AsString := formatFloat('#0.00',AMoney/APrice);
+      Amount := Field.asFloat;
+      rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+      if not rs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');  
+
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('CALC_UNITS').AsString then
+         begin
+          SourceScale := 1;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('BIG_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('BIGTO_CALC').asFloat;
+         end
+      else
+      if edtTable.FieldByName('UNIT_ID').AsString=rs.FieldByName('SMALL_UNITS').AsString then
+         begin
+          SourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+         end
+      else
+         begin
+          SourceScale := 1;
+         end;
+         
+      Field := edtTable.FindField('CALC_AMOUNT');
+      if Field<>nil then
+         begin
+            Field.AsFloat := edtTable.FindField('AMOUNT').AsInteger * SourceScale;
+         end;
+      
+
+      if edtTable.FindField('ORG_PRICE')=nil then
+        begin
+          //计算折扣
+          Field := edtTable.FindField('AGIO_RATE');
+          if Field<>nil then
+             Agio_Rate := (Field.AsFloat / 100)
+          else
+             Agio_Rate := 1;
+          //如果=0为不打折
+          if Agio_Rate=0 then Agio_Rate := 1;
+
+          Agio_Money := (AMoney/Agio_Rate ) - AMoney;
+        end
+      else
+        begin
+          if edtTable.FindField('ORG_PRICE').AsFloat=0 then
+             Agio_Money := 0
+          else
+             Agio_Money := edtTable.FindField('ORG_PRICE').AsFloat*Amount-AMoney;
+
+          //计算折扣
+          Field := edtTable.FindField('AGIO_RATE');
+          if (Field<>nil) and (AMount<>0) then
+             begin
+                if edtTable.FindField('ORG_PRICE').AsFloat<>0 then
+                   Field.AsString := formatFloat('#0.0',AMoney *100 /(edtTable.FindField('ORG_PRICE').AsFloat*Amount))
+                else
+                   Field.AsString := '100';
+             end;
+        end;
+      Field := edtTable.FindField('AGIO_MONEY');
+      if Field<>nil then
+         Field.AsString := FormatFloat('#0.00',Agio_Money);
+
+      Field := edtTable.FindField('CALC_MONEY');
+      if Field<>nil then
+         Field.AsString := FormatFloat('#0.00',AMoney) ;
+      edtTable.Post;
+      edtTable.Edit;
+  finally
+      Locked := false
+  end;
 end;
 
 end.

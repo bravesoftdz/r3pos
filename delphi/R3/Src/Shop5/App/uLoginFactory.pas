@@ -8,11 +8,13 @@ type
     FId: string;
     //µÇÂ¼¼ÆÊ±
     LStart:Int64;
+    FVersion: string;
     function GetSystemInfo:string;
     function GetComputerName:string;
     function GetMacAddr:string;
     function GetIpAddr:string;
     procedure SetId(const Value: string);
+    procedure SetVersion(const Value: string);
   protected
     function UpdateDbVersion:boolean;
   public
@@ -23,6 +25,7 @@ type
     procedure OpenModule(mId:string);
 
     property Id:string read FId write SetId;
+    property Version:string read FVersion write SetVersion;
   end;
 var
   LoginFactory:TLoginFactory;
@@ -162,7 +165,7 @@ begin
   Global.SHOP_ID := sid;
   SQL :=
     'insert into CA_LOGIN_INFO(LOGIN_ID,TENANT_ID,SHOP_ID,USER_ID,IP_ADDR,COMPUTER_NAME,MAC_ADDR,SYSTEM_INFO,PRODUCT_ID,NETWORK_STATUS,CONNECT_TO,LOGIN_DATE,CONNECT_TIMES,COMM,TIME_STAMP) '+
-    'values('''+Id+''','+inttostr(Global.TENANT_ID)+','''+sid+''','''+uid+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+GetSystemInfo+''','''+ProductId+''','''+flag+''','''+ConnectTo+''','''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(uGlobal.Factor.iDbType)+')';
+    'values('''+Id+''','+inttostr(Global.TENANT_ID)+','''+sid+''','''+uid+''','''+GetIPAddr+''','''+GetComputerName+''','''+GetMacAddr+''','''+GetSystemInfo+''','''+ProductId+'<'+Version+'>'+''','''+flag+''','''+ConnectTo+''','''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',-1,''00'','+GetTimeStamp(uGlobal.Factor.iDbType)+')';
   uGlobal.Factor.ExecSQL(SQL);
 end;
 
@@ -186,6 +189,11 @@ end;
 procedure TLoginFactory.SetId(const Value: string);
 begin
   FId := Value;
+end;
+
+procedure TLoginFactory.SetVersion(const Value: string);
+begin
+  FVersion := Value;
 end;
 
 function TLoginFactory.UpdateDbVersion: boolean;

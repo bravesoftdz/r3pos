@@ -1,6 +1,6 @@
 inherited frmGoodsInfoList: TfrmGoodsInfoList
-  Left = 197
-  Top = 102
+  Left = 265
+  Top = 238
   Width = 956
   Height = 628
   Caption = #21830#21697#26723#26696#31649#29702
@@ -10,36 +10,36 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 948
-    Height = 564
+    Width = 940
+    Height = 553
     inherited RzPanel2: TRzPanel
-      Width = 938
-      Height = 554
+      Width = 930
+      Height = 543
       inherited RzPage: TRzPageControl
-        Width = 932
-        Height = 548
+        Width = 924
+        Height = 537
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21830#21697#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 930
-            Height = 521
+            Width = 922
+            Height = 510
             object Splitter1: TSplitter
               Left = 181
               Top = 41
-              Height = 475
+              Height = 464
             end
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 920
+              Width = 912
               Height = 36
               Align = alTop
               BorderOuter = fsNone
               BorderWidth = 5
               TabOrder = 0
               DesignSize = (
-                920
+                912
                 36)
               object Panel3: TPanel
                 Left = 0
@@ -126,36 +126,19 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                 end
               end
             end
-            object rzTree: TRzTreeView
-              Left = 5
-              Top = 41
-              Width = 176
-              Height = 475
-              SelectionPen.Color = clBtnShadow
-              Align = alLeft
-              FrameStyle = fsGroove
-              FrameVisible = True
-              HideSelection = False
-              Indent = 19
-              PopupMenu = AddSortTree
-              ReadOnly = True
-              RowSelect = True
-              TabOrder = 1
-              OnChanging = rzTreeChanging
-            end
             object Panel1: TPanel
               Left = 184
               Top = 41
-              Width = 741
-              Height = 475
+              Width = 733
+              Height = 464
               Align = alClient
               Caption = 'Panel1'
-              TabOrder = 2
+              TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 739
-                Height = 454
+                Width = 731
+                Height = 443
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1
@@ -344,8 +327,8 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 455
-                Width = 739
+                Top = 444
+                Width = 731
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -365,23 +348,79 @@ inherited frmGoodsInfoList: TfrmGoodsInfoList
                 end
               end
             end
+            object Panel2: TPanel
+              Left = 5
+              Top = 41
+              Width = 176
+              Height = 464
+              Align = alLeft
+              AutoSize = True
+              BevelOuter = bvNone
+              TabOrder = 2
+              object rzTree: TRzTreeView
+                Left = 0
+                Top = 36
+                Width = 176
+                Height = 428
+                SelectionPen.Color = clBtnShadow
+                Align = alLeft
+                FrameStyle = fsGroove
+                FrameVisible = True
+                HideSelection = False
+                Indent = 19
+                PopupMenu = AddSortTree
+                ReadOnly = True
+                RowSelect = True
+                TabOrder = 0
+                OnChange = rzTreeChange
+                OnChanging = rzTreeChanging
+              end
+              object RzPanel6: TRzPanel
+                Left = 0
+                Top = 0
+                Width = 176
+                Height = 36
+                Align = alTop
+                BorderOuter = fsFlat
+                BorderWidth = 1
+                Color = clWhite
+                TabOrder = 1
+                object Label3: TLabel
+                  Left = 9
+                  Top = 11
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#23646#24615
+                end
+                object fndGODS_FLAG1: TcxComboBox
+                  Tag = -1
+                  Left = 64
+                  Top = 7
+                  Width = 104
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.OnChange = fndGODS_FLAG1PropertiesChange
+                  TabOrder = 0
+                end
+              end
+            end
           end
         end
       end
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 948
+    Width = 940
     inherited Image1: TImage
       Left = 425
-      Width = 503
+      Width = 495
     end
     inherited Image3: TImage
       Left = 425
-      Width = 503
+      Width = 495
     end
     inherited Image14: TImage
-      Left = 928
+      Left = 920
     end
     inherited rzPanel5: TPanel
       Left = 425

@@ -1337,6 +1337,7 @@ inherited frmMMList: TfrmMMList
             Width = 64
             Height = 32
             Cursor = crHandPoint
+            Hint = #36820#22238#20027#30028#38754
             Bitmaps.Down.Data = {
               36180000424D3618000000000000360000002800000040000000200000000100
               18000000000000180000120B0000120B00000000000000000000FEFEFEFBF7F3
@@ -1735,6 +1736,8 @@ inherited frmMMList: TfrmMMList
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
+            ParentShowHint = False
+            ShowHint = True
             TabOrder = 1
             OnClick = RzBmpButton1Click
           end

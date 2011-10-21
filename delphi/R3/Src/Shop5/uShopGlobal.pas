@@ -92,6 +92,9 @@ type
     function GetProdFlag:Char;
     function GetParameter(ParamName:string):string;
     procedure SetParameter(ParamName:string;Value:string);
+    //本SQL商品资料
+    function EncodeViwGoodsInfo(Fields:string):string;
+    //---------------------
     property Limit:integer read FLimit write SetLimit;
     //是否网络在线应用
     property okline:boolean read Fokline write Setokline;
@@ -449,6 +452,12 @@ begin
     except
     end;
   end;
+end;
+
+function TShopGlobal.EncodeViwGoodsInfo(Fields:string): string;
+begin
+  result :=
+  '';
 end;
 
 initialization

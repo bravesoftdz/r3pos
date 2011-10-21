@@ -244,8 +244,8 @@ type
     rzLeft_1: TRzPanel;
     Bar1: TRzPanel;
     RzPanel5: TRzPanel;
-    page_01: TRzBmpButton;
     page_02: TRzBmpButton;
+    page_01: TRzBmpButton;
     page_03: TRzBmpButton;
     page_04: TRzBmpButton;
     Bar2: TRzPanel;
@@ -278,6 +278,7 @@ type
     RzBmpButton5: TRzBmpButton;
     actfrmInitGuide: TAction;
     RzBmpButton6: TRzBmpButton;
+    actfrmSaleDaySingleReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -386,13 +387,13 @@ type
     procedure splitClick(Sender: TObject);
     procedure page_03Click(Sender: TObject);
     procedure page_04Click(Sender: TObject);
-    procedure page_02Click(Sender: TObject);
+    procedure page_01Click(Sender: TObject);
     procedure page_12Click(Sender: TObject);
     procedure page_13Click(Sender: TObject);
     procedure page_14Click(Sender: TObject);
     procedure tbDesktopClick(Sender: TObject);
     procedure page_11Click(Sender: TObject);
-    procedure page_01Click(Sender: TObject);
+    procedure page_02Click(Sender: TObject);
     procedure actfrmRimNetExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure actfrmCalcStorageExecute(Sender: TObject);
@@ -410,6 +411,7 @@ type
     procedure RzBmpButton5Click(Sender: TObject);
     procedure actfrmInitGuideExecute(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
+    procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -548,7 +550,6 @@ procedure TfrmXsm2Main.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
-  LoginFactory.Logout;
   Timer1.Enabled := false;
   if frmWelcome<>nil then frmWelcome.Free;
   UpdateTimer.Enabled := false;
@@ -833,6 +834,7 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
+  LoginFactory.Version := RzVersionInfo.FileVersion;
   if TimerFactory<>nil then TimerFactory.Free;
   try
   if (not Logined or frmXsmIEBrowser.SessionFail) or Locked then
@@ -1049,12 +1051,19 @@ begin
   result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
 end;
 begin
+  if PrainpowerJudge.Locked>0 then
+     begin
+       ShowMsgBox('正在执行消息同步，请稍等再重试退出软件..','友情提示..',MB_OK+MB_ICONINFORMATION);
+       CanClose := false;
+       Exit;
+     end;
   if not SystemShutdown and (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        CanClose := false;
        Exit;
        //Application.Minimize;
      end;
+  LoginFactory.Logout;
   Timer1.Enabled := false;
   StopSyncTask;
   if TimerFactory<>nil then TimerFactory.Free;
@@ -3865,11 +3874,11 @@ begin
   page_04.Down := SortToolButton;
 end;
 
-procedure TfrmXsm2Main.page_02Click(Sender: TObject);
+procedure TfrmXsm2Main.page_01Click(Sender: TObject);
 begin
   inherited;
   LoadMenu('网上订货');
-  page_02.Down := SortToolButton;
+  page_01.Down := SortToolButton;
 end;
 
 procedure TfrmXsm2Main.page_12Click(Sender: TObject);
@@ -3932,11 +3941,11 @@ begin
     end;
 end;
 
-procedure TfrmXsm2Main.page_01Click(Sender: TObject);
+procedure TfrmXsm2Main.page_02Click(Sender: TObject);
 begin
   inherited;
   LoadMenu('网上营销');
-  page_01.Down := SortToolButton;
+  page_02.Down := SortToolButton;
 end;
 
 procedure TfrmXsm2Main.UnSelect;
@@ -4609,6 +4618,30 @@ procedure TfrmXsm2Main.RzBmpButton6Click(Sender: TObject);
 begin
   inherited;
   TfrmWelcome.Popup;
+end;
+
+procedure TfrmXsm2Main.actfrmSaleDaySingleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
+  Form := FindChildForm('TfrmSimpleSaleDayReport');
+  if not Assigned(Form) then
+  begin
+    Form := TfrmSaleDayReport.Create(self);
+    TfrmSaleDayReport(Form).SingleReportParams;
+    AddFrom(Form);
+  end;
+  Form.Name := 'TfrmSimpleSaleDayReport';
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

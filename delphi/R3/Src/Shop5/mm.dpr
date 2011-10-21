@@ -273,7 +273,7 @@ uses
 
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.2';
+  DBVersion := '1.0.2.3';
   Application.ShowMainForm := false;
   Application.Title := 'MM2011';
   Application.CreateForm(TmmGlobal, mmGlobal);

@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=3
 MinorVer=0
 Release=1
-Build=32
+Build=35
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=R3
-FileVersion=3.0.1.32
+FileVersion=3.0.1.35
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -144,8 +144,8 @@ Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
 Count=9
-Item0=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\core;D:\Delphi\R3\zLib\src\parsesql;D:\Delphi\R3\zLib\src\plain
-Item1=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
+Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
+Item1=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\core;D:\Delphi\R3\zLib\src\parsesql;D:\Delphi\R3\zLib\src\plain
 Item2=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
 Item3=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
 Item4=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc
@@ -158,12 +158,12 @@ Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp
 [HistoryLists\hlOutputDirectorry]
 Count=14
-Item0=D:\r3_test
+Item0=D:\r3
 Item1=D:\mm
-Item2=D:\r3
-Item3=D:\r3_2210
-Item4=D:\r3_1102
-Item5=D:\r3_zhangtian
+Item2=D:\r3_zhangtian
+Item3=D:\r3_test
+Item4=D:\r3_2210
+Item5=D:\r3_1102
 Item6=D:\r3_2300
 Item7=D:\rsp\PlugIn
 Item8=D:\rsp

@@ -95,6 +95,7 @@ type
     dayKc:TZQuery;
     MthRs:TZQuery;
     CustRs:TZQuery;
+    MthJh:TZQuery;
     FDay1: string;    //当月份第几天
     FDay2: string;    //当月份第几天
     FLMonth: string; //上个月
@@ -102,6 +103,7 @@ type
     QtDay:string;
     YsDay:string;
     ToDay:string;
+    CurMonth:string;
     function  FormatFloatValue(InValue :real; size: integer): real; //小数位控制
     procedure LoadDays;
     procedure LoadMths;
@@ -114,6 +116,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure WRefresh;
     function EncodeMsgDayInfo:TMsgDayInfo;
     function EncodeMsgMthInfo:TMsgMonthInfo;
 
@@ -132,6 +135,7 @@ begin
   dayKc := TZQuery.Create(nil);
   MthRs := TZQuery.Create(nil);
   CustRs := TZQuery.Create(nil);
+  MthJh := TZQuery.Create(nil);
   Month := formatDatetime('YYYYMM',Date());
 end;
 
@@ -142,6 +146,7 @@ begin
   dayKc.Free;
   MthRs.Free;
   CustRs.Free;
+  MthJh.Free;
   inherited;
 end;
 
@@ -182,7 +187,7 @@ begin
     if dayRs.fieldbyName('NOTAX_MONEY').AsFloat<>0 then //毛利 除 不含税金额
        result.QTSale_PRF_RATE:=(result.QTSale_PRF*100)/dayRs.fieldbyName('NOTAX_MONEY').AsFloat;
   end;
-
+  dayJh.first;
   //最后一次进货情况
   result.TDStockGods_Count:=dayJh.fieldbyName('GODS_COUNT').AsInteger;
   result.TDStock_AMT:=dayJh.fieldbyName('STK_AMT').AsFloat;
@@ -262,9 +267,9 @@ begin
     result.TMSale_SINGLE_MNY_UP_RATE:=FormatFloatValue((result.TMSale_SINGLE_MNY-result.LMSale_SINGLE_MNY)*100/result.LMSale_SINGLE_MNY,2);   //本月单条金额增长率;
 
   if result.TMCust_AMT<>0 then
-    result.TMCust_AMT_RATE:=result.TMCust_AMT/result.TMSale_AMT; //本月消费者消费数量占的比例;
+    result.TMCust_AMT_RATE:=result.TMCust_AMT*100/result.TMSale_AMT; //本月消费者消费数量占的比例;
   if result.TMCust_MNY<>0 then
-    result.TMCust_MNY_RATE:=result.TMCust_MNY/result.TMSale_MNY; //本月消费者消费金额占的比例;
+    result.TMCust_MNY_RATE:=result.TMCust_MNY*100/result.TMSale_MNY; //本月消费者消费金额占的比例;
 
   result.TMCust_MAX_TIME := GetTMCust_MAX_TIME;
 
@@ -277,6 +282,9 @@ begin
   //2011.10.12 消费者(会员)情况:
   result.TMCust_Count:=CustRs.FieldByName('allCount').AsInteger;       //总的消费者个数;
   result.TMCust_NEW_Count:=CustRs.FieldByName('newCount').AsInteger;   //本月新建消费者个数;
+
+  result.TMStock_AMT:=FormatFloatValue(mthJh.FieldbyName('STOCK_AMT').AsFloat,2);  //本月入库数量:条
+  result.TMStock_MNY:=FormatFloatValue(mthJh.FieldbyName('STOCK_MNY').AsFloat,2);  //本月入库数量:条
 end;
 
 function TWelcome.FormatFloatValue(InValue: real; size: integer): real;
@@ -554,7 +562,32 @@ procedure TWelcome.LoadMths;
 var
   CalcUnit,str:string;
 begin
+  if CurMonth=Month then Exit;
+  CurMonth := '';
   CalcUnit:='(case when isnull(SMALLTO_CALC,0)=0 then 1.0 else cast(SMALLTO_CALC*1.00 as decimal(18,3)) end)';
+
+  //取会员情况:
+  CustRs.Close;
+  CustRs.SQL.Text:=
+    'select count(CUST_ID) as allCount,sum(case when SND_DATE>='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-01'' and SND_DATE<='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-'+FDay2+''' then 1 else 0 end) as newCount from PUB_CUSTOMER '+
+    ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
+  CustRs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  CustRs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Factor.Open(CustRs);
+
+  MthJh.close;
+  MthJh.SQL.Text:= ParseSQL(Factor.iDbType,
+    'select sum(CALC_AMOUNT/'+CalcUnit+') as STOCK_AMT '+  //有库存商品总数
+    ' ,sum(CALC_MONEY) as STOCK_MNY '+
+    ' from VIW_STOCKDATA a,PUB_GOODSINFO b '+
+    ' where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001 and a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and '+
+    ' a.STOCK_DATE>=:BEG_DATE and a.STOCK_DATE<=:END_DATE ');
+  MthJh.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  MthJh.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  MthJh.ParamByName('BEG_DATE').AsInteger := StrtoInt(FMonth+'01');   //本月第一天
+  MthJh.ParamByName('END_DATE').AsInteger := StrtoInt(FMonth+FDay2);  //本月今天
+  Factor.Open(MthJh);
+  
   //昨天销售情况
   str:=                                           
     'select round(a.SALES_DATE / 100) as SALES_DATE,'+
@@ -603,16 +636,7 @@ begin
   MthRs.ParamByName('TM_BEGIN_DATE').AsInteger := StrtoInt(FMonth+'01');  //本月第一天
   MthRs.ParamByName('TM_END_DATE').AsInteger :=   StrtoInt(FMonth+FDay2);  //本月今天
   Factor.Open(MthRs);
-
-  //取会员情况:
-  CustRs.Close;
-  CustRs.SQL.Text:=
-    'select count(CUST_ID) as allCount,sum(case when SND_DATE>='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-01'' and SND_DATE<='''+Copy(FMonth,1,4)+'-'+Copy(FMonth,5,2)+'-'+FDay2+''' then 1 else 0 end) as newCount from PUB_CUSTOMER '+
-    ' where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID ';
-  CustRs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  CustRs.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-  Factor.Open(CustRs);
-
+  CurMonth := Month;
 end;
 
 procedure TWelcome.SetMonth(const Value: string);
@@ -627,9 +651,14 @@ begin
      begin
        FDay2:=Copy(FormatDatetime('YYYYMMDD',Date()),7,2);
        if formatDatetime('DD',Date())= formatdatetime('DD',incMonth(CurDate,1)-1) then
-          FDay1:= FormatDatetime('DD',incMonth(CurDate)-1)
+          FDay1:= FormatDatetime('DD',CurDate-1)
        else
-          FDay1:= Copy(FormatDatetime('YYYYMMDD',Date()),7,2);
+          FDay1:= FormatDatetime('DD',Date());
+     end
+  else
+     begin
+          FDay1:= FormatDatetime('DD',CurDate-1);
+          FDay2:= formatdatetime('DD',incMonth(CurDate,1)-1);
      end;
 end;
 
@@ -726,6 +755,12 @@ begin
   finally
     list.Free;
   end;
+end;
+
+procedure TWelcome.WRefresh;
+begin
+  dayRs.close;
+  CurMonth := '';
 end;
 
 end.

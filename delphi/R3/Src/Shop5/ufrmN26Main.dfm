@@ -5719,6 +5719,11 @@ inherited frmN26Main: TfrmN26Main
       Caption = #25104#26412#35843#25972
       OnExecute = actfrmGoodsMonthExecute
     end
+    object actfrmSaleDaySingleReport: TAction
+      Tag = 41200001
+      Caption = #38144#21806#26085#25253
+      OnExecute = actfrmSaleDaySingleReportExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

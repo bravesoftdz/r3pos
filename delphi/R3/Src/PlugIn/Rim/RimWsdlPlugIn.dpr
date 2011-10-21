@@ -62,6 +62,7 @@ begin
     try                                 
       WsdlFactory:=TWsdlSyncFactory.Create;
       WsdlFactory.dbResoler := dbResoler;
+      WsdlFactory.N26Version := false;
       ReRun:=WsdlFactory.CallSyncData(GPlugIn,StrPas(Params));
       if ReRun=0 then
       begin

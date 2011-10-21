@@ -7,14 +7,14 @@ inherited frmSaleAnaly: TfrmSaleAnaly
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 976
-    Height = 603
+    Width = 968
+    Height = 592
     inherited RzPanel2: TRzPanel
-      Width = 966
-      Height = 593
+      Width = 958
+      Height = 582
       inherited RzPage: TRzPageControl
-        Width = 960
-        Height = 587
+        Width = 952
+        Height = 576
         ActivePage = TabSheet2
         FixedDimension = 25
         object TabSheet2: TRzTabSheet [0]
@@ -22,8 +22,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
           object RzPanel1: TRzPanel
             Left = 0
             Top = 0
-            Width = 958
-            Height = 560
+            Width = 950
+            Height = 549
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -32,8 +32,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 948
-              Height = 550
+              Width = 940
+              Height = 539
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -41,14 +41,14 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               object RzPnl2: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 948
+                Width = 940
                 Height = 74
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  948
+                  940
                   74)
                 object Label8: TLabel
                   Left = 17
@@ -274,23 +274,23 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   GridColor = clGray
                   TabOrder = 6
                   object P2_RB_Money: TcxRadioButton
-                    Left = 4
+                    Left = 68
                     Top = 1
                     Width = 58
                     Height = 17
                     Caption = #38144#21806#39069
-                    Checked = True
                     TabOrder = 0
-                    TabStop = True
                     OnClick = P2_RB_MoneyClick
                   end
                   object P2_RB_PRF: TcxRadioButton
-                    Left = 78
+                    Left = 6
                     Top = 1
                     Width = 46
                     Height = 17
                     Caption = #27611#21033
+                    Checked = True
                     TabOrder = 1
+                    TabStop = True
                     OnClick = P2_RB_PRFClick
                   end
                   object P2_RB_AMT: TcxRadioButton
@@ -375,18 +375,18 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               object PnlSB2: TRzPanel
                 Left = 0
                 Top = 74
-                Width = 948
-                Height = 476
+                Width = 940
+                Height = 465
                 Align = alClient
                 BorderOuter = fsNone
                 BorderSides = []
                 Color = clWhite
                 TabOrder = 1
                 object PnlS: TRzPanel
-                  Left = 947
+                  Left = 939
                   Top = 0
                   Width = 1
-                  Height = 476
+                  Height = 465
                   Align = alRight
                   BorderOuter = fsNone
                   BorderSides = []
@@ -396,8 +396,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 object SB2: TScrollBox
                   Left = 0
                   Top = 0
-                  Width = 947
-                  Height = 476
+                  Width = 939
+                  Height = 465
                   HorzScrollBar.Style = ssFlat
                   HorzScrollBar.Tracking = True
                   VertScrollBar.Tracking = True
@@ -445,7 +445,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  948
+                  940
                   74)
                 object Label13: TLabel
                   Left = 17
@@ -502,7 +502,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Caption = #32479#35745#31867#22411
                 end
                 object Label19: TLabel
-                  Left = 811
+                  Left = 795
                   Top = 54
                   Width = 48
                   Height = 12
@@ -510,7 +510,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Caption = #26174#31034#21333#20301
                 end
                 object Label20: TLabel
-                  Left = 811
+                  Left = 795
                   Top = 31
                   Width = 48
                   Height = 12
@@ -735,7 +735,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   TabOrder = 9
                 end
                 object fndP2UNIT_ID: TcxComboBox
-                  Left = 861
+                  Left = 845
                   Top = 50
                   Width = 80
                   Height = 20
@@ -745,7 +745,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   TabOrder = 10
                 end
                 object edtMoneyUnit: TcxComboBox
-                  Left = 861
+                  Left = 845
                   Top = 27
                   Width = 80
                   Height = 20
@@ -762,8 +762,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               object PnlSB3: TRzPanel
                 Left = 0
                 Top = 74
-                Width = 948
-                Height = 476
+                Width = 940
+                Height = 465
                 Align = alClient
                 BorderOuter = fsNone
                 BorderSides = []
@@ -806,13 +806,13 @@ inherited frmSaleAnaly: TfrmSaleAnaly
         inherited TabSheet1: TRzTabSheet
           Caption = #32463#33829#27010#20917
           inherited RzPanel3: TRzPanel
-            Width = 958
-            Height = 560
+            Width = 950
+            Height = 549
             inherited Panel4: TPanel
-              Width = 948
-              Height = 550
+              Width = 940
+              Height = 539
               inherited w1: TRzPanel
-                Width = 948
+                Width = 940
                 Height = 97
                 Color = clBtnFace
                 object RzLabel2: TRzLabel
@@ -1211,14 +1211,14 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               end
               inherited RzPanel7: TRzPanel
                 Top = 97
-                Width = 948
-                Height = 453
+                Width = 940
+                Height = 442
                 OnResize = RzPanel7Resize
                 object Pnl_Mm: TRzPanel
                   Left = 2
                   Top = 265
-                  Width = 944
-                  Height = 186
+                  Width = 936
+                  Height = 175
                   Align = alClient
                   BorderOuter = fsGroove
                   BorderSides = []
@@ -1227,8 +1227,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   object AnalyInfo: TcxMemo
                     Left = 0
                     Top = 24
-                    Width = 944
-                    Height = 162
+                    Width = 936
+                    Height = 151
                     Align = alClient
                     Properties.ReadOnly = True
                     TabOrder = 0
@@ -1237,7 +1237,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   object RzTool: TRzPanel
                     Left = 0
                     Top = 0
-                    Width = 944
+                    Width = 936
                     Height = 24
                     Align = alTop
                     BorderOuter = fsGroove
@@ -1327,7 +1327,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 object Pnl_Char: TRzPanel
                   Left = 2
                   Top = 2
-                  Width = 944
+                  Width = 936
                   Height = 263
                   Align = alTop
                   BorderOuter = fsGroove
@@ -1337,7 +1337,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   object Chart1: TChart
                     Left = 0
                     Top = 0
-                    Width = 944
+                    Width = 936
                     Height = 263
                     BackWall.Brush.Color = clWhite
                     BackWall.Brush.Style = bsClear
@@ -1384,15 +1384,15 @@ inherited frmSaleAnaly: TfrmSaleAnaly
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 976
+    Width = 968
     inherited Image1: TImage
-      Width = 606
+      Width = 594
     end
     inherited Image3: TImage
-      Width = 606
+      Width = 594
     end
     inherited Image14: TImage
-      Left = 956
+      Left = 948
     end
     inherited CoolBar1: TCoolBar
       inherited ToolBar1: TToolBar

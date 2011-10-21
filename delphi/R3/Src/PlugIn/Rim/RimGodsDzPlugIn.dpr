@@ -28,7 +28,8 @@ uses
   uBaseSyncFactory in '..\Pub\uBaseSyncFactory.pas',
   uRimSyncFactory in 'uRimSyncFactory.pas',
   uGodsDzFactory in 'uGodsDzFactory.pas',
-  uGodsDzCaFactory in 'uGodsDzCaFactory.pas';
+  uGodsDzCaFactory in 'uGodsDzCaFactory.pas',
+  ObjCommon in '..\..\Shop5\Obj\ObjCommon.pas';
 
 {$R *.res}
 

@@ -3882,7 +3882,11 @@ begin
                if rs.FieldByName('VALUE').AsString<FieldbyName('VALUE').AsString then
                   begin
                     FieldbyName('VALUE').AsString := rs.FieldByName('VALUE').AsString;
-                  end
+                  end;
+               if rs.FieldByName('VALUE').AsString<>FieldbyName('VALUE').AsString then
+                  begin
+                    FieldbyName('VALUE').asInteger := Params.ParambyName('SYN_TIME_STAMP').asInteger;
+                  end;
              end;
           result := inherited BeforeInsertRecord(AGlobal);
         finally

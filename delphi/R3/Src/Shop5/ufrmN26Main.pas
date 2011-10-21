@@ -289,6 +289,7 @@ type
     actfrmN26Net: TAction;
     actfrmGoodsMonth: TAction;
     CA_MODULE: TZQuery;
+    actfrmSaleDaySingleReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -410,6 +411,7 @@ type
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
     procedure actfrmGoodsMonthExecute(Sender: TObject);
+    procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -527,7 +529,6 @@ procedure TfrmN26Main.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
-  LoginFactory.Logout;
   Timer1.Enabled := false;
   if TimerFactory<>nil then TimerFactory.Free;
   frmLogo.Free;
@@ -725,6 +726,7 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
+  LoginFactory.Version := RzVersionInfo.FileVersion;
   if TimerFactory<>nil then TimerFactory.Free;
   try
   if not Logined or Locked then
@@ -906,18 +908,34 @@ begin
   result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
 end;
 begin
+  if PrainpowerJudge.Locked>0 then
+     begin
+       ShowMsgBox('正在执行消息同步，请稍等再重试退出软件..','友情提示..',MB_OK+MB_ICONINFORMATION);
+       CanClose := false;
+       Exit;
+     end;
   if not SystemShutdown and (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        CanClose := false;
        Exit;
        //Application.Minimize;
      end;
+  LoginFactory.Logout;
+  Timer1.Enabled := false;
   StopSyncTask;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
+  if not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and not CaFactory.CheckDebugSync then
      begin
         try
+          Global.TryRemateConnect;
+        except
+          Exit;
+        end;
+        try
+          if not SyncFactory.SyncLockCheck then Exit;
+          if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
+          if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self); 
           SyncFactory.SyncAll;
         except
           on E:Exception do
@@ -3869,6 +3887,7 @@ var
   sl:TStringList;
 begin
   inherited;
+  if not CaFactory.Audited then Raise Exception.Create('不支持脱机使用..');
   if not CA_MODULE.Locate('MODU_ID',inttostr(TRzGroupItem(Sender).Tag),[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
   delete(s,1,4);
@@ -3892,7 +3911,7 @@ begin
   try
     Form.Caption := CA_MODULE.FieldbyName('MODU_NAME').asString;
     sl.CommaText := s;
-    TfrmN26Browser(Form).OpenUrl(ExtractFilePath(ParamStr(0))+sl.values['url']);
+    TfrmN26Browser(Form).OpenUrl(TfrmN26Browser(Form).EncodeUrl(sl.values['url']) );
     Form.SetFocus;
     DoActiveChange(Form);
   except
@@ -3909,6 +3928,7 @@ var
   Action:TAction;
 begin
   inherited;
+  if not CaFactory.Audited then Raise Exception.Create('不支持脱机使用..');
   if not CA_MODULE.Locate('MODU_NAME','网上订货',[]) then Raise Exception.Create('你没有开通网上订货业务');
   if CA_MODULE.FieldByName('ACTION_NAME').AsString='actfrmN26Net' then
      begin
@@ -3934,7 +3954,7 @@ begin
         try
           Form.Caption := CA_MODULE.FieldbyName('MODU_NAME').asString;
           sl.CommaText := s;
-          TfrmN26Browser(Form).OpenUrl(ExtractFilePath(ParamStr(0))+sl.values['url']);
+          TfrmN26Browser(Form).OpenUrl(TfrmN26Browser(Form).EncodeUrl(sl.values['url']));
           Form.SetFocus;
           DoActiveChange(Form);
         except
@@ -3998,6 +4018,30 @@ begin
     Form := TfrmGoodsMonth.Create(self);
     AddFrom(Form);
   end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmSaleDaySingleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm('TfrmSimpleSaleDayReport');
+  if not Assigned(Form) then
+  begin
+    Form := TfrmSaleDayReport.Create(self);
+    TfrmSaleDayReport(Form).SingleReportParams;
+    AddFrom(Form);
+  end;
+  Form.Name := 'TfrmSimpleSaleDayReport';
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;

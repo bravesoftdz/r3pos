@@ -112,10 +112,14 @@ begin
 end;
 var s: String;
 begin
-  s := '<FONT STYLE="font-family: ' + Font.Name;
-  s := s + '; font-size: ' + IntToStr(Font.Size);
-  s := s + 'pt; color: #' + GetColor(Font.Color) + '">';
 
+//  s := '<FONT STYLE="font-family: ' + Font.Name;
+//  s := s + '; font-size: ' + IntToStr(abs(Font.Height));
+//  s := s + 'px; color: #' + GetColor(Font.Color) + '">';
+  if Font.Size=9 then
+    s := '<span class="txtContent1" style="color:#'+GetColor(Font.Color)+';" >'
+  else
+    s := '<span class="txtTitle1" style="color:#'+GetColor(Font.Color)+';" >';
   if (fsBold in Font.Style) then s := s + '<B>';
   if (fsItalic in Font.Style) then s := S + '<I>';
   if (fsUnderline in Font.Style) then s := s + '<U>';
@@ -130,13 +134,14 @@ begin
   if Text <> '' then
     s := s + Text
   else
-    s := s + '&nbsp';
+    s := s + '&nbsp;';
 
   if (fsBold in Font.Style) then s := s + '</B>';
   if (fsItalic in Font.Style) then s := S + '</I>';
   if (fsUnderline in Font.Style) then s := s + '</U>';
   if (fsStrikeOut in Font.Style) then s := s + '</STRIKE>';
-  s := s + '</FONT>';
+//  s := s + '</FONT>';
+  s := s + '</span>';
 
   result := s+ #13#10;
 end;
@@ -152,8 +157,12 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmSaleAnaly)">'+PutText(Font,'1.销售概况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    Font.Size := 12;
+    Font.Color := clNavy;
+    result := '1.<a href="dsk=(action=actfrmSaleDaySingleReport)">'+PutText(Font,'销售情况')+'</a>' +'<BR>'+ #13#10;
+    Font.Size := 9;
     Font.Style := [];
+    Font.Color := clBlack;
     MsgDayInfo := Welcome.EncodeMsgDayInfo;
     NotYSFlag:=(MsgDayInfo.YDSale_AMT=0) and (MsgDayInfo.YDSale_MNY=0) and (MsgDayInfo.YDSale_PRF=0);
     NotTDFlag:=(MsgDayInfo.TDSale_AMT=0) and (MsgDayInfo.TDSale_MNY=0) and (MsgDayInfo.TDSale_PRF=0);
@@ -169,7 +178,7 @@ begin
                     InttoStr(MsgDayInfo.TDSaleBill_Count)+'笔，'+FormatFloat('#0.###',MsgDayInfo.TDSale_AMT)+'条，'+
                     '金额'+FormatFloat('#0.00',MsgDayInfo.TDSale_MNY)+'元，'+
                     '毛利'+FormatFloat('#0.00',MsgDayInfo.TDSale_PRF)+'元，'+
-                    '毛利率'+FormatFloat('#0.00',MsgDayInfo.TDSale_PRF_RATE)+'%，继续加油！')+ #13#10+'<BR>'+ #13#10;
+                    '毛利率'+FormatFloat('#0.00',MsgDayInfo.TDSale_PRF_RATE)+'%，继续加油！')+ #13#10;
     end else
     if (Not NotYSFlag) and (NotTDFlag) then //昨天经营,今天还没经营
     begin
@@ -191,9 +200,9 @@ begin
              '金额下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_MNY-MsgDayInfo.YDSale_MNY)+'元，'+
              '毛利下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_PRF-MsgDayInfo.YDSale_PRF)+'元。';
          end;
-      result := result + PutText(Font,s)+'<BR>'+#13#10;
+      result := result + PutText(Font,s)+#13#10+'<br>'+#13#10;
       s := '    您今天还没有销售，祝您生意兴隆，加油！';
-      result := result + PutText(Font,s)+#13#10+'<BR>'+ #13#10;
+      result := result + PutText(Font,s)+#13#10;
     end else
     if (not NotYSFlag) and (not NotTDFlag) then //昨天经营,今天还没经营
     begin
@@ -215,7 +224,7 @@ begin
              '金额下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_MNY-MsgDayInfo.YDSale_MNY)+'元，'+
              '毛利下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_PRF-MsgDayInfo.YDSale_PRF)+'元。';
          end;
-      result := result + PutText(Font,s)+#13#10+'<BR>'+ #13#10;
+      result := result + PutText(Font,s)+#13#10+'<br>'+#13#10;
       if MsgDayInfo.TDSale_PRF<MsgDayInfo.YDSale_PRF then //小于昨天
       begin
         s:='    今天您的销售卷烟品种'+InttoStr(MsgDayInfo.TDSaleGods_Count)+'个，'+
@@ -250,8 +259,12 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmStockTotalReport)">'+PutText(Font,'2.进货情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    Font.Size := 12;
+    Font.Color := clNavy;
+    result := '2.<a href="dsk=(action=actfrmStockDayReport)">'+PutText(Font,'进货情况')+'</a>'+ #13#10+'<BR>'+ #13#10;
+    Font.Size := 9;
     Font.Style := [];
+    Font.Color := clBlack;
     MsgDayInfo := Welcome.EncodeMsgDayInfo;
     if MsgDayInfo.SCStock_AMT<>0 then
     s:=
@@ -269,7 +282,7 @@ begin
           '金额增长'+FormatFloat('#0.00',MsgDayInfo.TDStock_MNY-MsgDayInfo.SCStock_MNY)+'元，'+
           '单条值增长'+FormatFloat('#0.00',(MsgDayInfo.TDStock_MNY/MsgDayInfo.TDStock_AMT)-(MsgDayInfo.SCStock_MNY/MsgDayInfo.SCStock_AMT))+'元。'
       end;
-    result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
+    result := result + PutText(Font,s)+ #13#10;
   finally
     Font.Free;
   end;
@@ -285,11 +298,16 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmStgTotalReport)">'+PutText(Font,'3.库存情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    Font.Size := 12;
+    Font.Color := clNavy;
+    result := '3.<a href="dsk=(action=actfrmStorageTracking)">'+PutText(Font,'库存情况')+'</a>'+ #13#10+'<BR>'+ #13#10;
+    Font.Size := 9;
     Font.Style := [];
+    Font.Color := clBlack;
     MsgDayInfo := Welcome.EncodeMsgDayInfo;
     s:='    您当前经营卷烟'+InttoStr(MsgDayInfo.TMGods_All_Count)+'个，'+
-         '库存品种'+InttoStr(MsgDayInfo.TMGods_Count)+'个，'+         ''+FloattoStr(MsgDayInfo.TMAllStor_AMT)+'条';    if MsgDayInfo.TMLowStor_Count>0 then      s:=s+'，有'+InttoStr(MsgDayInfo.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。'    else      s:=s+'。';    result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
+         '库存品种'+InttoStr(MsgDayInfo.TMGods_Count)+'个，'+         ''+FloattoStr(MsgDayInfo.TMAllStor_AMT)+'条';    if MsgDayInfo.TMLowStor_Count>0 then       begin         result := result + PutText(Font,s+'，')+ #13#10;         s := '有'+InttoStr(MsgDayInfo.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。';         Font.Color := clBlue;         result := result + PutText(Font,s)+ #13#10;         Font.color := clBlack;       end    else       begin          s:=s+'。';          result := result + PutText(Font,s)+ #13#10;
+       end;
   finally
     Font.Free;
   end;
@@ -305,10 +323,14 @@ begin
   result := result+'<style type="text/css">'+#13+#10;
   result := result+'<!--   '+#13+#10;
   result := result+'* {margin:0;padding:0; border:0;}'+#13+#10;
-  result := result+'a:link { text-decoration: none; }'+#13+#10;
-  result := result+'a:visited { text-decoration: none; } '+#13+#10;
-  result := result+'a:hover { text-decoration: none; } '+#13+#10;
-  result := result+'a:active { text-decoration: none; } '+#13+#10;
+  result := result+'a:link { color: #004080; }'+#13+#10;
+  result := result+'a:visited { color: #004080; } '+#13+#10;
+//  result := result+'a:hover { text-decoration: none; } '+#13+#10;
+//  result := result+'a:active { text-decoration: none; } '+#13+#10;
+  result := result+'body {line-height:22px;} '+#13+#10;
+  result := result+'.txtTitle1{	font-family: 宋体;	font-size: 16px;vertical-align:bottom;} '+#13+#10;
+  result := result+'.txtContent1{	font-family: 宋体;font-size: 12px;vertical-align:bottom;} '+#13+#10;
+//  result := result+'* {letter-spacing: 0mm;} '+#13+#10;
   result := result+'  -->'+#13+#10;
   result := result+'</style>'+#13+#10;
   result := result+EncodeScript;
@@ -342,6 +364,7 @@ begin
        frmWelcome.Show;
        frmWelcome.bringtoFront;
      end;
+  Welcome.WRefresh;
   frmWelcome.OpenPage1;
 end;
 
@@ -400,7 +423,7 @@ procedure TfrmWelcome.OpenPage2;
 begin
   RzPage.ActivePageIndex := 1;
   ShowInfo(MthBrowser,EncodeMthInfo);
-  Lbl_Month_Title.Caption := copy(Welcome.Month,1,4)+'年'+copy(Welcome.Month,5,2)+'月份经营提醒';
+  Lbl_Month_Title.Caption := copy(Welcome.Month,5,2)+'月份经营提醒';
 end;
 
 procedure TfrmWelcome.RzBmpButton2Click(Sender: TObject);
@@ -421,22 +444,26 @@ begin
   result := result+'<html>'+#13+#10;
   result := result+'<head>'+#13+#10;
   result := result+'<title>每日经营提醒</title>'+#13+#10;
-  result := result+'</head>'+#13+#10;
+  result := result+'</head>'+#13+#10;                                                           
   result := result+'<style type="text/css">'+#13+#10;
   result := result+'<!--   '+#13+#10;
   result := result+'* {margin:0;padding:0; border:0;}'+#13+#10;
-  result := result+'a:link { text-decoration: none; }'+#13+#10;
-  result := result+'a:visited { text-decoration: none; } '+#13+#10;
-  result := result+'a:hover { text-decoration: none; } '+#13+#10;
-  result := result+'a:active { text-decoration: none; } '+#13+#10;
+  result := result+'a:link { color: #004080; }'+#13+#10;
+  result := result+'a:visited { color: #004080; } '+#13+#10;
+//  result := result+'a:hover { text-decoration: none; } '+#13+#10;
+//  result := result+'a:active { text-decoration: none; } '+#13+#10;
+  result := result+'body {line-height:22px;} '+#13+#10;
+  result := result+'.txtTitle1{	font-family: 宋体;	font-size: 16px;vertical-align:bottom;} '+#13+#10;
+  result := result+'.txtContent1{	font-family: 宋体;font-size: 12px;vertical-align:bottom;} '+#13+#10;
+//  result := result+'* {letter-spacing: 0mm;} '+#13+#10;
   result := result+'  -->'+#13+#10;
   result := result+'</style>'+#13+#10;
   result := result+EncodeScript;
-  result := result+'<body border="0" scroll="no" bgcolor="#EDF6FD" oncontextmenu ="return false">'+#13+#10;
+  result := result+'<body border="0" scroll="no" bgcolor="#EDF6FD" oncontextmenu ="return true">'+#13+#10;
   result := result+EncodeMthStockInfo;
-  result := result+'<BR><BR>'+EncodeMthSalesInfo;
-  result := result+'<BR><BR>'+EncodeMthStgInfo;
-  result := result+'<BR><BR>'+EncodeMthCustInfo;
+  result := result+'<BR>'+EncodeMthSalesInfo;
+  result := result+'<BR>'+EncodeMthStgInfo;
+  result := result+'<BR>'+EncodeMthCustInfo;
   result := result+'</body>'+#13+#10;
   result := result+'</html>';
 end;
@@ -466,17 +493,21 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmStockTotalReport)">'+PutText(Font,'1.本月进货情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    Font.Size := 12;
+    Font.Color := clNavy;
+    result := '1.<a href="dsk=(action=actfrmStockDayReport)">'+PutText(Font,'本月进货情况')+'</a>'+ #13#10+'<BR>'+ #13#10;
     Font.Style := [];
+    Font.Color := clBlack;
+    Font.Size := 9;
 
     MsgDayInfo := Welcome.EncodeMsgDayInfo;
     MsgMonthInfo := Welcome.EncodeMsgMthInfo;
 
     //1、本月进货情况
-    s:='    烟草公司本月供应的畅销品种'+InttoStr(MsgDayInfo.TMGods_SX_Count)+'个，'+
+    s:='    烟草公司当前供应的畅销品种'+InttoStr(MsgDayInfo.TMGods_SX_Count)+'个，'+
           '您目前经营品种'+InttoStr(MsgDayInfo.TMGods_All_Count)+'个；'+
-          '本月烟草公司供应新品'+InttoStr(MsgDayInfo.TMGods_NEW_Count)+'个，'+
-          '您目前经营'+InttoStr(MsgDayInfo.TMGods_NEW_SALE_Count)+'个；'+
+          '当前烟草公司供应新品'+InttoStr(MsgDayInfo.TMGods_NEW_Count)+'个，'+
+          '您经营'+InttoStr(MsgDayInfo.TMGods_NEW_SALE_Count)+'个；'+
           '您本月购进卷烟'+formatFloat('#0.0#',MsgMonthInfo.TMStock_AMT)+'条，'+
           '单条值'+formatFloat('#0.00',DivText(MsgMonthInfo.TMStock_MNY,MsgMonthInfo.TMStock_AMT))+'元。';
 
@@ -496,8 +527,12 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmSaleAnaly)">'+PutText(Font,'2.本月销售情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    Font.Size := 12;
+    Font.Color := clNavy;
+    result := '2.<a href="dsk=(action=actfrmSaleAnaly)">'+PutText(Font,'本月销售情况')+'</a>'+ #13#10+'<BR>'+ #13#10;
     Font.Style := [];
+    Font.Color := clBlack;
+    Font.Size := 9;
     MsgMthInfo := Welcome.EncodeMsgMthInfo;
     
     //2、本月销售情况
@@ -515,7 +550,7 @@ begin
     result := result + PutText(Font,s)+ '<br>'+ #13#10;
     s:='    您本月毛利最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_PRF+'，上月毛利最大的五个规格分别是：'+MsgMthInfo.LMGods_SY_MaxGrow_PRF+'。';
     result := result + PutText(Font,s)+ '<br>'+ #13#10;
-    s:='    您本月与上月比：销量增长最快的规格是：'+MsgMthInfo.TMGods_MaxGrowRate_AMT+'。';
+    s:='    您本月与上月比,销量增长最快的规格是：'+MsgMthInfo.TMGods_MaxGrowRate_AMT+'。';
     result := result + PutText(Font,s)+ #13#10;
   finally
     Font.Free;
@@ -533,13 +568,17 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmStgTotalReport)">'+PutText(Font,'3.当前库存情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    Font.Size := 12;
+    Font.Color := clNavy;
+    result := '3.<a href="dsk=(action=actfrmStorageTracking)">'+PutText(Font,'当前库存情况')+'</a>'+ #13#10+'<BR>'+ #13#10;
+    Font.Size := 9;
+    Font.Color := clBlack;
     Font.Style := [];
     MsgDayInfo := Welcome.EncodeMsgDayInfo;
     s:='    您当前经营卷烟'+InttoStr(MsgDayInfo.TMGods_All_Count)+'个，'+
-         '库存品种'+InttoStr(MsgDayInfo.TMGods_Count)+'个，'+         ''+FloattoStr(MsgDayInfo.TMAllStor_AMT)+'条';    if MsgDayInfo.TMLowStor_Count>0 then      s:=s+'，有'+InttoStr(MsgDayInfo.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。'    else      s:=s+'。';    result := result + PutText(Font,s)+ #13#10;
-  finally
-    Font.Free;
+         '库存品种'+InttoStr(MsgDayInfo.TMGods_Count)+'个，'+         ''+FloattoStr(MsgDayInfo.TMAllStor_AMT)+'条';    if MsgDayInfo.TMLowStor_Count>0 then       begin         result := result + PutText(Font,s+'，')+ #13#10;         s := '有'+InttoStr(MsgDayInfo.TMLowStor_Count)+'个规格低于合理库存，应及时补充货源。';         Font.Color := clBlue;         result := result + PutText(Font,s)+ #13#10;         Font.color := clBlack;       end    else       begin          s:=s+'。';          result := result + PutText(Font,s)+ #13#10;
+       end;
+  finally    Font.Free;
   end;
 end;
 
@@ -553,8 +592,12 @@ begin
   try
     Font.Assign(self.Font);
     Font.Style := [fsBold];
-    result := '<a href="dsk=(action=actfrmClientSaleReport)">'+PutText(Font,'4.您的客户情况')+'</a>'+ #13#10+'<BR><BR>'+ #13#10;
+    Font.Color := clNavy;
+    Font.Size := 12;
+    result := '4.<a href="dsk=(action=actfrmCustomer)">'+PutText(Font,'您的客户情况')+'</a>'+ #13#10+'<BR>'+ #13#10;
+    Font.Size := 9;
     Font.Style := [];
+    Font.Color := clBlack;
     MsgMthInfo := Welcome.EncodeMsgMthInfo;
   //4、您的客户情况
    s:='    您目前已建立消费者档案'+InttoStr(MsgMthInfo.TMCust_Count)+'个，'+
@@ -566,10 +609,12 @@ begin
    s:='    这些消费者销售数量'+formatFloat('#0.0#',MsgMthInfo.TMCust_AMT)+'条，'+
          '占卷烟总销量的'+formatFloat('#0.00',MsgMthInfo.TMCust_AMT_RATE)+'%，'+
          '消费金额'+formatFloat('#0.00',MsgMthInfo.TMCust_MNY)+'元，'+
-         '占卷烟总销售额的'+formatFloat('#0.00',MsgMthInfo.TMCust_MNY_RATE)+'%；'+
-         '您的客户常在'+MsgMthInfo.TMCust_MAX_TIME+'买烟，该时段可以加强宣传。';
-
-    result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
+         '占卷烟总销售额的'+formatFloat('#0.00',MsgMthInfo.TMCust_MNY_RATE)+'%；';
+    result := result + PutText(Font,s)+ #13#10;
+    s:=  '您的客户常在'+MsgMthInfo.TMCust_MAX_TIME+'买烟，该时段可以加强宣传。';
+    Font.color := clblue;
+    result := result + PutText(Font,s)+ #13#10;
+    Font.color := clBlack;
   finally
     Font.Free;
   end;

@@ -191,7 +191,10 @@ begin
              w := w + 'b.RELATION_ID=:RELATION_ID ';
         end;
       else
-        w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';
+        begin
+          if (rzTree.Selected.Level>0) then
+             w := w + 'j.SORT_ID'+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsString+' = :SORT_ID ';
+        end;
       end;
      end;
   if trim(edtSearch.Text)<>'' then
@@ -525,14 +528,10 @@ var
   AObj:TRecord_;
 begin
   ClearTree(rzTree);
-  case TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-  2:rs := Global.GetZQueryFromName('PUB_CATE_INFO');
-  4:rs := Global.GetZQueryFromName('PUB_BRAND_INFO');
-  5:rs := Global.GetZQueryFromName('PUB_IMPT_INFO');
-  6:rs := Global.GetZQueryFromName('PUB_AREA_INFO');
-  7:rs := Global.GetZQueryFromName('PUB_COLOR_INFO');
-  8:rs := Global.GetZQueryFromName('PUB_SIZE_INFO');
-  end;
+  rs := Global.GetZQueryFromName('PUB_GOODS_INDEXS');
+  rs.Filtered := false;
+  rs.Filter := 'SORT_TYPE='+TRecord_(fndGODS_FLAG1.Properties.Items.Objects[fndGODS_FLAG1.ItemIndex]).FieldByName('CODE_ID').asString;
+  rs.Filtered := true;
   if (rs<>nil) and (rs.Active) then
   begin
     rs.First;

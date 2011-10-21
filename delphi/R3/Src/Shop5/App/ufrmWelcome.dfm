@@ -4841,7 +4841,7 @@ inherited frmWelcome: TfrmWelcome
               ParentFont = False
               TabOrder = 0
               object ImgDay: TImage
-                Left = 187
+                Left = 201
                 Top = 7
                 Width = 154
                 Height = 33
@@ -5218,16 +5218,16 @@ inherited frmWelcome: TfrmWelcome
                   BFF65A87FE3BDCC1FF006D7C7F9FCFAFFFD9}
               end
               object Lbl_Day_Title: TLabel
-                Left = 229
-                Top = 15
-                Width = 78
-                Height = 13
+                Left = 218
+                Top = 11
+                Width = 120
+                Height = 19
                 Caption = #27599#22825#32463#33829#25552#37266
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clWhite
-                Font.Height = -13
+                Font.Height = -19
                 Font.Name = #23435#20307
-                Font.Style = []
+                Font.Style = [fsBold]
                 ParentFont = False
                 Transparent = True
               end
@@ -5659,16 +5659,16 @@ inherited frmWelcome: TfrmWelcome
                   BFF65A87FE3BDCC1FF006D7C7F9FCFAFFFD9}
               end
               object Lbl_Month_Title: TLabel
-                Left = 201
-                Top = 14
-                Width = 105
-                Height = 13
-                Caption = 'Lbl_Month_Title'
+                Left = 198
+                Top = 11
+                Width = 142
+                Height = 19
+                Caption = '09'#26376#20221#32463#33829#25552#37266
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clWhite
-                Font.Height = -13
+                Font.Height = -19
                 Font.Name = #23435#20307
-                Font.Style = []
+                Font.Style = [fsBold]
                 ParentFont = False
                 Transparent = True
               end
@@ -5765,7 +5765,7 @@ inherited frmWelcome: TfrmWelcome
                   FEF7EEFFF6EDFDF7ECFDF5EEFFF6ECFFF6EDFFF6EDFDF5EEFDF6EDFEF8EDDDDC
                   FC493FF00600EA1E16EDFBF7ECFFF7EEFCF5ECFBF6EDFBF6EDFDF5EEFDF7ECFB
                   F5EEFBF7ECFFF5EEFDF7ECFBF6EDFDF5EEFFF7EEE6EAFC4F46F0}
-                Color = clBtnFace
+                Color = clBlack
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clBlack
                 Font.Height = -12

@@ -8,6 +8,7 @@ type
     Proc:TNotifyEvent;
     FTimeOut: int64;
     hEvent: THandle;
+    hExecEvent: THandle;
     procedure SetTimeOut(const Value: int64);
   public
     constructor Create(AProc:TNotifyEvent;uTimeOut:int64);
@@ -59,18 +60,22 @@ begin
   FreeOnTerminate := false;
   TimeOut := uTimeOut;
   hEvent := CreateEvent(nil, True, False, nil);
+  hExecEvent := CreateEvent(nil, True, False, nil);
   ResetEvent(hEvent);
+  ResetEvent(hExecEvent);
   inherited Create(false);
 end;
 
 destructor TSyncThread.Destroy;
 begin
-  DoTerminate;
+  Terminate;
   SyncFactory.Stoped := true;
   SetEvent(hEvent);
-  TimeOut := 1;
-  inherited;
+  TimeOut := 20000;
+  WaitForSingleObject(hExecEvent, TimeOut);
   if hEvent<>0 then CloseHandle(hEvent);
+  if hExecEvent<>0 then CloseHandle(hExecEvent);
+  inherited;
   SyncThread := nil;
 end;
 
@@ -87,6 +92,7 @@ begin
          end;
        end;
   finally
+    SetEvent(hExecEvent);
     CoUninitialize;
   end;
 end;

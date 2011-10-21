@@ -361,7 +361,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
+  ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,ufrmWelcome,
   uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox;
 var
   frmMMToolBox:TfrmMMToolBox;
@@ -441,8 +441,9 @@ procedure TfrmMMMain.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
-  for i:=0 to FList.Count -1 do TObject(FList[i]).Free;
+  for i:=FList.Count -1 downto 0 do TObject(FList[i]).Free;
   FList.Free;
+  if Assigned(frmWelcome) then freeandnil(frmWelcome);
   freeandnil(frmPrgBar);
   inherited;
 
@@ -677,10 +678,10 @@ begin
    finally
      frmLogo.Close;
    end;
-   if mmFactory.logined and (mmGlobal.module[1]='1') then
-      ShowMMList
-   else
-      Show;
+//   if mmFactory.logined and (mmGlobal.module[1]='1') then
+//      ShowMMList
+//   else
+   Show;
 end;
 
 procedure TfrmMMMain.OpenMc(pid: string;mid:integer=0);
@@ -906,16 +907,19 @@ begin
            FList.Delete(i);
            if Sender=frmXsmIEBrowser then
               begin
+                TForm(Sender).WindowState := wsMinimized;
                 TForm(Sender).Left := -9000;
               end;
            if Sender=frmRimIEBrowser then
               begin
+                TForm(Sender).WindowState := wsMinimized;
                 TForm(Sender).Left := -9000;
               end;
            break;
          end;
     end;
   SortToolButton;
+  PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);
 end;
 
 procedure TfrmMMMain.sysCloseClick(Sender: TObject);
@@ -2282,6 +2286,7 @@ begin
            break;
          end;
     end;
+  PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);
 end;
 
 constructor TfrmMMMain.Create(AOwner: TComponent);

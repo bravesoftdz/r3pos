@@ -526,7 +526,6 @@ procedure TfrmShopMain.FormDestroy(Sender: TObject);
 var
   i:integer;
 begin
-  LoginFactory.Logout;
   Timer1.Enabled := false;
   if TimerFactory<>nil then TimerFactory.free;
   frmLogo.Free;
@@ -717,6 +716,7 @@ var
   lDate:TDate;
   AObj:TRecord_;
 begin
+  LoginFactory.Version := RzVersionInfo.FileVersion;
   if TimerFactory<>nil then TimerFactory.Free;
   try
   if not Logined or Locked then
@@ -898,6 +898,7 @@ begin
        Exit;
        //Application.Minimize;
      end;
+  LoginFactory.Logout;
   StopSyncTask;
   if TimerFactory<>nil then TimerFactory.Free;
   if Global.UserID='system' then exit;

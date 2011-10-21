@@ -1603,7 +1603,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
           SetSynTimeStamp('CA_RELATIONS',timeStamp,'#');
         finally
@@ -1771,7 +1771,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
           SetSynTimeStamp('CA_RELATION',timeStamp,'#');
         finally
@@ -1940,7 +1940,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
           SetSynTimeStamp('CA_TENANT',timeStamp,'#');
         finally
@@ -2077,7 +2077,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
           SetSynTimeStamp('PUB_GOODSSORT',timeStamp,'#');
         finally
@@ -2284,7 +2284,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
           SetSynTimeStamp('PUB_GOODSINFO',timeStamp,'#');
         finally
@@ -2417,7 +2417,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
           SetSynTimeStamp('PUB_MEAUNITS',timeStamp,'#');
         finally
@@ -2663,7 +2663,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncSingleTable',Params);
           SetSynTimeStamp('PUB_GOODS_RELATION',timeStamp,'#');
         finally
@@ -2803,7 +2803,7 @@ try
           Params.ParamByName('COMM_LOCK').AsString := '1';
           Params.ParamByName('TIME_STAMP').Value := TimeStamp;
           Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
-          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+          Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
           Factor.UpdateBatch(rs,'TSyncPubBarcode',Params);
           SetSynTimeStamp('PUB_BARCODE',timeStamp,'#');
         finally

@@ -168,6 +168,7 @@ type
     class function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
     class function ReadConfig(Header,Ident,DefValue:string; IniFile: string=''):string;  //读配置文件
+    class function ReadBool(Header,Ident:string;DefValue:boolean; IniFile: string=''):boolean;  //读配置文件
     class function WriteConfig(Header,Ident,Value:string; IniFile: string=''):Boolean; //写配置文件
 
     //调试及跟踪运行使用
@@ -695,7 +696,7 @@ begin
 end;
 
 class function TBaseSyncFactory.ReadConfig(Header,Ident,DefValue:string; IniFile: string=''): string;
-var F: TIniFile; FileName: string; 
+var F: TIniFile; FileName: string;
 begin
   result:='';
   if trim(IniFile)='' then
@@ -887,6 +888,20 @@ begin
     if ReStr='' then
       ReStr:=Copy(trim(SQLMsg),1,50)+' ... '+Copy(trim(SQLMsg),vLen-19,20);
     result:=ReStr;
+  end;
+end;
+
+class function TBaseSyncFactory.ReadBool(Header, Ident:string;DefValue:boolean;IniFile: string): boolean;
+var F: TIniFile; FileName: string;
+begin
+  result:=DefValue;
+  if trim(IniFile)='' then
+    FileName:=ExtractFilePath(Application.ExeName)+'PlugIn.cfg';
+  F:=TIniFile.Create(FileName);
+  try
+    result:=F.ReadBool(Header,Ident,DefValue);
+  finally
+    F.Free;
   end;
 end;
 

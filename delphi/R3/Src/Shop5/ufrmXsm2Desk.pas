@@ -35,10 +35,6 @@ type
     RzPanel2: TRzPanel;
     bgBase: TRzPanel;
     bgFunc: TRzPanel;
-    btnDownOrder: TRzBmpButton;
-    btnStockOrder: TRzBmpButton;
-    btnSalesOrder: TRzBmpButton;
-    btnStorage: TRzBmpButton;
     PopupMenu: TPopupMenu;
     IEDesktop: TWebBrowser;
     RzPanel3: TRzPanel;
@@ -49,10 +45,15 @@ type
     mnuBase: TRzBmpButton;
     mnuSys: TRzBmpButton;
     mnuIn: TRzBmpButton;
+    mnuAcct: TRzBmpButton;
+    deskMng: TPanel;
     Image11: TImage;
+    btnDownOrder: TRzBmpButton;
+    btnStockOrder: TRzBmpButton;
+    btnSalesOrder: TRzBmpButton;
+    btnStorage: TRzBmpButton;
     btnSaleDayReport: TRzBmpButton;
     btnSaleMonthReport: TRzBmpButton;
-    mnuAcct: TRzBmpButton;
     RzBmpButton1: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -80,6 +81,7 @@ type
     procedure btnSaleMonthReportClick(Sender: TObject);
     procedure mnuAcctClick(Sender: TObject);
     procedure RzBmpButton1Click(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     FHookLocked: boolean;
     FCA_MODULE: TZQuery;
@@ -127,6 +129,7 @@ begin
   inherited;
   myBtn := nil;
   Locked := false;
+  FormResize(self);
 end;
 
 procedure TfrmXsm2Desk.KeyBoardHook(Code: integer; Msg: word;
@@ -584,6 +587,13 @@ begin
   if Action=nil then Raise Exception.Create('你没有操作此模块的权限...');
   if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限...');
   Action.OnExecute(Action);
+end;
+
+procedure TfrmXsm2Desk.FormResize(Sender: TObject);
+begin
+  inherited;
+  deskMng.Left := (bgFunc.Width - deskMng.Width) div 2 - 1;
+//  deskMng.Top := (bgFunc.Height - deskMng.Height) div 2 - 1;
 end;
 
 end.

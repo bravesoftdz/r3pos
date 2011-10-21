@@ -215,8 +215,8 @@ begin
       end;
     adv.Add('<html>');
     adv.Add('<title>广告</title>');
+    adv.Add('<style type="text/css">*{margin:0; border:0; padding:0;}</style>');
     adv.Add('<style type="test/css">a:link{text-decoration:none}</style>');
-    adv.Add('<style type="text/css">html,body{margin:0; border:0; padding:0}</style>');
     if AdvInfo.AdvType = 4 then adv.Add('<script src="adv1.js" type="text/javascript"></script>');
     adv.Add('<body scroll="no">');
     case AdvInfo.AdvType of
@@ -368,12 +368,14 @@ end;
 function TAdvFactory.GetUrlStream(url:string;Stream: TStream): boolean;
 begin
   try
+    LogFile.AddLogFile(0,'下载广告:'+url); 
     Http := TIdHttp.Create(nil);
     try
       Http.HandleRedirects := True;
       Http.ReadTimeout := 15000;
       Stream.Position := 0;
       Http.Get(url,Stream);
+      LogFile.AddLogFile(0,'下载完毕:'+url); 
       result := true;
     finally
       Http.Free;
@@ -509,6 +511,7 @@ var
   vStream:_Stream;
   mFileName:string;
 begin
+  LogFile.AddLogFile(0,'开始下载:'+mUrl); 
   vMessage := CreateComObject(CLASS_Message) as IMessage;
   vConfiguration := CreateComObject(CLASS_Configuration) as IConfiguration;
   try
@@ -517,6 +520,7 @@ begin
     vStream := vMessage.GetStream;
     mFileName := ExtractFilePath(ParamStr(0))+'adv\'+id+'.mht';
     vStream.SaveToFile(mFileName, adSaveCreateOverWrite);
+    LogFile.AddLogFile(0,'下载完毕:'+mUrl);
   finally
     vMessage := nil;
     vConfiguration := nil;

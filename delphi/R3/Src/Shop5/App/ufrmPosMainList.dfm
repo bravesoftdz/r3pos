@@ -135,7 +135,7 @@ inherited frmPosMainList: TfrmPosMainList
       end
       object RzBitBtn1: TRzBitBtn
         Left = 323
-        Top = 9
+        Top = 10
         Caption = #30830#23450'(&O)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET

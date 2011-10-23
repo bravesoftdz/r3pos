@@ -157,7 +157,7 @@ end;
 procedure TfrmPosMainList.CdsSalesAfterScroll(DataSet: TDataSet);
 begin
   inherited;
-  if IsEnd or DataSet.Eof then Exit;
+  if IsEnd or not DataSet.Eof then Exit;
   if CdsSales.ControlsDisabled then Exit;
   Open(MaxId);
 end;

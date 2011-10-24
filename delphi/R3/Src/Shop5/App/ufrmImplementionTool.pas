@@ -27,11 +27,13 @@ type
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     actUnlock: TAction;
+    ToolButton4: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure actUnlockExecute(Sender: TObject);
+    procedure actInfoExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -41,7 +43,7 @@ type
 
 
 implementation
-uses uGlobal, uShopGlobal, ufrmBasic;
+uses uGlobal, uShopGlobal, ufrmBasic, ufrmPwdViewer;
 {$R *.dfm}
 
 procedure TfrmImplementionTool.FormCreate(Sender: TObject);
@@ -125,11 +127,18 @@ var ExeSql:String;
 begin
   inherited;
   if dsTenant.IsEmpty then Exit;
+  if MessageBox(Handle,'是否确认对当前企业进行解锁？','友情提示...',MB_YESNO+MB_ICONINFORMATION)<>6 then Exit;
   ExeSql := 'update SYS_DEFINE set VALUE='''' where TENANT_ID='+dsTenant.FieldbyName('TENANT_ID').AsString+' and DEFINE like ''DBKEY_%'' ';
   if Factor.ExecSQL(ExeSql) = 0 then
     MessageBox(Handle,pchar('当前企业没有锁定!'),pchar('友情提示...'),MB_OK+MB_ICONINFORMATION)
   else
     MessageBox(Handle,pchar('当前企业已经解锁!'),pchar('友情提示...'),MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TfrmImplementionTool.actInfoExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmPwdViewer.FindDialog(Self,IntToStr(Global.TENANT_ID));
 end;
 
 end.

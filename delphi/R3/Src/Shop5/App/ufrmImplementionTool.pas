@@ -28,12 +28,14 @@ type
     ToolButton3: TToolButton;
     actUnlock: TAction;
     ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure actUnlockExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
+    procedure actEditExecute(Sender: TObject);
   private
     { Private declarations }
   public
@@ -43,7 +45,7 @@ type
 
 
 implementation
-uses uGlobal, uShopGlobal, ufrmBasic, ufrmPwdViewer;
+uses uGlobal, uShopGlobal, ufrmBasic, ufrmPwdViewer, ufrmResetTimeStamp;
 {$R *.dfm}
 
 procedure TfrmImplementionTool.FormCreate(Sender: TObject);
@@ -139,6 +141,15 @@ procedure TfrmImplementionTool.actInfoExecute(Sender: TObject);
 begin
   inherited;
   TfrmPwdViewer.FindDialog(Self,IntToStr(Global.TENANT_ID));
+end;
+
+procedure TfrmImplementionTool.actEditExecute(Sender: TObject);
+begin
+  inherited;
+  if dsTenant.IsEmpty then Exit;
+  if TfrmResetTimeStamp.ShowDialog(Self,dsTenant.FieldbyName('TENANT_ID').AsString) then
+     MessageBox(Handle,pchar('当前企业所选"资料档案"时间戳重置成功!'),pchar('友情提示...'),MB_OK+MB_ICONINFORMATION);
+
 end;
 
 end.

@@ -341,32 +341,32 @@ inherited frmImplementionTool: TfrmImplementionTool
   inherited RzPanel4: TRzPanel
     Width = 934
     inherited Image1: TImage
-      Left = 187
-      Width = 727
+      Left = 242
+      Width = 672
     end
     inherited Image3: TImage
-      Left = 187
-      Width = 727
+      Left = 242
+      Width = 672
     end
     inherited Image14: TImage
       Left = 914
     end
     inherited rzPanel5: TPanel
-      Left = 187
+      Left = 242
     end
     inherited CoolBar1: TCoolBar
-      Width = 167
+      Width = 222
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 167
+          MinHeight = 222
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 167
+        Width = 222
         ButtonWidth = 55
         object ToolButton2: TToolButton
           Left = 0
@@ -379,8 +379,14 @@ inherited frmImplementionTool: TfrmImplementionTool
           Action = actInfo
           Caption = #29992#25143#23494#30721
         end
-        object ToolButton3: TToolButton
+        object ToolButton5: TToolButton
           Left = 110
+          Top = 0
+          Action = actEdit
+          Caption = #26102#38388#25139
+        end
+        object ToolButton3: TToolButton
+          Left = 165
           Top = 0
           Width = 2
           Caption = 'ToolButton3'
@@ -388,7 +394,7 @@ inherited frmImplementionTool: TfrmImplementionTool
           Style = tbsSeparator
         end
         object ToolButton1: TToolButton
-          Left = 112
+          Left = 167
           Top = 0
           Action = actExit
         end
@@ -396,6 +402,9 @@ inherited frmImplementionTool: TfrmImplementionTool
     end
   end
   inherited actList: TActionList
+    inherited actEdit: TAction
+      OnExecute = actEditExecute
+    end
     inherited actFind: TAction
       OnExecute = actFindExecute
     end

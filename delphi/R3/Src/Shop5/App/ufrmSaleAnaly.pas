@@ -9,7 +9,7 @@ uses
   RzButton, cxButtonEdit, zrComboBoxList, cxDropDownEdit, cxCalendar, cxControls,
   cxContainer, cxTextEdit, cxMaskEdit, uframeBaseAnaly, TeEngine,
   Series, TeeProcs, Chart, cxMemo, cxRadioGroup,ZBase, zrMonthEdit,
-  cxSpinEdit;
+  cxSpinEdit, ufrmDateControl;
 
 type
   TfrmSaleAnaly = class(TframeBaseAnaly)
@@ -115,6 +115,9 @@ type
     fndP2UNIT_ID: TcxComboBox;
     Label20: TLabel;
     edtMoneyUnit: TcxComboBox;
+    P1_DateControl: TfrmDateControl;
+    P3_DateControl: TfrmDateControl;
+    P2_DateControl: TfrmDateControl;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzPanel7Resize(Sender: TObject);
@@ -571,11 +574,17 @@ begin
   inherited;
   P1_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P1_DateControl.StartDateControl := P1_D1;
+  P1_DateControl.EndDateControl := P1_D2;
   fndP1_Sale_UNIT.ItemIndex:=0;   
   P2_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P2_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P2_DateControl.StartDateControl := P2_D1;
+  P2_DateControl.EndDateControl := P2_D2;
   P3_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P3_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P3_DateControl.StartDateControl := P3_D1;
+  P3_DateControl.EndDateControl := P3_D2;
 
   //默认第一分页
   if TabSheet2.TabVisible then

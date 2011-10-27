@@ -9,7 +9,7 @@ uses
   RzCmboBx, RzBckgnd, RzButton, Mask, RzEdit, cxControls, cxContainer, cxEdit,
   cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh, cxCalendar, cxButtonEdit,
   cxCheckBox, zbase, zrComboBoxList, jpeg, ZAbstractRODataset, ZAbstractDataset,
-  ZDataset, cxRadioGroup;
+  ZDataset, cxRadioGroup, ufrmDateControl;
 
 type
   TfrmPayDayReport = class(TframeBaseReport)
@@ -97,6 +97,11 @@ type
     fndP5_ACCOUNT_ID: TzrComboBoxList;
     Label13: TLabel;
     fndP5_PAYM_ID: TcxComboBox;
+    P1_DateControl: TfrmDateControl;
+    P2_DateControl: TfrmDateControl;
+    P3_DateControl: TfrmDateControl;
+    P4_DateControl: TfrmDateControl;
+    P5_DateControl: TfrmDateControl;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -173,18 +178,28 @@ begin
   TDbGridEhSort.InitForm(self);
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P1_DateControl.StartDateControl := P1_D1;
+  P1_DateControl.EndDateControl := P1_D2;
 
   P2_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P2_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P2_DateControl.StartDateControl := P2_D1;
+  P2_DateControl.EndDateControl := P2_D2;
 
   P3_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P3_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P3_DateControl.StartDateControl := P3_D1;
+  P3_DateControl.EndDateControl := P3_D2;
 
   P4_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P4_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  
+  P4_DateControl.StartDateControl := P4_D1;
+  P4_DateControl.EndDateControl := P4_D2;
+
   P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P5_DateControl.StartDateControl := P5_D1;
+  P5_DateControl.EndDateControl := P5_D2;
 
   fndP5_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   fndP5_PAYMan.DataSet := Global.GetZQueryFromName('CA_USERS');  

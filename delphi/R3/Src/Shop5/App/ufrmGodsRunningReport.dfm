@@ -1,20 +1,20 @@
 inherited frmGodsRunningReport: TfrmGodsRunningReport
-  Left = 195
-  Top = 108
-  Width = 1280
-  Height = 770
+  Left = 246
+  Top = 124
+  Width = 1069
+  Height = 593
   Caption = #21830#21697#27969#27700#24080#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1272
-    Height = 706
+    Width = 1061
+    Height = 529
     inherited RzPanel2: TRzPanel
-      Width = 1262
-      Height = 696
+      Width = 1051
+      Height = 519
       inherited RzPage: TRzPageControl
-        Width = 1057
-        Height = 690
+        Width = 846
+        Height = 513
         Color = clCream
         ParentColor = False
         FixedDimension = 25
@@ -22,14 +22,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
           Color = clCream
           Caption = #21830#21697#27969#27700#24080#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 1055
-            Height = 663
+            Width = 844
+            Height = 486
             inherited Panel4: TPanel
-              Width = 1045
-              Height = 653
+              Width = 834
+              Height = 476
               Color = clBtnFace
               inherited w1: TRzPanel
-                Width = 1045
+                Width = 834
                 Height = 82
                 TabOrder = 1
                 object RzLabel2: TRzLabel
@@ -76,7 +76,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Caption = #26465' '#24418' '#30721
                 end
                 object Label8: TLabel
-                  Left = 908
+                  Left = 697
                   Top = 58
                   Width = 48
                   Height = 12
@@ -103,7 +103,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 8
+                  TabOrder = 10
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -120,7 +120,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 4
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -134,7 +134,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -194,7 +194,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 3
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -242,14 +242,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Properties.Items.Strings = (
                     #29289#27969#36319#36394#21495
                     #25209#21495)
-                  TabOrder = 5
+                  TabOrder = 6
                 end
                 object fndP1_BarCode: TcxTextEdit
                   Left = 155
                   Top = 54
                   Width = 128
                   Height = 20
-                  TabOrder = 6
+                  TabOrder = 7
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
@@ -263,7 +263,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -294,7 +294,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   MultiSelect = False
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 958
+                  Left = 747
                   Top = 54
                   Width = 80
                   Height = 20
@@ -307,16 +307,23 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                     #21253#35013'2')
                   TabOrder = 9
                 end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 288
+                  Top = 10
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
+                end
               end
               inherited RzPanel7: TRzPanel
                 Top = 82
-                Width = 1045
-                Height = 571
+                Width = 834
+                Height = 394
                 Color = clBtnFace
                 TabOrder = 0
                 inherited DBGridEh1: TDBGridEh
-                  Width = 1041
-                  Height = 567
+                  Width = 830
+                  Height = 390
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -472,16 +479,16 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 1060
-        Height = 690
+        Left = 849
+        Height = 513
         inherited Panel2: TPanel
-          Height = 647
+          Height = 470
           inherited RzPanel1: TRzPanel [3]
           end
           inherited Panel5: TPanel [4]
-            Height = 532
+            Height = 355
             inherited rzShowColumns: TRzCheckList
-              Height = 528
+              Height = 351
             end
           end
         end
@@ -489,15 +496,15 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1272
+    Width = 1061
     inherited Image1: TImage
-      Width = 902
+      Width = 691
     end
     inherited Image3: TImage
-      Width = 902
+      Width = 691
     end
     inherited Image14: TImage
-      Left = 1252
+      Left = 1041
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

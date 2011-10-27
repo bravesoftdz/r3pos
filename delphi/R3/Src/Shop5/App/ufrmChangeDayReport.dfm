@@ -1,6 +1,6 @@
 inherited frmChangeDayReport: TfrmChangeDayReport
-  Left = 194
-  Top = 109
+  Left = 249
+  Top = 144
   Width = 900
   Height = 589
   Caption = #21830#21697#35843#25972#25253#34920
@@ -93,7 +93,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 478
-                  Top = 37
+                  Top = 39
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -111,7 +111,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -127,7 +127,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 3
+                  TabOrder = 6
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 344
@@ -139,7 +139,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 4
+                  TabOrder = 8
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -153,7 +153,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -195,7 +195,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 6
+                  TabOrder = 5
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
@@ -207,7 +207,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 7
+                  TabOrder = 3
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -221,7 +221,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -250,6 +250,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Buttons = [zbNew, zbClear, zbFind]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel
@@ -447,7 +454,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -497,7 +504,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -513,7 +520,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 4
+                  TabOrder = 6
                 end
                 object fndP2_UNIT_ID: TcxComboBox
                   Left = 344
@@ -525,7 +532,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 5
+                  TabOrder = 8
                 end
                 object fndP2_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -539,7 +546,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -581,7 +588,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP2_SORT_IDPropertiesButtonClick
-                  TabOrder = 7
+                  TabOrder = 5
                   OnKeyPress = fndP2_SORT_IDKeyPress
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
@@ -593,7 +600,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 8
+                  TabOrder = 3
+                end
+                inline P2_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel10: TRzPanel
@@ -837,7 +851,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -877,7 +891,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
                   Properties.OnChange = fndP3_REPORT_FLAGPropertiesChange
-                  TabOrder = 3
+                  TabOrder = 5
                 end
                 object fndP3_UNIT_ID: TcxComboBox
                   Left = 344
@@ -889,7 +903,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 4
+                  TabOrder = 7
                 end
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -903,7 +917,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -942,7 +956,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 6
+                  TabOrder = 3
                 end
                 object RzBitBtn2: TRzBitBtn
                   Left = 478
@@ -964,12 +978,19 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 7
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
                   NumGlyphs = 2
                   Spacing = 5
+                end
+                inline P3_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel12: TRzPanel
@@ -1232,7 +1253,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 10
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1248,7 +1269,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 3
+                  TabOrder = 7
                 end
                 object fndP4_UNIT_ID: TcxComboBox
                   Left = 344
@@ -1260,7 +1281,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 4
+                  TabOrder = 9
                 end
                 object fndP4_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -1274,7 +1295,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1331,7 +1352,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1373,7 +1394,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1412,7 +1433,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 9
+                  TabOrder = 3
                 end
                 object fndP4_RPTTYPE: TcxComboBox
                   Left = 567
@@ -1426,7 +1447,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     #21830#21697#36827#38144#23384#32479#35745#34920
                     #32676#32452#36827#38144#23384#32479#35745#34920
                     #20379#24212#21830#36827#38144#23384#32479#35745#34920)
-                  TabOrder = 10
+                  TabOrder = 11
+                end
+                inline P4_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel15: TRzPanel
@@ -1685,7 +1713,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1709,7 +1737,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 3
+                  TabOrder = 6
                 end
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -1723,7 +1751,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1765,7 +1793,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
-                  TabOrder = 5
+                  TabOrder = 8
                   OnKeyPress = fndP5_SORT_IDKeyPress
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
@@ -1780,7 +1808,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1822,7 +1850,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1861,7 +1889,14 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 8
+                  TabOrder = 3
+                end
+                inline P5_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel18: TRzPanel

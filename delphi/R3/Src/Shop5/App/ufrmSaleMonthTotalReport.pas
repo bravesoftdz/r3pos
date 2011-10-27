@@ -9,7 +9,7 @@ uses
   jpeg, StdCtrls, RzLstBox, RzChkLst, ExtCtrls, Grids, DBGridEh, RzTabs,
   RzPanel,uReportFactory, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, RzButton, zBase, cxButtonEdit, zrComboBoxList,
-  cxCalendar, zrMonthEdit;
+  cxCalendar, zrMonthEdit, ufrmDateControl;
 
 type
   TfrmSaleMonthTotalReport = class(TframeBaseReport)
@@ -36,6 +36,7 @@ type
     btnDelete: TRzBitBtn;
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
+    P1_DateControl: TfrmDateControl;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -135,6 +136,8 @@ begin
   TDbGridEhSort.InitForm(self,false);
   P1_D1.date := date; //默认当月
   P1_D2.date := date; //默认当月
+  P1_DateControl.StartDateControl := P1_D1;
+  P1_DateControl.EndDateControl := P1_D2;
   
   Factory := nil;
   load;

@@ -15,10 +15,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -34,7 +32,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Height = 60
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 10
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -42,21 +40,21 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 14
+                  Top = 10
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 40
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 6
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -64,15 +62,15 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 10
+                  Top = 6
                   Width = 86
                   Height = 20
                   Properties.DateButtons = [btnToday]
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 322
-                  Top = 21
+                  Left = 290
+                  Top = 25
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -99,7 +97,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 36
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -111,7 +109,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 156
-                  Top = 32
+                  Top = 36
                   Width = 117
                   Height = 20
                   Properties.AutoSelect = False
@@ -149,6 +147,13 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Buttons = [zbNew, zbClear, zbFind]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 6
+                  Width = 170
+                  Height = 20
+                  TabOrder = 5
                 end
               end
               inherited RzPanel7: TRzPanel
@@ -260,14 +265,14 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 60
+                Height = 64
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 object RzLabel4: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 11
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -275,21 +280,21 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object RzLabel5: TRzLabel
                   Left = 170
-                  Top = 14
+                  Top = 11
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label10: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 41
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 7
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -297,7 +302,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object P2_D2: TcxDateEdit
                   Left = 186
-                  Top = 10
+                  Top = 7
                   Width = 87
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -306,7 +311,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 31
+                  Top = 37
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -346,8 +351,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   MultiSelect = False
                 end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 302
-                  Top = 17
+                  Left = 297
+                  Top = 27
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -374,7 +379,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 31
+                  Top = 37
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -383,12 +388,19 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     #31649#29702#32676#32452)
                   TabOrder = 4
                 end
+                inline P2_DateControl: TfrmDateControl
+                  Left = 281
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 5
+                end
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 60
+                Top = 64
                 Width = 787
-                Height = 434
+                Height = 430
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -397,7 +409,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 430
+                  Height = 426
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -711,6 +723,13 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Buttons = []
                   DropListStyle = lsFixed
                   MultiSelect = False
+                end
+                inline P3_DateControl: TfrmDateControl
+                  Left = 281
+                  Top = 11
+                  Width = 170
+                  Height = 20
+                  TabOrder = 6
                 end
               end
               object RzPanel12: TRzPanel
@@ -1026,6 +1045,13 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Buttons = []
                 DropListStyle = lsFixed
                 MultiSelect = False
+              end
+              inline P4_DateControl: TfrmDateControl
+                Left = 282
+                Top = 11
+                Width = 170
+                Height = 20
+                TabOrder = 6
               end
             end
             object RzPanel17: TRzPanel
@@ -1434,6 +1460,13 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Buttons = [zbClear]
               DropListStyle = lsFixed
               MultiSelect = False
+            end
+            inline P5_DateControl: TfrmDateControl
+              Left = 278
+              Top = 11
+              Width = 170
+              Height = 20
+              TabOrder = 8
             end
           end
           object RzPanel15: TRzPanel

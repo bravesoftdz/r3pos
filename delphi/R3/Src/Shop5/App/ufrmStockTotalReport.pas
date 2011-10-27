@@ -9,7 +9,7 @@ uses
   jpeg, StdCtrls, RzLstBox, RzChkLst, ExtCtrls, Grids, DBGridEh, RzTabs,
   RzPanel,uReportFactory, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, RzButton, zBase, cxButtonEdit, zrComboBoxList,
-  cxCalendar;
+  cxCalendar, ufrmDateControl;
 
 type
   TfrmStockTotalReport = class(TframeBaseReport)
@@ -36,6 +36,7 @@ type
     fndP1_SHOP_ID: TzrComboBoxList;
     fndP1_SHOP_VALUE: TzrComboBoxList;
     fndP1_SHOP_TYPE: TcxComboBox;
+    P1_DateControl: TfrmDateControl;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -128,6 +129,8 @@ begin
   TDbGridEhSort.InitForm(self,false);
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P1_DateControl.StartDateControl := P1_D1;
+  P1_DateControl.EndDateControl := P1_D2;
   Factory := nil;
   load;
   if ShopGlobal.GetProdFlag = 'E' then

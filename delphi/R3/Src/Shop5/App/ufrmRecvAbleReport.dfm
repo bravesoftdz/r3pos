@@ -1,5 +1,6 @@
 inherited frmRecvAbleReport: TfrmRecvAbleReport
-  Left = 191
+  Left = 288
+  Top = 126
   Width = 1022
   Height = 611
   Caption = #24212#25910#27454#25253#34920
@@ -33,7 +34,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Height = 60
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 8
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -41,21 +42,21 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 14
+                  Top = 8
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 40
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 4
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -63,7 +64,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 10
+                  Top = 4
                   Width = 86
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -71,7 +72,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 322
-                  Top = 21
+                  Top = 25
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -89,7 +90,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 5
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -98,7 +99,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 36
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -110,7 +111,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 156
-                  Top = 32
+                  Top = 36
                   Width = 117
                   Height = 20
                   Properties.AutoSelect = False
@@ -148,6 +149,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Buttons = [zbNew, zbClear, zbFind]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 278
+                  Top = 4
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel
@@ -259,14 +267,14 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 60
+                Height = 65
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 object RzLabel4: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 13
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -274,21 +282,21 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object RzLabel5: TRzLabel
                   Left = 170
-                  Top = 14
+                  Top = 13
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label10: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 43
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 9
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -296,7 +304,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object P2_D2: TcxDateEdit
                   Left = 186
-                  Top = 10
+                  Top = 9
                   Width = 87
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -305,7 +313,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 31
+                  Top = 39
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -314,7 +322,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -346,7 +354,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object RzBitBtn1: TRzBitBtn
                   Left = 302
-                  Top = 17
+                  Top = 30
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -364,7 +372,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 5
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -373,21 +381,28 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 31
+                  Top = 39
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 3
+                end
+                inline P2_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 9
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 60
+                Top = 65
                 Width = 787
-                Height = 434
+                Height = 429
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -396,7 +411,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 430
+                  Height = 425
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -609,7 +624,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -628,7 +643,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -667,7 +682,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 3
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -710,6 +725,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Buttons = []
                   DropListStyle = lsFixed
                   MultiSelect = False
+                end
+                inline P3_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 10
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel12: TRzPanel
@@ -915,7 +937,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               ParentFont = False
               TextShadowColor = clWhite
               TextShadowDepth = 4
-              TabOrder = 2
+              TabOrder = 6
               TextStyle = tsRaised
               ThemeAware = False
               ImageIndex = 12
@@ -934,7 +956,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 3
+              TabOrder = 4
               InGrid = False
               KeyValue = Null
               FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -973,7 +995,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Properties.Items.Strings = (
                 #34892#25919#21306#22495
                 #31649#29702#32676#32452)
-              TabOrder = 4
+              TabOrder = 3
             end
             object fndP4_SHOP_ID: TzrComboBoxList
               Tag = -1
@@ -1016,6 +1038,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Buttons = []
               DropListStyle = lsFixed
               MultiSelect = False
+            end
+            inline P4_DateControl: TfrmDateControl
+              Left = 280
+              Top = 10
+              Width = 170
+              Height = 20
+              TabOrder = 2
             end
           end
           object RzPanel17: TRzPanel
@@ -1251,7 +1280,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1270,7 +1299,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1309,7 +1338,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 3
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -1393,6 +1422,13 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Buttons = [zbNew]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                end
+                inline P5_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 11
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel15: TRzPanel

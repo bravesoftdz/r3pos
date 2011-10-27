@@ -9,7 +9,7 @@ uses
   jpeg, StdCtrls, RzLstBox, RzChkLst, ExtCtrls, Grids, DBGridEh, RzTabs,
   RzPanel,uReportFactory, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, RzButton, zBase, cxButtonEdit, zrComboBoxList,
-  cxCalendar;
+  cxCalendar, ufrmDateControl;
 
 type
   TfrmStgTotalReport = class(TframeBaseReport)

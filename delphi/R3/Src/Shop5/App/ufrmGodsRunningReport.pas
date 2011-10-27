@@ -10,7 +10,7 @@ uses
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
   cxCalendar, cxButtonEdit, cxCheckBox, zbase, zrComboBoxList,ObjCommon,
   zrMonthEdit, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  cxRadioGroup, Buttons;
+  cxRadioGroup, Buttons, ufrmDateControl;
 
 type
   TfrmGodsRunningReport = class(TframeBaseReport)
@@ -31,6 +31,7 @@ type
     fndP1_SHOP_ID: TzrComboBoxList;
     Label8: TLabel;
     fndP1_UNIT_ID: TcxComboBox;
+    P1_DateControl: TfrmDateControl;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -72,6 +73,8 @@ begin
   AddBillTypeItems; //添加单据类型
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P1_DateControl.StartDateControl := P1_D1;
+  P1_DateControl.EndDateControl := P1_D2;
   fndP1_BarType_ID.ItemIndex:=0;
 
   SetRzPageActivePage(false); //设置默认分页

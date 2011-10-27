@@ -1,6 +1,6 @@
 inherited frmClientSaleReport: TfrmClientSaleReport
-  Left = 179
-  Top = 107
+  Left = 192
+  Top = 137
   Width = 1101
   Caption = #23458#25143#38144#21806#25253#34920
   PixelsPerInch = 96
@@ -11,10 +11,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       Width = 1083
       inherited RzPage: TRzPageControl
         Width = 878
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clWhite
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -137,7 +137,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 11
+                  TabOrder = 13
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -154,7 +154,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 6
+                  TabOrder = 7
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 776
@@ -168,7 +168,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 10
+                  TabOrder = 12
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -182,7 +182,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -224,7 +224,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 8
+                  TabOrder = 9
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_CUST_TYPE: TcxComboBox
@@ -239,7 +239,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 2
+                  TabOrder = 3
                 end
                 object fndP1_CUST_VALUE: TzrComboBoxList
                   Tag = -1
@@ -253,7 +253,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -294,7 +294,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -332,7 +332,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 10
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -382,7 +382,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -422,16 +422,23 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 12
+                  TabOrder = 11
+                end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel
                 Top = 122
                 Width = 866
-                Height = 321
+                Height = 310
                 inherited DBGridEh1: TDBGridEh
                   Width = 862
-                  Height = 317
+                  Height = 306
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   Columns = <
@@ -538,7 +545,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 876
-            Height = 453
+            Height = 442
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -663,7 +670,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 3
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -713,7 +720,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 11
+                TabOrder = 13
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -730,7 +737,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Properties.Items.Strings = (
                   #20027#20379#24212#21830
                   #21697#29260#21517#31216)
-                TabOrder = 6
+                TabOrder = 7
               end
               object fndP2_UNIT_ID: TcxComboBox
                 Left = 778
@@ -744,7 +751,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   #35745#37327#21333#20301
                   #21253#35013'1'
                   #21253#35013'2')
-                TabOrder = 10
+                TabOrder = 12
               end
               object fndP2_STAT_ID: TzrComboBoxList
                 Tag = -1
@@ -758,7 +765,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 7
+                TabOrder = 8
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -800,7 +807,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   end>
                 Properties.ReadOnly = True
                 Properties.OnButtonClick = fndP2_SORT_IDPropertiesButtonClick
-                TabOrder = 8
+                TabOrder = 9
                 OnKeyPress = fndP2_SORT_IDKeyPress
               end
               object fndP2_CUST_TYPE: TcxComboBox
@@ -815,7 +822,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   #23458#25143#31561#32423
                   #23458#25143#20998#31867
                   #23458#25143#32676#20307)
-                TabOrder = 2
+                TabOrder = 3
               end
               object fndP2_DEPT_ID: TzrComboBoxList
                 Left = 344
@@ -828,7 +835,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 6
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -866,7 +873,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 9
+                TabOrder = 10
                 InGrid = True
                 KeyValue = Null
                 FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -916,7 +923,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 5
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -956,14 +963,21 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Properties.Items.Strings = (
                   #34892#25919#22320#21306
                   #31649#29702#32676#32452)
-                TabOrder = 12
+                TabOrder = 11
+              end
+              inline P2_DateControl: TfrmDateControl
+                Left = 280
+                Top = 8
+                Width = 170
+                Height = 20
+                TabOrder = 2
               end
             end
             object RzPanel10: TRzPanel
               Left = 5
               Top = 126
               Width = 866
-              Height = 322
+              Height = 311
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -972,7 +986,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Left = 2
                 Top = 2
                 Width = 862
-                Height = 318
+                Height = 307
                 Align = alClient
                 AllowedOperations = []
                 BorderStyle = bsNone
@@ -1145,7 +1159,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 876
-            Height = 453
+            Height = 442
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1154,7 +1168,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Left = 5
               Top = 5
               Width = 866
-              Height = 443
+              Height = 432
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1277,7 +1291,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 9
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1296,7 +1310,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1334,7 +1348,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.OnChange = fndP3_REPORT_FLAGPropertiesChange
-                  TabOrder = 4
+                  TabOrder = 5
                 end
                 object fndP3_UNIT_ID: TcxComboBox
                   Left = 779
@@ -1348,7 +1362,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 8
+                  TabOrder = 10
                 end
                 object fndP3_CUST_VALUE: TzrComboBoxList
                   Tag = -1
@@ -1362,7 +1376,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1403,7 +1417,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #34892#25919#22320#21306
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867)
-                  TabOrder = 2
+                  TabOrder = 3
                 end
                 object fndP3_DEPT_ID: TzrComboBoxList
                   Left = 344
@@ -1416,7 +1430,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1453,7 +1467,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -1493,14 +1507,21 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 10
+                  TabOrder = 9
+                end
+                inline P3_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 100
                 Width = 866
-                Height = 343
+                Height = 332
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1510,7 +1531,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Left = 2
                   Top = 2
                   Width = 862
-                  Height = 339
+                  Height = 328
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1677,7 +1698,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 876
-            Height = 453
+            Height = 442
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1686,7 +1707,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Left = 5
               Top = 5
               Width = 866
-              Height = 443
+              Height = 432
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1821,7 +1842,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 11
+                  TabOrder = 14
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1838,7 +1859,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 6
+                  TabOrder = 8
                 end
                 object fndP4_UNIT_ID: TcxComboBox
                   Left = 778
@@ -1852,7 +1873,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 10
+                  TabOrder = 13
                 end
                 object fndP4_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -1866,7 +1887,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 9
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1908,7 +1929,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
-                  TabOrder = 8
+                  TabOrder = 7
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
                 object fndP4_CUST_VALUE: TzrComboBoxList
@@ -1923,7 +1944,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1965,7 +1986,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 2
+                  TabOrder = 3
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -1979,7 +2000,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -2057,7 +2078,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 11
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -2110,14 +2131,21 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 13
+                  TabOrder = 10
+                end
+                inline P4_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 120
                 Width = 866
-                Height = 323
+                Height = 312
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2127,7 +2155,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Left = 2
                   Top = 2
                   Width = 862
-                  Height = 319
+                  Height = 308
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2325,7 +2353,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
             Left = 0
             Top = 0
             Width = 876
-            Height = 453
+            Height = 442
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -2334,7 +2362,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
               Left = 5
               Top = 5
               Width = 866
-              Height = 443
+              Height = 432
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -2343,7 +2371,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 Left = 0
                 Top = 0
                 Width = 866
-                Height = 127
+                Height = 147
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -2364,22 +2392,22 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Caption = #33267
                 end
                 object Label17: TLabel
-                  Left = 288
-                  Top = 12
+                  Left = 24
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label18: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 78
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label22: TLabel
                   Left = 24
-                  Top = 56
+                  Top = 78
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
@@ -2393,28 +2421,28 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object Label29: TLabel
                   Left = 24
-                  Top = 102
+                  Top = 124
                   Width = 48
                   Height = 12
                   Caption = #21333#25454#31867#22411
                 end
                 object Label37: TLabel
                   Left = 288
-                  Top = 34
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
                 end
                 object Label44: TLabel
                   Left = 24
-                  Top = 78
+                  Top = 100
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#21517#31216
                 end
                 object Label8: TLabel
                   Left = 289
-                  Top = 78
+                  Top = 100
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -2431,7 +2459,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object BtnDetail: TRzBitBtn
                   Left = 479
-                  Top = 88
+                  Top = 110
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -2449,7 +2477,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 11
+                  TabOrder = 13
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -2467,7 +2495,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object fndP5_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 52
+                  Top = 74
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -2475,12 +2503,12 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 5
+                  TabOrder = 7
                 end
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 52
+                  Top = 74
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -2489,7 +2517,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2521,7 +2549,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object fndP5_SORT_ID: TcxButtonEdit
                   Left = 343
-                  Top = 52
+                  Top = 74
                   Width = 122
                   Height = 20
                   Properties.Buttons = <
@@ -2546,7 +2574,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2588,13 +2616,13 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 2
+                  TabOrder = 3
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 343
-                  Top = 8
-                  Width = 122
+                  Left = 80
+                  Top = 52
+                  Width = 193
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -2602,7 +2630,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -2614,13 +2642,14 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       FieldName = 'SHOP_NAME'
                       Footers = <>
                       Title.Caption = #21517#31216
+                      Width = 150
                     end
                     item
                       EditButtons = <>
                       FieldName = 'SEQ_NO'
                       Footers = <>
                       Title.Caption = #20195#30721
-                      Width = 20
+                      Width = 40
                     end>
                   DropWidth = 185
                   DropHeight = 180
@@ -2634,11 +2663,11 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object RzGB: TRzGroupBox
                   Left = 81
-                  Top = 93
+                  Top = 115
                   Width = 383
                   Height = 27
                   GroupStyle = gsStandard
-                  TabOrder = 10
+                  TabOrder = 12
                   ThemeAware = False
                   object fndP5_ALL: TcxRadioButton
                     Left = 5
@@ -2677,7 +2706,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object fndP5_DEPT_ID: TzrComboBoxList
                   Left = 343
-                  Top = 30
+                  Top = 52
                   Width = 122
                   Height = 20
                   Properties.AutoSelect = False
@@ -2686,7 +2715,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -2714,7 +2743,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 object fndP5_CLIENT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 74
+                  Top = 96
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -2723,7 +2752,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 10
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -2755,7 +2784,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                 end
                 object fndP5_SALES_TYPE: TcxComboBox
                   Left = 343
-                  Top = 74
+                  Top = 96
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -2763,14 +2792,21 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 12
+                  TabOrder = 11
+                end
+                inline P5_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel18: TRzPanel
                 Left = 0
-                Top = 127
+                Top = 147
                 Width = 866
-                Height = 316
+                Height = 285
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2779,7 +2815,7 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                   Left = 2
                   Top = 2
                   Width = 862
-                  Height = 312
+                  Height = 281
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

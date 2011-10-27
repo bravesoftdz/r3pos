@@ -1,70 +1,70 @@
 inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
-  Left = 195
-  Top = 107
+  Left = 190
+  Top = 152
   Width = 958
   Height = 558
   Caption = #21160#38144#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 942
-    Height = 483
+    Width = 950
+    Height = 494
     inherited RzPanel2: TRzPanel
-      Width = 932
-      Height = 473
+      Width = 940
+      Height = 484
       inherited RzPage: TRzPageControl
-        Width = 727
-        Height = 467
+        Width = 735
+        Height = 478
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21160#38144#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 725
-            Height = 440
+            Width = 733
+            Height = 451
             inherited Panel4: TPanel
-              Width = 715
-              Height = 430
+              Width = 723
+              Height = 441
               inherited w1: TRzPanel
-                Width = 715
-                Height = 104
+                Width = 723
+                Height = 102
                 object Label3: TLabel
                   Left = 279
-                  Top = 12
+                  Top = 3
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#26679#24335
                 end
                 object Label4: TLabel
                   Left = 280
-                  Top = 58
+                  Top = 61
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label5: TLabel
                   Left = 16
-                  Top = 59
+                  Top = 62
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label16: TLabel
                   Left = 280
-                  Top = 78
+                  Top = 81
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
                 object Label23: TLabel
                   Left = 16
-                  Top = 39
+                  Top = 42
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object RzLabel1: TRzLabel
                   Left = 16
-                  Top = 12
+                  Top = 3
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -72,30 +72,30 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object RzLabel12: TRzLabel
                   Left = 162
-                  Top = 13
+                  Top = 4
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label21: TLabel
                   Left = 16
-                  Top = 78
+                  Top = 81
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object rptTemplate: TcxComboBox
                   Left = 336
-                  Top = 9
+                  Top = 0
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
-                  TabOrder = 0
+                  TabOrder = 3
                 end
                 object btnNew: TRzBitBtn
                   Left = 465
-                  Top = 9
+                  Top = 0
                   Width = 48
                   Height = 21
                   Caption = #28155#21152
@@ -112,7 +112,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 1
+                  TabOrder = 4
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnNewClick
@@ -121,7 +121,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object btnEdit: TRzBitBtn
                   Left = 514
-                  Top = 9
+                  Top = 0
                   Width = 48
                   Height = 21
                   Caption = #20462#25913
@@ -138,7 +138,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 5
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnEditClick
@@ -147,7 +147,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object RzBitBtn1: TRzBitBtn
                   Left = 465
-                  Top = 65
+                  Top = 68
                   Width = 72
                   Height = 29
                   Action = actFind
@@ -165,7 +165,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 14
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -174,7 +174,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object fndP1_TYPE_ID: TcxComboBox
                   Left = 72
-                  Top = 55
+                  Top = 58
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -182,11 +182,11 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 4
+                  TabOrder = 9
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 336
-                  Top = 74
+                  Top = 77
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -195,12 +195,12 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 5
+                  TabOrder = 13
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 146
-                  Top = 55
+                  Top = 58
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -209,7 +209,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 10
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -241,7 +241,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 336
-                  Top = 54
+                  Top = 57
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -251,12 +251,12 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 7
+                  TabOrder = 11
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 72
-                  Top = 35
+                  Top = 38
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -264,12 +264,12 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 8
+                  TabOrder = 7
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 146
-                  Top = 35
+                  Top = 38
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -278,7 +278,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -311,7 +311,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 72
-                  Top = 75
+                  Top = 78
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -320,7 +320,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 10
+                  TabOrder = 12
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -352,7 +352,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object btnDelete: TRzBitBtn
                   Left = 563
-                  Top = 9
+                  Top = 0
                   Width = 48
                   Height = 21
                   Caption = #21024#38500
@@ -369,7 +369,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 11
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnDeleteClick
@@ -378,28 +378,35 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object P1_D1: TcxDateEdit
                   Left = 72
-                  Top = 9
+                  Top = 0
                   Width = 85
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  TabOrder = 12
+                  TabOrder = 0
                 end
                 object P1_D2: TcxDateEdit
                   Left = 180
-                  Top = 9
+                  Top = 0
                   Width = 85
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  TabOrder = 13
+                  TabOrder = 1
+                end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 74
+                  Top = 19
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 104
-                Width = 715
-                Height = 326
+                Top = 102
+                Width = 723
+                Height = 339
                 inherited DBGridEh1: TDBGridEh
-                  Width = 711
-                  Height = 322
+                  Width = 719
+                  Height = 335
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end
@@ -408,8 +415,8 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 730
-        Height = 467
+        Left = 738
+        Height = 478
         Visible = False
         inherited Panel2: TPanel
           Height = 444
@@ -424,15 +431,15 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 942
+    Width = 950
     inherited Image1: TImage
-      Width = 568
+      Width = 580
     end
     inherited Image3: TImage
-      Width = 568
+      Width = 580
     end
     inherited Image14: TImage
-      Left = 922
+      Left = 930
     end
   end
   inherited mmMenu: TMainMenu

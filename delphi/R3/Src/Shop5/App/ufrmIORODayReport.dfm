@@ -15,10 +15,10 @@ inherited frmIORODayReport: TfrmIORODayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet4
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -31,10 +31,10 @@ inherited frmIORODayReport: TfrmIORODayReport
               Height = 494
               inherited w1: TRzPanel
                 Width = 787
-                Height = 60
+                Height = 65
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 10
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -42,21 +42,21 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 14
+                  Top = 10
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 36
+                  Top = 40
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 6
                   Width = 85
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -65,7 +65,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 10
+                  Top = 6
                   Width = 86
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -74,7 +74,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 290
-                  Top = 21
+                  Top = 29
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -92,7 +92,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 5
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -101,7 +101,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 36
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -114,7 +114,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 156
-                  Top = 32
+                  Top = 36
                   Width = 117
                   Height = 20
                   Properties.AutoSelect = False
@@ -153,14 +153,21 @@ inherited frmIORODayReport: TfrmIORODayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 7
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
+                end
               end
               inherited RzPanel7: TRzPanel
-                Top = 60
+                Top = 65
                 Width = 787
-                Height = 434
+                Height = 429
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 430
+                  Height = 425
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -241,7 +248,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 60
+                Height = 65
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -263,7 +270,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object Label10: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 40
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
@@ -289,7 +296,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 37
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -298,7 +305,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -330,7 +337,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object RzBitBtn1: TRzBitBtn
                   Left = 287
-                  Top = 17
+                  Top = 29
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -348,7 +355,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 5
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -357,7 +364,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 37
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -365,14 +372,21 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 3
+                end
+                inline P2_DateControl: TfrmDateControl
+                  Left = 281
+                  Top = 10
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 60
+                Top = 65
                 Width = 787
-                Height = 434
+                Height = 429
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -381,7 +395,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 430
+                  Height = 425
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -588,7 +602,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -607,7 +621,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -647,7 +661,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 3
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -661,7 +675,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -702,7 +716,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                     #25910#25903#31185#30446
                     #36134#25143#21517#31216)
                   Properties.OnChange = fndP3_SortTypePropertiesChange
-                  TabOrder = 6
+                  TabOrder = 5
                 end
                 object fndP3_SORT_NAME: TzrComboBoxList
                   Tag = -1
@@ -745,6 +759,13 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
+                end
+                inline P3_DateControl: TfrmDateControl
+                  Left = 280
+                  Top = 11
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
                 end
               end
               object RzPanel12: TRzPanel
@@ -875,14 +896,14 @@ inherited frmIORODayReport: TfrmIORODayReport
                 Left = 0
                 Top = 0
                 Width = 787
-                Height = 103
+                Height = 117
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 object RzLabel8: TRzLabel
                   Left = 24
-                  Top = 14
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -890,42 +911,42 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object RzLabel9: TRzLabel
                   Left = 171
-                  Top = 14
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label12: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 33
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object Label3: TLabel
                   Left = 24
-                  Top = 58
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label4: TLabel
                   Left = 287
-                  Top = 58
+                  Top = 99
                   Width = 48
                   Height = 12
                   Caption = #25903#20184#26041#24335
                 end
                 object Label6: TLabel
                   Left = 287
-                  Top = 14
+                  Top = 55
                   Width = 48
                   Height = 12
                   Caption = #36134#25143#21517#31216
                 end
                 object Label7: TLabel
-                  Left = 287
-                  Top = 79
+                  Left = 24
+                  Top = 98
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -933,7 +954,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object Label13: TLabel
                   Left = 24
-                  Top = 79
+                  Top = 77
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -941,7 +962,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object Label14: TLabel
                   Left = 287
-                  Top = 35
+                  Top = 76
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -949,7 +970,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object P4_D1: TcxDateEdit
                   Left = 80
-                  Top = 10
+                  Top = 8
                   Width = 85
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -958,7 +979,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object P4_D2: TcxDateEdit
                   Left = 187
-                  Top = 10
+                  Top = 8
                   Width = 86
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -967,7 +988,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object RzBitBtn3: TRzBitBtn
                   Left = 473
-                  Top = 63
+                  Top = 82
                   Width = 79
                   Height = 32
                   Action = actFind
@@ -985,7 +1006,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -995,7 +1016,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 object fndP4_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 32
+                  Top = 30
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1004,7 +1025,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1036,7 +1057,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP4_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 32
+                  Top = 30
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1044,12 +1065,12 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 3
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 54
+                  Top = 52
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -1090,7 +1111,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP4_PAYM_ID: TzrComboBoxList
                   Left = 340
-                  Top = 54
+                  Top = 95
                   Width = 110
                   Height = 20
                   Properties.AutoSelect = False
@@ -1099,7 +1120,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 10
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1132,7 +1153,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP4_ACCOUNT_ID: TzrComboBoxList
                   Left = 340
-                  Top = 10
+                  Top = 51
                   Width = 110
                   Height = 20
                   Properties.AutoSelect = False
@@ -1141,7 +1162,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 6
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -1166,9 +1187,9 @@ inherited frmIORODayReport: TfrmIORODayReport
                   MultiSelect = False
                 end
                 object fndP4_USER_ID: TzrComboBoxList
-                  Left = 340
-                  Top = 76
-                  Width = 110
+                  Left = 80
+                  Top = 95
+                  Width = 193
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1176,7 +1197,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 9
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'ACCOUNT;USER_NAME'
@@ -1208,7 +1229,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP4_CLIENT_ID: TzrComboBoxList
                   Left = 80
-                  Top = 76
+                  Top = 74
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -1217,7 +1238,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE'
@@ -1278,7 +1299,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                 end
                 object fndP4_ITEM_ID: TzrComboBoxList
                   Left = 340
-                  Top = 32
+                  Top = 73
                   Width = 110
                   Height = 20
                   Properties.AutoSelect = False
@@ -1287,7 +1308,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 10
+                  TabOrder = 8
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'CODE_NAME;CODE_ID;CODE_SPELL'
@@ -1311,12 +1332,19 @@ inherited frmIORODayReport: TfrmIORODayReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
+                inline P4_DateControl: TfrmDateControl
+                  Left = 279
+                  Top = 10
+                  Width = 170
+                  Height = 20
+                  TabOrder = 2
+                end
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 103
+                Top = 117
                 Width = 787
-                Height = 391
+                Height = 377
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1325,7 +1353,7 @@ inherited frmIORODayReport: TfrmIORODayReport
                   Left = 2
                   Top = 2
                   Width = 783
-                  Height = 387
+                  Height = 373
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   DataSource = dsadoReport4

@@ -1,29 +1,29 @@
 inherited frmSaleAnaly: TfrmSaleAnaly
-  Left = 194
-  Top = 111
+  Left = 237
+  Top = 127
   Width = 984
-  Height = 667
+  Height = 614
   Caption = #30408#21033#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 968
-    Height = 592
+    Width = 976
+    Height = 550
     inherited RzPanel2: TRzPanel
-      Width = 958
-      Height = 582
+      Width = 966
+      Height = 540
       inherited RzPage: TRzPageControl
-        Width = 952
-        Height = 576
-        ActivePage = TabSheet2
+        Width = 960
+        Height = 534
+        TabIndex = 2
         FixedDimension = 25
         object TabSheet2: TRzTabSheet [0]
           Caption = #30408#21033#20998#26512
           object RzPanel1: TRzPanel
             Left = 0
             Top = 0
-            Width = 950
-            Height = 549
+            Width = 958
+            Height = 507
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -32,8 +32,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 940
-              Height = 539
+              Width = 948
+              Height = 497
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -41,14 +41,14 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               object RzPnl2: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 940
+                Width = 948
                 Height = 74
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  940
+                  948
                   74)
                 object Label8: TLabel
                   Left = 17
@@ -83,26 +83,26 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Caption = #32479#35745#31867#22411
                 end
                 object Label14: TLabel
-                  Left = 300
+                  Left = 17
                   Top = 10
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
                 end
                 object RzLabel1: TRzLabel
-                  Left = 17
-                  Top = 12
+                  Left = 298
+                  Top = 11
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #24320#22987#26085#26399
                 end
                 object RzLabel4: TRzLabel
-                  Left = 155
-                  Top = 11
-                  Width = 48
+                  Left = 441
+                  Top = 10
+                  Width = 12
                   Height = 12
-                  Caption = #25130#27490#26085#26399
+                  Caption = #33267
                 end
                 object Label17: TLabel
                   Left = 811
@@ -304,9 +304,9 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   end
                 end
                 object fndP2_DEPT_ID: TzrComboBoxList
-                  Left = 350
+                  Left = 69
                   Top = 6
-                  Width = 194
+                  Width = 218
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -340,8 +340,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   RangeValue = '1'
                 end
                 object P2_D1: TcxDateEdit
-                  Left = 69
-                  Top = 7
+                  Left = 350
+                  Top = 6
                   Width = 82
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -349,8 +349,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   TabOrder = 8
                 end
                 object P2_D2: TcxDateEdit
-                  Left = 205
-                  Top = 7
+                  Left = 462
+                  Top = 6
                   Width = 82
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -371,22 +371,29 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     #21253#35013'2')
                   TabOrder = 10
                 end
+                inline P2_DateControl: TfrmDateControl
+                  Left = 545
+                  Top = 7
+                  Width = 170
+                  Height = 20
+                  TabOrder = 11
+                end
               end
               object PnlSB2: TRzPanel
                 Left = 0
                 Top = 74
-                Width = 940
-                Height = 465
+                Width = 948
+                Height = 423
                 Align = alClient
                 BorderOuter = fsNone
                 BorderSides = []
                 Color = clWhite
                 TabOrder = 1
                 object PnlS: TRzPanel
-                  Left = 939
+                  Left = 947
                   Top = 0
                   Width = 1
-                  Height = 465
+                  Height = 423
                   Align = alRight
                   BorderOuter = fsNone
                   BorderSides = []
@@ -396,8 +403,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 object SB2: TScrollBox
                   Left = 0
                   Top = 0
-                  Width = 939
-                  Height = 465
+                  Width = 947
+                  Height = 423
                   HorzScrollBar.Style = ssFlat
                   HorzScrollBar.Tracking = True
                   VertScrollBar.Tracking = True
@@ -420,7 +427,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
             Left = 0
             Top = 0
             Width = 958
-            Height = 560
+            Height = 507
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -430,7 +437,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
               Left = 5
               Top = 5
               Width = 948
-              Height = 550
+              Height = 497
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -445,7 +452,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  940
+                  948
                   74)
                 object Label13: TLabel
                   Left = 17
@@ -472,14 +479,14 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Caption = #21830#21697#20998#31867
                 end
                 object Label18: TLabel
-                  Left = 300
+                  Left = 17
                   Top = 11
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
                 end
                 object RzLabel5: TRzLabel
-                  Left = 17
+                  Left = 299
                   Top = 12
                   Width = 48
                   Height = 12
@@ -487,11 +494,11 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Caption = #24320#22987#26085#26399
                 end
                 object RzLabel6: TRzLabel
-                  Left = 155
+                  Left = 442
                   Top = 11
-                  Width = 48
+                  Width = 12
                   Height = 12
-                  Caption = #25130#27490#26085#26399
+                  Caption = #33267
                 end
                 object Label11: TLabel
                   Left = 301
@@ -668,9 +675,9 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Spacing = 5
                 end
                 object fndP3_DEPT_ID: TzrComboBoxList
-                  Left = 351
+                  Left = 69
                   Top = 7
-                  Width = 196
+                  Width = 218
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -704,7 +711,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   RangeValue = '1'
                 end
                 object P3_D1: TcxDateEdit
-                  Left = 69
+                  Left = 351
                   Top = 7
                   Width = 82
                   Height = 20
@@ -713,7 +720,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   TabOrder = 7
                 end
                 object P3_D2: TcxDateEdit
-                  Left = 205
+                  Left = 465
                   Top = 7
                   Width = 82
                   Height = 20
@@ -758,12 +765,19 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.OnChange = fndP1_Sale_UNITPropertiesChange
                   TabOrder = 11
                 end
+                inline P3_DateControl: TfrmDateControl
+                  Left = 552
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 12
+                end
               end
               object PnlSB3: TRzPanel
                 Left = 0
                 Top = 74
-                Width = 940
-                Height = 465
+                Width = 948
+                Height = 423
                 Align = alClient
                 BorderOuter = fsNone
                 BorderSides = []
@@ -773,7 +787,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Left = 947
                   Top = 0
                   Width = 1
-                  Height = 476
+                  Height = 423
                   Align = alRight
                   BorderOuter = fsNone
                   BorderSides = []
@@ -784,7 +798,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Left = 0
                   Top = 0
                   Width = 947
-                  Height = 476
+                  Height = 423
                   HorzScrollBar.Style = ssFlat
                   HorzScrollBar.Tracking = True
                   VertScrollBar.Style = ssHotTrack
@@ -806,18 +820,18 @@ inherited frmSaleAnaly: TfrmSaleAnaly
         inherited TabSheet1: TRzTabSheet
           Caption = #32463#33829#27010#20917
           inherited RzPanel3: TRzPanel
-            Width = 950
-            Height = 549
+            Width = 958
+            Height = 507
             inherited Panel4: TPanel
-              Width = 940
-              Height = 539
+              Width = 948
+              Height = 497
               inherited w1: TRzPanel
-                Width = 940
+                Width = 948
                 Height = 97
                 Color = clBtnFace
                 object RzLabel2: TRzLabel
-                  Left = 25
-                  Top = 12
+                  Left = 315
+                  Top = 11
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -840,11 +854,11 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Caption = #21830#21697#25351#26631
                 end
                 object RzLabel3: TRzLabel
-                  Left = 164
-                  Top = 12
-                  Width = 48
+                  Left = 452
+                  Top = 11
+                  Width = 12
                   Height = 12
-                  Caption = #25130#27490#26085#26399
+                  Caption = #33267
                 end
                 object Label6: TLabel
                   Left = 317
@@ -879,8 +893,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Caption = #38144#21806#31867#22411
                 end
                 object Label32: TLabel
-                  Left = 316
-                  Top = 13
+                  Left = 26
+                  Top = 11
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
@@ -910,8 +924,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   TabOrder = 1
                 end
                 object P1_D1: TcxDateEdit
-                  Left = 78
-                  Top = 8
+                  Left = 368
+                  Top = 7
                   Width = 82
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1003,8 +1017,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   MultiSelect = False
                 end
                 object P1_D2: TcxDateEdit
-                  Left = 216
-                  Top = 8
+                  Left = 466
+                  Top = 7
                   Width = 82
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1065,7 +1079,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 368
                   Top = 28
-                  Width = 166
+                  Width = 180
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -1107,7 +1121,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 object RzPanel9: TRzPanel
                   Left = 369
                   Top = 71
-                  Width = 164
+                  Width = 178
                   Height = 20
                   BorderInner = fsFlat
                   BorderOuter = fsNone
@@ -1137,7 +1151,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 object RzPanel6: TRzPanel
                   Left = 369
                   Top = 49
-                  Width = 164
+                  Width = 178
                   Height = 20
                   BorderInner = fsFlat
                   BorderOuter = fsNone
@@ -1173,9 +1187,9 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   end
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
-                  Left = 368
+                  Left = 78
                   Top = 7
-                  Width = 166
+                  Width = 220
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -1208,17 +1222,24 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   RangeField = 'DEPT_TYPE'
                   RangeValue = '1'
                 end
+                inline P1_DateControl: TfrmDateControl
+                  Left = 556
+                  Top = 8
+                  Width = 170
+                  Height = 20
+                  TabOrder = 12
+                end
               end
               inherited RzPanel7: TRzPanel
                 Top = 97
-                Width = 940
-                Height = 442
+                Width = 948
+                Height = 400
                 OnResize = RzPanel7Resize
                 object Pnl_Mm: TRzPanel
                   Left = 2
                   Top = 265
-                  Width = 936
-                  Height = 175
+                  Width = 944
+                  Height = 133
                   Align = alClient
                   BorderOuter = fsGroove
                   BorderSides = []
@@ -1227,8 +1248,8 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   object AnalyInfo: TcxMemo
                     Left = 0
                     Top = 24
-                    Width = 936
-                    Height = 151
+                    Width = 944
+                    Height = 109
                     Align = alClient
                     Properties.ReadOnly = True
                     TabOrder = 0
@@ -1237,7 +1258,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   object RzTool: TRzPanel
                     Left = 0
                     Top = 0
-                    Width = 936
+                    Width = 944
                     Height = 24
                     Align = alTop
                     BorderOuter = fsGroove
@@ -1327,7 +1348,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                 object Pnl_Char: TRzPanel
                   Left = 2
                   Top = 2
-                  Width = 936
+                  Width = 944
                   Height = 263
                   Align = alTop
                   BorderOuter = fsGroove
@@ -1337,7 +1358,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   object Chart1: TChart
                     Left = 0
                     Top = 0
-                    Width = 936
+                    Width = 944
                     Height = 263
                     BackWall.Brush.Color = clWhite
                     BackWall.Brush.Style = bsClear
@@ -1384,15 +1405,15 @@ inherited frmSaleAnaly: TfrmSaleAnaly
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 968
+    Width = 976
     inherited Image1: TImage
-      Width = 594
+      Width = 606
     end
     inherited Image3: TImage
-      Width = 594
+      Width = 606
     end
     inherited Image14: TImage
-      Left = 948
+      Left = 956
     end
     inherited CoolBar1: TCoolBar
       inherited ToolBar1: TToolBar

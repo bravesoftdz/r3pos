@@ -9,7 +9,7 @@ uses
   jpeg, StdCtrls, RzLstBox, RzChkLst, ExtCtrls, Grids, DBGridEh, RzTabs,
   RzPanel,uReportFactory, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, RzButton, zBase, cxButtonEdit, zrComboBoxList,
-  cxCalendar;
+  cxCalendar, ufrmDateControl;
 
 type
   TfrmSaleTotalReport = class(TframeBaseReport)
@@ -44,6 +44,7 @@ type
     btnDelete: TRzBitBtn;
     Label40: TLabel;
     fndP1_SALES_TYPE: TcxComboBox;
+    P1_DateControl: TfrmDateControl;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -136,6 +137,8 @@ begin
   TDbGridEhSort.InitForm(self,false);
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  P1_DateControl.StartDateControl := P1_D1;
+  P1_DateControl.EndDateControl := P1_D2;
   fndP1_CLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndP1_GUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   Factory := nil;

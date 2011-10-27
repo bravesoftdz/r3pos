@@ -18,6 +18,7 @@ object frmDateControl: TfrmDateControl
       Width = 28
       Height = 13
       Caption = #20170#22825
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -11
@@ -25,6 +26,8 @@ object frmDateControl: TfrmDateControl
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabTodayClick
+      FlyByColor = clRed
+      FlyByEnabled = True
     end
     object LabYesterday: TRzLabel
       Left = 38
@@ -32,6 +35,7 @@ object frmDateControl: TfrmDateControl
       Width = 28
       Height = 13
       Caption = #26152#22825
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -11
@@ -39,6 +43,8 @@ object frmDateControl: TfrmDateControl
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabYesterdayClick
+      FlyByColor = clRed
+      FlyByEnabled = True
     end
     object LabThisweek: TRzLabel
       Left = 72
@@ -46,6 +52,7 @@ object frmDateControl: TfrmDateControl
       Width = 28
       Height = 13
       Caption = #26412#21608
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -11
@@ -53,6 +60,8 @@ object frmDateControl: TfrmDateControl
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabThisweekClick
+      FlyByColor = clRed
+      FlyByEnabled = True
     end
     object LabThisMonth: TRzLabel
       Left = 106
@@ -60,6 +69,7 @@ object frmDateControl: TfrmDateControl
       Width = 28
       Height = 13
       Caption = #26412#26376
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -11
@@ -67,6 +77,8 @@ object frmDateControl: TfrmDateControl
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabThisMonthClick
+      FlyByColor = clRed
+      FlyByEnabled = True
     end
     object LabLastMonth: TRzLabel
       Left = 139
@@ -74,6 +86,7 @@ object frmDateControl: TfrmDateControl
       Width = 28
       Height = 13
       Caption = #19978#26376
+      DragCursor = crHandPoint
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNavy
       Font.Height = -11
@@ -81,6 +94,8 @@ object frmDateControl: TfrmDateControl
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabLastMonthClick
+      FlyByColor = clRed
+      FlyByEnabled = True
     end
   end
 end

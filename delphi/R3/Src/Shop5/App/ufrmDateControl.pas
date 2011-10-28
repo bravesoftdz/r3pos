@@ -40,14 +40,18 @@ uses DateUtils, uFnUtil;
 
 procedure TfrmDateControl.LabTodayClick(Sender: TObject);
 begin
-  TcxDateEdit(StartDateControl).Date := Today();
-  TcxDateEdit(EndDateControl).Date := Today();
+  if StartDateControl is TcxDateEdit then
+    TcxDateEdit(StartDateControl).Date := Today();
+  if EndDateControl is TcxDateEdit then
+    TcxDateEdit(EndDateControl).Date := Today();
 end;
 
 procedure TfrmDateControl.LabYesterdayClick(Sender: TObject);
 begin
-  TcxDateEdit(StartDateControl).Date := Yesterday();
-  TcxDateEdit(EndDateControl).Date := Yesterday();
+  if StartDateControl is TcxDateEdit then
+    TcxDateEdit(StartDateControl).Date := Yesterday();
+  if EndDateControl is TcxDateEdit then
+    TcxDateEdit(EndDateControl).Date := Yesterday();
 end;
 
 procedure TfrmDateControl.SetEndDateControl(const Value: TComponent);
@@ -62,20 +66,26 @@ end;
 
 procedure TfrmDateControl.LabThisweekClick(Sender: TObject);
 begin
-  TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', StartOfTheWeek(date())));
-  TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date()));
+  if StartDateControl is TcxDateEdit then
+    TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', StartOfTheWeek(date())));
+  if EndDateControl is TcxDateEdit then
+    TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date()));
 end;
 
 procedure TfrmDateControl.LabThisMonthClick(Sender: TObject);
 begin
-  TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date()));
-  TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date()));
+  if StartDateControl is TcxDateEdit then
+    TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date()));
+  if EndDateControl is TcxDateEdit then
+    TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date()));
 end;
 
 procedure TfrmDateControl.LabLastMonthClick(Sender: TObject);
 begin
-  TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', IncMonth(Date,-1)));
-  TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', EndOfTheMonth(IncMonth(Date,-1))));
+  if StartDateControl is TcxDateEdit then
+    TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', IncMonth(Date,-1)));
+  if EndDateControl is TcxDateEdit then
+    TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', EndOfTheMonth(IncMonth(Date,-1))));
 end;
 
 end.

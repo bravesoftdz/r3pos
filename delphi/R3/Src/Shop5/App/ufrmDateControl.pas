@@ -64,24 +64,18 @@ procedure TfrmDateControl.LabThisweekClick(Sender: TObject);
 begin
   TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', StartOfTheWeek(date())));
   TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date()));
-  //TcxDateEdit(StartDateControl).Date := StartOfTheWeek(date());
-  //TcxDateEdit(EndDateControl).Date := date();
 end;
 
 procedure TfrmDateControl.LabThisMonthClick(Sender: TObject);
 begin
   TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date()));
   TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date()));
-  //TcxDateEdit(StartDateControl).Date := StartOfTheMonth(date());
-  //TcxDateEdit(EndDateControl).Date := date();
 end;
 
 procedure TfrmDateControl.LabLastMonthClick(Sender: TObject);
 begin
   TcxDateEdit(StartDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', IncMonth(Date,-1)));
   TcxDateEdit(EndDateControl).Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', EndOfTheMonth(IncMonth(Date,-1))));
-  //TcxDateEdit(StartDateControl).Date := StartOfTheMonth(IncMonth(Date(),-1));
-  //TcxDateEdit(EndDateControl).Date := EndOfTheMonth(IncMonth(Date(),-1));
 end;
 
 end.

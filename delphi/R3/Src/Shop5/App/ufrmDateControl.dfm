@@ -13,16 +13,16 @@ object frmDateControl: TfrmDateControl
     BorderOuter = fsNone
     TabOrder = 0
     object LabToday: TRzLabel
-      Left = 2
-      Top = 3
-      Width = 28
-      Height = 13
+      Left = 3
+      Top = 4
+      Width = 24
+      Height = 12
       Caption = #20170#22825
       DragCursor = crHandPoint
-      Font.Charset = DEFAULT_CHARSET
+      Font.Charset = ANSI_CHARSET
       Font.Color = clNavy
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Height = -12
+      Font.Name = #23435#20307
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabTodayClick
@@ -30,16 +30,16 @@ object frmDateControl: TfrmDateControl
       FlyByEnabled = True
     end
     object LabYesterday: TRzLabel
-      Left = 38
-      Top = 3
-      Width = 28
-      Height = 13
+      Left = 39
+      Top = 4
+      Width = 24
+      Height = 12
       Caption = #26152#22825
       DragCursor = crHandPoint
-      Font.Charset = DEFAULT_CHARSET
+      Font.Charset = ANSI_CHARSET
       Font.Color = clNavy
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Height = -12
+      Font.Name = #23435#20307
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabYesterdayClick
@@ -47,16 +47,16 @@ object frmDateControl: TfrmDateControl
       FlyByEnabled = True
     end
     object LabThisweek: TRzLabel
-      Left = 72
-      Top = 3
-      Width = 28
-      Height = 13
+      Left = 73
+      Top = 4
+      Width = 24
+      Height = 12
       Caption = #26412#21608
       DragCursor = crHandPoint
-      Font.Charset = DEFAULT_CHARSET
+      Font.Charset = ANSI_CHARSET
       Font.Color = clNavy
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Height = -12
+      Font.Name = #23435#20307
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabThisweekClick
@@ -64,16 +64,16 @@ object frmDateControl: TfrmDateControl
       FlyByEnabled = True
     end
     object LabThisMonth: TRzLabel
-      Left = 106
-      Top = 3
-      Width = 28
-      Height = 13
+      Left = 107
+      Top = 4
+      Width = 24
+      Height = 12
       Caption = #26412#26376
       DragCursor = crHandPoint
-      Font.Charset = DEFAULT_CHARSET
+      Font.Charset = ANSI_CHARSET
       Font.Color = clNavy
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Height = -12
+      Font.Name = #23435#20307
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabThisMonthClick
@@ -81,16 +81,16 @@ object frmDateControl: TfrmDateControl
       FlyByEnabled = True
     end
     object LabLastMonth: TRzLabel
-      Left = 139
-      Top = 3
-      Width = 28
-      Height = 13
+      Left = 140
+      Top = 4
+      Width = 24
+      Height = 12
       Caption = #19978#26376
       DragCursor = crHandPoint
-      Font.Charset = DEFAULT_CHARSET
+      Font.Charset = ANSI_CHARSET
       Font.Color = clNavy
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Height = -12
+      Font.Name = #23435#20307
       Font.Style = [fsUnderline]
       ParentFont = False
       OnClick = LabLastMonthClick

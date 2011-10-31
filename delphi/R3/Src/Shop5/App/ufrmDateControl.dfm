@@ -19,7 +19,7 @@ object frmDateControl: TfrmDateControl
       Height = 12
       Caption = #20170#22825
       DragCursor = crHandPoint
-      Font.Charset = ANSI_CHARSET
+      Font.Charset = GB2312_CHARSET
       Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
@@ -36,7 +36,7 @@ object frmDateControl: TfrmDateControl
       Height = 12
       Caption = #26152#22825
       DragCursor = crHandPoint
-      Font.Charset = ANSI_CHARSET
+      Font.Charset = GB2312_CHARSET
       Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
@@ -53,7 +53,7 @@ object frmDateControl: TfrmDateControl
       Height = 12
       Caption = #26412#21608
       DragCursor = crHandPoint
-      Font.Charset = ANSI_CHARSET
+      Font.Charset = GB2312_CHARSET
       Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
@@ -70,7 +70,7 @@ object frmDateControl: TfrmDateControl
       Height = 12
       Caption = #26412#26376
       DragCursor = crHandPoint
-      Font.Charset = ANSI_CHARSET
+      Font.Charset = GB2312_CHARSET
       Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307
@@ -87,7 +87,7 @@ object frmDateControl: TfrmDateControl
       Height = 12
       Caption = #19978#26376
       DragCursor = crHandPoint
-      Font.Charset = ANSI_CHARSET
+      Font.Charset = GB2312_CHARSET
       Font.Color = clNavy
       Font.Height = -12
       Font.Name = #23435#20307

@@ -708,7 +708,7 @@ end;
 
 function TfrmSalesOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('12400001',9);
+  result:=(ShopGlobal.GetChkRight('12400001',9) or ShopGlobal.GetChkRight('12400001',10));
 end;
 
 procedure TfrmSalesOrderList.PrintAfter(Sender: TObject);

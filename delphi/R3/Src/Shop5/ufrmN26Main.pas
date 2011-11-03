@@ -484,9 +484,15 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox;
+  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory;
 {$R *.dfm}
 
+function CheckXsmPassWord(uid, pwd: string): boolean;
+begin
+  xsm_username := uid;
+  xsm_password := pwd;
+  result := N26Factory.coLogin(uid,pwd);
+end;
 procedure TfrmN26Main.FormActivate(Sender: TObject);
 begin
   inherited;
@@ -518,6 +524,7 @@ begin
   SystemShutdown := false;
   Loging :=false;
   frmInstall := TfrmInstall.Create(self);
+  XsmCheckPassWord := CheckXsmPassWord;
   screen.OnActiveFormChange := DoActiveChange;
   RzVersionInfo.FilePath := ParamStr(0);
   LoadFrame;
@@ -729,7 +736,7 @@ begin
   LoginFactory.Version := RzVersionInfo.FileVersion;
   if TimerFactory<>nil then TimerFactory.Free;
   try
-  if not Logined or Locked then
+  if (not Logined and not N26Factory.Logined) or Locked then
      begin
        Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
        if Logined then
@@ -745,7 +752,10 @@ begin
        end;
      end
   else
-     result := true;
+     begin
+       if N26Factory.Logined then Logined := true;
+       result := true;
+     end;
   if Locked then Exit;
   if Logined then
      begin
@@ -3889,6 +3899,7 @@ begin
   inherited;
   if not CaFactory.Audited then Raise Exception.Create('不支持脱机使用..');
   if not CA_MODULE.Locate('MODU_ID',inttostr(TRzGroupItem(Sender).Tag),[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
+  if not ShopGlobal.GetChkRight(inttostr(TRzGroupItem(Sender).Tag)) then Raise Exception.Create('你没有操作此模块的权限。');
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
   delete(s,1,4);
   delete(s,length(s),1);
@@ -3932,6 +3943,7 @@ begin
   if not CA_MODULE.Locate('MODU_NAME','网上订货',[]) then Raise Exception.Create('你没有开通网上订货业务');
   if CA_MODULE.FieldByName('ACTION_NAME').AsString='actfrmN26Net' then
      begin
+        if not ShopGlobal.GetChkRight(CA_MODULE.FieldByName('MODU_ID').AsString) then Raise Exception.Create('你没有操作此模块的权限。');
         s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
         delete(s,1,4);
         delete(s,length(s),1);

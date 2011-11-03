@@ -151,7 +151,8 @@ begin
 end;
 
 destructor TfrmMain.Destroy;
-var i:Integer;
+var
+  r,i:Integer;
 begin
   Closeing := true;
   for i:= MDIChildCount-1 downto 0 do
@@ -264,7 +265,6 @@ begin
   AddIcon;
   if IE4Installed then
     FTaskMessage := RegisterWindowMessage('TaskbarCreated') else
-    UpdateTimer.Enabled := True;
 end;
 
 procedure TfrmMain.UpdateTimerTimer(Sender: TObject);

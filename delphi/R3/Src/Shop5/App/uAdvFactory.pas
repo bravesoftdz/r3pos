@@ -511,9 +511,17 @@ var
   vStream:_Stream;
   mFileName:string;
 begin
-  LogFile.AddLogFile(0,'开始下载:'+mUrl); 
-  vMessage := CreateComObject(CLASS_Message) as IMessage;
-  vConfiguration := CreateComObject(CLASS_Configuration) as IConfiguration;
+  LogFile.AddLogFile(0,'开始下载:'+mUrl);
+  try
+    vMessage := CreateComObject(CLASS_Message) as IMessage;
+  except
+    on E:Exception do  Raise Exception.Create('vMessage:'+E.Message);
+  end;
+  try
+    vConfiguration := CreateComObject(CLASS_Configuration) as IConfiguration;
+  except
+    on E:Exception do  Raise Exception.Create('vConfiguration:'+E.Message);
+  end;
   try
     vMessage.Configuration := vConfiguration;
     vMessage.CreateMHTMLBody(mURL, cdoSuppressNone,'','');

@@ -247,7 +247,8 @@ uses
   objGoodsMonth in 'Obj\objGoodsMonth.pas',
   uSyncThread in 'App\uSyncThread.pas',
   OleCtrls in '..\..\Pub\OleCtrls.pas',
-  ufrmPosMainList in 'App\ufrmPosMainList.pas' {frmPosMainList};
+  ufrmPosMainList in 'App\ufrmPosMainList.pas' {frmPosMainList},
+  uN26Factory in 'App\uN26Factory.pas' {N26Factory: TDataModule};
 
 {$R *.res}
 var

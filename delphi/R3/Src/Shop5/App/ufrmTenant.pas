@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, RzTabs, cxControls, cxContainer, ZBase,
   cxEdit, cxTextEdit, StdCtrls, RzButton, RzLabel, cxMaskEdit, uDsUtil,uCaFactory,
   cxButtonEdit, zrComboBoxList, ExtCtrls, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset, jpeg, ZdbFactory;
+  ZAbstractDataset, ZDataset, jpeg, ZdbFactory, IdCookieManager,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
 type
   TfrmTenant = class(TfrmBasic)
@@ -92,7 +93,7 @@ type
   end;
 
 implementation
-uses uGlobal,ufrmLogo, uShopGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
+uses uGlobal, uN26Factory,ufrmLogo, uShopGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
 {$R *.dfm}
 
 class function TfrmTenant.coRegister(Owner: TForm): boolean;
@@ -218,11 +219,23 @@ begin
       cxedtPasswrd.SetFocus;
       raise Exception.Create('请输入登录口令！');
     end;
-
-  Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),Trim(cxedtPasswrd.Text));
+  case N26Factory.Checked of
+  0:Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),Trim(cxedtPasswrd.Text));
+  1:begin
+      Login := CaFactory.coLogin(Trim(cxedtLOGIN_NAME.Text),CaFactory.DesEncode(Trim(cxedtLOGIN_NAME.Text),CaFactory.pubpwd),3);
+      if not N26Factory.coLogin(Trim(cxedtLOGIN_NAME.Text),cxedtPasswrd.Text) then Exit;
+      xsm_username := Trim(cxedtLOGIN_NAME.Text);
+      xsm_password := cxedtPasswrd.Text;
+      if TfrmTenant.coAutoRegister(Trim(cxedtLOGIN_NAME.Text),true) then
+         begin
+           ModalResult := mrok;
+         end;
+      Exit;
+    end;
+  end;
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
-// 改成允许注册多个企业  
+// 改成允许注册多个企业
 //  if (TENANT_ID>0) and (TENANT_ID <> Tenant.TENANT_ID) then
 //     begin
 //       MessageBox(Handle,'当前注册的企业跟系统内现有企业不相符，请输入原企业账号及密码进行注册。','友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -270,6 +283,7 @@ end;
 procedure TfrmTenant.Label20Click(Sender: TObject);
 begin
   inherited;
+  if N26Factory.Checked<>0 then Raise Exception.Create('请输入许可证号及密码注册。');
   if Global.TENANT_ID>0 then Raise Exception.Create('当前账套已经注册企业了，不能注册新的企业，请输入原企业登录名及密码进行认证');
   RzPage.ActivePageIndex := 1;
   Open(TENANT_ID);
@@ -400,7 +414,10 @@ begin
        begin
          cxedtLOGIN_NAME.Text := Temp.FieldByName('LOGIN_NAME').AsString;
          try
-            login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+            case N26Factory.Checked of
+            0:login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,CaFactory.DesEncode(Temp.FieldByName('LOGIN_NAME').AsString,CaFactory.pubpwd),3);
+            1:login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+            end;
          except
            on E:Exception do
               begin
@@ -551,6 +568,9 @@ begin
   //保存门店信息
   if Login.SHOP_ID<>'' then
      CaFactory.downloadShopInfo(Login.TENANT_ID,Login.SHOP_ID,xsm_username,xsm_password,1);
+  Global.TENANT_ID := Tenant.TENANT_ID;
+  Global.TENANT_NAME := Tenant.TENANT_NAME;
+  Global.SHORT_TENANT_NAME := Tenant.SHORT_TENANT_NAME;
   finally
      frmLogo.Close;
   end;

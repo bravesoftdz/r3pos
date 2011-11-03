@@ -3437,6 +3437,8 @@ try
       rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'seqNo'));
       rs.Post;
       Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
+      Global.SHOP_ID := rs.FieldByName('SHOP_ID').asString;
+      Global.SHOP_NAME := rs.FieldByName('SHOP_NAME').asString;
     end;
   finally
     Params.Free;

@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmIEWebForm, ImgList, ActnList, Menus, OleCtrls, SHDocVw,
   ExtCtrls, xmldom, XMLIntf, msxml, ActiveX, ComObj, ZBase,
-  msxmldom, XMLDoc, RzPanel;
+  msxmldom, XMLDoc, RzPanel, N26base64, ZDataSet,HTTPApp;
 
 type
   TfrmN26Browser = class(TfrmIEWebForm)
@@ -25,6 +25,8 @@ type
     procedure SetN26UserName(const Value: string);
     procedure SetN26Token(const Value: string);
     { Private declarations }
+    function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
+    function FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -40,7 +42,7 @@ type
   end;
 
 implementation
-uses EncDec,IniFiles, uGlobal;
+uses EncDec,IniFiles, uGlobal, uN26Factory;
 {$R *.dfm}
 
 { TfrmN26Browser }
@@ -48,11 +50,14 @@ uses EncDec,IniFiles, uGlobal;
 function TfrmN26Browser.DoLogin: boolean;
 function md5(s:string):string;
 begin
-  result := md5Encode(s);
+  result := HTTPEncode(md5Encode(s));
+end;
+function base64(s:string):string;
+begin
+  result := HTTPEncode(Base64EncodeStr(s));
 end;
 var
   doc:IXMLDomDocument;
-  Root:IXMLDOMElement;
   s:string;
 begin
   ReadParam;
@@ -60,7 +65,7 @@ begin
   if N26Url<>'' then
   begin
     try
-      Open(N26Url+'caLogin.do?username='+N26UserName+'&password='+md5(N26PassWord+N26UserName));
+      Open(N26Url+'caLogin.do?username='+base64(N26UserName)+'&password='+base64(N26PassWord));
       while Runed do Application.ProcessMessages;
       if not Assigned(IEBrowser.Document) then Exit;
       doc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
@@ -70,11 +75,8 @@ begin
       except
          Raise;
       end;
-      Root :=  doc.DocumentElement;
-      if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-      if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求登录失败...');
-      if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求登录失败,错误:'+Root.attributes.getNamedItem('msg').text);
-      N26Token := Root.attributes.getNamedItem('token').text;
+      if FindNode(doc,'header\pub\recAck',true).text<>'0000' then Raise Exception.Create('请求登录失败,错误:'+FindNode(doc,'header\pub\msg',true).text);
+      N26Token := FindNode(doc,'header\pub\token',true).text;
       logined := true;
     except
       on E:Exception do
@@ -83,7 +85,7 @@ begin
          end;
     end;
   end;
-  result := true;
+  result := logined;
 end;
 
 function TfrmN26Browser.OpenUrl(url: string): boolean;
@@ -126,9 +128,9 @@ var
   F:TIniFile;
   List:TStringList;
   Params:TftParamList;
+  rs:TZQuery;
   Msg:string;
 begin
-  if N26Url<>'' then Exit;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   List := TStringList.Create;
   try
@@ -150,17 +152,36 @@ begin
     except
     end;
   end;
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
-    Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
-    Params.Decode(Params,Msg);
-    N26UserName := Params.ParambyName('rimuid').AsString;
-    N26PassWord := Params.ParambyName('rimpwd').AsString;
-    if N26UserName='' then Raise Exception.Create('后台业务库中，没找到当前登录门店的许可证号.');
-  finally
-    Params.Free;
+  case N26Factory.Checked of
+  0:begin
+      Params := TftParamList.Create(nil);
+      try
+        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+        Msg := Global.RemoteFactory.ExecProc('TRimWsdlService',Params);
+        Params.Decode(Params,Msg);
+        N26UserName := Params.ParambyName('rimuid').AsString;
+        N26PassWord := Params.ParambyName('rimpwd').AsString;
+        if N26UserName='' then Raise Exception.Create('后台业务库中，没找到当前登录门店的许可证号.');
+      finally
+        Params.Free;
+      end;
+    end;
+  else
+    begin
+      rs := TZQuery.Create(nil);
+      try
+        rs.SQL.Text := 'select XSM_CODE,XSM_PSWD from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+        rs.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+        rs.ParambyName('SHOP_ID').asString := Global.SHOP_ID;
+        Factor.Open(rs);
+        N26UserName := rs.Fields[0].asString;
+        N26PassWord := DecStr(rs.Fields[1].asString,ENC_KEY);
+        if N26UserName='' then Raise Exception.Create('后台业务库中，没找到当前登录门店的许可证号.');
+      finally
+        rs.free;
+      end;
+    end;
   end;
 end;
 
@@ -187,9 +208,45 @@ end;
 function TfrmN26Browser.EncodeUrl(url: string): string;
 begin
   if pos('?',url)>0 then
-     result := N26Url+url+'token='+N26Token
+     result := N26Url+url+'token='+HTTPEncode(N26Token)
   else
-     result := N26Url+url+'?token='+N26Token;
+     result := N26Url+url+'?token='+HTTPEncode(N26Token);
+end;
+
+function TfrmN26Browser.FindElement(root: IXMLDOMNode;
+  s: string): IXMLDOMNode;
+var
+  i:integer;
+begin
+  result := root.firstChild;
+  while result<>nil do
+    begin
+      if result.nodeName=s then exit;
+      result := result.nextSibling;
+    end;
+  result := nil;
+end;
+
+function TfrmN26Browser.FindNode(doc: IXMLDomDocument; tree: string;
+  CheckExists: boolean): IXMLDOMNode;
+var
+  s:TStringList;
+  i:integer;
+begin
+  s := TStringList.Create;
+  try
+    s.Delimiter := '\';
+    s.DelimitedText := tree;
+    result := doc.documentElement;
+    for i:=0 to s.Count -1 do
+      begin
+        if result <>nil then
+           result := FindElement(result,s[i]);
+      end;
+    if CheckExists and (result = nil) then Raise Exception.Create('在文档中没找到结点'+tree); 
+  finally
+    s.Free;
+  end;
 end;
 
 end.

@@ -280,7 +280,6 @@ begin
       if Components[i] Is TZQuery then
          begin
            frmLogo.ShowTitle := '正在准备数据>'+Components[i].Name;
-           Sleep(0);
            TZQuery(Components[i]).Close;
            TZQuery(Components[i]).Filtered := false;
            if TZQuery(Components[i]).Params.FindParam('SHOP_ID')<>nil then

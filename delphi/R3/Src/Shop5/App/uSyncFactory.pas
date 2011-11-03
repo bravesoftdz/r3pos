@@ -709,21 +709,20 @@ begin
     LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
     if not cs.IsEmpty then
     begin
-      Global.LocalFactory.BeginTrans;
-      try
+      //Global.LocalFactory.BeginTrans;
+      //try
         SetTicket;
         rs.SyncDelta := cs.SyncDelta;
         cs.Delete;
-        if not cs.IsEmpty then
-        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         if not rs.IsEmpty then
-        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+           Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
-        Global.LocalFactory.CommitTrans;
-      except
-        Global.LocalFactory.RollbackTrans;
-        Raise;
-      end;
+      //  Global.LocalFactory.CommitTrans;
+      //except
+      //  Global.LocalFactory.RollbackTrans;
+      //  Raise;
+      //end;
     end;
     SetSynTimeStamp(tbName,SyncTimeStamp);
   finally
@@ -1632,28 +1631,27 @@ begin
     //上传本机数据
     cs.Close;
     rs.Close;
-    Global.LocalFactory.BeginTrans;
-    try
+//    Global.LocalFactory.BeginTrans;
+//    try
       SetTicket;
       Global.LocalFactory.Open(cs,ZClassName,Params);
       LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
-      SetSynTimeStamp(tbName,SyncTimeStamp);
       if not cs.IsEmpty then
       begin
         SetTicket;
         rs.SyncDelta := cs.SyncDelta;
         cs.Delete;
-        if not cs.IsEmpty then
-        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         if not rs.IsEmpty then
-        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+           Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+        SetSynTimeStamp(tbName,SyncTimeStamp);
       end;
-      Global.LocalFactory.CommitTrans;
-    except
-      Global.LocalFactory.RollbackTrans;
-      Raise;
-    end;
+//      Global.LocalFactory.CommitTrans;
+//    except
+//      Global.LocalFactory.RollbackTrans;
+//      Raise;
+//    end;
   finally
     rs.Free;
     cs.Free;
@@ -2998,21 +2996,20 @@ begin
     LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(cs.RecordCount));
     if not cs.IsEmpty then
     begin
-      Global.LocalFactory.BeginTrans;
-      try
+      //Global.LocalFactory.BeginTrans;
+      //try
         SetTicket;
         rs.SyncDelta := cs.SyncDelta;
         cs.Delete;
-        if not cs.IsEmpty then
-        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         if not rs.IsEmpty then
-        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+           Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
-        Global.LocalFactory.CommitTrans;
-      except
-        Global.LocalFactory.RollbackTrans;
-        Raise;
-      end;
+      //  Global.LocalFactory.CommitTrans;
+      //except
+      //  Global.LocalFactory.RollbackTrans;
+      //  Raise;
+      //end;
     end;
     SetSynTimeStamp(tbName,SyncTimeStamp);
   finally
@@ -3567,19 +3564,18 @@ begin
       SetTicket;
       rs.SyncDelta := cs.SyncDelta;
       cs.Delete;
-      Global.LocalFactory.BeginTrans;
-      try
-        SetSynTimeStamp(tbName,SyncTimeStamp);
-        if not cs.IsEmpty then
-        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
+      //Global.LocalFactory.BeginTrans;
+      //try
         if not rs.IsEmpty then
-        Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+           Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
+        Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
-        Global.LocalFactory.CommitTrans;
-      except
-        Global.LocalFactory.RollbackTrans;
-        Raise;
-      end;
+        SetSynTimeStamp(tbName,SyncTimeStamp);
+      //  Global.LocalFactory.CommitTrans;
+      //except
+      //  Global.LocalFactory.RollbackTrans;
+      //  Raise;
+      //end;
     end;
   finally
     rs.Free;

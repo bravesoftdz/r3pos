@@ -1106,6 +1106,7 @@ begin
     else
        begin
          FList.Add(Conn);
+         if Conn.InTransaction then Conn.RollbackTrans;
          Conn.ThreadId := 0;
        end;
   finally

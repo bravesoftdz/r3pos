@@ -244,7 +244,7 @@ var
 begin
   InterlockedIncrement(FWorking);
   dbResolver := CheckIdTransact;
-  LogFile.AddLogFile(0,'开始执行<'+inttostr(PlugInId)+'>'+PlugInDisplayName);
+//  LogFile.AddLogFile(0,'开始执行<'+inttostr(PlugInId)+'>'+PlugInDisplayName);
   try
     try
       @_DLLDoExecute := GetProcAddress(Handle, 'DoExecute');
@@ -261,7 +261,7 @@ begin
   finally
     InterlockedDecrement(FWorking);
     PushCache(dbResolver);
-    LogFile.AddLogFile(0,'结束执行<'+inttostr(PlugInId)+'>'+PlugInDisplayName);
+//    LogFile.AddLogFile(0,'结束执行<'+inttostr(PlugInId)+'>'+PlugInDisplayName);
   end;
 end;
 

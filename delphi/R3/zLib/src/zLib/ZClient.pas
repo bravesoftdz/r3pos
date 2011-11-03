@@ -1108,7 +1108,7 @@ var
   inKeepAlive,OutKeepAlive:TTCP_KEEPALIVE;
   opt ,insize,outsize: Integer;
 begin
-  //  Exit;
+  //Exit;
   //加入心跳代码
   opt:=1;
   if setsockopt(Socket,SOL_SOCKET,SO_KEEPALIVE,@opt,sizeof(opt))=SOCKET_ERROR then

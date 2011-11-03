@@ -1,7 +1,7 @@
 inherited frmXsm2Main: TfrmXsm2Main
-  Left = 352
-  Top = 240
-  Width = 928
+  Left = 168
+  Top = 213
+  Width = 740
   Height = 478
   Caption = ''
   Menu = nil
@@ -13,7 +13,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   TextHeight = 12
   inherited stbBottom: TStatusBar
     Top = 439
-    Width = 912
+    Width = 724
     Height = 1
     Panels = <
       item
@@ -33,7 +33,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   object Panel5: TPanel [1]
     Left = 0
     Top = 439
-    Width = 912
+    Width = 724
     Height = 0
     Align = alBottom
     BevelOuter = bvNone
@@ -42,7 +42,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     object Image3: TImage
       Left = 0
       Top = 0
-      Width = 912
+      Width = 724
       Height = 0
       Align = alClient
       Picture.Data = {
@@ -439,7 +439,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     end
   end
   object Panel8: TPanel [2]
-    Left = 911
+    Left = 723
     Top = 77
     Width = 1
     Height = 362
@@ -1014,7 +1014,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   object RzPanel1: TRzPanel [4]
     Left = 0
     Top = 0
-    Width = 912
+    Width = 724
     Height = 46
     Align = alTop
     BorderOuter = fsNone
@@ -1025,7 +1025,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     object Panel4: TPanel
       Left = 0
       Top = 0
-      Width = 912
+      Width = 724
       Height = 46
       Align = alClient
       BevelOuter = bvNone
@@ -2253,7 +2253,7 @@ inherited frmXsm2Main: TfrmXsm2Main
       object Image6: TImage
         Left = 346
         Top = 0
-        Width = 48
+        Width = 28
         Height = 46
         Align = alClient
         AutoSize = True
@@ -2661,7 +2661,7 @@ inherited frmXsm2Main: TfrmXsm2Main
         Stretch = True
       end
       object Panel2: TPanel
-        Left = 394
+        Left = 206
         Top = 0
         Width = 518
         Height = 46
@@ -5470,7 +5470,7 @@ inherited frmXsm2Main: TfrmXsm2Main
   object RzPanel9: TRzPanel [5]
     Left = 0
     Top = 46
-    Width = 912
+    Width = 724
     Height = 31
     Align = alTop
     BorderOuter = fsNone
@@ -5478,7 +5478,7 @@ inherited frmXsm2Main: TfrmXsm2Main
     object Panel9: TPanel
       Left = 0
       Top = 0
-      Width = 912
+      Width = 724
       Height = 2
       Align = alTop
       BevelOuter = bvNone
@@ -5488,13 +5488,13 @@ inherited frmXsm2Main: TfrmXsm2Main
     object rzTool: TPanel
       Left = 0
       Top = 0
-      Width = 912
+      Width = 724
       Height = 31
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
       object Image21: TImage
-        Left = 892
+        Left = 704
         Top = 1
         Width = 20
         Height = 30
@@ -6622,7 +6622,7 @@ inherited frmXsm2Main: TfrmXsm2Main
       object Panel3: TPanel
         Left = 114
         Top = 1
-        Width = 778
+        Width = 590
         Height = 30
         Align = alClient
         BevelOuter = bvNone
@@ -6630,7 +6630,7 @@ inherited frmXsm2Main: TfrmXsm2Main
         object rzToolButton: TPanel
           Left = 101
           Top = 0
-          Width = 677
+          Width = 489
           Height = 30
           Align = alClient
           BevelOuter = bvNone
@@ -6638,7 +6638,7 @@ inherited frmXsm2Main: TfrmXsm2Main
           object Image12: TImage
             Left = 0
             Top = 0
-            Width = 677
+            Width = 489
             Height = 30
             Align = alClient
             Picture.Data = {
@@ -7973,7 +7973,7 @@ inherited frmXsm2Main: TfrmXsm2Main
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 912
+        Width = 724
         Height = 1
         Align = alTop
         BevelOuter = bvNone

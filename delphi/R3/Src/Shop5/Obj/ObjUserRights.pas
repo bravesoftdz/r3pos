@@ -76,7 +76,28 @@ function TUserRightsData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
     Str:String;
 begin
-
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := ' select * from CA_RIGHT_FORDATA where TENANT_ID=:TENANT_ID and DATA_TYPE=:DATA_TYPE and USER_ID=:USER_ID and DATA_OBJECT=:DATA_OBJECT ';
+    rs.ParamByName('USER_ID').AsString := FieldbyName('USER_ID').AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+    rs.ParamByName('DATA_TYPE').AsString := FieldbyName('DATA_TYPE').AsString;
+    rs.ParamByName('DATA_OBJECT').AsString := FieldbyName('DATA_OBJECT').AsString;
+    AGlobal.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        if copy(rs.FieldbyName('COMM').AsString,2,1)='2' then
+        begin
+          Str := 'delete from CA_RIGHT_FORDATA where TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and ROWS_ID='''+rs.FieldbyName('ROWS_ID').AsString+''' ';
+          AGlobal.ExecSQL(Str);
+        end;
+        rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
+  Result := True;
 end;
 
 procedure TUserRightsData.InitClass;
@@ -90,10 +111,10 @@ begin
   IsSQLUpdate := true;
   Str:='update CA_RIGHT_FORDATA set DATA_OBJECT=:DATA_OBJECT,'
   + 'COMM=' + GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)
-  + ' where ROWS_ID=:OLD_ROWS_ID';
+  + ' where TENANT_ID=:TENANT_ID and ROWS_ID=:OLD_ROWS_ID';
   UpdateSQL.Add(Str);
 
-  Str:= 'update CA_RIGHT_FORDATA set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where ROWS_ID=:OLD_ROWS_ID ';
+  Str:= 'update CA_RIGHT_FORDATA set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where TENANT_ID=:TENANT_ID and ROWS_ID=:OLD_ROWS_ID ';
   DeleteSQL.Add(Str);
 end;
 

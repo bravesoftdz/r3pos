@@ -480,7 +480,7 @@ begin
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Params.ParamByName('USER_ID').AsString := Global.UserID;
+    Params.ParamByName('USER_ID').AsString := User_ID;
     Factor.Open(CdsShop_DeptRight,'TUserRightsData',Params);
   finally
     Params.Free;
@@ -501,20 +501,20 @@ begin
       ID := TRecord_(DataRightTree.Items[i].Data).FieldByName('DATA_OBJECT').AsString;
       if DataRightTree.ItemState[i] in [csChecked] then
         begin
-          if not CdsShop_DeptRight.Locate('TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT',VarArrayOf([IntToStr(Global.TENANT_ID),inttostr(r),Global.UserID,ID]),[]) then
+          if not CdsShop_DeptRight.Locate('TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT',VarArrayOf([IntToStr(Global.TENANT_ID),inttostr(r),User_ID,ID]),[]) then
             begin
               CdsShop_DeptRight.Append;
               CdsShop_DeptRight.FieldByName('ROWS_ID').AsString := TSequence.NewId;
               CdsShop_DeptRight.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
               CdsShop_DeptRight.FieldByName('DATA_TYPE').AsString := inttostr(r);
-              CdsShop_DeptRight.FieldByName('USER_ID').AsString := Global.UserID;
+              CdsShop_DeptRight.FieldByName('USER_ID').AsString := User_ID;//Global.UserID;
               CdsShop_DeptRight.FieldByName('DATA_OBJECT').AsString := ID;
               CdsShop_DeptRight.Post;
             end;
         end
       else
         begin
-          if CdsShop_DeptRight.Locate('TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT',VarArrayOf([IntToStr(Global.TENANT_ID),inttostr(r),Global.UserID,ID]),[]) then
+          if CdsShop_DeptRight.Locate('TENANT_ID,DATA_TYPE,USER_ID,DATA_OBJECT',VarArrayOf([IntToStr(Global.TENANT_ID),inttostr(r),User_ID,ID]),[]) then
             CdsShop_DeptRight.Delete;
         end;
     end;

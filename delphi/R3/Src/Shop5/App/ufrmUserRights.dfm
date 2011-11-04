@@ -1,6 +1,6 @@
 inherited frmUserRights: TfrmUserRights
-  Left = 513
-  Top = 262
+  Left = 747
+  Top = 213
   Caption = #29992#25143#25480#26435
   ClientHeight = 404
   ClientWidth = 398

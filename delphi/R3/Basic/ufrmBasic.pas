@@ -633,6 +633,7 @@ var
   i,c:integer;
   DBGridEh:TDBGridEh;
   save:boolean;
+  w:integer;
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sft.'+Global.UserID);
   try
@@ -644,11 +645,14 @@ begin
         if not DBGridEh.Enabled then continue;
         save := DBGridEh.AutoFitColWidths;
         DBGridEh.AutoFitColWidths := false;
-        for i:= 0 to DBGridEh.Columns.Count -1 do
+        w := DBGridEh.Columns.Count;
+        for i:= DBGridEh.Columns.Count -1 downto 0 do
         begin
           if DBGridEh.Columns[i].FieldName='' then Continue;
+          if (DBGridEh.FrozenCols+1) >= w then break;
           DBGridEh.Columns[i].Visible := F.ReadBool(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName,DBGridEh.Columns[i].Visible);
           DBGridEh.Columns[i].Width := F.ReadInteger(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName+'_WIDTH',DBGridEh.Columns[i].Width);
+          if not DBGridEh.Columns[i].Visible then dec(w);
           //DBGridEh.Columns[i].Index := F.ReadInteger(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName+'_INDEX',DBGridEh.Columns[i].Index);
         end;
         DBGridEh.AutoFitColWidths := save;

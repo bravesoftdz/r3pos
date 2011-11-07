@@ -327,7 +327,7 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
-
+    procedure LoadPic32;
     function ConnectToSQLite:boolean;
     function CreateMMLogin: TftParamList;
 
@@ -348,7 +348,7 @@ var
 
 implementation
 uses
-  ufrmMMLogin, ufrmMMList,uMsgBox,
+  ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory,
   uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
@@ -454,6 +454,7 @@ begin
   inherited;
   BorderStyle := bsNone;
   WindowState := wsMaximized;
+  LoadPic32;
   SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
   bkg_01.Picture.Bitmap.TransparentColor := clFuchsia;
   bkg_01.Picture.Bitmap.TransparentMode := tmFixed;
@@ -2726,6 +2727,32 @@ begin
   end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmMMMain.LoadPic32;
+var
+  DllHandle: THandle;
+  sflag:String;
+begin
+  sflag := 'm'+rcFactory.GetResString(1)+'_';
+  rzPage0.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left0_hot');
+  rzPage0.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left0');
+  rzPage1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left1_hot');
+  rzPage1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left1');
+  rzPage2.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left2_hot');
+  rzPage2.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left2');
+  rzPage3.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left3_hot');
+  rzPage3.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left3');
+  rzPage4.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left4_hot');
+  rzPage4.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left4');
+  rzPage5.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left5_hot');
+  rzPage5.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left5');
+  rzPage6.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left6_hot');
+  rzPage6.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left6');
+  rzPage7.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left7_hot');
+  rzPage7.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left7');
+  rzPage8.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left8_hot');
+  rzPage8.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left8');
 end;
 
 end.

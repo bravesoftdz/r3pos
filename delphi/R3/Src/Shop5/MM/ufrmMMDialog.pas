@@ -21,7 +21,7 @@ type
     RzLabel1: TRzLabel;
     toolDesk: TRzBmpButton;
     FontDialog1: TFontDialog;
-    RzBmpButton1: TRzBmpButton;
+    cxBtnClose: TRzBmpButton;
     Timer1: TTimer;
     Button1: TButton;
     Button2: TButton;
@@ -31,7 +31,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure toolDeskClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure RzBmpButton1Click(Sender: TObject);
+    procedure cxBtnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -55,6 +55,7 @@ type
     function ConvertBitmapToRTF(pict: TBitmap): string;
   public
     { Public declarations }
+    procedure LoadPic32;
     procedure SendMsg;
     procedure RecvMsg;
     property mmUserInfo:PmmUserInfo read FmmUserInfo write SetmmUserInfo;
@@ -63,7 +64,7 @@ var
   DefFont:TFont;
 implementation
 
-uses ufrmMMMain,ummGlobal;
+uses ufrmMMMain,ummGlobal,uRcFactory;
 
 {$R *.dfm}
 var
@@ -344,9 +345,10 @@ begin
   showRTF.DefAttributes.Charset := DefFont.Charset;
   showRTF.DefAttributes.Color := DefFont.Color;
   showRTF.DefAttributes.Size := DefFont.Size;
+  LoadPic32;
 end;
 
-procedure TfrmMMDialog.RzBmpButton1Click(Sender: TObject);
+procedure TfrmMMDialog.cxBtnCloseClick(Sender: TObject);
 begin
   inherited;
   Close;
@@ -396,6 +398,35 @@ begin
        Shift := [];
        Key := 0;
      end;
+
+end;
+
+procedure TfrmMMDialog.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 'm'+rcFactory.GetResString(1)+'_';
+  //top
+  bkg_01.Picture.Graphic := rcFactory.GetBitmap(sflag + 'dialog_top_bkg_01');
+  bkg_02.Picture.Graphic := rcFactory.GetBitmap(sflag + 'dialog_top_bkg_02');
+  formLogo.Picture.Graphic := rcFactory.GetBitmap(sflag + 'dialog_top_formLogo');
+  Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'dialog_top_Image2');
+  sysClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_top_sysClose_Up');
+  sysClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_top_sysClose_Hot');
+  sysMinimized.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_top_sysMinimized_Up');
+  sysMinimized.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_top_sysMinimized_Hot');
+  sysMaximized.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_top_sysMaximized_Up');
+  sysMaximized.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_top_sysMaximized_Hot');
+  //middle
+  toolDesk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_mid_toolDesk_Up');
+  toolDesk.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_mid_toolDesk_Hot');
+  //bottom
+  bkg_03.Picture.Graphic := rcFactory.GetBitmap(sflag + 'dialog_bottom_bkg_03');
+  bkg_04.Picture.Graphic := rcFactory.GetBitmap(sflag + 'dialog_bottom_bkg_04');
+  cxBtnOk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Up');
+  cxBtnOk.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Hot');
+  cxBtnClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Up');
+  cxBtnClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Hot');
 
 end;
 

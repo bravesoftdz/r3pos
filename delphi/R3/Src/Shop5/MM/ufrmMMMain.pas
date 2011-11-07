@@ -2735,6 +2735,7 @@ var
   sflag:String;
 begin
   sflag := 'm'+rcFactory.GetResString(1)+'_';
+  //Left
   rzPage0.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left0_hot');
   rzPage0.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left0');
   rzPage1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left1_hot');
@@ -2753,6 +2754,36 @@ begin
   rzPage7.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left7');
   rzPage8.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left8_hot');
   rzPage8.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left8');
+  //bottom
+  UsersStatus.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'bottom_Status_Down');
+  UsersStatus.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'bottom_Status');
+  bkg_03.Picture.Graphic := rcFactory.GetBitmap(sflag + 'bottom_bkg_03');
+  bkg_04.Picture.Graphic := rcFactory.GetBitmap(sflag + 'bottom_bkg_04');
+  //top
+  bkg_01.Picture.Graphic := rcFactory.GetBitmap(sflag + 'top_bkg_01');
+  bkg_02.Picture.Graphic := rcFactory.GetBitmap(sflag + 'top_bkg_02');
+  logo.Picture.Graphic := rcFactory.GetJpeg(sflag + 'top_logo');
+  toolDesk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_toolDesk_Up');
+  toolDesk.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_toolDesk_Hot');
+  toolDesk.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'top_toolDesk_Down');
+  toolClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_toolClose_Up');
+  toolClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_toolClose_Hot');
+  RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_RzBmpButton1_Up');
+  RzBmpButton1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_RzBmpButton1_Hot');
+  RzBmpButton3.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_RzBmpButton3_Up');
+  RzBmpButton3.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_RzBmpButton3_Hot');
+  RzBmpButton4.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_RzBmpButton4_Up');
+  RzBmpButton4.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_RzBmpButton4_Hot');
+  MenuSpilt.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_MenuSpilt_Up');
+  MenuSpilt.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'top_MenuSpilt_Down');
+  sysHelp.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_sysHelp_Up');
+  sysHelp.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysHelp_Hot');
+  sysMinimized.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_sysMinimized_Up');
+  sysMinimized.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysMinimized_Hot');
+  sysMaximized.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_sysMaximized_Up');
+  sysMaximized.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysMaximized_Hot');
+  sysClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_sysClose_Up');
+  sysClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysClose_Hot');
 end;
 
 end.

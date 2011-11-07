@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, RzForms, RzBckgnd, RzPanel,DbGridEh, RzBmpBtn, StdCtrls,
-  jpeg,ufrmBasic;
+  jpeg,ufrmBasic, uRcFactory;
 
 type
   TfrmMMBasic = class(TfrmBasic)
@@ -44,6 +44,7 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
+    procedure LoadPic32;
   end;
 
 implementation
@@ -173,12 +174,33 @@ end;
 constructor TfrmMMBasic.Create(AOwner: TComponent);
 begin
   inherited;
+  LoadPic32;
 end;
 
 destructor TfrmMMBasic.Destroy;
 begin
 
   inherited;
+end;
+
+procedure TfrmMMBasic.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 'm'+rcFactory.GetResString(1)+'_';
+  //Top
+  bkg_01.Picture.Graphic := rcFactory.GetBitmap(sflag + 'Basic_top_bkg_01');
+  bkg_02.Picture.Graphic := rcFactory.GetBitmap(sflag + 'Basic_top_bkg_02');
+  formLogo.Picture.Graphic := rcFactory.GetBitmap(sflag + 'Basic_top_formLogo');
+  sysClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Basic_top_sysClose_Up');
+  sysClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Basic_top_sysClose_Hot');
+  sysMinimized.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Basic_top_sysMinimized_Up');
+  sysMinimized.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Basic_top_sysMinimized_Hot');
+  sysMaximized.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Basic_top_sysMaximized_Up');
+  sysMaximized.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Basic_top_sysMaximized_Hot');
+  //bottom
+  bkg_03.Picture.Graphic := rcFactory.GetBitmap(sflag + 'Basic_bottom_bkg_03');
+  bkg_04.Picture.Graphic := rcFactory.GetBitmap(sflag + 'Basic_bottom_bkg_04');
 end;
 
 end.

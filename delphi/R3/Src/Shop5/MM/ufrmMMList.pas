@@ -71,6 +71,7 @@ type
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
+    procedure LoadPic32;
     function check:boolean;
     procedure LoadFriends;
     procedure ReadInfo;
@@ -82,7 +83,7 @@ var
   frmMMList: TfrmMMList;
 implementation
 {$R *.dfm}
-uses ufrmMMMain,ummGlobal,uTreeUtil,ufrmMMDialog;
+uses ufrmMMMain,ummGlobal,uTreeUtil,ufrmMMDialog,uRcFactory;
 
 { TfrmMMList }
 
@@ -350,6 +351,7 @@ end;
 constructor TfrmMMList.Create(AOwner: TComponent);
 begin
   inherited;
+  LoadPic32;
   frmMMFindBox := TfrmMMFindBox.Create(self); 
   self.Position := poDesigned;
   left := Screen.Width-width-1;
@@ -474,6 +476,33 @@ procedure TfrmMMList.Image4Click(Sender: TObject);
 begin
   inherited;
   frmMMMain.actfrmNewPaperReader.OnExecute(frmMMMain.actfrmNewPaperReader);
+
+end;
+
+procedure TfrmMMList.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 'm'+rcFactory.GetResString(1)+'_';
+  //bottom
+  RzBmpButton2.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_bottom_RzBmpButton2_Up');
+  Image1.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_bottom_bkg_01');
+  Image7.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_bottom_bkg_02');
+
+  //middle
+  Image3.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_03');
+  Image4.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_04');
+  Image5.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_05');
+  Image6.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_06');
+  toolDesk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Up');
+  toolDesk.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Down');
+  RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Up');
+  RzBmpButton1.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Down');
+  
+  //top
+  Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_top_Image2');
+  UsersStatus.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_top_UsersStatus_Up');
+  UsersStatus.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_top_UsersStatus_Down');
 
 end;
 

@@ -34,13 +34,15 @@ type
     locked:boolean;
   public
     { Public declarations }
+    constructor Create(AOwner: TComponent); override;
+    procedure LoadPic32;
     procedure LoadLogin;
     procedure SaveLogin;
     class function LockScreen(Owner:TForm):boolean;
   end;
 
 implementation
-uses ummGlobal,uCaFactory,IniFiles,ufrmHostDialog,uFnUtil,uGlobal,EncDec,ObjCommon;
+uses ummGlobal,uCaFactory,IniFiles,ufrmHostDialog,uFnUtil,uGlobal,EncDec,ObjCommon,uRcFactory;
 {$R *.dfm}
 
 procedure TfrmMMLogin.FormCreate(Sender: TObject);
@@ -280,6 +282,31 @@ procedure TfrmMMLogin.cxBtnSetupClick(Sender: TObject);
 begin
   inherited;
   TfrmHostDialog.SimpleDialog(self);
+end;
+
+procedure TfrmMMLogin.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 'm'+rcFactory.GetResString(1)+'_';
+  //Top
+  imgLogin.Picture.Graphic := rcFactory.GetBitmap(sflag + 'login_top_login');
+  //mid
+  Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'login_mid_image2');
+  //bottom
+  Image3.Picture.Graphic := rcFactory.GetBitmap(sflag + 'login_bottom_image3');
+  cxBtnOk.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Hot');
+  cxBtnOk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Up');
+  cxBtnSetup.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Hot');
+  cxBtnSetup.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'dialog_bottom_cxBtnOk_Up');
+  bkg_03.Picture.Graphic := rcFactory.GetBitmap(sflag + 'login_bottom_bkg_03');
+  bkg_04.Picture.Graphic := rcFactory.GetBitmap(sflag + 'login_bottom_bkg_04');
+end;
+
+constructor TfrmMMLogin.Create(AOwner: TComponent);
+begin
+  inherited;
+  LoadPic32;
 end;
 
 end.

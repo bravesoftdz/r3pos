@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, IdCookieManager, IdBaseComponent, IdComponent,
   IdTCPConnection, IdTCPClient, IdHTTP, xmldom, XMLIntf, msxml, ActiveX, ComObj, ZBase,
-  msxmldom, XMLDoc, Forms, N26base64,HTTPApp;
+  msxmldom, XMLDoc, Forms, N26base64, HTTPApp, ZDataSet;
 
 type
   TN26Factory = class(TDataModule)
@@ -29,6 +29,7 @@ type
   public
     { Public declarations }
     function Checked:integer;
+    function EncodeLoginUrl:string;
     function coLogin(username:string;password:string):boolean;
     property N26Url:string read FN26Url write SetN26Url;
     property N26UserName:string read FN26UserName write SetN26UserName;
@@ -41,8 +42,17 @@ var
   N26Factory: TN26Factory;
 
 implementation
- uses EncDec,IniFiles;
+ uses EncDec,IniFiles, uGlobal;
 {$R *.dfm}
+
+function md5(s:string):string;
+begin
+  result := HTTPEncode(md5Encode(s));
+end;
+function base64(s:string):string;
+begin
+  result := HTTPEncode(Base64EncodeStr(s));
+end;
 
 { TN26Factory }
 
@@ -62,14 +72,6 @@ begin
 end;
 
 function TN26Factory.coLogin(username, password: string): boolean;
-function md5(s:string):string;
-begin
-  result := HTTPEncode(md5Encode(s));
-end;
-function base64(s:string):string;
-begin
-  result := HTTPEncode(Base64EncodeStr(s));
-end;
 var
   doc:IXMLDomDocument;
   s:string;
@@ -96,6 +98,30 @@ begin
     end;
   end;
   Logined := result;
+end;
+
+function TN26Factory.EncodeLoginUrl: string;
+var
+  rs:TZQuery;
+begin
+  ReadParam;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select XSM_CODE,XSM_PSWD from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    rs.ParambyName('SHOP_ID').asString := Global.SHOP_ID;
+    Factor.Open(rs);
+    N26UserName := rs.Fields[0].asString;
+    N26PassWord := DecStr(rs.Fields[1].asString,ENC_KEY);
+    if N26UserName='' then Raise Exception.Create('没找到网上订货用户密码，无法直接登录.');
+  finally
+    rs.free;
+  end;
+  result := '';
+  if N26Url<>'' then
+  begin
+     result := N26Url+'mlogin.do?username='+base64(N26UserName)+'&password='+base64(N26PassWord);
+  end;
 end;
 
 function TN26Factory.FindElement(root: IXMLDOMNode;

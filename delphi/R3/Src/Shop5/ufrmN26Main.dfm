@@ -1,6 +1,6 @@
 inherited frmN26Main: TfrmN26Main
-  Left = 229
-  Top = 225
+  Left = 473
+  Top = 137
   Width = 829
   Height = 523
   Caption = ''
@@ -5723,6 +5723,10 @@ inherited frmN26Main: TfrmN26Main
       Tag = 41200001
       Caption = #38144#21806#26085#25253
       OnExecute = actfrmSaleDaySingleReportExecute
+    end
+    object actfrmIEOpen: TAction
+      Caption = #32593#19978#35746#36135
+      OnExecute = actfrmIEOpenExecute
     end
   end
   inherited PopupMenu: TPopupMenu

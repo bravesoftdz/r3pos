@@ -421,7 +421,7 @@ begin
          except
            on E:Exception do
               begin
-                if StrtoIntDef(login.RET,0) in [2,3] then
+                if StrtoIntDef(login.RET,0) in [2,3,6] then
                    begin
                      MessageBox(Handle,pchar('企业认证失败？错误原因:'+E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
                      Global.LocalFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID=0 and DEFINE=''TENANT_ID''');

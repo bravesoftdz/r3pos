@@ -290,6 +290,7 @@ type
     actfrmGoodsMonth: TAction;
     CA_MODULE: TZQuery;
     actfrmSaleDaySingleReport: TAction;
+    actfrmIEOpen: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -412,6 +413,7 @@ type
     procedure RzButton1Click(Sender: TObject);
     procedure actfrmGoodsMonthExecute(Sender: TObject);
     procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
+    procedure actfrmIEOpenExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -736,7 +738,7 @@ begin
   LoginFactory.Version := RzVersionInfo.FileVersion;
   if TimerFactory<>nil then TimerFactory.Free;
   try
-  if (not Logined and not N26Factory.Logined) or Locked then
+  if (not Logined and not  (CaFactory.Audited and N26Factory.Logined)) or Locked then
      begin
        Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
        if Logined then
@@ -4056,6 +4058,12 @@ begin
   Form.Name := 'TfrmSimpleSaleDayReport';
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmIEOpenExecute(Sender: TObject);
+begin
+  inherited;
+  ShellExecute(0,'open',Pchar(N26Factory.EncodeLoginUrl),nil,nil,0);
 end;
 
 end.

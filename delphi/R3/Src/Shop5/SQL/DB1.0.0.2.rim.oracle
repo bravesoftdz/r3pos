@@ -97,7 +97,7 @@ create view RIM_RM_CUST as select * from RM_CUST;
 --2011.08.17 PM：订单中间主表增加预计到货日期：
 alter table INF_INDEORDER add ARR_DATE varchar2(10);
 
---2011.08.29：修改对照的视图：RIM_GOODS_RELATION
+--2011.08.29修改罚没烟，2011.10.26修改：SORT_ID10；修改对照的视图：RIM_GOODS_RELATION
 drop view RIM_GOODS_RELATION;
 create view RIM_GOODS_RELATION
 as

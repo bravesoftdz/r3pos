@@ -15,11 +15,10 @@ type
     function GetJpeg(ResName:String):TJPEGImage;
     function GetBitmap(ResName:String):TBitmap;
     function GetResString(ResName:Integer):String;
-    property DllName:String read FDllName write SetDllName;
   end;
 
 var
-  rcFactory1:TrcFactory;
+  rcFactory:TrcFactory;
 implementation
 
 { TrcFactory }
@@ -93,8 +92,8 @@ end;
 
 
 initialization
-  rcFactory1 := TrcFactory.Create;
+  rcFactory := TrcFactory.Create;
 finalization
-  rcFactory1.Free;
+  rcFactory.Free;
 
 end.

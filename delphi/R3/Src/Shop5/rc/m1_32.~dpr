@@ -12,6 +12,7 @@ library m1_32;
 
 
 {$R m1.res}
+{$R s1.res}
 
 begin
 end.

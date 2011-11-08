@@ -1,8 +1,3 @@
-STRINGTABLE
-{
-  1, "1"
-  2, "279"
-}
 public_logo JPG D:\Delphi\R3\Src\Shop5\rc\public_logo.jpg
 m1_left0_hot BMP D:\Delphi\R3\Src\Shop5\rc\m1_left0_hot.bmp
 m1_left0 BMP D:\Delphi\R3\Src\Shop5\rc\m1_left0.bmp

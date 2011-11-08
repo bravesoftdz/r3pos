@@ -5,7 +5,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, StdCtrls, jpeg,ZdbFactory,Registry, ComCtrls, RzForms;
+  ExtCtrls, StdCtrls, jpeg,ZdbFactory,Registry, ComCtrls, RzForms, uRcFactory;
 
 type
   TfrmLogo = class(TForm)
@@ -22,6 +22,7 @@ type
   public
     procedure ShowPostion(Postion:Integer;Caption:String);
     { Public declarations }
+    procedure LoadPic32;
     procedure Show;
     property ShowTitle:string read FShowTitle write SetShowTitle;
     property Position:integer read FPosition write SetPosition;
@@ -52,6 +53,7 @@ begin
   if FileExists(ExtractFilePath(ParamStr(0))+'flash.jpg') then
      Image3.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'flash.jpg');
   frmLogo := self;
+  LoadPic32;
 end;
 
 procedure TfrmLogo.SetShowTitle(const Value: string);
@@ -71,6 +73,11 @@ begin
   ProgressBar1.Visible := True;
   ProgressBar1.Position := Value;
   Update;
+end;
+
+procedure TfrmLogo.LoadPic32;
+begin
+  Image3.Picture.Graphic := rcFactory.GetJpeg('public_logo');
 end;
 
 initialization

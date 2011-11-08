@@ -1,6 +1,6 @@
 inherited frmImplementionTool: TfrmImplementionTool
   Left = 312
-  Top = 156
+  Top = 146
   Width = 942
   Height = 592
   Caption = #25968#25454#23454#26045

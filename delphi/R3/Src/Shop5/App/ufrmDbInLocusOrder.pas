@@ -71,6 +71,7 @@ type
     procedure DBGridEh1DblClick(Sender: TObject);
   private
     { Private declarations }
+    IsFinish:Boolean;      //判断扫码是否完成
     function  CheckCanExport: boolean; override;
   protected
     function CheckInput:boolean;override;
@@ -197,12 +198,14 @@ var
 begin
   edtTable.DisableControls;
   try
-    edtTable.First;
+    {edtTable.First;
     while not edtTable.Eof do
       begin
         if edtTable.FieldbyName('BAL_AMT').AsInteger <>0 then Raise Exception.Create('当前商品扫码数据不正确，请核对后再保存');
         edtTable.Next;
-      end;
+      end;}
+    if not IsFinish then
+      if MessageBox(Handle,pchar('扫码没有完成,确定保存吗!'),'友情提示...',MB_YESNO+MB_ICONINFORMATION) <> 6 then Exit;        
   finally
     edtTable.EnableControls;
   end;
@@ -228,7 +231,10 @@ begin
        cdsHeader.FieldbyName('PLAN_DATE').AsString := formatDatetime('YYYY-MM-DD',Date());
        cdsHeader.FieldbyName('STOCK_USER').AsString := Global.UserID;
      end;
-  cdsHeader.FieldbyName('LOCUS_STATUS').AsString := '3';
+  if not IsFinish then
+    cdsHeader.FieldByName('LOCUS_STATUS').AsString := '2'
+  else
+    cdsHeader.FieldbyName('LOCUS_STATUS').AsString := '3';
   cdsHeader.FieldbyName('LOCUS_USER').AsString := Global.UserID;
   cdsHeader.FieldbyName('LOCUS_DATE').AsString := formatDatetime('YYYY-MM-DD',Date());
   cdsHeader.FieldbyName('LOCUS_AMT').AsInteger := r;
@@ -336,6 +342,10 @@ begin
            end;
         edtTable.Next;
       end;
+    if (wt = 0) and (pzwt = 0) then
+      IsFinish := True
+    else
+      IsFinish := False;      
     edtJH.Text := formatFloat('#0.0',jh);
     edtSM.Text := formatFloat('#0.0',sm);
     edtWT.Text := formatFloat('#0.0',wt);
@@ -369,6 +379,7 @@ var
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能审核空单据');
+  if not IsFinish then Raise Exception.Create('扫码没有完成,不能审核单据');
   if dbState <> dsBrowse then SaveOrder;
   if IsAudit then
      begin

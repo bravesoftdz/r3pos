@@ -178,7 +178,11 @@ end;
 procedure TfrmLocusNoProperty.RzBitBtn1Click(Sender: TObject);
 begin
   inherited;
-  if wait<>0 then Raise Exception.Create('扫码没有完成,请确认扫完再确认');
+  //if wait<>0 then Raise Exception.Create('扫码没有完成,请确认扫完再确认');
+  if wait <> 0 then
+     begin
+       if MessageBox(Handle,pchar('扫码没有完成,确认完毕吗!'),'友情提示...',MB_YESNO+MB_ICONINFORMATION) <> 6 then Exit; 
+     end;
   self.ModalResult := MROK;
 end;
 
@@ -425,16 +429,14 @@ end;
 
 procedure TfrmLocusNoProperty.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
-var
-  t:currency;
 begin
-  t := AObj.FieldbyName('CALC_AMOUNT').asFloat/CONV_RATE;
+  //t := AObj.FieldbyName('CALC_AMOUNT').asFloat/CONV_RATE;
   inherited;
-  if (wait<>0) and (wait<>trunc(t)) then
+  {if (wait<>0) and (wait<>trunc(t)) then
      begin
        CanClose := false;
        Raise Exception.Create('扫码没有完成,请确认扫完再确认');
-     end;
+     end;}
 
 end;
 

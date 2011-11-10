@@ -587,12 +587,10 @@ begin
     while not RoleList.Eof do
       begin
         if RoleList.FieldbyName('selflag').asInteger=1 then
-        v := (v or round(BintoInt(RoleList.FieldbyName('RIGHT_FORDATA').AsString)));
+        v := (v or round(BintoInt(FnString.FormatStringBack(RoleList.FieldbyName('RIGHT_FORDATA').AsString,10))));
         RoleList.Next;
       end;
-    rStr := inttoBin(v);
-    for i:=length(rStr) to 9 do
-        rStr := '0'+rStr;
+    rStr := FnString.FormatStringEx(inttoBin(v),10);
     DataFlag := rStr;
     rs := Global.GetZQueryFromName('PUB_PARAMS');
     for i:=1 to length(rStr) do

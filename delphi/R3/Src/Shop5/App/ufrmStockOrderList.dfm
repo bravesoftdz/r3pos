@@ -1,5 +1,5 @@
 inherited frmStockOrderList: TfrmStockOrderList
-  Left = 588
+  Left = 498
   Top = 93
   Width = 868
   Height = 612

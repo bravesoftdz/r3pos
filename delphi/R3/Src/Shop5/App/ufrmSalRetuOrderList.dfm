@@ -1,6 +1,6 @@
 inherited frmSalRetuOrderList: TfrmSalRetuOrderList
   Left = 280
-  Top = 148
+  Top = 131
   Width = 836
   Height = 607
   Caption = #38144#21806#36864#36135#21333

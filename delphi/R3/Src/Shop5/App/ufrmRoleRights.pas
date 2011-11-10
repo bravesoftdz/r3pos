@@ -418,7 +418,7 @@ begin
       end;
     if not ChkRights.Checked then DataRight := '00';
     if RIGHTData <> '' then
-      RIGHTData := DataRight + Copy(RIGHTData,3,50)
+      RIGHTData := DataRight + Copy(RIGHTData,3,8)
     else
       RIGHTData := DataRight + '00000000';
     rs.Edit;

@@ -412,13 +412,21 @@ begin
     end;
   rStr := FnString.FormatStringEx(inttoBin(r),10);
   if length(rStr)<DataFlag then Exit;
-  if rStr[DataFlag]<>'1' then Exit;
   if DataFlag=2 then
      deptId := GetDeptInfo.FieldbyName('DEPT_ID').AsString;
-  case DataFlag of
-  1:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12'') union all select '''+Global.SHOP_ID+''' as DATA_OBJECT from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' )';
-  2:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12'') union all select '''+deptId+''' as DATA_OBJECT from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' )';
-  end;
+  if rStr[DataFlag]<>'1' then
+     begin
+       if fnString.TrimRight(Global.SHOP_ID,4) = '0001' then Exit;
+       case DataFlag of
+       1:result := ' and '+FieldName+' = '''+Global.SHOP_ID+''' ';
+       2:result := ' and '+FieldName+' = '''+deptId+'''';
+     end;
+     end
+  else
+     case DataFlag of
+     1:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12'') union all select '''+Global.SHOP_ID+''' as DATA_OBJECT from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' )';
+     2:result := ' and '+FieldName+' in (select DATA_OBJECT from CA_RIGHT_FORDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DATA_TYPE='''+inttostr(DataFlag)+''' and USER_ID='''+Global.UserID+''' and COMM not in (''02'',''12'') union all select '''+deptId+''' as DATA_OBJECT from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' )';
+     end;
 end;
 
 procedure TShopGlobal.DataModuleCreate(Sender: TObject);

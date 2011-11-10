@@ -591,6 +591,8 @@ begin
         RoleList.Next;
       end;
     rStr := inttoBin(v);
+    for i:=length(rStr) to 9 do
+        rStr := '0'+rStr;
     DataFlag := rStr;
     rs := Global.GetZQueryFromName('PUB_PARAMS');
     for i:=1 to length(rStr) do

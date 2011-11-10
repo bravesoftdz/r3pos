@@ -501,7 +501,7 @@ begin
   ',B.SHOP_NAME,C.GODS_CODE,C.GODS_NAME,C.BARCODE as CALC_BARCODE,'+TransUnit(edtUNIT_ID.ItemIndex,'C','UNIT_ID')+' '+
   ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSPRICE_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.GODS_ID=C.GODS_ID '+
   ' left join VIW_SR_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID and A.GODS_ID=D.GODS_ID and A.PROPERTY_01=D.PROPERTY_01 and A.PROPERTY_02=D.PROPERTY_02 and A.BATCH_NO=D.BATCH_NO '+
-  ' '+StrWhere;
+  ' '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 
   Result :=
   'select jc.*,isnull(c.BARCODE,jc.CALC_BARCODE) as BARCODE,round(jc.NEW_OUTPRICE*jc.AMOUNT,2) as SALE_MNY,round(jc.NEW_INPRICE*jc.AMOUNT,2) as STOCK_MNY from ('+StrSql+') jc '+
@@ -881,7 +881,7 @@ begin
   StrSql :=
   'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,sum(A.AMOUNT) as AMOUNT '+
   ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSINFO_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-  ' '+StrWhere+' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
+  ' '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
 
   StrSql :=
   'select j1.TENANT_ID,j1.GODS_ID,''#'' as PROPERTY_01,''#'' as PROPERTY_02,'+
@@ -1019,7 +1019,7 @@ begin
   StrSql :=
   'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,sum(A.AMOUNT/(cast('+TransCalcRate(edtP3_UNIT_ID.ItemIndex,'C','')+' as decimal(18,3))*1.0)) as AMOUNT '+
   ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSINFO_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-  ' '+StrWhere+'  group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
+  ' '+StrWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+'  group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
 
   StrSql :=
   'select j1.TENANT_ID,j1.GODS_ID,F.GODS_CODE,F.GODS_NAME,F.BARCODE as CALC_BARCODE,''#'' as PROPERTY_01,''#'' as PROPERTY_02,max('+TransUnit(edtP3_UNIT_ID.ItemIndex,'F','')+') as UNIT_ID,sum(AMOUNT) as AMOUNT,'+

@@ -224,7 +224,7 @@ try
         cxedtUsers.Enabled := not Locked;
         edtOPER_DATE.Enabled := not Locked;
         cxcbSave.Visible := not Locked;
-        RzLabel1.Visible := not Locked and not CaFactory.Auto;
+        RzLabel1.Visible := not Locked;
         Label6.Visible := not Locked and not CaFactory.Auto;
         if Locked then
            begin

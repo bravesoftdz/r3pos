@@ -151,8 +151,6 @@ select
 	A.GODS_ID,    --R3商品内码
   B.SECOND_ID,   --业务系统商品内码<烟草公司内码>
   C.LICENSE_CODE,--证可证号
-  D.CUST_CODE,   --客户编号
-  D.CUST_ID,     --业务系统客户内码<烟草公司内码>
 --结账时进销价信息
 	A.NEW_INPRICE,--当时进价
 	A.NEW_OUTPRICE,--当时销价

@@ -248,7 +248,8 @@ uses
   uSyncThread in 'App\uSyncThread.pas',
   OleCtrls in '..\..\Pub\OleCtrls.pas',
   ufrmPosMainList in 'App\ufrmPosMainList.pas' {frmPosMainList},
-  uN26Factory in 'App\uN26Factory.pas' {N26Factory: TDataModule};
+  uN26Factory in 'App\uN26Factory.pas' {N26Factory: TDataModule},
+  ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame};
 
 {$R *.res}
 var

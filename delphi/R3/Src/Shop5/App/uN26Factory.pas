@@ -26,11 +26,13 @@ type
     procedure SetLogined(const Value: boolean);
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
     function FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
+    function EncodeLoginUrl: string;
   public
     { Public declarations }
     function Checked:integer;
-    function EncodeLoginUrl:string;
+    function coAutoLogin:boolean;
     function coLogin(username:string;password:string):boolean;
+    function EncodeUrl:string;
     property N26Url:string read FN26Url write SetN26Url;
     property N26UserName:string read FN26UserName write SetN26UserName;
     property N26PassWord:string read FN26PassWord write SetN26PassWord;
@@ -71,11 +73,35 @@ begin
   end;
 end;
 
+function TN26Factory.coAutoLogin: boolean;
+var
+  rs:TZQuery;
+begin
+  result := true;
+  if Checked=0 then Exit;
+  result := false;
+  ReadParam;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select XSM_CODE,XSM_PSWD from CA_SHOP_INFO where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID';
+    rs.ParambyName('TENANT_ID').asInteger := Global.TENANT_ID;
+    rs.ParambyName('SHOP_ID').asString := Global.SHOP_ID;
+    Factor.Open(rs);
+    N26UserName := rs.Fields[0].asString;
+    N26PassWord := DecStr(rs.Fields[1].asString,ENC_KEY);
+    if N26UserName='' then Raise Exception.Create('没找到网上订货用户密码，无法直接登录.');
+  finally
+    rs.free;
+  end;
+  result := coLogin(N26UserName,N26PassWord);
+end;
+
 function TN26Factory.coLogin(username, password: string): boolean;
 var
   doc:IXMLDomDocument;
   s:string;
 begin
+  result := true;
   if Checked=0 then Exit;
   ReadParam;
   result := false;
@@ -122,6 +148,11 @@ begin
   begin
      result := N26Url+'mlogin.do?username='+base64(N26UserName)+'&password='+base64(N26PassWord);
   end;
+end;
+
+function TN26Factory.EncodeUrl: string;
+begin
+  result := N26Url+'loginByToken.do?token='+HTTPEncode(N26Token);
 end;
 
 function TN26Factory.FindElement(root: IXMLDOMNode;

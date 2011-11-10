@@ -29,7 +29,7 @@ type
   end;
 
 implementation
-uses IniFiles,ufrmTenant;
+uses IniFiles,ufrmTenant,uCaFactory,uN26Factory;
 {$R *.dfm}
 
 { TfrmHostDialog }
@@ -40,6 +40,7 @@ begin
     begin
       try
         ReadHost;
+        RzBitBtn1.Visible := not ( CaFactory.auto or (N26Factory.Checked>0));
         result := (ShowModal);
       finally
         free;
@@ -120,7 +121,7 @@ begin
     begin
       try
         ReadHost;
-        RzBitBtn1.Visible := false;
+        RzBitBtn1.Visible := not ( CaFactory.auto or (N26Factory.Checked>0));
         result := (ShowModal);
       finally
         free;

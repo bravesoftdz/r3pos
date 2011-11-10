@@ -405,10 +405,12 @@ begin
   while not rs.Eof do
     begin
       if pos(','+rs.FieldByName('ROLE_ID').AsString+',',','+roles+',')>0 then
-      r := (r or Round(BintoInt(rs.FieldbyName('RIGHT_FORDATA').AsString)));
+      r := (r or Round(BintoInt(
+            FnString.FormatStringBack(rs.FieldbyName('RIGHT_FORDATA').AsString,10)
+          )));
       rs.Next;
     end;
-  rStr := inttoBin(r);
+  rStr := FnString.FormatStringEx(inttoBin(r),10);
   if length(rStr)<DataFlag then Exit;
   if rStr[DataFlag]<>'1' then Exit;
   if DataFlag=2 then

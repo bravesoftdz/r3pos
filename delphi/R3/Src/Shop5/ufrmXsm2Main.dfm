@@ -2253,7 +2253,7 @@ inherited frmXsm2Main: TfrmXsm2Main
       object Image6: TImage
         Left = 346
         Top = 0
-        Width = 28
+        Width = 4
         Height = 46
         Align = alClient
         AutoSize = True

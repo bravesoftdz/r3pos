@@ -845,7 +845,7 @@ begin
       button := TrzBmpButton(FList[i]);
       button.Top := 45;
       if i=0 then
-         button.Left := 126
+         button.Left := 138
       else
          button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+2;
       if button.Down then

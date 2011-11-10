@@ -2849,6 +2849,7 @@ begin
          else
          Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
+    if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self); 
     SyncFactory.SyncAll;
     Global.LoadBasic;
     ShopGlobal.LoadRight;
@@ -4063,7 +4064,8 @@ end;
 procedure TfrmN26Main.actfrmIEOpenExecute(Sender: TObject);
 begin
   inherited;
-  ShellExecute(0,'open',Pchar(N26Factory.EncodeLoginUrl),nil,nil,0);
+  if N26Factory.coAutoLogin then
+     ShellExecute(0,'open',Pchar(N26Factory.EncodeUrl),nil,nil,0);
 end;
 
 end.

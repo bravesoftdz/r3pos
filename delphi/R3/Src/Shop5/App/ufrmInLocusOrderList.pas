@@ -151,7 +151,7 @@ begin
      w := w +' and A.STOCK_ID>'''+id+'''';
   result :=
      'select A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,A.STOCK_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT,'+
-     'A.LOCUS_CHK_USER,A.LOCUS_CHK_DATE,case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from STK_STOCKORDER A '+w+'';
+     'A.LOCUS_CHK_USER,A.LOCUS_CHK_DATE,case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from STK_STOCKORDER A '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+'';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,c.PAYM_MNY,c.RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
@@ -261,7 +261,7 @@ begin
   fndP3_D1.Date := date();
   fndP3_D2.Date := date();
 
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndSHOP_ID.KeyValue := Global.SHOP_ID;
     fndSHOP_ID.Text := Global.SHOP_NAME;
@@ -277,9 +277,8 @@ begin
     fndP3_CLIENT_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP3_CLIENT_ID.Style);
     fndP3_CLIENT_ID.Properties.ReadOnly := True;
-    
-  end;
-
+  end;}
+  //2011.11.10 引入门店权限及部门权限，把原有的控制注释
     if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label40.Caption := '进货仓库';
@@ -560,7 +559,7 @@ begin
      w := w +' and A.SALES_ID>'''+id+'''';
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.SEND_ADDR,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,'+
             '-A.SALE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,-A.LOCUS_AMT as LOCUS_AMT,A.LOCUS_CHK_USER,A.LOCUS_CHK_DATE, '+
-            'case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from SAL_SALESORDER A '+w+'';
+            'case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from SAL_SALESORDER A '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+'';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,c.RECV_MNY,c.RECK_MNY from ('+result+') jc left outer join ACC_RECVABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SALES_ID=c.SALES_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
@@ -675,7 +674,7 @@ begin
 
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.SALES_TYPE,A.PLAN_DATE,A.REMARK,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,'+
             'A.SALE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT,A.LOCUS_CHK_DATE,A.LOCUS_CHK_USER '+
-            ' from SAL_SALESORDER A '+w+' ';
+            ' from SAL_SALESORDER A '+w+ShopGlobal.GetDataRight('A.CLIENT_ID',1)+' ';
   result := 'select ja.*,a.SHOP_NAME as CLIENT_NAME from ('+result+') ja left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.SHOP_ID';
   result := 'select jc.*,c.SHOP_NAME as SHOP_NAME from ('+result+') jc left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';

@@ -104,27 +104,27 @@ begin
   //查自已门店用户，及下属直营门店的用户
   if not ShopGlobal.GetChkRight('31500001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if fndSHOP_ID.AsString <> '' then
-    str := ' and a.SHOP_ID = '+QuotedStr(fndSHOP_ID.AsString);
+    str := ' and SHOP_ID = '+QuotedStr(fndSHOP_ID.AsString);
   if fndDUTY_IDS.AsString <> '' then
-    str := str + ' and a.DUTY_IDS = '+QuotedStr(fndDUTY_IDS.AsString);
+    str := str + ' and DUTY_IDS = '+QuotedStr(fndDUTY_IDS.AsString);
   if fndDEPT_ID.AsString <> '' then
-    str := str + ' and a.DEPT_ID = '+QuotedStr(fndDEPT_ID.AsString);
+    str := str + ' and DEPT_ID = '+QuotedStr(fndDEPT_ID.AsString);
   if fndDEGREES.Text <> '' then
-    str := str + ' and a.DEGREES = '+QuotedStr(TRecord_(fndDEGREES.Properties.Items.Objects[fndDEGREES.ItemIndex]).FieldbyName('CODE_ID').AsString);
+    str := str + ' and DEGREES = '+QuotedStr(TRecord_(fndDEGREES.Properties.Items.Objects[fndDEGREES.ItemIndex]).FieldbyName('CODE_ID').AsString);
   if (fndSEX.ItemIndex <> -1) and (fndSEX.ItemIndex <> 0) then
-    str := str + ' and a.SEX = '+QuotedStr(IntToStr(fndSEX.ItemIndex-1));
+    str := str + ' and SEX = '+QuotedStr(IntToStr(fndSEX.ItemIndex-1));
   if (fndState.ItemIndex <> -1) and (fndState.ItemIndex <> 0) then
     begin
       case fndState.ItemIndex of
-        1:str := str + ' and ifnull(a.WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
-        2:str := str + ' and ifnull(a.WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
-        3:str := str + ' and ifnull(a.DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
+        1:str := str + ' and ifnull(WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')>'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
+        2:str := str + ' and ifnull(WORK_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+')<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date))+' and ifnull(DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')>='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
+        3:str := str + ' and ifnull(DIMI_DATE,'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date+1))+')<'+QuotedStr(FormatDateTime('YYYY-MM-DD',Date));
       end;
     end;
 
   if edtKey.Text<>'' then
-     str:= str + ' and ( a.USER_NAME LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
-                  ' or a.USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or a.ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
+     str:= str + ' and ( USER_NAME LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+
+                  ' or USER_SPELL LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+' or ACCOUNT LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%')+')';
   Cds_Users.Close;
   Cds_Users.SQL.Text :=
   ParseSQL(Factor.iDbType,
@@ -132,8 +132,8 @@ begin
   'select ja.*,a.DEPT_NAME as DEPT_ID_TEXT from('+
   'select TENANT_ID,SHOP_ID,USER_ID,ACCOUNT,ENCODE,USER_NAME,USER_SPELL,PASS_WRD,DEPT_ID,DUTY_IDS,DUTY_NAMES as DUTY_IDS_TEXT,'+
   'ROLE_IDS,ROLE_NAMES as ROLE_IDS_TEXT,SEX,BIRTHDAY,DEGREES,MOBILE,OFFI_TELE,FAMI_TELE,EMAIL,QQ,'+
-  'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK,COMM from CA_USERS a '+
-  'where a.COMM not in (''12'',''02'') and a.TENANT_ID='+IntToStr(Global.TENANT_ID)+str+') ja '+
+  'MSN,MM,ID_NUMBER,IDN_TYPE,FAMI_ADDR,POSTALCODE,WORK_DATE,DIMI_DATE,REMARK,COMM from CA_USERS  '+
+  'where COMM not in (''12'',''02'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+str+ShopGlobal.GetDataRight('SHOP_ID',1)+') ja '+
   'left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID) jb '+
   'left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.SHOP_ID=b.SHOP_ID ORDER BY jb.USER_ID'
   );

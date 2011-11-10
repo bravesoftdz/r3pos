@@ -1,6 +1,6 @@
 inherited frmInLocusOrderList: TfrmInLocusOrderList
-  Left = 326
-  Top = 166
+  Left = 327
+  Top = 137
   Width = 868
   Height = 575
   Caption = #25910#36135#21333

@@ -1,6 +1,6 @@
 inherited frmOutLocusOrderList: TfrmOutLocusOrderList
-  Left = 298
-  Top = 112
+  Left = 297
+  Top = 158
   Width = 868
   Height = 575
   Caption = #21457#36135#21333
@@ -16,8 +16,8 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
       inherited RzPage: TRzPageControl
         Width = 844
         Height = 495
-        ActivePage = TabSheet3
-        TabIndex = 2
+        ActivePage = TabSheet2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810

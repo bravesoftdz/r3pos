@@ -109,7 +109,7 @@ begin
   if id<>'' then
     w := w +' and PRINT_DATE>'+id+' ';
 
-  str:='select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE from STO_PRINTORDER '+w+'';
+  str:='select TENANT_ID,SHOP_ID,PRINT_DATE,CHECK_STATUS,CHECK_TYPE,CREA_DATE,CREA_USER,CHK_USER,CHK_DATE from STO_PRINTORDER '+w+ShopGlobal.GetDataRight('SHOP_ID',1)+'';
   str:='select jb.*,b.USER_NAME as CREA_USER_TEXT,c.USER_NAME as CHK_USER_TEXT,d.SHOP_NAME as SHOP_ID_TEXT from ('+str+')jb '+
        ' left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.CREA_USER=b.USER_ID '+
        ' left outer join VIW_USERS c on jb.TENANT_ID=c.TENANT_ID and jb.CHK_USER=c.USER_ID '+
@@ -176,11 +176,12 @@ begin
   inherited;
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     begin
       SetEditStyle(dsBrowse,fndSHOP_ID.Style);
       fndSHOP_ID.Properties.ReadOnly := True;
-    end;
+    end;}
+  //2011.11.10 引入门店权限及部门权限，把原有的控制注释
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   InitGridPickList(DBGridEh1);
   fndCHECK_EMPL.DataSet := Global.GetZQueryFromName('CA_USERS');

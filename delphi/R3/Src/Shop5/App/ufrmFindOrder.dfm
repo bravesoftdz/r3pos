@@ -1,5 +1,6 @@
 inherited frmFindOrder: TfrmFindOrder
-  Left = 348
+  Left = 697
+  Top = 183
   ActiveControl = DBGridEh1
   Caption = #21333#25454#26597#35810
   ClientWidth = 492

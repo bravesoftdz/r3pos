@@ -107,7 +107,7 @@ begin
      w := w +' and A.STOCK_ID>'''+id+'''';
   result :=
      'select A.TENANT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,A.STOCK_AMT as AMOUNT,A.STOCK_MNY as AMONEY,''4'' as ABLE_TYPE, '+
-     'case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from STK_STOCKORDER A '+w+' ';
+     'case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from STK_STOCKORDER A '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
   result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jc.*,c.PAYM_MNY,c.RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.STOCK_ID=c.STOCK_ID and jc.ABLE_TYPE=c.ABLE_TYPE';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
@@ -195,15 +195,15 @@ begin
   D1.Date := date();
   D2.Date := date();
 
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndSHOP_ID.Properties.ReadOnly := False;
     fndSHOP_ID.KeyValue := Global.SHOP_ID;
     fndSHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndSHOP_ID.Style);
     fndSHOP_ID.Properties.ReadOnly := True;
-  end;
-
+  end;}
+  //2011.11.10 引入门店权限及部门权限，把原有的控制注释
   if not ShopGlobal.GetChkRight('14500001',2) then
      begin
        DBGridEh1.Columns[10].Free;

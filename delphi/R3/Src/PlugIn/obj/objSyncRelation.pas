@@ -38,7 +38,7 @@ uses ZPlugIn, ObjCommon;
 function TSynchronGood_Relation.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   PlugIn: TPlugIn;
-  InParams,TENANT_ID,Str: string;
+  InParams,TENANT_ID,Str,Sort_ID5: string;
   UpdateMode: integer;
   vData: oleVariant;
 begin
@@ -52,20 +52,24 @@ begin
     //第一步: 从第三方视图 到  R3的对照关系表;
     InParams:=Params.Encode(Params);
     PlugIn.DLLDoExecute(InParams, vData);
+    //是否重点品牌
+    Sort_ID5:='(case when SORT_ID4=''1'' then ''01072169-2F03-42C1-9EAB-541D031647AF'''+
+                   ' else ''15CD1495-B3C7-42C7-8709-5376FC061305'' end) as SORT_ID5 ';
+
 
     //第二步：返回查询结果:
     case UpdateMode of
      1:
       begin
         Str:=  //B.SORT_NAME as SORT_NAME2,C.SORT_NAME as SORT_NAME6,
-          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,SORT_ID6,'+
+          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,'+Sort_ID5+',SORT_ID6,'+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG in (1,2) then ''已对照'' when UPDATE_FLAG=4 then ''条码重复'' when UPDATE_FLAG=5 then ''手工对照'' else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' Order by GODS_CODE';
       end;
      2:
       begin
         Str:=
-          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,SORT_ID6,'+
+          'select 0 as flag,SECOND_ID,GODS_CODE,GODS_NAME,NEW_INPRICE,NEW_OUTPRICE,PACK_BARCODE,UPDATE_FLAG,SORT_ID2,'+Sort_ID5+',SORT_ID6,'+
           '(case when UPDATE_FLAG=0 then ''未对上'' when UPDATE_FLAG=2 then ''新对照''  when UPDATE_FLAG=4 then ''条码重复'' when UPDATE_FLAG=5 then ''手工对照''  else ''未知状态'' end) as UpdateCase '+
           ' from INF_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and UPDATE_FLAG<>1 Order by GODS_CODE';
       end;
@@ -163,7 +167,7 @@ begin
         'update PUB_GOODS_RELATION A '+
         ' set (NEW_INPRICE,NEW_OUTPRICE,COMM,TIME_STAMP)= '+
         ' (select NEW_INPRICE,NEW_OUTPRICE,'+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+') '+
-        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and '+
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') an '+
         ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+')';
       iRet:=AGlobal.ExecSQL(UpSQL);
 

@@ -52,7 +52,7 @@ begin
     //返回查询结果集:
     Str:=
       'select AA.*,BB.TENANT_ID as CLIENT_ID,BB.TENANT_NAME as CLIENT_NAME from '+
-      '(select * from INF_INDEORDER A where A.TENANT_ID='+TenantID+' and A.SHOP_ID='''+ShopID+''' and not exists(select 1 from STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.COMM_ID and B.TENANT_ID='+TenantID+')) AA, '+
+      '(select * from INF_INDEORDER A where A.TENANT_ID='+TenantID+' and A.SHOP_ID='''+ShopID+''' and not exists(select 1 from STK_STOCKORDER B where A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.COMM_ID and B.TENANT_ID='+TenantID+' and B.COMM not in (''02'',''12''))) AA, '+
       '(select R.RELATI_ID as RELATI_ID,T.TENANT_ID,T.TENANT_NAME from CA_TENANT T,CA_RELATIONS R where T.TENANT_ID=R.TENANT_ID and T.COMM not in (''02'',''12'') and R.RELATI_ID='+TenantID+' and R.RELATION_ID=1000006) BB '+
       ' where AA.TENANT_ID=BB.RELATI_ID '+
       ' order by AA.ARR_DATE,AA.INDE_DATE,AA.INDE_ID ';

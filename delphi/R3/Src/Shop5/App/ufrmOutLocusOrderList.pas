@@ -748,7 +748,7 @@ begin
      w := w +' and A.CHANGE_ID>'''+id+'''';
   result := 'select A.CHANGE_ID,A.CHANGE_DATE,A.GLIDE_NO,A.CHANGE_TYPE,A.REMARK,A.DUTY_USER,A.CHANGE_CODE,A.TENANT_ID,A.DEPT_ID,A.SHOP_ID,A.CREA_DATE,A.CREA_USER,'+
             'A.CHANGE_AMT as AMOUNT,A.LOCUS_DATE,A.LOCUS_USER,A.LOCUS_AMT,A.LOCUS_CHK_DATE,A.LOCUS_CHK_USER, '+
-            'case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from STO_CHANGEORDER A  '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2) + ' ';
+            'case when LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME from STO_CHANGEORDER A  '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' ';
   result := 'select ja.*,a.DEPT_NAME from ('+result+') ja left outer join CA_DEPT_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.DEPT_ID=a.DEPT_ID';
   result := 'select jb.*,b.USER_NAME as DUTY_USER_TEXT from ('+result+') jb left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.DUTY_USER=b.USER_ID';
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID';

@@ -3,12 +3,14 @@ inherited frameMDForm: TframeMDForm
   Caption = #29238#23376#31383#20307#27169#29256
   Menu = nil
   OldCreateOrder = True
+  Position = poDesigned
+  WindowState = wsMaximized
   PixelsPerInch = 96
   TextHeight = 12
   object bgPanel: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 541
+    Width = 540
     Height = 376
     Align = alClient
     BorderInner = fsFlatRounded

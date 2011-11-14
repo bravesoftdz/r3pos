@@ -44,10 +44,9 @@ end;
 constructor TframeMDForm.Create(AOwner: TComponent);
 begin
   inherited;
-//  DoubleBuffered := true;
   if Assigned(Application.MainForm) and Application.MainForm.Visible then
      begin
-       SetBounds(-4,-30,Application.MainForm.ClientWidth-129,Application.MainForm.ClientHeight-66);
+       SetBounds(-30,-20,Application.MainForm.ClientWidth+20,Application.MainForm.ClientHeight+30);
        WindowState := wsMaximized;
        FormStyle := fsMDIChild;
      end

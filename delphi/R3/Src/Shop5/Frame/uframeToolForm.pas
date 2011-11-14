@@ -15,7 +15,6 @@ type
     RzPanel3: TRzPanel;
     RzPanel4: TRzPanel;
     Image2: TImage;
-    Image1: TImage;
     Image3: TImage;
     rzPanel5: TPanel;
     Image4: TImage;
@@ -23,9 +22,11 @@ type
     CoolBar1: TCoolBar;
     ToolBar1: TToolBar;
     Image14: TImage;
+    Image1: TImage;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
+    procedure ToolBar1Resize(Sender: TObject);
   private
     { Private declarations }
   public
@@ -114,6 +115,17 @@ procedure TframeToolForm.FormActivate(Sender: TObject);
 begin
   inherited;
   lblToolCaption.Caption := 'µ±Ç°Î»ÖÃ->'+Caption;
+end;
+
+procedure TframeToolForm.ToolBar1Resize(Sender: TObject);
+begin
+  inherited;
+  ToolBar1.AutoSize := false;
+  CoolBar1.AutoSize := false;
+  ToolBar1.Width := width;
+  CoolBar1.Width := width;
+  ToolBar1.AutoSize := true;
+  CoolBar1.AutoSize := true;
 end;
 
 end.

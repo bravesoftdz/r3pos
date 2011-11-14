@@ -1,6 +1,6 @@
 inherited frmMMDesk: TfrmMMDesk
-  Left = 691
-  Top = 205
+  Left = 357
+  Top = 188
   Caption = 'frmMMDesk'
   ClientHeight = 372
   ClientWidth = 550

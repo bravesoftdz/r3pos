@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmMMBasic, RzBmpBtn, StdCtrls, ExtCtrls, RzBckgnd, RzPanel,
   RzButton, RzLabel, cxCheckBox, cxTextEdit, cxControls, cxContainer,
   cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, jpeg, ZDataSet, RzForms;
-
+const
+  WM_AUTOLOGIN=WM_USER+495;
 type
   TfrmMMLogin = class(TfrmMMBasic)
     Label4: TLabel;
@@ -32,12 +33,14 @@ type
   private
     { Private declarations }
     locked:boolean;
+    procedure wmAutoLogin(var Message: TMessage); message WM_AUTOLOGIN;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
     procedure LoadPic32;
     procedure LoadLogin;
     procedure SaveLogin;
+    procedure AutoLogin;
     class function LockScreen(Owner:TForm):boolean;
   end;
 
@@ -75,7 +78,7 @@ begin
   end;
 end;
 var
-  rs:TZQuery;
+  rs,temp:TZQuery;
 begin
   inherited;
   Screen.Cursor := crSQLWait;
@@ -95,7 +98,10 @@ begin
          mmGlobal.xsm_username := cxedtUsers.Text;
          mmGlobal.xsm_password := cxedtPasswrd.Text;
          CaFactory.coLogin(mmGlobal.xsm_username,CaFactory.DesEncode(mmGlobal.xsm_username,CaFactory.pubpwd),3);
-         if not mmGlobal.coLogin(mmGlobal.xsm_username,mmGlobal.xsm_password) then Exit;
+         if not mmGlobal.Logined then
+            begin
+              if not mmGlobal.coLogin(mmGlobal.xsm_username,mmGlobal.xsm_password) then Exit;
+            end;
          if not mmGlobal.AutoRegister(true) then Exit;
        end
     else
@@ -125,6 +131,7 @@ begin
        end;
     //开始登录了
     rs := TZQuery.Create(nil);
+    temp := TZQuery.Create(nil);
     try
       if locked then
         rs.SQL.Text :=
@@ -135,6 +142,16 @@ begin
         'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT,C.TENANT_NAME,C.SHORT_TENANT_NAME from VIW_USERS A,CA_SHOP_INFO B,CA_TENANT C '+
         'where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT in ('''+trim(cxedtUsers.Text)+''','''+lowercase(trim(cxedtUsers.Text))+''','''+uppercase(trim(cxedtUsers.Text))+''') and A.TENANT_ID='+inttostr(mmGlobal.TENANT_ID);
       uGlobal.Factor.open(rs);
+      if rs.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
+
+      if not ((rs.FieldByName('ACCOUNT').AsString = 'admin') or (rs.FieldByName('ACCOUNT').AsString = 'system') or (rs.FieldByName('ROLE_IDS').AsString = 'xsm')) then
+         begin
+           temp.SQL.Text := 'select DIMI_DATE from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(rs.FieldByName('ACCOUNT').AsString)+
+           ' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.DIMI_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()))+' and A.DIMI_DATE is not null ';
+           Factor.Open(temp);
+           if not temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'用户账号已经离职。');
+         end;
+
       if cxedtUsers.Text='system' then
         begin
           if lowerCase(cxedtPasswrd.Text)<>('rspcn.com@'+formatdatetime('YYMMDD',date())+inttostr(strtoint(formatDatetime('DD',Date())) mod 7 )) then
@@ -189,8 +206,9 @@ begin
             mmGlobal.xsm_nickname := mmGlobal.UserName;
             mmGlobal.xsm_userType := '1000';
           end;
-       if mmGlobal.xsm_userType <> '1000' then mmGlobal.module := '1100';
+//       if mmGlobal.xsm_userType <> '1000' then mmGlobal.module := '1100';
      finally
+       temp.Free;
        rs.Free;
      end;
      if not locked then
@@ -198,9 +216,9 @@ begin
           Factor.GqqLogin(mmGlobal.UserID,mmGlobal.SHOP_NAME+'('+mmGlobal.UserName+')');
           SaveLogin;
         end;
-     CheckSysDate;
+     if (mmGlobal.module[2]='1') then CheckSysDate;
      mmGlobal.SysDate := edtOPER_DATE.Date;
-     self.ModalResult := MROK;
+     ModalResult := MROK;
   finally
      logoStatus.Visible := false;
      Screen.Cursor := crDefault;
@@ -307,6 +325,29 @@ constructor TfrmMMLogin.Create(AOwner: TComponent);
 begin
   inherited;
   LoadPic32;
+  PostMessage(Handle,WM_AUTOLOGIN,0,0);
+end;
+
+procedure TfrmMMLogin.AutoLogin;
+begin
+  if ParamStr(1)='-mmPing' then
+     begin
+       if ParamStr(4)<>'' then
+          begin
+            mmGlobal.coAutoLogin(ParamStr(4));
+          end;
+       if mmGlobal.Logined then
+          begin
+            cxedtUsers.Text := mmGlobal.xsm_username;
+            cxedtPasswrd.Text := mmGlobal.xsm_nickname;
+            cxBtnOkClick(nil);
+          end;
+     end;
+end;
+
+procedure TfrmMMLogin.wmAutoLogin(var Message: TMessage);
+begin
+  AutoLogin;
 end;
 
 end.

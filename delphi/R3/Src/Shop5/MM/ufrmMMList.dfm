@@ -14,12 +14,10 @@ inherited frmMMList: TfrmMMList
     Height = 71
     inherited bkg_01: TImage
       Height = 71
-      Picture.Data = {00}
     end
     inherited bkg_02: TImage
       Left = 279
       Height = 71
-      Picture.Data = {00}
     end
     inherited bkg_top: TRzPanel
       Width = 271
@@ -31,9 +29,6 @@ inherited frmMMList: TfrmMMList
         Left = 25
         Top = 24
         Height = 68
-      end
-      inherited formLogo: TImage
-        Picture.Data = {00}
       end
       inherited RzFormShape1: TRzFormShape
         Width = 271
@@ -86,17 +81,8 @@ inherited frmMMList: TfrmMMList
         OnClick = UsersStatusClick
       end
     end
-    inherited sysMinimized: TRzBmpButton
-      Bitmaps.Hot.Data = {00000000}
-      Bitmaps.Up.Data = {00000000}
-    end
-    inherited sysMaximized: TRzBmpButton
-      Bitmaps.Hot.Data = {00000000}
-      Bitmaps.Up.Data = {00000000}
-    end
     inherited sysClose: TRzBmpButton
-      Bitmaps.Hot.Data = {00000000}
-      Bitmaps.Up.Data = {00000000}
+      Left = 220
     end
   end
   inherited bkg_bb: TRzPanel
@@ -107,7 +93,6 @@ inherited frmMMList: TfrmMMList
       Height = 51
       inherited bkg_03: TImage
         Top = -5
-        Picture.Data = {00}
       end
     end
     inherited RzPanel11: TRzPanel
@@ -115,7 +100,6 @@ inherited frmMMList: TfrmMMList
       Height = 51
       inherited bkg_04: TImage
         Top = -5
-        Picture.Data = {00}
       end
     end
     inherited bkg_bottom: TRzPanel
@@ -141,6 +125,7 @@ inherited frmMMList: TfrmMMList
         Top = 24
         Width = 24
         Height = 24
+        Anchors = [akTop, akRight]
         AutoSize = True
         Transparent = True
       end
@@ -384,8 +369,8 @@ inherited frmMMList: TfrmMMList
     end
   end
   object MediaPlayer: TMediaPlayer
-    Left = 250
-    Top = 0
+    Left = 178
+    Top = 24
     Width = 29
     Height = 30
     VisibleButtons = []

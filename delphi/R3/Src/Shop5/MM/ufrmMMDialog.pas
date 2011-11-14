@@ -23,8 +23,6 @@ type
     FontDialog1: TFontDialog;
     cxBtnClose: TRzBmpButton;
     Timer1: TTimer;
-    Button1: TButton;
-    Button2: TButton;
     procedure RzButton1Click(Sender: TObject);
     procedure cxBtnOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

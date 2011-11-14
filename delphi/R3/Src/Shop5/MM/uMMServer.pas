@@ -120,16 +120,17 @@ begin
   //注册消息
   MM_MsgId  := RegisterWindowMessage(MM_UNIQUE);
   MC_MsgId  := RegisterWindowMessage(MC_UNIQUE);
-  //InitInstance;
+  InitInstance;
 end;
 
 destructor TMMServer.Destroy;
 begin
   if MCHandle>0 then
      SendMessage(MCHandle,WM_COPYDATA, MM_QUIT,0);
+     
   //还原消息处理过程
   if OldWProc <> Nil then
-    SetWindowLong(Application.Handle, GWL_WNDPROC, LongInt(OldWProc));
+     SetWindowLong(Application.Handle, GWL_WNDPROC, LongInt(OldWProc));
 
   //关闭互斥对象
   if MutHandle <> 0 then CloseHandle(MutHandle);
@@ -151,7 +152,7 @@ var _Start:Int64;
 begin
   MCHandle := 0;
   BroadCastSystemMessage(BSF_IGNORECURRENTTASK or BSF_POSTMESSAGE,
-      @BSMRecipients, MM_MsgId, MI_GETHANDLE,Application.Handle);
+      @BSMRecipients, MM_MsgId, MI_GETHANDLE, Application.Handle);
   _Start := GetTickCount;
   while MCHandle=0 do
     begin

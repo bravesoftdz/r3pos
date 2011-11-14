@@ -58,6 +58,7 @@ type
     procedure Image5Click(Sender: TObject);
     procedure Image3Click(Sender: TObject);
     procedure Image4Click(Sender: TObject);
+    procedure sysCloseClick(Sender: TObject);
   private
     { Private declarations }
     frmMMFindBox:TfrmMMFindBox;
@@ -74,6 +75,7 @@ type
     procedure LoadPic32;
     function check:boolean;
     procedure LoadFriends;
+    procedure addStranger(userid,username:string);
     procedure ReadInfo;
     procedure OpenDialog(uid:string);
     procedure PlaySend(filename:string);
@@ -94,7 +96,7 @@ begin
   Exit;
   with Params do
     begin
-      if not (csDesigning in frmMMMain.ComponentState) then
+      if not (csDesigning in frmMMMain.ComponentState) and ((mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1')) then
          WndParent:=frmMMMain.Handle; //关键一行，用SetParent都不行！！
     end;
 end;
@@ -124,6 +126,13 @@ begin
     Params.ParambyName('TENANT_ID').asInteger := mmGlobal.TENANT_ID;
     mmGlobal.LocalFactory.Open(rs,'TmqqGrouping',Params);
     mmGlobal.LocalFactory.Open(us,'TmqqFriends',Params);
+    if not rs.Locate('S_GROUP_ID','STRANGER',[]) then
+       begin
+         rs.Append;
+         rs.FieldByName('S_GROUP_ID').AsString := 'STRANGER';
+         rs.FieldByName('I_SHOW_NAME').AsString := '陌生人';
+         rs.Post;
+       end;
     rs.first;
     while not rs.eof do
       begin
@@ -336,8 +345,13 @@ end;
 procedure TfrmMMList.RzBmpButton1Click(Sender: TObject);
 begin
   inherited;
-  frmMMMain.WindowState := wsMaximized;
-  frmMMMain.Show;
+  if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
+     begin
+       frmMMMain.WindowState := wsMaximized;
+       frmMMMain.Show;
+     end
+  else
+     MessageBox(Handle,'您没有开通其他应用,请联系客服开通此服务','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 destructor TfrmMMList.Destroy;
@@ -494,16 +508,61 @@ begin
   Image4.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_04');
   Image5.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_05');
   Image6.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_06');
-  toolDesk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Up');
-  toolDesk.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Down');
-  RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Up');
-  RzBmpButton1.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Down');
+  toolDesk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Up');
+  toolDesk.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Down');
+  RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Up');
+  RzBmpButton1.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Down');
   
   //top
   Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_top_Image2');
   UsersStatus.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_top_UsersStatus_Up');
   UsersStatus.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_top_UsersStatus_Down');
 
+end;
+
+procedure TfrmMMList.sysCloseClick(Sender: TObject);
+begin
+  if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
+     inherited
+  else
+     frmMMMain.Close;
+
+end;
+
+procedure TfrmMMList.addStranger(userid, username: string);
+var
+  mmUserInfo:PmmUserInfo;
+  b,g:TTreeNode;
+  i:integer;
+begin
+  mmUserInfo := mmFactory.Find(userid);
+  if mmUserInfo=nil then
+     begin
+       mmGlobal.addStranger(userid,username);
+       new(mmUserInfo);
+       mmUserInfo^.uid := userid;
+       mmUserInfo^.line := true;
+       mmUserInfo^.IsBeBlack := false;
+       mmUserInfo^.PlayerFava := TmmPlayerFava.Create;
+       mmUserInfo^.PlayerFava.messagetype := 1003;
+       mmUserInfo^.PlayerFava.routetype := 1;
+       mmUserInfo^.PlayerFava.playerId := userid;
+       mmUserInfo^.PlayerFava.nickName := username;
+       mmUserInfo^.PlayerFava.userType := '1000';
+       mmFactory.Add(mmUserInfo);
+       g := nil;
+       for i:=0 to rzUsers.Items.Count -1 do
+         begin
+           if rzUsers.Items[i].Text='陌生人' then
+              begin
+                g := rzUsers.Items[i];
+                break;
+              end;
+         end;
+       b := rzUsers.Items.AddChildObject(g,username,mmUserInfo);
+       b.ImageIndex := 3;
+       b.SelectedIndex := 3;
+     end;
 end;
 
 end.

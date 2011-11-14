@@ -545,13 +545,13 @@ begin
   result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
 end;
 begin
-  if (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
-     begin
-       CanClose := false;
-       Exit;
-     end;
   if (mmGlobal.module[2]='1') then
      begin
+        if (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+           begin
+             CanClose := false;
+             Exit;
+           end;
         StopSyncTask;
         if TimerFactory<>nil then TimerFactory.Free;
         if Global.UserID='system' then exit;
@@ -572,6 +572,14 @@ begin
                    ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
               end;
            end;
+     end
+  else
+     begin
+        if (ShowMsgBox('是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+           begin
+             CanClose := false;
+             Exit;
+           end;
      end;
 end;
 
@@ -588,6 +596,8 @@ begin
      frmLogo.ShowTitle := '读取我的好友信息';
      if mmGlobal.Logined and (mmGlobal.module[1]='1') then mmGlobal.getAllfriends;
      frmMMList.LoadFriends;
+     //添加对-mmPing的解悉
+     if ParamStr(1)='-mmPing' then frmMMList.addStranger(ParamStr(2),ParamStr(3)); 
    except
      on E:Exception do
         ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -595,7 +605,7 @@ begin
    
    try
      frmLogo.ShowTitle := '连接聊天服务器';
-     if mmGlobal.Logined and CaFactory.Audited and (mmGlobal.module[1]='1')  then
+     if mmGlobal.Logined and CaFactory.Audited and (mmGlobal.module[1]='1') then
         begin
           if mmGlobal.chat_addr<>'' then
              begin
@@ -610,7 +620,7 @@ begin
 
    if CaFactory.Audited and not mmGlobal.ONLVersion then
       begin
-        if CaFactory.Audited and CaFactory.CheckInitSync then
+        if CaFactory.Audited and CaFactory.CheckInitSync and (mmGlobal.module[2]='1') then
            begin
              CaFactory.SyncAll(1);
            end;
@@ -621,7 +631,7 @@ begin
       end
    else
       begin
-        if CaFactory.Audited and CaFactory.CheckInitSync then CaFactory.SyncAll(1);
+        if CaFactory.Audited and CaFactory.CheckInitSync and (mmGlobal.module[2]='1') then CaFactory.SyncAll(1);
         if CaFactory.Audited and (mmGlobal.module[2]='1') then //管理什么版本，有连接到服务器时，必须先同步数据
            begin
              if mmGlobal.ONLVersion then //在线版只需同步注册数据
@@ -656,7 +666,7 @@ begin
   end;
 
    //准备数据
-   if CaFactory.Audited then CommandPush.ExecuteCommand;
+   if CaFactory.Audited and (mmGlobal.module[2]='1') then CommandPush.ExecuteCommand;
 
    frmLogo.Show;
    try
@@ -669,7 +679,7 @@ begin
      frmLogo.ShowTitle := '正在初始化基础数据...';
      if (mmGlobal.module[2]='1') then mmGlobal.LoadBasic();
      frmLogo.ShowTitle := '正在初始化同步数据...';
-     mmGlobal.SyncTimeStamp;
+     if (mmGlobal.module[2]='1') then mmGlobal.SyncTimeStamp;
      frmLogo.ShowTitle := '正在初始化广告数据...';
      if (mmGlobal.module[4]='1') then AdvFactory.LoadAdv;
      frmMMDesk.LoadDesk;
@@ -679,10 +689,13 @@ begin
    finally
      frmLogo.Close;
    end;
-//   if mmFactory.logined and (mmGlobal.module[1]='1') then
-//      ShowMMList
-//   else
-   Show;
+   if mmFactory.logined and (mmGlobal.module[1]='1') then
+      ShowMMList
+   else
+   if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
+      Show
+   else
+      ShowMMList;
 end;
 
 procedure TfrmMMMain.OpenMc(pid: string;mid:integer=0);
@@ -838,30 +851,30 @@ var
   HasForm:boolean;
 begin
   toolClose.Visible := false;
-  toolDesk.Top := 45;
+  toolDesk.Top := 42;
   HasForm := false;
   for i:=0 to FList.Count -1 do
     begin
       button := TrzBmpButton(FList[i]);
-      button.Top := 45;
+      button.Top := 42;
       if i=0 then
-         button.Left := 138
+         button.Left := 139
       else
          button.Left := TrzBmpButton(FList[i-1]).Left+TrzBmpButton(FList[i-1]).width+2;
       if button.Down then
          begin
-           toolClose.Top := 41+3;
+           toolClose.Top := 42+2;
            toolClose.Left := button.Left + button.Width - 20;
            toolClose.Visible := true;
            toolClose.BringToFront;
-           button.Top := 43;
+           button.Top := 42;
            HasForm := true;
          end;
     end;
   toolDesk.Down := not HasForm;
   if toolDesk.Down then
      begin
-       toolDesk.Top := 43;
+       toolDesk.Top := 42;
      end;
 end;
 
@@ -958,6 +971,7 @@ end;
 procedure TfrmMMMain.RzTrayIcon1LButtonDown(Sender: TObject);
 begin
   inherited;
+  if not mmFactory.logined then Exit;
   ShowMMList;
 end;
 
@@ -973,6 +987,7 @@ end;
 procedure TfrmMMMain.RzTrayIcon1LButtonDblClick(Sender: TObject);
 begin
   inherited;
+  if not mmFactory.logined then Exit;
   ShowMsgDialog;
 end;
 
@@ -2180,6 +2195,7 @@ begin
          else
          Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
+    if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self); 
     SyncFactory.SyncAll;
     Global.LoadBasic;
     CheckEnabled;

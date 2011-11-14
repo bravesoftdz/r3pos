@@ -15,21 +15,16 @@ inherited frmMMDialog: TfrmMMDialog
     Height = 52
     inherited bkg_01: TImage
       Height = 52
-      Picture.Data = {00}
     end
     inherited bkg_02: TImage
       Left = 545
       Height = 52
-      Picture.Data = {00}
     end
     inherited bkg_top: TRzPanel
       Width = 537
       Height = 52
       inherited bkg_f1: TRzBackground
         Left = 300
-      end
-      inherited formLogo: TImage
-        Picture.Data = {00}
       end
       inherited RzFormShape1: TRzFormShape
         Width = 537
@@ -61,18 +56,6 @@ inherited frmMMDialog: TfrmMMDialog
         Transparent = True
       end
     end
-    inherited sysMinimized: TRzBmpButton
-      Bitmaps.Hot.Data = {00000000}
-      Bitmaps.Up.Data = {00000000}
-    end
-    inherited sysMaximized: TRzBmpButton
-      Bitmaps.Hot.Data = {00000000}
-      Bitmaps.Up.Data = {00000000}
-    end
-    inherited sysClose: TRzBmpButton
-      Bitmaps.Hot.Data = {00000000}
-      Bitmaps.Up.Data = {00000000}
-    end
   end
   inherited bkg_bb: TRzPanel
     Top = 428
@@ -82,7 +65,6 @@ inherited frmMMDialog: TfrmMMDialog
       Height = 34
       inherited bkg_03: TImage
         Top = -22
-        Picture.Data = {00}
       end
     end
     inherited RzPanel11: TRzPanel
@@ -90,7 +72,6 @@ inherited frmMMDialog: TfrmMMDialog
       Height = 34
       inherited bkg_04: TImage
         Top = -22
-        Picture.Data = {00}
       end
     end
     inherited bkg_bottom: TRzPanel
@@ -124,6 +105,7 @@ inherited frmMMDialog: TfrmMMDialog
         Height = 24
         Bitmaps.TransparentColor = clOlive
         Color = clBtnFace
+        Anchors = [akTop, akRight]
         Caption = #21457#36865'(&S)'
         TabOrder = 0
         OnClick = cxBtnOkClick
@@ -135,6 +117,7 @@ inherited frmMMDialog: TfrmMMDialog
         Height = 24
         Bitmaps.TransparentColor = clOlive
         Color = clBtnFace
+        Anchors = [akTop, akRight]
         Caption = #20851#38381'(&C)'
         TabOrder = 1
         OnClick = cxBtnCloseClick
@@ -238,24 +221,6 @@ inherited frmMMDialog: TfrmMMDialog
         BorderOuter = fsNone
         Color = 16621644
         TabOrder = 2
-        object Button1: TButton
-          Left = 40
-          Top = 24
-          Width = 75
-          Height = 25
-          Caption = #24320#22987#21457#36865
-          TabOrder = 0
-          OnClick = Button1Click
-        end
-        object Button2: TButton
-          Left = 40
-          Top = 72
-          Width = 75
-          Height = 25
-          Caption = #20572#27490#21457#36865
-          TabOrder = 1
-          OnClick = Button2Click
-        end
       end
     end
   end

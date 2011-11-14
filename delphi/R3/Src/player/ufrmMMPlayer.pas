@@ -5,10 +5,12 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, DSPack, DirectShow9, StdCtrls, ActiveX, DSUtil, Menus,
-  ExtCtrls, ComCtrls, Buttons, ImgList, RzTray;
+  ExtCtrls, ComCtrls, Buttons, ImgList, RzTray, RzStatus, RzPanel;
 
 const
   WM_PLAYLIST_REFRESH=WM_USER+3948;
+  WM_PLAY_DESKTOP=WM_USER+3949;
+  WM_TPOS_DISPLAY=WM_USER+3950;
 type
   pPlayListItem = ^TPlayListItem;
   TPlayListItem = Record
@@ -44,12 +46,9 @@ type
     SoundLevel: TTrackBar;
     Label3: TLabel;
     ImageList2: TImageList;
-    DSVideoWindowEx1: TDSVideoWindowEx2;
-    Panel2: TPanel;
     Splitter1: TSplitter;
     PopupMenu2: TPopupMenu;
     Add1: TMenuItem;
-    Remove1: TMenuItem;
     Clear1: TMenuItem;
     View1: TMenuItem;
     AspectRatio1: TMenuItem;
@@ -68,6 +67,20 @@ type
     Label2: TLabel;
     Bevel1: TBevel;
     RzTrayIcon1: TRzTrayIcon;
+    DSVideoWindowEx1: TDSVideoWindowEx2;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
+    N9: TMenuItem;
+    Panel2: TPanel;
+    RzMarqueeStatus1: TRzMarqueeStatus;
+    RzPanel1: TRzPanel;
+    pos01: TLabel;
+    pos02: TLabel;
+    pos03: TLabel;
+    pos04: TLabel;
     procedure Open1Click(Sender: TObject);
     procedure Exit1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -100,15 +113,23 @@ type
     procedure Exit2Click(Sender: TObject);
     procedure DSVideoWindowEx1OverlayVisible(Sender: TObject;
       Visible: Boolean);
+    procedure N4Click(Sender: TObject);
+    procedure N6Click(Sender: TObject);
+    procedure DSVideoWindowEx1DblClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure RzTrayIcon1RestoreApp(Sender: TObject);
   private
     { Private declarations }
     procedure WMPlayList(var Message: TMessage); message WM_PLAYLIST_REFRESH;
+    procedure WMPlayDesktop(var Message: TMessage); message WM_PLAY_DESKTOP;
+    procedure WMTPosDisplay(var Message: TMessage); message WM_TPOS_DISPLAY;
   public
     { Public declarations }
     OsdChanged : Boolean;
     PlayListItem : pPlayListItem;
     PlayingIndex : Integer;
-
+    procedure ReadMMPlayer;
+    procedure WriteMMPlayer;
     procedure ClearPlayList;
     procedure LoadPlayList;
   end;
@@ -118,7 +139,7 @@ var
 
 implementation
 
-uses ufrmColorCtrl,IniFiles;
+uses IniFiles,ufrmMMUrlDown,ufrmColorCtrl;
 
 {$R *.dfm}
 
@@ -166,12 +187,12 @@ procedure TfrmMMPlayer.DSVideoWindowEx1ColorKeyChanged(Sender: TObject);
 begin
   If DSVideoWindowEx1.OverlayVisible then
   Begin
-    Panel2.Color := DSVideoWindowEx1.ColorKey;
+    RzMarqueeStatus1.Color := DSVideoWindowEx1.ColorKey;
     ImageList2.BkColor := DSVideoWindowEx1.ColorKey;
   end
   else
   Begin
-    Panel2.Color := DSVideoWindowEx1.Color;
+    RzMarqueeStatus1.Color := DSVideoWindowEx1.Color;
     ImageList2.BkColor := DSVideoWindowEx1.Color;
   end;
 end;
@@ -217,6 +238,7 @@ begin
     rmLetterBox : LetterBox1.Checked := True;
     rmCrop      : Crop1.Checked := True;
   End;
+
   Combobox1.Items.Add('默认');
   If Screen.MonitorCount > 1 then
   Begin
@@ -225,6 +247,8 @@ begin
     Combobox1.Enabled := True;
   End;
   Combobox1.ItemIndex := 0;
+  ReadMMPlayer;
+  left := -9000;
 end;
 
 procedure TfrmMMPlayer.SpeedButton4Click(Sender: TObject);
@@ -290,10 +314,6 @@ End;
 
 procedure TfrmMMPlayer.PopupMenu2Popup(Sender: TObject);
 begin
-  If Listbox1.ItemIndex <> -1 then
-    Remove1.Enabled := True
-  else
-    Remove1.Enabled := False;
   If Listbox1.Items.Count > 0 then
     Clear1.Enabled := True
   else
@@ -426,6 +446,7 @@ begin
       DSVideoWindowEx1.StartDesktopPlayback(Screen.Monitors[Combobox1.Itemindex -1])
     else
       DSVideoWindowEx1.StartDesktopPlayback;
+    Application.Minimize;
   End
   else
     DSVideoWindowEx1.NormalPlayback;
@@ -491,7 +512,7 @@ begin
   FilterGraph1.Stop;
   FilterGraph1.ClearGraph;
   FilterGraph1.Active := False;
-  Listbox1.Items.Clear;
+  ClearPlayList;
 end;
 
 procedure TfrmMMPlayer.Exit2Click(Sender: TObject);
@@ -562,6 +583,119 @@ begin
        Listbox1.ItemIndex := 0;
        PlayingIndex := 0;
      end;
+  PostMessage(frmMMPlayer.Handle,WM_PLAY_DESKTOP,0,0);
+end;
+
+procedure TfrmMMPlayer.N4Click(Sender: TObject);
+begin
+  frmMMUrlDown.Show;
+end;
+
+procedure TfrmMMPlayer.N6Click(Sender: TObject);
+begin
+  frmMMUrlDown.Show;
+end;
+
+procedure TfrmMMPlayer.DSVideoWindowEx1DblClick(Sender: TObject);
+begin
+  SpeedButton4Click(SpeedButton4);
+end;
+
+procedure TfrmMMPlayer.ReadMMPlayer;
+var
+  F:TIniFile;
+  w:integer;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'\mmPlayer.ini');
+  try
+    w := F.ReadInteger('config','Monitor',0);
+    if w<ComboBox1.Items.Count then ComboBox1.ItemIndex := w;
+    F.WriteInteger('config','Handle',Handle);
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmMMPlayer.WriteMMPlayer;
+var
+  F:TIniFile;
+  w:integer;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'\mmPlayer.ini');
+  try
+    F.WriteInteger('config','Monitor',ComboBox1.ItemIndex);
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmMMPlayer.FormDestroy(Sender: TObject);
+begin
+  WriteMMPlayer;
+end;
+
+procedure TfrmMMPlayer.WMPlayDesktop(var Message: TMessage);
+begin
+  If Combobox1.ItemIndex > 0 then
+     DSVideoWindowEx1.StartFullScreen(Screen.Monitors[Combobox1.Itemindex -1])
+  else
+     DSVideoWindowEx1.StartFullScreen;
+  SpeedButton4.Down := DSVideoWindowEx1.FullScreen;
+  Application.Minimize;
+end;
+
+procedure TfrmMMPlayer.RzTrayIcon1RestoreApp(Sender: TObject);
+begin
+  left := (screen.width-width) div 2-1;
+end;
+
+procedure TfrmMMPlayer.WMTPosDisplay(var Message: TMessage);
+var
+  pos:TLabel;
+begin
+  case Message.WParamHi of
+  1:begin
+      pos := pos01;
+      pos02.Visible := false;
+      pos03.Visible := false;
+      pos04.Visible := false;
+    end;
+  2:begin
+      pos := pos02;
+      pos03.Visible := false;
+      pos04.Visible := false;
+    end;
+  3:begin
+      pos := pos03;
+      pos04.Visible := false;
+    end;
+  4:pos := pos04;
+  end;
+  pos.Visible := true;
+  case Message.WParamLo of
+  0:begin
+      pos.Caption := '结算:'+formatFloat('#.00',Message.LParam/100);
+    end;
+  1:begin
+      pos.Caption := '找零:'+formatFloat('#.00',Message.LParam/100);
+    end;
+  else
+    begin
+      case Message.WParamLo of
+      ord('A'):pos.Caption := '现金:'+formatFloat('#.00',Message.LParam/100);
+      ord('B'):pos.Caption := '刷卡:'+formatFloat('#.00',Message.LParam/100);
+      ord('C'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      ord('D'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      ord('E'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      ord('F'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      ord('G'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      ord('H'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      ord('I'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      ord('J'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+      end;
+    end;
+  end;
+  pos.Update;
 end;
 
 end.

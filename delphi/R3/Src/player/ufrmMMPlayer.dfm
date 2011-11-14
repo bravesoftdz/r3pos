@@ -1,9 +1,9 @@
 object frmMMPlayer: TfrmMMPlayer
-  Left = 607
-  Top = 126
+  Left = 495
+  Top = 234
   Width = 577
-  Height = 471
-  Caption = #35270#23631#24191#21578#25773#25918#31995#32479
+  Height = 461
+  Caption = #35270#23631#24191#21578
   Color = clBtnFace
   Font.Charset = GB2312_CHARSET
   Font.Color = clWindowText
@@ -14,20 +14,21 @@ object frmMMPlayer: TfrmMMPlayer
   OldCreateOrder = False
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   object Splitter1: TSplitter
     Left = 416
     Top = 0
     Width = 5
-    Height = 335
+    Height = 325
     Align = alRight
     Color = clGray
     ParentColor = False
   end
   object Panel1: TPanel
     Left = 0
-    Top = 371
+    Top = 361
     Width = 561
     Height = 42
     Align = alBottom
@@ -231,7 +232,7 @@ object frmMMPlayer: TfrmMMPlayer
   end
   object Panel3: TPanel
     Left = 0
-    Top = 335
+    Top = 325
     Width = 561
     Height = 36
     Align = alBottom
@@ -251,59 +252,19 @@ object frmMMPlayer: TfrmMMPlayer
       OnTimer = DSTrackBar1Timer
     end
   end
-  object DSVideoWindowEx1: TDSVideoWindowEx2
-    Left = 0
-    Top = 0
-    Width = 416
-    Height = 335
-    AspectRatio = rmLetterBox
-    AutoHideCursor = 3000
-    DigitalZoom = 0
-    FilterGraph = FilterGraph1
-    FullScreenTopMost = True
-    OnColorKeyChanged = DSVideoWindowEx1ColorKeyChanged
-    ColorControl.Brightness = 750
-    ColorControl.Contrast = 10000
-    ColorControl.Hue = 0
-    ColorControl.Saturation = 10000
-    ColorControl.Sharpness = 5
-    ColorControl.Gamma = 1
-    ColorControl.ColorEnable = True
-    NoScreenSaver = True
-    OnOverlayVisible = DSVideoWindowEx1OverlayVisible
-    Color = clBlack
-    PopupMenu = PopupMenu1
-    Align = alClient
-    object Panel2: TPanel
-      Left = 8
-      Top = 8
-      Width = 97
-      Height = 25
-      BevelOuter = bvNone
-      Caption = '0:00:00'
-      Color = clBlack
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clLime
-      Font.Height = -19
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-    end
-  end
   object Panel4: TPanel
     Left = 421
     Top = 0
     Width = 140
-    Height = 335
+    Height = 325
     Align = alRight
     BevelOuter = bvNone
-    TabOrder = 3
+    TabOrder = 2
     object ListBox1: TListBox
       Left = 0
       Top = 0
       Width = 140
-      Height = 335
+      Height = 325
       Align = alClient
       BorderStyle = bsNone
       Color = clBlack
@@ -317,6 +278,129 @@ object frmMMPlayer: TfrmMMPlayer
       PopupMenu = PopupMenu2
       TabOrder = 0
       OnDblClick = ListBox1DblClick
+    end
+  end
+  object DSVideoWindowEx1: TDSVideoWindowEx2
+    Left = 0
+    Top = 0
+    Width = 416
+    Height = 325
+    AspectRatio = rmStretched
+    AutoHideCursor = 0
+    DigitalZoom = 0
+    FilterGraph = FilterGraph1
+    OnColorKeyChanged = DSVideoWindowEx1ColorKeyChanged
+    ColorControl.Brightness = 750
+    ColorControl.Contrast = 10000
+    ColorControl.Hue = 0
+    ColorControl.Saturation = 10000
+    ColorControl.Sharpness = 5
+    ColorControl.Gamma = 1
+    ColorControl.ColorEnable = True
+    NoScreenSaver = False
+    OnOverlayVisible = DSVideoWindowEx1OverlayVisible
+    Color = clBlack
+    PopupMenu = PopupMenu1
+    Align = alClient
+    OnDblClick = DSVideoWindowEx1DblClick
+    DesignSize = (
+      416
+      325)
+    object RzMarqueeStatus1: TRzMarqueeStatus
+      Left = 14
+      Top = 266
+      Width = 392
+      Height = 44
+      BorderWidth = 0
+      FrameStyle = fsNone
+      Anchors = [akLeft, akRight, akBottom]
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clRed
+      Font.Height = -29
+      Font.Name = #21326#25991#20013#23435
+      Font.Style = [fsBold]
+      ParentFont = False
+      Caption = #27426#36814#20351#29992'TPOS'#38646#21806#32456#31471#31649#29702#31995#32479
+      ScrollDelay = 10
+    end
+    object Panel2: TPanel
+      Left = 346
+      Top = 6
+      Width = 65
+      Height = 17
+      Anchors = [akTop, akRight]
+      BevelOuter = bvNone
+      Caption = '0:00:00'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clLime
+      Font.Height = -16
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+    end
+    object RzPanel1: TRzPanel
+      Left = 181
+      Top = 71
+      Width = 229
+      Height = 193
+      Anchors = [akRight, akBottom]
+      BorderInner = fsFlat
+      BorderOuter = fsFlat
+      Color = clBlack
+      TabOrder = 1
+      object pos01: TLabel
+        Left = 8
+        Top = 8
+        Width = 187
+        Height = 35
+        Caption = #32467#31639#65306'1345'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -35
+        Font.Name = #40657#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object pos02: TLabel
+        Left = 8
+        Top = 53
+        Width = 187
+        Height = 35
+        Caption = #21047#21345#65306'1333'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -35
+        Font.Name = #40657#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object pos03: TLabel
+        Left = 8
+        Top = 98
+        Width = 168
+        Height = 35
+        Caption = #25910#29616#65306'232'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -35
+        Font.Name = #40657#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object pos04: TLabel
+        Left = 8
+        Top = 144
+        Width = 149
+        Height = 35
+        Caption = #25214#38646#65306'10'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clRed
+        Font.Height = -35
+        Font.Name = #40657#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
     end
   end
   object FilterGraph1: TFilterGraph
@@ -343,6 +427,19 @@ object frmMMPlayer: TfrmMMPlayer
         Caption = #25171#24320'(&O)'
         OnClick = Open1Click
       end
+      object N7: TMenuItem
+        Caption = '-'
+      end
+      object N9: TMenuItem
+        Caption = #33410#30446#28165#21333
+      end
+      object N4: TMenuItem
+        Caption = #19979#36733#33410#30446'(&D)'
+        OnClick = N4Click
+      end
+      object N8: TMenuItem
+        Caption = '-'
+      end
       object Exit1: TMenuItem
         Caption = #36864#20986'(&X)'
         OnClick = Exit1Click
@@ -351,17 +448,17 @@ object frmMMPlayer: TfrmMMPlayer
     object View1: TMenuItem
       Caption = #35270#22270'(&V)'
       object AspectRatio1: TMenuItem
-        Caption = 'AspectRatio'
+        Caption = #30011#38754
         object Stretched1: TMenuItem
           AutoCheck = True
-          Caption = 'Stretched'
+          Caption = #32553#25918
           GroupIndex = 1
           RadioItem = True
           OnClick = Stretched1Click
         end
         object LetterBox1: TMenuItem
           AutoCheck = True
-          Caption = 'Letter Box'
+          Caption = #26631#20934
           Checked = True
           GroupIndex = 1
           RadioItem = True
@@ -369,7 +466,7 @@ object frmMMPlayer: TfrmMMPlayer
         end
         object Crop1: TMenuItem
           AutoCheck = True
-          Caption = 'Crop'
+          Caption = #21098#20999
           GroupIndex = 1
           RadioItem = True
           OnClick = Crop1Click
@@ -914,6 +1011,13 @@ object frmMMPlayer: TfrmMMPlayer
     object Fullscreen1: TMenuItem
       Caption = #20840#23631
       OnClick = SpeedButton4Click
+    end
+    object N5: TMenuItem
+      Caption = '-'
+    end
+    object N6: TMenuItem
+      Caption = #19979#36733#33410#30446
+      OnClick = N6Click
     end
     object N3: TMenuItem
       Caption = '-'
@@ -2171,23 +2275,22 @@ object frmMMPlayer: TfrmMMPlayer
   end
   object PopupMenu2: TPopupMenu
     OnPopup = PopupMenu2Popup
-    Left = 616
-    Top = 16
+    Left = 456
+    Top = 96
     object Add1: TMenuItem
-      Caption = 'Add'
+      Caption = #28155#21152
       OnClick = Add1Click
     end
-    object Remove1: TMenuItem
-      Caption = 'Remove'
-    end
     object Clear1: TMenuItem
-      Caption = 'Clear'
+      Caption = #28165#38500
       OnClick = Clear1Click
     end
   end
   object RzTrayIcon1: TRzTrayIcon
     PopupMenu = PopupMenu1
+    Interval = 500
+    OnRestoreApp = RzTrayIcon1RestoreApp
     Left = 288
-    Top = 256
+    Top = 264
   end
 end

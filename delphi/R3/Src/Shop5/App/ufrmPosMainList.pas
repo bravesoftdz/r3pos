@@ -71,7 +71,7 @@ begin
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     Whe_Str := Whe_Str + ' and SHOP_ID='+QuotedStr(Global.SHOP_ID);
 
-  Sql_Str := ' select TENANT_ID,SALES_ID,GLIDE_NO,SALES_DATE,CLIENT_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,CREA_USER from SAL_SALESORDER '+Whe_Str+ShopGlobal.GetDataRight('SHOP_ID',1);
+  Sql_Str := ' select TENANT_ID,SALES_ID,GLIDE_NO,SALES_DATE,CLIENT_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,CREA_USER from SAL_SALESORDER '+Whe_Str+ShopGlobal.GetDataRight('SHOP_ID',1)+ShopGlobal.GetDataRight('DEPT_ID',2);
   Result := 'select ja.*,a.CLIENT_NAME as CLIENT_ID_TEXT from ('+Sql_Str+') ja left join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID ';
   Result := 'select jb.*,b.USER_NAME as CREA_USER_TEXT from ('+Result+') jb left join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.CREA_USER=b.USER_ID ';
   case Factor.iDbType of

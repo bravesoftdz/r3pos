@@ -168,7 +168,7 @@ type
     class function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
     class function ReadConfig(Header,Ident,DefValue:string; IniFile: string=''):string;  //读配置文件
-    class function ReadBool(Header,Ident:string;DefValue:boolean; IniFile: string=''):boolean;  //读配置文件
+    class function ReadBool(Header,Ident:string; DefValue: Boolean;IniFile: string=''):Boolean;  //读配置文件
     class function WriteConfig(Header,Ident,Value:string; IniFile: string=''):Boolean; //写配置文件
 
     //调试及跟踪运行使用
@@ -349,7 +349,7 @@ begin
   FParams := TftParamList.Create(nil);
   FLogList:= TStringList.Create;
   //读取配置参数
-  TWO_PHASE_COMMIT:=trim(ReadConfig('PARAMS','TWO_PHASE_COMMIT','1'))<>'0';
+  TWO_PHASE_COMMIT:=trim(ReadConfig('PARAMS','TWO_PHASE_COMMIT','1'))<>'0'; //
   KeepLogDay:=StrToInt(ReadConfig('PARAMS','KEEP_LOG_DAY','30'));
   LogKind:=StrToInt(ReadConfig('PARAMS','LOG_KIND','0'));
 end;
@@ -696,7 +696,7 @@ begin
 end;
 
 class function TBaseSyncFactory.ReadConfig(Header,Ident,DefValue:string; IniFile: string=''): string;
-var F: TIniFile; FileName: string;
+var F: TIniFile; FileName: string; 
 begin
   result:='';
   if trim(IniFile)='' then
@@ -891,10 +891,10 @@ begin
   end;
 end;
 
-class function TBaseSyncFactory.ReadBool(Header, Ident:string;DefValue:boolean;IniFile: string): boolean;
-var F: TIniFile; FileName: string;
+class function TBaseSyncFactory.ReadBool(Header, Ident: string; DefValue: Boolean; IniFile: string): Boolean;
+var F: TIniFile; FileName: string; 
 begin
-  result:=DefValue;
+  result:=False;
   if trim(IniFile)='' then
     FileName:=ExtractFilePath(Application.ExeName)+'PlugIn.cfg';
   F:=TIniFile.Create(FileName);
@@ -906,3 +906,4 @@ begin
 end;
 
 end.
+

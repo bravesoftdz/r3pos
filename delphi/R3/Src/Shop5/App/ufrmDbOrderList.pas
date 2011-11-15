@@ -77,7 +77,7 @@ uses ufrmDbOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFact
 { TfrmStockOrderList }
 
 function TfrmDbOrderList.EncodeSQL(id: string): string;
-var w,w1:string;
+var w,w1,w2,w_shop,w_client:string;
 begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   if fndSHOP_ID.AsString <> '' then
@@ -98,10 +98,18 @@ begin
        4:w1 := w1 +' where STOCK_USER is not null';
        end;
      end;
+  w_shop := ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  w_client := ShopGlobal.GetDataRight('A.CLIENT_ID',1);
+  if (w_shop <> '') and (w_client <> '') then
+    w2 := ' and ('+copy(w_shop,5,400)+' or '+copy(w_client,5,400)+') '
+  else if (w_shop <> '') then
+    w2 := w_shop
+  else if (w_client <> '') then
+    w2 := w_client;
   if id<>'' then
      w := w +' and A.SALES_ID>'''+id+'''';
   result := 'select A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.SALES_TYPE,A.PLAN_DATE,A.REMARK,A.CLIENT_ID,A.CREA_USER,A.SHOP_ID,A.GUIDE_USER,A.CREA_DATE,A.SALE_AMT as AMOUNT,A.SALE_MNY as AMONEY, '+
-            'case when A.LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME1 from SAL_SALESORDER A '+w+' and ('+copy(ShopGlobal.GetDataRight('A.SHOP_ID',1),5,400)+' or '+copy(ShopGlobal.GetDataRight('A.CLIENT_ID',1),5,400)+') ';
+            'case when A.LOCUS_STATUS = ''3'' then 3 else 1 end as LOCUS_STATUS_NAME1 from SAL_SALESORDER A '+w+w2;
   result := 'select ja.*,a.SHOP_NAME as CLIENT_NAME from ('+result+') ja left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.SHOP_ID';
   result := 'select jc.*,c.SHOP_NAME as SHOP_NAME from ('+result+') jc left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';

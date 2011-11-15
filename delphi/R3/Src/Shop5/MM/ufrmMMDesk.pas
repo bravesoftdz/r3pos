@@ -9,6 +9,7 @@ uses
 type
   TfrmMMDesk = class(TfrmDesk)
     IEDesktop: TWebBrowser;
+    NewWindow: TWebBrowser;
     procedure ufr(Sender: TObject;
       const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
       Headers: OleVariant; var Cancel: WordBool);
@@ -149,7 +150,7 @@ procedure TfrmMMDesk.IEDesktopNewWindow2(Sender: TObject;
   var ppDisp: IDispatch; var Cancel: WordBool);
 begin
   inherited;
-  ppDisp := IEDesktop.Application;
+  ppDisp := NewWindow.Application;
 end;
 
 end.

@@ -248,7 +248,6 @@ begin
 end;
 
 initialization
-  N26Factory := TN26Factory.Create(nil);
+  N26Factory := TN26Factory.Create(Application);
 finalization
-  freeandnil(N26Factory);
 end.

@@ -94,9 +94,14 @@ type
     function getBlackFriends:boolean;
     //读我所在黑名单
     function getBeBlackFriends:boolean;
+    //添加陌生人
+    function addStranger(userid,username:string):boolean;
 
     function getUrlPath:string;
+    //用户密码登录
     function coLogin(uid,pwd:string):boolean;
+    //采用令牌登录
+    function coAutoLogin(signature:string):boolean;
     function CheckRegister:boolean;
     function AutoRegister(isnew:boolean):boolean;
     function xsmLogin:boolean;
@@ -490,10 +495,18 @@ begin
 end;
 
 constructor TmmGlobal.Create(AOwner: TComponent);
+var
+  F:TIniFile;
 begin
   inherited;
   mmFactory := TmmFactory.Create;
   module := '1111';
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    module := F.ReadString('soft','module','1111');
+  finally
+    F.Free;
+  end;
 end;
 
 destructor TmmGlobal.Destroy;
@@ -841,6 +854,18 @@ end;
 procedure TmmGlobal.Setmodule(const Value: string);
 begin
   Fmodule := Value;
+end;
+
+function TmmGlobal.addStranger(userid, username: string): boolean;
+begin
+  Factor.ExecSQL(
+    'insert into MQQ_FRIENDS(TENANT_ID,F_USER_ID,FRIEND_ID,FRIEND_NAME,IS_BE_BLACK,S_GROUP_ID,NOTE,U_SHOW_NAME,IS_ONLINE,REF_ID,USER_TYPE,SEQ_NO) '+
+    'values('+inttostr(Global.TENANT_ID)+','''+Global.UserID+''','''+userid+''','''+username+''',''0'',''STRANGER'',''无'','''+username+''',''0'','''+userid+''',''1000'',9999999)');
+end;
+
+function TmmGlobal.coAutoLogin(signature: string): boolean;
+begin
+
 end;
 
 end.

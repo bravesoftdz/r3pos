@@ -139,10 +139,10 @@ begin
      if temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
      
 //  Begin
-     if not ((temp.FieldByName('ACCOUNT').AsString = 'admin') or (temp.FieldByName('ACCOUNT').AsString = 'system')) then
+     if not ((temp.FieldByName('ACCOUNT').AsString = 'admin') or (temp.FieldByName('ACCOUNT').AsString = 'system') or (temp.FieldByName('ROLE_IDS').AsString = 'xsm')) then
         begin
           rs.SQL.Text := 'select DIMI_DATE from CA_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT='+QuotedStr(temp.FieldByName('ACCOUNT').AsString)+
-          ' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.DIMI_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()))+' and A.DIMI_DATE<>'''' ';
+          ' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.DIMI_DATE<='+QuotedStr(FormatDateTime('YYYY-MM-DD',Date()))+' and A.DIMI_DATE is not null ';
           Factor.Open(rs);
           if not rs.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'用户账号已经离职。');
         end;

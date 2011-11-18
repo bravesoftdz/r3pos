@@ -149,7 +149,7 @@ begin
     'select je.*,e.USER_NAME as IORO_USER_TEXT from ('+
     'select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+
     'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
-    'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CUSTOMER B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+strWhere+' ) jc '+
+    'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CUSTOMER B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' ) jc '+
     'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
     'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
     'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID ) jf '+
@@ -161,7 +161,7 @@ begin
     'select je.*,e.USER_NAME as IORO_USER_TEXT from ('+
     'select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+
     'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
-    'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CLIENTINFO B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+strWhere+' ) jc '+
+    'select A.*,B.CLIENT_NAME as CLIENT_ID_TEXT from ACC_IOROORDER A,VIW_CLIENTINFO B where A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' ) jc '+
     'left outer join CA_DEPT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.DEPT_ID=c.DEPT_ID ) jd '+
     'left outer join VIW_ITEM_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ITEM_ID=d.CODE_ID ) je '+
     'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.IORO_USER=e.USER_ID ) jf '+

@@ -209,9 +209,11 @@ begin
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=18 then
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 待扫码收货！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=19 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsString+')预收、应收、应退款单！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger mod 1000)+')张 预收、('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 1000000)+
+                             ')张 应收、('+IntToStr((PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 1000) mod 1000)+')张 应退款单！'
         else if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=20 then
-           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsString+')预付、应付、应退款单！'
+           CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 1000000)+')张 预付、('+IntToStr((PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger div 1000) mod 1000)+
+                             ')张 应付、('+IntToStr(PrainpowerJudge.List.FieldbyName('SUM_ORDER').AsInteger mod 1000)+')张 应退款单！'
         else
            CdsNewsPaper.FieldByName('MSG_TITLE').AsString := '·您有 ('+PrainpowerJudge.List.FieldByName('SUM_ORDER').AsString+')张 "'+ PrainpowerJudge.List.FieldByName('MSG_TITLE').AsString+'" 没有审核';
         if PrainpowerJudge.List.FieldByName('sFlag').AsInteger=8 then
@@ -479,6 +481,9 @@ begin
     8:begin
       btn_Message1Click(Sender);
     end;
+    9..28:begin
+      btn_Message4Click(Sender);
+    end;
   end;
 
 end;
@@ -503,6 +508,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmStkIndentOrderList);
                    TfrmStkIndentOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmStkIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmStkIndentOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmStkIndentOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmStkIndentOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -512,6 +521,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmStockOrderList);
                    TfrmStockOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmStockOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmStockOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmStockOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmStockOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -521,6 +534,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmStkRetuOrderList);
                    TfrmStkRetuOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmStkRetuOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmStkRetuOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmStkRetuOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmStkRetuOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -530,6 +547,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmSalIndentOrderList);
                    TfrmSalIndentOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmSalIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmSalIndentOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmSalIndentOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmSalIndentOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -539,6 +560,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmSalesOrderList);
                    TfrmSalesOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmSalesOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmSalesOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmSalesOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmSalesOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -548,6 +573,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmSalRetuOrderList);
                    TfrmSalRetuOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmSalRetuOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmSalRetuOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmSalRetuOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmSalRetuOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -557,6 +586,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmDbOrderList);
                    TfrmDbOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmDbOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmDbOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmDbOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmDbOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -566,6 +599,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmCustomer);
                    TfrmCustomer(Form).edtDate1.Date := Date();
                    TfrmCustomer(Form).edtDate2.Date := Date()+PrainpowerJudge.List.FieldByName('MIN_DATE').AsInteger;
+
+                   TfrmCustomer(Form).cmbSHOP_ID.KeyValue := '';
+                   TfrmCustomer(Form).cmbSHOP_ID.Text := '';
+
                    TfrmCustomer(Form).actFindExecute(nil);
                  end;
              end;
@@ -575,6 +612,10 @@ begin
                    Form := frmMain.FindChildForm(TfrmCustomer);
                    TfrmCustomer(Form).edtDate3.Date := Date();
                    TfrmCustomer(Form).edtDate4.Date := Date()+PrainpowerJudge.List.FieldByName('MIN_DATE').AsInteger;
+
+                   TfrmCustomer(Form).cmbSHOP_ID.KeyValue := '';
+                   TfrmCustomer(Form).cmbSHOP_ID.Text := '';
+
                    TfrmCustomer(Form).actFindExecute(nil);
                  end;
              end;
@@ -589,6 +630,10 @@ begin
                        else
                         TfrmSalIndentOrderList(Form).fndSTATUS.ItemIndex := 4;
                        TfrmSalIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                       TfrmSalIndentOrderList(Form).fndSHOP_ID.KeyValue := '';
+                       TfrmSalIndentOrderList(Form).fndSHOP_ID.Text := '';
+
                        TfrmSalIndentOrderList(Form).actFindExecute(nil);
                      end;
                  end;
@@ -602,6 +647,10 @@ begin
                    else
                     TfrmStkIndentOrderList(Form).fndSTATUS.ItemIndex := 4;
                    TfrmStkIndentOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
+
+                   TfrmStkIndentOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmStkIndentOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmStkIndentOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -613,6 +662,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmOutLocusOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -624,6 +677,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndP2_STATUS.ItemIndex := 1;
                    TfrmOutLocusOrderList(Form).fndP2_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).fndP2_D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndP2_SHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndP2_SHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -635,6 +692,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndP3_STATUS.ItemIndex := 1;
                    TfrmOutLocusOrderList(Form).fndP3_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).fndP3_D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndP3_SHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndP3_SHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -646,6 +707,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndP4_STATUS.ItemIndex := 1;
                    TfrmOutLocusOrderList(Form).fndP4_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).fndP4_D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndP4_SHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndP4_SHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -657,6 +722,10 @@ begin
                    TfrmInLocusOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmInLocusOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmInLocusOrderList(Form).D2.Date := Date();
+
+                   TfrmInLocusOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmInLocusOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmInLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -668,6 +737,10 @@ begin
                    TfrmInLocusOrderList(Form).fndP2_STATUS.ItemIndex := 1;
                    TfrmInLocusOrderList(Form).fndP2_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmInLocusOrderList(Form).fndP2_D2.Date := Date();
+
+                   TfrmInLocusOrderList(Form).fndP2_SHOP_ID.KeyValue := '';
+                   TfrmInLocusOrderList(Form).fndP2_SHOP_ID.Text := '';
+
                    TfrmInLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -679,6 +752,10 @@ begin
                    TfrmRecvOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmRecvOrderList(Form).P1_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmRecvOrderList(Form).P1_D2.Date := Date();
+
+                   TfrmRecvOrderList(Form).fndP1_SHOP_ID.KeyValue := '';
+                   TfrmRecvOrderList(Form).fndP1_SHOP_ID.Text := '';
+
                    TfrmRecvOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -690,6 +767,10 @@ begin
                    TfrmPayOrderList(Form).fndSTATUS.ItemIndex := 1;
                    TfrmPayOrderList(Form).P1_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmPayOrderList(Form).P1_D2.Date := Date();
+
+                   TfrmPayOrderList(Form).fndP1_SHOP_ID.KeyValue := '';
+                   TfrmPayOrderList(Form).fndP1_SHOP_ID.Text := '';
+
                    TfrmPayOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -701,6 +782,10 @@ begin
                    TfrmRecvOrderList(Form).fndOrderStatus.ItemIndex := 1;
                    TfrmRecvOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmRecvOrderList(Form).D2.Date := Date();
+
+                   TfrmRecvOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmRecvOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmRecvOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -712,6 +797,10 @@ begin
                    TfrmPayOrderList(Form).fndOrderStatus.ItemIndex := 1;
                    TfrmPayOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmPayOrderList(Form).D2.Date := Date();
+
+                   TfrmPayOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmPayOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmPayOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -723,6 +812,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndSTATUS.ItemIndex := 3;
                    TfrmOutLocusOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -734,6 +827,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndP2_STATUS.ItemIndex := 3;
                    TfrmOutLocusOrderList(Form).fndP2_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).fndP2_D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndP2_SHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndP2_SHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -745,6 +842,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndP3_STATUS.ItemIndex := 3;
                    TfrmOutLocusOrderList(Form).fndP3_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).fndP3_D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndP3_SHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndP3_SHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -756,6 +857,10 @@ begin
                    TfrmOutLocusOrderList(Form).fndP4_STATUS.ItemIndex := 3;
                    TfrmOutLocusOrderList(Form).fndP4_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmOutLocusOrderList(Form).fndP4_D2.Date := Date();
+
+                   TfrmOutLocusOrderList(Form).fndP4_SHOP_ID.KeyValue := '';
+                   TfrmOutLocusOrderList(Form).fndP4_SHOP_ID.Text := '';
+
                    TfrmOutLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -767,6 +872,10 @@ begin
                    TfrmInLocusOrderList(Form).fndSTATUS.ItemIndex := 3;
                    TfrmInLocusOrderList(Form).D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmInLocusOrderList(Form).D2.Date := Date();
+
+                   TfrmInLocusOrderList(Form).fndSHOP_ID.KeyValue := '';
+                   TfrmInLocusOrderList(Form).fndSHOP_ID.Text := '';
+
                    TfrmInLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;
@@ -778,6 +887,10 @@ begin
                    TfrmInLocusOrderList(Form).fndP2_STATUS.ItemIndex := 3;
                    TfrmInLocusOrderList(Form).fndP2_D1.Date := FnTime.fnStrtoDate(PrainpowerJudge.List.FieldByName('MIN_DATE').AsString);
                    TfrmInLocusOrderList(Form).fndP2_D2.Date := Date();
+
+                   TfrmInLocusOrderList(Form).fndP2_SHOP_ID.KeyValue := '';
+                   TfrmInLocusOrderList(Form).fndP2_SHOP_ID.Text := '';
+
                    TfrmInLocusOrderList(Form).actFindExecute(nil);
                  end;
              end;

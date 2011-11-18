@@ -101,7 +101,7 @@ begin
      str:= str + ' and INVH_NO LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%');
   Cds_Invoice.Close;
   Cds_Invoice.SQL.Text:='select TENANT_ID,INVH_ID,SHOP_ID,CREA_USER,CREA_DATE,INVH_NO,BEGIN_NO,ENDED_NO,TOTAL_AMT,USING_AMT,CANCEL_AMT,'+
-  'BALANCE,REMARK,COMM,TIME_STAMP from SAL_INVOICE_BOOK Where COMM not in (''02'',''12'') and TENANT_ID='+ IntToStr(Global.TENANT_ID) + str;
+  'BALANCE,REMARK,COMM,TIME_STAMP from SAL_INVOICE_BOOK Where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+str+ShopGlobal.GetDataRight('SHOP_ID',1);
   Factor.Open(Cds_Invoice);
 end;
 

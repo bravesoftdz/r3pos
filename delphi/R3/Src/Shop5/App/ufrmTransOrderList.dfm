@@ -10,20 +10,20 @@ inherited frmTransOrderList: TfrmTransOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 898
-    Height = 524
+    Height = 523
     inherited RzPanel2: TRzPanel
       Width = 888
-      Height = 514
+      Height = 513
       inherited RzPage: TRzPageControl
         Width = 882
-        Height = 508
+        Height = 507
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #23384#21462#27454#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 880
-            Height = 481
+            Height = 480
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
@@ -296,7 +296,7 @@ inherited frmTransOrderList: TfrmTransOrderList
               Left = 5
               Top = 122
               Width = 870
-              Height = 354
+              Height = 353
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -305,7 +305,7 @@ inherited frmTransOrderList: TfrmTransOrderList
                 Left = 0
                 Top = 0
                 Width = 870
-                Height = 354
+                Height = 353
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Dsc_1

@@ -103,7 +103,7 @@ begin
   'else  ja.ACCT_NAME '+
   'end as ACCT_NAME_TEXT from '+
   '(select TENANT_ID,ACCOUNT_ID,SHOP_ID,ACCT_NAME,ACCT_SPELL,PAYM_ID,ORG_MNY,OUT_MNY,IN_MNY,BALANCE '+
-  'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+IsHeadShop+
+  'from ACC_ACCOUNT_INFO where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+IsHeadShop+ShopGlobal.GetDataRight('SHOP_ID',1)+
   ' ) ja left outer join CA_SHOP_INFO a on ja.TENANT_ID=a.TENANT_ID and ja.SHOP_ID=a.SHOP_ID';
 
   Factor.Open(cdsBrowser);

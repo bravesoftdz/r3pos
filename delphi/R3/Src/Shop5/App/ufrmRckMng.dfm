@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 196
-  Top = 107
+  Left = 153
+  Top = 171
   Width = 791
   Height = 577
   Caption = #32467#36134#31649#29702
@@ -17,6 +17,8 @@ inherited frmRckMng: TfrmRckMng
       inherited RzPage: TRzPageControl
         Width = 767
         Height = 497
+        ActivePage = TabSheet3
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -286,8 +288,8 @@ inherited frmRckMng: TfrmRckMng
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 757
-            Height = 459
+            Width = 765
+            Height = 470
             Align = alClient
             BorderInner = fsFlat
             BorderOuter = fsNone
@@ -296,8 +298,8 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel9: TRzPanel
               Left = 6
               Top = 79
-              Width = 745
-              Height = 374
+              Width = 753
+              Height = 385
               Align = alClient
               BorderOuter = fsNone
               Color = clWhite
@@ -305,8 +307,8 @@ inherited frmRckMng: TfrmRckMng
               object DBGridEh3: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 745
-                Height = 374
+                Width = 753
+                Height = 385
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_CloseMonth
@@ -397,7 +399,7 @@ inherited frmRckMng: TfrmRckMng
             object RzPanel11: TRzPanel
               Left = 6
               Top = 6
-              Width = 745
+              Width = 753
               Height = 73
               Align = alTop
               BorderOuter = fsNone

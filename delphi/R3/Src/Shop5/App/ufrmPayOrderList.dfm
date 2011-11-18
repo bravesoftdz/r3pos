@@ -1,6 +1,6 @@
 inherited frmPayOrderList: TfrmPayOrderList
-  Left = 304
-  Top = 98
+  Left = 235
+  Top = 155
   Width = 908
   Height = 600
   Caption = #20184#27454#21333
@@ -17,8 +17,6 @@ inherited frmPayOrderList: TfrmPayOrderList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 520
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet

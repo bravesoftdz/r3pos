@@ -1,6 +1,6 @@
 inherited frmIoroOrderList: TfrmIoroOrderList
-  Left = 313
-  Top = 122
+  Left = 244
+  Top = 152
   Width = 818
   Height = 569
   Caption = #20854#20182#36153#29992
@@ -9,19 +9,19 @@ inherited frmIoroOrderList: TfrmIoroOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 810
-    Height = 506
+    Height = 505
     inherited RzPanel2: TRzPanel
       Width = 800
-      Height = 496
+      Height = 495
       inherited RzPage: TRzPageControl
         Width = 794
-        Height = 490
+        Height = 489
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #25910#20837#20973#35777#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 792
-            Height = 463
+            Height = 462
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
@@ -294,7 +294,7 @@ inherited frmIoroOrderList: TfrmIoroOrderList
               Left = 6
               Top = 103
               Width = 780
-              Height = 354
+              Height = 353
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -302,7 +302,7 @@ inherited frmIoroOrderList: TfrmIoroOrderList
                 Left = 1
                 Top = 1
                 Width = 778
-                Height = 352
+                Height = 351
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource1

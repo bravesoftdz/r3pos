@@ -1,6 +1,6 @@
 inherited frmRecvOrderList: TfrmRecvOrderList
-  Left = 329
-  Top = 123
+  Left = 331
+  Top = 151
   Width = 908
   Height = 600
   Caption = #25910#27454#21333
@@ -17,8 +17,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 520
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet

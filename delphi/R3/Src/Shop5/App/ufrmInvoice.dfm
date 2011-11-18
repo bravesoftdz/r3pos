@@ -11,24 +11,24 @@ inherited frmInvoice: TfrmInvoice
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 855
-    Height = 488
+    Height = 487
     inherited RzPanel2: TRzPanel
       Width = 845
-      Height = 478
+      Height = 477
       inherited RzPage: TRzPageControl
         Width = 839
-        Height = 472
+        Height = 471
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21457#31080#20449#24687#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 837
-            Height = 445
+            Height = 444
             object RzPanel1: TRzPanel
               Left = 5
               Top = 121
               Width = 827
-              Height = 319
+              Height = 318
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -37,7 +37,7 @@ inherited frmInvoice: TfrmInvoice
                 Left = 5
                 Top = 5
                 Width = 817
-                Height = 290
+                Height = 289
                 Align = alClient
                 DataSource = Ds_Invoice
                 Flat = True
@@ -154,7 +154,7 @@ inherited frmInvoice: TfrmInvoice
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 295
+                Top = 294
                 Width = 817
                 Height = 19
                 Align = alBottom

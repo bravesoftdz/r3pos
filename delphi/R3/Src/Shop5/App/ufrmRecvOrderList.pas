@@ -383,7 +383,7 @@ begin
     ',C.SHOP_NAME as SHOP_ID_TEXT '+
     ' from ACC_RECVABLE_INFO A,VIW_CUSTOMER B,CA_SHOP_INFO C  '+
     ' where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
-    ' '+strWhere+' ';
+    ' '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' ';
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by ABLE_ID';
@@ -425,7 +425,8 @@ begin
   end;
   if id<>'' then
      strWhere := strWhere + ' and A.RECV_ID > '+QuotedStr(id);
-  strSql :='select A.RECV_ID,A.SHOP_ID,A.TENANT_ID,A.ACCOUNT_ID,A.CLIENT_ID,A.PAYM_ID,A.ITEM_ID,A.GLIDE_NO,A.RECV_DATE,A.RECV_USER,A.REMARK,A.RECV_MNY,A.CHK_DATE,A.CHK_USER,A.CREA_DATE,A.BILL_NO,A.COMM from ACC_RECVORDER A where '+strWhere;
+  strSql :='select A.RECV_ID,A.SHOP_ID,A.TENANT_ID,A.ACCOUNT_ID,A.CLIENT_ID,A.PAYM_ID,A.ITEM_ID,A.GLIDE_NO,A.RECV_DATE,A.RECV_USER,A.REMARK,'+
+           'A.RECV_MNY,A.CHK_DATE,A.CHK_USER,A.CREA_DATE,A.BILL_NO,A.COMM from ACC_RECVORDER A where '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1);
   strSql :='select jc.*,c.ACCT_NAME as ACCOUNT_ID_TEXT from ('+strSql+') jc '+
            'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.ACCOUNT_ID=c.ACCOUNT_ID';
   strSql :='select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+strSql+') jd '+

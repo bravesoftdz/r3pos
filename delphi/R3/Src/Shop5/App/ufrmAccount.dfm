@@ -10,19 +10,19 @@ inherited frmAccount: TfrmAccount
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 698
-    Height = 457
+    Height = 456
     inherited RzPanel2: TRzPanel
       Width = 688
-      Height = 447
+      Height = 446
       inherited RzPage: TRzPageControl
         Width = 682
-        Height = 441
+        Height = 440
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36134#25143#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 680
-            Height = 414
+            Height = 413
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
@@ -122,7 +122,7 @@ inherited frmAccount: TfrmAccount
               Left = 5
               Top = 41
               Width = 670
-              Height = 349
+              Height = 348
               Align = alClient
               DataSource = dsBrowser
               Flat = True
@@ -214,7 +214,7 @@ inherited frmAccount: TfrmAccount
             end
             object stbPanel: TPanel
               Left = 5
-              Top = 390
+              Top = 389
               Width = 670
               Height = 19
               Align = alBottom

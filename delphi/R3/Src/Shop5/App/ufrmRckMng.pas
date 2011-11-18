@@ -185,7 +185,7 @@ begin
       'sum(PAY_I) as PAY_I,'+
       'sum(PAY_J) as PAY_J,'+
       'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,'''' as CREA_USER,0 as TIME_STAMP '+
-      'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE) jc '+
+      'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+ShopGlobal.GetDataRight('SHOP_ID',1)+' group by TENANT_ID,SHOP_ID,CLSE_DATE) jc '+
       'left outer join CA_SHOP_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.SHOP_ID=c.SHOP_ID';
       strSql := strSql + ' union all '+
       'select jc.*,'''' as SHOP_ID_TEXT from ('+
@@ -202,7 +202,7 @@ begin
       'sum(PAY_I) as PAY_I,'+
       'sum(PAY_J) as PAY_J,'+
       'min(CHK_DATE) as CHK_DATE,min(CHK_USER) as CHK_USER,max(CREA_DATE) as CREA_DATE,CREA_USER,0 as TIME_STAMP '+
-      'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+' group by TENANT_ID,SHOP_ID,CLSE_DATE,CREA_USER) jc ';
+      'from ACC_CLOSE_FORDAY where TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+StrWhere+ShopGlobal.GetDataRight('SHOP_ID',1)+' group by TENANT_ID,SHOP_ID,CLSE_DATE,CREA_USER) jc ';
 
       result :=
       'select je.*,case when flag=1 then ''-Ð¡¼Æ-'' else e.USER_NAME end as CREA_USER_TEXT from ('+
@@ -225,7 +225,7 @@ begin
       StrSql :=
       'select jc.*,c.USER_NAME as CHK_USER_TEXT from('+
       'select jb.*,b.USER_NAME as CREA_USER_TEXT from('+
-      'select 0 as FLAG,TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,CHK_DATE,CHK_USER,COMM,TIME_STAMP from RCK_DAYS_CLOSE where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrWhere+') jb '+
+      'select 0 as FLAG,TENANT_ID,SHOP_ID,CREA_DATE,CREA_USER,CHK_DATE,CHK_USER,COMM,TIME_STAMP from RCK_DAYS_CLOSE where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrWhere+ShopGlobal.GetDataRight('SHOP_ID',1)+') jb '+
       ' left outer join VIW_USERS b on b.TENANT_ID=jb.TENANT_ID and b.USER_ID=jb.CREA_USER) jc '+
       ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER order by CREA_DATE desc';
       result := StrSql;
@@ -246,7 +246,7 @@ begin
       'select jc.*,c.USER_NAME as CHK_USER_TEXT from('+
       'select jb.*,b.USER_NAME as CREA_USER_TEXT from('+
       'select ja.*,a.SHOP_NAME as SHOP_ID_TEXT from('+
-      'select 0 as FLAG,TENANT_ID,SHOP_ID,MONTH,CREA_USER,BEGIN_DATE,END_DATE,CHK_DATE,CHK_USER,COMM,TIME_STAMP from RCK_MONTH_CLOSE where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrWhere+') ja'+
+      'select 0 as FLAG,TENANT_ID,SHOP_ID,MONTH,CREA_USER,BEGIN_DATE,END_DATE,CHK_DATE,CHK_USER,COMM,TIME_STAMP from RCK_MONTH_CLOSE where TENANT_ID='+IntToStr(Global.TENANT_ID)+StrWhere+ShopGlobal.GetDataRight('SHOP_ID',1)+') ja'+
       ' left outer join CA_SHOP_INFO a on a.TENANT_ID=ja.TENANT_ID and a.SHOP_ID=ja.SHOP_ID where a.COMM not in (''12'',''02'')) jb'+
       ' left outer join VIW_USERS b on b.TENANT_ID=jb.TENANT_ID and b.USER_ID=jb.CREA_USER) jc'+
       ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER order by MONTH desc';

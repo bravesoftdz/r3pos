@@ -72,6 +72,7 @@ type
     { Public declarations }
     function DoActionExecute(s:string; Flag:Integer):boolean;
     procedure Open;
+    procedure LoadPic32;
     function EncodeSql:String;
     procedure GetInfomation(MSG_ID:String);
     class function ShowNewsPaper(Title_ID:String;Msg_Class:Integer=0;Flag:Integer=0):Boolean;
@@ -79,7 +80,7 @@ type
 
 
 implementation
-uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uFnUtil, uPrainpowerJudge, ufrmHintMsg, ufrmQuestionnaire,
+uses uShopUtil, ufrmMain, uShopGlobal, uGlobal, uDsUtil, uFnUtil, uRcFactory, uPrainpowerJudge, ufrmHintMsg, ufrmQuestionnaire,
      ufrmStkIndentOrderList, ufrmStockOrderList, ufrmStkRetuOrderList, ufrmSalIndentOrderList, ufrmSalesOrderList,
      ufrmSalRetuOrderList, ufrmDbOrderList, ufrmCustomer, ufrmPayOrderList, ufrmRecvOrderList, ufrmInLocusOrderList, ufrmOutLocusOrderList;
 {$R *.dfm}
@@ -114,6 +115,7 @@ begin
   for i := 0 to RzPage.PageCount - 1 do
     RzPage.Pages[i].TabVisible := False;
   RzPage.ActivePageIndex := 0;
+  LoadPic32;
   Open;
   SetRecordNum;
   MsgFactory.Showing := true;
@@ -916,6 +918,38 @@ begin
 
   if Column.FieldName = 'MSG_INFO' then
     DBGridEh1DblClick(nil);
+end;
+
+procedure TfrmNewPaperReader.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 's'+rcFactory.GetResString(1)+'_';
+  //Top
+  Image1.Picture.Graphic := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Top');
+  //Mid
+  Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid2');
+  Image3.Picture.Graphic := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid3');
+  btn_Message0.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Up');
+  btn_Message0.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Down');
+  btn_Message0.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Hot');
+  btn_Message1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Up');
+  btn_Message1.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Down');
+  btn_Message1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Hot');
+  btn_Message2.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Up');
+  btn_Message2.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Down');
+  btn_Message2.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Hot');
+  btn_Message3.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Up');
+  btn_Message3.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Down');
+  btn_Message3.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Hot');
+  btn_Message4.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Up');
+  btn_Message4.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Down');
+  btn_Message4.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Hot');
+  btnReturn.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Return');
+  btnRead.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Read');
+  //Bottom
+  btn_Close.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Bottom_Close_Up');
+  btn_Close.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Bottom_Close_Hot');
 end;
 
 end.

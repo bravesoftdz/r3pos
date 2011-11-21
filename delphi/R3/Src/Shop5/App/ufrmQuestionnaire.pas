@@ -146,13 +146,14 @@ type
     procedure GetAnswer;
     procedure SetListAnswer;
     procedure SaveAnswer;
+    procedure LoadPic32;
     class function ShowForm(AOwner:TForm):boolean;
     class function AnswerQustion(AOwner: TForm;ID:String):Boolean;
   end;
 
 implementation
 uses ufrmLogo,uShopUtil, uShopGlobal, uSyncFactory, uCaFactory, uGlobal, uDsUtil, ActiveX, mshtml, DateUtils,
-  ufrmDesk;
+  ufrmDesk, uRcFactory;
 {$R *.dfm}
 
 { TfrmQuestionnaire }
@@ -210,6 +211,7 @@ begin
   inherited;
   for i:=0 to RzPage.PageCount-1 do
     RzPage.Pages[i].TabVisible := False;
+  LoadPic32;
 end;
 
 procedure TfrmQuestionnaire.FormShow(Sender: TObject);
@@ -913,6 +915,29 @@ procedure TfrmQuestionnaire.WebBrowser1DownloadComplete(Sender: TObject);
 begin
   inherited;
   waiting := false;
+end;
+
+procedure TfrmQuestionnaire.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 's'+rcFactory.GetResString(1)+'_';
+  //Top
+  Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid2');
+  Image3.Picture.Graphic := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid3');
+  //Right
+  btnPrevious.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Previous_Hot');
+  btnPrevious.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Previous_Up');
+  btnNext.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Next_Up');
+  btnNext.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Next_Hot');
+  btnCommit.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Commit_Up');
+  btnCommit.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Commit_Hot');
+  btnAnswer.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Answer_Up');
+  btnAnswer.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Answer_Hot');
+  btnReturn.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Return_Up');
+  btnReturn.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Return_Hot');
+  btnLook.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Look_Up');
+  btnLook.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'Questionnaire_Left_Look_Hot');
 end;
 
 end.

@@ -671,7 +671,7 @@ begin
         if (Temp.FieldByName('SUM_ORDER').AsInteger > 0) and ShopGlobal.GetChkRight('21300001',5) and IsAccount then
         begin
           rs.Append;
-          rs.FieldByName('ID').AsString := 'actfrmRecvOrderList';
+          rs.FieldByName('ID').AsString := 'actfrmPayOrderList';
           rs.FieldByName('MSG_CLASS').AsInteger := 4;
           rs.FieldByName('MSG_TITLE').AsString := '¸¶¿îµ¥';
           rs.FieldByName('SUM_ORDER').AsInteger := Temp.FieldByName('SUM_ORDER').AsInteger;

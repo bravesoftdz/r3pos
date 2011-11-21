@@ -12,6 +12,7 @@ object frmHintMsg: TfrmHintMsg
   Font.Style = [fsBold]
   FormStyle = fsStayOnTop
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
   object RzPanel1: TRzPanel

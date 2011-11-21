@@ -36,6 +36,7 @@ type
   public
     { Public declarations }
     procedure ReadFrom;
+    procedure LoadPic32;
     procedure WriteTo;
     procedure SetValue(ID,Value:String);
     class function XsmLogin:Boolean;
@@ -44,7 +45,8 @@ type
   end;
 
 implementation
-uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,uShopGlobal,uDsUtil,ufrmIEWebForm,ObjCommon;
+uses ZBase,ufnUtil,ufrmLogo,uGlobal,EncDec,uShopGlobal,uDsUtil,ufrmIEWebForm,ObjCommon,
+     uRcFactory;
 {$R *.dfm}
 
 procedure TfrmXsmLogin.ReadFrom;
@@ -202,6 +204,15 @@ procedure TfrmXsmLogin.edtPasswordKeyPress(Sender: TObject; var Key: Char);
 begin
   inherited;
   if Key=#13 then cxBtnOk.OnClick(cxBtnOk);
+end;
+
+procedure TfrmXsmLogin.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 's'+rcFactory.GetResString(1)+'_';
+  //Top
+  imgLogin.Picture.Graphic := rcFactory.GetJpeg(sflag + 'Login_Top');
 end;
 
 end.

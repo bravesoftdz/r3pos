@@ -89,10 +89,12 @@ type
     procedure labTitleMouseLeave(Sender: TObject);
     procedure edtContentsMouseEnter(Sender: TObject);
     procedure edtContentsMouseLeave(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
     MsgInfo:PMsgInfo;
+    procedure LoadPic32;
     { Public declarations }
     class procedure ShowInfo(Msg:PMsgInfo);
   end;
@@ -100,7 +102,7 @@ type
 var
   MsgFactory:TMsgFactory;
 implementation
-uses uGlobal,ufrmMain,ZLogFile,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge,ObjCommon;  //ufrmShowMsg
+uses uGlobal,ufrmMain,ZLogFile,uShopGlobal,ufrmNewsPaperReader,uPrainpowerJudge,ObjCommon,uRcFactory;  //ufrmShowMsg
 {$R *.dfm}
 var
   frmMsg: TfrmHintMsg;
@@ -452,6 +454,28 @@ end;
 procedure TMsgFactory.SetMMHandle(const Value: THandle);
 begin
   FMMHandle := Value;
+end;
+
+procedure TfrmHintMsg.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 's'+rcFactory.GetResString(1)+'_';
+  //Top
+  Image1.Picture.Graphic := rcFactory.GetBitmap(sflag + 'HintMsg_Top');
+  RzBmpButton3.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'HintMsg_Top_Close_Down');
+  RzBmpButton3.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'HintMsg_Top_Close_Down');
+  RzBmpButton3.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'HintMsg_Top_Close_Up');
+  //Bottom
+  RzBmpButton1.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'HintMsg_Bottom_Look_Down');
+  RzBmpButton1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'HintMsg_Bottom_Look_Down');
+  RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'HintMsg_Bottom_Look_Up');
+  RzBmpButton2.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'HintMsg_Bottom_Line');
+end;
+
+procedure TfrmHintMsg.FormCreate(Sender: TObject);
+begin
+  LoadPic32;
 end;
 
 initialization

@@ -95,6 +95,7 @@ type
     procedure WriteUsingDate;
   public
     { Public declarations }
+    procedure LoadPic32;
     procedure LoadParameter;
     procedure WriteParameter;
     class function InitGuide(AOwner:TForm):boolean;
@@ -103,7 +104,7 @@ type
 
 
 implementation
-uses uShopGlobal,uGlobal,uDevFactory;
+uses uShopGlobal,uGlobal,uDevFactory,uRcFactory;
 {$R *.dfm}
 
 procedure TfrmInitGuide.FormCreate(Sender: TObject);
@@ -115,9 +116,11 @@ begin
       Rz_page.Pages[i].TabVisible := False;
     end;
   Rz_page.ActivePageIndex := 0;
+  LoadPic32;
   btn_Prev.Visible := False;
   btn_Next.Visible := False;
   btn_End.Visible := False;
+
 end;
 
 procedure TfrmInitGuide.btn_StartClick(Sender: TObject);
@@ -443,6 +446,26 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmInitGuide.LoadPic32;
+var
+  sflag:String;
+begin
+  sflag := 's'+rcFactory.GetResString(1)+'_';
+
+  //Top
+  Image1.Picture.Graphic := rcFactory.GetJpeg(sflag + 'InitGuide_Top1');
+  Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'InitGuide_Top2');
+  //Bottom
+  btn_Start.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Start_Up');
+  btn_Start.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Start_Hot');
+  btn_Prev.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Prev_Up');
+  btn_Prev.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Prev_Hot');
+  btn_Next.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Next_Up');
+  btn_Next.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Next_Hot');
+  btn_End.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_End_Up');
+  btn_End.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_End_Hot');
 end;
 
 end.

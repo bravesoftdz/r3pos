@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uGlobal, IdBaseComponent, IdComponent, IdTCPConnection, msxml,
   IdTCPClient, IdHTTP, ZLogFile, ComObj, IdCookieManager, ZDataSet, ZBase, uShopGlobal,
-  DB, ZAbstractRODataset, ZAbstractDataset, ummFactory,IdCookie;
+  DB, ZAbstractRODataset, ZAbstractDataset, ummFactory,IdCookie,HTTPApp;
 
 type
   TmmGlobal = class(TShopGlobal)
@@ -77,7 +77,7 @@ type
 
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
-    
+
     function getChallenge:boolean;
     function doLogin:boolean;
     function getSignature:boolean;
@@ -864,7 +864,50 @@ begin
 end;
 
 function TmmGlobal.coAutoLogin(signature: string): boolean;
+var
+  Doc:IXMLDomDocument;
+  Root:IXMLDOMElement;
+  xml:string;
+  F:TIniFile;
 begin
+  xml := Utf8ToAnsi(signature);
+  Doc := CreateXML(xml);
+  xsm_signature := xml;
+  if not Assigned(doc) then Raise Exception.Create('Œﬁ–ß¡Ó≈∆...');
+  Root :=  doc.DocumentElement;
+  if not Assigned(Root) then Raise Exception.Create('Œﬁ–ß¡Ó≈∆£¨«Î«Ûµ«¬º ß∞‹...');
+  if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Œﬁ–ß¡Ó≈∆£¨«Î«Ûµ«¬º ß∞‹...');
+  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+    F.WriteString('xsm','xsmrt',getUrlPath);
+    xsm_parentComId := Root.selectSingleNode('parentComId').text;
+    F.WriteString('xsm','code1',xsm_parentComId);
+    xsm_comId := Root.selectSingleNode('comId').text;
+    F.WriteString('xsm','code2',xsm_comId);
+    xsm_userType := Root.selectSingleNode('userType').text;
+    xsm_comType := Root.selectSingleNode('comType').text;
+
+    xsm_username := Root.selectSingleNode('userId').text;
+    xsm_nickname := Root.selectSingleNode('nickName').text;
+    xsm_planText := Root.selectSingleNode('planText').text;
+    xsm_encodingData := Root.selectSingleNode('signatureValue').text;
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+  
+  xml := IdHTTP1.Get(xsmc+'tokenconsumer?xmlStr='+HTTPEncode(xsm_signature));
+  Doc := CreateXML(xml);
+  if not Assigned(doc) then Raise Exception.Create('Œﬁ–ß¡Ó≈∆...');
+  Root :=  doc.DocumentElement;
+  if not Assigned(Root) then Raise Exception.Create('Œﬁ–ß¡Ó≈∆£¨«Î«Ûµ«¬º ß∞‹...');
+  if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Œﬁ–ß¡Ó≈∆£¨«Î«Ûµ«¬º ß∞‹...');
+  if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create(Root.attributes.getNamedItem('msg').text);
+  result := true;
+  Logined := result;
 
 end;
 

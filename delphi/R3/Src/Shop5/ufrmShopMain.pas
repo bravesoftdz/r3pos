@@ -600,6 +600,7 @@ begin
   for i:=0 to FList.Count -1 do
     begin
       button := TrzBmpButton(FList[i]);
+      button.Visible := (i<6);
       button.Top := 0;
       if i=0 then
          button.Left := 0

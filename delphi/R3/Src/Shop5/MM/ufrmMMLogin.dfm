@@ -4,7 +4,6 @@ inherited frmMMLogin: TfrmMMLogin
   Caption = 'frmMMLogin'
   ClientHeight = 272
   ClientWidth = 410
-  Color = clFuchsia
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 12

@@ -22,7 +22,6 @@ type
     Timer1: TTimer;
     RzPanel1: TRzPanel;
     toolDesk: TRzBmpButton;
-    RzBmpButton1: TRzBmpButton;
     rzUserInfo: TRzLabel;
     Image1: TImage;
     Image7: TImage;
@@ -39,6 +38,7 @@ type
     UsersStatus: TRzBmpButton;
     rzUserNote: TRzLabel;
     Image2: TImage;
+    apply: TRzBmpButton;
     procedure FormCreate(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
     procedure RzGroup1Items0Click(Sender: TObject);
@@ -73,7 +73,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
     procedure LoadPic32;
-    function check:boolean;
+    function  check:boolean;
     procedure LoadFriends;
     procedure addStranger(userid,username:string);
     procedure ReadInfo;
@@ -93,12 +93,11 @@ uses ufrmMMMain,ummGlobal,uTreeUtil,ufrmMMDialog,uRcFactory;
 procedure TfrmMMList.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
-  Exit;
-  with Params do
-    begin
-      if not (csDesigning in frmMMMain.ComponentState) and ((mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1')) then
-         WndParent:=frmMMMain.Handle; //关键一行，用SetParent都不行！！
-    end;
+//  with Params do
+//    begin
+//      if not (csDesigning in frmMMMain.ComponentState) and ((mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1')) then
+//         WndParent:=frmMMMain.Handle; //关键一行，用SetParent都不行！！
+//    end;
 end;
 
 procedure TfrmMMList.FormCreate(Sender: TObject);
@@ -145,21 +144,24 @@ begin
          us.First;
          while not us.Eof do
            begin
-             new(mmUserInfo);
-             mmUserInfo^.uid := us.FieldbyName('FRIEND_ID').AsString;
-             mmUserInfo^.line := false;
-             mmUserInfo^.PlayerFava := TmmPlayerFava.Create;
-             mmUserInfo^.PlayerFava.messagetype := 1003;
-             mmUserInfo^.PlayerFava.routetype := 1;
-             mmUserInfo^.PlayerFava.playerId := us.FieldbyName('FRIEND_ID').AsString;
-             mmUserInfo^.PlayerFava.nickName := us.FieldbyName('FRIEND_NAME').AsString;
-             mmUserInfo^.PlayerFava.userType := us.FieldbyName('USER_TYPE').AsString;
-             //其他信息暂缺
-             mmUserInfo^.IsBeBlack := (us.FieldbyName('IS_BE_BLACK').asString='1');
-             mmFactory.Add(mmUserInfo);
-             b := rzUsers.Items.AddChildObject(g,us.FieldbyName('U_SHOW_NAME').AsString,mmUserInfo);
-             b.ImageIndex := 2;
-             b.SelectedIndex := 2;
+             if us.FieldbyName('FRIEND_ID').AsString<>mmGlobal.xsm_username then
+                begin
+                   new(mmUserInfo);
+                   mmUserInfo^.uid := us.FieldbyName('FRIEND_ID').AsString;
+                   mmUserInfo^.line := false;
+                   mmUserInfo^.PlayerFava := TmmPlayerFava.Create;
+                   mmUserInfo^.PlayerFava.messagetype := 1003;
+                   mmUserInfo^.PlayerFava.routetype := 1;
+                   mmUserInfo^.PlayerFava.playerId := us.FieldbyName('FRIEND_ID').AsString;
+                   mmUserInfo^.PlayerFava.nickName := us.FieldbyName('FRIEND_NAME').AsString;
+                   mmUserInfo^.PlayerFava.userType := us.FieldbyName('USER_TYPE').AsString;
+                   //其他信息暂缺
+                   mmUserInfo^.IsBeBlack := (us.FieldbyName('IS_BE_BLACK').asString='1');
+                   mmFactory.Add(mmUserInfo);
+                   b := rzUsers.Items.AddChildObject(g,us.FieldbyName('U_SHOW_NAME').AsString,mmUserInfo);
+                   b.ImageIndex := 2;
+                   b.SelectedIndex := 2;
+                end;
              us.Next;
            end;
          rs.Next;
@@ -510,8 +512,8 @@ begin
   Image6.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_06');
   toolDesk.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Up');
   toolDesk.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_toolDesk_Down');
-  RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Up');
-  RzBmpButton1.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Down');
+  apply.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Up');
+  apply.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'list_mid_RzBmpButton1_Down');
   
   //top
   Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_top_Image2');

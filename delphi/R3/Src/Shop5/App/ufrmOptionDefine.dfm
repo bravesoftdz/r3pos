@@ -1,9 +1,10 @@
 inherited frmOptionDefine: TfrmOptionDefine
   Left = 702
   Top = 155
-  Width = 356
-  Height = 275
+  BorderStyle = bsDialog
   Caption = #24211#23384#36873#39033#35774#32622
+  ClientHeight = 237
+  ClientWidth = 340
   OldCreateOrder = True
   OnCreate = FormCreate
   OnShow = FormShow
@@ -12,8 +13,8 @@ inherited frmOptionDefine: TfrmOptionDefine
   object PageControl1: TPageControl [0]
     Left = 0
     Top = 0
-    Width = 348
-    Height = 204
+    Width = 340
+    Height = 193
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
@@ -23,8 +24,8 @@ inherited frmOptionDefine: TfrmOptionDefine
       object Bevel2: TBevel
         Left = 0
         Top = 0
-        Width = 340
-        Height = 177
+        Width = 332
+        Height = 166
         Align = alClient
         ParentShowHint = False
         Shape = bsFrame
@@ -213,8 +214,8 @@ inherited frmOptionDefine: TfrmOptionDefine
   end
   object Panel1: TPanel [1]
     Left = 0
-    Top = 204
-    Width = 348
+    Top = 193
+    Width = 340
     Height = 44
     Align = alBottom
     BevelOuter = bvNone

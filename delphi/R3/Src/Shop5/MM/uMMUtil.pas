@@ -15,7 +15,8 @@ const
   MM_MESSAGE   = MM_USER+3; {向盟盟界面发送消息提示}
   MM_QUIT      = MM_USER+4; {向目标程序发送退出指令}
   MM_SESSION_FAIL   = MM_USER+5; {SESSION失效了，请求重新登录...}
-  
+  MM_PARAMS      = MM_USER+6; {命令行参数传入}
+
 type
   PMMCopyData=^TMMCopyData;
   TMMCopyData=record

@@ -9,7 +9,7 @@ inherited frmN26Main: TfrmN26Main
   WindowState = wsNormal
   WindowMenu = mnuWindow
   OnActivate = FormActivate
-  OnCloseQuery = FormCloseQuery
+  OnCloseQuery = rem
   PixelsPerInch = 96
   TextHeight = 12
   object Label2: TLabel [0]

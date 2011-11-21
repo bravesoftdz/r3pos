@@ -114,7 +114,6 @@ uses
   ufrmMeaUnits in 'App\ufrmMeaUnits.pas' {frmMeaUnits},
   ufrmMessage in 'App\ufrmMessage.pas' {frmMessage},
   ufrmMessageInfo in 'App\ufrmMessageInfo.pas' {frmMessageInfo},
-  ufrmN26Browser in 'App\ufrmN26Browser.pas' {frmN26Browser},
   ufrmNetLogin in 'App\ufrmNetLogin.pas' {frmNetLogin},
   ufrmNewCard in 'App\ufrmNewCard.pas' {frmNewCard},
   ufrmNewsPaperReader in 'App\ufrmNewsPaperReader.pas' {frmNewPaperReader},

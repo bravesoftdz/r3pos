@@ -6,7 +6,7 @@ object frmMMBasic: TfrmMMBasic
   Caption = 'frmMMBasic'
   ClientHeight = 388
   ClientWidth = 541
-  Color = 16621644
+  Color = clFuchsia
   TransparentColor = True
   TransparentColorValue = clFuchsia
   Font.Charset = GB2312_CHARSET

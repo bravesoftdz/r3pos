@@ -218,7 +218,7 @@ begin
     adv.Add('<style type="text/css">*{margin:0; border:0; padding:0;}</style>');
     adv.Add('<style type="test/css">a:link{text-decoration:none}</style>');
     if AdvInfo.AdvType = 4 then adv.Add('<script src="adv1.js" type="text/javascript"></script>');
-    adv.Add('<body scroll="no">');
+    adv.Add('<body scroll="no" oncontextmenu ="return false">');
     case AdvInfo.AdvType of
     1:adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><img alt="" src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" /></a>');
     2:adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><embed src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" type="application/x-shockwave-flash"/></a>');

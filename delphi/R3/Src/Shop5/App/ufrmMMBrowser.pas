@@ -23,6 +23,9 @@ type
     procedure IEBrowserTitleChange(Sender: TObject;
       const Text: WideString);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure IEBrowserBeforeNavigate2(Sender: TObject;
+      const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
+      Headers: OleVariant; var Cancel: WordBool);
   private
     FxsmSenceReady: boolean;
     FxsmReady: boolean;
@@ -190,6 +193,7 @@ begin
        if not xsmLogined then
          begin
            xsmLCStatus := lcError;
+           close;
            PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
          end
        else
@@ -200,11 +204,13 @@ begin
        xsmLCStatus := lcFinish;
        mmGlobal.Logined := false;
        IERefresh;
+       close;
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
      end;
   if msg.szMethodName='windowClose' then
      begin
        xsmLCStatus := lcFinish;
+       close;
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
      end;
   if msg.szMethodName='finish' then
@@ -218,6 +224,7 @@ begin
        xsmLCStatus := lcFinish;
        mmGlobal.Logined := false;
        IERefresh;
+       close;
        PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
      end;
 //两个参数
@@ -239,6 +246,7 @@ begin
              if msg.szPara1='9904' then
                 begin
                    IERefresh;
+                   close;
                    PostMessage(frmMain.Handle,WM_DESKTOP_REQUEST,0,0);
                 end;
              ShowMsgBox('<新商盟>其他错误异常请重新尝试','友情提示...',MB_OK+MB_ICONWARNING);
@@ -595,6 +603,23 @@ begin
       result := result.nextSibling;
     end;
   result := nil;
+end;
+
+procedure TfrmMMBrowser.IEBrowserBeforeNavigate2(Sender: TObject;
+  const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
+  Headers: OleVariant; var Cancel: WordBool);
+var w:integer;
+begin
+ w := pos('#=',url);
+ if w>0 then
+    begin
+      Cancel := true;
+      if copy(url,w+2,length(url))='000000000' then
+         begin
+            close;
+            PostMessage(Handle,WM_DESKTOP_REQUEST,0,0);
+         end;
+    end
 end;
 
 end.

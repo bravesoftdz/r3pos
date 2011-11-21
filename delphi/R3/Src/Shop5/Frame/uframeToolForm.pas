@@ -27,6 +27,7 @@ type
       Shift: TShiftState);
     procedure FormActivate(Sender: TObject);
     procedure ToolBar1Resize(Sender: TObject);
+    procedure CoolBar1Resize(Sender: TObject);
   private
     { Private declarations }
   public
@@ -126,6 +127,18 @@ begin
   CoolBar1.Width := width;
   ToolBar1.AutoSize := true;
   CoolBar1.AutoSize := true;
+end;
+
+procedure TframeToolForm.CoolBar1Resize(Sender: TObject);
+begin
+  inherited;
+  ToolBar1.AutoSize := false;
+  CoolBar1.AutoSize := false;
+  ToolBar1.Width := width;
+  CoolBar1.Width := width;
+  ToolBar1.AutoSize := true;
+  CoolBar1.AutoSize := true;
+
 end;
 
 end.

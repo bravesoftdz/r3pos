@@ -8,7 +8,7 @@ uses
   ZBase, RzTray, StdCtrls, Mask, RzEdit, RzBmpBtn, RzLabel, jpeg, RzPanel,
   ImgList, RzBckgnd, RzForms, ToolWin, Buttons, RzButton, ufrmBasic, ZdbFactory,
   ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, ufrmMMBrowser,ummFactory,
-  ufrmHintMsg;
+  ufrmHintMsg, RzStatus, ufrmInstall;
 
 const
   MSC_POPUP=WM_USER+1;                                                                           
@@ -156,7 +156,7 @@ type
     UsersStatus: TRzBmpButton;
     RzPanel4: TRzPanel;
     RzPanel5: TRzPanel;
-    RzPanel1: TRzPanel;
+    rzLeftTool: TRzPanel;
     rzPage1: TRzBmpButton;
     rzPage6: TRzBmpButton;
     rzPage2: TRzBmpButton;
@@ -171,8 +171,11 @@ type
     Image1: TImage;
     actfrmSimpleSaleDayReport: TAction;
     RzFormShape1: TRzFormShape;
-    RzLabel1: TRzLabel;
+    rzVersion: TRzLabel;
     CA_MODULE: TZQuery;
+    RzVersionInfo: TRzVersionInfo;
+    Image5: TImage;
+    lbM1: TLabel;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -291,6 +294,9 @@ type
     procedure rzPage7Click(Sender: TObject);
     procedure rzPage5Click(Sender: TObject);
     procedure actfrmSimpleSaleDayReportExecute(Sender: TObject);
+    procedure RzTrayIcon1RestoreApp(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
+    procedure lbM1Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -304,17 +310,22 @@ type
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
     procedure wm_Sign(var Message: TMessage); message MM_SIGN;
     procedure wm_SessionFail(var Message: TMessage); message MM_SESSION_FAIL;
+    procedure wm_Params(var Message: TMessage); message MM_PARAMS;
     procedure wm_desktop(var Message: TMessage); message WM_DESKTOP_REQUEST;
     procedure wm_lcControl(var Message: TMessage); message WM_LCCONTROL;
     procedure wm_mmcError(var Message: TMessage); message WM_MMC_ERROR;
     procedure wm_message(var Message: TMessage); message MSC_MESSAGE;
+    procedure WMNCHITTEST(var Msg: TWMNCHITTEST);  message WM_NCHITTEST;
 
+    function  CheckVersion:boolean;
     //导航工具栏
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
     procedure DoActiveChange(Sender:TObject);
     procedure AddFrom(form:TForm);
     function  SortToolButton:boolean;
+
+    procedure SortLeftButton;
 
     //菜单管理
     procedure CreateMenu;
@@ -330,7 +341,6 @@ type
     procedure LoadPic32;
     function ConnectToSQLite:boolean;
     function CreateMMLogin: TftParamList;
-
     procedure LoadParams;
     procedure CheckEnabled;
     procedure Init;
@@ -339,6 +349,7 @@ type
     procedure ShowMMList;
     procedure ShowMsgDialog;
     procedure HideMMList;
+    procedure Show;
     //软是否登录
     property Logined:boolean read FLogined write SetLogined;
   end;
@@ -371,15 +382,20 @@ function TfrmMMMain.Login: boolean;
 begin
   result := ConnectToSQLite;
   if not result then Exit;
-  with TfrmMMLogin.Create(self) do
-    begin
-      try
-        result := (ShowModal=MROK);
-        Logined := result;
-      finally
-        free;
+  LoginFactory.Logout;
+  try
+    with TfrmMMLogin.Create(self) do
+      begin
+        try
+          result := (ShowModal=MROK);
+          Logined := result;
+        finally
+          free;
+        end;
       end;
-    end;
+  finally
+     if Logined then LoginFactory.Login(Global.UserID,Global.SHOP_ID);
+  end;
 end;
 
 procedure TfrmMMMain.DropMenu(mid:integer;btn:TrzBmpButton);
@@ -456,6 +472,8 @@ begin
   WindowState := wsMaximized;
   LoadPic32;
   SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
+  RzVersionInfo.FilePath := ParamStr(0);
+  rzVersion.Caption := '版本:' + RzVersionInfo.FileVersion;
   bkg_01.Picture.Bitmap.TransparentColor := clFuchsia;
   bkg_01.Picture.Bitmap.TransparentMode := tmFixed;
   bkg_01.Picture.Bitmap.Transparent := true;
@@ -494,36 +512,33 @@ begin
   sysMinimized.Visible := (biMinimize in BorderIcons);
   FList := TList.Create;
   frmPrgBar := TfrmPrgBar.create(self);
-  ConnectToSQLite;
 
   Screen.OnActiveFormChange := DoActiveChange;
 
 end;
 
 function TfrmMMMain.ConnectToSQLite:boolean;
-var
-  Factory:TCreateDbFactory;
 begin
-  result := true;
-  Global.MoveToLocal;
-  Global.Connect;
-  Factory := TCreateDbFactory.Create;
-  try
-    if Factory.CheckVersion(DBVersion,Global.LocalFactory) then
-       result := TfrmDbUpgrade.DbUpgrade(Factory,Global.LocalFactory);
-  finally
-    Factory.Free;
-  end;
+  result := LoginFactory.ConnectTo();
 end;
 procedure TfrmMMMain.wm_Login(var Message: TMessage);
-var uid:string;
+var
+  uid:string;
 begin
   uid := mmGlobal.UserID;
-  Logined := Login;
+  if Message.LParam = 1 then
+     Logined := Login
+  else
+     Logined := Login and CheckVersion;
   if Logined then
      begin
        try
          Init;
+         if (ParamStr(1)='-mmPing') and (Message.LParam = 0) then
+            begin
+              MMServer.Params := StrPas(GetCommandLine);
+              PostMessage(Handle,MM_Params,0,0);
+            end;
        except
          on E:Exception do
             begin
@@ -552,10 +567,22 @@ begin
              CanClose := false;
              Exit;
            end;
-        StopSyncTask;
-        if TimerFactory<>nil then TimerFactory.Free;
-        if Global.UserID='system' then exit;
-        if not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and not CaFactory.CheckDebugSync then
+        HideMMList;
+        Visible := false;
+        try
+          LoginFactory.Logout;
+          StopSyncTask;
+          if TimerFactory<>nil then TimerFactory.Free;
+          if Global.UserID='system' then exit;
+          if CaFactory.CheckDebugSync then Exit;
+        except
+          on E:Exception do
+             begin
+               ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+               Exit;
+             end;
+        end;
+        if not ShopGlobal.ONLVersion then
            begin
               try
                 Global.TryRemateConnect;
@@ -563,10 +590,20 @@ begin
                 Exit;
               end;
               try
-                if not SyncFactory.SyncLockCheck then Exit;
                 if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
-                if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self);
+                if not SyncFactory.SyncLockCheck then Exit;
+                if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
                 SyncFactory.SyncAll;
+              except
+                on E:Exception do
+                   ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+              end;
+           end
+        else
+           begin
+              try
+                if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+                SyncFactory.SyncRim;
               except
                 on E:Exception do
                    ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -591,13 +628,12 @@ begin
   LoadParams;
   
   frmLogo.Show;
+  rzLeftTool.Enabled := false;
   try
    try
      frmLogo.ShowTitle := '读取我的好友信息';
      if mmGlobal.Logined and (mmGlobal.module[1]='1') then mmGlobal.getAllfriends;
      frmMMList.LoadFriends;
-     //添加对-mmPing的解悉
-     if ParamStr(1)='-mmPing' then frmMMList.addStranger(ParamStr(2),ParamStr(3)); 
    except
      on E:Exception do
         ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -662,6 +698,7 @@ begin
    end;
 
   finally
+    rzLeftTool.Enabled := true;
     frmLogo.Close;
   end;
 
@@ -689,9 +726,7 @@ begin
    finally
      frmLogo.Close;
    end;
-   if mmFactory.logined and (mmGlobal.module[1]='1') then
-      ShowMMList
-   else
+
    if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
       Show
    else
@@ -857,6 +892,7 @@ begin
     begin
       button := TrzBmpButton(FList[i]);
       button.Top := 42;
+      button.Visible := (i<5);
       if i=0 then
          button.Left := 139
       else
@@ -865,7 +901,7 @@ begin
          begin
            toolClose.Top := 42+2;
            toolClose.Left := button.Left + button.Width - 20;
-           toolClose.Visible := true;
+           toolClose.Visible := button.Visible;
            toolClose.BringToFront;
            button.Top := 42;
            HasForm := true;
@@ -2156,11 +2192,11 @@ begin
   if CaFactory.Audited then
      begin
        CaFactory.SyncAll(1);
-       if ShopGlobal.ONLVersion then Exit;
+       //if ShopGlobal.ONLVersion then Exit;
      end
   else
      begin
-       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
+       //if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
      end;
   if PrainpowerJudge.Locked>0 then
      begin
@@ -2195,11 +2231,13 @@ begin
          else
          Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
-    if TfrmCostCalc.CheckSyncReck(self) and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion then TfrmCostCalc.TryCalcMthGods(self); 
-    SyncFactory.SyncAll;
-    Global.LoadBasic;
-    CheckEnabled;
-    mmGlobal.LoadRight;
+    if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+    if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
+       begin
+         SyncFactory.SyncAll;
+         Global.LoadBasic;
+         ShopGlobal.LoadRight;
+       end;
   finally
     frmLogo.Close;
   end;
@@ -2253,6 +2291,8 @@ begin
      actfrmRelation.Enabled := actfrmRelation.Enabled and (rs.FieldbyName('TENANT_TYPE').asInteger<>3)
   else
      actfrmRelation.Enabled := false;
+
+  SortLeftButton;
 end;
 
 procedure TfrmMMMain.LoadParams;
@@ -2319,6 +2359,7 @@ begin
   pageLine.Width := bkg_top.Width - toolDesk.Left + 16;
   r3offline.Left := bkg_bottom.Width - r3offline.width - 10;
   UsersStatus.Left := r3offline.Left - usersStatus.Width - 5;
+  MMServer.MMHandle := Handle;
 end;
 
 destructor TfrmMMMain.Destroy;
@@ -2529,8 +2570,27 @@ begin
        MsgFactory.Load;
        IsFirst := true;
      end;
-
+     
   if UpdateTimer.Tag >= w then UpdateTimer.Tag := 0 else UpdateTimer.Tag := UpdateTimer.Tag + 1;
+  if MsgFactory.Count > 0 then
+     begin
+       lbM1.Caption := '('+inttostr(MsgFactory.UnRead)+')条';
+       case UpdateTimer.Tag mod 2 of
+       0:begin
+           lbM1.Font.Color := clRed;
+           lbM1.Font.Style := [fsBold];
+         end;
+       1:begin
+           lbM1.Font.Color := clWhite;
+           lbM1.Font.Style := [];
+         end;
+       end;
+     end
+  else
+     begin
+       lbM1.Caption := '(0)条';
+     end;
+
   if (MsgFactory.Loaded and ((UpdateTimer.Tag mod w)=0)) or IsFirst or MsgFactory.Opened then
      begin
        P := MsgFactory.ReadMsg;
@@ -2621,7 +2681,7 @@ begin
            button.Anchors := [akTop,akRight];
            button.width := 70;
            FMenu.Add(button);
-           button.Top := 0;
+           button.Top := 3;
          end;
       CA_MODULE.Next;
     end;
@@ -2679,6 +2739,11 @@ end;
 procedure TfrmMMMain.rzPage0Click(Sender: TObject);
 begin
   inherited;
+  if (mmGlobal.module[1]<>'1') then
+     begin
+       ShowMsgBox('您没有开通即时通讯功能！','友情提示..',MB_OK);
+       Exit;
+     end;
   ShowMMList;
 end;
 
@@ -2800,6 +2865,200 @@ begin
   sysMaximized.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysMaximized_Hot');
   sysClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_sysClose_Up');
   sysClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysClose_Hot');
+  Image5.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_03');
+end;
+
+procedure TfrmMMMain.WMNCHITTEST(var Msg: TWMNCHITTEST);
+const
+  cOffset = 10;
+var
+  vPoint: TPoint;
+begin
+  inherited;
+  vPoint := ScreenToClient(Point(Msg.XPos, Msg.YPos));
+  if PtInRect(Rect(0, 0, cOffset, cOffset), vPoint) then
+    Msg.Result := HTTOPLEFT
+  else if PtInRect(Rect(Width - cOffset, Height - cOffset, Width, Height), vPoint) then
+    Msg.Result := HTBOTTOMRIGHT
+  else if PtInRect(Rect(Width - cOffset, 0, Width, cOffset), vPoint) then
+    Msg.Result := HTTOPRIGHT
+  else if PtInRect(Rect(0, Height - cOffset, cOffset, Height), vPoint) then
+    Msg.Result := HTBOTTOMLEFT
+  else if PtInRect(Rect(cOffset, 0, Width - cOffset, cOffset), vPoint) then
+    Msg.Result := HTTOP
+  else if PtInRect(Rect(0, cOffset, cOffset, Height - cOffset), vPoint) then
+    Msg.Result := HTLEFT
+  else if PtInRect(Rect(Width - cOffset, cOffset, Width, Height - cOffset), vPoint) then
+    Msg.Result := HTRIGHT
+  else if PtInRect(Rect(cOffset, Height - cOffset, Width - cOffset, Height), vPoint) then
+    Msg.Result := HTBOTTOM;
+end;
+
+procedure TfrmMMMain.RzTrayIcon1RestoreApp(Sender: TObject);
+begin
+  inherited;
+  if not Logined then Exit;
+  if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
+     begin
+       WindowState := wsMaximized;
+       Show;
+     end
+  else
+     ShowMMList;
+
+end;
+
+procedure TfrmMMMain.wm_Params(var Message: TMessage);
+begin
+  //添加对-mmPing的解悉
+  if MMServer.ParamStr(1)='-mmPing' then
+     begin
+       frmMMList.addStranger(MMServer.ParamStr(2),MMServer.ParamStr(3));
+       if mmFactory.Logined then frmMMList.OpenDialog(MMServer.ParamStr(2));
+     end;
+end;
+
+function TfrmMMMain.CheckVersion: boolean;
+function GetFileNameFromURL(url: string): string;
+var ts : TStrings;
+begin
+  //从url取得文件名
+  ts := TStringList.create;
+  try
+    ts.Delimiter :='/';
+    ts.DelimitedText := url;
+    if ts.Count > 0 then
+       Result := ts[ts.Count - 1];
+  finally
+    ts.Free;
+  end;
+end;
+var
+  filename:string;
+  r:integer;
+  frmInstall:TfrmInstall;
+  CaUpgrade:TCaUpgrade;
+begin
+  result := false;
+  if not CaFactory.Audited then
+     begin
+       result := true;
+       Exit;
+     end;
+  try
+  try                               
+    frmLogo.Show;
+    frmLogo.ShowTitle := '检测版本信息...';
+    CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductId,RzVersionInfo.FileVersion);
+    if CaUpgrade.UpGrade in [1,2] then
+    begin
+       if (ShowMsgBox(pchar('系统检测的新版本'+CaUpgrade.Version+'，是否立即升级？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6) then
+       begin
+         if (CaUpgrade.UpGrade=1) then
+            begin
+              ShowMsgBox(pchar('你使用的软件版本过旧，没有升级无法继续使用.'),'友情提示...',MB_OK+MB_ICONQUESTION);
+              Exit
+            end else CaUpgrade.UpGrade := 3;
+       end;
+    end
+    else
+       CaUpgrade.UpGrade := 3;
+  finally
+    frmLogo.Close;
+  end;
+  if CaUpgrade.UpGrade<>3 then
+    begin
+      frmInstall := TfrmInstall.Create(Application);
+      try
+        frmInstall.Show;
+        frmInstall.CurVersion := RzVersionInfo.FileVersion;
+        frmInstall.NewVersion := CaUpgrade.Version;
+        frmInstall.Update;
+        filename := GetFileNameFromURL(CaUpgrade.URL);
+        frmInstall.Url := copy(CaUpgrade.URL,1,length(CaUpgrade.URL)-length(filename));
+        frmInstall.Path := ExtractFilePath(ParamStr(0));
+        if frmInstall.DownFile(filename) then
+           begin
+             result := false;
+             ShellExecute(application.handle,'open',pchar(ExtractFilePath(ParamStr(0))+'install\'+filename),pchar(ExtractFilePath(ParamStr(0))+'install\'),nil,SW_SHOWNORMAL);
+             Exit;
+           end
+        else
+           Raise Exception.Create('下载升级文件失败，系统无法完成升级');
+      finally
+        frmInstall.free;
+      end;
+     end;
+     result := true;
+  except
+    on E:Exception do
+       begin
+         ShowMsgBox(pchar('升级失败,错误:'+E.Message),'友情提示...',MB_OK+MB_ICONQUESTION);
+         result := false;
+       end;
+  end;
+end;
+
+procedure TfrmMMMain.RzBmpButton4Click(Sender: TObject);
+var
+  MMToolBox:PMMToolBox;
+begin
+  inherited;
+  if not CA_MODULE.Locate('MODU_NAME','在线客服',[]) then Raise Exception.Create('你没有开通在线客服业务');
+  new(MMToolBox);
+  try
+    MMToolBox^.mid := CA_MODULE.FieldbyName('MODU_ID').AsString;
+    MMToolBox^.Action := actfrmRimNet;
+    actfrmRimNet.OnExecute(TObject(MMToolBox));
+  finally
+    Dispose(MMToolBox);
+  end;
+end;
+
+procedure TfrmMMMain.lbM1Click(Sender: TObject);
+begin
+  inherited;
+  actfrmNewPaperReader.OnExecute(actfrmNewPaperReader);
+
+end;
+
+procedure TfrmMMMain.Show;
+begin
+  inherited Show;
+  FormResize(self);
+end;
+
+procedure TfrmMMMain.SortLeftButton;
+var
+  w:integer;
+begin
+
+  rzPage1.Visible := CA_MODULE.Locate('MODU_NAME','网上营销',[]);
+  rzPage2.Visible := CA_MODULE.Locate('MODU_NAME','网上订货',[]);
+  rzPage3.Visible := CA_MODULE.Locate('MODU_NAME','网上配货',[]);
+  rzPage4.Visible := CA_MODULE.Locate('MODU_NAME','网上结算',[]);
+  rzPage6.Visible := CA_MODULE.Locate('MODU_NAME','品牌培育',[]);
+  rzPage7.Visible := CA_MODULE.Locate('MODU_NAME','信息互通',[]);
+  rzPage8.Visible := CA_MODULE.Locate('MODU_NAME','我的社区',[]);
+  
+  w := -1;
+  if rzPage1.Visible then inc(w);
+  rzPage1.Top := 75+w*rzPage1.Height;
+  if rzPage2.Visible then inc(w);
+  rzPage2.Top := 75+w*rzPage2.Height;
+  if rzPage3.Visible then inc(w);
+  rzPage3.Top := 75+w*rzPage3.Height;
+  if rzPage4.Visible then inc(w);
+  rzPage4.Top := 75+w*rzPage4.Height;
+  if rzPage5.Visible then inc(w);
+  rzPage5.Top := 75+w*rzPage5.Height;
+  if rzPage6.Visible then inc(w);
+  rzPage6.Top := 75+w*rzPage6.Height;
+  if rzPage7.Visible then inc(w);
+  rzPage7.Top := 75+w*rzPage7.Height;
+  if rzPage8.Visible then inc(w);
+  rzPage8.Top := 75+w*rzPage8.Height;
+
 end;
 
 end.

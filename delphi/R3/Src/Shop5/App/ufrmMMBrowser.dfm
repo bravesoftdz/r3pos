@@ -25,6 +25,7 @@ inherited frmMMBrowser: TfrmMMBrowser
     Align = alClient
     TabOrder = 1
     OnTitleChange = IEBrowserTitleChange
+    OnBeforeNavigate2 = IEBrowserBeforeNavigate2
     ControlData = {
       4C000000D0370000C22600000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800

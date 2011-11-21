@@ -40,11 +40,7 @@ begin
   result := false;
   Global.MoveToLocal;
   Global.Connect;
-  if not UpdateDbVersion then
-     begin
-       result := false;
-       Exit;
-     end;
+  result := UpdateDbVersion;
 end;
 
 function TLoginFactory.GetComputerName: string;

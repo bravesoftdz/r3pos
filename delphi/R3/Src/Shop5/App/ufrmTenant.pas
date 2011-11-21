@@ -415,8 +415,8 @@ begin
          cxedtLOGIN_NAME.Text := Temp.FieldByName('LOGIN_NAME').AsString;
          try
             case N26Factory.Checked of
-            0:login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,CaFactory.DesEncode(Temp.FieldByName('LOGIN_NAME').AsString,CaFactory.pubpwd),3);
-            1:login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+            0:login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,DecStr(Temp.FieldByName('PASSWRD').AsString,ENC_KEY));
+            1:login := CaFactory.coLogin(Temp.FieldByName('LOGIN_NAME').AsString,CaFactory.DesEncode(Temp.FieldByName('LOGIN_NAME').AsString,CaFactory.pubpwd),3);
             end;
          except
            on E:Exception do
@@ -545,17 +545,20 @@ begin
       CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
       CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
       CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
-      CdsTable.FieldByName('XSM_CODE').AsString := id;
-      CdsTable.FieldByName('XSM_PSWD').AsString := EncStr(xsm_password,ENC_KEY);
+      if fnString.TrimRight(Login.SHOP_ID,4)='0001' then
+         begin
+           CdsTable.FieldByName('XSM_CODE').AsString := id;
+           CdsTable.FieldByName('XSM_PSWD').AsString := EncStr(xsm_password,ENC_KEY);
+         end;
       CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
       CdsTable.Post;
       Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
       Global.TENANT_ID := Tenant.TENANT_ID;
       Global.TENANT_NAME := Tenant.TENANT_NAME;
       Global.SHORT_TENANT_NAME := Tenant.SHORT_TENANT_NAME;
-      Global.SHOP_ID := inttostr(Tenant.TENANT_ID)+'0001';
+      Global.SHOP_ID := Login.SHOP_ID;
       Global.SHOP_NAME := Tenant.TENANT_NAME;
-      Global.UserID := inttostr(Tenant.TENANT_ID)+'0001';
+      Global.UserID := id;
       Global.UserName := Tenant.SHORT_TENANT_NAME;
       Global.Roles := 'xsm';
       TENANT_ID := Tenant.TENANT_ID;

@@ -459,6 +459,7 @@ inherited frameToolForm: TframeToolForm
         F9D47AF9D47AF9D06EF9CF68F9D16EF9D16EF9D16EF9D16EF9D16EF9D16EF9D0
         6EF9D16EF9D16EF9D16E}
       Vertical = True
+      OnResize = CoolBar1Resize
       object ToolBar1: TToolBar
         Left = 0
         Top = 0

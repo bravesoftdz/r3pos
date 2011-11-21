@@ -7,9 +7,13 @@ uses
 type
   TMMServer=class
   private
+    FMMHandle: THandle;
     procedure InitInstance;
+    procedure SetMMHandle(const Value: THandle);
   protected
     MCHandle:THandle;
+    FParams:string;
+    procedure DecodeParams(lParam:Longint);
     function RecvProc(wParam, lParam: Longint):LongInt;
     function SendProc(wParam, lParam: Longint):LongInt;
     procedure mmLogin;
@@ -22,8 +26,11 @@ type
     procedure coLogin(_MMLogin:TftParamList);
     procedure coSign(_MMLogin:TftParamList);
     procedure coSessionFail(_MMLogin:TftParamList);
+    function ParamStr(Index:integer):string;
     //¼ì²âÊÇ·ñ´ò¿ª
     function MCExists:boolean;
+    property MMHandle:THandle read FMMHandle write SetMMHandle;
+    property Params:string read FParams write FParams;
   end;
 var
   MMServer:TMMServer;
@@ -144,6 +151,7 @@ begin
   MM_LOGIN:mmLogin;
   MM_SIGN:mmSign;
   MM_SESSION_FAIL:mmSessionFail;
+  MM_PARAMS:DecodeParams(lParam);
   end;
 end;
 
@@ -220,6 +228,104 @@ begin
   lp.dwData := WM_COPYDATA;
   lp.cbData := length(s);
   SendProc(MM_SESSION_FAIL,integer(@lp));
+end;
+
+procedure TMMServer.DecodeParams(lParam: Integer);
+var
+  lp:PCopyDataStruct;
+begin
+  lp := PCopyDataStruct(lParam);
+  FParams := StrPas(lp^.lpData);
+  PostMessage(MMHandle,MM_PARAMS,0,0);
+end;
+
+procedure TMMServer.SetMMHandle(const Value: THandle);
+begin
+  FMMHandle := Value;
+end;
+
+function TMMServer.ParamStr(Index: integer): string;
+function GetParamStr(P: PChar; var Param: string): PChar;
+var
+  i, Len: Integer;
+  Start, S, Q: PChar;
+begin
+  while True do
+  begin
+    while (P[0] <> #0) and (P[0] <= ' ') do
+      P := CharNext(P);
+    if (P[0] = '"') and (P[1] = '"') then Inc(P, 2) else Break;
+  end;
+  Len := 0;
+  Start := P;
+  while P[0] > ' ' do
+  begin
+    if P[0] = '"' then
+    begin
+      P := CharNext(P);
+      while (P[0] <> #0) and (P[0] <> '"') do
+      begin
+        Q := CharNext(P);
+        Inc(Len, Q - P);
+        P := Q;
+      end;
+      if P[0] <> #0 then
+        P := CharNext(P);
+    end
+    else
+    begin
+      Q := CharNext(P);
+      Inc(Len, Q - P);
+      P := Q;
+    end;
+  end;
+
+  SetLength(Param, Len);
+
+  P := Start;
+  S := Pointer(Param);
+  i := 0;
+  while P[0] > ' ' do
+  begin
+    if P[0] = '"' then
+    begin
+      P := CharNext(P);
+      while (P[0] <> #0) and (P[0] <> '"') do
+      begin
+        Q := CharNext(P);
+        while P < Q do
+        begin
+          S[i] := P^;
+          Inc(P);
+          Inc(i);
+        end;
+      end;
+      if P[0] <> #0 then P := CharNext(P);
+    end
+    else
+    begin
+      Q := CharNext(P);
+      while P < Q do
+      begin
+        S[i] := P^;
+        Inc(P);
+        Inc(i);
+      end;
+    end;
+  end;
+
+  Result := P;
+end;
+var
+  P: PChar;
+begin
+  P := Pchar(FParams);
+  while True do
+  begin
+    P := GetParamStr(P, Result);
+    if (Index = 0) or (Result = '') then Break;
+    Dec(Index);
+  end;
 end;
 
 initialization

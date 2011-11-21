@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ufrmMMBasic, RzBmpBtn, StdCtrls, ExtCtrls, RzBckgnd, RzPanel,
-  RzButton, RzLabel, cxCheckBox, cxTextEdit, cxControls, cxContainer,
+  RzButton, RzLabel, cxCheckBox, cxTextEdit, cxControls, cxContainer,HTTPApp,
   cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, jpeg, ZDataSet, RzForms;
 const
   WM_AUTOLOGIN=WM_USER+495;
@@ -330,11 +330,11 @@ end;
 
 procedure TfrmMMLogin.AutoLogin;
 begin
-  if ParamStr(1)='-mmPing' then
+  if (ParamStr(1)='-mmPing') and not mmGlobal.Logined then
      begin
        if ParamStr(4)<>'' then
           begin
-            mmGlobal.coAutoLogin(ParamStr(4));
+            mmGlobal.coAutoLogin(HTTPDecode(ParamStr(4)));
           end;
        if mmGlobal.Logined then
           begin

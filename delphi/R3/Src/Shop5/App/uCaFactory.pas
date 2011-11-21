@@ -559,6 +559,7 @@ try
                  defSrvrId := GetNodeValue(caTenantLoginResp,'srvrId');
                  if flag=3 then
                  result.SHOP_ID := GetNodeValue(caTenantLoginResp,'shopId');
+                 if result.SHOP_ID='' then result.SHOP_ID := inttostr(result.TENANT_ID)+'0001';
                  f.WriteString('db','dbid',inttostr(result.DB_ID));
                  if StrtointDef(GetNodeValue(caTenantLoginResp,'databasePort'),0)=0 then
                     hsname := GetNodeValue(caTenantLoginResp,'dbHostName')
@@ -3411,11 +3412,14 @@ try
     Global.LocalFactory.Open(rs,'TShop',Params);
     if not rs.IsEmpty then
     begin
-      rs.Edit;
-      rs.FieldByName('XSM_CODE').asString := xsmCode;
-      rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
-      rs.Post;
-      Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
+      if rs.FieldByName('SHOP_ID').asString=shopId then
+      begin
+        rs.Edit;
+        rs.FieldByName('XSM_CODE').asString := xsmCode;
+        rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+        rs.Post;
+        Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
+      end;
     end
     else
     begin
@@ -3430,8 +3434,13 @@ try
       rs.FieldByName('FAXES').asString := GetNodeValue(caShopInfo,'faxes');
       rs.FieldByName('ADDRESS').asString := GetNodeValue(caShopInfo,'address');
       rs.FieldByName('POSTALCODE').asString := GetNodeValue(caShopInfo,'postalcode');
-      rs.FieldByName('XSM_CODE').asString := xsmCode;
-      rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+      if rs.FieldByName('SHOP_ID').asString=shopId then
+         begin
+           rs.FieldByName('XSM_CODE').asString := xsmCode;
+           rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+         end
+      else
+         rs.FieldByName('XSM_CODE').asString := GetNodeValue(caShopInfo,'xsmCode');
       rs.FieldByName('REGION_ID').asString := GetNodeValue(caShopInfo,'regionId');
       rs.FieldByName('SHOP_TYPE').asString := GetNodeValue(caShopInfo,'shopType');
       rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'seqNo'));

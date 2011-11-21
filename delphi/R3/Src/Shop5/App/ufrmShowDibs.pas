@@ -622,6 +622,7 @@ begin
         w := TotalFee;
         if TfrmDibsOption.ShowDibsOption(self,w) then
         begin
+          MainRecord.FieldByName('CASH_MNY').AsFloat := 0;
           MainRecord.FieldByName('PAY_A').AsFloat := 0;
           MainRecord.FieldByName('PAY_B').AsFloat := 0;
           MainRecord.FieldByName('PAY_C').AsFloat := 0;

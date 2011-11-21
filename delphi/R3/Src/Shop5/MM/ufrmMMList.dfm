@@ -281,7 +281,7 @@ inherited frmMMList: TfrmMMList
             ParentFont = False
             TabOrder = 0
           end
-          object RzBmpButton1: TRzBmpButton
+          object apply: TRzBmpButton
             Left = 66
             Top = 0
             Width = 64

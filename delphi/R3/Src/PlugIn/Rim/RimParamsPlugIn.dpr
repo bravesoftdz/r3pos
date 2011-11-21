@@ -23,10 +23,12 @@ uses
   SysUtils,
   Variants,
   Classes,
+  Forms,
   zBase,
   uBaseSyncFactory in '..\Pub\uBaseSyncFactory.pas',
   uRimSyncFactory in 'uRimSyncFactory.pas',
-  uParamsFactory in 'uParamsFactory.pas';
+  uParamsFactory in 'uParamsFactory.pas',
+  ufrmRimConfig in 'ufrmRimConfig.pas' {frmRimConfig};
 
 {$R *.res}
  
@@ -89,6 +91,14 @@ function ShowPlugin:Integer; stdcall;
 begin
   try
     //开始显示主界面窗体
+    with TfrmRimConfig.Create(application) do
+      begin
+        try
+          ShowModal;
+        finally
+          free;
+        end;
+      end;
 
     result := 0;
   except

@@ -106,3 +106,14 @@ s1_Questionnaire_Left_Return_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_Questionnaire_L
 s1_Questionnaire_Left_Return_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_Questionnaire_Left_Return_Hot.bmp
 s1_Questionnaire_Left_Look_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_Questionnaire_Left_Look_Up.bmp
 s1_Questionnaire_Left_Look_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_Questionnaire_Left_Look_Hot.bmp
+s1_Login_Top JPG D:\Delphi\R3\Src\Shop5\rc\s1_Login_Top.jpg
+s1_InitGuide_Top1 JPG D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Top1.jpg
+s1_InitGuide_Top2 BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Top2.bmp
+s1_InitGuide_Bottom_Start_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_Start_Up.bmp
+s1_InitGuide_Bottom_Start_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_Start_Hot.bmp
+s1_InitGuide_Bottom_Prev_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_Prev_Up.bmp
+s1_InitGuide_Bottom_Prev_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_Prev_Hot.bmp
+s1_InitGuide_Bottom_Next_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_Next_Up.bmp
+s1_InitGuide_Bottom_Next_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_Next_Hot.bmp
+s1_InitGuide_Bottom_End_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_End_Up.bmp
+s1_InitGuide_Bottom_End_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_InitGuide_Bottom_End_Hot.bmp

@@ -3,14 +3,33 @@ unit objPlugInSyncData;
 interface
 
 uses
-   SysUtils,Classes,Dialogs,ZBase,zIntf,Forms,zDataSet,DB;
+   SysUtils,Classes,Dialogs,ZBase,zIntf,Forms,zDataSet,DB,ZLogFile;
 
 const
   //国家烟草供应链ID:1000006
   NT_RELATION_ID=1000006;
 
+{== 插件上报序号ID==}
+{ 1、上报库存
+  2、上报销售汇总
+  3、消息同步
+  4、消费者
+  5、Rim.WSDL的Url、用户名、密码;
+  6、问卷调查
+}
+
+{== 日志类型: DEBUG_TYPE
+    0:不是日志模式;
+    1:全部门店上报直接打印在控制面板上;
+    2:根据指定SHOP.Log内的门店上报直接打印在控制面板上;
+    3:根据指定SHOP.Log内的门店上报写入Debug.log日志文件上;
+ ==}
+
+
 type
    TPlugParams=Record
+     DEBUG_TYPE: Integer;     {==日志类型:0,1,2,3 ==}
+     LOG_TYPE: Integer;       {==日志模式:0:上报执行情况不日志,1:有错误时打日志; 2：全部上报日志 ==}
      PlugInID: string;        {==插件ID;第1位:上报库存；第2位:上报销售汇总；第3位: 消息同步； 第4位：消费者 第5位：Rim.WSDL ==}
      VipUpload: Boolean;      {==消费者是否上报（默认上报）[1：上报，0表示不上报]==}
      Up_CUST_STATUS: string;  {==上报会员的状态[默认03：有效]==}
@@ -36,6 +55,10 @@ type
     FDbType: integer;
     FMaxStmp: string;
     FUpMaxStmp: string;
+    FLogMsg: string;
+    FPrcdMsg: string;
+    FRunState: Boolean;
+    FPlugInID: Integer;
     procedure SetParams(const Value: TftParamList);
     procedure setComID(const Value: string);
     procedure SetCustID(const Value: string);
@@ -43,10 +66,14 @@ type
     procedure SetShopID(const Value: string);
     procedure SetTenID(const Value: string);
     procedure SetShortID(const Value: string);
-    procedure SetParamsValue;
     procedure SetMaxStmp(const Value: string); //读取Rim相关参数值
+    function  SetParamsValue(InParams: TftParamList): Boolean;
     function  GetUpdateTime: string;
     function  GetTWO_PHASE_COMMIT: Boolean;
+    procedure SetLogMsg(const Value: string);
+    procedure SetPrcdMsg(const Value: string);
+    procedure SetRunState(const Value: Boolean);
+    procedure SetPlugInID(const Value: Integer);
   public
     constructor Create(AGlobal: IdbHelp); virtual;
     function DLLDoExecute(InParams: TftParamList; var vData: OleVariant): integer; virtual;      //提供给外面调用过程
@@ -57,6 +84,9 @@ type
     function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
     function GetR3ToRimUnit_ID(iDbType:integer; UNIT_ID: string): string; //返回单位换算
     function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
+    function AddLogMsg(vMsg: string; RunState: integer=1): Boolean; {==RunState:1表示直接加日志文字==}
+    function AddPrcdLogMsg(RunFlag: Boolean; vMsg: string;iRet: integer): Boolean;
+    function WriteToFileLog: Boolean; overload;
     function ExecSQL(SQL: string; var iRet: integer; MsgStr: string=''): Boolean;overload;  //返回更新记录数据
     function ExecSQL(SQLList: TStringList;var iRet:integer; Params: TftParamList=nil):integer; overload;  //返回更新记录数据
     function ExecTransSQL(SQL: string; var iRet: integer): Boolean;  //返回是否事务是否执行成功
@@ -65,7 +95,7 @@ type
 
     property DBFactor: IdbHelp read FDBFactor;                    //数据访问接口
     property DbType: integer read FDbType;        //数据库类型
-    property Params: TftParamList read FParams;   //参数列表
+    property Params: TftParamList read FParams write SetParams;   //参数列表
     property UpdateTime: string read GetUpdateTime; //最新更新时间[YYYY-MM-DD_HH:MM:SS]
     property ComID: string read FComID write setComID;    //Rim烟草公司ID
     property CustID: string read FCustID write SetCustID; //Rim零售户ID
@@ -75,23 +105,35 @@ type
     property LICENSE_CODE: string read FLICENSE_CODE write SetLICENSE_CODE; //烟草经营许可证ID
     property MaxStmp: string read FMaxStmp write SetMaxStmp;  //最大时间戳
     property UpMaxStmp: string read FUpMaxStmp;               //更新最大时间戳
-    property TWO_PHASE_COMMIT: Boolean read GetTWO_PHASE_COMMIT;   
+    property TWO_PHASE_COMMIT: Boolean read GetTWO_PHASE_COMMIT; //启动分布式（多个数据源提交事务）
+    property RunState: Boolean read FRunState write SetRunState; //运行状态（过程运行状态）
+    property LogMsg: string read FLogMsg Write SetLogMsg; //写一个类日志
+    property PrcdMsg: string read FPrcdMsg Write SetPrcdMsg; //某个过程日志
+    property PlugInID: Integer read FPlugInID Write SetPlugInID;  //插件ID(控制是否启用上报) 
   end;
 
   //上报最新库存
   TPlugInSyncStorage=class(TPlugInBase)
+  private
+    function SyncCustStorage:integer;
   public
     function DLLDoExecute(InParams: TftParamList; var vData: OleVariant):integer; override;  //提供给外面调用过程
   end;
 
   //上报销售汇总
   TPlugSyncSaleTotal=class(TPlugInBase)
+  private
+    function SyncSaleTotal: integer;
   public
     function DLLDoExecute(InParams: TftParamList; var vData: OleVariant):integer; override;  //提供给外面调用过程
-  end;  
+  end;
 
   //取Rim消息
   TPlugInSyncMessage=class(TPlugInBase)
+  private
+    AllRet: integer; //总下载消息数
+    NewRet: integer; //新插入消息数
+    function SyncMessage: integer;
   public
     function DLLDoExecute(InParams: TftParamList; var vData: OleVariant):integer; override;  //提供给外面调用过程
   end;
@@ -150,6 +192,9 @@ type
   function ReadConfig(Header,Ident,DefValue:string; IniFile: string=''):string;  //读配置文件
   function ReadBool(Header,Ident:string; DefValue: Boolean;IniFile: string=''):Boolean;  //读配置文件
   procedure ReadPlugInCfg(var vPlugParams: TPlugParams); //读取插件原定义参数
+  //写日志：
+  function WriteDebugLog(LogText: string; SHOP_ID: string=''): Boolean;
+            
 
 var
   PlugParams: TPlugParams;
@@ -195,7 +240,7 @@ end;
 
 procedure ReadPlugInCfg(var vPlugParams: TPlugParams); //取取产件定义参数
 begin
-  vPlugParams.PlugInID:=ReadConfig('PARAMS','PlugInID','00000');   //启用哪些插件上报
+  vPlugParams.PlugInID:=ReadConfig('PARAMS','PlugInID','0000000000000000000');   //启用哪些插件上报
   vPlugParams.VipUpload:=ReadBool('PARAMS','VipUpload',true);      //是否上报终端采集消费者
   vPlugParams.Up_CUST_STATUS:=ReadConfig('PARAMS','UP_CUST_STATUS','03'); //上报消费者的状态，默认:03
   vPlugParams.USE_SM_CARD:=ReadBool('PARAMS','USE_SM_CARD',true);  //默认启用上报商盟卡
@@ -203,12 +248,128 @@ begin
   vPlugParams.USING_CUST_PSWD:=ReadBool('rim','USING_CUST_PSWD',false); //启用客户密码
   vPlugParams.RimUrl:=ReadConfig('rim','url','');   //RimUrl
   vPlugParams.TWO_PHASE_COMMIT:=trim(ReadConfig('PARAMS','TWO_PHASE_COMMIT','1'))<>'0';
+  vPlugParams.DEBUG_TYPE:=StrtoIntDef(ReadConfig('PARAMS','DEBUG_TYPE','0'),0); //启用调试类型;
+  vPlugParams.LOG_TYPE:=StrtoIntDef(ReadConfig('PARAMS','LOG_TYPE','2'),0); //启用调试类型;
+end;
+
+//写日志
+function WriteDebugLog(LogText: string; SHOP_ID: string=''): Boolean;
+var
+  S,vShopID: string;
+  F: TextFile;
+begin
+  if PlugParams.DEBUG_TYPE=0 then Exit;  //非日志模式退出；
+  vShopID:='';
+  //if SHOP_ID<>'' then vShopID:=' SHOP_ID='+SHOP_ID;
+  case PlugParams.DEBUG_TYPE of
+   1:
+    begin
+      LogFile.AddLogFile(0,vShopID+' '+LogText);
+    end;
+   2:
+    begin
+      if FileExists(SHOP_ID+'.FLAG') then
+        LogFile.AddLogFile(0,vShopID+' '+LogText);
+    end;
+   3:
+    begin
+      if FileExists(SHOP_ID+'.FLAG') then
+      begin
+        S:=TimeToStr(Time())+vShopID+' '+LogText;
+        AssignFile(F,'debug.log');
+        if FileExists('debug.log') then
+           append(f)
+        else
+           rewrite(f);
+        try
+          Writeln(f,s);
+        finally
+          closefile(f);
+        end;
+      end;
+    end;
+  end;
+end;
+
+function TPlugInBase.AddLogMsg(vMsg: string; RunState: integer): Boolean;
+begin
+  result:=False;
+  if PlugParams.DEBUG_TYPE=0 then Exit;
+  if PlugParams.LOG_TYPE=0 then Exit;
+
+  case RunState of
+   -1: {==执行错误==}
+    begin
+      if vMsg<>'' then
+      begin
+        if trim(LogMsg)<>'' then
+          LogMsg:=LogMsg+';['+vMsg+'=Error]'
+        else
+          LogMsg:='['+vMsg+'=Error]';
+        result:=true;
+      end;
+    end;
+   0: {执行成功}
+    begin
+      if vMsg<>'' then
+      begin
+        if trim(LogMsg)<>'' then
+          LogMsg:=LogMsg+';['+vMsg+'Succ]'
+        else
+          LogMsg:='['+vMsg+'Succ]';
+        result:=true;
+      end;
+    end;
+   1: {==默认情况直接添加日志文字==}
+    begin
+      if vMsg<>'' then
+      begin
+        if trim(LogMsg)<>'' then
+          LogMsg:=LogMsg+';['+vMsg+']'
+        else
+          LogMsg:='['+vMsg+']';
+        result:=true;
+      end;
+    end;
+  end;
+end;
+
+function TPlugInBase.AddPrcdLogMsg(RunFlag: Boolean;vMsg: string;iRet: integer): Boolean;
+begin
+  result:=False;
+  if PlugParams.DEBUG_TYPE=0 then Exit;
+  if PlugParams.LOG_TYPE=0 then Exit;
+
+  if RunFlag then //正常运行
+  begin
+    if trim(PrcdMsg)='' then
+      PrcdMsg:=PrcdMsg+';'+vMsg+'='+InttoStr(iRet)
+    else
+      PrcdMsg:=vMsg+'='+InttoStr(iRet);
+  end else //错误情况
+    PrcdMsg:=PrcdMsg+';'+vMsg+'=False';
+end;
+
+function TPlugInBase.WriteToFileLog: Boolean;
+begin
+  // 0:上报执行情况不日志,1:有错误时打日志; 2：全部上报日志
+  if PlugParams.LOG_TYPE=0 then Exit;
+
+  case PlugParams.LOG_TYPE of
+   1:
+    begin
+      if not RunState then
+        WriteDebugLog(LogMsg,ShopID);
+    end;
+   2: WriteDebugLog(LogMsg,ShopID);
+  end;   
 end;
 
 constructor TPlugInBase.Create(AGlobal: IdbHelp);
 begin
   //传入参数:
   FDBFactor:=AGlobal;
+  FLogMsg:='';
 end;
 
 function TPlugInBase.DLLDoExecute(InParams: TftParamList; var vData: OleVariant): integer;
@@ -220,11 +381,13 @@ function TPlugInBase.ExecSQL(SQL: string; var iRet: integer; MsgStr: string): Bo
 begin
   result:=False;
   try
+    WriteDebugLog('ExecSQL:'+SQL);
     iRet:=FDBFactor.ExecSQL(SQL);
     result:=True;
   except
     on E:Exception do
     begin
+      WriteDebugLog('错误:'+E.Message);
       Raise Exception.Create(Pchar(MsgStr+'错误:'+E.Message));
     end;
   end;  
@@ -263,6 +426,7 @@ begin
   result:=False;
   FDBFactor.BeginTrans;
   try
+    WriteDebugLog('ExecTransSQL:'+SQL);
     iRet:=FDBFactor.ExecSQL(SQL);
     FDBFactor.CommitTrans;
     result:=True;
@@ -270,6 +434,7 @@ begin
     on E:Exception do
     begin
       FDBFactor.RollbackTrans;
+      WriteDebugLog('错误:'+E.Message);
       Raise Exception.Create('错误:'+E.Message);
     end;
   end;  
@@ -426,11 +591,16 @@ begin
   if DataSet.ClassNameIs('TZQuery') then //TZQuery
   begin
     try
+      WriteDebugLog('ExecSQL:'+TZQuery(DataSet).SQL.Text);
       TZQuery(DataSet).Close;
       DBFactor.Open(TZQuery(DataSet));  
       Result:=TZQuery(DataSet).Active;
     except
-      Raise; 
+      on E:Exception do
+      begin
+        WriteDebugLog('错误:'+E.Message);
+        Raise;
+      end;
     end;
   end
 end;
@@ -547,6 +717,11 @@ begin
   FComID := Value;
 end;
 
+procedure TPlugInBase.SetPrcdMsg(const Value: string);
+begin
+  FPrcdMsg := Value;
+end;
+
 procedure TPlugInBase.SetCustID(const Value: string);
 begin
   FCustID := Value;
@@ -555,6 +730,11 @@ end;
 procedure TPlugInBase.SetLICENSE_CODE(const Value: string);
 begin
   FLICENSE_CODE := Value;
+end;
+
+procedure TPlugInBase.SetLogMsg(const Value: string);
+begin
+  FLogMsg := Value;
 end;
 
 procedure TPlugInBase.SetMaxStmp(const Value: string);
@@ -567,12 +747,21 @@ begin
   FParams := Value;
 end;
 
-procedure TPlugInBase.SetParamsValue;
+function TPlugInBase.SetParamsValue(InParams: TftParamList): Boolean;
 var
   Rs: TZQuery;
+  PlugInIDS: string;
 begin
+  result:=False;
+  PlugInIDS:=PlugParams.PlugInID;
+  if PlugInIDS='' then PlugInIDS:='000000000000000000000000';
+  if Copy(PlugInIDS,PlugInID,1)='0' then Exit;
+
+  //传入参数列表
+  Params:=InParams;
   TenID:=Params.ParamByName('TENANT_ID').AsString; //企业ID
   ShopID:=Params.ParamByName('SHOP_ID').AsString;  //门店ID
+  ShortID:=Copy(ShopID,Length(ShopID)-3,4);
   FDbType:=DBFactor.iDbType; //数据库类型
   //先判断是否是烟草企业(是否是烟草加盟的企业):
   try
@@ -601,6 +790,13 @@ begin
   finally
     Rs.Free;
   end;
+  FLogMsg:='[TenID='+TenID+';ShopID='+ShopID+';ComID='+ComID+';CustID='+CustID+';LICENSE_CODE='+LICENSE_CODE+']';
+  result:=True;
+end;
+
+procedure TPlugInBase.SetRunState(const Value: Boolean);
+begin
+  FRunState := Value;
 end;
 
 procedure TPlugInBase.SetShopID(const Value: string);
@@ -632,7 +828,7 @@ begin
   except
     on E:Exception do
     begin
-      Raise Exception.Create('写日志执行失败:'+E.Message);
+      Raise Exception.Create('写日志(RIM_BAL_LOG)执行失败:'+E.Message);
     end;
   end;
 end;
@@ -645,20 +841,16 @@ end;
   (3)RIM_CUST_ITEM_WHSE是Rim零售户的总库存的汇总;
 }
 
-function TPlugInSyncStorage.DLLDoExecute(InParams: TftParamList; var vData: OleVariant):integer;
+
+function TPlugInSyncStorage.SyncCustStorage: integer;
 var
   iRect: integer;      //影响记录行
-  IsComTrans: Boolean; //提交事务返回
   Str,Up_Date: string;
 begin
   result := -1;
-  //传入参数列表
-  FParams:=InParams;
-  //判断并读取参数:
-  SetParamsValue;
-
   iRect:=0;
-  IsComTrans:=False;
+  PrcdMsg:='';
+  RunState:=False;  
   try
     Up_Date:=FormatDatetime('YYYYMMDD',Date());
 
@@ -668,8 +860,9 @@ begin
          ' from STO_STORAGE A,VIW_GOODSINFO B '+
          ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'') and A.TENANT_ID='+TenID+' and A.SHOP_ID='''+ShopID+''' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
          ' and not exists(select ITEM_ID from RIM_CUST_ITEM_SWHSE C where C.COM_ID='''+ComID+''' and C.CUST_ID='''+CustID+''' and C.TERM_ID='''+ShortID+''' and C.ITEM_ID=B.SECOND_ID) ';
-    IsComTrans:=ExecTransSQL(Str,iRect);
-
+    RunState:=ExecTransSQL(Str,iRect);
+    AddPrcdLogMsg(RunState,'SWHSE.insert=',iRect);
+    
     //2、插入: RIM_CUST_ITEM_SWHSE
     Str:=ParseSQL(DbType,
            'update RIM_CUST_ITEM_SWHSE '+
@@ -679,8 +872,11 @@ begin
                 ',DATE1='''+Up_Date+''',TIME1='''+TimeToStr(Time())+''' '+
            ' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''' '+
            ' and exists(select B.SECOND_ID from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TenID+' and A.SHOP_ID='''+ShopID+''' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)');
-    if IsComTrans then
-      IsComTrans:=ExecTransSQL(Str,iRect);
+    if RunState then
+    begin
+      RunState:=ExecTransSQL(Str,iRect);
+      AddPrcdLogMsg(RunState,'SWHSE.update=',iRect);
+    end;
 
     //3、先更新当前当天的中间库存到零售户库存表：[RIM_CUST_ITEM_WHSE]:
     str:=ParseSQL(DbType,
@@ -688,18 +884,24 @@ begin
          '  set (QTY,TIME_STAMP)=(select sum(QTY),max(TIME_STAMP) from RIM_CUST_ITEM_SWHSE A where RIM_CUST_ITEM_WHSE.COM_ID=A.COM_ID and RIM_CUST_ITEM_WHSE.CUST_ID=A.CUST_ID and RIM_CUST_ITEM_WHSE.ITEM_ID=A.ITEM_ID),'+
               ' DATE1='''+Up_Date+''',UPD_TIME='''+TimeToStr(Time())+''' '+
          ' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' ');
-    if IsComTrans then
-      IsComTrans:=ExecTransSQL(Str,iRect);
-      
+    if RunState then
+    begin
+      RunState:=ExecTransSQL(Str,iRect);
+      AddPrcdLogMsg(RunState,'WHSE.update=',iRect);
+    end;
+
     //4、没有更新到记录插入中间表：[RIM_CUST_ITEM_WHSE]:
     str:='insert into RIM_CUST_ITEM_WHSE(COM_ID,CUST_ID,ITEM_ID,QTY,DATE1,UPD_TIME,TIME_STAMP) '+
          ' select COM_ID,CUST_ID,ITEM_ID,sum(QTY),'''+Up_Date+''' as Up_Date,'''+TimeToStr(Time())+''' as UPD_TIME,max(TIME_STAMP) from RIM_CUST_ITEM_SWHSE A '+
          ' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and '+
          ' not Exists(select COM_ID from RIM_CUST_ITEM_WHSE where COM_ID=A.COM_ID and CUST_ID=A.CUST_ID and ITEM_ID=A.ITEM_ID) '+
          ' group by COM_ID,CUST_ID,ITEM_ID ';
-    if IsComTrans then
-      IsComTrans:=ExecTransSQL(Str,iRect);
-    if IsComTrans then result:=0;
+    if RunState then
+    begin
+      RunState:=ExecTransSQL(Str,iRect);
+      AddPrcdLogMsg(RunState,'WHSE.insert=',iRect);
+      result:=0;
+    end;
   except
     on E:Exception do
     begin
@@ -711,13 +913,31 @@ begin
   WriteToRIM_BAL_LOG(LICENSE_CODE,CustID,'11','上报零售户库存成功！','01');
 end;
 
+function TPlugInSyncStorage.DLLDoExecute(InParams: TftParamList; var vData: OleVariant):integer;
+begin
+  result := -1;
+  PlugInID:=1;  //第1位
+  if Not SetParamsValue(InParams) then Abort;  //退出不执行
 
+  try
+    result:=SyncCustStorage;
+    {result=0返回执行成功}
+    AddLogMsg('SyncCustStorage=',result);
+  finally
+    WriteToFileLog; //写入
+  end;
+end;
+
+procedure TPlugInBase.SetPlugInID(const Value: Integer);
+begin
+  FPlugInID := Value;
+end;
 
 { TPlugSyncSaleTotal }
 
-function TPlugSyncSaleTotal.DLLDoExecute(InParams: TftParamList; var vData: OleVariant): integer;
+function TPlugSyncSaleTotal.SyncSaleTotal: integer;
 var
-  iRet,UpiRet: integer;  //返回ExeSQL影响多少行记录
+  iRet,NewiRet: integer;  //返回ExeSQL影响多少行记录
   Session: string;       //session前缀
   Str: string; //门店后四位代码
   CndTab,         //条件表
@@ -727,13 +947,9 @@ var
   vSALES_DATE: string;     //销售日期[转成字符]
 begin
   result := -1;
-  //传入参数列表
-  FParams:=InParams;
-  //判断并读取参数:
-  SetParamsValue;
-
   iRet:=0;
-  UpiRet:=0;
+  NewiRet:=0;
+  RunState:=False;
   //返回销售汇总上次最大时间戳和当前时间戳:
   MaxStmp:=GetMaxNUM('10',ComID,CustID,ShopID);
 
@@ -778,54 +994,57 @@ begin
   else
     CndTab:=CndTab+' and ((TIME_STAMP>'+MaxStmp+')or(SALES_DATE='+SALES_DATE+'))'; //前台传入日期
                    
+  ExecSQL('delete from '+Session+'INF_SALESUM',iRet,'删除中间表');
   SalesTab:=
     'select M.TENANT_ID,M.SHOP_ID,S.GODS_ID,M.SALES_DATE,sum(S.CALC_AMOUNT) as CALC_AMOUNT,sum(S.CALC_MONEY) as CALC_MONEY '+
     ' from SAL_SALESORDER M,SAL_SALESDATA S,('+CndTab+') C '+
     ' where M.TENANT_ID=S.TENANT_ID and M.SALES_ID=S.SALES_ID and M.TENANT_ID=C.TENANT_ID and M.SHOP_ID=C.SHOP_ID and '+
     ' M.SALES_DATE=C.SALES_DATE and M.SALES_TYPE in (1,3,4) and M.COMM not in (''02'',''12'') and M.TENANT_ID='+TenID+' and M.SHOP_ID='''+ShopID+''' '+
     ' group by M.TENANT_ID,M.SHOP_ID,M.SALES_DATE,S.GODS_ID';
-
-  ExecSQL('delete from '+Session+'INF_SALESUM',iRet,'删除中间表');
   Str:='insert into '+Session+'INF_SALESUM(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_ID,SALES_DATE,QTY_ORD,AMT,CO_NUM) '+
     'select A.TENANT_ID,A.SHOP_ID,'''+ShortID+''' as SHORT_SHOP_ID,'''+ComID+''' as COM_ID,'''+CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,B.UNIT_ID,'+vSALES_DATE+' as SALES_DATE,'+
     ' (case when '+GetDefaultUnitCalc+'<>0 then cast(A.CALC_AMOUNT as decimal(18,3))/('+GetDefaultUnitCalc+') else A.CALC_AMOUNT end) as SALE_AMT,A.CALC_MONEY,('+vSALES_DATE+' || ''_'' || '''+CustID+''' ||''_'' || '''+ShortID+''') as CO_NUM '+
     ' from ('+SalesTab+')A,VIW_GOODSINFO B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
-  ExecSQL(Str,iRet,'插入日销售汇总中间表');
+  RunState:=ExecSQL(Str,iRet,'插入日销售汇总中间表');
+  AddPrcdLogMsg(RunState,'INF_SALESUM.insert=',iRet);
+
   if iRet=0 then
   begin
     result:=0; //返回没有可上报数据
     Exit; //没有上报数据时则退出;  //Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
   end;
-  
+
   //第三步: 每一次执行作为一个事务提交
   //1、删除销售历史数据(先删除表体在删除表头):
   Str:='delete from RIM_RETAIL_CO_LINE A '+
        ' where exists(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_SALESUM C '+
                     ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.SALES_DATE and B.COM_ID='''+ComID+'''and B.TERM_ID='''+ShortID+''' and B.CUST_ID='''+CustID+''' and A.CO_NUM=B.CO_NUM)';
   ExecSQL(Str,iRet,'删除历史日销售表体');
+
   Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_SALESUM B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.SALES_DATE) and A.COM_ID='''+ComID+''' and A.TERM_ID='''+ShortID+''' and A.CUST_ID='''+CustID+''' ';
   ExecSQL(Str,iRet,'删除历史日销售表头');
-  
+
   DBFactor.BeginTrans;
   try
     //2、插入日销售台账(先插表头在插入表体):
     Str:='insert into RIM_RETAIL_CO(CO_NUM,CUST_ID,COM_ID,TERM_ID,PUH_DATE,STATUS,PUH_TIME,UPD_DATE,UPD_TIME,QTY_SUM,AMT_SUM) '+
          'select CO_NUM,CUST_ID,COM_ID,SHORT_SHOP_ID,SALES_DATE,''01'' as STATUS,'''+TimetoStr(time())+''','''+FormatDatetime('YYYYMMDD',Date())+''','''+TimetoStr(time())+''',sum(QTY_ORD) as QTY_SUM,sum(AMT) as AMT_SUM '+
          ' from '+Session+'INF_SALESUM group by COM_ID,CUST_ID,SHORT_SHOP_ID,CO_NUM,SALES_DATE';
-    ExecSQL(Str,UpiRet,'插入日销售表头[RIM_RETAIL_CO]');
+    ExecSQL(Str,NewiRet,'插入日销售表头[RIM_RETAIL_CO]');
 
     Str:='insert into RIM_RETAIL_CO_LINE(CO_NUM,ITEM_ID,QTY_ORD,AMT,UM_ID,PRICE) '+
          'select CO_NUM,ITEM_ID,QTY_ORD,AMT,'+GetR3ToRimUnit_ID(DbType,'UNIT_ID')+' as UNIT_ID,'+
          '(case when QTY_ORD<>0 then cast(AMT as decimal(18,3))/cast(QTY_ORD as decimal(18,3)) else cast(AMT as decimal(18,3)) end) as PRICE from '+Session+'INF_SALESUM ';
     ExecSQL(Str,iRet,'插入日销售表体[RIM_RETAIL_CO_LINE]');
-
+    
     //3、更新上报时间戳:
     Str:='update RIM_R3_NUM set MAX_NUM='''+UpMaxStmp+''',UPDATE_TIME='''+UpdateTime+''' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and TYPE=''10'' and TERM_ID='''+ShopID+''' ';
     ExecSQL(Str,iRet,'更新上报时间戳');
 
     DBFactor.CommitTrans;
-    result:=UpiRet;
+    result:=NewiRet;
+    AddPrcdLogMsg(true,'RIM_RETAIL_CO.insert=',NewiRet);
   except
     on E:Exception do
     begin
@@ -834,15 +1053,31 @@ begin
       Raise;
     end;
   end;
-
   //执行成功写日志:
   WriteToRIM_BAL_LOG(LICENSE_CODE,CustID,'10','上报日销售成功！','01');
 end;
 
+function TPlugSyncSaleTotal.DLLDoExecute(InParams: TftParamList; var vData: OleVariant): integer;
+begin
+  result := -1;
+  PlugInID:=2;  //第2位
+  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+  
+  try
+    result:=SyncSaleTotal;
+    { result返回上报多笔销售汇总 }
+    if result>=0 then
+      AddLogMsg('SyncSaleTotal=',0)
+    else if result=-1 then
+      AddLogMsg('SyncSaleTotal=',-1);
+  finally
+    WriteToFileLog;
+  end;
+end;
 
 { TPlugInSyncMessage }
 
-function TPlugInSyncMessage.DLLDoExecute(InParams: TftParamList; var vData: OleVariant): integer;
+function TPlugInSyncMessage.SyncMessage: integer;
 var
   iRet: integer;
   str,s,mid: string;
@@ -850,11 +1085,8 @@ var
   FReData: OleVariant;
 begin
   result:=-1;
-  //传入参数列表
-  FParams:=InParams;
-  //判断并读取参数:
-  SetParamsValue;
-  
+  AllRet:=0;
+  NewRet:=0;
   rs:=TZQuery.Create(nil);
   try
     rs.Close;
@@ -878,9 +1110,10 @@ begin
        'and STATUS=''02'' and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and invalid_date>='''+formatDatetime('YYYYMMDD',Date())+''' '+
        'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+ShopID+''' and B.TENANT_ID='+TenID+' and B.COMM_ID=A.MSG_ID)';
     end;
-    
+
     if Open(Rs) then
     begin
+      AllRet:=Rs.RecordCount;
       rs.First;
       while not rs.Eof do
       begin
@@ -922,7 +1155,8 @@ begin
               ' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
           end;
           ExecSQL(Str,iRet);
-          DBFactor.CommitTrans;  
+          DBFactor.CommitTrans;
+          Inc(NewRet);
         except
           on E:Exception do
           begin
@@ -934,11 +1168,27 @@ begin
         rs.Next;
       end;
     end;
-    result:=0;
+    result:=NewRet;
   finally
     rs.Free;
   end;
 end;
+
+function TPlugInSyncMessage.DLLDoExecute(InParams: TftParamList; var vData: OleVariant): integer;
+begin
+  result:=-1;
+  PlugInID:=3;  //第3位
+  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+
+  try
+    result:=SyncMessage;
+    { result返回下载多少条消息 }
+    AddLogMsg('总下载消息数:'+InttoStr(AllRet)+';SyncMessage='+InttoStr(NewRet),1);
+  finally
+    WriteToFileLog;
+  end;
+end;
+
 
 { TPlugSyncVip }
 
@@ -958,28 +1208,30 @@ function TPlugSyncVip.DLLDoExecute(InParams: TftParamList; var vData: OleVariant
 var
   iRet: integer;
   ErrorFlag: Boolean;
-  custid,pid,SHOP_ID,TenID:string;
+  custid,pid:string;
   RsShop: TZQuery;
 begin
-  result:=-1;
-  //传入参数列表
-  FParams:=InParams;
-  //判断并读取参数:
-  SetParamsValue;
-
-  BasInfo.Close;
-  BasInfo.SQL.Text:='select GODS_ID,SORT_ID4,SORT_ID9 from VIW_GOODSINFO where TENANT_ID='+TenID;
-  Open(BasInfo);
-  
-  pid := GetPriceId(TenID);
   try
-    if pid<>'' then
-      SyncCustomer(TenID,ShopID,pid,true);
-  except
-    on E:Exception do
-    begin
-      Raise Exception.Create(Pchar('<'+ShopID+'>消费者同步[上传]错误:'+E.Message));
+    result:=-1;
+    PlugInID:=4;  //第4位
+    if Not SetParamsValue(InParams) then Abort;  //退出不执行
+
+    BasInfo.Close;
+    BasInfo.SQL.Text:='select GODS_ID,SORT_ID4,SORT_ID9 from VIW_GOODSINFO where TENANT_ID='+TenID;
+    Open(BasInfo);
+
+    pid := GetPriceId(TenID);
+    try
+      if pid<>'' then
+        SyncCustomer(TenID,ShopID,pid,true);
+    except
+      on E:Exception do
+      begin
+        Raise Exception.Create(Pchar('<'+ShopID+'>消费者同步[上传]错误:'+E.Message));
+      end;
     end;
+  finally
+    WriteToFileLog;
   end;
 end;         
 
@@ -999,7 +1251,7 @@ begin
     if crname='' then crname:='不记名';
     tmp.Close;
     tmp.SQL.Text := 'select TIME_STAMP from PUB_CUSTOMER where TENANT_ID='+tid+' and CUST_ID='''+ctid+'''';
-    Open(tmp); 
+    Open(tmp);
     Str :='';
     if not tmp.IsEmpty then
      begin
@@ -1374,9 +1626,9 @@ begin
           //把此会员信息，同步上去
           ReRun:=UpLoadCustomer(tid,custid,rs);
           DBFactor.CommitTrans;
-          if ReRun=1 then Inc(DCount); //累计
+          if ReRun=1 then Inc(UCount); //累计
         except
-          Inc(DErrCount);   //错误累加1;
+          Inc(UErrCount);   //错误累加1;
           DBFactor.RollbackTrans;
           Raise
         end;
@@ -1398,26 +1650,32 @@ begin
     begin
       DBFactor.BeginTrans;
       try
-        //把此会员信息，同步上去
+        //把此会员信息，下载下来
         ReRun:=DownLoadCustomer(tid,custid,sid,rid,pid,rs);
         DBFactor.CommitTrans;
-        if ReRun=1 then Inc(UCount); //累计
+        if ReRun=1 then Inc(DCount); //累计
       except
-        Inc(UErrCount);   //错误累加1;
+        Inc(DErrCount);   //错误累加1;
         DBFactor.RollbackTrans;
-        Raise
+        Raise;
       end;
       rs.Next;
     end;
 
     result:=(DErrCount+UErrCount=0);
   finally
+    //上传日志
+    AddLogMsg('UpLoadCustomer.Up:'+InttoStr(UCount)+',Error='+InttoStr(UErrCount),1);
+    //下载日志
+    AddLogMsg('DownLoadCustomer.Down:'+InttoStr(DCount)+',Error='+InttoStr(DErrCount),1);
+    
     rs.Free;
   end;
 end;
 
 function TPlugSyncVip.UpLoadCustomer(tid, custid: string;rs: TZQuery): integer;
 var
+  RunFlag: Boolean;
   tmp,idx:TZQuery;
   Str,idno,ctid,Up_CUST_STATUS:string;
   iRect:integer;
@@ -1427,11 +1685,12 @@ begin
   tmp := TZQuery.Create(nil);
   idx := TZQuery.Create(nil);
   Up_CUST_STATUS:=PlugParams.Up_CUST_STATUS;
-  if Up_CUST_STATUS='' then Up_CUST_STATUS:='03'; 
+  if Up_CUST_STATUS='' then Up_CUST_STATUS:='03';
   try
     tmp.Close;
     tmp.SQL.Text := 'select UPD_DATE,UPD_TIME from RIM_VIP_CONSUMER where CONSUMER_ID='''+ctid+'''';
     Open(tmp);
+    
     Str :='';
     if rs.FieldbyName('ID_NUMBER').AsString='' then idno := '无' else idno := rs.FieldbyName('ID_NUMBER').AsString;
     if not tmp.IsEmpty then
@@ -1487,7 +1746,7 @@ begin
        end;
     if Str<>'' then
        begin
-         ExecSQL(Str,iRect);
+         RunFlag:=ExecSQL(Str,iRect);
 
          //开始更新指标
          idx.Close;
@@ -1603,13 +1862,14 @@ begin
                 end;
              idx.Next;
            end;
+
         if Str<>'' then
-           begin
-             Str := 'update RIM_VIP_CONSUMER set '+Str+' where CONSUMER_ID='''+ctid+'''';
-             ExecSQL(Str,iRect);
-             result:=1;
-           end;
-       end;
+        begin
+          Str := 'update RIM_VIP_CONSUMER set '+Str+' where CONSUMER_ID='''+ctid+'''';
+          if RunFlag then RunFlag:=ExecSQL(Str,iRect);
+        end;
+      end;
+      if RunFlag then result:=1;
   finally
     idx.free;
     tmp.free;
@@ -1625,10 +1885,8 @@ var
   Rs: TZQuery;
 begin
   result:=-1;
-  //传入参数列表
-  FParams:=InParams;
-  //判断并读取参数:
-  SetParamsValue;
+  PlugInID:=5;  //第5位
+  if Not SetParamsValue(InParams) then Abort;  //退出不执行
 
   //返回RimURL
   RimURL:=trim(PlugParams.RimUrl);
@@ -1669,37 +1927,47 @@ begin
     end;
   finally
     rs.Free;
+    WriteToFileLog;
   end;
 end;
-
 
 { TPlugSyncQuestion }
 
 function TPlugSyncQuestion.DLLDoExecute(InParams: TftParamList; var vData: OleVariant): integer;
 var
-  iRet: integer;
+  iRet,ReRun: integer;
   ErrorFlag: Boolean;
   rs: TZQuery;
 begin
   result:=-1;
-  //传入参数列表
-  FParams:=InParams;
-  //判断并读取参数:
-  SetParamsValue;
+  PlugInID:=6;  //第6位
+  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+  
   if (FParams.FindParam('FLAG')<>nil) then
     FSyncType:=Params.FindParam('FLAG').AsInteger;
-    
+
   try
-    //提交问卷
-    if FSyncType=2 then
-      SyncInvest(TenID,ShopID,Params.ParambyName('QUESTION_ID').asString)
-    else  //下载问卷
-      SyncQuestion(TenID,ShopID);
-  except
-    on E:Exception do
-    begin
-      Raise Exception.Create('问卷调查失败:'+E.Message);
+    try
+      //提交问卷
+      if FSyncType=2 then
+      begin
+        ReRun:=SyncInvest(TenID,ShopID,Params.ParambyName('QUESTION_ID').asString);
+        //提交日志
+        AddLogMsg('SyncInvest=',ReRun);
+      end else  //下载问卷
+      begin
+        ReRun:=SyncQuestion(TenID,ShopID);
+        //下载日志
+        AddLogMsg('SyncQuestion=',ReRun);
+      end;
+    except
+      on E:Exception do
+      begin
+        Raise Exception.Create('问卷调查失败:'+E.Message);
+      end;
     end;
+  finally
+    WriteToFileLog;
   end;
 end;
 
@@ -1801,6 +2069,7 @@ begin
           ExecSQL(R3SQL,r);
         end;
         DBFactor.CommitTrans;
+        result:=0;
       except
         DBFactor.RollbackTrans;
         Raise
@@ -1825,6 +2094,7 @@ begin
       end;
       //开始写R3事务
       if IsComTrans and (vCount>0) then ExecTransSQL(R3SQL,r);
+      result:=0;
     end;
   finally
     DetailQry.Free;
@@ -1839,6 +2109,7 @@ var
   rs: TZQuery;
   Beg_Date,END_Date,IS_REPEAT: string;
 begin
+  Result:=-1;
   vCount:=0;
   Msg:='';
   rs:=TZQuery.Create(nil);
@@ -1877,6 +2148,7 @@ begin
              'values('+tid+','''+mid+''','''+sid+''',1,2,'''+rs.Fields[0].AsString+''',''00'','+GetTimeStamp(DbType)+')';
         ExecSQL(str,r);
         DBFactor.CommitTrans;
+        result:=0;
         Inc(vCount);
       except
         on E:Exception do
@@ -1922,6 +2194,7 @@ begin
     tmp.Free;
   end;
 end;
+
 
 initialization
   ReadPlugInCfg(PlugParams);

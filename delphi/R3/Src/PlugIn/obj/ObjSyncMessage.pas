@@ -21,173 +21,121 @@ type
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
 implementation
-uses ZPlugIn, ZlogFile;
+uses ZPlugIn, ZlogFile,objPlugInSyncData;
 
 { TSyncMessage }
 
-function TSyncMessage.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
+function TSyncMessage.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
-  PlugIn: TPlugIn;
   vData: OleVariant;
-  vParamStr: string;
+  PlugInObj: TPlugInSyncMessage;
 begin
   result:=False;
-  vParamStr := TftParamList.Encode(Params);
   //信息同步
-  PlugIn := PlugInList.Find(802);
   try
-    if PlugIn<>nil then
-       begin
-         PlugIn.Enter;
-         try
-            if PlugIn.Working=0 then
-            PlugIn.DLLDoExecute(vParamStr,vData);
-         finally
-            PlugIn.Leave;
-         end;
-         msg := 'succ';
-       end
-    else
-       msg := 'none';
-    result:=true;
+    try
+      PlugInObj:=TPlugInSyncMessage.Create(AGlobal);
+      PlugInObj.DLLDoExecute(Params,vData);
+    finally
+      PlugInObj.Free;
+    end;
+    result := true;
   except
-    Raise Exception.Create(PlugIn.DLLGetLastError);
+    on E: Exception do
+    begin
+      Raise Exception.Create(E.Message);
+    end;
   end;
 end;
 
 { TRimWsdlService }
 
-function TRimWsdlService.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
+function TRimWsdlService.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
-  PlugIn: TPlugIn;
   vData: OleVariant;
-  vParamStr: string;
+  RimWsdlObj: TPlugSyncWsdlService;
 begin
   result:=False;
-  vParamStr := TftParamList.Encode(Params);
-  PlugIn := PlugInList.Find(804);
+  //RIM的wsdl服务
   try
-    if PlugIn<>nil then
-       begin
-         PlugIn.Enter;
-         try
-            if PlugIn.Working=0 then
-            PlugIn.DLLDoExecute(vParamStr,vData);
-         finally
-            PlugIn.Leave;
-         end;
-         msg := vData;
-       end
-    else
-       Exception.Create('没有开通RIM的wsdl服务..');
+    try
+      RimWsdlObj:=TPlugSyncWsdlService.Create(AGlobal);
+      RimWsdlObj.DLLDoExecute(Params,vData);
+    finally
+      RimWsdlObj.Free;
+    end;
+    msg:=vData;
     result:=true;
   except
-    Raise Exception.Create(PlugIn.DLLGetLastError);
+    on E: Exception do
+    begin
+      Raise Exception.Create(E.Message);
+    end;
   end;
 end;
 
 { TSyncRimStorage }
 
-function TSyncRimInfo.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
+function TSyncRimInfo.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
-  PlugIn: TPlugIn;
   vData: OleVariant;
-  vParamStr: string;
+  PlugInBase: TPlugInBase;  
 begin
   result:=False;
-  vParamStr := TftParamList.Encode(Params);
   try
     //当前库存
-    PlugIn := PlugInList.Find(805);
-    if PlugIn<>nil then
-       begin
-         PlugIn.Enter;
-         try
-            if PlugIn.Working=0 then
-            PlugIn.DLLDoExecute(vParamStr,vData);
-         finally
-            PlugIn.Leave;
-         end;
-         msg := 'succ';
-       end
-    else
-       msg := 'none';
+    try
+      PlugInBase:=TPlugInSyncStorage.Create(AGlobal);
+      PlugInBase.DLLDoExecute(Params,vData);
+    finally
+      PlugInBase.Free;
+    end;
 
     //消费者
-    PlugIn := PlugInList.Find(803);
-    if PlugIn<>nil then
-       begin
-         PlugIn.Enter;
-         try
-            if PlugIn.Working=0 then
-            PlugIn.DLLDoExecute(vParamStr,vData);
-         finally
-            PlugIn.Leave;
-         end;
-         msg := 'succ';
-       end
-    else
-       msg := 'none';
+    try
+      PlugInBase:=TPlugSyncVip.Create(AGlobal);
+      PlugInBase.DLLDoExecute(Params,vData);
+    finally
+      PlugInBase.Free;
+    end;
 
     //销售汇总
-    PlugIn := PlugInList.Find(810);
-    if PlugIn<>nil then
-       begin
-         PlugIn.Enter;
-         try
-            if PlugIn.Working=0 then
-            PlugIn.DLLDoExecute(vParamStr,vData);
-         finally
-            PlugIn.Leave;
-         end;
-         msg := 'succ';
-       end
-    else
-       msg := 'none';
-
+    try
+      PlugInBase:=TPlugSyncSaleTotal.Create(AGlobal);
+      PlugInBase.DLLDoExecute(Params,vData);
+    finally
+      PlugInBase.Free;
+    end;
     result:=true;
   except
-    if PlugIn<>nil then
-       Raise Exception.Create(PlugIn.DLLGetLastError)
-    else
-       Raise;
+    Raise;
   end;
 end;
 
 { TSyncQuestion }
 
-function TSyncQuestion.Execute(AGlobal: IdbHelp;
-  Params: TftParamList): Boolean;
+function TSyncQuestion.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
 var
-  PlugIn: TPlugIn;
   vData: OleVariant;
-  vParamStr: string;
+  PlugQuestionObj: TPlugSyncQuestion;
 begin
   result:=False;
-  vParamStr := TftParamList.Encode(Params);
   //信息同步
-  PlugIn := PlugInList.Find(807);
   try
-    if PlugIn<>nil then
-       begin
-         PlugIn.Enter;
-         try
-            if PlugIn.Working=0 then
-            PlugIn.DLLDoExecute(vParamStr,vData);
-         finally
-            PlugIn.Leave;
-         end;
-         msg := 'succ';
-       end
-    else
-       msg := 'none';
-    result:=true;
+    //当前库存
+    try
+      PlugQuestionObj:=TPlugSyncQuestion.Create(AGlobal);
+      PlugQuestionObj.DLLDoExecute(Params,vData);
+      result:=true;
+    finally
+      PlugQuestionObj.Free;
+    end;
   except
-    Raise Exception.Create(PlugIn.DLLGetLastError);
-  end;
+    on E: Exception do
+    begin
+      Raise Exception.Create(E.Message);
+    end;
+  end;    
 end;
 
 initialization

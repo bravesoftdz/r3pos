@@ -942,9 +942,9 @@ begin
   btn_Message3.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Up');
   btn_Message3.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Down');
   btn_Message3.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Hot');
-  btn_Message4.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Up');
-  btn_Message4.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Down');
-  btn_Message4.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid1_Hot');
+  btn_Message4.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid4_Up');
+  btn_Message4.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid4_Down');
+  btn_Message4.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Mid4_Hot');
   btnReturn.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Return');
   btnRead.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'NewsPaperReader_Read');
   //Bottom

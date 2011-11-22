@@ -152,14 +152,15 @@ begin
   fndP1_SHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
   fndP1_SHOP_ID.Text := Global.SHOP_NAME;
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     SetEditStyle(dsBrowse,fndSHOP_ID.Style);
     fndSHOP_ID.Properties.ReadOnly := True;
 
     SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
     fndP1_SHOP_ID.Properties.ReadOnly := True;
-  end;
+  end;}
+  //2011.11.10 引入门店权限及部门权限，把原有的控制注释
   fndP1_CUST_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   RzPage.ActivePageIndex := 0;
   

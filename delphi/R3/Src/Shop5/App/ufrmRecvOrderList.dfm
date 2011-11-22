@@ -17,6 +17,8 @@ inherited frmRecvOrderList: TfrmRecvOrderList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 520
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -946,16 +948,16 @@ inherited frmRecvOrderList: TfrmRecvOrderList
   end
   inherited RzPanel4: TRzPanel
     Width = 900
-    inherited Image1: TImage
-      Left = 374
-      Width = 506
-    end
     inherited Image3: TImage
       Left = 374
-      Width = 506
+      Width = 0
     end
     inherited Image14: TImage
       Left = 880
+    end
+    inherited Image1: TImage
+      Left = 374
+      Width = 506
     end
     inherited rzPanel5: TPanel
       Left = 374

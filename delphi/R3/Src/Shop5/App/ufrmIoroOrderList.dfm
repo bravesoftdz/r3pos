@@ -1,6 +1,6 @@
 inherited frmIoroOrderList: TfrmIoroOrderList
   Left = 244
-  Top = 152
+  Top = 145
   Width = 818
   Height = 569
   Caption = #20854#20182#36153#29992

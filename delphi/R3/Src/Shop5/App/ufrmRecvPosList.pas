@@ -127,6 +127,8 @@ begin
 end;
 
 procedure TfrmRecvPosList.FormCreate(Sender: TObject);
+var i,idx:Integer;
+    V:String;
 begin
   inherited;
   TDbGridEhSort.InitForm(self);
@@ -141,6 +143,25 @@ begin
   fndITEM_ID.DataSet := Global.GetZQueryFromName('ACC_ITEM_INFO');
   fndRECV_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndPAYM_ID.Properties.Items,'CODE_NAME');
+  idx := TdsItems.FindItems(fndPAYM_ID.Properties.Items,'CODE_ID','C');
+  if idx<>-1 then
+  begin
+    fndPAYM_ID.Properties.Items.Objects[idx].Free;
+    fndPAYM_ID.Properties.Items.Delete(idx);
+  end;
+  idx := TdsItems.FindItems(fndPAYM_ID.Properties.Items,'CODE_ID','D');
+  if idx<>-1 then
+  begin
+    fndPAYM_ID.Properties.Items.Objects[idx].Free;
+    fndPAYM_ID.Properties.Items.Delete(idx);
+  end;
+  idx := TdsItems.FindItems(fndPAYM_ID.Properties.Items,'CODE_ID','G');
+  if idx<>-1 then
+  begin
+    fndPAYM_ID.Properties.Items.Objects[idx].Free;
+    fndPAYM_ID.Properties.Items.Delete(idx);
+  end;
+
   fndPAYM_ID.Properties.Items.Insert(0,'È«²¿');
   fndPAYM_ID.ItemIndex := 0;
   InitGrid;

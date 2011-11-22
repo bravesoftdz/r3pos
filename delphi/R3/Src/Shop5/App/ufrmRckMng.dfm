@@ -17,8 +17,6 @@ inherited frmRckMng: TfrmRckMng
       inherited RzPage: TRzPageControl
         Width = 767
         Height = 497
-        ActivePage = TabSheet3
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -797,16 +795,16 @@ inherited frmRckMng: TfrmRckMng
   end
   inherited RzPanel4: TRzPanel
     Width = 783
-    inherited Image1: TImage
-      Left = 245
-      Width = 518
-    end
     inherited Image3: TImage
       Left = 245
-      Width = 518
+      Width = 0
     end
     inherited Image14: TImage
       Left = 763
+    end
+    inherited Image1: TImage
+      Left = 245
+      Width = 518
     end
     inherited rzPanel5: TPanel
       Left = 245

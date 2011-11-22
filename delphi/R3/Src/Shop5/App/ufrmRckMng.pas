@@ -341,15 +341,15 @@ begin
   InitGrid;
   RzPage.ActivePageIndex := 0;
 
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP1_SHOP_ID.Properties.ReadOnly := False;
     fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
     fndP1_SHOP_ID.Text := Global.SHOP_NAME;
     SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
     fndP1_SHOP_ID.Properties.ReadOnly := True;
-  end;
-
+  end; }
+  //2011.11.10 引入门店权限及部门权限，把原有的控制注释
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label6.Caption := '所属仓库';

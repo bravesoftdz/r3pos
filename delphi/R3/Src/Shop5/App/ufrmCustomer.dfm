@@ -1,6 +1,6 @@
 inherited frmCustomer: TfrmCustomer
-  Left = 190
-  Top = 106
+  Left = 207
+  Top = 115
   Width = 805
   Height = 534
   Caption = #20250#21592#26723#26696#31649#29702
@@ -490,6 +490,7 @@ inherited frmCustomer: TfrmCustomer
                   end
                   item
                     Alignment = taRightJustify
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'BALANCE'
                     Footers = <>
@@ -563,16 +564,16 @@ inherited frmCustomer: TfrmCustomer
   end
   inherited RzPanel4: TRzPanel
     Width = 797
-    inherited Image1: TImage
-      Left = 479
-      Width = 298
-    end
     inherited Image3: TImage
       Left = 479
-      Width = 298
+      Width = 0
     end
     inherited Image14: TImage
       Left = 777
+    end
+    inherited Image1: TImage
+      Left = 479
+      Width = 298
     end
     inherited rzPanel5: TPanel
       Left = 479

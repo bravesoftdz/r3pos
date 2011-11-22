@@ -38,10 +38,21 @@ end;
 function TrcFactory.GetBitmap(ResName: String): TBitmap;
 var
   Stream: TStream;
+  FilePath: String;
 begin
   result := nil;
   //×°ÔØLogo
-  if FindResource(DllHandle, PChar(ResName), 'BMP') <> 0 then
+  FilePath := ExtractFilePath(ParamStr(0))+'res\images\'+ResName+'.bmp';
+  if FileExists(FilePath) then
+  begin
+    Result := TBitmap.Create;
+    try
+      Result.LoadFromFile(FilePath);
+    except
+      FreeAndNil(Result);
+    end;
+  end
+  else if FindResource(DllHandle, PChar(ResName), 'BMP') <> 0 then
   begin
     Stream := TResourceStream.Create(DllHandle, ResName, 'BMP');
     try
@@ -61,10 +72,21 @@ end;
 function TrcFactory.GetJpeg(ResName: String): TJPEGImage;
 var
   Stream: TStream;
+  FilePath: String;
 begin
   result := nil;
   //×°ÔØLogo
-  if FindResource(DllHandle, PChar(ResName), 'JPG') <> 0 then
+  FilePath := ExtractFilePath(ParamStr(0))+'res\images\'+ResName+'.jpg';
+  if FileExists(FilePath) then
+  begin
+    Result := TJPEGImage.Create;
+    try
+      Result.LoadFromFile(FilePath);
+    except
+      FreeAndNil(Result);
+    end;
+  end
+  else if FindResource(DllHandle, PChar(ResName), 'JPG') <> 0 then
   begin
     Stream := TResourceStream.Create(DllHandle, ResName, 'JPG');
     try

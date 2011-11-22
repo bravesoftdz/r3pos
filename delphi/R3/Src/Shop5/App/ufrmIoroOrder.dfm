@@ -206,6 +206,7 @@ inherited frmIoroOrder: TfrmIoroOrder
                 Title.Caption = #32534#21495
                 Width = 30
               end>
+            DataSet = CdsPayment
             DropWidth = 157
             DropHeight = 180
             ShowTitle = True
@@ -856,5 +857,12 @@ inherited frmIoroOrder: TfrmIoroOrder
     Params = <>
     Left = 118
     Top = 217
+  end
+  object CdsPayment: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 184
+    Top = 320
   end
 end

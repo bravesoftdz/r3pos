@@ -43,6 +43,7 @@ type
     Label14: TLabel;
     edtCLIENT_ID: TzrComboBoxList;
     edtPAYM_ID: TzrComboBoxList;
+    CdsPayment: TZQuery;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -208,7 +209,15 @@ begin
   AObj := TRecord_.Create;
   cid := Global.SHOP_ID;
   edtACCOUNT_ID.DataSet := Global.GeTZQueryFromName('ACC_ACCOUNT_INFO');
-  edtPAYM_ID.DataSet := Global.GetZQueryFromName('PUB_PAYMENT');
+  CdsPayment.Data := Global.GetZQueryFromName('PUB_PAYMENT').Data;
+  CdsPayment.First;
+  while not CdsPayment.Eof do
+  begin
+    if (CdsPayment.FieldByName('CODE_ID').AsString = 'C') or (CdsPayment.FieldByName('CODE_ID').AsString = 'D') or (CdsPayment.FieldByName('CODE_ID').AsString = 'G') then
+      CdsPayment.Delete
+    else
+      CdsPayment.Next;
+  end;
   edtITEM_ID.DataSet := Global.GeTZQueryFromName('ACC_ITEM_INFO');
   edtIORO_USER.DataSet := Global.GeTZQueryFromName('CA_USERS');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');

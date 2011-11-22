@@ -84,6 +84,9 @@ s1_NewsPaperReader_Mid3 BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Mid3.bm
 s1_NewsPaperReader_Mid1_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Mid1_Up.bmp
 s1_NewsPaperReader_Mid1_Down BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Mid1_Down.bmp
 s1_NewsPaperReader_Mid1_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Mid1_Hot.bmp
+s1_NewsPaperReader_Mid4_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Mid4_Up.bmp
+s1_NewsPaperReader_Mid4_Down BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Mid4_Down.bmp
+s1_NewsPaperReader_Mid4_Hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Mid4_Hot.bmp
 s1_NewsPaperReader_Return BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Return.bmp
 s1_NewsPaperReader_Read BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Read.bmp
 s1_NewsPaperReader_Bottom_Close_Up BMP D:\Delphi\R3\Src\Shop5\rc\s1_NewsPaperReader_Bottom_Close_Up.bmp

@@ -443,16 +443,16 @@ inherited frmTransOrderList: TfrmTransOrderList
   end
   inherited RzPanel4: TRzPanel
     Width = 898
-    inherited Image1: TImage
-      Left = 374
-      Width = 504
-    end
     inherited Image3: TImage
       Left = 374
-      Width = 504
+      Width = 0
     end
     inherited Image14: TImage
       Left = 878
+    end
+    inherited Image1: TImage
+      Left = 374
+      Width = 504
     end
     inherited rzPanel5: TPanel
       Left = 374

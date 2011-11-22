@@ -195,11 +195,12 @@ begin
   fndOUT_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   fndTRANS_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
 
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  {if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     begin
       SetEditStyle(dsBrowse,fndSHOP_ID.Style);
       fndSHOP_ID.Properties.ReadOnly := True;
-    end;
+    end;}
+  //2011.11.10 引入门店权限及部门权限，把原有的控制注释
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label40.Caption := '存取仓库';

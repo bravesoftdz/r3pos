@@ -240,6 +240,13 @@ inherited frmClient: TfrmClient
                     Width = 79
                   end
                   item
+                    DisplayFormat = '#0.00'
+                    EditButtons = <>
+                    FieldName = 'BALANCE'
+                    Footers = <>
+                    Title.Caption = #20313#39069
+                  end
+                  item
                     EditButtons = <>
                     FieldName = 'INVOICE_FLAG'
                     Footers = <>
@@ -352,16 +359,16 @@ inherited frmClient: TfrmClient
   end
   inherited RzPanel4: TRzPanel
     Width = 734
-    inherited Image1: TImage
-      Left = 440
-      Width = 274
-    end
     inherited Image3: TImage
       Left = 440
-      Width = 274
+      Width = 0
     end
     inherited Image14: TImage
       Left = 714
+    end
+    inherited Image1: TImage
+      Left = 440
+      Width = 274
     end
     inherited rzPanel5: TPanel
       Left = 440

@@ -418,14 +418,14 @@ var
   rs:TZQuery;
 begin
   result := false;
-  rs := TZQuery.Create(nil);
+  {rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select count(*) from VIW_MEAUNITS where TENANT_ID='+inttostr(Global.TENANT_ID);
     uGlobal.Factor.Open(rs);
     if rs.Fields[0].AsInteger > 0 then Exit;
   finally
     rs.Free;
-  end;
+  end; }
   with TfrmInitGuide.Create(AOwner) do
     begin
       try
@@ -458,14 +458,14 @@ begin
   Image1.Picture.Graphic := rcFactory.GetJpeg(sflag + 'InitGuide_Top1');
   Image2.Picture.Graphic := rcFactory.GetBitmap(sflag + 'InitGuide_Top2');
   //Bottom
-  btn_Start.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Start_Up');
-  btn_Start.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Start_Hot');
-  btn_Prev.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Prev_Up');
-  btn_Prev.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Prev_Hot');
-  btn_Next.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Next_Up');
-  btn_Next.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_Next_Hot');
-  btn_End.Bitmaps.Up := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_End_Up');
-  btn_End.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 's1_InitGuide_Bottom_End_Hot');
+  btn_Start.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_Start_Up');
+  btn_Start.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_Start_Hot');
+  btn_Prev.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_Prev_Up');
+  btn_Prev.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_Prev_Hot');
+  btn_Next.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_Next_Up');
+  btn_Next.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_Next_Hot');
+  btn_End.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_End_Up');
+  btn_End.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'InitGuide_Bottom_End_Hot');
 end;
 
 end.

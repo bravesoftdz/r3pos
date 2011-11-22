@@ -195,6 +195,7 @@ end;
 procedure TfrmXsmLogin.FormCreate(Sender: TObject);
 begin
   inherited;
+  LoadPic32;
   if FileExists(ExtractFilePath(ParamStr(0))+'login.jpg') then
      imgLogin.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'login.jpg');
 

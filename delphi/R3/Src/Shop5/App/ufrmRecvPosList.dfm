@@ -1,6 +1,6 @@
 inherited frmRecvPosList: TfrmRecvPosList
-  Left = 285
-  Top = 139
+  Left = 287
+  Top = 151
   Width = 908
   Height = 600
   Caption = #32564#27454#21333
@@ -17,6 +17,8 @@ inherited frmRecvPosList: TfrmRecvPosList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 520
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -828,16 +830,16 @@ inherited frmRecvPosList: TfrmRecvPosList
   end
   inherited RzPanel4: TRzPanel
     Width = 900
-    inherited Image1: TImage
-      Left = 374
-      Width = 506
-    end
     inherited Image3: TImage
       Left = 374
-      Width = 506
+      Width = 0
     end
     inherited Image14: TImage
       Left = 880
+    end
+    inherited Image1: TImage
+      Left = 374
+      Width = 506
     end
     inherited rzPanel5: TPanel
       Left = 374

@@ -132,6 +132,7 @@ begin
 end;
 
 procedure TfrmRecvPosOrder.FormCreate(Sender: TObject);
+var idx:Integer;
 begin
   inherited;
   AObj := TRecord_.Create;

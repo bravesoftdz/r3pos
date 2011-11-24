@@ -19,6 +19,9 @@ const
   //单据操作
   WM_EXEC_ORDER=WM_USER+3;
 
+  ////2011.11.14双屏发送消息
+  WM_TPOS_DISPLAY=WM_USER+3950;
+  
   //尺码，颜色编辑框
   PROPERTY_DIALOG=1;
   //批号、有效期输入框
@@ -31,6 +34,7 @@ const
   FIND_CUSTOMER_DIALOG=5;
   //查询导购员对话框
   FIND_GUIDE_DIALOG=6;
+
 type
   TfrmPosMain = class(TfrmBasic)
     RzPanel3: TRzPanel;
@@ -368,6 +372,9 @@ type
     //断电保护功能
     procedure SaveToFile;
     procedure LoadFromFile;
+
+    //结算时发送:结算金额、找零、现金、银行卡、储值卡等
+    function PostPayMessage(InObj: TRecord_): Boolean;
   public
     { Public declarations }
     // 最近输的货品
@@ -2428,8 +2435,9 @@ begin
   DeleteFile(ExtractFilePath(ParamStr(0))+'temp\pos.dat');
   AObj.CopyTo(SaveAObj);
   ShowHeader;
-  dbState := dsBrowse;
-
+  //2011.11.14向双屏终端发送结算消息
+  PostPayMessage(AObj);
+  dbState := dsBrowse;  
 end;
 
 procedure TfrmPosMain.Setoid(const Value: string);
@@ -4572,5 +4580,110 @@ begin
       Locked := false
   end;
 end;
+
+function TfrmPosMain.PostPayMessage(InObj: TRecord_): Boolean;
+const
+  PAY_CHAR='ABCDEFGHIJ'; //支付类型
+var
+  F: TIniFile;
+  vHandle: Hwnd;
+  MSG_TYPE,vCount,i: Longint;
+  PAY_ALL,PAY_RETURN: Longint;
+  PAY_Value: Array of Longint;  //支付值
+  w:array [0..3] of byte;
+  pWParam:^dword;
+  wParam: dword;
+begin
+  result:=False;
+  vCount:=1;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'mmPlayer.ini');
+  try   
+    vHandle:=F.ReadInteger('config','Handle',0);
+  finally
+    F.Free;
+  end;
+  if vHandle<=0 then Exit;
+  //结算金额:0
+  w[0] := 0;  //传入是:0表示结算金额
+  w[1] := 0;  //传入是:0表示结算金额
+  w[2] := 1;  //第1行
+  w[3] := 0;  //第1行
+  pWParam := @w;
+  wParam := pWParam^;
+  PAY_ALL:=Round((InObj.fieldbyName('SALE_MNY').asFloat-InObj.fieldbyName('PAY_DIBS').asFloat)*100); //零售金额 - 抹零金额
+  PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_ALL);
+
+  SetLength(PAY_Value,7);
+  //支付金额:
+  PAY_Value[0]:=Round(InObj.fieldbyName('PAY_A').asFloat*100);  //支付A:现金
+  PAY_Value[1]:=Round(InObj.fieldbyName('PAY_B').asFloat*100);  //支付B:刷卡
+  PAY_Value[2]:=Round(InObj.fieldbyName('PAY_C').asFloat*100);  //支付C:储值卡
+  PAY_Value[3]:=Round(InObj.fieldbyName('PAY_D').asFloat*100);  //支付D:记账
+  PAY_Value[4]:=Round(InObj.fieldbyName('PAY_E').asFloat*100);  //支付E:转账
+  PAY_Value[5]:=Round(InObj.fieldbyName('PAY_F').asFloat*100);  //支付F:支票
+  PAY_Value[6]:=Round(InObj.fieldbyName('PAY_G').asFloat*100);  //支付G:礼券
+
+  for i:=0 to 5 do
+  begin
+    if (vCount<3) and (PAY_Value[i]>0) then
+    begin
+      w[0] := ord(PAY_CHAR[i+1]);  //传入是:2、3表示结算类型
+      w[1] := 0;  //第几行
+      w[2] := vCount+1;  //第几行
+      w[3] := 0;                 //传入是:2、3表示结算类型
+      pWParam := @w;
+      wParam := pWParam^;
+      PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_Value[i]);
+      Inc(vCount);
+    end;
+  end;
+  //结算方式只有1种时循环取下一种：
+  if vCount<3 then
+  begin
+    for i:=0 to 5 do
+    begin
+      if (vCount<3) and (PAY_Value[i]=0) then
+      begin
+        w[0] := ord(PAY_CHAR[i+1]);  //传入是:1表示结算金额
+        w[1] := 0;         //第几行
+        w[2] := vCount+1;  //第几行
+        w[3] := 0;  //传入是:1表示结算金额
+        pWParam := @w;
+        wParam := pWParam^;
+        PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_Value[i]);
+        Inc(vCount);
+      end;
+    end;
+  end;
+
+  //找零:1
+  w[0] :=1;  //传入是:1表示找零金额
+  w[1] :=0;  //传入是:1表示找零金额
+  w[2] :=4;  //第4行
+  w[3] :=0;  //第4行
+  pWParam := @w;
+  wParam := pWParam^;
+  PAY_RETURN:=Round(InObj.fieldbyName('PAY_ZERO').asFloat*100); //找零金额
+  PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_RETURN); 
+
+  result:=true;
+end;
+
+{
+procedure TfrmPosMain.WMTPosDisplay(var Message: TMessage);
+var
+  str: string;
+  i,j,m: integer;
+begin
+  //消息的参数: 高字节位
+  i:=Message.WParamHi;
+  j:=Message.WParamLo;
+  m:=Message.LParam;
+  str:='Message.WParamHi='+InttoStr(i)+#13+
+       'Message.WParamLo='+InttoStr(j)+#13+
+       'Message.LParam='+InttoStr(m)+#13;
+       
+end;
+}
 
 end.

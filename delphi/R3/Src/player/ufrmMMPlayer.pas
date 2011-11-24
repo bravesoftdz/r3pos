@@ -11,6 +11,7 @@ const
   WM_PLAYLIST_REFRESH=WM_USER+3948;
   WM_PLAY_DESKTOP=WM_USER+3949;
   WM_TPOS_DISPLAY=WM_USER+3950;
+
 type
   pPlayListItem = ^TPlayListItem;
   TPlayListItem = Record
@@ -651,8 +652,11 @@ end;
 
 procedure TfrmMMPlayer.WMTPosDisplay(var Message: TMessage);
 var
+  Str: string;
+  vLow,vHigh,Iparm: integer;
   pos:TLabel;
 begin
+  //消息的参数: 高字节位
   case Message.WParamHi of
   1:begin
       pos := pos01;
@@ -671,31 +675,36 @@ begin
     end;
   4:pos := pos04;
   end;
-  pos.Visible := true;
-  case Message.WParamLo of
-  0:begin
-      pos.Caption := '结算:'+formatFloat('#.00',Message.LParam/100);
+  if pos<>nil then
+  begin
+    pos.Visible := true;
+
+    //消息的参数: 低字节位
+    case Message.WParamLo of
+     0:begin
+        pos.Caption := '结算:'+formatFloat('#.00',Message.LParam/100);
+       end;
+     1:begin
+        pos.Caption := '找零:'+formatFloat('#.00',Message.LParam/100);
+       end;
+     else
+       begin
+         case Message.WParamLo of
+          ord('A'):pos.Caption := '现金:'+formatFloat('#.00',Message.LParam/100);
+          ord('B'):pos.Caption := '刷卡:'+formatFloat('#.00',Message.LParam/100);
+          ord('C'):pos.Caption := '储值卡:'+formatFloat('#.00',Message.LParam/100);
+          ord('D'):pos.Caption := '记账:'+formatFloat('#.00',Message.LParam/100);
+          ord('E'):pos.Caption := '转账:'+formatFloat('#.00',Message.LParam/100);
+          ord('F'):pos.Caption := '支票:'+formatFloat('#.00',Message.LParam/100);
+          ord('G'):pos.Caption := '礼券:'+formatFloat('#.00',Message.LParam/100);
+          ord('H'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+          ord('I'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+          ord('J'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
+         end;
+       end;
     end;
-  1:begin
-      pos.Caption := '找零:'+formatFloat('#.00',Message.LParam/100);
-    end;
-  else
-    begin
-      case Message.WParamLo of
-      ord('A'):pos.Caption := '现金:'+formatFloat('#.00',Message.LParam/100);
-      ord('B'):pos.Caption := '刷卡:'+formatFloat('#.00',Message.LParam/100);
-      ord('C'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      ord('D'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      ord('E'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      ord('F'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      ord('G'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      ord('H'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      ord('I'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      ord('J'):pos.Caption := '结账:'+formatFloat('#.00',Message.LParam/100);
-      end;
-    end;
+    pos.Update;
   end;
-  pos.Update;
 end;
 
 end.

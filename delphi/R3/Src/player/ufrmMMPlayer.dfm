@@ -1,6 +1,6 @@
 object frmMMPlayer: TfrmMMPlayer
-  Left = 495
-  Top = 234
+  Left = 283
+  Top = 132
   Width = 577
   Height = 461
   Caption = #35270#23631#24191#21578
@@ -18,18 +18,18 @@ object frmMMPlayer: TfrmMMPlayer
   PixelsPerInch = 96
   TextHeight = 12
   object Splitter1: TSplitter
-    Left = 416
+    Left = 424
     Top = 0
     Width = 5
-    Height = 325
+    Height = 337
     Align = alRight
     Color = clGray
     ParentColor = False
   end
   object Panel1: TPanel
     Left = 0
-    Top = 361
-    Width = 561
+    Top = 373
+    Width = 569
     Height = 42
     Align = alBottom
     TabOrder = 0
@@ -232,15 +232,15 @@ object frmMMPlayer: TfrmMMPlayer
   end
   object Panel3: TPanel
     Left = 0
-    Top = 325
-    Width = 561
+    Top = 337
+    Width = 569
     Height = 36
     Align = alBottom
     TabOrder = 1
     object DSTrackBar1: TDSTrackBar
       Left = 1
       Top = 1
-      Width = 559
+      Width = 567
       Height = 34
       Align = alClient
       Ctl3D = True
@@ -253,10 +253,10 @@ object frmMMPlayer: TfrmMMPlayer
     end
   end
   object Panel4: TPanel
-    Left = 421
+    Left = 429
     Top = 0
     Width = 140
-    Height = 325
+    Height = 337
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
@@ -264,7 +264,7 @@ object frmMMPlayer: TfrmMMPlayer
       Left = 0
       Top = 0
       Width = 140
-      Height = 325
+      Height = 337
       Align = alClient
       BorderStyle = bsNone
       Color = clBlack
@@ -283,8 +283,8 @@ object frmMMPlayer: TfrmMMPlayer
   object DSVideoWindowEx1: TDSVideoWindowEx2
     Left = 0
     Top = 0
-    Width = 416
-    Height = 325
+    Width = 424
+    Height = 337
     AspectRatio = rmStretched
     AutoHideCursor = 0
     DigitalZoom = 0
@@ -304,8 +304,8 @@ object frmMMPlayer: TfrmMMPlayer
     Align = alClient
     OnDblClick = DSVideoWindowEx1DblClick
     DesignSize = (
-      416
-      325)
+      424
+      337)
     object RzMarqueeStatus1: TRzMarqueeStatus
       Left = 14
       Top = 266
@@ -352,7 +352,7 @@ object frmMMPlayer: TfrmMMPlayer
       object pos01: TLabel
         Left = 8
         Top = 8
-        Width = 187
+        Width = 184
         Height = 35
         Caption = #32467#31639#65306'1345'
         Font.Charset = GB2312_CHARSET
@@ -365,7 +365,7 @@ object frmMMPlayer: TfrmMMPlayer
       object pos02: TLabel
         Left = 8
         Top = 53
-        Width = 187
+        Width = 184
         Height = 35
         Caption = #21047#21345#65306'1333'
         Font.Charset = GB2312_CHARSET
@@ -378,7 +378,7 @@ object frmMMPlayer: TfrmMMPlayer
       object pos03: TLabel
         Left = 8
         Top = 98
-        Width = 168
+        Width = 165
         Height = 35
         Caption = #25910#29616#65306'232'
         Font.Charset = GB2312_CHARSET
@@ -391,7 +391,7 @@ object frmMMPlayer: TfrmMMPlayer
       object pos04: TLabel
         Left = 8
         Top = 144
-        Width = 149
+        Width = 146
         Height = 35
         Caption = #25214#38646#65306'10'
         Font.Charset = GB2312_CHARSET

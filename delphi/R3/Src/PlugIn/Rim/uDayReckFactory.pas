@@ -6,7 +6,6 @@ uses
   SysUtils, Variants, Classes,  Windows, Controls, Dialogs, DB, zDataSet, zIntf,
   zBase, uBaseSyncFactory, uRimSyncFactory;
 
-
 //计算商品日台账
 type
   TGodsDayReck=class
@@ -1183,7 +1182,7 @@ begin
 
   Str:='insert into '+Session+'INF_RECKDAY(TENANT_ID,LICENSE_CODE,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_CALC,NEW_INPIRCE,NEW_OUTPIRCE,RECK_DATE) '+
        'select A.TENANT_ID,'''+RimParam.LICENSE_CODE+''' as LICENSE_CODE,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,'+
-       'B.SECOND_ID,A.GODS_ID,('+GetDefaultUnitCalc+') as UNIT_CALC,B.NEW_OUTPRICE,B.NEW_INPRICE,'+ReckDate+' as RECK_DATE '+
+       'B.SECOND_ID,A.GODS_ID,('+GetDefaultUnitCalc(DbType)+') as UNIT_CALC,B.NEW_OUTPRICE,B.NEW_INPRICE,'+ReckDate+' as RECK_DATE '+
        ' from '+DayTab+' A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
   if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入日台帐临时表出错:'+GetLastError);
@@ -1219,7 +1218,7 @@ begin
              'cast(sum(BAL_AMT) as decimal(18,3)) as BAL_AMT,'+
              'cast(sum(BAL_MNY) as decimal(18,3)) as BAL_MNY,'+
              'cast(sum(SALE_PRF) as decimal(18,3)) as SALE_PRF ';
-             // '(case when sum(SALE_AMT)>0 then sum(SALE_MNY)*1.00/cast(sum(SALE_AMT) as decimal(18,6)) else SALE_MNY end) as COST_PRICE ';
+          // '(case when sum(SALE_AMT)>0 then sum(SALE_MNY)*1.00/cast(sum(SALE_AMT) as decimal(18,6)) else SALE_MNY end) as COST_PRICE ';
   DayTab:=
     'select rck.TENANT_ID,rck.CREA_DATE,gods.SECOND_ID as ITEM_ID,'+SumFields+' from '+
     '(select * from RCK_GOODS_DAYS where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+

@@ -48,7 +48,7 @@ end;
 //返回当前插件说明
 function GetPlugInDisplayName:Pchar; stdcall;
 begin
-  result := '下载RIM参数';
+  result := '下载RIM参数与插件参数设置';
 end;
 
 //为每个插件定义一个唯一标识号，范围1000-9999

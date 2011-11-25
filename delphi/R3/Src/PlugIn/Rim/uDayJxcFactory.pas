@@ -16,6 +16,7 @@ uses
 type
   TSalesTotalSyncFactory=class(TRimSyncFactory)
   private
+    procedure WriteDownLoadToReportLog(LogMsg: string); //下载参数写日志
     //从Rim的零售户表同步参数[single_sale_limit、sale_limit、IS_CHG_PRI]
     function DownRimParamsToR3: Boolean;
     //上报日台帐
@@ -49,7 +50,7 @@ begin
     //2011.06.12 Add从Rim下载销售限价、限量定义参数值
     DownRimParamsToR3;
 
-    BeginLogRun; {------开始运行日志------}
+    BeginLogReport; {------开始上报日志------}
     //返回R3的上报ShopList
     GetR3ReportShopList(R3ShopList);
     if R3ShopList.RecordCount=0 then
@@ -76,28 +77,28 @@ begin
         //if RimParam.ComID='' then Raise Exception.Create('R3传入企业ID（'+RimParam.TenID+' - '+RimParam.TenName+'）在RIM中没找到对应的COM_ID值...');
         if (RimParam.ComID<>'') and (RimParam.CustID<>'') then
         begin
-          LogInfo.BeginLog(RimParam.ShopName); //开始日志
+          BeginLogShopReport; //开始门店日志
+
           //开始上报日进销存汇总：
           try
             iRet:=SendDaySaleTotal;
-            LogInfo.AddBillMsg('日进销存汇总',iRet);
+            AddBillMsg('日进销存汇总',iRet);
           except
             on E:Exception do
             begin
-              LogInfo.AddBillMsg('日进销存汇总',-1);
-              WriteRunErrorMsg(E.Message);
-              if not ErrorFlag then ErrorFlag:=true;
+              AddBillMsg('日进销存汇总',-1,E.Message);
+              ErrorFlag:=true;
             end;
           end;
 
-          //写日志LogList
-          WriteToLogList(true, ErrorFlag);
+          //写门店上报结果日志
+          EndLogShopReport(true, ErrorFlag);
         end else
-          WriteToLogList(False); //对应不上门店
+          EndLogShopReport(False); //对应不上门店 
       except
         on E:Exception do
         begin
-          PlugIntf.WriteLogFile(Pchar('<810> <'+RimParam.ShopID+'>'+E.Message));
+          WriteLogFile(E.Message);
         end;
       end;
       R3ShopList.Next;
@@ -105,11 +106,7 @@ begin
     result:=1;
   finally
     DBLock(False);
-    if SyncType<>3 then  //调度运行才写日志
-    begin
-      FRunInfo.AllCount:=R3ShopList.RecordCount;  //总门店数
-      WriteLogRun('日进销存汇总');  //输出到文本日志
-    end;
+    WriteToReportLogFile('日进销存汇总');  //调度才写日志
   end;
 end;
 
@@ -148,7 +145,7 @@ begin
     ' and exists(select 1 from RM_CUST B,CA_SHOP_INFO C where B.LICENSE_CODE=C.LICENSE_CODE and A.RELATI_ID=C.TENANT_ID '+CustCnd+' and ('+CHGCnd+'))';
 
   try
-    BeginLogRun; //日志
+    BeginLogReport; //开始上报日志
     try
       BeginTrans;  //开始事务
       if ExecSQL(Pchar(str),iRet)<>0 then Raise Exception.Create('下载Rim零售户限价数参数出错：'+PlugIntf.GetLastError);
@@ -168,18 +165,7 @@ begin
       end;    
     end;
   finally
-    if SyncType<>3 then
-    begin
-      LogFile := ExtractShortPathName(ExtractFilePath(Application.ExeName))+'log\REPORT'+FormatDatetime('YYYYMMDD',Date())+'.log';
-      LogFileList:=TStringList.Create;
-      if FileExists(LogFile) then
-      begin
-        LogFileList.LoadFromFile(LogFile);
-        LogFileList.Add('    ');
-      end;
-      LogFileList.Add(Msg); 
-      LogFileList.SaveToFile(LogFile);
-    end;
+    WriteDownLoadToReportLog(Msg); //写入REPORT文件
   end;
 end;
 
@@ -227,6 +213,27 @@ begin
 
   //执行成功写日志:
   WriteToRIM_BAL_LOG(RimParam.LICENSE_CODE,RimParam.CustID,'10','上报日销存成功！','01');
+end;
+
+procedure TSalesTotalSyncFactory.WriteDownLoadToReportLog(LogMsg: string);
+var
+  LogFile: string;
+  LogFileList: TStringList;
+begin
+  if SyncType=3 then Exit; //前台执行不写日志
+  try
+    LogFile := ExtractShortPathName(ExtractFilePath(Application.ExeName))+'log\REPORT'+FormatDatetime('YYYYMMDD',Date())+'.log';
+    LogFileList:=TStringList.Create;
+    if FileExists(LogFile) then
+    begin
+      LogFileList.LoadFromFile(LogFile);
+      LogFileList.Add('    ');
+    end;
+    LogFileList.Add(LogMsg);
+    LogFileList.SaveToFile(LogFile);
+  finally
+    LogFileList.Free;
+  end;
 end;
 
 end.

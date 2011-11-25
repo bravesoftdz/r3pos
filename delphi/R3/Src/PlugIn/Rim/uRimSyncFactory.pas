@@ -35,7 +35,9 @@ type
     RimParam: TRimParams; //上报参数记录
     constructor Create; override;
     destructor Destroy;override;
-
+    //返回R3与Rim缩放率的换算：
+    function GetR3ToRimZoom_Rate(UNIT_ID: string; AliasTable: string=''): string;
+    //返回R3转Rim单位的Unit_ID;
     function GetR3ToRimUnit_ID(iDbType:integer; UNIT_ID: string): string;     //返回单位换算
     // 同步类型
     function GetSyncType: integer; virtual; //同步类型   
@@ -538,6 +540,29 @@ begin
   end;
 end;
 
+//'13F817A7-9472-48CF-91CD-27125E077FEB','盒'
+//'95331F4A-7AD6-45C2-B853-C278012C5525','条'
+//'93996CD7-B043-4440-9037-4B82BB5207DA','箱'
 
+function TRimSyncFactory.GetR3ToRimZoom_Rate(UNIT_ID: string; AliasTable: string): string;
+var
+  AliasTab,Zoom_Rate: string;
+begin
+  if trim(AliasTable)<>'' then AliasTab:=trim(AliasTable)+'.';
+  Zoom_Rate:=ParseSQL(DbType,'nvl('+AliasTab+'.ZOOM_RATE,1.0)');
+  case DbType of
+   0,4:
+    begin
+      Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then 1.0 '+  //盒
+                   ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then '+Zoom_Rate+' '+  //条
+               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then '+Zoom_Rate+' '+      //箱
+               ' else 1.0 end)'; //支
+    end;
+   1:
+    begin
+      Result:=' DECODE('+UNIT_ID+',''13F817A7-9472-48CF-91CD-27125E077FEB'',1.0,''95331F4A-7AD6-45C2-B853-C278012C5525'','+Zoom_Rate+',''93996CD7-B043-4440-9037-4B82BB5207DA'','+Zoom_Rate+',1.0)';
+    end;
+  end;
+end;
 
 end.

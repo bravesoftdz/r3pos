@@ -289,7 +289,8 @@ begin
             ' M.TENANT_ID='+RimParam.TenID+' and M.SHOP_ID in ('+SHOP_IDS+') and C.TIME_STAMP>'+MaxStmp;
   //插入临时表：
   Str:='insert into '+Session+'INF_RECKMONTH(TENANT_ID,LICENSE_CODE,SHORT_SHOP_ID,COM_ID,CUST_ID,ITEM_ID,GODS_ID,UNIT_CALC,RECK_MONTH) '+
-       'select A.TENANT_ID,'''+RimParam.LICENSE_CODE+''' as LICENSE_CODE,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,B.SECOND_ID,A.GODS_ID,('+GetDefaultUnitCalc+') as UNIT_CALC,'+ReckMonth+' as RECK_MONTH '+
+       'select A.TENANT_ID,'''+RimParam.LICENSE_CODE+''' as LICENSE_CODE,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,'+
+       ' B.SECOND_ID,A.GODS_ID,('+GetDefaultUnitCalc(DbType)+') as UNIT_CALC,'+ReckMonth+' as RECK_MONTH '+
        ' from ('+MonthTab+') A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID='+InttoStr(NT_RELATION_ID);
   if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入INF_RECKMONTH错误:'+GetLastError);
@@ -467,7 +468,7 @@ begin
   BillMainTable:='SAL_SALESORDER';    //单据主表
   BillKeyField:='SALES_ID';           //主表关键字段
   INFKeyField:='SALES_ID';            //中间表关键字段
-  BeginPrepare; //取时间戳和删除临时表数据
+  BeginPrepare;  //取时间戳和删除临时表数据
 
   str:='insert into '+Session+'INF_SALE(TENANT_ID,SHOP_ID,SHORT_SHOP_ID,COM_ID,CUST_ID,SALES_ID,SALE_DATE,CUST_CODE)'+
        'select '+RimParam.TenID+' as TENANT_ID,'''+RimParam.ShopID+''' as SHOP_ID,'''+RimParam.SHORT_ShopID+''' as SHORT_SHOP_ID,'''+RimParam.ComID+''' as COM_ID,'''+RimParam.CustID+''' as CUST_ID,A.SALES_ID,'+SALES_DATE+',B.CUST_CODE '+
@@ -478,7 +479,7 @@ begin
   if iRet=0 then
   begin
     result:=0; //返回没有可上报数据
-    Exit; //没有上报数据时则退出;  //Raise Exception.Create('没有可上报销售数据'); //若插入没有记录，退出循环
+    Exit;      //没有上报数据时则退出;
   end;
 
   //1、上报前删除历史单据：
@@ -504,7 +505,7 @@ begin
 
   Str:='insert into RIM_RETAIL_DETAIL(RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE,TREND_ID)'+
        ' select A.SALES_ID,A.SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID, '+
-       ' A.COST_PRICE,A.APRICE,A.AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark,A.SALE_DATE,A.TREND_ID '+ //'''+FormatDatetime('YYYYMMDD',Date())+'''
+       ' A.COST_PRICE,A.APRICE,A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark,A.SALE_DATE,A.TREND_ID '+ //'''+FormatDatetime('YYYYMMDD',Date())+'''
        ' from ('+DetailTab+')A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
        ' B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
   if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单表体出错：'+GetLastError);
@@ -585,12 +586,13 @@ begin
   if ExecSQL(PChar(Str),UpiRet)<>0 then Raise Exception.Create('插入调播单批发表头出错：'+GetLastError);
 
   //3、插入零售表体:
-  DetailTab:='select INF.DB_NEWID,S.*,'+GetR3ToRimUnit_ID(DbType,'S.UNIT_ID')+' as UM_ID from STK_STOCKDATA S,'+Session+'INF_DB INF where S.TENANT_ID=INF.TENANT_ID and S.STOCK_ID=INF.DB_ID and '+
-             ' S.TENANT_ID='+RimParam.TenID+' and S.SHOP_ID='''+RimParam.ShopID+''' ';
+  DetailTab:=
+    'select INF.DB_NEWID,S.*,'+GetR3ToRimUnit_ID(DbType,'S.UNIT_ID')+' as UM_ID from STK_STOCKDATA S,'+Session+'INF_DB INF where S.TENANT_ID=INF.TENANT_ID and S.STOCK_ID=INF.DB_ID and '+
+    ' S.TENANT_ID='+RimParam.TenID+' and S.SHOP_ID='''+RimParam.ShopID+''' ';
 
   Str:='insert into RIM_CUST_TRN_LINE(TRN_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,QTY_TRN,QTY_MINI_UM,AMT_TRN,NOTE)'+
        ' select A.DB_NEWID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE';
@@ -675,7 +677,7 @@ begin
              ' S.TENANT_ID='+RimParam.TenID;
   Str:='insert into RIM_CUST_TRN_LINE(TRN_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,QTY_TRN,QTY_MINI_UM,AMT_TRN,NOTE)'+
        ' select A.DB_NEWID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE ';
@@ -760,7 +762,7 @@ begin
 
   Str:='insert into RIM_VOUCHER_LINE(VOUCHER_NUM,VOUCHER_LINE,COM_ID,ITEM_ID,UM_ID,QTY_INCEPT,QTY_MINI_UM,AMT_INCEPT)'+
        ' select A.STOCK_ID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE ';
@@ -845,7 +847,7 @@ begin
 
   Str:='insert into RIM_ADJUST_DETAIL(ADJUST_NUM,ADJUST_LINE,COM_ID,ITEM_ID,UM_ID,QTY_ADJUST,QTY_MINI_UM,AMT_ADJUST)'+
        ' select A.CHANGE_ID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE';

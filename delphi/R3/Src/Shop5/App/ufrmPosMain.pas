@@ -4628,7 +4628,7 @@ begin
 
   for i:=0 to 6 do
   begin
-    if (vCount<3) and (PAY_Value[i]>0) then
+    if (vCount<3) and (PAY_Value[i]<>0) then
     begin
       w[0] := ord(PAY_CHAR[i+1]);  //传入是:2、3表示结算类型
       w[1] := 0;  //第几行

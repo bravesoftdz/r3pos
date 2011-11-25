@@ -440,7 +440,7 @@ begin
   end;  
 end;
 
-{== R3.数量*ZOOR_RATE=Rim.数量 ==}
+{== R3.数量 ÷ZOOR_RATE=Rim.数量[R3.数量 =ZOOR_RATE * Rim.数量] ==}
 function TPlugInBase.GetDefaultUnitCalc(AliasTable: string): string;
 var
   AliasTab,Zoom_Rate: string;
@@ -449,10 +449,10 @@ begin
     AliasTab:=trim(AliasTable)+'.';
   Zoom_Rate:=ParseSQL(FDBFactor.iDbType,'nvl('+AliasTab+'.ZOOM_RATE,1.0)');
   result:=
-    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00*'+Zoom_Rate+' '+             //默认单位为 计量单位
+    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+             //默认单位为 计量单位
         ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*'+Zoom_Rate+'*1.00 '+  //默认单位为 小单位
         ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC*'+Zoom_Rate+'*1.00 '+      //默认单位为 大单位
-        ' else 1.00*'+Zoom_Rate+' end ';                                                        //都不是则默认为换算为1;
+        ' else 1.00 end ';                                                        //都不是则默认为换算为1;
 end;
 
 function TPlugInBase.GetMaxNUM(BillType, COM_ID, CUST_ID, SHOP_ID: string): string;

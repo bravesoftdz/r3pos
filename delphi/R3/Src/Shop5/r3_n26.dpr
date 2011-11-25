@@ -35,7 +35,6 @@ uses
   ObjRoleInfo in 'Obj\ObjRoleInfo.pas',
   ObjUsers in 'Obj\ObjUsers.pas',
   ObjTenant in 'Obj\ObjTenant.pas',
-  uCaFactory in 'App\uCaFactory.pas',
   ufrmDeptInfo in 'App\ufrmDeptInfo.pas' {frmDeptInfo},
   ufrmDeptInfoList in 'App\ufrmDeptInfoList.pas' {frmDeptInfoList},
   ufrmGoodssort in 'App\ufrmGoodssort.pas' {frmGoodssort},
@@ -249,7 +248,8 @@ uses
   OleCtrls in '..\..\Pub\OleCtrls.pas',
   ufrmPosMainList in 'App\ufrmPosMainList.pas' {frmPosMainList},
   uN26Factory in 'App\uN26Factory.pas' {N26Factory: TDataModule},
-  ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame};
+  ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame},
+  uCaFactory in 'App\uCaFactory.pas';
 
 {$R *.res}
 var

@@ -893,19 +893,44 @@ begin
   result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
 end;
 begin
+  if PrainpowerJudge.Locked>0 then
+     begin
+       ShowMsgBox('正在执行消息同步，请稍等再重试退出软件..','友情提示..',MB_OK+MB_ICONINFORMATION);
+       CanClose := false;
+       Exit;
+     end;
   if not SystemShutdown and (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
      begin
        CanClose := false;
        Exit;
        //Application.Minimize;
      end;
-  LoginFactory.Logout;
-  StopSyncTask;
-  if TimerFactory<>nil then TimerFactory.Free;
-  if Global.UserID='system' then exit;
-  if CaFactory.Audited and not ShopGlobal.NetVersion and not ShopGlobal.ONLVersion and Global.RemoteFactory.Connected and CheckUpdateStatus and SyncFactory.CheckDBVersion and SyncFactory.SyncLockCheck then
+  try
+    LoginFactory.Logout;
+    Timer1.Enabled := false;
+    StopSyncTask;
+    if TimerFactory<>nil then TimerFactory.Free;
+    if Global.UserID='system' then exit;
+    if CaFactory.CheckDebugSync then Exit;
+  except
+    on E:Exception do
+       begin
+         ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+         Exit;
+       end;
+  end;
+  if not ShopGlobal.ONLVersion then
      begin
         try
+          if not Global.RemoteFactory.Connected then ShowMsgBox('请检查你的网络状态是否正常，接通网络后点击确认按钮!','友情提示...',MB_OK);
+          Global.TryRemateConnect;
+        except
+          Exit;
+        end;
+        try
+          if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
+          if not ShopGlobal.NetVersion and not SyncFactory.SyncLockCheck then Exit;
+          if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
           SyncFactory.SyncAll;
         except
           on E:Exception do
@@ -2809,11 +2834,11 @@ begin
   if CaFactory.Audited then
      begin
        CaFactory.SyncAll(1);
-       if ShopGlobal.ONLVersion then Exit;
+       //if ShopGlobal.ONLVersion then Exit;
      end
   else
      begin
-       if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
+       //if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
      end;
   if PrainpowerJudge.Locked>0 then
      begin
@@ -2846,11 +2871,16 @@ begin
               Exit;
             end
          else
-         Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
+            Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
-    SyncFactory.SyncAll;
-    Global.LoadBasic;
-    ShopGlobal.LoadRight;
+    if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+    if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
+       begin
+         SyncFactory.SyncAll;
+         frmLogo.Show;
+         Global.LoadBasic;
+         ShopGlobal.LoadRight;
+       end;
   finally
     frmLogo.Close;
   end;

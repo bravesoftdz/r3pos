@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, RzPrgres, ActiveX, RzButton, StdCtrls, RzLabel, UrlMon, ExtCtrls;
+  Dialogs, RzPrgres, ActiveX, RzButton, StdCtrls, RzLabel, UrlMon, ExtCtrls,
+  RzTray;
 type
   TDownLoadMonitor = class( TInterfacedObject, IBindStatusCallback )
    private
@@ -150,6 +151,7 @@ begin
            if DownFile(url,filename) then F.WriteBool(Session[i],'ready',true);
          end;
     end;
+    PostMessage(frmMMPlayer.Handle,WM_PLAYLIST_REFRESH,1,1);
     RzLabel1.Caption := 'œ¬‘ÿÕÍ≥…';
   finally
     Session.Free;

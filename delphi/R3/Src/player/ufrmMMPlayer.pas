@@ -11,6 +11,7 @@ const
   WM_PLAYLIST_REFRESH=WM_USER+3948;
   WM_PLAY_DESKTOP=WM_USER+3949;
   WM_TPOS_DISPLAY=WM_USER+3950;
+  UI_INITIALIZE   = WM_USER + 3951;
 
 type
   pPlayListItem = ^TPlayListItem;
@@ -67,16 +68,18 @@ type
     DSTrackBar1: TDSTrackBar;
     Label2: TLabel;
     Bevel1: TBevel;
-    RzTrayIcon1: TRzTrayIcon;
-    DSVideoWindowEx1: TDSVideoWindowEx2;
     N4: TMenuItem;
     N5: TMenuItem;
     N6: TMenuItem;
     N7: TMenuItem;
     N8: TMenuItem;
     N9: TMenuItem;
+    Timer1: TTimer;
+    RzTrayIcon1: TRzTrayIcon;
     Panel2: TPanel;
+    DSVideoWindowEx1: TDSVideoWindowEx2;
     RzMarqueeStatus1: TRzMarqueeStatus;
+    Panel5: TPanel;
     RzPanel1: TRzPanel;
     pos01: TLabel;
     pos02: TLabel;
@@ -84,7 +87,6 @@ type
     pos04: TLabel;
     procedure Open1Click(Sender: TObject);
     procedure Exit1Click(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure DSVideoWindowEx1ColorKeyChanged(Sender: TObject);
     procedure TrackBar1Change(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -118,7 +120,10 @@ type
     procedure N6Click(Sender: TObject);
     procedure DSVideoWindowEx1DblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
+    procedure RzTrayIcon1MinimizeApp(Sender: TObject);
   private
     { Private declarations }
     procedure WMPlayList(var Message: TMessage); message WM_PLAYLIST_REFRESH;
@@ -137,7 +142,6 @@ type
 
 var
   frmMMPlayer: TfrmMMPlayer;
-
 implementation
 
 uses IniFiles,ufrmMMUrlDown,ufrmColorCtrl;
@@ -179,21 +183,18 @@ begin
   Application.Terminate;}
 end;
 
-procedure TfrmMMPlayer.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-begin
-  Exit1Click(nil)
-end;
-
 procedure TfrmMMPlayer.DSVideoWindowEx1ColorKeyChanged(Sender: TObject);
 begin
   If DSVideoWindowEx1.OverlayVisible then
   Begin
     RzMarqueeStatus1.Color := DSVideoWindowEx1.ColorKey;
+    Panel5.Color := DSVideoWindowEx1.ColorKey;
     ImageList2.BkColor := DSVideoWindowEx1.ColorKey;
   end
   else
   Begin
     RzMarqueeStatus1.Color := DSVideoWindowEx1.Color;
+    Panel5.Color := DSVideoWindowEx1.ColorKey;
     ImageList2.BkColor := DSVideoWindowEx1.Color;
   end;
 end;
@@ -285,6 +286,7 @@ begin
     M := (value mod 3600) div 60;
     S := (value mod 3600) mod 60;
     Panel2.Caption := Format('%d:%2.2d:%2.2d', [H, M, S]);
+    Panel5.Caption := Format('%d:%2.2d:%2.2d', [H, M, S]);
   End;
   If OsdChanged then
   Begin
@@ -447,7 +449,6 @@ begin
       DSVideoWindowEx1.StartDesktopPlayback(Screen.Monitors[Combobox1.Itemindex -1])
     else
       DSVideoWindowEx1.StartDesktopPlayback;
-    Application.Minimize;
   End
   else
     DSVideoWindowEx1.NormalPlayback;
@@ -518,7 +519,7 @@ end;
 
 procedure TfrmMMPlayer.Exit2Click(Sender: TObject);
 begin
-  Close;
+  Application.Terminate;
 end;
 
 procedure TfrmMMPlayer.DSVideoWindowEx1OverlayVisible(Sender: TObject;
@@ -542,6 +543,8 @@ begin
   try
     ClearPlayList;
     F.ReadSections(Session);
+    RzMarqueeStatus1.Caption := F.ReadString('adv','sText','');
+    RzMarqueeStatus1.Visible := (RzMarqueeStatus1.Caption<>'');
     for i := Session.Count - 1 downto 0 do
     begin
       if F.ReadBool(Session[i],'ready',false) then
@@ -584,7 +587,7 @@ begin
        Listbox1.ItemIndex := 0;
        PlayingIndex := 0;
      end;
-  PostMessage(frmMMPlayer.Handle,WM_PLAY_DESKTOP,0,0);
+  if ComboBox1.Enabled and (ComboBox1.ItemIndex>0) and (Message.LParam=0) then PostMessage(frmMMPlayer.Handle,WM_PLAY_DESKTOP,0,0);
 end;
 
 procedure TfrmMMPlayer.N4Click(Sender: TObject);
@@ -637,17 +640,14 @@ end;
 
 procedure TfrmMMPlayer.WMPlayDesktop(var Message: TMessage);
 begin
+  left := -9000;
+  show;
   If Combobox1.ItemIndex > 0 then
      DSVideoWindowEx1.StartFullScreen(Screen.Monitors[Combobox1.Itemindex -1])
   else
      DSVideoWindowEx1.StartFullScreen;
   SpeedButton4.Down := DSVideoWindowEx1.FullScreen;
-  Application.Minimize;
-end;
-
-procedure TfrmMMPlayer.RzTrayIcon1RestoreApp(Sender: TObject);
-begin
-  left := (screen.width-width) div 2-1;
+  close;
 end;
 
 procedure TfrmMMPlayer.WMTPosDisplay(var Message: TMessage);
@@ -734,6 +734,35 @@ begin
     vCount:=vCount+45;
   end;
   if pos04.Visible then pos04.Top:=vCount;
+  RzPanel1.Visible := true;
+  RzPanel1.Update;
+  Timer1.Enabled := true;
+end;
+
+procedure TfrmMMPlayer.Timer1Timer(Sender: TObject);
+begin
+  Timer1.Enabled := false;
+  RzPanel1.Visible := false;
+  RzPanel1.Update;
+end;
+
+procedure TfrmMMPlayer.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  Application.Minimize;
+end;
+
+procedure TfrmMMPlayer.RzTrayIcon1RestoreApp(Sender: TObject);
+begin
+  WindowState := wsNormal;
+  Show;
+  Position := poScreenCenter;
+
+end;
+
+procedure TfrmMMPlayer.RzTrayIcon1MinimizeApp(Sender: TObject);
+begin
+  Close;
 end;
 
 end.

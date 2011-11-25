@@ -1,10 +1,10 @@
 object frmMMUrlDown: TfrmMMUrlDown
-  Left = 611
-  Top = 481
+  Left = 261
+  Top = 314
   BorderStyle = bsDialog
   Caption = #33410#30446#19979#36733
-  ClientHeight = 115
-  ClientWidth = 277
+  ClientHeight = 123
+  ClientWidth = 284
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,7 +12,7 @@ object frmMMUrlDown: TfrmMMUrlDown
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  Position = poMainFormCenter
+  Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13

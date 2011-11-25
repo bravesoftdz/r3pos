@@ -2235,6 +2235,7 @@ begin
     if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
        begin
          SyncFactory.SyncAll;
+         frmLogo.Show;
          Global.LoadBasic;
          ShopGlobal.LoadRight;
        end;

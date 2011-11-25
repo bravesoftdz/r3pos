@@ -1,8 +1,8 @@
 inherited frmN26Main: TfrmN26Main
-  Left = 289
-  Top = 410
-  Width = 829
-  Height = 468
+  Left = -8
+  Top = -8
+  Width = 1296
+  Height = 776
   Caption = ''
   Menu = nil
   Position = poDefault
@@ -27,8 +27,8 @@ inherited frmN26Main: TfrmN26Main
     Transparent = True
   end
   inherited stbBottom: TStatusBar
-    Top = 429
-    Width = 813
+    Top = 737
+    Width = 1280
     Height = 1
     Panels = <
       item
@@ -47,8 +47,8 @@ inherited frmN26Main: TfrmN26Main
   end
   object Panel5: TPanel [2]
     Left = 0
-    Top = 395
-    Width = 813
+    Top = 703
+    Width = 1280
     Height = 0
     Align = alBottom
     BevelOuter = bvNone
@@ -57,7 +57,7 @@ inherited frmN26Main: TfrmN26Main
     object Image3: TImage
       Left = 0
       Top = 0
-      Width = 813
+      Width = 1280
       Height = 0
       Align = alClient
       Picture.Data = {
@@ -457,7 +457,7 @@ inherited frmN26Main: TfrmN26Main
     Left = 2
     Top = 105
     Width = 172
-    Height = 290
+    Height = 598
     Align = alLeft
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -467,7 +467,7 @@ inherited frmN26Main: TfrmN26Main
       Left = 28
       Top = 0
       Width = 144
-      Height = 290
+      Height = 598
       ColorAdjustment = 2
       GroupBorderSize = 1
       SmallImages = ImageList1
@@ -481,7 +481,7 @@ inherited frmN26Main: TfrmN26Main
       Left = 0
       Top = 0
       Width = 28
-      Height = 290
+      Height = 598
       Align = alLeft
       BorderOuter = fsFlat
       BorderSides = [sdRight]
@@ -490,7 +490,7 @@ inherited frmN26Main: TfrmN26Main
         Left = 3
         Top = 0
         Width = 24
-        Height = 290
+        Height = 598
         Align = alLeft
         BackgroundColor = clWhite
         Color = clWhite
@@ -565,7 +565,7 @@ inherited frmN26Main: TfrmN26Main
         Left = 0
         Top = 0
         Width = 3
-        Height = 290
+        Height = 598
         Align = alLeft
         BevelOuter = bvNone
         Color = clWhite
@@ -577,17 +577,17 @@ inherited frmN26Main: TfrmN26Main
     Left = 0
     Top = 105
     Width = 2
-    Height = 290
+    Height = 598
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
     TabOrder = 2
   end
   object Panel8: TPanel [5]
-    Left = 811
+    Left = 1278
     Top = 105
     Width = 2
-    Height = 290
+    Height = 598
     Align = alRight
     BevelOuter = bvNone
     Color = 6241037
@@ -595,15 +595,15 @@ inherited frmN26Main: TfrmN26Main
   end
   object Panel10: TPanel [6]
     Left = 0
-    Top = 395
-    Width = 813
+    Top = 703
+    Width = 1280
     Height = 3
     Align = alBottom
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 4
     object Image15: TImage
-      Left = 805
+      Left = 1272
       Top = 0
       Width = 6
       Height = 3
@@ -619,7 +619,7 @@ inherited frmN26Main: TfrmN26Main
       AutoSize = True
     end
     object Panel21: TPanel
-      Left = 811
+      Left = 1278
       Top = 0
       Width = 2
       Height = 3
@@ -1915,7 +1915,7 @@ inherited frmN26Main: TfrmN26Main
     Left = 174
     Top = 105
     Width = 6
-    Height = 290
+    Height = 598
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
@@ -1932,8 +1932,8 @@ inherited frmN26Main: TfrmN26Main
   end
   object Panel23: TPanel [8]
     Left = 0
-    Top = 398
-    Width = 813
+    Top = 706
+    Width = 1280
     Height = 31
     Align = alBottom
     BevelOuter = bvNone
@@ -1947,7 +1947,7 @@ inherited frmN26Main: TfrmN26Main
       AutoSize = True
     end
     object Image24: TImage
-      Left = 802
+      Left = 1269
       Top = 0
       Width = 11
       Height = 31
@@ -1957,7 +1957,7 @@ inherited frmN26Main: TfrmN26Main
     object Image25: TImage
       Left = 9
       Top = 0
-      Width = 793
+      Width = 1260
       Height = 31
       Align = alClient
       Stretch = True
@@ -1965,7 +1965,7 @@ inherited frmN26Main: TfrmN26Main
     object RzLabel1: TRzLabel
       Left = 9
       Top = 0
-      Width = 793
+      Width = 1260
       Height = 31
       Align = alClient
       Alignment = taCenter
@@ -2001,7 +2001,7 @@ inherited frmN26Main: TfrmN26Main
   object RzPanel1: TRzPanel [10]
     Left = 0
     Top = 0
-    Width = 813
+    Width = 1280
     Height = 105
     Align = alTop
     BorderOuter = fsNone
@@ -2010,7 +2010,7 @@ inherited frmN26Main: TfrmN26Main
     object Panel1: TPanel
       Left = 0
       Top = 0
-      Width = 813
+      Width = 1280
       Height = 69
       Align = alTop
       AutoSize = True
@@ -2019,7 +2019,7 @@ inherited frmN26Main: TfrmN26Main
       object Panel4: TPanel
         Left = 0
         Top = 0
-        Width = 813
+        Width = 1280
         Height = 69
         Align = alTop
         BevelOuter = bvNone
@@ -3059,14 +3059,14 @@ inherited frmN26Main: TfrmN26Main
         object Image6: TImage
           Left = 491
           Top = 0
-          Width = 238
+          Width = 358
           Height = 69
           Align = alClient
           AutoSize = True
           Stretch = True
         end
         object Panel2: TPanel
-          Left = 382
+          Left = 849
           Top = 0
           Width = 431
           Height = 69
@@ -3817,13 +3817,13 @@ inherited frmN26Main: TfrmN26Main
     object rzTool: TPanel
       Left = 0
       Top = 67
-      Width = 813
+      Width = 1280
       Height = 38
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
       object Image21: TImage
-        Left = 802
+        Left = 1269
         Top = 2
         Width = 9
         Height = 36
@@ -4551,7 +4551,7 @@ inherited frmN26Main: TfrmN26Main
       object Panel3: TPanel
         Left = 480
         Top = 2
-        Width = 322
+        Width = 789
         Height = 36
         Align = alClient
         BevelOuter = bvNone
@@ -4559,7 +4559,7 @@ inherited frmN26Main: TfrmN26Main
         object Panel16: TPanel
           Left = 0
           Top = 0
-          Width = 322
+          Width = 789
           Height = 8
           Align = alTop
           BevelOuter = bvNone
@@ -4567,7 +4567,7 @@ inherited frmN26Main: TfrmN26Main
           object Image16: TImage
             Left = 0
             Top = 0
-            Width = 322
+            Width = 789
             Height = 8
             Align = alClient
             Stretch = True
@@ -4576,7 +4576,7 @@ inherited frmN26Main: TfrmN26Main
         object rzToolButton: TPanel
           Left = 0
           Top = 8
-          Width = 322
+          Width = 789
           Height = 28
           Align = alClient
           BevelOuter = bvNone
@@ -4584,7 +4584,7 @@ inherited frmN26Main: TfrmN26Main
           object Image27: TImage
             Left = 0
             Top = 0
-            Width = 322
+            Width = 789
             Height = 28
             Align = alClient
             Stretch = True
@@ -4592,7 +4592,7 @@ inherited frmN26Main: TfrmN26Main
         end
       end
       object Panel20: TPanel
-        Left = 811
+        Left = 1278
         Top = 2
         Width = 2
         Height = 36
@@ -4917,7 +4917,7 @@ inherited frmN26Main: TfrmN26Main
       object Panel9: TPanel
         Left = 0
         Top = 0
-        Width = 813
+        Width = 1280
         Height = 2
         Align = alTop
         BevelOuter = bvNone

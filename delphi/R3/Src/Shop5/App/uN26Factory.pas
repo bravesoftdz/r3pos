@@ -122,7 +122,9 @@ begin
            Raise;
          end;
     end;
-  end;
+  end
+  else
+    Raise Exception.Create('认证中心服务器地址没有配置，请联系客服人员!');
   Logined := result;
 end;
 

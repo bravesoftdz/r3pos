@@ -464,7 +464,10 @@ inherited frmSalesOrderList: TfrmSalesOrderList
       Width = 172
     end
     inherited Image14: TImage
-      Left = 800
+      Left = 508
+    end
+    inherited Image1: TImage
+      Left = 528
     end
     inherited rzPanel5: TPanel
       Left = 628

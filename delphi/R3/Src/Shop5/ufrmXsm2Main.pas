@@ -1086,8 +1086,8 @@ begin
         end;
         try
           if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
-          if not SyncFactory.SyncLockCheck then Exit;
-          if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+          if not ShopGlobal.NetVersion and not SyncFactory.SyncLockCheck then Exit;
+          if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
           SyncFactory.SyncAll;
         except
           on E:Exception do
@@ -1097,7 +1097,7 @@ begin
   else
      begin
         try
-          if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+          if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
           SyncFactory.SyncRim;
         except
           on E:Exception do
@@ -4285,6 +4285,7 @@ begin
     if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
        begin
          SyncFactory.SyncAll;
+         frmLogo.Show;
          Global.LoadBasic;
          ShopGlobal.LoadRight;
        end;

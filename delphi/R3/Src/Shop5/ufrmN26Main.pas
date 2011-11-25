@@ -738,7 +738,7 @@ begin
   LoginFactory.Version := RzVersionInfo.FileVersion;
   if TimerFactory<>nil then TimerFactory.Free;
   try
-  if (not Logined and not  (CaFactory.Audited and N26Factory.Logined)) or Locked then
+  if (not Logined and not (CaFactory.Audited and N26Factory.Logined)) or Locked then
      begin
        Logined := TfrmLogin.doLogin(SysId,Locked,Params,lDate);
        if Logined then
@@ -956,8 +956,8 @@ begin
         end;
         try
           if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
-          if not SyncFactory.SyncLockCheck then Exit;
-          if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+          if not ShopGlobal.NetVersion and not SyncFactory.SyncLockCheck then Exit;
+          if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
           SyncFactory.SyncAll;
         except
           on E:Exception do
@@ -967,7 +967,7 @@ begin
   else
      begin
         try
-          if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+          if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
           SyncFactory.SyncRim;
         except
           on E:Exception do
@@ -1330,6 +1330,7 @@ end;
 
 procedure TfrmN26Main.RzBmpButton9Click(Sender: TObject);
 var i:integer;
+  sN26Logined:boolean;
 begin
   inherited;
   if FindChildForm(TfrmPosMain)<>nil then Raise Exception.Create('收款机模块没有退出不能切换用户...');
@@ -1346,7 +1347,13 @@ begin
   if FList.Count=0 then
      begin
        Logined := false;
-       Logined := Login(false,false);
+       sN26Logined := N26Factory.Logined;
+       try
+         N26Factory.Logined := false;
+         Logined := Login(false,false);
+       finally
+         N26Factory.Logined :=  sN26Logined;
+       end;
      end;
 end;
 
@@ -1413,6 +1420,7 @@ begin
              Global.MoveToRemate;
              try
                Global.Connect;
+               CaFactory.Audited := true;
                with TCreateDbFactory.Create do
                begin
                  try
@@ -1427,10 +1435,10 @@ begin
                          end;
                       result := (ShowMsgBox('服务器的版本过旧，请联系管理员升级后台服务器，是否转脱机使用？','友情提示..',MB_YESNO+MB_ICONQUESTION)=6);
                       if result then
-                        begin
-                          Global.MoveToLocal;
-                          Global.Connect;
-                        end;
+                         begin
+                           Global.MoveToLocal;
+                           Global.Connect;
+                         end;
                     end;   
                  finally
                     free;
@@ -1447,6 +1455,7 @@ begin
                result := (ShowMsgBox('连接远程数据库失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
                if result then
                   begin
+                    CaFactory.Audited := false;
                     Global.MoveToLocal;
                     Global.Connect;
                   end;
@@ -1456,24 +1465,17 @@ begin
            end;
          end
          else
-         begin
-            if not CaFactory.Audited then
-               begin
-                 if ShopGlobal.ONLVersion then
-                    begin
-                      if ShowMsgBox('连接数据库服务器失败,请检查网络是否正常,是否重新选择连接主机？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
-                         TfrmHostDialog.HostDialog(self);
-                      result := false;
-                      Exit;
-                    end;
-                 result := (ShowMsgBox('连接认证服务器失败,是否转脱机操作?','友情提示...',MB_YESNO+MB_ICONQUESTION)=6);
-                 if result then
-                    begin
-                      Global.MoveToLocal;
-                      Global.Connect;
-                    end;
-               end;
-         end;
+           begin
+              if not CaFactory.Audited then
+                 begin
+                    ShowMsgBox('连接认证服务器失败,系统转脱机使用','友情提示...',MB_OK+MB_ICONINFORMATION);
+                    if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) then
+                       begin
+                         Global.MoveToLocal;
+                         Global.Connect;
+                       end;
+                 end;
+           end;
      end;
   try
     frmLogo.Show;
@@ -2886,12 +2888,13 @@ begin
               Exit;
             end
          else
-         Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
+            Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
     if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
     if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
        begin
          SyncFactory.SyncAll;
+         frmLogo.Show;
          Global.LoadBasic;
          ShopGlobal.LoadRight;
        end;

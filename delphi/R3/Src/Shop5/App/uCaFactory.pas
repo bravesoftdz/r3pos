@@ -3,7 +3,7 @@ unit uCaFactory;
 interface
 uses
   Windows, Messages, SysUtils, Classes,InvokeRegistry, SOAPHTTPClient, Types, XSBuiltIns,Des,WinInet, xmldom, XMLIntf,
-  msxmldom, XMLDoc, MSHTML,ComObj, ActiveX,msxml,ZDataSet,DB,ZBase,Variants,ZLogFile;
+  msxmldom, XMLDoc, MSHTML,ComObj, ActiveX,msxml,ZDataSet,DB,ZBase,Variants,ZLogFile,ZdbFactory,Forms;
 type
   TCaTenant=record
     TENANT_ID:integer;
@@ -112,6 +112,7 @@ type
     FTenantType: integer;
     FRspFlag: integer;
     FDownModule: boolean;
+    FConnected: boolean;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -125,6 +126,7 @@ type
     procedure SetRspFlag(const Value: integer);
     procedure SetDownModule(const Value: boolean);
     function GetRspTimeStamp: int64;
+    function GetTimeStamp: int64;
   protected
     RspHandle:THandle;
     RspcoLogin:TRspFunction;
@@ -152,6 +154,22 @@ type
     function GetTicket:Int64;
     procedure LoadRspFactory;
     procedure FreeRspFactory;
+    function  CheckRspState:boolean;
+    //ado模式认证
+    function  coAdoLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
+    function  CheckAdoUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
+    function  downloadAdoCaModule(TenantId,flag:integer):boolean;
+    function  coAdoGetList(TENANT_ID:string):TCaTenant;
+    function  downloadAdoShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
+    function  coAdoRegister(Info:TCaTenant):TCaTenant;
+    //rsp模式认证
+    function  coRspLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
+    function  CheckRspUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
+    function  downloadRspCaModule(TenantId,flag:integer):boolean;
+    function  coRspGetList(TENANT_ID:string):TCaTenant;
+    function  downloadRspShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
+    function  coRspRegister(Info:TCaTenant):TCaTenant;
+
   public
     auto:boolean;
     constructor Create;
@@ -219,7 +237,7 @@ type
     //认证审核通过
     property Audited:boolean read FAudited write SetAudited;
     //认证时的时间戳
-    property TimeStamp:int64 read FTimeStamp write SetTimeStamp;
+    property TimeStamp:int64 read GetTimeStamp write SetTimeStamp;
     //取服务器上当前时间戳
     property RspTimeStamp:int64 read GetRspTimeStamp;
     //是否是零售商
@@ -368,7 +386,7 @@ begin
   end;
 end;
 
-function TCaFactory.coGetList(TENANT_ID: string): TCaTenant;
+function TCaFactory.coRspGetList(TENANT_ID: string): TCaTenant;
 var
   inxml:string;
   doc:IXMLDomDocument;
@@ -465,7 +483,7 @@ except
 end;
 end;
 
-function TCaFactory.coLogin(Account, PassWrd: string;flag:integer=1): TCaLogin;
+function TCaFactory.coRspLogin(Account, PassWrd: string;flag:integer=1): TCaLogin;
 var
   inxml:string;
   doc:IXMLDomDocument;
@@ -477,14 +495,6 @@ var
   f,r:TIniFile;
   finded,isSrvr:boolean;
 begin
-//如果演示版直接不认证
-if CheckDebugSync then
-   begin
-     result.RET := '1';
-     result.TENANT_ID := Global.TENANT_ID;
-     Audited := true;
-     Exit;
-   end;
 try
   Audited := false;
   doc := CreateRspXML;
@@ -513,11 +523,11 @@ try
     h := SendHeader(rio,1);
     try
       try
-      doc := CreateXML(Decode(
-                      GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).login(Encode(inxml,pubpwd))
-                      ,pubpwd
-                   )
-             );
+        doc := CreateXML(Decode(
+                        GetCaTenantWebServiceImpl(true,URL+'CaTenantService?wsdl',rio).login(Encode(inxml,pubpwd))
+                        ,pubpwd
+                     )
+               );
       except
         on E:Exception do
            begin
@@ -526,7 +536,10 @@ try
                   Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
                 end
              else
-                Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
+                begin
+                  LogFile.AddLogFile(0,'认证<企业登录>失败;原始错误:'+E.Message);
+                  Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
+                end;
            end;
       end;
       GetHeader(rio).free;
@@ -678,7 +691,7 @@ except
 end;
 end;
 
-function TCaFactory.coRegister(Info: TCaTenant): TCaTenant;
+function TCaFactory.coRspRegister(Info: TCaTenant): TCaTenant;
 var
   inxml:string;
   doc:IXMLDomDocument;
@@ -1034,7 +1047,7 @@ begin
   FSessionId := Value;
 end;
 
-function TCaFactory.CheckUpgrade(TENANT_ID, PROD_ID,CurVeraion: string): TCaUpgrade;
+function TCaFactory.CheckRspUpgrade(TENANT_ID, PROD_ID,CurVeraion: string): TCaUpgrade;
 var
   inxml:string;
   doc:IXMLDomDocument;
@@ -1047,12 +1060,6 @@ var
   RioImpl:CaProductWebServiceImpl;
   F:TIniFile;
 begin
-//如果演示版直接不认证
-if CheckDebugSync then
-   begin
-     result.UpGrade := 3;
-     Exit;
-   end;
 try
   doc := CreateRspXML;
   Node := doc.createElement('flag');
@@ -1094,7 +1101,7 @@ try
           end;
         finally
           r.Free;
-        end; 
+        end;
       except
         on E:Exception do
            begin
@@ -1501,6 +1508,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -1676,6 +1688,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -1809,6 +1826,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -1978,6 +2000,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -2115,6 +2142,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -2322,6 +2354,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -2455,6 +2492,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -2701,6 +2743,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -2831,24 +2878,46 @@ function TCaFactory.AutoCoLogo: boolean;
 var
   Temp:TZQuery;
   SaveAudited:boolean;
+  SaveFactor:TdbFactory;
 begin
-  SaveAudited := Audited;
-  result:= false;
-  Temp := TZQuery.Create(nil);
-  try
-    Temp.Close;
-    Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_TYPE from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
-    Global.LocalFactory.Open(Temp);
-    if auto then
-       coLogin(Temp.Fields[0].AsString,DesEncode(Temp.Fields[0].AsString,pubpwd),3)
-    else
-       coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY),1);
-    TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
-    result := true;
-  finally
-    Audited := (Audited or SaveAudited);
-    Temp.Free;
-  end;
+  if CheckRspState then 
+     begin
+        SaveAudited := Audited;
+        result:= false;
+        Temp := TZQuery.Create(nil);
+        try
+          Temp.Close;
+          Temp.SQL.Text := 'select LOGIN_NAME,PASSWRD,TENANT_TYPE from CA_TENANT where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+          Global.LocalFactory.Open(Temp);
+          if auto then
+             coLogin(Temp.Fields[0].AsString,DesEncode(Temp.Fields[0].AsString,pubpwd),3)
+          else
+             coLogin(Temp.Fields[0].AsString,DecStr(Temp.Fields[1].AsString,ENC_KEY),1);
+          TenantType := temp.FieldbyName('TENANT_TYPE').AsInteger;
+          result := true;
+        finally
+          Audited := (Audited or SaveAudited);
+          Temp.Free;
+        end;
+     end
+  else
+     begin
+        if not Global.RemoteFactory.Connected then
+           begin
+             Global.MoveToRemate;
+             SaveFactor := Factor;
+             try
+               try
+                 Global.Connect;
+               except
+                 Raise Exception.Create('连接远程数据库失败,无法完成数据同步...');
+               end;
+             finally
+               Factor := SaveFactor;
+             end;
+           end;
+        FTimeStamp := rspTimeStamp;
+     end;
 end;
 
 procedure TCaFactory.SetTimeStamp(const Value: int64);
@@ -2903,6 +2972,11 @@ var
   Params:TftParamList;
   OutXml:WideString;
 begin
+  if not CheckRspState then
+     begin
+       result := true;
+       Exit;
+     end;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -3117,7 +3191,7 @@ except
 end;
 end;
 
-function TCaFactory.downloadCaModule(TenantId, flag: integer): boolean;
+function TCaFactory.downloadRspCaModule(TenantId, flag: integer): boolean;
 var
   inxml:string;
   doc:IXMLDomDocument;
@@ -3131,7 +3205,6 @@ var
   OutXml:WideString;
   RioImpl:CaProductWebServiceImpl;
 begin
-if not DownModule then Exit;
 try
   SetTicket;
   doc := CreateRspXML;
@@ -3327,7 +3400,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select '+GetTimeStamp(Global.RemoteFactory.iDbType)+' from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID);
+    rs.SQL.Text := 'select '+ObjCommon.GetTimeStamp(Global.RemoteFactory.iDbType)+' from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID);
     Global.RemoteFactory.Open(rs);
     result := StrtoInt64(rs.Fields[0].asString); 
   finally
@@ -3335,7 +3408,7 @@ begin
   end;
 end;
 
-function TCaFactory.downloadShopInfo(TenantId: integer; shopId,xsmCode,xsmPswd: string;
+function TCaFactory.downloadRspShopInfo(TenantId: integer; shopId,xsmCode,xsmPswd: string;
   flag: integer): boolean;
 var
   rs:TZQuery;
@@ -3490,6 +3563,460 @@ begin
   finally
     F.Free;
   end;
+end;
+
+function TCaFactory.GetTimeStamp: int64;
+begin
+  result := FTimeStamp;
+end;
+
+function TCaFactory.CheckRspState: boolean;
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'r3.cfg');
+  try
+    result := (F.ReadInteger('soft','rspStatus',0)=0);
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+end;
+
+function TCaFactory.coAdoLogin(Account, PassWrd: string;
+  flag: integer): TCaLogin;
+var
+  f,r:TIniFile;
+  rs:TZQuery;
+  srvrId,defsrvrId,hsname,cstr,defStr:string;
+  finded,isSrvr:boolean;
+  Params:TftParamList;
+  tid:integer;
+begin
+try
+  Audited := false;
+  if not Global.RemoteFactory.Connected then //连接
+     begin
+       F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+       try
+         Global.RemoteFactory.Initialize(F.ReadString('soft','ado',''));
+         Global.RemoteFactory.Connect;
+       finally
+         try
+           F.Free;
+         except
+         end;
+       end;
+     end;
+  Params := TftParamList.Create;
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('loginName').AsString := Account;
+    Params.ParamByName('PassWrd').AsString := PassWrd;
+    Params.ParamByName('flag').AsInteger := flag;
+    Global.RemoteFactory.Open(rs,'TcoLogin',Params);
+    result.RET := rs.FieldbyName('code').AsString;
+    result.TENANT_ID := rs.FieldbyName('tenantId').AsInteger;
+    tid := Global.TENANT_ID;
+    try
+      Global.TENANT_ID := result.TENANT_ID;
+      FTimeStamp := RspTimeStamp;
+    finally
+      Global.TENANT_ID := tid;
+    end;
+    Auto := (flag<>1);
+    SyncSystemTimeStamp;
+    if StrtoIntDef(result.RET,0) in [1,5] then //认证成功
+       begin
+         if result.RET = '1' then
+            begin
+              f := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+              r := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+              try
+                 srvrId := f.readString('db','srvrId','');
+                 defSrvrId := rs.FieldbyName('srvrId').AsString;
+                 if flag=3 then
+                    result.SHOP_ID := rs.FieldbyName('shopId').AsString;
+                 if result.SHOP_ID='' then result.SHOP_ID := inttostr(result.TENANT_ID)+'0001';
+                 result.DB_ID := rs.FieldbyName('dbId').AsInteger;
+                 f.WriteString('db','dbid',inttostr(result.DB_ID));
+                 r.WriteString('soft','SFVersion','.'+rs.FieldbyName('prodFlag').asString);
+                 r.WriteString('soft','CLVersion','.'+rs.FieldbyName('industry').asString);
+                 r.WriteString('soft','ProductID',rs.FieldbyName('prodId').asString);
+                 r.WriteString('soft','name',rs.FieldbyName('prodName').asString);
+                 Audited := true;
+                 finded := false;
+                 if not Global.Debug then
+                   begin
+                     isSrvr := false;
+                     rs.First;
+                     while not rs.Eof do
+                       begin
+                         f.WriteString('H_'+rs.FieldbyName('srvrId').asString,'srvrName',rs.FieldbyName('srvrName').asString);
+                         f.WriteString('H_'+rs.FieldbyName('srvrId').asString,'hostName',rs.FieldbyName('hostName').asString);
+                         f.WriteString('H_'+rs.FieldbyName('srvrId').asString,'srvrPort',rs.FieldbyName('srvrPort').asString);
+                         f.WriteString('H_'+rs.FieldbyName('srvrId').asString,'srvrPath',rs.FieldbyName('srvrPath').asString);
+                         case rs.FieldbyName('srvrStatus').asInteger of
+                         1: f.WriteString('H_'+rs.FieldbyName('srvrId').asString,'srvrStatus','正常');
+                         2: f.WriteString('H_'+rs.FieldbyName('srvrId').asString,'srvrStatus','爆满');
+                         9: begin
+                              f.EraseSection(rs.FieldbyName('srvrId').asString);
+                              rs.Next;
+                              continue;
+                            end;
+                         else
+                            f.WriteString('H_'+rs.FieldbyName('srvrId').asString,'srvrStatus','正常');
+                         end;
+                         if srvrId=rs.FieldbyName('srvrId').asString then isSrvr := true;
+                         if not finded then
+                            begin
+                              if srvrId=rs.FieldbyName('srvrId').asString then
+                                 begin
+                                   f.WriteString('db','Connstr','connmode=2;hostname='+rs.FieldbyName('hostName').asString+';port='+rs.FieldbyName('srvrPort').asString+';dbid='+inttostr(result.DB_ID));
+                                   finded := true;
+                                 end;
+                            end;
+                         if defSrvrId=rs.FieldbyName('srvrId').AsString then
+                            begin
+                              defStr := 'connmode=2;hostname='+rs.FieldbyName('hostName').asString+';port='+rs.FieldbyName('srvrPort').asString+';dbid='+inttostr(result.DB_ID);
+                            end;
+                         rs.Next;
+                       end;
+                     if not finded or not isSrvr then //一直没找到设置，默认第一个
+                       begin
+                         f.WriteString('db','srvrId',defSrvrId);
+                         f.WriteString('db','Connstr',defStr);
+                      end;
+                   end;
+              finally
+                try
+                  f.Free;
+                  r.Free;
+                except
+                end;
+              end;
+            end;
+       end;
+  finally
+    rs.Free;
+    Params.Free;
+  end;
+
+except
+  on E:Exception do
+  begin
+    LogFile.AddLogFile(0,'认证<企业登录>失败xml=无;原因:'+E.Message);
+    Raise;
+  end;
+end;
+end;
+
+function TCaFactory.coLogin(Account, PassWrd: string;
+  flag: integer): TCaLogin;
+begin
+  //如果演示版直接不认证
+  if CheckDebugSync then
+     begin
+       result.RET := '1';
+       result.TENANT_ID := Global.TENANT_ID;
+       Audited := true;
+       Exit;
+     end;
+  if CheckRspState then
+     result := coRspLogin(Account,PassWrd,flag)
+  else
+     result := coAdoLogin(Account,PassWrd,flag);
+end;
+
+function TCaFactory.CheckAdoUpgrade(TENANT_ID, PROD_ID,
+  CurVeraion: string): TCaUpgrade;
+var
+  Params:TftParamList;
+  F:TIniFile;
+begin
+try
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('tenantId').AsInteger := StrtoInt(TENANT_ID);
+    Params.ParamByName('prodId').AsString := PROD_ID;
+    Params.ParamByName('curVeraion').AsString := CurVeraion;
+    TftParamList.Decode(Params,Global.RemoteFactory.ExecProc('TcheckUprade',Params));
+    result.UpGrade := Params.ParambyName('upgradeType').AsInteger;
+    result.URL := Params.ParambyName('pkgDownloadUrl').AsString;
+    result.Version := Params.ParambyName('newVersion').AsString;
+  finally
+    Params.Free;
+  end;
+  //写安装目录到临时文件夹
+  F := TIniFile.Create(FnSystem.GetWinTmp+'r3.inst');
+  try
+    F.WriteString('r3','path',ExtractFileDir(ParamStr(0))); 
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+except
+  on E:Exception do
+     begin
+       LogFile.AddLogFile(0,'升级<版本检测>失败，原因:'+E.Message);
+       Raise;
+     end;
+end;
+end;
+
+function TCaFactory.CheckUpgrade(TENANT_ID, PROD_ID,
+  CurVeraion: string): TCaUpgrade;
+begin
+//如果演示版直接不认证
+if CheckDebugSync then
+   begin
+     result.UpGrade := 3;
+     Exit;
+   end;
+  if CheckRspState then
+     result := CheckRspUpgrade(TENANT_ID,PROD_ID,CurVeraion)
+  else
+     result := CheckAdoUpgrade(TENANT_ID,PROD_ID,CurVeraion);
+end;
+
+function TCaFactory.downloadAdoCaModule(TenantId, flag: integer): boolean;
+var
+  rs,temp:TZQuery;
+  Params:TftParamList;
+
+begin
+try
+  Params := TftParamList.Create(nil);
+  rs := TZQuery.Create(nil);
+  temp := TZQuery.Create(nil);
+  try
+    Params.ParamByName('tenantId').AsInteger := TenantId;
+    Params.ParamByName('flag').AsInteger := flag;
+    Params.ParamByName('prodId').AsString := ProductId;
+    Params.ParamByName('timeStamp').Value := GetSynTimeStamp('CA_MODULE',ProductId);
+    Global.RemoteFactory.Open(temp,'TdownloadCaModule',Params); 
+
+      rs.Close;
+      rs.FieldDefs.Add('PROD_ID',ftstring,10,true);
+      rs.FieldDefs.Add('MODU_ID',ftstring,20,true);
+      rs.FieldDefs.Add('SEQNO',ftInteger,0,true);
+      rs.FieldDefs.Add('MODU_NAME',ftstring,50,true);
+      rs.FieldDefs.Add('LEVEL_ID',ftstring,21,true);
+      rs.FieldDefs.Add('MODU_TYPE',ftInteger,0,true);
+      rs.FieldDefs.Add('ACTION_NAME',ftstring,50,true);
+      rs.FieldDefs.Add('ACTION_URL',ftstring,255,true);
+      rs.FieldDefs.Add('COMM',ftstring,2,true);
+      rs.FieldDefs.Add('TIME_STAMP',ftLargeInt,0,true);
+      rs.CreateDataSet;
+      temp.First;
+      while not temp.Eof do
+         begin
+           rs.Append;
+           rs.FieldByName('PROD_ID').AsString := temp.FieldbyName('PROD_ID').AsString;
+           rs.FieldByName('MODU_ID').AsString := temp.FieldbyName('MODU_ID').AsString;
+           rs.FieldByName('SEQNO').AsInteger := temp.FieldbyName('SEQNO').AsInteger;
+           rs.FieldByName('MODU_NAME').AsString := temp.FieldbyName('MODU_NAME').AsString;
+           rs.FieldByName('LEVEL_ID').AsString := temp.FieldbyName('LEVEL_ID').AsString;
+           rs.FieldByName('MODU_TYPE').AsInteger := temp.FieldbyName('MODU_TYPE').AsInteger;
+           rs.FieldByName('ACTION_NAME').AsString := temp.FieldbyName('ACTION_NAME').AsString;
+           rs.FieldByName('ACTION_URL').AsString := temp.FieldbyName('ACTION_URL').AsString;
+           rs.FieldByName('COMM').AsString := temp.FieldbyName('COMM').AsString;
+           TLargeintField(rs.FieldByName('TIME_STAMP')).Value := timeStamp;
+           rs.Post;
+           temp.Next;
+         end;
+      if not temp.IsEmpty then
+      begin
+        Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        Params.ParamByName('TABLE_NAME').AsString := 'CA_MODULE';
+        Params.ParamByName('KEY_FIELDS').AsString := 'PROD_ID;MODU_ID';
+        Params.ParamByName('PROD_ID').AsString := rs.FieldByName('PROD_ID').AsString;
+        Params.ParamByName('COMM_LOCK').AsString := '1';
+        Params.ParamByName('TIME_STAMP').Value := TimeStamp;
+        Params.ParamByName('SYN_TIME_STAMP').Value := TimeStamp;
+        Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 1;
+        Factor.UpdateBatch(rs,'TSyncCaModule',Params);
+        SetSynTimeStamp('CA_MODULE',timeStamp,ProductId);
+      end;
+  finally
+    rs.Free;
+    temp.Free;
+    Params.Free;
+  end;
+except
+  on E:Exception do
+  begin
+    LogFile.AddLogFile(0,'下载<功能模块>失败;原因:'+E.Message);
+    Raise;
+  end;
+end;
+end;
+
+function TCaFactory.downloadCaModule(TenantId, flag: integer): boolean;
+begin
+  //如果演示版直接不认证
+  if CheckDebugSync then
+     begin
+       result := true;
+       Exit;
+     end;
+  if not DownModule then Exit;
+  if CheckRspState then
+     result := downloadRspCaModule(TenantId,flag)
+  else
+     result := downloadAdoCaModule(TenantId,flag);
+end;
+
+function TCaFactory.coAdoGetList(TENANT_ID: string): TCaTenant;
+var
+  rs:TZQuery;
+  Params:TftParamList;
+begin
+try
+  Params := TftParamList.Create(nil);
+  rs := TZQuery.Create(nil);
+  try
+    Params.ParamByName('tenantId').AsInteger := StrtoInt(TENANT_ID);
+    Global.RemoteFactory.Open(rs,'TcoGetTenant',Params);
+    if rs.IsEmpty then Raise Exception.Create('企业资料没有找到,企业号：'+TENANT_ID); 
+    result.TENANT_ID := rs.FieldbyName('TENANT_ID').AsInteger;
+    result.LOGIN_NAME := rs.FieldbyName('LOGIN_NAME').AsString;
+    result.TENANT_NAME := rs.FieldbyName('TENANT_NAME').AsString;
+    result.SHORT_TENANT_NAME := rs.FieldbyName('SHORT_TENANT_NAME').AsString;
+    result.TENANT_SPELL := rs.FieldbyName('TENANT_SPELL').AsString;
+    result.TENANT_TYPE := rs.FieldbyName('TENANT_TYPE').AsInteger;
+    result.LICENSE_CODE := rs.FieldbyName('LICENSE_CODE').AsString;
+    result.LEGAL_REPR := rs.FieldbyName('LEGAL_REPR').AsString;
+    result.LINKMAN := rs.FieldbyName('LINKMAN').AsString;
+    result.TELEPHONE := rs.FieldbyName('TELEPHONE').AsString;
+    result.FAXES := rs.FieldbyName('FAXES').AsString;
+    result.HOMEPAGE := rs.FieldbyName('HOMEPAGE').AsString;
+    result.ADDRESS := rs.FieldbyName('ADDRESS').AsString;
+    result.POSTALCODE := rs.FieldbyName('POSTALCODE').AsString;
+    result.PASSWRD := rs.FieldbyName('PASSWRD').AsString;
+    result.QQ := rs.FieldbyName('QQ').AsString;
+    result.MSN := rs.FieldbyName('MSN').AsString;
+    result.REMARK := rs.FieldbyName('REMARK').AsString;
+    result.REGION_ID := rs.FieldbyName('REGION_ID').AsString;
+    result.SRVR_ID := rs.FieldbyName('SRVR_ID').AsString;
+    result.PROD_ID := rs.FieldbyName('PROD_ID').AsString;
+    result.DB_ID := rs.FieldbyName('DB_ID').AsString;
+    result.AUDIT_STATUS := rs.FieldbyName('AUDIT_STATUS').AsString;
+  finally
+    rs.Free;
+    Params.Free;
+  end;
+except
+  on E:Exception do
+  begin
+    LogFile.AddLogFile(0,'读取<企业资料>失败;原因:'+E.Message);
+    Raise;
+  end;
+end;
+end;
+
+function TCaFactory.coGetList(TENANT_ID: string): TCaTenant;
+begin
+  if CheckRspState then
+     result := coRspGetList(TENANT_ID)
+  else
+     result := coAdoGetList(TENANT_ID);
+end;
+
+function TCaFactory.downloadAdoShopInfo(TenantId: integer; shopId, xsmCode,
+  xsmPswd: string; flag: integer): boolean;
+var
+  rs,temp:TZQuery;
+  Params:TftParamList;
+begin
+try
+  rs := TZQuery.Create(nil);
+  temp := TZQuery.Create(nil);
+  Params := TftParamList.Create;
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := TenantId;
+    Params.ParamByName('SHOP_ID').AsString := shopId;
+    Global.RemoteFactory.Open(temp,'TcoGetShop',Params);
+    if temp.IsEmpty then Raise Exception.Create('门店档案没找到,原因:'+shopId);
+    
+    Global.LocalFactory.Open(rs,'TShop',Params);
+    if not rs.IsEmpty then
+    begin
+      if rs.FieldByName('SHOP_ID').asString=shopId then
+      begin
+        rs.Edit;
+        rs.FieldByName('XSM_CODE').asString := xsmCode;
+        rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+        rs.Post;
+        Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
+      end;
+    end
+    else
+    begin
+      rs.Edit;
+      rs.FieldByName('TENANT_ID').AsInteger := temp.FieldByName('TENANT_ID').AsInteger;
+      rs.FieldByName('SHOP_ID').asString := temp.FieldByName('SHOP_ID').asString;
+      rs.FieldByName('SHOP_NAME').asString := temp.FieldByName('SHOP_NAME').asString;
+      rs.FieldByName('SHOP_SPELL').asString := temp.FieldByName('SHOP_SPELL').asString;
+      rs.FieldByName('LICENSE_CODE').asString := temp.FieldByName('LICENSE_CODE').asString;
+      rs.FieldByName('LINKMAN').asString := temp.FieldByName('LINKMAN').asString;
+      rs.FieldByName('TELEPHONE').asString := temp.FieldByName('TELEPHONE').asString;
+      rs.FieldByName('FAXES').asString := temp.FieldByName('FAXES').asString;
+      rs.FieldByName('ADDRESS').asString := temp.FieldByName('ADDRESS').asString;
+      rs.FieldByName('POSTALCODE').asString := temp.FieldByName('POSTALCODE').asString;
+      if rs.FieldByName('SHOP_ID').asString=shopId then
+         begin
+           rs.FieldByName('XSM_CODE').asString := xsmCode;
+           rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+         end
+      else
+         rs.FieldByName('XSM_CODE').asString := temp.FieldByName('XSM_CODE').asString;
+      rs.FieldByName('REGION_ID').asString := temp.FieldByName('REGION_ID').asString;
+      rs.FieldByName('SHOP_TYPE').asString := temp.FieldByName('SHOP_TYPE').asString;
+      rs.FieldByName('SEQ_NO').AsInteger := temp.FieldByName('SEQ_NO').AsInteger;
+      rs.Post;
+      Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
+      Global.SHOP_ID := rs.FieldByName('SHOP_ID').asString;
+      Global.SHOP_NAME := rs.FieldByName('SHOP_NAME').asString;
+    end;
+  finally
+    Params.Free;
+    temp.Free;
+    rs.Free;
+  end;
+except
+  on E:Exception do
+  begin
+    LogFile.AddLogFile(0,'读取<门店资料>失败;原因:'+E.Message);
+    Raise;
+  end;
+end;
+end;
+
+function TCaFactory.downloadShopInfo(TenantId: integer; shopId, xsmCode,
+  xsmPswd: string; flag: integer): boolean;
+begin
+  if CheckRspState then
+     result := downloadRspShopInfo(TenantId,shopId,xsmCode,xsmPswd,flag)
+  else
+     result := downloadAdoShopInfo(TenantId,shopId,xsmCode,xsmPswd,flag);
+end;
+
+function TCaFactory.coAdoRegister(Info: TCaTenant): TCaTenant;
+begin
+  Raise Exception.Create('您所安装的版本不支持客户端注册，需开通服务请联系客服人员！'); 
+end;
+
+function TCaFactory.coRegister(Info: TCaTenant): TCaTenant;
+begin
+  if CheckRspState then
+     result := coRspRegister(Info)
+  else
+     result := coAdoRegister(Info);
 end;
 
 { rsp }

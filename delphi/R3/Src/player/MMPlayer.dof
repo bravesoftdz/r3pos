@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=D:\GxTest\R3_HJL
+OutputDir=d:\tpos
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -140,5 +140,7 @@ c:\program files\borland\delphi7\Projects\Bpl\dclusr70.bpl=Borland User Componen
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlOutputDirectorry]
-Count=1
-Item0=D:\GxTest\R3_HJL
+Count=3
+Item0=d:\tpos
+Item1=d:\n26
+Item2=D:\GxTest\R3_HJL

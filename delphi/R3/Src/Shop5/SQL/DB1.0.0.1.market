@@ -1,93 +1,16 @@
---账户类型
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','企业账户','ACCT_TYPE','00',5497000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','客户账户','ACCT_TYPE','00',5497000);
+--在会员档案中，加入保证金
+alter table PUB_IC_INFO add BOND_MNY decimal(10, 3) NULL;
 
---账户类型
-alter table ACC_ACCOUNT_INFO add [ACCT_TYPE] char(1) NULL;
---锁定金额<保证金>
-alter table ACC_ACCOUNT_INFO add [LOCK_MNY] [decimal](18, 3) NULL;
+--// 添加收支项目 “固定保证金”、“滚动保证金”、“销售返利”、“市场费用”
 
-update ACC_ACCOUNT_INFO set ACCT_TYPE='1';
-
---销售计划
-CREATE TABLE [MKT_PLANORDER] (
-        --企业代码
-	[TENANT_ID] int NOT NULL ,
-        --单号
-	[PLAN_ID] [char] (36) NOT NULL ,
-        --流水号
-	[GLIDE_NO] [varchar] (20) NOT NULL ,
-        --计划指标<保存为PUB_GOODSINFO各指标的字段名>
-	[KPI_FLAG] [varchar] (10) NULL ,
-        --年度
-	[KPI_YEAR] int NULL ,
-        --签约日期
-	[PLAN_DATE] int NULL ,
-        --开始日期
-	[BEGIN_DATE] [varchar] (10) NULL ,
-        --结束日期
-	[END_DATE] [varchar] (10) NULL ,
-        --经销商
-	[CLIENT_ID] [varchar] (36) NOT NULL ,
-        --经手人
-	[PLAN_USER] [varchar] (36) NULL ,
-        --审核日期
-	[CHK_DATE] [varchar] (10) NULL ,
-        --审核人员
-	[CHK_USER] [varchar] (36) NULL ,
-        --数量汇总
-	[PLAN_AMT] [decimal](18, 3) NULL ,
-        --金额汇总
-	[PLAN_MNY] [decimal](18, 3) NULL ,
-        --保证金
-	[LOCK_MNY] [decimal](18, 3) NULL ,
-        --备注
-	[REMARK] [varchar] (100) NULL ,
-        --操作时间
-	[CREA_DATE] [varchar] (30) NULL ,
-        --操作人员
-	[CREA_USER] [varchar] (36) NULL ,
-        --通讯标志
-	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_PLANORDER_COMM] DEFAULT ('00'),
-        --时间戳 当前系统日期*86400000
-  [TIME_STAMP] bigint NOT NULL,
-	CONSTRAINT [PK_MKT_PLANORDER] PRIMARY KEY 
-	(
-		[TENANT_ID],
-		[PLAN_ID]
-	) 
-);
-
-CREATE INDEX IX_MKT_PLANORDER_TENANT_ID ON MKT_PLANORDER(TENANT_ID);
-CREATE INDEX IX_MKT_PLANORDER_TIME_STAMP ON MKT_PLANORDER(TENANT_ID,TIME_STAMP);
-CREATE INDEX IX_MKT_PLANORDER_PLAN_DATE ON MKT_PLANORDER(PLAN_DATE);
-
---销售计划明细
-CREATE TABLE [MKT_PLANDATA] (
-        --企业代码
-	[TENANT_ID] int NOT NULL ,
-        --序号
-	[SEQNO] [int] NOT NULL ,
-        --订单号
-	[PLAN_ID] [char] (36) NOT NULL ,
-        --指标代码
-	[SORT_ID] [char] (36) NOT NULL ,
-        --订划销量
-	[AMOUNT] [decimal](18, 3) NULL ,
-        --计划金额
-	[AMONEY] [decimal](18, 3) NULL ,
-        --备注
-	[REMARK] [varchar] (100) NULL ,
-	CONSTRAINT [PK_MKT_PLANDATA] PRIMARY KEY  
-	(
-		[TENANT_ID],
-		[PLAN_ID],
-		[SEQNO]
-	)
-);
-
-CREATE INDEX IX_MKT_PLANDATA_TENANT_ID ON MKT_PLANDATA(TENANT_ID);
-CREATE INDEX IX_MKT_PLANDATA_GODS_ID ON MKT_PLANDATA(TENANT_ID,GODS_ID);
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
+select TENANT_ID,'6E3CB7C8-C3B8-48D6-B508-F8D98ED6253C','市场费用','SCFY','3',6,'00',5497000 from CA_TENANT;
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
+select TENANT_ID,'206FEBCB-6550-4EA0-A8E6-E8728AADA1BA','销售返利','XSFL','3',6,'00',5497000 from CA_TENANT;
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
+select TENANT_ID,'B43EF134-66A1-41DF-A921-EFD76198307F','固定保证金','GDBZJ','3',6,'00',5497000 from CA_TENANT;
+insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
+select TENANT_ID,'E9AED0B1-050C-4EFB-AA7A-0A64FE45EF97','滚动保证金','GDBZJ','3',6,'00',5497000 from CA_TENANT;
 
 --考核类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','年度考核','KPI_TYPE','00',5497000);
@@ -104,12 +27,12 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','
 CREATE TABLE [MKT_KPI_OPTION] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
-        --序号
-	[SEQNO] [int] NOT NULL ,
-        --订单号
-	[PLAN_ID] [char] (36) NOT NULL ,
-        --指标代码
-	[SORT_ID] [char] (36) NOT NULL ,
+        --指标ID号
+	[KPI_ID] char(36) NOT NULL ,
+        --指标名称
+	[KPI_NAME] [char] (50) NOT NULL ,
+        --换算系数<与计量单位的系数>
+	[KPI_RATE] [char] (36) NOT NULL ,
         --考核类型
 	[KPI_TYPE] [char] (1) NOT NULL ,
         --标准折扣
@@ -205,10 +128,101 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	[KPI_D3_ST] [int] NULL ,
 	[KPI_D3_ED] [int] NULL ,
 	[KPI_D3_MNY] [decimal](18, 3) NULL ,
-	
+
+
+	      --市场费
+	      
         --备注
 	[REMARK] [varchar] (100) NULL ,
 	CONSTRAINT [PK_MKT_KPI_OPTION] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[KPI_ID]
+	)
+);
+
+--考核指标对应商品清单
+CREATE TABLE [MKT_KPI_GOODS] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --考核指标
+	[KPI_ID] [char] (36) NOT NULL ,
+        --商品编码
+	[GODS_ID] [char] (36) NOT NULL ,
+	CONSTRAINT [PK_MKT_KPI_GOODS] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[KPI_ID],
+		[GODS_ID]
+	) 
+);
+
+--销售计划
+CREATE TABLE [MKT_PLANORDER] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --单号
+	[PLAN_ID] [char] (36) NOT NULL ,
+        --流水号
+	[GLIDE_NO] [varchar] (20) NOT NULL ,
+        --年度
+	[KPI_YEAR] int NULL ,
+        --签约日期
+	[PLAN_DATE] int NULL ,
+        --开始日期
+	[BEGIN_DATE] [varchar] (10) NULL ,
+        --结束日期
+	[END_DATE] [varchar] (10) NULL ,
+        --经销商
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --经手人
+	[PLAN_USER] [varchar] (36) NULL ,
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+        --数量汇总
+	[PLAN_AMT] [decimal](18, 3) NULL ,
+        --金额汇总
+	[PLAN_MNY] [decimal](18, 3) NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_PLANORDER_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_PLANORDER] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[PLAN_ID]
+	) 
+);
+
+CREATE INDEX IX_M_PNR_TENANT_ID ON MKT_PLANORDER(TENANT_ID);
+CREATE INDEX IX_M_PNR_TIME_STAMP ON MKT_PLANORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_M_PNR_PLAN_DATE ON MKT_PLANORDER(PLAN_DATE);
+
+--销售计划明细
+CREATE TABLE [MKT_PLANDATA] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --序号
+	[SEQNO] [int] NOT NULL ,
+        --订单号
+	[PLAN_ID] [char] (36) NOT NULL ,
+        --指标代码
+	[KPI_ID] [char] (36) NOT NULL ,
+        --订划销量
+	[AMOUNT] [decimal](18, 3) NULL ,
+        --计划金额
+	[AMONEY] [decimal](18, 3) NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+	CONSTRAINT [PK_MKT_PLANDATA] PRIMARY KEY  
 	(
 		[TENANT_ID],
 		[PLAN_ID],
@@ -216,8 +230,12 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	)
 );
 
---考核区间
-CREATE TABLE [MKT_KPI_FORHEAER] (
+CREATE INDEX IX_M_PND_TENANT_ID ON MKT_PLANDATA(TENANT_ID);
+CREATE INDEX IX_M_PND_PLAN_ID ON MKT_PLANDATA(TENANT_ID,PLAN_ID);
+CREATE INDEX IX_M_PND_GODS_ID ON MKT_PLANDATA(TENANT_ID,KPI_ID);
+
+--考核结果
+CREATE TABLE [MKT_KPI_RESULT] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --计划单号
@@ -226,10 +244,6 @@ CREATE TABLE [MKT_KPI_FORHEAER] (
 	[KPI_ID] [char] (36) NOT NULL ,
         --年度
 	[KPI_YEAR] int NULL ,
-        --考核类型
-	[KPI_TYPE] [char] (1) NOT NULL ,
-        --序号<对季度考核时，1为第一季度,其他都为0>
-	[SEQNO] [int] NOT NULL ,
         --开始日期
 	[BEGIN_DATE] [varchar] (10) NULL ,
         --结束日期
@@ -240,12 +254,64 @@ CREATE TABLE [MKT_KPI_FORHEAER] (
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
-        --销量
+        --计划销量
+	[PLAN_AMT] [decimal](18, 3) NULL ,
+        --计划金额 
+	[PLAN_MNY] [decimal](18, 3) NULL ,
+        --完成销量
 	[KPI_AMT] [decimal](18, 3) NULL ,
-        --销售额 
+        --完成金额 
 	[KPI_MNY] [decimal](18, 3) NULL ,
-        --返利
-	[KRP_MNY] [decimal](18, 3) NULL ,
+	
+	      --上半年返利
+	[KPI_Y_MNY] [decimal](18, 3) NULL ,
+        --上半年完成率
+	[KPI_Y_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_Y_AGIO] [decimal](18, 3) NULL ,
+	      --下半年返利
+	[KPI_L_MNY] [decimal](18, 3) NULL ,
+        --上半年完成率
+	[KPI_L_RATE] [decimal](18, 3) NULL ,
+        --达标折扣
+	[KPI_L_AGIO] [decimal](18, 3) NULL ,
+	
+        --第一季度返利
+	[KPI_G1_MNY] char(1) NULL ,
+        --第一季度完成率
+	[KPI_G1_RATE] [decimal](18, 3) NULL ,
+        --第一季度达标折扣
+	[KPI_G1_AGIO] [decimal](18, 3) NULL ,
+        --第二季度返利
+	[KPI_G2_MNY] char(1) NULL ,
+        --第二季度完成率
+	[KPI_G2_RATE] [decimal](18, 3) NULL ,
+        --第二季度达标折扣
+	[KPI_G2_AGIO] [decimal](18, 3) NULL ,
+        --第三季度返利
+	[KPI_G3_MNY] char(1) NULL ,
+        --第三季度完成率
+	[KPI_G3_RATE] [decimal](18, 3) NULL ,
+        --第三季度达标折扣
+	[KPI_G3_AGIO] [decimal](18, 3) NULL ,
+        --第四季度返利
+	[KPI_G4_MNY] char(1) NULL ,
+        --第四季度完成率
+	[KPI_G4_RATE] [decimal](18, 3) NULL ,
+        --第四季度达标折扣
+	[KPI_G4_AGIO] [decimal](18, 3) NULL ,
+	
+	      --时间段1返利
+	[KPI_D1_MNY] [decimal](18, 3) NULL ,
+	      --时间段2返利
+	[KPI_D2_MNY] [decimal](18, 3) NULL ,
+	      --时间段3返利
+	[KPI_D3_MNY] [decimal](18, 3) NULL ,
+
+        --销售返利
+	[KPI_MNY] [decimal](18, 3) NULL ,
+        --提取返利
+	[WDW_MNY] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
         --操作时间
@@ -253,53 +319,22 @@ CREATE TABLE [MKT_KPI_FORHEAER] (
         --操作人员
 	[CREA_USER] [varchar] (36) NULL ,
         --通讯标志
-	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_FORHEAER_COMM] DEFAULT ('00'),
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_RESULT_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
   [TIME_STAMP] bigint NOT NULL,
-	CONSTRAINT [PK_MKT_KPI_FORHEAER] PRIMARY KEY 
+	CONSTRAINT [PK_MKT_KPI_RESULT] PRIMARY KEY 
 	(
 		[TENANT_ID],
+		[KPI_YEAR],
 		[KPI_ID]
 	) 
 );
 
-CREATE INDEX IX_MKT_KPI_FORHEAER_TENANT_ID ON MKT_KPI_FORHEAER(TENANT_ID);
-CREATE INDEX IX_MKT_KPI_FORHEAER_TIME_STAMP ON MKT_KPI_FORHEAER(TENANT_ID,TIME_STAMP);
-CREATE INDEX IX_MKT_KPI_FORHEAER_PE_YEAR ON MKT_KPI_FORHEAER(TENANT_ID,KPI_YEAR);
-CREATE INDEX IX_MKT_KPI_FORHEAER_PLAN_ID ON MKT_KPI_FORHEAER(TENANT_ID,PLAN_ID);
-
---考核结果表
-CREATE TABLE [MKT_KPI_FORDATA] (
-        --企业代码
-	[TENANT_ID] int NOT NULL ,
-        --计划单号
-	[PLAN_ID] [char] (36) NOT NULL ,
-        --考核ID
-	[KPI_ID] [char] (36) NOT NULL ,
-        --指标代码
-	[SORT_ID] [char] (36) NOT NULL ,
-        --订划内销量
-	[SALE_AMT] [decimal](18, 3) NULL ,
-        --订划内金额
-	[SALE_MNY] [decimal](18, 3) NULL ,
-        --完成比率
-	[KPI_RATE] [decimal](18, 3) NULL ,
-        --扣折比例
-	[AGIO_RATE] [decimal](18, 3) NULL ,
-        --计提金额
-	[KPI_MNY] [decimal](18, 3) NULL ,
-        --摘要
-	[REMARK] [varchar] (100) NULL ,
-	CONSTRAINT [PK_MKT_KPI_FORDATA] PRIMARY KEY  
-	(
-		[TENANT_ID],
-		[KPI_ID],
-		[SEQNO]
-	)
-);
-
-CREATE INDEX IX_MKT_KPI_FORDATA_TENANT_ID ON MKT_KPI_FORDATA(TENANT_ID);
-CREATE INDEX IX_MKT_KPI_FORDATA_GODS_ID ON MKT_KPI_FORDATA(TENANT_ID,GODS_ID);
+CREATE INDEX IX_MKPIR_TENANT_ID ON MKT_KPI_RESULT(TENANT_ID);
+CREATE INDEX IX_MKPIR_TIME_STAMP ON MKT_KPI_RESULT(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MKPIR_KPI_YEAR ON MKT_KPI_RESULT(TENANT_ID,KPI_YEAR);
+CREATE INDEX IX_MKPIR_KPI_ID ON MKT_KPI_RESULT(TENANT_ID,KPI_ID);
+CREATE INDEX IX_MKPIR_PLAN_ID ON MKT_KPI_RESULT(TENANT_ID,PLAN_ID);
 
 --需求类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','补货需求','DEMA_TYPE','00',5497000);

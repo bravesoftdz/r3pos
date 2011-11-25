@@ -12,7 +12,7 @@ BRCC = $(ROOT)\bin\brcc32.exe $**
 PROJECTS = Shop.exe r3_xsm2.exe r3_n26.exe RSPScktSrvr.exe RimBillPlugIn.dll \
   RimDayReckPlugIn.dll RimGodsDzPlugIn.dll RimIVTPlugIn.dll RimMsgPlugIn.dll \
   RimOrderDownPlugIn.dll RimSaleTotalPlugIn.dll RimStoragePlugIn.dll \
-  RimVIPPlugIn.dll Upgrade.exe mm.exe RimWsdlPlugIn.dll
+  RimVIPPlugIn.dll Upgrade.exe mm.exe RimWsdlPlugIn.dll RimParamsPlugIn.dll
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -63,6 +63,9 @@ mm.exe: mm.dpr
   $(DCC)
 
 RimWsdlPlugIn.dll: ..\PlugIn\Rim\RimWsdlPlugIn.dpr
+  $(DCC)
+
+RimParamsPlugIn.dll: ..\PlugIn\Rim\RimParamsPlugIn.dpr
   $(DCC)
 
 

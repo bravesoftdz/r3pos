@@ -258,7 +258,20 @@ try
   Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
   ' values(:TENANT_ID,''291A4198-8AAC-46F7-8AB0-193189BF82EC'',''管理费用'',''GLFY'',''3'',5,''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''6E3CB7C8-C3B8-48D6-B508-F8D98ED6253C'',''市场费用'',''SCFY'',''3'',6,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''206FEBCB-6550-4EA0-A8E6-E8728AADA1BA'',''销售返利'',''XSFL'',''3'',6,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''B43EF134-66A1-41DF-A921-EFD76198307F'',''固定保证金'',''GDBZJ'',''3'',6,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
+  Str := 'insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)'+
+  ' values(:TENANT_ID,''E9AED0B1-050C-4EFB-AA7A-0A64FE45EF97'',''滚动保证金'',''GDBZJ'',''3'',6,''00'',5497000)';
+  AGlobal.ExecSQL(Str,Params);
   end;
+                           
   if not GetDutyInfo then
   begin
   //为企业初始化职务

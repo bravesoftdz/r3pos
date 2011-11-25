@@ -440,17 +440,19 @@ begin
   end;  
 end;
 
+{== R3.数量*ZOOR_RATE=Rim.数量 ==}
 function TPlugInBase.GetDefaultUnitCalc(AliasTable: string): string;
 var
-  AliasTab: string;
+  AliasTab,Zoom_Rate: string;
 begin
   if trim(AliasTable)<>'' then
     AliasTab:=trim(AliasTable)+'.';
+  Zoom_Rate:=ParseSQL(FDBFactor.iDbType,'nvl('+AliasTab+'.ZOOM_RATE,1.0)');
   result:=
-    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+             //默认单位为 计量单位
-        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*1.00 '+  //默认单位为 小单位
-        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC*1.00 '+      //默认单位为 大单位
-        ' else 1.00 end ';                                                        //都不是则默认为换算为1;
+    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00*'+Zoom_Rate+' '+             //默认单位为 计量单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*'+Zoom_Rate+'*1.00 '+  //默认单位为 小单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC*'+Zoom_Rate+'*1.00 '+      //默认单位为 大单位
+        ' else 1.00*'+Zoom_Rate+' end ';                                                        //都不是则默认为换算为1;
 end;
 
 function TPlugInBase.GetMaxNUM(BillType, COM_ID, CUST_ID, SHOP_ID: string): string;
@@ -917,7 +919,7 @@ function TPlugInSyncStorage.DLLDoExecute(InParams: TftParamList; var vData: OleV
 begin
   result := -1;
   PlugInID:=1;  //第1位
-  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+  if Not SetParamsValue(InParams) then Exit;  //退出不执行
 
   try
     result:=SyncCustStorage;
@@ -1061,7 +1063,7 @@ function TPlugSyncSaleTotal.DLLDoExecute(InParams: TftParamList; var vData: OleV
 begin
   result := -1;
   PlugInID:=2;  //第2位
-  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+  if Not SetParamsValue(InParams) then Exit;  //退出不执行
   
   try
     result:=SyncSaleTotal;
@@ -1178,7 +1180,7 @@ function TPlugInSyncMessage.DLLDoExecute(InParams: TftParamList; var vData: OleV
 begin
   result:=-1;
   PlugInID:=3;  //第3位
-  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+  if Not SetParamsValue(InParams) then Exit;  //退出不执行
 
   try
     result:=SyncMessage;
@@ -1214,7 +1216,7 @@ begin
   try
     result:=-1;
     PlugInID:=4;  //第4位
-    if Not SetParamsValue(InParams) then Abort;  //退出不执行
+    if Not SetParamsValue(InParams) then Exit;  //退出不执行
 
     BasInfo.Close;
     BasInfo.SQL.Text:='select GODS_ID,SORT_ID4,SORT_ID9 from VIW_GOODSINFO where TENANT_ID='+TenID;
@@ -1886,7 +1888,7 @@ var
 begin
   result:=-1;
   PlugInID:=5;  //第5位
-  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+  if Not SetParamsValue(InParams) then Exit;  //退出不执行
 
   //返回RimURL
   RimURL:=trim(PlugParams.RimUrl);
@@ -1941,7 +1943,7 @@ var
 begin
   result:=-1;
   PlugInID:=6;  //第6位
-  if Not SetParamsValue(InParams) then Abort;  //退出不执行
+  if Not SetParamsValue(InParams) then Exit;  //退出不执行
   
   if (FParams.FindParam('FLAG')<>nil) then
     FSyncType:=Params.FindParam('FLAG').AsInteger;

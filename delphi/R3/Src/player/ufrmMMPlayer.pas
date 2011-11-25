@@ -653,7 +653,7 @@ end;
 procedure TfrmMMPlayer.WMTPosDisplay(var Message: TMessage);
 var
   Str: string;
-  vLow,vHigh,Iparm: integer;
+  vLow,vHigh,Iparm,vCount,i: integer;
   pos:TLabel;
 begin
   //消息的参数: 高字节位
@@ -705,6 +705,35 @@ begin
     end;
     pos.Update;
   end;
+  //控制显示位置：
+  vCount:=0;
+  if pos01.Visible then Inc(vCount);
+  if pos02.Visible then Inc(vCount);
+  if pos03.Visible then Inc(vCount);
+  if pos04.Visible then Inc(vCount);
+  case vCount of
+   1: RzPanel1.Height:=49;
+   2: RzPanel1.Height:=97;
+   3: RzPanel1.Height:=145;
+   4: RzPanel1.Height:=193;
+  end;
+  vCount:=8;
+  if pos01.Visible then
+  begin
+    pos01.Top:=vCount;
+    vCount:=vCount+45;
+  end;
+  if pos02.Visible then
+  begin
+    pos02.Top:=vCount;
+    vCount:=vCount+45;
+  end;
+  if pos03.Visible then
+  begin
+    pos04.Top:=vCount;
+    vCount:=vCount+45;
+  end;
+  if pos04.Visible then pos04.Top:=vCount;
 end;
 
 end.

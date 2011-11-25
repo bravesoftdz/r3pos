@@ -98,7 +98,7 @@ type
     destructor Destroy;override;
     procedure BeginLog(const ShopName: string); //初始化参数
     //vType: 1:表示成功; 0:表示错误;
-    function AddBillMsg(BillName: string;iRect: integer=-1): Boolean;
+    function AddBillMsg(BillName: string; iRect: integer=-1): Boolean;
     function SetLogMsg(SetList: TStringList; vNum: integer=0): Boolean; //返回日志内容
     property RuniRet: integer read FRuniRet; //运行更改记录数
     property ErrorState: Boolean read FErrorState; //运行状态[默认为False]
@@ -165,7 +165,7 @@ type
     class function GetCommStr(iDbType:integer;alias:string=''):string;
     class function GetUpCommStr(iDbType:integer;alias:string=''):string;
     class function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
-    class function GetDefaultUnitCalc(AliasTable: string=''): string;  //返回转换后单位ID
+    class function GetDefaultUnitCalc(iDbType:integer; AliasTable: string=''): string;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
     class function ReadConfig(Header,Ident,DefValue:string; IniFile: string=''):string;  //读配置文件
     class function ReadBool(Header,Ident:string; DefValue: Boolean;IniFile: string=''):Boolean;  //读配置文件
@@ -428,17 +428,18 @@ begin
 end;
 
 
-class function TBaseSyncFactory.GetDefaultUnitCalc(AliasTable: string): string;
+class function TBaseSyncFactory.GetDefaultUnitCalc(iDbType:integer; AliasTable: string): string;
 var
-  AliasTab: string;
+  AliasTab,Zoom_Rate: string;
 begin
   if trim(AliasTable)<>'' then
-    AliasTab:=trim(AliasTable)+'.';
+    AliasTab:=trim(AliasTable)+'.';  
+  Zoom_Rate:=ParseSQL(iDbType,'nvl('+AliasTab+'.ZOOM_RATE,1.0)');
   result:=
-    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+             //默认单位为 计量单位
-        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*1.00 '+  //默认单位为 小单位
-        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC*1.00 '+      //默认单位为 大单位
-        ' else 1.00 end ';                                                        //都不是则默认为换算为1;
+    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+               //默认单位为 计量单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*'+Zoom_Rate+'*1.00 '+ //默认单位为 小单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC*'+Zoom_Rate+'*1.00 '+     //默认单位为 大单位
+        ' else 1.00 end ';                                                           //都不是则默认为换算为1;                                                     //都不是则默认为换算为1;
 end;
 
 class function TBaseSyncFactory.ParseSQL(iDbType: integer; SQL: string): string;

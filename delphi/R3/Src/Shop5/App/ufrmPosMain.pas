@@ -2436,7 +2436,7 @@ begin
   AObj.CopyTo(SaveAObj);
   ShowHeader;
   //2011.11.14向双屏终端发送结算消息
-  PostPayMessage(AObj);
+  PostPayMessage(SaveAObj);
   dbState := dsBrowse;  
 end;
 
@@ -4604,18 +4604,21 @@ begin
   end;
   if vHandle<=0 then Exit;
   //结算金额:0
-  w[0] := 0;  //传入是:0表示结算金额
-  w[1] := 0;  //传入是:0表示结算金额
-  w[2] := 1;  //第1行
-  w[3] := 0;  //第1行
-  pWParam := @w;
-  wParam := pWParam^;
   PAY_ALL:=Round((InObj.fieldbyName('SALE_MNY').asFloat-InObj.fieldbyName('PAY_DIBS').asFloat)*100); //零售金额 - 抹零金额
-  PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_ALL);
-
-  SetLength(PAY_Value,7);
+  if PAY_ALL<>0 then
+  begin
+    w[0] := 0;  //传入是:0表示结算金额
+    w[1] := 0;  //传入是:0表示结算金额
+    w[2] := 1;  //第1行
+    w[3] := 0;  //第1行
+    pWParam := @w;
+    wParam := pWParam^;
+    PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_ALL);
+  end;
+  
   //支付金额:
-  PAY_Value[0]:=Round(InObj.fieldbyName('PAY_A').asFloat*100);  //支付A:现金
+  SetLength(PAY_Value,7);
+  PAY_Value[0]:=Round(InObj.fieldbyName('Cash_MNY').asFloat*100);  //支付A:现金
   PAY_Value[1]:=Round(InObj.fieldbyName('PAY_B').asFloat*100);  //支付B:刷卡
   PAY_Value[2]:=Round(InObj.fieldbyName('PAY_C').asFloat*100);  //支付C:储值卡
   PAY_Value[3]:=Round(InObj.fieldbyName('PAY_D').asFloat*100);  //支付D:记账
@@ -4623,7 +4626,7 @@ begin
   PAY_Value[5]:=Round(InObj.fieldbyName('PAY_F').asFloat*100);  //支付F:支票
   PAY_Value[6]:=Round(InObj.fieldbyName('PAY_G').asFloat*100);  //支付G:礼券
 
-  for i:=0 to 5 do
+  for i:=0 to 6 do
   begin
     if (vCount<3) and (PAY_Value[i]>0) then
     begin
@@ -4637,35 +4640,20 @@ begin
       Inc(vCount);
     end;
   end;
-  //结算方式只有1种时循环取下一种：
-  if vCount<3 then
+
+  //找零:1 (不等于0时才发送)
+  if InObj.fieldbyName('PAY_ZERO').asFloat<>0 then
   begin
-    for i:=0 to 5 do
-    begin
-      if (vCount<3) and (PAY_Value[i]=0) then
-      begin
-        w[0] := ord(PAY_CHAR[i+1]);  //传入是:1表示结算金额
-        w[1] := 0;         //第几行
-        w[2] := vCount+1;  //第几行
-        w[3] := 0;  //传入是:1表示结算金额
-        pWParam := @w;
-        wParam := pWParam^;
-        PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_Value[i]);
-        Inc(vCount);
-      end;
-    end;
+    w[0] :=1;  //传入是:1表示找零金额
+    w[1] :=0;  //传入是:1表示找零金额
+    w[2] :=4;  //第4行
+    w[3] :=0;  //第4行
+    pWParam := @w;
+    wParam := pWParam^;
+    PAY_RETURN:=Round(InObj.fieldbyName('PAY_ZERO').asFloat*100); //找零金额
+    PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_RETURN);
   end;
-
-  //找零:1
-  w[0] :=1;  //传入是:1表示找零金额
-  w[1] :=0;  //传入是:1表示找零金额
-  w[2] :=4;  //第4行
-  w[3] :=0;  //第4行
-  pWParam := @w;
-  wParam := pWParam^;
-  PAY_RETURN:=Round(InObj.fieldbyName('PAY_ZERO').asFloat*100); //找零金额
-  PostMessage(vHandle,WM_TPOS_DISPLAY,wParam,PAY_RETURN); 
-
+  
   result:=true;
 end;
 

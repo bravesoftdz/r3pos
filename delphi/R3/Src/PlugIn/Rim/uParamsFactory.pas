@@ -33,7 +33,15 @@ var
   ErrorFlag: Boolean;
 begin
   result:=-1;
-  PlugInID:='810';
+  PlugInID:='1006';
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=8;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
+
   {------初始化参数------}
   PlugIntf:=GPlugIn;
   //1、返回数据库类型

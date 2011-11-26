@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=D:\rsp\plugin
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=3
 MinorVer=0
 Release=1
-Build=25
+Build=35
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=3.0.1.25
+FileVersion=3.0.1.35
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -142,3 +142,6 @@ Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
 Count=1
 Item0=D:\Delphi\R3\Pub
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=D:\rsp\plugin

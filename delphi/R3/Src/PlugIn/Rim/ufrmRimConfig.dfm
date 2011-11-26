@@ -21,7 +21,7 @@ object frmRimConfig: TfrmRimConfig
     Top = 0
     Width = 516
     Height = 366
-    ActivePage = TabSheet1
+    ActivePage = tabStock
     Align = alClient
     TabHeight = 22
     TabOrder = 0

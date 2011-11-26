@@ -37,7 +37,7 @@ type
     function GetMaxReckDay: string; 
     //检查是否存在漏报情况:
     function CheckReportBill: Boolean;
-    
+
     //上报月台账
     function SendMonthReck: integer;
     //上报销售单[零售、批发、退货]
@@ -245,9 +245,17 @@ var
   Str,MonthTab,ReckMonth,SHOP_IDS: string;
 begin
   result := -1;
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=9;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
+
   UpiRet:=0;
   //返回当前门店相同许可证号一样的:SHOP_IDS
-  SHOP_IDS:=GetShop_IDS(RimParam.TenID,RimParam.LICENSE_CODE);  
+  SHOP_IDS:=GetShop_IDS(RimParam.TenID,RimParam.LICENSE_CODE);
 
   //第一步: 创建台帐临时[INF_RECKMONTH]:
   case DbType of
@@ -434,6 +442,13 @@ var
 begin
   result := -1;
   UpiRet:=0;
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=11;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
 
   //第一步: 创建零售单（POS）临时[INF_POS_SALE]:
   case DbType of
@@ -505,7 +520,7 @@ begin
 
   Str:='insert into RIM_RETAIL_DETAIL(RETAIL_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,UNIT_COST,RETAIL_PRICE,QTY_SALE,QTY_MINI_UM,AMT,NOTE,PUH_DATE,TREND_ID)'+
        ' select A.SALES_ID,A.SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID, '+
-       ' A.COST_PRICE,A.APRICE,A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark,A.SALE_DATE,A.TREND_ID '+ //'''+FormatDatetime('YYYYMMDD',Date())+'''
+       ' A.COST_PRICE,A.APRICE,A.AMOUNT/'+GetR3ToRimZoom_Rate('A.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark,A.SALE_DATE,A.TREND_ID '+ //'''+FormatDatetime('YYYYMMDD',Date())+'''
        ' from ('+DetailTab+')A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and '+
        ' B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' ';
   if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('插入销售单表体出错：'+GetLastError);
@@ -514,7 +529,6 @@ begin
   if CommitReportTrans then
     result:=UpiRet;
 end;
-
 
 //上报调拨单 (type='04') {说明: 新R3设计时把调入当作为入库单，存储在入库表，调出单作为出库单，存储在销售单;同步时分两步处理 }
 function TBillSyncFactory.SenddbInDetail: integer;
@@ -526,6 +540,13 @@ var
 begin
   result := -1;
   UpiRet:=0;
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=12;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
 
   //第一步: 创建销售单（批发）临时[INF_SALE]:
   case DbType of
@@ -592,7 +613,7 @@ begin
 
   Str:='insert into RIM_CUST_TRN_LINE(TRN_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,QTY_TRN,QTY_MINI_UM,AMT_TRN,NOTE)'+
        ' select A.DB_NEWID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('A.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE';
@@ -613,6 +634,13 @@ var
 begin
   result := -1;
   UpiRet:=0;
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=13;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
 
   //第一步: 创建销售单（批发）临时[INF_SALE]:
   case DbType of
@@ -677,7 +705,7 @@ begin
              ' S.TENANT_ID='+RimParam.TenID;
   Str:='insert into RIM_CUST_TRN_LINE(TRN_NUM,LINE_NUM,COM_ID,ITEM_ID,UM_ID,QTY_TRN,QTY_MINI_UM,AMT_TRN,NOTE)'+
        ' select A.DB_NEWID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('A.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY,A.remark '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE ';
@@ -698,6 +726,13 @@ var
 begin
   result := -1;
   UpiRet:=0;
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=10;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
 
   //第一步: 创建销售单（批发）临时[INF_STOCK]:
   case DbType of
@@ -762,7 +797,7 @@ begin
 
   Str:='insert into RIM_VOUCHER_LINE(VOUCHER_NUM,VOUCHER_LINE,COM_ID,ITEM_ID,UM_ID,QTY_INCEPT,QTY_MINI_UM,AMT_INCEPT)'+
        ' select A.STOCK_ID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('A.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE ';
@@ -783,6 +818,13 @@ var
 begin
   result := -1;
   UpiRet:=0;
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=14;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
 
   //第一步: 创建销售单（批发）临时[INF_CHANGE]:
   case DbType of
@@ -847,7 +889,7 @@ begin
 
   Str:='insert into RIM_ADJUST_DETAIL(ADJUST_NUM,ADJUST_LINE,COM_ID,ITEM_ID,UM_ID,QTY_ADJUST,QTY_MINI_UM,AMT_ADJUST)'+
        ' select A.CHANGE_ID,SEQNO,'''+RimParam.ComID+''' as COM_ID,B.SECOND_ID,A.UM_ID,'+
-       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('S.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
+       ' A.AMOUNT/'+GetR3ToRimZoom_Rate('A.UNIT_ID','B')+' as AMOUNT,A.CALC_AMOUNT,A.AMONEY '+
        ' from ('+DetailTab+')A,VIW_GOODSINFO B '+
        ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.TENANT_ID='+RimParam.TenID+' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
        ' order by B.GODS_CODE';

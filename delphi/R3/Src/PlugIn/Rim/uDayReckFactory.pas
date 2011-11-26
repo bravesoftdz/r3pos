@@ -1035,6 +1035,14 @@ var
 begin
   result:=-1;
   PlugInID:='1005';
+  //2011.11.26日定义插件不执行参数
+  PlugInIdx:=7;
+  if not GetPlugInRunFlag then //插件定义执行
+  begin
+    result:=0;
+    Exit;
+  end;
+
   {------初始化参数------}
   PlugIntf:=GPlugIn;
   //1、返回数据库类型
@@ -1169,13 +1177,6 @@ begin
   if ExecSQL(PChar(Str),iRet)<>0 then Raise Exception.Create('删除临时表出错:'+GetLastError);
 
   //日台账表
-  {
-  DayTab:=
-    '(select distinct TENANT_ID,CREA_DATE,GODS_ID from RCK_GOODS_DAYS where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
-    ' union  '+
-    ' select distinct A.TENANT_ID,A.CREA_DATE,A.GODS_ID from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+RimParam.TenID+' and '+
-    ' A.SHOP_ID in ('+SHOP_IDS+') and A.CREA_DATE=C.CREA_DATE and A.TIME_STAMP>'+MaxStmp+')';
-  }
   DayTab:=
     '(select distinct A.TENANT_ID,A.CREA_DATE,A.GODS_ID from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+RimParam.TenID+' and '+
     ' A.SHOP_ID in ('+SHOP_IDS+') and A.CREA_DATE=C.CREA_DATE and C.TIME_STAMP>'+MaxStmp+')';
@@ -1219,14 +1220,14 @@ begin
              'cast(sum(BAL_MNY) as decimal(18,3)) as BAL_MNY,'+
              'cast(sum(SALE_PRF) as decimal(18,3)) as SALE_PRF ';
           // '(case when sum(SALE_AMT)>0 then sum(SALE_MNY)*1.00/cast(sum(SALE_AMT) as decimal(18,6)) else SALE_MNY end) as COST_PRICE ';
-  DayTab:=
-    'select rck.TENANT_ID,rck.CREA_DATE,gods.SECOND_ID as ITEM_ID,'+SumFields+' from '+
-    '(select * from RCK_GOODS_DAYS where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
-    ' union all '+
-    ' select A.* from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID='+RimParam.TenID+' and '+
-    ' A.SHOP_ID in ('+SHOP_IDS+') and A.CREA_DATE=C.CREA_DATE and A.TIME_STAMP>'+MaxStmp+')rck,VIW_GOODSINFO gods '+
-    ' where rck.TENANT_ID=gods.TENANT_ID and rck.GODS_ID=gods.GODS_ID '+
-    ' group by rck.TENANT_ID,rck.CREA_DATE,gods.SECOND_ID ';
+  //日台账9月后改成试算写入(RCK_DAYS_CLOSE),不需要在分开；
+    {'(select * from RCK_GOODS_DAYS where TENANT_ID='+RimParam.TenID+' and SHOP_ID in ('+SHOP_IDS+') and CREA_DATE>'+FormatDatetime('YYYYMMDD',LastReckDate)+' '+
+    ' union all '+}
+   DayTab:=
+     'select A.TENANT_ID,A.CREA_DATE,gods.SECOND_ID as ITEM_ID,'+SumFields+' from RCK_GOODS_DAYS A,RCK_DAYS_CLOSE C,VIW_GOODSINFO gods '+
+     ' where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.CREA_DATE=C.CREA_DATE and A.TENANT_ID=gods.TENANT_ID and A.GODS_ID=gods.GODS_ID '+
+     ' and A.TENANT_ID='+RimParam.TenID+' and A.SHOP_ID in ('+SHOP_IDS+') and A.TIME_STAMP>'+MaxStmp+' '+
+     ' group by A.TENANT_ID,A.CREA_DATE,gods.SECOND_ID ';
     
   //插入上报记录: 
   Str:=

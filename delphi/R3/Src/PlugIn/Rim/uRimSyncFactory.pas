@@ -26,20 +26,24 @@ type
     FMaxStmp: string;     //最大时间戳
     FUpMaxStmp: string;   //更新最大时间戳
     FSyncType: integer;   //同步类型
-    FShopLog: TLogShopInfo; //门店日志
+    FShopLog: TLogShopInfo;  //门店日志
+    FPlugInIdx: integer;
     procedure SetMaxStmp(const Value: string);
     procedure SetSyncType(const Value: Integer);
-    procedure TreatLogFile(LogDir: string); //处理日志文件
+    procedure TreatLogFile(LogDir: string);
+    procedure SetPlugInIdx(const Value: integer);
   public
     R3ShopList: TZQuery;  //上报门店List
     RimParam: TRimParams; //上报参数记录
     constructor Create; override;
     destructor Destroy;override;
+    //返回是否上报：插件参数定义：是否上报;
+    function GetPlugInRunFlag: Boolean;
     //返回R3与Rim缩放率的换算：
-    function GetR3ToRimZoom_Rate(UNIT_ID: string; AliasTable: string=''): string;
+    function GetR3ToRimZoom_Rate(Bill_UNIT_ID: string; AliasTable: string=''): string;
     //返回R3转Rim单位的Unit_ID;
     function GetR3ToRimUnit_ID(iDbType:integer; UNIT_ID: string): string;     //返回单位换算
-    // 同步类型
+    //同步类型
     function GetSyncType: integer; virtual; //同步类型   
     //1、返回RIM_R3_NUM表的上次时间戳和当前最大时间戳:
     function GetMaxNUM(BillType, COM_ID,CUST_ID, SHOP_ID: string): string;
@@ -55,7 +59,6 @@ type
     function GetShop_IDS(TenID,LICENSE_CODE: string): string;
     //8、执行单向的连接库语句开启事务:
     function ExecTransSQL(SQL: string; var iRet: Integer; Msg: string=''): Boolean;  //返回是否事务是否执行成功
-
     //9、企业开始上报:
     procedure BeginLogReport; virtual;  //企业开始上报
     //10、企业上报后写入Log文件:
@@ -68,7 +71,6 @@ type
     procedure EndLogShopReport(Msg: string; RelationFlag: Boolean; RunFlag: Boolean=False); overload; //门店完成上报
     //14、单据上报写Msg：vType: 1:表示成功; 0:表示错误;
     procedure AddBillMsg(BillName: string; iRect: integer; Msg: string='');  //一个单据上报
-
     //16、写RIM_BAL_LOG日志
     function WriteToRIM_BAL_LOG(LICENSE_CODE,CustID,LogType,LogNote,LogStatus: string; USER_ID: string='auto'): Boolean;
 
@@ -76,6 +78,7 @@ type
     property UpMaxStmp: string read FUpMaxStmp;                           //更新最大时间戳
     property SyncType: integer read FSyncType write SetSyncType;          //上报方式:（0: 调度执行； 3：前台传入执行)
     property ShopLog: TLogShopInfo read FShopLog;  //门店日志
+    property PlugInIdx: integer read FPlugInIdx write SetPlugInIdx;  //产件的索引:Idx
   end;
 
 implementation
@@ -544,25 +547,42 @@ end;
 //'95331F4A-7AD6-45C2-B853-C278012C5525','条'
 //'93996CD7-B043-4440-9037-4B82BB5207DA','箱'
 
-function TRimSyncFactory.GetR3ToRimZoom_Rate(UNIT_ID: string; AliasTable: string): string;
+function TRimSyncFactory.GetR3ToRimZoom_Rate(Bill_UNIT_ID: string; AliasTable: string): string;
 var
   AliasTab,Zoom_Rate: string;
 begin
   if trim(AliasTable)<>'' then AliasTab:=trim(AliasTable)+'.';
-  Zoom_Rate:=ParseSQL(DbType,'nvl('+AliasTab+'.ZOOM_RATE,1.0)');
+  Zoom_Rate:=ParseSQL(DbType,'nvl('+AliasTab+'ZOOM_RATE,1.0)');
   case DbType of
    0,4:
     begin
-      Result:='(case when '+UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then 1.0 '+  //盒
-                   ' when '+UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then '+Zoom_Rate+' '+  //条
-               ' when '+UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then '+Zoom_Rate+' '+      //箱
+      Result:='(case when '+Bill_UNIT_ID+'=''13F817A7-9472-48CF-91CD-27125E077FEB'' then 1.0 '+  //盒
+                   ' when '+Bill_UNIT_ID+'=''95331F4A-7AD6-45C2-B853-C278012C5525'' then '+Zoom_Rate+' '+  //条
+               ' when '+Bill_UNIT_ID+'=''93996CD7-B043-4440-9037-4B82BB5207DA'' then '+Zoom_Rate+' '+      //箱
                ' else 1.0 end)'; //支
     end;
    1:
     begin
-      Result:=' DECODE('+UNIT_ID+',''13F817A7-9472-48CF-91CD-27125E077FEB'',1.0,''95331F4A-7AD6-45C2-B853-C278012C5525'','+Zoom_Rate+',''93996CD7-B043-4440-9037-4B82BB5207DA'','+Zoom_Rate+',1.0)';
+      Result:=' DECODE('+Bill_UNIT_ID+',''13F817A7-9472-48CF-91CD-27125E077FEB'',1.0,''95331F4A-7AD6-45C2-B853-C278012C5525'','+Zoom_Rate+',''93996CD7-B043-4440-9037-4B82BB5207DA'','+Zoom_Rate+',1.0)';
     end;
   end;
+end;
+
+function TRimSyncFactory.GetPlugInRunFlag: Boolean;
+var
+  PlugInIDS: string;
+begin
+  result:=False;
+  //读取控制的IDS
+  PlugInIDS:=ReadConfig('PARAMS','PlugInID','000000000000000000000000');   //启用哪些插件上报
+  if PlugInIDS='' then PlugInIDS:='000000000000000000000000';
+  if Copy(PlugInIDS,PlugInIdx,1)='1' then
+    result:=true;
+end;
+
+procedure TRimSyncFactory.SetPlugInIdx(const Value: integer);
+begin
+  FPlugInIdx := Value;
 end;
 
 end.

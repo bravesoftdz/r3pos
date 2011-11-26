@@ -445,9 +445,10 @@ function TPlugInBase.GetDefaultUnitCalc(AliasTable: string): string;
 var
   AliasTab,Zoom_Rate: string;
 begin
+  AliasTab:='';
   if trim(AliasTable)<>'' then
     AliasTab:=trim(AliasTable)+'.';
-  Zoom_Rate:=ParseSQL(FDBFactor.iDbType,'nvl('+AliasTab+'.ZOOM_RATE,1.0)');
+  Zoom_Rate:=ParseSQL(FDBFactor.iDbType,'nvl('+AliasTab+'ZOOM_RATE,1.0)');
   result:=
     'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+             //默认单位为 计量单位
         ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*'+Zoom_Rate+'*1.00 '+  //默认单位为 小单位

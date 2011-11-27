@@ -311,7 +311,28 @@ end;
 { TDbOrder }
 
 function TDbOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
+var
+  SQL:string;
 begin
+  if FieldbyName('FROM_ID').AsString <> '' then
+     begin
+       SQL :=
+        'UPDATE MKT_DEMANDDATA '+
+        'SET '+
+        '  SHIP_AMOUNT = ( '+
+        '    SELECT '+
+        '      sum( b.CALC_AMOUNT ) '+
+        '    FROM  '+
+        '      SAL_SALESORDER a ,'+
+        '      SAL_SALESDATA b '+
+        '    WHERE '+
+        '      a.TENANT_ID = b.TENANT_ID AND a.SALES_ID = b.SALES_ID AND a.TENANT_ID = MKT_DEMANDDATA.TENANT_ID AND a.FROM_ID = MKT_DEMANDDATA.DEMA_ID '+
+        '      AND b.GODS_ID = MKT_DEMANDDATA.GODS_ID AND b.BATCH_NO = MKT_DEMANDDATA.BATCH_NO '+
+        '      AND b.UNIT_ID = MKT_DEMANDDATA.UNIT_ID AND b.PROPERTY_01 = MKT_DEMANDDATA.PROPERTY_01 AND b.PROPERTY_02 = MKT_DEMANDDATA.PROPERTY_02 AND b.IS_PRESENT = MKT_DEMANDDATA.IS_PRESENT  '+
+        '  ) '+
+        'WHERE DEMA_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
+         AGlobal.ExecSQL(SQL,self);
+     end;
 end;
 
 function TDbOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
@@ -424,6 +445,7 @@ begin
   inherited;
   lock := false;
   SelectSQL.Text :=
+               'select ji.*,i.DEMA_ID as DEMA_GLIDE_NO from ('+
                'select jh.*,h.USER_NAME as STOCK_USER_TEXT from ('+
                'select jg.*,g.GUIDE_USER as STOCK_USER,g.STOCK_MNY from ('+
                'select jf.*,f.USER_NAME as GUIDE_USER_TEXT from ('+
@@ -440,7 +462,8 @@ begin
                ' left outer join CA_SHOP_INFO e on je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
                ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.GUIDE_USER=f.USER_ID ) jg '+
                ' left outer join STK_STOCKORDER g on jg.TENANT_ID=g.TENANT_ID and jg.SALES_ID=g.STOCK_ID and jg.SALES_TYPE=g.STOCK_TYPE ) jh '+
-               ' left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.STOCK_USER=h.USER_ID ';
+               ' left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.STOCK_USER=h.USER_ID ) ji '+
+               ' left outer join MKT_DEMANDORDER i on i.TENANT_ID=ji.TENANT_ID and ji.FROM_ID=i.DEMA_ID ';
   IsSQLUpdate := True;
   Str := 'insert into SAL_SALESORDER(TENANT_ID,SHOP_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,ADVA_MNY,PAY_A,PAY_B,PAY_C,'+
       'PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,TIME_STAMP,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,IC_CARDNO,UNION_ID) '

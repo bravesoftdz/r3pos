@@ -8,7 +8,7 @@ uses
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar,
   Grids, DBGridEh, DB, RzLabel, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, zBase, ExtCtrls, RzPanel, RzTabs, DBGrids, cxButtonEdit,
-  zrComboBoxList;
+  zrComboBoxList, cxSpinEdit;
 
 const
   //国家烟草供应链ID:1000006
@@ -38,6 +38,9 @@ type
     SaveQry: TZQuery;
     NT_GOODSINFO: TZQuery;
     edt_R3Gods: TcxTextEdit;
+    Label4: TLabel;
+    edtZOOM_RATE: TcxSpinEdit;
+    Label5: TLabel;
     procedure btnCancelClick(Sender: TObject);
     procedure Grid_RelationDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh;State: TGridDrawState);
     procedure Grid_RelationCellClick(Column: TColumnEh);
@@ -49,6 +52,7 @@ type
     vType: integer;
     ReRun: integer;
     FSecond_IDS: string;
+    function  GetR3ZOOM_RATE(SecondID: string): Real;
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     function  CheckIsExistsRelation(var MsgStr: string): Boolean;
     procedure InitParams(vData: OleVariant);
@@ -247,6 +251,8 @@ begin
   btnOK.Left:=btnOK.Left-15;
   btnOK.Width:=btnOK.Width+15;
   btnOK.Caption:='取消对照关系';
+  edtZOOM_RATE.Properties.ReadOnly:=true;
+  edtZOOM_RATE.Style.Color:=$00E0E0E0;
   FInObj:= Aobj; //外面传入
 
   //手工对照查看对照关系：
@@ -259,7 +265,7 @@ begin
   end;
   StrList:=TStringList.Create;
   CdsTable.Close;
-  CdsTable.SQL.Text:='select GODS_ID,GODS_CODE,GODS_NAME,SECOND_ID,COMM_ID,BARCODE from VIW_GOODSINFO '+
+  CdsTable.SQL.Text:='select GODS_ID,GODS_CODE,GODS_NAME,SECOND_ID,COMM_ID,BARCODE,ZOOM_RATE from VIW_GOODSINFO '+
                ' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RELATION_ID='+IntToStr(NT_RELATION_ID)+Cnd;
   Factor.Open(CdsTable);
   if (CdsTable.Active) and (CdsTable.RecordCount=1) then
@@ -269,6 +275,7 @@ begin
     edt_R3Gods.Text:='编码:'+CdsTable.fieldbyName('GODS_CODE').AsString+'， 名称：'+CdsTable.fieldbyName('GODS_NAME').AsString+'， 条码:'+CdsTable.fieldbyName('BARCODE').AsString;
     COMM_ID:=trim(CdsTable.fieldbyName('COMM_ID').AsString);
     MainID:=trim(CdsTable.fieldbyName('SECOND_ID').AsString);
+    edtZOOM_RATE.Value:=CdsTable.fieldbyName('ZOOM_RATE').AsFloat;
 
     case Factor.iDbType of
      0:
@@ -283,8 +290,8 @@ begin
       end;
      4:
       begin
-        Cnd:=' and LOCATE(SECOND_ID,'''+COMM_ID+''')>0 ';
-        vFields:='(case when LOCATE('','' || SECOND_ID || '','','''+COMM_ID+''',1,1)>0 then 1 else 0 end) as IsFlag ';
+        Cnd:=' and LOCATE('','' || SECOND_ID || '','','''+COMM_ID+''')>0 ';
+        vFields:='(case when LOCATE('','' || SECOND_ID || '','','''+COMM_ID+''')>0 then 1 else 0 end) as IsFlag ';
       end;
     end;
     CdsTable.Close;
@@ -321,8 +328,7 @@ begin
   //保存
   SaveQry.Edit;
   //if SaveQry.FieldByName('ROWS_ID').AsString='' then //返回空记录
-  //begin
-
+  //begin  
   SaveQry.FieldByName('ROWS_ID').AsString:=NewId('');
   SaveQry.FieldByName('GODS_ID').AsString:=R3_GODS_ID.AsString;
   SaveQry.FieldByName('COMM').AsString:='00';
@@ -339,6 +345,7 @@ begin
   SaveQry.FieldByName('SORT_ID6').AsString:=CdsTable.fieldbyName('SORT_ID6').AsString;
   SaveQry.FieldByName('NEW_INPRICE').AsFloat:=CdsTable.fieldbyName('NEW_INPRICE').AsFloat;
   SaveQry.FieldByName('NEW_OUTPRICE').AsFloat:=CdsTable.fieldbyName('NEW_OUTPRICE').AsFloat;
+  SaveQry.FieldByName('ZOOM_RATE').AsFloat:=edtZOOM_RATE.Value; 
   SaveQry.Post;
 
   //提交
@@ -380,6 +387,21 @@ begin
    1: DoHandSetRelation;
    2: DoCancelHandSetRelation;
   end;
+end;
+
+function TfrmRelationHandSet.GetR3ZOOM_RATE(SecondID: string): Real;
+var
+  vID: string;
+  Rs: TZQuery;
+begin
+  result:=1.0;
+  vID:=trim(SecondID);
+  Rs:=Global.GetZQueryFromName('PUB_GOODSINFO');
+  if (Rs<>nil) and (Rs.Active) then
+  begin
+    if Rs.Locate('SECOND_ID',vID,[]) then
+      Result:=Rs.fieldbyName('ZOOM_RATE').AsFloat;
+  end;     
 end;
 
 end.

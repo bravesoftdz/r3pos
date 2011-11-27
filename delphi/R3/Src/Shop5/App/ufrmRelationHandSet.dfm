@@ -3,16 +3,16 @@ inherited frmRelationHandSet: TfrmRelationHandSet
   Top = 164
   BorderStyle = bsDialog
   Caption = #25163#24037#23545#29031#21367#28895#26723#26696
-  ClientHeight = 317
-  ClientWidth = 481
+  ClientHeight = 341
+  ClientWidth = 483
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 12
   object TitlePanel: TPanel [0]
     Left = 0
     Top = 0
-    Width = 481
-    Height = 56
+    Width = 483
+    Height = 75
     Align = alTop
     BevelOuter = bvNone
     Color = clWhite
@@ -31,14 +31,14 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     end
     object Bevel2: TBevel
       Left = 0
-      Top = 54
-      Width = 481
+      Top = 73
+      Width = 483
       Height = 2
       Align = alBottom
     end
     object HintL: TLabel
       Left = 15
-      Top = 10
+      Top = 8
       Width = 92
       Height = 12
       Caption = #23545#29031'R3'#30340#21830#21697#65306
@@ -51,7 +51,7 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     end
     object Label1: TLabel
       Left = 7
-      Top = 34
+      Top = 27
       Width = 99
       Height = 12
       Caption = 'Rim'#20027#23545#29031#21830#21697#65306
@@ -64,7 +64,7 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     end
     object Label2: TLabel
       Left = 466
-      Top = 9
+      Top = 7
       Width = 7
       Height = 12
       Caption = '*'
@@ -77,7 +77,7 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     end
     object Label3: TLabel
       Left = 466
-      Top = 32
+      Top = 27
       Width = 7
       Height = 12
       Caption = '*'
@@ -88,9 +88,35 @@ inherited frmRelationHandSet: TfrmRelationHandSet
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object Label4: TLabel
+      Left = 2
+      Top = 50
+      Width = 104
+      Height = 12
+      Caption = #26465#21333#20301#25442#31639#27604#20363#65306
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label5: TLabel
+      Left = 173
+      Top = 50
+      Width = 210
+      Height = 12
+      Caption = '(R3'#26465#30340#25968#37327' x '#25442#31639#27604#20363' = Rim'#26465#25968#37327')'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clRed
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
     object edt_R3Gods: TcxTextEdit
       Left = 108
-      Top = 6
+      Top = 3
       Width = 355
       Height = 20
       TabOrder = 2
@@ -100,7 +126,7 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     object R3_GODS_ID: TzrComboBoxList
       Tag = 100
       Left = 108
-      Top = 6
+      Top = 3
       Width = 355
       Height = 20
       TabStop = False
@@ -150,7 +176,7 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     end
     object Edt_RimGods: TcxTextEdit
       Left = 108
-      Top = 29
+      Top = 24
       Width = 355
       Height = 20
       Properties.ReadOnly = True
@@ -158,11 +184,22 @@ inherited frmRelationHandSet: TfrmRelationHandSet
       TabOrder = 1
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
     end
+    object edtZOOM_RATE: TcxSpinEdit
+      Left = 108
+      Top = 46
+      Width = 63
+      Height = 20
+      Properties.MaxValue = 100.000000000000000000
+      Properties.ValueType = vtFloat
+      TabOrder = 3
+      Value = 1.000000000000000000
+      ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+    end
   end
   object BottonPanel: TPanel [1]
     Left = 0
-    Top = 275
-    Width = 481
+    Top = 299
+    Width = 483
     Height = 42
     Align = alBottom
     BevelOuter = bvNone
@@ -171,7 +208,7 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     object Bevel1: TBevel
       Left = 1
       Top = 1
-      Width = 479
+      Width = 481
       Height = 2
       Align = alTop
     end
@@ -202,9 +239,9 @@ inherited frmRelationHandSet: TfrmRelationHandSet
   end
   object RzPage: TRzPageControl [2]
     Left = 0
-    Top = 56
-    Width = 481
-    Height = 219
+    Top = 75
+    Width = 483
+    Height = 224
     ActivePage = TabUpResult
     Align = alClient
     TabHeight = 20
@@ -217,8 +254,8 @@ inherited frmRelationHandSet: TfrmRelationHandSet
       object RzPanel1: TRzPanel
         Left = 0
         Top = 0
-        Width = 477
-        Height = 192
+        Width = 479
+        Height = 197
         Align = alClient
         BorderOuter = fsNone
         BorderWidth = 5
@@ -226,8 +263,8 @@ inherited frmRelationHandSet: TfrmRelationHandSet
         object Grid_Relation: TDBGridEh
           Left = 5
           Top = 5
-          Width = 467
-          Height = 182
+          Width = 469
+          Height = 187
           Align = alClient
           AllowedOperations = [alopUpdateEh]
           Flat = True
@@ -312,12 +349,12 @@ inherited frmRelationHandSet: TfrmRelationHandSet
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 384
-    Top = 48
+    Left = 432
+    Top = 96
   end
   inherited actList: TActionList
-    Left = 344
-    Top = 40
+    Left = 400
+    Top = 96
   end
   object CdsTable: TZQuery
     FieldDefs = <>

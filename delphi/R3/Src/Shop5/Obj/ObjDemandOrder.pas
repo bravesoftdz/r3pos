@@ -48,6 +48,14 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  TDemandOrderForDb=class(TZFactory)
+  public
+    procedure InitClass; override;
+  end;
+  TDemandDataForDb=class(TZFactory)
+  public
+    procedure InitClass; override;
+  end;
 implementation
 
 { TDemandData }
@@ -85,18 +93,18 @@ begin
   inherited;
   SelectSQL.Text :=
   'select j.TENANT_ID,j.SHOP_ID,j.SEQNO,j.DEMA_ID,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.LOCUS_NO,j.BOM_ID,j.BATCH_NO,j.IS_PRESENT,j.UNIT_ID,j.AMOUNT,j.ORG_PRICE,j.APRICE,b.GODS_NAME,b.GODS_CODE,'+
-  'j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,j.REMARK from MKT_DEMANDDATA j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.DEMA_ID=:DEMA_ID order by SEQNO';
+  'j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,j.SHIP_AMOUNT,j.REMARK from MKT_DEMANDDATA j left outer join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.DEMA_ID=:DEMA_ID order by SEQNO';
   IsSQLUpdate := True;
   Str :=
   'insert into MKT_DEMANDDATA(TENANT_ID,SHOP_ID,SEQNO,DEMA_ID,GODS_ID,PROPERTY_01,PROPERTY_02,LOCUS_NO,BOM_ID,BATCH_NO,IS_PRESENT,UNIT_ID,AMOUNT,'+
-  'ORG_PRICE,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,REMARK) VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:DEMA_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,'+
-  ':LOCUS_NO,:BOM_ID,:BATCH_NO,:IS_PRESENT,:UNIT_ID,:AMOUNT,:ORG_PRICE,:APRICE,:AMONEY,:AGIO_RATE,:AGIO_MONEY,:CALC_AMOUNT,:CALC_MONEY,:REMARK)';
+  'ORG_PRICE,APRICE,AMONEY,AGIO_RATE,AGIO_MONEY,CALC_AMOUNT,CALC_MONEY,SHIP_AMOUNT,REMARK) VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:DEMA_ID,:GODS_ID,:PROPERTY_01,:PROPERTY_02,'+
+  ':LOCUS_NO,:BOM_ID,:BATCH_NO,:IS_PRESENT,:UNIT_ID,:AMOUNT,:ORG_PRICE,:APRICE,:AMONEY,:AGIO_RATE,:AGIO_MONEY,:CALC_AMOUNT,:CALC_MONEY,:SHIP_AMOUNT,:REMARK)';
   InsertSQL.Text := Str;
   Str :=
   'update MKT_DEMANDDATA set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SEQNO=:SEQNO,DEMA_ID=:DEMA_ID,GODS_ID=:GODS_ID,PROPERTY_01=:PROPERTY_01,'+
   'PROPERTY_02=:PROPERTY_02,LOCUS_NO=:LOCUS_NO,BOM_ID=:BOM_ID,BATCH_NO=:BATCH_NO,IS_PRESENT=:IS_PRESENT,UNIT_ID=:UNIT_ID,AMOUNT=:AMOUNT,'+
   'ORG_PRICE=:ORG_PRICE,APRICE=:APRICE,AMONEY=:AMONEY,AGIO_RATE=:AGIO_RATE,AGIO_MONEY=:AGIO_MONEY,CALC_AMOUNT=:CALC_AMOUNT,CALC_MONEY=:CALC_MONEY,'+
-  'REMARK=:REMARK where TENANT_ID=:OLD_TENANT_ID and DEMA_ID=:OLD_DEMA_ID and SEQNO=:OLD_SEQNO';
+  'SHIP_AMOUNT=:SHIP_AMOUNT,REMARK=:REMARK where TENANT_ID=:OLD_TENANT_ID and DEMA_ID=:OLD_DEMA_ID and SEQNO=:OLD_SEQNO';
   UpdateSQL.Text := Str;
   Str := 'delete from MKT_DEMANDDATA where TENANT_ID=:OLD_TENANT_ID and DEMA_ID=:OLD_DEMA_ID and SEQNO=:OLD_SEQNO';
   DeleteSQL.Text := Str;
@@ -200,10 +208,10 @@ procedure TDemandOrderGetPrior.InitClass;
 begin
   inherited;
   case iDbType of
-  0,3:SelectSQL.Text := 'select top 1 DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC';
-  1:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC ) where ROWNUM=1';
-  4:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC ) tp fetch first 1 rows only';
-  5:SelectSQL.Text := 'select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC limit 1';
+  0,3:SelectSQL.Text := 'select top 1 DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO DESC';
+  1:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO DESC ) where ROWNUM=1';
+  4:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO DESC ) tp fetch first 1 rows only';
+  5:SelectSQL.Text := 'select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO DESC limit 1';
   end;
 end;
 
@@ -213,10 +221,10 @@ procedure TDemandOrderGetNext.InitClass;
 begin
   inherited;
   case iDbType of
-  0,3:SelectSQL.Text := 'select top 1 DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
-  1:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) where ROWNUM=1';
-  4:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
-  5:SelectSQL.Text := 'select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
+  0,3:SelectSQL.Text := 'select top 1 DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO';
+  1:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO) where ROWNUM=1';
+  4:SelectSQL.Text := 'select * from (select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO) tp fetch first 1 rows only';
+  5:SelectSQL.Text := 'select DEMA_ID from MKT_DEMANDORDER where TENANT_ID=:TENANT_ID and SHOP_ID=:SHOP_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO and DEMA_TYPE=:DEMA_TYPE order by GLIDE_NO limit 1';
   end;
 end;
 
@@ -281,6 +289,30 @@ begin
   end;
 end;
 
+{ TDemandDataForStock }
+
+procedure TDemandDataForDb.InitClass;
+begin
+  SelectSQL.Text :=
+  ParseSQL(iDbType,
+  'select j.TENANT_ID,j.SHOP_ID,j.SEQNO,j.DEMA_ID,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.LOCUS_NO,j.BOM_ID,'+
+  'j.BATCH_NO,j.IS_PRESENT,j.UNIT_ID,isnull(j.AMOUNT,0)-isnull(j.SHIP_AMOUNT,0) as AMOUNT,j.ORG_PRICE,j.APRICE,b.GODS_NAME,b.GODS_CODE,'+
+  'j.AMONEY,j.AGIO_RATE,j.AGIO_MONEY,j.CALC_AMOUNT,j.CALC_MONEY,j.REMARK from MKT_DEMANDDATA j left outer join VIW_GOODSINFO '+
+  ' b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.DEMA_ID=:DEMA_ID order by SEQNO');
+end;
+
+{ TDemandOrderForDb }
+
+procedure TDemandOrderForDb.InitClass;
+begin
+  SelectSQL.Text :=
+  ParseSQL(iDbType,
+  'select ja.TENANT_ID,ja.SHOP_ID as CLIENT_ID,ja.DEMA_ID,ja.DEMA_TYPE,ja.GLIDE_NO,ja.DEMA_DATE,ja.CLIENT_ID,'+
+  'ja.DEMA_USER,ja.CHK_DATE,ja.CHK_USER,ja.REMARK,ja.CREA_DATE,ja.CREA_USER,ja.DEMA_AMT,ja.DEMA_MNY,ja.COMM,'+
+  'ja.TIME_STAMP,a.USER_NAME as CHK_USER_TEXT from MKT_DEMANDORDER ja left join VIW_USERS a on ja.TENANT_ID=a.TENANT_ID '+
+  ' and ja.CHK_USER=a.USER_ID where ja.TENANT_ID=:TENANT_ID and ja.DEMA_ID=:DEMA_ID');
+end;
+
 initialization
   RegisterClass(TDemandOrder);
   RegisterClass(TDemandData);
@@ -288,6 +320,8 @@ initialization
   RegisterClass(TDemandOrderUnAudit);
   RegisterClass(TDemandOrderGetPrior);
   RegisterClass(TDemandOrderGetNext);
+  RegisterClass(TDemandDataForDb);
+  RegisterClass(TDemandOrderForDb);
 finalization
   UnRegisterClass(TDemandOrder);
   UnRegisterClass(TDemandData);
@@ -295,4 +329,6 @@ finalization
   UnRegisterClass(TDemandOrderUnAudit);
   UnRegisterClass(TDemandOrderGetPrior);
   UnRegisterClass(TDemandOrderGetNext);
+  UnRegisterClass(TDemandDataForDb);
+  UnRegisterClass(TDemandOrderForDb);
 end.

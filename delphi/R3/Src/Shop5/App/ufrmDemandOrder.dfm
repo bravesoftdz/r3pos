@@ -53,6 +53,22 @@ inherited frmDemandOrder: TfrmDemandOrder
         Height = 12
         Caption = #38656#27714#31867#22411
       end
+      object Label8: TLabel [5]
+        Left = 561
+        Top = 62
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #23457#26680#26085#26399
+      end
+      object Label9: TLabel [6]
+        Left = 561
+        Top = 39
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #23457#26680#29992#25143
+      end
       inherited RzPanel4: TRzPanel
         Height = 107
         TabOrder = 4
@@ -194,30 +210,32 @@ inherited frmDemandOrder: TfrmDemandOrder
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 5
       end
+      object edtCHK_DATE: TcxTextEdit
+        Tag = 1
+        Left = 616
+        Top = 58
+        Width = 103
+        Height = 20
+        TabOrder = 6
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtCHK_USER_TEXT: TcxTextEdit
+        Tag = 1
+        Left = 616
+        Top = 35
+        Width = 103
+        Height = 20
+        TabOrder = 7
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
     end
     inherited RzPanel3: TRzPanel
       Top = 434
       Width = 778
       Height = 49
       TabOrder = 2
-      object Label8: TLabel
-        Left = 28
-        Top = 9
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #23457#26680#26085#26399
-      end
-      object Label9: TLabel
-        Left = 204
-        Top = 9
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #23457#26680#29992#25143
-      end
       object Label1: TLabel
-        Left = 373
+        Left = 21
         Top = 9
         Width = 48
         Height = 12
@@ -229,27 +247,78 @@ inherited frmDemandOrder: TfrmDemandOrder
         Font.Style = []
         ParentFont = False
       end
-      object edtCHK_DATE: TcxTextEdit
-        Tag = 1
-        Left = 83
-        Top = 5
-        Width = 99
-        Height = 20
-        TabOrder = 0
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      object Label3: TLabel
+        Left = 197
+        Top = 9
+        Width = 48
+        Height = 12
+        Caption = #21512#29702#24211#23384
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
       end
-      object edtCHK_USER_TEXT: TcxTextEdit
-        Tag = 1
-        Left = 259
-        Top = 5
-        Width = 98
-        Height = 20
-        TabOrder = 1
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      object Label4: TLabel
+        Left = 365
+        Top = 9
+        Width = 48
+        Height = 12
+        Caption = #23433#20840#24211#23384
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label7: TLabel
+        Left = 541
+        Top = 9
+        Width = 48
+        Height = 12
+        Caption = #26085#22343#38144#37327
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
       end
       object fndMY_AMOUNT: TcxTextEdit
         Tag = 1
-        Left = 427
+        Left = 75
+        Top = 5
+        Width = 98
+        Height = 20
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clMaroon
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object cxTextEdit1: TcxTextEdit
+        Tag = 1
+        Left = 251
+        Top = 5
+        Width = 98
+        Height = 20
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clMaroon
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object cxTextEdit2: TcxTextEdit
+        Tag = 1
+        Left = 419
         Top = 5
         Width = 98
         Height = 20
@@ -260,6 +329,21 @@ inherited frmDemandOrder: TfrmDemandOrder
         Style.Font.Name = #23435#20307
         Style.Font.Style = [fsBold]
         TabOrder = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object cxTextEdit3: TcxTextEdit
+        Tag = 1
+        Left = 595
+        Top = 5
+        Width = 98
+        Height = 20
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clMaroon
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end

@@ -20,10 +20,6 @@ type
     edtREMARK: TcxTextEdit;
     edtDEMA_USER: TzrComboBoxList;
     Label6: TLabel;
-    Label8: TLabel;
-    edtCHK_DATE: TcxTextEdit;
-    edtCHK_USER_TEXT: TcxTextEdit;
-    Label9: TLabel;
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     actCustomer: TAction;
@@ -35,6 +31,16 @@ type
     N2: TMenuItem;
     Label1: TLabel;
     fndMY_AMOUNT: TcxTextEdit;
+    Label8: TLabel;
+    Label9: TLabel;
+    edtCHK_DATE: TcxTextEdit;
+    edtCHK_USER_TEXT: TcxTextEdit;
+    Label3: TLabel;
+    cxTextEdit1: TcxTextEdit;
+    Label4: TLabel;
+    cxTextEdit2: TcxTextEdit;
+    Label7: TLabel;
+    cxTextEdit3: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);

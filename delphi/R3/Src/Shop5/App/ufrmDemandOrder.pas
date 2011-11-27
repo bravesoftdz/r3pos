@@ -201,7 +201,6 @@ begin
     begin
       Label5.Caption := '²Ö¿âÃû³Æ';
     end;
-  FindColumn('AGIO_RATE').Visible := False;
 
 end;
 
@@ -266,7 +265,7 @@ begin
   edtDEMA_USER.KeyValue := Global.UserID;
   edtDEMA_USER.Text := Global.UserName;
 
-  Caption := edtDEMA_TYPE.Text + 'ÉêÇëµ¥';
+  Caption := edtDEMA_TYPE.Text + 'µ¥';
 
   InitRecord;
   if edtSHOP_ID.CanFocus and Visible then edtSHOP_ID.SetFocus;
@@ -860,7 +859,7 @@ begin
 
   if edtDEMA_TYPE.Properties.Items.Count > 0 then
      edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',DemandType);
-  Caption := edtDEMA_TYPE.Text + 'ÉêÇëµ¥';
+  Caption := edtDEMA_TYPE.Text + 'µ¥';
 end;
 
 procedure TfrmDemandOrder.N1Click(Sender: TObject);

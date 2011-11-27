@@ -375,16 +375,16 @@ inherited frmDbOrderList: TfrmDbOrderList
   end
   inherited RzPanel4: TRzPanel
     Width = 837
-    inherited Image1: TImage
-      Left = 581
-      Width = 236
-    end
     inherited Image3: TImage
       Left = 581
-      Width = 236
+      Width = 0
     end
     inherited Image14: TImage
       Left = 817
+    end
+    inherited Image1: TImage
+      Left = 581
+      Width = 236
     end
     inherited rzPanel5: TPanel
       Left = 581

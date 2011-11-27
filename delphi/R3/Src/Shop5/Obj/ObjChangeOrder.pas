@@ -15,6 +15,7 @@ type
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
   TChangeData=class(TZFactory)
@@ -257,6 +258,31 @@ begin
 end;
 
 { TChangeOrder }
+
+function TChangeOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
+var
+  SQL:string;
+begin
+  if FieldbyName('FROM_ID').AsString <> '' then
+     begin
+       SQL :=
+        'UPDATE MKT_DEMANDDATA '+
+        'SET '+
+        '  FNSH_AMOUNT = ( '+
+        '    SELECT '+
+        '      sum( b.CALC_AMOUNT ) '+
+        '    FROM  '+
+        '      STO_CHANGEORDER a ,'+
+        '      STO_CHANGEDATA b '+
+        '    WHERE '+
+        '      a.TENANT_ID = b.TENANT_ID AND a.CHANGE_ID = b.CHANGE_ID AND a.TENANT_ID = MKT_DEMANDDATA.TENANT_ID AND a.FROM_ID = MKT_DEMANDDATA.DEMA_ID '+
+        '      AND b.GODS_ID = MKT_DEMANDDATA.GODS_ID AND b.BATCH_NO = MKT_DEMANDDATA.BATCH_NO '+
+        '      AND b.UNIT_ID = MKT_DEMANDDATA.UNIT_ID AND b.PROPERTY_01 = MKT_DEMANDDATA.PROPERTY_01 AND b.PROPERTY_02 = MKT_DEMANDDATA.PROPERTY_02 AND b.IS_PRESENT = MKT_DEMANDDATA.IS_PRESENT  '+
+        '  ) '+
+        'WHERE DEMA_ID = :FROM_ID AND TENANT_ID = :TENANT_ID';
+         AGlobal.ExecSQL(SQL,self);
+     end;
+end;
 
 function TChangeOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin

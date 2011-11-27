@@ -46,6 +46,8 @@ type
     edtTELEPHONE: TcxTextEdit;
     Label16: TLabel;
     edtLINKMAN: TcxTextEdit;
+    edtDEMA_GLIDE_NO: TcxButtonEdit;
+    Label5: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -60,6 +62,8 @@ type
     procedure actCustomerExecute(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure actOKExecute(Sender: TObject);
+    procedure edtDEMA_GLIDE_NOPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     { Private declarations }
     //进位法则
@@ -74,6 +78,7 @@ type
     function IsKeyPress:boolean;override;
 
     procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
+    procedure DemaFrom(id:String);
     function CheckInput:boolean;override;
   public
     { Public declarations }
@@ -113,7 +118,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog,ufrmDbOkDialog;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmGoodsInfo,ufrmUsersInfo,
+     ufrmCodeInfo,uframeListDialog,ufrmDbOkDialog,ufrmDemandOrder,ufrmFindOrder;
 {$R *.dfm}
 
 procedure TfrmDbOrder.ReadHeader;
@@ -686,7 +692,74 @@ begin
 end;
 
 procedure TfrmDbOrder.WMFillData(var Message: TMessage);
+var
+  frmDemandOrder:TfrmDemandOrder;
+  i:integer;
 begin
+  if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
+  frmDemandOrder := TfrmDemandOrder(Message.WParam);
+  with TfrmDemandOrder(frmDemandOrder) do
+    begin
+      self.edtCLIENT_ID.KeyValue := edtSHOP_ID.KeyValue;
+      self.edtCLIENT_ID.Text := edtSHOP_ID.Text;
+      //self.edtSHOP_ID.KeyValue := edtSHOP_ID.KeyValue;
+      //self.edtSHOP_ID.Text := edtSHOP_ID.Text;
+      self.edtSTOCK_USER.KeyValue := edtDEMA_USER.KeyValue;
+      self.edtSTOCK_USER.Text := edtDEMA_USER.Text;
+      //self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
+      //self.edtDEPT_ID.Text := edtDEPT_ID.Text;
+      self.AObj.FieldbyName('FROM_ID').AsString := AObj.FieldbyName('DEMA_ID').AsString;
+      //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
+      self.edtDEMA_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
+      //self.edtADVA_MNY.Text := edtADVA_MNY.Text;
+      self.edtREMARK.Text := edtREMARK.Text;
+      self.Locked := False;
+
+      case Message.LParam of
+      0:DemaFrom(AObj.FieldbyName('DEMA_ID').AsString);
+      1:
+        begin
+          self.edtTable.DisableControls;
+          try
+          self.edtProperty.Close;
+          self.edtTable.Close;
+          self.edtProperty.CreateDataSet;
+          self.edtTable.CreateDataSet;
+          self.RowID := 0;
+          self.edtTable.Append;
+          for i:=0 to self.edtTable.Fields.Count -1 do
+            begin
+               if edtTable.FindField(self.edtTable.Fields[i].FieldName)<>nil then
+                  self.edtTable.Fields[i].Value := edtTable.FieldbyName(self.edtTable.Fields[i].FieldName).Value;
+            end;
+          inc(self.RowID);
+          self.edtTable.FieldbyName('SEQNO').AsInteger := self.RowID;
+          self.edtTable.FieldbyName('BARCODE').AsString := self.EnCodeBarcode;
+          self.edtTable.Post;
+
+          edtProperty.Filtered := false;
+          edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
+          edtProperty.Filtered := true;
+
+          edtProperty.First;
+          while not edtProperty.Eof do
+            begin
+              self.edtProperty.Append;
+              for i:=0 to self.edtProperty.Fields.Count -1 do
+                self.edtProperty.Fields[i].Value := edtProperty.FieldbyName(self.edtProperty.Fields[i].FieldName).Value;
+              self.edtProperty.FieldByName('SEQNO').AsInteger := self.edtTable.FieldbyName('SEQNO').AsInteger;
+              self.edtProperty.Post;
+
+              edtProperty.Next;
+            end;
+          finally
+            self.edtTable.EnableControls;
+          end;
+          self.Calc;
+        end;
+      end;
+    end;
+  inherited;
 end;
 
 procedure TfrmDbOrder.edtCLIENT_IDSaveValue(Sender: TObject);
@@ -760,6 +833,66 @@ begin
             end;
             if Saved then MessageBox(Handle,'到货确认完毕','友情提示..',MB_OK+MB_ICONINFORMATION);
           end;
+     end;
+end;
+
+procedure TfrmDbOrder.DemaFrom(id: String);
+var
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+   h := TZQuery.Create(nil);
+   d := TZQuery.Create(nil);
+   Params := TftParamList.Create(nil);
+   HObj := TRecord_.Create;
+   try
+      Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+      Params.ParamByName('DEMA_ID').asString := id;
+      Factor.BeginBatch;
+      try
+        Factor.AddBatch(h,'TDemandOrderForDb',Params);
+        Factor.AddBatch(d,'TDemandDataForDb',Params);
+        Factor.OpenBatch;
+        HObj.ReadFromDataSet(h);
+        ReadFromObject(HObj,self);
+        AObj.FieldbyName('FROM_ID').AsString := HObj.FieldbyName('DEMA_ID').AsString;
+        edtDEMA_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+        edtSALES_DATE.Date := Global.SysDate;
+        //AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
+        //edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
+        edtCHK_DATE.Text := '';
+        edtCHK_USER_TEXT.Text := '';
+        //if h.FieldByName('STKBILL_STATUS').AsInteger=0 then
+        //   AObj.FieldByName('ADVA_MNY').AsFloat := HObj.FieldByName('ADVA_MNY').AsFloat
+        //else
+        //   AObj.FieldByName('ADVA_MNY').AsFloat := 0;
+        ReadFrom(d);
+        Calc;
+      except
+        Factor.CancelBatch;
+        Raise;
+      end;
+   finally
+     HObj.Free;
+     Params.Free;
+     h.Free;
+     d.Free;
+   end;
+end;
+
+procedure TfrmDbOrder.edtDEMA_GLIDE_NOPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+var
+  s:string;
+begin
+  inherited;
+  if not IsNull then Raise Exception.Create('已经输入商品了，不能导入订单.');
+  if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入订单.');  
+  s := TfrmFindOrder.FindDialog(self,5,edtSHOP_ID.asString,'');
+  if s<>'' then
+     begin
+       DemaFrom(s);
      end;
 end;
 

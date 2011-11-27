@@ -1,16 +1,16 @@
 inherited frmDbOrder: TfrmDbOrder
-  Left = 199
-  Top = 107
+  Left = 411
+  Top = 325
   Width = 885
   Height = 552
   Caption = #35843#25320#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 869
-    Height = 514
+    Width = 877
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 859
+      Width = 867
       Height = 116
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -91,6 +91,13 @@ inherited frmDbOrder: TfrmDbOrder
         Height = 12
         Alignment = taRightJustify
         Caption = #32852#31995#20154
+      end
+      object Label5: TLabel [10]
+        Left = 582
+        Top = 72
+        Width = 48
+        Height = 12
+        Caption = #30003#35831#21333#21495
       end
       inherited RzPanel4: TRzPanel
         Height = 83
@@ -303,8 +310,8 @@ inherited frmDbOrder: TfrmDbOrder
         MultiSelect = False
       end
       object btnOk: TRzBitBtn
-        Left = 636
-        Top = 73
+        Left = 764
+        Top = 56
         Width = 69
         Height = 28
         Action = actOK
@@ -352,10 +359,23 @@ inherited frmDbOrder: TfrmDbOrder
         TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
+      object edtDEMA_GLIDE_NO: TcxButtonEdit
+        Left = 636
+        Top = 68
+        Width = 121
+        Height = 20
+        Properties.Buttons = <
+          item
+            Default = True
+            Kind = bkEllipsis
+          end>
+        Properties.OnButtonClick = edtDEMA_GLIDE_NOPropertiesButtonClick
+        TabOrder = 12
+      end
     end
     inherited RzPanel3: TRzPanel
-      Top = 410
-      Width = 859
+      Top = 421
+      Width = 867
       Height = 62
       TabOrder = 2
       object Label8: TLabel
@@ -451,8 +471,8 @@ inherited frmDbOrder: TfrmDbOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 154
-      Width = 859
-      Height = 256
+      Width = 867
+      Height = 267
       TabOrder = 3
       Columns = <
         item
@@ -573,15 +593,15 @@ inherited frmDbOrder: TfrmDbOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 121
-      Width = 859
+      Width = 867
     end
     inherited stbHint: TRzPanel
-      Top = 472
-      Width = 859
+      Top = 483
+      Width = 867
     end
     inherited rzHelp: TRzPanel
-      Top = 496
-      Width = 859
+      Top = 507
+      Width = 867
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox

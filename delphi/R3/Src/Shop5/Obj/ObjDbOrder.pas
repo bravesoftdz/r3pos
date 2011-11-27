@@ -445,7 +445,7 @@ begin
   inherited;
   lock := false;
   SelectSQL.Text :=
-               'select ji.*,i.DEMA_ID as DEMA_GLIDE_NO from ('+
+               'select ji.*,i.GLIDE_NO as DEMA_GLIDE_NO from ('+
                'select jh.*,h.USER_NAME as STOCK_USER_TEXT from ('+
                'select jg.*,g.GUIDE_USER as STOCK_USER,g.STOCK_MNY from ('+
                'select jf.*,f.USER_NAME as GUIDE_USER_TEXT from ('+
@@ -463,7 +463,7 @@ begin
                ' left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.GUIDE_USER=f.USER_ID ) jg '+
                ' left outer join STK_STOCKORDER g on jg.TENANT_ID=g.TENANT_ID and jg.SALES_ID=g.STOCK_ID and jg.SALES_TYPE=g.STOCK_TYPE ) jh '+
                ' left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.STOCK_USER=h.USER_ID ) ji '+
-               ' left outer join MKT_DEMANDORDER i on i.TENANT_ID=ji.TENANT_ID and ji.FROM_ID=i.DEMA_ID ';
+               ' left outer join MKT_DEMANDORDER i on i.TENANT_ID=ji.TENANT_ID and ji.FIG_ID=i.DEMA_ID ';
   IsSQLUpdate := True;
   Str := 'insert into SAL_SALESORDER(TENANT_ID,SHOP_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,ADVA_MNY,PAY_A,PAY_B,PAY_C,'+
       'PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,TIME_STAMP,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,IC_CARDNO,UNION_ID) '

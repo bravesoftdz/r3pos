@@ -263,7 +263,7 @@ function TChangeOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
 var
   SQL:string;
 begin
-  if FieldbyName('FROM_ID').AsString <> '' then
+  if FieldbyName('FIG_ID').AsString <> '' then
      begin
        SQL :=
         'UPDATE MKT_DEMANDDATA '+

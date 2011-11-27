@@ -14,13 +14,10 @@ const
 type
   TfrmDemandOrder = class(TframeOrderForm)
     lblSTOCK_DATE: TLabel;
-    lblCLIENT_ID: TLabel;
     Label2: TLabel;
     Label5: TLabel;
-    edtCLIENT_ID: TzrComboBoxList;
     edtDEMA_DATE: TcxDateEdit;
     edtREMARK: TcxTextEdit;
-    edtDEMA_TYPE: TcxComboBox;
     edtDEMA_USER: TzrComboBoxList;
     Label6: TLabel;
     Label8: TLabel;
@@ -31,7 +28,13 @@ type
     cdsDetail: TZQuery;
     actCustomer: TAction;
     Label18: TLabel;
-    RzBitBtn1: TRzBitBtn;
+    edtSHOP_ID: TzrComboBoxList;
+    Label13: TLabel;
+    edtDEMA_TYPE: TcxComboBox;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    Label1: TLabel;
+    fndMY_AMOUNT: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -39,28 +42,27 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns6UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh1Columns7UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtTableAfterPost(DataSet: TDataSet);
-    procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure DBGridEh1Columns4EditButtonClick(Sender: TObject;
       var Handled: Boolean);
     procedure fndGODS_IDAddClick(Sender: TObject);
     procedure fndGODS_IDSaveValue(Sender: TObject);
-    procedure edtCLIENT_IDAddClick(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
-    procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
-    procedure actIsPressentExecute(Sender: TObject);
-    procedure RzBitBtn1Click(Sender: TObject);
+    procedure N1Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure actBatchNoExecute(Sender: TObject);
   private
     { Private declarations }
     //进位法则
     CarryRule:integer;
     //保留小数位
     Deci:integer;
+    FDemandType: String;
     procedure ReadHeader;
     function  CheckCanExport: boolean; override;
     procedure SetdbState(const Value: TDataSetState); override;
+    procedure SetDemandType(const Value: String);
   protected
     procedure SetInputFlag(const Value: integer);override;
     function IsKeyPress:boolean;override;
@@ -90,7 +92,7 @@ type
     procedure ReadFrom(DataSet:TDataSet);override;
     procedure InitPrice(GODS_ID,UNIT_ID:string);override;
     procedure UnitToCalc(UNIT_ID:string);override;
-    //procedure PresentToCalc(Present:integer);override;
+    procedure PresentToCalc(Present:integer);override;
     procedure NewOrder;override;
     procedure EditOrder;override;
     procedure DeleteOrder;override;
@@ -98,11 +100,13 @@ type
     procedure AuditOrder;override;
     procedure CancelOrder;override;
     procedure Open(id:string);override;
+    property DemandType:String read FDemandType write SetDemandType;
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmShopMain,ufrmSupplierInfo,ufrmTenantInfo;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmMain,
+     ufrmUsersInfo,ufrmCodeInfo,uframeListDialog,uframeSelectCustomer,ufrmSalesOrderList,
+     ufrmSalesOrder,ufrmShopMain,ufrmSupplierInfo,ufrmTenantInfo,ufrmChangeOrderList,ufrmDbOrderList;
 {$R *.dfm}
 
 procedure TfrmDemandOrder.ReadHeader;
@@ -160,18 +164,44 @@ begin
   if IsAudit then Raise Exception.Create('已经审核的单据不能修改');
 //  if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   dbState := dsEdit;
-  if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
+  if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
 end;
 
 procedure TfrmDemandOrder.FormCreate(Sender: TObject);
+var rs:TZQuery;
 begin
   inherited;
-  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtDEMA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   //进位法则
   CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
   //保留小数位
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
+  //fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
+  //Label1.Visible := fndMY_AMOUNT.Visible;
+
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''DEMA_TYPE'' ';
+    Factor.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        AObj := TRecord_.Create;
+        AObj.ReadFromDataSet(rs);
+        edtDEMA_TYPE.Properties.Items.AddObject(rs.Fields[1].AsString,AObj); 
+        rs.Next;
+      end;
+  finally
+    rs.Free;
+  end;
+
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label5.Caption := '仓库名称';
+    end;
+  FindColumn('AGIO_RATE').Visible := False;
 
 end;
 
@@ -217,18 +247,29 @@ begin
   inherited;
   Open('');
   dbState := dsInsert;
+  edtSHOP_ID.Properties.ReadOnly := False;
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
+  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+  begin
+    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+    edtSHOP_ID.Properties.ReadOnly := True;
+  end;
+    
   rs := ShopGlobal.GetDeptInfo;
   AObj.FieldbyName('DEMA_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('DEMA_ID').asString;
   gid := '..新增..';// AObj.FieldbyName('GLIDE_NO').asString;
   edtDEMA_DATE.Date := Global.SysDate;
-
+  if edtDEMA_TYPE.Properties.Items.Count > 0 then
+     edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',DemandType);
   edtDEMA_USER.KeyValue := Global.UserID;
   edtDEMA_USER.Text := Global.UserName;
-  //edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
+
+  Caption := edtDEMA_TYPE.Text + '申请单';
 
   InitRecord;
-  if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
+  if edtSHOP_ID.CanFocus and Visible then edtSHOP_ID.SetFocus;
   TabSheet.Caption := '..新建..';
 end;
 
@@ -254,6 +295,7 @@ begin
     dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
+    DemandType := cdsHeader.FieldbyName('DEMA_TYPE').AsString;
     ReadHeader;
     ReadFrom(cdsDetail);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
@@ -267,10 +309,7 @@ begin
     end;}
     if id<>'' then
        begin
-         if trim(edtCLIENT_ID.Text)='' then
-            begin
-              TabSheet.Caption := gid;
-            end;
+         TabSheet.Caption := gid;
        end;
     ShowOweInfo;
   finally
@@ -292,16 +331,18 @@ begin
 
   Saved := false;
   if edtDEMA_DATE.EditValue = null then Raise Exception.Create('填报日期不能为空');
-  if edtDEMA_TYPE.ItemIndex = -1 then Raise Exception.Create('需求类型不能为空');
-  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
+  if edtDEMA_TYPE.ItemIndex<0 then Raise Exception.Create('请选择单据类型');
+  //if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  AObj.FieldbyName('CLIENT_ID').AsString  := IntToStr(Global.TENANT_ID);
   AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  AObj.FieldByName('DEMA_TYPE').AsString := TRecord_(edtDEMA_TYPE.Properties.Items.Objects[edtDEMA_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString;
   Calc;
   AObj.FieldByName('DEMA_AMT').AsFloat := TotalAmt;
   AObj.FieldByName('DEMA_MNY').AsFloat := TotalFee;
@@ -465,53 +506,6 @@ begin
   end;
 end;
 
-procedure TfrmDemandOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var
-  r:real;
-  Params:TLoginParam;
-  allow :boolean;
-  rs,us:TZQuery;
-begin
-  if not ShopGlobal.GetChkRight('12300001',5) then
-     begin
-       if TfrmLogin.doLogin(Params) then
-          begin
-            allow := ShopGlobal.GetChkRight('12300001',6,Params.UserID);
-            if not allow then Raise Exception.Create('你输入的用户没有赠送权限...');
-          end
-       else
-          allow := false;
-     end else allow := true;
-  if allow then
-  begin
-    try
-      if Text='' then
-         r := 0
-      else
-         r := StrtoFloat(Text);
-      if abs(r)>100 then Raise Exception.Create('输入的数值过大，无效');
-      edtTable.Edit;
-    except
-      on E:Exception do
-         begin
-            Text := TColumnEh(Sender).Field.AsString;
-            Value := TColumnEh(Sender).Field.asFloat;
-            MessageBox(Handle,pchar('输入无效折扣率,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-            Exit;
-         end;
-    end;
-    TColumnEh(Sender).Field.asFloat := r;
-    AgioToCalc(r);
-  end
-  else
-  begin
-    Value := TColumnEh(Sender).Field.asFloat;
-    Text := TColumnEh(Sender).Field.AsString;
-    MessageBox(Handle,pchar('你没有修改"需求填报"价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;
-end;
-
 procedure TfrmDemandOrder.edtTableAfterPost(DataSet: TDataSet);
 begin
   inherited;
@@ -540,34 +534,6 @@ begin
     edtTable.Locate('SEQNO',r,[]); 
     edtTable.EnableControls;
   end;
-end;
-
-procedure TfrmDemandOrder.edtCLIENT_IDSaveValue(Sender: TObject);
-var
-  rs:TZQuery;
-begin
-  inherited;
-  if (edtCLIENT_ID.AsString='') and edtCLIENT_ID.Focused and ShopGlobal.GetChkRight('32600001',2) then
-     begin
-       if MessageBox(Handle,'没找到你想查找的供应商是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-       edtCLIENT_ID.OnAddClick(nil);
-       Exit;
-     end;
-   rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
-   if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的供应商没找到,异常错误.');
-   Locked := true;
-   try
-     {if rs.FieldbyName('INVOICE_FLAG').AsInteger > 0 then
-        begin
-          //AObj.FieldbyName('TAX_RATE').AsFloat := rs.FieldbyName('TAX_RATE').AsFloat;
-          edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.FieldbyName('INVOICE_FLAG').AsString);
-          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat*100;
-        end;}
-     Calc;
-   finally
-     Locked := false;
-   end;
-  ShowOweInfo;
 end;
 
 procedure TfrmDemandOrder.AuditOrder;
@@ -679,23 +645,6 @@ begin
   inherited;
 end;
 
-procedure TfrmDemandOrder.edtCLIENT_IDAddClick(Sender: TObject);
-var r:TRecord_;
-begin
-  inherited;
-  r := TRecord_.Create;
-  try
-    if TfrmSupplierInfo.AddDialog(self,r) then
-       begin
-         edtCLIENT_ID.KeyValue := r.FieldbyName('CLIENT_ID').AsString;
-         edtCLIENT_ID.Text := r.FieldbyName('CLIENT_NAME').AsString;
-         edtCLIENT_ID.OnSaveValue(nil);
-       end;
-  finally
-    r.Free;
-  end;
-end;
-
 procedure TfrmDemandOrder.SetInputFlag(const Value: integer);
 begin
   inherited;
@@ -729,12 +678,36 @@ end;
 
 procedure TfrmDemandOrder.ShowInfo;
 var
-  bs:TZQuery;
+  rs,bs:TZQuery;
 begin
+  if not fndMY_AMOUNT.Visible then Exit;
+  fndMY_AMOUNT.Text := '';
   if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
   bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
-
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select sum(AMOUNT) as AMOUNT from STO_STORAGE A where A.GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID and A.BATCH_NO=:BATCH_NO';
+    rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
+    rs.ParamByName('SHOP_ID').AsString := edtSHOP_ID.AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
+    Factor.Open(rs);
+    if not rs.IsEmpty then
+       begin
+         if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
+         else
+         if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
+         else
+            fndMY_AMOUNT.Text := rs.FieldbyName('AMOUNT').AsString;
+       end
+    else
+       fndMY_AMOUNT.Text := '0';
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TfrmDemandOrder.UnitToCalc(UNIT_ID: string);
@@ -750,28 +723,11 @@ begin
 
 end;
 
-procedure TfrmDemandOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
-
-end;
-
 procedure TfrmDemandOrder.CheckInvaid;
 begin
   if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
   //inherited;
 
-end;
-
-procedure TfrmDemandOrder.actIsPressentExecute(Sender: TObject);
-begin
-  case edtTable.FieldbyName('IS_PRESENT').AsInteger of
-  0:PresentToCalc(1);
-  1:PresentToCalc(2);
-  else
-     PresentToCalc(0);
-  end;
 end;
 
 function TfrmDemandOrder.CheckCanExport: boolean;
@@ -782,7 +738,7 @@ end;
 procedure TfrmDemandOrder.SetdbState(const Value: TDataSetState);
 begin
   inherited;
-  //FindColumn('FNSH_AMOUNT').Visible := (Value=dsBrowse);
+  FindColumn('SHIP_AMOUNT').Visible := (Value=dsBrowse);
 end;
 
 procedure TfrmDemandOrder.AddRecord(AObj: TRecord_; UNIT_ID: string;
@@ -860,25 +816,6 @@ begin
   result := not (pos(inttostr(InputFlag),'8')>0);
 end;
 
-procedure TfrmDemandOrder.RzBitBtn1Click(Sender: TObject);
-var Flag:Integer;
-begin
-  inherited;
-  if not edtCLIENT_ID.DataSet.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Exit;
-  Flag := edtCLIENT_ID.DataSet.FieldByName('FLAG').AsInteger;
-  case Flag of
-    0:begin
-      TfrmSupplierInfo.ShowDialog(Self,edtCLIENT_ID.AsString);
-    end;
-    1:begin
-      TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
-    end;
-    3:begin
-      TfrmTenantInfo.ShowDialog(Self,StrToInt(edtCLIENT_ID.AsString));
-    end;
-  end;
-end;
-
 procedure TfrmDemandOrder.PresentToGods;
 var
   r:real;
@@ -915,6 +852,85 @@ begin
       InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
       PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
     end;
+end;
+
+procedure TfrmDemandOrder.SetDemandType(const Value: String);
+begin
+  FDemandType := Value;
+
+  if edtDEMA_TYPE.Properties.Items.Count > 0 then
+     edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',DemandType);
+  Caption := edtDEMA_TYPE.Text + '申请单';
+end;
+
+procedure TfrmDemandOrder.N1Click(Sender: TObject);
+var frmChangeOrderList:TfrmChangeOrderList;
+    frmDbOrderList:TfrmDbOrderList;
+begin
+  inherited;                                                                            
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
+  if DemandType = '1' then
+  begin
+    if not frmMain.FindAction('actfrmDbOrderList').Enabled then Exit;
+    frmMain.FindAction('actfrmDbOrderList').OnExecute(nil);
+    frmDbOrderList := TfrmDbOrderList(frmMain.FindChildForm(TfrmDbOrderList));
+    SendMessage(frmDbOrderList.Handle,WM_EXEC_ORDER,0,2);
+    PostMessage(frmDbOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+  end
+  else if DemandType = '2' then
+  begin
+    if not frmMain.FindAction('actfrmChangeOrderList2').Enabled then Exit;
+    frmMain.FindAction('actfrmChangeOrderList2').OnExecute(nil);
+    frmChangeOrderList := TfrmChangeOrderList(frmMain.FindChildForm(TfrmChangeOrderList));
+    SendMessage(frmChangeOrderList.Handle,WM_EXEC_ORDER,0,2);
+    PostMessage(frmChangeOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+  end;
+  inherited;
+end;
+
+procedure TfrmDemandOrder.N2Click(Sender: TObject);
+var frmChangeOrderList:TfrmChangeOrderList;
+    frmDbOrderList:TfrmDbOrderList;
+begin
+  inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
+  if DemandType = '1' then
+  begin
+    if not frmMain.FindAction('actfrmDbOrderList').Enabled then Exit;
+    frmMain.FindAction('actfrmDbOrderList').OnExecute(nil);
+    frmDbOrderList := TfrmDbOrderList(frmMain.FindChildForm(TfrmDbOrderList));
+    SendMessage(frmDbOrderList.Handle,WM_EXEC_ORDER,0,2);
+    PostMessage(frmDbOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
+  end
+  else if DemandType = '2' then
+  begin
+    if not frmMain.FindAction('actfrmChangeOrderList2').Enabled then Exit;
+    frmMain.FindAction('actfrmChangeOrderList2').OnExecute(nil);
+    frmChangeOrderList := TfrmChangeOrderList(frmMain.FindChildForm(TfrmChangeOrderList));
+    SendMessage(frmChangeOrderList.Handle,WM_EXEC_ORDER,0,2);
+    PostMessage(frmChangeOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
+  end;
+  inherited;
+end;
+
+procedure TfrmDemandOrder.FormShow(Sender: TObject);
+begin
+  inherited;
+//  FindColumn('AGIO_RATE').Visible := False;
+  PopupMenu1.Items[6].Visible := False;
+end;
+
+procedure TfrmDemandOrder.actBatchNoExecute(Sender: TObject);
+begin
+  //
+end;
+
+procedure TfrmDemandOrder.PresentToCalc(Present: integer);
+begin
+  inherited;
+  ShowInfo;
 end;
 
 end.

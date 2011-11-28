@@ -38,6 +38,8 @@ type
     edtTELEPHONE: TcxTextEdit;
     Label16: TLabel;
     edtLINKMAN: TcxTextEdit;
+    Label5: TLabel;
+    edtDEMA_GLIDE_NO: TcxButtonEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -56,6 +58,8 @@ type
     procedure edtDUTY_USERAddClick(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
     procedure edtSHOP_IDSaveValue(Sender: TObject);
+    procedure edtDEMA_GLIDE_NOPropertiesButtonClick(Sender: TObject;
+      AButtonIndex: Integer);
   private
     { Private declarations }
     w:integer;
@@ -63,6 +67,9 @@ type
     procedure SetCodeId(const Value: string);
     procedure ShowInfo;
     procedure SetdbState(const Value: TDataSetState); override;
+  protected
+    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
+    procedure DemaFrom(id:String);
   public
     { Public declarations }
     function CheckInput:boolean;override;
@@ -81,8 +88,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil, uShopGlobal, ufrmGoodsInfo, ufrmUsersInfo
-;
+uses uGlobal,uShopUtil,uDsUtil, uShopGlobal, ufrmGoodsInfo, ufrmUsersInfo, ufrmDemandOrder,
+     ufrmChangeOrderList,ufrmFindOrder, Math;
 {$R *.dfm}
 
 procedure TfrmChangeOrder.CancelOrder;
@@ -127,6 +134,7 @@ begin
     rs.Free;
   end;
 end;
+
 procedure TfrmChangeOrder.DeleteOrder;
 begin
   inherited;
@@ -174,6 +182,7 @@ begin
       SetEditStyle(dsBrowse,edtSHOP_ID.Style);
       edtSHOP_ID.Properties.ReadOnly := True;
     end;
+
   if edtCHANGE_DATE.CanFocus then edtCHANGE_DATE.SetFocus;
 end;
 
@@ -200,7 +209,7 @@ begin
       begin
         AObj := TRecord_.Create;
         AObj.ReadFromDataSet(rs);
-        edtCHANGE_CODE.Properties.Items.AddObject(rs.Fields[1].AsString,AObj); 
+        edtCHANGE_CODE.Properties.Items.AddObject(rs.Fields[1].AsString,AObj);
         rs.Next;
       end;
   finally
@@ -216,6 +225,7 @@ begin
     begin
       Label40.Caption := '仓库名称';
     end;
+
 end;
 
 procedure TfrmChangeOrder.InitPrice(GODS_ID, UNIT_ID: string);
@@ -302,6 +312,11 @@ begin
     oid := AObj.FieldbyName('CHANGE_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').asString;
+    if edtCHANGE_CODE.ItemIndex = 0 then
+    begin
+      Label5.Visible := False;
+      edtDEMA_GLIDE_NO.Visible := False;
+    end;
   finally
     Params.Free;
   end;
@@ -572,6 +587,8 @@ begin
      begin
        Label1.Caption := '经手人';
        Label4.Caption := '损益部门';
+       edtDEMA_GLIDE_NO.Visible := False;
+       Label5.Visible := False;
      end;
 end;
 
@@ -686,6 +703,146 @@ begin
        lblState.Caption := lblState.Caption + ' / 未发货';
   end;
 
+end;
+
+procedure TfrmChangeOrder.WMFillData(var Message: TMessage);
+var
+  frmDemandOrder:TfrmDemandOrder;
+  i:integer;
+begin
+  if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
+  frmDemandOrder := TfrmDemandOrder(Message.WParam);
+  with TfrmDemandOrder(frmDemandOrder) do
+    begin
+      self.edtSHOP_ID.KeyValue := edtSHOP_ID.KeyValue;
+      self.edtSHOP_ID.Text := edtSHOP_ID.Text;
+      //self.edtSHOP_ID.KeyValue := edtSHOP_ID.KeyValue;
+      //self.edtSHOP_ID.Text := edtSHOP_ID.Text;
+      //self.edtSTOCK_USER.KeyValue := edtDEMA_USER.KeyValue;
+      //self.edtSTOCK_USER.Text := edtDEMA_USER.Text;
+      //self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
+      //self.edtDEPT_ID.Text := edtDEPT_ID.Text;
+      self.AObj.FieldbyName('FIG_ID').AsString := AObj.FieldbyName('DEMA_ID').AsString;
+      //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
+      self.edtDEMA_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
+      //self.edtADVA_MNY.Text := edtADVA_MNY.Text;
+      self.edtREMARK.Text := edtREMARK.Text;
+      self.Locked := False;
+
+      case Message.LParam of
+      0:DemaFrom(AObj.FieldbyName('DEMA_ID').AsString);
+      1:
+        begin
+          self.edtTable.DisableControls;
+          try
+          self.edtProperty.Close;
+          self.edtTable.Close;
+          self.edtProperty.CreateDataSet;
+          self.edtTable.CreateDataSet;
+          self.RowID := 0;
+          self.edtTable.Append;
+          for i:=0 to self.edtTable.Fields.Count -1 do
+            begin
+               if edtTable.FindField(self.edtTable.Fields[i].FieldName)<>nil then
+                  self.edtTable.Fields[i].Value := edtTable.FieldbyName(self.edtTable.Fields[i].FieldName).Value;
+            end;
+          inc(self.RowID);
+          self.edtTable.FieldbyName('SEQNO').AsInteger := self.RowID;
+          self.edtTable.FieldbyName('BARCODE').AsString := self.EnCodeBarcode;
+          self.edtTable.Post;
+
+          edtProperty.Filtered := false;
+          edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
+          edtProperty.Filtered := true;
+
+          edtProperty.First;
+          while not edtProperty.Eof do
+            begin
+              self.edtProperty.Append;
+              for i:=0 to self.edtProperty.Fields.Count -1 do
+                self.edtProperty.Fields[i].Value := edtProperty.FieldbyName(self.edtProperty.Fields[i].FieldName).Value;
+              self.edtProperty.FieldByName('SEQNO').AsInteger := self.edtTable.FieldbyName('SEQNO').AsInteger;
+              self.edtProperty.Post;
+
+              edtProperty.Next;
+            end;
+          InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
+          AmountToCalc(edtTable.FieldbyName('AMOUNT').AsCurrency);            
+          finally
+            self.edtTable.EnableControls;
+          end;
+          //self.Calc;
+        end;
+      end;
+    end;
+  inherited;
+end;
+
+procedure TfrmChangeOrder.DemaFrom(id: String);
+var
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+   h := TZQuery.Create(nil);
+   d := TZQuery.Create(nil);
+   Params := TftParamList.Create(nil);
+   HObj := TRecord_.Create;
+   try
+      Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+      Params.ParamByName('DEMA_ID').asString := id;
+      Factor.BeginBatch;
+      try
+        Factor.AddBatch(h,'TDemandOrderForDb',Params);
+        Factor.AddBatch(d,'TDemandDataForDb',Params);
+        Factor.OpenBatch;
+        HObj.ReadFromDataSet(h);
+        ReadFromObject(HObj,self);
+        AObj.FieldbyName('FIG_ID').AsString := HObj.FieldbyName('DEMA_ID').AsString;
+        edtDEMA_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+        edtCHANGE_DATE.Date := Global.SysDate;
+        //AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
+        //edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
+        edtCHK_DATE.Text := '';
+        edtCHK_USER_TEXT.Text := '';
+        //if h.FieldByName('STKBILL_STATUS').AsInteger=0 then
+        //   AObj.FieldByName('ADVA_MNY').AsFloat := HObj.FieldByName('ADVA_MNY').AsFloat
+        //else
+        //   AObj.FieldByName('ADVA_MNY').AsFloat := 0;
+        ReadFrom(d);
+        edtTable.First;
+        while not edtTable.Eof do
+        begin
+          InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
+          AmountToCalc(edtTable.FieldbyName('AMOUNT').AsCurrency);
+          edtTable.Next;          
+        end;
+        //Calc;
+      except
+        Factor.CancelBatch;
+        Raise;
+      end;
+   finally
+     HObj.Free;
+     Params.Free;
+     h.Free;
+     d.Free;
+   end;
+end;
+
+procedure TfrmChangeOrder.edtDEMA_GLIDE_NOPropertiesButtonClick(
+  Sender: TObject; AButtonIndex: Integer);
+var
+  s:string;
+begin
+  inherited;
+  if not IsNull then Raise Exception.Create('已经输入商品了，不能导入订单.');
+  if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入订单.');  
+  s := TfrmFindOrder.FindDialog(self,6,edtSHOP_ID.asString,'');
+  if s<>'' then
+     begin
+       DemaFrom(s);
+     end;
 end;
 
 end.

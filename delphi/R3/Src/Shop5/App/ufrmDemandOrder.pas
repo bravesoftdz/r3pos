@@ -58,6 +58,7 @@ type
     procedure N2Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actBatchNoExecute(Sender: TObject);
+    procedure edtSHOP_IDPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -312,9 +313,9 @@ begin
     1:Label18.Caption := '状态:发货中';
     2:Label18.Caption := '状态:已发货';
     end;}
-    if id<>'' then
+    if Trim(edtSHOP_ID.Text)<>'' then
        begin
-         TabSheet.Caption := gid;
+         TabSheet.Caption := edtSHOP_ID.Text;
        end;
     ShowOweInfo;
   finally
@@ -887,7 +888,7 @@ begin
   begin
     if not frmMain.FindAction('actfrmChangeOrderList2').Enabled then Exit;
     frmMain.FindAction('actfrmChangeOrderList2').OnExecute(nil);
-    frmChangeOrderList := TfrmChangeOrderList(frmMain.FindChildForm(TfrmChangeOrderList));
+    frmChangeOrderList := TfrmChangeOrderList(frmMain.FindChildForm('frmChangeOrderList2'));
     SendMessage(frmChangeOrderList.Handle,WM_EXEC_ORDER,0,2);
     PostMessage(frmChangeOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
   end;
@@ -913,7 +914,7 @@ begin
   begin
     if not frmMain.FindAction('actfrmChangeOrderList2').Enabled then Exit;
     frmMain.FindAction('actfrmChangeOrderList2').OnExecute(nil);
-    frmChangeOrderList := TfrmChangeOrderList(frmMain.FindChildForm(TfrmChangeOrderList));
+    frmChangeOrderList := TfrmChangeOrderList(frmMain.FindChildForm('frmChangeOrderList2'));
     SendMessage(frmChangeOrderList.Handle,WM_EXEC_ORDER,0,2);
     PostMessage(frmChangeOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
   end;
@@ -936,6 +937,12 @@ procedure TfrmDemandOrder.PresentToCalc(Present: integer);
 begin
   inherited;
   ShowInfo;
+end;
+
+procedure TfrmDemandOrder.edtSHOP_IDPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if trim(edtSHOP_ID.Text)<>'' then TabSheet.Caption := edtSHOP_ID.Text;
 end;
 
 end.

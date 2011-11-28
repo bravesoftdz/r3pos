@@ -69,6 +69,7 @@ begin
   3:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is not null and STOCK_TYPE=1 and A.STOCK_DATE>=:D1 and A.STOCK_DATE<=:D2';
   4:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is not null and SALES_TYPE=1 and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2';
   5:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is not null and DEMA_TYPE=''1'' and A.DEMA_DATE>=:D1 and A.DEMA_DATE<=:D2';
+  6:w := ' where A.TENANT_ID=:TENANT_ID and CHK_DATE is not null and DEMA_TYPE=''2'' and A.DEMA_DATE>=:D1 and A.DEMA_DATE<=:D2';
   end;
   if fndSHOP_ID.AsString <> '' then
      w := w +' and A.SHOP_ID=:SHOP_ID';
@@ -82,7 +83,7 @@ begin
        1,2: w := w +' and A.INDE_ID>'''+id+'''';
        3: w := w +' and A.STOCK_ID>'''+id+'''';
        4: w := w +' and A.SALES_ID>'''+id+'''';
-       5: w := w +' and A.DEMA_ID>'''+id+'''';
+       5,6: w := w +' and A.DEMA_ID>'''+id+'''';
        end;
      end;
   case flag of
@@ -110,7 +111,7 @@ begin
      'from SAL_SALESORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
      result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
     end;
-  5:begin
+  5,6:begin
      result :=
      'select A.TENANT_ID,A.DEMA_ID AS INDE_ID,A.GLIDE_NO,A.DEMA_DATE as INDE_DATE,A.CLIENT_ID,A.DEMA_AMT as AMOUNT,A.DEMA_MNY as AMONEY,B.SHOP_NAME '+
      'from MKT_DEMANDORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' ';
@@ -242,6 +243,11 @@ begin
                   fndCLIENT_ID.Text := fndCLIENT_ID.DataSet.FieldbyName('CLIENT_NAME').AsString;
                 end;
            end;
+        if oFlag in [5,6] then
+        begin
+          SetEditStyle(dsBrowse,fndCLIENT_ID.Style);
+          fndCLIENT_ID.Properties.ReadOnly := True;
+        end;
         Open('');
         if ShowModal=MROK then
            result := cdsList.FieldbyName('INDE_ID').AsString

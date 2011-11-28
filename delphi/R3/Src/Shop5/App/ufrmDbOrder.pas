@@ -752,6 +752,8 @@ begin
 
               edtProperty.Next;
             end;
+          InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
+          AmountToCalc(edtTable.FieldbyName('AMOUNT').AsCurrency);
           finally
             self.edtTable.EnableControls;
           end;
@@ -868,6 +870,13 @@ begin
         //else
         //   AObj.FieldByName('ADVA_MNY').AsFloat := 0;
         ReadFrom(d);
+        edtTable.First;
+        while not edtTable.Eof do
+        begin
+          InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
+          AmountToCalc(edtTable.FieldbyName('AMOUNT').AsCurrency);
+          edtTable.Next;
+        end;
         Calc;
       except
         Factor.CancelBatch;

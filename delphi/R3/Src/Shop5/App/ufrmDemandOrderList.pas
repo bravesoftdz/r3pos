@@ -19,12 +19,10 @@ type
     D2: TcxDateEdit;
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
-    RzLabel4: TRzLabel;
     btnOk: TRzBitBtn;
     RzLabel5: TRzLabel;
     fndDEMA_ID: TcxTextEdit;
     fndSTATUS: TcxRadioGroup;
-    fndCLIENT_ID: TzrComboBoxList;
     actReport: TAction;
     frfSalIndentOrder: TfrReport;
     actRecv: TAction;
@@ -79,8 +77,7 @@ function TfrmDemandOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
   w := ' where TENANT_ID=:TENANT_ID and DEMA_TYPE='+QuotedStr(DemandType)+' and DEMA_DATE>=:D1 and DEMA_DATE<=:D2 '+ShopGlobal.GetDataRight('SHOP_ID',1);
-  if fndCLIENT_ID.AsString <> '' then
-     w := w +' and CLIENT_ID=:CLIENT_ID';
+
   if fndSHOP_ID.AsString <> '' then
      w := w + ' and SHOP_ID=:SHOP_ID';
   if trim(fndDEMA_ID.Text) <> '' then
@@ -96,7 +93,7 @@ begin
   if id<>'' then
      w := w +' and DEMA_ID>'''+id+'''';
   result := 'select TENANT_ID,SHOP_ID,DEMA_ID,DEMA_TYPE,GLIDE_NO,DEMA_DATE,CLIENT_ID,DEMA_USER,DEMA_AMT,DEMA_MNY,CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER from MKT_DEMANDORDER '+w+' ';
-  result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
+  //result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left outer join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
   result := 'select jb.*,b.USER_NAME as DEMA_USER_TEXT from ('+result+') jb left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.DEMA_USER=b.USER_ID';
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ';
   case Factor.iDbType of
@@ -134,7 +131,6 @@ begin
     rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
-    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('DEMA_ID').AsString;
@@ -173,7 +169,6 @@ begin
   fndSHOP_ID.Text := Global.SHOP_NAME;
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');   
   InitGridPickList(DBGridEh1);
-  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   D1.Date := date();
   D2.Date := date();
 

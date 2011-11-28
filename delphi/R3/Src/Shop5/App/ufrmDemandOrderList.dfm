@@ -23,7 +23,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
             Height = 500
             inherited RzPanel1: TRzPanel
               Width = 800
-              Height = 92
+              Height = 80
               Caption = '.'
               object RzLabel2: TRzLabel
                 Left = 33
@@ -40,17 +40,9 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                 Height = 12
                 Caption = #33267
               end
-              object RzLabel4: TRzLabel
-                Left = 45
-                Top = 47
-                Width = 36
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #20379#24212#21830
-              end
               object RzLabel5: TRzLabel
                 Left = 33
-                Top = 67
+                Top = 55
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -58,7 +50,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object Label1: TLabel
                 Left = 201
-                Top = 69
+                Top = 57
                 Width = 120
                 Height = 12
                 Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
@@ -71,7 +63,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object Label40: TLabel
                 Left = 33
-                Top = 26
+                Top = 30
                 Width = 48
                 Height = 12
                 Caption = #38376#24215#21517#31216
@@ -96,7 +88,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 453
-                Top = 58
+                Top = 47
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -114,7 +106,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 5
+                TabOrder = 4
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -123,17 +115,17 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object fndDEMA_ID: TcxTextEdit
                 Left = 89
-                Top = 64
+                Top = 52
                 Width = 104
                 Height = 20
-                TabOrder = 3
+                TabOrder = 2
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object fndSTATUS: TcxRadioGroup
                 Left = 344
-                Top = -4
+                Top = -5
                 Width = 97
-                Height = 89
+                Height = 79
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -145,83 +137,13 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                   item
                     Caption = #24050#23457#26680
                   end>
-                TabOrder = 4
+                TabOrder = 3
                 Caption = ''
-              end
-              object fndCLIENT_ID: TzrComboBoxList
-                Left = 89
-                Top = 43
-                Width = 236
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 2
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
-                KeyField = 'CLIENT_ID'
-                ListField = 'CLIENT_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'CLIENT_CODE'
-                    Footers = <>
-                    Title.Caption = #20195#30721
-                    Width = 60
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CLIENT_NAME'
-                    Footers = <>
-                    Title.Caption = #23458#25143#21517#31216
-                    Width = 150
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'LINKMAN'
-                    Footers = <>
-                    Title.Caption = #32852#31995#20154
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'TELEPHONE2'
-                    Footers = <>
-                    Title.Caption = #32852#31995#30005#35805
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'LICENSE_CODE'
-                    Footers = <>
-                    Title.Caption = #35777#20214#21495
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'ADDRESS'
-                    Footers = <>
-                    Title.Caption = #22320#22336
-                    Width = 150
-                  end>
-                DropWidth = 236
-                DropHeight = 180
-                ShowTitle = True
-                AutoFitColWidth = False
-                ShowButton = True
-                LocateStyle = lsDark
-                Buttons = [zbClear]
-                DropListStyle = lsFixed
-                MultiSelect = False
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 89
-                Top = 22
+                Top = 26
                 Width = 236
                 Height = 20
                 Properties.AutoSelect = False
@@ -230,7 +152,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 6
+                TabOrder = 5
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -262,9 +184,9 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 97
+              Top = 85
               Width = 800
-              Height = 398
+              Height = 410
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -281,8 +203,8 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                   EditButtons = <>
                   FieldName = 'GLIDE_NO'
                   Footers = <>
-                  Title.Caption = #21333#21495
-                  Width = 78
+                  Title.Caption = #21333'    '#21495
+                  Width = 80
                 end
                 item
                   DisplayFormat = '0000-00-00'
@@ -294,38 +216,31 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'CLIENT_NAME'
-                  Footers = <>
-                  Title.Caption = #20379#24212#21830
-                  Width = 150
-                end
-                item
-                  EditButtons = <>
                   FieldName = 'DEMA_USER_TEXT'
                   Footers = <>
                   Title.Caption = #30003#35831#20154
-                  Width = 53
+                  Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'DEMA_AMT'
                   Footers = <>
                   Title.Caption = #38656#27714#37327
-                  Width = 54
+                  Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'DEMA_MNY'
                   Footers = <>
                   Title.Caption = #38656#27714#37329#39069
-                  Width = 61
+                  Width = 70
                 end
                 item
                   EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
                   Title.Caption = #22791#27880
-                  Width = 98
+                  Width = 130
                 end
                 item
                   EditButtons = <>

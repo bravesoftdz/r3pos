@@ -170,6 +170,7 @@ inherited frmDemandOrder: TfrmDemandOrder
             Default = True
           end>
         Properties.ReadOnly = False
+        Properties.OnChange = edtSHOP_IDPropertiesChange
         TabOrder = 0
         InGrid = False
         KeyValue = Null

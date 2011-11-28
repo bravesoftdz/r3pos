@@ -1,6 +1,6 @@
 inherited frmDbOrder: TfrmDbOrder
-  Left = 411
-  Top = 186
+  Left = 577
+  Top = 137
   Width = 885
   Height = 552
   Caption = #35843#25320#21333

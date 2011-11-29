@@ -720,8 +720,8 @@ begin
       //self.edtSHOP_ID.Text := edtSHOP_ID.Text;
       //self.edtSTOCK_USER.KeyValue := edtDEMA_USER.KeyValue;
       //self.edtSTOCK_USER.Text := edtDEMA_USER.Text;
-      //self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
-      //self.edtDEPT_ID.Text := edtDEPT_ID.Text;
+      self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
+      self.edtDEPT_ID.Text := edtDEPT_ID.Text;
       self.AObj.FieldbyName('FIG_ID').AsString := AObj.FieldbyName('DEMA_ID').AsString;
       //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
       self.edtDEMA_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;

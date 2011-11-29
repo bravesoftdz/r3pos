@@ -186,11 +186,11 @@ procedure TfrmDemandOrderList.actEditExecute(Sender: TObject);
 begin
   if DemandType = '1' then
   begin
-    if not ShopGlobal.GetChkRight('100001062',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002124',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then
   begin
-    if not ShopGlobal.GetChkRight('100001054',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002132',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   end;
   if (CurOrder=nil) then
      begin
@@ -206,12 +206,12 @@ begin
     begin
       if DemandType = '1' then
       begin
-        if not ShopGlobal.GetChkRight('100001062',3) then
+        if not ShopGlobal.GetChkRight('100002124',3) then
           Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmDemandOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
       end;
       if DemandType = '2' then
       begin
-        if not ShopGlobal.GetChkRight('100001054',3) then
+        if not ShopGlobal.GetChkRight('100002132',3) then
           Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmDemandOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
       end;
     end;
@@ -223,11 +223,11 @@ procedure TfrmDemandOrderList.actDeleteExecute(Sender: TObject);
 begin
   if DemandType = '1' then   //补货
   begin
-    if not ShopGlobal.GetChkRight('100001062',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002124',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then  //领用
   begin
-    if not ShopGlobal.GetChkRight('100001054',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002132',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   end;
   if (CurOrder=nil) then
      begin
@@ -243,12 +243,12 @@ begin
     begin
       if DemandType = '1' then
       begin
-        if not ShopGlobal.GetChkRight('100001062',4) then
+        if not ShopGlobal.GetChkRight('100002124',4) then
           Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmDemandOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
       end;
       if DemandType = '2' then
       begin
-        if not ShopGlobal.GetChkRight('100001054',4) then
+        if not ShopGlobal.GetChkRight('100002132',4) then
           Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmDemandOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
       end;
     end;     
@@ -257,9 +257,9 @@ begin
      begin
        if not CurOrder.saved then Exit;
        if (
-           ((DemandType = '1') and ShopGlobal.GetChkRight('100001062',2))
+           ((DemandType = '1') and ShopGlobal.GetChkRight('100002124',2))
            or
-           ((DemandType = '2') and ShopGlobal.GetChkRight('100001054',2))
+           ((DemandType = '2') and ShopGlobal.GetChkRight('100002132',2))
            )
         and (MessageBox(Handle,pchar('删除当前单据成功,是否继续新增'+Caption+'？'),pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
@@ -290,9 +290,9 @@ begin
           end; }
        //判断新单权限
        if (
-          ((DemandType = '1') and ShopGlobal.GetChkRight('100001062',2))
+          ((DemandType = '1') and ShopGlobal.GetChkRight('100002124',2))
            or
-          ((DemandType = '2') and ShopGlobal.GetChkRight('100001054',2))
+          ((DemandType = '2') and ShopGlobal.GetChkRight('100002132',2))
           )
           and (MessageBox(Handle,pchar('是否继续新增"'+Caption+'"？'),pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
@@ -305,11 +305,11 @@ procedure TfrmDemandOrderList.actAuditExecute(Sender: TObject);
 begin
   if DemandType = '1' then
   begin
-    if not ShopGlobal.GetChkRight('100001062',5) then Raise Exception.Create('你没有审核(弃审)'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002124',5) then Raise Exception.Create('你没有审核(弃审)'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then
   begin
-    if not ShopGlobal.GetChkRight('100001054',5) then Raise Exception.Create('你没有审核(弃审)'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002132',5) then Raise Exception.Create('你没有审核(弃审)'+Caption+'的权限,请和管理员联系.');
   end;
   if (CurOrder=nil) then
      begin
@@ -463,11 +463,11 @@ begin
   inherited;
   if DemandType = '1' then
   begin
-    if not ShopGlobal.GetChkRight('100001062',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002124',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then
   begin
-    if not ShopGlobal.GetChkRight('100001054',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002132',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   end;
 
   with TfrmFastReport.Create(Self) do
@@ -496,11 +496,11 @@ begin
   inherited;
   if DemandType = '1' then
   begin
-    if not ShopGlobal.GetChkRight('100001062',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002124',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then
   begin
-    if not ShopGlobal.GetChkRight('100001054',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002132',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   end;
   
   with TfrmFastReport.Create(Self) do
@@ -527,11 +527,11 @@ procedure TfrmDemandOrderList.actNewExecute(Sender: TObject);
 begin
   if DemandType = '1' then
   begin
-    if not ShopGlobal.GetChkRight('100001062',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002124',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then
   begin
-    if not ShopGlobal.GetChkRight('100001054',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002132',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   end;
   inherited;
   if CurOrder<>nil then
@@ -572,9 +572,9 @@ end;
 function TfrmDemandOrderList.CheckCanExport: boolean;
 begin
   if DemandType='1' then
-    result:=ShopGlobal.GetChkRight('100001062',7)
+    result:=ShopGlobal.GetChkRight('100002124',7)
   else if DemandType='2' then
-    result:=ShopGlobal.GetChkRight('100001054',7);
+    result:=ShopGlobal.GetChkRight('100002132',7);
 
 end;
 

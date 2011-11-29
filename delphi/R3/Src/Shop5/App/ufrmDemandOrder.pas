@@ -183,6 +183,7 @@ begin
   inherited;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtDEMA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   //进位法则
   CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
   //保留小数位
@@ -867,17 +868,11 @@ end;
 procedure TfrmDemandOrder.SetDemandType(const Value: String);
 begin
   FDemandType := Value;
-  if Trim(Value) <> '' then
+  if (Value = '1') then
   begin
-    cdsDept_Id.Close;
-    if Value = '1' then
-      cdsDept_Id.SQL.Text := 'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,DEPT_TYPE,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO '+
-                             ' from CA_DEPT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') and DEPT_TYPE=''1'' order by LEVEL_ID'
-    else if Value = '2' then
-      cdsDept_Id.SQL.Text := 'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,DEPT_TYPE,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO '+
-                             ' from CA_DEPT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') order by LEVEL_ID';
-    Factor.Open(cdsDept_Id);
-  end;
+    edtDEPT_ID.RangeField := 'DEPT_TYPE';
+    edtDEPT_ID.RangeValue := '1';
+  end;  
   if edtDEMA_TYPE.Properties.Items.Count > 0 then
      edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',DemandType);
   Caption := edtDEMA_TYPE.Text + '单';
@@ -938,7 +933,6 @@ end;
 procedure TfrmDemandOrder.FormShow(Sender: TObject);
 begin
   inherited;
-//  FindColumn('AGIO_RATE').Visible := False;
   PopupMenu1.Items[6].Visible := False;
 end;
 

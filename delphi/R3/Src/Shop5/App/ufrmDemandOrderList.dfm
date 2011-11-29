@@ -1,6 +1,6 @@
 inherited frmDemandOrderList: TfrmDemandOrderList
-  Left = 530
-  Top = 116
+  Left = 511
+  Top = 167
   Width = 836
   Height = 607
   Caption = #38656#27714#22635#25253
@@ -213,7 +213,6 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                     Footers = <>
                     Title.Caption = #21517#31216
                   end>
-                DataSet = cdsDept_Id
                 DropWidth = 185
                 DropHeight = 180
                 ShowTitle = True
@@ -624,12 +623,5 @@ inherited frmDemandOrderList: TfrmDemandOrderList
       0014006364735F436867426F64792E22534C30303030220002006A6500140063
       64735F436867426F64792E224A4530303030220004006B687968000000000400
       79687A68000000000200647A000000000000000000000000FDFF0100000000}
-  end
-  object cdsDept_Id: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 257
-    Top = 214
   end
 end

@@ -32,7 +32,6 @@ type
     fndSHOP_ID: TzrComboBoxList;
     Label3: TLabel;
     fndDEPT_ID: TzrComboBoxList;
-    cdsDept_Id: TZQuery;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -132,7 +131,7 @@ begin
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
-    if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
+    //if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     Factor.Open(rs);
@@ -172,6 +171,7 @@ begin
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   InitGridPickList(DBGridEh1);
   D1.Date := date();
   D2.Date := date();
@@ -584,19 +584,13 @@ var
   SetCol: TColumnEh;
 begin
   FDemandType := Value;
-  if Trim(Value) <> '' then
+  if (Value = '1') then
   begin
-    cdsDept_Id.Close;
-    if Value = '1' then
-      cdsDept_Id.SQL.Text := 'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,DEPT_TYPE,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO '+
-                             ' from CA_DEPT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') and DEPT_TYPE=''1'' order by LEVEL_ID'
-    else if Value = '2' then
-      cdsDept_Id.SQL.Text := 'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,DEPT_TYPE,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO '+
-                             ' from CA_DEPT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') order by LEVEL_ID';
-    Factor.Open(cdsDept_Id);
+    fndDEPT_ID.RangeField := 'DEPT_TYPE';
+    fndDEPT_ID.RangeValue := '1';
   end;
+
   rs := TZQuery.Create(nil);
-  
   try
     rs.Close;
     rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where CODE_ID='''+Value+''' and TYPE_CODE=''DEMA_TYPE'' ';

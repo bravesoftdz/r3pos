@@ -41,6 +41,9 @@ type
     cxTextEdit2: TcxTextEdit;
     Label7: TLabel;
     cxTextEdit3: TcxTextEdit;
+    Label10: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    cdsDept_Id: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -864,7 +867,17 @@ end;
 procedure TfrmDemandOrder.SetDemandType(const Value: String);
 begin
   FDemandType := Value;
-
+  if Trim(Value) <> '' then
+  begin
+    cdsDept_Id.Close;
+    if Value = '1' then
+      cdsDept_Id.SQL.Text := 'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,DEPT_TYPE,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO '+
+                             ' from CA_DEPT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') and DEPT_TYPE=''1'' order by LEVEL_ID'
+    else if Value = '2' then
+      cdsDept_Id.SQL.Text := 'select  DEPT_ID,DEPT_NAME,DEPT_SPELL,LEVEL_ID,DEPT_TYPE,TELEPHONE,LINKMAN,FAXES,REMARK,SEQ_NO '+
+                             ' from CA_DEPT_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') order by LEVEL_ID';
+    Factor.Open(cdsDept_Id);
+  end;
   if edtDEMA_TYPE.Properties.Items.Count > 0 then
      edtDEMA_TYPE.ItemIndex := TdsItems.FindItems(edtDEMA_TYPE.Properties.Items,'CODE_ID',DemandType);
   Caption := edtDEMA_TYPE.Text + 'µ¥';

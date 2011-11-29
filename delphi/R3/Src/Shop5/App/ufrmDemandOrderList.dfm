@@ -23,7 +23,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
             Height = 500
             inherited RzPanel1: TRzPanel
               Width = 800
-              Height = 80
+              Height = 90
               Caption = '.'
               object RzLabel2: TRzLabel
                 Left = 33
@@ -42,7 +42,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object RzLabel5: TRzLabel
                 Left = 33
-                Top = 55
+                Top = 67
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -50,7 +50,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object Label1: TLabel
                 Left = 201
-                Top = 57
+                Top = 69
                 Width = 120
                 Height = 12
                 Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
@@ -63,10 +63,17 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object Label40: TLabel
                 Left = 33
-                Top = 30
+                Top = 26
                 Width = 48
                 Height = 12
                 Caption = #38376#24215#21517#31216
+              end
+              object Label3: TLabel
+                Left = 33
+                Top = 47
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
               end
               object D1: TcxDateEdit
                 Left = 89
@@ -88,7 +95,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 453
-                Top = 47
+                Top = 58
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -115,7 +122,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               end
               object fndDEMA_ID: TcxTextEdit
                 Left = 89
-                Top = 52
+                Top = 64
                 Width = 104
                 Height = 20
                 TabOrder = 2
@@ -125,7 +132,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                 Left = 344
                 Top = -5
                 Width = 97
-                Height = 79
+                Height = 90
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -143,7 +150,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 89
-                Top = 26
+                Top = 22
                 Width = 236
                 Height = 20
                 Properties.AutoSelect = False
@@ -182,11 +189,46 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndDEPT_ID: TzrComboBoxList
+                Left = 89
+                Top = 43
+                Width = 236
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 6
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DataSet = cdsDept_Id
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = False
+                LocateStyle = lsDark
+                Buttons = []
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 85
+              Top = 95
               Width = 800
-              Height = 410
+              Height = 400
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -582,5 +624,12 @@ inherited frmDemandOrderList: TfrmDemandOrderList
       0014006364735F436867426F64792E22534C30303030220002006A6500140063
       64735F436867426F64792E224A4530303030220004006B687968000000000400
       79687A68000000000200647A000000000000000000000000FDFF0100000000}
+  end
+  object cdsDept_Id: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 257
+    Top = 214
   end
 end

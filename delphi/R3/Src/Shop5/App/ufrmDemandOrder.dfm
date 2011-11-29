@@ -16,7 +16,7 @@ inherited frmDemandOrder: TfrmDemandOrder
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
         Left = 194
-        Top = 39
+        Top = 62
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -24,7 +24,7 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object Label2: TLabel [1]
         Left = 195
-        Top = 62
+        Top = 85
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -40,7 +40,7 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object Label6: TLabel [3]
         Left = 404
-        Top = 39
+        Top = 62
         Width = 36
         Height = 12
         Alignment = taRightJustify
@@ -68,6 +68,13 @@ inherited frmDemandOrder: TfrmDemandOrder
         Height = 12
         Alignment = taRightJustify
         Caption = #23457#26680#29992#25143
+      end
+      object Label10: TLabel [7]
+        Left = 195
+        Top = 39
+        Width = 48
+        Height = 12
+        Caption = #25152#23646#37096#38376
       end
       inherited RzPanel4: TRzPanel
         Height = 107
@@ -104,7 +111,7 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object edtDEMA_DATE: TcxDateEdit
         Left = 251
-        Top = 35
+        Top = 58
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -112,7 +119,7 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object edtREMARK: TcxTextEdit
         Left = 251
-        Top = 58
+        Top = 81
         Width = 286
         Height = 20
         TabOrder = 3
@@ -120,7 +127,7 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object edtDEMA_USER: TzrComboBoxList
         Left = 448
-        Top = 35
+        Top = 58
         Width = 89
         Height = 20
         Properties.AutoSelect = False
@@ -228,6 +235,41 @@ inherited frmDemandOrder: TfrmDemandOrder
         Height = 20
         TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtDEPT_ID: TzrComboBoxList
+        Left = 251
+        Top = 35
+        Width = 286
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 8
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'DEPT_NAME;DEPT_SPELL'
+        KeyField = 'DEPT_ID'
+        ListField = 'DEPT_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'DEPT_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end>
+        DataSet = cdsDept_Id
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = False
+        LocateStyle = lsDark
+        Buttons = []
+        DropListStyle = lsFixed
+        MultiSelect = False
       end
     end
     inherited RzPanel3: TRzPanel
@@ -653,5 +695,12 @@ inherited frmDemandOrder: TfrmDemandOrder
     Params = <>
     Left = 120
     Top = 224
+  end
+  object cdsDept_Id: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 168
+    Top = 32
   end
 end

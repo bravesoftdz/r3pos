@@ -245,7 +245,8 @@ begin
     finally
       Temp.Free;
     end;}
-    Str := 'update MKT_DEMANDORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and DEMA_ID='''+Params.FindParam('DEMA_ID').asString+''' and CHK_DATE IS NULL';
+    Str := 'update MKT_DEMANDORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) +
+           ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and DEMA_ID='''+Params.FindParam('DEMA_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
@@ -269,8 +270,28 @@ function TDemandOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+    rs:TZQuery;
 begin
    try
+    rs := TZQuery.Create(nil);
+    try
+      if Params.FindParam('DEMA_TYPE').AsString = '1' then
+      begin
+        rs.Close;
+        rs.SQL.Text := 'select FIG_ID from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and FIG_ID='''+Params.FindParam('DEMA_ID').asString+'''';
+        AGlobal.Open(rs);
+        if rs.FieldbyName('FIG_ID').AsString <> '' then Raise Exception.Create('已经配货的申请单不能弃审...');
+      end
+      else if Params.FindParam('DEMA_TYPE').AsString = '2' then
+      begin
+        rs.Close;
+        rs.SQL.Text := 'select FIG_ID from STO_CHANGEORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and FIG_ID='''+Params.FindParam('DEMA_ID').asString+'''';
+        AGlobal.Open(rs);
+        if rs.FieldbyName('FIG_ID').AsString <> '' then Raise Exception.Create('已经配货的申请单不能弃审...');
+      end;
+    finally
+      rs.Free;
+    end;
     Str := 'update MKT_DEMANDORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and DEMA_ID='''+Params.FindParam('DEMA_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
     if n=0 then

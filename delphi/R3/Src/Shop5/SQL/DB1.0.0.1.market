@@ -128,9 +128,6 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	[KPI_D3_ST] [int] NULL ,
 	[KPI_D3_ED] [int] NULL ,
 	[KPI_D3_MNY] [decimal](18, 3) NULL ,
-
-
-	      --市场费
 	      
         --备注
 	[REMARK] [varchar] (100) NULL ,
@@ -175,6 +172,8 @@ CREATE TABLE [MKT_PLANORDER] (
 	[END_DATE] [varchar] (10) NULL ,
         --经销商
 	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --所属部门
+	[DEPT_ID] varchar (12) NOT NULL ,
         --经手人
 	[PLAN_USER] [varchar] (36) NULL ,
         --审核日期
@@ -352,6 +351,10 @@ CREATE TABLE [MKT_REQUORDER] (
 	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[REQU_ID] [char] (36) NOT NULL ,
+        --生成其他收入支出单
+	[IORO_ID] [char] (36) NOT NULL ,
+        --所属部门
+	[DEPT_ID] varchar (12) NOT NULL ,
         --费用类型
 	[REQU_TYPE] [char] (36) NOT NULL ,
         --流水号
@@ -436,6 +439,8 @@ CREATE TABLE [MKT_DEMANDORDER] (
 	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[DEMA_ID] [char] (36) NOT NULL ,
+        --所属部门
+	[DEPT_ID] varchar (12) NOT NULL ,
         --需求类型
 	[DEMA_TYPE] [char] (36) NOT NULL ,
         --流水号

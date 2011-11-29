@@ -167,6 +167,8 @@ CREATE TABLE MKT_DEMANDORDER (
 	DEMA_DATE int NULL ,
         --经销商
 	CLIENT_ID varchar(36) NOT NULL ,
+        --所属部门
+	DEPT_ID varchar (12) NOT NULL ,
         --填报人
 	DEMA_USER varchar(36) ,
         --审核日期

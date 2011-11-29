@@ -1,6 +1,3 @@
---在会员档案中，加入保证金
-alter table PUB_IC_INFO add BOND_MNY decimal(10, 3) NULL;
-
 --// 添加收支项目 “固定保证金”、“滚动保证金”、“销售返利”、“市场费用”
 
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
@@ -38,6 +35,9 @@ CREATE TABLE [MKT_KPI_OPTION] (
         --标准折扣
 	[KPI_AGIO] [decimal](18, 3) NULL ,
 	
+        --计提比例
+	[MKT_AGIO] [decimal](18, 3) NULL ,
+
         --上半年完成率
 	[KPI_Y_DATA] char(1) NULL ,
 	[KPI_Y1_RATE] [decimal](18, 3) NULL ,
@@ -263,6 +263,9 @@ CREATE TABLE [MKT_KPI_RESULT] (
         --完成金额 
 	[KPI_MNY] [decimal](18, 3) NULL ,
 	
+        --市场费计提
+	[MKT_MNY] [decimal](18, 3) NULL ,
+	
 	      --上半年返利
 	[KPI_Y_MNY] [decimal](18, 3) NULL ,
         --上半年完成率
@@ -325,6 +328,7 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	CONSTRAINT [PK_MKT_KPI_RESULT] PRIMARY KEY 
 	(
 		[TENANT_ID],
+		[PLAN_ID],
 		[KPI_YEAR],
 		[KPI_ID]
 	) 
@@ -335,6 +339,88 @@ CREATE INDEX IX_MKPIR_TIME_STAMP ON MKT_KPI_RESULT(TENANT_ID,TIME_STAMP);
 CREATE INDEX IX_MKPIR_KPI_YEAR ON MKT_KPI_RESULT(TENANT_ID,KPI_YEAR);
 CREATE INDEX IX_MKPIR_KPI_ID ON MKT_KPI_RESULT(TENANT_ID,KPI_ID);
 CREATE INDEX IX_MKPIR_PLAN_ID ON MKT_KPI_RESULT(TENANT_ID,PLAN_ID);
+
+--需求类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','市场返利','REQU_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','市场计提','REQU_TYPE','00',5497000);
+
+--费用申领单
+CREATE TABLE [MKT_REQUORDER] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --单号
+	[REQU_ID] [char] (36) NOT NULL ,
+        --费用类型
+	[REQU_TYPE] [char] (36) NOT NULL ,
+        --流水号
+	[GLIDE_NO] [varchar] (20) NOT NULL ,
+        --填报日期
+	[REQU_DATE] int NULL ,
+        --经销商
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --填报人
+	[REQU_USER] [varchar] (36) NULL ,
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+        --申领金额
+	[REQU_MNY] [decimal](18, 3) NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_REQUORDER_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_REQUORDER] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[REQU_ID]
+	) 
+);
+
+CREATE INDEX IX_MRQD_TENANT_ID ON MKT_REQUORDER(TENANT_ID);
+CREATE INDEX IX_MRQD_TIME_STAMP ON MKT_REQUORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MRQD_DEMA_DATE ON MKT_REQUORDER(REQU_DATE);
+
+--费用申领明细
+CREATE TABLE [MKT_REQUDATA] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --序号
+	[SEQNO] [int] NOT NULL ,
+        --单号
+	[REQU_ID] [char] (36) NOT NULL ,
+        --计划单号
+	[PLAN_ID] [char] (36) NOT NULL ,
+        --考核ID
+	[KPI_ID] [char] (36) NOT NULL ,
+        --年度
+	[KPI_YEAR] int NULL ,
+        --申领金额
+	[REQU_MNY] [decimal](18, 3) NULL ,
+        --摘要
+	[REMARK] [varchar] (100) NULL ,
+	CONSTRAINT [PK_MKT_REQUDATA] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[REQU_ID],
+		[SEQNO]
+	)
+);
+
+CREATE INDEX IX_M_RQR_TENANT_ID ON MKT_DEMANDDATA(TENANT_ID);
+CREATE INDEX IX_M_RQR_REQU_ID ON MKT_DEMANDDATA(TENANT_ID,REQU_ID);
+CREATE INDEX IX_M_RQR_KPI_ID ON MKT_DEMANDDATA(TENANT_ID,PLAN_ID,KPI_YEAR,KPI_ID);
+CREATE INDEX IX_M_RQR_KPI_YEAR ON MKT_DEMANDDATA(TENANT_ID,KPI_YEAR);
 
 --需求类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','补货申请','DEMA_TYPE','00',5497000);
@@ -385,9 +471,9 @@ CREATE TABLE [MKT_DEMANDORDER] (
 	) 
 );
 
-CREATE INDEX IX_MKT_DEMANDORDER_TENANT_ID ON MKT_DEMANDORDER(TENANT_ID);
-CREATE INDEX IX_MKT_DEMANDORDER_TIME_STAMP ON MKT_DEMANDORDER(TENANT_ID,TIME_STAMP);
-CREATE INDEX IX_MKT_DEMANDORDER_DEMA_DATE ON MKT_DEMANDORDER(DEMA_DATE);
+CREATE INDEX IX_MDMD_TENANT_ID ON MKT_DEMANDORDER(TENANT_ID);
+CREATE INDEX IX_MDMD_TIME_STAMP ON MKT_DEMANDORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MDMD_DEMA_DATE ON MKT_DEMANDORDER(DEMA_DATE);
 
 --需求填报明细
 CREATE TABLE [MKT_DEMANDDATA] (

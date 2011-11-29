@@ -1,6 +1,6 @@
 object frmRimConfig: TfrmRimConfig
-  Left = 237
-  Top = 152
+  Left = 213
+  Top = 124
   BorderStyle = bsDialog
   Caption = 'RIM'#25509#21475#21442#25968
   ClientHeight = 411
@@ -21,7 +21,7 @@ object frmRimConfig: TfrmRimConfig
     Top = 0
     Width = 516
     Height = 366
-    ActivePage = tabStock
+    ActivePage = TabSheet1
     Align = alClient
     TabHeight = 22
     TabOrder = 0

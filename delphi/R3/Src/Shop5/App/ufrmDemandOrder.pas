@@ -568,6 +568,7 @@ begin
       Params.ParamByName('DEMA_ID').asString := cdsHeader.FieldbyName('DEMA_ID').AsString;
       Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
       Params.ParamByName('CHK_USER').asString := Global.UserID;
+      Params.ParamByName('DEMA_TYPE').AsString := DemandType;
       if not IsAudit then
          Msg := Factor.ExecProc('TDemandOrderAudit',Params)
       else

@@ -145,3 +145,114 @@ as
       VIW_GOODSINFO j1 LEFT JOIN 
       VIW_GOODSSORT j2 ON j1.TENANT_ID = j2.TENANT_ID AND j1.SORT_ID1 = j2.SORT_ID and j1.RELATION_ID=j2.RELATION_ID; 
 
+--需求类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','补货申请','DEMA_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','领用申请','DEMA_TYPE','00',5497000);
+
+--领用单对应的需求填报单
+alter table STO_CHANGEORDER add FIG_ID char(36) NULL;
+--需求填报
+CREATE TABLE MKT_DEMANDORDER (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店代码
+	SHOP_ID varchar(13) NOT NULL ,
+        --单号
+	DEMA_ID char(36) NOT NULL ,
+        --需求类型
+	DEMA_TYPE char(36) NOT NULL ,
+        --流水号
+	GLIDE_NO varchar(20) NOT NULL ,
+        --填报日期
+	DEMA_DATE int NULL ,
+        --经销商
+	CLIENT_ID varchar(36) NOT NULL ,
+        --填报人
+	DEMA_USER varchar(36) ,
+        --审核日期
+	CHK_DATE varchar(10) ,
+        --审核人员
+	CHK_USER varchar(36) ,
+        --数量汇总
+	DEMA_AMT decimal(18, 3) ,
+        --金额汇总
+	DEMA_MNY decimal(18, 3) ,
+        --备注
+	REMARK varchar(100) ,
+        --操作时间
+	CREA_DATE varchar (30)  ,
+        --操作人员
+	CREA_USER varchar (36)  ,
+        --通讯标志
+	COMM varchar (2) NOT NULL  DEFAULT '00',
+        --时间戳 当前系统日期*86400000
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_MKT_DEMANDORDER PRIMARY KEY 
+	(
+		TENANT_ID,
+		DEMA_ID
+	) 
+);
+
+CREATE INDEX IX_MKT_DEMANDORDER_TENANT_ID ON MKT_DEMANDORDER(TENANT_ID);
+CREATE INDEX IX_MKT_DEMANDORDER_TIME_STAMP ON MKT_DEMANDORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MKT_DEMANDORDER_DEMA_DATE ON MKT_DEMANDORDER(DEMA_DATE);
+
+--需求填报明细
+CREATE TABLE MKT_DEMANDDATA (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店代码
+	SHOP_ID varchar(13) NOT NULL ,
+        --序号
+	SEQNO int NOT NULL ,
+        --订单号
+	DEMA_ID char(36) NOT NULL ,
+        --货品代码
+	GODS_ID char(36) NOT NULL ,
+        --尺码
+	PROPERTY_01 varchar(36) NOT NULL ,
+        --颜色
+	PROPERTY_02 varchar(36) NOT NULL ,
+        --物流跟踪号
+	LOCUS_NO varchar(36) ,
+        --礼盒跟踪号
+	BOM_ID char(36) ,
+        --批号
+	BATCH_NO varchar(36) ,
+        --是否赠品
+	IS_PRESENT int NOT NULL,
+        --单位
+	UNIT_ID varchar(36) NOT NULL ,
+        --订划数量
+	AMOUNT decimal(18, 3) ,
+        --原单价
+	ORG_PRICE decimal(18, 3) ,
+        --供货单价
+	APRICE decimal(18, 3) ,
+        --销售金额
+	AMONEY decimal(18, 3) ,
+        --折扣率
+	AGIO_RATE decimal(18, 3) ,
+        --折扣额
+	AGIO_MONEY decimal(18, 3) ,
+        --计量单位数量
+	CALC_AMOUNT decimal(18, 3) ,
+        --需求金额
+	CALC_MONEY decimal(18, 3) ,
+        --发货数量
+	SHIP_AMOUNT decimal(18, 3) ,
+        --备注
+	REMARK varchar (100) ,
+	CONSTRAINT PK_MKT_DEMANDDATA PRIMARY KEY  
+	(
+		TENANT_ID,
+		DEMA_ID,
+		SEQNO
+	)
+);
+
+CREATE INDEX IX_M_DMA_TENANT_ID ON MKT_DEMANDDATA(TENANT_ID);
+CREATE INDEX IX_M_DMA_DEMA_ID ON MKT_DEMANDDATA(TENANT_ID,DEMA_ID);
+CREATE INDEX IX_M_DMA_GODS_ID ON MKT_DEMANDDATA(TENANT_ID,GODS_ID);
+

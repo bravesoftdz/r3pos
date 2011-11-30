@@ -646,16 +646,21 @@ begin
         save := DBGridEh.AutoFitColWidths;
         DBGridEh.AutoFitColWidths := false;
         w := DBGridEh.Columns.Count;
-        for i:= DBGridEh.Columns.Count -1 downto 0 do
-        begin
-          if DBGridEh.Columns[i].FieldName='' then Continue;
-          if (DBGridEh.FrozenCols+1) >= w then break;
-          DBGridEh.Columns[i].Visible := F.ReadBool(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName,DBGridEh.Columns[i].Visible);
-          DBGridEh.Columns[i].Width := F.ReadInteger(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName+'_WIDTH',DBGridEh.Columns[i].Width);
-          if not DBGridEh.Columns[i].Visible then dec(w);
-          //DBGridEh.Columns[i].Index := F.ReadInteger(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName+'_INDEX',DBGridEh.Columns[i].Index);
+        DBGridEh.Columns.BeginUpdate;
+        try
+          for i:= 0 to DBGridEh.FrozenCols do
+            if not DBGridEh.Columns[i].Visible then Dec(w);          for i:= DBGridEh.Columns.Count -1 downto 0 do
+          begin
+            if DBGridEh.Columns[i].FieldName='' then Continue;
+            if (DBGridEh.FrozenCols+1) >= w then break;
+            DBGridEh.Columns[i].Visible := F.ReadBool(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName,DBGridEh.Columns[i].Visible);
+            DBGridEh.Columns[i].Width := F.ReadInteger(Caption+DBGridEh.Name,DBGridEh.Columns[i].FieldName+'_WIDTH',DBGridEh.Columns[i].Width);
+            if not DBGridEh.Columns[i].Visible then dec(w);
+          end;
+          DBGridEh.AutoFitColWidths := save;
+        finally
+          DBGridEh.Columns.EndUpdate;
         end;
-        DBGridEh.AutoFitColWidths := save;
       end;
     end;
   finally

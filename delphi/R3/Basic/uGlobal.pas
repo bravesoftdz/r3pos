@@ -594,6 +594,7 @@ procedure TGlobal.TryRemateConnect;
 var
   SaveFactor:TdbFactory;
 begin
+  if RemoteFactory.Connected then Exit;
   SaveFactor := Factor;
   frmLogo.Show;
   try

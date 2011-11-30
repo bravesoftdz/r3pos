@@ -50,10 +50,10 @@ end;
 
 procedure TfrmLogo.FormCreate(Sender: TObject);
 begin
-  if FileExists(ExtractFilePath(ParamStr(0))+'flash.jpg') then
-     Image3.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'flash.jpg');
   frmLogo := self;
   LoadPic32;
+  if FileExists(ExtractFilePath(ParamStr(0))+'flash.jpg') then
+     Image3.Picture.LoadFromFile(ExtractFilePath(ParamStr(0))+'flash.jpg');
 end;
 
 procedure TfrmLogo.SetShowTitle(const Value: string);

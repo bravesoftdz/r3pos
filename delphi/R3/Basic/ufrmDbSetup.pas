@@ -118,8 +118,11 @@ begin
         ModalResult := mrOk;
         Exit;
       except
-        MessageBox(Handle,'连接数据库错误，请确认参数是否正确！',Pchar(Application.Title), mb_ok+mb_Iconinformation);
-        edtDBName.SetFocus;
+        on E:Exception do
+           begin
+             MessageBox(Handle,pchar('连接数据库错误，请确认参数是否正确！,错误原因:'+E.Message),Pchar(Application.Title), mb_ok+mb_Iconinformation);
+             edtDBName.SetFocus;
+           end;
       end;
     end;
     1:begin

@@ -490,7 +490,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory,ufrmDemandOrder;
+  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory,ufrmDemandOrderList;
 {$R *.dfm}
 
 function CheckXsmPassWord(uid, pwd: string): boolean;
@@ -787,6 +787,7 @@ begin
          LoadMenu(nil);
          ShopGlobal.SyncTimeStamp;
          frmLogo.ShowTitle := '初始化广告,请稍候...';
+         N26Factory.coPlayList;
          frmN26Desk.loadDesk;
          if not Locked and (DevFactory.ReadDefine('AUTORUNPOS','0')='1') and (ParamStr(1)<>'-xsm') and ShopGlobal.GetChkRight('500028') then
          begin
@@ -4074,11 +4075,11 @@ begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmN26Desk.SaveToFront;
   Form := FindChildForm('frmDemandOrderList1');
   if not Assigned(Form) then
      begin
@@ -4098,11 +4099,11 @@ begin
   inherited;
   if not Logined then
      begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
   Application.Restore;
-  frmShopDesk.SaveToFront;
+  frmN26Desk.SaveToFront;
   Form := FindChildForm('frmDemandOrderList2');
   if not Assigned(Form) then
      begin

@@ -395,7 +395,7 @@ implementation
 uses ufrmMain, ZLogFile, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
      ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
-     ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList, ufrmFastReport;
+     ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList, ufrmFastReport, uN26Factory;
 {$R *.dfm}
 
 procedure TfrmPosMain.FormCreate(Sender: TObject);
@@ -4585,7 +4585,6 @@ function TfrmPosMain.PostPayMessage(InObj: TRecord_): Boolean;
 const
   PAY_CHAR='ABCDEFGHIJ'; //支付类型
 var
-  F: TIniFile;
   vHandle: Hwnd;
   MSG_TYPE,vCount,i: Longint;
   PAY_ALL,PAY_RETURN: Longint;
@@ -4596,12 +4595,7 @@ var
 begin
   result:=False;
   vCount:=1;
-  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'mmPlayer.ini');
-  try   
-    vHandle:=F.ReadInteger('config','Handle',0);
-  finally
-    F.Free;
-  end;
+  vHandle := N26Factory.PlayerHandle;
   if vHandle<=0 then Exit;
   //结算金额:0
   PAY_ALL:=Round((InObj.fieldbyName('SALE_MNY').asFloat-InObj.fieldbyName('PAY_DIBS').asFloat)*100); //零售金额 - 抹零金额

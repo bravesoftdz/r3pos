@@ -18,11 +18,24 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','季度考核','KPI_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按实销量','KPI_TYPE','00',5497000);
 
---考核数据
+--考核标准
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按销量完成率','KPI_DATA','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按金额完成率','KPI_DATA','00',5497000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按完成销量','KPI_DATA','00',5497000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','按完成金额','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按毛利完成率','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','按完成销量','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','按完成金额','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('6','按完成毛利','KPI_DATA','00',5497000);
+--计算标准
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按销量<线性>','KPI_CALC','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按金额<线性>','KPI_CALC','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按毛利<线性>','KPI_CALC','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','按销量<累进>','KPI_CALC','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','按金额<累进>','KPI_CALC','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('6','按毛利<累进>','KPI_CALC','00',5497000);
+
+--是否启用阶梯考核
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','启用','KPI_OPTN','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁用','KPI_OPTN','00',5497000);
 
 --考核指标
 CREATE TABLE [MKT_KPI_INDEX] (
@@ -40,10 +53,14 @@ CREATE TABLE [MKT_KPI_INDEX] (
 	[KPI_TYPE] [char] (1) NOT NULL ,
         --考核标准
 	[KPI_DATA] char(1) NULL ,
-	        --标准折扣
+        --计算标准
+	[KPI_CALC] char(1) NULL ,
+	
+	        --标准系数
 	[KPI_AGIO] [decimal](18, 3) NULL ,
+	        --是否启用
+	[KPI_OPTN] char(1) NULL ,
 
-	      
         --备注
 	[REMARK] [varchar] (100) NULL ,
 	CONSTRAINT [PK_MKT_KPI_INDEX] PRIMARY KEY  
@@ -52,6 +69,10 @@ CREATE TABLE [MKT_KPI_INDEX] (
 		[KPI_ID]
 	)
 );
+
+--是否启用阶梯考核
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','允许','USING_BRRW','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁止','USING_BRRW','00',5497000);
 
 --考核指标标准
 CREATE TABLE [MKT_KPI_OPTION] (
@@ -70,6 +91,8 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	[KPI_DATE2] int NULL ,
         --达标后折扣
 	[KPI_AGIO] [decimal](18, 3) NULL ,
+	      --是否允许借量
+	[USING_BRRW] char(1) NULL ,
 	CONSTRAINT [PK_MKT_KPI_OPTION] PRIMARY KEY 
 	(
 		[TENANT_ID],
@@ -263,7 +286,9 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
         --达标后折扣
 	[KPI_AGIO] [decimal](18, 3) NULL ,
 
-	      --考核结果
+        --完成量
+	[FSH_VLE] [decimal](18, 3) NULL ,
+	      --考核量
 	[KPI_MNY] [decimal](18, 3) NULL ,
 	
 	CONSTRAINT [PK_MKT_KPI_R_LIST] PRIMARY KEY 

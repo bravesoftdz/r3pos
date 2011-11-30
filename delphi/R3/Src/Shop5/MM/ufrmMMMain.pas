@@ -362,7 +362,7 @@ var
 
 implementation
 uses
-  ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory,
+  ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory, uN26Factory,
   uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
@@ -722,6 +722,7 @@ begin
      if (mmGlobal.module[2]='1') then mmGlobal.SyncTimeStamp;
      frmLogo.ShowTitle := '正在初始化广告数据...';
      if (mmGlobal.module[4]='1') then AdvFactory.LoadAdv;
+     N26Factory.coPlayList;
      frmMMDesk.LoadDesk;
 
      UpdateTimer.Enabled := true;

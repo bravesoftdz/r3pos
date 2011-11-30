@@ -9,7 +9,8 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = Shop.exe r3_xsm2.exe r3_n26.exe RSPScktSrvr.exe Upgrade.exe mm.exe
+PROJECTS = Shop.exe r3_xsm2.exe r3_n26.exe RSPScktSrvr.exe Upgrade.exe mm.exe \
+  RimGodsDzPlugIn.dll RimParamsPlugIn.dll
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -30,6 +31,12 @@ Upgrade.exe: ..\RspSrvr\Upgrade.dpr
   $(DCC)
 
 mm.exe: mm.dpr
+  $(DCC)
+
+RimGodsDzPlugIn.dll: ..\PlugIn\Rim\RimGodsDzPlugIn.dpr
+  $(DCC)
+
+RimParamsPlugIn.dll: ..\PlugIn\Rim\RimParamsPlugIn.dpr
   $(DCC)
 
 

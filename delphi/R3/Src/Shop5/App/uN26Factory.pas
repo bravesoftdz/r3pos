@@ -3,10 +3,12 @@ unit uN26Factory;
 interface
 
 uses
-  SysUtils, Classes, IdCookieManager, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, xmldom, XMLIntf, msxml, ActiveX, ComObj, ZBase,
+  SysUtils, Classes,windows,messages,ZLogFile,
+  IdTCPConnection, IdTCPClient, IdHTTP, IdCookieManager, IdBaseComponent, IdComponent,
+  xmldom, XMLIntf, msxml, ActiveX, ComObj, ZBase,
   msxmldom, XMLDoc, Forms, N26base64, HTTPApp, ZDataSet;
-
+const
+  WM_GET_PLAYLIST=WM_USER+3952;
 type
   TN26Factory = class(TDataModule)
     IdHTTP1: TIdHTTP;
@@ -27,17 +29,20 @@ type
     function FindElement(root:IXMLDOMNode;s:string):IXMLDOMNode;
     function FindNode(doc:IXMLDomDocument;tree:string;CheckExists:boolean=true):IXMLDOMNode;
     function EncodeLoginUrl: string;
+    function getPlayerHandle: THandle;
   public
     { Public declarations }
     function Checked:integer;
     function coAutoLogin:boolean;
     function coLogin(username:string;password:string):boolean;
+    function coPlayList:boolean;
     function EncodeUrl:string;
     property N26Url:string read FN26Url write SetN26Url;
     property N26UserName:string read FN26UserName write SetN26UserName;
     property N26PassWord:string read FN26PassWord write SetN26PassWord;
     property N26Token:string read FN26Token write SetN26Token;
     property Logined:boolean read FLogined write SetLogined;
+    property PlayerHandle:THandle read getPlayerHandle;
   end;
 
 var
@@ -128,6 +133,78 @@ begin
   Logined := result;
 end;
 
+function TN26Factory.coPlayList: boolean;
+var
+  doc:IXMLDomDocument;
+  s,id,filename:string;
+  playListResp,Play:IXMLDOMNode;
+  F:TIniFile;
+  rc,i:integer;
+  list:TStringList;
+begin
+  result := false;
+  if Checked=0 then Exit;
+  if not Logined then Exit;
+  if not fileExists(ExtractFilePath(ParamStr(0))+'mmPlayer.exe') then Exit;
+  if N26Url<>'' then
+  begin
+    try
+      doc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
+      s := idHTTP1.Get(N26Url+'playList.do??token='+HTTPEncode(N26Token));
+      doc.loadXML(s);
+      if FindNode(doc,'header\pub\recAck',true).text<>'0000' then Raise Exception.Create('请求广告节目失败了,错误:'+FindNode(doc,'header\pub\msg',true).text);
+      F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'adv\playlist.ini');
+      list := TStringList.Create;
+      try
+        playListResp := FindNode(doc,'body\playListResp');
+        if playListResp<>nil then
+        begin
+          Play := playListResp.firstChild;
+          f.ReadSections(list);
+          for i:=0 to list.Count -1 do
+            begin
+              if (list[i]<>'adv') then
+                 f.EraseSection(list[i]); 
+            end;
+          rc := 0;
+          while Play<>nil do
+             begin
+               id := play.attributes.getNamedItem('id').nodeValue;
+               if id<>'' then
+                  begin
+                    filename := ExtractFilePath(ParamStr(0))+id+'.'+play.attributes.getNamedItem('mediaType').nodeValue;
+                    f.WriteString(id,'filename',filename);
+                    f.WriteString(id,'title',play.attributes.getNamedItem('name').nodeValue);
+                    f.WriteString(id,'url',play.attributes.getNamedItem('url').nodeValue);
+                    if not fileExists(filename) then
+                       begin
+                         inc(rc);
+                         f.WriteString(id,'ready','0');
+                       end
+                    else
+                       begin
+                         f.WriteString(id,'ready','1');
+                       end;
+                  end;
+               Play := Play.nextSibling;
+             end;
+        end;
+      finally
+        list.Free;
+        f.Free;
+      end;
+      result := (rc>0);
+      if result then
+         PostMessage(playerHandle,WM_GET_PLAYLIST,0,0);
+    except
+      on E:Exception do
+         begin
+           LogFile.AddLogFile(0,E.Message); 
+         end;
+    end;
+  end;
+end;
+
 function TN26Factory.EncodeLoginUrl: string;
 var
   rs:TZQuery;
@@ -190,6 +267,18 @@ begin
     if CheckExists and (result = nil) then Raise Exception.Create('在文档中没找到结点'+tree); 
   finally
     s.Free;
+  end;
+end;
+
+function TN26Factory.getPlayerHandle: THandle;
+var
+  F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'mmPlayer.ini');
+  try   
+    result:=F.ReadInteger('config','Handle',0);
+  finally
+    F.Free;
   end;
 end;
 

@@ -8,6 +8,11 @@ select TENANT_ID,'B43EF134-66A1-41DF-A921-EFD76198307F','固定保证金','GDBZJ','3'
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
 select TENANT_ID,'E9AED0B1-050C-4EFB-AA7A-0A64FE45EF97','滚动保证金','GDBZJ','3',6,'00',5497000 from CA_TENANT;
 
+--指标类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','返利考核','IDX_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','计提考核','IDX_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','业绩考核','IDX_TYPE','00',5497000);
+
 --考核类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','年度考核','KPI_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','季度考核','KPI_TYPE','00',5497000);
@@ -20,7 +25,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','按完成金额','KPI_DATA','00',5497000);
 
 --考核指标
-CREATE TABLE [MKT_KPI_OPTION] (
+CREATE TABLE [MKT_KPI_INDEX] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
         --指标ID号
@@ -29,112 +34,50 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	[KPI_NAME] [char] (50) NOT NULL ,
         --换算系数<与计量单位的系数>
 	[KPI_RATE] [char] (36) NOT NULL ,
+        --指标类型
+	[IDX_TYPE] [char] (1) NOT NULL ,
         --考核类型
 	[KPI_TYPE] [char] (1) NOT NULL ,
-        --标准折扣
+        --考核标准
+	[KPI_DATA] char(1) NULL ,
+	        --标准折扣
 	[KPI_AGIO] [decimal](18, 3) NULL ,
 
-        --上半年完成率
-	[KPI_Y_DATA] char(1) NULL ,
-        --标准折扣率
-	[KPI_Y_RATE] [decimal](18, 3) NULL ,
-	[KPI_Y1_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_Y1_AGIO] [decimal](18, 3) NULL ,
-        --上半年完成率
-	[KPI_Y2_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_Y2_AGIO] [decimal](18, 3) NULL ,
-        --上半年完成率
-	[KPI_Y3_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_Y3_AGIO] [decimal](18, 3) NULL ,
-	
-        --下半年完成率
-	[KPI_L_DATA] char(1) NULL ,
-	[KPI_L1_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_L1_AGIO] [decimal](18, 3) NULL ,
-        --下半年完成率
-	[KPI_L2_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_L2_AGIO] [decimal](18, 3) NULL ,
-        --下半年完成率
-	[KPI_L3_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_L3_AGIO] [decimal](18, 3) NULL ,
-	
-        --第一季度完成率
-	[KPI_G1_DATA] char(1) NULL ,
-	[KPI_G11_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G11_AGIO] [decimal](18, 3) NULL ,
-        --第一季度完成率
-	[KPI_G12_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G12_AGIO] [decimal](18, 3) NULL ,
-        --第一季度完成率
-	[KPI_G13_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G13_AGIO] [decimal](18, 3) NULL ,
-
-        --第二季度完成率
-	[KPI_G2_DATA] char(1) NULL ,
-	[KPI_G21_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G21_AGIO] [decimal](18, 3) NULL ,
-	[KPI_G22_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G22_AGIO] [decimal](18, 3) NULL ,
-	[KPI_G23_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G23_AGIO] [decimal](18, 3) NULL ,
-
-        --第三季度完成率
-	[KPI_G3_DATA] char(1) NULL ,
-	[KPI_G31_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G31_AGIO] [decimal](18, 3) NULL ,
-	[KPI_G32_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G32_AGIO] [decimal](18, 3) NULL ,
-	[KPI_G33_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G33_AGIO] [decimal](18, 3) NULL ,
-
-        --第四季度完成率
-	[KPI_G4_DATA] char(1) NULL ,
-	[KPI_G41_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G41_AGIO] [decimal](18, 3) NULL ,
-	[KPI_G42_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G42_AGIO] [decimal](18, 3) NULL ,
-	[KPI_G43_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_G43_AGIO] [decimal](18, 3) NULL ,
-	
-        --时间段
-	[KPI_D1_ST] [int] NULL ,
-	[KPI_D1_ED] [int] NULL ,
-	[KPI_D1_MNY] [decimal](18, 3) NULL ,
-	
-	[KPI_D2_ST] [int] NULL ,
-	[KPI_D2_ED] [int] NULL ,
-	[KPI_D2_MNY] [decimal](18, 3) NULL ,
-
-	[KPI_D3_ST] [int] NULL ,
-	[KPI_D3_ED] [int] NULL ,
-	[KPI_D3_MNY] [decimal](18, 3) NULL ,
 	      
         --备注
 	[REMARK] [varchar] (100) NULL ,
-	CONSTRAINT [PK_MKT_KPI_OPTION] PRIMARY KEY  
+	CONSTRAINT [PK_MKT_KPI_INDEX] PRIMARY KEY  
 	(
 		[TENANT_ID],
 		[KPI_ID]
 	)
 );
+
+--考核指标标准
+CREATE TABLE [MKT_KPI_OPTION] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --考核指标
+	[KPI_ID] [char] (36) NOT NULL ,
+        --级别，每个指标重 1 开始计数
+	[SEQNO] [int] NOT NULL ,
+	      --达标率
+	[KPI_RATE] [decimal](18, 3) NULL ,
+	      --达标量
+	[KPI_AMT] [decimal](18, 3) NULL ,
+	      --考时段
+	[KPI_DATE1] int NULL ,
+	[KPI_DATE2] int NULL ,
+        --达标后折扣
+	[KPI_AGIO] [decimal](18, 3) NULL ,
+	CONSTRAINT [PK_MKT_KPI_OPTION] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[KPI_ID],
+		[SEQNO]
+	) 
+);
+CREATE INDEX IX_MKPO_KPI_ID ON MKT_KPI_OPTION(TENANT_ID,KPI_ID);
 
 --考核指标对应商品清单
 CREATE TABLE [MKT_KPI_GOODS] (
@@ -144,8 +87,8 @@ CREATE TABLE [MKT_KPI_GOODS] (
 	[KPI_ID] [char] (36) NOT NULL ,
         --商品编码
 	[GODS_ID] [char] (36) NOT NULL ,
-        --计提比例
-	[MKT_AGIO] [decimal](18, 3) NULL ,
+        --考核单位
+	[UNIT_ID] [char] (36) NOT NULL ,
 	CONSTRAINT [PK_MKT_KPI_GOODS] PRIMARY KEY 
 	(
 		[TENANT_ID],
@@ -153,6 +96,7 @@ CREATE TABLE [MKT_KPI_GOODS] (
 		[GODS_ID]
 	) 
 );
+CREATE INDEX IX_MKPG_KPI_ID ON MKT_KPI_GOODS(TENANT_ID,KPI_ID);
 
 --销售计划
 CREATE TABLE [MKT_PLANORDER] (
@@ -185,9 +129,9 @@ CREATE TABLE [MKT_PLANORDER] (
         --金额汇总
 	[PLAN_MNY] [decimal](18, 3) NULL ,
         --保证金总额
-	[PLAN_MNY] [decimal](18, 3) NULL ,
+	[BOND_MNY] [decimal](18, 3) NULL ,
         --市场费预算
-	[PLAN_MNY] [decimal](18, 3) NULL ,
+	[BUDG_MNY] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
         --操作时间
@@ -223,15 +167,15 @@ CREATE TABLE [MKT_PLANDATA] (
 	[AMOUNT] [decimal](18, 3) NULL ,
         --计划金额
 	[AMONEY] [decimal](18, 3) NULL ,
-        --保证金总额
-	[PLAN_MNY] [decimal](18, 3) NULL ,
+        --保证金
+	[BOND_MNY] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
 	CONSTRAINT [PK_MKT_PLANDATA] PRIMARY KEY  
 	(
 		[TENANT_ID],
 		[PLAN_ID],
-		[SEQNO]
+		[KPI_ID]
 	)
 );
 
@@ -245,6 +189,8 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	[TENANT_ID] int NOT NULL ,
         --计划单号
 	[PLAN_ID] [char] (36) NOT NULL ,
+        --指标类型
+	[IDX_TYPE] [char] (1) NOT NULL ,
         --考核ID
 	[KPI_ID] [char] (36) NOT NULL ,
         --年度
@@ -263,60 +209,13 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	[PLAN_AMT] [decimal](18, 3) NULL ,
         --计划金额 
 	[PLAN_MNY] [decimal](18, 3) NULL ,
+	
         --完成销量
-	[KPI_AMT] [decimal](18, 3) NULL ,
+	[FISH_AMT] [decimal](18, 3) NULL ,
         --完成金额 
-	[KPI_MNY] [decimal](18, 3) NULL ,
+	[FISH_MNY] [decimal](18, 3) NULL ,
 	
-        --市场费计提
-	[MKT_MNY] [decimal](18, 3) NULL ,
-	
-	      --上半年返利
-	[KPI_Y_MNY] [decimal](18, 3) NULL ,
-        --上半年完成率
-	[KPI_Y_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_Y_AGIO] [decimal](18, 3) NULL ,
-	      --下半年返利
-	[KPI_L_MNY] [decimal](18, 3) NULL ,
-        --上半年完成率
-	[KPI_L_RATE] [decimal](18, 3) NULL ,
-        --达标折扣
-	[KPI_L_AGIO] [decimal](18, 3) NULL ,
-	
-        --第一季度返利
-	[KPI_G1_MNY] char(1) NULL ,
-        --第一季度完成率
-	[KPI_G1_RATE] [decimal](18, 3) NULL ,
-        --第一季度达标折扣
-	[KPI_G1_AGIO] [decimal](18, 3) NULL ,
-        --第二季度返利
-	[KPI_G2_MNY] char(1) NULL ,
-        --第二季度完成率
-	[KPI_G2_RATE] [decimal](18, 3) NULL ,
-        --第二季度达标折扣
-	[KPI_G2_AGIO] [decimal](18, 3) NULL ,
-        --第三季度返利
-	[KPI_G3_MNY] char(1) NULL ,
-        --第三季度完成率
-	[KPI_G3_RATE] [decimal](18, 3) NULL ,
-        --第三季度达标折扣
-	[KPI_G3_AGIO] [decimal](18, 3) NULL ,
-        --第四季度返利
-	[KPI_G4_MNY] char(1) NULL ,
-        --第四季度完成率
-	[KPI_G4_RATE] [decimal](18, 3) NULL ,
-        --第四季度达标折扣
-	[KPI_G4_AGIO] [decimal](18, 3) NULL ,
-	
-	      --时间段1返利
-	[KPI_D1_MNY] [decimal](18, 3) NULL ,
-	      --时间段2返利
-	[KPI_D2_MNY] [decimal](18, 3) NULL ,
-	      --时间段3返利
-	[KPI_D3_MNY] [decimal](18, 3) NULL ,
-
-        --销售返利
+        --考核结果<元>
 	[KPI_MNY] [decimal](18, 3) NULL ,
         --提取返利
 	[WDW_MNY] [decimal](18, 3) NULL ,
@@ -334,7 +233,6 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	(
 		[TENANT_ID],
 		[PLAN_ID],
-		[KPI_YEAR],
 		[KPI_ID]
 	) 
 );
@@ -344,6 +242,38 @@ CREATE INDEX IX_MKPIR_TIME_STAMP ON MKT_KPI_RESULT(TENANT_ID,TIME_STAMP);
 CREATE INDEX IX_MKPIR_KPI_YEAR ON MKT_KPI_RESULT(TENANT_ID,KPI_YEAR);
 CREATE INDEX IX_MKPIR_KPI_ID ON MKT_KPI_RESULT(TENANT_ID,KPI_ID);
 CREATE INDEX IX_MKPIR_PLAN_ID ON MKT_KPI_RESULT(TENANT_ID,PLAN_ID);
+
+--考核计算清单
+CREATE TABLE [MKT_KPI_RESULT_LIST] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --计划单号
+	[PLAN_ID] [char] (36) NOT NULL ,
+        --考核指标
+	[KPI_ID] [char] (36) NOT NULL ,
+        --级别，每个指标重 1 开始计数
+	[SEQNO] [int] NOT NULL ,
+	      --达标率
+	[KPI_RATE] [decimal](18, 3) NULL ,
+	      --达标量
+	[KPI_AMT] [decimal](18, 3) NULL ,
+	      --考时段
+	[KPI_DATE1] int NULL ,
+	[KPI_DATE2] int NULL ,
+        --达标后折扣
+	[KPI_AGIO] [decimal](18, 3) NULL ,
+
+	      --考核结果
+	[KPI_MNY] [decimal](18, 3) NULL ,
+	
+	CONSTRAINT [PK_MKT_KPI_R_LIST] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[PLAN_ID],
+		[KPI_ID],
+		[SEQNO]
+	) 
+);
 
 --需求类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','市场返利','REQU_TYPE','00',5497000);

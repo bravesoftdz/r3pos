@@ -150,7 +150,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','领用申请','DEMA_TYPE','00',5497000);
 
 --领用单对应的需求填报单
-alter table STO_CHANGEORDER add FIG_ID char(36) NULL;
+alter table STO_CHANGEORDER add FIG_ID char(36);
 --需求填报
 CREATE TABLE MKT_DEMANDORDER (
         --企业代码

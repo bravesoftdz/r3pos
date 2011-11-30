@@ -330,6 +330,7 @@ begin
        Label17.Caption := '请求指令总数:'+inttostr(DataBlockCount);
        Label9.Caption :=  '指令等待延时:'+inttostr(DataBlockMaxWaitTime)+'微秒';
      end;
+  if formatDatetime('HH:NN',now())='01:00' then Memo1.Lines.Clear;
 end;
 
 procedure TSocketForm.CheckValues;
@@ -775,9 +776,15 @@ var
   s:string;
   Item:TListItem;
 begin
+  if Memo1.Lines.Count > 5000 then Memo1.Lines.Clear;
   s := LogFile.ReadLogFile;
-  if s<>'' then
-     Memo1.Lines.Add(s); 
+  if Visible and (Pages.ActivePageIndex=4) and (s<>'') then
+     Memo1.Lines.Add(s);
+  while PlugInList.logs.Count > 0 do
+     begin
+       Memo1.Lines.Add(PlugInList.logs[0]);
+       PlugInList.Logs.Delete(0);
+     end;
 end;
 
 function TSocketForm.GetSelectedSocket: Pointer;

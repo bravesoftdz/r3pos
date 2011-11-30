@@ -12,6 +12,7 @@ const
   WM_PLAY_DESKTOP=WM_USER+3949;
   WM_TPOS_DISPLAY=WM_USER+3950;
   UI_INITIALIZE   = WM_USER + 3951;
+  WM_GET_PLAYLIST=WM_USER+3952;
 
 type
   pPlayListItem = ^TPlayListItem;
@@ -127,6 +128,7 @@ type
   private
     { Private declarations }
     procedure WMPlayList(var Message: TMessage); message WM_PLAYLIST_REFRESH;
+    procedure WMGetPlayList(var Message: TMessage); message WM_GET_PLAYLIST;
     procedure WMPlayDesktop(var Message: TMessage); message WM_PLAY_DESKTOP;
     procedure WMTPosDisplay(var Message: TMessage); message WM_TPOS_DISPLAY;
   public
@@ -763,6 +765,11 @@ end;
 procedure TfrmMMPlayer.RzTrayIcon1MinimizeApp(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TfrmMMPlayer.WMGetPlayList(var Message: TMessage);
+begin
+  frmMMUrlDown.Timer1Timer(nil);
 end;
 
 end.

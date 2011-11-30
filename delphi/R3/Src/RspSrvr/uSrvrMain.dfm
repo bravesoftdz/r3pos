@@ -29,7 +29,7 @@ object SocketForm: TSocketForm
     Top = 0
     Width = 519
     Height = 326
-    ActivePage = TabLog
+    ActivePage = PropPage
     Align = alClient
     TabOrder = 0
     OnChange = PagesChange

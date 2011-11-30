@@ -1,7 +1,7 @@
 unit ZPlugIn;
 
 interface
-uses Classes,SysUtils,Windows,Variants,ZServer,ZDataSet,ZdbHelp,ZLogFile,ZBase;
+uses Classes,SysUtils,Windows,Variants,ZServer,ZDataSet,ZdbHelp,ZLogFile,ZBase,ZConst;
 
 //插件说明
 //返回值为0代表执行成交，否反回对就原错误原因.
@@ -56,6 +56,9 @@ type
     procedure SetLastError(const Value: string);
     procedure SetData(const Value: Pointer);
     procedure SetWorking(const Value: integer);
+    
+    function CheckIdTransact:TdbResolver;
+    procedure PushCache(dbResolver:TdbResolver);
    protected
     IParams:IPlugIn;
     //设置当前插件参数,指定连锁ID号
@@ -84,9 +87,6 @@ type
 
     //日志服务
     function WriteLogFile(s:Pchar):integer;stdcall;
-
-    function CheckIdTransact:TdbResolver;
-    procedure PushCache(dbResolver:TdbResolver);
    public
     constructor Create(FileName:string);
     destructor Destroy; override;
@@ -109,6 +109,7 @@ type
   TPlugInList=class
    private
     FList:TList;
+    FLog:TStrings;
     FThreadLock:TRTLCriticalSection;
     function GetItems(ItemIndex: Integer): TPlugIn;
     function GetCount: Integer;
@@ -128,6 +129,7 @@ type
 
     property Items[ItemIndex:Integer]:TPlugIn read GetItems;
     property Count:Integer read GetCount;
+    property Logs:TStrings read FLog;
    end;
 var
   PlugInList:TPlugInList;
@@ -244,7 +246,6 @@ var
 begin
   InterlockedIncrement(FWorking);
   dbResolver := CheckIdTransact;
-//  LogFile.AddLogFile(0,'开始执行<'+inttostr(PlugInId)+'>'+PlugInDisplayName);
   try
     try
       @_DLLDoExecute := GetProcAddress(Handle, 'DoExecute');
@@ -254,14 +255,12 @@ begin
     except
       on E:Exception do
          begin
-           //LogFile.AddLogFile(0,'<'+inttostr(PlugInId)+'>'+E.Message,PlugInDisplayName);
            Raise;
          end;
     end;
   finally
     InterlockedDecrement(FWorking);
     PushCache(dbResolver);
-//    LogFile.AddLogFile(0,'结束执行<'+inttostr(PlugInId)+'>'+PlugInDisplayName);
   end;
 end;
 
@@ -402,21 +401,9 @@ end;
 
 function TPlugIn.WriteLogFile(s: Pchar): integer;
 begin
-//  Enter;
-//  try
-    try
-      LogFile.AddLogFile(0,s,PlugInDisplayName);
-      result := 0;
-    except
-      on E:Exception do
-         begin
-           result := 2000;
-           LastError := 'WriteLogFile'+E.Message;
-         end;
-    end;
-//  finally
-//    Leave;
-//  end;
+  if MainFormHandle=0 then Exit;
+  PlugInList.Logs.Add(StrPas(s));
+  PostMessage(MainFormHandle,WM_LOGFILE_UPDATE,0,0);
 end;
 
 function TPlugIn.GetLastError: Pchar;
@@ -564,6 +551,7 @@ constructor TPlugInList.Create;
 begin
   InitializeCriticalSection(FThreadLock);
   FList := TList.Create;
+  FLog := TStringList.Create;
   LoadAll;
 end;
 
@@ -592,6 +580,7 @@ begin
   Enter;
   try
     Clear;
+    FLog.Free;
     FList.Free;
   finally
     Leave;

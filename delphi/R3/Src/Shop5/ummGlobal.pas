@@ -286,8 +286,11 @@ var
   Root:IXMLDOMElement;    
   xml:string;
   F:TIniFile;
+  url:string;
 begin
-  xsm_signature := IdHTTP1.Get(xsmc+'users/dologin/up?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+xsm_challenge));
+try
+  url := xsmc+'users/dologin/up?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+xsm_challenge);
+  xsm_signature := IdHTTP1.Get(url);
   xml := Utf8ToAnsi(xsm_signature);
   Doc := CreateXML(xml);
   xsm_signature := xml;
@@ -317,6 +320,13 @@ begin
     end;
   end;
   result := true;
+except
+  on E:Exception do
+  begin
+    LogFile.AddLogFile(0,'–¬…Ã√À»œ÷§ ß∞‹;url='+url);
+    Raise;
+  end;
+end;
 end;
 
 function TmmGlobal.getChallenge: boolean;
@@ -325,8 +335,9 @@ var
   List:TStringList;
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;
-  xml:string;
+  xml,url:string;
 begin
+try
   result := false;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   List := TStringList.Create;
@@ -339,7 +350,8 @@ begin
          xsmc := List.Values['xsmc'];
          xsmurl := List.Values['xsm'];
        end;
-    xml := IdHTTP1.Get(xsmc+'users/forlogin');
+    url := xsmc+'users/forlogin';
+    xml := IdHTTP1.Get(url);
     xml := Utf8ToAnsi(xml);
     Doc := CreateXML(xml);
     if not Assigned(doc) then Raise Exception.Create('«Î«Ûµ«¬º ß∞‹...');
@@ -356,16 +368,24 @@ begin
     except
     end;
   end;
+except
+  on E:Exception do
+  begin
+    LogFile.AddLogFile(0,'«Î«Û—È÷§¬Î ß∞‹;url='+url);
+    Raise;
+  end;
+end;
 end;
 
 function TmmGlobal.getSignature: boolean;
 var
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;    
-  xml:string;
+  xml,url:string;
 begin
   try
-    xsm_signature := IdHTTP1.Get(xsmc+'users/gettoken');
+    url := xsmc+'users/gettoken';
+    xsm_signature := IdHTTP1.Get(url);
     xml := Utf8ToAnsi(xsm_signature);
     Doc := CreateXML(xml);
     xsm_signature := xml;
@@ -377,6 +397,7 @@ begin
     result := true;
   except
     logined := false;
+    LogFile.AddLogFile(0,'∂¡»°¡Ó≈∆ ß∞‹;url='+url);
     Raise;
   end;
 end;
@@ -604,7 +625,7 @@ begin
     result := true;
   except
     logined := false;
-    LogFile.AddLogFile(0,xml); 
+    LogFile.AddLogFile(0,'∂¡»°∫√”— ß∞‹£¨url='+url+';xml='+xml); 
     Raise;
   end;
 end;
@@ -624,10 +645,11 @@ var
   Doc:IXMLDomDocument;
   Root:IXMLDOMElement;    
   Node:IXMLDOMNode;
-  xml:string;
+  xml,url:string;
 begin
   try
-    xml := IdHTTP1.Get(xsmc+'navi/donavi/a?userId='+xsm_username+'&isFirst=0&comId='+xsm_comId+'&zoneId=GWGC');
+    url := xsmc+'navi/donavi/a?userId='+xsm_username+'&isFirst=0&comId='+xsm_comId+'&zoneId=GWGC';
+    xml := IdHTTP1.Get(url);
     xml := Utf8ToAnsi(xml);
     Doc := CreateXML(xml);
     if not Assigned(doc) then Raise Exception.Create('ƒ£ƒ‚µº∫Ω ß∞‹...');
@@ -662,10 +684,10 @@ begin
     result := true;
   except
     logined := false;
+    LogFile.AddLogFile(0,'ƒ£ƒ‚µº∫Ω ß∞‹;url='+url);
     Raise;
   end;
 end;
-
 procedure TmmGlobal.Setchat_addr(const Value: string);
 begin
   Fchat_addr := Value;

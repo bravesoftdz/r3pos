@@ -291,6 +291,8 @@ type
     CA_MODULE: TZQuery;
     actfrmSaleDaySingleReport: TAction;
     actfrmIEOpen: TAction;
+    actfrmDemandOrderList1: TAction;
+    actfrmDemandOrderList2: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -414,6 +416,8 @@ type
     procedure actfrmGoodsMonthExecute(Sender: TObject);
     procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
     procedure actfrmIEOpenExecute(Sender: TObject);
+    procedure actfrmDemandOrderList1Execute(Sender: TObject);
+    procedure actfrmDemandOrderList2Execute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -474,7 +478,7 @@ var
 
 implementation
 uses
-  uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmN26Desk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uRcFactory,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmN26Desk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -486,7 +490,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory;
+  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory,ufrmDemandOrder;
 {$R *.dfm}
 
 function CheckXsmPassWord(uid, pwd: string): boolean;
@@ -3030,120 +3034,64 @@ begin
 end;
 
 procedure TfrmN26Main.LoadPic32;
-var
-  DllHandle: THandle;
-function GetBitmap(ResName:string):TBITMAP;
-var
-  Stream: TStream;
 begin
-  result := nil;
-  //装载Logo
-  if FindResource(DllHandle, PChar(ResName), 'BMP') <> 0 then
-  begin
-    Stream := TResourceStream.Create(DllHandle, ResName, 'BMP');
-    try
-      result := TBITMAP.Create;
-      try
-        Stream.Position := 0;
-        result.LoadFromStream(Stream);
-      except
-        freeandnil(result);
-      end;
-    finally
-      Stream.Free;
-    end;
-  end;
-end;
-function GetJpeg(ResName:string):TJPEGImage;
-var
-  Stream: TStream;
-begin
-  result := nil;
-  //装载Logo
-  if FindResource(DllHandle, PChar(ResName), 'JPG') <> 0 then
-  begin
-    Stream := TResourceStream.Create(DllHandle, ResName, 'JPG');
-    try
-      result := TJPEGImage.Create;
-      try
-        Stream.Position := 0;
-        result.LoadFromStream(Stream);
-      except
-        freeandnil(result);
-      end;
-    finally
-      Stream.Free;
-    end;
-  end;
-end;
-function GetResString(ResName:integer):string;
-var
-  iRet:array[0..254] of char;
-begin
-  result := '';
-  LoadString(DllHandle, ResName, iRet, 254);
-  result := StrPas(iRet);
-end;
-
-var
-  pic:TGraphic;
-begin
-  DllHandle := LoadLibrary('Pic32.dll');
-  sflag := 's'+GetResString(1)+'_';
-  if DllHandle > 0 then 
-  try
+    sflag := 's1_';
     //logo
     //Image5.Picture.Graphic  := GetJpeg(sflag+'logo_lt');
-    Image6.Picture.Graphic  := GetJpeg(sflag+'logo_bg');
-    Image20.Picture.Graphic  := GetJpeg(sflag+'logo_r1');
-    Image17.Picture.Graphic  := GetJpeg(sflag+'logo_r2');
-    Image8.Picture.Graphic  := GetJpeg(sflag+'logo_r3');
-    Image7.Picture.Graphic  := GetJpeg(sflag+'logo_r4');
+    Image6.Picture.Graphic  := rcFactory.GetJpeg(sflag+'logo_bg');
+    Image20.Picture.Graphic  := rcFactory.GetJpeg(sflag+'logo_r1');
+    Image17.Picture.Graphic  := rcFactory.GetJpeg(sflag+'logo_r2');
+    Image8.Picture.Graphic  := rcFactory.GetJpeg(sflag+'logo_r3');
+    Image7.Picture.Graphic  := rcFactory.GetJpeg(sflag+'logo_r4');
     
-    Image14.Picture.Graphic  := GetJpeg(sflag+'menu_title');
+    Image14.Picture.Graphic  := rcFactory.GetJpeg(sflag+'menu_title');
 
-    Image11.Picture.Graphic  := GetJpeg(sflag+'tool_01');
-    Image10.Picture.Graphic  := GetJpeg(sflag+'tool_02');
-    Image16.Picture.Graphic  := GetJpeg(sflag+'tool_03');
-    Image27.Picture.Graphic  := GetJpeg(sflag+'tool_04');
-    Image21.Picture.Graphic  := GetJpeg(sflag+'tool_05');
+    Image11.Picture.Graphic  := rcFactory.GetJpeg(sflag+'tool_01');
+    Image10.Picture.Graphic  := rcFactory.GetJpeg(sflag+'tool_02');
+    Image16.Picture.Graphic  := rcFactory.GetJpeg(sflag+'tool_03');
+    Image27.Picture.Graphic  := rcFactory.GetJpeg(sflag+'tool_04');
+    Image21.Picture.Graphic  := rcFactory.GetJpeg(sflag+'tool_05');
 
-//    Image18.Picture.Graphic  := GetJpeg(sflag+'page_bg');
-    Image19.Picture.Graphic  := GetJpeg(sflag+'split');
+    Image19.Picture.Graphic  := rcFactory.GetJpeg(sflag+'split');
 
-    Image22.Picture.Graphic  := GetJpeg(sflag+'foot_1');
-    Image15.Picture.Graphic  := GetJpeg(sflag+'foot_2');
-    Image23.Picture.Graphic  := GetJpeg(sflag+'foot_3');
-    Image24.Picture.Graphic  := GetJpeg(sflag+'foot_4');
-    Image25.Picture.Graphic  := GetJpeg(sflag+'foot_bg');
+    Image22.Picture.Graphic  := rcFactory.GetJpeg(sflag+'foot_1');
+    Image15.Picture.Graphic  := rcFactory.GetJpeg(sflag+'foot_2');
+    Image23.Picture.Graphic  := rcFactory.GetJpeg(sflag+'foot_3');
+    Image24.Picture.Graphic  := rcFactory.GetJpeg(sflag+'foot_4');
+    Image25.Picture.Graphic  := rcFactory.GetJpeg(sflag+'foot_bg');
 
 
-    toolButton.Bitmaps.Up := GetBitmap(sflag+'toolbutton');
-    toolButton.Bitmaps.Down := GetBitmap(sflag+'toolbutton_hot');
-    RzBmpButton3.Bitmaps.Up := GetBitmap(sflag+'desktop');
-    RzBmpButton3.Bitmaps.Hot := GetBitmap(sflag+'desktop_hot');
+    toolButton.Bitmaps.Up := rcFactory.GetBitmap(sflag+'toolbutton');
+    toolButton.Bitmaps.Down := rcFactory.GetBitmap(sflag+'toolbutton_hot');
+    RzBmpButton3.Bitmaps.Up := rcFactory.GetBitmap(sflag+'desktop');
+    RzBmpButton3.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'desktop_hot');
 
-    RzBmpButton10.Bitmaps.Up := GetBitmap(sflag+'password');
-    RzBmpButton10.Bitmaps.Hot := GetBitmap(sflag+'password_hot');
-    RzBmpButton9.Bitmaps.Up := GetBitmap(sflag+'logout');
-    RzBmpButton9.Bitmaps.Hot := GetBitmap(sflag+'logout_hot');
-    RzBmpButton8.Bitmaps.Up := GetBitmap(sflag+'exit');
-    RzBmpButton8.Bitmaps.Hot := GetBitmap(sflag+'exit_hot');
+    RzBmpButton10.Bitmaps.Up := rcFactory.GetBitmap(sflag+'password');
+    RzBmpButton10.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'password_hot');
+    RzBmpButton9.Bitmaps.Up := rcFactory.GetBitmap(sflag+'logout');
+    RzBmpButton9.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'logout_hot');
+    RzBmpButton8.Bitmaps.Up := rcFactory.GetBitmap(sflag+'exit');
+    RzBmpButton8.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'exit_hot');
 
-    RzBmpButton6.Bitmaps.Up := GetBitmap(sflag+'home');
-    RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'home_hot');
-//    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
-//    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
-    RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'down');
-    RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
-    RzBmpButton4.Bitmaps.Up := GetBitmap(sflag+'upload');
-    RzBmpButton4.Bitmaps.Hot := GetBitmap(sflag+'upload_hot');
-    RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'help');
-    RzBmpButton5.Bitmaps.Hot := GetBitmap(sflag+'help_hot');
+    RzBmpButton6.Bitmaps.Up := rcFactory.GetBitmap(sflag+'home');
+    RzBmpButton6.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'home_hot');
+    if N26Factory.Checked=0 then
+       begin
+         RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag+'xsm');
+         RzBmpButton1.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'xsm_hot');
+       end
+    else
+       begin
+         RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag+'fit');
+         RzBmpButton1.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'fit_hot');
+       end;
+    RzBmpButton2.Bitmaps.Up := rcFactory.GetBitmap(sflag+'down');
+    RzBmpButton2.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'down_hot');
+    RzBmpButton4.Bitmaps.Up := rcFactory.GetBitmap(sflag+'upload');
+    RzBmpButton4.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'upload_hot');
+    RzBmpButton5.Bitmaps.Up := rcFactory.GetBitmap(sflag+'help');
+    RzBmpButton5.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'help_hot');
 
-  finally
-    if DllHandle > 0 then FreeLibrary(DllHandle);
-  end;
 end;
 
 procedure TfrmN26Main.RzBmpButton11Click(Sender: TObject);
@@ -3988,7 +3936,14 @@ var
 begin
   inherited;
   if not CaFactory.Audited then Raise Exception.Create('不支持脱机使用..');
-  if not CA_MODULE.Locate('MODU_NAME','网上订货',[]) then Raise Exception.Create('你没有开通网上订货业务');
+  if N26Factory.Checked=0 then
+     begin
+       if not CA_MODULE.Locate('MODU_NAME','网上订货',[]) then Raise Exception.Create('你没有开通网上订货业务');
+     end
+  else
+     begin
+       if not CA_MODULE.Locate('MODU_NAME','网上配货',[]) then Raise Exception.Create('你没有开通网上配货业务');
+     end;
   if CA_MODULE.FieldByName('ACTION_NAME').AsString='actfrmN26Net' then
      begin
         if not ShopGlobal.GetChkRight(CA_MODULE.FieldByName('MODU_ID').AsString) then Raise Exception.Create('你没有操作此模块的权限。');
@@ -4111,6 +4066,54 @@ begin
   inherited;
   if N26Factory.coAutoLogin then
      ShellExecute(0,'open',Pchar(N26Factory.EncodeUrl),nil,nil,0);
+end;
+
+procedure TfrmN26Main.actfrmDemandOrderList1Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmDemandOrderList1');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmDemandOrderList.Create(self);
+       TfrmDemandOrderList(Form).DemandType := '1';
+       TfrmDemandOrderList(Form).Name := 'frmDemandOrderList1';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmDemandOrderList2Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmDemandOrderList2');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmDemandOrderList.Create(self);
+       TfrmDemandOrderList(Form).DemandType := '2';
+       TfrmDemandOrderList(Form).Name := 'frmDemandOrderList2';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

@@ -74,6 +74,8 @@ s1_upload BMP D:\Delphi\R3\Src\Shop5\rc\s1_upload.bmp
 s1_upload_hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_upload_hot.bmp
 s1_xsm BMP D:\Delphi\R3\Src\Shop5\rc\s1_xsm.bmp
 s1_xsm_hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_xsm_hot.bmp
+s1_fit BMP D:\Delphi\R3\Src\Shop5\rc\s1_fit.bmp
+s1_fit_hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_fit_hot.bmp
 s1_message BMP D:\Delphi\R3\Src\Shop5\rc\s1_message.bmp
 s1_message_hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_message_hot.bmp
 s1_question BMP D:\Delphi\R3\Src\Shop5\rc\s1_question.bmp

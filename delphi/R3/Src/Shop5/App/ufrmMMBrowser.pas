@@ -444,6 +444,7 @@ var
 begin
   frmLogo.Show;
   try
+   frmLogo.ShowTitle := '正在登录RIM服务...';
    RimLogined := false;
    Params := TftParamList.Create(nil);
    try

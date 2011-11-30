@@ -315,7 +315,7 @@ var
   SQL:string;
 begin
   if FieldbyName('FIG_ID').AsString <> '' then
-     begin
+     begin                                               
        SQL :=
         'UPDATE MKT_DEMANDDATA '+
         'SET '+

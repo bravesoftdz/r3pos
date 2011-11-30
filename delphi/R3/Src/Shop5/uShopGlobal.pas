@@ -420,7 +420,7 @@ begin
        case DataFlag of
        1:result := ' and '+FieldName+' = '''+Global.SHOP_ID+''' ';
        2:result := ' and '+FieldName+' = '''+deptId+'''';
-     end;
+       end;
      end
   else
      case DataFlag of

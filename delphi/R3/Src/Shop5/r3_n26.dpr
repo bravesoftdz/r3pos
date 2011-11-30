@@ -249,7 +249,8 @@ uses
   ufrmPosMainList in 'App\ufrmPosMainList.pas' {frmPosMainList},
   uN26Factory in 'App\uN26Factory.pas' {N26Factory: TDataModule},
   ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame},
-  uCaFactory in 'App\uCaFactory.pas';
+  uCaFactory in 'App\uCaFactory.pas',
+  uRcFactory in 'App\uRcFactory.pas';
 
 {$R *.res}
 var
@@ -258,8 +259,8 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.3';
-  Application.Title := 'R3零售终端管理系统';
+  DBVersion := '1.0.2.4';
+  Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);
   Application.CreateForm(TfrmN26Main, frmN26Main);

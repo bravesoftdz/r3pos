@@ -289,6 +289,8 @@ type
     rzPage: TRzTabControl;
     Panel25: TPanel;
     actfrmGoodsMonth: TAction;
+    actfrmDemandOrderList1: TAction;
+    actfrmDemandOrderList2: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -408,6 +410,8 @@ type
     procedure RzTrayIcon1MinimizeApp(Sender: TObject);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure actfrmGoodsMonthExecute(Sender: TObject);
+    procedure actfrmDemandOrderList1Execute(Sender: TObject);
+    procedure actfrmDemandOrderList2Execute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -480,7 +484,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand
+  ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList
   ;
 {$R *.dfm}
 
@@ -3959,6 +3963,54 @@ begin
     Form := TfrmGoodsMonth.Create(self);
     AddFrom(Form);
   end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmDemandOrderList1Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmDemandOrderList1');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmDemandOrderList.Create(self);
+       TfrmDemandOrderList(Form).DemandType := '1';
+       TfrmDemandOrderList(Form).Name := 'frmDemandOrderList1';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmDemandOrderList2Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm('frmDemandOrderList2');
+  if not Assigned(Form) then
+     begin
+       Form := TfrmDemandOrderList.Create(self);
+       TfrmDemandOrderList(Form).DemandType := '2';
+       TfrmDemandOrderList(Form).Name := 'frmDemandOrderList2';
+       AddFrom(Form);
+//       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;

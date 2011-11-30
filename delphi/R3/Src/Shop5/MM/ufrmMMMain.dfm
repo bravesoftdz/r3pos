@@ -913,29 +913,9 @@ inherited frmMMMain: TfrmMMMain
       DesignSize = (
         68
         453)
-      object Image1: TImage
-        Left = 9
-        Top = 73
-        Width = 49
-        Height = 2
-        AutoSize = True
-        Picture.Data = {
-          07544269746D61705E010000424D5E0100000000000036000000280000003100
-          000002000000010018000000000028010000120B0000120B0000000000000000
-          0000FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773
-          FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB7
-          73FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FE
-          B773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773FEB773
-          FEB773FEB773FEB773FEB773FEB773FEB773FEB77300BD7B31BD7B31BD7B31BD
-          7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31
-          BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B
-          31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD
-          7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31BD7B31
-          BD7B31BD7B31BD7B3100}
-      end
       object rzPage1: TRzBmpButton
         Left = 1
-        Top = 75
+        Top = 71
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -955,7 +935,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage6: TRzBmpButton
         Left = 1
-        Top = 425
+        Top = 421
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -974,7 +954,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage2: TRzBmpButton
         Left = 1
-        Top = 145
+        Top = 141
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -993,7 +973,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage3: TRzBmpButton
         Left = 1
-        Top = 215
+        Top = 211
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -1012,7 +992,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage4: TRzBmpButton
         Left = 1
-        Top = 285
+        Top = 281
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -1031,7 +1011,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage7: TRzBmpButton
         Left = 1
-        Top = 495
+        Top = 491
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -1050,7 +1030,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage8: TRzBmpButton
         Left = 1
-        Top = 565
+        Top = 561
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -1089,7 +1069,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage5: TRzBmpButton
         Left = 1
-        Top = 355
+        Top = 351
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -3860,6 +3840,18 @@ inherited frmMMMain: TfrmMMMain
       Tag = 41200001
       Caption = #38144#21806#26085#25253
       OnExecute = actfrmSimpleSaleDayReportExecute
+    end
+    object actfrmNothing: TAction
+      Caption = #27809#26377#24320#36890
+      OnExecute = actfrmNothingExecute
+    end
+    object actfrmDemandOrderList1: TAction
+      Tag = 100002124
+      Caption = #34917#36135#30003#35831
+    end
+    object actfrmDemandOrderList2: TAction
+      Tag = 100002132
+      Caption = #39046#29992#30003#35831
     end
   end
   inherited PopupMenu: TPopupMenu

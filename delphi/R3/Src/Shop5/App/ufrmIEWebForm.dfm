@@ -15,7 +15,7 @@ inherited frmIEWebForm: TfrmIEWebForm
     object IEBrowser: TWebBrowser
       Left = 0
       Top = 30
-      Width = 541
+      Width = 540
       Height = 345
       Align = alClient
       TabOrder = 0
@@ -23,7 +23,7 @@ inherited frmIEWebForm: TfrmIEWebForm
       OnNavigateComplete2 = IEBrowserNavigateComplete2
       OnDocumentComplete = IEBrowserDocumentComplete
       ControlData = {
-        4C000000EA370000A82300000000000000000000000000000000000000000000
+        4C000000D0370000A82300000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126208000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
@@ -32,7 +32,7 @@ inherited frmIEWebForm: TfrmIEWebForm
     object RzPanel1: TRzPanel
       Left = 0
       Top = 1
-      Width = 541
+      Width = 540
       Height = 29
       Align = alTop
       BorderOuter = fsNone
@@ -47,7 +47,7 @@ inherited frmIEWebForm: TfrmIEWebForm
   object RzPanel2: TRzPanel [1]
     Left = 0
     Top = 0
-    Width = 541
+    Width = 540
     Height = 1
     Align = alTop
     BorderOuter = fsNone

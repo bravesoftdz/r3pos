@@ -60,7 +60,7 @@ var
   frmN26Desk: TfrmN26Desk;
 
 implementation
-uses ufrmMain,udmIcon,uShopGlobal,uDevFactory,Registry;
+uses ufrmMain,udmIcon,uRcFactory,uShopGlobal,uDevFactory,Registry;
 {$R *.dfm}
 
 function TfrmN26Desk.FindAction(id:string):TAction;

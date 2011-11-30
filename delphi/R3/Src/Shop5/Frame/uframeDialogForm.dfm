@@ -1,5 +1,5 @@
 inherited frameDialogForm: TframeDialogForm
-  Left = 308
+  Left = 309
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = #24377#20986#24335#31383#20307#27169#29256
@@ -9,7 +9,7 @@ inherited frameDialogForm: TframeDialogForm
   object bgPanel: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 541
+    Width = 540
     Height = 376
     Align = alClient
     BorderOuter = fsNone
@@ -18,7 +18,7 @@ inherited frameDialogForm: TframeDialogForm
     object RzPage: TRzPageControl
       Left = 5
       Top = 5
-      Width = 531
+      Width = 530
       Height = 326
       ActivePage = TabSheet1
       Align = alClient
@@ -32,7 +32,7 @@ inherited frameDialogForm: TframeDialogForm
         object RzPanel2: TRzPanel
           Left = 0
           Top = 0
-          Width = 527
+          Width = 526
           Height = 299
           Align = alClient
           BorderOuter = fsNone
@@ -44,7 +44,7 @@ inherited frameDialogForm: TframeDialogForm
     object btPanel: TRzPanel
       Left = 5
       Top = 331
-      Width = 531
+      Width = 530
       Height = 40
       Align = alBottom
       BorderOuter = fsNone

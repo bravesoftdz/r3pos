@@ -9,10 +9,7 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = Shop.exe r3_xsm2.exe r3_n26.exe RSPScktSrvr.exe RimBillPlugIn.dll \
-  RimDayReckPlugIn.dll RimGodsDzPlugIn.dll RimIVTPlugIn.dll RimMsgPlugIn.dll \
-  RimOrderDownPlugIn.dll RimSaleTotalPlugIn.dll RimStoragePlugIn.dll \
-  RimVIPPlugIn.dll Upgrade.exe mm.exe RimWsdlPlugIn.dll RimParamsPlugIn.dll
+PROJECTS = Shop.exe r3_xsm2.exe r3_n26.exe RSPScktSrvr.exe Upgrade.exe mm.exe
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -29,43 +26,10 @@ r3_n26.exe: r3_n26.dpr
 RSPScktSrvr.exe: ..\RspSrvr\RSPScktSrvr.dpr
   $(DCC)
 
-RimBillPlugIn.dll: ..\PlugIn\Rim\RimBillPlugIn.dpr
-  $(DCC)
-
-RimDayReckPlugIn.dll: ..\PlugIn\Rim\RimDayReckPlugIn.dpr
-  $(DCC)
-
-RimGodsDzPlugIn.dll: ..\PlugIn\Rim\RimGodsDzPlugIn.dpr
-  $(DCC)
-
-RimIVTPlugIn.dll: ..\PlugIn\Rim\RimIVTPlugIn.dpr
-  $(DCC)
-
-RimMsgPlugIn.dll: ..\PlugIn\Rim\RimMsgPlugIn.dpr
-  $(DCC)
-
-RimOrderDownPlugIn.dll: ..\PlugIn\Rim\RimOrderDownPlugIn.dpr
-  $(DCC)
-
-RimSaleTotalPlugIn.dll: ..\PlugIn\Rim\RimSaleTotalPlugIn.dpr
-  $(DCC)
-
-RimStoragePlugIn.dll: ..\PlugIn\Rim\RimStoragePlugIn.dpr
-  $(DCC)
-
-RimVIPPlugIn.dll: ..\PlugIn\Rim\RimVIPPlugIn.dpr
-  $(DCC)
-
 Upgrade.exe: ..\RspSrvr\Upgrade.dpr
   $(DCC)
 
 mm.exe: mm.dpr
-  $(DCC)
-
-RimWsdlPlugIn.dll: ..\PlugIn\Rim\RimWsdlPlugIn.dpr
-  $(DCC)
-
-RimParamsPlugIn.dll: ..\PlugIn\Rim\RimParamsPlugIn.dpr
   $(DCC)
 
 

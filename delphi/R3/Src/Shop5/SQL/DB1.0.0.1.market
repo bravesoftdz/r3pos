@@ -1,5 +1,4 @@
 --// 添加收支项目 “固定保证金”、“滚动保证金”、“销售返利”、“市场费用”
-
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
 select TENANT_ID,'6E3CB7C8-C3B8-48D6-B508-F8D98ED6253C','市场费用','SCFY','3',6,'00',5497000 from CA_TENANT;
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
@@ -34,12 +33,11 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	[KPI_TYPE] [char] (1) NOT NULL ,
         --标准折扣
 	[KPI_AGIO] [decimal](18, 3) NULL ,
-	
-        --计提比例
-	[MKT_AGIO] [decimal](18, 3) NULL ,
 
         --上半年完成率
 	[KPI_Y_DATA] char(1) NULL ,
+        --标准折扣率
+	[KPI_Y_RATE] [decimal](18, 3) NULL ,
 	[KPI_Y1_RATE] [decimal](18, 3) NULL ,
         --达标折扣
 	[KPI_Y1_AGIO] [decimal](18, 3) NULL ,
@@ -146,6 +144,8 @@ CREATE TABLE [MKT_KPI_GOODS] (
 	[KPI_ID] [char] (36) NOT NULL ,
         --商品编码
 	[GODS_ID] [char] (36) NOT NULL ,
+        --计提比例
+	[MKT_AGIO] [decimal](18, 3) NULL ,
 	CONSTRAINT [PK_MKT_KPI_GOODS] PRIMARY KEY 
 	(
 		[TENANT_ID],
@@ -184,6 +184,10 @@ CREATE TABLE [MKT_PLANORDER] (
 	[PLAN_AMT] [decimal](18, 3) NULL ,
         --金额汇总
 	[PLAN_MNY] [decimal](18, 3) NULL ,
+        --保证金总额
+	[PLAN_MNY] [decimal](18, 3) NULL ,
+        --市场费预算
+	[PLAN_MNY] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
         --操作时间
@@ -219,6 +223,8 @@ CREATE TABLE [MKT_PLANDATA] (
 	[AMOUNT] [decimal](18, 3) NULL ,
         --计划金额
 	[AMONEY] [decimal](18, 3) NULL ,
+        --保证金总额
+	[PLAN_MNY] [decimal](18, 3) NULL ,
         --备注
 	[REMARK] [varchar] (100) NULL ,
 	CONSTRAINT [PK_MKT_PLANDATA] PRIMARY KEY  

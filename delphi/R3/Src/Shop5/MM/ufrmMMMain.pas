@@ -168,7 +168,6 @@ type
     pageLine: TRzSeparator;
     rzPage0: TRzBmpButton;
     rzPage5: TRzBmpButton;
-    Image1: TImage;
     actfrmSimpleSaleDayReport: TAction;
     RzFormShape1: TRzFormShape;
     rzVersion: TRzLabel;
@@ -176,6 +175,9 @@ type
     RzVersionInfo: TRzVersionInfo;
     Image5: TImage;
     lbM1: TLabel;
+    actfrmNothing: TAction;
+    actfrmDemandOrderList1: TAction;
+    actfrmDemandOrderList2: TAction;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -297,6 +299,7 @@ type
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure lbM1Click(Sender: TObject);
+    procedure actfrmNothingExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -1056,6 +1059,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1070,6 +1074,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1084,6 +1089,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1098,6 +1104,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1119,6 +1126,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1133,6 +1141,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1149,6 +1158,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1165,6 +1175,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1179,6 +1190,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1254,6 +1266,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1268,6 +1281,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1282,6 +1296,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1296,6 +1311,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1310,6 +1326,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1324,6 +1341,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1538,6 +1556,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1554,6 +1573,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1598,6 +1618,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1615,6 +1636,7 @@ begin
   if Sender is TRecord_ then
     TfrmCheckTablePrint(Form).DoOpenDefaultData(TRecord_(Sender));
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1630,6 +1652,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1645,6 +1668,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1660,6 +1684,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1676,6 +1701,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1692,6 +1718,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1770,6 +1797,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1785,6 +1813,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1800,6 +1829,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1815,6 +1845,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1830,6 +1861,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1845,6 +1877,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1860,6 +1893,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1875,6 +1909,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1890,6 +1925,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1905,6 +1941,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1920,6 +1957,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1947,6 +1985,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -1962,6 +2001,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -2003,6 +2043,7 @@ begin
           end;
           TfrmStockOrderList(Form).DoIndeOrderWriteToStock(Aobj,vData);
           Form.WindowState := wsMaximized;
+          Form.Show;
           Form.BringToFront;
         end;
       end;
@@ -2023,6 +2064,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -2051,6 +2093,7 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -2256,6 +2299,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -2419,6 +2463,7 @@ var
 begin
   inherited;
   if not CaFactory.Audited then Raise Exception.Create('脱网登录不能使用此模块。');
+  if not CA_MODULE.Active then CheckEnabled;
   if not CA_MODULE.Locate('MODU_ID',PMMToolBox(Sender)^.mid,[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
   delete(s,1,4);
@@ -2489,6 +2534,7 @@ var
 begin
   inherited;
   if not CaFactory.Audited then Raise Exception.Create('脱网登录不能使用此模块。');
+  if not CA_MODULE.Active then CheckEnabled;
   if not CA_MODULE.Locate('MODU_ID',PMMToolBox(Sender)^.mid,[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
   delete(s,1,4);
@@ -2808,6 +2854,7 @@ begin
     AddFrom(Form);
   end;
   Form.WindowState := wsMaximized;
+  Form.Show;
   Form.BringToFront;
 end;
 
@@ -2867,6 +2914,7 @@ begin
   sysClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_sysClose_Up');
   sysClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysClose_Hot');
   Image5.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_03');
+  
 end;
 
 procedure TfrmMMMain.WMNCHITTEST(var Msg: TWMNCHITTEST);
@@ -2901,8 +2949,8 @@ begin
   if not Logined then Exit;
   if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
      begin
-       WindowState := wsMaximized;
        Show;
+       WindowState := wsMaximized;
      end
   else
      ShowMMList;
@@ -3033,7 +3081,7 @@ procedure TfrmMMMain.SortLeftButton;
 var
   w:integer;
 begin
-
+  rzPage0.Visible := mmGlobal.module[1]='1';
   rzPage1.Visible := CA_MODULE.Locate('MODU_NAME','网上营销',[]);
   rzPage2.Visible := CA_MODULE.Locate('MODU_NAME','网上订货',[]);
   rzPage3.Visible := CA_MODULE.Locate('MODU_NAME','网上配货',[]);
@@ -3043,23 +3091,31 @@ begin
   rzPage8.Visible := CA_MODULE.Locate('MODU_NAME','我的社区',[]);
   
   w := -1;
+  if rzPage0.Visible then inc(w);
+  rzPage0.Top := 0+w*rzPage0.Height;
   if rzPage1.Visible then inc(w);
-  rzPage1.Top := 75+w*rzPage1.Height;
+  rzPage1.Top := 0+w*rzPage1.Height;
   if rzPage2.Visible then inc(w);
-  rzPage2.Top := 75+w*rzPage2.Height;
+  rzPage2.Top := 0+w*rzPage2.Height;
   if rzPage3.Visible then inc(w);
-  rzPage3.Top := 75+w*rzPage3.Height;
+  rzPage3.Top := 0+w*rzPage3.Height;
   if rzPage4.Visible then inc(w);
-  rzPage4.Top := 75+w*rzPage4.Height;
+  rzPage4.Top := 0+w*rzPage4.Height;
   if rzPage5.Visible then inc(w);
-  rzPage5.Top := 75+w*rzPage5.Height;
+  rzPage5.Top := 0+w*rzPage5.Height;
   if rzPage6.Visible then inc(w);
-  rzPage6.Top := 75+w*rzPage6.Height;
+  rzPage6.Top := 0+w*rzPage6.Height;
   if rzPage7.Visible then inc(w);
-  rzPage7.Top := 75+w*rzPage7.Height;
+  rzPage7.Top := 0+w*rzPage7.Height;
   if rzPage8.Visible then inc(w);
-  rzPage8.Top := 75+w*rzPage8.Height;
+  rzPage8.Top := 0+w*rzPage8.Height;
 
+end;
+
+procedure TfrmMMMain.actfrmNothingExecute(Sender: TObject);
+begin
+  inherited;
+  ShowMsgBox('暂时没有开通此功能，感谢您的关注！','友情提示...',MB_OK);
 end;
 
 end.

@@ -349,8 +349,8 @@ begin
   inherited;
   if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
      begin
-       frmMMMain.WindowState := wsMaximized;
        frmMMMain.Show;
+       frmMMMain.WindowState := wsMaximized;
      end
   else
      MessageBox(Handle,'您没有开通其他应用,请联系客服开通此服务','友情提示...',MB_OK+MB_ICONINFORMATION);

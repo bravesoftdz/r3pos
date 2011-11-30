@@ -241,7 +241,10 @@ uses
   ufrmInitGuide in 'App\ufrmInitGuide.pas' {frmInitGuide},
   uLoginFactory in 'App\uLoginFactory.pas',
   objGoodsMonth in 'Obj\objGoodsMonth.pas',
-  ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth};
+  ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth},
+  ufrmDemandOrder in 'App\ufrmDemandOrder.pas' {frmDemandOrder},
+  ufrmDemandOrderList in 'App\ufrmDemandOrderList.pas' {frmDemandOrderList},
+  ObjDemandOrder in 'Obj\ObjDemandOrder.pas';
 
 {$R *.res}
 var
@@ -250,7 +253,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.3';
+  DBVersion := '1.0.2.1';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

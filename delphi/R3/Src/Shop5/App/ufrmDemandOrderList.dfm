@@ -7,22 +7,22 @@ inherited frmDemandOrderList: TfrmDemandOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 820
-    Height = 532
+    Width = 828
+    Height = 543
     inherited RzPanel2: TRzPanel
-      Width = 810
-      Height = 522
+      Width = 818
+      Height = 533
       inherited RzPage: TRzPageControl
-        Width = 804
-        Height = 516
+        Width = 812
+        Height = 527
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38656#35201#22635#25253
           inherited RzPanel3: TRzPanel
-            Width = 802
-            Height = 489
+            Width = 810
+            Height = 500
             inherited RzPanel1: TRzPanel
-              Width = 792
+              Width = 800
               Height = 90
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -226,8 +226,8 @@ inherited frmDemandOrderList: TfrmDemandOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 95
-              Width = 792
-              Height = 389
+              Width = 800
+              Height = 400
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -295,6 +295,19 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
                   Width = 119
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
+                  Width = 90
                 end>
             end
           end
@@ -303,38 +316,39 @@ inherited frmDemandOrderList: TfrmDemandOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 820
+    Width = 828
     inherited Image3: TImage
-      Left = 585
+      Left = 581
+      Width = 0
     end
     inherited Image14: TImage
-      Left = 800
+      Left = 808
     end
     inherited Image1: TImage
-      Left = 573
+      Left = 581
       Width = 227
     end
     inherited rzPanel5: TPanel
-      Left = 585
+      Left = 581
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 565
+      Width = 561
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 565
+          MinHeight = 561
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 565
+        Width = 561
         object ToolButton17: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actExit
         end

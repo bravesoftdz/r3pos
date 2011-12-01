@@ -43,7 +43,6 @@ type
     fndDAY_SALE_AMT: TcxTextEdit;
     Label10: TLabel;
     edtDEPT_ID: TzrComboBoxList;
-    cdsDept_Id: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);

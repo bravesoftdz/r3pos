@@ -260,7 +260,6 @@ inherited frmDemandOrder: TfrmDemandOrder
             Footers = <>
             Title.Caption = #21517#31216
           end>
-        DataSet = cdsDept_Id
         DropWidth = 185
         DropHeight = 180
         ShowTitle = True
@@ -695,12 +694,5 @@ inherited frmDemandOrder: TfrmDemandOrder
     Params = <>
     Left = 120
     Top = 224
-  end
-  object cdsDept_Id: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 168
-    Top = 32
   end
 end

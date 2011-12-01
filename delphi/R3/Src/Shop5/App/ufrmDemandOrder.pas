@@ -36,11 +36,11 @@ type
     edtCHK_DATE: TcxTextEdit;
     edtCHK_USER_TEXT: TcxTextEdit;
     Label3: TLabel;
-    cxTextEdit1: TcxTextEdit;
+    fndUPPER_AMOUNT: TcxTextEdit;
     Label4: TLabel;
-    cxTextEdit2: TcxTextEdit;
+    fndLOWER_AMOUNT: TcxTextEdit;
     Label7: TLabel;
-    cxTextEdit3: TcxTextEdit;
+    fndDAY_SALE_AMT: TcxTextEdit;
     Label10: TLabel;
     edtDEPT_ID: TzrComboBoxList;
     cdsDept_Id: TZQuery;
@@ -690,6 +690,7 @@ end;
 procedure TfrmDemandOrder.ShowInfo;
 var
   rs,bs:TZQuery;
+  Sql:String;
 begin
   if not fndMY_AMOUNT.Visible then Exit;
   fndMY_AMOUNT.Text := '';
@@ -698,21 +699,51 @@ begin
   if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select sum(AMOUNT) as AMOUNT from STO_STORAGE A where A.GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID and A.BATCH_NO=:BATCH_NO';
+    Sql :=
+    'select A.TENANT_ID,A.SHOP_ID,A.GODS_ID,sum(A.AMOUNT) as AMOUNT '+
+    ' from STO_STORAGE A inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID inner join VIW_GOODSINFO_SORTEXT C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+    ' and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and C.COMM not in (''02'',''12'')  and A.SHOP_ID='+QuotedStr(Global.SHOP_ID)+
+    ' and A.GODS_ID='+QuotedStr(edtTable.FieldByName('GODS_ID').AsString)+' and A.BATCH_NO='+QuotedStr(edtTable.FieldByName('BATCH_NO').AsString)+
+    ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID';
+    Sql :=
+    'select sum(j1.AMOUNT) as AMOUNT,'+
+    'sum(E.LOWER_AMOUNT) as LOWER_AMOUNT,'+
+    'sum(E.UPPER_AMOUNT) as UPPER_AMOUNT,'+
+    'sum(E.DAY_SALE_AMT) as DAY_SALE_AMT '+
+    'from ('+Sql+') j1 '+
+    'left outer join PUB_GOODS_INSHOP E on j1.TENANT_ID=E.TENANT_ID and j1.SHOP_ID=E.SHOP_ID and j1.GODS_ID=E.GODS_ID '+
+    'group by j1.TENANT_ID,j1.GODS_ID';
+    rs.SQL.Text := Sql;
+
+    {rs.SQL.Text := 'select sum(AMOUNT) as AMOUNT from STO_STORAGE A where A.GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID and A.BATCH_NO=:BATCH_NO';
     rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
     rs.ParamByName('SHOP_ID').AsString := edtSHOP_ID.AsString;
     rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
+    rs.ParamByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString; }
     Factor.Open(rs);
     if not rs.IsEmpty then
        begin
          if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
+         begin
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
+            fndUPPER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('UPPER_AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
+            fndLOWER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('LOWER_AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
+            fndDAY_SALE_AMT.Text := FormatFloat('#0.00',rs.FieldbyName('DAY_SALE_AMT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
+         end
+         else if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
+         begin
+            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
+            fndUPPER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('UPPER_AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
+            fndLOWER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('LOWER_AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
+            fndDAY_SALE_AMT.Text := FormatFloat('#0.00',rs.FieldbyName('DAY_SALE_AMT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
+         end
          else
-         if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
-         else
+         begin
             fndMY_AMOUNT.Text := rs.FieldbyName('AMOUNT').AsString;
+            fndUPPER_AMOUNT.Text := rs.FieldbyName('UPPER_AMOUNT').AsString;
+            fndLOWER_AMOUNT.Text := rs.FieldbyName('LOWER_AMOUNT').AsString;
+            fndDAY_SALE_AMT.Text := rs.FieldbyName('DAY_SALE_AMT').AsString;
+         end;
        end
     else
        fndMY_AMOUNT.Text := '0';

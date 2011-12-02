@@ -45,8 +45,6 @@ CREATE TABLE [MKT_KPI_INDEX] (
 	[KPI_ID] char(36) NOT NULL ,
         --指标名称
 	[KPI_NAME] [char] (50) NOT NULL ,
-        --换算系数<与计量单位的系数>
-	[KPI_RATE] [char] (36) NOT NULL ,
         --指标类型
 	[IDX_TYPE] [char] (1) NOT NULL ,
         --考核类型
@@ -70,7 +68,7 @@ CREATE TABLE [MKT_KPI_INDEX] (
 	)
 );
 
---是否启用阶梯考核
+--是否允许借量
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','允许','USING_BRRW','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁止','USING_BRRW','00',5497000);
 
@@ -125,7 +123,7 @@ CREATE INDEX IX_MKPG_KPI_ID ON MKT_KPI_GOODS(TENANT_ID,KPI_ID);
 CREATE TABLE [MKT_PLANORDER] (
         --企业代码
 	[TENANT_ID] int NOT NULL ,
-        --单号
+        --单  号
 	[PLAN_ID] [char] (36) NOT NULL ,
         --流水号
 	[GLIDE_NO] [varchar] (20) NOT NULL ,

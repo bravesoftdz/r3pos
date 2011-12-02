@@ -141,7 +141,7 @@ begin
   try
     adoRs:=TZQuery.Create(nil);
     adoRs.Close;
-    adoRs.SQL.Text:='select MODU_ID,MODU_NAME,LEVEL_ID,SEQNo,0 Tag from CA_MODULE where PROD_ID=:PROD_ID and  COMM not in (''02'',''12'')  order by LEVEL_ID';
+    adoRs.SQL.Text:='select MODU_ID,MODU_NAME,LEVEL_ID,SEQNo,0 Tag from CA_MODULE where PROD_ID=:PROD_ID and MODU_TYPE in (1,2) and  COMM not in (''02'',''12'')  order by LEVEL_ID';
     if adoRs.Params.FindParam('PROD_ID')<>nil then
       adoRs.ParamByName('PROD_ID').AsString:=ProductID;
     Factor.Open(adoRs);

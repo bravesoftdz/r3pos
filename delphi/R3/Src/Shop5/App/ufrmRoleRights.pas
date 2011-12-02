@@ -86,7 +86,7 @@ var
 begin
   try
     Ca_Modle.Close;
-    Ca_Modle.SQL.Text:='select MODU_ID,MODU_TYPE,MODU_NAME,LEVEL_ID,SEQNO,0 as Tag,0 as CheckFlag from CA_MODULE where PROD_ID=:PROD_ID and MODU_TYPE in ('1','2') and COMM not in (''02'',''12'') order by LEVEL_ID';
+    Ca_Modle.SQL.Text:='select MODU_ID,MODU_TYPE,MODU_NAME,LEVEL_ID,SEQNO,0 as Tag,0 as CheckFlag from CA_MODULE where PROD_ID=:PROD_ID and MODU_TYPE in (1,2) and COMM not in (''02'',''12'') order by LEVEL_ID';
     if Ca_Modle.Params.FindParam('PROD_ID')<>nil then
       Ca_Modle.ParamByName('PROD_ID').AsString:=ProductID;
     Factor.Open(Ca_Modle);

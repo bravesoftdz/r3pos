@@ -1292,8 +1292,9 @@ begin
     ',A.GUIDE_USER '+
     ',A.SALES_TYPE '+
     ',A.AMOUNT '+
-    ',A.ORG_PRICE as APRICE '+   //销售时间成本价
-    ',A.CALC_MONEY as AMONEY '+ 
+    ',A.ORG_PRICE '+   //销售时间成本价
+    ',A.APRICE '+   //销售时间成本价
+    ',A.CALC_MONEY as AMONEY '+
     ',A.NOTAX_MONEY '+  //不含税
     ',A.TAX_MONEY '+    //税项
     ',A.AGIO_MONEY '+   //折扣金额

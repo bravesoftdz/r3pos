@@ -8,6 +8,8 @@ inherited frmMMMain: TfrmMMMain
   TransparentColor = True
   TransparentColorValue = clFuchsia
   Menu = nil
+  Position = poDesktopCenter
+  WindowState = wsNormal
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 12
@@ -660,6 +662,13 @@ inherited frmMMMain: TfrmMMMain
         Font.Style = []
         ParentFont = False
       end
+      object RzFormShape1: TRzFormShape
+        Left = 0
+        Top = 2
+        Width = 808
+        Height = 69
+        OnDblClick = RzFormShape1DblClick
+      end
       object bkg_f1: TRzBackground
         Left = 1091
         Top = 2
@@ -695,13 +704,6 @@ inherited frmMMMain: TfrmMMMain
         Anchors = [akLeft, akRight]
         Color = 12352305
         ParentColor = False
-      end
-      object RzFormShape1: TRzFormShape
-        Left = 0
-        Top = 2
-        Width = 808
-        Height = 69
-        OnDblClick = RzFormShape1DblClick
       end
       object Image5: TImage
         Left = 508
@@ -915,7 +917,7 @@ inherited frmMMMain: TfrmMMMain
         453)
       object rzPage1: TRzBmpButton
         Left = 1
-        Top = 71
+        Top = 0
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -935,7 +937,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage6: TRzBmpButton
         Left = 1
-        Top = 421
+        Top = 350
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -954,7 +956,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage2: TRzBmpButton
         Left = 1
-        Top = 141
+        Top = 70
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -973,7 +975,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage3: TRzBmpButton
         Left = 1
-        Top = 211
+        Top = 140
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -992,7 +994,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage4: TRzBmpButton
         Left = 1
-        Top = 281
+        Top = 210
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -1011,7 +1013,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage7: TRzBmpButton
         Left = 1
-        Top = 491
+        Top = 420
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -1030,7 +1032,7 @@ inherited frmMMMain: TfrmMMMain
       end
       object rzPage8: TRzBmpButton
         Left = 1
-        Top = 561
+        Top = 490
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
@@ -1047,15 +1049,14 @@ inherited frmMMMain: TfrmMMMain
         TabOrder = 6
         OnClick = rzPage8Click
       end
-      object rzPage0: TRzBmpButton
+      object rzPage5: TRzBmpButton
         Left = 1
-        Top = 1
+        Top = 280
         Width = 63
         Height = 71
         Bitmaps.TransparentColor = clFuchsia
         Color = clBtnFace
         ButtonSize = bszNeither
-        Layout = blGlyphTop
         Anchors = [akTop, akRight]
         Font.Charset = GB2312_CHARSET
         Font.Color = clWhite
@@ -1065,25 +1066,6 @@ inherited frmMMMain: TfrmMMMain
         ParentFont = False
         PopupMenu = PopupMenu
         TabOrder = 7
-        OnClick = rzPage0Click
-      end
-      object rzPage5: TRzBmpButton
-        Left = 1
-        Top = 351
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 8
         OnClick = rzPage5Click
       end
     end

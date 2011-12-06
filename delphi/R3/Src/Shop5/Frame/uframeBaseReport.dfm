@@ -10,25 +10,25 @@ inherited frameBaseReport: TframeBaseReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 782
-    Height = 485
+    Width = 774
+    Height = 474
     inherited RzPanel2: TRzPanel
-      Width = 772
-      Height = 475
+      Width = 764
+      Height = 464
       inherited RzPage: TRzPageControl
-        Width = 567
-        Height = 469
+        Width = 559
+        Height = 458
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
-            Width = 565
-            Height = 442
+            Width = 557
+            Height = 431
             object Panel4: TPanel
               Left = 5
               Top = 5
-              Width = 555
-              Height = 432
+              Width = 547
+              Height = 421
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -36,7 +36,7 @@ inherited frameBaseReport: TframeBaseReport
               object w1: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 555
+                Width = 547
                 Height = 81
                 Align = alTop
                 BorderOuter = fsNone
@@ -46,8 +46,8 @@ inherited frameBaseReport: TframeBaseReport
               object RzPanel7: TRzPanel
                 Left = 0
                 Top = 81
-                Width = 555
-                Height = 351
+                Width = 547
+                Height = 340
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -55,8 +55,8 @@ inherited frameBaseReport: TframeBaseReport
                 object DBGridEh1: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 551
-                  Height = 347
+                  Width = 543
+                  Height = 336
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -105,10 +105,10 @@ inherited frameBaseReport: TframeBaseReport
         end
       end
       object PanelColumnS: TPanel
-        Left = 570
+        Left = 562
         Top = 3
         Width = 199
-        Height = 469
+        Height = 458
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
@@ -494,34 +494,34 @@ inherited frameBaseReport: TframeBaseReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 782
-    inherited Image1: TImage
-      Left = 350
-      Width = 412
-    end
+    Width = 774
     inherited Image3: TImage
-      Left = 350
-      Width = 412
+      Left = 354
+      Width = 0
     end
     inherited Image14: TImage
-      Left = 762
+      Left = 754
+    end
+    inherited Image1: TImage
+      Left = 342
+      Width = 412
     end
     inherited rzPanel5: TPanel
-      Left = 350
+      Left = 354
     end
     inherited CoolBar1: TCoolBar
-      Width = 330
+      Width = 334
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 330
+          MinHeight = 334
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 330
+        Width = 334
         ButtonWidth = 43
         object ToolButton1: TToolButton
           Left = 0
@@ -553,17 +553,17 @@ inherited frameBaseReport: TframeBaseReport
           Style = tbsDropDown
         end
         object ToolButton9: TToolButton
-          Left = 193
+          Left = 197
           Top = 0
           Action = actPrint
         end
         object ToolButton10: TToolButton
-          Left = 236
+          Left = 240
           Top = 0
           Action = actPreview
         end
         object ToolButton8: TToolButton
-          Left = 279
+          Left = 283
           Top = 0
           Width = 8
           Caption = 'ToolButton8'
@@ -571,7 +571,7 @@ inherited frameBaseReport: TframeBaseReport
           Style = tbsSeparator
         end
         object ToolButton4: TToolButton
-          Left = 287
+          Left = 291
           Top = 0
           Action = actExit
         end

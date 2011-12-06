@@ -359,7 +359,7 @@ begin
     end;
   AddRoot(Tree,'所有分类');
   finally
-    Locked := false;
+  //  Locked := false;
   end;
 end;
 
@@ -567,6 +567,7 @@ var
   rs: TZQuery;
   i,InValue: integer;
 begin
+  GoodSortList.Properties.BeginUpdate;
   try
     rs:=Global.GetZQueryFromName('PUB_STAT_INFO');
     ClearCbxPickList(GoodSortList);  //清除节点及Object对象
@@ -579,6 +580,7 @@ begin
   finally
     rs.Filtered:=False;
     rs.Filter:='';
+    GoodSortList.Properties.EndUpdate; 
   end;
 end;
 
@@ -1320,7 +1322,8 @@ end;
 procedure TfrmStorageTracking.FormShow(Sender: TObject);
 begin
   inherited;
-//  Open('');
+  Locked := false;
+  actFindExecute(nil);
 end;
 
 end.

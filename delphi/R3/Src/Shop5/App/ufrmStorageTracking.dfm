@@ -4,6 +4,7 @@ inherited frmStorageTracking: TfrmStorageTracking
   Width = 934
   Height = 604
   Caption = #21830#21697#24211#23384
+  WindowState = wsNormal
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow

@@ -331,8 +331,12 @@ procedure TframeBaseReport.actExportExecute(Sender: TObject);
 var Stream: TMemoryStream;
 begin
   inherited;
+  if DBGridEh=nil then Exit;
+  if DBGridEh.DataSource=nil then Exit;
+  if DBGridEh.DataSource.DataSet=nil then Exit;
+  if not DBGridEh.DataSource.DataSet.Active then Exit;
   SaveDialog1.DefaultExt := '*.xls';
-  SaveDialog1.Files.Text := 'Excel文件|*.xls';
+  SaveDialog1.Filter := 'Excel文档(*.xls)|*.xls|HTML文档(*.html)|*.html';
   if SaveDialog1.Execute then
   begin
     if FileExists(SaveDialog1.FileName) then
@@ -346,13 +350,28 @@ begin
     Stream := TMemoryStream.Create;
     try
       Stream.Position := 0;
-      with TDBGridEhExportAsHTML.Create do
+      if ExtractFileExt(SaveDialog1.FileName)='.xls' then
       begin
-        try
-          DBGridEh := self.DBGridEh;
-          ExportToStream(Stream, True);
-        finally
-          Free;
+        with TDBGridEhExportAsXLS.Create do
+        begin
+          try
+            DBGridEh := self.DBGridEh;
+            ExportToStream(Stream, True);
+          finally
+            Free;
+          end;
+        end;
+      end
+      else
+      begin
+        with TDBGridEhExportAsHTML.Create do
+        begin
+          try
+            DBGridEh := self.DBGridEh;
+            ExportToStream(Stream, True);
+          finally
+            Free;
+          end;
         end;
       end;
       Stream.SaveToFile(SaveDialog1.FileName);

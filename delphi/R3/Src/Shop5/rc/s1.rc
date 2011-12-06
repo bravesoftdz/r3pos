@@ -4,6 +4,7 @@ STRINGTABLE
   2, "279"
 }
 public_logo JPG D:\Delphi\R3\Src\Shop5\rc\public_logo.jpg
+s1_prg JPG D:\Delphi\R3\Src\Shop5\rc\s1_prg.jpg
 s1_c1_btn BMP D:\Delphi\R3\Src\Shop5\rc\s1_c1_btn.bmp
 s1_c1_btn_hot BMP D:\Delphi\R3\Src\Shop5\rc\s1_c1_btn_hot.bmp
 s1_c2_btn BMP D:\Delphi\R3\Src\Shop5\rc\s1_c2_btn.bmp

@@ -166,7 +166,6 @@ type
     rzPage8: TRzBmpButton;
     menuButton: TRzBmpButton;
     pageLine: TRzSeparator;
-    rzPage0: TRzBmpButton;
     rzPage5: TRzBmpButton;
     actfrmSimpleSaleDayReport: TAction;
     RzFormShape1: TRzFormShape;
@@ -187,7 +186,6 @@ type
     procedure sysCloseClick(Sender: TObject);
     procedure sysMaximizedClick(Sender: TObject);
     procedure sysMinimizedClick(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure RzTrayIcon1LButtonDown(Sender: TObject);
     procedure RzTrayIcon1LButtonDblClick(Sender: TObject);
     procedure actfrmMeaUnitsExecute(Sender: TObject);
@@ -309,6 +307,7 @@ type
     frmXsmIEBrowser:TfrmMMBrowser;
     frmRimIEBrowser:TfrmMMBrowser;
     FLogined: boolean;
+    FWindowState: TWindowState;
 
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
     procedure wm_Sign(var Message: TMessage); message MM_SIGN;
@@ -337,6 +336,8 @@ type
     procedure DropMenu(mid:integer;btn:TrzBmpButton);
     procedure PupupToolBox(Sender:TObject;s:string);
     procedure SetLogined(const Value: boolean);
+    procedure SetWindowState(const Value: TWindowState);
+    procedure InitTenant;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -355,6 +356,7 @@ type
     procedure Show;
     //软是否登录
     property Logined:boolean read FLogined write SetLogined;
+    property WindowState:TWindowState read FWindowState write SetWindowState;
   end;
 
 var
@@ -455,6 +457,24 @@ begin
   HostP := btn.ClientToScreen(Point(0,btn.Height));
   toolMenu.Popup(HostP.X,HostP.Y);
 end;
+procedure TfrmMMMain.InitTenant;
+var
+  Params:TftParamList;
+begin
+  Params := TftParamList.Create(nil);
+  try
+    frmLogo.Label1.Caption := '正在初始化默认数据...';
+    frmLogo.Label1.Update;
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Factor.ExecProc('TTenantInit',Params);
+    
+    frmLogo.Label1.Caption := '正在初始化权限数据...';
+    frmLogo.Label1.Update;
+    TfrmInitialRights.Rights(self);
+  finally
+    Params.Free;
+  end;
+end;
 
 procedure TfrmMMMain.FormDestroy(Sender: TObject);
 var
@@ -493,7 +513,6 @@ begin
   bkg_f1.Top := 2;
   bkg_f1.Left := bkg_top.Width - bkg_f1.Width;
   bkg_f1.Height := BKG_top.Height;
-  RzFormShape1.Enabled := not (WindowState = wsMaximized);
   sysMaximized.Top := 0;
   sysMinimized.Top := 0;
   sysClose.Top := 0;
@@ -560,7 +579,7 @@ procedure TfrmMMMain.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 function CheckUpdateStatus:boolean;
 begin
-  result := (Factor.ExecProc('TGetLastUpdateStatus')='1'); 
+  result := (Factor.ExecProc('TGetLastUpdateStatus')='1');
 end;
 begin
   if (mmGlobal.module[2]='1') then
@@ -629,7 +648,7 @@ begin
   if frmRimIEBrowser=nil then frmRimIEBrowser := TfrmMMBrowser.Create(self);
   //读取配置文件
   LoadParams;
-  
+
   frmLogo.Show;
   rzLeftTool.Enabled := false;
   try
@@ -641,7 +660,7 @@ begin
      on E:Exception do
         ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
-   
+
    try
      frmLogo.ShowTitle := '连接聊天服务器';
      if mmGlobal.Logined and CaFactory.Audited and (mmGlobal.module[1]='1') then
@@ -689,6 +708,12 @@ begin
            end;
      end;
 
+   if ( ( (mmGlobal.ONLVersion or mmGlobal.NetVersion) and not mmGlobal.offline ) //网络版，并在线状态
+      or
+      not (mmGlobal.ONLVersion or mmGlobal.NetVersion) ) //脱机版
+      and (mmGlobal.module[2]='1') //有开通销售管理功能
+   then InitTenant;
+
    try
      frmLogo.ShowTitle := '登录RIM后台服务';
      if mmGlobal.Logined and CaFactory.Audited and (mmGlobal.module[4]='1') then
@@ -726,7 +751,7 @@ begin
      frmMMDesk.LoadDesk;
 
      UpdateTimer.Enabled := true;
-     
+
    finally
      frmLogo.Close;
    end;
@@ -1000,14 +1025,6 @@ begin
 
 end;
 
-procedure TfrmMMMain.FormResize(Sender: TObject);
-begin
-  inherited;
-  if WindowState = wsMaximized then
-     SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
-  RzFormShape1.Enabled := not (WindowState = wsMaximized);
-end;
-
 procedure TfrmMMMain.RzTrayIcon1LButtonDown(Sender: TObject);
 begin
   inherited;
@@ -1021,7 +1038,7 @@ var
 begin
   mmUserInfo := mmFactory.FindFirst;
   if mmUserInfo<>nil then
-     frmMMList.OpenDialog(mmUserInfo.uid); 
+     frmMMList.OpenDialog(mmUserInfo.uid);
 end;
 
 procedure TfrmMMMain.RzTrayIcon1LButtonDblClick(Sender: TObject);
@@ -1378,6 +1395,7 @@ begin
        Form := TfrmSalIndentOrderList.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1392,6 +1410,7 @@ begin
        Form := TfrmStkIndentOrderList.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1406,6 +1425,7 @@ begin
        Form := TfrmCustomer.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1455,6 +1475,7 @@ begin
        Form := TfrmPriceOrderList.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1469,7 +1490,8 @@ begin
        Form := TfrmCheckOrderList.Create(self);
        AddFrom(Form);
      end;
-  TfrmCheckOrderList(Form).DoCheckPrint:=actfrmChecktablePrintExecute;     
+  TfrmCheckOrderList(Form).DoCheckPrint:=actfrmChecktablePrintExecute;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1484,6 +1506,7 @@ begin
        Form := TfrmDbOrderList.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1498,6 +1521,7 @@ begin
        Form := TfrmTransOrderList.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1525,6 +1549,7 @@ begin
              Form := TfrmShopInfoList.Create(self);
              AddFrom(Form);
            end;
+        Form.WindowState := wsMaximized;
         Form.Show;
         Form.BringToFront;
      end;
@@ -1540,6 +1565,7 @@ begin
        Form := TfrmAccount.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -1603,6 +1629,7 @@ begin
     Form := TfrmStorageTracking.Create(self);
     AddFrom(Form);
   end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -2133,6 +2160,7 @@ begin
     Form.Name := 'frmNetForOrder';
     if rimurl[length(rimurl)]<>'/' then rimurl := rimurl + '/';
     TfrmIEWebForm(Form).Open(rimurl+'rim_check/up?j_username='+rimuid+'&j_password='+rimpwd+'&MAIN_PAGE=rim');
+    Form.WindowState := wsMaximized;
     Form.Show;
     Form.BringToFront;
   except
@@ -2152,6 +2180,7 @@ begin
        Form := TfrmSaleManSaleReport.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -2167,6 +2196,7 @@ begin
        Form := TfrmClientSaleReport.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -2182,6 +2212,7 @@ begin
        Form := TfrmSaleTotalReport.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -2197,6 +2228,7 @@ begin
        Form := TfrmStgTotalReport.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -2212,6 +2244,7 @@ begin
        Form := TfrmStockTotalReport.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -2227,6 +2260,7 @@ begin
        Form := TfrmSaleMonthTotalReport.Create(self);
        AddFrom(Form);
      end;
+  Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
 end;
@@ -2399,7 +2433,7 @@ begin
   FormStyle := fsMDIForm;
   frmMMToolBox := TfrmMMToolBox.Create(self);
   frmXsmIEBrowser := nil;
-  frmRimIEBrowser := nil; 
+  frmRimIEBrowser := nil;
   pageLine.Top := bkg_top.Height  - 1;
   pageLine.Left := toolDesk.Left;
   pageLine.Width := bkg_top.Width - toolDesk.Left + 16;
@@ -2608,7 +2642,7 @@ begin
   if not Logined then Exit;
   if not Visible then Exit;
   if not Factor.Connected then Exit;
-  
+
   IsFirst := false;
   if (not MsgFactory.Loaded and (UpdateTimer.Tag>5)) or (MsgFactory.Loaded and (UpdateTimer.Tag>0) and
      (MsgFactory.UnRead=0) and ((UpdateTimer.Tag mod w)=0)
@@ -2618,7 +2652,7 @@ begin
        MsgFactory.Load;
        IsFirst := true;
      end;
-     
+
   if UpdateTimer.Tag >= w then UpdateTimer.Tag := 0 else UpdateTimer.Tag := UpdateTimer.Tag + 1;
   if MsgFactory.Count > 0 then
      begin
@@ -2766,10 +2800,10 @@ procedure TfrmMMMain.wm_lcControl(var Message: TMessage);
 begin
   if frmXsmIEBrowser=nil then
      begin
-       TObject(Message.WParam).Free; 
+       TObject(Message.WParam).Free;
        Exit;
      end;
-  frmXsmIEBrowser.LCRecv(TmmLCControlFava(Message.WParam)); 
+  frmXsmIEBrowser.LCRecv(TmmLCControlFava(Message.WParam));
 end;
 
 procedure TfrmMMMain.RzFormShape1DblClick(Sender: TObject);
@@ -2866,8 +2900,8 @@ var
 begin
   sflag := 'm'+rcFactory.GetResString(1)+'_';
   //Left
-  rzPage0.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left0_hot');
-  rzPage0.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left0');
+  //rzPage0.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left0_hot');
+  //rzPage0.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left0');
   rzPage1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left1_hot');
   rzPage1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left1');
   rzPage2.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left2_hot');
@@ -2915,7 +2949,7 @@ begin
   sysClose.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'top_sysClose_Up');
   sysClose.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'top_sysClose_Hot');
   Image5.Picture.Graphic := rcFactory.GetBitmap(sflag + 'list_mid_bkg_03');
-  
+
 end;
 
 procedure TfrmMMMain.WMNCHITTEST(var Msg: TWMNCHITTEST);
@@ -2996,7 +3030,7 @@ begin
        Exit;
      end;
   try
-  try                               
+  try
     frmLogo.Show;
     frmLogo.ShowTitle := '检测版本信息...';
     CaUpgrade := CaFactory.CheckUpgrade(inttostr(Global.TENANT_ID),ProductId,RzVersionInfo.FileVersion);
@@ -3050,11 +3084,17 @@ begin
 end;
 
 procedure TfrmMMMain.RzBmpButton4Click(Sender: TObject);
-var
-  MMToolBox:PMMToolBox;
+//var
+//  MMToolBox:PMMToolBox;
 begin
   inherited;
-  if not CA_MODULE.Locate('MODU_NAME','在线客服',[]) then Raise Exception.Create('你没有开通在线客服业务');
+  if (mmGlobal.module[1]<>'1') then
+     begin
+       ShowMsgBox('您没有开通即时通讯功能！','友情提示..',MB_OK);
+       Exit;
+     end;
+  ShowMMList;
+{  if not CA_MODULE.Locate('MODU_NAME','在线客服',[]) then Raise Exception.Create('你没有开通在线客服业务');
   new(MMToolBox);
   try
     MMToolBox^.mid := CA_MODULE.FieldbyName('MODU_ID').AsString;
@@ -3062,7 +3102,7 @@ begin
     actfrmRimNet.OnExecute(TObject(MMToolBox));
   finally
     Dispose(MMToolBox);
-  end;
+  end;}
 end;
 
 procedure TfrmMMMain.lbM1Click(Sender: TObject);
@@ -3075,14 +3115,14 @@ end;
 procedure TfrmMMMain.Show;
 begin
   inherited Show;
-  FormResize(self);
+  WindowState := wsMaximized;
 end;
 
 procedure TfrmMMMain.SortLeftButton;
 var
   w:integer;
 begin
-  rzPage0.Visible := mmGlobal.module[1]='1';
+//  rzPage0.Visible := mmGlobal.module[1]='1';
   rzPage1.Visible := CA_MODULE.Locate('MODU_NAME','网上营销',[]);
   rzPage2.Visible := CA_MODULE.Locate('MODU_NAME','网上订货',[]);
   rzPage3.Visible := CA_MODULE.Locate('MODU_NAME','网上配货',[]);
@@ -3090,10 +3130,10 @@ begin
   rzPage6.Visible := CA_MODULE.Locate('MODU_NAME','品牌培育',[]);
   rzPage7.Visible := CA_MODULE.Locate('MODU_NAME','信息互通',[]);
   rzPage8.Visible := CA_MODULE.Locate('MODU_NAME','我的社区',[]);
-  
+
   w := -1;
-  if rzPage0.Visible then inc(w);
-  rzPage0.Top := 0+w*rzPage0.Height;
+//  if rzPage0.Visible then inc(w);
+//  rzPage0.Top := 0+w*rzPage0.Height;
   if rzPage1.Visible then inc(w);
   rzPage1.Top := 0+w*rzPage1.Height;
   if rzPage2.Visible then inc(w);
@@ -3117,6 +3157,27 @@ procedure TfrmMMMain.actfrmNothingExecute(Sender: TObject);
 begin
   inherited;
   ShowMsgBox('暂时没有开通此功能，感谢您的关注！','友情提示...',MB_OK);
+end;
+
+procedure TfrmMMMain.SetWindowState(const Value: TWindowState);
+begin
+  if Value = wsMaximized then
+     begin
+       inherited WindowState := wsNormal;
+       SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
+     end;
+  if Value = wsNormal then
+     begin
+       inherited WindowState := wsNormal;
+       SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,800,590);
+     end;
+  if Value = wsMinimized then
+     begin
+       inherited WindowState := wsMinimized;
+       SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,800,590);
+     end;
+  RzFormShape1.Enabled := not (Value = wsMaximized);
+  FWindowState := Value;
 end;
 
 end.

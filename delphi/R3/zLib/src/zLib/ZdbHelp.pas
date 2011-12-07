@@ -471,7 +471,7 @@ end;
 procedure TdbHelp.RollbackTrans;
 begin
   try
-    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback'); 
+//    if not ZConn.InTransaction then Raise Exception.Create('当前连接不在事务状态,不能rollback'); 
     ZConn.Rollback;
     ZConn.TransactIsolationLevel := tiNone;
   except

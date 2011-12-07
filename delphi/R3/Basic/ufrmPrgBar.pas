@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, RzForms, RzPrgres, StdCtrls, RzLabel, RzPanel;
+  Dialogs, ExtCtrls, RzForms, RzPrgres, StdCtrls, RzLabel, RzPanel, jpeg;
 
 type
   TfrmPrgBar = class(TForm)
@@ -12,6 +12,7 @@ type
     RzPanel1: TRzPanel;
     RzLabel1: TRzLabel;
     RzProgressBar1: TRzProgressBar;
+    Image1: TImage;
     procedure FormCreate(Sender: TObject);
   private
     function GetPrecent: integer;
@@ -21,6 +22,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    procedure LoadPic32;
     property Precent:integer read GetPrecent write setPrecent;
     property WaitHint:string read GetWaitHint write SetWaitHint;
   end;
@@ -29,7 +31,7 @@ var
   frmPrgBar: TfrmPrgBar;
 
 implementation
-
+uses uRcFactory;
 {$R *.dfm}
 
 { TfrmPrgBar }
@@ -59,6 +61,11 @@ end;
 procedure TfrmPrgBar.FormCreate(Sender: TObject);
 begin
   frmPrgBar := self;
+end;
+
+procedure TfrmPrgBar.LoadPic32;
+begin
+  Image1.Picture.Graphic := rcFactory.GetJpeg('s1_prg');
 end;
 
 initialization

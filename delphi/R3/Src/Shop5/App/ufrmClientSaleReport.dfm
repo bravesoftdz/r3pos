@@ -3072,14 +3072,11 @@ inherited frmClientSaleReport: TfrmClientSaleReport
   end
   inherited RzPanel4: TRzPanel
     Width = 1093
-    inherited Image1: TImage
-      Width = 723
-    end
-    inherited Image3: TImage
-      Width = 723
-    end
     inherited Image14: TImage
       Left = 1073
+    end
+    inherited Image1: TImage
+      Width = 723
     end
   end
   inherited mmMenu: TMainMenu

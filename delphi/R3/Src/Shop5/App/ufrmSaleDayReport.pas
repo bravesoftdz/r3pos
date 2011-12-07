@@ -10,7 +10,7 @@ uses
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, PrnDbgeh,
   cxCalendar, cxButtonEdit, cxCheckBox, zbase, zrComboBoxList, jpeg,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxRadioGroup,
-  ufrmDateControl;
+  ufrmDateControl, Buttons;
 
 type
   TfrmSaleDayReport = class(TframeBaseReport)
@@ -263,7 +263,7 @@ type
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
     procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override;
-    function GetDataRight: string; //返回查看数据权限
+    function GetDataRight: string;
   public
     procedure SingleReportParams(ParameStr: string='');override; //简单报表调用参数
     procedure PrintBefore;override;
@@ -1270,7 +1270,7 @@ begin
     strWhere := strWhere+' and SALES_TYPE=4 '
   else if fndP6_SALRETU.Checked then //销售退货:3
     strWhere := strWhere+' and SALES_TYPE=3 ';
-
+ 
   SQLData := 'VIW_SALESDATA';
 
   strSql :=

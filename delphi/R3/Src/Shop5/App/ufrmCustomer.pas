@@ -127,7 +127,9 @@ type
     procedure AddMenuItem;
     procedure ResetCustomerPswClick(Sender:TObject);
     function FormatReportHead(TitleList: TStringList; Cols: integer): string;
-    { Private declarations }
+    //2011.12.06 xhh Add 查看会员最近三个月消费记录
+    procedure AddCustSalesPopuMemu; //添加右键菜单
+    procedure DoShowCustSaleGlide(Sender: TObject); //显示3月消费流水
   public
     { Public declarations }
     IsEnd: boolean;
@@ -144,7 +146,7 @@ type
 implementation
 uses ufrmCustomerInfo, DateUtils,  uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, uDsUtil, ufrmIntegralGlide,
      ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic, ufrmCancelCard, ufrmReturn, ufrmPassWord,
-     ufrmLossCard, ufrmExcelFactory;
+     ufrmLossCard, ufrmExcelFactory,ufrmShopMain,ufrmClientSaleReport;
 //  ufrmSendGsm, ufrmReNew,
 
 {$R *.dfm}
@@ -320,6 +322,7 @@ end;
 procedure TfrmCustomer.FormShow(Sender: TObject);
 begin
   inherited;
+  AddCustSalesPopuMemu; //2011.12.06 Add 
   if UpperCase(Global.UserID) = UpperCase('ADMIN') then
     AddMenuItem;    
   actFind.OnExecute(nil);
@@ -1360,6 +1363,38 @@ begin
     MessageBox(handle,Pchar('提示:"'+Cds_Customer.FieldByName('CUST_NAME').AsString+'"的会员卡密码重置失败!'),Pchar(Caption),MB_OK)
   else if i > 0 then
     MessageBox(handle,Pchar('提示:"'+Cds_Customer.FieldByName('CUST_NAME').AsString+'"的会员卡密码重置成功!'),Pchar(Caption),MB_OK);
+end;
+
+procedure TfrmCustomer.AddCustSalesPopuMemu;
+var
+  Item: TMenuItem;
+begin
+  if not frmShopMain.FindAction('actfrmSaleDayReport').Enabled then Exit; //判断是否查看消费记录权限
+  Item := TMenuItem.Create(nil);
+  Item.Caption := '消费记录';
+  Item.OnClick := DoShowCustSaleGlide;
+  PopupMenu1.Items.Insert(2,Item); //插入到第三菜单位置
+end;
+
+procedure TfrmCustomer.DoShowCustSaleGlide(Sender: TObject);
+var
+  CustID: string; //消费者ID
+  Form: TfrmBasic;
+begin
+  if not Cds_Customer.Active then Exit;
+  CustID:=trim(Cds_Customer.fieldbyName('CUST_ID').AsString);
+  if CustID<>'' then
+  begin
+    Form := frmShopMain.FindChildForm(TfrmClientSaleReport);
+    if not Assigned(Form) then
+    begin
+      Form := TfrmClientSaleReport.Create(self);
+      frmShopMain.AddFrom(Form);
+    end;
+    TfrmClientSaleReport(Form).SingleReportParams(CustID);
+    Form.WindowState := wsMaximized;
+    Form.BringToFront;
+  end;
 end;
 
 end.

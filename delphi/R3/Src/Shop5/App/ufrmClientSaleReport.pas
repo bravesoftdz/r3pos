@@ -239,7 +239,7 @@ type
     function GetGodsSortIdx: string;
     function GetDataRight: string; //返回查看数据权限
   public
-    { Public declarations }
+    procedure SingleReportParams(ParameStr: string='');override; //简单报表调用参数
     procedure PrintBefore;override;
     function GetRowType:integer;override;
     property UnitIDIdx: integer read GetUnitIDIdx; //当前统计计量方式
@@ -251,7 +251,7 @@ const
   ArySumField: Array[0..5] of string=('SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF');
 
 implementation
-uses  uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon;
+uses  uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon,uDsUtil;
 {$R *.dfm}
 
 procedure TfrmClientSaleReport.fndP1_SORT_IDKeyPress(Sender: TObject;
@@ -1611,6 +1611,37 @@ function TfrmClientSaleReport.GetDataRight: string;
 begin
   //主数据：RCK_C_GOODS_DAYS、VIW_SALESDATA  A
   result:=' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+end;
+
+procedure TfrmClientSaleReport.SingleReportParams(ParameStr: string);
+var
+  i: integer;
+  SetCol: TColumnEh;
+  CustTable: TZQuery;
+begin
+  inherited;
+  CustTable:=TZQuery(fndP5_CLIENT_ID.DataSet);
+  if (Custtable<>nil) and (Custtable.Active) then
+  begin
+    fndP5_CLIENT_ID.Text:=TdsFind.GetNameByID(CustTable,'CLIENT_ID','CLIENT_NAME',ParameStr);
+    fndP5_CLIENT_ID.KeyValue := ParameStr;
+  end;
+ 
+  //隐藏掉分页 (显示: 商品销售报表)
+  for i:=0 to RzPage.PageCount-2 do
+  begin
+    RzPage.Pages[i].TabVisible:=false
+  end;
+  RzPage.ActivePageIndex:=RzPage.PageCount-1;
+
+  //计算查询日期:
+  P5_D1.Date:=IncMonth(Date(),-3); //查询最近三个月开始日期
+  P5_D2.Date:=Date();        //默认当前系统日期
+
+  //不显示Grid列:  [2011.08.10 modif: 去掉：'SALE_ALLPRF','SALE_RATE',]
+  SetNotShowCostPrice(DBGridEh5, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']);
+  //查询数据
+  actFindExecute(nil);
 end;
 
 end.

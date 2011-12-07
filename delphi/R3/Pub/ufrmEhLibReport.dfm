@@ -255,7 +255,7 @@ inherited frmEhLibReport: TfrmEhLibReport
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '*.xls'
-    Filter = 'Excel'#26684#24335'(*.xls)|*.xls'
+    Filter = 'Excel'#26684#24335'(*.xls)|*.xls|Html'#26684#24335'(*.html)|*.html'
     Left = 328
     Top = 119
   end

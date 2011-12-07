@@ -171,13 +171,28 @@ begin
     Stream := TMemoryStream.Create;
     try
       Stream.Position := 0;
-      with TDBGridEhExportAsXLS.Create do
+      if ExtractFileExt(SaveDialog1.FileName)='.xls' then
       begin
-        try
-          DBGridEh := PrintDBGridEh.DBGridEh;
-          ExportToStream(Stream, True);
-        finally
-          Free;
+        with TDBGridEhExportAsXLS.Create do
+        begin
+          try
+            DBGridEh := PrintDBGridEh.DBGridEh;
+            ExportToStream(Stream, True);
+          finally
+            Free;
+          end;
+        end;
+      end
+      else
+      begin
+        with TDBGridEhExportAsHTML.Create do
+        begin
+          try
+            DBGridEh := PrintDBGridEh.DBGridEh;
+            ExportToStream(Stream, True);
+          finally
+            Free;
+          end;
         end;
       end;
       Stream.SaveToFile(SaveDialog1.FileName);

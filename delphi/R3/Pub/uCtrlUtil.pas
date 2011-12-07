@@ -623,7 +623,7 @@ begin
   SaveDialog := TSaveDialog.Create(Current);
   try
     SaveDialog.DefaultExt := '*.xls';
-    SaveDialog.Filter := 'ExcelÎÄµµ(*.xls)|*.xls';
+    SaveDialog.Filter := 'ExcelÎÄµµ(*.xls)|*.xls|HTMLÎÄµµ(*.html)|*.html';
     if SaveDialog.Execute then
        begin
        if FileExists(SaveDialog.FileName) then
@@ -635,14 +635,29 @@ begin
     Stream := TMemoryStream.Create;
     try
       Stream.Position := 0;
-   //   with TDBGridEhExportAsXLS.Create do
-      with TDBGridEhExportAsHTML.Create do
+      TfrmBasic(Current).DoBeforeExport;
+      if ExtractFileExt(SaveDialog.FileName)='.xls' then
       begin
-        try
-          DBGridEh := DbGrid;
-          ExportToStream(Stream, True);
-        finally
-          Free;
+        with TDBGridEhExportAsXLS.Create do
+        begin
+          try
+            DBGridEh := DbGrid;
+            ExportToStream(Stream, True);
+          finally
+            Free;
+          end;
+        end;
+      end
+      else
+      begin
+        with TDBGridEhExportAsHTML.Create do
+        begin
+          try
+            DBGridEh := DbGrid;
+            ExportToStream(Stream, True);
+          finally
+            Free;
+          end;
         end;
       end;
       Stream.SaveToFile(SaveDialog.FileName);

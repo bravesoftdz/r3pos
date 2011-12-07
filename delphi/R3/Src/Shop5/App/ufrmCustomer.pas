@@ -146,7 +146,7 @@ type
 implementation
 uses ufrmCustomerInfo, DateUtils,  uShopGlobal, uCtrlUtil, ufrmEhLibReport, uFnUtil, uDsUtil, ufrmIntegralGlide,
      ufrmIntegralGlide_Add, ufrmDeposit, ufrmNewCard, ufrmBasic, ufrmCancelCard, ufrmReturn, ufrmPassWord,
-     ufrmLossCard, ufrmExcelFactory,ufrmShopMain,ufrmClientSaleReport;
+     ufrmLossCard, ufrmExcelFactory,ufrmMain,ufrmClientSaleReport;
 //  ufrmSendGsm, ufrmReNew,
 
 {$R *.dfm}
@@ -1369,7 +1369,7 @@ procedure TfrmCustomer.AddCustSalesPopuMemu;
 var
   Item: TMenuItem;
 begin
-  if not frmShopMain.FindAction('actfrmSaleDayReport').Enabled then Exit; //判断是否查看消费记录权限
+  if not frmMain.FindAction('actfrmClientSaleReport').Enabled then Exit; //判断是否查看消费记录权限
   Item := TMenuItem.Create(nil);
   Item.Caption := '消费记录';
   Item.OnClick := DoShowCustSaleGlide;
@@ -1379,21 +1379,28 @@ end;
 procedure TfrmCustomer.DoShowCustSaleGlide(Sender: TObject);
 var
   CustID: string; //消费者ID
+  FindActTion: TAction; 
   Form: TfrmBasic;
 begin
   if not Cds_Customer.Active then Exit;
   CustID:=trim(Cds_Customer.fieldbyName('CUST_ID').AsString);
   if CustID<>'' then
   begin
-    Form := frmShopMain.FindChildForm(TfrmClientSaleReport);
+    Form := frmMain.FindChildForm(TfrmClientSaleReport);
+    //找不到窗体先找Action，并调用创建;
     if not Assigned(Form) then
     begin
-      Form := TfrmClientSaleReport.Create(self);
-      frmShopMain.AddFrom(Form);
+      FindActTion:=frmMain.FindAction('actfrmClientSaleReport');
+      if FindActTion<>nil then FindActTion.Execute;
     end;
-    TfrmClientSaleReport(Form).SingleReportParams(CustID);
-    Form.WindowState := wsMaximized;
-    Form.BringToFront;
+    //根据类找窗体对象找到后并执行SingleReportParams
+    Form := frmMain.FindChildForm(TfrmClientSaleReport);
+    if Form<>nil then
+    begin
+      TfrmClientSaleReport(Form).SingleReportParams(CustID);
+      Form.WindowState := wsMaximized;
+      Form.BringToFront;
+    end;
   end;
 end;
 

@@ -8,22 +8,22 @@ inherited frmSalesOrderList: TfrmSalesOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 820
-    Height = 485
+    Width = 828
+    Height = 496
     inherited RzPanel2: TRzPanel
-      Width = 810
-      Height = 475
+      Width = 818
+      Height = 486
       inherited RzPage: TRzPageControl
-        Width = 804
-        Height = 469
+        Width = 812
+        Height = 480
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 802
-            Height = 442
+            Width = 810
+            Height = 453
             inherited RzPanel1: TRzPanel
-              Width = 792
+              Width = 800
               Height = 121
               Caption = '.'
               object RzLabel2: TRzLabel
@@ -312,8 +312,8 @@ inherited frmSalesOrderList: TfrmSalesOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 126
-              Width = 792
-              Height = 311
+              Width = 800
+              Height = 322
               FrozenCols = 1
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
@@ -357,6 +357,34 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'AMOUNT'
+                  Footers = <>
+                  Title.Caption = #25968#37327
+                  Width = 54
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'AMONEY'
+                  Footers = <>
+                  Title.Caption = #21512#35745#37329#39069
+                  Width = 61
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'RECV_MNY'
+                  Footers = <>
+                  Title.Caption = #23454#25910#37329#39069
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'RECK_MNY'
+                  Footers = <>
+                  Title.Caption = #27424#25910#37329#39069
+                  Width = 59
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'PLAN_DATE'
                   Footers = <>
                   Title.Caption = #36865#36135#26085#26399
@@ -389,34 +417,6 @@ inherited frmSalesOrderList: TfrmSalesOrderList
                   Footers = <>
                   Title.Caption = #31080#25454#31867#22411
                   Width = 53
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'AMOUNT'
-                  Footers = <>
-                  Title.Caption = #25968#37327
-                  Width = 54
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'AMONEY'
-                  Footers = <>
-                  Title.Caption = #21512#35745#37329#39069
-                  Width = 61
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'RECV_MNY'
-                  Footers = <>
-                  Title.Caption = #23454#25910#37329#39069
-                  Width = 60
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'RECK_MNY'
-                  Footers = <>
-                  Title.Caption = #27424#25910#37329#39069
-                  Width = 59
                 end
                 item
                   EditButtons = <>
@@ -458,43 +458,43 @@ inherited frmSalesOrderList: TfrmSalesOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 820
+    Width = 828
     inherited Image3: TImage
-      Left = 628
+      Left = 624
       Width = 172
     end
     inherited Image14: TImage
-      Left = 508
+      Left = 516
     end
     inherited Image1: TImage
-      Left = 528
+      Left = 536
     end
     inherited rzPanel5: TPanel
-      Left = 628
+      Left = 624
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#38144#21806#20986#36135
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 608
+      Width = 604
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 608
+          MinHeight = 604
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 608
+        Width = 604
         object ToolButton16: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actRecv
         end
         object ToolButton17: TToolButton
-          Left = 565
+          Left = 561
           Top = 0
           Action = actExit
         end
@@ -513,6 +513,9 @@ inherited frmSalesOrderList: TfrmSalesOrderList
       ImageIndex = 28
       OnExecute = actRecvExecute
     end
+  end
+  inherited dsList: TDataSource
+    Top = 216
   end
   inherited ppmReport: TPopupMenu
     AutoHotkeys = maManual
@@ -539,6 +542,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
     SortedFields = 'GLIDE_NO'
     AfterScroll = cdsListAfterScroll
     IndexFieldNames = 'GLIDE_NO Asc'
+    Top = 216
   end
   object frfSalesOrder: TfrReport
     InitialZoom = pzDefault
@@ -546,8 +550,8 @@ inherited frmSalesOrderList: TfrmSalesOrderList
     StoreInDFM = True
     OnGetValue = frfSalesOrderGetValue
     OnUserFunction = frfSalesOrderUserFunction
-    Left = 488
-    Top = 201
+    Left = 480
+    Top = 217
     ReportForm = {
       18000000C4200000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000

@@ -1416,11 +1416,11 @@ begin
   inherited;
   r := TRecord_.Create;
   try
-    if TfrmUsersInfo.AddDialog(self,r) then
-       begin
-         edtSALES_STYLE.KeyValue := r.FieldbyName('CODE_ID').AsString;
-         edtSALES_STYLE.Text := r.FieldbyName('CODE_NAME').AsString;
-       end;
+    if TfrmCodeInfo.AddDialog(self,r,2) then
+     begin
+       edtSALES_STYLE.KeyValue := r.FieldbyName('CODE_ID').AsString;
+       edtSALES_STYLE.Text := r.FieldbyName('CODE_NAME').AsString
+     end;
   finally
     r.Free;
   end;
@@ -1845,10 +1845,10 @@ begin
   inherited;
   r := TRecord_.Create;
   try
-    if TfrmCodeInfo.AddDialog(self,r,2) then
+    if TfrmUsersInfo.AddDialog(self,r) then
        begin
          edtGUIDE_USER.KeyValue := r.FieldbyName('USER_ID').AsString;
-         edtGUIDE_USER.Text := r.FieldbyName('USER_NAME').AsString;
+         edtGUIDE_USER.Text := r.FieldbyName('USER_NAME').AsString;;
        end;
   finally
     r.Free;

@@ -94,7 +94,6 @@ type
     Label7: TLabel;
     fndP5_RecvMan: TzrComboBoxList;
     Label8: TLabel;
-    fndP5_PAYM_ID: TcxComboBox;
     Label13: TLabel;
     fndP5_ACCOUNT_ID: TzrComboBoxList;
     P1_DateControl: TfrmDateControl;
@@ -102,6 +101,7 @@ type
     P3_DateControl: TfrmDateControl;
     P4_DateControl: TfrmDateControl;
     P5_DateControl: TfrmDateControl;
+    fndP5_PAYM_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -258,7 +258,7 @@ begin
     end;
 
   fndP5_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndP5_PAYM_ID.Properties.Items,'CODE_NAME');
+  fndP5_PAYM_ID.DataSet:=Global.GetZQueryFromName('PUB_PAYMENT');
   //初始化Grid: 银行帐户
   Rs:=Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   AddDBGridEhColumnItems(DBGridEh5, Rs, 'ACCOUNT_ID', 'ACCOUNT_ID', 'ACCT_NAME');
@@ -775,8 +775,8 @@ begin
     strWhere:=strWhere+' and A.ACCOUNT_ID='''+fndP5_ACCOUNT_ID.AsString+''' ';
     
   //收款方式
-  if fndP5_PAYM_ID.ItemIndex<>-1 then
-    strWhere:=strWhere+' and A.PAYM_ID='''+TRecord_(fndP5_PAYM_ID.Properties.Items.Objects[fndP5_PAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString+''' '; 
+  if trim(fndP5_PAYM_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.PAYM_ID='''+fndP5_PAYM_ID.AsString+''' '; 
 
    //关联语句
   strSql:=

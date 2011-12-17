@@ -222,7 +222,7 @@ uses
 
 procedure TfrmStockDayReport.FormCreate(Sender: TObject);
 begin
-  inherited;     
+  inherited;
   TDbGridEhSort.InitForm(self,false);
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
@@ -382,10 +382,10 @@ begin
   if trim(fndP1_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
 
-  if RckMaxDate < vBegDate then      //--[全部查询视图]  
+  if RckMaxDate < vBegDate then   //--[全部查询视图]  
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else
-  if RckMaxDate >= vEndDate then //--[全部查询台帐表]
+  if RckMaxDate >= vEndDate then  //--[全部查询台帐表]
     SQLData :='RCK_GOODS_DAYS'
   else                                
   begin
@@ -668,7 +668,7 @@ begin
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
-    SQLData :='RCK_GOODS_DAYS'
+    SQLData :='RCK_GOODS_DAYS' 
   else
   begin
     SQLData:=
@@ -848,11 +848,13 @@ begin
     SQLData:='(select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
-    SQLData :='RCK_GOODS_DAYS'
-  else  
+  begin
+    SQLData :='RCK_GOODS_DAYS';
+    strWhere:=strWhere+' and (A.STOCK_AMT<>0 or A.STOCK_MNY<>0) ';
+  end else
   begin
     SQLData:=
-      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,STOCK_AMT,STOCK_MNY,STOCK_TAX,STOCK_RTL,STOCK_AGO from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' and (STOCK_AMT<>0 or STOCK_MNY<>0) '+
       ' union all '+                                                                                              //CALC_MONEY+AGIO_MONEY
       ' select TENANT_ID,SHOP_ID,STOCK_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as STOCK_AMT,NOTAX_MONEY as STOCK_MNY,TAX_MONEY as STOCK_TAX,STOCK_RTL,AGIO_MONEY as STOCK_AGO from VIW_STOCKDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ') ';

@@ -7,34 +7,34 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 943
-    Height = 549
+    Width = 951
+    Height = 560
     inherited RzPanel2: TRzPanel
-      Width = 933
-      Height = 539
+      Width = 941
+      Height = 550
       inherited RzPage: TRzPageControl
-        Width = 728
-        Height = 533
-        ActivePage = TabSheet3
+        Width = 736
+        Height = 544
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#36827#38144#23384#32479#35745#34920
           inherited RzPanel3: TRzPanel
-            Width = 726
-            Height = 506
+            Width = 734
+            Height = 517
             inherited Panel4: TPanel
-              Width = 716
-              Height = 496
+              Width = 724
+              Height = 507
               inherited w1: TRzPanel
-                Width = 716
+                Width = 724
                 Height = 83
                 object Label6: TLabel
-                  Left = 288
-                  Top = 36
+                  Left = 284
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -62,10 +62,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label8: TLabel
-                  Left = 288
-                  Top = 57
+                  Left = 581
+                  Top = 60
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label5: TLabel
@@ -112,10 +113,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 2
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 344
-                  Top = 54
-                  Width = 121
+                  Left = 631
+                  Top = 56
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 5
@@ -163,8 +165,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 32
+                  Left = 341
+                  Top = 54
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -268,11 +270,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 83
-                Width = 716
-                Height = 413
+                Width = 724
+                Height = 424
                 inherited DBGridEh1: TDBGridEh
-                  Width = 712
-                  Height = 409
+                  Width = 720
+                  Height = 420
                   FrozenCols = 3
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
@@ -563,6 +565,9 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
+                DesignSize = (
+                  724
+                  81)
                 object Label10: TLabel
                   Left = 24
                   Top = 35
@@ -571,8 +576,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #38376#24215#32676#32452
                 end
                 object Label13: TLabel
-                  Left = 288
-                  Top = 36
+                  Left = 286
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -600,10 +605,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label15: TLabel
-                  Left = 288
-                  Top = 57
+                  Left = 583
+                  Top = 56
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object fndP2_SHOP_VALUE: TzrComboBoxList
@@ -649,7 +655,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   MultiSelect = False
                 end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 478
+                  Left = 474
                   Top = 40
                   Width = 67
                   Height = 32
@@ -685,10 +691,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 3
                 end
                 object fndP2_UNIT_ID: TcxComboBox
-                  Left = 344
-                  Top = 53
-                  Width = 121
+                  Left = 632
+                  Top = 52
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 6
@@ -736,8 +743,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   MultiSelect = False
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 32
+                  Left = 342
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -1116,8 +1123,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 726
-            Height = 506
+            Width = 734
+            Height = 517
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1125,8 +1132,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 716
-              Height = 496
+              Width = 724
+              Height = 507
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1134,12 +1141,15 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 716
+                Width = 724
                 Height = 84
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
+                DesignSize = (
+                  724
+                  84)
                 object Label9: TLabel
                   Left = 24
                   Top = 58
@@ -1163,17 +1173,18 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #33267
                 end
                 object Label19: TLabel
-                  Left = 288
-                  Top = 36
+                  Left = 285
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #32479#35745#31867#22411
                 end
                 object Label20: TLabel
-                  Left = 288
+                  Left = 579
                   Top = 58
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label11: TLabel
@@ -1226,7 +1237,7 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   MultiSelect = False
                 end
                 object RzBitBtn2: TRzBitBtn
-                  Left = 478
+                  Left = 480
                   Top = 42
                   Width = 67
                   Height = 32
@@ -1253,8 +1264,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Spacing = 5
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
-                  Left = 344
-                  Top = 32
+                  Left = 338
+                  Top = 54
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1266,10 +1277,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 3
                 end
                 object fndP3_UNIT_ID: TcxComboBox
-                  Left = 344
+                  Left = 629
                   Top = 54
-                  Width = 121
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 4
@@ -1366,8 +1378,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 84
-                Width = 716
-                Height = 412
+                Width = 724
+                Height = 423
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1376,8 +1388,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 712
-                  Height = 408
+                  Width = 720
+                  Height = 419
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1703,18 +1715,18 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  716
+                  724
                   103)
                 object Label21: TLabel
                   Left = 24
-                  Top = 57
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label24: TLabel
-                  Left = 288
-                  Top = 56
+                  Left = 292
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -1736,16 +1748,17 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                 end
                 object Label25: TLabel
                   Left = 24
-                  Top = 79
+                  Top = 80
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 288
+                  Left = 582
                   Top = 80
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label3: TLabel
@@ -1756,15 +1769,14 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   Caption = #38376#24215#32676#32452
                 end
                 object Label38: TLabel
-                  Left = 576
+                  Left = 292
                   Top = 80
                   Width = 48
                   Height = 12
-                  Anchors = [akTop, akRight]
                   Caption = #32479#35745#31867#22411
                 end
                 object RzBitBtn3: TRzBitBtn
-                  Left = 480
+                  Left = 485
                   Top = 64
                   Width = 67
                   Height = 32
@@ -1800,10 +1812,11 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 3
                 end
                 object fndP4_UNIT_ID: TcxComboBox
-                  Left = 344
+                  Left = 632
                   Top = 76
-                  Width = 121
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   TabOrder = 6
@@ -1851,8 +1864,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   MultiSelect = False
                 end
                 object fndP4_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 52
+                  Left = 349
+                  Top = 54
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -1996,11 +2009,10 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
                   TabOrder = 9
                 end
                 object fndP4_RPTTYPE: TcxComboBox
-                  Left = 627
+                  Left = 349
                   Top = 76
-                  Width = 81
+                  Width = 121
                   Height = 20
-                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
@@ -2014,8 +2026,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 103
-                Width = 716
-                Height = 393
+                Width = 724
+                Height = 404
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2341,8 +2353,8 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 731
-        Height = 533
+        Left = 739
+        Height = 544
         inherited Panel2: TPanel
           Height = 501
           inherited RzPanel1: TRzPanel [3]
@@ -2358,15 +2370,16 @@ inherited frmJxcTotalReport: TfrmJxcTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 943
-    inherited Image1: TImage
-      Width = 569
-    end
+    Width = 951
     inherited Image3: TImage
-      Width = 569
+      Width = 12
     end
     inherited Image14: TImage
-      Left = 923
+      Left = 931
+    end
+    inherited Image1: TImage
+      Left = 362
+      Width = 569
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

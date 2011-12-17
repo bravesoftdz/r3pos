@@ -200,10 +200,10 @@ begin
   //2011.04.22 Add 判断成本价权限:
   if not ShopGlobal.GetChkRight('14500001',2) then
   begin
-    SetNotShowCostPrice(DBGridEh1, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
-    SetNotShowCostPrice(DBGridEh2, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
-    SetNotShowCostPrice(DBGridEh3, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
-    SetNotShowCostPrice(DBGridEh4, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh1, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_MNY','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh2, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_MNY','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh3, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_MNY','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
+    SetNotShowCostPrice(DBGridEh4, ['ORG_CST','STOCK_TTL','STOCK_TAX','STOCK_MNY','SALE_CST','SALE_MNY','SALE_PRF','SALE_RATE','DBIN_CST','DBOUT_CST','BAL_CST']);
   end;
   CreateGrid;
   RefreshColumn;
@@ -254,7 +254,7 @@ begin
   if P1_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //月份日期:
   if (P1_D1.asString<>'') and (P1_D1.asString=P1_D2.asString) then
@@ -409,7 +409,7 @@ begin
   if P2_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P2_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //月份日期:
   if (P2_D1.asString<>'') and (P2_D1.asString=P2_D2.asString) then
@@ -516,7 +516,7 @@ begin
   GodsStateIdx:=TRecord_(fndP3_REPORT_FLAG.Properties.Items.Objects[fndP3_REPORT_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger;
   
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
   
   //月份日期:
   if (P3_D1.asString<>'') and (P3_D1.asString=P3_D2.asString) then
@@ -748,7 +748,7 @@ begin
   result:='';
   if P4_D1.EditValue = null then Raise Exception.Create('日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('日期条件不能为空');
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
 
   //月份日期:
   if (P4_D1.asString<>'') and (P4_D1.asString=P4_D2.asString) then

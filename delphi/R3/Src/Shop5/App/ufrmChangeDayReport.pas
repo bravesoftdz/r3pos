@@ -564,7 +564,7 @@ begin
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
   else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
-    SQLData:='RCK_GOODS_DAYS'
+    SQLData:='RCK_GOODS_DAYS' 
   else //--[查询台账表]  Union  [视图]
   begin
     SQLData:=
@@ -655,7 +655,7 @@ begin
          else
            strWhere:=strWhere+' and B.REGION_ID='''+fndP3_SHOP_VALUE.AsString+''' ';
        end;
-      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
+      1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP3_SHOP_VALUE.AsString+''' ';
     end;
   end;
 
@@ -674,7 +674,7 @@ begin
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
   else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
-    SQLData:='RCK_GOODS_DAYS'
+    SQLData:='RCK_GOODS_DAYS' 
   else
   begin
     SQLData:=
@@ -841,11 +841,13 @@ begin
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
   else if RckMaxDate >= vEndDate then //--[全部查询台帐表]
-    SQLData:='RCK_GOODS_DAYS'
-  else //--Union  all 
+  begin
+    SQLData:='RCK_GOODS_DAYS';
+    strWhere:=strWhere+' and (A.CHANGE'+CodeId+'_AMT<>0 or A.CHANGE'+CodeId+'_MNY<>0) ';
+  end else //--Union  all
   begin
     SQLData:=
-      '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      '(select '+RCKFields+' from RCK_GOODS_DAYS where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' and (CHANGE'+CodeId+'_AMT<>0 or CHANGE'+CodeId+'_MNY<>0)'+
       ' union all '+
       ' select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+' '+
       ')';

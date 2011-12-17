@@ -1406,14 +1406,11 @@ inherited frmSaleAnaly: TfrmSaleAnaly
   end
   inherited RzPanel4: TRzPanel
     Width = 976
-    inherited Image1: TImage
-      Width = 606
-    end
-    inherited Image3: TImage
-      Width = 606
-    end
     inherited Image14: TImage
       Left = 956
+    end
+    inherited Image1: TImage
+      Width = 606
     end
     inherited CoolBar1: TCoolBar
       inherited ToolBar1: TToolBar

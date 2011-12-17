@@ -345,12 +345,12 @@ begin
   //2011.04.22 Add 设置查看成本价权限
   if not ShopGlobal.GetChkRight('14500001',2) then
   begin
-    SetNotShowCostPrice(DBGridEh1, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh2, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh3, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh5, ['SALE_CST','SALE_ALLPRF','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh6, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','AVG_PROFIT']); 
+    SetNotShowCostPrice(DBGridEh1, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh2, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh3, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh5, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
+    SetNotShowCostPrice(DBGridEh6, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','NOTAX_MONEY','AVG_PROFIT']); 
   end;
 
   if ShopGlobal.GetProdFlag = 'E' then
@@ -1126,12 +1126,14 @@ begin
               'AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   end else
   if RckMaxDate >= vEndDate then //--[全部查询台帐表]
-    SQLData:='RCK_C_GOODS_DAYS'
-  else //--[台账]  Union  [视图]
+  begin
+    SQLData:='RCK_C_GOODS_DAYS';
+    strWhere:=strWhere+' and (A.SALE_AMT<>0 or A.SALE_MNY<>0) '; 
+  end else //--[台账]  Union  [视图]
   begin
     SQLData :=
       '(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_C_GOODS_DAYS '+
-      ' where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
+      ' where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' and (SALE_AMT<>0 or SALE_MNY<>0) '+
       ' union all '+
       ' select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,'+
        'AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
@@ -1292,8 +1294,8 @@ begin
     ',A.GUIDE_USER '+
     ',A.SALES_TYPE '+
     ',A.AMOUNT '+
-    ',A.ORG_PRICE '+   //销售时间成本价
-    ',A.APRICE '+   //销售时间成本价
+    ',A.ORG_PRICE '+   //原售价
+    ',A.APRICE '+      //零售价
     ',A.CALC_MONEY as AMONEY '+
     ',A.NOTAX_MONEY '+  //不含税
     ',A.TAX_MONEY '+    //税项

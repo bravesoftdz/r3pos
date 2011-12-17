@@ -1,6 +1,6 @@
 inherited frmSaleTotalReport: TfrmSaleTotalReport
-  Left = 227
-  Top = 149
+  Left = 195
+  Top = 107
   Width = 958
   Height = 558
   Caption = #38144#21806#20998#26512#25253#34920
@@ -598,14 +598,11 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
   end
   inherited RzPanel4: TRzPanel
     Width = 950
-    inherited Image1: TImage
-      Width = 580
-    end
-    inherited Image3: TImage
-      Width = 580
-    end
     inherited Image14: TImage
       Left = 930
+    end
+    inherited Image1: TImage
+      Width = 580
     end
   end
   inherited mmMenu: TMainMenu

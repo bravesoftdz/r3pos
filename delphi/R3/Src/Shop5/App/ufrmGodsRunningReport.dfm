@@ -76,7 +76,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Caption = #26465' '#24418' '#30721
                 end
                 object Label8: TLabel
-                  Left = 697
+                  Left = 695
                   Top = 58
                   Width = 48
                   Height = 12
@@ -294,7 +294,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   MultiSelect = False
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 747
+                  Left = 744
                   Top = 54
                   Width = 80
                   Height = 20
@@ -497,14 +497,11 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
   end
   inherited RzPanel4: TRzPanel
     Width = 1061
-    inherited Image1: TImage
-      Width = 691
-    end
-    inherited Image3: TImage
-      Width = 691
-    end
     inherited Image14: TImage
       Left = 1041
+    end
+    inherited Image1: TImage
+      Width = 691
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

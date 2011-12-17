@@ -1,6 +1,6 @@
 inherited frmStockTotalReport: TfrmStockTotalReport
-  Left = 306
-  Top = 166
+  Left = 200
+  Top = 112
   Width = 955
   Height = 543
   Caption = #36827#36135#20998#26512#25253#34920
@@ -57,8 +57,8 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Caption = #38376#24215#21517#31216
                 end
                 object Label24: TLabel
-                  Left = 289
-                  Top = 71
+                  Left = 288
+                  Top = 92
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -72,11 +72,12 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 289
+                  Left = 577
                   Top = 92
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label12: TLabel
@@ -228,10 +229,11 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   TabOrder = 11
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 344
+                  Left = 627
                   Top = 89
-                  Width = 121
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
@@ -283,8 +285,8 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 344
-                  Top = 67
+                  Left = 343
+                  Top = 89
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -432,14 +434,11 @@ inherited frmStockTotalReport: TfrmStockTotalReport
   end
   inherited RzPanel4: TRzPanel
     Width = 947
-    inherited Image1: TImage
-      Width = 577
-    end
-    inherited Image3: TImage
-      Width = 577
-    end
     inherited Image14: TImage
       Left = 927
+    end
+    inherited Image1: TImage
+      Width = 577
     end
   end
   inherited mmMenu: TMainMenu

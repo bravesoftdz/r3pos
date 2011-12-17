@@ -15,10 +15,10 @@ inherited frmRckDayReport: TfrmRckDayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet5
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -31,10 +31,10 @@ inherited frmRckDayReport: TfrmRckDayReport
               Height = 494
               inherited w1: TRzPanel
                 Width = 787
-                Height = 64
+                Height = 72
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 8
+                  Top = 13
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -42,21 +42,21 @@ inherited frmRckDayReport: TfrmRckDayReport
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 8
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label5: TLabel
-                  Left = 24
-                  Top = 42
+                  Left = 25
+                  Top = 47
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 4
+                  Top = 8
                   Width = 85
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -65,7 +65,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 4
+                  Top = 8
                   Width = 86
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -73,8 +73,8 @@ inherited frmRckDayReport: TfrmRckDayReport
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 322
-                  Top = 29
+                  Left = 323
+                  Top = 35
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -100,8 +100,8 @@ inherited frmRckDayReport: TfrmRckDayReport
                   Spacing = 5
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
-                  Left = 80
-                  Top = 38
+                  Left = 81
+                  Top = 43
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -113,8 +113,8 @@ inherited frmRckDayReport: TfrmRckDayReport
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
-                  Left = 156
-                  Top = 38
+                  Left = 157
+                  Top = 43
                   Width = 117
                   Height = 20
                   Properties.AutoSelect = False
@@ -155,19 +155,19 @@ inherited frmRckDayReport: TfrmRckDayReport
                 end
                 inline P1_DateControl: TfrmDateControl
                   Left = 280
-                  Top = 4
+                  Top = 9
                   Width = 170
                   Height = 20
                   TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 64
+                Top = 72
                 Width = 787
-                Height = 430
+                Height = 422
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 426
+                  Height = 418
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -2323,14 +2323,11 @@ inherited frmRckDayReport: TfrmRckDayReport
   end
   inherited RzPanel4: TRzPanel
     Width = 1014
-    inherited Image1: TImage
-      Width = 644
-    end
-    inherited Image3: TImage
-      Width = 644
-    end
     inherited Image14: TImage
       Left = 994
+    end
+    inherited Image1: TImage
+      Width = 644
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

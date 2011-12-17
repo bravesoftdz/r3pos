@@ -96,12 +96,12 @@ type
     Label14: TLabel;
     fndP5_ACCOUNT_ID: TzrComboBoxList;
     Label13: TLabel;
-    fndP5_PAYM_ID: TcxComboBox;
     P1_DateControl: TfrmDateControl;
     P2_DateControl: TfrmDateControl;
     P3_DateControl: TfrmDateControl;
     P4_DateControl: TfrmDateControl;
     P5_DateControl: TfrmDateControl;
+    fndP5_PAYM_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
@@ -259,7 +259,7 @@ begin
     end;
 
   fndP5_ACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
-  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndP5_PAYM_ID.Properties.Items,'CODE_NAME');
+  fndP5_PAYM_ID.DataSet:=Global.GetZQueryFromName('PUB_PAYMENT');
 
   //初始化Grid: 付款方式
   Rs:=Global.GetZQueryFromName('PUB_PAYMENT');
@@ -414,7 +414,7 @@ begin
 
   //按根据条件门店汇总:
   strSql:=
-     'select A.TENANT_ID as TENANT_ID,A.ABLE_DATE as ABLE_DATE '+
+     'select A.TENANT_ID as TENANT_ID,A.PAY_DATE as ABLE_DATE '+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
      ',sum(ALL_MNY) as ALL_MNY '+
@@ -672,7 +672,7 @@ begin
   if fndBegDate.Date=fndEndDate.Date then
   begin
     vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
-    Str:='select TENANT_ID,SHOP_ID,ABLE_DATE,CLIENT_ID '+
+    Str:='select TENANT_ID,SHOP_ID,ABLE_DATE,PAY_DATE,CLIENT_ID '+
        ',(case when ABLE_DATE<>'+vBegDate+' then PAY_MNY else 0 end) as ORG_ALL_MNY '+   //付款合计:往日
        ',(case when ABLE_DATE='+vBegDate+'  then PAY_MNY else 0 end) as NEW_ALL_MNY '+   //付款合计:本期
        ', PAY_MNY as ALL_MNY '+                                                         //付款小计
@@ -685,13 +685,14 @@ begin
        ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //应退往日
        ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //应退本日
        ',(case when  ABLE_TYPE=''5'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //应退小计
-       ' from VIW_PAYABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE='+vBegDate+' '+DataRight;
+       ' from VIW_PAYABLEDATA '+
+       ' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and PAY_DATE='+vBegDate+' '+DataRight;
   end else
   if fndBegDate.Date<fndEndDate.Date then
   begin
     vBegDate:=FormatDatetime('YYYYMMDD',fndBegDate.Date);
     vEndDate:=FormatDatetime('YYYYMMDD',fndEndDate.Date);
-    Str:='select TENANT_ID,SHOP_ID,ABLE_DATE,CLIENT_ID '+
+    Str:='select TENANT_ID,SHOP_ID,ABLE_DATE,PAY_DATE,CLIENT_ID '+
       ',(case when (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_ALL_MNY '+   //付款合计:往日
       ',(case when (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then PAY_MNY else 0 end) as NEW_ALL_MNY '+   //付款合计:本期
       ', PAY_MNY as ALL_MNY '+                                                         //付款小计
@@ -704,7 +705,8 @@ begin
       ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
       ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
       ',(case when  ABLE_TYPE=''5'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
-      ' from VIW_PAYABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and ABLE_DATE>='+vBegDate+' and ABLE_DATE<='+vEndDate+' '+DataRight;
+      ' from VIW_PAYABLEDATA '+
+      ' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and PAY_DATE>='+vBegDate+' and PAY_DATE<='+vEndDate+' '+DataRight;
   end;
   result:=str;
 end;
@@ -720,7 +722,7 @@ begin
   strWhere:='';
 
   //付款查询条件
-  strWhere:=GetDateCnd(P5_D1, P5_D2, 'ABLE_DATE');
+  strWhere:=GetDateCnd(P5_D1, P5_D2, 'PAY_DATE');
 
   //门店管理群组
   strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'');
@@ -741,18 +743,20 @@ begin
     strWhere:=strWhere+' and A.ACCOUNT_ID='''+fndP5_ACCOUNT_ID.AsString+''' ';
     
   //收款方式
-  if fndP5_PAYM_ID.ItemIndex<>-1 then
-    strWhere:=strWhere+' and A.PAYM_ID='''+TRecord_(fndP5_PAYM_ID.Properties.Items.Objects[fndP5_PAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString+''' '; 
+  if trim(fndP5_PAYM_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.PAYM_ID='''+fndP5_PAYM_ID.AsString+''' '; 
 
   //关联语句
   strSql:=
     'select je.*,r.USER_NAME as USER_NAME,0 as OVERDAYS from '+
     '(select jd.*,E.ACCT_NAME as ACC_NAME from '+
     '(select j.*,D.CLIENT_NAME as CUST_NAME from  '+
-    ' (select A.*,B.SHOP_NAME from VIW_PAYABLEDATA A,CA_SHOP_INFO B where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+') j '+
+    ' (select A.*,B.SHOP_NAME from VIW_PAYABLEDATA A,CA_SHOP_INFO B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+') j '+
     '  left outer join VIW_CLIENTINFO D on j.TENANT_ID=D.TENANT_ID and j.CLIENT_ID=D.CLIENT_ID)jd '+
     '  left outer join ACC_ACCOUNT_INFO E on jd.ACCOUNT_ID=E.ACCOUNT_ID)je '+
-    '  left outer join viw_users r on je.TENANT_ID=r.TENANT_ID and je.PAY_USER=r.USER_ID order by je.PAY_USER ';
+    '  left outer join viw_users r on je.TENANT_ID=r.TENANT_ID and je.PAY_USER=r.USER_ID '+
+    ' order by je.PAY_USER ';
 
   Result := ParseSQL(Factor.iDbType,strSql);
 end;

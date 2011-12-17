@@ -29,10 +29,10 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Height = 494
               inherited w1: TRzPanel
                 Width = 787
-                Height = 60
+                Height = 67
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 10
+                  Top = 13
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -40,21 +40,21 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 10
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label5: TLabel
                   Left = 24
-                  Top = 40
+                  Top = 44
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 6
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -62,7 +62,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 6
+                  Top = 8
                   Width = 86
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -70,7 +70,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 290
-                  Top = 25
+                  Top = 32
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -97,7 +97,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 36
+                  Top = 40
                   Width = 73
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
@@ -109,7 +109,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 156
-                  Top = 36
+                  Top = 40
                   Width = 117
                   Height = 20
                   Properties.AutoSelect = False
@@ -150,19 +150,19 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 end
                 inline P1_DateControl: TfrmDateControl
                   Left = 280
-                  Top = 6
+                  Top = 7
                   Width = 170
                   Height = 20
                   TabOrder = 5
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 60
+                Top = 67
                 Width = 787
-                Height = 434
+                Height = 427
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 430
+                  Height = 423
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -1724,14 +1724,11 @@ inherited frmPayAbleReport: TfrmPayAbleReport
   end
   inherited RzPanel4: TRzPanel
     Width = 1014
-    inherited Image1: TImage
-      Width = 644
-    end
-    inherited Image3: TImage
-      Width = 644
-    end
     inherited Image14: TImage
       Left = 994
+    end
+    inherited Image1: TImage
+      Width = 644
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

@@ -1,4 +1,4 @@
---配货汇总表
+--配货汇总表 DB2
 create view RIM_JOURNAL 
 as
  select
@@ -17,6 +17,37 @@ as
     union all 
     select A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,sum(A.CALC_AMOUNT/case when B.SMALLTO_CALC<>0 then B.SMALLTO_CALC*B.ZOOM_RATE else B.ZOOM_RATE end) as STOCK_AMT,0 as SALES_AMT,0 as SALES_MNY,0 as STOR_AMT 
     from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID=1000006 and A.STOCK_DATE=(year(current date-1 days)*10000+month(current date-1 days)*100+day(current date-1 days))
+    group by A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID
+    union all 
+    select A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,0 as STOCK_AMT,0 as SALES_AMT,0 as SALES_MNY,sum(A.AMOUNT/case when B.SMALLTO_CALC<>0 then B.SMALLTO_CALC*B.ZOOM_RATE else B.ZOOM_RATE end) as STOR_AMT 
+    from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID=1000006 
+    group by A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID
+    ) j,CA_SHOP_INFO c where j.TENANT_ID=c.TENANT_ID and j.SHOP_ID=c.SHOP_ID 
+group by 
+   j.TENANT_ID, 
+   j.GODS_ID,   
+   j.SECOND_ID,   
+   C.LICENSE_CODE;
+
+--配货汇总表 ORACLE
+create view RIM_JOURNAL 
+as
+ select
+   j.TENANT_ID,   --R3企业号
+   j.GODS_ID,     --R3商品内码
+   j.SECOND_ID,   --业务系统商品内码<烟草公司内码>
+   C.LICENSE_CODE,--证可证号
+   sum(STOCK_AMT) as STOCK_AMT,--进货数量<条数量>
+   sum(SALES_AMT) as SALES_AMT,--销售数量<条数量>
+   sum(SALES_MNY) as SALES_MNY,--销售金额
+   sum(STOR_AMT) as STOR_AMT --库存数量<条数量>
+ from ( 
+    select A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,0 as STOCK_AMT,sum(CALC_AMOUNT/case when B.SMALLTO_CALC<>0 then B.SMALLTO_CALC*B.ZOOM_RATE else B.ZOOM_RATE end) as SALES_AMT,sum(CALC_MONEY) as SALES_MNY,0 as STOR_AMT 
+    from VIW_SALESDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID=1000006 and A.SALES_DATE=to_number(to_char(sysdate-1,'YYYYMMDD'))
+    group by A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,B.SECOND_ID 
+    union all 
+    select A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,sum(A.CALC_AMOUNT/case when B.SMALLTO_CALC<>0 then B.SMALLTO_CALC*B.ZOOM_RATE else B.ZOOM_RATE end) as STOCK_AMT,0 as SALES_AMT,0 as SALES_MNY,0 as STOR_AMT 
+    from VIW_STOCKDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.RELATION_ID=1000006 and A.STOCK_DATE=to_number(to_char(sysdate-1,'YYYYMMDD'))
     group by A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID
     union all 
     select A.TENANT_ID,A.SHOP_ID,B.SECOND_ID,A.GODS_ID,0 as STOCK_AMT,0 as SALES_AMT,0 as SALES_MNY,sum(A.AMOUNT/case when B.SMALLTO_CALC<>0 then B.SMALLTO_CALC*B.ZOOM_RATE else B.ZOOM_RATE end) as STOR_AMT 

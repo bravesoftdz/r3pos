@@ -164,7 +164,7 @@ CREATE TABLE MKT_DEMANDORDER (
         --流水号
 	GLIDE_NO varchar(20) NOT NULL ,
         --填报日期
-	DEMA_DATE int NULL ,
+	DEMA_DATE int ,
         --经销商
 	CLIENT_ID varchar(36) NOT NULL ,
         --所属部门

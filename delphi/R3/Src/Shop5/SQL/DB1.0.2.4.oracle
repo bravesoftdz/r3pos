@@ -1,5 +1,5 @@
 --添加商品缩放倍率
-alter table PUB_GOODS_RELATION add ZOOM_RATE decimal(18, 3) NOT NULL DEFAULT 1;
+alter table PUB_GOODS_RELATION add ZOOM_RATE decimal(18, 3) DEFAULT 1  NOT NULL ;
 --为应用服务器添加默认产品
 alter table CA_SERVER_INFO add PROD_ID varchar2(10);
 
@@ -165,7 +165,7 @@ CREATE TABLE MKT_DEMANDORDER (
         --流水号
 	GLIDE_NO varchar2(20) NOT NULL ,
         --填报日期
-	DEMA_DATE int NULL ,
+	DEMA_DATE number(9,0) ,
         --经销商
 	CLIENT_ID varchar2(36) NOT NULL ,
         --所属部门

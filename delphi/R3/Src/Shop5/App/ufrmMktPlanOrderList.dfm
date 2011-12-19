@@ -203,7 +203,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 336
-                Top = 56
+                Top = 72
                 Width = 67
                 Height = 26
                 Action = actFind

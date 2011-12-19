@@ -35,7 +35,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #20379' '#24212' '#21830
+        Caption = #32463' '#38144' '#21830
       end
       object Label3: TLabel [2]
         Left = 199

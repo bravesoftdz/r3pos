@@ -69,7 +69,7 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPla
 
 procedure TfrmMktPlanOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',2) then Raise Exception.Create('你没有新增订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100001070',2) then Raise Exception.Create('你没有新增销售计划的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -273,7 +273,6 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('CLIENT_ID').asString := CurContract.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
-          //Params.ParamByName('STOCK_TYPE').asString := '1';
           if (CurContract.gid = '') or (CurContract.gid='..新增..') then
              Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
           else
@@ -309,8 +308,7 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('CLIENT_ID').asString := CurContract.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
-          //Params.ParamByName('STOCK_TYPE').asString := '1';
-          if CurContract.gid = '' then
+          if (CurContract.gid = '') then
              Params.ParamByName('GLIDE_NO').asString := '00000000000000'
           else
              Params.ParamByName('GLIDE_NO').asString := CurContract.gid;

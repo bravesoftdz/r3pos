@@ -88,8 +88,10 @@ TReportFactory=class
     Fields:TStringList;
     Func:TStringList;
     FSafeDay: integer;
+    FReasDay: integer;
     procedure SetDataSet(const Value: TDataSet);
     procedure SetSafeDay(const Value: integer);
+    procedure SetReasDay(const Value: integer);
   protected
     function IsDSIndex(sid:string):boolean;
     function GetIndexFieldName(sid:string):integer;
@@ -115,6 +117,7 @@ TReportFactory=class
     destructor Destroy;override;
     property DataSet:TDataSet read FDataSet write SetDataSet;
     property SafeDay:integer read FSafeDay write SetSafeDay;
+    property ReasDay:integer read FReasDay write SetReasDay;
   end;
 
 implementation
@@ -155,6 +158,7 @@ begin
   if sourid='4' then Fields.CommaText := RF_DATA_SOURCE4;
 
   safeDay := StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7);
+  ReasDay := StrtoIntDef(ShopGlobal.GetParameter('REAS_DAY'),14);
 end;
 
 destructor TReportFactory.Destroy;
@@ -1663,7 +1667,7 @@ begin
             if (vRows[w1].Value/vRows[w2].Value)<SafeDay then
                result := '建议补货'
             else
-            if (vRows[w1].Value/vRows[w2].Value)>SafeDay then
+            if (vRows[w1].Value/vRows[w2].Value)>ReasDay then
                result := '加强促销';
           end;
      end;
@@ -1757,6 +1761,11 @@ end;
 procedure TReportFactory.SetSafeDay(const Value: integer);
 begin
   FSafeDay := Value;
+end;
+
+procedure TReportFactory.SetReasDay(const Value: integer);
+begin
+  FReasDay := Value;
 end;
 
 end.

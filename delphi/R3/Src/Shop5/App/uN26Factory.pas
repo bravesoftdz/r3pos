@@ -49,7 +49,7 @@ var
   N26Factory: TN26Factory;
 
 implementation
- uses EncDec,IniFiles, uGlobal;
+ uses EncDec,IniFiles,uGlobal,uCaFactory;
 {$R *.dfm}
 
 function md5(s:string):string;
@@ -144,7 +144,11 @@ var
 begin
   result := false;
   if Checked=0 then Exit;
-  if not Logined then Exit;
+  if not CaFactory.Audited then Exit;
+  if not Logined then
+     begin
+       if not coAutoLogin then Exit;
+     end;
   if not fileExists(ExtractFilePath(ParamStr(0))+'mmPlayer.exe') then Exit;
   if N26Url<>'' then
   begin
@@ -172,7 +176,7 @@ begin
                id := play.attributes.getNamedItem('id').nodeValue;
                if id<>'' then
                   begin
-                    filename := ExtractFilePath(ParamStr(0))+id+'.'+play.attributes.getNamedItem('mediaType').nodeValue;
+                    filename := ExtractFilePath(ParamStr(0))+'adv\'+id+'.'+play.attributes.getNamedItem('mediaType').nodeValue;
                     f.WriteString(id,'filename',filename);
                     f.WriteString(id,'title',play.attributes.getNamedItem('name').nodeValue);
                     f.WriteString(id,'url',play.attributes.getNamedItem('url').nodeValue);

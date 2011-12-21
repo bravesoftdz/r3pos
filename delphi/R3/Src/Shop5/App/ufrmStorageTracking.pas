@@ -1324,6 +1324,7 @@ begin
   inherited;
   Locked := false;
   actFindExecute(nil);
+  RzPanel3.Update;
 end;
 
 end.

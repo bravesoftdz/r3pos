@@ -15,8 +15,10 @@ inherited frmPayAbleReport: TfrmPayAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -36,7 +38,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #20184#27454#26085#26399
+                  Caption = #36134#27454#26085#26399
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
@@ -276,7 +278,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #20184#27454#26085#26399
+                  Caption = #36134#27454#26085#26399
                 end
                 object RzLabel5: TRzLabel
                   Left = 170
@@ -563,7 +565,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #20184#27454#26085#26399
+                  Caption = #36134#27454#26085#26399
                 end
                 object RzLabel7: TRzLabel
                   Left = 170
@@ -885,7 +887,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #20184#27454#26085#26399
+                Caption = #36134#27454#26085#26399
               end
               object RzLabel10: TRzLabel
                 Left = 170
@@ -1202,7 +1204,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Width = 48
               Height = 12
               Alignment = taRightJustify
-              Caption = #20184#27454#26085#26399
+              Caption = #36134#27454#26085#26399
             end
             object RzLabel9: TRzLabel
               Left = 171
@@ -1610,7 +1612,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Footer.ValueType = fvtSum
                   Footers = <>
                   ReadOnly = True
-                  Title.Caption = #32467#20313#37329#39069
+                  Title.Caption = #24050#20184#37329#39069
                   Title.Font.Charset = GB2312_CHARSET
                   Title.Font.Color = clWindowText
                   Title.Font.Height = -12

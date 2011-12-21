@@ -1,6 +1,6 @@
 inherited frmRckDayReport: TfrmRckDayReport
-  Left = 171
-  Top = 95
+  Left = 192
+  Top = 106
   Width = 1022
   Height = 611
   Caption = #33829#19994#32467#36134#25253#34920
@@ -1623,7 +1623,7 @@ inherited frmRckDayReport: TfrmRckDayReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #38144#21806#26085#26399
+                  Caption = #25910#27454#26085#26399
                 end
                 object RzLabel11: TRzLabel
                   Left = 167

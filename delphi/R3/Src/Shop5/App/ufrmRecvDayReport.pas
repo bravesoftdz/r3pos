@@ -758,7 +758,7 @@ begin
   strWhere:='';
 
   //收款日期条件
-  strWhere:=GetDateCnd(P5_D1, P5_D2, 'RECV_DATE');
+  strWhere:=GetDateCnd(P5_D1, P5_D2, 'RECV_DATE')+ShopGlobal.GetDataRight('SHOP_ID',1);;
   //门店管理群组条件
   strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'');
   //门店名称条件

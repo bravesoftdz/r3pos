@@ -1,6 +1,6 @@
 inherited frmRecvAbleReport: TfrmRecvAbleReport
-  Left = 288
-  Top = 126
+  Left = 189
+  Top = 103
   Width = 1022
   Height = 611
   Caption = #24212#25910#27454#25253#34920
@@ -15,10 +15,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -31,18 +29,18 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Height = 494
               inherited w1: TRzPanel
                 Width = 787
-                Height = 60
+                Height = 64
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 8
+                  Top = 12
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #25910#27454#26085#26399
+                  Caption = #36134#27454#26085#26399
                 end
                 object RzLabel3: TRzLabel
                   Left = 171
-                  Top = 8
+                  Top = 12
                   Width = 12
                   Height = 12
                   Caption = #33267
@@ -56,7 +54,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 4
+                  Top = 8
                   Width = 85
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -64,7 +62,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object P1_D2: TcxDateEdit
                   Left = 187
-                  Top = 4
+                  Top = 8
                   Width = 86
                   Height = 20
                   Properties.DateButtons = [btnToday]
@@ -72,7 +70,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 322
-                  Top = 25
+                  Top = 28
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -152,19 +150,19 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 end
                 inline P1_DateControl: TfrmDateControl
                   Left = 278
-                  Top = 4
+                  Top = 7
                   Width = 170
                   Height = 20
                   TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 60
+                Top = 64
                 Width = 787
-                Height = 434
+                Height = 430
                 inherited DBGridEh1: TDBGridEh
                   Width = 783
-                  Height = 430
+                  Height = 426
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -278,7 +276,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #25910#27454#26085#26399
+                  Caption = #36134#27454#26085#26399
                 end
                 object RzLabel5: TRzLabel
                   Left = 170
@@ -565,7 +563,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #25910#27454#26085#26399
+                  Caption = #36134#27454#26085#26399
                 end
                 object RzLabel7: TRzLabel
                   Left = 170
@@ -878,7 +876,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Width = 48
               Height = 12
               Alignment = taRightJustify
-              Caption = #25910#27454#26085#26399
+              Caption = #36134#27454#26085#26399
             end
             object RzLabel10: TRzLabel
               Left = 170
@@ -1213,7 +1211,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #25910#27454#26085#26399
+                  Caption = #36134#27454#26085#26399
                 end
                 object RzLabel9: TRzLabel
                   Left = 171
@@ -1666,14 +1664,11 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
   end
   inherited RzPanel4: TRzPanel
     Width = 1014
-    inherited Image1: TImage
-      Width = 644
-    end
-    inherited Image3: TImage
-      Width = 644
-    end
     inherited Image14: TImage
       Left = 994
+    end
+    inherited Image1: TImage
+      Width = 644
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

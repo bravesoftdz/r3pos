@@ -430,7 +430,7 @@ begin
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+' '+
-     ' group by A.TENANT_ID,A.ABLE_DATE ';
+     ' group by A.TENANT_ID,A.PAY_DATE ';
 
   Result := ParseSQL(Factor.iDbType,strSql);
 end;

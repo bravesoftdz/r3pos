@@ -15,7 +15,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
       inherited RzPage: TRzPageControl
         Width = 960
         Height = 534
-        TabIndex = 2
+        ActivePage = TabSheet2
         FixedDimension = 25
         object TabSheet2: TRzTabSheet [0]
           Caption = #30408#21033#20998#26512

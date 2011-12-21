@@ -195,6 +195,7 @@ type
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override;
     function GetGodsSortIdx: string; //添加Title
     function GetDataRight: string; //返回查看数据权限
+    function GetGuideDataRight: string; //
   public
     procedure PrintBefore;override;
     function GetRowType:integer;override;
@@ -885,7 +886,7 @@ begin
   if P5_D1.Date > P5_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
 
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+DataRight;
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+GetGuideDataRight;
 
   //GodsID不为空：
   if trim(GodsID)<>'' then strWhere:=strWhere+' and A.GODS_ID='''+GodsID+''' ';
@@ -1407,10 +1408,16 @@ begin
 end;
 
 function TfrmDbDayReport.GetDataRight: string;
+begin
+  result:=ShopGlobal.GetDataRight('A.SHOP_ID',1);
+end;
+
+function TfrmDbDayReport.GetGuideDataRight: string;
 var
   PosIdx: integer;
   Str,w_shop,w_client:string;
 begin
+  result:='';
   //主数据: RCK_GOODS_DAYS、VIW_MOVEDATA A
   w_shop := LowerCase(ShopGlobal.GetDataRight('A.SHOP_ID',1));
   w_client := LowerCase(ShopGlobal.GetDataRight('A.CLIENT_ID',1));

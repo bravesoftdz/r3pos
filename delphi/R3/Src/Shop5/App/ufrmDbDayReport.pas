@@ -1418,6 +1418,12 @@ var
   Str,w_shop,w_client:string;
 begin
   result:='';
+  if fndP6_DBIN.Checked then
+    result:=ShopGlobal.GetDataRight('A.SHOP_ID',1)
+  else if fndP6_DBOut.Checked then
+    result:=ShopGlobal.GetDataRight('A.CLIENT_ID',1);
+
+  {
   //Ö÷Êý¾Ý: RCK_GOODS_DAYS¡¢VIW_MOVEDATA A
   w_shop := LowerCase(ShopGlobal.GetDataRight('A.SHOP_ID',1));
   w_client := LowerCase(ShopGlobal.GetDataRight('A.CLIENT_ID',1));
@@ -1435,6 +1441,7 @@ begin
     else if (w_client <> '') then
       result := w_client;
   end;
+  }
 end;
 
 end.

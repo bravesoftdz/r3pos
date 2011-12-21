@@ -531,7 +531,7 @@ end;
 function TframeBaseAnaly.GetWeekID(FieldDate: string): string;
 begin
   case Factor.iDbType of
-   0: result:='datepart(weekday,convert(Datetime,convert(varchar(8),'+FieldDate+')),112)-1 ';  //返回值-1 刚好是：从0开始
+   0: result:='datepart(weekday,convert(Datetime,convert(varchar(8),'+FieldDate+'),112))-1 ';  //返回值-1 刚好是：从0开始
    1: result:='to_number(to_char(TO_DATE(to_char('+FieldDate+'),''yyyymmdd''),''d''))-1 ';
    4:
     begin

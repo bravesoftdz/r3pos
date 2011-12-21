@@ -15,8 +15,10 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 542
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1020,7 +1022,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label20: TLabel
                   Left = 703
-                  Top = 56
+                  Top = 57
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -1453,11 +1455,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 289
+                  Left = 705
                   Top = 79
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label12: TLabel
@@ -1468,11 +1471,10 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #38376#24215#32676#32452
                 end
                 object Label38: TLabel
-                  Left = 703
+                  Left = 289
                   Top = 80
                   Width = 48
                   Height = 12
-                  Anchors = [akTop, akRight]
                   Caption = #32479#35745#31867#22411
                 end
                 object P4_D1: TcxDateEdit
@@ -1530,10 +1532,11 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 7
                 end
                 object fndP4_UNIT_ID: TcxComboBox
-                  Left = 344
-                  Top = 76
-                  Width = 121
+                  Left = 755
+                  Top = 75
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
@@ -1696,11 +1699,10 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 3
                 end
                 object fndP4_RPTTYPE: TcxComboBox
-                  Left = 753
+                  Left = 344
                   Top = 76
-                  Width = 81
+                  Width = 121
                   Height = 20
-                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (

@@ -31,7 +31,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               Height = 505
               inherited w1: TRzPanel
                 Width = 848
-                Height = 82
+                Height = 80
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 14
@@ -42,7 +42,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object Label6: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -55,10 +55,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label8: TLabel
-                  Left = 288
+                  Left = 702
                   Top = 57
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label5: TLabel
@@ -79,7 +80,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 478
-                  Top = 41
+                  Top = 42
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -117,10 +118,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 2
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 344
+                  Left = 752
                   Top = 53
-                  Width = 121
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
@@ -174,7 +176,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 32
+                  Top = 53
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -256,12 +258,12 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 82
+                Top = 80
                 Width = 848
-                Height = 423
+                Height = 425
                 inherited DBGridEh1: TDBGridEh
                   Width = 844
-                  Height = 419
+                  Height = 421
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -379,6 +381,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
+                DesignSize = (
+                  848
+                  81)
                 object RzLabel4: TRzLabel
                   Left = 24
                   Top = 14
@@ -396,7 +401,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object Label13: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -409,10 +414,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label15: TLabel
-                  Left = 288
-                  Top = 57
+                  Left = 697
+                  Top = 56
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object P2_D1: TcxDateEdit
@@ -504,10 +510,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 3
                 end
                 object fndP2_UNIT_ID: TcxComboBox
-                  Left = 344
-                  Top = 53
-                  Width = 121
+                  Left = 753
+                  Top = 52
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
@@ -561,7 +568,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 32
+                  Top = 52
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -764,6 +771,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
+                DesignSize = (
+                  848
+                  82)
                 object RzLabel6: TRzLabel
                   Left = 24
                   Top = 14
@@ -774,23 +784,24 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object Label9: TLabel
                   Left = 24
-                  Top = 58
+                  Top = 59
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label19: TLabel
                   Left = 288
-                  Top = 36
+                  Top = 59
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
-                  Left = 288
-                  Top = 58
+                  Left = 705
+                  Top = 59
                   Width = 48
                   Height = 12
+                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label11: TLabel
@@ -811,7 +822,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object RzBitBtn2: TRzBitBtn
                   Left = 486
-                  Top = 40
+                  Top = 43
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -881,7 +892,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 344
-                  Top = 32
+                  Top = 54
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -890,10 +901,11 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   TabOrder = 3
                 end
                 object fndP3_UNIT_ID: TcxComboBox
-                  Left = 344
+                  Left = 755
                   Top = 54
-                  Width = 121
+                  Width = 80
                   Height = 20
+                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
                   Properties.Items.Strings = (
@@ -1126,14 +1138,14 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 106
+                Height = 104
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
                   848
-                  106)
+                  104)
                 object RzLabel8: TRzLabel
                   Left = 24
                   Top = 14
@@ -1196,7 +1208,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Top = 80
                   Width = 48
                   Height = 12
-                  Anchors = [akTop, akRight]
                   Caption = #32479#35745#31867#22411
                 end
                 object P4_D1: TcxDateEdit
@@ -1447,7 +1458,6 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Top = 76
                   Width = 121
                   Height = 20
-                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
@@ -1460,9 +1470,9 @@ inherited frmStorageDayReport: TfrmStorageDayReport
               end
               object RzPanel15: TRzPanel
                 Left = 0
-                Top = 106
+                Top = 104
                 Width = 848
-                Height = 399
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1472,7 +1482,7 @@ inherited frmStorageDayReport: TfrmStorageDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 395
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

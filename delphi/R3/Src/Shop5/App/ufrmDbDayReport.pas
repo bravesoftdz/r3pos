@@ -1409,7 +1409,7 @@ end;
 
 function TfrmDbDayReport.GetDataRight: string;
 begin
-  result:=ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  result:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 function TfrmDbDayReport.GetGuideDataRight: string;
@@ -1418,30 +1418,16 @@ var
   Str,w_shop,w_client:string;
 begin
   result:='';
-  if fndP6_DBIN.Checked then
-    result:=ShopGlobal.GetDataRight('A.SHOP_ID',1)
-  else if fndP6_DBOut.Checked then
-    result:=ShopGlobal.GetDataRight('A.CLIENT_ID',1);
-
-  {
-  //Ö÷Êý¾Ý: RCK_GOODS_DAYS¡¢VIW_MOVEDATA A
   w_shop := LowerCase(ShopGlobal.GetDataRight('A.SHOP_ID',1));
   w_client := LowerCase(ShopGlobal.GetDataRight('A.CLIENT_ID',1));
   if (w_shop <> '') and (w_client <> '') then
   begin
     PosIdx:=pos('and',w_shop)+3;
-    w_shop:=Copy(w_shop,PosIdx,400);
+    w_shop:=Copy(w_shop,PosIdx,length(w_shop));
     PosIdx:=pos('and',w_client)+3;
-    w_client:=Copy(w_client,PosIdx,400);
+    w_client:=Copy(w_client,PosIdx,length(w_client));
     result := ' and ('+w_shop+' or '+w_client+') ';
-  end else
-  begin
-    if (w_shop <> '') then
-      result := w_shop
-    else if (w_client <> '') then
-      result := w_client;
   end;
-  }
 end;
 
 end.

@@ -52,9 +52,9 @@ type
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure edtKPI_YEARPropertiesChange(Sender: TObject);
-    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DeleteClick(Sender: TObject);
+    procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -203,6 +203,8 @@ begin
 
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1';
   edtPLAN_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
 
 end;
@@ -267,13 +269,12 @@ var mny,bny,amt:real;
 begin
   inherited;
   Saved := false;
-  //if edtINDE_DATE.EditValue = null then Raise Exception.Create('订货日期不能为空');
+  if edtPLAN_DATE.EditValue = null then Raise Exception.Create('签约日期不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空销售计划单据...');
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  //AObj.FieldbyName('SHOP_ID').AsString := .AsString;
   cid := edtCLIENT_ID.asString;
   AObj.FieldByName('KPI_YEAR').AsInteger := edtKPI_YEAR.Value;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
@@ -554,30 +555,32 @@ begin
   //edtPLAN_DATE.Date := '';
 end;
 
-procedure TfrmMktPlanOrder.DBGridEh1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
-  State: TGridDrawState);
-var
-  ARect:TRect;
-begin
-  inherited;
-  if ((gdSelected in State) or (gdFocused in State)) then
-    begin
-      ARect := Rect;
-      DBGridEh1.Canvas.Pen.Color := clRed;
-      DBGridEh1.Canvas.Pen.Width := 1;
-      DBGridEh1.Canvas.Brush.Style := bsClear;
-      DbGridEh1.canvas.Rectangle(ARect);
-      //stbHint.Caption := Column.Title.Hint;
-    end;
-end;
-
 procedure TfrmMktPlanOrder.DeleteClick(Sender: TObject);
 begin
   inherited;
   if cdsDetail.IsEmpty then exit;
   if cdsDetail.FieldByName('KPI_ID').AsString='' then exit;
   cdsDetail.Delete;
+end;
+
+procedure TfrmMktPlanOrder.DBGridEh1DrawFooterCell(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; Rect: TRect;
+  State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'KPI_ID_TEXT' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+
+       DBGridEh1.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s个指标',[Inttostr(cdsDetail.RecordCount)]);
+       DBGridEh1.Canvas.Font.Style := [fsBold];
+       DBGridEh1.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh1.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
+     end;
 end;
 
 end.

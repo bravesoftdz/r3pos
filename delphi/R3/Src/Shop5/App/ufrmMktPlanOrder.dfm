@@ -351,6 +351,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       Height = 302
       FrozenCols = 1
       PopupMenu = PopupMenu1
+      OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
       OnMouseDown = DBGridEh1MouseDown
       Columns = <
@@ -450,7 +451,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       AutoFitColWidth = True
       ShowButton = True
       LocateStyle = lsDark
-      Buttons = [zbNew]
+      Buttons = []
       DropListStyle = lsFixed
       OnSaveValue = edtKPI_IDSaveValue
       MultiSelect = False
@@ -458,11 +459,11 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
   end
   inherited mmMenu: TMainMenu
     Left = 91
-    Top = 116
+    Top = 164
   end
   inherited actList: TActionList
     Left = 121
-    Top = 116
+    Top = 164
   end
   inherited dsTable: TDataSource
     Left = 96
@@ -474,13 +475,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
   end
   inherited cdsHeader: TZQuery
     Left = 61
-    Top = 116
+    Top = 164
   end
   object PopupMenu1: TPopupMenu
     Left = 128
     Top = 336
     object Delete: TMenuItem
-      Caption = #21024#38500
+      Caption = #21024#38500#25351#26631
       OnClick = DeleteClick
     end
   end

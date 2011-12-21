@@ -262,8 +262,22 @@ procedure TframeContractForm.DBGridEh1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 var
   ARect:TRect;
+  br:TBrush;
+  pn:TPen;
+  b,s:string;
 begin
-  inherited;
+  br := TBrush.Create;
+  br.Assign(DBGridEh1.Canvas.Brush);
+  pn := TPen.Create;
+  pn.Assign(DBGridEh1.Canvas.Pen);
+  try
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
@@ -271,6 +285,21 @@ begin
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsDetail.RecNo)),length(Inttostr(cdsDetail.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+  if ((gdSelected in State) or (gdFocused in State)) then
+    begin
+      ARect := Rect;
+      DBGridEh1.Canvas.Pen.Color := clRed;
+      DBGridEh1.Canvas.Pen.Width := 1;
+      DBGridEh1.Canvas.Brush.Style := bsClear;
+      DbGridEh1.canvas.Rectangle(ARect);
+      stbHint.Caption := Column.Title.Hint;
+    end;
+  finally
+    DBGridEh1.Canvas.Brush.Assign(br);
+    DBGridEh1.Canvas.Pen.Assign(pn);
+    br.Free;
+    pn.Free;
+  end;
 end;
 
 procedure TframeContractForm.InitRecord;

@@ -1,5 +1,5 @@
 inherited frmGodsRunningReport: TfrmGodsRunningReport
-  Left = 246
+  Left = 211
   Top = 124
   Width = 1069
   Height = 593

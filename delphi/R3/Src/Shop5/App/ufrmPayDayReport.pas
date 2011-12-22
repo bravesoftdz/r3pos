@@ -209,27 +209,27 @@ begin
   InitGrid;
   RefreshColumn;
 
-  {2011.08.25 加了DataRight后关闭
+  //2011.12.22 重开启[若非总店默认当前门店]
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-    begin
-      fndP3_SHOP_ID.Properties.ReadOnly := False;
-      fndP3_SHOP_ID.KeyValue := Global.SHOP_ID;
-      fndP3_SHOP_ID.Text := Global.SHOP_NAME;
-      SetEditStyle(dsBrowse,fndP3_SHOP_ID.Style);
-      fndP3_SHOP_ID.Properties.ReadOnly := True;
+  begin
+    fndP3_SHOP_ID.Properties.ReadOnly := False;
+    fndP3_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP3_SHOP_ID.Text := Global.SHOP_NAME;
+    //SetEditStyle(dsBrowse,fndP3_SHOP_ID.Style);
+    //fndP3_SHOP_ID.Properties.ReadOnly := True;
 
-      fndP4_SHOP_ID.Properties.ReadOnly := False;
-      fndP4_SHOP_ID.KeyValue := Global.SHOP_ID;
-      fndP4_SHOP_ID.Text := Global.SHOP_NAME;
-      SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
-      fndP4_SHOP_ID.Properties.ReadOnly := True;
+    fndP4_SHOP_ID.Properties.ReadOnly := False;
+    fndP4_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP4_SHOP_ID.Text := Global.SHOP_NAME;
+    //SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
+    //fndP4_SHOP_ID.Properties.ReadOnly := True;
 
-      fndP5_SHOP_ID.Properties.ReadOnly := False;
-      fndP5_SHOP_ID.KeyValue := Global.SHOP_ID;
-      fndP5_SHOP_ID.Text := Global.SHOP_NAME;
-      SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
-      fndP5_SHOP_ID.Properties.ReadOnly := True;
-    end;}
+    fndP5_SHOP_ID.Properties.ReadOnly := False;
+    fndP5_SHOP_ID.KeyValue := Global.SHOP_ID;
+    fndP5_SHOP_ID.Text := Global.SHOP_NAME;
+    //SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
+    //fndP5_SHOP_ID.Properties.ReadOnly := True;
+  end;
 
   if ShopGlobal.GetProdFlag = 'E' then
     begin
@@ -713,14 +713,14 @@ end;
 
 function TfrmPayDayReport.GetGuideSQl(chk: boolean): string;
 var
-  strSql,strWhere: string;
+  strSql,strWhere,DataRight: string;
 begin
   if P5_D1.EditValue = null then Raise Exception.Create(' 付款开始日期条件不能为空！');
   if P5_D2.EditValue = null then Raise Exception.Create(' 付款结束日期条件不能为空！');
   if P5_D1.Date>P5_D2.Date then Raise Exception.Create(' 付款开始日期不能大于结束日期！ ');
   // if round(PP5_D2.date-P5_D1.Date)>62 then Raise Exception.Create(' 您查询的时间段太长了，软件只能查询两个月内的流水单据 ');
   strWhere:='';
-
+  DataRight:=ShopGlobal.GetDataRight('A.SHOP_ID',1);
   //付款查询条件
   strWhere:=GetDateCnd(P5_D1, P5_D2, 'PAY_DATE');
 
@@ -752,7 +752,7 @@ begin
     '(select jd.*,E.ACCT_NAME as ACC_NAME from '+
     '(select j.*,D.CLIENT_NAME as CUST_NAME from  '+
     ' (select A.*,B.SHOP_NAME from VIW_PAYABLEDATA A,CA_SHOP_INFO B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+') j '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+strWhere+DataRight+') j '+
     '  left outer join VIW_CLIENTINFO D on j.TENANT_ID=D.TENANT_ID and j.CLIENT_ID=D.CLIENT_ID)jd '+
     '  left outer join ACC_ACCOUNT_INFO E on jd.ACCOUNT_ID=E.ACCOUNT_ID)je '+
     '  left outer join viw_users r on je.TENANT_ID=r.TENANT_ID and je.PAY_USER=r.USER_ID '+

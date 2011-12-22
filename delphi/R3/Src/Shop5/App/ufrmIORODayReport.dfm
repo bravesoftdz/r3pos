@@ -15,10 +15,10 @@ inherited frmIORODayReport: TfrmIORODayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet2
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1547,14 +1547,11 @@ inherited frmIORODayReport: TfrmIORODayReport
   end
   inherited RzPanel4: TRzPanel
     Width = 1014
-    inherited Image1: TImage
-      Width = 644
-    end
-    inherited Image3: TImage
-      Width = 644
-    end
     inherited Image14: TImage
       Left = 994
+    end
+    inherited Image1: TImage
+      Width = 644
     end
     inherited rzPanel5: TPanel
       inherited lblToolCaption: TRzLabel

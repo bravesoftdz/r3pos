@@ -110,14 +110,20 @@ type
     SB2: TScrollBox;
     SB3: TScrollBox;
     Label17: TLabel;
-    fndP1UNIT_ID: TcxComboBox;
-    Label19: TLabel;
     fndP2UNIT_ID: TcxComboBox;
+    Label19: TLabel;
+    fndP3UNIT_ID: TcxComboBox;
     Label20: TLabel;
     edtMoneyUnit: TcxComboBox;
     P1_DateControl: TfrmDateControl;
     P3_DateControl: TfrmDateControl;
     P2_DateControl: TfrmDateControl;
+    Label21: TLabel;
+    fndP2_SHOP_ID: TzrComboBoxList;
+    Label22: TLabel;
+    fndP3_SHOP_ID: TzrComboBoxList;
+    Label23: TLabel;
+    fndP1_SHOP_ID: TzrComboBoxList;
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject; AButtonIndex: Integer);
     procedure RzPanel7Resize(Sender: TObject);
@@ -138,6 +144,7 @@ type
     procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
   private
+    SORT_IDS: string;  //商品分类IDS
     SortName: string;  //商品分类名称
     sid1,sid2,sid3: string;        //商品分类ID
     srid1,srid2,srid3: string;     //商品供应链关系ID
@@ -253,6 +260,10 @@ begin
   //部门条件
   if fndP1_DEPT_ID.AsString<>'' then
     SaleCnd:=SaleCnd+' and DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
+  //门店条件:
+  if fndP1_SHOP_ID.AsString<>'' then
+    SaleCnd:=SaleCnd+' and SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+  
   //单据类型:
   if RB_sale.Checked then
     SaleCnd:=SaleCnd+' and SALES_TYPE=4 '
@@ -596,8 +607,10 @@ begin
   EdtvType.ItemIndex:=0;
   edtMoneyUnit.ItemIndex:=0;
   fndP2UNIT_ID.ItemIndex:=0;
-  AddUnitItemList(fndP1UNIT_ID, 2);
-  AddTongjiUnitList(fndP2UNIT_ID);
+  AddUnitItemList(fndP2UNIT_ID, 2);
+  AddTongjiUnitList(fndP3UNIT_ID);
+  SORT_IDS:=',SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,SORT_ID9,SORT_ID10'+
+            ',SORT_ID11,SORT_ID12,SORT_ID13,SORT_ID14,SORT_ID15,SORT_ID16,SORT_ID17,SORT_ID18,SORT_ID19,SORT_ID20';
 end;
 
 procedure TfrmSaleAnaly.RB_SaleMoneyClick(Sender: TObject);
@@ -624,7 +637,7 @@ end;
 function TfrmSaleAnaly.GetProfitAnalySQL(vType: integer): string; //盈利分析
 var
   TYPE_ID,SaleCnd,JoinStr,UnitID,UnitName: string;  //单位计算关系
-  strSql,strWhere,GoodTab,SQLData: string;
+  strSql,strWhere,GoodTab,SQLData,UnitFields: string;
 begin
   if P2_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
   if P2_D2.EditValue=null then Raise Exception.Create('截止日期不能为空！');
@@ -632,11 +645,14 @@ begin
   strWhere:='';
   if P2_RB_AMT.Checked then //销量
   begin
-    UnitID:='/'+GetUnitTO_CALC(fndP1UNIT_ID.ItemIndex,'C');
-    UnitName:=GetUnitID(fndP1UNIT_ID.ItemIndex,'C');
+    UnitID:='/C.UNIT_CALC';  //+GetUnitTO_CALC(fndP1UNIT_ID.ItemIndex,'C');
+    UnitName:='C.UNITID';    //GetUnitID(fndP1UNIT_ID.ItemIndex,'C');
+    UnitFields:=',(case when '+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+'=0 then 1.00 '+
+                      ' else '+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+' end) as UNIT_CALC '+
+                ',('+GetUnitID(fndP2UNIT_ID.ItemIndex,'')+')as UNITID ';
   end else
   begin
-    if fndP1UNIT_ID.ItemIndex=0 then
+    if fndP2UNIT_ID.ItemIndex=0 then
     begin
       UnitID:='';
       UnitName:='''元''';
@@ -671,17 +687,21 @@ begin
       1: strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP2_SHOP_VALUE.AsString+''' ';
     end;
   end;
-
+  //门店条件:
+  if trim(fndP2_SHOP_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP2_SHOP_ID.AsString+''' ';
+  
   //商品指标:
   if (fndP2_STAT_ID.AsString <> '') and (fndP2_TYPE_ID.ItemIndex>=0) then
   begin
-    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
+    if fndP2_STAT_ID.AsString <> '#' then 
+      strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP2_TYPE_ID)+'='''+fndP2_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
   if (trim(fndP2_SORT_ID.Text)<>'') and (trim(srid2)<>'') then
   begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    GoodTab:='(select TENANT_ID,RELATION_ID,LEVEL_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+UnitFields+' from VIW_GOODSINFO_SORTEXT where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid2+' ';
      else
@@ -690,7 +710,7 @@ begin
     if trim(sid2)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
-    GoodTab:='VIW_GOODSINFO';
+    GoodTab:='(select TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+UnitFields+' from VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
 
   if P2_RB_Money.Checked then  //销售额
     TYPE_ID:='(isnull(CALC_MONEY,0)+isnull(AGIO_MONEY,0))'
@@ -784,7 +804,7 @@ var
   Qry: TZQuery;
   SaleCnd,JoinStr,OrderBy,UnitID,AmtUnitID,MnyUnitID: string;  //单位计算关系
   FieldStr,MaxSQL,MaxValue1,MaxValue2: string;
-  strSql,strWhere,GoodTab,SQLData: string;
+  strSql,strWhere,GoodTab,SQLData,ShopCnd1,ShopCnd2: string;
 begin
   result:='';
   SaleCnd:='';
@@ -792,8 +812,8 @@ begin
   if P3_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
   if P3_D2.EditValue=null then Raise Exception.Create('截止日期不能为空！');
   if edtMoneyUnit.ItemIndex=0 then MnyUnitID:='' else  MnyUnitID:='/10000.0';
-  AmtUnitID:='('+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+')';
-  UnitID:=GetUnitID(fndP2UNIT_ID.ItemIndex,'');
+  AmtUnitID:='('+GetUnitTO_CALC(fndP3UNIT_ID.ItemIndex,'')+')';
+  UnitID:=GetUnitID(fndP3UNIT_ID.ItemIndex,'');
 
   //企业ID过滤
   SaleCnd:=' and SAL.TENANT_ID='+InttoStr(Global.TENANT_ID)+' ';
@@ -822,13 +842,20 @@ begin
   //商品指标:
   if (fndP3_STAT_ID.AsString <> '') and (fndP3_TYPE_ID.ItemIndex>=0) then
   begin
-    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP3_TYPE_ID)+'='''+fndP3_STAT_ID.AsString+''' ';
+    if trim(fndP3_STAT_ID.AsString) <> '#' then
+      strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP3_TYPE_ID)+'='''+fndP3_STAT_ID.AsString+''' ';
+  end;
+  //门店条件:
+  if fndP3_SHOP_ID.AsString<>'' then
+  begin
+    ShopCnd1:=' and SAL.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
+    ShopCnd2:=' and STO.SHOP_ID='''+fndP3_SHOP_ID.AsString+''' ';
   end;
 
   //商品分类:
   if (trim(fndP3_SORT_ID.Text)<>'') and (trim(srid3)<>'') then
   begin
-    GoodTab:='(select TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME,(case when '+AmtUnitID+'=0 then 1.00 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO_SORTEXT where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
+    GoodTab:='(select TENANT_ID,RELATION_ID,LEVEL_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+',(case when '+AmtUnitID+'=0 then 1.00 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO_SORTEXT where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
     case Factor.iDbType of
      4: strWhere:=strWhere+' and C.RELATION_ID='+srid3+' ';
      else
@@ -837,7 +864,7 @@ begin
     if trim(sid3)<>'' then
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid3+'%'' ';
   end else
-    GoodTab:='(select TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME,(case when '+AmtUnitID+'=0 then 1.00 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
+    GoodTab:='(select TENANT_ID,RELATION_ID,GODS_ID,GODS_CODE,GODS_NAME'+SORT_IDS+',(case when '+AmtUnitID+'=0 then 1.00 else '+AmtUnitID+' end) as AmtUnitID,'+UnitID+' as UnitID from VIW_GOODSINFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')';
 
   //分类取出Max(字段)
   case EdtvType.ItemIndex of
@@ -853,7 +880,7 @@ begin
       'cast((sum(isnull(NOTAX_MONEY,0)-isnull(COST_MONEY,0))'+MnyUnitID+') as decimal(18,3))as PRF_SUM '+
     '  from VIW_SALESDATA SAL,CA_SHOP_INFO B,'+GoodTab+' C '+
     '  where SAL.TENANT_ID=B.TENANT_ID and SAL.SHOP_ID=B.SHOP_ID and SAL.TENANT_ID=C.TENANT_ID and SAL.GODS_ID=C.GODS_ID '+SaleCnd+
-    ' '+ strWhere + ' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1)+
+    ' '+ strWhere+' '+ShopCnd1+' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1)+
     '  group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
     ' group by RELATION_ID');
     
@@ -872,12 +899,12 @@ begin
         end;
        1: //销售量 毛利
         begin
-          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM/'+AmtUnitID+')', 'sum(PRF_SUM'+MnyUnitID+')');
+          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM/C.AmtUnitID)', 'sum(PRF_SUM'+MnyUnitID+')');
           OrderBy:='order by RELATION_ID asc,vType asc,PRF_SUM desc,AMT_SUM desc,MNY_SUM desc'
         end;
        2: //销售量 销售额
         begin
-          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM/'+AmtUnitID+')', 'sum(MNY_SUM'+MnyUnitID+')');
+          FieldStr:=GetSumField(Qry, 'sum(AMT_SUM/C.AmtUnitID)', 'sum(MNY_SUM'+MnyUnitID+')');
           OrderBy:='order by RELATION_ID asc,vType asc,MNY_SUM desc,AMT_SUM desc,PRF_SUM desc ';
         end;
       end;
@@ -893,7 +920,7 @@ begin
      ' (isnull(SAL.NOTAX_MONEY,0)-isnull(SAL.COST_MONEY,0)) as PRF_SUM '+
      ' from STO_STORAGE STO left outer join VIW_SALESDATA SAL '+
      'on STO.TENANT_ID=SAL.TENANT_ID and STO.SHOP_ID=SAL.SHOP_ID and STO.GODS_ID=SAL.GODS_ID '+
-     ' where 1=1 '+SaleCnd+' '+ShopGlobal.GetDataRight('STO.SHOP_ID',1)+' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1);
+     ' where 1=1 '+SaleCnd+' '+ShopCnd2+' '+ShopGlobal.GetDataRight('STO.SHOP_ID',1); //' '+ShopGlobal.GetDataRight('SAL.SHOP_ID',1)
 
   if Factor.iDbType=0 then
   begin
@@ -1201,19 +1228,19 @@ end;
 procedure TfrmSaleAnaly.P2_RB_MoneyClick(Sender: TObject);
 begin
   inherited;
-  AddUnitItemList(fndP1UNIT_ID, 2);
+  AddUnitItemList(fndP2UNIT_ID, 2);
 end;
 
 procedure TfrmSaleAnaly.P2_RB_PRFClick(Sender: TObject);
 begin
   inherited;
-  AddUnitItemList(fndP1UNIT_ID, 2);
+  AddUnitItemList(fndP2UNIT_ID, 2);
 end;
 
 procedure TfrmSaleAnaly.P2_RB_AMTClick(Sender: TObject);
 begin
   inherited;
-  AddUnitItemList(fndP1UNIT_ID, 1);
+  AddUnitItemList(fndP2UNIT_ID, 1);
 end;
 
 

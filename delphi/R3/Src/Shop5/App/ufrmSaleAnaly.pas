@@ -296,7 +296,8 @@ begin
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
   begin
-    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
+    if fndP1_STAT_ID.AsString <> '#' then
+      strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
   end;
 
   //商品分类:
@@ -636,7 +637,7 @@ end;
 
 function TfrmSaleAnaly.GetProfitAnalySQL(vType: integer): string; //盈利分析
 var
-  TYPE_ID,SaleCnd,JoinStr,UnitID,UnitName: string;  //单位计算关系
+  TYPE_ID,SaleCnd,JoinStr,UnitID,UnitName,GroupUnitName: string;  //单位计算关系
   strSql,strWhere,GoodTab,SQLData,UnitFields: string;
 begin
   if P2_D1.EditValue=null then Raise Exception.Create('开始日期不能为空！');
@@ -647,6 +648,7 @@ begin
   begin
     UnitID:='/C.UNIT_CALC';  //+GetUnitTO_CALC(fndP1UNIT_ID.ItemIndex,'C');
     UnitName:='C.UNITID';    //GetUnitID(fndP1UNIT_ID.ItemIndex,'C');
+    GroupUnitName:=',C.UNITID';
     UnitFields:=',(case when '+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+'=0 then 1.00 '+
                       ' else '+GetUnitTO_CALC(fndP2UNIT_ID.ItemIndex,'')+' end) as UNIT_CALC '+
                 ',('+GetUnitID(fndP2UNIT_ID.ItemIndex,'')+')as UNITID ';
@@ -660,6 +662,11 @@ begin
     begin
       UnitID:='/10000.00';
       UnitName:='''万元''';
+    end;
+    case Factor.iDbType of
+     0: GroupUnitName:='';
+     else
+        GroupUnitName:=','+UnitName;
     end;
   end;
 
@@ -719,57 +726,28 @@ begin
   else if P2_RB_AMT.Checked then //销量
     TYPE_ID:='isnull(CALC_AMOUNT,0)';
 
-  case Factor.iDbType of
-   0:
-    begin
-      if P2_RB_AMT.Checked then //销量
-      begin
-        strSql :=
-          'select tmp.*,unit.UNIT_NAME as UNIT_NAME from '+
-          '(SELECT A.TENANT_ID as TENANT_ID,C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+UnitID+')as ANALYSUM,'+UnitName+' as UNIT_ID from '+
-          ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-          ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
-          ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
-          ' group by A.TENANT_ID,C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
-          ' left outer join VIW_MEAUNITS unit on tmp.TENANT_ID=unit.TENANT_ID and tmp.UNIT_ID=unit.UNIT_ID '+
-          'order by RELATION_ID asc,ANALYSUM desc ';
-      end else
-      begin
-        strSql :=
-          'select * from '+
-          '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+')'+UnitID+' as ANALYSUM,'+UnitName+' as UNIT_NAME from '+
-          ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-          ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
-          ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
-          'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME)tmp '+
-          'order by RELATION_ID asc,ANALYSUM desc ';
-      end;
-    end;
-   else
-    begin
-      if P2_RB_AMT.Checked then //销量
-      begin
-        strSql :=
-          'select tmp.*,unit.UNIT_NAME as UNIT_NAME from '+
-          '(SELECT A.TENANT_ID as TENANT_ID,C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+UnitID+')as ANALYSUM,'+UnitName+' as UNIT_ID from '+
-          ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-          ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
-          ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
-          ' group by A.TENANT_ID,C.RELATION_ID,C.GODS_CODE,C.GODS_NAME,'+UnitName+')tmp '+
-          ' left outer join VIW_MEAUNITS unit on tmp.TENANT_ID=unit.TENANT_ID and tmp.UNIT_ID=unit.UNIT_ID '+
-          'order by RELATION_ID asc,ANALYSUM desc ';
-      end else
-      begin
-        strSql :=
-          'select * from '+
-          '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+')'+UnitID+' as ANALYSUM,'+UnitName+' as UNIT_NAME from '+
-          ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
-          ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
-          ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
-          'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME,'+UnitName+')tmp '+
-          'order by RELATION_ID asc,ANALYSUM desc ';
-      end;
-    end;
+  if P2_RB_AMT.Checked then //销量
+  begin
+    strSql :=
+      'select tmp.*,unit.UNIT_NAME as UNIT_NAME from '+
+      '(SELECT A.TENANT_ID as TENANT_ID,C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,'+
+       'sum('+TYPE_ID+UnitID+')as ANALYSUM,'+UnitName+' as UNIT_ID from '+
+      ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
+      ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
+      ' group by A.TENANT_ID,C.RELATION_ID,C.GODS_CODE,C.GODS_NAME'+GroupUnitName+')tmp '+
+      ' left outer join VIW_MEAUNITS unit on tmp.TENANT_ID=unit.TENANT_ID and tmp.UNIT_ID=unit.UNIT_ID '+
+      'order by RELATION_ID asc,ANALYSUM desc ';
+  end else
+  begin
+    strSql :=
+      'select * from '+
+      '(SELECT C.RELATION_ID as RELATION_ID,C.GODS_CODE as GODS_CODE,C.GODS_NAME as GODS_NAME,sum('+TYPE_ID+')'+UnitID+' as ANALYSUM,'+UnitName+' as UNIT_NAME from '+
+      ' VIW_SALESDATA A,CA_SHOP_INFO B,'+GoodTab+' C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+SaleCnd+
+      ' '+strWhere +' '+ShopGlobal.GetDataRight('A.SHOP_ID',1)+
+      'group by C.RELATION_ID,C.GODS_CODE,C.GODS_NAME'+GroupUnitName+')tmp '+
+      'order by RELATION_ID asc,ANALYSUM desc ';
   end;
   Result := ParseSQL(Factor.iDbType,strSql);
 end;

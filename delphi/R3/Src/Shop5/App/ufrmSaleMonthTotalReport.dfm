@@ -26,31 +26,31 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
               Height = 441
               inherited w1: TRzPanel
                 Width = 723
-                Height = 113
+                Height = 102
                 object Label3: TLabel
-                  Left = 279
-                  Top = 12
+                  Left = 16
+                  Top = 37
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#26679#24335
                 end
                 object Label4: TLabel
-                  Left = 280
-                  Top = 90
+                  Left = 272
+                  Top = 79
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label5: TLabel
                   Left = 16
-                  Top = 71
+                  Top = 79
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label16: TLabel
                   Left = 579
-                  Top = 91
+                  Top = 79
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -58,7 +58,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object Label23: TLabel
                   Left = 16
-                  Top = 51
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
@@ -79,24 +79,24 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   Caption = #33267
                 end
                 object Label21: TLabel
-                  Left = 16
-                  Top = 90
+                  Left = 272
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object rptTemplate: TcxComboBox
-                  Left = 336
-                  Top = 7
-                  Width = 121
+                  Left = 72
+                  Top = 33
+                  Width = 193
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   TabOrder = 3
                 end
                 object btnNew: TRzBitBtn
-                  Left = 465
-                  Top = 7
+                  Left = 272
+                  Top = 33
                   Width = 48
                   Height = 21
                   Caption = #28155#21152
@@ -121,8 +121,8 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   Spacing = 5
                 end
                 object btnEdit: TRzBitBtn
-                  Left = 514
-                  Top = 7
+                  Left = 321
+                  Top = 33
                   Width = 48
                   Height = 21
                   Caption = #20462#25913
@@ -147,8 +147,8 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   Spacing = 5
                 end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 462
-                  Top = 78
+                  Left = 470
+                  Top = 67
                   Width = 72
                   Height = 29
                   Action = actFind
@@ -175,7 +175,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object fndP1_TYPE_ID: TcxComboBox
                   Left = 72
-                  Top = 67
+                  Top = 75
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -187,7 +187,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 630
-                  Top = 87
+                  Top = 75
                   Width = 80
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -202,7 +202,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 146
-                  Top = 67
+                  Top = 75
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -242,23 +242,23 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 333
-                  Top = 87
-                  Width = 121
+                  Left = 326
+                  Top = 75
+                  Width = 132
                   Height = 20
                   Properties.Buttons = <
                     item
                       Default = True
                       Kind = bkEllipsis
                     end>
-                  Properties.ReadOnly = True
+                  Properties.ReadOnly = False
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
                   TabOrder = 11
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 72
-                  Top = 47
+                  Top = 54
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -271,7 +271,7 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 146
-                  Top = 47
+                  Top = 54
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -312,9 +312,9 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 72
-                  Top = 87
-                  Width = 193
+                  Left = 326
+                  Top = 54
+                  Width = 132
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -353,8 +353,8 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   MultiSelect = False
                 end
                 object btnDelete: TRzBitBtn
-                  Left = 563
-                  Top = 7
+                  Left = 370
+                  Top = 33
                   Width = 48
                   Height = 21
                   Caption = #21024#38500
@@ -395,20 +395,20 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
                   TabOrder = 1
                 end
                 inline P1_DateControl: TfrmDateControl
-                  Left = 74
-                  Top = 27
+                  Left = 270
+                  Top = 8
                   Width = 170
                   Height = 20
                   TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 113
+                Top = 102
                 Width = 723
-                Height = 328
+                Height = 339
                 inherited DBGridEh1: TDBGridEh
                   Width = 719
-                  Height = 324
+                  Height = 335
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end
@@ -456,6 +456,8 @@ inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
     end
   end
   inherited PrintDBGridEh1: TPrintDBGridEh
+    Left = 200
+    Top = 248
     BeforeGridText_Data = {
       7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
       6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B

@@ -208,27 +208,27 @@ begin
   InitGrid;
   RefreshColumn;
 
-  {2011.08.25 加了DataRight后关闭
+  //2011.12.22 重开启[若非总店默认当前门店]
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP3_SHOP_ID.Properties.ReadOnly := False;
     fndP3_SHOP_ID.KeyValue := Global.SHOP_ID;
     fndP3_SHOP_ID.Text := Global.SHOP_NAME;
-    SetEditStyle(dsBrowse,fndP3_SHOP_ID.Style);
-    fndP3_SHOP_ID.Properties.ReadOnly := True;
-    
+    //SetEditStyle(dsBrowse,fndP3_SHOP_ID.Style);
+    //fndP3_SHOP_ID.Properties.ReadOnly := True;
+
     fndP4_SHOP_ID.Properties.ReadOnly := False;
     fndP4_SHOP_ID.KeyValue := Global.SHOP_ID;
     fndP4_SHOP_ID.Text := Global.SHOP_NAME;
-    SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
-    fndP4_SHOP_ID.Properties.ReadOnly := True;
+    //SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
+    //fndP4_SHOP_ID.Properties.ReadOnly := True;
 
     fndP5_SHOP_ID.Properties.ReadOnly := False;
     fndP5_SHOP_ID.KeyValue := Global.SHOP_ID;
     fndP5_SHOP_ID.Text := Global.SHOP_NAME;
-    SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
-    fndP5_SHOP_ID.Properties.ReadOnly := True;
-  end;}
+    //SetEditStyle(dsBrowse,fndP5_SHOP_ID.Style);
+    //fndP5_SHOP_ID.Properties.ReadOnly := True;
+  end;
 
   if ShopGlobal.GetProdFlag = 'E' then
     begin
@@ -758,7 +758,7 @@ begin
   strWhere:='';
 
   //收款日期条件
-  strWhere:=GetDateCnd(P5_D1, P5_D2, 'RECV_DATE')+ShopGlobal.GetDataRight('SHOP_ID',1);;
+  strWhere:=GetDateCnd(P5_D1, P5_D2, 'RECV_DATE')+ShopGlobal.GetDataRight('A.SHOP_ID',1);
   //门店管理群组条件
   strWhere:=strWhere+GetShopGroupCnd(fndP5_SHOP_TYPE,fndP5_SHOP_VALUE,'');
   //门店名称条件

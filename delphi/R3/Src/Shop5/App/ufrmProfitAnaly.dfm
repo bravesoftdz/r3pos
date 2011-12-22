@@ -2,14 +2,14 @@ object frmProfitAnaly: TfrmProfitAnaly
   Left = 0
   Top = 0
   Width = 1016
-  Height = 241
+  Height = 210
   TabOrder = 0
   OnResize = FrameResize
   object MainPnl: TPanel
     Left = 0
     Top = 0
     Width = 1016
-    Height = 237
+    Height = 206
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -17,7 +17,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Left = 478
       Top = 0
       Width = 6
-      Height = 237
+      Height = 206
       Color = clWhite
       ParentColor = False
     end
@@ -25,7 +25,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Left = 0
       Top = 0
       Width = 5
-      Height = 237
+      Height = 206
       Align = alLeft
       BevelOuter = bvNone
       Color = clWhite
@@ -41,7 +41,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Left = 5
       Top = 0
       Width = 470
-      Height = 237
+      Height = 206
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 1
@@ -49,7 +49,7 @@ object frmProfitAnaly: TfrmProfitAnaly
         Left = 0
         Top = 28
         Width = 470
-        Height = 209
+        Height = 178
         Align = alClient
         BevelOuter = bvLowered
         TabOrder = 0
@@ -57,7 +57,7 @@ object frmProfitAnaly: TfrmProfitAnaly
           Left = 1
           Top = 1
           Width = 468
-          Height = 207
+          Height = 176
           Align = alClient
           AllowedOperations = []
           AutoFitColWidths = True
@@ -272,7 +272,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Left = 484
       Top = 0
       Width = 528
-      Height = 237
+      Height = 206
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2
@@ -333,7 +333,7 @@ object frmProfitAnaly: TfrmProfitAnaly
         Left = 0
         Top = 28
         Width = 528
-        Height = 209
+        Height = 178
         Align = alClient
         BorderOuter = fsGroove
         Color = clWhite
@@ -342,7 +342,7 @@ object frmProfitAnaly: TfrmProfitAnaly
           Left = 2
           Top = 2
           Width = 524
-          Height = 205
+          Height = 174
           BackWall.Brush.Color = clWhite
           BackWall.Brush.Style = bsClear
           MarginBottom = 0
@@ -389,7 +389,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Left = 475
       Top = 0
       Width = 3
-      Height = 237
+      Height = 206
       Align = alLeft
       BevelOuter = bvNone
       Color = clWhite
@@ -405,7 +405,7 @@ object frmProfitAnaly: TfrmProfitAnaly
       Left = 1012
       Top = 0
       Width = 4
-      Height = 237
+      Height = 206
       Align = alRight
       BevelOuter = bvNone
       Color = clWhite
@@ -420,7 +420,7 @@ object frmProfitAnaly: TfrmProfitAnaly
   end
   object ButtomPnl: TPanel
     Left = 0
-    Top = 237
+    Top = 206
     Width = 1016
     Height = 4
     Align = alBottom

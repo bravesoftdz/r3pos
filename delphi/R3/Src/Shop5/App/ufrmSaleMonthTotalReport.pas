@@ -146,15 +146,15 @@ begin
     Label23.Caption := '仓库群组';
     Label21.Caption := '仓库名称';
   end;
-  {2011.08.25 加了DataRight后关闭
+  //2011.12.22 重开启[若非总店默认当前门店]
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP1_SHOP_ID.Properties.ReadOnly := False;
     fndP1_SHOP_ID.KeyValue := Global.SHOP_ID;
     fndP1_SHOP_ID.Text := Global.SHOP_NAME;
-    SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
-    fndP1_SHOP_ID.Properties.ReadOnly := True;
-  end;}
+    //SetEditStyle(dsBrowse,fndP1_SHOP_ID.Style);
+    //fndP1_SHOP_ID.Properties.ReadOnly := True;
+  end;
   btnNew.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
   btnEdit.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
   btnDelete.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
@@ -199,8 +199,7 @@ begin
   inherited;
   sid1 := '';
   srid1 := '';
-  fndP1_SORT_ID.Text := '';
-
+  fndP1_SORT_ID.Text := ''; 
 end;
 
 procedure TfrmSaleMonthTotalReport.fndP1_SORT_IDPropertiesButtonClick(
@@ -233,7 +232,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date>P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);;
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then

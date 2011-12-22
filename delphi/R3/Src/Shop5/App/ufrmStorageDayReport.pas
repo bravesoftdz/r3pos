@@ -192,21 +192,21 @@ begin
   SetRzPageActivePage; //设置PzPage.Activepage
 
   RefreshColumn;
-  {2011.08.25 加了DataRight后关闭
+  //2011.12.22 重开启[若非总店默认当前门店]
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
   begin
     fndP3_SHOP_ID.Properties.ReadOnly := False;
     fndP3_SHOP_ID.KeyValue := Global.SHOP_ID;
     fndP3_SHOP_ID.Text := Global.SHOP_NAME;
-    SetEditStyle(dsBrowse,fndP3_SHOP_ID.Style);
-    fndP3_SHOP_ID.Properties.ReadOnly := True;
+    //SetEditStyle(dsBrowse,fndP3_SHOP_ID.Style);
+    //fndP3_SHOP_ID.Properties.ReadOnly := True;
 
     fndP4_SHOP_ID.Properties.ReadOnly := False;
     fndP4_SHOP_ID.KeyValue := Global.SHOP_ID;
     fndP4_SHOP_ID.Text := Global.SHOP_NAME;
-    SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
-    fndP4_SHOP_ID.Properties.ReadOnly := True;
-  end;}
+    //SetEditStyle(dsBrowse,fndP4_SHOP_ID.Style);
+    //fndP4_SHOP_ID.Properties.ReadOnly := True;
+  end;
 
   //2011.04.22 Add 设置查看成本价权限
   if not ShopGlobal.GetChkRight('14500001',2) then

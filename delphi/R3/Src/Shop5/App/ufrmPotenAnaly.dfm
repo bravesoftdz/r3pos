@@ -2,12 +2,12 @@ object frmPotenAnaly: TfrmPotenAnaly
   Left = 0
   Top = 0
   Width = 1016
-  Height = 242
+  Height = 210
   TabOrder = 0
   OnResize = FrameResize
   object ButtomPnl: TPanel
     Left = 0
-    Top = 238
+    Top = 206
     Width = 1016
     Height = 4
     Align = alBottom
@@ -19,14 +19,14 @@ object frmPotenAnaly: TfrmPotenAnaly
     Left = 0
     Top = 0
     Width = 1016
-    Height = 238
+    Height = 206
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Splitter1: TSplitter
       Left = 506
       Top = 0
-      Height = 238
+      Height = 206
       Color = clWhite
       ParentColor = False
     end
@@ -34,7 +34,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       Left = 509
       Top = 0
       Width = 507
-      Height = 238
+      Height = 206
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
@@ -42,7 +42,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Left = 0
         Top = 0
         Width = 1
-        Height = 238
+        Height = 206
         Align = alLeft
         BevelOuter = bvNone
         Color = clWhite
@@ -58,7 +58,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Left = 1
         Top = 0
         Width = 502
-        Height = 238
+        Height = 206
         Align = alClient
         BevelOuter = bvNone
         Font.Charset = ANSI_CHARSET
@@ -72,7 +72,7 @@ object frmPotenAnaly: TfrmPotenAnaly
           Left = 0
           Top = 28
           Width = 502
-          Height = 210
+          Height = 178
           Align = alClient
           BevelOuter = bvLowered
           TabOrder = 0
@@ -80,7 +80,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             Left = 1
             Top = 1
             Width = 500
-            Height = 208
+            Height = 176
             Align = alClient
             AllowedOperations = []
             AutoFitColWidths = True
@@ -311,7 +311,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Left = 503
         Top = 0
         Width = 4
-        Height = 238
+        Height = 206
         Align = alRight
         BevelOuter = bvNone
         Color = clWhite
@@ -328,7 +328,7 @@ object frmPotenAnaly: TfrmPotenAnaly
       Left = 0
       Top = 0
       Width = 506
-      Height = 238
+      Height = 206
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 1
@@ -336,7 +336,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Left = 0
         Top = 0
         Width = 5
-        Height = 238
+        Height = 206
         Align = alLeft
         BevelOuter = bvNone
         Color = clWhite
@@ -352,7 +352,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Left = 5
         Top = 0
         Width = 500
-        Height = 238
+        Height = 206
         Align = alClient
         BevelOuter = bvNone
         Font.Charset = ANSI_CHARSET
@@ -366,7 +366,7 @@ object frmPotenAnaly: TfrmPotenAnaly
           Left = 0
           Top = 28
           Width = 500
-          Height = 210
+          Height = 178
           Align = alClient
           BevelOuter = bvLowered
           TabOrder = 0
@@ -374,7 +374,7 @@ object frmPotenAnaly: TfrmPotenAnaly
             Left = 1
             Top = 1
             Width = 498
-            Height = 208
+            Height = 176
             Align = alClient
             AllowedOperations = []
             AutoFitColWidths = True
@@ -464,7 +464,7 @@ object frmPotenAnaly: TfrmPotenAnaly
                 Footers = <>
                 Title.Caption = #27611#21033
                 Title.Color = clWhite
-                Width = 60
+                Width = 61
               end
               item
                 Alignment = taRightJustify
@@ -590,7 +590,7 @@ object frmPotenAnaly: TfrmPotenAnaly
         Left = 505
         Top = 0
         Width = 1
-        Height = 238
+        Height = 206
         Align = alRight
         BevelOuter = bvNone
         Color = clWhite

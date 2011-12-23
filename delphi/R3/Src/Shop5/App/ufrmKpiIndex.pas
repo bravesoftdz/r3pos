@@ -69,8 +69,8 @@ uses ufrmKpiIndexInfo,uGlobal,uShopGlobal, ufrmBasic, ufrmEhLibReport;
 procedure TfrmKpiIndex.actNewExecute(Sender: TObject);
 begin
   inherited;
-  //if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
-  //if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if not ShopGlobal.GetChkRight('100002143',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmKpiIndexInfo.Create(self) do
     begin
       try
@@ -133,8 +133,8 @@ procedure TfrmKpiIndex.actEditExecute(Sender: TObject);
 begin
   inherited;
   if (not Cds_KpiIndex.Active) or (Cds_KpiIndex.IsEmpty) then exit;
-  //if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
-  //if not ShopGlobal.GetChkRight('31500001',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
+  if not ShopGlobal.GetChkRight('100002143',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmKpiIndexInfo.Create(self) do
   begin
     try
@@ -149,7 +149,7 @@ end;
 
 function TfrmKpiIndex.CheckCanExport: Boolean;
 begin
-  //Result := ShopGlobal.GetChkRight('31500001',7);
+  Result := ShopGlobal.GetChkRight('100002143',6);
 end;
 
 procedure TfrmKpiIndex.PrintView;
@@ -166,7 +166,7 @@ procedure TfrmKpiIndex.actFindExecute(Sender: TObject);
 var StrSql:String;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('31500001',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if Trim(edtKey.Text) <> '' then
      StrSql := ' and KPI_NAME like ''%'+Trim(edtKey.Text)+'%''';
   if fndIDX_TYPE.Text <> '' then
@@ -241,7 +241,7 @@ end;
 procedure TfrmKpiIndex.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('31500001',6) then
+  if not ShopGlobal.GetChkRight('100002143',6) then
     Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
   PrintView;
   with TfrmEhLibReport.Create(self) do
@@ -257,7 +257,7 @@ end;
 procedure TfrmKpiIndex.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('31500001',6) then
+  if not ShopGlobal.GetChkRight('100002143',6) then
     Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 
   PrintView;

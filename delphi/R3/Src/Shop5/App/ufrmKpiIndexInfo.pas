@@ -129,7 +129,7 @@ uses uShopUtil,uDsUtil,ufrmBasic,Math,uGlobal,uFnUtil,uShopGlobal,uframeSelectGo
 class function TfrmKpiIndexInfo.AddDialog(Owner: TForm;
   var _AObj: TRecord_): boolean;
 begin
-   //if not ShopGlobal.GetChkRight('31500001',2) then Raise Exception.Create('你没有新增用户的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002143',2) then Raise Exception.Create('你没有新增考核指标的权限,请和管理员联系.');
    with TfrmKpiIndexInfo.Create(Owner) do
     begin
       try
@@ -152,11 +152,10 @@ begin
   Open('');
   dbState := dsInsert;
   edtKPI_AGIO.Text := '100';
-  edtKPI_TYPE.ItemIndex := TdsItems.FindItems(edtKPI_TYPE.Properties.Items,'CODE_ID','3');
+  edtKPI_TYPE.ItemIndex := TdsItems.FindItems(edtKPI_TYPE.Properties.Items,'CODE_ID','1');
   edtKPI_CALC.ItemIndex := TdsItems.FindItems(edtKPI_CALC.Properties.Items,'CODE_ID','1');
   edtIDX_TYPE.ItemIndex := TdsItems.FindItems(edtIDX_TYPE.Properties.Items,'CODE_ID','1');
   edtKPI_DATA.ItemIndex := TdsItems.FindItems(edtKPI_DATA.Properties.Items,'CODE_ID','1');
-  //InitRecord;
 
 end;
 
@@ -170,7 +169,7 @@ end;
 class function TfrmKpiIndexInfo.EditDialog(Owner: TForm; id: string;
   var _AObj: TRecord_): boolean;
 begin
-   //if not ShopGlobal.GetChkRight('31500001',3) then Raise Exception.Create('你没有修改用户的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002143',3) then Raise Exception.Create('你没有修改考核指标的权限,请和管理员联系.');
    with TfrmKpiIndexInfo.Create(Owner) do
     begin
       try
@@ -290,6 +289,16 @@ begin
 
   //检测结束
   WriteToObject(Aobj,self);
+  if edtKPI_OPTN.Checked then
+  begin
+    CdsKpiOption.First;
+    while not CdsKpiOption.Eof do
+    begin
+      if not IsNull then
+         raise Exception.Create('"指标标准"页中有必填项不能为空!');
+      CdsKpiOption.Next;
+    end;
+  end;
 
   Factor.BeginBatch;
   try

@@ -39,6 +39,7 @@ type
     fndIDX_TYPE: TcxComboBox;
     fndKPI_TYPE: TcxComboBox;
     lab_KPI_TYPE: TLabel;
+    Label2: TLabel;
     procedure actNewExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

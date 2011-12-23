@@ -32,7 +32,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                 972
                 92)
               object Label3: TLabel
-                Left = 5
+                Left = 21
                 Top = 66
                 Width = 65
                 Height = 12
@@ -57,9 +57,9 @@ inherited frmKpiIndex: TfrmKpiIndex
                 ParentFont = False
               end
               object Bevel1: TBevel
-                Left = 7
+                Left = 162
                 Top = 52
-                Width = 818
+                Width = 803
                 Height = 2
                 Anchors = [akLeft, akTop, akRight]
               end
@@ -123,8 +123,21 @@ inherited frmKpiIndex: TfrmKpiIndex
                 Font.Style = []
                 ParentFont = False
               end
+              object Label2: TLabel
+                Left = 21
+                Top = 47
+                Width = 130
+                Height = 12
+                Caption = #25903#25345#65288#25351#26631#21517#31216#65289#26597#35810
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clNavy
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
               object edtKey: TcxTextEdit
-                Left = 74
+                Left = 90
                 Top = 62
                 Width = 203
                 Height = 20
@@ -132,7 +145,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object btnOk: TRzBitBtn
-                Left = 285
+                Left = 301
                 Top = 60
                 Width = 67
                 Height = 24

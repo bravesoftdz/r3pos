@@ -223,11 +223,11 @@ end;
 
 procedure TfrmDemandOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if DemandType = '1' then   //补货
+  if DemandType = '1' then   //补货申请
   begin
     if not ShopGlobal.GetChkRight('100002124',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   end;
-  if DemandType = '2' then  //领用
+  if DemandType = '2' then  //领用申请
   begin
     if not ShopGlobal.GetChkRight('100002132',4) then Raise Exception.Create('你没有删除'+Caption+'的权限,请和管理员联系.');
   end;
@@ -276,20 +276,7 @@ begin
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       //try
-       //if DevFactory.SavePrint then
-       //   DoPrintTicket(CurOrder.cid,CurOrder.oid,0,TfrmSalIndentOrder(CurOrder).Cash,TfrmSalIndentOrder(CurOrder).Dibs);
-       //except
-       //   MessageBox(Handle,'打印小票出错，请确定纸张是否安装，小票打印电源是否打开？',pchar(Application.Title),MB_OK+MB_ICONQUESTION);
-       //end;
-       //DevFactory.OpenCashBox;
-       {if (ShopGlobal.GetParameter('SAVE_SALES_PRINT')='1')
-          and
-          ShopGlobal.GetChkRight('12300001',8) //打印权限
-       then
-          begin
-            actPrint.OnExecute(nil);
-          end; }
+
        //判断新单权限
        if (
           ((DemandType = '1') and ShopGlobal.GetChkRight('100002124',2))

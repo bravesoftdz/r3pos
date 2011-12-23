@@ -187,8 +187,6 @@ begin
   CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
   //保留小数位
   Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
-  //fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
-  //Label1.Visible := fndMY_AMOUNT.Visible;
 
   rs := TZQuery.Create(nil);
   try
@@ -301,7 +299,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
+    dbState := dsBrowse; 
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     DemandType := cdsHeader.FieldbyName('DEMA_TYPE').AsString;
@@ -311,11 +309,7 @@ begin
     oid := id;
     gid := AObj.FieldbyName('GLIDE_NO').AsString;
     cid := AObj.FieldbyName('SHOP_ID').asString;
-    {case AObj.FieldByName('SALBILL_STATUS').AsInteger of
-    0:Label18.Caption := '状态:待发货';
-    1:Label18.Caption := '状态:发货中';
-    2:Label18.Caption := '状态:已发货';
-    end;}
+
     if Trim(edtSHOP_ID.Text)<>'' then
        begin
          TabSheet.Caption := edtSHOP_ID.Text;
@@ -341,7 +335,6 @@ begin
   Saved := false;
   if edtDEMA_DATE.EditValue = null then Raise Exception.Create('填报日期不能为空');
   if edtDEMA_TYPE.ItemIndex<0 then Raise Exception.Create('请选择单据类型');
-  //if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;

@@ -170,13 +170,13 @@ begin
   if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if Trim(edtKey.Text) <> '' then
      StrSql := ' and KPI_NAME like ''%'+Trim(edtKey.Text)+'%''';
-  if fndIDX_TYPE.Text <> '' then
+  if fndIDX_TYPE.ItemIndex = -1 then
      StrSql := StrSql + ' and IDX_TYPE='''+TRecord_(fndIDX_TYPE.Properties.Items.Objects[fndIDX_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
-  if fndKPI_DATA.Text <> '' then
+  if fndKPI_DATA.ItemIndex = -1 then
      StrSql := StrSql + ' and KPI_DATA='''+TRecord_(fndKPI_DATA.Properties.Items.Objects[fndKPI_DATA.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
-  if fndKPI_TYPE.Text <> '' then
+  if fndKPI_TYPE.ItemIndex = -1 then
      StrSql := StrSql + ' and KPI_TYPE='''+TRecord_(fndKPI_TYPE.Properties.Items.Objects[fndKPI_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
-  if fndKPI_CALC.Text <> '' then
+  if fndKPI_CALC.ItemIndex = -1 then
      StrSql := StrSql + ' and KPI_CALC='''+TRecord_(fndKPI_CALC.Properties.Items.Objects[fndKPI_CALC.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   Cds_KpiIndex.Close;
   Cds_KpiIndex.SQL.Text :=

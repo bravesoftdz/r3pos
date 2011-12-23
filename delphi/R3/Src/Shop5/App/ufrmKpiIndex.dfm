@@ -163,6 +163,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                 Top = 25
                 Width = 121
                 Height = 20
+                Properties.DropDownListStyle = lsFixedList
                 TabOrder = 3
               end
               object fndKPI_DATA: TcxComboBox
@@ -170,6 +171,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                 Top = 25
                 Width = 121
                 Height = 20
+                Properties.DropDownListStyle = lsFixedList
                 TabOrder = 1
               end
               object fndIDX_TYPE: TcxComboBox
@@ -177,6 +179,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                 Top = 1
                 Width = 121
                 Height = 20
+                Properties.DropDownListStyle = lsFixedList
                 TabOrder = 0
               end
               object fndKPI_TYPE: TcxComboBox
@@ -184,6 +187,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                 Top = 1
                 Width = 121
                 Height = 20
+                Properties.DropDownListStyle = lsFixedList
                 TabOrder = 2
               end
             end

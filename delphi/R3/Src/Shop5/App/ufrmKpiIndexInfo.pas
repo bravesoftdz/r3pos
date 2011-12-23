@@ -52,6 +52,9 @@ type
     DBGridEh1: TDBGridEh;
     RzLabel4: TRzLabel;
     AddRecord_: TMenuItem;
+    Label1: TLabel;
+    RzLabel5: TRzLabel;
+    RzLabel6: TRzLabel;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -83,9 +86,15 @@ type
     procedure AddRecord_Click(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh2KeyPress(Sender: TObject; var Key: Char);
+    procedure edtIDX_TYPEPropertiesChange(Sender: TObject);
+    procedure edtKPI_CALCPropertiesChange(Sender: TObject);
+    procedure edtKPI_DATAPropertiesChange(Sender: TObject);
   private
     { Private declarations }
-    Saved:Boolean;
+    Saved,DisplayPer:Boolean;
+    KpiAgioFront,KpiAgioBack:String;
+    function IsNull:Boolean;
+    procedure ShowGrid;
     procedure InitGrid;
     procedure WMInitRecord(var Message: TMessage); message WM_INIT_RECORD;
     procedure InitRecord;
@@ -142,6 +151,11 @@ procedure TfrmKpiIndexInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
+  edtKPI_AGIO.Text := '100';
+  edtKPI_TYPE.ItemIndex := TdsItems.FindItems(edtKPI_TYPE.Properties.Items,'CODE_ID','3');
+  edtKPI_CALC.ItemIndex := TdsItems.FindItems(edtKPI_CALC.Properties.Items,'CODE_ID','1');
+  edtIDX_TYPE.ItemIndex := TdsItems.FindItems(edtIDX_TYPE.Properties.Items,'CODE_ID','1');
+  edtKPI_DATA.ItemIndex := TdsItems.FindItems(edtKPI_DATA.Properties.Items,'CODE_ID','1');
   //InitRecord;
 
 end;
@@ -150,6 +164,7 @@ procedure TfrmKpiIndexInfo.Edit(code: string);
 begin
   Open(code);
   dbState := dsEdit;
+  //edtKPI_TYPE.Properties.OnChange(nil);
 end;
 
 class function TfrmKpiIndexInfo.EditDialog(Owner: TForm; id: string;
@@ -192,7 +207,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  
+    dbState := dsBrowse;
     AObj.ReadFromDataSet(CdsKpiIndex);
     ReadFromObject(AObj,self);
     if Aobj.FieldByName('KPI_OPTN').AsString = '1' then
@@ -206,7 +221,7 @@ begin
          edtKPI_OPTN.Properties.OnChange(nil);
        end;
     RowID := CdsKpiOption.RecordCount;
-    edtKPI_TYPE.Properties.OnChange(nil);
+    //
   finally
     Params.Free;
   end;
@@ -230,6 +245,16 @@ begin
   begin
     if edtKPI_TYPE.CanFocus then edtKPI_TYPE.SetFocus;
     raise Exception.Create('考核类型不能为空！');
+  end;
+  if edtKPI_DATA.ItemIndex = -1 then
+  begin
+    if edtKPI_DATA.CanFocus then edtKPI_DATA.SetFocus;
+    raise Exception.Create('考核标准不能为空！');
+  end;
+  if edtKPI_CALC.ItemIndex = -1 then
+  begin
+    if edtKPI_CALC.CanFocus then edtKPI_CALC.SetFocus;
+    raise Exception.Create('计算标准不能为空！');
   end;
 
   //此检测，只对前台检测
@@ -285,42 +310,29 @@ begin
     CdsKpiIndex.Post;
     if edtKPI_OPTN.Checked then
     begin
-      if edtKPI_TYPE.ItemIndex = 2 then
+      CdsKpiOption.First;
+      while not CdsKpiOption.Eof do
       begin
-        CdsKpiOption.First;
-        while not CdsKpiOption.Eof do
-        begin
-          CdsKpiOption.Edit;
-          
-          if CdsKpiOption.FieldByName('TENANT_ID').AsString = '' then
-            CdsKpiOption.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-          if CdsKpiOption.FieldByName('KPI_ID').AsString = '' then
-            CdsKpiOption.FieldByName('KPI_ID').AsString := CdsKpiIndex.FieldbyName('KPI_ID').AsString;
-          //日期判断
-          //CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Null;
-          //CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Null;
-          CdsKpiOption.Post;
-          CdsKpiOption.Next;
-        end;
-      end
-      else
-      begin
-        CdsKpiOption.First;
-        while not CdsKpiOption.Eof do
-        begin
-          CdsKpiOption.Edit;
+        CdsKpiOption.Edit;
 
-          if CdsKpiOption.FieldByName('TENANT_ID').AsString = '' then
-            CdsKpiOption.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-          if CdsKpiOption.FieldByName('KPI_ID').AsString = '' then
-            CdsKpiOption.FieldByName('KPI_ID').AsString := CdsKpiIndex.FieldbyName('KPI_ID').AsString;
+        if CdsKpiOption.FieldByName('TENANT_ID').AsString = '' then
+          CdsKpiOption.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        if CdsKpiOption.FieldByName('KPI_ID').AsString = '' then
+          CdsKpiOption.FieldByName('KPI_ID').AsString := CdsKpiIndex.FieldbyName('KPI_ID').AsString;
+        if edtKPI_DATA.ItemIndex in [0,1,2] then
+           CdsKpiOption.FieldByName('KPI_AMT').Value := null
+        else
+           CdsKpiOption.FieldByName('KPI_RATE').Value := null;
 
-          CdsKpiOption.FieldByName('KPI_DATE1').Value := Null;
-          CdsKpiOption.FieldByName('KPI_DATE2').Value := Null;
-          CdsKpiOption.Post;
-          CdsKpiOption.Next;
+        if edtKPI_TYPE.ItemIndex <> 2 then
+        begin
+           CdsKpiOption.FieldByName('KPI_DATE1').Value := Null;
+           CdsKpiOption.FieldByName('KPI_DATE2').Value := Null;
         end;
+        CdsKpiOption.Post;
+        CdsKpiOption.Next;
       end;
+
     end
     else
     begin
@@ -378,6 +390,8 @@ begin
   inherited;
   Aobj := TRecord_.Create;
   RowID := 0;
+  KpiAgioFront := '返利';
+  KpiAgioBack := '系数';
   InitGrid;
 end;
 
@@ -417,11 +431,24 @@ begin
   begin
      DBGridEh1.Columns[1].Visible := True;
      DBGridEh1.Columns[2].Visible := True;
+     if Visible then
+     begin
+       DBGridEh1.SetFocus;
+       DBGridEh1.Col := 1;
+     end;
   end
   else
   begin
      DBGridEh1.Columns[1].Visible := False;
      DBGridEh1.Columns[2].Visible := False;
+     if Visible then
+     begin
+       DBGridEh1.SetFocus;
+       if edtKPI_DATA.ItemIndex in [0,1,2] then
+          DBGridEh1.Col := 3
+       else
+          DBGridEh1.Col := 4;
+     end;
   end;
 end;
 
@@ -436,8 +463,6 @@ end;
 procedure TfrmKpiIndexInfo.FormShow(Sender: TObject);
 begin
   inherited;
-  DBGridEh1.Columns[1].Visible := False;
-  DBGridEh1.Columns[2].Visible := False;
   RzPage.ActivePageIndex := 0;
 end;
 
@@ -578,9 +603,9 @@ begin
            inc(i)
         else
            begin
-             if Trim(CdsKpiOption.FieldbyName('KPI_ID').asString)='' then
+             if IsNull then
                 i := 1;
-             if (i=1) and (Trim(CdsKpiOption.FieldbyName('KPI_ID').asString)<>'') then
+             if (i=1) and IsNull then
                 begin
                    CdsKpiOption.Next ;
                    if CdsKpiOption.Eof then
@@ -588,7 +613,13 @@ begin
                         InitRecord;
                       end;
                    DbGridEh1.SetFocus;
-                   DbGridEh1.Col := 1 ;
+                   if edtKPI_TYPE.ItemIndex = 2 then
+                      DBGridEh1.Col := 1
+                   else
+                      if edtKPI_DATA.ItemIndex in [0,1,2] then
+                         DbGridEh1.Col := 3
+                      else
+                         DBGridEh1.Col := 4;
                 end
              else
                 DbGridEh1.Col := i;
@@ -745,23 +776,26 @@ procedure TfrmKpiIndexInfo.InitRecord;
 begin
   if dbState = dsBrowse then Exit;
   if CdsKpiOption.State in [dsEdit,dsInsert] then CdsKpiOption.Post;
-  //fndGODS_ID.Visible := false;
   CdsKpiOption.DisableControls;
   try
     CdsKpiOption.Last;
-    //if (CdsKpiOption.FieldbyName('KPI_ID').AsString = '') then
-    //begin
+    if CdsKpiOption.IsEmpty or IsNull then
+    begin
       inc(RowID);
       CdsKpiOption.Append;
       CdsKpiOption.FieldByName('KPI_ID').Value := null;
       if CdsKpiOption.FindField('SEQNO')<> nil then
          CdsKpiOption.FindField('SEQNO').asInteger := RowID;
+      CdsKpiOption.FindField('USING_BRRW').AsInteger := 1;
       CdsKpiOption.Post;
-    //end;
+    end;
     if edtKPI_TYPE.ItemIndex = 2 then
        DBGridEh1.Col := 1
     else
-       DbGridEh1.Col := 3;
+       if edtKPI_DATA.ItemIndex in [0,1,2] then
+          DbGridEh1.Col := 3
+       else
+          DBGridEh1.Col := 4;
     if DBGridEh1.CanFocus and Visible and (dbState <> dsBrowse) then DBGridEh1.SetFocus;
   finally
     CdsKpiOption.EnableControls;
@@ -792,7 +826,7 @@ begin
   if not CdsKpiOption.Active then Exit;
 
   CdsKpiOption.Edit;
-  CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',edtBeginDate.Date));
+  CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := StrToInt(FormatDateTime('MMDD',edtBeginDate.Date));
   CdsKpiOption.Post;
 end;
 
@@ -802,7 +836,7 @@ begin
   if not CdsKpiOption.Active then Exit;
 
   CdsKpiOption.Edit;
-  CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',edtEndDate.Date));
+  CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := StrToInt(FormatDateTime('MMDD',edtEndDate.Date));
   CdsKpiOption.Post;
 end;
 
@@ -889,7 +923,9 @@ end;
 procedure TfrmKpiIndexInfo.AddGoodsClick(Sender: TObject);
 begin
   inherited;
+  if not CdsKpiGoods.Active then Exit;
   if DBGridEh2.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
   OpenDialogGoods;
 end;
 
@@ -918,7 +954,9 @@ end;
 procedure TfrmKpiIndexInfo.AddRecord_Click(Sender: TObject);
 begin
   inherited;
+  if not CdsKpiOption.Active then Exit;
   if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
   InitRecord;
 end;
 
@@ -959,6 +997,109 @@ begin
        FocusNextColumn;
        Key := #0;
      end;
+end;
+
+procedure TfrmKpiIndexInfo.edtIDX_TYPEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtIDX_TYPE.ItemIndex = 0 then
+     KpiAgioFront := '返利'
+  else if edtIDX_TYPE.ItemIndex = 1 then
+     KpiAgioFront := '计提'
+  else if edtIDX_TYPE.ItemIndex = 2 then
+     KpiAgioFront := '提成';
+
+  lab_KPI_AGIO.Caption := KpiAgioFront+KpiAgioBack;
+  ShowGrid;
+end;
+
+procedure TfrmKpiIndexInfo.edtKPI_CALCPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtKPI_CALC.ItemIndex in [0,3] then
+  begin
+     KpiAgioBack := '系数';
+     DisplayPer := False;
+  end
+  else if edtKPI_CALC.ItemIndex in [1,2,4,5] then
+  begin
+     KpiAgioBack := '比率';
+     DisplayPer := True;
+  end;
+  lab_KPI_AGIO.Caption := KpiAgioFront+KpiAgioBack;
+  ShowGrid;
+end;
+
+procedure TfrmKpiIndexInfo.edtKPI_DATAPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtKPI_DATA.ItemIndex in [0,1,2] then
+  begin
+     DBGridEh1.Columns[3].Visible := True;
+     DBGridEh1.Columns[4].Visible := False;
+     if Visible then
+     begin
+       DBGridEh1.SetFocus;
+       if edtKPI_TYPE.ItemIndex = 2 then
+          DBGridEh1.Col := 1
+       else
+          DBGridEh1.Col := 3;
+     end;
+  end
+  else
+  begin
+     DBGridEh1.Columns[3].Visible := False;
+     DBGridEh1.Columns[4].Visible := True;
+     if Visible then
+     begin
+       DBGridEh1.SetFocus;
+       if edtKPI_TYPE.ItemIndex = 2 then
+          DBGridEh1.Col := 1
+       else
+          DBGridEh1.Col := 4;
+     end;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.ShowGrid;
+begin
+  if DisplayPer then
+  begin
+    DBGridEh1.Columns[5].Title.Caption := KpiAgioFront + KpiAgioBack;
+    DBGridEh1.Columns[5].DisplayFormat := '#0%';
+  end
+  else
+  begin
+    DBGridEh1.Columns[5].Title.Caption := KpiAgioFront + KpiAgioBack;
+    DBGridEh1.Columns[5].DisplayFormat := '';
+  end;
+  Label1.Visible := DisplayPer;
+end;
+
+function TfrmKpiIndexInfo.IsNull: Boolean;
+var B1,B2:Boolean;
+begin
+  B1 := True;
+  B2 := True;
+  if edtKPI_TYPE.ItemIndex = 2 then
+  begin
+     if (CdsKpiOption.FieldByName('KPI_DATE1').AsString = '') or (CdsKpiOption.FieldByName('KPI_DATE2').AsString = '') then
+        B1 := False;
+  end;
+  if edtKPI_DATA.ItemIndex in [0,1,2] then
+  begin
+     if (CdsKpiOption.FieldByName('KPI_RATE').AsString = '') or (CdsKpiOption.FieldByName('KPI_AGIO').AsString = '') then
+        B2 := False;
+  end
+  else
+  begin
+     if (CdsKpiOption.FieldByName('KPI_AMT').AsString = '') or (CdsKpiOption.FieldByName('KPI_AGIO').AsString = '') then
+        B2 := False;
+  end;
+  if B1 and B2 then
+     Result := True
+  else
+     Result := False;
 end;
 
 end.

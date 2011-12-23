@@ -1,6 +1,6 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 309
-  Top = 239
+  Left = 535
+  Top = 223
   Caption = #32771#26680#25351#26631
   ClientHeight = 368
   ClientWidth = 529
@@ -106,12 +106,12 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     end
     object lab_KPI_AGIO: TLabel [6]
       Left = 240
-      Top = 65
+      Top = 89
       Width = 100
       Height = 12
       Alignment = taRightJustify
       AutoSize = False
-      Caption = #26631#20934#31995#25968
+      Caption = #36820#21033#31995#25968
       Font.Charset = GB2312_CHARSET
       Font.Color = clBlack
       Font.Height = -12
@@ -137,6 +137,51 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     object RzLabel3: TRzLabel [8]
       Left = 467
       Top = 41
+      Width = 6
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '*'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label1: TLabel [9]
+      Left = 468
+      Top = 89
+      Width = 7
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '%'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
+    object RzLabel5: TRzLabel [10]
+      Left = 235
+      Top = 65
+      Width = 6
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '*'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
+    object RzLabel6: TRzLabel [11]
+      Left = 235
+      Top = 89
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -234,6 +279,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     Width = 34
                   end
                   item
+                    DisplayFormat = '00'#26376'00'#26085
                     EditButtons = <>
                     FieldName = 'KPI_DATE1'
                     Footers = <>
@@ -242,6 +288,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     Control = edtBeginDate
                   end
                   item
+                    DisplayFormat = '00'#26376'00'#26085
                     EditButtons = <>
                     FieldName = 'KPI_DATE2'
                     Footers = <>
@@ -281,6 +328,9 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     KeyList.Strings = (
                       '0'
                       '1')
+                    PickList.Strings = (
+                      '1'
+                      '0')
                     Title.Caption = #20511#37327
                     Width = 40
                   end>
@@ -495,6 +545,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 37
       Width = 121
       Height = 20
+      Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = edtKPI_TYPEPropertiesChange
       TabOrder = 2
     end
@@ -503,6 +554,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 37
       Width = 121
       Height = 20
+      Properties.DropDownListStyle = lsFixedList
+      Properties.OnChange = edtIDX_TYPEPropertiesChange
       TabOrder = 1
     end
     object edtKPI_DATA: TcxComboBox
@@ -510,6 +563,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 61
       Width = 121
       Height = 20
+      Properties.DropDownListStyle = lsFixedList
+      Properties.OnChange = edtKPI_DATAPropertiesChange
       TabOrder = 3
     end
     object edtKPI_CALC: TcxComboBox
@@ -517,24 +572,26 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 85
       Width = 121
       Height = 20
+      Properties.DropDownListStyle = lsFixedList
+      Properties.OnChange = edtKPI_CALCPropertiesChange
       TabOrder = 5
     end
     object edtKPI_AGIO: TcxTextEdit
       Left = 346
-      Top = 61
+      Top = 85
       Width = 121
       Height = 20
-      TabOrder = 4
+      TabOrder = 6
     end
     object edtKPI_OPTN: TcxCheckBox
       Left = 344
-      Top = 84
+      Top = 61
       Width = 121
       Height = 21
       Properties.DisplayUnchecked = 'False'
       Properties.OnChange = edtKPI_OPTNPropertiesChange
       Properties.Caption = #26159#21542#21551#29992#38454#26799
-      TabOrder = 6
+      TabOrder = 4
     end
   end
   inherited mmMenu: TMainMenu

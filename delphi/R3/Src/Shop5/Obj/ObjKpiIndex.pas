@@ -202,7 +202,7 @@ begin
   KeyFields := 'TENANT_ID;KPI_ID;SEQNO';
   SelectSQL.Text :=
   'select TENANT_ID,KPI_ID,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,USING_BRRW from MKT_KPI_OPTION '+
-  'where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') ';
+  'where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') order by SEQNO ';
 
   IsSQLUpdate := True;
   Str := 'insert into MKT_KPI_OPTION(TENANT_ID,KPI_ID,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,USING_BRRW,COMM,TIME_STAMP) '+

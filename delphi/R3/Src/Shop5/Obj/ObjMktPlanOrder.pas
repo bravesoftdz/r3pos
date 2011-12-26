@@ -195,17 +195,18 @@ end;
 
 function TMktPlanData.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  Result := True;
 end;
 
 function TMktPlanData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  Result := True;
 end;
 
 function TMktPlanData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeInsertRecord(AGlobal);
 end;
 
 function TMktPlanData.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -220,15 +221,15 @@ begin
   inherited;
   SelectSQL.Text :=
      'select A.TENANT_ID,A.SEQNO,A.PLAN_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.AMOUNT,A.AMONEY,A.BOND_MNY,A.REMARK '+
-     ' from MKT_PLANDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID where A.TENANT_ID=:TENANT_ID and A.PLAN_ID=:PLAN_ID ';
+     ' from MKT_PLANDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID where A.TENANT_ID=:TENANT_ID and A.PLAN_ID=:PLAN_ID order by A.SEQNO ';
   IsSQLUpdate := True;
   Str := 'insert into MKT_PLANDATA(TENANT_ID,SEQNO,PLAN_ID,KPI_ID,AMOUNT,AMONEY,BOND_MNY,REMARK) '
     + 'VALUES(:TENANT_ID,:SEQNO,:PLAN_ID,:KPI_ID,:AMOUNT,:AMONEY,:BOND_MNY,:REMARK)';
   InsertSQL.Text := Str;                                                          
   Str := 'update MKT_PLANDATA set TENANT_ID=:TENANT_ID,SEQNO=:SEQNO,PLAN_ID=:PLAN_ID,KPI_ID=:KPI_ID,AMOUNT=:AMOUNT,AMONEY=:AMONEY,BOND_MNY=:BOND_MNY,REMARK=:REMARK '
-    + 'where TENANT_ID=:OLD_TENANT_ID and PLAN_ID=:OLD_PLAN_ID';
+    + 'where TENANT_ID=:OLD_TENANT_ID and PLAN_ID=:OLD_PLAN_ID and SEQNO=:OLD_SEQNO';
   UpdateSQL.Text := Str;
-  Str := 'delete from MKT_PLANDATA where TENANT_ID=:OLD_TENANT_ID and PLAN_ID=:OLD_PLAN_ID';
+  Str := 'delete from MKT_PLANDATA where TENANT_ID=:OLD_TENANT_ID and PLAN_ID=:OLD_PLAN_ID and SEQNO=:OLD_SEQNO';
   DeleteSQL.Text := Str;
 end;
 

@@ -146,17 +146,18 @@ end;
 
 function TMktRequData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  Result := True;
 end;
 
 function TMktRequData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeInsertRecord(AGlobal);
 end;
 
 function TMktRequData.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  Result := True;
 end;
 
 procedure TMktRequData.InitClass;
@@ -168,7 +169,7 @@ begin
      'select A.TENANT_ID,A.SEQNO,A.REQU_ID,A.PLAN_ID,A.SHOP_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.KPI_YEAR,C.KPI_MNY,A.REQU_MNY,A.REMARK '+
      ' from MKT_REQUDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
      ' left join MKT_KPI_RESULT C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID and A.KPI_YEAR=C.KPI_YEAR '+
-     'where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID ';
+     'where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID order by A.SEQNO';
   IsSQLUpdate := True;
   Str := 'insert into MKT_REQUDATA(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,PLAN_ID,KPI_ID,KPI_YEAR,REQU_MNY,REMARK) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:PLAN_ID,:KPI_ID,:KPI_YEAR,:REQU_MNY,:REMARK)';
@@ -176,7 +177,7 @@ begin
   Str := 'update MKT_REQUDATA set TENANT_ID=:TENANT_ID,SEQNO=:SEQNO,SHOP_ID=:SHOP_ID,REQU_ID=:REQU_ID,PLAN_ID=:PLAN_ID,KPI_ID=:KPI_ID,KPI_YEAR=:KPI_YEAR,REQU_MNY=:REQU_MNY,REMARK=:REMARK '
     + 'where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO';
   UpdateSQL.Text := Str;
-  Str := 'delete from MKT_REQUDATA where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID ';
+  Str := 'delete from MKT_REQUDATA where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO ';
   DeleteSQL.Text := Str;
 end;
 

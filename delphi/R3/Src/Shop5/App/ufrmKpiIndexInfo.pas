@@ -89,6 +89,8 @@ type
     procedure edtIDX_TYPEPropertiesChange(Sender: TObject);
     procedure edtKPI_CALCPropertiesChange(Sender: TObject);
     procedure edtKPI_DATAPropertiesChange(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
     Saved,DisplayPer:Boolean;
@@ -228,6 +230,7 @@ end;
 
 procedure TfrmKpiIndexInfo.Save;
 var Temp:TZQuery;
+    R:Integer;
 begin
   if dbState=dsBrowse then exit;
   if trim(edtKPI_NAME.Text)='' then
@@ -319,11 +322,13 @@ begin
     CdsKpiIndex.Post;
     if edtKPI_OPTN.Checked then
     begin
+      R := 0;
       CdsKpiOption.First;
       while not CdsKpiOption.Eof do
       begin
+        Inc(R);
         CdsKpiOption.Edit;
-
+        CdsKpiOption.FieldByName('SEQNO').AsInteger := R;
         if CdsKpiOption.FieldByName('TENANT_ID').AsString = '' then
           CdsKpiOption.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
         if CdsKpiOption.FieldByName('KPI_ID').AsString = '' then
@@ -373,8 +378,7 @@ begin
   except
     Factor.CancelBatch;
     CdsKpiIndex.CancelUpdates;
-    CdsKpiOption.CancelUpdates;
-    CdsKpiGoods.CancelUpdates;
+
   end;
   dbState:=dsBrowse;
   Saved:=True;
@@ -865,6 +869,7 @@ begin
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
+      DbGridEh1.canvas.Brush.Color := $0000F2F2;
       DbGridEh2.canvas.FillRect(ARect);
       DrawText(DbGridEh2.Canvas.Handle,pchar(Inttostr(CdsKpiGoods.RecNo)),length(Inttostr(CdsKpiGoods.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
@@ -955,7 +960,6 @@ begin
   if not CdsKpiOption.IsEmpty and (MessageBox(Handle,pchar('确认删除本标准吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
      begin
        CdsKpiOption.Delete;
-       Dec(RowID);
        DBGridEh1.SetFocus;
      end;
 end;
@@ -1109,6 +1113,21 @@ begin
      Result := True
   else
      Result := False;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var
+  ARect:TRect;
+begin
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DbGridEh1.canvas.Brush.Color := $0000F2F2;
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(CdsKpiOption.RecNo)),length(Inttostr(CdsKpiOption.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
 end;
 
 end.

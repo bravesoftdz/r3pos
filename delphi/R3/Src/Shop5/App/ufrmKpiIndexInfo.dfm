@@ -13,6 +13,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     Width = 529
     Height = 368
     BorderColor = clWhite
+    Caption = '='
     Color = clWhite
     object RzLabel1: TRzLabel [0]
       Left = 235
@@ -198,7 +199,9 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 115
       Width = 519
       Height = 208
+      ActivePage = TabSheet2
       Align = alBottom
+      TabIndex = 1
       TabOrder = 7
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -268,6 +271,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
+                OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnKeyPress = DBGridEh1KeyPress
                 Columns = <
                   item
@@ -419,6 +423,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 EditButtons = <>
                 FieldName = 'SEQNO'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #24207#21495
                 Width = 31
               end

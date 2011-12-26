@@ -257,7 +257,6 @@ inherited frmKpiIndex: TfrmKpiIndex
                     Width = 30
                   end
                   item
-                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'KPI_NAME'
                     Footers = <>

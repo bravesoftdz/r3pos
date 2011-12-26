@@ -69,14 +69,14 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPla
 
 procedure TfrmMktPlanOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',2) then Raise Exception.Create('你没有新增销售计划的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',2) then Raise Exception.Create('你没有新增销售计划的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmMktPlanOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',4) then Raise Exception.Create('你没有删除销售计划单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',4) then Raise Exception.Create('你没有删除销售计划单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -86,14 +86,14 @@ begin
 
   if TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('100001070',5) then
+      if not ShopGlobal.GetChkRight('100002150',5) then
          Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       if ShopGlobal.GetChkRight('100001070',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售计划单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002150',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售计划单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -102,7 +102,7 @@ end;
 
 procedure TfrmMktPlanOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -112,7 +112,7 @@ begin
 
   if TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('100001070',5) then
+      if not ShopGlobal.GetChkRight('100002150',5) then
          Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
@@ -129,7 +129,7 @@ begin
           begin
             actPrint.OnExecute(nil);
           end;}
-       if ShopGlobal.GetChkRight('100001070',2) and (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002150',2) and (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -139,7 +139,7 @@ end;
 procedure TfrmMktPlanOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100001070',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -167,7 +167,7 @@ end;
 procedure TfrmMktPlanOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100001070',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -250,7 +250,7 @@ end;
 
 procedure TfrmMktPlanOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',5) then Raise Exception.Create('你没有审核销售计划单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',5) then Raise Exception.Create('你没有审核销售计划单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -412,7 +412,7 @@ begin
   inherited;
   Open('');
   //进入窗体默认新增加判断是否新增权限:
-  if (ShopGlobal.GetChkRight('100001070',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  if (ShopGlobal.GetChkRight('100002150',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmMktPlanOrderList.FormCreate(Sender: TObject);

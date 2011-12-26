@@ -343,6 +343,7 @@ inherited frameContractForm: TframeContractForm
       DecimalNumber = 2
       DigitalNumber = 12
       OnDrawColumnCell = DBGridEh1DrawColumnCell
+      OnMouseDown = DBGridEh1MouseDown
       Columns = <
         item
           EditButtons = <>

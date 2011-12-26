@@ -37,6 +37,10 @@ type
     cdsHeader: TZQuery;
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FdbState: TDataSetState;
     FIsAudit: boolean;
@@ -358,6 +362,99 @@ begin
            Exit;
          end;
     end;
+end;
+
+procedure TframeContractForm.DBGridEh1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var Cell: TGridCoord;
+begin
+  inherited;
+  Cell := DBGridEh1.MouseCoord(X,Y);
+  if Cell.Y > DBGridEh1.VisibleRowCount -2 then
+     InitRecord;
+end;
+
+procedure TframeContractForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  if (ssCtrl in Shift) and (Key in [ord('D'),ord('d')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,1);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('I'),ord('i')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,2);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('S'),ord('s')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,0);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('Z'),ord('z')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,7);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key = VK_END) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,4);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key = VK_PRIOR) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,5);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key = VK_NEXT) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,6);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key = VK_F5) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,8);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('P'),ord('p')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,3);
+       end;
+     end;
+  if (ssCtrl in Shift) and (ssShift in Shift) and (Key in [ord('P'),ord('p')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,10);
+       end;
+     end;
+  if (ssCtrl in Shift) and (Key in [ord('E'),ord('e')]) then
+     begin
+       if Assigned(TabSheet) then
+       begin
+         PostMessage(GetToolHandle,WM_EXEC_ORDER,0,11);
+       end;
+     end;
 end;
 
 end.

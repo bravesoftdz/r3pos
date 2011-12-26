@@ -57,6 +57,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
+    AddRow:Boolean;
     procedure FocusNextColumn;
     procedure KpiMnyToCalc;
     procedure SetdbState(const Value: TDataSetState);override;
@@ -316,6 +317,7 @@ begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空销售计划单据...');
+  if not AddRow then Raise Exception.Create('不能保存一张有问题的销售计划单据...');
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cid := edtCLIENT_ID.asString;
@@ -414,12 +416,10 @@ end;
 
 procedure TfrmMktRequOrder.DBGridEh1MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var Cell: TGridCoord;  
 begin
+  if not AddRow then Exit;
   inherited;
-  Cell := DBGridEh1.MouseCoord(X,Y);
-  if Cell.Y > DBGridEh1.VisibleRowCount -2 then
-     InitRecord;
+
 end;
 
 procedure TfrmMktRequOrder.edtKPI_IDEnter(Sender: TObject);
@@ -590,10 +590,12 @@ begin
         cdsDetail.FieldByName('KPI_MNY').AsInteger := rs.FieldByName('KPI_MNY').AsInteger;
         cdsDetail.FieldByName('REQU_MNY').AsInteger := rs.FieldByName('REQU_MNY').AsInteger;
         cdsDetail.Post;
+        AddRow := True;
       end
       else
       begin
         DBGridEh1.Col := 2;
+        AddRow := False;
         Raise Exception.Create('在"'+cdsDetail.FieldByName('KPI_YEAR').AsString+'"年度没有相关考核指标!');
       end;
     finally

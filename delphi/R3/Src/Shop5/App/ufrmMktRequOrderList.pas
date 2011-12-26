@@ -68,7 +68,7 @@ uses ufrmMktRequOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDic
 
 function TfrmMktRequOrderList.CheckCanExport: boolean;
 begin
-  result := ShopGlobal.GetChkRight('100001070',9);
+  result := ShopGlobal.GetChkRight('100002176',7);
 end;
 
 function TfrmMktRequOrderList.EncodeSQL(id: string): string;
@@ -163,14 +163,14 @@ end;
 
 procedure TfrmMktRequOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',2) then Raise Exception.Create('你没有新增费用申领的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',2) then Raise Exception.Create('你没有新增费用申领的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmMktRequOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',4) then Raise Exception.Create('你没有删除费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',4) then Raise Exception.Create('你没有删除费用申领单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -180,7 +180,7 @@ begin
 
   if TfrmMktRequOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('100001070',5) then
+      if not ShopGlobal.GetChkRight('100002176',5) then
          Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
@@ -442,7 +442,7 @@ procedure TfrmMktRequOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  if (ShopGlobal.GetChkRight('100001070',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  if (ShopGlobal.GetChkRight('100002176',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 end.

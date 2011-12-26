@@ -390,7 +390,7 @@ end;
 
 function TfrmMktPlanOrderList.CheckCanExport: boolean;
 begin
-  //result:=ShopGlobal.GetChkRight('11100001',7);
+  result:=ShopGlobal.GetChkRight('100002150',7);
 end;
 
 procedure TfrmMktPlanOrderList.DBGridEh1DblClick(Sender: TObject);

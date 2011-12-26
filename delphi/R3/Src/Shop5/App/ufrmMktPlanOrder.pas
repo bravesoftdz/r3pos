@@ -53,6 +53,7 @@ type
     procedure DeleteClick(Sender: TObject);
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -585,6 +586,12 @@ begin
        DBGridEh1.Canvas.Font.Style := [fsBold];
        DBGridEh1.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh1.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
      end;
+end;
+
+procedure TfrmMktPlanOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
 end;
 
 end.

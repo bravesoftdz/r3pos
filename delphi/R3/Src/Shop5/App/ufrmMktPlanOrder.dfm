@@ -127,6 +127,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
             Default = True
           end>
         Properties.ReadOnly = False
+        Properties.OnChange = edtCLIENT_IDPropertiesChange
         TabOrder = 0
         InGrid = False
         KeyValue = Null

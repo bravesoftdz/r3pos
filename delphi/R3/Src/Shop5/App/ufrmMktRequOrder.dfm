@@ -82,6 +82,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
             Default = True
           end>
         Properties.ReadOnly = True
+        Properties.OnChange = edtCLIENT_IDPropertiesChange
         TabOrder = 0
         InGrid = False
         KeyValue = Null

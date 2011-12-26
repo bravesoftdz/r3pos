@@ -55,6 +55,7 @@ type
     procedure DeleteRecordClick(Sender: TObject);
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     AddRow:Boolean;
@@ -631,6 +632,12 @@ begin
   end;
   TColumnEh(Sender).Field.AsInteger := Year;
   KpiMnyToCalc;
+end;
+
+procedure TfrmMktRequOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
 end;
 
 end.

@@ -125,10 +125,7 @@ begin
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       {if ShopGlobal.GetChkRight('100001070',6) then
-          begin
-            actPrint.OnExecute(nil);
-          end;}
+
        if ShopGlobal.GetChkRight('100002150',2) and (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else

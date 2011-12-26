@@ -370,7 +370,6 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnEnter = DBGridEh1Enter
       OnKeyPress = DBGridEh1KeyPress
-      OnMouseDown = DBGridEh1MouseDown
       Columns = <
         item
           EditButtons = <>

@@ -23,7 +23,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       Height = 121
       object RzLabel2: TRzLabel [0]
         Left = 451
-        Top = 34
+        Top = 12
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -69,7 +69,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object RzLabel7: TRzLabel [6]
         Left = 451
-        Top = 12
+        Top = 34
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -109,12 +109,12 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtPLAN_DATE: TcxDateEdit
         Left = 507
-        Top = 30
+        Top = 8
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateButtons = [btnToday]
-        TabOrder = 5
+        TabOrder = 4
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 254
@@ -297,13 +297,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtKPI_YEAR: TcxSpinEdit
         Left = 507
-        Top = 8
+        Top = 30
         Width = 121
         Height = 20
         Properties.MaxValue = 2111.000000000000000000
         Properties.MinValue = 2011.000000000000000000
         Properties.OnChange = edtKPI_YEARPropertiesChange
-        TabOrder = 4
+        TabOrder = 5
         Value = 2011
       end
     end
@@ -353,7 +353,6 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
-      OnMouseDown = DBGridEh1MouseDown
       Columns = <
         item
           EditButtons = <>

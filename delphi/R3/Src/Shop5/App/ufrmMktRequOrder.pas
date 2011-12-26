@@ -300,7 +300,7 @@ begin
     oid := AObj.FieldbyName('REQU_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
-
+    RowID := cdsDetail.RecordCount;
   finally
     Params.Free;
   end;
@@ -308,6 +308,7 @@ end;
 
 procedure TfrmMktRequOrder.SaveOrder;
 var rny:real;
+    R:Integer;
 begin
   inherited;
   Saved := false;
@@ -320,7 +321,6 @@ begin
   cid := edtCLIENT_ID.asString;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
-  AObj.FieldByName('IORO_ID').AsString := 'Test';
 
   Factor.BeginBatch;
   try
@@ -335,11 +335,13 @@ begin
             cdsDetail.Delete
          else
             begin
+             Inc(R);
              cdsDetail.Edit;
              cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
              cdsDetail.FieldByName('REQU_ID').AsString := cdsHeader.FieldbyName('REQU_ID').AsString;
-             cdsDetail.FieldByName('PLAN_ID').AsString := 'Test_Data';
+             //cdsDetail.FieldByName('PLAN_ID').AsString := 'Test_Data';
              cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
+             cdsDetail.FieldByName('SEQNO').AsInteger := R;
              rny := rny + cdsDetail.FieldbyName('REQU_MNY').asFloat;
              cdsDetail.Post;
              cdsDetail.Next;
@@ -356,7 +358,7 @@ begin
   except
     Factor.CancelBatch;
     cdsHeader.CancelUpdates;
-    cdsDetail.CancelUpdates;
+    //cdsDetail.CancelUpdates;
     Raise;
   end;
   Open(oid);

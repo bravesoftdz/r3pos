@@ -47,8 +47,6 @@ type
     procedure edtKPI_IDKeyPress(Sender: TObject; var Key: Char);
     procedure edtKPI_IDSaveValue(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
-    procedure DBGridEh1MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure DBGridEh1Columns1BeforeShowControl(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure edtKPI_YEARPropertiesChange(Sender: TObject);
@@ -220,6 +218,8 @@ begin
   rs := ShopGlobal.GetDeptInfo;
   edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
   edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
+  edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-01-01', date()));
+  edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-12-31', date()));  
   AObj.FieldbyName('PLAN_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('PLAN_ID').asString;
   gid := '..新增..';
@@ -258,7 +258,7 @@ begin
     oid := AObj.FieldbyName('PLAN_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('CLIENT_ID').AsString;
-
+    RowID := cdsDetail.RecordCount;
   finally
     Params.Free;
   end;
@@ -266,6 +266,7 @@ end;
 
 procedure TfrmMktPlanOrder.SaveOrder;
 var mny,bny,amt:real;
+    R:Integer;
 begin
   inherited;
   Saved := false;
@@ -279,11 +280,7 @@ begin
   AObj.FieldByName('KPI_YEAR').AsInteger := edtKPI_YEAR.Value;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
-  {if (ShopGlobal.GetParameter('STK_AUTO_CHK')<>'0') and ShopGlobal.GetChkRight('11100001',5) then
-     begin
-       AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
-       AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
-     end; }
+
   Factor.BeginBatch;
   try
     cdsHeader.Edit;
@@ -292,6 +289,7 @@ begin
     mny := 0;
     bny := 0;
     amt := 0;
+    R := 0;
     cdsDetail.First;
     while not cdsDetail.Eof do
        begin
@@ -299,9 +297,11 @@ begin
             cdsDetail.Delete
          else
             begin
+             Inc(R);
              cdsDetail.Edit;
              cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
              cdsDetail.FieldByName('PLAN_ID').AsString := cdsHeader.FieldbyName('PLAN_ID').AsString;
+             cdsDetail.FieldByName('SEQNO').AsInteger := R;
              mny := mny + cdsDetail.FieldbyName('AMONEY').asFloat;
              bny := bny + cdsDetail.FieldbyName('BOND_MNY').asFloat;
              amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
@@ -321,7 +321,7 @@ begin
   except
     Factor.CancelBatch;
     cdsHeader.CancelUpdates;
-    cdsDetail.CancelUpdates;
+    //cdsDetail.CancelUpdates;
     Raise;
   end;
   Open(oid);
@@ -503,16 +503,6 @@ begin
      end;
 end;
 
-procedure TfrmMktPlanOrder.DBGridEh1MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var Cell: TGridCoord;  
-begin
-  inherited;
-  Cell := DBGridEh1.MouseCoord(X,Y);
-  if Cell.Y > DBGridEh1.VisibleRowCount -2 then
-     InitRecord;
-end;
-
 procedure TfrmMktPlanOrder.SetdbState(const Value: TDataSetState);
 var Column:TColumnEh;
 begin
@@ -552,15 +542,29 @@ end;
 procedure TfrmMktPlanOrder.edtKPI_YEARPropertiesChange(Sender: TObject);
 begin
   inherited;
-  //edtPLAN_DATE.Date := '';
+  if (edtKPI_YEAR.Value < 2011) or (edtKPI_YEAR.Value > 2111) then Exit;
+  if edtBEGIN_DATE.EditValue = null then
+     edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-01-01', date()))
+  else
+     edtBEGIN_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtBEGIN_DATE.Date),5,6));
+
+  if edtEND_DATE.EditValue = null then
+     edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-12-31', date()))
+  else
+     edtEND_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtEND_DATE.Date),5,6));
 end;
 
 procedure TfrmMktPlanOrder.DeleteClick(Sender: TObject);
 begin
   inherited;
-  if cdsDetail.IsEmpty then exit;
-  if cdsDetail.FieldByName('KPI_ID').AsString='' then exit;
-  cdsDetail.Delete;
+  if DBGridEh1.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if not cdsDetail.IsEmpty and (MessageBox(Handle,pchar('确认删除"'+cdsDetail.FieldbyName('KPI_ID_TEXT').AsString+'"指标吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
+     begin
+       edtKPI_ID.Visible := Visible;
+       cdsDetail.Delete;
+       DBGridEh1.SetFocus;
+     end;
 end;
 
 procedure TfrmMktPlanOrder.DBGridEh1DrawFooterCell(Sender: TObject;
@@ -577,7 +581,7 @@ begin
        R.Bottom := Rect.Bottom;
 
        DBGridEh1.Canvas.FillRect(R);
-       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s个指标',[Inttostr(cdsDetail.RecordCount)]);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s笔',[Inttostr(cdsDetail.RecordCount)]);
        DBGridEh1.Canvas.Font.Style := [fsBold];
        DBGridEh1.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh1.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
      end;

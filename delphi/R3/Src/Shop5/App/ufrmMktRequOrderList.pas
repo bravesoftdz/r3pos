@@ -68,7 +68,7 @@ uses ufrmMktRequOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDic
 
 function TfrmMktRequOrderList.CheckCanExport: boolean;
 begin
-  result := ShopGlobal.GetChkRight('12400001',9);
+  result := ShopGlobal.GetChkRight('100001070',9);
 end;
 
 function TfrmMktRequOrderList.EncodeSQL(id: string): string;

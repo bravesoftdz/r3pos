@@ -61,6 +61,10 @@ CREATE TABLE [MKT_KPI_INDEX] (
 
         --备注
 	[REMARK] [varchar] (100) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_INDEX_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_MKT_KPI_INDEX] PRIMARY KEY  
 	(
 		[TENANT_ID],
@@ -78,6 +82,8 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	[TENANT_ID] int NOT NULL ,
         --考核指标
 	[KPI_ID] [char] (36) NOT NULL ,
+        --考核周期(年度时 1是上半年 2是下半年 季时 1,2,3,4表示4个季度,其他情况为0)
+	[KPI_LV] [char] (36) NOT NULL ,
         --级别，每个指标重 1 开始计数
 	[SEQNO] [int] NOT NULL ,
 	      --达标率
@@ -91,10 +97,15 @@ CREATE TABLE [MKT_KPI_OPTION] (
 	[KPI_AGIO] [decimal](18, 3) NULL ,
 	      --是否允许借量
 	[USING_BRRW] char(1) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_OPTION_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_MKT_KPI_OPTION] PRIMARY KEY 
 	(
 		[TENANT_ID],
 		[KPI_ID],
+		[KPI_LV],
 		[SEQNO]
 	) 
 );
@@ -110,6 +121,10 @@ CREATE TABLE [MKT_KPI_GOODS] (
 	[GODS_ID] [char] (36) NOT NULL ,
         --考核单位
 	[UNIT_ID] [char] (36) NOT NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_GOODS_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_MKT_KPI_GOODS] PRIMARY KEY 
 	(
 		[TENANT_ID],
@@ -226,6 +241,7 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
+	
         --计划销量
 	[PLAN_AMT] [decimal](18, 3) NULL ,
         --计划金额 
@@ -272,6 +288,8 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 	[PLAN_ID] [char] (36) NOT NULL ,
         --考核指标
 	[KPI_ID] [char] (36) NOT NULL ,
+        --考核周期(年度时 1是上半年 2是下半年 季时 1,2,3,4表示4个季度,其他情况为0)
+	[KPI_LV] [char] (36) NOT NULL ,
         --级别，每个指标重 1 开始计数
 	[SEQNO] [int] NOT NULL ,
 	      --达标率
@@ -286,7 +304,7 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 
         --完成量
 	[FSH_VLE] [decimal](18, 3) NULL ,
-	      --考核量
+	      --考核结果
 	[KPI_MNY] [decimal](18, 3) NULL ,
 	
 	CONSTRAINT [PK_MKT_KPI_R_LIST] PRIMARY KEY 
@@ -294,6 +312,7 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 		[TENANT_ID],
 		[PLAN_ID],
 		[KPI_ID],
+		[KPI_LV],
 		[SEQNO]
 	) 
 );
@@ -357,6 +376,8 @@ CREATE TABLE [MKT_REQUDATA] (
 	[TENANT_ID] int NOT NULL ,
         --门店代码
 	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --单号
+	[REQU_ID] [char] (36) NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
         --单号
@@ -379,10 +400,10 @@ CREATE TABLE [MKT_REQUDATA] (
 	)
 );
 
-CREATE INDEX IX_M_RQR_TENANT_ID ON MKT_DEMANDDATA(TENANT_ID);
-CREATE INDEX IX_M_RQR_REQU_ID ON MKT_DEMANDDATA(TENANT_ID,REQU_ID);
-CREATE INDEX IX_M_RQR_KPI_ID ON MKT_DEMANDDATA(TENANT_ID,PLAN_ID,KPI_YEAR,KPI_ID);
-CREATE INDEX IX_M_RQR_KPI_YEAR ON MKT_DEMANDDATA(TENANT_ID,KPI_YEAR);
+CREATE INDEX IX_M_RQR_TENANT_ID ON MKT_REQUDATA(TENANT_ID);
+CREATE INDEX IX_M_RQR_REQU_ID ON MKT_REQUDATA(TENANT_ID,REQU_ID);
+CREATE INDEX IX_M_RQR_KPI_ID ON MKT_REQUDATA(TENANT_ID,PLAN_ID,KPI_YEAR,KPI_ID);
+CREATE INDEX IX_M_RQR_KPI_YEAR ON MKT_REQUDATA(TENANT_ID,KPI_YEAR);
 
 --需求类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','补货申请','DEMA_TYPE','00',5497000);

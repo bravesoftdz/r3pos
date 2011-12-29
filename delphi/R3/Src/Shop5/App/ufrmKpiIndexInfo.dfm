@@ -199,9 +199,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 115
       Width = 519
       Height = 208
-      ActivePage = TabSheet2
       Align = alBottom
-      TabIndex = 1
       TabOrder = 7
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

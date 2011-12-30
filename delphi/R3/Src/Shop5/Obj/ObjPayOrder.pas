@@ -221,13 +221,13 @@ begin
   SelectSQL.Text :=
   'select jd.*,d.SHOP_NAME as SHOP_ID_TEXT from ('+
   'select jc.*,c.CLIENT_NAME as CLIENT_ID_TEXT from ('+
-  'select case when A.PAY_MNY=0 then 0 else 1 end as A,A.TENANT_ID,A.SHOP_ID,A.PAY_ID,A.SEQNO,A.ABLE_ID,A.ABLE_TYPE,'+
+  'select case when A.PAY_MNY=0 then 0 else 1 end as A,A.TENANT_ID,A.SHOP_ID,B.SHOP_ID as ACC_SHOP_ID,A.PAY_ID,A.SEQNO,A.ABLE_ID,A.ABLE_TYPE,'+
   'B.ACCT_MNY,B.RECK_MNY+A.PAY_MNY as RECK_MNY,A.PAY_MNY,B.RECK_MNY as BALA_MNY,'+
   'b.ACCT_INFO,b.CLIENT_ID,C.ACCOUNT_ID,b.ABLE_DATE '+
   'from ACC_PAYDATA A,ACC_PAYORDER C,ACC_PAYABLE_INFO B '+
   'where A.TENANT_ID=C.TENANT_ID and A.PAY_ID=C.PAY_ID and A.ABLE_ID=B.ABLE_ID and A.TENANT_ID=B.TENANT_ID and A.TENANT_ID=:TENANT_ID and A.PAY_ID=:PAY_ID ) jc '+
   'left outer join VIW_CLIENTINFO c on jc.CLIENT_ID=c.CLIENT_ID and jc.TENANT_ID=c.TENANT_ID ) jd '+
-  'left outer join CA_SHOP_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.SHOP_ID=d.SHOP_ID ';
+  'left outer join CA_SHOP_INFO d on jd.TENANT_ID=d.TENANT_ID and jd.ACC_SHOP_ID=d.SHOP_ID ';
   IsSQLUpdate := True;
 end;
 

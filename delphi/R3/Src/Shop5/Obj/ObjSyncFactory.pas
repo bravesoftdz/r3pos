@@ -1622,7 +1622,7 @@ begin
    begin
      AGlobal.ExecSQL(
          'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预付款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''6'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预付款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''6'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
    end;
 end;
@@ -1649,6 +1649,7 @@ begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'STK_INDENTORDER';
+       MaxCol := RowAccessor.ColumnCount - 1;
      end;
   InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
@@ -1698,7 +1699,9 @@ function TSyncStkIndentOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  Str := 'select * from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID';
+  Str :=
+     'select j.*,a.ABLE_ID from ( '+
+     'select * from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID) j left outer join ACC_PAYABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.INDE_ID=a.STOCK_ID';
   SelectSQL.Text := Str;
 end;
 
@@ -1833,7 +1836,7 @@ begin
    begin
      AGlobal.ExecSQL(
          'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
    end;
 end;
@@ -1860,6 +1863,7 @@ begin
   if not Init then
      begin
        Params.ParamByName('TABLE_NAME').AsString := 'SAL_INDENTORDER';
+       MaxCol := RowAccessor.ColumnCount - 1;
      end;
   InitSQL(AGlobal,false);
   Comm := RowAccessor.GetString(COMMIdx,WasNull);
@@ -1909,7 +1913,9 @@ function TSyncSalIndentOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   Str:string;
 begin
-  Str := 'select * from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID';
+  Str :=
+     'select j.*,a.ABLE_ID from ( '+
+     'select * from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID) j left outer join ACC_RECVABLE_INFO a on j.TENANT_ID=a.TENANT_ID and j.INDE_ID=a.SALES_ID';
   SelectSQL.Text := Str;
 end;
 

@@ -1,8 +1,6 @@
 inherited frameOrderToolForm: TframeOrderToolForm
-  Left = 127
-  Top = 47
+  Left = 120
   Width = 870
-  Height = 533
   Caption = 'frameOrderToolForm'
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -11,13 +9,10 @@ inherited frameOrderToolForm: TframeOrderToolForm
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 854
-    Height = 458
     inherited RzPanel2: TRzPanel
       Width = 844
-      Height = 448
       inherited RzPage: TRzPageControl
         Width = 838
-        Height = 442
         Color = clWindow
         FlatColor = clBtnFace
         ParentColor = False
@@ -33,7 +28,6 @@ inherited frameOrderToolForm: TframeOrderToolForm
           Caption = #21333#25454#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
             Width = 836
-            Height = 415
             BorderShadow = clWindow
             Color = clWindow
             FlatColor = clWindow
@@ -89,16 +83,16 @@ inherited frameOrderToolForm: TframeOrderToolForm
   end
   inherited RzPanel4: TRzPanel
     Width = 854
-    inherited Image1: TImage
-      Left = 542
-      Width = 292
-    end
     inherited Image3: TImage
       Left = 542
-      Width = 292
+      Width = 0
     end
     inherited Image14: TImage
       Left = 834
+    end
+    inherited Image1: TImage
+      Left = 542
+      Width = 292
     end
     inherited rzPanel5: TPanel
       Left = 542

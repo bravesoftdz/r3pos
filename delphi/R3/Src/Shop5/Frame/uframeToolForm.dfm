@@ -1,21 +1,23 @@
 inherited frameToolForm: TframeToolForm
-  Left = 400
-  Width = 650
+  Left = 261
+  Top = 36
+  Width = 764
+  Height = 533
   Caption = #24037#20855#26465#29238#23376#31383#20307#27169#29256
   OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Top = 37
-    Width = 634
-    Height = 339
+    Width = 748
+    Height = 458
     BorderColor = clWhite
     BorderShadow = clWhite
     object RzPanel2: TRzPanel
       Left = 5
       Top = 5
-      Width = 624
-      Height = 329
+      Width = 738
+      Height = 448
       Align = alClient
       BorderOuter = fsNone
       BorderWidth = 3
@@ -23,8 +25,8 @@ inherited frameToolForm: TframeToolForm
       object RzPage: TRzPageControl
         Left = 3
         Top = 3
-        Width = 618
-        Height = 323
+        Width = 732
+        Height = 442
         ActivePage = TabSheet1
         Align = alClient
         TabHeight = 25
@@ -37,8 +39,8 @@ inherited frameToolForm: TframeToolForm
           object RzPanel3: TRzPanel
             Left = 0
             Top = 0
-            Width = 616
-            Height = 296
+            Width = 730
+            Height = 415
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -51,7 +53,7 @@ inherited frameToolForm: TframeToolForm
   object RzPanel4: TRzPanel [1]
     Left = 0
     Top = 0
-    Width = 634
+    Width = 748
     Height = 37
     Align = alTop
     BorderOuter = fsFlat
@@ -140,7 +142,7 @@ inherited frameToolForm: TframeToolForm
     object Image3: TImage
       Left = 581
       Top = 1
-      Width = 13
+      Width = 127
       Height = 36
       Align = alClient
       Picture.Data = {
@@ -217,7 +219,7 @@ inherited frameToolForm: TframeToolForm
       Stretch = True
     end
     object Image14: TImage
-      Left = 614
+      Left = 728
       Top = 1
       Width = 20
       Height = 36
@@ -296,7 +298,7 @@ inherited frameToolForm: TframeToolForm
         F9D16EF9D16EF9D06EF9D16EF9D16EF9D16E}
     end
     object Image1: TImage
-      Left = 594
+      Left = 708
       Top = 1
       Width = 20
       Height = 36

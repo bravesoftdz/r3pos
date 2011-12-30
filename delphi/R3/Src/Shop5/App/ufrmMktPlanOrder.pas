@@ -268,6 +268,7 @@ end;
 procedure TfrmMktPlanOrder.SaveOrder;
 var mny,bny,amt:real;
     R:Integer;
+    Params:TftParamList;
 begin
   inherited;
   Saved := false;
@@ -281,6 +282,7 @@ begin
   AObj.FieldByName('KPI_YEAR').AsInteger := edtKPI_YEAR.Value;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  AObj.FieldByName('PLAN_TYPE').AsInteger := 1;
 
   Factor.BeginBatch;
   try
@@ -315,9 +317,16 @@ begin
     cdsHeader.FieldbyName('BOND_MNY').asFloat := bny;
     cdsHeader.FieldbyName('PLAN_AMT').asFloat := amt;
     cdsHeader.Post;
-    Factor.AddBatch(cdsHeader,'TMktPlanOrder');
-    Factor.AddBatch(cdsDetail,'TMktPlanData');
-    Factor.CommitBatch;
+    Params := TftParamList.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+      Factor.AddBatch(cdsHeader,'TMktPlanOrder',Params);
+      Factor.AddBatch(cdsDetail,'TMktPlanData',Params);
+      Factor.CommitBatch;
+    finally
+      Params.Free;
+    end;
     Saved := true;
   except
     Factor.CancelBatch;

@@ -339,7 +339,7 @@ end;
 function TfrmMktPlanOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.PLAN_DATE>=:D1 and A.PLAN_DATE<=:D2 ';
+  w := ' where A.TENANT_ID=:TENANT_ID and PLAN_TYPE=1 and A.PLAN_DATE>=:D1 and A.PLAN_DATE<=:D2 ';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndDEPT_ID.AsString <> '' then

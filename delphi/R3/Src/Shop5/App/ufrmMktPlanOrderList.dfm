@@ -1,7 +1,7 @@
 inherited frmMktPlanOrderList: TfrmMktPlanOrderList
   Left = 256
   Top = 204
-  Caption = #38144#21806#35745#21010
+  Caption = #32463#38144#21512#21516
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -34,7 +34,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #20379' '#24212' '#21830
+                Caption = #32463' '#38144' '#21830
               end
               object RzLabel5: TRzLabel
                 Left = 33
@@ -42,7 +42,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #35745#21010#21333#21495
+                Caption = #21333'    '#21495
               end
               object Label1: TLabel
                 Left = 201
@@ -65,11 +65,11 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Caption = #25152#23646#37096#38376
               end
               object Label2: TLabel
-                Left = 42
+                Left = 34
                 Top = 24
-                Width = 36
+                Width = 48
                 Height = 12
-                Caption = #32463#25163#20154
+                Caption = #32463' '#25163' '#20154
               end
               object D1: TcxDateEdit
                 Left = 89
@@ -272,7 +272,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 118
-              Height = 259
+              Height = 248
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -335,21 +335,21 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                   EditButtons = <>
                   FieldName = 'PLAN_AMT'
                   Footers = <>
-                  Title.Caption = #25968#37327#27719#24635
+                  Title.Caption = #21512#35745#25968#37327
                   Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'PLAN_MNY'
                   Footers = <>
-                  Title.Caption = #37329#39069#27719#24635
+                  Title.Caption = #21512#35745#37329#39069
                   Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'BOND_MNY'
                   Footers = <>
-                  Title.Caption = #20445#35777#37329#24635#39069
+                  Title.Caption = #20445#35777#37329
                   Width = 70
                 end
                 item
@@ -394,27 +394,27 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 589
-      Width = 239
+      Left = 593
+      Width = 227
     end
     inherited rzPanel5: TPanel
-      Left = 589
+      Left = 593
     end
     inherited CoolBar1: TCoolBar
-      Width = 569
+      Width = 573
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 569
+          MinHeight = 573
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 569
+        Width = 573
         object ToolButton15: TToolButton
-          Left = 516
+          Left = 520
           Top = 0
           Width = 10
           Caption = 'ToolButton15'
@@ -422,7 +422,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
           Style = tbsDivider
         end
         object ToolButton16: TToolButton
-          Left = 526
+          Left = 530
           Top = 0
           Action = actExit
         end

@@ -652,8 +652,9 @@ function TfrmInLocusOrderList.EncodeSQL3(id: string): string;
 var w,w1:string;
 begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=2 and A.CHK_DATE is not null and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 and A.LOCUS_STATUS=''3'' ';
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-     w := w +' and A.CLIENT_ID='''+Global.SHOP_ID+'''';
+// 2011-12-22 启用数据权限了，这句可以不要了
+//  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+//     w := w +' and A.CLIENT_ID='''+Global.SHOP_ID+'''';
   if fndP3_CLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndP3_SHOP_ID.AsString <> '' then

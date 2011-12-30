@@ -1629,7 +1629,7 @@ end;
 
 function TfrmSalesOrder.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('12400001',10);
+  result:=(ShopGlobal.GetChkRight('12400001',9) or ShopGlobal.GetChkRight('12400001',10));
 end;
 
 procedure TfrmSalesOrder.IndeFrom(id: string);

@@ -3,7 +3,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
   Top = 159
   Width = 883
   Height = 524
-  Caption = #38144#21806#35745#21010
+  Caption = #32463#38144#21512#21516
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -16,10 +16,10 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Caption = #32463' '#25163' '#20154
   end
   inherited RzPanel1: TRzPanel
-    Width = 875
-    Height = 497
+    Width = 867
+    Height = 486
     inherited RzPanel2: TRzPanel
-      Width = 865
+      Width = 857
       Height = 121
       object RzLabel2: TRzLabel [0]
         Left = 451
@@ -309,8 +309,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 428
-      Width = 865
+      Top = 417
+      Width = 857
       Height = 45
       object RzLabel9: TRzLabel
         Left = 33
@@ -348,8 +348,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 126
-      Width = 865
-      Height = 302
+      Width = 857
+      Height = 291
       FrozenCols = 1
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
@@ -368,7 +368,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           FieldName = 'KPI_ID_TEXT'
           Footers = <>
           Title.Caption = #25351#26631#21517#31216
-          Width = 150
+          Width = 173
           Control = edtKPI_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
         end
@@ -378,7 +378,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #35745#21010#38144#37327
-          Width = 80
+          Width = 78
         end
         item
           EditButtons = <>
@@ -386,7 +386,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #35745#21010#37329#39069
-          Width = 80
+          Width = 78
         end
         item
           EditButtons = <>
@@ -394,24 +394,24 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #20445#35777#37329
-          Width = 80
+          Width = 75
         end
         item
           EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791'      '#27880
-          Width = 200
+          Width = 209
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 473
-      Width = 865
+      Top = 462
+      Width = 857
       Height = 0
     end
     inherited rzHelp: TRzPanel
-      Top = 473
-      Width = 865
+      Top = 462
+      Width = 857
       Height = 19
     end
     object edtKPI_ID: TzrComboBoxList

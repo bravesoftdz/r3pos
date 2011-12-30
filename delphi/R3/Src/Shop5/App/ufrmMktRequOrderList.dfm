@@ -7,16 +7,16 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Height = 473
+    Height = 462
     inherited RzPanel2: TRzPanel
-      Height = 463
+      Height = 452
       inherited RzPage: TRzPageControl
-        Height = 457
+        Height = 446
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36153#29992#30003#39046#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
-            Height = 430
+            Height = 419
             inherited RzPanel1: TRzPanel
               Height = 108
               object RzLabel2: TRzLabel
@@ -279,7 +279,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 113
-              Height = 312
+              Height = 301
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -360,27 +360,27 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 579
-      Width = 249
+      Left = 583
+      Width = 237
     end
     inherited rzPanel5: TPanel
-      Left = 579
+      Left = 583
     end
     inherited CoolBar1: TCoolBar
-      Width = 559
+      Width = 563
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 559
+          MinHeight = 563
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 559
+        Width = 563
         object ToolButton15: TToolButton
-          Left = 516
+          Left = 520
           Top = 0
           Action = actExit
         end

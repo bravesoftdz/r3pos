@@ -187,6 +187,8 @@ procedure TfrmKpiIndexInfo.Edit(code: string);
 begin
   Open(code);
   dbState := dsEdit;
+  if edtKPI_TYPE.ItemIndex in [0,1] then
+     edtKPI_LV.ItemIndex := 0;
   //edtKPI_TYPE.Properties.OnChange(nil);
 end;
 
@@ -315,141 +317,146 @@ begin
 
   //检测结束
   WriteToObject(Aobj,self);
+
   Filter := CdsKpiOption.Filter;
-  CdsKpiOption.Filtered := False;
-  if edtKPI_OPTN.Checked then
-  begin
-    CdsKpiOption.First;
-    while not CdsKpiOption.Eof do
-    begin
-      if not IsNull then
-         raise Exception.Create('"指标标准"页中有必填项不能为空!');
-      CdsKpiOption.Next;
-    end;
-  end;
-
-  Factor.BeginBatch;
   try
-    if dbState=dsInsert then
-    begin
-      CdsKpiIndex.Append;
-      Aobj.FieldByName('KPI_ID').AsString := TSequence.NewId;
-      Aobj.FieldByName('TENANT_ID').AsInteger := ShopGlobal.TENANT_ID;
-    end
-    else if dbState=dsEdit then
-      CdsKpiIndex.Edit;
-
-    Aobj.WriteToDataSet(CdsKpiIndex);
-    if edtKPI_OPTN.Checked then
-       CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '1'
-    else
-       CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '0';
-    CdsKpiIndex.Post;
+    CdsKpiOption.Filtered := False;
     if edtKPI_OPTN.Checked then
     begin
-      R1 := 0;
-      R2 := 0;
-      R3 := 0;
-      R4 := 0;
-      R5 := 0;
-      
       CdsKpiOption.First;
       while not CdsKpiOption.Eof do
       begin
-        if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 0 then
-        begin
-           Inc(R5);
-           R := R5;
-        end
-        else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 1 then
-        begin
-           Inc(R1);
-           R := R1;
-        end
-        else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 2 then
-        begin
-           Inc(R2);
-           R := R2;
-        end
-        else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 3 then
-        begin
-           Inc(R3);
-           R := R3;
-        end
-        else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 4 then
-        begin
-           Inc(R5);
-           R := R5;
-        end;
-        CdsKpiOption.Edit;
-        CdsKpiOption.FieldByName('SEQNO').AsInteger := R;
-        if CdsKpiOption.FieldByName('TENANT_ID').AsString = '' then
-          CdsKpiOption.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-        if CdsKpiOption.FieldByName('KPI_ID').AsString = '' then
-          CdsKpiOption.FieldByName('KPI_ID').AsString := CdsKpiIndex.FieldbyName('KPI_ID').AsString;
-        if edtKPI_DATA.ItemIndex in [0,1,2] then
-           CdsKpiOption.FieldByName('KPI_AMT').Value := null
-        else
-           CdsKpiOption.FieldByName('KPI_RATE').Value := null;
-
-        if edtKPI_TYPE.ItemIndex <> 2 then
-        begin
-           if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 1 then
-           begin
-              CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_1.BeginDate;
-              CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_1.EndDate;
-           end
-           else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 2 then
-           begin
-              CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_2.BeginDate;
-              CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_2.EndDate;
-           end
-           else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 3 then
-           begin
-              CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_3.BeginDate;
-              CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_3.EndDate;
-           end
-           else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 4 then
-           begin
-              CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_4.BeginDate;
-              CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_4.EndDate;
-           end;
-        end;
-        CdsKpiOption.Post;
+        if not IsNull then
+           raise Exception.Create('"指标标准"页中有必填项不能为空!');
         CdsKpiOption.Next;
       end;
-
-    end
-    else
-    begin
-      if not CdsKpiOption.IsEmpty then
-         begin
-           CdsKpiOption.First;
-           while not CdsKpiOption.Eof do
-             CdsKpiOption.Delete;
-         end;
     end;
 
-    CdsKpiGoods.First;
-    while not CdsKpiGoods.Eof do
-    begin
-      CdsKpiGoods.Edit;
-      if CdsKpiGoods.FieldByName('TENANT_ID').AsString = '' then
-        CdsKpiGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      if CdsKpiGoods.FieldByName('KPI_ID').AsString = '' then
-        CdsKpiGoods.FieldByName('KPI_ID').AsString := CdsKpiIndex.FieldbyName('KPI_ID').AsString;
+    Factor.BeginBatch;
+    try
+      if dbState=dsInsert then
+      begin
+        CdsKpiIndex.Append;
+        Aobj.FieldByName('KPI_ID').AsString := TSequence.NewId;
+        Aobj.FieldByName('TENANT_ID').AsInteger := ShopGlobal.TENANT_ID;
+      end
+      else if dbState=dsEdit then
+        CdsKpiIndex.Edit;
 
-      CdsKpiGoods.Post;
-      CdsKpiGoods.Next;
+      Aobj.WriteToDataSet(CdsKpiIndex);
+      if edtKPI_OPTN.Checked then
+         CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '1'
+      else
+         CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '0';
+      CdsKpiIndex.Post;
+      if edtKPI_OPTN.Checked then
+      begin
+        R1 := 0;
+        R2 := 0;
+        R3 := 0;
+        R4 := 0;
+        R5 := 0;
+      
+        CdsKpiOption.First;
+        while not CdsKpiOption.Eof do
+        begin
+          if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 0 then
+          begin
+             Inc(R5);
+             R := R5;
+          end
+          else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 1 then
+          begin
+             Inc(R1);
+             R := R1;
+          end
+          else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 2 then
+          begin
+             Inc(R2);
+             R := R2;
+          end
+          else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 3 then
+          begin
+             Inc(R3);
+             R := R3;
+          end
+          else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 4 then
+          begin
+             Inc(R5);
+             R := R5;
+          end;
+          CdsKpiOption.Edit;
+          CdsKpiOption.FieldByName('SEQNO').AsInteger := R;
+          if CdsKpiOption.FieldByName('TENANT_ID').AsString = '' then
+            CdsKpiOption.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+          if CdsKpiOption.FieldByName('KPI_ID').AsString = '' then
+            CdsKpiOption.FieldByName('KPI_ID').AsString := CdsKpiIndex.FieldbyName('KPI_ID').AsString;
+          if edtKPI_DATA.ItemIndex in [0,1,2] then
+             CdsKpiOption.FieldByName('KPI_AMT').Value := null
+          else
+             CdsKpiOption.FieldByName('KPI_RATE').Value := null;
+
+          if edtKPI_TYPE.ItemIndex <> 2 then
+          begin
+             if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 1 then
+             begin
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_1.BeginDate;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_1.EndDate;
+             end
+             else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 2 then
+             begin
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_2.BeginDate;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_2.EndDate;
+             end
+             else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 3 then
+             begin
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_3.BeginDate;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_3.EndDate;
+             end
+             else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 4 then
+             begin
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_4.BeginDate;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_4.EndDate;
+             end;
+          end;
+          CdsKpiOption.Post;
+          CdsKpiOption.Next;
+        end;
+
+      end
+      else
+      begin
+        if not CdsKpiOption.IsEmpty then
+           begin
+             CdsKpiOption.First;
+             while not CdsKpiOption.Eof do
+               CdsKpiOption.Delete;
+           end;
+      end;
+
+      CdsKpiGoods.First;
+      while not CdsKpiGoods.Eof do
+      begin
+        CdsKpiGoods.Edit;
+        if CdsKpiGoods.FieldByName('TENANT_ID').AsString = '' then
+          CdsKpiGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        if CdsKpiGoods.FieldByName('KPI_ID').AsString = '' then
+          CdsKpiGoods.FieldByName('KPI_ID').AsString := CdsKpiIndex.FieldbyName('KPI_ID').AsString;
+
+        CdsKpiGoods.Post;
+        CdsKpiGoods.Next;
+      end;
+
+      Factor.AddBatch(CdsKpiIndex,'TKpiIndex');
+      Factor.AddBatch(CdsKpiOption,'TKpiOption');
+      Factor.AddBatch(CdsKpiGoods,'TKpiGoods');
+      Factor.CommitBatch;
+    except
+      Factor.CancelBatch;
+      CdsKpiIndex.CancelUpdates;
+
     end;
-
-    Factor.AddBatch(CdsKpiIndex,'TKpiIndex');
-    Factor.AddBatch(CdsKpiOption,'TKpiOption');
-    Factor.AddBatch(CdsKpiGoods,'TKpiGoods');
-    Factor.CommitBatch;
-  except
-    Factor.CancelBatch;
-    CdsKpiIndex.CancelUpdates;
+  finally
     CdsKpiOption.Filtered := False;
     CdsKpiOption.Filter := Filter;
     CdsKpiOption.Filtered := True;
@@ -518,31 +525,11 @@ end;
 procedure TfrmKpiIndexInfo.edtKPI_TYPEPropertiesChange(Sender: TObject);
 begin
   inherited;
-  //if CdsKpiOption.RecordCount > 0 then Raise Exception.Create('');
-
-  {if (CdsKpiOption.RecordCount > 0) and Visible then
-  begin
-     if MessageBox(Handle,pchar('确认要改变当前考核类型,指标将被清除?'),pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION) <> 6 then
-        Exit
-     else
-     begin
-        CdsKpiOption.First;
-        while not CdsKpiOption.Eof do
-          CdsKpiOption.Delete;
-     end;
-  end;}
-
   if edtKPI_TYPE.ItemIndex = 2 then
   begin
      DBGridEh1.Columns[1].Visible := True;
      DBGridEh1.Columns[2].Visible := True;
      RzPanel3.Visible := False;
-
-     {if Visible then
-     begin
-       DBGridEh1.SetFocus;
-       DBGridEh1.Col := 1;
-     end;}
   end
   else
   begin
@@ -550,8 +537,7 @@ begin
      DBGridEh1.Columns[2].Visible := False;
      RzPanel3.Visible := True;
      AddItem;
-     edtKPI_LV.ItemIndex := CdsKpiOption.FieldByName('KPI_LV').AsInteger-1;
-     edtKPI_LV.Properties.OnChange(nil);
+     edtKPI_LV.ItemIndex := 0;
      {if Visible then
      begin
        DBGridEh1.SetFocus;
@@ -1270,6 +1256,7 @@ var Date1,Date2:Integer;
 begin
   inherited;
   if edtKPI_LV.ItemIndex = -1 then Exit;
+  if CdsKpiOption.State in [dsEdit,dsInsert] then CdsKpiOption.Post;
   CdsKpiOption.Filtered := False;
   CdsKpiOption.Filter := ' KPI_LV='''+IntToStr(edtKPI_LV.ItemIndex+1)+'''';
   CdsKpiOption.Filtered := True;
@@ -1383,7 +1370,10 @@ end;
 procedure TfrmKpiIndexInfo.edtKPI_TYPEEnter(Sender: TObject);
 begin
   inherited;
-  if not CdsKpiOption.IsEmpty then Exit;
+  if not CdsKpiOption.IsEmpty then
+     edtKPI_TYPE.Properties.ReadOnly := True
+  else
+     edtKPI_TYPE.Properties.ReadOnly := False;
 end;
 
 end.

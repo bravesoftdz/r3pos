@@ -372,13 +372,13 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 Color = clWhite
                 TabOrder = 3
                 object RzLabel7: TRzLabel
-                  Left = 174
+                  Left = 221
                   Top = 17
                   Width = 60
                   Height = 12
                   Alignment = taRightJustify
                   AutoSize = False
-                  Caption = #24320#22987#26085#26399
+                  Caption = #26102#38388#27573
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
@@ -387,13 +387,13 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   ParentFont = False
                 end
                 object RzLabel8: TRzLabel
-                  Left = 332
+                  Left = 389
                   Top = 17
-                  Width = 60
+                  Width = 8
                   Height = 12
                   Alignment = taRightJustify
                   AutoSize = False
-                  Caption = #32467#26463#26085#26399
+                  Caption = '-'
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clBlack
                   Font.Height = -12
@@ -426,7 +426,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   TabOrder = 0
                 end
                 object D1: TcxDateEdit
-                  Left = 239
+                  Left = 286
                   Top = 12
                   Width = 100
                   Height = 20
@@ -434,7 +434,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   TabOrder = 1
                 end
                 object D2: TcxDateEdit
-                  Left = 396
+                  Left = 400
                   Top = 12
                   Width = 100
                   Height = 20

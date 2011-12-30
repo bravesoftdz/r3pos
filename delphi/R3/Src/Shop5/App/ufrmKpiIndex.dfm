@@ -4,6 +4,7 @@ inherited frmKpiIndex: TfrmKpiIndex
   Width = 1008
   Height = 573
   Caption = #32771#26680#25351#26631#31649#29702
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel

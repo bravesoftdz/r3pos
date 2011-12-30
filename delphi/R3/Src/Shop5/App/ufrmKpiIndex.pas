@@ -53,6 +53,7 @@ type
     procedure actInfoExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     function CheckCanExport:Boolean;
@@ -64,7 +65,8 @@ type
 
 
 implementation
-uses ufrmKpiIndexInfo,uGlobal,uShopGlobal, ufrmBasic, ufrmEhLibReport;
+uses ufrmKpiIndexInfo,uGlobal,uShopGlobal, ufrmBasic, ufrmEhLibReport,
+  uframeMDForm;
 {$R *.dfm}
 
 procedure TfrmKpiIndex.actNewExecute(Sender: TObject);
@@ -263,6 +265,12 @@ begin
 
   PrintView;
   PrintDBGridEh1.Print;
+end;
+
+procedure TfrmKpiIndex.FormShow(Sender: TObject);
+begin
+  inherited;
+  actFind.OnExecute(nil);
 end;
 
 end.

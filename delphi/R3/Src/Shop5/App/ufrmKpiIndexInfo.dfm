@@ -1,6 +1,6 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 535
-  Top = 223
+  Left = 594
+  Top = 169
   Caption = #32771#26680#25351#26631
   ClientHeight = 368
   ClientWidth = 529
@@ -236,9 +236,9 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               Caption = 'P1'
               object DBGridEh1: TDBGridEh
                 Left = 0
-                Top = 0
+                Top = 41
                 Width = 505
-                Height = 171
+                Height = 130
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_KpiOption
@@ -339,7 +339,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               end
               object edtEndDate: TcxDateEdit
                 Left = 120
-                Top = 72
+                Top = 80
                 Width = 99
                 Height = 20
                 Properties.OnChange = edtEndDatePropertiesChange
@@ -349,8 +349,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 OnExit = edtEndDateExit
               end
               object edtBeginDate: TcxDateEdit
-                Left = 40
-                Top = 48
+                Left = 16
+                Top = 80
                 Width = 97
                 Height = 20
                 Properties.OnChange = edtBeginDatePropertiesChange
@@ -360,6 +360,87 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 OnExit = edtBeginDateExit
                 OnKeyDown = edtBeginDateKeyDown
                 OnKeyPress = edtBeginDateKeyPress
+              end
+              object RzPanel3: TRzPanel
+                Left = 0
+                Top = 0
+                Width = 505
+                Height = 41
+                Align = alTop
+                BorderOuter = fsNone
+                BorderWidth = 1
+                Color = clWhite
+                TabOrder = 3
+                object RzLabel7: TRzLabel
+                  Left = 174
+                  Top = 17
+                  Width = 60
+                  Height = 12
+                  Alignment = taRightJustify
+                  AutoSize = False
+                  Caption = #24320#22987#26085#26399
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                end
+                object RzLabel8: TRzLabel
+                  Left = 332
+                  Top = 17
+                  Width = 60
+                  Height = 12
+                  Alignment = taRightJustify
+                  AutoSize = False
+                  Caption = #32467#26463#26085#26399
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                end
+                object labKPI_LV: TRzLabel
+                  Left = 10
+                  Top = 17
+                  Width = 40
+                  Height = 12
+                  Alignment = taRightJustify
+                  AutoSize = False
+                  Caption = #24180#24230
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                end
+                object edtKPI_LV: TcxComboBox
+                  Left = 55
+                  Top = 12
+                  Width = 100
+                  Height = 20
+                  Properties.DropDownListStyle = lsFixedList
+                  Properties.OnChange = edtKPI_LVPropertiesChange
+                  TabOrder = 0
+                end
+                object D1: TcxDateEdit
+                  Left = 239
+                  Top = 12
+                  Width = 100
+                  Height = 20
+                  Properties.OnChange = D1PropertiesChange
+                  TabOrder = 1
+                end
+                object D2: TcxDateEdit
+                  Left = 396
+                  Top = 12
+                  Width = 100
+                  Height = 20
+                  Properties.OnChange = D2PropertiesChange
+                  TabOrder = 2
+                end
               end
             end
           end
@@ -551,6 +632,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = edtKPI_TYPEPropertiesChange
       TabOrder = 2
+      OnEnter = edtKPI_TYPEEnter
     end
     object edtIDX_TYPE: TcxComboBox
       Left = 113

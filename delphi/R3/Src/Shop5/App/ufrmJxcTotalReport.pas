@@ -359,6 +359,7 @@ end;
 procedure TfrmJxcTotalReport.actFindExecute(Sender: TObject);
 var
   strSql: string;
+  strList: TStringList;
 begin
   case rzPage.ActivePageIndex of
     0:begin //按地区汇总表
@@ -389,6 +390,13 @@ begin
         strSql := GetGodsSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
+        try
+          strList:=TStringList.Create;
+          strList.Add(strSql);
+          strList.SaveToFile('c:\SQL.txt'); 
+        finally
+          strList.Free;
+        end;
         Factor.Open(adoReport4);
         dsadoReport4.DataSet:=nil;
         DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME',

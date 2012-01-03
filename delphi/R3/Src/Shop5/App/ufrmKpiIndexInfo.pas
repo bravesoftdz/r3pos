@@ -188,8 +188,10 @@ begin
   Open(code);
   dbState := dsEdit;
   if edtKPI_TYPE.ItemIndex in [0,1] then
+  begin
      edtKPI_LV.ItemIndex := 0;
-  //edtKPI_TYPE.Properties.OnChange(nil);
+     edtKPI_LV.Properties.OnChange(nil);
+  end;
 end;
 
 class function TfrmKpiIndexInfo.EditDialog(Owner: TForm; id: string;
@@ -530,12 +532,26 @@ begin
      DBGridEh1.Columns[1].Visible := True;
      DBGridEh1.Columns[2].Visible := True;
      RzPanel3.Visible := False;
+     CdsKpiOption.Filtered := False;
+     CdsKpiOption.Filter := '';
+     if dbState <> dsBrowse then
+     begin
+       CdsKpiOption.First;
+       while not CdsKpiOption.Eof do CdsKpiOption.Delete;
+     end;
   end
   else
   begin
      DBGridEh1.Columns[1].Visible := False;
      DBGridEh1.Columns[2].Visible := False;
      RzPanel3.Visible := True;
+     CdsKpiOption.Filtered := False;
+     CdsKpiOption.Filter := '';
+     if dbState <> dsBrowse then
+     begin
+       CdsKpiOption.First;
+       while not CdsKpiOption.Eof do CdsKpiOption.Delete;
+     end;
      AddItem;
      edtKPI_LV.ItemIndex := 0;
      {if Visible then
@@ -1370,10 +1386,10 @@ end;
 procedure TfrmKpiIndexInfo.edtKPI_TYPEEnter(Sender: TObject);
 begin
   inherited;
-  if not CdsKpiOption.IsEmpty then
+  {if not CdsKpiOption.IsEmpty then
      edtKPI_TYPE.Properties.ReadOnly := True
   else
-     edtKPI_TYPE.Properties.ReadOnly := False;
+     edtKPI_TYPE.Properties.ReadOnly := False; }
 end;
 
 end.

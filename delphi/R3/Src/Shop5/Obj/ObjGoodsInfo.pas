@@ -144,7 +144,7 @@ var
   vParam : TftParamList; 
 begin
   result:=true;
-  if trim(FieldByName('RELATION_ID').AsString)='0' then //自主创建才进行写条码
+  if trim(FieldByName('RELATION_ID').AsString)='0' then //自主创建更新商品最低价
   begin
     Str:=
       'Update PUB_GOODSINFO Set GODS_CODE=:GODS_CODE,GODS_NAME=:GODS_NAME,GODS_SPELL=:GODS_SPELL,GODS_TYPE=:GODS_TYPE,SORT_ID1=:SORT_ID1,'+
@@ -158,8 +158,15 @@ begin
       'COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
       ' Where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID ';
     AGlobal.ExecSQL(Str,self);
+  end else  //2011.12.06加盟经营则更新加盟对照表: PUB_GOODS_RELATION
+  begin
+    //更新本店定价:
+    Str:='update PUB_GOODS_RELATION set NEW_LOWPRICE=:NEW_LOWPRICE,COMM='+ GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+         ' Where TENANT_ID=:OLD_TENANT_ID and RELATION_ID=:OLD_RELATION_ID and GODS_ID=:OLD_GODS_ID ';
+    AGlobal.ExecSQL(Str,self);
   end;
-  
+
+
   //更新最新进价有变化时，更新到商品扩展表：
   if FieldbyName('NEW_INPRICE').AsFloat<>FieldbyName('NEW_INPRICE').AsOldFloat then
   begin

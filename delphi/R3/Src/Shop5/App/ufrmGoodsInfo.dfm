@@ -1,5 +1,5 @@
 inherited frmGoodsInfo: TfrmGoodsInfo
-  Left = 579
+  Left = 444
   Top = 199
   ActiveControl = edtGODS_CODE
   Caption = #21830#21697#26723#26696

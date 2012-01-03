@@ -189,6 +189,7 @@ type
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure N1Click(Sender: TObject);
   private
+    InputMode : Integer;   //输入模式
     DropUNITS_Ds: TZQuery;
     FPriceChange: Boolean;  //会员价是否编辑过
     FSortID: string;      //Append传入的SortID值
@@ -224,6 +225,7 @@ type
     procedure ExtGridFocusNextColumn; //移行
 
     procedure UpdateToGlobal(AObj:TRecord_); //更新Global
+    procedure SetInputMode;  //设置默认聚焦;
   public
      //SEQNO控制号
      RowID:integer;
@@ -396,6 +398,8 @@ begin
   SetCol:=FindColumn(self.ExtBarCodeGrid, 'UNIT_ID');
   if SetCol<>nil then
     fndUNIT_ID.DropWidth:=SetCol.Width+17;
+  //输入模式
+  InputMode:=StrtoIntDef(ShopGlobal.GetParameter('INPUT_MODE'),0);
 end;
 
 procedure TfrmGoodsInfo.FormDestroy(Sender: TObject);
@@ -682,16 +686,9 @@ begin
         edtGODS_CODE.Text := '自动编号';
         edtBARCODE1.Text := '自编条码';
         if CLVersion='OHR'  then
-        begin
-          if edtBARCODE1.CanFocus then edtBARCODE1.SetFocus;
-        end else
-        begin
-          if edtGODS_CODE.CanFocus then
-          begin
-            edtGODS_CODE.SetFocus;
-            edtGODS_CODE.SelectAll;
-          end;
-        end;
+          SetInputMode
+        else
+          SetInputMode;
       finally
         AObj1.Free;
       end;
@@ -841,16 +838,13 @@ begin
   inherited;
   if dbState=dsBrowse then
   begin
-    if edtGODS_CODE.CanFocus then  edtGODS_CODE.SetFocus;
+    SetInputMode;
   end else
   begin
     if CLVersion='OHR' then
-    begin
-      if edtBARCODE1.CanFocus then edtBARCODE1.SetFocus;
-    end else
-    begin
-      if edtGODS_CODE.CanFocus then  edtGODS_CODE.SetFocus;
-    end;
+      SetInputMode
+    else
+      SetInputMode;
   end;
 end;
 
@@ -1315,7 +1309,9 @@ begin
 end;
 
 procedure TfrmGoodsInfo.EditPrice(NotChangPrice: Boolean);
-var i:integer;
+var
+  i:integer;
+  Rs: TZQuery; 
 begin
   for i := 0 to ComponentCount-1 do
   begin
@@ -1377,6 +1373,20 @@ begin
 
   //供应链企业统一定价则退出
   if NotChangPrice then Exit;
+  //2011.12.06判断企业是否经销商(TENANT_TYPE=2);
+  Rs:=Global.GetZQueryFromName('CA_TENANT');
+  if (Rs<>nil) and (Rs.Active) then
+  begin
+    if Rs.Locate('TENANT_ID',Global.TENANT_ID,[]) then
+    begin
+      if trim(Rs.FieldByName('TENANT_TYPE').AsString)='2' then //经销商
+      begin
+        SetEditStyle(dsEdit,edtNEW_LOWPRICE.Style);
+        edtNEW_LOWPRICE.Properties.ReadOnly:=False;
+      end;
+    end;
+  end;
+  
 
   SetEditStyle(dsEdit,edtMY_OUTPRICE.Style);
   edtMY_OUTPRICE.Properties.ReadOnly:=False;
@@ -3144,6 +3154,28 @@ begin
   edtSORT_ID7.Text:='无';
   edtSORT_ID8.KeyValue:='#';
   edtSORT_ID8.Text:='无';
+end;
+
+procedure TfrmGoodsInfo.SetInputMode;
+begin
+  case InputMode of
+   0:
+    begin
+      if edtBARCODE1.CanFocus then
+      begin
+        edtBARCODE1.SetFocus;
+        edtBARCODE1.SelectAll;
+      end;
+    end;
+   1:
+    begin
+      if edtGODS_CODE.CanFocus then
+      begin
+        edtGODS_CODE.SetFocus;
+        edtGODS_CODE.SelectAll;
+      end;
+    end;
+  end;
 end;
 
 end.

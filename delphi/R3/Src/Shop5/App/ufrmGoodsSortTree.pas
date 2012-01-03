@@ -564,7 +564,11 @@ begin
         ShowModal;
         if ModalResult=MROK then
         begin
-          TRecord_(rzTree.Selected.Data).CopyTo(AObj);
+          if (rzTree.Items.Count>0) and (rzTree.Selected<>nil) then
+          begin
+            if rzTree.Selected.Data<>nil then
+              TRecord_(rzTree.Selected.Data).CopyTo(AObj);
+          end;
           result :=True;
         end
         else

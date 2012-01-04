@@ -102,6 +102,10 @@ type
     RzLabel33: TRzLabel;
     cdsCustomerExt: TZQuery;
     RzLabel34: TRzLabel;
+    CustSalesList: TZQuery;
+    DsCustSalesList: TDataSource;
+    TabSalesList: TRzTabSheet;
+    DBGridEh5: TDBGridEh;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -125,11 +129,17 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure cmbCUST_CODEPropertiesChange(Sender: TObject);
+    procedure DBGridEh5GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
+    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
-    { Private declarations }
     function GetCheckNo:string;
     function FindColumn(Grid:TDBGridEh;ColumnName:String):TColumnEh;
     procedure InitGrid;
+    procedure OpenCustSaleRecordList(CustID: string);  //打开最近90天消费记录
   public
     { Public declarations }
     Aobj:TRecord_;
@@ -153,7 +163,7 @@ type
 
 implementation
 uses uDsUtil, uGlobal, uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmPriceGradeInfo,ufrmshopinfo,ufrmNewCard,
-  Math, EncDec, ufrmBasic;
+  Math, EncDec, ufrmBasic,ObjCommon;
 
 {$R *.dfm}
 
@@ -237,6 +247,9 @@ begin
   finally
     Params.Free;
   end;
+  
+  if TabSalesList.TabVisible then
+    TabSalesList.PageIndex:=RzPage.PageCount-1;
 end;
 
 procedure TfrmCustomerInfo.Save;
@@ -515,6 +528,9 @@ begin
       //cdsUnionCard.ReadOnly := True;   
     end;
   end;
+  TabSalesList.TabVisible:=(Value<>dsInsert);
+  if TabSalesList.PageIndex<>RzPage.PageCount-1 then
+    TabSalesList.PageIndex:=RzPage.PageCount-1;
 end;
 
 procedure TfrmCustomerInfo.FormShow(Sender: TObject);
@@ -665,9 +681,18 @@ begin
 end;
 
 procedure TfrmCustomerInfo.RzPageChange(Sender: TObject);
-var Params:TftParamList;
+var
+  CustID: string;
+  Params:TftParamList;
 begin
   inherited;
+  if (TabSalesList.TabVisible) and (RzPage.ActivePage=TabSalesList) and (cdsTable.Active) then
+  begin
+    CustID:=trim(cdsTable.fieldbyName('CUST_ID').AsString);
+    if (CustID<>'') and (not CustSalesList.Active)  then
+      OpenCustSaleRecordList(CustID);
+  end;
+
   if RzPage.ActivePageIndex=2 then
   begin
 
@@ -1055,6 +1080,84 @@ begin
         Free;
       end;
     end;
+end;
+
+procedure TfrmCustomerInfo.OpenCustSaleRecordList(CustID: string);
+var
+  strSql,strWhere: string;
+begin
+  //过滤企业及数据权限:
+  strWhere:=' where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  //日期最近90天
+  strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',IncMonth(Date(),-3))+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',Date())+' ';
+  //客户ID
+  strWhere := strWhere + ' and isnull(D.CLIENT_ID,'''')='''+CustID+''' ';
+
+  strSql :=
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID '+
+    ',A.UNIT_ID '+
+    ',A.SALES_DATE '+
+    ',A.CLIENT_ID '+
+    ',A.CREA_DATE '+
+    ',A.CREA_USER '+
+    ',A.SHOP_ID '+
+    ',A.GUIDE_USER '+
+    ',A.SALES_TYPE '+
+    ',A.AMOUNT '+
+    ',A.APRICE '+      //零售价
+    ',A.CALC_MONEY as AMONEY '+
+    ' from VIW_SALESDATA A '+
+    '  left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    ' '+ strWhere + ' ';
+    
+  strSql:=
+    'select j.* '+
+    ',e.USER_NAME as CREA_USER_TEXT '+
+    ',u.UNIT_NAME as UNIT_NAME '+
+    ',r.GODS_CODE as GODS_CODE,r.GODS_NAME as GODS_NAME '+
+    'from ('+strSql+') j '+
+    ' inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
+    ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
+    ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID ';
+  strSql :=ParseSQL(Factor.iDbType, strSql);
+  strSql := strSql + ' order by j.SALES_DATE';
+
+  CustSalesList.Close;
+  CustSalesList.SQL.Text:=strSql;
+  Factor.Open(CustSalesList);
+end;
+
+procedure TfrmCustomerInfo.DBGridEh5GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'SALES_DATE' then Text := '合计:'+Text+'笔';
+end;
+
+procedure TfrmCustomerInfo.DBGridEh5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var
+  ARect:TRect;
+begin
+  if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
+  if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
+
+  if (Rect.Top = Column.Grid.CellRect(Column.Grid.Col, Column.Grid.Row).Top) and
+     (not (gdFocused in State) or not Column.Grid.Focused) then
+  begin
+    Column.Grid.Canvas.Brush.Color := clAqua;   //选中颜色状态
+  end;
+  Column.Grid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;  
 end;
 
 end.

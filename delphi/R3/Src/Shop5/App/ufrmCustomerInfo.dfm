@@ -1,6 +1,6 @@
 inherited frmCustomerInfo: TfrmCustomerInfo
-  Left = 509
-  Top = 135
+  Left = 342
+  Top = 169
   Caption = #20250#21592#26723#26696
   ClientHeight = 414
   ClientWidth = 535
@@ -139,7 +139,9 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 525
       Height = 212
+      ActivePage = TabSalesList
       Align = alBottom
+      TabIndex = 3
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -837,6 +839,127 @@ inherited frmCustomerInfo: TfrmCustomerInfo
             end>
         end
       end
+      object TabSalesList: TRzTabSheet
+        Color = clWhite
+        Caption = #26368#36817'90'#22825#28040#36153#35760#24405
+        object DBGridEh5: TDBGridEh
+          Left = 0
+          Top = 0
+          Width = 521
+          Height = 185
+          Align = alClient
+          AllowedOperations = []
+          Color = clWhite
+          Ctl3D = True
+          DataSource = DsCustSalesList
+          FixedColor = clWhite
+          Flat = True
+          Font.Charset = GB2312_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          FooterColor = clWindow
+          FooterFont.Charset = GB2312_CHARSET
+          FooterFont.Color = clWindowText
+          FooterFont.Height = -12
+          FooterFont.Name = #23435#20307
+          FooterFont.Style = []
+          FooterRowCount = 1
+          FrozenCols = 2
+          ImeName = #26497#21697#20116#31508#36755#20837#27861
+          Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+          ParentCtl3D = False
+          ParentFont = False
+          ReadOnly = True
+          RowHeight = 20
+          SumList.Active = True
+          TabOrder = 0
+          TitleFont.Charset = GB2312_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -12
+          TitleFont.Name = #23435#20307
+          TitleFont.Style = []
+          TitleHeight = 20
+          UseMultiTitle = True
+          IsDrawNullRow = False
+          CurrencySymbol = #65509
+          DecimalNumber = 2
+          DigitalNumber = 12
+          OnDrawColumnCell = DBGridEh5DrawColumnCell
+          OnGetFooterParams = DBGridEh5GetFooterParams
+          Columns = <
+            item
+              Alignment = taCenter
+              EditButtons = <>
+              FieldName = 'SEQNO'
+              Footers = <>
+              Title.Caption = #24207#21495
+              Width = 30
+            end
+            item
+              DisplayFormat = '0000-00-00'
+              EditButtons = <>
+              FieldName = 'SALES_DATE'
+              Footer.ValueType = fvtCount
+              Footers = <>
+              Title.Caption = #26085#26399
+              Width = 70
+            end
+            item
+              EditButtons = <>
+              FieldName = 'GODS_NAME'
+              Footers = <>
+              Title.Caption = #21830#21697#21517#31216
+              Width = 126
+            end
+            item
+              EditButtons = <>
+              FieldName = 'UNIT_NAME'
+              Footers = <>
+              Title.Caption = #21333#20301
+              Width = 30
+            end
+            item
+              Alignment = taRightJustify
+              DisplayFormat = '#0.###'
+              EditButtons = <>
+              FieldName = 'AMOUNT'
+              Footer.DisplayFormat = '#0.###'
+              Footer.ValueType = fvtSum
+              Footers = <>
+              Title.Caption = #25968#37327
+              Width = 56
+            end
+            item
+              Alignment = taRightJustify
+              DisplayFormat = '#0.00#'
+              EditButtons = <>
+              FieldName = 'APRICE'
+              Footers = <>
+              Title.Caption = #38646#21806#20215
+              Width = 66
+            end
+            item
+              Alignment = taRightJustify
+              DisplayFormat = '#0.00'
+              EditButtons = <>
+              FieldName = 'AMONEY'
+              Footer.DisplayFormat = '#0.00'
+              Footer.ValueType = fvtSum
+              Footers = <>
+              Title.Caption = #38144#21806#39069
+            end
+            item
+              EditButtons = <>
+              FieldName = 'CREA_USER_TEXT'
+              Footers = <>
+              Title.Caption = #21046#21333#20154
+              Width = 53
+            end>
+        end
+      end
     end
     inherited btPanel: TRzPanel
       Top = 374
@@ -1373,5 +1496,17 @@ inherited frmCustomerInfo: TfrmCustomerInfo
     Params = <>
     Left = 370
     Top = 310
+  end
+  object CustSalesList: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 442
+    Top = 206
+  end
+  object DsCustSalesList: TDataSource
+    DataSet = CustSalesList
+    Left = 475
+    Top = 205
   end
 end

@@ -1,8 +1,8 @@
 object frmMMPlayer: TfrmMMPlayer
-  Left = 283
-  Top = 132
-  Width = 577
-  Height = 461
+  Left = 485
+  Top = 237
+  Width = 715
+  Height = 459
   Caption = #35270#23631#24191#21578
   Color = clBtnFace
   Font.Charset = GB2312_CHARSET
@@ -12,24 +12,25 @@ object frmMMPlayer: TfrmMMPlayer
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
+  OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   object Splitter1: TSplitter
-    Left = 416
+    Left = 554
     Top = 0
     Width = 5
-    Height = 325
+    Height = 323
     Align = alRight
     Color = clGray
     ParentColor = False
   end
   object Panel1: TPanel
     Left = 0
-    Top = 361
-    Width = 561
+    Top = 359
+    Width = 699
     Height = 42
     Align = alBottom
     TabOrder = 0
@@ -232,15 +233,15 @@ object frmMMPlayer: TfrmMMPlayer
   end
   object Panel3: TPanel
     Left = 0
-    Top = 325
-    Width = 561
+    Top = 323
+    Width = 699
     Height = 36
     Align = alBottom
     TabOrder = 1
     object DSTrackBar1: TDSTrackBar
       Left = 1
       Top = 1
-      Width = 559
+      Width = 697
       Height = 34
       Align = alClient
       Ctl3D = True
@@ -253,10 +254,10 @@ object frmMMPlayer: TfrmMMPlayer
     end
   end
   object Panel4: TPanel
-    Left = 421
+    Left = 559
     Top = 0
     Width = 140
-    Height = 325
+    Height = 323
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
@@ -264,7 +265,7 @@ object frmMMPlayer: TfrmMMPlayer
       Left = 0
       Top = 0
       Width = 140
-      Height = 325
+      Height = 323
       Align = alClient
       BorderStyle = bsNone
       Color = clBlack
@@ -283,8 +284,8 @@ object frmMMPlayer: TfrmMMPlayer
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 416
-    Height = 325
+    Width = 554
+    Height = 323
     Align = alClient
     BevelOuter = bvNone
     Caption = #27491#22312#25773#25918#24191#21578
@@ -299,8 +300,8 @@ object frmMMPlayer: TfrmMMPlayer
     object DSVideoWindowEx1: TDSVideoWindowEx2
       Left = 0
       Top = 0
-      Width = 416
-      Height = 325
+      Width = 554
+      Height = 323
       AspectRatio = rmStretched
       AutoHideCursor = 0
       DigitalZoom = 0
@@ -320,12 +321,12 @@ object frmMMPlayer: TfrmMMPlayer
       Align = alClient
       OnDblClick = DSVideoWindowEx1DblClick
       DesignSize = (
-        416
-        325)
+        554
+        323)
       object RzMarqueeStatus1: TRzMarqueeStatus
         Left = 14
-        Top = 266
-        Width = 392
+        Top = 285
+        Width = 596
         Height = 44
         BorderWidth = 0
         FrameStyle = fsNone
@@ -341,7 +342,7 @@ object frmMMPlayer: TfrmMMPlayer
         ScrollDelay = 10
       end
       object Panel5: TPanel
-        Left = 346
+        Left = 486
         Top = 6
         Width = 65
         Height = 17
@@ -357,8 +358,8 @@ object frmMMPlayer: TfrmMMPlayer
         TabOrder = 0
       end
       object RzPanel1: TRzPanel
-        Left = 181
-        Top = 71
+        Left = 321
+        Top = 82
         Width = 229
         Height = 193
         Anchors = [akRight, akBottom]
@@ -2312,9 +2313,9 @@ object frmMMPlayer: TfrmMMPlayer
     Top = 288
   end
   object RzTrayIcon1: TRzTrayIcon
+    HideOnMinimize = False
     PopupMenu = PopupMenu1
     Interval = 500
-    OnMinimizeApp = RzTrayIcon1MinimizeApp
     OnRestoreApp = RzTrayIcon1RestoreApp
     Left = 104
     Top = 16

@@ -3,9 +3,9 @@ unit ufrmMMPlayer;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Classes, Graphics, Controls,MultiMon, Forms,
   Dialogs, DSPack, DirectShow9, StdCtrls, ActiveX, DSUtil, Menus,
-  ExtCtrls, ComCtrls, Buttons, ImgList, RzTray, RzStatus, RzPanel;
+  ExtCtrls, ComCtrls, Buttons, ImgList, RzTray, RzStatus, RzPanel,ufrmPlayMonitor;
 
 const
   WM_PLAYLIST_REFRESH=WM_USER+3948;
@@ -124,7 +124,7 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
-    procedure RzTrayIcon1MinimizeApp(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     procedure WMPlayList(var Message: TMessage); message WM_PLAYLIST_REFRESH;
@@ -136,6 +136,8 @@ type
     OsdChanged : Boolean;
     PlayListItem : pPlayListItem;
     PlayingIndex : Integer;
+    Shut:boolean;
+    frmPlayMonitor:TfrmPlayMonitor;
     procedure ReadMMPlayer;
     procedure WriteMMPlayer;
     procedure ClearPlayList;
@@ -229,6 +231,7 @@ procedure TfrmMMPlayer.FormCreate(Sender: TObject);
 var
   i : Integer;
 begin
+  Shut := false;
   Imagelist1.GetBitmap(3, SpeedButton1.Glyph);
   Imagelist1.GetBitmap(2, SpeedButton2.Glyph);
   Imagelist1.GetBitmap(4, SpeedButton3.Glyph);
@@ -521,7 +524,8 @@ end;
 
 procedure TfrmMMPlayer.Exit2Click(Sender: TObject);
 begin
-  Application.Terminate;
+  Shut := true;
+  Application.MainForm.Close;
 end;
 
 procedure TfrmMMPlayer.DSVideoWindowEx1OverlayVisible(Sender: TObject;
@@ -614,9 +618,16 @@ var
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'\mmPlayer.ini');
   try
-    w := F.ReadInteger('config','Monitor',0);
-    if w<ComboBox1.Items.Count then ComboBox1.ItemIndex := w;
-    F.WriteInteger('config','Handle',Handle);
+    w := F.ReadInteger('config','Monitor',9);
+    if w<ComboBox1.Items.Count then
+       begin
+         ComboBox1.ItemIndex := w;
+       end
+    else
+       begin
+         ComboBox1.ItemIndex := ComboBox1.Items.Count-1;
+       end;
+    //F.WriteInteger('config','Handle',Handle);
   finally
     F.Free;
   end;
@@ -629,7 +640,7 @@ var
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'\mmPlayer.ini');
   try
-    F.WriteInteger('config','Monitor',ComboBox1.ItemIndex);
+    if ComboBox1.Enabled then F.WriteInteger('config','Monitor',ComboBox1.ItemIndex);
   finally
     F.Free;
   end;
@@ -649,7 +660,7 @@ begin
   else
      DSVideoWindowEx1.StartFullScreen;
   SpeedButton4.Down := DSVideoWindowEx1.FullScreen;
-  close;
+  Close;
 end;
 
 procedure TfrmMMPlayer.WMTPosDisplay(var Message: TMessage);
@@ -751,25 +762,71 @@ end;
 procedure TfrmMMPlayer.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
-  Application.Minimize;
+//  if not Shut then
+     begin
+      //  CanClose := false;
+      //  Application.Minimize;
+      //  PostMessage(frmMMPlayer.Handle,WM_PLAY_DESKTOP,0,0);
+      //  Hide;
+     end;
 end;
 
 procedure TfrmMMPlayer.RzTrayIcon1RestoreApp(Sender: TObject);
+    function FindMonitor(Handle: THandle): TMonitor;
+    var
+      I: Integer;
+    begin
+      Result := nil;
+      for I := 0 to Screen.MonitorCount - 1 do
+      if Screen.Monitors[I].Handle = Handle then
+      begin
+        Result := Screen.Monitors[I];
+        break;
+      end;
+    end;
+
+    function MonitorFromWindow(const Handle: THandle;
+      MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
+  const
+    MonitorDefaultFlags: array[TMonitorDefaultTo] of DWORD = (MONITOR_DEFAULTTONEAREST,
+                                                              MONITOR_DEFAULTTONULL,
+                                                              MONITOR_DEFAULTTOPRIMARY);
+    begin
+      Result := FindMonitor(MultiMon.MonitorFromWindow(Handle,
+        MonitorDefaultFlags[MonitorDefault]));
+    end;
+var OnMonitor : TMonitor;
 begin
-  WindowState := wsNormal;
+  if WindowState= wsMinimized then
+     WindowState := wsNormal;
+  //OnMonitor := MonitorfromWindow(Handle);
+
   Show;
   Position := poScreenCenter;
-
-end;
-
-procedure TfrmMMPlayer.RzTrayIcon1MinimizeApp(Sender: TObject);
-begin
-  Close;
+  {if not Visible then
+     begin
+       Show;
+       if PlayingIndex >= 0 then
+          begin
+            PlayFile(pPlayListItem(ListBox1.Items.Objects[PlayingIndex])^.Path+pPlayListItem(ListBox1.Items.Objects[PlayingIndex])^.filename);
+          end;
+     end;
+  }     
 end;
 
 procedure TfrmMMPlayer.WMGetPlayList(var Message: TMessage);
 begin
   frmMMUrlDown.Timer1Timer(nil);
+end;
+
+procedure TfrmMMPlayer.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  if not Shut then
+    begin
+      Action := caHide;
+      ShowWindow( Application.Handle, sw_Hide );
+    end;
 end;
 
 end.

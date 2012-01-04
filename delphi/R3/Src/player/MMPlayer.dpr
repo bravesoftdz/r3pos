@@ -8,7 +8,8 @@ uses
   ufrmMMPlayer in 'ufrmMMPlayer.pas' {frmMMPlayer},
   ufrmColorCtrl in 'ufrmColorCtrl.pas' {ColorControlForm},
   ufrmMMUrlDown in 'ufrmMMUrlDown.pas' {frmMMUrlDown},
-  ufrmMainPlayer in 'ufrmMainPlayer.pas' {frmMainPlayer};
+  ufrmMainPlayer in 'ufrmMainPlayer.pas' {frmMainPlayer},
+  ufrmPlayMonitor in 'ufrmPlayMonitor.pas' {frmPlayMonitor};
 
 {$R *.res}
 begin
@@ -17,10 +18,10 @@ begin
     Application.Initialize;
     Application.ShowMainForm := false;
     Application.CreateForm(TfrmMainPlayer, frmMainPlayer);
-  Application.CreateForm(TfrmMMUrlDown, frmMMUrlDown);
-  Application.CreateForm(TfrmMMPlayer, frmMMPlayer);
-  Application.CreateForm(TColorControlForm, ColorControlForm);
-  PostMessage(frmMMPlayer.Handle,WM_PLAYLIST_REFRESH,0,0);
+    Application.CreateForm(TfrmMMUrlDown, frmMMUrlDown);
+    Application.CreateForm(TfrmMMPlayer, frmMMPlayer);
+    Application.CreateForm(TColorControlForm, ColorControlForm);
+    PostMessage(frmMMPlayer.Handle,WM_PLAYLIST_REFRESH,0,0);
     Application.Run;
   end;
 end.

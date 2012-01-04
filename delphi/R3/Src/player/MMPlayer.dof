@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=d:\tpos
+OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -111,11 +111,11 @@ ProjectLang=
 RootDir=E:\soft\¿Ø¼þ\DSPACK234\Demos\DSVideoWinDowEx\PlayWin\
 [Version Info]
 IncludeVerInfo=1
-AutoIncBuild=1
-MajorVer=1
+AutoIncBuild=0
+MajorVer=3
 MinorVer=0
-Release=0
-Build=2
+Release=1
+Build=36
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.0.0.2
+FileVersion=3.0.1.36
 InternalName=
 LegalCopyright=
 LegalTrademarks=

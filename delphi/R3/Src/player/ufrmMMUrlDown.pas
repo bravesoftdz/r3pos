@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, RzPrgres, ActiveX, RzButton, StdCtrls, RzLabel, UrlMon, ExtCtrls,
-  RzTray;
+  RzTray, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
+  IdHTTP;
 type
   TDownLoadMonitor = class( TInterfacedObject, IBindStatusCallback )
    private
@@ -35,9 +36,14 @@ type
     RzLabel1: TRzLabel;
     Timer1: TTimer;
     Bevel1: TBevel;
+    IdHTTP1: TIdHTTP;
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure IdHTTP1WorkBegin(Sender: TObject; AWorkMode: TWorkMode;
+      const AWorkCountMax: Integer);
+    procedure IdHTTP1Work(Sender: TObject; AWorkMode: TWorkMode;
+      const AWorkCount: Integer);
   private
     FStoped: boolean;
     Fdowning: boolean;
@@ -48,7 +54,7 @@ type
     { Public declarations }
     BindStatus:IBindStatusCallback;
     MMUrlDown:TMMUrlDown;
-    
+    fFileSize:Int64;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -92,7 +98,7 @@ end;
 
 function TDownLoadMonitor.OnProgress( ulProgress, ulProgressMax, ulStatusCode: ULONG; szStatusText: LPCWSTR ): HResult;
 begin
-    Application.ProcessMessages;
+    //Application.ProcessMessages;
     if frmMMUrlDown.Stoped then
          Result := E_ABORT
     else
@@ -124,15 +130,30 @@ begin
 end;
 
 function TfrmMMUrlDown.DownFile(url: string;filename:string): boolean;
+var
+   fm:TFileStream;
 begin
-  result := (UrlDownloadToFile(nil, PChar(url), PChar(filename), 0, BindStatus)=0);
+  result := true;
+  if fileExists(filename) then deletefile(filename);
+  try
+    fm := TFileStream.Create(filename,fmCreate);
+    try
+      IdHTTP1.Get(url,fm);
+      result := true;
+    finally
+      fm.Free;
+    end;
+  except
+    result := false;
+  end;
+  //result := (UrlDownloadToFile(nil, PChar(url), PChar(filename), 0, BindStatus)=0);
 end;
 
 procedure TfrmMMUrlDown.UrlDown(Sender: TObject);
 var
   F:TIniFile;
   Session:TStringList;
-  i:integer;
+  i,w:integer;
   url,filename:string;
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'adv\playlist.ini');
@@ -140,23 +161,29 @@ begin
   downing := true;
   try
     F.ReadSections(Session);
+    w := 0;
     for i := 0 to Session.Count - 1 do
     begin
-      if not F.ReadBool(Session[i],'ready',false) and not Stoped then
+      if not F.ReadBool(Session[i],'ready',false) and not Stoped and (Session[i]<>'adv') then
          begin
            filename := F.ReadString(Session[i],'filename','');
            url := F.ReadString(Session[i],'url','');
            RzLabel1.Caption := '下载'+url;
            RzLabel1.Update;
-           if DownFile(url,filename) then F.WriteBool(Session[i],'ready',true);
+           if DownFile(url,filename) then
+              begin
+                F.WriteBool(Session[i],'ready',true);
+                inc(w);
+              end;
          end;
     end;
-    PostMessage(frmMMPlayer.Handle,WM_PLAYLIST_REFRESH,1,1);
+    if w>0 then PostMessage(frmMMPlayer.Handle,WM_PLAYLIST_REFRESH,1,1);
     RzLabel1.Caption := '下载完成';
   finally
     Session.Free;
     F.Free;
     downing := false;
+    btnCancel.Enabled := true;
   end;
 end;
 
@@ -212,7 +239,28 @@ end;
 
 procedure TfrmMMUrlDown.btnCancelClick(Sender: TObject);
 begin
-  if Stoped then Timer1Timer(self) else Stoped := true;
+  if Stoped then
+     begin
+        Timer1Timer(self);
+     end else
+     begin
+       if not downing then Exit;
+       btnCancel.Enabled := false;
+       Stoped := true;
+     end;
+end;
+
+procedure TfrmMMUrlDown.IdHTTP1WorkBegin(Sender: TObject;
+  AWorkMode: TWorkMode; const AWorkCountMax: Integer);
+begin
+  fFileSize := AWorkCountMax;
+end;
+
+procedure TfrmMMUrlDown.IdHTTP1Work(Sender: TObject; AWorkMode: TWorkMode;
+  const AWorkCount: Integer);
+begin
+  if fFileSize=0 then Exit;
+  RzProgressBar1.Percent := round(AWorkCount / fFileSize * 100);
 end;
 
 end.

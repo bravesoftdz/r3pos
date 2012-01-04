@@ -207,6 +207,9 @@ type
     procedure frfSalesOrderGetValue(const ParName: String;
       var ParValue: Variant);
   private
+    CopyHeadInfo: TZQuery;
+    CopyDetailInfo: TZQuery;
+    CopyDetailObj: TRecord_;
     FInputFlag: integer;
     Locked:boolean;
     FdbState: TDataSetState;
@@ -362,22 +365,24 @@ type
     procedure InitPrice(GODS_ID,UNIT_ID:string;CalcAll:boolean=false);
     procedure ConvertUnit;
     procedure ConvertPresent;
-    function PrintSQL(tenantid,id:string):string;
+    function  PrintSQL(tenantid,id:string):string;
 
     procedure LoadFile(cName: string);
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
     function  CheckSale_Limit: Boolean; //2011.06.12判断是否限量
 
-
     //断电保护功能
     procedure SaveToFile;
     procedure LoadFromFile;
 
+    procedure DoReturnSaleOrder;  //退货
+    //新增退货单保存
+    procedure NewReturnSaleOrder(vType: integer); //新增退货单
     //结算时发送:结算金额、找零、现金、银行卡、储值卡等
     function PostPayMessage(InObj: TRecord_): Boolean;
   public
     { Public declarations }
-    // 最近输的货品
+    //最近输的货品
     vgds,vP1,vP2,vBtNo:string;
     function FindColumn(FieldName:string):TColumnEh;
     property InputFlag:integer read FInputFlag write SetInputFlag;
@@ -395,7 +400,9 @@ implementation
 uses ufrmMain, ZLogFile, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil, uDsUtil, uExpression, uGlobal, uShopGlobal,
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
      ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
-     ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList, ufrmFastReport, uN26Factory;
+     ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList, ufrmFastReport, uN26Factory,
+     ufrmSalRetuMenu;
+     
 {$R *.dfm}
 
 procedure TfrmPosMain.FormCreate(Sender: TObject);
@@ -405,6 +412,10 @@ var
   s:string;
 begin
   inherited;
+  CopyHeadInfo:=TZQuery.Create(self);
+  CopyDetailInfo:=TZQuery.Create(self);
+  CopyDetailObj:=TRecord_.Create;
+
   basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
   dsGodsInfo.DataSet := basInfo;
   DBGridEh1.Columns[4].Visible := (CLVersion='FIG');
@@ -1274,8 +1285,8 @@ begin
   end;
   SaveAObj.Free;
   AObj.free;
-  inherited;
-
+  CopyDetailObj.Free;
+  inherited;         
 end;
 
 procedure TfrmPosMain.WMDialogPull(var Message: TMessage);
@@ -1447,15 +1458,29 @@ begin
       end;
 
   if (Shift = []) and (Key=VK_ESCAPE) then
-     begin
-       if InputFlag<>0 then
-          begin
-            edtInput.Text := '';
-            DBGridEh1.Col := 1;
-            InputFlag := 0;
-          end;
-     end;
+  begin
+    if InputFlag<>0 then
+    begin
+      edtInput.Text := '';
+      DBGridEh1.Col := 1;
+      InputFlag := 0;
+    end;
+  end;
+  //
+  if (Shift = [ssShift]) and (Key=65) then  //Shift+A
+  begin
+    if InputFlag<>0 then
+    begin
+      edtInput.Text := '';
+      DBGridEh1.Col := 1;
+      InputFlag := 13;
+    end;
 
+  end;
+  if (Shift = [ssShift]) and (Key=83) then //Shift+S
+  begin
+
+  end;
 end;
 
 procedure TfrmPosMain.edtInputKeyPress(Sender: TObject; var Key: Char);
@@ -1578,6 +1603,8 @@ begin
            DBGridEh1.Col := 1;
            Exit;
          end;
+
+
       isAdd := false;
       if s='' then
          begin
@@ -2342,7 +2369,7 @@ begin
   end;
 
   //2011.06.14增加单品限量和本单限量
-  CheckSale_Limit;   
+  CheckSale_Limit;
 
   Saved := false;
   Check;
@@ -2437,7 +2464,7 @@ begin
   ShowHeader;
   //2011.11.14向双屏终端发送结算消息
   PostPayMessage(SaveAObj);
-  dbState := dsBrowse;  
+  dbState := dsBrowse;
 end;
 
 procedure TfrmPosMain.Setoid(const Value: string);
@@ -2586,10 +2613,16 @@ begin
      
   if (Shift = []) and (Key = VK_F10) then
      begin
-       if dbState = dsBrowse then Exit;
-       if cdsTable.IsEmpty then Exit;
-       if cdsTable.FieldByName('GODS_ID').AsString = '' then Exit;
-       ReturnGods;
+       if dbState = dsBrowse then
+       begin
+         DoReturnSaleOrder;
+         Exit;
+       end else
+       begin
+         if cdsTable.IsEmpty then Exit;
+         if cdsTable.FieldByName('GODS_ID').AsString = '' then Exit;
+         ReturnGods;
+       end;
      end;
   if (Shift = []) and (Key = VK_F6) then
      begin
@@ -4069,10 +4102,16 @@ end;
 procedure TfrmPosMain.h5Click(Sender: TObject);
 begin
   inherited;
-  if dbState = dsBrowse then Exit;
-  if cdsTable.IsEmpty then Exit;
-  if cdsTable.FieldByName('GODS_ID').AsString = '' then Exit;
-  ReturnGods;
+  if (dbState = dsBrowse) and (cdsHeader.RecordCount>0) then
+  begin
+    DoReturnSaleOrder;
+    Exit;
+  end else
+  begin
+    if cdsTable.IsEmpty then Exit;
+    if cdsTable.FieldByName('GODS_ID').AsString = '' then Exit;
+    ReturnGods;
+  end;
 end;
 
 procedure TfrmPosMain.h12Click(Sender: TObject);
@@ -4651,21 +4690,97 @@ begin
   result:=true;
 end;
 
-{
-procedure TfrmPosMain.WMTPosDisplay(var Message: TMessage);
-var
-  str: string;
-  i,j,m: integer;
+procedure TfrmPosMain.NewReturnSaleOrder(vType: integer);
+  procedure AddReturnRecord(CopyObj: TRecord_);
+  var
+    Pt:integer;
+    rs:TZQuery;
+    bs:TZQuery;
+  begin
+    cdsTable.DisableControls;
+    try
+      inc(RowID);
+      cdsTable.Append;
+      if cdsTable.FindField('SEQNO')<> nil then cdsTable.FindField('SEQNO').asInteger := RowID;
+      cdsTable.FieldbyName('GODS_ID').AsString := CopyObj.FieldbyName('GODS_ID').AsString;
+      cdsTable.FieldbyName('GODS_NAME').AsString := CopyObj.FieldbyName('GODS_NAME').AsString;
+      cdsTable.FieldbyName('GODS_CODE').AsString := CopyObj.FieldbyName('GODS_CODE').AsString;
+      cdsTable.FieldbyName('BARCODE').AsString := CopyObj.FieldbyName('BARCODE').AsString;
+      cdsTable.FieldByName('IS_PRESENT').asInteger := CopyObj.FieldByName('IS_PRESENT').asInteger;
+      cdsTable.FieldByName('PROPERTY_01').AsString := CopyObj.FieldByName('PROPERTY_01').AsString;
+      cdsTable.FieldByName('PROPERTY_02').AsString := CopyObj.FieldByName('PROPERTY_02').AsString;
+      cdsTable.FieldbyName('UNIT_ID').AsString := CopyObj.FieldbyName('UNIT_ID').AsString;
+      cdsTable.FieldbyName('BATCH_NO').AsString := '#';
+      cdsTable.FieldByName('AMOUNT').AsFloat := -CopyObj.FieldbyName('AMOUNT').AsFloat;
+      cdsTable.FieldByName('APRICE').AsFloat := CopyObj.FieldbyName('APRICE').AsFloat;
+      cdsTable.FieldbyName('ORG_PRICE').AsFloat := CopyObj.FieldbyName('ORG_PRICE').AsFloat;
+      cdsTable.FieldbyName('COST_PRICE').AsFloat := CopyObj.FieldbyName('COST_PRICE').AsFloat;
+      cdsTable.FieldByName('POLICY_TYPE').AsInteger := CopyObj.FieldbyName('POLICY_TYPE').AsInteger;
+      cdsTable.FieldByName('HAS_INTEGRAL').AsInteger := CopyObj.FieldbyName('HAS_INTEGRAL').AsInteger;
+      cdsTable.Post;
+    finally
+      cdsTable.EnableControls;
+    end;
+    if cdsTable.Recordcount=1 then ShowHeader;
+    bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if not bs.Locate('GODS_ID',CopyObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create(AObj.FieldbyName('GODS_NAME').AsString+'在经营商品中没找到，请退出系统重试.');
+    //根据数量计算相关金额
+    AmountToCalc(-CopyObj.FieldbyName('AMOUNT').AsFloat);
+  end;
 begin
-  //消息的参数: 高字节位
-  i:=Message.WParamHi;
-  j:=Message.WParamLo;
-  m:=Message.LParam;
-  str:='Message.WParamHi='+InttoStr(i)+#13+
-       'Message.WParamLo='+InttoStr(j)+#13+
-       'Message.LParam='+InttoStr(m)+#13;
-       
+  //新单
+  NewOrder;
+  if not cdsHeader.Active then Exit;
+  if not cdsTable.Active then Exit;
+  //填充主表数据
+  cdsHeader.Append;
+  cdsHeader.FieldByName('CLIENT_ID').AsString:=CopyHeadInfo.fieldbyName('CLIENT_ID').AsString;
+  cdsHeader.FieldByName('REMARK').AsString:='销售单〖'+CopyHeadInfo.fieldbyName('GLIDE_NO').AsString+'〗退货';
+  cdsHeader.Post;
+  if vType=0 then //单品退货
+  begin
+    AddReturnRecord(CopyDetailObj);
+  end else
+  if vType=1 then //整单退货
+  begin
+    CopyDetailInfo.First;
+    while not CopyDetailInfo.Eof do
+    begin
+      CopyDetailObj.Clear;
+      CopyDetailObj.ReadFromDataSet(CopyDetailInfo);
+      AddReturnRecord(CopyDetailObj);
+      CopyDetailInfo.Next;
+    end;
+  end;
 end;
-}
+
+procedure TfrmPosMain.DoReturnSaleOrder;
+begin
+  case TfrmSalRetuMenu.ShowMenu(self) of
+   0:
+    begin
+      CopyHeadInfo.Close;
+      CopyDetailInfo.Close;
+      CopyHeadInfo.Data:=cdsHeader.Data;
+      CopyDetailInfo.Data:=cdsTable.Data;
+      CopyDetailObj.Clear;
+      CopyDetailObj.ReadFromDataSet(cdsTable);
+      NewReturnSaleOrder(0); //新增退货单
+    end;
+   1:
+    begin
+      CopyDetailObj.Clear;
+      if not cdsHeader.Active then Exit;
+      if not cdsTable.Active then Exit;
+      CopyHeadInfo.Close;
+      CopyDetailInfo.Close;
+      CopyHeadInfo.Data:=cdsHeader.Data;
+      CopyDetailInfo.Data:=cdsTable.Data;
+      NewReturnSaleOrder(1); //新增退货单
+    end;
+   else
+    Raise Exception.Create('暂时不支持此项功能...');
+  end;
+end;
 
 end.

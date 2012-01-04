@@ -244,7 +244,19 @@ uses
   ufrmGoodsMonth in 'App\ufrmGoodsMonth.pas' {frmGoodsMonth},
   ufrmDemandOrder in 'App\ufrmDemandOrder.pas' {frmDemandOrder},
   ufrmDemandOrderList in 'App\ufrmDemandOrderList.pas' {frmDemandOrderList},
-  ObjDemandOrder in 'Obj\ObjDemandOrder.pas';
+  ObjDemandOrder in 'Obj\ObjDemandOrder.pas',
+  ufrmMktPlanOrder in 'App\ufrmMktPlanOrder.pas',
+  ufrmMktPlanOrderList in 'App\ufrmMktPlanOrderList.pas',
+  ufrmKpiIndex in 'App\ufrmKpiIndex.pas' {frmKpiIndex},
+  ufrmKpiIndexInfo in 'App\ufrmKpiIndexInfo.pas' {frmKpiIndexInfo},
+  uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
+  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
+  ObjKpiIndex in 'Obj\ObjKpiIndex.pas',
+  ObjMktPlanOrder in 'Obj\ObjMktPlanOrder.pas',
+  ObjMktRequOrder in 'Obj\ObjMktRequOrder.pas',
+  ufrmMktRequOrder in 'App\ufrmMktRequOrder.pas' {frmMktRequOrder},
+  ufrmMktRequOrderList in 'App\ufrmMktRequOrderList.pas' {frmMktRequOrderList},
+  ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame};
 
 {$R *.res}
 var
@@ -253,7 +265,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.1';
+  DBVersion := '1.0.2.4';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

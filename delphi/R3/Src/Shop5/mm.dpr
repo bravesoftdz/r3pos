@@ -266,7 +266,9 @@ uses
   ufrmMMBrowser in 'App\ufrmMMBrowser.pas' {frmMMBrowser},
   udmIcon in '..\..\Basic\udmIcon.pas' {dmIcon: TDataModule},
   ufrmMMToolBox in 'MM\ufrmMMToolBox.pas' {frmMMToolBox},
-  SHDocVw in '..\..\Pub\SHDocVw.pas';
+  SHDocVw in '..\..\Pub\SHDocVw.pas',
+  uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
+  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm};
 
 {$R *.res}
 

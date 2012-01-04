@@ -9,10 +9,10 @@ inherited frmMktRequOrder: TfrmMktRequOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 882
-    Height = 542
+    Width = 874
+    Height = 531
     inherited RzPanel2: TRzPanel
-      Width = 872
+      Width = 864
       Height = 116
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
@@ -311,8 +311,8 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 462
-      Width = 872
+      Top = 451
+      Width = 864
       object RzLabel9: TRzLabel
         Left = 33
         Top = 22
@@ -329,11 +329,11 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Caption = #23457#26680#20154#21592
       end
       object Label4: TLabel
-        Left = 427
+        Left = 439
         Top = 22
-        Width = 60
+        Width = 48
         Height = 12
-        Caption = #30003#39046#24635#37329#39069
+        Caption = #21512#35745#37329#39069
       end
       object edtCHK_USER: TcxTextEdit
         Tag = 1
@@ -365,8 +365,8 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 121
-      Width = 872
-      Height = 341
+      Width = 864
+      Height = 330
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnEnter = DBGridEh1Enter
@@ -402,7 +402,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           Footers = <>
           ReadOnly = True
           Title.Caption = #32489#25928
-          Width = 70
+          Width = 68
         end
         item
           EditButtons = <>
@@ -410,24 +410,24 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #30003#39046#37329#39069
-          Width = 70
+          Width = 69
         end
         item
           EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #25688'    '#35201
-          Width = 300
+          Width = 307
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 515
-      Width = 872
+      Top = 504
+      Width = 864
       Height = 0
     end
     inherited rzHelp: TRzPanel
-      Top = 515
-      Width = 872
+      Top = 504
+      Width = 864
       Height = 22
     end
     object edtKPI_ID: TzrComboBoxList

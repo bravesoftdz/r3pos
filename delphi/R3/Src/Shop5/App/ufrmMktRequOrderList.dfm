@@ -40,15 +40,15 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #20379' '#24212' '#21830
+                Caption = #32463' '#38144' '#21830
               end
               object RzLabel5: TRzLabel
-                Left = 9
+                Left = 33
                 Top = 86
-                Width = 72
+                Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #36153#29992#30003#39046#21333#21495
+                Caption = #30003#39046#21333#21495
               end
               object Label1: TLabel
                 Left = 201
@@ -298,6 +298,13 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'CLIENT_ID_TEXT'
+                  Footers = <>
+                  Title.Caption = #32463#38144#21830
+                  Width = 140
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'SHOP_ID_TEXT'
                   Footers = <>
                   Title.Caption = #38376#24215#21517#31216
@@ -308,13 +315,6 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                   FieldName = 'DEPT_ID_TEXT'
                   Footers = <>
                   Title.Caption = #25152#23646#37096#38376
-                  Width = 120
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'CLIENT_ID_TEXT'
-                  Footers = <>
-                  Title.Caption = #32463#38144#21830
                   Width = 120
                 end
                 item

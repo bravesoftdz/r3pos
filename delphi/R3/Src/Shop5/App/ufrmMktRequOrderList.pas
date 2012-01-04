@@ -421,9 +421,9 @@ begin
   fndSHOP_ID.Text := Global.SHOP_NAME;
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO'); 
   InitGridPickList(DBGridEh1);
-  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
-  fndCLIENT_ID.RangeField := 'FLAG';
-  fndCLIENT_ID.RangeValue := '3';
+  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+//  fndCLIENT_ID.RangeField := 'FLAG';
+//  fndCLIENT_ID.RangeValue := '3';
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   fndDEPT_ID.RangeField := 'DEPT_TYPE';
   fndDEPT_ID.RangeValue := '1';

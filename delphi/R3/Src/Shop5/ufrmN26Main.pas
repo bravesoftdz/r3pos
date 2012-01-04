@@ -293,6 +293,7 @@ type
     actfrmIEOpen: TAction;
     actfrmDemandOrderList1: TAction;
     actfrmDemandOrderList2: TAction;
+    actfrmInitGuide: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -418,6 +419,7 @@ type
     procedure actfrmIEOpenExecute(Sender: TObject);
     procedure actfrmDemandOrderList1Execute(Sender: TObject);
     procedure actfrmDemandOrderList2Execute(Sender: TObject);
+    procedure actfrmInitGuideExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -2895,7 +2897,7 @@ begin
          else
             Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
-    if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+    if not ShopGlobal.ONLVersion and not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
     if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
        begin
          SyncFactory.SyncAll;
@@ -4115,6 +4117,13 @@ begin
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmInitGuideExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmInitGuide.StartGuide(self);
+
 end;
 
 end.

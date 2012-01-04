@@ -275,7 +275,6 @@ type
     imgOffline: TImage;
     actfrmGoodsMonth: TAction;
     RzBmpButton4: TRzBmpButton;
-    RzBmpButton5: TRzBmpButton;
     actfrmInitGuide: TAction;
     RzBmpButton6: TRzBmpButton;
     actfrmSaleDaySingleReport: TAction;
@@ -4281,7 +4280,7 @@ begin
          else
          Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
-    if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+    if not ShopGlobal.ONLVersion and not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
     if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
        begin
          SyncFactory.SyncAll;

@@ -416,11 +416,11 @@ begin
      deptId := GetDeptInfo.FieldbyName('DEPT_ID').AsString;
   if rStr[DataFlag]<>'1' then
      begin
-       if fnString.TrimRight(Global.SHOP_ID,4) = '0001' then Exit;
-       case DataFlag of
-       1:result := ' and '+FieldName+' = '''+Global.SHOP_ID+''' ';
-       2:result := ' and '+FieldName+' = '''+deptId+'''';
-       end;
+       if (r=0) and (fnString.TrimRight(Global.SHOP_ID,4) <> '0001') then //没有启用任何数据权限时走默认
+         case DataFlag of
+         1:result := ' and '+FieldName+' = '''+Global.SHOP_ID+''' ';
+         2:result := ' and '+FieldName+' = '''+deptId+'''';
+         end;
      end
   else
      case DataFlag of

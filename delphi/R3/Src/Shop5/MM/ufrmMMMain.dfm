@@ -1,9 +1,11 @@
 inherited frmMMMain: TfrmMMMain
   Left = 203
   Top = 122
-  Width = 840
-  Height = 595
+  VertScrollBar.Range = 0
+  BorderStyle = bsNone
   Caption = 'MM2011'
+  ClientHeight = 557
+  ClientWidth = 824
   Color = clFuchsia
   TransparentColor = True
   TransparentColorValue = clFuchsia
@@ -3834,6 +3836,10 @@ inherited frmMMMain: TfrmMMMain
     object actfrmDemandOrderList2: TAction
       Tag = 100002132
       Caption = #39046#29992#30003#35831
+    end
+    object actfrmWelcome: TAction
+      Caption = #32463#33829#25552#37266
+      OnExecute = actfrmWelcomeExecute
     end
   end
   inherited PopupMenu: TPopupMenu

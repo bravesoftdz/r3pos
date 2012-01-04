@@ -177,6 +177,7 @@ type
     actfrmNothing: TAction;
     actfrmDemandOrderList1: TAction;
     actfrmDemandOrderList2: TAction;
+    actfrmWelcome: TAction;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -298,6 +299,7 @@ type
     procedure RzBmpButton4Click(Sender: TObject);
     procedure lbM1Click(Sender: TObject);
     procedure actfrmNothingExecute(Sender: TObject);
+    procedure actfrmWelcomeExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -491,10 +493,10 @@ end;
 procedure TfrmMMMain.FormCreate(Sender: TObject);
 begin
   inherited;
-  BorderStyle := bsNone;
-  WindowState := wsMaximized;
+//  BorderStyle := bsNone;
+//  WindowState := wsMaximized;
   LoadPic32;
-  SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
+//  SetBounds(Screen.WorkArealeft,Screen.WorkAreaTop,Screen.WorkAreaWidth,Screen.WorkAreaHeight);
   RzVersionInfo.FilePath := ParamStr(0);
   rzVersion.Caption := '版本:' + RzVersionInfo.FileVersion;
   bkg_01.Picture.Bitmap.TransparentColor := clFuchsia;
@@ -735,14 +737,15 @@ begin
 
    frmLogo.Show;
    try
+     frmLogo.ShowTitle := '正在初始化基础数据...';
+     if (mmGlobal.module[2]='1') then mmGlobal.LoadBasic();
+
      frmLogo.ShowTitle := '正在初始化权限数据...';
      mmGlobal.LoadRight;
      CheckEnabled;
      frmLogo.ShowTitle := '正在初始化系统菜单...';
      if (mmGlobal.module[2]='1') then CreateMenu;
 
-     frmLogo.ShowTitle := '正在初始化基础数据...';
-     if (mmGlobal.module[2]='1') then mmGlobal.LoadBasic();
      frmLogo.ShowTitle := '正在初始化同步数据...';
      if (mmGlobal.module[2]='1') then mmGlobal.SyncTimeStamp;
      frmLogo.ShowTitle := '正在初始化广告数据...';
@@ -757,9 +760,13 @@ begin
    end;
 
    if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
-      Show
+      begin
+        Show;
+        if (mmGlobal.module[2]='1') then TfrmWelcome.Popup;
+      end
    else
       ShowMMList;
+
 end;
 
 procedure TfrmMMMain.OpenMc(pid: string;mid:integer=0);
@@ -2309,7 +2316,7 @@ begin
          else
          Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
-    if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+    if not ShopGlobal.ONLVersion and not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
     if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
        begin
          SyncFactory.SyncAll;
@@ -2739,8 +2746,10 @@ begin
        TObject(FMenu[i]).Free;
      end;
   FMenu.Clear;
-  if not CA_MODULE.Locate('MODU_NAME,','零售终端',[]) then Exit;
-  lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString;
+  if CA_MODULE.Locate('MODU_NAME,','零售终端',[]) then
+     lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString
+  else
+     lvid := '';
   l := 0;
   CA_MODULE.First;
   while not CA_MODULE.Eof do
@@ -3178,6 +3187,12 @@ begin
      end;
   RzFormShape1.Enabled := not (Value = wsMaximized);
   FWindowState := Value;
+end;
+
+procedure TfrmMMMain.actfrmWelcomeExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmWelcome.Popup;
 end;
 
 end.

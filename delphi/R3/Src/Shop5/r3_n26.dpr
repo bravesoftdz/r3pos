@@ -250,7 +250,9 @@ uses
   uN26Factory in 'App\uN26Factory.pas' {N26Factory: TDataModule},
   ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame},
   uCaFactory in 'App\uCaFactory.pas',
-  uRcFactory in 'App\uRcFactory.pas';
+  uRcFactory in 'App\uRcFactory.pas',
+  uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
+  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm};
 
 {$R *.res}
 var

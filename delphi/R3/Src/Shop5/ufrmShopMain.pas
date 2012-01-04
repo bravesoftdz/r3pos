@@ -291,6 +291,9 @@ type
     actfrmGoodsMonth: TAction;
     actfrmDemandOrderList1: TAction;
     actfrmDemandOrderList2: TAction;
+    actfrmKpiIndex: TAction;
+    actfrmMktPlanOrderList: TAction;
+    actfrmMktRequOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -412,6 +415,9 @@ type
     procedure actfrmGoodsMonthExecute(Sender: TObject);
     procedure actfrmDemandOrderList1Execute(Sender: TObject);
     procedure actfrmDemandOrderList2Execute(Sender: TObject);
+    procedure actfrmKpiIndexExecute(Sender: TObject);
+    procedure actfrmMktPlanOrderListExecute(Sender: TObject);
+    procedure actfrmMktRequOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -484,8 +490,8 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList
-  ;
+  ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList
+  ,ufrmMktRequOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2877,7 +2883,7 @@ begin
          else
             Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        end;
-    if TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+    if not ShopGlobal.ONLVersion and not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
     if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
        begin
          SyncFactory.SyncAll;
@@ -3925,7 +3931,7 @@ begin
      end;
     TfrmCostCalc.CheckMonthReck(self);
   finally
-    TfrmInitGuide.InitGuide(self);
+    //TfrmInitGuide.InitGuide(self);
   end;
 end;
 
@@ -4010,6 +4016,69 @@ begin
        TfrmDemandOrderList(Form).Name := 'frmDemandOrderList2';
        AddFrom(Form);
 //       if ShopGlobal.GetChkRight('600029') then TfrmChangeOrderList(Form).actNew.OnExecute(nil);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmKpiIndexExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmKpiIndex);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmKpiIndex.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktPlanOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktPlanOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktPlanOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktRequOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktRequOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktRequOrderList.Create(self);
+       AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;

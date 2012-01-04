@@ -200,7 +200,7 @@ begin
   cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(cdsKPI_ID);
 
-  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtDEPT_ID.RangeField := 'DEPT_TYPE';
   edtDEPT_ID.RangeValue := '1';

@@ -89,8 +89,8 @@ function TMktPlanOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
 begin
-  if not lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-  if not lock and (FieldbyName('BOND_MNY').AsOldFloat <> 0) then  //删除时检测
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  if (FieldbyName('BOND_MNY').AsOldFloat <> 0) then  //删除时检测
      begin
        rs := TZQuery.Create(nil);
        try
@@ -131,7 +131,7 @@ begin
   begin
      AGlobal.ExecSQL(
          'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES('''+newid(Params.ParambyName('SHOP_ID').AsString)+''',:TENANT_ID,'''+FieldbyName('TENANT_ID').AsString+'0001'',:CLIENT_ID,'''+'固定保证金【合同号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'',:BOND_MNY,0,0,:BOND_MNY,:PLAN_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+       + 'VALUES('''+newid(Params.ParambyName('SHOP_ID').AsString)+''',:TENANT_ID,'''+FieldbyName('TENANT_ID').AsString+'0001'',:CLIENT_ID,'''+'固定保证金【合同号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'',:BOND_MNY,0,0,:BOND_MNY,:PLAN_DATE,:PLAN_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
   end;
 
@@ -152,15 +152,8 @@ begin
   finally
     rs.Free;
   end;     
-  lock := true;
-  try
-    result := BeforeDeleteRecord(AGlobal);
-    result := BeforeInsertRecord(AGlobal);
-    //修改时处理应收账款
-    AGlobal.ExecSQL('update ACC_RECVABLE_INFO set ACCT_MNY=:BOND_MNY,RECK_MNY=:BOND_MNY - :RECV_MNY - :REVE_MNY  where TENANT_ID=:OLD_TENANT_ID and SALES_ID=OLD_PLAN_ID and RECV_TYPE=''5''',self);
-  finally
-    lock := false;
-  end;
+  //修改时处理应收账款
+  AGlobal.ExecSQL('update ACC_RECVABLE_INFO set ACCT_MNY=:BOND_MNY,RECK_MNY=:BOND_MNY - RECV_MNY - REVE_MNY,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:PLAN_DATE,SALES_ID=:PLAN_ID  where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_PLAN_ID and RECV_TYPE=''5''',self);
 end;
 
 function TMktPlanOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -200,8 +193,8 @@ begin
      'select A.TENANT_ID,A.PLAN_ID,A.PLAN_TYPE,A.GLIDE_NO,A.KPI_YEAR,A.PLAN_DATE,A.BEGIN_DATE,A.END_DATE,A.CLIENT_ID,'+
      'B.CLIENT_NAME,A.DEPT_ID,F.DEPT_NAME as DEPT_ID_TEXT,A.PLAN_USER,D.USER_NAME as PLAN_USER_TEXT,'+
      'A.CHK_DATE,A.CHK_USER,C.USER_NAME as CHK_USER_TEXT,A.PLAN_AMT,A.PLAN_MNY,A.BOND_MNY,'+
-     'A.BUDG_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,A.COMM '+
-     ' from MKT_PLANORDER A left join VIW_CLIENTINFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+     'A.BUDG_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,A.COMM,A.TIME_STAMP '+
+     ' from MKT_PLANORDER A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
      ' left join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.CHK_USER=C.USER_ID '+
      ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.PLAN_USER=D.USER_ID '+
      ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CREA_USER=E.USER_ID '+

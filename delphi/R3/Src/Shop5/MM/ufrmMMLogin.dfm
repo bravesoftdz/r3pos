@@ -129,7 +129,7 @@ inherited frmMMLogin: TfrmMMLogin
         Bitmaps.TransparentColor = clOlive
         Color = clBtnFace
         Caption = #30331#24405'(&O)'
-        TabOrder = 0
+        TabOrder = 1
         OnClick = cxBtnOkClick
       end
       object cxBtnSetup: TRzBmpButton
@@ -140,7 +140,7 @@ inherited frmMMLogin: TfrmMMLogin
         Bitmaps.TransparentColor = clOlive
         Color = clBtnFace
         Caption = #35774#32622'(&S)'
-        TabOrder = 1
+        TabOrder = 0
         OnClick = cxBtnSetupClick
       end
     end
@@ -158,7 +158,7 @@ inherited frmMMLogin: TfrmMMLogin
       object Image2: TImage
         Left = 0
         Top = 0
-        Width = 408
+        Width = 113
         Height = 131
         Align = alClient
         AutoSize = True
@@ -201,7 +201,7 @@ inherited frmMMLogin: TfrmMMLogin
         Width = 152
         Height = 20
         Properties.EchoMode = eemPassword
-        TabOrder = 1
+        TabOrder = 2
         OnKeyPress = cxedtPasswrdKeyPress
       end
       object cxcbSave: TcxCheckBox
@@ -214,7 +214,7 @@ inherited frmMMLogin: TfrmMMLogin
         Properties.Caption = #20445#23384#30331#24405
         State = cbsChecked
         Style.Color = 16428113
-        TabOrder = 2
+        TabOrder = 4
         ImeName = #20013#25991' ('#31616#20307') - '#24494#36719#25340#38899
       end
       object cxcbOffline: TcxCheckBox
@@ -234,13 +234,14 @@ inherited frmMMLogin: TfrmMMLogin
         Top = 38
         Width = 152
         Height = 20
-        TabOrder = 4
+        TabOrder = 1
       end
       object logoStatus: TPanel
         Left = 113
         Top = 0
         Width = 295
-        Height = 130
+        Height = 131
+        Align = alRight
         BevelOuter = bvNone
         Caption = #27491#22312#30331#24405'...'
         Color = 16621644

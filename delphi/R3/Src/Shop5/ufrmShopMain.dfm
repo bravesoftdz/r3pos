@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 140
-  Top = 362
+  Left = 222
+  Top = 207
   Width = 804
   Height = 466
   Caption = ''
@@ -5261,6 +5261,21 @@ inherited frmShopMain: TfrmShopMain
       Tag = 100002132
       Caption = #39046#29992#30003#35831
       OnExecute = actfrmDemandOrderList2Execute
+    end
+    object actfrmKpiIndex: TAction
+      Tag = 100002143
+      Caption = #32771#26680#25351#26631
+      OnExecute = actfrmKpiIndexExecute
+    end
+    object actfrmMktPlanOrderList: TAction
+      Tag = 100002150
+      Caption = #32463#38144#21830#21512#32422
+      OnExecute = actfrmMktPlanOrderListExecute
+    end
+    object actfrmMktRequOrderList: TAction
+      Tag = 100002176
+      Caption = #36153#29992#30003#35831
+      OnExecute = actfrmMktRequOrderListExecute
     end
   end
   inherited PopupMenu: TPopupMenu

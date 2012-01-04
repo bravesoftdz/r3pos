@@ -7,30 +7,28 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1014
-    Height = 547
+    Width = 1006
+    Height = 536
     inherited RzPanel2: TRzPanel
-      Width = 1004
-      Height = 537
+      Width = 996
+      Height = 526
       inherited RzPage: TRzPageControl
-        Width = 799
-        Height = 531
-        ActivePage = TabSheet5
+        Width = 791
+        Height = 520
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#24212#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 797
-            Height = 504
+            Width = 789
+            Height = 493
             inherited Panel4: TPanel
-              Width = 787
-              Height = 494
+              Width = 779
+              Height = 483
               inherited w1: TRzPanel
-                Width = 787
+                Width = 779
                 Height = 64
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -160,11 +158,11 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 64
-                Width = 787
-                Height = 430
+                Width = 779
+                Height = 419
                 inherited DBGridEh1: TDBGridEh
-                  Width = 783
-                  Height = 426
+                  Width = 775
+                  Height = 415
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -248,8 +246,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 797
-            Height = 504
+            Width = 789
+            Height = 493
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -257,8 +255,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 787
-              Height = 494
+              Width = 779
+              Height = 483
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -266,7 +264,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 787
+                Width = 779
                 Height = 65
                 Align = alTop
                 BorderOuter = fsGroove
@@ -401,8 +399,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 65
-                Width = 787
-                Height = 429
+                Width = 779
+                Height = 418
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -410,8 +408,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 783
-                  Height = 425
+                  Width = 775
+                  Height = 414
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -535,8 +533,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 797
-            Height = 504
+            Width = 789
+            Height = 493
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -544,8 +542,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 787
-              Height = 494
+              Width = 779
+              Height = 483
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -553,7 +551,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 787
+                Width = 779
                 Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
@@ -737,8 +735,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 82
-                Width = 787
-                Height = 412
+                Width = 779
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -747,8 +745,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 783
-                  Height = 408
+                  Width = 775
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -866,7 +864,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 797
+            Width = 789
             Height = 82
             Align = alTop
             BorderOuter = fsGroove
@@ -1050,8 +1048,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel17: TRzPanel
             Left = 0
             Top = 82
-            Width = 797
-            Height = 422
+            Width = 789
+            Height = 411
             Align = alClient
             BorderOuter = fsGroove
             Color = clWhite
@@ -1060,8 +1058,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Tag = 1
               Left = 2
               Top = 2
-              Width = 793
-              Height = 418
+              Width = 785
+              Height = 407
               Align = alClient
               AllowedOperations = []
               BorderStyle = bsNone
@@ -1183,8 +1181,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 797
-            Height = 504
+            Width = 789
+            Height = 493
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1192,8 +1190,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 787
-              Height = 494
+              Width = 779
+              Height = 483
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1201,7 +1199,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 787
+                Width = 779
                 Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1434,8 +1432,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 82
-                Width = 787
-                Height = 412
+                Width = 779
+                Height = 401
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1443,8 +1441,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 783
-                  Height = 408
+                  Width = 775
+                  Height = 397
                   Align = alClient
                   AllowedOperations = []
                   DataSource = dsadoReport5
@@ -1648,8 +1646,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 802
-        Height = 531
+        Left = 794
+        Height = 520
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -1665,9 +1663,9 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1014
+    Width = 1006
     inherited Image14: TImage
-      Left = 994
+      Left = 986
     end
     inherited Image1: TImage
       Width = 644

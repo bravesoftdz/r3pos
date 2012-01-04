@@ -356,7 +356,7 @@ begin
      'B.CLIENT_NAME as CLIENT_ID_TEXT,A.DEPT_ID,F.DEPT_NAME as DEPT_ID_TEXT,A.PLAN_USER,D.USER_NAME as PLAN_USER_TEXT,'+
      'A.CHK_DATE,A.CHK_USER,C.USER_NAME as CHK_USER_TEXT,A.PLAN_AMT,A.PLAN_MNY,A.BOND_MNY,'+
      'A.BUDG_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT '+
-     ' from MKT_PLANORDER A left join VIW_CLIENTINFO B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+     ' from MKT_PLANORDER A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
      ' left join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.CHK_USER=C.USER_ID '+
      ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.PLAN_USER=D.USER_ID '+
      ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CREA_USER=E.USER_ID '+
@@ -416,7 +416,7 @@ procedure TfrmMktPlanOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
   InitGridPickList(DBGridEh1);
-  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   fndDEPT_ID.RangeField := 'DEPT_TYPE';
   fndDEPT_ID.RangeValue := '1';

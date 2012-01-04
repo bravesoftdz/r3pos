@@ -1,6 +1,6 @@
 inherited frmShopDesk: TfrmShopDesk
-  Left = 230
-  Top = 96
+  Left = 3
+  Top = 3
   Caption = 'frmShopDesk'
   ClientHeight = 520
   ClientWidth = 942

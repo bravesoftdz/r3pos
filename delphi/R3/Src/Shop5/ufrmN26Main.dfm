@@ -1,8 +1,8 @@
 inherited frmN26Main: TfrmN26Main
-  Left = 469
-  Top = 126
+  Left = 193
+  Top = 144
   Width = 958
-  Height = 558
+  Height = 556
   Caption = ''
   Menu = nil
   Position = poDefault
@@ -27,7 +27,7 @@ inherited frmN26Main: TfrmN26Main
     Transparent = True
   end
   inherited stbBottom: TStatusBar
-    Top = 519
+    Top = 517
     Width = 942
     Height = 1
     Panels = <
@@ -47,7 +47,7 @@ inherited frmN26Main: TfrmN26Main
   end
   object Panel5: TPanel [2]
     Left = 0
-    Top = 485
+    Top = 483
     Width = 942
     Height = 0
     Align = alBottom
@@ -457,7 +457,7 @@ inherited frmN26Main: TfrmN26Main
     Left = 2
     Top = 105
     Width = 172
-    Height = 380
+    Height = 378
     Align = alLeft
     BorderOuter = fsNone
     BorderSides = [sdLeft]
@@ -467,7 +467,7 @@ inherited frmN26Main: TfrmN26Main
       Left = 28
       Top = 0
       Width = 144
-      Height = 380
+      Height = 378
       ColorAdjustment = 2
       GroupBorderSize = 1
       SmallImages = ImageList1
@@ -481,7 +481,7 @@ inherited frmN26Main: TfrmN26Main
       Left = 0
       Top = 0
       Width = 28
-      Height = 380
+      Height = 378
       Align = alLeft
       BorderOuter = fsFlat
       BorderSides = [sdRight]
@@ -490,7 +490,7 @@ inherited frmN26Main: TfrmN26Main
         Left = 3
         Top = 0
         Width = 24
-        Height = 380
+        Height = 378
         Align = alLeft
         BackgroundColor = clWhite
         Color = clWhite
@@ -565,7 +565,7 @@ inherited frmN26Main: TfrmN26Main
         Left = 0
         Top = 0
         Width = 3
-        Height = 380
+        Height = 378
         Align = alLeft
         BevelOuter = bvNone
         Color = clWhite
@@ -577,7 +577,7 @@ inherited frmN26Main: TfrmN26Main
     Left = 0
     Top = 105
     Width = 2
-    Height = 380
+    Height = 378
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
@@ -587,7 +587,7 @@ inherited frmN26Main: TfrmN26Main
     Left = 940
     Top = 105
     Width = 2
-    Height = 380
+    Height = 378
     Align = alRight
     BevelOuter = bvNone
     Color = 6241037
@@ -595,7 +595,7 @@ inherited frmN26Main: TfrmN26Main
   end
   object Panel10: TPanel [6]
     Left = 0
-    Top = 485
+    Top = 483
     Width = 942
     Height = 3
     Align = alBottom
@@ -1915,7 +1915,7 @@ inherited frmN26Main: TfrmN26Main
     Left = 174
     Top = 105
     Width = 6
-    Height = 380
+    Height = 378
     Align = alLeft
     BevelOuter = bvNone
     Color = 6241037
@@ -1932,7 +1932,7 @@ inherited frmN26Main: TfrmN26Main
   end
   object Panel23: TPanel [8]
     Left = 0
-    Top = 488
+    Top = 486
     Width = 942
     Height = 31
     Align = alBottom
@@ -5737,6 +5737,10 @@ inherited frmN26Main: TfrmN26Main
       Tag = 100002132
       Caption = #39046#29992#30003#35831
       OnExecute = actfrmDemandOrderList2Execute
+    end
+    object actfrmInitGuide: TAction
+      Caption = #21021#22987#21270#21521#23548
+      OnExecute = actfrmInitGuideExecute
     end
   end
   inherited PopupMenu: TPopupMenu

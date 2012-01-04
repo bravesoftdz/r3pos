@@ -1,6 +1,6 @@
 inherited mmGlobal: TmmGlobal
   Left = 191
-  Top = 127
+  Top = 60
   inherited CA_MODULE: TZQuery
     Left = 88
     Top = 442

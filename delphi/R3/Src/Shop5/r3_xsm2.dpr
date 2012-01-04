@@ -255,7 +255,9 @@ uses
   uCommand in 'App\uCommand.pas',
   uMsgBox in '..\..\Basic\uMsgBox.pas',
   uWelcome in 'App\uWelcome.pas',
-  ufrmWelcome in 'App\ufrmWelcome.pas' {frmWelcome};
+  ufrmWelcome in 'App\ufrmWelcome.pas' {frmWelcome},
+  uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
+  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm};
 
 {$R *.res}
 var

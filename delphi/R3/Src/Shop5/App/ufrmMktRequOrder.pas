@@ -270,6 +270,7 @@ begin
   edtREQU_DATE.Date := Global.SysDate;
   edtREQU_USER.KeyValue := Global.UserID;
   edtREQU_USER.Text := Global.UserName;
+  edtREQU_TYPE.ItemIndex := 0;
 
   InitRecord;
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
@@ -379,7 +380,7 @@ end;
 procedure TfrmMktRequOrder.FormCreate(Sender: TObject);
 begin
   inherited;
-  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   //edtCLIENT_ID.RangeField := 'FLAG';
   //edtCLIENT_ID.RangeValue := '3';
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');

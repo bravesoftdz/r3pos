@@ -894,7 +894,7 @@ begin
             Raise Exception.Create('无法连接到RSP认证服务器，请检查网络是否正常.');
           end
        else
-          Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
+           Raise Exception.Create('连接RSP服务失败了，请关闭DEP服务试试...');
      end;
   if Global.debug then LogFile.AddLogFile(0,xml);
   result := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;

@@ -7,7 +7,8 @@ uses
   Dialogs, ufrmTenant, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset,
   ActnList, Menus, cxMaskEdit, cxButtonEdit, zrComboBoxList, ExtCtrls,
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, RzLabel, StdCtrls,
-  RzTabs, RzRadChk, ComCtrls, RzStatus, uDownByHttp, TlHelp32,ShellApi;
+  RzTabs, RzRadChk, ComCtrls, RzStatus, uDownByHttp, TlHelp32,ShellApi,
+  jpeg, cxSpinEdit, cxDropDownEdit, RzPanel, ZdbFactory,ZBase, cxCheckBox;
 
 type
   TfrmUpgrade = class(TfrmTenant)
@@ -17,20 +18,59 @@ type
     Label25: TLabel;
     Bevel3: TBevel;
     Label26: TLabel;
-    RzCheckBox1: TRzCheckBox;
     btnInstall: TRzBitBtn;
     stp1: TRzLabel;
     stp2: TRzLabel;
     stp3: TRzLabel;
-    stp4: TRzLabel;
+    RzVersionInfo: TRzVersionInfo;
+    TabSheet4: TRzTabSheet;
+    rzGroupBox: TRzGroupBox;
+    NbMode: TNotebook;
+    lblDbType: TLabel;
+    lbDBName: TLabel;
+    lbDBBaseName: TLabel;
+    lblUser: TLabel;
+    lblUserPW: TLabel;
+    lblAccountName: TLabel;
+    Label28: TLabel;
+    edtDbDir: TcxButtonEdit;
+    cbDbType: TcxComboBox;
+    edtDbName: TcxTextEdit;
+    edtDatabase: TcxTextEdit;
+    edtUser: TcxTextEdit;
+    edtUserPw: TcxTextEdit;
+    edtDBID: TcxSpinEdit;
+    Panel3: TPanel;
+    Image2: TImage;
+    Label29: TLabel;
+    Bevel4: TBevel;
+    Label30: TLabel;
+    TabSheet5: TRzTabSheet;
+    RzBitBtn2: TRzBitBtn;
+    Panel4: TPanel;
+    Image3: TImage;
+    Label31: TLabel;
+    Bevel5: TBevel;
+    Label32: TLabel;
+    RzCheckBox1: TRzCheckBox;
     Label27: TLabel;
     PrsBar: TProgressBar;
-    RzVersionInfo: TRzVersionInfo;
+    RzBitBtn3: TRzBitBtn;
+    Label33: TLabel;
+    ProgressBar1: TProgressBar;
+    Label34: TLabel;
+    cxButtonEdit1: TcxButtonEdit;
+    Label35: TLabel;
+    Region: TZQuery;
+    dbcRegion: TcxComboBox;
+    chkPartition: TcxCheckBox;
     procedure RzCheckBox1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnInstallClick(Sender: TObject);
+    procedure RzBitBtn2Click(Sender: TObject);
+    procedure RzBitBtn3Click(Sender: TObject);
   private
     { Private declarations }
     Aborted:boolean;
@@ -38,6 +78,13 @@ type
     function CheckLogin(NetWork:boolean=true): Boolean;
     function WinExecAndWait32V2(FileName: string; Visibility: integer): DWORD;
     function CheckExeFile(filename: string): boolean;
+    function GetConnStr: string;
+    procedure TestConnect;
+    function GetIniParams(Section, Key: String): String;
+    procedure LoadParams;
+    procedure SaveParams;
+    function GetPartitionSQL:string;
+    procedure SetIniParams(Section, Key, Value: String);
   public
     { Public declarations }
     url,path,dbid:string;
@@ -49,7 +96,7 @@ var
   frmUpgrade: TfrmUpgrade;
 
 implementation
-uses uCaFactory, uGlobal,WinSvc,udbUtil,IniFiles,EncDec;
+uses uCaFactory, uGlobal,uDsUtil,WinSvc,udbUtil,IniFiles,EncDec;
 var IsStop:boolean;
 {$R *.dfm}
 function StopService(AServName: string): Boolean;
@@ -147,16 +194,173 @@ begin
     CloseHandle(HFileRes);
 end;
 
+function TfrmUpgrade.GetConnStr: string;
+var ConnStr:String;
+    vList:TStringList;
+begin
+    case cbDbType.ItemIndex of
+      0:begin
+        if Trim(edtDbName.Text) = '' then Raise Exception.Create('');
+        if Trim(edtDatabase.Text) = '' then Raise Exception.Create('');
+        if Trim(edtUser.Text) = '' then Raise Exception.Create('');
+        if Trim(edtUserPw.Text) = '' then Raise Exception.Create('');
+        ConnStr := 'provider=mssql';
+        ConnStr := ConnStr + ';hostname=' + Trim(edtDbName.Text);
+        ConnStr := ConnStr + ';databasename=' + Trim(edtDatabase.Text);
+        ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+        ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
+       end;
+      1:begin
+        ConnStr := 'provider=oracle-9i';
+        ConnStr := ConnStr + ';hostname=' + Trim(edtDbName.Text);
+        ConnStr := ConnStr + ';databasename=' + Trim(edtDatabase.Text);
+        ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+        ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
+       end;
+      2:begin
+        ConnStr := 'provider=sqlite-3';
+        ConnStr := ConnStr + ';databasename=' + Trim(edtDbDir.Text);
+        if Trim(edtUser.Text) <> '' then ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+        if Trim(edtUserPw.Text) <> '' then ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
+       end;
+      3:begin
+        ConnStr := 'provider=ado';
+        ConnStr := ConnStr + ';"databasename=Provider=IBMDADB2;Persist Security Info=True;Data Source='+Trim(edtDatabase.Text)+';Location='+Trim(edtDbName.Text)+'"';
+        ConnStr := ConnStr + ';uid=' + Trim(edtUser.Text);
+        ConnStr := ConnStr + ';password=' + Trim(edtUserPw.Text);
+       end;
+    end;
+    Result := ConnStr;
+end;
+
+procedure TfrmUpgrade.SetIniParams(Section, Key, Value: String);
+var F:TIniFile;
+    Path:String;
+begin
+  Path := ExtractFilePath(Application.ExeName)+'db.cfg';
+  try
+    F := TIniFile.Create(Path);
+    F.WriteString(Section,Key,Value);
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmUpgrade.LoadParams;
+var Pro:String;
+  DBID:integer;
+begin
+  cxButtonEdit1.Text := GetIniParams('db','dataPath');
+  chkPartition.Checked := (GetIniParams('db','partition')='1');
+  DBID := StrtoIntDef(GetIniParams('db','dbid'),10000001);
+  edtDBID.Value := DBID;
+  Pro := GetIniParams('db'+IntToStr(DBID),'provider');
+  if Pro='mssql' then cbDbType.ItemIndex := 0;
+  if Pro='oracle' then cbDbType.ItemIndex := 1;
+  if Pro='sqlite' then cbDbType.ItemIndex := 2;
+  if Pro='db2' then cbDbType.ItemIndex := 3;
+  if cbDbType.ItemIndex = 0 then
+    begin
+      edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+      edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+      edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+      edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
+    end
+  else if cbDbType.ItemIndex = 1 then
+    begin
+      edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+      edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+      edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+      edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
+    end
+  else if cbDbType.ItemIndex = 2 then
+    begin
+      edtDbDir.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+      edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+      edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+      edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
+    end
+  else if cbDbType.ItemIndex = 3 then
+    begin
+      edtDbName.Text := GetIniParams('db'+IntToStr(DBID),'hostname');
+      edtDatabase.Text := GetIniParams('db'+IntToStr(DBID),'databasename');
+      edtUser.Text := GetIniParams('db'+IntToStr(DBID),'uid');
+      edtUserPw.Text := DecStr(GetIniParams('db'+IntToStr(DBID),'password'),ENC_KEY);
+    end;
+end;
+
+
+procedure TfrmUpgrade.SaveParams;
+var Pro:String;
+    DBID:integer;
+begin
+    DBID := edtDBID.Value;
+    SetIniParams('db','dbid',IntToStr(DBID));
+    if cbDbType.ItemIndex = 2 then
+      SetIniParams('db'+IntToStr(DBID),'hostname',Trim(edtDbDir.Text))
+    else
+      SetIniParams('db'+IntToStr(DBID),'hostname',Trim(edtDbName.Text));
+
+    SetIniParams('db'+IntToStr(DBID),'databasename',Trim(edtDatabase.Text));
+    SetIniParams('db'+IntToStr(DBID),'uid',Trim(edtUser.Text));
+    SetIniParams('db'+IntToStr(DBID),'password',EncStr(Trim(edtUserPw.Text),ENC_KEY));
+    case cbDbType.ItemIndex of
+      0: Pro := 'mssql';
+      1: Pro := 'oracle';
+      2: Pro := 'sqlite';
+      3: Pro := 'db2';
+    end;
+    SetIniParams('db'+IntToStr(DBID),'provider',Pro);
+    SetIniParams('db'+IntToStr(DBID),'dbid',IntToStr(edtDBID.Value));
+
+    SetIniParams('db'+IntToStr(DBID),'connstr',EncStr(GetConnStr,ENC_KEY));
+end;
+
+function TfrmUpgrade.GetIniParams(Section, Key: String): String;
+var F: TIniFile;
+    Path:String;
+begin
+  Path := ExtractFilePath(Application.ExeName)+'db.cfg';
+  try
+    F := TIniFile.Create(Path);
+    Result := F.ReadString(Section,Key,'');
+  finally
+    F.Free;
+  end;
+
+end;
+procedure TfrmUpgrade.TestConnect;
+var Conn:TdbFactory;
+    ConString:String;
+begin
+  try
+    ConString := GetConnStr;
+    Conn := TdbFactory.Create;
+    Conn.ConnMode := 2;
+    Conn.Initialize(ConString);
+    if not Conn.Connect then
+      Raise Exception.Create('测试连接未通过,请检查各连接参数是否正确!');
+  finally
+    Conn.Free;
+  end;
+end;
+
 procedure TfrmUpgrade.RzCheckBox1Click(Sender: TObject);
 begin
   inherited;
-  btnInstall.Enabled := RzCheckBox1.Checked;
+  RzBitBtn3.Enabled := RzCheckBox1.Checked;
 end;
 
 procedure TfrmUpgrade.FormShow(Sender: TObject);
 begin
   inherited;
-  if Check then  RzPage.ActivePageIndex := 2 else RzPage.ActivePageIndex := 0;
+  if ParamStr(1)='-MT' then
+     begin
+       LoadParams;
+       RzPage.ActivePageIndex := 3;
+     end
+  else
+     if Check then  RzPage.ActivePageIndex := 2 else RzPage.ActivePageIndex := 0;
 end;
 
 procedure TfrmUpgrade.RzBitBtn1Click(Sender: TObject);
@@ -281,7 +485,6 @@ begin
     stp1.Font.Style := [];
     stp2.Font.Style := [];
     stp3.Font.Style := [];
-    stp4.Font.Style := [];
     try
     stp1.Font.Style := [fsBold];
     if CheckLogin(true) then
@@ -316,15 +519,20 @@ begin
          end;
     end;
 
-    Label27.Caption := '正在升级数据..';
-    Label27.Update;
-    stp4.Font.Style := [fsBold];
-    dbUpgrade(dbid);
-    if MessageBox(Handle,'安装升级执行完毕，是否立即运行服务程序？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
-    begin
-       if not StartService('RSPScktSrvr') then ShellExecute(0,'open',pchar(ExtractFilePath(ParamStr(0))+'RSPScktSrvr.exe'),nil,nil,0);
-    end;
-    Close;
+    LoadParams;
+    if ParamStr(1)='-MT' then
+       begin
+         RzPage.ActivePageIndex := RzPage.ActivePageIndex + 1;
+       end
+    else
+       RzPage.ActivePageIndex := RzPage.ActivePageIndex + 2;
+    TdsItems.ClearItems(dbcRegion.Properties.Items);
+    Region.Close;
+    Region.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and CODE_ID like ''%0000'' order by CODE_ID';
+    Factor.Open(Region);
+    TdsItems.AddDataSetToItems(Region,dbcRegion.Properties.Items,'CODE_NAME');
+    dbcRegion.Properties.Items.Insert(0,'全国');
+    dbcRegion.ItemIndex := 0;
   finally
     btnInstall.Enabled := true;
   end;
@@ -401,9 +609,10 @@ begin
        end;
     except
       on E:Exception do
-      if MessageBox(Handle,Pchar('升级数据库<r3.db>出错了，是否继续执行?'+#13+'错误原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+         Raise;//if MessageBox(Handle,Pchar('升级数据库<r3.db>出错了，是否继续执行?'+#13+'错误原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     end;
     try
+       if trim(cxButtonEdit1.Text)='' then Raise Exception.Create('默认路径不能为空'); 
        Global.MoveToRemate;
        Factor.DisConnect;
        if id='' then id := F.ReadString('db','dbid',''); 
@@ -412,12 +621,28 @@ begin
        if dbFactory.CheckVersion('9.9.9.9') then
           begin
             dbFactory.Load(ExtractFilePath(ParamStr(0))+'dbFile.dat');
+            dbFactory.TBSPPATH := trim(cxButtonEdit1.Text);
+            dbFactory.PARTITION := GetPartitionSQL;
+            if pos('\',dbFactory.TBSPPATH)>0 then
+               begin
+                 if dbFactory.TBSPPATH[length(dbFactory.TBSPPATH)]<>'\' then dbFactory.TBSPPATH := dbFactory.TBSPPATH+'\';
+               end
+            else
+               begin
+                 if dbFactory.TBSPPATH[length(dbFactory.TBSPPATH)]<>'/' then dbFactory.TBSPPATH := dbFactory.TBSPPATH+'/';
+               end;
+            dbFactory.dbInit;
+            SetIniParams('db','dataPath',dbFactory.TBSPPATH);
+            if chkPartition.Checked then
+               SetIniParams('db','partition','1')
+            else
+               SetIniParams('db','partition','0');
             dbFactory.Run;
           end;
      except
        on E:Exception do
          begin
-           if MessageBox(Handle,Pchar('升级数据库<'+dbid+'>出错了，是否继续执行?'+#13+'错误原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+           Raise;//if MessageBox(Handle,Pchar('升级数据库<'+dbid+'>出错了，是否继续执行?'+#13+'错误原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
          end;
      end;
   finally
@@ -428,10 +653,10 @@ end;
 
 procedure TfrmUpgrade.CallBack(Title, SQL: string; Percent: Integer);
 begin
- Label27.Caption := Title;
- Label27.Update;
- PrsBar.Max := 100;
- PrsBar.Position := Percent;
+ Label33.Caption := Title;
+ Label33.Update;
+ ProgressBar1.Max := 100;
+ ProgressBar1.Position := Percent;
 end;
 
 function TfrmUpgrade.WinExecAndWait32V2(FileName: string;
@@ -490,6 +715,72 @@ begin { WinExecAndWait32V2 }
     CloseHandle(ProcessInfo.hProcess);
     CloseHandle(ProcessInfo.hThread);
   end; { Else }
+end;
+
+procedure TfrmUpgrade.RzBitBtn2Click(Sender: TObject);
+begin
+  inherited;
+  TestConnect;
+  SaveParams;
+  TdsItems.ClearItems(dbcRegion.Properties.Items);
+  Region.Close;
+  Region.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and CODE_ID like ''%0000'' order by CODE_ID';
+  Factor.Open(Region);
+  TdsItems.AddDataSetToItems(Region,dbcRegion.Properties.Items,'CODE_NAME');
+  dbcRegion.Properties.Items.Insert(0,'全国');
+  dbcRegion.ItemIndex := 0;
+  RzPage.ActivePageIndex := RzPage.ActivePageIndex + 1;
+end;
+
+procedure TfrmUpgrade.RzBitBtn3Click(Sender: TObject);
+begin
+  inherited;
+  Label27.Caption := '正在升级数据..';
+  Label27.Update;
+  dbUpgrade('');
+  if MessageBox(Handle,'安装升级执行完毕，是否立即运行服务程序？','友情提示...',MB_YESNO+MB_ICONQUESTION)=6 then
+  begin
+     if not StartService('RSPScktSrvr') then ShellExecute(0,'open',pchar(ExtractFilePath(ParamStr(0))+'RSPScktSrvr.exe'),nil,nil,0);
+  end;
+
+end;
+
+function TfrmUpgrade.GetPartitionSQL: string;
+var rs:TZQuery;
+begin
+  result := '';
+  if not chkPartition.Checked then Exit;
+  rs := TZQuery.Create(nil);
+  try
+    if dbcRegion.ItemIndex=0 then
+       rs.SQL.Text := 'select CODE_ID from PUB_CODE_INFO where CODE_TYPE=''8'' and CODE_ID like ''%00'' order by CODE_ID'
+    else
+       rs.SQL.Text := 'select CODE_ID from PUB_CODE_INFO where CODE_TYPE=''8'' and CODE_ID like '''+copy(TRecord_(dbcREGION.Properties.Items.Objects[dbcREGION.ItemIndex]).FieldbyName('CODE_ID').asString,1,2)+'%00'' order by CODE_ID';
+    Global.LocalFactory.Open(rs);
+    case Factor.iDbType of
+    1:result := 'PARTITION BY RANGE(TENANT_ID) (';
+    4:result := 'PARTITION BY RANGE(TENANT_ID) ( STARTING MINVALUE';
+    else
+      Exit;
+    end;
+    rs.First;
+    while not rs.Eof do
+      begin
+        case Factor.iDbType of
+        1:result := result + 'PARTITION C'+copy(rs.Fields[0].AsString,1,4)+' VALUES LESS THAN ('+copy(rs.Fields[0].AsString,1,4)+'99999),';
+        4:result := result + ',PARTITION C'+copy(rs.Fields[0].AsString,1,4)+' STARTING '+copy(rs.Fields[0].AsString,1,4)+'00000 ENDING '+copy(rs.Fields[0].AsString,1,4)+'99999';
+        end;
+        rs.Next;
+      end;
+    case Factor.iDbType of
+    1:result := result + 'PARTITION C9999 VALUES LESS THAN(MAXVALUE) )';
+    4:result := result + ',ENDING MAXVALUE )';
+    else
+      Exit;
+    end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

@@ -63,7 +63,8 @@ uses
   ObjDemandOrder in '..\Shop5\Obj\ObjDemandOrder.pas',
   objGoodsMonth in '..\Shop5\Obj\objGoodsMonth.pas',
   objPlugInSyncData in '..\PlugIn\obj\objPlugInSyncData.pas',
-  objCaFactory in 'obj\objCaFactory.pas';
+  objCaFactory in 'obj\objCaFactory.pas',
+  ObjChatInfo in '..\Shop5\Obj\ObjChatInfo.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}
@@ -131,7 +132,7 @@ begin
     SvcMgr.Application.Title := '通讯服务器';
     SocketService := TSocketService.CreateNew(SvcMgr.Application, 0);
     SvcMgr.Application.CreateForm(TSocketForm, SocketForm);
-    SvcMgr.Application.Run;
+  SvcMgr.Application.Run;
   end else
   begin
     Forms.Application.Initialize;

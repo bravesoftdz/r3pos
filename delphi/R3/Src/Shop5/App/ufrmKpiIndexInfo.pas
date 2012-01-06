@@ -902,7 +902,7 @@ begin
       else
          CdsKpiOption.FieldByName('KPI_LV').AsInteger := edtKPI_LV.ItemIndex + 1;
       CdsKpiOption.FieldByName('SEQNO').asInteger := RowID;
-      CdsKpiOption.FieldByName('USING_BRRW').AsInteger := 1;
+      CdsKpiOption.FieldByName('USING_BRRW').AsString := '1';
       CdsKpiOption.Post;
     end;
     if edtKPI_TYPE.ItemIndex = 2 then

@@ -270,6 +270,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                ReadOnly = True
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -291,7 +292,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'SEQNO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24207#21495
                     Width = 32
                   end
@@ -302,7 +302,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Footer.Value = #21512'   '#35745#65306
                     Footer.ValueType = fvtStaticText
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #36134#27454#26085#26399
                     Width = 70
                   end
@@ -310,7 +309,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'CUST_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #23458#25143#21517#31216
                     Width = 139
                   end
@@ -318,7 +316,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'RECV_TYPE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #36134#27454#31867#22411
                     Width = 52
                   end
@@ -326,7 +323,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'ACCT_INFO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25688#35201
                     Width = 208
                   end
@@ -337,7 +333,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #21512#35745#37329#39069
                     Width = 61
                   end
@@ -349,7 +344,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24050#25910#37329#39069
                     Width = 61
                   end
@@ -361,7 +355,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #20914#24080#37329#39069
                     Width = 61
                   end
@@ -372,7 +365,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #32467#20313#37329#39069
                     Width = 61
                   end
@@ -381,7 +373,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'NEAR_DATE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #26368#26032#25910#27454#26085#26399
                     Width = 80
                   end
@@ -389,7 +380,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'SHOP_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25152#23646#38376#24215
                     Width = 97
                   end>
@@ -812,6 +802,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                ReadOnly = True
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -834,7 +825,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'SEQ_NO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24207#21495
                     Width = 32
                   end
@@ -842,7 +832,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'GLIDE_NO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25910#27454#21333#21495
                     Width = 77
                   end
@@ -851,7 +840,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     FieldName = 'RECV_DATE'
                     Footer.Value = #21512'   '#35745#65306
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25910#27454#26085#26399
                     Width = 62
                   end
@@ -866,7 +854,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'ACCOUNT_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24080#25143#21517#31216
                     Width = 66
                   end
@@ -888,7 +875,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'ITEM_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25910#25903#31185#30446
                     Width = 70
                   end
@@ -896,7 +882,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'REMARK'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #35828#26126
                     Width = 129
                   end
@@ -919,7 +904,6 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     EditButtons = <>
                     FieldName = 'RECV_USER_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #21046#21333#20154
                     Width = 60
                   end

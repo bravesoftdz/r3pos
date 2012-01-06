@@ -65,6 +65,20 @@ type
     Label14: TLabel;
     Label18: TLabel;
     RzBitBtn1: TRzBitBtn;
+    pnlFEE: TPanel;
+    Label20: TLabel;
+    edtBOND_MNY: TcxTextEdit;
+    lblOTH1_MNY: TLabel;
+    edtOTH1_MNY: TcxTextEdit;
+    lblOTH2_MNY: TLabel;
+    edtOTH2_MNY: TcxTextEdit;
+    lblOTH3_MNY: TLabel;
+    edtOTH3_MNY: TcxTextEdit;
+    lblOTH4_MNY: TLabel;
+    edtOTH4_MNY: TcxTextEdit;
+    lblOTH5_MNY: TLabel;
+    edtOTH5_MNY: TcxTextEdit;
+    lblFeeOption: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -93,6 +107,7 @@ type
     procedure actIsPressentExecute(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
     procedure edtGUIDE_USERAddClick(Sender: TObject);
+    procedure lblFeeOptionClick(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -127,6 +142,7 @@ type
     Dibs,Cash:Currency;
     procedure ShowInfo;
     procedure ShowOweInfo;
+    procedure ReadFeeOption;
     procedure Calc;
     //输入会员号
     procedure WriteInfo(id:string);override;
@@ -224,6 +240,7 @@ end;
 procedure TfrmSalIndentOrder.FormCreate(Sender: TObject);
 begin
   inherited;
+  ReadFeeOption;
   fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
   Label1.Visible := fndMY_AMOUNT.Visible;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
@@ -1403,6 +1420,86 @@ begin
   finally
     r.Free;
   end;
+end;
+
+procedure TfrmSalIndentOrder.ReadFeeOption;
+var
+  rs:TZQuery;
+begin
+ // pnlFEE.Visible := (ShopGlobal.GetParameter('FEE_OPTION')='1');
+  lblFeeOption.Visible := true;
+  rs := Global.GetZQueryFromName('SYS_FEE_OPTION');
+  if rs.Locate('CODE_ID','OTH1_MNY',[]) then
+     begin
+       edtOTH1_MNY.Visible := true;
+       lblOTH1_MNY.Visible := true;
+       lblFeeOption.Left := edtOTH1_MNY.Left+edtOTH1_MNY.Width+20;
+       lblOTH1_MNY.Caption := rs.FieldbyName('CODE_NAME').AsString;
+     end
+  else
+     begin
+       edtOTH1_MNY.Visible := false;
+       lblOTH1_MNY.Visible := false;
+     end;
+  if rs.Locate('CODE_ID','OTH2_MNY',[]) then
+     begin
+       edtOTH2_MNY.Visible := true;
+       lblOTH2_MNY.Visible := true;
+       lblFeeOption.Visible := false;
+       lblFeeOption.Left := edtOTH2_MNY.Left+edtOTH2_MNY.Width+20;
+       lblOTH2_MNY.Caption := rs.FieldbyName('CODE_NAME').AsString;
+     end
+  else
+     begin
+       edtOTH2_MNY.Visible := false;
+       lblOTH2_MNY.Visible := false;
+     end;
+  if rs.Locate('CODE_ID','OTH3_MNY',[]) then
+     begin
+       edtOTH3_MNY.Visible := true;
+       lblOTH3_MNY.Visible := true;
+       lblFeeOption.Visible := false;
+       lblFeeOption.Left := edtOTH3_MNY.Left+edtOTH3_MNY.Width+20;
+       lblOTH3_MNY.Caption := rs.FieldbyName('CODE_NAME').AsString;
+     end
+  else
+     begin
+       edtOTH3_MNY.Visible := false;
+       lblOTH3_MNY.Visible := false;
+     end;
+  if rs.Locate('CODE_ID','OTH4_MNY',[]) then
+     begin
+       edtOTH4_MNY.Visible := true;
+       lblOTH4_MNY.Visible := true;
+       lblFeeOption.Visible := false;
+       lblFeeOption.Left := edtOTH4_MNY.Left+edtOTH4_MNY.Width+20;
+       lblOTH4_MNY.Caption := rs.FieldbyName('CODE_NAME').AsString;
+     end
+  else
+     begin
+       edtOTH4_MNY.Visible := false;
+       lblOTH4_MNY.Visible := false;
+     end;
+  if rs.Locate('CODE_ID','OTH5_MNY',[]) then
+     begin
+       edtOTH5_MNY.Visible := true;
+       lblOTH5_MNY.Visible := true;
+       lblFeeOption.Visible := false;
+       lblFeeOption.Left := edtOTH5_MNY.Left+edtOTH5_MNY.Width+20;
+       lblOTH5_MNY.Caption := rs.FieldbyName('CODE_NAME').AsString;
+     end
+  else
+     begin
+       edtOTH5_MNY.Visible := false;
+       lblOTH5_MNY.Visible := false;
+     end;
+
+end;
+
+procedure TfrmSalIndentOrder.lblFeeOptionClick(Sender: TObject);
+begin
+  inherited;
+  MessageBox(Handle,'暂时没开通此功能，谢谢你的关注！','友情提示...',MB_OK+MB_ICONINFORMATION);
 end;
 
 end.

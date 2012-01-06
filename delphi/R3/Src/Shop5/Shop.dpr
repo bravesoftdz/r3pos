@@ -254,9 +254,10 @@ uses
   ObjKpiIndex in 'Obj\ObjKpiIndex.pas',
   ObjMktPlanOrder in 'Obj\ObjMktPlanOrder.pas',
   ObjMktRequOrder in 'Obj\ObjMktRequOrder.pas',
-  ufrmMktRequOrder in 'App\ufrmMktRequOrder.pas' {frmMktRequOrder},
-  ufrmMktRequOrderList in 'App\ufrmMktRequOrderList.pas' {frmMktRequOrderList},
-  ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame};
+  ufrmMktBondOrder in 'App\ufrmMktBondOrder.pas' {frmMktBondOrder},
+  ufrmMktBondOrderList in 'App\ufrmMktBondOrderList.pas' {frmMktBondOrderList},
+  ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame},
+  ufrmSalRetuMenu in 'App\ufrmSalRetuMenu.pas' {frmSalRetuMenu};
 
 {$R *.res}
 var

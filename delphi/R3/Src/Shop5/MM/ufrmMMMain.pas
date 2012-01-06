@@ -1018,18 +1018,18 @@ end;
 procedure TfrmMMMain.sysMaximizedClick(Sender: TObject);
 begin
   inherited;
+  if not Visible then Visible := true;
   if WindowState = wsMaximized then
      WindowState := wsNormal
   else
      WindowState := wsMaximized;
-
 end;
 
 procedure TfrmMMMain.sysMinimizedClick(Sender: TObject);
 begin
   inherited;
-  WindowState := wsMinimized;
-
+  Hide;
+  ShowWindow( Application.Handle, sw_Hide );
 end;
 
 procedure TfrmMMMain.RzTrayIcon1LButtonDown(Sender: TObject);

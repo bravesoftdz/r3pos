@@ -147,6 +147,18 @@ begin
          rs.Free;
        end;
      end;
+  if (FieldbyName('BOND_MNY').AsOldFloat+FieldbyName('OTH1_MNY').AsOldFloat+FieldbyName('OTH2_MNY').AsOldFloat+FieldbyName('OTH3_MNY').AsOldFloat+FieldbyName('OTH4_MNY').AsOldFloat+FieldbyName('OTH5_MNY').AsOldFloat) <> 0 then
+     begin
+       rs := TZQuery.Create(nil);
+       try
+         rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('INDE_ID').AsOldString+''' and RECV_TYPE=''5''';
+         AGlobal.Open(rs);
+         if (rs.Fields[0].AsFloat <>0) then Raise Exception.Create('已经收款的订货单不能修改...');
+         AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('INDE_ID').AsOldString+''' and RECV_TYPE=''5''');
+       finally
+         rs.Free;
+       end;
+     end;
   result := true;
 end;
 
@@ -162,6 +174,22 @@ begin
      AGlobal.ExecSQL(
          'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
        + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+    ,self);
+  end;
+  if (FieldbyName('BOND_MNY').AsFloat <> 0) then
+  begin
+     AGlobal.ExecSQL(
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'滚存保证金【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'',:BOND_MNY,0,0,:BOND_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+    ,self);
+  end;
+  if ((FieldbyName('OTH1_MNY').AsFloat+FieldbyName('OTH2_MNY').AsFloat+FieldbyName('OTH3_MNY').AsFloat+FieldbyName('OTH4_MNY').AsFloat+FieldbyName('OTH5_MNY').AsFloat) <> 0) then
+  begin
+     AGlobal.ExecSQL(
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'其他费用【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'','+
+         formatFloat('#0.00',(FieldbyName('OTH1_MNY').AsFloat+FieldbyName('OTH2_MNY').AsFloat+FieldbyName('OTH3_MNY').AsFloat+FieldbyName('OTH4_MNY').AsFloat+FieldbyName('OTH5_MNY').AsFloat))+',0,0,'+
+         formatFloat('#0.00',(FieldbyName('OTH1_MNY').AsFloat+FieldbyName('OTH2_MNY').AsFloat+FieldbyName('OTH3_MNY').AsFloat+FieldbyName('OTH4_MNY').AsFloat+FieldbyName('OTH5_MNY').AsFloat))+',:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
   end;
   result := true;
@@ -228,7 +256,7 @@ begin
                'select jb.*,b.CLIENT_NAME as CLIENT_ID_TEXT,b.PRICE_ID,b.INTEGRAL as ACCU_INTEGRAL,b.BALANCE,b.CLIENT_CODE from '+
                '(select TENANT_ID,SHOP_ID,DEPT_ID,INDE_ID,GLIDE_NO,INDE_DATE,PLAN_DATE,ADVA_MNY,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,CLIENT_ID,'+
                'IC_CARDNO,UNION_ID,GUIDE_USER,CHK_DATE,CHK_USER,FIG_ID,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,'+
-               'INDE_AMT,INDE_MNY,SALBILL_STATUS,TIME_STAMP from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID) jb '+
+               'INDE_AMT,INDE_MNY,SALBILL_STATUS,BOND_MNY,OTH1_MNY,OTH2_MNY,OTH3_MNY,OTH4_MNY,OTH5_MNY,TIME_STAMP from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:INDE_ID) jb '+
                ' left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
@@ -236,13 +264,14 @@ begin
   IsSQLUpdate := True;
   Str :=
       'insert into SAL_INDENTORDER(TENANT_ID,SHOP_ID,DEPT_ID,INDE_ID,GLIDE_NO,INDE_DATE,PLAN_DATE,ADVA_MNY,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,INDE_AMT,'+
-      'INDE_MNY,FIG_ID,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,IC_CARDNO,UNION_ID,SALBILL_STATUS,TIME_STAMP) '
+      'INDE_MNY,FIG_ID,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,IC_CARDNO,UNION_ID,SALBILL_STATUS,BOND_MNY,OTH1_MNY,OTH2_MNY,OTH3_MNY,OTH4_MNY,OTH5_MNY,TIME_STAMP) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:INDE_ID,:GLIDE_NO,:INDE_DATE,:PLAN_DATE,:ADVA_MNY,:LINKMAN,:TELEPHONE,:SEND_ADDR,:SALES_STYLE,:CLIENT_ID,:GUIDE_USER,:CHK_DATE,:CHK_USER,:INDE_AMT,'+
-      ':INDE_MNY,:FIG_ID,:REMARK,:INVOICE_FLAG,:TAX_RATE,''00'',:CREA_DATE,:CREA_USER,:IC_CARDNO,:UNION_ID,0,'+GetTimeStamp(iDbType)+')';
+      ':INDE_MNY,:FIG_ID,:REMARK,:INVOICE_FLAG,:TAX_RATE,''00'',:CREA_DATE,:CREA_USER,:IC_CARDNO,:UNION_ID,0,:BOND_MNY,:OTH1_MNY,:OTH2_MNY,:OTH3_MNY,:OTH4_MNY,:OTH5_MNY,'+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str := 'update SAL_INDENTORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,INDE_ID=:INDE_ID,GLIDE_NO=:GLIDE_NO,INDE_DATE=:INDE_DATE,PLAN_DATE=:PLAN_DATE,ADVA_MNY=:ADVA_MNY,CLIENT_ID=:CLIENT_ID,INDE_AMT=:INDE_AMT,INDE_MNY=:INDE_MNY,'+
          'GUIDE_USER=:GUIDE_USER,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,LINKMAN=:LINKMAN,TELEPHONE=:TELEPHONE,SEND_ADDR=:SEND_ADDR,SALES_STYLE=:SALES_STYLE,FIG_ID=:FIG_ID,'+
-         'REMARK=:REMARK,INVOICE_FLAG=:INVOICE_FLAG,TAX_RATE=:TAX_RATE,IC_CARDNO=:IC_CARDNO,UNION_ID=:UNION_ID,'
+         'REMARK=:REMARK,INVOICE_FLAG=:INVOICE_FLAG,TAX_RATE=:TAX_RATE,IC_CARDNO=:IC_CARDNO,UNION_ID=:UNION_ID,'+
+         'BOND_MNY=:BOND_MNY,OTH1_MNY=:OTH1_MNY,OTH2_MNY=:OTH2_MNY,OTH3_MNY=:OTH3_MNY,OTH4_MNY=:OTH4_MNY,OTH5_MNY=:OTH5_MNY,'
     + 'COMM=' + GetCommStr(iDbType) + ','
     + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
     + 'where TENANT_ID=:OLD_TENANT_ID and INDE_ID=:OLD_INDE_ID';

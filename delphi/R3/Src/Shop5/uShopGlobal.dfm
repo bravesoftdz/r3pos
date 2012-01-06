@@ -1080,4 +1080,27 @@ inherited ShopGlobal: TShopGlobal
     Left = 136
     Top = 576
   end
+  object SYS_FEE_OPTION: TZQuery
+    Tag = 1
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME from PUB_CODE_INFO where TENANT_ID in (' +
+        '0,:TENANT_ID)  and COMM not in ('#39'02'#39','#39'12'#39') order by CODE_ID')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 368
+    Top = 568
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
 end

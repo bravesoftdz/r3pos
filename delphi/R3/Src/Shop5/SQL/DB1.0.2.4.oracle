@@ -187,7 +187,7 @@ CREATE TABLE MKT_DEMANDORDER (
         --操作人员
 	CREA_USER varchar2 (36)  ,
         --通讯标志
-	COMM varchar2 (2) NOT NULL  DEFAULT '00',
+	COMM varchar2 (2) DEFAULT '00' NOT NULL  ,
         --时间戳 当前系统日期*86400000
   TIME_STAMP NUMBER(22,0) NOT NULL,
 	CONSTRAINT PK_MKT_DEMANDORDER PRIMARY KEY 

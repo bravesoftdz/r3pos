@@ -143,7 +143,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
               Top = 5
               Width = 66
               Height = 26
-              Caption = #23436#27605'(&O)'
+              Caption = #20445#23384'(&O)'
               Color = clSilver
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
@@ -175,12 +175,12 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             TabOrder = 2
             object RzLEDDisplay: TRzLEDDisplay
               Left = 8
-              Top = 90
+              Top = 122
               Width = 121
             end
             object Label1: TLabel
               Left = 8
-              Top = 69
+              Top = 101
               Width = 24
               Height = 12
               Caption = #24050#25195
@@ -193,7 +193,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             end
             object Label2: TLabel
               Left = 8
-              Top = 133
+              Top = 181
               Width = 24
               Height = 12
               Caption = #24453#25195
@@ -206,12 +206,12 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             end
             object RzLEDDisplay2: TRzLEDDisplay
               Left = 8
-              Top = 154
+              Top = 202
               Width = 121
             end
             object Label3: TLabel
               Left = 8
-              Top = 11
+              Top = 27
               Width = 24
               Height = 12
               Caption = #21512#35745
@@ -224,7 +224,7 @@ inherited frmLocusNoProperty: TfrmLocusNoProperty
             end
             object RzLEDDisplay1: TRzLEDDisplay
               Left = 8
-              Top = 32
+              Top = 48
               Width = 121
             end
           end

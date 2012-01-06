@@ -1001,13 +1001,13 @@ begin
        if FieldbyName('STOCK_TYPE').asString='1' then
           begin
             rs.ParambyName('ABLE_TYPE').AsString := '4';
-            rs.ParambyName('ACCT_INFO').AsString := '进货货款【单号'+FieldbyName('GLIDE_NO').AsString+'】';
+            rs.ParambyName('ACCT_INFO').AsString := '进货货款【入库单号'+FieldbyName('GLIDE_NO').AsString+'】';
           end
        else
        if FieldbyName('STOCK_TYPE').asString='3' then
           begin
             rs.ParambyName('ABLE_TYPE').AsString := '5';
-            rs.ParambyName('ACCT_INFO').AsString := '进货退款【单号'+FieldbyName('GLIDE_NO').AsString+'】';
+            rs.ParambyName('ACCT_INFO').AsString := '进货退款【退货单号'+FieldbyName('GLIDE_NO').AsString+'】';
           end;
        rs.ParambyName('ABLE_ID').AsString := FieldbyName('ABLE_ID').asString;
        rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
@@ -1206,11 +1206,11 @@ begin
        case FieldbyName('SALES_TYPE').AsInteger of
        1,4: begin
             rs.ParambyName('RECV_TYPE').AsString := '1';
-            rs.ParambyName('ACCT_INFO').AsString := '销售货款【单号'+FieldbyName('GLIDE_NO').AsString+'】';
+            rs.ParambyName('ACCT_INFO').AsString := '销售货款【出货单号'+FieldbyName('GLIDE_NO').AsString+'】';
           end;
        3:   begin
             rs.ParambyName('RECV_TYPE').AsString := '2';
-            rs.ParambyName('ACCT_INFO').AsString := '销售退款【单号'+FieldbyName('GLIDE_NO').AsString+'】';
+            rs.ParambyName('ACCT_INFO').AsString := '销售退款【退货单号'+FieldbyName('GLIDE_NO').AsString+'】';
           end;
        end;
        rs.ParambyName('ABLE_ID').AsString := FieldbyName('ABLE_ID').asString;

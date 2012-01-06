@@ -9,26 +9,28 @@ inherited frmPayOrderList: TfrmPayOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 536
+    Width = 892
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 526
+      Width = 882
+      Height = 515
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 520
+        Width = 876
+        Height = 509
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #24212#20184#24080#27454#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 493
+            Width = 874
+            Height = 482
             BorderInner = fsStatus
             object RzPanel1: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -231,16 +233,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel3: TPanel
               Left = 6
               Top = 90
-              Width = 870
-              Height = 397
+              Width = 862
+              Height = 386
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 395
+                Width = 860
+                Height = 384
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = PayListDs
@@ -256,6 +258,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                ReadOnly = True
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -278,7 +281,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'SEQNO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24207#21495
                     Width = 32
                   end
@@ -289,7 +291,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Footer.Value = #21512'   '#35745#65306
                     Footer.ValueType = fvtStaticText
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #36134#27454#26085#26399
                     Width = 70
                   end
@@ -297,7 +298,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'CLIENT_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #20379#24212#21830#21517#31216
                     Width = 135
                   end
@@ -305,7 +305,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'ABLE_TYPE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #36134#27454#31867#22411
                     Width = 52
                   end
@@ -313,7 +312,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'ACCT_INFO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25688#35201
                     Width = 188
                   end
@@ -324,7 +322,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #21512#35745#37329#39069
                     Width = 66
                   end
@@ -336,7 +333,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24050#20184#37329#39069
                     Width = 65
                   end
@@ -348,7 +344,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #20914#36134#37329#39069
                     Width = 66
                   end
@@ -359,7 +354,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #32467#20313#37329#39069
                     Width = 63
                   end
@@ -368,7 +362,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'NEAR_DATE'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #26368#26032#20184#27454#26085#26399
                     Width = 80
                   end
@@ -376,7 +369,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'SHOP_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25152#23646#38376#24215
                     Width = 97
                   end>
@@ -389,8 +381,8 @@ inherited frmPayOrderList: TfrmPayOrderList
           object Panel1: TPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 493
+            Width = 874
+            Height = 482
             Align = alClient
             BevelInner = bvLowered
             BevelOuter = bvNone
@@ -400,7 +392,7 @@ inherited frmPayOrderList: TfrmPayOrderList
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -776,16 +768,16 @@ inherited frmPayOrderList: TfrmPayOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 870
-              Height = 358
+              Width = 862
+              Height = 347
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 356
+                Width = 860
+                Height = 345
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -800,6 +792,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                ReadOnly = True
                 RowHeight = 20
                 SumList.Active = True
                 TabOrder = 0
@@ -822,7 +815,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'SEQ_NO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24207#21495
                     Width = 32
                   end
@@ -830,7 +822,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'GLIDE_NO'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #20184#27454#21333#21495
                     Width = 77
                   end
@@ -839,7 +830,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     FieldName = 'PAY_DATE'
                     Footer.Value = #21512'   '#35745#65306
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #20184#27454#26085#26399
                     Width = 62
                   end
@@ -854,7 +844,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'ACCOUNT_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #24080#25143#21517#31216
                     Width = 66
                   end
@@ -876,7 +865,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'ITEM_ID_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #25910#25903#31185#30446
                     Width = 70
                   end
@@ -884,7 +872,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'REMARK'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #35828#26126
                     Width = 129
                   end
@@ -907,7 +894,6 @@ inherited frmPayOrderList: TfrmPayOrderList
                     EditButtons = <>
                     FieldName = 'PAY_USER_TEXT'
                     Footers = <>
-                    ReadOnly = True
                     Title.Caption = #20184#27454#20154
                     Width = 60
                   end
@@ -933,16 +919,16 @@ inherited frmPayOrderList: TfrmPayOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image3: TImage
       Left = 374
       Width = 0
     end
     inherited Image14: TImage
-      Left = 880
+      Left = 872
     end
     inherited Image1: TImage
-      Left = 374
+      Left = 366
       Width = 506
     end
     inherited rzPanel5: TPanel

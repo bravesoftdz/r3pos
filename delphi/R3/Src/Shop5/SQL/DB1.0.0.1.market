@@ -153,6 +153,8 @@ CREATE TABLE [MKT_PLANORDER] (
 	[PLAN_ID] [char] (36) NOT NULL ,
         --流水号
 	[GLIDE_NO] [varchar] (20) NOT NULL ,
+        --合同号 <后几位查询>
+	[FILES_NO] [varchar] (50) NOT NULL ,
         --年度
 	[KPI_YEAR] int NULL ,
         --签约日期

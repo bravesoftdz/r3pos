@@ -181,11 +181,11 @@ begin
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
 
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-  begin
-    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
-    edtSHOP_ID.Properties.ReadOnly := True;
-  end;
+//  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+//  begin
+//    SetEditStyle(dsBrowse,edtSHOP_ID.Style);
+//    edtSHOP_ID.Properties.ReadOnly := True;
+//  end;
   AObj.FieldbyName('RECV_ID').asString := TSequence.NewId();
   lblCaption.Caption :='µ¥ºÅ:..ÐÂÔö..';
   if edtPAYM_ID.Properties.Items.Count > 0 then

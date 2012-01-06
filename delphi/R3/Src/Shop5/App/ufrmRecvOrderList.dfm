@@ -49,7 +49,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #25910#27454#26085#26399
+                Caption = #36134#27454#26085#26399
               end
               object RzLabel3: TRzLabel
                 Left = 186

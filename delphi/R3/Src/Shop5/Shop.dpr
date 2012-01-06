@@ -66,7 +66,7 @@ uses
   ObjGoodsInfo in 'Obj\ObjGoodsInfo.pas',
   ObjGetPrice in 'Obj\ObjGetPrice.pas',
   ObjPayOrder in 'Obj\ObjPayOrder.pas',
-  ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
+  ObjBondOrder in 'Obj\ObjBondOrder.pas',
   ufrmCodeInfo in 'App\ufrmCodeInfo.pas' {frmCodeInfo},
   ObjCodeInfo in 'Obj\ObjCodeInfo.pas',
   uframeTreeFindDialog in 'Frame\uframeTreeFindDialog.pas' {frameTreeFindDialog},
@@ -202,8 +202,8 @@ uses
   ObjImpeach in 'Obj\ObjImpeach.pas',
   uPrainpowerJudge in 'App\uPrainpowerJudge.pas',
   ufrmDownStockOrder in 'App\ufrmDownStockOrder.pas' {frmDownStockOrder},
-  ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
-  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
+  ufrmBondOrderList in 'App\ufrmBondOrderList.pas' {frmBondOrderList},
+  ufrmBondOrder in 'App\ufrmBondOrder.pas' {frmBondOrder},
   ufrmImpeach in 'App\ufrmImpeach.pas' {frmImpeach},
   PubMemberService in 'App\PubMemberService.pas',
   ufrmNewCard in 'App\ufrmNewCard.pas' {frmNewCard},
@@ -254,10 +254,12 @@ uses
   ObjKpiIndex in 'Obj\ObjKpiIndex.pas',
   ObjMktPlanOrder in 'Obj\ObjMktPlanOrder.pas',
   ObjMktRequOrder in 'Obj\ObjMktRequOrder.pas',
-  ufrmMktBondOrder in 'App\ufrmMktBondOrder.pas' {frmMktBondOrder},
-  ufrmMktBondOrderList in 'App\ufrmMktBondOrderList.pas' {frmMktBondOrderList},
   ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame},
-  ufrmSalRetuMenu in 'App\ufrmSalRetuMenu.pas' {frmSalRetuMenu};
+  ufrmSalRetuMenu in 'App\ufrmSalRetuMenu.pas' {frmSalRetuMenu},
+  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
+  ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
+  ufrmMktRequOrder in 'App\ufrmMktRequOrder.pas' {frmMktRequOrder},
+  ufrmMktRequOrderList in 'App\ufrmMktRequOrderList.pas' {frmMktRequOrderList};
 
 {$R *.res}
 var

@@ -41,6 +41,8 @@ type
     edtITEM_ID: TzrComboBoxList;
     Label4: TLabel;
     edtBILL_NO: TcxTextEdit;
+    Label5: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -141,6 +143,9 @@ begin
   edtITEM_ID.DataSet := Global.GetZQueryFromName('ACC_ITEM_INFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1';
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),edtPAYM_ID.Properties.Items,'CODE_NAME');
 
   if ShopGlobal.GetProdFlag = 'E' then
@@ -167,6 +172,9 @@ begin
   edtSHOP_ID.Properties.ReadOnly := False;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
   if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
     begin
       SetEditStyle(dsBrowse,edtSHOP_ID.Style);
@@ -218,6 +226,8 @@ begin
   if edtACCOUNT_ID.AsString = '' then Raise Exception.Create('请选择帐户名称');
   if edtPAYM_ID.ItemIndex<0 then Raise Exception.Create('请选择付款方式名称');
   if edtITEM_ID.AsString = '' then Raise Exception.Create('请选择收支科目名称');
+  if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
   if edtPAY_DATE.EditValue = null then Raise Exception.Create('请选择付款日期');
   WriteToObject(AObj,self);
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());

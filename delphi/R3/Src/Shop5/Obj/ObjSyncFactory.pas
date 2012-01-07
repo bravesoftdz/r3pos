@@ -995,8 +995,8 @@ begin
      rs := TZQuery.Create(nil);
      try
        rs.SQL.Text :=
-         'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,:ACCT_INFO,:ABLE_TYPE,:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+         'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,:ACCT_INFO,:ABLE_TYPE,:STOCK_MNY,0,:ADVA_MNY,:RECK_MNY,:STOCK_DATE,:STOCK_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
        CopyToParams(rs.Params);
        if FieldbyName('STOCK_TYPE').asString='1' then
           begin
@@ -1029,7 +1029,7 @@ begin
      rs := TZQuery.Create(nil);
      try
        rs.SQL.Text :=
-         'update ACC_PAYABLE_INFO set ACCT_MNY=:STOCK_MNY,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:STOCK_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+         'update ACC_PAYABLE_INFO set ACCT_MNY=:STOCK_MNY,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:STOCK_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
        + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and ABLE_TYPE=:ABLE_TYPE';
        CopyToParams(rs.Params);
        rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('STOCK_MNY').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
@@ -1200,8 +1200,8 @@ begin
      rs := TZQuery.Create(nil);
      try
        rs.SQL.Text :=
-         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,:ACCT_INFO,:RECV_TYPE,:PAY_D,0,:ADVA_MNY,:RECK_MNY,:SALES_DATE,:SALES_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,:ACCT_INFO,:RECV_TYPE,:PAY_D,0,:ADVA_MNY,:RECK_MNY,:SALES_DATE,:SALES_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
        CopyToParams(rs.Params);
        case FieldbyName('SALES_TYPE').AsInteger of
        1,4: begin
@@ -1259,7 +1259,7 @@ begin
        rs := TZQuery.Create(nil);
        try
          rs.SQL.Text :=
-           'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-RECV_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+           'update ACC_RECVABLE_INFO set ACCT_MNY=:PAY_D,REVE_MNY=:ADVA_MNY,RECK_MNY=round(:RECK_MNY-RECV_MNY,2),SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:SALES_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
          + 'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID and RECV_TYPE=:RECV_TYPE';
          CopyToParams(rs.Params);
          rs.ParambyName('RECK_MNY').AsFloat := FieldbyName('PAY_D').AsFloat-FieldbyName('ADVA_MNY').AsFloat;
@@ -1621,8 +1621,8 @@ begin
    if (FieldbyName('ADVA_MNY').AsFloat <> 0) then
    begin
      AGlobal.ExecSQL(
-         'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预付款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''6'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+         'insert into ACC_PAYABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,ABLE_TYPE,ACCT_MNY,PAYM_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,STOCK_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'预付款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''6'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
    end;
 end;
@@ -1633,7 +1633,7 @@ begin
    rs := TZQuery.Create(nil);
    try
      rs.SQL.Text :=
-       'update ACC_PAYABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=round(:ADVA_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+       'update ACC_PAYABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=round(:ADVA_MNY-PAYM_MNY,2),SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
      + 'where TENANT_ID=:TENANT_ID and STOCK_ID=:INDE_ID and ABLE_TYPE=''6''';
      CopyToParams(rs.Params);
      AGlobal.ExecQuery(rs);
@@ -1835,8 +1835,8 @@ begin
    if (FieldbyName('ADVA_MNY').AsFloat <> 0) then
    begin
      AGlobal.ExecSQL(
-         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES(:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
    end;
 end;
@@ -1847,7 +1847,7 @@ begin
    rs := TZQuery.Create(nil);
    try
      rs.SQL.Text :=
-       'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=round(:ADVA_MNY-RECV_MNY,2),SHOP_ID=:SHOP_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
+       'update ACC_RECVABLE_INFO set ACCT_MNY=:ADVA_MNY,RECK_MNY=round(:ADVA_MNY-RECV_MNY,2),SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CLIENT_ID=:CLIENT_ID,ABLE_DATE=:INDE_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'  '
      + 'where TENANT_ID=:TENANT_ID and SALES_ID=:INDE_ID and RECV_TYPE=''3''';
      CopyToParams(rs.Params);
      AGlobal.ExecQuery(rs);
@@ -3262,11 +3262,11 @@ begin
        Params.ParamByName('TABLE_NAME').AsString := 'ACC_RECVABLE_INFO';
      end;
   InitSQL(AGlobal,false);
-  UpdateQuery.SQL.Text := 
-    'update ACC_RECVABLE_INFO set RECK_MNY=round(:ACCT_MNY-RECV_MNY,2),ABLE_DATE=:ABLE_DATE,ACCT_MNY=:ACCT_MNY,ACCT_INFO=:ACCT_INFO,CREA_USER=:CREA_USER,CREA_DATE=:CREA_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
+  UpdateQuery.SQL.Text :=
+    'update ACC_RECVABLE_INFO set RECK_MNY=round(:ACCT_MNY-RECV_MNY,2),ABLE_DATE=:ABLE_DATE,ACCT_MNY=:ACCT_MNY,DEPT_ID=:DEPT_ID,SHOP_ID=:SHOP_ID,ACCT_INFO=:ACCT_INFO,CREA_USER=:CREA_USER,CREA_DATE=:CREA_DATE,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
     'where TENANT_ID=:TENANT_ID and ABLE_ID=:ABLE_ID';
   FillParams(InsertQuery);
-  UpdateQuery.Params.AssignValues(InsertQuery.Params); 
+  UpdateQuery.Params.AssignValues(InsertQuery.Params);
   r := AGlobal.ExecQuery(UpdateQuery);
   if r=0 then
     begin

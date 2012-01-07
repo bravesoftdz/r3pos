@@ -259,7 +259,8 @@ uses
   ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
   ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
   ufrmMktRequOrder in 'App\ufrmMktRequOrder.pas' {frmMktRequOrder},
-  ufrmMktRequOrderList in 'App\ufrmMktRequOrderList.pas' {frmMktRequOrderList};
+  ufrmMktRequOrderList in 'App\ufrmMktRequOrderList.pas' {frmMktRequOrderList},
+  ObjRecvOrder in 'Obj\ObjRecvOrder.pas';
 
 {$R *.res}
 var

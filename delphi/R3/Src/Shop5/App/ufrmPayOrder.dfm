@@ -89,6 +89,7 @@ inherited frmPayOrder: TfrmPayOrder
                 OnUpdateData = DBGridEh1Columns1UpdateData
               end
               item
+                DisplayFormat = '0000-00-00'
                 EditButtons = <>
                 FieldName = 'ABLE_DATE'
                 Footer.Value = #21512'   '#35745#65306
@@ -296,11 +297,18 @@ inherited frmPayOrder: TfrmPayOrder
       end
       object Label4: TLabel
         Left = 439
-        Top = 60
+        Top = 81
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #31080#25454#32534#21495
+      end
+      object Label5: TLabel
+        Left = 438
+        Top = 59
+        Width = 48
+        Height = 12
+        Caption = #25152#23646#37096#38376
       end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
@@ -794,12 +802,46 @@ inherited frmPayOrder: TfrmPayOrder
       end
       object edtBILL_NO: TcxTextEdit
         Left = 492
-        Top = 55
+        Top = 76
         Width = 131
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 8
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtDEPT_ID: TzrComboBoxList
+        Left = 492
+        Top = 55
+        Width = 131
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 9
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'DEPT_NAME;DEPT_SPELL'
+        KeyField = 'DEPT_ID'
+        ListField = 'DEPT_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'DEPT_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end>
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = False
+        LocateStyle = lsDark
+        Buttons = []
+        DropListStyle = lsFixed
+        MultiSelect = False
       end
     end
   end

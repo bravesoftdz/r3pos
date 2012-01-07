@@ -29,7 +29,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               Left = 6
               Top = 6
               Width = 862
-              Height = 84
+              Height = 96
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -38,7 +38,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               TabOrder = 0
               object Label3: TLabel
                 Left = 24
-                Top = 33
+                Top = 32
                 Width = 48
                 Height = 12
                 Caption = #38376#24215#21517#31216
@@ -60,10 +60,17 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object Label2: TLabel
                 Left = 24
-                Top = 55
+                Top = 74
                 Width = 48
                 Height = 12
                 Caption = #20379' '#24212' '#21830
+              end
+              object Label8: TLabel
+                Left = 24
+                Top = 53
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
               end
               object P1_D1: TcxDateEdit
                 Left = 80
@@ -85,7 +92,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 435
-                Top = 41
+                Top = 57
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -103,7 +110,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 2
+                TabOrder = 6
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -113,7 +120,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               object fndP1_SHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
-                Top = 29
+                Top = 28
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -122,7 +129,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 3
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -156,7 +163,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Left = 316
                 Top = 2
                 Width = 105
-                Height = 71
+                Height = 87
                 ItemIndex = 1
                 Properties.Items = <
                   item
@@ -168,12 +175,12 @@ inherited frmPayOrderList: TfrmPayOrderList
                   item
                     Caption = #24050#32467#28165
                   end>
-                TabOrder = 4
+                TabOrder = 5
                 Caption = #29366#24577
               end
               object fndP1_CLIENT_ID: TzrComboBoxList
                 Left = 80
-                Top = 51
+                Top = 70
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -182,7 +189,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -227,12 +234,46 @@ inherited frmPayOrderList: TfrmPayOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndP1_DEPT_ID: TzrComboBoxList
+                Left = 80
+                Top = 49
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             object Panel3: TPanel
               Left = 6
-              Top = 90
+              Top = 102
               Width = 862
-              Height = 386
+              Height = 374
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -240,7 +281,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Left = 1
                 Top = 1
                 Width = 860
-                Height = 384
+                Height = 372
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = PayListDs
@@ -391,7 +432,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               Left = 6
               Top = 6
               Width = 862
-              Height = 123
+              Height = 129
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -415,7 +456,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object Label4: TLabel
                 Left = 26
-                Top = 93
+                Top = 106
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -423,7 +464,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object Label5: TLabel
                 Left = 210
-                Top = 93
+                Top = 106
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
@@ -431,7 +472,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object Label6: TLabel
                 Left = 210
-                Top = 73
+                Top = 87
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
@@ -439,14 +480,14 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object Label17: TLabel
                 Left = 13
-                Top = 53
+                Top = 68
                 Width = 60
                 Height = 12
                 Caption = #20379#24212#21830#21517#31216
               end
               object Label1: TLabel
                 Left = 26
-                Top = 73
+                Top = 87
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -454,10 +495,17 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object Label40: TLabel
                 Left = 24
-                Top = 32
+                Top = 30
                 Width = 48
                 Height = 12
                 Caption = #20184#27454#38376#24215
+              end
+              object Label7: TLabel
+                Left = 24
+                Top = 48
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
               end
               object D1: TcxDateEdit
                 Left = 80
@@ -479,7 +527,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object RzBitBtn1: TRzBitBtn
                 Left = 517
-                Top = 81
+                Top = 89
                 Width = 67
                 Height = 29
                 Action = actFind
@@ -497,7 +545,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 2
+                TabOrder = 10
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -508,7 +556,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Left = 396
                 Top = 29
                 Width = 105
-                Height = 80
+                Height = 92
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -520,12 +568,12 @@ inherited frmPayOrderList: TfrmPayOrderList
                   item
                     Caption = #24050#23457#26680
                   end>
-                TabOrder = 3
+                TabOrder = 9
                 Caption = ''
               end
               object fndPAY_USER: TzrComboBoxList
                 Left = 80
-                Top = 89
+                Top = 102
                 Width = 97
                 Height = 20
                 Properties.AutoSelect = False
@@ -534,7 +582,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 7
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT;USER_NAME'
@@ -566,7 +614,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object fndACCOUNT_ID: TzrComboBoxList
                 Left = 253
-                Top = 89
+                Top = 102
                 Width = 120
                 Height = 20
                 Properties.AutoSelect = False
@@ -575,7 +623,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 8
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -608,7 +656,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object fndITEM_ID: TzrComboBoxList
                 Left = 253
-                Top = 69
+                Top = 83
                 Width = 120
                 Height = 20
                 Properties.AutoSelect = False
@@ -643,7 +691,7 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object fndCLIENT_ID: TzrComboBoxList
                 Left = 80
-                Top = 49
+                Top = 64
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -652,7 +700,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 7
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -713,17 +761,17 @@ inherited frmPayOrderList: TfrmPayOrderList
               end
               object fndPAYM_ID: TcxComboBox
                 Left = 80
-                Top = 69
+                Top = 83
                 Width = 97
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DropDownListStyle = lsFixedList
-                TabOrder = 8
+                TabOrder = 5
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
-                Top = 28
+                Top = 26
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -732,7 +780,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 9
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -762,12 +810,46 @@ inherited frmPayOrderList: TfrmPayOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndDEPT_ID: TzrComboBoxList
+                Left = 80
+                Top = 45
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             object Panel2: TPanel
               Left = 6
-              Top = 129
+              Top = 135
               Width = 862
-              Height = 347
+              Height = 341
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -775,7 +857,7 @@ inherited frmPayOrderList: TfrmPayOrderList
                 Left = 1
                 Top = 1
                 Width = 860
-                Height = 345
+                Height = 339
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2

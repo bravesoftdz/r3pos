@@ -66,6 +66,10 @@ type
     DBGridEh1: TDBGridEh;
     CdsPayList: TZQuery;
     PayListDs: TDataSource;
+    Label8: TLabel;
+    fndP1_DEPT_ID: TzrComboBoxList;
+    Label7: TLabel;
+    fndDEPT_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -142,6 +146,8 @@ begin
   fndACCOUNT_ID.DataSet := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   fndITEM_ID.DataSet := Global.GetZQueryFromName('ACC_ITEM_INFO');
+  fndP1_DEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   fndPAY_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),fndPAYM_ID.Properties.Items,'CODE_NAME');
   fndPAYM_ID.Properties.Items.Insert(0,'全部');
@@ -358,6 +364,9 @@ begin
   //门店条件:
   if fndP1_SHOP_ID.AsString <> '' then
      strWhere := strWhere + ' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+'''';
+  //部门条件:
+  if fndP1_DEPT_ID.AsString <> '' then
+     strWhere := strWhere + ' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+'''';
   //客户条件:
   if fndP1_CLIENT_ID.AsString <> '' then
      strWhere := strWhere + ' and A.CLIENT_ID='''+fndP1_CLIENT_ID.AsString+'''';
@@ -383,7 +392,7 @@ begin
     ',C.SHOP_NAME as SHOP_ID_TEXT '+
     ' from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C  '+
     ' where A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
-    ' '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+' ';
+    ' '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by ABLE_ID';
@@ -447,6 +456,9 @@ begin
      strWhere := strWhere + ' and A.PAYM_ID='''+TRecord_(fndPAYM_ID.Properties.Items.Objects[fndPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   if fndSHOP_ID.AsString <> '' then
      strWhere := strWhere + ' and A.SHOP_ID='''+fndSHOP_ID.AsString+'''';
+  //部门条件:
+  if fndDEPT_ID.AsString <> '' then
+     strWhere := strWhere + ' and A.DEPT_ID='''+fndDEPT_ID.AsString+'''';
   if fndACCOUNT_ID.AsString <> '' then
      strWhere := strWhere + ' and A.ACCOUNT_ID='''+fndACCOUNT_ID.AsString+'''';
   if fndITEM_ID.AsString <> '' then
@@ -462,7 +474,7 @@ begin
   if id<>'' then
      strWhere := strWhere + ' and A.PAY_ID > '+QuotedStr(id);
   strSql :='select A.PAY_ID,A.SHOP_ID,A.TENANT_ID,A.ACCOUNT_ID,A.CLIENT_ID,A.PAYM_ID,A.ITEM_ID,A.GLIDE_NO,A.PAY_DATE,A.PAY_USER,A.REMARK,'+
-  'A.PAY_MNY,A.CHK_DATE,A.CREA_DATE,A.CHK_USER,A.BILL_NO,A.COMM from ACC_PAYORDER A where '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  'A.PAY_MNY,A.CHK_DATE,A.CREA_DATE,A.CHK_USER,A.BILL_NO,A.COMM from ACC_PAYORDER A where '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2);
   strSql :='select jc.*,c.ACCT_NAME as ACCOUNT_ID_TEXT from ('+strSql+') jc '+
            'left outer join VIW_ACCOUNT_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.ACCOUNT_ID=c.ACCOUNT_ID';
   strSql :='select jd.*,d.CODE_NAME as ITEM_ID_TEXT from ('+strSql+') jd '+

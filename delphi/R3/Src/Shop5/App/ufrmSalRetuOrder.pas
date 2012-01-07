@@ -410,6 +410,9 @@ begin
   if edtSALES_DATE.EditValue = null then Raise Exception.Create('退货日期不能为空');
   if edtINVOICE_FLAG.ItemIndex = -1 then Raise Exception.Create('票据类型不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
+  if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
+
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;

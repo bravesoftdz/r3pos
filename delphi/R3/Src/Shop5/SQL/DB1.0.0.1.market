@@ -68,14 +68,14 @@ CREATE TABLE [MKT_KPI_INDEX] (
 	[KPI_NAME] [char] (50) NOT NULL ,
         --指标类型
 	[IDX_TYPE] [char] (1) NOT NULL ,
+        --计算标准
+	[KPI_CALC] char(1) NULL ,
         --考核类型
 	[KPI_TYPE] [char] (1) NOT NULL ,
         --显示单位
 	[UNIT_NAME] [varchar] (10) NOT NULL ,
         --考核标准
 	[KPI_DATA] char(1) NULL ,
-        --计算标准
-	[KPI_CALC] char(1) NULL ,
 	
 	        --标准系数
 	[KPI_AGIO] [decimal](18, 3) NULL ,
@@ -267,6 +267,10 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	[SHOP_ID] [varchar] (13) NOT NULL ,
         --指标类型
 	[IDX_TYPE] [char] (1) NOT NULL ,
+        --指标类型
+	[IDX_TYPE] [char] (1) NOT NULL ,
+        --计算标准
+	[KPI_CALC] char(1) NULL ,
         --考核ID
 	[KPI_ID] [char] (36) NOT NULL ,
         --年度
@@ -573,3 +577,18 @@ CREATE INDEX IX_MBNR_FROM_ID ON MKT_BONDDATA(TENANT_ID,BOND_ID,FROM_ID);
 alter table ACC_RECVORDER add DEPT_ID varchar(12) null;
 --为付款单添加部门
 alter table ACC_PAYORDER add DEPT_ID varchar(12) null;
+
+--为收款单添加部门
+alter table ACC_RECVABLE_INFO add DEPT_ID varchar(12) null;
+--为付款单添加部门
+alter table ACC_PAYABLE_INFO add DEPT_ID varchar(12) null;
+
+update ACC_RECVORDER set DEPT_ID=(select DEPT_ID from VIW_USERS where TENANT_ID=ACC_RECVORDER.TENANT_ID and USER_ID=ACC_RECVORDER.RECV_USER);
+update ACC_PAYORDER set DEPT_ID=(select DEPT_ID from VIW_USERS where TENANT_ID=ACC_PAYORDER.TENANT_ID and USER_ID=ACC_PAYORDER.PAY_USER);
+
+update ACC_RECVABLE_INFO set DEPT_ID=(select DEPT_ID from SAL_SALESORDER where TENANT_ID=ACC_RECVABLE_INFO.TENANT_ID and SALES_ID=ACC_RECVABLE_INFO.SALES_ID) where RECV_TYPE in ('1','2');
+update ACC_RECVABLE_INFO set DEPT_ID=(select DEPT_ID from SAL_INDENTORDER where TENANT_ID=ACC_RECVABLE_INFO.TENANT_ID and INDE_ID=ACC_RECVABLE_INFO.SALES_ID) where RECV_TYPE in ('3');
+update ACC_RECVABLE_INFO set DEPT_ID=(select DEPT_ID from VIW_USERS where TENANT_ID=ACC_RECVABLE_INFO.TENANT_ID and USER_ID=ACC_RECVABLE_INFO.CREA_USER) where RECV_TYPE in ('4');
+
+update ACC_PAYABLE_INFO set DEPT_ID=(select DEPT_ID from STK_STOCKORDER where TENANT_ID=ACC_PAYABLE_INFO.TENANT_ID and STOCK_ID=ACC_PAYABLE_INFO.STOCK_ID) where ABLE_TYPE in ('4','5');
+update ACC_PAYABLE_INFO set DEPT_ID=(select DEPT_ID from STK_INDENTORDER where TENANT_ID=ACC_PAYABLE_INFO.TENANT_ID and INDE_ID=ACC_PAYABLE_INFO.STOCK_ID) where ABLE_TYPE in ('6');

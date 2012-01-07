@@ -172,22 +172,22 @@ begin
   if (FieldbyName('ADVA_MNY').AsFloat <> 0) then
   begin
      AGlobal.ExecSQL(
-         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'预收款【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''3'',:ADVA_MNY,0,0,:ADVA_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
   end;
   if (FieldbyName('BOND_MNY').AsFloat <> 0) then
   begin
      AGlobal.ExecSQL(
-         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'滚存保证金【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'',:BOND_MNY,0,0,:BOND_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'滚存保证金【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'',:BOND_MNY,0,0,:BOND_MNY,:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
   end;
   if ((FieldbyName('OTH1_MNY').AsFloat+FieldbyName('OTH2_MNY').AsFloat+FieldbyName('OTH3_MNY').AsFloat+FieldbyName('OTH4_MNY').AsFloat+FieldbyName('OTH5_MNY').AsFloat) <> 0) then
   begin
      AGlobal.ExecSQL(
-         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:CLIENT_ID,'''+'其他费用【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'','+
+         'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+       + 'VALUES('''+newid(FieldbyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'其他费用【订单号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'','+
          formatFloat('#0.00',(FieldbyName('OTH1_MNY').AsFloat+FieldbyName('OTH2_MNY').AsFloat+FieldbyName('OTH3_MNY').AsFloat+FieldbyName('OTH4_MNY').AsFloat+FieldbyName('OTH5_MNY').AsFloat))+',0,0,'+
          formatFloat('#0.00',(FieldbyName('OTH1_MNY').AsFloat+FieldbyName('OTH2_MNY').AsFloat+FieldbyName('OTH3_MNY').AsFloat+FieldbyName('OTH4_MNY').AsFloat+FieldbyName('OTH5_MNY').AsFloat))+',:INDE_DATE,:INDE_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);

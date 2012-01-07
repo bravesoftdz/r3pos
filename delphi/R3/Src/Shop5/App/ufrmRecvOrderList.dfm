@@ -29,7 +29,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               Left = 6
               Top = 6
               Width = 862
-              Height = 84
+              Height = 100
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -60,10 +60,17 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object Label2: TLabel
                 Left = 24
-                Top = 56
+                Top = 76
                 Width = 48
                 Height = 12
                 Caption = #23458#25143#21517#31216
+              end
+              object Label8: TLabel
+                Left = 24
+                Top = 55
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
               end
               object P1_D1: TcxDateEdit
                 Left = 80
@@ -85,7 +92,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 451
-                Top = 41
+                Top = 57
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -103,7 +110,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 2
+                TabOrder = 6
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -122,7 +129,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 3
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -156,7 +163,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Left = 324
                 Top = 2
                 Width = 105
-                Height = 71
+                Height = 90
                 ItemIndex = 1
                 Properties.Items = <
                   item
@@ -168,12 +175,12 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                   item
                     Caption = #24050#32467#28165
                   end>
-                TabOrder = 4
+                TabOrder = 5
                 Caption = #29366#24577
               end
               object fndP1_CUST_ID: TzrComboBoxList
                 Left = 80
-                Top = 51
+                Top = 73
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -182,7 +189,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -241,12 +248,46 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndP1_DEPT_ID: TzrComboBoxList
+                Left = 80
+                Top = 51
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             object Panel1: TPanel
               Left = 6
-              Top = 90
+              Top = 106
               Width = 862
-              Height = 386
+              Height = 370
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -254,7 +295,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Left = 1
                 Top = 1
                 Width = 860
-                Height = 384
+                Height = 368
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = RecvListDs
@@ -403,7 +444,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               Left = 6
               Top = 6
               Width = 862
-              Height = 123
+              Height = 129
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -427,7 +468,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object Label4: TLabel
                 Left = 26
-                Top = 93
+                Top = 106
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -435,7 +476,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object Label5: TLabel
                 Left = 210
-                Top = 93
+                Top = 104
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
@@ -443,7 +484,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object Label6: TLabel
                 Left = 210
-                Top = 73
+                Top = 85
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
@@ -451,14 +492,14 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object Label17: TLabel
                 Left = 24
-                Top = 53
+                Top = 68
                 Width = 48
                 Height = 12
                 Caption = #23458#25143#21517#31216
               end
               object Label1: TLabel
                 Left = 26
-                Top = 73
+                Top = 87
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -470,6 +511,13 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Width = 48
                 Height = 12
                 Caption = #25910#27454#38376#24215
+              end
+              object Label7: TLabel
+                Left = 24
+                Top = 49
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
               end
               object D1: TcxDateEdit
                 Left = 80
@@ -491,7 +539,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object RzBitBtn1: TRzBitBtn
                 Left = 517
-                Top = 83
+                Top = 91
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -509,7 +557,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 2
+                TabOrder = 10
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -520,7 +568,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Left = 396
                 Top = 29
                 Width = 105
-                Height = 80
+                Height = 92
                 ItemIndex = 0
                 Properties.Items = <
                   item
@@ -532,12 +580,12 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                   item
                     Caption = #24050#23457#26680
                   end>
-                TabOrder = 3
+                TabOrder = 9
                 Caption = ''
               end
               object fndRECV_USER: TzrComboBoxList
                 Left = 80
-                Top = 89
+                Top = 102
                 Width = 97
                 Height = 20
                 Properties.AutoSelect = False
@@ -546,7 +594,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 7
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT;USER_NAME'
@@ -578,7 +626,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object fndACCOUNT_ID: TzrComboBoxList
                 Left = 253
-                Top = 89
+                Top = 102
                 Width = 120
                 Height = 20
                 Properties.AutoSelect = False
@@ -587,7 +635,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 8
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT_ID;ACCT_NAME;ACCT_SPELL'
@@ -620,7 +668,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object fndCLIENT_ID: TzrComboBoxList
                 Left = 80
-                Top = 49
+                Top = 64
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -629,7 +677,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 6
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -690,17 +738,17 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object fndPAYM_ID: TcxComboBox
                 Left = 80
-                Top = 69
+                Top = 83
                 Width = 97
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DropDownListStyle = lsFixedList
-                TabOrder = 7
+                TabOrder = 5
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
                 Left = 80
-                Top = 28
+                Top = 26
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -709,7 +757,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 8
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -741,7 +789,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
               end
               object fndITEM_ID: TzrComboBoxList
                 Left = 253
-                Top = 69
+                Top = 83
                 Width = 120
                 Height = 20
                 Properties.AutoSelect = False
@@ -750,7 +798,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 9
+                TabOrder = 6
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_NAME;CODE_SPELL'
@@ -774,12 +822,46 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndDEPT_ID: TzrComboBoxList
+                Left = 80
+                Top = 45
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             object Panel2: TPanel
               Left = 6
-              Top = 129
+              Top = 135
               Width = 862
-              Height = 347
+              Height = 341
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -787,7 +869,7 @@ inherited frmRecvOrderList: TfrmRecvOrderList
                 Left = 1
                 Top = 1
                 Width = 860
-                Height = 345
+                Height = 339
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2

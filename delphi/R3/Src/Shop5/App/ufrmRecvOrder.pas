@@ -43,6 +43,10 @@ type
     edtBILL_NO: TcxTextEdit;
     Label8: TLabel;
     edtBANK_CODE: TcxTextEdit;
+    Label5: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    Label9: TLabel;
+    cxTextEdit1: TcxTextEdit;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -145,6 +149,9 @@ begin
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),edtPAYM_ID.Properties.Items,'CODE_NAME');
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1';
 //  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_BANK_INFO'),edtBANK_ID.Properties.Items,'CODE_NAME');
 
   if ShopGlobal.GetProdFlag = 'E' then
@@ -170,6 +177,9 @@ begin
   edtRECV_DATE.Date := Global.SysDate;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
 
 //  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
 //  begin
@@ -226,6 +236,8 @@ begin
      begin
        if trim(edtBANK_CODE.Text) = '' then Raise Exception.Create('请选择输入银行卡号');
      end;
+  if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
   WriteToObject(AObj,self);
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;

@@ -101,7 +101,7 @@ end;
 procedure TfrmMktKpiResult.actFindExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002158',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002158',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   Open('');
 end;
 
@@ -111,7 +111,7 @@ var
   Params:TftParamList;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002158',3) then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002158',3) then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
   if IsAudit then
      begin
        if CdsKpiResult.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前经销商考核结果执行弃审');
@@ -150,7 +150,7 @@ end;
 procedure TfrmMktKpiResult.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002158',4) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002158',4) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintView;
   PrintDBGridEh1.Print;
 end;
@@ -158,7 +158,7 @@ end;
 procedure TfrmMktKpiResult.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002158',4) then Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002158',4) then Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
   PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
@@ -174,7 +174,7 @@ procedure TfrmMktKpiResult.actSaveExecute(Sender: TObject);
 var Stream: TMemoryStream;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002158',5) then Raise Exception.Create('你没有导出'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002158',5) then Raise Exception.Create('你没有导出'+Caption+'的权限,请和管理员联系.');
   if Grid=nil then Exit;
   if Grid.DataSource=nil then Exit;
   if Grid.DataSource.DataSet=nil then Exit;
@@ -228,7 +228,7 @@ end;
 procedure TfrmMktKpiResult.actEditExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002158',2) then Raise Exception.Create('你没有计算'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002158',2) then Raise Exception.Create('你没有计算'+Caption+'的权限,请和管理员联系.');
   with TfrmMktKpiCalculate.Create(nil) do
   begin
     try
@@ -285,8 +285,11 @@ begin
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';
           
-  Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_ID,A.KPI_YEAR,A.BEGIN_DATE,A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,'+
-            'A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,A.PLAN_AMT,A.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,A.WDW_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT '+
+  Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_ID,A.KPI_YEAR,A.BEGIN_DATE,'+
+            'A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
+            'case when A.KPI_DATA in (''1'',''4'') then A.PLAN_AMT when A.KPI_DATA in (''2'',''3'',''5'',''6'') then A.PLAN_MNY end as PLAN_AMT,'+
+            'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT when A.KPI_DATA in (''2'',''3'',''5'',''6'') then A.FISH_MNY end as FISH_AMT,'+
+            'A.KPI_MNY,A.WDW_MNY,A.KPI_MNY-A.WDW_MNY as BALANCE_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT '+
             ' from MKT_KPI_RESULT A inner join MKT_PLANORDER B on A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
             ' left outer join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
             ' left outer join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+

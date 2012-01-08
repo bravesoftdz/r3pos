@@ -1,6 +1,6 @@
 inherited frmMktKpiResult: TfrmMktKpiResult
-  Left = 345
-  Top = 181
+  Left = 252
+  Top = 172
   Width = 915
   Height = 533
   Caption = #32771#26680#32467#26524
@@ -76,19 +76,19 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CLIENT_ID_TEXT'
-                    Footers = <>
-                    ReadOnly = True
-                    Title.Caption = #32463' '#38144' '#21830' '#21517' '#31216
-                    Width = 150
-                  end
-                  item
-                    EditButtons = <>
                     FieldName = 'KPI_YEAR'
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #24180#24230
                     Width = 50
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'CLIENT_ID_TEXT'
+                    Footers = <>
+                    ReadOnly = True
+                    Title.Caption = #32463#38144#21830
+                    Width = 150
                   end
                   item
                     EditButtons = <>
@@ -98,6 +98,13 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Width = 120
                   end
                   item
+                    EditButtons = <>
+                    FieldName = 'UNIT_NAME'
+                    Footers = <>
+                    Title.Caption = #21333#20301
+                    Width = 40
+                  end
+                  item
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
@@ -105,18 +112,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footer.DisplayFormat = '#,##0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #35745#21010#38144#37327
-                    Width = 60
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'PLAN_MNY'
-                    Footer.DisplayFormat = '#,##0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    Title.Caption = #35745#21010#37329#39069
+                    Title.Caption = #31614#32422#37327
                     Width = 60
                   end
                   item
@@ -129,19 +125,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footer.ValueType = fvtSum
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #23436#25104#38144#37327
-                    Width = 60
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
-                    EditButtons = <>
-                    FieldName = 'FISH_MNY'
-                    Footer.DisplayFormat = '#,##0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    Title.Caption = #23436#25104#37329#39069
-                    Visible = False
+                    Title.Caption = #23436#25104#37327
                     Width = 60
                   end
                   item
@@ -153,7 +137,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footer.DisplayFormat = '#0.00#'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #32771#26680#37327
+                    Title.Caption = #36820#21033#24635#39069
                     Width = 60
                   end
                   item
@@ -165,7 +149,14 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footer.DisplayFormat = '#,##0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #25552#21462#36820#21033
+                    Title.Caption = #24050#36820#37329#39069
+                    Width = 60
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'BALANCE_MNY'
+                    Footers = <>
+                    Title.Caption = #32467#20313#37329#39069
                     Width = 60
                   end
                   item

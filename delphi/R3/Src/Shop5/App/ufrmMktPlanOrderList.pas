@@ -24,11 +24,11 @@ type
     fndGLIDE_NO: TcxTextEdit;
     fndDEPT_ID: TzrComboBoxList;
     btnOk: TRzBitBtn;
-    fndPLAN_USER: TzrComboBoxList;
-    Label2: TLabel;
     frfMktPlanOrderList: TfrReport;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
+    Label40: TLabel;
+    fndSHOP_ID: TzrComboBoxList;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -204,8 +204,8 @@ begin
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
-    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString; 
-    if rs.Params.FindParam('PLAN_USER')<>nil then rs.Params.FindParam('PLAN_USER').AsString := fndPLAN_USER.AsString;
+    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
@@ -339,13 +339,13 @@ end;
 function TfrmMktPlanOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and PLAN_TYPE=1 and A.PLAN_DATE>=:D1 and A.PLAN_DATE<=:D2 ';
+  w := ' where A.TENANT_ID=:TENANT_ID and PLAN_TYPE=''1'' and A.PLAN_DATE>=:D1 and A.PLAN_DATE<=:D2 ';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndDEPT_ID.AsString <> '' then
      w := w +' and A.DEPT_ID=:DEPT_ID';
-  if fndPLAN_USER.AsString <> '' then
-     w := w + ' and A.PLAN_USER=:PLAN_USER';
+  if fndSHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
   if Trim(fndGLIDE_NO.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndGLIDE_NO.Text)+'''';
 
@@ -417,10 +417,12 @@ begin
   inherited;
   InitGridPickList(DBGridEh1);
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndSHOP_ID.KeyValue := Global.SHOP_ID;
+  fndSHOP_ID.Text := Global.SHOP_NAME;
+  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   fndDEPT_ID.RangeField := 'DEPT_TYPE';
   fndDEPT_ID.RangeValue := '1';
-  fndPLAN_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   D1.Date := date();
   D2.Date := date();
 

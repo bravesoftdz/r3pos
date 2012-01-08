@@ -8,7 +8,7 @@ uses
   ZDataset, ActnList, Menus, Grids, DBGridEh, ExtCtrls, StdCtrls, RzPanel,
   cxButtonEdit, zrComboBoxList, cxControls, cxContainer, cxEdit, ZBase,
   cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, RzLabel, zrYearEdit,
-  cxMemo, cxSpinEdit;
+  cxMemo, cxSpinEdit, RzButton;
 
 type
   TfrmMktPlanOrder = class(TframeContractForm)
@@ -39,6 +39,9 @@ type
     RzLabel3: TRzLabel;
     edtBUDG_MNY: TcxTextEdit;
     edtKPI_YEAR: TcxSpinEdit;
+    RzBitBtn1: TRzBitBtn;
+    Label40: TLabel;
+    edtSHOP_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure edtKPI_IDEnter(Sender: TObject);
     procedure edtKPI_IDExit(Sender: TObject);
@@ -54,6 +57,7 @@ type
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
+    procedure edtSHOP_IDSaveValue(Sender: TObject);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -199,7 +203,7 @@ begin
   cdsKPI_ID.Close;
   cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(cdsKPI_ID);
-
+  edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtDEPT_ID.RangeField := 'DEPT_TYPE';
@@ -215,7 +219,9 @@ begin
   Open('');
   dbState := dsInsert;
   edtKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
-
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
+  cid := edtSHOP_ID.KeyValue;
   rs := ShopGlobal.GetDeptInfo;
   edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
   edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
@@ -275,6 +281,7 @@ begin
   if edtPLAN_DATE.EditValue = null then Raise Exception.Create('签约日期不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空销售计划单据...');
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -282,6 +289,8 @@ begin
   AObj.FieldByName('KPI_YEAR').AsInteger := edtKPI_YEAR.Value;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+  AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
+  cid := edtSHOP_ID.asString;  
   AObj.FieldByName('PLAN_TYPE').AsInteger := 1;
 
   Factor.BeginBatch;
@@ -601,6 +610,12 @@ procedure TfrmMktPlanOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
+end;
+
+procedure TfrmMktPlanOrder.edtSHOP_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  cid := edtSHOP_ID.asString;
 end;
 
 end.

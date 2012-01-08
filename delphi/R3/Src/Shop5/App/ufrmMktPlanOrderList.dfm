@@ -1,6 +1,6 @@
 inherited frmMktPlanOrderList: TfrmMktPlanOrderList
-  Left = 256
-  Top = 204
+  Left = 250
+  Top = 152
   Caption = #32463#38144#21512#21516
   OnShow = FormShow
   PixelsPerInch = 96
@@ -64,12 +64,12 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 12
                 Caption = #25152#23646#37096#38376
               end
-              object Label2: TLabel
-                Left = 34
+              object Label40: TLabel
+                Left = 33
                 Top = 24
                 Width = 48
                 Height = 12
-                Caption = #32463' '#25163' '#20154
+                Caption = #35746#36135#38376#24215
               end
               object D1: TcxDateEdit
                 Left = 89
@@ -228,7 +228,8 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object fndPLAN_USER: TzrComboBoxList
+              object fndSHOP_ID: TzrComboBoxList
+                Tag = -1
                 Left = 89
                 Top = 20
                 Width = 236
@@ -242,25 +243,25 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 TabOrder = 6
                 InGrid = False
                 KeyValue = Null
-                FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
-                KeyField = 'USER_ID'
-                ListField = 'USER_NAME'
+                FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                KeyField = 'SHOP_ID'
+                ListField = 'SHOP_NAME'
                 Columns = <
                   item
                     EditButtons = <>
-                    FieldName = 'ACCOUNT'
+                    FieldName = 'SHOP_NAME'
                     Footers = <>
-                    Title.Caption = #24080#21495
+                    Title.Caption = #21517#31216
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'USER_NAME'
+                    FieldName = 'SHOP_ID'
                     Footers = <>
-                    Title.Caption = #22995#21517
-                    Width = 130
+                    Title.Caption = #20195#30721
+                    Width = 20
                   end>
-                DropWidth = 180
-                DropHeight = 150
+                DropWidth = 185
+                DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
                 ShowButton = True
@@ -272,7 +273,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 118
-              Height = 248
+              Height = 259
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -394,27 +395,27 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 593
-      Width = 227
+      Left = 589
+      Width = 239
     end
     inherited rzPanel5: TPanel
-      Left = 593
+      Left = 589
     end
     inherited CoolBar1: TCoolBar
-      Width = 573
+      Width = 569
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 573
+          MinHeight = 569
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 573
+        Width = 569
         object ToolButton15: TToolButton
-          Left = 520
+          Left = 516
           Top = 0
           Width = 10
           Caption = 'ToolButton15'
@@ -422,7 +423,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
           Style = tbsDivider
         end
         object ToolButton16: TToolButton
-          Left = 530
+          Left = 526
           Top = 0
           Action = actExit
         end

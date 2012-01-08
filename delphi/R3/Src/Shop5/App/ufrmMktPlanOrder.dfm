@@ -16,13 +16,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Caption = #32463' '#25163' '#20154
   end
   inherited RzPanel1: TRzPanel
-    Width = 867
-    Height = 486
+    Width = 875
+    Height = 497
     inherited RzPanel2: TRzPanel
-      Width = 857
-      Height = 121
+      Width = 865
+      Height = 98
       object RzLabel2: TRzLabel [0]
-        Left = 451
+        Left = 553
         Top = 12
         Width = 48
         Height = 12
@@ -39,20 +39,20 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object Label3: TLabel [2]
         Left = 199
-        Top = 34
+        Top = 56
         Width = 48
         Height = 12
         Caption = #25152#23646#37096#38376
       end
       object Label2: TLabel [3]
-        Left = 198
-        Top = 56
+        Left = 403
+        Top = 34
         Width = 48
         Height = 12
         Caption = #32463' '#25163' '#20154
       end
       object labBEGIN_DATE: TRzLabel [4]
-        Left = 451
+        Left = 553
         Top = 56
         Width = 48
         Height = 12
@@ -60,7 +60,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Caption = #24320#22987#26085#26399
       end
       object RzLabel1: TRzLabel [5]
-        Left = 451
+        Left = 553
         Top = 78
         Width = 48
         Height = 12
@@ -68,7 +68,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Caption = #32467#26463#26085#26399
       end
       object RzLabel7: TRzLabel [6]
-        Left = 451
+        Left = 553
         Top = 34
         Width = 48
         Height = 12
@@ -78,15 +78,15 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object RzLabel10: TRzLabel [7]
         Left = 222
-        Top = 100
+        Top = 78
         Width = 24
         Height = 12
         Alignment = taRightJustify
         Caption = #22791#27880
       end
       object RzLabel3: TRzLabel [8]
-        Left = 147
-        Top = 78
+        Left = 352
+        Top = 56
         Width = 100
         Height = 12
         Alignment = taRightJustify
@@ -99,6 +99,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object Label40: TLabel [9]
+        Left = 198
+        Top = 34
+        Width = 48
+        Height = 12
+        Caption = #25152#23646#38376#24215
+      end
       inherited RzPanel4: TRzPanel
         Height = 79
         TabOrder = 9
@@ -108,7 +115,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         end
       end
       object edtPLAN_DATE: TcxDateEdit
-        Left = 507
+        Left = 609
         Top = 8
         Width = 121
         Height = 20
@@ -119,7 +126,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       object edtCLIENT_ID: TzrComboBoxList
         Left = 254
         Top = 8
-        Width = 175
+        Width = 264
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -189,8 +196,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtDEPT_ID: TzrComboBoxList
         Left = 254
-        Top = 30
-        Width = 121
+        Top = 52
+        Width = 131
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -222,9 +229,9 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         MultiSelect = False
       end
       object edtPLAN_USER: TzrComboBoxList
-        Left = 254
-        Top = 52
-        Width = 121
+        Left = 453
+        Top = 30
+        Width = 88
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -263,7 +270,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         MultiSelect = False
       end
       object edtBEGIN_DATE: TcxDateEdit
-        Left = 507
+        Left = 609
         Top = 52
         Width = 121
         Height = 20
@@ -272,7 +279,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         TabOrder = 6
       end
       object edtEND_DATE: TcxDateEdit
-        Left = 507
+        Left = 609
         Top = 74
         Width = 121
         Height = 20
@@ -282,22 +289,22 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtREMARK: TcxMemo
         Left = 254
-        Top = 96
-        Width = 374
+        Top = 74
+        Width = 288
         Height = 20
         Properties.MaxLength = 100
         TabOrder = 8
       end
       object edtBUDG_MNY: TcxTextEdit
-        Left = 254
-        Top = 74
-        Width = 121
+        Left = 453
+        Top = 52
+        Width = 88
         Height = 20
         Properties.MaxLength = 11
         TabOrder = 3
       end
       object edtKPI_YEAR: TcxSpinEdit
-        Left = 507
+        Left = 609
         Top = 30
         Width = 121
         Height = 20
@@ -307,10 +314,78 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         TabOrder = 5
         Value = 2011
       end
+      object RzBitBtn1: TRzBitBtn
+        Left = 518
+        Top = 8
+        Width = 23
+        Height = 20
+        Caption = #35814
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 10
+        TabStop = False
+        TextStyle = tsRaised
+        ThemeAware = False
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object edtSHOP_ID: TzrComboBoxList
+        Left = 254
+        Top = 30
+        Width = 131
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 11
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'SEQ_NO;SHOP_NAME;SHOP_SPELL'
+        KeyField = 'SHOP_ID'
+        ListField = 'SHOP_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'SHOP_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end
+          item
+            EditButtons = <>
+            FieldName = 'SEQ_NO'
+            Footers = <>
+            Title.Caption = #24207#21495
+            Width = 20
+          end>
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = False
+        LocateStyle = lsDark
+        Buttons = []
+        DropListStyle = lsFixed
+        OnSaveValue = edtSHOP_IDSaveValue
+        MultiSelect = False
+      end
     end
     inherited RzPanel3: TRzPanel
-      Top = 417
-      Width = 857
+      Top = 428
+      Width = 865
       Height = 45
       object RzLabel9: TRzLabel
         Left = 33
@@ -347,9 +422,9 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
     end
     inherited DBGridEh1: TDBGridEh
-      Top = 126
-      Width = 857
-      Height = 291
+      Top = 103
+      Width = 865
+      Height = 325
       FrozenCols = 1
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
@@ -405,13 +480,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 462
-      Width = 857
+      Top = 473
+      Width = 865
       Height = 0
     end
     inherited rzHelp: TRzPanel
-      Top = 462
-      Width = 857
+      Top = 473
+      Width = 865
       Height = 19
     end
     object edtKPI_ID: TzrComboBoxList

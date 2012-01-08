@@ -1,5 +1,5 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 594
+  Left = 467
   Top = 169
   Caption = #32771#26680#25351#26631
   ClientHeight = 368
@@ -195,12 +195,42 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Font.Style = []
       ParentFont = False
     end
+    object RzLabel9: TRzLabel [12]
+      Left = 468
+      Top = 16
+      Width = 6
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '*'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
+    object RzLabel10: TRzLabel [13]
+      Left = 240
+      Top = 17
+      Width = 100
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = #21333#20301
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
     inherited RzPage: TRzPageControl
       Top = 115
       Width = 519
       Height = 208
       Align = alBottom
-      TabOrder = 7
+      TabOrder = 8
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -560,7 +590,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 323
       Width = 519
       Color = clWhite
-      TabOrder = 8
+      TabOrder = 9
       object Btn_Save: TRzBitBtn
         Left = 357
         Top = 11
@@ -631,7 +661,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Height = 20
       Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = edtKPI_TYPEPropertiesChange
-      TabOrder = 2
+      TabOrder = 3
       OnEnter = edtKPI_TYPEEnter
     end
     object edtIDX_TYPE: TcxComboBox
@@ -641,7 +671,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Height = 20
       Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = edtIDX_TYPEPropertiesChange
-      TabOrder = 1
+      TabOrder = 2
     end
     object edtKPI_DATA: TcxComboBox
       Left = 113
@@ -650,7 +680,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Height = 20
       Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = edtKPI_DATAPropertiesChange
-      TabOrder = 3
+      TabOrder = 4
     end
     object edtKPI_CALC: TcxComboBox
       Left = 113
@@ -659,14 +689,14 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Height = 20
       Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = edtKPI_CALCPropertiesChange
-      TabOrder = 5
+      TabOrder = 6
     end
     object edtKPI_AGIO: TcxTextEdit
       Left = 346
       Top = 85
       Width = 121
       Height = 20
-      TabOrder = 6
+      TabOrder = 7
     end
     object edtKPI_OPTN: TcxCheckBox
       Left = 344
@@ -676,7 +706,15 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Properties.DisplayUnchecked = 'False'
       Properties.OnChange = edtKPI_OPTNPropertiesChange
       Properties.Caption = #26159#21542#21551#29992#38454#26799
-      TabOrder = 4
+      TabOrder = 5
+    end
+    object edtUNIT_NAME: TcxTextEdit
+      Left = 346
+      Top = 12
+      Width = 121
+      Height = 20
+      Properties.MaxLength = 20
+      TabOrder = 1
     end
   end
   inherited mmMenu: TMainMenu

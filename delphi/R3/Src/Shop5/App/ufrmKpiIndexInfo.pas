@@ -68,6 +68,9 @@ type
     RzLabel7: TRzLabel;
     RzLabel8: TRzLabel;
     labKPI_LV: TRzLabel;
+    RzLabel9: TRzLabel;
+    RzLabel10: TRzLabel;
+    edtUNIT_NAME: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);

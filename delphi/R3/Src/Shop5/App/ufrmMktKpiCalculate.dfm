@@ -14,8 +14,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 350
-    Height = 218
+    Width = 358
+    Height = 229
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -23,8 +23,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     object RzPanel2: TRzPanel
       Left = 0
       Top = 0
-      Width = 350
-      Height = 176
+      Width = 358
+      Height = 187
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
@@ -205,8 +205,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     end
     object RzPanel3: TRzPanel
       Left = 0
-      Top = 176
-      Width = 350
+      Top = 187
+      Width = 358
       Height = 42
       Align = alBottom
       BorderOuter = fsNone

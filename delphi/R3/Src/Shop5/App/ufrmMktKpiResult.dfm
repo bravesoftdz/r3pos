@@ -153,6 +153,8 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Width = 60
                   end
                   item
+                    Alignment = taRightJustify
+                    DisplayFormat = '#,##0.00'
                     EditButtons = <>
                     FieldName = 'BALANCE_MNY'
                     Footers = <>

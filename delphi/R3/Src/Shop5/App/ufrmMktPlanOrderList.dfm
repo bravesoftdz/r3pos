@@ -252,6 +252,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 20
                 Properties.MinValue = 2000.000000000000000000
                 TabOrder = 5
+                Value = 2000
               end
               object K2: TcxSpinEdit
                 Left = 193
@@ -260,7 +261,6 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 20
                 Properties.MinValue = 2000.000000000000000000
                 TabOrder = 6
-                Value = 2000
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
@@ -307,7 +307,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 114
-              Height = 252
+              Height = 263
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -436,27 +436,27 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 593
-      Width = 227
+      Left = 589
+      Width = 239
     end
     inherited rzPanel5: TPanel
-      Left = 593
+      Left = 589
     end
     inherited CoolBar1: TCoolBar
-      Width = 573
+      Width = 569
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 573
+          MinHeight = 569
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 573
+        Width = 569
         object ToolButton15: TToolButton
-          Left = 520
+          Left = 516
           Top = 0
           Width = 10
           Caption = 'ToolButton15'
@@ -464,7 +464,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
           Style = tbsDivider
         end
         object ToolButton16: TToolButton
-          Left = 530
+          Left = 526
           Top = 0
           Action = actExit
         end

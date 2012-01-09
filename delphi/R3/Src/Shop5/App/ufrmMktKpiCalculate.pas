@@ -129,7 +129,7 @@ begin
   if fndKPI_ID.AsString <> '' then
      w := w + ' and A.KPI_ID=:KPI_ID ';
 
-  Result := 'select A.PLAN_ID,B.KPI_CALC,B.KPI_TYPE,B.KPI_DATA,A.KPI_ID,A.CLIENT_ID,C.PLAN_AMT,C.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
+  Result := 'select A.TENANT_ID,A.PLAN_ID,B.KPI_CALC,B.KPI_TYPE,B.KPI_DATA,A.KPI_ID,A.CLIENT_ID,C.PLAN_AMT,C.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
             ' from MKT_KPI_RESULT A,MKT_KPI_INDEX B,MKT_PLANORDER C '+
             ' where A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID and A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+w+' order by A.PLAN_ID,A.KPI_ID ';
 end;
@@ -157,10 +157,10 @@ begin
     end
     else
     begin
-      if cdsKpiOption.FieldByName('KPI_TYPE').AsString <> KpiLv then
+      if cdsKpiOption.FieldByName('KPI_LV').AsString <> KpiLv then
       begin
          IsAdd := True;
-         KpiLv := cdsKpiOption.FieldByName('KPI_TYPE').AsString;
+         KpiLv := cdsKpiOption.FieldByName('KPI_LV').AsString;
       end;
     end;
     if IsAdd then

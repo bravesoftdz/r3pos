@@ -13,7 +13,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     Height = 531
     inherited RzPanel2: TRzPanel
       Width = 864
-      Height = 116
+      Height = 111
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
         Top = 17
@@ -165,6 +165,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
+        Properties.OnChange = edtREQU_TYPEPropertiesChange
         TabOrder = 5
       end
       object edtREQU_USER: TzrComboBoxList
@@ -364,9 +365,9 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end
     end
     inherited DBGridEh1: TDBGridEh
-      Top = 121
+      Top = 116
       Width = 864
-      Height = 330
+      Height = 335
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnEnter = DBGridEh1Enter
@@ -401,7 +402,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           FieldName = 'KPI_MNY'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #32489#25928
+          Title.Caption = #35745#25552#37329#39069
           Width = 68
         end
         item

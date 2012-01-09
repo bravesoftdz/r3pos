@@ -10,8 +10,8 @@ inherited frameContractForm: TframeContractForm
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 664
-    Height = 462
+    Width = 656
+    Height = 451
     Align = alClient
     BorderInner = fsFlatRounded
     BorderOuter = fsNone
@@ -21,7 +21,7 @@ inherited frameContractForm: TframeContractForm
     object RzPanel2: TRzPanel
       Left = 5
       Top = 5
-      Width = 654
+      Width = 646
       Height = 215
       Align = alTop
       BorderOuter = fsNone
@@ -300,8 +300,8 @@ inherited frameContractForm: TframeContractForm
     end
     object RzPanel3: TRzPanel
       Left = 5
-      Top = 332
-      Width = 654
+      Top = 321
+      Width = 646
       Height = 53
       Align = alBottom
       BorderOuter = fsNone
@@ -312,8 +312,8 @@ inherited frameContractForm: TframeContractForm
     object DBGridEh1: TDBGridEh
       Left = 5
       Top = 220
-      Width = 654
-      Height = 112
+      Width = 646
+      Height = 101
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       DataSource = dsTable
@@ -355,8 +355,8 @@ inherited frameContractForm: TframeContractForm
     end
     object stbHint: TRzPanel
       Left = 5
-      Top = 433
-      Width = 654
+      Top = 422
+      Width = 646
       Height = 24
       Align = alBottom
       BorderOuter = fsFlat
@@ -373,8 +373,8 @@ inherited frameContractForm: TframeContractForm
     end
     object rzHelp: TRzPanel
       Left = 5
-      Top = 385
-      Width = 654
+      Top = 374
+      Width = 646
       Height = 48
       Align = alBottom
       BorderOuter = fsFlat
@@ -390,55 +390,7 @@ inherited frameContractForm: TframeContractForm
     Top = 264
   end
   object cdsDetail: TZQuery
-    FieldDefs = <
-      item
-        Name = 'SEQNO'
-        DataType = ftInteger
-      end
-      item
-        Name = 'GODS_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BARCODE'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'GODS_CODE'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'GODS_NAME'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'UNIT_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BATCH_NO'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'IS_PRESENT'
-        DataType = ftInteger
-      end
-      item
-        Name = 'LOCUS_NO'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'BOM_ID'
-        DataType = ftString
-        Size = 36
-      end>
+    FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 72

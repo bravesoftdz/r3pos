@@ -215,6 +215,7 @@ var Str:string;
     n:Integer;
     Temp:TZQuery;
 begin
+  AGlobal.BeginTrans;
   try
 
     Str := 'update MKT_REQUORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) +
@@ -225,11 +226,17 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    AGlobal.ExecSQL(
+           'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+         + 'select REQU_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,case when REQU_TYPE=''1'' then ''销售返利'' else ''市场费计提'' end,''5'',REQU_MNY,0,0,REQU_MNY,REQU_DATE,REQU_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',:CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+' from MKT_REQUORDER where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID'
+      ,params);
+    AGlobal.CommitTrans;
     Result := true;
     Msg := '审核单据成功';
   except
     on E:Exception do
       begin
+        AGlobal.RollbackTrans;
         Result := false;
         Msg := '审核错误'+E.Message;
       end;
@@ -244,6 +251,7 @@ var Str:string;
     n:Integer;
     rs:TZQuery;
 begin
+   AGlobal.BeginTrans;
    try
     Str := 'update MKT_REQUORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) +',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
            ' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and REQU_ID='''+Params.FindParam('REQU_ID').asString+''' and CHK_DATE IS NOT NULL';
@@ -253,11 +261,22 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('REQU_ID').asString+''' and RECV_TYPE=''5''';
+      AGlobal.Open(rs);
+      if (rs.Fields[0].AsFloat <>0) then Raise Exception.Create('已经收款的单不能弃审...');
+      AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('REQU_ID').asString+''' and RECV_TYPE=''5''');
+    finally
+      rs.Free;
+    end;
+    AGlobal.CommitTrans;
     MSG := '反审核单据成功。';
     Result := True;
   except
     on E:Exception do
        begin
+         AGlobal.RollbackTrans;
          Result := False;
          Msg := '反审核错误:'+E.Message;
        end;

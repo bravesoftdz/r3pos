@@ -8,7 +8,7 @@ uses
   ZDataset, ActnList, Menus, Grids, DBGridEh, ExtCtrls, StdCtrls, RzPanel,
   cxButtonEdit, zrComboBoxList, cxControls, cxContainer, cxEdit, ZBase,
   cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, RzLabel, zrYearEdit,
-  cxMemo, cxSpinEdit, RzButton;
+  cxMemo, cxSpinEdit;
 
 type
   TfrmMktPlanOrder = class(TframeContractForm)
@@ -39,7 +39,6 @@ type
     RzLabel3: TRzLabel;
     edtBUDG_MNY: TcxTextEdit;
     edtKPI_YEAR: TcxSpinEdit;
-    RzBitBtn1: TRzBitBtn;
     Label40: TLabel;
     edtSHOP_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
@@ -57,7 +56,6 @@ type
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
-    procedure edtSHOP_IDSaveValue(Sender: TObject);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -182,7 +180,7 @@ begin
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := AObj.FieldbyName('PLAN_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
-    cid := AObj.FieldbyName('CLIENT_ID').AsString;
+    cid := AObj.FieldbyName('SHOP_ID').AsString;
     dbState := dsBrowse;
 end;
 
@@ -200,10 +198,15 @@ end;
 procedure TfrmMktPlanOrder.FormCreate(Sender: TObject);
 begin
   inherited;
-  cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
-  Factor.Open(cdsKPI_ID);
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '所属仓库';
+    end;
+  cdsKPI_ID.Close;
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where IDX_TYPE in (''1'',''2'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  Factor.Open(cdsKPI_ID);
+
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtDEPT_ID.RangeField := 'DEPT_TYPE';
@@ -219,12 +222,12 @@ begin
   Open('');
   dbState := dsInsert;
   edtKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
-  edtSHOP_ID.KeyValue := Global.SHOP_ID;
-  edtSHOP_ID.Text := Global.SHOP_NAME;
-  cid := edtSHOP_ID.KeyValue;
+
   rs := ShopGlobal.GetDeptInfo;
   edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
   edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
   edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-01-01', date()));
   edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-12-31', date()));  
   AObj.FieldbyName('PLAN_ID').asString := TSequence.NewId();
@@ -264,7 +267,7 @@ begin
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := AObj.FieldbyName('PLAN_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
-    cid := AObj.FieldbyName('CLIENT_ID').AsString;
+    cid := AObj.FieldbyName('SHOP_ID').AsString;
     RowID := cdsDetail.RecordCount;
   finally
     Params.Free;
@@ -285,13 +288,11 @@ begin
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空销售计划单据...');
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cid := edtCLIENT_ID.asString;
+  cid := edtSHOP_ID.asString;
   AObj.FieldByName('KPI_YEAR').AsInteger := edtKPI_YEAR.Value;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
-  AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
-  cid := edtSHOP_ID.asString;  
-  AObj.FieldByName('PLAN_TYPE').AsInteger := 1;
+  AObj.FieldByName('PLAN_TYPE').AsString := '1';
 
   Factor.BeginBatch;
   try
@@ -610,12 +611,6 @@ procedure TfrmMktPlanOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
-end;
-
-procedure TfrmMktPlanOrder.edtSHOP_IDSaveValue(Sender: TObject);
-begin
-  inherited;
-  cid := edtSHOP_ID.asString;
 end;
 
 end.

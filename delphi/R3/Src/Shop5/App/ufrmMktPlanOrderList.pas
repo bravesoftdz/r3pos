@@ -8,7 +8,7 @@ uses
   ZAbstractDataset, ZDataset, Menus, ActnList, ComCtrls, ToolWin, StdCtrls,
   RzLabel, jpeg, ExtCtrls, Grids, DBGridEh, RzTabs, RzPanel, RzButton,
   cxTextEdit, cxButtonEdit, zrComboBoxList, cxControls, cxContainer,
-  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class;
+  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class, cxSpinEdit;
 
 type
   TfrmMktPlanOrderList = class(TframeContractToolForm)
@@ -16,17 +16,18 @@ type
     RzLabel3: TRzLabel;
     RzLabel4: TRzLabel;
     RzLabel5: TRzLabel;
-    Label1: TLabel;
     Label3: TLabel;
-    D1: TcxDateEdit;
-    D2: TcxDateEdit;
     fndCLIENT_ID: TzrComboBoxList;
     fndGLIDE_NO: TcxTextEdit;
     fndDEPT_ID: TzrComboBoxList;
     btnOk: TRzBitBtn;
+    fndPLAN_USER: TzrComboBoxList;
+    Label2: TLabel;
     frfMktPlanOrderList: TfrReport;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
+    K1: TcxSpinEdit;
+    K2: TcxSpinEdit;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
     procedure actNewExecute(Sender: TObject);
@@ -202,11 +203,12 @@ begin
   try
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
-    rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
-    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
-    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
+    rs.Params.ParamByName('K1').AsInteger := K1.Value;
+    rs.Params.ParamByName('K2').AsInteger := K2.Value;
+    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString; 
+    if rs.Params.FindParam('PLAN_USER')<>nil then rs.Params.FindParam('PLAN_USER').AsString := fndPLAN_USER.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('PLAN_ID').AsString;
@@ -339,13 +341,15 @@ end;
 function TfrmMktPlanOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and PLAN_TYPE=''1'' and A.PLAN_DATE>=:D1 and A.PLAN_DATE<=:D2 ';
+  w := ' where A.TENANT_ID=:TENANT_ID and PLAN_TYPE=''1'' and A.KPI_YEAR>=:K1 and A.KPI_YEAR<=:K2 ';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndDEPT_ID.AsString <> '' then
      w := w +' and A.DEPT_ID=:DEPT_ID';
   if fndSHOP_ID.AsString <> '' then
      w := w +' and A.SHOP_ID=:SHOP_ID';
+  if fndPLAN_USER.AsString <> '' then
+     w := w + ' and A.PLAN_USER=:PLAN_USER';
   if Trim(fndGLIDE_NO.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndGLIDE_NO.Text)+'''';
 
@@ -360,7 +364,7 @@ begin
      ' left join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.CHK_USER=C.USER_ID '+
      ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.PLAN_USER=D.USER_ID '+
      ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CREA_USER=E.USER_ID '+
-     ' left join CA_DEPT_INFO F on A.TENANT_ID=F.TENANT_ID and A.DEPT_ID=F.DEPT_ID '+w+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+     ' left join CA_DEPT_INFO F on A.TENANT_ID=F.TENANT_ID and A.DEPT_ID=F.DEPT_ID '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by PLAN_ID';
   1:result :=
@@ -417,14 +421,17 @@ begin
   inherited;
   InitGridPickList(DBGridEh1);
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
-  fndSHOP_ID.KeyValue := Global.SHOP_ID;
-  fndSHOP_ID.Text := Global.SHOP_NAME;
-  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   fndDEPT_ID.RangeField := 'DEPT_TYPE';
   fndDEPT_ID.RangeValue := '1';
-  D1.Date := date();
-  D2.Date := date();
+  fndPLAN_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  K1.Value := StrtoInt(formatDatetime('YYYY',date()));
+  K2.Value := StrtoInt(formatDatetime('YYYY',date()));
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '²Ö¿âÃû³Æ';
+    end;
 
 end;
 

@@ -14,7 +14,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
         Height = 446
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #36153#29992#30003#39046#26597#35810#21015#34920
+          Caption = #36153#29992#30003#39046#21333#21015#34920
           inherited RzPanel3: TRzPanel
             Height = 419
             inherited RzPanel1: TRzPanel

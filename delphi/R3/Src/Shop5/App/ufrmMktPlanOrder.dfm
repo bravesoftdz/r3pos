@@ -16,13 +16,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Caption = #32463' '#25163' '#20154
   end
   inherited RzPanel1: TRzPanel
-    Width = 875
-    Height = 497
+    Width = 867
+    Height = 486
     inherited RzPanel2: TRzPanel
-      Width = 865
-      Height = 98
+      Width = 857
+      Height = 121
       object RzLabel2: TRzLabel [0]
-        Left = 553
+        Left = 507
         Top = 12
         Width = 48
         Height = 12
@@ -39,20 +39,20 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object Label3: TLabel [2]
         Left = 199
-        Top = 56
+        Top = 34
         Width = 48
         Height = 12
         Caption = #25152#23646#37096#38376
       end
       object Label2: TLabel [3]
-        Left = 403
-        Top = 34
+        Left = 198
+        Top = 78
         Width = 48
         Height = 12
         Caption = #32463' '#25163' '#20154
       end
       object labBEGIN_DATE: TRzLabel [4]
-        Left = 553
+        Left = 507
         Top = 56
         Width = 48
         Height = 12
@@ -60,7 +60,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Caption = #24320#22987#26085#26399
       end
       object RzLabel1: TRzLabel [5]
-        Left = 553
+        Left = 507
         Top = 78
         Width = 48
         Height = 12
@@ -68,7 +68,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Caption = #32467#26463#26085#26399
       end
       object RzLabel7: TRzLabel [6]
-        Left = 553
+        Left = 507
         Top = 34
         Width = 48
         Height = 12
@@ -77,17 +77,17 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Caption = #24180'    '#24230
       end
       object RzLabel10: TRzLabel [7]
-        Left = 222
-        Top = 78
-        Width = 24
+        Left = 198
+        Top = 100
+        Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #22791#27880
+        Caption = #22791'    '#27880
       end
       object RzLabel3: TRzLabel [8]
-        Left = 352
-        Top = 56
-        Width = 100
+        Left = 330
+        Top = 78
+        Width = 71
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
@@ -101,32 +101,32 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object Label40: TLabel [9]
         Left = 198
-        Top = 34
+        Top = 55
         Width = 48
         Height = 12
         Caption = #25152#23646#38376#24215
       end
       inherited RzPanel4: TRzPanel
         Height = 79
-        TabOrder = 9
+        TabOrder = 10
         inherited Image1: TImage
           Left = 97
           Top = 32
         end
       end
       object edtPLAN_DATE: TcxDateEdit
-        Left = 609
+        Left = 563
         Top = 8
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateButtons = [btnToday]
-        TabOrder = 4
+        TabOrder = 5
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 254
         Top = 8
-        Width = 264
+        Width = 224
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -196,8 +196,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtDEPT_ID: TzrComboBoxList
         Left = 254
-        Top = 52
-        Width = 131
+        Top = 30
+        Width = 224
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -229,9 +229,9 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         MultiSelect = False
       end
       object edtPLAN_USER: TzrComboBoxList
-        Left = 453
-        Top = 30
-        Width = 88
+        Left = 254
+        Top = 74
+        Width = 75
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -239,7 +239,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 2
+        TabOrder = 3
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -270,80 +270,54 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         MultiSelect = False
       end
       object edtBEGIN_DATE: TcxDateEdit
-        Left = 609
+        Left = 563
         Top = 52
-        Width = 121
-        Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        Properties.DateButtons = [btnToday]
-        TabOrder = 6
-      end
-      object edtEND_DATE: TcxDateEdit
-        Left = 609
-        Top = 74
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateButtons = [btnToday]
         TabOrder = 7
       end
-      object edtREMARK: TcxMemo
-        Left = 254
+      object edtEND_DATE: TcxDateEdit
+        Left = 563
         Top = 74
-        Width = 288
+        Width = 121
         Height = 20
-        Properties.MaxLength = 100
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        Properties.DateButtons = [btnToday]
         TabOrder = 8
       end
+      object edtREMARK: TcxMemo
+        Left = 254
+        Top = 96
+        Width = 312
+        Height = 20
+        Properties.MaxLength = 100
+        TabOrder = 9
+      end
       object edtBUDG_MNY: TcxTextEdit
-        Left = 453
-        Top = 52
-        Width = 88
+        Left = 403
+        Top = 74
+        Width = 75
         Height = 20
         Properties.MaxLength = 11
-        TabOrder = 3
+        TabOrder = 4
       end
       object edtKPI_YEAR: TcxSpinEdit
-        Left = 609
+        Left = 563
         Top = 30
         Width = 121
         Height = 20
         Properties.MaxValue = 2111.000000000000000000
         Properties.MinValue = 2011.000000000000000000
         Properties.OnChange = edtKPI_YEARPropertiesChange
-        TabOrder = 5
+        TabOrder = 6
         Value = 2011
-      end
-      object RzBitBtn1: TRzBitBtn
-        Left = 518
-        Top = 8
-        Width = 23
-        Height = 20
-        Caption = #35814
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 10
-        TabStop = False
-        TextStyle = tsRaised
-        ThemeAware = False
-        NumGlyphs = 2
-        Spacing = 5
       end
       object edtSHOP_ID: TzrComboBoxList
         Left = 254
-        Top = 30
-        Width = 131
+        Top = 51
+        Width = 224
         Height = 20
         Properties.AutoSelect = False
         Properties.Buttons = <
@@ -351,10 +325,10 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 11
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
-        FilterFields = 'SEQ_NO;SHOP_NAME;SHOP_SPELL'
+        FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
         KeyField = 'SHOP_ID'
         ListField = 'SHOP_NAME'
         Columns = <
@@ -379,13 +353,12 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         LocateStyle = lsDark
         Buttons = []
         DropListStyle = lsFixed
-        OnSaveValue = edtSHOP_IDSaveValue
         MultiSelect = False
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 428
-      Width = 865
+      Top = 417
+      Width = 857
       Height = 45
       object RzLabel9: TRzLabel
         Left = 33
@@ -422,9 +395,9 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
     end
     inherited DBGridEh1: TDBGridEh
-      Top = 103
-      Width = 865
-      Height = 325
+      Top = 126
+      Width = 857
+      Height = 291
       FrozenCols = 1
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
@@ -452,7 +425,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #35745#21010#38144#37327
+          Title.Caption = #31614#32422#38144#37327
           Width = 78
         end
         item
@@ -460,7 +433,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           FieldName = 'AMONEY'
           Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #35745#21010#37329#39069
+          Title.Caption = #31614#32422#37329#39069
           Width = 78
         end
         item
@@ -480,13 +453,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 473
-      Width = 865
+      Top = 462
+      Width = 857
       Height = 0
     end
     inherited rzHelp: TRzPanel
-      Top = 473
-      Width = 865
+      Top = 462
+      Width = 857
       Height = 19
     end
     object edtKPI_ID: TzrComboBoxList
@@ -561,55 +534,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     end
   end
   object cdsKPI_ID: TZQuery
-    FieldDefs = <
-      item
-        Name = 'SEQNO'
-        DataType = ftInteger
-      end
-      item
-        Name = 'GODS_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BARCODE'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'GODS_CODE'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'GODS_NAME'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'UNIT_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BATCH_NO'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'IS_PRESENT'
-        DataType = ftInteger
-      end
-      item
-        Name = 'LOCUS_NO'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'BOM_ID'
-        DataType = ftString
-        Size = 36
-      end>
+    FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 192

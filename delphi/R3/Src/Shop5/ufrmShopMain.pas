@@ -296,6 +296,11 @@ type
     actfrmMktRequOrderList: TAction;
     actfrmBondOrderList: TAction;
     Button1: TButton;
+    actfrmMktTaskOrderList: TAction;
+    Button2: TButton;
+    actfrmMktKpiResult: TAction;
+    Button3: TButton;
+    Button4: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -421,6 +426,8 @@ type
     procedure actfrmMktPlanOrderListExecute(Sender: TObject);
     procedure actfrmMktRequOrderListExecute(Sender: TObject);
     procedure actfrmBondOrderListExecute(Sender: TObject);
+    procedure actfrmMktTaskOrderListExecute(Sender: TObject);
+    procedure actfrmMktKpiResultExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -494,7 +501,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList
-  ,ufrmMktRequOrderList,ufrmBondOrderList;
+  ,ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4102,6 +4109,48 @@ begin
   if not Assigned(Form) then
      begin
        Form := TfrmBondOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktTaskOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktTaskOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktTaskOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktKpiResultExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktKpiResult);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktKpiResult.Create(self);
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;

@@ -56,6 +56,7 @@ type
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
+    procedure edtREQU_TYPEPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     AddRow:Boolean;
@@ -66,7 +67,7 @@ type
   public
     { Public declarations }
     RowID:Integer;
-
+    locked:boolean;
     procedure InitRecord;override;
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -172,7 +173,10 @@ procedure TfrmMktRequOrder.EditOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
-  if IsAudit then Raise Exception.Create('已经审核的单据不能修改'); 
+  if IsAudit then Raise Exception.Create('已经审核的单据不能修改');
+  SetEditStyle(dsBrowse,edtREQU_TYPE.Style);
+  edtREQU_TYPE.Properties.ReadOnly := true;
+  edtREQU_TYPEPropertiesChange(nil);
 //  if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   dbState := dsEdit;
 
@@ -283,6 +287,7 @@ var
 begin
   inherited;
   Params := TftParamList.Create(nil);
+  locked := true;
   try
     Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
     Params.ParamByName('REQU_ID').asString := id;
@@ -305,6 +310,7 @@ begin
     cid := AObj.FieldbyName('SHOP_ID').AsString;
     RowID := cdsDetail.RecordCount;
   finally
+    locked := false;
     Params.Free;
   end;
 end;
@@ -391,7 +397,7 @@ begin
   AddCbxPickList(edtREQU_TYPE);
 
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where IDX_TYPE in (''1'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
 
   //' select A.KPI_ID,A.KPI_NAME,B.CLIENT_ID from MKT_KPI_INDEX A,MKT_KPI_RESULT B where '+
   //' A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and B.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
@@ -639,6 +645,20 @@ procedure TfrmMktRequOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
+end;
+
+procedure TfrmMktRequOrder.edtREQU_TYPEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtREQU_TYPE.ItemIndex < 0 then Exit;
+  if dbState = dsBrowse then Exit;
+  if locked then Exit;
+  cdsKPI_ID.Close;
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where IDX_TYPE in ('''+TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+''') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  Factor.Open(cdsKPI_ID);
+  cdsDetail.First;
+  while not cdsDetail.Eof do cdsDetail.Delete;
+  InitRecord;
 end;
 
 end.

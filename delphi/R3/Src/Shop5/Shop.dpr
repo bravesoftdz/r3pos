@@ -245,14 +245,14 @@ uses
   ufrmDemandOrder in 'App\ufrmDemandOrder.pas' {frmDemandOrder},
   ufrmDemandOrderList in 'App\ufrmDemandOrderList.pas' {frmDemandOrderList},
   ObjDemandOrder in 'Obj\ObjDemandOrder.pas',
-  ufrmMktPlanOrder in 'App\ufrmMktPlanOrder.pas',
-  ufrmMktPlanOrderList in 'App\ufrmMktPlanOrderList.pas',
+  ufrmMktTaskOrder in 'App\ufrmMktTaskOrder.pas' {frmMktTaskOrder},
+  ufrmMktTaskOrderList in 'App\ufrmMktTaskOrderList.pas' {frmMktTaskOrderList},
   ufrmKpiIndex in 'App\ufrmKpiIndex.pas' {frmKpiIndex},
   ufrmKpiIndexInfo in 'App\ufrmKpiIndexInfo.pas' {frmKpiIndexInfo},
   uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
   uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
   ObjKpiIndex in 'Obj\ObjKpiIndex.pas',
-  ObjMktPlanOrder in 'Obj\ObjMktPlanOrder.pas',
+  ObjMktTaskOrder in 'Obj\ObjMktTaskOrder.pas',
   ObjMktRequOrder in 'Obj\ObjMktRequOrder.pas',
   ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame},
   ufrmSalRetuMenu in 'App\ufrmSalRetuMenu.pas' {frmSalRetuMenu},
@@ -260,7 +260,15 @@ uses
   ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
   ufrmMktRequOrder in 'App\ufrmMktRequOrder.pas' {frmMktRequOrder},
   ufrmMktRequOrderList in 'App\ufrmMktRequOrderList.pas' {frmMktRequOrderList},
-  ObjRecvOrder in 'Obj\ObjRecvOrder.pas';
+  ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
+  ufrmMktPlanOrder in 'App\ufrmMktPlanOrder.pas' {frmMktPlanOrder},
+  ufrmMktPlanOrderList in 'App\ufrmMktPlanOrderList.pas' {frmMktPlanOrderList},
+  ObjMktPlanOrder in 'Obj\ObjMktPlanOrder.pas',
+  ufrmMktKpiResultList in 'App\ufrmMktKpiResultList.pas' {frmMktKpiResultList},
+  ufrmMktKpiCalculate in 'App\ufrmMktKpiCalculate.pas' {frmMktKpiCalculate},
+  ufrmMktKpiResult in 'App\ufrmMktKpiResult.pas' {frmMktKpiResult},
+  uKpiCalculate in 'App\uKpiCalculate.pas',
+  ObjMktKpiResult in 'Obj\ObjMktKpiResult.pas';
 
 {$R *.res}
 var

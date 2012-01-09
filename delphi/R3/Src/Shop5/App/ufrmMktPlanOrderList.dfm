@@ -1,6 +1,6 @@
 inherited frmMktPlanOrderList: TfrmMktPlanOrderList
-  Left = 250
-  Top = 152
+  Left = 256
+  Top = 204
   Caption = #32463#38144#21512#21516
   OnShow = FormShow
   PixelsPerInch = 96
@@ -12,17 +12,17 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
         inherited TabSheet1: TRzTabSheet
           inherited RzPanel3: TRzPanel
             inherited RzPanel1: TRzPanel
-              Height = 113
+              Height = 109
               object RzLabel2: TRzLabel
                 Left = 33
                 Top = 4
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #31614#32422#26085#26399
+                Caption = #31614#32422#24180#24230
               end
               object RzLabel3: TRzLabel
-                Left = 200
+                Left = 176
                 Top = 4
                 Width = 12
                 Height = 12
@@ -44,19 +44,6 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Alignment = taRightJustify
                 Caption = #21333'    '#21495
               end
-              object Label1: TLabel
-                Left = 201
-                Top = 87
-                Width = 120
-                Height = 12
-                Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
               object Label3: TLabel
                 Left = 33
                 Top = 44
@@ -64,30 +51,19 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 12
                 Caption = #25152#23646#37096#38376
               end
+              object Label2: TLabel
+                Left = 190
+                Top = 86
+                Width = 48
+                Height = 12
+                Caption = #32463' '#25163' '#20154
+              end
               object Label40: TLabel
                 Left = 33
                 Top = 24
                 Width = 48
                 Height = 12
-                Caption = #35746#36135#38376#24215
-              end
-              object D1: TcxDateEdit
-                Left = 89
-                Top = 0
-                Width = 104
-                Height = 20
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                Properties.DateButtons = [btnToday]
-                TabOrder = 0
-              end
-              object D2: TcxDateEdit
-                Left = 216
-                Top = 0
-                Width = 109
-                Height = 20
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                Properties.DateButtons = [btnToday]
-                TabOrder = 1
+                Caption = #38376#24215#21517#31216
               end
               object fndCLIENT_ID: TzrComboBoxList
                 Left = 89
@@ -100,7 +76,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 2
+                TabOrder = 0
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -162,9 +138,9 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
               object fndGLIDE_NO: TcxTextEdit
                 Left = 89
                 Top = 82
-                Width = 104
+                Width = 88
                 Height = 20
-                TabOrder = 3
+                TabOrder = 1
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object fndDEPT_ID: TzrComboBoxList
@@ -178,7 +154,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -202,8 +178,8 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 336
-                Top = 72
+                Left = 344
+                Top = 76
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -221,12 +197,70 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 5
+                TabOrder = 3
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
                 NumGlyphs = 2
                 Spacing = 5
+              end
+              object fndPLAN_USER: TzrComboBoxList
+                Left = 245
+                Top = 82
+                Width = 80
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 4
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
+                KeyField = 'USER_ID'
+                ListField = 'USER_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'ACCOUNT'
+                    Footers = <>
+                    Title.Caption = #24080#21495
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'USER_NAME'
+                    Footers = <>
+                    Title.Caption = #22995#21517
+                    Width = 130
+                  end>
+                DropWidth = 180
+                DropHeight = 150
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object K1: TcxSpinEdit
+                Left = 89
+                Top = 0
+                Width = 80
+                Height = 20
+                Properties.MinValue = 2000.000000000000000000
+                TabOrder = 5
+              end
+              object K2: TcxSpinEdit
+                Left = 193
+                Top = 0
+                Width = 80
+                Height = 20
+                Properties.MinValue = 2000.000000000000000000
+                TabOrder = 6
+                Value = 2000
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
@@ -240,7 +274,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 6
+                TabOrder = 7
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -272,8 +306,8 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
               end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 118
-              Height = 259
+              Top = 114
+              Height = 252
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -282,6 +316,13 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                   Footers = <>
                   Title.Caption = #24207#21495
                   Width = 30
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'KPI_YEAR'
+                  Footers = <>
+                  Title.Caption = #31614#32422#24180#24230
+                  Width = 59
                 end
                 item
                   EditButtons = <>
@@ -295,14 +336,14 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                   FieldName = 'CLIENT_ID_TEXT'
                   Footers = <>
                   Title.Caption = #32463#38144#21830
-                  Width = 120
+                  Width = 207
                 end
                 item
                   EditButtons = <>
                   FieldName = 'DEPT_ID_TEXT'
                   Footers = <>
                   Title.Caption = #25152#23646#37096#38376
-                  Width = 70
+                  Width = 125
                 end
                 item
                   EditButtons = <>
@@ -336,14 +377,14 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                   EditButtons = <>
                   FieldName = 'PLAN_AMT'
                   Footers = <>
-                  Title.Caption = #21512#35745#25968#37327
+                  Title.Caption = #31614#32422#38144#37327
                   Width = 60
                 end
                 item
                   EditButtons = <>
                   FieldName = 'PLAN_MNY'
                   Footers = <>
-                  Title.Caption = #21512#35745#37329#39069
+                  Title.Caption = #31614#32422#37329#39069
                   Width = 60
                 end
                 item
@@ -395,27 +436,27 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 589
-      Width = 239
+      Left = 593
+      Width = 227
     end
     inherited rzPanel5: TPanel
-      Left = 589
+      Left = 593
     end
     inherited CoolBar1: TCoolBar
-      Width = 569
+      Width = 573
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 569
+          MinHeight = 573
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 569
+        Width = 573
         object ToolButton15: TToolButton
-          Left = 516
+          Left = 520
           Top = 0
           Width = 10
           Caption = 'ToolButton15'
@@ -423,7 +464,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
           Style = tbsDivider
         end
         object ToolButton16: TToolButton
-          Left = 526
+          Left = 530
           Top = 0
           Action = actExit
         end

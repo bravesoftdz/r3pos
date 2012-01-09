@@ -38,6 +38,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','按完成销量','KPI_DATA','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','按完成金额','KPI_DATA','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('6','按完成毛利','KPI_DATA','00',5497000);
+
 --计算标准
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按销量<线性>','KPI_CALC','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按金额<线性>','KPI_CALC','00',5497000);
@@ -267,10 +268,10 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	[SHOP_ID] [varchar] (13) NOT NULL ,
         --指标类型
 	[IDX_TYPE] [char] (1) NOT NULL ,
-        --指标类型
-	[IDX_TYPE] [char] (1) NOT NULL ,
         --计算标准
 	[KPI_CALC] char(1) NULL ,
+        --考核类型
+	[KPI_TYPE] [char] (1) NOT NULL ,
         --考核ID
 	[KPI_ID] [char] (36) NOT NULL ,
         --年度
@@ -363,7 +364,7 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 );
 
 --需求类型
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','市场返利','REQU_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','销售返利','REQU_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','市场计提','REQU_TYPE','00',5497000);
 
 --费用申领单

@@ -131,7 +131,7 @@ begin
   begin
      AGlobal.ExecSQL(
          'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-       + 'VALUES('''+newid(Params.ParambyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,DEPT_ID,:CLIENT_ID,'''+'固定保证金【合同号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'',:BOND_MNY,0,0,:BOND_MNY,:PLAN_DATE,:PLAN_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+       + 'VALUES('''+newid(Params.ParambyName('SHOP_ID').AsString)+''',:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,'''+'固定保证金【合同号'+FieldbyName('GLIDE_NO').AsString+'】'+''',''5'',:BOND_MNY,0,0,:BOND_MNY,:PLAN_DATE,:PLAN_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
     ,self);
   end;
 

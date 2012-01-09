@@ -208,15 +208,15 @@ var ExceSql:String;
 begin
   if Params.FindParam('EXCETYPE').AsInteger = 1 then
   begin
-    ExceSql := ' insert into MKT_KPI_RESULT (TENANT_ID,PLAN_ID,IDX_TYPE,KPI_CALC,KPI_TYPE,KPI_DATA,KPI_ID,KPI_YEAR,BEGIN_DATE,END_DATE,CLIENT_ID,'+
+    ExceSql := ' insert into MKT_KPI_RESULT (TENANT_ID,PLAN_ID,SHOP_ID,IDX_TYPE,KPI_CALC,KPI_TYPE,KPI_DATA,KPI_ID,KPI_YEAR,BEGIN_DATE,END_DATE,CLIENT_ID,'+
          'CHK_DATE,CHK_USER,PLAN_AMT,PLAN_MNY,FISH_AMT,FISH_MNY,KPI_MNY,WDW_MNY,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+  //
-         ' select B.TENANT_ID,B.PLAN_ID,C.IDX_TYPE,C.KPI_CALC,C.KPI_TYPE,C.KPI_DATA,A.KPI_ID,B.KPI_YEAR,B.BEGIN_DATE,B.END_DATE,B.CLIENT_ID,B.CHK_DATE,B.CHK_USER,B.PLAN_AMT,'+
+         ' select B.TENANT_ID,B.PLAN_ID,B.SHOP_ID,C.IDX_TYPE,C.KPI_CALC,C.KPI_TYPE,C.KPI_DATA,A.KPI_ID,B.KPI_YEAR,B.BEGIN_DATE,B.END_DATE,B.CLIENT_ID,B.CHK_DATE,B.CHK_USER,B.PLAN_AMT,'+
          'B.PLAN_MNY,0 as FISH_AMT,0 as FISH_MNY,0 as KPI_MNY,0 as WDW_MNY,B.REMARK,'+QuotedStr(Params.FindParam('CREA_DATE').AsString)+
          ','+QuotedStr(Params.FindParam('CREA_USER').AsString)+',''00'','+GetTimeStamp(AGlobal.iDbType)+ //
          ' from MKT_PLANDATA A,MKT_PLANORDER B,MKT_KPI_INDEX C '+
          ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
-         ' and not exists (select * from MKT_KPI_RESULT where TENANT_ID=A.TENANT_ID and PLAN_ID=A.PLAN_ID and KPI_ID=A.KPI_ID and KPI_YEAR=B.KPI_YEAR) '+
-         ' and B.CHK_DATE IS NOT NULL and B.TENANT_ID=:TENANT_ID and B.KPI_YEAR=:KPI_YEAR ';
+         ' and not exists (select * from MKT_KPI_RESULT where TENANT_ID=A.TENANT_ID and PLAN_ID=A.PLAN_ID and KPI_ID=A.KPI_ID) '+
+         ' and B.CHK_DATE IS NOT NULL and B.PLAN_TYPE=:PLAN_TYPE and C.IDX_TYPE=:IDX_TYPE and B.TENANT_ID=:TENANT_ID and B.KPI_YEAR=:KPI_YEAR ';
     if Params.FindParam('CLIENT_ID') <> nil then
        ExceSql := ExceSql + ' and B.CLIENT_ID=:CLIENT_ID ';
     if Params.FindParam('KPI_ID') <> nil then
@@ -224,27 +224,28 @@ begin
   end
   else if Params.FindParam('EXCETYPE').AsInteger = 2 then
   begin
-    ExceSql := ' update MKT_KPI_RESULT A '+
-               ' set PLAN_AMT = (select AMOUNT from MKT_PLANORDER B,MKT_PLANDATA C where B.TENANT_ID=C.TENANT_ID and B.PLAN_ID=C.PLAN_ID '+
-               ' and A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID and A.KPI_ID=C.KPI_ID ) , '+
-               ' PLAN_MNY = (select AMONEY from MKT_PLANORDER B,MKT_PLANDATA C where B.TENANT_ID=C.TENANT_ID and B.PLAN_ID=C.PLAN_ID '+
-               ' and A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID and A.KPI_ID=C.KPI_ID ) , '+
-               ' COMM= (select COMM from MKT_PLANORDER B,MKT_PLANDATA C where B.TENANT_ID=C.TENANT_ID and B.PLAN_ID=C.PLAN_ID '+
-               ' and A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID and A.KPI_ID=C.KPI_ID )'+
-               ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR ';
+    ExceSql := ' update MKT_KPI_RESULT '+
+               ' set PLAN_AMT = (select AMOUNT from MKT_PLANDATA C where '+
+               ' C.TENANT_ID=MKT_KPI_RESULT.TENANT_ID and C.PLAN_ID=MKT_KPI_RESULT.PLAN_ID and C.KPI_ID=MKT_KPI_RESULT.KPI_ID) , '+
+               ' PLAN_MNY = (select AMONEY from MKT_PLANDATA C where '+
+               ' C.TENANT_ID=MKT_KPI_RESULT.TENANT_ID and C.PLAN_ID=MKT_KPI_RESULT.PLAN_ID and C.KPI_ID=MKT_KPI_RESULT.KPI_ID) , '+
+               ' COMM= ' + GetCommStr(AGlobal.iDbType) + ' '+
+               ' where TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR and IDX_TYPE=:IDX_TYPE and '+
+               ' Exists(select * from MKT_PLANORDER where TENANT_ID=MKT_KPI_RESULT.TENANT_ID and PLAN_ID=MKT_KPI_RESULT.PLAN_ID and PLAN_TYPE=:PLAN_TYPE and KPI_YEAR=:KPI_YEAR) ';
     if Params.FindParam('CLIENT_ID') <> nil then
-       ExceSql := ExceSql + ' and A.CLIENT_ID=:CLIENT_ID ';
+       ExceSql := ExceSql + ' and CLIENT_ID=:CLIENT_ID ';
     if Params.FindParam('KPI_ID') <> nil then
-       ExceSql := ExceSql + ' and A.KPI_ID=:KPI_ID ';
+       ExceSql := ExceSql + ' and KPI_ID=:KPI_ID ';
   end
   else if Params.FindParam('EXCETYPE').AsInteger = 3 then
   begin
-    ExceSql := 'delete from MKT_KPI_RESULT A where not exists (select * from MKT_PLANORDER C,MKT_PLANDATA B where C.TENANT_ID=B.TENANT_ID and C.PLAN_ID=B.PLAN_ID '+
-               'and B.TENANT_ID=A.TENANT_ID and B.PLAN_ID=A.PLAN_ID and B.KPI_ID=A.KPI_ID) and A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR ';
+    ExceSql := 'delete from MKT_KPI_RESULT where not exists(select * from MKT_PLANDATA B where '+
+               'B.TENANT_ID=MKT_KPI_RESULT.TENANT_ID and B.PLAN_ID=MKT_KPI_RESULT.PLAN_ID and B.KPI_ID=MKT_KPI_RESULT.KPI_ID) and TENANT_ID=:TENANT_ID and IDX_TYPE=:IDX_TYPE and KPI_YEAR=:KPI_YEAR '+
+               'and Exists(select * from MKT_PLANORDER where TENANT_ID=MKT_KPI_RESULT.TENANT_ID and PLAN_ID=MKT_KPI_RESULT.PLAN_ID and PLAN_TYPE=:PLAN_TYPE and KPI_YEAR=:KPI_YEAR) ';
     if Params.FindParam('CLIENT_ID') <> nil then
-       ExceSql := ExceSql + ' and A.CLIENT_ID=:CLIENT_ID ';
+       ExceSql := ExceSql + ' and CLIENT_ID=:CLIENT_ID ';
     if Params.FindParam('KPI_ID') <> nil then
-       ExceSql := ExceSql + ' and A.KPI_ID=:KPI_ID ';
+       ExceSql := ExceSql + ' and KPI_ID=:KPI_ID ';
   end;
   AGlobal.ExecSQL(ExceSql,Params);
 end;

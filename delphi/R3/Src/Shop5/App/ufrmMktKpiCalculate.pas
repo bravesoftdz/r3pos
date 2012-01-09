@@ -108,6 +108,8 @@ begin
     Params.ParamByName('CREA_USER').AsString := Global.UserID;
     Params.ParamByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
     Params.ParamByName('KPI_YEAR').AsInteger := fndKPI_YEAR.Value;
+    Params.ParamByName('PLAN_TYPE').AsString := '1';
+    Params.ParamByName('IDX_TYPE').AsString := '1';
     if fndCLIENT_ID.AsString <> '' then
        Params.ParamByName('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
     if fndKPI_ID.AsString <> '' then

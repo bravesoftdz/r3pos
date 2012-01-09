@@ -137,7 +137,7 @@ begin
   inherited;
   if (not Cds_KpiIndex.Active) or (Cds_KpiIndex.IsEmpty) then exit;
   if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
-  if not ShopGlobal.GetChkRight('100002143',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002143',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmKpiIndexInfo.Create(self) do
   begin
     try
@@ -169,7 +169,7 @@ procedure TfrmKpiIndex.actFindExecute(Sender: TObject);
 var StrSql:String;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if Trim(edtKey.Text) <> '' then
      StrSql := ' and KPI_NAME like ''%'+Trim(edtKey.Text)+'%''';
   if fndIDX_TYPE.ItemIndex <> -1 then

@@ -1,8 +1,8 @@
 inherited frmMktKpiCalculate: TfrmMktKpiCalculate
-  Left = 674
-  Top = 303
+  Left = 381
+  Top = 285
   Width = 366
-  Height = 237
+  Height = 256
   BorderIcons = [biSystemMenu]
   Caption = #32771#26680#35745#31639
   OldCreateOrder = True
@@ -15,7 +15,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     Left = 0
     Top = 0
     Width = 350
-    Height = 199
+    Height = 218
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -24,22 +24,29 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
       Left = 0
       Top = 0
       Width = 350
-      Height = 147
+      Height = 176
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
       TabOrder = 0
+      object Bevel1: TBevel
+        Left = 14
+        Top = 13
+        Width = 320
+        Height = 150
+        Shape = bsFrame
+      end
       object RzLabel4: TRzLabel
-        Left = 46
-        Top = 49
+        Left = 39
+        Top = 57
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #32463' '#38144' '#21830
       end
       object RzLabel7: TRzLabel
-        Left = 46
-        Top = 18
+        Left = 39
+        Top = 34
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -47,7 +54,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         Caption = #24180'    '#24230
       end
       object ProgressBar1: TRzProgressBar
-        Left = 41
+        Left = 34
         Top = 129
         Width = 280
         Height = 17
@@ -60,15 +67,15 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         TotalParts = 0
       end
       object RzLabel1: TRzLabel
-        Left = 46
-        Top = 81
+        Left = 39
+        Top = 78
         Width = 48
         Height = 12
         Alignment = taRightJustify
         Caption = #25351'    '#26631
       end
       object labINFO: TLabel
-        Left = 56
+        Left = 34
         Top = 112
         Width = 52
         Height = 12
@@ -81,8 +88,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         ParentFont = False
       end
       object fndCLIENT_ID: TzrComboBoxList
-        Left = 102
-        Top = 45
+        Left = 95
+        Top = 53
         Width = 215
         Height = 20
         Properties.AutoSelect = False
@@ -151,8 +158,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         MultiSelect = False
       end
       object fndKPI_YEAR: TcxSpinEdit
-        Left = 102
-        Top = 14
+        Left = 95
+        Top = 30
         Width = 121
         Height = 20
         Properties.MaxValue = 2111.000000000000000000
@@ -161,8 +168,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         Value = 2011
       end
       object fndKPI_ID: TzrComboBoxList
-        Left = 102
-        Top = 77
+        Left = 95
+        Top = 74
         Width = 215
         Height = 20
         Properties.AutoSelect = False
@@ -198,16 +205,16 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     end
     object RzPanel3: TRzPanel
       Left = 0
-      Top = 147
+      Top = 176
       Width = 350
-      Height = 52
+      Height = 42
       Align = alBottom
       BorderOuter = fsNone
       Color = clWhite
       TabOrder = 1
       object btnStart: TRzBitBtn
-        Left = 190
-        Top = 18
+        Left = 142
+        Top = 2
         Width = 67
         Height = 24
         Caption = #24320#22987
@@ -228,33 +235,6 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnStartClick
-        ImageIndex = 12
-        NumGlyphs = 2
-        Spacing = 5
-      end
-      object btnCancel: TRzBitBtn
-        Left = 278
-        Top = 18
-        Width = 67
-        Height = 24
-        Caption = #21462#28040
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 1
-        TextStyle = tsRaised
-        ThemeAware = False
-        OnClick = btnCancelClick
         ImageIndex = 12
         NumGlyphs = 2
         Spacing = 5

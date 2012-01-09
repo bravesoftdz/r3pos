@@ -241,6 +241,16 @@ begin
 end;
 
 procedure TKpiCalculate.BeginCalculate;
+function GetUnitTO_CALC: string;
+var
+  str: string;
+begin
+  str:=' case when B.UNIT_ID=C.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
+            ' when B.UNIT_ID=C.SMALL_UNITS then cast(C.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
+            ' when B.UNIT_ID=C.BIG_UNITS then cast(C.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
+            ' else 1.0 end ';
+  result:=str;
+end;
 var rs:TZQuery;
     IsAdd,IsBrrw:Boolean;
     Kpi_Index:PKpiIndex;
@@ -255,8 +265,10 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := 'select sum(CALC_AMOUNT) as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID '+
-    ' and GODS_ID in (select GODS_ID from MKT_KPI_GOODS where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) and SALES_DATE >= :SALES_DATE1 and SALES_DATE <= :SALES_DATE2 ';
+    rs.SQL.Text := 'select sum(CALC_AMOUNT/'+GetUnitTO_CALC+') as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,MKT_KPI_GOODS B,VIW_GOODSINFO C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+    ' and A.TENANT_ID=:TENANT_ID and A.CLIENT_ID=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 and A.SALES_DATE <= :SALES_DATE2'+
+    ' and B.KPI_ID=:KPI_ID ';
     rs.Params.ParamByName('TENANT_ID').AsInteger := FKpiInfo.TenantId;
     rs.Params.ParamByName('CLIENT_ID').AsString := FKpiInfo.ClientId;
     rs.Params.ParamByName('KPI_ID').AsString := FKpiInfo.KpiId;

@@ -232,6 +232,8 @@ constructor TZAdoPreparedStatement.Create(PlainDriver: IZPlainDriver;
 begin
   FAdoCommand := CoCommand.Create;
   FAdoCommand.CommandText := SQL;
+  FAdoCommand.CommandTimeout := 0;
+
   inherited Create(PlainDriver, Connection, SQL, Info);
   FAdoCommand._Set_ActiveConnection((Connection as IZAdoConnection).GetAdoConnection);
   FAdoCommand.Prepared := True;

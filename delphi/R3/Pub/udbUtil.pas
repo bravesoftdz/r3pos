@@ -12,11 +12,16 @@ TCreateDbFactory=class
     FCaptureError: Boolean;
     FonCreateDbCallBack: TCreateDbCallBack;
     FHasError: Boolean;
+    FTBSPPATH: string;
+    FPARTITION: string;
     function GetWindowTmp: string;
     procedure SetCaptureError(const Value: Boolean);
     procedure SetonCreateDbCallBack(const Value: TCreateDbCallBack);
     procedure SetHasError(const Value: Boolean);
     function GetiDbType: integer;
+    procedure SetTBSPPATH(const Value: string);
+    procedure SetPARTITION(const Value: string);
+    function EncodeSQL(SQL:string):string;
   public
     constructor Create;
     destructor  Destroy;override;
@@ -24,6 +29,7 @@ TCreateDbFactory=class
     function CheckVersion(Version:string;aFactor:TdbFactory=nil):Boolean;
     procedure UpdateVersion;
     procedure Load(FileName:string);
+    procedure dbInit;
     procedure Run;
     property WindowTmp:string read GetWindowTmp;
     property PrgVersion:string read FPrgVersion;
@@ -32,6 +38,8 @@ TCreateDbFactory=class
     property onCreateDbCallBack:TCreateDbCallBack read FonCreateDbCallBack write SetonCreateDbCallBack;
     property HasError:Boolean read FHasError write SetHasError;
     property iDbType:integer read GetiDbType;
+    property TBSPPATH:string read FTBSPPATH write SetTBSPPATH;
+    property PARTITION:string read FPARTITION write SetPARTITION;
   end;
 function CheckDbVersion(DBVersion:string):boolean;
 implementation
@@ -150,11 +158,128 @@ begin
   FList := TStringList.Create;
 end;
 
+procedure TCreateDbFactory.dbInit;
+var
+  n,CurSize,TotalSize,j:integer;
+  tmpPath,s:string;
+  F:TextFile;
+  SQL:TStringList;
+  rs,fs:TZQuery;
+  srDbType:integer;
+  dbInit:string;
+begin
+  if not ((CurVersion='') or (CurVersion='1.0.0.0')) then Exit;
+  HasError := false;
+  tmpPath := GetWindowTmp;
+  SQL := TStringList.Create;
+  try
+       srDbType := -1;
+       SQL.Clear;
+       if Assigned(onCreateDbCallBack) then
+          onCreateDbCallBack('初始化数据库','',0);
+       case Factor.iDbType of
+       0:dbInit := 'dbInit.mssql';
+       1:dbInit := 'dbInit.oracle';
+       4:dbInit := 'dbInit.db2';
+       5:dbInit := 'dbInit.sqlite';
+       else
+          dbInit := 'dbInit.sql';
+       end;
+       AssignFile(F,tmpPath+dbInit);
+       Reset(f);
+       CurSize :=0;
+       try
+         TotalSize := FileSize(F)*1024 div 8;
+         if TotalSize=0 then TotalSize := 1;
+         while not eof(f) do
+         begin
+           readln(f,s);
+           CurSize := CurSize + length(s);
+           s := trim(s);
+           if s='' then Continue;
+           if copy(s,1,10)='--{idbType' then
+              begin
+                srDbType := StrtoInt(copy(s,12,1));
+                Continue;
+              end;
+           if copy(s,1,2)='--' then Continue;
+           if (uppercase(s)='GO') or (s[length(s)]=';') then
+              begin
+                try
+                  if (s[length(s)]=';') then
+                     begin
+                       delete(s,length(s),1);
+                       SQL.Add(s);
+                     end;
+                  if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
+                     begin
+                        Factor.ExecSQL(
+                            EncodeSQL(SQL.Text)
+                            );
+                     end;
+                  srDbType := -1;
+                  if Assigned(onCreateDbCallBack) then
+                    onCreateDbCallBack('执行脚本',SQL.Text,CurSize*100 div TotalSize);
+                except
+                  on E:Exception do
+                  begin
+                     HasError := true;
+                     if Assigned(onCreateDbCallBack) then
+                        onCreateDbCallBack('执行错误:'+E.Message,SQL.Text,100);
+                     WriteLog('错误:'+E.Message+#13+SQL.Text);
+                     if CaptureError then Raise;
+                  end;
+                end;
+                SQL.Clear;
+              end
+           else
+              begin
+                if copy(s,1,2)<>'--' then
+                   SQL.Add(s);
+              end;
+         end;
+           try
+             if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
+                Factor.ExecSQL(
+                    EncodeSQL(SQL.Text)
+                    );
+             srDbType := -1;
+             SQL.Clear;
+             if Assigned(onCreateDbCallBack) then
+                onCreateDbCallBack('执行脚本',SQL.Text,100);
+           except
+             on E:Exception do
+               begin
+                 HasError := true;
+                 if Assigned(onCreateDbCallBack) then
+                    onCreateDbCallBack('执行错误:'+E.Message,SQL.Text,100);
+                 WriteLog('错误:'+E.Message+#13+SQL.Text);
+                 if CaptureError then Raise;
+               end;
+           end;
+         if Assigned(onCreateDbCallBack) then
+            onCreateDbCallBack('数据库初始化完毕','',100);
+       finally
+         CloseFile(f);
+         deleteFile(tmpPath+dbInit);
+       end;
+  finally
+    SQL.Free;
+  end;
+end;
+
 destructor TCreateDbFactory.Destroy;
 begin
   FList.Free;
   inherited;
 end;
+function TCreateDbFactory.EncodeSQL(SQL: string): string;
+begin
+  result := SQL;
+  result := StringReplace(result,'%TBSPPATH%',TBSPPATH,[rfReplaceAll]);
+  result := StringReplace(result,'%PARTITION%',PARTITION,[rfReplaceAll]);
+end;
+
 function TCreateDbFactory.GetiDbType: integer;
 begin
   result := Factor.iDbType;
@@ -197,6 +322,7 @@ begin
   FList.Sort;
   for i:= 0 to FList.Count - 1 do
     begin
+      if uppercase(FList[i])='dbinit' then continue;
       SQL.Clear;
       n := length(FList[i])-2-length(ExtractFileExt(FList[i]));
       Version := copy(FList[i],3,n);
@@ -246,7 +372,9 @@ begin
                            SQL.Add(s);
                          end;
                       if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
-                        Factor.ExecSQL(SQL.Text);
+                          Factor.ExecSQL(
+                              EncodeSQL(SQL.Text)
+                              );
                       srDbType := -1;
                       if Assigned(onCreateDbCallBack) then
                         onCreateDbCallBack('执行脚本',SQL.Text,CurSize*100 div TotalSize);
@@ -270,7 +398,9 @@ begin
              end;
                try
                  if (SQL.Count>0) and ((srDbType<0) or (srDbType=iDbType)) then
-                    Factor.ExecSQL(SQL.Text);
+                    Factor.ExecSQL(
+                        EncodeSQL(SQL.Text)
+                        );
                  srDbType := -1;
                  SQL.Clear;
                  if Assigned(onCreateDbCallBack) then
@@ -314,6 +444,16 @@ procedure TCreateDbFactory.SetonCreateDbCallBack(
   const Value: TCreateDbCallBack);
 begin
   FonCreateDbCallBack := Value;
+end;
+
+procedure TCreateDbFactory.SetPARTITION(const Value: string);
+begin
+  FPARTITION := Value;
+end;
+
+procedure TCreateDbFactory.SetTBSPPATH(const Value: string);
+begin
+  FTBSPPATH := Value;
 end;
 
 procedure TCreateDbFactory.UpdateVersion;

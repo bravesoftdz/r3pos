@@ -613,6 +613,7 @@ begin
         Result := CompareFloat(PDateTime(ValuePtr1)^, PDateTime(ValuePtr2)^);
       stString:
         begin
+          //zhangsenrong 2011-08-15 
           if FColumnLengths[ColumnIndex]=256 then
              begin
                if IsNumber(StrPas(PChar(ValuePtr1))) and IsNumber(StrPas(PChar(ValuePtr2))) then

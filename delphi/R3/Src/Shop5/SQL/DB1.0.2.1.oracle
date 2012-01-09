@@ -74,7 +74,7 @@ CREATE TABLE SYS_COMMAND(
 	(
 		ROWS_ID
 	) 
-);
+) TABLESPACE R3TB32K_BIZ;
 
 --处理卡号重复问题
 

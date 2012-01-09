@@ -74,7 +74,7 @@ CREATE TABLE SYS_COMMAND(
 	(
 		ROWS_ID
 	) 
-);
+) IN R3TB32K_BIZ INDEX IN R3IX32K_DEF;
 
 --处理卡号重复问题
 

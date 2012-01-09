@@ -639,6 +639,7 @@ begin
   end;
   TColumnEh(Sender).Field.AsInteger := Year;
   KpiMnyToCalc;
+  cdsDetail.Edit;
 end;
 
 procedure TfrmMktRequOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);

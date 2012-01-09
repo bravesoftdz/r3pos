@@ -281,31 +281,34 @@ begin
   cdsHeader.First;
   while not cdsHeader.Eof do
   begin
-    OpenResultList(cdsHeader.FieldByName('TENANT_ID').AsInteger,cdsHeader.FieldByName('PLAN_ID').AsString,cdsHeader.FieldByName('KPI_ID').AsString);
-    GetResultAmt_Mny(Fish_Amt,Fish_Mny);
-    KpiCalculate := TKpiCalculate.Create;
-    try
-      cdsHeader.Edit;
-      cdsHeader.FieldByName('FISH_AMT').AsFloat := Fish_Amt;
-      cdsHeader.FieldByName('FISH_MNY').AsFloat := Fish_Mny;
-      cdsHeader.Post;
-      KpiCalculate.FKpiInfo.TenantId := cdsHeader.FieldByName('TENANT_ID').AsInteger;
-      KpiCalculate.FKpiInfo.KpiYear := cdsHeader.FieldByName('KPI_YEAR').AsInteger;
-      KpiCalculate.FKpiInfo.KpiId := cdsHeader.FieldByName('KPI_ID').AsString;
-      KpiCalculate.FKpiInfo.ClientId := cdsHeader.FieldByName('CLIENT_ID').AsString;
-      KpiCalculate.FKpiInfo.IdxType := cdsHeader.FieldByName('IDX_TYPE').AsString;
-      KpiCalculate.FKpiInfo.KpiType := cdsKpiIndex.FieldByName('KPI_TYPE').AsString;
-      KpiCalculate.FKpiInfo.KpiData := cdsKpiIndex.FieldByName('KPI_DATA').AsString;
-      KpiCalculate.FKpiInfo.KpiCalc := cdsKpiIndex.FieldByName('KPI_CALC').AsString;
-      KpiCalculate.FKpiInfo.KpiOptn := cdsKpiIndex.FieldByName('KPI_OPTN').AsString;
-      KpiCalculate.FKpiInfo.KpiAgio := cdsKpiIndex.FieldByName('KPI_AGIO').AsFloat;
-      KpiCalculate.FKpiInfo.PlanAmt := cdsHeader.FieldByName('PLAN_AMT').AsFloat;    
-      KpiCalculate.FKpiInfo.PlanMny := cdsHeader.FieldByName('PLAN_MNY').AsFloat;
+    if cdsHeader.FieldByName('CHK_DATE').AsString = '' then
+    begin
+      OpenResultList(cdsHeader.FieldByName('TENANT_ID').AsInteger,cdsHeader.FieldByName('PLAN_ID').AsString,cdsHeader.FieldByName('KPI_ID').AsString);
+      GetResultAmt_Mny(Fish_Amt,Fish_Mny);
+      KpiCalculate := TKpiCalculate.Create;
+      try
+        cdsHeader.Edit;
+        cdsHeader.FieldByName('FISH_AMT').AsFloat := Fish_Amt;
+        cdsHeader.FieldByName('FISH_MNY').AsFloat := Fish_Mny;
+        cdsHeader.Post;
+        KpiCalculate.FKpiInfo.TenantId := cdsHeader.FieldByName('TENANT_ID').AsInteger;
+        KpiCalculate.FKpiInfo.KpiYear := cdsHeader.FieldByName('KPI_YEAR').AsInteger;
+        KpiCalculate.FKpiInfo.KpiId := cdsHeader.FieldByName('KPI_ID').AsString;
+        KpiCalculate.FKpiInfo.ClientId := cdsHeader.FieldByName('CLIENT_ID').AsString;
+        KpiCalculate.FKpiInfo.IdxType := cdsHeader.FieldByName('IDX_TYPE').AsString;
+        KpiCalculate.FKpiInfo.KpiType := cdsKpiIndex.FieldByName('KPI_TYPE').AsString;
+        KpiCalculate.FKpiInfo.KpiData := cdsKpiIndex.FieldByName('KPI_DATA').AsString;
+        KpiCalculate.FKpiInfo.KpiCalc := cdsKpiIndex.FieldByName('KPI_CALC').AsString;
+        KpiCalculate.FKpiInfo.KpiOptn := cdsKpiIndex.FieldByName('KPI_OPTN').AsString;
+        KpiCalculate.FKpiInfo.KpiAgio := cdsKpiIndex.FieldByName('KPI_AGIO').AsFloat;
+        KpiCalculate.FKpiInfo.PlanAmt := cdsHeader.FieldByName('PLAN_AMT').AsFloat;
+        KpiCalculate.FKpiInfo.PlanMny := cdsHeader.FieldByName('PLAN_MNY').AsFloat;
 
-      StatisticalData;
-      Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);
-    finally
-      KpiCalculate.Destroy;
+        StatisticalData;
+        Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);
+      finally
+        KpiCalculate.Destroy;
+      end;
     end;
     cdsHeader.Next;
   end;

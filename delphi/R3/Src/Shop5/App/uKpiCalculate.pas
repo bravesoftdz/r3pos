@@ -96,87 +96,91 @@ begin
   if StrToInt(FKpiInfo.KpiCalc) in [1,2,3] then
   begin
      if CurPrarm >= Param2 then
-        Result := CurAmt * CurAgio/100;
+     begin
+        Result := CurAmt * CurAgio*FKpiInfo.KpiAgio/100;
+        ProNum := 0;
+     end;
   end
   else if StrToInt(FKpiInfo.KpiCalc) in [4,5,6] then
   begin
-     if (CurPrarm >= Param2) and (Param1 = Param2 ) then
+     if FKpiInfo.KpiType <> '3' then
      begin
-        if FKpiInfo.KpiData = '1' then
-        begin
-           Result := FKpiInfo.PlanAmt*Param2*CurAgio/10000;
-           ProNum := CurAmt*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '2' then
-        begin
-           Result := FKpiInfo.PlanMny*Param2*CurAgio/10000;
-           ProNum := CurAmt*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '3' then
-        begin
-           //Result := FKpiInfo.PlanMny*Param2*CurAgio;
-           //ProNum := CurAmt*CurAgio;
-           //毛利目前为 零
-           Result := 0;
-           ProNum := 0;
-        end
-        else if FKpiInfo.KpiData = '4' then
-        begin
-           Result := Param2*CurAgio/10000;
-           ProNum := CurAmt*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '5' then
-        begin
-           Result := Param2*CurAgio/10000;
-           ProNum := CurAmt*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '6' then
-        begin
-           //Result := Param2*CurAgio;
-           //ProNum := CurAmt*CurAgio;
-           //毛利目前为 零
-           Result := 0;
-           ProNum := 0;
-        end;
+       if (CurPrarm >= Param2) and (Param1 = Param2 ) then
+       begin
+          if FKpiInfo.KpiData = '1' then
+          begin
+             Result := FKpiInfo.PlanAmt*Param2*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '2' then
+          begin
+             Result := FKpiInfo.PlanMny*Param2*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '3' then
+          begin
+             Result := FKpiInfo.PlanMny*Param2*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '4' then
+          begin
+             Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '5' then
+          begin
+             Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '6' then
+          begin
+             Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end;
+       end
+       else if (CurPrarm >= Param2) and (Param2 > Param1) then
+       begin
+          if FKpiInfo.KpiData = '1' then
+          begin
+             Result := (FKpiInfo.PlanAmt*Param2-FKpiInfo.PlanAmt*Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-FKpiInfo.PlanAmt*Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '2' then
+          begin
+             Result := (FKpiInfo.PlanAmt*Param2-FKpiInfo.PlanAmt*Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-FKpiInfo.PlanMny*Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '3' then
+          begin
+             Result := (FKpiInfo.PlanAmt*Param2-FKpiInfo.PlanAmt*Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-FKpiInfo.PlanMny*Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '4' then
+          begin
+             Result := (Param2-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '5' then
+          begin
+             Result := (Param2-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end
+          else if FKpiInfo.KpiData = '6' then
+          begin
+             Result := (Param2-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+             ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/100;
+          end;
+       end
+       else
+          ProNum := 0;
      end
-     else if (CurPrarm >= Param2) and (Param2 > Param1) then
+     else
      begin
-        if FKpiInfo.KpiData = '1' then
-        begin
-           Result := FKpiInfo.PlanAmt*(Param2-Param1)*CurAgio/10000;
-           ProNum := (CurAmt-FKpiInfo.PlanAmt*Param1)*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '2' then
-        begin
-           Result := FKpiInfo.PlanAmt*(Param2-Param1)*CurAgio/10000;
-           ProNum := (CurAmt-FKpiInfo.PlanAmt*Param1)*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '3' then
-        begin
-           //Result := (FKpiInfo.PlanAmt*Param2-FKpiInfo.PlanAmt*Param1)*CurAgio;
-           //ProNum := (CurAmt-FKpiInfo.PlanAmt*Param1)*CurAgio;
-           //毛利目前为 零
-           Result := 0;
-           ProNum := 0;
-        end
-        else if FKpiInfo.KpiData = '4' then
-        begin
-           Result := (Param2-Param1)*CurAgio/100;
-           ProNum := (CurAmt-Param1)*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '5' then
-        begin
-           Result := (Param2-Param1)*CurAgio/100;
-           ProNum := (CurAmt-Param1)*CurAgio/100;
-        end
-        else if FKpiInfo.KpiData = '6' then
-        begin
-           //Result := (Param2-Param1)*CurAgio;
-           //ProNum := (CurAmt-Param1)*CurAgio;
-           //毛利目前为 零
-           Result := 0;
-           ProNum := 0;
-        end;     
+       if (CurPrarm >= Param2) then
+       begin
+          Result := CurAmt*Param2*CurAgio*FKpiInfo.KpiAgio/100;
+          ProNum := 0;
+       end;
      end;
   end;
 end;
@@ -252,7 +256,7 @@ begin
   result:=str;
 end;
 var rs:TZQuery;
-    IsAdd,IsBrrw:Boolean;
+    IsAdd,Brrw:Boolean;
     Kpi_Index:PKpiIndex;
 //当前时间段内的达标量、当前考核结果、当前达标率/达标量、上一指标达标率/达标量、当前指标达标率/达标量,当前折扣系数
     CurAmount,CurMny,CurRate_Amt,LastParam,CurParam,CurAgio:Real;
@@ -283,8 +287,8 @@ begin
          begin
              if StrToInt(FKpiInfo.KpiData) in [1,2,3] then
              begin
-                CurParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat;
-                LastParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat;
+                CurParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat/100;
+                LastParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat/100;
              end
              else
              begin
@@ -297,7 +301,7 @@ begin
              if StrToInt(FKpiInfo.KpiData) in [1,2,3] then
              begin
                 CurParam := LastParam;
-                LastParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat;
+                LastParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat/100;
              end
              else
              begin
@@ -324,8 +328,8 @@ begin
         begin
           if StrToInt(FKpiInfo.KpiData) in [1,2,3] then
           begin
-             CurParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat;
-             LastParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat;
+             CurParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat/100;
+             LastParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat/100;
           end
           else
           begin
@@ -348,12 +352,12 @@ begin
         begin
           LastParam := CurParam;
           if StrToInt(FKpiInfo.KpiData) in [1,2,3] then
-             CurParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat
+             CurParam := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat/100
           else
              CurParam := FDataSet_Kpi.FieldByName('KPI_AMT').AsFloat;
         end;
-        CurAgio := FDataSet_Kpi.FieldByName('KPI_AGIO').AsFloat;
 
+        CurAgio := FDataSet_Kpi.FieldByName('KPI_AGIO').AsFloat;
       end;
       // 从此处结束对日期段的判断
 
@@ -392,7 +396,7 @@ begin
          IsAdd := False;
       end;
       
-      if FDataSet_Kpi.FieldByName('KPI_LV').AsString = '1' then
+      if (FDataSet_Kpi.FieldByName('KPI_LV').AsString = '1') and (FDataSet_Kpi.FieldByName('SEQNO').AsInteger = 1) then
       begin
          FKpiSite.LastParam := CurParam;
          FKpiSite.ThisParam := CurParam;
@@ -409,9 +413,11 @@ begin
       //根据考核标准 得出当前时间段 是否达标的系数
       CurRate_Amt := KpiDataNum(CurAmount);  
       //此处判断是否加借量值
-      CurAmount := UseBrrw(CurAmount,CurRate_Amt,LastParam,CurParam,FDataSet_Kpi.FieldByName('USING_BRRW').AsBoolean);
+      if FDataSet_Kpi.FieldByName('USING_BRRW').AsString = '1' then Brrw := True else Brrw := False;
+      CurAmount := UseBrrw(CurAmount,CurRate_Amt,LastParam,CurParam,Brrw);
       //得出当前档位的考核结果
       CurMny := ReachJudge(CalculateAmt,CurRate_Amt,LastParam,CurParam,CurAgio);
+
 
       New(Kpi_Index);
       Kpi_Index.LV := FDataSet_Kpi.FieldByName('KPI_LV').AsString;
@@ -420,7 +426,7 @@ begin
       Kpi_Index.KpiMny := CurMny;
       AddKpiIndex(Kpi_Index);
       //有关累进计算，重新赋值
-      if (StrToInt(FKpiInfo.KpiCalc) in [4,5,6]) and ((CurMny = 0) or ((CurMny<>0) and (FKpiSite.LastLv<>FKpiSite.ThisLv))) then
+      if (StrToInt(FKpiInfo.KpiCalc) in [4,5,6]) and (ProNum <> 0) and (FKpiSite.LastLv<>FKpiSite.ThisLv) then
       begin
          if FindKipIndex(FKpiSite.LastLv,FKpiSite.LastSeqNo) <> nil then
             FindKipIndex(FKpiSite.LastLv,FKpiSite.LastSeqNo).KpiMny := ProNum;
@@ -436,11 +442,11 @@ end;
 function TKpiCalculate.KpiDataNum(Num:Real): Real;
 begin
   if FKpiInfo.KpiData = '1' then
-     Result := Num/FKpiInfo.PlanAmt*100
+     Result := Num/FKpiInfo.PlanAmt
   else if FKpiInfo.KpiData = '2' then
-     Result := Num/FKpiInfo.PlanMny*100
+     Result := Num/FKpiInfo.PlanMny
   else if FKpiInfo.KpiData = '3' then
-     Result := Num/FKpiInfo.PlanMny*100
+     Result := Num/FKpiInfo.PlanMny
   else
      Result := Num;
 end;
@@ -449,11 +455,11 @@ function TKpiCalculate.UseBrrw(CurAmt,CurPrarm,Param1,Param2:Real;IsBrrw:Boolean
 begin
   if FKpiInfo.KpiType = '3' then
   begin
-     if CurPrarm < Param2 then
+     if CurPrarm < Param2 then       //当前时间段内的达标系数 小于 当前档位的达标系数
      begin
-        if IsBrrw then
+        if IsBrrw then    //当前档位是否允许借量
         begin
-           Result := CurAmt + ContainerBrrw;
+           Result := CurAmt + ContainerBrrw;     //当前时间段内的销售量/金额 从借量容器中获得借量值
            if FKpiInfo.KpiData = '1' then
               ContainerBrrw := Result - FKpiInfo.PlanAmt*Param2
            else if FKpiInfo.KpiData = '2' then
@@ -461,20 +467,21 @@ begin
            else if FKpiInfo.KpiData = '3' then
               ContainerBrrw := Result - FKpiInfo.PlanMny*Param2
            else 
-              ContainerBrrw := Result - Param2;
+              ContainerBrrw := Result - Param2;   //借量后把超额的值返还给 借量容器
 
-           if ContainerBrrw < 0 then ContainerBrrw := 0;
+           if ContainerBrrw < 0 then ContainerBrrw := 0;       // 如果没有超额则把 借量容器 为 0
 
         end;
      end
      else
      begin
+       // 
        if FKpiInfo.KpiData = '1' then
-          ContainerBrrw := CurAmt - FKpiInfo.PlanAmt*Param2/100
+          ContainerBrrw := CurAmt - FKpiInfo.PlanAmt*Param2
        else if FKpiInfo.KpiData = '2' then
-          ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2/100
+          ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2
        else if FKpiInfo.KpiData = '3' then
-          ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2/100
+          ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2
        else
           ContainerBrrw := CurAmt - Param2;
        Result := CurAmt;
@@ -482,8 +489,8 @@ begin
   end
   else
   begin
-     if (FKpiSite.LastLv <> FKpiSite.ThisLv) and Type_Brrw then
-     begin
+     if (FKpiSite.LastLv <> FKpiSite.ThisLv) and Type_Brrw then   //在 LastLv与ThisLv 不同时,说明上一个LastLv、LastSeqNo为上一周期的最后一档
+     begin                                                        //再计算最后一档的超额放入 借量容器 中
        if FKpiInfo.KpiData = '1' then
           ContainerBrrw := ContainerBrrw + FKpiSite.LastAmt - FKpiInfo.PlanAmt*FKpiSite.LastParam
        else if FKpiInfo.KpiData = '2' then
@@ -514,14 +521,14 @@ begin
      end
      else
      begin
-       if FKpiInfo.KpiData = '1' then
+       {if FKpiInfo.KpiData = '1' then
           ContainerBrrw := CurAmt - FKpiInfo.PlanAmt*Param2
        else if FKpiInfo.KpiData = '2' then
           ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2
        else if FKpiInfo.KpiData = '3' then
           ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2
        else
-          ContainerBrrw := CurAmt - Param2;
+          ContainerBrrw := CurAmt - Param2;}
        Result := CurAmt;
        Type_Brrw := True;
      end;
@@ -538,7 +545,8 @@ function TKpiCalculate.GetCurSeq(LV: String): Integer;
 var i,Seq:Integer;
     Mny:Real;
 begin
-  Seq := 0;
+  Seq := 1;
+  Mny := 0;
   for i := 0 to FList.Count - 1 do
   begin
     if PKpiIndex(FList[i]).LV = LV then
@@ -554,7 +562,7 @@ begin
        else
           if PKpiIndex(FList[i]).KpiMny <> 0 then
           begin
-             Mny := PKpiIndex(FList[i]).KpiMny;
+             //Mny := PKpiIndex(FList[i]).KpiMny;
              Seq := PKpiIndex(FList[i]).SEQNO;
           end;
     end;

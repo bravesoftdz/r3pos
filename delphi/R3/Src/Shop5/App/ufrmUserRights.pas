@@ -432,7 +432,8 @@ begin
   CdsShop:=TZQuery.Create(nil);
   try
     zxTab:=
-      'select distinct substr(CODE_ID,1,2) as CODE_ID from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' and COMM not in (''02'',''12'') and substr(CODE_ID,3,4)=''0000'' '+
+      'select distinct substr(CODE_ID,1,2) as CODE_ID from PUB_CODE_INFO '+
+      ' where TENANT_ID=0 and CODE_TYPE=''8'' and COMM not in (''02'',''12'') and substr(CODE_ID,3,4)=''0000'' '+
       ' and substr(CODE_ID,1,2) not in(select distinct substr(CODE_ID,1,2) from PUB_CODE_INFO where TENANT_ID=0 and CODE_TYPE=''8'' and COMM not in (''02'',''12'') and substr(CODE_ID,3,2)<>''00'' and substr(CODE_ID,5,2)=''00'' and substr(CODE_ID,3,4)<>''0000'')';
 
     Sql_Str :=
@@ -441,7 +442,7 @@ begin
         '  case when a.CODE_ID=''#'' then ''0099'''+
         '       when substr(a.CODE_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+
         '       when substr(a.CODE_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2) '+
-        '       when substr(a.CODE_ID,5,2)<>''00''  and zt.CODE_ID is not null then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) '+
+     // '       when substr(a.CODE_ID,5,2)<>''00''  and zt.CODE_ID is not null then ''00'''+Join_Str+'substr(a.CODE_ID,1,2) '+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) '+
         '       else ''00'''+Join_Str+'substr(a.CODE_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substr(a.CODE_ID,5,2) end as LEVEL_ID '+
         ' from '+
         '  (select CODE_ID,CODE_NAME,LEVEL_ID,(case when substr(CODE_ID,3,4)=''0000'' then substr(CODE_ID,1,2) else '' '' end) as FID, '+
@@ -456,7 +457,7 @@ begin
         '    case when REGION_ID=''#'' then ''0099'''+Join_Str+GetShopNo+
         '         when substr(REGION_ID,3,4)=''0000'' then ''00'''+Join_Str+'substr(REGION_ID,1,2)'+Join_Str+GetShopNo+
         '         when substr(REGION_ID,5,2)=''00''   then ''00'''+Join_Str+'substr(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(REGION_ID,3,2)'+Join_Str+GetShopNo+
-        '         when substr(REGION_ID,5,2)<>''00'' and zt.CODE_ID is not null  then ''00'''+Join_Str+'substr(REGION_ID,1,2)'+Join_Str+'substr(REGION_ID,5,2)'+Join_Str+GetShopNo+  //直辖市直（2级）
+    //  '         when substr(REGION_ID,5,2)<>''00'' and zt.CODE_ID is not null  then ''00'''+Join_Str+'substr(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(REGION_ID,3,2)'+Join_Str+'substr(REGION_ID,5,2)'+Join_Str+GetShopNo+  //直辖市直（2级）
         '         else ''00'''+Join_Str+'substr(REGION_ID,1,2)'+Join_Str+'''00'''+Join_Str+'substr(REGION_ID,3,2)'+Join_Str+'''00'''+Join_Str+'substr(REGION_ID,5,2)'+Join_Str+GetShopNo+' end as LEVEL_ID '+
         '  from CA_SHOP_INFO sh left outer join ('+zxTab+') zt on substr(sh.REGION_ID,1,2)=zt.CODE_ID '+
         '  where sh.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and sh.COMM not in (''02'',''12'') '+

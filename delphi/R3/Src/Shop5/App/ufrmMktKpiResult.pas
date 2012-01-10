@@ -41,6 +41,8 @@ type
     fndCUST_VALUE: TzrComboBoxList;
     RzLabel4: TRzLabel;
     fndCLIENT_ID: TzrComboBoxList;
+    Label40: TLabel;
+    fndSHOP_ID: TzrComboBoxList;
     procedure actExitExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -57,6 +59,7 @@ type
     procedure actInfoExecute(Sender: TObject);
     procedure GridDblClick(Sender: TObject);
     procedure CdsKpiResultAfterScroll(DataSet: TDataSet);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     MaxId:String;
@@ -95,6 +98,11 @@ begin
   fndKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
   fndCLIENT_ID.DataSet := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      Label40.Caption := '≤÷ø‚√˚≥∆';
+    end;
   CdsClient := TZQuery.Create(nil);
 end;
 
@@ -503,6 +511,7 @@ begin
       KpiCalc := CdsKpiResult.FieldByName('KPI_CALC').AsString;
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
       IdxType := CdsKpiResult.FieldByName('IDX_TYPE').AsString;
+      KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsString;
       Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
       ShowModal;
     finally
@@ -532,6 +541,12 @@ begin
      actAudit.Caption := '∆˙…Û'
   else
      actAudit.Caption := '…Û∫À';
+end;
+
+procedure TfrmMktKpiResult.FormShow(Sender: TObject);
+begin
+  inherited;
+  fndCUST_TYPE.ItemIndex := 0;
 end;
 
 end.

@@ -55,6 +55,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             OnDrawColumnCell = DBGridEh1DrawColumnCell
             Columns = <
               item
+                Color = clBtnFace
                 EditButtons = <>
                 FieldName = 'SEQNO'
                 Footers = <>
@@ -62,18 +63,20 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Width = 30
               end
               item
-                DisplayFormat = '00'#26376'00'#26085
+                DisplayFormat = '0000-00-00'
                 EditButtons = <>
                 FieldName = 'KPI_DATE1'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #24320#22987#26085#26399
                 Width = 60
               end
               item
-                DisplayFormat = '00'#26376'00'#26085
+                DisplayFormat = '0000-00-00'
                 EditButtons = <>
                 FieldName = 'KPI_DATE2'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #32467#26463#26085#26399
                 Width = 60
               end
@@ -82,6 +85,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 EditButtons = <>
                 FieldName = 'KPI_RATE'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #36798#26631#29575
                 Width = 60
               end

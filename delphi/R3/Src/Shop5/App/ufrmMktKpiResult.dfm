@@ -3,9 +3,10 @@ inherited frmMktKpiResult: TfrmMktKpiResult
   Top = 172
   Width = 915
   Height = 533
-  Caption = #32771#26680#32467#26524
+  Caption = #32463#38144#21830#36820#21033
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -19,15 +20,15 @@ inherited frmMktKpiResult: TfrmMktKpiResult
         Height = 453
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #32771#26680#32467#26524#26597#35810
+          Caption = #32463#38144#21830#36820#21033#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 889
             Height = 426
             object Panel1: TPanel
               Left = 5
-              Top = 120
+              Top = 98
               Width = 879
-              Height = 301
+              Height = 323
               Align = alClient
               BevelInner = bvLowered
               TabOrder = 0
@@ -35,7 +36,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 Left = 2
                 Top = 2
                 Width = 875
-                Height = 297
+                Height = 319
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DsKpiResult
@@ -129,6 +130,14 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Width = 60
                   end
                   item
+                    DisplayFormat = '#0%'
+                    EditButtons = <>
+                    FieldName = 'FISH_RATE'
+                    Footers = <>
+                    Title.Caption = #23436#25104#29575
+                    Width = 50
+                  end
+                  item
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
@@ -197,13 +206,13 @@ inherited frmMktKpiResult: TfrmMktKpiResult
               Left = 5
               Top = 5
               Width = 879
-              Height = 115
+              Height = 93
               Align = alTop
               BevelInner = bvLowered
               TabOrder = 1
               object Label1: TLabel
-                Left = 14
-                Top = 94
+                Left = 290
+                Top = 73
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -219,8 +228,8 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 Caption = #24180'    '#24230
               end
               object Label32: TLabel
-                Left = 14
-                Top = 30
+                Left = 290
+                Top = 51
                 Width = 48
                 Height = 12
                 Caption = #25152#23646#37096#38376
@@ -240,10 +249,17 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 Alignment = taRightJustify
                 Caption = #32463' '#38144' '#21830
               end
+              object Label40: TLabel
+                Left = 14
+                Top = 31
+                Width = 48
+                Height = 12
+                Caption = #38376#24215#21517#31216
+              end
               object fndKPI_ID: TzrComboBoxList
-                Left = 70
-                Top = 90
-                Width = 215
+                Left = 346
+                Top = 69
+                Width = 121
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -266,7 +282,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Width = 120
                   end>
                 DataSet = cdsKPI_ID
-                DropWidth = 290
+                DropWidth = 220
                 DropHeight = 228
                 ShowTitle = True
                 AutoFitColWidth = True
@@ -288,8 +304,8 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 Value = 2011
               end
               object btnOk: TRzBitBtn
-                Left = 294
-                Top = 86
+                Left = 477
+                Top = 64
                 Width = 67
                 Height = 24
                 Action = actFind
@@ -315,8 +331,8 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 Spacing = 5
               end
               object fndDEPT_ID: TzrComboBoxList
-                Left = 70
-                Top = 27
+                Left = 346
+                Top = 48
                 Width = 121
                 Height = 20
                 Properties.AutoSelect = False
@@ -401,9 +417,9 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
-                Buttons = [zbClear, zbFind]
+                Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
@@ -467,10 +483,52 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Title.Caption = #22320#22336
                     Width = 150
                   end>
-                DropWidth = 236
+                DropWidth = 220
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = False
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbClear]
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object fndSHOP_ID: TzrComboBoxList
+                Tag = -1
+                Left = 70
+                Top = 27
+                Width = 215
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 7
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+                KeyField = 'SHOP_ID'
+                ListField = 'SHOP_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'SHOP_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'SHOP_ID'
+                    Footers = <>
+                    Title.Caption = #20195#30721
+                    Width = 20
+                  end>
+                DropWidth = 215
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
                 ShowButton = True
                 LocateStyle = lsDark
                 Buttons = [zbClear]
@@ -616,7 +674,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 214
+    Left = 318
     Top = 67
   end
   object SaveDialog1: TSaveDialog

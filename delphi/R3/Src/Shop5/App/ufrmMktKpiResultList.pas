@@ -41,12 +41,14 @@ type
     FKpiType: String;
     FIdxType: String;
     FKpiName: String;
+    FKpiYear: String;
     procedure SetKpiCalc(const Value: String);
     procedure SetKpiData(const Value: String);
     procedure SetKpiType(const Value: String);
     procedure SetIdxType(const Value: String);
     procedure SetKpiName(const Value: String);
     procedure ShowGrid;
+    procedure SetKpiYear(const Value: String);
     { Private declarations }
   public
     { Public declarations }
@@ -58,6 +60,7 @@ type
     property KpiData:String read FKpiData write SetKpiData;
     property KpiCalc:String read FKpiCalc write SetKpiCalc;
     property IdxType:String read FIdxType write SetIdxType;
+    property KpiYear:String read FKpiYear write SetKpiYear;
     property KpiName:String write SetKpiName;
   end;
 
@@ -70,8 +73,9 @@ uses uGlobal,uCtrlUtil, ufrmBasic, uDsUtil;
 procedure TfrmMktKpiResultList.Open(Id: String);
 begin
   CdsList.Close;
-  CdsList.SQL.Text := 'select KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,FSH_VLE,KPI_MNY  from MKT_KPI_RESULT_LIST '+
-                      'where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PLAN_ID='+QuotedStr(Id)+' order by KPI_LV,SEQNO';
+  CdsList.SQL.Text := 'select KPI_LV,SEQNO,KPI_RATE,KPI_AMT,('+FormatDateTime('YYYY',Date())+'*10000+KPI_DATE1) as KPI_DATE1,'+
+  'case when KPI_DATE1>KPI_DATE2 then (('+KpiYear+'+1)*10000+KPI_DATE2) else ('+KpiYear+'*10000+KPI_DATE2) end as KPI_DATE2,'+
+  'KPI_AGIO,FSH_VLE,KPI_MNY  from MKT_KPI_RESULT_LIST where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PLAN_ID='+QuotedStr(Id)+' order by KPI_LV,SEQNO';
   Factor.Open(CdsList);
 end;
 
@@ -219,6 +223,11 @@ end;
 procedure TfrmMktKpiResultList.SaveInterfaceToFile;
 begin
 
+end;
+
+procedure TfrmMktKpiResultList.SetKpiYear(const Value: String);
+begin
+  FKpiYear := Value;
 end;
 
 end.

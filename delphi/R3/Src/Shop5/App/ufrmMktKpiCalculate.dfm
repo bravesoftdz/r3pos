@@ -2,7 +2,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
   Left = 562
   Top = 240
   Width = 366
-  Height = 256
+  Height = 242
   BorderIcons = [biSystemMenu]
   Caption = #32771#26680#35745#31639
   OldCreateOrder = True
@@ -15,7 +15,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     Left = 0
     Top = 0
     Width = 358
-    Height = 229
+    Height = 215
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -24,7 +24,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
       Left = 0
       Top = 0
       Width = 358
-      Height = 187
+      Height = 173
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
@@ -205,7 +205,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     end
     object RzPanel3: TRzPanel
       Left = 0
-      Top = 187
+      Top = 173
       Width = 358
       Height = 42
       Align = alBottom
@@ -213,8 +213,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
       Color = clWhite
       TabOrder = 1
       object btnStart: TRzBitBtn
-        Left = 142
-        Top = 2
+        Left = 144
+        Top = 4
         Width = 67
         Height = 24
         Caption = #24320#22987#35745#31639

@@ -312,7 +312,12 @@ end;
 procedure TfrmMktKpiCalculate.btnStartClick(Sender: TObject);
 begin
   inherited;
-  StartCalculate;
+  btnStart.Enabled := False;
+  try
+    StartCalculate;
+  finally
+    btnStart.Enabled := True;
+  end;
   ModalResult := MROK;
 end;
 

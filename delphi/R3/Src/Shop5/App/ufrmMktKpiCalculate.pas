@@ -83,11 +83,21 @@ procedure TfrmMktKpiCalculate.SetIdxType(const Value: String);
 begin
   FIdxType := Value;
   if Value = '1' then
-     Caption := '返利计算'
+  begin
+     Caption := '返利计算';
+     RzLabel4.Caption := '经 销 商';
+
+  end
   else if Value = '2' then
-     Caption := '计提计算'
+  begin
+     Caption := '计提计算';
+     RzLabel4.Caption := '经 销 商';
+  end
   else if Value = '3' then
+  begin
      Caption := '业绩计算';
+     RzLabel4.Caption := '业 务 员';
+  end;
 end;
 
 procedure TfrmMktKpiCalculate.FormShow(Sender: TObject);

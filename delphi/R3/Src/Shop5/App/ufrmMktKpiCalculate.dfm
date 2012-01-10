@@ -196,7 +196,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         DropHeight = 180
         ShowTitle = True
         AutoFitColWidth = False
-        ShowButton = False
+        ShowButton = True
         LocateStyle = lsDark
         Buttons = [zbClear]
         DropListStyle = lsFixed

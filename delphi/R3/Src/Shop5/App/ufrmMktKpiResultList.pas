@@ -51,6 +51,8 @@ type
   public
     { Public declarations }
     procedure Open(Id:String);
+    procedure SaveInterfaceToFile;
+    procedure LoadInterfaceFromFile;
     class function ShowDialog(Owner:TForm;Id,K_Name,K_Type,K_Data,K_Calc,I_Type:String):Boolean;
     property KpiType:String read FKpiType write SetKpiType;
     property KpiData:String read FKpiData write SetKpiData;
@@ -68,10 +70,9 @@ uses uGlobal,uCtrlUtil, ufrmBasic, uDsUtil;
 procedure TfrmMktKpiResultList.Open(Id: String);
 begin
   CdsList.Close;
-  CdsList.SQL.Text := 'select KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,FSH_VLE,KPI_MNY '+
-                      ' from MKT_KPI_RESULT_LIST where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PLAN_ID='+QuotedStr(Id);
+  CdsList.SQL.Text := 'select KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,FSH_VLE,KPI_MNY  from MKT_KPI_RESULT_LIST '+
+                      'where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PLAN_ID='+QuotedStr(Id)+' order by KPI_LV,SEQNO';
   Factor.Open(CdsList);
-
 end;
 
 procedure TfrmMktKpiResultList.SetIdxType(const Value: String);
@@ -133,16 +134,14 @@ procedure TfrmMktKpiResultList.edtKPI_DATAPropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  {if edtKPI_DATA.ItemIndex in [0,1,2] then
+  if edtKPI_DATA.ItemIndex in [0,1,2] then
   begin
-     DBGridEh1.Columns[3].Visible := True;
-     DBGridEh1.Columns[4].Visible := False;
+     DBGridEh1.FieldColumns['KPI_AMT'].Free;
   end
   else
   begin
-     DBGridEh1.Columns[3].Visible := False;
-     DBGridEh1.Columns[4].Visible := True;
-  end;  }
+     DBGridEh1.FieldColumns['KPI_RATE'].Free;
+  end;
 end;
 
 procedure TfrmMktKpiResultList.edtIDX_TYPEPropertiesChange(
@@ -163,13 +162,13 @@ procedure TfrmMktKpiResultList.ShowGrid;
 begin
   if DisplayPer then
   begin
-    DBGridEh1.Columns[5].Title.Caption := KpiAgioFront + KpiAgioBack;
-    DBGridEh1.Columns[5].DisplayFormat := '#0%';
+    DBGridEh1.FieldColumns['KPI_AGIO'].Title.Caption := KpiAgioFront + KpiAgioBack;
+    DBGridEh1.FieldColumns['KPI_AGIO'].DisplayFormat := '#0%';
   end
   else
   begin
-    DBGridEh1.Columns[5].Title.Caption := KpiAgioFront + KpiAgioBack;
-    DBGridEh1.Columns[5].DisplayFormat := '';
+    DBGridEh1.FieldColumns['KPI_AGIO'].Title.Caption := KpiAgioFront + KpiAgioBack;
+    DBGridEh1.FieldColumns['KPI_AGIO'].DisplayFormat := '';
   end;
 end;
 
@@ -193,7 +192,8 @@ end;
 procedure TfrmMktKpiResultList.FormShow(Sender: TObject);
 begin
   inherited;
-  //dbState := dsBrowse;
+  dbState := dsBrowse;
+  DBGridEh1.PopupMenu :=nil; 
 end;
 
 procedure TfrmMktKpiResultList.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -209,13 +209,16 @@ begin
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
-  if Column.FieldName = 'SEQNO' then
-    begin
-      ARect := Rect;
-      DBGridEh1.canvas.Brush.Color := $0000F2F2;
-      DBGridEh1.canvas.FillRect(ARect);
-      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(CdsList.RecNo)),length(Inttostr(CdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
+end;
+
+procedure TfrmMktKpiResultList.LoadInterfaceFromFile;
+begin
+
+end;
+
+procedure TfrmMktKpiResultList.SaveInterfaceToFile;
+begin
+
 end;
 
 end.

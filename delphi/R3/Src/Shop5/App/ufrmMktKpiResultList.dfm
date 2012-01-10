@@ -56,12 +56,13 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             Columns = <
               item
                 EditButtons = <>
-                FieldName = 'SEQ_NO'
+                FieldName = 'SEQNO'
                 Footers = <>
                 Title.Caption = #24207#21495
                 Width = 30
               end
               item
+                DisplayFormat = '00'#26376'00'#26085
                 EditButtons = <>
                 FieldName = 'KPI_DATE1'
                 Footers = <>
@@ -69,6 +70,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Width = 60
               end
               item
+                DisplayFormat = '00'#26376'00'#26085
                 EditButtons = <>
                 FieldName = 'KPI_DATE2'
                 Footers = <>

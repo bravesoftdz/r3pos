@@ -27,7 +27,6 @@ type
     DsList: TDataSource;
     CdsList: TZQuery;
     procedure btnCloseClick(Sender: TObject);
-    procedure edtKPI_TYPEPropertiesChange(Sender: TObject);
     procedure edtKPI_DATAPropertiesChange(Sender: TObject);
     procedure edtIDX_TYPEPropertiesChange(Sender: TObject);
     procedure edtKPI_CALCPropertiesChange(Sender: TObject);
@@ -69,7 +68,7 @@ uses uGlobal,uCtrlUtil, ufrmBasic, uDsUtil;
 procedure TfrmMktKpiResultList.Open(Id: String);
 begin
   CdsList.Close;
-  CdsList.SQL.Text := 'select KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,FSH_VLE,KPI_MNY '+
+  CdsList.SQL.Text := 'select KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,FSH_VLE,KPI_MNY '+
                       ' from MKT_KPI_RESULT_LIST where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PLAN_ID='+QuotedStr(Id);
   Factor.Open(CdsList);
 
@@ -130,27 +129,11 @@ begin
   Close;
 end;
 
-procedure TfrmMktKpiResultList.edtKPI_TYPEPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  if edtKPI_TYPE.ItemIndex = 2 then
-  begin
-     DBGridEh1.Columns[1].Visible := True;
-     DBGridEh1.Columns[2].Visible := True;
-  end
-  else
-  begin
-     DBGridEh1.Columns[1].Visible := False;
-     DBGridEh1.Columns[2].Visible := False;
-  end;
-end;
-
 procedure TfrmMktKpiResultList.edtKPI_DATAPropertiesChange(
   Sender: TObject);
 begin
   inherited;
-  if edtKPI_DATA.ItemIndex in [0,1,2] then
+  {if edtKPI_DATA.ItemIndex in [0,1,2] then
   begin
      DBGridEh1.Columns[3].Visible := True;
      DBGridEh1.Columns[4].Visible := False;
@@ -159,7 +142,7 @@ begin
   begin
      DBGridEh1.Columns[3].Visible := False;
      DBGridEh1.Columns[4].Visible := True;
-  end;
+  end;  }
 end;
 
 procedure TfrmMktKpiResultList.edtIDX_TYPEPropertiesChange(
@@ -210,7 +193,7 @@ end;
 procedure TfrmMktKpiResultList.FormShow(Sender: TObject);
 begin
   inherited;
-  dbState := dsBrowse;
+  //dbState := dsBrowse;
 end;
 
 procedure TfrmMktKpiResultList.DBGridEh1DrawColumnCell(Sender: TObject;

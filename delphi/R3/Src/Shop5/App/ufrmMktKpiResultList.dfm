@@ -1,6 +1,6 @@
 inherited frmMktKpiResultList: TfrmMktKpiResultList
-  Left = 644
-  Top = 169
+  Left = 736
+  Top = 205
   Caption = #25351#26631#32771#26680#28165#21333
   ClientHeight = 321
   ClientWidth = 477
@@ -62,40 +62,29 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Width = 30
               end
               item
-                DisplayFormat = '00'#26376'00'#26085
                 EditButtons = <>
                 FieldName = 'KPI_DATE1'
                 Footers = <>
-                KeyList.Strings = (
-                  '1'
-                  '2'
-                  '3')
-                PickList.Strings = (
-                  #32463#38144#21830
-                  #30452#33829#24215
-                  #21152#30431#24215
-                  #9)
-                ReadOnly = True
                 Title.Caption = #24320#22987#26085#26399
+                Width = 60
               end
               item
-                DisplayFormat = '00'#26376'00'#26085
                 EditButtons = <>
                 FieldName = 'KPI_DATE2'
                 Footers = <>
-                ReadOnly = True
                 Title.Caption = #32467#26463#26085#26399
+                Width = 60
               end
               item
                 Alignment = taRightJustify
                 EditButtons = <>
                 FieldName = 'KPI_RATE'
                 Footers = <>
-                ReadOnly = True
                 Title.Caption = #36798#26631#29575
                 Width = 60
               end
               item
+                Alignment = taRightJustify
                 EditButtons = <>
                 FieldName = 'KPI_AMT'
                 Footers = <>
@@ -104,6 +93,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Width = 60
               end
               item
+                Alignment = taRightJustify
                 EditButtons = <>
                 FieldName = 'KPI_AGIO'
                 Footers = <>
@@ -112,6 +102,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Width = 60
               end
               item
+                Alignment = taRightJustify
                 DisplayFormat = '#0.00'
                 EditButtons = <>
                 FieldName = 'FSH_VLE'
@@ -258,7 +249,6 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
               Width = 121
               Height = 20
               Properties.DropDownListStyle = lsFixedList
-              Properties.OnChange = edtKPI_TYPEPropertiesChange
               TabOrder = 4
             end
           end

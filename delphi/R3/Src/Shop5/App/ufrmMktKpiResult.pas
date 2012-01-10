@@ -285,7 +285,7 @@ begin
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';
           
-  Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_ID,A.KPI_YEAR,A.BEGIN_DATE,'+
+  Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
             'A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.PLAN_AMT when A.KPI_DATA in (''2'',''3'',''5'',''6'') then A.PLAN_MNY end as PLAN_AMT,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT when A.KPI_DATA in (''2'',''3'',''5'',''6'') then A.FISH_MNY end as FISH_AMT,'+
@@ -491,31 +491,25 @@ begin
 end;
 
 procedure TfrmMktKpiResult.actInfoExecute(Sender: TObject);
-var rs:TZQuery;
 begin
   inherited;
   if (not CdsKpiResult.Active) or (CdsKpiResult.IsEmpty) then exit;
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := ' select KPI_NAME,IDX_TYPE,KPI_TYPE,KPI_DATA,KPI_CALC from MKT_KPI_INDEX where KPI_ID='+QuotedStr(CdsKpiResult.FieldByName('KPI_ID').AsString);
-    Factor.Open(rs);
-    with TfrmMktKpiResultList.Create(self) do
-    begin
-      try
-        KpiType := rs.FieldByName('KPI_TYPE').AsString;
-        KpiData := rs.FieldByName('KPI_DATA').AsString;
-        KpiCalc := rs.FieldByName('KPI_CALC').AsString;
-        KpiName := rs.FieldByName('KPI_NAME').AsString;
-        IdxType := rs.FieldByName('IDX_TYPE').AsString;
-        Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
-        ShowModal;
-      finally
-        Free;
-      end;
+
+  with TfrmMktKpiResultList.Create(self) do
+  begin
+    try
+      KpiType := CdsKpiResult.FieldByName('KPI_TYPE').AsString;
+      KpiData := CdsKpiResult.FieldByName('KPI_DATA').AsString;
+      KpiCalc := CdsKpiResult.FieldByName('KPI_CALC').AsString;
+      KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
+      IdxType := CdsKpiResult.FieldByName('IDX_TYPE').AsString;
+      Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
+      ShowModal;
+    finally
+      Free;
     end;
-  finally
-    rs.Free;
   end;
+
 end;
 
 procedure TfrmMktKpiResult.GridDblClick(Sender: TObject);

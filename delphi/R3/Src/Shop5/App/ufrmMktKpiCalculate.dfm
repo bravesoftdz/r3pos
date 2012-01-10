@@ -1,6 +1,6 @@
 inherited frmMktKpiCalculate: TfrmMktKpiCalculate
-  Left = 381
-  Top = 285
+  Left = 562
+  Top = 240
   Width = 366
   Height = 256
   BorderIcons = [biSystemMenu]
@@ -217,7 +217,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         Top = 2
         Width = 67
         Height = 24
-        Caption = #24320#22987
+        Caption = #24320#22987#35745#31639
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack

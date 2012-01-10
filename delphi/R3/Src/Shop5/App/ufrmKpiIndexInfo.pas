@@ -323,6 +323,7 @@ begin
   WriteToObject(Aobj,self);
 
   Filter := CdsKpiOption.Filter;
+  CdsKpiOption.DisableControls;
   try
     CdsKpiOption.Filtered := False;
     if edtKPI_OPTN.Checked then
@@ -461,9 +462,13 @@ begin
 
     end;
   finally
-    CdsKpiOption.Filtered := False;
-    CdsKpiOption.Filter := Filter;
-    CdsKpiOption.Filtered := True;
+    if Trim(Filter) <> '' then
+    begin
+      CdsKpiOption.Filtered := False;
+      CdsKpiOption.Filter := Filter;
+      CdsKpiOption.Filtered := True;
+    end;
+    CdsKpiOption.EnableControls;
   end;
   dbState:=dsBrowse;
   Saved:=True;
@@ -521,10 +526,16 @@ begin
     if MessageBox(Handle,'是否继续新增指标?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
       Append
     else
+    begin
+      edtKPI_LV.Properties.Items.Clear;
       ModalResult := MROK;
+    end;
   end
   else
+  begin
+    edtKPI_LV.Properties.Items.Clear;
     ModalResult := MROK;
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.edtKPI_TYPEPropertiesChange(Sender: TObject);
@@ -567,6 +578,7 @@ begin
   inherited;
   Aobj.Free;
   fndUNIT_ID.Properties.Items.Clear;
+  edtKPI_LV.Properties.Items.Clear;
   Freeform(Self);
 end;
 
@@ -574,6 +586,8 @@ procedure TfrmKpiIndexInfo.FormShow(Sender: TObject);
 begin
   inherited;
   RzPage.ActivePageIndex := 0;
+  if dbState = dsBrowse then
+     edtKPI_LV.Properties.ReadOnly := False;
 end;
 
 procedure TfrmKpiIndexInfo.fndUNIT_IDExit(Sender: TObject);

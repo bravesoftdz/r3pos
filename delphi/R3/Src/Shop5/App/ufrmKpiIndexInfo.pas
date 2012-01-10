@@ -558,14 +558,7 @@ begin
      AddItem;
      edtKPI_LV.ItemIndex := 0;
      edtKPI_LV.Text := edtKPI_LV.Properties.Items.Strings[0];
-     {if Visible then
-     begin
-       DBGridEh1.SetFocus;
-       if edtKPI_DATA.ItemIndex in [0,1,2] then
-          DBGridEh1.Col := 3
-       else
-          DBGridEh1.Col := 4;
-     end;}
+
   end;
 end;
 

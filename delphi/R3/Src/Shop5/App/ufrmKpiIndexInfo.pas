@@ -110,6 +110,7 @@ type
     procedure edtKPI_LVPropertiesChange(Sender: TObject);
     procedure D1PropertiesChange(Sender: TObject);
     procedure D2PropertiesChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     Saved,DisplayPer:Boolean;
@@ -510,7 +511,6 @@ end;
 procedure TfrmKpiIndexInfo.Btn_CloseClick(Sender: TObject);
 begin
   inherited;
-  edtKPI_LV.Properties.Items.Clear;
   Close;
 end;
 
@@ -526,16 +526,10 @@ begin
     if MessageBox(Handle,'是否继续新增指标?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
       Append
     else
-    begin
-      edtKPI_LV.Properties.Items.Clear;
       ModalResult := MROK;
-    end;
   end
   else
-  begin
-    edtKPI_LV.Properties.Items.Clear;
     ModalResult := MROK;
-  end;
 end;
 
 procedure TfrmKpiIndexInfo.edtKPI_TYPEPropertiesChange(Sender: TObject);
@@ -578,7 +572,6 @@ begin
   inherited;
   Aobj.Free;
   fndUNIT_ID.Properties.Items.Clear;
-  edtKPI_LV.Properties.Items.Clear;
   Freeform(Self);
 end;
 
@@ -1393,6 +1386,13 @@ begin
   else if edtKPI_LV.ItemIndex = 3 then
      Date_4.EndDate := StrToInt(FormatDateTime('MMDD',D2.Date));
 
+end;
+
+procedure TfrmKpiIndexInfo.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  edtKPI_LV.Properties.Items.Clear;
 end;
 
 end.

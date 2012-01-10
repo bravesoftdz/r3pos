@@ -73,7 +73,7 @@ procedure TfrmKpiIndex.actNewExecute(Sender: TObject);
 begin
   inherited;
   if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
-  if not ShopGlobal.GetChkRight('100002143',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002143',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmKpiIndexInfo.Create(self) do
     begin
       try
@@ -244,8 +244,7 @@ end;
 procedure TfrmKpiIndex.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002143',6) then
-    Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002143',6) then Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
   PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
@@ -260,8 +259,7 @@ end;
 procedure TfrmKpiIndex.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002143',6) then
-    Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002143',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
 
   PrintView;
   PrintDBGridEh1.Print;

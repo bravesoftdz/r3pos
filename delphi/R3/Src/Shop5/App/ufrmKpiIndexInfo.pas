@@ -110,7 +110,6 @@ type
     procedure edtKPI_LVPropertiesChange(Sender: TObject);
     procedure D1PropertiesChange(Sender: TObject);
     procedure D2PropertiesChange(Sender: TObject);
-    procedure edtKPI_TYPEEnter(Sender: TObject);
   private
     { Private declarations }
     Saved,DisplayPer:Boolean;
@@ -506,6 +505,7 @@ end;
 procedure TfrmKpiIndexInfo.Btn_CloseClick(Sender: TObject);
 begin
   inherited;
+  edtKPI_LV.Properties.Items.Clear;
   Close;
 end;
 
@@ -557,6 +557,7 @@ begin
      end;
      AddItem;
      edtKPI_LV.ItemIndex := 0;
+     edtKPI_LV.Text := edtKPI_LV.Properties.Items.Strings[0];
      {if Visible then
      begin
        DBGridEh1.SetFocus;
@@ -1253,19 +1254,20 @@ end;
 
 procedure TfrmKpiIndexInfo.AddItem;
 begin
-  ClearCbxPickList(edtKPI_LV);
+  edtKPI_LV.Properties.Items.Clear;
+  //ClearCbxPickList(edtKPI_LV);
   if edtKPI_TYPE.ItemIndex = 0 then
   begin
-    edtKPI_LV.Properties.Items.Insert(0,'上半年');
-    edtKPI_LV.Properties.Items.Insert(1,'下半年');
+    edtKPI_LV.Properties.Items.AddObject('上半年',TObject(0));
+    edtKPI_LV.Properties.Items.AddObject('下半年',TObject(1));
     labKPI_LV.Caption := '年度';
   end
   else if edtKPI_TYPE.ItemIndex = 1 then
   begin
-    edtKPI_LV.Properties.Items.Insert(0,'一季度');
-    edtKPI_LV.Properties.Items.Insert(1,'二季度');
-    edtKPI_LV.Properties.Items.Insert(2,'三季度');
-    edtKPI_LV.Properties.Items.Insert(3,'四季度');
+    edtKPI_LV.Properties.Items.AddObject('一季度',TObject(0));
+    edtKPI_LV.Properties.Items.AddObject('二季度',TObject(1));
+    edtKPI_LV.Properties.Items.AddObject('三季度',TObject(2));
+    edtKPI_LV.Properties.Items.AddObject('四季度',TObject(3));
     labKPI_LV.Caption := '季度';
   end;
 end;
@@ -1384,15 +1386,6 @@ begin
   else if edtKPI_LV.ItemIndex = 3 then
      Date_4.EndDate := StrToInt(FormatDateTime('MMDD',D2.Date));
 
-end;
-
-procedure TfrmKpiIndexInfo.edtKPI_TYPEEnter(Sender: TObject);
-begin
-  inherited;
-  {if not CdsKpiOption.IsEmpty then
-     edtKPI_TYPE.Properties.ReadOnly := True
-  else
-     edtKPI_TYPE.Properties.ReadOnly := False; }
 end;
 
 end.

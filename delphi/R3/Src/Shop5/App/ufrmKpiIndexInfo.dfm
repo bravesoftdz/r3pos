@@ -662,7 +662,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Properties.DropDownListStyle = lsFixedList
       Properties.OnChange = edtKPI_TYPEPropertiesChange
       TabOrder = 3
-      OnEnter = edtKPI_TYPEEnter
     end
     object edtIDX_TYPE: TcxComboBox
       Left = 113

@@ -111,6 +111,16 @@ type
     procedure D1PropertiesChange(Sender: TObject);
     procedure D2PropertiesChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure DBGridEh1Columns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns4UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns6UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns3EditButtonClick(Sender: TObject;
+      var Handled: Boolean);
   private
     { Private declarations }
     Saved,DisplayPer:Boolean;
@@ -1393,6 +1403,46 @@ procedure TfrmKpiIndexInfo.FormClose(Sender: TObject;
 begin
   inherited;
   edtKPI_LV.Properties.Items.Clear;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  CdsKpiOption.Post;
+  CdsKpiOption.Edit;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns4UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  CdsKpiOption.Post;
+  CdsKpiOption.Edit;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns5UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  CdsKpiOption.Post;
+  CdsKpiOption.Edit;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns6UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  CdsKpiOption.Post;
+  CdsKpiOption.Edit;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns3EditButtonClick(
+  Sender: TObject; var Handled: Boolean);
+begin
+  inherited;
+  CdsKpiOption.Post;
+  CdsKpiOption.Edit;
 end;
 
 end.

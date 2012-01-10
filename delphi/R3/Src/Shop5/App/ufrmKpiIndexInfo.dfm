@@ -337,6 +337,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     Footers = <>
                     Title.Caption = #36798#26631#29575
                     Width = 60
+                    OnEditButtonClick = DBGridEh1Columns3EditButtonClick
+                    OnUpdateData = DBGridEh1Columns3UpdateData
                   end
                   item
                     EditButtons = <>
@@ -344,6 +346,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     Footers = <>
                     Title.Caption = #36798#26631#37327
                     Width = 60
+                    OnUpdateData = DBGridEh1Columns4UpdateData
                   end
                   item
                     DisplayFormat = '#0%'
@@ -351,6 +354,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     FieldName = 'KPI_AGIO'
                     Footers = <>
                     Title.Caption = #36798#26631#25240#25187
+                    OnUpdateData = DBGridEh1Columns5UpdateData
                   end
                   item
                     Checkboxes = True
@@ -365,6 +369,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                       '0')
                     Title.Caption = #20511#37327
                     Width = 40
+                    OnUpdateData = DBGridEh1Columns6UpdateData
                   end>
               end
               object edtEndDate: TcxDateEdit

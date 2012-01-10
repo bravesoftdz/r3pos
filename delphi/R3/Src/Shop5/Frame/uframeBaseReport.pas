@@ -88,6 +88,7 @@ type
     function  GetGodsStateValue(DefineState: string='11111111111111111111'): string; //返回商品指标的启用情况
   public
     PUB_CLIENT_ID: TZQuery;  //客户群体数据集
+    PUB_KPI_ID: TZQuery;  //客户群体数据集
 
     constructor Create(AOwner: TComponent); override;
     function  GetDBGridEh: TDBGridEh;virtual;
@@ -108,11 +109,13 @@ type
     //添加商品指标的ItemsList[SetFlag对应位数，1..20位，若为1表添加，若为0表不添加]
     procedure AddGoodSortTypeItems(GoodSortList: TcxComboBox; SetFlag: string='01111100000000000000');
     //动态设置商品指标的ItemsList: ItemsIdx对应商品表字段：SORT_IDX1..8
-    procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);    
+    procedure AddGoodSortTypeItemsList(Sender: TObject; SortTypeList: TzrComboBoxList);
     //添加统计单位Items
     procedure AddTongjiUnitList(TJUnit: TcxComboBox);
     //添加销售类型ItemsList: ItemsIdx: 对应：PUB_PARAMS.TYPE_CODE='TYPE_CODE'; AddAll:是否添加“全部”
     procedure AddCBxItemsList(SetCbx: TcxComboBox; TYPE_CODE: string; AddAll: Boolean=False);
+    //返回年度选择，指定数据集添加
+    procedure CopyItemsList(SrcCbx,DistCbx: TcxComboBox);
 
     //选择商品类别[带供应链] 返回名称[类别名称]
     function SelectGoodSortType(var SortID:string; var SortRelID: string; var SortName: string):Boolean;
@@ -129,9 +132,9 @@ type
     //根据统计条件关联查询数据（参数以上的返回字段）
     function GetUnitIDCnd(CalcIdx: integer; AliasTabName: string): string;
     //根据输入PageNo作为控件的No进行搜索报表表头条件
-    function  AddReportReport(TitleList: TStringList; PageNo: string): string;virtual; //添加Title
+    function AddReportReport(TitleList: TStringList; PageNo: string): string;virtual; //添加Title
     //参数说明:TitlStr标题的TitleList;  Cols排列列数 SplitCount 两列之间间隔空字符
-    function  FormatReportHead(TitleList: TStringList; Cols: integer): string;virtual;
+    function FormatReportHead(TitleList: TStringList; Cols: integer): string;virtual;
     //判断最大结帐日期[传入]
     function  CheckAccDate(BegDate, EndDate: integer;ShopID: string=''):integer; //返回台帐表最大结帐日期
     procedure Do_REPORT_FLAGOnChange(Sender: TObject; Grid: TDBGridEh);
@@ -158,6 +161,8 @@ type
 
     //2011.09.21 Add 金额的格式方式:
     procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);
+    //2012.01.07 Add 取指标的数据
+    procedure DoCreateKPIDataSet(IDX_TYPE: string='');
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -431,6 +436,7 @@ var
   Cbx: TcxComboBox;
   Column:TColumnEh;
   Grid: TDBGridEh;
+  SetCbx: TcxComboBox;
 begin
   inherited;
   //汇总记录值
@@ -472,7 +478,7 @@ begin
         end else
         if RightStr(CmpName,8)='_TYPE_ID' then //商品指标
         begin
-          DefState:=GetGodsStateValue('01111111111111111111');        
+          DefState:=GetGodsStateValue('01111111111111111111');
           AddGoodSortTypeItems(Cbx,DefState);
           Cbx.Properties.OnChange:=Dofnd_TYPE_IDChange;
           Cbx.ItemIndex:=0;
@@ -523,6 +529,14 @@ begin
         if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
           TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
       end;
+      if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,7)='_KPI_ID') then //考核指标
+      begin
+        TzrComboBoxList(Components[i]).ShowButton:=true;
+        TzrComboBoxList(Components[i]).Buttons:=[zbClear];
+        if TzrComboBoxList(Components[i]).DropWidth< TzrComboBoxList(Components[i]).Width then
+          TzrComboBoxList(Components[i]).DropWidth:=TzrComboBoxList(Components[i]).Width+20;
+        TzrComboBoxList(Components[i]).DataSet:=PUB_KPI_ID;
+      end else
       //客户群体
       if (Copy(CmpName,1,4)='FNDP') and (RightStr(CmpName,11)='_CUST_VALUE') then
       begin
@@ -1033,7 +1047,7 @@ begin
       CustValueList.Text:='';
     end;
   end;
-end;  
+end;
 
 procedure TframeBaseReport.Dofnd_SHOP_TYPEChange(Sender: TObject);
 var
@@ -1292,7 +1306,13 @@ begin
   begin
     TitleList.add(TcxComboBox(FindCmp1).Text+'：'+TzrComboBoxList(FindCmp2).Text);
   end;
-  
+  //  2、考核指标分组
+  FindCmp1:=FindComponent('fndP'+PageNo+'_KPI_ID');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and
+     (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).AsString<>'')  then
+  begin
+    TitleList.add('考核指标：'+TzrComboBoxList(FindCmp1).Text);
+  end;
   // 4、门店名称：
   FindCmp1:=FindComponent('fndP'+PageNo+'_SHOP_ID');
   if (FindCmp1<>nil)and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).AsString<>'') and (TzrComboBoxList(FindCmp1).Visible)  then
@@ -1829,6 +1849,38 @@ begin
         SetColumn.Footer.DisplayFormat:='#,##0.00';
       end;
     end;
+  end;
+end;
+
+procedure TframeBaseReport.CopyItemsList(SrcCbx, DistCbx: TcxComboBox);
+var
+  i: integer;
+  ItemCap: string;
+begin
+  ClearCbxPickList(DistCbx);
+  for i:=0 to SrcCbx.Properties.Items.Count-1 do
+  begin
+    ItemCap:=trim(SrcCbx.Properties.Items.Strings[i]);
+    if SrcCbx.Properties.Items.Objects[i]<>nil then
+      DistCbx.Properties.Items.AddObject(ItemCap,SrcCbx.Properties.Items.Objects[i]) 
+    else
+      DistCbx.Properties.Items.Add(ItemCap);
+  end;
+  if DistCbx.Properties.Items.Count>0 then DistCbx.ItemIndex:=0;
+end;
+
+procedure TframeBaseReport.DoCreateKPIDataSet(IDX_TYPE: string);
+var
+  Str: string;
+begin
+  if not Assigned(PUB_KPI_ID) then PUB_KPI_ID:=TZQuery.Create(self);
+  if not PUB_KPI_ID.Active then
+  begin
+    Str:='select KPI_ID,KPI_NAME,IDX_TYPE from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID)+' ';
+    if trim(IDX_TYPE)<>'' then
+      Str:=Str+' and IDX_TYPE='''+IDX_TYPE+''' ';
+    PUB_KPI_ID.SQL.Text:=Str;
+    Factor.Open(PUB_KPI_ID);
   end;
 end;
 

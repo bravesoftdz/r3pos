@@ -300,7 +300,7 @@ begin
 
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';
-          
+
   Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
             'A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.PLAN_AMT else A.PLAN_MNY end as PLAN_AMT,'+

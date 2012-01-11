@@ -79,7 +79,7 @@ type
 
 implementation
 uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic,uFnUtil,ObjCommon;
+  ufrmBasic,uFnUtil,ObjCommon,uShopUtil;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult2.actExitExecute(Sender: TObject);
@@ -343,7 +343,7 @@ begin
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('KPI_YEAR').AsInteger := fndKPI_YEAR.Value;
-    if rs.Params.FindParam('REGION_ID')<>nil then rs.Params.FindParam('REGION_ID').AsString := fndCUST_VALUE.AsString;
+    if rs.Params.FindParam('REGION_ID')<>nil then rs.Params.FindParam('REGION_ID').AsString := GetRegionId(fndCUST_VALUE.AsString);
     if rs.Params.FindParam('PRICE_ID')<>nil then rs.Params.FindParam('PRICE_ID').AsString := fndCUST_VALUE.AsString;
     if rs.Params.FindParam('SORT_ID')<>nil then rs.Params.FindParam('SORT_ID').AsString := fndCUST_VALUE.AsString;
     if rs.Params.FindParam('FLAG')<>nil then rs.Params.FindParam('FLAG').AsString := fndCUST_VALUE.AsString;

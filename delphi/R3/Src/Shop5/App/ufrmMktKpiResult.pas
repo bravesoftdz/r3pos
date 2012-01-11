@@ -79,7 +79,7 @@ type
 
 implementation
 uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic,ObjCommon,uFnUtil;
+  ufrmBasic,ObjCommon,uFnUtil,uShopUtil;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult.actExitExecute(Sender: TObject);
@@ -92,8 +92,7 @@ procedure TfrmMktKpiResult.FormCreate(Sender: TObject);
 begin
   inherited;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+
-                        IntToStr(Global.TENANT_ID)+' and IDX_TYPE = ''1'' ';
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and IDX_TYPE = ''1'' ';
   Factor.Open(cdsKPI_ID);
   fndKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
   fndCLIENT_ID.DataSet := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
@@ -343,7 +342,7 @@ begin
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('KPI_YEAR').AsInteger := fndKPI_YEAR.Value;
-    if rs.Params.FindParam('REGION_ID')<>nil then rs.Params.FindParam('REGION_ID').AsString := fndCUST_VALUE.AsString;
+    if rs.Params.FindParam('REGION_ID')<>nil then rs.Params.FindParam('REGION_ID').AsString := GetRegionId(fndCUST_VALUE.AsString);
     if rs.Params.FindParam('PRICE_ID')<>nil then rs.Params.FindParam('PRICE_ID').AsString := fndCUST_VALUE.AsString;
     if rs.Params.FindParam('SORT_ID')<>nil then rs.Params.FindParam('SORT_ID').AsString := fndCUST_VALUE.AsString;
     if rs.Params.FindParam('FLAG')<>nil then rs.Params.FindParam('FLAG').AsString := fndCUST_VALUE.AsString;

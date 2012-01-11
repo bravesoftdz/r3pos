@@ -185,6 +185,7 @@ begin
        else
           dbInit := 'dbInit.sql';
        end;
+       if not fileExists(tmpPath+dbInit) then Exit;
        AssignFile(F,tmpPath+dbInit);
        Reset(f);
        CurSize :=0;

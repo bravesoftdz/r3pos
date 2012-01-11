@@ -130,7 +130,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Width = 60
                   end
                   item
-                    DisplayFormat = '#0%'
+                    DisplayFormat = '#0.00%'
                     EditButtons = <>
                     FieldName = 'FISH_RATE'
                     Footers = <>

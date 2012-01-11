@@ -79,7 +79,7 @@ type
 
 implementation
 uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic;
+  ufrmBasic,ObjCommon,uFnUtil;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult.actExitExecute(Sender: TObject);
@@ -277,7 +277,13 @@ begin
   if fndCUST_VALUE.AsString <> '' then
   begin
      case fndCUST_TYPE.ItemIndex of
-       0:w := w +' and C.REGION_ID=:REGION_ID ';
+       0:
+       begin
+         if FnString.TrimRight(trim(fndCUST_VALUE.AsString),2)='00' then  //·ÇÄ©¼¶ÇøÓò
+           w := w +' and C.REGION_ID like '':REGION_ID%'' '
+         else
+           w := w +' and C.REGION_ID=:REGION_ID ';
+       end;
        1:w := w +' and C.PRICE_ID=:PRICE_ID ';
        2:w := w +' and C.SORT_ID=:SORT_ID ';
        3:w := w +' and C.FLAG=:FLAG ';
@@ -287,6 +293,8 @@ begin
      w := w + ' and B.DEPT_ID=:DEPT_ID ';
   if fndCLIENT_ID.AsString <> '' then
      w := w + ' and A.CLIENT_ID=:CLIENT_ID ';
+  if fndSHOP_ID.AsString <> '' then
+     w := w + ' and A.SHOP_ID=:SHOP_ID ';
   if fndKPI_ID.AsString <> '' then
      w := w +' and A.KPI_ID=:KPI_ID ';
 
@@ -295,14 +303,16 @@ begin
           
   Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
             'A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
-            'case when A.KPI_DATA in (''1'',''4'') then A.PLAN_AMT when A.KPI_DATA in (''2'',''3'',''5'',''6'') then A.PLAN_MNY end as PLAN_AMT,'+
-            'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT when A.KPI_DATA in (''2'',''3'',''5'',''6'') then A.FISH_MNY end as FISH_AMT,'+
+            'case when A.KPI_DATA in (''1'',''4'') then A.PLAN_AMT else A.PLAN_MNY end as PLAN_AMT,'+
+            'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
             'A.KPI_MNY,A.WDW_MNY,A.KPI_MNY-A.WDW_MNY as BALANCE_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT '+
             ' from MKT_KPI_RESULT A inner join MKT_PLANORDER B on A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-            ' left outer join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
+            ' inner join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
             ' left outer join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+
             ' left outer join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CHK_USER=E.USER_ID '+
             ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w;
+  Result := ParseSQL(Factor.iDbType,
+            'select H.*,case when H.PLAN_AMT <> 0 then cast(H.FISH_AMT/H.PLAN_AMT*100 as decimal(18,6)) else 0.00 end as FISH_RATE from ('+Result+') H order by CLIENT_ID ');
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by PLAN_ID';
@@ -339,6 +349,7 @@ begin
     if rs.Params.FindParam('FLAG')<>nil then rs.Params.FindParam('FLAG').AsString := fndCUST_VALUE.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
+    if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     if rs.Params.FindParam('KPI_ID')<>nil then rs.Params.FindParam('KPI_ID').AsString := fndKPI_ID.AsString;
     Factor.Open(rs);
     rs.Last;

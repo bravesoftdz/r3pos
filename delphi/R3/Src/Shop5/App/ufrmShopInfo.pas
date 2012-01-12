@@ -67,6 +67,8 @@ type
     edtCATEGORY: TcxComboBox;
     edtBEGIN_DATE: TcxDateEdit;
     edtEND_DATE: TcxDateEdit;
+    Label24: TLabel;
+    Label28: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -75,6 +77,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormShow(Sender: TObject);
     procedure edtSHOP_TYPEAddClick(Sender: TObject);
+    procedure edtCATEGORYPropertiesChange(Sender: TObject);
   private
     FIsRelation: Boolean;
     { Private declarations }
@@ -111,6 +114,7 @@ begin
   AObj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   edtSHOP_TYPE.KeyValue := '#';
   edtSHOP_TYPE.Text := '无';
+  edtCATEGORY.ItemIndex := TdsItems.FindItems(edtCATEGORY.Properties.Items,'CODE_ID','1');
   if Visible and edtSHOP_NAME.CanFocus then edtSHOP_NAME.SetFocus;
 end;
 
@@ -465,6 +469,23 @@ end;
 procedure TfrmShopInfo.SetIsRelation(const Value: Boolean);
 begin
   FIsRelation := Value;
+end;
+
+procedure TfrmShopInfo.edtCATEGORYPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtCATEGORY.ItemIndex = -1 then Exit;
+  if edtCATEGORY.ItemIndex = 0 then
+  begin
+     Label15.Caption := '开始时间';
+     Label21.Caption := '有效时间';
+     Label27.Caption := '购买总价';
+  end else
+  begin
+     Label15.Caption := '签约日期';
+     Label21.Caption := '到期日期';
+     Label27.Caption := '租金总价';
+  end;
 end;
 
 end.

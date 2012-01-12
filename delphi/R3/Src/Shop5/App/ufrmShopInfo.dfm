@@ -273,7 +273,7 @@ inherited frmShopInfo: TfrmShopInfo
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #24635#20215
+            Caption = #36141#20080#24635#20215
           end
           object lab_IDX_TYPE: TRzLabel
             Left = -5
@@ -289,6 +289,24 @@ inherited frmShopInfo: TfrmShopInfo
             Font.Name = #23435#20307
             Font.Style = []
             ParentFont = False
+          end
+          object Label24: TLabel
+            Left = 227
+            Top = 61
+            Width = 43
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #20803'/'#24179#26041
+          end
+          object Label28: TLabel
+            Left = 478
+            Top = 61
+            Width = 23
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #24179#26041
           end
           object edtBUIL_AREA: TcxTextEdit
             Left = 356
@@ -323,6 +341,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             Properties.DropDownListStyle = lsFixedList
+            Properties.OnChange = edtCATEGORYPropertiesChange
             TabOrder = 3
           end
           object edtBEGIN_DATE: TcxDateEdit

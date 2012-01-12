@@ -241,6 +241,7 @@ begin
   begin
     try
       IdxType := '2';
+      PlanType := '2';
       ShowModal;
     finally
       Free;
@@ -312,7 +313,7 @@ begin
             ' left outer join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CHK_USER=E.USER_ID '+
             ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w;
   Result := ParseSQL(Factor.iDbType,
-            'select H.*,case when H.PLAN_AMT <> 0 then cast(H.FISH_AMT/H.PLAN_AMT as decimal(18,6))*100 else 0.00 end as FISH_RATE from ('+Result+') H order by CLIENT_ID ');
+            'select H.*,case when H.PLAN_AMT <> 0 then cast(H.FISH_AMT*1.0/H.PLAN_AMT*1.0 as decimal(18,6))*100 else 0.00 end as FISH_RATE from ('+Result+') H order by CLIENT_ID ');
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by PLAN_ID';

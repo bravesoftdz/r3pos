@@ -40,6 +40,7 @@ type
     KpiCalculate:TKpiCalculate;
     Params:TftParamList;
     FPrgPercent: Integer;
+    FPlanType: String;
     procedure SetIdxType(const Value: String);
     procedure PrepareData;         //开始准备数据
     procedure StatisticalData;     //开始统计数据
@@ -50,10 +51,12 @@ type
     function GetResultListMny:Currency;   //计算当前考核指标下的各等级考核结果
     function EncodeSql:String;
     procedure SetPrgPercent(const Value: Integer);
+    procedure SetPlanType(const Value: String);
   public
     { Public declarations }
     procedure StartCalculate;
     property IdxType:String read FIdxType write SetIdxType;
+    property PlanType:String read FPlanType write SetPlanType;
     property PrgPercent:Integer read FPrgPercent write SetPrgPercent;
   end;
 
@@ -121,8 +124,8 @@ begin
     Params.ParamByName('CREA_USER').AsString := Global.UserID;
     Params.ParamByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
     Params.ParamByName('KPI_YEAR').AsInteger := fndKPI_YEAR.Value;
-    Params.ParamByName('PLAN_TYPE').AsString := '1';
-    Params.ParamByName('IDX_TYPE').AsString := '1';
+    Params.ParamByName('PLAN_TYPE').AsString := PlanType;
+    Params.ParamByName('IDX_TYPE').AsString := IdxType;
     if fndCLIENT_ID.AsString <> '' then
        Params.ParamByName('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
     if fndKPI_ID.AsString <> '' then
@@ -188,18 +191,20 @@ begin
       cdsDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       cdsDetail.FieldByName('PLAN_ID').AsString := cdsHeader.FieldByName('PLAN_ID').AsString;
       cdsDetail.FieldByName('KPI_ID').AsString := cdsKpiOption.FieldByName('KPI_ID').AsString;
-      cdsDetail.FieldByName('KPI_LV').AsInteger := cdsKpiOption.FieldByName('KPI_LV').AsInteger;
+      cdsDetail.FieldByName('KPI_LV').AsString := cdsKpiOption.FieldByName('KPI_LV').AsString;
       if cdsHeader.FieldByName('KPI_TYPE').AsString = '3' then
          cdsDetail.FieldByName('SEQNO').AsInteger := cdsKpiOption.FieldByName('SEQNO').AsInteger
       else
          cdsDetail.FieldByName('SEQNO').AsInteger := KpiCalculate.CurSeq[KpiLv];
-      cdsDetail.FieldByName('KPI_RATE').AsFloat := cdsKpiOption.FieldByName('KPI_RATE').AsFloat;
-      cdsDetail.FieldByName('KPI_AMT').AsFloat := cdsKpiOption.FieldByName('KPI_AMT').AsFloat;
       cdsDetail.FieldByName('KPI_DATE1').AsInteger := cdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
       cdsDetail.FieldByName('KPI_DATE2').AsInteger := cdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
-      cdsDetail.FieldByName('KPI_AGIO').AsFloat := cdsKpiOption.FieldByName('KPI_AGIO').AsFloat;
       KpiIn := KpiCalculate.FindKipIndex(KpiLv,cdsDetail.FieldByName('SEQNO').AsInteger);
       cdsDetail.FieldByName('FSH_VLE').AsFloat := KpiIn.FshVle;
+      if cdsKpiIndex.FieldByName('KPI_DATA').AsInteger in [1,2,3] then
+         cdsDetail.FieldByName('KPI_RATE').AsFloat := KpiIn.KpiRate
+      else
+         cdsDetail.FieldByName('KPI_AMT').AsFloat := KpiIn.KpiRate;
+      cdsDetail.FieldByName('KPI_AGIO').AsFloat := KpiIn.KpiAgio;
       FshVle := FshVle + cdsDetail.FieldByName('FSH_VLE').AsFloat;
       cdsDetail.FieldByName('KPI_MNY').AsFloat := KpiCalculate.KpiMny[KpiLv];
       KpiMny := KpiMny + cdsDetail.FieldByName('KPI_MNY').AsFloat;
@@ -291,25 +296,37 @@ begin
   while not cdsHeader.Eof do
   begin
     OpenResultList(Global.TENANT_ID,cdsHeader.FieldByName('PLAN_ID').AsString,cdsHeader.FieldByName('KPI_ID').AsString);
-    KpiCalculate := TKpiCalculate.Create;
-    try
-      KpiCalculate.FKpiInfo.TenantId := Global.TENANT_ID;
-      KpiCalculate.FKpiInfo.KpiYear := Params.ParamByName('KPI_YEAR').AsInteger;
-      KpiCalculate.FKpiInfo.KpiId := cdsHeader.FieldByName('KPI_ID').AsString;
-      KpiCalculate.FKpiInfo.ClientId := cdsHeader.FieldByName('CLIENT_ID').AsString;
-      KpiCalculate.FKpiInfo.IdxType := Params.ParamByName('IDX_TYPE').AsString;
-      KpiCalculate.FKpiInfo.KpiType := cdsHeader.FieldByName('KPI_TYPE').AsString;
-      KpiCalculate.FKpiInfo.KpiData := cdsHeader.FieldByName('KPI_DATA').AsString;
-      KpiCalculate.FKpiInfo.KpiCalc := cdsHeader.FieldByName('KPI_CALC').AsString;
-      KpiCalculate.FKpiInfo.KpiOptn := cdsHeader.FieldByName('KPI_OPTN').AsString;
-      KpiCalculate.FKpiInfo.KpiAgio := cdsHeader.FieldByName('KPI_AGIO').AsFloat;
-      KpiCalculate.FKpiInfo.PlanAmt := cdsHeader.FieldByName('PLAN_AMT').AsFloat;
-      KpiCalculate.FKpiInfo.PlanMny := cdsHeader.FieldByName('PLAN_MNY').AsFloat;
+    if ((cdsKpiIndex.FieldByName('KPI_DATA').AsInteger = 4)and(cdsKpiIndex.FieldByName('KPI_CALC').AsInteger in [5,6]))
+       or
+       ((cdsKpiIndex.FieldByName('KPI_DATA').AsInteger = 5)and(cdsKpiIndex.FieldByName('KPI_CALC').AsInteger in [4,6]))
+       or
+       ((cdsKpiIndex.FieldByName('KPI_DATA').AsInteger = 6)and(cdsKpiIndex.FieldByName('KPI_CALC').AsInteger in [4,5]))
+        then
+    begin
+      MessageBox(Handle,pchar('暂时不支持此种算法!'),pchar(Caption),MB_OK+MB_ICONQUESTION);
+    end
+    else
+    begin
+      KpiCalculate := TKpiCalculate.Create;
+      try
+        KpiCalculate.FKpiInfo.TenantId := Global.TENANT_ID;
+        KpiCalculate.FKpiInfo.KpiYear := Params.ParamByName('KPI_YEAR').AsInteger;
+        KpiCalculate.FKpiInfo.KpiId := cdsHeader.FieldByName('KPI_ID').AsString;
+        KpiCalculate.FKpiInfo.ClientId := cdsHeader.FieldByName('CLIENT_ID').AsString;
+        KpiCalculate.FKpiInfo.IdxType := Params.ParamByName('IDX_TYPE').AsString;
+        KpiCalculate.FKpiInfo.KpiType := cdsHeader.FieldByName('KPI_TYPE').AsString;
+        KpiCalculate.FKpiInfo.KpiData := cdsHeader.FieldByName('KPI_DATA').AsString;
+        KpiCalculate.FKpiInfo.KpiCalc := cdsHeader.FieldByName('KPI_CALC').AsString;
+        KpiCalculate.FKpiInfo.KpiOptn := cdsHeader.FieldByName('KPI_OPTN').AsString;
+        KpiCalculate.FKpiInfo.KpiAgio := cdsHeader.FieldByName('KPI_AGIO').AsFloat;
+        KpiCalculate.FKpiInfo.PlanAmt := cdsHeader.FieldByName('PLAN_AMT').AsFloat;
+        KpiCalculate.FKpiInfo.PlanMny := cdsHeader.FieldByName('PLAN_MNY').AsFloat;
 
-      StatisticalData;
-      Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);
-    finally
-      KpiCalculate.Destroy;
+        StatisticalData;
+        Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);
+      finally
+        KpiCalculate.Destroy;
+      end;
     end;
     ProgressBar1.Percent := (cdsHeader.RecNo*100 div cdsHeader.RecordCount);
     cdsHeader.Next;
@@ -353,6 +370,11 @@ begin
   FPrgPercent := Value;
   ProgressBar1.Percent := Value;
   Update;
+end;
+
+procedure TfrmMktKpiCalculate.SetPlanType(const Value: String);
+begin
+  FPlanType := Value;
 end;
 
 end.

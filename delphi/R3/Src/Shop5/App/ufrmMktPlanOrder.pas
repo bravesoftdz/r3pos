@@ -320,6 +320,7 @@ begin
            cdsDetail.Edit;
            cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
            cdsDetail.FieldByName('PLAN_ID').AsString := cdsHeader.FieldbyName('PLAN_ID').AsString;
+           cdsDetail.FieldByName('SHOP_ID').AsString := Global.SHOP_ID;
            cdsDetail.FieldByName('SEQNO').AsInteger := R;
            mny := mny + cdsDetail.FieldbyName('AMONEY').asFloat;
            bny := bny + cdsDetail.FieldbyName('BOND_MNY').asFloat;

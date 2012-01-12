@@ -110,7 +110,6 @@ type
     procedure edtKPI_LVPropertiesChange(Sender: TObject);
     procedure D1PropertiesChange(Sender: TObject);
     procedure D2PropertiesChange(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
@@ -142,6 +141,7 @@ type
     RowID:integer;
 
     Aobj:TRecord_;
+    destructor Destroy;override;
     function  FindColumn(FieldName:string):TColumnEh;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
@@ -1398,13 +1398,6 @@ begin
 
 end;
 
-procedure TfrmKpiIndexInfo.FormClose(Sender: TObject;
-  var Action: TCloseAction);
-begin
-  inherited;
-  edtKPI_LV.Properties.Items.Clear;
-end;
-
 procedure TfrmKpiIndexInfo.DBGridEh1Columns3UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
@@ -1443,6 +1436,12 @@ begin
   inherited;
   CdsKpiOption.Post;
   CdsKpiOption.Edit;
+end;
+
+destructor TfrmKpiIndexInfo.Destroy;
+begin
+  edtKPI_LV.Properties.Items.Clear;
+  inherited;
 end;
 
 end.

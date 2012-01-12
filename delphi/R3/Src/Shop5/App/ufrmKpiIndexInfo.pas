@@ -320,9 +320,9 @@ begin
       Temp := TZQuery.Create(nil);
       try
         Temp.Close;
-        Temp.SQL.Text := 'select KPI_ID,KPI_NAME from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_NAME='+QuotedStr(Trim(edtKPI_NAME.Text));
+        Temp.SQL.Text := 'select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''12'',''02'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_NAME='+QuotedStr(Trim(edtKPI_NAME.Text));
         Factor.Open(Temp);
-        if Temp.FieldByName('KPI_ID').AsString <> AObj.FieldByName('KPI_ID').AsString then
+        if (Temp.FieldByName('KPI_ID').AsString <> AObj.FieldByName('KPI_ID').AsString) and ( not Temp.IsEmpty) then
            raise Exception.Create('该指标名称已经存在，不能重复！');
       finally
         Temp.Free;

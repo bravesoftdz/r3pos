@@ -16,10 +16,10 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Caption = #32463' '#25163' '#20154
   end
   inherited RzPanel1: TRzPanel
-    Width = 867
-    Height = 486
+    Width = 875
+    Height = 497
     inherited RzPanel2: TRzPanel
-      Width = 857
+      Width = 865
       Height = 121
       object RzLabel2: TRzLabel [0]
         Left = 507
@@ -357,8 +357,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 417
-      Width = 857
+      Top = 428
+      Width = 865
       Height = 45
       object RzLabel9: TRzLabel
         Left = 33
@@ -396,8 +396,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 126
-      Width = 857
-      Height = 291
+      Width = 865
+      Height = 302
       FrozenCols = 1
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
@@ -449,17 +449,17 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791'      '#27880
-          Width = 209
+          Width = 240
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 462
-      Width = 857
+      Top = 473
+      Width = 865
       Height = 0
     end
     inherited rzHelp: TRzPanel
-      Top = 462
-      Width = 857
+      Top = 473
+      Width = 865
       Height = 19
     end
     object edtKPI_ID: TzrComboBoxList
@@ -489,7 +489,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           EditButtons = <>
           FieldName = 'KPI_NAME'
           Footers = <>
-          Title.Caption = #24080#25143#21517#31216
+          Title.Caption = #25351#26631#21517#31216
           Width = 60
         end>
       DataSet = cdsKPI_ID

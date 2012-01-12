@@ -1,6 +1,6 @@
 inherited frmShopInfo: TfrmShopInfo
-  Left = 525
-  Top = 245
+  Left = 395
+  Top = 238
   Caption = #38376#24215#26723#26696
   ClientHeight = 348
   ClientWidth = 534
@@ -20,8 +20,8 @@ inherited frmShopInfo: TfrmShopInfo
       Top = 113
       Width = 524
       Height = 185
-      ActivePage = TabSheet2
-      TabIndex = 1
+      ActivePage = TabSheet3
+      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -215,6 +215,129 @@ inherited frmShopInfo: TfrmShopInfo
             Properties.MaxLength = 50
             TabOrder = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+        end
+      end
+      object TabSheet3: TRzTabSheet
+        Color = clWhite
+        Caption = #20854#23427#20449#24687
+        object RzPanel4: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 520
+          Height = 158
+          Align = alClient
+          BorderOuter = fsNone
+          Color = clWhite
+          TabOrder = 0
+          object Label15: TLabel
+            Left = 15
+            Top = 37
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #24320#22987#26102#38388
+          end
+          object Label19: TLabel
+            Left = 265
+            Top = 61
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #38754#31215
+          end
+          object Label21: TLabel
+            Left = 265
+            Top = 37
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #26377#25928#26102#38388
+          end
+          object Label23: TLabel
+            Left = 15
+            Top = 61
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #21333#20215
+          end
+          object Label27: TLabel
+            Left = 15
+            Top = 85
+            Width = 80
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #24635#20215
+          end
+          object lab_IDX_TYPE: TRzLabel
+            Left = -5
+            Top = 14
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #20135#26435#31867#22411
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
+          object edtBUIL_AREA: TcxTextEdit
+            Left = 356
+            Top = 57
+            Width = 120
+            Height = 20
+            Properties.MaxLength = 30
+            TabOrder = 0
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object edtSHOP_MNY: TcxTextEdit
+            Left = 106
+            Top = 57
+            Width = 120
+            Height = 20
+            Properties.MaxLength = 6
+            TabOrder = 1
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object edtSHOP_PRC: TcxTextEdit
+            Left = 106
+            Top = 81
+            Width = 120
+            Height = 20
+            Properties.MaxLength = 6
+            TabOrder = 2
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+          end
+          object edtCATEGORY: TcxComboBox
+            Left = 106
+            Top = 10
+            Width = 120
+            Height = 20
+            Properties.DropDownListStyle = lsFixedList
+            TabOrder = 3
+          end
+          object edtBEGIN_DATE: TcxDateEdit
+            Left = 106
+            Top = 33
+            Width = 120
+            Height = 20
+            TabOrder = 4
+          end
+          object edtEND_DATE: TcxDateEdit
+            Left = 356
+            Top = 33
+            Width = 120
+            Height = 20
+            TabOrder = 5
           end
         end
       end

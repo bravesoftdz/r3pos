@@ -7,7 +7,8 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit, ZBase, DB, cxMemo,
   ZAbstractDataset, ZDataset, RzButton, cxMaskEdit, cxButtonEdit, zrComboBoxList,
-  RzCmboBx, Mask, RzEdit, cxDropDownEdit,cxCalendar,ZAbstractRODataset;
+  RzCmboBx, Mask, RzEdit, cxDropDownEdit,cxCalendar,ZAbstractRODataset,
+  RzLabel;
 
 type
   TfrmShopInfo = class(TframeDialogForm)
@@ -52,6 +53,20 @@ type
     edtXSM_PSWD: TcxTextEdit;
     Label13: TLabel;
     Label14: TLabel;
+    TabSheet3: TRzTabSheet;
+    RzPanel4: TRzPanel;
+    Label15: TLabel;
+    Label19: TLabel;
+    Label21: TLabel;
+    Label23: TLabel;
+    edtBUIL_AREA: TcxTextEdit;
+    edtSHOP_MNY: TcxTextEdit;
+    Label27: TLabel;
+    edtSHOP_PRC: TcxTextEdit;
+    lab_IDX_TYPE: TRzLabel;
+    edtCATEGORY: TcxComboBox;
+    edtBEGIN_DATE: TcxDateEdit;
+    edtEND_DATE: TcxDateEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOkClick(Sender: TObject);

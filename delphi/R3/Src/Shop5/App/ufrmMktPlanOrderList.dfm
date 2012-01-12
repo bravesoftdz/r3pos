@@ -252,7 +252,6 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 20
                 Properties.MinValue = 2000.000000000000000000
                 TabOrder = 5
-                Value = 2000
               end
               object K2: TcxSpinEdit
                 Left = 193
@@ -261,6 +260,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 20
                 Properties.MinValue = 2000.000000000000000000
                 TabOrder = 6
+                Value = 2000
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1

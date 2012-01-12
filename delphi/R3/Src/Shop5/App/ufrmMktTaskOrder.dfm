@@ -16,10 +16,10 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
     Caption = #32463' '#25163' '#20154
   end
   inherited RzPanel1: TRzPanel
-    Width = 867
-    Height = 486
+    Width = 875
+    Height = 497
     inherited RzPanel2: TRzPanel
-      Width = 857
+      Width = 865
       Height = 108
       object RzLabel2: TRzLabel [0]
         Left = 507
@@ -255,8 +255,8 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 417
-      Width = 857
+      Top = 428
+      Width = 865
       Height = 45
       object RzLabel9: TRzLabel
         Left = 33
@@ -294,8 +294,8 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 113
-      Width = 857
-      Height = 304
+      Width = 865
+      Height = 315
       FrozenCols = 1
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
@@ -343,13 +343,13 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 462
-      Width = 857
+      Top = 473
+      Width = 865
       Height = 0
     end
     inherited rzHelp: TRzPanel
-      Top = 462
-      Width = 857
+      Top = 473
+      Width = 865
       Height = 19
     end
     object edtKPI_ID: TzrComboBoxList

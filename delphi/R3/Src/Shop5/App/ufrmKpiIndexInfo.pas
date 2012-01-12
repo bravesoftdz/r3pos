@@ -251,6 +251,10 @@ begin
     AObj.ReadFromDataSet(CdsKpiIndex);
     ReadFromObject(AObj,self);
     if Aobj.FieldByName('KPI_OPTN').AsString = '1' then
+       edtKPI_OPTN.Checked := True
+    else
+       edtKPI_OPTN.Checked := False;
+    if Aobj.FieldByName('KPI_OPTN').AsString = '1' then
        begin
          edtKPI_OPTN.Checked := True;
          edtKPI_OPTN.Properties.OnChange(nil);
@@ -332,6 +336,10 @@ begin
 
   //¼ì²â½áÊø
   WriteToObject(Aobj,self);
+  if edtKPI_OPTN.Checked then
+     Aobj.FieldByName('KPI_OPTN').AsString := '1'
+  else
+     Aobj.FieldByName('KPI_OPTN').AsString := '2';
 
   Filter := CdsKpiOption.Filter;
   CdsKpiOption.DisableControls;

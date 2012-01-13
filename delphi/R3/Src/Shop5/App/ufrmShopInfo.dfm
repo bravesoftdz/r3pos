@@ -314,7 +314,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             Properties.MaxLength = 30
-            TabOrder = 0
+            TabOrder = 4
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtSHOP_MNY: TcxTextEdit
@@ -323,7 +323,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             Properties.MaxLength = 6
-            TabOrder = 1
+            TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtSHOP_PRC: TcxTextEdit
@@ -332,7 +332,7 @@ inherited frmShopInfo: TfrmShopInfo
             Width = 120
             Height = 20
             Properties.MaxLength = 6
-            TabOrder = 2
+            TabOrder = 5
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtCATEGORY: TcxComboBox
@@ -342,21 +342,21 @@ inherited frmShopInfo: TfrmShopInfo
             Height = 20
             Properties.DropDownListStyle = lsFixedList
             Properties.OnChange = edtCATEGORYPropertiesChange
-            TabOrder = 3
+            TabOrder = 0
           end
           object edtBEGIN_DATE: TcxDateEdit
             Left = 106
             Top = 33
             Width = 120
             Height = 20
-            TabOrder = 4
+            TabOrder = 1
           end
           object edtEND_DATE: TcxDateEdit
             Left = 356
             Top = 33
             Width = 120
             Height = 20
-            TabOrder = 5
+            TabOrder = 2
           end
         end
       end

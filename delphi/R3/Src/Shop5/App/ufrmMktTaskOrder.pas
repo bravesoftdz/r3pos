@@ -276,68 +276,81 @@ var mny,bny,amt:real;
 begin
   inherited;
   Saved := false;
-  if edtPLAN_DATE.EditValue = null then Raise Exception.Create('签约日期不能为空');
-  if edtPLAN_USER.AsString = '' then Raise Exception.Create('业务员不能为空');
-  if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
-  if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
-  if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空销售计划单据...');
-  WriteToObject(AObj,self);
-  AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cid := edtSHOP_ID.asString;
-  AObj.FieldByName('KPI_YEAR').AsInteger := edtKPI_YEAR.Value;
-  AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
-  AObj.FieldByName('CLIENT_ID').AsString := inttostr(Global.TENANT_ID);
-  AObj.FieldByName('CREA_USER').AsString := Global.UserID;
-  AObj.FieldByName('PLAN_TYPE').AsString := '2';
-
-  Factor.BeginBatch;
+  cdsDetail.DisableControls;
   try
-    cdsHeader.Edit;
-    AObj.WriteToDataSet(cdsHeader);
-    cdsHeader.Post;
-    mny := 0;
-    bny := 0;
-    amt := 0;
-    R := 0;
+    if edtPLAN_DATE.EditValue = null then Raise Exception.Create('签约日期不能为空');
+    if edtPLAN_USER.AsString = '' then Raise Exception.Create('业务员不能为空');
+    if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
+    if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
     cdsDetail.First;
     while not cdsDetail.Eof do
-       begin
-         if cdsDetail.FieldByName('KPI_ID').AsString = '' then
-            cdsDetail.Delete
-         else
-            begin
-             Inc(R);
-             cdsDetail.Edit;
-             cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
-             cdsDetail.FieldByName('PLAN_ID').AsString := cdsHeader.FieldbyName('PLAN_ID').AsString;
-             cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-             cdsDetail.FieldByName('SEQNO').AsInteger := R;
-             mny := mny + cdsDetail.FieldbyName('AMONEY').asFloat;
-             bny := bny + cdsDetail.FieldbyName('BOND_MNY').asFloat;
-             amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
-             cdsDetail.Post;
-             cdsDetail.Next;
-            end;
-       end;
-    cdsHeader.Edit;
-    cdsHeader.FieldbyName('PLAN_MNY').asFloat := mny;
-    cdsHeader.FieldbyName('BOND_MNY').asFloat := bny;
-    cdsHeader.FieldbyName('PLAN_AMT').asFloat := amt;
-    cdsHeader.Post;
-    Params := TftParamList.Create(nil);
-    try
-      Factor.AddBatch(cdsHeader,'TMktTaskOrder',Params);
-      Factor.AddBatch(cdsDetail,'TMktTaskData',Params);
-      Factor.CommitBatch;
-    finally
-      Params.Free;
+    begin
+       if cdsDetail.FieldByName('KPI_ID').AsString = '' then
+          cdsDetail.Delete
+       else
+          cdsDetail.Next;
     end;
-    Saved := true;
-  except
-    Factor.CancelBatch;
-    cdsHeader.CancelUpdates;
-    //cdsDetail.CancelUpdates;
-    Raise;
+    if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空销售计划单据...');
+    WriteToObject(AObj,self);
+    AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    cid := edtSHOP_ID.asString;
+    AObj.FieldByName('KPI_YEAR').AsInteger := edtKPI_YEAR.Value;
+    AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+    AObj.FieldByName('CLIENT_ID').AsString := inttostr(Global.TENANT_ID);
+    AObj.FieldByName('CREA_USER').AsString := Global.UserID;
+    AObj.FieldByName('PLAN_TYPE').AsString := '2';
+
+    Factor.BeginBatch;
+    try
+      cdsHeader.Edit;
+      AObj.WriteToDataSet(cdsHeader);
+      cdsHeader.Post;
+      mny := 0;
+      bny := 0;
+      amt := 0;
+      R := 0;
+      cdsDetail.First;
+      while not cdsDetail.Eof do
+         begin
+           if cdsDetail.FieldByName('KPI_ID').AsString = '' then
+              cdsDetail.Delete
+           else
+              begin
+               Inc(R);
+               cdsDetail.Edit;
+               cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
+               cdsDetail.FieldByName('PLAN_ID').AsString := cdsHeader.FieldbyName('PLAN_ID').AsString;
+               cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
+               cdsDetail.FieldByName('SEQNO').AsInteger := R;
+               mny := mny + cdsDetail.FieldbyName('AMONEY').asFloat;
+               bny := bny + cdsDetail.FieldbyName('BOND_MNY').asFloat;
+               amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
+               cdsDetail.Post;
+               cdsDetail.Next;
+              end;
+         end;
+      cdsHeader.Edit;
+      cdsHeader.FieldbyName('PLAN_MNY').asFloat := mny;
+      cdsHeader.FieldbyName('BOND_MNY').asFloat := bny;
+      cdsHeader.FieldbyName('PLAN_AMT').asFloat := amt;
+      cdsHeader.Post;
+      Params := TftParamList.Create(nil);
+      try
+        Factor.AddBatch(cdsHeader,'TMktTaskOrder',Params);
+        Factor.AddBatch(cdsDetail,'TMktTaskData',Params);
+        Factor.CommitBatch;
+      finally
+        Params.Free;
+      end;
+      Saved := true;
+    except
+      Factor.CancelBatch;
+      cdsHeader.CancelUpdates;
+      //cdsDetail.CancelUpdates;
+      Raise;
+    end;
+  finally
+    cdsDetail.EnableControls;
   end;
   Open(oid);
   dbState := dsBrowse;

@@ -60,6 +60,8 @@ type
     procedure GridDblClick(Sender: TObject);
     procedure CdsKpiResultAfterScroll(DataSet: TDataSet);
     procedure FormShow(Sender: TObject);
+    procedure GridDrawFooterCell(Sender: TObject; DataCol, Row: Integer;
+      Column: TColumnEh; Rect: TRect; State: TGridDrawState);
   private
     { Private declarations }
     MaxId:String;
@@ -79,7 +81,7 @@ type
 
 implementation
 uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic,uFnUtil,ObjCommon,uShopUtil;
+  ufrmBasic,uFnUtil,ObjCommon,uShopUtil,uXDictFactory;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult2.actExitExecute(Sender: TObject);
@@ -274,7 +276,7 @@ end;
 function TfrmMktKpiResult2.EncodeSql(id: String): String;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.IDX_TYPE=''2'' and A.KPI_YEAR=:KPI_YEAR ';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.IDX_TYPE=''2'' and A.KPI_YEAR=:KPI_YEAR and A.COMM not in (''02'',''12'') ';
   if fndCUST_VALUE.AsString <> '' then
   begin
      case fndCUST_TYPE.ItemIndex of
@@ -559,6 +561,25 @@ procedure TfrmMktKpiResult2.FormShow(Sender: TObject);
 begin
   inherited;
   fndCUST_TYPE.ItemIndex := 0;
+end;
+
+procedure TfrmMktKpiResult2.GridDrawFooterCell(Sender: TObject; DataCol,
+  Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'CLIENT_ID_TEXT' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+
+       Grid.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s个',[Inttostr(CdsKpiResult.RecordCount)]);
+       Grid.Canvas.Font.Style := [fsBold];
+       Grid.Canvas.TextRect(R,(Rect.Right) div 2,Rect.Top+2,s);
+     end;
 end;
 
 end.

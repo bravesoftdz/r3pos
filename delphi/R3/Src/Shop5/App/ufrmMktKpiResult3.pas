@@ -55,6 +55,8 @@ type
     procedure actInfoExecute(Sender: TObject);
     procedure GridDblClick(Sender: TObject);
     procedure CdsKpiResultAfterScroll(DataSet: TDataSet);
+    procedure GridDrawFooterCell(Sender: TObject; DataCol, Row: Integer;
+      Column: TColumnEh; Rect: TRect; State: TGridDrawState);
   private
     { Private declarations }
     MaxId:String;
@@ -74,7 +76,7 @@ type
 
 implementation
 uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic,uFnUtil,ObjCommon;
+  ufrmBasic,uFnUtil,ObjCommon,uXDictFactory;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult3.actExitExecute(Sender: TObject);
@@ -269,7 +271,7 @@ end;
 function TfrmMktKpiResult3.EncodeSql(id: String): String;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.IDX_TYPE=''3'' and A.KPI_YEAR=:KPI_YEAR ';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.IDX_TYPE=''3'' and A.KPI_YEAR=:KPI_YEAR and A.COMM not in (''02'',''12'') ';
 
   if fndDEPT_ID.AsString <> '' then
      w := w + ' and B.DEPT_ID=:DEPT_ID ';
@@ -283,7 +285,7 @@ begin
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';
           
-  Result := ' select A.TENANT_ID,A.PLAN_ID,G.USER_NAME as PLAN_USER_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
+  Result := ' select A.TENANT_ID,A.PLAN_ID,C.USER_NAME as PLAN_USER_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
             'A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.PLAN_AMT else A.PLAN_MNY end as PLAN_AMT,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
@@ -292,8 +294,7 @@ begin
             ' inner join VIW_USERS C on B.TENANT_ID=C.TENANT_ID and B.PLAN_USER=C.USER_ID '+
             ' left outer join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+
             ' left outer join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CHK_USER=E.USER_ID '+
-            ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID '+
-            ' left outer join VIW_USERS G on B.TENANT_ID=G.TENANT_ID and B.PLAN_USER=G.USER_ID ' + w;
+            ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w;
   Result := ParseSQL(Factor.iDbType,
             'select H.*,case when H.PLAN_AMT <> 0 then cast(H.FISH_AMT*1.0/H.PLAN_AMT*1.0 as decimal(18,6))*100 else 0.00 end as FISH_RATE from ('+Result+') H order by CLIENT_ID ');
 
@@ -455,6 +456,25 @@ begin
      actAudit.Caption := '弃审'
   else
      actAudit.Caption := '审核';
+end;
+
+procedure TfrmMktKpiResult3.GridDrawFooterCell(Sender: TObject; DataCol,
+  Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'PLAN_USER_TEXT' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+
+       Grid.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s人',[Inttostr(CdsKpiResult.RecordCount)]);
+       Grid.Canvas.Font.Style := [fsBold];
+       Grid.Canvas.TextRect(R,(Rect.Right) div 2,Rect.Top+2,s);
+     end;
 end;
 
 end.

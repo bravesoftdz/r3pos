@@ -144,14 +144,13 @@ end;
 function TfrmMktKpiCalculate.EncodeSql: String;
 var w:String;
 begin
-  w :=
-     ' and A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and C.PLAN_TYPE=:PLAN_TYPE and B.IDX_TYPE=:IDX_TYPE and A.COMM not in (''02'',''12'') ';
+  w := ' and A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and C.PLAN_TYPE=:PLAN_TYPE and A.COMM not in (''02'',''12'') ';
   if fndCLIENT_ID.AsString <> '' then
      w := w + ' and A.CLIENT_ID=:CLIENT_ID ';
   if fndKPI_ID.AsString <> '' then
      w := w + ' and A.KPI_ID=:KPI_ID ';
 
-  Result := 'select A.TENANT_ID,A.PLAN_ID,B.KPI_CALC,B.KPI_TYPE,B.KPI_DATA,A.KPI_ID,A.CLIENT_ID,C.PLAN_AMT,C.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
+  Result := 'select A.TENANT_ID,A.PLAN_ID,B.KPI_CALC,B.KPI_TYPE,B.KPI_DATA,A.KPI_ID,A.CLIENT_ID,C.PLAN_USER,C.PLAN_AMT,C.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
             ' from MKT_KPI_RESULT A,MKT_KPI_INDEX B,MKT_PLANORDER C '+
             ' where A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID and A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+w+' order by A.PLAN_ID,A.KPI_ID ';
 end;
@@ -312,7 +311,10 @@ begin
         KpiCalculate.FKpiInfo.TenantId := Global.TENANT_ID;
         KpiCalculate.FKpiInfo.KpiYear := Params.ParamByName('KPI_YEAR').AsInteger;
         KpiCalculate.FKpiInfo.KpiId := cdsHeader.FieldByName('KPI_ID').AsString;
-        KpiCalculate.FKpiInfo.ClientId := cdsHeader.FieldByName('CLIENT_ID').AsString;
+        if IdxType = '3' then
+           KpiCalculate.FKpiInfo.ClientId := cdsHeader.FieldByName('PLAN_USER').AsString
+        else
+           KpiCalculate.FKpiInfo.ClientId := cdsHeader.FieldByName('CLIENT_ID').AsString;
         KpiCalculate.FKpiInfo.IdxType := Params.ParamByName('IDX_TYPE').AsString;
         KpiCalculate.FKpiInfo.KpiType := cdsHeader.FieldByName('KPI_TYPE').AsString;
         KpiCalculate.FKpiInfo.KpiData := cdsHeader.FieldByName('KPI_DATA').AsString;
@@ -353,10 +355,6 @@ begin
   cdsHeader.Close;
   cdsHeader.SQL.Text := EncodeSql;
   cdsHeader.Params.AssignValues(Params);
-//  cdsHeader.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-//  cdsHeader.Params.ParamByName('KPI_YEAR').AsInteger := fndKPI_YEAR.Value;
-//  if cdsHeader.Params.FindParam('CLIENT_ID') <> nil then cdsHeader.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
-//  if cdsHeader.Params.FindParam('KPI_ID') <> nil then cdsHeader.Params.FindParam('KPI_ID').AsString := fndKPI_ID.AsString;
   Factor.Open(cdsHeader);
 end;
 

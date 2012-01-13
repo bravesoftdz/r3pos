@@ -68,7 +68,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
       end
       object RzLabel1: TRzLabel
         Left = 39
-        Top = 78
+        Top = 79
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -169,7 +169,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
       end
       object fndKPI_ID: TzrComboBoxList
         Left = 95
-        Top = 74
+        Top = 75
         Width = 215
         Height = 20
         Properties.AutoSelect = False

@@ -67,6 +67,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 DigitalNumber = 12
                 OnDblClick = GridDblClick
                 OnDrawColumnCell = GridDrawColumnCell
+                OnDrawFooterCell = GridDrawFooterCell
                 Columns = <
                   item
                     EditButtons = <>
@@ -114,7 +115,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #31614#32422#37327
-                    Width = 60
+                    Width = 80
                   end
                   item
                     Alignment = taRightJustify
@@ -127,7 +128,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #23436#25104#37327
-                    Width = 60
+                    Width = 80
                   end
                   item
                     DisplayFormat = '#0.00%'
@@ -147,7 +148,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #36820#21033#24635#39069
-                    Width = 60
+                    Width = 80
                   end
                   item
                     Alignment = taRightJustify
@@ -159,7 +160,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #24050#36820#37329#39069
-                    Width = 60
+                    Width = 80
                   end
                   item
                     Alignment = taRightJustify
@@ -168,7 +169,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     FieldName = 'BALANCE_MNY'
                     Footers = <>
                     Title.Caption = #32467#20313#37329#39069
-                    Width = 60
+                    Width = 80
                   end
                   item
                     EditButtons = <>

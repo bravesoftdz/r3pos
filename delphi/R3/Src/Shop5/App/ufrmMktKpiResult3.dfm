@@ -66,6 +66,7 @@ inherited frmMktKpiResult3: TfrmMktKpiResult3
                 DigitalNumber = 12
                 OnDblClick = GridDblClick
                 OnDrawColumnCell = GridDrawColumnCell
+                OnDrawFooterCell = GridDrawFooterCell
                 Columns = <
                   item
                     EditButtons = <>

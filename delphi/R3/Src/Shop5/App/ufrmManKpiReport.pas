@@ -38,7 +38,6 @@ type
     RzPanel9: TRzPanel;
     BtnSort: TRzBitBtn;
     RzPanel10: TRzPanel;
-    DBGridEh2: TDBGridEh;
     RzPanel14: TRzPanel;
     Panel6: TPanel;
     RzPanel15: TRzPanel;
@@ -158,8 +157,8 @@ uses
 
 procedure TfrmManKpiReport.FormCreate(Sender: TObject);
 begin
-  //必须放在继承之前取数
-  DoCreateKPIDataSet;
+  //必须放在继承之前取数:
+  DoCreateKPIDataSet('3');
   inherited;
   //初始化年度下拉
   AddYearCBxItemsList(fndP1_YEAR1);
@@ -238,7 +237,7 @@ begin
     ' and A.TENANT_ID=U.TENANT_ID and A.PLAN_USER=U.USER_ID '+ //关联员工
     ' and A.PLAN_TYPE=''2'' '+strWhere+' '+
     ' group by C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
-  
+
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+
      '(case when PLAN_AMT<>0 then cast(KPI_AMT/PLAN_AMT as decimal(18,6)) else 0.00 end) as KPI_RATE,'+     //完成率
@@ -587,7 +586,7 @@ procedure TfrmManKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
   var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'SORT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'GUIDE_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmManKpiReport.DBGridEh2GetFooterParams(Sender: TObject;
@@ -697,7 +696,7 @@ procedure TfrmManKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
   var Text: String);
 begin
   inherited;
-  if Column.FieldName = 'SHOP_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'KPI_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmManKpiReport.DBGridEh5GetFooterParams(Sender: TObject;
@@ -706,18 +705,7 @@ procedure TfrmManKpiReport.DBGridEh5GetFooterParams(Sender: TObject;
 var
   ColName: string;
 begin
-  if Column.FieldName = 'GODS_NAME' then Text := '合计:'+Text+'笔';
-  if AllRecord.Count<=0 then Exit;
-  ColName:=trim(UpperCase(Column.FieldName));
-  if ColName = 'GODS_NAME' then
-    Text := '合计:'+AllRecord.fieldbyName('GODS_NAME').AsString+'笔'
-  else
-  begin
-    if (Copy(ColName,1,5)='SALE_') and (AllRecord.FindField(ColName)<>nil) then
-    begin
-      Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
-    end;
-  end;
+  if Column.FieldName = 'GUIDE_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 procedure TfrmManKpiReport.DBGridEh1DrawColumnCell(Sender: TObject;

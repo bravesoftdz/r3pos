@@ -273,13 +273,17 @@ begin
   ' union all '+
   ' select 0 as A,''TOTAL'' as CODE_ID,''合计'' as CODE_NAME,''HJ'' as CODE_SPELL from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
   ' union all '+
-  ' select 0 as A,''FIELD'' as CODE_ID,''数据字段'' as CODE_NAME,''SJZD'' as CODE_SPELL from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' '+
-  ' union all '+
-  ' select 0 as A,CODE_ID,CODE_NAME,CODE_SPELL from ( '+
-  ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,b.CODE_SPELL,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-  ' (select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
-  ' where j.TYPE_CODE=''SORT_TYPE'') '+
-  ' g where not(CODE_NAME like ''自定义%'') ';
+  ' select 0 as A,''FIELD'' as CODE_ID,''数据字段'' as CODE_NAME,''SJZD'' as CODE_SPELL from CA_TENANT where TENANT_ID='+inttostr(Global.TENANT_ID)+' ';
+  if StrToIntDef(SourceId,0)<5 then
+  begin
+    Str_Sql :=Str_Sql+
+      ' union all '+
+      ' select 0 as A,CODE_ID,CODE_NAME,CODE_SPELL from ('+
+      ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,b.CODE_SPELL,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
+      ' (select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
+      ' where j.TYPE_CODE=''SORT_TYPE'') '+
+      ' g where not(CODE_NAME like ''自定义%'') ';
+  end;
   DsReportTemplate.DisableControls;
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=指标名称,CODE_SPELL=指标拼音码,CODE_ID=指标代码',RecordList) then
@@ -1125,13 +1129,17 @@ begin
   if dbState = dsBrowse then Exit;
   RecordList := TRecordList.Create;
   Str_Sql :=
-  ' select 0 as A,CODE_ID,CODE_NAME,CODE_SPELL from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'+SourceId+''' '+
-  ' union all '+
-  ' select 0 as A,CODE_ID,CODE_NAME,CODE_SPELL from ( '+
-  ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,b.CODE_SPELL,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-  ' (select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
-  ' where j.TYPE_CODE=''SORT_TYPE'') '+
-  ' g where not(CODE_NAME like ''自定义%'') ';
+  ' select 0 as A,CODE_ID,CODE_NAME,CODE_SPELL from PUB_PARAMS where TYPE_CODE=''INDEX_TYPE'+SourceId+''' ';
+  if StrToIntDef(SourceId,0)<5 then
+  begin
+    Str_Sql:=Str_Sql+
+      ' union all '+
+      ' select 0 as A,CODE_ID,CODE_NAME,CODE_SPELL from ( '+
+      ' select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,b.CODE_SPELL,case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
+      ' (select CODE_ID,CODE_NAME,CODE_SPELL,SEQ_NO from  PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''16'' ) b on j.CODE_ID=b.CODE_ID '+
+      ' where j.TYPE_CODE=''SORT_TYPE'') '+
+      ' g where not(CODE_NAME like ''自定义%'') ';
+  end;
   DsReportTemplate1.DisableControls;
   try
     if TframeListDialog.FindMDialog(Self,Str_Sql,'CODE_NAME=指标名称,CODE_SPELL=指标拼音码,CODE_ID=指标代码',RecordList) then

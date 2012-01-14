@@ -18,9 +18,17 @@ const
      'PRIOR_MONTH_CST_DIFF=成本(上期差),PRIOR_MONTH_PRF=毛利(上期),PRIOR_MONTH_PRF_DIFF=毛利(上期差),'+
      'ORG_AMT=期初数量,ORG_CST=期初成本,BAL_AMT=结存数量,BAL_CST=结存成本,DAYS_AMT=销售周期,AVG_SALE_AMT=日均销量,'+
      'CURR_SALE_PRF_RATE=毛利率,YEAR_SALE_PRF_RATE=毛利率(同期),PRIOR_SALE_PRF_RATE=毛利率(上期),YEAR_SALE_PRF_DIFF_RATE=毛利率(同期差),PRIOR_SALE_PRF_DIFF_RATE=毛利率(上期差),HINT_DAYS_AMT=库存建议';
-     
-type
+  //2012.01.12 Add数据源 
+  RF_DATA_SOURCE5=
+     'ACCOUNT=登录账号,CLIENT_CODE=客户编码,GUIDE_USER=人员,KPI_NAME=考核指标,KPI_YEAR=年度,KPI_LV=考核周期,PLAN_AMT=签约量,KPI_AMT=完成量';
+  RF_DATA_SOURCE6=
+     'ACCOUNT=登录账号,CLIENT_CODE=客户编码,REQU_YEAR=年度,GUIDE_USER=填报人,KPI_LV=考核周期,'+
+     'BOND1_MNY=固定保证金,BOND1_NEW_SL=固定保证金本期申领,BOND1_ALL_SL=固定保证金累计申领,BOND1_JY=固定保证金结余,'+
+     'BOND2_MNY=滚存保证金,BOND2_NEW_SL=滚存保证金本期申领,BOND2_ALL_SL=滚存保证金累计申领,BOND2_JY=滚存保证金结余,'+
+     'REQU1_MNY=市场返利金额,REQU1_NEW_SL=市场返利金额本期申领,REQU1_ALL_SL=市场返利累计申领金额,REQU1_JY=市场返利结余金额,'+
+     'REQU2_MNY=市场计提金额,REQU2_NEW_SL=市场计提金额本期申领,REQU2_ALL_SL=市场计提累计申领金额,REQU2_JY=市场计提结余金额';
 
+type
 pRCondi=^TRCondi;
 TRCondi=record
   Count:integer;
@@ -89,6 +97,7 @@ TReportFactory=class
     Func:TStringList;
     FSafeDay: integer;
     FReasDay: integer;
+    FKpi: TZQuery;
     procedure SetDataSet(const Value: TDataSet);
     procedure SetSafeDay(const Value: integer);
     procedure SetReasDay(const Value: integer);
@@ -156,9 +165,14 @@ begin
   if sourid='2' then Fields.CommaText := RF_DATA_SOURCE2;
   if sourid='3' then Fields.CommaText := RF_DATA_SOURCE3;
   if sourid='4' then Fields.CommaText := RF_DATA_SOURCE4;
+  if sourid='5' then Fields.CommaText := RF_DATA_SOURCE5;
+  if sourid='6' then Fields.CommaText := RF_DATA_SOURCE6;
 
   safeDay := StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7);
   ReasDay := StrtoIntDef(ShopGlobal.GetParameter('REAS_DAY'),14);
+  FKpi:=TZQuery.Create(nil);
+  Fkpi.SQL.Text:='select KPI_ID,KPI_NAME,IDX_TYPE,KPI_CALC,KPI_TYPE,UNIT_NAME,KPI_DATA from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID);
+  Factor.Open(FKpi);
 end;
 
 destructor TReportFactory.Destroy;
@@ -169,6 +183,7 @@ begin
   Rows.Free;
   Fields.Free;
   Func.Free;
+  FKpi.Free;
   inherited;
 end;
 
@@ -867,6 +882,8 @@ begin
      or
      (sid='SHOP_ID')
      or
+     (sid='KPI_ID')
+     or
      (sid='CREGION_ID')
      or
      (sid='SREGION_ID')
@@ -1025,6 +1042,23 @@ begin
                             node^.title := '未知名称';
                           end;
                      end;
+                  if PRTemplate(TLate[i])^.INDEX_ID='KPI_ID' then
+                     begin
+                       if dept.Locate('KPI_ID',node^.id,[]) then
+                          node^.title := FKpi.FieldbyName('KPI_NAME').AsString
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := '未知名称';
+                          end;
+                     end;                     
                   if PRTemplate(TLate[i])^.INDEX_ID='GUIDE_USER' then
                      begin
                        if users.Locate('USER_ID',node^.id,[]) then
@@ -1363,6 +1397,8 @@ begin
      (sid='23')
      or
      (sid='DEPT_ID')
+     or
+     (sid='KPI_ID')
      or
      (sid='GUIDE_USER')
      or

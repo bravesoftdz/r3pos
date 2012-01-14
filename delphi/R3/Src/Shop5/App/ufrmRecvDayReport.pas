@@ -291,20 +291,24 @@ begin
      'select B.REGION_ID as REGION_ID'+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_RECV_MNY) as ORG_RECV_MNY '+
      ',sum(NEW_RECV_MNY) as NEW_RECV_MNY '+
-     ',sum(RECV_MNY) as RECV_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
      ' group by B.REGION_ID ';
+
+  // ',sum(ALL_MNY) as ALL_MNY '+
+  // ',sum(ADVA_MNY) as ADVA_MNY '+
+  // ',sum(RECV_MNY) as RECV_MNY '+
+  // ',sum(RETURN_MNY) as RETURN_MNY  '+
+
 
   strSql:=
     'select jp.*,isnull(r.CODE_NAME,''无'') as CODE_NAME from  ('+strSql+') jp '+
@@ -402,16 +406,14 @@ begin
      'select A.TENANT_ID as TENANT_ID,A.SHOP_ID as SHOP_ID'+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_RECV_MNY) as ORG_RECV_MNY '+
      ',sum(NEW_RECV_MNY) as NEW_RECV_MNY '+
-     ',sum(RECV_MNY) as RECV_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
@@ -440,16 +442,14 @@ begin
      'select A.TENANT_ID as TENANT_ID,A.RECV_DATE as RECV_DATE '+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_RECV_MNY) as ORG_RECV_MNY '+
      ',sum(NEW_RECV_MNY) as NEW_RECV_MNY '+
-     ',sum(RECV_MNY) as RECV_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+' '+
@@ -474,16 +474,14 @@ begin
      'select A.TENANT_ID as TENANT_ID,A.CREA_USER as CREA_USER '+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_RECV_MNY) as ORG_RECV_MNY '+
      ',sum(NEW_RECV_MNY) as NEW_RECV_MNY '+
-     ',sum(RECV_MNY) as RECV_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
@@ -724,6 +722,8 @@ begin
        ',(case when (RECV_TYPE=''2'') and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
        ',(case when (RECV_TYPE=''2'') and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
        ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
+       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
        ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE='+vBegDate+' '+DataRitht;
   end else     
   if fndBegDate.Date<fndEndDate.Date then
@@ -743,6 +743,8 @@ begin
       ',(case when (RECV_TYPE=''2'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then RECV_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
       ',(case when (RECV_TYPE=''2'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then RECV_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
       ',(case when  RECV_TYPE=''2'' then RECV_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE<>'+vBegDate+') then RECV_MNY else 0 end) as ORG_OTHER_MNY '+ //退款往日
+       ',(case when (RECV_TYPE in (''5'',''6'')) and (ABLE_DATE='+vBegDate+')  then RECV_MNY else 0 end) as NEW_OTHER_MNY '+ //退款本日
       ' from VIW_RECVABLEDATA where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and RECV_DATE>='+vBegDate+' and RECV_DATE<='+vEndDate+' '+DataRitht;
   end;
   result:=str;

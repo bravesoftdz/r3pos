@@ -1,5 +1,4 @@
 inherited frmSaleMonthTotalReport: TfrmSaleMonthTotalReport
-  Left = 193
   Top = 125
   Width = 958
   Height = 558

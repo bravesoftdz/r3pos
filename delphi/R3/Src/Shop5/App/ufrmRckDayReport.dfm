@@ -15,10 +15,10 @@ inherited frmRckDayReport: TfrmRckDayReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet3
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

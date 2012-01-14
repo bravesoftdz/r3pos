@@ -26,7 +26,7 @@ inherited frmDefineReport: TfrmDefineReport
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 447
+            Width = 446
             Height = 214
             Align = alClient
             AutoFitColWidths = True
@@ -130,7 +130,7 @@ inherited frmDefineReport: TfrmDefineReport
               end>
           end
           object RzPanel1: TRzPanel
-            Left = 452
+            Left = 451
             Top = 5
             Width = 78
             Height = 214
@@ -329,7 +329,7 @@ inherited frmDefineReport: TfrmDefineReport
         object RzPanel5: TRzPanel
           Left = 0
           Top = 0
-          Width = 535
+          Width = 534
           Height = 224
           Align = alClient
           BorderOuter = fsNone
@@ -338,7 +338,7 @@ inherited frmDefineReport: TfrmDefineReport
           Color = clWhite
           TabOrder = 0
           object RzPanel4: TRzPanel
-            Left = 452
+            Left = 451
             Top = 5
             Width = 78
             Height = 214
@@ -506,7 +506,7 @@ inherited frmDefineReport: TfrmDefineReport
           object DBGridEh2: TDBGridEh
             Left = 5
             Top = 5
-            Width = 447
+            Width = 446
             Height = 214
             Align = alClient
             DataSource = CdsReportTemplate1
@@ -576,7 +576,7 @@ inherited frmDefineReport: TfrmDefineReport
         object RzPanel6: TRzPanel
           Left = 0
           Top = 0
-          Width = 535
+          Width = 534
           Height = 224
           Align = alClient
           BorderOuter = fsNone
@@ -586,7 +586,7 @@ inherited frmDefineReport: TfrmDefineReport
           object DBGridEh3: TDBGridEh
             Left = 0
             Top = 0
-            Width = 535
+            Width = 534
             Height = 224
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -711,7 +711,7 @@ inherited frmDefineReport: TfrmDefineReport
     object RzPanel3: TRzPanel
       Left = 5
       Top = 5
-      Width = 539
+      Width = 538
       Height = 86
       Align = alTop
       BorderOuter = fsNone
@@ -890,7 +890,7 @@ inherited frmDefineReport: TfrmDefineReport
   end
   object RoleDs: TDataSource
     DataSet = RoleList
-    Left = 180
+    Left = 188
     Top = 356
   end
   object RoleList: TZQuery

@@ -289,16 +289,14 @@ begin
      'select B.REGION_ID as REGION_ID'+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
      ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
-     ',sum(PAY_MNY) as PAY_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP1_SHOP_TYPE,fndP1_SHOP_VALUE,'')+' '+
@@ -379,16 +377,14 @@ begin
      'select A.TENANT_ID as TENANT_ID,A.SHOP_ID as SHOP_ID'+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
      ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
-     ',sum(PAY_MNY) as PAY_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP2_SHOP_TYPE,fndP2_SHOP_VALUE,'')+' '+
@@ -417,16 +413,14 @@ begin
      'select A.TENANT_ID as TENANT_ID,A.PAY_DATE as ABLE_DATE '+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
      ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
-     ',sum(PAY_MNY) as PAY_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
      ' '+GetShopGroupCnd(fndP4_SHOP_TYPE,fndP4_SHOP_VALUE,'')+' '+
@@ -451,16 +445,14 @@ begin
      'select A.TENANT_ID as TENANT_ID,A.CLIENT_ID as CLIENT_ID '+
      ',sum(ORG_ALL_MNY) as ORG_ALL_MNY '+
      ',sum(NEW_ALL_MNY) as NEW_ALL_MNY '+
-     ',sum(ALL_MNY) as ALL_MNY '+
      ',sum(ORG_ADVA_MNY) as ORG_ADVA_MNY '+
      ',sum(NEW_ADVA_MNY) as NEW_ADVA_MNY '+
-     ',sum(ADVA_MNY) as ADVA_MNY '+
      ',sum(ORG_PAY_MNY) as ORG_PAY_MNY '+
      ',sum(NEW_PAY_MNY) as NEW_PAY_MNY '+
-     ',sum(PAY_MNY) as PAY_MNY '+
      ',sum(ORG_RETURN_MNY) as ORG_RETURN_MNY '+
      ',sum(NEW_RETURN_MNY) as NEW_RETURN_MNY '+
-     ',sum(RETURN_MNY) as RETURN_MNY  '+
+     ',sum(ORG_OTHER_MNY) as ORG_OTHER_MNY '+
+     ',sum(NEW_OTHER_MNY) as NEW_OTHER_MNY '+
      ' from ('+RecvData+') A,CA_SHOP_INFO B '+
      ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID='+InttoStr(Global.TENANT_ID)+
      ' '+GetShopGroupCnd(fndP3_SHOP_TYPE,fndP3_SHOP_VALUE,'')+' '+
@@ -685,6 +677,8 @@ begin
        ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //应退往日
        ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //应退本日
        ',(case when  ABLE_TYPE=''5'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //应退小计
+       ',(case when (ABLE_TYPE in (''7'',''8'')) and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_OTHER_MNY '+ //其他往日
+       ',(case when (ABLE_TYPE in (''7'',''8'')) and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_OTHER_MNY '+ //其他本期
        ' from VIW_PAYABLEDATA '+
        ' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and PAY_DATE='+vBegDate+' '+DataRight;
   end else
@@ -705,6 +699,8 @@ begin
       ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE<'+vBegDate+' or ABLE_DATE>'+vEndDate+') then PAY_MNY else 0 end) as ORG_RETURN_MNY '+ //退款往日
       ',(case when (ABLE_TYPE=''5'') and (ABLE_DATE>='+vBegDate+') and (ABLE_DATE<='+vEndDate+') then PAY_MNY else 0 end) as NEW_RETURN_MNY '+ //退款本日
       ',(case when  ABLE_TYPE=''5'' then PAY_MNY else 0 end) as RETURN_MNY '+                                   //退款小计
+      ',(case when (ABLE_TYPE in (''7'',''8'')) and (ABLE_DATE<>'+vBegDate+') then PAY_MNY else 0 end) as ORG_OTHER_MNY '+ //其他往日
+      ',(case when (ABLE_TYPE in (''7'',''8'')) and (ABLE_DATE='+vBegDate+')  then PAY_MNY else 0 end) as NEW_OTHER_MNY '+ //其他本期
       ' from VIW_PAYABLEDATA '+
       ' where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and PAY_DATE>='+vBegDate+' and PAY_DATE<='+vEndDate+' '+DataRight;
   end;
@@ -836,11 +832,14 @@ begin
   Report.First;
   while not Report.Eof do
   begin
-    OverDays:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
-    if OverDays<0 then OverDays:=0;
-    Report.Edit;
-    Report.Fields[IdxDay].AsFloat:=OverDays;
-    Report.Post;
+    if (trim(Report.Fields[IdxBeg].AsString)<>'') and (trim(Report.Fields[IdxEnd].AsString)<>'') then
+    begin
+      OverDays:=FnTime.fnStrtoDate(Report.Fields[IdxEnd].AsString)-FnTime.fnStrtoDate(Report.Fields[IdxBeg].AsString);
+      if OverDays<0 then OverDays:=0;
+      Report.Edit;
+      Report.Fields[IdxDay].AsFloat:=OverDays;
+      Report.Post;
+    end;
     Report.Next;
   end;
 end;

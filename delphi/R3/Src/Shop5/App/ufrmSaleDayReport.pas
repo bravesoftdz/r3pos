@@ -235,7 +235,6 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure DBGridEh5TitleClick(Column: TColumnEh);
   private
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
@@ -1732,7 +1731,7 @@ begin
   //隐藏掉分页 (显示: 商品销售报表)
   for i:=0 to RzPage.PageCount-1 do
   begin
-    if i<>4 then 
+    if i<>4 then
       RzPage.Pages[i].TabVisible:=false
     else
       RzPage.ActivePageIndex:=4;
@@ -1804,11 +1803,6 @@ procedure TfrmSaleDayReport.DBGridEh5DrawColumnCell(Sender: TObject; const Rect:
   DataCol: Integer; Column: TColumnEh;State: TGridDrawState);
 begin
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
-end;
-
-procedure TfrmSaleDayReport.DBGridEh5TitleClick(Column: TColumnEh);
-begin
-  DBGridTitleClick(adoReport5,Column,'SORT_ID');
 end;
 
 function TfrmSaleDayReport.GetDataRight: string;

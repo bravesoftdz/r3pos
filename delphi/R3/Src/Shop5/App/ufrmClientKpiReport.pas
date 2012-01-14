@@ -145,7 +145,6 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh5TitleClick(Column: TColumnEh);
   private
     procedure AddYearCBxItemsList(SetCbx: TcxComboBox);
     //返回考核基础表
@@ -180,7 +179,7 @@ uses
 procedure TfrmClientKpiReport.FormCreate(Sender: TObject);
 begin
   //必须放在继承之前取数
-  DoCreateKPIDataSet;
+  DoCreateKPIDataSet('1');
   inherited;
   //初始化年度下拉
   AddYearCBxItemsList(fndP1_YEAR1);
@@ -309,6 +308,7 @@ begin
   begin
     strSql:=
       'select '+
+      ' A.TENANT_ID as TENANT_ID,'+
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
@@ -318,12 +318,14 @@ begin
       ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
       ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
-      ' group by C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
+      ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end else
   begin
     strSql:=
       'select '+
+      ' A.TENANT_ID as TENANT_ID,'+
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
@@ -333,18 +335,19 @@ begin
       ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
       ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
       ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
-      ' group by C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
+      ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end;
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+
-      '(case when PLAN_AMT<>0 then cast(KPI_AMT/PLAN_AMT as decimal(18,6)) else 0.00 end) as KPI_RATE,'+     //完成率
+      '(case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
       '(JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
      ' MKT.UNIT_NAME as UNIT_NAME,'+
      ' DEPT.DEPT_NAME as DEPT_NAME '+
      ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.KPI_ID=MKT.KPI_ID '+
+     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
      ' left outer join (select DEPT_ID,DEPT_NAME from CA_DEPT_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')DEPT '+
      ' on K.DEPT_ID=DEPT.DEPT_ID '+
      ' order by K.DEPT_ID '
@@ -396,6 +399,7 @@ begin
 
   strSql:=
     'select '+
+    ' A.TENANT_ID,'+
     ' C.KPI_ID as KPI_ID,'+
     ' A.KPI_YEAR as KPI_YEAR,'+
     ' D.REGION_ID as REGION_ID,'+
@@ -405,22 +409,23 @@ begin
     ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
     ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
     ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+    ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
-    ' group by C.KPI_ID,A.KPI_YEAR,D.REGION_ID';
+    ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,D.REGION_ID';
 
   Result :=ParseSQL(Factor.iDbType,
-     'select K.*,'+
-     ' (case when PLAN_AMT<>0 then cast(KPI_AMT/PLAN_AMT as decimal(18,6)) else 0.00 end) as KPI_RATE,'+     //完成率
+     'select K.*,'+                                 
+     ' (case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
      ' (JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
      '  MKT.UNIT_NAME as UNIT_NAME,'+
-     '  Area.CODE_NAME as CODE_NAME '+
+     '  isnull(Area.CODE_NAME,''无'') as CODE_NAME '+
      ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.KPI_ID=MKT.KPI_ID '+
+     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0)Area '+
      ' on K.REGION_ID=Area.CODE_ID '+
      ' order by K.REGION_ID '
-     );
+   );
 end;
 
 function TfrmClientKpiReport.GetRowType: integer;
@@ -530,6 +535,7 @@ begin
   begin
     strSql:=
       'select '+
+      ' A.TENANT_ID,'+
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
@@ -539,12 +545,14 @@ begin
       ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
       ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
-      ' group by C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
+      ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end else
   begin
     strSql:=
       'select '+
+      ' A.TENANT_ID,'+
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
@@ -554,18 +562,19 @@ begin
       ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
       ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
-      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
-      ' group by C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID '+
+      ' and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+      ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end;
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+
-     ' (case when PLAN_AMT<>0 then cast(KPI_AMT/PLAN_AMT as decimal(18,6)) else 0.00 end) as KPI_RATE,'+     //完成率
+     ' (case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
      ' (JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
      ' MKT.KPI_NAME as KPI_NAME,'+
      ' MKT.UNIT_NAME as UNIT_NAME '+
      ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.KPI_ID=MKT.KPI_ID '+
+     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
      ' order by K.KPI_ID '
      );
 end;
@@ -615,6 +624,7 @@ begin
 
   strSql:=
     'select '+
+    ' A.TENANT_ID,'+
     ' C.KPI_ID as KPI_ID,'+
     ' A.KPI_YEAR as KPI_YEAR,'+
     ' A.CLIENT_ID as CLIENT_ID,'+
@@ -625,17 +635,19 @@ begin
     ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
     ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
     ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+    ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
-    ' group by C.KPI_ID,A.KPI_YEAR,A.CLIENT_ID,D.CLIENT_NAME ';
+    ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.CLIENT_ID,D.CLIENT_NAME ';
 
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+
-     ' (case when PLAN_AMT<>0 then cast(KPI_AMT/PLAN_AMT as decimal(18,6)) else 0.00 end) as KPI_RATE,'+     //完成率
+     ' (case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
      ' (JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
      ' MKT.UNIT_NAME as UNIT_NAME '+
      ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.KPI_ID=MKT.KPI_ID '+
+     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
+     ' left outer join (select KPI_ID,KPI_LV from MKT_KPI_OPTION where TENANT_ID='+InttoStr(Global.TENANT_ID)+') OP on K.KPI_ID=OP.KPI_ID '+
      ' order by K.CLIENT_ID '
      );
 end;
@@ -664,6 +676,9 @@ begin
   //客户名称:
   if fndP5_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP5_CLIENT_ID.AsString+''' ';
+  //导购员:
+  if fndP5_GUIDE_USER.AsString<>'' then
+    strWhere:=strWhere+' and A.PLAN_USER='''+fndP5_GUIDE_USER.AsString+''' ';
 
   //客户群体所属行政区域|客户等级\客户分类:
   strCnd:='';
@@ -685,6 +700,7 @@ begin
 
   strSql:=
     'select '+
+    ' A.TENANT_ID,'+
     ' A.GLIDE_NO as GLIDE_NO,'+
     ' C.KPI_ID as KPI_ID,'+
     ' A.KPI_YEAR as KPI_YEAR,'+
@@ -697,22 +713,29 @@ begin
     ' C.WDW_MNY as REQU_MNY,'+    //考核提取反利[申领金额]
     ' B.BOND_MNY as BOND_MNY,'+   //保证金额
     ' C.REMARK as REMARK,'+
-    ' C.CHK_DATE as CHK_DATE,'+
-    ' C.CHK_USER as CHK_USER,'+
+    ' C.CREA_DATE as CREA_DATE,'+
+    ' C.CREA_USER as CREA_USER,'+
     ' D.CLIENT_NAME as CLIENT_NAME '+
     ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+    ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' ';
 
   Result :=ParseSQL(Factor.iDbType,
     'select K.*,'+
-    '(case when PLAN_AMT<>0 then cast(K.KPI_AMT/K.PLAN_AMT as decimal(18,6)) else 0.00 end) as KPI_RATE,'+     //完成率
-    ' OP.KPI_LV as KPI_LV,'+
+    '(case when PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
+    '(case when (MKT.KPI_TYPE=''1'') and (OP.KPI_LV=''1'') then ''上半年'' '+
+         ' when (MKT.KPI_TYPE=''1'') and (OP.KPI_LV=''2'') then ''下半年'' '+
+         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''1'') then ''第一季度'' '+
+         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''2'') then ''第二季度'' '+
+         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''3'') then ''第三季度'' '+
+         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''4'') then ''第四季度'' '+
+         ' else '' '' end)as KPI_LV,'+  //考核周期
     ' MKT.KPI_NAME as KPI_NAME,'+
     ' MKT.UNIT_NAME as UNIT_NAME '+
     ' from ('+strSql+')K '+
-    ' left outer join MKT_KPI_INDEX MKT on K.KPI_ID=MKT.KPI_ID '+
-    ' left outer join MKT_KPI_OPTION OP on K.KPI_ID=OP.KPI_ID '+
+    ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
+    ' left outer join (select KPI_ID,KPI_LV from MKT_KPI_OPTION where TENANT_ID='+InttoStr(Global.TENANT_ID)+') OP on K.KPI_ID=OP.KPI_ID '+
     ' order by K.GLIDE_NO '
     );
 end;
@@ -793,10 +816,13 @@ begin
 end;
 
 procedure TfrmClientKpiReport.DBGridEh1GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  CurValue: string;
+  FooterValue: Real;
 begin
+
   inherited;
   if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
 end;
@@ -842,7 +868,7 @@ begin
   Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);  //客户群组
   Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID);  //客户
   fndP4_KPI_ID.KeyValue:=adoReport3.fieldbyName('KPI_ID').AsString;
-  fndP4_KPI_ID.KeyValue:=adoReport3.fieldbyName('KPI_NAME').AsString;
+  fndP4_KPI_ID.Text:=adoReport3.fieldbyName('KPI_NAME').AsString;
   RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
 end;
@@ -895,12 +921,7 @@ procedure TfrmClientKpiReport.DBGridEh5GetFooterParams(Sender: TObject;
 var
   ColName: string;
 begin
-  if Column.FieldName = 'KPI_YEAR' then Text := '合计:'+Text+'笔';
-end;
-
-procedure TfrmClientKpiReport.DBGridEh5TitleClick(Column: TColumnEh);
-begin
-  DBGridTitleClick(adoReport5,Column,'SORT_ID');
+  if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
 function TfrmClientKpiReport.GetDataRight: string;

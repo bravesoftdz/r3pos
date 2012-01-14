@@ -1,36 +1,36 @@
 inherited frmClientKpiReport: TfrmClientKpiReport
   Left = 192
   Top = 106
-  Width = 913
+  Width = 891
   Height = 586
   Caption = #23458#25143#32771#26680#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 905
+    Width = 883
     Height = 522
     inherited RzPanel2: TRzPanel
-      Width = 895
+      Width = 873
       Height = 512
       inherited RzPage: TRzPageControl
-        Width = 690
+        Width = 668
         Height = 506
-        ActivePage = TabSheet5
+        ActivePage = TabSheet3
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 2
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #37096#38376#32771#26680#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 688
+            Width = 666
             Height = 479
             inherited Panel4: TPanel
-              Width = 678
+              Width = 656
               Height = 469
               inherited w1: TRzPanel
-                Width = 678
+                Width = 656
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -302,10 +302,10 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 678
+                Width = 656
                 Height = 391
                 inherited DBGridEh1: TDBGridEh
-                  Width = 674
+                  Width = 652
                   Height = 387
                   FrozenCols = 3
                   TitleHeight = 22
@@ -324,8 +324,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_YEAR'
                       Footers = <>
-                      Title.Caption = #32771#26680#24180#24230
-                      Width = 62
+                      Title.Caption = #24180#24230
+                      Width = 46
                     end
                     item
                       EditButtons = <>
@@ -344,34 +344,36 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#21010#24635#37327
-                      Width = 63
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
-                      EditButtons = <>
-                      FieldName = 'KPI_AMT'
-                      Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
-                      Width = 65
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'KPI_RATE'
+                      FieldName = 'KPI_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#29575
+                      Title.Caption = #23436#25104#24635#37327
                       Width = 84
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00%'
+                      EditButtons = <>
+                      FieldName = 'KPI_RATE'
+                      Footer.DisplayFormat = '#0.00%'
+                      Footer.ValueType = fvtStaticText
+                      Footers = <>
+                      Title.Caption = #23436#25104#29575
+                      Width = 60
                     end
                     item
                       Alignment = taRightJustify
@@ -382,7 +384,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#25552#24635#39069
-                      Width = 82
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -393,7 +395,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #30003#39046#24635#39069
-                      Width = 76
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -404,7 +406,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#24635#39069
-                      Width = 80
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -415,7 +417,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #22266#23450#20445#35777#37329
-                      Width = 80
+                      Width = 84
                     end>
                 end
               end
@@ -428,7 +430,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 688
+            Width = 666
             Height = 479
             Align = alClient
             BorderOuter = fsNone
@@ -437,7 +439,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 678
+              Width = 656
               Height = 469
               Align = alClient
               BevelOuter = bvNone
@@ -446,7 +448,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel19: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 678
+                Width = 656
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
@@ -723,7 +725,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel20: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 678
+                Width = 656
                 Height = 391
                 Align = alClient
                 BorderOuter = fsGroove
@@ -732,7 +734,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 674
+                  Width = 652
                   Height = 387
                   Align = alClient
                   AllowedOperations = []
@@ -791,8 +793,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_YEAR'
                       Footers = <>
-                      Title.Caption = #32771#26680#24180#24230
-                      Width = 82
+                      Title.Caption = #24180#24230
+                      Width = 46
                     end
                     item
                       EditButtons = <>
@@ -811,34 +813,36 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#21010#24635#37327
-                      Width = 66
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
-                      EditButtons = <>
-                      FieldName = 'KPI_AMT'
-                      Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
-                      Width = 65
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'KPI_RATE'
+                      FieldName = 'KPI_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#29575
+                      Title.Caption = #23436#25104#24635#37327
                       Width = 84
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00%'
+                      EditButtons = <>
+                      FieldName = 'KPI_RATE'
+                      Footer.DisplayFormat = '#0.00%'
+                      Footer.ValueType = fvtStaticText
+                      Footers = <>
+                      Title.Caption = #23436#25104#29575
+                      Width = 60
                     end
                     item
                       Alignment = taRightJustify
@@ -849,7 +853,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#25552#24635#39069
-                      Width = 82
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -860,7 +864,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #30003#39046#24635#39069
-                      Width = 76
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -871,7 +875,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#24635#39069
-                      Width = 80
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -882,7 +886,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #22266#23450#20445#35777#37329
-                      Width = 80
+                      Width = 84
                     end>
                 end
               end
@@ -895,7 +899,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 688
+            Width = 666
             Height = 479
             Align = alClient
             BorderOuter = fsNone
@@ -904,7 +908,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object RzPanel9: TRzPanel
               Left = 5
               Top = 5
-              Width = 678
+              Width = 656
               Height = 78
               Align = alTop
               Alignment = taRightJustify
@@ -1182,7 +1186,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object RzPanel10: TRzPanel
               Left = 5
               Top = 83
-              Width = 678
+              Width = 656
               Height = 391
               Align = alClient
               BorderOuter = fsGroove
@@ -1191,7 +1195,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object DBGridEh3: TDBGridEh
                 Left = 2
                 Top = 2
-                Width = 674
+                Width = 652
                 Height = 387
                 Align = alClient
                 AllowedOperations = []
@@ -1250,15 +1254,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     EditButtons = <>
                     FieldName = 'KPI_YEAR'
                     Footers = <>
-                    Title.Caption = #32771#26680#24180#24230
-                    Width = 62
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'KPI_ID'
-                    Footers = <>
-                    Title.Caption = #25351#26631#20195#30721
-                    Width = 62
+                    Title.Caption = #24180#24230
+                    Width = 46
                   end
                   item
                     EditButtons = <>
@@ -1277,34 +1274,36 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   end
                   item
                     Alignment = taRightJustify
-                    DisplayFormat = '#0.###'
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'PLAN_AMT'
-                    Footer.DisplayFormat = '#0.###'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #35745#21010#24635#37327
-                    Width = 66
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.###'
-                    EditButtons = <>
-                    FieldName = 'KPI_AMT'
-                    Footers = <>
-                    Title.Caption = #23436#25104#24635#37327
-                    Width = 65
+                    Width = 84
                   end
                   item
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'KPI_RATE'
+                    FieldName = 'KPI_AMT'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #23436#25104#29575
+                    Title.Caption = #23436#25104#24635#37327
                     Width = 84
+                  end
+                  item
+                    Alignment = taRightJustify
+                    DisplayFormat = '#0.00%'
+                    EditButtons = <>
+                    FieldName = 'KPI_RATE'
+                    Footer.DisplayFormat = '#0.00%'
+                    Footer.ValueType = fvtStaticText
+                    Footers = <>
+                    Title.Caption = #23436#25104#29575
+                    Width = 60
                   end
                   item
                     Alignment = taRightJustify
@@ -1315,7 +1314,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #35745#25552#24635#39069
-                    Width = 82
+                    Width = 84
                   end
                   item
                     Alignment = taRightJustify
@@ -1326,7 +1325,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #30003#39046#24635#39069
-                    Width = 76
+                    Width = 84
                   end
                   item
                     Alignment = taRightJustify
@@ -1337,7 +1336,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #32467#20313#24635#39069
-                    Width = 80
+                    Width = 84
                   end
                   item
                     Alignment = taRightJustify
@@ -1348,7 +1347,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #22266#23450#20445#35777#37329
-                    Width = 80
+                    Width = 84
                   end>
               end
             end
@@ -1360,7 +1359,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 688
+            Width = 666
             Height = 479
             Align = alClient
             BorderOuter = fsNone
@@ -1369,7 +1368,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 678
+              Width = 656
               Height = 469
               Align = alClient
               BevelOuter = bvNone
@@ -1378,7 +1377,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 678
+                Width = 656
                 Height = 77
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1655,7 +1654,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 77
-                Width = 678
+                Width = 656
                 Height = 392
                 Align = alClient
                 BorderOuter = fsGroove
@@ -1665,7 +1664,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 674
+                  Width = 652
                   Height = 388
                   Align = alClient
                   AllowedOperations = []
@@ -1724,8 +1723,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_YEAR'
                       Footers = <>
-                      Title.Caption = #32771#26680#24180#24230
-                      Width = 62
+                      Title.Caption = #24180#24230
+                      Width = 46
                     end
                     item
                       EditButtons = <>
@@ -1744,34 +1743,36 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#21010#24635#37327
-                      Width = 66
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
-                      EditButtons = <>
-                      FieldName = 'KPI_AMT'
-                      Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
-                      Width = 65
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'KPI_RATE'
+                      FieldName = 'KPI_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#29575
+                      Title.Caption = #23436#25104#24635#37327
                       Width = 84
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00%'
+                      EditButtons = <>
+                      FieldName = 'KPI_RATE'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtStaticText
+                      Footers = <>
+                      Title.Caption = #23436#25104#29575
+                      Width = 60
                     end
                     item
                       Alignment = taRightJustify
@@ -1782,7 +1783,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#25552#24635#39069
-                      Width = 82
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -1793,7 +1794,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #30003#39046#24635#39069
-                      Width = 76
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -1804,7 +1805,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #32467#20313#24635#39069
-                      Width = 80
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
@@ -1815,7 +1816,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #22266#23450#20445#35777#37329
-                      Width = 80
+                      Width = 84
                     end>
                 end
               end
@@ -1828,7 +1829,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 688
+            Width = 666
             Height = 479
             Align = alClient
             BorderOuter = fsNone
@@ -1837,7 +1838,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 678
+              Width = 656
               Height = 469
               Align = alClient
               BevelOuter = bvNone
@@ -1846,7 +1847,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 678
+                Width = 656
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2173,7 +2174,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 678
+                Width = 656
                 Height = 391
                 Align = alClient
                 BorderOuter = fsGroove
@@ -2183,7 +2184,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 674
+                  Width = 652
                   Height = 387
                   Align = alClient
                   AllowedOperations = []
@@ -2225,9 +2226,9 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
+                  OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh5GetFooterParams
-                  OnTitleClick = DBGridEh5TitleClick
                   Columns = <
                     item
                       Alignment = taCenter
@@ -2241,8 +2242,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_YEAR'
                       Footers = <>
-                      Title.Caption = #32771#26680#24180#24230
-                      Width = 56
+                      Title.Caption = #24180#24230
+                      Width = 46
                     end
                     item
                       EditButtons = <>
@@ -2253,14 +2254,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'GLIDE_NO'
-                      Footer.ValueType = fvtCount
-                      Footers = <>
-                      Title.Caption = #21333#21495
-                      Width = 80
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'CLIENT_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
@@ -2268,6 +2261,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Width = 185
                     end
                     item
+                      DisplayFormat = '0000-00-00'
                       EditButtons = <>
                       FieldName = 'BEGIN_DATE'
                       Footers = <>
@@ -2275,6 +2269,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Width = 72
                     end
                     item
+                      DisplayFormat = '0000-00-00'
                       EditButtons = <>
                       FieldName = 'END_DATE'
                       Footers = <>
@@ -2297,34 +2292,36 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#21010#24635#37327
-                      Width = 59
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
-                      EditButtons = <>
-                      FieldName = 'KPI_AMT'
-                      Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
-                      Width = 57
+                      Width = 84
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'KPI_RATE'
+                      FieldName = 'KPI_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
+                      Title.Caption = #23436#25104#24635#37327
+                      Width = 84
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00%'
+                      EditButtons = <>
+                      FieldName = 'KPI_RATE'
+                      Footer.DisplayFormat = '#0.00%'
+                      Footer.ValueType = fvtStaticText
+                      Footers = <>
                       Title.Caption = #23436#25104#29575
-                      Width = 44
+                      Width = 60
                     end
                     item
                       Alignment = taRightJustify
@@ -2335,6 +2332,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#25552#37329#39069
+                      Width = 84
                     end
                     item
                       EditButtons = <>
@@ -2342,6 +2340,14 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footers = <>
                       Title.Caption = #22791#27880
                       Width = 103
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GLIDE_NO'
+                      Footer.ValueType = fvtCount
+                      Footers = <>
+                      Title.Caption = #21333#21495
+                      Width = 80
                     end
                     item
                       EditButtons = <>
@@ -2364,7 +2370,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 693
+        Left = 671
         Height = 506
         inherited Panel2: TPanel
           Height = 463
@@ -2381,11 +2387,15 @@ inherited frmClientKpiReport: TfrmClientKpiReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 905
+    Width = 883
+    inherited Image3: TImage
+      Width = 375
+    end
     inherited Image14: TImage
-      Left = 885
+      Left = 863
     end
     inherited Image1: TImage
+      Left = 328
       Width = 535
     end
     inherited rzPanel5: TPanel

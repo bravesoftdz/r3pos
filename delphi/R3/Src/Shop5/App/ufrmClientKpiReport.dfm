@@ -15,10 +15,10 @@ inherited frmClientKpiReport: TfrmClientKpiReport
       inherited RzPage: TRzPageControl
         Width = 668
         Height = 506
-        ActivePage = TabSheet3
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -370,7 +370,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
                       Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtStaticText
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60
@@ -839,7 +839,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
                       Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtStaticText
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60
@@ -1300,7 +1300,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     EditButtons = <>
                     FieldName = 'KPI_RATE'
                     Footer.DisplayFormat = '#0.00%'
-                    Footer.ValueType = fvtStaticText
+                    Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #23436#25104#29575
                     Width = 60
@@ -1769,7 +1769,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
                       Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtStaticText
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60
@@ -2318,7 +2318,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
                       Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtStaticText
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60

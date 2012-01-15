@@ -693,6 +693,9 @@ begin
     if (AObj<>nil) and (AObj.FieldByName('CODE_ID').AsString<>'') then
       strWhere:=strWhere+' and A.REQU_TYPE='''+AObj.FieldByName('CODE_ID').AsString+''' ';
   end;
+  //填报人
+  if fndP5_GUIDE_USER.AsString <> '' then
+    strWhere:=strWhere+' and A.REQU_USER='''+fndP5_GUIDE_USER.AsString+''' ';
 
   //客户群体所属行政区域|客户等级\客户分类:
   strCnd:='';
@@ -753,11 +756,14 @@ end;
 procedure TfrmMktRequReport.DBGridEh4DblClick(Sender: TObject);
 begin
   if adoReport4.IsEmpty then Exit;
-  fndP5_CUST_TYPE.ItemIndex:=fndP4_CUST_TYPE.ItemIndex;  //客户群组类型
-  fndP5_REQU_TYPE.ItemIndex:=fndP4_REQU_TYPE.ItemIndex; //费用类型
-  Copy_ParamsValue(fndP4_CUST_VALUE,fndP5_CUST_VALUE);  //客户群组
-  Copy_ParamsValue(fndP4_KPI_ID,fndP5_KPI_ID);  //考核指标
-  fndP5_CLIENT_ID.KeyValue:=adoReport4.fieldbyName('CLIENT_ID').AsString;
+  P5_D1.Date:=P4_D1.Date;  //1.日期
+  P5_D2.Date:=P4_D2.Date;
+  fndP5_REQU_TYPE.ItemIndex:=fndP4_REQU_TYPE.ItemIndex; //2.费用类型
+  fndP5_CUST_TYPE.ItemIndex:=fndP4_CUST_TYPE.ItemIndex; //3.客户群组类型
+  Copy_ParamsValue(fndP4_CUST_VALUE,fndP5_CUST_VALUE);  //  客户群组
+  Copy_ParamsValue(fndP4_KPI_ID,fndP5_KPI_ID);          //4.考核指标
+  Copy_ParamsValue(fndP4_DEPT_ID,fndP5_DEPT_ID);        //5.部门
+  fndP5_CLIENT_ID.KeyValue:=adoReport4.fieldbyName('CLIENT_ID').AsString; //6.客户名称
   fndP5_CLIENT_ID.Text:=adoReport4.fieldbyName('CLIENT_NAME').AsString;
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
@@ -837,13 +843,14 @@ procedure TfrmMktRequReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
-
-  fndP2_CUST_TYPE.ItemIndex:=fndP1_CUST_TYPE.ItemIndex;  //客户群组类型
-  Copy_ParamsValue(fndP1_CUST_VALUE,fndP2_CUST_VALUE);  //客户群组
-  Copy_ParamsValue(fndP1_KPI_ID,fndP2_KPI_ID);  //考核指标        
-  Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID);  //客户
-  fndP2_REQU_TYPE.ItemIndex:=fndP1_REQU_TYPE.ItemIndex; //费用类型
-  fndP2_DEPT_ID.KeyValue:=adoReport1.fieldbyName('DEPT_ID').AsString;
+  P2_D1.Date:=P1_D1.Date;  //1.复制日期
+  P2_D2.Date:=P1_D2.Date;
+  fndP2_REQU_TYPE.ItemIndex:=fndP1_REQU_TYPE.ItemIndex;  //2.费用类型
+  fndP2_CUST_TYPE.ItemIndex:=fndP1_CUST_TYPE.ItemIndex;  //3.客户群组类型
+  Copy_ParamsValue(fndP1_CUST_VALUE,fndP2_CUST_VALUE);   //  客户群组
+  Copy_ParamsValue(fndP1_KPI_ID,fndP2_KPI_ID);           //4.考核指标
+  Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID);     //5.客户
+  fndP2_DEPT_ID.KeyValue:=adoReport1.fieldbyName('DEPT_ID').AsString; //6.部门名称
   fndP2_DEPT_ID.Text:=adoReport1.fieldbyName('DEPT_NAME').AsString;
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
@@ -853,10 +860,13 @@ procedure TfrmMktRequReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-  Copy_ParamsValue(fndP2_KPI_ID,fndP3_KPI_ID);  //考核指标
-  Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID);  //客户
-  fndP3_REQU_TYPE.ItemIndex:=fndP2_REQU_TYPE.ItemIndex; //费用类型
-  fndP3_CUST_TYPE.ItemIndex:=0;
+  P3_D1.Date:=P2_D1.Date;  //1.日期
+  P3_D2.Date:=P2_D2.Date;
+  fndP3_REQU_TYPE.ItemIndex:=fndP2_REQU_TYPE.ItemIndex; //2.费用类型
+  Copy_ParamsValue(fndP2_KPI_ID,fndP3_KPI_ID);          //3.考核指标
+  Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID);    //4.客户
+  Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID);        //5.部门
+  fndP3_CUST_TYPE.ItemIndex:=0;                         //6.客户群组
   fndP3_CUST_VALUE.KeyValue:=adoReport2.fieldbyName('REGION_ID').AsString;
   fndP3_CUST_VALUE.Text:=adoReport2.fieldbyName('CODE_NAME').AsString;
   RzPage.ActivePageIndex:=2;
@@ -867,11 +877,14 @@ procedure TfrmMktRequReport.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
-  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;  //客户群组类型
-  fndP4_REQU_TYPE.ItemIndex:=fndP3_REQU_TYPE.ItemIndex; //费用类型
-  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);  //客户群组
-  Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID);  //客户
-  fndP4_KPI_ID.KeyValue:=adoReport3.fieldbyName('KPI_ID').AsString;
+  P4_D1.Date:=P3_D1.Date;  //1.日期
+  P4_D2.Date:=P3_D2.Date;
+  fndP4_REQU_TYPE.ItemIndex:=fndP3_REQU_TYPE.ItemIndex;  //2.费用类型
+  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;  //3.客户群组类型
+  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);   //  客户群组
+  Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID);     //4.客户
+  Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID);         //5.部门
+  fndP4_KPI_ID.KeyValue:=adoReport3.fieldbyName('KPI_ID').AsString; //6.考核指标
   fndP4_KPI_ID.Text:=adoReport3.fieldbyName('KPI_NAME').AsString;
   RzPage.ActivePageIndex:=3;
   actFindExecute(nil);

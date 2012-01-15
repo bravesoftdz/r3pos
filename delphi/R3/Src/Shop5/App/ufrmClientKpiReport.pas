@@ -119,13 +119,12 @@ type
     fndP5_GUIDE_USER: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure DBGridEh4DblClick(Sender: TObject);
-    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
@@ -133,11 +132,11 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
@@ -481,19 +480,12 @@ begin
   end;
 end;
 
-procedure TfrmClientKpiReport.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  fndP1_KPI_ID.KeyValue := null;
-  fndP1_KPI_ID.Text := '';
-end;
-
 function TfrmClientKpiReport.GetKPISQL(chk:boolean=true): string;
 var
   strSql,strWhere,strCnd,KpiTab: string;
 begin
   if  fndP3_YEAR1.ItemIndex=-1 then Raise Exception.Create('所属年份不能为空...');
-  if (fndP3_YEAR1.ItemIndex<>-1)and(fndP3_YEAR2.ItemIndex<>-1)and(fndP3_YEAR1.Text>fndP1_YEAR2.Text) then Raise Exception.Create('开始年份不能大于结束年份...');
+  if (fndP3_YEAR1.ItemIndex<>-1)and(fndP3_YEAR2.ItemIndex<>-1)and(fndP3_YEAR1.Text>fndP3_YEAR2.Text) then Raise Exception.Create('开始年份不能大于结束年份...');
 
   //过滤企业ID和数据权限:
   strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
@@ -590,7 +582,7 @@ begin
   strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
 
   //考核年度条件
-  if (fndP4_YEAR2.ItemIndex<>-1) and (fndP4_YEAR1.Text<fndP1_YEAR2.Text) then //查询年度段
+  if (fndP4_YEAR2.ItemIndex<>-1) and (fndP4_YEAR1.Text<fndP4_YEAR2.Text) then //查询年度段
     strWhere:=strWhere+' and (A.KPI_YEAR>='+fndP4_YEAR1.Text+' and A.KPI_YEAR<='+fndP4_YEAR2.Text+')'
   else
     strWhere:=strWhere+' and A.KPI_YEAR='+fndP4_YEAR1.Text+' ';
@@ -743,12 +735,13 @@ end;
 procedure TfrmClientKpiReport.DBGridEh4DblClick(Sender: TObject);
 begin
   if adoReport4.IsEmpty then Exit;
-  fndP5_YEAR1.ItemIndex:=fndP4_YEAR1.ItemIndex;
+  fndP5_YEAR1.ItemIndex:=fndP4_YEAR1.ItemIndex;          //1.所属年度
   fndP5_YEAR2.ItemIndex:=fndP4_YEAR2.ItemIndex;
-  fndP5_CUST_TYPE.ItemIndex:=fndP4_CUST_TYPE.ItemIndex;  //客户群组类型
-  Copy_ParamsValue(fndP4_CUST_VALUE,fndP5_CUST_VALUE);  //客户群组
-  Copy_ParamsValue(fndP4_KPI_ID,fndP5_KPI_ID);  //考核指标
-  fndP5_CLIENT_ID.KeyValue:=adoReport4.fieldbyName('CLIENT_ID').AsString;
+  fndP5_CUST_TYPE.ItemIndex:=fndP4_CUST_TYPE.ItemIndex;  //2.客户群组类型
+  Copy_ParamsValue(fndP4_CUST_VALUE,fndP5_CUST_VALUE);   //  客户群组
+  Copy_ParamsValue(fndP4_KPI_ID,fndP5_KPI_ID);           //3.考核指标
+  Copy_ParamsValue(fndP4_DEPT_ID,fndP5_DEPT_ID);           //4.考核指标
+  fndP5_CLIENT_ID.KeyValue:=adoReport4.fieldbyName('CLIENT_ID').AsString;  //5.客户名称
   fndP5_CLIENT_ID.Text:=adoReport4.fieldbyName('CLIENT_NAME').AsString;
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
@@ -804,6 +797,8 @@ procedure TfrmClientKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 begin
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'KPI_RATE' then
+    GridGetFooterParamsValue(Sender,Text);
 end;
 
 procedure TfrmClientKpiReport.DBGridEh2GetFooterParams(Sender: TObject;
@@ -813,31 +808,31 @@ procedure TfrmClientKpiReport.DBGridEh2GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'KPI_RATE' then
+    GridGetFooterParamsValue(Sender,Text);
 end;
 
 procedure TfrmClientKpiReport.DBGridEh1GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
   var Alignment: TAlignment; State: TGridDrawState; var Text: String);
-var
-  CurValue: string;
-  FooterValue: Real;
 begin
-
   inherited;
   if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'KPI_RATE' then
+    GridGetFooterParamsValue(Sender,Text);
 end;
 
 procedure TfrmClientKpiReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
-  fndP2_YEAR1.ItemIndex:=fndP1_YEAR1.ItemIndex;
+  fndP2_YEAR1.ItemIndex:=fndP1_YEAR1.ItemIndex;     //1.所属年份
   fndP2_YEAR2.ItemIndex:=fndP1_YEAR2.ItemIndex;
-  fndP2_CUST_TYPE.ItemIndex:=fndP1_CUST_TYPE.ItemIndex;  //客户群组类型
-  Copy_ParamsValue(fndP1_CUST_VALUE,fndP2_CUST_VALUE);  //客户群组
-  Copy_ParamsValue(fndP1_KPI_ID,fndP2_KPI_ID);  //考核指标        
-  Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID);  //客户
-  fndP2_DEPT_ID.KeyValue:=adoReport1.fieldbyName('DEPT_ID').AsString; 
+  fndP2_CUST_TYPE.ItemIndex:=fndP1_CUST_TYPE.ItemIndex;  //2.客户群组类型
+  Copy_ParamsValue(fndP1_CUST_VALUE,fndP2_CUST_VALUE);   //  客户群组
+  Copy_ParamsValue(fndP1_KPI_ID,fndP2_KPI_ID);           //3.考核指标
+  Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID);     //4.客户
+  fndP2_DEPT_ID.KeyValue:=adoReport1.fieldbyName('DEPT_ID').AsString; //5.部门名称 
   fndP2_DEPT_ID.Text:=adoReport1.fieldbyName('DEPT_NAME').AsString; 
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
@@ -847,11 +842,12 @@ procedure TfrmClientKpiReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-  fndP3_YEAR1.ItemIndex:=fndP2_YEAR1.ItemIndex;
+  fndP3_YEAR1.ItemIndex:=fndP2_YEAR1.ItemIndex;  //1.所属年份
   fndP3_YEAR2.ItemIndex:=fndP2_YEAR2.ItemIndex;
-  Copy_ParamsValue(fndP2_KPI_ID,fndP3_KPI_ID);  //考核指标
-  Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID);  //客户
-  fndP3_CUST_TYPE.ItemIndex:=0;
+  Copy_ParamsValue(fndP2_KPI_ID,fndP3_KPI_ID);   //2.考核指标
+  Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID);  //3.客户
+  Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID);      //4.部门
+  fndP3_CUST_TYPE.ItemIndex:=0;                       //5.客户群组
   fndP3_CUST_VALUE.KeyValue:=adoReport2.fieldbyName('REGION_ID').AsString;
   fndP3_CUST_VALUE.Text:=adoReport2.fieldbyName('CODE_NAME').AsString;
   RzPage.ActivePageIndex:=2;
@@ -862,12 +858,13 @@ procedure TfrmClientKpiReport.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
-  fndP4_YEAR1.ItemIndex:=fndP3_YEAR1.ItemIndex;
+  fndP4_YEAR1.ItemIndex:=fndP3_YEAR1.ItemIndex;    //1.所属年份
   fndP4_YEAR2.ItemIndex:=fndP3_YEAR2.ItemIndex;
-  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;  //客户群组类型
-  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);  //客户群组
-  Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID);  //客户
-  fndP4_KPI_ID.KeyValue:=adoReport3.fieldbyName('KPI_ID').AsString;
+  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;   //2.客户群组类型
+  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);    //  客户群组
+  Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID);          //3.客户
+  Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID);      //4.客户
+  fndP4_KPI_ID.KeyValue:=adoReport3.fieldbyName('KPI_ID').AsString;  //5.考核指标
   fndP4_KPI_ID.Text:=adoReport3.fieldbyName('KPI_NAME').AsString;
   RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
@@ -913,6 +910,8 @@ procedure TfrmClientKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'KPI_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'KPI_RATE' then
+    GridGetFooterParamsValue(Sender,Text);
 end;
 
 procedure TfrmClientKpiReport.DBGridEh5GetFooterParams(Sender: TObject;
@@ -922,6 +921,8 @@ var
   ColName: string;
 begin
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
+  if Column.FieldName = 'KPI_RATE' then
+    GridGetFooterParamsValue(Sender,Text);  
 end;
 
 function TfrmClientKpiReport.GetDataRight: string;

@@ -753,11 +753,13 @@ procedure TfrmBondRequReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
-  fndP2_CUST_TYPE.ItemIndex:=fndP1_CUST_TYPE.ItemIndex;  //客户群组类型
-  Copy_ParamsValue(fndP1_CUST_VALUE,fndP2_CUST_VALUE);  //客户群组
-  Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID);  //客户
-  fndP2_BOND_TYPE.ItemIndex:=fndP1_BOND_TYPE.ItemIndex; //费用类型
-  fndP2_DEPT_ID.KeyValue:=adoReport1.fieldbyName('DEPT_ID').AsString;
+  P2_D1.Date:=P1_D1.Date;  //1.查询时段
+  P2_D2.Date:=P1_D2.Date;
+  fndP2_CUST_TYPE.ItemIndex:=fndP1_CUST_TYPE.ItemIndex;  //2.客户群组类型
+  Copy_ParamsValue(fndP1_CUST_VALUE,fndP2_CUST_VALUE);   //3.客户群组
+  Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID);     //  客户名称
+  fndP2_BOND_TYPE.ItemIndex:=fndP1_BOND_TYPE.ItemIndex;  //4.费用类型
+  fndP2_DEPT_ID.KeyValue:=adoReport1.fieldbyName('DEPT_ID').AsString; //5.部门名称
   fndP2_DEPT_ID.Text:=adoReport1.fieldbyName('DEPT_NAME').AsString;
   RzPage.ActivePageIndex:=1;
   actFindExecute(nil);
@@ -767,9 +769,12 @@ procedure TfrmBondRequReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
-  Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID);  //客户
-  fndP3_BOND_TYPE.ItemIndex:=fndP2_BOND_TYPE.ItemIndex; //费用类型
-  fndP3_CUST_TYPE.ItemIndex:=0;
+  P3_D1.Date:=P2_D1.Date;  //1.查询时段
+  P3_D2.Date:=P2_D2.Date;
+  Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID);  //2.客户
+  Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID);      //3.部门
+  fndP3_BOND_TYPE.ItemIndex:=fndP2_BOND_TYPE.ItemIndex; //4.费用类型
+  fndP3_CUST_TYPE.ItemIndex:=0;                         //5.客户群组
   fndP3_CUST_VALUE.KeyValue:=adoReport2.fieldbyName('REGION_ID').AsString;
   fndP3_CUST_VALUE.Text:=adoReport2.fieldbyName('CODE_NAME').AsString;
   RzPage.ActivePageIndex:=2;
@@ -780,11 +785,14 @@ procedure TfrmBondRequReport.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
-  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;  //客户群组类型
-  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);  //客户群组
-  fndP4_CLIENT_ID.KeyValue:=adoReport3.fieldbyName('CLIENT_ID').AsString;
+  P4_D1.Date:=P3_D1.Date;  //1.查询时段
+  P4_D2.Date:=P3_D2.Date;
+  fndP4_BOND_TYPE.ItemIndex:=fndP3_BOND_TYPE.ItemIndex;  //2.费用类型
+  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;  //3.客户群组类型
+  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);   //  客户群组名称
+  Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID);         //4.部门
+  fndP4_CLIENT_ID.KeyValue:=adoReport3.fieldbyName('CLIENT_ID').AsString; //5.客户名称
   fndP4_CLIENT_ID.Text:=adoReport3.fieldbyName('CLIENT_NAME').AsString;
-  fndP4_BOND_TYPE.ItemIndex:=fndP3_BOND_TYPE.ItemIndex; //费用类型
   RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
 end;

@@ -15,10 +15,10 @@ inherited frmManKpiReport: TfrmManKpiReport
       inherited RzPage: TRzPageControl
         Width = 690
         Height = 506
-        ActivePage = TabSheet2
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -344,25 +344,25 @@ inherited frmManKpiReport: TfrmManKpiReport
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#21010#24635#37327
-                      Width = 90
+                      Width = 100
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'KPI_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#24635#37327
-                      Width = 90
+                      Width = 100
                     end
                     item
                       Alignment = taRightJustify
@@ -370,10 +370,10 @@ inherited frmManKpiReport: TfrmManKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
                       Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtStaticText
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
-                      Width = 60
+                      Width = 70
                     end
                     item
                       Alignment = taRightJustify
@@ -384,7 +384,7 @@ inherited frmManKpiReport: TfrmManKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#25552#24635#39069
-                      Width = 90
+                      Width = 100
                     end>
                 end
               end
@@ -689,7 +689,7 @@ inherited frmManKpiReport: TfrmManKpiReport
               BorderOuter = fsGroove
               Color = clWhite
               TabOrder = 1
-              object TDBGridEh
+              object DBGridEh2: TDBGridEh
                 Left = 2
                 Top = 2
                 Width = 674
@@ -734,10 +734,10 @@ inherited frmManKpiReport: TfrmManKpiReport
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnDblClick = DBGridEh3DblClick
+                OnDblClick = DBGridEh2DblClick
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
-                OnGetFooterParams = DBGridEh3GetFooterParams
+                OnGetFooterParams = DBGridEh2GetFooterParams
                 Columns = <
                   item
                     Alignment = taCenter
@@ -778,25 +778,25 @@ inherited frmManKpiReport: TfrmManKpiReport
                   end
                   item
                     Alignment = taRightJustify
-                    DisplayFormat = '#0.###'
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'PLAN_AMT'
-                    Footer.DisplayFormat = '#0.###'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #35745#21010#24635#37327
-                    Width = 90
+                    Width = 100
                   end
                   item
                     Alignment = taRightJustify
-                    DisplayFormat = '#0.###'
+                    DisplayFormat = '#0.00'
                     EditButtons = <>
                     FieldName = 'KPI_AMT'
-                    Footer.DisplayFormat = '#0.###'
+                    Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #23436#25104#24635#37327
-                    Width = 90
+                    Width = 100
                   end
                   item
                     Alignment = taRightJustify
@@ -804,10 +804,10 @@ inherited frmManKpiReport: TfrmManKpiReport
                     EditButtons = <>
                     FieldName = 'KPI_RATE'
                     Footer.DisplayFormat = '#0.00%'
-                    Footer.ValueType = fvtStaticText
+                    Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #23436#25104#29575
-                    Width = 60
+                    Width = 70
                   end
                   item
                     Alignment = taRightJustify
@@ -818,7 +818,7 @@ inherited frmManKpiReport: TfrmManKpiReport
                     Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #35745#25552#24635#39069
-                    Width = 90
+                    Width = 100
                   end>
               end
             end
@@ -1130,7 +1130,7 @@ inherited frmManKpiReport: TfrmManKpiReport
                 BorderOuter = fsGroove
                 Color = clWhite
                 TabOrder = 1
-                object DBGridEh4: TDBGridEh
+                object DBGridEh3: TDBGridEh
                   Tag = 1
                   Left = 2
                   Top = 2
@@ -1176,10 +1176,10 @@ inherited frmManKpiReport: TfrmManKpiReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDblClick = DBGridEh4DblClick
+                  OnDblClick = DBGridEh3DblClick
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
-                  OnGetFooterParams = DBGridEh4GetFooterParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1213,24 +1213,25 @@ inherited frmManKpiReport: TfrmManKpiReport
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#21010#24635#37327
-                      Width = 90
+                      Width = 100
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'KPI_AMT'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#24635#37327
-                      Width = 90
+                      Width = 100
                     end
                     item
                       Alignment = taRightJustify
@@ -1238,10 +1239,10 @@ inherited frmManKpiReport: TfrmManKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
                       Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtStaticText
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
-                      Width = 60
+                      Width = 70
                     end
                     item
                       Alignment = taRightJustify
@@ -1252,7 +1253,7 @@ inherited frmManKpiReport: TfrmManKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#25552#24635#39069
-                      Width = 90
+                      Width = 100
                     end>
                 end
               end
@@ -1566,7 +1567,7 @@ inherited frmManKpiReport: TfrmManKpiReport
                 BorderOuter = fsGroove
                 Color = clWhite
                 TabOrder = 1
-                object DBGridEh5: TDBGridEh
+                object DBGridEh4: TDBGridEh
                   Tag = 1
                   Left = 2
                   Top = 2
@@ -1612,9 +1613,9 @@ inherited frmManKpiReport: TfrmManKpiReport
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
-                  OnDrawColumnCell = DBGridEh5DrawColumnCell
+                  OnDrawColumnCell = DBGridEh4DrawColumnCell
                   OnGetCellParams = DBGridEh1GetCellParams
-                  OnGetFooterParams = DBGridEh5GetFooterParams
+                  OnGetFooterParams = DBGridEh4GetFooterParams
                   Columns = <
                     item
                       Alignment = taCenter
@@ -1684,25 +1685,25 @@ inherited frmManKpiReport: TfrmManKpiReport
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#21010#24635#37327
-                      Width = 84
+                      Width = 90
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'KPI_AMT'
-                      Footer.DisplayFormat = '#0.###'
+                      Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#24635#37327
-                      Width = 84
+                      Width = 90
                     end
                     item
                       Alignment = taRightJustify
@@ -1710,10 +1711,10 @@ inherited frmManKpiReport: TfrmManKpiReport
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
                       Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtStaticText
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
-                      Width = 60
+                      Width = 66
                     end
                     item
                       Alignment = taRightJustify
@@ -1724,7 +1725,7 @@ inherited frmManKpiReport: TfrmManKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #35745#25552#37329#39069
-                      Width = 84
+                      Width = 90
                     end
                     item
                       EditButtons = <>

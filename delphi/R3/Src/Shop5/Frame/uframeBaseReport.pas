@@ -13,6 +13,22 @@ uses
   ZDataset, zrComboBoxList, ZBase, cxCalendar,zrMonthEdit,cxButtonEdit,
   cxRadioGroup, Buttons;
 
+type
+  TCalcFooter=class
+  private
+    FSecValue: string;
+    FFirValue: string;
+    FGridName: string;
+    procedure SetFirValue(const Value: string);
+    procedure SetGridName(const Value: string);
+    procedure SetSecValue(const Value: string);
+  public
+    function CalcValue(CalcKind: integer): string; {==计算方式1:表示计算%Rate==}
+    property GridName: string read FGridName write SetGridName;  {==计算的Grid=}
+    property FirValue: string read FFirValue write SetFirValue;  {==第一个值==}
+    property SecValue: string read FSecValue write SetSecValue;  {==第二个值==}
+  end;
+  
 type                        
   TframeBaseReport = class(TframeToolForm)
     dsadoReport1: TDataSource;
@@ -73,6 +89,7 @@ type
     function  GetHasChild: Boolean;
     function  GetGodsStateValue(DefineState: string='11111111111111111111'): string; //返回商品指标的启用情况
   public
+    CalcFooter: TCalcFooter;
     PUB_CLIENT_ID: TZQuery;  //客户群体数据集
     PUB_KPI_ID: TZQuery;  //客户群体数据集
 
@@ -166,6 +183,53 @@ uses
   ufrmSelectGoodSort;
 
 {$R *.dfm}
+
+{ TCalcFooter }
+
+function TCalcFooter.CalcValue(CalcKind: integer): string;
+var
+  CurValue: Real;  //当前值
+  vFirValue: Real;
+  vSecValue: Real;
+begin
+  case CalcKind of
+   1://计算Rate:
+    begin
+      vFirValue:=StrToFloatDef(FirValue,0.00);
+      vSecValue:=StrToFloatDef(SecValue,0.00);
+      if vFirValue<>0 then
+      begin
+        CurValue:=Round((vSecValue/vFirValue)*10000)/100;
+        result:=FloatToStr(CurValue)+'%';
+      end else
+        result:='0.00%';
+    end;
+   2: //计算价格:
+    begin
+              
+    end;
+  end;
+end;
+
+procedure TCalcFooter.SetFirValue(const Value: string);
+begin
+  FFirValue := Value;
+end;
+
+procedure TCalcFooter.SetGridName(const Value: string);
+begin
+  FGridName := Value;
+end;
+
+procedure TCalcFooter.SetSecValue(const Value: string);
+begin
+  if trim(FSecValue)<>trim(Value) then
+  begin
+    FFirValue:='';
+    FSecValue:='';
+  end;
+  FSecValue := Value;
+end;
 
 procedure TframeBaseReport.ActCloseExecute(Sender: TObject);
 begin
@@ -1921,5 +1985,6 @@ begin
     end;
   end;
 end;
+
 
 end.

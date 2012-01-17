@@ -92,6 +92,7 @@ type
     //读取产品标识符
     function GetProdFlag:Char;
     function GetParameter(ParamName:string):string;
+    function GetDeptID(DeptField,DeptID: string): string;  //不带and
     procedure SetParameter(ParamName:string;Value:string);
     //本SQL商品资料
     function EncodeViwGoodsInfo(Fields:string):string;
@@ -469,6 +470,19 @@ function TShopGlobal.EncodeViwGoodsInfo(Fields:string): string;
 begin
   result :=
   '';
+end;
+
+function TShopGlobal.GetDeptID(DeptField,DeptID: string): string;
+var
+  LvID: string;
+begin
+  result:=' and '+DeptField+'='''+DeptID+''' ';
+  if CA_DEPT_INFO.Locate('DEPT_ID',DeptID,[]) then
+  begin
+    LvID:=trim(CA_DEPT_INFO.FieldByName('LEVEL_ID').AsString);
+    if LvID<>'' then
+      result:=' and '+DeptField+' in (select DEPT_ID from CA_DEPT_INFO where LEVEL_ID like '''+LvID+'%'')';
+  end;
 end;
 
 initialization

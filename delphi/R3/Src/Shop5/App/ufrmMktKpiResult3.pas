@@ -106,7 +106,7 @@ end;
 procedure TfrmMktKpiResult3.actFindExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002158',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002170',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   Open('');
 end;
 
@@ -116,7 +116,7 @@ var
   Params:TftParamList;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002158',3) then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002170',3) then Raise Exception.Create('你没有审核'+Caption+'的权限,请和管理员联系.');
   if IsAudit then
      begin
        if CdsKpiResult.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前经销商考核结果执行弃审');
@@ -155,7 +155,7 @@ end;
 procedure TfrmMktKpiResult3.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002158',4) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002170',4) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   PrintView;
   PrintDBGridEh1.Print;
 end;
@@ -163,7 +163,7 @@ end;
 procedure TfrmMktKpiResult3.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002158',4) then Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002170',4) then Raise Exception.Create('你没有预览'+Caption+'的权限,请和管理员联系.');
   PrintView;
   with TfrmEhLibReport.Create(self) do
   begin
@@ -179,7 +179,7 @@ procedure TfrmMktKpiResult3.actSaveExecute(Sender: TObject);
 var Stream: TMemoryStream;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002158',5) then Raise Exception.Create('你没有导出'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002170',5) then Raise Exception.Create('你没有导出'+Caption+'的权限,请和管理员联系.');
   if Grid=nil then Exit;
   if Grid.DataSource=nil then Exit;
   if Grid.DataSource.DataSet=nil then Exit;
@@ -233,7 +233,7 @@ end;
 procedure TfrmMktKpiResult3.actEditExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002158',2) then Raise Exception.Create('你没有计算'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002170',2) then Raise Exception.Create('你没有计算'+Caption+'的权限,请和管理员联系.');
   with TfrmMktKpiCalculate.Create(nil) do
   begin
     try

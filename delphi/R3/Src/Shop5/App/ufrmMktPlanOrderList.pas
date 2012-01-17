@@ -8,7 +8,8 @@ uses
   ZAbstractDataset, ZDataset, Menus, ActnList, ComCtrls, ToolWin, StdCtrls,
   RzLabel, jpeg, ExtCtrls, Grids, DBGridEh, RzTabs, RzPanel, RzButton,
   cxTextEdit, cxButtonEdit, zrComboBoxList, cxControls, cxContainer,
-  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class, cxSpinEdit;
+  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class, cxSpinEdit,
+  cxRadioGroup;
 
 type
   TfrmMktPlanOrderList = class(TframeContractToolForm)
@@ -30,6 +31,7 @@ type
     K2: TcxSpinEdit;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
+    fndSTATUS: TcxRadioGroup;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -70,14 +72,14 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPla
 
 procedure TfrmMktPlanOrderList.actNewExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002150',2) then Raise Exception.Create('你没有新增销售计划的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',2) then Raise Exception.Create('你没有新增销售计划的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmMktPlanOrderList.actDeleteExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002150',4) then Raise Exception.Create('你没有删除销售计划单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',4) then Raise Exception.Create('你没有删除销售计划单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -103,7 +105,7 @@ end;
 
 procedure TfrmMktPlanOrderList.actEditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002150',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -125,9 +127,9 @@ begin
   inherited;
   if (CurContract<>nil) then
      begin
-       if not CurContract.saved then Exit;       //ShopGlobal.GetChkRight('100002150',2) and
+       if not CurContract.saved then Exit;       
 
-       if (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002150',2) and (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -137,7 +139,7 @@ end;
 procedure TfrmMktPlanOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -165,7 +167,7 @@ end;
 procedure TfrmMktPlanOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -249,7 +251,7 @@ end;
 
 procedure TfrmMktPlanOrderList.actAuditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002150',5) then Raise Exception.Create('你没有审核销售计划单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',5) then Raise Exception.Create('你没有审核销售计划单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -350,6 +352,15 @@ begin
      w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndPLAN_USER.AsString <> '' then
      w := w + ' and A.PLAN_USER=:PLAN_USER';
+  if fndSTATUS.ItemIndex > 0 then
+     begin
+       case fndSTATUS.ItemIndex of
+       1:w := w +' and A.CHK_DATE is null';
+       2:w := w +' and A.CHK_DATE is not null';
+       //3:w := w +' and A.STKBILL_STATUS=0';
+       //4:w := w +' and A.STKBILL_STATUS=1';
+       end;
+     end;
   if Trim(fndGLIDE_NO.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndGLIDE_NO.Text)+'''';
 

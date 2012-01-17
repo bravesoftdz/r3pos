@@ -178,7 +178,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 344
+                Left = 508
                 Top = 76
                 Width = 67
                 Height = 26
@@ -252,6 +252,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 20
                 Properties.MinValue = 2000.000000000000000000
                 TabOrder = 5
+                Value = 2000
               end
               object K2: TcxSpinEdit
                 Left = 193
@@ -260,7 +261,6 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 20
                 Properties.MinValue = 2000.000000000000000000
                 TabOrder = 6
-                Value = 2000
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1
@@ -303,6 +303,32 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
+              end
+              object fndSTATUS: TcxRadioGroup
+                Left = 336
+                Top = 16
+                Width = 160
+                Height = 86
+                ItemIndex = 0
+                Properties.Columns = 2
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
+                  end
+                  item
+                    Caption = #24050#36807#26399
+                  end
+                  item
+                    Caption = #26377#25928#26399
+                  end>
+                TabOrder = 8
+                Caption = ''
               end
             end
             inherited DBGridEh1: TDBGridEh

@@ -87,7 +87,7 @@ begin
   if id<>'' then
      w := w +' and A.REQU_ID>'''+id+'''';
      
-  result := 'select A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,A.REQU_ID,A.DEPT_ID,C.DEPT_NAME as DEPT_ID_TEXT,'+
+  result := 'select A.TENANT_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,A.REQU_ID,A.DEPT_ID,C.DEPT_NAME as DEPT_ID_TEXT,'+
   'A.REQU_TYPE,A.GLIDE_NO,A.REQU_DATE,A.CLIENT_ID,D.CLIENT_NAME as CLIENT_ID_TEXT,A.REQU_USER,E.USER_NAME as REQU_USER_TEXT,'+
   'A.CHK_DATE,A.CHK_USER,G.USER_NAME as CHK_USER_TEXT,A.REQU_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,F.USER_NAME as CREA_USER_TEXT '+
   ' from MKT_REQUORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
@@ -158,7 +158,21 @@ end;
 
 function TfrmMktRequOrderList.PrintSQL(tenantid, id: string): string;
 begin
-
+  Result := 'select C.*,D.USER_NAME as CHK_USER_TEXT,E.USER_NAME as CREA_USER_TEXT,F.USER_NAME as REQU_USER_TEXT,'+
+            'G.DEPT_NAME as DEPT_ID_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,I.KPI_NAME as KPI_ID_TEXT,J.SHOP_NAME as SHOP_ID_TEXT,'+
+            'K.CODE_NAME as REQU_TYPE_TEXT from ( '+
+            'Select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.REQU_TYPE,A.GLIDE_NO,A.REQU_USER,A.CLIENT_ID,A.CHK_USER,A.REQU_DATE,'+
+            'A.REMARK,A.CREA_USER,B.SEQNO,B.PLAN_ID,B.KPI_ID,B.KPI_YEAR,C.KPI_MNY,B.REQU_MNY,B.REMARK as REMARK_DETAIL '+
+            ' From MKT_REQUDATA B,MKT_REQUORDER A,MKT_KPI_RESULT C  where A.TENANT_ID = B.TENANT_ID and A.REQU_ID=B.REQU_ID '+
+            ' and B.TENANT_ID = C.TENANT_ID and B.PLAN_ID=C.PLAN_ID and A.TENANT_ID = '+tenantid+' and A.REQU_ID = '''+id+''' ) C '+
+            ' left join VIW_USERS D on D.TENANT_ID=C.TENANT_ID and D.USER_ID = C.CHK_USER '+
+            ' left join VIW_USERS E on E.TENANT_ID=C.TENANT_ID and E.USER_ID = C.CREA_USER '+
+            ' left join VIW_USERS F on F.TENANT_ID=C.TENANT_ID and F.USER_ID = C.REQU_USER '+
+            ' left join CA_DEPT_INFO G on G.TENANT_ID=C.TENANT_ID and G.DEPT_ID=C.DEPT_ID '+
+            ' left join VIW_CUSTOMER H on H.TENANT_ID=C.TENANT_ID and H.CLIENT_ID=C.CLIENT_ID '+
+            ' left join MKT_KPI_INDEX I on I.TENANT_ID=C.TENANT_ID and I.KPI_ID=C.KPI_ID '+
+            ' left join CA_SHOP_INFO J on J.TENANT_ID=C.TENANT_ID and J.SHOP_ID=C.SHOP_ID '+
+            ' left join PUB_PARAMS K on K.CODE_ID=C.REQU_TYPE where K.TYPE_CODE=''REQU_TYPE'' order by C.SEQNO  ';
 end;
 
 procedure TfrmMktRequOrderList.actNewExecute(Sender: TObject);
@@ -187,7 +201,7 @@ begin
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       if ShopGlobal.GetChkRight('100001070',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增费用申领单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002176',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增费用申领单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -196,7 +210,7 @@ end;
 
 procedure TfrmMktRequOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100001070',3) then Raise Exception.Create('你没有修改费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',3) then Raise Exception.Create('你没有修改费用申领单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -206,7 +220,7 @@ begin
 
   if TfrmMktRequOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('100001070',5) then
+      if not ShopGlobal.GetChkRight('100002176',5) then
          Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
@@ -219,11 +233,11 @@ begin
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       {if ShopGlobal.GetChkRight('100001070',6) then
+       {if ShopGlobal.GetChkRight('100002176',6) then
           begin
             actPrint.OnExecute(nil);
           end;}
-       if ShopGlobal.GetChkRight('100001070',2) and (MessageBox(Handle,'是否继续新增费用申领单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002176',2) and (MessageBox(Handle,'是否继续新增费用申领单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -233,7 +247,7 @@ end;
 procedure TfrmMktRequOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100001070',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -261,7 +275,7 @@ end;
 procedure TfrmMktRequOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100001070',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -304,7 +318,7 @@ end;
 
 procedure TfrmMktRequOrderList.actAuditExecute(Sender: TObject);
 begin
-//  if not ShopGlobal.GetChkRight('100001070',5) then Raise Exception.Create('你没有审核费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',5) then Raise Exception.Create('你没有审核费用申领单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;

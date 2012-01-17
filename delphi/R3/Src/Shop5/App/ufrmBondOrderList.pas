@@ -25,7 +25,7 @@ type
     ToolButton3: TToolButton;
     ToolButton6: TToolButton;
     DataSource2: TDataSource;
-    frfRecvOrder: TfrReport;
+    frfBondOrder: TfrReport;
     cdsList: TZQuery;
     TabSheet2: TRzTabSheet;
     RzPanel1: TRzPanel;
@@ -76,9 +76,9 @@ type
     procedure RzPageChange(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure frfRecvOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
+    procedure frfBondOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
     procedure actDeleteExecute(Sender: TObject);
-    procedure frfRecvOrderGetValue(const ParName: String; var ParValue: Variant);
+    procedure frfBondOrderGetValue(const ParName: String; var ParValue: Variant);
     procedure CdsRecvListAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
@@ -164,7 +164,7 @@ var
   ABLE_ID: string;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('21300001',2) then Raise Exception.Create('你没有新增申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002192',2) then Raise Exception.Create('你没有新增申领单的权限,请和管理员联系.');
   ABLE_ID:='';
   if (RzPage.ActivePage=TabSheet1) and (CdsRecvList.Active) and (CdsRecvList.RecordCount>0) then
      ABLE_ID:=trim(CdsRecvList.fieldbyName('ABLE_ID').AsString);
@@ -205,10 +205,10 @@ procedure TfrmBondOrderList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  if not ShopGlobal.GetChkRight('21300001',3) then Raise Exception.Create('你没有修改申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002192',3) then Raise Exception.Create('你没有修改申领单的权限,请和管理员联系.');
   if cdsList.FieldByName('BOND_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('21300001',5) then
+      if not ShopGlobal.GetChkRight('100002192',5) then
         Raise Exception.Create('你没有修改"'+cdsList.FieldByName('BOND_USER_TEXT').AsString+'"录入单据的权限!');
     end;
 
@@ -261,7 +261,7 @@ var
 begin
   inherited;
     if cdsList.IsEmpty then Raise Exception.Create('请选择待审核的申领单');
-   if not ShopGlobal.GetChkRight('21300001',5) then Raise Exception.Create('你没有审核申领单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002192',5) then Raise Exception.Create('你没有审核申领单的权限,请和管理员联系.');
     if cdsList.FieldByName('CHK_DATE').AsString<>'' then
        begin
          //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
@@ -560,35 +560,58 @@ end;
 
 function TfrmBondOrderList.PrintSQL2(tenantid,id: string): string;
 begin
+  case TRecord_(P1_BOND_TYPE.Properties.Items.Objects[P1_BOND_TYPE.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+  1:
   result :=
-  'select j.* '+
-  'from ( '+
-  'select ji.*,i.USER_NAME as RECV_USER_TEXT from ('+
-  'select jh.*,h.USER_NAME as CHK_USER_TEXT from ('+
-  'select jg.*,g.SHOP_NAME,g.ADDRESS as SHOP_ADDR,g.TELEPHONE as SHOP_TELE,g.FAXES from ('+
-  'select jf.*,f.ACCT_NAME as ACCOUNT_ID_TEXT from ('+
-  'select je.*,e.CODE_NAME as ITEM_ID_TEXT from ('+
-  'select jd.*,d.CLIENT_NAME as CLIENT_ID_TEXT,d.CLIENT_CODE,d.ADDRESS,d.POSTALCODE,d.LINKMAN,d.TELEPHONE2 as MOVE_TELE from ('+
-  'select A.TENANT_ID,A.SHOP_ID,A.RECV_ID,A.SEQNO,A.RECV_MNY,'+
-  'b.ACCT_INFO,c.CLIENT_ID,b.ABLE_DATE,C.ITEM_ID,C.ACCOUNT_ID,C.GLIDE_NO,C.RECV_USER,B.RECK_MNY,B.RECV_MNY as ABLE_RECV_MNY,B.ACCT_MNY,C.RECV_MNY as TOTAL_RECV_MNY,C.REMARK,C.RECV_DATE,B.RECV_TYPE,C.CHK_USER '+
-  'from ACC_RECVDATA A,ACC_RECVABLE_INFO B,ACC_RECVORDER C where A.TENANT_ID=B.TENANT_ID and A.TENANT_ID=C.TENANT_ID and A.ABLE_ID=B.ABLE_ID and A.RECV_ID=C.RECV_ID and A.TENANT_ID='+tenantid+' and A.RECV_ID='''+id+''' ) jd '+
-  'left outer join VIW_CUSTOMER d on jd.TENANT_ID=d.TENANT_ID and jd.CLIENT_ID=d.CLIENT_ID ) je '+
-  'left outer join VIW_ITEM_INFO e on je.TENANT_ID=e.TENANT_ID and je.ITEM_ID=e.CODE_ID ) jf '+
-  'left outer join VIW_ACCOUNT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.ACCOUNT_ID=f.ACCOUNT_ID ) jg '+
-  'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+
-  'left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.CHK_USER=h.USER_ID ) ji '+
-  'left outer join VIW_USERS i on ji.TENANT_ID=i.TENANT_ID and ji.RECV_USER=i.USER_ID ) j order by j.SEQNO' ;
+  'select R.*,D.USER_NAME as CHK_USER_TEXT,E.USER_NAME as CREA_USER_TEXT,F.USER_NAME as BOND_USER_TEXT,'+
+  'G.DEPT_NAME as DEPT_ID_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,I.SHOP_NAME as SHOP_ID_TEXT,J.CODE_NAME as BOND_TYPE_TEXT '+
+  ' from ( '+
+  ' select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.BOND_TYPE,A.GLIDE_NO,A.BOND_DATE,A.CLIENT_ID,A.BOND_USER,'+
+  ' A.CHK_USER,A.CREA_USER,A.REMARK,B.SEQNO,B.REMARK as REMARK_DETAIL,C.BOND_MNY as ACCT_MNY,'+
+  ' (isnull(C.BOND_MNY,0)-isnull(C.BOND_RET,0))+B.BOND_MNY as RECK_MNY,B.BOND_MNY,'+
+  ' (isnull(C.BOND_MNY,0)-isnull(C.BOND_RET,0)) as BALA_MNY,A.BOND_MNY as TOTAL_BOND_MNY '+
+  ' from MKT_BONDORDER A,MKT_BONDDATA B,MKT_PLANORDER C where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID '+
+  ' and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.PLAN_ID '+
+  ' and A.TENANT_ID='+tenantid+' and A.BOND_ID='''+id+''' ) R '+
+  ' left join VIW_USERS D on D.TENANT_ID=R.TENANT_ID and D.USER_ID = R.CHK_USER '+
+  ' left join VIW_USERS E on E.TENANT_ID=R.TENANT_ID and E.USER_ID = R.CREA_USER '+
+  ' left join VIW_USERS F on F.TENANT_ID=R.TENANT_ID and F.USER_ID = R.BOND_USER '+
+  ' left join CA_DEPT_INFO G on G.TENANT_ID=R.TENANT_ID and G.DEPT_ID=R.DEPT_ID '+
+  ' left join VIW_CUSTOMER H on H.TENANT_ID=R.TENANT_ID and H.CLIENT_ID=R.CLIENT_ID '+
+  ' left join CA_SHOP_INFO I on I.TENANT_ID=R.TENANT_ID and I.SHOP_ID=R.SHOP_ID '+
+  ' left join PUB_PARAMS J on J.CODE_ID=R.BOND_TYPE where J.TYPE_CODE=''BOND_TYPE'' order by R.SEQNO ' ;
+  2:
+  Result :=
+  'select R.*,D.USER_NAME as CHK_USER_TEXT,E.USER_NAME as CREA_USER_TEXT,F.USER_NAME as BOND_USER_TEXT,'+
+  'G.DEPT_NAME as DEPT_ID_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,I.SHOP_NAME as SHOP_ID_TEXT,J.CODE_NAME as BOND_TYPE_TEXT '+
+  ' from ( '+
+  ' select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.BOND_TYPE,A.GLIDE_NO,A.BOND_DATE,A.CLIENT_ID,A.BOND_USER,'+
+  ' A.CHK_USER,A.CREA_USER,A.REMARK,B.SEQNO,B.REMARK as REMARK_DETAIL,C.BOND_MNY as ACCT_MNY,'+
+  ' (isnull(C.BOND_MNY,0)-isnull(C.BOND_RET,0))+B.BOND_MNY as RECK_MNY,B.BOND_MNY,'+
+  ' (isnull(C.BOND_MNY,0)-isnull(C.BOND_RET,0)) as BALA_MNY,A.BOND_MNY as TOTAL_BOND_MNY '+
+  ' from MKT_BONDORDER A,MKT_BONDDATA B,SAL_INDENTORDER C where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID '+
+  ' and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.INDE_ID '+
+  ' and A.TENANT_ID='+tenantid+' and A.BOND_ID='''+id+''' ) R '+
+  ' left join VIW_USERS D on D.TENANT_ID=R.TENANT_ID and D.USER_ID = R.CHK_USER '+
+  ' left join VIW_USERS E on E.TENANT_ID=R.TENANT_ID and E.USER_ID = R.CREA_USER '+
+  ' left join VIW_USERS F on F.TENANT_ID=R.TENANT_ID and F.USER_ID = R.BOND_USER '+
+  ' left join CA_DEPT_INFO G on G.TENANT_ID=R.TENANT_ID and G.DEPT_ID=R.DEPT_ID '+
+  ' left join VIW_CUSTOMER H on H.TENANT_ID=R.TENANT_ID and H.CLIENT_ID=R.CLIENT_ID '+
+  ' left join CA_SHOP_INFO I on I.TENANT_ID=R.TENANT_ID and I.SHOP_ID=R.SHOP_ID '+
+  ' left join PUB_PARAMS J on J.CODE_ID=R.BOND_TYPE where J.TYPE_CODE=''BOND_TYPE'' order by R.SEQNO ';
+  end;
+  Result := ParseSQL(Factor.iDbType,Result);
 end;
 
 procedure TfrmBondOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
     if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('21300001',6) then Raise Exception.Create('你没有打印申领单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002192',6) then Raise Exception.Create('你没有打印申领单的权限,请和管理员联系.');
     with TfrmFastReport.Create(Self) do
       begin
         try
-           PrintReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('RECV_ID').AsString),frfRecvOrder);
+           PrintReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('BOND_ID').AsString),frfBondOrder);
         finally
            free;
         end;
@@ -600,18 +623,18 @@ procedure TfrmBondOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('21300001',6) then Raise Exception.Create('你没有打印申领单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002192',6) then Raise Exception.Create('你没有打印申领单的权限,请和管理员联系.');
     with TfrmFastReport.Create(Self) do
       begin
         try
-           ShowReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('RECV_ID').AsString),frfRecvOrder);
+           ShowReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('BOND_ID').AsString),frfBondOrder);
         finally
            free;
         end;
       end;
 end;
 
-procedure TfrmBondOrderList.frfRecvOrderUserFunction(const Name: String; p1,
+procedure TfrmBondOrderList.frfBondOrderUserFunction(const Name: String; p1,
   p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -627,10 +650,10 @@ procedure TfrmBondOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
    if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('21300001',4) then Raise Exception.Create('你没有删除申领单的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002192',4) then Raise Exception.Create('你没有删除申领单的权限,请和管理员联系.');
    if cdsList.FieldByName('BOND_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('21300001',5) then
+      if not ShopGlobal.GetChkRight('100002192',5) then
         Raise Exception.Create('你没有删除"'+cdsList.FieldByName('BOND_USER_TEXT').AsString+'"录入单据的权限!');
     end;
    if cdsList.FieldByName('CHK_DATE').AsString <> '' then Raise Exception.Create('此单已经审核,不能执行删除操作.');   
@@ -687,7 +710,7 @@ begin
   end;
 end;
 
-procedure TfrmBondOrderList.frfRecvOrderGetValue(const ParName: String;
+procedure TfrmBondOrderList.frfBondOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;
@@ -712,7 +735,7 @@ end;
 
 function TfrmBondOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('21300001',7);
+  result:=ShopGlobal.GetChkRight('100002192',7);
 end;
 
 

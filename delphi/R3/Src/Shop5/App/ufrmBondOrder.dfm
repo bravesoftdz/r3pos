@@ -1,6 +1,6 @@
 inherited frmBondOrder: TfrmBondOrder
-  Left = 286
-  Top = 225
+  Left = 676
+  Top = 245
   ActiveControl = edtCLIENT_ID
   Caption = #20445#35777#37329#30003#39046
   ClientHeight = 465
@@ -89,6 +89,13 @@ inherited frmBondOrder: TfrmBondOrder
                 OnUpdateData = DBGridEh1Columns1UpdateData
               end
               item
+                EditButtons = <>
+                FieldName = 'REMARK'
+                Footers = <>
+                Title.Caption = #25688#35201
+                Width = 226
+              end
+              item
                 DisplayFormat = '0000-00-00'
                 EditButtons = <>
                 FieldName = 'ABLE_DATE'
@@ -98,13 +105,6 @@ inherited frmBondOrder: TfrmBondOrder
                 ReadOnly = True
                 Title.Caption = #36134#27454#26085#26399
                 Width = 63
-              end
-              item
-                EditButtons = <>
-                FieldName = 'REMARK'
-                Footers = <>
-                Title.Caption = #25688#35201
-                Width = 226
               end
               item
                 DisplayFormat = '#0.00'

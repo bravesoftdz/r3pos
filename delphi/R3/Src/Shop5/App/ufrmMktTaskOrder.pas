@@ -311,24 +311,19 @@ begin
       R := 0;
       cdsDetail.First;
       while not cdsDetail.Eof do
-         begin
-           if cdsDetail.FieldByName('KPI_ID').AsString = '' then
-              cdsDetail.Delete
-           else
-              begin
-               Inc(R);
-               cdsDetail.Edit;
-               cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
-               cdsDetail.FieldByName('PLAN_ID').AsString := cdsHeader.FieldbyName('PLAN_ID').AsString;
-               cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-               cdsDetail.FieldByName('SEQNO').AsInteger := R;
-               mny := mny + cdsDetail.FieldbyName('AMONEY').asFloat;
-               bny := bny + cdsDetail.FieldbyName('BOND_MNY').asFloat;
-               amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
-               cdsDetail.Post;
-               cdsDetail.Next;
-              end;
-         end;
+      begin
+        Inc(R);
+        cdsDetail.Edit;
+        cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
+        cdsDetail.FieldByName('PLAN_ID').AsString := cdsHeader.FieldbyName('PLAN_ID').AsString;
+        cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
+        cdsDetail.FieldByName('SEQNO').AsInteger := R;
+        mny := mny + cdsDetail.FieldbyName('AMONEY').asFloat;
+        bny := bny + cdsDetail.FieldbyName('BOND_MNY').asFloat;
+        amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
+        cdsDetail.Post;
+        cdsDetail.Next;
+      end;
       cdsHeader.Edit;
       cdsHeader.FieldbyName('PLAN_MNY').asFloat := mny;
       cdsHeader.FieldbyName('BOND_MNY').asFloat := bny;

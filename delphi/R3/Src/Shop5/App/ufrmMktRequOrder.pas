@@ -324,6 +324,14 @@ begin
   if edtREQU_DATE.EditValue = null then Raise Exception.Create('填报日期不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
+  cdsDetail.First;
+  while not cdsDetail.Eof do
+  begin
+     if cdsDetail.FieldByName('KPI_ID').AsString = '' then
+        cdsDetail.Delete
+     else
+        cdsDetail.Next;
+  end;
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空销售计划单据...');
   if not AddRow then Raise Exception.Create('不能保存一张有问题的销售计划单据...');
   WriteToObject(AObj,self);
@@ -338,24 +346,20 @@ begin
     AObj.WriteToDataSet(cdsHeader);
     cdsHeader.Post;
     rny := 0;
+    R := 0;
     cdsDetail.First;
     while not cdsDetail.Eof do
        begin
-         if cdsDetail.FieldByName('KPI_ID').AsString = '' then
-            cdsDetail.Delete
-         else
-            begin
-             Inc(R);
-             cdsDetail.Edit;
-             cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
-             cdsDetail.FieldByName('REQU_ID').AsString := cdsHeader.FieldbyName('REQU_ID').AsString;
-             //cdsDetail.FieldByName('PLAN_ID').AsString := 'Test_Data';
-             cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-             cdsDetail.FieldByName('SEQNO').AsInteger := R;
-             rny := rny + cdsDetail.FieldbyName('REQU_MNY').asFloat;
-             cdsDetail.Post;
-             cdsDetail.Next;
-            end;
+         Inc(R);
+         cdsDetail.Edit;
+         cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
+         cdsDetail.FieldByName('REQU_ID').AsString := cdsHeader.FieldbyName('REQU_ID').AsString;
+         //cdsDetail.FieldByName('PLAN_ID').AsString := 'Test_Data';
+         cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
+         cdsDetail.FieldByName('SEQNO').AsInteger := R;
+         rny := rny + cdsDetail.FieldbyName('REQU_MNY').asFloat;
+         cdsDetail.Post;
+         cdsDetail.Next;
        end;
     cdsHeader.Edit;
     cdsHeader.FieldbyName('REQU_MNY').asFloat := rny;
@@ -395,7 +399,7 @@ begin
   edtDEPT_ID.RangeValue := '1';
   edtREQU_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   AddCbxPickList(edtREQU_TYPE);
-
+  AddRow := True;
   cdsKPI_ID.Close;
   cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where IDX_TYPE in (''1'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
 

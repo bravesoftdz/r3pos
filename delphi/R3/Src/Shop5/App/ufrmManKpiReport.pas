@@ -165,6 +165,8 @@ begin
   RefreshColumn;                                           
   //2011.09.21 Add 千分位；
   SetGridColumnDisplayFormat(['DBGridEh1.JT_MNY','DBGridEh2.JT_MNY','DBGridEh3.JT_MNY','DBGridEh4.JT_MNY','DBGridEh5.JT_MNY']);
+  //创建计算对象：
+  CalcFooter:=TCalcFooter.Create;  
 end;
 
 function TfrmManKpiReport.GetDeptSQL(chk: boolean): string;
@@ -563,8 +565,16 @@ procedure TfrmManKpiReport.DBGridEh1GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
-  if Column.FieldName = 'KPI_RATE' then
-    GridGetFooterParamsValue(Sender,Text);
+  if (Column.FieldName='PLAN_AMT') or (Column.FieldName='KPI_AMT') or (Column.FieldName='KPI_RATE') then
+  begin
+    CalcFooter.GridName:=TDBGridEh(Sender).Name;
+    if Column.FieldName = 'PLAN_AMT' then
+      CalcFooter.FirValue:=Text
+    else if Column.FieldName = 'KPI_AMT' then
+      CalcFooter.SecValue:=Text
+    else if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcFooter.CalcValue(1);
+  end;
 end;
 
 procedure TfrmManKpiReport.DBGridEh2GetFooterParams(Sender: TObject;
@@ -574,8 +584,16 @@ procedure TfrmManKpiReport.DBGridEh2GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'KPI_NAME' then Text := '合计:'+Text+'笔';
-  if Column.FieldName = 'KPI_RATE' then
-    GridGetFooterParamsValue(Sender,Text);
+  if (Column.FieldName='PLAN_AMT') or (Column.FieldName='KPI_AMT') or (Column.FieldName='KPI_RATE') then
+  begin
+    CalcFooter.GridName:=TDBGridEh(Sender).Name;
+    if Column.FieldName = 'PLAN_AMT' then
+      CalcFooter.FirValue:=Text
+    else if Column.FieldName = 'KPI_AMT' then
+      CalcFooter.SecValue:=Text
+    else if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcFooter.CalcValue(1);
+  end;
 end;
 
 procedure TfrmManKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
@@ -585,8 +603,16 @@ procedure TfrmManKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'GUIDE_NAME' then Text := '合计:'+Text+'笔';
-  if Column.FieldName = 'KPI_RATE' then
-    GridGetFooterParamsValue(Sender,Text);
+  if (Column.FieldName='PLAN_AMT') or (Column.FieldName='KPI_AMT') or (Column.FieldName='KPI_RATE') then
+  begin
+    CalcFooter.GridName:=TDBGridEh(Sender).Name;
+    if Column.FieldName = 'PLAN_AMT' then
+      CalcFooter.FirValue:=Text
+    else if Column.FieldName = 'KPI_AMT' then
+      CalcFooter.SecValue:=Text
+    else if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcFooter.CalcValue(1);
+  end;
 end;
 
 procedure TfrmManKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
@@ -596,8 +622,16 @@ procedure TfrmManKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
 begin
   inherited;
   if Column.FieldName = 'GUIDE_NAME' then Text := '合计:'+Text+'笔';
-  if Column.FieldName = 'KPI_RATE' then
-    GridGetFooterParamsValue(Sender,Text);
+  if (Column.FieldName='PLAN_AMT') or (Column.FieldName='KPI_AMT') or (Column.FieldName='KPI_RATE') then
+  begin
+    CalcFooter.GridName:=TDBGridEh(Sender).Name;
+    if Column.FieldName = 'PLAN_AMT' then
+      CalcFooter.FirValue:=Text
+    else if Column.FieldName = 'KPI_AMT' then
+      CalcFooter.SecValue:=Text
+    else if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcFooter.CalcValue(1);
+  end;
 end;
 
 procedure TfrmManKpiReport.DBGridEh1DblClick(Sender: TObject);

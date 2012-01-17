@@ -369,6 +369,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
+                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60
@@ -836,6 +837,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
+                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60
@@ -1295,6 +1297,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     DisplayFormat = '#0.00%'
                     EditButtons = <>
                     FieldName = 'KPI_RATE'
+                    Footer.ValueType = fvtStaticText
                     Footers = <>
                     Title.Caption = #23436#25104#29575
                     Width = 60
@@ -1762,6 +1765,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
+                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60
@@ -2307,6 +2311,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
+                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 60

@@ -15,10 +15,10 @@ inherited frmClientSaleReport: TfrmClientSaleReport
       inherited RzPage: TRzPageControl
         Width = 856
         Height = 509
-        ActivePage = TabSheet3
+        ActivePage = TabSheet5
         Color = clWhite
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clWhite
@@ -473,6 +473,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'SALE_AMT'
+                      Footer.DisplayFormat = '#0.###'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25968#37327
                     end
@@ -487,6 +489,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TTL'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#37329#39069
                       Width = 84
@@ -495,6 +499,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_TAX'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#39033#31246#39069
                       Width = 82
@@ -503,6 +509,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26410#31246#37329#39069
                       Width = 76
@@ -511,6 +519,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_CST'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #38144#21806#25104#26412
                       Width = 80
@@ -519,6 +529,8 @@ inherited frmClientSaleReport: TfrmClientSaleReport
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'SALE_ALLPRF'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #27611#21033
                       Width = 80

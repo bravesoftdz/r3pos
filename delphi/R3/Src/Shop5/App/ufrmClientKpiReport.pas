@@ -277,7 +277,7 @@ begin
     strWhere:=strWhere+' and A.KPI_YEAR='+fndP1_YEAR1.Text+' ';
   //部门条件:
   if trim(fndP1_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
   //考核指标:
   if fndP1_KPI_ID.AsString<>'' then
     strWhere:=strWhere+' and C.KPI_ID='''+fndP1_KPI_ID.AsString+''' ';
@@ -370,7 +370,7 @@ begin
     strWhere:=strWhere+' and A.KPI_YEAR='+fndP2_YEAR1.Text+' ';
   //部门条件:
   if trim(fndP2_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
+   strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
   //考核指标:
   if fndP2_KPI_ID.AsString<>'' then
     strWhere:=strWhere+' and C.KPI_ID='''+fndP2_KPI_ID.AsString+''' ';
@@ -497,7 +497,7 @@ begin
     strWhere:=strWhere+' and A.KPI_YEAR='+fndP3_YEAR1.Text+' ';
   //部门条件:
   if trim(fndP3_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP3_DEPT_ID.AsString);
   //考核指标:
   if fndP3_KPI_ID.AsString<>'' then
     strWhere:=strWhere+' and C.KPI_ID='''+fndP3_KPI_ID.AsString+''' ';
@@ -588,7 +588,7 @@ begin
     strWhere:=strWhere+' and A.KPI_YEAR='+fndP4_YEAR1.Text+' ';
   //部门条件:
   if trim(fndP4_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP4_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
   //考核指标:
   if fndP4_KPI_ID.AsString<>'' then
     strWhere:=strWhere+' and C.KPI_ID='''+fndP4_KPI_ID.AsString+''' ';
@@ -661,7 +661,7 @@ begin
     strWhere:=strWhere+' and A.KPI_YEAR='+fndP5_YEAR1.Text+' ';
   //部门条件:
   if trim(fndP5_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
   //考核指标:
   if fndP5_KPI_ID.AsString<>'' then
     strWhere:=strWhere+' and C.KPI_ID='''+fndP5_KPI_ID.AsString+''' ';

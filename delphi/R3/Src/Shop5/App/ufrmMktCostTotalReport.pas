@@ -218,14 +218,13 @@ begin
   //考核指标:(费用申领才有用)
   if fndP1_KPI_ID.AsString<>'' then
     RequCnd:=RequCnd+' and C.KPI_ID='''+fndP1_KPI_ID.AsString+''' ';
-  
   //部门条件:
   if trim(fndP1_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
   //客户名称:
   if fndP1_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP1_CLIENT_ID.AsString+''' ';
-
+    
   //客户群体所属行政区域|客户等级\客户分类:
   if (fndP1_CUST_VALUE.AsString<>'') then
   begin

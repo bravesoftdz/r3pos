@@ -780,7 +780,7 @@ begin
 
   //2011.05.11 Add 部门名称:
   if trim(fndP5_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
 
   //客户名称
   if Trim(fndP5_CLIENT_ID.Text) <> '' then
@@ -914,7 +914,7 @@ begin
     
   //2011.05.11 Add 部门名称:
   if trim(fndP4_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP4_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
 
   //商品指标:
   if (fndP4_STAT_ID.AsString <> '') and (fndP4_TYPE_ID.ItemIndex>=0) then
@@ -1102,7 +1102,7 @@ begin
 
   //2011.05.11 Add 部门名称:
   if trim(fndP3_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP3_DEPT_ID.AsString);
 
   //客户名称
   if Trim(fndP3_CLIENT_ID.Text) <> '' then
@@ -1399,7 +1399,7 @@ begin
 
   //2011.05.11 Add 部门名称:
   if trim(fndP2_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
@@ -1537,7 +1537,7 @@ begin
     strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
   //2011.05.11 Add 部门名称:
   if trim(fndP1_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin

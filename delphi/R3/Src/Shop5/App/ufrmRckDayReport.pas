@@ -815,7 +815,7 @@ begin
 
   //2011.05.11 Add 部门名称:
   if trim(fndP5_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
 
   //收银员
   if Trim(fndP5_CREA_USER.Text) <> '' then

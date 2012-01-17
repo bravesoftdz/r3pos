@@ -259,7 +259,7 @@ begin
     SaleCnd:=SaleCnd+' and SALES_DATE>='+FormatDatetime('YYYYMMDD',P1_D1.Date)+' and SALES_DATE<='+FormatDatetime('YYYYMMDD',P1_D2.Date)+' ';
   //部门条件
   if fndP1_DEPT_ID.AsString<>'' then
-    SaleCnd:=SaleCnd+' and DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
+    SaleCnd:=SaleCnd+ShopGlobal.GetDeptID('DEPT_ID',fndP1_DEPT_ID.AsString);
   //门店条件:
   if fndP1_SHOP_ID.AsString<>'' then
     SaleCnd:=SaleCnd+' and SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
@@ -679,7 +679,7 @@ begin
     SaleCnd:=SaleCnd+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',P2_D1.Date)+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',P2_D2.Date)+' ';
   //部门条件
   if fndP2_DEPT_ID.AsString<>'' then
-    SaleCnd:=SaleCnd+' and A.DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
+    SaleCnd:=SaleCnd+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);  
   //门店所属行政区域|门店类型:
   if (fndP2_SHOP_VALUE.AsString<>'') then
   begin
@@ -802,7 +802,7 @@ begin
     SaleCnd:=SaleCnd+' and SAL.SALES_DATE>='+FormatDatetime('YYYYMMDD',P3_D1.Date)+' and SAL.SALES_DATE<='+FormatDatetime('YYYYMMDD',P3_D2.Date)+' ';
   //部门条件
   if fndP3_DEPT_ID.AsString<>'' then
-    SaleCnd:=SaleCnd+' and SAL.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+    SaleCnd:=SaleCnd+ShopGlobal.GetDeptID('SAL.DEPT_ID',fndP3_DEPT_ID.AsString);
   //门店所属行政区域|门店类型:
   if (fndP3_SHOP_VALUE.AsString<>'') then
   begin

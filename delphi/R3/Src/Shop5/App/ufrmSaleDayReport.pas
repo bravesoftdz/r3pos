@@ -583,9 +583,9 @@ begin
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
-  //2011.05.11 Add 部门名称:
-  if trim(fndP2_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
+  //2011.05.11 Add 部门名称: [2012.01.16修改:可以按树上下级查询]
+  if trim(fndP2_DEPT_ID.AsString)<>'' then   
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
@@ -783,9 +783,10 @@ begin
   end else
     GoodTab:='VIW_GOODSPRICE';
 
-  //2011.05.11 Add 部门名称:
-  if trim(fndP3_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+  //2011.05.11 Add 部门名称: [2012.01.16修改:可以按树上下级查询]
+  if trim(fndP3_DEPT_ID.AsString)<>'' then  
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP3_DEPT_ID.AsString);
+
   //2011.05.11 Add 商品名称:
   if trim(fndP3_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP3_GODS_ID.AsString+''' ';
@@ -920,11 +921,11 @@ begin
     GoodTab:='VIW_GOODSPRICE';
    end;
 
-  //2011.05.11 Add 部门名称:
+  //2011.05.11 Add 部门名称: [2012.01.16修改:可以按树上下级查询]
   if trim(fndP4_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP4_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
 
-  if RckMaxDate < vBegDate then      //--[全部查询视图]
+  if RckMaxDate < vBegDate then    //--[全部查询视图]
   begin
     SQLData:='(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,'+
               'AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
@@ -1095,9 +1096,9 @@ begin
     end;
   end;
 
-  //2011.05.11 Add 部门名称:
+  //2011.05.11 Add 部门名称: [2012.01.16修改:可以按树上下级查询]
   if trim(fndP5_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
 
   //商品指标:
   if (fndP5_STAT_ID.AsString <> '') and (fndP5_TYPE_ID.ItemIndex>=0) then
@@ -1260,9 +1261,9 @@ begin
   end else
     GoodTab:='VIW_GOODSPRICE';
 
-  //2011.05.11 Add 部门名称:
+  //2011.05.11 Add 部门名称: [2012.01.16修改:可以按树上下级查询]
   if trim(fndP6_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP6_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP6_DEPT_ID.AsString);
 
   if fndP6_SALEORDER.Checked then //销售单:1
     strWhere := strWhere+' and SALES_TYPE=1 '

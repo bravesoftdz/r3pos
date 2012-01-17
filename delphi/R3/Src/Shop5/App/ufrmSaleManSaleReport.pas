@@ -178,7 +178,6 @@ type
     procedure fndP1_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP1_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
-    procedure DBGridEh1DblClick(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
@@ -187,7 +186,9 @@ type
     procedure fndP2_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP2_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
+    procedure DBGridEh3DblClick(Sender: TObject);
     procedure DBGridEh2GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -197,7 +198,6 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh3DblClick(Sender: TObject);
     procedure fndP4_SORT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndP4_SORT_IDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
@@ -289,7 +289,8 @@ begin
   fndP2_SORT_ID.Text:=fndP1_SORT_ID.Text;   //分类
   P2_D1.Date:=P1_D1.Date;
   P2_D2.Date:=P1_D2.Date;
-  Copy_ParamsValue(fndP1_DEPT_ID,fndP2_DEPT_ID);  //部门
+  fndP2_DEPT_ID.KeyValue:=trim(adoReport1.FieldbyName('DEPT_ID').AsString);  //部门ID
+  fndP2_DEPT_ID.Text:=trim(adoReport1.FieldbyName('DEPT_NAME').AsString);    //部门名称
   Copy_ParamsValue('TYPE_ID',1,2);          //指标
   fndP2_UNIT_ID.ItemIndex:=fndP1_UNIT_ID.ItemIndex; //显示单位
 
@@ -397,12 +398,11 @@ begin
   Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID); //部门名称
   Copy_ParamsValue('SHOP_TYPE',2,3);   //管理群组
   fndP3_UNIT_ID.ItemIndex:=fndP2_UNIT_ID.ItemIndex; //显示单位
-
   fndP3_SHOP_ID.KeyValue:=fndP2_SHOP_ID.KeyValue;
   fndP3_SHOP_ID.Text:=fndP2_SHOP_ID.Text;
- 
-  fndP3_GUIDE_USER.KeyValue := fndP2_GUIDE_USER.KeyValue;
-  fndP3_GUIDE_USER.Text := fndP2_GUIDE_USER.Text;
+  //上级传入人员参数:
+  fndP3_GUIDE_USER.KeyValue:=trim(adoReport2.fieldByName('GUIDE_USER').AsString);
+  fndP3_GUIDE_USER.Text :=trim(adoReport2.fieldByName('USER_NAME').AsString);
   fndP3_SALES_TYPE.ItemIndex:=fndP2_SALES_TYPE.ItemIndex;
 
   RzPage.ActivePageIndex:=2;
@@ -811,7 +811,7 @@ begin
 
   //2011.05.11 Add 部门名称:
   if trim(fndP5_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP5_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
 
   //业务员
   if Trim(fndP5_GUIDE_USER.Text) <> '' then
@@ -941,7 +941,7 @@ begin
     
   //2011.05.11 Add 部门名称:
   if trim(fndP4_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP4_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
 
   //门店条件
 {  if (fndP4_SHOP_ID.AsString<>'') then
@@ -1129,7 +1129,7 @@ begin
 
   //2011.05.11 Add 部门名称:
   if trim(fndP3_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP3_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP3_DEPT_ID.AsString);
 
   //业务员
   if Trim(fndP3_GUIDE_USER.Text) <> '' then
@@ -1412,7 +1412,7 @@ begin
 
   //2011.05.11 Add 部门名称:
   if trim(fndP2_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP2_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
   //2011.05.11 Add 商品名称:
   if trim(fndP2_GODS_ID.AsString)<>'' then
     strWhere:=strWhere+' and A.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
@@ -1549,7 +1549,7 @@ begin
     strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
   //2011.05.11 Add 部门名称:
   if trim(fndP1_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
   //门店名称
   if Trim(fndP1_SHOP_ID.Text) <> '' then
     begin

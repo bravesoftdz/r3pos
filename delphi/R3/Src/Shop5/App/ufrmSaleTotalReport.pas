@@ -256,8 +256,8 @@ begin
   //部门条件
   if (fndP1_DEPT_ID.AsString<>'') then
   begin
-    strWhere:=strWhere+' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
-    StrCnd:=' and DEPT_ID='''+fndP1_DEPT_ID.AsString+''' ';
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
+    StrCnd:=ShopGlobal.GetDeptID('DEPT_ID',fndP1_DEPT_ID.AsString);
   end;
   //业务条件
   if (fndP1_GUIDE_USER.AsString<>'') then

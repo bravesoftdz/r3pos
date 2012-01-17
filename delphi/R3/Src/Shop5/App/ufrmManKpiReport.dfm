@@ -369,8 +369,6 @@ inherited frmManKpiReport: TfrmManKpiReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
-                      Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 70
@@ -803,8 +801,6 @@ inherited frmManKpiReport: TfrmManKpiReport
                     DisplayFormat = '#0.00%'
                     EditButtons = <>
                     FieldName = 'KPI_RATE'
-                    Footer.DisplayFormat = '#0.00%'
-                    Footer.ValueType = fvtSum
                     Footers = <>
                     Title.Caption = #23436#25104#29575
                     Width = 70
@@ -1238,8 +1234,6 @@ inherited frmManKpiReport: TfrmManKpiReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
-                      Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 70
@@ -1710,8 +1704,6 @@ inherited frmManKpiReport: TfrmManKpiReport
                       DisplayFormat = '#0.00%'
                       EditButtons = <>
                       FieldName = 'KPI_RATE'
-                      Footer.DisplayFormat = '#0.00%'
-                      Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#29575
                       Width = 66

@@ -1,16 +1,3 @@
-{
-说明:
-   (1)报表中有关系计算，SQLITE两数相除: 先乘以 *1.00 转化浮点数，DB2有关Sum字段，
-      除数和被除数均要转成: cast(参数值 as decimal(18,3))
-   (2)2011年3月27日晚确定关于小数的点位数控制:
-      数量用:   #0.###
-      单价用:   #0.00#
-      金额用:   #0.00
-      毛利率用: #0.00%
-      折扣率用: #0%
-
-}                     
-
 
 unit uframeBaseReport;
 
@@ -25,7 +12,6 @@ uses
   DBGridEhImpExp,inifiles, jpeg, ZAbstractRODataset, ZAbstractDataset,
   ZDataset, zrComboBoxList, ZBase, cxCalendar,zrMonthEdit,cxButtonEdit,
   cxRadioGroup, Buttons;
-
 
 type                        
   TframeBaseReport = class(TframeToolForm)
@@ -155,6 +141,7 @@ type
     procedure AddReportTypeList(RptType: TcxComboBox);
     procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID, SORT_NAME: string; SumFields,CalcFields: Array of String); //分组报表
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure GridGetFooterParamsValue(Sender: TObject; var Text: String);  //设置汇总列计算
     procedure DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string); //点列标题排序
     function  GetRelation_ID(Relation_ID: string): string; //供应链排序
     function  GetGodsSTAT_ID(fndP_TYPE_ID: TcxComboBox): string;  //返回指标: CODE_ID
@@ -162,7 +149,9 @@ type
     //2011.09.21 Add 金额的格式方式:
     procedure SetGridColumnDisplayFormat(AryMnyFormat: Array of string);
     //2012.01.07 Add 取指标的数据
-    procedure DoCreateKPIDataSet(IDX_TYPE: string='');
+    procedure DoCreateKPIDataSet(IDX_TYPE_IDS: string='');
+    //计算GridFooter.Value:
+    procedure DoCalcGridFooterRate(SetGird: TDBGridEh; CalcCol: TColumnEh; FirCol,SecCol: string);
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -1869,7 +1858,7 @@ begin
   if DistCbx.Properties.Items.Count>0 then DistCbx.ItemIndex:=0;
 end;
 
-procedure TframeBaseReport.DoCreateKPIDataSet(IDX_TYPE: string);
+procedure TframeBaseReport.DoCreateKPIDataSet(IDX_TYPE_IDS: string);
 var
   Str: string;
 begin
@@ -1877,10 +1866,59 @@ begin
   if not PUB_KPI_ID.Active then
   begin
     Str:='select KPI_ID,KPI_NAME,IDX_TYPE from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID)+' ';
-    if trim(IDX_TYPE)<>'' then
-      Str:=Str+' and IDX_TYPE='''+IDX_TYPE+''' ';
+    if trim(IDX_TYPE_IDS)<>'' then
+    begin
+      if Pos(',',IDX_TYPE_IDS)>0 then
+        Str:=Str+' and IDX_TYPE='''+IDX_TYPE_IDS+''')'
+      else
+        Str:=Str+' and IDX_TYPE in ('''+StringReplace(IDX_TYPE_IDS,',',''',''',[rfReplaceAll])+''')';
+    end;
     PUB_KPI_ID.SQL.Text:=Str;
     Factor.Open(PUB_KPI_ID);
+  end;
+end;
+
+procedure TframeBaseReport.DoCalcGridFooterRate(SetGird: TDBGridEh; CalcCol: TColumnEh; FirCol,SecCol: string);
+var
+  i: integer;
+  FirstValue,SecondValue: real;
+  FirstCol,SecondCol: TColumnEh;
+begin
+  FirstValue:=0;
+  SecondValue:=0;
+  FirstCol:=FindColumn(SetGird,FirCol);
+  SecondCol:=FindColumn(SetGird,SecCol);
+  if (FirstCol<>nil) and (SecondCol<>nil) then
+  begin
+    if (FirstCol.Footer.ValueType in [fvtSum,fvtCount]) and (SecondCol.Footer.ValueType in [fvtSum,fvtCount]) then
+    begin
+      FirstValue:=StrToFloatDef(FirstCol.Footer.Value,0.0);
+      SecondValue:=StrToFloatDef(SecondCol.Footer.Value,0.0);
+      if SecondValue<>0 then
+        CalcCol.Footer.Value:=FloatToStr((FirstValue*100)/SecondValue)
+      else
+        CalcCol.Footer.Value:='0';
+    end;
+  end;
+end;
+
+procedure TframeBaseReport.GridGetFooterParamsValue(Sender: TObject; var Text: String);
+var
+  Idx: integer;
+  CurValue: Real;
+  DataSet: TDataSet;
+begin
+  DataSet:=TDBGridEh(Sender).DataSource.DataSet;
+  if (DataSet<>nil) and (DataSet.Active) and (DataSet.RecordCount>1) then
+  begin
+    Idx:=Pos('%',Text);
+    if Idx>0 then
+    begin
+      Text:=Copy(Text,1,Idx-1);
+      CurValue:=StrToFloatDef(Text,0.00)/(DataSet.RecordCount*1.00);
+      CurValue:=Round(CurValue*100)/100;
+      Text:=FloatToStr(CurValue)+'%';
+    end;
   end;
 end;
 

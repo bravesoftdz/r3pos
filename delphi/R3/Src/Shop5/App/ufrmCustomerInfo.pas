@@ -341,24 +341,19 @@ begin
           Raise Exception.Create('此会员号已经存在,不能重复!');
       end;
   end;
-  tmp1:=TZQuery.Create(nil);
-  try
-    tmp1.Close;
-    case Factor.iDbType of
-      0:tmp1.SQL.Text:='select top 1 PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc ';
-      1:tmp1.SQL.Text:='select * from (select PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc) where ROWNUM<2 ';
-      4:tmp1.SQL.Text := 'select PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc fetch first 600 rows only';
-      5:tmp1.SQL.Text:='select PRICE_ID from PUB_PRICEGRADE where COMM not in (''12'',''02'') and INTEGRAL<='+FloatToStr(StrToFloatDef(edtACCU_INTEGRAL.Text,0))+' and INTEGRAL>=0 order by INTEGRAL desc limit 1';
-    end;
-    Factor.Open(tmp1);
-    if (not tmp1.IsEmpty) and (cmbPRICE_ID.AsString<>tmp1.FieldByName('PRICE_ID').AsString) then
-    begin
-      if MessageBox(Handle,'累计积分与等级标准不符，是否继续保存？',pchar(Application.Title),MB_YESNO+MB_DEFBUTTON1+MB_ICONINFORMATION) <>6 then
-        Exit;
-    end;
-  finally
-    tmp1.Free;
+  tmp1:=Global.GetZQueryFromName('PUB_PRICEGRADE');
+
+  if tmp1.Locate('PRICE_ID',cmbPRICE_ID.AsString,[]) then
+  begin
+     if tmp1.FieldByName('INTEGRAL').AsInteger > StrToIntDef(edtACCU_INTEGRAL.Text,0) then
+     begin
+        j := MessageBox(Handle,'累计积分与等级标准不符,是否继续保存？',pchar(Application.Title),MB_YESNO+MB_DEFBUTTON1+MB_ICONINFORMATION);
+        if j <>6 then
+          Exit;
+     end;
   end;
+
+
   if cmbCUST_NAME.Text<>cdsTable.FieldByName('CUST_NAME').AsString then
   begin
     if dbState=dsEdit then
@@ -562,7 +557,7 @@ begin
   if dbState=dsBrowse then exit;
   if Application.Terminated then Exit;
   try
-   if not((dbState = dsInsert) and (trim(cmbCUST_NAME.Text)='')) then
+   if (dbState <> dsInsert) and (trim(cmbCUST_NAME.Text)<>'') then
    begin
     //WriteTo(AObj);
     if not IsEdit(Aobj,cdsTable) then Exit;

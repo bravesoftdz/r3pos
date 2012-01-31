@@ -241,8 +241,8 @@ begin
   lock := false;
   SelectSQL.Text := 'select g.*,h.CHANGE_TYPE as CHANGE_TYPE from ('+
                'select b.GODS_NAME,b.GODS_CODE,j.SHOP_ID,j.TENANT_ID,j.CHANGE_ID,j.SEQNO,j.GODS_ID,j.PROPERTY_01,j.PROPERTY_02,j.BATCH_NO,j.LOCUS_NO,j.BOM_ID,j.UNIT_ID,j.AMOUNT,j.APRICE,j.AMONEY,j.CALC_MONEY,j.COST_PRICE,j.IS_PRESENT,j.CALC_AMOUNT,'+
-               'j.COST_PRICE/case when J.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when J.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as COST_APRICE,'+
-               'round(j.COST_PRICE*j.CALC_AMOUNT,2)/case when J.UNIT_ID=B.SMALL_UNITS then B.SMALLTO_CALC when J.UNIT_ID=B.BIG_UNITS then B.BIGTO_CALC else 1 end as COST_MONEY,'+
+               'case when j.AMOUNT<>0 then round(j.COST_PRICE*j.CALC_AMOUNT,2)/j.AMOUNT else 0 end as COST_APRICE,'+
+               'round(j.COST_PRICE*j.CALC_AMOUNT,2) as COST_MONEY,'+
                'j.REMARK from STO_CHANGEDATA j inner join VIW_GOODSINFO b on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID where j.TENANT_ID=:TENANT_ID and j.CHANGE_ID=:CHANGE_ID ) g '+
                'left outer join STO_CHANGEORDER h on g.TENANT_ID=h.TENANT_ID and g.CHANGE_ID=h.CHANGE_ID order by SEQNO';
   IsSQLUpdate := True;

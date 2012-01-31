@@ -1,0 +1,28 @@
+; MMC.def : 声明 DLL 的模块参数。
+
+LIBRARY      "MMC"
+
+EXPORTS
+    ; 此处可以是显式导出
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE
+	
+	LC_Create	@1
+	LC_Close	@2
+	LC_Send			@3
+	LC_Send2		@4
+	LC_Send3		@5
+	LC_MethodRegister		@6
+	LC_NSend	@7
+	
+	SetDataCallBack
+	SetEventCallBack
+	Send
+	Connect
+	GetSockStatus
+	SetSockClose
+	SendSync
+	GetDescriptionFromErrorID
+	LoadLC

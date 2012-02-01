@@ -51,6 +51,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure K2PropertiesChange(Sender: TObject);
+    procedure K1PropertiesChange(Sender: TObject);
   private
     { Private declarations }
     function  CheckCanExport: boolean; override;
@@ -459,6 +461,20 @@ begin
       DBGridEh1.canvas.FillRect(ARect);
       DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+end;
+
+procedure TfrmMktPlanOrderList.K2PropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if (K2.Value < 2011) or (K2.Value > 2111) then
+     Raise Exception.Create('输入年度范围"2011-2111"');
+end;
+
+procedure TfrmMktPlanOrderList.K1PropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if (K1.Value < 2011) or (K1.Value > 2111) then
+     Raise Exception.Create('输入年度范围"2011-2111"');
 end;
 
 end.

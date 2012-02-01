@@ -797,6 +797,9 @@ end;
 procedure TfrmClientKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
   if (Column.FieldName='PLAN_AMT') or (Column.FieldName='KPI_AMT') or (Column.FieldName='KPI_RATE') then
@@ -805,9 +808,16 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 
@@ -815,6 +825,9 @@ procedure TfrmClientKpiReport.DBGridEh2GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   inherited;
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
@@ -824,15 +837,25 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 
 procedure TfrmClientKpiReport.DBGridEh1GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
   var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;  
 begin
   inherited;
   if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
@@ -842,9 +865,16 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText 
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 
@@ -933,6 +963,9 @@ procedure TfrmClientKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   inherited;
   if Column.FieldName = 'KPI_NAME' then Text := '合计:'+Text+'笔';
@@ -942,9 +975,16 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 
@@ -952,11 +992,27 @@ procedure TfrmClientKpiReport.DBGridEh5GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
   var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 var
-  ColName: string;
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
-  if Column.FieldName = 'KPI_RATE' then
-    GridGetFooterParamsValue(Sender,Text);  
+  if (Column.FieldName='PLAN_AMT') or (Column.FieldName='KPI_AMT') or (Column.FieldName='KPI_RATE') then
+  begin
+    CalcFooter.GridName:=TDBGridEh(Sender).Name;
+    if Column.FieldName = 'PLAN_AMT' then
+      CalcFooter.FirValue:=Text
+    else if Column.FieldName = 'KPI_AMT' then
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
+  end;
 end;
 
 function TfrmClientKpiReport.GetDataRight: string;

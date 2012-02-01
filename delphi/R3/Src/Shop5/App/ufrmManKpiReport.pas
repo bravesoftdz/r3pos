@@ -118,6 +118,7 @@ type
     procedure DBGridEh4DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
+    FLog: TStringList;
     procedure AddYearCBxItemsList(SetCbx: TcxComboBox);
     //按部门考核汇总表
     function GetDeptSQL(chk:boolean=true): string;   //1111
@@ -166,7 +167,7 @@ begin
   //2011.09.21 Add 千分位；
   SetGridColumnDisplayFormat(['DBGridEh1.JT_MNY','DBGridEh2.JT_MNY','DBGridEh3.JT_MNY','DBGridEh4.JT_MNY','DBGridEh5.JT_MNY']);
   //创建计算对象：
-  CalcFooter:=TCalcFooter.Create;  
+  CalcFooter:=TCalcFooter.Create;
 end;
 
 function TfrmManKpiReport.GetDeptSQL(chk: boolean): string;
@@ -562,6 +563,9 @@ procedure TfrmManKpiReport.DBGridEh1GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   inherited;
   if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
@@ -571,16 +575,25 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 
 procedure TfrmManKpiReport.DBGridEh2GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   inherited;
   if Column.FieldName = 'KPI_NAME' then Text := '合计:'+Text+'笔';
@@ -590,9 +603,16 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 
@@ -600,6 +620,9 @@ procedure TfrmManKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   inherited;
   if Column.FieldName = 'GUIDE_NAME' then Text := '合计:'+Text+'笔';
@@ -609,16 +632,25 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 
 procedure TfrmManKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
+var
+  CalcText: string;
+  SetCol: TColumnEh;
 begin
   inherited;
   if Column.FieldName = 'GUIDE_NAME' then Text := '合计:'+Text+'笔';
@@ -628,9 +660,16 @@ begin
     if Column.FieldName = 'PLAN_AMT' then
       CalcFooter.FirValue:=Text
     else if Column.FieldName = 'KPI_AMT' then
-      CalcFooter.SecValue:=Text
-    else if Column.FieldName = 'KPI_RATE' then
-      Text:=CalcFooter.CalcValue(1);
+      CalcFooter.SecValue:=Text;
+    CalcText:=CalcFooter.CalcValue(1);
+    if Column.FieldName = 'KPI_RATE' then
+      Text:=CalcText
+    else
+    begin
+      SetCol:=FindColumn(TDBGridEh(Sender),'KPI_RATE');
+      if (SetCol<>nil) and (SetCol.Footer.Value<>CalcText) then
+        SetCol.Footer.Value:=CalcText;
+    end;
   end;
 end;
 

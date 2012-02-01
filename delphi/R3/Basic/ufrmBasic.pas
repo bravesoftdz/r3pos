@@ -316,6 +316,7 @@ begin
       try
       if Components[i] is TcxCombobox then
          begin
+           TcxCombobox(Components[i]).Properties.OnChange := nil;
            ClearItems(TcxCombobox(Components[i]).Properties.Items);
          end;
 

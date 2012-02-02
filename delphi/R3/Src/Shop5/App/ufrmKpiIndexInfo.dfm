@@ -2,7 +2,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   Left = 467
   Top = 169
   Caption = #32771#26680#25351#26631
-  ClientHeight = 368
+  ClientHeight = 397
   ClientWidth = 529
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,9 +11,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 529
-    Height = 368
+    Height = 397
     BorderColor = clWhite
-    Caption = '='
     Color = clWhite
     object RzLabel1: TRzLabel [0]
       Left = 235
@@ -197,7 +196,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     end
     object RzLabel9: TRzLabel [12]
       Left = 468
-      Top = 16
+      Top = 65
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -212,7 +211,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     end
     object RzLabel10: TRzLabel [13]
       Left = 240
-      Top = 17
+      Top = 66
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -225,26 +224,43 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Font.Style = []
       ParentFont = False
     end
+    object RzLabel11: TRzLabel [14]
+      Left = 240
+      Top = 17
+      Width = 100
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = #25340#38899#30721
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
     inherited RzPage: TRzPageControl
-      Top = 115
+      Top = 140
       Width = 519
-      Height = 208
+      Height = 212
+      ActivePage = TabSheet2
       Align = alBottom
-      TabOrder = 8
+      TabIndex = 1
+      TabOrder = 9
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #25351#26631#26631#20934
         inherited RzPanel2: TRzPanel
           Width = 515
-          Height = 181
+          Height = 185
           BorderColor = clWhite
           Color = clWhite
           object Notebook1: TNotebook
             Left = 5
             Top = 5
             Width = 505
-            Height = 171
+            Height = 175
             Align = alClient
             PageIndex = 1
             TabOrder = 0
@@ -268,7 +284,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 Left = 0
                 Top = 41
                 Width = 505
-                Height = 130
+                Height = 134
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_KpiOption
@@ -488,7 +504,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           Left = 0
           Top = 0
           Width = 515
-          Height = 181
+          Height = 185
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -499,7 +515,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             Left = 5
             Top = 5
             Width = 505
-            Height = 171
+            Height = 175
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = Ds_KpiGoods
@@ -592,10 +608,10 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
     end
     inherited btPanel: TRzPanel
-      Top = 323
+      Top = 352
       Width = 519
       Color = clWhite
-      TabOrder = 9
+      TabOrder = 10
       object Btn_Save: TRzBitBtn
         Left = 357
         Top = 11
@@ -657,6 +673,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Width = 121
       Height = 20
       Properties.MaxLength = 20
+      Properties.OnChange = edtKPI_NAMEPropertiesChange
       TabOrder = 0
     end
     object edtKPI_TYPE: TcxComboBox
@@ -703,16 +720,24 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       TabOrder = 7
     end
     object edtKPI_OPTN: TcxCheckBox
-      Left = 344
-      Top = 61
-      Width = 121
+      Left = 110
+      Top = 109
+      Width = 126
       Height = 21
       Properties.DisplayUnchecked = 'False'
       Properties.OnChange = edtKPI_OPTNPropertiesChange
       Properties.Caption = #26159#21542#21551#29992#38454#26799
-      TabOrder = 5
+      TabOrder = 8
     end
     object edtUNIT_NAME: TcxTextEdit
+      Left = 346
+      Top = 61
+      Width = 121
+      Height = 20
+      Properties.MaxLength = 20
+      TabOrder = 5
+    end
+    object edtKPI_SPELL: TcxTextEdit
       Left = 346
       Top = 12
       Width = 121

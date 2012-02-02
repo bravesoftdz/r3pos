@@ -40,6 +40,8 @@ type
     fndCLIENT_ID: TzrComboBoxList;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
     procedure actExitExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -57,6 +59,7 @@ type
     procedure CdsKpiResultAfterScroll(DataSet: TDataSet);
     procedure GridDrawFooterCell(Sender: TObject; DataCol, Row: Integer;
       Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure N1Click(Sender: TObject);
   private
     { Private declarations }
     MaxId:String;
@@ -76,7 +79,7 @@ type
 
 implementation
 uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic,uFnUtil,ObjCommon,uXDictFactory;
+  ufrmBasic,uFnUtil,ObjCommon,uXDictFactory,ufrmKpiIndexInfo;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult3.actExitExecute(Sender: TObject);
@@ -89,7 +92,7 @@ procedure TfrmMktKpiResult3.FormCreate(Sender: TObject);
 begin
   inherited;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+
                         IntToStr(Global.TENANT_ID)+' and IDX_TYPE = ''3'' ';
   Factor.Open(cdsKPI_ID);
   fndKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
@@ -475,6 +478,23 @@ begin
        Grid.Canvas.Font.Style := [fsBold];
        Grid.Canvas.TextRect(R,(Rect.Right) div 2,Rect.Top+2,s);
      end;
+end;
+
+procedure TfrmMktKpiResult3.N1Click(Sender: TObject);
+begin
+  inherited;
+  if not CdsKpiResult.Active then Exit;
+  if CdsKpiResult.IsEmpty then Exit;
+  //if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查看指标的权限,请和管理员联系.');
+  with TfrmKpiIndexInfo.Create(self) do
+    begin
+      try
+        Open(CdsKpiResult.FieldByName('KPI_ID').AsString);
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

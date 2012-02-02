@@ -73,7 +73,7 @@ procedure TfrmKpiIndex.actNewExecute(Sender: TObject);
 begin
   inherited;
   if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
-  //if not ShopGlobal.GetChkRight('100002143',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002143',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   with TfrmKpiIndexInfo.Create(self) do
     begin
       try
@@ -137,7 +137,7 @@ begin
   inherited;
   if (not Cds_KpiIndex.Active) or (Cds_KpiIndex.IsEmpty) then exit;
   if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线操作!');
-  //if not ShopGlobal.GetChkRight('100002143',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002143',3) then Raise Exception.Create('你没有修改'+Caption+'的权限,请和管理员联系.');
   with TfrmKpiIndexInfo.Create(self) do
   begin
     try
@@ -171,21 +171,23 @@ begin
   inherited;
   //if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if Trim(edtKey.Text) <> '' then
-     StrSql := ' and KPI_NAME like ''%'+Trim(edtKey.Text)+'%''';
+     StrSql := ' and A.KPI_NAME like ''%'+Trim(edtKey.Text)+'%''';
   if fndIDX_TYPE.ItemIndex <> -1 then
-     StrSql := StrSql + ' and IDX_TYPE='''+TRecord_(fndIDX_TYPE.Properties.Items.Objects[fndIDX_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
+     StrSql := StrSql + ' and A.IDX_TYPE='''+TRecord_(fndIDX_TYPE.Properties.Items.Objects[fndIDX_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   if fndKPI_DATA.ItemIndex <> -1 then
-     StrSql := StrSql + ' and KPI_DATA='''+TRecord_(fndKPI_DATA.Properties.Items.Objects[fndKPI_DATA.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
+     StrSql := StrSql + ' and A.KPI_DATA='''+TRecord_(fndKPI_DATA.Properties.Items.Objects[fndKPI_DATA.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   if fndKPI_TYPE.ItemIndex <> -1 then
-     StrSql := StrSql + ' and KPI_TYPE='''+TRecord_(fndKPI_TYPE.Properties.Items.Objects[fndKPI_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
+     StrSql := StrSql + ' and A.KPI_TYPE='''+TRecord_(fndKPI_TYPE.Properties.Items.Objects[fndKPI_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   if fndKPI_CALC.ItemIndex <> -1 then
-     StrSql := StrSql + ' and KPI_CALC='''+TRecord_(fndKPI_CALC.Properties.Items.Objects[fndKPI_CALC.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
+     StrSql := StrSql + ' and A.KPI_CALC='''+TRecord_(fndKPI_CALC.Properties.Items.Objects[fndKPI_CALC.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   Cds_KpiIndex.Close;
   Cds_KpiIndex.SQL.Text :=
   ParseSQL(Factor.iDbType,
-  'select TENANT_ID,KPI_ID,KPI_NAME,IDX_TYPE,KPI_TYPE,KPI_DATA,KPI_CALC,KPI_AGIO,KPI_OPTN,REMARK from MKT_KPI_INDEX '+
-  ' where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+StrSql
-  );
+  'select A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,'+
+  'A.KPI_AGIO,A.KPI_OPTN,A.REMARK,count(B.GODS_ID) as GOODS_SUM from MKT_KPI_INDEX A,MKT_KPI_GOODS B '+
+  ' where A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+StrSql+
+  ' group by A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,'+
+  ' A.KPI_AGIO,A.KPI_OPTN,A.REMARK ');
   Factor.Open(Cds_KpiIndex);
 end;
 

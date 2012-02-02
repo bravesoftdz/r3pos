@@ -71,6 +71,8 @@ type
     RzLabel9: TRzLabel;
     RzLabel10: TRzLabel;
     edtUNIT_NAME: TcxTextEdit;
+    RzLabel11: TRzLabel;
+    edtKPI_SPELL: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -120,6 +122,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns3EditButtonClick(Sender: TObject;
       var Handled: Boolean);
+    procedure edtKPI_NAMEPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     Saved,DisplayPer:Boolean;
@@ -312,7 +315,7 @@ begin
       Temp.SQL.Text := 'select KPI_NAME from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_NAME='+QuotedStr(Trim(edtKPI_NAME.Text));
       Factor.Open(Temp);
       if Temp.FieldByName('KPI_NAME').AsString <> '' then
-         raise Exception.Create('该指标名称已经存在，不能重复！');
+         raise Exception.Create('该指标名称已经存在,不能重复!');
     finally
       Temp.Free;
     end;
@@ -589,7 +592,6 @@ procedure TfrmKpiIndexInfo.FormDestroy(Sender: TObject);
 begin
   inherited;
   Aobj.Free;
-  fndUNIT_ID.Properties.Items.Clear;
   Freeform(Self);
 end;
 
@@ -1449,7 +1451,15 @@ end;
 destructor TfrmKpiIndexInfo.Destroy;
 begin
   edtKPI_LV.Properties.Items.Clear;
+  fndUNIT_ID.Properties.Items.Clear;
   inherited;
+end;
+
+procedure TfrmKpiIndexInfo.edtKPI_NAMEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  If dbState <> dsBrowse Then
+     edtKPI_SPELL.Text := FnString.GetWordSpell(edtKPI_NAME.Text);
 end;
 
 end.

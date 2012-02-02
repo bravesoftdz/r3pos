@@ -52,6 +52,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+                PopupMenu = PopupMenu1
                 RowHeight = 23
                 SumList.Active = True
                 TabOrder = 0
@@ -271,7 +272,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 TabOrder = 0
                 InGrid = False
                 KeyValue = Null
-                FilterFields = 'KPI_NAME'
+                FilterFields = 'KPI_NAME;KPI_SPELL'
                 KeyField = 'KPI_ID'
                 ListField = 'KPI_NAME'
                 Columns = <
@@ -281,6 +282,13 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Footers = <>
                     Title.Caption = #25351#26631#21517#31216
                     Width = 120
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'KPI_SPELL'
+                    Footers = <>
+                    Title.Caption = #25340#38899#30721
+                    Width = 30
                   end>
                 DataSet = cdsKPI_ID
                 DropWidth = 220
@@ -701,5 +709,13 @@ inherited frmMktKpiResult: TfrmMktKpiResult
     Units = MM
     Left = 190
     Top = 224
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 222
+    Top = 224
+    object N1: TMenuItem
+      Caption = #23646#24615#25351#26631
+      OnClick = N1Click
+    end
   end
 end

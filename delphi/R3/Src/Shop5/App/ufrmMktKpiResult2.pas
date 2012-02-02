@@ -43,6 +43,8 @@ type
     fndCLIENT_ID: TzrComboBoxList;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
     procedure actExitExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -62,6 +64,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure GridDrawFooterCell(Sender: TObject; DataCol, Row: Integer;
       Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure N1Click(Sender: TObject);
   private
     { Private declarations }
     MaxId:String;
@@ -81,7 +84,7 @@ type
 
 implementation
 uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic,uFnUtil,ObjCommon,uShopUtil,uXDictFactory;
+  ufrmBasic,uFnUtil,ObjCommon,uShopUtil,uXDictFactory,ufrmKpiIndexInfo;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult2.actExitExecute(Sender: TObject);
@@ -94,7 +97,7 @@ procedure TfrmMktKpiResult2.FormCreate(Sender: TObject);
 begin
   inherited;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+
                         IntToStr(Global.TENANT_ID)+' and IDX_TYPE = ''2'' ';
   Factor.Open(cdsKPI_ID);
   fndKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
@@ -305,7 +308,7 @@ begin
      w := w +' and A.PLAN_ID>'''+id+'''';
           
   Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
-            'A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,B.BUDG_MNY,'+
+            'A.KPI_ID,A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,B.BUDG_MNY,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.PLAN_AMT else A.PLAN_MNY end as PLAN_AMT,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
             'A.KPI_MNY,A.WDW_MNY,A.KPI_MNY-A.WDW_MNY as BALANCE_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT '+
@@ -580,6 +583,23 @@ begin
        Grid.Canvas.Font.Style := [fsBold];
        Grid.Canvas.TextRect(R,(Rect.Right) div 2,Rect.Top+2,s);
      end;
+end;
+
+procedure TfrmMktKpiResult2.N1Click(Sender: TObject);
+begin
+  inherited;
+  if not CdsKpiResult.Active then Exit;
+  if CdsKpiResult.IsEmpty then Exit;
+  //if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查看指标的权限,请和管理员联系.');
+  with TfrmKpiIndexInfo.Create(self) do
+    begin
+      try
+        Open(CdsKpiResult.FieldByName('KPI_ID').AsString);
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

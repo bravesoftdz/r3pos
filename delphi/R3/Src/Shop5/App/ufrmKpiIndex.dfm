@@ -266,6 +266,13 @@ inherited frmKpiIndex: TfrmKpiIndex
                   end
                   item
                     EditButtons = <>
+                    FieldName = 'UNIT_NAME'
+                    Footers = <>
+                    Title.Caption = #21333#20301
+                    Width = 30
+                  end
+                  item
+                    EditButtons = <>
                     FieldName = 'IDX_TYPE'
                     Footers = <>
                     Title.Caption = #25351#26631#31867#22411
@@ -294,10 +301,10 @@ inherited frmKpiIndex: TfrmKpiIndex
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'KPI_AGIO'
+                    FieldName = 'GOODS_SUM'
                     Footers = <>
-                    Title.Caption = #26631#20934#31995#25968
-                    Width = 90
+                    Title.Caption = #21830#21697#25968
+                    Width = 50
                   end
                   item
                     EditButtons = <>

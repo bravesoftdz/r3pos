@@ -54,6 +54,7 @@ type
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure N1Click(Sender: TObject);
+    procedure edtPLAN_USERPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -634,6 +635,12 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmMktTaskOrder.edtPLAN_USERPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if trim(edtPLAN_USER.Text)<>'' then TabSheet.Caption := edtPLAN_USER.Text;
 end;
 
 end.

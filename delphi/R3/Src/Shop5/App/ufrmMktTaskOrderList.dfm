@@ -186,17 +186,22 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 Top = 0
                 Width = 80
                 Height = 20
-                Properties.MinValue = 2000.000000000000000000
+                Properties.MaxValue = 2111.000000000000000000
+                Properties.MinValue = 2011.000000000000000000
+                Properties.OnChange = K1PropertiesChange
                 TabOrder = 4
-                Value = 2000
+                Value = 2011
               end
               object K2: TcxSpinEdit
                 Left = 193
                 Top = 0
                 Width = 80
                 Height = 20
-                Properties.MinValue = 2000.000000000000000000
+                Properties.MaxValue = 2111.000000000000000000
+                Properties.MinValue = 2011.000000000000000000
+                Properties.OnChange = K2PropertiesChange
                 TabOrder = 5
+                Value = 2011
               end
               object fndSHOP_ID: TzrComboBoxList
                 Tag = -1

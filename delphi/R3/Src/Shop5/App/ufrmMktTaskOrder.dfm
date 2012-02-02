@@ -145,6 +145,7 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
             Default = True
           end>
         Properties.ReadOnly = False
+        Properties.OnChange = edtPLAN_USERPropertiesChange
         TabOrder = 0
         InGrid = False
         KeyValue = Null

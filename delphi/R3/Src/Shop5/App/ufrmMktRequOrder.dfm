@@ -450,7 +450,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       OnKeyPress = edtKPI_IDKeyPress
       InGrid = False
       KeyValue = Null
-      FilterFields = 'KPI_NAME'
+      FilterFields = 'KPI_NAME;KPI_SPELL'
       KeyField = 'KPI_ID'
       ListField = 'KPI_NAME'
       Columns = <
@@ -459,6 +459,13 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           FieldName = 'KPI_NAME'
           Footers = <>
           Title.Caption = #25351#26631#21517#31216
+        end
+        item
+          EditButtons = <>
+          FieldName = 'KPI_SPELL'
+          Footers = <>
+          Title.Caption = #25340#38899#30721
+          Width = 30
         end>
       DataSet = cdsKPI_ID
       DropWidth = 290
@@ -537,6 +544,10 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     object DeleteRecord: TMenuItem
       Caption = #21024#38500#25351#26631
       OnClick = DeleteRecordClick
+    end
+    object N1: TMenuItem
+      Caption = #25351#26631#23646#24615
+      OnClick = N1Click
     end
   end
 end

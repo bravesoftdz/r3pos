@@ -400,6 +400,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       Height = 302
       FrozenCols = 1
       PopupMenu = PopupMenu1
+      OnDblClick = DBGridEh1DblClick
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
       Columns = <
@@ -481,7 +482,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       OnKeyPress = edtKPI_IDKeyPress
       InGrid = True
       KeyValue = Null
-      FilterFields = 'KPI_NAME'
+      FilterFields = 'KPI_NAME;KPI_SPELL'
       KeyField = 'KPI_ID'
       ListField = 'KPI_NAME'
       Columns = <
@@ -491,6 +492,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           Footers = <>
           Title.Caption = #25351#26631#21517#31216
           Width = 60
+        end
+        item
+          EditButtons = <>
+          FieldName = 'KPI_SPELL'
+          Footers = <>
+          Title.Caption = #25340#38899#30721
+          Width = 30
         end>
       DataSet = cdsKPI_ID
       DropWidth = 157
@@ -531,6 +539,10 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     object Delete: TMenuItem
       Caption = #21024#38500#25351#26631
       OnClick = DeleteClick
+    end
+    object N1: TMenuItem
+      Caption = #25351#26631#23646#24615
+      OnClick = N1Click
     end
   end
   object cdsKPI_ID: TZQuery

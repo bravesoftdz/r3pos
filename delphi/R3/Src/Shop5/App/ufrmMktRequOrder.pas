@@ -37,6 +37,7 @@ type
     edtREQU_MNY: TcxTextEdit;
     PopupMenu1: TPopupMenu;
     DeleteRecord: TMenuItem;
+    N1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -57,6 +58,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure edtREQU_TYPEPropertiesChange(Sender: TObject);
+    procedure N1Click(Sender: TObject);
   private
     { Private declarations }
     AddRow:Boolean;
@@ -79,7 +81,8 @@ type
   end;
 
 implementation
-uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uDsUtil, ufrmBasic, uXDictFactory;
+uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uDsUtil, ufrmBasic, uXDictFactory,
+     ufrmKpiIndexInfo;
 {$R *.dfm}
 
 { TfrmMktRequOrder }
@@ -401,7 +404,7 @@ begin
   AddCbxPickList(edtREQU_TYPE);
   AddRow := True;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where IDX_TYPE in (''1'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where IDX_TYPE in (''1'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
 
   //' select A.KPI_ID,A.KPI_NAME,B.CLIENT_ID from MKT_KPI_INDEX A,MKT_KPI_RESULT B where '+
   //' A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and B.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
@@ -664,6 +667,23 @@ begin
   cdsDetail.First;
   while not cdsDetail.Eof do cdsDetail.Delete;
   InitRecord;
+end;
+
+procedure TfrmMktRequOrder.N1Click(Sender: TObject);
+begin
+  inherited;
+  if not cdsDetail.Active then Exit;
+  if cdsDetail.IsEmpty then Exit;
+  //if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查看指标的权限,请和管理员联系.');
+  with TfrmKpiIndexInfo.Create(self) do
+    begin
+      try
+        Open(cdsDetail.FieldByName('KPI_ID').AsString);
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
 end;
 
 end.

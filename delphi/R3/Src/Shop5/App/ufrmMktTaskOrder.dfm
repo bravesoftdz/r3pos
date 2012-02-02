@@ -371,7 +371,7 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
       OnKeyPress = edtKPI_IDKeyPress
       InGrid = True
       KeyValue = Null
-      FilterFields = 'KPI_NAME'
+      FilterFields = 'KPI_NAME;KPI_SPELL'
       KeyField = 'KPI_ID'
       ListField = 'KPI_NAME'
       Columns = <
@@ -381,6 +381,13 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
           Footers = <>
           Title.Caption = #24080#25143#21517#31216
           Width = 60
+        end
+        item
+          EditButtons = <>
+          FieldName = 'KPI_SPELL'
+          Footers = <>
+          Title.Caption = #25340#38899#30721
+          Width = 30
         end>
       DataSet = cdsKPI_ID
       DropWidth = 157
@@ -421,6 +428,10 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
     object Delete: TMenuItem
       Caption = #21024#38500#25351#26631
       OnClick = DeleteClick
+    end
+    object N1: TMenuItem
+      Caption = #25351#26631#23646#24615
+      OnClick = N1Click
     end
   end
   object cdsKPI_ID: TZQuery

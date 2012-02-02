@@ -69,7 +69,7 @@ type
 
 implementation
 uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPlanOrder,
-  uShopGlobal;
+     uShopGlobal;
 {$R *.dfm}
 
 procedure TfrmMktPlanOrderList.actNewExecute(Sender: TObject);

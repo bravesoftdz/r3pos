@@ -220,7 +220,7 @@ begin
         ParseSQL(AGlobal.iDbType ,
         'select jd.*,d.SHOP_NAME as SHOP_ID_TEXT from ('+
         'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
-        'select 1 as A,A.FROM_ID,A.TENANT_ID,A.SHOP_ID,C.BOND_TYPE,B.SHOP_ID as D_SHOP_ID,B.DEPT_ID,A.BOND_ID,A.SEQNO,A.FROM_ID,'+
+        'select 1 as A,A.FROM_ID,A.TENANT_ID,A.SHOP_ID,C.BOND_TYPE,B.SHOP_ID as D_SHOP_ID,B.DEPT_ID,A.BOND_ID,A.SEQNO,'+
         'B.BOND_MNY as ACCT_MNY,(isnull(B.BOND_MNY,0)-isnull(B.BOND_RET,0))+A.BOND_MNY as RECK_MNY,A.BOND_MNY,(isnull(B.BOND_MNY,0)-isnull(B.BOND_RET,0)) as BALA_MNY,'+
         'A.REMARK,b.PLAN_DATE as ABLE_DATE '+
         'from MKT_BONDDATA A,MKT_PLANORDER B,MKT_BONDORDER C '+
@@ -234,7 +234,7 @@ begin
         ParseSQL(AGlobal.iDbType ,
         'select jd.*,d.SHOP_NAME as SHOP_ID_TEXT from ('+
         'select jc.*,c.DEPT_NAME as DEPT_ID_TEXT from ('+
-        'select 1 as A,A.FROM_ID,A.TENANT_ID,A.SHOP_ID,C.BOND_TYPE,B.SHOP_ID as D_SHOP_ID,B.DEPT_ID,A.BOND_ID,A.SEQNO,A.FROM_ID,'+
+        'select 1 as A,A.FROM_ID,A.TENANT_ID,A.SHOP_ID,C.BOND_TYPE,B.SHOP_ID as D_SHOP_ID,B.DEPT_ID,A.BOND_ID,A.SEQNO,'+
         'B.BOND_MNY as ACCT_MNY,(isnull(B.BOND_MNY,0)-isnull(B.BOND_RET,0))+A.BOND_MNY as RECK_MNY,A.BOND_MNY,(isnull(B.BOND_MNY,0)-isnull(B.BOND_RET,0)) as BALA_MNY,'+
         'A.REMARK,b.INDE_DATE as ABLE_DATE '+
         'from MKT_BONDDATA A,SAL_INDENTORDER B,MKT_BONDORDER C '+

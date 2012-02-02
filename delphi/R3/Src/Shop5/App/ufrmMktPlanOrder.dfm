@@ -1,6 +1,6 @@
 inherited frmMktPlanOrder: TfrmMktPlanOrder
-  Left = 269
-  Top = 159
+  Left = 268
+  Top = 175
   Width = 883
   Height = 524
   Caption = #32463#38144#21512#21516
@@ -423,6 +423,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         end
         item
           EditButtons = <>
+          FieldName = 'UNIT_NAME'
+          Footers = <>
+          Title.Caption = #21333#20301
+          Width = 40
+        end
+        item
+          EditButtons = <>
           FieldName = 'AMOUNT'
           Footer.ValueType = fvtSum
           Footers = <>
@@ -526,6 +533,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Top = 336
   end
   inherited cdsDetail: TZQuery
+    FieldDefs = <>
     Left = 64
     Top = 336
   end

@@ -174,6 +174,7 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
         LocateStyle = lsDark
         Buttons = [zbClear]
         DropListStyle = lsFixed
+        OnSaveValue = edtPLAN_USERSaveValue
         MultiSelect = False
       end
       object edtBEGIN_DATE: TcxDateEdit
@@ -318,6 +319,13 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
           Width = 173
           Control = edtKPI_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
+        end
+        item
+          EditButtons = <>
+          FieldName = 'UNIT_NAME'
+          Footers = <>
+          Title.Caption = #21333#20301
+          Width = 40
         end
         item
           EditButtons = <>

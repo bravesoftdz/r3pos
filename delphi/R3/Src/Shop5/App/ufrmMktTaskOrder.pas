@@ -55,6 +55,7 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure edtPLAN_USERPropertiesChange(Sender: TObject);
+    procedure edtPLAN_USERSaveValue(Sender: TObject);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -204,7 +205,7 @@ begin
       Label40.Caption := 'À˘ Ù≤÷ø‚';
     end;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where IDX_TYPE in (''3'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME from MKT_KPI_INDEX where IDX_TYPE in (''3'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(cdsKPI_ID);
 
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
@@ -223,10 +224,11 @@ begin
   edtKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
 
   rs := ShopGlobal.GetDeptInfo;
-  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtPLAN_USERSaveValue(nil);
+  {edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
   edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
-  edtSHOP_ID.Text := Global.SHOP_NAME;
+  edtSHOP_ID.Text := Global.SHOP_NAME;}
   edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-01-01', date()));
   edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-12-31', date()));  
   AObj.FieldbyName('PLAN_ID').asString := TSequence.NewId();
@@ -511,6 +513,7 @@ begin
            cdsDetail.Edit;
            cdsDetail.FieldByName('KPI_ID').AsString := edtKPI_ID.AsString;
            cdsDetail.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
+           cdsDetail.FieldByName('UNIT_NAME').AsString := edtKPI_ID.DataSet.FieldByName('UNIT_NAME').AsString;
          end;
     end;
   finally
@@ -641,6 +644,24 @@ procedure TfrmMktTaskOrder.edtPLAN_USERPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtPLAN_USER.Text)<>'' then TabSheet.Caption := edtPLAN_USER.Text;
+end;
+
+procedure TfrmMktTaskOrder.edtPLAN_USERSaveValue(Sender: TObject);
+var ds:TZQuery;
+begin
+  inherited;
+  ds := ShopGlobal.GetZQueryFromName('CA_DEPT_INFO');
+  if ds.Locate('DEPT_ID',edtPLAN_USER.DataSet.FieldByName('DEPT_ID').AsString,[]) then
+  begin
+     edtDEPT_ID.KeyValue := ds.FieldByName('DEPT_ID').AsString;
+     edtDEPT_ID.Text := ds.FieldByName('DEPT_NAME').AsString;
+  end;
+  ds := ShopGlobal.GetZQueryFromName('CA_SHOP_INFO');
+  if ds.Locate('SHOP_ID',edtPLAN_USER.DataSet.FieldByName('SHOP_ID').AsString,[]) then
+  begin
+     edtSHOP_ID.KeyValue := ds.FieldByName('SHOP_ID').AsString;
+     edtSHOP_ID.Text := ds.FieldByName('SHOP_NAME').AsString;
+  end;
 end;
 
 end.

@@ -211,8 +211,8 @@ begin
     rs.Params.ParamByName('K2').AsInteger := K2.Value;
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString; 
     if rs.Params.FindParam('PLAN_USER')<>nil then rs.Params.FindParam('PLAN_USER').AsString := fndPLAN_USER.AsString;
-    if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
+    //if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('PLAN_ID').AsString;
@@ -348,8 +348,9 @@ begin
   w := ' where A.TENANT_ID=:TENANT_ID and PLAN_TYPE=''1'' and A.KPI_YEAR>=:K1 and A.KPI_YEAR<=:K2 ';
   if fndCLIENT_ID.AsString <> '' then
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
+  //[2012.02.03 xhh修改:可以按树上下级查询]
   if fndDEPT_ID.AsString <> '' then
-     w := w +' and A.DEPT_ID=:DEPT_ID';
+     w := w +ShopGlobal.GetDeptID('A.DEPT_ID',fndDEPT_ID.AsString);
   if fndSHOP_ID.AsString <> '' then
      w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndPLAN_USER.AsString <> '' then

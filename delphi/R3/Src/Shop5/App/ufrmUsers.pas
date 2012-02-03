@@ -107,8 +107,9 @@ begin
     str := ' and SHOP_ID = '+QuotedStr(fndSHOP_ID.AsString);
   if fndDUTY_IDS.AsString <> '' then
     str := str + ' and DUTY_IDS = '+QuotedStr(fndDUTY_IDS.AsString);
+  //[2012.02.03 xhh修改:可以按树上下级查询]str := str + ' and DEPT_ID = '+QuotedStr(fndDEPT_ID.AsString);
   if fndDEPT_ID.AsString <> '' then
-    str := str + ' and DEPT_ID = '+QuotedStr(fndDEPT_ID.AsString);
+    str := str + ShopGlobal.GetDeptID('DEPT_ID',fndDEPT_ID.AsString);
   if fndDEGREES.Text <> '' then
     str := str + ' and DEGREES = '+QuotedStr(TRecord_(fndDEGREES.Properties.Items.Objects[fndDEGREES.ItemIndex]).FieldbyName('CODE_ID').AsString);
   if (fndSEX.ItemIndex <> -1) and (fndSEX.ItemIndex <> 0) then

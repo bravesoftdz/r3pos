@@ -435,16 +435,16 @@ inherited frmStockOrderList: TfrmStockOrderList
   end
   inherited RzPanel4: TRzPanel
     Width = 860
-    inherited Image1: TImage
-      Left = 632
-      Width = 208
-    end
     inherited Image3: TImage
       Left = 632
-      Width = 208
+      Width = 0
     end
     inherited Image14: TImage
       Left = 840
+    end
+    inherited Image1: TImage
+      Left = 632
+      Width = 208
     end
     inherited rzPanel5: TPanel
       Left = 632

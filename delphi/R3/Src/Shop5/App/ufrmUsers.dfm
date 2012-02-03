@@ -574,16 +574,16 @@ inherited frmUsers: TfrmUsers
   end
   inherited RzPanel4: TRzPanel
     Width = 940
-    inherited Image1: TImage
-      Left = 371
-      Width = 549
-    end
     inherited Image3: TImage
       Left = 371
-      Width = 549
+      Width = 0
     end
     inherited Image14: TImage
       Left = 920
+    end
+    inherited Image1: TImage
+      Left = 371
+      Width = 549
     end
     inherited rzPanel5: TPanel
       Left = 371

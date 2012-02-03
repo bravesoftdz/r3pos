@@ -421,9 +421,9 @@ begin
      strWhere := strWhere + ' and A.PAYM_ID='''+TRecord_(fndPAYM_ID.Properties.Items.Objects[fndPAYM_ID.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   if fndSHOP_ID.AsString <> '' then
      strWhere := strWhere + ' and A.SHOP_ID='''+fndSHOP_ID.AsString+'''';
-  //部门条件:
+  //部门条件[2012.02.03 xhh修改:可以按树上下级查询]
   if fndDEPT_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.DEPT_ID='''+fndDEPT_ID.AsString+'''';
+     strWhere := strWhere + ShopGlobal.GetDeptID('A.DEPT_ID',fndDEPT_ID.AsString);
   if fndACCOUNT_ID.AsString <> '' then
      strWhere := strWhere + ' and A.ACCOUNT_ID='''+fndACCOUNT_ID.AsString+'''';
   if fndITEM_ID.AsString <> '' then

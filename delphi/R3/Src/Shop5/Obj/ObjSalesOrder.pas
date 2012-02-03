@@ -845,6 +845,7 @@ initialization
   RegisterClass(TSalesForLocusNoHeader);
   RegisterClass(TSalesLocusNoAudit);
   RegisterClass(TSalesLocusNoUnAudit);
+
 finalization
   UnRegisterClass(TSalesOrder);
   UnRegisterClass(TSalesData);
@@ -857,4 +858,5 @@ finalization
   UnRegisterClass(TSalesForLocusNoHeader);
   UnRegisterClass(TSalesLocusNoAudit);
   UnRegisterClass(TSalesLocusNoUnAudit);
+  
 end.

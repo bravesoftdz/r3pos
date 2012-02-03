@@ -1,6 +1,6 @@
 inherited frmMktRequOrder: TfrmMktRequOrder
-  Left = 321
-  Top = 155
+  Left = 283
+  Top = 141
   Width = 890
   Height = 569
   Caption = #36153#29992#30003#39046#21333
@@ -407,6 +407,13 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         end
         item
           EditButtons = <>
+          FieldName = 'WDW_MNY'
+          Footers = <>
+          Title.Caption = #32467#20313#37329#39069
+          Width = 68
+        end
+        item
+          EditButtons = <>
           FieldName = 'REQU_MNY'
           Footer.ValueType = fvtSum
           Footers = <>
@@ -479,6 +486,9 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       OnSaveValue = edtKPI_IDSaveValue
       MultiSelect = False
     end
+  end
+  inherited cdsDetail: TZQuery
+    FieldDefs = <>
   end
   inherited cdsHeader: TZQuery
     Top = 181

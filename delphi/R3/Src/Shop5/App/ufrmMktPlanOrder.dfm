@@ -91,7 +91,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #24066#22330#36153#39044#31639
+        Caption = #20445#35777#37329#24635#39069
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlue
         Font.Height = -12
@@ -533,7 +533,6 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Top = 336
   end
   inherited cdsDetail: TZQuery
-    FieldDefs = <>
     Left = 64
     Top = 336
   end

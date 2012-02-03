@@ -594,7 +594,7 @@ begin
     cdsDetail.DisableControls;
     try
       rs := TZQuery.Create(nil);
-      rs.SQL.Text := ParseSQL(Factor.iDbType,' select PLAN_ID,isnull(KPI_MNY,0) as KPI_MNY,isnull(KPI_MNY,0)-isnull(WDW_MNY,0) as REQU_MNY from MKT_KPI_RESULT where CLIENT_ID='+QuotedStr(edtCLIENT_ID.AsString)+
+      rs.SQL.Text := ParseSQL(Factor.iDbType,' select PLAN_ID,isnull(KPI_MNY,0) as KPI_MNY,isnull(WDW_MNY,0) as WDW_MNY,isnull(KPI_MNY,0)-isnull(WDW_MNY,0) as REQU_MNY from MKT_KPI_RESULT where CLIENT_ID='+QuotedStr(edtCLIENT_ID.AsString)+
       ' and KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+' and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_YEAR='+cdsDetail.FieldByName('KPI_YEAR').AsString);
       Factor.Open(rs);
 
@@ -603,6 +603,7 @@ begin
         if not (cdsDetail.State in [dsEdit,dsInsert]) then cdsDetail.Edit;
         cdsDetail.FieldByName('PLAN_ID').AsString := rs.FieldByName('PLAN_ID').AsString;
         cdsDetail.FieldByName('KPI_MNY').AsInteger := rs.FieldByName('KPI_MNY').AsInteger;
+        cdsDetail.FieldByName('WDW_MNY').AsInteger := rs.FieldByName('WDW_MNY').AsInteger;
         cdsDetail.FieldByName('REQU_MNY').AsInteger := rs.FieldByName('REQU_MNY').AsInteger;
         cdsDetail.Post;
         AddRow := True;

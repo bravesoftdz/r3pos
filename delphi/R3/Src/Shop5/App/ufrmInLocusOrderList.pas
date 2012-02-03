@@ -147,8 +147,9 @@ begin
      w := w +' and A.CLIENT_ID=:CLIENT_ID';
   if fndSHOP_ID.AsString <> '' then
      w := w +' and A.SHOP_ID=:SHOP_ID';
+  //[2012.02.03 xhh修改:可以按树上下级查询]
   if fndDEPT_ID.AsString <> '' then
-     w := w +' and A.DEPT_ID=:DEPT_ID';
+     w := w +ShopGlobal.GetDeptID('A.DEPT_ID',fndDEPT_ID.AsString);
   if trim(fndSTOCK_ID.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndSTOCK_ID.Text)+'''';
   if fndSTATUS.ItemIndex > 0 then
@@ -218,7 +219,7 @@ begin
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
-    if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
+    // rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     Factor.Open(rs);
     rs.Last;
     MaxId := rs.FieldbyName('STOCK_ID').AsString;

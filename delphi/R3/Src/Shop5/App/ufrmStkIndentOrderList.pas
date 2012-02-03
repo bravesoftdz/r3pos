@@ -60,9 +60,16 @@ type
   private
     oid:string;
     PrintTimes:Integer;
+    HandClosedItem :TMenuItem; //2012.01.30添加手工结案的菜单
     function  CheckCanExport: boolean; override;
     procedure PrintBefore(Sender:TObject);
     procedure PrintAfter(Sender:TObject);
+    //2012.01.30添加手工结案的菜单
+    procedure AddHandClosedPopup;
+    //2012.01.30设置是否可以手工结案
+    procedure DoOnPmPopup(Sender: TObject);
+    //2012.01.30手工结案的点击事件
+    procedure DoHandClosedClick(Sender: Tobject);    
   public
     { Public declarations }
     IsEnd: boolean;
@@ -75,7 +82,7 @@ type
 
 implementation
 uses ufrmStkIndentOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
-  uShopGlobal, uMsgBox;
+  uShopGlobal, uMsgBox, ufrmOrderHandSet;
 {$R *.dfm}
 
 { TfrmStkIndentOrderList }
@@ -220,6 +227,8 @@ begin
   Open('');
   //进入窗体默认新增加判断是否新增权限:
   if (ShopGlobal.GetChkRight('11100001',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  //2012.02.01创建菜单
+  AddHandClosedPopup;
 end;
 
 procedure TfrmStkIndentOrderList.actFindExecute(Sender: TObject);
@@ -303,7 +312,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
+//  if not ShopGlobal.GetChkRight('11100001',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -368,7 +377,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',5) then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
+//  if not ShopGlobal.GetChkRight('11100001',5) then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -498,7 +507,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',2) then Raise Exception.Create('你没有新增订货单的权限,请和管理员联系.');
+//  if not ShopGlobal.GetChkRight('11100001',2) then Raise Exception.Create('你没有新增订货单的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -661,5 +670,50 @@ begin
     rs.Free;
   end;
 end;
+
+procedure TfrmStkIndentOrderList.AddHandClosedPopup;
+var
+  p:TPopupMenu;
+  Item: TMenuItem;
+begin
+  p := DBGridEh1.PopupMenu;
+  if p=nil then Exit;
+  p.OnPopup:=DoOnPmPopup; 
+  Item :=TMenuItem.Create(nil);
+  Item.Caption := '-';
+  p.Items.Add(Item);
+  //创建菜单
+  HandClosedItem :=TMenuItem.Create(nil);
+  HandClosedItem.Caption := '手工结案';
+  HandClosedItem.OnClick := DoHandClosedClick;
+  p.Items.Add(HandClosedItem);
+end;
+
+procedure TfrmStkIndentOrderList.DoOnPmPopup(Sender: TObject);
+begin
+  if HandClosedItem<>nil then
+  begin
+    HandClosedItem.Enabled:=False;
+    if (not cdsList.Active) or (cdsList.IsEmpty) then Exit;
+    if cdsList.FieldByName('STKBILL_STATUS').AsInteger=1 then
+      HandClosedItem.Enabled:=true;  //只有发货状态才能手工结案
+  end;
+end;
+
+procedure TfrmStkIndentOrderList.DoHandClosedClick(Sender: Tobject);
+var
+  INDE_ID,Msg: string; //订单ID
+begin
+  INDE_ID:=cdsList.fieldbyName('INDE_ID').AsString;
+  Msg:='供应商〖'+cdsList.fieldbyName('CLIENT_NAME').AsString+'〗的采购订单〖'+cdsList.fieldbyName('GLIDE_NO').AsString+'〗手工结案成功 ！';
+  if TfrmOrderHandSet.FindDialog(self,1,INDE_ID) then
+  begin
+    cdsList.Edit;
+    cdsList.FieldByName('STKBILL_STATUS').AsString:='2'; 
+    cdsList.Post;
+    MessageBox(Handle,Pchar(Msg),'友情提示...',MB_OK+MB_ICONINFORMATION);
+  end;
+end;
+
 
 end.

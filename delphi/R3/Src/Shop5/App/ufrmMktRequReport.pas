@@ -344,7 +344,7 @@ begin
      ' from ('+strSql+')K '+
      ' left outer join (select DEPT_ID,DEPT_NAME from CA_DEPT_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')DEPT '+
      ' on K.DEPT_ID=DEPT.DEPT_ID '+
-     ' Group by K.DEPT_ID '
+     ' Group by K.DEPT_ID,DEPT.DEPT_NAME '
      );
 end;
 
@@ -423,7 +423,7 @@ begin
      ' from ('+strSql+')K '+
      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0)Area '+
      ' on K.REGION_ID=Area.CODE_ID '+
-     ' Group by K.REGION_ID '
+     ' Group by K.REGION_ID,Area.CODE_NAME '
      );
 
      
@@ -578,7 +578,7 @@ begin
      ' sum(NEW_REQU_MNY) as NEW_REQU_MNY,'+
      ' sum(JT_MNY-REQU_MNY) as JY_MNY '+     
      ' from ('+strSql+')K left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
-     ' Group by K.KPI_ID '
+     ' Group by K.KPI_ID,MKT.KPI_NAME '
      );
 end;
 

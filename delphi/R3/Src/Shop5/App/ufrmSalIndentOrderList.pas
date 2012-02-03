@@ -60,9 +60,16 @@ type
     { Private declarations }
     oid:string;
     PrintTimes:Integer;
+    HandClosedItem :TMenuItem; //2012.01.30添加手工结案的菜单
     function  CheckCanExport: boolean; override;
     procedure PrintBefore(Sender:TObject);
     procedure PrintAfter(Sender:TObject);
+    //2012.01.30添加手工结案的菜单
+    procedure AddHandClosedPopup;
+    //2012.01.30设置是否可以手工结案
+    procedure DoOnPmPopup(Sender: TObject);
+    //2012.01.30手工结案的点击事件
+    procedure DoHandClosedClick(Sender: Tobject);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -75,7 +82,7 @@ type
 
 implementation
 uses ufrmSalIndentOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,ufrmRecvOrder,
-  uShopGlobal,uDsUtil, uMsgBox;
+  uShopGlobal,uDsUtil, uMsgBox,ufrmOrderHandSet;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -212,6 +219,8 @@ begin
   inherited;
   Open('');
   if ShopGlobal.GetChkRight('12300001',2) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  //2012.01.30创建菜单
+  AddHandClosedPopup;
 end;
 
 procedure TfrmSalIndentOrderList.actEditExecute(Sender: TObject);
@@ -639,9 +648,10 @@ begin
 end;
 
 procedure TfrmSalIndentOrderList.PrintBefore(Sender: TObject);
-var rs:TZQuery;
-    Sql_Str,Info:String;
-    i:Integer;
+var
+  rs:TZQuery;
+  Sql_Str,Info:String;
+  i:Integer;
 begin
   rs := TZQuery.Create(nil);
   try
@@ -663,8 +673,51 @@ begin
        end;
   finally
     rs.Free;
-  end;
+  end;  
+end;
 
+procedure TfrmSalIndentOrderList.AddHandClosedPopup;
+var
+  p:TPopupMenu;
+  Item: TMenuItem;
+begin
+  p := DBGridEh1.PopupMenu;
+  if p=nil then Exit;
+  p.OnPopup:=DoOnPmPopup; 
+  Item :=TMenuItem.Create(nil);
+  Item.Caption := '-';
+  p.Items.Add(Item);
+  //创建菜单
+  HandClosedItem :=TMenuItem.Create(nil);
+  HandClosedItem.Caption := '手工结案';
+  HandClosedItem.OnClick := DoHandClosedClick;
+  p.Items.Add(HandClosedItem);
+end;
+
+procedure TfrmSalIndentOrderList.DoOnPmPopup(Sender: TObject);
+begin
+  if HandClosedItem<>nil then
+  begin
+    HandClosedItem.Enabled:=False;
+    if (not cdsList.Active) or (cdsList.IsEmpty) then Exit;
+    if cdsList.FieldByName('SALBILL_STATUS').AsInteger=1 then
+      HandClosedItem.Enabled:=true;  //只有发货状态才能手工结案
+  end;
+end;
+
+procedure TfrmSalIndentOrderList.DoHandClosedClick(Sender: Tobject);
+var
+  INDE_ID,Msg: string; //订单ID
+begin
+  INDE_ID:=cdsList.fieldbyName('INDE_ID').AsString;
+  Msg:='客户〖'+cdsList.fieldbyName('CLIENT_NAME').AsString+'〗的销售订单〖'+cdsList.fieldbyName('GLIDE_NO').AsString+'〗手工结案成功！';
+  if TfrmOrderHandSet.FindDialog(self,2,INDE_ID) then
+  begin
+    CdsList.Edit;
+    CdsList.FieldByName('SALBILL_STATUS').AsString:='2'; 
+    CdsList.Post;
+    MessageBox(Handle,Pchar(Msg),'友情提示...',MB_OK+MB_ICONINFORMATION);
+  end;
 end;
 
 end.

@@ -3,7 +3,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
   Top = 105
   Width = 958
   Height = 558
-  Caption = '   '#35745#25552#20998#26512#25253#34920
+  Caption = #32771#26680#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel

@@ -52,6 +52,12 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  //采购订单手工结案
+  TStkIndentOrderHandClosed=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+    
 implementation
 
 { TStkIndentData }
@@ -373,6 +379,60 @@ begin
       'where j.TENANT_ID=:TENANT_ID and j.INDE_ID=:INDE_ID and (isnull(j.CALC_AMOUNT,0)-isnull(j.FNSH_AMOUNT,0))>0 ) s order by SEQNO');
 end;
 
+{ TStkIndentOrderHandClosed }
+
+function TStkIndentOrderHandClosed.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
+var
+  rs:TZQuery;
+  r:Currency;
+  UpSQL:string;
+begin
+  Result := False;
+  //启动事务
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from STK_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := Params.ParamByName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := Params.ParamByName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    r := rs.Fields[0].AsFloat;
+    rs.Close;
+    rs.SQL.Text := 'select sum(ADVA_MNY) from STK_STOCKORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID';
+    rs.ParamByName('TENANT_ID').AsInteger := Params.ParamByName('TENANT_ID').AsInteger;
+    rs.ParamByName('FROM_ID').AsString := Params.ParamByName('FROM_ID').AsString;
+    AGlobal.Open(rs);
+    r := r - rs.Fields[0].AsFloat;
+  finally
+    rs.Free;
+  end;
+
+  AGlobal.BeginTrans;
+  try
+    UpSQL:=
+      'update STK_INDENTORDER '+
+      ' set STKBILL_STATUS=2,COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
+      ' where TENANT_ID='+Params.ParamByName('TENANT_ID').AsString+' and INDE_ID='''+Params.ParamByName('FROM_ID').AsString+''' ';
+    AGlobal.ExecSQL(UpSQL);
+    if r > 0 then // 如果结案后，如果有多余时要生成退款
+    begin
+      UpSQL:='update STK_STOCKORDER '+
+            ' set ADVA_MNY=ADVA_MNY+ '+formatFloat('#0.00',r)+',COMM='+GetCommStr(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
+            ' where TENANT_ID='+Params.ParamByName('TENANT_ID').AsString+' and STOCK_ID='''+Params.ParamByName('BILL_ID').AsString+''' ';
+      AGlobal.ExecSQL(UpSQL);
+      UpSQL:='update ACC_PAYABLE_INFO '+
+             ' set REVE_MNY=REVE_MNY + '+formatFloat('#0.00',r)+',RECK_MNY=RECK_MNY - '+formatFloat('#0.00',r)+
+             ' where TENANT_ID='+Params.ParamByName('TENANT_ID').AsString+' and STOCK_ID='''+Params.ParamByName('BILL_ID').AsString+''' ';
+      AGlobal.ExecSQL(UpSQL);
+    end;
+    AGlobal.CommitTrans;
+    Result := True;
+  except
+    AGlobal.RollbackTrans;
+    Raise;    
+  end;
+end;
+
 initialization
   RegisterClass(TStkIndentOrder);
   RegisterClass(TStkIndentData);
@@ -381,6 +441,8 @@ initialization
   RegisterClass(TStkIndentOrderGetNext);
   RegisterClass(TStkIndentOrderAudit);
   RegisterClass(TStkIndentOrderUnAudit);
+  RegisterClass(TStkIndentOrderHandClosed);
+
 finalization
   UnRegisterClass(TStkIndentOrder);
   UnRegisterClass(TStkIndentData);
@@ -389,4 +451,5 @@ finalization
   UnRegisterClass(TStkIndentOrderGetNext);
   UnRegisterClass(TStkIndentOrderAudit);
   UnRegisterClass(TStkIndentOrderUnAudit);
+  UnRegisterClass(TStkIndentOrderHandClosed);
 end.

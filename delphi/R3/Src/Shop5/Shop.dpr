@@ -211,7 +211,6 @@ uses
   ufrmReturn in 'App\ufrmReturn.pas' {frmReturn},
   ufrmCancelCard in 'App\ufrmCancelCard.pas' {frmCancelCard},
   ufrmDefineStateInfo in 'App\ufrmDefineStateInfo.pas' {frmDefineStateInfo},
-  ufrmXsmLogin in 'App\ufrmXsmLogin.pas' {frmXsmLogin},
   ObjDefineGodsState in 'Obj\ObjDefineGodsState.pas',
   ufrmClearData in 'App\ufrmClearData.pas' {frmClearData},
   ufrmStorageTracking in 'App\ufrmStorageTracking.pas' {frmStorageTracking},
@@ -268,7 +267,13 @@ uses
   ufrmMktKpiCalculate in 'App\ufrmMktKpiCalculate.pas' {frmMktKpiCalculate},
   ufrmMktKpiResult in 'App\ufrmMktKpiResult.pas' {frmMktKpiResult},
   uKpiCalculate in 'App\uKpiCalculate.pas',
-  ObjMktKpiResult in 'Obj\ObjMktKpiResult.pas';
+  ObjMktKpiResult in 'Obj\ObjMktKpiResult.pas',
+  ufrmMktKpiResult2 in 'App\ufrmMktKpiResult2.pas' {frmMktKpiResult2},
+  ufrmMktKpiResult3 in 'App\ufrmMktKpiResult3.pas' {frmMktKpiResult3},
+  ufrmBondRequReport in 'App\ufrmBondRequReport.pas' {frmBondRequReport},
+  ufrmMktRequReport in 'App\ufrmMktRequReport.pas' {frmMktRequReport},
+  ufrmMktCostTotalReport in 'App\ufrmMktCostTotalReport.pas' {frmMktCostTotalReport},
+  ufrmMktKpiTotalReport in 'App\ufrmMktKpiTotalReport.pas' {frmMktKpiTotalReport};
 
 {$R *.res}
 var
@@ -277,7 +282,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.4';
+  DBVersion := '1.0.2.5';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

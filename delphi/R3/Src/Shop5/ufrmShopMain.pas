@@ -258,7 +258,6 @@ type
     RzBmpButton10: TRzBmpButton;
     RzBmpButton9: TRzBmpButton;
     RzBmpButton8: TRzBmpButton;
-    RzBmpButton1: TRzBmpButton;
     RzBmpButton2: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
     RzBmpButton6: TRzBmpButton;
@@ -295,12 +294,18 @@ type
     actfrmMktPlanOrderList: TAction;
     actfrmMktRequOrderList: TAction;
     actfrmBondOrderList: TAction;
-    Button1: TButton;
     actfrmMktTaskOrderList: TAction;
-    Button2: TButton;
     actfrmMktKpiResult: TAction;
-    Button3: TButton;
-    Button4: TButton;
+    Image18: TImage;
+    actfrmClientKpiReport: TAction;
+    actfrmManKpiReport: TAction;
+    actfrmMktKpiResult2: TAction;
+    actfrmMktKpiResult3: TAction;
+    actfrmBondRequReport: TAction;
+    actfrmMktRequReport: TAction;
+    actfrmMktCostTotalReport: TAction;
+    actfrmMktKpiTotalReport: TAction;
+    actfrmMktMarketCostOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -358,7 +363,6 @@ type
     procedure actfrmCheckOrderListExecute(Sender: TObject);
     procedure actfrmDbOrderListExecute(Sender: TObject);
     procedure actfrmShopInfoListExecute(Sender: TObject);
-    procedure actfrmXsmBrowserExecute(Sender: TObject);
     procedure actfrmAccountExecute(Sender: TObject);
     procedure actfrmTransOrderListExecute(Sender: TObject);
     procedure actfrmDevFactoryExecute(Sender: TObject);
@@ -428,6 +432,15 @@ type
     procedure actfrmBondOrderListExecute(Sender: TObject);
     procedure actfrmMktTaskOrderListExecute(Sender: TObject);
     procedure actfrmMktKpiResultExecute(Sender: TObject);
+    procedure actfrmClientKpiReportExecute(Sender: TObject);
+    procedure actfrmManKpiReportExecute(Sender: TObject);
+    procedure actfrmMktKpiResult2Execute(Sender: TObject);
+    procedure actfrmMktKpiResult3Execute(Sender: TObject);
+    procedure actfrmBondRequReportExecute(Sender: TObject);
+    procedure actfrmMktRequReportExecute(Sender: TObject);
+    procedure actfrmMktCostTotalReportExecute(Sender: TObject);
+    procedure actfrmMktKpiTotalReportExecute(Sender: TObject);
+    procedure actfrmMktMarketCostOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -500,8 +513,10 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList
-  ,ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult;
+  ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList,
+  ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
+  ufrmMktKpiResult2,ufrmMktKpiResult3,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
+  ufrmMktMarketCostOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2286,49 +2301,6 @@ begin
      end;
 end;
 
-procedure TfrmShopMain.actfrmXsmBrowserExecute(Sender: TObject);
-var Form:TfrmBasic;
-begin
-  inherited;
-  if not Logined then
-     begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
-       Exit;
-     end;
-  Application.Restore;
-  frmShopDesk.SaveToFront;
-  Form := FindChildForm('frmXsmWebForm');
-  if not Assigned(Form) then
-     begin
-       Form := TfrmIEWebForm.Create(self);
-       Form.Caption := actfrmXsmBrowser.Caption;
-       AddFrom(Form);
-     end;
-  try
-    Form.Name := 'frmXsmWebForm';
-    if copy(ParamStr(3),1,8)='-xsmurl=' then
-       TfrmIEWebForm(Form).Open(copy(ParamStr(3),9,255))
-    else
-       begin
-//         if ShowMsgBox('你没有新商盟账号无法完成登录,是否进入新商盟演示账套?','友情提示..',MB_YESNO+MB_ICONINFORMATION)<>6 then
-//            begin
-//              Form.Free;
-//              Exit;
-//            end;
-         if not TfrmIEWebForm(Form).Open(TfrmIEWebForm(Form).GetDoLogin(xsm_url)) then
-            begin
-              Form.Free;
-              Exit;
-            end;
-       end;
-    Form.Show;
-    Form.BringToFront;
-  except
-    Form.Free;
-    Raise;
-  end;
-end;
-
 procedure TfrmShopMain.actfrmAccountExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
@@ -3132,8 +3104,8 @@ begin
 
     RzBmpButton6.Bitmaps.Up := GetBitmap(sflag+'home');
     RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'home_hot');
-    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
-    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
+//    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
+//    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
     RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'down');
     RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
     RzBmpButton4.Bitmaps.Up := GetBitmap(sflag+'upload');
@@ -4151,6 +4123,196 @@ begin
   if not Assigned(Form) then
      begin
        Form := TfrmMktKpiResult.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmClientKpiReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmClientKpiReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmClientKpiReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmManKpiReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmManKpiReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmManKpiReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktKpiResult2Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktKpiResult2);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktKpiResult2.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktKpiResult3Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktKpiResult3);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktKpiResult3.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmBondRequReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmBondRequReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmBondRequReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktRequReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktRequReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktRequReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktCostTotalReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktCostTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktCostTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktKpiTotalReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktKpiTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktKpiTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktMarketCostOrderListExecute(
+  Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktMarketCostOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktMarketCostOrderList.Create(self);
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;

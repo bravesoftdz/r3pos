@@ -82,8 +82,10 @@ begin
 
   if fndSHOP_ID.AsString <> '' then
      w := w + ' and SHOP_ID=:SHOP_ID';
+  //[2012.02.03 xhh修改:可以按树上下级查询]
   if fndDEPT_ID.AsString <> '' then
-     w := w +' and DEPT_ID=:DEPT_ID';
+     w := w + ShopGlobal.GetDeptID('DEPT_ID',fndDEPT_ID.AsString);     
+
   if trim(fndDEMA_ID.Text) <> '' then
      w := w +' and GLIDE_NO like ''%'+trim(fndDEMA_ID.Text)+'''';
 
@@ -133,7 +135,7 @@ begin
     rs.SQL.Text := EncodeSQL(Id);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
-    if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
+    //if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     Factor.Open(rs);

@@ -1,6 +1,6 @@
 inherited frmMktRequOrder: TfrmMktRequOrder
-  Left = 283
-  Top = 141
+  Left = 205
+  Top = 159
   Width = 890
   Height = 569
   Caption = #36153#29992#30003#39046#21333
@@ -395,7 +395,9 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           Footers = <>
           Title.Caption = #24180#24230
           Width = 60
+          Control = edtKPI_YEAR
           OnUpdateData = DBGridEh1Columns2UpdateData
+          OnBeforeShowControl = DBGridEh1Columns2BeforeShowControl
         end
         item
           EditButtons = <>
@@ -486,9 +488,47 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       OnSaveValue = edtKPI_IDSaveValue
       MultiSelect = False
     end
-  end
-  inherited cdsDetail: TZQuery
-    FieldDefs = <>
+    object edtKPI_YEAR: TzrComboBoxList
+      Left = 240
+      Top = 248
+      Width = 60
+      Height = 20
+      Properties.AutoSelect = False
+      Properties.Buttons = <
+        item
+          Default = True
+        end>
+      Properties.ReadOnly = True
+      TabOrder = 6
+      Visible = False
+      OnEnter = edtKPI_YEAREnter
+      OnExit = edtKPI_YEARExit
+      OnKeyDown = edtKPI_YEARKeyDown
+      OnKeyPress = edtKPI_YEARKeyPress
+      InGrid = False
+      KeyValue = Null
+      KeyField = 'KPI_YEAR'
+      ListField = 'KPI_YEAR'
+      Columns = <
+        item
+          EditButtons = <>
+          FieldName = 'KPI_YEAR'
+          Footers = <>
+          Title.Caption = #24180#20221
+          Width = 50
+        end>
+      DataSet = cdsKPI_YEAR
+      DropWidth = 60
+      DropHeight = 120
+      ShowTitle = True
+      AutoFitColWidth = True
+      ShowButton = True
+      LocateStyle = lsDark
+      Buttons = []
+      DropListStyle = lsFixed
+      OnSaveValue = edtKPI_YEARSaveValue
+      MultiSelect = False
+    end
   end
   inherited cdsHeader: TZQuery
     Top = 181
@@ -559,5 +599,12 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       Caption = #25351#26631#23646#24615
       OnClick = N1Click
     end
+  end
+  object cdsKPI_YEAR: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 308
+    Top = 239
   end
 end

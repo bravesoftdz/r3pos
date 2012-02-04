@@ -38,6 +38,8 @@ type
     PopupMenu1: TPopupMenu;
     DeleteRecord: TMenuItem;
     N1: TMenuItem;
+    edtKPI_YEAR: TzrComboBoxList;
+    cdsKPI_YEAR: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -59,6 +61,13 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure edtREQU_TYPEPropertiesChange(Sender: TObject);
     procedure N1Click(Sender: TObject);
+    procedure DBGridEh1Columns2BeforeShowControl(Sender: TObject);
+    procedure edtKPI_YEAREnter(Sender: TObject);
+    procedure edtKPI_YEARExit(Sender: TObject);
+    procedure edtKPI_YEARKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtKPI_YEARKeyPress(Sender: TObject; var Key: Char);
+    procedure edtKPI_YEARSaveValue(Sender: TObject);
   private
     { Private declarations }
     AddRow:Boolean;
@@ -685,6 +694,78 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmMktRequOrder.DBGridEh1Columns2BeforeShowControl(
+  Sender: TObject);
+begin
+  inherited;
+  cdsKPI_YEAR.SQL.Text := 'select KPI_YEAR from MKT_KPI_RESULT where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and CLIENT_ID='+QuotedStr(edtCLIENT_ID.AsString)+
+  ' and KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+' and COMM not in (''02'',''12'') ';
+  Factor.Open(cdsKPI_YEAR);
+end;
+
+procedure TfrmMktRequOrder.edtKPI_YEAREnter(Sender: TObject);
+begin
+  inherited;
+  edtKPI_YEAR.Properties.ReadOnly := DBGridEh1.ReadOnly;
+end;
+
+procedure TfrmMktRequOrder.edtKPI_YEARExit(Sender: TObject);
+begin
+  inherited;
+  if not edtKPI_YEAR.DropListed then edtKPI_YEAR.Visible := False;
+end;
+
+procedure TfrmMktRequOrder.edtKPI_YEARKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if (Key=VK_RIGHT) and not edtKPI_ID.Edited then
+     begin
+       DBGridEh1.SetFocus;
+       edtKPI_ID.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_UP) and not edtKPI_ID.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       edtKPI_ID.Visible := false;
+       cdsDetail.Prior;
+     end;
+  inherited;
+end;
+
+procedure TfrmMktRequOrder.edtKPI_YEARKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       Key := #0;
+       if cdsDetail.FieldbyName('KPI_YEAR').AsString = '' then
+          begin
+            edtKPI_YEAR.DropList;
+            Exit;
+          end;
+       FocusNextColumn;
+       DBGridEh1.SetFocus;
+     end;
+end;
+
+procedure TfrmMktRequOrder.edtKPI_YEARSaveValue(Sender: TObject);
+begin
+  inherited;
+  if not cdsDetail.Active then Exit;
+  if cdsDetail.FieldbyName('KPI_YEAR').AsString=edtKPI_YEAR.AsString then exit;
+
+  cdsDetail.DisableControls;
+  try
+    cdsDetail.Edit;
+    cdsDetail.FieldByName('KPI_YEAR').AsInteger := StrToInt(edtKPI_YEAR.AsString);
+    KpiMnyToCalc;
+  finally
+    cdsDetail.EnableControls;
+  end;
 end;
 
 end.

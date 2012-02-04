@@ -44,10 +44,6 @@ function GetBarCode(ID:string;Size,Color:string;Len:Integer=13):string;
 function GetBarCodeID(BarCode:string):string;
 function GetBarCodeColor(BarCode:string):string;
 function GetBarCodeSize(BarCode:string):string;
-
-//判断控件值不是否为空，并聚焦
-procedure CheckEdtValueIsEmpty(CmpCtrl: TWinControl; MsgStr: string);
-
 //截地区后缀
 function GetRegionId(id:string):string;
 
@@ -823,34 +819,6 @@ begin
         Column.Title.Caption := XDictFactory.GetResString('PROPERTY_01',ShopGlobal.GetVersionFlag,'尺码');
       end;
     end;
-  end;
-end;
-
-procedure CheckEdtValueIsEmpty(CmpCtrl: TWinControl; MsgStr: string);
-var
-  Msg: string;
-begin
-  if CmpCtrl=nil then Exit;
-  Msg:='     '+#13+trim(MsgStr)+#13+'     ';
-  if (CmpCtrl is TcxTextEdit) and (trim(TcxTextEdit(CmpCtrl).Text)='') then
-  begin
-    if TcxTextEdit(CmpCtrl).CanFocus then TcxTextEdit(CmpCtrl).SetFocus;
-    raise Exception.Create(Msg);
-  end else
-  if (CmpCtrl is TcxMemo) and (trim(TcxMemo(CmpCtrl).Text)='') then
-  begin
-    if TcxMemo(CmpCtrl).CanFocus then TcxMemo(CmpCtrl).SetFocus;
-    raise Exception.Create(Msg);
-  end else
-  if (CmpCtrl is TcxDateEdit) and (trim(TcxDateEdit(CmpCtrl).Text)='') then
-  begin
-    if TcxDateEdit(CmpCtrl).CanFocus then TcxDateEdit(CmpCtrl).SetFocus;
-    raise Exception.Create(Msg);
-  end else
-  if (CmpCtrl is TzrComboBoxList) and (trim(TzrComboBoxList(CmpCtrl).AsString)='') then
-  begin
-    if TzrComboBoxList(CmpCtrl).CanFocus then TzrComboBoxList(CmpCtrl).SetFocus;
-    raise Exception.Create(Msg);
   end;
 end;
 

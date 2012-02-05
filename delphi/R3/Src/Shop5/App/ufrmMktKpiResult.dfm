@@ -307,7 +307,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 Width = 121
                 Height = 20
                 Properties.MaxValue = 2111.000000000000000000
-                Properties.MinValue = 2011.000000000000000000
+                Properties.MinValue = 2000.000000000000000000
                 Properties.OnChange = fndKPI_YEARPropertiesChange
                 TabOrder = 1
                 Value = 2011

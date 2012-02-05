@@ -1,6 +1,6 @@
 inherited frmMktPlanOrder: TfrmMktPlanOrder
-  Left = 268
-  Top = 175
+  Left = 332
+  Top = 164
   Width = 883
   Height = 524
   Caption = #32463#38144#21512#21516
@@ -402,6 +402,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       PopupMenu = PopupMenu1
       OnDblClick = DBGridEh1DblClick
       OnDrawFooterCell = DBGridEh1DrawFooterCell
+      OnGetCellParams = DBGridEh1GetCellParams
       OnKeyPress = DBGridEh1KeyPress
       Columns = <
         item

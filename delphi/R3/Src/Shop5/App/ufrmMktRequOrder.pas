@@ -547,6 +547,8 @@ begin
            cdsDetail.Edit;
            cdsDetail.FieldByName('KPI_ID').AsString := edtKPI_ID.AsString;
            cdsDetail.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
+           cdsDetail.FieldByName('KPI_YEAR').AsString := '';
+           edtKPI_YEAR.Text := '';
            KpiMnyToCalc;
          end;
     end;

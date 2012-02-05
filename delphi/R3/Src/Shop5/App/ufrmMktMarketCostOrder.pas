@@ -574,7 +574,7 @@ end;
 procedure TfrmMktMarketCost.edtKPI_YEARPropertiesChange(Sender: TObject);
 begin
   inherited;
-  if (edtKPI_YEAR.Value < 2011) or (edtKPI_YEAR.Value > 2111) then Exit;
+  if (edtKPI_YEAR.Value < 2000) or (edtKPI_YEAR.Value > 2111) then Exit;
   if edtBEGIN_DATE.EditValue = null then
      edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-01-01', date()))
   else

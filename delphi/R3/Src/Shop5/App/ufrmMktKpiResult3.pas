@@ -52,7 +52,6 @@ type
     procedure actEditExecute(Sender: TObject);
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure fndKPI_YEARPropertiesChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
     procedure GridDblClick(Sender: TObject);
@@ -60,6 +59,9 @@ type
     procedure GridDrawFooterCell(Sender: TObject; DataCol, Row: Integer;
       Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure N1Click(Sender: TObject);
+    procedure fndKPI_YEARPropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
   private
     { Private declarations }
     MaxId:String;
@@ -241,7 +243,7 @@ begin
   begin
     try
       IdxType := '3';
-      PlanType := '3';
+      PlanType := '2';//年度目标
       ShowModal;
     finally
       Free;
@@ -355,14 +357,6 @@ begin
     sm.Free;
     rs.Free;
   end;
-end;
-
-procedure TfrmMktKpiResult3.fndKPI_YEARPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if (fndKPI_YEAR.Value < 2011) or (fndKPI_YEAR.Value > 2111) then
-     Raise Exception.Create('输入年度范围"2011-2111"');
-
 end;
 
 function TfrmMktKpiResult3.DoBeforeExport: boolean;
@@ -496,6 +490,14 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmMktKpiResult3.fndKPI_YEARPropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
+begin
+  inherited;
+  if (fndKPI_YEAR.Value < 2000) or (fndKPI_YEAR.Value > 2111) then
+     Raise Exception.Create('输入年度范围"2000-2111"');
 end;
 
 end.

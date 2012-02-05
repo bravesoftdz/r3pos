@@ -188,7 +188,7 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 Height = 20
                 Properties.MaxValue = 2111.000000000000000000
                 Properties.MinValue = 2000.000000000000000000
-                Properties.OnChange = K1PropertiesChange
+                Properties.OnValidate = K1PropertiesValidate
                 TabOrder = 4
                 Value = 2011
               end
@@ -199,7 +199,7 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 Height = 20
                 Properties.MaxValue = 2111.000000000000000000
                 Properties.MinValue = 2000.000000000000000000
-                Properties.OnChange = K2PropertiesChange
+                Properties.OnValidate = K2PropertiesValidate
                 TabOrder = 5
                 Value = 2011
               end

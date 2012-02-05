@@ -51,8 +51,12 @@ type
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure K2PropertiesChange(Sender: TObject);
-    procedure K1PropertiesChange(Sender: TObject);
+    procedure K2PropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
+    procedure K1PropertiesValidate(Sender: TObject;
+      var DisplayValue: Variant; var ErrorText: TCaption;
+      var Error: Boolean);
   private
     { Private declarations }
     function  CheckCanExport: boolean; override;
@@ -463,18 +467,20 @@ begin
     end;
 end;
 
-procedure TfrmMktMarketCostOrderList.K2PropertiesChange(Sender: TObject);
+procedure TfrmMktMarketCostOrderList.K2PropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
-  if (K2.Value < 2011) or (K2.Value > 2111) then
-     Raise Exception.Create('输入年度范围"2011-2111"');
+  if (K2.Value < 2000) or (K2.Value > 2111) then
+     Raise Exception.Create('输入年度范围"2000-2111"');
 end;
 
-procedure TfrmMktMarketCostOrderList.K1PropertiesChange(Sender: TObject);
+procedure TfrmMktMarketCostOrderList.K1PropertiesValidate(Sender: TObject;
+  var DisplayValue: Variant; var ErrorText: TCaption; var Error: Boolean);
 begin
   inherited;
-  if (K1.Value < 2011) or (K1.Value > 2111) then
-     Raise Exception.Create('输入年度范围"2011-2111"');
+  if (K1.Value < 2000) or (K1.Value > 2111) then
+     Raise Exception.Create('输入年度范围"2000-2111"');
 end;
 
 end.

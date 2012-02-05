@@ -59,8 +59,8 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
-    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
-      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -576,7 +576,7 @@ end;
 procedure TfrmMktPlanOrder.edtKPI_YEARPropertiesChange(Sender: TObject);
 begin
   inherited;
-  if (edtKPI_YEAR.Value < 2011) or (edtKPI_YEAR.Value > 2111) then Exit;
+  if (edtKPI_YEAR.Value < 2000) or (edtKPI_YEAR.Value > 2111) then Exit;
   if edtBEGIN_DATE.EditValue = null then
      edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-01-01', date()))
   else
@@ -650,13 +650,33 @@ begin
     end;
 end;
 
-procedure TfrmMktPlanOrder.DBGridEh1GetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
+procedure TfrmMktPlanOrder.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 begin
   inherited;
-  if edtKPI_ID.DataSet.FieldByName('').AsString = '' then
-     AFont.Color := clRed;
+  if (edtKPI_ID.AsString <> '') and (Column.FieldName = 'AMOUNT') then
+  begin
+    if cdsKPI_ID.Locate('KPI_ID',edtKPI_ID.AsString,[]) then
+    begin
+      if (edtKPI_ID.DataSet.FieldByName('KPI_DATA').AsInteger in [1,4]) then
+      begin
+         DBGridEh1.Canvas.Brush.Color := clRed;
+         DBGridEh1.DefaultDrawColumnCell(Rect,DataCol,Column,State);
+      end;
+    end;
+  end;
+  if (edtKPI_ID.AsString <> '') and (Column.FieldName = 'AMONEY') then
+  begin
+    if cdsKPI_ID.Locate('KPI_ID',edtKPI_ID.AsString,[]) then
+    begin
+      if (edtKPI_ID.DataSet.FieldByName('KPI_DATA').AsInteger in [2,3,5,6]) then
+      begin
+         DBGridEh1.Canvas.Brush.Color := clRed;
+         DBGridEh1.DefaultDrawColumnCell(Rect,DataCol,Column,State);
+      end;
+    end;
+  end;
 end;
 
 end.

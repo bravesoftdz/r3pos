@@ -339,10 +339,6 @@ begin
 
   //¼ì²â½áÊø
   WriteToObject(Aobj,self);
-  if edtKPI_OPTN.Checked then
-     Aobj.FieldByName('KPI_OPTN').AsString := '1'
-  else
-     Aobj.FieldByName('KPI_OPTN').AsString := '2';
 
   Filter := CdsKpiOption.Filter;
   CdsKpiOption.DisableControls;
@@ -372,9 +368,15 @@ begin
 
       Aobj.WriteToDataSet(CdsKpiIndex);
       if edtKPI_OPTN.Checked then
-         CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '1'
+      begin
+         CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '1';
+         Aobj.FieldByName('KPI_OPTN').AsString := '1';
+      end
       else
-         CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '0';
+      begin
+         CdsKpiIndex.FieldByName('KPI_OPTN').AsString := '2';
+         Aobj.FieldByName('KPI_OPTN').AsString := '2';
+      end;
       CdsKpiIndex.Post;
       if edtKPI_OPTN.Checked then
       begin
@@ -483,6 +485,7 @@ begin
       CdsKpiIndex.CancelUpdates;
 
     end;
+    Aobj.FieldByName('GOODS_SUM').AsInteger := CdsKpiGoods.RecordCount;
   finally
     if Trim(Filter) <> '' then
     begin

@@ -59,8 +59,8 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 Caption = #38376#24215#21517#31216
               end
               object Label1: TLabel
-                Left = 184
-                Top = 85
+                Left = 203
+                Top = 87
                 Width = 120
                 Height = 12
                 Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
@@ -74,7 +74,7 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
               object fndGLIDE_NO: TcxTextEdit
                 Left = 89
                 Top = 82
-                Width = 88
+                Width = 110
                 Height = 20
                 TabOrder = 0
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -114,7 +114,7 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 344
+                Left = 414
                 Top = 76
                 Width = 67
                 Height = 26
@@ -143,7 +143,7 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
               object fndPLAN_USER: TzrComboBoxList
                 Left = 89
                 Top = 60
-                Width = 184
+                Width = 236
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -244,6 +244,25 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
+              end
+              object fndSTATUS: TcxRadioGroup
+                Left = 329
+                Top = 16
+                Width = 80
+                Height = 86
+                ItemIndex = 0
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
+                  end>
+                TabOrder = 7
+                Caption = ''
               end
             end
             inherited DBGridEh1: TDBGridEh

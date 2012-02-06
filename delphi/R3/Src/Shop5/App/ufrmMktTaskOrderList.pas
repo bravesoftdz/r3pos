@@ -8,7 +8,8 @@ uses
   ZAbstractDataset, ZDataset, Menus, ActnList, ComCtrls, ToolWin, StdCtrls,
   RzLabel, jpeg, ExtCtrls, Grids, DBGridEh, RzTabs, RzPanel, RzButton,
   cxTextEdit, cxButtonEdit, zrComboBoxList, cxControls, cxContainer,
-  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class, cxSpinEdit;
+  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class, cxSpinEdit,
+  cxRadioGroup;
 
 type
   TfrmMktTaskOrderList = class(TframeContractToolForm)
@@ -29,6 +30,7 @@ type
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
     Label1: TLabel;
+    fndSTATUS: TcxRadioGroup;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -354,6 +356,13 @@ begin
      w := w + ' and A.PLAN_USER=:PLAN_USER';
   if Trim(fndGLIDE_NO.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndGLIDE_NO.Text)+'''';
+  if fndSTATUS.ItemIndex > 0 then
+     begin
+       case fndSTATUS.ItemIndex of
+       1:w := w +' and A.CHK_DATE is null';
+       2:w := w +' and A.CHK_DATE is not null';
+       end;
+     end;     
 
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';

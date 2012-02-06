@@ -8,7 +8,7 @@ uses
   ZAbstractDataset, ZDataset, Menus, ActnList, ComCtrls, ToolWin, StdCtrls,
   RzLabel, jpeg, ExtCtrls, Grids, DBGridEh, RzTabs, RzPanel, RzButton,
   cxTextEdit, cxButtonEdit, zrComboBoxList, cxControls, cxContainer,
-  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class;
+  cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class, cxRadioGroup;
 
 type
   TfrmMktRequOrderList = class(TframeContractToolForm)
@@ -28,6 +28,7 @@ type
     fndSHOP_ID: TzrComboBoxList;
     frfMktRequOrderList: TfrReport;
     ToolButton15: TToolButton;
+    fndSTATUS: TcxRadioGroup;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -84,6 +85,13 @@ begin
      w := w +ShopGlobal.GetDeptID('A.DEPT_ID',fndDEPT_ID.AsString);
   if trim(fndGLIDE_NO.Text) <> '' then
      w := w +' and A.GLIDE_NO like ''%'+trim(fndGLIDE_NO.Text)+'''';
+  if fndSTATUS.ItemIndex > 0 then
+     begin
+       case fndSTATUS.ItemIndex of
+       1:w := w +' and A.CHK_DATE is null';
+       2:w := w +' and A.CHK_DATE is not null';
+       end;
+     end;
 
   if id<>'' then
      w := w +' and A.REQU_ID>'''+id+'''';

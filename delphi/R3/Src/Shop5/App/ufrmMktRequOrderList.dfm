@@ -208,8 +208,8 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 336
-                Top = 72
+                Left = 416
+                Top = 76
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -275,6 +275,25 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
+              end
+              object fndSTATUS: TcxRadioGroup
+                Left = 328
+                Top = 16
+                Width = 80
+                Height = 86
+                ItemIndex = 0
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
+                  end>
+                TabOrder = 7
+                Caption = ''
               end
             end
             inherited DBGridEh1: TDBGridEh

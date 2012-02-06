@@ -478,10 +478,7 @@ begin
                CalculateAmt := rs.FieldByName('CALC_MONEY').AsFloat
             else if StrToInt(FKpiInfo.KpiCalc) in [3,6] then
                CalculateAmt := rs.FieldByName('CALC_MONEY').AsFloat;
-
-
          end;
-
          IsAdd := False;
       end;
       
@@ -512,7 +509,7 @@ begin
          Kpi_Index.LV := FDataSet_Kpi.FieldByName('KPI_LV').AsString;
          Kpi_Index.SEQNO := 0;
          Kpi_Index.KpiRate := 0;
-         Kpi_Index.KpiAgio := 0;
+         Kpi_Index.KpiAgio := FKpiInfo.KpiAgio;
          Kpi_Index.FshVle := CurAmount;
          Kpi_Index.KpiMny := CalculateAmt * FKpiInfo.KpiAgio;
          AddKpiIndex(Kpi_Index);

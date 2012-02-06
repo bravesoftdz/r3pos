@@ -1,5 +1,5 @@
 inherited frmMktKpiResultList: TfrmMktKpiResultList
-  Left = 736
+  Left = 643
   Top = 205
   Caption = #25351#26631#32771#26680#28165#21333
   ClientHeight = 321
@@ -36,7 +36,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             FooterFont.Height = -12
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
-            FrozenCols = 1
+            FrozenCols = 3
             Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 20
@@ -69,7 +69,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #24320#22987#26085#26399
-                Width = 60
+                Width = 70
               end
               item
                 DisplayFormat = '0000-00-00'
@@ -78,7 +78,27 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #32467#26463#26085#26399
-                Width = 60
+                Width = 70
+              end
+              item
+                Alignment = taRightJustify
+                DisplayFormat = '#0.00'
+                EditButtons = <>
+                FieldName = 'FSH_VLE'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #23436#25104#37327
+                Width = 70
+              end
+              item
+                Alignment = taRightJustify
+                DisplayFormat = '#0.00'
+                EditButtons = <>
+                FieldName = 'KPI_MNY'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #32771#26680#37327
+                Width = 70
               end
               item
                 Alignment = taRightJustify
@@ -106,26 +126,6 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 ReadOnly = True
                 Title.Caption = #36798#26631#25240#25187
                 Width = 60
-              end
-              item
-                Alignment = taRightJustify
-                DisplayFormat = '#0.00'
-                EditButtons = <>
-                FieldName = 'FSH_VLE'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #23436#25104#37327
-                Width = 70
-              end
-              item
-                Alignment = taRightJustify
-                DisplayFormat = '#0.00'
-                EditButtons = <>
-                FieldName = 'KPI_MNY'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #32771#26680#37327
-                Width = 70
               end>
           end
           object RzPanel1: TRzPanel

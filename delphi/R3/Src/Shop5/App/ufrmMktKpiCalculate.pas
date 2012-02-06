@@ -144,15 +144,17 @@ end;
 function TfrmMktKpiCalculate.EncodeSql: String;
 var w:String;
 begin
-  w := ' and A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and C.PLAN_TYPE=:PLAN_TYPE and A.COMM not in (''02'',''12'') ';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and C.PLAN_TYPE=:PLAN_TYPE and A.COMM not in (''02'',''12'') ';
   if fndCLIENT_ID.AsString <> '' then
      w := w + ' and A.CLIENT_ID=:CLIENT_ID ';
   if fndKPI_ID.AsString <> '' then
      w := w + ' and A.KPI_ID=:KPI_ID ';
 
-  Result := 'select A.TENANT_ID,A.PLAN_ID,B.KPI_CALC,B.KPI_TYPE,B.KPI_DATA,A.KPI_ID,A.CLIENT_ID,C.PLAN_USER,C.PLAN_AMT,C.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
-            ' from MKT_KPI_RESULT A,MKT_KPI_INDEX B,MKT_PLANORDER C '+
-            ' where A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID and A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+w+' order by A.PLAN_ID,A.KPI_ID ';
+  Result := 'select A.TENANT_ID,A.PLAN_ID,B.KPI_CALC,B.KPI_TYPE,B.KPI_DATA,A.KPI_ID,A.CLIENT_ID,C.PLAN_USER,'+
+            'G.AMOUNT,G.AMONEY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
+            ' from MKT_KPI_RESULT A inner join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
+            ' inner join MKT_PLANORDER C on A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID '+
+            ' left outer join MKT_PLANDATA G on A.TENANT_ID=G.TENANT_ID and A.PLAN_ID=G.PLAN_ID and A.KPI_ID=G.KPI_ID'+w+' order by A.PLAN_ID,A.KPI_ID ';
 end;
 
 procedure TfrmMktKpiCalculate.StatisticalData;
@@ -321,8 +323,8 @@ begin
         KpiCalculate.FKpiInfo.KpiCalc := cdsHeader.FieldByName('KPI_CALC').AsString;
         KpiCalculate.FKpiInfo.KpiOptn := cdsHeader.FieldByName('KPI_OPTN').AsString;
         KpiCalculate.FKpiInfo.KpiAgio := cdsHeader.FieldByName('KPI_AGIO').AsFloat;
-        KpiCalculate.FKpiInfo.PlanAmt := cdsHeader.FieldByName('PLAN_AMT').AsFloat;
-        KpiCalculate.FKpiInfo.PlanMny := cdsHeader.FieldByName('PLAN_MNY').AsFloat;
+        KpiCalculate.FKpiInfo.PlanAmt := cdsHeader.FieldByName('AMOUNT').AsFloat;
+        KpiCalculate.FKpiInfo.PlanMny := cdsHeader.FieldByName('AMONEY').AsFloat;
 
         StatisticalData;
         Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);

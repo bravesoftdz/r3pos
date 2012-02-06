@@ -659,7 +659,7 @@ begin
   begin
     if cdsKPI_ID.Locate('KPI_ID',edtKPI_ID.AsString,[]) then
     begin
-      if (edtKPI_ID.DataSet.FieldByName('KPI_DATA').AsInteger in [1,4]) then
+      if (cdsKPI_ID.FieldByName('KPI_DATA').AsInteger in [1,4]) then
       begin
          DBGridEh1.Canvas.Brush.Color := clRed;
          DBGridEh1.DefaultDrawColumnCell(Rect,DataCol,Column,State);
@@ -670,7 +670,7 @@ begin
   begin
     if cdsKPI_ID.Locate('KPI_ID',edtKPI_ID.AsString,[]) then
     begin
-      if (edtKPI_ID.DataSet.FieldByName('KPI_DATA').AsInteger in [2,3,5,6]) then
+      if (cdsKPI_ID.FieldByName('KPI_DATA').AsInteger in [2,3,5,6]) then
       begin
          DBGridEh1.Canvas.Brush.Color := clRed;
          DBGridEh1.DefaultDrawColumnCell(Rect,DataCol,Column,State);

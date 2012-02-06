@@ -438,7 +438,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         end
         item
           EditButtons = <>
-          FieldName = 'a'
+          FieldName = 'AMONEY'
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #31614#32422#37329#39069
@@ -533,7 +533,6 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Top = 336
   end
   inherited cdsDetail: TZQuery
-    FieldDefs = <>
     Left = 64
     Top = 336
   end

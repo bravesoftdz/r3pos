@@ -285,7 +285,7 @@ inherited frmMktKpiResult3: TfrmMktKpiResult3
                 Value = 2011
               end
               object btnOk: TRzBitBtn
-                Left = 294
+                Left = 373
                 Top = 86
                 Width = 67
                 Height = 24
@@ -430,6 +430,25 @@ inherited frmMktKpiResult3: TfrmMktKpiResult3
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
+              end
+              object fndSTATUS: TcxRadioGroup
+                Left = 289
+                Top = 24
+                Width = 80
+                Height = 86
+                ItemIndex = 0
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
+                  end>
+                TabOrder = 6
+                Caption = ''
               end
             end
           end

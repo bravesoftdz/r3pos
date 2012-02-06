@@ -8,7 +8,7 @@ uses
   RzLabel, jpeg, ExtCtrls, RzTabs, RzPanel, Grids, DBGridEh, DB, DBGridEhImpExp,
   ZAbstractRODataset, ZAbstractDataset, ZDataset, cxControls, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxButtonEdit, zrComboBoxList, cxSpinEdit,
-  RzButton, PrnDbgeh, cxDropDownEdit, ZBase;
+  RzButton, PrnDbgeh, cxDropDownEdit, ZBase, cxRadioGroup;
 
 type
   TfrmMktKpiResult = class(TframeToolForm)
@@ -45,6 +45,7 @@ type
     fndSHOP_ID: TzrComboBoxList;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
+    fndSTATUS: TcxRadioGroup;
     procedure actExitExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -304,6 +305,13 @@ begin
      w := w + ' and A.SHOP_ID=:SHOP_ID ';
   if fndKPI_ID.AsString <> '' then
      w := w +' and A.KPI_ID=:KPI_ID ';
+  if fndSTATUS.ItemIndex > 0 then
+     begin
+       case fndSTATUS.ItemIndex of
+         1:w := w +' and A.CHK_DATE is null';
+         2:w := w +' and A.CHK_DATE is not null';
+       end;
+     end;
 
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';
@@ -523,6 +531,7 @@ begin
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
       IdxType := CdsKpiResult.FieldByName('IDX_TYPE').AsString;
       KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsString;
+      KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
       Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
       ShowModal;
     finally

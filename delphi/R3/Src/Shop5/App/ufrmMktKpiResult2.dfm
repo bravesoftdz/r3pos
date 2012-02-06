@@ -267,7 +267,7 @@ inherited frmMktKpiResult2: TfrmMktKpiResult2
               object fndKPI_ID: TzrComboBoxList
                 Left = 350
                 Top = 69
-                Width = 121
+                Width = 133
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -319,7 +319,7 @@ inherited frmMktKpiResult2: TfrmMktKpiResult2
                 Value = 2011
               end
               object btnOk: TRzBitBtn
-                Left = 478
+                Left = 494
                 Top = 65
                 Width = 67
                 Height = 24
@@ -348,7 +348,7 @@ inherited frmMktKpiResult2: TfrmMktKpiResult2
               object fndDEPT_ID: TzrComboBoxList
                 Left = 350
                 Top = 48
-                Width = 121
+                Width = 133
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -549,6 +549,26 @@ inherited frmMktKpiResult2: TfrmMktKpiResult2
                 Buttons = [zbClear]
                 DropListStyle = lsFixed
                 MultiSelect = False
+              end
+              object fndSTATUS: TcxRadioGroup
+                Left = 293
+                Top = 17
+                Width = 190
+                Height = 30
+                ItemIndex = 0
+                Properties.Columns = 3
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
+                  end>
+                TabOrder = 8
+                Caption = ''
               end
             end
           end

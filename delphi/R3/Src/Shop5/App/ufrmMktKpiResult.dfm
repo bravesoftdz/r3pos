@@ -261,7 +261,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
               object fndKPI_ID: TzrComboBoxList
                 Left = 346
                 Top = 69
-                Width = 121
+                Width = 133
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -313,7 +313,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 Value = 2011
               end
               object btnOk: TRzBitBtn
-                Left = 477
+                Left = 487
                 Top = 64
                 Width = 67
                 Height = 24
@@ -342,7 +342,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
               object fndDEPT_ID: TzrComboBoxList
                 Left = 346
                 Top = 48
-                Width = 121
+                Width = 133
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -544,6 +544,26 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndSTATUS: TcxRadioGroup
+                Left = 289
+                Top = 17
+                Width = 190
+                Height = 30
+                ItemIndex = 0
+                Properties.Columns = 3
+                Properties.Items = <
+                  item
+                    Caption = #20840#37096
+                  end
+                  item
+                    Caption = #24453#23457#26680
+                  end
+                  item
+                    Caption = #24050#23457#26680
+                  end>
+                TabOrder = 8
+                Caption = ''
+              end
             end
           end
         end
@@ -683,8 +703,8 @@ inherited frmMktKpiResult: TfrmMktKpiResult
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 318
-    Top = 67
+    Left = 260
+    Top = 55
   end
   object SaveDialog1: TSaveDialog
     Left = 159

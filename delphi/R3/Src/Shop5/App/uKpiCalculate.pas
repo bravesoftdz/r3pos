@@ -551,11 +551,20 @@ end;
 function TKpiCalculate.KpiDataNum(Num:Real): Real;
 begin
   if FKpiInfo.KpiData = '1' then
-     Result := Num/FKpiInfo.PlanAmt
+  begin
+     if FKpiInfo.PlanAmt = 0 then
+        Result := 1
+     else
+        Result := Num/FKpiInfo.PlanAmt;
+  end
   else if FKpiInfo.KpiData = '2' then
-     Result := Num/FKpiInfo.PlanMny
+  begin
+     Result := Num/FKpiInfo.PlanMny;
+  end
   else if FKpiInfo.KpiData = '3' then
-     Result := Num/FKpiInfo.PlanMny
+  begin
+     Result := Num/FKpiInfo.PlanMny;
+  end
   else
      Result := Num;
 end;

@@ -333,6 +333,7 @@ var rny:real;
 begin
   inherited;
   Saved := false;
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
   if edtREQU_DATE.EditValue = null then Raise Exception.Create('填报日期不能为空');
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');

@@ -72,7 +72,7 @@ type
 
 
 implementation
-uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPlanOrder,
+uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktMarketCostOrder,
      uShopGlobal;
 {$R *.dfm}
 
@@ -93,10 +93,10 @@ begin
      end;
   if CurContract=nil then Raise Exception.Create('"销售计划"打开异常!');
 
-  if TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmMktMarketCost(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002150',5) then
-         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktMarketCost(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurContract<>nil) then
@@ -119,10 +119,10 @@ begin
      end;
   if CurContract=nil then Raise Exception.Create('"销售计划"打开异常!');
 
-  if TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmMktMarketCost(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002150',5) then
-         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktPlanOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktMarketCost(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
 
@@ -398,7 +398,7 @@ end;
 
 function TfrmMktMarketCostOrderList.GetFormClass: TFormClass;
 begin
-  Result := TfrmMktPlanOrder;
+  Result := TfrmMktMarketCost;
 end;
 
 function TfrmMktMarketCostOrderList.PrintSQL(tenantid, id: string): string;

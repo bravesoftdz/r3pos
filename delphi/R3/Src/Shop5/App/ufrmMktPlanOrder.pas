@@ -210,7 +210,7 @@ begin
       Label40.Caption := '所属仓库';
     end;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_DATA,KPI_SPELL,UNIT_NAME from MKT_KPI_INDEX where IDX_TYPE in (''1'',''2'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_DATA,KPI_SPELL,UNIT_NAME from MKT_KPI_INDEX where IDX_TYPE=''1'' and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(cdsKPI_ID);
 
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
@@ -287,6 +287,7 @@ var mny,bny,amt:real;
 begin
   inherited;
   Saved := false;
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
   cdsDetail.DisableControls;
   try
     if edtPLAN_DATE.EditValue = null then Raise Exception.Create('签约日期不能为空');

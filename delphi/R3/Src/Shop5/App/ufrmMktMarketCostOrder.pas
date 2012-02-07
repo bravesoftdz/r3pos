@@ -208,7 +208,7 @@ begin
       Label40.Caption := 'À˘ Ù≤÷ø‚';
     end;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME from MKT_KPI_INDEX where IDX_TYPE in (''1'',''2'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME from MKT_KPI_INDEX where IDX_TYPE=''2'' and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(cdsKPI_ID);
 
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');

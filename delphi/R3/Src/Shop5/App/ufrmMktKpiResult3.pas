@@ -299,7 +299,7 @@ begin
      w := w +' and A.PLAN_ID>'''+id+'''';
           
   Result := ' select A.TENANT_ID,A.PLAN_ID,C.USER_NAME as PLAN_USER_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
-            'A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
+            'A.KPI_ID,A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
             'case when A.KPI_DATA in (''1'',''4'') then G.AMOUNT else G.AMONEY end as PLAN_AMT,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
             'A.KPI_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT '+
@@ -433,6 +433,7 @@ begin
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
       IdxType := CdsKpiResult.FieldByName('IDX_TYPE').AsString;
       KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsString;
+      KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
       Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
       ShowModal;
     finally

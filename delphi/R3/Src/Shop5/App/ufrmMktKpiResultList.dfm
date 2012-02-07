@@ -102,6 +102,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
               end
               item
                 Alignment = taRightJustify
+                DisplayFormat = '#0%'
                 EditButtons = <>
                 FieldName = 'KPI_RATE'
                 Footers = <>

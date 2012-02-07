@@ -483,7 +483,7 @@ begin
     except
       Factor.CancelBatch;
       CdsKpiIndex.CancelUpdates;
-
+      Raise;
     end;
     Aobj.FieldByName('GOODS_SUM').AsInteger := CdsKpiGoods.RecordCount;
   finally
@@ -543,6 +543,7 @@ var bl:Boolean;
 begin
   inherited;
   bl := (dbState <> dsEdit);
+  if CdsKpiOption.State in [dsEdit,dsInsert] then CdsKpiOption.Post;  
   Save;
   If Saved and Assigned(OnSave) then OnSave(Aobj);
   If Saved and Assigned(OnSave) and bl then

@@ -202,6 +202,47 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         DropListStyle = lsFixed
         MultiSelect = False
       end
+      object fndPLAN_USER: TzrComboBoxList
+        Left = 95
+        Top = 53
+        Width = 215
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 3
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
+        KeyField = 'USER_ID'
+        ListField = 'USER_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'ACCOUNT'
+            Footers = <>
+            Title.Caption = #24080#21495
+          end
+          item
+            EditButtons = <>
+            FieldName = 'USER_NAME'
+            Footers = <>
+            Title.Caption = #22995#21517
+            Width = 130
+          end>
+        DropWidth = 180
+        DropHeight = 150
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbClear]
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
     end
     object RzPanel3: TRzPanel
       Left = 0

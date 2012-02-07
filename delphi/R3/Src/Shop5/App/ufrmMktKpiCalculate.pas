@@ -28,6 +28,7 @@ type
     cdsKpiIndex: TZQuery;
     cdsKpiOption: TZQuery;
     Bevel1: TBevel;
+    fndPLAN_USER: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -70,6 +71,7 @@ begin
   Params := TftParamList.Create;
 
   fndCLIENT_ID.DataSet := ShopGlobal.GetZQueryFromName('PUB_CUSTOMER');
+  fndPLAN_USER.DataSet := ShopGlobal.GetZQueryFromName('CA_USERS');
   fndKPI_YEAR.Value := StrToInt(FormatDateTime('YYYY',Date()));
   CdsKpiId := TZQuery.Create(nil);
   fndKPI_ID.DataSet := CdsKpiId;
@@ -89,17 +91,19 @@ begin
   begin
      Caption := '返利计算';
      RzLabel4.Caption := '经 销 商';
-
+     fndPLAN_USER.Visible := False;
   end
   else if Value = '2' then
   begin
      Caption := '计提计算';
      RzLabel4.Caption := '经 销 商';
+     fndPLAN_USER.Visible := False;
   end
   else if Value = '3' then
   begin
      Caption := '业绩计算';
      RzLabel4.Caption := '业 务 员';
+     fndCLIENT_ID.Visible := False;
   end;
 end;
 
@@ -128,6 +132,8 @@ begin
     Params.ParamByName('IDX_TYPE').AsString := IdxType;
     if fndCLIENT_ID.AsString <> '' then
        Params.ParamByName('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
+    if fndPLAN_USER.AsString <> '' then
+       Params.ParamByName('PLAN_USER').AsString := fndPLAN_USER.AsString;
     if fndKPI_ID.AsString <> '' then
        Params.ParamByName('KPI_ID').AsString := fndKPI_ID.AsString;
     // EXCETYPE 类型: 1、插入 2、修改 3、删除
@@ -145,8 +151,16 @@ function TfrmMktKpiCalculate.EncodeSql: String;
 var w:String;
 begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and C.PLAN_TYPE=:PLAN_TYPE and A.COMM not in (''02'',''12'') ';
-  if fndCLIENT_ID.AsString <> '' then
-     w := w + ' and A.CLIENT_ID=:CLIENT_ID ';
+  if IdxType = '3' then
+  begin
+    if fndPLAN_USER.AsString <> '' then
+       w := w + ' and A.PLAN_USER=:PLAN_USER ';
+  end
+  else
+  begin
+    if fndCLIENT_ID.AsString <> '' then
+       w := w + ' and A.CLIENT_ID=:CLIENT_ID ';
+  end;
   if fndKPI_ID.AsString <> '' then
      w := w + ' and A.KPI_ID=:KPI_ID ';
 

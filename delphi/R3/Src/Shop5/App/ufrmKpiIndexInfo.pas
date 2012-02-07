@@ -1056,6 +1056,7 @@ begin
   basInfo := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
   //AddRecord(AObj,basInfo.FieldbyName('UNIT_ID').AsString,True);
+  if CdsKpiGoods.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('商品清单中已经存在"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
   CdsKpiGoods.Append;
   CdsKpiGoods.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
   CdsKpiGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;

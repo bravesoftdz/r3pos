@@ -154,7 +154,7 @@ begin
   if IdxType = '3' then
   begin
     if fndPLAN_USER.AsString <> '' then
-       w := w + ' and A.PLAN_USER=:PLAN_USER ';
+       w := w + ' and C.PLAN_USER=:PLAN_USER ';
   end
   else
   begin

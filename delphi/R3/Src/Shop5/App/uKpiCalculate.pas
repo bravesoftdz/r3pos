@@ -677,11 +677,17 @@ begin
   end
   else if FKpiInfo.KpiData = '2' then
   begin
-     Result := Num/FKpiInfo.PlanMny;
+     if FKpiInfo.PlanMny = 0 then
+        Result := 1
+     else
+        Result := Num/FKpiInfo.PlanMny;
   end
   else if FKpiInfo.KpiData = '3' then
   begin
-     Result := Num/FKpiInfo.PlanMny;
+     if FKpiInfo.PlanMny = 0 then
+        Result := 1
+     else
+        Result := Num/FKpiInfo.PlanMny;
   end
   else
      Result := Num;

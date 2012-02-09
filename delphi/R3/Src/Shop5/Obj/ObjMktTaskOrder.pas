@@ -105,7 +105,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and PLAN_USER='+QuotedStr(FieldbyName('PLAN_USER').AsString)+
-                   ' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString;
+                   ' and PLAN_TYPE='+QuotedStr(FieldByName('PLAN_TYPE').AsString)+' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString;
     aGlobal.Open(rs);
 
     if rs.FieldByName('Record_Sum').AsInteger > 0 then
@@ -122,8 +122,8 @@ begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and PLAN_USER='+QuotedStr(FieldbyName('PLAN_USER').AsString)+
-                   ' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString+' and PLAN_USER<>'+QuotedStr(FieldbyName('PLAN_USER').AsString);
+    rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and PLAN_USER='+QuotedStr(FieldbyName('PLAN_USER').AsString)+' and PLAN_TYPE='+QuotedStr(FieldByName('PLAN_TYPE').AsString)+
+                   ' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString+' and PLAN_ID<>'+QuotedStr(FieldbyName('PLAN_ID').AsString);
     aGlobal.Open(rs);
 
     if rs.FieldByName('Record_Sum').AsInteger > 0 then

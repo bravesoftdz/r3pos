@@ -117,7 +117,7 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and CLIENT_ID='+QuotedStr(FieldbyName('CLIENT_ID').AsString)+
-                   ' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString;
+                   ' and PLAN_TYPE='+QuotedStr(FieldByName('PLAN_TYPE').AsString)+' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString;
     aGlobal.Open(rs);
 
     if rs.FieldByName('Record_Sum').AsInteger > 0 then

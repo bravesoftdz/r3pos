@@ -98,13 +98,20 @@ var Rate:Integer;
     D_Value:Real;
 begin
   Result := 0;
+
   LastProNum := ProNum;
   if StrToInt(FKpiInfo.KpiCalc) in [1,4] then Rate := 1 else Rate := 100;
   if StrToInt(FKpiInfo.KpiCalc) in [1,2,3] then
   begin
      if CurPrarm >= Param2 then
      begin
-        Result := CurAmt * CurAgio*FKpiInfo.KpiAgio/Rate;
+        //Result := CurAmt * CurAgio*FKpiInfo.KpiAgio/Rate;
+        Result := CurAmt * CurAgio/Rate;
+        ProNum := 0;
+     end
+     else
+     begin
+        Result := CurAmt * FKpiInfo.KpiAgio/Rate;
         ProNum := 0;
      end;
   end
@@ -116,52 +123,76 @@ begin
        begin
           if FKpiInfo.KpiData = '1' then
           begin
-             Result := FKpiInfo.PlanAmt*Param2*CurAgio*FKpiInfo.KpiAgio/Rate;
-             ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/Rate;
+             //Result := FKpiInfo.PlanAmt*Param2*CurAgio*FKpiInfo.KpiAgio/Rate;
+             //ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/Rate;
+             Result := FKpiInfo.PlanAmt*Param2*CurAgio/Rate;
+             ProNum := CurAmt*CurAgio/Rate;
           end
           else if FKpiInfo.KpiData = '2' then
           begin
-             Result := FKpiInfo.PlanMny*Param2*CurAgio*FKpiInfo.KpiAgio/Rate;
-             ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/Rate;
+             //Result := FKpiInfo.PlanMny*Param2*CurAgio*FKpiInfo.KpiAgio/Rate;
+             //ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/Rate;
+             Result := FKpiInfo.PlanMny*Param2*CurAgio/Rate;
+             ProNum := CurAmt*CurAgio/Rate;
           end
           else if FKpiInfo.KpiData = '3' then
           begin
-             Result := FKpiInfo.PlanMny*Param2*CurAgio*FKpiInfo.KpiAgio/Rate;
-             ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/Rate;
+             //Result := FKpiInfo.PlanMny*Param2*CurAgio*FKpiInfo.KpiAgio/Rate;
+             //ProNum := CurAmt*CurAgio*FKpiInfo.KpiAgio/Rate;
+             Result := FKpiInfo.PlanMny*Param2*CurAgio/Rate;
+             ProNum := CurAmt*CurAgio/Rate;
           end
           else if FKpiInfo.KpiData = '4' then
           begin
-             Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             {Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
              D_Value := CurAmt-Param2;
              if D_Value <= 0 then
                 ProNum := 0
              else
-                ProNum := (D_Value)*CurAgio*FKpiInfo.KpiAgio/Rate;
+                ProNum := (D_Value)*CurAgio*FKpiInfo.KpiAgio/Rate;}
+             Result := (Param2)*CurAgio/Rate;
+             D_Value := CurAmt-Param2;
+             if D_Value <= 0 then
+                ProNum := 0
+             else
+                ProNum := (D_Value)*CurAgio/Rate;
           end
           else if FKpiInfo.KpiData = '5' then
           begin
-             Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             {Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
              D_Value := CurAmt-Param2;
              if D_Value <= 0 then
                 ProNum := 0
              else
-                ProNum := (CurAmt-Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
+                ProNum := (CurAmt-Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;}
+             Result := (Param2)*CurAgio/Rate;
+             D_Value := CurAmt-Param2;
+             if D_Value <= 0 then
+                ProNum := 0
+             else
+                ProNum := (CurAmt-Param2)*CurAgio/Rate;
           end
           else if FKpiInfo.KpiData = '6' then
           begin
-             Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             {Result := (Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
              D_Value := CurAmt-Param2;
              if D_Value <= 0 then
                 ProNum := 0
              else
-                ProNum := (CurAmt-Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;
+                ProNum := (CurAmt-Param2)*CurAgio*FKpiInfo.KpiAgio/Rate;}
+             Result := (Param2)*CurAgio/Rate;
+             D_Value := CurAmt-Param2;
+             if D_Value <= 0 then
+                ProNum := 0
+             else
+                ProNum := (CurAmt-Param2)*CurAgio/Rate;
           end;
        end
        else if (CurPrarm >= Param2) and (Param2 > Param1) then
        begin
           if FKpiInfo.KpiData = '1' then
           begin
-             D_Value := CurAmt-FKpiInfo.PlanAmt*Param2;
+             {D_Value := CurAmt-FKpiInfo.PlanAmt*Param2;
              if D_Value <= 0 then
              begin
                 Result := 0;
@@ -171,11 +202,22 @@ begin
              begin
                 Result := (FKpiInfo.PlanAmt*Param2-FKpiInfo.PlanAmt*Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
                 ProNum := (CurAmt-FKpiInfo.PlanAmt*Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             end;}
+             D_Value := CurAmt-FKpiInfo.PlanAmt*Param2;
+             if D_Value <= 0 then
+             begin
+                Result := 0;
+                ProNum := 0;
+             end
+             else
+             begin
+                Result := (FKpiInfo.PlanAmt*Param2-FKpiInfo.PlanAmt*Param1)*CurAgio/Rate;
+                ProNum := (CurAmt-FKpiInfo.PlanAmt*Param1)*CurAgio/Rate;
              end;
           end
           else if FKpiInfo.KpiData = '2' then
           begin
-             D_Value := CurAmt-FKpiInfo.PlanMny*Param2;
+             {D_Value := CurAmt-FKpiInfo.PlanMny*Param2;
              if D_Value <= 0 then
              begin
                 Result := 0;
@@ -185,11 +227,22 @@ begin
              begin
                 Result := (FKpiInfo.PlanMny*Param2-FKpiInfo.PlanMny*Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
                 ProNum := (CurAmt-FKpiInfo.PlanMny*Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             end;}
+             D_Value := CurAmt-FKpiInfo.PlanMny*Param2;
+             if D_Value <= 0 then
+             begin
+                Result := 0;
+                ProNum := 0;
+             end
+             else
+             begin
+                Result := (FKpiInfo.PlanMny*Param2-FKpiInfo.PlanMny*Param1)*CurAgio/Rate;
+                ProNum := (CurAmt-FKpiInfo.PlanMny*Param1)*CurAgio/Rate;
              end;
           end
           else if FKpiInfo.KpiData = '3' then
           begin
-             D_Value := CurAmt-FKpiInfo.PlanMny*Param2;
+             {D_Value := CurAmt-FKpiInfo.PlanMny*Param2;
              if D_Value <= 0 then
              begin
                 Result := 0;
@@ -199,11 +252,22 @@ begin
              begin
                 Result := (FKpiInfo.PlanMny*Param2-FKpiInfo.PlanMny*Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
                 ProNum := (CurAmt-FKpiInfo.PlanMny*Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             end;}
+             D_Value := CurAmt-FKpiInfo.PlanMny*Param2;
+             if D_Value <= 0 then
+             begin
+                Result := 0;
+                ProNum := 0;
+             end
+             else
+             begin
+                Result := (FKpiInfo.PlanMny*Param2-FKpiInfo.PlanMny*Param1)*CurAgio/Rate;
+                ProNum := (CurAmt-FKpiInfo.PlanMny*Param1)*CurAgio/Rate;
              end;
           end
           else if FKpiInfo.KpiData = '4' then
           begin
-             D_Value := CurAmt-Param2;
+             {D_Value := CurAmt-Param2;
              if D_Value <= 0 then
              begin
                 Result := 0;
@@ -213,10 +277,32 @@ begin
              begin
                 Result := (Param2-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
                 ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             end;}
+             D_Value := CurAmt-Param2;
+             if D_Value <= 0 then
+             begin
+                Result := 0;
+                ProNum := 0;
+             end
+             else
+             begin
+                Result := (Param2-Param1)*CurAgio/Rate;
+                ProNum := (CurAmt-Param1)*CurAgio/Rate;
              end;
           end
           else if FKpiInfo.KpiData = '5' then
           begin
+             {D_Value := CurAmt-Param2;
+             if D_Value <= 0 then
+             begin
+                Result := 0;
+                ProNum := 0;
+             end
+             else
+             begin
+                Result := (Param2-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+                ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             end;}
              D_Value := CurAmt-Param2;
              if D_Value <= 0 then
              begin
@@ -231,7 +317,7 @@ begin
           end
           else if FKpiInfo.KpiData = '6' then
           begin
-             D_Value := CurAmt-Param2;
+             {D_Value := CurAmt-Param2;
              if D_Value <= 0 then
              begin
                 Result := 0;
@@ -241,6 +327,17 @@ begin
              begin
                 Result := (Param2-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
                 ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+             end;}
+             D_Value := CurAmt-Param2;
+             if D_Value <= 0 then
+             begin
+                Result := 0;
+                ProNum := 0;
+             end
+             else
+             begin
+                Result := (Param2-Param1)*CurAgio/Rate;
+                ProNum := (CurAmt-Param1)*CurAgio/Rate;
              end;
           end;
        end
@@ -251,7 +348,12 @@ begin
      begin
        if (CurPrarm >= Param2) then
        begin
-          Result := CurAmt*Param2*CurAgio*FKpiInfo.KpiAgio/Rate;
+          Result := CurAmt*Param2*CurAgio/Rate;
+          ProNum := 0;
+       end
+       else
+       begin
+          Result := CurAmt*Param2*FKpiInfo.KpiAgio/Rate;
           ProNum := 0;
        end;
      end;
@@ -334,7 +436,7 @@ var rs:TZQuery;
 //当前时间段内的达标量、当前考核结果、当前达标率/达标量、上一指标达标率/达标量、当前指标达标率/达标量,当前折扣系数
     CurAmount,CurMny,CurRate_Amt,LastParam,CurParam,CurAgio:Real;
     // 返利计算
-    CalculateAmt:Real;
+    CalculateAmt,ActAmt:Real;
 begin
   if FDataSet_Kpi.IsEmpty then Exit;
 
@@ -479,6 +581,7 @@ begin
             else if StrToInt(FKpiInfo.KpiCalc) in [3,6] then
                CalculateAmt := rs.FieldByName('CALC_MONEY').AsFloat;
          end;
+         ActAmt := CurAmount;
          IsAdd := False;
       end;
       
@@ -510,7 +613,7 @@ begin
          Kpi_Index.SEQNO := 0;
          Kpi_Index.KpiRate := 0;
          Kpi_Index.KpiAgio := FKpiInfo.KpiAgio;
-         Kpi_Index.FshVle := CurAmount;
+         Kpi_Index.FshVle := ActAmt;
          Kpi_Index.KpiMny := CalculateAmt * FKpiInfo.KpiAgio;
          AddKpiIndex(Kpi_Index);
       end;
@@ -519,11 +622,26 @@ begin
       Kpi_Index.LV := FDataSet_Kpi.FieldByName('KPI_LV').AsString;
       Kpi_Index.SEQNO := FDataSet_Kpi.FieldByName('SEQNO').AsInteger;
       if StrToInt(FKpiInfo.KpiData) in [1,2,3] then
-         Kpi_Index.KpiRate := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat
+      begin
+         if CurRate_Amt > CurParam then
+            Kpi_Index.KpiRate := FDataSet_Kpi.FieldByName('KPI_RATE').AsFloat
+         else
+            Kpi_Index.KpiRate := 0;
+      end
       else
-         Kpi_Index.KpiRate := FDataSet_Kpi.FieldByName('KPI_AMT').AsFloat;
-      Kpi_Index.KpiAgio := FDataSet_Kpi.FieldByName('KPI_AGIO').AsFloat;;
-      Kpi_Index.FshVle := CalculateAmt;
+      begin
+         if CurRate_Amt > CurParam then
+            Kpi_Index.KpiRate := FDataSet_Kpi.FieldByName('KPI_AMT').AsFloat
+         else
+            Kpi_Index.KpiRate := 0;
+      end;
+
+      if CurRate_Amt > CurParam then
+        Kpi_Index.KpiAgio := FDataSet_Kpi.FieldByName('KPI_AGIO').AsFloat
+      else
+        Kpi_Index.KpiAgio := FKpiInfo.KpiAgio;
+
+      Kpi_Index.FshVle := ActAmt;
       Kpi_Index.KpiMny := CurMny;
       AddKpiIndex(Kpi_Index);
       //有关累进计算，重新赋值
@@ -619,6 +737,7 @@ begin
        else
           ContainerBrrw := FKpiSite.LastAmt - FKpiSite.LastParam;
        Result := CurAmt + ContainerBrrw;
+       //if ContainerBrrw < 0 then ContainerBrrw := 0;
        ContainerBrrw := 0;
      end;
 

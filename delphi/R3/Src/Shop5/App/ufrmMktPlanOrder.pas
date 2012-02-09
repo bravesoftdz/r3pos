@@ -656,9 +656,9 @@ procedure TfrmMktPlanOrder.DBGridEh1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-  if (edtKPI_ID.AsString <> '') and (Column.FieldName = 'AMOUNT') then
+  if (cdsDetail.FieldByName('KPI_ID').AsString <> '') and (Column.FieldName = 'AMOUNT') then
   begin
-    if cdsKPI_ID.Locate('KPI_ID',edtKPI_ID.AsString,[]) then
+    if cdsKPI_ID.Locate('KPI_ID',cdsDetail.FieldByName('KPI_ID').AsString,[]) then
     begin
       if (cdsKPI_ID.FieldByName('KPI_DATA').AsInteger in [1,4]) then
       begin
@@ -667,9 +667,9 @@ begin
       end;
     end;
   end;
-  if (edtKPI_ID.AsString <> '') and (Column.FieldName = 'AMONEY') then
+  if (cdsDetail.FieldByName('KPI_ID').AsString <> '') and (Column.FieldName = 'AMONEY') then
   begin
-    if cdsKPI_ID.Locate('KPI_ID',edtKPI_ID.AsString,[]) then
+    if cdsKPI_ID.Locate('KPI_ID',cdsDetail.FieldByName('KPI_ID').AsString,[]) then
     begin
       if (cdsKPI_ID.FieldByName('KPI_DATA').AsInteger in [2,3,5,6]) then
       begin

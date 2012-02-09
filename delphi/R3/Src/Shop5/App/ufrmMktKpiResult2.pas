@@ -532,6 +532,7 @@ begin
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
       IdxType := CdsKpiResult.FieldByName('IDX_TYPE').AsString;
       KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsString;
+      KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
       Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
       ShowModal;
     finally

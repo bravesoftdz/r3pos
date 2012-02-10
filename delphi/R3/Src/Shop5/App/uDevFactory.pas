@@ -1,7 +1,7 @@
 unit uDevFactory;
 
 interface
-uses Windows,Classes,spComm,SysUtils,zPrinters;
+uses Windows,Classes,spComm,SysUtils,zPrinters,ufrmShowPanel;
 type
 TDevFactory=class
   private
@@ -52,7 +52,7 @@ TDevFactory=class
     function GetWidth: integer;
     procedure SetPrintFormat(const Value: integer);
   protected
-    
+    frmShowPanel:TfrmShowPanel;
   public
     F:TextFile;
     constructor Create;
@@ -155,11 +155,13 @@ constructor TDevFactory.Create;
 begin
   inherited;
   FComm := TComm.Create(nil);
+  frmShowPanel := TfrmShowPanel.Create(nil);
 end;
 
 destructor TDevFactory.Destroy;
 begin
   FComm.StopComm;
+  frmShowPanel.Free;
   FComm.Free;
   inherited;
 end;
@@ -412,24 +414,44 @@ class procedure TDevFactory.ShowAMoney(Value: Real);
 begin
   DevFactory.SetLEDType(3);
   DevFactory.SetLEDNumber(Value);
+  if Screen.MonitorCount>1 then
+     begin
+       DevFactory.frmShowPanel.sText := '金额:'+formatFloat('#0.0##',Value);
+       DevFactory.frmShowPanel.StartScreen;
+     end;
 end;
 
 class procedure TDevFactory.ShowAPrice(Value: Real);
 begin
   DevFactory.SetLEDType(1);
   DevFactory.SetLEDNumber(Value);
+  if Screen.MonitorCount>1 then
+     begin
+       DevFactory.frmShowPanel.sText := '单价:'+formatFloat('#0.0##',Value);
+       DevFactory.frmShowPanel.StartScreen;
+     end;
 end;
 
 class procedure TDevFactory.ShowATotal(Value: Real);
 begin
   DevFactory.SetLEDType(2);
   DevFactory.SetLEDNumber(Value);
+  if Screen.MonitorCount>1 then
+     begin
+       DevFactory.frmShowPanel.sText := '总价:'+formatFloat('#0.0##',Value);
+       DevFactory.frmShowPanel.StartScreen;
+     end;
 end;
 
 class procedure TDevFactory.ShowDibs(Value: Real);
 begin
   DevFactory.SetLEDType(4);
   DevFactory.SetLEDNumber(Value);
+  if Screen.MonitorCount>1 then
+     begin
+       DevFactory.frmShowPanel.sText := '找零:'+formatFloat('#0.0##',Value);
+       DevFactory.frmShowPanel.StartScreen;
+     end;
 end;
 
 procedure TDevFactory.WritePrint(s: string);

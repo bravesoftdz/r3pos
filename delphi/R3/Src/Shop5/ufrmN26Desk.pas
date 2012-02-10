@@ -24,12 +24,12 @@ type
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
-    RzBmpButton1: TRzBmpButton;
     Image4: TImage;
     RzBmpButton2: TRzBmpButton;
     Image5: TImage;
     Image6: TImage;
     RzBmpButton3: TRzBmpButton;
+    RzBmpButton1: TRzBmpButton;
     procedure RzBmpButton16Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnDownOrderClick(Sender: TObject);
@@ -60,7 +60,7 @@ var
   frmN26Desk: TfrmN26Desk;
 
 implementation
-uses ufrmMain,udmIcon,uRcFactory,uShopGlobal,uDevFactory,Registry;
+uses ufrmMain,udmIcon,uRcFactory,uShopGlobal,uDevFactory,Registry,IniFiles;
 {$R *.dfm}
 
 function TfrmN26Desk.FindAction(id:string):TAction;
@@ -161,38 +161,43 @@ var url:string;
     Ec:IHTMLElementCollection;
     iframe:DispHTMLIFrame;
     _Start:int64;
+    F:TIniFile;
 begin
   Wait := true;
-  if not FileExists(ExtractFilePath(ParamStr(0))+'desk.html') then Exit;
-  IEDesktop.Navigate(ExtractFilePath(ParamStr(0))+'desk.html');
-  _Start := GetTickCount;
-  while Wait do
-    begin
-      if (GetTickCount - _Start) > 20000 then break;
-      Application.ProcessMessages;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    case F.ReadInteger('soft','deskFlag',0) of
+    0:begin //默认界面
+        if not FileExists(ExtractFilePath(ParamStr(0))+'desk.html') then Exit;
+        IEDesktop.Navigate(ExtractFilePath(ParamStr(0))+'desk.html');
+        _Start := GetTickCount;
+        while Wait do
+          begin
+            if (GetTickCount - _Start) > 20000 then break;
+            Application.ProcessMessages;
+          end;
+        Doc := IEDesktop.Document as IHTMLDocument2;
+        if Doc=nil then Exit;
+        iframe := Doc.all.item('mht1',EmptyParam) as DispHTMLIFrame;
+        if iframe<>nil then
+           begin
+             iframe.src := ExtractFilePath(ParamStr(0))+'adv\mht1.mht';
+           end;
+        if FileExists(ExtractFilePath(ParamStr(0))+'adv\adv1.html') then
+           begin
+             url := ExtractFilePath(ParamStr(0))+'adv\adv1.html';
+             iframe := Doc.all.item('Adv1',EmptyParam) as DispHTMLIFrame;
+             if iframe<>nil then iframe.src := url;
+           end;
+      end;
+    1:begin //只有HTML在线页面
+        bgFunc.Visible := false;
+        IEDesktop.Navigate(ExtractFilePath(ParamStr(0))+'desk.html');
+      end;
     end;
-  Doc := IEDesktop.Document as IHTMLDocument2;
-  if Doc=nil then Exit;
-  iframe := Doc.all.item('mht1',EmptyParam) as DispHTMLIFrame;
-  if iframe<>nil then
-     begin
-       //if CaFactory.Audited and frmRimIEBrowser.Logined then
-       //begin
-       //  iframe.src := rim_url+'indexActivityInfo.action?comId='+rim_comid+'&custId='+rim_custid;
-       //  AdvFactory.WBSaveAsMht(rim_url+'indexActivityInfo.action?comId='+rim_comid+'&custId='+rim_custid,'mht1');
-       //end else
-         iframe.src := ExtractFilePath(ParamStr(0))+'adv\mht1.mht';
-       //if CaFactory.Audited and frmRimIEBrowser.Logined then
-       //   AdvFactory.GetAllFile(IEDesktop)
-       //else
-       //   AdvFactory.LoadAllFile(IEDesktop);
-     end;
-  if FileExists(ExtractFilePath(ParamStr(0))+'adv\adv1.html') then
-     begin
-       url := ExtractFilePath(ParamStr(0))+'adv\adv1.html';
-       iframe := Doc.all.item('Adv1',EmptyParam) as DispHTMLIFrame;
-       if iframe<>nil then iframe.src := url;
-     end;
+  finally
+    F.Free;
+  end;
 end;
 
 procedure TfrmN26Desk.RzBmpButton1Click(Sender: TObject);

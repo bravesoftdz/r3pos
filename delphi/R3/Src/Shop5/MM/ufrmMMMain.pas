@@ -2570,7 +2570,7 @@ end;
 
 procedure TfrmMMMain.actfrmRimNetExecute(Sender: TObject);
 var
-  s:string;
+  s,p:string;
   Form:TfrmBasic;
   sl:TStringList;
 begin
@@ -2611,8 +2611,8 @@ begin
     AddFrom(frmRimIEBrowser);
     frmRimIEBrowser.WindowState := wsMaximized;
     frmRimIEBrowser.BringToFront;
-
-    frmRimIEBrowser.IEOpen(frmRimIEBrowser.rimUrl+sl.values['url']+'?comId='+frmRimIEBrowser.rimcomId+'&custId='+frmRimIEBrowser.rimcustId);
+    if pos('?',sl.values['url'])=0 then p := '?' else p := '&';
+    frmRimIEBrowser.IEOpen(frmRimIEBrowser.rimUrl+sl.values['url']+p+'comId='+frmRimIEBrowser.rimcomId+'&custId='+frmRimIEBrowser.rimcustId);
   finally
     frmLogo.Close;
     sl.free;

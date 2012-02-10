@@ -225,7 +225,7 @@ begin
       if trim(edtLINKMAN.Text)='' then
       begin
         if edtLINKMAN.CanFocus then edtLINKMAN.SetFocus;
-        raise Exception.Create('存在新商盟账号,负责人不能为空!');
+        raise Exception.Create('存在网上订货账号,负责人不能为空!');
       end;
     end;
 

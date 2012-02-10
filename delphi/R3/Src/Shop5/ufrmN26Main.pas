@@ -294,6 +294,8 @@ type
     actfrmDemandOrderList1: TAction;
     actfrmDemandOrderList2: TAction;
     actfrmInitGuide: TAction;
+    Image18: TImage;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -420,6 +422,7 @@ type
     procedure actfrmDemandOrderList1Execute(Sender: TObject);
     procedure actfrmDemandOrderList2Execute(Sender: TObject);
     procedure actfrmInitGuideExecute(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -819,6 +822,7 @@ begin
      if Logined then TimerFactory := TTimerFactory.Create(DoLoadMsg,StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60000);
      if Logined then StartSyncTask;
      Timer1.Enabled := Logined;
+     frmLogo.Close;
   end;
 end;
 
@@ -3078,12 +3082,12 @@ begin
 
     RzBmpButton6.Bitmaps.Up := rcFactory.GetBitmap(sflag+'home');
     RzBmpButton6.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'home_hot');
-    if N26Factory.Checked=0 then
-       begin
-         RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag+'xsm');
-         RzBmpButton1.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'xsm_hot');
-       end
-    else
+//    if N26Factory.Checked=0 then
+//       begin
+//         RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag+'xsm');
+//         RzBmpButton1.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'xsm_hot');
+//       end
+//    else
        begin
          RzBmpButton1.Bitmaps.Up := rcFactory.GetBitmap(sflag+'fit');
          RzBmpButton1.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'fit_hot');
@@ -4124,6 +4128,12 @@ begin
   inherited;
   TfrmInitGuide.StartGuide(self);
 
+end;
+
+procedure TfrmN26Main.Button1Click(Sender: TObject);
+begin
+  inherited;
+  TDevFactory.ShowAPrice(2943.4); 
 end;
 
 end.

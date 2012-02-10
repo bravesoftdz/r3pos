@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=d:\mm
+OutputDir=
 UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -100,7 +100,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=-mmPing 28349  ²âÊÔ1
+RunParams=
 HostApplication=
 Launcher=
 UseLauncher=0
@@ -114,8 +114,8 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=3
 MinorVer=0
-Release=1
-Build=36
+Release=2
+Build=37
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=MM
-FileVersion=3.0.1.36
+FileVersion=3.0.2.37
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -141,17 +141,18 @@ Item0=LIBV4.0
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=10
+Count=11
 Item0=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\plain;D:\Delphi\R3\zLib\src\component;E:\soft\¿Ø¼þ\Gzip125
-Item1=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\core;D:\Delphi\R3\zLib\src\parsesql;D:\Delphi\R3\zLib\src\plain
-Item2=D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\core
-Item3=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
-Item4=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
-Item5=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc
-Item6=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
-Item7=D:\Delphi\R3\zLib\src\zLib
-Item8=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub
-Item9=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc
+Item1=D:\Delphi\R3\Basic;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc;E:\soft\¿Ø¼þ\Gzip125
+Item2=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub;D:\Delphi\R3\zLib\src\core;D:\Delphi\R3\zLib\src\parsesql;D:\Delphi\R3\zLib\src\plain
+Item3=D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\core
+Item4=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc;..\..\..\Pub
+Item5=D:\Delphi\R3\Pub;D:\Delphi\R3\Basic;D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
+Item6=..\..\..\zLib\src\zLib;..\..\..\zLib\src\component;..\..\..\zLib\src\dbc
+Item7=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\src\dbc
+Item8=D:\Delphi\R3\zLib\src\zLib
+Item9=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc;D:\Delphi\R3\Pub
+Item10=D:\Delphi\R3\zLib\src\zLib;D:\Delphi\R3\zLib\src\component;D:\Delphi\R3\zLib\packages\delphi7\build;D:\Delphi\R3\zLib\src\dbc
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp

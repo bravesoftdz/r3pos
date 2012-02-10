@@ -25,11 +25,10 @@ inherited frmMMDesk: TfrmMMDesk
   object NewWindow: TWebBrowser
     Left = -9000
     Top = 248
-    Width = 121
-    Height = 100
+    Width = 550
+    Height = 372
     TabOrder = 1
     OnBeforeNavigate2 = ufr
-    OnNewWindow2 = IEDesktopNewWindow2
     ControlData = {
       4C000000D8380000732600000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800

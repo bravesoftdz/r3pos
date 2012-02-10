@@ -162,6 +162,7 @@ inherited frmMMLogin: TfrmMMLogin
         Height = 131
         Align = alClient
         AutoSize = True
+        Stretch = True
       end
       object Label4: TLabel
         Left = 139

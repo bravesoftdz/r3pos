@@ -264,7 +264,7 @@ var
   handle:THandle;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.4';
+  DBVersion := '1.0.2.5';
   Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

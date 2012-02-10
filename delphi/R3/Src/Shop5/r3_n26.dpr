@@ -252,7 +252,16 @@ uses
   uCaFactory in 'App\uCaFactory.pas',
   uRcFactory in 'App\uRcFactory.pas',
   uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
-  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm};
+  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
+  ObjChatInfo in 'Obj\ObjChatInfo.pas',
+  ObjDemandOrder in 'Obj\ObjDemandOrder.pas',
+  ObjKpiIndex in 'Obj\ObjKpiIndex.pas',
+  ObjMktKpiResult in 'Obj\ObjMktKpiResult.pas',
+  ObjMktPlanOrder in 'Obj\ObjMktPlanOrder.pas',
+  ObjMktRequOrder in 'Obj\ObjMktRequOrder.pas',
+  ObjMktTaskOrder in 'Obj\ObjMktTaskOrder.pas',
+  ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
+  ufrmShowPanel in 'ufrmShowPanel.pas' {frmShowPanel};
 
 {$R *.res}
 var
@@ -261,7 +270,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.4';
+  DBVersion := '1.0.2.5';
   Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

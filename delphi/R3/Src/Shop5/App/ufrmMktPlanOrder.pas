@@ -37,7 +37,7 @@ type
     edtCHK_USER: TcxTextEdit;
     edtCHK_DATE: TcxTextEdit;
     RzLabel3: TRzLabel;
-    edtBUDG_MNY: TcxTextEdit;
+    edtBOND_MNY: TcxTextEdit;
     edtKPI_YEAR: TcxSpinEdit;
     Label40: TLabel;
     edtSHOP_ID: TzrComboBoxList;

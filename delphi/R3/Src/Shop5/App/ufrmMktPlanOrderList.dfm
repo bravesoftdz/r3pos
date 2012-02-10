@@ -430,6 +430,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                   FieldName = 'BUDG_MNY'
                   Footers = <>
                   Title.Caption = #24066#22330#36153#39044#31639
+                  Visible = False
                 end
                 item
                   EditButtons = <>

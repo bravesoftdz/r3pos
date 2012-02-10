@@ -295,7 +295,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Properties.MaxLength = 100
         TabOrder = 9
       end
-      object edtBUDG_MNY: TcxTextEdit
+      object edtBOND_MNY: TcxTextEdit
         Left = 403
         Top = 74
         Width = 75

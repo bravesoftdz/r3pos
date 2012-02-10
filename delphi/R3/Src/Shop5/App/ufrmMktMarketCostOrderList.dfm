@@ -424,6 +424,7 @@ inherited frmMktMarketCostOrderList: TfrmMktMarketCostOrderList
                   FieldName = 'BOND_MNY'
                   Footers = <>
                   Title.Caption = #20445#35777#37329
+                  Visible = False
                   Width = 70
                 end
                 item

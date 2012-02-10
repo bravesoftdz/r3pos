@@ -111,7 +111,6 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure edtKPI_LVPropertiesChange(Sender: TObject);
     procedure D1PropertiesChange(Sender: TObject);
-    procedure D2PropertiesChange(Sender: TObject);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
@@ -123,12 +122,14 @@ type
     procedure DBGridEh1Columns3EditButtonClick(Sender: TObject;
       var Handled: Boolean);
     procedure edtKPI_NAMEPropertiesChange(Sender: TObject);
+    procedure D2PropertiesChange(Sender: TObject);
   private
     { Private declarations }
     Saved,DisplayPer:Boolean;
     KpiAgioFront,KpiAgioBack:String;
     Date_1,Date_2,Date_3,Date_4:TDateRecord;
-    C1,C2,C3,C4:Integer;
+    Changed:Boolean;
+    CurYear:Integer;
     function IsNull:Boolean;
     procedure ShowGrid;
     procedure InitGrid;
@@ -429,23 +430,23 @@ begin
           begin
              if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 1 then
              begin
-                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_1.BeginDate;
-                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_1.EndDate;
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_1.BeginDate mod 10000;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_1.EndDate mod 10000;
              end
              else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 2 then
              begin
-                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_2.BeginDate;
-                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_2.EndDate;
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_2.BeginDate mod 10000;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_2.EndDate mod 10000;
              end
              else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 3 then
              begin
-                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_3.BeginDate;
-                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_3.EndDate;
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_3.BeginDate mod 10000;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_3.EndDate mod 10000;
              end
              else if CdsKpiOption.FieldByName('KPI_LV').AsInteger = 4 then
              begin
-                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_4.BeginDate;
-                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_4.EndDate;
+                CdsKpiOption.FieldByName('KPI_DATE1').AsInteger := Date_4.BeginDate mod 10000;
+                CdsKpiOption.FieldByName('KPI_DATE2').AsInteger := Date_4.EndDate mod 10000;
              end;
           end;
           CdsKpiOption.Post;
@@ -518,10 +519,7 @@ begin
   inherited;
   Aobj := TRecord_.Create;
   RowID := 0;
-  C1 := 0;
-  C2 := 0;
-  C3 := 0;
-  C4 := 0;
+  CurYear := StrToInt(FormatDateTime('YYYY',Date));
   KpiAgioFront := '·µÀû';
   KpiAgioBack := 'ÏµÊý';
   InitGrid;
@@ -577,6 +575,14 @@ begin
   begin
      DBGridEh1.Columns[1].Visible := False;
      DBGridEh1.Columns[2].Visible := False;
+     Date_1.BeginDate := 0;
+     Date_1.EndDate := 0;
+     Date_2.BeginDate := 0;
+     Date_2.EndDate := 0;
+     Date_3.BeginDate := 0;
+     Date_3.EndDate := 0;
+     Date_4.BeginDate := 0;
+     Date_4.EndDate := 0;
      RzPanel3.Visible := True;
      CdsKpiOption.Filtered := False;
      CdsKpiOption.Filter := '';
@@ -1308,108 +1314,152 @@ begin
   CdsKpiOption.Filtered := True;
   if edtKPI_LV.ItemIndex = 0 then
   begin
-     if C1 = 0 then
+     if dbState in [dsEdit,dsBrowse] then
      begin
-        Date_1.BeginDate := CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
-        Date_1.EndDate := CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+        if (Date_1.BeginDate = 0) then
+        begin
+            if (CdsKpiOption.FieldByName('KPI_DATE1').AsInteger < CdsKpiOption.FieldByName('KPI_DATE2').AsInteger) then
+            begin
+               Date_1.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_1.EndDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end else
+            begin
+               Date_1.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_1.EndDate := (CurYear+1)*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end;
+
+        end;
+     end
+     else
+     begin
+       if (Date_1.BeginDate = 0) and (edtKPI_TYPE.ItemIndex = 0) then
+       begin
+          Date_1.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',Date));
+          Date_1.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date-1,6)));
+          Date_2.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date,6)));
+          Date_2.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date-1,12)));
+       end
+       else if (Date_1.BeginDate = 0) and (edtKPI_TYPE.ItemIndex = 1) then
+       begin
+          Date_1.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',Date));
+          Date_1.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date-1,3)));
+          Date_2.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date,3)));
+          Date_2.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date-1,6)));
+          Date_3.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date,6)));
+          Date_3.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date-1,9)));
+          Date_4.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date,9)));
+          Date_4.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date-1,12)));
+       end;
      end;
-     Inc(C1);
      Date1 := Date_1.BeginDate;
      Date2 := Date_1.EndDate;
+     Changed := True;
   end
   else if edtKPI_LV.ItemIndex = 1 then
   begin
-     if C2 = 0 then
+     if dbState in [dsEdit,dsBrowse] then
      begin
-        Date_2.BeginDate := CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
-        Date_2.EndDate := CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+        if (Date_2.BeginDate = 0) then
+        begin
+            if (CdsKpiOption.FieldByName('KPI_DATE1').AsInteger < CdsKpiOption.FieldByName('KPI_DATE2').AsInteger) then
+            begin
+               Date_2.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_2.EndDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end else
+            begin
+               Date_2.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_2.EndDate := (CurYear+1)*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end;
+        end;
      end;
-     Inc(C2);
      Date1 := Date_2.BeginDate;
      Date2 := Date_2.EndDate;
   end
   else if edtKPI_LV.ItemIndex = 2 then
   begin
-     if C3 = 0 then
+     if dbState in [dsEdit,dsBrowse] then
      begin
-        Date_3.BeginDate := CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
-        Date_3.EndDate := CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+        if (Date_3.BeginDate = 0) then
+        begin
+            if (CdsKpiOption.FieldByName('KPI_DATE1').AsInteger < CdsKpiOption.FieldByName('KPI_DATE2').AsInteger) then
+            begin
+               Date_3.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_3.EndDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end else
+            begin
+               Date_3.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_3.EndDate := (CurYear+1)*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end;
+        end;
      end;
-     Inc(C3);
      Date1 := Date_3.BeginDate;
      Date2 := Date_3.EndDate;
   end
   else if edtKPI_LV.ItemIndex = 3 then
   begin
-     if C4 = 0 then
+     if dbState in [dsEdit,dsBrowse] then
      begin
-        Date_4.BeginDate := CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
-        Date_4.EndDate := CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+        if (Date_4.BeginDate = 0) then
+        begin
+            if (CdsKpiOption.FieldByName('KPI_DATE1').AsInteger < CdsKpiOption.FieldByName('KPI_DATE2').AsInteger) then
+            begin
+               Date_4.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_4.EndDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end else
+            begin
+               Date_4.BeginDate := CurYear*10000+CdsKpiOption.FieldByName('KPI_DATE1').AsInteger;
+               Date_4.EndDate := (CurYear+1)*10000+CdsKpiOption.FieldByName('KPI_DATE2').AsInteger;
+            end;
+        end;
      end;
-     Inc(C4);
      Date1 := Date_4.BeginDate;
      Date2 := Date_4.EndDate;
   end;
-  if Date1 = 0 then
-     D1.Date := Date()
-  else
-  begin
-     if Date1 > Date2 then
-        D1.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',IncYear(Date,-1)))*10000+Date1))
-     else
-        D1.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',Date))*10000+Date1));
-  end;
-
+  D1.Date := FnTime.fnStrtoDate(IntToStr(Date1));
+  D2.Date := FnTime.fnStrtoDate(IntToStr(Date2));
+  Changed := False;
 end;
 
 procedure TfrmKpiIndexInfo.D1PropertiesChange(Sender: TObject);
-var Date2:Integer;
 begin
   inherited;
   if not CdsKpiOption.Active then Exit;
-  if edtKPI_LV.ItemIndex = 0 then
+  if (edtKPI_LV.ItemIndex = 0) then
   begin
-     Date_1.BeginDate := StrToInt(FormatDateTime('MMDD',D1.Date));
-     Date2 := Date_1.EndDate;
-  end
-  else if edtKPI_LV.ItemIndex = 1 then
+     if Changed then Exit;
+     if edtKPI_TYPE.ItemIndex = 0 then
+     begin
+        Date_1.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',D1.Date));
+        Date_1.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,6)-1));
+        Date_2.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,6)));
+        Date_2.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,12)-1));
+     end
+     else if edtKPI_TYPE.ItemIndex = 1 then
+     begin
+        Date_1.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',D1.Date));
+        Date_1.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,3)-1));
+        Date_2.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,3)));
+        Date_2.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,6)-1));
+        Date_3.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,6)));
+        Date_3.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,9)-1));
+        Date_4.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,9)));
+        Date_4.EndDate := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(D1.Date,12)-1));
+     end;
+     D1.Date := FnTime.fnStrtoDate(IntToStr(Date_1.BeginDate));
+     D2.Date := FnTime.fnStrtoDate(IntToStr(Date_1.EndDate));
+  end else
+  if edtKPI_LV.ItemIndex = 1 then
   begin
-     Date_2.BeginDate := StrToInt(FormatDateTime('MMDD',D1.Date));
-     Date2 := Date_2.EndDate;
-  end
-  else if edtKPI_LV.ItemIndex = 2 then
+     Date_2.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',D1.Date));
+  end else
+  if edtKPI_LV.ItemIndex = 2 then
   begin
-     Date_3.BeginDate := StrToInt(FormatDateTime('MMDD',D1.Date));
-     Date2 := Date_3.EndDate;
-  end
-  else if edtKPI_LV.ItemIndex = 3 then
+     Date_3.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',D1.Date));
+  end else
+  if edtKPI_LV.ItemIndex = 3 then
   begin
-     Date_4.BeginDate := StrToInt(FormatDateTime('MMDD',D1.Date));
-     Date2 := Date_4.EndDate;
+     Date_4.BeginDate := StrToInt(FormatDateTime('YYYYMMDD',D1.Date));
   end;
-  if Date2 = 0 then
-  begin
-    if edtKPI_TYPE.ItemIndex = 0 then
-       D2.Date := IncMonth(D1.Date,6)-1
-    else if edtKPI_TYPE.ItemIndex = 1 then
-       D2.Date := IncMonth(D1.Date,3)-1;
-  end
-  else
-     D2.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',Date))*10000+Date2));
-end;
-
-procedure TfrmKpiIndexInfo.D2PropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if not CdsKpiOption.Active then Exit;
-  if edtKPI_LV.ItemIndex = 0 then
-     Date_1.EndDate := StrToInt(FormatDateTime('MMDD',D2.Date))
-  else if edtKPI_LV.ItemIndex = 1 then
-     Date_2.EndDate := StrToInt(FormatDateTime('MMDD',D2.Date))
-  else if edtKPI_LV.ItemIndex = 2 then
-     Date_3.EndDate := StrToInt(FormatDateTime('MMDD',D2.Date))
-  else if edtKPI_LV.ItemIndex = 3 then
-     Date_4.EndDate := StrToInt(FormatDateTime('MMDD',D2.Date));
 
 end;
 
@@ -1465,6 +1515,20 @@ begin
   inherited;
   If dbState <> dsBrowse Then
      edtKPI_SPELL.Text := FnString.GetWordSpell(edtKPI_NAME.Text);
+end;
+
+procedure TfrmKpiIndexInfo.D2PropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if Changed then Exit;
+  if edtKPI_LV.ItemIndex = 0 then
+     Date_1.EndDate := StrToInt(FormatDateTime('YYYYMMDD',D2.Date))
+  else if edtKPI_LV.ItemIndex = 1 then
+     Date_2.EndDate := StrToInt(FormatDateTime('YYYYMMDD',D2.Date))
+  else if edtKPI_LV.ItemIndex = 2 then
+     Date_3.EndDate := StrToInt(FormatDateTime('YYYYMMDD',D2.Date))
+  else if edtKPI_LV.ItemIndex = 3 then
+     Date_4.EndDate := StrToInt(FormatDateTime('YYYYMMDD',D2.Date));
 end;
 
 end.

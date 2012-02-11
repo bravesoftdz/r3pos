@@ -279,7 +279,7 @@ type
     //赠品处理,
     RtlPSTFlag:integer;
     RtlGDPC_ID:string;
-    Dibs,Cash:Currency;
+    Dibs,Cash:Currency;  //抹零金额、现金
     GUID,GUNM,STGID,STGNM,STGGNM:string;
     AObj:TRecord_;
     SaveAObj:TRecord_;
@@ -4735,6 +4735,7 @@ begin
   //填充主表数据
   cdsHeader.Append;
   cdsHeader.FieldByName('CLIENT_ID').AsString:=CopyHeadInfo.fieldbyName('CLIENT_ID').AsString;
+  cdsHeader.FieldByName('PAY_DIBS').AsFloat:=CopyHeadInfo.fieldbyName('PAY_DIBS').AsFloat; //抹零金额
   cdsHeader.FieldByName('REMARK').AsString:='销售单〖'+CopyHeadInfo.fieldbyName('GLIDE_NO').AsString+'〗退货';
   cdsHeader.Post;
   if vType=0 then //单品退货
@@ -4743,6 +4744,8 @@ begin
   end else
   if vType=1 then //整单退货
   begin
+    //整单退货抹0金额
+    AObj.fieldbyName('PAY_DIBS').AsFloat:=CopyHeadInfo.fieldbyName('PAY_DIBS').AsFloat; //抹零金额
     CopyDetailInfo.First;
     while not CopyDetailInfo.Eof do
     begin

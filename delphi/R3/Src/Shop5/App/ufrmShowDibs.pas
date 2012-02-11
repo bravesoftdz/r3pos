@@ -98,7 +98,7 @@ begin
         MainRecord := _MainRecord;
         //2011-07-25 为简单操作，去掉保留收款数据功能 zhangsr
         //if MainRecord.FieldByName('PAY_DIBS').AsString = '' then
-           MainRecord.FieldByName('PAY_DIBS').asFloat := (_TotalFee-r);
+           MainRecord.FieldByName('PAY_DIBS').asFloat := (_TotalFee-r-MainRecord.FieldByName('PAY_DIBS').AsFloat); //2012.02.11抹零金额
         //if MainRecord.FieldByName('PAY_A').AsString = '' then
            MainRecord.FieldByName('PAY_A').AsFloat := 0;
         //if MainRecord.FieldByName('PAY_B').AsString = '' then

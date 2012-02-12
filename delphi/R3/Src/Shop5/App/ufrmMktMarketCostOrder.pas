@@ -59,6 +59,8 @@ type
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
+    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -334,7 +336,7 @@ begin
          end;
       cdsHeader.Edit;
       cdsHeader.FieldbyName('PLAN_MNY').asFloat := mny;
-      cdsHeader.FieldbyName('BOND_MNY').asFloat := bny;
+      cdsHeader.FieldbyName('BUDG_MNY').asFloat := bny;
       cdsHeader.FieldbyName('PLAN_AMT').asFloat := amt;
       cdsHeader.Post;
       Params := TftParamList.Create(nil);
@@ -646,6 +648,23 @@ begin
         free;
       end;
     end;
+end;
+
+procedure TfrmMktMarketCost.DBGridEh1Columns5UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var SumMny:Currency;
+begin
+  inherited;
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
+  SumMny := 0;
+  cdsDetail.First;
+  while not cdsDetail.Eof do
+  begin
+    SumMny := SumMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
+    cdsDetail.Next;
+  end;
+  edtBUDG_MNY.Text := FloatToStr(SumMny);
+  cdsDetail.Edit;
 end;
 
 end.

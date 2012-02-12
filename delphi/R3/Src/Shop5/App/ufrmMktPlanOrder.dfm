@@ -451,6 +451,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           Footers = <>
           Title.Caption = #20445#35777#37329
           Width = 75
+          OnUpdateData = DBGridEh1Columns5UpdateData
         end
         item
           EditButtons = <>

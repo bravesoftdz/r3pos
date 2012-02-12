@@ -451,6 +451,7 @@ inherited frmMktMarketCost: TfrmMktMarketCost
           Footers = <>
           Title.Caption = #24066#22330#36153#39044#31639
           Width = 75
+          OnUpdateData = DBGridEh1Columns5UpdateData
         end
         item
           EditButtons = <>

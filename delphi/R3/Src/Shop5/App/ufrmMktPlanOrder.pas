@@ -61,6 +61,8 @@ type
     procedure N1Click(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -678,6 +680,23 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TfrmMktPlanOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var SumMny:Currency;
+begin
+  inherited;
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
+  SumMny := 0;
+  cdsDetail.First;
+  while not cdsDetail.Eof do
+  begin
+    SumMny := SumMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
+    cdsDetail.Next;
+  end;
+  edtBOND_MNY.Text := FloatToStr(SumMny);
+  cdsDetail.Edit;
 end;
 
 end.

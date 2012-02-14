@@ -689,7 +689,11 @@ begin
         actDelete.Enabled := false;
         actAudit.Enabled := false;
      end;
-
+  case rzPage.ActivePageIndex of
+    0:M_ID := 0;
+    1:M_ID := 1;
+    2:M_ID := 2;
+  end;
 end;
 
 function TfrmInLocusOrderList.EncodeSQL2(id: string): string;
@@ -940,13 +944,13 @@ begin
       if CurOrder<>nil then
          Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_ID='+QuotedStr(CurOrder.oid)
       else
-         Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsList.FieldbyName('SALES_ID').AsString);
+         Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsP2List.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsP2List.FieldbyName('SALES_ID').AsString);
     end;
     2:begin
       if CurOrder<>nil then
          Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_ID='+QuotedStr(CurOrder.oid)
       else
-         Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsList.FieldbyName('SALES_ID').AsString);
+         Sql_Str := 'update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsP3List.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsP3List.FieldbyName('SALES_ID').AsString);
     end;
   end;
   Factor.ExecSQL(Sql_Str);
@@ -970,13 +974,13 @@ begin
         if CurOrder<>nil then
            Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_ID='+QuotedStr(CurOrder.oid)
         else
-           Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsList.FieldbyName('SALES_ID').AsString);
+           Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+cdsP2List.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsP2List.FieldbyName('SALES_ID').AsString);
       end;
       2:begin
         if CurOrder<>nil then
            Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_ID='+QuotedStr(CurOrder.oid)
         else
-           Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsList.FieldbyName('SALES_ID').AsString);
+           Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+cdsP3List.FieldbyName('TENANT_ID').AsString+' and SALES_ID='+QuotedStr(cdsP3List.FieldbyName('SALES_ID').AsString);
       end;
     end;
     rs.Close;

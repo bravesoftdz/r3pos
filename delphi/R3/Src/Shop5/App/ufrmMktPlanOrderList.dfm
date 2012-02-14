@@ -1,6 +1,6 @@
 inherited frmMktPlanOrderList: TfrmMktPlanOrderList
-  Left = 256
-  Top = 204
+  Left = 340
+  Top = 193
   Caption = #32463#38144#21512#21516
   OnShow = FormShow
   PixelsPerInch = 96
@@ -251,7 +251,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Width = 80
                 Height = 20
                 Properties.MaxValue = 2111.000000000000000000
-                Properties.MinValue = 2011.000000000000000000
+                Properties.MinValue = 2000.000000000000000000
                 Properties.OnValidate = K1PropertiesValidate
                 TabOrder = 5
                 Value = 2011
@@ -262,7 +262,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Width = 80
                 Height = 20
                 Properties.MaxValue = 2111.000000000000000000
-                Properties.MinValue = 2011.000000000000000000
+                Properties.MinValue = 2000.000000000000000000
                 Properties.OnValidate = K2PropertiesValidate
                 TabOrder = 6
                 Value = 2011
@@ -528,5 +528,19 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
     Left = 425
     Top = 230
     ReportForm = {18000000}
+  end
+  object CdsHeader: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 241
+    Top = 270
+  end
+  object CdsDetail: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 273
+    Top = 270
   end
 end

@@ -451,7 +451,6 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           Footers = <>
           Title.Caption = #20445#35777#37329
           Width = 75
-          OnUpdateData = DBGridEh1Columns5UpdateData
         end
         item
           EditButtons = <>
@@ -551,6 +550,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     object N1: TMenuItem
       Caption = #25351#26631#23646#24615
       OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object N3: TMenuItem
+      Caption = #25209#37327#28155#21152
+      OnClick = N3Click
     end
   end
   object cdsKPI_ID: TZQuery

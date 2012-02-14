@@ -42,6 +42,8 @@ type
     Label40: TLabel;
     edtSHOP_ID: TzrComboBoxList;
     N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure edtKPI_IDEnter(Sender: TObject);
     procedure edtKPI_IDExit(Sender: TObject);
@@ -61,8 +63,7 @@ type
     procedure N1Click(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure N3Click(Sender: TObject);
   private
     { Private declarations }
     procedure FocusNextColumn;
@@ -521,11 +522,13 @@ begin
            cdsDetail.FieldByName('KPI_ID').AsString := edtKPI_ID.AsString;
            cdsDetail.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
            cdsDetail.FieldByName('UNIT_NAME').AsString := edtKPI_ID.DataSet.FieldByName('UNIT_NAME').AsString;
+           cdsDetail.Post;
          end;
     end;
   finally
     if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
     cdsDetail.EnableControls;
+    cdsDetail.Edit;
   end;
 end;
 
@@ -682,21 +685,36 @@ begin
   end;
 end;
 
-procedure TfrmMktPlanOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var SumMny:Currency;
+procedure TfrmMktPlanOrder.N3Click(Sender: TObject);
 begin
   inherited;
-  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
-  SumMny := 0;
-  cdsDetail.First;
-  while not cdsDetail.Eof do
-  begin
-    SumMny := SumMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
-    cdsDetail.Next;
+  //if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有添加权限？');
+  if not cdsDetail.Active then Exit;
+  if cdsKPI_ID.IsEmpty then  Raise Exception.Create('没有批量导入的指标？');
+  if cdsDetail.State in [dsInsert,dsEdit] then cdsDetail.Post;
+
+  cdsDetail.DisableControls;
+  try
+    cdsKPI_ID.First;
+    while not cdsKPI_ID.Eof do
+    begin
+      if not cdsDetail.Locate('KPI_ID',cdsKPI_ID.FieldByName('KPI_ID').AsString,[]) then
+         begin
+           InitRecord;
+           cdsDetail.Edit;
+           cdsDetail.FieldByName('KPI_ID').AsString := cdsKPI_ID.FieldByName('KPI_ID').AsString;
+           cdsDetail.FieldByName('KPI_ID_TEXT').AsString := cdsKPI_ID.FieldByName('KPI_NAME').AsString;
+           cdsDetail.FieldByName('UNIT_NAME').AsString := cdsKPI_ID.FieldByName('UNIT_NAME').AsString;
+           cdsDetail.Post;
+         end;
+         
+      cdsKPI_ID.Next;
+    end;
+  finally
+    if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
+    cdsDetail.EnableControls;
+    cdsDetail.Edit;
   end;
-  edtBOND_MNY.Text := FloatToStr(SumMny);
-  cdsDetail.Edit;
 end;
 
 end.

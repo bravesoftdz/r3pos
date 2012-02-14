@@ -7,7 +7,7 @@ uses
   Dialogs, uframeContractToolForm, DB, ZAbstractRODataset, ZBase,
   ZAbstractDataset, ZDataset, Menus, ActnList, ComCtrls, ToolWin, StdCtrls,
   RzLabel, jpeg, ExtCtrls, Grids, DBGridEh, RzTabs, RzPanel, RzButton,
-  cxTextEdit, cxButtonEdit, zrComboBoxList, cxControls, cxContainer,
+  cxTextEdit, cxButtonEdit, zrComboBoxList, cxControls, cxContainer, DateUtils,
   cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, FR_Class, cxSpinEdit,
   cxRadioGroup;
 
@@ -32,6 +32,8 @@ type
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
     fndSTATUS: TcxRadioGroup;
+    CdsHeader: TZQuery;
+    CdsDetail: TZQuery;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -59,7 +61,12 @@ type
       var Error: Boolean);
   private
     { Private declarations }
+    IsAddItem:Boolean;
     function  CheckCanExport: boolean; override;
+    procedure AddMenuItem;
+    procedure DeleteMenuItem;
+    procedure ContractExtensionClick(Sender:TObject);
+    procedure SaveContractExtension(Id:String);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -73,7 +80,7 @@ type
 
 implementation
 uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPlanOrder,
-     uShopGlobal;
+     uShopGlobal, Math;
 {$R *.dfm}
 
 procedure TfrmMktPlanOrderList.actNewExecute(Sender: TObject);
@@ -242,6 +249,10 @@ end;
 procedure TfrmMktPlanOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if fndSTATUS.ItemIndex = 3 then
+     AddMenuItem
+  else
+     DeleteMenuItem;
   Open('');
 end;
 
@@ -364,8 +375,8 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       //3:w := w +' and A.STKBILL_STATUS=0';
-       //4:w := w +' and A.STKBILL_STATUS=1';
+       3:w := w +' and A.KPI_YEAR<'+FormatDateTime('YYYY',Date)+' and A.KPI_YEAR='+FormatDateTime('YYYY',IncYear(Date,-1));
+       4:w := w +' and A.KPI_YEAR='+FormatDateTime('YYYY',IncYear(Date));
        end;
      end;
   if Trim(fndGLIDE_NO.Text) <> '' then
@@ -437,6 +448,7 @@ end;
 procedure TfrmMktPlanOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
+  IsAddItem := False;
   InitGridPickList(DBGridEh1);
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
@@ -482,6 +494,84 @@ begin
   inherited;
   if (K2.Value < 2000) or (K2.Value > 2111) then
      Raise Exception.Create('输入年度范围"2000-2111"');
+end;
+
+procedure TfrmMktPlanOrderList.AddMenuItem;
+var P:TPopupMenu;
+begin
+  P := DBGridEh1.PopupMenu;
+  if (P <> nil) and (not IsAddItem) then
+  begin
+    IsAddItem := True;
+    P.Items.Insert(0,NewItem('续约',0,False,True,ContractExtensionClick,0,'ContractExtension'));
+    P.Items.Insert(1,NewLine);
+  end;
+end;
+
+procedure TfrmMktPlanOrderList.ContractExtensionClick(Sender: TObject);
+begin
+  if not cdsList.Active then Exit;
+  if cdsList.IsEmpty then Exit;
+  cdsList.First;
+  while not cdsList.Eof do
+  begin
+    SaveContractExtension(cdsList.FieldByName('PLAN_ID').AsString);
+    cdsList.Next;
+  end;
+
+end;
+
+procedure TfrmMktPlanOrderList.DeleteMenuItem;
+var P:TPopupMenu;
+begin
+  P := DBGridEh1.PopupMenu;
+  if (P <> nil) and IsAddItem then
+  begin
+    IsAddItem := False;
+    P.Items.Delete(1);
+    P.Items.Delete(0)
+  end;
+end;
+
+procedure TfrmMktPlanOrderList.SaveContractExtension(Id: String);
+var
+  Params:TftParamList;
+begin
+  inherited;
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+    Params.ParamByName('PLAN_ID').asString := id;
+    //CdsHeader.Close;
+    //CdsDetail.Close;
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsHeader,'TMktPlanOrder',Params);
+      Factor.AddBatch(cdsDetail,'TMktPlanData',Params);
+      Factor.OpenBatch;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
+
+  finally
+    Params.Free;
+  end;
+
+  Factor.BeginBatch;
+  try
+    Params := TftParamList.Create(nil);
+    try
+      Factor.AddBatch(cdsHeader,'TMktPlanOrder',Params);
+      Factor.AddBatch(cdsDetail,'TMktPlanData',Params);
+      Factor.CommitBatch;
+    finally
+      Params.Free;
+    end;
+  except
+    Factor.CancelBatch;
+    Raise;
+  end;
 end;
 
 end.

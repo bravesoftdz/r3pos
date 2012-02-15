@@ -111,7 +111,7 @@ procedure TfrmMktKpiCalculate.FormShow(Sender: TObject);
 begin
   inherited;
   CdsKpiId.Close;
-  CdsKpiId.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and IDX_TYPE='+QuotedStr(IdxType);
+  CdsKpiId.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and IDX_TYPE='+QuotedStr(IdxType);
   Factor.Open(CdsKpiId);
 end;
 
@@ -165,7 +165,7 @@ begin
      w := w + ' and A.KPI_ID=:KPI_ID ';
 
   Result := 'select A.TENANT_ID,A.PLAN_ID,B.KPI_CALC,B.KPI_TYPE,B.KPI_DATA,A.KPI_ID,A.CLIENT_ID,C.PLAN_USER,'+
-            'G.AMOUNT,G.AMONEY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
+            'G.AMOUNT,G.AMONEY,A.FISH_AMT,A.FISH_MNY,C.PLAN_AMT,C.PLAN_MNY,A.KPI_MNY,B.KPI_OPTN,B.KPI_AGIO '+
             ' from MKT_KPI_RESULT A inner join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
             ' inner join MKT_PLANORDER C on A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID '+
             ' left outer join MKT_PLANDATA G on A.TENANT_ID=G.TENANT_ID and A.PLAN_ID=G.PLAN_ID and A.KPI_ID=G.KPI_ID'+w+' order by A.PLAN_ID,A.KPI_ID ';
@@ -235,7 +235,25 @@ begin
      cdsHeader.FieldByName('FISH_MNY').AsFloat := FshVle
   else if cdsHeader.FieldByName('KPI_DATA').AsInteger in [3,6] then
      cdsHeader.FieldByName('FISH_MNY').AsFloat := FshVle;
-  cdsHeader.FieldByName('KPI_MNY').AsFloat := KpiMny;       
+  if cdsHeader.FieldByName('KPI_TYPE').AsString = '1' then
+  begin
+     if (cdsHeader.FieldByName('KPI_DATA').AsInteger in [1,4]) then
+     begin
+        if cdsHeader.FieldByName('PLAN_AMT').AsFloat > FshVle then
+           cdsHeader.FieldByName('KPI_MNY').AsFloat := 0
+        else
+           cdsHeader.FieldByName('KPI_MNY').AsFloat := KpiMny;
+     end
+     else
+     begin
+        if cdsHeader.FieldByName('PLAN_MNY').AsFloat > FshVle then
+           cdsHeader.FieldByName('KPI_MNY').AsFloat := 0
+        else
+           cdsHeader.FieldByName('KPI_MNY').AsFloat := KpiMny;
+     end;
+  end
+  else
+    cdsHeader.FieldByName('KPI_MNY').AsFloat := KpiMny;
   cdsHeader.Post;
 end;
 

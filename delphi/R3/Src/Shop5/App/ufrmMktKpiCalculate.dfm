@@ -181,7 +181,7 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         TabOrder = 2
         InGrid = False
         KeyValue = Null
-        FilterFields = 'KPI_NAME'
+        FilterFields = 'KPI_NAME;KPI_SPELL'
         KeyField = 'KPI_ID'
         ListField = 'KPI_NAME'
         Columns = <

@@ -375,8 +375,8 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       3:w := w +' and not Exists (select * from MKT_PLANORDER B where A.PLAN_ID=B.PLAN_ID and B.KPI_YEAR=A.KPI_YEAR+1) and A.END_DATE<'+FormatDateTime('YYYY-MM-DD',Date);
-       4:w := w +' and Exists (select * from MKT_PLANORDER B where A.PLAN_ID=B.PLAN_ID and B.KPI_YEAR='+FormatDateTime('YYYY',Date)+') ';
+       3:w := w +' and not Exists (select * from MKT_PLANORDER B where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_YEAR=A.KPI_YEAR+1) and A.END_DATE<'''+FormatDateTime('YYYY-MM-DD',Date)+'''';
+       4:w := w +' and Exists (select * from MKT_PLANORDER B where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_YEAR='+FormatDateTime('YYYY',Date)+') ';
        end;
      end;
   if Trim(fndGLIDE_NO.Text) <> '' then

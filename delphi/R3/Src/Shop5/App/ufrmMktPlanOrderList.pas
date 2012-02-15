@@ -510,14 +510,14 @@ end;
 
 procedure TfrmMktPlanOrderList.ContractExtensionClick(Sender: TObject);
 begin
-  if not cdsList.Active then Exit;
+  {if not cdsList.Active then Exit;
   if cdsList.IsEmpty then Exit;
   cdsList.First;
   while not cdsList.Eof do
   begin
     SaveContractExtension(cdsList.FieldByName('PLAN_ID').AsString);
     cdsList.Next;
-  end;
+  end;}
 
 end;
 

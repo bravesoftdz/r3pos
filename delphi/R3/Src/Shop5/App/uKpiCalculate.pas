@@ -447,21 +447,21 @@ begin
     if FKpiInfo.IdxType = '1' then
     begin
       rs.SQL.Text := 'select sum(CALC_AMOUNT/'+GetUnitTO_CALC+') as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,MKT_KPI_GOODS B,VIW_GOODSINFO C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID and A.IS_PRESENT=0 '+
       ' and A.TENANT_ID=:TENANT_ID and A.CLIENT_ID=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 and A.SALES_DATE <= :SALES_DATE2'+
       ' and B.KPI_ID=:KPI_ID ';
     end
     else if FKpiInfo.IdxType = '2' then
     begin
       rs.SQL.Text := 'select sum(CALC_AMOUNT/'+GetUnitTO_CALC+') as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,MKT_KPI_GOODS B,VIW_GOODSINFO C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID and A.IS_PRESENT=0 '+
       ' and A.TENANT_ID=:TENANT_ID and A.CLIENT_ID=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 and A.SALES_DATE <= :SALES_DATE2'+
       ' and B.KPI_ID=:KPI_ID ';
     end
     else if FKpiInfo.IdxType = '3' then
     begin
       rs.SQL.Text := 'select sum(CALC_AMOUNT/'+GetUnitTO_CALC+') as CALC_AMOUNT,sum(CALC_MONEY) as CALC_MONEY from VIW_SALESDATA A,MKT_KPI_GOODS B,VIW_GOODSINFO C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID and A.IS_PRESENT=0 '+
       ' and A.TENANT_ID=:TENANT_ID and A.GUIDE_USER=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 and A.SALES_DATE <= :SALES_DATE2'+
       ' and B.KPI_ID=:KPI_ID ';
     end;

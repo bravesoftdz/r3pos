@@ -1,6 +1,5 @@
 inherited frmChangeDayReport: TfrmChangeDayReport
-  Left = 197
-  Top = 98
+  Top = 103
   Width = 900
   Height = 589
   Caption = #21830#21697#35843#25972#25253#34920
@@ -47,7 +46,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object Label6: TLabel
                   Left = 290
-                  Top = 56
+                  Top = 37
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -73,6 +72,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
+                end
+                object Label33: TLabel
+                  Left = 291
+                  Top = 56
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object P1_D1: TcxDateEdit
                   Left = 80
@@ -185,7 +191,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 52
+                  Top = 30
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -257,6 +263,58 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 170
                   Height = 20
                   TabOrder = 2
+                end
+                object fndP1_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 52
+                  Width = 121
+                  Height = 20
+                  TabStop = False
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 10
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               inherited RzPanel7: TRzPanel
@@ -410,7 +468,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object Label13: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -429,6 +487,13 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Height = 12
                   Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
+                end
+                object Label3: TLabel
+                  Left = 288
+                  Top = 56
+                  Width = 48
+                  Height = 12
+                  Caption = #21830#21697#21517#31216
                 end
                 object P2_D1: TcxDateEdit
                   Left = 80
@@ -583,7 +648,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 52
+                  Top = 30
                   Width = 121
                   Height = 20
                   Properties.Buttons = <
@@ -613,6 +678,58 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Width = 170
                   Height = 20
                   TabOrder = 2
+                end
+                object fndP2_GODS_ID: TzrComboBoxList
+                  Tag = 100
+                  Left = 344
+                  Top = 52
+                  Width = 121
+                  Height = 20
+                  TabStop = False
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 10
+                  InGrid = True
+                  KeyValue = Null
+                  FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                  KeyField = 'GODS_ID'
+                  ListField = 'GODS_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 150
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 50
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 65
+                    end>
+                  DropWidth = 380
+                  DropHeight = 250
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               object RzPanel10: TRzPanel
@@ -1647,7 +1764,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                 Left = 0
                 Top = 0
                 Width = 665
-                Height = 78
+                Height = 97
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
@@ -1911,9 +2028,9 @@ inherited frmChangeDayReport: TfrmChangeDayReport
               end
               object RzPanel18: TRzPanel
                 Left = 0
-                Top = 78
+                Top = 97
                 Width = 665
-                Height = 394
+                Height = 375
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1922,7 +2039,7 @@ inherited frmChangeDayReport: TfrmChangeDayReport
                   Left = 2
                   Top = 2
                   Width = 661
-                  Height = 390
+                  Height = 371
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

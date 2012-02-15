@@ -129,6 +129,10 @@ type
     P3_DateControl: TfrmDateControl;
     P4_DateControl: TfrmDateControl;
     P5_DateControl: TfrmDateControl;
+    Label33: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
+    fndP2_GODS_ID: TzrComboBoxList;
+    Label3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -396,6 +400,10 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
+  //商品条件
+  if trim(fndP1_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
+  
 
   if RckMaxDate < vBegDate then   //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'
@@ -559,6 +567,9 @@ begin
       strWhere := strWhere+' and C.LEVEL_ID like '''+sid2+'%'' ';
   end else
     GoodTab:='VIW_GOODSPRICE';
+  //商品条件
+  if trim(fndP2_GODS_ID.AsString)<>'' then
+    strWhere:=strWhere+' and A.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
     SQLData:='(select '+VIWFields+' from VIW_CHANGEDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CHANGE_CODE='''+CodeId+''' '+StrCnd+')'

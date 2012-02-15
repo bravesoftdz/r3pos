@@ -1,6 +1,6 @@
 inherited frmMktPlanOrderList: TfrmMktPlanOrderList
-  Left = 340
-  Top = 193
+  Left = 273
+  Top = 242
   Caption = #32463#38144#21512#21516
   OnShow = FormShow
   PixelsPerInch = 96
@@ -330,7 +330,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Caption = #24050#36807#26399
                   end
                   item
-                    Caption = #26377#25928#26399
+                    Caption = #26377#32493#32422
                   end>
                 TabOrder = 8
                 Caption = ''

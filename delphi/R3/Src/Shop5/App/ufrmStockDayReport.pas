@@ -1045,6 +1045,7 @@ begin
   fndP2_SORT_ID.Text := fndP1_SORT_ID.Text; //分类
   fndP2_UNIT_ID.ItemIndex := fndP1_UNIT_ID.ItemIndex; //显示单位
   Copy_ParamsValue('TYPE_ID',1,2);    //商品指标
+  Copy_ParamsValue(fndP1_GODS_ID,fndP2_GODS_ID); //商品名称
   fndP2_SHOP_TYPE.ItemIndex := 0;
   fndP2_SHOP_VALUE.KeyValue := adoReport1.FieldbyName('REGION_ID').AsString;
   fndP2_SHOP_VALUE.Text := adoReport1.FieldbyName('CODE_NAME').AsString;

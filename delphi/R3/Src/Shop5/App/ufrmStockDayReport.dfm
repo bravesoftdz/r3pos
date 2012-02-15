@@ -15,10 +15,8 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 542
-        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -31,7 +29,7 @@ inherited frmStockDayReport: TfrmStockDayReport
               Height = 505
               inherited w1: TRzPanel
                 Width = 848
-                Height = 101
+                Height = 79
                 object RzLabel2: TRzLabel
                   Left = 24
                   Top = 13
@@ -48,8 +46,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #33267
                 end
                 object Label6: TLabel
-                  Left = 286
-                  Top = 80
+                  Left = 288
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -63,7 +61,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label8: TLabel
                   Left = 704
-                  Top = 79
+                  Top = 57
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -77,8 +75,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #38376#24215#32676#32452
                 end
                 object Label3: TLabel
-                  Left = 24
-                  Top = 80
+                  Left = 288
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#21517#31216
@@ -103,7 +101,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object btnOk: TRzBitBtn
                   Left = 473
-                  Top = 64
+                  Top = 40
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -142,7 +140,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 754
-                  Top = 75
+                  Top = 53
                   Width = 80
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -198,8 +196,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 75
-                  Width = 121
+                  Top = 31
+                  Width = 114
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -266,9 +264,9 @@ inherited frmStockDayReport: TfrmStockDayReport
                   MultiSelect = False
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
-                  Left = 80
-                  Top = 75
-                  Width = 193
+                  Left = 344
+                  Top = 53
+                  Width = 114
                   Height = 20
                   TabStop = False
                   Properties.AutoSelect = False
@@ -324,12 +322,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 101
+                Top = 79
                 Width = 848
-                Height = 404
+                Height = 426
                 inherited DBGridEh1: TDBGridEh
                   Width = 844
-                  Height = 400
+                  Height = 422
                   FrozenCols = 3
                   TitleHeight = 22
                   UseMultiTitle = False
@@ -482,14 +480,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 100
+                Height = 76
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
                   848
-                  100)
+                  76)
                 object RzLabel4: TRzLabel
                   Left = 24
                   Top = 13
@@ -513,8 +511,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #38376#24215#32676#32452
                 end
                 object Label13: TLabel
-                  Left = 288
-                  Top = 76
+                  Left = 287
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -528,15 +526,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label15: TLabel
                   Left = 704
-                  Top = 77
+                  Top = 55
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
                 end
                 object Label4: TLabel
-                  Left = 24
-                  Top = 76
+                  Left = 287
+                  Top = 56
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#21517#31216
@@ -602,8 +600,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                   MultiSelect = False
                 end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 474
-                  Top = 61
+                  Left = 476
+                  Top = 38
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -639,7 +637,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP2_UNIT_ID: TcxComboBox
                   Left = 754
-                  Top = 72
+                  Top = 50
                   Width = 80
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -695,8 +693,8 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP2_SORT_ID: TcxButtonEdit
                   Left = 344
-                  Top = 72
-                  Width = 121
+                  Top = 31
+                  Width = 122
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -721,9 +719,9 @@ inherited frmStockDayReport: TfrmStockDayReport
                   TabOrder = 3
                 end
                 object fndP2_GODS_ID: TzrComboBoxList
-                  Left = 80
-                  Top = 72
-                  Width = 193
+                  Left = 344
+                  Top = 52
+                  Width = 122
                   Height = 20
                   TabStop = False
                   Properties.AutoSelect = False
@@ -780,9 +778,9 @@ inherited frmStockDayReport: TfrmStockDayReport
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 100
+                Top = 76
                 Width = 848
-                Height = 405
+                Height = 429
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -791,7 +789,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 401
+                  Height = 425
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone

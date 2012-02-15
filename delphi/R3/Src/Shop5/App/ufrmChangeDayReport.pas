@@ -1022,6 +1022,7 @@ begin
   sid2:=sid1;
   srid2:=srid1;
   fndP2_SORT_ID.Text:=fndP1_SORT_ID.Text;  //分类
+  Copy_ParamsValue(fndP1_GODS_ID,fndP2_GODS_ID); //商品名称
   Copy_ParamsValue('TYPE_ID',1,2);  //统计指标
 
   fndP2_SHOP_TYPE.ItemIndex:=0;  //管理群组

@@ -311,8 +311,8 @@ begin
              end
              else
              begin
-                Result := (Param2-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
-                ProNum := (CurAmt-Param1)*CurAgio*FKpiInfo.KpiAgio/Rate;
+                Result := (Param2-Param1)*CurAgio/Rate;
+                ProNum := (CurAmt-Param1)*CurAgio/Rate;
              end;
           end
           else if FKpiInfo.KpiData = '6' then
@@ -599,11 +599,11 @@ begin
          FKpiSite.LastAmt := FKpiSite.ThisAmt;
          FKpiSite.ThisAmt := CurAmount;
       end;
-      //根据考核标准 得出当前时间段 是否达标的系数
-      CurRate_Amt := KpiDataNum(CurAmount);  
       //此处判断是否加借量值
       if FDataSet_Kpi.FieldByName('USING_BRRW').AsString = '1' then Brrw := True else Brrw := False;
       CurAmount := UseBrrw(CurAmount,CurRate_Amt,LastParam,CurParam,Brrw);
+      //根据考核标准 得出当前时间段 是否达标的系数
+      CurRate_Amt := KpiDataNum(CurAmount);  
       //得出当前档位的考核结果
       CurMny := ReachJudge(CalculateAmt,CurRate_Amt,LastParam,CurParam,CurAgio);
       if (CurMny = 0) and (FDataSet_Kpi.FieldByName('KPI_LV').AsString <> '0') and (FDataSet_Kpi.FieldByName('SEQNO').AsInteger = 1) then
@@ -710,22 +710,20 @@ begin
               ContainerBrrw := Result - FKpiInfo.PlanMny*Param2
            else 
               ContainerBrrw := Result - Param2;   //借量后把超额的值返还给 借量容器
-
            if ContainerBrrw < 0 then ContainerBrrw := 0;       // 如果没有超额则把 借量容器 为 0
-
         end;
      end
      else
      begin
-       // 
+       // 已经超额，超额的向借量容器中流动
        if FKpiInfo.KpiData = '1' then
-          ContainerBrrw := CurAmt - FKpiInfo.PlanAmt*Param2
+          ContainerBrrw := ContainerBrrw + CurAmt - FKpiInfo.PlanAmt*Param2
        else if FKpiInfo.KpiData = '2' then
-          ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2
+          ContainerBrrw := ContainerBrrw + CurAmt - FKpiInfo.PlanMny*Param2
        else if FKpiInfo.KpiData = '3' then
-          ContainerBrrw := CurAmt - FKpiInfo.PlanMny*Param2
+          ContainerBrrw := ContainerBrrw + CurAmt - FKpiInfo.PlanMny*Param2
        else
-          ContainerBrrw := CurAmt - Param2;
+          ContainerBrrw := ContainerBrrw + CurAmt - Param2;
        Result := CurAmt;
      end;
   end
@@ -743,7 +741,6 @@ begin
        else
           ContainerBrrw := FKpiSite.LastAmt - FKpiSite.LastParam;
        Result := CurAmt + ContainerBrrw;
-       //if ContainerBrrw < 0 then ContainerBrrw := 0;
        ContainerBrrw := 0;
      end;
 

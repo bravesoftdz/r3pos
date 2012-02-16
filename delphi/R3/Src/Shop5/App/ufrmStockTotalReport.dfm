@@ -94,7 +94,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object btnNew: TRzBitBtn
                   Left = 291
@@ -115,7 +115,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 4
+                  TabOrder = 12
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnNewClick
@@ -141,7 +141,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 5
+                  TabOrder = 13
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnEditClick
@@ -168,7 +168,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 14
+                  TabOrder = 10
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -194,7 +194,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 6
+                  TabOrder = 14
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnDeleteClick
@@ -226,7 +226,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 11
+                  TabOrder = 6
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 627
@@ -240,7 +240,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 13
+                  TabOrder = 9
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -254,7 +254,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 12
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -296,7 +296,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                     end>
                   Properties.ReadOnly = False
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 10
+                  TabOrder = 8
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -310,7 +310,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -352,7 +352,7 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -392,14 +392,14 @@ inherited frmStockTotalReport: TfrmStockTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 7
+                  TabOrder = 3
                 end
                 inline P1_DateControl: TfrmDateControl
                   Left = 290
                   Top = 9
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 11
                 end
               end
               inherited RzPanel7: TRzPanel

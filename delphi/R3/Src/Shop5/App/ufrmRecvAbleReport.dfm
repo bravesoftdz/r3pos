@@ -7,28 +7,30 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1006
-    Height = 536
+    Width = 1014
+    Height = 547
     inherited RzPanel2: TRzPanel
-      Width = 996
-      Height = 526
+      Width = 1004
+      Height = 537
       inherited RzPage: TRzPageControl
-        Width = 791
-        Height = 520
+        Width = 799
+        Height = 531
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #22320#21306#24212#25910#27454#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 789
-            Height = 493
+            Width = 797
+            Height = 504
             inherited Panel4: TPanel
-              Width = 779
-              Height = 483
+              Width = 787
+              Height = 494
               inherited w1: TRzPanel
-                Width = 779
+                Width = 787
                 Height = 64
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -88,7 +90,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 5
+                  TabOrder = 4
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -104,7 +106,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -118,7 +120,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -153,16 +155,16 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Top = 7
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 5
                 end
               end
               inherited RzPanel7: TRzPanel
                 Top = 64
-                Width = 779
-                Height = 419
+                Width = 787
+                Height = 430
                 inherited DBGridEh1: TDBGridEh
-                  Width = 775
-                  Height = 415
+                  Width = 783
+                  Height = 426
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -246,8 +248,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 789
-            Height = 493
+            Width = 797
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -255,8 +257,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 779
-              Height = 483
+              Width = 787
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -264,7 +266,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 779
+                Width = 787
                 Height = 65
                 Align = alTop
                 BorderOuter = fsGroove
@@ -320,7 +322,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -370,7 +372,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 5
+                  TabOrder = 4
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -386,21 +388,21 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 inline P2_DateControl: TfrmDateControl
                   Left = 280
                   Top = 9
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 5
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 65
-                Width = 779
-                Height = 418
+                Width = 787
+                Height = 429
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -408,8 +410,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 775
-                  Height = 414
+                  Width = 783
+                  Height = 425
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -533,8 +535,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 789
-            Height = 493
+            Width = 797
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -542,8 +544,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 779
-              Height = 483
+              Width = 787
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -551,7 +553,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 779
+                Width = 787
                 Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
@@ -622,7 +624,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 6
+                  TabOrder = 5
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -641,7 +643,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -680,7 +682,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -694,7 +696,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -729,14 +731,14 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Top = 10
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 6
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 82
-                Width = 779
-                Height = 401
+                Width = 787
+                Height = 412
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -745,8 +747,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 775
-                  Height = 397
+                  Width = 783
+                  Height = 408
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -864,7 +866,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel16: TRzPanel
             Left = 0
             Top = 0
-            Width = 789
+            Width = 797
             Height = 82
             Align = alTop
             BorderOuter = fsGroove
@@ -935,7 +937,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               ParentFont = False
               TextShadowColor = clWhite
               TextShadowDepth = 4
-              TabOrder = 6
+              TabOrder = 5
               TextStyle = tsRaised
               ThemeAware = False
               ImageIndex = 12
@@ -954,7 +956,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 4
+              TabOrder = 3
               InGrid = False
               KeyValue = Null
               FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -993,7 +995,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Properties.Items.Strings = (
                 #34892#25919#21306#22495
                 #31649#29702#32676#32452)
-              TabOrder = 3
+              TabOrder = 2
             end
             object fndP4_SHOP_ID: TzrComboBoxList
               Tag = -1
@@ -1007,7 +1009,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 5
+              TabOrder = 4
               InGrid = False
               KeyValue = Null
               FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1042,14 +1044,14 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Top = 10
               Width = 170
               Height = 20
-              TabOrder = 2
+              TabOrder = 6
             end
           end
           object RzPanel17: TRzPanel
             Left = 0
             Top = 82
-            Width = 789
-            Height = 411
+            Width = 797
+            Height = 422
             Align = alClient
             BorderOuter = fsGroove
             Color = clWhite
@@ -1058,8 +1060,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               Tag = 1
               Left = 2
               Top = 2
-              Width = 785
-              Height = 407
+              Width = 793
+              Height = 418
               Align = alClient
               AllowedOperations = []
               BorderStyle = bsNone
@@ -1181,8 +1183,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 789
-            Height = 493
+            Width = 797
+            Height = 504
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1190,8 +1192,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 779
-              Height = 483
+              Width = 787
+              Height = 494
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1199,7 +1201,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
               object RzPanel14: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 779
+                Width = 787
                 Height = 82
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1278,7 +1280,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 7
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1297,7 +1299,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1336,7 +1338,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -1350,7 +1352,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1391,7 +1393,7 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -1426,14 +1428,14 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                   Top = 11
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 7
                 end
               end
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 82
-                Width = 779
-                Height = 401
+                Width = 787
+                Height = 412
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1441,8 +1443,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 775
-                  Height = 397
+                  Width = 783
+                  Height = 408
                   Align = alClient
                   AllowedOperations = []
                   DataSource = dsadoReport5
@@ -1646,8 +1648,8 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 794
-        Height = 520
+        Left = 802
+        Height = 531
         inherited Panel2: TPanel
           Height = 488
           inherited RzPanel1: TRzPanel [3]
@@ -1663,9 +1665,9 @@ inherited frmRecvAbleReport: TfrmRecvAbleReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1006
+    Width = 1014
     inherited Image14: TImage
-      Left = 986
+      Left = 994
     end
     inherited Image1: TImage
       Width = 644

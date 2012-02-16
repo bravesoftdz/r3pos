@@ -6,30 +6,30 @@ inherited frmMktRequReport: TfrmMktRequReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 970
-    Height = 511
+    Width = 978
+    Height = 522
     inherited RzPanel2: TRzPanel
-      Width = 960
-      Height = 501
+      Width = 968
+      Height = 512
       inherited RzPage: TRzPageControl
-        Width = 755
-        Height = 495
-        ActivePage = TabSheet4
+        Width = 763
+        Height = 506
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #37096#38376#36153#29992#30003#39046#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 753
-            Height = 468
+            Width = 761
+            Height = 479
             inherited Panel4: TPanel
-              Width = 743
-              Height = 458
+              Width = 751
+              Height = 469
               inherited w1: TRzPanel
-                Width = 743
+                Width = 751
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -88,7 +88,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Left = 509
                   Top = 40
                   Width = 67
-                  Height = 29
+                  Height = 30
                   Action = actFind
                   Caption = #26597#35810
                   Color = clSilver
@@ -104,7 +104,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 1
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -123,7 +123,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 0
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME'
@@ -158,7 +158,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -196,7 +196,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 3
+                  TabOrder = 4
                 end
                 object fndP1_CUST_VALUE: TzrComboBoxList
                   Tag = -1
@@ -210,7 +210,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -252,7 +252,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -289,7 +289,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 6
+                  TabOrder = 0
                 end
                 object P1_D2: TcxDateEdit
                   Left = 184
@@ -298,14 +298,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 7
+                  TabOrder = 1
                 end
                 inline P1_DateControl: TfrmDateControl
                   Left = 286
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 8
+                  TabOrder = 9
                 end
                 object fndP1_REQU_TYPE: TcxComboBox
                   Left = 667
@@ -320,16 +320,16 @@ inherited frmMktRequReport: TfrmMktRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 9
+                  TabOrder = 7
                 end
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 743
-                Height = 380
+                Width = 751
+                Height = 391
                 inherited DBGridEh1: TDBGridEh
-                  Width = 739
-                  Height = 376
+                  Width = 747
+                  Height = 387
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -442,7 +442,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  743
+                  751
                   78)
                 object Label3: TLabel
                   Left = 24
@@ -498,10 +498,10 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Caption = #36153#29992#31867#22411
                 end
                 object BtnDept: TRzBitBtn
-                  Left = 526
+                  Left = 510
                   Top = 41
                   Width = 67
-                  Height = 29
+                  Height = 30
                   Action = actFind
                   Caption = #26597#35810
                   Color = clSilver
@@ -517,7 +517,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -536,7 +536,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 4
                 end
                 object fndP2_KPI_ID: TzrComboBoxList
                   Tag = -1
@@ -586,7 +586,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -628,7 +628,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -669,7 +669,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -702,7 +702,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 6
+                  TabOrder = 0
                 end
                 object P2_D2: TcxDateEdit
                   Left = 184
@@ -711,14 +711,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 7
+                  TabOrder = 1
                 end
                 inline P2_DateControl: TfrmDateControl
                   Left = 288
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 8
+                  TabOrder = 9
                 end
                 object fndP2_REQU_TYPE: TcxComboBox
                   Left = 659
@@ -733,14 +733,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 9
+                  TabOrder = 7
                 end
               end
               object RzPanel20: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 743
-                Height = 380
+                Width = 751
+                Height = 391
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -894,7 +894,7 @@ inherited frmMktRequReport: TfrmMktRequReport
               BorderSides = [sdLeft, sdTop, sdRight]
               TabOrder = 0
               DesignSize = (
-                743
+                751
                 78)
               object Label8: TLabel
                 Left = 24
@@ -950,10 +950,10 @@ inherited frmMktRequReport: TfrmMktRequReport
                 Caption = #36153#29992#31867#22411
               end
               object BtnSort: TRzBitBtn
-                Left = 518
-                Top = 36
+                Left = 514
+                Top = 41
                 Width = 67
-                Height = 32
+                Height = 30
                 Action = actFind
                 Caption = #26597#35810
                 Color = clSilver
@@ -969,7 +969,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 0
+                TabOrder = 8
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -988,7 +988,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   #23458#25143#31561#32423
                   #23458#25143#20998#31867
                   #23458#25143#32676#20307)
-                TabOrder = 1
+                TabOrder = 4
               end
               object fndP3_KPI_ID: TzrComboBoxList
                 Tag = -1
@@ -1038,7 +1038,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 3
+                TabOrder = 5
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1080,7 +1080,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 6
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -1121,7 +1121,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 3
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1154,7 +1154,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
-                TabOrder = 6
+                TabOrder = 0
               end
               object P3_D2: TcxDateEdit
                 Left = 184
@@ -1163,14 +1163,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 Properties.DateButtons = [btnToday]
-                TabOrder = 7
+                TabOrder = 1
               end
               inline P3_DateControl: TfrmDateControl
                 Left = 286
                 Top = 8
                 Width = 170
                 Height = 20
-                TabOrder = 8
+                TabOrder = 9
               end
               object fndP3_REQU_TYPE: TcxComboBox
                 Left = 659
@@ -1185,14 +1185,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                   #23458#25143#31561#32423
                   #23458#25143#20998#31867
                   #23458#25143#32676#20307)
-                TabOrder = 9
+                TabOrder = 7
               end
             end
             object RzPanel10: TRzPanel
               Left = 5
               Top = 83
-              Width = 743
-              Height = 380
+              Width = 751
+              Height = 391
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1328,8 +1328,8 @@ inherited frmMktRequReport: TfrmMktRequReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 753
-            Height = 468
+            Width = 761
+            Height = 479
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1337,8 +1337,8 @@ inherited frmMktRequReport: TfrmMktRequReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 743
-              Height = 458
+              Width = 751
+              Height = 469
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1346,14 +1346,14 @@ inherited frmMktRequReport: TfrmMktRequReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 743
+                Width = 751
                 Height = 77
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  743
+                  751
                   77)
                 object Label9: TLabel
                   Left = 24
@@ -1428,7 +1428,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1447,7 +1447,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 4
                 end
                 object fndP4_KPI_ID: TzrComboBoxList
                   Tag = -1
@@ -1497,7 +1497,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1539,7 +1539,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -1580,7 +1580,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1613,7 +1613,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 6
+                  TabOrder = 1
                 end
                 object P4_D1: TcxDateEdit
                   Left = 77
@@ -1622,14 +1622,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 7
+                  TabOrder = 0
                 end
                 inline P4_DateControl: TfrmDateControl
                   Left = 286
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 8
+                  TabOrder = 9
                 end
                 object fndP4_REQU_TYPE: TcxComboBox
                   Left = 667
@@ -1644,14 +1644,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 9
+                  TabOrder = 7
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 77
-                Width = 743
-                Height = 381
+                Width = 751
+                Height = 392
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1660,8 +1660,8 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Tag = 1
                   Left = 2
                   Top = 2
-                  Width = 739
-                  Height = 377
+                  Width = 747
+                  Height = 388
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1814,7 +1814,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  743
+                  751
                   100)
                 object Label16: TLabel
                   Left = 24
@@ -1897,7 +1897,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1916,7 +1916,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 3
                 end
                 object fndP5_KPI_ID: TzrComboBoxList
                   Tag = -1
@@ -1966,7 +1966,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2008,7 +2008,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -2087,7 +2087,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
@@ -2124,7 +2124,7 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 7
+                  TabOrder = 0
                 end
                 object P5_D2: TcxDateEdit
                   Left = 184
@@ -2133,14 +2133,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 8
+                  TabOrder = 1
                 end
                 inline P5_DateControl: TfrmDateControl
                   Left = 286
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 9
+                  TabOrder = 10
                 end
                 object fndP5_REQU_TYPE: TcxComboBox
                   Left = 659
@@ -2150,14 +2150,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                   Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 10
+                  TabOrder = 8
                 end
               end
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 100
-                Width = 743
-                Height = 358
+                Width = 751
+                Height = 369
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2337,8 +2337,8 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 758
-        Height = 495
+        Left = 766
+        Height = 506
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2354,15 +2354,15 @@ inherited frmMktRequReport: TfrmMktRequReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 970
+    Width = 978
     inherited Image3: TImage
-      Width = 61
+      Width = 73
     end
     inherited Image14: TImage
-      Left = 950
+      Left = 958
     end
     inherited Image1: TImage
-      Left = 415
+      Left = 423
       Width = 535
     end
     inherited rzPanel5: TPanel

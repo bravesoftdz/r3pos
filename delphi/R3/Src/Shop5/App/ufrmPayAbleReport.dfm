@@ -15,10 +15,8 @@ inherited frmPayAbleReport: TfrmPayAbleReport
       inherited RzPage: TRzPageControl
         Width = 799
         Height = 531
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -90,7 +88,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 4
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -106,7 +104,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -120,7 +118,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -322,7 +320,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -372,7 +370,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 4
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -388,7 +386,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 2
                 end
                 inline P2_DateControl: TfrmDateControl
                   Left = 281
@@ -624,7 +622,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 5
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -682,7 +680,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 2
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -696,7 +694,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -946,7 +944,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 2
+                TabOrder = 5
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -1004,7 +1002,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                 Properties.Items.Strings = (
                   #34892#25919#21306#22495
                   #31649#29702#32676#32452)
-                TabOrder = 4
+                TabOrder = 2
               end
               object fndP4_SHOP_ID: TzrComboBoxList
                 Tag = -1
@@ -1018,7 +1016,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 5
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1279,7 +1277,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               ParentFont = False
               TextShadowColor = clWhite
               TextShadowDepth = 4
-              TabOrder = 2
+              TabOrder = 7
               TextStyle = tsRaised
               ThemeAware = False
               ImageIndex = 12
@@ -1337,7 +1335,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
               Properties.Items.Strings = (
                 #34892#25919#21306#22495
                 #31649#29702#32676#32452)
-              TabOrder = 4
+              TabOrder = 2
             end
             object fndP5_SHOP_ID: TzrComboBoxList
               Tag = -1
@@ -1433,7 +1431,7 @@ inherited frmPayAbleReport: TfrmPayAbleReport
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 7
+              TabOrder = 4
               InGrid = False
               KeyValue = Null
               FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'

@@ -113,7 +113,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 1
+                  TabOrder = 10
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnNewClick
@@ -139,7 +139,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnEditClick
@@ -166,7 +166,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 4
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -192,7 +192,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 12
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnDeleteClick
@@ -248,7 +248,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -332,7 +332,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME'
@@ -369,7 +369,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 9
+                  TabOrder = 6
                 end
                 object fndP1_REQU_TYPE: TcxComboBox
                   Left = 335
@@ -383,7 +383,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 10
+                  TabOrder = 3
                 end
                 object P1_D1: TcxDateEdit
                   Left = 72
@@ -392,7 +392,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 11
+                  TabOrder = 1
                 end
                 object P1_D2: TcxDateEdit
                   Left = 179
@@ -401,7 +401,7 @@ inherited frmMktCostTotalReport: TfrmMktCostTotalReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 12
+                  TabOrder = 2
                 end
               end
               inherited RzPanel7: TRzPanel

@@ -15,10 +15,8 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 542
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -121,7 +119,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -152,7 +150,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 9
+                  TabOrder = 8
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -208,7 +206,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 7
+                  TabOrder = 4
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
@@ -221,7 +219,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -235,7 +233,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -277,7 +275,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -320,7 +318,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 9
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 10
                 end
               end
               inherited RzPanel7: TRzPanel
@@ -482,14 +480,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 76
+                Height = 79
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
                   848
-                  76)
+                  79)
                 object RzLabel4: TRzLabel
                   Left = 24
                   Top = 13
@@ -507,7 +505,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label10: TLabel
                   Left = 24
-                  Top = 34
+                  Top = 35
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
@@ -521,14 +519,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label14: TLabel
                   Left = 24
-                  Top = 55
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label15: TLabel
                   Left = 704
-                  Top = 55
+                  Top = 57
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -536,7 +534,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label4: TLabel
                   Left = 287
-                  Top = 56
+                  Top = 57
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#21517#31216
@@ -562,7 +560,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 30
+                  Top = 31
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -571,7 +569,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -603,7 +601,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object RzBitBtn1: TRzBitBtn
                   Left = 476
-                  Top = 38
+                  Top = 41
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -621,7 +619,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -630,7 +628,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP2_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 51
+                  Top = 53
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -639,7 +637,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP2_UNIT_ID: TcxComboBox
                   Left = 754
-                  Top = 50
+                  Top = 53
                   Width = 80
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -649,12 +647,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 9
+                  TabOrder = 8
                 end
                 object fndP2_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 51
+                  Top = 53
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -705,12 +703,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP2_SORT_IDPropertiesButtonClick
-                  TabOrder = 7
+                  TabOrder = 4
                   OnKeyPress = fndP2_SORT_IDKeyPress
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 30
+                  Top = 31
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -718,11 +716,11 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP2_GODS_ID: TzrComboBoxList
                   Left = 344
-                  Top = 52
+                  Top = 53
                   Width = 122
                   Height = 20
                   TabStop = False
@@ -732,7 +730,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -775,14 +773,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 9
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 10
                 end
               end
               object RzPanel10: TRzPanel
                 Left = 0
-                Top = 76
+                Top = 79
                 Width = 848
-                Height = 429
+                Height = 426
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -791,7 +789,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 425
+                  Height = 422
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -982,14 +980,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                 Left = 0
                 Top = 0
                 Width = 848
-                Height = 79
+                Height = 81
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
                   848
-                  79)
+                  81)
                 object RzLabel6: TRzLabel
                   Left = 24
                   Top = 14
@@ -1007,7 +1005,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label9: TLabel
                   Left = 24
-                  Top = 56
+                  Top = 58
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1015,14 +1013,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label19: TLabel
                   Left = 288
-                  Top = 56
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #25253#34920#31867#22411
                 end
                 object Label20: TLabel
                   Left = 703
-                  Top = 57
+                  Top = 58
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -1030,7 +1028,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label11: TLabel
                   Left = 24
-                  Top = 35
+                  Top = 36
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1056,7 +1054,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object RzBitBtn2: TRzBitBtn
                   Left = 480
-                  Top = 38
+                  Top = 40
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -1084,7 +1082,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 52
+                  Top = 54
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -1093,7 +1091,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1125,7 +1123,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP3_REPORT_FLAG: TcxComboBox
                   Left = 340
-                  Top = 52
+                  Top = 54
                   Width = 121
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1135,7 +1133,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP3_UNIT_ID: TcxComboBox
                   Left = 753
-                  Top = 52
+                  Top = 54
                   Width = 80
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -1145,12 +1143,12 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 7
+                  TabOrder = 6
                 end
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 31
+                  Top = 32
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1159,7 +1157,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1191,7 +1189,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 31
+                  Top = 32
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1199,21 +1197,21 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 inline P3_DateControl: TfrmDateControl
                   Left = 282
                   Top = 10
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 7
                 end
               end
               object RzPanel12: TRzPanel
                 Left = 0
-                Top = 79
+                Top = 81
                 Width = 848
-                Height = 426
+                Height = 424
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1223,7 +1221,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Left = 2
                   Top = 2
                   Width = 844
-                  Height = 422
+                  Height = 420
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1455,7 +1453,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Caption = #21830#21697#25351#26631
                 end
                 object Label26: TLabel
-                  Left = 705
+                  Left = 703
                   Top = 79
                   Width = 48
                   Height = 12
@@ -1515,7 +1513,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 11
+                  TabOrder = 10
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1529,10 +1527,10 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 7
+                  TabOrder = 6
                 end
                 object fndP4_UNIT_ID: TcxComboBox
-                  Left = 755
+                  Left = 753
                   Top = 75
                   Width = 80
                   Height = 20
@@ -1557,7 +1555,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1599,7 +1597,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP4_SORT_IDPropertiesButtonClick
-                  TabOrder = 6
+                  TabOrder = 5
                   OnKeyPress = fndP4_SORT_IDKeyPress
                 end
                 object fndP4_SHOP_ID: TzrComboBoxList
@@ -1614,7 +1612,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1656,7 +1654,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1696,7 +1694,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object fndP4_RPTTYPE: TcxComboBox
                   Left = 344
@@ -1710,14 +1708,14 @@ inherited frmStockDayReport: TfrmStockDayReport
                     #21830#21697#36827#38144#23384#32479#35745#34920
                     #32676#32452#36827#38144#23384#32479#35745#34920
                     #20379#24212#21830#36827#38144#23384#32479#35745#34920)
-                  TabOrder = 10
+                  TabOrder = 8
                 end
                 inline P4_DateControl: TfrmDateControl
                   Left = 280
                   Top = 11
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 11
                 end
               end
               object RzPanel15: TRzPanel
@@ -1962,35 +1960,35 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object Label17: TLabel
                   Left = 24
-                  Top = 85
+                  Top = 81
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label18: TLabel
                   Left = 278
-                  Top = 62
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
                 end
                 object Label22: TLabel
                   Left = 24
-                  Top = 61
+                  Top = 58
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#25351#26631
                 end
                 object Label28: TLabel
                   Left = 24
-                  Top = 38
+                  Top = 37
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#32676#32452
                 end
                 object Label29: TLabel
                   Left = 278
-                  Top = 85
+                  Top = 80
                   Width = 48
                   Height = 12
                   Caption = #21333#25454#31867#22411
@@ -2024,7 +2022,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -2042,17 +2040,17 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP5_TYPE_ID: TcxComboBox
                   Left = 80
-                  Top = 57
+                  Top = 54
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 5
+                  TabOrder = 4
                 end
                 object fndP5_STAT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 57
+                  Top = 54
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -2061,7 +2059,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2093,7 +2091,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP5_SORT_ID: TcxButtonEdit
                   Left = 330
-                  Top = 57
+                  Top = 54
                   Width = 168
                   Height = 20
                   Properties.Buttons = <
@@ -2103,13 +2101,13 @@ inherited frmStockDayReport: TfrmStockDayReport
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP5_SORT_IDPropertiesButtonClick
-                  TabOrder = 7
+                  TabOrder = 6
                   OnKeyPress = fndP5_SORT_IDKeyPress
                 end
                 object fndP5_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 80
+                  Top = 77
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -2118,7 +2116,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -2151,7 +2149,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 object fndP5_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 154
-                  Top = 33
+                  Top = 32
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -2160,7 +2158,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2192,7 +2190,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                 end
                 object fndP5_SHOP_TYPE: TcxComboBox
                   Left = 80
-                  Top = 33
+                  Top = 32
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -2200,15 +2198,15 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 2
                 end
                 object RzGB: TRzGroupBox
                   Left = 331
-                  Top = 76
+                  Top = 73
                   Width = 167
                   Height = 27
                   GroupStyle = gsStandard
-                  TabOrder = 9
+                  TabOrder = 8
                   ThemeAware = False
                   object fndP5_ALL: TcxRadioButton
                     Left = 2
@@ -2242,7 +2240,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 11
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 10
                 end
               end
               object RzPanel18: TRzPanel

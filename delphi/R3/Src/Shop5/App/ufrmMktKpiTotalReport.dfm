@@ -113,7 +113,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 1
+                  TabOrder = 10
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnNewClick
@@ -139,7 +139,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 2
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnEditClick
@@ -166,7 +166,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 4
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -192,7 +192,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 3
+                  TabOrder = 12
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnDeleteClick
@@ -209,7 +209,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 5
+                  TabOrder = 1
                 end
                 object fndP1_YEAR2: TcxComboBox
                   Left = 185
@@ -221,7 +221,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 6
+                  TabOrder = 2
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
                   Left = 335
@@ -234,7 +234,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -314,7 +314,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 9
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -356,7 +356,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 10
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME'
@@ -393,7 +393,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 11
+                  TabOrder = 6
                 end
                 object fndP1_KPI_TYPE: TcxComboBox
                   Left = 335
@@ -406,7 +406,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                     #23458#25143#32771#26680
                     #20154#21592#32771#26680)
                   Properties.OnChange = fndP1_KPI_TYPEPropertiesChange
-                  TabOrder = 12
+                  TabOrder = 3
                 end
               end
               inherited RzPanel7: TRzPanel

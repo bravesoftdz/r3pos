@@ -24,7 +24,6 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
           inherited RzPanel3: TRzPanel
             Width = 853
             Height = 518
-            BorderColor = clBtnFace
             Caption = '`'
             inherited Panel4: TPanel
               Width = 843
@@ -100,7 +99,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Width = 121
                   Height = 20
                   Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 6
+                  TabOrder = 3
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
                   Left = 337
@@ -114,7 +113,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 4
+                  TabOrder = 1
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
@@ -169,7 +168,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 2
+                  TabOrder = 4
                 end
                 object fndP1_STAT_ID: TzrComboBoxList
                   Tag = -1
@@ -183,7 +182,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -214,7 +213,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                   Height = 21
                   Properties.DisplayUnchecked = 'False'
                   Properties.Caption = #26159#21542#26174#31034#38646#24211#23384#30340#21830#21697
-                  TabOrder = 5
+                  TabOrder = 6
                 end
                 object fndP1_PRINT_DATE: TzrComboBoxList
                   Left = 80
@@ -227,7 +226,7 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 1
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'PRINT_DATE'
@@ -438,16 +437,15 @@ inherited frmCheckTablePrint: TfrmCheckTablePrint
   end
   inherited RzPanel4: TRzPanel
     Width = 1070
-    inherited Image1: TImage
-      Left = 434
-      Width = 616
-    end
     inherited Image3: TImage
       Left = 434
-      Width = 616
     end
     inherited Image14: TImage
       Left = 1050
+    end
+    inherited Image1: TImage
+      Left = 434
+      Width = 616
     end
     inherited rzPanel5: TPanel
       Left = 434

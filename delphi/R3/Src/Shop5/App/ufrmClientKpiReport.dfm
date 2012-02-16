@@ -15,8 +15,10 @@ inherited frmClientKpiReport: TfrmClientKpiReport
       inherited RzPage: TRzPageControl
         Width = 668
         Height = 506
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -95,7 +97,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 1
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -114,7 +116,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 0
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME'
@@ -148,7 +150,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 2
+                  TabOrder = 0
                 end
                 object fndP1_YEAR2: TcxComboBox
                   Left = 190
@@ -160,7 +162,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 3
+                  TabOrder = 1
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
                   Left = 340
@@ -173,7 +175,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -211,7 +213,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 5
+                  TabOrder = 4
                 end
                 object fndP1_CUST_VALUE: TzrComboBoxList
                   Tag = -1
@@ -225,7 +227,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -267,7 +269,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -516,7 +518,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -535,7 +537,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 4
                 end
                 object fndP2_YEAR1: TcxComboBox
                   Left = 77
@@ -547,7 +549,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 2
+                  TabOrder = 0
                 end
                 object fndP2_KPI_ID: TzrComboBoxList
                   Tag = -1
@@ -561,7 +563,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME'
@@ -597,7 +599,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -637,7 +639,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 5
+                  TabOrder = 1
                 end
                 object fndP2_CLIENT_ID: TzrComboBoxList
                   Tag = -1
@@ -692,7 +694,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -976,7 +978,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 0
+                TabOrder = 7
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -995,7 +997,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   #23458#25143#31561#32423
                   #23458#25143#20998#31867
                   #23458#25143#32676#20307)
-                TabOrder = 1
+                TabOrder = 4
               end
               object fndP3_YEAR1: TcxComboBox
                 Left = 77
@@ -1007,7 +1009,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 Properties.Items.Strings = (
                   #34892#25919#22320#21306
                   #31649#29702#32676#32452)
-                TabOrder = 2
+                TabOrder = 0
               end
               object fndP3_KPI_ID: TzrComboBoxList
                 Tag = -1
@@ -1021,7 +1023,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 3
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'KPI_ID;KPI_NAME'
@@ -1057,7 +1059,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 5
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1097,7 +1099,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 Properties.Items.Strings = (
                   #34892#25919#22320#21306
                   #31649#29702#32676#32452)
-                TabOrder = 5
+                TabOrder = 1
               end
               object fndP3_CLIENT_ID: TzrComboBoxList
                 Tag = -1
@@ -1152,7 +1154,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 7
+                TabOrder = 3
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1443,7 +1445,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1462,7 +1464,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 4
                 end
                 object fndP4_YEAR1: TcxComboBox
                   Left = 77
@@ -1474,7 +1476,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 2
+                  TabOrder = 0
                 end
                 object fndP4_KPI_ID: TzrComboBoxList
                   Tag = -1
@@ -1488,7 +1490,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME'
@@ -1524,7 +1526,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1564,7 +1566,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 5
+                  TabOrder = 1
                 end
                 object fndP4_CLIENT_ID: TzrComboBoxList
                   Tag = -1
@@ -1619,7 +1621,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1920,7 +1922,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1939,7 +1941,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 5
                 end
                 object fndP5_YEAR1: TcxComboBox
                   Left = 77
@@ -1951,7 +1953,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 2
+                  TabOrder = 0
                 end
                 object fndP5_KPI_ID: TzrComboBoxList
                   Tag = -1
@@ -2001,7 +2003,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -2041,7 +2043,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 5
+                  TabOrder = 1
                 end
                 object fndP5_CLIENT_ID: TzrComboBoxList
                   Tag = -1
@@ -2055,7 +2057,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -2096,7 +2098,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -2134,7 +2136,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'USER_ID;USER_SPELL;USER_NAME'

@@ -103,7 +103,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -120,13 +120,13 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Properties.Items.Strings = (
                     #34892#25919#21306#22495
                     #31649#29702#32676#32452)
-                  TabOrder = 4
+                  TabOrder = 3
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 429
                   Top = 32
-                  Width = 127
+                  Width = 128
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -134,7 +134,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -194,7 +194,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 2
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -242,14 +242,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                   Properties.Items.Strings = (
                     #29289#27969#36319#36394#21495
                     #25209#21495)
-                  TabOrder = 6
+                  TabOrder = 5
                 end
                 object fndP1_BarCode: TcxTextEdit
                   Left = 155
                   Top = 54
                   Width = 128
                   Height = 20
-                  TabOrder = 7
+                  TabOrder = 6
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
@@ -263,7 +263,7 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -305,14 +305,14 @@ inherited frmGodsRunningReport: TfrmGodsRunningReport
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 9
+                  TabOrder = 8
                 end
                 inline P1_DateControl: TfrmDateControl
-                  Left = 288
+                  Left = 292
                   Top = 10
                   Width = 170
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 10
                 end
               end
               inherited RzPanel7: TRzPanel

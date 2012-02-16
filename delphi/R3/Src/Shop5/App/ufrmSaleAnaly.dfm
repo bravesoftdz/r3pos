@@ -130,7 +130,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 0
+                  TabOrder = 5
                 end
                 object fndP2_SHOP_TYPE: TcxComboBox
                   Left = 69
@@ -142,7 +142,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 1
+                  TabOrder = 2
                 end
                 object fndP2_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -156,7 +156,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -198,7 +198,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -240,7 +240,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP2_SORT_IDPropertiesButtonClick
-                  TabOrder = 4
+                  TabOrder = 7
                   OnKeyPress = fndP2_SORT_IDKeyPress
                 end
                 object RzBitBtn1: TRzBitBtn
@@ -263,7 +263,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 5
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -280,7 +280,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Color = clWhite
                   FlatColor = 6956042
                   GridColor = clGray
-                  TabOrder = 6
+                  TabOrder = 9
                   object P2_RB_Money: TcxRadioButton
                     Left = 64
                     Top = 1
@@ -322,7 +322,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -354,7 +354,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 8
+                  TabOrder = 0
                 end
                 object P2_D2: TcxDateEdit
                   Left = 197
@@ -363,7 +363,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 9
+                  TabOrder = 1
                 end
                 object fndP2UNIT_ID: TcxComboBox
                   Left = 854
@@ -384,7 +384,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Top = 7
                   Width = 170
                   Height = 20
-                  TabOrder = 11
+                  TabOrder = 12
                 end
                 object fndP2_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -398,7 +398,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 12
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -592,7 +592,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 0
+                  TabOrder = 5
                 end
                 object fndP3_SHOP_TYPE: TcxComboBox
                   Left = 70
@@ -604,7 +604,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 1
+                  TabOrder = 2
                 end
                 object fndP3_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -618,7 +618,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -660,7 +660,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -702,7 +702,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP3_SORT_IDPropertiesButtonClick
-                  TabOrder = 4
+                  TabOrder = 7
                   OnKeyPress = fndP3_SORT_IDKeyPress
                 end
                 object RzBitBtn2: TRzBitBtn
@@ -725,7 +725,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 5
+                  TabOrder = 12
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -743,7 +743,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 8
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -775,7 +775,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 7
+                  TabOrder = 0
                 end
                 object P3_D2: TcxDateEdit
                   Left = 197
@@ -784,7 +784,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 8
+                  TabOrder = 1
                 end
                 object EdtvType: TcxComboBox
                   Left = 356
@@ -807,7 +807,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsEditFixedList
-                  TabOrder = 10
+                  TabOrder = 11
                 end
                 object edtMoneyUnit: TcxComboBox
                   Left = 513
@@ -820,14 +820,14 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     #20803
                     #19975#20803)
                   Properties.OnChange = fndP1_Sale_UNITPropertiesChange
-                  TabOrder = 11
+                  TabOrder = 10
                 end
                 inline P3_DateControl: TfrmDateControl
                   Left = 302
                   Top = 7
                   Width = 170
                   Height = 20
-                  TabOrder = 12
+                  TabOrder = 13
                 end
                 object fndP3_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -841,7 +841,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 13
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
@@ -1017,7 +1017,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.Items.Strings = (
                     #20027#20379#24212#21830
                     #21697#29260#21517#31216)
-                  TabOrder = 0
+                  TabOrder = 5
                 end
                 object fndP1_SHOP_TYPE: TcxComboBox
                   Left = 78
@@ -1029,7 +1029,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Properties.Items.Strings = (
                     #34892#25919#22320#21306
                     #31649#29702#32676#32452)
-                  TabOrder = 1
+                  TabOrder = 2
                 end
                 object P1_D1: TcxDateEdit
                   Left = 78
@@ -1038,7 +1038,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 2
+                  TabOrder = 0
                 end
                 object fndP1_SHOP_VALUE: TzrComboBoxList
                   Tag = -1
@@ -1094,7 +1094,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1131,7 +1131,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 5
+                  TabOrder = 1
                 end
                 object fndP1_GODS_ID: TzrComboBoxList
                   Tag = 100
@@ -1146,7 +1146,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 10
                   InGrid = True
                   KeyValue = Null
                   FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
@@ -1196,7 +1196,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                     end>
                   Properties.ReadOnly = True
                   Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 7
+                  TabOrder = 8
                   OnKeyPress = fndP1_SORT_IDKeyPress
                 end
                 object btnOk: TRzBitBtn
@@ -1219,7 +1219,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 8
+                  TabOrder = 12
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1236,7 +1236,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Color = clWhite
                   FlatColor = 6956042
                   GridColor = clGray
-                  TabOrder = 9
+                  TabOrder = 11
                   object RB_hour: TcxRadioButton
                     Left = 3
                     Top = 2
@@ -1266,7 +1266,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Color = clWhite
                   FlatColor = 6956042
                   GridColor = clGray
-                  TabOrder = 10
+                  TabOrder = 9
                   object RB_all: TcxRadioButton
                     Left = 3
                     Top = 2
@@ -1305,7 +1305,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 11
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1335,7 +1335,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                   Top = 7
                   Width = 170
                   Height = 20
-                  TabOrder = 12
+                  TabOrder = 13
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
@@ -1349,7 +1349,7 @@ inherited frmSaleAnaly: TfrmSaleAnaly
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 13
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'

@@ -209,7 +209,7 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
         Width = 121
         Height = 20
         Properties.MaxValue = 2111.000000000000000000
-        Properties.MinValue = 2011.000000000000000000
+        Properties.MinValue = 2000.000000000000000000
         Properties.OnChange = edtKPI_YEARPropertiesChange
         TabOrder = 4
         Value = 2011
@@ -441,6 +441,13 @@ inherited frmMktTaskOrder: TfrmMktTaskOrder
     object N1: TMenuItem
       Caption = #25351#26631#23646#24615
       OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object N3: TMenuItem
+      Caption = #25209#37327#28155#21152
+      OnClick = N3Click
     end
   end
   object cdsKPI_ID: TZQuery

@@ -114,7 +114,7 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 414
+                Left = 507
                 Top = 76
                 Width = 67
                 Height = 26
@@ -246,11 +246,12 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                 MultiSelect = False
               end
               object fndSTATUS: TcxRadioGroup
-                Left = 329
+                Left = 336
                 Top = 16
-                Width = 80
+                Width = 160
                 Height = 86
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -260,6 +261,12 @@ inherited frmMktTaskOrderList: TfrmMktTaskOrderList
                   end
                   item
                     Caption = #24050#23457#26680
+                  end
+                  item
+                    Caption = #24050#36807#26399
+                  end
+                  item
+                    Caption = #26377#25928#26399
                   end>
                 TabOrder = 7
                 Caption = ''

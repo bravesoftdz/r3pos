@@ -58,7 +58,11 @@ type
       var Error: Boolean);
   private
     { Private declarations }
+    IsAddItem:Boolean;
     function  CheckCanExport: boolean; override;
+    procedure AddMenuItem;
+    procedure DeleteMenuItem;
+    procedure SingleContractExtensionClick(Sender:TObject);    
   public
     { Public declarations }
     IsEnd: boolean;
@@ -77,20 +81,20 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktTas
 
 procedure TfrmMktTaskOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100002184',2) then Raise Exception.Create('你没有新增销售计划的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002184',2) then Raise Exception.Create('你没有新增年度计划的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmMktTaskOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100002184',4) then Raise Exception.Create('你没有删除销售计划单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002184',4) then Raise Exception.Create('你没有删除年度计划单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('PLAN_ID').AsString,cdsList.FieldbyName('CLIENT_ID').AsString);
+       OpenForm(cdsList.FieldbyName('PLAN_ID').AsString,cdsList.FieldbyName('PLAN_USER').AsString);
      end;
-  if CurContract=nil then Raise Exception.Create('"销售计划"打开异常!');
+  if CurContract=nil then Raise Exception.Create('"年度计划"打开异常!');
 
   if TfrmMktTaskOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
@@ -101,7 +105,7 @@ begin
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       if ShopGlobal.GetChkRight('100002184',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售计划单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002184',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增年度计划单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -110,13 +114,13 @@ end;
 
 procedure TfrmMktTaskOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100002184',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002184',3) then Raise Exception.Create('你没有修改年度计划单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('PLAN_ID').AsString,cdsList.FieldbyName('CLIENT_ID').AsString);
+       OpenForm(cdsList.FieldbyName('PLAN_ID').AsString,cdsList.FieldbyName('PLAN_USER').AsString);
      end;
-  if CurContract=nil then Raise Exception.Create('"销售计划"打开异常!');
+  if CurContract=nil then Raise Exception.Create('"年度计划"打开异常!');
 
   if TfrmMktTaskOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
@@ -134,7 +138,7 @@ begin
      begin
        if not CurContract.saved then Exit;
 
-       if ShopGlobal.GetChkRight('100002184',2) and (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002184',2) and (MessageBox(Handle,'是否继续新增年度计划单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -144,7 +148,7 @@ end;
 procedure TfrmMktTaskOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002184',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002184',6) then Raise Exception.Create('你没有打印年度计划单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -172,7 +176,7 @@ end;
 procedure TfrmMktTaskOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002184',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002184',6) then Raise Exception.Create('你没有打印年度计划单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -240,6 +244,10 @@ end;
 procedure TfrmMktTaskOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if fndSTATUS.ItemIndex = 3 then
+     AddMenuItem
+  else
+     DeleteMenuItem;  
   Open('');
 end;
 
@@ -255,7 +263,7 @@ end;
 
 procedure TfrmMktTaskOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100002184',5) then Raise Exception.Create('你没有审核销售计划单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002184',5) then Raise Exception.Create('你没有审核年度计划单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -361,6 +369,8 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
+       3:w := w +' and not Exists (select * from MKT_PLANORDER G where A.TENANT_ID=G.TENANT_ID and A.PLAN_USER=G.PLAN_USER and G.PLAN_TYPE=''2'' and G.KPI_YEAR=A.KPI_YEAR+1) and A.END_DATE<'''+FormatDateTime('YYYY-MM-DD',Date)+'''';
+       4:w := w +' and Exists (select * from MKT_PLANORDER G where A.TENANT_ID=G.TENANT_ID and A.PLAN_USER=G.PLAN_USER and G.PLAN_TYPE=''2'' and G.KPI_YEAR=A.KPI_YEAR+1) ';
        end;
      end;     
 
@@ -386,7 +396,7 @@ begin
        'select * from ('+result+') j order by PLAN_ID) tp fetch first 600  rows only';
   5:result := 'select * from ('+result+') j order by PLAN_ID limit 600';
   else
-    result := 'select * from ('+result+') j order by PLAN_ID';
+    result := 'select * from ('+result+') j order by PLAN_ID ';
   end;
 end;
 
@@ -474,6 +484,39 @@ begin
   inherited;
   if (K2.Value < 2000) or (K2.Value > 2111) then
      Raise Exception.Create('输入年度范围"2000-2111"');
+end;
+
+procedure TfrmMktTaskOrderList.AddMenuItem;
+var P:TPopupMenu;
+begin
+  P := DBGridEh1.PopupMenu;
+  if (P <> nil) and (not IsAddItem) then
+  begin
+    IsAddItem := True;
+    P.Items.Insert(0,NewItem('单笔续约',0,False,True,SingleContractExtensionClick,0,'ContractExtension'));
+    P.Items.Insert(1,NewLine);
+  end;
+end;
+
+procedure TfrmMktTaskOrderList.DeleteMenuItem;
+var P:TPopupMenu;
+begin
+  P := DBGridEh1.PopupMenu;
+  if (P <> nil) and IsAddItem then
+  begin
+    IsAddItem := False;
+    P.Items.Delete(1);
+    P.Items.Delete(0);
+  end;
+end;
+
+procedure TfrmMktTaskOrderList.SingleContractExtensionClick(
+  Sender: TObject);
+begin
+  if not cdsList.Active then Exit;
+  if cdsList.IsEmpty then Exit;
+  actNewExecute(Sender);
+  TfrmMktTaskOrder(CurContract).SingleContractExtensionFrom(cdsList.FieldByName('PLAN_ID').AsString);
 end;
 
 end.

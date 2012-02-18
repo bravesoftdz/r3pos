@@ -65,8 +65,7 @@ type
     function  CheckCanExport: boolean; override;
     procedure AddMenuItem;
     procedure DeleteMenuItem;
-    procedure ContractExtensionClick(Sender:TObject);
-    procedure SaveContractExtension(Id:String);
+    procedure SingleContractExtensionClick(Sender:TObject);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -80,7 +79,7 @@ type
 
 implementation
 uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPlanOrder,
-     uShopGlobal, Math;
+     ufrmMain, uShopGlobal, Math;
 {$R *.dfm}
 
 procedure TfrmMktPlanOrderList.actNewExecute(Sender: TObject);
@@ -375,8 +374,8 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       3:w := w +' and not Exists (select * from MKT_PLANORDER B where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_YEAR=A.KPI_YEAR+1) and A.END_DATE<'''+FormatDateTime('YYYY-MM-DD',Date)+'''';
-       4:w := w +' and Exists (select * from MKT_PLANORDER B where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_YEAR='+FormatDateTime('YYYY',Date)+') ';
+       3:w := w +' and not Exists (select * from MKT_PLANORDER G where A.TENANT_ID=G.TENANT_ID and A.CLIENT_ID=G.CLIENT_ID and G.PLAN_TYPE=''1'' and G.KPI_YEAR=A.KPI_YEAR+1) and A.END_DATE<'''+FormatDateTime('YYYY-MM-DD',Date)+'''';
+       4:w := w +' and Exists (select * from MKT_PLANORDER G where A.TENANT_ID=G.TENANT_ID and A.CLIENT_ID=G.CLIENT_ID and G.PLAN_TYPE=''1'' and G.KPI_YEAR=A.KPI_YEAR+1) ';
        end;
      end;
   if Trim(fndGLIDE_NO.Text) <> '' then
@@ -395,7 +394,7 @@ begin
      ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CREA_USER=E.USER_ID '+
      ' left join CA_DEPT_INFO F on A.TENANT_ID=F.TENANT_ID and A.DEPT_ID=F.DEPT_ID '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
   case Factor.iDbType of
-  0:result := 'select top 600 * from ('+result+') jp order by PLAN_ID';
+  0:result := 'select top 600 * from ('+result+') jp order by PLAN_ID ';
   1:result :=
        'select * from ('+
        'select * from ('+result+') j order by PLAN_ID) where ROWNUM<=600';
@@ -404,7 +403,7 @@ begin
        'select * from ('+result+') j order by PLAN_ID) tp fetch first 600  rows only';
   5:result := 'select * from ('+result+') j order by PLAN_ID limit 600';
   else
-    result := 'select * from ('+result+') j order by PLAN_ID';
+    result := 'select * from ('+result+') j order by PLAN_ID ';
   end;
 end;
 
@@ -503,22 +502,10 @@ begin
   if (P <> nil) and (not IsAddItem) then
   begin
     IsAddItem := True;
-    P.Items.Insert(0,NewItem('续约',0,False,True,ContractExtensionClick,0,'ContractExtension'));
+    P.Items.Insert(0,NewItem('单笔续约',0,False,True,SingleContractExtensionClick,0,'ContractExtension'));
+    //P.Items.Insert(1,NewItem('批量续约',0,False,True,ContractExtensionClick,0,'ContractExtension'));
     P.Items.Insert(1,NewLine);
   end;
-end;
-
-procedure TfrmMktPlanOrderList.ContractExtensionClick(Sender: TObject);
-begin
-  {if not cdsList.Active then Exit;
-  if cdsList.IsEmpty then Exit;
-  cdsList.First;
-  while not cdsList.Eof do
-  begin
-    SaveContractExtension(cdsList.FieldByName('PLAN_ID').AsString);
-    cdsList.Next;
-  end;}
-
 end;
 
 procedure TfrmMktPlanOrderList.DeleteMenuItem;
@@ -528,48 +515,19 @@ begin
   if (P <> nil) and IsAddItem then
   begin
     IsAddItem := False;
+    //P.Items.Delete(2);
     P.Items.Delete(1);
-    P.Items.Delete(0)
+    P.Items.Delete(0);
   end;
 end;
 
-procedure TfrmMktPlanOrderList.SaveContractExtension(Id: String);
-var
-  Params:TftParamList;
+procedure TfrmMktPlanOrderList.SingleContractExtensionClick(
+  Sender: TObject);
 begin
-  inherited;
-  Params := TftParamList.Create(nil);
-  try
-    Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-    Params.ParamByName('PLAN_ID').asString := id;
-    Factor.BeginBatch;
-    try
-      Factor.AddBatch(cdsHeader,'TMktPlanOrder',Params);
-      Factor.AddBatch(cdsDetail,'TMktPlanData',Params);
-      Factor.OpenBatch;
-    except
-      Factor.CancelBatch;
-      Raise;
-    end;
-
-  finally
-    Params.Free;
-  end;
-
-  Factor.BeginBatch;
-  try
-    Params := TftParamList.Create(nil);
-    try
-      Factor.AddBatch(cdsHeader,'TMktPlanOrder',Params);
-      Factor.AddBatch(cdsDetail,'TMktPlanData',Params);
-      Factor.CommitBatch;
-    finally
-      Params.Free;
-    end;
-  except
-    Factor.CancelBatch;
-    Raise;
-  end;
+  if not cdsList.Active then Exit;
+  if cdsList.IsEmpty then Exit;
+  actNewExecute(Sender);
+  TfrmMktPlanOrder(CurContract).SingleContractExtensionFrom(cdsList.FieldByName('PLAN_ID').AsString);
 end;
 
 end.

@@ -72,7 +72,7 @@ type
   public
     { Public declarations }
     RowID:Integer;
-
+    procedure SingleContractExtensionFrom(Id:String);
     procedure InitRecord;override;
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -85,7 +85,7 @@ type
 
 implementation
 uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uDsUtil, ufrmBasic, uXDictFactory,
-     ufrmKpiIndexInfo;
+     ufrmKpiIndexInfo, ufrmMktPlanOrderList;
 {$R *.dfm}
 
 procedure TfrmMktPlanOrder.AuditOrder;
@@ -272,7 +272,7 @@ begin
     dbState := dsBrowse;  
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
-    edtKPI_YEAR.Value := AObj.FieldByName('KPI_YEAR').AsInteger; 
+    edtKPI_YEAR.Value := AObj.FieldByName('KPI_YEAR').AsInteger;
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := AObj.FieldbyName('PLAN_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
@@ -714,6 +714,59 @@ begin
     if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
     cdsDetail.EnableControls;
     cdsDetail.Edit;
+  end;
+end;
+
+procedure TfrmMktPlanOrder.SingleContractExtensionFrom(Id:String);
+var a,b:TZQuery;
+    Params_1:TftParamList;
+    Obj_1:TRecord_;
+    i:Integer;
+begin
+  a := TZQuery.Create(nil);
+  b := TZQuery.Create(nil);
+  Params_1 := TftParamList.Create(nil);
+  Obj_1 := TRecord_.Create;
+  cdsDetail.DisableControls;
+  try
+    Params_1.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+    Params_1.ParamByName('PLAN_ID').asString := id;
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(a,'TMktPlanOrder',Params_1);
+      Factor.AddBatch(b,'TMktPlanData',Params_1);
+      Factor.OpenBatch;
+      Obj_1.ReadFromDataSet(a);
+      ReadFromObject(Obj_1,Self);
+      edtKPI_YEAR.Value := Obj_1.FieldByName('KPI_YEAR').AsInteger+1;
+      cid := Obj_1.FieldbyName('SHOP_ID').AsString;
+
+      b.First;
+      while not b.Eof do
+      begin
+        if not cdsDetail.Locate('KPI_ID',b.FieldByName('KPI_ID').AsString,[]) then
+           begin
+             InitRecord;
+             cdsDetail.Edit;
+             for i:=0 to cdsDetail.Fields.Count-1 do
+             begin
+               if b.FindField(cdsDetail.Fields[i].FieldName) <> nil then
+                  cdsDetail.Fields[i].Value := b.FieldbyName(cdsDetail.Fields[i].FieldName).Value;
+             end;
+             cdsDetail.Post;
+           end;
+        b.Next;
+      end;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
+  finally
+    FreeAndNil(Obj_1);
+    FreeAndNil(Params_1);
+    FreeAndNil(a);
+    FreeAndNil(b);
+    cdsDetail.EnableControls;
   end;
 end;
 

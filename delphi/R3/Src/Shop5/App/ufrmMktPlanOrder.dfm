@@ -309,7 +309,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Width = 121
         Height = 20
         Properties.MaxValue = 2111.000000000000000000
-        Properties.MinValue = 2011.000000000000000000
+        Properties.MinValue = 2000.000000000000000000
         Properties.OnChange = edtKPI_YEARPropertiesChange
         TabOrder = 6
         Value = 2011

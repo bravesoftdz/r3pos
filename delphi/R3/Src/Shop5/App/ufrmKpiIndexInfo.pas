@@ -131,6 +131,7 @@ type
     Changed:Boolean;
     CurYear:Integer;
     function IsNull:Boolean;
+    function DateRepeatEstimate:Boolean;
     procedure ShowGrid;
     procedure InitGrid;
     procedure WMInitRecord(var Message: TMessage); message WM_INIT_RECORD;
@@ -1006,7 +1007,7 @@ begin
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
-      DbGridEh1.canvas.Brush.Color := $0000F2F2;
+      DbGridEh2.canvas.Brush.Color := $0000F2F2;
       DbGridEh2.canvas.FillRect(ARect);
       DrawText(DbGridEh2.Canvas.Handle,pchar(Inttostr(CdsKpiGoods.RecNo)),length(Inttostr(CdsKpiGoods.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
@@ -1529,6 +1530,20 @@ begin
      Date_3.EndDate := StrToInt(FormatDateTime('YYYYMMDD',D2.Date))
   else if edtKPI_LV.ItemIndex = 3 then
      Date_4.EndDate := StrToInt(FormatDateTime('YYYYMMDD',D2.Date));
+end;
+
+function TfrmKpiIndexInfo.DateRepeatEstimate: Boolean;
+var DaySum:Integer;
+begin
+  if edtKPI_TYPE.ItemIndex = 0 then
+  begin
+  end
+  else if edtKPI_TYPE.ItemIndex = 1 then
+  begin
+  end
+  else if edtKPI_TYPE.ItemIndex = 2 then
+  begin
+  end;
 end;
 
 end.

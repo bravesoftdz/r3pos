@@ -1,6 +1,6 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 467
-  Top = 169
+  Left = 504
+  Top = 195
   Caption = #32771#26680#25351#26631
   ClientHeight = 397
   ClientWidth = 529
@@ -243,7 +243,9 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 140
       Width = 519
       Height = 212
+      ActivePage = TabSheet2
       Align = alBottom
+      TabIndex = 1
       TabOrder = 9
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

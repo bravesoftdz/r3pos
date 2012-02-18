@@ -59,7 +59,11 @@ type
       var Error: Boolean);
   private
     { Private declarations }
+    IsAddItem:Boolean;
     function  CheckCanExport: boolean; override;
+    procedure AddMenuItem;
+    procedure DeleteMenuItem;
+    procedure SingleContractExtensionClick(Sender:TObject);    
   public
     { Public declarations }
     IsEnd: boolean;
@@ -242,6 +246,10 @@ end;
 procedure TfrmMktMarketCostOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
+  if fndSTATUS.ItemIndex = 3 then
+     AddMenuItem
+  else
+     DeleteMenuItem;  
   Open('');
 end;
 
@@ -363,8 +371,8 @@ begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       //3:w := w +' and A.STKBILL_STATUS=0';
-       //4:w := w +' and A.STKBILL_STATUS=1';
+       3:w := w +' and not Exists (select * from MKT_PLANORDER G where A.TENANT_ID=G.TENANT_ID and A.CLIENT_ID=G.CLIENT_ID and G.PLAN_TYPE=''3'' and G.KPI_YEAR=A.KPI_YEAR+1) and A.END_DATE<'''+FormatDateTime('YYYY-MM-DD',Date)+'''';
+       4:w := w +' and Exists (select * from MKT_PLANORDER G where A.TENANT_ID=G.TENANT_ID and A.CLIENT_ID=G.CLIENT_ID and G.PLAN_TYPE=''3'' and G.KPI_YEAR=A.KPI_YEAR+1) ';
        end;
      end;
   if Trim(fndGLIDE_NO.Text) <> '' then
@@ -481,6 +489,39 @@ begin
   inherited;
   if (K1.Value < 2000) or (K1.Value > 2111) then
      Raise Exception.Create('输入年度范围"2000-2111"');
+end;
+
+procedure TfrmMktMarketCostOrderList.AddMenuItem;
+var P:TPopupMenu;
+begin
+  P := DBGridEh1.PopupMenu;
+  if (P <> nil) and (not IsAddItem) then
+  begin
+    IsAddItem := True;
+    P.Items.Insert(0,NewItem('单笔续约',0,False,True,SingleContractExtensionClick,0,'ContractExtension'));
+    P.Items.Insert(1,NewLine);
+  end;
+end;
+
+procedure TfrmMktMarketCostOrderList.DeleteMenuItem;
+var P:TPopupMenu;
+begin
+  P := DBGridEh1.PopupMenu;
+  if (P <> nil) and IsAddItem then
+  begin
+    IsAddItem := False;
+    P.Items.Delete(1);
+    P.Items.Delete(0);
+  end;
+end;
+
+procedure TfrmMktMarketCostOrderList.SingleContractExtensionClick(
+  Sender: TObject);
+begin
+  if not cdsList.Active then Exit;
+  if cdsList.IsEmpty then Exit;
+  actNewExecute(Sender);
+  TfrmMktMarketCost(CurContract).SingleContractExtensionFrom(cdsList.FieldByName('PLAN_ID').AsString);
 end;
 
 end.

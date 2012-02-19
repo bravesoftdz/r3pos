@@ -55,6 +55,8 @@ type
     edtADVA_MNY: TcxTextEdit;
     Label11: TLabel;
     RzBitBtn1: TRzBitBtn;
+    actDownIndeOrder: TAction;
+    Btn_DownOrder: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -130,16 +132,27 @@ type
     procedure PrintBarcode;
     //2011.04.12 晚 增加 到货确认填充 订单
     function  IndeOrderWriteToStock(AObj: TRecord_; vData: OleVariant): Boolean;
+
   end;
 
 implementation
 uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo,ufrmTenantInfo,  
-  ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmMain,ufrmFindOrder,ufrmBarCodePrint;
+  ufrmUsersInfo,ufrmStkIndentOrder,ufrmStkRetuOrderList,ufrmMain,ufrmFindOrder,ufrmBarCodePrint,
+  IniFiles;
 {$R *.dfm}
 
 procedure TfrmStockOrder.CancelOrder;
 begin
   inherited;
+  //下载订单的设置控件为可用
+  if (not edtCLIENT_ID.Enabled) and (FDownOrderID<>'') then
+  begin
+    edtCLIENT_ID.Enabled:=true;  //供应商选择
+    edtSHOP_ID.Enabled:=true;    //入库门店
+    edtInput.Enabled:=true;      //条形码
+    DBGridEh1.ReadOnly:=false;     //明细Grid
+  end;
+    
   if dbState = dsInsert then
      NewOrder
   else
@@ -198,6 +211,8 @@ begin
 end;
 
 procedure TfrmStockOrder.FormCreate(Sender: TObject);
+var
+  F: TIniFile;
 begin
   inherited;
   FDownOrderID:='';
@@ -225,6 +240,11 @@ begin
     begin
       Label40.Caption := '进货仓库';
     end;
+
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try    if F.ReadInteger('soft','deskFlag',0)=1 then      Btn_DownOrder.Visible:=True    else      Btn_DownOrder.Visible:=False;  finally
+    F.Free;
+  end;
 end;
 
 procedure TfrmStockOrder.InitPrice(GODS_ID, UNIT_ID: string);

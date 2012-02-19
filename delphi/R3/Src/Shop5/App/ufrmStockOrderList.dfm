@@ -1,27 +1,27 @@
 inherited frmStockOrderList: TfrmStockOrderList
-  Left = 409
-  Top = 107
+  Left = 311
+  Top = 109
   Width = 868
-  Height = 612
+  Height = 610
   Caption = #36827#36135#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 860
-    Height = 548
+    Height = 546
     inherited RzPanel2: TRzPanel
       Width = 850
-      Height = 538
+      Height = 536
       inherited RzPage: TRzPageControl
         Width = 844
-        Height = 532
+        Height = 530
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36827#36135#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 842
-            Height = 505
+            Height = 503
             inherited RzPanel1: TRzPanel
               Width = 832
               Height = 110
@@ -312,7 +312,7 @@ inherited frmStockOrderList: TfrmStockOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 115
               Width = 832
-              Height = 385
+              Height = 383
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -498,6 +498,11 @@ inherited frmStockOrderList: TfrmStockOrderList
       Caption = #20184#27454
       ImageIndex = 28
       OnExecute = actfrmPayOrderExecute
+    end
+    object actDownIndeOrder: TAction
+      Caption = #35746#21333
+      ImageIndex = 3
+      OnExecute = actDownIndeOrderExecute
     end
   end
   inherited cdsList: TZQuery
@@ -754,5 +759,12 @@ inherited frmStockOrderList: TfrmStockOrderList
       735F436867426F64792E22534C30303030220002006A650014006364735F4368
       67426F64792E224A4530303030220004006B68796800000000040079687A6800
       0000000200647A000000000000000000000000FDFF0100000000}
+  end
+  object PmDownOrder: TPopupMenu
+    Left = 121
+    Top = 190
+    object N1: TMenuItem
+      Action = actDownIndeOrder
+    end
   end
 end

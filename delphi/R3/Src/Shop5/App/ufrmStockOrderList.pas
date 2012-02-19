@@ -11,7 +11,7 @@ uses
   ToolWin, StdCtrls, RzLabel, Grids, DBGridEh, ExtCtrls, RzTabs, RzPanel,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxCalendar, cxButtonEdit, zrComboBoxList, RzButton,
-  cxRadioGroup, ZBase, FR_Class, jpeg, ZAbstractRODataset,
+  cxRadioGroup, ZBase, FR_Class, jpeg, ZAbstractRODataset, ZdbFactory,
   ZAbstractDataset, ZDataset;
 
 type
@@ -36,6 +36,9 @@ type
     fndSHOP_ID: TzrComboBoxList;
     Label3: TLabel;
     fndDEPT_ID: TzrComboBoxList;
+    actDownIndeOrder: TAction;
+    PmDownOrder: TPopupMenu;
+    N1: TMenuItem;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -56,8 +59,8 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure actfrmPayOrderExecute(Sender: TObject);
-    procedure frfStockOrderGetValue(const ParName: String;
-      var ParValue: Variant);
+    procedure frfStockOrderGetValue(const ParName: String; var ParValue: Variant);
+    procedure actDownIndeOrderExecute(Sender: TObject);
   private
     oid:string;
     PrintTimes:Integer;
@@ -76,8 +79,9 @@ type
   end;
 
 implementation
-uses ufrmStockOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
-  uShopGlobal, uframeOrderForm, ufrmBasic, uMsgBox;
+uses
+  ufrmStockOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
+  uShopGlobal, uframeOrderForm, ufrmBasic, uMsgBox, ufrmDownStockOrder,ufrmMain;
 {$R *.dfm}
 
 { TfrmStockOrderList }
@@ -506,7 +510,9 @@ procedure TfrmStockOrderList.actNewExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('11200001',2) then Raise Exception.Create('你没有新增进货单的权限,请和管理员联系.');
   inherited;
-
+  if CurOrder<>nil then
+    TfrmStockOrder(CurOrder).actDownIndeOrder.OnExecute:=actDownIndeOrderExecute;
+    
 end;
 
 procedure TfrmStockOrderList.DBGridEh1DblClick(Sender: TObject);
@@ -671,6 +677,81 @@ begin
        end;
   finally
     rs.Free;
+  end;
+end;
+
+procedure TfrmStockOrderList.actDownIndeOrderExecute(Sender: TObject);
+var
+  msgstr: string;
+  IsFlag: Boolean;
+  Aobj: TRecord_;
+  Form: TfrmBasic;
+  vData: OleVariant;
+  SaveFactor:TdbFactory;
+  StockOrder: TfrmStockOrder;
+begin
+  //判断是否有权限
+  IsFlag:=ShopGlobal.GetChkRight('91900001',1);
+  if not IsFlag then Raise Exception.Create('你没有到货确认权限,请和管理员联系.');
+  //检测网络是否正常
+  if not Global.RemoteFactory.Connected then
+  begin
+    if ShowMsgBox('当前连接已经断开，是否尝试连接远程服务器？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    SaveFactor := uGlobal.Factor;
+    try
+      Global.MoveToRemate;
+      try
+        Global.Connect;
+      except
+        ShowMsgBox('无法连接到远程服务器，请检查网络是否正常','友情提示...',MB_OK+MB_ICONINFORMATION);
+        Exit;
+      end;
+    finally
+      uGlobal.Factor := SaveFactor;
+    end;
+  end;
+  //判断单据状态；
+  if CurOrder<>nil then StockOrder:=TfrmStockOrder(CurOrder);
+  if StockOrder<>nil then
+  begin
+    if StockOrder.dbState=dsInsert then
+    begin
+      msgstr:='您当前新增的入库单还没保存，是否进行“按卷烟订单入库”吗？';
+      if MessageBox(Handle,pchar(msgstr),Pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    end else
+    if StockOrder.dbState=dsEdit then
+    begin
+      msgstr:='您当前修改的入库单还没保存，是否进行“按卷烟订单入库”吗？';
+      if MessageBox(Handle,pchar(msgstr),Pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+    end;
+  end;
+
+  Form := frmMain.FindChildForm(TfrmDownStockOrder);
+  if (Form<>nil) and TfrmDownStockOrder(Form).Xsm and not Application.MainForm.Visible then
+  begin
+    Form.Show;
+    Form.WindowState := wsNormal;
+    Form.BringToFront;
+    Exit;
+  end;
+  if (Form<>nil) then Form.Free;
+  if not Application.MainForm.Visible then
+  begin
+    TfrmDownStockOrder.XsmShow;
+    Exit;
+  end;
+  
+  try
+    Aobj:=TRecord_.Create;
+    if TfrmDownStockOrder.DownStockOrder(AObj,vData) then
+    begin
+      if trim(AObj.fieldbyName('INDE_ID').AsString)<>'' then
+      begin
+        DoIndeOrderWriteToStock(Aobj,vData);
+      end;
+    end;
+  finally
+    Aobj.Free;
   end;
 end;
 

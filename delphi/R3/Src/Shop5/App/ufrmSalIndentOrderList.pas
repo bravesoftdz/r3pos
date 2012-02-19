@@ -210,9 +210,11 @@ begin
   end;}
   //2011.11.10 引入门店权限及部门权限，把原有的控制注释
   if ShopGlobal.GetProdFlag = 'E' then
-    begin
-      Label40.Caption := '仓库名称';
-    end;
+  begin
+    Label40.Caption := '仓库名称';
+  end;
+  //2012.02.18修改:对于没收款权限，菜单不显示
+  actRecv.Visible:=ShopGlobal.GetChkRight('21300001',2);   
 end;
 
 procedure TfrmSalIndentOrderList.FormShow(Sender: TObject);

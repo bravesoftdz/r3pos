@@ -206,6 +206,8 @@ begin
       Label40.Caption := '仓库名称';
       DBGridEh1.Columns[4].Title.Caption := '仓库名称';
     end;
+  //2012.02.18修改:对于没收款权限，菜单不显示
+  actRecv.Visible:=ShopGlobal.GetChkRight('21300001',2); 
 end;
 
 procedure TfrmSalRetuOrderList.FormShow(Sender: TObject);

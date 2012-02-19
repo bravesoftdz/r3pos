@@ -214,12 +214,14 @@ begin
     end;
 
   if not ShopGlobal.GetChkRight('14500001',2) then
-     begin
-       DBGridEh1.Columns[10].Free;
-       DBGridEh1.Columns[9].Free;
-       DBGridEh1.Columns[8].Free;
-       DBGridEh1.Columns[7].Free;
-     end;
+  begin
+    DBGridEh1.Columns[10].Free;
+    DBGridEh1.Columns[9].Free;
+    DBGridEh1.Columns[8].Free;
+    DBGridEh1.Columns[7].Free;
+  end;
+  //2012.02.18修改:对于没收款权限，菜单不显示
+  actfrmPayOrder.Visible:=ShopGlobal.GetChkRight('21400001',2);
 end;
 
 procedure TfrmStkIndentOrderList.FormShow(Sender: TObject);

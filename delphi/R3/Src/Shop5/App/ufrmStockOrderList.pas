@@ -217,10 +217,12 @@ begin
      end;
 
   if ShopGlobal.GetProdFlag = 'E' then
-    begin
-      Label40.Caption := '进货仓库';
-      DBGridEh1.Columns[4].Title.Caption := '仓库名称';
-    end;
+  begin
+    Label40.Caption := '进货仓库';
+    DBGridEh1.Columns[4].Title.Caption := '仓库名称';
+  end;
+  //2012.02.18修改:对于没收款权限，菜单不显示
+  actfrmPayOrder.Visible:=ShopGlobal.GetChkRight('21400001',2);
 end;
 
 procedure TfrmStockOrderList.FormShow(Sender: TObject);

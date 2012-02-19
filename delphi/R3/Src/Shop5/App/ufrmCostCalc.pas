@@ -901,6 +901,7 @@ begin
     
     //每次计算都算到最后一天
     if mDate<eDate then mDate := eDate;
+    if mDate<date() then mDate := date();
     pt := round(mDate-cDate);
   finally
     rs.Free;

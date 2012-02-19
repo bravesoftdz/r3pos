@@ -1366,6 +1366,7 @@ begin
   if Present in [0,1] then
      inherited
   else
+  if Present in [2] then
      begin
        bs := Global.GetZQueryFromName('PUB_GOODSINFO');
        if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
@@ -1383,9 +1384,18 @@ begin
           end
        else
           begin
-            MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
-            PresentToCalc(0);
+            //MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+            PresentToCalc(3);
+            Exit;
           end;
+      end
+  else
+      begin
+         edtTable.Edit;
+         InitPrice(edtTable.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('UNIT_ID').AsString);
+         edtTable.Edit;
+         edtTable.FieldByName('IS_PRESENT').AsInteger := 3;
+         PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
       end;
   ShowInfo;
 end;
@@ -1610,6 +1620,7 @@ begin
   case edtTable.FieldbyName('IS_PRESENT').AsInteger of
   0:PresentToCalc(1);
   1:PresentToCalc(2);
+  2:PresentToCalc(3);
   else
      PresentToCalc(0);
   end;

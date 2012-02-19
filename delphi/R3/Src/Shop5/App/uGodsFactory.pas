@@ -36,7 +36,8 @@ begin
   try
     rs.SQL.Text :=
       'select BARCODE,GODS_NAME,GODS_SPELL,CALC_UNITS,SMALL_UNITS,BIG_UNITS,SMALLTO_CALC,BIGTO_CALC,NEW_OUTPRICE,NEW_INPRICE,SORT_ID1,UNIT_ID '+
-      'from PUB_GOODSINFO where TENANT_ID=0 and BARCODE='''+bcode+'''';
+      'from PUB_GOODSINFO where TENANT_ID=0 and BARCODE=:BARCODE';
+    rs.Parambyname('BARCODE').AsString := bcode;
     db.Open(rs);
     if not rs.IsEmpty then
        begin

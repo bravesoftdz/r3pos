@@ -630,6 +630,9 @@ begin
       if cdsTable.FieldbyName('IS_PRESENT').AsString = '2' then
          s := '(兑换)'+cdsTable.FieldbyName('GODS_NAME').AsString
       else
+      if cdsTable.FieldbyName('IS_PRESENT').AsString = '3' then
+         s := '(核销)'+cdsTable.FieldbyName('GODS_NAME').AsString
+      else
          s := cdsTable.FieldbyName('GODS_NAME').AsString;
       ARect := Rect;
       DbGridEh1.canvas.FillRect(ARect);
@@ -998,6 +1001,7 @@ begin
      case r of
      0:PresentToCalc(1);
      1:PresentToCalc(2);
+     2:PresentToCalc(3);
      else
        PresentToCalc(0);
      end;
@@ -1061,6 +1065,7 @@ begin
     cdsTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(Global.SHOP_ID,GODS_ID,cdsTable.FieldbyName('BATCH_NO').AsString);
     cdsTable.FieldByName('POLICY_TYPE').AsInteger := rs.FieldbyName('V_POLICY_TYPE').AsInteger;
     cdsTable.FieldByName('HAS_INTEGRAL').AsInteger := rs.FieldbyName('V_HAS_INTEGRAL').AsInteger;
+    
     //看是否换购商品
     if bs.FieldByName('USING_BARTER').AsInteger=3 then
        begin
@@ -1108,6 +1113,7 @@ begin
     cdsTable.Edit;
   end
   else
+  if Present in [2] then
   begin
      bs := Global.GetZQueryFromName('PUB_GOODSINFO');
      if not bs.Locate('GODS_ID',cdsTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+cdsTable.FieldbyName('GODS_NAME').AsString+'”');
@@ -1125,9 +1131,17 @@ begin
         end
      else
         begin
-          MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
-          PresentToCalc(0);
+          //MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+          PresentToCalc(3);
         end;
+  end
+  else
+  begin
+     cdsTable.Edit;
+     InitPrice(cdsTable.FieldbyName('GODS_ID').AsString,cdsTable.FieldbyName('UNIT_ID').AsString);
+     cdsTable.Edit;
+     cdsTable.FieldByName('IS_PRESENT').AsInteger := 3;
+     PriceToCalc(cdsTable.FieldbyName('APRICE').AsFloat);
   end;
 end;
 

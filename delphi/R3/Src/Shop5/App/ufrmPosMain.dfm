@@ -664,7 +664,7 @@ inherited frmPosMain: TfrmPosMain
         object lblDIBS: TLabel
           Left = 198
           Top = 98
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #25214#38646#65306
           Font.Charset = GB2312_CHARSET
@@ -677,7 +677,7 @@ inherited frmPosMain: TfrmPosMain
         object lblCASH: TLabel
           Left = 198
           Top = 58
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #29616#37329#65306
           Font.Charset = GB2312_CHARSET
@@ -735,7 +735,7 @@ inherited frmPosMain: TfrmPosMain
         object lblACCT_MNY: TLabel
           Left = 198
           Top = 18
-          Width = 90
+          Width = 93
           Height = 29
           Caption = #32467#31639#65306
           Font.Charset = GB2312_CHARSET
@@ -1533,10 +1533,10 @@ inherited frmPosMain: TfrmPosMain
     object Label28: TLabel
       Left = 453
       Top = 7
-      Width = 96
+      Width = 120
       Height = 12
       Cursor = crHandPoint
-      Caption = #36192#36865'/'#20817#25442'  [F4] '
+      Caption = #36192#36865'/'#20817#25442'/'#26680#38144' [F4] '
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12

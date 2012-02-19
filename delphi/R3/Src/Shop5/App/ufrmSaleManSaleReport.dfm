@@ -15,9 +15,9 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
       inherited RzPage: TRzPageControl
         Width = 870
         Height = 488
-        ActivePage = TabSheet3
+        ActivePage = TabSheet2
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #37096#38376#38144#21806#27719#24635#34920
@@ -335,7 +335,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                   Top = 96
                   Width = 193
                   Height = 20
-                  TabStop = False
                   Properties.AutoSelect = False
                   Properties.Buttons = <
                     item
@@ -955,7 +954,6 @@ inherited frmSaleManSaleReport: TfrmSaleManSaleReport
                 Top = 119
                 Width = 193
                 Height = 20
-                TabStop = False
                 Properties.AutoSelect = False
                 Properties.Buttons = <
                   item

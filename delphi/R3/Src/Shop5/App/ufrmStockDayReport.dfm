@@ -15,8 +15,10 @@ inherited frmStockDayReport: TfrmStockDayReport
       inherited RzPage: TRzPageControl
         Width = 860
         Height = 542
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -268,7 +270,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 53
                   Width = 114
                   Height = 20
-                  TabStop = False
                   Properties.AutoSelect = False
                   Properties.Buttons = <
                     item
@@ -723,7 +724,6 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 53
                   Width = 122
                   Height = 20
-                  TabStop = False
                   Properties.AutoSelect = False
                   Properties.Buttons = <
                     item
@@ -1072,7 +1072,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 8
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1204,7 +1204,7 @@ inherited frmStockDayReport: TfrmStockDayReport
                   Top = 10
                   Width = 170
                   Height = 20
-                  TabOrder = 7
+                  TabOrder = 8
                 end
               end
               object RzPanel12: TRzPanel

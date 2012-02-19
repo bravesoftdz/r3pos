@@ -14,10 +14,8 @@ inherited frmBondRequReport: TfrmBondRequReport
       inherited RzPage: TRzPageControl
         Width = 819
         Height = 506
-        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -95,7 +93,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -113,7 +111,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 1
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -151,7 +149,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 2
+                  TabOrder = 4
                 end
                 object fndP1_CUST_VALUE: TzrComboBoxList
                   Tag = -1
@@ -165,7 +163,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -207,7 +205,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -244,7 +242,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 5
+                  TabOrder = 0
                 end
                 object P1_D2: TcxDateEdit
                   Left = 184
@@ -253,14 +251,14 @@ inherited frmBondRequReport: TfrmBondRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 6
+                  TabOrder = 1
                 end
                 inline P1_DateControl: TfrmDateControl
                   Left = 286
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 7
+                  TabOrder = 8
                 end
                 object fndP1_BOND_TYPE: TcxComboBox
                   Left = 340
@@ -274,7 +272,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 8
+                  TabOrder = 3
                 end
               end
               inherited RzPanel7: TRzPanel
@@ -870,7 +868,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -889,7 +887,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 4
                 end
                 object fndP3_CUST_VALUE: TzrComboBoxList
                   Tag = -1
@@ -903,7 +901,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -945,7 +943,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -986,7 +984,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -1019,7 +1017,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 5
+                  TabOrder = 1
                 end
                 object P3_D1: TcxDateEdit
                   Left = 77
@@ -1028,14 +1026,14 @@ inherited frmBondRequReport: TfrmBondRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 6
+                  TabOrder = 0
                 end
                 inline P3_DateControl: TfrmDateControl
                   Left = 286
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 7
+                  TabOrder = 8
                 end
                 object fndP3_BOND_TYPE: TcxComboBox
                   Left = 338
@@ -1049,7 +1047,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 8
+                  TabOrder = 3
                 end
               end
               object RzPanel12: TRzPanel
@@ -1294,7 +1292,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 0
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -1313,7 +1311,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 1
+                  TabOrder = 2
                 end
                 object fndP4_CUST_VALUE: TzrComboBoxList
                   Tag = -1
@@ -1327,7 +1325,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -1369,7 +1367,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -1448,7 +1446,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
@@ -1485,7 +1483,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 6
+                  TabOrder = 0
                 end
                 object P4_D2: TcxDateEdit
                   Left = 184
@@ -1494,14 +1492,14 @@ inherited frmBondRequReport: TfrmBondRequReport
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DateButtons = [btnToday]
-                  TabOrder = 7
+                  TabOrder = 1
                 end
                 inline P4_DateControl: TfrmDateControl
                   Left = 286
                   Top = 8
                   Width = 170
                   Height = 20
-                  TabOrder = 8
+                  TabOrder = 9
                 end
                 object fndP4_BOND_TYPE: TcxComboBox
                   Left = 722
@@ -1516,7 +1514,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 9
+                  TabOrder = 7
                 end
               end
               object RzPanel21: TRzPanel

@@ -65,7 +65,7 @@ procedure TfrmMktActiveList.DBGridEh1Columns1UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
-  if Length(Text) > 10 then
+  if Length(Text) > 50 then
     begin
       cdsActive.FieldByName('ACTIVE_NAME').AsString:='';
       Raise Exception.Create('市场活动名称不能超出25个汉字或50个字符');
@@ -78,7 +78,7 @@ procedure TfrmMktActiveList.btnAppendClick(Sender: TObject);
 begin
   inherited;
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
-  //if not (ShopGlobal.GetChkRight('32200001',2) or ShopGlobal.GetChkRight('32200001',3)) then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
+  if not (ShopGlobal.GetChkRight('100002257',2) or ShopGlobal.GetChkRight('100002257',3)) then Raise Exception.Create('你没有编辑市场活动的权限,请和管理员联系.');
   if cdsActive.State in [dsEdit,dsInsert] then cdsActive.Post;
   if not cdsActive.IsEmpty then
   begin
@@ -115,7 +115,7 @@ procedure TfrmMktActiveList.btnDeleteClick(Sender: TObject);
 begin
   inherited;
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
-  //if not ShopGlobal.GetChkRight('32200001',4) then Raise Exception.Create('你没有删除计量单位的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002257',4) then Raise Exception.Create('你没有删除市场活动的权限,请和管理员联系.');
   if MessageBox(Handle,pchar('确认要删除"'+cdsActive.FieldbyName('ACTIVE_NAME').AsString+'"活动？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsActive.Delete;
   if cdsActive.State in [dsEdit,dsInsert] then cdsActive.Post;
@@ -284,7 +284,7 @@ end;
 class function TfrmMktActiveList.AddDialog(Owner: TForm;
   var AObj: TRecord_): boolean;
 begin
-   //if not ShopGlobal.GetChkRight('32200001',2) then Raise Exception.Create('你没有编辑计量单位的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002257',2) then Raise Exception.Create('你没有编辑市场活动的权限,请和管理员联系.');
    with TfrmMktActiveList.Create(Owner) do
     begin
       try
@@ -311,7 +311,7 @@ end;
 
 class function TfrmMktActiveList.ShowDialog(Owner: TForm): boolean;
 begin
-  //if not ShopGlobal.GetChkRight('32200001',1) then Raise Exception.Create('你没有查看计量单位的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002257',1) then Raise Exception.Create('你没有查看市场活动的权限,请和管理员联系.');
   with TfrmMktActiveList.Create(Owner) do
     begin
       try
@@ -336,7 +336,7 @@ end;
 
 function TfrmMktActiveList.CheckCanExport: boolean;
 begin
-  //Result := ShopGlobal.GetChkRight('32200001',6);
+  Result := ShopGlobal.GetChkRight('100002257',6);
 end;
 
 procedure TfrmMktActiveList.edtACTIVE_GROUPSaveValue(Sender: TObject);
@@ -352,7 +352,7 @@ begin
   inherited;
   if not cdsActive.Active then Exit;
 
-  if (edtACTIVE_GROUP.AsString='') and edtACTIVE_GROUP.Focused then   //and ShopGlobal.GetChkRight('32600001',2)
+  if (edtACTIVE_GROUP.AsString='') and edtACTIVE_GROUP.Focused and ShopGlobal.GetChkRight('100002257',2) then   //
      Raise Exception.Create('没找到你想查找的活动分组？');
 
   cdsActive.DisableControls;

@@ -6,7 +6,7 @@ uses
   Dialogs, StdCtrls,MultiMon, DirectShow9, ActiveX,ComObj, DSUtil, RzPanel, ExtCtrls, RzStatus, DSPack, Marquee,
   jpeg,msxml;
 const
-  WM_PLAY_END=WM_USER+3000;
+  WM_PLAY_ENDING=WM_USER+3000;
 type
   TMonitorType=(mtNone,mtPhoto,mtText,mtVideo);
   PSrcDefine=^TSrcDefine;
@@ -160,6 +160,8 @@ type
     procedure Open(root:IXMLDOMNode);
     procedure Play;
     procedure Close;
+    procedure Pause;
+    procedure resume;
     property ProgramId:string read FProgramId write SetProgramId;
     property ProgramSeq:integer read FProgramSeq write SetProgramSeq;
     property ProgramLen:integer read FProgramLen write SetProgramLen;
@@ -200,6 +202,9 @@ type
     procedure Open(root:IXMLDOMNode);
     procedure Close;
     procedure Play;
+    procedure Pause;
+    procedure resume;
+    
     property PlayListId:string read FPlayListId write SetPlayListId;
     property PlayListLen:integer read FPlayListLen write SetPlayListLen;
     property PlayType:integer read FPlayType write SetPlayType;
@@ -223,7 +228,7 @@ type
     FProgramListType: integer;
     FPeriod: integer;
     FEndDate: string;
-    FStarteDate: string;
+    FStartDate: string;
     FProgramListId: string;
     Fended: boolean;
     procedure Setindex(const Value: integer);
@@ -231,7 +236,7 @@ type
     procedure SetPeriod(const Value: integer);
     procedure SetProgramListId(const Value: string);
     procedure SetProgramListType(const Value: integer);
-    procedure SetStarteDate(const Value: string);
+    procedure SetStartDate(const Value: string);
     procedure Setended(const Value: boolean);
   protected
     procedure TimerComplete(Sender:TObject);
@@ -243,10 +248,13 @@ type
     procedure Open(filename:string);
     procedure Close;
     procedure Play;
+    procedure Pause;
+    procedure resume;
+
     property index:integer read Findex write Setindex;
     property ProgramListId:string read FProgramListId write SetProgramListId;
     property Period:integer read FPeriod write SetPeriod;
-    property StarteDate:string read FStarteDate write SetStarteDate;
+    property StartDate:string read FStartDate write SetStartDate;
     property EndDate:string read FEndDate write SetEndDate;
     property ProgramListType:integer read FProgramListType write SetProgramListType;
     property ended:boolean read Fended write Setended;
@@ -795,6 +803,19 @@ begin
     end;
 end;
 
+procedure TrcProgram.Pause;
+var
+  i:integer;
+begin
+  for i:=0 to flist.Count -1 do
+    begin
+      with TrcMonitor(flist[i]) do
+        begin
+          Pause;
+        end;
+    end;
+end;
+
 procedure TrcProgram.Play;
 var
   i:integer;
@@ -806,6 +827,19 @@ begin
           if SrcCount<=0 then continue;
           index := index+1;
           Open(srcs[index]);
+        end;
+    end;
+end;
+
+procedure TrcProgram.resume;
+var
+  i:integer;
+begin
+  for i:=0 to flist.Count -1 do
+    begin
+      with TrcMonitor(flist[i]) do
+        begin
+          resume;
         end;
     end;
 end;
@@ -972,6 +1006,18 @@ begin
   FNearTime := Value;
 end;
 
+procedure TrcPlayList.Pause;
+begin
+  if curProgram=nil then Exit;
+  curProgram.Pause;
+end;
+
+procedure TrcPlayList.resume;
+begin
+  if curProgram=nil then Exit;
+  curProgram.resume;
+end;
+
 { TrcFile }
 
 procedure TrcFile.Clear;
@@ -1020,7 +1066,7 @@ begin
   node := xmlDoc.documentElement;
   ProgramListId := node.selectSingleNode('ProgramListId').text;
   Period := StrtoIntDef(node.selectSingleNode('Period').text,0);
-  StarteDate := node.selectSingleNode('StarteDate').text;
+  StartDate := node.selectSingleNode('StartDate').text;
   EndDate := node.selectSingleNode('EndDate').text;
   ProgramListType := StrtoIntDef(node.selectSingleNode('ProgramListType').text,0);
   node := node.firstChild;
@@ -1036,6 +1082,11 @@ begin
     end;
 end;
 
+procedure TrcFile.Pause;
+begin
+  if curPlayList<>nil then curPlayList.Pause;
+end;
+
 procedure TrcFile.Play;
 begin
   if flist.Count=0 then Exit;
@@ -1049,6 +1100,11 @@ begin
      end;
   curPlayList.Play;
   Timer.Enabled := true;
+end;
+
+procedure TrcFile.resume;
+begin
+  if curPlayList<>nil then curPlayList.resume;
 end;
 
 procedure TrcFile.SetEndDate(const Value: string);
@@ -1090,9 +1146,9 @@ begin
   FProgramListType := Value;
 end;
 
-procedure TrcFile.SetStarteDate(const Value: string);
+procedure TrcFile.SetStartDate(const Value: string);
 begin
-  FStarteDate := Value;
+  FStartDate := Value;
 end;
 
 procedure TrcFile.TimerComplete(Sender: TObject);
@@ -1126,7 +1182,7 @@ begin
        if (index=(flist.Count-1)) and (ProgramListType=1) then
           begin
             ended := true;
-            postmessage(Parant.Handle,WM_PLAY_END,0,0);
+            postmessage(Parant.Handle,WM_PLAY_ENDING,integer(self),0);
             Exit;
           end;
        index := index+1;

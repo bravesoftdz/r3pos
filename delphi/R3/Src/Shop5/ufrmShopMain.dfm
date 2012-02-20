@@ -5620,6 +5620,7 @@ inherited frmShopMain: TfrmShopMain
       OnExecute = actfrmMktKpiTotalReportExecute
     end
     object actfrmMktMarketCostOrderList: TAction
+      Tag = 100002226
       Caption = #24066#22330#36153#39044#31639
       OnExecute = actfrmMktMarketCostOrderListExecute
     end

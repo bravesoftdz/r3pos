@@ -41,6 +41,9 @@ type
     procedure RzBmpButton2Click(Sender: TObject);
     procedure IEDesktopNavigateComplete2(Sender: TObject;
       const pDisp: IDispatch; var URL: OleVariant);
+    procedure IEDesktopBeforeNavigate2(Sender: TObject;
+      const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
+      Headers: OleVariant; var Cancel: WordBool);
   private
     FHookLocked: boolean;
     Wait:boolean;
@@ -60,7 +63,8 @@ var
   frmN26Desk: TfrmN26Desk;
 
 implementation
-uses ufrmMain,udmIcon,uRcFactory,uShopGlobal,uDevFactory,Registry,IniFiles;
+uses ufrmMain,udmIcon,uRcFactory,uShopGlobal,uDevFactory,Registry,IniFiles,
+  ufrmN26Main,uMsgBox;
 {$R *.dfm}
 
 function TfrmN26Desk.FindAction(id:string):TAction;
@@ -238,6 +242,37 @@ procedure TfrmN26Desk.IEDesktopNavigateComplete2(Sender: TObject;
 begin
   inherited;
   Wait := false;
+end;
+
+procedure TfrmN26Desk.IEDesktopBeforeNavigate2(Sender: TObject;
+  const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
+  Headers: OleVariant; var Cancel: WordBool);
+var
+  s:string;
+  w:integer;
+  vList:TStringList;
+  Action:TAction;
+begin
+  inherited;
+  Cancel := false;
+  s := url;
+  w := pos('dsk=',s);
+  if w=0 then Exit;
+  delete(s,1,w+4);
+  if (s<>'') and (s[length(s)]=')') then delete(s,length(s),1);
+  Cancel := true;
+  vList := TStringList.Create;
+  try
+    vList.CommaText := s;
+    Action := frmN26Main.FindAction(vList.Values['action']);
+    if Assigned(Action) and Action.Enabled then
+       begin
+         Action.OnExecute(Action);
+       end
+    else ShowMsgBox('你没有操作此模块的权限...','友情提示...',MB_OK+MB_ICONINFORMATION);
+  finally
+    vList.Free;
+  end;
 end;
 
 end.

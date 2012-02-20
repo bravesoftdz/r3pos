@@ -358,7 +358,7 @@ begin
   if (Column.Field.Index>2) and not VarIsNull(Factory.Footer[Column.Field.Index-3].Value) and not VarIsClear(Factory.Footer[Column.Field.Index-3].Value) and VarIsNumeric(Factory.Footer[Column.Field.Index-3].Value) then
      Text := formatFloat('#0.00',Factory.Footer[Column.Field.Index-3].Value)
   else
-     Text := '';
+  if Column.FieldName<>'A_IDX' then Text := '';
 end;
 
 procedure TfrmStockTotalReport.btnDeleteClick(Sender: TObject);

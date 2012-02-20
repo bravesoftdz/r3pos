@@ -289,13 +289,14 @@ type
     actfrmN26Net: TAction;
     actfrmGoodsMonth: TAction;
     CA_MODULE: TZQuery;
-    actfrmSaleDaySingleReport: TAction;
+    actfrmSimpleSaleDayReport: TAction;
     actfrmIEOpen: TAction;
     actfrmDemandOrderList1: TAction;
     actfrmDemandOrderList2: TAction;
     actfrmInitGuide: TAction;
     Image18: TImage;
-    Button1: TButton;
+    RzBmpButton7: TRzBmpButton;
+    RzBmpButton11: TRzBmpButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -417,7 +418,7 @@ type
     procedure RzTrayIcon1RestoreApp(Sender: TObject);
     procedure RzButton1Click(Sender: TObject);
     procedure actfrmGoodsMonthExecute(Sender: TObject);
-    procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
+    procedure actfrmSimpleSaleDayReportExecute(Sender: TObject);
     procedure actfrmIEOpenExecute(Sender: TObject);
     procedure actfrmDemandOrderList1Execute(Sender: TObject);
     procedure actfrmDemandOrderList2Execute(Sender: TObject);
@@ -433,6 +434,8 @@ type
     FSystemShutdown: boolean;
     sflag:string;
     IsXsm:Boolean;
+    FdeskFlag: integer;
+    FleftVisible: boolean;
     procedure DoLoadMsg(Sender:TObject);
     procedure DoActiveForm(Sender:TObject);
     procedure DoFreeForm(Sender:TObject);
@@ -459,6 +462,8 @@ type
     procedure SetSystemShutdown(const Value: boolean);
     procedure InitTenant;
     procedure DoPageClick(Sender:TObject);
+    procedure SetdeskFlag(const Value: integer);
+    procedure SetleftVisible(const Value: boolean);
   public
     { Publicdeclarations }
     destructor Destroy; override;
@@ -476,6 +481,8 @@ type
     property Logined:boolean read FLogined write SetLogined;
     property Loging:boolean read FLoging write SetLoging;
     property SystemShutdown:boolean read FSystemShutdown write SetSystemShutdown;
+    property deskFlag:integer read FdeskFlag write SetdeskFlag;
+    property leftVisible:boolean read FleftVisible write SetleftVisible;
   end;
 
 var
@@ -540,7 +547,6 @@ begin
   RzVersionInfo.FilePath := ParamStr(0);
   LoadFrame;
   TimerFactory := nil;
-
 end;
 
 procedure TfrmN26Main.FormDestroy(Sender: TObject);
@@ -587,6 +593,14 @@ begin
     Panel12.Width := 31;
     Panel24.Width := 23;
     frmMain.OnResize(nil);
+  end;
+  leftVisible := true;
+  case deskFlag of
+  1:begin
+       rzLeft.Width := 29;
+       Panel12.Width := 31;
+       Panel24.Width := 23;
+    end;
   end;
 end;
 
@@ -828,6 +842,7 @@ end;
 
 procedure TfrmN26Main.wm_Login(var Message: TMessage);
 var prm:string;
+  F:TIniFile;
 begin
   if Logined then Exit;
   CaFactory.DownModule := true;
@@ -871,6 +886,27 @@ begin
       frmN26Main.WindowState := wsMaximized;
       Application.Restore;
     end;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    deskFlag := F.ReadInteger('soft','deskFlag',0);
+    case deskFlag of
+    0:begin
+        RzBmpButton6.Visible := true;
+        RzBmpButton1.Visible := true;
+        RzBmpButton2.Visible := true;
+        RzBmpButton4.Visible := true;
+        leftVisible := true;
+      end;
+    1:begin
+        Image19Click(nil);
+        RzBmpButton7.Visible := true;
+        RzBmpButton11.Visible := true;
+        leftVisible := false;
+      end;
+    end;
+  finally
+    F.Free;
+  end;
   except
     on E:Exception do
        begin
@@ -1323,7 +1359,8 @@ end;
 procedure TfrmN26Main.Image19Click(Sender: TObject);
 begin
   inherited;
-  if rzLeft.Width = 29 then
+  rzLeft.Visible := true;
+  if rzLeft.Width <= 29 then
      begin
        rzLeft.Width := 172;
        Panel12.Width := 174;
@@ -2681,9 +2718,19 @@ end;
 procedure TfrmN26Main.RzBmpButton3Click(Sender: TObject);
 begin
   inherited;
-  if rzLeft.Width = 29 then rzLeft.Width := 172;
-  if Panel12.Width = 31 then Panel12.Width := 174;
-  if Panel24.Width = 23 then Panel24.Width := 166;
+  leftVisible := true;
+  case deskFlag of
+  1:begin
+       rzLeft.Width := 29;
+       Panel12.Width := 31;
+       Panel24.Width := 23;
+    end;
+  0:begin
+       if rzLeft.Width = 29 then rzLeft.Width := 172;
+       if Panel12.Width = 31 then Panel12.Width := 174;
+       if Panel24.Width = 23 then Panel24.Width := 166;
+    end;
+  end;
   frmMain.OnResize(nil);
   frmN26Desk.Locked := true;
   frmN26Desk.BringToFront;
@@ -3104,8 +3151,7 @@ end;
 procedure TfrmN26Main.RzBmpButton11Click(Sender: TObject);
 begin
   inherited;
-  TfrmPswModify.ShowExecute(Global.UserId,Global.UserName);
-
+  ShellExecute(handle,'open',Pchar(ExtractFilePath(ParamStr(0))+'res\xxfd.html'),nil,nil,0);
 end;
 
 procedure TfrmN26Main.RzBmpButton12Click(Sender: TObject);
@@ -3118,22 +3164,7 @@ end;
 procedure TfrmN26Main.RzBmpButton7Click(Sender: TObject);
 begin
   inherited;
-  if ShopGlobal.offline and not Global.RemoteFactory.Connected then
-     begin
-       Global.MoveToRemate;
-       try
-         try
-           Global.Connect;
-         except
-           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...'); 
-         end;
-       finally
-         Global.MoveToLocal;
-       end;
-     end;
-  if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
-  SyncFactory.SyncAll;
-  Global.LoadBasic;
+  actfrmCustomer.OnExecute(actfrmCustomer);
 end;
 
 procedure TfrmN26Main.RzBmpButton14Click(Sender: TObject);
@@ -3873,6 +3904,10 @@ begin
   for i:=0 to rzPage.Tabs.Count -1 do rzPage.Tabs[i].ImageIndex := 0;
   LoadMenu(rzPage.Tabs[rzPage.TabIndex]);
   rzPage.Tabs[rzPage.TabIndex].ImageIndex := 1;
+  if rzLeft.Width = 29 then rzLeft.Width := 172;
+  if Panel12.Width = 31 then Panel12.Width := 174;
+  if Panel24.Width = 23 then Panel24.Width := 166;
+  frmMain.OnResize(nil);
 end;
 
 procedure TfrmN26Main.wm_check(var Message: TMessage);
@@ -4044,7 +4079,7 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmN26Main.actfrmSaleDaySingleReportExecute(Sender: TObject);
+procedure TfrmN26Main.actfrmSimpleSaleDayReportExecute(Sender: TObject);
 var
   Form:TfrmBasic;
 begin
@@ -4134,6 +4169,20 @@ procedure TfrmN26Main.Button1Click(Sender: TObject);
 begin
   inherited;
   TDevFactory.ShowAPrice(2943.4); 
+end;
+
+procedure TfrmN26Main.SetdeskFlag(const Value: integer);
+begin
+  FdeskFlag := Value;
+end;
+
+procedure TfrmN26Main.SetleftVisible(const Value: boolean);
+begin
+  FleftVisible := Value;
+  rzLeft.Visible := true;
+  rzLeft.Width := 6;
+  Panel12.Width := 8;
+  Panel24.Width := 0;
 end;
 
 end.

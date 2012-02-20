@@ -3889,6 +3889,10 @@ begin
   for i:=0 to rzPage.Tabs.Count -1 do rzPage.Tabs[i].ImageIndex := 0;
   LoadMenu(rzPage.Tabs[rzPage.TabIndex]);
   rzPage.Tabs[rzPage.TabIndex].ImageIndex := 1;
+  if rzLeft.Width = 29 then rzLeft.Width := 172;
+  if Panel12.Width = 31 then Panel12.Width := 174;
+  if Panel24.Width = 23 then Panel24.Width := 166;
+  frmMain.OnResize(nil);
 end;
 
 destructor TfrmShopMain.Destroy;

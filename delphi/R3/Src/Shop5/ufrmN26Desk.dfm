@@ -10025,6 +10025,7 @@ inherited frmN26Desk: TfrmN26Desk
         Height = 244
         Align = alClient
         TabOrder = 0
+        OnBeforeNavigate2 = IEDesktopBeforeNavigate2
         OnNavigateComplete2 = IEDesktopNavigateComplete2
         ControlData = {
           4C00000088600000381900000000000000000000000000000000000000000000

@@ -13,13 +13,17 @@ alter table CA_PROD_INFO add RES_IMAGES varchar(255);
 
 --// 添加收支项目 “固定保证金”、“滚动保证金”、“销售返利”、“市场费用”
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
-select TENANT_ID,'6E3CB7C8-C3B8-48D6-B508-F8D98ED6253C','市场费用','SCFY','3',6,'00',5497000 from CA_TENANT;
+select TENANT_ID,'6E3CB7C8-C3B8-48D6-B508-F8D98ED6253C','市场费用','SCFY','3',6,'00',5497000 from CA_TENANT 
+where not Exists(select * from PUB_CODE_INFO where tenant_id=CA_TENANT.tenant_id and code_id='6E3CB7C8-C3B8-48D6-B508-F8D98ED6253C' and code_type='3');
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
-select TENANT_ID,'206FEBCB-6550-4EA0-A8E6-E8728AADA1BA','销售返利','XSFL','3',6,'00',5497000 from CA_TENANT;
+select TENANT_ID,'206FEBCB-6550-4EA0-A8E6-E8728AADA1BA','销售返利','XSFL','3',6,'00',5497000 from CA_TENANT
+where not Exists(select * from PUB_CODE_INFO where tenant_id=CA_TENANT.tenant_id and code_id='206FEBCB-6550-4EA0-A8E6-E8728AADA1BA' and code_type='3');
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
-select TENANT_ID,'B43EF134-66A1-41DF-A921-EFD76198307F','固定保证金','GDBZJ','3',6,'00',5497000 from CA_TENANT;
+select TENANT_ID,'B43EF134-66A1-41DF-A921-EFD76198307F','固定保证金','GDBZJ','3',6,'00',5497000 from CA_TENANT
+where not Exists(select * from PUB_CODE_INFO where tenant_id=CA_TENANT.tenant_id and code_id='B43EF134-66A1-41DF-A921-EFD76198307F' and code_type='3');
 insert into PUB_CODE_INFO(tenant_id,code_id,code_name,code_spell,code_type,seq_no,comm,time_stamp)
-select TENANT_ID,'E9AED0B1-050C-4EFB-AA7A-0A64FE45EF97','滚动保证金','GDBZJ','3',6,'00',5497000 from CA_TENANT;
+select TENANT_ID,'E9AED0B1-050C-4EFB-AA7A-0A64FE45EF97','滚动保证金','GDBZJ','3',6,'00',5497000 from CA_TENANT
+where not Exists(select * from PUB_CODE_INFO where tenant_id=CA_TENANT.tenant_id and code_id='E9AED0B1-050C-4EFB-AA7A-0A64FE45EF97' and code_type='3');
 
 --指标类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','返利考核','IDX_TYPE','00',5497000);
@@ -246,7 +250,7 @@ CREATE TABLE MKT_PLANDATA (
         --保证金
 	BOND_MNY decimal(18, 3) ,
         --备注
-	REMARK varchar (100) NULL ,
+	REMARK varchar (100) ,
 	CONSTRAint PK_MKT_PLANDATA PRIMARY KEY  
 	(
 		TENANT_ID,
@@ -367,6 +371,9 @@ CREATE TABLE MKT_KPI_RESULT_LIST (
 	) 
 )  IN R3TB32K_BIZ INDEX IN R3IX32K_DEF;
 
+CREATE INDEX IX_MPRT_TENANT_ID ON MKT_KPI_RESULT_LIST(TENANT_ID);
+CREATE INDEX IX_MPRT_PLAN_ID ON MKT_KPI_RESULT_LIST(PLAN_ID);
+CREATE INDEX IX_MPRT_KPI_ID ON MKT_KPI_RESULT_LIST(KPI_ID);
 --需求类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','市场返利','REQU_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','市场计提','REQU_TYPE','00',5497000);
@@ -544,7 +551,7 @@ CREATE TABLE MKT_BONDORDER (
 		TENANT_ID,
 		BOND_ID
 	) 
-)  IN R3TB32K_BIZ INDEX IN R3IX32K_DEF
+)  IN R3TB32K_BIZ INDEX IN R3IX32K_DEF;
 
 CREATE INDEX IX_MBND_TENANT_ID ON MKT_BONDORDER(TENANT_ID);
 CREATE INDEX IX_MBND_TIME_STAMP ON MKT_BONDORDER(TENANT_ID,TIME_STAMP);
@@ -572,7 +579,7 @@ CREATE TABLE MKT_BONDDATA (
 		BOND_ID,
 		SEQNO
 	)
-)  IN R3TB32K_BIZ INDEX IN R3IX32K_DEF
+)  IN R3TB32K_BIZ INDEX IN R3IX32K_DEF;
 
 CREATE INDEX IX_MBNR_TENANT_ID ON MKT_BONDDATA(TENANT_ID);
 CREATE INDEX IX_MBNR_BOND_ID ON MKT_BONDDATA(TENANT_ID,BOND_ID);
@@ -618,3 +625,7 @@ update ACC_PAYABLE_INFO set DEPT_ID=(select DEPT_ID from STK_INDENTORDER where T
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('CREGION_ID','客户所在区(县)','INDEX_TYPE6','00',5497000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('CREGION_ID1','客户所在省','INDEX_TYPE6','00',5497000);
  insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('CREGION_ID2','客户所在市','INDEX_TYPE6','00',5497000);
+
+
+ delete from PUB_PARAMS where CODE_ID='3' and TYPE_CODE='IS_PRESENT';
+ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','核销','IS_PRESENT','00',5497000);

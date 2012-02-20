@@ -328,7 +328,7 @@ end;
 
 function TrcMonitor.Open(src: PSrcDefine): boolean;
 begin
-
+  result := false;
 end;
 
 procedure TrcMonitor.Pause;
@@ -680,10 +680,10 @@ var
   Video:TrcVideoMonitor;
   Src:PSrcDefine;
 begin
-  LayoutStartX := StrtoIntDef(Root.selectSingleNode('LayoutStartX').text,0);
-  LayoutEndX := StrtoIntDef(Root.selectSingleNode('LayoutEndX').text,0);
-  LayoutStartY := StrtoIntDef(Root.selectSingleNode('LayoutStartY').text,0);
-  LayoutEndY := StrtoIntDef(Root.selectSingleNode('LayoutEndY').text,0);
+  LayoutStartX := StrtoIntDef(Root.selectSingleNode('layoutStartX').text,0);
+  LayoutEndX := StrtoIntDef(Root.selectSingleNode('layoutEndX').text,0);
+  LayoutStartY := StrtoIntDef(Root.selectSingleNode('layoutStartY').text,0);
+  LayoutEndY := StrtoIntDef(Root.selectSingleNode('layoutEndY').text,0);
 
   Video := TrcVideoMonitor.Create(Parant);
   Flist.Add(Video);
@@ -691,15 +691,16 @@ begin
   Video.left := LayoutStartY;
   Video.height := LayoutStartY+LayoutEndY;
   Video.width := LayoutStartX+LayoutEndX;
-  Node := Root.firstChild;
+  Node := Root.selectSingleNode('videoList');
+  Node := Node.firstChild;
   while Node<>nil do
     begin
-      if Node.nodeName='Src' then
+      if Node.nodeName='video' then
          begin
            new(src);
-           src^.SourceId := Node.selectSingleNode('SourceId').text;
-           src^.Sequence := StrtoIntDef(Node.selectSingleNode('Sequence').text,0);
-           src^.src := Node.selectSingleNode('Path').text;
+           src^.SourceId := Node.selectSingleNode('videoId').text;
+           src^.Sequence := StrtoIntDef(Node.selectSingleNode('sequence').text,0);
+           src^.src := Node.selectSingleNode('path').text;
            Video.AddSrc(src);
          end;
       Node := Node.nextSibling;
@@ -712,10 +713,10 @@ var
   Photo:TrcPhotoMonitor;
   Src:PSrcDefine;
 begin
-  LayoutStartX := StrtoIntDef(Root.selectSingleNode('LayoutStartX').text,0);
-  LayoutEndX := StrtoIntDef(Root.selectSingleNode('LayoutEndX').text,0);
-  LayoutStartY := StrtoIntDef(Root.selectSingleNode('LayoutStartY').text,0);
-  LayoutEndY := StrtoIntDef(Root.selectSingleNode('LayoutEndY').text,0);
+  LayoutStartX := StrtoIntDef(Root.selectSingleNode('layoutStartX').text,0);
+  LayoutEndX := StrtoIntDef(Root.selectSingleNode('layoutEndX').text,0);
+  LayoutStartY := StrtoIntDef(Root.selectSingleNode('layoutStartY').text,0);
+  LayoutEndY := StrtoIntDef(Root.selectSingleNode('layoutEndY').text,0);
 
   Photo := TrcPhotoMonitor.Create(Parant);
   Flist.Add(Photo);
@@ -723,17 +724,18 @@ begin
   Photo.left := LayoutStartY;
   Photo.height := LayoutStartY+LayoutEndY;
   Photo.width := LayoutStartX+LayoutEndX;
-  Node := Root.firstChild;
+  Node := Root.selectSingleNode('photoList');
+  Node := Node.firstChild;
   while Node<>nil do
     begin
-      if Node.nodeName='Src' then
+      if Node.nodeName='photo' then
          begin
            new(src);
-           src^.SourceId := Node.selectSingleNode('SourceId').text;
-           src^.Sequence := StrtoIntDef(Node.selectSingleNode('Sequence').text,0);
-           src^.src := Node.selectSingleNode('Path').text;
-           src^.srcLength := StrtoIntDef(Node.selectSingleNode('ShowTime').text,0);
-           src^.Effect := StrtoIntDef(Node.selectSingleNode('Effect').text,0);
+           src^.SourceId := Node.selectSingleNode('photoId').text;
+           src^.Sequence := StrtoIntDef(Node.selectSingleNode('sequence').text,0);
+           src^.src := Node.selectSingleNode('path').text;
+           src^.srcLength := StrtoIntDef(Node.selectSingleNode('showTime').text,0);
+           src^.Effect := StrtoIntDef(Node.selectSingleNode('effect').text,0);
            Photo.AddSrc(src);
          end;
       Node := Node.nextSibling;
@@ -746,10 +748,10 @@ var
   Text:TrcTextMonitor;
   Src:PSrcDefine;
 begin
-  LayoutStartX := StrtoIntDef(Root.selectSingleNode('LayoutStartX').text,0);
-  LayoutEndX := StrtoIntDef(Root.selectSingleNode('LayoutEndX').text,0);
-  LayoutStartY := StrtoIntDef(Root.selectSingleNode('LayoutStartY').text,0);
-  LayoutEndY := StrtoIntDef(Root.selectSingleNode('LayoutEndY').text,0);
+  LayoutStartX := StrtoIntDef(Root.selectSingleNode('layoutStartX').text,0);
+  LayoutEndX := StrtoIntDef(Root.selectSingleNode('layoutEndX').text,0);
+  LayoutStartY := StrtoIntDef(Root.selectSingleNode('layoutStartY').text,0);
+  LayoutEndY := StrtoIntDef(Root.selectSingleNode('layoutEndY').text,0);
 
   Text := TrcTextMonitor.Create(Parant);
   Flist.Add(Text);
@@ -757,24 +759,24 @@ begin
   Text.left := LayoutStartY;
   Text.height := LayoutStartY+LayoutEndY;
   Text.width := LayoutStartX+LayoutEndX;
-  
-  Node := Root.firstChild;
+  Node := Root.selectSingleNode('textList');
+  Node := Node.firstChild;
   while Node<>nil do
     begin
-      if Node.nodeName='Src' then
+      if Node.nodeName='text' then
          begin
            new(src);
-           src^.SourceId := Node.selectSingleNode('SourceId').text;
-           src^.Sequence := StrtoIntDef(Node.selectSingleNode('Sequence').text,0);
-           src^.src := Node.selectSingleNode('Content').text;
+           src^.SourceId := Node.selectSingleNode('textId').text;
+           src^.Sequence := StrtoIntDef(Node.selectSingleNode('sequence').text,0);
+           src^.src := Node.selectSingleNode('content').text;
            src^.srcLength := StrtoIntDef(Node.selectSingleNode('ShowTime').text,0);
-           src^.Effect := StrtoIntDef(Node.selectSingleNode('Effect').text,0);
-           src^.FontSize := StrtoIntDef(Node.selectSingleNode('FontSize').text,12);
-           src^.FontColor := StrtoIntDef(Node.selectSingleNode('FontColor').text,$0);
-           src^.BackColor := StrtoIntDef(Node.selectSingleNode('BackColor').text,$ffff);
-           src^.ScrollSpeed := StrtoIntDef(Node.selectSingleNode('ScrollSpeed').text,100);
-           src^.FontName := Node.selectSingleNode('FontName').text;
-           src^.CharSet := StrtoIntDef(Node.selectSingleNode('CharSet').text,0);
+           src^.Effect := StrtoIntDef(Node.selectSingleNode('effect').text,0);
+           src^.FontSize := StrtoIntDef(Node.selectSingleNode('fontSize').text,12);
+           src^.FontColor := StrtoIntDef(Node.selectSingleNode('fontColor').text,$0);
+           src^.BackColor := StrtoIntDef(Node.selectSingleNode('backColor').text,$ffff);
+           src^.ScrollSpeed := StrtoIntDef(Node.selectSingleNode('scrollSpeed').text,100);
+           src^.FontName := Node.selectSingleNode('fontName').text;
+           src^.CharSet := StrtoIntDef(Node.selectSingleNode('showTime').text,0);
            Text.AddSrc(src);
          end;
       Node := Node.nextSibling;
@@ -785,22 +787,47 @@ var
   ScreenSize:string;
   w:integer;
 begin
-  ScreenSize := Root.selectSingleNode('ProgramId').text;
+  ScreenSize := Root.selectSingleNode('screenSize').text;
   w := pos('*',ScreenSize);
   ScreenWidth := StrtoIntDef(trim(copy(ScreenSize,1,w-1)),1024);
   ScreenHeight := StrtoIntDef(trim(copy(ScreenSize,w+1,255)),768);
   Parant.SetBounds(0,0,ScreenWidth,ScreenHeight);
-  Node := Root.firstChild;
-  while Node<>nil do
-    begin
-      if Node.nodeName='Photo' then
-         AddPhoto(Node);
-      if Node.nodeName='Video' then
-         AddVideo(Node);
-      if Node.nodeName='Text' then
-         AddText(Node);
-      Node := Node.nextSibling;
-    end;
+  //初始化图片
+  Node := Root.selectSingleNode('photoElList');
+  if Node<>nil then
+     begin
+        Node := Root.firstChild;
+        while Node<>nil do
+          begin
+            if Node.nodeName='photoEl' then
+               AddPhoto(Node);
+            Node := Node.nextSibling;
+          end;
+     end;
+  //初始化视屏
+  Node := Root.selectSingleNode('videoElList');
+  if Node<>nil then
+     begin
+        Node := Root.firstChild;
+        while Node<>nil do
+          begin
+            if Node.nodeName='videoEl' then
+               AddVideo(Node);
+            Node := Node.nextSibling;
+          end;
+     end;
+  //初始化文本
+  Node := Root.selectSingleNode('textElList');
+  if Node<>nil then
+     begin
+        Node := Root.firstChild;
+        while Node<>nil do
+          begin
+            if Node.nodeName='videoEl' then
+               AddText(Node);
+            Node := Node.nextSibling;
+          end;
+     end;
 end;
 
 procedure TrcProgram.Pause;
@@ -910,22 +937,23 @@ var
   Node:IXMLDOMNode;
   prog:TrcProgram;
 begin
-  PlayListId := Root.selectSingleNode('PlayListId').text;
-  PlayListLen := StrtoIntDef(Root.selectSingleNode('PlayListLen').text,0);
-  PlayType := StrtoIntDef(Root.selectSingleNode('Type').text,0);
-  StartTime := Root.selectSingleNode('StartTime').text;
-  PlayListSeq := StrtoIntDef(Root.selectSingleNode('PlayListSeq').text,0);
+  PlayListId := Root.selectSingleNode('playId').text;
+  PlayListLen := StrtoIntDef(Root.selectSingleNode('playLen').text,0);
+  PlayType := StrtoIntDef(Root.selectSingleNode('type').text,0);
+  StartTime := Root.selectSingleNode('startTime').text;
+  PlayListSeq := StrtoIntDef(Root.selectSingleNode('playSeq').text,0);
+  Node := Root.selectSingleNode('programList'); 
   Node := root.firstChild;
   while Node<>nil do
     begin
-      if Node.nodeName='Program' then
+      if Node.nodeName='program' then
          begin
            prog := TrcProgram.Create(Parant);
            Flist.Add(prog);
            prog.root := Node;
-           prog.ProgramId := Node.selectSingleNode('ProgramId').text;
-           prog.ProgramLen := StrtoIntDef(Node.selectSingleNode('ProgramLen').text,0);
-           prog.ProgramSeq := StrtoIntDef(Node.selectSingleNode('ProgramSeq').text,0);
+           prog.ProgramId := Node.selectSingleNode('programId').text;
+           prog.ProgramLen := StrtoIntDef(Node.selectSingleNode('programLen').text,0);
+           prog.ProgramSeq := StrtoIntDef(Node.selectSingleNode('programSeq').text,0);
          end;
       Node := Node.nextSibling;
     end;
@@ -1064,15 +1092,16 @@ begin
   xmlDoc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   xmlDoc.load(filename);
   node := xmlDoc.documentElement;
-  ProgramListId := node.selectSingleNode('ProgramListId').text;
-  Period := StrtoIntDef(node.selectSingleNode('Period').text,0);
-  StartDate := node.selectSingleNode('StartDate').text;
-  EndDate := node.selectSingleNode('EndDate').text;
-  ProgramListType := StrtoIntDef(node.selectSingleNode('ProgramListType').text,0);
+  ProgramListId := node.selectSingleNode('programListId').text;
+  Period := StrtoIntDef(node.selectSingleNode('period').text,0);
+  StartDate := node.selectSingleNode('starteDate').text;
+  EndDate := node.selectSingleNode('endDate').text;
+  ProgramListType := StrtoIntDef(node.selectSingleNode('programListtype').text,0);
+  node := node.selectSingleNode('playList');
   node := node.firstChild;
   while node<>nil do
     begin
-      if node.nodeName='PlayList' then
+      if node.nodeName='play' then
          begin
            playList := TrcPlayList.Create(Parant);
            flist.Add(playList);

@@ -1,8 +1,8 @@
 object frmRCPlayer: TfrmRCPlayer
-  Left = 400
-  Top = 185
-  Width = 485
-  Height = 403
+  Left = 278
+  Top = 203
+  Width = 463
+  Height = 336
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = #35270#23631#24191#21578
   Color = clBtnFace
@@ -15,223 +15,37 @@ object frmRCPlayer: TfrmRCPlayer
   OldCreateOrder = False
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   object Panel1: TPanel
     Left = 0
-    Top = 303
-    Width = 469
-    Height = 42
+    Top = 253
+    Width = 447
+    Height = 25
     Align = alBottom
     TabOrder = 0
-    object SpeedButton1: TSpeedButton
-      Left = 8
-      Top = 8
-      Width = 23
-      Height = 22
-      Hint = 'Play'
-      Flat = True
-      ParentShowHint = False
-      ShowHint = True
-      OnClick = SpeedButton1Click
-    end
-    object SpeedButton2: TSpeedButton
-      Left = 32
-      Top = 8
-      Width = 23
-      Height = 22
-      Hint = 'Pause'
-      Flat = True
-      ParentShowHint = False
-      ShowHint = True
-      OnClick = SpeedButton2Click
-    end
-    object SpeedButton3: TSpeedButton
-      Left = 56
-      Top = 8
-      Width = 23
-      Height = 22
-      Hint = 'Stop'
-      Flat = True
-      ParentShowHint = False
-      ShowHint = True
-      OnClick = SpeedButton3Click
-    end
-    object SpeedButton5: TSpeedButton
-      Left = 168
-      Top = 8
-      Width = 23
-      Height = 22
-      Hint = 'Show ColorControls'
-      Enabled = False
-      Flat = True
-      Glyph.Data = {
-        E6040000424DE604000000000000360000002800000014000000140000000100
-        180000000000B004000000000000000000000000000000000000FFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000FFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFF000000FFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFF
-        FF000000000000FFFFFF000000FFFFFFFFFFFFFFFFFF000000FFFFFF00000000
-        0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFF000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFF000000FFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFF
-        000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
-        00000000000000FFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFF000000FF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFFFF000000
-        000000000000000000FFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFF00000000000000
-        0000000000FFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFF0000000000000000000000
-        00000000FFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFF000000FFFFFFFFFFFFFFFFFF000000000000000000000000000000
-        FFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FF000000FFFFFFFFFFFFFFFFFF000000000000000000000000000000FFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        000000FFFFFFFFFFFF000000000000000000000000FFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000
-        0000FFFFFF000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
-        00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFF}
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object Label3: TLabel
-      Left = 269
-      Top = 2
-      Width = 24
-      Height = 12
-      Caption = #38899#37327
-      Transparent = True
-    end
-    object SpeedButton6: TSpeedButton
-      Left = 88
-      Top = 8
-      Width = 23
-      Height = 22
-      Hint = 'Previus Track'
-      Enabled = False
-      Flat = True
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object SpeedButton7: TSpeedButton
-      Left = 112
-      Top = 8
-      Width = 23
-      Height = 22
-      Hint = 'Next Track'
-      Enabled = False
-      Flat = True
-      ParentShowHint = False
-      ShowHint = True
-    end
-    object Label2: TLabel
-      Left = 353
-      Top = 2
-      Width = 48
-      Height = 12
-      Caption = #26174#31034#35270#23631
-    end
-    object Bevel1: TBevel
-      Left = 248
-      Top = 3
-      Width = 4
-      Height = 36
-      Shape = bsLeftLine
-    end
-    object SpeedButton4: TSpeedButton
-      Left = 144
-      Top = 8
-      Width = 23
-      Height = 22
-      Hint = 'Next Track'
-      Flat = True
-      ParentShowHint = False
-      ShowHint = True
-      OnClick = SpeedButton4Click
-    end
-    object SoundLevel: TTrackBar
-      Left = 257
-      Top = 13
-      Width = 57
-      Height = 25
-      Max = 10000
-      Frequency = 1000
-      TabOrder = 0
-      ThumbLength = 15
-      TickMarks = tmTopLeft
-      OnChange = SoundLevelChange
-    end
-    object ComboBox1: TComboBox
-      Left = 321
-      Top = 18
-      Width = 137
-      Height = 20
-      Style = csDropDownList
-      Enabled = False
-      ItemHeight = 12
-      TabOrder = 1
-    end
-  end
-  object Panel3: TPanel
-    Left = 0
-    Top = 267
-    Width = 469
-    Height = 36
-    Align = alBottom
-    TabOrder = 1
-    object DSTrackBar1: TDSTrackBar
-      Left = 1
-      Top = 1
-      Width = 467
-      Height = 34
-      Align = alClient
-      Ctl3D = True
-      LineSize = 10
-      Max = 5
-      ParentCtl3D = False
-      TabOrder = 0
-      OnTimer = DSTrackBar1Timer
-    end
   end
   object Bkg: TPanel
     Left = 0
     Top = 0
-    Width = 469
-    Height = 267
+    Width = 447
+    Height = 253
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 1
     object Memo1: TMemo
       Left = 0
       Top = 0
-      Width = 469
-      Height = 267
+      Width = 447
+      Height = 253
       Align = alClient
       BorderStyle = bsNone
-      Color = clBlack
+      Color = 5701632
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
       Font.Name = #23435#20307
       Font.Style = []
-      Lines.Strings = (
-        #24320#22987#19979#36733)
       ParentFont = False
       TabOrder = 0
     end
@@ -246,11 +60,16 @@ object frmRCPlayer: TfrmRCPlayer
   object MainMenu1: TMainMenu
     Left = 192
     Top = 16
+    object N1: TMenuItem
+      Caption = #33410#30446'(&A)'
+    end
+    object N2: TMenuItem
+      Caption = #36164#28304'(&B)'
+    end
     object File1: TMenuItem
-      Caption = #25991#20214'(&F)'
+      Caption = #31995#32479'(&C)'
       object open1: TMenuItem
         Caption = #25171#24320
-        OnClick = open1Click
       end
       object N3: TMenuItem
         Caption = #19979#36733
@@ -768,7 +587,8 @@ object frmRCPlayer: TfrmRCPlayer
     Left = 224
     Top = 16
     object Fullscreen1: TMenuItem
-      Caption = #31649#29702
+      Caption = #25511#21046#21488
+      ShortCut = 49242
       OnClick = Fullscreen1Click
     end
     object N5: TMenuItem

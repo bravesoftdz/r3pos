@@ -45,7 +45,7 @@ inherited frmMktActiveList: TfrmMktActiveList
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
-            RowHeight = 20
+            RowHeight = 18
             TabOrder = 0
             TitleFont.Charset = GB2312_CHARSET
             TitleFont.Color = clWindowText
@@ -93,15 +93,6 @@ inherited frmMktActiveList: TfrmMktActiveList
                 Title.Caption = #25340#38899#30721
                 Title.Color = clWhite
                 Width = 87
-              end
-              item
-                EditButtons = <>
-                FieldName = 'REMARK'
-                Footers = <>
-                Title.Caption = #22791#27880
-                Title.Color = clWhite
-                Visible = False
-                Width = 120
               end>
           end
           object edtACTIVE_GROUP: TzrComboBoxList
@@ -142,7 +133,7 @@ inherited frmMktActiveList: TfrmMktActiveList
                 Width = 30
               end>
             DropWidth = 123
-            DropHeight = 228
+            DropHeight = 130
             ShowTitle = True
             AutoFitColWidth = True
             ShowButton = True
@@ -283,7 +274,6 @@ inherited frmMktActiveList: TfrmMktActiveList
   object cdsActive: TZQuery
     FieldDefs = <>
     CachedUpdates = True
-    AfterEdit = cdsActiveAfterEdit
     Params = <>
     Left = 38
     Top = 173

@@ -30,7 +30,6 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure cdsActiveAfterEdit(DataSet: TDataSet);
     procedure edtACTIVE_GROUPSaveValue(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure edtACTIVE_GROUPEnter(Sender: TObject);
@@ -136,7 +135,7 @@ begin
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
   if cdsActive.State in [dsInsert,dsEdit] then cdsActive.Post;
   if (cdsActive.FieldbyName('ACTIVE_NAME').AsString='') and (cdsActive.FieldbyName('ACTIVE_SPELL').AsString='')
-  and (cdsActive.FieldbyName('ACTIVE_GROUP').AsString='') and (cdsActive.FieldbyName('ACTIVE_ID').AsString='') then
+  and (cdsActive.FieldbyName('ACTIVE_GROUP').AsString='') then
   begin
     if not cdsActive.IsEmpty then
       cdsActive.Delete;
@@ -254,12 +253,6 @@ begin
     else if i=6 then
       btnSaveClick(nil);
   end;
-end;
-
-procedure TfrmMktActiveList.cdsActiveAfterEdit(DataSet: TDataSet);
-begin
-  inherited;
-  btnSave.Enabled:=True;
 end;
 
 class function TfrmMktActiveList.AddDialog(Owner: TForm;
@@ -477,7 +470,7 @@ begin
      begin
        DBGridEh1.SetFocus;
        edtACTIVE_GROUP.Visible := false;
-       edtTable.Prior;
+       cdsActive.Prior;
      end;
   if (Key=VK_DOWN) and (Shift=[]) and not edtACTIVE_GROUP.DropListed then
      begin

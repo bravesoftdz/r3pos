@@ -775,7 +775,7 @@ begin
     if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求校验码失败...');
     if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求校验码失败...');
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求校验码失败,错误:'+Root.attributes.getNamedItem('msg').text);
-    xsm_challenge := Root.childNodes[0].text;
+    xsm_challenge := Root.selectSingleNode('challenge').text;
     result := true;
   finally
     List.free;

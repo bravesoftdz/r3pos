@@ -3602,7 +3602,13 @@ try
        F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
        try
          Global.RemoteFactory.Initialize(F.ReadString('soft','ado',''));
-         Global.RemoteFactory.Connect;
+         try
+           Global.RemoteFactory.Connect;
+         except
+           //ado连接失败时，尝试平台认证
+           coRspLogin(Account,PassWrd,flag);
+           exit;
+         end;
        finally
          try
            F.Free;

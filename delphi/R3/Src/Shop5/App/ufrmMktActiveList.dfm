@@ -3,33 +3,33 @@ inherited frmMktActiveList: TfrmMktActiveList
   Top = 160
   Caption = #24066#22330#27963#21160
   ClientHeight = 350
-  ClientWidth = 513
+  ClientWidth = 388
   Color = clWhite
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 513
+    Width = 388
     Height = 350
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 503
+      Width = 378
       Height = 298
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #24066#22330#27963#21160#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 499
+          Width = 374
           Height = 271
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 489
+            Width = 364
             Height = 261
             Align = alClient
             AutoFitColWidths = True
@@ -58,6 +58,7 @@ inherited frmMktActiveList: TfrmMktActiveList
             DecimalNumber = 2
             DigitalNumber = 12
             OnDrawColumnCell = DBGridEh1DrawColumnCell
+            OnKeyPress = DBGridEh1KeyPress
             Columns = <
               item
                 EditButtons = <>
@@ -78,14 +79,6 @@ inherited frmMktActiveList: TfrmMktActiveList
               end
               item
                 EditButtons = <>
-                FieldName = 'ACTIVE_SPELL'
-                Footers = <>
-                Title.Caption = #25340#38899#30721
-                Title.Color = clWhite
-                Width = 87
-              end
-              item
-                EditButtons = <>
                 FieldName = 'ACTIVE_GROUP_TEXT'
                 Footers = <>
                 Title.Caption = #27963#21160#20998#32452
@@ -95,12 +88,20 @@ inherited frmMktActiveList: TfrmMktActiveList
               end
               item
                 EditButtons = <>
+                FieldName = 'ACTIVE_SPELL'
+                Footers = <>
+                Title.Caption = #25340#38899#30721
+                Title.Color = clWhite
+                Width = 87
+              end
+              item
+                EditButtons = <>
                 FieldName = 'REMARK'
                 Footers = <>
                 Title.Caption = #22791#27880
                 Title.Color = clWhite
+                Visible = False
                 Width = 120
-                OnUpdateData = DBGridEh1Columns4UpdateData
               end>
           end
           object edtACTIVE_GROUP: TzrComboBoxList
@@ -118,6 +119,7 @@ inherited frmMktActiveList: TfrmMktActiveList
             Visible = False
             OnEnter = edtACTIVE_GROUPEnter
             OnExit = edtACTIVE_GROUPExit
+            OnKeyDown = edtACTIVE_GROUPKeyDown
             OnKeyPress = edtACTIVE_GROUPKeyPress
             InGrid = False
             KeyValue = Null
@@ -155,12 +157,12 @@ inherited frmMktActiveList: TfrmMktActiveList
     end
     inherited btPanel: TRzPanel
       Top = 303
-      Width = 503
+      Width = 378
       Height = 42
       BorderColor = clWhite
       Color = clWhite
       object btnSave: TRzBitBtn
-        Left = 348
+        Left = 196
         Top = 13
         Width = 67
         Height = 26
@@ -186,7 +188,7 @@ inherited frmMktActiveList: TfrmMktActiveList
         Spacing = 5
       end
       object btnExit: TRzBitBtn
-        Left = 432
+        Left = 280
         Top = 13
         Width = 67
         Height = 26
@@ -212,7 +214,7 @@ inherited frmMktActiveList: TfrmMktActiveList
         Spacing = 5
       end
       object btnAppend: TRzBitBtn
-        Left = 182
+        Left = 30
         Top = 13
         Width = 67
         Height = 26
@@ -238,7 +240,7 @@ inherited frmMktActiveList: TfrmMktActiveList
         Spacing = 5
       end
       object btnDelete: TRzBitBtn
-        Left = 265
+        Left = 113
         Top = 13
         Width = 67
         Height = 26
@@ -282,8 +284,6 @@ inherited frmMktActiveList: TfrmMktActiveList
     FieldDefs = <>
     CachedUpdates = True
     AfterEdit = cdsActiveAfterEdit
-    BeforePost = cdsActiveBeforePost
-    OnNewRecord = cdsActiveNewRecord
     Params = <>
     Left = 38
     Top = 173

@@ -26,8 +26,6 @@ type
     procedure btnDeleteClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
     procedure btnExitClick(Sender: TObject);
-    procedure cdsActiveBeforePost(DataSet: TDataSet);
-    procedure cdsActiveNewRecord(DataSet: TDataSet);
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -38,8 +36,9 @@ type
     procedure edtACTIVE_GROUPEnter(Sender: TObject);
     procedure edtACTIVE_GROUPExit(Sender: TObject);
     procedure edtACTIVE_GROUPKeyPress(Sender: TObject; var Key: Char);
-    procedure DBGridEh1Columns4UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+    procedure edtACTIVE_GROUPKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FFlag: integer;
     IsOffline:Boolean;
@@ -51,6 +50,8 @@ type
   public
     procedure Open;
     procedure Save;
+    procedure FocusNextColumn;
+    procedure InitRecord;
     { Public declarations }
     class function AddDialog(Owner:TForm;var AObj:TRecord_):boolean;
     class function ShowDialog(Owner:TForm):boolean;
@@ -199,27 +200,6 @@ begin
   if cdsActive.IsEmpty then btnDelete.Enabled:=False;
 end;
 
-procedure TfrmMktActiveList.cdsActiveBeforePost(DataSet: TDataSet);
-begin
-  inherited;
-  if (DBGridEh1.Row=DBGridEh1.RowCount-1) and ((cdsActive.FieldByName('ACTIVE_ID').AsString='')
-  or (cdsActive.FieldByName('ACTIVE_NAME').AsString='') or (cdsActive.FieldByName('ACTIVE_SPELL').AsString='')) then
-  begin
-    exit;
-  end;
-
-end;
-
-procedure TfrmMktActiveList.cdsActiveNewRecord(DataSet: TDataSet);
-begin
-  inherited;
-  if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
-  cdsActive.FieldByName('ACTIVE_ID').AsString := TSequence.NewId;
-  cdsActive.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cdsActive.Post;
-  cdsActive.Edit;
-end;
-
 procedure TfrmMktActiveList.FormShow(Sender: TObject);
 begin
   inherited;
@@ -281,6 +261,7 @@ begin
   inherited;
   btnSave.Enabled:=True;
 end;
+
 class function TfrmMktActiveList.AddDialog(Owner: TForm;
   var AObj: TRecord_): boolean;
 begin
@@ -405,20 +386,113 @@ begin
             edtACTIVE_GROUP.DropList;
             Exit;
           end;
-       DBGridEh1.Col := 4;
        DBGridEh1.SetFocus;
+       FocusNextColumn;
      end;
 end;
 
-procedure TfrmMktActiveList.DBGridEh1Columns4UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+procedure TfrmMktActiveList.FocusNextColumn;
+var i:Integer;
 begin
-  inherited;
-  btnSave.Enabled:=True;
-  if ((cdsActive.FieldByName('ACTIVE_ID').AsString='') or (cdsActive.FieldByName('ACTIVE_NAME').AsString='') or (cdsActive.FieldByName('ACTIVE_SPELL').AsString='')) then
-  begin
-    exit;
+  i:=DbGridEh1.Col;
+  if cdsActive.RecordCount>cdsActive.RecNo then
+     begin
+       cdsActive.Next;
+       Exit;
+     end;
+  Inc(i);
+  while True do
+    begin
+      if i>=3 then i:= 1;
+      if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) then  // and (i<>1)
+         inc(i)
+      else
+         begin
+           if Trim(cdsActive.FieldbyName('ACTIVE_GROUP').asString)='' then
+              i := 1;
+           if (i=1) and (Trim(cdsActive.FieldbyName('ACTIVE_GROUP').asString)<>'') then
+              begin
+                 cdsActive.Next ;
+                 if cdsActive.Eof then
+                    begin
+                      InitRecord;
+                    end;
+                 DbGridEh1.SetFocus;
+                 DbGridEh1.Col := 1 ;
+              end
+           else
+              DbGridEh1.Col := i;
+           Exit;
+         end;
+    end;
+end;
+
+procedure TfrmMktActiveList.InitRecord;
+begin
+  if dbState = dsBrowse then Exit;
+  if cdsActive.State in [dsEdit,dsInsert] then cdsActive.Post;
+  edtACTIVE_GROUP.Visible := false;
+  cdsActive.DisableControls;
+  try
+  cdsActive.Last;
+  if cdsActive.IsEmpty or ((cdsActive.FieldbyName('ACTIVE_GROUP').AsString <> '')
+  and (cdsActive.FieldbyName('ACTIVE_NAME').AsString <> '')) then
+    begin
+      if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
+      cdsActive.Append;
+      cdsActive.FieldByName('ACTIVE_ID').AsString := TSequence.NewId;
+      cdsActive.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      cdsActive.Post;
+      btnSave.Enabled:=True;
+    end;
+    DbGridEh1.Col := 1 ;
+    if DBGridEh1.CanFocus and Visible and (dbState <> dsBrowse) then DBGridEh1.SetFocus;
+  finally
+    cdsActive.EnableControls;
+    cdsActive.Edit;
   end;
+end;
+
+procedure TfrmMktActiveList.DBGridEh1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if (Key=#13) then
+     begin
+       FocusNextColumn;
+       Key := #0;
+     end;
+  inherited;
+end;
+
+procedure TfrmMktActiveList.edtACTIVE_GROUPKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if (Key=VK_RIGHT) and not edtACTIVE_GROUP.Edited then
+     begin
+       DBGridEh1.SetFocus;
+       edtACTIVE_GROUP.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_UP) and not edtACTIVE_GROUP.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       edtACTIVE_GROUP.Visible := false;
+       edtTable.Prior;
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not edtACTIVE_GROUP.DropListed then
+     begin
+       if (cdsActive.FieldByName('ACTIVE_GROUP').AsString='') and (cdsActive.FieldByName('ACTIVE_ID').AsString<>'')
+       and (cdsActive.FieldByName('ACTIVE_NAME').AsString<>'') then
+          edtACTIVE_GROUP.DropList
+       else
+       begin
+         DBGridEh1.SetFocus;
+         edtACTIVE_GROUP.Visible := false;
+         if cdsActive.FieldByName('ACTIVE_ID').AsString <> '' then
+            Key := 0
+       end;
+     end;
+  inherited;
 end;
 
 end.

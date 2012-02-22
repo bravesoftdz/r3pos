@@ -1,0 +1,256 @@
+delete from PUB_PARAMS where CODE_ID='3' and TYPE_CODE='IS_PRESENT';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','核销','IS_PRESENT','00',5497000);
+--活动组定义
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('18','活动组','CODE_TYPE','00',5497000);
+
+--市场活动
+CREATE TABLE [MKT_ACTIVE_INFO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --活动编号
+	[ACTIVE_ID] char(36) NOT NULL ,
+        --活动名称
+	[ACTIVE_NAME] [varchar] (50) NOT NULL ,
+        --拼音码
+	[ACTIVE_SPELL] [varchar] (50) NOT NULL ,
+        --活动分组-PUB_CODE_INFO.CODE_TYPE=17
+	[ACTIVE_GROUP] [varchar] (36) NOT NULL ,
+        --说明
+	[REMARK] [varchar] (100) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_ACTIVE_INFO_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_ACTIVE_INFO] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[ACTIVE_ID]
+	)
+);
+
+--是否启动多档促销 0不启用 1启用
+alter table SAL_PRICEDATA add USING_LEVEL char(1) NULL;
+--档位类型 1按金额 2按销量
+alter table SAL_PRICEDATA add LVL_TYPE char(1) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV1_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV2_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV3_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV4_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV5_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV6_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV7_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV8_AMT decimal(18, 3) NULL;
+--档位达标量
+alter table SAL_PRICEDATA add LV9_AMT decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV1_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV2_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV3_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV4_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV5_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV6_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV7_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV8_PRC decimal(18, 3) NULL;
+--档位优惠价
+alter table SAL_PRICEDATA add LV9_PRC decimal(18, 3) NULL;
+
+--商品简称
+alter table PUB_GOODSINFO	add SHORT_GODS_NAME varchar(30) NULL;
+update PUB_GOODSINFO set SHORT_GODS_NAME=GODS_NAME;
+
+
+--指标类型
+delete from PUB_PARAMS where TYPE_CODE='IDX_TYPE';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','客户指标','IDX_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','业绩指标','IDX_TYPE','00',5497000);
+--考核类型
+delete from PUB_PARAMS where TYPE_CODE='KPI_TYPE';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','年度考核','KPI_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','季度考核','KPI_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按时间段','KPI_TYPE','00',5497000);
+
+drop table MKT_KPI_INDEX;
+--考核指标
+CREATE TABLE [MKT_KPI_INDEX] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --指标ID号
+	[KPI_ID] char(36) NOT NULL ,
+        --指标名称
+	[KPI_NAME] [varchar] (50) NOT NULL ,
+        --拼音码
+	[KPI_SPELL] [varchar] (50) NOT NULL ,
+        --指标类型
+	[IDX_TYPE] [char] (1) NOT NULL ,
+        --考核类型
+	[KPI_TYPE] [char] (1) NOT NULL ,
+        --显示单位
+	[UNIT_NAME] [varchar] (10) NOT NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_INDEX_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_KPI_INDEX] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[KPI_ID]
+	)
+);
+
+CREATE INDEX IX_KPDX_TENANT_ID ON MKT_KPI_INDEX(TENANT_ID);
+
+--商品清单用原结构
+delete from MKT_KPI_GOODS;
+
+--签约等级
+CREATE TABLE [MKT_KPI_LEVEL] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --考核等级
+	[LEVEL_ID] [char] (36) NOT NULL ,
+        --等级名称
+	[LEVELD_NAME] [varchar] (50) NOT NULL ,
+        --所属指标
+	[KPI_ID] [char] (36) NOT NULL ,
+	      --签约量要求
+	[LVL_AMT] [decimal](18, 3) NULL ,
+	      --保底返利或计提系数 默认为0
+	[LOW_RATE] [decimal](18, 3) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_OPTION_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_KPI_LEVEL] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[LEVEL_ID],
+	) 
+);
+CREATE INDEX IX_KPLV_TENANT_ID ON MKT_KPI_INDEX(TENANT_ID);
+
+--考核标准
+delete from PUB_PARAMS where TYPE_CODE='KPI_DATA';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按完成率','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按销售额','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按销售量','KPI_DATA','00',5497000);
+--计算标准
+delete from PUB_PARAMS where TYPE_CODE='KPI_CALC';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按百分率','KPI_CALC','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按完成量','KPI_CALC','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','指定金额','KPI_CALC','00',5497000);
+--返利设定
+delete from PUB_PARAMS where TYPE_CODE='RATIO_TYPE';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','拉通返利','RATIO_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按商品返','RATIO_TYPE','00',5497000);
+--时段定义
+CREATE TABLE [MKT_KPI_TIMES] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --考核等级
+	[TIMES_ID] [char] (36) NOT NULL ,
+        --所属指标
+	[KPI_ID] [char] (36) NOT NULL ,
+        --时段名（一季，上半年等）
+	[TIMES_NAME] [char] (36) NOT NULL ,
+        --序号
+	[SEQNO] [int] NOT NULL ,
+	      --考时段
+	[KPI_DATE1] int NULL ,
+	[KPI_DATE2] int NULL ,
+	      --是否允许借量
+	[USING_BRRW] char(1) NULL ,
+	      --是否是为促销时段(只有年返有效)
+	[KPI_FLAG] char(1) NULL ,
+	      --考核标准
+	[KPI_DATA] char(1) NULL ,
+	      --计算标准
+	[KPI_CALC] char(1) NULL ,
+        --返利设定
+	[RATIO_TYPE] [char] (36) NOT NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_TIMES_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_KPI_TIMES] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[TIMES_ID]
+	) 
+);
+CREATE INDEX IX_KPTM_TENANT_ID ON MKT_KPI_TIMES(TENANT_ID);
+
+drop table MKT_KPI_OPTION;
+--达标档位
+CREATE TABLE [MKT_KPI_SEQNO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --档位编号
+	[SEQNO_ID] [char] (36) NOT NULL ,
+        --考核指标
+	[KPI_ID] [char] (36) NOT NULL ,
+        --签约等级
+	[LEVEL_ID] [char] (36) NOT NULL ,
+        --返利时段
+	[TIMES_ID] [char] (36) NOT NULL ,
+        --档位系号，每个指标重 1 开始计数
+	[SEQNO] [int] NOT NULL ,
+	      --达标量/达标系数
+	[KPI_AMT] [decimal](18, 3) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_SEQNO_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_KPI_SEQNO] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[SEQNO_ID],
+	) 
+);
+CREATE INDEX IX_KPSQ_TENANT_ID ON MKT_KPI_SEQNO(TENANT_ID);
+
+--返利系数
+CREATE TABLE [MKT_KPI_RATIO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --返利编号
+	[RATIO_ID] [char] (36) NOT NULL ,
+        --考核指标
+	[KPI_ID] [char] (36) NOT NULL ,
+        --签约等级
+	[LEVEL_ID] [char] (36) NOT NULL ,
+        --返利时段
+	[TIMES_ID] [char] (36) NOT NULL ,
+        --达标档位
+	[SEQNO_ID] [char] (36) NOT NULL ,
+        --返利商品
+	[GODS_ID] [char] (36) NULL ,
+	      --返利系数
+	[KPI_RATIO] [decimal](18, 3) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_RATIO_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_KPI_RATIO] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[RATIO_ID]
+	) 
+);
+CREATE INDEX IX_KPRO_TENANT_ID ON MKT_KPI_RATIO(TENANT_ID);

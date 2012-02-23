@@ -178,6 +178,7 @@ type
     actfrmDemandOrderList1: TAction;
     actfrmDemandOrderList2: TAction;
     actfrmWelcome: TAction;
+    actfrmSaleDaySingleReport: TAction;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -300,6 +301,7 @@ type
     procedure lbM1Click(Sender: TObject);
     procedure actfrmNothingExecute(Sender: TObject);
     procedure actfrmWelcomeExecute(Sender: TObject);
+    procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {µ¼º½²Ëµ¥}
@@ -3193,6 +3195,23 @@ procedure TfrmMMMain.actfrmWelcomeExecute(Sender: TObject);
 begin
   inherited;
   TfrmWelcome.Popup;
+end;
+
+procedure TfrmMMMain.actfrmSaleDaySingleReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmSaleDayReport);
+  if not Assigned(Form) then
+  begin
+    Form := TfrmSaleDayReport.Create(self);
+    TfrmSaleDayReport(Form).SingleReportParams;
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

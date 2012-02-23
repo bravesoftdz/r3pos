@@ -3841,6 +3841,10 @@ inherited frmMMMain: TfrmMMMain
       Caption = #32463#33829#25552#37266
       OnExecute = actfrmWelcomeExecute
     end
+    object actfrmSaleDaySingleReport: TAction
+      Caption = #38144#21806#26085#25253
+      OnExecute = actfrmSaleDaySingleReportExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 256

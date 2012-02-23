@@ -1747,18 +1747,24 @@ begin
   Label36.Visible:=False;
   fndP5_DEPT_ID.Visible:=False;
 
+  //商品分类
+  Label24.Top:=Label25.Top;
+  Label43.Top:=Label25.Top;
+  fndP5_SORT_ID.Top:=fndP5_TYPE_ID.Top;
+  fndP5_SALES_TYPE.Top:=fndP5_TYPE_ID.Top;
+  //商品指标向上移:
   Label25.Top:=Label21.Top;
-  Label26.Top:=Label21.Top;
-  Label38.Top:=Label21.Top;
   fndP5_TYPE_ID.Top:=fndP5_SHOP_ID.Top;
   fndP5_STAT_ID.Top:=fndP5_SHOP_ID.Top;
+  //显示单位
+  Label26.Top:=Label21.Top;
   fndP5_UNIT_ID.Top:=fndP5_SHOP_ID.Top;
+  //统计类型
+  Label38.Top:=Label21.Top;
   fndP5_RPTTYPE.Top:=fndP5_SHOP_ID.Top;
-  
+  //门店名称向上移:
   Label21.Top:=Label12.Top;
-  Label24.Top:=Label21.Top;
   fndP5_SHOP_ID.Top:=fndP5_SHOP_TYPE.Top;
-  fndP5_SORT_ID.Top:=fndP5_SHOP_TYPE.Top;
   RzPanel15.Height:=RzPanel15.Height-22;
   BtnSaleSum.Top:=BtnSaleSum.Top-22;
 end;

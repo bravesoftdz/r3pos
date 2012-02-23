@@ -30,6 +30,7 @@ type
     procedure cxbtnCancelClick(Sender: TObject);
     procedure cxedtPasswrdKeyPress(Sender: TObject; var Key: Char);
     procedure cxBtnSetupClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     locked:boolean;
@@ -281,11 +282,12 @@ begin
     begin
       try
         locked := true;
+        sysClose.Visible:=False;
         cxedtUsers.Enabled := false;
         edtOPER_DATE.Enabled := false;
         cxBtnSetup.Visible := false;
         cxcbOffline.Visible := false;
-        cxBtnOk.Caption := 'ËøÆÁ(&O)';
+        cxBtnOk.Caption := '½âËø(&O)';  //ËøÆÁ
         cxedtUsers.Text := Global.UserName;
         ActiveControl := cxedtPasswrd;
         result := (ShowModal=MROK);
@@ -348,6 +350,14 @@ end;
 procedure TfrmMMLogin.wmAutoLogin(var Message: TMessage);
 begin
   AutoLogin;
+end;
+
+procedure TfrmMMLogin.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key=#27 then
+     Exit 
+  else
+     OnEnterPress(Self,Key);
 end;
 
 end.

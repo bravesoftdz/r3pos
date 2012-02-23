@@ -168,7 +168,7 @@ CREATE TABLE [MKT_KPI_TIMES] (
         --所属指标
 	[KPI_ID] [char] (36) NOT NULL ,
         --时段名（一季，上半年等）
-	[TIMES_NAME] [char] (36) NOT NULL ,
+	[TIMES_NAME] [varchar] (50) NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
 	      --考时段
@@ -183,7 +183,7 @@ CREATE TABLE [MKT_KPI_TIMES] (
 	      --计算标准
 	[KPI_CALC] char(1) NULL ,
         --返利设定
-	[RATIO_TYPE] [char] (36) NOT NULL ,
+	[RATIO_TYPE] [char] (1) NOT NULL ,
         --通讯标志
 	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_TIMES_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000

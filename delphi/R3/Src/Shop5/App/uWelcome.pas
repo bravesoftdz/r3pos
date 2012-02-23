@@ -587,10 +587,10 @@ begin
   MthJh.ParamByName('BEG_DATE').AsInteger := StrtoInt(FMonth+'01');   //本月第一天
   MthJh.ParamByName('END_DATE').AsInteger := StrtoInt(FMonth+FDay2);  //本月今天
   Factor.Open(MthJh);
-  
+
   //昨天销售情况
   str:=                                           
-    'select round(a.SALES_DATE / 100) as SALES_DATE,'+
+    'select round(a.SALES_DATE/100,0) as SALES_DATE,'+
     'a.GODS_ID as GODS_ID,count(*) as SAL_OAMT,'+
     'count(distinct a.GODS_ID) as SAL_GAMT,'+
     'sum(CALC_AMOUNT/'+CalcUnit+') as SAL_AMT,'+
@@ -626,7 +626,7 @@ begin
     ' where a.GODS_ID=b.GODS_ID and b.TENANT_ID=110000001 '+
     ' and a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID and ((a.SALES_DATE>=:LM_BEGIN_DATE and a.SALES_DATE<=:LM_END_DATE)'+
     ' or (a.SALES_DATE>=:TM_BEGIN_DATE and a.SALES_DATE<=:TM_END_DATE)) '+
-    'group by round(a.SALES_DATE / 100),a.GODS_ID';
+    'group by round(a.SALES_DATE/100,0),a.GODS_ID';
   MthRs.Close;
   MthRs.SQL.Text:=ParseSQL(Factor.iDbType, Str);
   MthRs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

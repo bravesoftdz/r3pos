@@ -284,7 +284,9 @@ var
 begin
   if trim(FieldbyName('RELATION_FLAG').AsString)<>'1' then //只有是自主经营才能修改编辑
   begin
-    Str := 'update PUB_BARCODE set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
+    //2012.02.23对删除的UNIT_ID置为32个0;
+    Str :=
+      'update PUB_BARCODE set UNIT_ID=''00000000000000000000000000000000'',COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
       ' where TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID and PROPERTY_01=:OLD_PROPERTY_01 and '+
       ' PROPERTY_02=:OLD_PROPERTY_02 and BARCODE_TYPE=:OLD_BARCODE_TYPE and BATCH_NO=:OLD_BATCH_NO ';
     AGlobal.ExecSQL(Str,self);

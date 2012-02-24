@@ -355,8 +355,9 @@ end;
 procedure TfrmMMLogin.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key=#27 then
-     Exit 
-  else
+  begin
+    if not sysClose.Visible then Exit else Close;
+  end else
      OnEnterPress(Self,Key);
 end;
 

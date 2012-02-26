@@ -1150,7 +1150,7 @@ begin
           end else
           if rs.Fields[1].asString='05' then
           begin
-             s := '֪ͨ'
+             s := '֪ͨ';
              Msg_Class:='0';
           end else
           if rs.Fields[1].asString='99' then

@@ -10,23 +10,23 @@ inherited frmDutyInfoList: TfrmDutyInfoList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 727
-    Height = 458
+    Height = 457
     inherited RzPanel2: TRzPanel
       Width = 717
-      Height = 448
+      Height = 447
       inherited RzPage: TRzPageControl
         Width = 711
-        Height = 442
+        Height = 441
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32844#21153#26723#26696#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 709
-            Height = 415
+            Height = 414
             object Splitter1: TSplitter
               Left = 185
               Top = 41
-              Height = 369
+              Height = 368
             end
             object RzPanel1: TRzPanel
               Left = 5
@@ -129,7 +129,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
               Left = 5
               Top = 41
               Width = 180
-              Height = 369
+              Height = 368
               SelectionPen.Color = clBtnShadow
               Align = alLeft
               FrameStyle = fsGroove
@@ -146,7 +146,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
               Left = 188
               Top = 41
               Width = 516
-              Height = 369
+              Height = 368
               Align = alClient
               Caption = 'Panel3'
               TabOrder = 2
@@ -154,7 +154,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
                 Left = 1
                 Top = 1
                 Width = 514
-                Height = 348
+                Height = 347
                 Align = alClient
                 DataSource = DataSource1
                 Flat = True
@@ -226,7 +226,7 @@ inherited frmDutyInfoList: TfrmDutyInfoList
               end
               object stbPanel: TPanel
                 Left = 1
-                Top = 349
+                Top = 348
                 Width = 514
                 Height = 19
                 Align = alBottom
@@ -254,16 +254,16 @@ inherited frmDutyInfoList: TfrmDutyInfoList
   end
   inherited RzPanel4: TRzPanel
     Width = 727
-    inherited Image1: TImage
-      Left = 329
-      Width = 378
-    end
     inherited Image3: TImage
       Left = 329
-      Width = 378
+      Width = 0
     end
     inherited Image14: TImage
       Left = 707
+    end
+    inherited Image1: TImage
+      Left = 329
+      Width = 378
     end
     inherited rzPanel5: TPanel
       Left = 329

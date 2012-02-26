@@ -1,6 +1,6 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 504
-  Top = 195
+  Left = 367
+  Top = 204
   Caption = #32771#26680#25351#26631
   ClientHeight = 397
   ClientWidth = 529
@@ -89,52 +89,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Font.Style = []
       ParentFont = False
     end
-    object lab_KPI_DATA: TLabel [5]
-      Left = 7
-      Top = 65
-      Width = 100
-      Height = 12
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = #32771#26680#26631#20934
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
-    end
-    object lab_KPI_AGIO: TLabel [6]
-      Left = 240
-      Top = 89
-      Width = 100
-      Height = 12
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = #36820#21033#31995#25968
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
-    end
-    object lab_KPI_CALC: TLabel [7]
-      Left = 7
-      Top = 89
-      Width = 100
-      Height = 12
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = #35745#31639#26631#20934
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
-    end
-    object RzLabel3: TRzLabel [8]
+    object RzLabel3: TRzLabel [5]
       Left = 467
       Top = 41
       Width = 6
@@ -149,22 +104,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Font.Style = []
       ParentFont = False
     end
-    object Label1: TLabel [9]
-      Left = 468
-      Top = 89
-      Width = 7
-      Height = 12
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = '%'
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clBlack
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
-    end
-    object RzLabel5: TRzLabel [10]
+    object RzLabel9: TRzLabel [6]
       Left = 235
       Top = 65
       Width = 6
@@ -179,39 +119,9 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Font.Style = []
       ParentFont = False
     end
-    object RzLabel6: TRzLabel [11]
-      Left = 235
-      Top = 89
-      Width = 6
-      Height = 12
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = '*'
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clMaroon
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
-    end
-    object RzLabel9: TRzLabel [12]
-      Left = 468
+    object RzLabel10: TRzLabel [7]
+      Left = 7
       Top = 65
-      Width = 6
-      Height = 12
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = '*'
-      Font.Charset = GB2312_CHARSET
-      Font.Color = clMaroon
-      Font.Height = -12
-      Font.Name = #23435#20307
-      Font.Style = []
-      ParentFont = False
-    end
-    object RzLabel10: TRzLabel [13]
-      Left = 240
-      Top = 66
       Width = 100
       Height = 12
       Alignment = taRightJustify
@@ -224,7 +134,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Font.Style = []
       ParentFont = False
     end
-    object RzLabel11: TRzLabel [14]
+    object RzLabel11: TRzLabel [8]
       Left = 240
       Top = 17
       Width = 100
@@ -239,18 +149,33 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Font.Style = []
       ParentFont = False
     end
+    object RzLabel5: TRzLabel [9]
+      Left = 7
+      Top = 88
+      Width = 100
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = #22791#27880
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
     inherited RzPage: TRzPageControl
       Top = 140
       Width = 519
       Height = 212
-      ActivePage = TabSheet2
+      ActivePage = TabSheet3
       Align = alBottom
-      TabIndex = 1
-      TabOrder = 9
+      TabIndex = 2
+      TabOrder = 6
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #25351#26631#26631#20934
+        Caption = #31614#32422#31561#32423
         inherited RzPanel2: TRzPanel
           Width = 515
           Height = 185
@@ -282,12 +207,12 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               Caption = 'P1'
               object DBGridEh1: TDBGridEh
                 Left = 0
-                Top = 41
+                Top = 0
                 Width = 505
-                Height = 134
+                Height = 175
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
-                DataSource = Ds_KpiOption
+                DataSource = Ds_KpiLevel
                 Flat = True
                 FooterColor = clWindow
                 FooterFont.Charset = GB2312_CHARSET
@@ -302,7 +227,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 PopupMenu = PopupMenu1
                 RowHeight = 17
                 SumList.Active = True
-                TabOrder = 2
+                TabOrder = 0
                 TitleFont.Charset = GB2312_CHARSET
                 TitleFont.Color = clWindowText
                 TitleFont.Height = -12
@@ -323,175 +248,30 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     FieldName = 'SEQNO'
                     Footers = <>
                     ReadOnly = True
-                    Title.Caption = #32423#21035
+                    Title.Caption = #24207#21495
                     Width = 34
                   end
                   item
-                    DisplayFormat = '00'#26376'00'#26085
                     EditButtons = <>
-                    FieldName = 'KPI_DATE1'
+                    FieldName = 'LEVELD_NAME'
                     Footers = <>
-                    Title.Caption = #24320#22987#26085#26399
-                    Width = 80
-                    Control = edtBeginDate
+                    Title.Caption = #31561#32423#21517#31216
+                    Width = 100
                   end
                   item
-                    DisplayFormat = '00'#26376'00'#26085
                     EditButtons = <>
-                    FieldName = 'KPI_DATE2'
+                    FieldName = 'LVL_AMT'
                     Footers = <>
-                    ReadOnly = True
-                    Tag = 1
-                    Title.Caption = #32467#26463#26085#26399
+                    Title.Caption = #31614#32422#37327'('#21544')'
                     Width = 80
-                    Control = edtEndDate
                   end
                   item
                     DisplayFormat = '#0%'
                     EditButtons = <>
-                    FieldName = 'KPI_RATE'
+                    FieldName = 'LOW_RATE'
                     Footers = <>
-                    Title.Caption = #36798#26631#29575
-                    Width = 60
-                    OnEditButtonClick = DBGridEh1Columns3EditButtonClick
-                    OnUpdateData = DBGridEh1Columns3UpdateData
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'KPI_AMT'
-                    Footers = <>
-                    Title.Caption = #36798#26631#37327
-                    Width = 60
-                    OnUpdateData = DBGridEh1Columns4UpdateData
-                  end
-                  item
-                    DisplayFormat = '#0%'
-                    EditButtons = <>
-                    FieldName = 'KPI_AGIO'
-                    Footers = <>
-                    Title.Caption = #36798#26631#25240#25187
-                    OnUpdateData = DBGridEh1Columns5UpdateData
-                  end
-                  item
-                    Checkboxes = True
-                    EditButtons = <>
-                    FieldName = 'USING_BRRW'
-                    Footers = <>
-                    KeyList.Strings = (
-                      '0'
-                      '1')
-                    PickList.Strings = (
-                      '1'
-                      '0')
-                    Title.Caption = #20511#37327
-                    Width = 40
-                    OnUpdateData = DBGridEh1Columns6UpdateData
+                    Title.Caption = #36820#21033#31995#25968
                   end>
-              end
-              object edtEndDate: TcxDateEdit
-                Left = 120
-                Top = 80
-                Width = 99
-                Height = 20
-                Properties.OnChange = edtEndDatePropertiesChange
-                TabOrder = 0
-                Visible = False
-                OnEnter = edtEndDateEnter
-                OnExit = edtEndDateExit
-              end
-              object edtBeginDate: TcxDateEdit
-                Left = 16
-                Top = 80
-                Width = 97
-                Height = 20
-                Properties.OnChange = edtBeginDatePropertiesChange
-                TabOrder = 1
-                Visible = False
-                OnEnter = edtBeginDateEnter
-                OnExit = edtBeginDateExit
-                OnKeyDown = edtBeginDateKeyDown
-                OnKeyPress = edtBeginDateKeyPress
-              end
-              object RzPanel3: TRzPanel
-                Left = 0
-                Top = 0
-                Width = 505
-                Height = 41
-                Align = alTop
-                BorderOuter = fsNone
-                BorderWidth = 1
-                Color = clWhite
-                TabOrder = 3
-                object RzLabel7: TRzLabel
-                  Left = 221
-                  Top = 17
-                  Width = 60
-                  Height = 12
-                  Alignment = taRightJustify
-                  AutoSize = False
-                  Caption = #26102#38388#27573
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  ParentFont = False
-                end
-                object RzLabel8: TRzLabel
-                  Left = 389
-                  Top = 17
-                  Width = 8
-                  Height = 12
-                  Alignment = taRightJustify
-                  AutoSize = False
-                  Caption = '-'
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  ParentFont = False
-                end
-                object labKPI_LV: TRzLabel
-                  Left = 10
-                  Top = 17
-                  Width = 40
-                  Height = 12
-                  Alignment = taRightJustify
-                  AutoSize = False
-                  Caption = #24180#24230
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  ParentFont = False
-                end
-                object edtKPI_LV: TcxComboBox
-                  Left = 55
-                  Top = 12
-                  Width = 100
-                  Height = 20
-                  Properties.DropDownListStyle = lsFixedList
-                  Properties.OnChange = edtKPI_LVPropertiesChange
-                  TabOrder = 0
-                end
-                object D1: TcxDateEdit
-                  Left = 286
-                  Top = 12
-                  Width = 100
-                  Height = 20
-                  Properties.OnChange = D1PropertiesChange
-                  TabOrder = 1
-                end
-                object D2: TcxDateEdit
-                  Left = 400
-                  Top = 12
-                  Width = 100
-                  Height = 20
-                  Properties.OnChange = D2PropertiesChange
-                  TabOrder = 2
-                end
               end
             end
           end
@@ -561,6 +341,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 EditButtons = <>
                 FieldName = 'GODS_NAME'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #21830#21697#21517#31216
                 Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721#12289#35745#37327#21333#20301#26465#30721'" '#26597#35810
                 Width = 142
@@ -578,6 +359,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 EditButtons = <>
                 FieldName = 'BARCODE'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #26465#30721
                 Width = 93
               end
@@ -606,12 +388,139 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           end
         end
       end
+      object TabSheet3: TRzTabSheet
+        Color = clWhite
+        Caption = #26102#27573#23450#20041
+        object RzPanel3: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 515
+          Height = 185
+          Align = alClient
+          BorderOuter = fsNone
+          Color = clWindow
+          TabOrder = 0
+          object DBGridEh3: TDBGridEh
+            Left = 0
+            Top = 0
+            Width = 515
+            Height = 185
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            DataSource = Ds_KpiTimes
+            Flat = True
+            FooterColor = clWindow
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            FooterRowCount = 1
+            FrozenCols = 2
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
+            PopupMenu = PopupMenu3
+            RowHeight = 17
+            SumList.Active = True
+            TabOrder = 0
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            TitleHeight = 20
+            UseMultiTitle = True
+            VertScrollBar.VisibleMode = sbAlwaysShowEh
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            OnDrawColumnCell = DBGridEh3DrawColumnCell
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SEQNO'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #24207#21495
+                Width = 30
+              end
+              item
+                EditButtons = <>
+                FieldName = 'TIMES_NAME'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #26102#27573#21517
+                Width = 80
+              end
+              item
+                DisplayFormat = '00-00'
+                EditButtons = <>
+                FieldName = 'KPI_DATE1'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #24320#22987#26085#26399
+                Width = 60
+              end
+              item
+                DisplayFormat = '00-00'
+                EditButtons = <>
+                FieldName = 'KPI_DATE2'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #32467#26463#26085#26399
+                Width = 60
+              end
+              item
+                EditButtons = <>
+                FieldName = 'KPI_DATA'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #32771#26680#26631#20934
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'KPI_CALC'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #35745#31639#26631#20934
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'RATIO_TYPE'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #36820#21033#35774#23450
+                Width = 70
+              end
+              item
+                Checkboxes = True
+                EditButtons = <>
+                FieldName = 'KPI_FLAG'
+                Footers = <>
+                Title.Caption = #20419#38144
+                Width = 30
+              end
+              item
+                Checkboxes = True
+                DisplayFormat = '#0%'
+                EditButtons = <>
+                FieldName = 'USING_BRRW'
+                Footers = <>
+                Title.Caption = #20511#37327
+                Width = 30
+              end>
+          end
+        end
+      end
     end
     inherited btPanel: TRzPanel
       Top = 352
       Width = 519
       Color = clWhite
-      TabOrder = 10
+      TabOrder = 7
       object Btn_Save: TRzBitBtn
         Left = 357
         Top = 11
@@ -672,7 +581,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 12
       Width = 121
       Height = 20
-      Properties.MaxLength = 20
+      Properties.MaxLength = 50
       Properties.OnChange = edtKPI_NAMEPropertiesChange
       TabOrder = 0
     end
@@ -682,7 +591,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Width = 121
       Height = 20
       Properties.DropDownListStyle = lsFixedList
-      Properties.OnChange = edtKPI_TYPEPropertiesChange
       TabOrder = 3
     end
     object edtIDX_TYPE: TcxComboBox
@@ -694,112 +602,85 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Properties.OnChange = edtIDX_TYPEPropertiesChange
       TabOrder = 2
     end
-    object edtKPI_DATA: TcxComboBox
-      Left = 113
-      Top = 61
-      Width = 121
-      Height = 20
-      Properties.DropDownListStyle = lsFixedList
-      Properties.OnChange = edtKPI_DATAPropertiesChange
-      TabOrder = 4
-    end
-    object edtKPI_CALC: TcxComboBox
-      Left = 113
-      Top = 85
-      Width = 121
-      Height = 20
-      Properties.DropDownListStyle = lsFixedList
-      Properties.OnChange = edtKPI_CALCPropertiesChange
-      TabOrder = 6
-    end
-    object edtKPI_AGIO: TcxTextEdit
-      Left = 346
-      Top = 85
-      Width = 121
-      Height = 20
-      TabOrder = 7
-    end
-    object edtKPI_OPTN: TcxCheckBox
-      Left = 110
-      Top = 109
-      Width = 126
-      Height = 21
-      Properties.DisplayUnchecked = 'False'
-      Properties.OnChange = edtKPI_OPTNPropertiesChange
-      Properties.Caption = #26159#21542#21551#29992#38454#26799
-      TabOrder = 8
-    end
     object edtUNIT_NAME: TcxTextEdit
-      Left = 346
+      Left = 113
       Top = 61
       Width = 121
       Height = 20
-      Properties.MaxLength = 20
-      TabOrder = 5
+      Properties.MaxLength = 10
+      TabOrder = 4
     end
     object edtKPI_SPELL: TcxTextEdit
       Left = 346
       Top = 12
       Width = 121
       Height = 20
-      Properties.MaxLength = 20
+      Properties.MaxLength = 50
       TabOrder = 1
+    end
+    object edtREMARK: TcxMemo
+      Left = 113
+      Top = 85
+      Width = 354
+      Height = 49
+      Properties.MaxLength = 100
+      TabOrder = 5
     end
   end
   inherited mmMenu: TMainMenu
     Left = 110
-    Top = 273
+    Top = 365
   end
   inherited actList: TActionList
     Left = 142
-    Top = 273
+    Top = 365
   end
-  object CdsKpiOption: TZQuery
+  object CdsKpiLevel: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 47
-    Top = 273
+    Top = 365
   end
-  object Ds_KpiOption: TDataSource
-    DataSet = CdsKpiOption
+  object Ds_KpiLevel: TDataSource
+    DataSet = CdsKpiLevel
     Left = 79
-    Top = 273
+    Top = 365
   end
   object CdsKpiIndex: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 48
-    Top = 211
+    Top = 275
   end
   object CdsKpiGoods: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 48
-    Top = 243
+    Top = 335
   end
   object Ds_KpiGoods: TDataSource
     DataSet = CdsKpiGoods
     Left = 79
-    Top = 242
+    Top = 334
   end
   object PopupMenu1: TPopupMenu
     Left = 18
-    Top = 273
+    Top = 365
     object AddRecord_: TMenuItem
-      Caption = #26032#22686#26631#20934
+      Caption = #26032#22686#31561#32423
       OnClick = AddRecord_Click
     end
     object DeleteRecord: TMenuItem
-      Caption = #21024#38500#26631#20934
+      Caption = #21024#38500#31561#32423
       OnClick = DeleteRecordClick
     end
   end
   object PopupMenu2: TPopupMenu
     Left = 19
-    Top = 243
+    Top = 335
     object AddGoods: TMenuItem
       Caption = #26032#22686#21830#21697
       OnClick = AddGoodsClick
@@ -807,6 +688,34 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     object DeleteGoods: TMenuItem
       Caption = #21024#38500#21333#21697
       OnClick = DeleteGoodsClick
+    end
+  end
+  object Ds_KpiTimes: TDataSource
+    DataSet = CdsKpiTimes
+    Left = 79
+    Top = 304
+  end
+  object CdsKpiTimes: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 48
+    Top = 305
+  end
+  object PopupMenu3: TPopupMenu
+    Left = 19
+    Top = 305
+    object N1: TMenuItem
+      Caption = #26032#22686#26102#27573
+      OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = #20462#25913#26102#27573
+      OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = #21024#38500#26102#27573
+      OnClick = N3Click
     end
   end
 end

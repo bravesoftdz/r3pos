@@ -31,10 +31,6 @@ type
     Cds_KpiIndex: TZQuery;
     Ds_KpiIndex: TDataSource;
     PrintDBGridEh1: TPrintDBGridEh;
-    lab_KPI_CALC: TLabel;
-    fndKPI_CALC: TcxComboBox;
-    fndKPI_DATA: TcxComboBox;
-    lab_KPI_DATA: TLabel;
     lab_IDX_TYPE: TRzLabel;
     fndIDX_TYPE: TcxComboBox;
     fndKPI_TYPE: TcxComboBox;
@@ -171,23 +167,17 @@ begin
   inherited;
   //if not ShopGlobal.GetChkRight('100002143',1) then Raise Exception.Create('你没有查询'+Caption+'的权限,请和管理员联系.');
   if Trim(edtKey.Text) <> '' then
-     StrSql := ' and A.KPI_NAME like ''%'+Trim(edtKey.Text)+'%''';
+     StrSql := ' and A.KPI_NAME like ''%'+Trim(edtKey.Text)+'%'' ';
   if fndIDX_TYPE.ItemIndex <> -1 then
      StrSql := StrSql + ' and A.IDX_TYPE='''+TRecord_(fndIDX_TYPE.Properties.Items.Objects[fndIDX_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
-  if fndKPI_DATA.ItemIndex <> -1 then
-     StrSql := StrSql + ' and A.KPI_DATA='''+TRecord_(fndKPI_DATA.Properties.Items.Objects[fndKPI_DATA.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   if fndKPI_TYPE.ItemIndex <> -1 then
      StrSql := StrSql + ' and A.KPI_TYPE='''+TRecord_(fndKPI_TYPE.Properties.Items.Objects[fndKPI_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
-  if fndKPI_CALC.ItemIndex <> -1 then
-     StrSql := StrSql + ' and A.KPI_CALC='''+TRecord_(fndKPI_CALC.Properties.Items.Objects[fndKPI_CALC.ItemIndex]).FieldbyName('CODE_ID').AsString+'''';
   Cds_KpiIndex.Close;
   Cds_KpiIndex.SQL.Text :=
   ParseSQL(Factor.iDbType,
-  'select A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,'+
-  'A.KPI_AGIO,A.KPI_OPTN,A.REMARK,count(B.GODS_ID) as GOODS_SUM from MKT_KPI_INDEX A,MKT_KPI_GOODS B '+
+  'select A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK,count(B.GODS_ID) as GOODS_SUM from MKT_KPI_INDEX A,MKT_KPI_GOODS B '+
   ' where A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+StrSql+
-  ' group by A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,'+
-  ' A.KPI_AGIO,A.KPI_OPTN,A.REMARK ');
+  ' group by A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK ');
   Factor.Open(Cds_KpiIndex);
 end;
 

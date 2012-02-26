@@ -25,16 +25,16 @@ inherited frmKpiIndex: TfrmKpiIndex
               Left = 5
               Top = 5
               Width = 972
-              Height = 92
+              Height = 82
               Align = alTop
               BorderOuter = fsNone
               TabOrder = 0
               DesignSize = (
                 972
-                92)
+                82)
               object Label3: TLabel
                 Left = 21
-                Top = 66
+                Top = 60
                 Width = 65
                 Height = 12
                 Caption = #26597#35810#20851#20581#23383
@@ -59,44 +59,14 @@ inherited frmKpiIndex: TfrmKpiIndex
               end
               object Bevel1: TBevel
                 Left = 162
-                Top = 52
+                Top = 44
                 Width = 803
                 Height = 2
                 Anchors = [akLeft, akTop, akRight]
               end
-              object lab_KPI_CALC: TLabel
-                Left = 201
-                Top = 29
-                Width = 100
-                Height = 12
-                Alignment = taRightJustify
-                AutoSize = False
-                Caption = #35745#31639#26631#20934
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
-              object lab_KPI_DATA: TLabel
-                Left = -32
-                Top = 29
-                Width = 100
-                Height = 12
-                Alignment = taRightJustify
-                AutoSize = False
-                Caption = #32771#26680#26631#20934
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clBlack
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
               object lab_IDX_TYPE: TRzLabel
                 Left = -32
-                Top = 5
+                Top = 13
                 Width = 100
                 Height = 12
                 Alignment = taRightJustify
@@ -111,7 +81,7 @@ inherited frmKpiIndex: TfrmKpiIndex
               end
               object lab_KPI_TYPE: TLabel
                 Left = 201
-                Top = 5
+                Top = 13
                 Width = 100
                 Height = 12
                 Alignment = taRightJustify
@@ -126,7 +96,7 @@ inherited frmKpiIndex: TfrmKpiIndex
               end
               object Label2: TLabel
                 Left = 21
-                Top = 47
+                Top = 38
                 Width = 130
                 Height = 12
                 Caption = #25903#25345#65288#25351#26631#21517#31216#65289#26597#35810
@@ -139,15 +109,15 @@ inherited frmKpiIndex: TfrmKpiIndex
               end
               object edtKey: TcxTextEdit
                 Left = 90
-                Top = 62
+                Top = 56
                 Width = 203
                 Height = 20
-                TabOrder = 4
+                TabOrder = 2
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
               object btnOk: TRzBitBtn
                 Left = 301
-                Top = 60
+                Top = 54
                 Width = 67
                 Height = 24
                 Action = actFind
@@ -165,32 +135,16 @@ inherited frmKpiIndex: TfrmKpiIndex
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 5
+                TabOrder = 3
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object fndKPI_CALC: TcxComboBox
-                Left = 307
-                Top = 25
-                Width = 121
-                Height = 20
-                Properties.DropDownListStyle = lsFixedList
-                TabOrder = 3
-              end
-              object fndKPI_DATA: TcxComboBox
-                Left = 74
-                Top = 25
-                Width = 121
-                Height = 20
-                Properties.DropDownListStyle = lsFixedList
-                TabOrder = 1
-              end
               object fndIDX_TYPE: TcxComboBox
                 Left = 74
-                Top = 1
+                Top = 9
                 Width = 121
                 Height = 20
                 Properties.DropDownListStyle = lsFixedList
@@ -198,18 +152,18 @@ inherited frmKpiIndex: TfrmKpiIndex
               end
               object fndKPI_TYPE: TcxComboBox
                 Left = 307
-                Top = 1
+                Top = 9
                 Width = 121
                 Height = 20
                 Properties.DropDownListStyle = lsFixedList
-                TabOrder = 2
+                TabOrder = 1
               end
             end
             object RzPanel6: TRzPanel
               Left = 5
-              Top = 97
+              Top = 87
               Width = 972
-              Height = 364
+              Height = 374
               Align = alClient
               BorderOuter = fsNone
               TabOrder = 1
@@ -217,7 +171,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                 Left = 0
                 Top = 0
                 Width = 972
-                Height = 364
+                Height = 374
                 Align = alClient
                 DataSource = Ds_KpiIndex
                 Flat = True
@@ -255,7 +209,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                     FieldName = 'SEQNO'
                     Footers = <>
                     Title.Caption = #24207#21495
-                    Width = 30
+                    Width = 35
                   end
                   item
                     EditButtons = <>
@@ -276,28 +230,14 @@ inherited frmKpiIndex: TfrmKpiIndex
                     FieldName = 'IDX_TYPE'
                     Footers = <>
                     Title.Caption = #25351#26631#31867#22411
-                    Width = 80
+                    Width = 100
                   end
                   item
                     EditButtons = <>
                     FieldName = 'KPI_TYPE'
                     Footers = <>
                     Title.Caption = #32771#26680#31867#22411
-                    Width = 80
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'KPI_DATA'
-                    Footers = <>
-                    Title.Caption = #32771#26680#26631#20934
-                    Width = 120
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'KPI_CALC'
-                    Footers = <>
-                    Title.Caption = #35745#31639#26631#20934
-                    Width = 120
+                    Width = 100
                   end
                   item
                     EditButtons = <>
@@ -308,10 +248,10 @@ inherited frmKpiIndex: TfrmKpiIndex
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'KPI_OPTN'
+                    FieldName = 'REMARK'
                     Footers = <>
-                    Title.Caption = #26159#21542#21551#29992#38454#26799
-                    Width = 80
+                    Title.Caption = #22791'  '#27880
+                    Width = 200
                   end>
               end
             end

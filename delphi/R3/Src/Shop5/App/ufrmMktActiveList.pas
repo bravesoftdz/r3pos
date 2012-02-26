@@ -38,6 +38,7 @@ type
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
     procedure edtACTIVE_GROUPKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure cdsActiveNewRecord(DataSet: TDataSet);
   private
     FFlag: integer;
     IsOffline:Boolean;
@@ -78,7 +79,7 @@ procedure TfrmMktActiveList.btnAppendClick(Sender: TObject);
 begin
   inherited;
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
-  if not (ShopGlobal.GetChkRight('100002257',2) or ShopGlobal.GetChkRight('100002257',3)) then Raise Exception.Create('你没有编辑市场活动的权限,请和管理员联系.');
+  //if not (ShopGlobal.GetChkRight('100002257',2) or ShopGlobal.GetChkRight('100002257',3)) then Raise Exception.Create('你没有编辑市场活动的权限,请和管理员联系.');
   if cdsActive.State in [dsEdit,dsInsert] then cdsActive.Post;
   if not cdsActive.IsEmpty then
   begin
@@ -115,7 +116,7 @@ procedure TfrmMktActiveList.btnDeleteClick(Sender: TObject);
 begin
   inherited;
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
-  if not ShopGlobal.GetChkRight('100002257',4) then Raise Exception.Create('你没有删除市场活动的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002257',4) then Raise Exception.Create('你没有删除市场活动的权限,请和管理员联系.');
   if MessageBox(Handle,pchar('确认要删除"'+cdsActive.FieldbyName('ACTIVE_NAME').AsString+'"活动？'),pchar(application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   cdsActive.Delete;
   if cdsActive.State in [dsEdit,dsInsert] then cdsActive.Post;
@@ -258,7 +259,7 @@ end;
 class function TfrmMktActiveList.AddDialog(Owner: TForm;
   var AObj: TRecord_): boolean;
 begin
-   if not ShopGlobal.GetChkRight('100002257',2) then Raise Exception.Create('你没有编辑市场活动的权限,请和管理员联系.');
+   //if not ShopGlobal.GetChkRight('100002257',2) then Raise Exception.Create('你没有编辑市场活动的权限,请和管理员联系.');
    with TfrmMktActiveList.Create(Owner) do
     begin
       try
@@ -285,7 +286,7 @@ end;
 
 class function TfrmMktActiveList.ShowDialog(Owner: TForm): boolean;
 begin
-  if not ShopGlobal.GetChkRight('100002257',1) then Raise Exception.Create('你没有查看市场活动的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002257',1) then Raise Exception.Create('你没有查看市场活动的权限,请和管理员联系.');
   with TfrmMktActiveList.Create(Owner) do
     begin
       try
@@ -486,6 +487,12 @@ begin
        end;
      end;
   inherited;
+end;
+
+procedure TfrmMktActiveList.cdsActiveNewRecord(DataSet: TDataSet);
+begin
+  inherited;
+  Exit;
 end;
 
 end.

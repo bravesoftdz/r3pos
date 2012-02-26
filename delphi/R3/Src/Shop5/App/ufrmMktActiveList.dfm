@@ -274,6 +274,7 @@ inherited frmMktActiveList: TfrmMktActiveList
   object cdsActive: TZQuery
     FieldDefs = <>
     CachedUpdates = True
+    OnNewRecord = cdsActiveNewRecord
     Params = <>
     Left = 38
     Top = 173

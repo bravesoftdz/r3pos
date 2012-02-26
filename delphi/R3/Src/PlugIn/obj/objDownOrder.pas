@@ -247,7 +247,7 @@ begin
              ' from RIM_SD_CO_LINE A '+
              ' left outer join (select GODS_ID,SECOND_ID,COMM_ID,ZOOM_RATE from VIW_GOODSINFO where TENANT_ID='+TenID+' and COMM not in (''02'',''12''))B '+
              ' on (A.ITEM_ID=B.SECOND_ID) or (INSTR(B.COMM_ID,'','' || A.ITEM_ID || '','', 1, 1)>0) '+  //加条件：
-             ' where A.CO_NUM='''+INDE_ID+''' '+
+             ' where A.CO_NUM='''+INDE_ID+''' and A.QTY_ORD<>0 '+ //2012.02.23增加过滤条件QTY_ORD不为0
              ' group by CO_NUM,B.GODS_ID ';  //,ITEM_ID
         end;
        4: //DB2
@@ -266,7 +266,7 @@ begin
              ' from RIM_SD_CO_LINE A '+
              ' left outer join (select GODS_ID,SECOND_ID,COMM_ID,ZOOM_RATE from VIW_GOODSINFO where TENANT_ID='+TenID+' and COMM not in (''02'',''12''))B '+
              ' on (A.ITEM_ID=B.SECOND_ID) or (locate('','' || A.ITEM_ID || '','',B.COMM_ID)>0) '+  //加条件：
-             ' where A.CO_NUM='''+INDE_ID+''' '+
+             ' where A.CO_NUM='''+INDE_ID+''' and A.QTY_ORD<>0 '+ //2012.02.23增加过滤条件QTY_ORD不为0
              ' group by CO_NUM,B.GODS_ID ';
         end;
       end;

@@ -69,6 +69,7 @@ begin
   except
     on E: Exception do
     begin
+      msg :=E.Message;
       Raise Exception.Create(E.Message);
     end;
   end;

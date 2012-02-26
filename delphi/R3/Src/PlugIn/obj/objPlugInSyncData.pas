@@ -757,8 +757,9 @@ var
 begin
   result:=False;
   PlugInIDS:=PlugParams.PlugInID;
-  if PlugInIDS='' then PlugInIDS:='000000000000000000000000';
+  if trim(PlugInIDS)='' then PlugInIDS:='000000000000000000000000';
   if Copy(PlugInIDS,PlugInID,1)='0' then Exit;
+ 
 
   //传入参数列表
   Params:=InParams;
@@ -776,7 +777,6 @@ begin
       if trim(Rs.FieldByName('TENANT_ID').AsString)='' then
         Raise Exception.Create('传入<零售户>企业ID:('+TenID+') 没有加盟上级烟草企业');
     end;
-    
     //读取Rim.COM_ID,Rim.Cust_ID,Rim.LICENSE_CODE 许可证号;
     Rs.Close;
     Rs.SQL.Text:=
@@ -1083,7 +1083,7 @@ end;
 function TPlugInSyncMessage.SyncMessage: integer;
 var
   iRet: integer;
-  str,s,mid: string;
+  str,s,mid,Msg_Class: string;
   rs: TZQuery;
   FReData: OleVariant;
 begin
@@ -1122,39 +1122,55 @@ begin
       begin
         DBFactor.BeginTrans;
         try
+          Msg_Class:='0';
           mid:=newid(ShopID);
           str:='insert into MSC_MESSAGE_LIST(TENANT_ID,MSG_ID,SHOP_ID,MSG_FEEDBACK_STATUS,MSG_READ_STATUS,COMM,TIME_STAMP) '+
                'values('+TenID+','''+mid+''','''+ShopID+''',1,1,''00'','+GetTimeStamp(DbType)+')';
-          ExecSQL(str,iRet);  
-
+          ExecSQL(str,iRet);
+          {== 消息:0;公告:1;政策:2;广告:3;==}
           if rs.Fields[1].asString='01' then
-             s := '促销信息'
-          else
+          begin
+             s := '促销信息';
+             Msg_Class:='1';
+          end else
           if rs.Fields[1].asString='02' then
-             s := '广告信息'
-          else
+          begin
+             s := '广告信息';
+             Msg_Class:='3';
+          end else
           if rs.Fields[1].asString='03' then
-             s := '货源信息'
-          else
+          begin
+             s := '货源信息';
+             Msg_Class:='1';
+          end else
           if rs.Fields[1].asString='04' then
-             s := '新品信息'
-          else
+          begin
+             s := '新品信息';
+             Msg_Class:='0';
+          end else
           if rs.Fields[1].asString='05' then
+          begin
              s := '通知'
-          else
+             Msg_Class:='0';
+          end else
           if rs.Fields[1].asString='99' then
-             s := '到货通知'
-          else
-             s := '公告';
+          begin
+             s := '到货通知';
+             Msg_Class:='0';
+          end else
+          begin
+            s := '公告';
+            Msg_Class:='1';
+          end;
 
           case DbType of
            4:str :=
               'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
-              'select '+TenID+','''+mid+''',''0'',int(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
+              'select '+TenID+','''+mid+''','''+Msg_Class+''',int(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
               ' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
            1:str :=
               'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
-              'select '+TenID+','''+mid+''',''0'',to_number(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
+              'select '+TenID+','''+mid+''','''+Msg_Class+''',to_number(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
               ' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
           end;
           ExecSQL(Str,iRet);

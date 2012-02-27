@@ -317,16 +317,16 @@ try
   begin
   //为企业初始化部门
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,DEPT_TYPE,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''营销部'',''1'',''001'',''ZD'',''业务销售部门'',''00'',5497000)';
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'001'+''',''营销部'',''1'',''001'',''YXB'',''业务销售部门'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,DEPT_TYPE,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'002'+''',''综合部'',''3'',''002'',''ZD'',''行政人事后台管理部门'',''00'',5497000)';
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'002'+''',''综合部'',''3'',''002'',''ZHB'',''行政人事后台管理部门'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,DEPT_TYPE,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'003'+''',''财务部'',''2'',''003'',''ZD'',''财务会计及统计部门'',''00'',5497000)';
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'003'+''',''财务部'',''2'',''003'',''CWB'',''财务会计及统计部门'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   Str := 'insert into CA_DEPT_INFO (TENANT_ID,DEPT_ID,DEPT_NAME,DEPT_TYPE,LEVEL_ID,DEPT_SPELL,REMARK,COMM,TIME_STAMP)'+
-  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'004'+''',''拓展部'',''3'',''004'',''ZD'',''企业发展策略经营管理部'',''00'',5497000)';
+  ' values(:TENANT_ID,'''+Params.ParambyName('TENANT_ID').AsString+'004'+''',''拓展部'',''3'',''004'',''TZB'',''企业发展策略经营管理部'',''00'',5497000)';
   AGlobal.ExecSQL(Str,Params);
   end;
   if not GetGradeInfo then

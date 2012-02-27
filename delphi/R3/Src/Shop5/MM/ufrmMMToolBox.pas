@@ -36,7 +36,7 @@ type
   end;
 
 implementation
-uses ufrmMMMain;
+uses ufrmMMMain,uShopGlobal;
 {$R *.dfm}
 
 { TfrmMMToolBox }
@@ -129,7 +129,7 @@ begin
       then
          begin
            Action := frmMMMain.FindAction(rs.FieldbyName('ACTION_NAME').AsString);
-           if Assigned(Action) and Action.Enabled then
+           if Assigned(Action) and Action.Enabled and ShopGlobal.GetChkRight(rs.FieldbyName('MODU_ID').AsString) then
               begin
                  ListItem := rzList.Items.Add;
                  ListItem.Caption := rs.FieldbyName('MODU_NAME').AsString;
@@ -143,7 +143,7 @@ begin
       rs.Next;
     end;
   width := rzList.Items.Count*90+ 24;
-  toolClose.left := RzPanel3.width - 17; 
+  toolClose.left := RzPanel3.width - 17;
 end;
 
 procedure TfrmMMToolBox.RzListClick(Sender: TObject);

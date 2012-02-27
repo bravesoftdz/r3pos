@@ -3567,23 +3567,6 @@ inherited frmShopMain: TfrmShopMain
                 end
               end
             end
-            object RzBmpButton2: TRzBmpButton
-              Left = 176
-              Top = 39
-              Width = 84
-              Height = 29
-              Cursor = crHandPoint
-              Bitmaps.TransparentColor = clOlive
-              Color = clBtnFace
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clWhite
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = []
-              ParentFont = False
-              TabOrder = 1
-              OnClick = RzBmpButton2Click
-            end
             object RzBmpButton5: TRzBmpButton
               Left = 346
               Top = 39
@@ -3598,10 +3581,10 @@ inherited frmShopMain: TfrmShopMain
               Font.Name = #23435#20307
               Font.Style = []
               ParentFont = False
-              TabOrder = 2
+              TabOrder = 1
             end
             object RzBmpButton6: TRzBmpButton
-              Left = 86
+              Left = 171
               Top = 39
               Width = 89
               Height = 29
@@ -3614,7 +3597,7 @@ inherited frmShopMain: TfrmShopMain
               Font.Name = #23435#20307
               Font.Style = []
               ParentFont = False
-              TabOrder = 3
+              TabOrder = 2
               OnClick = RzBmpButton6Click
             end
             object RzBmpButton4: TRzBmpButton
@@ -3631,7 +3614,7 @@ inherited frmShopMain: TfrmShopMain
               Font.Name = #23435#20307
               Font.Style = []
               ParentFont = False
-              TabOrder = 4
+              TabOrder = 3
               OnClick = RzBmpButton4Click
             end
           end
@@ -5623,6 +5606,11 @@ inherited frmShopMain: TfrmShopMain
       Tag = 100002226
       Caption = #24066#22330#36153#39044#31639
       OnExecute = actfrmMktMarketCostOrderListExecute
+    end
+    object actfrmMktActiveList: TAction
+      Tag = 100002257
+      Caption = #27963#21160#39033#30446
+      OnExecute = actfrmMktActiveListExecute
     end
   end
   inherited PopupMenu: TPopupMenu

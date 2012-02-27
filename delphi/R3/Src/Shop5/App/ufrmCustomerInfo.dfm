@@ -139,9 +139,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
       Top = 162
       Width = 525
       Height = 212
-      ActivePage = TabSalesList
       Align = alBottom
-      TabIndex = 3
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -938,7 +936,7 @@ inherited frmCustomerInfo: TfrmCustomerInfo
               EditButtons = <>
               FieldName = 'APRICE'
               Footers = <>
-              Title.Caption = #38646#21806#20215
+              Title.Caption = #23454#38469#21806#20215
               Width = 66
             end
             item
@@ -950,6 +948,13 @@ inherited frmCustomerInfo: TfrmCustomerInfo
               Footer.ValueType = fvtSum
               Footers = <>
               Title.Caption = #38144#21806#39069
+            end
+            item
+              EditButtons = <>
+              FieldName = 'TREND_ID'
+              Footers = <>
+              Title.Caption = #36141#20080#29992#36884
+              Width = 60
             end
             item
               EditButtons = <>

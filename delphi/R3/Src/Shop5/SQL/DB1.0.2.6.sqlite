@@ -78,6 +78,7 @@ update PUB_GOODSINFO set SHORT_GODS_NAME=GODS_NAME;
 delete from PUB_PARAMS where TYPE_CODE='IDX_TYPE';
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','客户指标','IDX_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','业绩指标','IDX_TYPE','00',5497000);
+
 --考核类型
 delete from PUB_PARAMS where TYPE_CODE='KPI_TYPE';
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','年度考核','KPI_TYPE','00',5497000);
@@ -147,14 +148,17 @@ CREATE INDEX IX_KPLV_TENANT_ID ON MKT_KPI_INDEX(TENANT_ID);
 
 --考核标准
 delete from PUB_PARAMS where TYPE_CODE='KPI_DATA';
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按完成率','KPI_DATA','00',5497000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按销售额','KPI_DATA','00',5497000);
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按销售量','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按销量完成率','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按金额完成率','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','按销售额','KPI_DATA','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','按销售量','KPI_DATA','00',5497000);
+
 --计算标准
 delete from PUB_PARAMS where TYPE_CODE='KPI_CALC';
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','按百分率','KPI_CALC','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','按完成量','KPI_CALC','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','指定金额','KPI_CALC','00',5497000);
+
 --返利设定
 delete from PUB_PARAMS where TYPE_CODE='RATIO_TYPE';
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','拉通返利','RATIO_TYPE','00',5497000);
@@ -241,6 +245,8 @@ CREATE TABLE [MKT_KPI_RATIO] (
 	[SEQNO_ID] [char] (36) NOT NULL ,
         --返利商品
 	[GODS_ID] [char] (36) NULL ,
+        --返利单位
+	[UNIT_ID] [char] (36) NULL ,
 	      --返利系数
 	[KPI_RATIO] [decimal](18, 3) NULL ,
         --通讯标志
@@ -254,3 +260,178 @@ CREATE TABLE [MKT_KPI_RATIO] (
 	) 
 );
 CREATE INDEX IX_KPRO_TENANT_ID ON MKT_KPI_RATIO(TENANT_ID);
+
+
+--市场费计提
+CREATE TABLE [MKT_ACTIVE_RATIO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --计提编号
+	[ACTR_ID] [char] (36) NOT NULL ,
+        --考核指标
+	[KPI_ID] [char] (36) NOT NULL ,
+        --返利商品
+	[GODS_ID] [char] (36) NULL ,
+        --考核单位
+	[UNIT_ID] [char] (36) NOT NULL ,
+	      --计提系数
+	[ACTR_RATIO] [decimal](18, 3) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_ACTIVE_RATIO_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_ACTIVE_RATIO] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[ACTR_ID]
+	) 
+);
+CREATE INDEX IX_ACTR_TENANT_ID ON MKT_ACTIVE_RATIO(TENANT_ID);
+
+--预算金额
+alter table MKT_PLANDATA add [BUDG_MNY] [decimal](18, 3) NULL;
+
+--添加所属部门
+alter table PUB_CUSTOMER add DEPT_ID varchar (12) NULL;
+alter table PUB_CLIENTINFO add DEPT_ID varchar (12) NULL;
+
+update PUB_CUSTOMER set DEPT_ID=TENANT_ID||'001';
+update PUB_CLIENTINFO set DEPT_ID=TENANT_ID||'001';
+
+drop table MKT_KPI_RESULT;
+--考核结果
+CREATE TABLE [MKT_KPI_RESULT] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --经销商
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --考核ID
+	[KPI_ID] [char] (36) NOT NULL ,
+        --年度
+	[KPI_YEAR] int NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --所属部门
+	[DEPT_ID] [varchar] (12) NOT NULL,
+        --计划单号<有签约的有>
+	[PLAN_ID] [char] (36) NULL ,
+	
+        --指标类型
+	[IDX_TYPE] [char] (1) NOT NULL ,
+        --考核类型
+	[KPI_TYPE] [char] (1) NOT NULL ,
+	      --考核标准
+	[KPI_DATA] char(1) NULL ,
+	      --计算标准
+	[KPI_CALC] char(1) NULL ,
+        --返利设定
+	[RATIO_TYPE] [char] (1) NOT NULL ,
+	
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+	
+        --签约销量
+	[PLAN_AMT] [decimal](18, 3) NULL ,
+        --签约金额 
+	[PLAN_MNY] [decimal](18, 3) NULL ,
+	
+        --完成销量
+	[FISH_AMT] [decimal](18, 3) NULL ,
+        --调整销量
+	[ADJS_AMT] [decimal](18, 3) NULL ,
+        --完成金额 
+	[FISH_MNY] [decimal](18, 3) NULL ,
+        --调整金额
+	[ADJS_MNY] [decimal](18, 3) NULL ,
+	
+        --返利结果
+	[KPI_MNY] [decimal](18, 3) NULL ,
+        --提取返利
+	[WDW_MNY] [decimal](18, 3) NULL ,
+	
+	      --市场费预算
+	[BUDG_MNY] [decimal](18, 3) NULL,
+	      --市场费计提
+	[BUDG_KPI] [decimal](18, 3) NULL,
+	      --市场费申领
+	[BUDG_WDW] [decimal](18, 3) NULL,
+	      --市场费核销
+	[BUDG_VRF] [decimal](18, 3) NULL,
+	
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_RESULT_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_KPI_RESULT] PRIMARY KEY 
+	(
+		[TENANT_ID],[KPI_YEAR],[KPI_ID],[CLIENT_ID]
+	) 
+);
+
+CREATE INDEX IX_MKPIR_TENANT_ID ON MKT_KPI_RESULT(TENANT_ID);
+CREATE INDEX IX_MKPIR_TIME_STAMP ON MKT_KPI_RESULT(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MKPIR_KPI_YEAR ON MKT_KPI_RESULT(TENANT_ID,KPI_YEAR);
+CREATE INDEX IX_MKPIR_KPI_ID ON MKT_KPI_RESULT(TENANT_ID,KPI_ID);
+CREATE INDEX IX_MKPIR_CLIENT_ID ON MKT_KPI_RESULT(TENANT_ID,CLIENT_ID);
+CREATE INDEX IX_MKPIR_DEPT_ID ON MKT_KPI_RESULT(TENANT_ID,DEPT_ID);
+CREATE INDEX IX_MKPIR_SHOP_ID ON MKT_KPI_RESULT(TENANT_ID,SHOP_ID);
+
+--返利计算明细
+CREATE TABLE [MKT_KPI_RESULT_LIST] (
+        --行号
+	[ROWS_ID] [varchar] (36) NOT NULL ,
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --经销商
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --考核ID
+	[KPI_ID] [char] (36) NOT NULL ,
+        --年  度
+	[KPI_YEAR] int NOT NULL ,
+	      --考时段
+	[KPI_DATE1] int NULL ,
+	[KPI_DATE2] int NULL ,
+        --返利商品
+	[GODS_ID] [char] (36) NULL ,
+	      --完成签约量对应的等级
+	[LVL_AMT] [decimal](18, 3) NULL ,
+	      --完成率
+	[KPI_RATE] [decimal](18, 3) NULL ,
+
+        --完成销量
+	[FISH_AMT] [decimal](18, 3) NULL ,
+        --调整销量
+	[ADJS_AMT] [decimal](18, 3) NULL ,
+        --完成金额 
+	[FISH_MNY] [decimal](18, 3) NULL ,
+        --调整金额
+	[ADJS_MNY] [decimal](18, 3) NULL ,
+
+	      --返利系数
+	[KPI_RATIO] [decimal](18, 3) NULL ,
+	
+	      --市场费计提系数
+	[ACTR_RATIO] [decimal](18, 3) NULL ,
+	
+	      --考核结果
+	[KPI_MNY] [decimal](18, 3) NULL ,
+	      --市场费计提
+	[BUDG_KPI] [decimal](18, 3) NULL,
+	
+	CONSTRAINT [PK_MKT_KPI_R_LIST] PRIMARY KEY 
+	(
+		[ROWS_ID]
+	) 
+);
+
+CREATE INDEX IX_MPRT_TENANT_ID ON MKT_KPI_RESULT_LIST(TENANT_ID);
+CREATE INDEX IX_MPRT_KEYID ON MKT_KPI_RESULT_LIST(TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR);
+CREATE INDEX IX_MPRT_KPI_YEAR ON MKT_KPI_RESULT_LIST(KPI_YEAR);

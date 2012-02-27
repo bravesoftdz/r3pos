@@ -261,7 +261,7 @@ uses
   ObjMktRequOrder in 'Obj\ObjMktRequOrder.pas',
   ObjMktTaskOrder in 'Obj\ObjMktTaskOrder.pas',
   ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
-  ufrmShowPanel in 'ufrmShowPanel.pas' {frmShowPanel};
+  ufrmShowPanel in 'App\ufrmShowPanel.pas' {frmShowPanel};
 
 {$R *.res}
 var

@@ -531,6 +531,7 @@ end;
 procedure TfrmCustomerInfo.FormShow(Sender: TObject);
 begin
   inherited;
+  InitGrid;
   cmbCUST_CODE.SelectAll;
   RzPage.ActivePageIndex := 0;
   if cmbCUST_CODE.CanFocus then cmbCUST_CODE.SetFocus;
@@ -1021,13 +1022,11 @@ end;
 
 procedure TfrmCustomerInfo.InitGrid;
 var rs:TZQuery;
-    Col:TColumnEh;
+    Col,Column:TColumnEh;
 begin
   Col := FindColumn(DBGridEh1,'IC_STATUS');
-  if Col = nil then Exit;
 
   rs := Global.GetZQueryFromName('PUB_PARAMS');
-  if not rs.Active then Exit;
   rs.Filtered := False;
   rs.Filter := ' TYPE_CODE=''IC_STATUS'' ';
   rs.Filtered := True;
@@ -1037,8 +1036,19 @@ begin
   rs.First;
   while not rs.Eof do
     begin
-      Col.KeyList.Add(rs.FieldbyName('CODE_ID ').AsString);
+      Col.KeyList.Add(rs.FieldbyName('CODE_ID').AsString);
       Col.PickList.Add(rs.FieldbyName('CODE_NAME').AsString);
+      rs.Next;
+    end;
+  rs := Global.GeTZQueryFromName('PUB_TREND_INFO');
+  Column := FindColumn(DBGridEh5,'TREND_ID');
+  Column.KeyList.Clear;
+  Column.PickList.Clear;
+  rs.First;
+  while not rs.Eof do
+    begin
+      Column.KeyList.Add(rs.Fields[0].asString);
+      Column.PickList.Add(rs.Fields[1].asString);
       rs.Next;
     end;
 end;
@@ -1082,29 +1092,29 @@ var
   strSql,strWhere: string;
 begin
   //过滤企业及数据权限:
-  strWhere:=' where A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  strWhere:=' and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('B.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('B.SHOP_ID',1);
   //日期最近90天
-  strWhere:=strWhere+' and A.SALES_DATE>='+FormatDatetime('YYYYMMDD',IncMonth(Date(),-3))+' and A.SALES_DATE<='+FormatDatetime('YYYYMMDD',Date())+' ';
+  strWhere:=strWhere+' and B.SALES_DATE>='+FormatDatetime('YYYYMMDD',IncMonth(Date(),-3))+' and B.SALES_DATE<='+FormatDatetime('YYYYMMDD',Date())+' ';
   //客户ID
-  strWhere := strWhere + ' and isnull(D.CLIENT_ID,'''')='''+CustID+''' ';
+  strWhere := strWhere + ' and B.CLIENT_ID='''+CustID+''' ';
 
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID '+
     ',A.UNIT_ID '+
-    ',A.SALES_DATE '+
-    ',A.CLIENT_ID '+
-    ',A.CREA_DATE '+
-    ',A.CREA_USER '+
+    ',B.SALES_DATE '+
+    ',B.CLIENT_ID '+
+    ',B.CREA_DATE '+
+    ',B.CREA_USER '+
     ',A.SHOP_ID '+
-    ',A.GUIDE_USER '+
-    ',A.SALES_TYPE '+
+    ',B.GUIDE_USER '+
+    ',B.SALES_TYPE '+
     ',A.AMOUNT '+
     ',A.APRICE '+      //零售价
+    ',A.TREND_ID '+
     ',A.CALC_MONEY as AMONEY '+
-    ' from VIW_SALESDATA A '+
-    '  left outer join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+    ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
     ' '+ strWhere + ' ';
     
   strSql:=
@@ -1117,7 +1127,7 @@ begin
     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
     ' left outer join VIW_USERS e on j.TENANT_ID=e.TENANT_ID and j.CREA_USER=e.USER_ID ';
   strSql :=ParseSQL(Factor.iDbType, strSql);
-  strSql := strSql + ' order by j.SALES_DATE';
+  strSql := strSql + ' order by j.SALES_DATE desc';
 
   CustSalesList.Close;
   CustSalesList.SQL.Text:=strSql;

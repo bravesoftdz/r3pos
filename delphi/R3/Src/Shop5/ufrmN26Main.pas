@@ -424,6 +424,7 @@ type
     procedure actfrmDemandOrderList2Execute(Sender: TObject);
     procedure actfrmInitGuideExecute(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure RzBmpButton5Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -3143,15 +3144,68 @@ begin
     RzBmpButton2.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'down_hot');
     RzBmpButton4.Bitmaps.Up := rcFactory.GetBitmap(sflag+'upload');
     RzBmpButton4.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'upload_hot');
-    RzBmpButton5.Bitmaps.Up := rcFactory.GetBitmap(sflag+'help');
-    RzBmpButton5.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'help_hot');
+//    RzBmpButton5.Bitmaps.Up := rcFactory.GetBitmap(sflag+'help');
+//    RzBmpButton5.Bitmaps.Hot := rcFactory.GetBitmap(sflag+'help_hot');
 
 end;
 
 procedure TfrmN26Main.RzBmpButton11Click(Sender: TObject);
+var
+  s:string;
+  Form:TfrmBasic;
+  sl:TStringList;
+  Action:TAction;
 begin
   inherited;
-  ShellExecute(handle,'open',Pchar(ExtractFilePath(ParamStr(0))+'res\xxfd.html'),nil,nil,0);
+  if not CaFactory.Audited then Raise Exception.Create('不支持脱机使用..');
+  if N26Factory.Checked=0 then
+     begin
+       if not CA_MODULE.Locate('MODU_NAME','信息互动',[]) then Raise Exception.Create('你没有开通信息互动功能');
+     end
+  else
+     begin
+       if not CA_MODULE.Locate('MODU_NAME','信息互动',[]) then Raise Exception.Create('你没有开通信息互动功能');
+     end;
+  if CA_MODULE.FieldByName('ACTION_NAME').AsString='actfrmN26Net' then
+     begin
+        if not ShopGlobal.GetChkRight(CA_MODULE.FieldByName('MODU_ID').AsString) then Raise Exception.Create('你没有操作此模块的权限。');
+        s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
+        delete(s,1,4);
+        delete(s,length(s),1);
+        if not Logined then
+           begin
+             PostMessage(frmMain.Handle,WM_LOGIN_REQUEST,0,0);
+             Exit;
+           end;
+        Application.Restore;
+        frmN26Desk.SaveToFront;
+        Form := FindChildForm(TfrmN26Browser);
+        if not Assigned(Form) then
+           begin
+             Form := TfrmN26Browser.Create(self);
+             Form.Caption := CA_MODULE.FieldbyName('MODU_NAME').asString;
+             AddFrom(Form);
+             if not TfrmN26Browser(Form).DoLogin then Exit;
+           end;
+        sl := TStringList.Create;
+        try
+          Form.Caption := CA_MODULE.FieldbyName('MODU_NAME').asString;
+          sl.CommaText := s;
+          TfrmN26Browser(Form).OpenUrl(TfrmN26Browser(Form).EncodeUrl(sl.values['url']));
+          Form.SetFocus;
+          DoActiveChange(Form);
+        except
+          sl.free;
+          Raise;
+        end;
+    end
+  else
+    begin
+       Action := FindAction(CA_MODULE.FieldByName('ACTION_NAME').AsString);
+       if Action=nil then Exit;
+       if not Action.Enabled then Raise Exception.Create('你没有操作此模块的权限');
+       Action.OnExecute(Action); 
+    end;
 end;
 
 procedure TfrmN26Main.RzBmpButton12Click(Sender: TObject);
@@ -4183,6 +4237,12 @@ begin
   rzLeft.Width := 6;
   Panel12.Width := 8;
   Panel24.Width := 0;
+end;
+
+procedure TfrmN26Main.RzBmpButton5Click(Sender: TObject);
+begin
+  inherited;
+  Close;
 end;
 
 end.

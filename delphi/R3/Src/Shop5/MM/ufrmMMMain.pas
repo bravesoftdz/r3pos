@@ -8,7 +8,7 @@ uses
   ZBase, RzTray, StdCtrls, Mask, RzEdit, RzBmpBtn, RzLabel, jpeg, RzPanel,
   ImgList, RzBckgnd, RzForms, ToolWin, Buttons, RzButton, ufrmBasic, ZdbFactory,
   ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, ufrmMMBrowser,ummFactory,
-  ufrmHintMsg, RzStatus, ufrmInstall;
+  ufrmHintMsg, RzStatus, ufrmInstall,uTimerFactory;
 
 const
   MSC_POPUP=WM_USER+1;                                                                           
@@ -312,7 +312,7 @@ type
     frmRimIEBrowser:TfrmMMBrowser;
     FLogined: boolean;
     FWindowState: TWindowState;
-
+    TimerFactory:TTimerFactory;
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
     procedure wm_Sign(var Message: TMessage); message MM_SIGN;
     procedure wm_SessionFail(var Message: TMessage); message MM_SESSION_FAIL;
@@ -342,6 +342,7 @@ type
     procedure SetLogined(const Value: boolean);
     procedure SetWindowState(const Value: TWindowState);
     procedure InitTenant;
+    procedure DoLoadMsg(Sender:TObject);
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -369,7 +370,7 @@ var
 implementation
 uses
   ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory, uN26Factory,
-  uDsUtil,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uFnUtil,ufrmLogo,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -391,6 +392,7 @@ function TfrmMMMain.Login: boolean;
 begin
   result := ConnectToSQLite;
   if not result then Exit;
+  if TimerFactory<>nil then FreeAndNil(TimerFactory);
   LoginFactory.Logout;
   try
     with TfrmMMLogin.Create(self) do
@@ -404,6 +406,7 @@ begin
       end;
   finally
      if Logined then LoginFactory.Login(Global.UserID,Global.SHOP_ID);
+     if Logined and (mmGlobal.module[2]='1') then TimerFactory := TTimerFactory.Create(DoLoadMsg,StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60000);
   end;
 end;
 
@@ -593,6 +596,7 @@ begin
              CanClose := false;
              Exit;
            end;
+        if TimerFactory<>nil then FreeAndNil(TimerFactory);
         HideMMList;
         Visible := false;
         try
@@ -2438,6 +2442,7 @@ end;
 constructor TfrmMMMain.Create(AOwner: TComponent);
 begin
   inherited;
+  TimerFactory := nil;
   FMenu := TList.Create;
   FormStyle := fsMDIForm;
   frmMMToolBox := TfrmMMToolBox.Create(self);
@@ -3212,6 +3217,15 @@ begin
   Form.WindowState := wsMaximized;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmMMMain.DoLoadMsg(Sender: TObject);
+begin
+  if not Visible then Exit;
+  if not Logined then Exit;
+  if mmGlobal.module[2]<>'1' then Exit;
+  if SyncFactory.Locked > 0 then Exit;
+  PrainpowerJudge.SyncMsgc;
 end;
 
 end.

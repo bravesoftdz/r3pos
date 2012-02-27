@@ -20,8 +20,6 @@ inherited frmShopInfo: TfrmShopInfo
       Top = 113
       Width = 524
       Height = 185
-      ActivePage = TabSheet3
-      TabIndex = 2
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -198,6 +196,7 @@ inherited frmShopInfo: TfrmShopInfo
             ParentFont = False
           end
           object edtXSM_CODE: TcxTextEdit
+            Tag = 1
             Left = 106
             Top = 25
             Width = 187
@@ -240,16 +239,16 @@ inherited frmShopInfo: TfrmShopInfo
             Caption = #24320#22987#26102#38388
           end
           object Label19: TLabel
-            Left = 265
+            Left = 15
             Top = 61
             Width = 80
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #38754#31215
+            Caption = #24314#31569#38754#31215
           end
           object Label21: TLabel
-            Left = 265
+            Left = 233
             Top = 37
             Width = 80
             Height = 12
@@ -259,7 +258,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object Label23: TLabel
             Left = 15
-            Top = 61
+            Top = 98
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -268,7 +267,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object Label27: TLabel
             Left = 15
-            Top = 85
+            Top = 122
             Width = 80
             Height = 12
             Alignment = taRightJustify
@@ -292,7 +291,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object Label24: TLabel
             Left = 227
-            Top = 61
+            Top = 98
             Width = 43
             Height = 12
             Alignment = taRightJustify
@@ -300,7 +299,7 @@ inherited frmShopInfo: TfrmShopInfo
             Caption = #20803'/'#24179#26041
           end
           object Label28: TLabel
-            Left = 478
+            Left = 228
             Top = 61
             Width = 23
             Height = 12
@@ -309,7 +308,7 @@ inherited frmShopInfo: TfrmShopInfo
             Caption = #24179#26041
           end
           object edtBUIL_AREA: TcxTextEdit
-            Left = 356
+            Left = 106
             Top = 57
             Width = 120
             Height = 20
@@ -319,7 +318,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object edtSHOP_MNY: TcxTextEdit
             Left = 106
-            Top = 57
+            Top = 94
             Width = 120
             Height = 20
             Properties.MaxLength = 6
@@ -328,7 +327,7 @@ inherited frmShopInfo: TfrmShopInfo
           end
           object edtSHOP_PRC: TcxTextEdit
             Left = 106
-            Top = 81
+            Top = 118
             Width = 120
             Height = 20
             Properties.MaxLength = 6
@@ -352,7 +351,7 @@ inherited frmShopInfo: TfrmShopInfo
             TabOrder = 1
           end
           object edtEND_DATE: TcxDateEdit
-            Left = 356
+            Left = 324
             Top = 33
             Width = 120
             Height = 20

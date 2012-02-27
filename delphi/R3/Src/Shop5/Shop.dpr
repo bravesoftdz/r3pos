@@ -273,7 +273,9 @@ uses
   ufrmBondRequReport in 'App\ufrmBondRequReport.pas' {frmBondRequReport},
   ufrmMktRequReport in 'App\ufrmMktRequReport.pas' {frmMktRequReport},
   ufrmMktCostTotalReport in 'App\ufrmMktCostTotalReport.pas' {frmMktCostTotalReport},
-  ufrmMktKpiTotalReport in 'App\ufrmMktKpiTotalReport.pas' {frmMktKpiTotalReport};
+  ufrmMktKpiTotalReport in 'App\ufrmMktKpiTotalReport.pas' {frmMktKpiTotalReport},
+  ufrmMktActiveList in 'App\ufrmMktActiveList.pas' {frmMktActiveList},
+  ObjMktActiveList in 'Obj\ObjMktActiveList.pas';
 
 {$R *.res}
 var

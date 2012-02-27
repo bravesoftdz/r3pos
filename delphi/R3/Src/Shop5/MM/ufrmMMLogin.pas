@@ -46,7 +46,7 @@ type
   end;
 
 implementation
-uses ummGlobal,uCaFactory,IniFiles,ufrmHostDialog,uFnUtil,uGlobal,EncDec,ObjCommon,uRcFactory;
+uses ummGlobal,uCaFactory,ufrmPswModify,IniFiles,ufrmHostDialog,uFnUtil,uGlobal,EncDec,ObjCommon,uRcFactory;
 {$R *.dfm}
 
 procedure TfrmMMLogin.FormCreate(Sender: TObject);
@@ -215,6 +215,7 @@ begin
      if not locked then
         begin
           Factor.GqqLogin(mmGlobal.UserID,mmGlobal.SHOP_NAME+'('+mmGlobal.UserName+')');
+          if trim(cxedtPasswrd.Text)='1234' then TfrmPswModify.ShowExecute(mmGlobal.UserID,cxedtUsers.Text);
           SaveLogin;
         end;
      if (mmGlobal.module[2]='1') then CheckSysDate;

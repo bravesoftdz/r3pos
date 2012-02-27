@@ -289,6 +289,7 @@ var
   url:string;
 begin
 try
+  result := false;
   url := xsmc+'users/dologin/up?j_username='+xsm_username+'&j_password='+md5(md5(xsm_password)+xsm_challenge);
   xsm_signature := IdHTTP1.Get(url);
   xml := Utf8ToAnsi(xsm_signature);
@@ -359,7 +360,7 @@ try
     if not Assigned(Root) then Raise Exception.Create('Url地址返回无效XML文档，请求校验码失败...');
     if Root.attributes.getNamedItem('code')=nil then Raise Exception.Create('Url地址返回无效XML文档，请求校验码失败...');
     if Root.attributes.getNamedItem('code').text<>'0000' then Raise Exception.Create('请求校验码失败,错误:'+Root.attributes.getNamedItem('msg').text);
-    xsm_challenge := Root.childNodes[0].text;
+    xsm_challenge := Root.selectSingleNode('challenge').text;
     result := true;
   finally
     List.free;
@@ -647,6 +648,7 @@ var
   Node:IXMLDOMNode;
   xml,url:string;
 begin
+  result := false;
   try
     url := xsmc+'navi/donavi/a?userId='+xsm_username+'&isFirst=0&comId='+xsm_comId+'&zoneId=GWGC';
     xml := IdHTTP1.Get(url);

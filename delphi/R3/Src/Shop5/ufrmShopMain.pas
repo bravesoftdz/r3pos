@@ -258,7 +258,6 @@ type
     RzBmpButton10: TRzBmpButton;
     RzBmpButton9: TRzBmpButton;
     RzBmpButton8: TRzBmpButton;
-    RzBmpButton2: TRzBmpButton;
     RzBmpButton5: TRzBmpButton;
     RzBmpButton6: TRzBmpButton;
     RzBmpButton4: TRzBmpButton;
@@ -306,6 +305,7 @@ type
     actfrmMktCostTotalReport: TAction;
     actfrmMktKpiTotalReport: TAction;
     actfrmMktMarketCostOrderList: TAction;
+    actfrmMktActiveList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -441,6 +441,7 @@ type
     procedure actfrmMktCostTotalReportExecute(Sender: TObject);
     procedure actfrmMktKpiTotalReportExecute(Sender: TObject);
     procedure actfrmMktMarketCostOrderListExecute(Sender: TObject);
+    procedure actfrmMktActiveListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -516,7 +517,7 @@ uses
   ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList,
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
   ufrmMktKpiResult2,ufrmMktKpiResult3,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
-  ufrmMktMarketCostOrderList;
+  ufrmMktMarketCostOrderList,ufrmMktActiveList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -3106,8 +3107,8 @@ begin
     RzBmpButton6.Bitmaps.Hot := GetBitmap(sflag+'home_hot');
 //    RzBmpButton1.Bitmaps.Up := GetBitmap(sflag+'xsm');
 //    RzBmpButton1.Bitmaps.Hot := GetBitmap(sflag+'xsm_hot');
-    RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'down');
-    RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
+//    RzBmpButton2.Bitmaps.Up := GetBitmap(sflag+'down');
+//    RzBmpButton2.Bitmaps.Hot := GetBitmap(sflag+'down_hot');
     RzBmpButton4.Bitmaps.Up := GetBitmap(sflag+'upload');
     RzBmpButton4.Bitmaps.Hot := GetBitmap(sflag+'upload_hot');
     RzBmpButton5.Bitmaps.Up := GetBitmap(sflag+'help');
@@ -4321,6 +4322,27 @@ begin
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktActiveListExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+//  Application.Restore;
+  frmShopDesk.SaveToFront;
+  with TfrmMktActiveList.Create(self) do
+    begin
+      try
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
+
 end;
 
 end.

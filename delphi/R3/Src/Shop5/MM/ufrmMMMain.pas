@@ -8,7 +8,7 @@ uses
   ZBase, RzTray, StdCtrls, Mask, RzEdit, RzBmpBtn, RzLabel, jpeg, RzPanel,
   ImgList, RzBckgnd, RzForms, ToolWin, Buttons, RzButton, ufrmBasic, ZdbFactory,
   ZDataSet, DB, ZAbstractRODataset, ZAbstractDataset, ufrmMMBrowser,ummFactory,
-  ufrmHintMsg, RzStatus, ufrmInstall,uTimerFactory;
+  ufrmHintMsg, RzStatus, ufrmInstall;
 
 const
   MSC_POPUP=WM_USER+1;                                                                           
@@ -312,7 +312,6 @@ type
     frmRimIEBrowser:TfrmMMBrowser;
     FLogined: boolean;
     FWindowState: TWindowState;
-    TimerFactory:TTimerFactory;
     procedure wm_Login(var Message: TMessage); message MM_LOGIN;
     procedure wm_Sign(var Message: TMessage); message MM_SIGN;
     procedure wm_SessionFail(var Message: TMessage); message MM_SESSION_FAIL;
@@ -369,7 +368,7 @@ var
 
 implementation
 uses
-  ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory, uN26Factory,
+  ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory, uN26Factory,uTimerFactory,
   uDsUtil,uFnUtil,ufrmLogo,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
@@ -392,7 +391,7 @@ function TfrmMMMain.Login: boolean;
 begin
   result := ConnectToSQLite;
   if not result then Exit;
-  if TimerFactory<>nil then FreeAndNil(TimerFactory);
+  if TimerFactory<>nil then TimerFactory.free;
   LoginFactory.Logout;
   try
     with TfrmMMLogin.Create(self) do
@@ -596,7 +595,7 @@ begin
              CanClose := false;
              Exit;
            end;
-        if TimerFactory<>nil then FreeAndNil(TimerFactory);
+        if TimerFactory<>nil then TimerFactory.free;
         HideMMList;
         Visible := false;
         try

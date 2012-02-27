@@ -15,7 +15,7 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
-  TKpiOption=class(TZFactory)
+  TKpiLevel=class(TZFactory)
   private
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -37,6 +37,10 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  TKpiTimes=class(TZFactory)
+  private
+    procedure InitClass; override;
+  end;  
 
 
 implementation
@@ -156,15 +160,15 @@ begin
   inherited;
   KeyFields := 'TENANT_ID;KPI_ID';
   SelectSQL.Text :=
-  'select TENANT_ID,KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME,IDX_TYPE,KPI_TYPE,0 as GOODS_SUM,KPI_DATA,KPI_CALC,KPI_AGIO,KPI_OPTN,REMARK from MKT_KPI_INDEX '+
+  'select TENANT_ID,KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME,IDX_TYPE,KPI_TYPE,0 as GOODS_SUM,REMARK from MKT_KPI_INDEX '+
   'where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') ';
 
   IsSQLUpdate := True;
-  Str := 'insert into MKT_KPI_INDEX(TENANT_ID,KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME,IDX_TYPE,KPI_TYPE,KPI_DATA,KPI_CALC,KPI_AGIO,KPI_OPTN,REMARK,COMM,TIME_STAMP) '+
-         ' VALUES(:TENANT_ID,:KPI_ID,:KPI_NAME,:KPI_SPELL,:UNIT_NAME,:IDX_TYPE,:KPI_TYPE,:KPI_DATA,:KPI_CALC,:KPI_AGIO,:KPI_OPTN,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into MKT_KPI_INDEX(TENANT_ID,KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME,IDX_TYPE,KPI_TYPE,REMARK,COMM,TIME_STAMP) '+
+         ' VALUES(:TENANT_ID,:KPI_ID,:KPI_NAME,:KPI_SPELL,:UNIT_NAME,:IDX_TYPE,:KPI_TYPE,:REMARK,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add( Str);
   Str := 'update MKT_KPI_INDEX set TENANT_ID=:TENANT_ID,KPI_ID=:KPI_ID,KPI_NAME=:KPI_NAME,UNIT_NAME=:UNIT_NAME,IDX_TYPE=:IDX_TYPE,KPI_TYPE=:KPI_TYPE,'+
-         'KPI_DATA=:KPI_DATA,KPI_SPELL=:KPI_SPELL,KPI_CALC=:KPI_CALC,KPI_AGIO=:KPI_AGIO,KPI_OPTN=:KPI_OPTN,REMARK=:REMARK,COMM='+GetCommStr(iDbType)+
+         'KPI_SPELL=:KPI_SPELL,REMARK=:REMARK,COMM='+GetCommStr(iDbType)+
          ',TIME_STAMP='+GetTimeStamp(iDbType)+' where KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID ';
   UpdateSQL.Add( Str);
   Str := 'update MKT_KPI_INDEX set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+' where KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID';
@@ -172,57 +176,83 @@ begin
 
 end;
 
-{ TKpiOption }
+{ TKpiLevel }
 
-function TKpiOption.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+function TKpiLevel.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
 
 end;
 
-function TKpiOption.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+function TKpiLevel.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
 
 end;
 
-function TKpiOption.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+function TKpiLevel.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
 
 end;
 
-function TKpiOption.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+function TKpiLevel.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
 begin
 
 end;
 
-procedure TKpiOption.InitClass;
+procedure TKpiLevel.InitClass;
 var
   Str: string;
 begin
   inherited;
-  KeyFields := 'TENANT_ID;KPI_ID;KPI_LV;SEQNO';
+  KeyFields := 'TENANT_ID;LEVEL_ID';
   SelectSQL.Text :=
-  'select TENANT_ID,KPI_ID,KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,USING_BRRW from MKT_KPI_OPTION '+
-  'where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') order by KPI_LV,SEQNO ';
+  'select TENANT_ID,LEVEL_ID,LEVELD_NAME,KPI_ID,LVL_AMT,LOW_RATE from MKT_KPI_LEVEL '+
+  'where TENANT_ID=:TENANT_ID and LEVEL_ID=:LEVEL_ID and COMM not in (''02'',''12'') order by LEVEL_ID ';
 
   IsSQLUpdate := True;
-  Str := 'insert into MKT_KPI_OPTION(TENANT_ID,KPI_ID,KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,USING_BRRW,COMM,TIME_STAMP) '+
-         ' VALUES(:TENANT_ID,:KPI_ID,:KPI_LV,:SEQNO,:KPI_RATE,:KPI_AMT,:KPI_DATE1,:KPI_DATE2,:KPI_AGIO,:USING_BRRW,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into MKT_KPI_LEVEL(TENANT_ID,LEVEL_ID,LEVELD_NAME,KPI_ID,LVL_AMT,LOW_RATE,COMM,TIME_STAMP) '+
+         ' VALUES(:TENANT_ID,:LEVEL_ID,:LEVELD_NAME,:KPI_ID,:LVL_AMT,:LOW_RATE,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add( Str);
-  Str := 'update MKT_KPI_OPTION set TENANT_ID=:TENANT_ID,KPI_ID=:KPI_ID,KPI_LV=:KPI_LV,SEQNO=:SEQNO,KPI_RATE=:KPI_RATE,KPI_AMT=:KPI_AMT,'+
-         'KPI_DATE1=:KPI_DATE1,KPI_DATE2=:KPI_DATE2,KPI_AGIO=:KPI_AGIO,USING_BRRW=:USING_BRRW,COMM='+GetCommStr(iDbType)+
-         ',TIME_STAMP='+GetTimeStamp(iDbType)+' where KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID and KPI_LV=:OLD_KPI_LV and SEQNO=:OLD_SEQNO ';
+  Str := 'update MKT_KPI_LEVEL set TENANT_ID=:TENANT_ID,LEVEL_ID=:LEVEL_ID,LEVELD_NAME=:LEVELD_NAME,KPI_ID=:KPI_ID,LVL_AMT=:LVL_AMT,LOW_RATE=:LOW_RATE,COMM='+GetCommStr(iDbType)+
+         ',TIME_STAMP='+GetTimeStamp(iDbType)+' where LEVEL_ID=:OLD_LEVEL_ID and TENANT_ID=:OLD_TENANT_ID ';
   UpdateSQL.Add( Str);
-  Str := 'delete from MKT_KPI_OPTION where KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID and KPI_LV=:OLD_KPI_LV and SEQNO=:OLD_SEQNO ';
+  Str := 'delete from MKT_KPI_LEVEL where LEVEL_ID=:OLD_LEVEL_ID and TENANT_ID=:OLD_TENANT_ID ';
+  DeleteSQL.Add( Str);
+end;
+
+{ TKpiTimes }
+
+procedure TKpiTimes.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  KeyFields := 'TENANT_ID;TIMES_ID';
+  SelectSQL.Text :=
+  ' select TENANT_ID,TIMES_ID,KPI_ID,TIMES_NAME,SEQNO,KPI_DATE1,KPI_DATE2,USING_BRRW,KPI_FLAG, '+
+  ' KPI_DATA,KPI_CALC,RATIO_TYPE,COMM,TIME_STAMP from MKT_KPI_TIMES '+
+  ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') order by SEQNO ';
+  IsSQLUpdate := True;
+  Str := ' insert into MKT_KPI_TIMES(TENANT_ID,TIMES_ID,KPI_ID,TIMES_NAME,SEQNO,KPI_DATE1,KPI_DATE2,USING_BRRW,KPI_FLAG, '+
+  ' KPI_DATA,KPI_CALC,RATIO_TYPE,COMM,TIME_STAMP) VALUES(:TENANT_ID,:TIMES_ID,:KPI_ID,:TIMES_NAME,:SEQNO,:KPI_DATE1,'+
+  ' :KPI_DATE2,:USING_BRRW,:KPI_FLAG,:KPI_DATA,:KPI_CALC,:RATIO_TYPE,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Add( Str);
+  Str := ' update MKT_KPI_TIMES set TENANT_ID=:TENANT_ID,TIMES_ID=:TIMES_ID,KPI_ID=:KPI_ID,TIMES_NAME=:TIMES_NAME,SEQNO=:SEQNO,'+
+  'KPI_DATE1=:KPI_DATE1,KPI_DATE2=:KPI_DATE2,USING_BRRW=:USING_BRRW,KPI_FLAG=:KPI_FLAG,KPI_DATA=:KPI_DATA,KPI_CALC=:KPI_CALC,'+
+  'RATIO_TYPE=:RATIO_TYPE,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+' where TIMES_ID=:OLD_TIMES_ID and TENANT_ID=:OLD_TENANT_ID ';
+  UpdateSQL.Add( Str);
+  Str := ' delete from MKT_KPI_TIMES where TIMES_ID=:OLD_TIMES_ID and TENANT_ID=:OLD_TENANT_ID ';
   DeleteSQL.Add( Str);
 end;
 
 initialization
   RegisterClass(TKpiIndex);
-  RegisterClass(TKpiOption);
+  RegisterClass(TKpiLevel);
   RegisterClass(TKpiGoods);
+  RegisterClass(TKpiTimes);
 finalization
   UnRegisterClass(TKpiIndex);
-  UnRegisterClass(TKpiOption);
+  UnRegisterClass(TKpiLevel);
   UnRegisterClass(TKpiGoods);
+  UnRegisterClass(TKpiTimes);
 
 end.

@@ -2513,7 +2513,7 @@ begin
   if not CaFactory.Audited then Raise Exception.Create('脱网登录不能使用此模块。');
   if not CA_MODULE.Active then CheckEnabled;
   if not CA_MODULE.Locate('MODU_ID',PMMToolBox(Sender)^.mid,[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
-  if ShopGlobal.GetChkRight(PMMToolBox(Sender)^.mid) then Raise Exception.Create('您没有操作此模块的权限.'); 
+  if not ShopGlobal.GetChkRight(PMMToolBox(Sender)^.mid) then Raise Exception.Create('您没有操作此模块的权限.'); 
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
   delete(s,1,4);
   delete(s,length(s),1);
@@ -2585,7 +2585,7 @@ begin
   if not CaFactory.Audited then Raise Exception.Create('脱网登录不能使用此模块。');
   if not CA_MODULE.Active then CheckEnabled;
   if not CA_MODULE.Locate('MODU_ID',PMMToolBox(Sender)^.mid,[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
-  if ShopGlobal.GetChkRight(PMMToolBox(Sender)^.mid) then Raise Exception.Create('您没有操作此模块的权限.'); 
+  if not ShopGlobal.GetChkRight(PMMToolBox(Sender)^.mid) then Raise Exception.Create('您没有操作此模块的权限.'); 
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
   delete(s,1,4);
   delete(s,length(s),1);

@@ -45,7 +45,7 @@ type
     Label29: TLabel;
     Bevel4: TBevel;
     Label30: TLabel;
-    TabSheet5: TRzTabSheet;
+    dbInst: TRzTabSheet;
     RzBitBtn2: TRzBitBtn;
     Panel4: TPanel;
     Image3: TImage;
@@ -64,6 +64,24 @@ type
     Region: TZQuery;
     dbcRegion: TcxComboBox;
     chkPartition: TcxCheckBox;
+    cxButtonEdit2: TcxButtonEdit;
+    Label36: TLabel;
+    Label37: TLabel;
+    cxButtonEdit3: TcxButtonEdit;
+    Label38: TLabel;
+    cxButtonEdit4: TcxButtonEdit;
+    dev1: TcxComboBox;
+    dev2: TcxComboBox;
+    dev3: TcxComboBox;
+    dev4: TcxComboBox;
+    Label39: TLabel;
+    Label40: TLabel;
+    Label41: TLabel;
+    Label42: TLabel;
+    size1: TcxSpinEdit;
+    size2: TcxSpinEdit;
+    size3: TcxSpinEdit;
+    size4: TcxSpinEdit;
     procedure RzCheckBox1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RzBitBtn1Click(Sender: TObject);
@@ -71,6 +89,8 @@ type
     procedure btnInstallClick(Sender: TObject);
     procedure RzBitBtn2Click(Sender: TObject);
     procedure RzBitBtn3Click(Sender: TObject);
+    procedure RzPageChanging(Sender: TObject; NewIndex: Integer;
+      var AllowChange: Boolean);
   private
     { Private declarations }
     Aborted:boolean;
@@ -81,13 +101,17 @@ type
     function GetConnStr: string;
     procedure TestConnect;
     function GetIniParams(Section, Key: String): String;
+    procedure SetIniParams(Section, Key, Value: String);
+    function GetdbParams(Section, Key: String): String;
+    procedure SetdbParams(Section, Key, Value: String);
     procedure LoadParams;
     procedure SaveParams;
     function GetPartitionSQL:string;
-    procedure SetIniParams(Section, Key, Value: String);
+    function EncodeTBSPath(flag:integer):string;
   public
     { Public declarations }
     url,path,dbid:string;
+    procedure dbInstParams;
     procedure dbUpgrade(id:string);
     function DownFile(FileName:string):boolean;
   end;
@@ -250,8 +274,6 @@ procedure TfrmUpgrade.LoadParams;
 var Pro:String;
   DBID:integer;
 begin
-  cxButtonEdit1.Text := GetIniParams('db','dataPath');
-  chkPartition.Checked := (GetIniParams('db','partition')='1');
   DBID := StrtoIntDef(GetIniParams('db','dbid'),10000001);
   edtDBID.Value := DBID;
   Pro := GetIniParams('db'+IntToStr(DBID),'provider');
@@ -531,8 +553,15 @@ begin
     Region.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and CODE_ID like ''%0000'' order by CODE_ID';
     Factor.Open(Region);
     TdsItems.AddDataSetToItems(Region,dbcRegion.Properties.Items,'CODE_NAME');
-    dbcRegion.Properties.Items.Insert(0,'全国');
-    dbcRegion.ItemIndex := 0;
+//    dbcRegion.Properties.Items.Insert(0,'全国');
+    if dbcRegion.Properties.Items.Count>0 then
+       dbcRegion.ItemIndex := 0;
+    try
+      dbInstParams;
+    except
+      RzPage.ActivePageIndex := 2;
+      Raise;
+    end;
   finally
     btnInstall.Enabled := true;
   end;
@@ -612,32 +641,45 @@ begin
          Raise;//if MessageBox(Handle,Pchar('升级数据库<r3.db>出错了，是否继续执行?'+#13+'错误原因:'+E.Message),'友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     end;
     try
-       if trim(cxButtonEdit1.Text)='' then Raise Exception.Create('默认路径不能为空'); 
        Global.MoveToRemate;
        Factor.DisConnect;
-       if id='' then id := F.ReadString('db','dbid',''); 
+       if id='' then id := F.ReadString('db','dbid','');
        Factor.Initialize(DecStr(F.ReadString('db'+id,'connstr',''),ENC_KEY));
        Factor.Connect;
        if dbFactory.CheckVersion('9.9.9.9') then
           begin
             dbFactory.Load(ExtractFilePath(ParamStr(0))+'dbFile.dat');
-            dbFactory.TBSPPATH := trim(cxButtonEdit1.Text);
+            dbFactory.TBSPPATH1 := EncodeTBSPath(1);
+            dbFactory.TBSPPATH2 := EncodeTBSPath(2);
+            dbFactory.TBSPPATH3 := EncodeTBSPath(3);
+            dbFactory.TBSPPATH4 := EncodeTBSPath(4);
             dbFactory.PARTITION := GetPartitionSQL;
-            if pos('\',dbFactory.TBSPPATH)>0 then
-               begin
-                 if dbFactory.TBSPPATH[length(dbFactory.TBSPPATH)]<>'\' then dbFactory.TBSPPATH := dbFactory.TBSPPATH+'\';
-               end
-            else
-               begin
-                 if dbFactory.TBSPPATH[length(dbFactory.TBSPPATH)]<>'/' then dbFactory.TBSPPATH := dbFactory.TBSPPATH+'/';
-               end;
             dbFactory.dbInit;
-            SetIniParams('db','dataPath',dbFactory.TBSPPATH);
-            if chkPartition.Checked then
-               SetIniParams('db','partition','1')
-            else
-               SetIniParams('db','partition','0');
             dbFactory.Run;
+            if chkPartition.Enabled then
+               begin
+                  SetdbParams('db','dev1Type',inttostr(dev1.ItemIndex));
+                  SetdbParams('db','dev2Type',inttostr(dev2.ItemIndex));
+                  SetdbParams('db','dev3Type',inttostr(dev3.ItemIndex));
+                  SetdbParams('db','dev4Type',inttostr(dev4.ItemIndex));
+
+                  SetdbParams('db','dataPath1',trim(cxButtonEdit1.Text));
+                  SetdbParams('db','dataPath2',trim(cxButtonEdit2.Text));
+                  SetdbParams('db','dataPath3',trim(cxButtonEdit3.Text));
+                  SetdbParams('db','dataPath4',trim(cxButtonEdit4.Text));
+
+                  SetdbParams('db','DataSize1',trim(size1.Text));
+                  SetdbParams('db','DataSize2',trim(size2.Text));
+                  SetdbParams('db','DataSize3',trim(size3.Text));
+                  SetdbParams('db','DataSize4',trim(size4.Text));
+
+                  if dbcRegion.ItemIndex > 0 then
+                     SetdbParams('db','Region',TRecord_(dbcRegion.Properties.Items.Objects[dbcRegion.ItemIndex]).FieldbyName('CODE_ID').AsString);
+                  if chkPartition.Checked then
+                     SetdbParams('db','partition','1')
+                  else
+                     SetdbParams('db','partition','0');
+               end;
           end;
      except
        on E:Exception do
@@ -727,9 +769,16 @@ begin
   Region.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and CODE_ID like ''%0000'' order by CODE_ID';
   Factor.Open(Region);
   TdsItems.AddDataSetToItems(Region,dbcRegion.Properties.Items,'CODE_NAME');
-  dbcRegion.Properties.Items.Insert(0,'全国');
-  dbcRegion.ItemIndex := 0;
+  //dbcRegion.Properties.Items.Insert(0,'全国');
+  if dbcRegion.Properties.Items.Count>0 then
+     dbcRegion.ItemIndex := 0;
   RzPage.ActivePageIndex := RzPage.ActivePageIndex + 1;
+  try
+    dbInstParams;
+  except
+    RzPage.ActivePageIndex := 3;
+    Raise;
+  end;
 end;
 
 procedure TfrmUpgrade.RzBitBtn3Click(Sender: TObject);
@@ -742,7 +791,7 @@ begin
   begin
      if not StartService('RSPScktSrvr') then ShellExecute(0,'open',pchar(ExtractFilePath(ParamStr(0))+'RSPScktSrvr.exe'),nil,nil,0);
   end;
-
+  Close;
 end;
 
 function TfrmUpgrade.GetPartitionSQL: string;
@@ -750,6 +799,7 @@ var rs:TZQuery;
 begin
   result := '';
   if not chkPartition.Checked then Exit;
+  if dbcREGION.ItemIndex < 0 then Exit;
   rs := TZQuery.Create(nil);
   try
     if dbcRegion.ItemIndex=0 then
@@ -781,6 +831,151 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TfrmUpgrade.GetdbParams(Section, Key: String): String;
+var
+  rs:TZQuery;
+begin
+try
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where TENANT_ID=0 and DEFINE='''+Key+'''';
+    Global.RemoteFactory.Open(rs);
+    result := rs.Fields[0].AsString;
+  finally
+    rs.Free;
+  end;
+except
+  result := '';
+end;
+end;
+
+procedure TfrmUpgrade.SetdbParams(Section, Key, Value: String);
+var n:integer;
+begin
+  n := Global.RemoteFactory.ExecSQL('update SYS_DEFINE set VALUE='''+Value+''' where TENANT_ID=0 and DEFINE='''+Key+'''');
+  if n=0 then  Global.RemoteFactory.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values(0,'''+Key+''','''+Value+''',0,''00'',5497000)');
+end;
+
+procedure TfrmUpgrade.dbInstParams;
+var
+  F:TIniFile;
+  id:string;
+  s:string;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+     Global.MoveToRemate;
+     Factor.DisConnect;
+     id := F.ReadString('db','dbid','');
+     Factor.Initialize(DecStr(F.ReadString('db'+id,'connstr',''),ENC_KEY));
+     Factor.Connect;
+     
+     dev1.ItemIndex := StrtoIntDef(GetDbParams('db','dev1Type'),0);
+     dev2.ItemIndex := StrtoIntDef(GetDbParams('db','dev2Type'),0);
+     dev3.ItemIndex := StrtoIntDef(GetDbParams('db','dev3Type'),0);
+     dev4.ItemIndex := StrtoIntDef(GetDbParams('db','dev4Type'),0);
+
+     cxButtonEdit1.Text := GetDbParams('db','dataPath1');
+     cxButtonEdit2.Text := GetDbParams('db','dataPath2');
+     cxButtonEdit3.Text := GetDbParams('db','dataPath3');
+     cxButtonEdit4.Text := GetDbParams('db','dataPath4');
+     chkPartition.Checked := (GetDbParams('db','partition')='1');
+
+     size1.value := StrtoIntDef(GetDbParams('db','DataSize1'),2000);
+     size2.value := StrtoIntDef(GetDbParams('db','DataSize2'),2000);
+     size3.value := StrtoIntDef(GetDbParams('db','DataSize3'),2000);
+     size4.value := StrtoIntDef(GetDbParams('db','DataSize4'),2000);
+
+     chkPartition.Enabled := (GetDbParams('db','partition')='');
+     dbcRegion.Enabled := chkPartition.Enabled;
+     cxButtonEdit1.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     cxButtonEdit2.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     cxButtonEdit3.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     cxButtonEdit4.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     dev1.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     dev2.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     dev3.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     dev4.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     size1.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     size2.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     size3.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     size4.Enabled := (Global.RemoteFactory.iDbType in [1,4]) and chkPartition.Enabled;
+     dbcRegion.ItemIndex := TdsItems.FindItems(dbcRegion.Properties.Items,'CODE_ID',GetDbParams('db','Region'));
+     if dbcRegion.ItemIndex < 0 then dbcRegion.ItemIndex := 0;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmUpgrade.RzPageChanging(Sender: TObject; NewIndex: Integer;
+  var AllowChange: Boolean);
+begin
+  inherited;
+  dbInstParams;
+end;
+
+function TfrmUpgrade.EncodeTBSPath(flag: integer): string;
+begin
+case Factor.iDbType of
+4:begin
+  case flag of
+  1:begin
+      case dev1.ItemIndex of
+      0:result :='FILE '''+cxButtonEdit1.Text+''' '+inttostr(size1.Value*1024 div 4);
+      1:result :='DEVICE '''+cxButtonEdit1.Text+''' '+inttostr(size1.Value*1024 div 4);
+      end;
+    end;
+  2:begin
+      case dev2.ItemIndex of
+      0:result :='FILE '''+cxButtonEdit2.Text+''' '+inttostr(size2.Value*1024 div 32);
+      1:result :='DEVICE '''+cxButtonEdit2.Text+''' '+inttostr(size2.Value*1024 div 32);
+      end;
+    end;
+  3:begin
+      case dev3.ItemIndex of
+      0:result :='FILE '''+cxButtonEdit3.Text+''' '+inttostr(size3.Value*1024 div 32);
+      1:result :='DEVICE '''+cxButtonEdit3.Text+''' '+inttostr(size3.Value*1024 div 32);
+      end;
+    end;
+  4:begin
+      case dev4.ItemIndex of
+      0:result :='FILE '''+cxButtonEdit4.Text+''' '+inttostr(size4.Value*1024 div 32);
+      1:result :='DEVICE '''+cxButtonEdit4.Text+''' '+inttostr(size4.Value*1024 div 32);
+      end;
+    end;
+  end;
+  end;
+1:begin
+  case flag of
+  1:begin
+      case dev1.ItemIndex of
+      0:result :='DATAFILE '''+cxButtonEdit1.Text+''' SIZE '+inttostr(size1.Value*1024)+'K';
+      1:result :='DATAFILE '''+cxButtonEdit1.Text+''' SIZE '+inttostr(size1.Value*1024)+'K';
+      end;
+    end;
+  2:begin
+      case dev2.ItemIndex of
+      0:result :='DATAFILE '''+cxButtonEdit2.Text+''' SIZE '+inttostr(size2.Value*1024)+'K';
+      1:result :='DATAFILE '''+cxButtonEdit2.Text+''' SIZE '+inttostr(size2.Value*1024)+'K';
+      end;
+    end;
+  3:begin
+      case dev3.ItemIndex of
+      0:result :='DATAFILE '''+cxButtonEdit3.Text+''' SIZE '+inttostr(size3.Value*1024)+'K';
+      1:result :='DATAFILE '''+cxButtonEdit3.Text+''' SIZE '+inttostr(size3.Value*1024)+'K';
+      end;
+    end;
+  4:begin
+      case dev4.ItemIndex of
+      0:result :='DATAFILE '''+cxButtonEdit4.Text+''' SIZE '+inttostr(size4.Value*1024)+'K';
+      1:result :='DATAFILE '''+cxButtonEdit4.Text+''' SIZE '+inttostr(size4.Value*1024)+'K';
+      end;
+    end;
+  end;
+  end;
+end;
 end;
 
 end.

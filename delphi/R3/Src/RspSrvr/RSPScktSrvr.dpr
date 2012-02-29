@@ -29,7 +29,7 @@ uses
   ObjPRICEGRADEInfo in '..\Shop5\Obj\ObjPriceGradeInfo.pas',
   ObjPriceOrder in '..\Shop5\Obj\ObjPriceOrder.pas',
   ObjPrintOrder in '..\Shop5\Obj\ObjPrintOrder.pas',
-  ObjRecvOrder in '..\Shop5\Obj\ObjRecvOrder.pas',
+  ObjBondOrder in '..\Shop5\Obj\ObjBondOrder.pas',
   ObjRoleInfo in '..\Shop5\Obj\ObjRoleInfo.pas',
   ObjRoleRights in '..\Shop5\Obj\ObjRoleRights.pas',
   ObjSalesOrder in '..\Shop5\Obj\ObjSalesOrder.pas',
@@ -64,7 +64,13 @@ uses
   objGoodsMonth in '..\Shop5\Obj\objGoodsMonth.pas',
   objPlugInSyncData in '..\PlugIn\obj\objPlugInSyncData.pas',
   objCaFactory in 'obj\objCaFactory.pas',
-  ObjChatInfo in '..\Shop5\Obj\ObjChatInfo.pas';
+  ObjChatInfo in '..\Shop5\Obj\ObjChatInfo.pas',
+  ObjKpiIndex in '..\Shop5\Obj\ObjKpiIndex.pas',
+  ObjMktKpiResult in '..\Shop5\Obj\ObjMktKpiResult.pas',
+  ObjMktPlanOrder in '..\Shop5\Obj\ObjMktPlanOrder.pas',
+  ObjMktRequOrder in '..\Shop5\Obj\ObjMktRequOrder.pas',
+  ObjMktTaskOrder in '..\Shop5\Obj\ObjMktTaskOrder.pas',
+  ObjRecvOrder in '..\Shop5\Obj\ObjRecvOrder.pas';
 
 {$R *.res}
 //{$R JclCommCtrlAdmin.RES}

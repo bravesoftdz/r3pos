@@ -1,24 +1,17 @@
 inherited frmUpgrade: TfrmUpgrade
-  Top = 200
   ActiveControl = nil
   Caption = #23433#35013#21319#32423#21521#23548
-  ClientHeight = 327
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPage: TRzPageControl
-    Height = 327
+    OnChanging = RzPageChanging
     FixedDimension = 18
-    inherited TabSheet1: TRzTabSheet
-      inherited Panel2: TPanel
-        Height = 305
-      end
-    end
     object TabSheet3: TRzTabSheet
       Caption = #23433#35013#21319#32423
       DesignSize = (
         472
-        305)
+        304)
       object stp1: TRzLabel
         Left = 53
         Top = 68
@@ -525,7 +518,7 @@ inherited frmUpgrade: TfrmUpgrade
       Caption = #36830#25509#21442#25968
       DesignSize = (
         472
-        305)
+        304)
       object rzGroupBox: TRzGroupBox
         Left = 37
         Top = 64
@@ -955,30 +948,30 @@ inherited frmUpgrade: TfrmUpgrade
         Spacing = 5
       end
     end
-    object TabSheet5: TRzTabSheet
+    object dbInst: TRzTabSheet
       Caption = #25968#25454#24211#23433#35013
       DesignSize = (
         472
-        305)
+        304)
       object Label33: TLabel
         Left = 45
-        Top = 160
+        Top = 188
         Width = 356
         Height = 12
         AutoSize = False
         Caption = #19979#36733#23433#35013#21253#35831#31245#20505'...'
       end
       object Label34: TLabel
-        Left = 48
-        Top = 74
-        Width = 60
+        Left = 36
+        Top = 62
+        Width = 72
         Height = 12
         Alignment = taRightJustify
-        Caption = #40664#35748#36335#24452#65306
+        Caption = #22522#30784#34920#31354#38388#65306
       end
       object Label35: TLabel
         Left = 28
-        Top = 97
+        Top = 144
         Width = 80
         Height = 12
         Alignment = taRightJustify
@@ -990,6 +983,62 @@ inherited frmUpgrade: TfrmUpgrade
         Font.Name = #23435#20307
         Font.Style = []
         ParentFont = False
+      end
+      object Label36: TLabel
+        Left = 36
+        Top = 82
+        Width = 72
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #19994#21153#34920#31354#38388#65306
+      end
+      object Label37: TLabel
+        Left = 36
+        Top = 102
+        Width = 72
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #21488#36134#34920#31354#38388#65306
+      end
+      object Label38: TLabel
+        Left = 36
+        Top = 122
+        Width = 72
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32034#24341#34920#31354#38388#65306
+      end
+      object Label39: TLabel
+        Left = 397
+        Top = 62
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        Caption = 'M'
+      end
+      object Label40: TLabel
+        Left = 397
+        Top = 82
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        Caption = 'M'
+      end
+      object Label41: TLabel
+        Left = 397
+        Top = 102
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        Caption = 'M'
+      end
+      object Label42: TLabel
+        Left = 397
+        Top = 122
+        Width = 6
+        Height = 12
+        Alignment = taRightJustify
+        Caption = 'M'
       end
       object Panel4: TPanel
         Left = 0
@@ -1244,7 +1293,7 @@ inherited frmUpgrade: TfrmUpgrade
       end
       object RzCheckBox1: TRzCheckBox
         Left = 48
-        Top = 205
+        Top = 229
         Width = 233
         Height = 17
         Caption = #21451#24773#25552#31034#65306#26159#21542#24050#32463#20570#22909#25968#25454#22791#20221#65311
@@ -1260,7 +1309,7 @@ inherited frmUpgrade: TfrmUpgrade
       end
       object RzBitBtn3: TRzBitBtn
         Left = 200
-        Top = 247
+        Top = 263
         Width = 81
         Height = 29
         Anchors = [akTop, akRight]
@@ -1286,16 +1335,16 @@ inherited frmUpgrade: TfrmUpgrade
       end
       object ProgressBar1: TProgressBar
         Left = 48
-        Top = 177
+        Top = 205
         Width = 355
         Height = 17
         BorderWidth = 1
         TabOrder = 3
       end
       object cxButtonEdit1: TcxButtonEdit
-        Left = 108
-        Top = 70
-        Width = 210
+        Left = 160
+        Top = 58
+        Width = 169
         Height = 20
         Properties.Buttons = <
           item
@@ -1305,8 +1354,8 @@ inherited frmUpgrade: TfrmUpgrade
         TabOrder = 4
       end
       object dbcRegion: TcxComboBox
-        Left = 108
-        Top = 93
+        Left = 107
+        Top = 140
         Width = 121
         Height = 20
         Properties.DropDownListStyle = lsFixedList
@@ -1314,18 +1363,138 @@ inherited frmUpgrade: TfrmUpgrade
       end
       object chkPartition: TcxCheckBox
         Left = 41
-        Top = 123
+        Top = 162
         Width = 345
         Height = 21
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #21551#29992#20998#21306#65288#22312#21551#29992#21069#35831#30830#35748#20320#30340#25968#25454#24211#29256#26412#26159#21542#25903#25345#20998#21306#65289
         TabOrder = 6
       end
+      object cxButtonEdit2: TcxButtonEdit
+        Left = 160
+        Top = 78
+        Width = 169
+        Height = 20
+        Properties.Buttons = <
+          item
+            Default = True
+            Kind = bkEllipsis
+          end>
+        TabOrder = 7
+      end
+      object cxButtonEdit3: TcxButtonEdit
+        Left = 160
+        Top = 98
+        Width = 169
+        Height = 20
+        Properties.Buttons = <
+          item
+            Default = True
+            Kind = bkEllipsis
+          end>
+        TabOrder = 8
+      end
+      object cxButtonEdit4: TcxButtonEdit
+        Left = 160
+        Top = 118
+        Width = 169
+        Height = 20
+        Properties.Buttons = <
+          item
+            Default = True
+            Kind = bkEllipsis
+          end>
+        TabOrder = 9
+      end
+      object dev1: TcxComboBox
+        Left = 107
+        Top = 58
+        Width = 54
+        Height = 20
+        Properties.DropDownListStyle = lsFixedList
+        Properties.Items.Strings = (
+          #25991#20214
+          #35774#22791)
+        TabOrder = 10
+      end
+      object dev2: TcxComboBox
+        Left = 107
+        Top = 78
+        Width = 54
+        Height = 20
+        Properties.DropDownListStyle = lsFixedList
+        Properties.Items.Strings = (
+          #25991#20214
+          #35774#22791)
+        TabOrder = 11
+      end
+      object dev3: TcxComboBox
+        Left = 107
+        Top = 98
+        Width = 54
+        Height = 20
+        Properties.DropDownListStyle = lsFixedList
+        Properties.Items.Strings = (
+          #25991#20214
+          #35774#22791)
+        TabOrder = 12
+      end
+      object dev4: TcxComboBox
+        Left = 107
+        Top = 118
+        Width = 54
+        Height = 20
+        Properties.DropDownListStyle = lsFixedList
+        Properties.Items.Strings = (
+          #25991#20214
+          #35774#22791)
+        TabOrder = 13
+      end
+      object size1: TcxSpinEdit
+        Left = 328
+        Top = 58
+        Width = 66
+        Height = 20
+        Properties.MaxValue = 999999999.000000000000000000
+        Properties.MinValue = 2000.000000000000000000
+        TabOrder = 14
+        Value = 2000
+      end
+      object size2: TcxSpinEdit
+        Left = 328
+        Top = 78
+        Width = 66
+        Height = 20
+        Properties.MaxValue = 999999999.000000000000000000
+        Properties.MinValue = 2000.000000000000000000
+        TabOrder = 15
+        Value = 2000
+      end
+      object size3: TcxSpinEdit
+        Left = 328
+        Top = 98
+        Width = 66
+        Height = 20
+        Properties.MaxValue = 999999999.000000000000000000
+        Properties.MinValue = 2000.000000000000000000
+        TabOrder = 16
+        Value = 2000
+      end
+      object size4: TcxSpinEdit
+        Left = 328
+        Top = 118
+        Width = 66
+        Height = 20
+        Properties.MaxValue = 999999999.000000000000000000
+        Properties.MinValue = 2000.000000000000000000
+        TabOrder = 17
+        Value = 2000
+      end
     end
   end
   inherited actList: TActionList
-    Left = 400
-    Top = 64
+    Left = 336
+    Top = 32
   end
   object RzVersionInfo: TRzVersionInfo
     Left = 257
@@ -1335,7 +1504,7 @@ inherited frmUpgrade: TfrmUpgrade
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 401
-    Top = 96
+    Left = 305
+    Top = 32
   end
 end

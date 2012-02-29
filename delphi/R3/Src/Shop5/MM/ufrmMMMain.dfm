@@ -1,11 +1,11 @@
 inherited frmMMMain: TfrmMMMain
-  Left = 203
-  Top = 122
+  Left = -8
+  Top = -8
   VertScrollBar.Range = 0
   BorderStyle = bsNone
   Caption = 'MM2011'
-  ClientHeight = 557
-  ClientWidth = 824
+  ClientHeight = 738
+  ClientWidth = 1280
   Color = clFuchsia
   TransparentColor = True
   TransparentColorValue = clFuchsia
@@ -16,15 +16,15 @@ inherited frmMMMain: TfrmMMMain
   PixelsPerInch = 96
   TextHeight = 12
   inherited stbBottom: TStatusBar
-    Top = 524
-    Width = 824
+    Top = 705
+    Width = 1280
     Height = 0
   end
   object RzPanel2: TRzPanel [1]
     Left = 71
     Top = 71
     Width = 0
-    Height = 453
+    Height = 634
     Align = alLeft
     BorderOuter = fsFlat
     BorderSides = [sdRight]
@@ -476,8 +476,8 @@ inherited frmMMMain: TfrmMMMain
   end
   object bkg_bb: TRzPanel [2]
     Left = 0
-    Top = 524
-    Width = 824
+    Top = 705
+    Width = 1280
     Height = 33
     Align = alBottom
     BorderOuter = fsNone
@@ -502,7 +502,7 @@ inherited frmMMMain: TfrmMMMain
       end
     end
     object RzPanel11: TRzPanel
-      Left = 816
+      Left = 1272
       Top = 0
       Width = 8
       Height = 33
@@ -521,7 +521,7 @@ inherited frmMMMain: TfrmMMMain
     object bkg_bottom: TRzPanel
       Left = 8
       Top = 0
-      Width = 808
+      Width = 1264
       Height = 33
       Align = alClient
       BorderOuter = fsFlat
@@ -530,12 +530,12 @@ inherited frmMMMain: TfrmMMMain
       FlatColor = 6842472
       TabOrder = 2
       DesignSize = (
-        808
+        1264
         33)
       object RzSeparator3: TRzSeparator
         Left = 0
         Top = 31
-        Width = 808
+        Width = 1264
         Height = 1
         ShowGradient = True
         Align = alBottom
@@ -543,7 +543,7 @@ inherited frmMMMain: TfrmMMMain
         ParentColor = False
       end
       object bkg_f2: TRzBackground
-        Left = -1
+        Left = 455
         Top = 0
         Width = 809
         Height = 31
@@ -560,7 +560,7 @@ inherited frmMMMain: TfrmMMMain
       object copyRight: TRzLabel
         Left = 8
         Top = 10
-        Width = 617
+        Width = 1073
         Height = 21
         Alignment = taCenter
         Anchors = [akLeft, akTop, akRight, akBottom]
@@ -570,7 +570,7 @@ inherited frmMMMain: TfrmMMMain
         BorderSides = [sdLeft, sdRight, sdBottom]
       end
       object r3offline: TRzLabel
-        Left = 746
+        Left = 1202
         Top = 10
         Width = 48
         Height = 12
@@ -587,7 +587,7 @@ inherited frmMMMain: TfrmMMMain
         Transparent = True
       end
       object UsersStatus: TRzBmpButton
-        Left = 730
+        Left = 1186
         Top = 11
         Width = 11
         Height = 11
@@ -604,7 +604,7 @@ inherited frmMMMain: TfrmMMMain
   object bgk_tt: TRzPanel [3]
     Left = 0
     Top = 0
-    Width = 824
+    Width = 1280
     Height = 71
     Align = alTop
     BorderOuter = fsNone
@@ -612,7 +612,7 @@ inherited frmMMMain: TfrmMMMain
     TabOrder = 3
     Transparent = True
     DesignSize = (
-      824
+      1280
       71)
     object bkg_01: TImage
       Left = 0
@@ -623,7 +623,7 @@ inherited frmMMMain: TfrmMMMain
       AutoSize = True
     end
     object bkg_02: TImage
-      Left = 816
+      Left = 1272
       Top = 0
       Width = 8
       Height = 71
@@ -633,7 +633,7 @@ inherited frmMMMain: TfrmMMMain
     object bkg_top: TRzPanel
       Left = 8
       Top = 0
-      Width = 808
+      Width = 1264
       Height = 71
       Align = alClient
       BorderOuter = fsFlat
@@ -642,7 +642,7 @@ inherited frmMMMain: TfrmMMMain
       FlatColor = 6842472
       TabOrder = 0
       DesignSize = (
-        808
+        1264
         71)
       object logo: TImage
         Left = 0
@@ -667,7 +667,7 @@ inherited frmMMMain: TfrmMMMain
       object RzFormShape1: TRzFormShape
         Left = 0
         Top = 2
-        Width = 808
+        Width = 1264
         Height = 69
         OnDblClick = RzFormShape1DblClick
       end
@@ -689,7 +689,7 @@ inherited frmMMMain: TfrmMMMain
       object RzSeparator2: TRzSeparator
         Left = 0
         Top = 1
-        Width = 808
+        Width = 1264
         Height = 1
         ShowGradient = True
         Align = alTop
@@ -699,7 +699,7 @@ inherited frmMMMain: TfrmMMMain
       object pageLine: TRzSeparator
         Left = 264
         Top = 70
-        Width = 177
+        Width = 633
         Height = 1
         HighlightColor = 12352305
         ShowGradient = True
@@ -708,7 +708,7 @@ inherited frmMMMain: TfrmMMMain
         ParentColor = False
       end
       object Image5: TImage
-        Left = 508
+        Left = 964
         Top = 48
         Width = 15
         Height = 15
@@ -719,7 +719,7 @@ inherited frmMMMain: TfrmMMMain
         OnClick = lbM1Click
       end
       object lbM1: TLabel
-        Left = 523
+        Left = 979
         Top = 48
         Width = 30
         Height = 12
@@ -773,7 +773,7 @@ inherited frmMMMain: TfrmMMMain
         OnClick = toolCloseClick
       end
       object RzBmpButton1: TRzBmpButton
-        Left = 720
+        Left = 1176
         Top = 42
         Width = 79
         Height = 24
@@ -791,7 +791,7 @@ inherited frmMMMain: TfrmMMMain
         OnClick = RzBmpButton1Click
       end
       object RzBmpButton3: TRzBmpButton
-        Left = 639
+        Left = 1095
         Top = 42
         Width = 81
         Height = 24
@@ -809,7 +809,7 @@ inherited frmMMMain: TfrmMMMain
         OnClick = RzBmpButton3Click
       end
       object RzBmpButton4: TRzBmpButton
-        Left = 558
+        Left = 1014
         Top = 42
         Width = 81
         Height = 24
@@ -847,7 +847,7 @@ inherited frmMMMain: TfrmMMMain
       end
     end
     object sysHelp: TRzBmpButton
-      Left = 706
+      Left = 1162
       Top = 0
       Width = 28
       Height = 23
@@ -858,7 +858,7 @@ inherited frmMMMain: TfrmMMMain
       OnClick = sysHelpClick
     end
     object sysMinimized: TRzBmpButton
-      Left = 735
+      Left = 1191
       Top = 0
       Width = 28
       Height = 23
@@ -869,7 +869,7 @@ inherited frmMMMain: TfrmMMMain
       OnClick = sysMinimizedClick
     end
     object sysMaximized: TRzBmpButton
-      Left = 764
+      Left = 1220
       Top = 0
       Width = 28
       Height = 23
@@ -880,7 +880,7 @@ inherited frmMMMain: TfrmMMMain
       OnClick = sysMaximizedClick
     end
     object sysClose: TRzBmpButton
-      Left = 795
+      Left = 1251
       Top = 0
       Width = 41
       Height = 23
@@ -895,7 +895,7 @@ inherited frmMMMain: TfrmMMMain
     Left = 2
     Top = 71
     Width = 69
-    Height = 453
+    Height = 634
     Align = alLeft
     BorderOuter = fsFlat
     BorderSides = [sdRight]
@@ -907,7 +907,7 @@ inherited frmMMMain: TfrmMMMain
       Left = 0
       Top = 0
       Width = 68
-      Height = 453
+      Height = 634
       Align = alClient
       BorderOuter = fsFlat
       BorderSides = []
@@ -916,7 +916,7 @@ inherited frmMMMain: TfrmMMMain
       TabOrder = 0
       DesignSize = (
         68
-        453)
+        634)
       object rzPage1: TRzBmpButton
         Left = 1
         Top = 0
@@ -2002,10 +2002,10 @@ inherited frmMMMain: TfrmMMMain
     Visible = False
   end
   object RzPanel7: TRzPanel [6]
-    Left = 822
+    Left = 1278
     Top = 71
     Width = 2
-    Height = 453
+    Height = 634
     Align = alRight
     BorderOuter = fsFlat
     BorderSides = [sdRight]
@@ -2016,7 +2016,7 @@ inherited frmMMMain: TfrmMMMain
       Left = 0
       Top = 0
       Width = 1
-      Height = 453
+      Height = 634
       Align = alRight
       BorderOuter = fsFlat
       BorderSides = [sdRight]
@@ -2958,7 +2958,7 @@ inherited frmMMMain: TfrmMMMain
     Left = 0
     Top = 71
     Width = 2
-    Height = 453
+    Height = 634
     Align = alLeft
     BorderOuter = fsFlat
     BorderSides = [sdLeft]
@@ -2970,7 +2970,7 @@ inherited frmMMMain: TfrmMMMain
       Left = 1
       Top = 0
       Width = 1
-      Height = 453
+      Height = 634
       Align = alLeft
       BorderOuter = fsFlat
       BorderSides = [sdLeft]

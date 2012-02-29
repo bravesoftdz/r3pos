@@ -154,6 +154,7 @@ begin
   try
     try
       idHTTP.OnWork := IdHTTPWork;
+      idHTTP.HandleRedirects := true;
       //if FTFile.Size>0 then
       //   begin
       //      IdHTTP.Request.ContentRangeStart := FTFile.Size-1;

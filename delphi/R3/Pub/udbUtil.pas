@@ -14,6 +14,10 @@ TCreateDbFactory=class
     FHasError: Boolean;
     FTBSPPATH: string;
     FPARTITION: string;
+    FTBSPPATH1: string;
+    FTBSPPATH3: string;
+    FTBSPPATH2: string;
+    FTBSPPATH4: string;
     function GetWindowTmp: string;
     procedure SetCaptureError(const Value: Boolean);
     procedure SetonCreateDbCallBack(const Value: TCreateDbCallBack);
@@ -22,6 +26,10 @@ TCreateDbFactory=class
     procedure SetTBSPPATH(const Value: string);
     procedure SetPARTITION(const Value: string);
     function EncodeSQL(SQL:string):string;
+    procedure SetTBSPPATH1(const Value: string);
+    procedure SetTBSPPATH2(const Value: string);
+    procedure SetTBSPPATH3(const Value: string);
+    procedure SetTBSPPATH4(const Value: string);
   public
     constructor Create;
     destructor  Destroy;override;
@@ -39,6 +47,10 @@ TCreateDbFactory=class
     property HasError:Boolean read FHasError write SetHasError;
     property iDbType:integer read GetiDbType;
     property TBSPPATH:string read FTBSPPATH write SetTBSPPATH;
+    property TBSPPATH1:string read FTBSPPATH1 write SetTBSPPATH1;
+    property TBSPPATH2:string read FTBSPPATH2 write SetTBSPPATH2;
+    property TBSPPATH3:string read FTBSPPATH3 write SetTBSPPATH3;
+    property TBSPPATH4:string read FTBSPPATH4 write SetTBSPPATH4;
     property PARTITION:string read FPARTITION write SetPARTITION;
   end;
 function CheckDbVersion(DBVersion:string):boolean;
@@ -168,7 +180,12 @@ var
   srDbType:integer;
   dbInit:string;
 begin
-  if not ((CurVersion='') or (CurVersion='1.0.0.0')) then Exit;
+  if CompareVersion(CurVersion,'1.0.2.4') then Exit;
+  if not (Factor.iDbType in [1,4]) then Exit;
+  if TBSPPATH1='' then Raise Exception.Create('请正确设置基础表空间的存储路径');
+  if TBSPPATH2='' then Raise Exception.Create('请正确设置业务表空间的存储路径');
+  if TBSPPATH3='' then Raise Exception.Create('请正确设置台账表空间的存储路径');
+  if TBSPPATH4='' then Raise Exception.Create('请正确设置索引表空间的存储路径');
   HasError := false;
   tmpPath := GetWindowTmp;
   SQL := TStringList.Create;
@@ -278,6 +295,10 @@ function TCreateDbFactory.EncodeSQL(SQL: string): string;
 begin
   result := SQL;
   result := StringReplace(result,'%TBSPPATH%',TBSPPATH,[rfReplaceAll]);
+  result := StringReplace(result,'%TBSPPATH1%',TBSPPATH1,[rfReplaceAll]);
+  result := StringReplace(result,'%TBSPPATH2%',TBSPPATH2,[rfReplaceAll]);
+  result := StringReplace(result,'%TBSPPATH3%',TBSPPATH3,[rfReplaceAll]);
+  result := StringReplace(result,'%TBSPPATH4%',TBSPPATH4,[rfReplaceAll]);
   result := StringReplace(result,'%PARTITION%',PARTITION,[rfReplaceAll]);
 end;
 
@@ -455,6 +476,26 @@ end;
 procedure TCreateDbFactory.SetTBSPPATH(const Value: string);
 begin
   FTBSPPATH := Value;
+end;
+
+procedure TCreateDbFactory.SetTBSPPATH1(const Value: string);
+begin
+  FTBSPPATH1 := Value;
+end;
+
+procedure TCreateDbFactory.SetTBSPPATH2(const Value: string);
+begin
+  FTBSPPATH2 := Value;
+end;
+
+procedure TCreateDbFactory.SetTBSPPATH3(const Value: string);
+begin
+  FTBSPPATH3 := Value;
+end;
+
+procedure TCreateDbFactory.SetTBSPPATH4(const Value: string);
+begin
+  FTBSPPATH4 := Value;
 end;
 
 procedure TCreateDbFactory.UpdateVersion;

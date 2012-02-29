@@ -44,7 +44,7 @@ resourcestring
   cxSEditPostError = 'An error occured during posting edit value';
   cxSEditTimeConvertError = 'Could not convert to time';
   cxSEditValidateErrorText = '你输入的值无效，请按ESC健取消输入';
-  cxSEditValueOutOfBounds = '输入的值超出允许范围';
+  cxSEditValueOutOfBounds = '输入的值超出允许范围，请重新输入';
 
   // TODO
   cxSEditCheckBoxChecked             = 'True';

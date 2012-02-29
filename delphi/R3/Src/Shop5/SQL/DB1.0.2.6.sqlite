@@ -1,3 +1,5 @@
+update STO_STORAGE set AMOUNT=round(AMOUNT,3),AMONEY=round(AMONEY,6),COST_PRICE=round(COST_PRICE,6);
+
 delete from PUB_PARAMS where CODE_ID='3' and TYPE_CODE='IS_PRESENT';
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','核销','IS_PRESENT','00',5497000);
 --活动组定义
@@ -27,6 +29,18 @@ CREATE TABLE [MKT_ACTIVE_INFO] (
 		[ACTIVE_ID]
 	)
 );
+
+
+--BOM类型定义
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','散装礼盒','BOM_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','整装礼盒','BOM_TYPE','00',5497000);
+--BOM状态
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','启用','BOM_STATUS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','禁用','BOM_STATUS','00',5497000);
+--添加BOM类型
+alter table SAL_BOMORDER add BOM_TYPE char(1) NULL;
+alter table SAL_BOMORDER add BOM_STATUS char(1) NULL;
+alter table SAL_BOMORDER add GODS_ID varchar(36) NULL;
 
 --是否启动多档促销 0不启用 1启用
 alter table SAL_PRICEDATA add USING_LEVEL char(1) NULL;
@@ -409,6 +423,8 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 
         --完成销量
 	[FISH_AMT] [decimal](18, 3) NULL ,
+        --转换成返利单位对应的系数
+	[FISH_CALC_RATE] [decimal](18, 3) NULL ,
         --调整销量
 	[ADJS_AMT] [decimal](18, 3) NULL ,
         --完成金额 

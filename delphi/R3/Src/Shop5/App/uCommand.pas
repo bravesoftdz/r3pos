@@ -52,7 +52,7 @@ begin
       1:begin
           Str_Sql := List.FieldbyName('COMMAND_TEXT').AsString;
           Str_Sql := stringreplace(Str_Sql,':TENANT_ID',inttostr(Global.TENANT_ID),[rfReplaceAll]);
-          Str_Sql := stringreplace(Str_Sql,':SHOP_ID',Global.SHOP_ID,[rfReplaceAll]);
+          Str_Sql := stringreplace(Str_Sql,':SHOP_ID',''''+Global.SHOP_ID+'''',[rfReplaceAll]);
           Global.LocalFactory.ExecSQL(Str_Sql);
           Global.RemoteFactory.ExecSQL('update SYS_COMMAND set COMMAND_STATUS=''2'' where ROWS_ID='+QuotedStr(List.FieldbyName('ROWS_ID').AsString));
         end;

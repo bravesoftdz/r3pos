@@ -26,7 +26,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_G: TLabel
       Left = 28
       Top = 409
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -39,7 +39,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_F: TLabel
       Left = 28
       Top = 360
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -52,7 +52,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_E: TLabel
       Left = 28
       Top = 313
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -65,7 +65,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_D: TLabel
       Left = 28
       Top = 264
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -78,7 +78,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_C: TLabel
       Left = 28
       Top = 216
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -91,7 +91,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_B: TLabel
       Left = 28
       Top = 168
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -104,7 +104,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_A: TLabel
       Left = 28
       Top = 120
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -117,7 +117,7 @@ inherited frmShowDibs: TfrmShowDibs
     object Label1: TLabel
       Left = 28
       Top = 24
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #24212#25910#37329#39069#65306
       Font.Charset = GB2312_CHARSET
@@ -130,7 +130,7 @@ inherited frmShowDibs: TfrmShowDibs
     object Label2: TLabel
       Left = 28
       Top = 72
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #24453#25910#37329#39069#65306
       Font.Charset = GB2312_CHARSET
@@ -143,7 +143,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_H: TLabel
       Left = 28
       Top = 465
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -156,7 +156,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_I: TLabel
       Left = 28
       Top = 513
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -169,7 +169,7 @@ inherited frmShowDibs: TfrmShowDibs
     object lblPAY_J: TLabel
       Left = 28
       Top = 561
-      Width = 150
+      Width = 155
       Height = 29
       Caption = #25903#20184#26041#24335#65306
       Font.Charset = GB2312_CHARSET
@@ -425,7 +425,7 @@ inherited frmShowDibs: TfrmShowDibs
       object Label3: TLabel
         Left = 21
         Top = 2
-        Width = 150
+        Width = 155
         Height = 29
         Caption = #25214#38646#37329#39069#65306
         Font.Charset = GB2312_CHARSET

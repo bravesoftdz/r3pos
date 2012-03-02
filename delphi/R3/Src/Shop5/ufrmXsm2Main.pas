@@ -859,7 +859,7 @@ begin
   if Locked then Exit;
   if Logined then
      begin
-       CommandPush.ExecuteCommand;
+       //CommandPush.ExecuteCommand;
        Loging := false;
        frmLogo.Show;
        try

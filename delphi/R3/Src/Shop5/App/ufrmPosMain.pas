@@ -2720,7 +2720,7 @@ begin
   if Saved then
   begin
     try
-      if DevFactory.SavePrint and Printed then
+      if Printed then
        begin
          if DevFactory.PrintFormat=1 then
             DoPrintOrder(oid)

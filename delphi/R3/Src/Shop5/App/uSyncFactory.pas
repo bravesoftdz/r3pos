@@ -130,7 +130,7 @@ type
 var
   SyncFactory:TSyncFactory;
 implementation
-uses uGlobal,ufrmLogo,ufrmDesk,uFnUtil,uMsgBox,uDsUtil,uCaFactory,uSyncThread;
+uses uGlobal,ufrmLogo,ufrmDesk,uFnUtil,uMsgBox,uDsUtil,uCaFactory,uSyncThread,uCommand;
 { TCaFactory }
 
 function TSyncFactory.CheckDBVersion: boolean;
@@ -812,6 +812,7 @@ begin
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
   frmLogo.ProgressBar1.Max := FList.Count;
+  CommandPush.ExecuteCommand;
   for i:=0 to FList.Count -1 do
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
@@ -869,6 +870,7 @@ begin
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
   frmLogo.ProgressBar1.Max := FList.Count;
+  CommandPush.ExecuteCommand;
   for i:=0 to FList.Count -1 do
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';

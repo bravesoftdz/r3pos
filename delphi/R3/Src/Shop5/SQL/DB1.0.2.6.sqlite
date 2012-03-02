@@ -334,12 +334,6 @@ CREATE TABLE [MKT_KPI_RESULT] (
 	[IDX_TYPE] [char] (1) NOT NULL ,
         --考核类型
 	[KPI_TYPE] [char] (1) NOT NULL ,
-	      --考核标准
-	[KPI_DATA] char(1) NULL ,
-	      --计算标准
-	[KPI_CALC] char(1) NULL ,
-        --返利设定
-	[RATIO_TYPE] [char] (1) NOT NULL ,
 	
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
@@ -414,6 +408,12 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 	      --考时段
 	[KPI_DATE1] int NULL ,
 	[KPI_DATE2] int NULL ,
+	      --考核标准
+	[KPI_DATA] char(1) NULL ,
+	      --计算标准
+	[KPI_CALC] char(1) NULL ,
+        --返利设定
+	[RATIO_TYPE] [char] (1) NOT NULL ,
         --返利商品
 	[GODS_ID] [char] (36) NULL ,
 	      --完成签约量对应的等级
@@ -421,7 +421,7 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 	      --完成率
 	[KPI_RATE] [decimal](18, 3) NULL ,
 
-        --完成销量
+        --完成销量<调整后结果=去销售表SUM()+ADJS_AMT>
 	[FISH_AMT] [decimal](18, 3) NULL ,
         --转换成返利单位对应的系数
 	[FISH_CALC_RATE] [decimal](18, 3) NULL ,
@@ -434,12 +434,11 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 
 	      --返利系数
 	[KPI_RATIO] [decimal](18, 3) NULL ,
+	      --考核结果
+	[KPI_MNY] [decimal](18, 3) NULL ,
 	
 	      --市场费计提系数
 	[ACTR_RATIO] [decimal](18, 3) NULL ,
-	
-	      --考核结果
-	[KPI_MNY] [decimal](18, 3) NULL ,
 	      --市场费计提
 	[BUDG_KPI] [decimal](18, 3) NULL,
 	

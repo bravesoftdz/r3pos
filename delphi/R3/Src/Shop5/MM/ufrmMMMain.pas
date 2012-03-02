@@ -683,6 +683,9 @@ begin
         ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
    end;
 
+   //准备数据
+   //if CaFactory.Audited and (mmGlobal.module[2]='1') then CommandPush.ExecuteCommand;
+   
    if CaFactory.Audited and not mmGlobal.ONLVersion then
       begin
         if CaFactory.Audited and CaFactory.CheckInitSync and (mmGlobal.module[2]='1') then
@@ -736,10 +739,7 @@ begin
     rzLeftTool.Enabled := true;
     frmLogo.Close;
   end;
-
-   //准备数据
-   if CaFactory.Audited and (mmGlobal.module[2]='1') then CommandPush.ExecuteCommand;
-
+  
    frmLogo.Show;
    try
      frmLogo.ShowTitle := '正在初始化基础数据...';

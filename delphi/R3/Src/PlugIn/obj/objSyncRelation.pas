@@ -102,7 +102,7 @@ var
   UpdateMode,iRet: integer;
   TENANT_ID, Str: string;
   Comm, TimeStp: string;
-  UpStr, UpSQL, InFields, UpFields: WideString;
+  UpStr, UpSQL, ExeSQL, InFields, UpFields: WideString;
 begin
   result:=-1;
   iRet:=0;
@@ -121,6 +121,14 @@ begin
   UpFields:=
     'SECOND_ID,GODS_CODE,GODS_NAME,GODS_SPELL,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,SORT_ID9,SORT_ID10,'+
     'SORT_ID11,SORT_ID12,SORT_ID13,SORT_ID14,SORT_ID15,SORT_ID16,SORT_ID17,SORT_ID18,SORT_ID19,SORT_ID20,NEW_INPRICE,NEW_OUTPRICE,NEW_LOWPRICE ';
+
+  //2012.03.04上午处理(Rsp上修改条码后根据条码新对照出的记录处理归属到原对照)
+  ExeSQL:=
+    'update INF_GOODS_RELATION A set A.UPDATE_FLAG=1 '+
+    ' where A.UPDATE_FLAG=2 and '+
+    ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'')) ';
+  AGlobal.ExecSQL(ExeSQL);
+
   case UpdateMode of
    1: //刷新所有条件:
     begin
@@ -231,6 +239,14 @@ begin
     ',A.SORT_ID20=B.SORT_ID20'+
     ',A.NEW_INPRICE=B.NEW_INPRICE'+
     ',A.NEW_OUTPRICE=B.NEW_OUTPRICE';       
+
+  //2012.03.04上午处理(Rsp上修改条码后根据条码新对照出的记录处理归属到原对照)
+  ExeSQL:=
+    'update INF_GOODS_RELATION A set A.UPDATE_FLAG=1 '+
+    ' where A.UPDATE_FLAG=2 and '+
+    ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'')) ';
+  AGlobal.ExecSQL(ExeSQL);
+
   case UpdateMode of
    1: //刷新所有:
     begin

@@ -49,7 +49,8 @@ end;
 
 function TGodsDzSyncFactory.InsertData_INF_GOODS_RELATION(COM_ID: string; UpdateMode: integer): Integer;
 var
-  iRet,BarCount: integer;    //返回更改记录数
+  iRet,BarCount: integer;  //返回更改记录数
+  SelectSQL: string;       //查询语句
   Sort_ID2,Sort_ID5,Sort_ID6,Sort_ID10: string;
   CALC_UNIT,TENANT_ID: string; //价格分类 、是否是省内外　、计量单位
   Box_InPrice, Box_OutPrice, BarCode: string;    //包的入库价、包的零售价、条码
@@ -105,12 +106,13 @@ begin
     RsInf:=TZQuery.Create(nil);  //R3中间表
     RsBarPub:=TZQuery.Create(nil);  //R3条码_供应链
 
-    RsBarPub.SQL.Text:=
+    SelectSQL:=
       'select A.GODS_ID,A.BARCODE,B.ROWS_ID,B.SECOND_ID,B.RELATION_ID,'+
-      '(case when A.GODS_ID=B.Gods_ID and B.SECOND_ID is not null then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
+      '(case when A.GODS_ID=B.Gods_ID and nvl(B.SECOND_ID,'''')<>'''' then 1 else 2 end) as IsFlag from PUB_BARCODE A '+
       'left outer join (select * from PUB_GOODS_RELATION where TENANT_ID='+TENANT_ID+' and COMM not in (''02'',''12'')) B '+
       ' on A.GODS_ID=B.GODS_ID '+
       ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' and A.COMM not in (''02'',''12'') ';
+    RsBarPub.SQL.Text:=ParseSQL(DbType,SelectSQL);
     Open(RsBarPub);
     RsRim.Close;
     RsRim.SQL.Text:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID5+','+Sort_ID6+','+Sort_ID10+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+COM_ID+''' ';
@@ -118,7 +120,7 @@ begin
     RsInf.SQL.Text:='select A.*,0 as UpdateMode,0 as FLAG from INF_GOODS_RELATION A where A.TENANT_ID='+TENANT_ID;
     Open(RsInf);
 
-    //2011.09.24 xhh 生成汇总的BarCode:
+    //2011.09.24 xhh 生成汇总的BarCode数据集:
     CreateBarCode(RsBarPub);
     
     //开始循环对照
@@ -134,7 +136,7 @@ begin
           begin
             //返回当前条码中有多少个
             BarCount:=GetR3BarCode(BarCode);
-            if BarCount=1 then  //1对1情况
+            if BarCount=1 then  //Rim.BarCode=R3.BarCode(1对1)情况
             begin
               //判断当前插入中是否存在条码重复情况:
               if RsInf.Locate('PACK_BARCODE',BarCode,[]) then  //已存在[重复]
@@ -144,7 +146,7 @@ begin
                 RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
                 RsInf.FieldByName('UPDATE_FLAG').AsInteger:=4;       //状态[4: 重复条码]
                 RsInf.FieldByName('SORT_ID3').AsString:=TENANT_ID;   //2011.08.29 主供应商默认：市局烟草公司ID
-                RsInf.FieldByName('GODS_NAME').AsString:=RsInf.FieldByName('GODS_NAME').AsString+'(rim)';
+                RsInf.FieldByName('GODS_NAME').AsString:=RsInf.FieldByName('GODS_NAME').AsString+'(rim重复)';
                 RsInf.Post;
                 //新插入当前
                 RsInf.Append;
@@ -158,10 +160,10 @@ begin
                 RsInf.FieldByName('UpdateMode').AsInteger:=UpdateMode; //更新模式
                 RsInf.FieldByName('FLAG').AsInteger:=SyncType; //运行类型[R3、Rsp]
                 RsInf.FieldByName('SORT_ID3').AsString:=TENANT_ID; //2011.08.29 主供应商默认：市局烟草公司ID
-                RsInf.FieldByName('GODS_NAME').AsString:=RsInf.FieldByName('GODS_NAME').AsString+'(rim)';
+                RsInf.FieldByName('GODS_NAME').AsString:=RsInf.FieldByName('GODS_NAME').AsString+'(rim重复)';
                 RsInf.Post;
               end else
-              begin
+              begin //Rim.BarCode在R3中存在多个条码:
                 RsInf.Append;
                 AObj.WriteToDataSet(RsInf,False);  //Aobj写入DataSet;
                 RsInf.FieldByName('ROWS_ID').AsString:=NewId();
@@ -175,7 +177,7 @@ begin
                 RsInf.FieldByName('SORT_ID3').AsString:=TENANT_ID; //2011.08.29 主供应商默认：市局烟草公司ID
                 RsInf.Post;
               end;
-            end else //大于1个(有重复)
+            end else //Rim.BarCode在R3.BarCode中有多个(有重复)
             begin
               //新插入当前
               RsInf.Append;
@@ -184,7 +186,7 @@ begin
               RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
               RsInf.FieldByName('RELATION_ID').AsInteger:=NT_RELATION_ID;  //国家卷烟供应链1000006
               RsInf.FieldByName('GODS_ID').AsString:=RsBarPub.fieldbyName('GODS_ID').AsString;
-              RsInf.FieldByName('GODS_NAME').AsString:=RsInf.FieldByName('GODS_NAME').AsString+'(r3)';
+              RsInf.FieldByName('GODS_NAME').AsString:=RsInf.FieldByName('GODS_NAME').AsString+'(r3重复)';
               RsInf.FieldByName('PACK_BARCODE').AsString:=BarCode; //条条码
               RsInf.FieldByName('UPDATE_FLAG').AsInteger:=4;       //状态[4: 重复条码]
               RsInf.FieldByName('UpdateMode').AsInteger:=UpdateMode; //更新模式
@@ -192,10 +194,10 @@ begin
               RsInf.FieldByName('SORT_ID3').AsString:=TENANT_ID; //2011.08.29 主供应商默认：市局烟草公司ID
               RsInf.Post;
             end;
-          end else {==对不上，作为返回显示结果查看==}
+          end else {==Rim.BarCode<>R3.BarCode 作为返回显示结果查看==}
           begin
             RsInf.Append;
-            AObj.WriteToDataSet(RsInf, False); //Aobj写入DataSet;
+            //AObj.WriteToDataSet(RsInf, False); //Aobj写入DataSet;
             RsInf.FieldByName('ROWS_ID').AsString:=NewId();
             RsInf.FieldByName('TENANT_ID').AsInteger:=StrtoInt(TENANT_ID);
             RsInf.FieldByName('RELATION_ID').AsInteger:=NT_RELATION_ID;  //国家卷烟供应链:1000006

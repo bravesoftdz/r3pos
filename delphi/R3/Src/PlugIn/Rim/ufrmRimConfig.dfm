@@ -1,10 +1,10 @@
 object frmRimConfig: TfrmRimConfig
-  Left = 213
-  Top = 124
+  Left = 212
+  Top = 113
   BorderStyle = bsDialog
   Caption = 'RIM'#25509#21475#21442#25968
-  ClientHeight = 411
-  ClientWidth = 516
+  ClientHeight = 428
+  ClientWidth = 532
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -19,9 +19,9 @@ object frmRimConfig: TfrmRimConfig
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 516
-    Height = 366
-    ActivePage = TabSheet1
+    Width = 532
+    Height = 383
+    ActivePage = tabStock
     Align = alClient
     TabHeight = 22
     TabOrder = 0
@@ -31,8 +31,8 @@ object frmRimConfig: TfrmRimConfig
       object GB_ITEM: TGroupBox
         Left = 0
         Top = 0
-        Width = 169
-        Height = 334
+        Width = 217
+        Height = 351
         Align = alLeft
         Caption = #19978#25253#36873#39033
         TabOrder = 0
@@ -137,9 +137,9 @@ object frmRimConfig: TfrmRimConfig
         object CB_8: TCheckBox
           Left = 12
           Top = 175
-          Width = 91
+          Width = 199
           Height = 18
-          Caption = #19979#36733'Rim'#21442#25968
+          Caption = #19979#36733'Rim'#21442#25968#21644#29983#25104#21040#36135#28040#24687#25552#37266
           Font.Charset = ANSI_CHARSET
           Font.Color = clNavy
           Font.Height = -12
@@ -150,15 +150,22 @@ object frmRimConfig: TfrmRimConfig
         end
         object GB_liushui: TGroupBox
           Left = 2
-          Top = 193
-          Width = 165
-          Height = 139
+          Top = 201
+          Width = 213
+          Height = 148
           Align = alBottom
+          Caption = #19994#21153#21333#25454#27969#27700
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clRed
+          Font.Height = -12
+          Font.Name = #23435#20307
+          Font.Style = []
+          ParentFont = False
           TabOrder = 8
           object CB_9: TCheckBox
             Left = 10
-            Top = 11
-            Width = 111
+            Top = 18
+            Width = 127
             Height = 18
             Caption = #19978#25253#21830#21697#26376#21488#36134
             Font.Charset = ANSI_CHARSET
@@ -171,10 +178,10 @@ object frmRimConfig: TfrmRimConfig
           end
           object CB_10: TCheckBox
             Left = 10
-            Top = 33
-            Width = 96
+            Top = 40
+            Width = 127
             Height = 18
-            Caption = #19978#25253#20837#24211#27969#27700
+            Caption = #19978#25253#20837#24211#21333#27969#27700
             Font.Charset = ANSI_CHARSET
             Font.Color = clNavy
             Font.Height = -12
@@ -185,10 +192,10 @@ object frmRimConfig: TfrmRimConfig
           end
           object CB_11: TCheckBox
             Left = 10
-            Top = 53
-            Width = 96
+            Top = 60
+            Width = 127
             Height = 18
-            Caption = #19978#25253#38144#21806#27969#27700
+            Caption = #19978#25253#38144#21806#21333#27969#27700
             Font.Charset = ANSI_CHARSET
             Font.Color = clNavy
             Font.Height = -12
@@ -199,10 +206,10 @@ object frmRimConfig: TfrmRimConfig
           end
           object CB_12: TCheckBox
             Left = 10
-            Top = 74
+            Top = 81
             Width = 142
             Height = 18
-            Caption = #19978#25253#35843#25320#27969#27700#65288#35843#20837#65289
+            Caption = #19978#25253#35843#25320#21333'('#20837')'#27969#27700
             Font.Charset = ANSI_CHARSET
             Font.Color = clNavy
             Font.Height = -12
@@ -213,10 +220,10 @@ object frmRimConfig: TfrmRimConfig
           end
           object CB_13: TCheckBox
             Left = 10
-            Top = 96
+            Top = 103
             Width = 142
             Height = 18
-            Caption = #19978#25253#35843#25320#27969#27700#65288#35843#20986#65289
+            Caption = #19978#25253#35843#25320#21333'('#20986')'#27969#27700
             Font.Charset = ANSI_CHARSET
             Font.Color = clNavy
             Font.Height = -12
@@ -227,10 +234,10 @@ object frmRimConfig: TfrmRimConfig
           end
           object CB_14: TCheckBox
             Left = 10
-            Top = 117
-            Width = 95
+            Top = 124
+            Width = 119
             Height = 18
-            Caption = #19978#25253#35843#25972#27969#27700
+            Caption = #19978#25253#35843#25972#21333#27969#27700
             Font.Charset = ANSI_CHARSET
             Font.Color = clNavy
             Font.Height = -12
@@ -242,10 +249,10 @@ object frmRimConfig: TfrmRimConfig
         end
       end
       object GroupBox4: TGroupBox
-        Left = 169
+        Left = 217
         Top = 0
-        Width = 339
-        Height = 334
+        Width = 307
+        Height = 351
         Align = alClient
         Font.Charset = ANSI_CHARSET
         Font.Color = clNavy
@@ -257,7 +264,7 @@ object frmRimConfig: TfrmRimConfig
         object GroupBox1: TGroupBox
           Left = 2
           Top = 14
-          Width = 335
+          Width = 303
           Height = 54
           Align = alTop
           Caption = #20107#21153#21442#25968#35774#32622
@@ -279,7 +286,7 @@ object frmRimConfig: TfrmRimConfig
       object GroupBox2: TGroupBox
         Left = 0
         Top = 0
-        Width = 508
+        Width = 524
         Height = 81
         Align = alTop
         Caption = #28040#36153#32773#21442#25968
@@ -322,22 +329,22 @@ object frmRimConfig: TfrmRimConfig
       object Panel4: TPanel
         Left = 0
         Top = 81
-        Width = 508
-        Height = 253
+        Width = 524
+        Height = 270
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
         object GroupBox6: TGroupBox
           Left = 0
-          Top = 71
-          Width = 508
-          Height = 73
+          Top = 72
+          Width = 524
+          Height = 72
           Align = alTop
           Caption = #26085#21488#36134#25554#20214#21442#25968
           TabOrder = 0
           object CB_USE_CALC_RCKDAY: TCheckBox
-            Left = 8
-            Top = 34
+            Left = 12
+            Top = 30
             Width = 202
             Height = 18
             Caption = #21551#29992#26085#21488#36134#19978#25253#21069#33258#21160#35797#31639#26085#21488#36134
@@ -353,13 +360,13 @@ object frmRimConfig: TfrmRimConfig
         object GroupBox7: TGroupBox
           Left = 0
           Top = 0
-          Width = 508
-          Height = 71
+          Width = 524
+          Height = 72
           Align = alTop
           Caption = #23545#29031#25554#20214#21442#25968
           TabOrder = 1
           object CB_AUTO_DOWN_BASEINFO: TCheckBox
-            Left = 7
+            Left = 12
             Top = 29
             Width = 218
             Height = 18
@@ -373,6 +380,43 @@ object frmRimConfig: TfrmRimConfig
             TabOrder = 0
           end
         end
+        object GroupBox5: TGroupBox
+          Left = 0
+          Top = 144
+          Width = 524
+          Height = 72
+          Align = alTop
+          Caption = #33258#21160#21019#24314#28040#24687#25554#20214#21442#25968
+          TabOrder = 2
+          object CB_AUTO_DOWN_ORDER: TCheckBox
+            Left = 204
+            Top = 31
+            Width = 155
+            Height = 18
+            Caption = #21551#29992#33258#21160#21040#36135#30830#35748#28040#24687
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+          end
+          object CB_CREATE_ORDER_MSG: TCheckBox
+            Left = 12
+            Top = 31
+            Width = 155
+            Height = 18
+            Caption = #21551#29992#29983#25104#21040#36135#28040#24687#25552#37266
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 1
+          end
+        end
       end
     end
     object TabSheet2: TTabSheet
@@ -381,7 +425,7 @@ object frmRimConfig: TfrmRimConfig
       object GroupBox3: TGroupBox
         Left = 0
         Top = 0
-        Width = 508
+        Width = 524
         Height = 74
         Align = alTop
         Caption = 'WDSL'#21442#25968
@@ -431,35 +475,12 @@ object frmRimConfig: TfrmRimConfig
           end
         end
       end
-      object GroupBox5: TGroupBox
-        Left = 0
-        Top = 74
-        Width = 508
-        Height = 65
-        Align = alTop
-        Caption = #28040#24687#25554#20214#21442#25968
-        TabOrder = 1
-        object CB_AUTO_DOWN_ORDER: TCheckBox
-          Left = 10
-          Top = 26
-          Width = 155
-          Height = 18
-          Caption = #21551#29992#33258#21160#21040#36135#30830#35748#28040#24687
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clBlack
-          Font.Height = -12
-          Font.Name = #23435#20307
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 0
-        end
-      end
     end
   end
   object Panel2: TPanel
     Left = 0
-    Top = 366
-    Width = 516
+    Top = 383
+    Width = 532
     Height = 45
     Align = alBottom
     BevelOuter = bvLowered

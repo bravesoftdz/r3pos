@@ -83,11 +83,7 @@ type
 
 implementation
 
-
-
-
 { TRimSyncFactory }
-
  
 constructor TRimSyncFactory.Create;
 begin
@@ -574,8 +570,8 @@ var
 begin
   result:=False;
   //读取控制的IDS
-  PlugInIDS:=ReadConfig('PARAMS','PlugInID','000000000000000000000000');   //启用哪些插件上报
-  if PlugInIDS='' then PlugInIDS:='000000000000000000000000';
+  PlugInIDS:=ReadConfig('PARAMS','PlugInID','0000000000000000000');   //启用哪些插件上报
+  if PlugInIDS='' then PlugInIDS:='0000000000000000000';
   if Copy(PlugInIDS,PlugInIdx,1)='1' then
     result:=true;
 end;

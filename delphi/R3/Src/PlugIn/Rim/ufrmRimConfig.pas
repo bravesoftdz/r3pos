@@ -7,6 +7,9 @@ uses
   Dialogs, StdCtrls, ExtCtrls, cxControls, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, ComCtrls;
 
+const
+  WM_PlugIn_Msg = WM_USER+11;
+    
 type
   TfrmRimConfig = class(TForm)
     PageControl1: TPageControl;
@@ -37,8 +40,6 @@ type
     BtnClose: TButton;
     GroupBox4: TGroupBox;
     GroupBox6: TGroupBox;
-    GroupBox5: TGroupBox;
-    CB_AUTO_DOWN_ORDER: TCheckBox;
     GroupBox7: TGroupBox;
     CB_USE_CALC_RCKDAY: TCheckBox;
     CB_AUTO_DOWN_BASEINFO: TCheckBox;
@@ -53,16 +54,21 @@ type
     CB_12: TCheckBox;
     CB_13: TCheckBox;
     CB_14: TCheckBox;
+    GroupBox5: TGroupBox;
+    CB_AUTO_DOWN_ORDER: TCheckBox;
+    CB_CREATE_ORDER_MSG: TCheckBox;
     procedure BtnCloseClick(Sender: TObject);
     procedure BtnOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    { Private declarations }
   public
-    { Public declarations }
   end;
+
 implementation
-uses IniFiles;
+
+uses
+  IniFiles;
+
 {$R *.dfm}
 
 procedure TfrmRimConfig.BtnCloseClick(Sender: TObject);
@@ -73,14 +79,15 @@ end;
 procedure TfrmRimConfig.BtnOkClick(Sender: TObject);
 var
   F:TIniFile;
-  SetValue: string; //保存值  
+  RspHandle: HWnd;  //Rsp服务器的句柄
+  SetValue: string; //保存值
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
   try
     F.WriteString('rim','url',Edit1.Text);
     //启用客户密码：
     F.WriteBool('rim','USING_CUST_PSWD',chkCUST_PSWD.Checked);
- 
+
     //启用分布式事务:
     if chkTWO_PHASE_COMMIT.Checked then SetValue:='1' else SetValue:='0';
     F.WriteString('PARAMS','TWO_PHASE_COMMIT',SetValue);
@@ -91,7 +98,9 @@ begin
     F.WriteBool('PARAMS','USE_SM_CARD',CB_USE_SM_CARD.Checked);
     if trim(Edt_VipStatus.Text)<>'' then F.WriteString('PARAMS','UP_CUST_STATUS',Edt_VipStatus.Text);
 
-    //启用自动到货确认：
+    //启用生成到货消息提醒:
+    F.WriteBool('PARAMS','CREATE_ORDER_MSG',CB_CREATE_ORDER_MSG.Checked);
+    //启用自动到货确认:
     F.WriteBool('PARAMS','AUTO_DOWN_ORDER',CB_AUTO_DOWN_ORDER.Checked);
     //启用上报台账前先试算:
     F.WriteBool('PARAMS','USE_CALC_RCKDAY',CB_USE_CALC_RCKDAY.Checked);
@@ -115,6 +124,11 @@ begin
     if CB_13.Checked then SetValue:=SetValue+'1' else SetValue:=SetValue+'0';
     if CB_14.Checked then SetValue:=SetValue+'1' else SetValue:=SetValue+'0';   
     F.WriteString('PARAMS','PlugInID',SetValue);
+
+    //2012.03.05发送有保存消息:
+    RspHandle:=F.ReadInteger('RSPMSG','RSPHANDLE',0);
+    if RspHandle>0 then
+      PostMessage(RspHandle,WM_PlugIn_Msg,0,0);
   finally
     F.free;
   end;
@@ -124,7 +138,7 @@ end;
 procedure TfrmRimConfig.FormCreate(Sender: TObject);
 var
   F:TIniFile;
-  tmpValue: string;
+  tmpValue,ReValue: string;
 begin
   PageControl1.ActivePageIndex:=0;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'PlugIn.cfg');
@@ -140,15 +154,19 @@ begin
     Edt_VipStatus.Text:=F.ReadString('PARAMS','UP_CUST_STATUS','03');
     chkCUST_PSWD.Checked := F.ReadBool('rim','USING_CUST_PSWD',false);
 
+    //启用生成到货消息提醒:
+    CB_CREATE_ORDER_MSG.Checked:=F.ReadBool('PARAMS','CREATE_ORDER_MSG',False);    
     //启用自动到货确认：
-    chkCUST_PSWD.Checked:=F.ReadBool('rim','AUTO_DOWN_ORDER',False);
+    CB_AUTO_DOWN_ORDER.Checked:=F.ReadBool('PARAMS','AUTO_DOWN_ORDER',False);
+    //启用客户密码:
+    chkCUST_PSWD.Checked:=F.ReadBool('rim','USING_CUST_PSWD',False);
     //启用上报台账前先试算:
     CB_USE_CALC_RCKDAY.Checked:=F.ReadBool('PARAMS','USE_CALC_RCKDAY',False);
     //启用对照前自动下载Rsp基础资料：
     CB_AUTO_DOWN_BASEINFO.Checked:=F.ReadBool('PARAMS','AUTO_DOWN_BASEINFO',False);
 
     //上报选项：
-    tmpValue:=F.ReadString('PARAMS','PlugInID','00000000000000000000000000000');
+    tmpValue:=F.ReadString('PARAMS','PlugInID','0000000000000000000');
     CB_1.Checked:=(Copy(tmpValue,1,1)='1');
     CB_2.Checked:=(Copy(tmpValue,2,1)='1');
     CB_3.Checked:=(Copy(tmpValue,3,1)='1');

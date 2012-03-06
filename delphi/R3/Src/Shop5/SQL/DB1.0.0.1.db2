@@ -185,7 +185,7 @@ CREATE TABLE CA_PROD_INFO(
 	PROD_SHORT_NAME varchar(20) NOT NULL,
     --产品版本号 主要可能用于产品功能限定或者产品安装介质关联产品等级限定 比如企业版/个人版；
 	PROD_VERSION varchar(10) NOT NULL,
-    --行业类型 MKT 超市<食杂店> FIG 服装 DLI 食品 OHR 通用 产品行业限定
+    --行业类型 MKT 超市 FIG 服装 DLI 食品 TGS 食杂店 OHR 默认
 	INDUSTRY varchar(3) NOT NULL,
     --产品类型 LCL单机版 NET连锁版  产品特殊功能限定
 	PROD_FLAG varchar(3) NOT NULL,

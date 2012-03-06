@@ -233,16 +233,19 @@ end;
 
 function TShopGlobal.GetVersionFlag: integer;
 begin
-  if CLVersion='FIG' then
+  if CLVersion='FIG' then //服装版
      result := 1
   else
-  if CLVersion='MKT' then
+  if CLVersion='MKT' then //中小超市版
      result := 2
   else
-  if CLVersion='DLI' then
+  if CLVersion='DLI' then //食品业
      result := 4
   else
-     result := 3
+  if CLVersion='TGS' then //食杂店-小型夫妻店精简版
+     result := 5
+  else
+     result := 3          //默认
 end;
 
 procedure TShopGlobal.WriteLogInfo(LogType: integer; ModId, LogName,

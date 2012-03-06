@@ -158,7 +158,7 @@ CREATE TABLE [MKT_KPI_LEVEL] (
 		[LEVEL_ID]
 	) 
 );
-CREATE INDEX IX_KPLV_TENANT_ID ON MKT_KPI_INDEX(TENANT_ID);
+CREATE INDEX IX_KPLV_TENANT_ID ON MKT_KPI_LEVEL(TENANT_ID);
 
 --考核标准
 delete from PUB_PARAMS where TYPE_CODE='KPI_DATA';
@@ -444,10 +444,124 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 	
 	CONSTRAINT [PK_MKT_KPI_R_LIST] PRIMARY KEY 
 	(
-		[ROWS_ID]
+		[TENANT_ID],[ROWS_ID]
 	) 
 );
 
 CREATE INDEX IX_MPRT_TENANT_ID ON MKT_KPI_RESULT_LIST(TENANT_ID);
 CREATE INDEX IX_MPRT_KEYID ON MKT_KPI_RESULT_LIST(TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR);
 CREATE INDEX IX_MPRT_KPI_YEAR ON MKT_KPI_RESULT_LIST(KPI_YEAR);
+
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','开票','INVOICE_STATUS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','作废','INVOICE_STATUS','00',5497000);
+
+drop table SAL_INVOICE_BOOK;
+--发票本管理
+CREATE TABLE [SAL_INVOICE_BOOK] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --流水ID号
+	[INVH_ID] [char] (36) NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --领用部门
+	[DEPT_ID] [varchar] (12) NOT NULL ,
+        --发票类型
+	[INVOICE_FLAG] [varchar] (1) NULL ,
+        --领用人
+	[CREA_USER] int NOT NULL ,
+        --领用日期
+	[CREA_DATE] int NOT NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --发票代码
+	[INVH_NO] [varchar] (50) NOT NULL ,
+        --发票起始号
+	[BEGIN_NO] int NOT NULL ,
+        --发票终止号
+	[ENDED_NO] int NOT NULL ,
+        --合计张数
+	[TOTAL_AMT] int NULL ,
+        --开票张数
+	[USING_AMT] int NULL ,
+        --作废张数
+	[CANCEL_AMT] int NULL ,
+        --结余张数
+	[BALANCE] int NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_INVOICE_BOOK_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_SAL_INVOICE_BOOK] PRIMARY KEY   
+	(
+		[TENANT_ID],[INVH_ID]
+	) 
+);
+
+CREATE INDEX IX_SAL_INVOICE_BOOK_TENANT_ID ON SAL_INVOICE_BOOK(TENANT_ID);
+CREATE INDEX IX_SAL_INVOICE_BOOK_TIME_STAMP ON SAL_INVOICE_BOOK(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_SAL_INVOICE_BOOK_CREA_DATE ON SAL_INVOICE_BOOK(CREA_DATE);
+CREATE INDEX IX_SAL_INVOICE_BOOK_SHOP_ID ON SAL_INVOICE_BOOK(TENANT_ID,SHOP_ID);
+
+drop table SAL_INVOICE_INFO;
+--发票明细
+CREATE TABLE [SAL_INVOICE_INFO] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --流水ID号
+	[INVD_ID] [char] (36) NOT NULL ,
+        --发票本号
+	[INVH_ID] [char] (36) NULL ,
+        --开票门店
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --开票部门
+	[DEPT_ID] [varchar] (12) NOT NULL ,
+        --开票人
+	[CREA_USER] [varchar] (36) NOT NULL ,
+        --开票日期
+	[CREA_DATE] int NOT NULL ,
+        --客户编码
+	[CLIENT_ID] [varchar] (36)  NOT NULL ,
+        --开票名称
+	[INVO_NAME] [varchar] (50)  NOT NULL ,
+        --开票地址
+	[ADDR_NAME] [varchar] (50)  NOT NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --发票类型
+	[INVOICE_FLAG] [varchar] (1) NULL ,
+	      --发票号
+	[INVOICE_NO] int NOT NULL ,
+        --开票金额
+	[INVOICE_MNY] [decimal](18, 3) NULL ,
+        --发票状态
+	[INVOICE_STATUS] [varchar] (1) NOT NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_INVOICE_INFO_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_SAL_INVOICE_INFO] PRIMARY KEY   
+	(
+		[TENANT_ID],[INVD_ID]
+	) 
+);
+
+CREATE INDEX IX_SAL_INVOICE_INFO_TENANT_ID ON SAL_INVOICE_INFO(TENANT_ID);
+CREATE INDEX IX_SAL_INVOICE_INFO_TIME_STAMP ON SAL_INVOICE_INFO(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_SAL_INVOICE_INFO_CREA_DATE ON SAL_INVOICE_INFO(CREA_DATE);
+
+--发票明细
+CREATE TABLE [SAL_INVOICE_LIST] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --发票流水ID号
+	[INVD_ID] [char] (36) NOT NULL ,
+        --销售流水ID号
+	[SALES_ID] [char] (36) NOT NULL ,
+	CONSTRAINT [PK_SAL_INVOICE_LIST] PRIMARY KEY   
+	(
+		[TENANT_ID],[INVD_ID],[SALES_ID]
+	);
+);
+CREATE INDEX IX_SAL_INVOICE_LIST_SALES_ID ON SAL_INVOICE_LIST(TENANT_ID,SALES_ID);
+CREATE INDEX IX_SAL_INVOICE_LIST_INVD_ID ON SAL_INVOICE_LIST(TENANT_ID,INVD_ID);

@@ -165,7 +165,8 @@ type
     class function GetCommStr(iDbType:integer;alias:string=''):string;
     class function GetUpCommStr(iDbType:integer;alias:string=''):string;
     class function GetTimeStamp(iDbType:Integer):string;   //返回时间戳
-    class function GetDefaultUnitCalc(iDbType:integer; AliasTable: string=''): string;  //返回转换后单位ID
+    class function GetDefaultUnitCalc(AliasTable: string=''): string; overload;  //返回转换后单位ID
+    class function GetDefaultUnitCalc(iDbType:integer; AliasTable: string=''): string; overload;  //返回转换后单位ID
     class function ParseSQL(iDbType:integer;SQL:string):string;    //通用函数转换
     class function ReadConfig(Header,Ident,DefValue:string; IniFile: string=''):string;  //读配置文件
     class function ReadBool(Header,Ident:string; DefValue: Boolean;IniFile: string=''):Boolean;  //读配置文件
@@ -427,13 +428,25 @@ begin
   end;
 end;
 
+class function TBaseSyncFactory.GetDefaultUnitCalc(AliasTable: string): string;
+var
+  AliasTab: string;
+begin
+  if trim(AliasTable)<>'' then
+    AliasTab:=trim(AliasTable)+'.';
+  result:=
+    'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+               //默认单位为 计量单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'SMALL_UNITS then SMALLTO_CALC*1.00 '+ //默认单位为 小单位
+        ' when '+AliasTab+'UNIT_ID='+AliasTab+'BIG_UNITS then BIGTO_CALC*1.00 '+     //默认单位为 大单位
+        ' else 1.00 end ';                                                           //都不是则默认为换算为1;                                                     //都不是则默认为换算为1;
+end;
 
 class function TBaseSyncFactory.GetDefaultUnitCalc(iDbType:integer; AliasTable: string): string;
 var
   AliasTab,Zoom_Rate: string;
 begin
   if trim(AliasTable)<>'' then
-    AliasTab:=trim(AliasTable)+'.';  
+    AliasTab:=trim(AliasTable)+'.';
   Zoom_Rate:=ParseSQL(iDbType,'nvl('+AliasTab+'ZOOM_RATE,1.0)');
   result:=
     'case when '+AliasTab+'UNIT_ID='+AliasTab+'CALC_UNITS then 1.00 '+               //默认单位为 计量单位
@@ -673,7 +686,7 @@ end;
 
 function TBaseSyncFactory.GetUpdateTime: string;
 var
-  vYear,vMonth,vDay,vHour,vMin, vSec,vMSec: Word;
+  vYear,vMonth,vDay,vHour,vMin,vSec,vMSec: Word;
 begin
   DecodeDate(Date(), vYear, vMonth,vDay);
   result:=FormatFloat('0000',vYear)+'-'+FormatFloat('00',vMonth)+'-'+FormatFloat('00',vDay);  //10位

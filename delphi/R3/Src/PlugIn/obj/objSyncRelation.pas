@@ -151,11 +151,11 @@ begin
       iRet:=AGlobal.ExecSQL(UpSQL);
 
       //2012.03.06处理(删除标记)上次自动对照，本次对照不上:
-      UpSQL:=
+      UpSQL:=ParseSQL(AGlobal.iDbType,
         'update PUB_GOODS_RELATION A set COMM='+GetDeleteComm(AGlobal.iDbType)+',TIME_STAMP='+TimeStp+' '+
-        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and not '+
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and nvl(A.COMM_ID,'''')='''' and not '+
         ' exists(select gods_id from INF_GOODS_RELATION B where '+
-        ' A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1)';
+        ' A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1)');
       AGlobal.ExecSQL(UpSQL);
     end;
    2: //刷新新品:

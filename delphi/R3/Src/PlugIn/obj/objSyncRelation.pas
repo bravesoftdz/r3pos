@@ -9,6 +9,7 @@ uses
 type
   TInf_Goods_Relation=class(TZFactory)
   private
+    function GetDeleteComm(iDbType:integer;alias:string=''):string;
     function GetUpdateTime: string;
     //Rim到R3单位换算和手工对照
     function DoChangeUnit_DB2_Oracle(AGlobal:IdbHelp): Integer;
@@ -102,7 +103,7 @@ var
   UpdateMode,iRet: integer;
   TENANT_ID, Str: string;
   Comm, TimeStp: string;
-  UpStr, UpSQL, ExeSQL, InFields, UpFields: WideString;
+  UpStr, UpSQL, InFields, UpFields: WideString;
 begin
   result:=-1;
   iRet:=0;
@@ -121,13 +122,6 @@ begin
   UpFields:=
     'SECOND_ID,GODS_CODE,GODS_NAME,GODS_SPELL,SORT_ID1,SORT_ID2,SORT_ID3,SORT_ID4,SORT_ID5,SORT_ID6,SORT_ID7,SORT_ID8,SORT_ID9,SORT_ID10,'+
     'SORT_ID11,SORT_ID12,SORT_ID13,SORT_ID14,SORT_ID15,SORT_ID16,SORT_ID17,SORT_ID18,SORT_ID19,SORT_ID20,NEW_INPRICE,NEW_OUTPRICE,NEW_LOWPRICE ';
-
-  //2012.03.04上午处理(Rsp上修改条码后根据条码新对照出的记录处理归属到原对照)
-  ExeSQL:=
-    'update INF_GOODS_RELATION A set A.UPDATE_FLAG=1 '+
-    ' where A.UPDATE_FLAG=2 and '+
-    ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'')) ';
-  AGlobal.ExecSQL(ExeSQL);
 
   case UpdateMode of
    1: //刷新所有条件:
@@ -155,6 +149,14 @@ begin
          ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SECOND_ID=B.SECOND_ID and B.UPDATE_FLAG=5)';
       UpSQL:=ParseSQL(AGlobal.iDbType,UpSQL);
       iRet:=AGlobal.ExecSQL(UpSQL);
+
+      //2012.03.06处理(删除标记)上次自动对照，本次对照不上:
+      UpSQL:=
+        'update PUB_GOODS_RELATION A set COMM='+GetDeleteComm(AGlobal.iDbType)+',TIME_STAMP='+TimeStp+' '+
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and not '+
+        ' exists(select gods_id from INF_GOODS_RELATION B where '+
+        ' A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1)';
+      AGlobal.ExecSQL(UpSQL);
     end;
    2: //刷新新品:
     begin
@@ -240,13 +242,6 @@ begin
     ',A.NEW_INPRICE=B.NEW_INPRICE'+
     ',A.NEW_OUTPRICE=B.NEW_OUTPRICE';       
 
-  //2012.03.04上午处理(Rsp上修改条码后根据条码新对照出的记录处理归属到原对照)
-  ExeSQL:=
-    'update INF_GOODS_RELATION A set A.UPDATE_FLAG=1 '+
-    ' where A.UPDATE_FLAG=2 and '+
-    ' exists(select 1 from PUB_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'')) ';
-  AGlobal.ExecSQL(ExeSQL);
-
   case UpdateMode of
    1: //刷新所有:
     begin
@@ -260,6 +255,14 @@ begin
         'select '+InFields+InComm+' from INF_GOODS_RELATION A where A.TENANT_ID='''+TENANT_ID+''' and UPDATE_FLAG=2 and '+
         ' not exists(select 1 from PUB_GOODS_RELATION B where B.TENANT_ID='+TENANT_ID+' and A.GODS_ID=B.GODS_ID) ';
       iRet:=iRet+AGlobal.ExecSQL(UpSQL);
+
+      //2012.03.06处理(删除标记)上次自动对照，本次对照不上:
+      UpSQL:=
+        'update PUB_GOODS_RELATION A set COMM='+GetDeleteComm(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and not '+
+        ' exists(select gods_id from INF_GOODS_RELATION B where '+
+        ' A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1)';
+      AGlobal.ExecSQL(UpSQL);
     end;
    2: //刷新新品:
     begin
@@ -378,6 +381,16 @@ begin
   end;
   AGlobal.ExecSQL(UpSQL);
   result:=iRet;
+end;
+
+function TInf_Goods_Relation.GetDeleteComm(iDbType:integer;alias:string=''):string;
+begin
+  case iDbType of
+   0:  result:='substring('+alias+'COMM,1,1) + ''2'' ';
+   1,4:result:='substr('+alias+'COMM,1,1) || ''2'' ';
+  else
+   result := '''02''';
+  end;
 end;
 
 initialization

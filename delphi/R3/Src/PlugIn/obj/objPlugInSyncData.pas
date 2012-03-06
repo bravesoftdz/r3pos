@@ -239,8 +239,8 @@ begin
 end;
 
 procedure ReadPlugInCfg(var vPlugParams: TPlugParams); //取取产件定义参数
-begin
-  vPlugParams.PlugInID:=ReadConfig('PARAMS','PlugInID','0000000000000000000');   //启用哪些插件上报
+begin                                                 {==3:下载Rim消息;5:下载Rim登录wsdl;6:问卷调查下载;8:下载参数;==}
+  vPlugParams.PlugInID:=ReadConfig('PARAMS','PlugInID','001010010000000000000000');   //启用哪些插件上报
   vPlugParams.VipUpload:=ReadBool('PARAMS','VipUpload',true);      //是否上报终端采集消费者
   vPlugParams.Up_CUST_STATUS:=ReadConfig('PARAMS','UP_CUST_STATUS','03'); //上报消费者的状态，默认:03
   vPlugParams.USE_SM_CARD:=ReadBool('PARAMS','USE_SM_CARD',true);  //默认启用上报商盟卡
@@ -756,10 +756,9 @@ var
   PlugInIDS: string;
 begin
   result:=False;
-  PlugInIDS:=PlugParams.PlugInID;
-  if trim(PlugInIDS)='' then PlugInIDS:='000000000000000000000000';
-  if Copy(PlugInIDS,PlugInID,1)='0' then Exit;
- 
+  PlugInIDS:=PlugParams.PlugInID;       {==3:下载Rim消息;5:下载Rim登录wsdl;8:下载参数;==}
+  if trim(PlugInIDS)='' then PlugInIDS:='001010010000000000000000'; //默认:开启358参数
+  if Copy(PlugInIDS,PlugInID,1)='0' then Exit;  
 
   //传入参数列表
   Params:=InParams;
@@ -862,7 +861,7 @@ begin
          ' select '''+CustID+''' as CUST_ID,B.SECOND_ID,'''+ComID+''' as COM_ID,'''+ShortID+''' as TERM_ID,0 as QRY,'''+Up_Date+''' as UPD_DATE,'''+TimetoStr(time())+''' as UPD_TIME,''0'',0 '+
          ' from STO_STORAGE A,VIW_GOODSINFO B '+
          ' where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.COMM not in (''02'',''12'') and A.TENANT_ID='+TenID+' and A.SHOP_ID='''+ShopID+''' and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+
-         ' and not exists(select ITEM_ID from RIM_CUST_ITEM_SWHSE C where C.COM_ID='''+ComID+''' and C.CUST_ID='''+CustID+''' and C.TERM_ID='''+ShortID+''' and C.ITEM_ID=B.SECOND_ID) ';
+         ' and B.SECOND_ID not in (select ITEM_ID from RIM_CUST_ITEM_SWHSE where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''')';
     RunState:=ExecTransSQL(Str,iRect);
     AddPrcdLogMsg(RunState,'SWHSE.insert=',iRect);
     
@@ -874,7 +873,7 @@ begin
                              ' B.COMM not in (''02'',''12'') and B.RELATION_ID='+InttoStr(NT_RELATION_ID)+' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)'+
                 ',DATE1='''+Up_Date+''',TIME1='''+TimeToStr(Time())+''' '+
            ' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''' '+
-           ' and exists(select B.SECOND_ID from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TenID+' and A.SHOP_ID='''+ShopID+''' and RIM_CUST_ITEM_SWHSE.ITEM_ID=B.SECOND_ID)');
+           ' and ITEM_ID in (select B.SECOND_ID from STO_STORAGE A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID='+TenID+' and A.SHOP_ID='''+ShopID+''')');
     if RunState then
     begin
       RunState:=ExecTransSQL(Str,iRect);
@@ -895,9 +894,9 @@ begin
 
     //4、没有更新到记录插入中间表：[RIM_CUST_ITEM_WHSE]:
     str:='insert into RIM_CUST_ITEM_WHSE(COM_ID,CUST_ID,ITEM_ID,QTY,DATE1,UPD_TIME,TIME_STAMP) '+
-         ' select COM_ID,CUST_ID,ITEM_ID,sum(QTY),'''+Up_Date+''' as Up_Date,'''+TimeToStr(Time())+''' as UPD_TIME,max(TIME_STAMP) from RIM_CUST_ITEM_SWHSE A '+
-         ' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and '+
-         ' not Exists(select COM_ID from RIM_CUST_ITEM_WHSE where COM_ID=A.COM_ID and CUST_ID=A.CUST_ID and ITEM_ID=A.ITEM_ID) '+
+         ' select COM_ID,CUST_ID,ITEM_ID,sum(QTY),'''+Up_Date+''' as Up_Date,'''+TimeToStr(Time())+''' as UPD_TIME,max(TIME_STAMP) from RIM_CUST_ITEM_SWHSE '+
+         ' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' '+
+         ' and ITEM_ID not in (select ITEM_ID from RIM_CUST_ITEM_WHSE where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''') '+
          ' group by COM_ID,CUST_ID,ITEM_ID ';
     if RunState then
     begin
@@ -1020,12 +1019,15 @@ begin
 
   //第三步: 每一次执行作为一个事务提交
   //1、删除销售历史数据(先删除表体在删除表头):
-  Str:='delete from RIM_RETAIL_CO_LINE A '+
-       ' where exists(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_SALESUM C '+
-                    ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.SALES_DATE and B.COM_ID='''+ComID+'''and B.TERM_ID='''+ShortID+''' and B.CUST_ID='''+CustID+''' and A.CO_NUM=B.CO_NUM)';
+  Str:='delete from RIM_RETAIL_CO_LINE where CO_NUM in '+
+       '(select B.CO_NUM from RIM_RETAIL_CO B,'+Session+'INF_SALESUM C '+
+       ' where B.COM_ID=C.COM_ID and B.CUST_ID=C.CUST_ID and B.PUH_DATE=C.SALES_DATE '+
+         ' and B.COM_ID='''+ComID+''' and B.CUST_ID='''+CustID+''' and B.TERM_ID='''+ShortID+''')';
   ExecSQL(Str,iRet,'删除历史日销售表体');
 
-  Str:='delete from RIM_RETAIL_CO A where exists(select 1 from '+Session+'INF_SALESUM B where A.COM_ID=B.COM_ID and A.CUST_ID=B.CUST_ID and A.PUH_DATE=B.SALES_DATE) and A.COM_ID='''+ComID+''' and A.TERM_ID='''+ShortID+''' and A.CUST_ID='''+CustID+''' ';
+  Str:='delete from RIM_RETAIL_CO '+
+       ' where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and TERM_ID='''+ShortID+''' '+
+       ' and PUH_DATE in (select SALES_DATE from '+Session+'INF_SALESUM where COM_ID='''+ComID+''' and CUST_ID='''+CustID+''' and SHORT_SHOP_ID='''+ShortID+''')';
   ExecSQL(Str,iRet,'删除历史日销售表头');
 
   DBFactor.BeginTrans;
@@ -1101,7 +1103,7 @@ begin
        ' (POSSTR(RECEIVER,'''+CustID+','')>0) or ('+
        ' (slsman_id in (select slsman_id from rm_cust where cust_id='''+CustID+''') or slsman_id is null or slsman_id='''') '+
        ' and (saleorg_id in (select saleorg_id from rm_cust where cust_id='''+CustID+''') or saleorg_id is null or saleorg_id='''') '+       ' and (sale_center_id in (select sale_center_id from rm_cust where cust_id='''+CustID+''') or sale_center_id is null or sale_center_id='''') '+       ' and (receiver is null or receiver =''''  or receiver ='','') '+       ' )'+       ')'+       'and STATUS=''02'' and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and invalid_date>='''+formatDatetime('YYYYMMDD',Date())+''' '+
-       'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+ShopID+''' and B.TENANT_ID='+TenID+' and B.COMM_ID=A.MSG_ID)';
+       'and A.MSG_ID not in(select B.COMM_ID from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and B.TENANT_ID='+TenID+' and C.SHOP_ID='''+ShopID+''')';
     1:
      rs.SQL.Text :=
        'select MSG_ID,TYPE,INVALID_DATE from RIM_MESSAGE A where COM_ID='''+ComID+''' and '+
@@ -1111,7 +1113,7 @@ begin
        ' and ( saleorg_id in (select saleorg_id from rm_cust where cust_id='''+CustID+''') or saleorg_id is null or saleorg_id='''') '+       ' and (sale_center_id in (select sale_center_id from rm_cust where cust_id='''+CustID+''') or sale_center_id is null or sale_center_id='''') '+       ' and (receiver is null or receiver =''''  or receiver ='','') '+       ' )'+
        ')'+
        'and STATUS=''02'' and RECEIVER_TYPE=''2'' and USE_DATE>='''+formatDatetime('YYYYMMDD',Date()-30)+''' and invalid_date>='''+formatDatetime('YYYYMMDD',Date())+''' '+
-       'and not Exists(select * from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and C.SHOP_ID='''+ShopID+''' and B.TENANT_ID='+TenID+' and B.COMM_ID=A.MSG_ID)';
+       'and A.MSG_ID not in(select B.COMM_ID from MSC_MESSAGE B,MSC_MESSAGE_LIST C where B.TENANT_ID=C.TENANT_ID and B.MSG_ID=C.MSG_ID and B.TENANT_ID='+TenID+' and C.SHOP_ID='''+ShopID+''')';
     end;
 
     if Open(Rs) then
@@ -1164,13 +1166,13 @@ begin
           end;
 
           case DbType of
-           4:str :=
+           4:str :=                           //'+Msg_Class+' 暂关掉
               'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
-              'select '+TenID+','''+mid+''','''+Msg_Class+''',int(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
+              'select '+TenID+','''+mid+''',''0'',int(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
               ' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
            1:str :=
               'insert into MSC_MESSAGE(TENANT_ID,MSG_ID,MSG_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,MSG_SOURCE,ISSUE_USER,MSG_TITLE,MSG_CONTENT,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
-              'select '+TenID+','''+mid+''','''+Msg_Class+''',to_number(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
+              'select '+TenID+','''+mid+''',''0'',to_number(USE_DATE),'+TenID+','''+s+''',''system'',TITLE,CONTENT,'''+formatDatetime('YYYY-MM-DD',fnTime.fnStrtoDate(rs.Fields[2].asString) )+''','''+rs.Fields[0].asString+''',''00'','+GetTimeStamp(DbType)+
               ' from RIM_MESSAGE A where COM_ID='''+ComID+''' and MSG_ID='''+rs.Fields[0].asString+''' ';
           end;
           ExecSQL(Str,iRet);
@@ -1527,7 +1529,9 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE where TENANT_ID in (select TENANT_ID from CA_RELATIONS where RELATI_ID='+tid+' AND RELATION_ID=1000006) and PRICE_TYPE=''2''';
+    rs.SQL.Text :=
+      'select PRICE_ID,PRICE_NAME from PUB_PRICEGRADE '+
+      ' where TENANT_ID in (select TENANT_ID from CA_RELATIONS where RELATI_ID='+tid+' AND RELATION_ID=1000006) and PRICE_TYPE=''2''';
     Open(rs);
     result := rs.Fields[0].AsString;
     PRICE_NAME:=trim(rs.Fields[1].AsString);
@@ -2040,7 +2044,7 @@ begin
       'select '''+mid+''',A.INVEST_ID,A.VOLUME_ID,'''+formatDatetime('YYYYMMDD',date())+''','''+formatDatetime('HH:NN:SS',now())+''','''+CustID+''' '+
       ' from CC_INVESTIGATE A,MSC_QUESTION B,MSC_INVEST_LIST C where B.TENANT_ID='+tid+' and B.COMM_ID=A.INVEST_ID '+
       ' and B.QUESTION_ID='''+qid+''' and B.TENANT_ID=C.TENANT_ID and B.QUESTION_ID=C.QUESTION_ID and C.QUESTION_FEEDBACK_STATUS=1 and C.QUESTION_ANSWER_STATUS=1 and C.SHOP_ID='''+sid+''' '+
-      ' and not Exists(select * from CC_MYINVESTIGATE D where A.INVEST_ID=D.INVEST_ID and D.CUST_ID='''+CustID+''')';
+      ' and A.INVEST_ID not in(select INVEST_ID from CC_MYINVESTIGATE where CUST_ID='''+CustID+''')';
 
     //插入Rim我的调查行表
     DetailQry.Close;
@@ -2135,8 +2139,9 @@ begin
   try
     rs.Close;
     rs.SQL.Text:=
-       'select INVEST_ID,VOLUME_ID,BEGIN_DATE,END_DATE,IS_REPEAT from CC_INVESTIGATE A where A.INVEST_GROUP=''01'' and A.END_DATE>='''+FormatDatetime('YYYYMMDD',Now())+''' '+
-       'and not exists(select * from MSC_INVEST_LIST B where A.INVEST_ID=B.COMM_ID and B.TENANT_ID='+tid+' and B.SHOP_ID='''+sid+''')';
+       'select INVEST_ID,VOLUME_ID,BEGIN_DATE,END_DATE,IS_REPEAT from CC_INVESTIGATE A '+
+       ' where A.INVEST_GROUP=''01'' and A.END_DATE>='''+FormatDatetime('YYYYMMDD',Now())+''' '+
+         ' and A.INVEST_ID not in(select COMM_ID from MSC_INVEST_LIST where TENANT_ID='+tid+' and SHOP_ID='''+sid+''')';
     Open(rs);
     rs.First;
     while not rs.Eof do
@@ -2155,8 +2160,9 @@ begin
         str :=
           'insert into MSC_QUESTION(TENANT_ID,QUESTION_ID,QUESTION_CLASS,ISSUE_DATE,ISSUE_TENANT_ID,QUESTION_SOURCE,ISSUE_USER,QUESTION_TITLE,ANSWER_FLAG,QUESTION_ITEM_AMT,REMARK,END_DATE,COMM_ID,COMM,TIME_STAMP) '+
           'select '+tid+','''+mid+''',''1'','+Beg_Date+',0,A.INVEST_NAME,''system'',B.VOLUME_NAME,'''+IS_REPEAT+''',0,B.VOLUME_NOTE,'''+END_Date+''',A.INVEST_ID,''00'','+GetTimeStamp(DbType)+' '+
-          'from CC_INVESTIGATE A,CC_VOLUME B where A.VOLUME_ID=B.VOLUME_ID and A.ORGAN_ID=B.ORGAN_ID and '+
-          ' A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+ComID+''' and not exists(select * from MSC_QUESTION B where A.INVEST_ID=B.COMM_ID and B.TENANT_ID='+tid+')';
+          'from CC_INVESTIGATE A,CC_VOLUME B where A.VOLUME_ID=B.VOLUME_ID and A.ORGAN_ID=B.ORGAN_ID '+
+          ' and A.INVEST_ID='''+rs.Fields[0].asString+''' and A.ORGAN_ID='''+ComID+''' '+
+          ' and A.INVEST_ID not in (select COMM_ID from MSC_QUESTION where TENANT_ID='+tid+')';
         ExecSQL(str,r);
 
         //初始化[一张问卷]题目
@@ -2219,7 +2225,6 @@ initialization
   ReadPlugInCfg(PlugParams);
 
 finalization
-
 
 
 end.

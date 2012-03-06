@@ -31,6 +31,9 @@ type
     class function ReadIniFileSection(FileName: string;var Section: TStringList): Boolean;
     //删除Ini文件Section:
     class function DeleteIniFileSection(FileName,Section: string): Boolean;
+    //返回字符值
+    class function GetParamValue(var LStr: string; CodeStr,FlagStr: string): string;
+    class function GetParamValueInt(var LStr: string; CodeStr,FlagStr: string): integer;
   end;
 
   {==服务管理: DoTaskCmd:(0:查询服务;1:启用服务;2:停止服务;3:重启Ado服务); ==}
@@ -44,8 +47,6 @@ type
   public
     //查询服务
     function QueryService(AServName: string): integer;
-    //启动服务
-    function StartService(AServName: string): Boolean;
     //停止服务
     function StopService(AServName: string): Boolean;
     //重启动服务
@@ -54,32 +55,50 @@ type
     function DoTaskCommand(ObjectFactory:IdbHelp): integer;
     //读取SelectSQL之前，通常用于处理 SelectSQL  返回值说明 =0表示执行成功 否则为错误代码
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
-    procedure InitClass; override;
-  end;
-
-  {==连接状态: DoTaskCmd:(0:查询数据库和客户端连接;1:查询数据库连接;2:查询客户端连接;3:断开客户端连接); ==}
-  TSrvrConnetion=class(TZFactory)
-  private
-    //根据客户端传入参数值：执行相应指令
-    function DoTaskCommand(ObjectFactory:IdbHelp): integer;
-  public
-    //读取SelectSQL之前，通常用于处理 SelectSQL  返回值说明 =0表示执行成功 否则为错误代码
-    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
-    procedure InitClass; override;
   end;
 
   {==服务Socket连接参数==}
-  TSrvrParamInfo=class(TZFactory)
+  TSrvrPortInfo=class(TZFactory)
   private
-    FIsFlag: integer;  //运行标记位
+    DoTaskIdx: integer;
+    function CheckSrvrPort:Boolean;     //判断端口是否占用
+    function OpenSrvrPortList: Boolean; //返回SrvrPortList
+    function SaveSrvrPortList: Boolean; //保存SrvrPortList
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL  返回值说明 =0表示执行成功 否则为错误代码
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  {==连接状态: DoTaskCmd:(0:查询数据库连接); ==}
+  TSrvrDBConnetion=class(TZFactory)
+  private
+    DoTaskIdx: integer;
+    FDBList: TStringList;
+    function OpenDBList: Boolean;  //打开返回DBList
+    function CheckDBConnect: Boolean;  //保存连接DBList
+    function SaveDBList: Boolean;  //保存连接DBList
+  public
+    constructor Create(ADataSet: TDataSet);override;
+    destructor  Destroy;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL  返回值说明 =0表示执行成功 否则为错误代码
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+
+  {==连接状态: DoTaskCmd:(0:查询数据库和客户端连接;1:查询数据库连接;2:查询客户端连接;3:断开客户端连接); ==}
+  TClientConnetion=class(TZFactory)
+  private
+    DoTaskIdx: integer;
     //根据客户端传入参数值：执行相应指令
     function DoTaskCommand(ObjectFactory:IdbHelp): integer;
+    //正常刷新数据(返回客户端连接List)
+    function OpenClientConnectionList: Boolean;
+    //移除客户端连接
+    function RemoveClientConnected: Boolean;  
   public
     //插入之前处理保存文件内容
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //读取SelectSQL之前，通常用于处理 SelectSQL  返回值说明 =0表示执行成功 否则为错误代码
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
-    //初始化类
     procedure InitClass; override;
   end;
 
@@ -89,9 +108,8 @@ type
     FIsFlag: integer;  //运行标记位
     //根据客户端传入参数值：执行相应指令
     function DoTaskCommand(ObjectFactory:IdbHelp): integer;
+    function BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
   public
-    //插入之前处理保存文件内容
-    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //读取SelectSQL之前，通常用于处理 SelectSQL  返回值说明 =0表示执行成功 否则为错误代码
     function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
     //初始化类
@@ -141,7 +159,7 @@ type
 implementation
 
 uses
-  uSrvrServer,ZLogFile;
+  ZLogFile,EncDec;
 
 { TSrvrCtrl }
 
@@ -274,6 +292,32 @@ begin
   end;
 end;
 
+class function TSrvrCtrl.GetParamValue(var LStr: string; CodeStr, FlagStr: string): string;
+var
+  Idx1,Idx2,vLen: integer;
+begin
+  Idx1:=Pos(CodeStr,LStr)+1;
+  Idx2:=Pos(FlagStr,LStr);
+  if (Idx1>0) and (Idx2>0) and (Idx2>Idx1)then
+  begin
+    result:=Copy(LStr,Idx1,Idx2-Idx1+1);
+    LStr:=Copy(LStr,Idx2+1,length(LStr));
+  end;
+end;
+
+class function TSrvrCtrl.GetParamValueInt(var LStr: string; CodeStr, FlagStr: string): integer;
+var
+  Idx1,Idx2,vLen: integer;
+begin
+  Idx1:=Pos(CodeStr,LStr)+1;
+  Idx2:=Pos(FlagStr,LStr);
+  if (Idx1>0) and (Idx2>0) and (Idx2>Idx1)then
+  begin
+    result:=StrtoIntDef(Copy(LStr,Idx1,Idx2-Idx1+1),0);
+    LStr:=Copy(LStr,Idx2+1,length(LStr));
+  end;
+end;
+
 { TSrvrService }
 
 function TSrvrService.QueryService(AServName: string): integer;
@@ -295,33 +339,6 @@ begin
       finally
         CloseServiceHandle(hService);
       end;
-    end;
-  finally
-    CloseServiceHandle(SCManager);
-  end;
-end;
-
-function TSrvrService.StartService(AServName: string): Boolean;
-var
-  lpServiceArgVectors: PChar;
-  SCManager, hService: SC_HANDLE;
-begin
-  SCManager := OpenSCManager(nil, nil, SC_MANAGER_ALL_ACCESS);
-  Result := SCManager <> 0;
-  if Result then
-  try
-    hService := OpenService(SCManager, PChar(AServName), SERVICE_ALL_ACCESS);
-    Result := hService <> 0;
-    if (hService = 0) and (GetLastError = ERROR_SERVICE_DOES_NOT_EXIST) then
-      Exception.Create('The specified service['+AServName+'] does not exist');
-    if hService <> 0 then
-    try
-      lpServiceArgVectors := nil;
-      Result := WinSvc.StartService(hService, 0, PChar(lpServiceArgVectors));
-      if not Result and (GetLastError = ERROR_SERVICE_ALREADY_RUNNING) then
-        Result := True;
-    finally
-      CloseServiceHandle(hService);
     end;
   finally
     CloseServiceHandle(SCManager);
@@ -388,11 +405,6 @@ begin
     DoTaskIdx:=StrToIntDef(Params.FindParam('DoTaskCmd').AsString,0);
     case DoTaskIdx of
      0: result:=QueryService('RSPScktSrvr');
-     1:
-      begin
-        ReRun:=StartService('RSPScktSrvr');
-        if ReRun then result:=1;
-      end;
      2:
       begin
         ReRun:=StopService('RSPScktSrvr');
@@ -406,12 +418,6 @@ begin
     end;
   end;
 end;
-
-procedure TSrvrService.InitClass;
-begin
-  inherited;
-
-end;         
 
 function TSrvrService.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
@@ -528,174 +534,28 @@ end;
 
 { TSrvrConnetion }
 
-function TSrvrConnetion.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
-var
-  i: integer;
-  Rs: TZQuery;
-  vObj: TRecord_;
-  DBFlag,ClientFlag: Boolean;
-  StrList: TStringList;
-  vSession: TZSession;
+function TClientConnetion.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-  DBFlag:=False;      //数据库
-  ClientFlag:=False;  //客户端
-  if Params.FindParam('Con_Type')<>nil then
-  begin
-    case Params.FindParam('Con_Type').AsInteger of
-      1: DBFlag:=true;      //数据库
-      2: ClientFlag:=true;  //客户端
-     else
-      begin
-        DBFlag:=true;       //数据库
-        ClientFlag:=true;   //客户端
-      end;
-    end;
-  end;
-  Rs:=TZQuery(DataSet);
-  Rs.Close;
-  Rs.FieldDefs.Add('Con_Type',ftInteger,0,true);    //类型:1是DB;2是客户端
-  Rs.FieldDefs.Add('Con_ID',ftstring,30,False);      //连接ID(SESION_ID,SRVR_ID)
-  Rs.FieldDefs.Add('Con_DB_ID',ftstring,30,False);   //连接ID(DB_ID)
-  Rs.FieldDefs.Add('Con_PROT',ftstring,10,False);    //连接端口号
-  Rs.FieldDefs.Add('Con_HostName',ftstring,100,False);  //连接主机名
-  Rs.FieldDefs.Add('Con_PARAMS',ftstring,60,False);  //连接主机名
-  Rs.FieldDefs.Add('Con_UPTIME',ftstring,40,False);      //连接更新时间
-  Rs.CreateDataSet;
-  //插入数据库连接
-  if DBFlag then
-  begin
-    StrList:=SrvrObj.DBList;
-    for i:=0 to StrList.Count-1 do
-    begin
-      vObj:=TRecord_(StrList.Objects[i]);
-      if (vObj<>nil) and (vObj.FieldByName('DB_ID').AsString<>'') then
-      begin
-        Rs.Append;
-        Rs.FieldByName('Con_Type').AsInteger:=1; //DB
-        Rs.FieldByName('Con_ID').AsString:=vObj.fieldbyName('DB_ID').AsString;
-        Rs.FieldByName('Con_DB_ID').AsString:='';
-        Rs.FieldByName('Con_PROT').AsString:='';
-        Rs.FieldByName('Con_HostName').AsString:=vObj.fieldbyName('DB_HostName').AsString;
-        Rs.FieldByName('Con_PARAMS').AsString:='';
-        Rs.FieldByName('Con_UPTIME').AsString:=vObj.fieldbyName('DB_Provider').AsString;
-        Rs.Post;
-      end;
-    end;
-  end;
-  //插入客户端连接
-  if ClientFlag then
-  begin
-    for i:=0 to Sessions.Count-1 do
-    begin
-      vSession:=Sessions.Sessions[i];
-      if vSession<>nil then
-      begin
-        Rs.Append;
-        Rs.FieldByName('Con_Type').AsInteger:=2; //Client
-        Rs.FieldByName('Con_ID').AsString:=IntToStr(vSession.SessionID);
-        Rs.FieldByName('Con_DB_ID').AsString:=IntToStr(vSession.dbid);
-        Rs.FieldByName('Con_PROT').AsString:=vSession.Port;
-        Rs.FieldByName('Con_HostName').AsString:=vSession.IPAddress;
-        Rs.FieldByName('Con_PARAMS').AsString:=vSession.UserName;
-        Rs.FieldByName('Con_UPTIME').AsString:=DateTimeToStr(now());
-        Rs.Post;
-      end;
-    end;
+
+end;
+
+function TClientConnetion.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  DoTaskIdx:=0;
+  if Params.FindParam('DoTaskCmd')<>nil then
+    DoTaskIdx:=StrToIntDef(Params.FindParam('DoTaskCmd').AsString,0);
+  case DoTaskIdx of
+   0: result:=OpenClientConnectionList;  //只返回刷新列表
+   1: result:=RemoveClientConnected;     //移除客户端连接
   end;
 end;
 
-function TSrvrConnetion.DoTaskCommand(ObjectFactory: IdbHelp): integer;
+function TClientConnetion.DoTaskCommand(ObjectFactory: IdbHelp): integer;
 begin
 
 end;
 
-procedure TSrvrConnetion.InitClass;
-begin
-  inherited;
-
-end;
-
-
-{ TSrvrParamInfo }
-
-function TSrvrParamInfo.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-var
-  Rs,EditTable: TZQuery;
-  FileName,PortNum: string;
-begin
-  FileName:=TSrvrCtrl.GetPath+'sckt.cfg';
-  Rs:=TZQuery(DataSet);
-  if (Rs<>nil) and (FIsFlag<>1) then
-  begin
-    EditTable:=TZQuery.Create(nil);
-    EditTable.Data:=Rs.Data;
-    try
-      EditTable.First;
-      while not EditTable.Eof do
-      begin
-        PortNum:=EditTable.FieldByName('SRVR_PORT').AsString;
-        case EditTable.FieldByName('SRVR_STATE').AsInteger of
-         1,2:
-          begin
-            TSrvrCtrl.WriteIniFileInt(FileName,PortNum,'ckThreadCacheSize',EditTable.FieldByName('SRVR_ThreadCacheSize').AsInteger);
-            TSrvrCtrl.WriteIniFileInt(FileName,PortNum,'ckTimeout',EditTable.FieldByName('SRVR_TIMEOUT').AsInteger);
-            TSrvrCtrl.WriteIniFileBool(FileName,PortNum,'ckKeepAlive',EditTable.FieldByName('SRVR_KeepActive').AsBoolean);
-          end;
-         3: TSrvrCtrl.DeleteIniFileSection(FileName,PortNum);
-        end;
-        EditTable.Next; 
-      end;
-    finally
-      EditTable.Free;
-    end;
-    FIsFlag:=1; //打上标记位
-  end;
-end;
-
-function TSrvrParamInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
-var
-  i: integer;
-  Rs: TZQuery;
-  PortNum,FileName: string;
-  SectionList: TStringList;
-begin
-  Rs:=TZQuery(DataSet);
-  Rs.Close;
-  Rs.FieldDefs.Add('SRVR_PORT_OLD',ftInteger,0,true); //原端口号(更新使用)
-  Rs.FieldDefs.Add('SRVR_PORT',ftInteger,0,true);     //端口号
-  Rs.FieldDefs.Add('SRVR_ThreadCacheSize',ftInteger,0,False);   //线程缓冲数
-  Rs.FieldDefs.Add('SRVR_TIMEOUT',ftInteger,0,False);     //不活动分钟数
-  Rs.FieldDefs.Add('SRVR_KeepActive',ftBoolean,0,False);  //心跳机制(0:不启用;1:启用)
-  Rs.FieldDefs.Add('SRVR_STATE',ftInteger,0,False);       //记录状态(0:不变; 1:添加; 2:修改; 2:删除)
-  Rs.CreateDataSet;
-  //插入数据库连接
-  try
-    FileName:=TSrvrCtrl.GetPath+'sckt.cfg';
-    SectionList:=TStringList.Create;
-    TSrvrCtrl.ReadIniFileSection(FileName,SectionList);
-    for i:=0 to SectionList.Count-1 do
-    begin
-      PortNum:=trim(SectionList.Strings[i]);
-      Rs.Append;
-      Rs.FieldByName('SRVR_PORT_OLD').AsInteger:=StrToInt(PortNum);
-      Rs.FieldByName('SRVR_PORT').AsInteger:=StrToInt(PortNum);
-      Rs.FieldByName('SRVR_ThreadCacheSize').AsInteger:=TSrvrCtrl.ReadIniFileInt(FileName,PortNum,'ckThreadCacheSize');
-      Rs.FieldByName('SRVR_TIMEOUT').AsInteger:=TSrvrCtrl.ReadIniFileInt(FileName,PortNum,'ckTimeout');
-      Rs.FieldByName('SRVR_KeepActive').AsBoolean:=TSrvrCtrl.ReadIniFileBool(FileName,PortNum,'ckKeepAlive');
-      Rs.FieldByName('SRVR_STATE').AsInteger:=0;
-      Rs.Post;
-    end;
-  finally
-    SectionList.Free;
-  end;
-end;
-
-function TSrvrParamInfo.DoTaskCommand(ObjectFactory: IdbHelp): integer;
-begin
-
-end;
-
-procedure TSrvrParamInfo.InitClass;
+procedure TClientConnetion.InitClass;
 begin
   inherited;
 
@@ -784,8 +644,8 @@ begin
     Rs.FieldDefs.Add('LOG_File',ftBlob,0,False);     //日志文件
     Rs.CreateDataSet;
     LogFile:=TSrvrCtrl.GetPath+'CurLog.Log';
-    SrvrObj.LogList.SaveToFile(LogFile);
-    SrvrObj.LogList.Clear;
+ //   SrvrObj.LogList.SaveToFile(LogFile);
+ //   SrvrObj.LogList.Clear;
     sm:=TMemoryStream.Create;
     sm.LoadFromFile(LogFile);
     Rs.Append;
@@ -973,18 +833,395 @@ begin
 
 end;
 
+{ TSrvrDBConnetion }
+
+function TSrvrDBConnetion.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+begin
+  DoTaskIdx:=0;
+  if Params.FindParam('DoTaskCmd')<>nil then
+    DoTaskIdx:=StrToIntDef(Params.FindParam('DoTaskCmd').AsString,0);
+  case DoTaskIdx of
+   0: OpenDBList;  //只返回
+   1: CheckDBConnect; 
+   2: SaveDBList;  //先判断是否能连接在保存
+  end;
+end;
+
+function TSrvrDBConnetion.CheckDBConnect: Boolean;
+var
+  DBCon: string;
+  Rs: TZQuery;
+  dbHelp: IdbHelp;
+begin
+  result:=False;
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('ReRun',ftBoolean,0,true);        //连接DB_ID
+  Rs.CreateDataSet;
+  Rs.Append;
+  Rs.FieldByName('ReRun').AsBoolean:=False;
+  Rs.Post;
+
+  if Params.FindParam('DB_CONSTR')<>nil then DBCon:=Params.FindParam('DB_CONSTR').AsString;   //数据库登录密码
+  if DBCon<>'' then
+  begin
+    try
+      dbHelp := TdbHelp.Create;
+      dbHelp.Initialize(DecStr(DBCon,ENC_KEY));
+      dbHelp.Connect;
+      //连接上保存参数
+      if dbHelp.Connected then
+      begin
+        try
+          Rs.Edit;
+          Rs.FieldByName('ReRun').AsBoolean:=true;
+          Rs.Post;
+        except
+        end;
+      end;
+    finally
+      dbHelp:=nil;
+    end;
+  end;
+end;
+
+constructor TSrvrDBConnetion.Create(ADataSet: TDataSet);
+var
+  i: integer;
+  F: TIniFile;
+  CusStr: string;
+begin
+  FDBList:=TStringList.Create;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+    F.ReadSections(FDBList);
+    for i:=FDBList.Count-1 to 0 do
+    begin
+      CusStr:=trim(LowerCase(FDBList.Strings[i]));
+      if not ((length(CusStr)>2) and (copy(CusStr,1,2)='db')) then
+      begin
+        FDBList.Delete(i);
+      end;
+    end;
+  finally
+    F.Free;
+  end;   
+end;
+
+destructor TSrvrDBConnetion.Destroy;
+begin
+  FDBList.Free;
+  inherited;
+end;
+
+function TSrvrDBConnetion.OpenDBList: Boolean;
+var
+  i: integer;
+  Rs: TZQuery;
+  DBID,FileName,DbHost: string;
+begin
+  result:=false;
+  FileName:=TSrvrCtrl.GetPath+'db.cfg';
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('DB_ID',ftstring,20,False);        //连接DB_ID
+  Rs.FieldDefs.Add('DB_TYPE',ftstring,20,False);      //数据库类型
+  Rs.FieldDefs.Add('DB_HOSTNAME',ftstring,50,False);  //数据库主机名
+  Rs.FieldDefs.Add('DB_DBNAME',ftstring,50,False);    //数据库库名
+  Rs.FieldDefs.Add('DB_USERID',ftstring,50,False);    //数据库登录用户名
+  Rs.FieldDefs.Add('DB_PWD',ftstring,60,False);       //数据库登录密码
+  Rs.FieldDefs.Add('DB_STATUS',ftInteger,0,False);       //数据库登录密码
+  Rs.CreateDataSet;
+  //插入数据库连接
+  for i:=0 to FDBList.Count-1 do
+  begin
+    DBID:=trim(FDBList.Strings[i]);
+    DbHost:=TSrvrCtrl.ReadIniFile(FileName,DBID,'hostname');
+    Rs.Append;
+    Rs.FieldByName('DB_ID').AsString:=Copy(DBID,3,20); 
+    Rs.FieldByName('DB_TYPE').AsString:=TSrvrCtrl.ReadIniFile(FileName,DBID,'provider');
+    Rs.FieldByName('DB_HOSTNAME').AsString:=DbHost;
+    Rs.FieldByName('DB_DBNAME').AsString:=TSrvrCtrl.ReadIniFile(FileName,DBID,'databasename');
+    Rs.FieldByName('DB_USERID').AsString:=TSrvrCtrl.ReadIniFile(FileName,DBID,'uid');
+    Rs.FieldByName('DB_PWD').AsString:=TSrvrCtrl.ReadIniFile(FileName,DBID,'password');
+    Rs.FieldByName('DB_STATUS').AsInteger:=0;
+    Rs.Post;
+  end;
+  result:=true;
+end;
+
+function TSrvrDBConnetion.SaveDBList: Boolean;
+var
+  Rs: TZQuery;
+  FileName,DBID,DbType,DbHost,DbPort,DBName,DBUID,DBPwd,DBCon: string;
+  dbHelp: IdbHelp;
+begin
+  result:=False;
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('ReRun',ftBoolean,0,true);        //连接DB_ID
+  Rs.CreateDataSet;
+  Rs.Append;
+  Rs.FieldByName('ReRun').AsBoolean:=False;
+  Rs.Post;
+
+  FileName:=TSrvrCtrl.GetPath+'db.cfg';
+  DBID:='';
+  DbType:='';
+  DbHost:='';
+  DbPort:='';
+  DBName:='';
+  DBUID:='';
+  DBPwd:='';
+  DBCon:='';
+  if Params.FindParam('DB_ID')<>nil then DBID:=Params.FindParam('DB_ID').AsString;  //连接DB_ID
+  if Params.FindParam('DB_TYPE')<>nil then DbType:=Params.FindParam('DB_TYPE').AsString;  //数据库类型
+  if Params.FindParam('DB_HOSTNAME')<>nil then DbHost:=Params.FindParam('DB_HOSTNAME').AsString;  //数据库主机名
+  if Params.FindParam('DB_DBNAME')<>nil then DBName:=Params.FindParam('DB_DBNAME').AsString;  //数据库库名
+  if Params.FindParam('DB_USERID')<>nil then DBUID:=Params.FindParam('DB_USERID').AsString;   //数据库登录用户名
+  if Params.FindParam('DB_PWD')<>nil then DBPwd:=Params.FindParam('DB_PWD').AsString;    //数据库登录密码
+  if Params.FindParam('DB_CONSTR')<>nil then DBCon:=Params.FindParam('DB_CONSTR').AsString;   //数据库登录密码
+  if (DBID<>'') and (DbHost<>'') then
+  begin
+    try
+      dbHelp := TdbHelp.Create;
+      dbHelp.Initialize(DecStr(DBCon,ENC_KEY));
+      dbHelp.Connect;
+      //连接上保存参数
+      if dbHelp.Connected then
+      begin
+        try
+          TSrvrCtrl.WriteIniFile(FileName,'db'+DBID,'dbid',DBID);
+          TSrvrCtrl.WriteIniFile(FileName,'db'+DBID,'hostname',DbHost);
+          TSrvrCtrl.WriteIniFile(FileName,'db'+DBID,'databasename',DBName);
+          TSrvrCtrl.WriteIniFile(FileName,'db'+DBID,'password',DBPwd);
+          TSrvrCtrl.WriteIniFile(FileName,'db'+DBID,'provider',DbType);
+          TSrvrCtrl.WriteIniFile(FileName,'db'+DBID,'connstr',DBCon);
+          Rs.Edit;
+          Rs.FieldByName('ReRun').AsBoolean:=true;
+          Rs.Post;
+        except
+        end;
+      end;
+    finally
+      dbHelp:=nil;
+    end;
+  end;
+end;
+
+function TClientConnetion.OpenClientConnectionList: Boolean;
+var
+  i: integer;
+  Rs: TZQuery;
+  vSession: TZSession;
+begin
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('Con_ID',ftstring,30,False);         //连接ID(SESION_ID,SRVR_ID)
+  Rs.FieldDefs.Add('Con_DB_ID',ftstring,30,False);      //连接ID(DB_ID)
+  Rs.FieldDefs.Add('Con_PROT',ftstring,10,False);       //连接端口号
+  Rs.FieldDefs.Add('Con_HOSTNAME',ftstring,60,False);   //连接主机名
+  Rs.FieldDefs.Add('Con_USERNAME',ftstring,40,False);   //连接用户名
+  Rs.FieldDefs.Add('Con_UPTIME',ftstring,30,False);     //连接更新时间
+  Rs.CreateDataSet;
+  //插入客户端连接
+  for i:=0 to Sessions.Count-1 do
+  begin
+    vSession:=Sessions.Sessions[i];
+    if vSession<>nil then
+    begin
+      Rs.Append;
+      Rs.FieldByName('Con_ID').AsString:=IntToStr(vSession.SessionID);
+      Rs.FieldByName('Con_DB_ID').AsString:=IntToStr(vSession.dbid);
+      Rs.FieldByName('Con_PROT').AsString:=vSession.Port;
+      Rs.FieldByName('Con_HOSTNAME').AsString:=vSession.IPAddress;
+      Rs.FieldByName('Con_USERNAME').AsString:=vSession.UserName;
+      Rs.FieldByName('Con_UPTIME').AsString:=DateTimeToStr(now());
+      Rs.Post;
+    end;
+  end;
+end;
+
+function TClientConnetion.RemoveClientConnected: Boolean;
+var
+  i: integer;
+  Rs: TZQuery;
+  vSession: TZSession;
+begin
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('Con_ID',ftstring,30,True);          //连接ID(SESION_ID,SRVR_ID)
+  Rs.FieldDefs.Add('Con_STATUS',ftInteger,0,False);      //连接状态
+  Rs.CreateDataSet;
+  //执行移除连接
+  Rs.Append;
+  Rs.FieldByName('Con_ID').AsString:=Params.ParamByName('Con_ID').AsString;
+  Rs.FieldByName('Con_STATUS').AsInteger:=0;
+  Rs.Post;
+end;
+
+
+
+{ TSrvrPortInfo }
+
+function TSrvrPortInfo.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  i: integer;
+  Rs: TZQuery;
+  PortNum,FileName: string;
+  SectionList: TStringList;
+begin
+  DoTaskIdx:=0;
+  if Params.FindParam('DoTaskCmd')<>nil then
+    DoTaskIdx:=StrToIntDef(Params.FindParam('DoTaskCmd').AsString,0);
+  case DoTaskIdx of
+   0: result:=OpenSrvrPortList;  //只返回刷新列表
+   1: result:=CheckSrvrPort;     //判断端口是否被占用
+   2: result:=SaveSrvrPortList;  //保存端口参数
+  end;
+end;
+
+function TSrvrPortInfo.CheckSrvrPort: Boolean;
+var
+  PortNum: integer;
+  Rs: TZQuery;
+  PortDisp: TSocketDispatcher;
+begin
+  result:=False;
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('ReRun',ftBoolean,0,true); //原端口号(更新使用)
+  Rs.CreateDataSet;
+  Rs.Append;
+  Rs.FieldByName('ReRun').AsBoolean:=False;
+  Rs.Post;
+
+  PortNum:=0;
+  if Params.FindParam('SRVR_PORT')<>nil then
+    PortNum:=Params.FindParam('SRVR_PORT').AsInteger;
+
+  if PortNum>0 then
+  begin
+    PortDisp := TSocketDispatcher.Create(nil);
+    try
+      PortDisp.Port:=PortNum;
+      try
+        PortDisp.Open;
+        Rs.Edit;
+        Rs.FieldByName('ReRun').AsBoolean:=PortDisp.Active;
+        Rs.Post;
+      except
+        on E: Exception do
+          raise Exception.CreateResFmt(@SOpenError, [PortDisp.Port, E.Message]);
+      end;
+    finally
+      PortDisp.Free;
+    end;
+  end;
+end;
+ 
+function TSrvrPortInfo.OpenSrvrPortList: Boolean;
+var
+  i: integer;
+  Rs: TZQuery;
+  PortNum,FileName: string;
+  SectionList: TStringList;
+begin
+  result:=False;
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('SRVR_PORT_OLD',ftInteger,0,true); //原端口号(更新使用)
+  Rs.FieldDefs.Add('SRVR_PORT',ftInteger,0,true);     //端口号
+  Rs.FieldDefs.Add('SRVR_ThreadCacheSize',ftInteger,0,False);   //线程缓冲数
+  Rs.FieldDefs.Add('SRVR_TIMEOUT',ftInteger,0,False);     //不活动分钟数
+  Rs.FieldDefs.Add('SRVR_KeepActive',ftBoolean,0,False);  //心跳机制(0:不启用;1:启用)
+  Rs.FieldDefs.Add('SRVR_STATUS',ftInteger,0,False);       //记录状态(0:不变; 1:添加; 2:修改; 2:删除)
+  Rs.CreateDataSet;
+  //插入数据库连接
+  try
+    FileName:=TSrvrCtrl.GetPath+'sckt.cfg';
+    SectionList:=TStringList.Create;
+    TSrvrCtrl.ReadIniFileSection(FileName,SectionList);
+    for i:=0 to SectionList.Count-1 do
+    begin
+      PortNum:=trim(SectionList.Strings[i]);
+      Rs.Append;
+      Rs.FieldByName('SRVR_PORT_OLD').AsInteger:=StrToInt(PortNum);
+      Rs.FieldByName('SRVR_PORT').AsInteger:=StrToInt(PortNum);
+      Rs.FieldByName('SRVR_ThreadCacheSize').AsInteger:=TSrvrCtrl.ReadIniFileInt(FileName,PortNum,'ckThreadCacheSize');
+      Rs.FieldByName('SRVR_TIMEOUT').AsInteger:=TSrvrCtrl.ReadIniFileInt(FileName,PortNum,'ckTimeout');
+      Rs.FieldByName('SRVR_KeepActive').AsBoolean:=TSrvrCtrl.ReadIniFileBool(FileName,PortNum,'ckKeepAlive');
+      Rs.FieldByName('SRVR_STATUS').AsInteger:=0;
+      Rs.Post;
+    end;
+    result:=true;
+  finally
+    SectionList.Free;
+  end;
+end;
+
+function TSrvrPortInfo.SaveSrvrPortList: Boolean;
+var
+  i,IsRun: integer;
+  Rs: TZQuery;
+  FileName,ParamValue: string;
+  PortNum,KeepActive: string;
+  ThreadCacheSize,TIMEOUT,PortState: integer;
+begin
+  IsRun:=0;
+  FileName:=TSrvrCtrl.GetPath+'sckt.cfg';
+  Rs:=TZQuery(DataSet);
+  Rs.Close;
+  Rs.FieldDefs.Add('ReRun',ftBoolean,0,true); //原端口号(更新使用)
+  Rs.CreateDataSet;
+  Rs.Append;
+  Rs.FieldByName('ReRun').AsBoolean:=False;
+  Rs.Post;
+  for i:=1 to Params.Count do
+  begin
+    if Params.FindParam('PORTNUM'+InttoStr(i))<>nil then
+      ParamValue:=trim(Params.FindParam('PORTNUM'+InttoStr(i)).AsString);
+    if ParamValue<>'' then
+    begin
+      PortNum:=TSrvrCtrl.GetParamValue(ParamValue,'PORT=',';');
+      ThreadCacheSize:=TSrvrCtrl.GetParamValueInt(ParamValue,'CACHE=',';');
+      TIMEOUT:=TSrvrCtrl.GetParamValueInt(ParamValue,'TIME=',';');
+      KeepActive:=TSrvrCtrl.GetParamValue(ParamValue,'ACTIVE=',';');
+      PortState:=TSrvrCtrl.GetParamValueInt(ParamValue,'STATUS=',';');
+      if (PortNum<>'') and (PortState>0) then
+      begin
+        case PortState of
+         1,2:
+          begin
+            TSrvrCtrl.WriteIniFileInt(FileName,PortNum,'ckThreadCacheSize',ThreadCacheSize);
+            TSrvrCtrl.WriteIniFileInt(FileName,PortNum,'ckTimeout',TIMEOUT);
+            TSrvrCtrl.WriteIniFileBool(FileName,PortNum,'ckKeepAlive',(trim(KeepActive)<>'0'));
+          end;
+         3: TSrvrCtrl.DeleteIniFileSection(FileName,PortNum);
+        end;
+      end;
+    end;
+    Inc(IsRun);
+  end;
+  Rs.Edit;
+  Rs.FieldByName('ReRun').AsBoolean:=(IsRun>0);
+  Rs.Post;
+end;
+
 initialization
   RegisterClass(TSrvrService);
-  RegisterClass(TSrvrConnetion);
-  RegisterClass(TSrvrParamInfo);
+  RegisterClass(TSrvrDBConnetion);
+  RegisterClass(TClientConnetion);
+  RegisterClass(TSrvrPortInfo);
   RegisterClass(TSrvrTask);
   RegisterClass(TSrvrLog);
 
   RegisterClass(TRemoteTask);
 finalization
   UnRegisterClass(TSrvrService);
-  UnRegisterClass(TSrvrConnetion);
-  UnRegisterClass(TSrvrParamInfo); 
+  UnRegisterClass(TSrvrDBConnetion);
+  UnRegisterClass(TClientConnetion);
+  UnRegisterClass(TSrvrPortInfo);
   UnRegisterClass(TSrvrTask);
   UnRegisterClass(TSrvrLog);
   

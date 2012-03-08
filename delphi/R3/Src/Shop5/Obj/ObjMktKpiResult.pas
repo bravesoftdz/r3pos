@@ -8,27 +8,10 @@ type
   private
     Locked:boolean;
   public
-    function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
-    //记录行集新增检测函数，返回值是True 测可以新增当前记录
-    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
-    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集删除检测函数，返回值是True 测可以删除当前记录
-    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
-    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
   TMktKpiResultList=class(TZFactory)
   public
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
-    //记录行集新增检测函数，返回值是True 测可以新增当前记录
-    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
-    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集删除检测函数，返回值是True 测可以删除当前记录
-    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
-    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
   TMktKpiResultSale=class(TZFactory)
@@ -110,91 +93,48 @@ end;
 
 { TMktKpiResultList }
 
-function TMktKpiResultList.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResultList.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResultList.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResultList.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResultList.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
 procedure TMktKpiResultList.InitClass;
 var
   Str: string;
 begin
   inherited;
-  SelectSQL.Text := 'select TENANT_ID,PLAN_ID,KPI_ID,KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,FSH_VLE,KPI_MNY '+
-                    ' from MKT_KPI_RESULT_LIST where TENANT_ID=:TENANT_ID and PLAN_ID=:PLAN_ID and KPI_ID=:KPI_ID order by KPI_LV,SEQNO';
+  SelectSQL.Text := 'select ROWS_ID,TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,(KPI_YEAR*10000+KPI_DATE1) as KPI_DATE1,'+
+                    'case when KPI_DATE1>KPI_DATE2 then ((KPI_YEAR+1)*10000+KPI_DATE2) else (KPI_YEAR*10000+KPI_DATE2) end as KPI_DATE2,'+
+                    'KPI_DATA,KPI_CALC,RATIO_TYPE,GODS_ID,LVL_AMT,KPI_RATE,FISH_AMT-ADJS_AMT as ORG_AMT,FISH_AMT,'+
+                    'FISH_CALC_RATE,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_RATIO,ACTR_RATIO,KPI_MNY,BUDG_KPI '+
+                    ' from MKT_KPI_RESULT_LIST where TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR and KPI_ID=:KPI_ID and CLIENT_ID=:CLIENT_ID ';
   IsSQLUpdate := True;
-  Str := 'insert into MKT_KPI_RESULT_LIST(TENANT_ID,PLAN_ID,KPI_ID,KPI_LV,SEQNO,KPI_RATE,KPI_AMT,KPI_DATE1,KPI_DATE2,KPI_AGIO,FSH_VLE,KPI_MNY) '
-    + 'VALUES(:TENANT_ID,:PLAN_ID,:KPI_ID,:KPI_LV,:SEQNO,:KPI_RATE,:KPI_AMT,:KPI_DATE1,:KPI_DATE2,:KPI_AGIO,:FSH_VLE,:KPI_MNY)';
+  Str := 'insert into MKT_KPI_RESULT_LIST(ROWS_ID,TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,KPI_DATE1,KPI_DATE2,KPI_DATA,KPI_CALC,RATIO_TYPE,'+
+         'GODS_ID,LVL_AMT,KPI_RATE,FISH_AMT,FISH_CALC_RATE,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_RATIO,ACTR_RATIO,KPI_MNY,BUDG_KPI) ' +
+         ' VALUES(:ROWS_ID,:TENANT_ID,:CLIENT_ID,:KPI_ID,:KPI_YEAR,:KPI_DATE1,:KPI_DATE2,:KPI_DATA,:KPI_CALC,:RATIO_TYPE,:GODS_ID,'+
+         ':LVL_AMT,:KPI_RATE,:FISH_AMT,:FISH_CALC_RATE,:ADJS_AMT,:FISH_MNY,:ADJS_MNY,:KPI_RATIO,:ACTR_RATIO,:KPI_MNY,:BUDG_KPI)';
   InsertSQL.Text := Str;
-  Str := 'update MKT_KPI_RESULT_LIST set TENANT_ID=:TENANT_ID,PLAN_ID=:PLAN_ID,KPI_ID=:KPI_ID,KPI_LV=:KPI_LV,SEQNO=:SEQNO,'+
-         ' KPI_RATE=:KPI_RATE,KPI_AMT=:KPI_AMT,KPI_DATE1=:KPI_DATE1,KPI_DATE2=:KPI_DATE2,KPI_AGIO=:KPI_AGIO,FSH_VLE=:FSH_VLE,KPI_MNY=:KPI_MNY '+
-         ' where TENANT_ID=:OLD_TENANT_ID and PLAN_ID=:OLD_PLAN_ID and KPI_ID=:OLD_KPI_ID and KPI_LV=:OLD_KPI_LV and SEQNO=:OLD_SEQNO';
+  Str := 'update MKT_KPI_RESULT_LIST set TENANT_ID=:TENANT_ID,CLIENT_ID=:CLIENT_ID,KPI_ID=:KPI_ID,KPI_YEAR=:KPI_YEAR,KPI_DATE1=:KPI_DATE1,'+
+         'KPI_DATE2=:KPI_DATE2,KPI_DATA=:KPI_DATA,KPI_CALC=:KPI_CALC,RATIO_TYPE=:RATIO_TYPE,GODS_ID=:GODS_ID,LVL_AMT=:LVL_AMT,KPI_RATE=:KPI_RATE,'+
+         'FISH_AMT=:FISH_AMT,FISH_CALC_RATE=:FISH_CALC_RATE,ADJS_AMT=:ADJS_AMT,FISH_MNY=:FISH_MNY,ADJS_MNY=:ADJS_MNY,KPI_RATIO=:KPI_RATIO,'+
+         'ACTR_RATIO=:ACTR_RATIO,KPI_MNY=:KPI_MNY,BUDG_KPI=:BUDG_KPI where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and KPI_ID=:OLD_KPI_ID and CLIENT_ID=:OLD_CLIENT_ID ';
   UpdateSQL.Text := Str;
-  Str := 'delete from MKT_KPI_RESULT_LIST where TENANT_ID=:OLD_TENANT_ID and PLAN_ID=:OLD_PLAN_ID and KPI_ID=:OLD_KPI_ID and KPI_LV=:OLD_KPI_LV and SEQNO=:OLD_SEQNO';
+  Str := 'delete from MKT_KPI_RESULT_LIST where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and KPI_ID=:OLD_KPI_ID and CLIENT_ID=:OLD_CLIENT_ID ';
   DeleteSQL.Text := Str;
 end;
 
 { TMktKpiResult }
-
-function TMktKpiResult.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResult.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResult.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResult.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResult.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktKpiResult.CheckTimeStamp(aGlobal: IdbHelp; s: string;
-  comm: boolean): boolean;
-begin
-
-end;
 
 procedure TMktKpiResult.InitClass;
 var
   Str: string;
 begin
   inherited;
+  SelectSQL.Text := 'select TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,SHOP_ID,DEPT_ID,PLAN_ID,IDX_TYPE,KPI_TYPE,CHK_DATE,CHK_USER,PLAN_AMT,PLAN_MNY,'+
+                    'FISH_AMT,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_MNY,WDW_MNY,BUDG_MNY,BUDG_KPI,BUDG_WDW,BUDG_VRF,REMARK,CREA_DATE,CREA_USER '+
+                    ' from MKT_KPI_RESULT where TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR and KPI_ID=:KPI_ID and CLIENT_ID=:CLIENT_ID ';
+  IsSQLUpdate := True;
 
-  Str := 'update MKT_KPI_RESULT set PLAN_AMT=:PLAN_AMT,PLAN_MNY=:PLAN_MNY,FISH_AMT=:FISH_AMT,FISH_MNY=:FISH_MNY,KPI_MNY=:KPI_MNY,KPI_CALC=:KPI_CALC,KPI_TYPE=:KPI_TYPE,KPI_DATA=:KPI_DATA '+
-         ' where TENANT_ID=:OLD_TENANT_ID and PLAN_ID=:OLD_PLAN_ID and KPI_ID=:OLD_KPI_ID ';
+  Str := 'update MKT_KPI_RESULT set TENANT_ID=:TENANT_ID,CLIENT_ID=:CLIENT_ID,KPI_ID=:KPI_ID,KPI_YEAR=:KPI_YEAR,SHOP_ID=:SHOP_ID,'+
+         'DEPT_ID=:DEPT_ID,PLAN_ID=:PLAN_ID,IDX_TYPE=:IDX_TYPE,KPI_TYPE=:KPI_TYPE,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,PLAN_AMT=:PLAN_AMT,'+
+         'PLAN_MNY=:PLAN_MNY,FISH_AMT=:FISH_AMT,ADJS_AMT=:ADJS_AMT,FISH_MNY=:FISH_MNY,ADJS_MNY=:ADJS_MNY,KPI_MNY=:KPI_MNY,WDW_MNY=:WDW_MNY,'+
+         'BUDG_MNY=:BUDG_MNY,BUDG_KPI=:BUDG_KPI,BUDG_WDW=:BUDG_WDW,BUDG_VRF=:BUDG_VRF,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER '+
+         ' where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and KPI_ID=:OLD_KPI_ID and CLIENT_ID=:OLD_CLIENT_ID ';
   UpdateSQL.Text := Str;
 
 end;
@@ -208,7 +148,10 @@ var ExceSql:String;
 begin
   if Params.FindParam('EXCETYPE').AsInteger = 1 then
   begin
-    ExceSql := ' insert into MKT_KPI_RESULT (TENANT_ID,PLAN_ID,SHOP_ID,IDX_TYPE,KPI_CALC,KPI_TYPE,KPI_DATA,KPI_ID,KPI_YEAR,BEGIN_DATE,END_DATE,CLIENT_ID,'+
+  {TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,SHOP_ID,DEPT_ID,PLAN_ID,IDX_TYPE,KPI_TYPE,KPI_DATA,KPI_CALC,RATIO_TYPE,CHK_DATE,
+CHK_USER,PLAN_AMT,PLAN_MNY,FISH_AMT,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_MNY,WDW_MNY,BUDG_MNY,BUDG_KPI,BUDG_WDW,BUDG_VRF,
+REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP}
+    {ExceSql := ' insert into MKT_KPI_RESULT (TENANT_ID,PLAN_ID,SHOP_ID,IDX_TYPE,KPI_CALC,KPI_TYPE,KPI_DATA,KPI_ID,KPI_YEAR,BEGIN_DATE,END_DATE,CLIENT_ID,'+
          'CHK_DATE,CHK_USER,PLAN_AMT,PLAN_MNY,FISH_AMT,FISH_MNY,KPI_MNY,WDW_MNY,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+  //
          ' select B.TENANT_ID,B.PLAN_ID,B.SHOP_ID,C.IDX_TYPE,C.KPI_CALC,C.KPI_TYPE,C.KPI_DATA,A.KPI_ID,B.KPI_YEAR,B.BEGIN_DATE,B.END_DATE,B.CLIENT_ID,B.CHK_DATE,B.CHK_USER,B.PLAN_AMT,'+
          'B.PLAN_MNY,0 as FISH_AMT,0 as FISH_MNY,0 as KPI_MNY,0 as WDW_MNY,B.REMARK,'+QuotedStr(Params.FindParam('CREA_DATE').AsString)+
@@ -216,15 +159,24 @@ begin
          ' from MKT_PLANDATA A,MKT_PLANORDER B,MKT_KPI_INDEX C '+
          ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
          ' and not exists (select * from MKT_KPI_RESULT where TENANT_ID=A.TENANT_ID and PLAN_ID=A.PLAN_ID and KPI_ID=A.KPI_ID) '+
-         ' and B.CHK_DATE IS NOT NULL and B.PLAN_TYPE=:PLAN_TYPE and C.IDX_TYPE=:IDX_TYPE and B.TENANT_ID=:TENANT_ID and B.KPI_YEAR=:KPI_YEAR ';
+         ' and B.CHK_DATE IS NOT NULL and B.PLAN_TYPE=:PLAN_TYPE and C.IDX_TYPE=:IDX_TYPE and B.TENANT_ID=:TENANT_ID and B.KPI_YEAR=:KPI_YEAR ';}
+
+    ExceSql := 'insert into MKT_KPI_RESULT (TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,SHOP_ID,DEPT_ID,PLAN_ID,IDX_TYPE,KPI_TYPE,'+
+               'CREA_DATE,CREA_USER,PLAN_AMT,PLAN_MNY,FISH_AMT,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_MNY,WDW_MNY,REMARK,COMM,TIME_STAMP) '+
+               'select B.TENANT_ID,B.CLIENT_ID,A.KPI_ID,B.KPI_YEAR,B.SHOP_ID,B.DEPT_ID,C.PLAN_ID,A.IDX_TYPE,A.KPI_TYPE,B.CREA_DATE,'+
+               'B.CREA_USER, C.AMOUNT,C.AMONEY,0 as FISH_AMT,0 as ADJS_AMT,0 as FISH_MNY,0 as ADJS_MNY,0 as KPI_MNY,0 as WDW_MNY,C.REMARK,''00'','+GetTimeStamp(AGlobal.iDbType)+
+               ' from MKT_KPI_INDEX A inner join MKT_PLANORDER B on B.TENANT_ID=A.TENANT_ID '+
+               ' left join MKT_PLANDATA C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
+               ' where not exists (select * from MKT_KPI_RESULT where TENANT_ID=A.TENANT_ID and KPI_ID=A.KPI_ID) '+
+               ' and B.CHK_DATE IS NOT NULL and B.PLAN_TYPE=:PLAN_TYPE and B.TENANT_ID=:TENANT_ID and B.KPI_YEAR=:KPI_YEAR ';
     if Params.FindParam('CLIENT_ID') <> nil then
        ExceSql := ExceSql + ' and B.CLIENT_ID=:CLIENT_ID ';
     if Params.FindParam('KPI_ID') <> nil then
-       ExceSql := ExceSql + ' and A.KPI_ID=:KPI_ID ';
+       ExceSql := ExceSql + ' and C.KPI_ID=:KPI_ID ';
   end
   else if Params.FindParam('EXCETYPE').AsInteger = 2 then
   begin
-    ExceSql := ' update MKT_KPI_RESULT '+
+    {ExceSql := ' update MKT_KPI_RESULT '+
                ' set PLAN_AMT = (select AMOUNT from MKT_PLANDATA C where '+
                ' C.TENANT_ID=MKT_KPI_RESULT.TENANT_ID and C.PLAN_ID=MKT_KPI_RESULT.PLAN_ID and C.KPI_ID=MKT_KPI_RESULT.KPI_ID) , '+
                ' PLAN_MNY = (select AMONEY from MKT_PLANDATA C where '+
@@ -235,13 +187,13 @@ begin
     if Params.FindParam('CLIENT_ID') <> nil then
        ExceSql := ExceSql + ' and CLIENT_ID=:CLIENT_ID ';
     if Params.FindParam('KPI_ID') <> nil then
-       ExceSql := ExceSql + ' and KPI_ID=:KPI_ID ';
+       ExceSql := ExceSql + ' and KPI_ID=:KPI_ID '; }
   end
   else if Params.FindParam('EXCETYPE').AsInteger = 3 then
   begin
     ExceSql := 'delete from MKT_KPI_RESULT where not exists(select * from MKT_PLANDATA B where '+
-               'B.TENANT_ID=MKT_KPI_RESULT.TENANT_ID and B.PLAN_ID=MKT_KPI_RESULT.PLAN_ID and B.KPI_ID=MKT_KPI_RESULT.KPI_ID) and TENANT_ID=:TENANT_ID and IDX_TYPE=:IDX_TYPE and KPI_YEAR=:KPI_YEAR '+
-               'and Exists(select * from MKT_PLANORDER where TENANT_ID=MKT_KPI_RESULT.TENANT_ID and PLAN_ID=MKT_KPI_RESULT.PLAN_ID and PLAN_TYPE=:PLAN_TYPE and KPI_YEAR=:KPI_YEAR) ';
+               'B.TENANT_ID=MKT_KPI_RESULT.TENANT_ID and B.PLAN_ID=MKT_KPI_RESULT.PLAN_ID and B.KPI_ID=MKT_KPI_RESULT.KPI_ID) and TENANT_ID=:TENANT_ID and IDX_TYPE=:IDX_TYPE and KPI_YEAR=:KPI_YEAR ';//+
+               //'and Exists(select * from MKT_PLANORDER where TENANT_ID=MKT_KPI_RESULT.TENANT_ID and PLAN_ID=MKT_KPI_RESULT.PLAN_ID and PLAN_TYPE=:PLAN_TYPE and KPI_YEAR=:KPI_YEAR) ';
     if Params.FindParam('CLIENT_ID') <> nil then
        ExceSql := ExceSql + ' and CLIENT_ID=:CLIENT_ID ';
     if Params.FindParam('KPI_ID') <> nil then

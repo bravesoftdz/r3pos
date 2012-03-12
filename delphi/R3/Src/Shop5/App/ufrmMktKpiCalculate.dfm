@@ -163,7 +163,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         Width = 121
         Height = 20
         Properties.MaxValue = 2111.000000000000000000
-        Properties.MinValue = 2011.000000000000000000
+        Properties.MinValue = 2000.000000000000000000
+        Properties.OnValidate = fndKPI_YEARPropertiesValidate
         TabOrder = 1
         Value = 2011
       end
@@ -295,27 +296,55 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     CachedUpdates = True
     Params = <>
     Left = 2
-    Top = 148
+    Top = 117
   end
   object cdsDetail: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 2
-    Top = 180
+    Top = 149
   end
   object cdsKpiIndex: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 33
-    Top = 180
+    Top = 149
   end
-  object cdsKpiOption: TZQuery
+  object cdsKpiLevel: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 64
-    Top = 180
+    Top = 149
+  end
+  object CdsKpiRatio: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 64
+    Top = 181
+  end
+  object CdsKpiSeqNo: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 33
+    Top = 181
+  end
+  object CdsKpiTimes: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 2
+    Top = 181
+  end
+  object CdsKpiGoods: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 95
+    Top = 181
   end
 end

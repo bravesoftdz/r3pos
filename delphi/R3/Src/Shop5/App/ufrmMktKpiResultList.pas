@@ -6,65 +6,64 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, Grids, DBGridEh, cxMaskEdit, cxDropDownEdit, cxControls,
-  cxContainer, cxEdit, cxTextEdit, StdCtrls, RzLabel, DB,
+  cxContainer, cxEdit, cxTextEdit, StdCtrls, RzLabel, DB, ZBase,
   ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 type
+  TOnEditEvent = procedure(Aobj:TRecord_) of object;
   TfrmMktKpiResultList = class(TframeDialogForm)
     DBGridEh1: TDBGridEh;
     btnClose: TRzBitBtn;
     RzPanel1: TRzPanel;
     lab_KPI_NAME: TRzLabel;
     lab_IDX_TYPE: TRzLabel;
-    lab_KPI_DATA: TLabel;
-    lab_KPI_CALC: TLabel;
     lab_KPI_TYPE: TLabel;
     edtKPI_NAME: TcxTextEdit;
     edtIDX_TYPE: TcxComboBox;
-    edtKPI_DATA: TcxComboBox;
-    edtKPI_CALC: TcxComboBox;
     edtKPI_TYPE: TcxComboBox;
     DsList: TDataSource;
-    CdsList: TZQuery;
+    CdsResultList: TZQuery;
+    CdsResult: TZQuery;
     procedure btnCloseClick(Sender: TObject);
-    procedure edtKPI_DATAPropertiesChange(Sender: TObject);
-    procedure edtIDX_TYPEPropertiesChange(Sender: TObject);
-    procedure edtKPI_CALCPropertiesChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh1Columns9UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
-    DisplayPer:Boolean;
-    KpiAgioFront,KpiAgioBack:String;
+    IsEdit,Saved:Boolean;
     FKpiData: String;
     FKpiCalc: String;
     FKpiType: String;
     FIdxType: String;
     FKpiName: String;
-    FKpiYear: String;
+    FKpiYear: Integer;
     FKpiId: String;
-    procedure SetKpiCalc(const Value: String);
-    procedure SetKpiData(const Value: String);
+    FClientId: String;
+    FUpdateRecord: TOnEditEvent;
     procedure SetKpiType(const Value: String);
     procedure SetIdxType(const Value: String);
     procedure SetKpiName(const Value: String);
-    procedure ShowGrid;
-    procedure SetKpiYear(const Value: String);
+    procedure SetKpiYear(const Value: Integer);
     procedure SetKpiId(const Value: String);
+    procedure SetClientId(const Value: String);
+    procedure SetUpdateRecord(const Value: TOnEditEvent);
     { Private declarations }
   public
     { Public declarations }
-    procedure Open(Id:String);
-    procedure SaveInterfaceToFile;
-    procedure LoadInterfaceFromFile;
-    class function ShowDialog(Owner:TForm;Id,K_Name,K_Type,K_Data,K_Calc,I_Type:String):Boolean;
+    Obj_1:TRecord_;
+    procedure Open;
+    procedure Save;
+    class function ShowDialog(Owner:TForm;Id,K_Name,K_Type,ClientId,I_Type:String;K_Year:Integer):Boolean;
     property KpiType:String read FKpiType write SetKpiType;
-    property KpiData:String read FKpiData write SetKpiData;
-    property KpiCalc:String read FKpiCalc write SetKpiCalc;
     property IdxType:String read FIdxType write SetIdxType;
-    property KpiYear:String read FKpiYear write SetKpiYear;
+    property ClientId:String read FClientId write SetClientId;
+    property KpiYear:Integer read FKpiYear write SetKpiYear;
     property KpiId:String read FKpiId write SetKpiId;
     property KpiName:String write SetKpiName;
+    property UpdateRecord:TOnEditEvent read FUpdateRecord write SetUpdateRecord;
   end;
 
 implementation
@@ -73,32 +72,28 @@ uses uGlobal,uCtrlUtil, ufrmBasic, uDsUtil;
 
 { TfrmMktKpiResultList }
 
-procedure TfrmMktKpiResultList.Open(Id: String);
+procedure TfrmMktKpiResultList.Open;
+var param:TftParamList;
 begin
-  CdsList.Close;
-  CdsList.SQL.Text := 'select KPI_LV,SEQNO,KPI_RATE,KPI_AMT,('+FormatDateTime('YYYY',Date())+'*10000+KPI_DATE1) as KPI_DATE1,'+
-  'case when KPI_DATE1>KPI_DATE2 then (('+KpiYear+'+1)*10000+KPI_DATE2) else ('+KpiYear+'*10000+KPI_DATE2) end as KPI_DATE2,'+
-  'KPI_AGIO,FSH_VLE,KPI_MNY  from MKT_KPI_RESULT_LIST where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and PLAN_ID='+QuotedStr(Id)+
-  ' and KPI_ID='+QuotedStr(KpiId)+' order by KPI_LV,SEQNO';
-  Factor.Open(CdsList);
+  try
+    param := TftParamList.Create;
+    param.ParamByName('KPI_YEAR').AsInteger := KpiYear;
+    param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    param.ParamByName('KPI_ID').AsString := KpiId;
+    param.ParamByName('CLIENT_ID').AsString := ClientId;
+    Factor.BeginBatch;
+    Factor.AddBatch(CdsResult,'TMktKpiResult',param);
+    Factor.AddBatch(CdsResultList,'TMktKpiResultList',param);
+    Factor.OpenBatch;
+  finally
+    param.Free;
+  end;
 end;
 
 procedure TfrmMktKpiResultList.SetIdxType(const Value: String);
 begin
   FIdxType := Value;
   edtIDX_TYPE.ItemIndex := TdsItems.FindItems(edtIDX_TYPE.Properties.Items,'CODE_ID',Value);
-end;
-
-procedure TfrmMktKpiResultList.SetKpiCalc(const Value: String);
-begin
-  FKpiCalc := Value;
-  edtKPI_CALC.ItemIndex := TdsItems.FindItems(edtKPI_CALC.Properties.Items,'CODE_ID',Value);
-end;
-
-procedure TfrmMktKpiResultList.SetKpiData(const Value: String);
-begin
-  FKpiData := Value;
-  edtKPI_DATA.ItemIndex := TdsItems.FindItems(edtKPI_DATA.Properties.Items,'CODE_ID',Value);
 end;
 
 procedure TfrmMktKpiResultList.SetKpiName(const Value: String);
@@ -113,88 +108,12 @@ begin
   edtKPI_TYPE.ItemIndex := TdsItems.FindItems(edtKPI_TYPE.Properties.Items,'CODE_ID',Value);
 end;
 
-class function TfrmMktKpiResultList.ShowDialog(Owner: TForm; Id,
-  K_Name,K_Type, K_Data, K_Calc, I_Type: String): Boolean;
-begin
-  with TfrmMktKpiResultList.Create(Owner) do
-  begin
-    try
-      KpiName := K_Name;
-      KpiType := K_Type;
-      KpiData := K_Data;
-      KpiCalc := K_Calc;
-      IdxType := I_Type;
-      Open(Id);
-      ShowModal;
-    finally
-      Free;
-    end;
-  end;
-end;
-
 procedure TfrmMktKpiResultList.btnCloseClick(Sender: TObject);
 begin
   inherited;
+  if IsEdit then Save;
+  if Saved and Assigned(UpdateRecord) then UpdateRecord(Obj_1);
   Close;
-end;
-
-procedure TfrmMktKpiResultList.edtKPI_DATAPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  if edtKPI_DATA.ItemIndex in [0,1,2] then
-  begin
-     DBGridEh1.FieldColumns['KPI_AMT'].Free;
-  end
-  else
-  begin
-     DBGridEh1.FieldColumns['KPI_RATE'].Free;
-  end;
-end;
-
-procedure TfrmMktKpiResultList.edtIDX_TYPEPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  if edtIDX_TYPE.ItemIndex = 0 then
-     KpiAgioFront := '返利'
-  else if edtIDX_TYPE.ItemIndex = 1 then
-     KpiAgioFront := '计提'
-  else if edtIDX_TYPE.ItemIndex = 2 then
-     KpiAgioFront := '提成';
-
-  ShowGrid;
-end;
-
-procedure TfrmMktKpiResultList.ShowGrid;
-begin
-  if DisplayPer then
-  begin
-    DBGridEh1.FieldColumns['KPI_AGIO'].Title.Caption := KpiAgioFront + KpiAgioBack;
-    DBGridEh1.FieldColumns['KPI_AGIO'].DisplayFormat := '#0%';
-  end
-  else
-  begin
-    DBGridEh1.FieldColumns['KPI_AGIO'].Title.Caption := KpiAgioFront + KpiAgioBack;
-    DBGridEh1.FieldColumns['KPI_AGIO'].DisplayFormat := '';
-  end;
-end;
-
-procedure TfrmMktKpiResultList.edtKPI_CALCPropertiesChange(
-  Sender: TObject);
-begin
-  inherited;
-  if edtKPI_CALC.ItemIndex in [0,3] then
-  begin
-     KpiAgioBack := '系数';
-     DisplayPer := False;
-  end
-  else if edtKPI_CALC.ItemIndex in [1,2,4,5] then
-  begin
-     KpiAgioBack := '比率';
-     DisplayPer := True;
-  end;
-  ShowGrid;
 end;
 
 procedure TfrmMktKpiResultList.FormShow(Sender: TObject);
@@ -217,19 +136,16 @@ begin
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh1.canvas.Brush.Color := $0000F2F2;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(CdsResultList.RecNo)),length(Inttostr(CdsResultList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
 end;
 
-procedure TfrmMktKpiResultList.LoadInterfaceFromFile;
-begin
-
-end;
-
-procedure TfrmMktKpiResultList.SaveInterfaceToFile;
-begin
-
-end;
-
-procedure TfrmMktKpiResultList.SetKpiYear(const Value: String);
+procedure TfrmMktKpiResultList.SetKpiYear(const Value: Integer);
 begin
   FKpiYear := Value;
 end;
@@ -237,6 +153,106 @@ end;
 procedure TfrmMktKpiResultList.SetKpiId(const Value: String);
 begin
   FKpiId := Value;
+end;
+
+procedure TfrmMktKpiResultList.SetClientId(const Value: String);
+begin
+  FClientId := Value;
+end;
+
+procedure TfrmMktKpiResultList.DBGridEh1Columns9UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var Amt,CurPrice:Real;
+    rs:TZQuery;
+begin
+  inherited;
+  try
+    rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    if rs.Locate('GODS_ID',CdsResultList.FieldByName('GODS_ID').AsString,[]) then
+       CurPrice := rs.FieldByName('NEW_OUTPRICE').AsFloat;
+    if Text = '' then Amt := 0 else Amt := StrToFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.AsFloat;
+    Raise Exception.Create('无效数值类型!');
+  end;
+  TColumnEh(Sender).Field.AsFloat := Amt;
+  
+  CdsResultList.Edit;
+  CdsResultList.FieldByName('FISH_MNY').AsFloat := Amt*CurPrice;
+  CdsResultList.FieldByName('ADJS_AMT').AsFloat := Amt-CdsResultList.FieldByName('ORG_AMT').AsFloat;
+  CdsResultList.FieldByName('ADJS_MNY').AsFloat := CdsResultList.FieldByName('ADJS_AMT').AsFloat*CurPrice;
+  CdsResultList.Post;
+  CdsResultList.Edit;
+  IsEdit := True;
+end;
+
+class function TfrmMktKpiResultList.ShowDialog(Owner: TForm; Id, K_Name,
+  K_Type, ClientId, I_Type: String; K_Year: Integer): Boolean;
+begin
+  with TfrmMktKpiResultList.Create(Owner) do
+  begin
+    try
+      KpiId := Id;
+      KpiName := K_Name;
+      KpiType := K_Type;
+      IdxType := I_Type;
+      ClientId := ClientId;
+      KpiYear := K_Year;
+      Open;
+      ShowModal;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TfrmMktKpiResultList.Save;
+var SumFishAmt,SumFishMny,SumAdjsAmt,SumAdjsMny:Real;
+begin
+  CdsResultList.First;
+  while not CdsResultList.Eof do
+  begin
+    SumFishAmt := SumFishAmt + CdsResultList.FieldByName('FISH_AMT').AsFloat;
+    SumFishMny := SumFishAmt + CdsResultList.FieldByName('ADJS_AMT').AsFloat;
+    SumAdjsAmt := SumFishAmt + CdsResultList.FieldByName('FISH_MNY').AsFloat;
+    SumAdjsMny := SumFishAmt + CdsResultList.FieldByName('ADJS_MNY').AsFloat;
+    CdsResultList.Next;
+  end;
+  CdsResult.Edit;
+  CdsResult.FieldByName('FISH_AMT').AsFloat := SumFishAmt;
+  CdsResult.FieldByName('ADJS_AMT').AsFloat := SumFishMny;
+  CdsResult.FieldByName('FISH_MNY').AsFloat := SumAdjsAmt;
+  CdsResult.FieldByName('ADJS_MNY').AsFloat := SumAdjsMny;
+  CdsResult.Post;
+  Obj_1.ReadFromDataSet(CdsResult);
+  try
+    Factor.BeginBatch;
+    Factor.AddBatch(CdsResult,'TMktKpiResult');
+    Factor.AddBatch(CdsResultList,'TMktKpiResultList');
+    Factor.CommitBatch;
+  Except
+    Factor.CancelBatch;
+    Raise;
+  end;
+  Saved := True;
+end;
+
+procedure TfrmMktKpiResultList.SetUpdateRecord(const Value: TOnEditEvent);
+begin
+  FUpdateRecord := Value;
+end;
+
+procedure TfrmMktKpiResultList.FormCreate(Sender: TObject);
+begin
+  inherited;
+  Obj_1 := TRecord_.Create;
+end;
+
+procedure TfrmMktKpiResultList.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  Obj_1.Free;
 end;
 
 end.

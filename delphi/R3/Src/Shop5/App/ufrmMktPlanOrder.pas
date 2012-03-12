@@ -44,6 +44,8 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
+    RzLabel5: TRzLabel;
+    edtFILES_NO: TcxMemo;
     procedure FormCreate(Sender: TObject);
     procedure edtKPI_IDEnter(Sender: TObject);
     procedure edtKPI_IDExit(Sender: TObject);
@@ -213,7 +215,7 @@ begin
       Label40.Caption := '所属仓库';
     end;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_DATA,KPI_SPELL,UNIT_NAME from MKT_KPI_INDEX where IDX_TYPE=''1'' and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL,UNIT_NAME from MKT_KPI_INDEX where IDX_TYPE=''1'' and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(cdsKPI_ID);
 
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
@@ -297,6 +299,7 @@ begin
     if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
     if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
     if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
+    if Trim(edtFILES_NO.Text) = '' then Raise Exception.Create('合同号不能为空');
     cdsDetail.First;
     while not cdsDetail.Eof do
     begin
@@ -661,7 +664,7 @@ procedure TfrmMktPlanOrder.DBGridEh1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   inherited;
-  if (cdsDetail.FieldByName('KPI_ID').AsString <> '') and (Column.FieldName = 'AMOUNT') then
+  {if (cdsDetail.FieldByName('KPI_ID').AsString <> '') and (Column.FieldName = 'AMOUNT') then
   begin
     if cdsKPI_ID.Locate('KPI_ID',cdsDetail.FieldByName('KPI_ID').AsString,[]) then
     begin
@@ -682,7 +685,7 @@ begin
          DBGridEh1.DefaultDrawColumnCell(Rect,DataCol,Column,State);
       end;
     end;
-  end;
+  end;}
 end;
 
 procedure TfrmMktPlanOrder.N3Click(Sender: TObject);

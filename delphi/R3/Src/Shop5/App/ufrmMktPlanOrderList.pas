@@ -16,10 +16,8 @@ type
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
     RzLabel4: TRzLabel;
-    RzLabel5: TRzLabel;
     Label3: TLabel;
     fndCLIENT_ID: TzrComboBoxList;
-    fndGLIDE_NO: TcxTextEdit;
     fndDEPT_ID: TzrComboBoxList;
     btnOk: TRzBitBtn;
     fndPLAN_USER: TzrComboBoxList;
@@ -34,6 +32,8 @@ type
     fndSTATUS: TcxRadioGroup;
     CdsHeader: TZQuery;
     CdsDetail: TZQuery;
+    RzLabel1: TRzLabel;
+    fndFILES_NO: TcxTextEdit;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -179,7 +179,7 @@ end;
 procedure TfrmMktPlanOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印经销合同的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -378,13 +378,13 @@ begin
        4:w := w +' and Exists (select * from MKT_PLANORDER G where A.TENANT_ID=G.TENANT_ID and A.CLIENT_ID=G.CLIENT_ID and G.PLAN_TYPE=''1'' and G.KPI_YEAR=A.KPI_YEAR+1) ';
        end;
      end;
-  if Trim(fndGLIDE_NO.Text) <> '' then
-     w := w +' and A.GLIDE_NO like ''%'+trim(fndGLIDE_NO.Text)+'''';
+  if Trim(fndFILES_NO.Text) <> '' then
+     w := w +' and A.FILES_NO like ''%'+trim(fndFILES_NO.Text)+'''';
 
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';
   result :=
-     'select A.PLAN_ID,A.GLIDE_NO,A.KPI_YEAR,A.PLAN_DATE,A.BEGIN_DATE,A.END_DATE,A.CLIENT_ID,'+
+     'select A.TENANT_ID,A.PLAN_ID,A.GLIDE_NO,A.FILES_NO,A.KPI_YEAR,A.PLAN_DATE,A.BEGIN_DATE,A.END_DATE,A.CLIENT_ID,'+
      'B.CLIENT_NAME as CLIENT_ID_TEXT,A.DEPT_ID,F.DEPT_NAME as DEPT_ID_TEXT,A.PLAN_USER,D.USER_NAME as PLAN_USER_TEXT,'+
      'A.CHK_DATE,A.CHK_USER,C.USER_NAME as CHK_USER_TEXT,A.PLAN_AMT,A.PLAN_MNY,A.BOND_MNY,'+
      'A.BUDG_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT '+

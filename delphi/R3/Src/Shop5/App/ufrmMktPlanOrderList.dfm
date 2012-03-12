@@ -1,6 +1,6 @@
 inherited frmMktPlanOrderList: TfrmMktPlanOrderList
-  Left = 273
-  Top = 242
+  Left = 270
+  Top = 186
   Caption = #32463#38144#21512#21516
   OnShow = FormShow
   PixelsPerInch = 96
@@ -36,14 +36,6 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Alignment = taRightJustify
                 Caption = #32463' '#38144' '#21830
               end
-              object RzLabel5: TRzLabel
-                Left = 33
-                Top = 86
-                Width = 48
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #21333'    '#21495
-              end
               object Label3: TLabel
                 Left = 33
                 Top = 44
@@ -52,7 +44,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Caption = #25152#23646#37096#38376
               end
               object Label2: TLabel
-                Left = 190
+                Left = 34
                 Top = 86
                 Width = 48
                 Height = 12
@@ -65,6 +57,14 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Height = 12
                 Caption = #38376#24215#21517#31216
               end
+              object RzLabel1: TRzLabel
+                Left = 181
+                Top = 87
+                Width = 48
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #21512' '#21516' '#21495
+              end
               object fndCLIENT_ID: TzrComboBoxList
                 Left = 89
                 Top = 61
@@ -76,7 +76,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 0
+                TabOrder = 4
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -135,14 +135,6 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
-              object fndGLIDE_NO: TcxTextEdit
-                Left = 89
-                Top = 82
-                Width = 88
-                Height = 20
-                TabOrder = 1
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
               object fndDEPT_ID: TzrComboBoxList
                 Left = 89
                 Top = 40
@@ -154,7 +146,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 2
+                TabOrder = 3
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -178,7 +170,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 508
+                Left = 489
                 Top = 76
                 Width = 67
                 Height = 26
@@ -197,7 +189,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 3
+                TabOrder = 8
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -205,7 +197,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Spacing = 5
               end
               object fndPLAN_USER: TzrComboBoxList
-                Left = 245
+                Left = 89
                 Top = 82
                 Width = 80
                 Height = 20
@@ -215,7 +207,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 4
+                TabOrder = 5
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -253,7 +245,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Properties.MaxValue = 2111.000000000000000000
                 Properties.MinValue = 2000.000000000000000000
                 Properties.OnValidate = K1PropertiesValidate
-                TabOrder = 5
+                TabOrder = 0
                 Value = 2011
               end
               object K2: TcxSpinEdit
@@ -264,7 +256,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 Properties.MaxValue = 2111.000000000000000000
                 Properties.MinValue = 2000.000000000000000000
                 Properties.OnValidate = K2PropertiesValidate
-                TabOrder = 6
+                TabOrder = 1
                 Value = 2011
               end
               object fndSHOP_ID: TzrComboBoxList
@@ -279,7 +271,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 7
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -310,9 +302,9 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                 MultiSelect = False
               end
               object fndSTATUS: TcxRadioGroup
-                Left = 336
+                Left = 335
                 Top = 16
-                Width = 160
+                Width = 145
                 Height = 86
                 ItemIndex = 0
                 Properties.Columns = 2
@@ -332,8 +324,16 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                   item
                     Caption = #26377#32493#32422
                   end>
-                TabOrder = 8
+                TabOrder = 7
                 Caption = ''
+              end
+              object fndFILES_NO: TcxTextEdit
+                Left = 237
+                Top = 82
+                Width = 88
+                Height = 20
+                TabOrder = 6
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               end
             end
             inherited DBGridEh1: TDBGridEh
@@ -360,6 +360,13 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
                   FieldName = 'GLIDE_NO'
                   Footers = <>
                   Title.Caption = #27969#27700#21495
+                  Width = 100
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'FILES_NO'
+                  Footers = <>
+                  Title.Caption = #21512#21516#21495
                   Width = 100
                 end
                 item

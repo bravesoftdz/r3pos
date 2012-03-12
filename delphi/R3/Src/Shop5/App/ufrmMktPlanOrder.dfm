@@ -23,7 +23,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       Height = 121
       object RzLabel2: TRzLabel [0]
         Left = 507
-        Top = 12
+        Top = 34
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -53,7 +53,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object labBEGIN_DATE: TRzLabel [4]
         Left = 507
-        Top = 56
+        Top = 78
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -61,7 +61,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object RzLabel1: TRzLabel [5]
         Left = 507
-        Top = 78
+        Top = 100
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -69,7 +69,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object RzLabel7: TRzLabel [6]
         Left = 507
-        Top = 34
+        Top = 56
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -106,9 +106,17 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Height = 12
         Caption = #25152#23646#38376#24215
       end
+      object RzLabel5: TRzLabel [10]
+        Left = 507
+        Top = 12
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #21512' '#21516' '#21495
+      end
       inherited RzPanel4: TRzPanel
         Height = 79
-        TabOrder = 10
+        TabOrder = 11
         inherited Image1: TImage
           Left = 97
           Top = 32
@@ -116,12 +124,12 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtPLAN_DATE: TcxDateEdit
         Left = 563
-        Top = 8
+        Top = 30
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateButtons = [btnToday]
-        TabOrder = 5
+        TabOrder = 7
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 254
@@ -271,29 +279,29 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtBEGIN_DATE: TcxDateEdit
         Left = 563
-        Top = 52
-        Width = 121
-        Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        Properties.DateButtons = [btnToday]
-        TabOrder = 7
-      end
-      object edtEND_DATE: TcxDateEdit
-        Left = 563
         Top = 74
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DateButtons = [btnToday]
-        TabOrder = 8
+        TabOrder = 9
+      end
+      object edtEND_DATE: TcxDateEdit
+        Left = 563
+        Top = 96
+        Width = 121
+        Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        Properties.DateButtons = [btnToday]
+        TabOrder = 10
       end
       object edtREMARK: TcxMemo
         Left = 254
         Top = 96
-        Width = 312
+        Width = 224
         Height = 20
         Properties.MaxLength = 100
-        TabOrder = 9
+        TabOrder = 5
       end
       object edtBOND_MNY: TcxTextEdit
         Left = 403
@@ -305,13 +313,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
       object edtKPI_YEAR: TcxSpinEdit
         Left = 563
-        Top = 30
+        Top = 52
         Width = 121
         Height = 20
         Properties.MaxValue = 2111.000000000000000000
         Properties.MinValue = 2000.000000000000000000
         Properties.OnChange = edtKPI_YEARPropertiesChange
-        TabOrder = 6
+        TabOrder = 8
         Value = 2011
       end
       object edtSHOP_ID: TzrComboBoxList
@@ -354,6 +362,14 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Buttons = []
         DropListStyle = lsFixed
         MultiSelect = False
+      end
+      object edtFILES_NO: TcxMemo
+        Left = 563
+        Top = 8
+        Width = 121
+        Height = 20
+        Properties.MaxLength = 100
+        TabOrder = 6
       end
     end
     inherited RzPanel3: TRzPanel

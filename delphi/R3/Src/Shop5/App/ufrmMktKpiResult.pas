@@ -625,13 +625,15 @@ end;
 procedure TfrmMktKpiResult.EditRecord(Aobj: TRecord_);
 begin
   if not CdsKpiResult.Active then Exit;
-  if CdsKpiResult.Locate('TENANT_ID,KPI_YEAR,KPI_ID,CLIENT_ID',VarArrayOf([Aobj.FieldByName('TENANT_ID').AsInteger,
-  Aobj.FieldByName('KPI_YEAR').AsInteger,Aobj.FieldByName('KPI_ID').AsString,Aobj.FieldByName('CLIENT_ID').AsString]),[]) then
+  if CdsKpiResult.Locate('TENANT_ID,KPI_YEAR,KPI_ID,CLIENT_ID',
+  VarArrayOf([Aobj.FieldByName('TENANT_ID').AsInteger,
+              Aobj.FieldByName('KPI_YEAR').AsInteger,
+              Aobj.FieldByName('KPI_ID').AsString,
+              Aobj.FieldByName('CLIENT_ID').AsString]),[]) then
   begin
-    { CdsKpiResult.Edit;
-     CdsKpiResult.FieldByName('').AsFloat := 0;
-     CdsKpiResult.FieldByName('').AsFloat := 0;
-     CdsKpiResult.Post; }
+     CdsKpiResult.Edit;
+     CdsKpiResult.FieldByName('FISH_AMT').AsFloat := Aobj.fieldByName('FISH_AMT').AsFloat;
+     CdsKpiResult.Post;
   end;
 end;
 

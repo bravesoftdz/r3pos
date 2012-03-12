@@ -1203,7 +1203,7 @@ begin
     CheckNum := GetSaleMoney(KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger);
     CurKpiRate := KpiDataNum(CheckNum);//第一次获得达标系数(在没有借量之前)
     LocateTapPosition(CurKpiRate);  //定位达标档位并获取相关参数
-    
+
     if KpiTimes.FieldByName('USING_BRRW').AsString = '1' then IsBorrow := True else IsBorrow := False;
     CheckNum := UseBrrw(CheckNum,IsBorrow);
 
@@ -1211,6 +1211,26 @@ begin
 
     ReachJudge(CurKpiRate);
 
+    KpiTimes.Next;
+  end;
+  KpiTimes.First;
+  while not KpiTimes.Eof do
+  begin
+    if KpiTimes.FieldByName('KPI_FLAG').AsString = '1' then
+    begin
+      KpiData := KpiTimes.FieldByName('KPI_DATA').AsInteger;
+      KpiCalc := KpiTimes.FieldByName('KPI_CALC').AsInteger;
+      RatioType := KpiTimes.FieldByName('RATIO_TYPE').AsInteger;
+      CheckNum := GetSaleMoney(KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger);
+      CurKpiRate := KpiDataNum(CheckNum);//第一次获得达标系数(在没有借量之前)
+      LocateTapPosition(CurKpiRate);  //定位达标档位并获取相关参数
+
+      //if KpiTimes.FieldByName('USING_BRRW').AsString = '1' then IsBorrow := True else IsBorrow := False;
+      //CheckNum := UseBrrw(CheckNum,IsBorrow);
+      //CurKpiRate := KpiDataNum(CheckNum);//第二次获得达标系数(在借量之后)
+
+      ReachJudge(CurKpiRate);
+    end;
     KpiTimes.Next;
   end;
 end;

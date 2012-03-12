@@ -62,7 +62,7 @@ type
     ContainerBrrw:Real; //借量值容器
     MaxRate:Real;       //最大返利系数
     GoodsRate:Real;     //商品转换系数
-
+    IsFlag:Boolean;     //是否开始计算促销时段
     CdsGoods: TZQuery;  //记录某一时间段内各商品的相关参数
     KpiData,KpiCalc,RatioType:Integer;  //存储当前时间段内的 考核标准、计算标准、返利设定 参数
     SmallToCalc,BigToCalc:Real;         //小换算率、大换算率
@@ -1025,7 +1025,7 @@ begin
   end;
 
   if Ratio = 0 then Ratio := FKpiIndexInfo.LevelLowRate;
-  if Ratio > MaxRate then MaxRate := Ratio;
+  if (Ratio > MaxRate) and not IsFlag then MaxRate := Ratio;
 
   CdsGoods.First;
   while not CdsGoods.Eof do
@@ -1062,9 +1062,9 @@ begin
       KpiDetail.FieldByName('ADJS_MNY').AsFloat := 0;
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
       if KpiCalc = 1 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
       else if KpiCalc = 2 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio/100
       else if KpiCalc = 3 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
       KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
@@ -1084,9 +1084,9 @@ begin
            KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
         KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
         if KpiCalc = 1 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := KpiDetail.FieldByName('FISH_MNY').AsFloat*Ratio
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := KpiDetail.FieldByName('FISH_MNY').AsFloat*Ratio/100
         else if KpiCalc = 2 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('FISH_AMT').AsFloat)*Ratio
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('FISH_AMT').AsFloat)*Ratio/100
         else if KpiCalc = 3 then
            KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
         KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
@@ -1194,6 +1194,7 @@ var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
     IsBorrow:Boolean;
 begin
   LocateLevel(FKpiIndexInfo.PlanAmt);
+  IsFlag := False;
   KpiTimes.First;
   while not KpiTimes.Eof do
   begin
@@ -1213,6 +1214,8 @@ begin
 
     KpiTimes.Next;
   end;
+
+  IsFlag := True;
   KpiTimes.First;
   while not KpiTimes.Eof do
   begin

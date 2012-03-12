@@ -878,7 +878,7 @@ function TClientRebate.GetSaleMoney(StartDate, EndDate: Integer): Real;
 function GetUnitTO_CALC: string;
 var str:string;
 begin
-  str:=' case when D.UNIT_ID is null then 1.0 '+
+  str:='( case when D.UNIT_ID is null then 1.0 '+
        ' when D.UNIT_ID=C.CALC_UNITS then 1.0 '+     //默认单位为 计量单位
        ' when D.UNIT_ID=C.SMALL_UNITS then cast(C.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
        ' when D.UNIT_ID=C.BIG_UNITS then cast(C.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
@@ -886,7 +886,7 @@ begin
        ' case when B.UNIT_ID=C.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
        ' when B.UNIT_ID=C.SMALL_UNITS then cast(C.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
        ' when B.UNIT_ID=C.BIG_UNITS then cast(C.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
-       ' else 1.0 end ';
+       ' else 1.0 end )';
   result:=str;
 end;
 begin
@@ -984,6 +984,7 @@ begin
 end;
 
 procedure TClientRebate.LocateTapPosition(Rate: Real);
+var CurRate:Real;
 begin
   {KpiSeqNo.Filtered := False;
   KpiSeqNo.Filter := ' LEVEL_ID='''+FKpiIndexInfo.LevelId+''' and TIMES_ID='''+KpiTimes.FieldByName('TIMES_ID').AsString+''' ';
@@ -994,10 +995,13 @@ begin
   KpiSeqNo.First;
   while not KpiSeqNo.Eof do
   begin
-
+    if KpiData in [1,2] then
+       CurRate := KpiSeqNo.FieldByName('KPI_AMT').AsFloat/100
+    else
+       CurRate := KpiSeqNo.FieldByName('KPI_AMT').AsFloat;
     if (KpiSeqNo.FieldByName('LEVEL_ID').AsString = FKpiIndexInfo.LevelId) and
     (KpiSeqNo.FieldByName('TIMES_ID').AsString = KpiTimes.FieldByName('TIMES_ID').AsString) and
-    (Rate >= KpiSeqNo.FieldByName('KPI_AMT').AsFloat/100) then
+    (Rate >= CurRate) then
     begin
        FSeqNo.SeqNoId := KpiSeqNo.FieldByName('SEQNO_ID').AsString;
        FSeqNo.KpiAmt := KpiSeqNo.FieldByName('KPI_AMT').AsFloat;
@@ -1052,7 +1056,7 @@ begin
          KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
       else
          KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
-      KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat/KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
+      KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat;//KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
       KpiDetail.FieldByName('ADJS_AMT').AsFloat := 0;
       KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
       KpiDetail.FieldByName('ADJS_MNY').AsFloat := 0;
@@ -1076,15 +1080,11 @@ begin
          KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
       else
          KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
-      KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat/KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
-      KpiDetail.FieldByName('ADJS_AMT').AsFloat := 0;
-      KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
-      KpiDetail.FieldByName('ADJS_MNY').AsFloat := 0;
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
       if KpiCalc = 1 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := KpiDetail.FieldByName('FISH_MNY').AsFloat*Ratio
       else if KpiCalc = 2 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('FISH_AMT').AsFloat)*Ratio
       else if KpiCalc = 3 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
       KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;

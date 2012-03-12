@@ -111,8 +111,14 @@ end;
 procedure TfrmMktKpiResultList.btnCloseClick(Sender: TObject);
 begin
   inherited;
-  if IsEdit then Save;
-  if Saved and Assigned(UpdateRecord) then UpdateRecord(Obj_1);
+  if IsEdit then
+  begin
+     if MessageBox(Handle,'数据有修改,是否保存?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
+     begin
+        Save;
+        if Saved and Assigned(UpdateRecord) then UpdateRecord(Obj_1);
+     end;
+  end;
   Close;
 end;
 
@@ -181,7 +187,7 @@ begin
   CdsResultList.Edit;
   CdsResultList.FieldByName('FISH_MNY').AsFloat := Amt*CurPrice;
   CdsResultList.FieldByName('ADJS_AMT').AsFloat := Amt-CdsResultList.FieldByName('ORG_AMT').AsFloat;
-  CdsResultList.FieldByName('ADJS_MNY').AsFloat := CdsResultList.FieldByName('ADJS_AMT').AsFloat*CurPrice;
+  CdsResultList.FieldByName('ADJS_MNY').AsFloat := CdsResultList.FieldByName('ADJS_AMT').AsFloat*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat*CurPrice;
   CdsResultList.Post;
   CdsResultList.Edit;
   IsEdit := True;

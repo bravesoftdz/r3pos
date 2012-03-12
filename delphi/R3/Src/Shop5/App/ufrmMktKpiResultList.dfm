@@ -116,8 +116,8 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 FieldName = 'LVL_AMT'
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #31614#32422#37327
-                Width = 50
+                Title.Caption = #31614#32422#31561#32423
+                Width = 60
               end
               item
                 DisplayFormat = '#0.00'

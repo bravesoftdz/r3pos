@@ -78,6 +78,7 @@ type
     procedure SetIsAudit(const Value: Boolean);
   public
     { Public declarations }
+    procedure EditRecord(Aobj:TRecord_);
     function  DoBeforeExport: boolean; override;
     function EncodeSql(id:String):String;
     procedure Open(Id:String);
@@ -298,7 +299,7 @@ begin
      end;
   end;
   if fndDEPT_ID.AsString <> '' then
-     w := w + ' and B.DEPT_ID=:DEPT_ID ';
+     w := w + ' and A.DEPT_ID=:DEPT_ID ';
   if fndCLIENT_ID.AsString <> '' then
      w := w + ' and A.CLIENT_ID=:CLIENT_ID ';
   if fndSHOP_ID.AsString <> '' then
@@ -316,8 +317,8 @@ begin
   if id<>'' then
      w := w +' and A.PLAN_ID>'''+id+'''';
 
-  Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
-            'A.KPI_ID,A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,F.UNIT_NAME,'+
+  {Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
+            'A.KPI_ID,A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,'+
             'case when A.KPI_DATA in (''1'',''4'') then G.AMOUNT else G.AMONEY end as PLAN_AMT,'+
             'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
             'A.KPI_MNY,A.WDW_MNY,A.KPI_MNY-A.WDW_MNY as BALANCE_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT '+
@@ -326,7 +327,15 @@ begin
             ' left outer join MKT_PLANDATA G on A.TENANT_ID=G.TENANT_ID and A.PLAN_ID=G.PLAN_ID and A.KPI_ID=G.KPI_ID'+
             ' left outer join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+
             ' left outer join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CHK_USER=E.USER_ID '+
-            ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w;
+            ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w; }
+
+  Result := ' select A.TENANT_ID,A.CLIENT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_ID,F.KPI_NAME as KPI_ID_TEXT,F.UNIT_NAME,A.KPI_YEAR,'+
+            ' A.CHK_DATE,A.CHK_USER,A.PLAN_AMT,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,A.WDW_MNY,A.KPI_MNY-A.WDW_MNY as BALANCE_MNY,'+
+            ' A.CREA_DATE,E.USER_NAME as CHK_USER_TEXT,A.CREA_USER from MKT_KPI_RESULT A '+
+            ' left join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
+            ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+
+            ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CHK_USER=E.USER_ID '+
+            ' left join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w;
   Result := ParseSQL(Factor.iDbType,
             'select H.*,case when H.PLAN_AMT <> 0 then cast(H.FISH_AMT*1.0/H.PLAN_AMT*1.0 as decimal(18,6))*100 else 0.00 end as FISH_RATE from ('+Result+') H  ');
 
@@ -526,13 +535,13 @@ begin
   begin
     try
       KpiType := CdsKpiResult.FieldByName('KPI_TYPE').AsString;
-      KpiData := CdsKpiResult.FieldByName('KPI_DATA').AsString;
-      KpiCalc := CdsKpiResult.FieldByName('KPI_CALC').AsString;
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
       IdxType := CdsKpiResult.FieldByName('IDX_TYPE').AsString;
-      KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsString;
+      KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsInteger;
       KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
-      Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
+      ClientId := CdsKpiResult.FieldByName('CLIENT_ID').AsString;
+      UpdateRecord := EditRecord;
+      Open;
       ShowModal;
     finally
       Free;
@@ -611,6 +620,19 @@ begin
   inherited;
   if (fndKPI_YEAR.Value < 2000) or (fndKPI_YEAR.Value > 2111) then
      Raise Exception.Create(' ‰»ÎƒÍ∂»∑∂Œß"2000-2111"');
+end;
+
+procedure TfrmMktKpiResult.EditRecord(Aobj: TRecord_);
+begin
+  if not CdsKpiResult.Active then Exit;
+  if CdsKpiResult.Locate('TENANT_ID,KPI_YEAR,KPI_ID,CLIENT_ID',VarArrayOf([Aobj.FieldByName('TENANT_ID').AsInteger,
+  Aobj.FieldByName('KPI_YEAR').AsInteger,Aobj.FieldByName('KPI_ID').AsString,Aobj.FieldByName('CLIENT_ID').AsString]),[]) then
+  begin
+    { CdsKpiResult.Edit;
+     CdsKpiResult.FieldByName('').AsFloat := 0;
+     CdsKpiResult.FieldByName('').AsFloat := 0;
+     CdsKpiResult.Post; }
+  end;
 end;
 
 end.

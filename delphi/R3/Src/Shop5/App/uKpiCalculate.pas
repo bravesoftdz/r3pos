@@ -3,7 +3,7 @@ unit uKpiCalculate;
 interface
 uses
   Windows, Messages, SysUtils, Classes, InvokeRegistry, Types, ZBase, Variants,
-  ObjCommon, ZDataset, DateUtils;
+  ObjCommon, ZDataset, DateUtils, ZAbstractRODataset;
 
 type
   TKpiInfo=record
@@ -17,8 +17,25 @@ type
     KpiCalc:String;    //计算标准
     KpiOptn:String;    //是否启用阶梯
     KpiAgio:Real;      //标准系数
-    PlanAmt:Real;      //计划销量
-    PlanMny:Real;      //计划金额
+    PlanAmt:Real;      //签约销量
+    PlanMny:Real;      //签约金额
+  end;
+  TKpiIndexInfo=record   //指标信息记录
+    TenantId:Integer;  //企业ID
+    KpiYear:Integer;   //年度
+    KpiId:String;      //指标ID
+    ClientId:String;   //经销商ID
+    IdxType:String;    //指标类型
+    KpiType:String;    //考核类型
+    LevelId:String;    //签约等级
+    LevelAmt:Real;     //签约量
+    LevelLowRate:Real; //等级最低返利系数
+    PlanAmt:Real;      //签约销量
+    PlanMny:Real;      //签约金额
+  end;
+  TKpiSeqNo=record     //达标档位信息记录
+    SeqNoId:String;    //档位ID
+    KpiAmt:Real;       //达标量/达标系数
   end;
   TKpiSite=record
     LastLv:String;
@@ -40,6 +57,51 @@ type
   end;
   //PKpiInfo=^TKpiInfo;
   PKpiIndex=^TKpiIndex;
+  TClientRebate=class
+  private
+    ContainerBrrw:Real; //借量值容器
+    MaxRate:Real;       //最大返利系数
+    GoodsRate:Real;     //商品转换系数
+
+    CdsGoods: TZQuery;  //记录某一时间段内各商品的相关参数
+    KpiData,KpiCalc,RatioType:Integer;  //存储当前时间段内的 考核标准、计算标准、返利设定 参数
+    SmallToCalc,BigToCalc:Real;         //小换算率、大换算率
+    FKpiLevel: TZQuery;
+    FKpiGoods: TZQuery;
+    FKpiSeqNo: TZQuery;
+    FKpiRatio: TZQuery;
+    FKpiTimes: TZQuery;
+    FKpiDetail: TZQuery;
+    procedure SetKpiGoods(const Value: TZQuery);
+    procedure SetKpiLevel(const Value: TZQuery);
+    procedure SetKpiRatio(const Value: TZQuery);
+    procedure SetKpiSeqNo(const Value: TZQuery);
+    procedure SetKpiTimes(const Value: TZQuery);
+    procedure SetKpiDetail(const Value: TZQuery);
+    function UnitToCalc(GoodsId,UnitId:String):Real;
+  public
+    FKpiIndexInfo:TKpiIndexInfo;
+    FSeqNo:TKpiSeqNo;
+    constructor Create;
+    destructor Destroy; override;
+    procedure YearCheck;            //年度考核
+    procedure SeasonCheck;          //季度考核
+    procedure DateSectionCheck;     //时间段考核
+    procedure CalculationRebate;    //计算返利
+    procedure LocateLevel(SumNum:Real);    //定位签约等级
+    procedure LocateTapPosition(Rate:Real);//定位达标档位
+    function KpiDataNum(Num:Real):Real;    //计算当前考核达标系数
+    function GetSaleMoney(StartDate,EndDate:Integer):Real;
+    procedure ReachJudge(KpiRate:Real);
+    function UseBrrw(CurAmt:Real;IsBrrw:Boolean):Real;
+    property KpiGoods:TZQuery read FKpiGoods write SetKpiGoods;
+    property KpiLevel:TZQuery read FKpiLevel write SetKpiLevel;
+    property KpiTimes:TZQuery read FKpiTimes write SetKpiTimes;
+    property KpiSeqNo:TZQuery read FKpiSeqNo write SetKpiSeqNo;
+    property KpiRatio:TZQuery read FKpiRatio write SetKpiRatio;
+    property KpiDetail:TZQuery read FKpiDetail write SetKpiDetail;
+  end;
+
   TKpiCalculate=class
   private
     FDataSet_Kpi: TZQuery;
@@ -76,7 +138,7 @@ type
   end;
 
 implementation
-uses uShopGlobal,uGlobal, DB;
+uses uShopGlobal,uGlobal,uDsUtil,DB;
 
 
 { TKpiCalculate }
@@ -603,7 +665,7 @@ begin
       if FDataSet_Kpi.FieldByName('USING_BRRW').AsString = '1' then Brrw := True else Brrw := False;
       CurAmount := UseBrrw(CurAmount,CurRate_Amt,LastParam,CurParam,Brrw);
       //根据考核标准 得出当前时间段 是否达标的系数
-      CurRate_Amt := KpiDataNum(CurAmount);  
+      CurRate_Amt := KpiDataNum(CurAmount);
       //得出当前档位的考核结果
       CurMny := ReachJudge(CalculateAmt,CurRate_Amt,LastParam,CurParam,CurAgio);
       if (CurMny = 0) and (FDataSet_Kpi.FieldByName('KPI_LV').AsString <> '0') and (FDataSet_Kpi.FieldByName('SEQNO').AsInteger = 1) then
@@ -781,6 +843,373 @@ begin
     end;
   end;
   Result := Seq;
+end;
+
+{ TClientRebate }
+
+procedure TClientRebate.CalculationRebate;
+begin
+  if FKpiIndexInfo.KpiType = '1' then
+     YearCheck
+  else if FKpiIndexInfo.KpiType = '2' then
+     SeasonCheck
+  else if FKpiIndexInfo.KpiType = '3' then
+     DateSectionCheck;
+end;
+
+constructor TClientRebate.Create;
+begin
+  CdsGoods := TZQuery.Create(nil);
+  ContainerBrrw := 0;
+end;
+
+procedure TClientRebate.DateSectionCheck;
+begin
+
+end;
+
+destructor TClientRebate.Destroy;
+begin
+  CdsGoods.Free;
+  inherited;
+end;
+
+function TClientRebate.GetSaleMoney(StartDate, EndDate: Integer): Real;
+function GetUnitTO_CALC: string;
+var str:string;
+begin
+  str:=' case when D.UNIT_ID is null then 1.0 '+
+       ' when D.UNIT_ID=C.CALC_UNITS then 1.0 '+     //默认单位为 计量单位
+       ' when D.UNIT_ID=C.SMALL_UNITS then cast(C.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
+       ' when D.UNIT_ID=C.BIG_UNITS then cast(C.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
+       ' else 1.0 end / '+
+       ' case when B.UNIT_ID=C.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
+       ' when B.UNIT_ID=C.SMALL_UNITS then cast(C.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
+       ' when B.UNIT_ID=C.BIG_UNITS then cast(C.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
+       ' else 1.0 end ';
+  result:=str;
+end;
+begin
+  if FKpiIndexInfo.IdxType = '1' then
+    CdsGoods.SQL.Text :=
+    ' select A.GODS_ID,A.APRICE,sum(A.CALC_AMOUNT/'+GetUnitTO_CALC+') as CALC_AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
+    ' from VIW_SALESDATA A inner join MKT_KPI_GOODS B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
+    ' inner join VIW_GOODSINFO C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+    ' left join MKT_KPI_RATIO D on A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID '+
+    ' where A.IS_PRESENT=0 and A.TENANT_ID=:TENANT_ID and A.CLIENT_ID=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 '+
+    ' and A.SALES_DATE <= :SALES_DATE2 and B.KPI_ID=:KPI_ID group by A.GODS_ID,A.APRICE '
+  else
+    CdsGoods.SQL.Text :=
+    ' select A.GODS_ID,A.APRICE,sum(A.CALC_AMOUNT/'+GetUnitTO_CALC+') as CALC_AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
+    ' from VIW_SALESDATA A inner join MKT_KPI_GOODS B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
+    ' inner join VIW_GOODSINFO C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+    ' left join MKT_KPI_RATIO D on A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID '+
+    ' where A.IS_PRESENT=0 and A.TENANT_ID=:TENANT_ID and A.GUIDE_USER=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 '+
+    ' and A.SALES_DATE <= :SALES_DATE2 and B.KPI_ID=:KPI_ID group by A.GODS_ID,A.APRICE ';
+
+  CdsGoods.Params.ParamByName('TENANT_ID').AsInteger := FKpiIndexInfo.TenantId;
+  CdsGoods.Params.ParamByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
+  CdsGoods.Params.ParamByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
+
+  if StartDate > EndDate then
+  begin
+     CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+StartDate;
+     CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := (FKpiIndexInfo.KpiYear+1)*10000+EndDate;
+  end
+  else
+  begin
+     CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+StartDate;
+     CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := FKpiIndexInfo.KpiYear*10000+EndDate;
+  end;
+  Factor.Open(CdsGoods);
+  if CdsGoods.IsEmpty then
+     Result := 0
+  else
+  begin
+     CdsGoods.First;
+     while not CdsGoods.Eof do
+     begin
+       if KpiData in [1,4] then
+          Result := Result + CdsGoods.FieldByName('CALC_AMOUNT').AsFloat
+       else
+          Result := Result + CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+       CdsGoods.Next;
+     end;
+  end;
+end;
+
+function TClientRebate.KpiDataNum(Num: Real): Real;
+begin
+  if KpiTimes.FieldByName('KPI_DATA').AsString = '1' then
+  begin
+     if FKpiIndexInfo.PlanAmt = 0 then
+        Result := 0
+     else
+        Result := Num/FKpiIndexInfo.PlanAmt;
+  end
+  else if KpiTimes.FieldByName('KPI_DATA').AsString = '2' then
+  begin
+     if FKpiIndexInfo.PlanMny = 0 then
+        Result := 0
+     else
+        Result := Num/FKpiIndexInfo.PlanMny;
+  end
+  else
+     Result := Num;
+end;
+
+procedure TClientRebate.LocateLevel(SumNum: Real);
+var Id:String;
+    Amt,Rete:Real;
+begin
+  Id := '';
+  Amt := 0;
+  Rete := 0;
+  KpiLevel.SortedFields := 'LVL_AMT';
+  KpiLevel.SortType := stAscending;
+  KpiLevel.First;
+  while not KpiLevel.Eof do
+  begin
+    if SumNum >= KpiLevel.FieldByName('LVL_AMT').AsFloat then
+    begin
+       Id := KpiLevel.FieldByName('LEVEL_ID').AsString;
+       Amt := KpiLevel.FieldByName('LVL_AMT').AsFloat;
+       Rete := KpiLevel.FieldByName('LOW_RATE').AsFloat;
+    end;
+    KpiLevel.Next;
+  end;
+  FKpiIndexInfo.LevelId := Id;
+  FKpiIndexInfo.LevelAmt := Amt;
+  FKpiIndexInfo.LevelLowRate := Rete;
+end;
+
+procedure TClientRebate.LocateTapPosition(Rate: Real);
+begin
+  {KpiSeqNo.Filtered := False;
+  KpiSeqNo.Filter := ' LEVEL_ID='''+FKpiIndexInfo.LevelId+''' and TIMES_ID='''+KpiTimes.FieldByName('TIMES_ID').AsString+''' ';
+  KpiSeqNo.Filtered := True;}
+  KpiSeqNo.SortedFields := 'KPI_AMT';
+  KpiSeqNo.SortType := stAscending;
+
+  KpiSeqNo.First;
+  while not KpiSeqNo.Eof do
+  begin
+
+    if (KpiSeqNo.FieldByName('LEVEL_ID').AsString = FKpiIndexInfo.LevelId) and
+    (KpiSeqNo.FieldByName('TIMES_ID').AsString = KpiTimes.FieldByName('TIMES_ID').AsString) and
+    (Rate >= KpiSeqNo.FieldByName('KPI_AMT').AsFloat/100) then
+    begin
+       FSeqNo.SeqNoId := KpiSeqNo.FieldByName('SEQNO_ID').AsString;
+       FSeqNo.KpiAmt := KpiSeqNo.FieldByName('KPI_AMT').AsFloat;
+    end;
+    KpiSeqNo.Next;
+  end;
+end;
+
+procedure TClientRebate.ReachJudge(KpiRate:Real);
+var GoodsId,UnitId:String;
+    Ratio:Real;
+begin
+  GoodsId := '';
+  UnitId := '';
+  Ratio := 0;
+  if KpiRatio.Locate('SEQNO_ID',KpiSeqNo.FieldByName('SEQNO_ID').AsString,[]) then
+  begin
+    GoodsId := KpiRatio.FieldByName('GODS_ID').AsString;
+    UnitId := KpiRatio.FieldByName('UNIT_ID').AsString;
+    Ratio := KpiRatio.FieldByName('KPI_RATIO').AsFloat;
+  end;
+
+  if Ratio = 0 then Ratio := FKpiIndexInfo.LevelLowRate;
+  if Ratio > MaxRate then MaxRate := Ratio;
+
+  CdsGoods.First;
+  while not CdsGoods.Eof do
+  begin
+    KpiGoods.Locate('GODS_ID',CdsGoods.FieldByName('GODS_ID').AsString,[]);
+    SmallToCalc := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,KpiGoods.FieldByName('UNIT_ID').AsString);
+    if UnitId <> '' then
+       BigToCalc := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,UnitId)
+    else
+       BigToCalc := 0;
+    if not KpiDetail.Locate('GODS_ID;KPI_DATE1;KPI_DATE2',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('KPI_DATE1').AsString,KpiTimes.FieldByName('KPI_DATE2').AsString]),[]) then
+    begin
+      KpiDetail.Append;
+      KpiDetail.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+      KpiDetail.FieldByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
+      KpiDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      KpiDetail.FieldByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
+      KpiDetail.FieldByName('KPI_YEAR').AsInteger := FKpiIndexInfo.KpiYear;
+      KpiDetail.FieldByName('KPI_DATE1').AsInteger := KpiTimes.FieldByName('KPI_DATE1').AsInteger;
+      KpiDetail.FieldByName('KPI_DATE2').AsInteger := KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+      KpiDetail.FieldByName('KPI_DATA').AsString := IntToStr(KpiData);
+      KpiDetail.FieldByName('KPI_CALC').AsString := IntToStr(KpiCalc);
+      KpiDetail.FieldByName('RATIO_TYPE').AsString := IntToStr(RatioType);
+      KpiDetail.FieldByName('GODS_ID').AsString := CdsGoods.FieldByName('GODS_ID').AsString;
+      KpiDetail.FieldByName('LVL_AMT').AsFloat := FKpiIndexInfo.LevelAmt;
+      KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
+      if BigToCalc = 0 then
+         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
+      else
+         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
+      KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat/KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
+      KpiDetail.FieldByName('ADJS_AMT').AsFloat := 0;
+      KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+      KpiDetail.FieldByName('ADJS_MNY').AsFloat := 0;
+      KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
+      if KpiCalc = 1 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio
+      else if KpiCalc = 2 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
+      else if KpiCalc = 3 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
+      KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
+      KpiDetail.FieldByName('BUDG_KPI').AsFloat := 0;
+      KpiDetail.Post;
+    end
+    else
+    begin
+      KpiDetail.Edit;
+      KpiDetail.FieldByName('LVL_AMT').AsFloat := FKpiIndexInfo.LevelAmt;
+      KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
+      if BigToCalc = 0 then
+         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
+      else
+         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
+      KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat/KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
+      KpiDetail.FieldByName('ADJS_AMT').AsFloat := 0;
+      KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+      KpiDetail.FieldByName('ADJS_MNY').AsFloat := 0;
+      KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
+      if KpiCalc = 1 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio
+      else if KpiCalc = 2 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
+      else if KpiCalc = 3 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
+      KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
+      KpiDetail.FieldByName('BUDG_KPI').AsFloat := 0;
+      KpiDetail.Post;
+    end;
+
+    CdsGoods.Next;
+  end;
+end;
+
+procedure TClientRebate.SeasonCheck;
+begin
+
+end;
+
+procedure TClientRebate.SetKpiDetail(const Value: TZQuery);
+begin
+  FKpiDetail := Value;
+end;
+
+procedure TClientRebate.SetKpiGoods(const Value: TZQuery);
+begin
+  FKpiGoods := Value;
+end;
+
+procedure TClientRebate.SetKpiLevel(const Value: TZQuery);
+begin
+  FKpiLevel := Value;
+end;
+
+procedure TClientRebate.SetKpiRatio(const Value: TZQuery);
+begin
+  FKpiRatio := Value;
+end;
+
+procedure TClientRebate.SetKpiSeqNo(const Value: TZQuery);
+begin
+  FKpiSeqNo := Value;
+end;
+
+procedure TClientRebate.SetKpiTimes(const Value: TZQuery);
+begin
+  FKpiTimes := Value;
+end;
+
+function TClientRebate.UnitToCalc(GoodsId,UnitId: String): Real;
+var rs:TZQuery;
+begin
+  Result := 1;
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if rs.Locate('GODS_ID',GoodsId,[]) then
+  begin
+    if UnitId=rs.FieldByName('CALC_UNITS').AsString then
+       Result := 1
+    else if UnitId=rs.FieldByName('BIG_UNITS').AsString then
+       Result := rs.FieldByName('BIGTO_CALC').asFloat
+    else if UnitId=rs.FieldByName('SMALL_UNITS').AsString then
+       Result := rs.FieldByName('SMALLTO_CALC').asFloat
+    else
+       Result := 1;
+  end
+  else
+  begin
+     Raise Exception.Create('经营商品中没找到"'+rs.FieldbyName('GODS_NAME').AsString+'"');
+  end;
+end;
+
+function TClientRebate.UseBrrw(CurAmt: Real; IsBrrw: Boolean): Real;
+begin
+  Result := CurAmt;
+
+  if FSeqNo.KpiAmt <> 0 then
+  begin
+     if KpiData = 1 then
+        ContainerBrrw := ContainerBrrw + CurAmt - FKpiIndexInfo.PlanAmt*FSeqNo.KpiAmt
+     else if KpiData = 2 then
+        ContainerBrrw := ContainerBrrw + CurAmt - FKpiIndexInfo.PlanMny*FSeqNo.KpiAmt
+     else
+        ContainerBrrw := ContainerBrrw + CurAmt - FSeqNo.KpiAmt;
+     Result := CurAmt;
+  end
+  else
+  begin
+     if IsBrrw then
+     begin
+        Result := ContainerBrrw + CurAmt;
+        if KpiData = 1 then
+           ContainerBrrw := Result - FKpiIndexInfo.PlanAmt*FSeqNo.KpiAmt
+        else if KpiData = 2 then
+           ContainerBrrw := Result - FKpiIndexInfo.PlanMny*FSeqNo.KpiAmt
+        else
+           ContainerBrrw := Result - FSeqNo.KpiAmt;
+           
+        if ContainerBrrw < 0 then ContainerBrrw := 0;
+     end
+     else
+        Result := CurAmt;
+  end;
+end;
+
+procedure TClientRebate.YearCheck;
+var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
+    IsBorrow:Boolean;
+begin
+  LocateLevel(FKpiIndexInfo.PlanAmt);
+  KpiTimes.First;
+  while not KpiTimes.Eof do
+  begin
+    KpiData := KpiTimes.FieldByName('KPI_DATA').AsInteger;
+    KpiCalc := KpiTimes.FieldByName('KPI_CALC').AsInteger;
+    RatioType := KpiTimes.FieldByName('RATIO_TYPE').AsInteger;
+    CheckNum := GetSaleMoney(KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger);
+    CurKpiRate := KpiDataNum(CheckNum);//第一次获得达标系数(在没有借量之前)
+    LocateTapPosition(CurKpiRate);  //定位达标档位并获取相关参数
+    
+    if KpiTimes.FieldByName('USING_BRRW').AsString = '1' then IsBorrow := True else IsBorrow := False;
+    CheckNum := UseBrrw(CheckNum,IsBorrow);
+
+    CurKpiRate := KpiDataNum(CheckNum);//第二次获得达标系数(在借量之后)
+
+    ReachJudge(CurKpiRate);
+
+    KpiTimes.Next;
+  end;
 end;
 
 end.

@@ -173,7 +173,7 @@ begin
   if fndKPI_ID.AsString <> '' then
      w := w + ' and A.KPI_ID=:KPI_ID ';
 
-  Result := ' select A.TENANT_ID,B.KPI_TYPE,A.KPI_ID,A.CLIENT_ID,A.PLAN_AMT,A.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY '+
+  Result := ' select A.TENANT_ID,A.KPI_YEAR,B.KPI_TYPE,A.KPI_ID,A.CLIENT_ID,A.PLAN_AMT,A.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.ADJS_AMT,A.ADJS_MNY,A.KPI_MNY '+
   ' from MKT_KPI_RESULT A inner join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
   ' left join MKT_PLANORDER C on A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID '+w+' order by A.KPI_ID ';
   
@@ -215,6 +215,7 @@ end;
 procedure TfrmMktKpiCalculate.StartCalculate;
 var i:Integer;
     Fish_Amt,Fish_Mny:Currency;
+    SumFishAmt,SumFishMny,SumAdjsAmt,SumAdjsMny,SumKpiMny:Real;    
 begin
   //开始准备数据
   PrepareData;
@@ -228,6 +229,11 @@ begin
   begin
     OpenResultList(cdsHeader.FieldByName('CLIENT_ID').AsString,cdsHeader.FieldByName('KPI_ID').AsString);
 
+    SumFishAmt := 0;
+    SumFishMny := 0;
+    SumAdjsAmt := 0;
+    SumAdjsMny := 0;
+    SumKpiMny := 0;
     KpiCalculate := TClientRebate.Create;
     try
       KpiCalculate.FKpiIndexInfo.TenantId := Global.TENANT_ID;
@@ -246,6 +252,23 @@ begin
       KpiCalculate.KpiRatio := CdsKpiRatio;
       KpiCalculate.KpiDetail := cdsDetail;
       KpiCalculate.CalculationRebate;
+      cdsDetail.First;
+      while not cdsDetail.Eof do
+      begin
+        SumFishAmt := SumFishAmt + cdsDetail.FieldByName('FISH_AMT').AsFloat;
+        SumFishMny := SumFishAmt + cdsDetail.FieldByName('ADJS_AMT').AsFloat;
+        SumAdjsAmt := SumFishAmt + cdsDetail.FieldByName('FISH_MNY').AsFloat;
+        SumAdjsMny := SumFishAmt + cdsDetail.FieldByName('ADJS_MNY').AsFloat;
+        SumKpiMny := SumKpiMny + cdsDetail.FieldByName('KPI_MNY').AsFloat;
+        cdsDetail.Next;
+      end;
+      cdsHeader.Edit;
+      cdsHeader.FieldByName('FISH_AMT').AsFloat := SumFishAmt;
+      cdsHeader.FieldByName('ADJS_AMT').AsFloat := SumFishMny;
+      cdsHeader.FieldByName('FISH_MNY').AsFloat := SumAdjsAmt;
+      cdsHeader.FieldByName('ADJS_MNY').AsFloat := SumAdjsMny;
+      cdsHeader.FieldByName('KPI_MNY').AsFloat := SumKpiMny;
+      cdsHeader.Post;
       try
         Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);
       except

@@ -24,7 +24,6 @@ type
     DsList: TDataSource;
     CdsResultList: TZQuery;
     CdsResult: TZQuery;
-    procedure btnCloseClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -32,6 +31,8 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     IsEdit,Saved:Boolean;
     FKpiData: String;
@@ -108,20 +109,6 @@ begin
   edtKPI_TYPE.ItemIndex := TdsItems.FindItems(edtKPI_TYPE.Properties.Items,'CODE_ID',Value);
 end;
 
-procedure TfrmMktKpiResultList.btnCloseClick(Sender: TObject);
-begin
-  inherited;
-  if IsEdit then
-  begin
-     if MessageBox(Handle,'数据有修改,是否保存?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
-     begin
-        Save;
-        if Saved and Assigned(UpdateRecord) then UpdateRecord(Obj_1);
-     end;
-  end;
-  Close;
-end;
-
 procedure TfrmMktKpiResultList.FormShow(Sender: TObject);
 begin
   inherited;
@@ -185,7 +172,7 @@ begin
   TColumnEh(Sender).Field.AsFloat := Amt;
   
   CdsResultList.Edit;
-  CdsResultList.FieldByName('FISH_MNY').AsFloat := Amt*CurPrice;
+  CdsResultList.FieldByName('FISH_MNY').AsFloat := Amt*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat*CurPrice;
   CdsResultList.FieldByName('ADJS_AMT').AsFloat := Amt-CdsResultList.FieldByName('ORG_AMT').AsFloat;
   CdsResultList.FieldByName('ADJS_MNY').AsFloat := CdsResultList.FieldByName('ADJS_AMT').AsFloat*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat*CurPrice;
   CdsResultList.Post;
@@ -259,6 +246,26 @@ procedure TfrmMktKpiResultList.FormDestroy(Sender: TObject);
 begin
   inherited;
   Obj_1.Free;
+end;
+
+procedure TfrmMktKpiResultList.btnCloseClick(Sender: TObject);
+begin
+  inherited;
+  Close;
+end;
+
+procedure TfrmMktKpiResultList.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  inherited;
+  if IsEdit then
+  begin
+     if MessageBox(Handle,'数据有修改,是否保存?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
+     begin
+        Save;
+        if Saved and Assigned(UpdateRecord) then UpdateRecord(Obj_1);
+     end;
+  end;
 end;
 
 end.

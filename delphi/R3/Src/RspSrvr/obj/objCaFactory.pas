@@ -35,7 +35,7 @@ function TcoLogin.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
 var
   rs:TZQuery;
   tid,i:integer;
-  sid,prodId,prodFlag,prodName,industry,auditStatus:string;
+  sid,srvrId,prodId,prodFlag,prodName,industry,auditStatus:string;
   f:TIniFile;
   ls:TStringList;
 begin
@@ -61,19 +61,20 @@ begin
   ls := TStringList.Create;
   try
     case Params.ParamByName('flag').AsInteger of
-    1,2:rs.SQL.Text := 'select TENANT_ID,PASSWRD,PROD_ID,AUDIT_STATUS from CA_TENANT where LOGIN_NAME=:LOGIN_NAME';
-    3:rs.SQL.Text := 'select A.TENANT_ID,A.SHOP_ID,B.PROD_ID,B.AUDIT_STATUS from CA_SHOP_INFO A,CA_TENANT B where A.TENANT_ID=B.TENANT_ID and A.XSM_CODE=:LOGIN_NAME';
+    1,2:rs.SQL.Text := 'select TENANT_ID,PASSWRD,PROD_ID,AUDIT_STATUS,SRVR_ID from CA_TENANT where LOGIN_NAME=:LOGIN_NAME';
+    3:rs.SQL.Text := 'select A.TENANT_ID,A.SHOP_ID,B.PROD_ID,B.AUDIT_STATUS,B.SRVR_ID from CA_SHOP_INFO A,CA_TENANT B where A.TENANT_ID=B.TENANT_ID and A.XSM_CODE=:LOGIN_NAME';
     end;
     rs.ParamByName('LOGIN_NAME').AsString := Params.ParambyName('loginName').AsString;
     AGlobal.Open(rs);
     if rs.IsEmpty and (Params.ParamByName('flag').AsInteger=3) then
        begin
          rs.Close;
-         rs.SQL.Text := 'select TENANT_ID,PASSWRD,PROD_ID,AUDIT_STATUS from CA_TENANT where LOGIN_NAME=:LOGIN_NAME';
+         rs.SQL.Text := 'select TENANT_ID,PASSWRD,PROD_ID,AUDIT_STATUS,SRVR_ID from CA_TENANT where LOGIN_NAME=:LOGIN_NAME';
          rs.ParamByName('LOGIN_NAME').AsString := Params.ParambyName('loginName').AsString;
          Params.ParambyName('flag').AsInteger := 2;
          AGlobal.Open(rs);
        end;
+    srvrId := rs.FieldbyName('SRVR_ID').AsString;
     if rs.IsEmpty then Raise Exception.Create('注册的用户名无效');
     if (Params.ParamByName('flag').AsInteger=1) and (rs.Fields[1].asString=EncStr(Params.ParamByName('PassWrd').AsString,ENC_KEY)) then Raise Exception.Create('登录密码无效');
     tid := rs.FieldbyName('TENANT_ID').AsInteger;
@@ -107,7 +108,7 @@ begin
                DataSet.FieldByName('prodId').AsString := prodId;
                DataSet.FieldByName('prodName').AsString := prodName;
 
-               DataSet.FieldByName('srvrId').AsString := copy(ls[i],3,20);
+               DataSet.FieldByName('srvrId').AsString := srvrId;
                DataSet.FieldByName('srvrPort').AsInteger := f.ReadInteger(ls[i],'srvrPort',1024);
                DataSet.FieldByName('srvrName').AsString := f.ReadString(ls[i],'srvrName','');
                DataSet.FieldByName('hostName').AsString := f.ReadString(ls[i],'hostName','');

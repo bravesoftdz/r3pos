@@ -1036,7 +1036,7 @@ begin
        BigToCalc := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,UnitId)
     else
        BigToCalc := 0;
-    if not KpiDetail.Locate('GODS_ID;KPI_DATE1;KPI_DATE2',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('KPI_DATE1').AsString,KpiTimes.FieldByName('KPI_DATE2').AsString]),[]) then
+    if not KpiDetail.Locate('GODS_ID;KPI_DATE1;KPI_DATE2',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger]),[]) then
     begin
       KpiDetail.Append;
       KpiDetail.FieldByName('ROWS_ID').AsString := TSequence.NewId;
@@ -1084,18 +1084,18 @@ begin
       if (Ratio > MaxRate) and not IsFlag then
       begin
         if KpiCalc = 1 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('ADJS_MNY').AsFloat+CdsGoods.FieldByName('CALC_MONEY').AsFloat)*Ratio/100
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_MONEY').AsFloat)*Ratio/100
         else if KpiCalc = 2 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('ADJS_AMT').AsFloat+CdsGoods.FieldByName('CALC_AMOUNT').AsFloat)*Ratio/100
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_AMOUNT').AsFloat)*Ratio/100
         else if KpiCalc = 3 then
            KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
       end
       else
       begin
         if KpiCalc = 1 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('ADJS_MNY').AsFloat+CdsGoods.FieldByName('CALC_MONEY').AsFloat)*Ratio/100
         else if KpiCalc = 2 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio/100
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('ADJS_AMT').AsFloat+CdsGoods.FieldByName('CALC_AMOUNT').AsFloat)*Ratio/100
         else if KpiCalc = 3 then
            KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
       end;

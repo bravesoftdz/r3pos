@@ -2,7 +2,6 @@ inherited frmMktKpiResult3: TfrmMktKpiResult3
   Left = 252
   Top = 172
   Width = 915
-  Height = 533
   Caption = #19994#21153#21592#25552#25104
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -10,19 +9,15 @@ inherited frmMktKpiResult3: TfrmMktKpiResult3
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 907
-    Height = 469
     inherited RzPanel2: TRzPanel
       Width = 897
-      Height = 459
       inherited RzPage: TRzPageControl
         Width = 891
-        Height = 453
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #19994#21153#21592#25552#25104#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 889
-            Height = 426
             object Panel1: TPanel
               Left = 5
               Top = 120

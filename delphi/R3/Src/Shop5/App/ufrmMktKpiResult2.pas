@@ -526,7 +526,7 @@ begin
   with TfrmMktKpiResultList.Create(self) do
   begin
     try
-      KpiType := CdsKpiResult.FieldByName('KPI_TYPE').AsString;
+      {KpiType := CdsKpiResult.FieldByName('KPI_TYPE').AsString;
       KpiData := CdsKpiResult.FieldByName('KPI_DATA').AsString;
       KpiCalc := CdsKpiResult.FieldByName('KPI_CALC').AsString;
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
@@ -534,7 +534,7 @@ begin
       KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsString;
       KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
       Open(CdsKpiResult.FieldByName('PLAN_ID').AsString);
-      ShowModal;
+      ShowModal; }
     finally
       Free;
     end;

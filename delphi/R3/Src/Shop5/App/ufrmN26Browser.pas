@@ -207,10 +207,15 @@ end;
 
 function TfrmN26Browser.EncodeUrl(url: string): string;
 begin
+  if N26Token<>'' then
+  begin
   if pos('?',url)>0 then
      result := N26Url+url+'token='+HTTPEncode(N26Token)
   else
      result := N26Url+url+'?token='+HTTPEncode(N26Token);
+  end
+  else
+  result := url;
 end;
 
 function TfrmN26Browser.FindElement(root: IXMLDOMNode;

@@ -20,6 +20,8 @@ inherited frmShopInfo: TfrmShopInfo
       Top = 113
       Width = 524
       Height = 185
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -196,7 +198,6 @@ inherited frmShopInfo: TfrmShopInfo
             ParentFont = False
           end
           object edtXSM_CODE: TcxTextEdit
-            Tag = 1
             Left = 106
             Top = 25
             Width = 187

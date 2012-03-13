@@ -85,6 +85,9 @@ alter table SAL_PRICEDATA add LV9_PRC decimal(18, 3) NULL;
 
 --商品简称
 alter table PUB_GOODSINFO	add SHORT_GODS_NAME varchar(30) NULL;
+--积分标准
+alter table PUB_GOODSINFOEXT add ITGL_RATE decimal(18, 3) NULL,
+
 update PUB_GOODSINFO set SHORT_GODS_NAME=GODS_NAME;
 
 
@@ -141,7 +144,7 @@ CREATE TABLE [MKT_KPI_LEVEL] (
         --考核等级
 	[LEVEL_ID] [char] (36) NOT NULL ,
         --等级名称
-	[LEVELD_NAME] [varchar] (50) NOT NULL ,
+	[LEVEL_NAME] [varchar] (50) NOT NULL ,
         --所属指标
 	[KPI_ID] [char] (36) NOT NULL ,
 	      --签约量要求

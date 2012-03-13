@@ -83,11 +83,11 @@ type
     { Private declarations }
     function CheckRelation:Boolean;
     procedure SetIsRelation(const Value: Boolean);
+    procedure SetdbState(const Value: TDataSetState); override;
   public
     { Public declarations }
     AObj:TRecord_;
     Saved:boolean;
-    procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
     procedure Edit(code:string);
@@ -300,8 +300,13 @@ begin
 end;
 
 procedure TfrmShopInfo.SetdbState(const Value: TDataSetState);
-var Name_S:String;
+var
+  Name_S:String;
 begin
+  if trim(edtXSM_CODE.Text)<>'' then
+     edtXSM_CODE.Tag := 1
+  else
+     edtXSM_CODE.Tag := 0;
   inherited;
   if ShopGlobal.GetProdFlag = 'E' then
     Name_S := '²Ö¿â'

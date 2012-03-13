@@ -169,7 +169,7 @@ type
     function  coRspGetList(TENANT_ID:string):TCaTenant;
     function  downloadRspShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
     function  coRspRegister(Info:TCaTenant):TCaTenant;
-
+    procedure WAdoParams;
   public
     auto:boolean;
     constructor Create;
@@ -3594,11 +3594,13 @@ var
   finded,isSrvr:boolean;
   Params:TftParamList;
   tid:integer;
+  rsp:boolean;
 begin
 try
   Audited := false;
   if not Global.RemoteFactory.Connected then //连接
      begin
+       rsp := false;
        F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
        try
          Global.RemoteFactory.Initialize(F.ReadString('soft','ado',''));
@@ -3606,8 +3608,8 @@ try
            Global.RemoteFactory.Connect;
          except
            //ado连接失败时，尝试平台认证
-           coRspLogin(Account,PassWrd,flag);
-           exit;
+           result := coRspLogin(Account,PassWrd,flag);
+           rsp := true;
          end;
        finally
          try
@@ -3615,6 +3617,11 @@ try
          except
          end;
        end;
+       if rsp and (StrtoIntDef(result.RET,0) in [1,5]) then
+          begin
+            WAdoParams;
+          end;
+       if rsp then Exit;
      end;
   Params := TftParamList.Create;
   rs := TZQuery.Create(nil);
@@ -4023,6 +4030,21 @@ begin
      result := coRspRegister(Info)
   else
      result := coAdoRegister(Info);
+end;
+
+procedure TCaFactory.WAdoParams;
+var
+  r3,db:TIniFile;
+begin
+  r3 := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  db := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
+  try
+    if r3.ReadInteger('soft','rspStatus',0)=1 then
+       r3.WriteString('soft','ado',db.ReadString('db','connstr',''));  
+  finally
+    db.Free;
+    r3.Free;
+  end;
 end;
 
 { rsp }

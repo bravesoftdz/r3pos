@@ -229,7 +229,7 @@ begin
   result := '';
   if N26Url<>'' then
   begin
-     result := N26Url+'mlogin.do?username='+base64(N26UserName)+'&password='+base64(N26PassWord);
+     result := N26Url+'caLogin.do?username='+base64(N26UserName)+'&password='+base64(N26PassWord);
   end;
 end;
 

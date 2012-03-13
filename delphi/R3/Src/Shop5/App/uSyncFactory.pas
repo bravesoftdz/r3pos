@@ -1647,8 +1647,8 @@ begin
            Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
         Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
-        SetSynTimeStamp(tbName,SyncTimeStamp);
       end;
+      SetSynTimeStamp(tbName,SyncTimeStamp);
 //      Global.LocalFactory.CommitTrans;
 //    except
 //      Global.LocalFactory.RollbackTrans;
@@ -3572,13 +3572,13 @@ begin
            Global.RemoteFactory.UpdateBatch(rs,ZClassName,Params);
         Global.LocalFactory.UpdateBatch(cs,ZClassName,Params);
         LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
-        SetSynTimeStamp(tbName,SyncTimeStamp);
       //  Global.LocalFactory.CommitTrans;
       //except
       //  Global.LocalFactory.RollbackTrans;
       //  Raise;
       //end;
     end;
+    SetSynTimeStamp(tbName,SyncTimeStamp);
   finally
     rs.Free;
     cs.Free;

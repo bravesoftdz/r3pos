@@ -345,7 +345,13 @@ begin
      begin
        if (CurOrder.dbState = dsInsert) and (CurOrder.IsNull) then
           begin
-            if MessageBox(Handle,'没有输入任何商品资料,是否想关闭当前单据?','友情提示...',MB_YESNO+MB_ICONQUESTION) = 6 then CurOrder.Close;
+            if MessageBox(Handle,'没有输入任何商品资料,是否想关闭当前单据?','友情提示...',MB_YESNO+MB_ICONQUESTION) = 6 then
+               begin
+                 if TabSheet1.TabVisible then
+                    CurOrder.Close
+                 else
+                    CurOrder.CancelOrder;
+               end;
           end
        else
           begin

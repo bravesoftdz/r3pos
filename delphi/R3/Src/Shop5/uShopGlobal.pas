@@ -233,6 +233,8 @@ end;
 
 function TShopGlobal.GetVersionFlag: integer;
 begin
+  result := 5;
+  exit;
   if CLVersion='FIG' then //·þ×°°æ
      result := 1
   else

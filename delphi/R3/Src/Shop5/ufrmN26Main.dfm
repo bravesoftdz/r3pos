@@ -7573,6 +7573,14 @@ inherited frmN26Main: TfrmN26Main
       Caption = #21021#22987#21270#21521#23548
       OnExecute = actfrmInitGuideExecute
     end
+    object actfrmAllRckReport: TAction
+      Caption = #21488#36134#31649#29702
+      OnExecute = actfrmAllRckReportExecute
+    end
+    object actfrmSyncAll: TAction
+      Caption = #25968#25454#21516#27493
+      OnExecute = actfrmSyncAllExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

@@ -26,6 +26,7 @@ TDevFactory=class
     FCloseDayPrintFlag: integer;
     FCopys: integer;
     FPrintFormat: integer;
+    CashBoxStart:Int64;
     procedure SetPrepared(const Value: Boolean);
     procedure SetDisplayComm(const Value: Integer);
     procedure SetScanComm(const Value: Integer);
@@ -232,6 +233,8 @@ var F:TextFile;
     S:string;
 begin
   if DevFactory.CashBox=0 then Exit;
+  if (GetTickCount-DevFactory.CashBoxStart)<5000 then Exit;
+  DevFactory.CashBoxStart := GetTickCount;
   if DevFactory.CashBox=1 then
      begin
         DevFactory.BeginPrint;

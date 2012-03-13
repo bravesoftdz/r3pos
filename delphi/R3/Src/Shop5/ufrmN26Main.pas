@@ -297,6 +297,8 @@ type
     Image18: TImage;
     RzBmpButton7: TRzBmpButton;
     RzBmpButton11: TRzBmpButton;
+    actfrmAllRckReport: TAction;
+    actfrmSyncAll: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -378,7 +380,6 @@ type
     procedure actfrmStorageTrackingExecute(Sender: TObject);
     procedure actfrmDbDayReportExecute(Sender: TObject);
     procedure actfrmGodsRunningReportExecute(Sender: TObject);
-    procedure RzBmpButton4Click(Sender: TObject);
     procedure RzBmpButton2Click(Sender: TObject);
     procedure tlbCloseClick(Sender: TObject);
     procedure N103Click(Sender: TObject);
@@ -425,6 +426,9 @@ type
     procedure actfrmInitGuideExecute(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
+    procedure actfrmAllRckReportExecute(Sender: TObject);
+    procedure actfrmSyncAllExecute(Sender: TObject);
+    procedure RzBmpButton4Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -503,7 +507,8 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory,ufrmDemandOrderList;
+  ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory,
+  ufrmDemandOrderList,ufrmAllRckReport;
 {$R *.dfm}
 
 function CheckXsmPassWord(uid, pwd: string): boolean;
@@ -2904,64 +2909,6 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmN26Main.RzBmpButton4Click(Sender: TObject);
-begin
-  inherited;
-  if CaFactory.Audited then
-     begin
-       CaFactory.SyncAll(1);
-       //if ShopGlobal.ONLVersion then Exit;
-     end
-  else
-     begin
-       //if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
-     end;
-  if PrainpowerJudge.Locked>0 then
-     begin
-       ShowMsgBox('正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
-     end;
-  frmLogo.Show;
-  frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
-  try
-    if ShopGlobal.offline and not Global.RemoteFactory.Connected then
-     begin
-       Global.MoveToRemate;
-       try
-         try
-           Global.Connect;
-         except
-           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...');
-         end;
-       finally
-         Global.MoveToLocal;
-       end;
-     end;
-    if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
-    SyncFactory.SyncLockDb;
-    if not SyncFactory.SyncLockCheck then
-       begin
-         if Global.UserID='system' then
-            begin
-              if ShowMsgBox('当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-              SyncFactory.SyncUnLockDb;
-              Exit;
-            end
-         else
-            Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
-       end;
-    if not ShopGlobal.ONLVersion and not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
-    if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
-       begin
-         SyncFactory.SyncAll;
-         frmLogo.Show;
-         Global.LoadBasic;
-         ShopGlobal.LoadRight;
-       end;
-  finally
-    frmLogo.Close;
-  end;
-end;
-
 procedure TfrmN26Main.RzBmpButton13Click(Sender: TObject);
 begin
   inherited;
@@ -3157,6 +3104,8 @@ var
   Action:TAction;
 begin
   inherited;
+  ShellExecute(handle,'open','http://localhost:8888/ebp/loginJS.do?userID=3203010000055&passwd=0000 ',nil,nil,0);
+  Exit;
   if not CaFactory.Audited then Raise Exception.Create('不支持脱机使用..');
   if N26Factory.Checked=0 then
      begin
@@ -4243,6 +4192,93 @@ procedure TfrmN26Main.RzBmpButton5Click(Sender: TObject);
 begin
   inherited;
   Close;
+end;
+
+procedure TfrmN26Main.actfrmAllRckReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmAllRckReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmAllRckReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmSyncAllExecute(Sender: TObject);
+begin
+  inherited;
+  if CaFactory.Audited then
+     begin
+       CaFactory.SyncAll(1);
+       //if ShopGlobal.ONLVersion then Exit;
+     end
+  else
+     begin
+       //if ShopGlobal.ONLVersion then Raise Exception.Create('网络版不需要执行数据同步...');
+     end;
+  if PrainpowerJudge.Locked>0 then
+     begin
+       ShowMsgBox('正在执行消息同步，请稍等数据上报..','友情提示..',MB_OK+MB_ICONINFORMATION);
+     end;
+  frmLogo.Show;
+  frmLogo.ShowTitle := '正在连接远程服务器，请稍候...';
+  try
+    if ShopGlobal.offline and not Global.RemoteFactory.Connected then
+     begin
+       Global.MoveToRemate;
+       try
+         try
+           Global.Connect;
+         except
+           Raise Exception.Create('连接远程数据库失败,无法完成数据同步...');
+         end;
+       finally
+         Global.MoveToLocal;
+       end;
+     end;
+    if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
+    SyncFactory.SyncLockDb;
+    if not SyncFactory.SyncLockCheck then
+       begin
+         if Global.UserID='system' then
+            begin
+              if ShowMsgBox('当前门店已经锁定电脑了不能执行数据同步，是否对远程数据库进行解锁？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+              SyncFactory.SyncUnLockDb;
+              Exit;
+            end
+         else
+            Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
+       end;
+    if not ShopGlobal.ONLVersion and not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+    if ShopGlobal.ONLVersion then SyncFactory.SyncRim else
+       begin
+         SyncFactory.SyncAll;
+         frmLogo.Show;
+         Global.LoadBasic;
+         ShopGlobal.LoadRight;
+       end;
+  finally
+    frmLogo.Close;
+  end;
+
+end;
+
+procedure TfrmN26Main.RzBmpButton4Click(Sender: TObject);
+begin
+  inherited;
+  actfrmSyncAll.OnExecute(actfrmSyncAll);
 end;
 
 end.

@@ -233,7 +233,7 @@ uses
   objHandSetRelation in 'Obj\objHandSetRelation.pas',
   ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet},
   ufrmFieldSort in 'App\ufrmFieldSort.pas' {frmFieldSort},
-  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
+  ufrmAllRckReport in 'App\ufrmAllRckReport.pas' {frmAllRckReport},
   ufrmInitialRights in 'App\ufrmInitialRights.pas' {frmInitialRights},
   ufrmN26Main in 'ufrmN26Main.pas' {frmN26Main},
   ufrmN26Desk in 'ufrmN26Desk.pas' {frmN26Desk},
@@ -261,7 +261,8 @@ uses
   ObjMktRequOrder in 'Obj\ObjMktRequOrder.pas',
   ObjMktTaskOrder in 'Obj\ObjMktTaskOrder.pas',
   ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
-  ufrmShowPanel in 'App\ufrmShowPanel.pas' {frmShowPanel};
+  ufrmShowPanel in 'App\ufrmShowPanel.pas' {frmShowPanel},
+  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport};
 
 {$R *.res}
 var

@@ -155,7 +155,7 @@ uses
   ufrmSaleAnaly in 'App\ufrmSaleAnaly.pas' {frmSaleAnaly},
   ufrmSaleDayReport in 'App\ufrmSaleDayReport.pas' {frmSaleDayReport},
   ufrmSaleManSaleReport in 'App\ufrmSaleManSaleReport.pas' {frmSaleManSaleReport},
-  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
+  ufrmAllRckReport in 'App\ufrmAllRckReport.pas' {frmAllRckReport},
   ufrmSalesOrder in 'App\ufrmSalesOrder.pas' {frmSalesOrder},
   ufrmSalesOrderList in 'App\ufrmSalesOrderList.pas' {frmSalesOrderList},
   ufrmSaleTotalReport in 'App\ufrmSaleTotalReport.pas' {frmSaleTotalReport},
@@ -269,7 +269,8 @@ uses
   SHDocVw in '..\..\Pub\SHDocVw.pas',
   uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
   uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
-  ufrmKpiTimes in 'App\ufrmKpiTimes.pas' {frmKpiTimes};
+  ufrmKpiTimes in 'App\ufrmKpiTimes.pas' {frmKpiTimes},
+  ObjRecvOrder in 'Obj\ObjRecvOrder.pas';
 
 {$R *.res}
 

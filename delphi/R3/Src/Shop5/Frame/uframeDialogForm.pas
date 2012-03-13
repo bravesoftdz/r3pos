@@ -55,6 +55,7 @@ procedure TframeDialogForm.SetdbState(const Value: TDataSetState);
 begin
   FdbState := Value;
   SetFormEditStatus(self,Value);
+
 end;
 
 procedure TframeDialogForm.SetOnSave(const Value: TOnSaveEvent);

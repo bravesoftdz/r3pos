@@ -233,7 +233,7 @@ uses
   objHandSetRelation in 'Obj\objHandSetRelation.pas',
   ufrmRelationHandSet in 'App\ufrmRelationHandSet.pas' {frmRelationHandSet},
   ufrmFieldSort in 'App\ufrmFieldSort.pas' {frmFieldSort},
-  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
+  ufrmAllRckReport in 'App\ufrmAllRckReport.pas' {frmAllRckReport},
   ufrmIEWebForm in 'App\ufrmIEWebForm.pas' {frmIEWebForm},
   ufrmXsmIEBrowser in 'App\ufrmXsmIEBrowser.pas' {frmXsmIEBrowser},
   LCContrllerLib in 'App\LCContrllerLib.pas',
@@ -257,7 +257,8 @@ uses
   uWelcome in 'App\uWelcome.pas',
   ufrmWelcome in 'App\ufrmWelcome.pas' {frmWelcome},
   uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
-  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm};
+  uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
+  ObjRecvOrder in 'Obj\ObjRecvOrder.pas';
 
 {$R *.res}
 var

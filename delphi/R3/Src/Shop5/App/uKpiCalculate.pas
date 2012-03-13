@@ -1073,26 +1073,35 @@ begin
     end
     else
     begin
-      if Ratio > MaxRate then
+      KpiDetail.Edit;
+      KpiDetail.FieldByName('LVL_AMT').AsFloat := FKpiIndexInfo.LevelAmt;
+      KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
+      if BigToCalc = 0 then
+         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
+      else
+         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
+      KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
+      if (Ratio > MaxRate) and not IsFlag then
       begin
-        KpiDetail.Edit;
-        KpiDetail.FieldByName('LVL_AMT').AsFloat := FKpiIndexInfo.LevelAmt;
-        KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
-        if BigToCalc = 0 then
-           KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
-        else
-           KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
-        KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
         if KpiCalc = 1 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := KpiDetail.FieldByName('FISH_MNY').AsFloat*Ratio/100
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('ADJS_MNY').AsFloat+CdsGoods.FieldByName('CALC_MONEY').AsFloat)*Ratio/100
         else if KpiCalc = 2 then
-           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('FISH_AMT').AsFloat)*Ratio/100
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := (KpiDetail.FieldByName('ADJS_AMT').AsFloat+CdsGoods.FieldByName('CALC_AMOUNT').AsFloat)*Ratio/100
         else if KpiCalc = 3 then
            KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
-        KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
-        KpiDetail.FieldByName('BUDG_KPI').AsFloat := 0;
-        KpiDetail.Post;
+      end
+      else
+      begin
+        if KpiCalc = 1 then
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
+        else if KpiCalc = 2 then
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio/100
+        else if KpiCalc = 3 then
+           KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
       end;
+      KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
+      KpiDetail.FieldByName('BUDG_KPI').AsFloat := 0;
+      KpiDetail.Post;
     end;
 
     CdsGoods.Next;

@@ -240,6 +240,7 @@ inherited frmKpiIndex: TfrmKpiIndex
                     Width = 100
                   end
                   item
+                    Alignment = taRightJustify
                     EditButtons = <>
                     FieldName = 'GOODS_SUM'
                     Footers = <>

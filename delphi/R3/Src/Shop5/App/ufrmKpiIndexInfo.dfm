@@ -168,9 +168,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 140
       Width = 519
       Height = 212
-      ActivePage = TabSheet3
       Align = alBottom
-      TabIndex = 2
       TabOrder = 6
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -253,7 +251,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'LEVELD_NAME'
+                    FieldName = 'LEVEL_NAME'
                     Footers = <>
                     Title.Caption = #31561#32423#21517#31216
                     Width = 100

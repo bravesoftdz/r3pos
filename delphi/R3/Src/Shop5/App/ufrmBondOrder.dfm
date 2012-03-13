@@ -1,6 +1,6 @@
 inherited frmBondOrder: TfrmBondOrder
-  Left = 676
-  Top = 245
+  Left = 447
+  Top = 237
   ActiveControl = edtCLIENT_ID
   Caption = #20445#35777#37329#30003#39046
   ClientHeight = 465

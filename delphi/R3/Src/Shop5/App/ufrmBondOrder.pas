@@ -475,7 +475,7 @@ begin
         cdsDetail.Append;
         cdsDetail.FieldByName('A').AsString := '0';
         cdsDetail.FieldByName('FROM_ID').AsString := rs.FieldbyName('FROM_ID').AsString;
-        cdsDetail.FieldByName('REMARK').AsString := '滚存保证金(订单号:'+rs.FieldbyName('GLIDE_NO').AsString+')';
+        cdsDetail.FieldByName('REMARK').AsString := edtBOND_TYPE.Text+'(订单号:'+rs.FieldbyName('GLIDE_NO').AsString+')';
         cdsDetail.FieldByName('BOND_TYPE').AsString := TRecord_(edtBOND_TYPE.Properties.Items.Objects[edtBOND_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString;
         cdsDetail.FieldByName('ACCT_MNY').asFloat := rs.FieldbyName('ACCT_MNY').asFloat;
         cdsDetail.FieldByName('RECK_MNY').asFloat := rs.FieldbyName('RECK_MNY').asFloat;

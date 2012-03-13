@@ -13,7 +13,7 @@ var
   LogoVisible:boolean;
   PrgBarVisible:boolean;
 begin
-  frmDesk.Waited := false;
+  if frmDesk<>nil then frmDesk.Waited := false;
   if (frmLogo<>nil) and frmLogo.Visible then
      begin
        frmLogo.Close;

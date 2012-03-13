@@ -19,6 +19,7 @@ type
  public
    class function GetTimeStamp(iDbType:Integer):string;  //根据iDbType返回数据库时间戳函数
    class function GetSequence(SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):String;overload;
+   class function TryGetSequence(SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer;Number:Integer=1):String;overload;
    class function GetSequence(AFactor:TdbFactory;SEQU_ID,TENANT_ID,FLAG_TEXT:string;nLen:Integer):String;overload;
    class function GetMaxID(FlagText:String;Factor:TdbFactory;FieldName,TableName:String;nLen:String;CondiStr:String=''):String;overload;
    class function GetIntegerID(Factor:TdbFactory;FieldName,TableName:String;CondiStr:String=''):Integer;
@@ -307,5 +308,71 @@ begin
      result :=Global.SHOP_ID+'_'+formatDatetime('YYYYMMDDHHNNSS',now());
 end;
 
+
+class function TSequence.TryGetSequence(SEQU_ID, TENANT_ID,
+  FLAG_TEXT: string; nLen, Number: Integer): String;
+  function GetFormat:string;
+    var i:Integer;
+    begin
+      Result := '';
+      for i:=1 to nLen do
+        Result := Result +'0';
+    end;
+var Temp:TZQuery;
+    Str,flag:string;
+    InTrans:Boolean;
+begin
+  InTrans := Factor.InTransaction;
+  Temp := TZQuery.Create(nil);
+  try
+     if not InTrans then Factor.BeginTrans(10);
+     try
+       case Factor.iDbType of
+       0:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE with (UPDLOCK) where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+       1:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE';
+       4:Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' FOR UPDATE WITH RS ';
+       3,5:
+         begin
+          //Factor.ExecSQL('update SYS_SEQUENCE set SEQU_NO=SEQU_NO+1 where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''');
+          Temp.SQL.Text := 'select FLAG_TEXT,SEQU_NO+1 from SYS_SEQUENCE where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+''' ';
+         end;
+       end;
+       Factor.Open(Temp);
+       if Temp.IsEmpty then
+          begin
+            Result := FLAG_TEXT+FormatFloat(GetFormat,1);
+            Str := 'insert into SYS_SEQUENCE(TENANT_ID,SEQU_ID,FLAG_TEXT,SEQU_NO,COMM,TIME_STAMP) values('+TENANT_ID+','''+SEQU_ID+''','''+FLAG_TEXT+''','+Inttostr(Number)+',''00'','+TSequence.GetTimeStamp(Factor.iDbType)+')';
+          end
+       else
+       if (Temp.FieldbyName('FLAG_TEXT').AsString<FLAG_TEXT) then
+          begin
+            Result := FLAG_TEXT+FormatFloat(GetFormat,1);
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+FLAG_TEXT+''',SEQU_NO='+Inttostr(Number)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
+          end
+       else
+          begin
+            if Temp.FieldbyName('FLAG_TEXT').AsString=FLAG_TEXT then
+               flag := FLAG_TEXT
+            else
+               flag := Temp.FieldbyName('FLAG_TEXT').AsString;
+            if (Factor.iDbType=3) or (Factor.iDbType=5) then
+               begin
+                 Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger);
+                 Number := 0;
+               end
+            else
+               Result := flag+FormatFloat(GetFormat,Temp.FieldbyName('SEQU_NO').AsInteger+1);
+            Str := 'update SYS_SEQUENCE set FLAG_TEXT='''+flag+''',SEQU_NO='+Inttostr(Temp.FieldbyName('SEQU_NO').AsInteger+Number)+' where TENANT_ID='+TENANT_ID+' and SEQU_ID='''+SEQU_ID+'''';
+          end;
+       //Factor.ExecSQL(Str);
+       if not InTrans then Factor.CommitTrans;
+    except
+       if not InTrans then Factor.RollbackTrans;
+       Raise;
+    end;
+  finally
+     Temp.Free;
+  end;
+end;
 
 end.

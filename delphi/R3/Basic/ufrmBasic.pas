@@ -7,7 +7,7 @@ uses
   Dialogs,ZdbFactory,uGlobal, Menus, ActnList, cxControls, cxSpinEdit, RzSplit,RzTabs,
   cxContainer, cxEdit, cxTextEdit,ExtCtrls, cxMemo,DbGridEh,cxDropDownEdit,ZBase,FR_Class,
   ComCtrls,RzTreeVw, StdCtrls, RzButton, RzPanel, ShellApi, cxCalendar,DBGrids,cxCheckBox,
-  cxMaskEdit,cxButtonEdit,zrComboBoxList,ZLogFile, RzBmpBtn;
+  cxMaskEdit,cxButtonEdit,zrComboBoxList,ZLogFile, RzBmpBtn, RzLabel;
 const
   RowSelectColor=clAqua;
   BtnColor = $00DAD39C;
@@ -89,7 +89,7 @@ var
   FormBgk:boolean;
   myHKL: HKL;
 implementation
-uses IniFiles,uCtrlUtil;
+uses IniFiles,uUIFactory,uCtrlUtil;
 {$R *.dfm}
 
 procedure TfrmBasic.DoDatePropertiesValidate(Sender: TObject;
@@ -131,6 +131,7 @@ constructor TfrmBasic.Create(AOwner: TComponent);
 var i,c:integer;
 begin
   inherited;
+  UIFactory.InitForm(self); 
   PageHandle := 0;
   ContainerHanle := 0;
 //  try

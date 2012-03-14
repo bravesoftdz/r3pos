@@ -159,6 +159,9 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
                   end
                   item
                     Caption = #24050#32467#36134
+                  end
+                  item
+                    Caption = #26410#25171#21360
                   end>
                 TabOrder = 6
                 Caption = ''

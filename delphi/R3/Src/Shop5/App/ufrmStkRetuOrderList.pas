@@ -99,6 +99,7 @@ begin
        2:w := w +' and A.CHK_DATE is not null';
        3:w1 := w1 +' where RECK_MNY<>0';
        4:w1 := w1 +' where RECK_MNY=0';
+       5:w := w + ' and A.PRINT_TIMES is null ';
        end;
      end;
   if id<>'' then

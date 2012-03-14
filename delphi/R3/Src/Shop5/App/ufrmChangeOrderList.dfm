@@ -134,6 +134,7 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                 Width = 129
                 Height = 83
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -143,6 +144,9 @@ inherited frmChangeOrderList: TfrmChangeOrderList
                   end
                   item
                     Caption = #24050#23457#26680
+                  end
+                  item
+                    Caption = #26410#25171#21360
                   end>
                 TabOrder = 4
                 Caption = ''

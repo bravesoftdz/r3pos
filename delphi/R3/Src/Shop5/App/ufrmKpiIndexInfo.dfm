@@ -18,8 +18,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 113
       Width = 682
       Height = 292
-      ActivePage = TabSheet4
-      TabIndex = 3
       OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -827,15 +825,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         Height = 49
         Properties.MaxLength = 100
         TabOrder = 5
-      end
-      object Button1: TButton
-        Left = 618
-        Top = 74
-        Width = 50
-        Height = 25
-        Caption = 'Button1'
-        TabOrder = 6
-        OnClick = Button1Click
       end
     end
   end

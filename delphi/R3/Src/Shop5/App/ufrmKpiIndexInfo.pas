@@ -73,7 +73,6 @@ type
     ItemRatio: TMenuItem;
     CdsKpiRatio: TZQuery;
     CdsKpiSeqNo: TZQuery;
-    Button1: TButton;
     ItemSeqNo: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
@@ -108,7 +107,6 @@ type
     procedure ItemSeqNoClick(Sender: TObject);
     procedure KpiGridGetAlignment(Sender: TObject; ARow, ACol: Integer; var HAlign: TAlignment; var VAlign: TVAlignment);
     procedure KpiGridCanEditCell(Sender: TObject; ARow, ACol: Integer; var CanEdit: Boolean);
-    procedure Button1Click(Sender: TObject);
     procedure KpiGridClickCell(Sender: TObject; ARow, ACol: Integer);
   private
     FRowIdx: integer; //当前行索引
@@ -1537,12 +1535,6 @@ begin
       CanEdit := false;
   end else
     CanEdit := false;
-end;
-
-procedure TfrmKpiIndexInfo.Button1Click(Sender: TObject);
-begin
-  inherited;
-  SaveKpiGridData;
 end;
 
 function TfrmKpiIndexInfo.GetKpiGods_ID: string;

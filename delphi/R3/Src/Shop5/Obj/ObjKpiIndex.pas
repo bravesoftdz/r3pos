@@ -217,7 +217,7 @@ begin
   inherited;
   KeyFields := 'TENANT_ID;LEVEL_ID';
   SelectSQL.Text :=
-  'select TENANT_ID,LEVEL_ID,LEVEL_NAME,KPI_ID,LVL_AMT,LOW_RATE from MKT_KPI_LEVEL '+
+  'select TENANT_ID,LEVEL_ID,LEVEL_NAME,KPI_ID,LVL_AMT,LOW_RATE,0 as LEVEL_Rows from MKT_KPI_LEVEL '+
   'where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') order by LEVEL_ID ';
 
   IsSQLUpdate := True;
@@ -312,19 +312,51 @@ var
 begin
   inherited;
   KeyFields := 'TENANT_ID;RATIO_ID';
-  SelectSQL.Text :='select * from MKT_KPI_RATIO where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID ';     
+  SelectSQL.Text :=
+    'select a.TENANT_ID as TENANT_ID,'+
+          ' a.RATIO_ID as RATIO_ID,'+
+          ' a.KPI_ID as KPI_ID,'+
+          ' a.LEVEL_ID as LEVEL_ID,'+
+          ' a.TIMES_ID as TIMES_ID,'+
+          ' a.SEQNO_ID as SEQNO_ID,'+
+          ' a.GODS_ID as GODS_ID,'+
+          ' a.UNIT_ID as UNIT_ID,'+
+          ' a.KPI_RATIO as KPI_RATIO,'+
+          ' b.SEQNO as SEQNO,'+
+          ' b.KPI_AMT as KPI_AMT,'+
+          ' c.LEVEL_NAME as LEVEL_NAME,'+
+          ' c.LVL_AMT as LVL_AMT,'+
+          ' c.LOW_RATE as LOW_RATE,'+
+          ' d.TIMES_NAME as TIMES_NAME,'+
+          ' d.KPI_DATE1 as KPI_DATE1,'+
+          ' d.KPI_DATE2 as KPI_DATE2,'+
+          ' d.USING_BRRW as USING_BRRW,'+
+          ' d.KPI_FLAG as KPI_FLAG,'+
+          ' d.KPI_DATA as KPI_DATA,'+
+          ' d.KPI_CALC as KPI_CALC,'+
+          ' d.RATIO_TYPE as RATIO_TYPE,'+
+          ' e.GODS_NAME as GODS_NAME,'+
+          ' f.UNIT_NAME as UNIT_NAME '+
+    ' from MKT_KPI_RATIO a '+
+    ' left outer join MKT_KPI_SEQNO b on a.tenant_id=b.tenant_id and a.SEQNO_ID=b.SEQNO_ID '+
+    ' left outer join MKT_KPI_LEVEL c on a.tenant_id=c.tenant_id and a.LEVEL_ID=c.LEVEL_ID '+
+    ' left outer join MKT_KPI_TIMES d on a.tenant_id=d.tenant_id and a.TIMES_ID=d.TIMES_ID '+
+    ' left outer join VIW_GOODSINFO e on a.tenant_id=e.tenant_id and a.GODS_ID=e.GODS_ID '+
+    ' left outer join VIW_MEAUNITS  f on a.tenant_id=f.tenant_id and a.UNIT_ID=f.UNIT_ID '+
+    ' where a.TENANT_ID=:TENANT_ID and a.KPI_ID=:KPI_ID '+
+    ' order by b.SEQNO';
   Str :=
     ' insert into MKT_KPI_RATIO(TENANT_ID,RATIO_ID,KPI_ID,LEVEL_ID,TIMES_ID,SEQNO_ID,GODS_ID,UNIT_ID,KPI_RATIO,COMM,TIME_STAMP)'+
     ' values(:TENANT_ID,:RATIO_ID,:KPI_ID,:LEVEL_ID,:TIMES_ID,:SEQNO_ID,:GODS_ID,:UNIT_ID,:KPI_RATIO,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add(Str);
   Str :=
-    'update MKT_KPI_SEQNO '+
+    'update MKT_KPI_RATIO '+
     ' set TENANT_ID=:TENANT_ID,RATIO_ID=:RATIO_ID,KPI_ID=:KPI_ID,LEVEL_ID=:LEVEL_ID,TIMES_ID=:TIMES_ID,'+
     ' SEQNO_ID=:SEQNO_ID,GODS_ID=:GODS_ID,UNIT_ID=:UNIT_ID,KPI_RATIO=:KPI_RATIO,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
     ' where TENANT_ID=:OLD_TENANT_ID and RATIO_ID=:OLD_RATIO_ID and KPI_ID=:OLD_KPI_ID ';
   UpdateSQL.Add( Str);
   Str:=
-    'update MKT_KPI_SEQNO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
+    'update MKT_KPI_RATIO set COMM=''02'',TIME_STAMP='+GetTimeStamp(iDbType)+
     ' where TENANT_ID=:OLD_TENANT_ID and RATIO_ID=:OLD_RATIO_ID ';
   DeleteSQL.Add( Str);
 end;

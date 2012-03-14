@@ -136,17 +136,49 @@ end;
 
 function TMktRequData.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  result := true;
 end;
 
 function TMktRequData.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var Str:String;
 begin
+  Str := 'delete from MKT_REQUDATA where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO ';
+  AGlobal.ExecSQL(Str,Self);
 
+  AGlobal.ExecSQL(
+     ParseSQL(iDbType,
+        'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)-:OLD_REQU_MNY,2),'+
+        'COMM=' + GetCommStr(iDbType) +
+        ',TIME_STAMP='+GetTimeStamp(iDbType)+
+        ' where PLAN_ID=:OLD_PLAN_ID and KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID'),Self);
 end;
 
 function TMktRequData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var Str:String;
+    rs:TZQuery;
 begin
   Result := True;
+  Str := 'insert into MKT_REQUDATA(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,PLAN_ID,KPI_ID,KPI_YEAR,REQU_MNY,REMARK) '+
+         ' VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:PLAN_ID,:KPI_ID,:KPI_YEAR,:REQU_MNY,:REMARK) ';
+  AGlobal.ExecSQL(Str,Self);
+  
+  AGlobal.ExecSQL(
+     ParseSQL(iDbType,
+       'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)+ :REQU_MNY,2),'+
+       'COMM=' + GetCommStr(iDbType) +
+       ',TIME_STAMP='+GetTimeStamp(iDbType)+
+       ' where PLAN_ID=:PLAN_ID and KPI_ID=:KPI_ID and TENANT_ID=:TENANT_ID'),Self);
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select count(*) from MKT_KPI_RESULT where PLAN_ID=:PLAN_ID and KPI_ID=:KPI_ID and TENANT_ID=:TENANT_ID and WDW_MNY>KPI_MNY ';
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('PLAN_ID').AsString := FieldByName('PLAN_ID').AsString;
+    rs.ParamByName('KPI_ID').AsString := FieldByName('KPI_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then Exception.Create(FieldbyName('KPI_YEAR').asString+'年度的"'+FieldbyName('KPI_ID_TEXT').asString+'"指标返利余额不足不能申领.');
+  finally
+    rs.Free;
+  end;
 end;
 
 function TMktRequData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
@@ -165,20 +197,13 @@ var
   Str: string;
 begin
   inherited;
-  SelectSQL.Text :=      
-     'select A.TENANT_ID,A.SEQNO,A.REQU_ID,A.PLAN_ID,A.SHOP_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.KPI_YEAR,C.KPI_MNY,C.WDW_MNY,A.REQU_MNY,A.REMARK '+
+  SelectSQL.Text := ParseSQL(iDbType,
+     'select A.TENANT_ID,A.SEQNO,A.REQU_ID,A.PLAN_ID,A.SHOP_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.KPI_YEAR,C.KPI_MNY,C.WDW_MNY,A.REQU_MNY,(isnull(C.KPI_MNY,0)-isnull(C.WDW_MNY,0)) as BALA_MNY,A.REMARK '+
      ' from MKT_REQUDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
      ' left join MKT_KPI_RESULT C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID and A.KPI_YEAR=C.KPI_YEAR '+
-     'where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID order by A.SEQNO';
+     ' where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID order by A.SEQNO');
   IsSQLUpdate := True;
-  Str := 'insert into MKT_REQUDATA(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,PLAN_ID,KPI_ID,KPI_YEAR,REQU_MNY,REMARK) '
-    + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:PLAN_ID,:KPI_ID,:KPI_YEAR,:REQU_MNY,:REMARK)';
-  InsertSQL.Text := Str;
-  Str := 'update MKT_REQUDATA set TENANT_ID=:TENANT_ID,SEQNO=:SEQNO,SHOP_ID=:SHOP_ID,REQU_ID=:REQU_ID,PLAN_ID=:PLAN_ID,KPI_ID=:KPI_ID,KPI_YEAR=:KPI_YEAR,REQU_MNY=:REQU_MNY,REMARK=:REMARK '
-    + 'where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO';
-  UpdateSQL.Text := Str;
-  Str := 'delete from MKT_REQUDATA where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO ';
-  DeleteSQL.Text := Str;
+
 end;
 
 { TMktRequOrderGetPrior }

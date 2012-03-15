@@ -59,7 +59,6 @@ type
     procedure DBGridEh1Columns2UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
-    procedure edtREQU_TYPEPropertiesChange(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure DBGridEh1Columns2BeforeShowControl(Sender: TObject);
     procedure edtKPI_YEAREnter(Sender: TObject);
@@ -188,7 +187,6 @@ begin
   if IsAudit then Raise Exception.Create('已经审核的单据不能修改');
   SetEditStyle(dsBrowse,edtREQU_TYPE.Style);
   edtREQU_TYPE.Properties.ReadOnly := true;
-  edtREQU_TYPEPropertiesChange(nil);
 //  if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   dbState := dsEdit;
 
@@ -414,10 +412,8 @@ begin
   AddCbxPickList(edtREQU_TYPE);
   AddRow := True;
   cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where IDX_TYPE in (''1'') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
-
-  //' select A.KPI_ID,A.KPI_NAME,B.CLIENT_ID from MKT_KPI_INDEX A,MKT_KPI_RESULT B where '+
-  //' A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and B.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
+  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where TENANT_ID=:TENANT_ID and IDX_TYPE=''1'' and COMM not in (''02'',''12'') ';
+  cdsKPI_ID.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Factor.Open(cdsKPI_ID);
 end;
 
@@ -600,23 +596,30 @@ end;
 
 procedure TfrmMktRequOrder.KpiMnyToCalc;
 var rs:TZQuery;
+    Sql_Str:String;
 begin
   if (cdsDetail.FieldByName('KPI_ID').AsString <> '') and (cdsDetail.FieldByName('KPI_YEAR').AsString <> '') then
   begin
     cdsDetail.DisableControls;
     try
+      Sql_Str := ' select PLAN_ID,isnull(KPI_MNY,0) as KPI_MNY,isnull(WDW_MNY,0) as WDW_MNY,isnull(KPI_MNY,0)-isnull(WDW_MNY,0) as REQU_MNY '+
+      ' from MKT_KPI_RESULT where CLIENT_ID=:CLIENT_ID and KPI_ID=:KPI_ID and TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR ';
       rs := TZQuery.Create(nil);
-      rs.SQL.Text := ParseSQL(Factor.iDbType,' select PLAN_ID,isnull(KPI_MNY,0) as KPI_MNY,isnull(WDW_MNY,0) as WDW_MNY,isnull(KPI_MNY,0)-isnull(WDW_MNY,0) as REQU_MNY from MKT_KPI_RESULT where CLIENT_ID='+QuotedStr(edtCLIENT_ID.AsString)+
-      ' and KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+' and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_YEAR='+cdsDetail.FieldByName('KPI_YEAR').AsString);
+      rs.SQL.Text := ParseSQL(Factor.iDbType,Sql_Str);
+      rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      rs.ParamByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
+      rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+      rs.ParamByName('KPI_YEAR').AsInteger := cdsDetail.FieldByName('KPI_YEAR').AsInteger;
       Factor.Open(rs);
 
       if not rs.IsEmpty then
       begin
         if not (cdsDetail.State in [dsEdit,dsInsert]) then cdsDetail.Edit;
         cdsDetail.FieldByName('PLAN_ID').AsString := rs.FieldByName('PLAN_ID').AsString;
-        cdsDetail.FieldByName('KPI_MNY').AsInteger := rs.FieldByName('KPI_MNY').AsInteger;
-        cdsDetail.FieldByName('WDW_MNY').AsInteger := rs.FieldByName('WDW_MNY').AsInteger;
-        cdsDetail.FieldByName('REQU_MNY').AsInteger := rs.FieldByName('REQU_MNY').AsInteger;
+        cdsDetail.FieldByName('KPI_MNY').AsFloat := rs.FieldByName('KPI_MNY').AsFloat;
+        cdsDetail.FieldByName('WDW_MNY').AsFloat := rs.FieldByName('WDW_MNY').AsFloat;
+        cdsDetail.FieldByName('REQU_MNY').AsFloat := rs.FieldByName('REQU_MNY').AsFloat;
+        cdsDetail.FieldByName('BALA_MNY').AsFloat := 0;
         cdsDetail.Post;
         AddRow := True;
       end
@@ -650,12 +653,12 @@ begin
      Year := StrToInt(FormatDateTime('YYYY',Date()))
   else
      Year := StrToInt(Text);
-  if not((Year >= 2011) and (Year <= 2111)) then
-     Raise Exception.Create('输入年度范围"2011-2111"');
+  if not((Year >= 2000) and (Year <= 2111)) then
+     Raise Exception.Create('输入年度范围"2000-2111"');
   except
     Text := TColumnEh(Sender).Field.AsString;
     Value := TColumnEh(Sender).Field.asFloat;
-    Raise Exception.Create('输入年度范围"2011-2111"');
+    Raise Exception.Create('输入年度范围"2000-2111"');
   end;
   TColumnEh(Sender).Field.AsInteger := Year;
   KpiMnyToCalc;
@@ -666,20 +669,6 @@ procedure TfrmMktRequOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
-end;
-
-procedure TfrmMktRequOrder.edtREQU_TYPEPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if edtREQU_TYPE.ItemIndex < 0 then Exit;
-  if dbState = dsBrowse then Exit;
-  if locked then Exit;
-  cdsKPI_ID.Close;
-  cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME from MKT_KPI_INDEX where IDX_TYPE in ('''+TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+''') and COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID);
-  Factor.Open(cdsKPI_ID);
-  cdsDetail.First;
-  while not cdsDetail.Eof do cdsDetail.Delete;
-  InitRecord;
 end;
 
 procedure TfrmMktRequOrder.N1Click(Sender: TObject);
@@ -703,8 +692,11 @@ procedure TfrmMktRequOrder.DBGridEh1Columns2BeforeShowControl(
   Sender: TObject);
 begin
   inherited;
-  cdsKPI_YEAR.SQL.Text := 'select KPI_YEAR from MKT_KPI_RESULT where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+' and CLIENT_ID='+QuotedStr(edtCLIENT_ID.AsString)+
-  ' and KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+' and COMM not in (''02'',''12'') ';
+  cdsKPI_YEAR.Close;
+  cdsKPI_YEAR.SQL.Text := 'select KPI_YEAR from MKT_KPI_RESULT where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') ';
+  cdsKPI_YEAR.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  cdsKPI_YEAR.ParamByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
+  cdsKPI_YEAR.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
   Factor.Open(cdsKPI_YEAR);
 end;
 

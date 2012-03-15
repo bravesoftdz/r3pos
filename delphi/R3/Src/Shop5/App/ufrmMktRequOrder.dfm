@@ -165,7 +165,6 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
-        Properties.OnChange = edtREQU_TYPEPropertiesChange
         TabOrder = 5
       end
       object edtREQU_USER: TzrComboBoxList
@@ -400,27 +399,39 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           OnBeforeShowControl = DBGridEh1Columns2BeforeShowControl
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'KPI_MNY'
           Footers = <>
           ReadOnly = True
-          Title.Caption = #35745#25552#37329#39069
+          Title.Caption = #36820#21033#37329#39069
           Width = 68
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'WDW_MNY'
           Footers = <>
-          Title.Caption = #32467#20313#37329#39069
+          ReadOnly = True
+          Title.Caption = #24050#36820#37329#39069
           Width = 68
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'REQU_MNY'
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #30003#39046#37329#39069
           Width = 69
+        end
+        item
+          DisplayFormat = '#0.00'
+          EditButtons = <>
+          FieldName = 'BALA_MNY'
+          Footers = <>
+          Title.Caption = #32467#20313#37329#39069
+          Width = 70
         end
         item
           EditButtons = <>

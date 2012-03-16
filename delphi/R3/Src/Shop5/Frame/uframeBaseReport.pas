@@ -147,7 +147,7 @@ type
     function  GetRowType:integer;virtual;
     //2011.04.22 Add 控制是否有查看成本价权限
     procedure SetNotShowCostPrice(SetGrid: TDBGridEh; AryFields: Array of String);
-    procedure RefreshColumn;
+    procedure RefreshColumn; virtual;
     function  FindColumn(DBGrid:TDBGridEh;FieldName:string):TColumnEh;
     procedure CreateColumn(FieldName,TitleName:string;Index:Integer;ValueType:TFooterValueType=fvtNon;vWidth:Integer=70);
     procedure ClearSortMark;
@@ -156,10 +156,11 @@ type
     procedure SingleReportParams(ParameStr: string='');virtual; //简单报表调用参数
     //添加报表分组类型: RptType
     procedure AddReportTypeList(RptType: TcxComboBox);
-    procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID, SORT_NAME: string; SumFields,CalcFields: Array of String); //分组报表
+    procedure DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID, SORT_NAME,OrderByField: string; SumFields,CalcFields: Array of String); //分组报表
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure GridGetFooterParamsValue(Sender: TObject; var Text: String);  //设置汇总列计算
-    procedure DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string); //点列标题排序
+    procedure DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh); overload; //点列标题排序
+    procedure DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SetSORT_ID: string); overload;//点列标题排序
     function  GetRelation_ID(Relation_ID: string): string; //供应链排序
     function  GetGodsSTAT_ID(fndP_TYPE_ID: TcxComboBox): string;  //返回指标: CODE_ID
 
@@ -169,6 +170,9 @@ type
     procedure DoCreateKPIDataSet(IDX_TYPE_IDS: string='');
     //计算GridFooter.Value:
     procedure DoCalcGridFooterRate(SetGird: TDBGridEh; CalcCol: TColumnEh; FirCol,SecCol: string);
+    //动态保存列
+    procedure LoadGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);virtual;
+    procedure SaveGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);virtual;
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -1550,7 +1554,7 @@ begin
 
 end;
 
-procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,SORT_NAME: string; SumFields,CalcFields: Array of String);
+procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,SORT_NAME,OrderByField: string; SumFields,CalcFields: Array of String);
  //取SortList:
  procedure SetSortList(InDataSet: TZQuery; SortList: TStringList);
  var SortID: string;
@@ -1652,7 +1656,7 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
    end;
  end;
 var
-  i: integer;
+  i,ORD_ID: integer;
   SID,str: string;
   Rs: TZQuery;
   SortList: TStringList;
@@ -1666,51 +1670,46 @@ begin
     tmpObj:=TRecord_.Create;
     FAllRecord.Clear;
     FAllRecord.ReadField(DataSet);
+    FAllRecord.FieldByName(SORT_NAME).AsString:=InttoStr(DataSet.RecordCount); //返回记录数
     SetSortList(Rs,SortList); //读取分类个数
     DataSet.EmptyDataSet;  //清空数据
+    ORD_ID:=10000000;
     Rs.First;
     for i:=0 to SortList.Count-1 do  //逐个分类循环处理
     begin
+      Inc(ORD_ID);
       SID:=trim(SortList.Strings[i]);
       SortObj.ReadField(DataSet);
-      while not Rs.Eof do
-      begin
-        if SID=trim(Rs.fieldbyname(SORT_ID).AsString) then
+      try
+        Rs.Filtered:=False;
+        Rs.Filter:='SORT_ID='''+SID+''' ';
+        Rs.Filtered:=True;
+        while not Rs.Eof do
         begin
           tmpObj.ReadFromDataSet(Rs);
-          tmpObj.FieldByName(SORT_ID).AsString:=InttoStr(100000+(10*(i+1)));
+          tmpObj.FieldByName(OrderByField).AsString:=IntToStr(ORD_ID);
           CalcSum(FAllRecord,SortObj,tmpObj); //计算汇总数据
           DataSet.Append;
           tmpObj.WriteToDataSet(DataSet);  //写入数据集
+          if DataSet.State in [dsInsert,dsEdit] then DataSet.Post;
           Rs.Next;
-        end else
-        begin
-          //插入当前SortID的汇总数
-          CalcValue(SortObj); //计算汇总数据
-          DataSet.Append;
-          SortObj.WriteToDataSet(DataSet);  //写入数据集
-          DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID);
-          SortObj.Clear;
-          Break;  //不相等则退出循环
         end;
+      finally
+        Rs.Filtered:=False;
+        Rs.Filter:='';
       end;
-    end;
-
-    //最后一次分组汇总：
-    if (not DataSet.IsEmpty) and (SortObj.Count>0) then
-    begin
+      //插入当前SortID的汇总数
       CalcValue(SortObj); //计算汇总数据
-      DataSet.Append;
+      Inc(ORD_ID);
+      SortObj.FieldByName(OrderByField).AsString:=IntToStr(ORD_ID);
+      SortObj.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID);
+      DataSet.Append; //插入总合计
       SortObj.WriteToDataSet(DataSet);  //写入数据集
-      DataSet.FieldByName(SORT_NAME).AsString:='    '+GetSortName(SID);
+      if DataSet.State in [dsInsert,dsEdit] then DataSet.Post;
       SortObj.Clear;
-    end;      
-
-    //返回记录数
-    FAllRecord.FieldByName(SORT_NAME).AsString:=InttoStr(Rs.RecordCount);
-    //插入总合计
-    if not DataSet.IsEmpty then
-      CalcValue(FAllRecord); //计算汇总数据
+    end;
+    //计算汇总数据
+    if not DataSet.IsEmpty then CalcValue(FAllRecord);
   finally
     Rs.Free;
     SortList.Free;
@@ -1807,19 +1806,29 @@ function TframeBaseReport.GetRelation_ID(Relation_ID: string): string;
 begin
   case Factor.iDbType of
    0,1,4:
-      result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
-   5: result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
+      result:='(case when '+Relation_ID+'=0 then 99999999 else 10000000+'+Relation_ID+' end)';
+   5: result:='(case when '+Relation_ID+'=0 then 99999999 else 10000000+'+Relation_ID+' end)';
    else
-      result:='(case when '+Relation_ID+'=0 then 9999999 else '+Relation_ID+' end)';
+      result:='(case when '+Relation_ID+'=0 then 99999999 else 10000000+'+Relation_ID+' end)';
   end;
 end;
 
-procedure TframeBaseReport.DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SORT_ID: string);
+procedure TframeBaseReport.DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh);
 begin
   if Column.Field = nil then Exit;
   if (GridDataSet=nil) or (GridDataSet.IsEmpty) then Exit;
   case Column.Title.SortMarker of
-    smNoneEh,smDownEh:     begin       Column.Title.SortMarker := smUpEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' ASC';     end;    smUpEh:     begin       Column.Title.SortMarker := smDownEh;       GridDataSet.SortedFields:=SORT_ID+' ASC,'+Column.FieldName+' DESC';     end;
+    smNoneEh,smDownEh:     begin       Column.Title.SortMarker := smUpEh;       GridDataSet.SortedFields := Column.FieldName+' ASC';     end;    smUpEh:     begin       Column.Title.SortMarker := smDownEh;       GridDataSet.SortedFields := Column.FieldName+' DESC';     end;
+  end;
+end;
+
+
+procedure TframeBaseReport.DBGridTitleClick(GridDataSet: TZQuery; Column: TColumnEh; SetSORT_ID: string);
+begin
+  if Column.Field = nil then Exit;
+  if (GridDataSet=nil) or (GridDataSet.IsEmpty) then Exit;
+  case Column.Title.SortMarker of
+    smNoneEh,smDownEh:     begin       Column.Title.SortMarker := smUpEh;       GridDataSet.SortedFields := SetSORT_ID+' ASC;'+Column.FieldName+' ASC';     end;    smUpEh:     begin       Column.Title.SortMarker := smDownEh;       GridDataSet.SortedFields := SetSORT_ID+' ASC;'+Column.FieldName+' DESC';     end;
   end;
 end;
 
@@ -1984,6 +1993,59 @@ begin
       Text:=FloatToStr(CurValue)+'%';
     end;
   end;
+end;  
+
+procedure TframeBaseReport.LoadGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);
+var
+  F:TIniFile;
+  i,c:integer;
+  save:boolean;
+  w:integer;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sft.'+Global.UserID);
+  try
+    if not DBGridEh.Enabled then Exit;
+    save := DBGridEh.AutoFitColWidths;
+    DBGridEh.AutoFitColWidths := false;
+    w := DBGridEh.Columns.Count;
+    for i:= DBGridEh.Columns.Count -1 downto 0 do
+    begin
+      if DBGridEh.Columns[i].FieldName='' then Continue;
+      if (DBGridEh.FrozenCols+1) >= w then break;
+      DBGridEh.Columns[i].Visible := F.ReadBool(vHeadName,DBGridEh.Columns[i].FieldName,DBGridEh.Columns[i].Visible);
+      DBGridEh.Columns[i].Width := F.ReadInteger(vHeadName,DBGridEh.Columns[i].FieldName+'_WIDTH',DBGridEh.Columns[i].Width);
+      if not DBGridEh.Columns[i].Visible then Dec(w);
+    end;
+    DBGridEh.AutoFitColWidths := save;
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+end;
+
+procedure TframeBaseReport.SaveGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);
+var
+  F:TIniFile;
+  i,c:integer;
+begin
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'sft.'+Global.UserID);
+  try
+    for i:= 0 to DBGridEh.Columns.Count -1 do
+    begin
+      if DBGridEh.Columns[i].FieldName='' then Continue;
+      F.WriteBool(vHeadName,DBGridEh.Columns[i].FieldName,DBGridEh.Columns[i].Visible);
+      F.WriteInteger(vHeadName,DBGridEh.Columns[i].FieldName+'_WIDTH',DBGridEh.Columns[i].Width);
+      F.WriteInteger(vHeadName,DBGridEh.Columns[i].FieldName+'_INDEX',DBGridEh.Columns[i].Index);
+    end;
+  finally
+    try
+      F.Free;
+    except
+    end;
+  end;
+
 end;
 
 

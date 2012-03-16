@@ -1,32 +1,31 @@
 inherited frmAllRckReport: TfrmAllRckReport
-  Left = 180
-  Top = 183
+  Top = 105
   Width = 958
-  Height = 558
+  Height = 554
   Caption = #32508#21512#21488#36134
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 942
-    Height = 483
+    Width = 950
+    Height = 490
     inherited RzPanel2: TRzPanel
-      Width = 932
-      Height = 473
+      Width = 940
+      Height = 480
       inherited RzPage: TRzPageControl
-        Width = 727
-        Height = 467
+        Width = 735
+        Height = 474
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32508#21512#21488#36134
           inherited RzPanel3: TRzPanel
-            Width = 725
-            Height = 440
+            Width = 733
+            Height = 447
             inherited Panel4: TPanel
-              Width = 715
-              Height = 430
+              Width = 723
+              Height = 437
               inherited w1: TRzPanel
-                Width = 715
-                Height = 63
+                Width = 723
+                Height = 60
                 object Label3: TLabel
                   Left = 16
                   Top = 37
@@ -34,37 +33,12 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Height = 12
                   Caption = #21488#24080#20998#31867
                 end
-                object Label4: TLabel
-                  Left = 768
-                  Top = 39
+                object LblUnit: TLabel
+                  Left = 295
+                  Top = 37
                   Width = 48
                   Height = 12
-                  Caption = #21830#21697#20998#31867
-                  Visible = False
-                end
-                object Label5: TLabel
-                  Left = 512
-                  Top = 39
-                  Width = 48
-                  Height = 12
-                  Caption = #21830#21697#25351#26631
-                  Visible = False
-                end
-                object Label16: TLabel
-                  Left = 579
-                  Top = 39
-                  Width = 48
-                  Height = 12
-                  Anchors = [akTop, akRight]
                   Caption = #26174#31034#21333#20301
-                end
-                object Label23: TLabel
-                  Left = 512
-                  Top = 18
-                  Width = 48
-                  Height = 12
-                  Caption = #38376#24215#32676#32452
-                  Visible = False
                 end
                 object RzLabel1: TRzLabel
                   Left = 16
@@ -81,25 +55,24 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Height = 12
                   Caption = #33267
                 end
-                object Label21: TLabel
-                  Left = 768
-                  Top = 18
-                  Width = 48
-                  Height = 12
-                  Caption = #38376#24215#21517#31216
-                  Visible = False
-                end
                 object rptTemplate: TcxComboBox
                   Left = 72
                   Top = 33
                   Width = 193
                   Height = 20
                   Properties.DropDownListStyle = lsFixedList
+                  Properties.Items.Strings = (
+                    #20840#37096#21830#21697#21488#36134
+                    #21367#28895#21830#21697#21488#36134
+                    #38750#21367#28895#21830#21697#21488#24080
+                    #36827#36135#21488#36134
+                    #38144#21806#21488#36134)
+                  Properties.OnChange = rptTemplatePropertiesChange
                   TabOrder = 2
                 end
                 object btnNew: TRzBitBtn
-                  Left = 272
-                  Top = 33
+                  Left = 572
+                  Top = 35
                   Width = 48
                   Height = 21
                   Caption = #28155#21152
@@ -116,7 +89,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 12
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnNewClick
@@ -124,8 +97,8 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Spacing = 5
                 end
                 object btnEdit: TRzBitBtn
-                  Left = 321
-                  Top = 33
+                  Left = 621
+                  Top = 35
                   Width = 48
                   Height = 21
                   Caption = #20462#25913
@@ -142,7 +115,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 13
+                  TabOrder = 7
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnEditClick
@@ -150,8 +123,8 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Spacing = 5
                 end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 430
-                  Top = 27
+                  Left = 454
+                  Top = 24
                   Width = 72
                   Height = 29
                   Action = actFind
@@ -169,201 +142,29 @@ inherited frmAllRckReport: TfrmAllRckReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 4
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
                   NumGlyphs = 2
                   Spacing = 5
                 end
-                object fndP1_TYPE_ID: TcxComboBox
-                  Left = 568
-                  Top = 35
-                  Width = 73
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #20027#20379#24212#21830
-                    #21697#29260#21517#31216)
-                  TabOrder = 6
-                  Visible = False
-                end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 630
-                  Top = 35
-                  Width = 80
+                  Left = 346
+                  Top = 33
+                  Width = 89
                   Height = 20
-                  Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #35745#37327#21333#20301
                     #21253#35013'1'
                     #21253#35013'2')
-                  TabOrder = 9
-                end
-                object fndP1_STAT_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 642
-                  Top = 35
-                  Width = 119
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 7
-                  Visible = False
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 822
-                  Top = 35
-                  Width = 132
-                  Height = 20
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                      Kind = bkEllipsis
-                    end>
-                  Properties.ReadOnly = False
-                  Properties.OnButtonClick = fndP1_SORT_IDPropertiesButtonClick
-                  TabOrder = 8
-                  Visible = False
-                  OnKeyPress = fndP1_SORT_IDKeyPress
-                end
-                object fndP1_SHOP_TYPE: TcxComboBox
-                  Left = 568
-                  Top = 14
-                  Width = 73
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
                   TabOrder = 3
-                  Visible = False
-                end
-                object fndP1_SHOP_VALUE: TzrComboBoxList
-                  Tag = -1
-                  Left = 642
-                  Top = 14
-                  Width = 119
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 4
-                  Visible = False
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = [zbNew, zbClear, zbFind]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP1_SHOP_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 822
-                  Top = 14
-                  Width = 132
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 5
-                  Visible = False
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL;SEQ_NO'
-                  KeyField = 'SHOP_ID'
-                  ListField = 'SHOP_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'SHOP_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SEQ_NO'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = []
-                  DropListStyle = lsFixed
-                  MultiSelect = False
                 end
                 object btnDelete: TRzBitBtn
-                  Left = 370
-                  Top = 33
+                  Left = 670
+                  Top = 35
                   Width = 48
                   Height = 21
                   Caption = #21024#38500
@@ -380,7 +181,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 14
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnDeleteClick
@@ -408,17 +209,20 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Top = 7
                   Width = 170
                   Height = 20
-                  TabOrder = 11
+                  TabOrder = 5
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 63
-                Width = 715
-                Height = 367
+                Top = 60
+                Width = 723
+                Height = 377
                 inherited DBGridEh1: TDBGridEh
-                  Width = 711
-                  Height = 363
+                  Tag = 1
+                  Width = 719
+                  Height = 373
+                  OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
+                  OnTitleClick = DBGridEh1TitleClick
                   Columns = <
                     item
                       EditButtons = <>
@@ -455,15 +259,15 @@ inherited frmAllRckReport: TfrmAllRckReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 730
-        Height = 467
+        Left = 738
+        Height = 474
         Visible = False
         inherited Panel2: TPanel
-          Height = 444
+          Height = 440
           inherited Panel5: TPanel
-            Height = 329
+            Height = 325
             inherited rzShowColumns: TRzCheckList
-              Height = 325
+              Height = 321
             end
           end
         end
@@ -471,12 +275,9 @@ inherited frmAllRckReport: TfrmAllRckReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 942
-    inherited Image3: TImage
-      Width = 326
-    end
+    Width = 950
     inherited Image14: TImage
-      Left = 922
+      Left = 930
     end
     inherited Image1: TImage
       Width = 580

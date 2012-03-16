@@ -1976,15 +1976,15 @@ begin
        Value:=StringReplace(Value,' Asc','',[rfReplaceAll,rfIgnoreCase]);
     end;
     FSortedFields := Value;
-    if Active then
-      {InternalSort;}
-      {bangfauzan modification}
-       if (FSortedFields = '') then
-          Self.InternalRefresh
-       else
-          InternalSort;
-      {end of bangfauzan modification}
   end;
+  if Active then
+    {InternalSort;}
+    {bangfauzan modification}
+     if (FSortedFields = '') then
+        Self.InternalRefresh
+     else
+        InternalSort;
+    {end of bangfauzan modification}
 end;
 
 {**

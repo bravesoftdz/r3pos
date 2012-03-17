@@ -42,6 +42,7 @@ alter table SAL_BOMORDER add BOM_TYPE char(1) NULL;
 alter table SAL_BOMORDER add BOM_STATUS char(1) NULL;
 alter table SAL_BOMORDER add GODS_ID varchar(36) NULL;
 alter table SAL_BOMORDER add DEPT_ID varchar(12) NULL;
+alter table SAL_BOMORDER add HAS_INTEGRAL char(1) NULL;
 
 --是否启动多档促销 0不启用 1启用
 alter table SAL_PRICEDATA add USING_LEVEL char(1) NULL;
@@ -719,6 +720,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('18',
 
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','私秘','NB_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','共享','NB_TYPE','00',5497000);
+
 --我的记事本
 CREATE TABLE [OA_NOTEBOOK] (
         --企业代码
@@ -753,3 +755,143 @@ CREATE TABLE [OA_NOTEBOOK] (
 CREATE INDEX IX_OANB_TENANT_ID ON OA_NOTEBOOK(TENANT_ID);
 CREATE INDEX IX_OANB_USER_ID ON OA_NOTEBOOK(USER_ID);
 CREATE INDEX IX_OANB_NB_DATE ON OA_NOTEBOOK(NB_DATE);
+
+--返还类型
+delete from PUB_PARAMS where TYPE_CODE='REQU_TYPE';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','商品返还','REQU_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','现金返还','REQU_TYPE','00',5497000);
+
+drop table MKT_REQUORDER;
+--费用申领单
+CREATE TABLE [MKT_REQUORDER] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --单号
+	[REQU_ID] [char] (36) NOT NULL ,
+        --所属部门
+	[DEPT_ID] varchar (12) NOT NULL ,
+        --返还类型
+	[REQU_TYPE] [char] (36) NOT NULL ,
+        --流水号
+	[GLIDE_NO] [varchar] (20) NOT NULL ,
+        --填报日期
+	[REQU_DATE] int NOT NULL ,
+        --经销商
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --填报人
+	[REQU_USER] [varchar] (36) NULL ,
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+        --返利金额
+	[KPI_MNY] [decimal](18, 3) NULL ,
+        --市场费用
+	[BUDG_MNY] [decimal](18, 3) NULL ,
+        --价格支持
+	[AGIO_MNY] [decimal](18, 3) NULL ,
+        --其他金额
+	[OTHR_MNY] [decimal](18, 3) NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_REQUORDER_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_REQUORDER] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[REQU_ID]
+	) 
+);
+
+CREATE INDEX IX_MRQD_TENANT_ID ON MKT_REQUORDER(TENANT_ID);
+CREATE INDEX IX_MRQD_TIME_STAMP ON MKT_REQUORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MRQD_DEMA_DATE ON MKT_REQUORDER(REQU_DATE);
+
+drop table MKT_REQUDATA;
+--费用申领明细
+CREATE TABLE [MKT_REQUDATA] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --序号
+	[SEQNO] [int] NOT NULL ,
+        --单号
+	[REQU_ID] [char] (36) NOT NULL ,
+        --计划单号
+	[PLAN_ID] [char] (36) NOT NULL ,
+        --考核ID
+	[KPI_ID] [char] (36) NOT NULL ,
+        --年度
+	[KPI_YEAR] int NULL ,
+        --返利金额
+	[KPI_MNY] [decimal](18, 3) NULL ,
+        --市场费用
+	[BUDG_MNY] [decimal](18, 3) NULL ,
+        --价格支持
+	[AGIO_MNY] [decimal](18, 3) NULL ,
+        --其他金额
+	[OTHR_MNY] [decimal](18, 3) NULL ,
+        --摘要
+	[REMARK] [varchar] (100) NULL ,
+	CONSTRAINT [PK_MKT_REQUDATA] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[REQU_ID],
+		[SEQNO]
+	)
+);
+
+CREATE INDEX IX_M_RQR_TENANT_ID ON MKT_REQUDATA(TENANT_ID);
+CREATE INDEX IX_M_RQR_REQU_ID ON MKT_REQUDATA(TENANT_ID,REQU_ID);
+CREATE INDEX IX_M_RQR_KPI_ID ON MKT_REQUDATA(TENANT_ID,PLAN_ID,KPI_YEAR,KPI_ID);
+CREATE INDEX IX_M_RQR_KPI_YEAR ON MKT_REQUDATA(TENANT_ID,KPI_YEAR);
+
+--费用分摊明细
+CREATE TABLE [MKT_REQUSHARE] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --序号
+	[SEQNO] [int] NOT NULL ,
+        --单号
+	[REQU_ID] [char] (36) NOT NULL ,
+        --商品
+	[GODS_ID] [char] (36) NOT NULL ,
+	      --单价
+	[UNIT_ID] [char] (36) NOT NULL ,
+        --返还数量
+	[AMOUNT] [decimal](18, 3) NULL ,
+        --返还数量
+	[CALC_AMOUNT] [decimal](18, 3) NULL ,
+        --返利金额
+	[KPI_MNY] [decimal](18, 3) NULL ,
+        --市场费用
+	[BUDG_MNY] [decimal](18, 3) NULL ,
+        --价格支持
+	[AGIO_MNY] [decimal](18, 3) NULL ,
+        --其他金额
+	[OTHR_MNY] [decimal](18, 3) NULL ,
+        --摘要
+	[REMARK] [varchar] (100) NULL ,
+	CONSTRAINT [PK_MKT_REQUSHARE] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[REQU_ID],
+		[SEQNO]
+	)
+);
+
+CREATE INDEX IX_MRSR_TENANT_ID ON MKT_REQUSHARE(TENANT_ID);
+CREATE INDEX IX_MRSR_REQU_ID ON MKT_REQUSHARE(TENANT_ID,REQU_ID);
+CREATE INDEX IX_MRSR_KPI_ID ON MKT_REQUSHARE(TENANT_ID,GODS_ID);
+

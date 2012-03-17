@@ -235,6 +235,7 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure DBGridEh5TitleClick(Column: TColumnEh);
   private
     vBegDate,            //查询开始日期
     vEndDate: integer;   //查询结束日期
@@ -685,7 +686,7 @@ begin
         adoReport5.SQL.Text := strSql;
         Factor.Open(adoReport5);
         dsadoReport5.DataSet:=nil;
-        DoGodsGroupBySort(adoReport5,GodsSortIdx,'SORT_ID','GODS_NAME',
+        DoGodsGroupBySort(adoReport5,GodsSortIdx,'SORT_ID','GODS_NAME','ORDER_ID',
                           ['SALE_AMT','SALE_TTL','SALE_TAX','SALE_MNY','SALE_CST','SALE_ALLPRF'],
                           ['SALE_PRC=SALE_TTL/SALE_AMT','SALE_RATE=SALE_ALLPRF/SALE_MNY*100.0','SALE_PRF=SALE_ALLPRF/SALE_AMT']);
         dsadoReport5.DataSet:=adoReport5;
@@ -1144,7 +1145,7 @@ begin
   case StrToInt(GodsSortIdx) of
    0: SORT_ID:='C.RELATION_ID';
    else
-      SORT_ID:='C.SORT_ID'+GodsSortIdx+' ';
+      SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'')';
   end;
 
   UnitCalc:=GetUnitTO_CALC(fndP5_UNIT_ID.ItemIndex,'C');
@@ -1177,7 +1178,7 @@ begin
    0: //供应链
     begin
       strSql :=
-        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,'+GetRelation_ID('j.SORT_ID')+' as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         '  on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
@@ -1186,14 +1187,14 @@ begin
    else
     begin
       strSql :=
-        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         ' on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
         ' left outer join '+
-        '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+        '(select SORT_ID,'+IntToVarchar('(10000000+SEQ_NO)')+' as ORDER_ID from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
         ' on  j.SORT_ID=s.SORT_ID '+
-        ' order by s.OrderNo,s.SORT_ID,j.GODS_CODE';
+        ' order by s.ORDER_ID,j.GODS_CODE';
     end;
   end;
   result:=ParseSQL(Factor.iDbType,strSql);
@@ -1816,6 +1817,11 @@ function TfrmSaleDayReport.GetDataRight: string;
 begin
   //主数据：RCK_C_GOODS_DAYS、VIW_SALESDATA  A
   result:=' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+end;
+
+procedure TfrmSaleDayReport.DBGridEh5TitleClick(Column: TColumnEh);
+begin
+  DBGridTitleClick(adoReport5,Column,'ORDER_ID');
 end;
 
 end.

@@ -171,7 +171,7 @@ begin
   safeDay := StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7);
   ReasDay := StrtoIntDef(ShopGlobal.GetParameter('REAS_DAY'),14);
   FKpi:=TZQuery.Create(nil);
-  Fkpi.SQL.Text:='select KPI_ID,KPI_NAME,IDX_TYPE,KPI_CALC,KPI_TYPE,UNIT_NAME,KPI_DATA from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID);
+  Fkpi.SQL.Text:='select * from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID);
   Factor.Open(FKpi);
 end;
 

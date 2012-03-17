@@ -1,5 +1,5 @@
 inherited frmSaleManSaleReport: TfrmSaleManSaleReport
-  Left = 190
+  Left = 187
   Top = 103
   Width = 1093
   Height = 568

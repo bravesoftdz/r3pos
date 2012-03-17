@@ -124,7 +124,7 @@ begin
 end;
 
 procedure TfrmDeptInfo.Save;
-  procedure UpdateToGlobal(AObj:TRecord_);
+ {procedure UpdateToGlobal(AObj:TRecord_);
   var
     Temp:TZQuery;
     i: integer; IsFlag: Boolean;
@@ -144,14 +144,14 @@ procedure TfrmDeptInfo.Save;
       if Temp.FindField(FName)<>nil then
         Temp.FieldByName(FName).Value:=AObj.Fields[i].AsValue;
     end;}
-    Temp.Post;
+  {  Temp.Post;
 
     //ÐÞ¸ÄLEVEL_IDÖµ:
     NewID:=trim(AObj.FieldByName('LEVEL_ID').AsString);
     OldID:=trim(AObj.FieldByName('LEVEL_ID').AsOldString);
     if (NewID<>OldID) and (OldID<>'') then
     begin
-      Temp.SortedFields := 'DEPT_ID';
+      //Temp.SortedFields := 'DEPT_ID';
       Temp.First;
       while not Temp.Eof do
       begin
@@ -166,9 +166,9 @@ procedure TfrmDeptInfo.Save;
         end;
         Temp.Next;
       end;
-      Temp.SortedFields:='LEVEL_ID';
+      //Temp.SortedFields:='LEVEL_ID';
     end;
-  end;
+  end;}
 var
   tmp:TZQuery;
   j:integer;
@@ -200,7 +200,7 @@ begin
   AObj.WriteToDataSet(cdsTable);
   cdsTable.Post;
   if Factor.UpdateBatch(cdsTable,'TDEPTInfo',nil) then
-    UpdateToGlobal(Aobj);
+    ShopGlobal.RefreshTable('Ca_Dept_INFO');
   Saved:=True;
   dbState:=dsBrowse;
 end;

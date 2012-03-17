@@ -418,7 +418,7 @@ var
 begin
   RzTree.OnChange:=nil;
   rs := Global.GetZQueryFromName('CA_DEPT_INFO');
-  rs.SortedFields:='LEVEL_ID';
+  //rs.SortedFields:='LEVEL_ID';
   rs.SortType:=stAscending;
   CreateLevelTree(rs,rzTree,'333333333','DEPT_ID','DEPT_NAME','LEVEL_ID',1,3,'');
   Obj  := TRecord_.Create;

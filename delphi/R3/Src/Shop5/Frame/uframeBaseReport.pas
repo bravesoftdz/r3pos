@@ -1644,6 +1644,15 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
           result:=trim(SortRs.fieldbyName('SORT_NAME').AsString);
       end;
     end;
+   3: 
+    begin 
+      SortRs:=Global.GetZQueryFromName('PUB_CLIENTINFO');
+      if SortRs<>nil then
+      begin
+        if SortRs.Locate('CLIENT_ID',SORT_ID,[]) then
+          result:=trim(SortRs.fieldbyName('CLIENT_NAME').AsString);
+      end;
+    end;
    else
     begin
       SortRs:=Global.GetZQueryFromName('PUB_GOODS_INDEXS');
@@ -1771,8 +1780,11 @@ end;
 
 procedure TframeBaseReport.GridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 var
-  SORT_ID: string;
+  ORDER_ID: string;  //排序字段
+  GodsCode: string;  //货号
+  BarCode: string;   //条码
   ARect:TRect;
+  GridDs: TDataSet;  //Grid数据集
 begin
   if TDBGridEh(Sender).DataSource.DataSet=nil then Exit;
   if not TDBGridEh(Sender).DataSource.DataSet.Active then Exit;
@@ -1789,16 +1801,16 @@ begin
     ARect := Rect;
     DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
-
-  SORT_ID:=trim(TDBGridEh(Sender).DataSource.DataSet.fieldbyName('SORT_ID').AsString);
-  if Copy(SORT_ID,length(SORT_ID),1) = '1' then
+  //初始化参数:
+  GridDs:=TDBGridEh(Sender).DataSource.DataSet; //Grid数据集 
+  if GridDs.FindField('ORDER_ID')<>nil then ORDER_ID:=GridDs.fieldbyName('ORDER_ID').AsString;
+  if GridDs.FindField('GODS_CODE')<>nil then GodsCode:=GridDs.fieldbyName('GODS_CODE').AsString;
+  if GridDs.FindField('BARCODE')<>nil then BarCode:=GridDs.fieldbyName('BARCODE').AsString;
+  if (trim(Column.FieldName)<>'SEQNO') and (trim(ORDER_ID)<>'') and (trim(GodsCode)='') and (trim(BarCode)='') then
   begin
-    if trim(Column.FieldName)<>'SEQNO' then
-    begin
-      TDBGridEh(Sender).Canvas.Brush.Color := $00E7E2E3; //$00A5A5A5;
-      TDBGridEh(Sender).Canvas.Font.Style:=[fsBold];
-      TDBGridEh(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
-    end;
+    TDBGridEh(Sender).Canvas.Brush.Color := $00E7E2E3; //$00A5A5A5;
+    TDBGridEh(Sender).Canvas.Font.Style:=[fsBold];
+    TDBGridEh(Sender).DefaultDrawColumnCell(Rect, DataCol, Column, State);
   end;
 end;
 

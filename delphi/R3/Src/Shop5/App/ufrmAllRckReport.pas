@@ -905,7 +905,7 @@ begin
         'SELECT '+
         ' A.TENANT_ID '+
         ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
-        ',C.NEW_INPRICE*'+UnitCalc+' as NEW_INPRICE,C.NEW_OUTPRICE*'+UnitCalc+' as NEW_OUTPRICE '+
+        ',(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
         ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
         ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
 
@@ -921,7 +921,7 @@ begin
         ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
         ' from RCK_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSPRICE C '+
         ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere+' '+
-        ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
+        ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,(C.NEW_INPRICE*'+UnitCalc+'),(C.NEW_OUTPRICE*'+UnitCalc+')';
       strSql :=
         'select j.* '+
         ' ,(case when SALE_MNY<>0 then (SALE_PRF*100.00/SALE_MNY) else 0.00 end) as SALE_RATE '+    //销售毛利率

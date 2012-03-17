@@ -14,10 +14,10 @@ inherited frmChangeDayReport: TfrmChangeDayReport
       inherited RzPage: TRzPageControl
         Width = 677
         Height = 509
-        ActivePage = TabSheet3
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 2
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

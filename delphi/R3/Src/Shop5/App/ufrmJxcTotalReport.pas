@@ -390,16 +390,18 @@ begin
         strSql := GetGodsSQL;
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
+        {
         try
           strList:=TStringList.Create;
           strList.Add(strSql);
-          strList.SaveToFile('c:\SQL.txt'); 
+          strList.SaveToFile('c:\SQL.txt');
         finally
           strList.Free;
         end;
+        }
         Factor.Open(adoReport4);
         dsadoReport4.DataSet:=nil;
-        DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME',
+        DoGodsGroupBySort(adoReport4,GodsSortIdx,'SORT_ID','GODS_NAME','ORDER_ID',
                           ['ORG_AMT','ORG_CST','ORG_RTL','STOCK_AMT','STOCK_TTL','STOCK_MNY','STOCK_TAX','SALE_AMT','SALE_TTL','SALE_MNY',
                            'SALE_TAX','SALE_CST','SALE_PRF','SALE_RATE','DBIN_AMT','DBIN_CST','DBOUT_AMT','DBOUT_CST','BAL_AMT','BAL_CST','BAL_RTL'],
                           ['SALE_RATE=SALE_PRF/SALE_MNY*100.0']);
@@ -860,26 +862,25 @@ begin
 
   case StrToInt(GodsSortIdx) of
    0:
-    begin 
+    begin
       strSql :=
-        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,'+GetRelation_ID('j.SORT_ID')+' as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
-        ' order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE ';
-
+        ' order by '+GetRelation_ID('j.SORT_ID')+',j.GODS_CODE ';     
     end;
    else
     begin
       strSql :=
-        'select j.*,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
+        'select j.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,j.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') j '+
         'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         'on j.TENANT_ID=b.TENANT_ID and j.GODS_ID=b.GODS_ID and j.BATCH_NO=b.BATCH_NO and j.PROPERTY_01=b.PROPERTY_01 and j.PROPERTY_02=b.PROPERTY_02 and j.UNIT_ID=b.UNIT_ID '+
         'left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '+
         ' left outer join '+
-        '(select SORT_ID,SEQ_NO as OrderNo from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
+        '(select SORT_ID,'+IntToVarchar('(10000000+SEQ_NO)')+' as ORDER_ID from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE='+GodsSortIdx+' and COMM not in (''02'',''12'')) s '+
         ' on  j.SORT_ID=s.SORT_ID '+
-        ' order by s.OrderNo,s.SORT_ID,j.GODS_CODE';
+        ' order by s.ORDER_ID,j.GODS_CODE';
     end;
   end;
   Result :=  ParseSQL(Factor.iDbType, strSql);
@@ -1250,9 +1251,8 @@ begin
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh2GetFooterParams(Sender: TObject;
-  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
-  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
-  var Text: String);
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
+  var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 begin
   inherited;
   if Column.FieldName = 'SHOP_NAME' then Text := 'ºÏ¼Æ:'+Text+'±Ê';
@@ -1281,7 +1281,6 @@ begin
       end;
     end;
   end;
-   
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh4GetFooterParams(Sender: TObject;
@@ -1320,8 +1319,8 @@ end;
 
 procedure TfrmJxcTotalReport.DBGridEh4TitleClick(Column: TColumnEh);
 begin
-  inherited;
-  DBGridTitleClick(adoReport4,Column,'SORT_ID');
+  //inherited;
+  DBGridTitleClick(adoReport4,Column,'ORDER_ID');
 end;
 
 procedure TfrmJxcTotalReport.DBGridEh4DrawColumnCell(Sender: TObject;

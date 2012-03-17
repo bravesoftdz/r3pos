@@ -9,7 +9,7 @@ uses
   Dialogs, uframeToolForm, ExtCtrls, ComCtrls, RzTreeVw, Grids, DBGridEh,
   cxEdit, cxTextEdit, ActnList, Menus, ToolWin, cxControls, cxContainer,
   StdCtrls, RzLabel, RzTabs, RzPanel, DB, zBase, RzButton, PrnDbgeh, jpeg,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, DBGrids, Buttons;
  
 
 type

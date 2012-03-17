@@ -111,7 +111,7 @@ begin
 end;
 
 procedure TfrmDutyInfo.Save;
-  procedure UpdateToGlobal(AObj:TRecord_);
+ {procedure UpdateToGlobal(AObj:TRecord_);
   var
     Temp:TZQuery;
     i: integer; IsFlag: Boolean;
@@ -131,14 +131,14 @@ procedure TfrmDutyInfo.Save;
       if Temp.FindField(FName)<>nil then
         Temp.FieldByName(FName).Value:=AObj.Fields[i].AsValue;
     end;}
-    Temp.Post;
+    {Temp.Post;
     
     //ÐÞ¸ÄLEVEL_IDÖµ:
     NewID:=trim(AObj.FieldByName('LEVEL_ID').AsString);
     OldID:=trim(AObj.FieldByName('LEVEL_ID').AsOldString);
     if (NewID<>OldID) and (OldID<>'') then
     begin
-      Temp.SortedFields := 'DUTY_ID';
+      //Temp.SortedFields := 'DUTY_ID';
       Temp.First;
       while not Temp.Eof do
       begin
@@ -153,16 +153,14 @@ procedure TfrmDutyInfo.Save;
         end;
         Temp.Next;
       end;
-      Temp.SortedFields:='LEVEL_ID';
+      
+      //Temp.SortedFields:='LEVEL_ID';
     end;
-  end;
+  end;}
 var
   tmp:TZQuery;
   j:integer;
-  TestObj: TRecord_;
 begin
-  TestObj:=TRecord_.Create;
-
   if trim(edtDUTY_NAME.Text)='' then
   begin
     if not edtDUTY_NAME.CanFocus then edtDUTY_NAME.SetFocus;
@@ -183,7 +181,7 @@ begin
   AObj.WriteToDataSet(cdsTable);
   cdsTable.Post;
   if Factor.UpdateBatch(cdsTable,'TDutyInfo',nil) then
-    UpdateToGlobal(Aobj);
+    ShopGlobal.RefreshTable('Ca_DUTY_INFO');
   Saved:=True;
   dbState:=dsBrowse;
 end;

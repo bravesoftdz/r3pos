@@ -15,8 +15,6 @@ type
     btnSave: TRzBitBtn;
     btnExit: TRzBitBtn;
     dsPriceLv: TDataSource;
-    btnAppend: TRzBitBtn;
-    btnDelete: TRzBitBtn;
     Pm: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
@@ -62,6 +60,7 @@ type
     procedure cdsPriceLvBeforeInsert(DataSet: TDataSet);
     procedure CtrlAddExecute(Sender: TObject);
     procedure CtrlDelExecute(Sender: TObject);
+    procedure edtLVL_TYPEPropertiesChange(Sender: TObject);
   private
     procedure SetdbState(const Value: TDataSetState);
     function CheckCanExport:boolean;
@@ -130,7 +129,7 @@ begin
         Text := '';
         //MessageBox(self.handle,Pchar('商品档位"'+sCurrStr+'"已经存在,请重新输入..'),Pchar(Caption),MB_OK);
         //PostMessage(self.Handle,WM_Locate_msg,cdsPriceLv.RecNo,DBGridEh1.SelectedIndex);
-        Raise Exception.Create('商品档位"'+sCurrStr+'"已经存在.');   
+        Raise Exception.Create('商品档位"'+sCurrStr+'"已经存在.');
 
       end;
   finally
@@ -220,12 +219,6 @@ begin
     cdsPriceLv.EnableControls;
   end;
   btnSave.Enabled:=True;
-  //如果删除后没有记录，删除按钮不能操作
-  if cdsPriceLv.IsEmpty then
-  begin
-    btnDelete.Enabled:=False;
-    Exit;
-  end;
 end;
 
 procedure TfrmPriceLevelSet.btnSaveClick(Sender: TObject);
@@ -245,7 +238,7 @@ begin
       if cdsPriceLv.FieldByName('LV_AMT').AsFloat<=0 then
       begin
         if LVL_TYPE=1 then
-          raise Exception.Create('档位'+IntToStr(cdsPriceLv.RecNo)+'达标金额不能小于或等于0！') 
+          raise Exception.Create('档位'+IntToStr(cdsPriceLv.RecNo)+'达标金额不能小于或等于0！')
         else
           raise Exception.Create('档位'+IntToStr(cdsPriceLv.RecNo)+'达标数量不能小于或等于0！');
       end;
@@ -610,7 +603,7 @@ begin
     if FieldName = '' then
       Exit;
     case Title.SortMarker of
-      smNoneEh:                             
+      smNoneEh:
       begin
         Title.SortMarker := smDownEh;
         sortstring := Column.FieldName + ' ASC';
@@ -643,6 +636,16 @@ procedure TfrmPriceLevelSet.CtrlDelExecute(Sender: TObject);
 begin
   inherited;
   btnDeleteClick(Sender);
+end;
+
+procedure TfrmPriceLevelSet.edtLVL_TYPEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  // 0 按金额
+  if edtLVL_TYPE.ItemIndex=0 then
+     DBGridEh1.Columns[1].Title.caption :='购买金额'
+  else
+     DBGridEh1.Columns[1].Title.caption :='购买数量';
 end;
 
 end.

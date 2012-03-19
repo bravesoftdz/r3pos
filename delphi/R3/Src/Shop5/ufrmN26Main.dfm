@@ -519,7 +519,7 @@ inherited frmN26Main: TfrmN26Main
         TabColors.HighlightBar = clWhite
         TabColors.Shadow = clWhite
         TabColors.Unselected = clWhite
-        TabIndex = 0
+        TabIndex = 1
         TabOrder = 0
         TabOrientation = toRight
         Tabs = <

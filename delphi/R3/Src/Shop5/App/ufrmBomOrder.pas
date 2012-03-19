@@ -8,7 +8,7 @@ uses
   cxTextEdit, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, ExtCtrls, RzPanel, cxDropDownEdit,
   cxCalendar, zBase, cxSpinEdit, RzButton, cxListBox,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, RzLabel, DBGrids;
 
 type
   TfrmBomOrder = class(TframeOrderForm)
@@ -23,8 +23,6 @@ type
     cdsHeader: TZQuery;
     cdsDetail: TZQuery;
     N2: TMenuItem;
-    N3: TMenuItem;
-    N4: TMenuItem;
     Label3: TLabel;
     edtGIFT_CODE: TcxTextEdit;
     edtGIFT_NAME: TcxTextEdit;
@@ -32,11 +30,29 @@ type
     Label1: TLabel;
     edtREMARK: TcxTextEdit;
     Label8: TLabel;
-    edtCHK_DATE: TcxTextEdit;
-    Label9: TLabel;
+    edtSALS_AMOUNT: TcxTextEdit;
+    Label4: TLabel;
+    edtRCK_AMOUNT: TcxTextEdit;
     edtCHK_USER_TEXT: TcxTextEdit;
-    Label13: TLabel;
+    Label7: TLabel;
+    Label10: TLabel;
+    edtCHK_DATE: TcxTextEdit;
+    edtSHOP_ID: TzrComboBoxList;
+    Label40: TLabel;
+    RzLabel4: TRzLabel;
+    edtBOM_TYPE: TcxComboBox;
+    RzLabel1: TRzLabel;
+    edtBOM_STATUS: TcxComboBox;
+    edtBOM_AMOUNT: TcxTextEdit;
     edtRTL_PRICE: TcxTextEdit;
+    Label6: TLabel;
+    Label9: TLabel;
+    Label11: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    edtGODS_IDS: TzrComboBoxList;
+    LabelBOM_STATUS: TLabel;
+    Label12: TLabel;
+    edtHAS_INTEGRAL: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -46,22 +62,21 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure edtINVOICE_FLAGPropertiesChange(Sender: TObject);
-    procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure DBGridEh1Columns4EditButtonClick(Sender: TObject;
       var Handled: Boolean);
-    procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure actPrintBarcodeExecute(Sender: TObject);
     procedure fndGODS_IDSaveValue(Sender: TObject);
     procedure fndGODS_IDAddClick(Sender: TObject);
-    procedure edtCLIENT_IDAddClick(Sender: TObject);
     procedure edtBOM_USERAddClick(Sender: TObject);
-    procedure edtSHOP_IDSaveValue(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1CellClick(Column: TColumnEh);
     procedure N3Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
+    procedure edtBOM_AMOUNTPropertiesChange(Sender: TObject);
+    procedure edtBOM_TYPEPropertiesChange(Sender: TObject);
+    procedure edtGODS_IDSSaveValue(Sender: TObject);
+    procedure edtBOM_STATUSPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     //结算金额
@@ -75,6 +90,7 @@ type
     procedure ReadHeader;
     function CheckInput:boolean;override;
     function  CheckCanExport: boolean; override;
+    function  IsChinese(str:string):Boolean;
   public
     { Public declarations }
     procedure CheckInvaid;override;
@@ -95,7 +111,9 @@ type
     procedure CancelOrder;override;
     procedure AuditOrder;override;
     procedure Open(id:string);override;
-    procedure PrintBarcode;
+    //JP_add
+    procedure RTLMoneyToSumPrice;
+
   end;
 
 implementation
@@ -125,8 +143,8 @@ begin
   while not cdsDetail.Eof do cdsDetail.Delete;
   Factor.BeginBatch;
   try
-    Factor.AddBatch(cdsHeader,'TStkIndentOrder');
-    Factor.AddBatch(cdsDetail,'TStkIndentData');
+    Factor.AddBatch(cdsHeader,'TBomOrder');
+    Factor.AddBatch(cdsDetail,'TBomData');
     Factor.CommitBatch;
     Saved := true;
   except
@@ -141,7 +159,7 @@ begin
 
     ReadFrom(cdsDetail);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
-    oid := AObj.FieldbyName('INDE_ID').asString;
+    oid := AObj.FieldbyName('BOM_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
     dbState := dsBrowse;
@@ -155,21 +173,21 @@ begin
   if IsAudit then Raise Exception.Create('已经审核的单据不能修改'); 
   if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能修改');
   dbState := dsEdit;
-  if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
+  //JP_???修改数量
+  //edtBOM_AMOUNT.Properties.ReadOnly :=false;
 end;
 
 procedure TfrmBomOrder.FormCreate(Sender: TObject);
 begin
   inherited;
   CanAppend := true;
-  fndMY_AMOUNT.Visible := ShopGlobal.GetChkRight('14500001',1); //是否有库存查询权限
-  Label6.Visible := fndMY_AMOUNT.Visible;
+  edtGODS_IDS.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
+  edtBOM_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
-  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
-  edtGUIDE_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
-  InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
-  InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
-  DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  //JP_???
+  edtDEPT_ID.RangeField := 'DEPT_TYPE';
+  edtDEPT_ID.RangeValue := '1';
 end;
 
 procedure TfrmBomOrder.InitPrice(GODS_ID, UNIT_ID: string);
@@ -182,41 +200,56 @@ begin
   edtTable.Edit;
   if UNIT_ID=rs.FieldbyName('SMALL_UNITS').AsString then
   begin
-     edtTable.FieldbyName('APRICE').AsFloat :=rs.FieldbyName('NEW_INPRICE1').AsFloat;
-     edtTable.FieldbyName('ORG_PRICE').AsFloat :=rs.FieldbyName('NEW_OUTPRICE1').AsFloat;
+     //edtTable.FieldbyName('APRICE').AsFloat :=rs.FieldbyName('NEW_INPRICE1').AsFloat;
+     edtTable.FieldbyName('RTL_PRICE').AsFloat :=rs.FieldbyName('NEW_OUTPRICE1').AsFloat;
   end
   else
   if UNIT_ID=rs.FieldbyName('BIG_UNITS').AsString then
   begin
-     edtTable.FieldbyName('APRICE').AsFloat :=rs.FieldbyName('NEW_INPRICE2').AsFloat;
-     edtTable.FieldbyName('ORG_PRICE').AsFloat :=rs.FieldbyName('NEW_OUTPRICE2').AsFloat;
+     //edtTable.FieldbyName('APRICE').AsFloat :=rs.FieldbyName('NEW_INPRICE2').AsFloat;
+     edtTable.FieldbyName('RTL_PRICE').AsFloat :=rs.FieldbyName('NEW_OUTPRICE2').AsFloat;
   end
   else
   begin
-     edtTable.FieldbyName('APRICE').AsFloat :=rs.FieldbyName('NEW_INPRICE').AsFloat;
-     edtTable.FieldbyName('ORG_PRICE').AsFloat :=rs.FieldbyName('NEW_OUTPRICE').AsFloat;
+     //edtTable.FieldbyName('APRICE').AsFloat :=rs.FieldbyName('NEW_INPRICE').AsFloat;
+     edtTable.FieldbyName('RTL_PRICE').AsFloat :=rs.FieldbyName('NEW_OUTPRICE').AsFloat;
   end;
+  edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
+  //edtTable.FieldbyName('AMOUNT').AsFloat := 1;
   ShowInfo;
 end;
 
 procedure TfrmBomOrder.NewOrder;
+var
+  rs:TZQuery;
 begin
   inherited;
   Open('');
   dbState := dsInsert;
+  AObj.FieldbyName('BOM_ID').asString := TSequence.NewId();
+  oid := AObj.FieldbyName('BOM_ID').asString;
+  gid := '..新增..';
+  edtBOM_DATE.Date := Global.SysDate;
+  edtBOM_USER.KeyValue := Global.UserID;
+  edtBOM_USER.Text := Global.UserName;
   edtSHOP_ID.KeyValue := Global.SHOP_ID;
   edtSHOP_ID.Text := Global.SHOP_NAME;
-  cid := edtSHOP_ID.KeyValue;
-  AObj.FieldbyName('INDE_ID').asString := TSequence.NewId();
-  oid := AObj.FieldbyName('INDE_ID').asString;
-  gid := '..新增..';
-  edtINDE_DATE.Date := Global.SysDate;
-  edtGUIDE_USER.KeyValue := Global.UserID;
-  edtGUIDE_USER.Text := Global.UserName;
-  edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
-  edtINVOICE_FLAGPropertiesChange(nil);
+  edtBOM_TYPE.ItemIndex := 0;
+  //edtBOM_STATUS.Caption:='启用';
+  edtBOM_STATUS.Properties.ReadOnly := false;
+  edtBOM_STATUS.ItemIndex := 0;
+  edtBOM_STATUS.Properties.ReadOnly := true;
+  edtBOM_AMOUNT.Text :='1';
+  edtRCK_AMOUNT.Text :='1';
+  edtBARCODE.Text :='自编条码';
+  edtGIFT_CODE.Text :='自动编号';
+  edtHAS_INTEGRAL.ItemIndex := 1;
+  //
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
+
   InitRecord;
-  if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
   TabSheet.Caption := '..新建..';
 end;
 
@@ -229,24 +262,24 @@ begin
   try
     Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
     Params.ParamByName('SHOP_ID').AsString := cid;
-    Params.ParamByName('INDE_ID').asString := id;
+    Params.ParamByName('BOM_ID').asString := id;
     Factor.BeginBatch;
     try
-      Factor.AddBatch(cdsHeader,'TStkIndentOrder',Params);
-      Factor.AddBatch(cdsDetail,'TStkIndentData',Params);
+      Factor.AddBatch(cdsHeader,'TBomOrder',Params);
+      Factor.AddBatch(cdsDetail,'TBomData',Params);
       Factor.OpenBatch;
     except
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前    
+    dbState := dsBrowse;  //2011.04.02 提到ReadFromObject之前
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     ReadHeader;
 
     ReadFrom(cdsDetail);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
-    oid := AObj.FieldbyName('INDE_ID').asString;
+    oid := AObj.FieldbyName('BOM_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
     ShowOweInfo;
@@ -257,19 +290,41 @@ end;
 
 procedure TfrmBomOrder.SaveOrder;
 var mny,amt:real;
+    BARCODE_ID:string;
 begin
   inherited;
   Saved := false;
-  if edtINDE_DATE.EditValue = null then Raise Exception.Create('订货日期不能为空');
-  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
-  if edtINVOICE_FLAG.ItemIndex = -1 then Raise Exception.Create('票据类型不能为空');
+  if edtBOM_DATE.EditValue = null then Raise Exception.Create('包装日期不能为空');
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;
+  if trim(edtDEPT_ID.AsString) = '' then Raise Exception.Create('所属部门不能为空');
+  if trim(edtGIFT_NAME.text) = '' then Raise Exception.Create('礼盒名称不能为空');
+  //JP_Add
+  if dbState = dsInsert then
+  begin
+    if (trim(edtGIFT_CODE.Text)='自动编号') or (trim(edtGIFT_CODE.Text)='') or (IsChinese(trim(edtGIFT_CODE.Text))) then
+    begin
+      edtGIFT_CODE.Text:=TSequence.GetSequence('GODS_CODE',InttoStr(ShopGlobal.TENANT_ID),'',6);  //企业内码ID
+      AObj.FieldbyName('GIFT_CODE').AsString :=edtGIFT_CODE.Text;  //企业内码ID
+    end else
+      AObj.FieldbyName('GIFT_CODE').AsString:=trim(edtGIFT_CODE.Text);
+
+    if (edtBARCODE.Text = '自编条码') or (trim(edtBARCODE.Text)='') or (IsChinese(trim(edtBARCODE.Text))) then
+    begin
+      BARCODE_ID:=TSequence.GetSequence('BARCODE_ID',InttoStr(ShopGlobal.TENANT_ID),'',6);
+      edtBARCODE.Text := GetBarCode(BARCODE_ID,'#','#');
+      AObj.FieldbyName('BARCODE').AsString :=edtBARCODE.Text;
+    end else
+      AObj.FieldbyName('BARCODE').AsString:=trim(edtBARCODE.Text);
+
+  end;
+
+
+
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
-  cid := edtSHOP_ID.asString;
+  AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   Calc;
@@ -287,18 +342,14 @@ begin
          cdsDetail.Edit;
          cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
          cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-         cdsDetail.FieldByName('INDE_ID').AsString := cdsHeader.FieldbyName('INDE_ID').AsString;
-         mny := mny + cdsDetail.FieldbyName('CALC_MONEY').asFloat;
+         cdsDetail.FieldByName('BOM_ID').AsString := cdsHeader.FieldbyName('BOM_ID').AsString;
+         mny := mny + cdsDetail.FieldbyName('RTL_MONEY').asFloat;
          amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
          cdsDetail.Post;
          cdsDetail.Next;
        end;
-    cdsHeader.Edit;
-    cdsHeader.FieldbyName('INDE_MNY').asFloat := mny;
-    cdsHeader.FieldbyName('INDE_AMT').asFloat := amt;
-    cdsHeader.Post;
-    Factor.AddBatch(cdsHeader,'TStkIndentOrder');
-    Factor.AddBatch(cdsDetail,'TStkIndentData');
+    Factor.AddBatch(cdsHeader,'TBomOrder');
+    Factor.AddBatch(cdsDetail,'TBomData');
     Factor.CommitBatch;
     Saved := true;
   except
@@ -321,7 +372,7 @@ begin
        Value := null;
        FocusNextColumn;
        Exit;
-     end;
+     end;    //JP_???   PropertyEnabled
   if PropertyEnabled then
      begin
        Text := TColumnEh(Sender).Field.AsString;
@@ -349,26 +400,14 @@ procedure TfrmBomOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:integer;
 begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoInt(Text);
-    if abs(r)>1 then Raise Exception.Create('输入的数值过大，无效');
-    
-  except
-    Text := '';
-    Value := null;
-    Raise Exception.Create('输入无效数值'+Text);
-  end;
-  TColumnEh(Sender).Field.asFloat := r;
-  PresentToCalc(r);
+
 end;
 
 procedure TfrmBomOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
+
   try
     if Text='' then
        r := 0
@@ -381,70 +420,16 @@ begin
     Raise Exception.Create('输入无效数值型');
   end;
   TColumnEh(Sender).Field.asFloat := r;
-  AMoneyToCalc(r);
+  //AMoneyToCalc(r);
+  RTLMoneyToSumPrice;
+
 end;
 
 procedure TfrmBomOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:real;
 begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoFloat(Text);
-    if abs(r)>999999 then Raise Exception.Create('输入的数值过大，无效');
-  except
-    Text := TColumnEh(Sender).Field.AsString;
-    Value := TColumnEh(Sender).Field.asFloat;
-    Raise Exception.Create('输入无效数值型');
-  end;
-  TColumnEh(Sender).Field.asFloat := r;
-  PriceToCalc(r);
-end;
 
-procedure TfrmBomOrder.edtINVOICE_FLAGPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if Locked then Exit;
-  if dbState=dsBrowse then Exit;
-  if edtINVOICE_FLAG.ItemIndex < 0 then Exit;
-  case TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-  1:AObj.FieldbyName('TAX_RATE').AsFloat := 0;
-  2:AObj.FieldbyName('TAX_RATE').AsFloat := InRate2;
-  3:AObj.FieldbyName('TAX_RATE').AsFloat := InRate3;
-  end;
-  edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
-//  edtTAX_RATE.Visible := (TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger<>1);
-  Calc;
-end;
-
-procedure TfrmBomOrder.edtCLIENT_IDSaveValue(Sender: TObject);
-var
-  rs:TZQuery;
-begin
-  inherited;
-  if (edtCLIENT_ID.AsString='') and edtCLIENT_ID.Focused and ShopGlobal.GetChkRight('33100001',2) then
-     begin
-       if MessageBox(Handle,'没找到你想查找的供应商是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-       edtCLIENT_ID.OnAddClick(nil);
-       Exit;
-     end;
-   rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
-   if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的供应商没找到,异常错误.');
-   Locked := true;
-   try
-     if rs.FieldbyName('INVOICE_FLAG').AsInteger > 0 then
-        begin
-          AObj.FieldbyName('TAX_RATE').AsFloat := rs.FieldbyName('TAX_RATE').AsFloat;
-          edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',rs.FieldbyName('INVOICE_FLAG').AsString);
-          edtTAX_RATE.Value := AObj.FieldbyName('TAX_RATE').AsFloat;
-        end;
-     Calc;
-   finally
-     Locked := false;
-   end;
-  ShowOweInfo;
 end;
 
 function TfrmBomOrder.Calc:real;
@@ -456,21 +441,20 @@ begin
   edtTable.DisableControls;
   try
     r := edtTable.FieldbyName('SEQNO').AsInteger;
+    TotalAmt :=0;
     TotalFee := 0;
     edtTable.First;
     while not edtTable.Eof do
       begin
-        TotalFee := TotalFee + edtTable.FieldbyName('CALC_MONEY').AsFloat;
+        TotalFee := TotalFee + edtTable.FieldbyName('RTL_MONEY').AsFloat;
         TotalAmt := TotalAmt + edtTable.FieldbyName('AMOUNT').AsFloat;
         edtTable.Next;
       end;
     result := TotalFee;
   finally
-    edtTable.Locate('SEQNO',r,[]); 
+    edtTable.Locate('SEQNO',r,[]);
     edtTable.EnableControls;
   end;
-//  edtCALC_MONEY.Text := formatFloat('#0.00',TotalFee);
-  edtTAX_MONEY.Text := formatFloat('#0.00',(TotalFee/(1+AObj.FieldbyName('TAX_RATE').AsFloat))*AObj.FieldbyName('TAX_RATE').AsFloat);
 end;
 
 procedure TfrmBomOrder.edtTableAfterPost(DataSet: TDataSet);
@@ -484,7 +468,8 @@ procedure TfrmBomOrder.DBGridEh1Columns4EditButtonClick(Sender: TObject;
   var Handled: Boolean);
 begin
   inherited;
-  PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,1);
+  //JP_????   尺码颜色
+  //PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,1);
 end;
 
 procedure TfrmBomOrder.AuditOrder;
@@ -498,25 +483,25 @@ begin
   if IsAudit then
      begin
        if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
-       if cdsHeader.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前订货单执行弃审');
-       if MessageBox(Handle,'确认弃审当前订货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if cdsHeader.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前礼盒执行弃审');
+       if MessageBox(Handle,'确认弃审当前礼盒单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end
   else
      begin
        if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
-       if MessageBox(Handle,'确认审核当前订货单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if MessageBox(Handle,'确认审核当前礼盒单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
     Params := TftParamList.Create(nil);
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      Params.ParamByName('INDE_ID').asString := cdsHeader.FieldbyName('INDE_ID').AsString;
+      Params.ParamByName('BOM_ID').asString := cdsHeader.FieldbyName('BOM_ID').AsString;
       Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
       Params.ParamByName('CHK_USER').asString := Global.UserID;
       if not IsAudit then
-         Msg := Factor.ExecProc('TStkIndentOrderAudit',Params)
+         Msg := Factor.ExecProc('TBomOrderAudit',Params)
       else
-         Msg := Factor.ExecProc('TStkIndentOrderUnAudit',Params) ;
+         Msg := Factor.ExecProc('TBomOrderUnAudit',Params) ;
     finally
        Params.free;
     end;
@@ -549,104 +534,11 @@ begin
   end;
 end;
 
-procedure TfrmBomOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
-
-end;
-
-procedure TfrmBomOrder.PrintBarcode;
-{
-procedure AddTo(DataSet:TDataSet;ID,P1,P2:string;amt:Integer);
-function PubGetBarCode:string;
-var rs:TADODataSet;
-begin
-  rs := TADODataSet.Create(nil);
-  try
-    rs.CommandText := 'select BARCODE from PUB_BARCODE where GODS_ID='''+ID+''' and PROPERTY_01='''+P1+''' and PROPERTY_02='''+P2+''' and BATCH_NO=''#''';
-    Factor.Open(rs);
-    result := rs.Fields[0].AsString;
-  finally
-    rs.Free;
-  end;
-end;
-var
-  rs:TADODataSet;
-begin
-  rs := Global.GetADODataSetFromName('BAS_GOODSINFO');
-  if rs.Locate('GODS_ID',ID,[]) then
-  begin
-    DataSet.Append;
-    DataSet.FieldByName('A').AsBoolean := true;
-    DataSet.FieldByName('GODS_ID').AsString := rs.FieldByName('GODS_ID').AsString;;
-    DataSet.FieldByName('BCODE').AsString := rs.FieldByName('BCODE').AsString;
-    DataSet.FieldByName('GODS_NAME').AsString := rs.FieldByName('GODS_NAME').AsString;
-    DataSet.FieldByName('GODS_CODE').AsString := rs.FieldByName('GODS_CODE').AsString;;
-    DataSet.FieldByName('NEW_OUTPRICE').AsString := rs.FieldByName('NEW_OUTPRICE').AsString;
-    DataSet.FieldByName('NEW_CUSTPRICE').AsString := rs.FieldByName('NEW_CUSTPRICE').AsString;
-    DataSet.FieldByName('PROPERTY_01').AsString := P1;
-    DataSet.FieldByName('PROPERTY_02').AsString := P2;
-    //
-    DataSet.FieldByName('BARCODE').AsString := PubGetBarCode;
-    if (DataSet.FieldByName('BARCODE').AsString='') or fnString.IsCustBarCode(DataSet.FieldByName('BARCODE').AsString) then
-       DataSet.FieldByName('BARCODE').AsString := GetBarCode(rs.FieldByName('BCODE').AsString,
-         P1,P2);
-    DataSet.FieldByName('AMOUNT').AsInteger := amt;
-    DataSet.Post;
-  end;
-end;
-var amt,i,RecNo:integer;
-}
-begin
-  inherited;
-  {
-  RecNo := edtTable.RecNo;
-  edtTable.DisableControls;
-  try
-  with TfrmBarCodePrint.Create(self) do
-    begin
-      try
-        adoPrint.Close;
-        adoPrint.CreateDataSet;
-        edtTable.First;
-        while not edtTable.Eof do
-          begin
-            if PropertyEnabled then
-               begin
-                 edtProperty.Filtered := false;
-                 edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
-                 edtProperty.Filtered := true;
-                 edtProperty.First;
-                 while not edtProperty.Eof do
-                    begin
-                      AddTo(adoPrint,edtProperty.FieldbyName('GODS_ID').AsString,edtProperty.FieldbyName('PROPERTY_01').AsString,edtProperty.FieldbyName('PROPERTY_02').AsString,trunc(edtProperty.FieldbyName('CALC_AMOUNT').AsFloat));
-                      edtProperty.Next;
-                    end;
-               end
-            else
-               begin
-                 AddTo(adoPrint,edtTable.FieldbyName('GODS_ID').AsString,'#','#',trunc(edtTable.FieldbyName('CALC_AMOUNT').AsFloat));
-               end;
-            edtTable.Next;
-          end;
-        ShowModal;
-      finally
-        free;
-      end;
-    end;
-  finally
-    if RecNo>0 then edtTable.RecNo := RecNo;
-    edtTable.EnableControls;
-  end;
-  }
-end;
-
 procedure TfrmBomOrder.actPrintBarcodeExecute(Sender: TObject);
 begin
   inherited;
-  if IsNull then Raise Exception.Create('请输入商品后，再打印条码'); 
-  PrintBarcode;
+  if IsNull then Raise Exception.Create('请输入商品后，再打印条码');
+
 end;
 
 procedure TfrmBomOrder.fndGODS_IDSaveValue(Sender: TObject);
@@ -676,9 +568,9 @@ begin
                 begin
                   edtTable.FieldbyName('AMOUNT').AsFloat := 1;
                   AMountToCalc(1);
-                  edtTable.FieldByName('NEW_OUTAMONEY').AsString:=formatfloat('#0.000',edtTable.FieldbyName('NEW_OUTPRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
+                  //edtTable.FieldByName('NEW_OUTAMONEY').AsString:=formatfloat('#0.000',edtTable.FieldbyName('NEW_OUTPRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
                 end
-             else
+             else    //JP_???
                 PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
            end;
        end;
@@ -687,24 +579,6 @@ begin
     r.Free;
   end;
   
-end;
-
-procedure TfrmBomOrder.edtCLIENT_IDAddClick(Sender: TObject);
-var r:TRecord_;
-begin
-  inherited;
-  r := TRecord_.Create;
-  try
-    if TfrmSupplierInfo.AddDialog(self,r) then
-       begin
-         edtCLIENT_ID.KeyValue := r.FieldbyName('CLIENT_ID').AsString;
-         edtCLIENT_ID.Text := r.FieldbyName('CLIENT_NAME').AsString;
-         edtCLIENT_ID.OnSaveValue(nil);
-       end;
-  finally
-    r.Free;
-  end;
-
 end;
 
 procedure TfrmBomOrder.edtBOM_USERAddClick(Sender: TObject);
@@ -717,8 +591,8 @@ begin
   try
     if TfrmUsersInfo.AddDialog(self,r) then
        begin
-         edtGUIDE_USER.KeyValue := r.FieldbyName('USER_ID').AsString;
-         edtGUIDE_USER.Text := r.FieldbyName('USER_NAME').AsString;
+         edtBom_USER.KeyValue := r.FieldbyName('USER_ID').AsString;
+         edtBom_USER.Text := r.FieldbyName('USER_NAME').AsString;
        end;
   finally
     r.Free;
@@ -727,68 +601,37 @@ begin
 end;
 
 procedure TfrmBomOrder.ReadHeader;
+var rcks,boms,sals : Integer;
 begin
+   if (Trim(edtRCK_AMOUNT.Text) = '' ) then
+   begin
+      edtRCK_AMOUNT.Text:= edtBOM_AMOUNT.Text;
+      edtSALS_AMOUNT.Text:='0';
+      exit;
+   end;
+   try
+      if (Trim(edtBOM_AMOUNT.Text) <> '' ) then
+      begin
+           boms:= StrToInt(Trim(edtBOM_AMOUNT.Text)) ;
+           rcks:= StrToInt(Trim(edtRCK_AMOUNT.Text)) ;
+           if boms <  rcks then  rcks :=boms;
+           edtSALS_AMOUNT.Text:=IntToStr(boms-rcks);
+      end;
+   finally
+   end;
+
 end;
 
+//显示最新库存(Bom单只组合不需要显示库存)
 procedure TfrmBomOrder.ShowOweInfo;
-var
-  rs:TZQuery;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.Close;
-    rs.SQL.Text := 'select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID';
-    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
-    Factor.Open(rs);
-    if rs.Fields[0].AsString<>'' then
-       fndRECK_MNY.Text := formatFloat('#0.00',rs.Fields[0].AsFloat)
-    else
-       fndRECK_MNY.Text := formatFloat('#0.00',0);
-  finally
-    rs.Free;
-  end;
+
 end;
 
+//显示最新库存(Bom单只组合不需要显示库存)
 procedure TfrmBomOrder.ShowInfo;
-var
-  rs,bs:TZQuery;
 begin
-  if not fndMY_AMOUNT.Visible then Exit;
-  fndMY_AMOUNT.Text := '';
-  if edtTable.FieldByName('GODS_ID').AsString = '' then Exit;
-  bs := Global.GetZQueryFromName('PUB_GOODSINFO'); 
-  if not bs.Locate('GODS_ID',edtTable.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到“'+edtTable.FieldbyName('GODS_NAME').AsString+'”');
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := 'select sum(AMOUNT) as AMOUNT from STO_STORAGE A where A.GODS_ID=:GODS_ID and SHOP_ID=:SHOP_ID and TENANT_ID=:TENANT_ID and A.BATCH_NO=:BATCH_NO';
-    rs.ParamByName('GODS_ID').AsString := edtTable.FieldByName('GODS_ID').AsString;
-    rs.ParamByName('SHOP_ID').AsString := edtSHOP_ID.AsString;
-    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    rs.ParamByName('BATCH_NO').AsString := edtTable.FieldByName('BATCH_NO').AsString;
-    Factor.Open(rs);
-    if not rs.IsEmpty then
-       begin
-         if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('BIG_UNITS').AsString) and (bs.FieldbyName('BIGTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)
-         else
-         if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
-            fndMY_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)
-         else
-            fndMY_AMOUNT.Text := rs.FieldbyName('AMOUNT').AsString;
-       end
-    else
-       fndMY_AMOUNT.Text := '0';
-  finally
-    rs.Free;
-  end;
-end;
 
-procedure TfrmBomOrder.edtSHOP_IDSaveValue(Sender: TObject);
-begin
-  inherited;
-  cid := edtSHOP_ID.asString;
-  ShowInfo;
 end;
 
 procedure TfrmBomOrder.PresentToCalc(Present: integer);
@@ -799,8 +642,23 @@ begin
 end;
 
 procedure TfrmBomOrder.UnitToCalc(UNIT_ID: string);
+var AMount,SourceScale:Real;
+    Field:TField;
+    rs:TZQuery;
+    u:integer;
 begin
   inherited;
+  if Locked then Exit;
+  Locked := True;
+  try
+     if edtTable.FindField('RTL_PRICE')<>nil then
+        begin
+           InitPrice(edtTable.FieldByName('GODS_ID').asString,UNIT_ID);
+           AMountToCalc(AMount);
+        end;
+  finally
+     Locked := false;
+  end;
   ShowInfo;
 
 end;
@@ -880,7 +738,8 @@ procedure TfrmBomOrder.AmountToCalc(Amount: Real);
 begin
   inherited;
   edtTable.Edit;
-  edtTable.FieldbyName('RTL_MONEY').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat*edtTable.FieldbyName('ORG_PRICE').AsFloat;
+  edtTable.FieldbyName('RTL_MONEY').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat*edtTable.FieldbyName('RTL_PRICE').AsFloat;
+  RTLMoneyToSumPrice;
 end;
 
 procedure TfrmBomOrder.AgioToCalc(Agio: Real);
@@ -931,14 +790,118 @@ begin
   inherited;
 end;
 
-function TfrmBomOrder.CheckInput: boolean;
+function TfrmBomOrder.CheckInput: boolean;  //JP_???
 begin
   result := not (pos(inttostr(InputFlag),'124')>0);
 end;
 
 function TfrmBomOrder.CheckCanExport: boolean;
+begin   //JP_???
+  result:=ShopGlobal.GetChkRight('100002306',7);
+end;
+
+procedure TfrmBomOrder.RTLMoneyToSumPrice;
+var tmp: TZQuery;
+    c:real;
 begin
-  result:=ShopGlobal.GetChkRight('11100001',7);
+  try
+    tmp:=TZQuery.Create(nil);
+    tmp.Data:=edtTable.Data;
+    c := 0;
+    tmp.First;
+    while not tmp.Eof do
+      begin
+        if tmp.FindField('RTL_MONEY')<>nil then
+        begin
+           c := c +tmp.FieldByName('RTL_MONEY').asFloat;
+        end;
+        tmp.Next;
+      end;
+      edtRTL_PRICE.Text := FormatFloat('#0.00',c);
+  finally
+    tmp.Free;
+  end;
+  edtTable.Edit;
+end;
+
+procedure TfrmBomOrder.edtBOM_AMOUNTPropertiesChange(Sender: TObject);
+var rcks,boms,sals : Integer;
+begin
+  inherited;
+  //dbstate     dsEdit dsBrowse  dsInsert
+  if not (edtBOM_AMOUNT.Focused) THEN exit;
+  try
+      if dbstate in [dsEdit, dsInsert] then
+      begin
+         if (Trim(edtBOM_AMOUNT.Text) <> '' ) then
+             boms:= StrToInt(Trim(edtBOM_AMOUNT.Text))
+         else
+             boms:= 0 ;
+         sals:= StrToInt(Trim(edtSALS_AMOUNT.Text)) ;
+         if boms <  sals then  raise Exception.CreateFmt('礼盒数量不能低于%d。',[sals]);;
+         edtRCK_AMOUNT.Text:=IntToStr(boms-sals);
+      end;
+  finally
+  end;
+end;
+function TfrmBomOrder.IsChinese(str:string):Boolean;
+var i:integer;
+begin
+  Result:=False;
+  for i:=0 to length(str)-1 do
+  begin
+    if str[i] in LeadBytes then
+    begin
+      Result:=True;
+      Break;
+    end;
+  end;
+end;
+procedure TfrmBomOrder.edtBOM_TYPEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  // 0 '散装礼盒'
+  if edtBOM_TYPE.ItemIndex=0 then
+  begin
+  edtGODS_IDS.Visible := false ;
+  edtGIFT_NAME.Visible := true;
+  end
+  else
+  begin
+  edtGIFT_NAME.Visible := false;
+  edtGODS_IDS.Visible := true;
+  end;
+  //dbstate
+  //
+  //showmessage(edtBOM_TYPE.Text+':'+inttostr(edtBOM_TYPE.ItemIndex));
+  //fndGODS_ID.AsString
+  //fndGODS_ID.Text
+  //fndGODS_ID
+
+end;
+
+procedure TfrmBomOrder.edtGODS_IDSSaveValue(Sender: TObject);
+var rs:TZQuery;
+begin
+  inherited;
+  //showmessage(edtGODS_IDS.Text+':'+edtGODS_IDS.AsString);
+  edtGIFT_NAME.Text := edtGODS_IDS.Text;
+  try
+      rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+      if rs.Locate('GODS_ID',edtGODS_IDS.AsString,[]) then
+      begin
+        edtGIFT_CODE.Text := rs.FieldbyName('GODS_CODE').AsString;
+        edtBARCODE.Text := rs.FieldbyName('BARCODE').AsString;
+      end;
+  finally
+  end;
+end;
+
+procedure TfrmBomOrder.edtBOM_STATUSPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  LabelBOM_STATUS.Caption :='礼盒状态：'+ edtBOM_STATUS.Text;
+  
 end;
 
 end.

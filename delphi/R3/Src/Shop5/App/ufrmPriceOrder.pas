@@ -9,7 +9,7 @@ uses
   cxTextEdit, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, ExtCtrls, RzPanel, cxDropDownEdit,
   cxCalendar, zBase, DBClient, RzButton, cxSpinEdit, cxTimeEdit, RzLabel,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, DBGrids;
 
 type
   TfrmPriceOrder = class(TframeOrderForm)
@@ -35,6 +35,7 @@ type
     Btn_View: TRzBitBtn;
     Label19: TLabel;
     CA_RELATIONS: TZQuery;
+    mnuUsingLevel: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure actImportFromPrintExecute(Sender: TObject);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
@@ -46,6 +47,8 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure Btn_ViewClick(Sender: TObject);
     procedure fndGODS_IDSaveValue(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
+    procedure mnuUsingLevelClick(Sender: TObject);
   private
     { Private declarations }
     w:integer;
@@ -76,7 +79,7 @@ type
 implementation
        // ufrmCheckTree,
 uses
- uGlobal,uShopUtil,uFnUtil,uDsUtil, uShopGlobal,ufrmPrcCompList,ufrmBatchPmdPrice;
+ uGlobal,uShopUtil,uFnUtil,uDsUtil, uShopGlobal,ufrmPrcCompList,ufrmBatchPmdPrice,ufrmPriceLevelSet;
 
 {$R *.dfm}
 
@@ -241,6 +244,7 @@ begin
   edtTable.FieldbyName('BATCH_NO').asString := '#';
   edtTable.FieldbyName('UNIT_ID').asString := UNIT_ID;
   edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
+  edtTable.FieldbyName('USING_LEVEL').asString := '1';
 end;
 
 procedure TfrmPriceOrder.NewOrder;
@@ -757,6 +761,64 @@ begin
   end;
 
   inherited; //¼Ì³Ð»ùÀà
+end;
+
+procedure TfrmPriceOrder.DBGridEh1DblClick(Sender: TObject);
+var
+  varAObj:TRecord_;
+begin
+  inherited;
+  if (dbState <> dsBrowse) and (edtTable.FieldbyName('USING_LEVEL').AsString ='1') then
+  begin
+     varAobj := TRecord_.Create;
+     varAobj.ReadFromDataSet(edtTable);
+      //varAobj.FieldByName('LV1_AMT').AsFloat
+      //varAobj.FieldByName('LV1_PRC').AsFloat
+      //varAobj.ReadField(edtTable);
+      if TfrmPriceLevelSet.AddDialog(self,varAObj) then
+      begin
+        edtTable.Edit;
+        //edtTable.FieldByName('').AsFloat:=
+        varAObj.WriteToDataSet(edtTable);
+        edtTable.Post;
+      end
+      //varAobj.Free;
+
+  end
+  else
+  begin
+      varAobj := TRecord_.Create;
+     varAobj.ReadFromDataSet(edtTable);
+     TfrmPriceLevelSet.ShowDialog(self,varAObj);
+     //varAobj.Free;
+  end;
+  //varAobj.Free;
+
+end;
+
+procedure TfrmPriceOrder.mnuUsingLevelClick(Sender: TObject);
+var
+  varAObj:TRecord_;
+begin
+  inherited;
+  if DBGridEh1.ReadOnly then Exit;
+  //showMessage('11111') ;
+  if (dbState <> dsBrowse) and (edtTable.FieldbyName('USING_LEVEL').AsString ='1') then
+  begin
+      //showMessage('22222') ;
+     varAobj := TRecord_.Create;
+     varAobj.ReadFromDataSet(edtTable);
+      //varAobj.FieldByName('LV1_AMT').AsFloat
+      //varAobj.FieldByName('LV1_PRC').AsFloat
+      //varAobj.ReadField(edtTable);
+      if TfrmPriceLevelSet.AddDialog(self,varAObj) then
+      begin
+        edtTable.Edit;
+        //edtTable.FieldByName('').AsFloat:=
+        varAObj.WriteToDataSet(edtTable);
+        edtTable.Post;
+      end
+  end;
 end;
 
 end.

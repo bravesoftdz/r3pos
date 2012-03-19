@@ -2692,6 +2692,7 @@ begin
           begin
             edtInput.Text := '';
             DBGridEh1.Col := 1;
+            InputMode := StrtoIntDef(ShopGlobal.GetParameter('INPUT_MODE'),0);
             InputFlag := 0;
           end
        else

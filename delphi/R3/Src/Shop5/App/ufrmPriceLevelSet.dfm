@@ -9,28 +9,28 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Top = 23
+    Top = 41
     Width = 343
-    Height = 305
+    Height = 287
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
       Width = 333
-      Height = 253
+      Height = 235
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #21830#21697#20215#26684#26723#20301#23450#20041
+        Caption = #20419#38144#26723#20301#35774#32622
         inherited RzPanel2: TRzPanel
           Width = 329
-          Height = 226
+          Height = 208
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 319
-            Height = 216
+            Height = 198
             Align = alClient
             AutoFitColWidths = True
             DataSource = dsPriceLv
@@ -67,9 +67,9 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
                 FieldName = 'SEQ_NO'
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #26723#20301#24207#21495
+                Title.Caption = #26723#20301
                 Title.Color = clWhite
-                Width = 55
+                Width = 31
               end
               item
                 EditButtons = <>
@@ -78,17 +78,17 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
                 Title.Caption = #26723#20301#36798#26631#37327
                 Title.Color = clWhite
                 Title.TitleButton = True
-                Width = 131
+                Width = 118
                 OnUpdateData = DBGridEh1Columns1UpdateData
               end
               item
                 EditButtons = <>
                 FieldName = 'LV_PRC'
                 Footers = <>
-                Title.Caption = #26723#20301#20248#24800#20215
+                Title.Caption = #20248#24800#20215
                 Title.Color = clWhite
                 Title.TitleButton = True
-                Width = 102
+                Width = 115
                 OnUpdateData = DBGridEh1Columns2UpdateData
               end>
           end
@@ -96,13 +96,13 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
       end
     end
     inherited btPanel: TRzPanel
-      Top = 258
+      Top = 240
       Width = 333
       Height = 42
       BorderColor = clWhite
       Color = clWhite
       object btnSave: TRzBitBtn
-        Left = 176
+        Left = 128
         Top = 13
         Width = 67
         Height = 26
@@ -120,7 +120,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 1
+        TabOrder = 0
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnSaveClick
@@ -128,7 +128,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
         Spacing = 5
       end
       object btnExit: TRzBitBtn
-        Left = 260
+        Left = 212
         Top = 13
         Width = 67
         Height = 26
@@ -146,62 +146,10 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 3
+        TabOrder = 1
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnExitClick
-        NumGlyphs = 2
-        Spacing = 5
-      end
-      object btnAppend: TRzBitBtn
-        Left = 10
-        Top = 13
-        Width = 67
-        Height = 26
-        Caption = #26032#22686'(&A)'
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 0
-        TextStyle = tsRaised
-        ThemeAware = False
-        OnClick = btnAppendClick
-        NumGlyphs = 2
-        Spacing = 5
-      end
-      object btnDelete: TRzBitBtn
-        Left = 93
-        Top = 13
-        Width = 67
-        Height = 26
-        Caption = #21024#38500'(&D)'
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 2
-        TextStyle = tsRaised
-        ThemeAware = False
-        OnClick = btnDeleteClick
         NumGlyphs = 2
         Spacing = 5
       end
@@ -211,7 +159,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
     Left = 0
     Top = 0
     Width = 343
-    Height = 23
+    Height = 41
     Align = alTop
     BorderOuter = fsNone
     BorderColor = clWhite
@@ -219,14 +167,14 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
     TabOrder = 1
     object lblTypeName: TLabel
       Left = 13
-      Top = 8
+      Top = 16
       Width = 48
       Height = 12
-      Caption = #26723#20301#31867#22411
+      Caption = #20419#38144#31867#22411
     end
     object RzLabel23: TRzLabel
       Left = 199
-      Top = 7
+      Top = 15
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -241,14 +189,15 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
     end
     object edtLVL_TYPE: TcxComboBox
       Left = 67
-      Top = 3
+      Top = 11
       Width = 129
       Height = 20
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Properties.DropDownListStyle = lsFixedList
       Properties.Items.Strings = (
-        #25353#37329#39069
-        #25353#25968#37327)
+        #25353#36141#20080#37329#39069
+        #25353#36141#20080#25968#37327)
+      Properties.OnChange = edtLVL_TYPEPropertiesChange
       Properties.OnEditValueChanged = edtLVL_TYPEPropertiesEditValueChanged
       TabOrder = 0
     end

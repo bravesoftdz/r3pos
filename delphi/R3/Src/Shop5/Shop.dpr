@@ -276,7 +276,11 @@ uses
   ufrmMktKpiTotalReport in 'App\ufrmMktKpiTotalReport.pas' {frmMktKpiTotalReport},
   ufrmMktActiveList in 'App\ufrmMktActiveList.pas' {frmMktActiveList},
   ObjMktActiveList in 'Obj\ObjMktActiveList.pas',
-  uUIFactory in '..\..\Basic\uUIFactory.pas';
+  uUIFactory in '..\..\Basic\uUIFactory.pas',
+  ufrmBomOrder in 'App\ufrmBomOrder.pas' {frmBomOrder},
+  ufrmBomOrderList in 'App\ufrmBomOrderList.pas' {frmBomOrderList},
+  ObjBomOrder in 'Obj\ObjBomOrder.pas',
+  ufrmPriceLevelSet in 'App\ufrmPriceLevelSet.pas' {frmPriceLevelSet};
 
 {$R *.res}
 var
@@ -285,7 +289,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.5';
+  DBVersion := '1.0.2.6';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

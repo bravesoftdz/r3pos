@@ -414,7 +414,7 @@ begin
     CdsDept.Close;
     CdsDept.SQL.Text:=
     'select DEPT_ID as DATA_OBJECT,DEPT_NAME as DATA_NAME,''001'' as LEVEL_ID from CA_DEPT_INFO where TENANT_ID='+IntToStr(ShopGlobal.TENANT_ID)+
-    ' and DEPT_TYPE=''1'' and COMM not in (''02'',''12'') order by DEPT_ID';
+    ' and COMM not in (''02'',''12'') order by DEPT_ID';
     Factor.Open(CdsDept);
     CreateLevelTree(CdsDept,DataRightTree,'333333','DATA_OBJECT','DATA_NAME','LEVEL_ID');
     if DataRightTree.Items.Count>0 then DataRightTree.TopItem.Selected:=True;

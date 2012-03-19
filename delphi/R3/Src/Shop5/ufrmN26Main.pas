@@ -603,9 +603,12 @@ begin
   leftVisible := true;
   case deskFlag of
   1:begin
-       rzLeft.Width := 29;
-       Panel12.Width := 31;
-       Panel24.Width := 23;
+       if rzLeft.Enabled then
+          begin
+            rzLeft.Width := 29;
+            Panel12.Width := 31;
+            Panel24.Width := 23;
+          end;
     end;
   end;
 end;
@@ -3925,10 +3928,11 @@ begin
        if not SyncFactory.SyncLockCheck then Raise Exception.Create('你当前使用的电脑不是门店指定的专用电脑，不能执行数据同步操作。');
        SyncFactory.SyncAll;
      end;
-    TfrmCostCalc.CheckMonthReck(self);
   finally
     TfrmInitGuide.InitGuide(self);
   end;
+  if actfrmMonthClose.Enabled then  TfrmCostCalc.CheckMonthReck(self);
+  if actfrmDownIndeOrder.Enabled then actfrmDownIndeOrder.OnExecute(actfrmDownIndeOrder);
 end;
 
 procedure TfrmN26Main.actfrmN26NetExecute(Sender: TObject);

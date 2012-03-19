@@ -1,6 +1,6 @@
 inherited frmPriceOrderList: TfrmPriceOrderList
-  Left = 199
-  Top = 105
+  Left = 447
+  Top = 126
   Width = 841
   Height = 581
   Caption = #20419#38144#21333
@@ -9,19 +9,19 @@ inherited frmPriceOrderList: TfrmPriceOrderList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 833
-    Height = 518
+    Height = 510
     inherited RzPanel2: TRzPanel
       Width = 823
-      Height = 508
+      Height = 500
       inherited RzPage: TRzPageControl
         Width = 817
-        Height = 502
+        Height = 494
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20419#38144#21333#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 815
-            Height = 475
+            Height = 467
             inherited RzPanel1: TRzPanel
               Width = 805
               Height = 68
@@ -135,7 +135,7 @@ inherited frmPriceOrderList: TfrmPriceOrderList
             inherited DBGridEh1: TDBGridEh
               Top = 73
               Width = 805
-              Height = 397
+              Height = 389
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OnDblClick = DBGridEh1DblClick
               Columns = <
@@ -195,16 +195,16 @@ inherited frmPriceOrderList: TfrmPriceOrderList
   end
   inherited RzPanel4: TRzPanel
     Width = 833
-    inherited Image1: TImage
-      Left = 581
-      Width = 232
-    end
     inherited Image3: TImage
       Left = 581
-      Width = 232
+      Width = 0
     end
     inherited Image14: TImage
       Left = 813
+    end
+    inherited Image1: TImage
+      Left = 581
+      Width = 232
     end
     inherited rzPanel5: TPanel
       Left = 581
@@ -222,7 +222,7 @@ inherited frmPriceOrderList: TfrmPriceOrderList
           FixedSize = True
           ImageIndex = -1
           MinHeight = 561
-          Width = 48
+          Width = 36
         end>
       inherited ToolBar1: TToolBar
         Width = 561

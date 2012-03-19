@@ -838,8 +838,10 @@ inherited frmSalesOrder: TfrmSalesOrder
     object N1: TMenuItem [5]
       Action = actCustomer
     end
-    inherited mnuIsPressent: TMenuItem
-      Caption = #20999#25442'('#38144#21806'-'#36192#21697'-'#20817#25442'-'#26680#38144')'
+    object N5: TMenuItem [9]
+      Caption = #36755#20837#31036#30418
+      ShortCut = 121
+      OnClick = N5Click
     end
     object N2: TMenuItem
       Caption = #25972#21333#36864#36135

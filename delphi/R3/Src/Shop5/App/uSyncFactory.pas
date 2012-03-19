@@ -662,7 +662,7 @@ begin
   new(n);
   n^.tbname := 'CA_LOGIN_INFO';
   n^.keyFields := 'TENANT_ID;LOGIN_ID';
-  n^.synFlag := 0;
+  n^.synFlag := 28;
   n^.KeyFlag := 0;
   n^.tbtitle := '登录日志';
   FList.Add(n);
@@ -842,6 +842,7 @@ begin
       frmLogo.Position := i;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
+    frmLogo.ShowTitle := '正在同步<Rim相关参数>...';
     SyncRim;
   finally
     frmLogo.Close;

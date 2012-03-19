@@ -313,6 +313,8 @@ type
     function GodsToLocusNo(id:string):boolean;
     //输入批号
     function GodsToBatchNo(id:string):boolean;
+    //礼盒输入
+    function GodsToBomInfo(id:string):boolean;
 
     procedure ShowHeader(flag:integer=0);
     procedure Calc;
@@ -538,7 +540,7 @@ begin
 
   DBGridEh2.Options := DBGridEh2.Options + [dgRowSelect];
 
-  lblInputHimt.Visible := ShopGlobal.GetChkRight('14500001',1); 
+  lblInputHimt.Visible := ShopGlobal.GetChkRight('14500001',1);
 end;
 
 procedure TfrmPosMain.AddRecord(AObj: TRecord_; UNIT_ID,P1,P2: string;IsPresent:boolean=false);
@@ -566,14 +568,14 @@ begin
         cdsTable.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
         cdsTable.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
         cdsTable.FieldbyName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
-        cdsTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
-        cdsTable.FieldByName('IS_PRESENT').asInteger := pt;
-        cdsTable.FieldByName('PROPERTY_01').AsString := P1;
-        cdsTable.FieldByName('PROPERTY_02').AsString := P2;
         if UNIT_ID='' then
            cdsTable.FieldbyName('UNIT_ID').AsString := AObj.FieldbyName('CALC_UNITS').AsString
         else
            cdsTable.FieldbyName('UNIT_ID').AsString := UNIT_ID;
+        cdsTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
+        cdsTable.FieldByName('IS_PRESENT').asInteger := pt;
+        cdsTable.FieldByName('PROPERTY_01').AsString := P1;
+        cdsTable.FieldByName('PROPERTY_02').AsString := P2;
         cdsTable.FieldbyName('BATCH_NO').AsString := '#';
         cdsTable.Post;
      end;
@@ -714,14 +716,18 @@ begin
       case InputMode of
       0:begin
          lblInput.Caption := '条码输入';
-         rzHint.Caption := '切换"货号"输入按[Tab]健';
+         rzHint.Caption := '切换"货号/礼盒"输入按[Tab]健';
         end;
       1:begin
          lblInput.Caption := '货号输入';
-         rzHint.Caption := '切换"条码"输入按[Tab]健';
+         rzHint.Caption := '切换"条码/礼盒"输入按[Tab]健';
         end;
       2:begin
          InputFlag := 10;
+         Exit;
+        end;
+      3:begin
+         InputFlag := 13;
          Exit;
         end;
       end;
@@ -782,6 +788,10 @@ begin
   12:begin
       lblInput.Caption := '输入备注';
       lblHint.Caption := '请输入备注后按“回车”';
+    end;
+  13:begin
+      lblInput.Caption := '礼盒条码';
+      lblHint.Caption := '切换"条码/货号"输入按[Tab]健';
     end;
   end;
   FInputFlag := Value;
@@ -998,10 +1008,10 @@ begin
   begin
      if cdsTable.FieldbyName('GODS_ID').AsString='' then Exit;
      if cdsTable.FindField('IS_PRESENT')=nil then Exit;
+     if cdsTable.FindField('IS_PRESENT').asInteger>2 then Raise Exception.Create('业务核销的商品不能切换');
      case r of
      0:PresentToCalc(1);
      1:PresentToCalc(2);
-     2:PresentToCalc(3);
      else
        PresentToCalc(0);
      end;
@@ -1131,10 +1141,10 @@ begin
         end
      else
         begin
-          //MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
-          PresentToCalc(3);
+          MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+          //PresentToCalc(3);
         end;
-  end
+{  end
   else
   begin
      cdsTable.Edit;
@@ -1142,7 +1152,7 @@ begin
      cdsTable.Edit;
      cdsTable.FieldByName('IS_PRESENT').AsInteger := 3;
      PriceToCalc(cdsTable.FieldbyName('APRICE').AsFloat);
-  end;
+}  end;
 end;
 
 procedure TfrmPosMain.PriceToCalc(APrice: Currency);
@@ -1428,7 +1438,12 @@ begin
   inherited;
   if (Shift = []) and(Key = VK_TAB) then
      begin
-       if InputMode = 0 then InputMode := 1 else InputMode := 0;
+       case InputMode of
+       0:InputMode := 1;
+       1:InputMode := 3;
+       else
+         InputMode := 0;
+       end;
        InputFlag := 0;
        Key := 0;
      end;
@@ -1477,23 +1492,9 @@ begin
     begin
       edtInput.Text := '';
       DBGridEh1.Col := 1;
+      InputMode := StrtoIntDef(ShopGlobal.GetParameter('INPUT_MODE'),0);
       InputFlag := 0;
     end;
-  end;
-  //
-  if (Shift = [ssShift]) and (Key=65) then  //Shift+A
-  begin
-    if InputFlag<>0 then
-    begin
-      edtInput.Text := '';
-      DBGridEh1.Col := 1;
-      InputFlag := 13;
-    end;
-
-  end;
-  if (Shift = [ssShift]) and (Key=83) then //Shift+S
-  begin
-
   end;
 end;
 
@@ -1504,7 +1505,6 @@ var
   amt:Currency;
   AObj:TRecord_;
 begin
-
   inherited;
   if Key=#13 then
     begin
@@ -1583,16 +1583,23 @@ begin
            DBGridEh1.Col := 1;
            Exit;
          end;
-      if InputFlag=10 then //物流跟踪号
+      if ((InputFlag=0) and (InputMode=2)) or (InputFlag=10) then //物流跟踪号
          begin
            if s<>'' then if not GodsToLocusNo(s) then Exit;
            InputFlag := 0;
            DBGridEh1.Col := 1;
            Exit;
          end;
-      if InputFlag=11 then //商品批号
+      if InputFlag=11 then //批号输入
          begin
            if s<>'' then if not GodsToBatchNo(s) then Exit;
+           InputFlag := 0;
+           DBGridEh1.Col := 1;
+           Exit;
+         end;
+      if ((InputFlag=0) and (InputMode=3)) or (InputFlag=13) then //礼盒条码
+         begin
+           if s<>'' then if not GodsToBomInfo(s) then Exit;
            InputFlag := 0;
            DBGridEh1.Col := 1;
            Exit;
@@ -1617,8 +1624,6 @@ begin
            DBGridEh1.Col := 1;
            Exit;
          end;
-
-
       isAdd := false;
       if s='' then
          begin
@@ -1657,7 +1662,7 @@ begin
               end;
            if amt=0 then
               begin
-                Raise Exception.Create('不能输入0数量'); 
+                Raise Exception.Create('不能输入0数量');
               end
            else
               begin
@@ -4797,6 +4802,67 @@ begin
     end;
    else
     Raise Exception.Create('暂时不支持此项功能...');
+  end;
+end;
+
+function TfrmPosMain.GodsToBomInfo(id: string): boolean;
+var
+  rs,ts:TZQuery;
+  bid:string;
+  HAS_INTEGRAL,bomType:integer;
+begin
+  rs := TZQuery.Create(nil);
+  cdsTable.DisableControls;
+  try
+    rs.SQL.Text := 'select BOM_ID,HAS_INTEGRAL,BOM_TYPE from SAL_BOMORDER where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE and BOM_STATUS=''1'' and CHK_DATE is not null';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('BARCODE').AsString := id;
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('输入的礼盒条码无效');
+    bid := rs.Fields[0].AsString;
+    HAS_INTEGRAL := rs.Fields[1].AsInteger;
+    bomType := rs.Fields[2].AsInteger;
+    rs.Close;
+    case bomType of
+    1:rs.SQL.Text := 'select A.GODS_ID,B.GODS_CODE,B.GODS_NAME,A.UNIT_ID,A.RTL_PRICE,A.AMOUNT from SAL_BOMDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.BOM_ID=:BOM_ID';
+    2:rs.SQL.Text := 'select A.GODS_ID,B.GODS_CODE,B.GODS_NAME,A.UNIT_ID,A.RTL_PRICE,A.AMOUNT from SAL_BOMORDER A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.BOM_ID=:BOM_ID';
+    end;
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('BOM_ID').AsString := bid;
+    Factor.Open(rs);
+    ts := Global.GetZQueryFromName('PUB_TREND_INFO');
+    ts.First;
+    rs.First;
+    while not rs.Eof do
+      begin
+        inc(RowID);
+        cdsTable.Append;
+        if cdsTable.FindField('SEQNO')<> nil then cdsTable.FindField('SEQNO').asInteger := RowID;
+        cdsTable.FieldbyName('GODS_ID').AsString := rs.FieldbyName('GODS_ID').AsString;
+        cdsTable.FieldbyName('GODS_NAME').AsString := rs.FieldbyName('GODS_NAME').AsString;
+        cdsTable.FieldbyName('GODS_CODE').AsString := rs.FieldbyName('GODS_CODE').AsString;
+        cdsTable.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
+        cdsTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
+        cdsTable.FieldByName('IS_PRESENT').asInteger := 0;
+        cdsTable.FieldByName('PROPERTY_01').AsString := '#';
+        cdsTable.FieldByName('PROPERTY_02').AsString := '#';
+        cdsTable.FieldbyName('BATCH_NO').AsString := '#';
+        cdsTable.FieldByName('TREND_ID').AsString := ts.FieldbyName('CODE_ID').AsString;
+        cdsTable.FieldbyName('ORG_PRICE').AsFloat := rs.FieldbyName('RTL_PRICE').AsFloat;
+        cdsTable.FieldbyName('APRICE').AsFloat := rs.FieldbyName('RTL_PRICE').AsFloat;
+        cdsTable.FieldbyName('AMOUNT').AsFloat := rs.FieldbyName('AMOUNT').AsFloat;
+        cdsTable.FieldByName('BOM_ID').AsString := bid;
+        cdsTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(Global.SHOP_ID,rs.FieldbyName('GODS_ID').AsString,cdsTable.FieldbyName('BATCH_NO').AsString);
+        cdsTable.FieldByName('POLICY_TYPE').AsInteger := 3;
+        cdsTable.FieldByName('HAS_INTEGRAL').AsInteger := HAS_INTEGRAL;
+        AMountToCalc(cdsTable.FieldbyName('AMOUNT').AsFloat);
+        if cdsTable.State in [dsEdit,dsInsert] then cdsTable.Post;
+        rs.Next;
+      end;
+    result := true;
+  finally
+    rs.Free;
+    cdsTable.EnableControls;
   end;
 end;
 

@@ -79,6 +79,7 @@ type
     lblOTH5_MNY: TLabel;
     edtOTH5_MNY: TcxTextEdit;
     lblFeeOption: TLabel;
+    N5: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -108,6 +109,10 @@ type
     procedure RzBitBtn1Click(Sender: TObject);
     procedure edtGUIDE_USERAddClick(Sender: TObject);
     procedure lblFeeOptionClick(Sender: TObject);
+    procedure edtInputKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edtInputKeyPress(Sender: TObject; var Key: Char);
+    procedure N5Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -154,6 +159,8 @@ type
     procedure PriceToGods(id:string);override;
     //赠送
     procedure PresentToGods;
+    //礼盒输入
+    function GodsToBomInfo(id:string):boolean;
     //检测数据合法性
     procedure CheckInvaid;override;
     procedure ReadFrom(DataSet:TDataSet);override;
@@ -1186,11 +1193,11 @@ begin
           end
        else
           begin
-            //MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
-            PresentToCalc(3);
+            MessageBox(Handle,'此商品没有启用积分换购，不能进行兑换','友情提示...',MB_OK+MB_ICONINFORMATION);
+            //PresentToCalc(3);
             Exit;
           end;
-      end
+{      end
   else
       begin
          edtTable.Edit;
@@ -1198,7 +1205,7 @@ begin
          edtTable.Edit;
          edtTable.FieldByName('IS_PRESENT').AsInteger := 3;
          PriceToCalc(edtTable.FieldbyName('APRICE').AsFloat);
-      end;
+}      end;
   ShowInfo;
 end;
 
@@ -1305,7 +1312,7 @@ begin
   case edtTable.FieldbyName('IS_PRESENT').AsInteger of
   0:PresentToCalc(1);
   1:PresentToCalc(2);
-  2:PresentToCalc(3);
+//  2:PresentToCalc(3);
   else
      PresentToCalc(0);
   end;
@@ -1515,6 +1522,114 @@ procedure TfrmSalIndentOrder.lblFeeOptionClick(Sender: TObject);
 begin
   inherited;
   MessageBox(Handle,'暂时没开通此功能，谢谢你的关注！','友情提示...',MB_OK+MB_ICONINFORMATION);
+end;
+
+function TfrmSalIndentOrder.GodsToBomInfo(id: string): boolean;
+var
+  rs:TZQuery;
+  bid:string;
+  HAS_INTEGRAL,bomType:integer;
+  r:boolean;
+begin
+  rs := TZQuery.Create(nil);
+  edtTable.DisableControls;
+  try
+    rs.SQL.Text := 'select BOM_ID,HAS_INTEGRAL,BOM_TYPE from SAL_BOMORDER where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE and BOM_STATUS=''1'' and CHK_DATE is not null';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('BARCODE').AsString := id;
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('输入的礼盒条码无效');
+    bid := rs.Fields[0].AsString;
+    HAS_INTEGRAL := rs.Fields[1].AsInteger;
+    rs.Close;
+    case bomType of
+    1:rs.SQL.Text := 'select A.GODS_ID,B.GODS_CODE,B.GODS_NAME,A.UNIT_ID,A.RTL_PRICE,A.AMOUNT from SAL_BOMDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.BOM_ID=:BOM_ID';
+    2:rs.SQL.Text := 'select A.GODS_ID,B.GODS_CODE,B.GODS_NAME,A.UNIT_ID,A.RTL_PRICE,A.AMOUNT from SAL_BOMORDER A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.BOM_ID=:BOM_ID';
+    end;
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('BOM_ID').AsString := bid;
+    Factor.Open(rs);
+    rs.First;
+    while not rs.Eof do
+      begin
+        r := edtTable.Locate('GODS_ID;BATCH_NO;UNIT_ID;IS_PRESENT;LOCUS_NO;BOM_ID',VarArrayOf([rs.FieldbyName('GODS_ID').AsString,'#',rs.FieldbyName('UNIT_ID').AsString,0,null,bid]),[]);
+        if not r then
+           begin
+             InitRecord;
+           end else edtTable.Edit;
+        edtTable.FieldbyName('GODS_ID').AsString := rs.FieldbyName('GODS_ID').AsString;
+        edtTable.FieldbyName('GODS_NAME').AsString := rs.FieldbyName('GODS_NAME').AsString;
+        edtTable.FieldbyName('GODS_CODE').AsString := rs.FieldbyName('GODS_CODE').AsString;
+        edtTable.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
+        edtTable.FieldbyName('BARCODE').AsString := EnCodeBarcode;
+        edtTable.FieldByName('IS_PRESENT').asInteger := 0;
+        edtTable.FieldbyName('BATCH_NO').AsString := '#';
+        edtTable.FieldbyName('ORG_PRICE').AsFloat := rs.FieldbyName('RTL_PRICE').AsFloat;
+        edtTable.FieldbyName('APRICE').AsFloat := rs.FieldbyName('RTL_PRICE').AsFloat;
+        edtTable.FieldbyName('AMOUNT').AsFloat := edtTable.FieldbyName('AMOUNT').AsFloat+rs.FieldbyName('AMOUNT').AsFloat;
+        edtTable.FieldByName('BOM_ID').AsString := bid;
+        edtTable.FieldbyName('COST_PRICE').AsFloat := GetCostPrice(Global.SHOP_ID,rs.FieldbyName('GODS_ID').AsString,edtTable.FieldbyName('BATCH_NO').AsString);
+        edtTable.FieldByName('POLICY_TYPE').AsInteger := 3;
+        edtTable.FieldByName('HAS_INTEGRAL').AsInteger := HAS_INTEGRAL;
+        AMountToCalc(edtTable.FieldbyName('AMOUNT').AsFloat);
+        if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
+        rs.Next;
+      end;
+    result := true;
+  finally
+    rs.Free;
+    edtTable.EnableControls;
+  end;
+end;
+
+procedure TfrmSalIndentOrder.edtInputKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if (Shift = []) and(Key = VK_TAB) then
+     begin
+       case InputMode of
+       0:InputMode := 1;
+       1:InputMode := 3;
+       else
+         InputMode := 0;
+       end;
+       InputFlag := 0;
+       Key := 0;
+     end
+  else
+     inherited;
+end;
+
+procedure TfrmSalIndentOrder.edtInputKeyPress(Sender: TObject;
+  var Key: Char);
+var s:string;
+begin
+  if (Key=#13) and (InputFlag=10) then
+     begin
+       s := trim(edtInput.Text);
+       try
+         if s<>'' then if not GodsToBomInfo(s) then Exit;
+         InputFlag := 0;
+         DBGridEh1.Col := 1;
+         edtInput.Text := '';
+         Key := #0;
+       except
+         edtInput.Text := s;
+         edtInput.SelectAll;
+         Raise;
+       end;
+     end
+  else
+  inherited;  //继承基类
+end;
+
+procedure TfrmSalIndentOrder.N5Click(Sender: TObject);
+begin
+  inherited;
+  if DBGridEh1.ReadOnly then Exit;
+  if edtInput.CanFocus and Visible and not edtInput.Focused then edtInput.SetFocus;
+  InputFlag := 10;
+
 end;
 
 end.

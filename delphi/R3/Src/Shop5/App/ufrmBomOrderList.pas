@@ -1,4 +1,4 @@
-{  11100001	0	进货订单	1	查询  2	新增	3	修改	4	删除	5	审核	6	打印	7	导出
+{  11100001	0	礼盒单单	1	查询  2	新增	3	修改	4	删除	5	审核	6	打印	7	导出
 }
 
 unit ufrmBomOrderList;
@@ -21,19 +21,24 @@ type
     D2: TcxDateEdit;
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
-    RzLabel4: TRzLabel;
-    fndCLIENT_ID: TzrComboBoxList;
     RzLabel5: TRzLabel;
-    fndINDE_ID: TcxTextEdit;
     Label1: TLabel;
     btnOk: TRzBitBtn;
     fndSTATUS: TcxRadioGroup;
-    frfStockOrder: TfrReport;
-    actfrmPayOrder: TAction;
+    frfBomOrder: TfrReport;
     ToolButton16: TToolButton;
     ToolButton17: TToolButton;
     Label40: TLabel;
     fndSHOP_ID: TzrComboBoxList;
+    RzLabel4: TRzLabel;
+    fndBom_Type: TcxComboBox;
+    Label2: TLabel;
+    fndDEPT_ID: TzrComboBoxList;
+    Label3: TLabel;
+    fndGIFT_NAME: TcxTextEdit;
+    fndBOM_USER: TzrComboBoxList;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
     procedure cdsListAfterScroll(DataSet: TDataSet);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -45,16 +50,18 @@ type
     procedure actSaveExecute(Sender: TObject);
     procedure actAuditExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
-    procedure frfStockOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
+    procedure frfBomOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure actfrmPayOrderExecute(Sender: TObject);
-    procedure frfStockOrderGetValue(const ParName: String;
+    procedure frfBomOrderGetValue(const ParName: String;
       var ParValue: Variant);
+    procedure N1Click(Sender: TObject);
+    procedure DBGridEh1CellClick(Column: TColumnEh);
+    procedure PopupMenu1Popup(Sender: TObject);
   private
     oid:string;
     function  CheckCanExport: boolean; override;
@@ -69,52 +76,83 @@ type
   end;
 
 implementation
-uses ufrmStkIndentOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmPayOrder,
-  uShopGlobal;
+uses
+  ufrmBomOrder, uDsUtil, uFnUtil,uGlobal,uShopUtil, uXDictFactory,
+  ufrmFastReport, uShopGlobal;
 {$R *.dfm}
 
-{ TfrmStkIndentOrderList }
+{ TfrmBomOrderList }
 
 function TfrmBomOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.SHOP_ID=:SHOP_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 ';
-  if fndCLIENT_ID.AsString <> '' then
-     w := w +' and A.CLIENT_ID=:CLIENT_ID';
-  if trim(fndINDE_ID.Text) <> '' then
-     w := w +' and A.GLIDE_NO like ''%'+trim(fndINDE_ID.Text)+'''';
+  w1 :=' ';
+  w := ' where A.TENANT_ID=:TENANT_ID  and A.BOM_DATE>=:D1 and A.BOM_DATE<=:D2 ';
+  //if trim(fndBOM_ID.Text) <> '' then
+  //   w := w +' and A.GLIDE_NO like ''%'+trim(fndBOM_ID.Text)+'''';
+  if fndSHOP_ID.AsString <> '' then
+     w := w +' and A.SHOP_ID=:SHOP_ID';
+  //[2012.02.03 xhh修改:可以按树上下级查询]
+  if fndDEPT_ID.AsString <> '' then //w := w +' and A.DEPT_ID=:DEPT_ID';
+     w := w +ShopGlobal.GetDeptID('A.DEPT_ID',fndDEPT_ID.AsString);
+
+  if trim(fndGIFT_NAME.Text)<>'' then
+     w:= w + ' and ( A.GLIDE_NO LIKE '+QuotedStr('%'+trim(fndGIFT_NAME.Text)+'%')+
+                  ' or A.GIFT_NAME LIKE '+QuotedStr('%'+trim(fndGIFT_NAME.Text)+'%')+
+                  ' or A.BARCODE LIKE '+QuotedStr('%'+trim(fndGIFT_NAME.Text)+'%')+')';
+
+  {
+  if trim(fndGIFT_NAME.Text) <> '' then
+     w := w +' and A.GIFT_NAME like ''%'+trim(fndGIFT_NAME.Text)+'%''';
+ if trim(fndBARCODE.Text) <> '' then
+     w := w +' and A.BARCODE like ''%'+trim(fndBARCODE.Text)+'%''';   }
+
+  if trim(fndBOM_USER.AsString) <> '' then
+     w := w +' and A.BOM_USER='+QuotedStr(trim(fndBOM_USER.AsString));
+  if fndBom_Type.ItemIndex > -1 then
+     begin
+       case fndBom_Type.ItemIndex of
+       0:w := w +' and A.BOM_TYPE=''1'' ';
+       1:w := w +' and A.BOM_TYPE=''2'' ';
+       end;
+     end;
+
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
        1:w := w +' and A.CHK_DATE is null';
        2:w := w +' and A.CHK_DATE is not null';
-       3:w := w +' and not Exists(select * from STK_STOCKORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
-       4:w := w +' and Exists(select * from STK_STOCKORDER where TENANT_ID=A.TENANT_ID and FROM_ID=A.INDE_ID)';
        end;
      end;
+  // -- 设置数据权限
+  w :=w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2);
   if id<>'' then
-     w := w +' and A.INDE_ID>'''+id+'''';
-  result :=
+     w := w +' and A.BOM_ID>'''+id+'''';
+  {result :=
      'select A.TENANT_ID,A.INDE_ID,A.GLIDE_NO,A.INDE_DATE,A.CREA_DATE,A.REMARK,A.INVOICE_FLAG,A.CLIENT_ID,A.GUIDE_USER,A.CREA_USER,A.SHOP_ID,A.ADVA_MNY,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY '+
-     'from STK_INDENTORDER A '+w+' ';
-  result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
-  result := 'select jc.*,c.PAYM_MNY,c.RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.INDE_ID=c.STOCK_ID';
-  result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
-  result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID '+w1;
+     'from STK_INDENTORDER A '+w+' ';   }
+  result :=
+     ' select A.TENANT_ID,A.SHOP_ID,A.BOM_ID,A.GLIDE_NO,A.GIFT_CODE,A.GIFT_NAME,A.BARCODE,A.BOM_AMOUNT,A.RCK_AMOUNT,A.RTL_PRICE,A.BOM_DATE,A.BOM_USER,A.CHK_DATE,A.CHK_USER,A.REMARK,A.CREA_DATE,A.CREA_USER,A.BOM_TYPE,A.BOM_STATUS,A.GODS_ID '+
+     ' from SAL_BOMORDER A '+w+' ';
+  //供应商result := 'select ja.*,a.CLIENT_NAME from ('+result+') ja left join VIW_CLIENTINFO a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID';
+  //result := 'select jc.*,c.PAYM_MNY,c.RECK_MNY from ('+result+') jc left join ACC_PAYABLE_INFO c on jc.TENANT_ID=c.TENANT_ID and jc.INDE_ID=c.STOCK_ID';
+  result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.BOM_USER=d.USER_ID';
+  result := 'select je.*,e.USER_NAME as CREA_USER_TEXT  from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID ' ;
+  result := 'select jf.*,f.USER_NAME as CHK_USER_TEXT  from ('+result+') jf left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CHK_USER=f.USER_ID '+w1;
   case Factor.iDbType of
-  0:result := 'select top 600 * from ('+result+') jp order by INDE_ID';
+  0:result := 'select top 600 * from ('+result+') jp order by BOM_ID';
   4:result :=
        'select * from ('+
-       'select * from ('+result+') j order by INDE_ID) tp fetch first 600  rows only';
-  5:result := 'select * from ('+result+') j order by INDE_ID limit 600';
+       'select * from ('+result+') j order by BOM_ID) tp fetch first 600  rows only';
+  5:result := 'select * from ('+result+') j order by BOM_ID limit 600';
   else
-    result := 'select * from ('+result+') j order by INDE_ID';
+    result := 'select * from ('+result+') j order by BOM_ID';
   end;
 end;
 
 function TfrmBomOrderList.GetFormClass: TFormClass;
 begin
-  result := TfrmStkIndentOrder;
+  result := TfrmBomOrder;
 end;
 
 procedure TfrmBomOrderList.Open(Id: string);
@@ -129,18 +167,18 @@ begin
   cdsList.DisableControls;
   try
     rs.SQL.Text := EncodeSQL(Id);
+    //ShowMessage(inttostr(fndBom_Type.ItemIndex)) ;
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('SHOP_ID').AsString := fndSHOP_ID.AsString;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
-    if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString; 
     Factor.Open(rs);
     rs.Last;
-    MaxId := rs.FieldbyName('INDE_ID').AsString;
+    MaxId := rs.FieldbyName('BOM_ID').AsString;
     if Id='' then
     begin
        rs.SaveToStream(sm);
-       cdsList.LoadFromStream(sm);  
+       cdsList.LoadFromStream(sm);
        cdsList.IndexFieldNames := 'GLIDE_NO';
     end
     else
@@ -171,10 +209,13 @@ begin
   fndSHOP_ID.KeyValue := Global.SHOP_ID;
   fndSHOP_ID.Text := Global.SHOP_NAME;
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  fndBOM_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   InitGridPickList(DBGridEh1);
-  fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   D1.Date := date();
   D2.Date := date();
+  fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  fndDEPT_ID.RangeField := 'DEPT_TYPE';
+  fndDEPT_ID.RangeValue := '1';
 end;
 
 procedure TfrmBomOrderList.FormShow(Sender: TObject);
@@ -182,14 +223,13 @@ begin
   inherited;
   Open('');
   //进入窗体默认新增加判断是否新增权限:
-  if (ShopGlobal.GetChkRight('11100001',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
+  //if {(ShopGlobal.GetChkRight('11100001',2)) and }(rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
 procedure TfrmBomOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
   Open('');
-
 end;
 
 procedure TfrmBomOrderList.actPriorExecute(Sender: TObject);
@@ -205,14 +245,13 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('STOCK_TYPE').asString := '1';
           if (CurOrder.gid = '') or (CurOrder.gid='..新增..') then
              Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
           else
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
           Temp := TZQuery.Create(nil);
           try
-             Factor.Open(Temp,'TStockOrderGetPrior',Params);
+             Factor.Open(Temp,'TBomOrderGetPrior',Params);
              if Temp.Fields[0].asString<>'' then
                 CurOrder.Open(Temp.Fields[0].asString);
           finally
@@ -241,14 +280,13 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('SHOP_ID').asString := CurOrder.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
-          Params.ParamByName('STOCK_TYPE').asString := '1';
           if CurOrder.gid = '' then
              Params.ParamByName('GLIDE_NO').asString := '00000000000000'
           else
              Params.ParamByName('GLIDE_NO').asString := CurOrder.gid;
           Temp := TZQuery.Create(nil);
           try
-             Factor.Open(Temp,'TStockOrderGetNext',Params);
+             Factor.Open(Temp,'TBomOrderGetNext',Params);
              if Temp.Fields[0].asString<>'' then
                 CurOrder.Open(Temp.Fields[0].asString);
           finally
@@ -266,11 +304,11 @@ end;
 
 procedure TfrmBomOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002306',3) then Raise Exception.Create('你没有修改礼盒权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('BOM_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   inherited;
 
@@ -278,17 +316,17 @@ end;
 
 procedure TfrmBomOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',4) then Raise Exception.Create('你没有删除订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002306',4) then Raise Exception.Create('你没有删除礼盒的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('BOM_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   inherited;
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('11100001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if {ShopGlobal.GetChkRight('100002306',2) and }(MessageBox(Handle,'删除当前单据成功,是否继续新增礼盒？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -303,12 +341,12 @@ begin
        if not CurOrder.saved then Exit;
        if (ShopGlobal.GetParameter('SAVE_STOCK_PRINT')='1')
           and
-          ShopGlobal.GetChkRight('11100001',6)
+          ShopGlobal.GetChkRight('100002306',6)
        then
           begin
             actPrint.OnExecute(nil);
           end;
-       if ShopGlobal.GetChkRight('11100001',2) and (MessageBox(Handle,'是否继续新增订货单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002306',2) and (MessageBox(Handle,'是否继续新增礼盒？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -317,11 +355,11 @@ end;
 
 procedure TfrmBomOrderList.actAuditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',5) then Raise Exception.Create('你没有审核订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002306',5) then Raise Exception.Create('你没有审核礼盒的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('BOM_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
   inherited;
 
@@ -333,12 +371,12 @@ begin
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
-       OpenForm(cdsList.FieldbyName('INDE_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
+       OpenForm(cdsList.FieldbyName('BOM_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
 
 end;
 
-procedure TfrmBomOrderList.frfStockOrderUserFunction(const Name: String;
+procedure TfrmBomOrderList.frfBomOrderUserFunction(const Name: String;
   p1, p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -390,7 +428,7 @@ end;
 procedure TfrmBomOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('11100001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002306',6) then Raise Exception.Create('你没有打印礼盒单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -398,12 +436,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfBomOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStockOrder);
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('BOM_ID').AsString),frfBomOrder);
            end;
       finally
          free;
@@ -414,7 +452,7 @@ end;
 procedure TfrmBomOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('11100001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002306',6) then Raise Exception.Create('你没有打印礼盒单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -422,12 +460,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfStockOrder,nil,true);
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfBomOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('INDE_ID').AsString),frfStockOrder,nil,true);
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('BOM_ID').AsString),frfBomOrder,nil,true);
            end;
       finally
          free;
@@ -437,7 +475,7 @@ end;
 
 procedure TfrmBomOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',2) then Raise Exception.Create('你没有新增订货单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002306',2) then Raise Exception.Create('你没有新增礼盒的权限,请和管理员联系.');
   inherited;
 
 end;
@@ -468,88 +506,7 @@ begin
 
 end;
 
-procedure TfrmBomOrderList.actfrmPayOrderExecute(Sender: TObject);
-var
-  rs:TZQuery;
-  clid,cpid,oid:string;
-begin
-  inherited;
-  if not ShopGlobal.GetChkRight('21400001',2) then Raise Exception.Create('你没有付款单的新增权限,请和管理员联系.');
-  rs := TZQuery.Create(nil);
-  try
-  if CurOrder<>nil then
-     begin
-       clid := TfrmStkIndentOrder(CurOrder).edtCLIENT_ID.AsString;
-       cpid := CurOrder.cid;
-       oid := CurOrder.oid;
-     end
-  else
-     begin
-       if cdsList.IsEmpty then Exit;
-       clid := cdsList.FieldbyName('CLIENT_ID').AsString;
-       cpid := cdsList.FieldbyName('SHOP_ID').AsString;
-       oid := cdsList.FieldbyName('INDE_ID').AsString;
-     end;
-  rs.SQL.Text
-     :='select A.ABLE_ID,A.SHOP_ID,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.STOCK_ID,A.ACCT_INFO,A.ABLE_TYPE,A.ACCT_MNY,A.PAYM_MNY,A.REVE_MNY,A.RECK_MNY,A.ABLE_DATE,A.NEAR_DATE,C.SHOP_NAME as SHOP_ID_TEXT '+
-     'from ACC_PAYABLE_INFO A,VIW_CLIENTINFO B,CA_SHOP_INFO C where A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CLIENT_ID='''+clid+''' and A.RECK_MNY<>0 order by ABLE_ID';
-  Factor.Open(rs);
-  if rs.IsEmpty then Raise Exception.Create('当前选中的供应商没有欠款...'); 
-  with TfrmPayOrder.Create(self) do
-    begin
-      try
-        Append;
-        edtCLIENT_ID.KeyValue := clid;
-        edtCLIENT_ID.Text := TdsFind.GetNameByID(edtCLIENT_ID.DataSet,'CLIENT_ID','CLIENT_NAME',clid);
-        rs.First;
-        while not rs.eof do
-          begin
-            if rs.FieldbyName('RECK_MNY').AsFloat <> 0 then
-               begin
-                 cdsDetail.Append;
-                 cdsDetail.FieldByName('ABLE_ID').AsString := rs.FieldbyName('ABLE_ID').AsString;
-                 cdsDetail.FieldByName('ACCT_INFO').AsString := rs.FieldbyName('ACCT_INFO').AsString;
-                 cdsDetail.FieldByName('ABLE_TYPE').AsString := rs.FieldbyName('ABLE_TYPE').AsString;
-                 cdsDetail.FieldByName('RECK_MNY').AsString := rs.FieldbyName('RECK_MNY').AsString;
-                 cdsDetail.FieldByName('ACCT_MNY').AsString := rs.FieldbyName('ACCT_MNY').AsString;
-
-                 if rs.FieldbyName('STOCK_ID').AsString = oid then
-                    begin
-                      cdsDetail.FieldByName('A').AsString := '1';
-                      cdsDetail.FieldByName('PAY_MNY').AsString := rs.FieldbyName('RECK_MNY').AsString;
-                      cdsDetail.FieldByName('BALA_MNY').AsString := '0';
-                    end
-                 else
-                    begin
-                      cdsDetail.FieldByName('A').AsString := '0';
-                      cdsDetail.FieldByName('PAY_MNY').AsString := '0';
-                      cdsDetail.FieldByName('BALA_MNY').AsString := rs.FieldbyName('RECK_MNY').AsString;
-                    end;
-
-                 cdsDetail.FieldByName('ABLE_DATE').AsString := rs.FieldbyName('ABLE_DATE').AsString;
-                 cdsDetail.FieldByName('CLIENT_ID').AsString := rs.FieldbyName('CLIENT_ID').AsString;
-                 cdsDetail.FieldByName('CLIENT_ID_TEXT').AsString := rs.FieldbyName('CLIENT_ID_TEXT').AsString;
-                 cdsDetail.FieldByName('SHOP_ID').AsString := rs.FieldbyName('SHOP_ID').AsString;
-                 cdsDetail.FieldByName('SHOP_ID_TEXT').AsString := rs.FieldbyName('SHOP_ID_TEXT').AsString;
-                 cdsDetail.Post;
-               end;
-            rs.Next;
-          end;
-        if ShowModal=MROK then
-           begin
-             if CurOrder<>nil then TfrmStkIndentOrder(CurOrder).ShowOweInfo;
-           end;
-      finally
-        free;
-      end;
-    end;
-  finally
-    rs.Free;
-  end;
-  
-end;
-
-procedure TfrmBomOrderList.frfStockOrderGetValue(const ParName: String;
+procedure TfrmBomOrderList.frfBomOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;
@@ -560,7 +517,64 @@ end;
 
 function TfrmBomOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('11100001',7);
+  result:=ShopGlobal.GetChkRight('100002306',7);
+end;
+
+procedure TfrmBomOrderList.N1Click(Sender: TObject);
+var
+  Str,sSign: string;
+  i:Integer;
+begin
+  inherited;
+  //if dbState = dsBrowse then Exit;
+  if cdsList.IsEmpty then Exit;
+  {if DBGridEh1.ReadOnly then Exit;
+  fndStr := edtTable.FieldbyName('GODS_ID').AsString;
+  if Assigned(fndGODS_ID.OnAddClick) then
+     fndGODS_ID.OnAddClick(fndGODS_ID);
+     }
+
+  //
+  if  cdsList.fieldbyName('BOM_STATUS').AsString <> '1' then
+      sSign := '1'
+  else
+      sSign := '2';
+  try
+    // -- 更新数据
+    Str := ' update SAL_BOMORDER set BOM_STATUS='+QuotedStr(sSign)
+        // ,COMM=' + GetCommStr(iDbType) + ',TIME_STAMP='+GetTimeStamp(iDbType)
+        + ' where TENANT_ID='+cdsList.fieldbyName('TENANT_ID').AsString
+        + ' and BOM_ID='+QuotedStr(cdsList.fieldbyName('BOM_ID').AsString);
+    i:=Factor.ExecSQL(Str);
+    if i = 0 then
+        MessageBox(handle,Pchar('提示:状态修改失败!'),Pchar(Caption),MB_OK)
+    else if i > 0 then
+        begin
+            cdsList.edit;
+            cdsList.fieldbyName('BOM_STATUS').AsString := sSign;
+            cdsList.post;
+            MessageBox(handle,Pchar('提示:状态修改成功!'),Pchar(Caption),MB_OK);
+        end;
+
+  finally
+  end;
+
+end;
+
+procedure TfrmBomOrderList.DBGridEh1CellClick(Column: TColumnEh);
+begin
+  inherited;
+  //showmessage(cdsList.fieldbyName('GIFT_NAME').AsString +':'+cdsList.fieldbyName('BOM_STATUS').AsString );
+
+end;
+
+procedure TfrmBomOrderList.PopupMenu1Popup(Sender: TObject);
+begin
+  inherited;
+  if  cdsList.fieldbyName('BOM_STATUS').AsString <> '1' then
+      N1.Caption := '启用'
+  else
+      N1.Caption := '禁用';
 end;
 
 end.

@@ -838,8 +838,10 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
     object N1: TMenuItem [5]
       Action = actCustomer
     end
-    inherited mnuIsPressent: TMenuItem
-      Caption = #20999#25442'('#38144#21806'-'#36192#21697'-'#20817#25442'-'#26680#38144')'
+    object N2: TMenuItem [9]
+      Caption = #36755#20837#31036#30418
+      ShortCut = 121
+      OnClick = N2Click
     end
   end
   inherited edtTable: TZQuery

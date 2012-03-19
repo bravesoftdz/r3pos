@@ -25,6 +25,7 @@ type
   public
     { Public declarations }
     procedure LoadDesk;
+    procedure OpenPage(script:string);
     property HookLocked:boolean read FHookLocked write SetHookLocked;
   end;
 
@@ -151,6 +152,23 @@ procedure TfrmMMDesk.IEDesktopNewWindow2(Sender: TObject;
 begin
   inherited;
   ppDisp := NewWindow.Application;
+end;
+
+procedure TfrmMMDesk.OpenPage(script: string);
+var
+  Doc:IHTMLDocument2;
+  win: IHTMLWindow2;
+  Olelanguage: Olevariant;
+begin
+  Doc := IEDesktop.document as IHTMLDocument2;
+  if Doc=nil then Raise Exception.Create('×ÀÃæHTML´ò¿ªÊ§°Ü'); 
+  win := Doc.parentWindow;
+  try
+    win.execScript(script,Olelanguage);
+  finally
+    win := nil;
+    Doc := nil;
+  end;
 end;
 
 end.

@@ -63,7 +63,7 @@ public
   function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
 end;
 const
-  ComVersion='3.0.1.36';
+  ComVersion='3.0.2.38';
 var
   FldXdict:TZReadonlyQuery;
   NearSyncDate:TDatetime;

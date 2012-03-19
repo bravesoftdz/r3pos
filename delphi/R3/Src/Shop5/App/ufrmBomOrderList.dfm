@@ -1,37 +1,37 @@
 inherited frmBomOrderList: TfrmBomOrderList
-  Left = 196
-  Top = 104
-  Width = 868
-  Height = 612
+  Left = 329
+  Top = 187
+  Width = 980
+  Height = 665
   Caption = #31036#30418#21253#35013
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 852
-    Height = 538
+    Width = 972
+    Height = 594
     inherited RzPanel2: TRzPanel
-      Width = 842
-      Height = 528
+      Width = 962
+      Height = 584
       inherited RzPage: TRzPageControl
-        Width = 836
-        Height = 522
+        Width = 956
+        Height = 578
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #36827#36135#35746#36135#21333#26597#35810
+          Caption = #31036#30418#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 834
-            Height = 495
+            Width = 954
+            Height = 551
             inherited RzPanel1: TRzPanel
-              Width = 824
-              Height = 100
+              Width = 944
+              Height = 92
               object RzLabel2: TRzLabel
                 Left = 33
                 Top = 4
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #35746#36135#26085#26399
+                Caption = #31036#30418#26085#26399
               end
               object RzLabel3: TRzLabel
                 Left = 200
@@ -40,28 +40,20 @@ inherited frmBomOrderList: TfrmBomOrderList
                 Height = 12
                 Caption = #33267
               end
-              object RzLabel4: TRzLabel
-                Left = 33
-                Top = 44
-                Width = 48
-                Height = 12
-                Alignment = taRightJustify
-                Caption = #20379' '#24212' '#21830
-              end
               object RzLabel5: TRzLabel
-                Left = 33
-                Top = 64
+                Left = 329
+                Top = 24
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #35746#36135#21333#21495
+                Caption = #32463' '#21150' '#20154
               end
               object Label1: TLabel
-                Left = 201
-                Top = 65
-                Width = 120
+                Left = 329
+                Top = 73
+                Width = 144
                 Height = 12
-                Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
+                Caption = #25903#25345#21517#31216#12289#26465#30721#12289#21333#21495#27169#31946
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clNavy
                 Font.Height = -12
@@ -74,7 +66,29 @@ inherited frmBomOrderList: TfrmBomOrderList
                 Top = 24
                 Width = 48
                 Height = 12
-                Caption = #35746#36135#38376#24215
+                Caption = #25152#23646#38376#24215
+              end
+              object RzLabel4: TRzLabel
+                Left = 329
+                Top = 4
+                Width = 48
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #31036#30418#31867#22411
+              end
+              object Label2: TLabel
+                Left = 33
+                Top = 48
+                Width = 48
+                Height = 12
+                Caption = #25152#23646#37096#38376
+              end
+              object Label3: TLabel
+                Left = 33
+                Top = 72
+                Width = 48
+                Height = 12
+                Caption = #20851' '#38190' '#23383
               end
               object D1: TcxDateEdit
                 Left = 89
@@ -94,87 +108,9 @@ inherited frmBomOrderList: TfrmBomOrderList
                 Properties.DateButtons = [btnToday]
                 TabOrder = 1
               end
-              object fndCLIENT_ID: TzrComboBoxList
-                Left = 89
-                Top = 40
-                Width = 236
-                Height = 20
-                Properties.AutoSelect = False
-                Properties.Buttons = <
-                  item
-                    Default = True
-                  end>
-                Properties.ReadOnly = False
-                TabOrder = 2
-                InGrid = False
-                KeyValue = Null
-                FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
-                KeyField = 'CLIENT_ID'
-                ListField = 'CLIENT_NAME'
-                Columns = <
-                  item
-                    EditButtons = <>
-                    FieldName = 'CLIENT_CODE'
-                    Footers = <>
-                    Title.Caption = #20195#30721
-                    Width = 60
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'CLIENT_NAME'
-                    Footers = <>
-                    Title.Caption = #20379#24212#21830#21517#31216
-                    Width = 150
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'LINKMAN'
-                    Footers = <>
-                    Title.Caption = #32852#31995#20154
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'TELEPHONE2'
-                    Footers = <>
-                    Title.Caption = #32852#31995#30005#35805
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'LICENSE_CODE'
-                    Footers = <>
-                    Title.Caption = #35777#20214#21495
-                    Width = 70
-                  end
-                  item
-                    EditButtons = <>
-                    FieldName = 'ADDRESS'
-                    Footers = <>
-                    Title.Caption = #22320#22336
-                    Width = 150
-                  end>
-                DropWidth = 236
-                DropHeight = 180
-                ShowTitle = True
-                AutoFitColWidth = False
-                ShowButton = True
-                LocateStyle = lsDark
-                Buttons = [zbClear]
-                DropListStyle = lsFixed
-                MultiSelect = False
-              end
-              object fndINDE_ID: TcxTextEdit
-                Left = 89
-                Top = 60
-                Width = 104
-                Height = 20
-                TabOrder = 3
-                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              end
               object btnOk: TRzBitBtn
-                Left = 504
-                Top = 56
+                Left = 664
+                Top = 40
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -192,7 +128,7 @@ inherited frmBomOrderList: TfrmBomOrderList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 5
+                TabOrder = 8
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -200,12 +136,11 @@ inherited frmBomOrderList: TfrmBomOrderList
                 Spacing = 5
               end
               object fndSTATUS: TcxRadioGroup
-                Left = 344
-                Top = -5
-                Width = 145
-                Height = 86
+                Left = 536
+                Top = -6
+                Width = 105
+                Height = 84
                 ItemIndex = 0
-                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -215,14 +150,8 @@ inherited frmBomOrderList: TfrmBomOrderList
                   end
                   item
                     Caption = #24050#23457#26680
-                  end
-                  item
-                    Caption = #26410#20837#24211
-                  end
-                  item
-                    Caption = #24050#20837#24211
                   end>
-                TabOrder = 4
+                TabOrder = 7
                 Caption = ''
               end
               object fndSHOP_ID: TzrComboBoxList
@@ -237,7 +166,7 @@ inherited frmBomOrderList: TfrmBomOrderList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 6
+                TabOrder = 2
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -267,12 +196,107 @@ inherited frmBomOrderList: TfrmBomOrderList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndBom_Type: TcxComboBox
+                Left = 385
+                Top = 0
+                Width = 104
+                Height = 20
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                Properties.DropDownListStyle = lsFixedList
+                Properties.Items.Strings = (
+                  #25955#35013#31036#30418
+                  #25972#35013#31036#30418)
+                TabOrder = 5
+              end
+              object fndDEPT_ID: TzrComboBoxList
+                Tag = -1
+                Left = 89
+                Top = 44
+                Width = 236
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                KeyField = 'DEPT_ID'
+                ListField = 'DEPT_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'DEPT_NAME'
+                    Footers = <>
+                    Title.Caption = #21517#31216
+                  end>
+                DropWidth = 185
+                DropHeight = 180
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = False
+                LocateStyle = lsDark
+                Buttons = []
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
+              object fndGIFT_NAME: TcxTextEdit
+                Left = 89
+                Top = 68
+                Width = 236
+                Height = 20
+                TabOrder = 4
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+              object fndBOM_USER: TzrComboBoxList
+                Left = 385
+                Top = 20
+                Width = 104
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 6
+                InGrid = False
+                KeyValue = Null
+                FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
+                KeyField = 'USER_ID'
+                ListField = 'USER_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'ACCOUNT'
+                    Footers = <>
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'USER_NAME'
+                    Footers = <>
+                  end>
+                DropWidth = 290
+                DropHeight = 228
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = []
+                DropListStyle = lsFixed
+                MultiSelect = False
+              end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 105
-              Width = 824
-              Height = 385
+              Top = 97
+              Width = 944
+              Height = 449
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              PopupMenu = PopupMenu1
+              OnCellClick = DBGridEh1CellClick
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -287,71 +311,64 @@ inherited frmBomOrderList: TfrmBomOrderList
                   FieldName = 'GLIDE_NO'
                   Footers = <>
                   Title.Caption = #27969#27700#21495
-                  Width = 85
+                  Width = 90
                 end
                 item
                   DisplayFormat = '0000-00-00'
                   EditButtons = <>
-                  FieldName = 'INDE_DATE'
+                  FieldName = 'BOM_DATE'
                   Footers = <>
-                  Title.Caption = #35746#36135#26085#26399
-                  Width = 68
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'CLIENT_NAME'
-                  Footers = <>
-                  Title.Caption = #20379#24212#21830
-                  Width = 160
+                  Title.Caption = #21253#35013#26085#26399
+                  Width = 62
                 end
                 item
                   EditButtons = <>
                   FieldName = 'GUIDE_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #39564#36135#21592
+                  Title.Caption = #32463#21150#20154
                   Width = 53
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'INVOICE_FLAG'
+                  FieldName = 'GIFT_NAME'
                   Footers = <>
-                  Title.Caption = #31080#25454#31867#22411
-                  Width = 54
+                  Title.Caption = #31036#30418#21517#31216
+                  Width = 186
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'AMOUNT'
+                  FieldName = 'BOM_AMOUNT'
                   Footers = <>
-                  Title.Caption = #25968#37327
-                  Width = 57
+                  Title.Caption = #31036#30418#25968#37327
+                  Width = 52
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'AMONEY'
+                  FieldName = 'RCK_AMOUNT'
                   Footers = <>
-                  Title.Caption = #21512#35745#37329#39069
+                  Title.Caption = #32467#20313#25968#37327
+                  Width = 53
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'RTL_PRICE'
+                  Footers = <>
+                  Title.Caption = #20215#26684
+                  Width = 49
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'BOM_TYPE'
+                  Footers = <>
+                  Title.Caption = #31867#22411
                   Width = 58
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'ADVA_MNY'
+                  FieldName = 'BOM_STATUS'
                   Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#24212#20184
-                  Width = 60
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'PAYM_MNY'
-                  Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#23454#20184
-                  Width = 58
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'RECK_MNY'
-                  Footers = <>
-                  Title.Caption = #39044#20184#27454'|'#27424#20184
-                  Width = 63
+                  Title.Caption = #29366#24577
+                  Width = 36
                 end
                 item
                   EditButtons = <>
@@ -365,13 +382,26 @@ inherited frmBomOrderList: TfrmBomOrderList
                   FieldName = 'CREA_USER_TEXT'
                   Footers = <>
                   Title.Caption = #21046#21333#21592
+                  Width = 57
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_DATE'
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
-                  Width = 131
+                  Width = 122
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CHK_USER_TEXT'
+                  Footers = <>
+                  Title.Caption = #23457#26680#20154#21592
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CHK_DATE'
+                  Footers = <>
+                  Title.Caption = #23457#26680#26085#26399
                 end>
             end
           end
@@ -380,44 +410,46 @@ inherited frmBomOrderList: TfrmBomOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 852
-    inherited Image1: TImage
-      Left = 636
-      Width = 196
-    end
+    Width = 972
     inherited Image3: TImage
-      Left = 636
-      Width = 196
+      Left = 632
+      Width = 124
     end
     inherited Image14: TImage
-      Left = 832
+      Left = 952
+    end
+    inherited Image1: TImage
+      Left = 756
+      Width = 196
     end
     inherited rzPanel5: TPanel
-      Left = 636
+      Left = 632
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 616
+      Width = 612
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 616
-          Width = 48
+          MinHeight = 612
+          Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 616
+        Width = 612
         object ToolButton16: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
-          Action = actfrmPayOrder
+          Caption = #20184#27454
+          ImageIndex = 28
+          Visible = False
         end
         object ToolButton17: TToolButton
-          Left = 565
+          Left = 561
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -425,7 +457,7 @@ inherited frmBomOrderList: TfrmBomOrderList
           Style = tbsDivider
         end
         object ToolButton11: TToolButton
-          Left = 573
+          Left = 569
           Top = 0
           Action = actExit
         end
@@ -433,32 +465,33 @@ inherited frmBomOrderList: TfrmBomOrderList
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 208
-    Top = 144
+    Left = 240
+    Top = 232
   end
   inherited actList: TActionList
+    Left = 256
+    Top = 176
     inherited actInfo: TAction
       OnExecute = actInfoExecute
     end
-    object actfrmPayOrder: TAction
-      Caption = #20184#27454
-      ImageIndex = 28
-      OnExecute = actfrmPayOrderExecute
-    end
+  end
+  inherited ppmReport: TPopupMenu
+    Left = 878
+    Top = 63
   end
   inherited cdsList: TZQuery
     AfterScroll = cdsListAfterScroll
   end
-  object frfStockOrder: TfrReport
+  object frfBomOrder: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    OnGetValue = frfStockOrderGetValue
-    OnUserFunction = frfStockOrderUserFunction
+    OnGetValue = frfBomOrderGetValue
+    OnUserFunction = frfBomOrderUserFunction
     Left = 416
     Top = 193
     ReportForm = {
-      18000000381F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000311F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -707,6 +740,15 @@ inherited frmBomOrderList: TfrmBomOrderList
       000000000000FEFEFF060000000A00205661726961626C657300000000020073
       6C0014006364735F436867426F64792E22534C30303030220002006A65001400
       6364735F436867426F64792E224A4530303030220004006B6879680000000004
-      0079687A68000000000200647A000000000000000000000000FDFF0100000000}
+      0079687A68000000000200647A000000000000000000000000}
+  end
+  object PopupMenu1: TPopupMenu
+    OnPopup = PopupMenu1Popup
+    Left = 321
+    Top = 262
+    object N1: TMenuItem
+      Caption = #21551#29992
+      OnClick = N1Click
+    end
   end
 end

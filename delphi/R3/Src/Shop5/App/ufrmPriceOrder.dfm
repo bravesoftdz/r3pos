@@ -1,16 +1,16 @@
 inherited frmPriceOrder: TfrmPriceOrder
-  Left = 199
-  Top = 106
+  Left = 380
+  Top = 108
   Width = 839
   Height = 576
   Caption = #20419#38144#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 823
-    Height = 538
+    Width = 831
+    Height = 542
     inherited RzPanel2: TRzPanel
-      Width = 813
+      Width = 821
       Height = 84
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -193,8 +193,8 @@ inherited frmPriceOrder: TfrmPriceOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 474
-      Width = 813
+      Top = 478
+      Width = 821
       Height = 35
       TabOrder = 2
       object Label8: TLabel
@@ -232,8 +232,8 @@ inherited frmPriceOrder: TfrmPriceOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 122
-      Width = 813
-      Height = 302
+      Width = 821
+      Height = 306
       TabOrder = 3
       Columns = <
         item
@@ -351,6 +351,23 @@ inherited frmPriceOrder: TfrmPriceOrder
             #21542)
           Title.Caption = #20250#21592'|'#31215#20998
           Width = 35
+        end
+        item
+          Alignment = taCenter
+          ButtonStyle = cbsEllipsis
+          Checkboxes = True
+          EditButtons = <>
+          FieldName = 'USING_LEVEL'
+          Footers = <>
+          KeyList.Strings = (
+            '1'
+            '0')
+          PickList.Strings = (
+            #21542
+            #26159
+            '')
+          Title.Caption = #21551#29992#22810#26723#23450#20215
+          Width = 45
         end>
     end
     inherited fndGODS_ID: TzrComboBoxList
@@ -360,15 +377,15 @@ inherited frmPriceOrder: TfrmPriceOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 89
-      Width = 813
+      Width = 821
     end
     inherited stbHint: TRzPanel
-      Top = 509
-      Width = 813
+      Top = 513
+      Width = 821
     end
     inherited rzHelp: TRzPanel
-      Top = 424
-      Width = 813
+      Top = 428
+      Width = 821
       Height = 50
     end
     inherited fndUNIT_ID: TcxComboBox
@@ -397,6 +414,10 @@ inherited frmPriceOrder: TfrmPriceOrder
   inherited PopupMenu1: TPopupMenu
     inherited munDivRow1: TMenuItem
       Visible = False
+    end
+    object mnuUsingLevel: TMenuItem
+      Caption = #21551#29992#26723#20301
+      OnClick = mnuUsingLevelClick
     end
   end
   inherited edtTable: TZQuery
@@ -501,6 +522,88 @@ inherited frmPriceOrder: TfrmPriceOrder
         Name = 'PROPERTY_02'
         DataType = ftString
         Size = 36
+      end
+      item
+        Name = 'USING_LEVEL'
+        DataType = ftString
+        Size = 1
+      end
+      item
+        Name = 'LVL_TYPE'
+        DataType = ftString
+        Size = 1
+      end
+      item
+        Name = 'LV1_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV2_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV3_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV4_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV5_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV6_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV7_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV8_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV9_AMT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV1_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV2_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV3_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV4_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV5_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV6_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV7_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV8_PRC'
+        DataType = ftFloat
+      end
+      item
+        Name = 'LV9_PRC'
+        DataType = ftFloat
       end>
     Left = 48
     Top = 248

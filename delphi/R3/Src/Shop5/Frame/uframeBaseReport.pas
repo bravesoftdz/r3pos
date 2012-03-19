@@ -1557,7 +1557,7 @@ end;
 procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,SORT_NAME,OrderByField: string; SumFields,CalcFields: Array of String);
  //取SortList:
  procedure SetSortList(InDataSet: TZQuery; SortList: TStringList);
- var SortID: string;
+ var i: integer; SortID: string;
  begin
    try
      SortList.Clear;
@@ -1568,6 +1568,12 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
        if SortList.IndexOf(SortID)=-1 then
          SortList.Add(SortID);
        InDataSet.Next;
+     end;
+     //对于默认值:第一个若是"#"处理
+     if trim(SortList.Strings[0])='#' then
+     begin
+       SortList.Delete(0);
+       SortList.Add('#'); 
      end;
    finally
      InDataSet.First;

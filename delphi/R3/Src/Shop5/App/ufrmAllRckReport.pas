@@ -43,6 +43,8 @@ type
     procedure rzShowColumnsChange(Sender: TObject; Index: Integer;
       NewState: TCheckBoxState);
     procedure actColumnVisibleExecute(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     PrintTimes:Integer;
     idx: integer;
@@ -1239,6 +1241,13 @@ begin
   finally
     rzShowColumns.Tag := 0;
   end;
+end;
+
+procedure TfrmAllRckReport.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+begin
+  GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
 end;
 
 end.

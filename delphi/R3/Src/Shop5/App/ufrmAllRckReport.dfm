@@ -64,7 +64,7 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Properties.Items.Strings = (
                     #20840#37096#21830#21697#21488#36134
                     #21367#28895#21830#21697#21488#36134
-                    #38750#21367#28895#21830#21697#21488#24080
+                    #38750#28895#21830#21697#21488#24080
                     #36827#36135#21488#36134
                     #38144#21806#21488#36134)
                   Properties.OnChange = rptTemplatePropertiesChange

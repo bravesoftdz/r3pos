@@ -1619,7 +1619,7 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
  function GetSortName(SORT_ID: string): string; //返回小计名称:
  var SortRs: TZQuery;
  begin
-   result:='无';
+   result:='未定义';
    case strtoInt(SORT_IDX) of
    0:
     begin

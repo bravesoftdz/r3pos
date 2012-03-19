@@ -528,28 +528,15 @@ begin
     end
   else
     begin
-      edtPriceGrade.Enabled := False;
+      edtPriceGrade.Enabled := True;
       edtDelete.Enabled := False;
-      if ShopGlobal.GetChkRight('33200001',2) then
-        begin
-          dbState:=dsBrowse;
-          edtPriceGrade.Enabled:=True;
-        end;
       if ShopGlobal.GetChkRight('33200001',3) then
         begin
-          dbState:=dsEdit;
-          //DBGridEh1.ReadOnly:=True;
-          //edtPriceGrade.Enabled:=False;
-          edtSave.Enabled:=True;
-          //edtCancel.Enabled:=False;
-          //edtDelete.Enabled:=False;
           btnAdd.Enabled := edtSave.Enabled;
           btnDetele.Enabled := edtSave.Enabled;
         end;
       if ShopGlobal.GetChkRight('33200001',4) then
         begin
-          dbState:=dsBrowse;
-          //edtCancel.Enabled:=False;
           edtDelete.Enabled:=true;
         end;
     end;

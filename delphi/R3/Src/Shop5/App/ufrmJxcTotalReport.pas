@@ -806,7 +806,8 @@ begin
   case StrToInt(GodsSortIdx) of
    0: SORT_ID:='C.RELATION_ID';
    else
-      SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'')';
+      SORT_ID:='case when isnull(C.SORT_ID'+GodsSortIdx+','''')='''' then ''#'' else C.SORT_ID'+GodsSortIdx+' end';
+      //SORT_ID:='isnull(C.SORT_ID'+GodsSortIdx+',''#'')';
   end;
 
   //ºÏ≤‚ «∑Òº∆À„

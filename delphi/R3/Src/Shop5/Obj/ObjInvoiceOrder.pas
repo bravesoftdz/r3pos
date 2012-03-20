@@ -52,8 +52,9 @@ begin
 end;
 
 function TInvoiceOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-begin
 
+begin
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前发票已经被另一用户修改，你不能再保存。');
 end;
 
 function TInvoiceOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -63,8 +64,24 @@ end;
 
 function TInvoiceOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;
   comm: boolean): boolean;
+var
+  rs:TZQuery;
 begin
-
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TIME_STAMP,COMM from SAL_INVOICE_INFO where INVD_ID='''+FieldbyName('INVD_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
+    aGlobal.Open(rs);
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and
+    (
+       (copy(rs.Fields[1].asString,1,1)='1')
+       or
+       (copy(rs.Fields[1].asString,2,1)<>'0')
+    )
+    then Raise Exception.Create('已经同步的数据不能删除..');
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TInvoiceOrder.InitClass;
@@ -83,12 +100,12 @@ begin
   ' left join PUB_PARAMS F on A.INVOICE_FLAG=F.CODE_ID '+
   ' where A.TENANT_ID=:TENANT_ID and A.INVD_ID=:INVD_ID and F.TYPE_CODE=''INVOICE_FLAG'' ';
   IsSQLUpdate := True;
-  Str := 'insert into SAL_INVOICE_INFO(TENANT_ID,INVD_ID,INVH_ID,SHOP_ID,DEPT_ID,CREA_USER,CREA_DATE,CLIENT_ID,INVO_NAME,ADDR_NAME,REMARK,INVOICE_FLAG,INVOICE_NO,INVOICE_MNY,INVOICE_STATUS,COMM,TIME_STAMP) '
-    + 'VALUES(:TENANT_ID,:INVD_ID,:INVH_ID,:SHOP_ID,:DEPT_ID,:CREA_USER,:CREA_DATE,:CLIENT_ID,:INVO_NAME,:ADDR_NAME,:REMARK,:INVOICE_FLAG,:INVOICE_NO,:INVOICE_MNY,:INVOICE_STATUS,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into SAL_INVOICE_INFO(TENANT_ID,INVD_ID,INVH_ID,SHOP_ID,DEPT_ID,CREA_USER,CREA_DATE,CLIENT_ID,INVO_NAME,ADDR_NAME,REMARK,INVOICE_FLAG,INVOICE_NO,INVOICE_MNY,INVOICE_STATUS,EXPORT_STATUS,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:INVD_ID,:INVH_ID,:SHOP_ID,:DEPT_ID,:CREA_USER,:CREA_DATE,:CLIENT_ID,:INVO_NAME,:ADDR_NAME,:REMARK,:INVOICE_FLAG,:INVOICE_NO,:INVOICE_MNY,:INVOICE_STATUS,:EXPORT_STATUS,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str := 'update SAL_INVOICE_INFO set TENANT_ID=:TENANT_ID,INVD_ID=:INVD_ID,INVH_ID=:INVH_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CREA_USER=:CREA_USER,'
     + 'CREA_DATE=:CREA_DATE,CLIENT_ID=:CLIENT_ID,INVO_NAME=:INVO_NAME,ADDR_NAME=:ADDR_NAME,REMARK=:REMARK,INVOICE_FLAG=:INVOICE_FLAG,'
-    + 'INVOICE_NO=:INVOICE_NO,INVOICE_MNY=:INVOICE_MNY,INVOICE_STATUS=:INVOICE_STATUS '
+    + 'INVOICE_NO=:INVOICE_NO,INVOICE_MNY=:INVOICE_MNY,INVOICE_STATUS=:INVOICE_STATUS,EXPORT_STATUS=:EXPORT_STATUS '
     + ',COMM=' + GetCommStr(iDbType)
     + ',TIME_STAMP='+GetTimeStamp(iDbType)
     + ' where INVD_ID=:OLD_INVD_ID and TENANT_ID=:OLD_TENANT_ID';
@@ -115,8 +132,8 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := ' select B.GLIDE_NO from SAL_INVOICE_LIST A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID '+
-    ' and A.SALES_ID=B.SALES_ID and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID ';
+    rs.SQL.Text := ' select B.GLIDE_NO from SAL_INVOICE_LIST A,SAL_SALESORDER B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID '+
+    ' and A.SALES_ID=B.SALES_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
     rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
     AGlobal.Open(rs);
@@ -128,8 +145,23 @@ begin
 end;
 
 function TInvoiceData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+var Str:string;
+    rs:TZQuery;
+    n:Integer;
 begin
-
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := ' select count(*) from SAL_INVOICE_LIST A,SAL_INVOICE_INFO B where A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
+    ' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID and A.INVD_ID<>:INVD_ID and B.INVOICE_STATUS=''1'' ';
+    rs.ParamByName('TENANT_ID').AsInteger := Params.FindParam('TENANT_ID').AsInteger;
+    rs.ParamByName('SALES_ID').AsString := Params.FindParam('SALES_ID').AsString;
+    rs.ParamByName('INVD_ID').AsString := Params.FindParam('INVD_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then
+       Raise Exception.Create('发票中的销售单已开票!');
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TInvoiceData.InitClass;
@@ -157,7 +189,8 @@ var Str:string;
     n:Integer;
 begin
   try
-    Str := 'update SAL_INVOICE_INFO set INVOICE_STATUS=''2'' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INVD_ID='''+Params.FindParam('INVD_ID').asString+''' and INVOICE_STATUS=''1'' ';
+    Str := 'update SAL_INVOICE_INFO set INVOICE_STATUS=''2'',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
+    ' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INVD_ID='''+Params.FindParam('INVD_ID').asString+''' ';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到待作废发票，是否被另一用户删除或已作废。')
@@ -180,10 +213,24 @@ end;
 function TInvoiceOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
+    rs:TZQuery;
     n:Integer;
 begin
   try
-    Str := 'update SAL_INVOICE_INFO set INVOICE_STATUS=''1'' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INVD_ID='''+Params.FindParam('INVD_ID').asString+''' and INVOICE_STATUS=''2'' ';
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := ' select A.SALES_ID from SAL_INVOICE_LIST A,SAL_INVOICE_INFO B where A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID and A.TENANT_ID=:TENANT_ID'+
+      ' and A.SALES_ID in ( select SALES_ID from SAL_INVOICE_LIST  where TENANT_ID=:TENANT_ID and INVD_ID=:INVD_ID) and B.INVOICE_STATUS=''1'' ';
+      rs.ParamByName('TENANT_ID').AsInteger := Params.FindParam('TENANT_ID').AsInteger;
+      rs.ParamByName('INVD_ID').AsString := Params.FindParam('INVD_ID').AsString;
+      AGlobal.Open(rs);
+      if rs.FieldByName('SALES_ID').AsString <> '' then
+         Raise Exception.Create('作废发票中的销售单已有重新开票!');
+    finally
+      rs.Free;
+    end;
+    Str := 'update SAL_INVOICE_INFO set INVOICE_STATUS=''1'',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
+    ' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INVD_ID='''+Params.FindParam('INVD_ID').asString+''' ';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到已作废发票，是否被另一用户删除或已升效。')

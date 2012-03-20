@@ -113,7 +113,7 @@ var Client_Id,InvoiceFlag:String;
     SumMny:Real;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
   if CdsSalesList.State in [dsInsert,dsEdit] then CdsSalesList.Post;
   CdsSalesList.DisableControls;
   try
@@ -130,19 +130,19 @@ begin
        begin
          if Client_Id = '' then Client_Id := CdsSalesList.FieldByName('CLIENT_ID').AsString;
          if (Client_Id<>'') and (Client_Id<>CdsSalesList.FieldByName('CLIENT_ID').AsString) then
-            Raise Exception.Create('请选择相同客户的销售单进行开单...');
+            Raise Exception.Create('请选择相同客户的销售单进行开票...');
 
          if InvoiceFlag = '' then InvoiceFlag := CdsSalesList.FieldByName('INVOICE_FLAG').AsString;
          if (InvoiceFlag<>'') and (InvoiceFlag<>CdsSalesList.FieldByName('INVOICE_FLAG').AsString) then
-            Raise Exception.Create('请选择相同发票类型的销售单进行开单...');
+            Raise Exception.Create('请选择相同发票类型的销售单进行开票...');
 
          if CdsSalesList.FieldByName('INVOICE_NO').AsString <> '' then
-            Raise Exception.Create('销售单号"'+CdsSalesList.FieldByName('GLIDE_NO').AsString+'"已经开单...');
+            Raise Exception.Create('销售单号"'+CdsSalesList.FieldByName('GLIDE_NO').AsString+'"已经开票...');
          SumMny := SumMny + CdsSalesList.FieldByName('AMONEY').AsFloat;
          CdsSalesList.Next;
        end;
     end;
-    if not IsExist then Raise Exception.Create('请选择要开单的销售单...');
+    if not IsExist then Raise Exception.Create('请选择要开票的销售单...');
     if SumMny = 0 then Raise Exception.Create('所选择的销售单的金额为0');
 
     with TfrmSalInvoice.Create(self) do
@@ -180,7 +180,7 @@ procedure TfrmSalInvoiceList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
    if cdsList.IsEmpty then Exit;
-   //if not ShopGlobal.GetChkRight('100002314',4) then Raise Exception.Create('你没有删除发票的权限,请和管理员联系.');
+   if not ShopGlobal.GetChkRight('100002314',4) then Raise Exception.Create('你没有删除发票的权限,请和管理员联系.');
    if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002314',4) then
@@ -206,7 +206,7 @@ procedure TfrmSalInvoiceList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  //if not ShopGlobal.GetChkRight('100002314',3) then Raise Exception.Create('你没有修改发票的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002314',3) then Raise Exception.Create('你没有修改发票的权限,请和管理员联系.');
   if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002314',3) then
@@ -272,7 +272,7 @@ var
 begin
   inherited;
   if cdsList.IsEmpty then Raise Exception.Create('请选择要作废的发票');
-  //if not ShopGlobal.GetChkRight('100002314',5) then Raise Exception.Create('你没有作废发票的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002314',5) then Raise Exception.Create('你没有作废发票的权限,请和管理员联系.');
   if cdsList.FieldByName('INVOICE_STATUS').AsString='1' then
      begin
        //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能作废');

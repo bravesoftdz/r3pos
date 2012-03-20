@@ -166,7 +166,7 @@ end;
 procedure TfrmKpiTimes.FormShow(Sender: TObject);
 begin
   inherited;
-  edtTIMES_NAME.SetFocus;
+  if edtTIMES_NAME.CanFocus then edtTIMES_NAME.SetFocus;
 end;
 
 end.

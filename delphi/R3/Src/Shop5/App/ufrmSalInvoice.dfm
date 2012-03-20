@@ -5,6 +5,7 @@ inherited frmSalInvoice: TfrmSalInvoice
   ClientHeight = 258
   ClientWidth = 527
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -74,12 +75,18 @@ inherited frmSalInvoice: TfrmSalInvoice
             Caption = #24320#31080#38376#24215
           end
           object Label4: TLabel
-            Left = 114
+            Left = 109
             Top = 92
-            Width = 48
+            Width = 53
             Height = 12
             Alignment = taRightJustify
             Caption = #21457' '#31080' '#21495
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = [fsBold]
+            ParentFont = False
           end
           object Label8: TLabel
             Left = 114
@@ -529,6 +536,12 @@ inherited frmSalInvoice: TfrmSalInvoice
             Top = 87
             Width = 133
             Height = 20
+            ParentFont = False
+            Style.Font.Charset = GB2312_CHARSET
+            Style.Font.Color = clWindowText
+            Style.Font.Height = -12
+            Style.Font.Name = #23435#20307
+            Style.Font.Style = [fsBold]
             TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end

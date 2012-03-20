@@ -687,6 +687,7 @@ procedure TfrmSalInvoiceList.FormShow(Sender: TObject);
 begin
   inherited;
   Open1('');
+  if P1_D1.CanFocus then P1_D1.SetFocus;
 end;
 
 procedure TfrmSalInvoiceList.RzPageChange(Sender: TObject);

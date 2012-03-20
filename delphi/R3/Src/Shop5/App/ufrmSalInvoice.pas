@@ -43,6 +43,7 @@ type
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FisAudit: boolean;
     Fcid: string;
@@ -297,6 +298,12 @@ end;
 procedure TfrmSalInvoice.SetInvoiceId(const Value: String);
 begin
   FInvoiceId := Value;
+end;
+
+procedure TfrmSalInvoice.FormShow(Sender: TObject);
+begin
+  inherited;
+  if edtINVOICE_NO.CanFocus then edtINVOICE_NO.SetFocus;
 end;
 
 end.

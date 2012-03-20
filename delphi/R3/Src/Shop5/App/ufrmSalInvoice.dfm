@@ -114,7 +114,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 0
+            TabOrder = 2
             InGrid = False
             KeyValue = Null
             FilterFields = 'INVH_NO'
@@ -145,14 +145,14 @@ inherited frmSalInvoice: TfrmSalInvoice
             Width = 131
             Height = 20
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            TabOrder = 1
+            TabOrder = 5
           end
           object edtREMARK: TcxTextEdit
             Left = 167
             Top = 137
             Width = 273
             Height = 20
-            TabOrder = 2
+            TabOrder = 9
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object RzPanel4: TRzPanel
@@ -165,7 +165,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             BorderShadow = clActiveCaption
             Color = clWhite
             FlatColor = clBlue
-            TabOrder = 3
+            TabOrder = 10
             Visible = False
             object Image1: TImage
               Left = 15
@@ -414,7 +414,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 4
+            TabOrder = 0
             InGrid = False
             KeyValue = Null
             FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
@@ -481,7 +481,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             Height = 20
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 5
+            TabOrder = 1
           end
           object edtSHOP_ID: TzrComboBoxList
             Left = 369
@@ -529,7 +529,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             Top = 87
             Width = 133
             Height = 20
-            TabOrder = 7
+            TabOrder = 3
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtINVOICE_MNY: TcxTextEdit
@@ -537,7 +537,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             Top = 112
             Width = 133
             Height = 20
-            TabOrder = 8
+            TabOrder = 4
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtDEPT_ID: TzrComboBoxList
@@ -551,7 +551,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = False
-            TabOrder = 9
+            TabOrder = 7
             InGrid = False
             KeyValue = Null
             FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -585,7 +585,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 10
+            TabOrder = 8
             InGrid = False
             KeyValue = Null
             FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'

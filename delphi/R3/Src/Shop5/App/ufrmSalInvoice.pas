@@ -102,6 +102,7 @@ begin
   edtINVOICE_MNY.Text := FloatToStr(InvoiceMny);
   AObj.FieldbyName('INVD_ID').asString := TSequence.NewId();
   AObj.FieldByName('INVOICE_STATUS').AsString := '1';
+  AObj.FieldByName('EXPORT_STATUS').AsString := '1';
   edtCLIENT_IDSaveValue(nil);
 
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;

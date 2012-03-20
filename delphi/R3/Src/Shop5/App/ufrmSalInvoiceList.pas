@@ -113,7 +113,7 @@ var Client_Id,InvoiceFlag:String;
     SumMny:Real;
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('21300001',2) then Raise Exception.Create('你没有新增收款单的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
   if CdsSalesList.State in [dsInsert,dsEdit] then CdsSalesList.Post;
   CdsSalesList.DisableControls;
   try
@@ -180,14 +180,14 @@ procedure TfrmSalInvoiceList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
    if cdsList.IsEmpty then Exit;
-   //if not ShopGlobal.GetChkRight('21300001',4) then Raise Exception.Create('你没有删除开票单的权限,请和管理员联系.');
+   //if not ShopGlobal.GetChkRight('100002314',4) then Raise Exception.Create('你没有删除发票的权限,请和管理员联系.');
    if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      //if not ShopGlobal.GetChkRight('21300001',5) then
-        Raise Exception.Create('你没有删除"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"发票单的权限!');
+      if not ShopGlobal.GetChkRight('100002314',4) then
+        Raise Exception.Create('你没有删除"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"发票的权限!');
     end;
 
-   if MessageBox(Handle,'确认删除当前选中的发票单？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+   if MessageBox(Handle,'确认删除当前选中的发票吗？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
    with TfrmSalInvoice.Create(self) do
       begin
         try
@@ -195,7 +195,7 @@ begin
           DeleteOrder;
           cdsList.Delete;
           if cdsList.IsEmpty then cdsDetail.Close;
-          MessageBox(Handle,'删除发票单成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
+          MessageBox(Handle,'删除发票成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
         finally
           free;
         end;
@@ -206,14 +206,14 @@ procedure TfrmSalInvoiceList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  //if not ShopGlobal.GetChkRight('21300001',3) then Raise Exception.Create('你没有修改收款单的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002314',3) then Raise Exception.Create('你没有修改发票的权限,请和管理员联系.');
   if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      //if not ShopGlobal.GetChkRight('21300001',5) then
-        Raise Exception.Create('你没有修改"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"开票的权限!');
+      if not ShopGlobal.GetChkRight('100002314',3) then
+        Raise Exception.Create('你没有修改"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"发票的权限!');
     end;
 
-  if cdsList.FieldByName('INVOICE_STATUS').AsString = '2' then Raise Exception.Create('此单已经作废,不能执行修改操作.');  
+  if cdsList.FieldByName('INVOICE_STATUS').AsString = '2' then Raise Exception.Create('此发票已经作废,不能执行修改操作.');
   with TfrmSalInvoice.Create(self) do
     begin
       try
@@ -229,12 +229,14 @@ end;
 procedure TfrmSalInvoiceList.actPrintExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
   Raise Exception.Create('此功能暂时没有开放.')
 end;
 
 procedure TfrmSalInvoiceList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
+  if not ShopGlobal.GetChkRight('100002314',7) then Raise Exception.Create('你没有导出发票的权限,请和管理员联系.');
   Raise Exception.Create('此功能暂时没有开放.')
 end;
 
@@ -270,10 +272,10 @@ var
 begin
   inherited;
   if cdsList.IsEmpty then Raise Exception.Create('请选择要作废的发票');
-  //if not ShopGlobal.GetChkRight('21300001',5) then Raise Exception.Create('你没有审核收款单的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002314',5) then Raise Exception.Create('你没有作废发票的权限,请和管理员联系.');
   if cdsList.FieldByName('INVOICE_STATUS').AsString='1' then
      begin
-       //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
+       //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能作废');
        //if cdsList.FieldByName('CREA_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前销售单执行弃审');
        if MessageBox(Handle,'确认作废当前发票？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end
@@ -344,7 +346,7 @@ end;
 
 procedure TfrmSalInvoiceList.ChangeButton;
 begin
-  if cdsList.Active and (cdsList.FieldByName('INVOICE_STATUS').AsString = '1') then actAudit.Caption := '作废' else actAudit.Caption := '有效';
+  if cdsList.Active and (cdsList.FieldByName('INVOICE_STATUS').AsString = '1') then actAudit.Caption := '作废' else actAudit.Caption := '升效';
 //  if rzPage.ActivePageIndex = 0 then
      begin
        actDelete.Enabled := rzPage.ActivePageIndex > 0;
@@ -392,12 +394,12 @@ begin
        if Column <> nil then Column.Visible := True;
      end;
    1:begin
-       strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST F where A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
+       strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
        Column := FindColumn('SetFlag');
        if Column <> nil then Column.Visible := True;
      end;
    2:begin
-       strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST F where A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
+       strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
        Column := FindColumn('SetFlag');
        if Column <> nil then Column.Visible := False;
      end;
@@ -409,7 +411,7 @@ begin
   ' from SAL_SALESORDER A left join ( '+
   ' select M.TENANT_ID,M.CLIENT_ID,M.INVD_ID,N.SALES_ID,H.USER_NAME as CREA_USER_TEXT,M.INVOICE_FLAG,M.INVOICE_NO,M.INVOICE_MNY,M.INVOICE_STATUS '+
   ' from SAL_INVOICE_INFO M inner join SAL_INVOICE_LIST N on M.TENANT_ID=N.TENANT_ID and M.INVD_ID=N.INVD_ID '+
-  ' left join VIW_USERS H on M.TENANT_ID=H.TENANT_ID and M.CREA_USER=H.USER_ID '+
+  ' left join VIW_USERS H on M.TENANT_ID=H.TENANT_ID and M.CREA_USER=H.USER_ID where M.INVOICE_STATUS=''1'' '+
   ' ) B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.CLIENT_ID=B.CLIENT_ID '+
   ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
   ' left join CA_SHOP_INFO E on A.TENANT_ID=E.TENANT_ID and A.SHOP_ID=E.SHOP_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';

@@ -30,6 +30,18 @@ type
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  TMktRequShare=class(TZFactory)
+  public
+    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集修改检测函数，返回值是True 测可以修改当前记录
+    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集删除检测函数，返回值是True 测可以删除当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
+    procedure InitClass; override;
+  end;
   TMktRequOrderGetPrior=class(TZFactory)
   public
     procedure InitClass;override;
@@ -108,25 +120,27 @@ begin
   inherited;
   Locked := false;
   SelectSQL.Text :=
-  'select A.TENANT_ID,A.REQU_ID,A.IORO_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,A.DEPT_ID,C.DEPT_NAME as DEPT_ID_TEXT,'+
-  'A.REQU_TYPE,A.GLIDE_NO,A.REQU_DATE,A.CLIENT_ID,D.CLIENT_NAME as CLIENT_ID_TEXT,A.REQU_USER,E.USER_NAME as REQU_USER_TEXT,'+
-  'A.CHK_DATE,A.CHK_USER,G.USER_NAME as CHK_USER_TEXT,A.REQU_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,F.USER_NAME as CREA_USER_TEXT '+
+  'select A.TENANT_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,A.REQU_ID,A.DEPT_ID,C.DEPT_NAME as DEPT_ID_TEXT,'+
+  'A.REQU_TYPE,A.GLIDE_NO,A.REQU_DATE,A.CLIENT_ID,D.CLIENT_NAME as CLIENT_ID_TEXT,E.USER_NAME as REQU_USER_TEXT,'+
+  'A.REQU_USER,A.CHK_DATE,A.CHK_USER,G.USER_NAME as CHK_USER_TEXT,A.KPI_MNY,A.BUDG_MNY,A.AGIO_MNY,'+
+  'A.OTHR_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,F.USER_NAME as CREA_USER_TEXT '+
   ' from MKT_REQUORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
   ' left join CA_DEPT_INFO C on A.TENANT_ID=C.TENANT_ID and A.DEPT_ID=C.DEPT_ID '+
   ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
   ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.REQU_USER=E.USER_ID '+
   ' left join VIW_USERS F on A.TENANT_ID=F.TENANT_ID and A.CREA_USER=F.USER_ID '+
-  ' left join VIW_USERS G on A.TENANT_ID=G.TENANT_ID and A.CHK_USER=G.USER_ID '+
+  ' left join VIW_USERS G on A.TENANT_ID=G.TENANT_ID and A.CHK_USER=G.USER_ID  '+
   ' where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID';
   IsSQLUpdate := True;
-  Str := 'insert into MKT_REQUORDER(TENANT_ID,SHOP_ID,REQU_ID,IORO_ID,DEPT_ID,REQU_TYPE,GLIDE_NO,REQU_DATE,CLIENT_ID,REQU_USER,CHK_DATE,CHK_USER,REQU_MNY,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-    + 'VALUES(:TENANT_ID,:SHOP_ID,:REQU_ID,''#'',:DEPT_ID,:REQU_TYPE,:GLIDE_NO,:REQU_DATE,:CLIENT_ID,:REQU_USER,:CHK_DATE,:CHK_USER,:REQU_MNY,:REMARK,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into MKT_REQUORDER(TENANT_ID,SHOP_ID,REQU_ID,DEPT_ID,REQU_TYPE,GLIDE_NO,REQU_DATE,CLIENT_ID,REQU_USER,CHK_DATE,CHK_USER,KPI_MNY,BUDG_MNY,AGIO_MNY,OTHR_MNY,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:REQU_ID,:DEPT_ID,:REQU_TYPE,:GLIDE_NO,:REQU_DATE,:CLIENT_ID,:REQU_USER,:CHK_DATE,:CHK_USER,:KPI_MNY,:BUDG_MNY,:AGIO_MNY,:OTHR_MNY,:REMARK,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
-  Str := 'update MKT_REQUORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,REQU_ID=:REQU_ID,DEPT_ID=:DEPT_ID,REQU_TYPE=:REQU_TYPE,GLIDE_NO=:GLIDE_NO,REQU_DATE=:REQU_DATE,'+
-      'CLIENT_ID=:CLIENT_ID,REQU_USER=:REQU_USER,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,REQU_MNY=:REQU_MNY,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,'
-    + 'COMM=' + GetCommStr(iDbType) + ','
-    + 'TIME_STAMP='+GetTimeStamp(iDbType)+' '
-    + 'where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID ';
+  Str := 'update MKT_REQUORDER set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,REQU_ID=:REQU_ID,DEPT_ID=:DEPT_ID,REQU_TYPE=:REQU_TYPE,GLIDE_NO=:GLIDE_NO,'+
+         'REQU_DATE=:REQU_DATE,CLIENT_ID=:CLIENT_ID,REQU_USER=:REQU_USER,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,KPI_MNY=:KPI_MNY,BUDG_MNY=:BUDG_MNY,'+
+         'AGIO_MNY=:AGIO_MNY,OTHR_MNY=:OTHR_MNY,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,'+
+         'COMM=' + GetCommStr(iDbType) + ','+
+         'TIME_STAMP='+GetTimeStamp(iDbType)+' '+
+         'where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID ';
   UpdateSQL.Text := Str;
   Str := ' delete from MKT_REQUORDER where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID ';
   DeleteSQL.Text := Str;
@@ -147,7 +161,7 @@ begin
 
   AGlobal.ExecSQL(
      ParseSQL(iDbType,
-        'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)-:OLD_REQU_MNY,2),'+
+        'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)-:OLD_KPI_MNY,2),BUDG_WDW=round(isnull(BUDG_WDW,0)-:OLD_BUDG_MNY,2),'+
         'COMM=' + GetCommStr(iDbType) +
         ',TIME_STAMP='+GetTimeStamp(iDbType)+
         ' where PLAN_ID=:OLD_PLAN_ID and KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID'),Self);
@@ -158,13 +172,13 @@ var Str:String;
     rs:TZQuery;
 begin
   Result := True;
-  Str := 'insert into MKT_REQUDATA(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,PLAN_ID,KPI_ID,KPI_YEAR,REQU_MNY,REMARK) '+
-         ' VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:PLAN_ID,:KPI_ID,:KPI_YEAR,:REQU_MNY,:REMARK) ';
+  Str := 'insert into MKT_REQUDATA(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,PLAN_ID,KPI_ID,KPI_YEAR,KPI_MNY,BUDG_MNY,AGIO_MNY,OTHR_MNY,REMARK) '+
+         ' VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:PLAN_ID,:KPI_ID,:KPI_YEAR,:KPI_MNY,:BUDG_MNY,:AGIO_MNY,:OTHR_MNY,:REMARK) ';
   AGlobal.ExecSQL(Str,Self);
   
   AGlobal.ExecSQL(
      ParseSQL(iDbType,
-       'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)+ :REQU_MNY,2),'+
+       'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)+ :KPI_MNY,2),BUDG_WDW=round(isnull(BUDG_WDW,0)+ :BUDG_MNY,2),'+
        'COMM=' + GetCommStr(iDbType) +
        ',TIME_STAMP='+GetTimeStamp(iDbType)+
        ' where PLAN_ID=:PLAN_ID and KPI_ID=:KPI_ID and TENANT_ID=:TENANT_ID'),Self);
@@ -198,10 +212,11 @@ var
 begin
   inherited;
   SelectSQL.Text := ParseSQL(iDbType,
-     'select A.TENANT_ID,A.SEQNO,A.REQU_ID,A.PLAN_ID,A.SHOP_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.KPI_YEAR,C.KPI_MNY,C.WDW_MNY,A.REQU_MNY,(isnull(C.KPI_MNY,0)-isnull(C.WDW_MNY,0)) as BALA_MNY,A.REMARK '+
-     ' from MKT_REQUDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
+     ' select A.TENANT_ID,A.SHOP_ID,A.SEQNO,A.REQU_ID,A.PLAN_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.KPI_YEAR,'+
+     '(ifnull(C.KPI_MNY,0)-ifnull(C.WDW_MNY,0)) as KPI_MNY,(ifnull(C.BUDG_KPI,0)-ifnull(C.BUDG_WDW,0)) as BUDG_MNY,'+
+     'A.AGIO_MNY,A.OTHR_MNY,A.REMARK from MKT_REQUDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
      ' left join MKT_KPI_RESULT C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID and A.KPI_YEAR=C.KPI_YEAR '+
-     ' where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID order by A.SEQNO');
+     ' where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID order by A.SEQNO ');
   IsSQLUpdate := True;
 
 end;
@@ -308,9 +323,62 @@ begin
   end;
 end;
 
+{ TMktRequShare }
+
+function TMktRequShare.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
+function TMktRequShare.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
+function TMktRequShare.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
+function TMktRequShare.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
+function TMktRequShare.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+
+end;
+
+procedure TMktRequShare.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  //Locked := false;
+  SelectSQL.Text :=
+  'select A.TENANT_ID,A.SHOP_ID,A.SEQNO,A.REQU_ID,A.GODS_ID,A.UNIT_ID,A.AMOUNT,A.CALC_AMOUNT,'+
+  'A.KPI_MNY,A.BUDG_MNY,A.AGIO_MNY,A.OTHR_MNY,A.REMARK,B.GODS_NAME,B.GODS_CODE,''#'' as BATCH_NO,'+
+  '''#'' as LOCUS_NO,''#'' as BOM_ID,''#'' as PROPERTY_01,''#'' as PROPERTY_02,0 as IS_PRESENT '+
+  ' from MKT_REQUSHARE A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID  '+
+  ' where A.TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID ';
+
+  IsSQLUpdate := True;
+  Str := 'insert into MKT_REQUSHARE(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,GODS_ID,UNIT_ID,AMOUNT,CALC_AMOUNT,KPI_MNY,BUDG_MNY,AGIO_MNY,OTHR_MNY,REMARK) '
+    + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:GODS_ID,:UNIT_ID,:AMOUNT,:CALC_AMOUNT,:KPI_MNY,:BUDG_MNY,:AGIO_MNY,:OTHR_MNY,:REMARK)';
+  InsertSQL.Text := Str;
+  Str := 'update MKT_REQUSHARE set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SEQNO=:SEQNO,REQU_ID=:REQU_ID,GODS_ID=:GODS_ID,UNIT_ID=:UNIT_ID,'+
+         'AMOUNT=:AMOUNT,CALC_AMOUNT=:CALC_AMOUNT,KPI_MNY=:KPI_MNY,BUDG_MNY=:BUDG_MNY,AGIO_MNY=:AGIO_MNY,OTHR_MNY=:OTHR_MNY,REMARK=:REMARK '+
+         'where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO ';
+  UpdateSQL.Text := Str;
+  Str := ' delete from MKT_REQUSHARE where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO ';
+  DeleteSQL.Text := Str;
+end;
+
 initialization
   RegisterClass(TMktRequOrder);
   RegisterClass(TMktRequData);
+  RegisterClass(TMktRequShare);
   RegisterClass(TMktRequOrderGetPrior);
   RegisterClass(TMktRequOrderGetNext);
   RegisterClass(TMktRequOrderAudit);
@@ -318,9 +386,11 @@ initialization
 finalization
   UnRegisterClass(TMktRequOrder);
   UnRegisterClass(TMktRequData);
+  UnRegisterClass(TMktRequShare);
   UnRegisterClass(TMktRequOrderGetPrior);
   UnRegisterClass(TMktRequOrderGetNext);
   UnRegisterClass(TMktRequOrderAudit);
   UnRegisterClass(TMktRequOrderUnAudit);
 end.
- 
+{
+}

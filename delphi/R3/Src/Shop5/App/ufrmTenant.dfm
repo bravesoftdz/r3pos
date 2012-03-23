@@ -1,7 +1,7 @@
 inherited frmTenant: TfrmTenant
   Left = 336
   Top = 201
-  ActiveControl = cxedtLOGIN_NAME
+  ActiveControl = edtLOGIN_NAME
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = #20225#19994#27880#20876
@@ -17,9 +17,9 @@ inherited frmTenant: TfrmTenant
     Top = 0
     Width = 476
     Height = 326
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     FixedDimension = 18
     object TabSheet1: TRzTabSheet

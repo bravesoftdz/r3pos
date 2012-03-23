@@ -1,7 +1,7 @@
 inherited frmPriceLevelSet: TfrmPriceLevelSet
   Left = 437
   Top = 220
-  Caption = #21830#21697#20215#26684#26723#20301#23450#20041
+  Caption = #22810#26723#23450#20215
   ClientHeight = 328
   ClientWidth = 343
   Color = clWhite
@@ -20,7 +20,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #20419#38144#26723#20301#35774#32622
+        Caption = #20215#26684#26723#20301#23450#20041
         inherited RzPanel2: TRzPanel
           Width = 329
           Height = 208
@@ -69,7 +69,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
                 ReadOnly = True
                 Title.Caption = #26723#20301
                 Title.Color = clWhite
-                Width = 31
+                Width = 55
               end
               item
                 EditButtons = <>
@@ -78,7 +78,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
                 Title.Caption = #26723#20301#36798#26631#37327
                 Title.Color = clWhite
                 Title.TitleButton = True
-                Width = 118
+                Width = 131
                 OnUpdateData = DBGridEh1Columns1UpdateData
               end
               item
@@ -88,7 +88,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
                 Title.Caption = #20248#24800#20215
                 Title.Color = clWhite
                 Title.TitleButton = True
-                Width = 115
+                Width = 102
                 OnUpdateData = DBGridEh1Columns2UpdateData
               end>
           end
@@ -102,7 +102,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
       BorderColor = clWhite
       Color = clWhite
       object btnSave: TRzBitBtn
-        Left = 128
+        Left = 104
         Top = 13
         Width = 67
         Height = 26
@@ -120,7 +120,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 0
+        TabOrder = 1
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnSaveClick
@@ -128,7 +128,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
         Spacing = 5
       end
       object btnExit: TRzBitBtn
-        Left = 212
+        Left = 188
         Top = 13
         Width = 67
         Height = 26
@@ -146,10 +146,64 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 1
+        TabOrder = 3
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = btnExitClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object btnAppend: TRzBitBtn
+        Left = 10
+        Top = 13
+        Width = 67
+        Height = 26
+        Caption = #26032#22686'(&A)'
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 0
+        TextStyle = tsRaised
+        ThemeAware = False
+        Visible = False
+        OnClick = btnAppendClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
+      object btnDelete: TRzBitBtn
+        Left = 93
+        Top = 13
+        Width = 67
+        Height = 26
+        Caption = #21024#38500'(&D)'
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 2
+        TextStyle = tsRaised
+        ThemeAware = False
+        Visible = False
+        OnClick = btnDeleteClick
         NumGlyphs = 2
         Spacing = 5
       end
@@ -167,14 +221,14 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
     TabOrder = 1
     object lblTypeName: TLabel
       Left = 13
-      Top = 16
+      Top = 8
       Width = 48
       Height = 12
       Caption = #20419#38144#31867#22411
     end
     object RzLabel23: TRzLabel
       Left = 199
-      Top = 15
+      Top = 7
       Width = 6
       Height = 12
       Alignment = taRightJustify
@@ -189,14 +243,14 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
     end
     object edtLVL_TYPE: TcxComboBox
       Left = 67
-      Top = 11
+      Top = 3
       Width = 129
       Height = 20
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Properties.DropDownListStyle = lsFixedList
       Properties.Items.Strings = (
-        #25353#36141#20080#37329#39069
-        #25353#36141#20080#25968#37327)
+        #25353#38144#21806#37329#39069
+        #25353#38144#21806#25968#37327)
       Properties.OnChange = edtLVL_TYPEPropertiesChange
       Properties.OnEditValueChanged = edtLVL_TYPEPropertiesEditValueChanged
       TabOrder = 0

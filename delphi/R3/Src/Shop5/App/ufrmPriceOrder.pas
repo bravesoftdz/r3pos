@@ -244,7 +244,7 @@ begin
   edtTable.FieldbyName('BATCH_NO').asString := '#';
   edtTable.FieldbyName('UNIT_ID').asString := UNIT_ID;
   edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
-  edtTable.FieldbyName('USING_LEVEL').asString := '1';
+  edtTable.FieldbyName('USING_LEVEL').asString := '2';
 end;
 
 procedure TfrmPriceOrder.NewOrder;
@@ -560,6 +560,14 @@ procedure TfrmPriceOrder.Btn_BatchPriceClick(Sender: TObject);
 begin
   inherited;
   TfrmBatchPmdPrice.BatchPrice(edtTable);
+  edtTable.First;
+    while not edtTable.Eof do
+    begin
+      edtTable.Edit;
+      edtTable.FieldbyName('USING_LEVEL').asString := '0';
+      edtTable.Post;
+      edtTable.Next;
+    end;
 end;
 
 procedure TfrmPriceOrder.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
@@ -803,8 +811,11 @@ begin
   inherited;
   if DBGridEh1.ReadOnly then Exit;
   //showMessage('11111') ;
-  if (dbState <> dsBrowse) and (edtTable.FieldbyName('USING_LEVEL').AsString ='1') then
+  if (dbState <> dsBrowse){ and (edtTable.FieldbyName('USING_LEVEL').AsString ='1')} then
   begin
+      edtTable.Edit;
+      edtTable.FieldbyName('USING_LEVEL').AsString :='1';
+      edtTable.Post;
       //showMessage('22222') ;
      varAobj := TRecord_.Create;
      varAobj.ReadFromDataSet(edtTable);

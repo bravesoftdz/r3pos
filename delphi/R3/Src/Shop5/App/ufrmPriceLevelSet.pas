@@ -15,6 +15,8 @@ type
     btnSave: TRzBitBtn;
     btnExit: TRzBitBtn;
     dsPriceLv: TDataSource;
+    btnAppend: TRzBitBtn;
+    btnDelete: TRzBitBtn;
     Pm: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
@@ -219,6 +221,12 @@ begin
     cdsPriceLv.EnableControls;
   end;
   btnSave.Enabled:=True;
+  //如果删除后没有记录，删除按钮不能操作
+  if cdsPriceLv.IsEmpty then
+  begin
+    btnDelete.Enabled:=False;
+    Exit;
+  end;
 end;
 
 procedure TfrmPriceLevelSet.btnSaveClick(Sender: TObject);
@@ -643,9 +651,9 @@ begin
   inherited;
   // 0 按金额
   if edtLVL_TYPE.ItemIndex=0 then
-     DBGridEh1.Columns[1].Title.caption :='购买金额'
+     DBGridEh1.Columns[1].Title.caption :='销售金额'
   else
-     DBGridEh1.Columns[1].Title.caption :='购买数量';
+     DBGridEh1.Columns[1].Title.caption :='销售量';
 end;
 
 end.

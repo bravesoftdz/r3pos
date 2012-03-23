@@ -89,7 +89,7 @@ type
     class function coNewRegister(Owner:TForm):boolean;
     function Login_F(NetWork:boolean=true):Boolean;
     procedure Save;
-    procedure Open(id:integer);
+    procedure Open(id:integer;OpenFactor:TdbFactory=nil);
   end;
 
 implementation
@@ -197,6 +197,16 @@ begin
 
   CdsTable.Post;
   Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
+
+  if (Global.LocalFactory<>uGlobal.Factor) and uGlobal.Factor.Connected then  
+     begin
+       Open(Tenant.TENANT_ID,uGlobal.Factor);
+       cdsTable.Edit;
+       Obj.WriteToDataSet(CdsTable);
+
+       CdsTable.Post;
+       uGlobal.Factor.UpdateBatch(CdsTable,'TTenant',nil);
+     end;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Obj.FieldByName('TENANT_NAME').AsString;
   TENANT_ID := Tenant.TENANT_ID;
@@ -235,48 +245,63 @@ begin
   end;
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
-// 改成允许注册多个企业
-//  if (TENANT_ID>0) and (TENANT_ID <> Tenant.TENANT_ID) then
-//     begin
-//       MessageBox(Handle,'当前注册的企业跟系统内现有企业不相符，请输入原企业账号及密码进行注册。','友情提示...',MB_OK+MB_ICONINFORMATION);
-//       Exit;
-//     end;
   Open(Tenant.TENANT_ID);
-//兄弟不能有这句，晕呼  zhangsenrong 修改
-//  if CdsTable.Locate('TENANT_ID',Tenant.TENANT_ID,[]) then
-    begin
-      CdsTable.Edit;
-      CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
-      CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
-      CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
-      CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
-      CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
-      CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
-      CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
-      CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
-      CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
-      CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
-      CdsTable.FieldByName('MSN').AsString := Tenant.MSN;
-      CdsTable.FieldByName('QQ').AsString := Tenant.QQ;
-      CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
-      CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
-      CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
-      CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
-      CdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(cxedtPasswrd.Text),ENC_KEY);
-      CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
-      CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
-      CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
-      CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
-      CdsTable.Post;
-      Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
-    end;
+  CdsTable.Edit;
+  CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+  CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
+  CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
+  CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
+  CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
+  CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
+  CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
+  CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
+  CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
+  CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
+  CdsTable.FieldByName('MSN').AsString := Tenant.MSN;
+  CdsTable.FieldByName('QQ').AsString := Tenant.QQ;
+  CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
+  CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
+  CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
+  CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
+  CdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(cxedtPasswrd.Text),ENC_KEY);
+  CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
+  CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
+  CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+  CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
+  CdsTable.Post;
+  Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
+  if (Global.LocalFactory<>uGlobal.Factor) and uGlobal.Factor.Connected then
+     begin
+        Open(Tenant.TENANT_ID,uGlobal.Factor);
+        CdsTable.Edit;
+        CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+        CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
+        CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
+        CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
+        CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
+        CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
+        CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
+        CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
+        CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
+        CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
+        CdsTable.FieldByName('MSN').AsString := Tenant.MSN;
+        CdsTable.FieldByName('QQ').AsString := Tenant.QQ;
+        CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
+        CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
+        CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
+        CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
+        CdsTable.FieldByName('PASSWRD').AsString := EncStr(Trim(cxedtPasswrd.Text),ENC_KEY);
+        CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
+        CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
+        CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+        CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
+        CdsTable.Post;
+        Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
+     end;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;
-//  if TENANT_ID=0 then
-     begin
-       TENANT_ID := Tenant.TENANT_ID;
-       SaveParams;
-     end;
+  TENANT_ID := Tenant.TENANT_ID;
+  SaveParams;
   ModalResult := mrok;
 end;
 
@@ -346,13 +371,16 @@ begin
   ModalResult := mrok;
 end;
 
-procedure TfrmTenant.Open(id:integer);
+procedure TfrmTenant.Open(id:integer;OpenFactor:TdbFactory=nil);
 var Params:TftParamList;
 begin
   Params := TftParamList.Create;
   try
      Params.ParamByName('TENANT_ID').AsInteger := id;
-     Global.LocalFactory.Open(CdsTable,'TTenant',Params);
+     if OpenFactor=nil then
+        Global.LocalFactory.Open(CdsTable,'TTenant',Params)
+     else
+        uGlobal.Factor.Open(CdsTable,'TTenant',Params);
   finally
     Params.Free;
   end;
@@ -553,6 +581,39 @@ begin
       CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
       CdsTable.Post;
       Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
+      if (Global.LocalFactory<>uGlobal.Factor) and uGlobal.Factor.Connected then
+         begin
+            Open(Tenant.TENANT_ID,uGlobal.Factor);
+            CdsTable.Edit;
+            CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+            CdsTable.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
+            CdsTable.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
+            CdsTable.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
+            CdsTable.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
+            CdsTable.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
+            CdsTable.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
+            CdsTable.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
+            CdsTable.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
+            CdsTable.FieldByName('FAXES').AsString := Tenant.FAXES;
+            CdsTable.FieldByName('MSN').AsString := Tenant.MSN;
+            CdsTable.FieldByName('QQ').AsString := Tenant.QQ;
+            CdsTable.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
+            CdsTable.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
+            CdsTable.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
+            CdsTable.FieldByName('REMARK').AsString := Tenant.REMARK;
+            CdsTable.FieldByName('PASSWRD').AsString := EncStr(Tenant.PASSWRD,ENC_KEY);
+            CdsTable.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
+            CdsTable.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
+            CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+            if fnString.TrimRight(Login.SHOP_ID,4)='0001' then
+               begin
+                 CdsTable.FieldByName('XSM_CODE').AsString := id;
+                 CdsTable.FieldByName('XSM_PSWD').AsString := EncStr(xsm_password,ENC_KEY);
+               end;
+            CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
+            CdsTable.Post;
+            uGlobal.Factor.UpdateBatch(CdsTable,'TTenant',nil);
+         end;
       Global.TENANT_ID := Tenant.TENANT_ID;
       Global.TENANT_NAME := Tenant.TENANT_NAME;
       Global.SHORT_TENANT_NAME := Tenant.SHORT_TENANT_NAME;

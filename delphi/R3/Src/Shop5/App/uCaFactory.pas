@@ -113,6 +113,8 @@ type
     FRspFlag: integer;
     FDownModule: boolean;
     FConnected: boolean;
+    FresVersion: string;
+    FresDesktop: string;
     procedure SetSSL(const Value: string);
     procedure SetURL(const Value: string);
     procedure Setpubpwd(const Value: string);
@@ -127,6 +129,8 @@ type
     procedure SetDownModule(const Value: boolean);
     function GetRspTimeStamp: int64;
     function GetTimeStamp: int64;
+    procedure SetresDesktop(const Value: string);
+    procedure SetresVersion(const Value: string);
   protected
     RspHandle:THandle;
     RspcoLogin:TRspFunction;
@@ -196,7 +200,6 @@ type
     //产品服务
     function CheckDebugSync:boolean;
     function CheckUpgrade(TENANT_ID,PROD_ID,CurVeraion:string):TCaUpgrade;
-
     //供应链服务
     function CreateServiceLine(var ServiceLine:TServiceLine):boolean;
     function queryServiceLines(tid:integer;List:TList):boolean;
@@ -246,6 +249,9 @@ type
     property RspFlag:integer read FRspFlag write SetRspFlag;
     //是否下载菜单
     property DownModule:boolean read FDownModule write SetDownModule;
+    //最新桌面版本号
+    property resVersion:string read FresVersion write SetresVersion;
+    property resDesktop:string read FresDesktop write SetresDesktop;
   end;
 var CaFactory:TCaFactory;
 implementation
@@ -570,9 +576,10 @@ try
                  srvrId := f.readString('db','srvrId','');
                  result.DB_ID := StrtoInt(GetNodeValue(caTenantLoginResp,'dbId'));
                  defSrvrId := GetNodeValue(caTenantLoginResp,'srvrId');
-                 if flag=3 then
-                 result.SHOP_ID := GetNodeValue(caTenantLoginResp,'shopId');
+                 if flag=3 then result.SHOP_ID := GetNodeValue(caTenantLoginResp,'shopId');
                  if result.SHOP_ID='' then result.SHOP_ID := inttostr(result.TENANT_ID)+'0001';
+                 resVersion := GetNodeValue(caTenantLoginResp,'resVersion');
+                 resDesktop := GetNodeValue(caTenantLoginResp,'resDesktop');
                  f.WriteString('db','dbid',inttostr(result.DB_ID));
                  if StrtointDef(GetNodeValue(caTenantLoginResp,'databasePort'),0)=0 then
                     hsname := GetNodeValue(caTenantLoginResp,'dbHostName')
@@ -3519,6 +3526,47 @@ try
       rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'seqNo'));
       rs.Post;
       Global.LocalFactory.UpdateBatch(rs,'TShop',Params);
+      if (Global.LocalFactory<>uGlobal.Factor) and Factor.Connected then
+         begin
+            uGlobal.Factor.Open(rs,'TShop',Params);
+            if not rs.IsEmpty then
+            begin
+              if rs.FieldByName('SHOP_ID').asString=shopId then
+              begin
+                rs.Edit;
+                rs.FieldByName('XSM_CODE').asString := xsmCode;
+                rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+                rs.Post;
+                uGlobal.Factor.UpdateBatch(rs,'TShop',Params);
+              end;
+            end
+            else
+            begin
+              rs.Edit;
+              rs.FieldByName('TENANT_ID').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'tenantId'));
+              rs.FieldByName('SHOP_ID').asString := GetNodeValue(caShopInfo,'shopId');
+              rs.FieldByName('SHOP_NAME').asString := GetNodeValue(caShopInfo,'shopName');
+              rs.FieldByName('SHOP_SPELL').asString := GetNodeValue(caShopInfo,'shopSpell');
+              rs.FieldByName('LICENSE_CODE').asString := GetNodeValue(caShopInfo,'licenseCode');
+              rs.FieldByName('LINKMAN').asString := GetNodeValue(caShopInfo,'linkman');
+              rs.FieldByName('TELEPHONE').asString := GetNodeValue(caShopInfo,'telephone');
+              rs.FieldByName('FAXES').asString := GetNodeValue(caShopInfo,'faxes');
+              rs.FieldByName('ADDRESS').asString := GetNodeValue(caShopInfo,'address');
+              rs.FieldByName('POSTALCODE').asString := GetNodeValue(caShopInfo,'postalcode');
+              if rs.FieldByName('SHOP_ID').asString=shopId then
+                 begin
+                   rs.FieldByName('XSM_CODE').asString := xsmCode;
+                   rs.FieldByName('XSM_PSWD').asString := EncStr(xsmPswd,ENC_KEY);
+                 end
+              else
+                 rs.FieldByName('XSM_CODE').asString := GetNodeValue(caShopInfo,'xsmCode');
+              rs.FieldByName('REGION_ID').asString := GetNodeValue(caShopInfo,'regionId');
+              rs.FieldByName('SHOP_TYPE').asString := GetNodeValue(caShopInfo,'shopType');
+              rs.FieldByName('SEQ_NO').AsInteger := StrtoInt(GetNodeValue(caShopInfo,'seqNo'));
+              rs.Post;
+              uGlobal.Factor.UpdateBatch(rs,'TShop',Params);
+         end;
+      end;
       Global.SHOP_ID := rs.FieldByName('SHOP_ID').asString;
       Global.SHOP_NAME := rs.FieldByName('SHOP_NAME').asString;
     end;
@@ -4045,6 +4093,16 @@ begin
     db.Free;
     r3.Free;
   end;
+end;
+
+procedure TCaFactory.SetresDesktop(const Value: string);
+begin
+  FresDesktop := Value;
+end;
+
+procedure TCaFactory.SetresVersion(const Value: string);
+begin
+  FresVersion := Value;
 end;
 
 { rsp }

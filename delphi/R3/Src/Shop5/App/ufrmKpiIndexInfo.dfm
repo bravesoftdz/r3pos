@@ -1,9 +1,10 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 283
-  Top = 165
+  Left = 307
+  Top = 166
   Caption = #32771#26680#25351#26631
   ClientHeight = 450
   ClientWidth = 692
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -18,7 +19,10 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 113
       Width = 682
       Height = 292
+      ActivePage = TabSheet4
+      TabIndex = 3
       OnChange = RzPageChange
+      OnChanging = RzPageChanging
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
@@ -388,6 +392,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           ParentFont = False
           PopupMenu = KpiPm
           TabOrder = 0
+          OnKeyPress = KpiGridKeyPress
           GridLineColor = clSilver
           ActiveCellShow = False
           ActiveCellFont.Charset = DEFAULT_CHARSET
@@ -411,6 +416,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           OnGetAlignment = KpiGridGetAlignment
           OnClickCell = KpiGridClickCell
           OnCanEditCell = KpiGridCanEditCell
+          OnCellsChanged = KpiGridCellsChanged
           DragDropSettings.OleAcceptFiles = True
           DragDropSettings.OleAcceptText = True
           SortSettings.AutoColumnMerge = False
@@ -826,6 +832,34 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         Properties.MaxLength = 100
         TabOrder = 5
       end
+      object Button1: TButton
+        Left = 616
+        Top = 48
+        Width = 75
+        Height = 25
+        Caption = 'Button1'
+        TabOrder = 6
+      end
+      object Row: TcxSpinEdit
+        Left = 506
+        Top = 25
+        Width = 50
+        Height = 20
+        Properties.MaxValue = 100.000000000000000000
+        TabOrder = 7
+        Value = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object Col: TcxSpinEdit
+        Left = 562
+        Top = 25
+        Width = 50
+        Height = 20
+        Properties.MaxValue = 100.000000000000000000
+        TabOrder = 8
+        Value = 2
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
     end
   end
   inherited mmMenu: TMainMenu
@@ -922,10 +956,10 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   object KpiPm: TPopupMenu
     OnPopup = KpiPmPopup
     Left = 362
-    Top = 168
-    object ItemSeqNo: TMenuItem
-      Caption = #32534#36753#36798#26631#26723#20301
-      OnClick = ItemSeqNoClick
+    Top = 176
+    object AddSeqNo: TMenuItem
+      Caption = #28155#21152#36798#26631#26723#20301
+      OnClick = AddSeqNoClick
     end
     object ItemRatio: TMenuItem
       Caption = #32534#36753#36798#26631#31995#25968

@@ -8,7 +8,7 @@ uses
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, RzLabel,
   cxMaskEdit, cxDropDownEdit, Grids, DBGridEh, DB, ZAbstractRODataset, ZBase,
   ZAbstractDataset, ZDataset, cxCalendar, cxRadioGroup, cxCheckBox, DateUtils,
-  cxMemo, BaseGrid, AdvGrid, Buttons, DBGrids;
+  cxMemo, BaseGrid, AdvGrid, Buttons, DBGrids, cxSpinEdit;
 
 const
   WM_INIT_RECORD=WM_USER+4;
@@ -18,7 +18,21 @@ type
     BeginDate:Integer;
     EndDate:Integer;
   end;
-  
+  //档次达标系数
+  TKpiRatio=record
+    Index:integer;
+    ColType:integer;  //列类型(前面3列:0;达标量:1;达标系数:2;)
+    SEQNO_ID:string;  //档次ID
+    TIME_ID:string;   //时段ID
+    GODS_ID:string;   //商品ID
+  end;
+  pKpiRow=^TKpiRow;
+  TKpiRow=record
+    RowState:integer;   //0:新插入; 1:原存在;
+    TimesCount:integer; //时段个数
+    LEVEL_ID:string;
+    Ratio:array [0..255] of TKpiRatio;
+  end;
 type
   TfrmKpiIndexInfo = class(TframeDialogForm)
     Btn_Save: TRzBitBtn;
@@ -70,10 +84,13 @@ type
     RzLabel5: TRzLabel;
     edtREMARK: TcxMemo;
     KpiPm: TPopupMenu;
-    ItemRatio: TMenuItem;
+    ItemRatio: TMenuItem;    
     CdsKpiRatio: TZQuery;
     CdsKpiSeqNo: TZQuery;
-    ItemSeqNo: TMenuItem;
+    AddSeqNo: TMenuItem;
+    Button1: TButton;
+    Row: TcxSpinEdit;
+    Col: TcxSpinEdit;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -102,17 +119,24 @@ type
     procedure N2Click(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure KpiPmPopup(Sender: TObject);
-    procedure RzPageChange(Sender: TObject);
     procedure ItemRatioClick(Sender: TObject);
-    procedure ItemSeqNoClick(Sender: TObject);
+    procedure RzPageChange(Sender: TObject);
     procedure KpiGridGetAlignment(Sender: TObject; ARow, ACol: Integer; var HAlign: TAlignment; var VAlign: TVAlignment);
     procedure KpiGridCanEditCell(Sender: TObject; ARow, ACol: Integer; var CanEdit: Boolean);
     procedure KpiGridClickCell(Sender: TObject; ARow, ACol: Integer);
+    procedure AddSeqNoClick(Sender: TObject);
+    procedure RzPageChanging(Sender: TObject; NewIndex: Integer; var AllowChange: Boolean);
+    procedure KpiGridCellsChanged(Sender: TObject; R: TRect);
+    procedure KpiGridKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
-    FRowIdx: integer; //当前行索引
-    FColIdx: integer; //当前列索引
-    FLevelGodsList: TZQuery;  //1个等级的商品List数据集
-    FKpiData: TZQuery;  //考核内容数据集
+    pBaseRow:pKpiRow;  //初始化标题时
+    FChangeState: Boolean;  //变化状态
+    FListCount: Integer;    //Draw的行数
+    FRowIdx: integer;   //当前行索引
+    FColIdx: integer;   //当前列索引
+    FKpiGridList: TList;  //画表格(保存时段、档次ID)[RowIdx=KpiGird.Rows]
+
     Saved,DisplayPer:Boolean;
     KpiAgioFront,KpiAgioBack:String;
     Changed:Boolean;
@@ -126,18 +150,14 @@ type
     procedure OpenDialogGoods;
     procedure AddFromDialog(AObj:TRecord_);
     procedure FocusNextColumn;
-    function  GetGodsRows(GodsID: string): integer;
     //考核指标初始化
-    procedure CreateKpiData;    //创建数据集
     procedure InitKpiGrid;      //初始化表头
     procedure InitKpiGridData;  //初始化数据
-    function  SaveKpiGridData: Boolean; //从Grid保存数据到数据集
-    function  GetKpiLevel_ID: string;   //当前所选行等级Level_ID
-    function  GetKpiGods_ID: string;    //当前所选行Gods_ID
-    function  GetKpiTimes_ID: string;   //当前所选列时段Times_ID
-    function  GetSeqNo_ID: string;      //当前所选行SeqNo_ID
-    function  GetRatio_ID: string;      //当前所选行Ratio_ID
-    procedure DrawKpiGridData;    //画表格
+    procedure DrawKpiGridData;  //画表格
+    function WriteRowKpiGridToDataSet(pRow: pKpiRow; GridRow: integer):Boolean; //从Grid保存一行数据到
+    function SaveKpiGridData:Boolean;     //从Grid保存数据到数据集
+    function GetKpiLevel_ID(RowIdx: integer=-1):string;   //当前所选行等级Level_ID
+    function GetKpiTimes_ID(ColIdx: integer=-1):string;   //当前所选列时段Times_ID
   public
     RowID:integer;
     Aobj:TRecord_;
@@ -152,11 +172,6 @@ type
     class function AddDialog(Owner:TForm;var _AObj:TRecord_):boolean;
     class function EditDialog(Owner:TForm;id:string;var _AObj:TRecord_):boolean;
     class function ShowDialog(Owner:TForm;id:string):boolean;
-    property KpiLevel_ID: string read GetKpiLevel_ID;  //当前所选行等级Level_ID
-    property KpiTimes_ID: string read GetKpiTimes_ID;  //当前所选列时段Times_ID
-    property KpiGods_ID: string read GetKpiGods_ID;    //当前所选行Gods_ID
-    property KpiSeqNo_ID: string read GetSeqNo_ID;     //当前所选行SeqNo_ID
-    property KpiRatio_ID: string read GetRatio_ID;     //当前所选行Ratio_ID
   end;
 
 
@@ -164,7 +179,7 @@ implementation
 
 uses
   uShopUtil,uDsUtil,ufrmBasic,Math,uGlobal,uFnUtil,uShopGlobal,
-  uframeSelectGoods,ufrmKpiTimes,ufrmKpiSeqNoSet,ufrmKpiRatioSet;
+  uframeSelectGoods,ufrmKpiTimes,ufrmKpiRatioSet;
   
 {$R *.dfm}
 
@@ -359,9 +374,7 @@ end;
 procedure TfrmKpiIndexInfo.FormCreate(Sender: TObject);
 begin
   inherited;
-  //1个等级的商品List数据集
-  FLevelGodsList:=TZQuery.Create(self); 
-  FKpiData:=TZQuery.Create(self);   //考核内容数据集
+  FKpiGridList:=TList.Create;  //画表格(保存时段、档次ID)
   Aobj := TRecord_.Create;
   RowID := 0;
   CurYear := StrToInt(FormatDateTime('YYYY',Date));
@@ -370,6 +383,7 @@ begin
   InitGrid;
   FRowIdx:=-1;
   FColIdx:=-1;
+
 end;
 
 procedure TfrmKpiIndexInfo.Writeto(Aobj: TRecord_);
@@ -407,6 +421,7 @@ procedure TfrmKpiIndexInfo.FormDestroy(Sender: TObject);
 begin
   inherited;
   Aobj.Free;
+  FKpiGridList.Free;
   Freeform(Self);
 end;
 
@@ -790,7 +805,6 @@ begin
       Caption:='考核指标';
     end;
   end;
-  TabSheet4.TabVisible:=(dbState<>dsInsert);
 end;
 
 procedure TfrmKpiIndexInfo.DBGridEh1KeyPress(Sender: TObject;
@@ -992,130 +1006,225 @@ begin
 end;
 
 procedure TfrmKpiIndexInfo.InitKpiGrid;
+  procedure SetpRowValue(vCol,ColType: integer; TIMES_ID,GODS_ID: string);
+  begin
+    pBaseRow^.LEVEL_ID:='';
+    pBaseRow^.Ratio[vCol].Index:=vCol;
+    pBaseRow^.Ratio[vCol].ColType:=ColType;
+    pBaseRow^.Ratio[vCol].SEQNO_ID:='';
+    pBaseRow^.Ratio[vCol].TIME_ID:=TIMES_ID;
+    pBaseRow^.Ratio[vCol].GODS_ID:=GODS_ID;
+  end;
 var
-  i,vCol: integer;
+  i,vCol,vGodsCount: integer;
+  GodsName,GodsID,TimeID: string;
 begin
+  New(pBaseRow);
   //先画标题: 创建一个 RowCount:2 x  ColCount:6 的Grid表格，行数待 设定的记录数确定。
   //列名: 序号、等级名称、等级基数、等级底数、商品名称、单位、档次量1、考核系数1、档次量2、考核系数2、档次量n、考核系数n
   KpiGrid.Clear;
-  KpiGrid.ColCount:=6+CdsKpiTimes.RecordCount*2;
   KpiGrid.RowCount:=3;
-  KpiGrid.FixedRows := 2; //设置标题有xx行
+  KpiGrid.ColCount:=4;
+  KpiGrid.FixedRows :=2; //设置标题有xx行
+  KpiGrid.FixedCols :=1; //设置序号
   //第1列
   KpiGrid.MergeCells(0,0,1,2);
   KpiGrid.Cells[0,0] := '序号';
-  KpiGrid.ColWidths[0] := 32;
+  KpiGrid.ColWidths[0] := 30;
+  SetpRowValue(0,0,'','');
   //第2列
   KpiGrid.MergeCells(1,0,1,2);
   KpiGrid.Cells[1,0] := '等级名称';
   KpiGrid.ColWidths[1] := 100;
+  SetpRowValue(1,0,'','');
   //第3列
   KpiGrid.MergeCells(2,0,1,2);
   KpiGrid.Cells[2,0] := '签约量';
   KpiGrid.ColWidths[2] := 60;
+  SetpRowValue(2,0,'','');
   //第4列
   KpiGrid.MergeCells(3,0,1,2);
   KpiGrid.Cells[3,0] := '全年返利比例(%)';
   KpiGrid.ColWidths[3] := 60;
-  //第5列
-  KpiGrid.MergeCells(4,0,1,2);
-  KpiGrid.Cells[4,0] := '商品名称';
-  KpiGrid.ColWidths[4] := 100;
-  //第6列
-  KpiGrid.MergeCells(5,0,1,2);
-  KpiGrid.Cells[5,0] := '单位';
-  KpiGrid.ColWidths[5] := 44;
-  
+  SetpRowValue(3,0,'','');
   //创建时段:
-  vCol:=5;
+  vCol:=3;
+  vGodsCount:=CdsKpiGoods.RecordCount;
   CdsKpiTimes.First;
   while not CdsKpiTimes.Eof do
   begin
-    Inc(vCol);
-    KpiGrid.MergeCells(vCol,0,2,1);
-    KpiGrid.Cells[vCol,0]:=CdsKpiTimes.FieldByName('TIMES_NAME').AsString;
-    KpiGrid.Cells[vCol,1]:='销量';
-    KpiGrid.ColWidths[vCol] := 56;
-    Inc(vCol);
-    KpiGrid.Cells[vCol,1]:='系数';
-    KpiGrid.ColWidths[vCol] := 56;
+    Inc(vCol); //索引增加一列
+    TimeID:=trim(CdsKpiTimes.FieldByName('TIMES_ID').AsString);
+    if CdsKpiTimes.FieldByName('RATIO_TYPE').AsString='1' then
+    begin
+      KpiGrid.ColCount:=KpiGrid.ColCount+2;
+      //合并时段标题
+      KpiGrid.MergeCells(vCol,0,2,1); //有多少个商品合并
+      KpiGrid.Cells[vCol,0]:=CdsKpiTimes.FieldByName('TIMES_NAME').AsString;
+      //达标量
+      KpiGrid.Cells[vCol,1] := '达标量';
+      KpiGrid.ColWidths[vCol] := 60;
+      SetpRowValue(vCol,1,TimeID,'#');
+
+      //返利系数
+      Inc(vCol);
+      KpiGrid.Cells[vCol,1]:='返利系数(%)';
+      KpiGrid.ColWidths[vCol] := 70;
+      SetpRowValue(vCol,2,TimeID,'#');
+    end else
+    begin
+      KpiGrid.ColCount:=KpiGrid.ColCount+vGodsCount+1;
+      //合并时段标题
+      KpiGrid.MergeCells(vCol,0,vGodsCount+1,1); //有多少个商品合并
+      KpiGrid.Cells[vCol,0]:=CdsKpiTimes.FieldByName('TIMES_NAME').AsString;
+      //达标量
+      KpiGrid.Cells[vCol,1] := '达标量';
+      KpiGrid.ColWidths[vCol] := 60;
+      SetpRowValue(vCol,1,TimeID,'');
+
+      //循环商品
+      CdsKpiGoods.First;
+      while not CdsKpiGoods.Eof do
+      begin
+        Inc(vCol);  //索引增加一列
+        GodsID:=trim(CdsKpiGoods.FieldByName('GODS_ID').AsString);
+        GodsName:='';
+        if CdsKpiGoods.FindField('SHORT_GODS_NAME')<>nil then
+          GodsName:=trim(CdsKpiGoods.FieldByName('SHORT_GODS_NAME').AsString);
+        if GodsName='' then GodsName:=trim(CdsKpiGoods.FieldByName('GODS_NAME').AsString);
+        KpiGrid.Cells[vCol,1]:=GodsName;
+        KpiGrid.ColWidths[vCol]:= 60;
+        SetpRowValue(vCol,2,TimeID,GodsID);
+        CdsKpiGoods.Next;
+      end;
+    end;
     CdsKpiTimes.Next;
   end;
 end;
 
+//从Grid保存一行数据到[CdsSeqNoList,CdsRatioList]
+function TfrmKpiIndexInfo.WriteRowKpiGridToDataSet(pRow: pKpiRow; GridRow: integer):Boolean;
+ function GetGodsDefUnitID(GODS_ID:string): string;
+ var RsGods: TZQuery;
+ begin
+   result:='#';
+   RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO');
+   if (RsGods<>nil) and (RsGods.Locate('GODS_ID',GODS_ID,[])) then
+     result:=trim(RsGods.fieldByName('CALC_UNITS').AsString);
+ end;
+var
+  IsEdit: Boolean; //编辑状态
+  gCol,i,SEQ_NO: integer;   //循环列
+  CellText,NewID: string;
+  pRaito: TKpiRatio;
+begin
+  result:=False;
+  for gCol:=4 to KpiGrid.ColCount-1 do
+  begin
+    CellText:=KpiGrid.Cells[gCol,GridRow]; //当前值
+    pRow:=pKpiRow(FKpiGridList.Items[GridRow-2]); //当前KpiGird行-2
+    pRaito:=pRow.Ratio[gCol];
+    if trim(CellText)='' then //为空进行删除
+    begin
+      case pRaito.ColType of
+       1: //达标档次数量:MKT_KPI_SEQNO
+        begin
+          if (pRaito.SEQNO_ID<>'') and (CdsKpiSeqNo.Locate('SEQNO_ID',pRaito.SEQNO_ID,[])) then
+            CdsKpiSeqNo.Delete;
+        end;
+       2: //达标系数:MKT_KPI_RATIO
+        begin
+          if (pRaito.SEQNO_ID<>'') and (pRaito.GODS_ID<>'') then
+          begin
+            if CdsKpiRatio.Locate('SEQNO_ID;GODS_ID',VarArrayOf([pRaito.SEQNO_ID,pRaito.GODS_ID]),[]) then
+              CdsKpiRatio.Delete;
+          end;
+        end
+      end;
+    end else //不为空则进行更新DataSet
+    begin
+      case pRaito.ColType of
+       1: //达标档次数量:MKT_KPI_SEQNO
+        begin
+          IsEdit:=False;
+          if (pRaito.SEQNO_ID<>'') and (CdsKpiSeqNo.Locate('SEQNO_ID',pRaito.SEQNO_ID,[])) then
+          begin
+            CdsKpiSeqNo.Edit;
+            CdsKpiSeqNo.FieldByName('KPI_AMT').AsFloat:=StrToFloatDef(CellText,0.0);
+            CdsKpiSeqNo.Post;
+            IsEdit:=True;
+          end;
+          if not IsEdit then
+          begin
+            SEQ_NO:=CdsKpiSeqNo.RecordCount+1;
+            NewID:=TSequence.NewId;
+            CdsKpiSeqNo.Append;
+            CdsKpiSeqNo.FieldByName('SEQNO_ID').AsString:=NewID;
+            CdsKpiSeqNo.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+            CdsKpiSeqNo.FieldByName('KPI_ID').AsString:=Aobj.FieldByName('KPI_ID').AsString;
+            CdsKpiSeqNo.FieldByName('LEVEL_ID').AsString:=pRow.LEVEL_ID;
+            CdsKpiSeqNo.FieldByName('TIMES_ID').AsString:=pRaito.TIME_ID;
+            CdsKpiSeqNo.FieldByName('SEQNO').AsInteger:=SEQ_NO;   //保存前再次排序    
+            CdsKpiSeqNo.FieldByName('KPI_AMT').AsFloat:=StrToFloatDef(CellText,0.0);  //档次数量
+            CdsKpiSeqNo.Post;
+            pRow.Ratio[gCol].SEQNO_ID:=NewID;
+            if pRaito.GODS_ID='#' then //拉通返利
+              pRow.Ratio[gCol+1].SEQNO_ID:=NewID 
+            else
+            begin
+              for i:=0 to CdsKpiGoods.RecordCount-1 do //循环
+                pRow.Ratio[gCol+1+i].SEQNO_ID:=NewID;
+            end;
+          end; 
+        end;
+       2: //达标系数:MKT_KPI_RATIO
+        begin
+          IsEdit:=False;
+          if CdsKpiRatio.Locate('SEQNO_ID;GODS_ID',VarArrayOf([pRaito.SEQNO_ID,pRaito.GODS_ID]),[]) then
+          begin
+            CdsKpiRatio.Edit;
+            CdsKpiRatio.FieldByName('KPI_RATIO').AsFloat:=StrToFloatDef(CellText,0.0);
+            CdsKpiRatio.Post;
+            IsEdit:=True;
+          end;
+          if not IsEdit then
+          begin
+            NewID:=TSequence.NewId;  //新GUID
+            CdsKpiRatio.Append;
+            CdsKpiRatio.FieldByName('RATIO_ID').AsString:=NewID;
+            CdsKpiRatio.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+            CdsKpiRatio.FieldByName('KPI_ID').AsString:=Aobj.FieldByName('KPI_ID').AsString;
+            CdsKpiRatio.FieldByName('LEVEL_ID').AsString:=pRow.LEVEL_ID;
+            CdsKpiRatio.FieldByName('TIMES_ID').AsString:=pRaito.TIME_ID;
+            CdsKpiRatio.FieldByName('SEQNO_ID').AsString:=pRaito.SEQNO_ID;
+            CdsKpiRatio.FieldByName('GODS_ID').AsString:=pRaito.GODS_ID;
+            if trim(pRaito.GODS_ID)='#' then
+              CdsKpiRatio.FieldByName('UNIT_ID').AsString:='#'
+            else
+              CdsKpiRatio.FieldByName('UNIT_ID').AsString:=GetGodsDefUnitID(pRaito.GODS_ID);
+            CdsKpiRatio.FieldByName('KPI_RATIO').AsFloat:=StrToFloatDef(CellText,0.0);   //档次系数
+            CdsKpiRatio.Post; 
+          end; 
+        end;  //2:
+      end;  //case pRaito.ColType of
+    end;  //不为空提交end
+  end;  //for .
+end;                              
+
 function TfrmKpiIndexInfo.SaveKpiGridData: Boolean;
 var
-  i,vCol,vRow: integer;
-  TimeNo,SeqNo_ID,Ratio_ID: string;
-  FRatioID: string;  //RATIO_ID字段
-  FKpiAmt: string;   //数量
-  FKpiRatio: string;  //系数
+  gRow: integer;
+  pCurRow: pKpiRow;
 begin
-  //循环保存根据KpiGrid的行号对应FKpiData.RecNo进行保存:
-  if not FKpiData.Active then Exit;
-  vRow:=1;
-  FKpiData.Filtered:=False;
-  FKpiData.Filter:='';
-  for i:=2 to KpiGrid.RowCount-1 do
+  //根据KpiGrid的循环:从第一条开始循环
+  for gRow:=2 to KpiGrid.RowCount-1 do
   begin
-    vCol:=5;
-    vRow:=vRow+1;
-    if i-1>CdsKpiTimes.RecordCount then Continue;
-    FKpiData.RecNo:=i-1;
-    FKpiData.Edit;
-    CdsKpiTimes.First;
-    while not CdsKpiTimes.Eof do
+    if FKpiGridList.Count>=(gRow-2) then
     begin
-      TimeNo:=IntToStr(CdsKpiTimes.FieldByName('SEQNO').AsInteger); //序号
-      FKpiAmt:='KPI_AMT_'+TimeNo;    //数量
-      FKpiRatio:='KPI_RATIO_'+TimeNo;  //系数
-     {if FKpiData.FindField(FKpiAmt)<>nil then
-      begin
-        vCol:=vCol+1;
-        FKpiData.FieldByName(FKpiAmt).AsFloat:=StrToFloatDef(KpiGrid.Cells[vCol,vRow],0);
-      end;}
-      if FKpiData.FindField(FKpiRatio)<>nil then
-      begin
-        vCol:=vCol+2;
-        FKpiData.FieldByName(FKpiRatio).AsFloat:=StrToFloatDef(KpiGrid.Cells[vCol,vRow],0);
-      end;
-      CdsKpiTimes.Next;
+      pCurRow:=pKpiRow(FKpiGridList.Items[gRow-2]);
+      //从Grid保存一行数据到
+      WriteRowKpiGridToDataSet(pCurRow,gRow);
     end;
-    if FKpiData.State in [dsInsert,dsEdit] then FKpiData.Post;
-  end;
-  //从数据集(FKpiData)保存到数据集(CdsKpiTimes,CdsKpiRatio)
-  FKpiData.First;
-  while not FKpiData.Eof do
-  begin
-    CdsKpiTimes.First;
-    while not CdsKpiTimes.Eof do
-    begin
-      TimeNo:=IntToStr(CdsKpiTimes.FieldByName('SEQNO').AsInteger); //序号
-      FRatioID:='RATIO_ID_'+TimeNo;  //RATIO_ID字段
-      FKpiAmt:='KPI_AMT_'+TimeNo;    //数量
-      FKpiRatio:='KPI_RATIO_'+TimeNo;  //系数
-      if FKpiData.FindField(FRatioID)<>nil then //有此字段
-      begin
-        //系数:
-        Ratio_ID:=trim(FKpiData.FieldByName(FRatioID).AsString);    //系数ID
-        if CdsKpiRatio.Locate('RATIO_ID',Ratio_ID,[]) then
-        begin
-          CdsKpiRatio.Edit;
-          CdsKpiRatio.FieldByName('KPI_RATIO').AsFloat:=FKpiData.FieldByName(FKpiRatio).AsFloat;
-          CdsKpiRatio.Post;
-        end;
-        //档位:
-       {SeqNo_ID:=trim(FKpiData.FieldByName('SEQNO_ID').AsString);  //档次ID
-        if CdsKpiSeqNo.Locate('SEQNO_ID',SeqNo_ID,[]) then
-        begin
-          CdsKpiSeqNo.Edit;
-          CdsKpiSeqNo.FieldByName('KPI_AMT').AsFloat:=FKpiData.FieldByName(FKpiAmt).AsFloat;
-          CdsKpiSeqNo.Post;
-        end;}        
-      end;
-      CdsKpiTimes.Next;
-    end;
-    FKpiData.Next;
   end;
   if CdsKpiSeqNo.State in [dsInsert,dsEdit] then CdsKpiSeqNo.Post;
   if CdsKpiRatio.State in [dsInsert,dsEdit] then CdsKpiRatio.Post;
@@ -1123,45 +1232,40 @@ end;
 
 procedure TfrmKpiIndexInfo.KpiPmPopup(Sender: TObject);
 var
-  IsEdit: Boolean;
-  vColIdx,ColNo: integer;
+  GODS_ID: string;
+  pRow: pKpiRow;
+  pRatio: TKpiRatio;
 begin
   if FRowIdx>1 then
   begin
     ItemRatio.Visible:=true;
-    ItemSeqNo.Visible:=true;
+    AddSeqNo.Visible:=true;
     ItemRatio.Enabled:=true;
-    ItemSeqNo.Enabled:=true;
-    vColIdx:=FColIdx;
+    AddSeqNo.Enabled:=true;
     //前面6列显示
-    case vColIdx of
-     0..5: //前面5列:
-      begin
+    if FColIdx<4 then
+    begin
+      ItemRatio.Enabled:=False;
+      ItemRatio.Visible:=False;
+    end else
+    begin
+      pRow:=pKpiRow(FKpiGridList.Items[FRowIdx-2]);
+      if (pRow.Ratio[FColIdx].GODS_ID='#') or (pRow.Ratio[FColIdx].GODS_ID='') then //拉通返利则不可用
         ItemRatio.Enabled:=False;
-        if trim(KpiSeqNo_ID)='' then  //1、当前行没有SEQNO_ID则进行设置(达标档位)
-          ItemSeqNo.Caption:='添加达标档位'
-        else //2、当前若已
-          ItemSeqNo.Caption:='编辑达标档位';
-      end;
-     else
+      if (ItemRatio.Enabled) and (FRowIdx-2>=0) and (FRowIdx-1<=FKpiGridList.Count) then
       begin
-        if trim(KpiSeqNo_ID)='' then //1、当前行没有SEQNO_ID则进行设置(达标档位)
-        begin
+        pRow:=pKpiRow(FKpiGridList.Items[FRowIdx-2]);
+        pRatio:=pRow.Ratio[FColIdx];
+        if not CdsKpiRatio.Locate('SEQNO_ID;GODS_ID',VarArrayOf([pRatio.SEQNO_ID,pRatio.GODS_ID]),[]) then
           ItemRatio.Enabled:=False;
-          ItemSeqNo.Caption:='添加达标档位';
-        end else //2、当前若已
-        begin
-          ItemRatio.Enabled:=True;
-          ItemSeqNo.Caption:='编辑达标档位';
-        end;
       end;
     end;
   end else
   begin
     ItemRatio.Enabled:=False;
-    ItemSeqNo.Enabled:=False;
+    AddSeqNo.Enabled:=False;
     ItemRatio.Visible:=False;
-    ItemSeqNo.Visible:=False;
+    AddSeqNo.Visible:=False;
   end;
 end;
 
@@ -1174,337 +1278,163 @@ begin
   end;
 end;
 
-procedure TfrmKpiIndexInfo.CreateKpiData;
-var
-  i: integer;
-begin
-  FKpiData.Close;
-  //创建字段:
-  FKpiData.FieldDefs.Clear;
-  FKpiData.FieldDefs.Add('CNO',ftInteger,0,true);         //序号[自己记录编号]
-  FKpiData.FieldDefs.Add('LEVEL_ID',ftString,36,true);    //等级ID
-  FKpiData.FieldDefs.Add('LEVEL_NAME',ftString,50,true);  //等级名称
-  FKpiData.FieldDefs.Add('GODS_ID',ftString,36,true);     //商品ID
-  FKpiData.FieldDefs.Add('GODS_NAME',ftString,50,true);   //商品名称
-  FKpiData.FieldDefs.Add('UNIT_ID',ftString,36,true);     //单位ID
-  FKpiData.FieldDefs.Add('UNIT_NAME',ftString,50,true);   //单位名称
-  FKpiData.FieldDefs.Add('SEQNO_ID',ftString,36,true);    //档次ID
-  FKpiData.FieldDefs.Add('LVL_AMT',ftFloat,0,true);       //签约量要求
-  FKpiData.FieldDefs.Add('LOW_RATE',ftFloat,0,true);      //保底返利或计提系数 默认为0
-
-  //下面的字段为创建考核周期字段
-  CdsKpiTimes.First;
-  while not CdsKpiTimes.Eof do
-  begin
-    i:=CdsKpiTimes.fieldbyName('SEQNO').AsInteger;
-    FKpiData.FieldDefs.Add('RATIO_ID_'+IntToStr(i),ftString,36,true);    //等级RATIO_ID
-    FKpiData.FieldDefs.Add('KPI_AMT_'+IntToStr(i),ftFloat,0,true);      //保底返利或计提系数 默认为0
-    FKpiData.FieldDefs.Add('KPI_RATIO_'+IntToStr(i),ftFloat,0,true);      //保底返利或计提系数 默认为0
-    CdsKpiTimes.Next;
-  end;
-  FKpiData.CreateDataSet;
-end;
-
-procedure TfrmKpiIndexInfo.ItemRatioClick(Sender: TObject);
-var
-  i: integer;
-  GodsID: string; 
-  SeqNoID: string;
-  RatioID: string;
-  IsNewFlag: Boolean;
-  CurRatioObj: TRecord_;
-begin
-  inherited;
-  if CdsKpiLevel.IsEmpty then Raise Exception.Create('    指标等级不能空，请先设置...    ');
-  if CdsKpiTimes.IsEmpty then Raise Exception.Create('    指标时段不能空，请先设置...    ');
-  try
-    IsNewFlag:=true;
-    CurRatioObj:=TRecord_.Create;
-    GodsID:=KpiGods_ID;    //当前商品ID
-    SeqNoID:=KpiSeqNo_ID;  //当前档次ID
-    RatioID:=KpiRatio_ID;  //当前系数ID
-    if SeqNoID='' then Raise Exception.Create('  达标档位不能为空...  ');
-    if (RatioID<>'') and (CdsKpiRatio.Locate('RATIO_ID',RatioID,[])) then
-    begin
-      CurRatioObj.ReadFromDataSet(CdsKpiRatio);
-      IsNewFlag:=False;  //编辑记录
-    end else
-    begin
-      CurRatioObj.ReadFromDataSet(CdsKpiRatio);
-      for i:=0 to CurRatioObj.Count-1 do
-        CurRatioObj.Fields[i].AsString:='';
-      CurRatioObj.FieldByName('SEQNO_ID').AsString:=SeqNoID;
-      CurRatioObj.FieldByName('GODS_ID').AsString:=GodsID;
-    end;
-
-    if TfrmKpiRatioSet.EditDialog(CurRatioObj, CdsKpiGoods, CdsKpiSeqNo) then
-    begin
-      if IsNewFlag then
-      begin
-        CurRatioObj.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-        CurRatioObj.FieldByName('RATIO_ID').AsString:=TSequence.NewId();
-        CdsKpiRatio.Append;
-        CurRatioObj.WriteToDataSet(CdsKpiRatio);
-        CdsKpiRatio.Post;
-      end else
-      begin
-        if CdsKpiRatio.Locate('RATIO_ID',RatioID,[]) then
-        begin
-          CdsKpiRatio.Edit;
-          CurRatioObj.WriteToDataSet(CdsKpiRatio);
-          CdsKpiRatio.Post;
-        end;
-      end;
-      //刷新(Draw)KpiGrid
-      DrawKpiGridData; 
-    end;
-  finally
-    CurRatioObj.Free;
-  end;
-end;
-
 procedure TfrmKpiIndexInfo.InitKpiGridData;
-var NewRecNo: integer;
-  function GetTimeNo(TimeID: string): string;
+  function GetColIdx(TimID: string):integer; //根据时段返回考核档次ColIdx
+  var i: integer;
   begin
-    result:='-1';
-    if CdsKpiTimes.Locate('TIMES_ID',TimeID,[]) then
-      result:=IntToStr(CdsKpiTimes.FieldByName('SEQNO').AsInteger); //时段No
-  end;
-  //初始一个等级商品列表:
-  function GetLevelGodsList(RsRatio: TZQuery; Lvl_ID: string): Boolean;
-  var GodsID: string;
-  begin
-    Result:=False;
-    FLevelGodsList.Close;
-    FLevelGodsList.FieldDefs.Clear;
-    FLevelGodsList.FieldDefs.Add('GODS_ID',ftString,36,true);    //商品ID
-    FLevelGodsList.FieldDefs.Add('GODS_NAME',ftString,50,true);  //商品名称
-    FLevelGodsList.FieldDefs.Add('GODS_Rows',ftInteger,0,true);  //有多少行
-    FLevelGodsList.CreateDataSet;
-    //循环商品列表:
-    CdsKpiGoods.First;
-    while not CdsKpiGoods.Eof do
+    result:=-1;
+    for i:=0 to High(pBaseRow^.Ratio) do
     begin
-      GodsID:=trim(CdsKpiGoods.FieldByName('GODS_ID').AsString);
-      if not FLevelGodsList.Locate('GODS_ID',GodsID,[]) then
+      if trim(TimID)=trim(pBaseRow^.Ratio[i].TIME_ID) then
       begin
-        FLevelGodsList.Append;
-        FLevelGodsList.FieldByName('GODS_ID').AsString:=GodsID;
-        FLevelGodsList.FieldByName('GODS_NAME').AsString:=CdsKpiGoods.FieldByName('GODS_NAME').AsString;
-        FLevelGodsList.FieldByName('GODS_Rows').AsInteger:=0;
-        FLevelGodsList.Post;
+        result:=i;
+        Exit;
       end;
-      CdsKpiGoods.Next;
     end;
-    Result:=True;
   end;
-  //初始化一个等级:
-  function InitKpiLevelData(KpiRatio: TZQuery; LvlObj: TRecord_; var vRecNo: integer): Boolean;
+  //初始化一个等级的档次:
+  function InitKpiLevelData(Lvl_ID: string; var vRecNo: integer): Boolean;
   var
-    Gods_Rows: integer; //商品个数
-    CurFlag: Boolean;
-    Lvl_ID: string;
-    TimeID,FilStr,TimeNo: string;
-    FKpiAmt,FKpiRatio,FRatioID: string; //字段名称
+    i,j,ColIdx: integer;
+    TimID: string;    //等级ID
+    CurFlag: Boolean;  //当前循环标记
+    pRow,newRow: pKpiRow;
   begin
     try
       vRecNo:=0;
-      Lvl_ID:=LvlObj.FieldByName('LEVEL_ID').AsString;
-      //根据商品进行循环
-      FLevelGodsList.First;
-      while not FLevelGodsList.Eof do
+      //根据CdsKpiSeqNo进行循环
+      CdsKpiSeqNo.Filtered:=False;
+      CdsKpiSeqNo.Filter:='LEVEL_ID='''+Lvl_ID+'''';
+      CdsKpiSeqNo.Filtered:=True;
+      CdsKpiSeqNo.First;
+      while not CdsKpiSeqNo.Eof do
       begin
-        FilStr:='LEVEL_ID='''+Lvl_ID+''' and GODS_ID='''+trim(FLevelGodsList.FieldbyName('GODS_ID').AsString)+''' ';
-        KpiRatio.Filtered:=False;
-        KpiRatio.Filter:=FilStr;
-        KpiRatio.Filtered:=true;
-        FKpiData.Filtered:=False;
-        FKpiData.Filter:=FilStr;
-        FKpiData.Filtered:=true;
-        if KpiRatio.RecordCount=0 then
+        CurFlag:=False;
+        TimID:=trim(CdsKpiSeqNo.FieldByName('TIMES_ID').AsString);
+        ColIdx:=GetColIdx(TimID); //返回当前档次所在列ColIdx
+        for i:=0 to FKpiGridList.Count-1 do
         begin
-          Gods_Rows:=1;
-          Inc(NewRecNo);
-          FKpiData.Append;
-          FKpiData.FieldByName('CNO').AsInteger:=NewRecNo;
-          FKpiData.FieldByName('LEVEL_ID').AsString:=Lvl_ID;
-          FKpiData.FieldByName('LEVEL_NAME').AsString:=trim(LvlObj.FieldByName('LEVEL_NAME').AsString);
-          FKpiData.FieldByName('LVL_AMT').AsFloat:=LvlObj.FieldByName('LVL_AMT').AsFloat;
-          FKpiData.FieldByName('LOW_RATE').AsFloat:=LvlObj.FieldByName('LOW_RATE').AsFloat;
-          FKpiData.FieldByName('GODS_ID').AsString:=FLevelGodsList.FieldByName('GODS_ID').AsString;
-          FKpiData.FieldByName('GODS_NAME').AsString:=FLevelGodsList.FieldByName('GODS_NAME').AsString;
-          FKpiData.FieldByName('UNIT_ID').AsString:='';
-          FKpiData.FieldByName('UNIT_NAME').AsString:='';
-          FKpiData.FieldByName('SEQNO_ID').AsString:='';
-          FKpiData.Post;
-        end else
-        begin
-          KpiRatio.First;
-          while not KpiRatio.Eof do
+          pRow:=pKpiRow(FKpiGridList.Items[i]);
+          if (not CurFlag) and (trim(pRow^.LEVEL_ID)=trim(Lvl_ID)) and
+             (pRow^.Ratio[ColIdx].TIME_ID=TimID) and (pRow^.Ratio[ColIdx].SEQNO_ID='') then //直接写入此位置
           begin
-            CurFlag:=False;
-            TimeID:=trim(KpiRatio.FieldByName('TIMES_ID').AsString);
-            TimeNo:=GetTimeNo(TimeID);
-            FRatioID:='RATIO_ID_'+TimeNo;  //RATIO_ID字段
-            FKpiAmt:='KPI_AMT_'+TimeNo;    //数量
-            FKpiRatio:='KPI_RATIO_'+TimeNo;  //系数
-            FKpiData.First;
-            while (not FKpiData.Eof) and (Not CurFlag) do
+            for j:=ColIdx to High(pBaseRow^.Ratio) do
             begin
-              if (not CurFlag) and (FKpiData.FindField(FRatioID)<>nil) and (trim(FKpiData.FieldByName(FRatioID).AsString)='') then //还没被填入
-              begin
-                FKpiData.Edit;
-                FKpiData.FieldByName(FRatioID).AsString:=KpiRatio.FieldByName('RATIO_ID').AsString;
-                if FKpiData.FindField(FKpiAmt)<>nil then
-                  FKpiData.FieldByName(FKpiAmt).AsFloat:=KpiRatio.FieldByName('KPI_AMT').AsFloat;
-                if FKpiData.FindField(FKpiRatio)<>nil then
-                  FKpiData.FieldByName(FKpiRatio).AsFloat:=KpiRatio.FieldByName('KPI_RATIO').AsFloat;
-                FKpiData.Post;
-                CurFlag:=true;
-              end;
-              FKpiData.Next;
+              if (trim(pRow^.Ratio[j].TIME_ID)=TimID) and (trim(pRow^.Ratio[j].TIME_ID)<>'') then
+                pRow^.Ratio[j].SEQNO_ID:=trim(CdsKpiSeqNo.FieldByName('SEQNO_ID').AsString);
             end;
-            if not CurFlag then //新增记录
-            begin
-              Inc(NewRecNo);
-              FKpiData.Append;
-              FKpiData.FieldByName('CNO').AsInteger:=NewRecNo;
-              FKpiData.FieldByName('LEVEL_ID').AsString:=KpiRatio.FieldByName('LEVEL_ID').AsString;
-              FKpiData.FieldByName('LEVEL_NAME').AsString:=KpiRatio.FieldByName('LEVEL_NAME').AsString;
-              FKpiData.FieldByName('GODS_ID').AsString:=KpiRatio.FieldByName('GODS_ID').AsString;
-              FKpiData.FieldByName('GODS_NAME').AsString:=KpiRatio.FieldByName('GODS_NAME').AsString;
-              FKpiData.FieldByName('UNIT_ID').AsString:=KpiRatio.FieldByName('UNIT_ID').AsString;
-              FKpiData.FieldByName('UNIT_NAME').AsString:=KpiRatio.FieldByName('UNIT_NAME').AsString;
-              FKpiData.FieldByName('SEQNO_ID').AsString:=KpiRatio.FieldByName('SEQNO_ID').AsString;
-              FKpiData.FieldByName('LVL_AMT').AsFloat:=KpiRatio.FieldByName('LVL_AMT').AsFloat;
-              FKpiData.FieldByName('LOW_RATE').AsFloat:=KpiRatio.FieldByName('LOW_RATE').AsFloat;
-              //Ratio_ID
-              FKpiData.FieldByName(FRatioID).AsString:=KpiRatio.FieldByName('RATIO_ID').AsString;
-              if FKpiData.FindField(FKpiAmt)<>nil then
-                FKpiData.FieldByName(FKpiAmt).AsFloat:=KpiRatio.FieldByName('KPI_AMT').AsFloat;
-              if FKpiData.FindField(FKpiRatio)<>nil then
-                FKpiData.FieldByName(FKpiRatio).AsFloat:=KpiRatio.FieldByName('KPI_RATIO').AsFloat;
-              FKpiData.Post;
-            end;
-            KpiRatio.Next;
+            CurFlag:=true;
           end;
-          Gods_Rows:=FKpiData.RecordCount;
         end;
-
-        //当前商品循环完，记录此商品个数据
-        FLevelGodsList.Edit;
-        FLevelGodsList.FieldByName('Gods_Rows').AsInteger:=Gods_Rows;
-        FLevelGodsList.Post;
-        vRecNo:=vRecNo+Gods_Rows;  //累计有多少行
-        FLevelGodsList.Next;
+        if not CurFlag then //没有新加
+        begin
+          Inc(vRecNo);
+          New(newRow);
+          System.Move(pBaseRow^,newRow^,sizeof(pBaseRow^)); //复制
+          //初始化
+          newRow^.RowState:=1;
+          newRow^.LEVEL_ID:=Lvl_ID;
+          //初始化当前时段的列
+          for j:=ColIdx to High(pBaseRow^.Ratio) do
+          begin
+            if (trim(newRow^.Ratio[j].TIME_ID)=TimID) and (trim(newRow^.Ratio[j].TIME_ID)<>'') then
+              newRow^.Ratio[j].SEQNO_ID:=trim(CdsKpiSeqNo.FieldByName('SEQNO_ID').AsString);
+          end;
+          FKpiGridList.Add(newRow); 
+          CurFlag:=true;
+        end;
+        CdsKpiSeqNo.Next;
+      end;
+      if vRecNo=0 then //本等级都没定义档次,默认一个档次
+      begin
+        Inc(vRecNo);
+        New(newRow);
+        System.Move(pBaseRow^,newRow^,sizeof(pBaseRow^)); //复制
+        //初始化
+        newRow^.RowState:=0;
+        newRow^.LEVEL_ID:=Lvl_ID;
+        FKpiGridList.Add(newRow);
       end;
     finally
-      KpiRatio.Filtered:=False;
-      KpiRatio.Filter:='';
+      CdsKpiSeqNo.Filtered:=False;
+      CdsKpiSeqNo.Filter:='';
     end;
   end;
+  function GetCellValue(pRaito: TKpiRatio): string;
+  begin
+    result:='';
+    case pRaito.ColType of
+     1:
+      begin
+        if CdsKpiSeqNo.Locate('SEQNO_ID',pRaito.SEQNO_ID,[]) then
+        begin
+          if not CdsKpiSeqNo.fieldByName('KPI_AMT').IsNull then
+            result:=FloatToStr(CdsKpiSeqNo.fieldByName('KPI_AMT').AsFloat);
+        end;
+      end;
+     2:
+      begin
+        //按商品返利 和 拉通返利(GODS_ID='#')
+        if CdsKpiRatio.Locate('SEQNO_ID;GODS_ID',VarArrayOf([pRaito.SEQNO_ID,pRaito.GODS_ID]),[])then
+        begin
+          if not CdsKpiRatio.fieldByName('KPI_RATIO').IsNull then
+            result:=FloatToStr(CdsKpiRatio.fieldByName('KPI_RATIO').AsFloat);
+        end;
+      end;
+    end; //case pRaito.ColType of
+  end;
 var
-  IsAddFlag: Boolean;
-  Lvl_Obj: TRecord_;
-  vRowCount,vCol,vRow,gRow,gCurRow: integer;
-  Lvl_ID,TimeNo,FieldAmt,FieldRatio,Level_ID,Gods_ID: string;       //当前时段ID
-  GodsIDs: wideString;
-  KpiRatio: TZQuery;
+  CurRow: integer;    //Grid.Draw行
+  gRow,gCol,vRowCount: integer;
+  Lvl_ID,ReValue: string;       //当前时段ID
+  pRow: pKpiRow;
+  pRaito: TKpiRatio;
 begin
-  if not FKpiData.Active then Exit;
+  if not CdsKpiLevel.Active then Exit;
+  if not CdsKpiSeqNo.Active then Exit;
   if not CdsKpiRatio.Active then Exit;
-  IsAddFlag:=False;
-  NewRecNo:=0;
+  FKpiGridList.Clear; //清除Grid的列
   try
-    Lvl_Obj:=TRecord_.Create;
-    KpiRatio:=TZQuery.Create(nil);
-    KpiRatio.Data:=CdsKpiRatio.Data;
+    CurRow:=2;
     CdsKpiLevel.First;
     while not CdsKpiLevel.Eof do
     begin
-      Lvl_Obj.ReadFromDataSet(CdsKpiLevel); 
-      //初始化一个等级:
-      Lvl_ID:=trim(CdsKpiLevel.FieldByName('LEVEL_ID').AsString);
-      //过滤商品出来:
-      GetLevelGodsList(KpiRatio,Lvl_ID);
+      Lvl_ID:=trim(CdsKpiLevel.FieldByName('LEVEL_ID').AsString); //初始化一个等级:
       //初始化等级:
-      InitKpiLevelData(KpiRatio,Lvl_Obj,vRowCount);
+      InitKpiLevelData(Lvl_ID,vRowCount);
       //保存当前等级有xx条记录[合并单元格需要]:
       CdsKpiLevel.Edit;
       CdsKpiLevel.FieldByName('LEVEL_Rows').AsInteger:=vRowCount;
       CdsKpiLevel.Post;
-      //初始化到Grid:
-      if vRowCount<=0 then
+
+      //初始化到Grid(判断是否第一次初始Grid行)
+      CurRow:=CurRow+vRowCount;
+      if KpiGrid.RowCount<CurRow then KpiGrid.RowCount:=CurRow;
+
+      for gRow:=CurRow-vRowCount to CurRow-1 do  //从上次行开始循环
       begin
-        CdsKpiLevel.Next;
-        Continue;
-      end;
-      if Not IsAddFlag then
-      begin
-        if vRowCount>1 then KpiGrid.RowCount:=vRowCount+2;
-        IsAddFlag:=true;
-      end else
-        KpiGrid.RowCount:=KpiGrid.RowCount+vRowCount;
-      try
-        FKpiData.Filtered:=False;
-        FKpiData.Filter:='LEVEL_ID='''+Lvl_ID+''' ';
-        FKpiData.Filtered:=True;
-        FKpiData.First;
-        while not FKpiData.Eof do
+        //写入前面4列，只写当前等级的第一行:
+        if gRow=(CurRow-vRowCount) then
         begin
-          vRow:=KpiGrid.RowCount-(vRowCount-FKpiData.RecNo)-1;
-          gRow:=vRow;
-          //写入前面4列，只写当前等级的第一行:
-          if FKpiData.RecNo=1 then
-          begin
-            KpiGrid.Cells[0,vRow]:=IntToStr(CdsKpiLevel.RecNo); //序号
-            KpiGrid.MergeCells(0,vRow,1,vRowCount);
-            KpiGrid.Cells[1,vRow]:=trim(FKpiData.FieldByName('LEVEL_NAME').AsString);    //等级名称
-            KpiGrid.MergeCells(1,vRow,1,vRowCount);
-            KpiGrid.Cells[2,vRow]:=FloatToStr(FKpiData.FieldByName('LVL_AMT').AsFloat);  //等级达标量
-            KpiGrid.MergeCells(2,vRow,1,vRowCount);
-            KpiGrid.Cells[3,vRow]:=FloatToStr(FKpiData.FieldByName('LOW_RATE').AsFloat); //等级达标率
-            KpiGrid.MergeCells(3,vRow,1,vRowCount);
-          end;
-          //写入商品列(第5列)，只写商品的第一行:
-          Level_ID:=Trim(FKpiData.FieldByName('LEVEL_ID').AsString);
-          Gods_ID:=Trim(FKpiData.FieldByName('GODS_ID').AsString);
-          if Pos(';'+Level_ID+Gods_ID+';',GodsIDs)<=0 then
-          begin
-            GodsIDs:=GodsIDs+';'+Level_ID+Gods_ID+';';
-            gCurRow:=GetGodsRows(Gods_ID); 
-            KpiGrid.Cells[4,gRow]:=trim(FKpiData.FieldByName('GODS_NAME').AsString); //商品名称
-            KpiGrid.MergeCells(4,gRow,1,gCurRow);
-            gRow:=gRow+gCurRow;
-          end;
-          //写第6列(Col=5)开始:
-          KpiGrid.Cells[5,vRow]:=trim(FKpiData.FieldByName('UNIT_NAME').AsString); //单位名称
-          vCol:=5;
-          CdsKpiTimes.First;
-          while not CdsKpiTimes.Eof do
-          begin
-            vCol:=vCol+1;  //下一列
-            TimeNo:=InttoStr(CdsKpiTimes.FieldByName('SEQNO').AsInteger);
-            FieldAmt:='KPI_AMT_'+TimeNo;   //达标数量
-            FieldRatio:='KPI_RATIO_'+TimeNo;  //达标系数
-            if FKpiData.FindField(FieldAmt)<>nil then
-              KpiGrid.Cells[vCol,vRow]:=FloatToStr(FKpiData.FieldByName(FieldAmt).AsFloat); //考核数量
-            vCol:=vCol+1;  //下一列
-            if FKpiData.FindField(FieldRatio)<>nil then
-              KpiGrid.Cells[vCol,vRow]:=FloatToStr(FKpiData.FieldByName(FieldRatio).AsFloat); //考核数量
-            CdsKpiTimes.Next;
-          end;
-          FKpiData.Next;
+          KpiGrid.Cells[0,gRow]:=IntToStr(CdsKpiLevel.RecNo); //序号
+          KpiGrid.MergeCells(0,gRow,1,vRowCount);
+          KpiGrid.Cells[1,gRow]:=trim(CdsKpiLevel.FieldByName('LEVEL_NAME').AsString);    //等级名称
+          KpiGrid.MergeCells(1,gRow,1,vRowCount);
+          KpiGrid.Floats[2,gRow]:=CdsKpiLevel.FieldByName('LVL_AMT').AsFloat;  //等级达标量
+          KpiGrid.MergeCells(2,gRow,1,vRowCount);
+          KpiGrid.Floats[3,gRow]:=CdsKpiLevel.FieldByName('LOW_RATE').AsFloat; //等级达标率
+          KpiGrid.MergeCells(3,gRow,1,vRowCount);
         end;
-      finally
-        FKpiData.Filtered:=true;
-        FKpiData.Filter:='';
+        //写入时段列:第4列开始:
+        pRow:=pKpiRow(FKpiGridList.Items[gRow-2]); //当前KpiGird行-2
+        for gCol:=4 to KpiGrid.ColCount-1 do
+        begin
+          KpiGrid.Cells[gCol,gRow]:=GetCellValue(pRow^.Ratio[gCol]); //取值填充到Cells单元格
+        end;
       end;
       CdsKpiLevel.Next;
     end;
   finally
-    KpiRatio.Free;
   end;
 end;
 
@@ -1514,22 +1444,14 @@ begin
   inherited;
   if ARow in [0,1] then HAlign := taCenter;
   if ACol=0 then HAlign := taCenter;
-end;                                          
-
-function TfrmKpiIndexInfo.GetGodsRows(GodsID: string): integer;
-begin
-  result:=0;
-  if not FLevelGodsList.Active then Exit;
-  if FLevelGodsList.Locate('GODS_ID',GodsID,[]) then
-    result:=FLevelGodsList.FieldByName('GODS_Rows').AsInteger;
 end;
 
 procedure TfrmKpiIndexInfo.KpiGridCanEditCell(Sender: TObject; ARow, ACol: Integer; var CanEdit: Boolean);
 begin
   inherited;
-  if (FKpiData.Active) then
+  if FKpiGridList.Count>0 then
   begin
-    if (ARow>1) and (ACol>5) and (ACol mod 2=1) then
+    if (ARow>1) and (ACol>3) then
       CanEdit := (dbState <> dsBrowse)
     else
       CanEdit := false;
@@ -1537,46 +1459,33 @@ begin
     CanEdit := false;
 end;
 
-function TfrmKpiIndexInfo.GetKpiGods_ID: string;
+function TfrmKpiIndexInfo.GetKpiLevel_ID(RowIdx: integer): string;
 var
-  CurRecNo: integer;
+  CurRow: integer;
 begin
   result:='';
-  if not FKpiData.Active then Exit;
-  CurRecNo:=FRowIdx-1;
-  if (CurRecNo>0) and (CurRecNo<=FKpiData.RecordCount) then
+  if RowIdx=-1 then
+    CurRow:=FRowIdx-2  //标题有2行
+  else
+    CurRow:=RowIdx;
+  if (CurRow>=0) and (CurRow<=FKpiGridList.Count) then
   begin
-    FKpiData.RecNo:=CurRecNo;
-    result:=trim(FKpiData.fieldByName('GODS_ID').AsString);
+    result:=pKpiRow(FKpiGridList.Items[CurRow]).LEVEL_ID;
   end;
 end;
 
-function TfrmKpiIndexInfo.GetKpiLevel_ID: string;
+function TfrmKpiIndexInfo.GetKpiTimes_ID(ColIdx: integer): string;
 var
-  CurRecNo: integer;
+  CurIdx: integer;
+  FieldName: string; //字段名
 begin
   result:='';
-  if not FKpiData.Active then Exit;
-  CurRecNo:=FRowIdx-1;
-  if (CurRecNo>0) and (CurRecNo<=FKpiData.RecordCount) then
-  begin
-    FKpiData.RecNo:=CurRecNo;
-    result:=trim(FKpiData.fieldByName('LEVEL_ID').AsString);
-  end;
-end;
-
-function TfrmKpiIndexInfo.GetKpiTimes_ID: string;
-var
-  vRecNo: integer;
-begin
-  result:='';    
-  if not CdsKpiTimes.Active then Exit;
-  vRecNo:=((FColIdx-6) div 2)+1; //第几个（Times_ID时段）
-  if (vRecNo>0) and (vRecNo<=CdsKpiTimes.RecordCount) then
-  begin
-    CdsKpiTimes.RecNo:=vRecNo;
-    result:=trim(CdsKpiTimes.fieldByName('TIMES_ID').AsString);
-  end;
+  if ColIdx=-1 then //默认当前单元格
+     CurIdx:=FColIdx
+  else
+     CurIdx:=ColIdx;
+  if (CurIdx>3) and (CurIdx<KpiGrid.ColCount-1) then
+    result:=pBaseRow^.Ratio[CurIdx].TIME_ID;
 end;
 
 procedure TfrmKpiIndexInfo.KpiGridClickCell(Sender: TObject; ARow, ACol: Integer);
@@ -1586,130 +1495,158 @@ begin
   FColIdx:=ACol; //当前列索引
 end;
 
-function TfrmKpiIndexInfo.GetSeqNo_ID: string;
-var
-  CurRecNo: integer;
-begin
-  result:='';
-  if not FKpiData.Active then Exit;
-  CurRecNo:=FRowIdx-1;
-  if (CurRecNo>0) and (CurRecNo<=FKpiData.RecordCount) then
-  begin
-    FKpiData.RecNo:=CurRecNo;
-    result:=trim(FKpiData.fieldByName('SEQNO_ID').AsString);
-  end;
-end;
-
-procedure TfrmKpiIndexInfo.ItemSeqNoClick(Sender: TObject);
-var
-  i: integer;
-  SeqNoID: string;
-  LevelID: string;
-  Times_ID: string;
-  IsNewFlag: Boolean;
-  CurSeqNoObj: TRecord_;
-  CurLevelObj: TRecord_;
-begin
-  inherited;
-  if CdsKpiLevel.IsEmpty then Raise Exception.Create('    指标等级不能空，请先设置...    ');
-  if CdsKpiTimes.IsEmpty then Raise Exception.Create('    指标时段不能空，请先设置...    ');
-
-  try
-    IsNewFlag:=true;
-    CurSeqNoObj:=TRecord_.Create;
-    CurLevelObj:=TRecord_.Create;
-    SeqNoID:=KpiSeqNo_ID;
-    LevelID:=KpiLevel_ID;
-    Times_ID:=KpiTimes_ID;
-    if (SeqNoID<>'') and (CdsKpiSeqNo.Locate('SEQNO_ID',SeqNoID,[])) then
-    begin
-      CurSeqNoObj.ReadFromDataSet(CdsKpiSeqNo);
-      IsNewFlag:=False; //编辑记录
-    end else
-    begin
-      CurSeqNoObj.ReadFromDataSet(CdsKpiSeqNo);
-      for i:=0 to CurSeqNoObj.Count-1 do
-        CurSeqNoObj.Fields[i].AsString:='';
-    end;
-    //档次记录
-    if (LevelID<>'') and (CdsKpiLevel.Locate('LEVEL_ID',LevelID,[])) then
-      CurLevelObj.ReadFromDataSet(CdsKpiLevel); 
-
-    if TfrmKpiSeqNoSet.EditDialog(CurSeqNoObj,CurLevelObj,Times_ID,CdsKpiTimes) then
-    begin
-      if IsNewFlag then
-      begin
-        i:=CdsKpiSeqNo.RecordCount;
-        CurSeqNoObj.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
-        CurSeqNoObj.FieldByName('SEQNO_ID').AsString:=TSequence.NewId();
-        CurSeqNoObj.FieldByName('SEQNO').AsInteger:=i+1;
-        CdsKpiSeqNo.Append;
-        CurSeqNoObj.WriteToDataSet(CdsKpiSeqNo);
-        CdsKpiSeqNo.Post;
-      end else
-      begin
-        if CdsKpiSeqNo.Locate('SEQNO_ID',SeqNoID,[]) then
-        begin
-          CdsKpiSeqNo.Edit;
-          CurSeqNoObj.WriteToDataSet(CdsKpiSeqNo);
-          CdsKpiSeqNo.Post;
-          CdsKpiRatio.First;
-          //循环更新:CdsKpiRatio
-          while not CdsKpiRatio.Eof do
-          begin
-            if trim(CdsKpiRatio.FieldByName('SEQNO_ID').AsString)=SeqNoID then
-            begin
-              CdsKpiRatio.Edit;
-              CdsKpiRatio.FieldByName('TIMES_ID').AsString:=CurSeqNoObj.FieldByName('TIMES_ID').AsString;
-              CdsKpiRatio.FieldByName('TIMES_NAME').AsString:=CurSeqNoObj.FieldByName('TIMES_NAME').AsString;
-              CdsKpiRatio.FieldByName('KPI_AMT').AsFloat:=CurSeqNoObj.FieldByName('KPI_AMT').AsFloat;
-              CdsKpiRatio.FieldByName('KPI_DATE1').AsString:=CurSeqNoObj.FieldByName('KPI_DATE1').AsString;
-              CdsKpiRatio.FieldByName('KPI_DATE2').AsString:=CurSeqNoObj.FieldByName('KPI_DATE2').AsString;
-              CdsKpiRatio.FieldByName('USING_BRRW').AsString:=CurSeqNoObj.FieldByName('USING_BRRW').AsString;
-              CdsKpiRatio.FieldByName('KPI_FLAG').AsString:=CurSeqNoObj.FieldByName('KPI_FLAG').AsString;
-              CdsKpiRatio.FieldByName('KPI_DATA').AsString:=CurSeqNoObj.FieldByName('KPI_DATA').AsString;
-              CdsKpiRatio.FieldByName('KPI_CALC').AsString:=CurSeqNoObj.FieldByName('KPI_CALC').AsString;
-              CdsKpiRatio.FieldByName('RATIO_TYPE').AsString:=CurSeqNoObj.FieldByName('RATIO_TYPE').AsString;
-              CdsKpiRatio.Post;
-            end;
-            CdsKpiRatio.Next;
-          end; 
-        end;
-      end;
-      //刷新(Draw)KpiGrid
-      DrawKpiGridData;
-    end;
-  finally
-    CurSeqNoObj.Free;
-    CurLevelObj.Free;
-  end;
-end;
-
-function TfrmKpiIndexInfo.GetRatio_ID: string;
-var
-  vRecNo: integer;
-  TimesID,TimeNo,RatioID: string;
-begin
-  result:='';
-  TimesID:=GetKpiTimes_ID;
-  if CdsKpiTimes.Locate('TIMES_ID',TimesID,[]) then
-    TimeNo:=IntToStr(CdsKpiTimes.FieldByName('SEQNO').AsInteger);
-  RatioID:='RATIO_ID_'+TimeNo;
-  vRecNo:=FRowIdx-1;
-  if (vRecNo>0) and (vRecNo<FKpiData.RecordCount) then
-  begin
-    FKpiData.RecNo:=vRecNo;
-    if FKpiData.FindField(RatioID)<>nil then
-      result:=trim(FKpiData.FieldByName(RatioID).AsString);
-  end;
-end;
-
 procedure TfrmKpiIndexInfo.DrawKpiGridData;
 begin
   //刷新(Draw)KpiGrid
-  CreateKpiData;
   InitKpiGrid;
   InitKpiGridData;
+  FChangeState:=False;
+  FListCount:=FKpiGridList.Count;
+end;
+
+//添加档次
+procedure TfrmKpiIndexInfo.AddSeqNoClick(Sender: TObject);
+var
+  vRow,BegRow,Lvl_Rows: integer;
+  LvlID,NewID: string;  //等级ID
+  AryIdx: integer;
+  newRow: pKpiRow;
+begin
+  LvlID:=GetKpiLevel_ID;
+  if (LvlID<>'') and (FRowIdx>1) then
+  begin
+    //新插入行
+    New(newRow);
+    System.Move(pBaseRow^,newRow^,sizeof(pBaseRow^)); //复制
+    newRow^.RowState:=0;
+    newRow^.LEVEL_ID:=LvlID;
+    FKpiGridList.Insert(FRowIdx-1,newRow);   
+    //KpiGrid新插入1行
+    KpiGrid.InsertRows(FRowIdx+1,1);
+    if CdsKpiLevel.Locate('LEVEL_ID',LvlID,[]) then
+    begin
+      Lvl_Rows:=CdsKpiLevel.FieldByName('LEVEL_Rows').AsInteger+1;
+      CdsKpiLevel.Edit;
+      CdsKpiLevel.FieldByName('LEVEL_Rows').AsInteger:=Lvl_Rows;
+      CdsKpiLevel.Post;
+    end;
+    BegRow:=2;
+    CdsKpiLevel.First;
+    while not CdsKpiLevel.Eof do
+    begin
+      if trim(CdsKpiLevel.FieldByName('LEVEL_ID').AsString)=LvlID then
+        Break  //若相等则退出
+      else
+        BegRow:=BegRow+CdsKpiLevel.FieldByName('LEVEL_Rows').AsInteger;
+      CdsKpiLevel.Next;
+    end;
+    //合并单元格
+    KpiGrid.MergeCells(0,BegRow,1,Lvl_Rows);  //合并第1列
+    KpiGrid.MergeCells(1,BegRow,1,Lvl_Rows);  //合并第2列
+    KpiGrid.MergeCells(2,BegRow,1,Lvl_Rows);  //合并第3列
+    KpiGrid.MergeCells(3,BegRow,1,Lvl_Rows);  //合并第4列
+  end;
+  if not FChangeState then
+    FChangeState:=(FListCount<FKpiGridList.Count);
+end;
+
+procedure TfrmKpiIndexInfo.RzPageChanging(Sender: TObject; NewIndex: Integer; var AllowChange: Boolean);
+begin
+  if (FChangeState=True) and (RzPage.ActivePage=TabSheet4) and (NewIndex<>TabSheet4.TabIndex) then
+  begin
+    if MessageBox(self.Handle,Pchar('     '+#13+'     当前档次达标量（系数）修改还没保存，是否保存？   '+#13+'      '),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1)=6 then
+    begin
+      SaveKpiGridData;
+    end;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.KpiGridCellsChanged(Sender: TObject; R: TRect);
+begin
+  //指定列和行范围内有变化才
+  if (not FChangeState) and (FRowIdx>3) and (FColIdx>1) then
+    FChangeState:=True;
+end;
+
+procedure TfrmKpiIndexInfo.KpiGridKeyPress(Sender: TObject; var Key: Char);
+var
+  CurText: string;
+begin
+  CurText:=KpiGrid.Cells[FColIdx,FRowIdx];
+  if (Key=#161) or (Key='。') then Key:='.';
+  if (StrToFloatDef(CurText,0)>999999999) and (Key<>#8) then
+    Raise Exception.Create('输入的数值过大，无效...');
+  if Pos('.',CurText)>0 then
+  begin
+    if Key in ['0'..'9',#8] then
+    else Key:=#0;
+  end else
+  begin
+    if Key in ['0'..'9','.',#8] then
+    else Key:=#0;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+var i: integer;
+begin
+  if (dbState=dsBrowse) or (Application.Terminated) then exit;
+  try
+    if FChangeState and 
+      (not((dbState = dsInsert) and (trim(edtKPI_NAME.Text)='') and (trim(edtUNIT_NAME.Text)='') and (edtIDX_TYPE.ItemIndex=-1) and (edtKPI_TYPE.ItemIndex=-1))) then
+    begin
+      i:=MessageBox(handle,Pchar('    考核指标有修改，是否保存修改信息？    '),Pchar(Caption),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONQUESTION);
+      if i=6 then
+      begin
+        if CdsKpiLevel.State in [dsEdit,dsInsert] then CdsKpiLevel.Post;
+        SaveKpiGridData;
+        Save;
+        if Saved and Assigned(OnSave) then OnSave(Aobj);
+      end;
+      if i=2 then abort;
+    end;
+  except
+    CanClose := false;
+    Raise;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.ItemRatioClick(Sender: TObject);
+var
+  pRow: pKpiRow;
+  pRatio: TKpiRatio;
+  RatioObj: TRecord_;
+  Lvl_ID,Gods_ID: string;
+begin
+  if (FRowIdx-2>=0) and (FRowIdx-1<=FKpiGridList.Count) and (FColIdx>3) then
+  begin
+    pRow:=pKpiRow(FKpiGridList.Items[FRowIdx-2]);
+    pRatio:=pRow.Ratio[FColIdx];
+    if pRatio.ColType=2 then
+    begin
+      if CdsKpiRatio.Locate('SEQNO_ID;GODS_ID',VarArrayOf([pRatio.SEQNO_ID,pRatio.GODS_ID]),[]) then
+      begin
+        try
+          RatioObj:=TRecord_.Create;
+          RatioObj.ReadFromDataSet(CdsKpiRatio);
+          Lvl_ID:=trim(RatioObj.FieldByName('LEVEL_ID').AsString);
+          Gods_ID:=trim(RatioObj.FieldByName('GODS_ID').AsString);
+          if CdsKpiLevel.Locate('LEVEL_ID',Lvl_ID,[]) then
+            RatioObj.FieldByName('LEVEL_ID').AsString:=trim(CdsKpiLevel.FieldByName('LEVEL_NAME').AsString);
+          if CdsKpiGoods.Locate('GODS_ID',Gods_ID,[]) then
+            RatioObj.FieldByName('GODS_ID').AsString:=trim(CdsKpiGoods.FieldByName('GODS_NAME').AsString);
+          if TfrmKpiRatioSet.EditDialog(RatioObj) then
+          begin
+            CdsKpiRatio.Edit;
+            CdsKpiRatio.FieldByName('UNIT_ID').AsString:=RatioObj.FieldByName('UNIT_ID').AsString;
+            CdsKpiRatio.Post;
+          end;
+        finally
+          RatioObj.Free;
+        end;
+      end;
+    end;
+  end;
 end;
 
 end.

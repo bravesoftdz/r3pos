@@ -57,9 +57,9 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
             ParentFont = False
           end
           object Label33: TLabel
-            Left = 15
+            Left = 27
             Top = 112
-            Width = 60
+            Width = 48
             Height = 12
             Alignment = taRightJustify
             Caption = #21830#21697#21517#31216
@@ -178,57 +178,6 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
             Style.Color = 15395562
             TabOrder = 0
           end
-          object edtGODS_ID: TzrComboBoxList
-            Tag = 100
-            Left = 77
-            Top = 108
-            Width = 148
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = False
-            TabOrder = 1
-            InGrid = True
-            KeyValue = Null
-            FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
-            KeyField = 'GODS_ID'
-            ListField = 'GODS_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'GODS_NAME'
-                Footers = <>
-                Title.Caption = #21830#21697#21517#31216
-                Width = 150
-              end
-              item
-                EditButtons = <>
-                FieldName = 'GODS_CODE'
-                Footers = <>
-                Title.Caption = #36135#21495
-                Width = 50
-              end
-              item
-                EditButtons = <>
-                FieldName = 'BARCODE'
-                Footers = <>
-                Title.Caption = #26465#30721
-                Width = 65
-              end>
-            DropWidth = 380
-            DropHeight = 250
-            ShowTitle = True
-            AutoFitColWidth = True
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbNew, zbFind]
-            DropListStyle = lsFixed
-            MultiSelect = False
-            ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-          end
           object edt_UNIT_ID: TzrComboBoxList
             Tag = 100
             Left = 307
@@ -241,7 +190,7 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
                 Default = True
               end>
             Properties.ReadOnly = False
-            TabOrder = 2
+            TabOrder = 1
             InGrid = False
             KeyValue = Null
             FilterFields = 'UNIT_NAME;UNIT_SPELL;UNIT_ID'
@@ -282,7 +231,7 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
             Height = 20
             Properties.ReadOnly = True
             Style.Color = 15395562
-            TabOrder = 3
+            TabOrder = 2
           end
           object edtLOW_RATE: TcxTextEdit
             Tag = 1
@@ -292,69 +241,17 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
             Height = 20
             Properties.ReadOnly = True
             Style.Color = 15395562
-            TabOrder = 4
+            TabOrder = 3
           end
           object edtKPI_RATIO: TcxTextEdit
-            Tag = 100
+            Tag = 1
             Left = 443
             Top = 108
             Width = 70
             Height = 20
             Properties.ReadOnly = False
-            Style.Color = clWhite
-            TabOrder = 5
-          end
-          object edtLevel_ID: TzrComboBoxList
-            Tag = 100
-            Left = 77
-            Top = 19
-            Width = 148
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = False
-            TabOrder = 6
-            InGrid = True
-            KeyValue = Null
-            FilterFields = 'LEVEL_NAME;TIMES_NAME'
-            KeyField = 'LEVEL_ID'
-            ListField = 'LEVEL_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'LEVEL_NAME'
-                Footers = <>
-                Title.Caption = #31561#32423#21517#31216
-                Width = 150
-              end
-              item
-                EditButtons = <>
-                FieldName = 'KPI_AMT'
-                Footers = <>
-                Title.Caption = #31614#32422#37327
-                Width = 60
-              end
-              item
-                EditButtons = <>
-                FieldName = 'TIMES_NAME'
-                Footers = <>
-                Title.Caption = #26102#27573#21517#31216
-                Width = 100
-              end>
-            DropWidth = 380
-            DropHeight = 250
-            ShowTitle = True
-            AutoFitColWidth = True
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbNew, zbFind]
-            DropListStyle = lsFixed
-            OnSaveValue = edtLevel_IDSaveValue
-            MultiSelect = False
-            ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+            Style.Color = 15395562
+            TabOrder = 4
           end
           object edtKPI_CALC: TcxComboBox
             Tag = 1
@@ -364,7 +261,7 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
             Height = 20
             Properties.DropDownListStyle = lsFixedList
             Style.Color = 15395562
-            TabOrder = 7
+            TabOrder = 5
           end
           object edtKPI_DATA: TcxComboBox
             Tag = 1
@@ -374,7 +271,7 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
             Height = 20
             Properties.DropDownListStyle = lsFixedList
             Style.Color = 15395562
-            TabOrder = 8
+            TabOrder = 6
           end
           object edtRATIO_TYPE: TcxComboBox
             Tag = 1
@@ -383,7 +280,26 @@ inherited frmKpiRatioSet: TfrmKpiRatioSet
             Width = 207
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            Properties.OnChange = edtRATIO_TYPEPropertiesChange
+            Style.Color = 15395562
+            TabOrder = 7
+          end
+          object edt_GODS_ID: TcxTextEdit
+            Tag = 1
+            Left = 79
+            Top = 108
+            Width = 146
+            Height = 20
+            Properties.ReadOnly = True
+            Style.Color = 15395562
+            TabOrder = 8
+          end
+          object edtLEVEL_ID: TcxTextEdit
+            Tag = 1
+            Left = 78
+            Top = 18
+            Width = 147
+            Height = 20
+            Properties.ReadOnly = True
             Style.Color = 15395562
             TabOrder = 9
           end

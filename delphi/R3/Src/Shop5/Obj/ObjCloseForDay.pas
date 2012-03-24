@@ -7,6 +7,7 @@ type
   private
     ps:TZQuery;
     ss:TZQuery;
+    function GetDeptID(AGlobal:IdbHelp): string;
     function GetPayment(s:string):string;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -50,15 +51,18 @@ begin
   rs := TZQuery.Create(nil);
   try
     rs.SQL.Text :=
-      'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,PAYM_ID,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-    + 'select :ABLE_ID,:TENANT_ID,:SHOP_ID,DEPT_ID,:TENANT_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+' from VIW_USERS where TENANT_ID=:TENANT_ID and USER_ID=:CREA_USER';
+      'insert into ACC_RECVABLE_INFO '+
+      '(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,PAYM_ID,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+      ' values(:ABLE_ID,:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,:ACCT_INFO,''4'',:PAYM_ID,:RECV_MNY,0,0,:RECV_MNY,:CLSE_DATE,'+GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
     ss.First;
     while not ss.Eof do
     begin
       rs.ParambyName('TENANT_ID').AsInteger := ss.FieldbyName('TENANT_ID').AsInteger;
       rs.ParambyName('SHOP_ID').AsString := ss.FieldbyName('SHOP_ID').AsString;
+      rs.ParambyName('CLIENT_ID').AsString := IntToStr(ss.FieldbyName('TENANT_ID').AsInteger);
       rs.ParambyName('CLSE_DATE').AsInteger := ss.FieldbyName('CLSE_DATE').AsInteger;
       rs.ParambyName('CREA_USER').AsString := ss.FieldbyName('CREA_USER').AsString;
+      rs.ParambyName('DEPT_ID').AsString := GetDeptID(AGlobal);
       if ss.FieldbyName('PAY_A').AsFloat<>0 then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
@@ -261,6 +265,23 @@ begin
   ss.Free;
   ps.Free;
   inherited;
+end;
+
+function TCloseForDay.GetDeptID(AGlobal: IdbHelp): string;
+var
+  Rs: TZQuery;
+begin
+  result:='';
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQL.Text:='select DEPT_ID from VIW_USERS where TENANT_ID=:TENANT_ID and USER_ID=:CREA_USER';
+    Rs.Params.ParamByName('TENANT_ID').AsInteger:=Params.ParamByName('TENANT_ID').AsInteger;
+    Rs.Params.ParamByName('CREA_USER').AsString:=Params.ParamByName('CREA_USER').AsString;
+    AGlobal.Open(Rs);
+    result:=Rs.FieldByName('DEPT_ID').AsString;
+  finally
+    Rs.Free;
+  end;
 end;
 
 function TCloseForDay.GetPayment(s: string): string;

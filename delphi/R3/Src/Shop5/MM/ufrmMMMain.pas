@@ -157,16 +157,8 @@ type
     RzPanel4: TRzPanel;
     RzPanel5: TRzPanel;
     rzLeftTool: TRzPanel;
-    rzPage1: TRzBmpButton;
-    rzPage6: TRzBmpButton;
-    rzPage2: TRzBmpButton;
-    rzPage3: TRzBmpButton;
-    rzPage4: TRzBmpButton;
-    rzPage7: TRzBmpButton;
-    rzPage8: TRzBmpButton;
     menuButton: TRzBmpButton;
     pageLine: TRzSeparator;
-    rzPage5: TRzBmpButton;
     actfrmSimpleSaleDayReport: TAction;
     RzFormShape1: TRzFormShape;
     rzVersion: TRzLabel;
@@ -308,6 +300,7 @@ type
     { Private declarations }
     FList:TList; {导航菜单}
     FMenu:TList; {主菜单}
+    FTool:TList; {导航栏}
     rc:int64;
     
     frmXsmIEBrowser:TfrmMMBrowser;
@@ -332,11 +325,13 @@ type
     procedure AddFrom(form:TForm);
     function  SortToolButton:boolean;
 
-    procedure SortLeftButton;
+    //procedure SortLeftButton;
 
     //菜单管理
     procedure CreateMenu;
+    procedure CreateTools;
     procedure DoOpenMenu(Sender:TObject);
+    procedure DoOpenTools(Sender:TObject);
     procedure wm_popup(var Message: TMessage); message MSC_POPUP;
     procedure DropMenu(mid:integer;btn:TrzBmpButton);
     procedure PupupToolBox(Sender:TObject;s:string);
@@ -344,6 +339,7 @@ type
     procedure SetWindowState(const Value: TWindowState);
     procedure InitTenant;
     procedure DoLoadMsg(Sender:TObject);
+    function CheckRight(mid: integer): boolean;
   public
     { Public declarations }
     constructor Create(AOwner: TComponent); override;
@@ -370,7 +366,7 @@ var
 
 implementation
 uses
-  ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory, uN26Factory,uTimerFactory,
+  ufrmMMLogin, ufrmMMList,uMsgBox, uRcFactory, uN26Factory,uTimerFactory,uVerificationFactory,
   uDsUtil,uFnUtil,ufrmLogo,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
@@ -383,7 +379,7 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,ufrmWelcome,
+  ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmNetLogin,ufrmInitGuide,ufrmWelcome,uResFactory,
   uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox;
 var
   frmMMToolBox:TfrmMMToolBox;
@@ -556,12 +552,26 @@ var
   uid:string;
 begin
   uid := mmGlobal.UserID;
+  if not VerificationFactory.GetKeyExists then
+     begin
+       ShowMsgBox(pchar('未检测到智能密码钥匙，请确认已经插入'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       Application.Terminate;
+       exit;
+     end;
+
   if Message.LParam = 1 then
      Logined := Login
   else
      Logined := Login and CheckVersion;
   if Logined then
      begin
+       if not VerificationFactory.GetUserExists then
+          begin
+              ShowMsgBox(pchar('智能密码钥匙不是本店使用的，请确认是否本店的密钥'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+              Application.Terminate;
+              exit;
+          end;
+
        try
          Init;
          if (ParamStr(1)='-mmPing') and (Message.LParam = 0) then
@@ -658,6 +668,7 @@ begin
   //读取配置文件
   LoadParams;
 
+  resFactory.checkAndDownRes;
   frmLogo.Show;
   rzLeftTool.Enabled := false;
   try
@@ -751,13 +762,15 @@ begin
      mmGlobal.LoadRight;
      CheckEnabled;
      frmLogo.ShowTitle := '正在初始化系统菜单...';
-     if (mmGlobal.module[2]='1') then CreateMenu;
+     if (mmGlobal.module[2]='1') then
+        begin
+          CreateMenu;CreateTools;
+        end;
 
      frmLogo.ShowTitle := '正在初始化同步数据...';
      if (mmGlobal.module[2]='1') then mmGlobal.SyncTimeStamp;
      frmLogo.ShowTitle := '正在初始化广告数据...';
      if (mmGlobal.module[4]='1') then AdvFactory.LoadAdv;
-     N26Factory.coPlayList;
      frmMMDesk.LoadDesk;
 
      UpdateTimer.Enabled := true;
@@ -1777,8 +1790,19 @@ begin
 end;
 
 procedure TfrmMMMain.RzBmpButton1Click(Sender: TObject);
+var i:integer;
 begin
   inherited;
+  if FindChildForm(TfrmPosMain)<>nil then Raise Exception.Create('收款机模块没有退出不能切换用户...');
+  if FList.Count > 0 then
+     begin
+       if MessageBox(Handle,'是否关闭当前打开的所有模块？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       for i:= FList.Count -1 downto 0 do
+         begin
+           if TrzBmpButton(FList[i]).GroupIndex=999 then
+              TForm(TrzBmpButton(FList[i]).tag).free;
+         end;
+     end;
   PostMessage(frmMMMain.Handle,MM_LOGIN,0,1);
 end;
 
@@ -2386,7 +2410,7 @@ begin
   else
      actfrmRelation.Enabled := false;
 
-  SortLeftButton;
+  //SortLeftButton;
 end;
 
 procedure TfrmMMMain.LoadParams;
@@ -2445,6 +2469,7 @@ begin
   inherited;
   TimerFactory := nil;
   FMenu := TList.Create;
+  FTool := TList.Create;
   FormStyle := fsMDIForm;
   frmMMToolBox := TfrmMMToolBox.Create(self);
   frmXsmIEBrowser := nil;
@@ -2464,7 +2489,9 @@ begin
   Logined := false;
   Screen.OnActiveFormChange := nil;
   for i:=0 to FMenu.Count -1 do TObject(FMenu[i]).Free;
+  for i:=0 to FTool.Count -1 do TObject(FTool[i]).Free;
   FMenu.Free;
+  FTool.Free;
   if frmXsmIEBrowser<>nil then freeAndNil(frmXsmIEBrowser);
   if frmRimIEBrowser<>nil then freeAndNil(frmRimIEBrowser);
   freeAndNil(frmMMToolBox);
@@ -2712,14 +2739,14 @@ begin
 
 end;
 
-procedure TfrmMMMain.CreateMenu;
-function CheckRight(mid:integer):boolean;
+function TfrmMMMain.CheckRight(mid:integer):boolean;
 var
   lvid:string;
   Action:TAction;
 begin
   result := false;
   if not CA_MODULE.Locate('MODU_ID',inttostr(mid),[]) then Exit;
+  try
   lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString;
   CA_MODULE.First;
   while not CA_MODULE.Eof do
@@ -2744,7 +2771,11 @@ begin
          end;
       CA_MODULE.Next;
     end;
+  finally
+    CA_MODULE.Locate('MODU_ID',inttostr(mid),[]);
+  end;
 end;
+procedure TfrmMMMain.CreateMenu;
 var
   i:integer;
   lvid:string;
@@ -2756,6 +2787,9 @@ begin
        TObject(FMenu[i]).Free;
      end;
   FMenu.Clear;
+  if CA_MODULE.Locate('MODU_NAME,','功能菜单',[]) then
+     lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString
+  else
   if CA_MODULE.Locate('MODU_NAME,','零售终端',[]) then
      lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString
   else
@@ -2921,7 +2955,7 @@ begin
   //Left
   //rzPage0.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left0_hot');
   //rzPage0.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left0');
-  rzPage1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left1_hot');
+  {rzPage1.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left1_hot');
   rzPage1.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left1');
   rzPage2.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left2_hot');
   rzPage2.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left2');
@@ -2936,7 +2970,7 @@ begin
   rzPage7.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left7_hot');
   rzPage7.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left7');
   rzPage8.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left8_hot');
-  rzPage8.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left8');
+  rzPage8.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left8'); }
   //bottom
   UsersStatus.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'bottom_Status_Down');
   UsersStatus.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'bottom_Status');
@@ -3137,7 +3171,7 @@ begin
   WindowState := wsMaximized;
 end;
 
-procedure TfrmMMMain.SortLeftButton;
+{procedure TfrmMMMain.SortLeftButton;
 var
   w:integer;
 begin
@@ -3170,7 +3204,7 @@ begin
   if rzPage8.Visible then inc(w);
   rzPage8.Top := 0+w*rzPage8.Height;
 
-end;
+end; }
 
 procedure TfrmMMMain.actfrmNothingExecute(Sender: TObject);
 begin
@@ -3240,10 +3274,109 @@ begin
   if not CA_MODULE.Active then CheckEnabled;
   if not CA_MODULE.Locate('MODU_ID',PMMToolBox(Sender)^.mid,[]) then Raise Exception.Create('没找到对应的模块ID='+inttostr(TrzBmpButton(Sender).Tag));
   if not ShopGlobal.GetChkRight(PMMToolBox(Sender)^.mid) then Raise Exception.Create('您没有操作此模块的权限.');
+  toolDeskClick(toolDesk);
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
-  delete(s,1,4);
-  delete(s,length(s),1);
-  frmMMDesk.OpenPage(s); 
+  if s<>'' then
+     begin
+       delete(s,1,4);
+       delete(s,length(s),1);
+       frmMMDesk.OpenPage(s);
+     end;
+end;
+
+procedure TfrmMMMain.DoOpenTools(Sender: TObject);
+begin
+  if TrzBmpButton(Sender).Tag>0 then
+     frmMMToolBox.Popup(TWinControl(Sender),inttostr(TrzBmpButton(Sender).Tag));
+end;
+
+procedure TfrmMMMain.CreateTools;
+var
+  i:integer;
+  lvid:string;
+  button:TrzBmpButton;
+  r:integer;
+begin
+  for i:=0 to FTool.Count -1 do
+     begin
+       TObject(FTool[i]).Free;
+     end;
+  FMenu.Clear;
+  if CA_MODULE.Locate('MODU_NAME,','导航菜单',[]) then
+     lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString
+  else
+  if CA_MODULE.Locate('MODU_NAME,','新商盟',[]) then
+     lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString
+  else
+     lvid := '';
+  r := 0;
+  CA_MODULE.First;
+  while not CA_MODULE.Eof do
+    begin
+      if (copy(CA_MODULE.FieldbyName('LEVEL_ID').AsString,1,length(lvid))=lvid)
+          and
+         (length(CA_MODULE.FieldbyName('LEVEL_ID').AsString)=length(lvid)+3)
+          and
+         CheckRight(CA_MODULE.FieldbyName('MODU_ID').AsInteger)
+      then
+         begin
+           inc(r);
+           button := TrzBmpButton.Create(bkg_top);
+           button.Parent := rzLeftTool;
+           button.Left := 1;
+           button.Caption := '';
+           button.Top := (r-1)*71;
+           button.Tag := CA_MODULE.FieldbyName('MODU_ID').AsInteger;
+           button.OnClick := DoOpenTools;
+           button.Bitmaps.Hot := rcFactory.GetBitmap(CA_MODULE.FieldbyName('MODU_NAME').AsString+'_hot');
+           button.Bitmaps.Up := rcFactory.GetBitmap(CA_MODULE.FieldbyName('MODU_NAME').AsString);
+           if button.Bitmaps.Hot.Empty then //为了兼容固化桌面版本
+              begin
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='网上营销' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left1_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left1');
+                   end;
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='网上订货' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left2_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left2');
+                   end;
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='网上配货' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left3_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left3');
+                   end;
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='网上结算' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left4_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left4');
+                   end;
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='销售管理' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left5_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left5');
+                   end;
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='品牌培育' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left6_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left6');
+                   end;
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='信息互通' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left7_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left7');
+                   end;
+                if CA_MODULE.FieldbyName('MODU_NAME').AsString='我的社区' then
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left8_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_left8');
+                   end;
+              end;
+           FTool.Add(button);
+         end;
+      CA_MODULE.Next;
+    end;
 end;
 
 end.

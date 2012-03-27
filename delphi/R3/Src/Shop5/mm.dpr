@@ -270,7 +270,17 @@ uses
   uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
   uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
   ufrmKpiTimes in 'App\ufrmKpiTimes.pas' {frmKpiTimes},
-  ObjRecvOrder in 'Obj\ObjRecvOrder.pas';
+  ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
+  ufrmOrderHandSet in 'App\ufrmOrderHandSet.pas' {frmOrderHandSet},
+  ufrmShowPanel in 'App\ufrmShowPanel.pas' {frmShowPanel},
+  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
+  ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
+  ufrmSalRetuMenu in 'App\ufrmSalRetuMenu.pas' {frmSalRetuMenu},
+  ufrmDateControl in 'App\ufrmDateControl.pas' {frmDateControl: TFrame},
+  ufrmPriceLevelSet in 'App\ufrmPriceLevelSet.pas' {frmPriceLevelSet},
+  ufrmXsmLogin in 'App\ufrmXsmLogin.pas' {frmXsmLogin},
+  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
+  uResFactory in 'App\uResFactory.pas';
 
 {$R *.res}
 

@@ -1,11 +1,11 @@
 inherited frmMMMain: TfrmMMMain
   Left = -8
-  Top = -8
+  Top = 0
   VertScrollBar.Range = 0
   BorderStyle = bsNone
   Caption = 'MM2011'
   ClientHeight = 738
-  ClientWidth = 1280
+  ClientWidth = 1276
   Color = clFuchsia
   TransparentColor = True
   TransparentColorValue = clFuchsia
@@ -17,7 +17,7 @@ inherited frmMMMain: TfrmMMMain
   TextHeight = 12
   inherited stbBottom: TStatusBar
     Top = 705
-    Width = 1280
+    Width = 1276
     Height = 0
   end
   object RzPanel2: TRzPanel [1]
@@ -477,7 +477,7 @@ inherited frmMMMain: TfrmMMMain
   object bkg_bb: TRzPanel [2]
     Left = 0
     Top = 705
-    Width = 1280
+    Width = 1276
     Height = 33
     Align = alBottom
     BorderOuter = fsNone
@@ -502,7 +502,7 @@ inherited frmMMMain: TfrmMMMain
       end
     end
     object RzPanel11: TRzPanel
-      Left = 1272
+      Left = 1268
       Top = 0
       Width = 8
       Height = 33
@@ -521,7 +521,7 @@ inherited frmMMMain: TfrmMMMain
     object bkg_bottom: TRzPanel
       Left = 8
       Top = 0
-      Width = 1264
+      Width = 1260
       Height = 33
       Align = alClient
       BorderOuter = fsFlat
@@ -530,12 +530,12 @@ inherited frmMMMain: TfrmMMMain
       FlatColor = 6842472
       TabOrder = 2
       DesignSize = (
-        1264
+        1260
         33)
       object RzSeparator3: TRzSeparator
         Left = 0
         Top = 31
-        Width = 1264
+        Width = 1260
         Height = 1
         ShowGradient = True
         Align = alBottom
@@ -543,7 +543,7 @@ inherited frmMMMain: TfrmMMMain
         ParentColor = False
       end
       object bkg_f2: TRzBackground
-        Left = 455
+        Left = 451
         Top = 0
         Width = 809
         Height = 31
@@ -604,7 +604,7 @@ inherited frmMMMain: TfrmMMMain
   object bgk_tt: TRzPanel [3]
     Left = 0
     Top = 0
-    Width = 1280
+    Width = 1276
     Height = 71
     Align = alTop
     BorderOuter = fsNone
@@ -612,7 +612,7 @@ inherited frmMMMain: TfrmMMMain
     TabOrder = 3
     Transparent = True
     DesignSize = (
-      1280
+      1276
       71)
     object bkg_01: TImage
       Left = 0
@@ -623,7 +623,7 @@ inherited frmMMMain: TfrmMMMain
       AutoSize = True
     end
     object bkg_02: TImage
-      Left = 1272
+      Left = 1268
       Top = 0
       Width = 8
       Height = 71
@@ -633,7 +633,7 @@ inherited frmMMMain: TfrmMMMain
     object bkg_top: TRzPanel
       Left = 8
       Top = 0
-      Width = 1264
+      Width = 1260
       Height = 71
       Align = alClient
       BorderOuter = fsFlat
@@ -642,7 +642,7 @@ inherited frmMMMain: TfrmMMMain
       FlatColor = 6842472
       TabOrder = 0
       DesignSize = (
-        1264
+        1260
         71)
       object logo: TImage
         Left = 0
@@ -667,7 +667,7 @@ inherited frmMMMain: TfrmMMMain
       object RzFormShape1: TRzFormShape
         Left = 0
         Top = 2
-        Width = 1264
+        Width = 1260
         Height = 69
         OnDblClick = RzFormShape1DblClick
       end
@@ -689,7 +689,7 @@ inherited frmMMMain: TfrmMMMain
       object RzSeparator2: TRzSeparator
         Left = 0
         Top = 1
-        Width = 1264
+        Width = 1260
         Height = 1
         ShowGradient = True
         Align = alTop
@@ -914,162 +914,6 @@ inherited frmMMMain: TfrmMMMain
       Color = 16621644
       FlatColor = 16703918
       TabOrder = 0
-      DesignSize = (
-        68
-        634)
-      object rzPage1: TRzBmpButton
-        Left = 1
-        Top = 0
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Layout = blGlyphTop
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 0
-        OnClick = rzPage1Click
-      end
-      object rzPage6: TRzBmpButton
-        Left = 1
-        Top = 350
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 1
-        OnClick = rzPage6Click
-      end
-      object rzPage2: TRzBmpButton
-        Left = 1
-        Top = 70
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 2
-        OnClick = rzPage2Click
-      end
-      object rzPage3: TRzBmpButton
-        Left = 1
-        Top = 140
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 3
-        OnClick = rzPage3Click
-      end
-      object rzPage4: TRzBmpButton
-        Left = 1
-        Top = 210
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 4
-        OnClick = rzPage4Click
-      end
-      object rzPage7: TRzBmpButton
-        Left = 1
-        Top = 420
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 5
-        OnClick = rzPage7Click
-      end
-      object rzPage8: TRzBmpButton
-        Left = 1
-        Top = 490
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 6
-        OnClick = rzPage8Click
-      end
-      object rzPage5: TRzBmpButton
-        Left = 1
-        Top = 280
-        Width = 63
-        Height = 71
-        Bitmaps.TransparentColor = clFuchsia
-        Color = clBtnFace
-        ButtonSize = bszNeither
-        Anchors = [akTop, akRight]
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWhite
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-        PopupMenu = PopupMenu
-        TabOrder = 7
-        OnClick = rzPage5Click
-      end
     end
   end
   object toolButton: TRzBmpButton [5]
@@ -2002,7 +1846,7 @@ inherited frmMMMain: TfrmMMMain
     Visible = False
   end
   object RzPanel7: TRzPanel [6]
-    Left = 1278
+    Left = 1274
     Top = 71
     Width = 2
     Height = 634

@@ -5216,10 +5216,11 @@ inherited frmShopMain: TfrmShopMain
       Enabled = False
       OnExecute = actfrmStkIndentOrderListExecute
     end
-    object actfrmInvoice: TAction
+    object actfrmSalInvoiceList: TAction
+      Tag = 100002314
       Caption = #21457#31080#31649#29702
       Enabled = False
-      OnExecute = actfrmInvoiceExecute
+      OnExecute = actfrmSalInvoiceListExecute
     end
     object actfrmCustomer: TAction
       Tag = 33400001

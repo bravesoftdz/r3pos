@@ -1,4 +1,4 @@
-unit ufrmMktRequOrderList1;
+unit ufrmMktRequOrderList;
 
 interface
 
@@ -11,7 +11,7 @@ uses
   cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar;
 
 type
-  TfrmMktRequOrderList1 = class(TframeOrderToolForm)
+  TfrmMktRequOrderList = class(TframeOrderToolForm)
     RzLabel2: TRzLabel;
     RzLabel3: TRzLabel;
     RzLabel4: TRzLabel;
@@ -42,6 +42,7 @@ type
     procedure actAuditExecute(Sender: TObject);
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
   private
     { Private declarations }
     function  CheckCanExport: boolean; override;
@@ -56,18 +57,18 @@ type
   end;
 
 implementation
-uses ufrmMktRequOrder1,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,
+uses ufrmMktRequOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,
   uShopGlobal,uDsUtil, uMsgBox, uframeMDForm;
 {$R *.dfm}
 
 { TfrmMktRequOrderList1 }
 
-function TfrmMktRequOrderList1.CheckCanExport: boolean;
+function TfrmMktRequOrderList.CheckCanExport: boolean;
 begin
   result := ShopGlobal.GetChkRight('100002176',7);
 end;
 
-function TfrmMktRequOrderList1.EncodeSQL(id: string): string;
+function TfrmMktRequOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.REQU_DATE>=:D1 and A.REQU_DATE<=:D2';
@@ -115,12 +116,12 @@ begin
   end;
 end;
 
-function TfrmMktRequOrderList1.GetFormClass: TFormClass;
+function TfrmMktRequOrderList.GetFormClass: TFormClass;
 begin
-  Result := TfrmMktRequOrder1;
+  Result := TfrmMktRequOrder;
 end;
 
-procedure TfrmMktRequOrderList1.Open(Id: string);
+procedure TfrmMktRequOrderList.Open(Id: string);
 var
   rs:TZQuery;
   sm:TMemoryStream;
@@ -160,7 +161,7 @@ begin
   end;
 end;
 
-function TfrmMktRequOrderList1.PrintSQL(tenantid, id: string): string;
+function TfrmMktRequOrderList.PrintSQL(tenantid, id: string): string;
 begin
   Result := 'select C.*,D.USER_NAME as CHK_USER_TEXT,E.USER_NAME as CREA_USER_TEXT,F.USER_NAME as REQU_USER_TEXT,'+
             'G.DEPT_NAME as DEPT_ID_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,I.KPI_NAME as KPI_ID_TEXT,J.SHOP_NAME as SHOP_ID_TEXT,'+
@@ -179,14 +180,14 @@ begin
             ' left join PUB_PARAMS K on K.CODE_ID=C.REQU_TYPE where K.TYPE_CODE=''REQU_TYPE'' order by C.SEQNO  ';
 end;
 
-procedure TfrmMktRequOrderList1.FormShow(Sender: TObject);
+procedure TfrmMktRequOrderList.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
   if (ShopGlobal.GetChkRight('100002176',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then actNew.OnExecute(nil);
 end;
 
-procedure TfrmMktRequOrderList1.FormCreate(Sender: TObject);
+procedure TfrmMktRequOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
   fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
@@ -210,13 +211,13 @@ begin
     end;
 end;
 
-procedure TfrmMktRequOrderList1.actNewExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actNewExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('100002176',2) then Raise Exception.Create('你没有新增费用申领的权限,请和管理员联系.');
   inherited;
 end;
 
-procedure TfrmMktRequOrderList1.actDeleteExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actDeleteExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('100002176',4) then Raise Exception.Create('你没有删除费用申领单的权限,请和管理员联系.');
   if (CurOrder=nil) then
@@ -226,10 +227,10 @@ begin
      end;
   if CurOrder=nil then Raise Exception.Create('"费用申领"打开异常!');
 
-  if TfrmMktRequOrder1(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002176',5) then
-         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder1(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurOrder<>nil) then
@@ -242,7 +243,7 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrderList1.actEditExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actEditExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('100002176',3) then Raise Exception.Create('你没有修改费用申领单的权限,请和管理员联系.');
   if (CurOrder=nil) then
@@ -252,15 +253,15 @@ begin
      end;
   if CurOrder=nil then Raise Exception.Create('"费用申领"打开异常!');
 
-  if TfrmMktRequOrder1(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002176',5) then
-         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder1(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
 end;
 
-procedure TfrmMktRequOrderList1.actSaveExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actSaveExecute(Sender: TObject);
 begin
   inherited;
   if (CurOrder<>nil) then
@@ -277,7 +278,7 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrderList1.actPrintExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
@@ -305,7 +306,7 @@ begin
     end;
 end;
 
-procedure TfrmMktRequOrderList1.actPreviewExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
@@ -333,13 +334,13 @@ begin
     end;
 end;
 
-procedure TfrmMktRequOrderList1.actFindExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actFindExecute(Sender: TObject);
 begin
   inherited;
   Open('');
 end;
 
-procedure TfrmMktRequOrderList1.actInfoExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actInfoExecute(Sender: TObject);
 begin
   inherited;
   if (CurOrder=nil) then
@@ -349,7 +350,7 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrderList1.actAuditExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actAuditExecute(Sender: TObject);
 begin
   if not ShopGlobal.GetChkRight('100002176',5) then Raise Exception.Create('你没有审核费用申领单的权限,请和管理员联系.');
   if (CurOrder=nil) then
@@ -360,7 +361,7 @@ begin
   inherited;
 end;
 
-procedure TfrmMktRequOrderList1.actPriorExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actPriorExecute(Sender: TObject);
 var
   Temp:TZQuery;
   Params:TftParamList;
@@ -395,7 +396,7 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrderList1.actNextExecute(Sender: TObject);
+procedure TfrmMktRequOrderList.actNextExecute(Sender: TObject);
 var
   Temp:TZQuery;
   Params:TftParamList;
@@ -428,6 +429,13 @@ begin
      begin
         cdsList.Next;
      end;
+end;
+
+procedure TfrmMktRequOrderList.DBGridEh1DblClick(Sender: TObject);
+begin
+  inherited;
+  actInfo.OnExecute(nil)
+
 end;
 
 end.

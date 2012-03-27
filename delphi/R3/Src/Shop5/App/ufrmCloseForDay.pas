@@ -450,7 +450,7 @@ begin
       if (ShopGlobal.NetVersion) then
          begin
            if not SyncFactory.CheckDBVersion then Raise Exception.Create('当前数据库版本跟服务器不一致，请先升级程序后再同步...');
-           SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
+           SyncFactory.SyncForDay;//改为只上报销售  SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
          end;
       CheckOffData;
       if not ShopGlobal.GetChkRight('13200001',2) then Raise Exception.Create('您没有结账权限,请联系管理员!');

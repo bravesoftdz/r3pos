@@ -129,9 +129,9 @@ begin
   begin
     case fndP1_BarType_ID.ItemIndex of
      0: begin
-          strWhere:=strWhere+' and (Exists(select * from STK_LOCUS_FORSTCK where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and STOCK_ID=A.ORDER_ID and LOCUS_NO='''+trim(fndP1_BarCode.Text)+''') ';
-          strWhere:=strWhere+' or Exists(select * from SAL_LOCUS_FORSALE where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SALES_ID=A.ORDER_ID and LOCUS_NO='''+trim(fndP1_BarCode.Text)+''') ';
-          strWhere:=strWhere+' or Exists(select * from STO_LOCUS_FORCHAG where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and CHANGE_ID=A.ORDER_ID and LOCUS_NO='''+trim(fndP1_BarCode.Text)+''')) ';
+          strWhere:=strWhere+' and (Exists(select * from STK_LOCUS_FORSTCK where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and STOCK_ID=A.ORDER_ID and LOCUS_NO like ''%'+trim(fndP1_BarCode.Text)+''') ';
+          strWhere:=strWhere+' or Exists(select * from SAL_LOCUS_FORSALE where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SALES_ID=A.ORDER_ID and LOCUS_NO like ''%'+trim(fndP1_BarCode.Text)+''') ';
+          strWhere:=strWhere+' or Exists(select * from STO_LOCUS_FORCHAG where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and CHANGE_ID=A.ORDER_ID and LOCUS_NO like ''%'+trim(fndP1_BarCode.Text)+''')) ';
         end;
      1: strWhere:=strWhere+' and BATCH_NO='''+trim(fndP1_BarCode.Text)+''' '
     end;

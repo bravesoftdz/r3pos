@@ -1,4 +1,4 @@
-unit ufrmMktRequOrder1;
+unit ufrmMktRequOrder;
 
 interface
 
@@ -10,7 +10,7 @@ uses
   zrComboBoxList, Grids, DBGridEh, ExtCtrls, StdCtrls, RzPanel;
 
 type
-  TfrmMktRequOrder1 = class(TframeOrderForm)
+  TfrmMktRequOrder = class(TframeOrderForm)
     DBGridEh2: TDBGridEh;
     lblSTOCK_DATE: TLabel;
     lblCLIENT_ID: TLabel;
@@ -28,11 +28,7 @@ type
     edtDEPT_ID: TzrComboBoxList;
     RzBitBtn1: TRzBitBtn;
     cdsHeader: TZQuery;
-    RzTabControl1: TRzTabControl;
-    Label8: TLabel;
-    Label9: TLabel;
-    edtCHK_DATE: TcxTextEdit;
-    edtCHK_USER_TEXT: TcxTextEdit;
+    RzTab: TRzTabControl;
     edtKPI_ID: TzrComboBoxList;
     edtKPI_YEAR: TzrComboBoxList;
     cdsKPI_ID: TZQuery;
@@ -43,8 +39,20 @@ type
     PopupMenu2: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
+    Label8: TLabel;
+    edtCHK_DATE: TcxTextEdit;
+    Label9: TLabel;
+    edtCHK_USER_TEXT: TcxTextEdit;
+    Label1: TLabel;
+    edtKPI_MNY: TcxTextEdit;
+    edtBUDG_MNY: TcxTextEdit;
+    Label4: TLabel;
+    edtAGIO_MNY: TcxTextEdit;
+    Label7: TLabel;
+    edtOTHR_MNY: TcxTextEdit;
+    Label10: TLabel;
     procedure FormShow(Sender: TObject);
-    procedure RzTabControl1Change(Sender: TObject);
+    procedure RzTabChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure edtKPI_IDEnter(Sender: TObject);
@@ -61,20 +69,16 @@ type
     procedure edtKPI_YEARSaveValue(Sender: TObject);
     procedure DBGridEh2DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
-    procedure DBGridEh2Enter(Sender: TObject);
     procedure DBGridEh2KeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh2MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh2Columns2BeforeShowControl(Sender: TObject);
-    procedure DBGridEh2Columns2UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh2Columns1UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure edtCLIENT_IDPropertiesChange(Sender: TObject);
     procedure fndGODS_IDSaveValue(Sender: TObject);
-    procedure fndGODS_IDAddClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure DBGridEh1Columns6UpdateData(Sender: TObject;
@@ -93,6 +97,10 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh2Columns6UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure edtREQU_TYPEPropertiesChange(Sender: TObject);
+    procedure edtTableAfterPost(DataSet: TDataSet);
+    procedure cdsDetail2AfterPost(DataSet: TDataSet);
+    procedure DBGridEh2Columns1BeforeShowControl(Sender: TObject);
   private
     { Private declarations }
     AddRow:Boolean;
@@ -100,15 +108,15 @@ type
     DKpiMny,DBudgMny,DAgioMny,DOthrMny:Real;
     procedure FocusNextColumn2;
     function  FindColumn2(FieldName:string):TColumnEh;
-    procedure KpiMnyToCalc;
     procedure InitRecord2;
     procedure SetdbState(const Value: TDataSetState);override;
     function GetIsNull: boolean;
+    procedure Calc;
+    procedure ClearInvaid;override;
   public
     { Public declarations }
     RowID:Integer;
     locked:boolean;
-    procedure ShowOweInfo;
     procedure NewOrder;override;
     procedure EditOrder;override;
     procedure DeleteOrder;override;
@@ -125,7 +133,7 @@ uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uDsUtil, ufrmBasic, uXD
 
 { TfrmMktRequOrder1 }
 
-procedure TfrmMktRequOrder1.AuditOrder;
+procedure TfrmMktRequOrder.AuditOrder;
 var
   Msg :string;
   Params:TftParamList;
@@ -159,7 +167,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-{    IsAudit := not IsAudit;
+    IsAudit := not IsAudit;
     if IsAudit then
        begin
          edtCHK_DATE.Text := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -179,7 +187,6 @@ begin
     cdsHeader.FieldByName('CHK_USER').AsString := AObj.FieldByName('CHK_USER').AsString;
     cdsHeader.Post;
     cdsHeader.CommitUpdates;
-}
   except
     on E:Exception do
        begin
@@ -189,7 +196,7 @@ begin
   Open(oid);
 end;
 
-procedure TfrmMktRequOrder1.CancelOrder;
+procedure TfrmMktRequOrder.CancelOrder;
 begin
   inherited;
   if dbState = dsInsert then
@@ -198,7 +205,7 @@ begin
      Open(oid);
 end;
 
-procedure TfrmMktRequOrder1.DeleteOrder;
+procedure TfrmMktRequOrder.DeleteOrder;
 begin
   inherited;
   Saved := false;
@@ -235,10 +242,9 @@ begin
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
     dbState := dsBrowse;
-    ShowOweInfo;
 end;
 
-procedure TfrmMktRequOrder1.EditOrder;
+procedure TfrmMktRequOrder.EditOrder;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
@@ -253,54 +259,12 @@ begin
   if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
 end;
 
-function TfrmMktRequOrder1.GetIsNull: boolean;
+function TfrmMktRequOrder.GetIsNull: boolean;
 begin
-
+  
 end;
 
-procedure TfrmMktRequOrder1.KpiMnyToCalc;
-var rs:TZQuery;
-    Sql_Str:String;
-begin
-  if (cdsDetail2.FieldByName('KPI_ID').AsString <> '') and (cdsDetail2.FieldByName('KPI_YEAR').AsString <> '') then
-  begin
-    cdsDetail2.DisableControls;
-    try
-      Sql_Str := ' select PLAN_ID,(ifnull(KPI_MNY,0)-ifnull(WDW_MNY,0)) as BLA_MNY,(ifnull(BUDG_KPI,0)-ifnull(BUDG_WDW,0)) as BUDG_MNY '+
-      ' from MKT_KPI_RESULT where CLIENT_ID=:CLIENT_ID and KPI_ID=:KPI_ID and TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR ';
-      rs := TZQuery.Create(nil);
-      rs.SQL.Text := ParseSQL(Factor.iDbType,Sql_Str);
-      rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-      rs.ParamByName('KPI_ID').AsString := cdsDetail2.FieldByName('KPI_ID').AsString;
-      rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
-      rs.ParamByName('KPI_YEAR').AsInteger := cdsDetail2.FieldByName('KPI_YEAR').AsInteger;
-      Factor.Open(rs);
-
-      if not rs.IsEmpty then
-      begin
-        if not (cdsDetail2.State in [dsEdit,dsInsert]) then cdsDetail2.Edit;
-        cdsDetail2.FieldByName('PLAN_ID').AsString := rs.FieldByName('PLAN_ID').AsString;
-        cdsDetail2.FieldByName('KPI_MNY').AsFloat := rs.FieldByName('BLA_MNY').AsFloat;
-        cdsDetail2.FieldByName('BUDG_MNY').AsFloat := rs.FieldByName('BUDG_MNY').AsFloat;
-        cdsDetail2.FieldByName('AGIO_MNY').AsFloat := 0;
-        cdsDetail2.FieldByName('OTHR_MNY').AsFloat := 0;
-        cdsDetail2.Post;
-        AddRow := True;
-      end
-      else
-      begin
-        DBGridEh2.Col := 2;
-        AddRow := False;
-        Raise Exception.Create('在"'+cdsDetail2.FieldByName('KPI_YEAR').AsString+'"年度没有相关考核指标!');
-      end;
-    finally
-      rs.Free;
-      cdsDetail2.EnableControls;
-    end;
-  end;
-end;
-
-procedure TfrmMktRequOrder1.NewOrder;
+procedure TfrmMktRequOrder.NewOrder;
 var rs:TZQuery;
 begin
   inherited;
@@ -324,14 +288,14 @@ begin
   edtREQU_DATE.Date := Global.SysDate;
   edtREQU_USER.KeyValue := Global.UserID;
   edtREQU_USER.Text := Global.UserName;
-  //edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
-  //edtINVOICE_FLAGPropertiesChange(nil);
+  if edtREQU_TYPE.Properties.Items.Count>0 then edtREQU_TYPE.ItemIndex := 0;
   InitRecord;
+  InitRecord2;
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
   TabSheet.Caption := '..新建..';
 end;
 
-procedure TfrmMktRequOrder1.Open(id: string);
+procedure TfrmMktRequOrder.Open(id: string);
 var
   Params:TftParamList;
 begin
@@ -361,18 +325,15 @@ begin
     RowID := cdsDetail2.RecordCount;
 
     locked := false;
-
     //edtSHOP_ID.Properties.ReadOnly := False;
     ReadFrom(cdsDetail);
-
-    ShowOweInfo;
   finally
     Params.Free;
   end;
 end;
 
-procedure TfrmMktRequOrder1.SaveOrder;
-var mny,amt:real;
+procedure TfrmMktRequOrder.SaveOrder;
+var i:integer;
 begin
   inherited;
   Saved := false;
@@ -381,11 +342,13 @@ begin
   if edtREQU_TYPE.ItemIndex = -1 then Raise Exception.Create('返还类型不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空');
   if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
-  if not ((SKpiMny=DKpiMny) or (SBudgMny=DBudgMny) or (SAgioMny=DAgioMny) or (SOthrMny=DOthrMny)) then
-     Raise Exception.Create('');
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;
+  Calc;
+  if (TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsInteger=1) and
+     not ((SKpiMny=DKpiMny) and (SBudgMny=DBudgMny) and (SAgioMny=DAgioMny) and (SOthrMny=DOthrMny)) then
+     Raise Exception.Create('费用分摊不平,请正确填写各项费用金额');
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
@@ -397,33 +360,48 @@ begin
        AObj.FieldbyName('CHK_DATE').AsString := formatdatetime('YYYY-MM-DD',date());
        AObj.FieldbyName('CHK_USER').AsString := Global.UserID;
      end;}
-  //Calc;
   Factor.BeginBatch;
   try
     cdsHeader.Edit;
     AObj.WriteToDataSet(cdsHeader);
     cdsHeader.Post;
     WriteTo(cdsDetail);
-    mny := 0;
-    amt := 0;
-    cdsDetail.First;
-    while not cdsDetail.Eof do
-       begin
-         cdsDetail.Edit;
-         cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
-         cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-         cdsDetail.FieldByName('REQU_ID').AsString := cdsHeader.FieldbyName('REQU_ID').AsString;
-         mny := mny + cdsDetail.FieldbyName('CALC_MONEY').asFloat;
-         amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
-         cdsDetail.Post;
-         cdsDetail.Next;
-       end;
     cdsHeader.Edit;
-    cdsHeader.FieldbyName('KPI_MNY').asFloat := mny;
-    cdsHeader.FieldbyName('BUDG_MNY').asFloat := amt;
-    cdsHeader.FieldbyName('AGIO_MNY').asFloat := mny;
-    cdsHeader.FieldbyName('OTHR_MNY').asFloat := amt;
+    cdsHeader.FieldbyName('KPI_MNY').asFloat := DKpiMny;
+    cdsHeader.FieldbyName('BUDG_MNY').asFloat := DBudgMny;
+    cdsHeader.FieldbyName('AGIO_MNY').asFloat := DAgioMny;
+    cdsHeader.FieldbyName('OTHR_MNY').asFloat := DOthrMny;
     cdsHeader.Post;
+    cdsDetail.DisableControls;
+    cdsDetail2.DisableControls;
+    try
+      cdsDetail.First;
+      while not cdsDetail.Eof do
+        begin
+          cdsDetail.Edit;
+          cdsDetail.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
+          cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
+          cdsDetail.FieldByName('REQU_ID').AsString := cdsHeader.FieldbyName('REQU_ID').AsString;
+          cdsDetail.Post;
+          cdsDetail.Next;
+        end;
+      i := 0;
+      cdsDetail2.First;
+      while not cdsDetail2.Eof do
+        begin
+          cdsDetail2.Edit;
+          cdsDetail2.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
+          cdsDetail2.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
+          cdsDetail2.FieldByName('REQU_ID').AsString := cdsHeader.FieldbyName('REQU_ID').AsString;
+          inc(i);
+          cdsDetail2.FieldByName('SEQNO').AsInteger := i;
+          cdsDetail2.Post;
+          cdsDetail2.Next;
+        end;
+    finally
+      cdsDetail.EnableControls;
+      cdsDetail2.EnableControls;
+    end;
     Factor.AddBatch(cdsHeader,'TMktRequOrder');
     Factor.AddBatch(cdsDetail,'TMktRequShare');
     Factor.AddBatch(cdsDetail2,'TMktRequData');
@@ -433,22 +411,24 @@ begin
     Factor.CancelBatch;
     cdsHeader.CancelUpdates;
     cdsDetail.CancelUpdates;
-    cdsDetail2.CancelUpdates;
+    //cdsDetail2.CancelUpdates;
     Raise;
   end;
   Open(oid);
   dbState := dsBrowse;
 end;
 
-procedure TfrmMktRequOrder1.SetdbState(const Value: TDataSetState);
-var Column:TColumnEh;
+procedure TfrmMktRequOrder.SetdbState(const Value: TDataSetState);
+//var Column:TColumnEh;
 begin
-  Column := FindColumn2('KPI_ID_TEXT');
-  if Column<>nil then Column.ReadOnly := true;
+//  Column := FindColumn2('KPI_ID_TEXT');
+//  if Column<>nil then Column.ReadOnly := true;
   inherited;
+  DBGridEh1.ReadOnly := (dbState=dsBrowse);
+  DBGridEh2.ReadOnly := (dbState=dsBrowse);
 end;
 
-procedure TfrmMktRequOrder1.FormShow(Sender: TObject);
+procedure TfrmMktRequOrder.FormShow(Sender: TObject);
 begin
   inherited;
   SKpiMny := 0;
@@ -459,25 +439,29 @@ begin
   DBudgMny := 0;
   DAgioMny := 0;
   DOthrMny := 0;
-  RzTabControl1.TabIndex := 0;
+  RzTab.TabIndex := 0;
   DBGridEh2.Align := alClient;
   DBGridEh1.BringToFront;
 end;
 
-procedure TfrmMktRequOrder1.RzTabControl1Change(Sender: TObject);
+procedure TfrmMktRequOrder.RzTabChange(Sender: TObject);
 begin
   inherited;
-  if RzTabControl1.TabIndex = 0 then
+  if RzTab.TabIndex = 0 then
   begin
+     fndGODS_ID.CloseList;
+     edtKPI_ID.CloseList;
      DBGridEh1.BringToFront;
   end
   else
   begin
+     fndGODS_ID.CloseList;
+     edtKPI_ID.CloseList;
      DBGridEh2.BringToFront;
   end;
 end;
 
-procedure TfrmMktRequOrder1.FormCreate(Sender: TObject);
+procedure TfrmMktRequOrder.FormCreate(Sender: TObject);
 begin
   inherited;
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
@@ -496,25 +480,25 @@ begin
   Factor.Open(cdsKPI_ID);
 end;
 
-procedure TfrmMktRequOrder1.FormDestroy(Sender: TObject);
+procedure TfrmMktRequOrder.FormDestroy(Sender: TObject);
 begin
   ClearCbxPickList(edtREQU_TYPE);
   inherited;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_IDEnter(Sender: TObject);
+procedure TfrmMktRequOrder.edtKPI_IDEnter(Sender: TObject);
 begin
   inherited;
   edtKPI_ID.Properties.ReadOnly := DBGridEh2.ReadOnly;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_IDExit(Sender: TObject);
+procedure TfrmMktRequOrder.edtKPI_IDExit(Sender: TObject);
 begin
   inherited;
   if not edtKPI_ID.DropListed then edtKPI_ID.Visible := False;
 end;
 
-procedure TfrmMktRequOrder1.FocusNextColumn2;
+procedure TfrmMktRequOrder.FocusNextColumn2;
 var i:Integer;
 begin
   i:=DBGridEh2.Col;
@@ -545,7 +529,7 @@ begin
     end;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_IDKeyDown(Sender: TObject;
+procedure TfrmMktRequOrder.edtKPI_IDKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   if (Key=VK_RIGHT) and not edtKPI_ID.Edited then
@@ -578,7 +562,7 @@ begin
   inherited;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_IDKeyPress(Sender: TObject;
+procedure TfrmMktRequOrder.edtKPI_IDKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
@@ -595,7 +579,7 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_IDSaveValue(Sender: TObject);
+procedure TfrmMktRequOrder.edtKPI_IDSaveValue(Sender: TObject);
 procedure EraseRecord;
 var i:integer;
 begin
@@ -605,6 +589,12 @@ begin
   edtKPI_ID.KeyValue := null;
 end;
 begin
+  if edtCLIENT_ID.AsString = '' then
+     begin
+       MessageBox(Handle,'请先选择客户后再录单。','友情提示...',MB_OK+MB_ICONINFORMATION);
+       edtCLIENT_ID.SetFocus;
+       Exit;
+     end;
   inherited;
   if not cdsDetail2.Active then Exit;
   if cdsDetail2.FieldbyName('KPI_ID').AsString=edtKPI_ID.AsString then exit;
@@ -622,7 +612,7 @@ begin
     begin
       if cdsDetail2.Locate('KPI_ID',edtKPI_ID.AsString,[]) then
          begin
-           Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"指标重复录入,请核对输入是否正确.',[edtKPI_ID.Text]));
+           Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.KpiIdxRepeat','"%s"指标重复录入,请核对输入是否正确.',[edtKPI_ID.Text]));
          end
       else
          begin
@@ -631,7 +621,6 @@ begin
            cdsDetail2.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
            cdsDetail2.FieldByName('KPI_YEAR').AsString := '';
            edtKPI_YEAR.Text := '';
-           KpiMnyToCalc;
          end;
     end;
   finally
@@ -640,19 +629,19 @@ begin
   end;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_YEAREnter(Sender: TObject);
+procedure TfrmMktRequOrder.edtKPI_YEAREnter(Sender: TObject);
 begin
   inherited;
   edtKPI_YEAR.Properties.ReadOnly := DBGridEh2.ReadOnly;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_YEARExit(Sender: TObject);
+procedure TfrmMktRequOrder.edtKPI_YEARExit(Sender: TObject);
 begin
   inherited;
   if not edtKPI_YEAR.DropListed then edtKPI_YEAR.Visible := False;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_YEARKeyDown(Sender: TObject;
+procedure TfrmMktRequOrder.edtKPI_YEARKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   if (Key=VK_RIGHT) and not edtKPI_ID.Edited then
@@ -670,7 +659,7 @@ begin
   inherited;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_YEARKeyPress(Sender: TObject;
+procedure TfrmMktRequOrder.edtKPI_YEARKeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
@@ -687,23 +676,37 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrder1.edtKPI_YEARSaveValue(Sender: TObject);
+procedure TfrmMktRequOrder.edtKPI_YEARSaveValue(Sender: TObject);
+var
+  rs:TZQuery;
 begin
   inherited;
   if not cdsDetail2.Active then Exit;
-  if cdsDetail2.FieldbyName('KPI_YEAR').AsString=edtKPI_YEAR.AsString then exit;
-
+//  if cdsDetail2.FieldbyName('KPI_YEAR').AsString=edtKPI_YEAR.AsString then exit;
+  if edtKPI_YEAR.asString='' then Exit;
+  rs := TZQuery.Create(nil);
   cdsDetail2.DisableControls;
   try
     cdsDetail2.Edit;
     cdsDetail2.FieldByName('KPI_YEAR').AsInteger := StrToInt(edtKPI_YEAR.AsString);
-    KpiMnyToCalc;
+    rs.SQL.Text := 'select KPI_MNY,BUDG_KPI,PLAN_ID from MKT_KPI_RESULT where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR';
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('CLIENT_ID').asString := edtCLIENT_ID.asString;
+    rs.ParamByName('KPI_ID').asString := cdsDetail2.FieldByName('KPI_ID').asString ;
+    rs.ParamByName('KPI_YEAR').AsInteger := cdsDetail2.FieldByName('KPI_YEAR').AsInteger ;
+    Factor.Open(rs);
+    if rs.IsEmpty then Raise Exception.Create('你所选择的年度无效。'); 
+    cdsDetail2.FieldByName('PLAN_ID').asString := rs.FieldByName('PLAN_ID').asString ;
+    cdsDetail2.FieldByName('KPI_MNY').AsFloat := rs.FieldByName('KPI_MNY').AsFloat ;
+    cdsDetail2.FieldByName('BUDG_MNY').AsFloat := rs.FieldByName('BUDG_KPI').AsFloat ;
+    cdsDetail2.Post;
   finally
+    rs.Free;
     cdsDetail2.EnableControls;
   end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2DrawFooterCell(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2DrawFooterCell(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; Rect: TRect;
   State: TGridDrawState);
 var R:TRect;
@@ -723,17 +726,7 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2Enter(Sender: TObject);
-begin
-  inherited;
-  if edtCLIENT_ID.AsString = '' then
-     begin
-       //MessageBox(Handle,'经销商不能为空！',pchar(Application.Title),MB_OK+MB_ICONQUESTION);
-       edtCLIENT_ID.SetFocus;
-     end;
-end;
-
-procedure TfrmMktRequOrder1.DBGridEh2KeyPress(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2KeyPress(Sender: TObject;
   var Key: Char);
 begin
   inherited;
@@ -744,18 +737,17 @@ begin
      end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2MouseDown(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var Cell: TGridCoord;
 begin
   inherited;
-  if not AddRow then Exit;
   Cell := DBGridEh2.MouseCoord(X,Y);
   if Cell.Y > DBGridEh2.VisibleRowCount -2 then
-     InitRecord;
+     InitRecord2;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2DrawColumnCell(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var
@@ -801,10 +793,11 @@ begin
   end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2Columns2BeforeShowControl(
+procedure TfrmMktRequOrder.DBGridEh2Columns2BeforeShowControl(
   Sender: TObject);
 begin
   inherited;
+  edtKPI_YEAR.Text := cdsDetail2.FieldbyName('KPI_YEAR').asString;
   cdsKPI_YEAR.Close;
   cdsKPI_YEAR.SQL.Text := 'select KPI_YEAR from MKT_KPI_RESULT where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') ';
   cdsKPI_YEAR.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -813,28 +806,7 @@ begin
   Factor.Open(cdsKPI_YEAR);
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2Columns2UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var Year:Integer;
-begin
-  try
-  if Text = '' then
-     Year := StrToInt(FormatDateTime('YYYY',Date()))
-  else
-     Year := StrToInt(Text);
-  if not((Year >= 2000) and (Year <= 2111)) then
-     Raise Exception.Create('输入年度范围"2000-2111"');
-  except
-    Text := TColumnEh(Sender).Field.AsString;
-    Value := TColumnEh(Sender).Field.asFloat;
-    Raise Exception.Create('输入年度范围"2000-2111"');
-  end;
-  TColumnEh(Sender).Field.AsInteger := Year;
-  KpiMnyToCalc;
-  cdsDetail2.Edit;
-end;
-
-procedure TfrmMktRequOrder1.DBGridEh2Columns1UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2Columns1UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 begin
   inherited;
@@ -843,7 +815,7 @@ begin
   edtKPI_ID.SaveStatus;
 end;
 
-function TfrmMktRequOrder1.FindColumn2(FieldName: string): TColumnEh;
+function TfrmMktRequOrder.FindColumn2(FieldName: string): TColumnEh;
 var i:integer;
 begin
   Result := nil;
@@ -857,19 +829,20 @@ begin
     end;
 end;
 
-procedure TfrmMktRequOrder1.edtCLIENT_IDPropertiesChange(Sender: TObject);
+procedure TfrmMktRequOrder.edtCLIENT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if trim(edtCLIENT_ID.Text)<>'' then TabSheet.Caption := edtCLIENT_ID.Text;
 end;
 
-procedure TfrmMktRequOrder1.ShowOweInfo;
+procedure TfrmMktRequOrder.fndGODS_IDSaveValue(Sender: TObject);
 begin
-
-end;
-
-procedure TfrmMktRequOrder1.fndGODS_IDSaveValue(Sender: TObject);
-begin
+  if edtCLIENT_ID.AsString = '' then
+     begin
+       MessageBox(Handle,'请先选择客户后再录单。','友情提示...',MB_OK+MB_ICONINFORMATION);
+       edtCLIENT_ID.SetFocus;
+       Exit;
+     end;
   if (fndGODS_ID.AsString='') and fndGODS_ID.Focused and ShopGlobal.GetChkRight('32600001',2) then
      begin
        if MessageBox(Handle,'没找到你想查找的商品是否新增一个？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
@@ -880,34 +853,7 @@ begin
   inherited;
 end;
 
-procedure TfrmMktRequOrder1.fndGODS_IDAddClick(Sender: TObject);
-var r:TRecord_;
-begin
-  //if not ShopGlobal.GetChkRight('32600001',2) then Exit;
-  r := TRecord_.Create;
-  try
-    if TfrmGoodsInfo.AddDialog(self,r,fndStr) then
-       begin
-         AddRecord(r,r.FieldbyName('CALC_UNITS').AsString,true);
-         if (edtTable.FindField('AMOUNT')<>nil) and (edtTable.FindField('AMOUNT').AsFloat=0) then
-           begin
-             if not PropertyEnabled then
-                begin
-                  edtTable.FieldbyName('AMOUNT').AsFloat := 1;
-                  AMountToCalc(1);
-                  //edtTable.FieldByName('NEW_OUTAMONEY').AsString:=formatfloat('#0.000',edtTable.FieldbyName('NEW_OUTPRICE').AsFloat*edtTable.FieldbyName('CALC_AMOUNT').AsFloat);
-                end
-             else
-                PostMessage(Handle,WM_DIALOG_PULL,PROPERTY_DIALOG,0);
-           end;
-       end;
-    DBGridEh1.SetFocus;
-  finally
-    r.Free;
-  end;
-end;
-
-procedure TfrmMktRequOrder1.N1Click(Sender: TObject);
+procedure TfrmMktRequOrder.N1Click(Sender: TObject);
 begin
   inherited;
   if cdsDetail2.IsEmpty then Exit;
@@ -915,7 +861,7 @@ begin
   cdsDetail2.Delete;
 end;
 
-procedure TfrmMktRequOrder1.N2Click(Sender: TObject);
+procedure TfrmMktRequOrder.N2Click(Sender: TObject);
 begin
   inherited;
   if not cdsDetail2.Active then Exit;
@@ -932,7 +878,7 @@ begin
     end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh1Columns6UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
@@ -962,11 +908,10 @@ begin
         end;
         if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         TColumnEh(Sender).Field.asFloat := r;
-        SKpiMny := SKpiMny + r;
      end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh1Columns7UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh1Columns7UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
@@ -996,11 +941,10 @@ begin
         end;
         if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         TColumnEh(Sender).Field.asFloat := r;
-        SBudgMny := SBudgMny + r;
      end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh1Columns8UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh1Columns8UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
@@ -1030,11 +974,10 @@ begin
         end;
         if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         TColumnEh(Sender).Field.asFloat := r;
-        SAgioMny := SAgioMny + r;
      end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh1Columns9UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh1Columns9UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
@@ -1064,15 +1007,14 @@ begin
         end;
         if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         TColumnEh(Sender).Field.asFloat := r;
-        SOthrMny := SOthrMny + r;
      end;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2Columns3UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2Columns3UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
-  if edtTable.FieldbyName('KPI_ID').AsString = '' then
+  if cdsDetail2.FieldbyName('KPI_ID').AsString = '' then
      begin
        Text := '';
        Value := null;
@@ -1091,15 +1033,13 @@ begin
   end;
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
-  DKpiMny := DKpiMny + r;
-
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2Columns4UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2Columns4UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
-  if edtTable.FieldbyName('KPI_ID').AsString = '' then
+  if cdsDetail2.FieldbyName('KPI_ID').AsString = '' then
      begin
        Text := '';
        Value := null;
@@ -1118,14 +1058,13 @@ begin
   end;
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
-  DBudgMny := DBudgMny + r;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2Columns5UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
-  if edtTable.FieldbyName('KPI_ID').AsString = '' then
+  if cdsDetail2.FieldbyName('KPI_ID').AsString = '' then
      begin
        Text := '';
        Value := null;
@@ -1144,14 +1083,13 @@ begin
   end;
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
-  DAgioMny := DAgioMny + r;
 end;
 
-procedure TfrmMktRequOrder1.DBGridEh2Columns6UpdateData(Sender: TObject;
+procedure TfrmMktRequOrder.DBGridEh2Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Real;
 begin
-  if edtTable.FieldbyName('KPI_ID').AsString = '' then
+  if cdsDetail2.FieldbyName('KPI_ID').AsString = '' then
      begin
        Text := '';
        Value := null;
@@ -1170,16 +1108,14 @@ begin
   end;
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
-  DOthrMny := DOthrMny + r;
 end;
 
-procedure TfrmMktRequOrder1.InitRecord2;
+procedure TfrmMktRequOrder.InitRecord2;
 var tmp:TZQuery;
 begin
   if dbState = dsBrowse then Exit;
   if cdsDetail2.State in [dsEdit,dsInsert] then cdsDetail2.Post;
-  //edtKPI_ID.Visible := false;
-  if DBGridEh2.CanFocus and Visible then DBGridEh2.SetFocus;
+  edtKPI_ID.Visible := false;
   cdsDetail2.DisableControls;
   try
   cdsDetail2.Last;
@@ -1194,11 +1130,124 @@ begin
       cdsDetail2.Post;
       cdsDetail2.Edit;
     end;
-  DBGridEh2.Col := 1 ;
-
+    DBGridEh2.Col := 1 ;
+    if DBGridEh2.CanFocus and Visible and (dbState <> dsBrowse) and (RzTab.TabIndex=0) then DBGridEh2.SetFocus;
   finally
     cdsDetail2.EnableControls;
+    cdsDetail2.Edit;
   end;
+end;
+
+procedure TfrmMktRequOrder.edtREQU_TYPEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if edtREQU_TYPE.ItemIndex >=0 then
+     begin
+       RzTab.TabIndex := TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsInteger-1;
+       RzPanel3.Visible := (TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsInteger=1);
+     end
+  else
+     RzTab.TabIndex := 0;
+end;
+
+procedure TfrmMktRequOrder.Calc;
+var
+  r:integer;
+  mny:real;
+  ps:TZQuery;
+begin
+  edtTable.DisableControls;
+  try
+    r := edtTable.FieldbyName('SEQNO').AsInteger;
+    SKpiMny := 0;
+    SBudgMny := 0;
+    SAgioMny := 0;
+    SOthrMny := 0;
+    edtTable.First;
+    while not edtTable.Eof do
+      begin
+        SKpiMny := SKpiMny + edtTable.FieldbyName('KPI_MNY').AsFloat;
+        SBudgMny := SBudgMny + edtTable.FieldbyName('BUDG_MNY').AsFloat;
+        SAgioMny := SAgioMny + edtTable.FieldbyName('AGIO_MNY').AsFloat;
+        SOthrMny := SOthrMny + edtTable.FieldbyName('OTHR_MNY').AsFloat;
+        edtTable.Next;
+      end;
+  finally
+    edtTable.Locate('SEQNO',r,[]);
+    edtTable.EnableControls;
+  end;
+  cdsDetail2.DisableControls;
+  try
+    r := cdsDetail2.FieldbyName('SEQNO').AsInteger;
+    DKpiMny := 0;
+    DBudgMny := 0;
+    DAgioMny := 0;
+    DOthrMny := 0;
+    cdsDetail2.First;
+    while not cdsDetail2.Eof do
+      begin
+        DKpiMny := DKpiMny + cdsDetail2.FieldbyName('KPI_MNY').AsFloat;
+        DBudgMny := DBudgMny + cdsDetail2.FieldbyName('BUDG_MNY').AsFloat;
+        DAgioMny := DAgioMny + cdsDetail2.FieldbyName('AGIO_MNY').AsFloat;
+        DOthrMny := DOthrMny + cdsDetail2.FieldbyName('OTHR_MNY').AsFloat;
+        cdsDetail2.Next;
+      end;
+  finally
+    cdsDetail2.Locate('SEQNO',r,[]);
+    cdsDetail2.EnableControls;
+  end;
+  edtOTHR_MNY.Text := formatFloat('#0.0#',SOthrMny-DOthrMny);
+  edtAGIO_MNY.Text := formatFloat('#0.0#',SAgioMny-DAgioMny);
+  edtBUDG_MNY.Text := formatFloat('#0.0#',SBudgMny-DBudgMny);
+  edtKPI_MNY.Text := formatFloat('#0.0#',SKpiMny-DKpiMny);
+end;
+
+procedure TfrmMktRequOrder.edtTableAfterPost(DataSet: TDataSet);
+begin
+  inherited;
+  if not edtTable.ControlsDisabled then Calc;
+
+end;
+
+procedure TfrmMktRequOrder.cdsDetail2AfterPost(DataSet: TDataSet);
+begin
+  inherited;
+  if not cdsDetail2.ControlsDisabled then Calc;
+
+end;
+
+procedure TfrmMktRequOrder.ClearInvaid;
+var
+  r:integer;
+begin
+  inherited;
+  if cdsDetail2.State in [dsEdit,dsInsert] then cdsDetail2.Post;
+  r := cdsDetail2.RecNo;
+  cdsDetail2.DisableControls;
+  try
+  cdsDetail2.First;
+  while not cdsDetail2.Eof do
+    begin
+      if (cdsDetail2.FieldByName('KPI_ID').AsString = '')
+         or
+         (cdsDetail2.FieldByName('KPI_YEAR').AsString = '')
+      then
+         cdsDetail2.Delete
+      else
+         cdsDetail2.Next;
+    end;
+  finally
+    if r>0 then cdsDetail2.RecNo := r;
+    cdsDetail2.EnableControls;
+  end;
+end;
+
+procedure TfrmMktRequOrder.DBGridEh2Columns1BeforeShowControl(
+  Sender: TObject);
+begin
+  inherited;
+  edtKPI_ID.Text := cdsDetail2.FieldbyName('KPI_ID_TEXT').asString;
+  edtKPI_ID.KeyValue := cdsDetail2.FieldbyName('KPI_ID').asString;
 end;
 
 end.

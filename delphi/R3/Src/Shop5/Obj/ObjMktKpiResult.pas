@@ -170,8 +170,8 @@ REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP}
                'select B.TENANT_ID,B.CLIENT_ID,A.KPI_ID,B.KPI_YEAR,B.SHOP_ID,B.DEPT_ID,B.PLAN_ID,A.IDX_TYPE,A.KPI_TYPE,B.CREA_DATE,'+
                'B.CREA_USER, C.AMOUNT,C.AMONEY,0 as FISH_AMT,0 as ADJS_AMT,0 as FISH_MNY,0 as ADJS_MNY,0 as KPI_MNY,0 as WDW_MNY,C.REMARK,''00'','+GetTimeStamp(AGlobal.iDbType)+
                ' from MKT_KPI_INDEX A inner join MKT_PLANORDER B on B.TENANT_ID=A.TENANT_ID '+
-               ' left join MKT_PLANDATA C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
-               ' where not exists (select * from MKT_KPI_RESULT where TENANT_ID=A.TENANT_ID and KPI_ID=A.KPI_ID) '+
+               ' left outer join MKT_PLANDATA C on A.TENANT_ID=C.TENANT_ID and B.TENANT_ID=C.TENANT_ID and B.PLAN_ID=C.PLAN_ID and A.KPI_ID=C.KPI_ID '+
+               ' where not exists (select * from MKT_KPI_RESULT where TENANT_ID=A.TENANT_ID and KPI_ID=A.KPI_ID and KPI_YEAR=B.KPI_YEAR and CLIENT_ID=B.CLIENT_ID) '+
                ' and B.CHK_DATE IS NOT NULL and B.PLAN_TYPE=:PLAN_TYPE and B.TENANT_ID=:TENANT_ID and B.KPI_YEAR=:KPI_YEAR ';
     if Params.FindParam('CLIENT_ID') <> nil then
        ExceSql := ExceSql + ' and B.CLIENT_ID=:CLIENT_ID ';

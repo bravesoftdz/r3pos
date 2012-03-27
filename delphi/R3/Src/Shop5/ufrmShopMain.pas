@@ -162,7 +162,7 @@ type
     actfrmPriceGradeInfo: TAction;
     actfrmSalIndentOrderList: TAction;
     actfrmStkIndentOrderList: TAction;
-    actfrmInvoice: TAction;
+    actfrmSalInvoiceList: TAction;
     actfrmCustomer: TAction;
     actfrmCostCalc: TAction;
     actfrmSysDefine: TAction;
@@ -353,7 +353,7 @@ type
     procedure actfrmPriceGradeInfoExecute(Sender: TObject);
     procedure actfrmSalIndentOrderListExecute(Sender: TObject);
     procedure actfrmStkIndentOrderListExecute(Sender: TObject);
-    procedure actfrmInvoiceExecute(Sender: TObject);
+    procedure actfrmSalInvoiceListExecute(Sender: TObject);
     procedure actfrmCustomerExecute(Sender: TObject);
     procedure actfrmCostCalcExecute(Sender: TObject);
     procedure actfrmSysDefineExecute(Sender: TObject);
@@ -508,8 +508,8 @@ uses
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
-  ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmInvoice,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
-  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmIEWebForm,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
+  ufrmSalIndentOrderList,ufrmStkIndentOrderList,ufrmCustomer,ufrmCostCalc,ufrmSysDefine,ufrmPriceOrderList,
+  ufrmCheckOrderList,ufrmCloseForDay,ufrmDbOrderList,ufrmShopInfoList,ufrmAccount,ufrmTransOrderList,ufrmDevFactory,
   ufrmIoroOrderList,ufrmCheckTablePrint,ufrmRckMng,ufrmJxcTotalReport,ufrmStockDayReport,ufrmDeptInfoList,ufrmSaleDayReport,
   ufrmChangeDayReport,ufrmStorageDayReport,ufrmRckDayReport,ufrmRelation,uSyncFactory,ufrmRecvDayReport,ufrmPayDayReport,
   ufrmRecvAbleReport,ufrmPayAbleReport,ufrmStorageTracking,ufrmDbDayReport,ufrmGodsRunningReport,uCaFactory,ufrmIoroDayReport,
@@ -519,7 +519,7 @@ uses
   ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList,
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
   ufrmMktKpiResult2,ufrmMktKpiResult3,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
-  ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList;
+  ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -2075,7 +2075,7 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmInvoiceExecute(Sender: TObject);
+procedure TfrmShopMain.actfrmSalInvoiceListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
@@ -2086,10 +2086,10 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmInvoice);
+  Form := FindChildForm(TfrmSalInvoiceList);
   if not Assigned(Form) then
      begin
-       Form := TfrmInvoice.Create(self);
+       Form := TfrmSalInvoiceList.Create(self);
        AddFrom(Form);
      end;
   Form.Show;
@@ -3478,6 +3478,7 @@ var
   Params:TftParamList;
 begin
   inherited;
+  {
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -3516,6 +3517,7 @@ begin
     Form.Free;
     Raise;
   end;
+  }
 end;
 
 procedure TfrmShopMain.actfrmSaleManSaleReportExecute(Sender: TObject);

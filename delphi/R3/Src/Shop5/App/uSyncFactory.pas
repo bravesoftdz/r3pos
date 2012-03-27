@@ -106,6 +106,8 @@ type
     procedure SyncThread(Sender: TObject);
     //数据同步到Rim
     procedure SyncRim;
+    //只同步日结账所需数据
+    procedure SyncForDay;
 
     procedure ReadTimeStamp;
 
@@ -838,7 +840,7 @@ begin
       26:SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       27:SyncIcGlideOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       28:SyncCaLoginInfo(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      end;      
+      end;
       frmLogo.Position := i;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
@@ -1402,6 +1404,54 @@ begin
     cs_h.Free;
     rs_d.Free;
     cs_d.Free;
+  end;
+end;
+
+procedure TSyncFactory.SyncForDay;
+var
+  i:integer;
+begin
+  StopSyncTask;
+  if CaFactory.CheckDebugSync then Exit;
+  EndTimeStamp := 0;
+  InterlockedIncrement(Locked);
+  Working := true;
+  try
+  frmLogo.Show;
+  frmDesk.Waited := true;
+  try
+  try
+    CaFactory.AutoCoLogo;
+  except
+    on E:Exception do
+      begin
+        LogFile.AddLogFile(0,'同步请求认证失败,错误:'+E.Message);
+        Raise;
+      end;
+  end;
+  SyncComm := CheckRemeteData;
+  SyncTimeStamp := CaFactory.TimeStamp;
+  SyncFactory.InitList;
+  frmLogo.ProgressBar1.Max := FList.Count;
+  CommandPush.ExecuteCommand;
+  for i:=0 to FList.Count -1 do
+    begin
+      frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+      Application.ProcessMessages;
+      frmLogo.BringToFront;
+      case PSynTableInfo(FList[i])^.synFlag of
+      6:SyncSalesOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      end;
+      frmLogo.Position := i;
+    end;
+  finally
+    frmLogo.Close;
+    frmDesk.Waited := false;
+  end;
+  finally
+    Working := false;
+    InterlockedDecrement(Locked);
+    ReadTimeStamp;
   end;
 end;
 

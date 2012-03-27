@@ -1,6 +1,8 @@
 inherited mmGlobal: TmmGlobal
-  Left = 191
-  Top = 60
+  Left = 141
+  Top = 82
+  Height = 669
+  Width = 1036
   inherited CA_MODULE: TZQuery
     Left = 88
     Top = 442
@@ -26,7 +28,7 @@ inherited mmGlobal: TmmGlobal
     Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
     HTTPOptions = [hoKeepOrigProtocol, hoForceEncodeParams]
     CookieManager = IdCookieManager1
-    Left = 160
-    Top = 545
+    Left = 112
+    Top = 553
   end
 end

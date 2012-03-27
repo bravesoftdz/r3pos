@@ -227,6 +227,36 @@ begin
     rs.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
     rs.Post;
     LocalFactory.UpdateBatch(rs,'TTenant',nil);
+    if (LocalFactory<>Factor) and Factor.Connected then
+       begin
+          Factor.Open(rs,'TTenant',Params);
+          rs.Edit;
+          rs.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
+          rs.FieldByName('LOGIN_NAME').AsString := Tenant.LOGIN_NAME;
+          rs.FieldByName('TENANT_NAME').AsString := Tenant.TENANT_NAME;
+          rs.FieldByName('TENANT_TYPE').AsInteger := Tenant.TENANT_TYPE;
+          rs.FieldByName('SHORT_TENANT_NAME').AsString := Tenant.SHORT_TENANT_NAME;
+          rs.FieldByName('TENANT_SPELL').AsString := Tenant.TENANT_SPELL;
+          rs.FieldByName('LEGAL_REPR').AsString := Tenant.LEGAL_REPR;
+          rs.FieldByName('LINKMAN').AsString := Tenant.LINKMAN;
+          rs.FieldByName('TELEPHONE').AsString := Tenant.TELEPHONE;
+          rs.FieldByName('FAXES').AsString := Tenant.FAXES;
+          rs.FieldByName('MSN').AsString := Tenant.MSN;
+          rs.FieldByName('QQ').AsString := Tenant.QQ;
+          rs.FieldByName('LICENSE_CODE').AsString := Tenant.LICENSE_CODE;
+          rs.FieldByName('ADDRESS').AsString := Tenant.ADDRESS;
+          rs.FieldByName('POSTALCODE').AsString := Tenant.POSTALCODE;
+          rs.FieldByName('REMARK').AsString := Tenant.REMARK;
+          rs.FieldByName('PASSWRD').AsString := EncStr(Tenant.PASSWRD,ENC_KEY);
+          rs.FieldByName('REGION_ID').AsString := Tenant.REGION_ID;
+          rs.FieldByName('SRVR_ID').AsString := Tenant.SRVR_ID;
+          rs.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
+          rs.FieldByName('XSM_CODE').AsString := xsm_username;
+          rs.FieldByName('XSM_PSWD').AsString := EncStr(xsm_password,ENC_KEY);
+          rs.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
+          rs.Post;
+          Factor.UpdateBatch(rs,'TTenant',nil);
+       end;
     Global.TENANT_ID := Tenant.TENANT_ID;
     Global.TENANT_NAME := Tenant.TENANT_NAME;
     Global.SHORT_TENANT_NAME := Tenant.SHORT_TENANT_NAME;

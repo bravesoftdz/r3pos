@@ -212,10 +212,9 @@ var
 begin
   inherited;
   SelectSQL.Text := ParseSQL(iDbType,
-     ' select A.TENANT_ID,A.SHOP_ID,A.SEQNO,A.REQU_ID,A.PLAN_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.KPI_YEAR,'+
-     '(ifnull(C.KPI_MNY,0)-ifnull(C.WDW_MNY,0)) as KPI_MNY,(ifnull(C.BUDG_KPI,0)-ifnull(C.BUDG_WDW,0)) as BUDG_MNY,'+
-     'A.AGIO_MNY,A.OTHR_MNY,A.REMARK from MKT_REQUDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
-     ' left join MKT_KPI_RESULT C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID and A.KPI_YEAR=C.KPI_YEAR '+
+     ' select A.SEQNO,A.TENANT_ID,A.SHOP_ID,A.REQU_ID,A.PLAN_ID,A.KPI_ID,B.KPI_NAME as KPI_ID_TEXT,A.KPI_YEAR,'+
+     ' A.KPI_MNY,A.BUDG_MNY,A.AGIO_MNY,A.OTHR_MNY,A.REMARK '+
+     ' from MKT_REQUDATA A left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
      ' where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID order by A.SEQNO ');
   IsSQLUpdate := True;
 
@@ -268,7 +267,7 @@ begin
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
     AGlobal.ExecSQL(
            'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-         + 'select REQU_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,case when REQU_TYPE=''1'' then ''销售返利'' else ''市场费计提'' end'+GetStrJoin(AGlobal.iDbType)+'''(申请单号:'''+GetStrJoin(AGlobal.iDbType)+'GLIDE_NO'+GetStrJoin(AGlobal.iDbType)+''')'',''5'',REQU_MNY,0,0,REQU_MNY,REQU_DATE,REQU_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',:CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+' from MKT_REQUORDER where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID'
+         + 'select REQU_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,''费用申请'''+GetStrJoin(AGlobal.iDbType)+'''(申请单号:'''+GetStrJoin(AGlobal.iDbType)+'GLIDE_NO'+GetStrJoin(AGlobal.iDbType)+''')'',''5'',KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,0,0,KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,REQU_DATE,REQU_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',:CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+' from MKT_REQUORDER where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and REQU_TYPE=''2'''
       ,params);
     AGlobal.CommitTrans;
     Result := true;

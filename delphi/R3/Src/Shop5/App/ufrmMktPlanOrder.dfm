@@ -470,6 +470,14 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         end
         item
           EditButtons = <>
+          FieldName = 'BUDG_MNY'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #39044#31639#37329#39069
+          Width = 75
+        end
+        item
+          EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #22791'      '#27880

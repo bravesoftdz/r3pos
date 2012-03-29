@@ -172,12 +172,11 @@ type
     actfrmWelcome: TAction;
     actfrmSaleDaySingleReport: TAction;
     actfrmDeskPage: TAction;
+    actExit: TAction;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure miCloseClick(Sender: TObject);
-    procedure RzBmpButton2Click(Sender: TObject);
     procedure sysCloseClick(Sender: TObject);
     procedure sysMaximizedClick(Sender: TObject);
     procedure sysMinimizedClick(Sender: TObject);
@@ -296,13 +295,14 @@ type
     procedure actfrmWelcomeExecute(Sender: TObject);
     procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
     procedure actfrmDeskPageExecute(Sender: TObject);
+    procedure actExitExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
     FMenu:TList; {主菜单}
     FTool:TList; {导航栏}
     rc:int64;
-    
+
     frmXsmIEBrowser:TfrmMMBrowser;
     frmRimIEBrowser:TfrmMMBrowser;
     FLogined: boolean;
@@ -350,6 +350,7 @@ type
     procedure LoadParams;
     procedure CheckEnabled;
     procedure Init;
+    procedure InitAfter;
     function  Login: boolean;
     procedure OpenMc(pid: string; mid:integer=0);
     procedure ShowMMList;
@@ -380,7 +381,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmNetLogin,ufrmInitGuide,ufrmWelcome,uResFactory,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox;
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox, ufrmAdv;
 var
   frmMMToolBox:TfrmMMToolBox;
 {$R *.dfm}
@@ -586,6 +587,7 @@ begin
               Application.Terminate;
             end;
        end;
+       InitAfter;
      end
   else
      begin
@@ -782,7 +784,6 @@ begin
    if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
       begin
         Show;
-        if (mmGlobal.module[2]='1') then TfrmWelcome.Popup;
       end
    else
       ShowMMList;
@@ -882,19 +883,6 @@ begin
   frmMMList.ReadInfo;
   frmMMList.Show;
   frmMMList.BringToFront;
-end;
-
-procedure TfrmMMMain.miCloseClick(Sender: TObject);
-begin
-  inherited;
-  Close;
-end;
-
-procedure TfrmMMMain.RzBmpButton2Click(Sender: TObject);
-begin
-  inherited;
-  Close;
-
 end;
 
 procedure TfrmMMMain.AddFrom(form: TForm);
@@ -2681,6 +2669,10 @@ var
   IsFirst:boolean;
 begin
   inherited;
+
+  if (AdvShowed = 1) and (frmWelcome = nil) then
+    TfrmAdv.LoadAdv;
+   
   w := StrtoIntDef(ShopGlobal.GetParameter('INTERVALTIME'),10)*60;
   if PrainpowerJudge.Locked>0 then Exit;
   if not Logined then Exit;
@@ -3377,6 +3369,91 @@ begin
          end;
       CA_MODULE.Next;
     end;
+end;
+
+procedure TfrmMMMain.InitAfter;
+begin
+  AutoSyncTask;
+  if (mmGlobal.module[2]='1') then
+    begin
+      TfrmWelcome.Popup;
+      AdvShowed := 1;
+    end
+end;
+
+procedure TfrmMMMain.actExitExecute(Sender: TObject);
+function CheckUpdateStatus:boolean;
+begin
+  result := (Factor.ExecProc('TGetLastUpdateStatus')='1');
+end;
+begin
+  if (mmGlobal.module[2]='1') then
+     begin
+        if (ShowMsgBox('为保障您的数据安全，退出时系统将为您的数据进行备份整理，是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+           begin
+             Exit;
+           end;
+        if TimerFactory<>nil then TimerFactory.free;
+        HideMMList;
+        Visible := false;
+        try
+          LoginFactory.Logout;
+          StopSyncTask;
+          if TimerFactory<>nil then TimerFactory.Free;
+          if Global.UserID='system' then exit;
+          if CaFactory.CheckDebugSync then Exit;
+        except
+          on E:Exception do
+             begin
+               ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+               Close;
+               Exit;
+             end;
+        end;
+        if not ShopGlobal.ONLVersion then
+           begin
+              try
+                Global.TryRemateConnect;
+              except
+                Close;
+                Exit;
+              end;
+              try
+                if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
+                if not ShopGlobal.NetVersion and not SyncFactory.SyncLockCheck then Exit;
+                if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+                SyncFactory.SyncAll;
+              except
+                on E:Exception do
+                   begin
+                     ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+                     Close;
+                     Exit;
+                   end;
+              end;
+           end
+        else
+           begin
+              try
+                if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
+                SyncFactory.SyncRim;
+              except
+                on E:Exception do
+                   begin
+                     ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
+                     Close;
+                     Exit;
+                   end;
+              end;
+           end;
+     end
+  else
+     begin
+        if (ShowMsgBox('是否退出系统？','友情提示..',MB_YESNO+MB_ICONQUESTION)<>6) then
+           begin
+             Close;
+           end;
+     end;
 end;
 
 end.

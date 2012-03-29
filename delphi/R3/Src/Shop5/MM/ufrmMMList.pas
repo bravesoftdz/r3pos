@@ -527,7 +527,7 @@ begin
   if (mmGlobal.module[2]='1') or (mmGlobal.module[3]='1') or (mmGlobal.module[4]='1') then
      inherited
   else
-     frmMMMain.Close;
+     frmMMMain.actExit.OnExecute(nil);
 
 end;
 

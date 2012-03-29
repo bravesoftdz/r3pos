@@ -101,7 +101,7 @@ type
   end;
   
 implementation
-uses ummGlobal, ufrmHintMsg, IniFiles, ufrmMain,ufrmLogo, ZLogFile, uMsgBox, ufrmDesk, uGlobal;
+uses ummGlobal, ufrmHintMsg, IniFiles, ufrmMain,ufrmLogo, ZLogFile, uMsgBox, ufrmDesk, uGlobal, uShopGlobal;
 {$R *.dfm}
 
 { TfrmMMBrowser }
@@ -454,6 +454,8 @@ begin
      Params.Decode(Params,Msg);
      rimcomId := Params.ParambyName('rimcid').AsString;
      rimcustId := Params.ParambyName('xsmuid').AsString;
+     Rim_ComId := rimcomId;
+     Rim_CustId := rimcustId;
      if rimcustId='' then rimcustId := Params.ParambyName('rimuid').AsString;
      if rimcustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
    finally

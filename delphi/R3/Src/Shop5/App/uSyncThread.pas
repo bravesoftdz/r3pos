@@ -21,6 +21,7 @@ type
   end;
 //开启自动同步任务
 procedure StartSyncTask;
+procedure AutoSyncTask;
 //结束同步任务
 procedure StopSyncTask;
 var SyncThread:TSyncThread;
@@ -34,8 +35,17 @@ begin
   if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then Exit;
   if not SyncFactory.CheckThreadSync then Exit;
   if not SyncFactory.SyncLockCheck then Exit;
-  if ShopGlobal.GetParameter('AUTO_SYNC')='0' then Exit; 
+  if ShopGlobal.GetParameter('AUTO_SYNC')='0' then Exit;
   SyncThread := TSyncThread.Create(SyncFactory.SyncThread,random(999999));
+end;
+procedure AutoSyncTask;
+begin
+  if not Global.RemoteFactory.Connected then Exit;
+  if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then Exit;
+  if not SyncFactory.CheckThreadSync then Exit;
+  if not SyncFactory.SyncLockCheck then Exit;
+  if ShopGlobal.GetParameter('AUTO_SYNC')='0' then Exit;
+  SyncFactory.SyncThread(nil);
 end;
 //结束同步任务
 procedure StopSyncTask;
@@ -87,7 +97,7 @@ begin
     if not SyncFactory.Stoped then
        begin
          try
-           Proc(nil);
+           Proc(self);
          except
          end;
        end;

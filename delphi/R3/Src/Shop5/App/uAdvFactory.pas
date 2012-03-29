@@ -45,7 +45,7 @@ type
 var
   AdvFactory:TAdvFactory;
 implementation
-uses IniFiles,uCaFactory,ufrmDesk,uShopGlobal;
+uses IniFiles,uCaFactory,ufrmDesk,uShopGlobal,ufrmAdv;
 //var
 //  Rim_Url:string;
 //  Rim_ComId:string;
@@ -220,9 +220,24 @@ begin
     if AdvInfo.AdvType = 4 then adv.Add('<script src="adv1.js" type="text/javascript"></script>');
     adv.Add('<body scroll="no" oncontextmenu ="return false">');
     case AdvInfo.AdvType of
-    1:adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><img alt="" src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" /></a>');
-    2:adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><embed src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" type="application/x-shockwave-flash"/></a>');
-    3:adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><embed src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" type="application/x-shockwave-flash"/></a>');
+    1:begin
+        if AdvInfo.linkList[0] <> '' then
+          adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><img alt="" src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" /></a>')
+        else
+          adv.Add('<img alt="" src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" />');
+      end;
+    2:begin
+        if AdvInfo.linkList[0] <> '' then
+          adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><embed src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" type="application/x-shockwave-flash"/></a>')
+        else
+          adv.Add('<embed src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" type="application/x-shockwave-flash"/>');
+      end;
+    3:begin
+      if AdvInfo.linkList[0] <> '' then
+        adv.Add('<a target="_blank" href="'+AdvInfo.linkList[0]+'"><embed src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" type="application/x-shockwave-flash"/></a>')
+      else
+        adv.Add('<embed src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[0])+'" type="application/x-shockwave-flash"/>');
+      end;    
     4:begin
        adv.Add('<link href="adv.css"  rel="stylesheet" type="text/css"/>');
        adv.Add('<div class="container" id="idContainer2">');
@@ -231,7 +246,10 @@ begin
        for i:=0 to 20 do
          begin
             if AdvInfo.urlList[i]<>'' then
-               adv.Add('<td><a target="_blank" href="'+AdvInfo.linkList[i]+'"><img src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i])+'"/></a></td>');
+              if AdvInfo.linkList[i] <> '' then
+                adv.Add('<td><a target="_blank" href="'+AdvInfo.linkList[i]+'"><img src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i])+'"/></a></td>')
+              else
+                adv.Add('<td><img src="'+ExtractFilePath(ParamStr(0))+'adv\images\'+GetUrlFileName(AdvInfo.urlList[i])+'"/></td>');
          end;
        adv.Add('</tr>');
        adv.Add('</table>');
@@ -391,8 +409,9 @@ begin
   try
     ReadParam;
     GetAdvInfo(1);
+    GetAdvInfo(2);
   except
-    
+
   end;
 end;
 
@@ -479,7 +498,7 @@ var
   F:TIniFile;
   List:TStringList;
 begin
-  if Rim_ComId<>'' then Exit;
+  if Rim_ComId = '' then Exit;
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'db.cfg');
   List := TStringList.Create;
   try

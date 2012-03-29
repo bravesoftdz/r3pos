@@ -92,7 +92,8 @@ type
     function LocateTapPosition(CheckNum:Real;Brrow:boolean=false):real;//定位达标档位
     function KpiDataNum(Num:Real):Real;    //计算当前考核达标系数
     function GetSaleMoney(StartDate,EndDate:Integer):Real;
-    procedure ReachJudge(KpiRate:Real);
+    procedure ReachJudge(KpiRate,CheckNum:Real);
+    procedure PromJudge(KpiRate:Real);
     function UseBrrw(CurAmt:Real;IsBrrw:Boolean):Real;
     property KpiGoods:TZQuery read FKpiGoods write SetKpiGoods;
     property KpiLevel:TZQuery read FKpiLevel write SetKpiLevel;
@@ -864,7 +865,28 @@ begin
 end;
 
 procedure TClientRebate.DateSectionCheck;
+var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
+    IsBorrow:Boolean;
 begin
+  LocateLevel(FKpiIndexInfo.PlanAmt);
+  IsFlag := False;
+  KpiTimes.First;
+  while not KpiTimes.Eof do
+  begin
+    if KpiTimes.FieldByName('KPI_FLAG').AsString = '0' then
+    begin
+      KpiData := KpiTimes.FieldByName('KPI_DATA').AsInteger;
+      KpiCalc := KpiTimes.FieldByName('KPI_CALC').AsInteger;
+      RatioType := KpiTimes.FieldByName('RATIO_TYPE').AsInteger;
+
+      CheckNum := GetSaleMoney(KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger);
+
+      if (KpiTimes.FieldByName('USING_BRRW').AsString = '1') then IsBorrow := True else IsBorrow := False;
+      CurKpiRate := LocateTapPosition(CheckNum,IsBorrow); //定位达标档位并获取相关参数
+      ReachJudge(CurKpiRate,CheckNum);
+    end;
+    KpiTimes.Next;
+  end;
 end;
 
 destructor TClientRebate.Destroy;
@@ -923,10 +945,10 @@ begin
      CdsGoods.First;
      while not CdsGoods.Eof do
      begin
-       if KpiData in [1,4] then
-          Result := Result + CdsGoods.FieldByName('AMOUNT').AsFloat
-       else
-          Result := Result + CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+         if KpiData in [1,4] then
+            Result := Result + CdsGoods.FieldByName('AMOUNT').AsFloat
+         else
+            Result := Result + CdsGoods.FieldByName('CALC_MONEY').AsFloat;
        CdsGoods.Next;
      end;
   end;
@@ -986,7 +1008,9 @@ begin
   KpiSeqNo.Filtered := True;
   KpiSeqNo.SortedFields := 'KPI_AMT';
   KpiSeqNo.SortType := stAscending;
-
+  result := CheckNum;
+  FSeqNo.SeqNoId := '';
+  FSeqNo.KpiAmt := 0;
   KpiSeqNo.First;
   while not KpiSeqNo.Eof do
   begin
@@ -1018,24 +1042,30 @@ begin
     end;
     KpiSeqNo.Next;
   end;
-  //处理借量容器剩余量
-  if KpiData in [1,2] then //只有完成最高档位后的量才能用来借用。
-     MaxAmt :=  FKpiIndexInfo.PlanAmt*KpiSeqNo.FieldByName('KPI_AMT').AsFloat/100
-  else
-     MaxAmt := KpiSeqNo.FieldByName('KPI_AMT').AsFloat;
-  if KpiData in [1,2] then //只有完成最高档位后的量才能用来借用。
-     UsingAmt :=  FKpiIndexInfo.PlanAmt*FSeqNo.KpiAmt/100
-  else
-     UsingAmt := FSeqNo.KpiAmt;
-  if UsingAmt>CheckNum then
-     ContainerBrrw := ContainerBrrw-(UsingAmt-CheckNum);
-  if CheckNum>MaxAmt then
-     ContainerBrrw := ContainerBrrw+(CheckNum-MaxAmt);
+  if Brrow then
+  begin
+    //处理借量容器剩余量
+    if KpiData in [1,2] then //只有完成最高档位后的量才能用来借用。
+       MaxAmt :=  FKpiIndexInfo.PlanAmt*KpiSeqNo.FieldByName('KPI_AMT').AsFloat/100
+    else
+       MaxAmt := KpiSeqNo.FieldByName('KPI_AMT').AsFloat;
+
+    if KpiData in [1,2] then //只有完成最高档位后的量才能用来借用。
+       UsingAmt :=  FKpiIndexInfo.PlanAmt*FSeqNo.KpiAmt/100
+    else
+       UsingAmt := FSeqNo.KpiAmt;
+    if UsingAmt>CheckNum then result := UsingAmt;
+    
+    if UsingAmt>CheckNum then
+       ContainerBrrw := ContainerBrrw-(UsingAmt-CheckNum);
+    if CheckNum>MaxAmt then
+       ContainerBrrw := ContainerBrrw+(CheckNum-MaxAmt);
+  end;
 end;
 
-procedure TClientRebate.ReachJudge(KpiRate:Real);
+procedure TClientRebate.PromJudge(KpiRate: Real);
 var GoodsId,UnitId:String;
-    Ratio:Real;
+    Ratio,PromNum:Real;
 begin
   GoodsId := '';
   UnitId := '';
@@ -1051,19 +1081,89 @@ begin
       VarArrayOf([KpiSeqNo.FieldByName('SEQNO_ID').AsString,GoodsId]),[]) then
     begin
       GoodsId := KpiRatio.FieldByName('GODS_ID').AsString;
-      UnitId := KpiRatio.FieldByName('UNIT_ID').AsString;
+      UnitId := '';
       Ratio := KpiRatio.FieldByName('KPI_RATIO').AsFloat;
+    end
+    else
+    begin
+      GoodsId := CdsGoods.FieldByName('GODS_ID').AsString;
+      UnitId := '';
+      Ratio := 0;
     end;
 
-    if Ratio<FKpiIndexInfo.LevelLowRate then Ratio := FKpiIndexInfo.LevelLowRate;
-    //if (Ratio > MaxRate) and not IsFlag then MaxRate := Ratio;
+    KpiDetail.First;
+    while not KpiDetail.Eof do
+      begin
+        if (KpiDetail.FieldByName('KPI_DATE1').AsInteger<=KpiTimes.FieldByName('KPI_DATE1').AsInteger)
+           and
+           (KpiDetail.FieldByName('KPI_DATE2').AsInteger>=KpiTimes.FieldByName('KPI_DATE2').AsInteger)
+        then //促销时段内的区间
+           begin
+             if KpiDetail.FieldByName('KPI_RATIO').AsFloat<Ratio then
+                begin
+                  KpiDetail.Edit;
+                  case KpiCalc of
+                  1:begin
+                      PromNum := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+                      KpiDetail.FieldByName('KPI_MNY').AsFloat :=
+                        (KpiDetail.FieldByName('FISH_MNY').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat/100
+                        +
+                        PromNum*Ratio/100
+                    end;
+                  2:begin
+                      PromNum := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat;
+                      KpiDetail.FieldByName('KPI_MNY').AsFloat :=
+                        (CdsGoods.FieldByName('FISH_AMT').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat
+                        +
+                        PromNum*Ratio
+                    end;
+                  3:begin
+                      Raise Exception.Create('指定金额方式不支持促销时段。');
+                    end;
+                  end;
+                end;
+           end;
+        KpiDetail.Next;
+      end;
+    CdsGoods.Next;
+  end;
+end;
+
+procedure TClientRebate.ReachJudge(KpiRate,CheckNum:Real);
+var GoodsId,UnitId:String;
+    Ratio,FishCalcRate:Real;
+begin
+  GoodsId := '';
+  UnitId := '';
+  Ratio := 0;
+  CdsGoods.First;
+  while not CdsGoods.Eof do
+  begin
+    if KpiTimes.FieldByName('RATIO_TYPE').AsString='1' then
+       GoodsId:='#'
+    else
+       GoodsId:=CdsGoods.FieldByName('GODS_ID').AsString;
+    if KpiRatio.Locate('SEQNO_ID;GODS_ID',
+      VarArrayOf([KpiSeqNo.FieldByName('SEQNO_ID').AsString,GoodsId]),[]) then
+    begin
+      GoodsId := KpiRatio.FieldByName('GODS_ID').AsString;
+      UnitId := '';
+      Ratio := KpiRatio.FieldByName('KPI_RATIO').AsFloat;
+    end
+    else
+    begin
+      GoodsId := CdsGoods.FieldByName('GODS_ID').AsString;
+      UnitId := '';
+      if (CheckNum>=FKpiIndexInfo.PlanAmt) then
+         Ratio := FKpiIndexInfo.LevelLowRate
+      else
+         Ratio := 0;
+    end;
+
+    if (Ratio<FKpiIndexInfo.LevelLowRate) and (CheckNum>=FKpiIndexInfo.PlanAmt) then Ratio := FKpiIndexInfo.LevelLowRate;
 
     if not KpiGoods.Locate('GODS_ID',CdsGoods.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('KpiGoods没找到商品');
-    SmallToCalc := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,KpiGoods.FieldByName('UNIT_ID').AsString);
-    if UnitId <> '' then
-       BigToCalc := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,UnitId)
-    else
-       BigToCalc := 0;
+    FishCalcRate := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,KpiGoods.FieldByName('UNIT_ID').AsString);
     if not KpiDetail.Locate('GODS_ID;KPI_DATE1;KPI_DATE2',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger]),[]) then
     begin
       KpiDetail.Append;
@@ -1080,10 +1180,7 @@ begin
       KpiDetail.FieldByName('GODS_ID').AsString := CdsGoods.FieldByName('GODS_ID').AsString;
       KpiDetail.FieldByName('LVL_AMT').AsFloat := FKpiIndexInfo.LevelAmt;
       KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
-      if BigToCalc = 0 then
-         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
-      else
-         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
+      KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
       KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('AMOUNT').AsFloat;//KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
       KpiDetail.FieldByName('ADJS_AMT').AsFloat := 0;
       KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
@@ -1096,10 +1193,10 @@ begin
          KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
       else if KpiCalc = 3 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
-         
+
       KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
       KpiDetail.FieldByName('BUDG_KPI').AsFloat := 0;
-      KpiDetail.Post;
+      KpiDetail.Post;      GetTickCount
     end
     else
     begin
@@ -1108,10 +1205,7 @@ begin
       KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
       KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('AMOUNT').AsFloat;
       KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
-      if BigToCalc = 0 then
-         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := SmallToCalc
-      else
-         KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := BigToCalc/SmallToCalc;
+      KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
 
       if KpiCalc = 1 then
@@ -1120,7 +1214,7 @@ begin
          KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_AMOUNT').AsFloat)*Ratio
       else if KpiCalc = 3 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
-         
+
       KpiDetail.FieldByName('ACTR_RATIO').AsFloat := 0;
       KpiDetail.FieldByName('BUDG_KPI').AsFloat := 0;
       KpiDetail.Post;
@@ -1131,7 +1225,28 @@ begin
 end;
 
 procedure TClientRebate.SeasonCheck;
+var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
+    IsBorrow:Boolean;
 begin
+  LocateLevel(FKpiIndexInfo.PlanAmt);
+  IsFlag := False;
+  KpiTimes.First;
+  while not KpiTimes.Eof do
+  begin
+    if KpiTimes.FieldByName('KPI_FLAG').AsString = '0' then
+    begin
+      KpiData := KpiTimes.FieldByName('KPI_DATA').AsInteger;
+      KpiCalc := KpiTimes.FieldByName('KPI_CALC').AsInteger;
+      RatioType := KpiTimes.FieldByName('RATIO_TYPE').AsInteger;
+
+      CheckNum := GetSaleMoney(KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger);
+
+      if (KpiTimes.FieldByName('USING_BRRW').AsString = '1') then IsBorrow := True else IsBorrow := False;
+      CurKpiRate := LocateTapPosition(CheckNum,IsBorrow); //定位达标档位并获取相关参数
+      ReachJudge(CurKpiRate,CheckNum);
+    end;
+    KpiTimes.Next;
+  end;
 end;
 
 procedure TClientRebate.SetKpiDetail(const Value: TZQuery);
@@ -1233,22 +1348,17 @@ begin
       KpiData := KpiTimes.FieldByName('KPI_DATA').AsInteger;
       KpiCalc := KpiTimes.FieldByName('KPI_CALC').AsInteger;
       RatioType := KpiTimes.FieldByName('RATIO_TYPE').AsInteger;
+
       CheckNum := GetSaleMoney(KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger);
-      //CurKpiRate := KpiDataNum(CheckNum);//第一次获得达标系数(在没有借量之前)
+
       if (KpiTimes.FieldByName('USING_BRRW').AsString = '1') then IsBorrow := True else IsBorrow := False;
       CurKpiRate := LocateTapPosition(CheckNum,IsBorrow); //定位达标档位并获取相关参数
-
-      //if FSeqNo.isMax and (KpiTimes.FieldByName('USING_BRRW').AsString = '1') then IsBorrow := True else IsBorrow := False;
-      //CheckNum := UseBrrw(CheckNum,IsBorrow); {借量逻辑有问题，没处理借多少量及借量后的档位}
-
-      //CurKpiRate := KpiDataNum(CheckNum);//第二次获得达标系数(在借量之后)
-
-      ReachJudge(CurKpiRate);
+      ReachJudge(CurKpiRate,CheckNum);
     end;
     KpiTimes.Next;
   end;
 
-{  IsFlag := True;
+  IsFlag := True;
   KpiTimes.First;
   while not KpiTimes.Eof do
   begin
@@ -1258,17 +1368,12 @@ begin
       KpiCalc := KpiTimes.FieldByName('KPI_CALC').AsInteger;
       RatioType := KpiTimes.FieldByName('RATIO_TYPE').AsInteger;
       CheckNum := GetSaleMoney(KpiTimes.FieldByName('KPI_DATE1').AsInteger,KpiTimes.FieldByName('KPI_DATE2').AsInteger);
-      CurKpiRate := KpiDataNum(CheckNum);//第一次获得达标系数(在没有借量之前)
-      LocateTapPosition(CurKpiRate);  //定位达标档位并获取相关参数
+      CurKpiRate := LocateTapPosition(CheckNum,false); //定位达标档位并获取相关参数
 
-      //if KpiTimes.FieldByName('USING_BRRW').AsString = '1' then IsBorrow := True else IsBorrow := False;
-      //CheckNum := UseBrrw(CheckNum,IsBorrow);
-      //CurKpiRate := KpiDataNum(CheckNum);//第二次获得达标系数(在借量之后)
-
-      ReachJudge(CurKpiRate);
+      PromJudge(CurKpiRate);
     end;
     KpiTimes.Next;
-  end;  }
+  end;
 end;
 
 end.

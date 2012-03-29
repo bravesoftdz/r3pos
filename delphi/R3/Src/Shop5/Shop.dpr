@@ -289,7 +289,6 @@ uses
   uSyncThread in 'App\uSyncThread.pas',
   uWelcome in 'App\uWelcome.pas',
   LCContrllerLib in 'App\LCContrllerLib.pas',
-  uAdvFactory in 'App\uAdvFactory.pas',
   uCommand in 'App\uCommand.pas',
   ufrmOrderHandSet in 'App\ufrmOrderHandSet.pas' {frmOrderHandSet},
   ufrmDbLocusOrder in 'App\ufrmDbLocusOrder.pas' {frmDbLocusOrder},

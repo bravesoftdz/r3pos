@@ -844,6 +844,7 @@ begin
       frmLogo.Position := i;
     end;
     SetSynTimeStamp('#',SyncTimeStamp,'#');
+    SetSynTimeStamp('AUTO',SyncTimeStamp,'#');
     frmLogo.ShowTitle := '正在同步<Rim相关参数>...';
     SyncRim;
   finally
@@ -3504,7 +3505,7 @@ begin
   if Working then Exit;
   Stoped := false;
   Working := true;
-
+  if Sender=nil then frmLogo.Show;
   InterlockedIncrement(Locked);
   try
     try
@@ -3516,7 +3517,7 @@ begin
           Raise;
         end;
     end;
-    
+
   sdate := CaFactory.TimeStamp / 86400.0+40542.0 +2;  //delphi 下地date是重01开始算，所以要加2
   sdate := fnTime.fnStrtoDate(formatDatetime('YYYYMMDD',sdate));  {下掉时间，转成零晨时间}
   EndTimeStamp := round(( (sdate-2) -40542)*86400);
@@ -3524,9 +3525,15 @@ begin
   SyncComm := CheckRemeteData;
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
-  frmLogo.ProgressBar1.Max := FList.Count;
+  if Sender=nil then frmLogo.ProgressBar1.Max := FList.Count;
   for i:=0 to FList.Count -1 do
     begin
+      if Sender=nil then
+         begin
+           frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
+           Application.ProcessMessages;
+           frmLogo.BringToFront;
+         end;
       if Stoped then Exit;
       case PSynTableInfo(FList[i])^.synFlag of
       5:SyncStockOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
@@ -3544,8 +3551,8 @@ begin
       18:SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       19:SyncCheckOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       27:SyncIcGlideOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
-      end;      
-      frmLogo.Position := i;
+      end;
+      if Sender=nil then frmLogo.Position := i;
     end;
     SetSynTimeStamp('AUTO',EndTimeStamp,'#');
   finally
@@ -3553,6 +3560,7 @@ begin
     ReadTimeStamp;
     Working := false;
     EndTimeStamp := 0;
+    if Sender=nil then frmLogo.Close;
   end;
 end;
 

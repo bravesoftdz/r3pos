@@ -12,7 +12,6 @@ inherited frmMMMain: TfrmMMMain
   Menu = nil
   Position = poDesktopCenter
   WindowState = wsNormal
-  OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 12
   inherited stbBottom: TStatusBar
@@ -888,7 +887,7 @@ inherited frmMMMain: TfrmMMMain
       Color = clBtnFace
       Anchors = [akTop, akRight]
       TabOrder = 4
-      OnClick = sysCloseClick
+      OnClick = actExitExecute
     end
   end
   object bkgMenu: TRzPanel [4]
@@ -3693,6 +3692,10 @@ inherited frmMMMain: TfrmMMMain
       Caption = #26700#38754#20999#25442
       OnExecute = actfrmDeskPageExecute
     end
+    object actExit: TAction
+      Caption = #36864#20986#31995#32479
+      OnExecute = actExitExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 256
@@ -3714,6 +3717,9 @@ inherited frmMMMain: TfrmMMMain
     end
     object N1: TMenuItem [4]
       Caption = '-'
+    end
+    inherited miClose: TMenuItem
+      OnClick = actExitExecute
     end
   end
   inherited UpdateTimer: TTimer

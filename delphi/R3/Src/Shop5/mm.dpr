@@ -280,7 +280,8 @@ uses
   ufrmPriceLevelSet in 'App\ufrmPriceLevelSet.pas' {frmPriceLevelSet},
   ufrmXsmLogin in 'App\ufrmXsmLogin.pas' {frmXsmLogin},
   ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
-  uResFactory in 'App\uResFactory.pas';
+  uResFactory in 'App\uResFactory.pas',
+  ObjCostCalc in 'Obj\ObjCostCalc.pas';
 
 {$R *.res}
 

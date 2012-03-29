@@ -46,7 +46,7 @@ alter table SAL_BOMORDER add HAS_INTEGRAL char(1) NULL;
 
 --是否启动多档促销 0不启用 1启用
 alter table SAL_PRICEDATA add USING_LEVEL char(1) NULL;
---档位类型 1按金额 2按销量
+--档位类型 1按金额 2按销量 3按整单金额
 alter table SAL_PRICEDATA add LVL_TYPE char(1) NULL;
 --档位达标量
 alter table SAL_PRICEDATA add LV1_AMT decimal(18, 3) NULL;

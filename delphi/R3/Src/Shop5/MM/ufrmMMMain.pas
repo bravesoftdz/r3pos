@@ -3400,8 +3400,16 @@ begin
           LoginFactory.Logout;
           StopSyncTask;
           if TimerFactory<>nil then TimerFactory.Free;
-          if Global.UserID='system' then exit;
-          if CaFactory.CheckDebugSync then Exit;
+          if Global.UserID='system' then
+            begin
+              Close;
+              exit;
+            end;
+          if CaFactory.CheckDebugSync then
+            begin
+              Close;
+              Exit;
+            end;
         except
           on E:Exception do
              begin
@@ -3420,9 +3428,14 @@ begin
               end;
               try
                 if not SyncFactory.CheckDBVersion then Raise Exception.Create('你本机使用的软件版本过旧，请升级程序后再使用。');
-                if not ShopGlobal.NetVersion and not SyncFactory.SyncLockCheck then Exit;
+                if not ShopGlobal.NetVersion and not SyncFactory.SyncLockCheck then
+                   begin
+                     Close;
+                     Exit;
+                   end;
                 if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
                 SyncFactory.SyncAll;
+                Close;
               except
                 on E:Exception do
                    begin
@@ -3437,6 +3450,7 @@ begin
               try
                 if not ShopGlobal.NetVersion and TfrmCostCalc.CheckSyncReck(self) then TfrmCostCalc.TryCalcMthGods(self);
                 SyncFactory.SyncRim;
+                Close;
               except
                 on E:Exception do
                    begin

@@ -1,6 +1,6 @@
 inherited frmCostCalc: TfrmCostCalc
-  Left = 371
-  Top = 306
+  Left = 460
+  Top = 278
   BorderStyle = bsDialog
   Caption = #25104#26412#26680#31639
   ClientHeight = 199

@@ -121,7 +121,7 @@ type
 
   end;
 implementation
-uses uGlobal,uFnUtil,uShopGlobal,ObjCommon,uSyncFactory,ufrmMain;
+uses uGlobal,uFnUtil,uShopGlobal,ObjCommon,uSyncFactory,ufrmMain,uDsUtil;
 {$R *.dfm}
 
 { TfrmCostCalc }
@@ -472,8 +472,51 @@ begin
   Fid := Value;
 end;
 
-procedure TfrmCostCalc.btnStartClick(Sender: TObject);
+function getLocalDBKey() : string;
+var rs : TZQuery;
+var localDBKey : string;
 begin
+  // 获取本机DBKey
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select VALUE from SYS_DEFINE where DEFINE='''+'DBKEY_'+Global.SHOP_ID+''' and TENANT_ID='+inttostr(Global.TENANT_ID);
+    Global.LocalFactory.Open(rs);
+    if not rs.IsEmpty then
+      localDBKey := rs.Fields[0].AsString
+    else
+      begin
+        localDBKey := TSequence.newId();
+        Global.LocalFactory.ExecSQL('insert into SYS_DEFINE(TENANT_ID,DEFINE,VALUE,VALUE_TYPE,COMM,TIME_STAMP) values('+inttostr(Global.TENANT_ID)+','''+'DBKEY_'+Global.SHOP_ID+''','''+localDBKey+''',0,''00'',0)');
+      end
+  finally
+    rs.Free;
+  end;
+  result := localDBKey;
+end;
+
+procedure TfrmCostCalc.btnStartClick(Sender: TObject);
+var localDBKey : string;
+var Params:TftParamList;
+var msg : string;
+begin
+
+  if not ShopGlobal.offline then
+    begin
+      Params := TftParamList.Create(nil);
+      try
+        localDBKey := getLocalDBKey();
+        Params.ParamByName('localDBKey').AsString := localDBKey;
+        Params.ParamByName('tenantId').AsInteger := Global.TENANT_ID;
+        msg := Factor.ExecProc('TCheckCostCalc',Params) ;
+      finally
+        Params.Free;
+      end;
+    end;
+
+  if (msg <> 'null') and (msg <> '') then
+    Raise Exception.Create(msg);
+
   inherited;
   Label1.Caption:='正在核算需要较长的时间,请稍候....';
   if flag in [1,2] then
@@ -550,6 +593,8 @@ begin
     btnStart.Enabled := true;
     DBUnLock;
   end;
+  if not ShopGlobal.offline then
+    Factor.ExecSQL('delete from SYS_DEFINE where TENANT_ID = ' + inttostr(Global.TENANT_ID) + ' and DEFINE in (''RCK_ID'',''RCK_TIME'') ');
   ModalResult := MROK;
 end;
 

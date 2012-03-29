@@ -795,6 +795,7 @@ begin
   StopSyncTask;
   if CaFactory.CheckDebugSync then Exit;
   EndTimeStamp := 0;
+  CommandPush.ExecuteCommand;
   InterlockedIncrement(Locked);
   Working := true;
   try
@@ -814,7 +815,6 @@ begin
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
   frmLogo.ProgressBar1.Max := FList.Count;
-  CommandPush.ExecuteCommand;
   for i:=0 to FList.Count -1 do
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';
@@ -864,6 +864,7 @@ var
 begin
   if CaFactory.CheckDebugSync then Exit;
   EndTimeStamp := 0;
+  CommandPush.ExecuteCommand;
   Working := true;
   InterlockedIncrement(Locked);
   try
@@ -874,7 +875,6 @@ begin
   SyncTimeStamp := CaFactory.TimeStamp;
   SyncFactory.InitList;
   frmLogo.ProgressBar1.Max := FList.Count;
-  CommandPush.ExecuteCommand;
   for i:=0 to FList.Count -1 do
     begin
       frmLogo.ShowTitle := '正在同步<'+PSynTableInfo(FList[i])^.tbtitle+'>...';

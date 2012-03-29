@@ -4,9 +4,9 @@ interface
 uses SysUtils,ZBase,Classes,ZIntf,ObjCommon,ZDataset;
 
 type
+  //考核指标
   TKpiIndex=class(TZFactory)
   private
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
@@ -15,70 +15,45 @@ type
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  //考核等级
   TKpiLevel=class(TZFactory)
   private
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
-    //记录行集新增检测函数，返回值是True 测可以新增当前记录
-    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
-    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集删除检测函数，返回值是True 测可以删除当前记录
-    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  //考核商品
   TKpiGoods=class(TZFactory)
   private
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
-    //记录行集新增检测函数，返回值是True 测可以新增当前记录
-    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
-    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集删除检测函数，返回值是True 测可以删除当前记录
-    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  //考核时段
   TKpiTimes=class(TZFactory)
   private
     procedure InitClass; override;
   end;
 
   //2012.03.07xhh add考核指标的档次
+  //考核档次
   TKpiSeqNo=class(TZFactory)
   private
     procedure InitClass; override;
   end;
 
   //2012.03.07xhh add考核内容填报
+  //考核系数填报
   TKpiRatio=class(TZFactory)
   private
     procedure InitClass; override;
   end;
-  
 
+  //考核市场费计提系数
+  TMktRatio=class(TZFactory)
+  private
+    procedure InitClass; override;
+  end;
 
 implementation
 
 { TKpiGoods }
-
-function TKpiGoods.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TKpiGoods.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TKpiGoods.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TKpiGoods.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
 
 procedure TKpiGoods.InitClass;
 var
@@ -98,8 +73,7 @@ begin
   UpdateSQL.Add( Str);
   Str := 'delete from MKT_KPI_GOODS where KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID and GODS_ID=:OLD_GODS_ID';
   DeleteSQL.Add( Str);
-end;
-
+end; 
 
 { TKpiIndex }
 
@@ -115,8 +89,7 @@ begin
     rs.ParamByName('KPI_ID').AsString := FieldbyName('KPI_ID').AsOldString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger>0 then
-      Raise Exception.Create('指标"'+FieldbyName('KPI_NAME').AsString+'"存在销售计划明细中,不能删除!');
-
+      Raise Exception.Create('指标"'+FieldbyName('KPI_NAME').AsString+'"存在销售计划明细中,不能删除!');   
   finally
     rs.Free;
   end;
@@ -161,11 +134,6 @@ begin
   Result:=True;
 end;
 
-function TKpiIndex.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
 procedure TKpiIndex.InitClass;
 var
   Str: string;
@@ -189,26 +157,6 @@ begin
 end;
 
 { TKpiLevel }
-
-function TKpiLevel.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TKpiLevel.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TKpiLevel.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TKpiLevel.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
 
 procedure TKpiLevel.InitClass;
 var
@@ -265,29 +213,16 @@ begin
   inherited;
   KeyFields := 'TENANT_ID;SEQNO_ID';
   SelectSQL.Text :=
-    'select a.TENANT_ID as TENANT_ID,'+
-          ' a.SEQNO_ID as SEQNO_ID,'+
-          ' a.SEQNO as SEQNO,'+
-          ' a.KPI_ID as KPI_ID,'+
-          ' a.LEVEL_ID as LEVEL_ID,'+
-          ' a.TIMES_ID as TIMES_ID,'+
-          ' a.KPI_AMT as KPI_AMT,'+
-          ' b.LEVEL_NAME as LEVEL_NAME,'+
-          ' b.LVL_AMT as LVL_AMT,'+
-          ' b.LOW_RATE as LOW_RATE,'+
-          ' c.TIMES_NAME as TIMES_NAME,'+
-          ' c.KPI_DATE1 as KPI_DATE1,'+
-          ' c.KPI_DATE2 as KPI_DATE2,'+
-          ' c.USING_BRRW as USING_BRRW,'+
-          ' c.KPI_FLAG as KPI_FLAG,'+
-          ' c.KPI_DATA as KPI_DATA,'+
-          ' c.KPI_CALC as KPI_CALC,'+
-          ' c.RATIO_TYPE as RATIO_TYPE '+
-    ' from MKT_KPI_SEQNO a '+
-    ' left outer join MKT_KPI_LEVEL b on a.tenant_id=b.tenant_id and a.LEVEL_ID=b.LEVEL_ID '+
-    ' left outer join MKT_KPI_TIMES c on a.tenant_id=c.tenant_id and a.TIMES_ID=c.TIMES_ID '+
-    ' where a.TENANT_ID=:TENANT_ID and a.KPI_ID=:KPI_ID '+
-    ' order by a.SEQNO';
+    'select TENANT_ID,'+
+          ' SEQNO_ID,'+
+          ' SEQNO,'+
+          ' KPI_ID,'+
+          ' LEVEL_ID,'+
+          ' TIMES_ID,'+
+          ' KPI_AMT '+
+    ' from MKT_KPI_SEQNO '+
+    ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID '+
+    ' order by SEQNO';
   Str :=
     'insert into MKT_KPI_SEQNO (TENANT_ID,SEQNO_ID,KPI_ID,LEVEL_ID,TIMES_ID,SEQNO,KPI_AMT,COMM,TIME_STAMP) '+
     ' values(:TENANT_ID,:SEQNO_ID,:KPI_ID,:LEVEL_ID,:TIMES_ID,:SEQNO,:KPI_AMT,''00'','+GetTimeStamp(iDbType)+')';
@@ -313,38 +248,18 @@ begin
   inherited;
   KeyFields := 'TENANT_ID;RATIO_ID';
   SelectSQL.Text :=
-    'select a.TENANT_ID as TENANT_ID,'+
-          ' a.RATIO_ID as RATIO_ID,'+
-          ' a.KPI_ID as KPI_ID,'+
-          ' a.LEVEL_ID as LEVEL_ID,'+
-          ' a.TIMES_ID as TIMES_ID,'+
-          ' a.SEQNO_ID as SEQNO_ID,'+
-          ' a.GODS_ID as GODS_ID,'+
-          ' a.UNIT_ID as UNIT_ID,'+
-          ' a.KPI_RATIO as KPI_RATIO,'+
-          ' b.SEQNO as SEQNO,'+
-          ' b.KPI_AMT as KPI_AMT,'+
-          ' c.LEVEL_NAME as LEVEL_NAME,'+
-          ' c.LVL_AMT as LVL_AMT,'+
-          ' c.LOW_RATE as LOW_RATE,'+
-          ' d.TIMES_NAME as TIMES_NAME,'+
-          ' d.KPI_DATE1 as KPI_DATE1,'+
-          ' d.KPI_DATE2 as KPI_DATE2,'+
-          ' d.USING_BRRW as USING_BRRW,'+
-          ' d.KPI_FLAG as KPI_FLAG,'+
-          ' d.KPI_DATA as KPI_DATA,'+
-          ' d.KPI_CALC as KPI_CALC,'+
-          ' d.RATIO_TYPE as RATIO_TYPE,'+
-          ' e.GODS_NAME as GODS_NAME,'+
-          ' f.UNIT_NAME as UNIT_NAME '+
-    ' from MKT_KPI_RATIO a '+
-    ' left outer join MKT_KPI_SEQNO b on a.tenant_id=b.tenant_id and a.SEQNO_ID=b.SEQNO_ID '+
-    ' left outer join MKT_KPI_LEVEL c on a.tenant_id=c.tenant_id and a.LEVEL_ID=c.LEVEL_ID '+
-    ' left outer join MKT_KPI_TIMES d on a.tenant_id=d.tenant_id and a.TIMES_ID=d.TIMES_ID '+
-    ' left outer join VIW_GOODSINFO e on a.tenant_id=e.tenant_id and a.GODS_ID=e.GODS_ID '+
-    ' left outer join VIW_MEAUNITS  f on a.tenant_id=f.tenant_id and a.UNIT_ID=f.UNIT_ID '+
-    ' where a.TENANT_ID=:TENANT_ID and a.KPI_ID=:KPI_ID '+
-    ' order by b.SEQNO';
+    'select TENANT_ID,'+
+          ' RATIO_ID,'+
+          ' KPI_ID,'+
+          ' LEVEL_ID,'+
+          ' TIMES_ID,'+
+          ' SEQNO_ID,'+
+          ' GODS_ID,'+
+          ' UNIT_ID,'+
+          ' KPI_RATIO '+
+    ' from MKT_KPI_RATIO '+
+    ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID '+
+    ' order by LEVEL_ID';
   Str :=
     ' insert into MKT_KPI_RATIO(TENANT_ID,RATIO_ID,KPI_ID,LEVEL_ID,TIMES_ID,SEQNO_ID,GODS_ID,UNIT_ID,KPI_RATIO,COMM,TIME_STAMP)'+
     ' values(:TENANT_ID,:RATIO_ID,:KPI_ID,:LEVEL_ID,:TIMES_ID,:SEQNO_ID,:GODS_ID,:UNIT_ID,:KPI_RATIO,''00'','+GetTimeStamp(iDbType)+')';
@@ -361,6 +276,39 @@ begin
   DeleteSQL.Add( Str);
 end;
 
+{ TMktRatio }
+
+procedure TMktRatio.InitClass;
+var
+  Str: string;
+begin
+  KeyFields:='TENANT_ID;ACTR_ID';
+  SelectSQL.Text :=
+    'select '+
+    ' a.TENANT_ID as TENANT_ID,'+
+    ' a.ACTR_ID as ACTR_ID,'+
+    ' a.KPI_ID as KPI_ID,'+
+    ' a.GODS_ID as GODS_ID,'+
+    ' a.UNIT_ID as UNIT_ID,'+
+    ' a.ACTR_RATIO as ACTR_RATIO,'+
+    ' b.GODS_NAME as GODS_NAME,'+
+    ' b.GODS_CODE as GODS_CODE,'+
+    ' b.BARCODE as BARCODE '+
+    ' from MKT_ACTIVE_RATIO a '+
+    ' left join VIW_GOODSINFO b on a.TENANT_ID=b.TENANT_ID and a.GODS_ID=b.GODS_ID '+
+    ' where a.TENANT_ID=:TENANT_ID and a.KPI_ID=:KPI_ID and a.COMM not in (''02'',''12'')';
+
+  Str := 'insert into MKT_ACTIVE_RATIO(TENANT_ID,ACTR_ID,KPI_ID,GODS_ID,UNIT_ID,ACTR_RATIO,COMM,TIME_STAMP)'+
+         ' VALUES(:TENANT_ID,:ACTR_ID,:KPI_ID,:GODS_ID,:UNIT_ID,:ACTR_RATIO,''00'','+GetTimeStamp(iDbType)+')';
+  InsertSQL.Add( Str);
+  Str := 'update MKT_ACTIVE_RATIO '+
+         ' set TENANT_ID=:TENANT_ID,KPI_ID=:KPI_ID,ACTR_ID=:ACTR_ID,GODS_ID=:GODS_ID,UNIT_ID=:UNIT_ID,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+         ' where TENANT_ID=:OLD_TENANT_ID and ACTR_ID=:OLD_ACTR_ID';
+  UpdateSQL.Add( Str);
+  Str := 'delete from MKT_ACTIVE_RATIO where TENANT_ID=:OLD_TENANT_ID and ACTR_ID=:OLD_ACTR_ID';
+  DeleteSQL.Add( Str);
+end;
+
 initialization
   RegisterClass(TKpiIndex);
   RegisterClass(TKpiLevel);
@@ -368,6 +316,8 @@ initialization
   RegisterClass(TKpiTimes);
   RegisterClass(TKpiSeqNo);
   RegisterClass(TKpiRatio);
+  RegisterClass(TMktRatio);
+
 
 finalization
   UnRegisterClass(TKpiIndex);
@@ -375,6 +325,8 @@ finalization
   UnRegisterClass(TKpiGoods);
   UnRegisterClass(TKpiTimes);
   UnRegisterClass(TKpiSeqNo);
-  UnRegisterClass(TKpiRatio);  
+  UnRegisterClass(TKpiRatio);
+  UnRegisterClass(TMktRatio);
+
 
 end.

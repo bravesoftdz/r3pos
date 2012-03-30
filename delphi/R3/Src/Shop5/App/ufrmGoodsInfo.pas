@@ -188,6 +188,10 @@ type
     procedure ExtBarCodeGridMouseDown(Sender: TObject;
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure N1Click(Sender: TObject);
+    procedure PriceGridColumns4UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure PriceGridColumns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     InputMode : Integer;   //输入模式
     DropUNITS_Ds: TZQuery;
@@ -1959,12 +1963,25 @@ begin
 end;
 
 procedure TfrmGoodsInfo.CheckGoodsFieldIsEmpty;
+  procedure CheckGodsMaxPrice(edtPrice: TcxTextEdit;MsgInfo: string);
+  begin
+    if StrToFloatDef(edtPrice.Text,0)>999999999 then
+    begin
+      if edtPrice.CanFocus then edtPrice.SetFocus;
+      Raise Exception.Create('输入的〖'+MsgInfo+'〗数值过大，无效...');
+    end;
+  end;
+var
+  PriceName: string;
 begin
   if (dbState = dsEdit) and (trim(edtGODS_CODE.Text)='') then
   begin
     if edtGODS_CODE.CanFocus then edtGODS_CODE.SetFocus;
     Raise Exception.Create('货号不能为空，请输入！');
   end;
+  //2012.03.30判断货号是否超长
+  if Length(edtGODS_CODE.Text)>20 then
+    edtGODS_CODE.Text:=Copy(edtGODS_CODE.Text,1,20);
 
   if Trim(edtGODS_NAME.Text)='' then
   begin
@@ -2121,6 +2138,29 @@ begin
   begin
     if edtBIGTO_CALC.CanFocus then edtBIGTO_CALC.SetFocus;
     raise Exception.Create('大包装单位的换算系数不能小于等于0!');
+  end;
+  //判断价格超大
+  CheckGodsMaxPrice(edtNEW_OUTPRICE,'标准售价');
+  CheckGodsMaxPrice(edtMY_OUTPRICE,'本店售价（计量单位）');
+  CheckGodsMaxPrice(edtNEW_INPRICE,'最新进价');
+  CheckGodsMaxPrice(edtNEW_LOWPRICE,'最新进价');
+  CheckGodsMaxPrice(edtMY_OUTPRICE1,'本店售价（小件单位）');
+  CheckGodsMaxPrice(edtMY_OUTPRICE2,'本店售价（大件单位）');
+  //会员价格判断[]
+  if CdsMemberPrice.Active then
+  begin
+    CdsMemberPrice.First;
+    while not CdsMemberPrice.Eof do
+    begin
+      PriceName:=trim(CdsMemberPrice.FieldByName('PRICE_Name').AsString);
+      if CdsMemberPrice.FieldByName('NEW_OUTPRICE').AsFloat>999999999 then
+        Raise Exception.Create('输入的〖'+PriceName+'〗计量单位数值过大，无效...');
+      if CdsMemberPrice.FieldByName('NEW_OUTPRICE1').AsFloat>999999999 then
+        Raise Exception.Create('输入的〖'+PriceName+'〗小件单位数值过大，无效...');
+      if CdsMemberPrice.FieldByName('NEW_OUTPRICE2').AsFloat>999999999 then
+        Raise Exception.Create('输入的〖'+PriceName+'〗大件单位数值过大，无效...');        
+      CdsMemberPrice.Next;
+    end;
   end;
 end;
 
@@ -2637,7 +2677,7 @@ begin
         Exit;
       end;
   end;
-  if abs(r)>999999999 then Raise Exception.Create('输入的数值不能100，无效');
+  if abs(r)>999999999 then Raise Exception.Create('  输入的数值过大，无效...  ');
 
   if (VarIsNull(Value)) then r:=0 else r:=Value;
 
@@ -2648,7 +2688,7 @@ begin
     CdsMemberPrice.Post;
     CALC_MenberProfitPrice(CdsMemberPrice,1);
     if not (CdsMemberPrice.State in [dsEdit,dsInsert]) then CdsMemberPrice.Edit;
-  end; 
+  end;
 end;
 
 procedure TfrmGoodsInfo.edtDefault1Click(Sender: TObject);
@@ -3175,6 +3215,58 @@ begin
         edtGODS_CODE.SelectAll;
       end;
     end;
+  end;
+end;
+
+procedure TfrmGoodsInfo.PriceGridColumns4UpdateData(Sender: TObject; var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  r: Real;
+  SetCol: TColumnEh;
+begin
+  SetCol:=FindColumn(PriceGrid,'NEW_OUTPRICE1');
+  if setCol.Visible then
+  begin
+    try
+      if Text='' then
+        r := 0
+      else
+         r := StrtoFloatDef(Text,0);
+    except
+      on E:Exception do
+      begin
+        Text :='0';
+        Value :='0';
+        MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+        Exit;
+      end;
+    end;
+    if abs(r)>999999999 then Raise Exception.Create('  输入的数值过大，无效...  ');
+  end;
+end;
+
+procedure TfrmGoodsInfo.PriceGridColumns5UpdateData(Sender: TObject; var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  r: Real;
+  SetCol: TColumnEh;
+begin
+  SetCol:=FindColumn(PriceGrid,'NEW_OUTPRICE2');
+  if setCol.Visible then
+  begin
+    try
+      if Text='' then
+        r := 0
+      else
+         r := StrtoFloatDef(Text,0);
+    except
+      on E:Exception do
+      begin
+        Text :='0';
+        Value :='0';
+        MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+        Exit;
+      end;
+    end;
+    if abs(r)>999999999 then Raise Exception.Create('  输入的数值过大，无效...  ');
   end;
 end;
 

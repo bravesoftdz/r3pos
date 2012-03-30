@@ -49,13 +49,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
-      ActivePage = TabSheet2
+      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 5
+      TabIndex = 1
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -567,6 +567,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Footers = <>
                 Title.Caption = #23567#21253#35013#21806#20215
                 Width = 90
+                OnUpdateData = PriceGridColumns4UpdateData
               end
               item
                 EditButtons = <>
@@ -574,6 +575,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
                 Footers = <>
                 Title.Caption = #22823#21253#35013#21806#20215
                 Width = 90
+                OnUpdateData = PriceGridColumns5UpdateData
               end>
           end
         end

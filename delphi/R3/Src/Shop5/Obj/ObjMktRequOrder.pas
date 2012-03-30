@@ -250,7 +250,7 @@ end;
 
 function TMktRequOrderAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
-var Str:string;
+var Str,ChkUser:string;
     n:Integer;
     Temp:TZQuery;
 begin
@@ -262,13 +262,15 @@ begin
     n := AGlobal.ExecSQL(Str);
     if n=0 then
        Raise Exception.Create('没找到待审核单据，是否被另一用户删除或已审核。')
-    else
-    if n>1 then
+    else if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
-    AGlobal.ExecSQL(
-           'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-         + 'select REQU_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,''费用申请'''+GetStrJoin(AGlobal.iDbType)+'''(申请单号:'''+GetStrJoin(AGlobal.iDbType)+'GLIDE_NO'+GetStrJoin(AGlobal.iDbType)+''')'',''5'',KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,0,0,KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,REQU_DATE,REQU_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''',:CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+' from MKT_REQUORDER where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and REQU_TYPE=''2'''
-      ,params);
+    ChkUser:=Params.ParamByName('CHK_USER').AsString;
+    Str:=
+      'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+      'select REQU_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,''费用申请'''+GetStrJoin(AGlobal.iDbType)+'''(申请单号:'''+GetStrJoin(AGlobal.iDbType)+'GLIDE_NO'+GetStrJoin(AGlobal.iDbType)+''')'',''5'','+
+      ' KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,0,0,KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,REQU_DATE,REQU_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''','''+ChkUser+''' as CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+
+      ' from MKT_REQUORDER where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and REQU_TYPE=''2''';
+    AGlobal.ExecSQL(Str,params);
     AGlobal.CommitTrans;
     Result := true;
     Msg := '审核单据成功';

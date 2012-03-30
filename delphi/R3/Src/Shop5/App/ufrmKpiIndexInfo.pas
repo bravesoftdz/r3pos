@@ -46,8 +46,8 @@ type
     Ds_KpiGoods: TDataSource;
     DBGridEh2: TDBGridEh;
     fndUNIT_ID: TcxComboBox;
-    PopupMenu1: TPopupMenu;
-    PopupMenu2: TPopupMenu;
+    Pm_Level: TPopupMenu;
+    Pm_Gods: TPopupMenu;
     AddGoods: TMenuItem;
     DeleteGoods: TMenuItem;
     DeleteRecord: TMenuItem;
@@ -60,7 +60,7 @@ type
     DBGridEh3: TDBGridEh;
     Ds_KpiTimes: TDataSource;
     CdsKpiTimes: TZQuery;
-    PopupMenu3: TPopupMenu;
+    Pm_Times: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
@@ -88,9 +88,17 @@ type
     CdsKpiRatio: TZQuery;
     CdsKpiSeqNo: TZQuery;
     AddSeqNo: TMenuItem;
-    Button1: TButton;
-    Row: TcxSpinEdit;
-    Col: TcxSpinEdit;
+    TabSheet5: TRzTabSheet;
+    RzPanel5: TRzPanel;
+    DBGridEh5: TDBGridEh;
+    fndUNIT_ID1: TcxComboBox;
+    CdsMktGoods: TZQuery;
+    Ds_MktGoods: TDataSource;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -102,6 +110,12 @@ type
     procedure fndUNIT_IDKeyPress(Sender: TObject; var Key: Char);
     procedure fndUNIT_IDPropertiesChange(Sender: TObject);
     procedure DBGridEh2Columns4BeforeShowControl(Sender: TObject);
+    procedure fndUNIT_ID1Enter(Sender: TObject);
+    procedure fndUNIT_ID1Exit(Sender: TObject);
+    procedure fndUNIT_ID1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure fndUNIT_ID1KeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh5Columns4BeforeShowControl(Sender: TObject);
+    procedure fndUNIT_ID1PropertiesChange(Sender: TObject);    
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DeleteGoodsClick(Sender: TObject);
     procedure AddGoodsClick(Sender: TObject);
@@ -129,9 +143,18 @@ type
     procedure KpiGridCellsChanged(Sender: TObject; R: TRect);
     procedure KpiGridKeyPress(Sender: TObject; var Key: Char);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure DBGridEh5DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure N8Click(Sender: TObject);
+    procedure DBGridEh1Columns1UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns2UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
-    pBaseRow:pKpiRow;  //初始化标题时
-    FChangeState: Boolean;  //变化状态
+    pBaseRow:pKpiRow;   //初始化标题时
+    FKpiState: Boolean; //考核指标状态
+    FChangeState: Boolean;  //档次、系数编辑状态
     FListCount: Integer;    //Draw的行数
     FRowIdx: integer;   //当前行索引
     FColIdx: integer;   //当前列索引
@@ -154,24 +177,28 @@ type
     procedure InitKpiGrid;      //初始化表头
     procedure InitKpiGridData;  //初始化数据
     procedure DrawKpiGridData;  //画表格
+    procedure SetKpiState;      //设置变化状态
     function WriteRowKpiGridToDataSet(pRow: pKpiRow; GridRow: integer):Boolean; //从Grid保存一行数据到
     function SaveKpiGridData:Boolean;     //从Grid保存数据到数据集
     function GetKpiLevel_ID(RowIdx: integer=-1):string;   //当前所选行等级Level_ID
-    function GetKpiTimes_ID(ColIdx: integer=-1):string;   //当前所选列时段Times_ID
+    function GetKpiTimes_ID(ColIdx: integer=-1):string;
+    procedure SetChangeState(const Value: Boolean);   //当前所选列时段Times_ID
   public
     RowID:integer;
     Aobj:TRecord_;
     destructor Destroy;override;
-    function  FindColumn(FieldName:string):TColumnEh;
+    function  FindColumn(FindGrid:TDBGridEh; FieldName:string):TColumnEh;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
     procedure Edit(code:string);
+    procedure CheckKpiLevel;  //检查判断KpiLevel记录情况
+    procedure BeforSaveCheckData; //保存前判断数据合法性
     procedure Save;
-    procedure Writeto(Aobj:TRecord_);
     class function AddDialog(Owner:TForm;var _AObj:TRecord_):boolean;
     class function EditDialog(Owner:TForm;id:string;var _AObj:TRecord_):boolean;
     class function ShowDialog(Owner:TForm;id:string):boolean;
+    property ChangeState:Boolean read FChangeState write SetChangeState;
   end;
 
 
@@ -195,6 +222,7 @@ begin
         if ShowModal=MROK then
         begin
           AObj.CopyTo(_AObj);
+          _AObj.AddField('GOODS_SUM',CdsKpiGoods.RecordCount,ftFloat);
           result :=True;
         end
         else
@@ -209,7 +237,8 @@ procedure TfrmKpiIndexInfo.Append;
 begin
   Open('');
   dbState := dsInsert;
-  Aobj.FieldByName('KPI_ID').AsString := TSequence.NewId;
+  Aobj.FieldByName('KPI_ID').AsString := TSequence.NewId;  //guid
+  Aobj.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID; //TENANT_ID
   edtKPI_TYPE.ItemIndex := TdsItems.FindItems(edtKPI_TYPE.Properties.Items,'CODE_ID','1');
   edtIDX_TYPE.ItemIndex := TdsItems.FindItems(edtIDX_TYPE.Properties.Items,'CODE_ID','1');
 end;
@@ -220,8 +249,7 @@ begin
   dbState := dsEdit;
 end;
 
-class function TfrmKpiIndexInfo.EditDialog(Owner: TForm; id: string;
-  var _AObj: TRecord_): boolean;
+class function TfrmKpiIndexInfo.EditDialog(Owner: TForm; id: string; var _AObj: TRecord_): boolean;
 begin
    if not ShopGlobal.GetChkRight('100002143',3) then Raise Exception.Create('你没有修改考核指标的权限,请和管理员联系.');
    with TfrmKpiIndexInfo.Create(Owner) do
@@ -230,7 +258,7 @@ begin
         Edit(id);
         if ShowModal=MROK then
         begin
-          AObj.CopyTo(_AObj);
+          _AObj.AddField('GOODS_SUM',CdsKpiGoods.RecordCount,ftFloat);
           result :=True;
         end
         else
@@ -258,6 +286,7 @@ begin
       Factor.AddBatch(CdsKpiTimes,'TKpiTimes',Params);
       Factor.AddBatch(CdsKpiSeqNo,'TKpiSeqNo',Params);
       Factor.AddBatch(CdsKpiRatio,'TKpiRatio',Params);
+      Factor.AddBatch(CdsMktGoods,'TMktRatio',Params);
       Factor.OpenBatch;
     except
       Factor.CancelBatch;
@@ -274,71 +303,31 @@ begin
 end;
 
 procedure TfrmKpiIndexInfo.Save;
-var Temp:TZQuery;
-    Filter:String;
 begin
   if dbState=dsBrowse then exit;
-  if trim(edtKPI_NAME.Text)='' then
-  begin
-    if edtKPI_NAME.CanFocus then edtKPI_NAME.SetFocus;
-    raise Exception.Create('指标名称不能为空！');
-  end;
-  if edtIDX_TYPE.ItemIndex = -1 then
-  begin
-    if edtIDX_TYPE.CanFocus then edtIDX_TYPE.SetFocus;
-    raise Exception.Create('指标类型不能为空！');
-  end;
-  if edtKPI_TYPE.ItemIndex = -1 then
-  begin
-    if edtKPI_TYPE.CanFocus then edtKPI_TYPE.SetFocus;
-    raise Exception.Create('考核类型不能为空！');
-  end;
-
-  //此检测，只对前台检测
-  if dbState = dsInsert then
-  begin
-    Temp := TZQuery.Create(nil);
-    try
-      Temp.Close;
-      Temp.SQL.Text := 'select KPI_NAME from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_NAME='+QuotedStr(Trim(edtKPI_NAME.Text));
-      Factor.Open(Temp);
-      if Temp.FieldByName('KPI_NAME').AsString <> '' then
-         raise Exception.Create('该指标名称已经存在,不能重复!');
-    finally
-      Temp.Free;
-    end;
-  end
-  else if dbState = dsEdit then
-  begin
-    if Trim(edtKPI_NAME.Text) <> CdsKpiIndex.FieldByName('KPI_NAME').AsString then
-    begin
-      Temp := TZQuery.Create(nil);
-      try
-        Temp.Close;
-        Temp.SQL.Text := 'select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''12'',''02'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_NAME='+QuotedStr(Trim(edtKPI_NAME.Text));
-        Factor.Open(Temp);
-        if (Temp.FieldByName('KPI_ID').AsString <> AObj.FieldByName('KPI_ID').AsString) and ( not Temp.IsEmpty) then
-           raise Exception.Create('该指标名称已经存在，不能重复！');
-      finally
-        Temp.Free;
-      end;
-    end;
-  end;
+  BeforSaveCheckData; //保存前判断数据合法性
+  CheckKpiLevel;  //检查判断KpiLevel记录情况
 
   //检测结束
-  WriteToObject(Aobj,self);
+  WriteToObject(Aobj,self); //
   CdsKpiIndex.Edit;
   Aobj.WriteToDataSet(CdsKpiIndex);
-  if dbState = dsInsert then
-  begin
-     CdsKpiIndex.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-     CdsKpiIndex.FieldByName('KPI_ID').AsString := Aobj.FieldByName('KPI_ID').AsString;
-  end;
-  CdsKpiIndex.Post;
+  //考核指标
+  if CdsKpiIndex.State in [dsInsert,dsEdit] then CdsKpiIndex.Post;
+  //1、考核等级
+  if CdsKpiLevel.State in [dsInsert,dsEdit] then CdsKpiLevel.Post;
+  //2、考核商品
+  if CdsKpiGoods.State in [dsInsert,dsEdit] then CdsKpiGoods.Post;
+  //3、考核时段
+  if CdsKpiTimes.State in [dsInsert,dsEdit] then CdsKpiTimes.Post;
+  //4、考核档次
+  if CdsKpiSeqNo.State in [dsInsert,dsEdit] then CdsKpiSeqNo.Post;
+  //5、考核系数
+  if CdsKpiRatio.State in [dsInsert,dsEdit] then CdsKpiRatio.Post;
+  //6、市场费计提
+  if CdsMktGoods.State in [dsInsert,dsEdit] then CdsMktGoods.Post;
 
-  CdsKpiIndex.DisableControls;
-  CdsKpiGoods.DisableControls;
-  CdsKpiTimes.DisableControls;
+  //启动打包
   Factor.BeginBatch;
   try
     Factor.AddBatch(CdsKpiIndex,'TKpiIndex');
@@ -347,11 +336,18 @@ begin
     Factor.AddBatch(CdsKpiTimes,'TKpiTimes');
     Factor.AddBatch(CdsKpiSeqNo,'TKpiSeqNo');
     Factor.AddBatch(CdsKpiRatio,'TKpiRatio');
+    Factor.AddBatch(CdsMktGoods,'TMktRatio');
     Factor.CommitBatch;
-  finally
-    CdsKpiTimes.EnableControls;
-    CdsKpiGoods.EnableControls;
-    CdsKpiIndex.EnableControls;
+  except
+    Factor.CancelBatch;
+    CdsKpiIndex.CancelUpdates;
+    CdsKpiLevel.CancelUpdates;
+    CdsKpiGoods.CancelUpdates;
+    CdsKpiTimes.CancelUpdates;
+    CdsKpiSeqNo.CancelUpdates;        
+    CdsKpiRatio.CancelUpdates;
+    CdsMktGoods.CancelUpdates;
+    Raise;
   end;
   dbState:=dsBrowse;
   Saved:=True;
@@ -383,12 +379,7 @@ begin
   InitGrid;
   FRowIdx:=-1;
   FColIdx:=-1;
-
-end;
-
-procedure TfrmKpiIndexInfo.Writeto(Aobj: TRecord_);
-begin
-  WriteToObject(Aobj,self);
+  FKpiState:=False;
 end;
 
 procedure TfrmKpiIndexInfo.Btn_CloseClick(Sender: TObject);
@@ -398,14 +389,18 @@ begin
 end;
 
 procedure TfrmKpiIndexInfo.Btn_SaveClick(Sender: TObject);
-var bl:Boolean;
+var bl:Boolean;  
 begin
   inherited;
   bl := (dbState <> dsEdit);
   if CdsKpiLevel.State in [dsEdit,dsInsert] then CdsKpiLevel.Post;
   SaveKpiGridData;
   Save;
-  If Saved and Assigned(OnSave) then OnSave(Aobj);
+  if Saved and Assigned(OnSave) then
+  begin
+    Aobj.FieldByName('GOODS_SUM').AsInteger:=CdsKpiGoods.RecordCount; //商品记录数
+    OnSave(Aobj);
+  end;
   If Saved and Assigned(OnSave) and bl then
   begin
     if MessageBox(Handle,'是否继续新增指标?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
@@ -422,7 +417,6 @@ begin
   inherited;
   Aobj.Free;
   FKpiGridList.Free;
-  Freeform(Self);
 end;
 
 procedure TfrmKpiIndexInfo.FormShow(Sender: TObject);
@@ -502,37 +496,54 @@ begin
   w := Integer(fndUNIT_ID.Properties.Items.Objects[fndUNIT_ID.ItemIndex]);
   rs := Global.GetZQueryFromName('PUB_GOODSINFO');
   if rs.Locate('GODS_ID',CdsKpiGoods.FieldbyName('GODS_ID').AsString,[]) then
-     begin
-       CdsKpiGoods.Edit;
-       case w of
-       0:CdsKpiGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('CALC_UNITS').AsString;
-       1:CdsKpiGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('SMALL_UNITS').AsString;
-       2:CdsKpiGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('BIG_UNITS').AsString;
-       end;
-     end;
+  begin
+    CdsKpiGoods.Edit;
+    case w of
+     0:CdsKpiGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('CALC_UNITS').AsString;
+     1:CdsKpiGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('SMALL_UNITS').AsString;
+     2:CdsKpiGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('BIG_UNITS').AsString;
+    end;
+    if CdsKpiGoods.State in [dsInsert,dsEdit] then CdsKpiGoods.Post;
+    SetKpiState; //设置修改状态
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.InitGrid;
 var
   rs:TZQuery;
-  Column:TColumnEh;
+  SetCol1,SetCol2:TColumnEh;
 begin
   inherited;
-  Column := FindColumn('UNIT_ID');
-  if Column<>nil then
-  begin
+  SetCol1 := FindColumn(DBGridEh2,'UNIT_ID');
+  SetCol2 := FindColumn(DBGridEh5,'UNIT_ID');
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   rs.First;
   while not rs.Eof do
+  begin
+    if SetCol1<>nil then
     begin
-      Column.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
-      Column.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
-      rs.Next;
+      SetCol1.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      SetCol1.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
     end;
-  Column.ReadOnly := true;
-  Column.Control := fndUNIT_ID;
-  Column.OnBeforeShowControl := DBGridEh2Columns4BeforeShowControl;
+    if SetCol2<>nil then
+    begin
+      SetCol2.KeyList.Add(rs.FieldbyName('UNIT_ID').AsString);
+      SetCol2.PickList.Add(rs.FieldbyName('UNIT_NAME').AsString);
+    end;
+    rs.Next;
   end;
+  if SetCol1<>nil then
+  begin
+    SetCol1.ReadOnly := true;
+    SetCol1.Control := fndUNIT_ID;
+    SetCol1.OnBeforeShowControl := DBGridEh2Columns4BeforeShowControl;
+  end;
+  if SetCol2<>nil then
+  begin
+    SetCol2.ReadOnly := true;
+    SetCol2.Control := fndUNIT_ID1;
+    SetCol2.OnBeforeShowControl := DBGridEh5Columns4BeforeShowControl;
+  end;  
 end;
 
 procedure TfrmKpiIndexInfo.FocusNextColumn;
@@ -542,68 +553,99 @@ begin
   begin
     i:=DbGridEh1.Col;
     if CdsKpiLevel.RecordCount>CdsKpiLevel.RecNo then
-       begin
-         CdsKpiLevel.Next;
-         Exit;
-       end;
+    begin
+      CdsKpiLevel.Next;
+      Exit;
+    end;
     Inc(i);
     while True do
+    begin
+      if i>=DbGridEh1.Columns.Count then i:= 1;
+      if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) and (i<>1) then
+        inc(i)
+      else
       begin
-        if i>=DbGridEh1.Columns.Count then i:= 1;
-        if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) and (i<>1) then
-           inc(i)
-        else
-           begin
-             if (i=1) and (CdsKpiLevel.FieldByName('LEVEL_NAME').AsString <> '') then
-                begin
-                   CdsKpiLevel.Next ;
-                   if CdsKpiLevel.Eof then
-                      begin
-                        InitRecord;
-                      end;
-                   DbGridEh1.SetFocus;
-                   DbGridEh1.Col := i;
-                end
-             else
-                DbGridEh1.Col := i;
-             Exit;
-           end;
+        if (i=1) and (CdsKpiLevel.FieldByName('LEVEL_NAME').AsString <> '') then
+        begin
+          CdsKpiLevel.Next ;
+          if CdsKpiLevel.Eof then
+          begin
+            InitRecord;
+          end;
+          DbGridEh1.SetFocus;
+          DbGridEh1.Col := i;
+        end else
+          DbGridEh1.Col := i;
+          Exit;
       end;
-  end
-  else if RzPage.ActivePageIndex = 1 then
+    end;
+  end else
+  if RzPage.ActivePageIndex = 1 then
   begin
     i:=DbGridEh2.Col;
     if CdsKpiGoods.RecordCount>CdsKpiGoods.RecNo then
-       begin
-         CdsKpiGoods.Next;
-         Exit;
-       end;
+    begin
+      CdsKpiGoods.Next;
+      Exit;
+    end;
     Inc(i);
     while True do
+    begin
+      if i>=DbGridEh2.Columns.Count then i:= 1;
+      if (DbGridEh2.Columns[i].ReadOnly or not DbGridEh2.Columns[i].Visible) and (i<>1) then
+        inc(i)
+      else
       begin
-        if i>=DbGridEh2.Columns.Count then i:= 1;
-        if (DbGridEh2.Columns[i].ReadOnly or not DbGridEh2.Columns[i].Visible) and (i<>1) then
-           inc(i)
-        else
-           begin
-             if Trim(CdsKpiGoods.FieldbyName('GODS_ID').asString)='' then
-                i := 1;
-             if (i=1) and (Trim(CdsKpiGoods.FieldbyName('GODS_ID').asString)<>'') then
-                begin
-                   CdsKpiGoods.Next ;
-                   if CdsKpiGoods.Eof then
-                      begin
-                        CdsKpiGoods.First;
-                      end;
-                   DbGridEh2.SetFocus;
-                   DbGridEh2.Col := 1 ;
-                end
-             else
-                DbGridEh2.Col := i;
-             Exit;
-           end;
+        if Trim(CdsKpiGoods.FieldbyName('GODS_ID').asString)='' then
+          i := 1;
+        if (i=1) and (Trim(CdsKpiGoods.FieldbyName('GODS_ID').asString)<>'') then
+        begin
+          CdsKpiGoods.Next ;
+          if CdsKpiGoods.Eof then
+          begin
+            CdsKpiGoods.First;
+          end;
+          DbGridEh2.SetFocus;
+          DbGridEh2.Col := 1 ;
+        end else
+        DbGridEh2.Col := i;
+        Exit;
       end;
-  end;
+    end;
+  end else
+  if RzPage.ActivePageIndex = 4 then
+  begin
+    i:=DbGridEh5.Col;
+    if CdsMktGoods.RecordCount>CdsMktGoods.RecNo then
+    begin
+      CdsMktGoods.Next;
+      Exit;
+    end;
+    Inc(i);
+    while True do
+    begin
+      if i>=DbGridEh5.Columns.Count then i:= 1;
+      if (DbGridEh5.Columns[i].ReadOnly or not DbGridEh5.Columns[i].Visible) and (i<>1) then
+        inc(i)
+      else
+      begin
+        if Trim(CdsMktGoods.FieldbyName('GODS_ID').asString)='' then
+          i := 1;
+        if (i=1) and (Trim(CdsMktGoods.FieldbyName('GODS_ID').asString)<>'') then
+        begin
+          CdsMktGoods.Next ;
+          if CdsMktGoods.Eof then
+          begin
+            CdsMktGoods.First;
+          end;
+          DbGridEh5.SetFocus;
+          DbGridEh5.Col := 1 ;
+        end else
+        DbGridEh5.Col := i;
+        Exit;
+      end;
+    end;
+  end;  
 end;
 
 procedure TfrmKpiIndexInfo.DBGridEh2Columns4BeforeShowControl(
@@ -638,18 +680,18 @@ begin
   end;
 end;
 
-function TfrmKpiIndexInfo.FindColumn(FieldName: string): TColumnEh;
+function TfrmKpiIndexInfo.FindColumn(FindGrid:TDBGridEh; FieldName: string): TColumnEh;
 var i:integer;
 begin
   Result := nil;
-  for i:=0 to DBGridEh2.Columns.Count -1 do
+  for i:=0 to FindGrid.Columns.Count -1 do
+  begin
+    if UpperCase(FindGrid.Columns[i].FieldName)=UpperCase(FieldName) then
     begin
-      if UpperCase(DBGridEh2.Columns[i].FieldName)=UpperCase(FieldName) then
-         begin
-           Result := DBGridEh2.Columns[i];
-           Exit;
-         end;
+      Result := FindGrid.Columns[i];
+      Exit;
     end;
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.WMInitRecord(var Message: TMessage);
@@ -702,13 +744,32 @@ end;
 procedure TfrmKpiIndexInfo.DeleteGoodsClick(Sender: TObject);
 begin
   inherited;
-  if DBGridEh2.ReadOnly then Exit;
-  if dbState = dsBrowse then Exit;
-  if not CdsKpiGoods.IsEmpty and (MessageBox(Handle,pchar('确认删除"'+CdsKpiGoods.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
-     begin
-       CdsKpiGoods.Delete;
-       DBGridEh2.SetFocus;
-     end;
+  case RzPage.ActivePageIndex of
+   1:
+    begin
+      if DBGridEh2.ReadOnly then Exit;
+      if dbState = dsBrowse then Exit;
+      if CdsKpiGoods.IsEmpty then Exit;
+      if MessageBox(Handle,pchar('确认删除"'+CdsKpiGoods.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
+      begin
+        CdsKpiGoods.Delete;
+        DBGridEh2.SetFocus;
+      end;
+      SetKpiState; //设置修改状态
+    end;
+   4:
+    begin
+      if DBGridEh5.ReadOnly then Exit;
+      if dbState = dsBrowse then Exit;
+      if CdsMktGoods.IsEmpty then Exit;
+      if MessageBox(Handle,pchar('确认删除"'+CdsMktGoods.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
+      begin
+        CdsMktGoods.Delete;
+        DBGridEh5.SetFocus;
+      end;
+      SetKpiState; //设置修改状态
+    end;
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.OpenDialogGoods;
@@ -716,58 +777,90 @@ var
   AObj:TRecord_;
 begin
   with TframeSelectGoods.Create(self) do
-    begin
-      try
-        MultiSelect := false;
-        edtSearch.Text := '';
-        OnSave := AddFromDialog;
-        if ShowModal=MROK then
-           begin
-             cdsList.first;
-             while not cdsList.eof do
-               begin
-                 AObj := TRecord_.Create;
-                 try
-                   AObj.ReadFromDataSet(cdsList);
-                   AddFromDialog(AObj);
-                 finally
-                   AObj.Free;
-                 end;
-                 cdsList.Next;
-               end;
-           end;
-      finally
-        free;
+  begin
+    try
+      MultiSelect := false;
+      edtSearch.Text := '';
+      OnSave := AddFromDialog;
+      if ShowModal=MROK then
+      begin
+        cdsList.first;
+        while not cdsList.eof do
+        begin
+          AObj := TRecord_.Create;
+          try
+            AObj.ReadFromDataSet(cdsList);
+            AddFromDialog(AObj);
+          finally
+            AObj.Free;
+          end;
+          cdsList.Next;
+        end;
       end;
+    finally
+      free;
     end;
-
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.AddFromDialog(AObj: TRecord_);
-var basInfo:TZQuery;
+var
+  GODS_ID: string;
+  basInfo:TZQuery;
 begin
   basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
-  //AddRecord(AObj,basInfo.FieldbyName('UNIT_ID').AsString,True);
-  if CdsKpiGoods.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('商品清单中已经存在"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
-  CdsKpiGoods.Append;
-  CdsKpiGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  CdsKpiGoods.FieldByName('KPI_ID').AsString := Self.Aobj.FieldByName('KPI_ID').AsString;
-  CdsKpiGoods.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
-  CdsKpiGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
-  CdsKpiGoods.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
-  CdsKpiGoods.FieldByName('BARCODE').AsString := AObj.FieldbyName('BARCODE').AsString;
-  CdsKpiGoods.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
-  CdsKpiGoods.Post;
+  GODS_ID:=trim(AObj.FieldbyName('GODS_ID').AsString);
+  if (RzPage.ActivePage=TabSheet2) and (not CdsKpiGoods.Locate('GODS_ID',GODS_ID,[])) then //Raise Exception.Create('商品清单中已经存在"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
+  begin
+    CdsKpiGoods.Append;
+    CdsKpiGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    CdsKpiGoods.FieldByName('KPI_ID').AsString := Self.Aobj.FieldByName('KPI_ID').AsString;
+    CdsKpiGoods.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+    CdsKpiGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+    CdsKpiGoods.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+    CdsKpiGoods.FieldByName('BARCODE').AsString := AObj.FieldbyName('BARCODE').AsString;
+    CdsKpiGoods.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
+    CdsKpiGoods.Post;
+    Exit;
+  end;
+  if (RzPage.ActivePage=TabSheet5) and (not CdsMktGoods.Locate('GODS_ID',GODS_ID,[])) then
+  begin
+    CdsMktGoods.Append;
+    CdsMktGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    CdsMktGoods.FieldByName('ACTR_ID').AsString := TSequence.NewId;
+    CdsMktGoods.FieldByName('KPI_ID').AsString := Self.Aobj.FieldByName('KPI_ID').AsString;
+    CdsMktGoods.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+    CdsMktGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+    CdsMktGoods.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+    CdsMktGoods.FieldByName('BARCODE').AsString := AObj.FieldbyName('BARCODE').AsString;
+    CdsMktGoods.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
+    CdsMktGoods.Post;
+    Exit;
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.AddGoodsClick(Sender: TObject);
 begin
   inherited;
-  if not CdsKpiGoods.Active then Exit;
-  if DBGridEh2.ReadOnly then Exit;
-  if dbState = dsBrowse then Exit;
-  OpenDialogGoods;
+  case RzPage.ActivePageIndex of
+   1:
+    begin
+      if not CdsKpiGoods.Active then Exit;
+      if DBGridEh2.ReadOnly then Exit;
+      if dbState = dsBrowse then Exit;
+      OpenDialogGoods;
+      SetKpiState; //设置修改状态
+    end;
+   4:
+    begin             
+      if not CdsMktGoods.Active then Exit;
+      if DBGridEh5.ReadOnly then Exit;
+      if dbState = dsBrowse then Exit;
+      OpenDialogGoods;
+      SetKpiState; //设置修改状态
+    end;
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.DeleteRecordClick(Sender: TObject);
@@ -776,10 +869,11 @@ begin
   if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   if not CdsKpiLevel.IsEmpty and (MessageBox(Handle,pchar('确认删除本"签约等级"吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
-     begin
-       CdsKpiLevel.Delete;
-       DBGridEh1.SetFocus;
-     end;
+  begin
+    CdsKpiLevel.Delete;
+    DBGridEh1.SetFocus;
+    SetKpiState; //设置修改状态
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.AddRecord_Click(Sender: TObject);
@@ -789,6 +883,7 @@ begin
   if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   InitRecord;
+  SetKpiState; //设置修改状态
 end;
 
 procedure TfrmKpiIndexInfo.SetdbState(const Value: TDataSetState);
@@ -880,6 +975,7 @@ end;
 destructor TfrmKpiIndexInfo.Destroy;
 begin
   fndUNIT_ID.Properties.Items.Clear;
+  fndUNIT_ID1.Properties.Items.Clear;
   inherited;
 end;
 
@@ -927,6 +1023,7 @@ begin
         CdsKpiTimes.FieldByName('KPI_CALC').AsString := KpiCalc;
         CdsKpiTimes.Post;
         CdsKpiTimes.Edit;
+        SetKpiState; //设置修改状态
       end;
     finally
       Free;
@@ -963,6 +1060,7 @@ begin
         CdsKpiTimes.FieldByName('KPI_CALC').AsString := KpiCalc;
         CdsKpiTimes.Post;
         CdsKpiTimes.Edit;
+        SetKpiState; //设置修改状态
       end;
     finally
       Free;
@@ -998,11 +1096,12 @@ begin
   if DBGridEh3.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   if not CdsKpiTimes.IsEmpty and (MessageBox(Handle,pchar('确认删除本"时段"吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
-     begin
-       CdsKpiTimes.Delete;
-       Dec(RowID);
-       DBGridEh3.SetFocus;
-     end;
+  begin
+    CdsKpiTimes.Delete;
+    Dec(RowID);
+    DBGridEh3.SetFocus;
+    SetKpiState; //设置修改状态
+  end;
 end;
 
 procedure TfrmKpiIndexInfo.InitKpiGrid;
@@ -1035,16 +1134,16 @@ begin
   //第2列
   KpiGrid.MergeCells(1,0,1,2);
   KpiGrid.Cells[1,0] := '等级名称';
-  KpiGrid.ColWidths[1] := 100;
+  KpiGrid.ColWidths[1] := 80;
   SetpRowValue(1,0,'','');
   //第3列
   KpiGrid.MergeCells(2,0,1,2);
   KpiGrid.Cells[2,0] := '签约量';
-  KpiGrid.ColWidths[2] := 60;
+  KpiGrid.ColWidths[2] := 50;
   SetpRowValue(2,0,'','');
   //第4列
   KpiGrid.MergeCells(3,0,1,2);
-  KpiGrid.Cells[3,0] := '全年返利比例(%)';
+  KpiGrid.Cells[3,0] := '返还比例';
   KpiGrid.ColWidths[3] := 60;
   SetpRowValue(3,0,'','');
   //创建时段:
@@ -1080,7 +1179,7 @@ begin
       //达标量
       KpiGrid.Cells[vCol,1] := '达标量';
       KpiGrid.ColWidths[vCol] := 60;
-      SetpRowValue(vCol,1,TimeID,'');
+      SetpRowValue(vCol,1,TimeID,'#');
 
       //循环商品
       CdsKpiGoods.First;
@@ -1114,7 +1213,7 @@ function TfrmKpiIndexInfo.WriteRowKpiGridToDataSet(pRow: pKpiRow; GridRow: integ
  end;
 var
   IsEdit: Boolean; //编辑状态
-  gCol,i,SEQ_NO: integer;   //循环列
+  gCol,i,j,SEQ_NO: integer;   //循环列
   CellText,NewID: string;
   pRaito: TKpiRatio;
 begin
@@ -1131,6 +1230,17 @@ begin
         begin
           if (pRaito.SEQNO_ID<>'') and (CdsKpiSeqNo.Locate('SEQNO_ID',pRaito.SEQNO_ID,[])) then
             CdsKpiSeqNo.Delete;
+          //档次删除掉，对应系数也删除掉:
+          if trim(pRaito.GODS_ID)='#' then //拉通返利
+            KpiGrid.Cells[gCol+1,GridRow]:='' 
+          else  //按商品返利
+          begin
+            for j:=gCol+1 to KpiGrid.ColCount-1 do
+            begin
+              if (pRow.Ratio[j].GODS_ID=pRaito.GODS_ID) and (trim(KpiGrid.Cells[j,GridRow])<>'') then
+                KpiGrid.Cells[j,GridRow]:='';
+            end; 
+          end;
         end;
        2: //达标系数:MKT_KPI_RATIO
         begin
@@ -1216,6 +1326,8 @@ var
   gRow: integer;
   pCurRow: pKpiRow;
 begin
+  result:=False;
+  if FKpiGridList.Count<=0 then Exit;
   //根据KpiGrid的循环:从第一条开始循环
   for gRow:=2 to KpiGrid.RowCount-1 do
   begin
@@ -1228,6 +1340,7 @@ begin
   end;
   if CdsKpiSeqNo.State in [dsInsert,dsEdit] then CdsKpiSeqNo.Post;
   if CdsKpiRatio.State in [dsInsert,dsEdit] then CdsKpiRatio.Post;
+  FChangeState:=False;
 end;
 
 procedure TfrmKpiIndexInfo.KpiPmPopup(Sender: TObject);
@@ -1420,9 +1533,9 @@ begin
           KpiGrid.MergeCells(0,gRow,1,vRowCount);
           KpiGrid.Cells[1,gRow]:=trim(CdsKpiLevel.FieldByName('LEVEL_NAME').AsString);    //等级名称
           KpiGrid.MergeCells(1,gRow,1,vRowCount);
-          KpiGrid.Floats[2,gRow]:=CdsKpiLevel.FieldByName('LVL_AMT').AsFloat;  //等级达标量
+          KpiGrid.Cells[2,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LVL_AMT').AsFloat);  //等级达标量
           KpiGrid.MergeCells(2,gRow,1,vRowCount);
-          KpiGrid.Floats[3,gRow]:=CdsKpiLevel.FieldByName('LOW_RATE').AsFloat; //等级达标率
+          KpiGrid.Cells[3,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LOW_RATE').AsFloat)+'%'; //等级达标率
           KpiGrid.MergeCells(3,gRow,1,vRowCount);
         end;
         //写入时段列:第4列开始:
@@ -1447,13 +1560,48 @@ begin
 end;
 
 procedure TfrmKpiIndexInfo.KpiGridCanEditCell(Sender: TObject; ARow, ACol: Integer; var CanEdit: Boolean);
+var
+  i: integer;
+  EmptyFlag: Boolean;
+  TIMES_ID: string;
+  pCurRow: pKpiRow;  //初始化标题时
 begin
   inherited;
   if FKpiGridList.Count>0 then
   begin
     if (ARow>1) and (ACol>3) then
-      CanEdit := (dbState <> dsBrowse)
-    else
+    begin
+      CanEdit := (dbState <> dsBrowse);
+      //判断是否有填写考核档次:[MKT_KPI_SEQNO]
+      if CanEdit and (pBaseRow.Ratio[ACol].ColType=2) then
+      begin
+        //拉通返利
+        if (pBaseRow.Ratio[ACol].GODS_ID='#') and (KpiGrid.Floats[ACol-1,ARow]<=0) then
+        begin
+          KpiGrid.Cells[ACol,ARow]:='';
+          CanEdit:=False;
+        end;
+        //按商品返利
+        if pBaseRow.Ratio[ACol].GODS_ID<>'#' then
+        begin
+          EmptyFlag:=False;
+          TIMES_ID:=pBaseRow.Ratio[ACol].TIME_ID;
+          for i:=4 to KpiGrid.ColCount do //从第4列开始循环 到最后一列
+          begin
+            if (trim(pBaseRow.Ratio[i].TIME_ID)=trim(TIMES_ID)) and (trim(pBaseRow.Ratio[i].TIME_ID)<>'') then //时段相同
+            begin
+              if (trim(pBaseRow.Ratio[i].GODS_ID)='#') and (KpiGrid.Floats[i,ARow]<=0) then
+              begin
+                EmptyFlag:=True;
+                CanEdit:=False;
+              end;
+              if EmptyFlag and (trim(pBaseRow.Ratio[i].GODS_ID)<>'#') and (KpiGrid.Cells[i,ARow]<>'') then
+                KpiGrid.Cells[i,ARow]:=''; 
+            end;
+          end;
+        end;
+      end;
+    end else
       CanEdit := false;
   end else
     CanEdit := false;
@@ -1500,7 +1648,7 @@ begin
   //刷新(Draw)KpiGrid
   InitKpiGrid;
   InitKpiGridData;
-  FChangeState:=False;
+  ChangeState:=False;
   FListCount:=FKpiGridList.Count;
 end;
 
@@ -1546,13 +1694,18 @@ begin
     KpiGrid.MergeCells(2,BegRow,1,Lvl_Rows);  //合并第3列
     KpiGrid.MergeCells(3,BegRow,1,Lvl_Rows);  //合并第4列
   end;
-  if not FChangeState then
-    FChangeState:=(FListCount<FKpiGridList.Count);
+  if not ChangeState then
+    ChangeState:=(FListCount<FKpiGridList.Count);
 end;
 
 procedure TfrmKpiIndexInfo.RzPageChanging(Sender: TObject; NewIndex: Integer; var AllowChange: Boolean);
 begin
-  if (FChangeState=True) and (RzPage.ActivePage=TabSheet4) and (NewIndex<>TabSheet4.TabIndex) then
+  //检查判断KpiLevel记录情况:
+  if (RzPage.ActivePage=TabSheet1) and (NewIndex<>TabSheet1.TabIndex) then
+    CheckKpiLevel;
+    
+  //判断是否保存:
+  if (ChangeState=True) and (RzPage.ActivePage=TabSheet4) and (NewIndex<>TabSheet4.TabIndex) then
   begin
     if MessageBox(self.Handle,Pchar('     '+#13+'     当前档次达标量（系数）修改还没保存，是否保存？   '+#13+'      '),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1)=6 then
     begin
@@ -1564,8 +1717,8 @@ end;
 procedure TfrmKpiIndexInfo.KpiGridCellsChanged(Sender: TObject; R: TRect);
 begin
   //指定列和行范围内有变化才
-  if (not FChangeState) and (FRowIdx>3) and (FColIdx>1) then
-    FChangeState:=True;
+  if (not ChangeState) and (FRowIdx>1) and (FColIdx>3) then
+    ChangeState:=True;
 end;
 
 procedure TfrmKpiIndexInfo.KpiGridKeyPress(Sender: TObject; var Key: Char);
@@ -1592,7 +1745,7 @@ var i: integer;
 begin
   if (dbState=dsBrowse) or (Application.Terminated) then exit;
   try
-    if FChangeState and 
+    if FKpiState and 
       (not((dbState = dsInsert) and (trim(edtKPI_NAME.Text)='') and (trim(edtUNIT_NAME.Text)='') and (edtIDX_TYPE.ItemIndex=-1) and (edtKPI_TYPE.ItemIndex=-1))) then
     begin
       i:=MessageBox(handle,Pchar('    考核指标有修改，是否保存修改信息？    '),Pchar(Caption),MB_YESNOCANCEL+MB_DEFBUTTON1+MB_ICONQUESTION);
@@ -1616,7 +1769,7 @@ var
   pRow: pKpiRow;
   pRatio: TKpiRatio;
   RatioObj: TRecord_;
-  Lvl_ID,Gods_ID: string;
+  Lvl_ID,TimID,Gods_ID: string;
 begin
   if (FRowIdx-2>=0) and (FRowIdx-1<=FKpiGridList.Count) and (FColIdx>3) then
   begin
@@ -1630,11 +1783,23 @@ begin
           RatioObj:=TRecord_.Create;
           RatioObj.ReadFromDataSet(CdsKpiRatio);
           Lvl_ID:=trim(RatioObj.FieldByName('LEVEL_ID').AsString);
+          TimID:=trim(RatioObj.FieldByName('TIMES_ID').AsString);
           Gods_ID:=trim(RatioObj.FieldByName('GODS_ID').AsString);
           if CdsKpiLevel.Locate('LEVEL_ID',Lvl_ID,[]) then
+          begin
             RatioObj.FieldByName('LEVEL_ID').AsString:=trim(CdsKpiLevel.FieldByName('LEVEL_NAME').AsString);
+            RatioObj.AddField('LVL_AMT',CdsKpiLevel.FieldByName('LVL_AMT').AsFloat,ftFloat);
+            RatioObj.AddField('LOW_RATE',CdsKpiLevel.FieldByName('LOW_RATE').AsFloat,ftFloat);
+          end;
+          if CdsKpiTimes.Locate('TIMES_ID',TimID,[]) then
+          begin
+            RatioObj.FieldByName('TIMES_ID').AsString:=trim(CdsKpiTimes.FieldByName('TIMES_NAME').AsString);
+            RatioObj.AddField('KPI_DATA',CdsKpiTimes.FieldByName('KPI_DATA').AsFloat,ftFloat);
+            RatioObj.AddField('KPI_CALC',CdsKpiTimes.FieldByName('KPI_CALC').AsFloat,ftFloat);
+            RatioObj.AddField('RATIO_TYPE',CdsKpiTimes.FieldByName('RATIO_TYPE').AsFloat,ftFloat);
+          end;
           if CdsKpiGoods.Locate('GODS_ID',Gods_ID,[]) then
-            RatioObj.FieldByName('GODS_ID').AsString:=trim(CdsKpiGoods.FieldByName('GODS_NAME').AsString);
+            RatioObj.FieldByName('GODS_ID').AsString:=trim(CdsKpiGoods.FieldByName('GODS_NAME').AsString); 
           if TfrmKpiRatioSet.EditDialog(RatioObj) then
           begin
             CdsKpiRatio.Edit;
@@ -1647,6 +1812,263 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TfrmKpiIndexInfo.fndUNIT_ID1Enter(Sender: TObject);
+begin
+  inherited;
+  fndUNIT_ID1.Properties.ReadOnly := DBGridEh5.ReadOnly;
+end;
+
+procedure TfrmKpiIndexInfo.fndUNIT_ID1Exit(Sender: TObject);
+begin
+  inherited;
+  fndUNIT_ID1.Visible := False;
+end;
+
+procedure TfrmKpiIndexInfo.fndUNIT_ID1KeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  if (Key=VK_RIGHT) then
+     begin
+       DBGridEh5.SetFocus;
+       fndUNIT_ID1.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_LEFT) then
+     begin
+       DBGridEh5.SetFocus;
+       fndUNIT_ID1.Visible := false;
+       DBGridEh5.Col := DBGridEh5.Col -1;
+     end;
+  if (Key=VK_UP) and (Shift=[]) and not fndUNIT_ID.DroppedDown then
+     begin
+       DBGridEh5.SetFocus;
+       fndUNIT_ID1.Visible := false;
+       if CdsMktGoods.Active then CdsMktGoods.Prior;
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not fndUNIT_ID1.DroppedDown then
+     begin
+       DBGridEh5.SetFocus;
+       fndUNIT_ID1.Visible := false;
+       if CdsMktGoods.Active then
+       begin
+         CdsMktGoods.Next;
+         if CdsMktGoods.Eof then
+           CdsMktGoods.First;
+       end;
+     end;
+end;
+
+procedure TfrmKpiIndexInfo.fndUNIT_ID1KeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+  begin
+    Key := #0;
+    DBGridEh5.SetFocus;
+    FocusNextColumn;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh5Columns4BeforeShowControl(Sender: TObject);
+var
+  rs:TZQuery;
+  us:TZQuery;
+  GODS_ID: string;
+begin
+  inherited;
+  if CdsMktGoods.IsEmpty then Exit;
+  fndUNIT_ID1.Tag := 1;
+  try
+    GODS_ID:=trim(CdsMktGoods.FieldbyName('GODS_ID').AsString);
+    rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+    us := Global.GetZQueryFromName('PUB_MEAUNITS');
+    fndUNIT_ID1.Properties.Items.Clear;
+    if rs.Locate('GODS_ID',GODS_ID,[]) then
+    begin
+      if us.Locate('UNIT_ID',rs.FieldbyName('CALC_UNITS').AsString,[]) then
+        fndUNIT_ID1.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(0));
+      if us.Locate('UNIT_ID',rs.FieldbyName('SMALL_UNITS').AsString,[]) then
+        fndUNIT_ID1.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(1));
+      if us.Locate('UNIT_ID',rs.FieldbyName('BIG_UNITS').AsString,[]) then
+        fndUNIT_ID1.Properties.Items.AddObject(us.FieldbyName('UNIT_NAME').AsString,TObject(2));
+    end;
+    if us.Locate('UNIT_ID',CdsMktGoods.FieldbyName('UNIT_ID').AsString,[]) then
+    begin
+      fndUNIT_ID1.Properties.ReadOnly := false;
+      fndUNIT_ID1.ItemIndex := fndUNIT_ID1.Properties.Items.IndexOf(us.FieldbyName('UNIT_NAME').AsString);
+      fndUNIT_ID1.Properties.ReadOnly := (dbState = dsBrowse);
+    end;
+  finally
+    fndUNIT_ID1.Tag := 0;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.fndUNIT_ID1PropertiesChange(Sender: TObject);
+var
+  w:integer;
+  rs:TZQuery;
+begin
+  inherited;
+  if fndUNIT_ID1.Tag = 1 then Exit;
+  if fndUNIT_ID1.ItemIndex < 0 then Exit;
+  if not fndUNIT_ID1.Visible then Exit;
+  w := Integer(fndUNIT_ID1.Properties.Items.Objects[fndUNIT_ID1.ItemIndex]);
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if rs.Locate('GODS_ID',CdsMktGoods.FieldbyName('GODS_ID').AsString,[]) then
+  begin
+    CdsMktGoods.Edit;
+    case w of
+     0:CdsMktGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('CALC_UNITS').AsString;
+     1:CdsMktGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('SMALL_UNITS').AsString;
+     2:CdsMktGoods.FieldByName('UNIT_ID').AsString := rs.FieldbyName('BIG_UNITS').AsString;
+    end;
+    CdsMktGoods.Post;
+    SetKpiState; //设置修改状态
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh5DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+var
+  ARect: TRect;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh5.CellRect(DBGridEh5.Col,DBGridEh5.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh2.Focused) then
+  begin
+    DBGridEh5.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh5.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+  begin
+    ARect := Rect;
+    DbGridEh5.canvas.Brush.Color := $0000F2F2;
+    DbGridEh5.canvas.FillRect(ARect);
+    DrawText(DbGridEh5.Canvas.Handle,pchar(Inttostr(CdsMktGoods.RecNo)),length(Inttostr(CdsMktGoods.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.CheckKpiLevel;
+begin
+  //判断考核等级名称是否为空,为空删除掉
+  if CdsKpiLevel.State in [dsInsert,dsEdit] then CdsKpiLevel.Post; 
+  CdsKpiLevel.DisableControls;
+  try
+    CdsKpiLevel.First;
+    while not CdsKpiLevel.Eof do
+    begin
+      if trim(CdsKpiLevel.FieldByName('LEVEL_NAME').AsString)='' then
+      begin
+        CdsKpiLevel.Delete;
+        Continue;
+      end;
+      CdsKpiLevel.Next;
+    end;
+  finally
+    CdsKpiLevel.EnableControls;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.BeforSaveCheckData;
+var Temp:TZQuery;
+    Filter:String;
+begin
+  if dbState=dsBrowse then exit;
+  if trim(edtKPI_NAME.Text)='' then
+  begin
+    if edtKPI_NAME.CanFocus then edtKPI_NAME.SetFocus;
+    raise Exception.Create('指标名称不能为空！');
+  end;
+  if edtIDX_TYPE.ItemIndex = -1 then
+  begin
+    if edtIDX_TYPE.CanFocus then edtIDX_TYPE.SetFocus;
+    raise Exception.Create('指标类型不能为空！');
+  end;
+  if edtKPI_TYPE.ItemIndex = -1 then
+  begin
+    if edtKPI_TYPE.CanFocus then edtKPI_TYPE.SetFocus;
+    raise Exception.Create('考核类型不能为空！');
+  end;
+  if trim(edtUNIT_NAME.Text)='' then
+  begin
+    if edtUNIT_NAME.CanFocus then edtUNIT_NAME.SetFocus;
+    raise Exception.Create(' 单位不能为空！ ');
+  end;
+  //此检测，只对前台检测
+  if dbState = dsInsert then
+  begin
+    Temp := TZQuery.Create(nil);
+    try
+      Temp.Close;
+      Temp.SQL.Text := 'select KPI_NAME from MKT_KPI_INDEX where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_NAME='+QuotedStr(Trim(edtKPI_NAME.Text));
+      Factor.Open(Temp);
+      if Temp.FieldByName('KPI_NAME').AsString <> '' then
+        raise Exception.Create('该指标名称已经存在,不能重复!');
+    finally
+      Temp.Free;
+    end;
+  end
+  else if dbState = dsEdit then
+  begin
+    if Trim(edtKPI_NAME.Text) <> CdsKpiIndex.FieldByName('KPI_NAME').AsString then
+    begin
+      Temp := TZQuery.Create(nil);
+      try
+        Temp.Close;
+        Temp.SQL.Text := 'select KPI_ID,KPI_NAME from MKT_KPI_INDEX where COMM not in (''12'',''02'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and KPI_NAME='+QuotedStr(Trim(edtKPI_NAME.Text));
+        Factor.Open(Temp);
+        if (Temp.FieldByName('KPI_ID').AsString <> AObj.FieldByName('KPI_ID').AsString) and ( not Temp.IsEmpty) then
+           raise Exception.Create('该指标名称已经存在，不能重复！');
+      finally
+        Temp.Free;
+      end;
+    end;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.N8Click(Sender: TObject);
+begin
+  inherited;
+  SaveKpiGridData; 
+end;
+
+procedure TfrmKpiIndexInfo.SetKpiState;
+begin
+  if (dbState=dsEdit) and (not FKpiState) then //编辑状态才设置
+    FKpiState:=true;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns1UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  if trim(Text)<>trim(Value) then
+    SetKpiState; //设置修改状态
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns2UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  if trim(Text)<>trim(Value) then
+    SetKpiState; //设置修改状态
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh1Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  if trim(Text)<>trim(Value) then
+    SetKpiState; //设置修改状态
+end;
+
+procedure TfrmKpiIndexInfo.SetChangeState(const Value: Boolean);
+begin
+  FChangeState := Value;
+  if FChangeState then
+    SetKpiState; //设置修改状态
 end;
 
 end.

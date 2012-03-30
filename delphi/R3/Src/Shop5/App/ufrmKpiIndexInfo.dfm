@@ -1,6 +1,6 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 307
-  Top = 166
+  Left = 274
+  Top = 149
   Caption = #32771#26680#25351#26631
   ClientHeight = 450
   ClientWidth = 692
@@ -19,8 +19,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 113
       Width = 682
       Height = 292
-      ActivePage = TabSheet4
-      TabIndex = 3
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20
@@ -75,7 +73,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-                PopupMenu = PopupMenu1
+                PopupMenu = Pm_Level
                 RowHeight = 17
                 SumList.Active = True
                 TabOrder = 0
@@ -108,6 +106,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     Footers = <>
                     Title.Caption = #31561#32423#21517#31216
                     Width = 100
+                    OnUpdateData = DBGridEh1Columns1UpdateData
                   end
                   item
                     EditButtons = <>
@@ -115,13 +114,15 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     Footers = <>
                     Title.Caption = #31614#32422#37327'('#21544')'
                     Width = 80
+                    OnUpdateData = DBGridEh1Columns2UpdateData
                   end
                   item
-                    DisplayFormat = '#0%'
+                    DisplayFormat = '#0.##%'
                     EditButtons = <>
                     FieldName = 'LOW_RATE'
                     Footers = <>
                     Title.Caption = #36820#21033#31995#25968
+                    OnUpdateData = DBGridEh1Columns3UpdateData
                   end>
               end
             end
@@ -161,7 +162,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             FrozenCols = 2
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-            PopupMenu = PopupMenu2
+            PopupMenu = Pm_Gods
             RowHeight = 17
             SumList.Active = True
             TabOrder = 0
@@ -270,7 +271,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             FrozenCols = 2
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-            PopupMenu = PopupMenu3
+            PopupMenu = Pm_Times
             RowHeight = 17
             SumList.Active = True
             TabOrder = 0
@@ -351,11 +352,17 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 EditButtons = <>
                 FieldName = 'KPI_FLAG'
                 Footers = <>
+                KeyList.Strings = (
+                  '0'
+                  '1')
+                PickList.Strings = (
+                  #21542
+                  #26159)
                 Title.Caption = #20419#38144
                 Width = 30
               end
               item
-                Checkboxes = True
+                Checkboxes = False
                 DisplayFormat = '#0%'
                 EditButtons = <>
                 FieldName = 'USING_BRRW'
@@ -560,6 +567,124 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             20
             20
             20)
+        end
+      end
+      object TabSheet5: TRzTabSheet
+        Color = clWhite
+        Caption = #35745#25552#31995#25968
+        object RzPanel5: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 678
+          Height = 265
+          Align = alClient
+          BorderOuter = fsNone
+          BorderColor = clWhite
+          BorderWidth = 5
+          Color = clWhite
+          TabOrder = 0
+          object DBGridEh5: TDBGridEh
+            Left = 5
+            Top = 5
+            Width = 668
+            Height = 255
+            Align = alClient
+            AllowedOperations = [alopUpdateEh]
+            DataSource = Ds_MktGoods
+            Flat = True
+            FooterColor = clWindow
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            FooterRowCount = 1
+            FrozenCols = 2
+            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
+            PopupMenu = Pm_Gods
+            RowHeight = 17
+            SumList.Active = True
+            TabOrder = 0
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            TitleHeight = 20
+            UseMultiTitle = True
+            VertScrollBar.VisibleMode = sbAlwaysShowEh
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            OnDrawColumnCell = DBGridEh5DrawColumnCell
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SEQNO'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #24207#21495
+                Width = 31
+              end
+              item
+                EditButtons = <>
+                FieldName = 'GODS_NAME'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #21830#21697#21517#31216
+                Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721#12289#35745#37327#21333#20301#26465#30721'" '#26597#35810
+                Width = 142
+              end
+              item
+                EditButtons = <>
+                FieldName = 'GODS_CODE'
+                Footers = <>
+                ReadOnly = True
+                Tag = 1
+                Title.Caption = #36135#21495
+                Width = 61
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BARCODE'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #26465#30721
+                Width = 93
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_ID'
+                Footers = <>
+                Title.Caption = #21333#20301
+                Width = 52
+                OnBeforeShowControl = DBGridEh5Columns4BeforeShowControl
+              end
+              item
+                DisplayFormat = '#0.##%'
+                EditButtons = <>
+                FieldName = 'ACTR_RATIO'
+                Footers = <>
+                Title.Caption = #35745#25552#31995#25968
+                Width = 63
+              end>
+          end
+          object fndUNIT_ID1: TcxComboBox
+            Left = 336
+            Top = 25
+            Width = 57
+            Height = 20
+            Properties.DropDownListStyle = lsFixedList
+            Properties.OnChange = fndUNIT_ID1PropertiesChange
+            TabOrder = 1
+            Visible = False
+            OnEnter = fndUNIT_ID1Enter
+            OnExit = fndUNIT_ID1Exit
+            OnKeyDown = fndUNIT_ID1KeyDown
+            OnKeyPress = fndUNIT_ID1KeyPress
+          end
         end
       end
     end
@@ -832,34 +957,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         Properties.MaxLength = 100
         TabOrder = 5
       end
-      object Button1: TButton
-        Left = 616
-        Top = 48
-        Width = 75
-        Height = 25
-        Caption = 'Button1'
-        TabOrder = 6
-      end
-      object Row: TcxSpinEdit
-        Left = 506
-        Top = 25
-        Width = 50
-        Height = 20
-        Properties.MaxValue = 100.000000000000000000
-        TabOrder = 7
-        Value = 2
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-      object Col: TcxSpinEdit
-        Left = 562
-        Top = 25
-        Width = 50
-        Height = 20
-        Properties.MaxValue = 100.000000000000000000
-        TabOrder = 8
-        Value = 2
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
     end
   end
   inherited mmMenu: TMainMenu
@@ -901,7 +998,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     Left = 79
     Top = 334
   end
-  object PopupMenu1: TPopupMenu
+  object Pm_Level: TPopupMenu
     Left = 18
     Top = 365
     object AddRecord_: TMenuItem
@@ -912,8 +1009,11 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Caption = #21024#38500#31561#32423
       OnClick = DeleteRecordClick
     end
+    object N6: TMenuItem
+      Caption = '-'
+    end
   end
-  object PopupMenu2: TPopupMenu
+  object Pm_Gods: TPopupMenu
     Left = 19
     Top = 335
     object AddGoods: TMenuItem
@@ -923,6 +1023,9 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     object DeleteGoods: TMenuItem
       Caption = #21024#38500#21333#21697
       OnClick = DeleteGoodsClick
+    end
+    object N5: TMenuItem
+      Caption = '-'
     end
   end
   object Ds_KpiTimes: TDataSource
@@ -937,7 +1040,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     Left = 48
     Top = 305
   end
-  object PopupMenu3: TPopupMenu
+  object Pm_Times: TPopupMenu
     Left = 19
     Top = 305
     object N1: TMenuItem
@@ -952,18 +1055,28 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Caption = #21024#38500#26102#27573
       OnClick = N3Click
     end
+    object N4: TMenuItem
+      Caption = '-'
+    end
   end
   object KpiPm: TPopupMenu
     OnPopup = KpiPmPopup
-    Left = 362
-    Top = 176
+    Left = 418
+    Top = 224
     object AddSeqNo: TMenuItem
       Caption = #28155#21152#36798#26631#26723#20301
       OnClick = AddSeqNoClick
     end
     object ItemRatio: TMenuItem
-      Caption = #32534#36753#36798#26631#31995#25968
+      Caption = #32534#36753#21830#21697#21333#20301
       OnClick = ItemRatioClick
+    end
+    object N7: TMenuItem
+      Caption = '-'
+    end
+    object N8: TMenuItem
+      Caption = #20445#23384
+      OnClick = N8Click
     end
   end
   object CdsKpiRatio: TZQuery
@@ -979,5 +1092,17 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     Params = <>
     Left = 47
     Top = 412
+  end
+  object CdsMktGoods: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 375
+    Top = 413
+  end
+  object Ds_MktGoods: TDataSource
+    DataSet = CdsMktGoods
+    Left = 407
+    Top = 413
   end
 end

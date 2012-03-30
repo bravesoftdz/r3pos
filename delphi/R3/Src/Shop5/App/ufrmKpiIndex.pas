@@ -108,11 +108,13 @@ begin
 end;
 
 procedure TfrmKpiIndex.actDeleteExecute(Sender: TObject);
-var i:Integer;
+var
+  i: Integer;
+  Params: TftParamList;
 begin
-  inherited;
   if (Not Cds_KpiIndex.Active) then Exit;
   if (Cds_KpiIndex.RecordCount = 0) then Exit;
+  if Copy(trim(Cds_KpiIndex.FieldByName('COMM').AsString),1,1)='1' then Raise Exception.Create('       已同步过单据不能删除...        ');
 
   i:=MessageBox(Handle,Pchar('是否要删除吗?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1);
   if i=6 then
@@ -120,7 +122,15 @@ begin
     try
       Cds_KpiIndex.CommitUpdates;
       Cds_KpiIndex.Delete;
-      Factor.UpdateBatch(Cds_KpiIndex,'TKpiIndex');
+      try
+        Params:=TftParamList.Create(nil);
+        Params.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
+        Params.ParamByName('KPI_ID').AsString:=trim(Cds_KpiIndex.FieldByName('KPI_ID').AsString);
+        Factor.ExecProc('TKpiIndexDelete',Params);
+      finally
+        Params.Free;
+      end;
+      //Factor.UpdateBatch(Cds_KpiIndex,'TKpiIndex');
     Except
       Cds_KpiIndex.CancelUpdates;
       Raise;
@@ -175,7 +185,7 @@ begin
   Cds_KpiIndex.Close;
   Cds_KpiIndex.SQL.Text :=
   ParseSQL(Factor.iDbType,
-  'select A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK,count(B.GODS_ID) as GOODS_SUM from MKT_KPI_INDEX A,MKT_KPI_GOODS B '+
+  'select A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK,count(B.GODS_ID) as GOODS_SUM,A.COMM from MKT_KPI_INDEX A,MKT_KPI_GOODS B '+
   ' where A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+StrSql+
   ' group by A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK ');
   Factor.Open(Cds_KpiIndex);

@@ -51,6 +51,8 @@ type
     Label7: TLabel;
     edtOTHR_MNY: TcxTextEdit;
     Label10: TLabel;
+    N3: TMenuItem;
+    N4: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure RzTabChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -101,6 +103,8 @@ type
     procedure edtTableAfterPost(DataSet: TDataSet);
     procedure cdsDetail2AfterPost(DataSet: TDataSet);
     procedure DBGridEh2Columns1BeforeShowControl(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
   private
     { Private declarations }
     AddRow:Boolean;
@@ -127,8 +131,11 @@ type
   end;
 
 implementation
-uses uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, uDsUtil, ufrmBasic, uXDictFactory,
-     ufrmKpiIndexInfo, ufrmGoodsInfo;
+
+uses
+  uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, ufrmBasic, ufrmMain,
+  uDsUtil, uXDictFactory, ufrmKpiIndexInfo, ufrmGoodsInfo,ufrmSalIndentOrderList;
+
 {$R *.dfm}
 
 { TfrmMktRequOrder1 }
@@ -1248,6 +1255,40 @@ begin
   inherited;
   edtKPI_ID.Text := cdsDetail2.FieldbyName('KPI_ID_TEXT').asString;
   edtKPI_ID.KeyValue := cdsDetail2.FieldbyName('KPI_ID').asString;
+end;
+
+procedure TfrmMktRequOrder.N4Click(Sender: TObject);
+ function CheckRequOrderID: Boolean;
+ var Rs: TZQuery;
+ begin
+   result:=False;
+   try
+     Rs:=TZQuery.Create(nil);
+     Rs.SQL.Text:='select count(*) as ReSum from SAL_INDENTORDER where ATTH_ID='''+'REQ'+AObj.FieldByName('REQU_ID').AsString+''' ';
+     Factor.Open(Rs);
+     if Rs.Active and (Rs.FieldByName('ReSum').AsInteger>0) then
+       Result:=True;
+   finally
+     Rs.Free;
+   end;
+ end;
+var
+  frmSalIndentOrderList: TfrmSalIndentOrderList;
+begin
+  if dbState <> dsBrowse then Raise Exception.Create('   请保存单据后再操作。   ');
+  if not IsAudit then Raise Exception.Create('  没有审核的单据不能生成销售订单...  ');
+  if CheckRequOrderID then Raise Exception.Create('  本单据已经生成，不能重复生成...  ');
+  if not frmMain.FindAction('actfrmSalIndentOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmSalIndentOrderList').OnExecute(nil);
+  frmSalIndentOrderList := TfrmSalIndentOrderList(frmMain.FindChildForm(TfrmSalIndentOrderList));
+  SendMessage(frmSalIndentOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmSalIndentOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+end;
+
+procedure TfrmMktRequOrder.PopupMenu1Popup(Sender: TObject);
+begin
+  inherited;
+  N4.Enabled:=(dbState=dsEdit);
 end;
 
 end.

@@ -1,6 +1,5 @@
 inherited frmMktRequOrderList: TfrmMktRequOrderList
-  Left = 292
-  Top = 164
+  Top = 110
   Caption = #36153#29992#30003#39046#21333
   OnShow = FormShow
   PixelsPerInch = 96
@@ -203,7 +202,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 416
+                Left = 480
                 Top = 76
                 Width = 67
                 Height = 26
@@ -274,9 +273,10 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
               object fndSTATUS: TcxRadioGroup
                 Left = 328
                 Top = 16
-                Width = 80
+                Width = 129
                 Height = 86
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -286,6 +286,12 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                   end
                   item
                     Caption = #24050#23457#26680
+                  end
+                  item
+                    Caption = #26410#26680#38144
+                  end
+                  item
+                    Caption = #24050#26680#38144
                   end>
                 TabOrder = 7
                 Caption = ''
@@ -293,7 +299,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 115
-              Height = 295
+              Height = 306
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -361,6 +367,12 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'HEXIAO'
+                  Footers = <>
+                  Title.Caption = #26680#38144
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
                   Title.Caption = #22791#27880
@@ -374,26 +386,26 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 585
+      Left = 581
     end
     inherited rzPanel5: TPanel
-      Left = 585
+      Left = 581
     end
     inherited CoolBar1: TCoolBar
-      Width = 565
+      Width = 561
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 565
+          MinHeight = 561
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 565
+        Width = 561
         object ToolButton11: TToolButton
-          Left = 522
+          Left = 518
           Top = 0
           Action = actExit
         end

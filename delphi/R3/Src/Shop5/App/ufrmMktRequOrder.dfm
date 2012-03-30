@@ -1,6 +1,6 @@
 inherited frmMktRequOrder: TfrmMktRequOrder
-  Left = 167
-  Top = 126
+  Left = 194
+  Top = 106
   Width = 938
   Height = 605
   Caption = #36153#29992#30003#39046#21333
@@ -9,10 +9,10 @@ inherited frmMktRequOrder: TfrmMktRequOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 922
-    Height = 567
+    Width = 930
+    Height = 578
     inherited RzPanel2: TRzPanel
-      Width = 912
+      Width = 920
       Height = 107
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
@@ -351,8 +351,8 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 448
-      Width = 912
+      Top = 459
+      Width = 920
       Height = 42
       object Label1: TLabel
         Left = 9
@@ -449,8 +449,8 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 145
-      Width = 912
-      Height = 172
+      Width = 920
+      Height = 183
       Columns = <
         item
           EditButtons = <>
@@ -554,7 +554,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     end
     inherited pnlBarCode: TRzPanel [3]
       Top = 112
-      Width = 912
+      Width = 920
       inherited lblInput: TLabel
         Left = 583
         Visible = False
@@ -570,11 +570,11 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       object RzTab: TRzTabControl
         Left = 0
         Top = 1
-        Width = 912
+        Width = 920
         Height = 29
         Align = alTop
         TabHeight = 29
-        TabIndex = 0
+        TabIndex = 1
         TabOrder = 1
         Tabs = <
           item
@@ -588,20 +588,20 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end
     end
     inherited stbHint: TRzPanel [4]
-      Top = 538
-      Width = 912
+      Top = 549
+      Width = 920
     end
     inherited rzHelp: TRzPanel [5]
-      Top = 490
-      Width = 912
+      Top = 501
+      Width = 920
     end
     inherited fndUNIT_ID: TcxComboBox [6]
       Top = 184
     end
     object DBGridEh2: TDBGridEh [7]
       Left = 5
-      Top = 317
-      Width = 912
+      Top = 328
+      Width = 920
       Height = 131
       Align = alBottom
       AllowedOperations = [alopUpdateEh]
@@ -811,6 +811,16 @@ inherited frmMktRequOrder: TfrmMktRequOrder
   inherited dsTable: TDataSource
     Left = 109
     Top = 250
+  end
+  inherited PopupMenu1: TPopupMenu
+    OnPopup = PopupMenu1Popup
+    object N4: TMenuItem [9]
+      Caption = #29983#25104#38144#21806#35746#21333
+      OnClick = N4Click
+    end
+    object N3: TMenuItem [10]
+      Caption = '-'
+    end
   end
   inherited edtTable: TZQuery
     FieldDefs = <

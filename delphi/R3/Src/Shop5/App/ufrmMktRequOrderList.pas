@@ -58,7 +58,7 @@ type
 
 implementation
 uses ufrmMktRequOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,
-  uShopGlobal,uDsUtil, uMsgBox, uframeMDForm;
+  uShopGlobal,uDsUtil, uMsgBox, uframeMDForm,ObjCommon;
 {$R *.dfm}
 
 { TfrmMktRequOrderList1 }
@@ -69,7 +69,7 @@ begin
 end;
 
 function TfrmMktRequOrderList.EncodeSQL(id: string): string;
-var w,w1:string;
+var w,w1,JoinStr:string;
 begin
   w := ' where A.TENANT_ID=:TENANT_ID and A.REQU_DATE>=:D1 and A.REQU_DATE<=:D2';
   if fndSHOP_ID.AsString <> '' then
@@ -84,23 +84,30 @@ begin
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
-       1:w := w +' and A.CHK_DATE is null';
-       2:w := w +' and A.CHK_DATE is not null';
+        1:w := w +' and A.CHK_DATE is null';
+        2:w := w +' and A.CHK_DATE is not null';
+        3:w := w +' and SAL.ATTH_ID is null';
+        4:w := w +' and SAL.ATTH_ID is not null';
        end;
      end;
 
   if id<>'' then
      w := w +' and A.REQU_ID>'''+id+'''';
-     
+
+  JoinStr:='''REQ'''+GetStrJoin(Factor.iDbType);
+
   result := 'select A.TENANT_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,A.REQU_ID,A.DEPT_ID,C.DEPT_NAME as DEPT_ID_TEXT,'+
   'A.REQU_TYPE,A.GLIDE_NO,A.REQU_DATE,A.CLIENT_ID,D.CLIENT_NAME as CLIENT_ID_TEXT,A.REQU_USER,E.USER_NAME as REQU_USER_TEXT,'+
-  'A.CHK_DATE,A.CHK_USER,G.USER_NAME as CHK_USER_TEXT,A.KPI_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,F.USER_NAME as CREA_USER_TEXT '+
+  'A.CHK_DATE,A.CHK_USER,G.USER_NAME as CHK_USER_TEXT,A.KPI_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,F.USER_NAME as CREA_USER_TEXT,'+
+  ' (case when SAL.ATTH_ID is null then ''Î´ºËÏú''  else ''ÒÑºËÏú'' end) as HEXIAO  '+
   ' from MKT_REQUORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
   ' left join CA_DEPT_INFO C on A.TENANT_ID=C.TENANT_ID and A.DEPT_ID=C.DEPT_ID '+
   ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
   ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.REQU_USER=E.USER_ID '+
   ' left join VIW_USERS F on A.TENANT_ID=F.TENANT_ID and A.CREA_USER=F.USER_ID '+
-  ' left join VIW_USERS G on A.TENANT_ID=G.TENANT_ID and A.CHK_USER=G.USER_ID '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+  ' left join VIW_USERS G on A.TENANT_ID=G.TENANT_ID and A.CHK_USER=G.USER_ID '+
+  ' left join (select distinct TENANT_ID,ATTH_ID from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and ATTH_ID is not null) SAL on A.TENANT_ID=SAL.TENANT_ID and '+JoinStr+'A.REQU_ID=SAL.ATTH_ID '+
+  w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') j order by REQU_ID';

@@ -53,11 +53,13 @@ type
     IsOffline:Boolean;
     FFlag: integer;
     FCode_type: Integer;
+    FMaxCount: Integer;
     procedure SetFlag(const Value: integer);
     procedure SetCode_type(const Value: Integer);
     procedure SetdbState(const Value: TDataSetState);
+    procedure SetMaxCount(const Value: Integer);
   protected
-    function CheckCanExport:boolean;    
+    function CheckCanExport:boolean;
     { Private declarations }
   public
     procedure RefreshTable;
@@ -65,9 +67,10 @@ type
     procedure Save;
     property  Flag:integer read FFlag write SetFlag;  //1:其它窗体调用这个窗体
     class function AddDialog(Owner:TForm;var AObj:TRecord_;CODETYPE:Integer=5):boolean;
-    class function ShowDialog(Owner:TForm;CODETYPE:Integer=5):boolean;
+    class function ShowDialog(Owner:TForm;CODETYPE:Integer=5):boolean; 
+    class function ShowDialogMax(Owner:TForm;vMaxCount: integer;CODETYPE:Integer=5):boolean; 
     property Code_type: Integer read FCode_type write SetCode_type;
-    { Public declarations }
+    property MaxCount: Integer read FMaxCount write SetMaxCount; //最大记录数据
   end;
 
 implementation
@@ -206,6 +209,7 @@ procedure TfrmCodeInfo.cdsCODE_INFONewRecord(DataSet: TDataSet);
 begin
   inherited;
   if IsOffline then Raise Exception.Create('连锁版不允许离线操作!');
+  if (FMaxCount>0) and (cdsCODE_INFO.RecordCount>=FMaxCount) then Raise Exception.Create('  当前已达到限定的记录数据，不能增加...  '); 
   cdsCODE_INFO.FieldByName('SEQ_NO').AsString:=IntToStr(cdsCODE_INFO.RecordCount+1);
   cdsCODE_INFO.FieldByName('CODE_ID').AsString := TSequence.NewId;
   cdsCODE_INFO.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -342,6 +346,22 @@ begin
     end;
 end;
 
+class function TfrmCodeInfo.ShowDialogMax(Owner: TForm; vMaxCount, CODETYPE: Integer): boolean;
+begin
+  with TfrmCodeInfo.Create(Owner) do
+  begin
+    try
+      Code_type := CODETYPE;
+      MaxCount := vMaxCount;
+      Open;
+      btnSave.Enabled:=False;
+      ShowModal;
+    finally
+      Free;
+    end;
+  end;
+end;
+
 procedure TfrmCodeInfo.SetFlag(const Value: integer);
 begin
   FFlag := Value;
@@ -349,6 +369,7 @@ end;
 
 procedure TfrmCodeInfo.FormCreate(Sender: TObject);
 begin
+  FMaxCount:=0;
   if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then
     begin
       IsOffline := True;
@@ -562,7 +583,7 @@ begin
     14: Str_Table := 'PUB_DEGREES_INFO';
     15: Str_Table := 'PUB_OCCUPATION_INFO';
     16: Str_Table := 'PUB_TREND_INFO';
-    18: Str_Table := 'MKT_ACTIVE_INFO';
+    18: Str_Table := ''; //'MKT_ACTIVE_INFO';
   end;
   if Str_Table<>'' then Global.RefreshTable(Str_Table);
 end;
@@ -582,5 +603,11 @@ function TfrmCodeInfo.CheckCanExport: boolean;
 begin
   Result := True;
 end;
+
+procedure TfrmCodeInfo.SetMaxCount(const Value: Integer);
+begin
+  FMaxCount := Value;
+end;
+
 
 end.

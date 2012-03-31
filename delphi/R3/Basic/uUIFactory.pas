@@ -63,6 +63,7 @@ begin
             Control.Height := F.ReadInteger(Form.Name,Control.Name+'_height',Control.Height);
             Control.Width := F.ReadInteger(Form.Name,Control.Name+'_width',Control.Width);
             Control.Visible := F.ReadBool(Form.Name,Control.Name+'_visible',Control.Visible);
+            Control.Enabled := F.ReadBool(Form.Name,Control.Name+'_enabled',Control.Enabled);
           end
        else
           Continue;
@@ -77,7 +78,7 @@ begin
                   if not F.ReadBool(Form.Name,Control.Name+'.'+Columns[c].FieldName+'_visible',true) then
                      Columns.Delete(c)
                   else
-                     Columns[c].Title.Caption := F.ReadString(Form.Name,Control.Name+'.'+Columns[c].FieldName+'_name',Columns[c].Title.Caption);
+                     Columns[c].Title.Caption := F.ReadString(Form.Name,Control.Name+'.'+Columns[c].FieldName+'_caption',Columns[c].Title.Caption);
                 end;
               finally
                 Columns.EndUpdate;

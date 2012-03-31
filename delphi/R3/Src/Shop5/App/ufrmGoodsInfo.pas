@@ -116,6 +116,8 @@ type
     ExtPm: TPopupMenu;
     N1: TMenuItem;
     Label12: TLabel;
+    Label13: TLabel;
+    edtSHORT_GODS_NAME: TcxTextEdit;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

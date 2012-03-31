@@ -8,7 +8,7 @@ uses
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, RzLabel,
   cxMaskEdit, cxDropDownEdit, Grids, DBGridEh, DB, ZAbstractRODataset, ZBase,
   ZAbstractDataset, ZDataset, cxCalendar, cxRadioGroup, cxCheckBox, DateUtils,
-  cxMemo, BaseGrid, AdvGrid, Buttons, DBGrids, cxSpinEdit;
+  cxMemo, BaseGrid, AdvGrid, Buttons, DBGrids, cxSpinEdit, cxButtonEdit;
 
 const
   WM_INIT_RECORD=WM_USER+4;
@@ -40,32 +40,26 @@ type
     CdsKpiLevel: TZQuery;
     Ds_KpiLevel: TDataSource;
     CdsKpiIndex: TZQuery;
-    TabSheet2: TRzTabSheet;
-    RzPanel1: TRzPanel;
     CdsKpiGoods: TZQuery;
     Ds_KpiGoods: TDataSource;
-    DBGridEh2: TDBGridEh;
-    fndUNIT_ID: TcxComboBox;
     Pm_Level: TPopupMenu;
     Pm_Gods: TPopupMenu;
     AddGoods: TMenuItem;
     DeleteGoods: TMenuItem;
-    DeleteRecord: TMenuItem;
+    DelLevel: TMenuItem;
     Notebook1: TNotebook;
     DBGridEh1: TDBGridEh;
     RzLabel4: TRzLabel;
-    AddRecord_: TMenuItem;
+    AddLevel: TMenuItem;
     TabSheet3: TRzTabSheet;
     RzPanel3: TRzPanel;
-    DBGridEh3: TDBGridEh;
     Ds_KpiTimes: TDataSource;
     CdsKpiTimes: TZQuery;
     Pm_Times: TPopupMenu;
-    N1: TMenuItem;
-    N2: TMenuItem;
-    N3: TMenuItem;
+    AddKpiTimes: TMenuItem;
+    EditKpiTimes: TMenuItem;
+    DelKpiTimes: TMenuItem;
     TabSheet4: TRzTabSheet;
-    KpiGrid: TAdvStringGrid;
     RzPanel4: TRzPanel;
     lab_KPI_NAME: TRzLabel;
     lab_IDX_TYPE: TRzLabel;
@@ -79,10 +73,8 @@ type
     lab_KPI_TYPE: TLabel;
     RzLabel3: TRzLabel;
     RzLabel9: TRzLabel;
-    edtUNIT_NAME: TcxTextEdit;
     RzLabel10: TRzLabel;
     RzLabel5: TRzLabel;
-    edtREMARK: TcxMemo;
     KpiPm: TPopupMenu;
     ItemRatio: TMenuItem;    
     CdsKpiRatio: TZQuery;
@@ -99,6 +91,22 @@ type
     N6: TMenuItem;
     N7: TMenuItem;
     N8: TMenuItem;
+    RzPnl_left: TRzPanel;
+    RzPanel7: TRzPanel;
+    RzPnl_right: TRzPanel;
+    DBGridEh3: TDBGridEh;
+    DBGridEh2: TDBGridEh;
+    RzPanel9: TRzPanel;
+    fndUNIT_ID: TcxComboBox;
+    RzPanel1: TRzPanel;
+    KpiGrid: TAdvStringGrid;
+    Btn_Left_add: TRzBitBtn;
+    Btn_Left_del: TRzBitBtn;
+    Btn_Right_add: TRzBitBtn;
+    Btn_Right_edit: TRzBitBtn;
+    Btn_Right_del: TRzBitBtn;
+    edtUNIT_NAME: TcxTextEdit;
+    edtREMARK: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -119,8 +127,8 @@ type
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DeleteGoodsClick(Sender: TObject);
     procedure AddGoodsClick(Sender: TObject);
-    procedure DeleteRecordClick(Sender: TObject);
-    procedure AddRecord_Click(Sender: TObject);
+    procedure DelLevelClick(Sender: TObject);
+    procedure AddLevelClick(Sender: TObject);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh2KeyPress(Sender: TObject; var Key: Char);
     procedure edtIDX_TYPEPropertiesChange(Sender: TObject);
@@ -129,9 +137,9 @@ type
     procedure edtKPI_NAMEPropertiesChange(Sender: TObject);
     procedure DBGridEh3DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure N1Click(Sender: TObject);
-    procedure N2Click(Sender: TObject);
-    procedure N3Click(Sender: TObject);
+    procedure AddKpiTimesClick(Sender: TObject);
+    procedure EditKpiTimesClick(Sender: TObject);
+    procedure DelKpiTimesClick(Sender: TObject);
     procedure KpiPmPopup(Sender: TObject);
     procedure ItemRatioClick(Sender: TObject);
     procedure RzPageChange(Sender: TObject);
@@ -151,6 +159,13 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure RzPanel3Resize(Sender: TObject);
+    procedure Btn_Left_addClick(Sender: TObject);
+    procedure Btn_Left_delClick(Sender: TObject);
+    procedure Btn_Right_addClick(Sender: TObject);
+    procedure Btn_Right_delClick(Sender: TObject);
+    procedure Btn_Right_editClick(Sender: TObject);
+    procedure edtUNIT_NAMEPropertiesChange(Sender: TObject);
   private
     pBaseRow:pKpiRow;   //初始化标题时
     FKpiState: Boolean; //考核指标状态
@@ -172,7 +187,7 @@ type
     procedure InitTimesRecord;
     procedure OpenDialogGoods;
     procedure AddFromDialog(AObj:TRecord_);
-    procedure FocusNextColumn;
+    procedure FocusNextColumn(IsRight: Boolean=False);
     //考核指标初始化
     procedure InitKpiGrid;      //初始化表头
     procedure InitKpiGridData;  //初始化数据
@@ -514,7 +529,7 @@ var
   SetCol1,SetCol2:TColumnEh;
 begin
   inherited;
-  SetCol1 := FindColumn(DBGridEh2,'UNIT_ID');
+  SetCol1 := FindColumn(DBGridEh1,'UNIT_ID');
   SetCol2 := FindColumn(DBGridEh5,'UNIT_ID');
   rs := Global.GetZQueryFromName('PUB_MEAUNITS');
   rs.First;
@@ -546,43 +561,12 @@ begin
   end;  
 end;
 
-procedure TfrmKpiIndexInfo.FocusNextColumn;
+procedure TfrmKpiIndexInfo.FocusNextColumn(IsRight: Boolean);
 var i:Integer;
 begin
-  if RzPage.ActivePageIndex = 0 then
+  if RzPage.ActivePage = self.TabSheet1 then  //商品清单
   begin
     i:=DbGridEh1.Col;
-    if CdsKpiLevel.RecordCount>CdsKpiLevel.RecNo then
-    begin
-      CdsKpiLevel.Next;
-      Exit;
-    end;
-    Inc(i);
-    while True do
-    begin
-      if i>=DbGridEh1.Columns.Count then i:= 1;
-      if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) and (i<>1) then
-        inc(i)
-      else
-      begin
-        if (i=1) and (CdsKpiLevel.FieldByName('LEVEL_NAME').AsString <> '') then
-        begin
-          CdsKpiLevel.Next ;
-          if CdsKpiLevel.Eof then
-          begin
-            InitRecord;
-          end;
-          DbGridEh1.SetFocus;
-          DbGridEh1.Col := i;
-        end else
-          DbGridEh1.Col := i;
-          Exit;
-      end;
-    end;
-  end else
-  if RzPage.ActivePageIndex = 1 then
-  begin
-    i:=DbGridEh2.Col;
     if CdsKpiGoods.RecordCount>CdsKpiGoods.RecNo then
     begin
       CdsKpiGoods.Next;
@@ -591,8 +575,8 @@ begin
     Inc(i);
     while True do
     begin
-      if i>=DbGridEh2.Columns.Count then i:= 1;
-      if (DbGridEh2.Columns[i].ReadOnly or not DbGridEh2.Columns[i].Visible) and (i<>1) then
+      if i>=DbGridEh1.Columns.Count then i:= 1;
+      if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) and (i<>1) then
         inc(i)
       else
       begin
@@ -605,15 +589,79 @@ begin
           begin
             CdsKpiGoods.First;
           end;
-          DbGridEh2.SetFocus;
-          DbGridEh2.Col := 1 ;
+          DbGridEh1.SetFocus;
+          DbGridEh1.Col := 1 ;
         end else
-        DbGridEh2.Col := i;
+        DbGridEh1.Col := i;
         Exit;
       end;
     end;
   end else
-  if RzPage.ActivePageIndex = 4 then
+  if RzPage.ActivePage = self.TabSheet3 then
+  begin              
+    if not IsRight then //左边:DbGridEh2
+    begin
+      i:=DbGridEh2.Col;
+      if CdsKpiLevel.RecordCount>CdsKpiLevel.RecNo then
+      begin
+        CdsKpiLevel.Next;
+        Exit;
+      end;
+      Inc(i);
+      while True do
+      begin
+        if i>=DbGridEh2.Columns.Count then i:= 1;
+        if (DbGridEh2.Columns[i].ReadOnly or not DbGridEh2.Columns[i].Visible) and (i<>1) then
+          inc(i)
+        else
+        begin
+          if (i=1) and (CdsKpiLevel.FieldByName('LEVEL_NAME').AsString <> '') then
+          begin
+            CdsKpiLevel.Next ;
+            if CdsKpiLevel.Eof then
+            begin
+              InitRecord;
+            end;
+            DbGridEh2.SetFocus;
+            DbGridEh2.Col := i;
+          end else
+            DbGridEh2.Col := i;
+          Exit;
+        end;
+      end;
+    end else
+    begin
+      i:=DBGridEh3.Col;
+      if CdsKpiTimes.RecordCount>CdsKpiTimes.RecNo then
+      begin
+        CdsKpiTimes.Next;
+        Exit;
+      end;
+      Inc(i);
+      while True do
+      begin
+        if i>=DBGridEh3.Columns.Count then i:= 1;
+        if (DBGridEh3.Columns[i].ReadOnly or not DBGridEh3.Columns[i].Visible) and (i<>1) then
+          inc(i)
+        else
+        begin
+          if (i=1) and (CdsKpiTimes.FieldByName('LEVEL_NAME').AsString <> '') then
+          begin
+            CdsKpiTimes.Next ;
+            if CdsKpiTimes.Eof then
+            begin
+              CdsKpiTimes.First;;
+            end;
+            DbGridEh3.SetFocus;
+            DbGridEh3.Col := i;
+          end else
+            DbGridEh3.Col := i;
+          Exit;
+        end;
+      end;
+    end;
+  end else
+  if RzPage.ActivePage = self.TabSheet5 then
   begin
     i:=DbGridEh5.Col;
     if CdsMktGoods.RecordCount>CdsMktGoods.RecNo then
@@ -742,34 +790,22 @@ begin
 end;
 
 procedure TfrmKpiIndexInfo.DeleteGoodsClick(Sender: TObject);
+var
+  GodsID: string;
 begin
   inherited;
-  case RzPage.ActivePageIndex of
-   1:
-    begin
-      if DBGridEh2.ReadOnly then Exit;
-      if dbState = dsBrowse then Exit;
-      if CdsKpiGoods.IsEmpty then Exit;
-      if MessageBox(Handle,pchar('确认删除"'+CdsKpiGoods.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
-      begin
-        CdsKpiGoods.Delete;
-        DBGridEh2.SetFocus;
-      end;
-      SetKpiState; //设置修改状态
-    end;
-   4:
-    begin
-      if DBGridEh5.ReadOnly then Exit;
-      if dbState = dsBrowse then Exit;
-      if CdsMktGoods.IsEmpty then Exit;
-      if MessageBox(Handle,pchar('确认删除"'+CdsMktGoods.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
-      begin
-        CdsMktGoods.Delete;
-        DBGridEh5.SetFocus;
-      end;
-      SetKpiState; //设置修改状态
-    end;
+  if DBGridEh2.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  if CdsKpiGoods.IsEmpty then Exit;
+  if MessageBox(Handle,pchar('确认删除"'+CdsKpiGoods.FieldbyName('GODS_NAME').AsString+'"商品吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
+  begin
+    GodsID:=trim(CdsKpiGoods.FieldByName('GODS_ID').AsString);
+    CdsKpiGoods.Delete;
+    if CdsMktGoods.Locate('GODS_ID',GodsID,[]) then
+      CdsMktGoods.Delete;
+    DBGridEh2.SetFocus;
   end;
+  SetKpiState; //设置修改状态
 end;
 
 procedure TfrmKpiIndexInfo.OpenDialogGoods;
@@ -804,15 +840,47 @@ begin
 end;
 
 procedure TfrmKpiIndexInfo.AddFromDialog(AObj: TRecord_);
+  function GetGodsUnitID: string;
+  var RsUnit,RsGods: TZQuery; GodsID: string;
+  begin
+    result:=AObj.FieldbyName('UNIT_ID').AsString;  //默认当前商品默认单位
+    GodsID:=trim(AObj.FieldByName('GODS_ID').AsString);
+    RsUnit:=Global.GetZQueryFromName('PUB_MEAUNITS'); //单位DataSet;
+    RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO'); 
+    //根据输入单位名称定位是否存在此商品
+    if (trim(edtUNIT_NAME.Text)<>'') and (RsGods.Locate('GODS_ID',GodsID,[])) then
+    begin
+      //计量单位
+      if RsUnit.Locate('UNIT_ID',trim(RsGods.FieldbyName('CALC_UNITS').AsString),[]) then
+      begin
+        if trim(RsUnit.FieldByName('UNIT_NAME').AsString)=trim(edtUNIT_NAME.Text) then
+          result:=trim(RsGods.FieldbyName('CALC_UNITS').AsString);
+      end;
+      //小件单位
+      if RsUnit.Locate('UNIT_ID',trim(RsGods.FieldbyName('SMALL_UNITS').AsString),[]) then
+      begin
+        if trim(RsUnit.FieldByName('UNIT_NAME').AsString)=trim(edtUNIT_NAME.Text) then
+          result:=trim(RsGods.FieldbyName('SMALL_UNITS').AsString);
+      end;
+      //大件单位
+      if RsUnit.Locate('UNIT_ID',trim(RsGods.FieldbyName('BIG_UNITS').AsString),[]) then
+      begin
+        if trim(RsUnit.FieldByName('UNIT_NAME').AsString)=trim(edtUNIT_NAME.Text) then
+          result:=trim(RsGods.FieldbyName('BIG_UNITS').AsString);
+      end;
+    end; 
+  end;
 var
-  GODS_ID: string;
+  GODS_ID,UNIT_ID: string;
   basInfo:TZQuery;
 begin
+  UNIT_ID:='';
   basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
   if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
   GODS_ID:=trim(AObj.FieldbyName('GODS_ID').AsString);
-  if (RzPage.ActivePage=TabSheet2) and (not CdsKpiGoods.Locate('GODS_ID',GODS_ID,[])) then //Raise Exception.Create('商品清单中已经存在"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
+  if not CdsKpiGoods.Locate('GODS_ID',GODS_ID,[]) then //没有则插入
   begin
+    //添加商品清单
     CdsKpiGoods.Append;
     CdsKpiGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     CdsKpiGoods.FieldByName('KPI_ID').AsString := Self.Aobj.FieldByName('KPI_ID').AsString;
@@ -820,50 +888,35 @@ begin
     CdsKpiGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
     CdsKpiGoods.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
     CdsKpiGoods.FieldByName('BARCODE').AsString := AObj.FieldbyName('BARCODE').AsString;
-    CdsKpiGoods.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
+    CdsKpiGoods.FieldByName('UNIT_ID').AsString := GetGodsUnitID;
     CdsKpiGoods.Post;
-    Exit;
-  end;
-  if (RzPage.ActivePage=TabSheet5) and (not CdsMktGoods.Locate('GODS_ID',GODS_ID,[])) then
-  begin
-    CdsMktGoods.Append;
-    CdsMktGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    CdsMktGoods.FieldByName('ACTR_ID').AsString := TSequence.NewId;
-    CdsMktGoods.FieldByName('KPI_ID').AsString := Self.Aobj.FieldByName('KPI_ID').AsString;
-    CdsMktGoods.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
-    CdsMktGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
-    CdsMktGoods.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
-    CdsMktGoods.FieldByName('BARCODE').AsString := AObj.FieldbyName('BARCODE').AsString;
-    CdsMktGoods.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
-    CdsMktGoods.Post;
-    Exit;
+    //添加市场费商品清单
+    if not CdsMktGoods.Locate('GODS_ID',GODS_ID,[]) then //没有则插入
+    begin
+      CdsMktGoods.Append;
+      CdsMktGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      CdsMktGoods.FieldByName('KPI_ID').AsString := Self.Aobj.FieldByName('KPI_ID').AsString;
+      CdsMktGoods.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+      CdsMktGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+      CdsMktGoods.FieldByName('GODS_CODE').AsString := AObj.FieldbyName('GODS_CODE').AsString;
+      CdsMktGoods.FieldByName('BARCODE').AsString := AObj.FieldbyName('BARCODE').AsString;
+      CdsMktGoods.FieldByName('UNIT_ID').AsString := AObj.FieldbyName('UNIT_ID').AsString;
+      CdsMktGoods.Post;
+    end;
   end;
 end;
 
 procedure TfrmKpiIndexInfo.AddGoodsClick(Sender: TObject);
 begin
   inherited;
-  case RzPage.ActivePageIndex of
-   1:
-    begin
-      if not CdsKpiGoods.Active then Exit;
-      if DBGridEh2.ReadOnly then Exit;
-      if dbState = dsBrowse then Exit;
-      OpenDialogGoods;
-      SetKpiState; //设置修改状态
-    end;
-   4:
-    begin             
-      if not CdsMktGoods.Active then Exit;
-      if DBGridEh5.ReadOnly then Exit;
-      if dbState = dsBrowse then Exit;
-      OpenDialogGoods;
-      SetKpiState; //设置修改状态
-    end;
-  end;
+  if not CdsKpiGoods.Active then Exit;
+  if DBGridEh2.ReadOnly then Exit;
+  if dbState = dsBrowse then Exit;
+  OpenDialogGoods;
+  SetKpiState; //设置修改状态
 end;
 
-procedure TfrmKpiIndexInfo.DeleteRecordClick(Sender: TObject);
+procedure TfrmKpiIndexInfo.DelLevelClick(Sender: TObject);
 begin
   inherited;
   if DBGridEh1.ReadOnly then Exit;
@@ -871,18 +924,19 @@ begin
   if not CdsKpiLevel.IsEmpty and (MessageBox(Handle,pchar('确认删除本"签约等级"吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6) then
   begin
     CdsKpiLevel.Delete;
-    DBGridEh1.SetFocus;
+    DBGridEh2.SetFocus;
     SetKpiState; //设置修改状态
   end;
 end;
 
-procedure TfrmKpiIndexInfo.AddRecord_Click(Sender: TObject);
+procedure TfrmKpiIndexInfo.AddLevelClick(Sender: TObject);
 begin
   inherited;
   if not CdsKpiLevel.Active then Exit;
-  if DBGridEh1.ReadOnly then Exit;
+  if DBGridEh2.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   InitRecord;
+  DBGridEh2.SetFocus;
   SetKpiState; //设置修改状态
 end;
 
@@ -1001,7 +1055,7 @@ begin
     end;
 end;
 
-procedure TfrmKpiIndexInfo.N1Click(Sender: TObject);
+procedure TfrmKpiIndexInfo.AddKpiTimesClick(Sender: TObject);
 begin
   inherited;
   with TfrmKpiTimes.Create(Self) do
@@ -1031,7 +1085,7 @@ begin
   end;
 end;
 
-procedure TfrmKpiIndexInfo.N2Click(Sender: TObject);
+procedure TfrmKpiIndexInfo.EditKpiTimesClick(Sender: TObject);
 begin
   inherited;
   with TfrmKpiTimes.Create(Self) do
@@ -1090,7 +1144,7 @@ begin
   end;
 end;
 
-procedure TfrmKpiIndexInfo.N3Click(Sender: TObject);
+procedure TfrmKpiIndexInfo.DelKpiTimesClick(Sender: TObject);
 begin
   inherited;
   if DBGridEh3.ReadOnly then Exit;
@@ -2069,6 +2123,56 @@ begin
   FChangeState := Value;
   if FChangeState then
     SetKpiState; //设置修改状态
+end;
+
+procedure TfrmKpiIndexInfo.RzPanel3Resize(Sender: TObject);
+begin
+  inherited;
+  RzPnl_left.Width:=Round(RzPanel3.Width div 2);
+end;
+
+procedure TfrmKpiIndexInfo.Btn_Left_addClick(Sender: TObject);
+begin
+  inherited;
+  AddLevel.Click;
+end;
+
+procedure TfrmKpiIndexInfo.Btn_Left_delClick(Sender: TObject);
+begin
+  inherited;
+  DelLevel.Click;
+end;
+
+procedure TfrmKpiIndexInfo.Btn_Right_addClick(Sender: TObject);
+begin
+  inherited;
+  AddKpiTimes.Click;
+end;
+
+procedure TfrmKpiIndexInfo.Btn_Right_delClick(Sender: TObject);
+begin
+  inherited;
+  DelKpiTimes.Click;
+end;
+
+procedure TfrmKpiIndexInfo.Btn_Right_editClick(Sender: TObject);
+begin
+  inherited;
+  EditKpiTimes.Click;
+end;
+
+procedure TfrmKpiIndexInfo.edtUNIT_NAMEPropertiesChange(Sender: TObject);
+var
+  SetCol: TColumnEh;
+begin
+  SetCol:=FindColumn(DBGridEh2,'LVL_AMT');
+  if SetCol<>nil then
+  begin
+    if trim(edtUNIT_NAME.Text)<>'' then
+      SetCol.Title.Caption:='签约量('+trim(edtUNIT_NAME.Text)+')'
+    else
+      SetCol.Title.Caption:='签约量'
+  end;
 end;
 
 end.

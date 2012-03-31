@@ -1288,7 +1288,7 @@ end;
 procedure TfrmMktRequOrder.PopupMenu1Popup(Sender: TObject);
 begin
   inherited;
-  N4.Enabled:=(dbState=dsEdit);
+  N4.Enabled:=(dbState=dsBrowse);
 end;
 
 end.

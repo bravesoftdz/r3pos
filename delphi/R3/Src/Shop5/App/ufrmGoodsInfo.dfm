@@ -1051,8 +1051,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Color = clWhite
       TabOrder = 0
       object Label11: TLabel
-        Left = 55
-        Top = 30
+        Left = 229
+        Top = 9
         Width = 24
         Height = 12
         Alignment = taRightJustify
@@ -1094,7 +1094,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       end
       object Label3: TLabel
         Left = 31
-        Top = 51
+        Top = 31
         Width = 48
         Height = 12
         Alignment = taRightJustify
@@ -1107,8 +1107,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label4: TLabel
-        Left = 260
-        Top = 51
+        Left = 364
+        Top = 30
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -1149,8 +1149,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label42: TLabel
-        Left = 188
-        Top = 30
+        Left = 362
+        Top = 9
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -1303,13 +1303,27 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label12: TLabel
-        Left = 199
-        Top = 31
+        Left = 373
+        Top = 10
         Width = 138
         Height = 12
         Caption = '('#24314#35758#36135#21495#38271#24230#19981#23567#20110'5'#20301')'
         Font.Charset = GB2312_CHARSET
         Font.Color = clNavy
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label13: TLabel
+        Left = 31
+        Top = 52
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #21830#21697#21517#31216
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
         Font.Height = -12
         Font.Name = #23435#20307
         Font.Style = []
@@ -1322,13 +1336,13 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Height = 20
         TabStop = False
         Properties.MaxLength = 50
-        TabOrder = 3
+        TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGODS_NAME: TcxTextEdit
         Left = 86
-        Top = 47
-        Width = 172
+        Top = 27
+        Width = 274
         Height = 20
         Properties.MaxLength = 50
         Properties.OnChange = edtGODS_NAMEPropertiesChange
@@ -1336,8 +1350,8 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGODS_CODE: TcxTextEdit
-        Left = 86
-        Top = 26
+        Left = 260
+        Top = 5
         Width = 100
         Height = 20
         Properties.MaxLength = 20
@@ -1351,7 +1365,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 100
         Height = 20
         Properties.OnChange = edtNEW_OUTPRICEPropertiesChange
-        TabOrder = 6
+        TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtNEW_OUTPRICEExit
         OnKeyPress = edtNEW_OUTPRICEKeyPress
@@ -1362,7 +1376,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 100
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
-        TabOrder = 7
+        TabOrder = 8
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtMY_OUTPRICEExit
         OnKeyPress = edtNEW_OUTPRICEKeyPress
@@ -1379,7 +1393,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           end>
         Properties.ReadOnly = True
         Properties.OnChange = edtCALC_UNITSPropertiesChange
-        TabOrder = 4
+        TabOrder = 5
         OnExit = edtCALC_UNITSExit
         InGrid = False
         KeyValue = Null
@@ -1428,10 +1442,10 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       object edtNEW_INPRICE: TcxTextEdit
         Left = 183
         Top = 113
-        Width = 76
+        Width = 77
         Height = 20
         Properties.OnChange = edtNEW_INPRICEPropertiesChange
-        TabOrder = 9
+        TabOrder = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtNEW_OUTPRICEKeyPress
       end
@@ -1441,7 +1455,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 33
         Height = 20
         Properties.OnChange = edtPROFIT_RATEPropertiesChange
-        TabOrder = 8
+        TabOrder = 9
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnKeyPress = edtPROFIT_RATEKeyPress
       end
@@ -1451,7 +1465,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 100
         Height = 20
         Properties.OnChange = edtMY_OUTPRICEPropertiesChange
-        TabOrder = 10
+        TabOrder = 11
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         OnExit = edtNEW_LOWPRICEExit
         OnKeyPress = edtNEW_LOWPRICEKeyPress
@@ -1468,8 +1482,18 @@ inherited frmGoodsInfo: TfrmGoodsInfo
           end>
         Properties.ReadOnly = True
         Properties.OnButtonClick = edtSORT_ID1PropertiesButtonClick
-        TabOrder = 5
+        TabOrder = 6
         OnKeyPress = edtSORT_ID1KeyPress
+      end
+      object edtSHORT_GODS_NAME: TcxTextEdit
+        Left = 86
+        Top = 48
+        Width = 174
+        Height = 20
+        Properties.MaxLength = 50
+        Properties.OnChange = edtGODS_NAMEPropertiesChange
+        TabOrder = 3
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
   end

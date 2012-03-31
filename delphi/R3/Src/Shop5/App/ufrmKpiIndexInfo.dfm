@@ -2,8 +2,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   Left = 274
   Top = 149
   Caption = #32771#26680#25351#26631
-  ClientHeight = 450
-  ClientWidth = 692
+  ClientHeight = 432
+  ClientWidth = 651
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,30 +11,30 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 692
-    Height = 450
+    Width = 651
+    Height = 432
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Top = 113
-      Width = 682
-      Height = 292
+      Top = 92
+      Width = 641
+      Height = 295
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #31614#32422#31561#32423
+        Caption = #21830#21697#28165#21333
         inherited RzPanel2: TRzPanel
-          Width = 678
-          Height = 265
+          Width = 637
+          Height = 268
           BorderColor = clWhite
           Color = clWhite
           object Notebook1: TNotebook
             Left = 5
             Top = 5
-            Width = 668
-            Height = 255
+            Width = 627
+            Height = 258
             Align = alClient
             PageIndex = 1
             TabOrder = 0
@@ -57,11 +57,11 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 668
-                Height = 255
+                Width = 627
+                Height = 258
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
-                DataSource = Ds_KpiLevel
+                DataSource = Ds_KpiGoods
                 Flat = True
                 FooterColor = clWindow
                 FooterFont.Charset = GB2312_CHARSET
@@ -73,7 +73,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 FrozenCols = 2
                 Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
                 OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-                PopupMenu = Pm_Level
+                PopupMenu = Pm_Gods
                 RowHeight = 17
                 SumList.Active = True
                 TabOrder = 0
@@ -98,485 +98,697 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #24207#21495
-                    Width = 34
+                    Width = 31
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'LEVEL_NAME'
+                    FieldName = 'GODS_NAME'
                     Footers = <>
-                    Title.Caption = #31561#32423#21517#31216
-                    Width = 100
-                    OnUpdateData = DBGridEh1Columns1UpdateData
+                    ReadOnly = True
+                    Title.Caption = #21830#21697#21517#31216
+                    Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721#12289#35745#37327#21333#20301#26465#30721'" '#26597#35810
+                    Width = 149
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'LVL_AMT'
+                    FieldName = 'GODS_CODE'
                     Footers = <>
-                    Title.Caption = #31614#32422#37327'('#21544')'
-                    Width = 80
-                    OnUpdateData = DBGridEh1Columns2UpdateData
+                    ReadOnly = True
+                    Tag = 1
+                    Title.Caption = #36135#21495
+                    Width = 72
                   end
                   item
-                    DisplayFormat = '#0.##%'
                     EditButtons = <>
-                    FieldName = 'LOW_RATE'
+                    FieldName = 'BARCODE'
                     Footers = <>
-                    Title.Caption = #36820#21033#31995#25968
-                    OnUpdateData = DBGridEh1Columns3UpdateData
+                    ReadOnly = True
+                    Title.Caption = #26465#30721
+                    Width = 93
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'UNIT_ID'
+                    Footers = <>
+                    Title.Caption = #21333#20301
+                    Width = 49
+                    OnBeforeShowControl = DBGridEh2Columns4BeforeShowControl
                   end>
+              end
+              object fndUNIT_ID: TcxComboBox
+                Left = 320
+                Top = 33
+                Width = 49
+                Height = 20
+                Properties.DropDownListStyle = lsFixedList
+                Properties.OnChange = fndUNIT_IDPropertiesChange
+                TabOrder = 1
+                Visible = False
+                OnEnter = fndUNIT_IDEnter
+                OnExit = fndUNIT_IDExit
+                OnKeyDown = fndUNIT_IDKeyDown
+                OnKeyPress = fndUNIT_IDKeyPress
               end
             end
           end
         end
       end
-      object TabSheet2: TRzTabSheet
+      object TabSheet3: TRzTabSheet
         Color = clWhite
-        Caption = #21830#21697#28165#21333
+        Caption = #25351#26631#23646#24615
+        object RzPanel3: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 637
+          Height = 268
+          Align = alClient
+          BorderOuter = fsNone
+          Color = clWindow
+          TabOrder = 0
+          OnResize = RzPanel3Resize
+          object RzPnl_left: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 318
+            Height = 268
+            Align = alLeft
+            BorderOuter = fsNone
+            BorderColor = clWhite
+            BorderWidth = 5
+            Color = clWhite
+            TabOrder = 0
+            object RzPanel7: TRzPanel
+              Left = 5
+              Top = 5
+              Width = 308
+              Height = 26
+              Align = alTop
+              Alignment = taLeftJustify
+              BorderOuter = fsNone
+              Caption = ' '#31614#32422#31561#32423
+              Color = clWhite
+              TabOrder = 0
+              DesignSize = (
+                308
+                26)
+              object Btn_Left_add: TRzBitBtn
+                Left = 192
+                Top = 0
+                Width = 56
+                Height = 22
+                Anchors = [akTop, akRight]
+                Caption = #28155#21152
+                Color = clWhite
+                HighlightColor = 16026986
+                HotTrack = True
+                HotTrackColor = 3983359
+                TextShadowDepth = 0
+                TabOrder = 0
+                OnClick = Btn_Left_addClick
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000110B0000110B00000000000000000000FFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31801
+                  B31801B31801B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFF01B31800D21E00D21E01B318FFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31800
+                  D93B00D93B01B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFF01B31801B31801B31801B31800DF5900DF5901B31801B31801B31801B3
+                  18FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31800E67600E67600E67600
+                  E67600E67600E67600E67600E67601B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFF01B31800EC9400EC9400EC9400EC9400EC9400EC9400EC9400EC9401B3
+                  18FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31801B31801B31801B31800
+                  F2B200F2B201B31801B31801B31801B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFF01B31800F9CF00F9CF01B318FFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31800
+                  FFEC00FFEC01B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFF01B31801B31801B31801B318FFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+              end
+              object Btn_Left_del: TRzBitBtn
+                Left = 250
+                Top = 0
+                Width = 56
+                Height = 22
+                Anchors = [akTop, akRight]
+                Caption = #21024#38500
+                Color = clWhite
+                HighlightColor = 16026986
+                HotTrack = True
+                HotTrackColor = 3983359
+                TextShadowDepth = 0
+                TabOrder = 1
+                OnClick = Btn_Left_delClick
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE5E8F79EA9E1546BC73F
+                  59C03A53BF4C67C297A7DCE1E6F5FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFC3C9ED5566CC3C52CC757AE88F92EE8F92EE7178E4334DC1405CBEB9C4
+                  E7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC5C9EF5160CD5C65E0A1A6F57E86EF5B
+                  63E9595DE77D84EE9EA0F4515DD73452BAB9C4E7FFFFFFFFFFFFFFFFFFE8EAF9
+                  6571D4616BE3A1ACF5545FEC505CEA4D59E94E59E64C56E65056E69EA2F45460
+                  D6405CBFE2E7F5FFFFFFFFFFFFACB0EA4B56DBA2ABF65664F05266EE4D59E94D
+                  59E94D59E94D59E94C58E6525AE69FA3F53450C496A6DCFFFFFFFFFFFF7378DD
+                  818CEE7E91F75D73F34D59E94D59E94D59E94D59E94D59E94D59E94F5BE97B83
+                  F0757BE24C64C4FFFFFFFFFFFF6569DBA1ABF77086F86882F6FFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFF4D59E95C66EA969CF13956BEFFFFFFFFFFFF696EDC
+                  AFB9F97F93FA7085F0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF4D59E95E6A
+                  EE969DF13D55C0FFFFFFFFFFFF7C7FE3A5AFF59DABFA778CF0545FEC545FEC54
+                  5FEC545FEC545FEC545FEC6377F2818EF4787FE9566BC9FFFFFFFFFFFFB5B5F0
+                  7D83EACDD4FC8B9DFA7E93F7758AEE6C84F66C84F66C84F66C84F66379F3A4AF
+                  F83E4FD0A0ABE1FFFFFFFFFFFFEBEBFB7978E3A3A7F3D4DBFD879AFA7F91F07A
+                  8EF17F94F87E92F9768CF8A8B6F8636EE35868CDE6E8F7FFFFFFFFFFFFFFFFFF
+                  CFCFF6706FE1AAADF2D8DCFDAEBAFA91A3FA8B9DFA9CA9FBBAC7FC707BE95462
+                  CEC3C9EEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCFCFF67979E28E93EDBEC3F8CC
+                  D3F9C4CBF9AAB4F46670E2646ED6C6CAEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFEBEBFBB6B6F07D7FE26A6BDE686BDC7479DEAFB3EBE8E9F9FFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+              end
+            end
+            object DBGridEh2: TDBGridEh
+              Left = 5
+              Top = 31
+              Width = 308
+              Height = 232
+              Align = alClient
+              AllowedOperations = [alopUpdateEh]
+              DataSource = Ds_KpiLevel
+              Flat = True
+              FooterColor = clWindow
+              FooterFont.Charset = GB2312_CHARSET
+              FooterFont.Color = clWindowText
+              FooterFont.Height = -12
+              FooterFont.Name = #23435#20307
+              FooterFont.Style = []
+              FooterRowCount = 1
+              FrozenCols = 2
+              Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
+              OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
+              PopupMenu = Pm_Level
+              RowHeight = 17
+              SumList.Active = True
+              TabOrder = 1
+              TitleFont.Charset = GB2312_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = #23435#20307
+              TitleFont.Style = []
+              TitleHeight = 20
+              UseMultiTitle = True
+              VertScrollBar.VisibleMode = sbAlwaysShowEh
+              IsDrawNullRow = False
+              CurrencySymbol = #65509
+              DecimalNumber = 2
+              DigitalNumber = 12
+              OnDrawColumnCell = DBGridEh2DrawColumnCell
+              OnKeyPress = DBGridEh1KeyPress
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'SEQNO'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #24207#21495
+                  Width = 28
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LEVEL_NAME'
+                  Footers = <>
+                  Title.Caption = #31561#32423#21517#31216
+                  Width = 97
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LVL_AMT'
+                  Footers = <>
+                  Title.Caption = #31614#32422#37327'('#21544')'
+                  Width = 80
+                end
+                item
+                  DisplayFormat = '#0.##%'
+                  EditButtons = <>
+                  FieldName = 'LOW_RATE'
+                  Footers = <>
+                  Title.Caption = #36820#21033#31995#25968
+                  Width = 53
+                end>
+            end
+          end
+          object RzPnl_right: TRzPanel
+            Left = 318
+            Top = 0
+            Width = 319
+            Height = 268
+            Align = alClient
+            BorderOuter = fsNone
+            BorderColor = clWhite
+            BorderWidth = 5
+            Color = clWhite
+            TabOrder = 1
+            object DBGridEh3: TDBGridEh
+              Left = 5
+              Top = 31
+              Width = 309
+              Height = 232
+              Align = alClient
+              AllowedOperations = [alopUpdateEh]
+              DataSource = Ds_KpiTimes
+              Flat = True
+              FooterColor = clWindow
+              FooterFont.Charset = GB2312_CHARSET
+              FooterFont.Color = clWindowText
+              FooterFont.Height = -12
+              FooterFont.Name = #23435#20307
+              FooterFont.Style = []
+              FooterRowCount = 1
+              FrozenCols = 2
+              Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
+              OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
+              PopupMenu = Pm_Times
+              RowHeight = 17
+              SumList.Active = True
+              TabOrder = 0
+              TitleFont.Charset = GB2312_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = #23435#20307
+              TitleFont.Style = []
+              TitleHeight = 20
+              UseMultiTitle = True
+              VertScrollBar.VisibleMode = sbAlwaysShowEh
+              IsDrawNullRow = False
+              CurrencySymbol = #65509
+              DecimalNumber = 2
+              DigitalNumber = 12
+              OnDrawColumnCell = DBGridEh3DrawColumnCell
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'SEQNO'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #24207#21495
+                  Width = 30
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'TIMES_NAME'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #26102#27573#21517
+                  Width = 80
+                end
+                item
+                  DisplayFormat = '00-00'
+                  EditButtons = <>
+                  FieldName = 'KPI_DATE1'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #24320#22987#26085#26399
+                  Width = 60
+                end
+                item
+                  DisplayFormat = '00-00'
+                  EditButtons = <>
+                  FieldName = 'KPI_DATE2'
+                  Footers = <>
+                  ReadOnly = True
+                  Title.Caption = #32467#26463#26085#26399
+                  Width = 60
+                end>
+            end
+            object RzPanel9: TRzPanel
+              Left = 5
+              Top = 5
+              Width = 309
+              Height = 26
+              Align = alTop
+              Alignment = taLeftJustify
+              BorderOuter = fsNone
+              Caption = ' '#26102#27573#23450#20041
+              Color = clWhite
+              TabOrder = 1
+              DesignSize = (
+                309
+                26)
+              object Btn_Right_add: TRzBitBtn
+                Left = 137
+                Top = 0
+                Width = 56
+                Height = 22
+                Anchors = [akTop, akRight]
+                Caption = #28155#21152
+                Color = clWhite
+                HighlightColor = 16026986
+                HotTrack = True
+                HotTrackColor = 3983359
+                TextShadowDepth = 0
+                TabOrder = 0
+                OnClick = Btn_Right_addClick
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000110B0000110B00000000000000000000FFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31801
+                  B31801B31801B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFF01B31800D21E00D21E01B318FFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31800
+                  D93B00D93B01B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFF01B31801B31801B31801B31800DF5900DF5901B31801B31801B31801B3
+                  18FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31800E67600E67600E67600
+                  E67600E67600E67600E67600E67601B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFF01B31800EC9400EC9400EC9400EC9400EC9400EC9400EC9400EC9401B3
+                  18FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31801B31801B31801B31800
+                  F2B200F2B201B31801B31801B31801B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFF01B31800F9CF00F9CF01B318FFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF01B31800
+                  FFEC00FFEC01B318FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFF01B31801B31801B31801B318FFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+              end
+              object Btn_Right_edit: TRzBitBtn
+                Left = 195
+                Top = 0
+                Width = 56
+                Height = 22
+                Anchors = [akTop, akRight]
+                Caption = #20462#25913
+                Color = clWhite
+                HighlightColor = 16026986
+                HotTrack = True
+                HotTrackColor = 3983359
+                TextShadowDepth = 0
+                TabOrder = 1
+                OnClick = Btn_Right_editClick
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000EFEEEE9B9A9A
+                  D1D2D2DADADAE6E6E6F5F5F5FEFEFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFF94AFBE82A0B3D9D9DAC6C6C6C4C4C4D8D8D8EE
+                  EEEEFCFCFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFAFCCDD
+                  9FD4FD8EAAC0FBFBFBE5E5E5D2D2D2CECECEDBDBDBECECECF9F9F9FFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFE1EBF085B7E08FBCE98BD4E0FFFFFFFDFDFDF1
+                  F1F1E3E3E3DCDCDCE1E1E1ECECECF7F7F7FDFDFDFFFFFFFFFFFFFFFFFFFFFFFF
+                  7AACC887D3F44FD7F5D2FCFEFFFFFFFFFFFFFFFFFFFAFAFAF0F0F0EAEAEAEAEA
+                  EAF0F0F0F9F9F9FFFFFFFFFFFFFFFFFFC6DBE652BCDE7BDDFF6EE7F6FFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFEFEFEFAFAFAFAFAFAFDFDFDFFFFFFFFFFFFFFFFFF
+                  FFFFFF77B5D57DE0FB67D9F6B9F8FCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFEDF563BFE28FEFFF69E3F5F8
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFF9CCAE985E9FA88EDFE9DF4FAFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5F9FD77C8F1A3FFFF71
+                  EAFEE7FBFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFC0E0FA91EAFFB1F7FAC8D4D9FFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFABD3ECDB
+                  D7D8A5AC9DE7EBE7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFEDEDEE7F9D7544762DB4BFADFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB7
+                  C5B6BAC1AFB7B5C0E0E1F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7F6F6A09EC94748A6A0A2F1FEFEFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFCDCDF78888DDEEEFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+              end
+              object Btn_Right_del: TRzBitBtn
+                Left = 253
+                Top = 0
+                Width = 56
+                Height = 22
+                Anchors = [akTop, akRight]
+                Caption = #21024#38500
+                Color = clWhite
+                HighlightColor = 16026986
+                HotTrack = True
+                HotTrackColor = 3983359
+                TextShadowDepth = 0
+                TabOrder = 2
+                OnClick = Btn_Right_delClick
+                Glyph.Data = {
+                  36030000424D3603000000000000360000002800000010000000100000000100
+                  18000000000000030000120B0000120B00000000000000000000FFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE5E8F79EA9E1546BC73F
+                  59C03A53BF4C67C297A7DCE1E6F5FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFC3C9ED5566CC3C52CC757AE88F92EE8F92EE7178E4334DC1405CBEB9C4
+                  E7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC5C9EF5160CD5C65E0A1A6F57E86EF5B
+                  63E9595DE77D84EE9EA0F4515DD73452BAB9C4E7FFFFFFFFFFFFFFFFFFE8EAF9
+                  6571D4616BE3A1ACF5545FEC505CEA4D59E94E59E64C56E65056E69EA2F45460
+                  D6405CBFE2E7F5FFFFFFFFFFFFACB0EA4B56DBA2ABF65664F05266EE4D59E94D
+                  59E94D59E94D59E94C58E6525AE69FA3F53450C496A6DCFFFFFFFFFFFF7378DD
+                  818CEE7E91F75D73F34D59E94D59E94D59E94D59E94D59E94D59E94F5BE97B83
+                  F0757BE24C64C4FFFFFFFFFFFF6569DBA1ABF77086F86882F6FFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFF4D59E95C66EA969CF13956BEFFFFFFFFFFFF696EDC
+                  AFB9F97F93FA7085F0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF4D59E95E6A
+                  EE969DF13D55C0FFFFFFFFFFFF7C7FE3A5AFF59DABFA778CF0545FEC545FEC54
+                  5FEC545FEC545FEC545FEC6377F2818EF4787FE9566BC9FFFFFFFFFFFFB5B5F0
+                  7D83EACDD4FC8B9DFA7E93F7758AEE6C84F66C84F66C84F66C84F66379F3A4AF
+                  F83E4FD0A0ABE1FFFFFFFFFFFFEBEBFB7978E3A3A7F3D4DBFD879AFA7F91F07A
+                  8EF17F94F87E92F9768CF8A8B6F8636EE35868CDE6E8F7FFFFFFFFFFFFFFFFFF
+                  CFCFF6706FE1AAADF2D8DCFDAEBAFA91A3FA8B9DFA9CA9FBBAC7FC707BE95462
+                  CEC3C9EEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFCFCFF67979E28E93EDBEC3F8CC
+                  D3F9C4CBF9AAB4F46670E2646ED6C6CAEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFEBEBFBB6B6F07D7FE26A6BDE686BDC7479DEAFB3EBE8E9F9FFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+              end
+            end
+          end
+        end
+      end
+      object TabSheet4: TRzTabSheet
+        Color = clWhite
+        Caption = #36820#21033#35774#32622
         object RzPanel1: TRzPanel
           Left = 0
           Top = 0
-          Width = 678
-          Height = 265
+          Width = 637
+          Height = 268
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
           BorderWidth = 5
           Color = clWhite
           TabOrder = 0
-          object DBGridEh2: TDBGridEh
+          object KpiGrid: TAdvStringGrid
             Left = 5
             Top = 5
-            Width = 668
-            Height = 255
+            Width = 627
+            Height = 258
+            Cursor = crDefault
             Align = alClient
-            AllowedOperations = [alopUpdateEh]
-            DataSource = Ds_KpiGoods
-            Flat = True
-            FooterColor = clWindow
-            FooterFont.Charset = GB2312_CHARSET
-            FooterFont.Color = clWindowText
-            FooterFont.Height = -12
-            FooterFont.Name = #23435#20307
-            FooterFont.Style = []
-            FooterRowCount = 1
-            FrozenCols = 2
-            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
-            OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-            PopupMenu = Pm_Gods
-            RowHeight = 17
-            SumList.Active = True
+            ColCount = 4
+            DefaultRowHeight = 20
+            DefaultDrawing = False
+            FixedCols = 0
+            RowCount = 5
+            FixedRows = 1
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            GridLineWidth = 1
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goEditing, goTabs]
+            ParentFont = False
+            PopupMenu = KpiPm
             TabOrder = 0
-            TitleFont.Charset = GB2312_CHARSET
-            TitleFont.Color = clWindowText
-            TitleFont.Height = -12
-            TitleFont.Name = #23435#20307
-            TitleFont.Style = []
-            TitleHeight = 20
-            UseMultiTitle = True
-            VertScrollBar.VisibleMode = sbAlwaysShowEh
-            IsDrawNullRow = False
-            CurrencySymbol = #65509
-            DecimalNumber = 2
-            DigitalNumber = 12
-            OnDrawColumnCell = DBGridEh2DrawColumnCell
-            OnKeyPress = DBGridEh2KeyPress
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'SEQNO'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #24207#21495
-                Width = 31
-              end
-              item
-                EditButtons = <>
-                FieldName = 'GODS_NAME'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #21830#21697#21517#31216
-                Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721#12289#35745#37327#21333#20301#26465#30721'" '#26597#35810
-                Width = 142
-              end
-              item
-                EditButtons = <>
-                FieldName = 'GODS_CODE'
-                Footers = <>
-                ReadOnly = True
-                Tag = 1
-                Title.Caption = #36135#21495
-                Width = 61
-              end
-              item
-                EditButtons = <>
-                FieldName = 'BARCODE'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #26465#30721
-                Width = 93
-              end
-              item
-                EditButtons = <>
-                FieldName = 'UNIT_ID'
-                Footers = <>
-                Title.Caption = #21333#20301
-                Width = 46
-                OnBeforeShowControl = DBGridEh2Columns4BeforeShowControl
-              end>
+            OnKeyPress = KpiGridKeyPress
+            GridLineColor = clSilver
+            ActiveCellShow = False
+            ActiveCellFont.Charset = DEFAULT_CHARSET
+            ActiveCellFont.Color = clWindowText
+            ActiveCellFont.Height = -11
+            ActiveCellFont.Name = 'MS Sans Serif'
+            ActiveCellFont.Style = [fsBold]
+            ActiveCellColor = clGray
+            Bands.PrimaryColor = clInfoBk
+            Bands.PrimaryLength = 1
+            Bands.SecondaryColor = clWindow
+            Bands.SecondaryLength = 1
+            Bands.Print = False
+            AutoNumAlign = False
+            AutoSize = False
+            VAlignment = vtaCenter
+            EnhTextSize = False
+            EnhRowColMove = False
+            SizeWithForm = False
+            Multilinecells = False
+            OnGetAlignment = KpiGridGetAlignment
+            OnClickCell = KpiGridClickCell
+            OnCanEditCell = KpiGridCanEditCell
+            OnCellsChanged = KpiGridCellsChanged
+            DragDropSettings.OleAcceptFiles = True
+            DragDropSettings.OleAcceptText = True
+            SortSettings.AutoColumnMerge = False
+            SortSettings.Column = 0
+            SortSettings.Show = False
+            SortSettings.IndexShow = False
+            SortSettings.IndexColor = clYellow
+            SortSettings.Full = True
+            SortSettings.SingleColumn = False
+            SortSettings.IgnoreBlanks = False
+            SortSettings.BlankPos = blFirst
+            SortSettings.AutoFormat = True
+            SortSettings.Direction = sdAscending
+            SortSettings.FixedCols = False
+            SortSettings.NormalCellsOnly = False
+            SortSettings.Row = 0
+            FloatingFooter.Color = clBtnFace
+            FloatingFooter.Column = 0
+            FloatingFooter.FooterStyle = fsFixedLastRow
+            FloatingFooter.Visible = False
+            ControlLook.Color = clBlack
+            ControlLook.CheckSize = 15
+            ControlLook.RadioSize = 10
+            ControlLook.ControlStyle = csWinXP
+            ControlLook.FlatButton = False
+            EnableBlink = False
+            EnableHTML = True
+            EnableWheel = True
+            Flat = False
+            Look = glTMS
+            HintColor = clYellow
+            SelectionColor = clHighlight
+            SelectionTextColor = clHighlightText
+            SelectionRectangle = False
+            SelectionResizer = False
+            SelectionRTFKeep = False
+            HintShowCells = False
+            HintShowLargeText = False
+            HintShowSizing = False
+            PrintSettings.FooterSize = 0
+            PrintSettings.HeaderSize = 0
+            PrintSettings.Time = ppNone
+            PrintSettings.Date = ppNone
+            PrintSettings.DateFormat = 'dd/mm/yyyy'
+            PrintSettings.PageNr = ppNone
+            PrintSettings.Title = ppNone
+            PrintSettings.Font.Charset = DEFAULT_CHARSET
+            PrintSettings.Font.Color = clWindowText
+            PrintSettings.Font.Height = -11
+            PrintSettings.Font.Name = 'MS Sans Serif'
+            PrintSettings.Font.Style = []
+            PrintSettings.HeaderFont.Charset = DEFAULT_CHARSET
+            PrintSettings.HeaderFont.Color = clWindowText
+            PrintSettings.HeaderFont.Height = -11
+            PrintSettings.HeaderFont.Name = 'MS Sans Serif'
+            PrintSettings.HeaderFont.Style = []
+            PrintSettings.FooterFont.Charset = DEFAULT_CHARSET
+            PrintSettings.FooterFont.Color = clWindowText
+            PrintSettings.FooterFont.Height = -11
+            PrintSettings.FooterFont.Name = 'MS Sans Serif'
+            PrintSettings.FooterFont.Style = []
+            PrintSettings.Borders = pbNoborder
+            PrintSettings.BorderStyle = psSolid
+            PrintSettings.Centered = False
+            PrintSettings.RepeatFixedRows = False
+            PrintSettings.RepeatFixedCols = False
+            PrintSettings.LeftSize = 0
+            PrintSettings.RightSize = 0
+            PrintSettings.ColumnSpacing = 0
+            PrintSettings.RowSpacing = 0
+            PrintSettings.TitleSpacing = 0
+            PrintSettings.Orientation = poPortrait
+            PrintSettings.PagePrefix = 'page'
+            PrintSettings.PageNumberOffset = 0
+            PrintSettings.MaxPagesOffset = 0
+            PrintSettings.FixedWidth = 0
+            PrintSettings.FixedHeight = 0
+            PrintSettings.UseFixedHeight = False
+            PrintSettings.UseFixedWidth = False
+            PrintSettings.FitToPage = fpNever
+            PrintSettings.PageNumSep = '/'
+            PrintSettings.NoAutoSize = False
+            PrintSettings.NoAutoSizeRow = False
+            PrintSettings.PrintGraphics = False
+            HTMLSettings.Width = 100
+            HTMLSettings.XHTML = False
+            Navigation.AdvanceOnEnter = True
+            Navigation.AutoComboDropSize = True
+            Navigation.AdvanceDirection = adLeftRight
+            Navigation.InsertPosition = pInsertBefore
+            Navigation.HomeEndKey = heFirstLastColumn
+            Navigation.TabToNextAtEnd = False
+            Navigation.TabAdvanceDirection = adLeftRight
+            ColumnSize.Location = clRegistry
+            CellNode.Color = clSilver
+            CellNode.NodeColor = clBlack
+            CellNode.ShowTree = False
+            MaxEditLength = 0
+            MouseActions.DirectEdit = True
+            IntelliPan = ipVertical
+            URLColor = clBlack
+            URLShow = False
+            URLFull = False
+            URLEdit = False
+            ScrollType = ssNormal
+            ScrollColor = clNone
+            ScrollWidth = 16
+            ScrollSynch = False
+            ScrollProportional = False
+            ScrollHints = shNone
+            OemConvert = False
+            FixedFooters = 0
+            FixedRightCols = 0
+            FixedColWidth = 48
+            FixedRowHeight = 22
+            FixedFont.Charset = DEFAULT_CHARSET
+            FixedFont.Color = clWindowText
+            FixedFont.Height = -11
+            FixedFont.Name = 'MS Sans Serif'
+            FixedFont.Style = []
+            FixedAsButtons = False
+            FloatFormat = '%.2f'
+            IntegralHeight = False
+            WordWrap = False
+            Lookup = False
+            LookupCaseSensitive = False
+            LookupHistory = False
+            BackGround.Top = 0
+            BackGround.Left = 0
+            BackGround.Display = bdTile
+            BackGround.Cells = bcNormal
+            Filter = <>
+            ColWidths = (
+              48
+              60
+              71
+              64)
+            RowHeights = (
+              22
+              20
+              20
+              20
+              20)
           end
-          object fndUNIT_ID: TcxComboBox
-            Left = 336
-            Top = 33
-            Width = 49
-            Height = 20
-            Properties.DropDownListStyle = lsFixedList
-            Properties.OnChange = fndUNIT_IDPropertiesChange
-            TabOrder = 1
-            Visible = False
-            OnEnter = fndUNIT_IDEnter
-            OnExit = fndUNIT_IDExit
-            OnKeyDown = fndUNIT_IDKeyDown
-            OnKeyPress = fndUNIT_IDKeyPress
-          end
-        end
-      end
-      object TabSheet3: TRzTabSheet
-        Color = clWhite
-        Caption = #26102#27573#23450#20041
-        object RzPanel3: TRzPanel
-          Left = 0
-          Top = 0
-          Width = 678
-          Height = 265
-          Align = alClient
-          BorderOuter = fsNone
-          Color = clWindow
-          TabOrder = 0
-          object DBGridEh3: TDBGridEh
-            Left = 0
-            Top = 0
-            Width = 678
-            Height = 265
-            Align = alClient
-            AllowedOperations = [alopUpdateEh]
-            DataSource = Ds_KpiTimes
-            Flat = True
-            FooterColor = clWindow
-            FooterFont.Charset = GB2312_CHARSET
-            FooterFont.Color = clWindowText
-            FooterFont.Height = -12
-            FooterFont.Name = #23435#20307
-            FooterFont.Style = []
-            FooterRowCount = 1
-            FrozenCols = 2
-            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
-            OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-            PopupMenu = Pm_Times
-            RowHeight = 17
-            SumList.Active = True
-            TabOrder = 0
-            TitleFont.Charset = GB2312_CHARSET
-            TitleFont.Color = clWindowText
-            TitleFont.Height = -12
-            TitleFont.Name = #23435#20307
-            TitleFont.Style = []
-            TitleHeight = 20
-            UseMultiTitle = True
-            VertScrollBar.VisibleMode = sbAlwaysShowEh
-            IsDrawNullRow = False
-            CurrencySymbol = #65509
-            DecimalNumber = 2
-            DigitalNumber = 12
-            OnDrawColumnCell = DBGridEh3DrawColumnCell
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'SEQNO'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #24207#21495
-                Width = 30
-              end
-              item
-                EditButtons = <>
-                FieldName = 'TIMES_NAME'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #26102#27573#21517
-                Width = 80
-              end
-              item
-                DisplayFormat = '00-00'
-                EditButtons = <>
-                FieldName = 'KPI_DATE1'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #24320#22987#26085#26399
-                Width = 60
-              end
-              item
-                DisplayFormat = '00-00'
-                EditButtons = <>
-                FieldName = 'KPI_DATE2'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #32467#26463#26085#26399
-                Width = 60
-              end
-              item
-                EditButtons = <>
-                FieldName = 'KPI_DATA'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #32771#26680#26631#20934
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'KPI_CALC'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #35745#31639#26631#20934
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'RATIO_TYPE'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #36820#21033#35774#23450
-                Width = 70
-              end
-              item
-                Checkboxes = True
-                EditButtons = <>
-                FieldName = 'KPI_FLAG'
-                Footers = <>
-                KeyList.Strings = (
-                  '0'
-                  '1')
-                PickList.Strings = (
-                  #21542
-                  #26159)
-                Title.Caption = #20419#38144
-                Width = 30
-              end
-              item
-                Checkboxes = False
-                DisplayFormat = '#0%'
-                EditButtons = <>
-                FieldName = 'USING_BRRW'
-                Footers = <>
-                Title.Caption = #20511#37327
-                Width = 30
-              end>
-          end
-        end
-      end
-      object TabSheet4: TRzTabSheet
-        Color = clWhite
-        Caption = #25351#26631#31995#25968
-        object KpiGrid: TAdvStringGrid
-          Left = 0
-          Top = 0
-          Width = 678
-          Height = 265
-          Cursor = crDefault
-          Align = alClient
-          ColCount = 4
-          DefaultRowHeight = 20
-          DefaultDrawing = False
-          FixedCols = 0
-          RowCount = 5
-          FixedRows = 1
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          GridLineWidth = 1
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goEditing, goTabs]
-          ParentFont = False
-          PopupMenu = KpiPm
-          TabOrder = 0
-          OnKeyPress = KpiGridKeyPress
-          GridLineColor = clSilver
-          ActiveCellShow = False
-          ActiveCellFont.Charset = DEFAULT_CHARSET
-          ActiveCellFont.Color = clWindowText
-          ActiveCellFont.Height = -11
-          ActiveCellFont.Name = 'MS Sans Serif'
-          ActiveCellFont.Style = [fsBold]
-          ActiveCellColor = clGray
-          Bands.PrimaryColor = clInfoBk
-          Bands.PrimaryLength = 1
-          Bands.SecondaryColor = clWindow
-          Bands.SecondaryLength = 1
-          Bands.Print = False
-          AutoNumAlign = False
-          AutoSize = False
-          VAlignment = vtaCenter
-          EnhTextSize = False
-          EnhRowColMove = False
-          SizeWithForm = False
-          Multilinecells = False
-          OnGetAlignment = KpiGridGetAlignment
-          OnClickCell = KpiGridClickCell
-          OnCanEditCell = KpiGridCanEditCell
-          OnCellsChanged = KpiGridCellsChanged
-          DragDropSettings.OleAcceptFiles = True
-          DragDropSettings.OleAcceptText = True
-          SortSettings.AutoColumnMerge = False
-          SortSettings.Column = 0
-          SortSettings.Show = False
-          SortSettings.IndexShow = False
-          SortSettings.IndexColor = clYellow
-          SortSettings.Full = True
-          SortSettings.SingleColumn = False
-          SortSettings.IgnoreBlanks = False
-          SortSettings.BlankPos = blFirst
-          SortSettings.AutoFormat = True
-          SortSettings.Direction = sdAscending
-          SortSettings.FixedCols = False
-          SortSettings.NormalCellsOnly = False
-          SortSettings.Row = 0
-          FloatingFooter.Color = clBtnFace
-          FloatingFooter.Column = 0
-          FloatingFooter.FooterStyle = fsFixedLastRow
-          FloatingFooter.Visible = False
-          ControlLook.Color = clBlack
-          ControlLook.CheckSize = 15
-          ControlLook.RadioSize = 10
-          ControlLook.ControlStyle = csWinXP
-          ControlLook.FlatButton = False
-          EnableBlink = False
-          EnableHTML = True
-          EnableWheel = True
-          Flat = False
-          Look = glTMS
-          HintColor = clYellow
-          SelectionColor = clHighlight
-          SelectionTextColor = clHighlightText
-          SelectionRectangle = False
-          SelectionResizer = False
-          SelectionRTFKeep = False
-          HintShowCells = False
-          HintShowLargeText = False
-          HintShowSizing = False
-          PrintSettings.FooterSize = 0
-          PrintSettings.HeaderSize = 0
-          PrintSettings.Time = ppNone
-          PrintSettings.Date = ppNone
-          PrintSettings.DateFormat = 'dd/mm/yyyy'
-          PrintSettings.PageNr = ppNone
-          PrintSettings.Title = ppNone
-          PrintSettings.Font.Charset = DEFAULT_CHARSET
-          PrintSettings.Font.Color = clWindowText
-          PrintSettings.Font.Height = -11
-          PrintSettings.Font.Name = 'MS Sans Serif'
-          PrintSettings.Font.Style = []
-          PrintSettings.HeaderFont.Charset = DEFAULT_CHARSET
-          PrintSettings.HeaderFont.Color = clWindowText
-          PrintSettings.HeaderFont.Height = -11
-          PrintSettings.HeaderFont.Name = 'MS Sans Serif'
-          PrintSettings.HeaderFont.Style = []
-          PrintSettings.FooterFont.Charset = DEFAULT_CHARSET
-          PrintSettings.FooterFont.Color = clWindowText
-          PrintSettings.FooterFont.Height = -11
-          PrintSettings.FooterFont.Name = 'MS Sans Serif'
-          PrintSettings.FooterFont.Style = []
-          PrintSettings.Borders = pbNoborder
-          PrintSettings.BorderStyle = psSolid
-          PrintSettings.Centered = False
-          PrintSettings.RepeatFixedRows = False
-          PrintSettings.RepeatFixedCols = False
-          PrintSettings.LeftSize = 0
-          PrintSettings.RightSize = 0
-          PrintSettings.ColumnSpacing = 0
-          PrintSettings.RowSpacing = 0
-          PrintSettings.TitleSpacing = 0
-          PrintSettings.Orientation = poPortrait
-          PrintSettings.PagePrefix = 'page'
-          PrintSettings.PageNumberOffset = 0
-          PrintSettings.MaxPagesOffset = 0
-          PrintSettings.FixedWidth = 0
-          PrintSettings.FixedHeight = 0
-          PrintSettings.UseFixedHeight = False
-          PrintSettings.UseFixedWidth = False
-          PrintSettings.FitToPage = fpNever
-          PrintSettings.PageNumSep = '/'
-          PrintSettings.NoAutoSize = False
-          PrintSettings.NoAutoSizeRow = False
-          PrintSettings.PrintGraphics = False
-          HTMLSettings.Width = 100
-          HTMLSettings.XHTML = False
-          Navigation.AdvanceOnEnter = True
-          Navigation.AutoComboDropSize = True
-          Navigation.AdvanceDirection = adLeftRight
-          Navigation.InsertPosition = pInsertBefore
-          Navigation.HomeEndKey = heFirstLastColumn
-          Navigation.TabToNextAtEnd = False
-          Navigation.TabAdvanceDirection = adLeftRight
-          ColumnSize.Location = clRegistry
-          CellNode.Color = clSilver
-          CellNode.NodeColor = clBlack
-          CellNode.ShowTree = False
-          MaxEditLength = 0
-          MouseActions.DirectEdit = True
-          IntelliPan = ipVertical
-          URLColor = clBlack
-          URLShow = False
-          URLFull = False
-          URLEdit = False
-          ScrollType = ssNormal
-          ScrollColor = clNone
-          ScrollWidth = 16
-          ScrollSynch = False
-          ScrollProportional = False
-          ScrollHints = shNone
-          OemConvert = False
-          FixedFooters = 0
-          FixedRightCols = 0
-          FixedColWidth = 48
-          FixedRowHeight = 22
-          FixedFont.Charset = DEFAULT_CHARSET
-          FixedFont.Color = clWindowText
-          FixedFont.Height = -11
-          FixedFont.Name = 'MS Sans Serif'
-          FixedFont.Style = []
-          FixedAsButtons = False
-          FloatFormat = '%.2f'
-          IntegralHeight = False
-          WordWrap = False
-          Lookup = False
-          LookupCaseSensitive = False
-          LookupHistory = False
-          BackGround.Top = 0
-          BackGround.Left = 0
-          BackGround.Display = bdTile
-          BackGround.Cells = bcNormal
-          Filter = <>
-          ColWidths = (
-            48
-            60
-            71
-            64)
-          RowHeights = (
-            22
-            20
-            20
-            20
-            20)
         end
       end
       object TabSheet5: TRzTabSheet
         Color = clWhite
-        Caption = #35745#25552#31995#25968
+        Caption = #24066#22330#36153#35774#32622
         object RzPanel5: TRzPanel
           Left = 0
           Top = 0
-          Width = 678
-          Height = 265
+          Width = 637
+          Height = 268
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -586,8 +798,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           object DBGridEh5: TDBGridEh
             Left = 5
             Top = 5
-            Width = 668
-            Height = 255
+            Width = 627
+            Height = 258
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = Ds_MktGoods
@@ -602,7 +814,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             FrozenCols = 2
             Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-            PopupMenu = Pm_Gods
             RowHeight = 17
             SumList.Active = True
             TabOrder = 0
@@ -689,11 +900,11 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
     end
     inherited btPanel: TRzPanel
-      Top = 405
-      Width = 682
+      Top = 387
+      Width = 641
       Color = clWhite
       object Btn_Save: TRzBitBtn
-        Left = 520
+        Left = 479
         Top = 11
         Width = 67
         Height = 26
@@ -720,7 +931,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 610
+        Left = 569
         Top = 11
         Width = 67
         Height = 26
@@ -750,8 +961,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     object RzPanel4: TRzPanel
       Left = 5
       Top = 5
-      Width = 682
-      Height = 108
+      Width = 641
+      Height = 87
       Align = alTop
       BorderOuter = fsNone
       BorderColor = clWhite
@@ -774,7 +985,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object lab_IDX_TYPE: TRzLabel
         Left = 6
-        Top = 31
+        Top = 33
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -789,7 +1000,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel2: TRzLabel
         Left = 237
-        Top = 31
+        Top = 33
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -804,7 +1015,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel1: TRzLabel
         Left = 237
-        Top = 7
+        Top = 8
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -834,7 +1045,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object lab_KPI_TYPE: TLabel
         Left = 260
-        Top = 31
+        Top = 33
         Width = 83
         Height = 12
         Alignment = taRightJustify
@@ -849,7 +1060,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel3: TRzLabel
         Left = 483
-        Top = 31
+        Top = 33
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -864,7 +1075,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel9: TRzLabel
         Left = 615
-        Top = 7
+        Top = 8
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -879,7 +1090,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel10: TRzLabel
         Left = 500
-        Top = 7
+        Top = 8
         Width = 36
         Height = 12
         Alignment = taRightJustify
@@ -894,7 +1105,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel5: TRzLabel
         Left = 6
-        Top = 55
+        Top = 58
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -909,16 +1120,16 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object edtIDX_TYPE: TcxComboBox
         Left = 103
-        Top = 27
+        Top = 29
         Width = 130
         Height = 20
         Properties.DropDownListStyle = lsFixedList
         Properties.OnChange = edtIDX_TYPEPropertiesChange
-        TabOrder = 3
+        TabOrder = 2
       end
       object edtKPI_NAME: TcxTextEdit
         Left = 103
-        Top = 3
+        Top = 4
         Width = 130
         Height = 20
         Properties.MaxLength = 50
@@ -927,7 +1138,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object edtKPI_SPELL: TcxTextEdit
         Left = 350
-        Top = 3
+        Top = 4
         Width = 130
         Height = 20
         Properties.MaxLength = 50
@@ -935,79 +1146,80 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object edtKPI_TYPE: TcxComboBox
         Left = 350
-        Top = 27
+        Top = 29
         Width = 130
         Height = 20
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 4
+        TabOrder = 3
       end
       object edtUNIT_NAME: TcxTextEdit
-        Left = 539
-        Top = 3
-        Width = 73
+        Left = 542
+        Top = 4
+        Width = 70
         Height = 20
         Properties.MaxLength = 10
-        TabOrder = 2
+        Properties.OnChange = edtUNIT_NAMEPropertiesChange
+        TabOrder = 4
       end
-      object edtREMARK: TcxMemo
+      object edtREMARK: TcxTextEdit
         Left = 103
-        Top = 52
-        Width = 508
-        Height = 49
+        Top = 54
+        Width = 509
+        Height = 20
         Properties.MaxLength = 100
         TabOrder = 5
       end
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 110
-    Top = 365
+    Left = 398
+    Top = 293
   end
   inherited actList: TActionList
-    Left = 142
-    Top = 365
+    Left = 430
+    Top = 293
   end
   object CdsKpiLevel: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 47
-    Top = 365
+    Top = 271
   end
   object Ds_KpiLevel: TDataSource
     DataSet = CdsKpiLevel
     Left = 79
-    Top = 365
+    Top = 271
   end
   object CdsKpiIndex: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 48
-    Top = 275
+    Top = 203
   end
   object CdsKpiGoods: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 48
-    Top = 335
+    Top = 239
   end
   object Ds_KpiGoods: TDataSource
     DataSet = CdsKpiGoods
     Left = 79
-    Top = 334
+    Top = 238
   end
   object Pm_Level: TPopupMenu
     Left = 18
-    Top = 365
-    object AddRecord_: TMenuItem
+    Top = 271
+    object AddLevel: TMenuItem
       Caption = #26032#22686#31561#32423
-      OnClick = AddRecord_Click
+      OnClick = AddLevelClick
     end
-    object DeleteRecord: TMenuItem
+    object DelLevel: TMenuItem
       Caption = #21024#38500#31561#32423
-      OnClick = DeleteRecordClick
+      OnClick = DelLevelClick
     end
     object N6: TMenuItem
       Caption = '-'
@@ -1015,7 +1227,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   end
   object Pm_Gods: TPopupMenu
     Left = 19
-    Top = 335
+    Top = 239
     object AddGoods: TMenuItem
       Caption = #26032#22686#21830#21697
       OnClick = AddGoodsClick
@@ -1031,29 +1243,29 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   object Ds_KpiTimes: TDataSource
     DataSet = CdsKpiTimes
     Left = 79
-    Top = 304
+    Top = 301
   end
   object CdsKpiTimes: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 48
-    Top = 305
+    Top = 302
   end
   object Pm_Times: TPopupMenu
     Left = 19
-    Top = 305
-    object N1: TMenuItem
+    Top = 302
+    object AddKpiTimes: TMenuItem
       Caption = #26032#22686#26102#27573
-      OnClick = N1Click
+      OnClick = AddKpiTimesClick
     end
-    object N2: TMenuItem
+    object EditKpiTimes: TMenuItem
       Caption = #20462#25913#26102#27573
-      OnClick = N2Click
+      OnClick = EditKpiTimesClick
     end
-    object N3: TMenuItem
+    object DelKpiTimes: TMenuItem
       Caption = #21024#38500#26102#27573
-      OnClick = N3Click
+      OnClick = DelKpiTimesClick
     end
     object N4: TMenuItem
       Caption = '-'
@@ -1061,8 +1273,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   end
   object KpiPm: TPopupMenu
     OnPopup = KpiPmPopup
-    Left = 418
-    Top = 224
+    Left = 10
+    Top = 400
     object AddSeqNo: TMenuItem
       Caption = #28155#21152#36798#26631#26723#20301
       OnClick = AddSeqNoClick
@@ -1083,26 +1295,26 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 95
-    Top = 412
+    Left = 47
+    Top = 364
   end
   object CdsKpiSeqNo: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 47
-    Top = 412
+    Top = 332
   end
   object CdsMktGoods: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 375
-    Top = 413
+    Left = 47
+    Top = 397
   end
   object Ds_MktGoods: TDataSource
     DataSet = CdsMktGoods
-    Left = 407
-    Top = 413
+    Left = 79
+    Top = 397
   end
 end

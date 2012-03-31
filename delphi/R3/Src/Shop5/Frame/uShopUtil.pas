@@ -651,7 +651,7 @@ begin
                 if (AObj.FieldbyName(fldname).DataType in [ftSmallint, ftInteger, ftWord, ftLargeint]) then
                    begin
                      try
-                       StrtoInt(TcxMaskEdit(Components[i]).Text);
+                       if StrtoInt(TcxMaskEdit(Components[i]).Text)>999999999 then Raise Exception.Create('数值过大');
                      except
                        Raise Exception.Create(TcxMaskEdit(Components[i]).Text+'无效整型数据');
                      end;
@@ -659,7 +659,7 @@ begin
                 if (AObj.FieldbyName(fldname).DataType in [ftFloat, ftCurrency, ftBCD]) then
                    begin
                      try
-                       StrtoFloat(TcxMaskEdit(Components[i]).Text);
+                       if StrtoFloat(TcxMaskEdit(Components[i]).Text)>999999999 then Raise Exception.Create('数值过大');
                      except
                        Raise Exception.Create(TcxMaskEdit(Components[i]).Text+'无效数值型数据');
                      end;
@@ -681,7 +681,7 @@ begin
                 if (AObj.FieldbyName(fldname).DataType in [ftSmallint, ftInteger, ftWord, ftLargeint]) then
                    begin
                      try
-                       StrtoInt(TcxTextEdit(Components[i]).Text);
+                       if StrtoInt(TcxTextEdit(Components[i]).Text)>999999999 then Raise Exception.Create('数值过大');
                      except
                        Raise Exception.Create(TcxTextEdit(Components[i]).Text+'无效整型数据');
                      end;
@@ -689,7 +689,7 @@ begin
                 if (AObj.FieldbyName(fldname).DataType in [ftFloat, ftCurrency, ftBCD]) then
                    begin
                      try
-                       StrtoFloat(TcxTextEdit(Components[i]).Text);
+                       if StrtoFloat(TcxTextEdit(Components[i]).Text)>999999999 then Raise Exception.Create('数值过大');
                      except
                        Raise Exception.Create(TcxTextEdit(Components[i]).Text+'无效数值型数据');
                      end;

@@ -78,12 +78,12 @@ begin
   result := false;
   sm := TStringStream.Create('');
   try
-    if not GetUrlStream(Rim_Url+'advRequest/adv.action?comId='+Rim_ComId+'&custId='+Rim_CustId+'&&position='+inttostr(Position),sm) then Exit;
+    if not GetUrlStream(Rim_Url+'advRequest/adv.action?comId='+Rim_ComId+'&custId='+Rim_CustId+'&position='+inttostr(Position),sm) then Exit;
     doc := CreateXML(sm.DataString);
     if doc=nil then Exit;
     Node := FindNode(doc,'header\pub');
     AdvInfo.Position := Position;
-    AdvInfo.AdvType := StrtoIntDef(GetNodeValue(Node,'advType'),0);
+    AdvInfo.AdvType := StrtoIntDef(GetNodeValue(Node,'advType'),-1);// -1:没有相应的广告信息
     Node := FindNode(doc,'body\advinfo');
     UrlList := Node.firstChild;
     for i:=0 to 20 do AdvInfo.urlList[i] := '';
@@ -275,7 +275,12 @@ begin
   try
   result := AdvRequest(Position,AdvInfo);
   if result then
-     result := GetAdvAllFile(AdvInfo);
+    begin
+      if AdvInfo.AdvType <> -1 then
+        result := GetAdvAllFile(AdvInfo)
+      else if FileExists(ExtractFilePath(ParamStr(0))+'adv\adv' + inttostr(Position) + '.html') then
+        DeleteFile(ExtractFilePath(ParamStr(0))+'adv\adv' + inttostr(Position) + '.html');
+    end;
   except
      on E:Exception do
         begin

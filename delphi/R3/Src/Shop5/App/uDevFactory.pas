@@ -69,7 +69,7 @@ TDevFactory=class
     procedure BeginPrint;
     procedure WritePrint(s:string);
     procedure WritePrintNoEnter(s:string);
-    procedure EndPrint;
+    procedure EndPrint;                                                                     
 
     function EncodeDivStr:string;
 

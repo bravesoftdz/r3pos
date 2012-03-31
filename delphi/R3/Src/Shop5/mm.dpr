@@ -281,7 +281,8 @@ uses
   ufrmXsmLogin in 'App\ufrmXsmLogin.pas' {frmXsmLogin},
   ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
   uResFactory in 'App\uResFactory.pas',
-  ObjCostCalc in 'Obj\ObjCostCalc.pas';
+  ObjCostCalc in 'Obj\ObjCostCalc.pas',
+  ufrmAdv in 'App\ufrmAdv.pas' {frmAdv};
 
 {$R *.res}
 

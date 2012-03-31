@@ -1048,6 +1048,11 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
       ShortCut = 121
       OnClick = N5Click
     end
+    object useLvlPrice: TMenuItem [10]
+      Caption = #26723#20301#20419#38144
+      ShortCut = 120
+      OnClick = useLvlPriceClick
+    end
     object N2: TMenuItem
       Caption = #25972#21333#20986#24211
       OnClick = N2Click

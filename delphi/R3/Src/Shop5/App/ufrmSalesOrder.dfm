@@ -1,6 +1,6 @@
 inherited frmSalesOrder: TfrmSalesOrder
-  Left = 202
-  Top = 134
+  Left = 284
+  Top = 128
   Width = 796
   Height = 552
   Caption = #38144#21806#21333
@@ -842,6 +842,11 @@ inherited frmSalesOrder: TfrmSalesOrder
       Caption = #36755#20837#31036#30418
       ShortCut = 121
       OnClick = N5Click
+    end
+    object useLvlPrice: TMenuItem [10]
+      Caption = #26723#20301#20419#38144
+      ShortCut = 120
+      OnClick = useLvlPriceClick
     end
     object N2: TMenuItem
       Caption = #25972#21333#36864#36135

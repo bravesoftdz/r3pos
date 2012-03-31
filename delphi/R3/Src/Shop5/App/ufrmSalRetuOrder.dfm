@@ -843,6 +843,11 @@ inherited frmSalRetuOrder: TfrmSalRetuOrder
       ShortCut = 121
       OnClick = N2Click
     end
+    object useLvlPrice: TMenuItem [10]
+      Caption = #26723#20301#20419#38144
+      ShortCut = 120
+      OnClick = useLvlPriceClick
+    end
   end
   inherited edtTable: TZQuery
     FieldDefs = <

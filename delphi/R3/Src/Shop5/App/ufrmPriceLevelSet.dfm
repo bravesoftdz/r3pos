@@ -1,10 +1,11 @@
 inherited frmPriceLevelSet: TfrmPriceLevelSet
-  Left = 437
-  Top = 220
-  Caption = #22810#26723#23450#20215
+  Left = 362
+  Top = 184
+  Caption = #22810#26723#20419#38144
   ClientHeight = 328
   ClientWidth = 343
   Color = clWhite
+  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -20,7 +21,7 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #20215#26684#26723#20301#23450#20041
+        Caption = #20419#38144#26723#20301#23450#20041
         inherited RzPanel2: TRzPanel
           Width = 329
           Height = 208
@@ -32,7 +33,6 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
             Width = 319
             Height = 198
             Align = alClient
-            AutoFitColWidths = True
             DataSource = dsPriceLv
             Flat = True
             FooterColor = clWindow
@@ -69,17 +69,27 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
                 ReadOnly = True
                 Title.Caption = #26723#20301
                 Title.Color = clWhite
-                Width = 55
+                Width = 26
               end
               item
                 EditButtons = <>
                 FieldName = 'LV_AMT'
                 Footers = <>
-                Title.Caption = #26723#20301#36798#26631#37327
+                Title.Caption = #36798#26631#37327
                 Title.Color = clWhite
                 Title.TitleButton = True
-                Width = 131
+                Width = 102
                 OnUpdateData = DBGridEh1Columns1UpdateData
+              end
+              item
+                DisplayFormat = '#0%'
+                EditButtons = <>
+                FieldName = 'AGIO_RATE'
+                Footers = <>
+                Title.Caption = #25240#25187#29575
+                Title.Color = clWhite
+                Width = 53
+                OnUpdateData = DBGridEh1Columns2UpdateData
               end
               item
                 EditButtons = <>
@@ -88,8 +98,8 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
                 Title.Caption = #20248#24800#20215
                 Title.Color = clWhite
                 Title.TitleButton = True
-                Width = 102
-                OnUpdateData = DBGridEh1Columns2UpdateData
+                Width = 107
+                OnUpdateData = DBGridEh1Columns3UpdateData
               end>
           end
         end
@@ -249,8 +259,9 @@ inherited frmPriceLevelSet: TfrmPriceLevelSet
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Properties.DropDownListStyle = lsFixedList
       Properties.Items.Strings = (
-        #25353#38144#21806#37329#39069
-        #25353#38144#21806#25968#37327)
+        #25353#21333#21697#37329#39069
+        #25353#21333#21697#25968#37327
+        #25353#25972#21333#37329#39069)
       Properties.OnChange = edtLVL_TYPEPropertiesChange
       Properties.OnEditValueChanged = edtLVL_TYPEPropertiesEditValueChanged
       TabOrder = 0

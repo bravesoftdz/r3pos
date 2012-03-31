@@ -18,7 +18,11 @@ const
   WM_STATUS_CHANGE=WM_USER+2;
   //单据操作
   WM_EXEC_ORDER=WM_USER+3;
-
+  //档位促销
+  WM_LVL_PRICE=WM_USER+4;
+  //档位促销完成
+  WM_LVL_PRICE_OVER=WM_USER+5;
+  
   ////2011.11.14双屏发送消息
   WM_TPOS_DISPLAY=WM_USER+3950;
   
@@ -228,6 +232,7 @@ type
     { Private declarations }
     procedure WMDialogPull(var Message: TMessage); message WM_DIALOG_PULL;
     procedure WMExecOrder(var Message: TMessage); message WM_EXEC_ORDER;
+    procedure WMLvlPrice(var Message: TMessage); message WM_LVL_PRICE;
     procedure OpenDialogGoods;
     procedure OpenDialogProperty;
     function  OpenDialogCustomer(KeyString:string;C_T:Integer=0):boolean;
@@ -247,6 +252,7 @@ type
     procedure SetIsReck(const Value: boolean);
     procedure SetbasInfo(const Value: TZQuery);
     function GetbasInfo: TZQuery;
+    function getLvlPrice(priceDataSet : TZQuery; number : currency) : currency;
   protected
     //进位法则
     CarryRule:integer;
@@ -403,7 +409,7 @@ uses ufrmMain, ZLogFile, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
      ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
      ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList, ufrmFastReport, uN26Factory,
-     ufrmSalRetuMenu;
+     ufrmSalRetuMenu, ufrmShopMain;
      
 {$R *.dfm}
 
@@ -2412,7 +2418,7 @@ begin
   if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.');
   Printed := DevFactory.SavePrint;
   //结算对话框
-  if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs,cdsICGlide) then Exit;
+  if not TfrmShowDibs.ShowDibs(self,TotalFee,AObj,Printed,Cash,Dibs,cdsICGlide,self.Handle) then Exit;
   //end
   Factor.BeginBatch;
   cdsTable.DisableControls;
@@ -4864,6 +4870,211 @@ begin
     rs.Free;
     cdsTable.EnableControls;
   end;
+end;
+
+
+function TfrmPosMain.getLvlPrice(priceDataSet : TZQuery; number : currency) : currency;
+var lvlAmt:array [0..8] of currency;
+var lvlPrc:array [0..8] of currency;
+var i : integer;
+begin
+  result := -1;
+  for i := 0 to 8 do
+    begin
+      if  (priceDataSet.FieldByName('LV'+ inttostr(i+1) +'_AMT').AsString = '')
+          or
+          (priceDataSet.FieldByName('LV'+ inttostr(i+1) +'_AMT').AsString = '0')
+          or
+          (priceDataSet.FieldByName('LV'+ inttostr(i+1) +'_AMT').AsString = '#')
+        then break;
+      lvlAmt[i] := priceDataSet.FieldByName('LV'+ inttostr(i+1) +'_AMT').AsCurrency;
+      lvlPrc[i] := priceDataSet.FieldByName('LV'+ inttostr(i+1) +'_PRC').AsCurrency;
+      if (number >= lvlAmt[i]) then
+        begin
+          result := FnNumber.ConvertToFight(lvlPrc[i], CarryRule, Deci);
+        end;
+    end;
+end;
+
+function getUnitRate(godsId : string; unitId : string; godsName : string) : real;
+var sourceScale : real;
+var rs : TZQuery;
+begin
+  sourceScale := 1;
+  rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not rs.Locate('GODS_ID',godsId,[]) then Raise Exception.Create('经营商品中没找到“'+godsName+'”');  
+  if unitId=rs.FieldByName('CALC_UNITS').AsString then
+    begin
+      sourceScale := 1;
+    end
+  else
+    if unitId=rs.FieldByName('BIG_UNITS').AsString then
+      begin
+        sourceScale := rs.FieldByName('BIGTO_CALC').AsFloat;
+      end
+    else
+      if unitId=rs.FieldByName('SMALL_UNITS').AsString then
+        begin
+          sourceScale := rs.FieldByName('SMALLTO_CALC').asFloat;
+        end
+      else
+        begin
+          sourceScale := 1;
+        end;
+  result := sourceScale;
+end;
+
+procedure TfrmPosMain.WMLvlPrice(var Message: TMessage);
+var SQL : string;
+var priceDataSet : TZQuery;
+var nowDate : string;
+var godsId : string;
+var godsAmount : currency;
+var godsMoney : currency;
+var allMoney : currency;
+var lvlPrice : currency;
+var unitRate : real;
+begin
+  inherited;
+  nowDate := formatDatetime('YYYY-MM-DD HH:NN:SS', now()); 
+  priceDataSet := TZQuery.Create(nil);
+
+  cdsTable.DisableControls;
+  try
+	  SQL := 'select 	DATA.PROM_ID,DATA.TENANT_ID,SEQNO,GODS_ID,NEW_OUTPRICE,NEW_OUTPRICE1,NEW_OUTPRICE2,RATE_OFF,AGIO_RATE,ISINTEGRAL, ' +
+					 '        USING_LEVEL,LVL_TYPE,LV1_AMT,LV2_AMT,LV3_AMT,LV4_AMT,LV5_AMT,LV6_AMT,LV7_AMT,LV8_AMT,LV9_AMT,LV1_PRC, ' +
+	         '        LV2_PRC,LV3_PRC,LV4_PRC,LV5_PRC,LV6_PRC,LV7_PRC,LV8_PRC,LV9_PRC ' +
+	         'from 		SAL_PRICEDATA DATA,SAL_PRICEORDER ORD,SAL_PROM_SHOP SHOP ' +
+	         'where		DATA.PROM_ID = ORD.PROM_ID ' +
+	         '				and DATA.TENANT_ID = ORD.TENANT_ID ' +
+           '				and SHOP.PROM_ID = ORD.PROM_ID ' +
+           '				and SHOP.TENANT_ID = SHOP.TENANT_ID ' +
+	         '				and ORD.TENANT_ID = ' + inttostr(Global.TENANT_ID) +
+	         '				and SHOP.SHOP_ID = ''' + Global.SHOP_ID + ''' ' +
+	         '				and ORD.CHK_USER is not null ' +
+	         '				and ORD.BEGIN_DATE <= ''' + nowDate + ''' ' +
+	         '				and ORD.END_DATE >= ''' + nowDate + ''' ' +
+	         '				and DATA.USING_LEVEL = ''1'' ' +
+	         '				and DATA.LVL_TYPE is not null ' +
+           '        and ORD.COMM NOT IN (''02'',''12'') ';
+	  priceDataSet.SQL.Text := SQL;
+	  Factor.Open(priceDataSet);
+	  
+	  if priceDataSet.IsEmpty or cdsTable.IsEmpty then
+      begin
+        // actSave.OnExecute(actSave);
+        Exit;
+      end;
+
+    cdsTable.First;
+	  priceDataSet.First;
+
+    // 价格复位
+    while not cdsTable.Eof do
+      begin
+        if (cdsTable.FieldByName('IS_PRESENT').AsInteger <> 0) or ((cdsTable.FieldByName('BOM_ID').AsString <> '') and (cdsTable.FieldByName('BOM_ID').AsString <> '#')) then
+          begin
+            cdsTable.Next;
+            continue;
+          end;
+        // 如果非手工调价，重新获取价格
+        if cdsTable.FieldbyName('POLICY_TYPE').AsInteger <> 4 then
+          begin
+            InitPrice(cdsTable.FieldbyName('GODS_ID').AsString,cdsTable.FieldbyName('UNIT_ID').AsString);
+            PriceToCalc(cdsTable.FieldByName('APRICE').AsCurrency);
+          end;
+        cdsTable.Next;
+    end;
+
+    // 取整单价格
+    allMoney := 0;
+    cdsTable.First;
+    while not cdsTable.Eof do
+      begin
+        allMoney := allMoney + cdsTable.FieldbyName('AMONEY').AsFloat;
+        cdsTable.Next;
+    end;
+
+	  //1:单品金额 2:单品数量 3:整单金额
+	  while not priceDataSet.Eof do
+  	  begin
+	      godsId := priceDataSet.FieldByName('GODS_ID').AsString;
+
+        cdsTable.Filtered := false;
+        cdsTable.Filter := 'GODS_ID='''+godsId+'''';
+        cdsTable.Filtered := true;
+
+        godsAmount := 0;
+        godsMoney := 0;
+
+        if not cdsTable.IsEmpty then
+          begin
+            cdsTable.First;
+      	    while not cdsTable.Eof do
+        	    begin
+                if (cdsTable.FieldByName('IS_PRESENT').AsInteger <> 0) or ((cdsTable.FieldByName('BOM_ID').AsString <> '') and (cdsTable.FieldByName('BOM_ID').AsString <> '#')) then
+                  begin
+                    cdsTable.Next;
+                    continue;
+                  end;
+
+                godsAmount := godsAmount + cdsTable.FieldByName('CALC_AMOUNT').AsCurrency;
+                godsMoney := godsMoney + cdsTable.FieldByName('CALC_AMOUNT').AsCurrency * priceDataSet.FieldByName('NEW_OUTPRICE').AsCurrency;
+                cdsTable.Next;
+    	        end;
+
+            case strtointdef(priceDataSet.FieldByName('LVL_TYPE').AsString, 0) of
+		          1 : // 单品金额
+		            begin
+                  lvlPrice := getLvlPrice(priceDataSet, godsMoney);
+		            end;
+		          2 : // 单品数量
+		            begin
+		              lvlPrice := getLvlPrice(priceDataSet, godsAmount);
+		            end;
+		          3 : // 整单金额
+		            begin
+                  lvlPrice := getLvlPrice(priceDataSet, allMoney);
+		            end;
+		        end;
+
+            cdsTable.First;
+      	    while not cdsTable.Eof do
+        	    begin
+                if (cdsTable.FieldByName('IS_PRESENT').AsInteger <> 0) or ((cdsTable.FieldByName('BOM_ID').AsString <> '') and (cdsTable.FieldByName('BOM_ID').AsString <> '#')) then
+                  begin
+                    cdsTable.Next;
+                    continue;
+                  end;
+
+                if cdsTable.FieldByName('CALC_AMOUNT').AsCurrency <> 0 then
+                  begin
+                    if (lvlPrice >= 0) and (lvlPrice < (cdsTable.FieldByName('AMONEY').AsCurrency / cdsTable.FieldByName('CALC_AMOUNT').AsCurrency)) then
+                      begin
+                        cdsTable.Edit;
+                        cdsTable.FieldByName('APRICE').AsCurrency :=  FnNumber.ConvertToFight(lvlPrice * getUnitRate(cdsTable.FieldByName('GODS_ID').AsString,cdsTable.FieldByName('UNIT_ID').AsString,cdsTable.FieldByName('GODS_NAME').AsString), CarryRule, Deci);
+                        cdsTable.FieldbyName('POLICY_TYPE').AsInteger := 3; // 促销
+                        PriceToCalc(cdsTable.FieldByName('APRICE').AsCurrency);
+                        cdsTable.Post;
+                      end;
+                  end;
+                cdsTable.Next;
+    	        end;
+          end;
+
+        cdsTable.Filtered := false;
+        cdsTable.Filter := '';
+        cdsTable.Filtered := true;
+
+        priceDataSet.Next;
+	    end;
+  finally
+    cdsTable.EnableControls;
+    priceDataSet.Free;
+  end;
+  Calc;
+  //actSave.OnExecute(actSave);
+  PostMessage(Message.WParam, WM_LVL_PRICE_OVER, Round(TotalFee * 1000), 0);
 end;
 
 end.

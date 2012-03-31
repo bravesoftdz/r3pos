@@ -1,6 +1,6 @@
 inherited frmPriceOrder: TfrmPriceOrder
-  Left = 380
-  Top = 108
+  Left = 863
+  Top = 99
   Width = 839
   Height = 576
   Caption = #20419#38144#21333
@@ -366,8 +366,9 @@ inherited frmPriceOrder: TfrmPriceOrder
             #21542
             #26159
             '')
-          Title.Caption = #21551#29992#22810#26723#23450#20215
+          Title.Caption = #21551#29992#22810#26723#20419#38144
           Width = 45
+          OnUpdateData = DBGridEh1Columns13UpdateData
         end>
     end
     inherited fndGODS_ID: TzrComboBoxList

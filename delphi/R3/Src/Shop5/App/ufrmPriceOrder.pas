@@ -49,6 +49,8 @@ type
     procedure fndGODS_IDSaveValue(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure mnuUsingLevelClick(Sender: TObject);
+    procedure DBGridEh1Columns13UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     w:integer;
@@ -244,7 +246,7 @@ begin
   edtTable.FieldbyName('BATCH_NO').asString := '#';
   edtTable.FieldbyName('UNIT_ID').asString := UNIT_ID;
   edtTable.FieldbyName('IS_PRESENT').AsInteger := 0;
-  edtTable.FieldbyName('USING_LEVEL').asString := '2';
+  edtTable.FieldbyName('USING_LEVEL').asString := '0';
 end;
 
 procedure TfrmPriceOrder.NewOrder;
@@ -776,6 +778,7 @@ var
   varAObj:TRecord_;
 begin
   inherited;
+  if  edtTable.FieldbyName('USING_LEVEL').AsString <>'1' then exit;
   if (dbState <> dsBrowse) and (edtTable.FieldbyName('USING_LEVEL').AsString ='1') then
   begin
      varAobj := TRecord_.Create;
@@ -822,13 +825,47 @@ begin
       //varAobj.FieldByName('LV1_AMT').AsFloat
       //varAobj.FieldByName('LV1_PRC').AsFloat
       //varAobj.ReadField(edtTable);
+      try
+        if TfrmPriceLevelSet.AddDialog(self,varAObj) then
+        begin
+          edtTable.Edit;
+          //edtTable.FieldByName('').AsFloat:=
+          varAObj.WriteToDataSet(edtTable);
+          edtTable.Post;
+        end
+      finally
+        varAObj.Free;
+      end;
+
+  end;
+end;
+
+procedure TfrmPriceOrder.DBGridEh1Columns13UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  varAObj:TRecord_;
+begin
+  inherited;
+  if  (Text='1') then
+  begin
+     //Text := TColumnEh(Sender).Field.AsString;
+     //Value := TColumnEh(Sender).Field.asFloat;
+     edtTable.Edit;
+      edtTable.FieldbyName('USING_LEVEL').AsString :='1';
+      edtTable.Post;
+     varAobj := TRecord_.Create;
+     varAobj.ReadFromDataSet(edtTable);
+      //varAobj.FieldByName('LV1_AMT').AsFloat
+      //varAobj.FieldByName('LV1_PRC').AsFloat
+      //varAobj.ReadField(edtTable);
       if TfrmPriceLevelSet.AddDialog(self,varAObj) then
       begin
         edtTable.Edit;
         //edtTable.FieldByName('').AsFloat:=
         varAObj.WriteToDataSet(edtTable);
-        edtTable.Post;
-      end
+        //edtTable.Post;
+      end ;
+      edtTable.Edit;
   end;
 end;
 

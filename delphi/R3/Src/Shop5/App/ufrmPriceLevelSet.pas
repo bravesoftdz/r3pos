@@ -38,7 +38,7 @@ type
     CtrlDel: TAction;
     procedure DBGridEh1Columns1UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh1Columns2UpdateData(Sender: TObject;
+    procedure DBGridEh1Columns3UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -63,6 +63,9 @@ type
     procedure CtrlAddExecute(Sender: TObject);
     procedure CtrlDelExecute(Sender: TObject);
     procedure edtLVL_TYPEPropertiesChange(Sender: TObject);
+    procedure DBGridEh1Columns2UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure FormCreate(Sender: TObject);
   private
     procedure SetdbState(const Value: TDataSetState);
     function CheckCanExport:boolean;
@@ -70,6 +73,10 @@ type
     procedure SetUpdateState();
     procedure SetBrowseState();
   public
+    //当前窗体修改状态
+    formEditStatus:boolean;
+    OutPrice:Real;
+    CarryRule,Deci:integer;
     //定价记录(传入)
     PriceObj: TRecord_;
     procedure Open;
@@ -147,9 +154,30 @@ begin
   if StrtoFloatDef(Text,0)<=0 then
   begin
     //if dbstate=dsBrowse then dbstate:=dsEdit;
+    cdsPriceLv.FieldByName('AGIO_RATE').AsString:='';
+    Raise Exception.Create('   商品价格档位【'+InttoStr(cdsPriceLv.RecNo)+'】的折扣率不能小于0或等于0！  ');
+  end;
+  cdsPriceLv.Edit;
+  //cdsPriceLv.FieldByName('LV_PRC').AsFloat := RoundTo(StrtoFloatDef(Text,0)*OutPrice,0);
+  cdsPriceLv.FieldByName('LV_PRC').AsFloat :=FnNumber.ConvertToFight(StrtoFloatDef(Text,0)*OutPrice/100,CarryRule,deci);
+
+end;
+
+procedure TfrmPriceLevelSet.DBGridEh1Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+begin
+  inherited;
+  SetUpdateState;
+  if StrtoFloatDef(Text,0)<=0 then
+  begin
+    //if dbstate=dsBrowse then dbstate:=dsEdit;
     cdsPriceLv.FieldByName('LV_PRC').AsString:='';
     Raise Exception.Create('   商品价格档位【'+InttoStr(cdsPriceLv.RecNo)+'】的优惠价不能小于0或等于0！  ');
   end;
+  cdsPriceLv.Edit;
+  //cdsPriceLv.FieldByName('AGIO_RATE').AsFloat := RoundTo(StrtoFloatDef(Text,0)*10/OutPrice,-2);
+  cdsPriceLv.FieldByName('AGIO_RATE').AsFloat :=FnNumber.ConvertToFight(StrtoFloatDef(Text,0)/OutPrice*100,CarryRule,deci);
+
 end;
 
 procedure TfrmPriceLevelSet.btnAppendClick(Sender: TObject);
@@ -232,6 +260,7 @@ end;
 procedure TfrmPriceLevelSet.btnSaveClick(Sender: TObject);
 begin
   inherited;
+
   if cdsPriceLv.State in [dsInsert,dsEdit] then cdsPriceLv.Post;
   if (cdsPriceLv.FieldByName('LV_AMT').AsFloat<=0) and (cdsPriceLv.FieldByName('LV_PRC').AsFloat<=0) then
   begin
@@ -277,11 +306,13 @@ begin
   cdsPriceLv.Close;
   cdsPriceLv.FieldDefs.Add('SEQ_NO',ftInteger,0,true);
   cdsPriceLv.FieldDefs.Add('LV_AMT',ftFloat,0,true);
+  cdsPriceLv.FieldDefs.Add('AGIO_RATE',ftFloat,0,true);
   cdsPriceLv.FieldDefs.Add('LV_PRC',ftFloat,0,true);
   cdsPriceLv.CreateDataSet;
   //把PriceObj传入的转成记录集
   iCurrNum :=1;
   iNum :=1;
+  OutPrice :=PriceObj.FieldByName('OUT_PRICE').AsFloat;
   While iNum <=9 do
   begin
     if (PriceObj.FieldByName('LV'+inttostr(iNum)+'_AMT').AsFloat>0) and (PriceObj.FieldByName('LV'+inttostr(iNum)+'_PRC').AsFloat >0)    then
@@ -290,6 +321,8 @@ begin
       cdsPriceLv.FieldByName('SEQ_NO').AsInteger := iCurrNum;
       cdsPriceLv.FieldByName('LV_AMT').AsFloat := PriceObj.FieldByName('LV'+inttostr(iNum)+'_AMT').AsFloat;
       cdsPriceLv.FieldByName('LV_PRC').AsFloat := PriceObj.FieldByName('LV'+inttostr(iNum)+'_PRC').AsFloat;
+      //cdsPriceLv.FieldByName('AGIO_RATE').AsFloat := RoundTo(PriceObj.FieldByName('LV'+inttostr(iNum)+'_PRC').AsFloat*10/PriceObj.FieldByName('OUT_PRICE').AsFloat,-2);
+      cdsPriceLv.FieldByName('AGIO_RATE').AsFloat := FnNumber.ConvertToFight(PriceObj.FieldByName('LV'+inttostr(iNum)+'_PRC').AsFloat*100/PriceObj.FieldByName('OUT_PRICE').AsFloat,CarryRule,deci);
       cdsPriceLv.Post;
       iCurrNum := iCurrNum+1;
     end;
@@ -297,7 +330,7 @@ begin
   end;
 
 
-  sLVL_TYPE := PriceObj.FieldByName('LVL_TYPE').AsString;    
+  sLVL_TYPE := PriceObj.FieldByName('LVL_TYPE').AsString;
   if sLVL_TYPE ='' then
   begin
     SetUpdateState;
@@ -309,11 +342,17 @@ begin
   case sLVL_TYPE[1]  of
     '1':  edtLVL_TYPE.ItemIndex := 0;
     '2':  edtLVL_TYPE.ItemIndex := 1;
+    '3':  edtLVL_TYPE.ItemIndex := 2;
   else
     edtLVL_TYPE.ItemIndex := 0;
   end;
 
-   SetBrowseState;
+  if formEditStatus then  SetUpdateState
+  else
+  begin
+  SetBrowseState;
+  DBGridEh1.ReadOnly:=true;
+  end;
   //dbstate:=dsBrowse;
 
 end;
@@ -323,6 +362,8 @@ var iNum:integer;
 Temp:TZQuery;
 begin
   result:=false;
+  //cdsPriceLv.SortType:=stAscending;
+  cdsPriceLv.IndexFieldNames := 'LV_AMT ASC';
   //当前数据集转不保存PriceObj
   cdsPriceLv.First;
   iNum := 1;
@@ -335,8 +376,8 @@ begin
   end;
   while iNum <=9 do
   begin
-    PriceObj.FieldByName('LV'+inttostr(iNum)+'_AMT').AsString :='';
-    PriceObj.FieldByName('LV'+inttostr(iNum)+'_PRC').AsString :='';
+    PriceObj.FieldByName('LV'+inttostr(iNum)+'_AMT').AsString :='0';
+    PriceObj.FieldByName('LV'+inttostr(iNum)+'_PRC').AsString :='0';
     iNum := iNum+1;
   end;
   PriceObj.FieldByName('LVL_TYPE').AsString := inttostr(edtLVL_TYPE.ItemIndex+1);
@@ -411,6 +452,8 @@ begin
     try
       //传入OBJ记录
       PriceObj:=AObj;
+      formEditStatus :=true;
+  //    SetUpdateState;
       ShowModal;
       result:=(ModalResult=mrOk);
     finally
@@ -490,6 +533,7 @@ begin
     //第二步：将当前条记录写入下一条记录
     cdsPriceLv.Edit;
     cdsPriceLv.FieldByName('LV_AMT').AsFloat:=iItem.FieldByName('LV_AMT').AsFloat;
+    cdsPriceLv.FieldByName('AGIO_RATE').AsFloat:=iItem.FieldByName('AGIO_RATE').AsFloat;
     cdsPriceLv.FieldByName('LV_PRC').AsFloat:=iItem.FieldByName('LV_PRC').AsFloat;
     cdsPriceLv.Post;
     //第三步：将下一条写入原当前条
@@ -497,7 +541,8 @@ begin
     begin
       cdsPriceLv.Edit;
       cdsPriceLv.FieldByName('LV_AMT').AsFloat:=iItem1.FieldByName('LV_AMT').AsFloat;
-      cdsPriceLv.FieldByName('LV_PRC').AsFloat:=iItem1.FieldByName('LV_PRC').AsFloat;
+      cdsPriceLv.FieldByName('AGIO_RATE').AsFloat:=iItem1.FieldByName('AGIO_RATE').AsFloat;
+      cdsPriceLv.FieldByName('LV_PRC').AsFloat:=iItem.FieldByName('LV_PRC').AsFloat;
       cdsPriceLv.Post;
     end;
   finally
@@ -556,6 +601,7 @@ begin
     try
       //传入OBJ记录
       PriceObj:=AObj;
+      formEditStatus :=false;
       ShowModal;
     finally
       Free;
@@ -650,10 +696,28 @@ procedure TfrmPriceLevelSet.edtLVL_TYPEPropertiesChange(Sender: TObject);
 begin
   inherited;
   // 0 按金额
-  if edtLVL_TYPE.ItemIndex=0 then
+  {if edtLVL_TYPE.ItemIndex=0 then
      DBGridEh1.Columns[1].Title.caption :='销售金额'
   else
-     DBGridEh1.Columns[1].Title.caption :='销售量';
+     DBGridEh1.Columns[1].Title.caption :='销售数量';   }
+  case edtLVL_TYPE.ItemIndex  of
+    0:  DBGridEh1.Columns[1].Title.caption :='单品金额';
+    1:  DBGridEh1.Columns[1].Title.caption :='单品数量';
+    2:  DBGridEh1.Columns[1].Title.caption :='整单金额';
+  else
+    DBGridEh1.Columns[1].Title.caption :='单品金额';
+  end;
+
+end;
+
+
+
+procedure TfrmPriceLevelSet.FormCreate(Sender: TObject);
+begin
+  inherited;
+  Deci := StrtoIntDef(ShopGlobal.GetParameter('POSDIGHT'),2);
+  //进位法则
+  CarryRule := StrtoIntDef(ShopGlobal.GetParameter('CARRYRULE'),0);
 end;
 
 end.

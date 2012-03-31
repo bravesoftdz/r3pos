@@ -7,6 +7,12 @@ uses
   Dialogs, ufrmBasic, ActnList, Menus, RzButton, ExtCtrls, RzPanel,Math,
   StdCtrls, cxControls, cxContainer, cxEdit, cxTextEdit,ZBase, ZDataSet;
 
+const
+  //档位促销
+  WM_LVL_PRICE=WM_USER+4;
+  //档位促销完成
+  WM_LVL_PRICE_OVER=WM_USER+5;
+
 type
   TfrmShowDibs = class(TfrmBasic)
     RzPanel1: TRzPanel;
@@ -44,6 +50,7 @@ type
     edtPAY_I: TcxTextEdit;
     lblPAY_J: TLabel;
     edtPAY_J: TcxTextEdit;
+    Label4: TLabel;
     procedure edtTakeFeeKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -57,6 +64,7 @@ type
     procedure edtTakeFeeEnter(Sender: TObject);
   private
     { Private declarations }
+    FHandle : Hwnd;
     Digit:integer;
     MainRecord:TRecord_;
     TotalFee:Currency;
@@ -67,13 +75,14 @@ type
     procedure InitForm;
     function DoPayB(mny:Currency):boolean;
     function DoPayC(mny:Currency):boolean;
+    procedure WMLvlPriceOver(var Message: TMessage); message WM_LVL_PRICE_OVER;
   public
     { Public declarations }
-    class function ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency;var zPayDs:TZQuery):Boolean;
+    class function ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency;var zPayDs:TZQuery; vHandle : Hwnd=0):Boolean;
   end;
 
 implementation
-uses uGlobal,ufnUtil,uDsUtil,uExpression,ufrmDibsOption,uShopGlobal,ufrmLogin,ufrmCardNoInput,EncDec;
+uses uGlobal,ufnUtil,uDsUtil,uExpression,ufrmDibsOption,uShopGlobal,ufrmLogin,ufrmCardNoInput,EncDec,uMsgBox;
 {$R *.dfm}
 
 function MyRoundTo(const AValue: Double; const ADigit: TRoundToRange = -2): Currency;
@@ -87,12 +96,13 @@ begin
 end;
 { TfrmShowDibs }
 
-class function TfrmShowDibs.ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency;var zPayDs:TZQuery): Boolean;
+class function TfrmShowDibs.ShowDibs(Owner:TForm;_TotalFee:Currency;_MainRecord:TRecord_;var Printed:boolean;var Cash:Currency;var Dibs:Currency;var zPayDs:TZQuery; vHandle : Hwnd): Boolean;
 var r:Currency;
 begin
   with TfrmShowDibs.Create(Owner) do
     begin
       try
+        FHandle := vHandle;
         PayDs := zPayDs;
         r := MyRoundTo(_TotalFee,Digit);
         MainRecord := _MainRecord;
@@ -605,6 +615,12 @@ var
   allow :boolean;
 begin
   inherited;
+  if Key=VK_F9 then
+    begin
+      if MessageBox(Handle,'是否启用档位促销?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+      PostMessage(FHandle, WM_LVL_PRICE, self.Handle, 0);
+      // Close;
+    end;
   if Key=VK_F5 then
      begin
        if not ShopGlobal.GetChkRight('13100001',7) then
@@ -742,6 +758,32 @@ begin
   inherited;
   if myHKL>0 then
   ActivateKeyBoardLayOut(myHKL,KLF_ACTIVATE);
+end;
+
+procedure TfrmShowDibs.WMLvlPriceOver(var Message: TMessage);
+var r : currency;
+var _TotalFee : currency;
+begin
+  _TotalFee := Message.WParam / 1000;
+	r := MyRoundTo(_TotalFee,Digit);
+	
+	MainRecord.FieldByName('PAY_DIBS').asFloat := (_TotalFee-r-MainRecord.FieldByName('PAY_DIBS').AsFloat); //2012.02.11抹零金额      
+	MainRecord.FieldByName('PAY_A').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_B').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_C').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_D').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_E').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_F').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_G').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_H').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_I').AsFloat := 0;      
+	MainRecord.FieldByName('PAY_J').AsFloat := 0;      
+	MainRecord.FieldByName('CASH_MNY').AsFloat := 0;
+	MainRecord.FieldByName('PAY_ZERO').AsFloat := 0;
+	
+	TotalFee := _TotalFee;
+	ShowFee;
+	edtTakeFee.Text := edtPAY_WAIT.Text;
 end;
 
 end.

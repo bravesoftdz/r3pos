@@ -399,6 +399,19 @@ inherited frmShowDibs: TfrmShowDibs
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object Label4: TLabel
+        Left = 18
+        Top = 100
+        Width = 100
+        Height = 12
+        Caption = '4'#12289#26723#20301#20419#38144'(F9)'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clWhite
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
     end
     object Panel1: TPanel
       Left = 7

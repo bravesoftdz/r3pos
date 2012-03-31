@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=d:\mm
 UnitOutputDir=D:\Delphi\R3\Src\Shop5\temp
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -159,11 +159,11 @@ Count=1
 Item0=D:\Delphi\R3\Src\Shop5\temp
 [HistoryLists\hlOutputDirectorry]
 Count=12
-Item0=C:\Users\IBM\Desktop\R3_MM_DL_TEST\R3_MM_DL_TEST
-Item1=d:\shop
-Item2=D:\rsp
-Item3=d:\tpos
-Item4=d:\mm
+Item0=d:\mm
+Item1=C:\Users\IBM\Desktop\R3_MM_DL_TEST\R3_MM_DL_TEST
+Item2=d:\shop
+Item3=D:\rsp
+Item4=d:\tpos
 Item5=D:\rsp\PlugIn
 Item6=D:\r3
 Item7=D:\Delphi\R3\Src\RspSrvr\PlugIn

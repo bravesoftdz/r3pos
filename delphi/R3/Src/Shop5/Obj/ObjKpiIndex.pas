@@ -172,7 +172,7 @@ begin
   KeyFields := 'TENANT_ID;LEVEL_ID';
   SelectSQL.Text :=
     'select TENANT_ID,LEVEL_ID,LEVEL_NAME,KPI_ID,LVL_AMT,LOW_RATE,0 as LEVEL_Rows from MKT_KPI_LEVEL '+
-    'where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') order by LEVEL_ID ';
+    'where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and COMM not in (''02'',''12'') order by LEVEL_NAME ';
 
   IsSQLUpdate := True;
   Str := 'insert into MKT_KPI_LEVEL(TENANT_ID,LEVEL_ID,LEVEL_NAME,KPI_ID,LVL_AMT,LOW_RATE,COMM,TIME_STAMP) '+
@@ -355,7 +355,7 @@ begin
          ' VALUES(:TENANT_ID,:ACTR_ID,:KPI_ID,:GODS_ID,:UNIT_ID,:ACTR_RATIO,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Add( Str);
   Str := 'update MKT_ACTIVE_RATIO '+
-         ' set TENANT_ID=:TENANT_ID,KPI_ID=:KPI_ID,ACTR_ID=:ACTR_ID,GODS_ID=:GODS_ID,UNIT_ID=:UNIT_ID,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
+         ' set TENANT_ID=:TENANT_ID,KPI_ID=:KPI_ID,ACTR_ID=:ACTR_ID,GODS_ID=:GODS_ID,UNIT_ID=:UNIT_ID,ACTR_RATIO=:ACTR_RATIO,COMM='+GetCommStr(iDbType)+',TIME_STAMP='+GetTimeStamp(iDbType)+
          ' where TENANT_ID=:OLD_TENANT_ID and ACTR_ID=:OLD_ACTR_ID';
   UpdateSQL.Add( Str);
   Str := 'delete from MKT_ACTIVE_RATIO where TENANT_ID=:OLD_TENANT_ID and ACTR_ID=:OLD_ACTR_ID';
@@ -383,7 +383,7 @@ begin
       ' select count(*) as ReSum from MKT_REQUDATA a,MKT_REQUORDER b where a.TENANT_ID=b.TENANT_ID and a.REQU_ID=b.REQU_ID and a.TENANT_ID='+TenID+' and a.KPI_ID='''+KPI_ID+''' and b.COMM not in (''02'',''12''))tp';
     AGlobal.Open(rs);
     if rs.Active and (rs.FieldByName('ReSum').AsInteger>0) then
-     Raise Exception.Create('   此指标已被引用，不能删除！   ');   
+      Raise Exception.Create('   此指标已被引用，不能删除！   ');   
   finally
     rs.Free;
   end;

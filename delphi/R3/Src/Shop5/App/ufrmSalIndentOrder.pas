@@ -132,6 +132,7 @@ type
     function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
     function CheckInput:boolean;override;
+    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;  //填充数据    
   public
     { Public declarations }
     //结算金额
@@ -181,7 +182,8 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo,ufrmExcelFactory;
+   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo,
+   ufrmExcelFactory,ufrmMktRequOrder;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -1837,6 +1839,98 @@ begin
   end;
   Calc;
   DBGridEh1.SetFocus;
+end;
+
+procedure TfrmSalIndentOrder.WMFillData(var Message: TMessage);
+var
+  i:integer;
+  FieldName,GODS_ID: string;
+  frmMktRequOrder: TfrmMktRequOrder;
+begin
+  if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
+  frmMktRequOrder := TfrmMktRequOrder(Message.WParam);
+  with TfrmMktRequOrder(frmMktRequOrder) do
+  begin
+    //经销商
+    self.edtCLIENT_ID.KeyValue := edtCLIENT_ID.KeyValue;
+    self.edtCLIENT_ID.Text := edtCLIENT_ID.Text;
+    //申报门店
+    self.edtSHOP_ID.KeyValue := edtSHOP_ID.KeyValue;
+    self.edtSHOP_ID.Text := edtSHOP_ID.Text;
+    //填报人
+    self.edtGUIDE_USER.KeyValue := edtREQU_USER.KeyValue;
+    self.edtGUIDE_USER.Text := edtREQU_USER.Text;
+    //所属部门
+    self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
+    self.edtDEPT_ID.Text := edtDEPT_ID.Text;
+    //关联单据ID
+    self.AObj.FieldbyName('ATTH_ID').AsString:='REQ'+AObj.FieldbyName('REQU_ID').AsString;
+    //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
+    //self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
+    self.edtREMARK.Text := edtREMARK.Text;
+   {self.Locked := true;
+    try
+      self.edtINVOICE_FLAG.ItemIndex := edtINVOICE_FLAG.ItemIndex;
+      self.edtTAX_RATE.Value := edtTAX_RATE.Value;
+    finally
+      self.Locked := false;
+    end;}
+    self.edtTable.DisableControls;
+    try
+      self.edtProperty.Close;
+      self.edtTable.Close;
+      self.edtProperty.CreateDataSet;
+      self.edtTable.CreateDataSet;
+      self.RowID := 0;
+      self.edtTable.Append;
+      for i:=0 to self.edtTable.Fields.Count -1 do
+      begin
+        if edtTable.FindField(self.edtTable.Fields[i].FieldName)<>nil then
+        begin
+          self.edtTable.Fields[i].Value := edtTable.FieldbyName(self.edtTable.Fields[i].FieldName).Value;
+        end;
+        //对价格读取
+        FieldName:=trim(self.edtTable.Fields[i].FieldName);
+        if FieldName='APRICE' then //or (FieldName='AMONEY') then
+        begin
+          self.InitPrice(self.edtTable.FieldbyName('GODS_ID').AsString,self.edtTable.FieldbyName('UNIT_ID').AsString);
+          self.edtTable.Fields[i].Value :='0';
+          self.edtTable.FieldByName('IS_PRESENT').AsString:='3';
+          self.PriceToCalc(0.0);
+        end else
+        if FieldName='IS_PRESENT' then
+          self.edtTable.Fields[i].Value :='3';
+      end;
+      inc(self.RowID);
+      self.edtTable.FieldbyName('SEQNO').AsInteger := self.RowID;
+      self.edtTable.FieldbyName('BARCODE').AsString := self.EnCodeBarcode;
+      self.edtTable.Post;
+
+      edtProperty.Filtered := false;
+      edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
+      edtProperty.Filtered := true;
+
+      edtProperty.First;
+      while not edtProperty.Eof do
+      begin
+        self.edtProperty.Append;
+        for i:=0 to self.edtProperty.Fields.Count -1 do
+        begin
+          if edtProperty.FindField(FieldName)<>nil then
+          begin
+            self.edtProperty.Fields[i].Value := edtProperty.FieldbyName(self.edtProperty.Fields[i].FieldName).Value;
+          end;
+        end;
+        self.edtProperty.FieldByName('SEQNO').AsInteger := self.edtTable.FieldbyName('SEQNO').AsInteger;
+        self.edtProperty.Post;
+
+        edtProperty.Next;
+      end;
+    finally
+      self.edtTable.EnableControls;
+    end;
+    self.Calc;
+  end;
 end;
 
 end.

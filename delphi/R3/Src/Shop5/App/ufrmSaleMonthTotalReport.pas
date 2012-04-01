@@ -169,16 +169,19 @@ begin
 end;
 
 procedure TfrmSaleMonthTotalReport.actFindExecute(Sender: TObject);
-var strSql:string;
+var strSql:string; StrLog: TStringList;
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;
   adoReport1.Close;
   if Factory<>nil then Factory.Free;
   Factory := TReportFactory.Create('4');
+  StrLog:=TStringList.Create;
   try
     if Factory.DataSet.Active then Factory.DataSet.Close;
     strSql := GetGodsSQL;
+    StrLog.Add(StrSql);
+    StrLog.SaveToFile('c:\SQL.Log');  
     if strSql='' then Exit;
     TZQuery(Factory.DataSet).SQL.Text:= strSql;
     frmPrgBar.Show;
@@ -190,6 +193,7 @@ begin
     Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
   finally
     frmPrgBar.Close;
+    StrLog.Free;
   end;
 end;
 
@@ -302,7 +306,7 @@ begin
   strSql :=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
 
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>

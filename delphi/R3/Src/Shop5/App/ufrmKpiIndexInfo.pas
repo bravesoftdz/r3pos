@@ -458,25 +458,25 @@ begin
   inherited;
   if (Key=VK_RIGHT) then
      begin
-       DBGridEh2.SetFocus;
+       DBGridEh1.SetFocus;
        fndUNIT_ID.Visible := false;
        FocusNextColumn;
      end;
   if (Key=VK_LEFT) then
      begin
-       DBGridEh2.SetFocus;
+       DBGridEh1.SetFocus;
        fndUNIT_ID.Visible := false;
        DBGridEh2.Col := DBGridEh2.Col -1;
      end;
   if (Key=VK_UP) and (Shift=[]) and not fndUNIT_ID.DroppedDown then
      begin
-       DBGridEh2.SetFocus;
+       DBGridEh1.SetFocus;
        fndUNIT_ID.Visible := false;
        if CdsKpiGoods.Active then CdsKpiGoods.Prior;
      end;
   if (Key=VK_DOWN) and (Shift=[]) and not fndUNIT_ID.DroppedDown then
      begin
-       DBGridEh2.SetFocus;
+       DBGridEh1.SetFocus;
        fndUNIT_ID.Visible := false;
        if CdsKpiGoods.Active then
          begin
@@ -494,7 +494,7 @@ begin
   if Key=#13 then
      begin
        Key := #0;
-       DBGridEh2.SetFocus;
+       DBGridEh1.SetFocus;
        FocusNextColumn;
      end;
 end;
@@ -760,7 +760,7 @@ begin
     CdsKpiLevel.FieldByName('KPI_ID').AsString := Aobj.FieldByName('KPI_ID').AsString;
     CdsKpiLevel.Post;
     DBGridEh1.Col := 1;
-    if DBGridEh1.CanFocus and Visible and (dbState <> dsBrowse) then DBGridEh1.SetFocus;
+    if DBGridEh2.CanFocus and Visible and (dbState <> dsBrowse) then DBGridEh2.SetFocus;
   finally
     CdsKpiLevel.EnableControls;
     CdsKpiLevel.Edit;
@@ -770,7 +770,9 @@ end;
 procedure TfrmKpiIndexInfo.DBGridEh2DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
-var ARect: TRect;
+var
+  ARect: TRect;
+  GridDs: TDataSet;
 begin
   inherited;
   if (Rect.Top = DBGridEh2.CellRect(DBGridEh2.Col,DBGridEh2.Row).Top) and (not
@@ -780,12 +782,13 @@ begin
   end;
   DBGridEh2.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
+  GridDs:=TDataSet(TDBGridEh(Sender).DataSource.DataSet);
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
       DbGridEh2.canvas.Brush.Color := $0000F2F2;
       DbGridEh2.canvas.FillRect(ARect);
-      DrawText(DbGridEh2.Canvas.Handle,pchar(Inttostr(CdsKpiGoods.RecNo)),length(Inttostr(CdsKpiGoods.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+      DrawText(DbGridEh2.Canvas.Handle,pchar(Inttostr(GridDs.RecNo)),length(Inttostr(GridDs.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
 end;
 
@@ -803,7 +806,7 @@ begin
     CdsKpiGoods.Delete;
     if CdsMktGoods.Locate('GODS_ID',GodsID,[]) then
       CdsMktGoods.Delete;
-    DBGridEh2.SetFocus;
+    DBGridEh1.SetFocus;
   end;
   SetKpiState; //设置修改状态
 end;
@@ -895,6 +898,7 @@ begin
     begin
       CdsMktGoods.Append;
       CdsMktGoods.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      CdsMktGoods.FieldByName('ACTR_ID').AsString := TSequence.NewId;
       CdsMktGoods.FieldByName('KPI_ID').AsString := Self.Aobj.FieldByName('KPI_ID').AsString;
       CdsMktGoods.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
       CdsMktGoods.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
@@ -1016,13 +1020,15 @@ procedure TfrmKpiIndexInfo.DBGridEh1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 var
   ARect:TRect;
+  GridDs: TDataSet;
 begin
+  GridDs:=TDataSet(TDBGridEh(Sender).DataSource.DataSet);
   if Column.FieldName = 'SEQNO' then
-    begin
+   begin
       ARect := Rect;
       DbGridEh1.canvas.Brush.Color := $0000F2F2;
       DbGridEh1.canvas.FillRect(ARect);
-      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(CdsKpiLevel.RecNo)),length(Inttostr(CdsKpiLevel.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(GridDs.RecNo)),length(Inttostr(GridDs.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
 end;
 
@@ -1045,13 +1051,15 @@ procedure TfrmKpiIndexInfo.DBGridEh3DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 var
   ARect:TRect;
+  GridDs: TDataSet;  
 begin
+  GridDs:=TDataSet(TDBGridEh(Sender).DataSource.DataSet);
   if Column.FieldName = 'SEQNO' then
     begin
       ARect := Rect;
       DBGridEh3.canvas.Brush.Color := $0000F2F2;
       DBGridEh3.canvas.FillRect(ARect);
-      DrawText(DBGridEh3.Canvas.Handle,pchar(Inttostr(CdsKpiTimes.RecNo)),length(Inttostr(CdsKpiTimes.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+      DrawText(DBGridEh3.Canvas.Handle,pchar(Inttostr(GridDs.RecNo)),length(Inttostr(GridDs.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
 end;
 
@@ -1332,7 +1340,7 @@ begin
             CdsKpiSeqNo.FieldByName('KPI_AMT').AsFloat:=StrToFloatDef(CellText,0.0);  //档次数量
             CdsKpiSeqNo.Post;
             pRow.Ratio[gCol].SEQNO_ID:=NewID;
-            if pRaito.GODS_ID='#' then //拉通返利
+            if pRow.Ratio[gCol+1].GODS_ID='#' then //拉通返利
               pRow.Ratio[gCol+1].SEQNO_ID:=NewID 
             else
             begin
@@ -1989,6 +1997,7 @@ procedure TfrmKpiIndexInfo.DBGridEh5DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
 var
   ARect: TRect;
+  GridDs: TDataSet;    
 begin
   inherited;
   if (Rect.Top = DBGridEh5.CellRect(DBGridEh5.Col,DBGridEh5.Row).Top) and (not
@@ -1998,12 +2007,13 @@ begin
   end;
   DBGridEh5.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
+  GridDs:=TDataSet(TDBGridEh(Sender).DataSource.DataSet);  
   if Column.FieldName = 'SEQNO' then
   begin
     ARect := Rect;
     DbGridEh5.canvas.Brush.Color := $0000F2F2;
     DbGridEh5.canvas.FillRect(ARect);
-    DrawText(DbGridEh5.Canvas.Handle,pchar(Inttostr(CdsMktGoods.RecNo)),length(Inttostr(CdsMktGoods.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    DrawText(DbGridEh5.Canvas.Handle,pchar(Inttostr(GridDs.RecNo)),length(Inttostr(GridDs.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
 end;
 

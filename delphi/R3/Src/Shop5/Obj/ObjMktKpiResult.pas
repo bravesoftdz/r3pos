@@ -14,6 +14,10 @@ type
   public
     procedure InitClass; override;
   end;
+  TMktKpiResultListForEdit=class(TZFactory)
+  public
+    procedure InitClass; override;
+  end;
   TMktKpiResultSale=class(TZFactory)
   public
     procedure InitClass; override;
@@ -98,12 +102,14 @@ var
   Str: string;
 begin
   inherited;
-  SelectSQL.Text := 'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,(A.KPI_YEAR*10000+A.KPI_DATE1) as BEGIN_DATE,A.KPI_DATE1,'+
+  SelectSQL.Text :=
+             ParseSQL(iDbType,
+                    'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,(A.KPI_YEAR*10000+A.KPI_DATE1) as BEGIN_DATE,A.KPI_DATE1,'+
                     'case when A.KPI_DATE1>A.KPI_DATE2 then ((A.KPI_YEAR+1)*10000+A.KPI_DATE2) else (A.KPI_YEAR*10000+A.KPI_DATE2) end as END_DATE,A.KPI_DATE2,'+
-                    'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,B.GODS_NAME as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,A.FISH_AMT-A.ADJS_AMT as ORG_AMT,A.FISH_AMT,'+
+                    'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,isnull(B.SHORT_GODS_NAME,B.GODS_NAME) as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,A.FISH_AMT-A.ADJS_AMT as ORG_AMT,A.FISH_AMT,'+
                     'A.FISH_CALC_RATE,A.ADJS_AMT,A.FISH_MNY,A.ADJS_MNY,A.KPI_RATIO,A.ACTR_RATIO,A.KPI_MNY,A.BUDG_KPI '+
                     ' from MKT_KPI_RESULT_LIST A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
-                    ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.KPI_ID=:KPI_ID and A.CLIENT_ID=:CLIENT_ID ';
+                    ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.KPI_ID=:KPI_ID and A.CLIENT_ID=:CLIENT_ID ');
   IsSQLUpdate := True;
   Str := 'insert into MKT_KPI_RESULT_LIST(ROWS_ID,TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,KPI_DATE1,KPI_DATE2,KPI_DATA,KPI_CALC,RATIO_TYPE,'+
          'GODS_ID,LVL_AMT,KPI_RATE,FISH_AMT,FISH_CALC_RATE,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_RATIO,ACTR_RATIO,KPI_MNY,BUDG_KPI) ' +
@@ -127,7 +133,7 @@ var
 begin
   inherited;
   SelectSQL.Text := 'select TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,SHOP_ID,DEPT_ID,PLAN_ID,IDX_TYPE,KPI_TYPE,CHK_DATE,CHK_USER,PLAN_AMT,PLAN_MNY,'+
-                    'FISH_AMT,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_MNY,WDW_MNY,BUDG_MNY,BUDG_KPI,BUDG_WDW,BUDG_VRF,REMARK,CREA_DATE,CREA_USER '+
+                    ' FISH_AMT,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_MNY,WDW_MNY,BUDG_MNY,BUDG_KPI,BUDG_WDW,BUDG_VRF,REMARK,CREA_DATE,CREA_USER '+
                     ' from MKT_KPI_RESULT where TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR and KPI_ID=:KPI_ID and CLIENT_ID=:CLIENT_ID ';
   IsSQLUpdate := True;
   {Str := 'update MKT_KPI_RESULT set TENANT_ID=:TENANT_ID,CLIENT_ID=:CLIENT_ID,KPI_ID=:KPI_ID,KPI_YEAR=:KPI_YEAR,SHOP_ID=:SHOP_ID,'+
@@ -137,7 +143,7 @@ begin
          ' where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and KPI_ID=:OLD_KPI_ID and CLIENT_ID=:OLD_CLIENT_ID '; }
 
   Str := ' update MKT_KPI_RESULT set FISH_AMT=:FISH_AMT,ADJS_AMT=:ADJS_AMT,FISH_MNY=:FISH_MNY,ADJS_MNY=:ADJS_MNY,KPI_MNY=:KPI_MNY,'+
-         'WDW_MNY=:WDW_MNY,BUDG_MNY=:BUDG_MNY,BUDG_KPI=:BUDG_KPI,BUDG_WDW=:BUDG_WDW,BUDG_VRF=:BUDG_VRF '+
+         ' WDW_MNY=:WDW_MNY,BUDG_MNY=:BUDG_MNY,BUDG_KPI=:BUDG_KPI,BUDG_WDW=:BUDG_WDW,BUDG_VRF=:BUDG_VRF '+
          ' where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and KPI_ID=:OLD_KPI_ID and CLIENT_ID=:OLD_CLIENT_ID ';
   UpdateSQL.Text := Str;
 
@@ -215,9 +221,36 @@ begin
     ' and CLIENT_ID=:CLIENT_ID and GODS_ID in (select GODS_ID from MKT_KPI_GOODS where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) and SALES_DATE >= :SALES_DATE1 and SALES_DATE <= :SALES_DATE2 ';
 end;
 
+{ TMktKpiResultListForEdit }
+
+procedure TMktKpiResultListForEdit.InitClass;
+var
+  Str: string;
+begin
+  inherited;
+  SelectSQL.Text :=
+             ParseSQL(iDbType,
+                    'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,(A.KPI_YEAR*10000+A.KPI_DATE1) as BEGIN_DATE,A.KPI_DATE1,'+
+                    'case when A.KPI_DATE1>A.KPI_DATE2 then ((A.KPI_YEAR+1)*10000+A.KPI_DATE2) else (A.KPI_YEAR*10000+A.KPI_DATE2) end as END_DATE,A.KPI_DATE2,'+
+                    'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,isnull(B.SHORT_GODS_NAME,B.GODS_NAME) as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,'+
+                    'case when A.KPI_DATA in (''1'',''3'') then isnull(A.FISH_AMT,0)-isnull(A.ADJS_AMT,0) else isnull(A.FISH_MNY,0)-isnull(A.ADJS_MNY,0) end as ORG_AMT,'+
+                    'case when A.KPI_DATA in (''1'',''3'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
+                    'case when A.KPI_DATA in (''1'',''3'') then A.ADJS_AMT else A.ADJS_MNY end as ADJS_AMT,'+
+                    'case when A.KPI_DATA in (''1'',''3'') then C.UNIT_NAME else ''Ԫ'' end as UNIT_NAME,'+
+                    'case when A.KPI_CALC in (''1'') then ''%'' when A.KPI_CALC in (''2'') then D.UNIT_NAME else ''Ԫ'' end as CALC_SHOW_NAME,'+
+                    'A.FISH_CALC_RATE,'+
+                    'A.KPI_RATIO,A.ACTR_RATIO,A.KPI_MNY,A.BUDG_KPI '+
+                    ' from MKT_KPI_RESULT_LIST A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
+                    ' left join MKT_KPI_INDEX C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
+                    ' left join VIW_MEAUNITS D on C.TENANT_ID=D.TENANT_ID and C.CALC_UNITS=D.UNIT_ID '+
+                    ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.KPI_ID=:KPI_ID and A.CLIENT_ID=:CLIENT_ID '
+             );
+end;
+
 initialization
   RegisterClass(TMktKpiResult);
   RegisterClass(TMktKpiResultList);
+  RegisterClass(TMktKpiResultListForEdit);
   RegisterClass(TMktKpiResultAudit);
   RegisterClass(TMktKpiResultUnAudit);
   RegisterClass(TMktKpiResultHeader);
@@ -225,6 +258,7 @@ initialization
 finalization
   UnRegisterClass(TMktKpiResult);
   UnRegisterClass(TMktKpiResultList);
+  UnRegisterClass(TMktKpiResultListForEdit);
   UnRegisterClass(TMktKpiResultAudit);
   UnRegisterClass(TMktKpiResultUnAudit);
   UnRegisterClass(TMktKpiResultHeader);

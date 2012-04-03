@@ -16,10 +16,8 @@ type
     btnClose: TRzBitBtn;
     RzPanel1: TRzPanel;
     lab_KPI_NAME: TRzLabel;
-    lab_IDX_TYPE: TRzLabel;
     lab_KPI_TYPE: TLabel;
     edtKPI_NAME: TcxTextEdit;
-    edtIDX_TYPE: TcxComboBox;
     edtKPI_TYPE: TcxComboBox;
     DsList: TDataSource;
     CdsResultList: TZQuery;
@@ -78,13 +76,13 @@ var param:TftParamList;
 begin
   try
     param := TftParamList.Create;
-    param.ParamByName('KPI_YEAR').AsInteger := KpiYear;
     param.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    param.ParamByName('KPI_YEAR').AsInteger := KpiYear;
     param.ParamByName('KPI_ID').AsString := KpiId;
     param.ParamByName('CLIENT_ID').AsString := ClientId;
     Factor.BeginBatch;
     Factor.AddBatch(CdsResult,'TMktKpiResult',param);
-    Factor.AddBatch(CdsResultList,'TMktKpiResultList',param);
+    Factor.AddBatch(CdsResultList,'TMktKpiResultListForEdit',param);
     Factor.OpenBatch;
   finally
     param.Free;
@@ -94,7 +92,6 @@ end;
 procedure TfrmMktKpiResultList.SetIdxType(const Value: String);
 begin
   FIdxType := Value;
-  edtIDX_TYPE.ItemIndex := TdsItems.FindItems(edtIDX_TYPE.Properties.Items,'CODE_ID',Value);
 end;
 
 procedure TfrmMktKpiResultList.SetKpiName(const Value: String);
@@ -120,6 +117,7 @@ procedure TfrmMktKpiResultList.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var ARect:TRect;
+  s:string;
 begin
   inherited;
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
@@ -136,6 +134,17 @@ begin
       DBGridEh1.canvas.FillRect(ARect);
       DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(CdsResultList.RecNo)),length(Inttostr(CdsResultList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+  if Column.FieldName = 'KPI_RATIO' then
+     begin
+      ARect := Rect;
+      DBGridEh1.canvas.Brush.Color := $0000F2F2;
+      DBGridEh1.canvas.FillRect(ARect);
+       case CdsResultList.FieldbyName('KPI_CALC').AsInteger of
+       0,2:s := formatFloat('#0.00',Column.Field.AsFloat)+CdsResultList.FieldbyName('CALC_SHOW_NAME').asString;
+       1:s := formatFloat('#0.00',Column.Field.AsFloat)+'/'+CdsResultList.FieldbyName('CALC_SHOW_NAME').asString;
+       end;
+      DrawText(DBGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+     end;
 end;
 
 procedure TfrmMktKpiResultList.SetKpiYear(const Value: Integer);
@@ -159,7 +168,7 @@ var Amt,CurPrice:Real;
     rs:TZQuery;
 begin
   inherited;
-  try
+{  try
     rs := Global.GetZQueryFromName('PUB_GOODSINFO');
     if rs.Locate('GODS_ID',CdsResultList.FieldByName('GODS_ID').AsString,[]) then
        CurPrice := rs.FieldByName('NEW_OUTPRICE').AsFloat;
@@ -177,7 +186,7 @@ begin
   CdsResultList.FieldByName('ADJS_MNY').AsFloat := CdsResultList.FieldByName('ADJS_AMT').AsFloat*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat*CurPrice;
   CdsResultList.Post;
   CdsResultList.Edit;
-  IsEdit := True;
+  IsEdit := True;    }
 end;
 
 class function TfrmMktKpiResultList.ShowDialog(Owner: TForm; Id, K_Name,
@@ -222,7 +231,7 @@ begin
   try
     Factor.BeginBatch;
     Factor.AddBatch(CdsResult,'TMktKpiResult');
-    Factor.AddBatch(CdsResultList,'TMktKpiResultList');
+    Factor.AddBatch(CdsResultList,'TMktKpiResultListForEdit');
     Factor.CommitBatch;
   Except
     Factor.CancelBatch;

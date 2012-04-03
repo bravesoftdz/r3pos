@@ -200,7 +200,7 @@ begin
         '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
         '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
         '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ';
+        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ';
     Factor.ExecSQL(SQL);
     truncTable(tempTableName1);
     Factor.ExecSQL('insert into '+tempTableName1+' select * from '+tempTableName2);
@@ -246,7 +246,7 @@ begin
     '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
     '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
-    'where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
+    'where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
   Factor.ExecSQL(SQL);
   w := 1;
   for i:= 1 to pt do
@@ -508,7 +508,7 @@ begin
         localDBKey := getLocalDBKey();
         Params.ParamByName('localDBKey').AsString := localDBKey;
         Params.ParamByName('tenantId').AsInteger := Global.TENANT_ID;
-        msg := Factor.ExecProc('TCheckCostCalc',Params) ;
+        //msg := Factor.ExecProc('TCheckCostCalc',Params) ;
       finally
         Params.Free;
       end;
@@ -674,7 +674,7 @@ begin
         '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
         '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
         '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',e)+' ';
+        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',e)+' ';
     Factor.ExecSQL(SQL);
     truncTable(tempTableName1);
     Factor.ExecSQL('insert into '+tempTableName1+' select * from '+tempTableName2);
@@ -720,7 +720,7 @@ begin
     '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
     '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
-    'where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate)+' ';
+    'where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate)+' ';
   Factor.ExecSQL(SQL);
   b := 1;
   while true do
@@ -1027,7 +1027,7 @@ begin
         '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,'+
         '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
         '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
-        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ';
+        'from '+tempTableName1+' A where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate+w)+' ';
     Factor.ExecSQL(SQL);
     truncTable(tempTableName1);
     Factor.ExecSQL('insert into '+tempTableName1+' select * from '+tempTableName2);
@@ -1073,7 +1073,7 @@ begin
     '0 as COST_PRICE,0 as SALE_CST,0 as SALE_PRF,0 as SALRT_CST,0 as DBIN_CST,0 as DBOUT_CST,'+
     '0 as CHANGE1_CST,0 as CHANGE2_CST,0 as CHANGE3_CST,0 as CHANGE4_CST,0 as CHANGE5_CST '+
     'from RCK_GOODS_DAYS A Left outer join VIW_GOODSPRICEEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.SHOP_ID=B.SHOP_ID '+
-    'where (A.BAL_AMT<>0 or A.BAL_MNY<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
+    'where (A.BAL_AMT<>0 or A.BAL_CST<>0) and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',cDate)+' ';
   Factor.ExecSQL(SQL);
   w := 1;
   for i:= 1 to pt do

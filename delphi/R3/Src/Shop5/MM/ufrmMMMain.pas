@@ -173,6 +173,7 @@ type
     actfrmSaleDaySingleReport: TAction;
     actfrmDeskPage: TAction;
     actExit: TAction;
+    actfrmNoteBook: TAction;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -296,6 +297,7 @@ type
     procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
     procedure actfrmDeskPageExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
+    procedure actfrmNoteBookExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -381,7 +383,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmNetLogin,ufrmInitGuide,ufrmWelcome,uResFactory,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox, ufrmAdv;
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox, ufrmAdv, ufrmNoteBook;
 var
   frmMMToolBox:TfrmMMToolBox;
 {$R *.dfm}
@@ -3328,41 +3330,53 @@ begin
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left1_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left1');
-                   end;
+                   end
+                else
                 if CA_MODULE.FieldbyName('MODU_NAME').AsString='网上订货' then
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left2_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left2');
-                   end;
+                   end
+                else
                 if CA_MODULE.FieldbyName('MODU_NAME').AsString='网上配货' then
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left3_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left3');
-                   end;
+                   end
+                else
                 if CA_MODULE.FieldbyName('MODU_NAME').AsString='网上结算' then
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left4_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left4');
-                   end;
+                   end
+                else
                 if CA_MODULE.FieldbyName('MODU_NAME').AsString='销售管理' then
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left5_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left5');
-                   end;
+                   end
+                else
                 if CA_MODULE.FieldbyName('MODU_NAME').AsString='品牌培育' then
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left6_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left6');
-                   end;
+                   end
+                else
                 if CA_MODULE.FieldbyName('MODU_NAME').AsString='信息互通' then
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left7_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left7');
-                   end;
+                   end
+                else
                 if CA_MODULE.FieldbyName('MODU_NAME').AsString='我的社区' then
                    begin
                       button.Bitmaps.Hot := rcFactory.GetBitmap('m1_left8_hot');
                       button.Bitmaps.Up := rcFactory.GetBitmap('m1_left8');
+                   end
+                else
+                   begin
+                      button.Bitmaps.Hot := rcFactory.GetBitmap('m1_default_hot');
+                      button.Bitmaps.Up := rcFactory.GetBitmap('m1_default');
                    end;
               end;
            FTool.Add(button);
@@ -3468,6 +3482,12 @@ begin
              Close;
            end;
      end;
+end;
+
+procedure TfrmMMMain.actfrmNoteBookExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmNoteBook.ShowNoteBook('');
 end;
 
 end.

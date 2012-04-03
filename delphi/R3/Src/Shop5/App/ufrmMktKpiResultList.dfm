@@ -1,33 +1,33 @@
 inherited frmMktKpiResultList: TfrmMktKpiResultList
-  Left = 430
-  Top = 203
+  Left = 267
+  Top = 219
   Caption = #25351#26631#32771#26680#28165#21333
-  ClientHeight = 334
-  ClientWidth = 490
+  ClientHeight = 383
+  ClientWidth = 600
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 490
-    Height = 334
+    Width = 600
+    Height = 383
     inherited RzPage: TRzPageControl
-      Width = 480
-      Height = 284
+      Width = 590
+      Height = 333
       TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         TabVisible = False
         inherited RzPanel2: TRzPanel
-          Width = 476
-          Height = 280
+          Width = 586
+          Height = 329
           object DBGridEh1: TDBGridEh
             Tag = -1
             Left = 5
-            Top = 71
-            Width = 466
-            Height = 204
+            Top = 40
+            Width = 576
+            Height = 284
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DsList
@@ -38,10 +38,12 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             FooterFont.Height = -12
             FooterFont.Name = #23435#20307
             FooterFont.Style = []
-            FrozenCols = 3
+            FooterRowCount = 1
+            FrozenCols = 1
             Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
             RowHeight = 20
+            SumList.Active = True
             TabOrder = 0
             TitleFont.Charset = GB2312_CHARSET
             TitleFont.Color = clWindowText
@@ -62,16 +64,18 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 FieldName = 'SEQNO'
                 Footers = <>
                 Title.Caption = #24207#21495
-                Width = 30
+                Width = 22
               end
               item
                 DisplayFormat = '0000-00-00'
                 EditButtons = <>
                 FieldName = 'BEGIN_DATE'
+                Footer.Value = #21512#35745#65306
+                Footer.ValueType = fvtStaticText
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #24320#22987#26085#26399
-                Width = 70
+                Width = 62
               end
               item
                 DisplayFormat = '0000-00-00'
@@ -80,35 +84,22 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #32467#26463#26085#26399
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'KPI_DATA'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #32771#26680#26631#20934
-              end
-              item
-                EditButtons = <>
-                FieldName = 'KPI_CALC'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #35745#31639#26631#20934
-              end
-              item
-                EditButtons = <>
-                FieldName = 'RATIO_TYPE'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #36820#21033#35774#23450
+                Width = 61
               end
               item
                 EditButtons = <>
                 FieldName = 'GODS_ID_TEXT'
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #36820#21033#21830#21697
+                Title.Caption = #21830#21697#21517#31216
+                Width = 69
+              end
+              item
+                EditButtons = <>
+                FieldName = 'UNIT_NAME'
+                Footers = <>
+                Title.Caption = #21333#20301
+                Width = 23
               end
               item
                 DisplayFormat = '#0.00'
@@ -117,79 +108,104 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #31614#32422#31561#32423
-                Width = 60
+                Width = 31
               end
               item
+                Alignment = taRightJustify
                 DisplayFormat = '#0.00'
+                EditButtons = <>
+                FieldName = 'FISH_AMT'
+                Footer.DisplayFormat = '#0.00'
+                Footer.ValueType = fvtSum
+                Footers = <>
+                Title.Caption = #23436#25104#37327
+                Width = 51
+                OnUpdateData = DBGridEh1Columns9UpdateData
+              end
+              item
+                Alignment = taRightJustify
+                DisplayFormat = '#0.00%'
                 EditButtons = <>
                 FieldName = 'KPI_RATE'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #23436#25104#29575
-                Width = 50
+                Width = 40
               end
               item
-                DisplayFormat = '#0.00'
-                EditButtons = <>
-                FieldName = 'FISH_AMT'
-                Footers = <>
-                Title.Caption = #23436#25104#38144#37327
-                OnUpdateData = DBGridEh1Columns9UpdateData
-              end
-              item
-                DisplayFormat = '#0.00'
-                EditButtons = <>
-                FieldName = 'FISH_CALC_RATE'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #36716#25442#31995#25968
-              end
-              item
+                Alignment = taRightJustify
                 DisplayFormat = '#0.00'
                 EditButtons = <>
                 FieldName = 'ADJS_AMT'
+                Footer.DisplayFormat = '#0.00'
+                Footer.ValueType = fvtSum
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #35843#25972#38144#37327
+                Title.Caption = #35843#25972#37327
+                Width = 51
               end
               item
-                DisplayFormat = '#0.00'
-                EditButtons = <>
-                FieldName = 'FISH_MNY'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #23436#25104#37329#39069
-              end
-              item
-                DisplayFormat = '#0.00'
-                EditButtons = <>
-                FieldName = 'ADJS_MNY'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #35843#25972#37329#39069
-              end
-              item
-                DisplayFormat = '#0.00'
+                Alignment = taRightJustify
                 EditButtons = <>
                 FieldName = 'KPI_RATIO'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #36820#21033#31995#25968
+                Width = 33
               end
               item
+                Alignment = taRightJustify
                 DisplayFormat = '#0.00'
                 EditButtons = <>
                 FieldName = 'KPI_MNY'
+                Footer.DisplayFormat = '#0.00'
+                Footer.ValueType = fvtSum
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #32771#26680#32467#26524
+                Title.Caption = #36820#21033#37329#39069
+                Width = 52
+              end
+              item
+                Alignment = taRightJustify
+                DisplayFormat = '#0.00'
+                EditButtons = <>
+                FieldName = 'BUDG_MNY'
+                Footer.DisplayFormat = '#0.00'
+                Footer.ValueType = fvtSum
+                Footers = <>
+                Title.Caption = #24066#22330#36153
+                Width = 55
+              end
+              item
+                EditButtons = <>
+                FieldName = 'RATIO_TYPE'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #36820#21033#35774#23450
+                Width = 67
+              end
+              item
+                EditButtons = <>
+                FieldName = 'KPI_DATA'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #32771#26680#26631#20934
+                Width = 79
+              end
+              item
+                EditButtons = <>
+                FieldName = 'KPI_CALC'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #35745#31639#26631#20934
+                Width = 73
               end>
           end
           object RzPanel1: TRzPanel
             Left = 5
             Top = 5
-            Width = 466
-            Height = 66
+            Width = 576
+            Height = 35
             Align = alTop
             BorderOuter = fsNone
             BorderSides = [sdBottom]
@@ -198,7 +214,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             TabOrder = 1
             object lab_KPI_NAME: TRzLabel
               Left = -17
-              Top = 14
+              Top = 10
               Width = 100
               Height = 12
               Alignment = taRightJustify
@@ -211,28 +227,12 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
               Font.Style = []
               ParentFont = False
             end
-            object lab_IDX_TYPE: TRzLabel
-              Left = -17
-              Top = 40
-              Width = 100
-              Height = 12
-              Alignment = taRightJustify
-              AutoSize = False
-              Caption = #25351#26631#31867#22411
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clBlack
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = []
-              ParentFont = False
-            end
             object lab_KPI_TYPE: TLabel
-              Left = 212
-              Top = 40
-              Width = 100
+              Left = 312
+              Top = 10
+              Width = 48
               Height = 12
               Alignment = taRightJustify
-              AutoSize = False
               Caption = #32771#26680#31867#22411
               Font.Charset = GB2312_CHARSET
               Font.Color = clBlack
@@ -244,39 +244,30 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             object edtKPI_NAME: TcxTextEdit
               Tag = 1
               Left = 89
-              Top = 9
-              Width = 232
+              Top = 6
+              Width = 200
               Height = 20
               Properties.MaxLength = 20
               TabOrder = 0
             end
-            object edtIDX_TYPE: TcxComboBox
+            object edtKPI_TYPE: TcxComboBox
               Tag = 1
-              Left = 89
-              Top = 36
+              Left = 366
+              Top = 6
               Width = 121
               Height = 20
               Properties.DropDownListStyle = lsFixedList
               TabOrder = 1
-            end
-            object edtKPI_TYPE: TcxComboBox
-              Tag = 1
-              Left = 318
-              Top = 36
-              Width = 121
-              Height = 20
-              Properties.DropDownListStyle = lsFixedList
-              TabOrder = 2
             end
           end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Top = 289
-      Width = 480
+      Top = 338
+      Width = 590
       object btnClose: TRzBitBtn
-        Left = 398
+        Left = 508
         Top = 11
         Width = 67
         Height = 26

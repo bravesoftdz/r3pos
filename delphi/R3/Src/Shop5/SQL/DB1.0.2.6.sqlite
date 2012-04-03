@@ -155,7 +155,7 @@ CREATE TABLE [MKT_KPI_LEVEL] (
 	      --保底返利或计提系数 默认为0
 	[LOW_RATE] [decimal](18, 3) NULL ,
         --通讯标志
-	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_OPTION_COMM] DEFAULT ('00'),
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_KPI_LEVEL_COMM] DEFAULT ('00'),
         --时间戳 当前系统日期*86400000
   [TIME_STAMP] bigint NOT NULL,
 	CONSTRAINT [PK_MKT_KPI_LEVEL] PRIMARY KEY 

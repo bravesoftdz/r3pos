@@ -3696,6 +3696,11 @@ inherited frmMMMain: TfrmMMMain
       Caption = #36864#20986#31995#32479
       OnExecute = actExitExecute
     end
+    object actfrmNoteBook: TAction
+      Tag = 100002327
+      Caption = #35760#20107#26412
+      OnExecute = actfrmNoteBookExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 256

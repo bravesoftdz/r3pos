@@ -258,14 +258,15 @@ uses
   ufrmWelcome in 'App\ufrmWelcome.pas' {frmWelcome},
   uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
   uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
-  ObjRecvOrder in 'Obj\ObjRecvOrder.pas';
+  ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
+  ObjCostCalc in 'Obj\ObjCostCalc.pas';
 
 {$R *.res}
 var
   handle:THandle;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.5';
+  DBVersion := '1.0.2.6';
   Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

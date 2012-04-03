@@ -282,13 +282,15 @@ uses
   ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
   uResFactory in 'App\uResFactory.pas',
   ObjCostCalc in 'Obj\ObjCostCalc.pas',
-  ufrmAdv in 'App\ufrmAdv.pas' {frmAdv};
+  ufrmAdv in 'App\ufrmAdv.pas' {frmAdv},
+  ufrmNoteBook in 'App\ufrmNoteBook.pas' {frmNoteBook},
+  ObjNoteBook in 'Obj\ObjNoteBook.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.5';
+  DBVersion := '1.0.2.6';
   Application.ShowMainForm := false;
   Application.Title := 'MM2012';
   Application.CreateForm(TmmGlobal, mmGlobal);

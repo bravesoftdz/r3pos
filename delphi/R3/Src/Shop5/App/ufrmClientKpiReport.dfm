@@ -3,7 +3,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
   Top = 106
   Width = 891
   Height = 586
-  Caption = #23458#25143#32771#26680#25253#34920
+  Caption = #23458#25143#36820#21033#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
@@ -15,14 +15,12 @@ inherited frmClientKpiReport: TfrmClientKpiReport
       inherited RzPage: TRzPageControl
         Width = 668
         Height = 506
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
-          Caption = #37096#38376#32771#26680#27719#24635#34920
+          Caption = #37096#38376#36820#21033#27719#24635#34920
           inherited RzPanel3: TRzPanel
             Width = 666
             Height = 479
@@ -350,7 +348,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#21010#24635#37327
+                      Title.Caption = #31614#32422#37327
                       Width = 84
                     end
                     item
@@ -361,7 +359,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
+                      Title.Caption = #23436#25104#37327
                       Width = 84
                     end
                     item
@@ -382,7 +380,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#25552#24635#39069
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 84
                     end
                     item
@@ -393,7 +391,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #30003#39046#24635#39069
+                      Title.Caption = #30003#39046#37329#39069
                       Width = 84
                     end
                     item
@@ -404,7 +402,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32467#20313#24635#39069
+                      Title.Caption = #32467#20313#37329#39069
                       Width = 84
                     end
                     item
@@ -425,7 +423,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
         end
         object TabSheet2: TRzTabSheet
           Color = clCream
-          Caption = #22320#21306#32771#26680#27719#24635#34920
+          Caption = #22320#21306#36820#21033#27719#24635#34920
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
@@ -818,7 +816,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#21010#24635#37327
+                      Title.Caption = #31614#32422#37327
                       Width = 84
                     end
                     item
@@ -829,7 +827,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
+                      Title.Caption = #23436#25104#37327
                       Width = 84
                     end
                     item
@@ -850,7 +848,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#25552#24635#39069
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 84
                     end
                     item
@@ -861,7 +859,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #30003#39046#24635#39069
+                      Title.Caption = #30003#39046#37329#39069
                       Width = 84
                     end
                     item
@@ -872,7 +870,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32467#20313#24635#39069
+                      Title.Caption = #32467#20313#37329#39069
                       Width = 84
                     end
                     item
@@ -893,7 +891,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
         end
         object TabSheet3: TRzTabSheet
           Color = clCream
-          Caption = #32771#26680#25351#26631#27719#24635#34920
+          Caption = #36820#21033#25351#26631#27719#24635#34920
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
@@ -1278,7 +1276,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #35745#21010#24635#37327
+                    Title.Caption = #31614#32422#37327
                     Width = 84
                   end
                   item
@@ -1289,7 +1287,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #23436#25104#24635#37327
+                    Title.Caption = #23436#25104#37327
                     Width = 84
                   end
                   item
@@ -1310,7 +1308,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #35745#25552#24635#39069
+                    Title.Caption = #36820#21033#37329#39069
                     Width = 84
                   end
                   item
@@ -1321,7 +1319,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #30003#39046#24635#39069
+                    Title.Caption = #30003#39046#37329#39069
                     Width = 84
                   end
                   item
@@ -1332,7 +1330,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #32467#20313#24635#39069
+                    Title.Caption = #32467#20313#37329#39069
                     Width = 84
                   end
                   item
@@ -1352,7 +1350,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #23458#25143#32771#26680#27719#24635#34920
+          Caption = #23458#25143#36820#21033#27719#24635#34920
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
@@ -1746,7 +1744,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#21010#24635#37327
+                      Title.Caption = #31614#32422#37327
                       Width = 84
                     end
                     item
@@ -1757,7 +1755,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
+                      Title.Caption = #23436#25104#37327
                       Width = 84
                     end
                     item
@@ -1778,7 +1776,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#25552#24635#39069
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 84
                     end
                     item
@@ -1789,7 +1787,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #30003#39046#24635#39069
+                      Title.Caption = #30003#39046#37329#39069
                       Width = 84
                     end
                     item
@@ -1800,7 +1798,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32467#20313#24635#39069
+                      Title.Caption = #32467#20313#37329#39069
                       Width = 84
                     end
                     item
@@ -1821,7 +1819,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
         end
         object TabSheet5: TRzTabSheet
           Color = clCream
-          Caption = #23458#25143#32771#26680#26126#32454#34920
+          Caption = #23458#25143#36820#21033#26126#32454#34920
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
@@ -2292,7 +2290,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#21010#24635#37327
+                      Title.Caption = #31614#32422#37327
                       Width = 84
                     end
                     item
@@ -2303,7 +2301,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#24635#37327
+                      Title.Caption = #23436#25104#37327
                       Width = 84
                     end
                     item
@@ -2324,7 +2322,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #35745#25552#37329#39069
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 84
                     end
                     item

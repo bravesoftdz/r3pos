@@ -233,10 +233,10 @@ begin
       ' C.FISH_AMT as KPI_FISH_AMT,'+     //考核完成数量
       ' C.FISH_MNY as KPI_FISH_MNY,'+     //考核完成金额
       ' C.KPI_MNY as KPI_MNY,'+           //考核结果(元)
-      ' C.WDW_MNY as WDW_MNY  '+          //考核提取反利
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and A.PLAN_TYPE=''1'' '+
-      '  '+strWhere;
+      ' D.WDW_MNY as WDW_MNY  '+          //考核提取反利
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
+      ' C.TENANT_ID=D.TENANT_ID and C.KPI_YEAR=D.KPI_YEAR and C.KPI_ID=D.KPI_ID and C.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere;
   end else
   begin
     result:=
@@ -255,10 +255,12 @@ begin
       ' C.FISH_AMT as KPI_FISH_AMT,'+     //考核完成数量
       ' C.FISH_MNY as KPI_FISH_MNY,'+     //考核完成金额
       ' C.KPI_MNY as KPI_MNY,'+           //考核结果(元)
-      ' C.WDW_MNY as WDW_MNY  '+          //考核提取反利
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
+      ' E.WDW_MNY as WDW_MNY  '+          //考核提取反利
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
       ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
-      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+ClientCnd;
+      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
+      ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
+      ' A.PLAN_TYPE=''1'' '+strWhere+ClientCnd;
   end;
 end;
 
@@ -313,14 +315,14 @@ begin
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
+      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
       ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(D.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+      ' C.TENANT_ID=D.TENANT_ID and C.KPI_YEAR=D.KPI_YEAR and C.KPI_ID=D.KPI_ID and C.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
       ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end else
   begin
@@ -330,15 +332,16 @@ begin
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
+      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
       ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
+      ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
+      ' A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
       ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end;
   Result :=ParseSQL(Factor.iDbType,
@@ -404,15 +407,14 @@ begin
     ' C.KPI_ID as KPI_ID,'+
     ' A.KPI_YEAR as KPI_YEAR,'+
     ' D.REGION_ID as REGION_ID,'+
-    ' sum(case when C.KPI_CALC in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-    ' sum(case when C.KPI_CALC in (''1'',''4'') then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
+    ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+    ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
     ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-    ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+    ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
     ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-    ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
+    ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
     ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,D.REGION_ID';
 
   Result :=ParseSQL(Factor.iDbType,
@@ -533,14 +535,14 @@ begin
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
+      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
       ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(D.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+      ' C.TENANT_ID=D.TENANT_ID and C.KPI_YEAR=D.KPI_YEAR and C.KPI_ID=D.KPI_ID and C.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
       ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end else
   begin
@@ -550,15 +552,14 @@ begin
       ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC in (''1'',''4'') then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
+      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
       ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-      ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID '+
-      ' and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
+      ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
       ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end;
   Result :=ParseSQL(Factor.iDbType,
@@ -623,15 +624,16 @@ begin
     ' A.KPI_YEAR as KPI_YEAR,'+
     ' A.CLIENT_ID as CLIENT_ID,'+
     ' D.CLIENT_NAME as CLIENT_NAME,'+
-    ' sum(case when C.KPI_CALC in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-    ' sum(case when C.KPI_CALC in (''1'',''4'') then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
+    ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+    ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
     ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-    ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+    ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
     ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-    ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
+    ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
+    ' A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
     ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.CLIENT_ID,D.CLIENT_NAME ';
 
   Result :=ParseSQL(Factor.iDbType,
@@ -701,18 +703,18 @@ begin
     ' A.DEPT_ID as DEPT_ID,'+
     ' C.BEGIN_DATE as BEGIN_DATE,'+ //考核开始日期
     ' C.END_DATE as END_DATE,'+     //考核结束日期
-    ' (case when C.KPI_CALC in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-    ' (case when C.KPI_CALC in (''1'',''4'') then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
+    ' (case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+    ' (case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
     ' C.KPI_MNY as JT_MNY,'+      //考核结果(元)[计提金额]
-    ' C.WDW_MNY as REQU_MNY,'+    //考核提取反利[申领金额]
+    ' E.WDW_MNY as REQU_MNY,'+    //考核提取反利[申领金额]
     ' B.BOND_MNY as BOND_MNY,'+   //保证金额
     ' C.REMARK as REMARK,'+
     ' C.CREA_DATE as CREA_DATE,'+
     ' C.CREA_USER as CREA_USER,'+
     ' D.CLIENT_NAME as CLIENT_NAME '+
-    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
-    ' and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+    '  C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' ';
 
   Result :=ParseSQL(Factor.iDbType,

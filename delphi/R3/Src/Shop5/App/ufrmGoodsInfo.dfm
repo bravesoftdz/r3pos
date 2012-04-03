@@ -1051,7 +1051,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Color = clWhite
       TabOrder = 0
       object Label11: TLabel
-        Left = 229
+        Left = 200
         Top = 9
         Width = 24
         Height = 12
@@ -1107,7 +1107,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label4: TLabel
-        Left = 364
+        Left = 333
         Top = 30
         Width = 6
         Height = 12
@@ -1149,7 +1149,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label42: TLabel
-        Left = 362
+        Left = 333
         Top = 9
         Width = 6
         Height = 12
@@ -1303,7 +1303,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ParentFont = False
       end
       object Label12: TLabel
-        Left = 373
+        Left = 341
         Top = 10
         Width = 138
         Height = 12
@@ -1321,7 +1321,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #21830#21697#21517#31216
+        Caption = #21830#21697#31616#31216
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -1342,7 +1342,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       object edtGODS_NAME: TcxTextEdit
         Left = 86
         Top = 27
-        Width = 274
+        Width = 245
         Height = 20
         Properties.MaxLength = 50
         Properties.OnChange = edtGODS_NAMEPropertiesChange
@@ -1350,7 +1350,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtGODS_CODE: TcxTextEdit
-        Left = 260
+        Left = 231
         Top = 5
         Width = 100
         Height = 20
@@ -1488,7 +1488,7 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       object edtSHORT_GODS_NAME: TcxTextEdit
         Left = 86
         Top = 48
-        Width = 174
+        Width = 100
         Height = 20
         Properties.MaxLength = 50
         Properties.OnChange = edtGODS_NAMEPropertiesChange

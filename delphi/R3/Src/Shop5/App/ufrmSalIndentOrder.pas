@@ -132,7 +132,8 @@ type
     function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;override;
     procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);override;
     function CheckInput:boolean;override;
-    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;  //填充数据    
+    procedure SalIndentFrom(id:string); //填充单据
+    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;  //填充数据
   public
     { Public declarations }
     //结算金额
@@ -1849,88 +1850,84 @@ var
 begin
   if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
   frmMktRequOrder := TfrmMktRequOrder(Message.WParam);
-  with TfrmMktRequOrder(frmMktRequOrder) do
-  begin
-    //经销商
-    self.edtCLIENT_ID.KeyValue := edtCLIENT_ID.KeyValue;
-    self.edtCLIENT_ID.Text := edtCLIENT_ID.Text;
-    //申报门店
-    self.edtSHOP_ID.KeyValue := edtSHOP_ID.KeyValue;
-    self.edtSHOP_ID.Text := edtSHOP_ID.Text;
-    //填报人
-    self.edtGUIDE_USER.KeyValue := edtREQU_USER.KeyValue;
-    self.edtGUIDE_USER.Text := edtREQU_USER.Text;
-    //所属部门
-    self.edtDEPT_ID.KeyValue := edtDEPT_ID.KeyValue;
-    self.edtDEPT_ID.Text := edtDEPT_ID.Text;
-    //关联单据ID
-    self.AObj.FieldbyName('ATTH_ID').AsString:='REQ'+AObj.FieldbyName('REQU_ID').AsString;
-    //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
-    //self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
-    self.edtREMARK.Text := edtREMARK.Text;
-   {self.Locked := true;
-    try
-      self.edtINVOICE_FLAG.ItemIndex := edtINVOICE_FLAG.ItemIndex;
-      self.edtTAX_RATE.Value := edtTAX_RATE.Value;
-    finally
-      self.Locked := false;
-    end;}
-    self.edtTable.DisableControls;
-    try
-      self.edtProperty.Close;
-      self.edtTable.Close;
-      self.edtProperty.CreateDataSet;
-      self.edtTable.CreateDataSet;
-      self.RowID := 0;
-      self.edtTable.Append;
-      for i:=0 to self.edtTable.Fields.Count -1 do
-      begin
-        if edtTable.FindField(self.edtTable.Fields[i].FieldName)<>nil then
-        begin
-          self.edtTable.Fields[i].Value := edtTable.FieldbyName(self.edtTable.Fields[i].FieldName).Value;
-        end;
-        //对价格读取
-        FieldName:=trim(self.edtTable.Fields[i].FieldName);
-        if FieldName='APRICE' then //or (FieldName='AMONEY') then
-        begin
-          self.InitPrice(self.edtTable.FieldbyName('GODS_ID').AsString,self.edtTable.FieldbyName('UNIT_ID').AsString);
-          self.edtTable.Fields[i].Value :='0';
-          self.edtTable.FieldByName('IS_PRESENT').AsString:='3';
-          self.PriceToCalc(0.0);
-        end else
-        if FieldName='IS_PRESENT' then
-          self.edtTable.Fields[i].Value :='3';
-      end;
-      inc(self.RowID);
-      self.edtTable.FieldbyName('SEQNO').AsInteger := self.RowID;
-      self.edtTable.FieldbyName('BARCODE').AsString := self.EnCodeBarcode;
-      self.edtTable.Post;
 
-      edtProperty.Filtered := false;
-      edtProperty.Filter := 'SEQNO='+edtTable.FieldbyName('SEQNO').AsString;
-      edtProperty.Filtered := true;
+  //经销商
+  self.edtCLIENT_ID.KeyValue := frmMktRequOrder.edtCLIENT_ID.KeyValue;
+  self.edtCLIENT_ID.Text := frmMktRequOrder.edtCLIENT_ID.Text;
+  //申报门店
+  self.edtSHOP_ID.KeyValue := frmMktRequOrder.edtSHOP_ID.KeyValue;
+  self.edtSHOP_ID.Text := frmMktRequOrder.edtSHOP_ID.Text;
+  //填报人
+  self.edtGUIDE_USER.KeyValue := frmMktRequOrder.edtREQU_USER.KeyValue;
+  self.edtGUIDE_USER.Text := frmMktRequOrder.edtREQU_USER.Text;
+  //所属部门
+  self.edtDEPT_ID.KeyValue := frmMktRequOrder.edtDEPT_ID.KeyValue;
+  self.edtDEPT_ID.Text := frmMktRequOrder.edtDEPT_ID.Text;
+  //关联单据ID
+  //self.AObj.FieldbyName('ATTH_ID').AsString:='REQ'+AObj.FieldbyName('REQU_ID').AsString;
+  //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
+  //self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
+  self.edtREMARK.Text := frmMktRequOrder.edtREMARK.Text;
 
-      edtProperty.First;
-      while not edtProperty.Eof do
-      begin
-        self.edtProperty.Append;
-        for i:=0 to self.edtProperty.Fields.Count -1 do
-        begin
-          if edtProperty.FindField(FieldName)<>nil then
+  //导入明细数据
+  self.SalIndentFrom(frmMktRequOrder.AObj.FieldbyName('REQU_ID').AsString);
+end;
+
+procedure TfrmSalIndentOrder.SalIndentFrom(id: string);
+var
+  h,d:TZQuery;
+  Params:TftParamList;
+  HObj:TRecord_;
+begin
+   h := TZQuery.Create(nil);
+   d := TZQuery.Create(nil);
+   Params := TftParamList.Create(nil);
+   HObj := TRecord_.Create;
+   try
+      Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
+      Params.ParamByName('REQU_ID').asString := id;
+      Factor.BeginBatch;
+      try
+        Factor.AddBatch(h,'TMktRequOrder',Params);
+        Factor.AddBatch(d,'TMktRequShare',Params);
+        Factor.OpenBatch;
+        HObj.ReadFromDataSet(h);
+        ReadFromObject(HObj,self);
+        AObj.FieldbyName('ATTH_ID').AsString:='REQ'+HObj.FieldbyName('REQU_ID').AsString;
+        //edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
+        edtINDE_DATE.Date:= Global.SysDate;
+        //AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
+        //edtTAX_RATE.Value := HObj.FieldbyName('TAX_RATE').AsFloat*100;
+        edtCHK_DATE.Text := '';
+        edtCHK_USER_TEXT.Text := '';
+        ReadFrom(d);
+        try
+          self.edtTable.DisableControls;
+          while not self.edtTable.Eof do
           begin
-            self.edtProperty.Fields[i].Value := edtProperty.FieldbyName(self.edtProperty.Fields[i].FieldName).Value;
+            //对价格读取
+            self.edtTable.Edit;
+            self.InitPrice(self.edtTable.FieldbyName('GODS_ID').AsString,self.edtTable.FieldbyName('UNIT_ID').AsString);
+            self.edtTable.FieldByName('APRICE').AsFloat:=0;
+            self.PriceToCalc(0.0);
+            self.edtTable.FieldByName('IS_PRESENT').AsString:='3';
+            if self.edtTable.State in [dsInsert,dsEdit] then self.edtTable.Post;
+            Calc;
+            self.edtTable.Next;
           end;
+        finally
+          self.edtTable.EnableControls;
         end;
-        self.edtProperty.FieldByName('SEQNO').AsInteger := self.edtTable.FieldbyName('SEQNO').AsInteger;
-        self.edtProperty.Post;
-
-        edtProperty.Next;
+      except
+        Factor.CancelBatch;
+        Raise;
       end;
-    finally
-      self.edtTable.EnableControls;
-    end;
-    self.Calc;
-  end;
+   finally
+     HObj.Free;
+     Params.Free;
+     h.Free;
+     d.Free;
+   end;
 end;
 
 end.

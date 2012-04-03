@@ -81,9 +81,14 @@ begin
     param.ParamByName('KPI_ID').AsString := KpiId;
     param.ParamByName('CLIENT_ID').AsString := ClientId;
     Factor.BeginBatch;
-    Factor.AddBatch(CdsResult,'TMktKpiResult',param);
-    Factor.AddBatch(CdsResultList,'TMktKpiResultListForEdit',param);
-    Factor.OpenBatch;
+    try
+      Factor.AddBatch(CdsResult,'TMktKpiResult',param);
+      Factor.AddBatch(CdsResultList,'TMktKpiResultListForEdit',param);
+      Factor.OpenBatch;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
   finally
     param.Free;
   end;
@@ -140,8 +145,8 @@ begin
       DBGridEh1.canvas.Brush.Color := $0000F2F2;
       DBGridEh1.canvas.FillRect(ARect);
        case CdsResultList.FieldbyName('KPI_CALC').AsInteger of
-       0,2:s := formatFloat('#0.00',Column.Field.AsFloat)+CdsResultList.FieldbyName('CALC_SHOW_NAME').asString;
-       1:s := formatFloat('#0.00',Column.Field.AsFloat)+'/'+CdsResultList.FieldbyName('CALC_SHOW_NAME').asString;
+       1,3:s := formatFloat('#0.00',Column.Field.AsFloat)+CdsResultList.FieldbyName('CALC_SHOW_NAME').asString;
+       2:s := formatFloat('#0.00',Column.Field.AsFloat)+'/'+CdsResultList.FieldbyName('CALC_SHOW_NAME').asString;
        end;
       DrawText(DBGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
      end;
@@ -233,7 +238,7 @@ begin
     Factor.AddBatch(CdsResult,'TMktKpiResult');
     Factor.AddBatch(CdsResultList,'TMktKpiResultListForEdit');
     Factor.CommitBatch;
-  Except
+  except
     Factor.CancelBatch;
     Raise;
   end;

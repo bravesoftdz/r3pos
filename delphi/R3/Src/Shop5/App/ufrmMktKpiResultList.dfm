@@ -169,7 +169,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Alignment = taRightJustify
                 DisplayFormat = '#0.00'
                 EditButtons = <>
-                FieldName = 'BUDG_MNY'
+                FieldName = 'BUDG_KPI'
                 Footer.DisplayFormat = '#0.00'
                 Footer.ValueType = fvtSum
                 Footers = <>

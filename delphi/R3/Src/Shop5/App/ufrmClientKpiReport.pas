@@ -643,7 +643,7 @@ begin
      ' MKT.UNIT_NAME as UNIT_NAME '+
      ' from ('+strSql+')K '+
      ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
-     ' left outer join (select KPI_ID,KPI_LV from MKT_KPI_OPTION where TENANT_ID='+InttoStr(Global.TENANT_ID)+') OP on K.KPI_ID=OP.KPI_ID '+
+     //' left outer join (select KPI_ID,KPI_LV from MKT_KPI_OPTION where TENANT_ID='+InttoStr(Global.TENANT_ID)+') OP on K.KPI_ID=OP.KPI_ID '+
      ' order by K.CLIENT_ID '
      );
 end;
@@ -701,16 +701,16 @@ begin
     ' C.KPI_ID as KPI_ID,'+
     ' A.KPI_YEAR as KPI_YEAR,'+
     ' A.DEPT_ID as DEPT_ID,'+
-    ' C.BEGIN_DATE as BEGIN_DATE,'+ //考核开始日期
-    ' C.END_DATE as END_DATE,'+     //考核结束日期
+    '(C.KPI_YEAR*10000+C.KPI_DATE1) as BEGIN_DATE,'+ //考核开始日期
+    '(case when C.KPI_DATE1>C.KPI_DATE2 then ((C.KPI_YEAR+1)*10000+C.KPI_DATE2) else (C.KPI_YEAR*10000+C.KPI_DATE2) end) as END_DATE,'+
     ' (case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
     ' (case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
     ' C.KPI_MNY as JT_MNY,'+      //考核结果(元)[计提金额]
     ' E.WDW_MNY as REQU_MNY,'+    //考核提取反利[申领金额]
     ' B.BOND_MNY as BOND_MNY,'+   //保证金额
-    ' C.REMARK as REMARK,'+
-    ' C.CREA_DATE as CREA_DATE,'+
-    ' C.CREA_USER as CREA_USER,'+
+    ' E.REMARK as REMARK,'+
+    ' E.CREA_DATE as CREA_DATE,'+
+    ' E.CREA_USER as CREA_USER,'+
     ' D.CLIENT_NAME as CLIENT_NAME '+
     ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
     ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
@@ -720,18 +720,10 @@ begin
   Result :=ParseSQL(Factor.iDbType,
     'select K.*,'+
     '(case when PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
-    '(case when (MKT.KPI_TYPE=''1'') and (OP.KPI_LV=''1'') then ''上半年'' '+
-         ' when (MKT.KPI_TYPE=''1'') and (OP.KPI_LV=''2'') then ''下半年'' '+
-         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''1'') then ''第一季度'' '+
-         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''2'') then ''第二季度'' '+
-         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''3'') then ''第三季度'' '+
-         ' when (MKT.KPI_TYPE=''2'') and (OP.KPI_LV=''4'') then ''第四季度'' '+
-         ' else '' '' end)as KPI_LV,'+  //考核周期
     ' MKT.KPI_NAME as KPI_NAME,'+
     ' MKT.UNIT_NAME as UNIT_NAME '+
     ' from ('+strSql+')K '+
     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
-    ' left outer join (select KPI_ID,KPI_LV from MKT_KPI_OPTION where TENANT_ID='+InttoStr(Global.TENANT_ID)+') OP on K.KPI_ID=OP.KPI_ID '+
     ' order by K.GLIDE_NO '
     );
 end;

@@ -15,8 +15,10 @@ inherited frmClientKpiReport: TfrmClientKpiReport
       inherited RzPage: TRzPageControl
         Width = 668
         Height = 506
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -2238,13 +2240,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footers = <>
                       Title.Caption = #24180#24230
                       Width = 46
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'KPI_LV'
-                      Footers = <>
-                      Title.Caption = #32771#26680#21608#26399
-                      Width = 59
                     end
                     item
                       EditButtons = <>

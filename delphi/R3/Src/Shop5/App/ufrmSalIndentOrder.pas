@@ -1868,9 +1868,9 @@ begin
   //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
   //self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
   self.edtREMARK.Text := frmMktRequOrder.edtREMARK.Text;
-
   //导入明细数据
   self.SalIndentFrom(frmMktRequOrder.AObj.FieldbyName('REQU_ID').AsString);
+  
 end;
 
 procedure TfrmSalIndentOrder.SalIndentFrom(id: string);

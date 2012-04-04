@@ -121,12 +121,14 @@ begin
   begin
     try
       Cds_KpiIndex.CommitUpdates;
-      Cds_KpiIndex.Delete;
       try
+        //删除数据库
         Params:=TftParamList.Create(nil);
         Params.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
         Params.ParamByName('KPI_ID').AsString:=trim(Cds_KpiIndex.FieldByName('KPI_ID').AsString);
         Factor.ExecProc('TKpiIndexDelete',Params);
+        //删除数据集
+        Cds_KpiIndex.Delete;
       finally
         Params.Free;
       end;
@@ -185,9 +187,9 @@ begin
   Cds_KpiIndex.Close;
   Cds_KpiIndex.SQL.Text :=
   ParseSQL(Factor.iDbType,
-  'select A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK,count(B.GODS_ID) as GOODS_SUM,A.COMM from MKT_KPI_INDEX A,MKT_KPI_GOODS B '+
+  'select A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK,A.COMM,count(B.GODS_ID) as GOODS_SUM from MKT_KPI_INDEX A,MKT_KPI_GOODS B '+
   ' where A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and A.COMM not in (''02'',''12'') and A.TENANT_ID='+IntToStr(Global.TENANT_ID)+StrSql+
-  ' group by A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK ');
+  ' group by A.TENANT_ID,A.KPI_ID,A.KPI_NAME,A.UNIT_NAME,A.IDX_TYPE,A.KPI_TYPE,A.REMARK,A.COMM');
   Factor.Open(Cds_KpiIndex);
 end;
 

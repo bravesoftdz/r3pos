@@ -169,19 +169,16 @@ begin
 end;
 
 procedure TfrmSaleMonthTotalReport.actFindExecute(Sender: TObject);
-var strSql:string; StrLog: TStringList;
+var strSql:string;
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;
   adoReport1.Close;
   if Factory<>nil then Factory.Free;
   Factory := TReportFactory.Create('4');
-  StrLog:=TStringList.Create;
   try
     if Factory.DataSet.Active then Factory.DataSet.Close;
     strSql := GetGodsSQL;
-    StrLog.Add(StrSql);
-    StrLog.SaveToFile('c:\SQL.Log');  
     if strSql='' then Exit;
     TZQuery(Factory.DataSet).SQL.Text:= strSql;
     frmPrgBar.Show;
@@ -193,7 +190,6 @@ begin
     Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
   finally
     frmPrgBar.Close;
-    StrLog.Free;
   end;
 end;
 

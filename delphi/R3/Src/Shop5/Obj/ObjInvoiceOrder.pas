@@ -92,7 +92,7 @@ begin
   SelectSQL.Text :=
   'select A.TENANT_ID,A.INVD_ID,A.INVH_ID,A.SHOP_ID,C.SHOP_NAME as SHOP_ID_TEXT,A.DEPT_ID,D.DEPT_NAME as DEPT_ID_TEXT,'+
   'A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,A.CREA_DATE,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.INVO_NAME,'+
-  'A.ADDR_NAME,A.REMARK,A.INVOICE_FLAG,A.INVOICE_NO,A.INVOICE_MNY,A.EXPORT_STATUS,A.INVOICE_STATUS '+
+  'A.ADDR_NAME,A.REMARK,A.INVOICE_FLAG,A.INVOICE_NO,A.INVOICE_MNY,A.EXPORT_STATUS,A.INVOICE_STATUS,A.COMM,A.TIME_STAMP '+
   ' from SAL_INVOICE_INFO A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
@@ -153,9 +153,9 @@ begin
   try
     rs.SQL.Text := ' select count(*) from SAL_INVOICE_LIST A,SAL_INVOICE_INFO B where A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
     ' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID and A.INVD_ID<>:INVD_ID and B.INVOICE_STATUS=''1'' ';
-    rs.ParamByName('TENANT_ID').AsInteger := Params.FindParam('TENANT_ID').AsInteger;
-    rs.ParamByName('SALES_ID').AsString := Params.FindParam('SALES_ID').AsString;
-    rs.ParamByName('INVD_ID').AsString := Params.FindParam('INVD_ID').AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
+    rs.ParamByName('INVD_ID').AsString := FieldByName('INVD_ID').AsString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
        Raise Exception.Create('发票中的销售单已开票!');

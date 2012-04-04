@@ -98,8 +98,8 @@ begin
   inherited;
   SelectSQL.Text :=
              ParseSQL(iDbType,
-                    'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,(A.KPI_YEAR*10000+A.KPI_DATE1) as BEGIN_DATE,A.KPI_DATE1,'+
-                    'case when A.KPI_DATE1>A.KPI_DATE2 then ((A.KPI_YEAR+1)*10000+A.KPI_DATE2) else (A.KPI_YEAR*10000+A.KPI_DATE2) end as END_DATE,A.KPI_DATE2,'+
+                    'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,A.KPI_DATE1,'+
+                    'A.KPI_DATE2,'+
                     'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,isnull(B.SHORT_GODS_NAME,B.GODS_NAME) as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,A.FISH_AMT-A.ADJS_AMT as ORG_AMT,A.FISH_AMT,'+
                     'A.FISH_CALC_RATE,A.ADJS_AMT,A.FISH_MNY,A.ADJS_MNY,A.KPI_RATIO,A.ACTR_RATIO,A.KPI_MNY,A.BUDG_KPI '+
                     ' from MKT_KPI_RESULT_LIST A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
@@ -224,8 +224,8 @@ begin
   inherited;
   SelectSQL.Text :=
              ParseSQL(iDbType,
-                    'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,(A.KPI_YEAR*10000+A.KPI_DATE1) as BEGIN_DATE,A.KPI_DATE1,'+
-                    'case when A.KPI_DATE1>A.KPI_DATE2 then ((A.KPI_YEAR+1)*10000+A.KPI_DATE2) else (A.KPI_YEAR*10000+A.KPI_DATE2) end as END_DATE,A.KPI_DATE2,'+
+                    'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,A.KPI_DATE1,'+
+                    'A.KPI_DATE2,'+
                     'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,isnull(B.SHORT_GODS_NAME,B.GODS_NAME) as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,'+
                     'case when A.KPI_DATA in (''1'',''3'') then isnull(A.FISH_AMT,0)-isnull(A.ADJS_AMT,0) else isnull(A.FISH_MNY,0)-isnull(A.ADJS_MNY,0) end as ORG_AMT,'+
                     'case when A.KPI_DATA in (''1'',''3'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+

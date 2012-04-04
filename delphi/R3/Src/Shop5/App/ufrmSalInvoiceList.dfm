@@ -17,6 +17,8 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
       inherited RzPage: TRzPageControl
         Width = 876
         Height = 458
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -482,8 +484,8 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
           object RzPanel7: TRzPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 442
+            Width = 874
+            Height = 431
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -492,7 +494,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
             object RzPanel8: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 129
               Align = alTop
               BorderOuter = fsNone
@@ -845,16 +847,16 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
             object Panel2: TPanel
               Left = 6
               Top = 135
-              Width = 870
-              Height = 301
+              Width = 862
+              Height = 290
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 299
+                Width = 860
+                Height = 288
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2

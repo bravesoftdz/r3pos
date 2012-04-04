@@ -88,7 +88,7 @@ type
   private
     { Private declarations }
     procedure ChangeButton;
-    function  CheckCanExport: boolean; override;    
+    function  CheckCanExport: boolean; override;
   public
     { Public declarations }
     IsEnd1,IsEnd2: boolean;
@@ -349,6 +349,7 @@ begin
   if cdsList.Active and (cdsList.FieldByName('INVOICE_STATUS').AsString = '1') then actAudit.Caption := '作废' else actAudit.Caption := '还原';
 //  if rzPage.ActivePageIndex = 0 then
      begin
+       actNew.Enabled := rzPage.ActivePageIndex = 0;
        actDelete.Enabled := rzPage.ActivePageIndex > 0;
        actEdit.Enabled := rzPage.ActivePageIndex > 0;
        actSave.Enabled := rzPage.ActivePageIndex > 0;
@@ -436,7 +437,7 @@ begin
   if D1.EditValue = null then Raise Exception.Create('开票日期条件不能为空');
   if D2.EditValue = null then Raise Exception.Create('开票日期条件不能为空');
   if D1.Date > D2.Date then Raise Exception.Create('开票查询开始日期不能大于结束日期');
-  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and F.TYPE_CODE=''INVOICE_FLAG'' and A.CREA_DATE>=:D1 and A.CREA_DATE<=:D2 ';
+  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.CREA_DATE>=:D1 and A.CREA_DATE<=:D2 ';
 
   //分批取数据的条件:
   if trim(id)<>'' then
@@ -454,6 +455,10 @@ begin
     1:strWhere := strWhere + ' and A.INVOICE_STATUS=''1'' ';
     2:strWhere := strWhere + ' and A.INVOICE_STATUS=''2'' ';
   end;
+  if fndINVOICE_FLAG.ItemIndex>0 then
+     strWhere := strWhere + ' and A.INVOICE_FLAG='''+TRecord_(fndINVOICE_FLAG.Properties.Items.Objects[fndINVOICE_FLAG.ItemIndex]).FieldbyName('CODE_ID').asString+''' ';
+  if fndCREA_USER.AsString <> '' then
+     strWhere := strWhere + ' and A.CREA_USER='''+fndCREA_USER.AsString+'''';
   if trim(fndINVOICE_NO.Text) <> '' then
      strWhere := strWhere +' and A.INVOICE_NO like ''%'+trim(fndINVOICE_NO.Text)+''' ';
 
@@ -464,7 +469,7 @@ begin
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
   ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CREA_USER=E.USER_ID '+
-  ' left join PUB_PARAMS F on A.INVOICE_FLAG=F.CODE_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+  ' '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by INVD_ID';
@@ -681,6 +686,7 @@ begin
       Label40.Caption := '开票仓库';
     end;
   ChangeButton;
+  fndINVOICE_FLAG.Properties.Items.Insert(0,'全部');
 end;
 
 procedure TfrmSalInvoiceList.FormShow(Sender: TObject);

@@ -500,7 +500,10 @@ var localDBKey : string;
 var Params:TftParamList;
 var msg : string;
 begin
-
+  if flag in [1,2] then
+     begin
+       if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
+     end;
   if not ShopGlobal.offline then
     begin
       Params := TftParamList.Create(nil);
@@ -508,7 +511,7 @@ begin
         localDBKey := getLocalDBKey();
         Params.ParamByName('localDBKey').AsString := localDBKey;
         Params.ParamByName('tenantId').AsInteger := Global.TENANT_ID;
-        //msg := Factor.ExecProc('TCheckCostCalc',Params) ;
+        msg := Factor.ExecProc('TCheckCostCalc',Params) ;
       finally
         Params.Free;
       end;
@@ -519,11 +522,6 @@ begin
 
   inherited;
   Label1.Caption:='正在核算需要较长的时间,请稍候....';
-  if flag in [1,2] then
-     begin
-       if (ShopGlobal.NetVersion) and (ShopGlobal.offline) then Raise Exception.Create('连锁版不允许离线结账!');
-       if (ShopGlobal.NetVersion) then SyncFactory.SyncAll; //连锁版结账前都必须同步脱机数据...
-     end;
   Label11.Caption := '读取参数...';
   Update;
   //读取参数

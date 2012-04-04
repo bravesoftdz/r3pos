@@ -69,7 +69,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
               item
                 DisplayFormat = '0000-00-00'
                 EditButtons = <>
-                FieldName = 'BEGIN_DATE'
+                FieldName = 'KPI_DATE1'
                 Footer.Value = #21512#35745#65306
                 Footer.ValueType = fvtStaticText
                 Footers = <>
@@ -80,7 +80,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
               item
                 DisplayFormat = '0000-00-00'
                 EditButtons = <>
-                FieldName = 'END_DATE'
+                FieldName = 'KPI_DATE2'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #32467#26463#26085#26399

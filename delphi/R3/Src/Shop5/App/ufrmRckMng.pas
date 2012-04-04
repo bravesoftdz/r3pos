@@ -402,7 +402,11 @@ begin
     rs.ParamByName('SHOP_ID').AsString := cdsBrowser.FieldbyName('SHOP_ID').AsString;
     rs.ParamByName('CREA_USER').AsString := cdsBrowser.FieldbyName('CREA_USER').AsString;
     Factor.Open(rs);
-    if (copy(rs.Fields[1].asString,1,1)='1') then Raise Exception.Create('数据已经同步,不能撤消!');
+    if (copy(rs.Fields[1].asString,1,1)='1') then
+       begin
+         MessageBox(Handle,'你的结账数据已经同步了，撤消后请重新结账。','友情提示...',MB_OK+MB_ICONINFORMATION);
+         //Raise Exception.Create('数据已经同步,不能撤消!');
+       end;
     cdsBrowser.Delete;
     try
       Factor.UpdateBatch(cdsBrowser,'TCloseForDay');
@@ -694,7 +698,10 @@ begin
     rs.ParamByName('CREA_DATE').AsInteger := d;
     Factor.Open(rs);
     if rs.Fields[1].AsString <> '' then Raise Exception.Create(formatFloat('0000-00-00',d)+'号的结账记录已经审核不能撤消。');
-    if copy(rs.Fields[0].AsString,1,1)='1' then Raise Exception.Create(formatFloat('0000-00-00',d)+'号的结账记录已经上报不能撤消。');
+    if copy(rs.Fields[0].AsString,1,1)='1' then
+       begin
+         MessageBox(Handle,Pchar(formatFloat('0000-00-00',d)+'号的结账数据已经同步了，撤消后请重新结账。'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       end;
     r := Factor.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+inttostr(d)+'');
     MessageBox(Handle,'撤消结账记录成完','友情提示',MB_OK+MB_ICONINFORMATION);
     Open;
@@ -724,7 +731,10 @@ begin
     rs.ParamByName('MONTH').AsInteger := d;
     Factor.Open(rs);
     if rs.Fields[1].AsString <> '' then Raise Exception.Create(formatFloat('0000-00',d)+'月的结账记录已经审核不能撤消。');
-    if copy(rs.Fields[0].AsString,1,1)='1' then Raise Exception.Create(formatFloat('0000-00',d)+'月的结账记录已经上报不能撤消。');
+    if copy(rs.Fields[0].AsString,1,1)='1' then
+       begin
+         MessageBox(Handle,Pchar(formatFloat('0000-00',d)+'月的结账数据已经同步了，撤消后请重新结账。'),'友情提示...',MB_OK+MB_ICONINFORMATION);
+       end;
     b := StrtoInt(formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[2].asString)) );
     e := StrtoInt(formatDatetime('YYYYMMDD',fnTime.fnStrtoDate(rs.Fields[3].asString)) );
     Factor.BeginTrans;

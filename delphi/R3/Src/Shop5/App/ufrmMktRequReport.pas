@@ -312,10 +312,10 @@ begin
     strSql:=
       'select '+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' B.REQU_MNY as REQU_MNY,'+
-      ' (case when A.REQU_DATE<'+vBegDate+' and A.REQU_DATE>'+vEndDate+' then B.REQU_MNY else 0 end) as ORG_REQU_MNY,'+
-      ' (case when A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' then B.REQU_MNY else 0 end) as NEW_REQU_MNY,'+
-      ' C.KPI_MNY as JT_MNY '+     //考核结果(元)[计提金额]
+      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
+      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
+      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
+      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
       ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID '+strWhere+' ';
   end else
@@ -323,10 +323,10 @@ begin
     strSql:=
       'select '+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' B.REQU_MNY as REQU_MNY,'+
-      ' (case when A.REQU_DATE<'+vBegDate+' and A.REQU_DATE>'+vEndDate+' then B.REQU_MNY else 0 end) as ORG_REQU_MNY,'+
-      ' (case when A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' then B.REQU_MNY else 0 end) as NEW_REQU_MNY,'+
-      ' C.KPI_MNY as JT_MNY '+     //考核结果(元)[计提金额]
+      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
+      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
+      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
+      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
       ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
       ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
       ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
@@ -336,11 +336,10 @@ begin
      'select '+
      ' K.DEPT_ID as DEPT_ID,'+
      ' DEPT.DEPT_NAME as DEPT_NAME,'+
-     ' sum(JT_MNY) as JT_MNY,'+
-     ' sum(REQU_MNY) as REQU_MNY,'+
-     ' sum(ORG_REQU_MNY) as ORG_REQU_MNY,'+
-     ' sum(NEW_REQU_MNY) as NEW_REQU_MNY, '+
-     ' sum(JT_MNY-REQU_MNY) as JY_MNY '+
+     ' sum(KPI_MNY) as KPI_MNY,'+
+     ' sum(BUDG_MNY) as BUDG_MNY,'+
+     ' sum(AGIO_MNY) as AGIO_MNY,'+
+     ' sum(OTHR_MNY) as OTHR_MNY '+
      ' from ('+strSql+')K '+
      ' left outer join (select DEPT_ID,DEPT_NAME from CA_DEPT_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')DEPT '+
      ' on K.DEPT_ID=DEPT.DEPT_ID '+
@@ -403,10 +402,10 @@ begin
   strSql:=
     'select '+
     ' D.REGION_ID as REGION_ID,'+
-    ' B.REQU_MNY as REQU_MNY,'+
-    ' (case when A.REQU_DATE<'+vBegDate+' and A.REQU_DATE>'+vEndDate+' then B.REQU_MNY else 0 end) as ORG_REQU_MNY,'+
-    ' (case when A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' then B.REQU_MNY else 0 end) as NEW_REQU_MNY,'+
-    ' C.KPI_MNY as JT_MNY '+     //考核结果(元)[计提金额]
+    ' B.KPI_MNY as KPI_MNY,'+     //返利金额
+    ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
+    ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
+    ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
     ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
     ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
@@ -415,11 +414,10 @@ begin
      'select '+
      ' K.REGION_ID as REGION_ID,'+
      ' isnull(Area.CODE_NAME,''无'') as CODE_NAME,'+
-     ' sum(JT_MNY) as JT_MNY,'+
-     ' sum(REQU_MNY) as REQU_MNY,'+
-     ' sum(ORG_REQU_MNY) as ORG_REQU_MNY,'+
-     ' sum(NEW_REQU_MNY) as NEW_REQU_MNY,'+
-     ' sum(JT_MNY-REQU_MNY) as JY_MNY '+     
+     ' sum(KPI_MNY) as KPI_MNY,'+
+     ' sum(BUDG_MNY) as BUDG_MNY,'+
+     ' sum(AGIO_MNY) as AGIO_MNY,'+
+     ' sum(OTHR_MNY) as OTHR_MNY '+
      ' from ('+strSql+')K '+
      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0)Area '+
      ' on K.REGION_ID=Area.CODE_ID '+
@@ -547,10 +545,10 @@ begin
       'select '+
       ' A.TENANT_ID as TENANT_ID,'+
       ' C.KPI_ID as KPI_ID,'+
-      ' B.REQU_MNY as REQU_MNY,'+
-      ' (case when A.REQU_DATE<'+vBegDate+' and A.REQU_DATE>'+vEndDate+' then B.REQU_MNY else 0 end) as ORG_REQU_MNY,'+
-      ' (case when A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' then B.REQU_MNY else 0 end) as NEW_REQU_MNY,'+
-      ' C.KPI_MNY as JT_MNY '+     //考核结果(元)[计提金额]
+      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
+      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
+      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
+      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
       ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID '+strWhere+' ';
   end else
@@ -559,10 +557,10 @@ begin
       'select '+
       ' A.TENANT_ID as TENANT_ID,'+
       ' C.KPI_ID as KPI_ID,'+
-      ' B.REQU_MNY as REQU_MNY,'+
-      ' (case when A.REQU_DATE<'+vBegDate+' and A.REQU_DATE>'+vEndDate+' then B.REQU_MNY else 0 end) as ORG_REQU_MNY,'+
-      ' (case when A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' then B.REQU_MNY else 0 end) as NEW_REQU_MNY,'+
-      ' C.KPI_MNY as JT_MNY '+     //考核结果(元)[计提金额]
+      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
+      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
+      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
+      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
       ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
       ' where  A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
       ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
@@ -572,11 +570,10 @@ begin
      'select '+
      ' K.KPI_ID as KPI_ID,'+
      ' MKT.KPI_NAME as KPI_NAME,'+
-     ' sum(JT_MNY) as JT_MNY,'+
-     ' sum(REQU_MNY) as REQU_MNY,'+
-     ' sum(ORG_REQU_MNY) as ORG_REQU_MNY,'+
-     ' sum(NEW_REQU_MNY) as NEW_REQU_MNY,'+
-     ' sum(JT_MNY-REQU_MNY) as JY_MNY '+     
+     ' sum(KPI_MNY) as KPI_MNY,'+
+     ' sum(BUDG_MNY) as BUDG_MNY,'+
+     ' sum(AGIO_MNY) as AGIO_MNY,'+
+     ' sum(OTHR_MNY) as OTHR_MNY '+     
      ' from ('+strSql+')K left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
      ' Group by K.KPI_ID,MKT.KPI_NAME '
      );
@@ -638,10 +635,10 @@ begin
     'select '+
     ' A.CLIENT_ID as CLIENT_ID,'+
     ' D.CLIENT_NAME as CLIENT_NAME,'+
-    ' B.REQU_MNY as REQU_MNY,'+
-    ' (case when A.REQU_DATE<'+vBegDate+' and A.REQU_DATE>'+vEndDate+' then B.REQU_MNY else 0 end) as ORG_REQU_MNY,'+
-    ' (case when A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' then B.REQU_MNY else 0 end) as NEW_REQU_MNY,'+
-    ' C.KPI_MNY as JT_MNY '+     //考核结果(元)[计提金额]
+    ' B.KPI_MNY as KPI_MNY,'+     //返利金额
+    ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
+    ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
+    ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
     ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
     ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
@@ -650,11 +647,10 @@ begin
      'select '+
      ' K.CLIENT_ID as CLIENT_ID,'+
      ' K.CLIENT_NAME as CLIENT_NAME,'+
-     ' sum(JT_MNY) as JT_MNY,'+
-     ' sum(REQU_MNY) as REQU_MNY,'+
-     ' sum(ORG_REQU_MNY) as ORG_REQU_MNY,'+
-     ' sum(NEW_REQU_MNY) as NEW_REQU_MNY,'+
-     ' sum(JT_MNY-REQU_MNY) as JY_MNY '+     
+     ' sum(KPI_MNY) as KPI_MNY,'+
+     ' sum(BUDG_MNY) as BUDG_MNY,'+
+     ' sum(AGIO_MNY) as AGIO_MNY,'+
+     ' sum(OTHR_MNY) as OTHR_MNY '+
      ' from ('+strSql+')K '+
      ' Group by K.CLIENT_ID,K.CLIENT_NAME '
      );
@@ -726,7 +722,10 @@ begin
     ' A.REQU_USER as REQU_USER,'+      //填报人ID
     ' B.KPI_YEAR as REQU_YEAR,'+       //申领年份
     ' A.REQU_TYPE as REQU_TYPE,'+      //申领类型
-    ' A.REQU_MNY as REQU_MNY,'+        //申领金额
+    ' B.KPI_MNY as KPI_MNY,'+          //返利金额
+    ' B.BUDG_MNY as BUDG_MNY,'+        //市场费用
+    ' B.AGIO_MNY as AGIO_MNY,'+        //价格支持
+    ' B.OTHR_MNY as OTHR_MNY,'+        //其他金额
     ' B.REMARK as REMARK,'+            //备注
     ' A.CREA_DATE as CREA_DATE,'+      //创建日期
     ' A.CREA_USER as CREA_USER,'+      //创建人
@@ -903,7 +902,7 @@ begin
       Rs.Filtered:=false;
       Rs.Filter:='DEPT_TYPE=1';
       Rs.Filtered:=true;
-      //rzPage.Pages[0].TabVisible:=(Rs.RecordCount>1);  //多个营销部时显示
+      rzPage.Pages[0].TabVisible:=(Rs.RecordCount>1);  //多个营销部时显示
     finally
       Rs.Filtered:=false;
       Rs.Filter:='';

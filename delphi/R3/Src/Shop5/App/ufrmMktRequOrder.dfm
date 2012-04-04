@@ -574,7 +574,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Height = 29
         Align = alTop
         TabHeight = 29
-        TabIndex = 1
+        TabIndex = 0
         TabOrder = 1
         Tabs = <
           item

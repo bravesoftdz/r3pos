@@ -14,10 +14,8 @@ inherited frmMktRequReport: TfrmMktRequReport
       inherited RzPage: TRzPageControl
         Width = 763
         Height = 506
-        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -355,55 +353,44 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'JT_MNY'
+                      FieldName = 'KPI_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#35745#25552
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'REQU_MNY'
+                      FieldName = 'BUDG_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#30003#39046
+                      Title.Caption = #24066#22330#36153#29992
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'NEW_REQU_MNY'
+                      FieldName = 'AGIO_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #26412#26399#30003#39046
+                      Title.Caption = #20215#26684#25903#25345
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_REQU_MNY'
+                      FieldName = 'OTHR_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24448#26085#30003#39046
-                      Width = 120
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'JY_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#24635#39069
+                      Title.Caption = #20854#20182#37329#39069
                       Width = 120
                     end>
                 end
@@ -815,55 +802,44 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'JT_MNY'
+                      FieldName = 'KPI_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#35745#25552
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'REQU_MNY'
+                      FieldName = 'BUDG_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#30003#39046
+                      Title.Caption = #24066#22330#36153#29992
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'NEW_REQU_MNY'
+                      FieldName = 'AGIO_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #26412#26399#30003#39046
-                      Width = 120
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.###'
-                      EditButtons = <>
-                      FieldName = 'ORG_REQU_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #24448#26085#30003#39046
+                      Title.Caption = #20215#26684#25903#25345
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'JY_MNY'
+                      FieldName = 'OTHR_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32467#20313#24635#39069
+                      Title.Caption = #20854#20182#37329#39069
                       Width = 120
                     end>
                 end
@@ -1267,55 +1243,44 @@ inherited frmMktRequReport: TfrmMktRequReport
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'JT_MNY'
+                    FieldName = 'KPI_MNY'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #32047#35745#35745#25552
+                    Title.Caption = #36820#21033#37329#39069
                     Width = 120
                   end
                   item
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'REQU_MNY'
+                    FieldName = 'BUDG_MNY'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #32047#35745#30003#39046
-                    Width = 120
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.###'
-                    EditButtons = <>
-                    FieldName = 'NEW_REQU_MNY'
-                    Footer.DisplayFormat = '#0.00'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    Title.Caption = #26412#26399#30003#39046
-                    Width = 120
-                  end
-                  item
-                    Alignment = taRightJustify
-                    DisplayFormat = '#0.###'
-                    EditButtons = <>
-                    FieldName = 'ORG_REQU_MNY'
-                    Footer.DisplayFormat = '#0.###'
-                    Footer.ValueType = fvtSum
-                    Footers = <>
-                    Title.Caption = #24448#26085#30003#39046
+                    Title.Caption = #24066#22330#36153#29992
                     Width = 120
                   end
                   item
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'JY_MNY'
+                    FieldName = 'AGIO_MNY'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #32467#20313#24635#39069
+                    Title.Caption = #20215#26684#25903#25345
+                    Width = 120
+                  end
+                  item
+                    Alignment = taRightJustify
+                    DisplayFormat = '#0.00'
+                    EditButtons = <>
+                    FieldName = 'OTHR_MNY'
+                    Footer.DisplayFormat = '#0.00'
+                    Footer.ValueType = fvtSum
+                    Footers = <>
+                    Title.Caption = #20854#20182#37329#39069
                     Width = 120
                   end>
               end
@@ -1727,55 +1692,44 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'JT_MNY'
+                      FieldName = 'KPI_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#35745#25552
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'REQU_MNY'
+                      FieldName = 'BUDG_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#30003#39046
+                      Title.Caption = #24066#22330#36153#29992
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'NEW_REQU_MNY'
+                      FieldName = 'AGIO_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #26412#26399#30003#39046
+                      Title.Caption = #20215#26684#25903#25345
                       Width = 120
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'ORG_REQU_MNY'
+                      FieldName = 'OTHR_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #24448#26085#30003#39046
-                      Width = 120
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'JY_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#24635#39069
+                      Title.Caption = #20854#20182#37329#39069
                       Width = 120
                     end>
                 end
@@ -2261,12 +2215,33 @@ inherited frmMktRequReport: TfrmMktRequReport
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'REQU_MNY'
+                      FieldName = 'KPI_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #30003#39046#37329#39069
-                      Width = 69
+                      Title.Caption = #36820#21033#37329#39069
+                      Width = 70
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BUDG_MNY'
+                      Footers = <>
+                      Title.Caption = #24066#22330#36153#29992
+                      Width = 70
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'AGIO_MNY'
+                      Footers = <>
+                      Title.Caption = #20215#26684#25903#25345
+                      Width = 70
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'OTHR_MNY'
+                      Footers = <>
+                      Title.Caption = #20854#20182#37329#39069
+                      Width = 70
                     end
                     item
                       EditButtons = <>

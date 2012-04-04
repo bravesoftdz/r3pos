@@ -1903,6 +1903,7 @@ begin
         ReadFrom(d);
         try
           self.edtTable.DisableControls;
+          self.edtTable.First;
           while not self.edtTable.Eof do
           begin
             //对价格读取

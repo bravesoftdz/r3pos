@@ -16,11 +16,11 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Top = 92
+      Top = 103
       Width = 641
-      Height = 295
-      ActivePage = TabSheet5
-      TabIndex = 3
+      Height = 284
+      ActivePage = TabSheet4
+      TabIndex = 2
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20
@@ -29,14 +29,14 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         Caption = #21830#21697#28165#21333
         inherited RzPanel2: TRzPanel
           Width = 637
-          Height = 268
+          Height = 257
           BorderColor = clWhite
           Color = clWhite
           object Notebook1: TNotebook
             Left = 5
             Top = 5
             Width = 627
-            Height = 258
+            Height = 247
             Align = alClient
             PageIndex = 1
             TabOrder = 0
@@ -60,7 +60,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 Left = 0
                 Top = 0
                 Width = 627
-                Height = 258
+                Height = 247
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = Ds_KpiGoods
@@ -162,7 +162,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           Left = 0
           Top = 0
           Width = 637
-          Height = 268
+          Height = 257
           Align = alClient
           BorderOuter = fsNone
           Color = clWindow
@@ -172,7 +172,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             Left = 0
             Top = 0
             Width = 318
-            Height = 268
+            Height = 257
             Align = alLeft
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -282,7 +282,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               Left = 5
               Top = 31
               Width = 308
-              Height = 232
+              Height = 221
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               DataSource = Ds_KpiLevel
@@ -336,15 +336,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   FieldName = 'LVL_AMT'
                   Footers = <>
                   Title.Caption = #31614#32422#37327'('#21544')'
-                  Width = 80
-                end
-                item
-                  DisplayFormat = '#0.##%'
-                  EditButtons = <>
-                  FieldName = 'LOW_RATE'
-                  Footers = <>
-                  Title.Caption = #36820#21033#31995#25968
-                  Width = 53
+                  Width = 87
                 end>
             end
           end
@@ -352,7 +344,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             Left = 318
             Top = 0
             Width = 319
-            Height = 268
+            Height = 257
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -363,7 +355,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               Left = 5
               Top = 31
               Width = 309
-              Height = 232
+              Height = 221
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               DataSource = Ds_KpiTimes
@@ -394,6 +386,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               CurrencySymbol = #65509
               DecimalNumber = 2
               DigitalNumber = 12
+              OnDblClick = DBGridEh3DblClick
               OnDrawColumnCell = DBGridEh3DrawColumnCell
               Columns = <
                 item
@@ -582,7 +575,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           Left = 0
           Top = 0
           Width = 637
-          Height = 268
+          Height = 257
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -593,7 +586,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             Left = 5
             Top = 5
             Width = 627
-            Height = 258
+            Height = 247
             Cursor = crDefault
             Align = alClient
             ColCount = 4
@@ -790,7 +783,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           Left = 0
           Top = 0
           Width = 637
-          Height = 268
+          Height = 257
           Align = alClient
           BorderOuter = fsNone
           BorderColor = clWhite
@@ -801,7 +794,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             Left = 5
             Top = 5
             Width = 627
-            Height = 258
+            Height = 247
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = Ds_MktGoods
@@ -964,7 +957,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Left = 5
       Top = 5
       Width = 641
-      Height = 87
+      Height = 98
       Align = alTop
       BorderOuter = fsNone
       BorderColor = clWhite
@@ -972,7 +965,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       TabOrder = 2
       object lab_KPI_NAME: TRzLabel
         Left = 6
-        Top = 8
+        Top = 7
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -987,7 +980,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object lab_IDX_TYPE: TRzLabel
         Left = 6
-        Top = 33
+        Top = 49
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -1002,7 +995,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel2: TRzLabel
         Left = 237
-        Top = 33
+        Top = 49
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -1016,8 +1009,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         ParentFont = False
       end
       object RzLabel1: TRzLabel
-        Left = 237
-        Top = 8
+        Left = 309
+        Top = 7
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -1032,12 +1025,12 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel11: TRzLabel
         Left = 258
-        Top = 8
+        Top = 28
         Width = 83
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #25340#38899#30721
+        Caption = #25340' '#38899' '#30721
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -1047,7 +1040,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object lab_KPI_TYPE: TLabel
         Left = 260
-        Top = 33
+        Top = 49
         Width = 83
         Height = 12
         Alignment = taRightJustify
@@ -1062,7 +1055,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel3: TRzLabel
         Left = 483
-        Top = 33
+        Top = 49
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -1076,8 +1069,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         ParentFont = False
       end
       object RzLabel9: TRzLabel
-        Left = 615
-        Top = 8
+        Left = 152
+        Top = 28
         Width = 6
         Height = 12
         Alignment = taRightJustify
@@ -1091,13 +1084,13 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         ParentFont = False
       end
       object RzLabel10: TRzLabel
-        Left = 500
-        Top = 8
-        Width = 36
+        Left = 40
+        Top = 28
+        Width = 57
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #21333#20301
+        Caption = #31614#32422#21333#20301
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -1107,7 +1100,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object RzLabel5: TRzLabel
         Left = 6
-        Top = 58
+        Top = 70
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -1122,7 +1115,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object edtIDX_TYPE: TcxComboBox
         Left = 103
-        Top = 29
+        Top = 45
         Width = 130
         Height = 20
         Properties.DropDownListStyle = lsFixedList
@@ -1131,8 +1124,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object edtKPI_NAME: TcxTextEdit
         Left = 103
-        Top = 4
-        Width = 130
+        Top = 3
+        Width = 202
         Height = 20
         Properties.MaxLength = 50
         Properties.OnChange = edtKPI_NAMEPropertiesChange
@@ -1140,36 +1133,36 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       end
       object edtKPI_SPELL: TcxTextEdit
         Left = 350
-        Top = 4
+        Top = 24
         Width = 130
         Height = 20
         Properties.MaxLength = 50
-        TabOrder = 1
+        TabOrder = 5
       end
       object edtKPI_TYPE: TcxComboBox
         Left = 350
-        Top = 29
+        Top = 45
         Width = 130
         Height = 20
         Properties.DropDownListStyle = lsFixedList
         TabOrder = 3
       end
       object edtUNIT_NAME: TcxTextEdit
-        Left = 542
-        Top = 4
-        Width = 70
+        Left = 103
+        Top = 24
+        Width = 43
         Height = 20
         Properties.MaxLength = 10
         Properties.OnChange = edtUNIT_NAMEPropertiesChange
-        TabOrder = 4
+        TabOrder = 1
       end
       object edtREMARK: TcxTextEdit
         Left = 103
-        Top = 54
-        Width = 509
+        Top = 66
+        Width = 298
         Height = 20
         Properties.MaxLength = 100
-        TabOrder = 5
+        TabOrder = 4
       end
     end
   end

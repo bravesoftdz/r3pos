@@ -166,6 +166,7 @@ type
     procedure Btn_Right_delClick(Sender: TObject);
     procedure Btn_Right_editClick(Sender: TObject);
     procedure edtUNIT_NAMEPropertiesChange(Sender: TObject);
+    procedure DBGridEh3DblClick(Sender: TObject);
   private
     pBaseRow:pKpiRow;   //初始化标题时
     FKpiState: Boolean; //考核指标状态
@@ -2183,6 +2184,12 @@ begin
     else
       SetCol.Title.Caption:='签约量'
   end;
+end;
+
+procedure TfrmKpiIndexInfo.DBGridEh3DblClick(Sender: TObject);
+begin
+  inherited;
+  EditKpiTimes.Click;
 end;
 
 end.

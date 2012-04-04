@@ -630,6 +630,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             OnClickCell = KpiGridClickCell
             OnCanEditCell = KpiGridCanEditCell
             OnCellsChanged = KpiGridCellsChanged
+            OnGetFloatFormat = KpiGridGetFloatFormat
             DragDropSettings.OleAcceptFiles = True
             DragDropSettings.OleAcceptText = True
             SortSettings.AutoColumnMerge = False
@@ -869,7 +870,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                 OnBeforeShowControl = DBGridEh5Columns4BeforeShowControl
               end
               item
-                DisplayFormat = '#0.##%'
+                DisplayFormat = '#0.##'
                 EditButtons = <>
                 FieldName = 'ACTR_RATIO'
                 Footers = <>

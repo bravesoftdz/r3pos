@@ -17,7 +17,7 @@ type
   TDateRecord = Record
     BeginDate:Integer;
     EndDate:Integer;
-  end;
+  end;                   
   //档次达标系数
   TKpiRatio=record
     Index:integer;
@@ -167,6 +167,8 @@ type
     procedure Btn_Right_editClick(Sender: TObject);
     procedure edtUNIT_NAMEPropertiesChange(Sender: TObject);
     procedure DBGridEh3DblClick(Sender: TObject);
+    procedure KpiGridGetFloatFormat(Sender: TObject; ACol, ARow: Integer;
+      var IsFloat: Boolean; var FloatFormat: String);
   private
     pBaseRow:pKpiRow;   //初始化标题时
     FKpiState: Boolean; //考核指标状态
@@ -1186,7 +1188,7 @@ begin
   //列名: 序号、等级名称、等级基数、等级底数、商品名称、单位、档次量1、考核系数1、档次量2、考核系数2、档次量n、考核系数n
   KpiGrid.Clear;
   KpiGrid.RowCount:=3;
-  KpiGrid.ColCount:=4;
+  KpiGrid.ColCount:=3;
   KpiGrid.FixedRows :=2; //设置标题有xx行
   KpiGrid.FixedCols :=1; //设置序号
   //第1列
@@ -1200,17 +1202,17 @@ begin
   KpiGrid.ColWidths[1] := 80;
   SetpRowValue(1,0,'','');
   //第3列
-  KpiGrid.MergeCells(2,0,1,2);
+ {KpiGrid.MergeCells(2,0,1,2);
   KpiGrid.Cells[2,0] := '签约量';
   KpiGrid.ColWidths[2] := 50;
-  SetpRowValue(2,0,'','');
+  SetpRowValue(2,0,'','');}
   //第4列
-  KpiGrid.MergeCells(3,0,1,2);
-  KpiGrid.Cells[3,0] := '返还比例';
-  KpiGrid.ColWidths[3] := 60;
-  SetpRowValue(3,0,'','');
+  KpiGrid.MergeCells(2,0,1,2);
+  KpiGrid.Cells[2,0] := '返还比例';
+  KpiGrid.ColWidths[2] := 60;
+  SetpRowValue(2,0,'','');
   //创建时段:
-  vCol:=3;
+  vCol:=2;
   vGodsCount:=CdsKpiGoods.RecordCount;
   CdsKpiTimes.First;
   while not CdsKpiTimes.Eof do
@@ -1596,14 +1598,14 @@ begin
           KpiGrid.MergeCells(0,gRow,1,vRowCount);
           KpiGrid.Cells[1,gRow]:=trim(CdsKpiLevel.FieldByName('LEVEL_NAME').AsString);    //等级名称
           KpiGrid.MergeCells(1,gRow,1,vRowCount);
-          KpiGrid.Cells[2,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LVL_AMT').AsFloat);  //等级达标量
+          //KpiGrid.Cells[2,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LVL_AMT').AsFloat);  //等级达标量
+          //KpiGrid.MergeCells(2,gRow,1,vRowCount);
+          KpiGrid.Cells[2,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LOW_RATE').AsFloat)+'%'; //等级达标率
           KpiGrid.MergeCells(2,gRow,1,vRowCount);
-          KpiGrid.Cells[3,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LOW_RATE').AsFloat)+'%'; //等级达标率
-          KpiGrid.MergeCells(3,gRow,1,vRowCount);
         end;
         //写入时段列:第4列开始:
         pRow:=pKpiRow(FKpiGridList.Items[gRow-2]); //当前KpiGird行-2
-        for gCol:=4 to KpiGrid.ColCount-1 do
+        for gCol:=3 to KpiGrid.ColCount-1 do
         begin
           KpiGrid.Cells[gCol,gRow]:=GetCellValue(pRow^.Ratio[gCol]); //取值填充到Cells单元格
         end;
@@ -1620,6 +1622,7 @@ begin
   inherited;
   if ARow in [0,1] then HAlign := taCenter;
   if ACol=0 then HAlign := taCenter;
+  if (ARow>1) and (ACol>2) then HAlign:=taRightJustify;
 end;
 
 procedure TfrmKpiIndexInfo.KpiGridCanEditCell(Sender: TObject; ARow, ACol: Integer; var CanEdit: Boolean);
@@ -1632,7 +1635,7 @@ begin
   inherited;
   if FKpiGridList.Count>0 then
   begin
-    if (ARow>1) and (ACol>3) then
+    if (ARow>1) and (ACol>2) then
     begin
       CanEdit := (dbState <> dsBrowse);
       //判断是否有填写考核档次:[MKT_KPI_SEQNO]
@@ -1695,7 +1698,7 @@ begin
      CurIdx:=FColIdx
   else
      CurIdx:=ColIdx;
-  if (CurIdx>3) and (CurIdx<KpiGrid.ColCount-1) then
+  if (CurIdx>2) and (CurIdx<KpiGrid.ColCount-1) then
     result:=pBaseRow^.Ratio[CurIdx].TIME_ID;
 end;
 
@@ -1755,7 +1758,7 @@ begin
     KpiGrid.MergeCells(0,BegRow,1,Lvl_Rows);  //合并第1列
     KpiGrid.MergeCells(1,BegRow,1,Lvl_Rows);  //合并第2列
     KpiGrid.MergeCells(2,BegRow,1,Lvl_Rows);  //合并第3列
-    KpiGrid.MergeCells(3,BegRow,1,Lvl_Rows);  //合并第4列
+    //KpiGrid.MergeCells(3,BegRow,1,Lvl_Rows);  //合并第4列
   end;
   if not ChangeState then
     ChangeState:=(FListCount<FKpiGridList.Count);
@@ -1780,7 +1783,7 @@ end;
 procedure TfrmKpiIndexInfo.KpiGridCellsChanged(Sender: TObject; R: TRect);
 begin
   //指定列和行范围内有变化才
-  if (not ChangeState) and (FRowIdx>1) and (FColIdx>3) then
+  if (not ChangeState) and (FRowIdx>1) and (FColIdx>2) then
     ChangeState:=True;
 end;
 
@@ -1834,7 +1837,7 @@ var
   RatioObj: TRecord_;
   Lvl_ID,TimID,Gods_ID: string;
 begin
-  if (FRowIdx-2>=0) and (FRowIdx-1<=FKpiGridList.Count) and (FColIdx>3) then
+  if (FRowIdx-2>=0) and (FRowIdx-1<=FKpiGridList.Count) and (FColIdx>2) then
   begin
     pRow:=pKpiRow(FKpiGridList.Items[FRowIdx-2]);
     pRatio:=pRow.Ratio[FColIdx];
@@ -2190,6 +2193,87 @@ procedure TfrmKpiIndexInfo.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
   EditKpiTimes.Click;
+end;
+
+procedure TfrmKpiIndexInfo.KpiGridGetFloatFormat(Sender: TObject; ACol, ARow: Integer;
+  var IsFloat: Boolean; var FloatFormat: String);
+ function GetCellValue(TIMES_ID,SEQNO_ID,GODS_ID: String): string;
+ var KPI_CALC:integer; UNIT_ID: string; RsTime,RsGods,RsUnit: TZQuery;
+ begin
+   result:='';
+   RsTime:=TZQuery.Create(nil);
+   try
+     RsTime.Data:=CdsKpiTimes.Data;
+     if RsTime.Locate('TIMES_ID',TIMES_ID,[]) then
+     begin
+       KPI_CALC:=StrToIntDef(trim(RsTime.FieldByName('KPI_CALC').AsString),0);
+       //达标系数根据(KPI_CALC:[1:按百分率];[2:按完成量];[3:指定金额]);
+       case KPI_CALC of
+        1: result:='％';
+        2:
+         begin
+           //系数表定位到
+           if CdsKpiRatio.Locate('SEQNO_ID;GODS_ID',VarArrayOf([SEQNO_ID,GODS_ID]),[]) then
+             UNIT_ID:=trim(CdsKpiRatio.FieldByName('UNIT_ID').AsString)
+           else
+           begin
+             RsGods:=Global.GetZQueryFromName('PUB_GOODSINFO');
+             if RsGods.Locate('GODS_ID',GODS_ID,[]) then
+               UNIT_ID:=trim(RsGods.FieldByName('CALC_UNITS').AsString);
+           end;
+           RsUnit:= Global.GetZQueryFromName('PUB_MEAUNITS');
+           if RsUnit.Locate('UNIT_ID',UNIT_ID,[]) then
+             result:=trim(RsUnit.FieldByName('UNIT_NAME').AsString);
+           if result<>'' then result:='/'+result;
+         end;
+        3: result:='元';
+       end;
+     end;
+   finally
+     RsTime.Free;
+   end;
+ end;
+var
+  i: integer;
+  CellText,TIMES_ID,SEQNO_ID,GODS_ID: string;
+  pRow: pKpiRow;
+begin
+  CellText:=trim(KpiGrid.Cells[ACol,ARow]);
+  if ACol=0 then
+    FloatFormat:=CellText;
+  if (ARow>1) and (ACol>2) and (FKpiGridList.Count>0) then
+  begin
+    if CellText='' then
+      FloatFormat:=''
+    else
+    begin
+      pRow:=pKpiRow(FKpiGridList.Items[ARow-2]);
+      case pRow.Ratio[ACol].ColType of
+       1: //档次单位=指标单位
+        begin
+          FloatFormat:=CellText+edtUNIT_NAME.Text;
+        end;
+       2: //达标系数根据(KPI_CALC:[1:按百分率];[2:按完成量];[3:指定金额]);
+        begin
+          if pRow.Ratio[ACol].GODS_ID='#' then //拉通返利(默认取第一个商品单位)
+          begin
+            for i:=4 to High(pBaseRow.Ratio) do
+            begin
+              if pBaseRow.Ratio[i].GODS_ID<>'#' then
+              begin
+                GODS_ID:=trim(pBaseRow.Ratio[i].GODS_ID);
+                break;
+              end;
+            end;
+            FloatFormat:=CellText+GetCellValue(pRow.Ratio[ACol].TIME_ID,pRow.Ratio[ACol].SEQNO_ID,GODS_ID);
+          end else
+          begin
+            FloatFormat:=CellText+GetCellValue(pRow.Ratio[ACol].TIME_ID,pRow.Ratio[ACol].SEQNO_ID,pRow.Ratio[ACol].GODS_ID);
+          end;
+        end;
+      end;
+    end;
+  end;
 end;
 
 end.

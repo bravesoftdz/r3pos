@@ -14,8 +14,10 @@ inherited frmBondRequReport: TfrmBondRequReport
       inherited RzPage: TRzPageControl
         Width = 819
         Height = 506
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

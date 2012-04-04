@@ -14,8 +14,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 350
-    Height = 204
+    Width = 358
+    Height = 215
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -23,8 +23,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     object RzPanel2: TRzPanel
       Left = 0
       Top = 0
-      Width = 350
-      Height = 162
+      Width = 358
+      Height = 173
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
@@ -247,8 +247,8 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     end
     object RzPanel3: TRzPanel
       Left = 0
-      Top = 162
-      Width = 350
+      Top = 173
+      Width = 358
       Height = 42
       Align = alBottom
       BorderOuter = fsNone
@@ -346,5 +346,12 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
     Params = <>
     Left = 95
     Top = 181
+  end
+  object CdsActiveRatio: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 95
+    Top = 149
   end
 end

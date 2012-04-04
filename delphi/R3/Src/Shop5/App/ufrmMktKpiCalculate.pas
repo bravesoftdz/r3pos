@@ -33,6 +33,7 @@ type
     CdsKpiSeqNo: TZQuery;
     CdsKpiTimes: TZQuery;
     CdsKpiGoods: TZQuery;
+    CdsActiveRatio: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -201,6 +202,7 @@ begin
       Factor.AddBatch(CdsKpiTimes,'TKpiTimes',Param);
       Factor.AddBatch(CdsKpiGoods,'TKpiGoods',Param);
       Factor.AddBatch(CdsKpiRatio,'TKpiRatio',Param);
+      Factor.AddBatch(CdsActiveRatio,'TMktRatio',Param);
       Factor.AddBatch(cdsDetail,'TMktKpiResultList',Param);
       Factor.OpenBatch;
     except
@@ -250,6 +252,7 @@ begin
       KpiCalculate.KpiTimes := CdsKpiTimes;
       KpiCalculate.KpiSeqNo := CdsKpiSeqNo;
       KpiCalculate.KpiRatio := CdsKpiRatio;
+      KpiCalculate.ActiveRatio := CdsActiveRatio;
       KpiCalculate.KpiDetail := cdsDetail;
       KpiCalculate.CalculationRebate;
       cdsDetail.First;

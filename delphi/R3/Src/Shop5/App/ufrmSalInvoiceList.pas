@@ -282,7 +282,7 @@ begin
   else
      begin
        //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
-       if MessageBox(Handle,'确认升效当前发票？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+       if MessageBox(Handle,'确认还原作废发票？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
     Params := TftParamList.Create(nil);
@@ -346,7 +346,7 @@ end;
 
 procedure TfrmSalInvoiceList.ChangeButton;
 begin
-  if cdsList.Active and (cdsList.FieldByName('INVOICE_STATUS').AsString = '1') then actAudit.Caption := '作废' else actAudit.Caption := '升效';
+  if cdsList.Active and (cdsList.FieldByName('INVOICE_STATUS').AsString = '1') then actAudit.Caption := '作废' else actAudit.Caption := '还原';
 //  if rzPage.ActivePageIndex = 0 then
      begin
        actDelete.Enabled := rzPage.ActivePageIndex > 0;

@@ -53,6 +53,7 @@ type
     Label10: TLabel;
     N3: TMenuItem;
     N4: TMenuItem;
+    lblFeeOption: TLabel;
     procedure FormShow(Sender: TObject);
     procedure RzTabChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -1151,6 +1152,7 @@ begin
   if edtREQU_TYPE.ItemIndex >=0 then
      begin
        RzTab.TabIndex := TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsInteger-1;
+       pnlBarCode.Visible := (TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsInteger=1);
        RzPanel3.Visible := (TRecord_(edtREQU_TYPE.Properties.Items.Objects[edtREQU_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsInteger=1);
      end
   else

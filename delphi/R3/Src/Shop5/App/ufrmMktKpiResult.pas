@@ -45,7 +45,6 @@ type
     fndSHOP_ID: TzrComboBoxList;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
-    fndSTATUS: TcxRadioGroup;
     procedure actExitExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -141,6 +140,7 @@ begin
     Params := TftParamList.Create(nil);
     try
       Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('KPI_YEAR').AsInteger := CdsKpiResult.FieldbyName('KPI_YEAR').AsInteger;
       Params.ParamByName('PLAN_ID').asString := CdsKpiResult.FieldbyName('PLAN_ID').AsString;
       Params.ParamByName('KPI_ID').asString := CdsKpiResult.FieldbyName('KPI_ID').AsString;
       Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
@@ -153,7 +153,7 @@ begin
        Params.free;
     end;
     MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-
+    Open('');                            
   except
     on E:Exception do
        begin
@@ -306,16 +306,6 @@ begin
      w := w + ' and A.SHOP_ID=:SHOP_ID ';
   if fndKPI_ID.AsString <> '' then
      w := w +' and A.KPI_ID=:KPI_ID ';
-  if fndSTATUS.ItemIndex > 0 then
-     begin
-       case fndSTATUS.ItemIndex of
-         1:w := w +' and A.CHK_DATE is null';
-         2:w := w +' and A.CHK_DATE is not null';
-       end;
-     end;
-
-  if id<>'' then
-     w := w +' and A.PLAN_ID>'''+id+'''';
 
   {Result := ' select A.TENANT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_DATA,A.KPI_CALC,A.KPI_YEAR,A.BEGIN_DATE,'+
             'A.KPI_ID,A.END_DATE,A.CLIENT_ID,A.CHK_DATE,F.KPI_NAME as KPI_ID_TEXT,A.CHK_USER,E.USER_NAME as CHK_USER_TEXT,'+
@@ -330,16 +320,17 @@ begin
             ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w; }
 
   Result := ' select A.TENANT_ID,A.CLIENT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_ID,F.KPI_NAME as KPI_ID_TEXT,F.UNIT_NAME,A.KPI_YEAR,'+
-            ' A.CHK_DATE,A.CHK_USER,A.PLAN_AMT,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,A.WDW_MNY,A.KPI_MNY-A.WDW_MNY as BALANCE_MNY,'+
-            ' A.CREA_DATE,E.USER_NAME as CHK_USER_TEXT,A.CREA_USER from MKT_KPI_RESULT A '+
+            ' A.CHK_DATE,A.CHK_USER,A.PLAN_AMT,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,A.WDW_MNY,isnull(A.KPI_MNY,0)-isnull(A.WDW_MNY,0) as KPI_BAL,A.BUDG_MNY,A.BUDG_KPI,A.BUDG_WDW,isnull(A.BUDG_KPI,0)-isnull(BUDG_WDW,0) as BUDG_BAL,'+
+            ' A.CREA_DATE,E.USER_NAME as CHK_USER_TEXT,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT from MKT_KPI_RESULT A '+
             ' left join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
             ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+
             ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CHK_USER=E.USER_ID '+
             ' left join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w;
   Result := ParseSQL(Factor.iDbType,
-            'select H.*,case when H.PLAN_AMT <> 0 then cast(H.FISH_AMT*1.0/H.PLAN_AMT*1.0 as decimal(18,6))*100 else 0.00 end as FISH_RATE from ('+Result+') H  ');
+            'select H.*,case when H.PLAN_AMT <> 0 then (H.FISH_AMT*1.0/H.PLAN_AMT*1.0)*100 else 0.00 end as FISH_RATE from ('+Result+') H  ');
 
-  case Factor.iDbType of
+  Result := result + ' order by KPI_YEAR,KPI_ID';
+{  case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') jp order by PLAN_ID';
   1:result :=
        'select * from ('+
@@ -351,7 +342,7 @@ begin
   else
     result := 'select * from ('+result+') j order by PLAN_ID';
   end;
-              
+}
 end;
 
 procedure TfrmMktKpiResult.Open(Id: String);

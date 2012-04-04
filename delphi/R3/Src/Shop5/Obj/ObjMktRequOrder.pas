@@ -69,7 +69,8 @@ end;
 
 function TMktRequOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  if not Locked and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,true) then  Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  result := true;
 end;
 
 function TMktRequOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
@@ -83,7 +84,12 @@ end;
 
 function TMktRequOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  Locked := true;
+  try
+    if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  finally
+    Locked := false;
+  end;
 end;
 
 function TMktRequOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -123,7 +129,7 @@ begin
   'select A.TENANT_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,A.REQU_ID,A.DEPT_ID,C.DEPT_NAME as DEPT_ID_TEXT,'+
   'A.REQU_TYPE,A.GLIDE_NO,A.REQU_DATE,A.CLIENT_ID,D.CLIENT_NAME as CLIENT_ID_TEXT,E.USER_NAME as REQU_USER_TEXT,'+
   'A.REQU_USER,A.CHK_DATE,A.CHK_USER,G.USER_NAME as CHK_USER_TEXT,A.KPI_MNY,A.BUDG_MNY,A.AGIO_MNY,'+
-  'A.OTHR_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,F.USER_NAME as CREA_USER_TEXT '+
+  'A.OTHR_MNY,A.REMARK,A.CREA_DATE,A.CREA_USER,F.USER_NAME as CREA_USER_TEXT,A.COMM,A.TIME_STAMP '+
   ' from MKT_REQUORDER A left join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
   ' left join CA_DEPT_INFO C on A.TENANT_ID=C.TENANT_ID and A.DEPT_ID=C.DEPT_ID '+
   ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
@@ -161,7 +167,7 @@ begin
 
   AGlobal.ExecSQL(
      ParseSQL(iDbType,
-        'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)-:OLD_KPI_MNY,2),BUDG_WDW=round(isnull(BUDG_WDW,0)-:OLD_BUDG_MNY,2),'+
+        'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0) - :OLD_KPI_MNY,2),BUDG_WDW=round(isnull(BUDG_WDW,0) - :OLD_BUDG_MNY,2),'+
         'COMM=' + GetCommStr(iDbType) +
         ',TIME_STAMP='+GetTimeStamp(iDbType)+
         ' where PLAN_ID=:OLD_PLAN_ID and KPI_ID=:OLD_KPI_ID and TENANT_ID=:OLD_TENANT_ID'),Self);
@@ -175,14 +181,14 @@ begin
   Str := 'insert into MKT_REQUDATA(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,PLAN_ID,KPI_ID,KPI_YEAR,KPI_MNY,BUDG_MNY,AGIO_MNY,OTHR_MNY,REMARK) '+
          ' VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:PLAN_ID,:KPI_ID,:KPI_YEAR,:KPI_MNY,:BUDG_MNY,:AGIO_MNY,:OTHR_MNY,:REMARK) ';
   AGlobal.ExecSQL(Str,Self);
-  
+
   AGlobal.ExecSQL(
      ParseSQL(iDbType,
        'update MKT_KPI_RESULT set WDW_MNY=round(isnull(WDW_MNY,0)+ :KPI_MNY,2),BUDG_WDW=round(isnull(BUDG_WDW,0)+ :BUDG_MNY,2),'+
        'COMM=' + GetCommStr(iDbType) +
        ',TIME_STAMP='+GetTimeStamp(iDbType)+
        ' where PLAN_ID=:PLAN_ID and KPI_ID=:KPI_ID and TENANT_ID=:TENANT_ID'),Self);
-  rs := TZQuery.Create(nil);
+{  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := 'select count(*) from MKT_KPI_RESULT where PLAN_ID=:PLAN_ID and KPI_ID=:KPI_ID and TENANT_ID=:TENANT_ID and WDW_MNY>KPI_MNY ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
@@ -193,7 +199,7 @@ begin
   finally
     rs.Free;
   end;
-end;
+}end;
 
 function TMktRequData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin

@@ -8,8 +8,6 @@ type
     lock:boolean;
   public
     function CheckTimeStamp(aGlobal:IdbHelp;s:string;comm:boolean=true):boolean;
-    //JP_???
-    //function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集修改检测函数，返回值是True 测可以修改当前记录
@@ -56,41 +54,11 @@ var
   rs:TZQuery;
 begin
   result := true;
-  //if not Lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,True) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
+  if not Lock and not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,True) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
 
 end;
 
 function TBomOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-function GetAdvaMny:currency;
-var
-  rs:TZQuery;
-begin
-{
-  rs := TZQuery.Create(nil);
-  try
-    rs.Close;
-    rs.SQL.Text := 'select sum(ADVA_MNY) from SAL_INDENTORDER where TENANT_ID=:TENANT_ID and INDE_ID=:FROM_ID';
-    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
-    AGlobal.Open(rs);
-    result := rs.Fields[0].AsFloat;
-    rs.Close;
-    rs.SQL.Text := 'select sum(ADVA_MNY) from SAL_SALESORDER where TENANT_ID=:TENANT_ID and FROM_ID=:FROM_ID and SALES_ID<>:SALES_ID ';
-    rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
-    rs.ParamByName('FROM_ID').AsString := FieldbyName('FROM_ID').AsString;
-    rs.ParamByName('SALES_ID').AsString := FieldbyName('SALES_ID').AsString;
-    AGlobal.Open(rs);
-    result := result - rs.Fields[0].AsFloat;
-    if result >= FieldbyName('PAY_D').AsFloat then
-       result := FieldbyName('PAY_D').AsFloat;
-  finally
-    rs.Free;
-  end;
-  }
-end;
-var
-  rs:TZQuery;
-  r:integer;
 begin
   result := true;
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
@@ -103,8 +71,7 @@ end;
 function TBomOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
   result := true;
-  //if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
-//  WriteLogInfo(AGlobal,FieldbyName('CREA_USER').AsString,2,'500026','修改【单号'+FieldbyName('GLIDE_NO').asString+'】',EncodeLogInfo(self,'SAL_SALESORDER',usModified));
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
 end;
 
 
@@ -144,7 +111,8 @@ begin
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ( '+
                'select jc.*,c.USER_NAME as CREA_USER_TEXT from ( '+
                'select jb.*,b.USER_NAME as BOM_USER_TEXT  from  '+
-               '(select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.BOM_ID,A.GLIDE_NO,A.GIFT_CODE,A.GIFT_NAME,A.BARCODE,A.BOM_AMOUNT,A.RCK_AMOUNT,A.RTL_PRICE,A.BOM_DATE,A.BOM_USER,A.CHK_DATE,A.CHK_USER,A.REMARK,A.CREA_DATE,A.CREA_USER,A.BOM_TYPE,A.BOM_STATUS,A.GODS_ID,A.COMM'+',A.HAS_INTEGRAL '+
+               '(select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.BOM_ID,A.GLIDE_NO,A.GIFT_CODE,A.GIFT_NAME,A.BARCODE,A.BOM_AMOUNT,A.RCK_AMOUNT,A.RTL_PRICE,A.BOM_DATE,A.BOM_USER,A.CHK_DATE,A.CHK_USER,A.REMARK,'+
+               'A.CREA_DATE,A.CREA_USER,A.BOM_TYPE,A.BOM_STATUS,A.GODS_ID,A.COMM,A.TIME_STAMP,A.HAS_INTEGRAL '+
                '  from SAL_BOMORDER A  where A.TENANT_ID=:TENANT_ID and A.BOM_ID=:BOM_ID) jb  '+
                ' left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.BOM_USER=b.USER_ID ) jc  '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ) jd  '+
@@ -152,10 +120,6 @@ begin
                ' left outer join CA_SHOP_INFO e on je.TENANT_ID=e.TENANT_ID and je.SHOP_ID=e.SHOP_ID ) jf '+
                ' left outer join CA_DEPT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.DEPT_ID=f.DEPT_ID ';
   IsSQLUpdate := True;
-  //Str := 'insert into SAL_SALESORDER(TENANT_ID,SHOP_ID,DEPT_ID,SALES_ID,GLIDE_NO,SALES_DATE,SALES_TYPE,PLAN_DATE,CLIENT_ID,GUIDE_USER,CHK_DATE,CHK_USER,FROM_ID,FIG_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,PAY_DIBS,ADVA_MNY,PAY_A,PAY_B,PAY_C,'+
-  //    'PAY_D,PAY_E,PAY_F,PAY_G,PAY_H,PAY_I,PAY_J,BANK_ID,BANK_CODE,INTEGRAL,BARTER_INTEGRAL,REMARK,INVOICE_FLAG,TAX_RATE,COMM,CREA_DATE,CREA_USER,TIME_STAMP,LINKMAN,TELEPHONE,SEND_ADDR,SALES_STYLE,IC_CARDNO,UNION_ID,LOCUS_STATUS) '
-  //  + 'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:SALES_ID,:GLIDE_NO,:SALES_DATE,:SALES_TYPE,:PLAN_DATE,:CLIENT_ID,:GUIDE_USER,:CHK_DATE,:CHK_USER,:FROM_ID,:FIG_ID,:SALE_AMT,:SALE_MNY,:CASH_MNY,:PAY_ZERO,:PAY_DIBS,:ADVA_MNY,:PAY_A,:PAY_B,:PAY_C,:PAY_D,'+
-  //    ':PAY_E,:PAY_F,:PAY_G,:PAY_H,:PAY_I,:PAY_J,:BANK_ID,:BANK_CODE,:INTEGRAL,:BARTER_INTEGRAL,:REMARK,:INVOICE_FLAG,:TAX_RATE,''00'','+GetSysDateFormat(iDbType)+',:CREA_USER,'+GetTimeStamp(iDbType)+',:LINKMAN,:TELEPHONE,:SEND_ADDR,:SALES_STYLE,:IC_CARDNO,:UNION_ID,''1'')';
   Str := 'insert into SAL_BOMORDER(TENANT_ID,SHOP_ID,DEPT_ID,BOM_ID,GLIDE_NO,GIFT_CODE,GIFT_NAME,BARCODE,BOM_AMOUNT,RCK_AMOUNT,RTL_PRICE,BOM_DATE,BOM_USER,CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP,BOM_TYPE,BOM_STATUS,GODS_ID,HAS_INTEGRAL)'
       +'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:BOM_ID,:GLIDE_NO,:GIFT_CODE,:GIFT_NAME,:BARCODE,:BOM_AMOUNT,:RCK_AMOUNT,:RTL_PRICE,:BOM_DATE,:BOM_USER,:CHK_DATE,:CHK_USER,:REMARK,'
       + GetSysDateFormat(iDbType)+',:CREA_USER,''00'','+GetTimeStamp(iDbType)+',:BOM_TYPE,:BOM_STATUS,:GODS_ID,:HAS_INTEGRAL)';

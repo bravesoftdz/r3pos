@@ -300,6 +300,8 @@ begin
   CheckInvaid;
   if trim(edtDEPT_ID.AsString) = '' then Raise Exception.Create('所属部门不能为空');
   if trim(edtGIFT_NAME.text) = '' then Raise Exception.Create('礼盒名称不能为空');
+  if edtBOM_TYPE.ItemIndex<0 then Raise Exception.Create('礼盒类型不能为空'); 
+  if TRecord_(edtBOM_TYPE.Properties.Items.Objects[edtBOM_TYPE.ItemIndex]).FieldByName('CODE_ID').AsString='2' then Raise Exception.Create('暂不支持整装礼盒'); 
   //JP_Add
   if dbState = dsInsert then
   begin

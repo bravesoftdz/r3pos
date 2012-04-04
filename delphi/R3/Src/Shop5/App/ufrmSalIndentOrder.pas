@@ -81,6 +81,7 @@ type
     lblFeeOption: TLabel;
     N5: TMenuItem;
     useLvlPrice: TMenuItem;
+    Label21: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -189,6 +190,7 @@ uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrm
 
 procedure TfrmSalIndentOrder.ReadHeader;
 begin
+  Label21.Visible := (AObj.FieldbyName('ATTH_ID').AsString<>'');
 end;
 procedure TfrmSalIndentOrder.CancelOrder;
 begin
@@ -1923,6 +1925,8 @@ begin
         Factor.CancelBatch;
         Raise;
       end;
+     ReadHeader;
+     ShowOweInfo;
    finally
      HObj.Free;
      Params.Free;

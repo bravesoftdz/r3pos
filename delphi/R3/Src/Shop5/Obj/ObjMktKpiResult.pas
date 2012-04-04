@@ -49,13 +49,10 @@ begin
     rs := TZQuery.Create(nil);
 
     Str := 'update MKT_KPI_RESULT set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +
-    ' and PLAN_ID='''+Params.FindParam('PLAN_ID').asString+''' and KPI_ID='''+Params.FindParam('KPI_ID').asString+''' and CHK_DATE IS NOT NULL';
+    ' and KPI_YEAR='+Params.FindParam('KPI_YEAR').asString+'';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
-       Raise Exception.Create('没找到已审核当前经销商考核结果，是否被另一用户删除或反审核。')
-    else
-    if n>1 then
-       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+       Raise Exception.Create('没找到已审核当前经销商考核结果，是否被另一用户删除或反审核。');
     MSG := '反审核当前经销商考核结果成功。';
     Result := True;
   except
@@ -77,13 +74,10 @@ var Str:string;
 begin
   try
     Str := 'update MKT_KPI_RESULT set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+
-           ' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and PLAN_ID='''+Params.FindParam('PLAN_ID').asString+''' and KPI_ID='''+Params.FindParam('KPI_ID').asString+''' and CHK_DATE IS NULL';
+           ' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and KPI_YEAR='+Params.FindParam('KPI_YEAR').asString+'';
     n := AGlobal.ExecSQL(Str);
     if n=0 then
-       Raise Exception.Create('没找到待审核当前经销商考核结果，是否被另一用户删除或已审核。')
-    else
-    if n>1 then
-       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+       Raise Exception.Create('没找到待审核当前经销商考核结果，是否被另一用户删除或已审核。');
     Result := true;
     Msg := '审核当前经销商考核结果成功';
   except

@@ -88,6 +88,8 @@ type
     procedure SyncCloseForDay(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //促销单
     procedure SyncPriceOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
+    //礼盒单
+    procedure SyncBomOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //盘点单
     procedure SyncCheckOrder(tbName,KeyFields,ZClassName:string;KeyFlag:integer=0);
     //同步问答卷
@@ -257,6 +259,7 @@ begin
   26:result := 'TSyncSysReportList';
   27:result := 'TSyncICGlideInfo';
   29:result := 'TSyncSysDefine';
+  30:result := 'TSyncBomOrderList';
   else
     result := 'TSyncSingleTable';
   end;
@@ -512,6 +515,12 @@ begin
   n^.synFlag := 18;
   n^.KeyFlag := 0;
   n^.tbtitle := '促销单据';
+  FList.Add(n);
+  n^.tbname := 'SAL_BOMORDER';
+  n^.keyFields := 'TENANT_ID;BOM_ID';
+  n^.synFlag := 30;
+  n^.KeyFlag := 0;
+  n^.tbtitle := '礼盒单';
   FList.Add(n);
 
   new(n);
@@ -840,6 +849,7 @@ begin
       26:SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       27:SyncIcGlideOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       28:SyncCaLoginInfo(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      30:SyncBomOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.Position := i;
     end;
@@ -888,6 +898,7 @@ begin
       18:if not gbl then SyncPriceOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       25:if gbl then SyncCaModule(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       26:if gbl then SyncSysReport(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
+      30:if not gbl then SyncBomOrder(PSynTableInfo(FList[i])^.tbname,PSynTableInfo(FList[i])^.keyFields,GetFactoryName(PSynTableInfo(FList[i])),PSynTableInfo(FList[i])^.KeyFlag);
       end;
       frmLogo.Position := i;
     end;
@@ -3652,6 +3663,146 @@ begin
   if ShowMsgBox('你是否真要对本企业的所有门店账套进行解锁？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   Global.RemoteFactory.ExecSQL('delete from SYS_DEFINE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and DEFINE like ''DBKEY_%''');
   ShowMsgBox('解锁成功。','友情提示...',MB_OK+MB_ICONINFORMATION);
+end;
+
+procedure TSyncFactory.SyncBomOrder(tbName, KeyFields, ZClassName: string;
+  KeyFlag: integer);
+var
+  ls,cs_h,cs_d,rs_h,rs_d:TZQuery;
+begin
+  Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  Params.ParamByName('KEY_FLAG').AsInteger := KeyFlag;
+  Params.ParamByName('SHOP_ID').AsString := Global.SHOP_ID;
+  Params.ParamByName('TABLE_NAME').AsString := tbName;
+  Params.ParamByName('KEY_FIELDS').AsString := KeyFields;
+  Params.ParamByName('TIME_STAMP').Value := GetSynTimeStamp(tbName,Global.SHOP_ID);
+  Params.ParamByName('TIME_STAMP_NOCHG').AsInteger := 0;
+
+  if EndTimeStamp>0 then //启用截止时间，用EndTimeStamp
+     Params.ParamByName('SYN_TIME_STAMP').Value := EndTimeStamp
+  else
+     Params.ParamByName('SYN_TIME_STAMP').Value := SyncTimeStamp;
+  Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
+  //如果上次上报时间，大于等截止时间戳时，不需要同步
+  if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
+
+  LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := false;
+    SetTicket;
+    Global.RemoteFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'下载<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    //SyncRckClose(ls,'BOM_DATE',Global.LocalFactory);
+    SetTicket;
+    ls.First;
+    while not ls.Eof do
+       begin
+         frmLogo.ShowTitle := '正在下载<收入支出>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
+         //以服务器为优先下载
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('BOM_ID').AsString := ls.FieldbyName('BOM_ID').AsString;
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncBomOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncBomData',Params);
+           Global.RemoteFactory.OpenBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         cs_h.SyncDelta := rs_h.SyncDelta;
+         cs_d.SyncDelta := rs_d.SyncDelta;
+
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncBomOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncBomData',Params);
+           Global.LocalFactory.CommitBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    LogFile.AddLogFile(0,'下载<'+tbName+'>保存时长:'+inttostr(GetTicket));
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
+
+  //下传
+  ls := TZQuery.Create(nil);
+  cs_h := TZQuery.Create(nil);
+  rs_h := TZQuery.Create(nil);
+  cs_d := TZQuery.Create(nil);
+  rs_d := TZQuery.Create(nil);
+  try
+    Params.ParamByName('SYN_COMM').AsBoolean := SyncComm;
+    SetTicket;
+    Global.LocalFactory.Open(ls,ZClassName,Params);
+    LogFile.AddLogFile(0,'上传<'+tbName+'>打开时长:'+inttostr(GetTicket)+'  记录数:'+inttostr(ls.RecordCount));
+    //SyncRckClose(ls,'BOM_DATE',Global.RemoteFactory);
+    SetTicket;
+    ls.First;
+    while not ls.Eof do
+       begin
+         frmLogo.ShowTitle := '正在上传<收入支出>'+inttostr(ls.RecNo)+'笔';
+         Application.ProcessMessages;
+         cs_h.Close;
+         cs_d.Close;
+         rs_h.Close;
+         rs_d.Close;
+
+         Params.ParamByName('BOM_ID').AsString := ls.FieldbyName('BOM_ID').AsString;
+         Global.LocalFactory.BeginBatch;
+         try
+           Global.LocalFactory.AddBatch(cs_h,'TSyncBomOrder',Params);
+           Global.LocalFactory.AddBatch(cs_d,'TSyncBomData',Params);
+           Global.LocalFactory.OpenBatch;
+         except
+           Global.LocalFactory.CancelBatch;
+           Raise;
+         end;
+
+         rs_h.SyncDelta := cs_h.SyncDelta;
+         rs_d.SyncDelta := cs_d.SyncDelta;
+
+         Global.RemoteFactory.BeginBatch;
+         try
+           Global.RemoteFactory.AddBatch(rs_h,'TSyncBomOrder',Params);
+           Global.RemoteFactory.AddBatch(rs_d,'TSyncBomData',Params);
+           Global.RemoteFactory.CommitBatch;
+         except
+           Global.RemoteFactory.CancelBatch;
+           Raise;
+         end;
+
+         ls.Next;
+       end;
+    LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
+    SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
+  finally
+    ls.Free;
+    rs_h.Free;
+    cs_h.Free;
+    rs_d.Free;
+    cs_d.Free;
+  end;
 end;
 
 initialization

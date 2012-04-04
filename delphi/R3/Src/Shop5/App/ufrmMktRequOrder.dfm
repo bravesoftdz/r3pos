@@ -9,10 +9,10 @@ inherited frmMktRequOrder: TfrmMktRequOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 930
-    Height = 578
+    Width = 922
+    Height = 567
     inherited RzPanel2: TRzPanel
-      Width = 920
+      Width = 912
       Height = 107
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
@@ -351,16 +351,18 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 459
-      Width = 920
-      Height = 42
+      Top = 456
+      Width = 912
+      Height = 34
+      BorderInner = fsStatus
+      Color = clWindowFrame
       object Label1: TLabel
-        Left = 9
-        Top = 14
-        Width = 65
+        Left = 22
+        Top = 11
+        Width = 52
         Height = 12
         Alignment = taRightJustify
-        Caption = #24453#20998#25674#36820#21033
+        Caption = #20998#25674#36820#21033
         Font.Charset = GB2312_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -369,12 +371,12 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         ParentFont = False
       end
       object Label4: TLabel
-        Left = 212
-        Top = 14
-        Width = 78
+        Left = 203
+        Top = 11
+        Width = 39
         Height = 12
         Alignment = taRightJustify
-        Caption = #24453#20998#25674#24066#22330#36153
+        Caption = #24066#22330#36153
         Font.Charset = GB2312_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -383,12 +385,12 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         ParentFont = False
       end
       object Label7: TLabel
-        Left = 431
-        Top = 14
-        Width = 91
+        Left = 366
+        Top = 11
+        Width = 52
         Height = 12
         Alignment = taRightJustify
-        Caption = #24453#20998#25674#20215#26684#25903#25345
+        Caption = #20215#26684#25903#25345
         Font.Charset = GB2312_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -397,12 +399,12 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         ParentFont = False
       end
       object Label10: TLabel
-        Left = 663
-        Top = 14
-        Width = 91
+        Left = 542
+        Top = 11
+        Width = 52
         Height = 12
         Alignment = taRightJustify
-        Caption = #24453#20998#25674#20854#20182#36153#29992
+        Caption = #20854#20182#36153#29992
         Font.Charset = GB2312_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -410,38 +412,51 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object lblFeeOption: TLabel
+        Left = 716
+        Top = 12
+        Width = 72
+        Height = 12
+        Caption = '<<'#24453#20998#25674#20313#39069
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlue
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object edtKPI_MNY: TcxTextEdit
         Tag = 1
         Left = 83
-        Top = 10
-        Width = 121
+        Top = 7
+        Width = 102
         Height = 20
         TabOrder = 0
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtBUDG_MNY: TcxTextEdit
         Tag = 1
-        Left = 299
-        Top = 10
-        Width = 121
+        Left = 251
+        Top = 7
+        Width = 102
         Height = 20
         TabOrder = 1
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtAGIO_MNY: TcxTextEdit
         Tag = 1
-        Left = 531
-        Top = 10
-        Width = 121
+        Left = 427
+        Top = 7
+        Width = 102
         Height = 20
         TabOrder = 2
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtOTHR_MNY: TcxTextEdit
         Tag = 1
-        Left = 763
-        Top = 10
-        Width = 121
+        Left = 603
+        Top = 7
+        Width = 102
         Height = 20
         TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -449,8 +464,8 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 145
-      Width = 920
-      Height = 183
+      Width = 912
+      Height = 180
       Columns = <
         item
           EditButtons = <>
@@ -554,7 +569,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     end
     inherited pnlBarCode: TRzPanel [3]
       Top = 112
-      Width = 920
+      Width = 912
       inherited lblInput: TLabel
         Left = 583
         Visible = False
@@ -570,7 +585,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       object RzTab: TRzTabControl
         Left = 0
         Top = 1
-        Width = 920
+        Width = 912
         Height = 29
         Align = alTop
         TabHeight = 29
@@ -588,20 +603,20 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end
     end
     inherited stbHint: TRzPanel [4]
-      Top = 549
-      Width = 920
+      Top = 538
+      Width = 912
     end
     inherited rzHelp: TRzPanel [5]
-      Top = 501
-      Width = 920
+      Top = 490
+      Width = 912
     end
     inherited fndUNIT_ID: TcxComboBox [6]
       Top = 184
     end
     object DBGridEh2: TDBGridEh [7]
       Left = 5
-      Top = 328
-      Width = 920
+      Top = 325
+      Width = 912
       Height = 131
       Align = alBottom
       AllowedOperations = [alopUpdateEh]

@@ -9,28 +9,26 @@ inherited frmBondOrderList: TfrmBondOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 536
+    Width = 892
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 526
+      Width = 882
+      Height = 515
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 520
-        ActivePage = TabSheet2
-        TabIndex = 1
+        Width = 876
+        Height = 509
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #20445#35777#37329#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 493
+            Width = 874
+            Height = 482
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 99
               Align = alTop
               BorderOuter = fsNone
@@ -264,16 +262,16 @@ inherited frmBondOrderList: TfrmBondOrderList
             object Panel1: TPanel
               Left = 6
               Top = 105
-              Width = 870
-              Height = 382
+              Width = 862
+              Height = 371
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 380
+                Width = 860
+                Height = 369
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = RecvListDs
@@ -345,8 +343,8 @@ inherited frmBondOrderList: TfrmBondOrderList
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
-                    Title.Caption = #21512#35745#37329#39069
-                    Width = 61
+                    Title.Caption = #20445#35777#37329#39069
+                    Width = 66
                   end
                   item
                     Alignment = taRightJustify
@@ -393,8 +391,8 @@ inherited frmBondOrderList: TfrmBondOrderList
           object RzPanel1: TRzPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 493
+            Width = 874
+            Height = 482
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -403,7 +401,7 @@ inherited frmBondOrderList: TfrmBondOrderList
             object RzPanel7: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 123
               Align = alTop
               BorderOuter = fsNone
@@ -686,16 +684,16 @@ inherited frmBondOrderList: TfrmBondOrderList
             object Panel2: TPanel
               Left = 6
               Top = 129
-              Width = 870
-              Height = 358
+              Width = 862
+              Height = 347
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 356
+                Width = 860
+                Height = 345
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -809,16 +807,16 @@ inherited frmBondOrderList: TfrmBondOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image3: TImage
       Left = 374
       Width = 0
     end
     inherited Image14: TImage
-      Left = 880
+      Left = 872
     end
     inherited Image1: TImage
-      Left = 374
+      Left = 366
       Width = 506
     end
     inherited rzPanel5: TPanel

@@ -113,7 +113,7 @@ inherited frmBondOrder: TfrmBondOrder
                 Footer.ValueType = fvtSum
                 Footers = <>
                 ReadOnly = True
-                Title.Caption = #36134#27454#24635#39069
+                Title.Caption = #20445#35777#37329#39069
               end
               item
                 Alignment = taRightJustify

@@ -582,6 +582,30 @@ type
   public
     function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
   end;
+  //30 synFlag
+  TSyncBomOrderList=class(TZFactory)
+  public
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncBomOrder=class(TSyncSingleTable)
+  public
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+    //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
+  TSyncBomData=class(TSyncSingleTable)
+  public
+    //当使用此事件,Applied 返回true 时，以上三个检测函数无效，所有更数据库逻辑都由此函数完成。
+    function BeforeUpdateRecord(AGlobal:IdbHelp):Boolean;override;
+    //读取SelectSQL之前，通常用于处理 SelectSQL
+    function BeforeOpenRecord(AGlobal:IdbHelp):Boolean;override;
+     //记录行集新增检测函数，返回值是True 测可以新增当前记录
+    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
+  end;
 implementation
 
 { TSyncSingleTable }
@@ -3932,6 +3956,118 @@ begin
   end;
 end;
 
+{ TSyncBomOrderList }
+
+function TSyncBomOrderList.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str :=
+  'select TENANT_ID,BOM_ID,BOM_DATE from '+Params.ParambyName('TABLE_NAME').AsString+ ' where TENANT_ID=:TENANT_ID and TIME_STAMP>:TIME_STAMP';
+  if Params.ParamByName('SYN_COMM').AsBoolean then
+     Str := Str +ParseSQL(AGlobal.iDbType,' and substring(COMM,1,1)<>''1''');
+
+  if Params.ParamByName('END_TIME_STAMP').AsInteger>0 then
+     Str := Str +' and TIME_STAMP<=:END_TIME_STAMP';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncBomOrder }
+
+function TSyncBomOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var js:string;
+begin
+  case AGlobal.iDbType of
+  0:js := '+';
+  1,4,5:js := '||';
+  end;
+  AGlobal.ExecSQL(ParseSQL(AGlobal.iDbType,'update '+Params.ParambyName('TABLE_NAME').AsString+' set COMM=''1'''+js+'substring(COMM,2,1) where TENANT_ID=:TENANT_ID and BOM_ID=:BOM_ID'),self);
+end;
+
+function TSyncBomOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var
+  r:integer;
+  WasNull:boolean;
+  Comm:string;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SAL_BOMORDER';
+     end;
+  InitSQL(AGlobal,false);
+  Comm := RowAccessor.GetString(COMMIdx,WasNull);
+  if (Comm='00') and (Params.ParamByName('KEY_FLAG').AsInteger=0) then
+     begin
+       try
+         FillParams(InsertQuery);
+         AGlobal.ExecQuery(InsertQuery);
+       except
+         on E:Exception do
+            begin
+              if CheckUnique(E.Message) then
+                 begin
+                   FillParams(UpdateQuery);
+                   AGlobal.ExecQuery(UpdateQuery);
+                 end
+              else
+                 Raise;
+            end;
+       end;
+     end
+  else
+     begin
+       FillParams(UpdateQuery);
+       r := AGlobal.ExecQuery(UpdateQuery);
+       if r=0 then
+          begin
+            try
+              FillParams(InsertQuery);
+              AGlobal.ExecQuery(InsertQuery);
+            except
+               on E:Exception do
+                  begin
+                    if not CheckUnique(E.Message) then
+                       Raise;
+                  end;
+            end;
+          end;
+     end;
+end;
+
+function TSyncBomOrder.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from SAL_BOMORDER where TENANT_ID=:TENANT_ID and BOM_ID=:BOM_ID';
+  SelectSQL.Text := Str;
+end;
+
+{ TSyncBomData }
+
+function TSyncBomData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+begin
+  if not Init then
+     begin
+       Params.ParamByName('TABLE_NAME').AsString := 'SAL_BOMDATA';
+     end;
+  InitSQL(AGlobal);
+  FillParams(InsertQuery);
+  AGlobal.ExecQuery(InsertQuery);
+end;
+
+function TSyncBomData.BeforeOpenRecord(AGlobal: IdbHelp): Boolean;
+var
+  Str:string;
+begin
+  Str := 'select * from SAL_BOMDATA where TENANT_ID=:TENANT_ID and BOM_ID=:BOM_ID';
+  SelectSQL.Text := Str;
+end;
+
+function TSyncBomData.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
+begin
+  AGlobal.ExecSQL('delete from SAL_BOMDATA where TENANT_ID=:TENANT_ID and BOM_ID=:BOM_ID',Params);
+end;
+
 initialization
   RegisterClass(TSyncDeleteRckClose);
   RegisterClass(TSyncSingleTable);
@@ -3968,6 +4104,9 @@ initialization
   RegisterClass(TSyncPayOrderList);
   RegisterClass(TSyncPayOrder);
   RegisterClass(TSyncPayData);
+  RegisterClass(TSyncBomOrderList);
+  RegisterClass(TSyncBomOrder);
+  RegisterClass(TSyncBomData);
 
   RegisterClass(TSyncPriceOrderList);
   RegisterClass(TSyncPriceOrder);
@@ -4046,6 +4185,10 @@ finalization
   UnRegisterClass(TSyncPriceOrder);
   UnRegisterClass(TSyncPriceData);
   UnRegisterClass(TSyncPromShop);
+
+  UnRegisterClass(TSyncBomOrderList);
+  UnRegisterClass(TSyncBomOrder);
+  UnRegisterClass(TSyncBomData);
 
   UnRegisterClass(TSyncCheckOrderList);
   UnRegisterClass(TSyncCheckOrder);

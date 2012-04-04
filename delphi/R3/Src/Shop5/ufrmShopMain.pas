@@ -2079,6 +2079,7 @@ procedure TfrmShopMain.actfrmSalInvoiceListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4016,6 +4017,7 @@ procedure TfrmShopMain.actfrmKpiIndexExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4037,6 +4039,7 @@ procedure TfrmShopMain.actfrmMktPlanOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4058,6 +4061,7 @@ procedure TfrmShopMain.actfrmMktRequOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4079,6 +4083,7 @@ procedure TfrmShopMain.actfrmBondOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4100,6 +4105,7 @@ procedure TfrmShopMain.actfrmMktTaskOrderListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4121,6 +4127,7 @@ procedure TfrmShopMain.actfrmMktKpiResultExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4184,6 +4191,7 @@ procedure TfrmShopMain.actfrmMktKpiResult2Execute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4205,6 +4213,7 @@ procedure TfrmShopMain.actfrmMktKpiResult3Execute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
@@ -4331,6 +4340,7 @@ end;
 procedure TfrmShopMain.actfrmMktActiveListExecute(Sender: TObject);
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);

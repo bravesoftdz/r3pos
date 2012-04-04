@@ -861,6 +861,7 @@ begin
      MidCalc := UnitToCalc(GodId,KpiGoods.FieldByName('UNIT_ID').AsString);
      CurUnitNum := GodNum*MidCalc;
      MidCalc := UnitToCalc(GodId,ActiveRatio.FieldByName('UNIT_ID').AsString);
+     if MidCalc = 0 then MidCalc := 1;
      KpiDetail.FieldByName('ACTR_RATIO').AsFloat := ActiveRatio.FieldByName('ACTR_RATIO').AsFloat;
      KpiDetail.FieldByName('BUDG_KPI').AsFloat := CurUnitNum/MidCalc*ActiveRatio.FieldByName('ACTR_RATIO').AsFloat;
   end;
@@ -944,17 +945,9 @@ begin
   CdsGoods.Params.ParamByName('TENANT_ID').AsInteger := FKpiIndexInfo.TenantId;
   CdsGoods.Params.ParamByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
   CdsGoods.Params.ParamByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
+  CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := StartDate;
+  CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := EndDate;
 
-  if StartDate > EndDate then
-  begin
-     CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+StartDate;
-     CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := (FKpiIndexInfo.KpiYear+1)*10000+EndDate;
-  end
-  else
-  begin
-     CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+StartDate;
-     CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := FKpiIndexInfo.KpiYear*10000+EndDate;
-  end;
   Factor.Open(CdsGoods);
   if CdsGoods.IsEmpty then
      Result := 0
@@ -1186,6 +1179,7 @@ begin
     begin
       KpiDetail.Append;
       KpiDetail.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+      KpiDetail.FieldByName('TIMES_ID').AsString := KpiTimes.FieldByName('TIMES_ID').AsString;
       KpiDetail.FieldByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
       KpiDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       KpiDetail.FieldByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;

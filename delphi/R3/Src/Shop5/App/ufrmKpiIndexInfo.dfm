@@ -19,8 +19,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 103
       Width = 641
       Height = 284
-      ActivePage = TabSheet4
-      TabIndex = 2
+      ActivePage = TabSheet3
+      TabIndex = 1
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20
@@ -406,7 +406,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   Width = 80
                 end
                 item
-                  DisplayFormat = '00-00'
+                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'KPI_DATE1'
                   Footers = <>
@@ -415,7 +415,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   Width = 60
                 end
                 item
-                  DisplayFormat = '00-00'
+                  DisplayFormat = '0000-00-00'
                   EditButtons = <>
                   FieldName = 'KPI_DATE2'
                   Footers = <>

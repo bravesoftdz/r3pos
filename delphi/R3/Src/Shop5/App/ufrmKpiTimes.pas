@@ -100,17 +100,14 @@ begin
   FKpiDate1 := Value;
   if not IsFirst then Exit;
 
-  edtKPI_DATE1.Date := FnTime.fnStrtoDate(IntToStr(CurrentYear*10000+Value));
+  edtKPI_DATE1.Date := FnTime.fnStrtoDate(IntToStr(Value));
 end;
 
 procedure TfrmKpiTimes.SetKpiDate2(const Value: Integer);
 begin
   FKpiDate2 := Value;
   if not IsFirst then Exit;
-  if FKpiDate1 > FKpiDate2 then
-     edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr((CurrentYear+1)*10000+Value))
-  else
-     edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr(CurrentYear*10000+Value));
+  edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr(Value));
 end;
 
 procedure TfrmKpiTimes.SetKpiFlag(const Value: String);
@@ -156,8 +153,8 @@ begin
   RatioType := TRecord_(edtRATIO_TYPE.Properties.Items.Objects[edtRATIO_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString;
   KpiData := TRecord_(edtKPI_DATA.Properties.Items.Objects[edtKPI_DATA.ItemIndex]).FieldbyName('CODE_ID').AsString;
   KpiCalc := TRecord_(edtKPI_CALC.Properties.Items.Objects[edtKPI_CALC.ItemIndex]).FieldbyName('CODE_ID').AsString;;
-  KpiDate1 := StrToInt(FormatDateTime('YYYYMMDD',edtKPI_DATE1.Date)) mod 10000;
-  KpiDate2 := StrToInt(FormatDateTime('YYYYMMDD',edtKPI_DATE2.Date)) mod 10000;
+  KpiDate1 := StrToInt(FormatDateTime('YYYYMMDD',edtKPI_DATE1.Date));
+  KpiDate2 := StrToInt(FormatDateTime('YYYYMMDD',edtKPI_DATE2.Date));
   if edtKPI_FLAG.Checked then KpiFlag := '1' else KpiFlag := '0';
   if edtUSING_BRRW.Checked then UsingBrrw := '1' else UsingBrrw := '0';
   ModalResult := mrOk;

@@ -132,17 +132,9 @@ begin
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
-  if Column.FieldName = 'SEQNO' then
-    begin
-      ARect := Rect;
-      DBGridEh1.canvas.Brush.Color := $0000F2F2;
-      DBGridEh1.canvas.FillRect(ARect);
-      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(CdsResultList.RecNo)),length(Inttostr(CdsResultList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
-    end;
   if Column.FieldName = 'KPI_RATIO' then
      begin
       ARect := Rect;
-      DBGridEh1.canvas.Brush.Color := $0000F2F2;
       DBGridEh1.canvas.FillRect(ARect);
        case CdsResultList.FieldbyName('KPI_CALC').AsInteger of
        1,3:s := formatFloat('#0.00',Column.Field.AsFloat)+CdsResultList.FieldbyName('CALC_SHOW_NAME').asString;
@@ -150,6 +142,13 @@ begin
        end;
       DrawText(DBGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
      end;
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh1.canvas.Brush.Color := $0000F2F2;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(CdsResultList.RecNo)),length(Inttostr(CdsResultList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
 end;
 
 procedure TfrmMktKpiResultList.SetKpiYear(const Value: Integer);

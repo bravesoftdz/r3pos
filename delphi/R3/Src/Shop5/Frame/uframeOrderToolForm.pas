@@ -8,7 +8,8 @@ uses
   RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, cxControls,FR_Class,
   cxContainer, cxEdit, cxTextEdit, DB, ADODB, DBClient,uframeOrderForm,
   jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset;
-
+const
+  WM_JOIN_DATA=WM_USER+9998;
 type
   TframeOrderToolForm = class(TframeToolForm)
     ToolButton3: TToolButton;
@@ -77,6 +78,7 @@ type
     { Public declarations }
     procedure WMStatusChange(var Message: TMessage); message WM_STATUS_CHANGE;
     procedure WMExecOrder(var Message: TMessage); message WM_EXEC_ORDER;
+    procedure WMJoinData(var Message: TMessage); message WM_JOIN_DATA;
     procedure WndProc(var Message: TMessage); override;
     //必须重装
     function GetFormClass:TFormClass;virtual;
@@ -675,6 +677,17 @@ begin
   Freed := false;
   inherited;
 
+end;
+
+procedure TframeOrderToolForm.WMJoinData(var Message: TMessage);
+var
+  id,sid:string;
+begin
+  if Message.WParam=0 then Raise Exception.Create('传入单号不能为空');
+  id := StrPas(Pchar(Message.WParam));
+  if Message.LParam=0 then
+     sid := StrPas(Pchar(Message.LParam));
+  OpenForm(id,sid);
 end;
 
 end.

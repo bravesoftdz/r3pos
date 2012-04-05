@@ -1235,7 +1235,7 @@ begin
 
       //返利系数
       Inc(vCol);
-      KpiGrid.Cells[vCol,1]:='返利系数(%)';
+      KpiGrid.Cells[vCol,1]:='返利系数';
       KpiGrid.ColWidths[vCol] := 70;
       SetpRowValue(vCol,2,TimeID,'#');
     end else
@@ -1286,7 +1286,7 @@ var
   pRaito: TKpiRatio;
 begin
   result:=False;
-  for gCol:=4 to KpiGrid.ColCount-1 do
+  for gCol:=3 to KpiGrid.ColCount-1 do
   begin
     CellText:=KpiGrid.Cells[gCol,GridRow]; //当前值
     pRow:=pKpiRow(FKpiGridList.Items[GridRow-2]); //当前KpiGird行-2
@@ -1395,6 +1395,7 @@ var
   pCurRow: pKpiRow;
 begin
   result:=False;
+  if dbState=dsBrowse then Exit;
   if FKpiGridList.Count<=0 then Exit;
   //根据KpiGrid的循环:从第一条开始循环
   for gRow:=2 to KpiGrid.RowCount-1 do
@@ -1423,8 +1424,8 @@ begin
     AddSeqNo.Visible:=true;
     ItemRatio.Enabled:=true;
     AddSeqNo.Enabled:=true;
-    //前面6列显示
-    if FColIdx<4 then
+    //前面3列显示
+    if FColIdx<3 then
     begin
       ItemRatio.Enabled:=False;
       ItemRatio.Visible:=False;
@@ -1594,7 +1595,7 @@ begin
 
       for gRow:=CurRow-vRowCount to CurRow-1 do  //从上次行开始循环
       begin
-        //写入前面4列，只写当前等级的第一行:
+        //写入前面3列，只写当前等级的第一行:
         if gRow=(CurRow-vRowCount) then
         begin
           KpiGrid.Cells[0,gRow]:=IntToStr(CdsKpiLevel.RecNo); //序号
@@ -1603,7 +1604,7 @@ begin
           KpiGrid.MergeCells(1,gRow,1,vRowCount);
           //KpiGrid.Cells[2,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LVL_AMT').AsFloat);  //等级达标量
           //KpiGrid.MergeCells(2,gRow,1,vRowCount);
-          KpiGrid.Cells[2,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LOW_RATE').AsFloat)+'%'; //等级达标率
+          KpiGrid.Cells[2,gRow]:=FloatToStr(CdsKpiLevel.FieldByName('LOW_RATE').AsFloat)+'％'; //等级达标率
           KpiGrid.MergeCells(2,gRow,1,vRowCount);
         end;
         //写入时段列:第4列开始:
@@ -1636,6 +1637,11 @@ var
   pCurRow: pKpiRow;  //初始化标题时
 begin
   inherited;
+  if dbState = dsBrowse then
+  begin
+    CanEdit := false;
+    Exit;
+  end;
   if FKpiGridList.Count>0 then
   begin
     if (ARow>1) and (ACol>2) then
@@ -1655,7 +1661,7 @@ begin
         begin
           EmptyFlag:=False;
           TIMES_ID:=pBaseRow.Ratio[ACol].TIME_ID;
-          for i:=4 to KpiGrid.ColCount do //从第4列开始循环 到最后一列
+          for i:=3 to KpiGrid.ColCount do //从第4列开始循环 到最后一列
           begin
             if (trim(pBaseRow.Ratio[i].TIME_ID)=trim(TIMES_ID)) and (trim(pBaseRow.Ratio[i].TIME_ID)<>'') then //时段相同
             begin
@@ -1729,6 +1735,7 @@ var
   AryIdx: integer;
   newRow: pKpiRow;
 begin
+  if dbState = dsBrowse then Exit;
   LvlID:=GetKpiLevel_ID;
   if (LvlID<>'') and (FRowIdx>1) then
   begin
@@ -1837,6 +1844,7 @@ var
   RatioObj: TRecord_;
   Lvl_ID,TimID,Gods_ID: string;
 begin
+  if dbState = dsBrowse then Exit;
   if (FRowIdx-2>=0) and (FRowIdx-1<=FKpiGridList.Count) and (FColIdx>2) then
   begin
     pRow:=pKpiRow(FKpiGridList.Items[FRowIdx-2]);

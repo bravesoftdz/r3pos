@@ -962,7 +962,7 @@ begin
   CdsGoods.Params.ParamByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
   CdsGoods.Params.ParamByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
   CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+StartDate;
-  if StartDate > EndDate then
+  if StartDate < EndDate then
      CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := FKpiIndexInfo.KpiYear*10000+EndDate
   else
      CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := (FKpiIndexInfo.KpiYear+1)*10000+EndDate;
@@ -1124,7 +1124,7 @@ begin
     end;
 
     Date1 := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
-    if KpiTimes.FieldByName('KPI_DATE1').AsInteger > KpiTimes.FieldByName('KPI_DATE2').AsInteger then
+    if KpiTimes.FieldByName('KPI_DATE1').AsInteger < KpiTimes.FieldByName('KPI_DATE2').AsInteger then
        Date2 := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
     else
        Date2 := (FKpiIndexInfo.KpiYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
@@ -1213,7 +1213,7 @@ begin
       KpiDetail.FieldByName('KPI_YEAR').AsInteger := FKpiIndexInfo.KpiYear;
       
       KpiDetail.FieldByName('KPI_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
-      if KpiTimes.FieldByName('KPI_DATE1').AsInteger > KpiTimes.FieldByName('KPI_DATE2').AsInteger then
+      if KpiTimes.FieldByName('KPI_DATE1').AsInteger < KpiTimes.FieldByName('KPI_DATE2').AsInteger then
          KpiDetail.FieldByName('KPI_DATE2').AsInteger := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
       else
          KpiDetail.FieldByName('KPI_DATE2').AsInteger := (FKpiIndexInfo.KpiYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;

@@ -15,10 +15,10 @@ inherited frmClientKpiReport: TfrmClientKpiReport
       inherited RzPage: TRzPageControl
         Width = 668
         Height = 506
-        ActivePage = TabSheet5
+        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1121,7 +1121,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh3: TDBGridEh
-                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 652
@@ -2060,7 +2059,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh5: TDBGridEh
-                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 652

@@ -869,6 +869,22 @@ end;
 
 procedure TClientRebate.CalculationRebate;
 begin
+  KpiTimes.First;
+  while not KpiTimes.Eof do
+  begin
+    if KpiTimes.FieldByName('KPI_FLAG').AsString = '1' then
+    begin
+       KpiDetail.First;
+       while not KpiDetail.Eof do
+       begin
+         if KpiDetail.FieldByName('TIMES_ID').AsString = KpiTimes.FieldByName('TIMES_ID').AsString then
+            KpiDetail.Delete
+         else
+            KpiDetail.Next;
+       end;
+    end;
+    KpiTimes.Next;
+  end;
   if FKpiIndexInfo.KpiType = '1' then
      YearCheck
   else if FKpiIndexInfo.KpiType = '2' then

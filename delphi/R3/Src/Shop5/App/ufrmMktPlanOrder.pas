@@ -693,6 +693,7 @@ begin
   inherited;
   //if not ShopGlobal.GetChkRight('32600001',2) then Raise Exception.Create('你没有添加权限？');
   if not cdsDetail.Active then Exit;
+  if dbState = dsBrowse then Exit;
   if cdsKPI_ID.IsEmpty then  Raise Exception.Create('没有批量导入的指标？');
   if cdsDetail.State in [dsInsert,dsEdit] then cdsDetail.Post;
 

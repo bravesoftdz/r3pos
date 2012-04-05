@@ -14,11 +14,11 @@ uses
 
 type
   TfrmClientKpiReport = class(TframeBaseReport)
-    TabSheet3: TRzTabSheet;
     TabSheet4: TRzTabSheet;
+    TabSheet3: TRzTabSheet;
     TabSheet5: TRzTabSheet;
     RzLabel2: TRzLabel;
-    btnOk: TRzBitBtn;
+    btnDept: TRzBitBtn;
     dsadoReport2: TDataSource;
     RzPanel6: TRzPanel;
     dsadoReport3: TDataSource;
@@ -33,24 +33,24 @@ type
     adoReport5: TZQuery;
     Panel3: TPanel;
     RzPanel11: TRzPanel;
-    RzBitBtn2: TRzBitBtn;
+    BtnClient: TRzBitBtn;
     RzPanel12: TRzPanel;
-    DBGridEh4: TDBGridEh;
-    RzPanel9: TRzPanel;
-    BtnSort: TRzBitBtn;
-    RzPanel10: TRzPanel;
     DBGridEh3: TDBGridEh;
+    RzPanel9: TRzPanel;
+    BtnKpi: TRzBitBtn;
+    RzPanel10: TRzPanel;
+    DBGridEh4: TDBGridEh;
     TabSheet2: TRzTabSheet;
     RzPanel8: TRzPanel;
     Panel1: TPanel;
     RzPanel19: TRzPanel;
-    BtnDept: TRzBitBtn;
+    BtnRegion: TRzBitBtn;
     RzPanel20: TRzPanel;
     DBGridEh2: TDBGridEh;
     RzPanel14: TRzPanel;
     Panel6: TPanel;
     RzPanel15: TRzPanel;
-    BtnSaleSum: TRzBitBtn;
+    BtnSaleDetail: TRzBitBtn;
     RzPanel21: TRzPanel;
     DBGridEh5: TDBGridEh;
     fndP1_YEAR1: TcxComboBox;
@@ -79,29 +79,29 @@ type
     RzLabel1: TRzLabel;
     Label8: TLabel;
     Label10: TLabel;
-    fndP3_CUST_TYPE: TcxComboBox;
-    fndP3_YEAR1: TcxComboBox;
-    RzLabel8: TRzLabel;
-    fndP3_KPI_ID: TzrComboBoxList;
-    fndP3_CUST_VALUE: TzrComboBoxList;
-    fndP3_YEAR2: TcxComboBox;
-    Label13: TLabel;
-    Label14: TLabel;
-    fndP3_CLIENT_ID: TzrComboBoxList;
-    fndP3_DEPT_ID: TzrComboBoxList;
-    RzLabel4: TRzLabel;
-    Label9: TLabel;
-    Label11: TLabel;
     fndP4_CUST_TYPE: TcxComboBox;
     fndP4_YEAR1: TcxComboBox;
-    RzLabel5: TRzLabel;
+    RzLabel8: TRzLabel;
     fndP4_KPI_ID: TzrComboBoxList;
     fndP4_CUST_VALUE: TzrComboBoxList;
     fndP4_YEAR2: TcxComboBox;
-    Label12: TLabel;
-    Label15: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
     fndP4_CLIENT_ID: TzrComboBoxList;
     fndP4_DEPT_ID: TzrComboBoxList;
+    RzLabel4: TRzLabel;
+    Label9: TLabel;
+    Label11: TLabel;
+    fndP3_CUST_TYPE: TcxComboBox;
+    fndP3_YEAR1: TcxComboBox;
+    RzLabel5: TRzLabel;
+    fndP3_KPI_ID: TzrComboBoxList;
+    fndP3_CUST_VALUE: TzrComboBoxList;
+    fndP3_YEAR2: TcxComboBox;
+    Label12: TLabel;
+    Label15: TLabel;
+    fndP3_CLIENT_ID: TzrComboBoxList;
+    fndP3_DEPT_ID: TzrComboBoxList;
     RzLabel9: TRzLabel;
     Label16: TLabel;
     Label19: TLabel;
@@ -132,11 +132,11 @@ type
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
+    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
-    procedure DBGridEh4GetFooterParams(Sender: TObject; DataCol,
+    procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
@@ -146,16 +146,16 @@ type
       State: TGridDrawState; var Text: String);
   private
     procedure AddYearCBxItemsList(SetCbx: TcxComboBox);
-    //返回考核基础表
-    function GetKPIBaseTab(strWhere,ClientCnd: string; IsTable: Boolean=True): string;
+    //返回考核结果表:
+    function GetKpiResultTab: string;
     //按部门考核汇总表
     function GetDeptSQL(chk:boolean=true): string;   //1111
     //按管理考核汇总表
     function GetGroupSQL(chk:boolean=true): string;  //2222
-    //按门店考核汇总表
-    function GetKPISQL(chk:boolean=true): string;    //3333
     //按客户考核汇总表
-    function GetClientSQL(chk:boolean=true): string;  //4444
+    function GetClientSQL(chk:boolean=true): string; //3333
+    //按考核指标汇总表
+    function GetKPISQL(chk:boolean=true): string;    //4444
     //按客户考核明细流水表
     function GetGlideSQL(chk:boolean=true): string;   //5555
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
@@ -213,56 +213,7 @@ begin
   CalcFooter:=TCalcFooter.Create;                            
 end;
 
-function TfrmClientKpiReport.GetKPIBaseTab(strWhere, ClientCnd: string; IsTable: Boolean): string;
-begin
-  if trim(ClientCnd)='' then
-  begin
-    result:=
-      'select A.*,'+
-      ' B.KPI_ID as KPI_ID,'+      //计划明细表考核ID
-      ' B.AMOUNT as AMOUNT,'+      //计划明细表数量
-      ' B.AMONEY as AMONEY,'+      //计划明细表金额
-      ' B.BOND_MNY as BOND_MNY,'+  //计划明细表保证金
-      ' B.REMARK as REMARK,'+      //计划明细表备注
-      ' C.IDX_TYPE as IDX_TYPE,'+  //指标类型
-      ' C.KPI_CALC as KPI_CALC,'+  //指标计算标准
-      ' C.BEGIN_DATE as KPI_BEGIN_DATE,'+ //考核开始日期
-      ' C.END_DATE as KPI_END_DATE,'+     //考核结束日期
-      ' C.CHK_DATE as KPI_CHK_DATE,'+     //考核审核日期
-      ' C.CHK_USER as KPI_CHK_USER,'+     //考核审核人
-      ' C.FISH_AMT as KPI_FISH_AMT,'+     //考核完成数量
-      ' C.FISH_MNY as KPI_FISH_MNY,'+     //考核完成金额
-      ' C.KPI_MNY as KPI_MNY,'+           //考核结果(元)
-      ' D.WDW_MNY as WDW_MNY  '+          //考核提取反利
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
-      ' C.TENANT_ID=D.TENANT_ID and C.KPI_YEAR=D.KPI_YEAR and C.KPI_ID=D.KPI_ID and C.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere;
-  end else
-  begin
-    result:=
-      'select A.*,'+
-      ' B.KPI_ID as KPI_ID,'+      //计划明细表考核ID
-      ' B.AMOUNT as AMOUNT,'+      //计划明细表数量
-      ' B.AMONEY as AMONEY,'+      //计划明细表金额
-      ' B.BOND_MNY as BOND_MNY,'+  //计划明细表保证金
-      ' B.REMARK as REMARK,'+      //计划明细表备注
-      ' C.IDX_TYPE as IDX_TYPE,'+  //指标类型
-      ' C.KPI_CALC as KPI_CALC,'+  //指标计算标准
-      ' C.BEGIN_DATE as KPI_BEGIN_DATE,'+ //考核开始日期
-      ' C.END_DATE as KPI_END_DATE,'+     //考核结束日期
-      ' C.CHK_DATE as KPI_CHK_DATE,'+     //考核审核日期
-      ' C.CHK_USER as KPI_CHK_USER,'+     //考核审核人
-      ' C.FISH_AMT as KPI_FISH_AMT,'+     //考核完成数量
-      ' C.FISH_MNY as KPI_FISH_MNY,'+     //考核完成金额
-      ' C.KPI_MNY as KPI_MNY,'+           //考核结果(元)
-      ' E.WDW_MNY as WDW_MNY  '+          //考核提取反利
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.KPI_ID=C.KPI_ID and '+
-      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
-      ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
-      ' A.PLAN_TYPE=''1'' '+strWhere+ClientCnd;
-  end;
-end;
+
 
 function TfrmClientKpiReport.GetDeptSQL(chk: boolean): string;
 var
@@ -312,46 +263,35 @@ begin
     strSql:=
       'select '+
       ' A.TENANT_ID as TENANT_ID,'+
-      ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
       ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(D.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT D '+
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C '+
       ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-      ' C.TENANT_ID=D.TENANT_ID and C.KPI_YEAR=D.KPI_YEAR and C.KPI_ID=D.KPI_ID and C.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
-      ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
+      ' A.PLAN_TYPE=''1'' '+strWhere+' '+
+      ' group by A.TENANT_ID,A.KPI_YEAR,A.DEPT_ID';
   end else
   begin
     strSql:=
       'select '+
       ' A.TENANT_ID as TENANT_ID,'+
-      ' C.KPI_ID as KPI_ID,'+
       ' A.KPI_YEAR as KPI_YEAR,'+
       ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
       ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
       ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
       ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
-      ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
-      ' A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
       ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
   end;
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+
-      '(case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
       '(JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
-     ' MKT.UNIT_NAME as UNIT_NAME,'+
-     ' DEPT.DEPT_NAME as DEPT_NAME '+
+     ' isnull(DEPT.DEPT_NAME,''无'') as DEPT_NAME '+
      ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
      ' left outer join (select DEPT_ID,DEPT_NAME from CA_DEPT_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')DEPT '+
      ' on K.DEPT_ID=DEPT.DEPT_ID '+
      ' order by K.DEPT_ID '
@@ -404,27 +344,21 @@ begin
   strSql:=
     'select '+
     ' A.TENANT_ID,'+
-    ' C.KPI_ID as KPI_ID,'+
     ' A.KPI_YEAR as KPI_YEAR,'+
     ' D.REGION_ID as REGION_ID,'+
-    ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-    ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
     ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-    ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+    ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
     ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
-    ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
-    ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,D.REGION_ID';
+    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+    ' group by A.TENANT_ID,A.KPI_YEAR,D.REGION_ID';
 
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+                                 
-     ' (case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
      ' (JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
-     '  MKT.UNIT_NAME as UNIT_NAME,'+
      '  isnull(Area.CODE_NAME,''无'') as CODE_NAME '+
      ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0)Area '+
      ' on K.REGION_ID=Area.CODE_ID '+
      ' order by K.REGION_ID '
@@ -458,7 +392,7 @@ begin
       end;
     2: begin //按KPI汇总表
         if adoReport3.Active then adoReport3.Close;
-        strSql := GetKPISQL;
+        strSql := GetClientSQL;
 
         if strSql='' then Exit;
         adoReport3.SQL.Text := strSql;
@@ -466,7 +400,7 @@ begin
       end;
     3: begin //按客户汇总表
         if adoReport4.Active then adoReport4.Close;
-        strSql := GetClientSQL;
+        strSql := GetKPISQL;
 
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
@@ -484,7 +418,7 @@ begin
   end;
 end;
 
-function TfrmClientKpiReport.GetKPISQL(chk:boolean=true): string;
+function TfrmClientKpiReport.GetCLIENTSQL(chk:boolean=true): string;
 var
   strSql,strWhere,strCnd,KpiTab: string;
 begin
@@ -527,56 +461,28 @@ begin
     end;
   end;
 
-  if trim(StrCnd)='' then
-  begin
-    strSql:=
-      'select '+
-      ' A.TENANT_ID,'+
-      ' C.KPI_ID as KPI_ID,'+
-      ' A.KPI_YEAR as KPI_YEAR,'+
-      ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
-      ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(D.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
-      ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-      ' C.TENANT_ID=D.TENANT_ID and C.KPI_YEAR=D.KPI_YEAR and C.KPI_ID=D.KPI_ID and C.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+' '+
-      ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
-  end else
-  begin
-    strSql:=
-      'select '+
-      ' A.TENANT_ID,'+
-      ' C.KPI_ID as KPI_ID,'+
-      ' A.KPI_YEAR as KPI_YEAR,'+
-      ' A.DEPT_ID as DEPT_ID,'+
-      ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-      ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
-      ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-      ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
-      ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-      ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
-      ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
-      ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
-  end;
-  Result :=ParseSQL(Factor.iDbType,
-     'select K.*,'+
-     ' (case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
-     ' (JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
-     ' MKT.KPI_NAME as KPI_NAME,'+
-     ' MKT.UNIT_NAME as UNIT_NAME '+
-     ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
-     ' order by K.KPI_ID '
-     );
+  strSql:=
+    'select '+
+    ' A.TENANT_ID,'+
+    ' A.KPI_YEAR as KPI_YEAR,'+
+    ' A.CLIENT_ID as CLIENT_ID,'+
+    ' D.CLIENT_NAME as CLIENT_NAME,'+
+    ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
+    ' sum(C.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+    ' sum(B.BOND_MNY) as BOND_MNY,'+  //保证金额
+    ' sum(C.KPI_MNY - C.WDW_MNY) as JY_MNY  '+   //结余金额
+    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
+    ' A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+    ' group by A.TENANT_ID,A.KPI_YEAR,A.CLIENT_ID,D.CLIENT_NAME ';
+
+  Result :=ParseSQL(Factor.iDbType, strSql);
 end;
 
-function TfrmClientKpiReport.GetCLIENTSQL(chk:boolean=true): string;
+function TfrmClientKpiReport.GetKPISQL(chk:boolean=true): string;
 var
-  strSql,strWhere,strCnd,KpiTab: string;
+  strSql,strWhere,strCnd,KpiTab,KPI_R_TAB: string;
 begin
   if  fndP4_YEAR1.ItemIndex=-1 then Raise Exception.Create('所属年份不能为空...');
   if (fndP4_YEAR1.ItemIndex<>-1)and(fndP4_YEAR2.ItemIndex<>-1)and(fndP4_YEAR1.Text>fndP4_YEAR2.Text) then Raise Exception.Create('开始年份不能大于结束年份...');
@@ -593,7 +499,7 @@ begin
   if trim(fndP4_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
   //考核指标:
-  if fndP4_KPI_ID.AsString<>'' then
+  if fndP3_KPI_ID.AsString<>'' then
     strWhere:=strWhere+' and C.KPI_ID='''+fndP4_KPI_ID.AsString+''' ';
   //客户名称:
   if fndP4_CLIENT_ID.AsString<>'' then
@@ -617,40 +523,62 @@ begin
     end;
   end;
 
-  strSql:=
-    'select '+
-    ' A.TENANT_ID,'+
-    ' C.KPI_ID as KPI_ID,'+
-    ' A.KPI_YEAR as KPI_YEAR,'+
-    ' A.CLIENT_ID as CLIENT_ID,'+
-    ' D.CLIENT_NAME as CLIENT_NAME,'+
-    ' sum(case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-    ' sum(case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
-    ' sum(C.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
-    ' sum(E.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
-    ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
-    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
-    ' C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
-    ' A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
-    ' group by A.TENANT_ID,C.KPI_ID,A.KPI_YEAR,A.CLIENT_ID,D.CLIENT_NAME ';
+  //考核结果表:
+  KPI_R_TAB:=GetKpiResultTab; // 
 
+  if trim(StrCnd)='' then
+  begin
+    strSql:=
+      'select '+
+      ' A.TENANT_ID,'+
+      ' R.KPI_ID as KPI_ID,'+
+      ' A.KPI_YEAR as KPI_YEAR,'+
+      ' A.DEPT_ID as DEPT_ID,'+
+      ' sum(case when R.KPI_DATA in (''1'',''4'') then (B.AMOUNT/R.CalcValue) else B.AMONEY end) as PLAN_AMT,'+     //计划量
+      ' sum(case when R.KPI_DATA in (''1'',''4'') then R.FISH_AMT else R.FISH_MNY end) as KPI_AMT,'+  //完成量
+      ' sum(R.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
+      ' sum(R.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,('+KPI_R_TAB+')R '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and '+
+      ' A.TENANT_ID=R.TENANT_ID and B.KPI_ID=R.KPI_ID and '+
+      ' A.PLAN_TYPE=''1'' '+strWhere+' '+
+      ' group by A.TENANT_ID,R.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
+  end else
+  begin
+    strSql:=
+      'select '+
+      ' A.TENANT_ID,'+
+      ' R.KPI_ID as KPI_ID,'+
+      ' A.KPI_YEAR as KPI_YEAR,'+
+      ' A.DEPT_ID as DEPT_ID,'+
+      ' sum(case when R.KPI_DATA in (''1'',''4'') then (B.AMOUNT/R.CalcValue) else B.AMONEY end) as PLAN_AMT,'+     //计划量
+      ' sum(case when R.KPI_DATA in (''1'',''4'') then R.FISH_AMT else R.FISH_MNY end) as KPI_AMT,'+  //完成量
+      ' sum(R.KPI_MNY) as JT_MNY,'+     //考核结果(元)[计提金额]
+      ' sum(R.WDW_MNY) as REQU_MNY,'+   //考核提取反利[申领金额]
+      ' sum(B.BOND_MNY) as BOND_MNY '+  //保证金额
+      ' from MKT_PLANORDER A,MKT_PLANDATA B,('+KPI_R_TAB+')R,VIW_CUSTOMER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and '+
+      ' A.TENANT_ID=R.TENANT_ID and B.KPI_ID=R.KPI_ID and  '+
+      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and '+
+      ' A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+      ' group by A.TENANT_ID,R.KPI_ID,A.KPI_YEAR,A.DEPT_ID';
+  end;
   Result :=ParseSQL(Factor.iDbType,
      'select K.*,'+
      ' (case when K.PLAN_AMT<>0 then cast(K.KPI_AMT/(K.PLAN_AMT*1.00) as decimal(18,6)) else 0.00 end)*100.00 as KPI_RATE,'+     //完成率
      ' (JT_MNY - REQU_MNY) as JY_MNY,'+   //结余金额
+     ' MKT.KPI_NAME as KPI_NAME,'+
      ' MKT.UNIT_NAME as UNIT_NAME '+
      ' from ('+strSql+')K '+
      ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
-     //' left outer join (select KPI_ID,KPI_LV from MKT_KPI_OPTION where TENANT_ID='+InttoStr(Global.TENANT_ID)+') OP on K.KPI_ID=OP.KPI_ID '+
-     ' order by K.CLIENT_ID '
+     ' order by K.KPI_ID '
      );
 end;
 
 function TfrmClientKpiReport.GetGlideSQL(chk:boolean=true): string;
 var
-  strSql,strWhere,strCnd,KpiTab: string;
+  strSql,strWhere,strCnd,KpiTab,KPI_R_TAB: string;
 begin
   if  fndP5_YEAR1.ItemIndex=-1 then Raise Exception.Create('所属年份不能为空...');
   if (fndP5_YEAR1.ItemIndex<>-1) and (fndP5_YEAR2.ItemIndex<>-1)and(fndP5_YEAR1.Text>fndP5_YEAR2.Text) then Raise Exception.Create('开始年份不能大于结束年份...');
@@ -668,7 +596,7 @@ begin
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
   //考核指标:
   if fndP5_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and C.KPI_ID='''+fndP5_KPI_ID.AsString+''' ';
+    strWhere:=strWhere+' and R.KPI_ID='''+fndP5_KPI_ID.AsString+''' ';
   //客户名称:
   if fndP5_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP5_CLIENT_ID.AsString+''' ';
@@ -694,27 +622,29 @@ begin
     end;
   end;
 
+  KPI_R_TAB:=GetKpiResultTab;
+
   strSql:=
     'select '+
     ' A.TENANT_ID,'+
     ' A.GLIDE_NO as GLIDE_NO,'+
-    ' C.KPI_ID as KPI_ID,'+
+    ' R.KPI_ID as KPI_ID,'+
     ' A.KPI_YEAR as KPI_YEAR,'+
     ' A.DEPT_ID as DEPT_ID,'+
-    '(C.KPI_YEAR*10000+C.KPI_DATE1) as BEGIN_DATE,'+ //考核开始日期
-    '(case when C.KPI_DATE1>C.KPI_DATE2 then ((C.KPI_YEAR+1)*10000+C.KPI_DATE2) else (C.KPI_YEAR*10000+C.KPI_DATE2) end) as END_DATE,'+
-    ' (case when C.KPI_CALC=''2'' then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-    ' (case when C.KPI_CALC=''2'' then C.FISH_AMT else C.FISH_MNY end) as KPI_AMT,'+  //完成量
-    ' C.KPI_MNY as JT_MNY,'+      //考核结果(元)[计提金额]
-    ' E.WDW_MNY as REQU_MNY,'+    //考核提取反利[申领金额]
+    ' R.KPI_DATE1 as BEGIN_DATE,'+ //考核开始日期
+    ' R.KPI_DATE2 as END_DATE,'+
+    ' (case when R.KPI_DATA in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+    ' (case when R.KPI_DATA in (''1'',''4'') then R.FISH_AMT else R.FISH_MNY end) as KPI_AMT,'+  //完成量
+    ' R.KPI_MNY as JT_MNY,'+      //考核结果(元)[计提金额]
+    ' R.WDW_MNY as REQU_MNY,'+    //考核提取反利[申领金额]
     ' B.BOND_MNY as BOND_MNY,'+   //保证金额
-    ' E.REMARK as REMARK,'+
-    ' E.CREA_DATE as CREA_DATE,'+
-    ' E.CREA_USER as CREA_USER,'+
+    ' R.REMARK as REMARK,'+
+    ' R.CREA_DATE as CREA_DATE,'+
+    ' R.CREA_USER as CREA_USER,'+
     ' D.CLIENT_NAME as CLIENT_NAME '+
-    ' from MKT_PLANORDER A,MKT_PLANDATA B,MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT E,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
-    '  C.TENANT_ID=E.TENANT_ID and C.KPI_YEAR=E.KPI_YEAR and C.KPI_ID=E.KPI_ID and C.CLIENT_ID=E.CLIENT_ID and '+
+    ' from MKT_PLANORDER A,MKT_PLANDATA B,('+KPI_R_TAB+')R,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and '+
+    ' B.TENANT_ID=R.TENANT_ID and B.KPI_ID=R.KPI_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' ';
 
   Result :=ParseSQL(Factor.iDbType,
@@ -728,18 +658,18 @@ begin
     );
 end;
 
-procedure TfrmClientKpiReport.DBGridEh4DblClick(Sender: TObject);
+procedure TfrmClientKpiReport.DBGridEh3DblClick(Sender: TObject);
 begin
-  if adoReport4.IsEmpty then Exit;
-  fndP5_YEAR1.ItemIndex:=fndP4_YEAR1.ItemIndex;          //1.所属年度
-  fndP5_YEAR2.ItemIndex:=fndP4_YEAR2.ItemIndex;
-  fndP5_CUST_TYPE.ItemIndex:=fndP4_CUST_TYPE.ItemIndex;  //2.客户群组类型
-  Copy_ParamsValue(fndP4_CUST_VALUE,fndP5_CUST_VALUE);   //  客户群组
-  Copy_ParamsValue(fndP4_KPI_ID,fndP5_KPI_ID);           //3.考核指标
-  Copy_ParamsValue(fndP4_DEPT_ID,fndP5_DEPT_ID);           //4.考核指标
-  fndP5_CLIENT_ID.KeyValue:=adoReport4.fieldbyName('CLIENT_ID').AsString;  //5.客户名称
-  fndP5_CLIENT_ID.Text:=adoReport4.fieldbyName('CLIENT_NAME').AsString;
-  RzPage.ActivePageIndex:=4;
+  if adoReport3.IsEmpty then Exit;
+  fndP4_YEAR1.ItemIndex:=fndP3_YEAR1.ItemIndex;    //1.所属年份
+  fndP4_YEAR2.ItemIndex:=fndP3_YEAR2.ItemIndex;
+  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;   //2.客户群组类型
+  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);    //  客户群组
+  Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID);          //3.客户
+  Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID);      //4.客户
+  fndP4_CLIENT_ID.KeyValue:=adoReport3.fieldbyName('CLIENT_ID').AsString;  //5.客户名称
+  fndP4_CLIENT_ID.Text:=adoReport3.fieldbyName('CLIENT_NAME').AsString;
+  RzPage.ActivePageIndex:=3;
   actFindExecute(nil);
 end;
 
@@ -788,7 +718,7 @@ begin
 end;
 
 
-procedure TfrmClientKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
+procedure TfrmClientKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 var
@@ -904,19 +834,19 @@ begin
   actFindExecute(nil);
 end;
 
-procedure TfrmClientKpiReport.DBGridEh3DblClick(Sender: TObject);
+procedure TfrmClientKpiReport.DBGridEh4DblClick(Sender: TObject);
 begin
   inherited;
-  if adoReport3.IsEmpty then Exit;
-  fndP4_YEAR1.ItemIndex:=fndP3_YEAR1.ItemIndex;    //1.所属年份
-  fndP4_YEAR2.ItemIndex:=fndP3_YEAR2.ItemIndex;
-  fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;   //2.客户群组类型
-  Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);    //  客户群组
-  Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID);          //3.客户
-  Copy_ParamsValue(fndP3_CLIENT_ID,fndP4_CLIENT_ID);      //4.客户
-  fndP4_KPI_ID.KeyValue:=adoReport3.fieldbyName('KPI_ID').AsString;  //5.考核指标
-  fndP4_KPI_ID.Text:=adoReport3.fieldbyName('KPI_NAME').AsString;
-  RzPage.ActivePageIndex:=3;
+  if adoReport4.IsEmpty then Exit;
+  fndP5_YEAR1.ItemIndex:=fndP4_YEAR1.ItemIndex;          //1.所属年度
+  fndP5_YEAR2.ItemIndex:=fndP4_YEAR2.ItemIndex;
+  fndP5_CUST_TYPE.ItemIndex:=fndP4_CUST_TYPE.ItemIndex;  //2.客户群组类型
+  Copy_ParamsValue(fndP4_CUST_VALUE,fndP5_CUST_VALUE);   //  客户群组
+  Copy_ParamsValue(fndP4_KPI_ID,fndP5_KPI_ID);           //3.考核指标
+  Copy_ParamsValue(fndP4_DEPT_ID,fndP5_DEPT_ID);           //4.考核指标
+  fndP5_KPI_ID.KeyValue:=adoReport4.fieldbyName('KPI_ID').AsString;  //5.考核指标
+  fndP5_KPI_ID.Text:=adoReport4.fieldbyName('KPI_NAME').AsString;
+  RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
 end;
 
@@ -953,7 +883,7 @@ begin
   end; 
 end;
 
-procedure TfrmClientKpiReport.DBGridEh3GetFooterParams(Sender: TObject;
+procedure TfrmClientKpiReport.DBGridEh4GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
@@ -1042,6 +972,40 @@ begin
   finally
     Rs.Free;
   end;
+end;
+
+
+function TfrmClientKpiReport.GetKpiResultTab: string;
+var
+  str,UnitCalc: string;
+begin
+  //考核结果表:
+  UnitCalc:=
+    '(case when K.UNIT_ID=G.SMALL_UNITS then cast(isnull(G.SMALLTO_CALC,1.0)*1.00 as decimal(18,3)) '+
+         ' when K.UNIT_ID=G.BIG_UNITS then cast(isnull(G.BIGTO_CALC,1.0)*1.00 as decimal(18,3)) '+
+         ' else 1.0 end)';
+  Str:=
+    'select '+
+    ' D.TENANT_ID as TENANT_ID,'+
+    ' D.KPI_ID as KPI_ID,'+
+    ' C.KPI_DATA as KPI_DATA,'+
+    ' C.FISH_AMT as FISH_AMT,'+
+    ' C.FISH_MNY as FISH_MNY,'+
+    ' C.KPI_MNY as KPI_MNY,'+
+    ' D.WDW_MNY as WDW_MNY,'+
+    ' (case when C.KPI_CALC=''2'' then '+UnitCalc+' else 1.0 end)as CalcValue, '+  //计划量
+    ' D.REMARK as REMARK,'+   //备注
+    ' D.CREA_DATE as CREA_DATE,'+
+    ' D.CREA_USER as CREA_USER,'+
+    ' C.KPI_DATE1 as KPI_DATE1,'+
+    ' C.KPI_DATE2 as KPI_DATE2 '+
+    ' from MKT_KPI_RESULT_LIST C,MKT_KPI_RESULT D,MKT_KPI_GOODS K,VIW_GOODSINFO G '+
+    ' where C.TENANT_ID=D.TENANT_ID and C.KPI_YEAR=D.KPI_YEAR and C.KPI_ID=D.KPI_ID and C.CLIENT_ID=D.CLIENT_ID and '+
+    ' C.TENANT_ID=K.TENANT_ID and C.GODS_ID=K.GODS_ID and '+
+    ' C.TENANT_ID=G.TENANT_ID and C.GODS_ID=G.GODS_ID and '+
+    ' C.TENANT_ID='+IntToStr(Global.TENANT_ID);
+    
+  Result :=ParseSQL(Factor.iDbType,Str);
 end;
 
 end.

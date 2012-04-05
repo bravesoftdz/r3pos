@@ -1,6 +1,6 @@
 inherited frmClientKpiReport: TfrmClientKpiReport
-  Left = 192
-  Top = 106
+  Left = 230
+  Top = 103
   Width = 891
   Height = 586
   Caption = #23458#25143#36820#21033#25253#34920
@@ -77,7 +77,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Height = 12
                   Caption = #23458#25143#21517#31216
                 end
-                object btnOk: TRzBitBtn
+                object btnDept: TRzBitBtn
                   Left = 509
                   Top = 40
                   Width = 67
@@ -336,45 +336,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Width = 153
                     end
                     item
-                      EditButtons = <>
-                      FieldName = 'UNIT_NAME'
-                      Footers = <>
-                      Title.Caption = #21333#20301
-                      Width = 36
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #31614#32422#37327
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'KPI_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #23436#25104#37327
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00%'
-                      EditButtons = <>
-                      FieldName = 'KPI_RATE'
-                      Footer.ValueType = fvtStaticText
-                      Footers = <>
-                      Title.Caption = #23436#25104#29575
-                      Width = 60
-                    end
-                    item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
@@ -498,7 +459,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Height = 12
                   Caption = #23458#25143#21517#31216
                 end
-                object BtnDept: TRzBitBtn
+                object BtnRegion: TRzBitBtn
                   Left = 526
                   Top = 41
                   Width = 67
@@ -804,43 +765,434 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Width = 133
                     end
                     item
-                      EditButtons = <>
-                      FieldName = 'UNIT_NAME'
-                      Footers = <>
-                      Title.Caption = #21333#20301
-                      Width = 31
-                    end
-                    item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'PLAN_AMT'
+                      FieldName = 'JT_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #31614#32422#37327
+                      Title.Caption = #36820#21033#37329#39069
                       Width = 84
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'KPI_AMT'
+                      FieldName = 'REQU_MNY'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#37327
+                      Title.Caption = #30003#39046#37329#39069
                       Width = 84
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.00%'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'KPI_RATE'
-                      Footer.ValueType = fvtStaticText
+                      FieldName = 'JY_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #23436#25104#29575
-                      Width = 60
+                      Title.Caption = #32467#20313#37329#39069
+                      Width = 84
+                    end
+                    item
+                      Alignment = taRightJustify
+                      DisplayFormat = '#0.00'
+                      EditButtons = <>
+                      FieldName = 'BOND_MNY'
+                      Footer.DisplayFormat = '#0.00'
+                      Footer.ValueType = fvtSum
+                      Footers = <>
+                      Title.Caption = #22266#23450#20445#35777#37329
+                      Width = 84
+                    end>
+                end
+              end
+            end
+          end
+        end
+        object TabSheet3: TRzTabSheet
+          Color = clCream
+          Caption = #23458#25143#36820#21033#27719#24635#34920
+          object RzPanel13: TRzPanel
+            Left = 0
+            Top = 0
+            Width = 666
+            Height = 479
+            Align = alClient
+            BorderOuter = fsNone
+            BorderWidth = 5
+            TabOrder = 0
+            object Panel3: TPanel
+              Left = 5
+              Top = 5
+              Width = 656
+              Height = 469
+              Align = alClient
+              BevelOuter = bvNone
+              Color = clWhite
+              TabOrder = 0
+              object RzPanel11: TRzPanel
+                Left = 0
+                Top = 0
+                Width = 656
+                Height = 77
+                Align = alTop
+                BorderOuter = fsGroove
+                BorderSides = [sdLeft, sdTop, sdRight]
+                TabOrder = 0
+                object RzLabel4: TRzLabel
+                  Left = 24
+                  Top = 12
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #25152#23646#24180#20221
+                end
+                object Label9: TLabel
+                  Left = 24
+                  Top = 34
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #32771#26680#25351#26631
+                end
+                object Label11: TLabel
+                  Left = 24
+                  Top = 57
+                  Width = 48
+                  Height = 12
+                  Caption = #23458#25143#20998#32452
+                end
+                object RzLabel5: TRzLabel
+                  Left = 168
+                  Top = 12
+                  Width = 12
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #33267
+                end
+                object Label12: TLabel
+                  Left = 287
+                  Top = 34
+                  Width = 48
+                  Height = 12
+                  Caption = #25152#23646#37096#38376
+                end
+                object Label15: TLabel
+                  Left = 287
+                  Top = 57
+                  Width = 48
+                  Height = 12
+                  Caption = #23458#25143#21517#31216
+                end
+                object BtnClient: TRzBitBtn
+                  Left = 513
+                  Top = 34
+                  Width = 67
+                  Height = 32
+                  Action = actFind
+                  Caption = #26597#35810
+                  Color = clSilver
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = [fsBold]
+                  HighlightColor = 16026986
+                  HotTrack = True
+                  HotTrackColor = 3983359
+                  HotTrackColorType = htctActual
+                  ParentFont = False
+                  TextShadowColor = clWhite
+                  TextShadowDepth = 4
+                  TabOrder = 7
+                  TextStyle = tsRaised
+                  ThemeAware = False
+                  ImageIndex = 12
+                  NumGlyphs = 2
+                  Spacing = 5
+                end
+                object fndP3_CUST_TYPE: TcxComboBox
+                  Left = 77
+                  Top = 52
+                  Width = 73
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #34892#25919#22320#21306
+                    #23458#25143#31561#32423
+                    #23458#25143#20998#31867
+                    #23458#25143#32676#20307)
+                  TabOrder = 4
+                end
+                object fndP3_YEAR1: TcxComboBox
+                  Left = 77
+                  Top = 8
+                  Width = 80
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  TabOrder = 0
+                end
+                object fndP3_KPI_ID: TzrComboBoxList
+                  Tag = -1
+                  Left = 77
+                  Top = 30
+                  Width = 193
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 2
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'KPI_ID;KPI_NAME'
+                  KeyField = 'KPI_ID'
+                  ListField = 'KPI_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'KPI_NAME'
+                      Footers = <>
+                      Title.Caption = #25351#26631#21517#31216
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+                end
+                object fndP3_CUST_VALUE: TzrComboBoxList
+                  Tag = -1
+                  Left = 151
+                  Top = 52
+                  Width = 119
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 5
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_ID'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = [zbNew, zbClear, zbFind]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP3_YEAR2: TcxComboBox
+                  Left = 190
+                  Top = 8
+                  Width = 80
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  TabOrder = 1
+                end
+                object fndP3_CLIENT_ID: TzrComboBoxList
+                  Tag = -1
+                  Left = 340
+                  Top = 52
+                  Width = 156
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 6
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
+                  KeyField = 'CLIENT_ID'
+                  ListField = 'CLIENT_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CLIENT_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CLIENT_SPELL'
+                      Footers = <>
+                      Title.Caption = #20195#30721
+                      Width = 20
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbClear]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndP3_DEPT_ID: TzrComboBoxList
+                  Left = 340
+                  Top = 30
+                  Width = 156
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = False
+                  TabOrder = 3
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'DEPT_NAME;DEPT_SPELL'
+                  KeyField = 'DEPT_ID'
+                  ListField = 'DEPT_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'DEPT_NAME'
+                      Footers = <>
+                      Title.Caption = #21517#31216
+                    end>
+                  DropWidth = 185
+                  DropHeight = 180
+                  ShowTitle = True
+                  AutoFitColWidth = True
+                  ShowButton = False
+                  LocateStyle = lsDark
+                  Buttons = []
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                  RangeField = 'DEPT_TYPE'
+                  RangeValue = '1'
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
+                end
+              end
+              object RzPanel12: TRzPanel
+                Left = 0
+                Top = 77
+                Width = 656
+                Height = 392
+                Align = alClient
+                BorderOuter = fsGroove
+                Color = clWhite
+                TabOrder = 1
+                object DBGridEh3: TDBGridEh
+                  Tag = 1
+                  Left = 2
+                  Top = 2
+                  Width = 652
+                  Height = 388
+                  Align = alClient
+                  AllowedOperations = []
+                  BorderStyle = bsNone
+                  Color = clWhite
+                  Ctl3D = True
+                  DataSource = dsadoReport3
+                  Flat = True
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  FooterColor = clWhite
+                  FooterFont.Charset = GB2312_CHARSET
+                  FooterFont.Color = clWindowText
+                  FooterFont.Height = -12
+                  FooterFont.Name = #23435#20307
+                  FooterFont.Style = []
+                  FooterRowCount = 1
+                  FrozenCols = 3
+                  ImeName = #26497#21697#20116#31508#36755#20837#27861
+                  Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+                  OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+                  ParentCtl3D = False
+                  ParentFont = False
+                  ReadOnly = True
+                  RowHeight = 20
+                  SumList.Active = True
+                  TabOrder = 0
+                  TitleFont.Charset = GB2312_CHARSET
+                  TitleFont.Color = clWindowText
+                  TitleFont.Height = -12
+                  TitleFont.Name = #23435#20307
+                  TitleFont.Style = [fsBold]
+                  TitleHeight = 22
+                  UseMultiTitle = True
+                  IsDrawNullRow = False
+                  CurrencySymbol = #65509
+                  DecimalNumber = 2
+                  DigitalNumber = 12
+                  OnDblClick = DBGridEh3DblClick
+                  OnDrawColumnCell = DBGridEh1DrawColumnCell
+                  OnGetCellParams = DBGridEh1GetCellParams
+                  OnGetFooterParams = DBGridEh3GetFooterParams
+                  Columns = <
+                    item
+                      Alignment = taCenter
+                      EditButtons = <>
+                      FieldName = 'SEQNO'
+                      Footers = <>
+                      Title.Caption = #24207#21495
+                      Width = 30
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'KPI_YEAR'
+                      Footers = <>
+                      Title.Caption = #24180#24230
+                      Width = 46
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'CLIENT_NAME'
+                      Footer.ValueType = fvtCount
+                      Footers = <>
+                      Title.Caption = #23458#25143#21517#31216
+                      Width = 185
                     end
                     item
                       Alignment = taRightJustify
@@ -891,7 +1243,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             end
           end
         end
-        object TabSheet3: TRzTabSheet
+        object TabSheet4: TRzTabSheet
           Color = clCream
           Caption = #36820#21033#25351#26631#27719#24635#34920
           object RzPanel6: TRzPanel
@@ -958,7 +1310,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 Height = 12
                 Caption = #23458#25143#21517#31216
               end
-              object BtnSort: TRzBitBtn
+              object BtnKpi: TRzBitBtn
                 Left = 518
                 Top = 36
                 Width = 67
@@ -985,7 +1337,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 NumGlyphs = 2
                 Spacing = 5
               end
-              object fndP3_CUST_TYPE: TcxComboBox
+              object fndP4_CUST_TYPE: TcxComboBox
                 Left = 77
                 Top = 52
                 Width = 73
@@ -999,7 +1351,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   #23458#25143#32676#20307)
                 TabOrder = 4
               end
-              object fndP3_YEAR1: TcxComboBox
+              object fndP4_YEAR1: TcxComboBox
                 Left = 77
                 Top = 8
                 Width = 80
@@ -1011,7 +1363,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   #31649#29702#32676#32452)
                 TabOrder = 0
               end
-              object fndP3_KPI_ID: TzrComboBoxList
+              object fndP4_KPI_ID: TzrComboBoxList
                 Tag = -1
                 Left = 77
                 Top = 30
@@ -1047,7 +1399,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 MultiSelect = False
                 ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
-              object fndP3_CUST_VALUE: TzrComboBoxList
+              object fndP4_CUST_VALUE: TzrComboBoxList
                 Tag = -1
                 Left = 151
                 Top = 52
@@ -1089,7 +1441,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
-              object fndP3_YEAR2: TcxComboBox
+              object fndP4_YEAR2: TcxComboBox
                 Left = 190
                 Top = 8
                 Width = 80
@@ -1101,7 +1453,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   #31649#29702#32676#32452)
                 TabOrder = 1
               end
-              object fndP3_CLIENT_ID: TzrComboBoxList
+              object fndP4_CLIENT_ID: TzrComboBoxList
                 Tag = -1
                 Left = 340
                 Top = 52
@@ -1143,7 +1495,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
-              object fndP3_DEPT_ID: TzrComboBoxList
+              object fndP4_DEPT_ID: TzrComboBoxList
                 Left = 340
                 Top = 30
                 Width = 156
@@ -1190,7 +1542,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               BorderOuter = fsGroove
               Color = clWhite
               TabOrder = 1
-              object DBGridEh3: TDBGridEh
+              object DBGridEh4: TDBGridEh
                 Left = 2
                 Top = 2
                 Width = 652
@@ -1200,7 +1552,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 BorderStyle = bsNone
                 Color = clWhite
                 Ctl3D = True
-                DataSource = dsadoReport3
+                DataSource = dsadoReport4
                 Flat = True
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clWindowText
@@ -1235,10 +1587,10 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnDblClick = DBGridEh3DblClick
+                OnDblClick = DBGridEh4DblClick
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
-                OnGetFooterParams = DBGridEh3GetFooterParams
+                OnGetFooterParams = DBGridEh4GetFooterParams
                 Columns = <
                   item
                     Alignment = taCenter
@@ -1350,475 +1702,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             end
           end
         end
-        object TabSheet4: TRzTabSheet
-          Color = clCream
-          Caption = #23458#25143#36820#21033#27719#24635#34920
-          object RzPanel13: TRzPanel
-            Left = 0
-            Top = 0
-            Width = 666
-            Height = 479
-            Align = alClient
-            BorderOuter = fsNone
-            BorderWidth = 5
-            TabOrder = 0
-            object Panel3: TPanel
-              Left = 5
-              Top = 5
-              Width = 656
-              Height = 469
-              Align = alClient
-              BevelOuter = bvNone
-              Color = clWhite
-              TabOrder = 0
-              object RzPanel11: TRzPanel
-                Left = 0
-                Top = 0
-                Width = 656
-                Height = 77
-                Align = alTop
-                BorderOuter = fsGroove
-                BorderSides = [sdLeft, sdTop, sdRight]
-                TabOrder = 0
-                object RzLabel4: TRzLabel
-                  Left = 24
-                  Top = 12
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #25152#23646#24180#20221
-                end
-                object Label9: TLabel
-                  Left = 24
-                  Top = 34
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #32771#26680#25351#26631
-                end
-                object Label11: TLabel
-                  Left = 24
-                  Top = 57
-                  Width = 48
-                  Height = 12
-                  Caption = #23458#25143#20998#32452
-                end
-                object RzLabel5: TRzLabel
-                  Left = 168
-                  Top = 12
-                  Width = 12
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #33267
-                end
-                object Label12: TLabel
-                  Left = 287
-                  Top = 34
-                  Width = 48
-                  Height = 12
-                  Caption = #25152#23646#37096#38376
-                end
-                object Label15: TLabel
-                  Left = 287
-                  Top = 57
-                  Width = 48
-                  Height = 12
-                  Caption = #23458#25143#21517#31216
-                end
-                object RzBitBtn2: TRzBitBtn
-                  Left = 513
-                  Top = 34
-                  Width = 67
-                  Height = 32
-                  Action = actFind
-                  Caption = #26597#35810
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 7
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  ImageIndex = 12
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-                object fndP4_CUST_TYPE: TcxComboBox
-                  Left = 77
-                  Top = 52
-                  Width = 73
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #34892#25919#22320#21306
-                    #23458#25143#31561#32423
-                    #23458#25143#20998#31867
-                    #23458#25143#32676#20307)
-                  TabOrder = 4
-                end
-                object fndP4_YEAR1: TcxComboBox
-                  Left = 77
-                  Top = 8
-                  Width = 80
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
-                  TabOrder = 0
-                end
-                object fndP4_KPI_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 77
-                  Top = 30
-                  Width = 193
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 2
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'KPI_ID;KPI_NAME'
-                  KeyField = 'KPI_ID'
-                  ListField = 'KPI_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'KPI_NAME'
-                      Footers = <>
-                      Title.Caption = #25351#26631#21517#31216
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-                end
-                object fndP4_CUST_VALUE: TzrComboBoxList
-                  Tag = -1
-                  Left = 151
-                  Top = 52
-                  Width = 119
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 5
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
-                  KeyField = 'CODE_ID'
-                  ListField = 'CODE_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CODE_ID'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = [zbNew, zbClear, zbFind]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP4_YEAR2: TcxComboBox
-                  Left = 190
-                  Top = 8
-                  Width = 80
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #34892#25919#22320#21306
-                    #31649#29702#32676#32452)
-                  TabOrder = 1
-                end
-                object fndP4_CLIENT_ID: TzrComboBoxList
-                  Tag = -1
-                  Left = 340
-                  Top = 52
-                  Width = 156
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 6
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
-                  KeyField = 'CLIENT_ID'
-                  ListField = 'CLIENT_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'CLIENT_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CLIENT_SPELL'
-                      Footers = <>
-                      Title.Caption = #20195#30721
-                      Width = 20
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = True
-                  LocateStyle = lsDark
-                  Buttons = [zbClear]
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                end
-                object fndP4_DEPT_ID: TzrComboBoxList
-                  Left = 340
-                  Top = 30
-                  Width = 156
-                  Height = 20
-                  Properties.AutoSelect = False
-                  Properties.Buttons = <
-                    item
-                      Default = True
-                    end>
-                  Properties.ReadOnly = False
-                  TabOrder = 3
-                  InGrid = False
-                  KeyValue = Null
-                  FilterFields = 'DEPT_NAME;DEPT_SPELL'
-                  KeyField = 'DEPT_ID'
-                  ListField = 'DEPT_NAME'
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      FieldName = 'DEPT_NAME'
-                      Footers = <>
-                      Title.Caption = #21517#31216
-                    end>
-                  DropWidth = 185
-                  DropHeight = 180
-                  ShowTitle = True
-                  AutoFitColWidth = True
-                  ShowButton = False
-                  LocateStyle = lsDark
-                  Buttons = []
-                  DropListStyle = lsFixed
-                  MultiSelect = False
-                  RangeField = 'DEPT_TYPE'
-                  RangeValue = '1'
-                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-                end
-              end
-              object RzPanel12: TRzPanel
-                Left = 0
-                Top = 77
-                Width = 656
-                Height = 392
-                Align = alClient
-                BorderOuter = fsGroove
-                Color = clWhite
-                TabOrder = 1
-                object DBGridEh4: TDBGridEh
-                  Tag = 1
-                  Left = 2
-                  Top = 2
-                  Width = 652
-                  Height = 388
-                  Align = alClient
-                  AllowedOperations = []
-                  BorderStyle = bsNone
-                  Color = clWhite
-                  Ctl3D = True
-                  DataSource = dsadoReport4
-                  Flat = True
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clWindowText
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  FooterColor = clWhite
-                  FooterFont.Charset = GB2312_CHARSET
-                  FooterFont.Color = clWindowText
-                  FooterFont.Height = -12
-                  FooterFont.Name = #23435#20307
-                  FooterFont.Style = []
-                  FooterRowCount = 1
-                  FrozenCols = 3
-                  ImeName = #26497#21697#20116#31508#36755#20837#27861
-                  Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-                  OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
-                  ParentCtl3D = False
-                  ParentFont = False
-                  ReadOnly = True
-                  RowHeight = 20
-                  SumList.Active = True
-                  TabOrder = 0
-                  TitleFont.Charset = GB2312_CHARSET
-                  TitleFont.Color = clWindowText
-                  TitleFont.Height = -12
-                  TitleFont.Name = #23435#20307
-                  TitleFont.Style = [fsBold]
-                  TitleHeight = 22
-                  UseMultiTitle = True
-                  IsDrawNullRow = False
-                  CurrencySymbol = #65509
-                  DecimalNumber = 2
-                  DigitalNumber = 12
-                  OnDblClick = DBGridEh4DblClick
-                  OnDrawColumnCell = DBGridEh1DrawColumnCell
-                  OnGetCellParams = DBGridEh1GetCellParams
-                  OnGetFooterParams = DBGridEh4GetFooterParams
-                  Columns = <
-                    item
-                      Alignment = taCenter
-                      EditButtons = <>
-                      FieldName = 'SEQNO'
-                      Footers = <>
-                      Title.Caption = #24207#21495
-                      Width = 30
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'KPI_YEAR'
-                      Footers = <>
-                      Title.Caption = #24180#24230
-                      Width = 46
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CLIENT_NAME'
-                      Footer.ValueType = fvtCount
-                      Footers = <>
-                      Title.Caption = #23458#25143#21517#31216
-                      Width = 185
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'UNIT_NAME'
-                      Footers = <>
-                      Title.Caption = #21333#20301
-                      Width = 31
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'PLAN_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #31614#32422#37327
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'KPI_AMT'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #23436#25104#37327
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00%'
-                      EditButtons = <>
-                      FieldName = 'KPI_RATE'
-                      Footer.ValueType = fvtStaticText
-                      Footers = <>
-                      Title.Caption = #23436#25104#29575
-                      Width = 60
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'JT_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #36820#21033#37329#39069
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'REQU_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #30003#39046#37329#39069
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'JY_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#37329#39069
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'BOND_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #22266#23450#20445#35777#37329
-                      Width = 84
-                    end>
-                end
-              end
-            end
-          end
-        end
         object TabSheet5: TRzTabSheet
           Color = clCream
           Caption = #23458#25143#36820#21033#26126#32454#34920
@@ -1902,7 +1785,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   Alignment = taRightJustify
                   Caption = #23548' '#36141' '#21592
                 end
-                object BtnSaleSum: TRzBitBtn
+                object BtnSaleDetail: TRzBitBtn
                   Left = 505
                   Top = 38
                   Width = 67
@@ -2330,7 +2213,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     item
                       EditButtons = <>
                       FieldName = 'GLIDE_NO'
-                      Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21333#21495
                       Width = 80

@@ -1,4 +1,4 @@
-unit ufrmMktRequReport;
+unit ufrmMktGodsReport;
 
 interface
 
@@ -13,33 +13,23 @@ uses
   ufrmDateControl, Buttons, DBGrids;
   
 type
-  TfrmMktRequReport = class(TframeBaseReport)
-    TabSheet4: TRzTabSheet;
+  TfrmMktGodsReport = class(TframeBaseReport)
     TabSheet3: TRzTabSheet;
-    TabSheet5: TRzTabSheet;
+    TabSheet4: TRzTabSheet;
     RzLabel2: TRzLabel;
     btnOk: TRzBitBtn;
     dsadoReport2: TDataSource;
-    RzPanel6: TRzPanel;
     dsadoReport3: TDataSource;
     RzPanel13: TRzPanel;
     dsadoReport4: TDataSource;
-    dsadoReport5: TDataSource;
-    Label7: TLabel;
-    fndP1_KPI_ID: TzrComboBoxList;
     adoReport2: TZQuery;
     adoReport3: TZQuery;
     adoReport4: TZQuery;
-    adoReport5: TZQuery;
     Panel3: TPanel;
     RzPanel11: TRzPanel;
     BtnKpi: TRzBitBtn;
     RzPanel12: TRzPanel;
     DBGridEh3: TDBGridEh;
-    RzPanel9: TRzPanel;
-    BtnClient: TRzBitBtn;
-    RzPanel10: TRzPanel;
-    DBGridEh4: TDBGridEh;
     TabSheet2: TRzTabSheet;
     RzPanel8: TRzPanel;
     Panel1: TPanel;
@@ -50,9 +40,9 @@ type
     RzPanel14: TRzPanel;
     Panel6: TPanel;
     RzPanel15: TRzPanel;
-    BtnSaleSum: TRzBitBtn;
+    BtnSaleDetail: TRzBitBtn;
     RzPanel21: TRzPanel;
-    DBGridEh5: TDBGridEh;
+    DBGridEh4: TDBGridEh;
     RzLabel6: TRzLabel;
     Label17: TLabel;
     fndP1_DEPT_ID: TzrComboBoxList;
@@ -61,74 +51,61 @@ type
     fndP1_CUST_VALUE: TzrComboBoxList;
     Label44: TLabel;
     fndP1_CLIENT_ID: TzrComboBoxList;
-    Label3: TLabel;
     Label4: TLabel;
     fndP2_CUST_TYPE: TcxComboBox;
-    fndP2_KPI_ID: TzrComboBoxList;
     fndP2_CUST_VALUE: TzrComboBoxList;
     Label5: TLabel;
     Label6: TLabel;
     fndP2_CLIENT_ID: TzrComboBoxList;
     fndP2_DEPT_ID: TzrComboBoxList;
-    Label8: TLabel;
-    Label10: TLabel;
-    fndP4_CUST_TYPE: TcxComboBox;
-    fndP4_KPI_ID: TzrComboBoxList;
-    fndP4_CUST_VALUE: TzrComboBoxList;
-    Label13: TLabel;
-    Label14: TLabel;
-    fndP4_CLIENT_ID: TzrComboBoxList;
-    fndP4_DEPT_ID: TzrComboBoxList;
-    Label9: TLabel;
     Label11: TLabel;
     fndP3_CUST_TYPE: TcxComboBox;
-    fndP3_KPI_ID: TzrComboBoxList;
     fndP3_CUST_VALUE: TzrComboBoxList;
     Label12: TLabel;
     Label15: TLabel;
     fndP3_CLIENT_ID: TzrComboBoxList;
     fndP3_DEPT_ID: TzrComboBoxList;
-    Label16: TLabel;
     Label19: TLabel;
-    fndP5_CUST_TYPE: TcxComboBox;
-    fndP5_KPI_ID: TzrComboBoxList;
-    fndP5_CUST_VALUE: TzrComboBoxList;
+    fndP4_CUST_TYPE: TcxComboBox;
+    fndP4_CUST_VALUE: TzrComboBoxList;
     Label20: TLabel;
     Label21: TLabel;
-    fndP5_CLIENT_ID: TzrComboBoxList;
-    fndP5_DEPT_ID: TzrComboBoxList;
+    fndP4_CLIENT_ID: TzrComboBoxList;
+    fndP4_DEPT_ID: TzrComboBoxList;
     Label22: TLabel;
-    fndP5_GUIDE_USER: TzrComboBoxList;
+    fndP4_GUIDE_USER: TzrComboBoxList;
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
     P2_D1: TcxDateEdit;
     P2_D2: TcxDateEdit;
     RzLabel3: TRzLabel;
     RzLabel7: TRzLabel;
-    P4_D1: TcxDateEdit;
-    P4_D2: TcxDateEdit;
-    RzLabel1: TRzLabel;
-    RzLabel8: TRzLabel;
     P3_D2: TcxDateEdit;
     RzLabel4: TRzLabel;
     P3_D1: TcxDateEdit;
     RzLabel5: TRzLabel;
-    P5_D1: TcxDateEdit;
-    P5_D2: TcxDateEdit;
+    P4_D1: TcxDateEdit;
+    P4_D2: TcxDateEdit;
     RzLabel9: TRzLabel;
     RzLabel10: TRzLabel;
     P1_DateControl: TfrmDateControl;
     P2_DateControl: TfrmDateControl;
-    P4_DateControl: TfrmDateControl;
     P3_DateControl: TfrmDateControl;
-    P5_DateControl: TfrmDateControl;
+    P4_DateControl: TfrmDateControl;
+    Label33: TLabel;
+    fndP1_GODS_ID: TzrComboBoxList;
+    Label3: TLabel;
+    fndP2_GODS_ID: TzrComboBoxList;
+    Label7: TLabel;
+    fndP3_GODS_ID: TzrComboBoxList;
+    Label9: TLabel;
+    fndP4_GODS_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure fndP1_TYPE_IDPropertiesChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh2DblClick(Sender: TObject);
-    procedure DBGridEh4DblClick(Sender: TObject);
     procedure DBGridEh3GetFooterParams(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; AFont: TFont;
       var Background: TColor; var Alignment: TAlignment;
@@ -159,11 +136,9 @@ type
     //按管理考核汇总表
     function GetGroupSQL(chk:boolean=true): string;  //2222
     //按客户考核汇总表
-    function GetClientSQL(chk:boolean=true): string;  //4444
-    //按门店考核汇总表
-    function GetKPISQL(chk:boolean=true): string;    //3333
+    function GetClientSQL(chk:boolean=true): string;  //3333
     //按客户考核明细流水表
-    function GetGlideSQL(chk:boolean=true): string;   //5555
+    function GetGlideSQL(chk:boolean=true): string;   //4444
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
     //设置Page分页显示:（IsGroupReport是否分组[区域、门店]）
     procedure SetRzPageActivePage(IsGroupReport: Boolean=true); override;
@@ -181,7 +156,7 @@ uses
   uShopGlobal,uFnUtil, uShopUtil, uGlobal, uCtrlUtil, ObjCommon;
 {$R *.dfm}
 
-procedure TfrmMktRequReport.FormCreate(Sender: TObject);
+procedure TfrmMktGodsReport.FormCreate(Sender: TObject);
 begin
   //必须放在继承之前取数
   DoCreateKPIDataSet('1');
@@ -207,16 +182,10 @@ begin
   P4_DateControl.StartDateControl:=P4_D1;
   P4_DateControl.EndDateControl:=P4_D2;
 
-  P5_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
-  P5_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
-  P5_DateControl.StartDateControl:=P5_D1;
-  P5_DateControl.EndDateControl:=P5_D2;
-
   fndP1_CLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
   fndP2_CLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
   fndP3_CLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
   fndP4_CLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
-  fndP5_CLIENT_ID.DataSet:=Global.GetZQueryFromName('PUB_CUSTOMER');
 
   TDbGridEhSort.InitForm(self,false);
   SetRzPageActivePage; //设置PzPage.Activepage
@@ -232,7 +201,7 @@ begin
 
 end;
 
-function TfrmMktRequReport.GetDeptSQL(chk: boolean): string;
+function TfrmMktGodsReport.GetDeptSQL(chk: boolean): string;
 var
   strSql,strWhere,strCnd,KpiTab: string;
 begin
@@ -254,8 +223,8 @@ begin
   if trim(fndP1_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
   //考核指标:
-  if fndP1_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and B.KPI_ID='''+fndP1_KPI_ID.AsString+''' ';
+  if fndP1_GODS_ID.AsString<>'' then
+    strWhere:=strWhere+' and B.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
   //客户名称:
   if fndP1_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP1_CLIENT_ID.AsString+''' ';
@@ -287,9 +256,8 @@ begin
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
       ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUDATA B '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID '+
-      '  '+strWhere+' ';
+      ' from MKT_REQUORDER A,MKT_REQUSHARE B '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID '+strWhere+' ';
   end else
   begin
     strSql:=
@@ -299,7 +267,7 @@ begin
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
       ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUDATA B,VIW_CUSTOMER D '+
+      ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_CUSTOMER D '+
       ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
       ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
   end;
@@ -319,7 +287,7 @@ begin
      );
 end;
 
-function TfrmMktRequReport.GetGroupSQL(chk:boolean=true): string;
+function TfrmMktGodsReport.GetGroupSQL(chk:boolean=true): string;
 var
   strSql,strWhere,strCnd,KpiTab: string;
 begin
@@ -340,8 +308,8 @@ begin
   if trim(fndP2_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
   //考核指标:
-  if fndP2_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and B.KPI_ID='''+fndP2_KPI_ID.AsString+''' ';
+  if fndP2_GODS_ID.AsString<>'' then
+    strWhere:=strWhere+' and C.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
   //客户名称:
   if fndP2_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP2_CLIENT_ID.AsString+''' ';
@@ -371,7 +339,7 @@ begin
     ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
     ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
     ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-    ' from MKT_REQUORDER A,MKT_REQUDATA B,VIW_CUSTOMER D '+
+    ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_CUSTOMER D '+
     ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
 
@@ -387,15 +355,17 @@ begin
      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0)Area '+
      ' on K.REGION_ID=Area.CODE_ID '+
      ' Group by K.REGION_ID,Area.CODE_NAME '
-     );        
+     );
+
+     
 end;
 
-function TfrmMktRequReport.GetRowType: integer;
+function TfrmMktGodsReport.GetRowType: integer;
 begin
   result :=0;
 end;
 
-procedure TfrmMktRequReport.actFindExecute(Sender: TObject);
+procedure TfrmMktGodsReport.actFindExecute(Sender: TObject);
 var
   strSql: string;
 begin
@@ -422,121 +392,26 @@ begin
         adoReport3.SQL.Text := strSql;
         Factor.Open(adoReport3);
       end;
-    3: begin //按KPI汇总表
+    3: begin //按商品汇总表
         if adoReport4.Active then adoReport4.Close;
-        strSql := GetKPISQL;
+        adoReport4.SortedFields:='';
+        strSql := GetGlideSQL;
 
         if strSql='' then Exit;
         adoReport4.SQL.Text := strSql;
         Factor.Open(adoReport4);
       end;
-    4: begin //按商品汇总表
-        if adoReport5.Active then adoReport5.Close;
-        adoReport5.SortedFields:='';
-        strSql := GetGlideSQL;
-
-        if strSql='' then Exit;
-        adoReport5.SQL.Text := strSql;
-        Factor.Open(adoReport5);
-      end;
   end;
 end;
 
-procedure TfrmMktRequReport.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
+procedure TfrmMktGodsReport.fndP1_TYPE_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
-  fndP1_KPI_ID.KeyValue := null;
-  fndP1_KPI_ID.Text := '';
+  fndP1_GODS_ID.KeyValue := null;
+  fndP1_GODS_ID.Text := '';
 end;
 
-function TfrmMktRequReport.GetKPISQL(chk:boolean=true): string;
-var
-  strSql,strWhere,strCnd,KpiTab: string;
-begin
-  if P4_D1.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
-  if P4_D2.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
-  if P4_D1.Date > P4_D2.Date then Raise Exception.Create('申领的结束日期不能小于开始日期...');
-
-  //过滤企业ID和数据权限:
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
-  //申领日期
-  vBegDate:=FormatDatetime('YYYYMMDD',P3_D1.Date);
-  vEndDate:=FormatDatetime('YYYYMMDD',P3_D2.Date);
-  if vBegDate < vEndDate then
-    strWhere:=strWhere+' and A.REQU_DATE>='+vBegDate+' and A.REQU_DATE<='+vEndDate+' '
-  else if vBegDate = vEndDate then
-    strWhere:=strWhere+' and A.REQU_DATE='+vBegDate+' ';
-
-   //部门条件:
-  if trim(fndP4_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
-  //考核指标:
-  if fndP4_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and C.KPI_ID='''+fndP4_KPI_ID.AsString+''' ';
-  //客户名称:
-  if fndP4_CLIENT_ID.AsString<>'' then
-    strWhere:=strWhere+' and A.CLIENT_ID='''+fndP4_CLIENT_ID.AsString+''' ';
-
-  //客户群体所属行政区域|客户等级\客户分类:
-  strCnd:='';
-  if (fndP4_CUST_VALUE.AsString<>'') then
-  begin
-    case fndP4_CUST_TYPE.ItemIndex of
-     0:
-       begin
-         if FnString.TrimRight(trim(fndP4_CUST_VALUE.AsString),2)='00' then  //非末级区域
-           strCnd:=' and D.REGION_ID like '''+GetRegionId(fndP4_CUST_VALUE.AsString)+'%'' '
-         else
-           strCnd:=' and D.REGION_ID='''+fndP4_CUST_VALUE.AsString+''' ';
-       end;
-     1: strCnd:=' and D.PRICE_ID='''+fndP4_CUST_VALUE.AsString+''' ';   //等级
-     2: strCnd:=' and D.SORT_ID='''+fndP4_CUST_VALUE.AsString+''' ';    //分类
-     3: strCnd:=' and D.FLAG='+fndP4_CUST_VALUE.AsString+' ';           //客户群体
-    end;
-  end;
-
-  if trim(StrCnd)='' then
-  begin
-    strSql:=
-      'select '+
-      ' A.TENANT_ID as TENANT_ID,'+
-      ' B.KPI_ID as KPI_ID,'+
-      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
-      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
-      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
-      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUDATA B '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID '+strWhere+' ';
-  end else
-  begin
-    strSql:=
-      'select '+
-      ' A.TENANT_ID as TENANT_ID,'+
-      ' B.KPI_ID as KPI_ID,'+
-      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
-      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
-      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
-      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUDATA B,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
-            ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
-  end;
-
-  Result :=ParseSQL(Factor.iDbType,
-     'select '+
-     ' K.KPI_ID as KPI_ID,'+
-     ' MKT.KPI_NAME as KPI_NAME,'+
-     ' sum(KPI_MNY) as KPI_MNY,'+
-     ' sum(BUDG_MNY) as BUDG_MNY,'+
-     ' sum(AGIO_MNY) as AGIO_MNY,'+
-     ' sum(OTHR_MNY) as OTHR_MNY '+     
-     ' from ('+strSql+')K '+
-     ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
-     ' Group by K.KPI_ID,MKT.KPI_NAME '
-     );
-end;
-
-function TfrmMktRequReport.GetCLIENTSQL(chk:boolean=true): string;
+function TfrmMktGodsReport.GetCLIENTSQL(chk:boolean=true): string;
 var
   strSql,strWhere,strCnd,KpiTab: string;
 begin
@@ -557,8 +432,8 @@ begin
   if trim(fndP3_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP3_DEPT_ID.AsString);
   //考核指标:
-  if fndP3_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and B.KPI_ID='''+fndP3_KPI_ID.AsString+''' ';
+  if fndP3_GODS_ID.AsString<>'' then
+    strWhere:=strWhere+' and C.GODS_ID='''+fndP3_GODS_ID.AsString+''' ';
   //客户名称:
   if fndP3_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP3_CLIENT_ID.AsString+''' ';
@@ -585,25 +460,34 @@ begin
     'select '+
     ' A.CLIENT_ID as CLIENT_ID,'+
     ' D.CLIENT_NAME as CLIENT_NAME,'+
-    ' sum(B.KPI_MNY) as KPI_MNY,'+     //返利金额
-    ' sum(B.BUDG_MNY) as BUDG_MNY,'+   //市场费用
-    ' sum(B.AGIO_MNY) as AGIO_MNY,'+   //价格支持
-    ' sum(B.OTHR_MNY) as OTHR_MNY '+   //其他金额
-    ' from MKT_REQUORDER A,MKT_REQUDATA B,VIW_CUSTOMER D '+
+    ' B.KPI_MNY as KPI_MNY,'+     //返利金额
+    ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
+    ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
+    ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
+    ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_CUSTOMER D '+
     ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
-    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+
-    ' Group by A.CLIENT_ID,D.CLIENT_NAME ';
+    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
 
-  Result :=ParseSQL(Factor.iDbType, strSql);
+  Result :=ParseSQL(Factor.iDbType,
+     'select '+
+     ' K.CLIENT_ID as CLIENT_ID,'+
+     ' K.CLIENT_NAME as CLIENT_NAME,'+
+     ' sum(KPI_MNY) as KPI_MNY,'+
+     ' sum(BUDG_MNY) as BUDG_MNY,'+
+     ' sum(AGIO_MNY) as AGIO_MNY,'+
+     ' sum(OTHR_MNY) as OTHR_MNY '+
+     ' from ('+strSql+')K '+
+     ' Group by K.CLIENT_ID,K.CLIENT_NAME '
+     );
 end;
 
-function TfrmMktRequReport.GetGlideSQL(chk:boolean=true): string;
+function TfrmMktGodsReport.GetGlideSQL(chk:boolean=true): string;
 var
   strSql,strWhere,strCnd,KpiTab: string;
 begin
-  if P5_D1.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
-  if P5_D2.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
-  if P5_D1.Date > P5_D2.Date then Raise Exception.Create('申领的结束日期不能小于开始日期...');
+  if P4_D1.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
+  if P4_D2.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
+  if P4_D1.Date > P4_D2.Date then Raise Exception.Create('申领的结束日期不能小于开始日期...');
 
   //过滤企业ID和数据权限:
   strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+GetDataRight;
@@ -615,34 +499,34 @@ begin
   else if vBegDate = vEndDate then
     strWhere:=strWhere+' and A.REQU_DATE='+vBegDate+' ';
   //部门条件:
-  if trim(fndP5_DEPT_ID.AsString)<>'' then
-    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
+  if trim(fndP4_DEPT_ID.AsString)<>'' then
+    strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
   //考核指标:
-  if fndP5_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and C.KPI_ID='''+fndP5_KPI_ID.AsString+''' ';
+  if fndP4_GODS_ID.AsString<>'' then
+    strWhere:=strWhere+' and B.GODS_ID='''+fndP4_GODS_ID.AsString+''' ';
   //客户名称:
-  if fndP5_CLIENT_ID.AsString<>'' then
-    strWhere:=strWhere+' and A.CLIENT_ID='''+fndP5_CLIENT_ID.AsString+''' ';
+  if fndP4_CLIENT_ID.AsString<>'' then
+    strWhere:=strWhere+' and A.CLIENT_ID='''+fndP4_CLIENT_ID.AsString+''' ';
 
   //填报人
-  if fndP5_GUIDE_USER.AsString <> '' then
-    strWhere:=strWhere+' and A.REQU_USER='''+fndP5_GUIDE_USER.AsString+''' ';
+  if fndP4_GUIDE_USER.AsString <> '' then
+    strWhere:=strWhere+' and A.REQU_USER='''+fndP4_GUIDE_USER.AsString+''' ';
 
   //客户群体所属行政区域|客户等级\客户分类:
   strCnd:='';
-  if (fndP5_CUST_VALUE.AsString<>'') then
+  if (fndP4_CUST_VALUE.AsString<>'') then
   begin
-    case fndP5_CUST_TYPE.ItemIndex of
+    case fndP4_CUST_TYPE.ItemIndex of
      0:
        begin
-         if FnString.TrimRight(trim(fndP5_CUST_VALUE.AsString),2)='00' then  //非末级区域
-           strCnd:=' and D.REGION_ID like '''+GetRegionId(fndP5_CUST_VALUE.AsString)+'%'' '
+         if FnString.TrimRight(trim(fndP4_CUST_VALUE.AsString),2)='00' then  //非末级区域
+           strCnd:=' and D.REGION_ID like '''+GetRegionId(fndP4_CUST_VALUE.AsString)+'%'' '
          else
-           strCnd:=' and D.REGION_ID='''+fndP5_CUST_VALUE.AsString+''' ';
+           strCnd:=' and D.REGION_ID='''+fndP4_CUST_VALUE.AsString+''' ';
        end;
-     1: strCnd:=' and D.PRICE_ID='''+fndP5_CUST_VALUE.AsString+''' ';   //等级
-     2: strCnd:=' and D.SORT_ID='''+fndP5_CUST_VALUE.AsString+''' ';    //分类
-     3: strCnd:=' and D.FLAG='+fndP5_CUST_VALUE.AsString+' ';           //客户群体
+     1: strCnd:=' and D.PRICE_ID='''+fndP4_CUST_VALUE.AsString+''' ';   //等级
+     2: strCnd:=' and D.SORT_ID='''+fndP4_CUST_VALUE.AsString+''' ';    //分类
+     3: strCnd:=' and D.FLAG='+fndP4_CUST_VALUE.AsString+' ';           //客户群体
     end;
   end;
 
@@ -650,35 +534,37 @@ begin
     'select '+
     ' A.TENANT_ID as TENANT_ID,'+
     ' A.GLIDE_NO as GLIDE_NO,'+        //申领单号
-    ' A.REQU_DATE as REQU_DATE,'+       //申领日期
+    ' A.REQU_DATE as REQU_DATE,'+      //申领日期
     ' D.CLIENT_NAME as CLIENT_NAME,'+  //客户名称
     ' A.DEPT_ID as DEPT_ID,'+          //部门ID
-    ' B.KPI_ID as KPI_ID,'+            //考核ID
-    ' A.REQU_USER as REQU_USER,'+      //填报人ID
-    ' B.KPI_YEAR as REQU_YEAR,'+       //申领年份
-    ' A.REQU_TYPE as REQU_TYPE,'+      //申领类型
-    ' B.KPI_MNY as KPI_MNY,'+          //返利金额
+    ' B.GODS_ID as GODS_ID,'+          //商品ID
+    ' B.UNIT_ID as UNIT_ID,'+          //商品单位
+    ' B.AMOUNT as AMOUNT,'+            //返还数量
+    ' B.KPI_MNY as KPI_MNY,'+          //返还金额
     ' B.BUDG_MNY as BUDG_MNY,'+        //市场费用
     ' B.AGIO_MNY as AGIO_MNY,'+        //价格支持
     ' B.OTHR_MNY as OTHR_MNY,'+        //其他金额
-    ' B.REMARK as REMARK,'+            //备注
+    ' B.REMARK as REMARK,'+            //摘要
+    ' A.REQU_USER as REQU_USER,'+      //填报人ID
     ' A.CREA_DATE as CREA_DATE,'+      //创建日期
     ' A.CREA_USER as CREA_USER,'+      //创建人
     ' A.CHK_DATE as CHK_DATE,'+        //审核日期
     ' A.CHK_USER as CHK_USER '+        //审核人
-    ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+    ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID  '+strWhere+strCnd+' ';
-
+ 
   Result :=ParseSQL(Factor.iDbType,
     'select K.*,'+
-    ' MKT.KPI_NAME as KPI_NAME,'+
+    ' G.GODS_NAME as GODS_NAME,'+
+    ' U.UNIT_NAME as UNIT_NAME,'+
     ' DEPT.DEPT_NAME as DEPT_NAME,'+
     ' D.USER_NAME as REQU_USER_TEXT,'+
     ' E.USER_NAME as CREA_USER_TEXT,'+
     ' F.USER_NAME as CHK_USER_TEXT '+
     ' from ('+strSql+')K '+
-    ' left outer join MKT_KPI_INDEX MKT on K.TENANT_ID=MKT.TENANT_ID and K.KPI_ID=MKT.KPI_ID '+
+    ' left outer join VIW_GOODSINFO G on K.TENANT_ID=G.TENANT_ID and K.GODS_ID=G.GODS_ID '+
+    ' left outer join VIW_MEAUNITS U on K.UNIT_ID=U.UNIT_ID '+
     ' left outer join CA_DEPT_INFO DEPT on K.TENANT_ID=DEPT.TENANT_ID and K.DEPT_ID=DEPT.DEPT_ID '+
     ' left outer join VIW_USERS D on K.TENANT_ID=D.TENANT_ID and K.REQU_USER=D.USER_ID '+
     ' left outer join VIW_USERS E on K.TENANT_ID=E.TENANT_ID and K.CREA_USER=E.USER_ID '+
@@ -687,13 +573,13 @@ begin
     );
 end;
 
-procedure TfrmMktRequReport.FormDestroy(Sender: TObject);
+procedure TfrmMktGodsReport.FormDestroy(Sender: TObject);
 begin
   TDbGridEhSort.FreeForm(self);
   inherited;
 end;
 
-procedure TfrmMktRequReport.PrintBefore;
+procedure TfrmMktGodsReport.PrintBefore;
 var
   ReStr: string;
   Title: TStringList;
@@ -717,7 +603,7 @@ begin
   end;
 end;
 
-function TfrmMktRequReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
+function TfrmMktGodsReport.AddReportReport(TitleList: TStringList; PageNo: string): string;
 var
   FindCmp1,FindCmp2: TComponent;
 begin
@@ -732,14 +618,14 @@ begin
 end;
 
 
-procedure TfrmMktRequReport.DBGridEh3GetFooterParams(Sender: TObject;
+procedure TfrmMktGodsReport.DBGridEh3GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 begin
   if Column.FieldName = 'CLIENT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
-procedure TfrmMktRequReport.DBGridEh2GetFooterParams(Sender: TObject;
+procedure TfrmMktGodsReport.DBGridEh2GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
@@ -748,7 +634,7 @@ begin
   if Column.FieldName = 'CODE_NAME' then Text := '合计:'+Text+'笔';
 end;
 
-procedure TfrmMktRequReport.DBGridEh1GetFooterParams(Sender: TObject;
+procedure TfrmMktGodsReport.DBGridEh1GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
@@ -757,7 +643,7 @@ begin
   if Column.FieldName = 'DEPT_NAME' then Text := '合计:'+Text+'笔';
 end;
 
-procedure TfrmMktRequReport.DBGridEh1DblClick(Sender: TObject);
+procedure TfrmMktGodsReport.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport1.IsEmpty then Exit;
@@ -765,7 +651,7 @@ begin
   P2_D2.Date:=P1_D2.Date;
   fndP2_CUST_TYPE.ItemIndex:=fndP1_CUST_TYPE.ItemIndex;  //3.客户群组类型
   Copy_ParamsValue(fndP1_CUST_VALUE,fndP2_CUST_VALUE);   //  客户群组
-  Copy_ParamsValue(fndP1_KPI_ID,fndP2_KPI_ID);           //4.考核指标
+  Copy_ParamsValue(fndP1_GODS_ID,fndP2_GODS_ID);         //4.商品ID
   Copy_ParamsValue(fndP1_CLIENT_ID,fndP2_CLIENT_ID);     //5.客户
   fndP2_DEPT_ID.KeyValue:=adoReport1.fieldbyName('DEPT_ID').AsString; //6.部门名称
   fndP2_DEPT_ID.Text:=adoReport1.fieldbyName('DEPT_NAME').AsString;
@@ -773,13 +659,13 @@ begin
   actFindExecute(nil);
 end;
 
-procedure TfrmMktRequReport.DBGridEh2DblClick(Sender: TObject);
+procedure TfrmMktGodsReport.DBGridEh2DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport2.IsEmpty then Exit;
   P3_D1.Date:=P2_D1.Date;  //1.日期
   P3_D2.Date:=P2_D2.Date;
-  Copy_ParamsValue(fndP2_KPI_ID,fndP3_KPI_ID);          //3.考核指标
+  Copy_ParamsValue(fndP2_GODS_ID,fndP3_GODS_ID);          //3.考核指标
   Copy_ParamsValue(fndP2_CLIENT_ID,fndP3_CLIENT_ID);    //4.客户
   Copy_ParamsValue(fndP2_DEPT_ID,fndP3_DEPT_ID);        //5.部门
   fndP3_CUST_TYPE.ItemIndex:=0;                         //6.客户群组
@@ -789,23 +675,7 @@ begin
   actFindExecute(nil);
 end;
 
-procedure TfrmMktRequReport.DBGridEh4DblClick(Sender: TObject);
-begin
-  inherited;
-  if adoReport4.IsEmpty then Exit;
-  P5_D1.Date:=P4_D1.Date;  //1.日期
-  P5_D2.Date:=P4_D2.Date;
-  fndP5_CUST_TYPE.ItemIndex:=fndP4_CUST_TYPE.ItemIndex; //3.客户群组类型
-  Copy_ParamsValue(fndP4_CUST_VALUE,fndP5_CUST_VALUE);  //  客户群组
-  Copy_ParamsValue(fndP4_CLIENT_ID,fndP5_CLIENT_ID);    //4.客户名称
-  Copy_ParamsValue(fndP4_DEPT_ID,fndP5_DEPT_ID);        //5.部门
-  fndP5_KPI_ID.KeyValue:=adoReport4.fieldbyName('KPI_ID').AsString; //6.指标ID
-  fndP5_KPI_ID.Text:=adoReport4.fieldbyName('KPI_NAME').AsString;
-  RzPage.ActivePageIndex:=4;
-  actFindExecute(nil);
-end;
-
-procedure TfrmMktRequReport.SetRzPageActivePage(IsGroupReport: Boolean);
+procedure TfrmMktGodsReport.SetRzPageActivePage(IsGroupReport: Boolean);
 var
   i: integer;
   IsVisble: Boolean;
@@ -838,7 +708,7 @@ begin
   end; 
 end;
 
-procedure TfrmMktRequReport.DBGridEh4GetFooterParams(Sender: TObject;
+procedure TfrmMktGodsReport.DBGridEh4GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
   var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
   var Text: String);
@@ -847,7 +717,7 @@ begin
   if Column.FieldName = 'KPI_NAME' then Text := '合计:'+Text+'笔';
 end;
 
-procedure TfrmMktRequReport.DBGridEh5GetFooterParams(Sender: TObject;
+procedure TfrmMktGodsReport.DBGridEh5GetFooterParams(Sender: TObject;
   DataCol, Row: Integer; Column: TColumnEh; AFont: TFont; var Background: TColor;
   var Alignment: TAlignment; State: TGridDrawState; var Text: String);
 var
@@ -856,14 +726,14 @@ begin
   if Column.FieldName = 'GLIDE_NO' then Text := '合计:'+Text+'笔';
 end;
 
-function TfrmMktRequReport.GetDataRight: string;
+function TfrmMktGodsReport.GetDataRight: string;
 begin
   //主数据：RCK_C_GOODS_DAYS、VIW_SALESDATA  A
   result:=' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 end;
 
 
-procedure TfrmMktRequReport.AddYearCBxItemsList(SetCbx: TcxComboBox);
+procedure TfrmMktGodsReport.AddYearCBxItemsList(SetCbx: TcxComboBox);
 var
   Str,CurYear: string;
   Rs: TZQuery;
@@ -891,7 +761,7 @@ begin
   end;
 end;
 
-procedure TfrmMktRequReport.DBGridEh3DblClick(Sender: TObject);
+procedure TfrmMktGodsReport.DBGridEh3DblClick(Sender: TObject);
 begin
   inherited;
   if adoReport3.IsEmpty then Exit;
@@ -899,7 +769,7 @@ begin
   P4_D2.Date:=P3_D2.Date;
   fndP4_CUST_TYPE.ItemIndex:=fndP3_CUST_TYPE.ItemIndex;  //3.客户群组类型
   Copy_ParamsValue(fndP3_CUST_VALUE,fndP4_CUST_VALUE);   //  客户群组
-  Copy_ParamsValue(fndP3_KPI_ID,fndP4_KPI_ID);     //4.客户
+  Copy_ParamsValue(fndP3_GODS_ID,fndP4_GODS_ID);     //4.客户
   Copy_ParamsValue(fndP3_DEPT_ID,fndP4_DEPT_ID);         //5.部门
   fndP4_CLIENT_ID.KeyValue:=adoReport3.fieldbyName('CLIENT_ID').AsString; //6.考核指标
   fndP4_CLIENT_ID.Text:=adoReport3.fieldbyName('CLIENT_NAME').AsString;

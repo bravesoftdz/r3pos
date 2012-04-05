@@ -49,12 +49,12 @@ inherited frmNoteBook: TfrmNoteBook
           Top = 5
           Width = 466
           Height = 357
-          ActivePage = TabTittle
+          ActivePage = TabContents
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight

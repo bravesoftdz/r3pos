@@ -397,8 +397,8 @@ begin
   KpiAgioFront := '返利';
   KpiAgioBack := '系数';
   InitGrid;
-  FRowIdx:=-1;
-  FColIdx:=-1;
+  FRowIdx:=2;
+  FColIdx:=1;
   FKpiState:=False;
 end;
 
@@ -1793,16 +1793,15 @@ procedure TfrmKpiIndexInfo.KpiGridKeyPress(Sender: TObject; var Key: Char);
 var
   CurText: string;
 begin
+  //VK_BACK=8;VK_TAB=9;VK_CLEAR=12;VK_RETURN=13;VK_DELETE=46;
   CurText:=KpiGrid.Cells[FColIdx,FRowIdx];
   if (Key=#161) or (Key='。') then Key:='.';
   if Pos('.',CurText)>0 then
   begin
-    if Key in ['0'..'9',#8] then
-    else Key:=#0;
+    if not(Key in ['0'..'9',#8,#9,#13,#46]) then Key:=#0;
   end else
   begin
-    if Key in ['0'..'9','.',#8] then
-    else Key:=#0;
+    if not(Key in ['0'..'9','.',#8,#9,#13,#46]) then Key:=#0;
   end;
 end;
 
@@ -2282,7 +2281,7 @@ var
 begin
   CurText:=KpiGrid.Cells[FColIdx,FRowIdx];
   if trim(CurText)='' then Exit;
-  if (StrToFloatDef(CurText,999999999)>999999999) and ((Key<>VK_RETURN)or(Key<>VK_BACK)) then
+  if (StrToFloatDef(CurText,999999999)>999999999)and(Key in [0,1,2,3,4,5,6,7,8,9,190]) then
   begin
     KpiGrid.Cells[FColIdx,FRowIdx]:=Copy(CurText,1,Length(CurText)-1);
     Raise Exception.Create('输入的数值过大，无效...');

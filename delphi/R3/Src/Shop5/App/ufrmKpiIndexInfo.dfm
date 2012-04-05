@@ -1,6 +1,6 @@
 inherited frmKpiIndexInfo: TfrmKpiIndexInfo
-  Left = 274
-  Top = 149
+  Left = 278
+  Top = 125
   Caption = #32771#26680#25351#26631
   ClientHeight = 432
   ClientWidth = 651
@@ -601,7 +601,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             Font.Name = 'Tahoma'
             Font.Style = []
             GridLineWidth = 1
-            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goEditing, goTabs]
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goTabs]
             ParentFont = False
             PopupMenu = KpiPm
             TabOrder = 0
@@ -719,7 +719,6 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             HTMLSettings.Width = 100
             HTMLSettings.XHTML = False
             Navigation.AdvanceOnEnter = True
-            Navigation.AutoComboDropSize = True
             Navigation.AdvanceDirection = adLeftRight
             Navigation.InsertPosition = pInsertBefore
             Navigation.HomeEndKey = heFirstLastColumn

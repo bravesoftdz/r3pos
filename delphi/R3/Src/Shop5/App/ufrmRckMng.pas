@@ -210,7 +210,7 @@ begin
       'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
       'left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID order by je.CLSE_DATE,je.SHOP_ID,flag';
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       if P2_D1.EditValue = null then Exception.Create('结账日期不能为空!');
       if P2_D2.EditValue = null then Exception.Create('结账日期不能为空!');
@@ -230,7 +230,7 @@ begin
       ' left outer join VIW_USERS c on c.TENANT_ID=jc.TENANT_ID and c.USER_ID=jc.CHK_USER order by CREA_DATE desc';
       result := StrSql;
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       if P3_M1.asString = '' then Exception.Create('结账月份不能为空!');
       if P3_M2.asString = '' then Exception.Create('结账月份不能为空!');
@@ -475,6 +475,7 @@ begin
             actAudit.Caption := '弃审';
           Except
             actAudit.Caption := '审核';
+            Msg := '审核时发生异常';
           end;
         end
       else
@@ -484,12 +485,13 @@ begin
             actAudit.Caption := '审核';
           Except
             actAudit.Caption := '弃审';
+            Msg := '弃审时发生异常';
           end;
         end;
     finally
       Params.Free;
     end;
-    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION);
+    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
     locked := true;
     try
       Open;
@@ -530,13 +532,13 @@ begin
   //权限
   if Db_CloseDay.FieldByName('CHK_DATE').AsString <> '' then
     begin
-      if Copy(Db_CloseDay.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
+//      if Copy(Db_CloseDay.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
       if Db_CloseDay.FieldByName('CHK_USER').AsString <> Global.UserID then Raise Exception.Create('只有审核人才能对当前单据执行弃审');
       if MessageBox(Handle,'确认弃审当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     end
   else
     begin
-      if Copy(Db_CloseDay.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
+//      if Copy(Db_CloseDay.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
       if MessageBox(Handle,'确认审核当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then Exit;
     end;
 
@@ -548,8 +550,10 @@ begin
           try
             Factor.ExecSQL('update RCK_DAYS_CLOSE set CHK_DATE='''+FormatDateTime('YYYY-MM-DD',Date)+''',CHK_USER='''+Global.UserID+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and CREA_DATE='+Db_CloseDay.FieldbyName('CREA_DATE').AsString);
             actAudit.Caption := '弃审';
+            Msg := '日结账审核成功';
           Except
             actAudit.Caption := '审核';
+            Msg := '审核时发生异常';
           end;
         end
       else
@@ -557,29 +561,31 @@ begin
           try
             Factor.ExecSQL('update RCK_DAYS_CLOSE set CHK_DATE=null,CHK_USER=null,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and CREA_DATE='+Db_CloseDay.FieldbyName('CREA_DATE').AsString);
             actAudit.Caption := '审核';
+            Msg := '日结账弃审成功';
           Except
             actAudit.Caption := '弃审';
+            Msg := '弃审时发生异常';
           end;
         end;
     finally
       Params.Free;
     end;
-    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION);
-    if cdsBrowser.FieldByName('CHK_DATE').AsString = '' then
+    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+    if Db_CloseDay.FieldByName('CHK_DATE').AsString = '' then
       begin
-        cdsBrowser.Edit;
-        cdsBrowser.FieldByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
-        cdsBrowser.FieldByName('CHK_USER').AsString := Global.UserID;
-        cdsBrowser.FieldByName('CHK_USER_TEXT').AsString := Global.UserName;
-        cdsBrowser.Post;
+        Db_CloseDay.Edit;
+        Db_CloseDay.FieldByName('CHK_DATE').AsString := FormatDateTime('YYYY-MM-DD',Date);
+        Db_CloseDay.FieldByName('CHK_USER').AsString := Global.UserID;
+        Db_CloseDay.FieldByName('CHK_USER_TEXT').AsString := Global.UserName;
+        Db_CloseDay.Post;
       end
     else
       begin
-        cdsBrowser.Edit;
-        cdsBrowser.FieldByName('CHK_DATE').AsString := '';
-        cdsBrowser.FieldByName('CHK_USER').AsString := '';
-        cdsBrowser.FieldByName('CHK_USER_TEXT').AsString := '';
-        cdsBrowser.Post;
+        Db_CloseDay.Edit;
+        Db_CloseDay.FieldByName('CHK_DATE').AsString := '';
+        Db_CloseDay.FieldByName('CHK_USER').AsString := '';
+        Db_CloseDay.FieldByName('CHK_USER_TEXT').AsString := '';
+        Db_CloseDay.Post;
       end;
   Except
     on E:Exception do
@@ -599,13 +605,13 @@ begin
   //权限
   if Db_CloseMonth.FieldByName('CHK_DATE').AsString <> '' then
     begin
-      if Copy(Db_CloseMonth.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
+//      if Copy(Db_CloseMonth.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能弃审');
       if Db_CloseMonth.FieldByName('CHK_USER').AsString <> Global.UserID then Raise Exception.Create('只有审核人才能对当前单据执行弃审');
       if MessageBox(Handle,'确认弃审当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
     end
   else
     begin
-      if Copy(Db_CloseMonth.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
+//      if Copy(Db_CloseMonth.FieldbyName('COMM').AsString,1,1)='1' then Raise Exception.Create('已经同步的数据不能再审核');
       if MessageBox(Handle,'确认审核当前单据？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then Exit;
     end;
 
@@ -617,9 +623,10 @@ begin
           try
             Factor.ExecSQL('update RCK_MONTH_CLOSE set CHK_DATE='''+formatDatetime('YYYY-MM-DD',date())+''',CHK_USER='''+Global.UserID+''',COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and MONTH='+Db_CloseMonth.FieldbyName('MONTH').AsString);
             actAudit.Caption := '弃审';
-            Msg := '月结账审核完毕';
+            Msg := '月结账审核成功';
           Except
             actAudit.Caption := '审核';
+            Msg := '审核时发生异常';
           end;
         end
       else
@@ -627,15 +634,16 @@ begin
           try
             Factor.ExecSQL('update RCK_MONTH_CLOSE set CHK_DATE=null,CHK_USER=null,COMM='+GetCommStr(Factor.iDbType)+',TIME_STAMP='+GetTimeStamp(Factor.iDbType)+' where TENANT_ID='''+inttostr(Global.TENANT_ID)+''' and MONTH='+Db_CloseMonth.FieldbyName('MONTH').AsString);
             actAudit.Caption := '审核';
-            Msg := '月结账弃审完毕';
+            Msg := '月结账弃审成功';
           Except
             actAudit.Caption := '弃审';
+            Msg := '弃审时发生异常';
           end;
         end;
     finally
       Params.Free;
     end;
-    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION);
+    MessageBox(Handle,pchar(Msg),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
     if Db_CloseMonth.FieldByName('CHK_DATE').AsString = '' then
       begin
         Db_CloseMonth.Edit;
@@ -703,7 +711,7 @@ begin
          MessageBox(Handle,Pchar(formatFloat('0000-00-00',d)+'号的结账数据已经同步了，撤消后请重新结账。'),'友情提示...',MB_OK+MB_ICONINFORMATION);
        end;
     r := Factor.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+inttostr(d)+'');
-    MessageBox(Handle,'撤消结账记录成完','友情提示',MB_OK+MB_ICONINFORMATION);
+    MessageBox(Handle,'撤消结账记录完成','友情提示',MB_OK+MB_ICONINFORMATION);
     Open;
   finally
     rs.Free;
@@ -746,7 +754,7 @@ begin
       Factor.RollbackTrans;
       Raise;
     end;
-    MessageBox(Handle,'撤消结账记录成完','友情提示',MB_OK+MB_ICONINFORMATION); 
+    MessageBox(Handle,'撤消结账记录完成','友情提示',MB_OK+MB_ICONINFORMATION); 
     Open;
   finally
     rs.Free;

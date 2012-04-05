@@ -416,9 +416,10 @@ begin
   if CdsKpiLevel.State in [dsEdit,dsInsert] then CdsKpiLevel.Post;
   SaveKpiGridData;
   Save;
+  CdsKpiGoods.Filtered := false;
+  Aobj.FieldByName('GOODS_SUM').AsInteger:=CdsKpiGoods.RecordCount; //商品记录数
   if Saved and Assigned(OnSave) then
   begin
-    Aobj.FieldByName('GOODS_SUM').AsInteger:=CdsKpiGoods.RecordCount; //商品记录数
     OnSave(Aobj);
   end;
   If Saved and Assigned(OnSave) and bl then
@@ -1201,7 +1202,7 @@ begin
   //第2列
   KpiGrid.MergeCells(1,0,1,2);
   KpiGrid.Cells[1,0] := '等级名称';
-  KpiGrid.ColWidths[1] := 80;
+  KpiGrid.ColWidths[1] := 60;
   SetpRowValue(1,0,'','');
   //第3列
  {KpiGrid.MergeCells(2,0,1,2);
@@ -1210,8 +1211,8 @@ begin
   SetpRowValue(2,0,'','');}
   //第4列
   KpiGrid.MergeCells(2,0,1,2);
-  KpiGrid.Cells[2,0] := '返还比例';
-  KpiGrid.ColWidths[2] := 60;
+  KpiGrid.Cells[2,0] := '基数';
+  KpiGrid.ColWidths[2] := 40;
   SetpRowValue(2,0,'','');
   //创建时段:
   vCol:=2;
@@ -1229,7 +1230,7 @@ begin
       KpiGrid.Cells[vCol,0]:=CdsKpiTimes.FieldByName('TIMES_NAME').AsString;
       //达标量
       KpiGrid.Cells[vCol,1] := '档位';
-      KpiGrid.ColWidths[vCol] := 60;
+      KpiGrid.ColWidths[vCol] := 50;
       SetpRowValue(vCol,1,TimeID,'#');
 
       //返利系数
@@ -1245,7 +1246,7 @@ begin
       KpiGrid.Cells[vCol,0]:=CdsKpiTimes.FieldByName('TIMES_NAME').AsString;
       //达标量
       KpiGrid.Cells[vCol,1] := '档位';
-      KpiGrid.ColWidths[vCol] := 60;
+      KpiGrid.ColWidths[vCol] := 50;
       SetpRowValue(vCol,1,TimeID,'#');
 
       //循环商品

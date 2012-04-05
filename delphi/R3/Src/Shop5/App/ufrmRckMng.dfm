@@ -1,6 +1,6 @@
 inherited frmRckMng: TfrmRckMng
-  Left = 153
-  Top = 171
+  Left = 177
+  Top = 146
   Width = 791
   Height = 577
   Caption = #32467#36134#31649#29702
@@ -17,8 +17,8 @@ inherited frmRckMng: TfrmRckMng
       inherited RzPage: TRzPageControl
         Width = 759
         Height = 486
-        ActivePage = TabSheet3
-        TabIndex = 2
+        ActivePage = TabSheet2
+        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -364,7 +364,6 @@ inherited frmRckMng: TfrmRckMng
                     Width = 75
                   end
                   item
-                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'CHK_USER_TEXT'
                     Footers = <>

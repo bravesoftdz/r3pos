@@ -3,7 +3,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   Top = 125
   Caption = #32771#26680#25351#26631
   ClientHeight = 432
-  ClientWidth = 651
+  ClientWidth = 641
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,16 +11,16 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 651
+    Width = 641
     Height = 432
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
       Top = 103
-      Width = 641
+      Width = 631
       Height = 284
-      ActivePage = TabSheet4
-      TabIndex = 2
+      ActivePage = TabSheet5
+      TabIndex = 3
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20
@@ -28,14 +28,14 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         Color = clWhite
         Caption = #21830#21697#28165#21333
         inherited RzPanel2: TRzPanel
-          Width = 637
+          Width = 627
           Height = 257
           BorderColor = clWhite
           Color = clWhite
           object Notebook1: TNotebook
             Left = 5
             Top = 5
-            Width = 627
+            Width = 617
             Height = 247
             Align = alClient
             PageIndex = 1
@@ -59,7 +59,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               object DBGridEh1: TDBGridEh
                 Left = 0
                 Top = 0
-                Width = 627
+                Width = 617
                 Height = 247
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
@@ -161,7 +161,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         object RzPanel3: TRzPanel
           Left = 0
           Top = 0
-          Width = 637
+          Width = 627
           Height = 257
           Align = alClient
           BorderOuter = fsNone
@@ -171,7 +171,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           object RzPnl_left: TRzPanel
             Left = 0
             Top = 0
-            Width = 318
+            Width = 305
             Height = 257
             Align = alLeft
             BorderOuter = fsNone
@@ -182,7 +182,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             object RzPanel7: TRzPanel
               Left = 5
               Top = 5
-              Width = 308
+              Width = 295
               Height = 26
               Align = alTop
               Alignment = taLeftJustify
@@ -191,10 +191,10 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               Color = clWhite
               TabOrder = 0
               DesignSize = (
-                308
+                295
                 26)
               object Btn_Left_add: TRzBitBtn
-                Left = 192
+                Left = 179
                 Top = 0
                 Width = 56
                 Height = 22
@@ -236,7 +236,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
               end
               object Btn_Left_del: TRzBitBtn
-                Left = 250
+                Left = 237
                 Top = 0
                 Width = 56
                 Height = 22
@@ -281,7 +281,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             object DBGridEh2: TDBGridEh
               Left = 5
               Top = 31
-              Width = 308
+              Width = 295
               Height = 221
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -329,21 +329,29 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   FieldName = 'LEVEL_NAME'
                   Footers = <>
                   Title.Caption = #31561#32423#21517#31216
-                  Width = 97
+                  Width = 89
                 end
                 item
                   EditButtons = <>
                   FieldName = 'LVL_AMT'
                   Footers = <>
                   Title.Caption = #31614#32422#37327'('#21544')'
-                  Width = 87
+                  Width = 70
+                end
+                item
+                  DisplayFormat = '#0.0%'
+                  EditButtons = <>
+                  FieldName = 'LOW_RATE'
+                  Footers = <>
+                  Title.Caption = #36820#21033#22522#25968
+                  Width = 57
                 end>
             end
           end
           object RzPnl_right: TRzPanel
-            Left = 318
+            Left = 305
             Top = 0
-            Width = 319
+            Width = 322
             Height = 257
             Align = alClient
             BorderOuter = fsNone
@@ -354,7 +362,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             object DBGridEh3: TDBGridEh
               Left = 5
               Top = 31
-              Width = 309
+              Width = 312
               Height = 221
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -406,7 +414,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   Width = 80
                 end
                 item
-                  DisplayFormat = '0000-00-00'
+                  DisplayFormat = '00-00'
                   EditButtons = <>
                   FieldName = 'KPI_DATE1'
                   Footers = <>
@@ -415,7 +423,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   Width = 60
                 end
                 item
-                  DisplayFormat = '0000-00-00'
+                  DisplayFormat = '00-00'
                   EditButtons = <>
                   FieldName = 'KPI_DATE2'
                   Footers = <>
@@ -427,7 +435,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             object RzPanel9: TRzPanel
               Left = 5
               Top = 5
-              Width = 309
+              Width = 312
               Height = 26
               Align = alTop
               Alignment = taLeftJustify
@@ -436,10 +444,10 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
               Color = clWhite
               TabOrder = 1
               DesignSize = (
-                309
+                312
                 26)
               object Btn_Right_add: TRzBitBtn
-                Left = 137
+                Left = 140
                 Top = 0
                 Width = 56
                 Height = 22
@@ -481,7 +489,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
               end
               object Btn_Right_edit: TRzBitBtn
-                Left = 195
+                Left = 198
                 Top = 0
                 Width = 56
                 Height = 22
@@ -523,7 +531,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
                   FFFFCDCDF78888DDEEEFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
               end
               object Btn_Right_del: TRzBitBtn
-                Left = 253
+                Left = 256
                 Top = 0
                 Width = 56
                 Height = 22
@@ -574,7 +582,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         object RzPanel1: TRzPanel
           Left = 0
           Top = 0
-          Width = 637
+          Width = 627
           Height = 257
           Align = alClient
           BorderOuter = fsNone
@@ -585,7 +593,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           object KpiGrid: TAdvStringGrid
             Left = 5
             Top = 5
-            Width = 627
+            Width = 617
             Height = 247
             Cursor = crDefault
             Align = alClient
@@ -783,7 +791,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         object RzPanel5: TRzPanel
           Left = 0
           Top = 0
-          Width = 637
+          Width = 627
           Height = 257
           Align = alClient
           BorderOuter = fsNone
@@ -794,7 +802,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
           object DBGridEh5: TDBGridEh
             Left = 5
             Top = 5
-            Width = 627
+            Width = 617
             Height = 247
             Align = alClient
             AllowedOperations = [alopUpdateEh]
@@ -897,10 +905,10 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     end
     inherited btPanel: TRzPanel
       Top = 387
-      Width = 641
+      Width = 631
       Color = clWhite
       object Btn_Save: TRzBitBtn
-        Left = 479
+        Left = 469
         Top = 11
         Width = 67
         Height = 26
@@ -927,7 +935,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 569
+        Left = 559
         Top = 11
         Width = 67
         Height = 26
@@ -957,7 +965,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
     object RzPanel4: TRzPanel
       Left = 5
       Top = 5
-      Width = 641
+      Width = 631
       Height = 98
       Align = alTop
       BorderOuter = fsNone

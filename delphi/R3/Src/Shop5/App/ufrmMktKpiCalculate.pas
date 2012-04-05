@@ -34,6 +34,7 @@ type
     CdsKpiTimes: TZQuery;
     CdsKpiGoods: TZQuery;
     CdsActiveRatio: TZQuery;
+    labInfomation: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -217,7 +218,7 @@ end;
 procedure TfrmMktKpiCalculate.StartCalculate;
 var i:Integer;
     Fish_Amt,Fish_Mny:Currency;
-    SumFishAmt,SumFishMny,SumAdjsAmt,SumAdjsMny,SumKpiMny:Real;    
+    SumFishAmt,SumFishMny,SumAdjsAmt,SumAdjsMny,SumKpiMny,SumBudgKpi:Real;    
 begin
   //开始准备数据
   PrepareData;
@@ -230,12 +231,13 @@ begin
   while not cdsHeader.Eof do
   begin
     OpenResultList(cdsHeader.FieldByName('CLIENT_ID').AsString,cdsHeader.FieldByName('KPI_ID').AsString);
-
+    labInfomation.Caption := '正计算"'+cdsKpiIndex.FieldByName('KPI_NAME').AsString+'"指标...';
     SumFishAmt := 0;
     SumFishMny := 0;
     SumAdjsAmt := 0;
     SumAdjsMny := 0;
     SumKpiMny := 0;
+    SumBudgKpi := 0;
     KpiCalculate := TClientRebate.Create;
     try
       KpiCalculate.FKpiIndexInfo.TenantId := Global.TENANT_ID;
@@ -263,6 +265,7 @@ begin
         SumAdjsAmt := SumFishAmt + cdsDetail.FieldByName('FISH_MNY').AsFloat;
         SumAdjsMny := SumFishAmt + cdsDetail.FieldByName('ADJS_MNY').AsFloat;
         SumKpiMny := SumKpiMny + cdsDetail.FieldByName('KPI_MNY').AsFloat;
+        SumBudgKpi := SumBudgKpi + cdsDetail.FieldByName('BUDG_KPI').AsFloat;
         cdsDetail.Next;
       end;
       cdsHeader.Edit;
@@ -271,6 +274,7 @@ begin
       cdsHeader.FieldByName('FISH_MNY').AsFloat := SumAdjsAmt;
       cdsHeader.FieldByName('ADJS_MNY').AsFloat := SumAdjsMny;
       cdsHeader.FieldByName('KPI_MNY').AsFloat := SumKpiMny;
+      cdsHeader.FieldByName('BUDG_KPI').AsFloat := SumBudgKpi;
       cdsHeader.Post;
       try
         Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);

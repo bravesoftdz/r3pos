@@ -87,6 +87,19 @@ inherited frmMktKpiCalculate: TfrmMktKpiCalculate
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object labInfomation: TLabel
+        Left = 94
+        Top = 112
+        Width = 24
+        Height = 12
+        Caption = '....'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
       object fndCLIENT_ID: TzrComboBoxList
         Left = 95
         Top = 53

@@ -2233,6 +2233,27 @@ procedure TfrmKpiIndexInfo.KpiGridGetFloatFormat(Sender: TObject; ACol, ARow: In
      RsTime.Free;
    end;
  end;
+ function GetLVLValue(TIMES_ID,SEQNO_ID: String): string;
+ var KPI_CALC:integer; UNIT_ID: string; RsTime,RsGods,RsUnit: TZQuery;
+ begin
+   result:='';
+   RsTime:=TZQuery.Create(nil);
+   try
+     RsTime.Data:=CdsKpiTimes.Data;
+     if RsTime.Locate('TIMES_ID',TIMES_ID,[]) then
+     begin
+       KPI_CALC:=StrToIntDef(trim(RsTime.FieldByName('KPI_CALC').AsString),0);
+       //达标系数根据(KPI_CALC:[1:按百分率];[2:按完成量];[3:指定金额]);
+       case KPI_CALC of
+        1,2: result:='％';
+        3:result := edtUNIT_NAME.Text;
+        4:result := '元';
+       end;
+     end;
+   finally
+     RsTime.Free;
+   end;
+ end;
 var
   i: integer;
   CellText,TIMES_ID,SEQNO_ID,GODS_ID: string;
@@ -2251,7 +2272,7 @@ begin
       case pRow.Ratio[ACol].ColType of
        1: //档次单位=指标单位
         begin
-          FloatFormat:=CellText+edtUNIT_NAME.Text;
+          FloatFormat:=CellText+GetLVLValue(pRow.Ratio[ACol].TIME_ID,pRow.Ratio[ACol].SEQNO_ID);
         end;
        2: //达标系数根据(KPI_CALC:[1:按百分率];[2:按完成量];[3:指定金额]);
         begin

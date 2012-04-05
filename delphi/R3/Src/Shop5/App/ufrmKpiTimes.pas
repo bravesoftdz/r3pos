@@ -153,8 +153,8 @@ begin
   RatioType := TRecord_(edtRATIO_TYPE.Properties.Items.Objects[edtRATIO_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString;
   KpiData := TRecord_(edtKPI_DATA.Properties.Items.Objects[edtKPI_DATA.ItemIndex]).FieldbyName('CODE_ID').AsString;
   KpiCalc := TRecord_(edtKPI_CALC.Properties.Items.Objects[edtKPI_CALC.ItemIndex]).FieldbyName('CODE_ID').AsString;;
-  KpiDate1 := StrToInt(FormatDateTime('YYYYMMDD',edtKPI_DATE1.Date));
-  KpiDate2 := StrToInt(FormatDateTime('YYYYMMDD',edtKPI_DATE2.Date));
+  KpiDate1 := StrToInt(FormatDateTime('MMDD',edtKPI_DATE1.Date));
+  KpiDate2 := StrToInt(FormatDateTime('MMDD',edtKPI_DATE2.Date));
   if edtKPI_FLAG.Checked then KpiFlag := '1' else KpiFlag := '0';
   if edtUSING_BRRW.Checked then UsingBrrw := '1' else UsingBrrw := '0';
   ModalResult := mrOk;

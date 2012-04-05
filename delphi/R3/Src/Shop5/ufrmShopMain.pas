@@ -307,6 +307,7 @@ type
     actfrmMktMarketCostOrderList: TAction;
     actfrmMktActiveList: TAction;
     actfrmBomOrderList: TAction;
+    actfrmMktGodsReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -444,6 +445,7 @@ type
     procedure actfrmMktMarketCostOrderListExecute(Sender: TObject);
     procedure actfrmMktActiveListExecute(Sender: TObject);
     procedure actfrmBomOrderListExecute(Sender: TObject);
+    procedure actfrmMktGodsReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -519,7 +521,7 @@ uses
   ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList,
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
   ufrmMktKpiResult2,ufrmMktKpiResult3,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
-  ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList;
+  ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4377,6 +4379,27 @@ begin
        AddFrom(Form);
      end;
   Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktGodsReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktGodsReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktGodsReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;
 

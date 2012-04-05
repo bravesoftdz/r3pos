@@ -19,8 +19,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 103
       Width = 631
       Height = 284
-      ActivePage = TabSheet4
-      TabIndex = 2
+      ActivePage = TabSheet3
+      TabIndex = 1
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20
@@ -1258,7 +1258,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
   end
   object Pm_Times: TPopupMenu
     Left = 19
-    Top = 302
+    Top = 304
     object AddKpiTimes: TMenuItem
       Caption = #26032#22686#26102#27573
       OnClick = AddKpiTimesClick

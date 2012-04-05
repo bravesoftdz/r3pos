@@ -106,6 +106,8 @@ type
     procedure DBGridEh2Columns1BeforeShowControl(Sender: TObject);
     procedure N4Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
+    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     AddRow:Boolean;
@@ -353,6 +355,7 @@ begin
   if edtREQU_TYPE.ItemIndex = -1 then Raise Exception.Create('返还类型不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空');
   if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
+  if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;
@@ -1304,6 +1307,40 @@ begin
 
   Open(copy(frmSalIndetOrder.AObj.FieldByName('ATTH_ID').AsString,4,36));
 
+end;
+
+procedure TfrmMktRequOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Currency;
+begin
+  if edtTable.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
+  if PropertyEnabled then
+     begin
+       Text := TColumnEh(Sender).Field.AsString;
+       Value := TColumnEh(Sender).Field.asFloat;
+     end
+  else
+     begin
+        try
+          if Text='' then
+             r := 0
+          else
+             r := StrtoFloat(Text);
+        except
+          Text := TColumnEh(Sender).Field.AsString;
+          Value := TColumnEh(Sender).Field.asFloat;
+          Raise Exception.Create('输入无效数值型');
+        end;
+        if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+        TColumnEh(Sender).Field.asFloat := r;
+        AMountToCalc(r);
+     end;
 end;
 
 end.

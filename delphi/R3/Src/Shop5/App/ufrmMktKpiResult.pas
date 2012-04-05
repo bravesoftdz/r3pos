@@ -86,7 +86,7 @@ type
 
 
 implementation
-uses uGlobal, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
+uses uGlobal, uCtrlUtil, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
   ufrmBasic,ObjCommon,uFnUtil,uShopUtil,uXDictFactory,ufrmKpiIndexInfo;
 {$R *.dfm}
 
@@ -99,6 +99,7 @@ end;
 procedure TfrmMktKpiResult.FormCreate(Sender: TObject);
 begin
   inherited;
+  TDbGridEhSort.InitForm(self); 
   cdsKPI_ID.Close;
   cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' and IDX_TYPE = ''1'' ';
   Factor.Open(cdsKPI_ID);
@@ -514,6 +515,7 @@ end;
 procedure TfrmMktKpiResult.FormDestroy(Sender: TObject);
 begin
   inherited;
+  TDbGridEhSort.FreeForm(self); 
   CdsClient.Free;
 end;
 

@@ -304,7 +304,8 @@ uses
   ufrmManKpiReport in 'App\ufrmManKpiReport.pas' {frmManKpiReport},
   ufrmMktMarketCostOrderList in 'App\ufrmMktMarketCostOrderList.pas' {frmMktMarketCostOrderList},
   ufrmMktMarketCostOrder in 'App\ufrmMktMarketCostOrder.pas' {frmMktMarketCost},
-  ObjCostCalc in 'Obj\ObjCostCalc.pas';
+  ObjCostCalc in 'Obj\ObjCostCalc.pas',
+  ufrmMktGodsReport in 'App\ufrmMktGodsReport.pas' {frmMktGodsReport};
 
 {$R *.res}
 var

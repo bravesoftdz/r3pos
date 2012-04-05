@@ -651,7 +651,7 @@ begin
         ' D.CLIENT_NAME as CLIENT_NAME,'+   //客户名称
         ' A.DEPT_ID as DEPT_ID,'+           //部门ID
         ' A.BOND_USER as BOND_USER,'+       //填报人ID
-        ' C.KPI_YEAR as BOND_YEAR,'+        //申领年份
+        ' substr('+IntToVarchar('C.INDE_DATE')+',1,4) as BOND_YEAR,'+        //申领年份
         ' A.BOND_TYPE as BOND_TYPE,'+       //申领类型
         ' B.BOND_MNY as BOND_MNY,'+         //保证金额申请金额
         ' B.REMARK as REMARK,'+             //备注

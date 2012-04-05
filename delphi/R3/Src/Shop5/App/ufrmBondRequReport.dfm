@@ -1,5 +1,6 @@
 inherited frmBondRequReport: TfrmBondRequReport
-  Left = 195
+  Left = 218
+  Top = 124
   Width = 1042
   Height = 586
   Caption = #20445#35777#37329#30003#39046#25253#34920
@@ -14,10 +15,10 @@ inherited frmBondRequReport: TfrmBondRequReport
       inherited RzPage: TRzPageControl
         Width = 819
         Height = 506
-        ActivePage = TabSheet2
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1062,7 +1063,6 @@ inherited frmBondRequReport: TfrmBondRequReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh3: TDBGridEh
-                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 803
@@ -1529,7 +1529,6 @@ inherited frmBondRequReport: TfrmBondRequReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh4: TDBGridEh
-                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 803

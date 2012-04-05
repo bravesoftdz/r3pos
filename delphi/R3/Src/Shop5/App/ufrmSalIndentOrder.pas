@@ -116,6 +116,7 @@ type
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure N5Click(Sender: TObject);
     procedure useLvlPriceClick(Sender: TObject);
+    procedure Label21Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -151,6 +152,7 @@ type
     RtlPSTFlag:integer;
     RtlGDPC_ID:string;
     Dibs,Cash:Currency;
+    //GlideNo:String;
     procedure ShowInfo;
     procedure ShowOweInfo;
     procedure ReadFeeOption;
@@ -185,7 +187,7 @@ type
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
    ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo,
-   ufrmExcelFactory,ufrmMktRequOrder;
+   ufrmExcelFactory,ufrmMktRequOrder,ufrmMktRequOrderList, ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -368,7 +370,7 @@ begin
   end;
 
   edtPLAN_DATE.Date := edtINDE_DATE.Date+1;
-  
+
   edtGUIDE_USER.KeyValue := Global.UserID;
   edtGUIDE_USER.Text := Global.UserName;
   edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InttoStr(DefInvFlag));
@@ -1268,7 +1270,7 @@ var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
-  if not isAudit then Raise Exception.Create('没有审核的单据不能发货...'); 
+  if not isAudit then Raise Exception.Create('没有审核的单据不能发货...');
   if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...'); 
   if not frmMain.FindAction('actfrmSalesOrderList').Enabled then Exit;
   frmMain.FindAction('actfrmSalesOrderList').OnExecute(nil);
@@ -1933,6 +1935,21 @@ begin
      h.Free;
      d.Free;
    end;
+end;
+
+procedure TfrmSalIndentOrder.Label21Click(Sender: TObject);
+var frmMktRequOrderList:TfrmMktRequOrderList;
+    rs:TZQuery;
+begin
+  inherited;
+  //if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  //if not isAudit then Raise Exception.Create('没有审核的单据不能发货...');
+  //if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...');
+  if not frmMain.FindAction('actfrmMktRequOrderList').Enabled then Exit;
+  frmMain.FindAction('actfrmMktRequOrderList').OnExecute(nil);
+  frmMktRequOrderList := TfrmMktRequOrderList(frmMain.FindChildForm(TfrmMktRequOrderList));
+  SendMessage(frmMktRequOrderList.Handle,WM_EXEC_ORDER,0,2);
+  PostMessage(frmMktRequOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
 end;
 
 end.

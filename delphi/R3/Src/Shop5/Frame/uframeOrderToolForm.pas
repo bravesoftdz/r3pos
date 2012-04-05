@@ -8,8 +8,6 @@ uses
   RzLabel, RzTabs, ExtCtrls, RzPanel, Grids, DBGridEh, cxControls,FR_Class,
   cxContainer, cxEdit, cxTextEdit, DB, ADODB, DBClient,uframeOrderForm,
   jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset;
-const
-  WM_JOIN_DATA=WM_USER+9998;
 type
   TframeOrderToolForm = class(TframeToolForm)
     ToolButton3: TToolButton;

@@ -10,6 +10,7 @@ uses
   cxDropDownEdit, ZAbstractRODataset, ZAbstractDataset, ZDataset;
 
 const
+
   WM_DIALOG_PULL=WM_USER+1;
   //×´Ì¬¸Ä±ä
   WM_STATUS_CHANGE=WM_USER+2;
@@ -19,6 +20,7 @@ const
   WM_INIT_RECORD=WM_USER+4;
   WM_NEXT_RECORD=WM_USER+5;
   WM_PRIOR_RECORD=WM_USER+6;
+  WM_JOIN_DATA=WM_USER+8;
   //Ìî³äÊý¾Ý
   WM_FILL_DATA=WM_USER+7;
   //³ßÂë£¬ÑÕÉ«±à¼­¿ò

@@ -1939,7 +1939,7 @@ end;
 
 procedure TfrmSalIndentOrder.Label21Click(Sender: TObject);
 var frmMktRequOrderList:TfrmMktRequOrderList;
-    rs:TZQuery;
+  s:string;
 begin
   inherited;
   //if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
@@ -1948,8 +1948,10 @@ begin
   if not frmMain.FindAction('actfrmMktRequOrderList').Enabled then Exit;
   frmMain.FindAction('actfrmMktRequOrderList').OnExecute(nil);
   frmMktRequOrderList := TfrmMktRequOrderList(frmMain.FindChildForm(TfrmMktRequOrderList));
-  SendMessage(frmMktRequOrderList.Handle,WM_EXEC_ORDER,0,2);
-  PostMessage(frmMktRequOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+  s := copy(AObj.FieldByName('ATTH_ID').AsString,4,36);
+  Application.ProcessMessages;
+  SendMessage(frmMktRequOrderList.Handle,WM_JOIN_DATA,integer(Pchar(s)),0);
+  //PostMessage(frmMktRequOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
 end;
 
 end.

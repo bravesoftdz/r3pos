@@ -577,22 +577,22 @@ procedure TfrmNoteBook.ActSaveNBExecute(Sender: TObject);
 begin
   if trim(edtNB_TITLE.Text)='' then
   begin
-    edtNB_TITLE.SetFocus;
+    if (RzPage.ActivePage=TabContents) and edtNB_TITLE.CanFocus then edtNB_TITLE.SetFocus;
     Raise Exception.Create('   请记事本输入标题...    ');
   end;
   if edtNB_GROUP.ItemIndex=-1 then
   begin
-    edtNB_GROUP.SetFocus;
+    if (RzPage.ActivePage=TabContents) and edtNB_GROUP.CanFocus then edtNB_GROUP.SetFocus;
     Raise Exception.Create('   请记事本分类...    ');
   end;
   if edtNB_TYPE.ItemIndex=-1 then
   begin
-    edtNB_TYPE.SetFocus;
+    if (RzPage.ActivePage=TabContents) and edtNB_TYPE.CanFocus then edtNB_TYPE.SetFocus;
     Raise Exception.Create('   请记事本类型...    ');
   end;
   if Length(edtNB_TEXT.Text)>255 then
   begin
-    edtNB_TEXT.SetFocus;
+    if (RzPage.ActivePage=TabContents) and edtNB_TEXT.CanFocus then edtNB_TEXT.SetFocus;
     Raise Exception.Create('   记录本内容超过长度(255)，请重新编辑   ');
   end;
   WriteToObj(AObj);
@@ -601,7 +601,7 @@ begin
   else if dbState=dsEdit then
     CdsNoteBookInfo.Edit;
   AObj.WriteToDataSet(CdsNoteBookInfo);
-  if CdsNoteBook.State in [dsInsert,dsEdit] then CdsNoteBook.Post;
+  if CdsNoteBookInfo.State in [dsInsert,dsEdit] then CdsNoteBookInfo.Post;
   if Factor.UpdateBatch(CdsNoteBookInfo,'TNoteBook',nil) then
   begin
     FOldID:='';

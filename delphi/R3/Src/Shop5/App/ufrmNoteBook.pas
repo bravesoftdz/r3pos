@@ -69,7 +69,7 @@ type
     DelNote: TMenuItem;
     ActNewNB: TAction;
     ActSaveNB: TAction;
-    ActEditNB: TAction;    
+    ActEditNB: TAction;
     ActDeleteNB: TAction;
     procedure btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -164,7 +164,6 @@ var i:Integer;
 begin
   inherited;
   Initform(self);
-
   //记事本分类
   CreateNoteBookType;
   for i := 0 to RzPage.PageCount - 1 do
@@ -172,6 +171,7 @@ begin
   RzPage.ActivePageIndex := 0;
   LoadPic32;
   OpenNoteBookList;
+  i:=CdsNoteBook.RecordCount;
   SetRecordNum;
   edtUSER_ID.DataSet:=Global.GetZQueryFromName('CA_USERS');
   //默认第一个按钮
@@ -180,6 +180,8 @@ begin
   SelObj:=TRecord_.Create;
   dbState:=dsBrowse;
   BtnNew.Action:=ActNewNB;
+  if i=0 then
+    ActNewNBExecute(Sender);  
 end;
 
 procedure TfrmNoteBook.OpenNoteBookList;
@@ -373,8 +375,8 @@ begin
   CdsNoteBook.Filtered := False;
   CdsNoteBook.Filter := ' NB_GROUP='''+NB_GROUP[BtnIdx]+''' ';
   CdsNoteBook.Filtered := True;
-  DBGridEh1.Visible:=(CdsNoteBook.RecordCount>0);
-  if (DBGridEh1.Visible) and (self.Visible) then
+  // DBGridEh1.Visible:=(CdsNoteBook.RecordCount>0);
+  if self.Visible then
   begin
     DBGridEh1.SetFocus;
     DBGridEh1.SelectedIndex:=1;
@@ -384,14 +386,26 @@ end;
 
 procedure TfrmNoteBook.CreateNoteBookType;
 var
-  CodeName: string;
+  Str,NewID,CodeName: string;
   NBObj: TRecord_;
 begin
   ClearCbxPickList(edtNB_GROUP);
   NoteBookType.Close;
-  NoteBookType.SQL.Text:=
-    'select SEQ_NO,CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''19'' and COMM not in (''02'',''12'') order by SEQ_NO';
+  NoteBookType.SQL.Text:='select SEQ_NO,CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''19'' and COMM not in (''02'',''12'') order by SEQ_NO';
   Factor.Open(NoteBookType);
+  if NoteBookType.IsEmpty then
+  begin
+    NewID:=TSequence.NewId();
+    Str:='insert into PUB_CODE_INFO '+
+               '(TENANT_ID,CODE_ID,LEVEL_ID,CODE_TYPE,CODE_NAME,CODE_SPELL,SEQ_NO,COMM,TIME_STAMP)'+
+         'values('+IntToStr(Global.TENANT_ID)+','''+NewID+''','''',''19'',''我的记事本'',''WDJSB'',1,''00'','+GetTimeStamp(Factor.iDbType)+')';
+    Factor.ExecSQL(Str);
+    NoteBookType.Append;
+    NoteBookType.FieldByName('SEQ_NO').AsInteger:=1;
+    NoteBookType.FieldByName('CODE_ID').AsString:=NewID;
+    NoteBookType.FieldByName('CODE_NAME').AsString:='我的记事本';
+    NoteBookType.Post;
+  end;
   //设置成空
   btn_Message0.Caption:='';
   btn_Message1.Caption:='';
@@ -445,7 +459,7 @@ end;
 
 procedure TfrmNoteBook.btn_Message0Click(Sender: TObject);
 begin
-  SetBtnProperty(0); 
+  SetBtnProperty(0);
 end;
 
 procedure TfrmNoteBook.btn_Message1Click(Sender: TObject);
@@ -598,22 +612,24 @@ begin
         OpenNoteBookInfo(AObj.FieldByName('ROWS_ID').AsString); 
         CdsNoteBook.Append;
         CdsNoteBook.FieldByName('ROWS_ID').AsString:=AObj.FieldByName('ROWS_ID').AsString;
+        CdsNoteBook.FieldByName('USER_ID').AsString:=AObj.FieldByName('USER_ID').AsString;
+        CdsNoteBook.FieldByName('NB_SEQNO').AsInteger:=AObj.FieldByName('NB_SEQNO').AsInteger;
         CdsNoteBook.FieldByName('NB_GROUP').AsString:=AObj.FieldByName('NB_GROUP').AsString;
-        CdsNoteBook.FieldByName('NB_TITLE').AsString:='·'+AObj.FieldByName('NB_TITLE').AsString;
         CdsNoteBook.FieldByName('NB_TYPE').AsString:=AObj.FieldByName('NB_TYPE').AsString;
         CdsNoteBook.FieldByName('NB_DATE').AsString:=AObj.FieldByName('NB_DATE').AsString;
-        CdsNoteBook.FieldByName('NB_SEQNO').AsInteger:=AObj.FieldByName('NB_SEQNO').AsInteger;
-        CdsNoteBook.Post;  
-      end;
+        CdsNoteBook.FieldByName('NB_TITLE').AsString:='·'+AObj.FieldByName('NB_TITLE').AsString;  
+        CdsNoteBook.Post;
+     end;
      dsEdit:
       begin
         if CdsNoteBook.Locate('ROWS_ID',AObj.FieldByName('ROWS_ID').AsString,[]) then
         begin
           CdsNoteBook.Edit;
+          CdsNoteBook.FieldByName('USER_ID').AsString:=AObj.FieldByName('USER_ID').AsString;
           CdsNoteBook.FieldByName('NB_GROUP').AsString:=AObj.FieldByName('NB_GROUP').AsString;
-          CdsNoteBook.FieldByName('NB_TITLE').AsString:='·'+AObj.FieldByName('NB_TITLE').AsString;
           CdsNoteBook.FieldByName('NB_TYPE').AsString:=AObj.FieldByName('NB_TYPE').AsString;
           CdsNoteBook.FieldByName('NB_DATE').AsString:=AObj.FieldByName('NB_DATE').AsString;
+          CdsNoteBook.FieldByName('NB_TITLE').AsString:='·'+AObj.FieldByName('NB_TITLE').AsString;
           CdsNoteBook.Post;
         end;
       end;
@@ -721,8 +737,10 @@ begin
     RzPage.ActivePage:=TabContents;
     OpenNoteBookInfo(trim(SelObj.FieldByName('ROWS_ID').AsString));
     if trim(SelObj.FieldByName('USER_ID').AsString)=Global.UserID then
-      dbState:=dsEdit
-    else
+    begin
+      dbState:=dsEdit;
+      FOldID:=trim(SelObj.FieldByName('ROWS_ID').AsString);
+    end else
     begin
       dbState:=dsBrowse;
       FOldID:='';
@@ -777,7 +795,10 @@ begin
   begin
     RzPage.ActivePage:=TabTittle;
     DBGridEh1.SetFocus;
-    DBGridEh1.SelectedIndex:=1;
+    if DBGridEh1.DataSource.DataSet.RecordCount=0 then
+      DBGridEh1.SelectedIndex:=0
+    else
+      DBGridEh1.SelectedIndex:=1;
   end;
 end;
 

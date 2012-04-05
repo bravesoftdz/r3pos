@@ -49,12 +49,12 @@ inherited frmNoteBook: TfrmNoteBook
           Top = 5
           Width = 466
           Height = 357
-          ActivePage = TabContents
+          ActivePage = TabTittle
           Align = alClient
           FlatColor = clWhite
           ShowCardFrame = False
           TabColors.Shadow = clWhite
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 0
           TabStyle = tsDoubleSlant
           TextColors.DisabledShadow = clBtnHighlight
@@ -346,6 +346,7 @@ inherited frmNoteBook: TfrmNoteBook
                   Font.Name = #23435#20307
                   Font.Style = []
                   ParentFont = False
+                  Visible = False
                 end
                 object edtNB_DATE: TcxDateEdit
                   Left = 364

@@ -961,8 +961,12 @@ begin
   CdsGoods.Params.ParamByName('TENANT_ID').AsInteger := FKpiIndexInfo.TenantId;
   CdsGoods.Params.ParamByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
   CdsGoods.Params.ParamByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
-  CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := StartDate;
-  CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := EndDate;
+  CdsGoods.Params.ParamByName('SALES_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+StartDate;
+  if StartDate > EndDate then
+     CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := FKpiIndexInfo.KpiYear*10000+EndDate
+  else
+     CdsGoods.Params.ParamByName('SALES_DATE2').AsInteger := (FKpiIndexInfo.KpiYear+1)*10000+EndDate;
+  
 
   Factor.Open(CdsGoods);
   if CdsGoods.IsEmpty then
@@ -1093,6 +1097,7 @@ end;
 procedure TClientRebate.PromJudge(KpiRate: Real);
 var GoodsId,UnitId:String;
     Ratio,PromNum:Real;
+    Date1,Date2:Integer;
 begin
   GoodsId := '';
   UnitId := '';
@@ -1118,12 +1123,18 @@ begin
       Ratio := 0;
     end;
 
+    Date1 := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
+    if KpiTimes.FieldByName('KPI_DATE1').AsInteger > KpiTimes.FieldByName('KPI_DATE2').AsInteger then
+       Date2 := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
+    else
+       Date2 := (FKpiIndexInfo.KpiYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+
     KpiDetail.First;
     while not KpiDetail.Eof do
       begin
-        if (KpiDetail.FieldByName('KPI_DATE1').AsInteger<=KpiTimes.FieldByName('KPI_DATE1').AsInteger)
+        if (KpiDetail.FieldByName('KPI_DATE1').AsInteger<=Date1)
            and
-           (KpiDetail.FieldByName('KPI_DATE2').AsInteger>=KpiTimes.FieldByName('KPI_DATE2').AsInteger)
+           (KpiDetail.FieldByName('KPI_DATE2').AsInteger>=Date2)
         then //促销时段内的区间
            begin
              if KpiDetail.FieldByName('KPI_RATIO').AsFloat<Ratio then
@@ -1200,8 +1211,13 @@ begin
       KpiDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       KpiDetail.FieldByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
       KpiDetail.FieldByName('KPI_YEAR').AsInteger := FKpiIndexInfo.KpiYear;
-      KpiDetail.FieldByName('KPI_DATE1').AsInteger := KpiTimes.FieldByName('KPI_DATE1').AsInteger;
-      KpiDetail.FieldByName('KPI_DATE2').AsInteger := KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+      
+      KpiDetail.FieldByName('KPI_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
+      if KpiTimes.FieldByName('KPI_DATE1').AsInteger > KpiTimes.FieldByName('KPI_DATE2').AsInteger then
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
+      else
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := (FKpiIndexInfo.KpiYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+
       KpiDetail.FieldByName('KPI_DATA').AsString := IntToStr(KpiData);
       KpiDetail.FieldByName('KPI_CALC').AsString := IntToStr(KpiCalc);
       KpiDetail.FieldByName('RATIO_TYPE').AsString := IntToStr(RatioType);
@@ -1228,8 +1244,13 @@ begin
     else
     begin
       KpiDetail.Edit;
-      KpiDetail.FieldByName('KPI_DATE1').AsInteger := KpiTimes.FieldByName('KPI_DATE1').AsInteger;
-      KpiDetail.FieldByName('KPI_DATE2').AsInteger := KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+      
+      KpiDetail.FieldByName('KPI_DATE1').AsInteger := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
+      if KpiTimes.FieldByName('KPI_DATE1').AsInteger > KpiTimes.FieldByName('KPI_DATE2').AsInteger then
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := FKpiIndexInfo.KpiYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
+      else
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := (FKpiIndexInfo.KpiYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+
       KpiDetail.FieldByName('KPI_DATA').AsString := IntToStr(KpiData);
       KpiDetail.FieldByName('KPI_CALC').AsString := IntToStr(KpiCalc);
       KpiDetail.FieldByName('RATIO_TYPE').AsString := IntToStr(RatioType);

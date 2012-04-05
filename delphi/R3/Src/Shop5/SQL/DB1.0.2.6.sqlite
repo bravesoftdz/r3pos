@@ -411,6 +411,8 @@ CREATE TABLE [MKT_KPI_RESULT_LIST] (
 	[KPI_ID] [char] (36) NOT NULL ,
         --年  度
 	[KPI_YEAR] int NOT NULL ,
+        --返利时段
+	TIMES_ID char (36) NOT NULL ,
 	      --考时段
 	[KPI_DATE1] int NULL ,
 	[KPI_DATE2] int NULL ,

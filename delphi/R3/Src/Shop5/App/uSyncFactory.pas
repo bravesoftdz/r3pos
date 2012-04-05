@@ -516,6 +516,7 @@ begin
   n^.KeyFlag := 0;
   n^.tbtitle := '´ÙÏúµ¥¾Ý';
   FList.Add(n);
+  new(n);
   n^.tbname := 'SAL_BOMORDER';
   n^.keyFields := 'TENANT_ID;BOM_ID';
   n^.synFlag := 30;

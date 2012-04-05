@@ -303,7 +303,8 @@ uses
   ufrmClientKpiReport in 'App\ufrmClientKpiReport.pas' {frmClientKpiReport},
   ufrmManKpiReport in 'App\ufrmManKpiReport.pas' {frmManKpiReport},
   ufrmMktMarketCostOrderList in 'App\ufrmMktMarketCostOrderList.pas' {frmMktMarketCostOrderList},
-  ufrmMktMarketCostOrder in 'App\ufrmMktMarketCostOrder.pas' {frmMktMarketCost};
+  ufrmMktMarketCostOrder in 'App\ufrmMktMarketCostOrder.pas' {frmMktMarketCost},
+  ObjCostCalc in 'Obj\ObjCostCalc.pas';
 
 {$R *.res}
 var
@@ -312,7 +313,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.5';
+  DBVersion := '1.0.2.6';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

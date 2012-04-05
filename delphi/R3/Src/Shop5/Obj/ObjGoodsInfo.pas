@@ -13,7 +13,7 @@ type
     function IsRootShop: Boolean;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
+    //记录行集修改检测函TZFactory数，返回值是True 测可以修改当前记录
     function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
     //记录行集删除检测函数，返回值是True 测可以删除当前记录
     function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;

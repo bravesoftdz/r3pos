@@ -263,12 +263,12 @@ begin
       cdsBrowser.SQL.Text := EncodeSQL;
       Factor.Open(cdsBrowser);
     end;
-  2:begin
+  1:begin
       Db_CloseDay.Close;
       Db_CloseDay.SQL.Text := EncodeSQL;
       Factor.Open(Db_CloseDay);
     end;
-  1:begin
+  2:begin
       Db_CloseMonth.Close;
       Db_CloseMonth.SQL.Text := EncodeSQL;
       Factor.Open(Db_CloseMonth);
@@ -370,13 +370,13 @@ begin
       if TfrmBatchCloseForDay.EditDialog(Self) then
         Open;
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       if not frmMain.FindAction('actfrmDaysClose').Enabled then Raise Exception.Create('你没有日结账权限，不能完成操作此功能.');
       frmMain.FindAction('actfrmDaysClose').OnExecute(nil);
       Open;
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       if not frmMain.FindAction('actfrmMonthClose').Enabled then Raise Exception.Create('你没有月结账权限，不能完成操作此功能.');
       frmMain.FindAction('actfrmMonthClose').OnExecute(nil);
@@ -427,11 +427,11 @@ begin
       if cdsBrowser.IsEmpty and (not cdsBrowser.Active) then Exit;
       Cancel;
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       CancelD;
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       CancelM;
     end;
@@ -667,11 +667,11 @@ begin
     begin
       Audit1;
     end
-  else if RzPage.TabIndex = 2 then
+  else if RzPage.TabIndex = 1 then
     begin
       Audit2;
     end
-  else if RzPage.TabIndex = 1 then
+  else if RzPage.TabIndex = 2 then
     begin
       Audit3;
     end;

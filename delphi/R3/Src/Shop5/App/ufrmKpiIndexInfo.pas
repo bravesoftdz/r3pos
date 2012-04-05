@@ -169,6 +169,8 @@ type
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure KpiGridGetFloatFormat(Sender: TObject; ACol, ARow: Integer;
       var IsFloat: Boolean; var FloatFormat: String);
+    procedure KpiGridKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     pBaseRow:pKpiRow;   //初始化标题时
     FKpiState: Boolean; //考核指标状态
@@ -1226,7 +1228,7 @@ begin
       KpiGrid.MergeCells(vCol,0,2,1); //有多少个商品合并
       KpiGrid.Cells[vCol,0]:=CdsKpiTimes.FieldByName('TIMES_NAME').AsString;
       //达标量
-      KpiGrid.Cells[vCol,1] := '达标量';
+      KpiGrid.Cells[vCol,1] := '档位';
       KpiGrid.ColWidths[vCol] := 60;
       SetpRowValue(vCol,1,TimeID,'#');
 
@@ -1242,7 +1244,7 @@ begin
       KpiGrid.MergeCells(vCol,0,vGodsCount+1,1); //有多少个商品合并
       KpiGrid.Cells[vCol,0]:=CdsKpiTimes.FieldByName('TIMES_NAME').AsString;
       //达标量
-      KpiGrid.Cells[vCol,1] := '达标量';
+      KpiGrid.Cells[vCol,1] := '档位';
       KpiGrid.ColWidths[vCol] := 60;
       SetpRowValue(vCol,1,TimeID,'#');
 
@@ -1793,8 +1795,6 @@ var
 begin
   CurText:=KpiGrid.Cells[FColIdx,FRowIdx];
   if (Key=#161) or (Key='。') then Key:='.';
-  if (StrToFloatDef(CurText,0)>999999999) and (Key<>#8) then
-    Raise Exception.Create('输入的数值过大，无效...');
   if Pos('.',CurText)>0 then
   begin
     if Key in ['0'..'9',#8] then
@@ -2273,6 +2273,19 @@ begin
         end;
       end;
     end;
+  end;
+end;
+
+procedure TfrmKpiIndexInfo.KpiGridKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+  CurText: string;
+begin
+  CurText:=KpiGrid.Cells[FColIdx,FRowIdx];
+  if trim(CurText)='' then Exit;
+  if (StrToFloatDef(CurText,999999999)>999999999) and ((Key<>VK_RETURN)or(Key<>VK_BACK)) then
+  begin
+    KpiGrid.Cells[FColIdx,FRowIdx]:=Copy(CurText,1,Length(CurText)-1);
+    Raise Exception.Create('输入的数值过大，无效...');
   end;
 end;
 

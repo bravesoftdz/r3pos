@@ -118,6 +118,8 @@ type
     function GetIsNull: boolean;
     procedure Calc;
     procedure ClearInvaid;override;
+  protected
+    procedure WMFillData(var Message: TMessage); message WM_FILL_DATA;
   public
     { Public declarations }
     RowID:Integer;
@@ -135,7 +137,8 @@ implementation
 
 uses
   uGlobal, uCtrlUtil,uShopGlobal, uShopUtil, uFnUtil, ufrmBasic, ufrmMain,
-  uDsUtil, uXDictFactory, ufrmKpiIndexInfo, ufrmGoodsInfo,ufrmSalIndentOrderList;
+  uDsUtil, uXDictFactory, ufrmKpiIndexInfo, ufrmGoodsInfo,ufrmSalIndentOrderList,
+  ufrmSalIndentOrder;
 
 {$R *.dfm}
 
@@ -1291,6 +1294,16 @@ procedure TfrmMktRequOrder.PopupMenu1Popup(Sender: TObject);
 begin
   inherited;
   N4.Enabled:=(dbState=dsBrowse);
+end;
+
+procedure TfrmMktRequOrder.WMFillData(var Message: TMessage);
+var frmSalIndetOrder:TfrmSalIndentOrder;
+begin
+  //if dbState <> dsBrowse then Raise Exception.Create('不是在浏览状态不能完成操作');
+  frmSalIndetOrder := TfrmSalIndentOrder(Message.WParam);
+
+  Open(copy(frmSalIndetOrder.AObj.FieldByName('ATTH_ID').AsString,4,36));
+
 end;
 
 end.

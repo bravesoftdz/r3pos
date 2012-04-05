@@ -15,10 +15,10 @@ inherited frmMktRequReport: TfrmMktRequReport
       inherited RzPage: TRzPageControl
         Width = 763
         Height = 506
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1110,7 +1110,6 @@ inherited frmMktRequReport: TfrmMktRequReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh3: TDBGridEh
-                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 747
@@ -1998,7 +1997,6 @@ inherited frmMktRequReport: TfrmMktRequReport
                 Color = clWhite
                 TabOrder = 1
                 object DBGridEh5: TDBGridEh
-                  Tag = 1
                   Left = 2
                   Top = 2
                   Width = 747

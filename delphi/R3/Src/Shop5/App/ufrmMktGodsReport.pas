@@ -161,8 +161,6 @@ type
       State: TGridDrawState; var Text: String);
     procedure DBGridEh3DblClick(Sender: TObject);
     procedure DBGridEh4DblClick(Sender: TObject);
-    procedure DBGridEh5GetCellParams(Sender: TObject; Column: TColumnEh;
-      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
     AObj: TRecord_;
     vBegDate,vEndDate: string;
@@ -877,7 +875,7 @@ procedure TfrmMktGodsReport.DBGridEh5GetFooterParams(Sender: TObject;
 var
   ColName: string;
 begin
-  if Column.FieldName = 'GLIDE_NO' then Text := '合计:'+Text+'笔';  
+  if Column.FieldName = 'GLIDE_NO' then Text := '合计:'+Text+'笔';
 end;
 
 function TfrmMktGodsReport.GetDataRight: string;
@@ -945,14 +943,6 @@ begin
   fndP5_GODS_ID.Text:=adoReport4.fieldbyName('GODS_NAME').AsString;
   RzPage.ActivePageIndex:=4;
   actFindExecute(nil);
-end;
-
-procedure TfrmMktGodsReport.DBGridEh5GetCellParams(Sender: TObject;
-  Column: TColumnEh; AFont: TFont; var Background: TColor;
-  State: TGridDrawState);
-begin
-  inherited;
-if Column.FieldName = 'GLIDE_NO' then Text := '合计:'+Text+'笔';
 end;
 
 end.

@@ -2300,7 +2300,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                   DecimalNumber = 2
                   DigitalNumber = 12
                   OnDrawColumnCell = DBGridEh1DrawColumnCell
-                  OnGetCellParams = DBGridEh5GetCellParams
+                  OnGetCellParams = DBGridEh1GetCellParams
                   OnGetFooterParams = DBGridEh5GetFooterParams
                   Columns = <
                     item

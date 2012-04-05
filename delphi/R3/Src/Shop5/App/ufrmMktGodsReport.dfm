@@ -1,6 +1,6 @@
 inherited frmMktGodsReport: TfrmMktGodsReport
-  Left = 269
-  Top = 109
+  Left = 217
+  Top = 99
   Width = 986
   Height = 586
   Caption = #21830#21697#30003#39046#25253#34920
@@ -1832,7 +1832,28 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
-                      Width = 178
+                      Width = 199
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BARCODE'
+                      Footers = <>
+                      Title.Caption = #26465#30721
+                      Width = 95
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 62
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'UNIT_NAME'
+                      Footers = <>
+                      Title.Caption = #21333#20301
+                      Width = 33
                     end
                     item
                       Alignment = taRightJustify
@@ -2317,7 +2338,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                       FieldName = 'REQU_DATE'
                       Footers = <>
                       Title.Caption = #22635#25253#26085#26399
-                      Width = 74
+                      Width = 85
                     end
                     item
                       EditButtons = <>
@@ -2332,14 +2353,14 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                       FieldName = 'CLIENT_NAME'
                       Footers = <>
                       Title.Caption = #23458#25143#21517#31216
-                      Width = 145
+                      Width = 137
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'DEPT_NAME'
+                      FieldName = 'BARCODE'
                       Footers = <>
-                      Title.Caption = #25152#23646#37096#38376
-                      Width = 72
+                      Title.Caption = #26465#30721
+                      Width = 95
                     end
                     item
                       EditButtons = <>
@@ -2347,6 +2368,13 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
                       Width = 70
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'GODS_CODE'
+                      Footers = <>
+                      Title.Caption = #36135#21495
+                      Width = 62
                     end
                     item
                       EditButtons = <>
@@ -2400,6 +2428,13 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                       FieldName = 'REQU_YEAR'
                       Footers = <>
                       Title.Caption = #30003#39046#24180#20221
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'DEPT_NAME'
+                      Footers = <>
+                      Title.Caption = #25152#23646#37096#38376
+                      Width = 72
                     end
                     item
                       EditButtons = <>

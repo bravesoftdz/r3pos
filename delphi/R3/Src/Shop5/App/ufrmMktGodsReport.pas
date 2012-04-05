@@ -544,7 +544,7 @@ end;
 
 function TfrmMktGodsReport.GetGodsSQL(chk:boolean=true): string;    //4444
 var
-  strSql,strWhere,strCnd,KpiTab,UnitCalc: string;
+  strSql,strWhere,strCnd,KpiTab,UnitCalc,UnitID: string;
 begin
   if P4_D1.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
   if P4_D2.EditValue = null then Raise Exception.Create('申领日期条件不能为空');
@@ -588,13 +588,18 @@ begin
   end;
   //单位换算系数
   UnitCalc:=GetUnitTO_CALC(fndP4_UNIT_ID.ItemIndex,'C'); 
+  UnitID:=GetUnitID(fndP4_UNIT_ID.ItemIndex,'C');
 
   if strCnd='' then
   begin
     strSql:=
       'select '+
+      ' A.TENANT_ID as TENANT_ID,'+      
       ' B.GODS_ID as GODS_ID,'+
       ' C.GODS_NAME as GODS_NAME,'+
+      ' C.BARCODE as BARCODE,'+
+      ' C.GODS_CODE as GODS_CODE,'+
+      ' '+UnitID+' as UNIT_ID,'+
       ' (B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
       ' B.KPI_MNY as KPI_MNY,'+     //返利金额
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
@@ -607,8 +612,12 @@ begin
   begin
     strSql:=
       'select '+
+      ' A.TENANT_ID as TENANT_ID,'+
       ' B.GODS_ID as GODS_ID,'+
       ' C.GODS_NAME as GODS_NAME,'+
+      ' C.BARCODE as BARCODE,'+
+      ' C.GODS_CODE as GODS_CODE,'+
+      ' '+UnitID+' as UNIT_ID,'+
       ' (B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
       ' B.KPI_MNY as KPI_MNY,'+     //返利金额
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
@@ -620,16 +629,22 @@ begin
             ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
   end;
   Result :=ParseSQL(Factor.iDbType,
-     'select '+
+     'select j.*,u.UNIT_NAME as UNIT_NAME  from '+
+     '(select '+
+     ' K.TENANT_ID as TENANT_ID,'+
      ' K.GODS_ID as GODS_ID,'+
      ' K.GODS_NAME as GODS_NAME,'+
+     ' K.BARCODE as BARCODE,'+
+     ' K.GODS_CODE as GODS_CODE,'+
+     ' K.UNIT_ID as UNIT_ID,'+     
      ' sum(CALC_AMOUNT) as CALC_AMOUNT,'+
      ' sum(KPI_MNY) as KPI_MNY,'+
      ' sum(BUDG_MNY) as BUDG_MNY,'+
      ' sum(AGIO_MNY) as AGIO_MNY,'+
      ' sum(OTHR_MNY) as OTHR_MNY '+
      ' from ('+strSql+')K '+
-     ' Group by K.GODS_ID,K.GODS_NAME '
+     ' Group by K.TENANT_ID,K.GODS_ID,K.GODS_NAME) j '+
+     ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '
      );
 end;
 
@@ -709,6 +724,8 @@ begin
   Result :=ParseSQL(Factor.iDbType,
     'select K.*,'+
     ' G.GODS_NAME as GODS_NAME,'+
+    ' G.GODS_CODE as GODS_CODE,'+
+    ' G.BARCODE as BARCODE,'+
     ' U.UNIT_NAME as UNIT_NAME,'+
     ' DEPT.DEPT_NAME as DEPT_NAME,'+
     ' D.USER_NAME as REQU_USER_TEXT,'+

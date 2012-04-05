@@ -100,14 +100,17 @@ begin
   FKpiDate1 := Value;
   if not IsFirst then Exit;
 
-  edtKPI_DATE1.Date := FnTime.fnStrtoDate(IntToStr(Value));
+  edtKPI_DATE1.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',Date()))*10000+Value));
 end;
 
 procedure TfrmKpiTimes.SetKpiDate2(const Value: Integer);
 begin
   FKpiDate2 := Value;
   if not IsFirst then Exit;
-  edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr(Value));
+  if FKpiDate1 < FKpiDate2 then
+     edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',Date()))*10000+Value))
+  else
+     edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',IncYear(Date())))*10000+Value));
 end;
 
 procedure TfrmKpiTimes.SetKpiFlag(const Value: String);

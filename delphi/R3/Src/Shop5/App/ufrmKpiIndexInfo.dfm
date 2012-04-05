@@ -19,8 +19,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 103
       Width = 641
       Height = 284
-      ActivePage = TabSheet3
-      TabIndex = 1
+      ActivePage = TabSheet4
+      TabIndex = 2
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20
@@ -606,6 +606,7 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
             PopupMenu = KpiPm
             TabOrder = 0
             OnKeyPress = KpiGridKeyPress
+            OnKeyUp = KpiGridKeyUp
             GridLineColor = clSilver
             ActiveCellShow = False
             ActiveCellFont.Charset = DEFAULT_CHARSET

@@ -1225,9 +1225,9 @@ begin
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
 
       if KpiCalc = 1 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_MONEY').AsFloat)*Ratio/100
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_MONEY').AsFloat+KpiDetail.FieldByName('ADJS_MNY').AsFloat)*Ratio/100
       else if KpiCalc = 2 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_AMOUNT').AsFloat)*Ratio
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_AMOUNT').AsFloat+KpiDetail.FieldByName('ADJS_AMT').AsFloat)*Ratio
       else if KpiCalc = 3 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
 

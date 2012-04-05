@@ -283,6 +283,8 @@ uses
 {$R *.dfm}
 
 procedure TfrmSaleDayReport.FormCreate(Sender: TObject);
+var
+  SetCol: TColumnEh;
 begin
   inherited;
   TDbGridEhSort.InitForm(self,false);
@@ -367,6 +369,10 @@ begin
       Label17.Caption := '仓库名称';
 
       Label23.Caption := '仓库群组';
+
+      SetCol:=self.FindColumn(DBGridEh6,'SHOP_NAME');
+      if setCol<>nil then
+        SetCol.Title.Caption:='仓库名称';
     end;
 
   //增加单位显示：

@@ -280,9 +280,9 @@ begin
     finally
       KpiCalculate.Destroy;
     end;
+    ProgressBar1.Percent := (cdsHeader.RecNo*100 div cdsHeader.RecordCount);
     cdsHeader.Next;
   end;
-  ProgressBar1.Percent := (cdsHeader.RecNo*100 div cdsHeader.RecordCount);
 
   Factor.UpdateBatch(cdsHeader,'TMktKpiResult',nil);
   ProgressBar1.Percent := 100;

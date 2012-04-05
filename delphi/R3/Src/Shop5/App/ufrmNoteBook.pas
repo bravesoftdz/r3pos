@@ -178,7 +178,6 @@ begin
   SetBtnProperty(0);
   AObj:=TRecord_.Create;
   SelObj:=TRecord_.Create;
-  dbState:=dsBrowse;
   BtnNew.Action:=ActNewNB;
   if i=0 then
     ActNewNBExecute(Sender);  
@@ -382,6 +381,7 @@ begin
     DBGridEh1.SelectedIndex:=1;
   end;
   FBtnIdx:=BtnIdx;
+  dbState:=dsBrowse;
 end;
 
 procedure TfrmNoteBook.CreateNoteBookType;

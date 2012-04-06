@@ -578,8 +578,8 @@ try
                  defSrvrId := GetNodeValue(caTenantLoginResp,'srvrId');
                  if flag=3 then result.SHOP_ID := GetNodeValue(caTenantLoginResp,'shopId');
                  if result.SHOP_ID='' then result.SHOP_ID := inttostr(result.TENANT_ID)+'0001';
-                 //resVersion := GetNodeValue(caTenantLoginResp,'resVersion');
-                 //resDesktop := GetNodeValue(caTenantLoginResp,'resDesktop');
+                 resVersion := GetNodeValue(caTenantLoginResp,'resVersion');
+                 resDesktop := GetNodeValue(caTenantLoginResp,'resDesktop');
                  f.WriteString('db','dbid',inttostr(result.DB_ID));
                  if StrtointDef(GetNodeValue(caTenantLoginResp,'databasePort'),0)=0 then
                     hsname := GetNodeValue(caTenantLoginResp,'dbHostName')

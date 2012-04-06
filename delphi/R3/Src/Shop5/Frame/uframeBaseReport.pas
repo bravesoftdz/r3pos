@@ -1570,7 +1570,7 @@ procedure TframeBaseReport.DoGodsGroupBySort(DataSet: TZQuery; SORT_IDX,SORT_ID,
        InDataSet.Next;
      end;
      //对于默认值:第一个若是"#"处理
-     if trim(SortList.Strings[0])='#' then
+     if (SortList.Count>0) and (trim(SortList.Strings[0])='#') then
      begin
        SortList.Delete(0);
        SortList.Add('#'); 

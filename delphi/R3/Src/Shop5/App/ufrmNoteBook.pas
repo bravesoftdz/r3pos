@@ -590,6 +590,11 @@ begin
     if (RzPage.ActivePage=TabContents) and edtNB_TYPE.CanFocus then edtNB_TYPE.SetFocus;
     Raise Exception.Create('   请记事本类型...    ');
   end;
+  if Trim(edtNB_TEXT.Text)='' then
+  begin
+    if (RzPage.ActivePage=TabContents) and edtNB_TEXT.CanFocus then edtNB_TEXT.SetFocus;
+    Raise Exception.Create('   记录本内容不能为空，请输入...   ');
+  end;
   if Length(edtNB_TEXT.Text)>255 then
   begin
     if (RzPage.ActivePage=TabContents) and edtNB_TEXT.CanFocus then edtNB_TEXT.SetFocus;

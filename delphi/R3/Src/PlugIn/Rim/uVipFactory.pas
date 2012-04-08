@@ -75,7 +75,7 @@ begin
   GetSyncType;  //返回同步类型标记[]
 
   BasInfo.Close;
-  BasInfo.SQL.Text := 'select GODS_ID,SORT_ID4,SORT_ID9 from VIW_GOODSINFO where TENANT_ID='+Params.ParambyName('TENANT_ID').asString;
+  BasInfo.SQL.Text := 'select GODS_ID,SECOND_ID,SORT_ID4,SORT_ID9 from VIW_GOODSINFO where TENANT_ID='+Params.ParambyName('TENANT_ID').asString;
   Open(BasInfo);
 
   if Params.FindParam('SHOP_ID')<>nil then //报当前门店的会员
@@ -211,8 +211,8 @@ begin
        rs.SQL.Text := 'select ITEM_ID from sd_item A,RIM_GOODS_RELATION B where A.BRAND_ID1='''+id+''' and A.ITEM_ID=B.GODS_ID';
        if Open(rs) then
        begin
-         if not rs.IsEmpty and BasInfo.Locate('GODS_ID',rs.Fields[0].AsString,[]) then
-           result := rs.FieldbyName('SORT_ID4').AsString;
+         if not rs.IsEmpty and BasInfo.Locate('SECOND_ID',rs.Fields[0].AsString,[]) then
+           result := BasInfo.FieldbyName('SORT_ID4').AsString;
        end;
      finally
        rs.Free;

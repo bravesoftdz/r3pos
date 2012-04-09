@@ -171,7 +171,7 @@ begin
 end;
 
 procedure TfrmSaleTotalReport.actFindExecute(Sender: TObject);
-var strSql:string;
+var strSql:string;  
 begin
   inherited;
   if rptTempLate.ItemIndex<0 then Exit;

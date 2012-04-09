@@ -434,10 +434,16 @@ begin
 end;
 
 procedure TfrmKpiIndexInfo.FormDestroy(Sender: TObject);            
+var
+  i: integer;
 begin
   inherited;
   Aobj.Free;
+  //释放指针
+  for i:=0 to FKpiGridList.Count -1 do
+    Dispose(FKpiGridList[i]);
   FKpiGridList.Free;
+  if pBaseRow<>nil then Dispose(pBaseRow);  //释放base行指针
 end;
 
 procedure TfrmKpiIndexInfo.FormShow(Sender: TObject);
@@ -1186,6 +1192,7 @@ var
   i,vCol,vGodsCount: integer;
   GodsName,GodsID,TimeID: string;
 begin
+  if pBaseRow<>nil then Dispose(pBaseRow);  //释放base行指针
   New(pBaseRow);
   //先画标题: 创建一个 RowCount:2 x  ColCount:6 的Grid表格，行数待 设定的记录数确定。
   //列名: 序号、等级名称、等级基数、等级底数、商品名称、单位、档次量1、考核系数1、档次量2、考核系数2、档次量n、考核系数n
@@ -1566,7 +1573,7 @@ procedure TfrmKpiIndexInfo.InitKpiGridData;
     end; //case pRaito.ColType of
   end;
 var
-  CurRow: integer;    //Grid.Draw行
+  i,CurRow: integer;    //Grid.Draw行
   gRow,gCol,vRowCount: integer;
   Lvl_ID,ReValue: string;       //当前时段ID
   pRow: pKpiRow;
@@ -1575,7 +1582,9 @@ begin
   if not CdsKpiLevel.Active then Exit;
   if not CdsKpiSeqNo.Active then Exit;
   if not CdsKpiRatio.Active then Exit;
-  FKpiGridList.Clear; //清除Grid的列
+  //释放FKpiGridList指针:
+  for i:=0 to FKpiGridList.Count -1 do Dispose(FKpiGridList[i]);
+  FKpiGridList.Clear;
   try
     CurRow:=2;
     CdsKpiLevel.First;

@@ -91,7 +91,7 @@ alter table PUB_GOODS_RELATION add SHORT_GODS_NAME varchar(30) NULL;
 --积分标准
 alter table PUB_GOODSINFOEXT add ITGL_RATE decimal(18, 3) NULL;
 
-update PUB_GOODSINFO set SHORT_GODS_NAME=GODS_NAME;
+--update PUB_GOODSINFO set SHORT_GODS_NAME=GODS_NAME;
 
 
 --指标类型

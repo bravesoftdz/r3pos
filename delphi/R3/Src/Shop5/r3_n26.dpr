@@ -262,7 +262,48 @@ uses
   ObjMktTaskOrder in 'Obj\ObjMktTaskOrder.pas',
   ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
   ufrmShowPanel in 'App\ufrmShowPanel.pas' {frmShowPanel},
-  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport};
+  ufrmSaleMonthTotalReport in 'App\ufrmSaleMonthTotalReport.pas' {frmSaleMonthTotalReport},
+  uCommand in 'App\uCommand.pas',
+  ufrmRecvOrder in 'App\ufrmRecvOrder.pas' {frmRecvOrder},
+  ufrmRecvOrderList in 'App\ufrmRecvOrderList.pas' {frmRecvOrderList},
+  ufrmMktActiveList in 'App\ufrmMktActiveList.pas' {frmMktActiveList},
+  ufrmMktCostTotalReport in 'App\ufrmMktCostTotalReport.pas' {frmMktCostTotalReport},
+  ufrmMktGodsReport in 'App\ufrmMktGodsReport.pas' {frmMktGodsReport},
+  ufrmMktKpiCalculate in 'App\ufrmMktKpiCalculate.pas' {frmMktKpiCalculate},
+  ufrmMktKpiResult in 'App\ufrmMktKpiResult.pas' {frmMktKpiResult},
+  ufrmMktKpiResult2 in 'App\ufrmMktKpiResult2.pas' {frmMktKpiResult2},
+  ufrmMktKpiResult3 in 'App\ufrmMktKpiResult3.pas' {frmMktKpiResult3},
+  ufrmMktKpiResultList in 'App\ufrmMktKpiResultList.pas' {frmMktKpiResultList},
+  ufrmMktKpiTotalReport in 'App\ufrmMktKpiTotalReport.pas' {frmMktKpiTotalReport},
+  ufrmMktMarketCostOrder in 'App\ufrmMktMarketCostOrder.pas' {frmMktMarketCost},
+  ufrmMktMarketCostOrderList in 'App\ufrmMktMarketCostOrderList.pas' {frmMktMarketCostOrderList},
+  ufrmMktPlanOrder in 'App\ufrmMktPlanOrder.pas' {frmMktPlanOrder},
+  ufrmMktPlanOrderList in 'App\ufrmMktPlanOrderList.pas' {frmMktPlanOrderList},
+  ufrmMktRequOrder in 'App\ufrmMktRequOrder.pas' {frmMktRequOrder},
+  ufrmMktRequOrderList in 'App\ufrmMktRequOrderList.pas' {frmMktRequOrderList},
+  ufrmMktRequReport in 'App\ufrmMktRequReport.pas' {frmMktRequReport},
+  ufrmMktTaskOrder in 'App\ufrmMktTaskOrder.pas' {frmMktTaskOrder},
+  ufrmMktTaskOrderList in 'App\ufrmMktTaskOrderList.pas' {frmMktTaskOrderList},
+  ufrmKpiIndex in 'App\ufrmKpiIndex.pas' {frmKpiIndex},
+  ufrmKpiIndexInfo in 'App\ufrmKpiIndexInfo.pas' {frmKpiIndexInfo},
+  ufrmKpiRatioSet in 'App\ufrmKpiRatioSet.pas' {frmKpiRatioSet},
+  ufrmKpiSeqNoSet in 'App\ufrmKpiSeqNoSet.pas' {frmKpiSeqNoSet},
+  ufrmKpiTimes in 'App\ufrmKpiTimes.pas' {frmKpiTimes},
+  ufrmOrderHandSet in 'App\ufrmOrderHandSet.pas' {frmOrderHandSet},
+  ufrmDemandOrder in 'App\ufrmDemandOrder.pas' {frmDemandOrder},
+  ufrmDemandOrderList in 'App\ufrmDemandOrderList.pas' {frmDemandOrderList},
+  ufrmSalRetuMenu in 'App\ufrmSalRetuMenu.pas' {frmSalRetuMenu},
+  ufrmPriceLevelSet in 'App\ufrmPriceLevelSet.pas' {frmPriceLevelSet},
+  ufrmProfitAnaly in 'App\ufrmProfitAnaly.pas' {frmProfitAnaly: TFrame},
+  ufrmPotenAnaly in 'App\ufrmPotenAnaly.pas' {frmPotenAnaly: TFrame},
+  uKpiCalculate in 'App\uKpiCalculate.pas',
+  ufrmClientKpiReport in 'App\ufrmClientKpiReport.pas' {frmClientKpiReport},
+  ufrmManKpiReport in 'App\ufrmManKpiReport.pas' {frmManKpiReport},
+  ufrmBondRequReport in 'App\ufrmBondRequReport.pas' {frmBondRequReport},
+  ufrmBomOrder in 'App\ufrmBomOrder.pas' {frmBomOrder},
+  ufrmBomOrderList in 'App\ufrmBomOrderList.pas' {frmBomOrderList},
+  ufrmSalInvoice in 'App\ufrmSalInvoice.pas' {frmSalInvoice},
+  ufrmSalInvoiceList in 'App\ufrmSalInvoiceList.pas' {frmSalInvoiceList};
 
 {$R *.res}
 var
@@ -271,7 +312,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.5';
+  DBVersion := '1.0.2.6';
   Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

@@ -3270,7 +3270,7 @@ begin
   if not ShopGlobal.GetChkRight(PMMToolBox(Sender)^.mid) then Raise Exception.Create('您没有操作此模块的权限.');
   toolDeskClick(toolDesk);
   s := CA_MODULE.FieldbyName('ACTION_URL').AsString;
-  if s<>'' then
+  if (s<>'') and (s<>'#') then
      begin
        delete(s,1,4);
        delete(s,length(s),1);

@@ -406,16 +406,7 @@ begin
 end;
 
 function TfrmDemandOrderList.PrintSQL(tenantid, id: string): string;
-var
-  TopCnd: string;
 begin
-  //数据库类型 0:SQL Server; 1:Oracle; 2:Sybase; 3:ACCESS; 4:DB2; 5:Sqlite
-  case Factor.iDbType of
-   0: TopCnd:=' top 20000 ';
-   else
-      TopCnd:='';
-  end;
-
   result :=
    'select j.* from ( '+
    'select jj.*,l.GODS_NAME,l.GODS_CODE,l.BARCODE from ('+
@@ -428,12 +419,12 @@ begin
    'select jc.*,e.USER_NAME as CREA_USER_TEXT from ( '+
    'select jb.*,d.USER_NAME as DEMA_USER_TEXT from ( '+
    'select ja.*,c.CLIENT_NAME from ( '+
-   'select '+TopCnd+' A.TENANT_ID,A.SHOP_ID,A.DEMA_ID,A.DEMA_TYPE,A.GLIDE_NO,A.DEMA_DATE,A.CLIENT_ID,A.DEMA_USER,'+
+   'select A.TENANT_ID,A.SHOP_ID,A.DEMA_ID,A.DEMA_TYPE,A.GLIDE_NO,A.DEMA_DATE,A.CLIENT_ID,A.DEMA_USER,'+
    'A.DEMA_AMT,A.DEMA_MNY,A.CHK_DATE,A.CHK_USER,A.REMARK,A.CREA_DATE,A.CREA_USER,B.SEQNO,B.GODS_ID,'+
    'B.PROPERTY_01,B.PROPERTY_02,B.LOCUS_NO,B.BOM_ID,B.BATCH_NO,B.IS_PRESENT,B.UNIT_ID,B.AMOUNT,B.ORG_PRICE,'+
    'B.APRICE,B.AMONEY,B.AGIO_RATE,B.AGIO_MONEY,B.CALC_AMOUNT,B.CALC_MONEY,B.REMARK '+
    ' from MKT_DEMANDDATA B left join MKT_DEMANDORDER A on A.TENANT_ID=B.TENANT_ID '+
-   ' and A.DEMA_ID=B.DEMA_ID where A.TENANT_ID='+tenantid+' and A.DEMA_ID='''+id+''' order by SEQNO) ja '+
+   ' and A.DEMA_ID=B.DEMA_ID where A.TENANT_ID='+tenantid+' and A.DEMA_ID='''+id+''' ) ja '+
    ' left outer join VIW_CLIENTINFO c on ja.TENANT_ID=c.TENANT_ID and ja.CLIENT_ID=c.CLIENT_ID ) jb '+
    ' left outer join VIW_USERS d on jb.TENANT_ID=d.TENANT_ID and jb.DEMA_USER=d.USER_ID ) jc '+
    ' left outer join VIW_USERS e on jc.TENANT_ID=e.TENANT_ID and jc.CREA_USER=e.USER_ID ) jd '+
@@ -443,7 +434,7 @@ begin
    ' left outer join VIW_SIZE_INFO i on jg.TENANT_ID=i.TENANT_ID and jg.PROPERTY_01=i.SIZE_ID ) jh '+
    ' left outer join VIW_COLOR_INFO j on jh.TENANT_ID=j.TENANT_ID and jh.PROPERTY_02=j.COLOR_ID ) ji '+
    ' left outer join VIW_MEAUNITS k on ji.TENANT_ID=k.TENANT_ID and ji.UNIT_ID=k.UNIT_ID ) jj '+
-   ' left outer join VIW_GOODSINFO l on jj.TENANT_ID=l.TENANT_ID and jj.GODS_ID=l.GODS_ID ) j ';
+   ' left outer join VIW_GOODSINFO l on jj.TENANT_ID=l.TENANT_ID and jj.GODS_ID=l.GODS_ID ) j order by SEQNO';
 end;
 
 procedure TfrmDemandOrderList.frfSalIndentOrderUserFunction(const Name: String;

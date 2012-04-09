@@ -398,10 +398,9 @@ function TfrmSalesOrderList.PrintSQL(tenantid, id: string): string;
 var
   TopCnd: string;
 begin
-  //2012.04.09 xhh修改 针对MS SQL Server库(top .. order by)
   //数据库类型 0:SQL Server; 1:Oracle; 2:Sybase; 3:ACCESS; 4:DB2; 5:Sqlite
   case Factor.iDbType of
-   0: TopCnd:=' top 20000 '; //SQL Server 需要加:top
+   0: TopCnd:=' top 20000 ';
    else
       TopCnd:='';
   end;

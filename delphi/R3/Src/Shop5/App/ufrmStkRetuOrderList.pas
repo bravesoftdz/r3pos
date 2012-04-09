@@ -401,7 +401,17 @@ begin
 end;
 
 function TfrmStkRetuOrderList.PrintSQL(tenantid, id: string): string;
+var
+  TopCnd: string;
 begin
+  //2012.04.09 xhh修改 针对MS SQL Server库(top .. order by)
+  //数据库类型 0:SQL Server; 1:Oracle; 2:Sybase; 3:ACCESS; 4:DB2; 5:Sqlite
+  case Factor.iDbType of
+   0: TopCnd:=' top 20000 ';
+   else
+      TopCnd:='';
+  end;
+
   result :=
    'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT,'+
    'j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_TAX_MNY,'+
@@ -421,10 +431,11 @@ begin
    'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
    'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
    'select jb.*,b.CLIENT_NAME,b.LINKMAN,b.TELEPHONE2 as MOVE_TELE,b.SETTLE_CODE,b.POSTALCODE,b.ADDRESS,b.FAXES CLIENT_FAXES from ('+
-   'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,A.PRINT_TIMES,'+
+   'select '+TopCnd+' A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,A.PRINT_TIMES,'+
    'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,-A.STOCK_AMT as STOCK_AMT,-A.STOCK_MNY as STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,'+
    '-B.AMOUNT as AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.LOCUS_NO,-B.CALC_MONEY as CALC_MONEY,B.AGIO_RATE,-B.AGIO_MONEY as AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL '+
-   'from STK_STOCKORDER A,STK_STOCKDATA B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' ) jb '+
+   'from STK_STOCKORDER A,STK_STOCKDATA B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' '+
+   ' order by SEQNO) jb '+
    'left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
    'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
    'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
@@ -436,7 +447,7 @@ begin
    'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and jj.PROPERTY_02=j.COLOR_ID ) jk '+
    'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl '+
    'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') l on jl.SETTLE_CODE=l.CODE_ID) jm '+
-   'left outer join CA_DEPT_INFO m on jm.TENANT_ID=m.TENANT_ID and jm.DEPT_ID=m.DEPT_ID ) j order by SEQNO';
+   'left outer join CA_DEPT_INFO m on jm.TENANT_ID=m.TENANT_ID and jm.DEPT_ID=m.DEPT_ID ) j ';
 end;
 
 procedure TfrmStkRetuOrderList.actPrintExecute(Sender: TObject);

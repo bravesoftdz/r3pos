@@ -318,7 +318,9 @@ begin
 end;
 
 function TfrmIoroOrderList.PrintSQL(id: string): string;
-var tb:string;
+var
+  tb:string;
+  TopCnd: string; 
   code_name:string;
 begin
   case IoroType of
@@ -331,6 +333,14 @@ begin
       code_name := '支出';
     end;
   end;
+  //2012.04.09 xhh修改 针对MS SQL Server库(top .. order by)
+  //数据库类型 0:SQL Server; 1:Oracle; 2:Sybase; 3:ACCESS; 4:DB2; 5:Sqlite
+  case Factor.iDbType of
+   0: TopCnd:=' top 20000 ';
+   else
+      TopCnd:='';
+  end;
+    
   result :=
   'select j.*,'''+code_name+''' as CODE_NAME '+
   'from ( '+
@@ -342,9 +352,10 @@ begin
   'select jf.*,f.ACCT_NAME as ACCOUNT_ID_TEXT from ('+
   'select je.*,e.CODE_NAME as ITEM_ID_TEXT from ('+
   'select jd.*,d.CLIENT_NAME as CLIENT_ID_TEXT,d.CLIENT_CODE,d.ADDRESS,d.POSTALCODE,d.LINKMAN,d.TELEPHONE2 as MOVE_TELE from ('+
-  'select A.TENANT_ID,A.SHOP_ID,A.IORO_ID,A.SEQNO,A.IORO_MNY,A.PAYM_ID,A.BILL_NO,'+
+  'select '+TopCnd+' A.TENANT_ID,A.SHOP_ID,A.IORO_ID,A.SEQNO,A.IORO_MNY,A.PAYM_ID,A.BILL_NO,'+
   'A.IORO_INFO,c.CLIENT_ID,C.ITEM_ID,A.ACCOUNT_ID,C.GLIDE_NO,C.IORO_USER,C.IORO_MNY as TOTAL_IORO_MNY,C.CREA_USER,C.REMARK,C.IORO_DATE,C.IORO_TYPE,C.CHK_USER '+
-  'from ACC_IORODATA A,ACC_IOROORDER C where A.TENANT_ID=C.TENANT_ID and A.IORO_ID=C.IORO_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_ID='''+id+''' ) jd '+
+  'from ACC_IORODATA A,ACC_IOROORDER C where A.TENANT_ID=C.TENANT_ID and A.IORO_ID=C.IORO_ID and A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.IORO_ID='''+id+''' '+
+  ' order by A.SEQNO) jd '+
   'left outer join '+tb+' d on jd.TENANT_ID=d.TENANT_ID and jd.CLIENT_ID=d.CLIENT_ID ) je '+
   'left outer join VIW_ITEM_INFO e on je.TENANT_ID=e.TENANT_ID and je.ITEM_ID=e.CODE_ID ) jf '+
   'left outer join VIW_ACCOUNT_INFO f on jf.TENANT_ID=f.TENANT_ID and jf.ACCOUNT_ID=f.ACCOUNT_ID ) jg '+
@@ -352,8 +363,7 @@ begin
   'left outer join VIW_USERS h on jh.TENANT_ID=h.TENANT_ID and jh.CHK_USER=h.USER_ID ) ji '+
   'left outer join VIW_USERS i on ji.TENANT_ID=i.TENANT_ID and ji.IORO_USER=i.USER_ID ) jk '+
   'left outer join VIW_USERS k on jk.TENANT_ID=k.TENANT_ID and jk.CREA_USER=k.USER_ID ) jl '+
-  'left outer join VIW_PAYMENT l on jl.TENANT_ID=l.TENANT_ID and jl.PAYM_ID=l.CODE_ID ) j '+
-  'order by j.SEQNO' ;
+  'left outer join VIW_PAYMENT l on jl.TENANT_ID=l.TENANT_ID and jl.PAYM_ID=l.CODE_ID ) j ';
 end;
 
 procedure TfrmIoroOrderList.actPrintExecute(Sender: TObject);

@@ -438,7 +438,17 @@ begin
 end;
 
 function TfrmOutLocusOrderList.PrintSQL(tenantid, id: string;M:Integer): string;
+var
+  TopCnd: string;
 begin
+  //2012.04.09 xhh修改 针对MS SQL Server库(top .. order by)
+  //数据库类型 0:SQL Server; 1:Oracle; 2:Sybase; 3:ACCESS; 4:DB2; 5:Sqlite
+  case Factor.iDbType of
+   0: TopCnd:=' top 20000 ';
+   else
+      TopCnd:='';
+  end;
+
   case M of
     0:begin
       result := 'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT from ('+
@@ -455,11 +465,11 @@ begin
      'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
      'select jc.*,c.GLIDE_NO as GLIDE_NO_FROM from ('+
      'select jb.*,b.CLIENT_NAME,b.CLIENT_CODE,b.SETTLE_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE2 as MOVE_TELE,b.INTEGRAL as ACCU_INTEGRAL,b.FAXES as CLIENT_FAXES from ('+
-     'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
+     'select '+TopCnd+' A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
      'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.SALE_AMT,A.SALE_MNY,A.CASH_MNY,A.PAY_ZERO,A.PAY_DIBS,A.PAY_A,A.PAY_B,A.PAY_C,A.PAY_D,A.PAY_E,A.PAY_F,'+
      'A.PAY_G,A.PAY_H,A.PAY_I,A.PAY_J,A.INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.REMARK as REMARK_DETAIL,'+
      'B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,A.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT from SAL_SALESORDER A,SAL_SALESDATA B '+
-     'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' ) jb '+
+     'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' order by SEQNO) jb '+
      'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
      'left outer join SAL_INDENTORDER c on jc.TENANT_ID=c.TENANT_ID and jc.FROM_ID=c.INDE_ID ) jd '+
      'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
@@ -472,7 +482,7 @@ begin
      'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
      'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
      'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
-     'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j order by SEQNO';
+     'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j ';
      end;
     1:begin
       Result :=
@@ -481,12 +491,12 @@ begin
        'b.FAXES as CLIENT_FAXES,c.USER_NAME as GUIDE_USER_TEXT,d.USER_NAME as CHK_USER_TEXT,e.CODE_NAME as INVOICE_FLAG_TEXT,f.USER_NAME as CREA_USER_TEXT,'+
        'g.SHOP_NAME,h.GODS_NAME,h.GODS_CODE,h.BARCODE,i.SIZE_NAME as PROPERTY_01_TEXT,j.COLOR_NAME as PROPERTY_02_TEXT,k.UNIT_NAME '+
        ' from ( '+
-       'select A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
+       'select '+TopCnd+' A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
        'A.PRINT_TIMES,A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.SALE_AMT,A.SALE_MNY,A.CASH_MNY,A.PAY_ZERO,A.PAY_DIBS,A.PAY_A,A.PAY_B,A.PAY_C,A.PAY_D,A.PAY_E,'+
        'A.PAY_F,A.PAY_G,A.PAY_H,A.PAY_I,A.PAY_J,A.INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_TYPE,A.SALES_STYLE,B.AMOUNT,B.APRICE,B.SEQNO,'+
        'B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,round(B.CALC_AMOUNT*B.COST_PRICE,2) as COST_MONEY,'+
        'B.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from SAL_SALESORDER A,SAL_SALESDATA B '+
-       ' where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' '+
+       ' where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' order by SEQNO '+
        ') jb left outer join CA_SHOP_INFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.SHOP_ID '+
        ' left outer join MKT_DEMANDORDER y on jb.TENANT_ID=y.TENANT_ID and jb.FIG_ID=y.DEMA_ID '+
        ' left outer join VIW_USERS c on jb.TENANT_ID=c.TENANT_ID and jb.GUIDE_USER=c.USER_ID '+
@@ -498,7 +508,7 @@ begin
        ' left outer join VIW_SIZE_INFO i on jb.TENANT_ID=i.TENANT_ID and jb.PROPERTY_01=i.SIZE_ID '+
        ' left outer join VIW_COLOR_INFO j on jb.TENANT_ID=j.TENANT_ID and  jb.PROPERTY_02=j.COLOR_ID '+
        ' left outer join VIW_MEAUNITS k on jb.TENANT_ID=k.TENANT_ID and jb.UNIT_ID=k.UNIT_ID '+
-       ' ) j order by SEQNO ';
+       ' ) j ';
     end;
     2:begin
       Result :=
@@ -515,9 +525,9 @@ begin
        'select je.*,e.USER_NAME as CHK_USER_TEXT from ( '+
        'select jc.*,c.USER_NAME as DUTY_USER_TEXT from ( '+
        'select jb.*,b.CHANGE_NAME from ( '+
-       'select A.*,A.CHANGE_AMT as SALE_AMT,A.CHANGE_DATE as SALES_DATE,'''' as CLIENT_NAME,B.AMOUNT,B.CALC_AMOUNT,B.COST_PRICE,B.APRICE,B.CALC_MONEY,B.SEQNO,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.IS_PRESENT,'+
+       'select '+TopCnd+' A.*,A.CHANGE_AMT as SALE_AMT,A.CHANGE_DATE as SALES_DATE,'''' as CLIENT_NAME,B.AMOUNT,B.CALC_AMOUNT,B.COST_PRICE,B.APRICE,B.CALC_MONEY,B.SEQNO,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.IS_PRESENT,'+
        'B.REMARK as REMARK_DETAIL from STO_CHANGEORDER A,STO_CHANGEDATA B where A.TENANT_ID=B.TENANT_ID and A.CHANGE_ID=B.CHANGE_ID and A.TENANT_ID='+tenantid+
-       ' and A.CHANGE_ID='''+id+''' '+
+       ' and A.CHANGE_ID='''+id+''' order by SEQNO '+
        ') jb left outer join STO_CHANGECODE b on jb.CHANGE_CODE=b.CHANGE_CODE '+
        ') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.DUTY_USER=c.USER_ID '+
        ') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CHK_USER=e.USER_ID '+
@@ -530,7 +540,7 @@ begin
        ') jl left outer join CA_DEPT_INFO l on jl.TENANT_ID=l.TENANT_ID and jl.DEPT_ID=l.DEPT_ID '+
        ') jm left outer join VIW_USERS m on jm.TENANT_ID=m.TENANT_ID and jm.LOCUS_USER=m.USER_ID '+
        ') jn left outer join MKT_DEMANDORDER n on jn.TENANT_ID=n.TENANT_ID and jn.FIG_ID=n.DEMA_ID '+
-       ') j order by SEQNO '
+       ') j ';
     end;
     3:begin
       Result :=
@@ -548,11 +558,11 @@ begin
        'select jd.*,d.USER_NAME as CHK_USER_TEXT from ( '+
        'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ( '+
        'select jb.*,b.CLIENT_NAME,b.LINKMAN,b.TELEPHONE2 as TELEPHONE,b.SETTLE_CODE,b.POSTALCODE,b.ADDRESS as SEND_ADDR,b.FAXES CLIENT_FAXES from ( '+
-       'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE as SALES_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,A.PRINT_TIMES,A.CHK_DATE,A.CHK_USER,'+
+       'select '+TopCnd+' A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE as SALES_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,A.PRINT_TIMES,A.CHK_DATE,A.CHK_USER,'+
        'A.FROM_ID,A.FIG_ID,-A.STOCK_AMT as SALE_AMT,-A.STOCK_MNY as STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,-B.AMOUNT as AMOUNT,B.APRICE,'+
        'B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.LOCUS_NO,-B.CALC_MONEY as CALC_MONEY,B.AGIO_RATE,-B.AGIO_MONEY as AGIO_MONEY,'+
        'B.IS_PRESENT,B.REMARK as REMARK_DETAIL from STK_STOCKORDER A,STK_STOCKDATA B where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID '+
-       ' and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' '+
+       ' and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' order by SEQNO '+
        ') jb left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID '+
        ') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID '+
        ') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID '+
@@ -566,7 +576,7 @@ begin
        ') jl left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') l on jl.SETTLE_CODE=l.CODE_ID '+
        ') jm left outer join CA_DEPT_INFO m on jm.TENANT_ID=m.TENANT_ID and jm.DEPT_ID=m.DEPT_ID '+
        ') jn left outer join STK_STOCKORDER n on jn.TENANT_ID=n.TENANT_ID and jn.FROM_ID=n.STOCK_ID '+
-       ') j order by SEQNO ';
+       ') j ';
     end;
    end;
 end;

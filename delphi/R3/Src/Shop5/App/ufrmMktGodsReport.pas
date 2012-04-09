@@ -241,8 +241,6 @@ begin
                               'DBGridEh4.KPI_MNY','DBGridEh4.BUDG_MNY','DBGridEh4.AGIO_MNY','DBGridEh4.OTHR_MNY',
                               'DBGridEh5.KPI_MNY','DBGridEh5.BUDG_MNY','DBGridEh5.AGIO_MNY','DBGridEh5.OTHR_MNY']);
 
-
-
 end;
 
 function TfrmMktGodsReport.GetDeptSQL(chk: boolean): string;
@@ -266,7 +264,7 @@ begin
   //部门条件:
   if trim(fndP1_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
-  //考核指标:
+  //商品名称:
   if fndP1_GODS_ID.AsString<>'' then
     strWhere:=strWhere+' and B.GODS_ID='''+fndP1_GODS_ID.AsString+''' ';
   //客户名称:
@@ -358,7 +356,7 @@ begin
    //部门条件:
   if trim(fndP2_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP2_DEPT_ID.AsString);
-  //考核指标:
+  //商品名称:
   if fndP2_GODS_ID.AsString<>'' then
     strWhere:=strWhere+' and C.GODS_ID='''+fndP2_GODS_ID.AsString+''' ';
   //客户名称:
@@ -497,7 +495,7 @@ begin
   //部门条件:
   if trim(fndP3_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP3_DEPT_ID.AsString);
-  //考核指标:
+  //商品名称:
   if fndP3_GODS_ID.AsString<>'' then
     strWhere:=strWhere+' and C.GODS_ID='''+fndP3_GODS_ID.AsString+''' ';
   //客户名称:
@@ -562,7 +560,7 @@ begin
   //部门条件:
   if trim(fndP4_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP4_DEPT_ID.AsString);
-  //考核指标:
+  //商品名称:
   if fndP4_GODS_ID.AsString<>'' then
     strWhere:=strWhere+' and C.GODS_ID='''+fndP4_GODS_ID.AsString+''' ';
   //客户名称:
@@ -668,7 +666,7 @@ begin
   //部门条件:
   if trim(fndP5_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
-  //考核指标:
+  //商品名称:
   if fndP5_GODS_ID.AsString<>'' then
     strWhere:=strWhere+' and B.GODS_ID='''+fndP5_GODS_ID.AsString+''' ';
   //客户名称:

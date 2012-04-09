@@ -1,6 +1,5 @@
 inherited frmMktGodsReport: TfrmMktGodsReport
-  Left = 217
-  Top = 99
+  Left = 191
   Width = 986
   Height = 586
   Caption = #21830#21697#30003#39046#25253#34920
@@ -15,10 +14,10 @@ inherited frmMktGodsReport: TfrmMktGodsReport
       inherited RzPage: TRzPageControl
         Width = 763
         Height = 506
-        ActivePage = TabSheet5
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 4
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

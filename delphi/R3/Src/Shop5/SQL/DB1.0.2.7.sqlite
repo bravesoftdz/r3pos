@@ -1,0 +1,79 @@
+--添加市场费用核销
+alter table MKT_REQUDATA add BUDG_VRF [decimal](18, 3) NULL;
+
+--市场活动费核销
+CREATE TABLE [MKT_BUDGORDER] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --市场活动费核销ID
+	[BUDG_ID] [char] (36) NOT NULL ,
+        --流水号
+	[GLIDE_NO] [varchar] (20) NOT NULL ,
+        --经销商
+	[CLIENT_ID] [varchar] (36) NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --所属部门
+	[DEPT_ID] [varchar] (12) NOT NULL,
+        --核销日期
+	[BUDG_DATE] int NOT NULL ,
+
+        --审核日期
+	[CHK_DATE] [varchar] (10) NULL ,
+        --审核人员
+	[CHK_USER] [varchar] (36) NULL ,
+
+        --申领单号
+	[REQU_ID] [char] (36) NULL ,
+
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_MKT_BUDGORDER_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_MKT_BUDGORDER] PRIMARY KEY 
+	(
+		[TENANT_ID],
+		[BUDG_ID]
+	) 
+);
+
+CREATE INDEX IX_MKT_BUDGORDER_TENANT_ID ON MKT_BUDGORDER(TENANT_ID);
+CREATE INDEX IX_MKT_BUDGORDER_TIME_STAMP ON MKT_BUDGORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MKT_BUDGORDER_BUDG_DATE ON MKT_BUDGORDER(BUDG_DATE);
+
+--市场活动费核销明细
+CREATE TABLE [MKT_BUDGDATA] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --市场活动费核销ID
+	[BUDG_ID] [char] (36) NOT NULL ,
+        --门店代码
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --序号
+	[SEQNO] [int] NOT NULL ,
+	--活动编号
+	[ACTIVE_ID] char(36) NOT NULL ,
+        --考核ID
+	[KPI_ID] [char] (36) NOT NULL ,
+        --活动费用
+	[AMONEY] [decimal](18, 3) NULL ,
+
+	[REMARK] [varchar] (100) NULL ,
+	CONSTRAINT [PK_MKT_BUDGDATA] PRIMARY KEY  
+	(
+		[TENANT_ID],
+		[BUDG_ID],
+		[SEQNO]
+	)
+);
+
+CREATE INDEX IX_MKT_BUDGDATA_TENANT_ID ON MKT_BUDGDATA(TENANT_ID);
+CREATE INDEX IX_MKT_BUDGDATA_BUDG_ID ON MKT_BUDGDATA(TENANT_ID,BUDG_ID);
+CREATE INDEX IX_MKT_BUDGDATA_KPI_ID ON MKT_BUDGDATA(TENANT_ID,KPI_ID);
+

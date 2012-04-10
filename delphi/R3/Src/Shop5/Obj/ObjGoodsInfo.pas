@@ -75,11 +75,12 @@ begin
   result := true;
   try
     rs:=TZQuery.Create(nil);
-    rs.SQL.Text:='select Count(*) as ReSum from STO_STORAGE where AMOUNT<>0 and GODS_ID=:GODS_ID ';
-    rs.Params.ParamByName('GODS_ID').AsString:=trim(FieldByName('GODS_ID').AsOldString); 
+    rs.SQL.Text:='select Count(*) as ReSum from STO_STORAGE where TENANT_ID=:TENANT_ID and round(AMOUNT,3)<>0 and GODS_ID=:GODS_ID ';
+    rs.Params.ParamByName('TENANT_ID').AsInteger:=FieldByName('TENANT_ID').AsInteger;
+    rs.Params.ParamByName('GODS_ID').AsString:=trim(FieldByName('GODS_ID').AsOldString);
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger> 0 then
-      Raise Exception.Create('"'+FieldbyName('GODS_NAME').AsOldString+'"库存不为0不能删除.');      ;
+    if rs.Fields[0].asInteger> 0 then
+       Raise Exception.Create('"'+FieldbyName('GODS_NAME').AsOldString+'"库存不为0不能删除.');      ;
   finally
     rs.Free;
   end;

@@ -263,7 +263,8 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
-    ',C.NEW_INPRICE*'+UnitCalc+' as NEW_INPRICE,C.NEW_OUTPRICE*'+UnitCalc+' as NEW_OUTPRICE '+
+    ',C.NEW_INPRICE*'+UnitCalc+' as NEW_INPRICE'+
+    ',C.NEW_OUTPRICE*'+UnitCalc+' as NEW_OUTPRICE '+
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
@@ -320,7 +321,7 @@ begin
     'SELECT '+
     ' A.TENANT_ID '+
     ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
-    ',C.NEW_INPRICE*'+UnitCalc+' as NEW_INPRICE,C.NEW_OUTPRICE*'+UnitCalc+' as NEW_OUTPRICE '+
+    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
 
     ',0 as ORG_AMT '+ //期初数量
     ',0 as ORG_MNY '+   //进项金额<按当时进价>

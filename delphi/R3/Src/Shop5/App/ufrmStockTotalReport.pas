@@ -230,7 +230,7 @@ begin
   if trim(fndP1_SHOP_ID.AsString)<>'' then
   begin
     strWhere:=strWhere+' and A.SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
-    StrCnd:=' SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
+    StrCnd:=' and SHOP_ID='''+trim(fndP1_SHOP_ID.AsString)+''' ';
   end;
 
   //查询主数据: 过滤企业ID

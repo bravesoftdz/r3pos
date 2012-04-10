@@ -82,7 +82,7 @@ type
   end;
 
 implementation
-uses uGlobal,ufnUtil,uDsUtil,uExpression,ufrmDibsOption,uShopGlobal,ufrmLogin,ufrmCardNoInput,EncDec,uMsgBox;
+uses uGlobal,uDevFactory,ufnUtil,uDsUtil,uExpression,ufrmDibsOption,uShopGlobal,ufrmLogin,ufrmCardNoInput,EncDec,uMsgBox;
 {$R *.dfm}
 
 function MyRoundTo(const AValue: Double; const ADigit: TRoundToRange = -2): Currency;
@@ -105,6 +105,9 @@ begin
         FHandle := vHandle;
         PayDs := zPayDs;
         r := MyRoundTo(_TotalFee,Digit);
+        //2012.04.10在固显屏上显示总计(抹0之后金额):
+        TDevFactory.ShowATotal(r);
+
         MainRecord := _MainRecord;
         //2011-07-25 为简单操作，去掉保留收款数据功能 zhangsr
         //if MainRecord.FieldByName('PAY_DIBS').AsString = '' then
@@ -144,6 +147,8 @@ begin
              MainRecord.FieldByName('PAY_ZERO').AsFloat := StrtoFloat(edtDIBS.Text);
              MainRecord.FieldByName('PAY_A').AsFloat :=
                 MainRecord.FieldByName('CASH_MNY').AsFloat-MainRecord.FieldByName('PAY_ZERO').AsFloat;
+             //2012.04.10在固显屏上显示找零:
+             TDevFactory.ShowDibs(MainRecord.FieldByName('PAY_ZERO').AsFloat);
            end;
       finally
         free;
@@ -197,6 +202,9 @@ begin
           end;
        MainRecord.FieldByName('CASH_MNY').AsFloat := GetFee(edtTakeFee.Text);
        MainRecord.FieldByName('PAY_A').AsFloat := MainRecord.FieldByName('CASH_MNY').AsFloat;
+       //2012.04.10固显屏上显示实收现金:
+       TDevFactory.ShowAMoney(MainRecord.FieldByName('PAY_A').AsFloat);
+
        r :=  Calc-(TotalFee);
        ShowFee;
        edtTakeFee.Text := '';
@@ -207,6 +215,8 @@ begin
      begin
        MainRecord.FieldByName('CASH_MNY').AsFloat := GetFee(edtTakeFee.Text);
        MainRecord.FieldByName('PAY_A').AsFloat := MainRecord.FieldByName('CASH_MNY').AsFloat;
+       //2012.04.10固显屏上显示实收现金:
+       TDevFactory.ShowAMoney(MainRecord.FieldByName('PAY_A').AsFloat);       
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -784,6 +794,8 @@ begin
 	TotalFee := _TotalFee;
 	ShowFee;
 	edtTakeFee.Text := edtPAY_WAIT.Text;
+  //2012.04.10固显屏上显示总计:
+  TDevFactory.ShowATotal(r);
 end;
 
 end.

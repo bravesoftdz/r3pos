@@ -10,8 +10,8 @@ inherited frameContractForm: TframeContractForm
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 656
-    Height = 451
+    Width = 664
+    Height = 462
     Align = alClient
     BorderInner = fsFlatRounded
     BorderOuter = fsNone
@@ -21,7 +21,7 @@ inherited frameContractForm: TframeContractForm
     object RzPanel2: TRzPanel
       Left = 5
       Top = 5
-      Width = 646
+      Width = 654
       Height = 215
       Align = alTop
       BorderOuter = fsNone
@@ -300,8 +300,8 @@ inherited frameContractForm: TframeContractForm
     end
     object RzPanel3: TRzPanel
       Left = 5
-      Top = 321
-      Width = 646
+      Top = 332
+      Width = 654
       Height = 53
       Align = alBottom
       BorderOuter = fsNone
@@ -312,8 +312,8 @@ inherited frameContractForm: TframeContractForm
     object DBGridEh1: TDBGridEh
       Left = 5
       Top = 220
-      Width = 646
-      Height = 101
+      Width = 654
+      Height = 112
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       DataSource = dsTable
@@ -355,8 +355,8 @@ inherited frameContractForm: TframeContractForm
     end
     object stbHint: TRzPanel
       Left = 5
-      Top = 422
-      Width = 646
+      Top = 433
+      Width = 654
       Height = 24
       Align = alBottom
       BorderOuter = fsFlat
@@ -373,8 +373,8 @@ inherited frameContractForm: TframeContractForm
     end
     object rzHelp: TRzPanel
       Left = 5
-      Top = 374
-      Width = 646
+      Top = 385
+      Width = 654
       Height = 48
       Align = alBottom
       BorderOuter = fsFlat

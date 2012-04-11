@@ -69,6 +69,8 @@ type
   public
     { Public declarations }
     AObj:TRecord_;
+    //清除无效数据
+    procedure ClearInvaid;virtual;
     function IsKeyPress:boolean;virtual;
     procedure InitRecord;virtual;
     function  FindColumn(FieldName:string):TColumnEh;
@@ -154,6 +156,7 @@ end;
 
 function TframeContractForm.GetIsNull: boolean;
 begin
+  ClearInvaid;
   result := cdsDetail.IsEmpty;
 end;
 
@@ -455,6 +458,11 @@ begin
          PostMessage(GetToolHandle,WM_EXEC_ORDER,0,11);
        end;
      end;
+end;
+
+procedure TframeContractForm.ClearInvaid;
+begin
+
 end;
 
 end.

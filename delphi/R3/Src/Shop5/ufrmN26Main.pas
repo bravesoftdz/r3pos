@@ -1476,7 +1476,7 @@ begin
              frmLogo.ShowTitle := '检测远程应用服务器...';
              Global.MoveToRemate;
              try
-               Global.Connect;
+               if not Global.RemoteFactory.Connected then Global.Connect;
                CaFactory.Audited := true;
                with TCreateDbFactory.Create do
                begin

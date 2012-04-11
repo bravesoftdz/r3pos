@@ -103,6 +103,17 @@ begin
             begin
               if not mmGlobal.coLogin(mmGlobal.xsm_username,mmGlobal.xsm_password) then Exit;
             end;
+         mmGlobal.InitLoad;
+         if (mmGlobal.NetVersion or mmGlobal.ONLVersion) then
+            begin
+               try
+                 mmGlobal.MoveToRemate;
+                 mmGlobal.Connect;
+               except
+                 MessageBox(Handle,'首次登录必须使用在线使用，请检测你的网络是否正常连接?','友情提示...',MB_OK+MB_ICONQUESTION);
+                 Exit;
+               end;
+            end;
          if not mmGlobal.AutoRegister(true) then Exit;
        end
     else
@@ -115,7 +126,7 @@ begin
             CaFactory.Audited := false;
        end;
     mmGlobal.InitLoad;
-    if CaFactory.Audited then
+    if CaFactory.Audited and not mmGlobal.RemoteFactory.Connected then
        begin
          try
            mmGlobal.MoveToRemate;

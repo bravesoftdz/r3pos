@@ -82,6 +82,8 @@ type
     Obj: TRecord_;
     TENANT_ID: Integer;
     Added:boolean;
+    procedure LoadVersion;
+    procedure ConnectRemoate;
     function Check:boolean;
     procedure SaveParams;
     class function coAutoRegister(id:string;isnew:boolean=true):boolean;
@@ -93,7 +95,7 @@ type
   end;
 
 implementation
-uses uGlobal, uN26Factory,ufrmLogo, uShopGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
+uses uGlobal, IniFiles, uN26Factory,ufrmLogo, uShopGlobal, Math, uShoputil,ObjCommon,EncDec,uFnUtil;
 {$R *.dfm}
 
 class function TfrmTenant.coRegister(Owner: TForm): boolean;
@@ -188,6 +190,7 @@ begin
   Tenant.AUDIT_STATUS := Obj.FieldByName('AUDIT_STATUS').AsString;
 
   Tenant := CaFactory.coRegister(Tenant);
+  ConnectRemoate;
   //
   Obj.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
   //以上语句在与远程服务器连接后，从服务器端获取企业ID值
@@ -243,6 +246,7 @@ begin
       Exit;
     end;
   end;
+  ConnectRemoate;
   //
   Tenant := CaFactory.coGetList(IntToStr(Login.TENANT_ID));
   Open(Tenant.TENANT_ID);
@@ -551,6 +555,7 @@ begin
   begin
     try
       Added := false;
+      ConnectRemoate;
       Open(Tenant.TENANT_ID);
       CdsTable.Edit;
       CdsTable.FieldByName('TENANT_ID').AsInteger := Tenant.TENANT_ID;
@@ -638,6 +643,38 @@ begin
   finally
      frmLogo.Close;
   end;
+end;
+
+procedure TfrmTenant.LoadVersion;
+var
+  F:TIniFile;
+begin
+  inherited;
+  F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
+  try
+    if not FindCmdLineSwitch('rsp',['-','+'],false) then
+       begin
+          SFVersion := F.ReadString('soft','SFVersion','.NET');
+          CLVersion := F.ReadString('soft','CLVersion','.MKT');
+          ProductID := F.ReadString('soft','ProductID','R3_RYC');
+       end;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmTenant.ConnectRemoate;
+begin
+  LoadVersion;
+  if (SFVersion='.NET') or (SFVersion='.ONL') then
+     begin
+       Global.MoveToRemate;
+       try
+         Global.Connect;
+       except
+         Raise Exception.Create('首次登录必须使用在线使用，请检测您的网络是否正常连接.');
+       end;
+     end;
 end;
 
 end.

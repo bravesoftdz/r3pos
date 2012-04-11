@@ -1406,14 +1406,14 @@ begin
   if not result then Exit;
   if result then
      begin
-      if ShopGlobal.NetVersion or ShopGlobal.ONLVersion then
+      if (ShopGlobal.NetVersion or ShopGlobal.ONLVersion) then
          begin
            frmLogo.Show;
            try
              frmLogo.ShowTitle := '检测远程应用服务器...';
              Global.MoveToRemate;
              try
-               Global.Connect;
+               if not Global.RemoteFactory.Connected then Global.Connect;
                with TCreateDbFactory.Create do
                begin
                  try

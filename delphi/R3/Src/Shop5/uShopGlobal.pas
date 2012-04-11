@@ -55,6 +55,7 @@ type
     PUB_TREND_INFO: TZQuery;
     CA_MODULE: TZQuery;
     SYS_FEE_OPTION: TZQuery;
+    MKT_ACTIVE_GROUP: TZQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     Fokline: boolean;

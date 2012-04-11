@@ -1064,7 +1064,7 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 504
-    Top = 520
+    Top = 528
     ParamData = <
       item
         DataType = ftUnknown
@@ -1078,7 +1078,7 @@ inherited ShopGlobal: TShopGlobal
     CachedUpdates = True
     Params = <>
     Left = 136
-    Top = 576
+    Top = 536
   end
   object SYS_FEE_OPTION: TZQuery
     Tag = 1
@@ -1095,7 +1095,29 @@ inherited ShopGlobal: TShopGlobal
         ParamType = ptUnknown
       end>
     Left = 368
-    Top = 568
+    Top = 528
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+  end
+  object MKT_ACTIVE_GROUP: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where TEN' +
+        'ANT_ID=:TENANT_ID and CODE_TYPE='#39'18'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'TENANT_ID'
+        ParamType = ptUnknown
+      end>
+    Left = 664
+    Top = 528
     ParamData = <
       item
         DataType = ftUnknown

@@ -14,10 +14,10 @@ inherited frmMktBudgReport: TfrmMktBudgReport
       inherited RzPage: TRzPageControl
         Width = 668
         Height = 506
-        ActivePage = TabSheet4
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
@@ -1786,7 +1786,7 @@ inherited frmMktBudgReport: TfrmMktBudgReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #23548' '#36141' '#21592
+                  Caption = #36127' '#36131' '#20154
                 end
                 object BtnSaleDetail: TRzBitBtn
                   Left = 505
@@ -2128,25 +2128,17 @@ inherited frmMktBudgReport: TfrmMktBudgReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'BUDG_DATE'
+                      Footers = <>
+                      Title.Caption = #26680#38144#26085#26399
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'CLIENT_NAME'
                       Footer.ValueType = fvtCount
                       Footers = <>
                       Title.Caption = #23458#25143#21517#31216
                       Width = 185
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'BEGIN_DATE'
-                      Footers = <>
-                      Title.Caption = #24320#22987#26085#26399
-                      Width = 72
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'END_DATE'
-                      Footers = <>
-                      Title.Caption = #32467#26463#26085#26399
-                      Width = 72
                     end
                     item
                       EditButtons = <>
@@ -2156,48 +2148,24 @@ inherited frmMktBudgReport: TfrmMktBudgReport
                       Width = 70
                     end
                     item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'BUDG_KPI'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
+                      FieldName = 'ACTIVE_GROUP_TXT'
                       Footers = <>
-                      Title.Caption = #39044#31639#37329#39069
-                      Width = 84
+                      Title.Caption = #27963#21160#20998#32452
                     end
                     item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'BUDG_MNY'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
+                      FieldName = 'ACTIVE_NAME'
                       Footers = <>
-                      Title.Caption = #35745#25552#37329#39069
-                      Width = 84
+                      Title.Caption = #27963#21160#21517#31216
+                      Width = 85
                     end
                     item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'BUDG_WDW'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #30003#39046#37329#39069
-                      Width = 84
-                    end
-                    item
-                      Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
-                      EditButtons = <>
-                      FieldName = 'BUDG_BAL'
-                      Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
-                      Footers = <>
-                      Title.Caption = #32467#20313#37329#39069
-                      Width = 84
+                      Title.Caption = #26412#27425#26680#38144#30003#39046
+                      Width = 90
                     end
                     item
                       Alignment = taRightJustify
@@ -2208,7 +2176,7 @@ inherited frmMktBudgReport: TfrmMktBudgReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #26680#38144#37329#39069
-                      Width = 84
+                      Width = 76
                     end
                     item
                       EditButtons = <>

@@ -20,6 +20,7 @@ type
     btnDelete: TRzBitBtn;
     cdsActive: TZQuery;
     edtACTIVE_GROUP: TzrComboBoxList;
+    MktActiveInfo: TZQuery;
     procedure DBGridEh1Columns1UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure btnAppendClick(Sender: TObject);
@@ -52,6 +53,7 @@ type
     procedure Save;
     procedure FocusNextColumn;
     procedure InitRecord;
+    procedure ClearInvaid;
     { Public declarations }
     class function AddDialog(Owner:TForm;var AObj:TRecord_):boolean;
     class function ShowDialog(Owner:TForm):boolean;
@@ -188,6 +190,7 @@ end;
 
 procedure TfrmMktActiveList.Save;
 begin
+  ClearInvaid;
   try
     Factor.UpdateBatch(cdsActive,'TMktActiveList');
   except
@@ -353,7 +356,10 @@ end;
 procedure TfrmMktActiveList.FormCreate(Sender: TObject);
 begin
   inherited;
-  edtACTIVE_GROUP.DataSet := ShopGlobal.GetZQueryFromName('MKT_ACTIVE_INFO');
+  MktActiveInfo.Close;
+  MktActiveInfo.SQL.Text := ' select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO '+
+  ' where CODE_TYPE=18 and COMM not in (''02'',''12'') order by CODE_ID ';
+  Factor.Open(MktActiveInfo);
 end;
 
 procedure TfrmMktActiveList.edtACTIVE_GROUPEnter(Sender: TObject);
@@ -492,7 +498,35 @@ end;
 procedure TfrmMktActiveList.cdsActiveNewRecord(DataSet: TDataSet);
 begin
   inherited;
+  cdsActive.FieldByName('ACTIVE_ID').AsString := TSequence.NewId;
+  cdsActive.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   Exit;
+end;
+
+procedure TfrmMktActiveList.ClearInvaid;
+var
+  Controls:boolean;
+  r:integer;
+begin
+  if cdsActive.State in [dsEdit,dsInsert] then cdsActive.Post;
+  r := cdsActive.RecNo;
+  cdsActive.DisableControls;
+  try
+  cdsActive.First;
+  while not cdsActive.Eof do
+    begin
+      if (cdsActive.FieldByName('ACTIVE_GROUP').AsString = '')
+         or
+         (cdsActive.FieldByName('ACTIVE_ID').AsString = '')
+      then
+         cdsActive.Delete
+      else
+         cdsActive.Next;
+    end;
+  finally
+    if r>0 then cdsActive.RecNo := r;
+    if not Controls then  cdsActive.EnableControls;
+  end;
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited frmMktActiveList: TfrmMktActiveList
-  Left = 655
-  Top = 160
+  Left = 792
+  Top = 134
   Caption = #24066#22330#27963#21160
   ClientHeight = 350
   ClientWidth = 388
@@ -122,7 +122,7 @@ inherited frmMktActiveList: TfrmMktActiveList
                 EditButtons = <>
                 FieldName = 'CODE_NAME'
                 Footers = <>
-                Title.Caption = #27963#21160#21517#31216
+                Title.Caption = #27963#21160#32452#21517#31216
                 Width = 80
               end
               item
@@ -132,6 +132,7 @@ inherited frmMktActiveList: TfrmMktActiveList
                 Title.Caption = #25340#38899#30721
                 Width = 30
               end>
+            DataSet = MktActiveInfo
             DropWidth = 123
             DropHeight = 130
             ShowTitle = True
@@ -278,5 +279,13 @@ inherited frmMktActiveList: TfrmMktActiveList
     Params = <>
     Left = 38
     Top = 173
+  end
+  object MktActiveInfo: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    OnNewRecord = cdsActiveNewRecord
+    Params = <>
+    Left = 334
+    Top = 133
   end
 end

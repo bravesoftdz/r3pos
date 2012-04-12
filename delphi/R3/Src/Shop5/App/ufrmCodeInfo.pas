@@ -583,7 +583,7 @@ begin
     14: Str_Table := 'PUB_DEGREES_INFO';
     15: Str_Table := 'PUB_OCCUPATION_INFO';
     16: Str_Table := 'PUB_TREND_INFO';
-    18: Str_Table := 'MKT_ACTIVE_INFO';
+    18: Str_Table := 'MKT_ACTIVE_GROUP';
     19: Str_Table := '';
   end;
   if Str_Table<>'' then Global.RefreshTable(Str_Table);

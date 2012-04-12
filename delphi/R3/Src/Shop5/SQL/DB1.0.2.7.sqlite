@@ -17,6 +17,7 @@ CREATE TABLE [MKT_BUDGORDER] (
 	[DEPT_ID] [varchar] (12) NOT NULL,
         --核销日期
 	[BUDG_DATE] int NOT NULL ,
+        --负责人
   [BUDG_USER] [varchar] (36) NULL ,
 
         --审核日期
@@ -222,6 +223,6 @@ CREATE INDEX IX_STO_GOODS_LOCATION_LOCATION_ID ON STO_GOODS_LOCATION(TENANT_ID,L
 CREATE INDEX IX_STO_GOODS_LOCATION_GODS_ID ON STO_GOODS_LOCATION(TENANT_ID,GODS_ID);
 
 --最近购买日期
-alter table PUB_IC_INFO add NEAR_BUY_DATE int NULL;
+alter table PUB_IC_INFO add NEAR_BUY_DATE int NULL;  
 --购买频次 几次/天
 alter table PUB_IC_INFO add FREQUENCY int NULL;

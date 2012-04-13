@@ -407,7 +407,7 @@ begin
     except
       Factor.CancelBatch;
       cdsHeader.CancelUpdates;
-      cdsDetail.CancelUpdates;
+      //cdsDetail.CancelUpdates;
       cdsBudgShare.CancelUpdates;
       Raise;
     end;
@@ -585,7 +585,7 @@ begin
        Exit;
      end;
   inherited;
-  //if not IsNull then Raise Exception.Create('已经输入指标,不能导入申领单号.');
+  if not IsNull then Raise Exception.Create('已经输入指标,不能导入申领单号.');
   if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入申领单号.');
   FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,uid,utext);
   if FromId<>'' then
@@ -606,6 +606,7 @@ end;
 
 function TfrmMktBudgOrder.IsNull: Boolean;
 begin
+  ClearInvaid;
   Result := cdsDetail.IsEmpty;
 end;
 

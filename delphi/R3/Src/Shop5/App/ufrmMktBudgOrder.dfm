@@ -3,7 +3,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
   Top = 189
   Width = 929
   Height = 520
-  Caption = #24066#22330#27963#21160#36153#26680#38144#21333
+  Caption = #26680#38144#21333
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12

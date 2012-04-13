@@ -316,8 +316,8 @@ begin
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
 
   str := ' update MKT_KPI_RESULT set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
-         ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR and CLIENT_ID='+QuotedStr(FieldByName('CLIENT_ID').AsString);
-  AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);  
+         ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR and CLIENT_ID=:CLIENT_ID';//+QuotedStr(FieldByName('CLIENT_ID').AsString);
+  AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
   Result := True;
 end;
 

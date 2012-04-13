@@ -76,11 +76,13 @@ end;
 
 function TMktBudgOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
+  Result := False;
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
      begin
      if (FieldbyName('GLIDE_NO').AsString='') or (Pos('新增',FieldbyName('GLIDE_NO').AsString)>0) then
         FieldbyName('GLIDE_NO').AsString := trimright(FieldbyName('TENANT_ID').AsString+'0001',4)+GetSequence(AGlobal,'GNO_H_'+FieldbyName('TENANT_ID').AsString+'0001',FieldbyName('TENANT_ID').AsString,formatDatetime('YYMMDD',now()),5);
      end;
+  Result := True;
 end;
 
 function TMktBudgOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
@@ -95,8 +97,24 @@ end;
 
 function TMktBudgOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;
   comm: boolean): boolean;
+var
+  rs:TZQuery;
 begin
-
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TIME_STAMP,COMM from MKT_BUDGORDER where BUDG_ID='''+FieldbyName('BUDG_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+'';
+    aGlobal.Open(rs);
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and
+    (
+       (copy(rs.Fields[1].asString,1,1)='1')
+       or
+       (copy(rs.Fields[1].asString,2,1)<>'0')
+    )
+    then Raise Exception.Create('已经同步的数据不能删除..');
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TMktBudgOrder.InitClass;
@@ -274,8 +292,13 @@ begin
   Result := False;
   Str := 'delete from MKT_BUDGSHARE where TENANT_ID=:OLD_TENANT_ID and BUDG_ID=:OLD_BUDG_ID and SEQNO=:OLD_SEQNO';
   AGlobal.ExecSQL(str,Self);
+
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)-:OLD_BUDG_VRF,2) '+
          ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and SEQNO=:SEQNO ';
+  AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
+
+  str := ' update MKT_KPI_RESULT set BUDG_VRF=round(isnull(BUDG_VRF,0)-:OLD_BUDG_VRF,2) '+
+         ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR and CLIENT_ID='+QuotedStr(FieldByName('CLIENT_ID').AsString);
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
   Result := True;
 end;
@@ -287,9 +310,14 @@ begin
   Str := 'insert into MKT_BUDGSHARE(TENANT_ID,SEQNO,REQU_ID,BUDG_ID,KPI_ID,KPI_YEAR,BUDG_VRF) '
   + 'values(:TENANT_ID,:SEQNO,:REQU_ID,:BUDG_ID,:KPI_ID,:KPI_YEAR,:BUDG_VRF)';
   AGlobal.ExecSQL(str,Self);
+
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
          ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and SEQNO=:SEQNO ';
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
+
+  str := ' update MKT_KPI_RESULT set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
+         ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR and CLIENT_ID='+QuotedStr(FieldByName('CLIENT_ID').AsString);
+  AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);  
   Result := True;
 end;
 
@@ -310,8 +338,7 @@ var
 begin
   inherited;
   SelectSQL.Text :=
-  'select TENANT_ID,SEQNO,REQU_ID,BUDG_ID,KPI_ID,KPI_YEAR,BUDG_VRF '+
-  ' from MKT_BUDGSHARE where TENANT_ID=:TENANT_ID and BUDG_ID=:BUDG_ID ';
+  ' select TENANT_ID,SEQNO,REQU_ID,BUDG_ID,KPI_ID,KPI_YEAR,BUDG_VRF from MKT_BUDGSHARE where TENANT_ID=:TENANT_ID and BUDG_ID=:BUDG_ID ';
   IsSQLUpdate := True;
 end;
 

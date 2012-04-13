@@ -3,7 +3,7 @@ inherited frmMktBudgOrderList: TfrmMktBudgOrderList
   Top = 158
   Width = 942
   Height = 532
-  Caption = #24066#22330#27963#21160#36153#26680#38144#21333
+  Caption = #26680#38144#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -18,7 +18,7 @@ inherited frmMktBudgOrderList: TfrmMktBudgOrderList
         Height = 452
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #24066#22330#27963#21160#36153#26680#38144#21333#21015#34920
+          Caption = #26680#38144#21333#21015#34920
           inherited RzPanel3: TRzPanel
             Width = 916
             Height = 425

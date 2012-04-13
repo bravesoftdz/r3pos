@@ -40,6 +40,7 @@ type
     procedure edtACTIVE_GROUPKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure cdsActiveNewRecord(DataSet: TDataSet);
+    procedure DBGridEh1Columns2BeforeShowControl(Sender: TObject);
   private
     FFlag: integer;
     IsOffline:Boolean;
@@ -527,6 +528,15 @@ begin
     if r>0 then cdsActive.RecNo := r;
     if not Controls then  cdsActive.EnableControls;
   end;
+end;
+
+procedure TfrmMktActiveList.DBGridEh1Columns2BeforeShowControl(
+  Sender: TObject);
+begin
+  inherited;
+  edtACTIVE_GROUP.KeyValue := cdsActive.FieldByName('ACTIVE_GROUP').AsString;
+  edtACTIVE_GROUP.Text := cdsActive.FieldByName('ACTIVE_GROUP_TEXT').AsString;
+  edtACTIVE_GROUP.SaveStatus;
 end;
 
 end.

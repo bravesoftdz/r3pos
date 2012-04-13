@@ -85,6 +85,7 @@ inherited frmMktActiveList: TfrmMktActiveList
                 Title.Color = clWhite
                 Width = 120
                 Control = edtACTIVE_GROUP
+                OnBeforeShowControl = DBGridEh1Columns2BeforeShowControl
               end
               item
                 EditButtons = <>
@@ -123,14 +124,7 @@ inherited frmMktActiveList: TfrmMktActiveList
                 FieldName = 'CODE_NAME'
                 Footers = <>
                 Title.Caption = #27963#21160#32452#21517#31216
-                Width = 80
-              end
-              item
-                EditButtons = <>
-                FieldName = 'CODE_SPELL'
-                Footers = <>
-                Title.Caption = #25340#38899#30721
-                Width = 30
+                Width = 121
               end>
             DataSet = MktActiveInfo
             DropWidth = 123

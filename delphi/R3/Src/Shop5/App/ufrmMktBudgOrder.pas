@@ -62,6 +62,7 @@ type
     procedure DBGridEh1Columns2BeforeShowControl(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure edtCLIENT_IDSaveValue(Sender: TObject);
   private
     { Private declarations }
     FromId:String;
@@ -73,7 +74,7 @@ type
   public
     { Public declarations }
     RowID:Integer;
-    procedure ClearInvaid;override;  
+    procedure ClearInvaid;override;
     procedure InitRecord;override;
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -337,7 +338,7 @@ begin
     oid := AObj.FieldbyName('BUDG_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
     cid := AObj.FieldbyName('SHOP_ID').AsString;
-    if AObj.FieldByName('REQU_ID').AsString <> '' then FromId := AObj.FieldByName('REQU_ID').AsString;
+    FromId := AObj.FieldByName('REQU_ID').AsString;
     RowID := cdsDetail.RecordCount;
   finally
     Params.Free;
@@ -347,6 +348,7 @@ end;
 procedure TfrmMktBudgOrder.SaveOrder;
 var mny:real;
     R:Integer;
+    ParamsClint:TftParamList;
 begin
   inherited;
   Saved := false;
@@ -391,15 +393,22 @@ begin
       cdsHeader.FieldbyName('BUDG_VRF').asFloat := mny;
       cdsHeader.Post;
       ShareCost;
-      Factor.AddBatch(cdsHeader,'TMktBudgOrder');
-      Factor.AddBatch(cdsDetail,'TMktBudgData');
-      Factor.AddBatch(cdsBudgShare,'TMktBudgShare');
-      Factor.CommitBatch;
+      ParamsClint := TftParamList.Create;
+      try
+        ParamsClint.ParamByName('CLIENT_ID').AsString := cdsHeader.FieldbyName('CLIENT_ID').AsString;
+        Factor.AddBatch(cdsHeader,'TMktBudgOrder');
+        Factor.AddBatch(cdsDetail,'TMktBudgData');
+        Factor.AddBatch(cdsBudgShare,'TMktBudgShare',ParamsClint);
+        Factor.CommitBatch;
+      finally
+        ParamsClint.Free;
+      end;
       Saved := true;
     except
       Factor.CancelBatch;
       cdsHeader.CancelUpdates;
       cdsDetail.CancelUpdates;
+      cdsBudgShare.CancelUpdates;
       Raise;
     end;
   finally
@@ -751,11 +760,45 @@ begin
 end;
 
 procedure TfrmMktBudgOrder.N1Click(Sender: TObject);
+var r:Integer;
 begin
   inherited;
   if not cdsDetail.Active then Exit;
   if DBGridEh1.ReadOnly then Exit;
-  if dbState = dsBrowse then Exit; 
+  if dbState = dsBrowse then Exit;
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
+  if cdsDetail.FieldByName('KPI_ID').AsString = '' then Exit;
+  r := cdsDetail.FieldByName('SEQNO').AsInteger;
+  cdsDetail.DisableControls;
+  try
+    cdsDetail.SortedFields := 'KPI_ID';
+    cdsDetail.Filtered := False;
+    cdsDetail.First;
+    while not cdsDetail.Eof do
+    begin
+      if cdsDetail.FieldByName('SEQNO').AsInteger >= r then
+      begin
+         cdsDetail.Edit;
+         cdsDetail.FieldByName('SEQNO').AsInteger := cdsDetail.FieldByName('SEQNO').AsInteger + 1;
+         cdsDetail.Post;
+      end;
+      cdsDetail.Next;
+    end;
+    inc(RowID);
+    cdsDetail.Append;
+    cdsDetail.FieldByName('BUDG_ID').Value := null;
+    if cdsDetail.FindField('SEQNO')<> nil then
+       cdsDetail.FindField('SEQNO').asInteger := RowID;
+    cdsDetail.Post;
+    cdsDetail.SortedFields := 'SEQNO';
+    cdsDetail.Locate('SEQNO',r,[]);
+    cdsDetail.Edit;
+    edtKPI_ID.KeyValue := Null;
+    edtKPI_ID.Text := '';
+    DBGridEh1.Col := 1;
+  finally
+    cdsDetail.EnableControls;
+  end;
 end;
 
 procedure TfrmMktBudgOrder.N2Click(Sender: TObject);
@@ -790,8 +833,9 @@ begin
     begin
       BudgMny := cdsDetail.FieldByName('BUDG_VRF').AsFloat;
       ds.Close;
-      Text_Sql := ' select REQU_ID,KPI_ID,KPI_YEAR,BUDG_MNY,BUDG_MNY-isnull(BUDG_VRF,0) as BLA_MNY '+
-      ' from MKT_REQUDATA where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and BUDG_MNY<>isnull(BUDG_VRF,0) order by KPI_YEAR ';
+      Text_Sql := ' select A.REQU_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_MNY,A.BUDG_MNY+isnull(B.BUDG_VRF,0)-isnull(A.BUDG_VRF,0) as BLA_MNY '+
+      ' from MKT_REQUDATA A left join MKT_BUDGSHARE B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and A.KPI_ID=B.KPI_ID and A.KPI_YEAR=B.KPI_YEAR '+
+      ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+' and A.BUDG_MNY<>isnull(A.BUDG_VRF,0) order by A.KPI_YEAR ';
       ds.SQL.Text := ParseSQL(Factor.iDbType,Text_Sql);
       Factor.Open(ds);
       ds.First;
@@ -866,6 +910,12 @@ begin
     end;
     cdsDetail.Next;
   end;
+end;
+
+procedure TfrmMktBudgOrder.edtCLIENT_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  if FromId <> '' then Raise Exception.Create('申领单号已选择,不能再改换"经销商"!');
 end;
 
 end.

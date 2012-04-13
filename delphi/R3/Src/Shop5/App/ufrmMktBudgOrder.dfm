@@ -169,6 +169,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
         LocateStyle = lsDark
         Buttons = [zbNew, zbFind]
         DropListStyle = lsFixed
+        OnSaveValue = edtCLIENT_IDSaveValue
         MultiSelect = False
       end
       object edtBUDG_DATE: TcxDateEdit
@@ -421,7 +422,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #25688#35201
-          Width = 200
+          Width = 340
         end>
     end
     inherited stbHint: TRzPanel

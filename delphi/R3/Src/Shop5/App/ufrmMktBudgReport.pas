@@ -270,7 +270,7 @@ begin
       ' sum(A.BUDG_KPI) as BUDG_KPI,'+
       ' sum(A.BUDG_MNY) as BUDG_MNY,'+
       ' sum(A.BUDG_WDW) as BUDG_WDW,'+
-      ' sum(isnull(A.BUDG_KPI,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
+      ' sum(isnull(A.BUDG_MNY,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
       ' sum(A.BUDG_VRF) as BUDG_VRF '+
       ' from MKT_KPI_RESULT A '+
       //' left outer join ('+BudgTab+')B on A.TENANT_ID=B.TENANT_ID and A.KPI_YEAR=B.KPI_YEAR and A.KPI_ID=B.KPI_ID '+
@@ -284,7 +284,7 @@ begin
       ' sum(A.BUDG_KPI) as BUDG_KPI,'+
       ' sum(A.BUDG_MNY) as BUDG_MNY,'+
       ' sum(A.BUDG_WDW) as BUDG_WDW,'+
-      ' sum(isnull(A.BUDG_KPI,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
+      ' sum(isnull(A.BUDG_MNY,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
       ' sum(A.BUDG_VRF) as BUDG_VRF '+
       ' from MKT_KPI_RESULT A '+
       ' inner join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
@@ -345,7 +345,7 @@ begin
     ' sum(A.BUDG_KPI) as BUDG_KPI,'+
     ' sum(A.BUDG_MNY) as BUDG_MNY,'+
     ' sum(A.BUDG_WDW) as BUDG_WDW,'+
-    ' sum(isnull(A.BUDG_KPI,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
+    ' sum(isnull(A.BUDG_MNY,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
     ' sum(A.BUDG_VRF) as BUDG_VRF '+
     ' from MKT_KPI_RESULT A '+
     ' inner join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
@@ -465,7 +465,7 @@ begin
     ' sum(A.BUDG_KPI) as BUDG_KPI,'+
     ' sum(A.BUDG_MNY) as BUDG_MNY,'+
     ' sum(A.BUDG_WDW) as BUDG_WDW,'+
-    ' sum(isnull(A.BUDG_KPI,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
+    ' sum(isnull(A.BUDG_MNY,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
     ' sum(A.BUDG_VRF) as BUDG_VRF '+
     ' from MKT_KPI_RESULT A,VIW_CUSTOMER D '+
     ' where A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+CustCnd+
@@ -549,7 +549,7 @@ begin
       ' sum(A.BUDG_KPI) as BUDG_KPI,'+
       ' sum(A.BUDG_MNY) as BUDG_MNY,'+
       ' sum(A.BUDG_WDW) as BUDG_WDW,'+
-      ' sum(isnull(A.BUDG_KPI,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
+      ' sum(isnull(A.BUDG_MNY,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
       ' sum(A.BUDG_VRF) as BUDG_VRF'+SumFields+
       ' from MKT_KPI_RESULT A '+
       ' left outer join ('+BudgTab+')B '+
@@ -563,7 +563,7 @@ begin
       ' sum(A.BUDG_KPI) as BUDG_KPI,'+
       ' sum(A.BUDG_MNY) as BUDG_MNY,'+
       ' sum(A.BUDG_WDW) as BUDG_WDW,'+
-      ' sum(isnull(A.BUDG_KPI,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
+      ' sum(isnull(A.BUDG_MNY,0)-isnull(A.BUDG_WDW,0))as BUDG_BAL,'+
       ' sum(A.BUDG_VRF) as BUDG_VRF'+SumFields+
       ' from MKT_KPI_RESULT A '+
       ' inner join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+

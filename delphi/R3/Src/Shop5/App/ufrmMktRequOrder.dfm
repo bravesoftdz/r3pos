@@ -1,6 +1,6 @@
 inherited frmMktRequOrder: TfrmMktRequOrder
-  Left = 897
-  Top = 154
+  Left = 428
+  Top = 133
   Width = 938
   Height = 605
   Caption = #36153#29992#30003#39046#21333
@@ -525,7 +525,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           EditButtons = <>
           FieldName = 'APRICE'
           Footers = <>
-          Title.Caption = #21333#20215
+          Title.Caption = #24403#21069#21333#20215
           Width = 60
         end
         item

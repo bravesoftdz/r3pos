@@ -177,7 +177,7 @@ function TMktRequData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
     rs:TZQuery;
 begin
-  Result := True;
+  Result := False;
   Str := 'insert into MKT_REQUDATA(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,PLAN_ID,KPI_ID,KPI_YEAR,KPI_MNY,BUDG_MNY,AGIO_MNY,OTHR_MNY,REMARK) '+
          ' VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:PLAN_ID,:KPI_ID,:KPI_YEAR,:KPI_MNY,:BUDG_MNY,:AGIO_MNY,:OTHR_MNY,:REMARK) ';
   AGlobal.ExecSQL(Str,Self);
@@ -199,7 +199,9 @@ begin
   finally
     rs.Free;
   end;
-}end;
+}
+  Result := True;
+end;
 
 function TMktRequData.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
@@ -363,13 +365,14 @@ var
 begin
   inherited;
   //Locked := false;
-  SelectSQL.Text :=
+  Str :=
   'select A.TENANT_ID,A.SHOP_ID,A.SEQNO,A.REQU_ID,A.GODS_ID,A.UNIT_ID,A.AMOUNT,A.CALC_AMOUNT,'+
+  'isnull(B.NEW_OUTPRICE,0) as APRICE,A.AMOUNT*B.NEW_OUTPRICE as AMONEY,'+
   'A.KPI_MNY,A.BUDG_MNY,A.AGIO_MNY,A.OTHR_MNY,A.REMARK,B.GODS_NAME,B.GODS_CODE,''#'' as BATCH_NO,'+
   '''#'' as LOCUS_NO,''#'' as BOM_ID,''#'' as PROPERTY_01,''#'' as PROPERTY_02,0 as IS_PRESENT '+
   ' from MKT_REQUSHARE A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID  '+
   ' where A.TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID ';
-
+  SelectSQL.Text := ParseSQL(iDbType,Str);
   IsSQLUpdate := True;
   Str := 'insert into MKT_REQUSHARE(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,GODS_ID,UNIT_ID,AMOUNT,CALC_AMOUNT,KPI_MNY,BUDG_MNY,AGIO_MNY,OTHR_MNY,REMARK) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:GODS_ID,:UNIT_ID,:AMOUNT,:CALC_AMOUNT,:KPI_MNY,:BUDG_MNY,:AGIO_MNY,:OTHR_MNY,:REMARK)';

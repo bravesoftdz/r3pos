@@ -939,6 +939,10 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Name = 'REMARK'
         DataType = ftString
         Size = 100
+      end
+      item
+        Name = 'CACL_AMOUNT'
+        DataType = ftFloat
       end>
     AfterScroll = edtTableAfterScroll
     AfterPost = edtTableAfterPost
@@ -946,6 +950,68 @@ inherited frmMktRequOrder: TfrmMktRequOrder
     Top = 250
   end
   inherited edtProperty: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'GODS_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'GODS_CODE'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'GODS_NAME'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'UNIT_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BATCH_NO'
+        DataType = ftString
+        Size = 50
+      end
+      item
+        Name = 'IS_PRESENT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LOCUS_NO'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'BOM_ID'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_01'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'PROPERTY_02'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'CALC_AMOUNT'
+        DataType = ftFloat
+      end>
     Left = 96
     Top = 296
   end

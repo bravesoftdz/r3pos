@@ -52,6 +52,7 @@ type
       var Background: TColor; var Alignment: TAlignment;
       State: TGridDrawState; var Text: String);
     procedure btnDeleteClick(Sender: TObject);
+    procedure w1Resize(Sender: TObject);
   private
     { Private declarations }
     sid1,srid1,SortName:string;
@@ -66,6 +67,7 @@ type
     function CheckRowColor:boolean;
     //按商品销售汇总表
     function  GetGodsSQL(chk:boolean=true): string;   //5555
+    function  GetGodsSQL_YouHua(chk:boolean=true): string;   //5555
     procedure Open(id:string);
     procedure load;
     procedure PrintBefore;override;
@@ -178,7 +180,9 @@ begin
   Factory := TReportFactory.Create('4');
   try
     if Factory.DataSet.Active then Factory.DataSet.Close;
-    strSql := GetGodsSQL;
+    //0: strSql := GetGodsSQL;
+    strSql := GetGodsSQL_YouHua;
+
     if strSql='' then Exit;
     TZQuery(Factory.DataSet).SQL.Text:= strSql;
     frmPrgBar.Show;
@@ -221,10 +225,43 @@ begin
   end;
 end;
 
-function TfrmSaleMonthTotalReport.GetGodsSQL(chk: boolean): string;
+function TfrmSaleMonthTotalReport.GetGodsSQL_YouHua(chk: boolean): string;
+  function GetAllTab(vStrWhere: string): string;
+  var CxCnd: string;
+  begin
+    //商品分类:
+    if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
+    begin
+      case Factor.iDbType of
+       4: CxCnd:=' and R.RELATION_ID='+srid1+' ';
+       else
+          CxCnd:=' and R.RELATION_ID='''+srid1+''' ';
+      end;
+      if trim(sid1)<>'' then
+        CxCnd := CxCnd+' and S.LEVEL_ID like '''+sid1+'%'' ';
+
+      Result:=
+        ' RCK_GOODS_DAYS A '+
+        ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+        ' inner join (select * from PUB_GOODSINFO where '+GetGodsOwnerTenIds('TENANT_ID')+')C on A.GODS_ID=C.GODS_ID '+
+        ' left outer join (select * from PUB_GOODS_RELATION where '+GetGodsOwnerTenIds('TENANT_ID',1)+')R on A.GODS_ID=R.GODS_ID '+
+        ' left outer join PUB_GOODSSORT S on C.TENANT_ID=S.TENANT_ID and C.SORT_ID1=R.SORT_ID '+
+        ' left outer join PUB_GOODSPRICE P on A.TENANT_ID=P.TENANT_ID and A.GODS_ID=P.GODS_ID '+
+        ' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+CxCnd+' '+vStrWhere;
+    end else
+    begin
+      Result:=
+        ' RCK_GOODS_DAYS A '+
+        ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+        ' inner join (select * from PUB_GOODSINFO where '+GetGodsOwnerTenIds('TENANT_ID')+')C on A.GODS_ID=C.GODS_ID '+
+        ' left outer join (select * from PUB_GOODS_RELATION where '+GetGodsOwnerTenIds('TENANT_ID',1)+')R on A.GODS_ID=R.GODS_ID '+        
+        ' left outer join PUB_GOODSPRICE P on A.TENANT_ID=P.TENANT_ID and A.GODS_ID=P.GODS_ID '+
+        ' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+vStrWhere;
+    end;
+  end;
 var
-  mx, UnitCalc: string;  //单位计算关系
-  strSql,strWhere,strWhere_y,strWhere_m,GoodTab: widestring;
+  mx, UnitCalc, UnitID: string;  //单位计算关系
+  strSql,strWhere,strWhere_y,strWhere_m,FieldStr,GoodTab,AllTab,CxCnd: widestring;
   Day:integer;
 begin
   result:='';
@@ -232,7 +269,7 @@ begin
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date>P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
   //过滤企业ID
-  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  strWhere:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 
   //门店所属行政区域|门店类型:
   if (fndP1_SHOP_VALUE.AsString<>'') then
@@ -251,24 +288,9 @@ begin
 
   //商品指标:
   if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
-  begin
     strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
-  end;
 
   Day := round(P1_D2.Date - P1_D1.Date) + 1;
-  //商品分类:
-  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
-  begin
-    GoodTab:='VIW_GOODSINFO_SORTEXT';
-    case Factor.iDbType of
-     4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
-     else
-        strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
-    end;
-    if trim(sid1)<>'' then
-      strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
-  end else
-    GoodTab:='VIW_GOODSINFO';
 
   //门店条件
   if (fndP1_SHOP_ID.AsString<>'') then
@@ -299,11 +321,16 @@ begin
   else if P1_D1.Date<P1_D2.Date then
     strWhere:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
 
-  strSql :=
+  //商品单位
+  UnitID:=GetUnitID(fndP1_UNIT_ID.ItemIndex,'C');
+
+  //当前月查询字段
+  strSql:=
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
-    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(isnull(R.NEW_INPRICE,C.NEW_INPRICE)*'+UnitCalc+') as NEW_INPRICE'+
+    ',max(isnull(R.NEW_OUTPRICE,C.NEW_OUTPRICE)*'+UnitCalc+') as NEW_OUTPRICE'+
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
@@ -314,17 +341,15 @@ begin
     ',sum(STOCK_TAX) as STOCK_TAX '+   //进项税额
     ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
 
-
     ',0 as YEAR_STOCK_AMT '+   //进货数量
     ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
     ',0 as YEAR_STOCK_TAX '+   //进项税额
     ',0 as YEAR_STOCK_TTL '+  //进货金额
 
-
     ',0 as PRIOR_STOCK_AMT '+   //进货数量
     ',0 as PRIOR_STOCK_MNY '+   //进货金额<末税>
     ',0 as PRIOR_STOCK_TAX '+   //进项税额
-    ',0 as PRIOR_STOCK_TTL '+  //进货金额
+    ',0 as PRIOR_STOCK_TTL '+   //进货金额
 
     ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
     ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
@@ -336,14 +361,14 @@ begin
     ',0 as PRIOR_YEAR_AMT '+   //去年同期销售数量
     ',0 as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
     ',0 as PRIOR_YEAR_TAX '+   //去年同期销项税额
-    ',0 as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',0 as PRIOR_YEAR_TTL '+   //去年同期销售金额
     ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
     ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
 
     ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
     ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
     ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
-    ',0 as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',0 as PRIOR_MONTH_TTL '+   //上月销售金额
     ',0 as PRIOR_MONTH_CST '+   //上月销售成本
     ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
 
@@ -351,17 +376,16 @@ begin
     ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
     ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
-    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
+    ','+inttostr(Day)+' as DAYS_AMT '+ //销售天数
+    ' from ' +GetAllTab(strWhere)+' '+
+    ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID';
 
   strSql := strSql + ' union all '+
-    'SELECT '+
+    'SELECT '+  
     ' A.TENANT_ID '+
-    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
-    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
-
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(isnull(R.NEW_INPRICE,C.NEW_INPRICE)*'+UnitCalc+') as NEW_INPRICE'+
+    ',max(isnull(R.NEW_OUTPRICE,C.NEW_OUTPRICE)*'+UnitCalc+') as NEW_OUTPRICE'+
     ',0 as ORG_AMT '+ //期初数量
     ',0 as ORG_MNY '+   //进项金额<按当时进价>
     ',0 as ORG_RTL '+   //可销售额<按零售价>
@@ -370,8 +394,7 @@ begin
     ',0 as STOCK_AMT '+   //进货数量
     ',0 as STOCK_MNY '+   //进货金额<末税>
     ',0 as STOCK_TAX '+   //进项税额
-    ',0 as STOCK_TTL '+  //进货金额
-
+    ',0 as STOCK_TTL '+   //进货金额  
 
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
@@ -410,15 +433,15 @@ begin
     ',0 as BAL_RTL '+   //可销售额<按零售价>
     ',0 as BAL_CST '+   //结存成本<移动加权成本>
     ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere_y + ' '+
-    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
+    'from '+GetAllTab(strWhere_y)+' '+
+    ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID';
 
   strSql := strSql + ' union all '+
     'SELECT '+
     ' A.TENANT_ID '+
-    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
-    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE'+
+    ',max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
 
     ',0 as ORG_AMT '+ //期初数量
     ',0 as ORG_MNY '+   //进项金额<按当时进价>
@@ -428,14 +451,12 @@ begin
     ',0 as STOCK_AMT '+   //进货数量
     ',0 as STOCK_MNY '+   //进货金额<末税>
     ',0 as STOCK_TAX '+   //进项税额
-    ',0 as STOCK_TTL '+  //进货金额
-
+    ',0 as STOCK_TTL '+  //进货金额         
 
     ',0 as YEAR_STOCK_AMT '+   //进货数量
     ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
     ',0 as YEAR_STOCK_TAX '+   //进项税额
     ',0 as YEAR_STOCK_TTL '+  //进货金额
-
 
     ',sum(STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
     ',sum(STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
@@ -468,21 +489,24 @@ begin
     ',0 as BAL_RTL '+   //可销售额<按零售价>
     ',0 as BAL_CST '+   //结存成本<移动加权成本>
     ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
-    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
-    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere_m + ' '+
-    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
+    'from '+GetAllTab(strWhere_y)+
+    ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID ';
 
+  //关联商品
   strSql :=
     'select j.*,'+
     'r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME as GODS_ID_TEXT,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID,'+
     'r.SORT_ID1,r.RELATION_ID as SORT_ID24,r.SORT_ID1 as SORT_ID21,r.SORT_ID1 as SORT_ID22,r.SORT_ID1 as SORT_ID23,r.SORT_ID2,r.SORT_ID3,r.SORT_ID4,r.SORT_ID5,r.SORT_ID6,r.SORT_ID7,r.SORT_ID8,r.SORT_ID9,r.SORT_ID10,'+
-    'r.SORT_ID11,r.SORT_ID12,r.SORT_ID13,r.SORT_ID14,r.SORT_ID15,r.SORT_ID16,r.SORT_ID17,r.SORT_ID18,r.SORT_ID19,r.SORT_ID20 '+
+    'r.SORT_ID11,r.SORT_ID12,r.SORT_ID13,r.SORT_ID14,r.SORT_ID15,r.SORT_ID16,r.SORT_ID17,r.SORT_ID18,r.SORT_ID19,r.SORT_ID20,'+
+    'j.SREGION_ID as SREGION_ID1,j.SREGION_ID as SREGION_ID2 '+
     ' from ('+strSql+') j inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
 
   strSql :=
-    'select ja.*,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') ja '+
-    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
-    'on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and ja.PROPERTY_02=b.PROPERTY_02 and ja.UNIT_ID=b.UNIT_ID '+
+    'select ja.*,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME '+
+    ' from ('+strSql+') ja '+
+    'left outer join '+
+    ' (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+    '  on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and ja.PROPERTY_02=b.PROPERTY_02 and ja.UNIT_ID=b.UNIT_ID '+
     'left outer join VIW_MEAUNITS u on ja.TENANT_ID=u.TENANT_ID and ja.UNIT_ID=u.UNIT_ID '+
     ' order by ja.GODS_CODE ';
 
@@ -608,6 +632,678 @@ begin
            LCK_Index := i;
          end;
     end;
+end;
+
+function TfrmSaleMonthTotalReport.GetGodsSQL(chk: boolean): string;
+var
+  mx, UnitCalc: string;  //单位计算关系
+  strSql,strWhere,strWhere_y,strWhere_m,GoodTab: widestring;
+  Day:integer;
+begin
+  result:='';
+  if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P1_D1.Date>P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
+  //过滤企业ID
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+
+  //门店所属行政区域|门店类型:
+  if (fndP1_SHOP_VALUE.AsString<>'') then
+  begin
+    case fndP1_SHOP_TYPE.ItemIndex of
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP1_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+       end;
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
+    end;
+  end;
+
+  //商品指标:
+  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+  begin
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
+  end;
+
+  Day := round(P1_D2.Date - P1_D1.Date) + 1;
+  //商品分类:
+  if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
+  begin
+    GoodTab:='VIW_GOODSINFO_SORTEXT';
+    case Factor.iDbType of
+     4: strWhere := strWhere+' and C.RELATION_ID='+srid1+' ';
+     else
+        strWhere := strWhere+' and C.RELATION_ID='''+srid1+''' ';
+    end;
+    if trim(sid1)<>'' then
+      strWhere := strWhere+' and C.LEVEL_ID like '''+sid1+'%'' ';
+  end else
+    GoodTab:='VIW_GOODSINFO';
+
+  //门店条件
+  if (fndP1_SHOP_ID.AsString<>'') then
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+
+  //计量单位换算:
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
+  //检测是否计算
+  CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
+  
+  mx := GetMaxDate(StrtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
+
+  //同期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))) then
+    strWhere_y:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_y:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))+' ';
+
+  //上期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))) then
+    strWhere_m:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_m:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))+' ';
+
+  //日期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',P1_D1.Date)=formatDatetime('YYYYMMDD',P1_D2.Date)) then
+    strWhere:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
+
+  strSql :=
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
+
+
+    ',0 as YEAR_STOCK_AMT '+   //进货数量
+    ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as YEAR_STOCK_TAX '+   //进项税额
+    ',0 as YEAR_STOCK_TTL '+  //进货金额
+
+
+    ',0 as PRIOR_STOCK_AMT '+   //进货数量
+    ',0 as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as PRIOR_STOCK_TAX '+   //进项税额
+    ',0 as PRIOR_STOCK_TTL '+  //进货金额
+
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
+    ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
+    ',sum(SALE_TAX) as SALE_TAX '+   //销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
+    ',sum(SALE_CST) as SALE_CST '+   //销售成本
+    ',sum(SALE_PRF) as SALE_PRF '+   //销售毛利
+
+    ',0 as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',0 as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',0 as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',0 as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',0 as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',0 as PRIOR_MONTH_CST '+   //上月销售成本
+    ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
+    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
+    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID';
+
+  strSql := strSql + ' union all '+
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
+
+    ',0 as ORG_AMT '+ //期初数量
+    ',0 as ORG_MNY '+   //进项金额<按当时进价>
+    ',0 as ORG_RTL '+   //可销售额<按零售价>
+    ',0 as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',0 as STOCK_AMT '+   //进货数量
+    ',0 as STOCK_MNY '+   //进货金额<末税>
+    ',0 as STOCK_TAX '+   //进项税额
+    ',0 as STOCK_TTL '+  //进货金额
+
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
+
+
+    ',0 as PRIOR_STOCK_AMT '+   //进货数量
+    ',0 as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as PRIOR_STOCK_TAX '+   //进项税额
+    ',0 as PRIOR_STOCK_TTL '+  //进货金额
+
+    ',0 as SALE_AMT '+   //销售数量
+    ',0 as SALE_MNY '+   //销售金额<末税>
+    ',0 as SALE_TAX '+   //销项税额
+    ',0 as SALE_TTL '+  //销售金额
+    ',0 as SALE_CST '+   //销售成本
+    ',0 as SALE_PRF '+   //销售毛利
+
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',sum(SALE_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',sum(SALE_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',sum(SALE_CST) as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',sum(SALE_PRF) as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',0 as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',0 as PRIOR_MONTH_CST '+   //上月销售成本
+    ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',0 as BAL_AMT '+ //结存数量
+    ',0 as BAL_MNY '+   //进项金额<按当时进价>
+    ',0 as BAL_RTL '+   //可销售额<按零售价>
+    ',0 as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
+    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere_y + ' '+
+    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID ';
+
+  strSql := strSql + ' union all '+
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME as SHOP_ID_TEXT,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
+
+    ',0 as ORG_AMT '+ //期初数量
+    ',0 as ORG_MNY '+   //进项金额<按当时进价>
+    ',0 as ORG_RTL '+   //可销售额<按零售价>
+    ',0 as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',0 as STOCK_AMT '+   //进货数量
+    ',0 as STOCK_MNY '+   //进货金额<末税>
+    ',0 as STOCK_TAX '+   //进项税额
+    ',0 as STOCK_TTL '+  //进货金额
+
+
+    ',0 as YEAR_STOCK_AMT '+   //进货数量
+    ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as YEAR_STOCK_TAX '+   //进项税额
+    ',0 as YEAR_STOCK_TTL '+  //进货金额
+
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
+
+    ',0 as SALE_AMT '+   //销售数量
+    ',0 as SALE_MNY '+   //销售金额<末税>
+    ',0 as SALE_TAX '+   //销项税额
+    ',0 as SALE_TTL '+  //销售金额
+    ',0 as SALE_CST '+   //销售成本
+    ',0 as SALE_PRF '+   //销售毛利
+
+    ',0 as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',0 as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',0 as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',0 as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',sum(SALE_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',sum(SALE_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',sum(SALE_CST) as PRIOR_MONTH_CST '+   //上月销售成本
+    ',sum(SALE_PRF) as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',0 as BAL_AMT '+ //结存数量
+    ',0 as BAL_MNY '+   //进项金额<按当时进价>
+    ',0 as BAL_RTL '+   //可销售额<按零售价>
+    ',0 as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
+    'from RCK_GOODS_DAYS A,CA_SHOP_INFO B,'+GoodTab+' C '+                 
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere_m + ' '+
+    'group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID';
+
+  strSql :=
+    'select j.*,'+
+    'r.BARCODE as CALC_BARCODE,r.GODS_CODE,r.GODS_NAME as GODS_ID_TEXT,''#'' as PROPERTY_01,''#'' as BATCH_NO,''#'' as PROPERTY_02,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID,'+
+    'r.SORT_ID1,r.RELATION_ID as SORT_ID24,r.SORT_ID1 as SORT_ID21,r.SORT_ID1 as SORT_ID22,r.SORT_ID1 as SORT_ID23,r.SORT_ID2,r.SORT_ID3,r.SORT_ID4,r.SORT_ID5,r.SORT_ID6,r.SORT_ID7,r.SORT_ID8,r.SORT_ID9,r.SORT_ID10,'+
+    'r.SORT_ID11,r.SORT_ID12,r.SORT_ID13,r.SORT_ID14,r.SORT_ID15,r.SORT_ID16,r.SORT_ID17,r.SORT_ID18,r.SORT_ID19,r.SORT_ID20,'+
+    'j.SREGION_ID as SREGION_ID1,j.SREGION_ID as SREGION_ID2 '+
+    ' from ('+strSql+') j inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
+
+  strSql :=
+    'select ja.*,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME from ('+strSql+') ja '+
+    'left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+    'on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and ja.PROPERTY_02=b.PROPERTY_02 and ja.UNIT_ID=b.UNIT_ID '+
+    'left outer join VIW_MEAUNITS u on ja.TENANT_ID=u.TENANT_ID and ja.UNIT_ID=u.UNIT_ID '+
+    ' order by ja.GODS_CODE ';
+
+  result:=ParseSQL(Factor.iDbType,strSql);
+end;
+
+{
+function TfrmSaleMonthTotalReport.GetGodsSQL_YouHua(chk: boolean): string;
+  function GetAllTab(vStrWhere: string): string;
+  var CxCnd: string;
+  begin
+    //商品分类:
+    if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
+    begin
+      case Factor.iDbType of
+       4: CxCnd:=' and R.RELATION_ID='+srid1+' ';
+       else
+          CxCnd:=' and R.RELATION_ID='''+srid1+''' ';
+      end;
+      if trim(sid1)<>'' then
+        CxCnd := CxCnd+' and S.LEVEL_ID like '''+sid1+'%'' ';
+
+      Result:=
+        ' RCK_GOODS_DAYS A '+
+        ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+        ' inner join (select * from PUB_GOODSINFO where '+GetGodsOwnerTenIds('TENANT_ID')+')C on A.GODS_ID=C.GODS_ID '+
+        ' inner join (select * from PUB_GOODS_RELATION where '+GetGodsOwnerTenIds('TENANT_ID',1)+')R on A.GODS_ID=R.GODS_ID '+
+        ' inner join PUB_GOODSSORT S on C.TENANT_ID=S.TENANT_ID and C.SORT_ID1=R.SORT_ID '+
+        ' left outer join PUB_GOODSPRICE P on A.TENANT_ID=P.TENANT_ID and A.GODS_ID=P.GODS_ID '+
+        ' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+CxCnd+' '+vStrWhere;
+    end else
+    begin
+      Result:=
+        ' RCK_GOODS_DAYS A '+
+        ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+        ' inner join (select * from PUB_GOODSINFO where '+GetGodsOwnerTenIds('TENANT_ID')+')C on A.GODS_ID=C.GODS_ID '+
+        ' inner join (select * from PUB_GOODS_RELATION where '+GetGodsOwnerTenIds('TENANT_ID',1)+')R on A.GODS_ID=R.GODS_ID '+        
+        ' left outer join PUB_GOODSPRICE P on A.TENANT_ID=P.TENANT_ID and A.GODS_ID=P.GODS_ID '+
+        ' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' and '+GetGodsOwnerTenIds('C.TENANT_ID')+' '+vStrWhere;
+    end;
+  end;
+var
+  mx, UnitCalc, UnitID: string;  //单位计算关系
+  strSql,strWhere,strWhere_y,strWhere_m,FieldStr,GoodTab,AllTab,CxCnd: widestring;
+  Day:integer;
+begin
+  result:='';
+  if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
+  if P1_D1.Date>P1_D2.Date then Raise Exception.Create('结束日期不能小于开始日期...');
+  //过滤企业ID
+  strWhere:=' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+
+  //门店所属行政区域|门店类型:
+  if (fndP1_SHOP_VALUE.AsString<>'') then
+  begin
+    case fndP1_SHOP_TYPE.ItemIndex of
+      0:
+       begin
+         if FnString.TrimRight(trim(fndP1_SHOP_VALUE.AsString),2)='00' then //非末级区域
+           strWhere:=strWhere+' and B.REGION_ID like '''+GetRegionId(fndP1_SHOP_VALUE.AsString)+'%'' '
+         else
+           strWhere:=strWhere+' and B.REGION_ID='''+fndP1_SHOP_VALUE.AsString+''' ';
+       end;
+      1:strWhere:=strWhere+' and B.SHOP_TYPE='''+fndP1_SHOP_VALUE.AsString+''' ';
+    end;
+  end;
+
+  //商品指标:
+  if (fndP1_STAT_ID.AsString <> '') and (fndP1_TYPE_ID.ItemIndex>=0) then
+    strWhere:=strWhere+' and C.SORT_ID'+GetGodsSTAT_ID(fndP1_TYPE_ID)+'='''+fndP1_STAT_ID.AsString+''' ';
+
+  Day := round(P1_D2.Date - P1_D1.Date) + 1;
+
+  //门店条件
+  if (fndP1_SHOP_ID.AsString<>'') then
+    strWhere:=strWhere+' and A.SHOP_ID='''+fndP1_SHOP_ID.AsString+''' ';
+
+  //计量单位换算:
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
+  //检测是否计算
+  CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
+  
+  mx := GetMaxDate(StrtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
+
+  //同期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))) then
+    strWhere_y:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_y:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-12))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-12))+' ';
+
+  //上期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))=formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))) then
+    strWhere_m:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere_m:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',incmonth(P1_D1.Date,-1))+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',incmonth(P1_D2.Date,-1))+' ';
+
+  //日期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',P1_D1.Date)=formatDatetime('YYYYMMDD',P1_D2.Date)) then
+    strWhere:=strWhere+' and A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere:=strWhere+' and A.CREA_DATE>='+formatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+formatDatetime('YYYYMMDD',P1_D2.Date)+' ';
+
+  //商品单位
+  UnitID:=GetUnitID(fndP1_UNIT_ID.ItemIndex,'C');
+
+  //当前月查询字段
+  strSql:=
+    'SELECT '+  
+    ' A.TENANT_ID '+
+    ',A.GODS_ID'+
+    ',C.BARCODE as CALC_BARCODE'+ 
+    ',isnull(R.GODS_CODE,C.GODS_CODE)as GODS_CODE'+
+    ',isnull(R.GODS_NAME,C.GODS_NAME)as GODS_ID_TEXT'+
+    ',''#'' as BATCH_NO'+
+    ',''#'' as PROPERTY_01'+
+    ',''#'' as PROPERTY_02'+
+    ','+UnitID+' as UNIT_ID'+
+    ',C.SORT_ID1'+
+    ',C.SORT_ID2'+
+    ',C.SORT_ID3'+
+    ',C.SORT_ID4'+
+    ',C.SORT_ID5'+
+    ',C.SORT_ID6'+
+    ',C.SORT_ID7'+
+    ',C.SORT_ID8'+
+    ',C.SORT_ID9'+
+    ',C.SORT_ID10'+
+    ',C.SORT_ID11'+
+    ',C.SORT_ID12'+
+    ',C.SORT_ID13'+
+    ',C.SORT_ID14'+
+    ',C.SORT_ID15'+
+    ',C.SORT_ID16'+
+    ',C.SORT_ID17'+
+    ',C.SORT_ID18'+
+    ',C.SORT_ID19'+
+    ',C.SORT_ID20'+
+    ',C.SORT_ID1 as SORT_ID21'+
+    ',C.SORT_ID1 as SORT_ID22'+
+    ',C.SORT_ID1 as SORT_ID23'+ 
+    ',R.RELATION_ID as SORT_ID24'+
+    ',A.SHOP_ID'+
+    ',B.SHOP_NAME as SHOP_ID_TEXT'+
+    ',isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(isnull(R.NEW_INPRICE,C.NEW_INPRICE)*'+UnitCalc+') as NEW_INPRICE'+
+    ',max(isnull(R.NEW_OUTPRICE,C.NEW_OUTPRICE)*'+UnitCalc+') as NEW_OUTPRICE'+
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_RTL else 0 end) as ORG_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_CST else 0 end) as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+  //进货金额
+
+    ',0 as YEAR_STOCK_AMT '+   //进货数量
+    ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as YEAR_STOCK_TAX '+   //进项税额
+    ',0 as YEAR_STOCK_TTL '+  //进货金额
+
+    ',0 as PRIOR_STOCK_AMT '+   //进货数量
+    ',0 as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as PRIOR_STOCK_TAX '+   //进项税额
+    ',0 as PRIOR_STOCK_TTL '+   //进货金额
+
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
+    ',sum(SALE_MNY) as SALE_MNY '+   //销售金额<末税>
+    ',sum(SALE_TAX) as SALE_TAX '+   //销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
+    ',sum(SALE_CST) as SALE_CST '+   //销售成本
+    ',sum(SALE_PRF) as SALE_PRF '+   //销售毛利
+
+    ',0 as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',0 as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',0 as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',0 as PRIOR_YEAR_TTL '+   //去年同期销售金额
+    ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',0 as PRIOR_MONTH_TTL '+   //上月销售金额
+    ',0 as PRIOR_MONTH_CST '+   //上月销售成本
+    ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_RTL else 0 end) as BAL_RTL '+   //可销售额<按零售价>
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_CST else 0 end) as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+ //销售天数
+    ' from ' +GetAllTab(strWhere)+
+    ' group by A.TENANT_ID,A.GODS_ID,C.BARCODE,isnull(R.GODS_CODE,C.GODS_CODE),isnull(R.GODS_NAME,C.GODS_NAME),'+UnitID+','+
+              'C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.SORT_ID7,C.SORT_ID8,C.SORT_ID9,C.SORT_ID10,C.SORT_ID11,'+
+              'C.SORT_ID12,C.SORT_ID13,C.SORT_ID14,C.SORT_ID15,C.SORT_ID16,C.SORT_ID17,C.SORT_ID18,C.SORT_ID19,C.SORT_ID20,'+
+              'R.RELATION_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#''),isnull(B.REGION_ID,''#'')';
+
+
+  strSql := strSql + ' union all '+
+    'SELECT '+  
+    ' A.TENANT_ID '+
+    ',A.GODS_ID'+
+    ',C.BARCODE as CALC_BARCODE'+ 
+    ',isnull(R.GODS_CODE,C.GODS_CODE)as GODS_CODE'+
+    ',isnull(R.GODS_NAME,C.GODS_NAME)as GODS_ID_TEXT'+
+    ',''#'' as BATCH_NO'+
+    ',''#'' as PROPERTY_01'+
+    ',''#'' as PROPERTY_02'+
+    ','+UnitID+' as UNIT_ID'+
+    ',C.SORT_ID1'+
+    ',C.SORT_ID2'+
+    ',C.SORT_ID3'+
+    ',C.SORT_ID4'+
+    ',C.SORT_ID5'+
+    ',C.SORT_ID6'+
+    ',C.SORT_ID7'+
+    ',C.SORT_ID8'+
+    ',C.SORT_ID9'+
+    ',C.SORT_ID10'+
+    ',C.SORT_ID11'+
+    ',C.SORT_ID12'+
+    ',C.SORT_ID13'+
+    ',C.SORT_ID14'+
+    ',C.SORT_ID15'+
+    ',C.SORT_ID16'+
+    ',C.SORT_ID17'+
+    ',C.SORT_ID18'+
+    ',C.SORT_ID19'+
+    ',C.SORT_ID20'+
+    ',C.SORT_ID1 as SORT_ID21'+
+    ',C.SORT_ID1 as SORT_ID22'+
+    ',C.SORT_ID1 as SORT_ID23'+ 
+    ',R.RELATION_ID as SORT_ID24'+
+    ',A.SHOP_ID'+
+    ',B.SHOP_NAME as SHOP_ID_TEXT'+
+    ',isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(isnull(R.NEW_INPRICE,C.NEW_INPRICE)*'+UnitCalc+') as NEW_INPRICE'+
+    ',max(isnull(R.NEW_OUTPRICE,C.NEW_OUTPRICE)*'+UnitCalc+') as NEW_OUTPRICE'+
+    ',0 as ORG_AMT '+ //期初数量
+    ',0 as ORG_MNY '+   //进项金额<按当时进价>
+    ',0 as ORG_RTL '+   //可销售额<按零售价>
+    ',0 as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',0 as STOCK_AMT '+   //进货数量
+    ',0 as STOCK_MNY '+   //进货金额<末税>
+    ',0 as STOCK_TAX '+   //进项税额
+    ',0 as STOCK_TTL '+  //进货金额
+
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as YEAR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as YEAR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as YEAR_STOCK_TTL '+  //进货金额
+
+
+    ',0 as PRIOR_STOCK_AMT '+   //进货数量
+    ',0 as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as PRIOR_STOCK_TAX '+   //进项税额
+    ',0 as PRIOR_STOCK_TTL '+  //进货金额
+
+    ',0 as SALE_AMT '+   //销售数量
+    ',0 as SALE_MNY '+   //销售金额<末税>
+    ',0 as SALE_TAX '+   //销项税额
+    ',0 as SALE_TTL '+  //销售金额
+    ',0 as SALE_CST '+   //销售成本
+    ',0 as SALE_PRF '+   //销售毛利
+
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',sum(SALE_MNY) as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',sum(SALE_TAX) as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',sum(SALE_CST) as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',sum(SALE_PRF) as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',0 as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',0 as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',0 as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',0 as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',0 as PRIOR_MONTH_CST '+   //上月销售成本
+    ',0 as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',0 as BAL_AMT '+ //结存数量
+    ',0 as BAL_MNY '+   //进项金额<按当时进价>
+    ',0 as BAL_RTL '+   //可销售额<按零售价>
+    ',0 as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
+    'from '+GetAllTab(strWhere_y)+
+    ' group by A.TENANT_ID,A.GODS_ID,C.BARCODE,isnull(R.GODS_CODE,C.GODS_CODE),isnull(R.GODS_NAME,C.GODS_NAME),'+UnitID+','+
+              'C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.SORT_ID7,C.SORT_ID8,C.SORT_ID9,C.SORT_ID10,C.SORT_ID11,'+
+              'C.SORT_ID12,C.SORT_ID13,C.SORT_ID14,C.SORT_ID15,C.SORT_ID16,C.SORT_ID17,C.SORT_ID18,C.SORT_ID19,C.SORT_ID20,'+
+              'R.RELATION_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#''),isnull(B.REGION_ID,''#'')';
+
+  strSql := strSql + ' union all '+
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID'+
+    ',C.BARCODE as CALC_BARCODE'+ 
+    ',isnull(R.GODS_CODE,C.GODS_CODE) as GODS_CODE'+
+    ',isnull(R.GODS_NAME,C.GODS_NAME) as GODS_ID_TEXT'+
+    ',''#'' as BATCH_NO'+
+    ',''#'' as PROPERTY_01'+
+    ',''#'' as PROPERTY_02'+
+    ','+UnitID+' as UNIT_ID'+
+    ',C.SORT_ID1'+
+    ',C.SORT_ID2'+
+    ',C.SORT_ID3'+
+    ',C.SORT_ID4'+
+    ',C.SORT_ID5'+
+    ',C.SORT_ID6'+
+    ',C.SORT_ID7'+
+    ',C.SORT_ID8'+
+    ',C.SORT_ID9'+
+    ',C.SORT_ID10'+
+    ',C.SORT_ID11'+
+    ',C.SORT_ID12'+
+    ',C.SORT_ID13'+
+    ',C.SORT_ID14'+
+    ',C.SORT_ID15'+
+    ',C.SORT_ID16'+
+    ',C.SORT_ID17'+
+    ',C.SORT_ID18'+
+    ',C.SORT_ID19'+
+    ',C.SORT_ID20'+
+    ',r.SORT_ID1 as SORT_ID21'+
+    ',r.SORT_ID1 as SORT_ID22'+
+    ',r.SORT_ID1 as SORT_ID23'+ 
+    ',r.RELATION_ID as SORT_ID24'+
+    ',A.SHOP_ID'+
+    ',B.SHOP_NAME as SHOP_ID_TEXT'+
+    ',isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE,isnull(B.REGION_ID,''#'') as SREGION_ID'+
+    ',max(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE'+
+    ',max(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
+
+    ',0 as ORG_AMT '+ //期初数量
+    ',0 as ORG_MNY '+   //进项金额<按当时进价>
+    ',0 as ORG_RTL '+   //可销售额<按零售价>
+    ',0 as ORG_CST '+   //结存成本<移动加权成本>
+
+    ',0 as STOCK_AMT '+   //进货数量
+    ',0 as STOCK_MNY '+   //进货金额<末税>
+    ',0 as STOCK_TAX '+   //进项税额
+    ',0 as STOCK_TTL '+  //进货金额         
+
+    ',0 as YEAR_STOCK_AMT '+   //进货数量
+    ',0 as YEAR_STOCK_MNY '+   //进货金额<末税>
+    ',0 as YEAR_STOCK_TAX '+   //进项税额
+    ',0 as YEAR_STOCK_TTL '+  //进货金额
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as PRIOR_STOCK_AMT '+   //进货数量
+    ',sum(STOCK_MNY) as PRIOR_STOCK_MNY '+   //进货金额<末税>
+    ',sum(STOCK_TAX) as PRIOR_STOCK_TAX '+   //进项税额
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as PRIOR_STOCK_TTL '+  //进货金额
+
+    ',0 as SALE_AMT '+   //销售数量
+    ',0 as SALE_MNY '+   //销售金额<末税>
+    ',0 as SALE_TAX '+   //销项税额
+    ',0 as SALE_TTL '+  //销售金额
+    ',0 as SALE_CST '+   //销售成本
+    ',0 as SALE_PRF '+   //销售毛利
+
+    ',0 as PRIOR_YEAR_AMT '+   //去年同期销售数量
+    ',0 as PRIOR_YEAR_MNY '+   //去年同期销售金额<末税>
+    ',0 as PRIOR_YEAR_TAX '+   //去年同期销项税额
+    ',0 as PRIOR_YEAR_TTL '+  //去年同期销售金额
+    ',0 as PRIOR_YEAR_CST '+   //去年同期销售成本
+    ',0 as PRIOR_YEAR_PRF '+   //去年同期销售毛利
+
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as PRIOR_MONTH_AMT '+   //上月销售数量
+    ',sum(SALE_MNY) as PRIOR_MONTH_MNY '+   //上月销售金额<末税>
+    ',sum(SALE_TAX) as PRIOR_MONTH_TAX '+   //上月销项税额
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as PRIOR_MONTH_TTL '+  //上月销售金额
+    ',sum(SALE_CST) as PRIOR_MONTH_CST '+   //上月销售成本
+    ',sum(SALE_PRF) as PRIOR_MONTH_PRF '+   //上月销售毛利
+
+    ',0 as BAL_AMT '+ //结存数量
+    ',0 as BAL_MNY '+   //进项金额<按当时进价>
+    ',0 as BAL_RTL '+   //可销售额<按零售价>
+    ',0 as BAL_CST '+   //结存成本<移动加权成本>
+    ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
+    'from '+GetAllTab(strWhere_y)+
+    ' group by A.TENANT_ID,A.GODS_ID,C.BARCODE,isnull(R.GODS_CODE,C.GODS_CODE),isnull(R.GODS_NAME,C.GODS_NAME),'+UnitID+','+
+              'C.SORT_ID1,C.SORT_ID2,C.SORT_ID3,C.SORT_ID4,C.SORT_ID5,C.SORT_ID6,C.SORT_ID7,C.SORT_ID8,C.SORT_ID9,C.SORT_ID10,C.SORT_ID11,'+
+              'C.SORT_ID12,C.SORT_ID13,C.SORT_ID14,C.SORT_ID15,C.SORT_ID16,C.SORT_ID17,C.SORT_ID18,C.SORT_ID19,C.SORT_ID20,'+
+              'R.RELATION_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#''),isnull(B.REGION_ID,''#'')';
+
+  strSql :=
+    'select ja.*,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME,'+
+    'ja.SREGION_ID as SREGION_ID1,ja.SREGION_ID as SREGION_ID2 '+
+    ' from ('+strSql+') ja '+
+    'left outer join '+
+    ' (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+    '  on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and ja.PROPERTY_02=b.PROPERTY_02 and ja.UNIT_ID=b.UNIT_ID '+
+    'left outer join VIW_MEAUNITS u on ja.TENANT_ID=u.TENANT_ID and ja.UNIT_ID=u.UNIT_ID '+
+    ' order by ja.GODS_CODE ';
+
+  result:=ParseSQL(Factor.iDbType,strSql);
+  //showmessage('iDbType='+IntToStr(Factor.iDbType)+#13+result);
+end;
+}
+
+procedure TfrmSaleMonthTotalReport.w1Resize(Sender: TObject);
+begin
+  inherited;
+  Label16.Left:=w1.Width-144;
+  fndP1_UNIT_ID.Left:=w1.Width-107;
 end;
 
 end.

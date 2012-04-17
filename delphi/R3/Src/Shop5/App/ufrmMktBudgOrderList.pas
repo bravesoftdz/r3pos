@@ -404,7 +404,7 @@ begin
   ' left join MKT_REQUORDER H on A.TENANT_ID=H.TENANT_ID and A.REQU_ID=H.REQU_ID '+
   ' left join MKT_ACTIVE_INFO I on B.TENANT_ID=I.TENANT_ID and B.ACTIVE_ID=I.ACTIVE_ID '+
   ' left join MKT_KPI_INDEX J on B.TENANT_ID=J.TENANT_ID and B.KPI_ID=J.KPI_ID '+
-  ' where A.TENANT_ID='+tenantid+' and A.BUDG_ID='''+id+'''';
+  ' where A.TENANT_ID='+tenantid+' and A.BUDG_ID='''+id+''' order by B.SEQNO ';
 end;
 
 function TfrmMktBudgOrderList.CheckCanExport: boolean;

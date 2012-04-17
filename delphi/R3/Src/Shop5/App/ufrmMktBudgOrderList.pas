@@ -46,6 +46,10 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure cdsListAfterScroll(DataSet: TDataSet);
+    procedure frfMktBudgOrderGetValue(const ParName: String;
+      var ParValue: Variant);
+    procedure frfMktBudgOrderUserFunction(const Name: String; p1, p2,
+      p3: Variant; var Val: Variant);
   private
     { Private declarations }
     function CheckCanExport: boolean; override;
@@ -386,7 +390,21 @@ end;
 
 function TfrmMktBudgOrderList.PrintSQL(tenantid, id: string): string;
 begin
-  Result := '';
+  Result :=
+  'select A.GLIDE_NO,G.CLIENT_NAME as CLIENT_ID_TEXT,C.SHOP_NAME as SHOP_ID_TEXT,DEPT_NAME as DEPT_ID_TEXT,A.BUDG_DATE,'+
+  'E.USER_NAME as BUDG_USER_TEXT,A.CHK_DATE,F.USER_NAME as CHK_USER_TEXT,A.BUDG_VRF,A.REMARK,H.GLIDE_NO as REQU_ID_TEXT,K.USER_NAME as CREA_USER_TEXT,'+
+  'A.CREA_DATE,B.SEQNO,I.ACTIVE_NAME as ACTIVE_ID_TEXT,J.KPI_NAME as KPI_ID_TEXT,B.BUDG_VRF as DETAIL_BUDG_VRF,B.REMARK as DETAIL_REMARK '+
+  ' from MKT_BUDGORDER A inner join MKT_BUDGDATA B on A.TENANT_ID=B.TENANT_ID and A.BUDG_ID=B.BUDG_ID '+
+  ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
+  ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
+  ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.BUDG_USER=E.USER_ID '+
+  ' left join VIW_USERS F on A.TENANT_ID=F.TENANT_ID and A.CHK_USER=F.USER_ID '+
+  ' left join VIW_USERS K on A.TENANT_ID=K.TENANT_ID and A.CREA_USER=K.USER_ID '+
+  ' left join VIW_CUSTOMER G on A.TENANT_ID=G.TENANT_ID and A.CLIENT_ID=G.CLIENT_ID '+
+  ' left join MKT_REQUORDER H on A.TENANT_ID=H.TENANT_ID and A.REQU_ID=H.REQU_ID '+
+  ' left join MKT_ACTIVE_INFO I on B.TENANT_ID=I.TENANT_ID and B.ACTIVE_ID=I.ACTIVE_ID '+
+  ' left join MKT_KPI_INDEX J on B.TENANT_ID=J.TENANT_ID and B.KPI_ID=J.KPI_ID '+
+  ' where A.TENANT_ID='+tenantid+' and A.BUDG_ID='''+id+'''';
 end;
 
 function TfrmMktBudgOrderList.CheckCanExport: boolean;
@@ -440,6 +458,27 @@ begin
   if IsEnd or not DataSet.Eof then Exit;
   if cdsList.ControlsDisabled then Exit;
   Open(MaxId);
+end;
+
+procedure TfrmMktBudgOrderList.frfMktBudgOrderGetValue(
+  const ParName: String; var ParValue: Variant);
+begin
+  inherited;
+  if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
+  if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+  if ParName='打印人' then ParValue := ShopGlobal.UserName;
+end;
+
+procedure TfrmMktBudgOrderList.frfMktBudgOrderUserFunction(
+  const Name: String; p1, p2, p3: Variant; var Val: Variant);
+var small:real;
+begin
+  inherited;
+  if UPPERCASE(Name)='SMALLTOBIG' then
+     begin
+       small := frParser.Calc(p1);
+       Val := FnNumber.SmallTOBig(small);
+     end;
 end;
 
 end.

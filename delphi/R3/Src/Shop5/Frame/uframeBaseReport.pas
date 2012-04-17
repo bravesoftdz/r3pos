@@ -173,6 +173,8 @@ type
     //动态保存列
     procedure LoadGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);virtual;
     procedure SaveGridColumnFormat(DBGridEh: TDBGridEh; vHeadName: string);virtual;
+    //返回当前企业的经营商品所属企业:
+    function  GetGodsOwnerTenIds(CxFieldName: string; vType: integer=0): string;
 
     property  HasChild: Boolean read GetHasChild;    //判断是否多门店
     property  DBGridEh: TDBGridEh read GetDBGridEh;  //当前DBGridEh
@@ -2066,5 +2068,33 @@ begin
 
 end;
 
+
+function TframeBaseReport.GetGodsOwnerTenIds(CxFieldName: string; vType: integer=0): string;
+var
+  Rs: TZQuery;
+  TenIds: string;
+begin
+  result:=' '+CxFieldName+'='+IntToStr(Global.TENANT_ID);
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.SQl.Text:='select a.TENANT_ID as TEN_ID,b.TENANT_ID as TENANT_ID from CA_RELATIONS a,CA_RELATION b where a.RELATION_ID=b.RELATION_ID and a.RELATI_ID='+IntToStr(Global.TENANT_ID);
+    Factor.Open(Rs);
+    if Rs.IsEmpty then Exit;
+    //循环取Tenant_ID进行组条件
+    TenIds:=IntToStr(Global.TENANT_ID);
+    Rs.First;
+    while not Rs.Eof do
+    begin
+      case vType of
+       0: TenIds:=TenIds+','+IntToStr(Rs.FieldByName('TENANT_ID').AsInteger);
+       1: TenIds:=TenIds+','+IntToStr(Rs.FieldByName('TEN_ID').AsInteger);
+      end;
+      Rs.Next;
+    end;
+    result:=' '+CxFieldName+' in('+TenIds+')';
+  finally
+    Rs.Free;
+  end;
+end;
 
 end.

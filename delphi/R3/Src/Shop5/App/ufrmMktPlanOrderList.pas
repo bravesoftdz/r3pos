@@ -59,6 +59,8 @@ type
     procedure K2PropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
+    procedure frfMktPlanOrderListUserFunction(const Name: String; p1, p2,
+      p3: Variant; var Val: Variant);
   private
     { Private declarations }
     IsAddItem:Boolean;
@@ -414,7 +416,22 @@ end;
 
 function TfrmMktPlanOrderList.PrintSQL(tenantid, id: string): string;
 begin
-  Result := '';
+  Result := 'select A.GLIDE_NO,A.FILES_NO,A.KPI_YEAR,A.PLAN_DATE,C.SHOP_NAME as SHOP_ID_TEXT,'+
+  'H.CLIENT_NAME as CLIENT_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,I.CODE_NAME as PLAN_TYPE_TEXT,'+
+  'E.USER_NAME as PLAN_USER_TEXT,A.CHK_DATE,F.USER_NAME as CHK_USER_TEXT,A.PLAN_AMT,A.PLAN_MNY,'+
+  'A.BOND_MNY,A.BOND_RET,A.BUDG_MNY,A.REMARK,A.CREA_DATE,G.USER_NAME as CREA_USER_TEXT,'+
+  'B.SEQNO,J.KPI_NAME as KPI_ID_TEXT,J.UNIT_NAME,B.AMOUNT,B.AMONEY,B.BOND_MNY,B.BUDG_MNY,B.REMARK as REMARK_DETAIL '+
+  ' from MKT_PLANORDER A inner join MKT_PLANDATA B on A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID '+
+  ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
+  ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
+  ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.PLAN_USER=E.USER_ID '+
+  ' left join VIW_USERS F on A.TENANT_ID=F.TENANT_ID and A.CHK_USER=F.USER_ID '+
+  ' left join VIW_USERS G on A.TENANT_ID=G.TENANT_ID and A.CREA_USER=G.USER_ID '+
+  ' left join VIW_CUSTOMER H on A.TENANT_ID=H.TENANT_ID and A.CLIENT_ID=H.CLIENT_ID '+
+  ' left join PUB_PARAMS I on A.PLAN_TYPE=I.CODE_ID '+
+  ' left join MKT_KPI_INDEX J on B.TENANT_ID=J.TENANT_ID and B.KPI_ID=J.KPI_ID '+
+  ' where I.TYPE_CODE=''PLAN_TYPE'' and A.TENANT_ID='+tenantid+' and A.PLAN_ID='''+id+''' order by B.SEQNO ';
+  
 end;
 
 function TfrmMktPlanOrderList.CheckCanExport: boolean;
@@ -528,6 +545,18 @@ begin
   if cdsList.IsEmpty then Exit;
   actNewExecute(Sender);
   TfrmMktPlanOrder(CurContract).SingleContractExtensionFrom(cdsList.FieldByName('PLAN_ID').AsString);
+end;
+
+procedure TfrmMktPlanOrderList.frfMktPlanOrderListUserFunction(
+  const Name: String; p1, p2, p3: Variant; var Val: Variant);
+var small:real;
+begin
+  inherited;
+  if UPPERCASE(Name)='SMALLTOBIG' then
+     begin
+       small := frParser.Calc(p1);
+       Val := FnNumber.SmallTOBig(small);
+     end;
 end;
 
 end.

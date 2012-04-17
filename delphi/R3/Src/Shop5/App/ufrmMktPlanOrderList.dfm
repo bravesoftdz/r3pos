@@ -532,6 +532,7 @@ inherited frmMktPlanOrderList: TfrmMktPlanOrderList
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     OnGetValue = frfMktPlanOrderListGetValue
+    OnUserFunction = frfMktPlanOrderListUserFunction
     Left = 425
     Top = 230
     ReportForm = {18000000}

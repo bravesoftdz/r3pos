@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeToolForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, Grids, DBGridEh, cxControls, cxContainer, cxEdit, cxTextEdit,
-  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, ZBase,
+  StdCtrls, RzLabel, ComCtrls, ToolWin, DB, ZBase, uFnUtil,
   FR_Class, jpeg, ZAbstractRODataset, ZAbstractDataset, ZDataset,
   cxDropDownEdit, cxCalendar, cxMaskEdit, cxButtonEdit, zrComboBoxList,
   PrnDbgeh;
@@ -37,12 +37,13 @@ type
     lab_SHOP_ID: TRzLabel;
     RzLabel6: TRzLabel;
     edtCREA_USER: TzrComboBoxList;
-    edtCREA_DATE1: TcxDateEdit;
+    D1: TcxDateEdit;
     labCREA_DATE: TRzLabel;
     Label3: TLabel;
-    edtCREA_DATE2: TcxDateEdit;
+    D2: TcxDateEdit;
     RzLabel1: TRzLabel;
     PrintDBGridEh1: TPrintDBGridEh;
+    Label1: TLabel;
     procedure actFindExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
@@ -57,7 +58,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure edtKeyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure edtKeyPropertiesChange(Sender: TObject);
     procedure Cds_InvoiceAfterScroll(DataSet: TDataSet);
     procedure FormDestroy(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
@@ -80,29 +80,26 @@ procedure TfrmInvoice.actFindExecute(Sender: TObject);
 var str:string;
 begin
   inherited;
+  if D1.EditValue = null then Raise Exception.Create('领用日期条件不能为空');
+  if D2.EditValue = null then Raise Exception.Create('领用日期条件不能为空');
+  if D1.Date > D2.Date then Raise Exception.Create('领用查询开始日期不能大于结束日期');
+
   //查询门店门店发票领用情况
   if edtSHOP_ID.Text <> '' then
     str := ' and SHOP_ID='+QuotedStr(edtSHOP_ID.AsString);
   if edtCREA_USER.Text <> '' then
     str :=str + ' and CREA_USER='+QuotedStr(edtCREA_USER.AsString);
 
-  if (edtCREA_DATE1.EditValue=NULL) and (edtCREA_DATE2.EditValue<>NULL) then
-     str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE2.Date));
-  if (edtCREA_DATE1.EditValue<>NULL) and (edtCREA_DATE2.EditValue=NULL) then
-     str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE1.Date));
-  if (edtCREA_DATE1.EditValue<>NULL) and (edtCREA_DATE2.EditValue<>NULL) then
-  begin
-    if edtCREA_DATE1.Date=edtCREA_DATE2.Date then
-      str:=str+' and CREA_DATE='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE1.Date))+' '
-    else
-      str:=str+' and CREA_DATE>='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE1.Date))+' and CREA_DATE<='+QuotedStr(FormatDateTime('YYYYMMDD',edtCREA_DATE2.Date));
-  end;
+  str:=str+' and CREA_DATE>='+FormatDateTime('YYYYMMDD',D1.Date)+' and CREA_DATE<='+FormatDateTime('YYYYMMDD',D2.Date);
+
   if edtKey.Text<>'' then
-     str:= str + ' and INVH_NO LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%');
+     str:= str + ' and INVH_NO like ''%'+trim(edtkey.Text)+''' ';
   Cds_Invoice.Close;
   Cds_Invoice.SQL.Text:='select TENANT_ID,INVH_ID,SHOP_ID,CREA_USER,CREA_DATE,INVH_NO,BEGIN_NO,ENDED_NO,TOTAL_AMT,USING_AMT,CANCEL_AMT,'+
-  'BALANCE,REMARK,COMM,TIME_STAMP from SAL_INVOICE_BOOK Where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+str+ShopGlobal.GetDataRight('SHOP_ID',1);
+  'BALANCE,REMARK from SAL_INVOICE_BOOK Where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+str+
+  ShopGlobal.GetDataRight('SHOP_ID',1)+ShopGlobal.GetDataRight('DEPT_ID',2);
   Factor.Open(Cds_Invoice);
+  
 end;
 
 procedure TfrmInvoice.actDeleteExecute(Sender: TObject);
@@ -205,6 +202,12 @@ begin
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   InitGrid;
   TDbGridEhSort.InitForm(self);
+  D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
+  D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));
+  edtSHOP_ID.KeyValue := Global.SHOP_ID;
+  edtSHOP_ID.Text := Global.SHOP_NAME;
+  edtCREA_USER.KeyValue := Global.UserID;
+  edtCREA_USER.Text := Global.UserName;
 end;
 
 procedure TfrmInvoice.actInfoExecute(Sender: TObject);
@@ -273,7 +276,7 @@ begin
   while not tmp.Eof do
     begin
       DBGridEh1.FieldColumns['CREA_USER'].KeyList.Add(tmp.Fields[0].asstring);
-      DBGridEh1.FieldColumns['CREA_USER'].PickList.Add(tmp.Fields[1].asstring);
+      DBGridEh1.FieldColumns['CREA_USER'].PickList.Add(tmp.Fields[2].asstring);
       tmp.Next;
     end;
 end;
@@ -294,14 +297,6 @@ begin
      Cds_Invoice.Next;
   if Key=VK_UP then
      Cds_Invoice.Prior;
-end;
-
-procedure TfrmInvoice.edtKeyPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  Cds_Invoice.Filtered:=False;
-  Cds_Invoice.Filter:=' INVH_NO LIKE '+QuotedStr('%'+trim(edtkey.Text)+'%');
-  Cds_Invoice.Filtered:=(edtKey.Text<>'');
 end;
 
 procedure TfrmInvoice.Cds_InvoiceAfterScroll(DataSet: TDataSet);

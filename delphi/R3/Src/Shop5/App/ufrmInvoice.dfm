@@ -10,25 +10,25 @@ inherited frmInvoice: TfrmInvoice
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 847
-    Height = 476
+    Width = 855
+    Height = 487
     inherited RzPanel2: TRzPanel
-      Width = 837
-      Height = 466
+      Width = 845
+      Height = 477
       inherited RzPage: TRzPageControl
-        Width = 831
-        Height = 460
+        Width = 839
+        Height = 471
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21457#31080#20449#24687#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 829
-            Height = 433
+            Width = 837
+            Height = 444
             object RzPanel1: TRzPanel
               Left = 5
               Top = 121
-              Width = 819
-              Height = 307
+              Width = 827
+              Height = 318
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -36,8 +36,8 @@ inherited frmInvoice: TfrmInvoice
               object DBGridEh1: TDBGridEh
                 Left = 5
                 Top = 5
-                Width = 809
-                Height = 278
+                Width = 817
+                Height = 289
                 Align = alClient
                 DataSource = Ds_Invoice
                 Flat = True
@@ -66,7 +66,7 @@ inherited frmInvoice: TfrmInvoice
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
-                OnDblClick = actEditExecute
+                OnDblClick = actInfoExecute
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 OnGetCellParams = DBGridEh1GetCellParams
                 Columns = <
@@ -154,8 +154,8 @@ inherited frmInvoice: TfrmInvoice
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 283
-                Width = 809
+                Top = 294
+                Width = 817
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -178,7 +178,7 @@ inherited frmInvoice: TfrmInvoice
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
-              Width = 819
+              Width = 827
               Height = 116
               Align = alTop
               BorderOuter = fsNone
@@ -187,7 +187,7 @@ inherited frmInvoice: TfrmInvoice
               object Panel2: TPanel
                 Left = 5
                 Top = 5
-                Width = 809
+                Width = 817
                 Height = 106
                 Align = alClient
                 Alignment = taLeftJustify
@@ -247,7 +247,7 @@ inherited frmInvoice: TfrmInvoice
                 end
                 object Label3: TLabel
                   Left = 32
-                  Top = 79
+                  Top = 80
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -274,12 +274,30 @@ inherited frmInvoice: TfrmInvoice
                   Font.Style = []
                   ParentFont = False
                 end
+                object Label1: TLabel
+                  Left = 181
+                  Top = 81
+                  Width = 126
+                  Height = 12
+                  Caption = #25903#25345#21457#31080#26412#21495#21518'4'#20301#26597#35810
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
+                  ParentFont = False
+                end
                 object edtKey: TcxTextEdit
                   Left = 85
                   Top = 76
-                  Width = 223
+                  Width = 95
                   Height = 20
-                  Properties.OnChange = edtKeyPropertiesChange
+                  ParentFont = False
+                  Style.Font.Charset = GB2312_CHARSET
+                  Style.Font.Color = clWindowText
+                  Style.Font.Height = -12
+                  Style.Font.Name = #23435#20307
+                  Style.Font.Style = []
                   TabOrder = 4
                   OnKeyDown = edtKeyKeyDown
                 end
@@ -315,12 +333,18 @@ inherited frmInvoice: TfrmInvoice
                   Top = 30
                   Width = 223
                   Height = 20
+                  ParentFont = False
                   Properties.AutoSelect = False
                   Properties.Buttons = <
                     item
                       Default = True
                     end>
                   Properties.ReadOnly = False
+                  Style.Font.Charset = GB2312_CHARSET
+                  Style.Font.Color = clWindowText
+                  Style.Font.Height = -12
+                  Style.Font.Name = #23435#20307
+                  Style.Font.Style = []
                   TabOrder = 2
                   InGrid = False
                   KeyValue = Null
@@ -351,12 +375,18 @@ inherited frmInvoice: TfrmInvoice
                   Top = 53
                   Width = 223
                   Height = 20
+                  ParentFont = False
                   Properties.AutoSelect = False
                   Properties.Buttons = <
                     item
                       Default = True
                     end>
                   Properties.ReadOnly = False
+                  Style.Font.Charset = GB2312_CHARSET
+                  Style.Font.Color = clWindowText
+                  Style.Font.Height = -12
+                  Style.Font.Name = #23435#20307
+                  Style.Font.Style = []
                   TabOrder = 3
                   InGrid = False
                   KeyValue = Null
@@ -388,18 +418,30 @@ inherited frmInvoice: TfrmInvoice
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object edtCREA_DATE1: TcxDateEdit
+                object D1: TcxDateEdit
                   Left = 85
                   Top = 7
                   Width = 100
                   Height = 20
+                  ParentFont = False
+                  Style.Font.Charset = GB2312_CHARSET
+                  Style.Font.Color = clWindowText
+                  Style.Font.Height = -12
+                  Style.Font.Name = #23435#20307
+                  Style.Font.Style = []
                   TabOrder = 0
                 end
-                object edtCREA_DATE2: TcxDateEdit
+                object D2: TcxDateEdit
                   Left = 208
                   Top = 7
                   Width = 100
                   Height = 20
+                  ParentFont = False
+                  Style.Font.Charset = GB2312_CHARSET
+                  Style.Font.Color = clWindowText
+                  Style.Font.Height = -12
+                  Style.Font.Name = #23435#20307
+                  Style.Font.Style = []
                   TabOrder = 1
                 end
               end
@@ -410,16 +452,16 @@ inherited frmInvoice: TfrmInvoice
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 847
+    Width = 855
     inherited Image3: TImage
       Left = 324
       Width = 0
     end
     inherited Image14: TImage
-      Left = 827
+      Left = 835
     end
     inherited Image1: TImage
-      Left = 316
+      Left = 324
       Width = 511
     end
     inherited rzPanel5: TPanel

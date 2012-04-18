@@ -43,6 +43,11 @@ type
     edtUSING_AMT: TcxTextEdit;
     RzLabel12: TRzLabel;
     edtCREA_DATE: TcxDateEdit;
+    RzLabel13: TRzLabel;
+    RzLabel14: TRzLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    edtINVOICE_FLAG: TcxComboBox;
+    labIDN_TYPE: TRzLabel;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -105,8 +110,15 @@ procedure TfrmInvoiceInfo.FormCreate(Sender: TObject);
 begin
   inherited;
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
+  edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   Aobj := TRecord_.Create;
+  if ShopGlobal.GetProdFlag = 'E' then
+    begin
+      lab_SHOP_ID.Caption := '领用仓库';
+      edtSHOP_ID.KeyValue:=IntToStr(Global.TENANT_ID)+'0001';
+      edtSHOP_ID.Text := edtSHOP_ID.DataSet.FieldByName(edtSHOP_ID.ListField).AsString;
+    end;
 end;
 
 procedure TfrmInvoiceInfo.FormDestroy(Sender: TObject);
@@ -130,6 +142,8 @@ begin
     ReadFromObject(Aobj,Self);
     edtSHOP_ID.KeyValue := Aobj.FieldbyName('SHOP_ID').AsString;
     edtSHOP_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_SHOP_INFO'),'SHOP_ID','SHOP_NAME',Aobj.FieldbyName('SHOP_ID').AsString);
+    edtDEPT_ID.KeyValue := Aobj.FieldbyName('DEPT_ID').AsString;
+    edtDEPT_ID.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_DEPT_INFO'),'DEPT_ID','DEPT_NAME',Aobj.FieldbyName('DEPT_ID').AsString);
     edtCREA_USER.KeyValue := Aobj.FieldbyName('CREA_USER').AsString;
     edtCREA_USER.Text := TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',Aobj.FieldbyName('CREA_USER').AsString);
     dbState := dsBrowse;
@@ -160,6 +174,11 @@ begin
   begin
     if edtSHOP_ID.CanFocus then edtSHOP_ID.SetFocus;
     raise Exception.Create('请选择领用门店！');
+  end;
+  if trim(edtDEPT_ID.Text)='' then
+  begin
+    if edtDEPT_ID.CanFocus then edtDEPT_ID.SetFocus;
+    raise Exception.Create('请选择领用部门！');
   end;
   if trim(edtCREA_USER.Text)='' then
   begin

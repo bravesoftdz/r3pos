@@ -479,7 +479,7 @@ CREATE TABLE [SAL_INVOICE_BOOK] (
         --发票类型
 	[INVOICE_FLAG] [varchar] (1) NULL ,
         --领用人
-	[CREA_USER] int NOT NULL ,
+	[CREA_USER] [varchar] (36) NOT NULL ,
         --领用日期
 	[CREA_DATE] int NOT NULL ,
         --备注

@@ -9,14 +9,14 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 474
+    Width = 900
+    Height = 485
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 464
+      Width = 890
+      Height = 475
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 458
+        Width = 884
+        Height = 469
         ActivePage = TabSheet2
         TabIndex = 1
         OnChange = RzPageChange
@@ -24,13 +24,13 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#24320#31080#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 431
+            Width = 882
+            Height = 442
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 864
-              Height = 421
+              Width = 872
+              Height = 432
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -39,7 +39,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
               object RzPanel6: TRzPanel
                 Left = 6
                 Top = 6
-                Width = 852
+                Width = 860
                 Height = 120
                 Align = alTop
                 BorderOuter = fsNone
@@ -326,16 +326,16 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
               object Panel1: TPanel
                 Left = 6
                 Top = 126
-                Width = 852
-                Height = 289
+                Width = 860
+                Height = 300
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 850
-                  Height = 287
+                  Width = 858
+                  Height = 298
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite
@@ -484,8 +484,8 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
           object RzPanel7: TRzPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 431
+            Width = 882
+            Height = 442
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -494,7 +494,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
             object RzPanel8: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
+              Width = 870
               Height = 129
               Align = alTop
               BorderOuter = fsNone
@@ -563,7 +563,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 Caption = #21457' '#31080' '#21495
               end
               object Label5: TLabel
-                Left = 226
+                Left = 188
                 Top = 107
                 Width = 114
                 Height = 12
@@ -838,7 +838,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
               object fndINVOICE_NO: TcxTextEdit
                 Left = 80
                 Top = 103
-                Width = 143
+                Width = 97
                 Height = 20
                 TabOrder = 7
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -847,16 +847,16 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
             object Panel2: TPanel
               Left = 6
               Top = 135
-              Width = 862
-              Height = 290
+              Width = 870
+              Height = 301
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 288
+                Width = 868
+                Height = 299
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -978,16 +978,16 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image3: TImage
       Left = 374
-      Width = 478
+      Width = 486
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited Image1: TImage
-      Left = 852
+      Left = 860
     end
     inherited rzPanel5: TPanel
       Left = 374

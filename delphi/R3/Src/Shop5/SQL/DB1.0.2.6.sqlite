@@ -486,6 +486,8 @@ CREATE TABLE [SAL_INVOICE_BOOK] (
 	[REMARK] [varchar] (100) NULL ,
         --发票代码
 	[INVH_NO] [varchar] (50) NOT NULL ,
+        --当前打印票号
+	[CURRENT_NO] int NULL ,	
         --发票起始号
 	[BEGIN_NO] int NOT NULL ,
         --发票终止号

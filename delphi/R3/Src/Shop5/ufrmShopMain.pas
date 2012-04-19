@@ -308,6 +308,12 @@ type
     actfrmMktActiveList: TAction;
     actfrmBomOrderList: TAction;
     actfrmMktGodsReport: TAction;
+    actfrmMktBudgOrderList: TAction;
+    Button1: TButton;
+    actfrmMktBudgReport: TAction;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -446,6 +452,10 @@ type
     procedure actfrmMktActiveListExecute(Sender: TObject);
     procedure actfrmBomOrderListExecute(Sender: TObject);
     procedure actfrmMktGodsReportExecute(Sender: TObject);
+    procedure actfrmMktBudgOrderListExecute(Sender: TObject);
+    procedure actfrmMktBudgReportExecute(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -521,7 +531,7 @@ uses
   ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList,
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
   ufrmMktKpiResult2,ufrmMktKpiResult3,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
-  ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport;
+  ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,ufrmMktBudgReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4348,7 +4358,7 @@ begin
        PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
        Exit;
      end;
-//  Application.Restore;
+  Application.Restore;
   frmShopDesk.SaveToFront;
   with TfrmMktActiveList.Create(self) do
     begin
@@ -4401,6 +4411,68 @@ begin
      end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktBudgOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktBudgOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktBudgOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktBudgReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktBudgReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktBudgReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.Button3Click(Sender: TObject);
+begin
+  inherited;
+  actfrmMktActiveList.OnExecute(nil);
+end;
+
+procedure TfrmShopMain.Button4Click(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  TfrmCodeInfo.ShowDialog(self,18);
+
 end;
 
 end.

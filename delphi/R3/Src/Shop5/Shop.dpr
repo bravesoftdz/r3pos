@@ -305,7 +305,12 @@ uses
   ufrmMktMarketCostOrderList in 'App\ufrmMktMarketCostOrderList.pas' {frmMktMarketCostOrderList},
   ufrmMktMarketCostOrder in 'App\ufrmMktMarketCostOrder.pas' {frmMktMarketCost},
   ObjCostCalc in 'Obj\ObjCostCalc.pas',
-  ufrmMktGodsReport in 'App\ufrmMktGodsReport.pas' {frmMktGodsReport};
+  ufrmMktGodsReport in 'App\ufrmMktGodsReport.pas' {frmMktGodsReport},
+  ufrmMktBudgOrder in 'App\ufrmMktBudgOrder.pas' {frmMktBudgOrder},
+  ufrmMktBudgOrderList in 'App\ufrmMktBudgOrderList.pas' {frmMktBudgOrderList},
+  ufrmMktBudgReport in 'App\ufrmMktBudgReport.pas' {frmMktBudgReport},
+  ObjMktBudgOrder in 'Obj\ObjMktBudgOrder.pas',
+  ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder};
 
 {$R *.res}
 var

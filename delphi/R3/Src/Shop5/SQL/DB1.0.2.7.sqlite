@@ -19,16 +19,14 @@ CREATE TABLE [MKT_BUDGORDER] (
 	[BUDG_DATE] int NOT NULL ,
         --负责人
   [BUDG_USER] [varchar] (36) NULL ,
-
         --审核日期
 	[CHK_DATE] [varchar] (10) NULL ,
         --审核人员
 	[CHK_USER] [varchar] (36) NULL ,
-
         --申领单号
 	[REQU_ID] [char] (36) NULL ,
+	
 	[BUDG_VRF] [decimal](18, 3) NULL ,
-
         --备注
 	[REMARK] [varchar] (100) NULL ,
         --操作时间
@@ -60,7 +58,7 @@ CREATE TABLE [MKT_BUDGDATA] (
 	[SHOP_ID] [varchar] (13) NOT NULL ,
         --序号
 	[SEQNO] [int] NOT NULL ,
-	--活动编号
+				--活动编号
 	[ACTIVE_ID] char(36) NOT NULL ,
         --考核ID
 	[KPI_ID] [char] (36) NOT NULL ,

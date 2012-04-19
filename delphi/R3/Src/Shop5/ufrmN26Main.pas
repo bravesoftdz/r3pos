@@ -161,7 +161,7 @@ type
     actfrmPriceGradeInfo: TAction;
     actfrmSalIndentOrderList: TAction;
     actfrmStkIndentOrderList: TAction;
-    actfrmInvoice: TAction;
+    actfrmSalInvoiceList: TAction;
     actfrmCustomer: TAction;
     actfrmCostCalc: TAction;
     actfrmSysDefine: TAction;
@@ -299,6 +299,7 @@ type
     RzBmpButton11: TRzBmpButton;
     actfrmAllRckReport: TAction;
     actfrmSyncAll: TAction;
+    actfrmBomOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -345,7 +346,7 @@ type
     procedure actfrmPriceGradeInfoExecute(Sender: TObject);
     procedure actfrmSalIndentOrderListExecute(Sender: TObject);
     procedure actfrmStkIndentOrderListExecute(Sender: TObject);
-    procedure actfrmInvoiceExecute(Sender: TObject);
+    procedure actfrmSalInvoiceListExecute(Sender: TObject);
     procedure actfrmCustomerExecute(Sender: TObject);
     procedure actfrmCostCalcExecute(Sender: TObject);
     procedure actfrmSysDefineExecute(Sender: TObject);
@@ -429,6 +430,7 @@ type
     procedure actfrmAllRckReportExecute(Sender: TObject);
     procedure actfrmSyncAllExecute(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
+    procedure actfrmBomOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -495,7 +497,7 @@ var
 
 implementation
 uses
-  uDsUtil,uRcFactory,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmN26Desk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uRcFactory,ufrmBomOrderList,uFnUtil,ufrmLogo,uTimerFactory,ufrmTenant,ufrmN26Desk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -508,7 +510,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory,
-  ufrmDemandOrderList,ufrmAllRckReport;
+  ufrmDemandOrderList,ufrmAllRckReport,ufrmSalInvoiceList;
 {$R *.dfm}
 
 function CheckXsmPassWord(uid, pwd: string): boolean;
@@ -2154,10 +2156,11 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmN26Main.actfrmInvoiceExecute(Sender: TObject);
+procedure TfrmN26Main.actfrmSalInvoiceListExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
   inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
   if not Logined then
      begin
        PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
@@ -2165,10 +2168,10 @@ begin
      end;
   Application.Restore;
   frmN26Desk.SaveToFront;
-  Form := FindChildForm(TfrmInvoice);
+  Form := FindChildForm(TfrmSalInvoiceList);
   if not Assigned(Form) then
      begin
-       Form := TfrmInvoice.Create(self);
+       Form := TfrmSalInvoiceList.Create(self);
        AddFrom(Form);
      end;
   Form.Show;
@@ -4283,6 +4286,28 @@ procedure TfrmN26Main.RzBmpButton4Click(Sender: TObject);
 begin
   inherited;
   actfrmSyncAll.OnExecute(actfrmSyncAll);
+end;
+
+procedure TfrmN26Main.actfrmBomOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+  begin
+    PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+    Exit;
+  end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm('TfrmBomOrderList');
+  if not Assigned(Form) then
+  begin
+    Form := TfrmBomOrderList.Create(self);
+    AddFrom(Form);
+  end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
 end;
 
 end.

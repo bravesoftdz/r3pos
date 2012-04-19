@@ -3692,14 +3692,24 @@ inherited frmMMMain: TfrmMMMain
       Caption = #26700#38754#20999#25442
       OnExecute = actfrmDeskPageExecute
     end
-    object actExit: TAction
-      Caption = #36864#20986#31995#32479
-      OnExecute = actExitExecute
+    object actfrmBomOrderList: TAction
+      Tag = 100002306
+      Caption = #31036#30418#31649#29702
+      OnExecute = actfrmBomOrderListExecute
+    end
+    object actfrmSalInvoiceList: TAction
+      Tag = 100002314
+      Caption = #21457#31080#31649#29702
+      OnExecute = actfrmSalInvoiceListExecute
     end
     object actfrmNoteBook: TAction
       Tag = 100002327
       Caption = #35760#20107#26412
       OnExecute = actfrmNoteBookExecute
+    end
+    object actExit: TAction
+      Caption = #36864#20986#31995#32479
+      OnExecute = actExitExecute
     end
   end
   inherited PopupMenu: TPopupMenu

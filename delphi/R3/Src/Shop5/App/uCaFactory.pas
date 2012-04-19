@@ -224,7 +224,7 @@ type
     function coLogin(Account:string;PassWrd:string;flag:integer=1):TCaLogin;
     function coRegister(Info:TCaTenant):TCaTenant;
     function coGetList(TENANT_ID:string):TCaTenant;
-    
+
     function SyncSystemTimeStamp:boolean;
     //保存门店
     function downloadShopInfo(TenantId:integer;shopId,xsmCode,xsmPswd:string;flag:integer):boolean;
@@ -1132,7 +1132,10 @@ try
   //写安装目录到临时文件夹
   F := TIniFile.Create(FnSystem.GetWinTmp+'r3.inst');
   try
-    F.WriteString('r3','path',ExtractFileDir(ParamStr(0))); 
+    if RspFlag=1 then
+       F.WriteString('rsp','path',ExtractFileDir(ParamStr(0)))
+    else
+       F.WriteString('r3','path',ExtractFileDir(ParamStr(0)));
   finally
     try
       F.Free;
@@ -3813,7 +3816,10 @@ try
   //写安装目录到临时文件夹
   F := TIniFile.Create(FnSystem.GetWinTmp+'r3.inst');
   try
-    F.WriteString('r3','path',ExtractFileDir(ParamStr(0))); 
+    if RspFlag=1 then
+       F.WriteString('rsp','path',ExtractFileDir(ParamStr(0)))
+    else
+       F.WriteString('r3','path',ExtractFileDir(ParamStr(0)));
   finally
     try
       F.Free;

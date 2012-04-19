@@ -1968,6 +1968,7 @@ begin
     if rs.IsEmpty then Raise Exception.Create('输入的礼盒条码无效');
     bid := rs.Fields[0].AsString;
     HAS_INTEGRAL := rs.Fields[1].AsInteger;
+    bomType := rs.Fields[2].AsInteger;
     rs.Close;
     case bomType of
     1:rs.SQL.Text := 'select A.GODS_ID,B.GODS_CODE,B.GODS_NAME,A.UNIT_ID,A.RTL_PRICE,A.AMOUNT from SAL_BOMDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.BOM_ID=:BOM_ID';

@@ -519,7 +519,7 @@ inherited frmN26Main: TfrmN26Main
         TabColors.HighlightBar = clWhite
         TabColors.Shadow = clWhite
         TabColors.Unselected = clWhite
-        TabIndex = 1
+        TabIndex = 0
         TabOrder = 0
         TabOrientation = toRight
         Tabs = <
@@ -7240,10 +7240,11 @@ inherited frmN26Main: TfrmN26Main
       Enabled = False
       OnExecute = actfrmStkIndentOrderListExecute
     end
-    object actfrmInvoice: TAction
+    object actfrmSalInvoiceList: TAction
+      Tag = 100002314
       Caption = #21457#31080#31649#29702
       Enabled = False
-      OnExecute = actfrmInvoiceExecute
+      OnExecute = actfrmSalInvoiceListExecute
     end
     object actfrmCustomer: TAction
       Tag = 33400001
@@ -7580,6 +7581,11 @@ inherited frmN26Main: TfrmN26Main
     object actfrmSyncAll: TAction
       Caption = #25968#25454#21516#27493
       OnExecute = actfrmSyncAllExecute
+    end
+    object actfrmBomOrderList: TAction
+      Tag = 100002306
+      Caption = #31036#30418#31649#29702
+      OnExecute = actfrmBomOrderListExecute
     end
   end
   inherited PopupMenu: TPopupMenu

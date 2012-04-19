@@ -174,6 +174,8 @@ type
     actfrmDeskPage: TAction;
     actExit: TAction;
     actfrmNoteBook: TAction;
+    actfrmBomOrderList: TAction;
+    actfrmSalInvoiceList: TAction;
 
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -298,6 +300,8 @@ type
     procedure actfrmDeskPageExecute(Sender: TObject);
     procedure actExitExecute(Sender: TObject);
     procedure actfrmNoteBookExecute(Sender: TObject);
+    procedure actfrmBomOrderListExecute(Sender: TObject);
+    procedure actfrmSalInvoiceListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList; {导航菜单}
@@ -382,8 +386,8 @@ uses
   ufrmMessage,ufrmNewsPaperReader,ufrmShopInfo,ufrmQuestionnaire,ufrmInLocusOrderList,ufrmOutLocusOrderList,uPrainpowerJudge,
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
-  ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmNetLogin,ufrmInitGuide,ufrmWelcome,uResFactory,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox, ufrmAdv, ufrmNoteBook;
+  ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmNetLogin,ufrmInitGuide,ufrmWelcome,uResFactory,ufrmSalInvoiceList,
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand, ummGlobal, ufrmMMDesk, ufrmMMToolBox, ufrmAdv, ufrmNoteBook, ufrmBomOrderList;
 var
   frmMMToolBox:TfrmMMToolBox;
 {$R *.dfm}
@@ -3488,6 +3492,35 @@ procedure TfrmMMMain.actfrmNoteBookExecute(Sender: TObject);
 begin
   inherited;
   TfrmNoteBook.ShowNoteBook('');
+end;
+
+procedure TfrmMMMain.actfrmBomOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  Form := FindChildForm(TfrmBomOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmBomOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmMMMain.actfrmSalInvoiceListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  Form := FindChildForm(TfrmSalInvoiceList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSalInvoiceList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

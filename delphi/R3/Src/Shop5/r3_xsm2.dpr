@@ -259,7 +259,8 @@ uses
   uframeContractForm in 'Frame\uframeContractForm.pas' {frameContractForm},
   uframeContractToolForm in 'Frame\uframeContractToolForm.pas' {frameContractToolForm},
   ObjRecvOrder in 'Obj\ObjRecvOrder.pas',
-  ObjCostCalc in 'Obj\ObjCostCalc.pas';
+  ObjCostCalc in 'Obj\ObjCostCalc.pas',
+  ObjBomOrder in 'Obj\ObjBomOrder.pas';
 
 {$R *.res}
 var

@@ -1,6 +1,6 @@
 inherited frmShopMain: TfrmShopMain
-  Left = 228
-  Top = 155
+  Left = 184
+  Top = 151
   Width = 817
   Height = 561
   Caption = ''
@@ -3619,6 +3619,40 @@ inherited frmShopMain: TfrmShopMain
             end
           end
         end
+        object Button1: TButton
+          Left = 256
+          Top = 32
+          Width = 75
+          Height = 25
+          Action = actfrmMktBudgOrderList
+          TabOrder = 1
+        end
+        object Button2: TButton
+          Left = 336
+          Top = 32
+          Width = 75
+          Height = 25
+          Action = actfrmMktBudgReport
+          TabOrder = 2
+        end
+        object Button3: TButton
+          Left = 176
+          Top = 32
+          Width = 75
+          Height = 25
+          Caption = #27963#21160#39033#30446
+          TabOrder = 3
+          OnClick = Button3Click
+        end
+        object Button4: TButton
+          Left = 96
+          Top = 32
+          Width = 75
+          Height = 25
+          Caption = #27963#21160#39033#30446
+          TabOrder = 4
+          OnClick = Button4Click
+        end
       end
     end
     object rzTool: TPanel
@@ -5533,6 +5567,11 @@ inherited frmShopMain: TfrmShopMain
       Caption = #39046#29992#30003#35831
       OnExecute = actfrmDemandOrderList2Execute
     end
+    object actfrmBomOrderList: TAction
+      Tag = 100002306
+      Caption = #31036#30418#21253#35013
+      OnExecute = actfrmBomOrderListExecute
+    end
     object actfrmKpiIndex: TAction
       Tag = 100002143
       Caption = #32771#26680#25351#26631
@@ -5613,15 +5652,18 @@ inherited frmShopMain: TfrmShopMain
       Caption = #27963#21160#39033#30446
       OnExecute = actfrmMktActiveListExecute
     end
-    object actfrmBomOrderList: TAction
-      Tag = 100002306
-      Caption = #31036#30418#21253#35013
-      OnExecute = actfrmBomOrderListExecute
-    end
     object actfrmMktGodsReport: TAction
       Tag = 100002339
       Caption = #21830#21697#30003#39046#25253#34920
       OnExecute = actfrmMktGodsReportExecute
+    end
+    object actfrmMktBudgOrderList: TAction
+      Caption = #36153#29992#26680#38144
+      OnExecute = actfrmMktBudgOrderListExecute
+    end
+    object actfrmMktBudgReport: TAction
+      Caption = #36153#29992#26680#38144#25253#34920
+      OnExecute = actfrmMktBudgReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

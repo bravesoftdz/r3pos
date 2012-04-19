@@ -278,6 +278,8 @@ type
     actfrmInitGuide: TAction;
     RzBmpButton6: TRzBmpButton;
     actfrmSaleDaySingleReport: TAction;
+    actfrmBomOrderList: TAction;
+    actfrmNoteBook: TAction;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -411,6 +413,8 @@ type
     procedure actfrmInitGuideExecute(Sender: TObject);
     procedure RzBmpButton6Click(Sender: TObject);
     procedure actfrmSaleDaySingleReportExecute(Sender: TObject);
+    procedure actfrmBomOrderListExecute(Sender: TObject);
+    procedure actfrmNoteBookExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -492,7 +496,7 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmXsmIEBrowser,ufrmRimIEBrowser,ufrmOptionDefine,ufrmInitialRights,uAdvFactory,ufrmXsmLogin,ufrmNetLogin,ufrmInitGuide,
-  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox;
+  uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,ufrmNoteBook,ufrmBomOrderList;
   
 {$R *.dfm}
 
@@ -4664,6 +4668,34 @@ begin
   Form.Name := 'TfrmSimpleSaleDayReport';
   Form.WindowState := wsMaximized;
   Form.BringToFront;
+end;
+
+procedure TfrmXsm2Main.actfrmBomOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmXsm2Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmXsm2Desk.SaveToFront;
+  Form := FindChildForm(TfrmBomOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmBomOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmXsm2Main.actfrmNoteBookExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmNoteBook.ShowNoteBook('');
+
 end;
 
 end.

@@ -303,7 +303,9 @@ uses
   ufrmBomOrder in 'App\ufrmBomOrder.pas' {frmBomOrder},
   ufrmBomOrderList in 'App\ufrmBomOrderList.pas' {frmBomOrderList},
   ufrmSalInvoice in 'App\ufrmSalInvoice.pas' {frmSalInvoice},
-  ufrmSalInvoiceList in 'App\ufrmSalInvoiceList.pas' {frmSalInvoiceList};
+  ufrmSalInvoiceList in 'App\ufrmSalInvoiceList.pas' {frmSalInvoiceList},
+  ObjBomOrder in 'Obj\ObjBomOrder.pas',
+  ObjInvoiceOrder in 'Obj\ObjInvoiceOrder.pas';
 
 {$R *.res}
 var

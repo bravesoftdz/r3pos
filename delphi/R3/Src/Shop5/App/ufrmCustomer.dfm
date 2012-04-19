@@ -489,6 +489,22 @@ inherited frmCustomer: TfrmCustomer
                     Width = 70
                   end
                   item
+                    DisplayFormat = '0000-00-00'
+                    EditButtons = <>
+                    FieldName = 'NEAR_BUY_DATE'
+                    Footers = <>
+                    Title.Caption = #36141#20080#26085#26399
+                    Width = 75
+                  end
+                  item
+                    DisplayFormat = '0'#22825'/'#27425
+                    EditButtons = <>
+                    FieldName = 'FREQUENCY'
+                    Footers = <>
+                    Title.Caption = #36141#20080#39057#27425
+                    Width = 55
+                  end
+                  item
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>

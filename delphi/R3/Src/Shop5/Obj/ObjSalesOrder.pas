@@ -83,7 +83,7 @@ type
   end;
 
 implementation
-
+uses uFnUtil, DateUtils;
 { TStockData }
 
 function TSalesData.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
@@ -370,6 +370,7 @@ end;
 var
   rs:TZQuery;
   r:integer;
+  salesDate,nearBuyDate,frequency,diff: integer;
 begin
   if (Params.FindParam('SyncFlag')=nil) or (Params.FindParam('SyncFlag').asInteger=0) then
   begin
@@ -395,7 +396,7 @@ begin
        end;
      end;
   end;
-  //更新积分
+  //更新积分以及最新购买日期
   if length(FieldbyName('CLIENT_ID').AsString)>0 then
   begin
      if FieldbyName('BARTER_INTEGRAL').AsInteger<>0 then //扣减换购积分
@@ -406,7 +407,7 @@ begin
         ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID and INTEGRAL>=:BARTER_INTEGRAL')
      ,self);
 
-     if r=0 then Raise Exception.Create('当前可用积分不足，不能完成积分兑换'); 
+     if r=0 then Raise Exception.Create('当前可用积分不足，不能完成积分兑换');
      end;
      if FieldbyName('INTEGRAL').AsInteger<>0 then
      AGlobal.ExecSQL(
@@ -414,6 +415,39 @@ begin
         'update PUB_IC_INFO set INTEGRAL=IsNull(INTEGRAL,0)+ :INTEGRAL,ACCU_INTEGRAL=IsNull(ACCU_INTEGRAL,0) + :INTEGRAL'+
         ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID')
      ,self);
+
+     //更新最近购买日期以及购买频次
+     rs := TZQuery.Create(nil);
+     salesDate := FieldbyName('SALES_DATE').AsInteger;
+     try
+        rs.SQL.Text := 'select NEAR_BUY_DATE,FREQUENCY from PUB_IC_INFO where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID ';
+        rs.ParambyName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
+        rs.ParambyName('CLIENT_ID').AsString := FieldbyName('CLIENT_ID').AsString;
+        AGlobal.Open(rs);
+        if not rs.IsEmpty then
+          begin
+            nearBuyDate := rs.FieldByName('NEAR_BUY_DATE').AsInteger;
+            frequency := rs.FieldByName('FREQUENCY').AsInteger;
+            if salesDate >= nearBuyDate then
+              begin
+                if (nearBuyDate <= 0) and (frequency <= 0) then
+                  frequency := 0
+                else
+                  begin
+                    diff := DaysBetween(FnTime.fnStrtoDate(inttostr(nearBuyDate)), FnTime.fnStrtoDate(inttostr(salesDate)));
+                    if frequency <= 0 then
+                      frequency := 1;
+                    frequency := ceil((frequency + diff) / 2.0);
+                  end;
+                //更新最近购买日期以及频次
+                AGlobal.ExecSQL('update PUB_IC_INFO set NEAR_BUY_DATE = ' + inttostr(salesDate) +
+                                                       ',FREQUENCY = ' + inttostr(frequency) +
+                                 ' where TENANT_ID=:TENANT_ID and UNION_ID=''#'' and CLIENT_ID=:CLIENT_ID', self);
+              end;
+          end;
+     finally
+        rs.Free
+     end;
   end;
   result := true;
 end;

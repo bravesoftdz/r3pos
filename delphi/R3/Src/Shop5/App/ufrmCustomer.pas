@@ -291,6 +291,7 @@ procedure TfrmCustomer.DBGridEh1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
 var ARect: TRect;
+    nearBuyDate,frequency,diff: integer;
 begin
   inherited;
   if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
@@ -305,6 +306,23 @@ begin
       ARect := Rect;
       DbGridEh1.canvas.FillRect(ARect);
       DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(Cds_Customer.RecNo)),length(Inttostr(Cds_Customer.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+
+  if (Column.FieldName = 'NEAR_BUY_DATE') or (Column.FieldName = 'FREQUENCY') then
+    begin
+      nearBuyDate := Cds_Customer.FieldByName('NEAR_BUY_DATE').AsInteger;
+      frequency := Cds_Customer.FieldByName('FREQUENCY').AsInteger;
+      if (nearBuyDate > 0) and (frequency > 0) then
+        begin
+          diff := DaysBetween(FnTime.fnStrtoDate(inttostr(nearBuyDate)), now());
+          if diff > frequency then
+            begin
+              DBGridEh1.Canvas.Brush.Color := clRed;
+              DBGridEh1.Canvas.Font.Color := clwhite;
+              DBGridEh1.Canvas.Font.Style:=[fsBold];
+              DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+            end;
+        end;
     end;
 end;
 
@@ -499,7 +517,7 @@ begin
   if ShopGlobal.GetChkRight('33400001',7) then
      begin
       Str_Sql :=
-      'select A.*,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from ('+
+      'select A.*,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE,B.NEAR_BUY_DATE,B.FREQUENCY from ('+
       'select 0 selflag,CUST_ID,TENANT_ID,SHOP_ID,CUST_CODE,CUST_NAME,SEX,MOVE_TELE,BIRTHDAY,FAMI_ADDR,'+
       'SORT_ID,PRICE_ID,''#'' as UNION_ID from PUB_CUSTOMER where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+ParseSQL(Factor.iDbType,Str_Where)+ShopGlobal.GetDataRight('SHOP_ID',1)+') '+
       'A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.UNION_ID=B.UNION_ID ';
@@ -507,7 +525,7 @@ begin
   else
      begin
       Str_Sql :=
-      'select A.*,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE from ('+
+      'select A.*,B.ACCU_INTEGRAL,B.RULE_INTEGRAL,B.INTEGRAL,B.BALANCE,B.NEAR_BUY_DATE,B.FREQUENCY from ('+
       'select 0 selflag,CUST_ID,TENANT_ID,SHOP_ID,CUST_CODE,CUST_NAME,SEX,MOVE_TELE,BIRTHDAY,FAMI_ADDR,'+
       'SORT_ID,PRICE_ID,''#'' as UNION_ID from PUB_CUSTOMER where COMM not in (''02'',''12'') and TENANT_ID='+IntToStr(Global.TENANT_ID)+' '+ParseSQL(Factor.iDbType,Str_Where)+') '+
       'A left join PUB_IC_INFO B on A.CUST_ID=B.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.UNION_ID=B.UNION_ID ';

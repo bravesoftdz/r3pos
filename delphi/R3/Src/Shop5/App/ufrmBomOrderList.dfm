@@ -1,29 +1,29 @@
 inherited frmBomOrderList: TfrmBomOrderList
-  Left = 329
-  Top = 187
-  Width = 980
-  Height = 665
+  Left = 367
+  Top = 292
+  Width = 738
+  Height = 465
   Caption = #31036#30418#21253#35013
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 972
-    Height = 594
+    Width = 722
+    Height = 390
     inherited RzPanel2: TRzPanel
-      Width = 962
-      Height = 584
+      Width = 712
+      Height = 380
       inherited RzPage: TRzPageControl
-        Width = 956
-        Height = 578
+        Width = 706
+        Height = 374
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #31036#30418#21333#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 954
-            Height = 551
+            Width = 704
+            Height = 347
             inherited RzPanel1: TRzPanel
-              Width = 944
+              Width = 694
               Height = 92
               object RzLabel2: TRzLabel
                 Left = 33
@@ -292,8 +292,8 @@ inherited frmBomOrderList: TfrmBomOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 97
-              Width = 944
-              Height = 449
+              Width = 694
+              Height = 245
               Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               PopupMenu = PopupMenu1
               OnCellClick = DBGridEh1CellClick
@@ -410,46 +410,46 @@ inherited frmBomOrderList: TfrmBomOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 972
+    Width = 722
     inherited Image3: TImage
-      Left = 632
-      Width = 124
+      Left = 636
+      Width = 43
     end
     inherited Image14: TImage
-      Left = 952
+      Left = 702
     end
     inherited Image1: TImage
-      Left = 756
+      Left = 506
       Width = 196
     end
     inherited rzPanel5: TPanel
-      Left = 632
+      Left = 636
       inherited lblToolCaption: TRzLabel
         Caption = #24403#21069#20301#32622'->'#36827#36135#35746#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 612
+      Width = 616
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 612
+          MinHeight = 616
           Width = 36
         end>
       inherited ToolBar1: TToolBar
-        Width = 612
+        Width = 616
         object ToolButton16: TToolButton
-          Left = 518
+          Left = 522
           Top = 0
           Caption = #20184#27454
           ImageIndex = 28
           Visible = False
         end
         object ToolButton17: TToolButton
-          Left = 561
+          Left = 565
           Top = 0
           Width = 8
           Caption = 'ToolButton17'
@@ -457,7 +457,7 @@ inherited frmBomOrderList: TfrmBomOrderList
           Style = tbsDivider
         end
         object ToolButton11: TToolButton
-          Left = 569
+          Left = 573
           Top = 0
           Action = actExit
         end
@@ -491,7 +491,7 @@ inherited frmBomOrderList: TfrmBomOrderList
     Left = 416
     Top = 193
     ReportForm = {
-      18000000311F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
+      18000000381F0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
       00000000000000030400466F726D000F000080DC000000780000007C0100002C
       010000040000000200D60000000B004D61737465724461746131000201000000
@@ -740,7 +740,7 @@ inherited frmBomOrderList: TfrmBomOrderList
       000000000000FEFEFF060000000A00205661726961626C657300000000020073
       6C0014006364735F436867426F64792E22534C30303030220002006A65001400
       6364735F436867426F64792E224A4530303030220004006B6879680000000004
-      0079687A68000000000200647A000000000000000000000000}
+      0079687A68000000000200647A000000000000000000000000FDFF0100000000}
   end
   object PopupMenu1: TPopupMenu
     OnPopup = PopupMenu1Popup

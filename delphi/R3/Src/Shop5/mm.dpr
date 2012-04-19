@@ -284,7 +284,9 @@ uses
   ObjCostCalc in 'Obj\ObjCostCalc.pas',
   ufrmAdv in 'App\ufrmAdv.pas' {frmAdv},
   ufrmNoteBook in 'App\ufrmNoteBook.pas' {frmNoteBook},
-  ObjNoteBook in 'Obj\ObjNoteBook.pas';
+  ObjNoteBook in 'Obj\ObjNoteBook.pas',
+  ObjBomOrder in 'Obj\ObjBomOrder.pas',
+  ObjInvoiceOrder in 'Obj\ObjInvoiceOrder.pas';
 
 {$R *.res}
 

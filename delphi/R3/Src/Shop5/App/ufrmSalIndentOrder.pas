@@ -1065,7 +1065,36 @@ end;
 
 procedure TfrmSalIndentOrder.SetInputFlag(const Value: integer);
 begin
-  inherited;
+  case Value of
+  0:begin
+      inherited SetInputFlag(Value);
+      case InputMode of
+      0:begin
+         lblInput.Caption := '条码输入';
+         lblHint.Caption := '切换"货号/礼盒"输入按[Tab]健';
+        end;
+      1:begin
+         lblInput.Caption := '货号输入';
+         lblHint.Caption := '切换"条码/礼盒"输入按[Tab]健';
+        end;
+      2:begin
+         InputFlag := 7;
+        end;
+      3:begin
+         InputFlag := 10;
+        end;
+      end;
+    end;
+  10:begin
+      lblInput.Caption := '礼盒条码';
+      lblHint.Caption := '切换"条码/货号"输入按[Tab]健';
+      inherited SetInputFlag(Value);
+     end
+  else
+    begin
+      inherited SetInputFlag(Value);
+    end;
+  end;
 end;
 
 function TfrmSalIndentOrder.IsKeyPress: boolean;
@@ -1551,6 +1580,7 @@ begin
     if rs.IsEmpty then Raise Exception.Create('输入的礼盒条码无效');
     bid := rs.Fields[0].AsString;
     HAS_INTEGRAL := rs.Fields[1].AsInteger;
+    bomType := rs.Fields[2].AsInteger;
     rs.Close;
     case bomType of
     1:rs.SQL.Text := 'select A.GODS_ID,B.GODS_CODE,B.GODS_NAME,A.UNIT_ID,A.RTL_PRICE,A.AMOUNT from SAL_BOMDATA A,VIW_GOODSINFO B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and A.TENANT_ID=:TENANT_ID and A.BOM_ID=:BOM_ID';

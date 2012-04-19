@@ -21663,6 +21663,15 @@ inherited frmXsm2Main: TfrmXsm2Main
       Caption = #38144#21806#26085#25253
       OnExecute = actfrmSaleDaySingleReportExecute
     end
+    object actfrmBomOrderList: TAction
+      Tag = 100002306
+      Caption = #31036#30418#31649#29702
+      OnExecute = actfrmBomOrderListExecute
+    end
+    object actfrmNoteBook: TAction
+      Caption = 'u'
+      OnExecute = actfrmNoteBookExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

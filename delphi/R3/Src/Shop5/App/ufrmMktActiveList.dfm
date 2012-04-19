@@ -126,14 +126,14 @@ inherited frmMktActiveList: TfrmMktActiveList
                 Title.Caption = #27963#21160#32452#21517#31216
                 Width = 121
               end>
-            DataSet = MktActiveInfo
             DropWidth = 123
             DropHeight = 130
             ShowTitle = True
             AutoFitColWidth = True
+            OnAddClick = edtACTIVE_GROUPAddClick
             ShowButton = True
             LocateStyle = lsDark
-            Buttons = []
+            Buttons = [zbNew]
             DropListStyle = lsFixed
             OnSaveValue = edtACTIVE_GROUPSaveValue
             MultiSelect = False
@@ -273,13 +273,5 @@ inherited frmMktActiveList: TfrmMktActiveList
     Params = <>
     Left = 38
     Top = 173
-  end
-  object MktActiveInfo: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    OnNewRecord = cdsActiveNewRecord
-    Params = <>
-    Left = 334
-    Top = 133
   end
 end

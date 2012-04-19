@@ -20,7 +20,6 @@ type
     btnDelete: TRzBitBtn;
     cdsActive: TZQuery;
     edtACTIVE_GROUP: TzrComboBoxList;
-    MktActiveInfo: TZQuery;
     procedure DBGridEh1Columns1UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure btnAppendClick(Sender: TObject);
@@ -41,6 +40,7 @@ type
       Shift: TShiftState);
     procedure cdsActiveNewRecord(DataSet: TDataSet);
     procedure DBGridEh1Columns2BeforeShowControl(Sender: TObject);
+    procedure edtACTIVE_GROUPAddClick(Sender: TObject);
   private
     FFlag: integer;
     IsOffline:Boolean;
@@ -62,7 +62,7 @@ type
   end;
 
 implementation
-uses  uGlobal,uFnUtil,uDsUtil,uShopUtil, uShopGlobal, ufrmBasic, Math;
+uses  uGlobal,uFnUtil,uDsUtil,uShopUtil, uShopGlobal, ufrmBasic, Math, ufrmCodeInfo;
 {$R *.dfm}
 
 procedure TfrmMktActiveList.DBGridEh1Columns1UpdateData(Sender: TObject;
@@ -357,10 +357,7 @@ end;
 procedure TfrmMktActiveList.FormCreate(Sender: TObject);
 begin
   inherited;
-  MktActiveInfo.Close;
-  MktActiveInfo.SQL.Text := ' select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO '+
-  ' where CODE_TYPE=18 and COMM not in (''02'',''12'') order by CODE_ID ';
-  Factor.Open(MktActiveInfo);
+  edtACTIVE_GROUP.DataSet := ShopGlobal.GetZQueryFromName('MKT_ACTIVE_GROUP');
 end;
 
 procedure TfrmMktActiveList.edtACTIVE_GROUPEnter(Sender: TObject);
@@ -537,6 +534,24 @@ begin
   edtACTIVE_GROUP.KeyValue := cdsActive.FieldByName('ACTIVE_GROUP').AsString;
   edtACTIVE_GROUP.Text := cdsActive.FieldByName('ACTIVE_GROUP_TEXT').AsString;
   edtACTIVE_GROUP.SaveStatus;
+end;
+
+procedure TfrmMktActiveList.edtACTIVE_GROUPAddClick(Sender: TObject);
+var AObj_2:TRecord_;
+begin
+  inherited;
+  AObj_2 := TRecord_.Create;
+  try
+    if TfrmCodeInfo.AddDialog(self,AObj_2,18) then
+       begin
+         edtACTIVE_GROUP.KeyValue := AObj_2.FieldbyName('CODE_ID').asString;
+         edtACTIVE_GROUP.Text := AObj_2.FieldbyName('CODE_NAME').asString;
+         cdsActive.FieldByName('ACTIVE_GROUP').AsString := AObj_2.FieldbyName('CODE_ID').asString;
+         cdsActive.FieldByName('ACTIVE_GROUP_TEXT').AsString := AObj_2.FieldbyName('CODE_NAME').asString;
+       end;
+  finally
+    AObj_2.Free;
+  end;
 end;
 
 end.

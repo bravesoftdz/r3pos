@@ -63,6 +63,8 @@ type
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
+    procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
   private
     { Private declarations }
     FromId:String;
@@ -163,6 +165,7 @@ begin
 end;
 
 procedure TfrmMktBudgOrder.DeleteOrder;
+var ParamClient:TftParamList;
 begin
   inherited;
   Saved := false;
@@ -170,29 +173,38 @@ begin
   if IsAudit then Raise Exception.Create('已经审核的单据不能删除');
   if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能删除');
   if MessageBox(Handle,'是否真想删除当前核销单据?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  cdsHeader.Delete;
-  cdsDetail.First;
-  while not cdsDetail.Eof do cdsDetail.Delete;
-  Factor.BeginBatch;
+  ParamClient := TftParamList.Create;
   try
-    Factor.AddBatch(cdsHeader,'TMktBudgOrder');
-    Factor.AddBatch(cdsDetail,'TMktBudgData');
-    Factor.AddBatch(cdsBudgShare,'TMktBudgShare');
-    Factor.CommitBatch;
-    Saved := true;
-  except
-    Factor.CancelBatch;
-    cdsHeader.CancelUpdates;
-    cdsDetail.CancelUpdates;
-    Raise;
+    ParamClient.ParamByName('CLIENT_ID').AsString := cdsHeader.FieldByName('CLIENT_ID').AsString;
+    cdsHeader.Delete;
+    cdsDetail.First;
+    while not cdsDetail.Eof do cdsDetail.Delete;
+    cdsBudgShare.First;
+    while not cdsBudgShare.Eof do cdsBudgShare.Delete;
+
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsHeader,'TMktBudgOrder');
+      Factor.AddBatch(cdsDetail,'TMktBudgData');
+      Factor.AddBatch(cdsBudgShare,'TMktBudgShare',ParamClient);
+      Factor.CommitBatch;
+      Saved := true;
+    except
+      Factor.CancelBatch;
+      cdsHeader.CancelUpdates;
+      cdsDetail.CancelUpdates;
+      Raise;
+    end;
+  finally
+    ParamClient.Free;
   end;
-    AObj.ReadFromDataSet(cdsHeader);
-    ReadFromObject(AObj,self);
-    IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
-    oid := AObj.FieldbyName('BUDG_ID').asString;
-    gid := AObj.FieldbyName('GLIDE_NO').asString;
-    cid := AObj.FieldbyName('SHOP_ID').AsString;
-    dbState := dsBrowse;
+  AObj.ReadFromDataSet(cdsHeader);
+  ReadFromObject(AObj,self);
+  IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
+  oid := AObj.FieldbyName('BUDG_ID').asString;
+  gid := AObj.FieldbyName('GLIDE_NO').asString;
+  cid := AObj.FieldbyName('SHOP_ID').AsString;
+  dbState := dsBrowse;
 end;
 
 procedure TfrmMktBudgOrder.EditOrder;
@@ -204,9 +216,10 @@ begin
   if AObj.FieldByName('REQU_ID').AsString <> '' then
   begin
     cdsKPI_ID.Close;
-    cdsKPI_ID.SQL.Text := ' select C.KPI_ID,C.KPI_NAME,C.KPI_SPELL from MKT_REQUORDER A left join MKT_REQUDATA B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID '+
-    ' left join MKT_KPI_INDEX C on B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID '+
-    ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(AObj.FieldByName('REQU_ID').AsString)+' and A.COMM not in (''02'',''12'') ';
+    cdsKPI_ID.SQL.Text := ' select A.KPI_ID,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
+                          ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
+                          ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
+                          ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
     Factor.Open(cdsKPI_ID);
   end;
   dbState := dsEdit;
@@ -578,6 +591,7 @@ procedure TfrmMktBudgOrder.edtREQU_IDPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 var g,uid,utext:string;
 begin
+  if dbState = dsBrowse then Exit;
   if edtCLIENT_ID.AsString = '' then
      begin
        MessageBox(Handle,'请先选择经销商后再录单.','友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -595,11 +609,10 @@ begin
        edtBUDG_USER.Text := utext;
 
        cdsKPI_ID.Close;
-       cdsKPI_ID.SQL.Text := ' select C.KPI_ID,C.KPI_NAME,C.KPI_SPELL from MKT_REQUORDER A '+
-                             ' left join MKT_REQUDATA B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID '+
-                             ' left join MKT_KPI_INDEX C on B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID '+
+       cdsKPI_ID.SQL.Text := ' select A.KPI_ID,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
+                             ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
                              ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
-                             ' and A.COMM not in (''02'',''12'') ';
+                             ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
        Factor.Open(cdsKPI_ID);
      end;
 end;
@@ -822,10 +835,11 @@ var ds:TZQuery;
     BudgMny,LastMny:Real;
     Text_Sql:String;
 begin
-  if not Changed then Exit; 
+  if not Changed then Exit;
   ds := TZQuery.Create(nil);
   i := 0;
   try
+    cdsBudgShare.Filtered := False;
     cdsBudgShare.First;
     while not cdsBudgShare.Eof do cdsBudgShare.Delete;
 
@@ -844,7 +858,7 @@ begin
       begin
         if BudgMny > 0 then
         begin
-           if cdsBudgShare.Locate('KPI_ID,KPI_YEAR',VarArrayOf([ds.FieldByName('KPI_ID').AsString,ds.FieldByName('KPI_YEAR').AsInteger]),[]) then
+           if cdsBudgShare.Locate('KPI_ID,KPI_YEAR',VarArrayOf([cdsDetail.FieldByName('KPI_ID').AsString,ds.FieldByName('KPI_YEAR').AsInteger]),[]) then
            begin
              LastMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat;
              cdsBudgShare.Edit;
@@ -864,7 +878,7 @@ begin
              cdsBudgShare.FieldByName('SEQNO').AsInteger := i;
              cdsBudgShare.FieldByName('BUDG_ID').AsString := cdsHeader.FieldByName('BUDG_ID').AsString;
              cdsBudgShare.FieldByName('REQU_ID').AsString := ds.FieldByName('REQU_ID').AsString;
-             cdsBudgShare.FieldByName('KPI_ID').AsString := ds.FieldByName('KPI_ID').AsString;
+             cdsBudgShare.FieldByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
              if BudgMny >= ds.FieldByName('BLA_MNY').AsFloat then
                 cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := ds.FieldByName('BLA_MNY').AsFloat
              else
@@ -917,6 +931,26 @@ procedure TfrmMktBudgOrder.edtCLIENT_IDSaveValue(Sender: TObject);
 begin
   inherited;
   if FromId <> '' then Raise Exception.Create('申领单号已选择,不能再改换"经销商"!');
+end;
+
+procedure TfrmMktBudgOrder.DBGridEh1DrawFooterCell(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; Rect: TRect;
+  State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'KPI_ID_TEXT' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+
+       DBGridEh1.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s个指标',[Inttostr(cdsDetail.RecordCount)]);
+       DBGridEh1.Canvas.Font.Style := [fsBold];
+       DBGridEh1.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh1.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
+     end;
 end;
 
 end.

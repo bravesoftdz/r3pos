@@ -373,15 +373,16 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 418
+      Top = 448
       Width = 911
-      Height = 38
+      Height = 16
     end
     inherited DBGridEh1: TDBGridEh
       Top = 130
       Width = 911
-      Height = 288
+      Height = 310
       PopupMenu = PopupMenu1
+      OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
       Columns = <
         item
@@ -396,7 +397,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
           FieldName = 'KPI_ID_TEXT'
           Footers = <>
           Title.Caption = #25351#26631#21517#31216
-          Width = 141
+          Width = 181
           Control = edtKPI_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
         end
@@ -422,11 +423,11 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #25688#35201
-          Width = 340
+          Width = 300
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 456
+      Top = 440
       Width = 911
       Height = 8
     end

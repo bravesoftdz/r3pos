@@ -76,7 +76,6 @@ end;
 
 procedure TfrmMktBudgOrderList.actDeleteExecute(Sender: TObject);
 begin
-  inherited;
   //if not ShopGlobal.GetChkRight('11100001',4) then Raise Exception.Create('你没有删除市场活动费核销单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
@@ -97,7 +96,7 @@ begin
        if ShopGlobal.GetChkRight('11100001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增市场活动费核销单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
-          if rzPage.PageCount>2 then CurContract.Close;
+          if rzPage.PageCount>1 then CurContract.Close;
      end;
 end;
 

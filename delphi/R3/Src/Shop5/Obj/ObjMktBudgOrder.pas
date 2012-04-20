@@ -294,11 +294,11 @@ begin
   AGlobal.ExecSQL(str,Self);
 
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)-:OLD_BUDG_VRF,2) '+
-         ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and SEQNO=:SEQNO ';
+         ' where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and KPI_ID=:OLD_KPI_ID and KPI_YEAR=:OLD_KPI_YEAR ';
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
 
   str := ' update MKT_KPI_RESULT set BUDG_VRF=round(isnull(BUDG_VRF,0)-:OLD_BUDG_VRF,2) '+
-         ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR and CLIENT_ID='+QuotedStr(Params.ParamByName('CLIENT_ID').AsString);
+         ' where TENANT_ID=:OLD_TENANT_ID and KPI_ID=:OLD_KPI_ID and KPI_YEAR=:OLD_KPI_YEAR and CLIENT_ID='+QuotedStr(Params.ParamByName('CLIENT_ID').AsString);
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
   Result := True;
 end;
@@ -312,7 +312,7 @@ begin
   AGlobal.ExecSQL(str,Self);
 
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
-         ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and SEQNO=:SEQNO ';
+         ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR ';
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
 
   str := ' update MKT_KPI_RESULT set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+

@@ -198,10 +198,11 @@ begin
   finally
     ParamClient.Free;
   end;
-  AObj.ReadFromDataSet(cdsHeader);
-  ReadFromObject(AObj,self);
+  {AObj.ReadFromDataSet(cdsHeader);
+  ReadFromObject(AObj,self);}
+  Open('');
   IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
-  oid := AObj.FieldbyName('BUDG_ID').asString;
+  oid := '';
   gid := AObj.FieldbyName('GLIDE_NO').asString;
   cid := AObj.FieldbyName('SHOP_ID').AsString;
   dbState := dsBrowse;
@@ -601,20 +602,27 @@ begin
   inherited;
   if not IsNull then Raise Exception.Create('已经输入指标,不能导入申领单号.');
   if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入申领单号.');
-  FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,uid,utext);
-  if FromId<>'' then
-     begin
-       edtREQU_ID_TEXT.Text := g;
-       edtBUDG_USER.KeyValue := uid;
-       edtBUDG_USER.Text := utext;
+  cdsDetail.DisableControls;
+  try
+    FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,uid,utext);
+    if FromId<>'' then
+       begin
+         edtREQU_ID_TEXT.Text := g;
+         edtBUDG_USER.KeyValue := uid;
+         edtBUDG_USER.Text := utext;
 
-       cdsKPI_ID.Close;
-       cdsKPI_ID.SQL.Text := ' select A.KPI_ID,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
-                             ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
-                             ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
-                             ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
-       Factor.Open(cdsKPI_ID);
-     end;
+         cdsKPI_ID.Close;
+         cdsKPI_ID.SQL.Text := ' select A.KPI_ID,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
+                               ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
+                               ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
+                               ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
+         Factor.Open(cdsKPI_ID);
+       end;
+  finally
+    cdsDetail.EnableControls;
+    cdsDetail.Edit;
+  end;
+
 end;
 
 function TfrmMktBudgOrder.IsNull: Boolean;
@@ -839,7 +847,6 @@ begin
   ds := TZQuery.Create(nil);
   i := 0;
   try
-    cdsBudgShare.Filtered := False;
     cdsBudgShare.First;
     while not cdsBudgShare.Eof do cdsBudgShare.Delete;
 
@@ -925,6 +932,7 @@ begin
     end;
     cdsDetail.Next;
   end;
+  cdsBudgShare.Filtered := False;
 end;
 
 procedure TfrmMktBudgOrder.edtCLIENT_IDSaveValue(Sender: TObject);

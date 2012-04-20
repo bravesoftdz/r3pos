@@ -96,7 +96,7 @@ begin
        if ShopGlobal.GetChkRight('11100001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增市场活动费核销单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
-          if rzPage.PageCount>1 then CurContract.Close;
+          if rzPage.PageCount>2 then CurContract.Close;
      end;
 end;
 
@@ -110,7 +110,8 @@ begin
      end;
   if CurContract=nil then Raise Exception.Create('"市场活动费核销单"打开异常!');
 
-  if TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString<>'')
+  and (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID) then
     begin
       if not ShopGlobal.GetChkRight('11100001',5) then
         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');

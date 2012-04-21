@@ -231,6 +231,11 @@ procedure TfrmMktBudgOrder.FocusNextColumn;
 var i:Integer;
 begin
   i:=DbGridEh1.Col;
+  if cdsDetail.RecordCount > cdsDetail.RecNo then
+  begin
+     cdsDetail.Next;
+     Exit;
+  end;
   Inc(i);
   while True do
     begin
@@ -826,7 +831,6 @@ end;
 procedure TfrmMktBudgOrder.N2Click(Sender: TObject);
 begin
   inherited;
-  if not cdsDetail.IsEmpty then Exit;
   if DBGridEh1.ReadOnly then Exit;
   if dbState = dsBrowse then Exit;
   if MessageBox(Handle,pchar('确认删除"'+cdsDetail.FieldbyName('KPI_ID_TEXT').AsString+'"指标吗？'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)=6 then
@@ -847,6 +851,7 @@ begin
   ds := TZQuery.Create(nil);
   i := 0;
   try
+    cdsBudgShare.Filtered := False;
     cdsBudgShare.First;
     while not cdsBudgShare.Eof do cdsBudgShare.Delete;
 
@@ -855,29 +860,53 @@ begin
     begin
       BudgMny := cdsDetail.FieldByName('BUDG_VRF').AsFloat;
       ds.Close;
-      Text_Sql := ' select A.REQU_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_MNY,A.BUDG_MNY+isnull(B.BUDG_VRF,0)-isnull(A.BUDG_VRF,0) as BLA_MNY '+
-      ' from MKT_REQUDATA A left join MKT_BUDGSHARE B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and A.KPI_ID=B.KPI_ID and A.KPI_YEAR=B.KPI_YEAR '+
-      ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+' and A.BUDG_MNY<>isnull(A.BUDG_VRF,0) order by A.KPI_YEAR ';
+      if dbState = dsInsert then
+         Text_Sql := ' select A.REQU_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_MNY,A.BUDG_MNY-isnull(A.BUDG_VRF,0) as BLA_MNY '+
+         ' from MKT_REQUDATA A left join MKT_BUDGSHARE B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and A.KPI_ID=B.KPI_ID and A.KPI_YEAR=B.KPI_YEAR '+
+         ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+' and A.KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+' order by A.KPI_YEAR '
+      else if dbState = dsEdit then
+         Text_Sql := ' select A.REQU_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_MNY,A.BUDG_MNY+isnull(B.BUDG_VRF,0)-isnull(A.BUDG_VRF,0) as BLA_MNY '+
+         ' from MKT_REQUDATA A left join MKT_BUDGSHARE B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and A.KPI_ID=B.KPI_ID and A.KPI_YEAR=B.KPI_YEAR '+
+         ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+' and A.KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+
+         ' and B.BUDG_ID='+QuotedStr(cdsHeader.FieldByName('BUDG_ID').AsString)+' order by A.KPI_YEAR ';
+
       ds.SQL.Text := ParseSQL(Factor.iDbType,Text_Sql);
       Factor.Open(ds);
       ds.First;
       while not ds.Eof do
       begin
-        if BudgMny > 0 then
+        {if BudgMny > 0 then}
         begin
-           if cdsBudgShare.Locate('KPI_ID,KPI_YEAR',VarArrayOf([cdsDetail.FieldByName('KPI_ID').AsString,ds.FieldByName('KPI_YEAR').AsInteger]),[]) then
+           if cdsBudgShare.Locate('KPI_ID,KPI_YEAR',VarArrayOf([ds.FieldByName('KPI_ID').AsString,ds.FieldByName('KPI_YEAR').AsInteger]),[]) then
            begin
-             LastMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat;
-             cdsBudgShare.Edit;
-             if BudgMny >= ds.FieldByName('BLA_MNY').AsFloat then
-                cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat+ds.FieldByName('BLA_MNY').AsFloat
+             //LastMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat;
+             if BudgMny>(ds.FieldByName('BLA_MNY').AsFloat-cdsBudgShare.FieldByName('BUDG_VRF').AsFloat) then
+                Raise Exception.Create('当前核销金额超出未核销金额!');
+                
+             if cdsBudgShare.FieldByName('BUDG_VRF').AsFloat = ds.FieldByName('BLA_MNY').AsFloat then
+             begin
+                Exit;
+             end
              else
-                cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat+BudgMny;
-             cdsBudgShare.Post;
-             BudgMny := BudgMny - ds.FieldByName('BLA_MNY').AsFloat+LastMny;
+             begin
+               cdsBudgShare.Edit;
+               if BudgMny > ds.FieldByName('BLA_MNY').AsFloat then
+               begin
+                  cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat+ds.FieldByName('BLA_MNY').AsFloat;
+                  BudgMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat - ds.FieldByName('BLA_MNY').AsFloat;
+               end
+               else
+               begin
+                  cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat+BudgMny;
+                  BudgMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat - ds.FieldByName('BLA_MNY').AsFloat;
+               end;
+               cdsBudgShare.Post;
+             end;
            end
            else
            begin
+             if BudgMny>ds.FieldByName('BLA_MNY').AsFloat then
+                Raise Exception.Create('当前核销金额超出未核销金额!');
              inc(i);
              cdsBudgShare.Append;
              cdsBudgShare.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldByName('TENANT_ID').AsInteger;
@@ -886,12 +915,18 @@ begin
              cdsBudgShare.FieldByName('BUDG_ID').AsString := cdsHeader.FieldByName('BUDG_ID').AsString;
              cdsBudgShare.FieldByName('REQU_ID').AsString := ds.FieldByName('REQU_ID').AsString;
              cdsBudgShare.FieldByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
-             if BudgMny >= ds.FieldByName('BLA_MNY').AsFloat then
-                cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := ds.FieldByName('BLA_MNY').AsFloat
+             if BudgMny > ds.FieldByName('BLA_MNY').AsFloat then
+             begin
+                cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := ds.FieldByName('BLA_MNY').AsFloat;
+                BudgMny := BudgMny - ds.FieldByName('BLA_MNY').AsFloat;
+             end
              else
+             begin
                 cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := BudgMny;
+                BudgMny := 0;
+             end;
              cdsBudgShare.Post;
-             BudgMny := BudgMny - ds.FieldByName('BLA_MNY').AsFloat;
+             //
            end;
         end;
         ds.Next;

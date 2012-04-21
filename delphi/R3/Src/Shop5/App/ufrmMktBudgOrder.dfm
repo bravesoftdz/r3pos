@@ -1,6 +1,6 @@
 inherited frmMktBudgOrder: TfrmMktBudgOrder
-  Left = 229
-  Top = 189
+  Left = 224
+  Top = 173
   Width = 929
   Height = 520
   Caption = #26680#38144#21333

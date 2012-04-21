@@ -84,7 +84,8 @@ begin
      end;
   if CurContract=nil then Raise Exception.Create('"市场活动费核销单"打开异常!');
 
-  if TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString<>'')
+  and (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID) then
     begin
       if not ShopGlobal.GetChkRight('11100001',5) then
         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');

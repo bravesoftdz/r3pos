@@ -282,7 +282,32 @@ end;
 { TMktBudgShare }
 
 function TMktBudgShare.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
+var
+  rs :TZQuery;
+  s:string;
 begin
+  result := true;
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := ParseSQL(iDbType,' select A.KPI_ID,A.KPI_YEAR,B.KPI_NAME from MKT_REQUDATA A,MKT_KPI_INDEX B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID and A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID and round(isnull(A.BUDG_MNY,0)-isnull(A.BUDG_VRF,0),2)<0 ');
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('REQU_ID').AsString := FieldByName('REQU_ID').AsString;
+    AGlobal.Open(rs);
+    if rs.IsEmpty then Exit;
+    s := '';
+    rs.First;
+    while not rs.Eof do
+       begin
+         if s<>'' then s := s + #13;
+         s := s+rs.Fields[2].AsString+' '+rs.Fields[1].AsString+'年';
+         rs.Next;
+       end;
+    if s<>'' then
+       Raise Exception.Create('以下指标的申领金额不足:'+#13+'"'+s+'" '+#13+'无法完成超额核销.');
+  finally
+    rs.Free;
+  end;
 
 end;
 
@@ -298,41 +323,26 @@ begin
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
 
   str := ' update MKT_KPI_RESULT set BUDG_VRF=round(isnull(BUDG_VRF,0)-:OLD_BUDG_VRF,2) '+
-         ' where TENANT_ID=:OLD_TENANT_ID and KPI_ID=:OLD_KPI_ID and KPI_YEAR=:OLD_KPI_YEAR and CLIENT_ID='+QuotedStr(Params.ParamByName('CLIENT_ID').AsString);
+         ' where TENANT_ID=:OLD_TENANT_ID and KPI_ID=:OLD_KPI_ID and KPI_YEAR=:OLD_KPI_YEAR and CLIENT_ID=:OLD_CLIENT_ID';
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
   Result := True;
 end;
 
 function TMktBudgShare.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-var str:String;
-    rs:TZQuery;
+var
+  str:String;
 begin
   Result := False;
   Str := 'insert into MKT_BUDGSHARE(TENANT_ID,SEQNO,REQU_ID,BUDG_ID,KPI_ID,KPI_YEAR,BUDG_VRF) '
   + 'values(:TENANT_ID,:SEQNO,:REQU_ID,:BUDG_ID,:KPI_ID,:KPI_YEAR,:BUDG_VRF)';
   AGlobal.ExecSQL(str,Self);
 
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text := ParseSQL(iDbType,' select isnull(BUDG_MNY,0)-isnull(BUDG_VRF,0) as BLA_MNY from MKT_REQUDATA '+
-    ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR ');
-    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
-    rs.ParamByName('REQU_ID').AsString := FieldByName('REQU_ID').AsString;
-    rs.ParamByName('KPI_ID').AsString := FieldByName('KPI_ID').AsString;
-    rs.ParamByName('KPI_YEAR').AsInteger := FieldByName('KPI_YEAR').AsInteger;
-    AGlobal.Open(rs);
-    if rs.FieldByName('BLA_MNY').AsFloat < FieldByName('BUDG_VRF').AsFloat then
-       Raise Exception.Create('当前核销金额超出未核销金额!');
-  finally
-    rs.Free;
-  end;
-
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
          ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR ';
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
 
   str := ' update MKT_KPI_RESULT set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
-         ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR and CLIENT_ID='+QuotedStr(Params.ParamByName('CLIENT_ID').AsString);
+         ' where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR and CLIENT_ID=:CLIENT_ID';
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
   Result := True;
 end;
@@ -354,7 +364,8 @@ var
 begin
   inherited;
   SelectSQL.Text :=
-  ' select TENANT_ID,SEQNO,REQU_ID,BUDG_ID,KPI_ID,KPI_YEAR,BUDG_VRF from MKT_BUDGSHARE where TENANT_ID=:TENANT_ID and BUDG_ID=:BUDG_ID ';
+  ' select A.TENANT_ID,A.SEQNO,A.REQU_ID,A.BUDG_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_VRF,B.CLIENT_ID from MKT_BUDGSHARE A,MKT_BUDGORDER B '+
+  ' where A.TENANT_ID=B.TENANT_ID and A.BUDG_ID=B.BUDG_ID and A.TENANT_ID=:TENANT_ID and A.BUDG_ID=:BUDG_ID ';
   IsSQLUpdate := True;
 end;
 

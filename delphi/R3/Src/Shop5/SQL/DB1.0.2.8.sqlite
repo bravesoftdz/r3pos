@@ -1,0 +1,102 @@
+drop table SAL_INVOICE_BOOK;
+--发票本管理
+CREATE TABLE [SAL_INVOICE_BOOK] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --流水ID号
+	[INVH_ID] [char] (36) NOT NULL ,
+        --领用门店
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --领用部门
+	[DEPT_ID] [varchar] (12) NOT NULL ,
+        --发票类型
+	[INVOICE_FLAG] [varchar] (1) NULL ,
+        --领用人
+	[CREA_USER] varchar(36) NOT NULL ,
+        --领用日期
+	[CREA_DATE] int NOT NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --发票代码
+	[INVH_NO] [varchar] (50) NOT NULL ,
+        --当前票号
+	[CURRENT_NO] int NOT NULL ,
+        --发票起始号
+	[BEGIN_NO] int NOT NULL ,
+        --发票终止号
+	[ENDED_NO] int NOT NULL ,
+        --合计张数
+	[TOTAL_AMT] int NULL ,
+        --开票张数
+	[USING_AMT] int NULL ,
+        --作废张数
+	[CANCEL_AMT] int NULL ,
+        --结余张数
+	[BALANCE] int NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_INVOICE_BOOK_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_SAL_INVOICE_BOOK] PRIMARY KEY   
+	(
+		[TENANT_ID],[INVH_ID]
+	) 
+);
+
+CREATE INDEX IX_SAL_INVOICE_BOOK_TENANT_ID ON SAL_INVOICE_BOOK(TENANT_ID);
+CREATE INDEX IX_SAL_INVOICE_BOOK_TIME_STAMP ON SAL_INVOICE_BOOK(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_SAL_INVOICE_BOOK_CREA_DATE ON SAL_INVOICE_BOOK(CREA_DATE);
+CREATE INDEX IX_SAL_INVOICE_BOOK_SHOP_ID ON SAL_INVOICE_BOOK(TENANT_ID,SHOP_ID);
+
+
+--代金券流水
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','发放','VOUCHER_FLAG','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','回收','VOUCHER_FLAG','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','支付','VOUCHER_FLAG','00',5497000);
+
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('0','不关联','LINK_FLAG','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','订货单','LINK_FLAG','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','销售单','LINK_FLAG','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','退货单','LINK_FLAG','00',5497000);
+
+--代金券流水
+CREATE TABLE [SAL_VOUCHER_GLIDE] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --流水ID号
+	[VOUCHER_ID] [char] (36) NOT NULL ,
+        --门店
+	[SHOP_ID] [varchar] (13) NOT NULL ,
+        --部门
+	[DEPT_ID] [varchar] (12) NOT NULL ,
+        --流水类型
+	[VOUCHER_FLAG] [varchar] (1) NULL ,
+        --领用人
+	[CREA_USER] varchar(36) NOT NULL ,
+        --领用日期
+	[CREA_DATE] int NOT NULL ,
+        --备注
+	[REMARK] [varchar] (100) NULL ,
+        --张数
+	[VOUCHER_AMT] int NOT NULL ,
+        --面值
+	[VOUCHER_PRC] int NOT NULL ,
+        --金额
+	[VOUCHER_MNY] int NULL ,
+        --单据类型
+	[LINK_FLAG] [char] (1) NOT NULL ,
+        --关联单号
+	[LINK_ID] [char] (36) NULL,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SAL_VOUCHER_GLIDE_COMM] DEFAULT ('00'),
+        --时间戳 
+  [TIME_STAMP] bigint NOT NULL,
+	CONSTRAINT [PK_SAL_VOUCHER_GLIDE] PRIMARY KEY   
+	(
+		[TENANT_ID],[VOUCHER_ID]
+	) 
+);
+
+CREATE INDEX IX_SAL_VOUCHER_GLIDE_TENANT_ID ON SAL_VOUCHER_GLIDE(TENANT_ID);
+CREATE INDEX IX_SAL_VOUCHER_GLIDE_TIME_STAMP ON SAL_VOUCHER_GLIDE(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_SAL_VOUCHER_GLIDE_CREA_DATE ON SAL_VOUCHER_GLIDE(CREA_DATE);

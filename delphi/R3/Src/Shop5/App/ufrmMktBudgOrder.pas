@@ -70,7 +70,6 @@ type
     FromId:String;
     procedure FocusNextColumn;
     procedure SetdbState(const Value: TDataSetState);override;
-    function Changed:Boolean;
     procedure ShareCost; //分摊核销费用
     function IsNull:Boolean;
   public
@@ -165,7 +164,6 @@ begin
 end;
 
 procedure TfrmMktBudgOrder.DeleteOrder;
-var ParamClient:TftParamList;
 begin
   inherited;
   Saved := false;
@@ -173,34 +171,27 @@ begin
   if IsAudit then Raise Exception.Create('已经审核的单据不能删除');
   if copy(cdsHeader.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能删除');
   if MessageBox(Handle,'是否真想删除当前核销单据?',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-  ParamClient := TftParamList.Create;
-  try
-    ParamClient.ParamByName('CLIENT_ID').AsString := cdsHeader.FieldByName('CLIENT_ID').AsString;
-    cdsHeader.Delete;
-    cdsDetail.First;
-    while not cdsDetail.Eof do cdsDetail.Delete;
-    cdsBudgShare.First;
-    while not cdsBudgShare.Eof do cdsBudgShare.Delete;
+  cdsHeader.Delete;
+  cdsDetail.First;
+  while not cdsDetail.Eof do cdsDetail.Delete;
+  cdsBudgShare.First;
+  while not cdsBudgShare.Eof do cdsBudgShare.Delete;
 
-    Factor.BeginBatch;
-    try
-      Factor.AddBatch(cdsHeader,'TMktBudgOrder');
-      Factor.AddBatch(cdsDetail,'TMktBudgData');
-      Factor.AddBatch(cdsBudgShare,'TMktBudgShare',ParamClient);
-      Factor.CommitBatch;
-      Saved := true;
-    except
-      Factor.CancelBatch;
-      cdsHeader.CancelUpdates;
-      cdsDetail.CancelUpdates;
-      Raise;
-    end;
-  finally
-    ParamClient.Free;
+  Factor.BeginBatch;
+  try
+    Factor.AddBatch(cdsHeader,'TMktBudgOrder');
+    Factor.AddBatch(cdsDetail,'TMktBudgData');
+    Factor.AddBatch(cdsBudgShare,'TMktBudgShare');
+    Factor.CommitBatch;
+    Saved := true;
+  except
+    Factor.CancelBatch;
+    cdsHeader.CancelUpdates;
+    cdsDetail.CancelUpdates;
+    cdsBudgShare.CancelUpdates;
+    Raise;
   end;
-  {AObj.ReadFromDataSet(cdsHeader);
-  ReadFromObject(AObj,self);}
-  Open('');
+  Open(oid);
   IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
   oid := '';
   gid := AObj.FieldbyName('GLIDE_NO').asString;
@@ -367,19 +358,18 @@ end;
 procedure TfrmMktBudgOrder.SaveOrder;
 var mny:real;
     R:Integer;
-    ParamsClint:TftParamList;
 begin
   inherited;
   Saved := false;
   if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
+  if edtBUDG_DATE.EditValue = null then Raise Exception.Create('签约日期不能为空');
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
+  if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
+  if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空核销单据...');
+  ClearInvaid;
   cdsDetail.DisableControls;
   try
-    if edtBUDG_DATE.EditValue = null then Raise Exception.Create('签约日期不能为空');
-    if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
-    if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
-    if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
-    ClearInvaid;
-    if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空核销单据...');
 
     WriteToObject(AObj,self);
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -388,40 +378,34 @@ begin
     AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
     AObj.FieldByName('CREA_USER').AsString := Global.UserID;
 
+    cdsHeader.Edit;
+    AObj.WriteToDataSet(cdsHeader);
+    cdsHeader.Post;
+    mny := 0;
+    R := 0;
+    cdsDetail.First;
+    while not cdsDetail.Eof do
+       begin
+         Inc(R);
+         cdsDetail.Edit;
+         cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
+         cdsDetail.FieldByName('BUDG_ID').AsString := cdsHeader.FieldbyName('BUDG_ID').AsString;
+         cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
+         cdsDetail.FieldByName('SEQNO').AsInteger := R;
+         mny := mny + cdsDetail.FieldbyName('BUDG_VRF').asFloat;
+         cdsDetail.Post;
+         cdsDetail.Next;
+       end;
+    cdsHeader.Edit;
+    cdsHeader.FieldbyName('BUDG_VRF').asFloat := mny;
+    cdsHeader.Post;
+    ShareCost;
     Factor.BeginBatch;
     try
-      cdsHeader.Edit;
-      AObj.WriteToDataSet(cdsHeader);
-      cdsHeader.Post;
-      mny := 0;
-      R := 0;
-      cdsDetail.First;
-      while not cdsDetail.Eof do
-         begin
-           Inc(R);
-           cdsDetail.Edit;
-           cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
-           cdsDetail.FieldByName('BUDG_ID').AsString := cdsHeader.FieldbyName('BUDG_ID').AsString;
-           cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
-           cdsDetail.FieldByName('SEQNO').AsInteger := R;
-           mny := mny + cdsDetail.FieldbyName('BUDG_VRF').asFloat;
-           cdsDetail.Post;
-           cdsDetail.Next;
-         end;
-      cdsHeader.Edit;
-      cdsHeader.FieldbyName('BUDG_VRF').asFloat := mny;
-      cdsHeader.Post;
-      ShareCost;
-      ParamsClint := TftParamList.Create;
-      try
-        ParamsClint.ParamByName('CLIENT_ID').AsString := cdsHeader.FieldbyName('CLIENT_ID').AsString;
-        Factor.AddBatch(cdsHeader,'TMktBudgOrder');
-        Factor.AddBatch(cdsDetail,'TMktBudgData');
-        Factor.AddBatch(cdsBudgShare,'TMktBudgShare',ParamsClint);
-        Factor.CommitBatch;
-      finally
-        ParamsClint.Free;
-      end;
+      Factor.AddBatch(cdsHeader,'TMktBudgOrder');
+      Factor.AddBatch(cdsDetail,'TMktBudgData');
+      Factor.AddBatch(cdsBudgShare,'TMktBudgShare');
+      Factor.CommitBatch;
       Saved := true;
     except
       Factor.CancelBatch;
@@ -663,7 +647,7 @@ begin
   Field := cdsDetail.FindField('BUDG_VRF');
   Controls := cdsDetail.ControlsDisabled;
   r := cdsDetail.RecNo;
-  cdsDetail.DisableControls;
+  if not Controls then cdsDetail.DisableControls;
   try
   cdsDetail.First;
   while not cdsDetail.Eof do
@@ -844,10 +828,9 @@ end;
 procedure TfrmMktBudgOrder.ShareCost;
 var ds:TZQuery;
     i:Integer;
-    BudgMny,LastMny:Real;
+    DudgMny,DudgBal:Currency;
     Text_Sql:String;
 begin
-  if not Changed then Exit;
   ds := TZQuery.Create(nil);
   i := 0;
   try
@@ -855,119 +838,66 @@ begin
     cdsBudgShare.First;
     while not cdsBudgShare.Eof do cdsBudgShare.Delete;
 
+    ds.Close;
+    Text_Sql := ' select A.REQU_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_MNY,A.BUDG_MNY+isnull(B.BUDG_VRF,0)-isnull(A.BUDG_VRF,0) as BLA_MNY '+
+     ' from MKT_REQUDATA A left join (select * from MKT_BUDGSHARE where TENANT_ID=:TENANT_ID and BUDG_ID=:BUDG_ID) B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and A.KPI_ID=B.KPI_ID and A.KPI_YEAR=B.KPI_YEAR '+
+     ' where A.TENANT_ID=:TENANT_ID and A.REQU_ID=:REQU_ID order by A.KPI_ID,A.KPI_YEAR ';
+
+    ds.SQL.Text := ParseSQL(Factor.iDbType,Text_Sql);
+    ds.ParambyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    ds.ParamByName('REQU_ID').AsString := FromId;
+    ds.ParamByName('BUDG_ID').AsString := cdsHeader.FieldByName('BUDG_ID').AsString;
+    Factor.Open(ds);
+
     cdsDetail.First;
     while not cdsDetail.Eof do
     begin
-      BudgMny := cdsDetail.FieldByName('BUDG_VRF').AsFloat;
-      ds.Close;
-      if dbState = dsInsert then
-         Text_Sql := ' select A.REQU_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_MNY,A.BUDG_MNY-isnull(A.BUDG_VRF,0) as BLA_MNY '+
-         ' from MKT_REQUDATA A left join MKT_BUDGSHARE B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and A.KPI_ID=B.KPI_ID and A.KPI_YEAR=B.KPI_YEAR '+
-         ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+' and A.KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+' order by A.KPI_YEAR '
-      else if dbState = dsEdit then
-         Text_Sql := ' select A.REQU_ID,A.KPI_ID,A.KPI_YEAR,A.BUDG_MNY,A.BUDG_MNY+isnull(B.BUDG_VRF,0)-isnull(A.BUDG_VRF,0) as BLA_MNY '+
-         ' from MKT_REQUDATA A left join MKT_BUDGSHARE B on A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and A.KPI_ID=B.KPI_ID and A.KPI_YEAR=B.KPI_YEAR '+
-         ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+' and A.KPI_ID='+QuotedStr(cdsDetail.FieldByName('KPI_ID').AsString)+
-         ' and B.BUDG_ID='+QuotedStr(cdsHeader.FieldByName('BUDG_ID').AsString)+' order by A.KPI_YEAR ';
-
-      ds.SQL.Text := ParseSQL(Factor.iDbType,Text_Sql);
-      Factor.Open(ds);
+      DudgBal := cdsDetail.FieldByName('BUDG_VRF').AsFloat;
       ds.First;
       while not ds.Eof do
       begin
-        {if BudgMny > 0 then}
+        if ds.FieldByName('KPI_ID').AsString=cdsDetail.FieldByName('KPI_ID').AsString then
         begin
            if cdsBudgShare.Locate('KPI_ID,KPI_YEAR',VarArrayOf([ds.FieldByName('KPI_ID').AsString,ds.FieldByName('KPI_YEAR').AsInteger]),[]) then
            begin
-             //LastMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat;
-             if BudgMny>(ds.FieldByName('BLA_MNY').AsFloat-cdsBudgShare.FieldByName('BUDG_VRF').AsFloat) then
-                Raise Exception.Create('当前核销金额超出未核销金额!');
-                
-             if cdsBudgShare.FieldByName('BUDG_VRF').AsFloat = ds.FieldByName('BLA_MNY').AsFloat then
-             begin
-                Exit;
-             end
+             if (ds.FieldByName('BLA_MNY').AsFloat-cdsBudgShare.FieldByName('BUDG_VRF').AsFloat)>DudgBal then
+                DudgMny := DudgBal
              else
-             begin
-               cdsBudgShare.Edit;
-               if BudgMny > ds.FieldByName('BLA_MNY').AsFloat then
-               begin
-                  cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat+ds.FieldByName('BLA_MNY').AsFloat;
-                  BudgMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat - ds.FieldByName('BLA_MNY').AsFloat;
-               end
-               else
-               begin
-                  cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat+BudgMny;
-                  BudgMny := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat - ds.FieldByName('BLA_MNY').AsFloat;
-               end;
-               cdsBudgShare.Post;
-             end;
+                DudgMny := (ds.FieldByName('BLA_MNY').AsFloat-cdsBudgShare.FieldByName('BUDG_VRF').AsFloat);
+             cdsBudgShare.Edit;
+             cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := cdsBudgShare.FieldByName('BUDG_VRF').AsFloat + DudgMny;
+             cdsBudgShare.Post;
+             DudgBal := DudgBal - DudgMny;
            end
            else
            begin
-             if BudgMny>ds.FieldByName('BLA_MNY').AsFloat then
-                Raise Exception.Create('当前核销金额超出未核销金额!');
+             if ds.FieldByName('BLA_MNY').AsFloat>DudgBal then
+                DudgMny := DudgBal
+             else
+                DudgMny := ds.FieldByName('BLA_MNY').AsFloat;
              inc(i);
              cdsBudgShare.Append;
              cdsBudgShare.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldByName('TENANT_ID').AsInteger;
              cdsBudgShare.FieldByName('KPI_YEAR').AsInteger := ds.FieldByName('KPI_YEAR').AsInteger;
              cdsBudgShare.FieldByName('SEQNO').AsInteger := i;
+             cdsBudgShare.FieldByName('CLIENT_ID').AsString := cdsHeader.FieldByName('CLIENT_ID').AsString;
              cdsBudgShare.FieldByName('BUDG_ID').AsString := cdsHeader.FieldByName('BUDG_ID').AsString;
              cdsBudgShare.FieldByName('REQU_ID').AsString := ds.FieldByName('REQU_ID').AsString;
-             cdsBudgShare.FieldByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
-             if BudgMny > ds.FieldByName('BLA_MNY').AsFloat then
-             begin
-                cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := ds.FieldByName('BLA_MNY').AsFloat;
-                BudgMny := BudgMny - ds.FieldByName('BLA_MNY').AsFloat;
-             end
-             else
-             begin
-                cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := BudgMny;
-                BudgMny := 0;
-             end;
+             cdsBudgShare.FieldByName('KPI_ID').AsString := ds.FieldByName('KPI_ID').AsString;
+             cdsBudgShare.FieldByName('BUDG_VRF').AsFloat := DudgMny;
              cdsBudgShare.Post;
+             DudgBal := DudgBal - DudgMny;
              //
            end;
         end;
         ds.Next;
       end;
+      if DudgBal>0 then Raise Exception.Create(cdsDetail.FieldbyName('KPI_ID_TEXT').asString+'申领金额不足，不能超额核销.');
       cdsDetail.Next;
     end;
   finally
     ds.Free;
   end;
-end;
-
-function TfrmMktBudgOrder.Changed: Boolean;
-var CurMny,SumMny:Real;
-begin
-  Result := False;
-  CurMny := 0;
-  cdsDetail.First;
-  while not cdsDetail.Eof do
-  begin
-    SumMny := 0;
-    CurMny := cdsDetail.FieldbyName('BUDG_VRF').AsFloat;
-    if CurMny <> 0 then
-    begin
-      cdsBudgShare.Filtered := False;
-      cdsBudgShare.Filter := 'KPI_ID='+QuotedStr(cdsDetail.FieldbyName('KPI_ID').AsString);
-      cdsBudgShare.Filtered := True;
-      cdsBudgShare.First;
-      while not cdsBudgShare.Eof do
-      begin
-        SumMny := SumMny + cdsBudgShare.FieldbyName('BUDG_VRF').AsFloat;
-        cdsBudgShare.Next;
-      end;
-      if CurMny <> SumMny then
-      begin
-         Result := True;
-         Exit;
-      end;
-    end;
-    cdsDetail.Next;
-  end;
-  cdsBudgShare.Filtered := False;
 end;
 
 procedure TfrmMktBudgOrder.edtCLIENT_IDSaveValue(Sender: TObject);
@@ -988,6 +918,12 @@ begin
        R.Left := Rect.Left;
        R.Top := Rect.Top ;
        R.Bottom := Rect.Bottom;
+       R.Right := Rect.Right;
+
+       if FindColumn('ACTIVE_ID_TEXT')<>nil then
+       begin
+            R.Right := Rect.Right + FindColumn('ACTIVE_ID_TEXT').Width
+       end;
 
        DBGridEh1.Canvas.FillRect(R);
        s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s个指标',[Inttostr(cdsDetail.RecordCount)]);

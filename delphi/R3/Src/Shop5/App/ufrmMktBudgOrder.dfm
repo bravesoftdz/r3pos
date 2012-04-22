@@ -8,10 +8,10 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 921
-    Height = 493
+    Width = 913
+    Height = 482
     inherited RzPanel2: TRzPanel
-      Width = 911
+      Width = 903
       Height = 125
       object lblBUDG_DATE: TLabel [0]
         Left = 562
@@ -373,14 +373,14 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 448
-      Width = 911
+      Top = 437
+      Width = 903
       Height = 16
     end
     inherited DBGridEh1: TDBGridEh
       Top = 130
-      Width = 911
-      Height = 310
+      Width = 903
+      Height = 299
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
@@ -397,7 +397,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
           FieldName = 'KPI_ID_TEXT'
           Footers = <>
           Title.Caption = #25351#26631#21517#31216
-          Width = 181
+          Width = 246
           Control = edtKPI_ID
           OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
         end
@@ -416,24 +416,24 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
           FieldName = 'BUDG_VRF'
           Footers = <>
           Title.Caption = #27963#21160#36153#29992
-          Width = 80
+          Width = 67
         end
         item
           EditButtons = <>
           FieldName = 'REMARK'
           Footers = <>
           Title.Caption = #25688#35201
-          Width = 300
+          Width = 250
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 440
-      Width = 911
+      Top = 429
+      Width = 903
       Height = 8
     end
     inherited rzHelp: TRzPanel
-      Top = 464
-      Width = 911
+      Top = 453
+      Width = 903
       Height = 24
     end
     object edtKPI_ID: TzrComboBoxList

@@ -242,6 +242,7 @@ begin
   inherited;
   Locked := false;
   SelectSQL.Text :=
+               'select jf.*,f.GLIDE_NO as DEMA_GLIDE_NO from ('+
                'select je.*,e.DEPT_NAME as DEPT_ID_TEXT from ('+
                'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
                'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
@@ -251,7 +252,8 @@ begin
                ' left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
                ' left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
                ' left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
-               ' left outer join CA_DEPT_INFO e on je.TENANT_ID=e.TENANT_ID and je.DEPT_ID=e.DEPT_ID ';
+               ' left outer join CA_DEPT_INFO e on je.TENANT_ID=e.TENANT_ID and je.DEPT_ID=e.DEPT_ID ) jf '+
+               ' left outer join MKT_DEMANDORDER f on jf.TENANT_ID=f.TENANT_ID and jf.FIG_ID=f.DEMA_ID';
   IsSQLUpdate := True;
   Str := 'insert into STK_INDENTORDER(TENANT_ID,SHOP_ID,DEPT_ID,INDE_ID,GLIDE_NO,INDE_DATE,GUIDE_USER,CLIENT_ID,CHK_DATE,CHK_USER,PLAN_DATE,ADVA_MNY,FIG_ID,INDE_AMT,INDE_MNY,INVOICE_FLAG,TAX_RATE,REMARK,STKBILL_STATUS,COMM,CREA_DATE,CREA_USER,TIME_STAMP) '
     + 'VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:INDE_ID,:GLIDE_NO,:INDE_DATE,:GUIDE_USER,:CLIENT_ID,:CHK_DATE,:CHK_USER,:PLAN_DATE,:ADVA_MNY,:FIG_ID,:INDE_AMT,:INDE_MNY,:INVOICE_FLAG,:TAX_RATE,:REMARK,0,''00'',:CREA_DATE,:CREA_USER,'+GetTimeStamp(iDbType)+')';

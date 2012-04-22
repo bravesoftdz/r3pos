@@ -305,11 +305,27 @@ end;
 
 function TMktBudgShare.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var str:String;
+    rs:TZQuery;
 begin
   Result := False;
   Str := 'insert into MKT_BUDGSHARE(TENANT_ID,SEQNO,REQU_ID,BUDG_ID,KPI_ID,KPI_YEAR,BUDG_VRF) '
   + 'values(:TENANT_ID,:SEQNO,:REQU_ID,:BUDG_ID,:KPI_ID,:KPI_YEAR,:BUDG_VRF)';
   AGlobal.ExecSQL(str,Self);
+
+  rs := TZQuery.Create();
+  try
+    rs.SQL.Text := ParseSQL(iDbType,' select isnull(BUDG_MNY,0)-isnull(BUDG_VRF,0) as BLA_MNY from MKT_REQUDATA '+
+    ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR ');
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('REQU_ID').AsString := FieldByName('REQU_ID').AsString;
+    rs.ParamByName('KPI_ID').AsString := FieldByName('KPI_ID').AsString;
+    rs.ParamByName('KPI_YEAR').AsInteger := FieldByName('KPI_YEAR').AsInteger;
+    AGlobal.Open(rs);
+    if rs.FieldByName('BLA_MNY').AsFloat < FieldByName('BUDG_VRF').AsFloat then
+       Raise Exception.Create('当前核销金额超出未核销金额!');
+  finally
+    rs.Free;
+  end;
 
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
          ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR ';

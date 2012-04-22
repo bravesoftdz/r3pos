@@ -309,11 +309,7 @@ type
     actfrmBomOrderList: TAction;
     actfrmMktGodsReport: TAction;
     actfrmMktBudgOrderList: TAction;
-    Button1: TButton;
     actfrmMktBudgReport: TAction;
-    Button2: TButton;
-    Button3: TButton;
-    Button4: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

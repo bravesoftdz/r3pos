@@ -109,7 +109,7 @@ begin
     cdsActive.EnableControls;
   end;
   cdsActive.Append;
-
+  cdsActive.FieldbyName('ACTIVE_ID').AsString:='';
   DBGridEh1.SetFocus;
   DBGridEh1.Col:=1;
   DBGridEh1.EditorMode := true;
@@ -546,6 +546,7 @@ begin
        begin
          edtACTIVE_GROUP.KeyValue := AObj_2.FieldbyName('CODE_ID').asString;
          edtACTIVE_GROUP.Text := AObj_2.FieldbyName('CODE_NAME').asString;
+         cdsActive.Edit;
          cdsActive.FieldByName('ACTIVE_GROUP').AsString := AObj_2.FieldbyName('CODE_ID').asString;
          cdsActive.FieldByName('ACTIVE_GROUP_TEXT').AsString := AObj_2.FieldbyName('CODE_NAME').asString;
        end;

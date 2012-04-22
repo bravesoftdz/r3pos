@@ -3619,40 +3619,6 @@ inherited frmShopMain: TfrmShopMain
             end
           end
         end
-        object Button1: TButton
-          Left = 256
-          Top = 32
-          Width = 75
-          Height = 25
-          Action = actfrmMktBudgOrderList
-          TabOrder = 1
-        end
-        object Button2: TButton
-          Left = 336
-          Top = 32
-          Width = 75
-          Height = 25
-          Action = actfrmMktBudgReport
-          TabOrder = 2
-        end
-        object Button3: TButton
-          Left = 176
-          Top = 32
-          Width = 75
-          Height = 25
-          Caption = #27963#21160#39033#30446
-          TabOrder = 3
-          OnClick = Button3Click
-        end
-        object Button4: TButton
-          Left = 96
-          Top = 32
-          Width = 75
-          Height = 25
-          Caption = #27963#21160#39033#30446
-          TabOrder = 4
-          OnClick = Button4Click
-        end
       end
     end
     object rzTool: TPanel
@@ -5658,10 +5624,12 @@ inherited frmShopMain: TfrmShopMain
       OnExecute = actfrmMktGodsReportExecute
     end
     object actfrmMktBudgOrderList: TAction
+      Tag = 100002297
       Caption = #36153#29992#26680#38144
       OnExecute = actfrmMktBudgOrderListExecute
     end
     object actfrmMktBudgReport: TAction
+      Tag = 100002305
       Caption = #36153#29992#26680#38144#25253#34920
       OnExecute = actfrmMktBudgReportExecute
     end

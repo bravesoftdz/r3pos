@@ -312,7 +312,7 @@ begin
   + 'values(:TENANT_ID,:SEQNO,:REQU_ID,:BUDG_ID,:KPI_ID,:KPI_YEAR,:BUDG_VRF)';
   AGlobal.ExecSQL(str,Self);
 
-  rs := TZQuery.Create();
+  rs := TZQuery.Create(nil);
   try
     rs.SQL.Text := ParseSQL(iDbType,' select isnull(BUDG_MNY,0)-isnull(BUDG_VRF,0) as BLA_MNY from MKT_REQUDATA '+
     ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR ');

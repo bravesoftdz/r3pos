@@ -70,31 +70,31 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, uShopGloba
 
 procedure TfrmMktBudgOrderList.actNewExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('11100001',2) then Raise Exception.Create('你没有新增市场活动费核销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002297',2) then Raise Exception.Create('你没有新增核销单的权限,请和管理员联系.');
   inherited;
 end;
 
 procedure TfrmMktBudgOrderList.actDeleteExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('11100001',4) then Raise Exception.Create('你没有删除市场活动费核销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002297',4) then Raise Exception.Create('你没有删除核销单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
        OpenForm(cdsList.FieldbyName('BUDG_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
-  if CurContract=nil then Raise Exception.Create('"市场活动费核销单"打开异常!');
+  if CurContract=nil then Raise Exception.Create('"核销单"打开异常!');
 
   if (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString<>'')
   and (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID) then
     begin
-      if not ShopGlobal.GetChkRight('11100001',5) then
+      if not ShopGlobal.GetChkRight('100002297',5) then
         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       if ShopGlobal.GetChkRight('11100001',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增市场活动费核销单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002297',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增核销单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -103,18 +103,18 @@ end;
 
 procedure TfrmMktBudgOrderList.actEditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('11100001',3) then Raise Exception.Create('你没有修改市场活动费核销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002297',3) then Raise Exception.Create('你没有修改核销单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
        OpenForm(cdsList.FieldbyName('BUDG_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
-  if CurContract=nil then Raise Exception.Create('"市场活动费核销单"打开异常!');
+  if CurContract=nil then Raise Exception.Create('"核销单"打开异常!');
 
   if (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString<>'')
   and (TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID) then
     begin
-      if not ShopGlobal.GetChkRight('11100001',5) then
+      if not ShopGlobal.GetChkRight('100002297',5) then
         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktBudgOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
@@ -127,11 +127,11 @@ begin
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       {if ShopGlobal.GetChkRight('11100001',6) then
+       {if ShopGlobal.GetChkRight('100002297',6) then
           begin
             actPrint.OnExecute(nil);
           end;}
-       if ShopGlobal.GetChkRight('11100001',2) and (MessageBox(Handle,'是否继续新增市场活动费核销单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002297',2) and (MessageBox(Handle,'是否继续新增核销单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -141,7 +141,7 @@ end;
 procedure TfrmMktBudgOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('11100001',6) then Raise Exception.Create('你没有打印市场活动费核销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印核销单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -169,7 +169,7 @@ end;
 procedure TfrmMktBudgOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('11100001',6) then Raise Exception.Create('你没有打印市场活动费核销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印核销单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -212,7 +212,7 @@ end;
 
 procedure TfrmMktBudgOrderList.actAuditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('11100001',5) then Raise Exception.Create('你没有审核市场活动费核销单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002297',5) then Raise Exception.Create('你没有审核核销单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -410,7 +410,7 @@ end;
 
 function TfrmMktBudgOrderList.CheckCanExport: boolean;
 begin
-  //result:=ShopGlobal.GetChkRight('100002150',7);
+  result:=ShopGlobal.GetChkRight('100002297',7);
 end;
 
 procedure TfrmMktBudgOrderList.FormCreate(Sender: TObject);
@@ -434,7 +434,7 @@ begin
   inherited;
   Open('');
   //进入窗体默认新增加判断是否新增权限:
-  //if (ShopGlobal.GetChkRight('100002150',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then
+  //if (ShopGlobal.GetChkRight('100002297',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then
   actNew.OnExecute(nil);
 end;
 

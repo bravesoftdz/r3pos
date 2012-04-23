@@ -279,7 +279,10 @@ begin
       if Params.FindParam('DEMA_TYPE').AsString = '1' then
       begin
         rs.Close;
-        rs.SQL.Text := 'select FIG_ID from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and FIG_ID='''+Params.FindParam('DEMA_ID').asString+'''';
+        if Copy(Params.FindParam('SHOP_ID').AsString,length(Params.FindParam('SHOP_ID').AsString)-3,length(Params.FindParam('SHOP_ID').AsString)) <> '0001' then
+           rs.SQL.Text := 'select FIG_ID from SAL_SALESORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and FIG_ID='''+Params.FindParam('DEMA_ID').asString+''''
+        else
+           rs.SQL.Text := 'select FIG_ID from STK_INDENTORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and FIG_ID='''+Params.FindParam('DEMA_ID').asString+'''';
         AGlobal.Open(rs);
         if rs.FieldbyName('FIG_ID').AsString <> '' then Raise Exception.Create('已经配货的申请单不能弃审...');
       end

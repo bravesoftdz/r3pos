@@ -8,7 +8,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeOrderToolForm, DB, ActnList, Menus, ComCtrls,
   ToolWin, StdCtrls, RzLabel, Grids, DBGridEh, ExtCtrls, RzTabs, RzPanel,
-  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
+  cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, ObjCommon,
   cxDropDownEdit, cxCalendar, cxButtonEdit, zrComboBoxList, RzButton,
   cxRadioGroup, ZBase, FR_Class, jpeg, ZAbstractRODataset,
   ZAbstractDataset, ZDataset;
@@ -24,7 +24,7 @@ type
     fndDEMA_ID: TcxTextEdit;
     fndSTATUS: TcxRadioGroup;
     actReport: TAction;
-    frfSalIndentOrder: TfrReport;
+    frfDemandOrder: TfrReport;
     actRecv: TAction;
     ToolButton17: TToolButton;
     Label1: TLabel;
@@ -42,7 +42,7 @@ type
     procedure actPriorExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
-    procedure frfSalIndentOrderUserFunction(const Name: String; p1, p2,
+    procedure frfDemandOrderUserFunction(const Name: String; p1, p2,
       p3: Variant; var Val: Variant);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -50,7 +50,7 @@ type
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure frfSalIndentOrderGetValue(const ParName: String; var ParValue: Variant);
+    procedure frfDemandOrderGetValue(const ParName: String; var ParValue: Variant);
   private
     { Private declarations }
     oid:string;
@@ -78,27 +78,29 @@ uses ufrmDemandOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDict
 function TfrmDemandOrderList.EncodeSQL(id: string): string;
 var w,w1:string;
 begin
-  w := ' where TENANT_ID=:TENANT_ID and DEMA_TYPE='+QuotedStr(DemandType)+' and DEMA_DATE>=:D1 and DEMA_DATE<=:D2 '+ShopGlobal.GetDataRight('SHOP_ID',1);
+  w := ' where A.TENANT_ID=:TENANT_ID and A.DEMA_TYPE='+QuotedStr(DemandType)+' and A.DEMA_DATE>=:D1 and A.DEMA_DATE<=:D2 '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
 
   if fndSHOP_ID.AsString <> '' then
-     w := w + ' and SHOP_ID=:SHOP_ID';
+     w := w + ' and A.SHOP_ID=:SHOP_ID';
   //[2012.02.03 xhh修改:可以按树上下级查询]
   if fndDEPT_ID.AsString <> '' then
-     w := w + ShopGlobal.GetDeptID('DEPT_ID',fndDEPT_ID.AsString);     
+     w := w + ShopGlobal.GetDeptID('A.DEPT_ID',fndDEPT_ID.AsString);
 
   if trim(fndDEMA_ID.Text) <> '' then
-     w := w +' and GLIDE_NO like ''%'+trim(fndDEMA_ID.Text)+'''';
+     w := w +' and A.GLIDE_NO like ''%'+trim(fndDEMA_ID.Text)+'''';
 
   if fndSTATUS.ItemIndex > 0 then
      begin
        case fndSTATUS.ItemIndex of
-       1:w := w +' and CHK_DATE is null';
-       2:w := w +' and CHK_DATE is not null';
+       1:w := w +' and A.CHK_DATE is null';
+       2:w := w +' and A.CHK_DATE is not null';
+       3:w := w + ' and isnull(B.SHIP_AMOUNT,0) <> 0 ';
        end;
      end;
   if id<>'' then
-     w := w +' and DEMA_ID>'''+id+'''';
-  result := 'select TENANT_ID,SHOP_ID,DEMA_ID,DEMA_TYPE,GLIDE_NO,DEMA_DATE,CLIENT_ID,DEMA_USER,DEMA_AMT,DEMA_MNY,CHK_DATE,CHK_USER,REMARK,CREA_DATE,CREA_USER from MKT_DEMANDORDER '+w+' ';
+     w := w +' and A.DEMA_ID>'''+id+'''';
+  result := 'select A.TENANT_ID,A.SHOP_ID,A.DEMA_ID,A.DEMA_TYPE,A.GLIDE_NO,A.DEMA_DATE,A.CLIENT_ID,A.DEMA_USER,A.DEMA_AMT,A.DEMA_MNY,A.CHK_DATE,A.CHK_USER,'+
+  'sum(isnull(B.SHIP_AMOUNT,0)) as SHIP_AMOUNT,A.REMARK,A.CREA_DATE,A.CREA_USER from MKT_DEMANDORDER A left join MKT_DEMANDDATA B on A.TENANT_ID=B.TENANT_ID and A.DEMA_ID=B.DEMA_ID '+w+' ';
   result := 'select ja.*,a.USER_NAME as CHK_USER_TEXT  from ('+result+') ja left outer join VIW_USERS a on ja.TENANT_ID=a.TENANT_ID and ja.CHK_USER=a.USER_ID';
   result := 'select jb.*,b.USER_NAME as DEMA_USER_TEXT from ('+result+') jb left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.DEMA_USER=b.USER_ID';
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ';
@@ -132,7 +134,7 @@ begin
   sm := TMemoryStream.Create;
   cdsList.DisableControls;
   try
-    rs.SQL.Text := EncodeSQL(Id);
+    rs.SQL.Text := ParseSQL(Factor.iDbType,EncodeSQL(Id));
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndSHOP_ID.AsString;
     //if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndDEPT_ID.AsString;
@@ -437,7 +439,7 @@ begin
    ' left outer join VIW_GOODSINFO l on jj.TENANT_ID=l.TENANT_ID and jj.GODS_ID=l.GODS_ID ) j order by SEQNO';
 end;
 
-procedure TfrmDemandOrderList.frfSalIndentOrderUserFunction(const Name: String;
+procedure TfrmDemandOrderList.frfDemandOrderUserFunction(const Name: String;
   p1, p2, p3: Variant; var Val: Variant);
 var small:real;
 begin
@@ -468,12 +470,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalIndentOrder);
+             PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfDemandOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('DEMA_ID').AsString),frfSalIndentOrder);
+             PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('DEMA_ID').AsString),frfDemandOrder);
            end;
       finally
          free;
@@ -487,7 +489,7 @@ begin
   inherited;
   if DemandType = '1' then
   begin
-    if not ShopGlobal.GetChkRight('100002124',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
+    //if not ShopGlobal.GetChkRight('100002124',6) then Raise Exception.Create('你没有打印'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then
   begin
@@ -501,12 +503,12 @@ begin
            begin
              if CurOrder.oid = '' then Exit;
              if CurOrder.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfSalIndentOrder,nil,true);
+             ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurOrder.oid),frfDemandOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('DEMA_ID').AsString),frfSalIndentOrder,nil,true);
+             ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('DEMA_ID').AsString),frfDemandOrder,nil,true);
            end;
       finally
          free;
@@ -551,7 +553,7 @@ begin
 
 end;
 
-procedure TfrmDemandOrderList.frfSalIndentOrderGetValue(const ParName: String;
+procedure TfrmDemandOrderList.frfDemandOrderGetValue(const ParName: String;
   var ParValue: Variant);
 begin
   inherited;

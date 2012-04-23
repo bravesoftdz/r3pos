@@ -470,13 +470,13 @@ end;
 
 procedure TfrmDemandOrder.DBGridEh1Columns6UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var
+{var
   r,op:real;
   Params:TLoginParam;
   allow :boolean;
-  rs,us:TZQuery;
+  rs,us:TZQuery;}
 begin
-  if not ShopGlobal.GetChkRight('12300001',5) then
+  {if not ShopGlobal.GetChkRight('12300001',5) then
      begin
        if TfrmLogin.doLogin(Params) then
           begin
@@ -501,14 +501,14 @@ begin
     if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
     op := TColumnEh(Sender).Field.asFloat;
     TColumnEh(Sender).Field.asFloat := r;
-    AMoneyToCalc(r);
+    AmountToCalc(r);
   end
   else
   begin
     Value := TColumnEh(Sender).Field.asFloat;
     Text := TColumnEh(Sender).Field.AsString;
     MessageBox(Handle,pchar('你没有修改"需求填报"价格的权限,请和管理员联系...'),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-  end;
+  end;}
 end;
 
 procedure TfrmDemandOrder.edtTableAfterPost(DataSet: TDataSet);
@@ -568,6 +568,7 @@ begin
       Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',Global.SysDate);
       Params.ParamByName('CHK_USER').asString := Global.UserID;
       Params.ParamByName('DEMA_TYPE').AsString := DemandType;
+      params.ParamByName('SHOP_ID').AsString := AObj.FieldByName('SHOP_ID').AsString;
       if not IsAudit then
          Msg := Factor.ExecProc('TDemandOrderAudit',Params)
       else

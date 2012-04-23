@@ -1,6 +1,6 @@
 inherited frmDemandOrderList: TfrmDemandOrderList
-  Left = 511
-  Top = 131
+  Left = 512
+  Top = 165
   Width = 836
   Height = 607
   Caption = #38656#27714#22635#25253
@@ -94,7 +94,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                 TabOrder = 1
               end
               object btnOk: TRzBitBtn
-                Left = 453
+                Left = 501
                 Top = 58
                 Width = 67
                 Height = 26
@@ -131,9 +131,10 @@ inherited frmDemandOrderList: TfrmDemandOrderList
               object fndSTATUS: TcxRadioGroup
                 Left = 344
                 Top = -5
-                Width = 97
+                Width = 146
                 Height = 90
                 ItemIndex = 0
+                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -143,6 +144,9 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                   end
                   item
                     Caption = #24050#23457#26680
+                  end
+                  item
+                    Caption = #24050#21457#36135
                   end>
                 TabOrder = 3
                 Caption = ''
@@ -263,6 +267,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                   Width = 60
                 end
                 item
+                  DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'DEMA_AMT'
                   Footers = <>
@@ -270,11 +275,20 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                   Width = 60
                 end
                 item
+                  DisplayFormat = '#0.00'
                   EditButtons = <>
                   FieldName = 'DEMA_MNY'
                   Footers = <>
                   Title.Caption = #38656#27714#37329#39069
                   Width = 70
+                end
+                item
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'SHIP_AMOUNT'
+                  Footers = <>
+                  Title.Caption = #21457#36135#37327
+                  Width = 60
                 end
                 item
                   EditButtons = <>
@@ -405,12 +419,12 @@ inherited frmDemandOrderList: TfrmDemandOrderList
     Left = 358
     Top = 216
   end
-  object frfSalIndentOrder: TfrReport
+  object frfDemandOrder: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    OnGetValue = frfSalIndentOrderGetValue
-    OnUserFunction = frfSalIndentOrderUserFunction
+    OnGetValue = frfDemandOrderGetValue
+    OnUserFunction = frfDemandOrderUserFunction
     Left = 488
     Top = 201
     ReportForm = {

@@ -1,6 +1,6 @@
 inherited frmDemandOrder: TfrmDemandOrder
-  Left = 520
-  Top = 152
+  Left = 250
+  Top = 145
   Width = 796
   Height = 552
   Caption = #38656#27714#22635#25253
@@ -455,6 +455,7 @@ inherited frmDemandOrder: TfrmDemandOrder
           ReadOnly = True
           Title.Caption = #21457#36135#37327
           Width = 56
+          OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
           EditButtons = <>

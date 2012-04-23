@@ -146,6 +146,9 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                     Caption = #24050#23457#26680
                   end
                   item
+                    Caption = #24453#21457#36135
+                  end
+                  item
                     Caption = #24050#21457#36135
                   end>
                 TabOrder = 3

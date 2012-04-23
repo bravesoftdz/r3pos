@@ -614,6 +614,10 @@ inherited frmDemandOrder: TfrmDemandOrder
       item
         Name = 'CALC_MONEY'
         DataType = ftFloat
+      end
+      item
+        Name = 'CALC_AMOUNT'
+        DataType = ftFloat
       end>
     AfterScroll = edtTableAfterScroll
     AfterPost = edtTableAfterPost

@@ -115,7 +115,8 @@ type
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmMain,
      ufrmUsersInfo,ufrmCodeInfo,uframeListDialog,uframeSelectCustomer,ufrmSalesOrderList,
-     ufrmSalesOrder,ufrmShopMain,ufrmSupplierInfo,ufrmTenantInfo,ufrmChangeOrderList,ufrmDbOrderList;
+     ufrmSalesOrder,ufrmShopMain,ufrmSupplierInfo,ufrmTenantInfo,ufrmChangeOrderList,ufrmDbOrderList,
+     ufrmStkIndentOrderList;
 {$R *.dfm}
 
 procedure TfrmDemandOrder.ReadHeader;
@@ -335,6 +336,8 @@ begin
   Saved := false;
   if edtDEMA_DATE.EditValue = null then Raise Exception.Create('填报日期不能为空');
   if edtDEMA_TYPE.ItemIndex<0 then Raise Exception.Create('请选择单据类型');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label5.Caption+'不能为空!');
+  if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空!');
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');
   CheckInvaid;
@@ -903,6 +906,7 @@ end;
 
 procedure TfrmDemandOrder.N1Click(Sender: TObject);
 var frmChangeOrderList:TfrmChangeOrderList;
+    frmStkIndentOrderList:TfrmStkIndentOrderList;
     frmDbOrderList:TfrmDbOrderList;
 begin
   inherited;                                                                            
@@ -910,11 +914,22 @@ begin
   if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
   if DemandType = '1' then
   begin
-    if not frmMain.FindAction('actfrmDbOrderList').Enabled then Exit;
-    frmMain.FindAction('actfrmDbOrderList').OnExecute(nil);
-    frmDbOrderList := TfrmDbOrderList(frmMain.FindChildForm(TfrmDbOrderList));
-    SendMessage(frmDbOrderList.Handle,WM_EXEC_ORDER,0,2);
-    PostMessage(frmDbOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+    if Copy(AObj.FieldByName('SHOP_ID').AsString,length(AObj.FieldByName('SHOP_ID').AsString)-3,length(AObj.FieldByName('SHOP_ID').AsString)) <> '0001' then
+    begin
+       if not frmMain.FindAction('actfrmDbOrderList').Enabled then Exit;
+       frmMain.FindAction('actfrmDbOrderList').OnExecute(nil);
+       frmDbOrderList := TfrmDbOrderList(frmMain.FindChildForm(TfrmDbOrderList));
+       SendMessage(frmDbOrderList.Handle,WM_EXEC_ORDER,0,2);
+       PostMessage(frmDbOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+    end
+    else
+    begin
+       if not frmMain.FindAction('actfrmStkIndentOrderList').Enabled then Exit;
+       frmMain.FindAction('actfrmStkIndentOrderList').OnExecute(nil);
+       frmStkIndentOrderList := TfrmStkIndentOrderList(frmMain.FindChildForm(TfrmStkIndentOrderList));
+       SendMessage(frmStkIndentOrderList.Handle,WM_EXEC_ORDER,0,2);
+       PostMessage(frmStkIndentOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+    end;
   end
   else if DemandType = '2' then
   begin
@@ -929,6 +944,7 @@ end;
 
 procedure TfrmDemandOrder.N2Click(Sender: TObject);
 var frmChangeOrderList:TfrmChangeOrderList;
+    frmStkIndentOrderList:TfrmStkIndentOrderList;
     frmDbOrderList:TfrmDbOrderList;
 begin
   inherited;
@@ -936,11 +952,22 @@ begin
   if not IsAudit then Raise Exception.Create('没有审核的单据不能入库..');
   if DemandType = '1' then
   begin
-    if not frmMain.FindAction('actfrmDbOrderList').Enabled then Exit;
-    frmMain.FindAction('actfrmDbOrderList').OnExecute(nil);
-    frmDbOrderList := TfrmDbOrderList(frmMain.FindChildForm(TfrmDbOrderList));
-    SendMessage(frmDbOrderList.Handle,WM_EXEC_ORDER,0,2);
-    PostMessage(frmDbOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
+    if Copy(AObj.FieldByName('SHOP_ID').AsString,length(AObj.FieldByName('SHOP_ID').AsString)-3,length(AObj.FieldByName('SHOP_ID').AsString)) <> '0001' then
+    begin
+       if not frmMain.FindAction('actfrmDbOrderList').Enabled then Exit;
+       frmMain.FindAction('actfrmDbOrderList').OnExecute(nil);
+       frmDbOrderList := TfrmDbOrderList(frmMain.FindChildForm(TfrmDbOrderList));
+       SendMessage(frmDbOrderList.Handle,WM_EXEC_ORDER,0,2);
+       PostMessage(frmDbOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
+    end
+    else
+    begin
+       if not frmMain.FindAction('actfrmStkIndentOrderList').Enabled then Exit;
+       frmMain.FindAction('actfrmStkIndentOrderList').OnExecute(nil);
+       frmStkIndentOrderList := TfrmStkIndentOrderList(frmMain.FindChildForm(TfrmStkIndentOrderList));
+       SendMessage(frmStkIndentOrderList.Handle,WM_EXEC_ORDER,0,2);
+       PostMessage(frmStkIndentOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
+    end;
   end
   else if DemandType = '2' then
   begin

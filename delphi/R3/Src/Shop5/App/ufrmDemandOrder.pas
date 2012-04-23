@@ -43,6 +43,8 @@ type
     fndDAY_SALE_AMT: TcxTextEdit;
     Label10: TLabel;
     edtDEPT_ID: TzrComboBoxList;
+    Label11: TLabel;
+    fndSUPPLY_AMOUNT: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -687,6 +689,7 @@ procedure TfrmDemandOrder.ShowInfo;
 var
   rs,bs:TZQuery;
   Sql:String;
+  DiffAmt:Currency;
 begin
   if not fndMY_AMOUNT.Visible then Exit;
   fndMY_AMOUNT.Text := '';
@@ -725,6 +728,11 @@ begin
             fndUPPER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('UPPER_AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
             fndLOWER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('LOWER_AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
             fndDAY_SALE_AMT.Text := FormatFloat('#0.00',rs.FieldbyName('DAY_SALE_AMT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
+            DiffAmt := (rs.FieldbyName('UPPER_AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat)-(rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('BIGTO_CALC').AsFloat);
+            if DiffAmt > 0 then
+               fndSUPPLY_AMOUNT.Text := FormatFloat('#0.00',DiffAmt)
+            else
+               fndSUPPLY_AMOUNT.Text := '0';
          end
          else if (edtTable.FieldbyName('UNIT_ID').AsString = bs.FieldbyName('SMALL_UNITS').AsString) and (bs.FieldbyName('SMALLTO_CALC').AsFloat<>0) then
          begin
@@ -732,6 +740,11 @@ begin
             fndUPPER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('UPPER_AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
             fndLOWER_AMOUNT.Text := FormatFloat('#0.00',rs.FieldbyName('LOWER_AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
             fndDAY_SALE_AMT.Text := FormatFloat('#0.00',rs.FieldbyName('DAY_SALE_AMT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
+            DiffAmt := (rs.FieldbyName('UPPER_AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat)-(rs.FieldbyName('AMOUNT').AsFloat/bs.FieldbyName('SMALLTO_CALC').AsFloat);
+            if DiffAmt > 0 then
+               fndSUPPLY_AMOUNT.Text := FormatFloat('#0.00',DiffAmt)
+            else
+               fndSUPPLY_AMOUNT.Text := '0';
          end
          else
          begin
@@ -739,6 +752,11 @@ begin
             fndUPPER_AMOUNT.Text := rs.FieldbyName('UPPER_AMOUNT').AsString;
             fndLOWER_AMOUNT.Text := rs.FieldbyName('LOWER_AMOUNT').AsString;
             fndDAY_SALE_AMT.Text := rs.FieldbyName('DAY_SALE_AMT').AsString;
+            DiffAmt := rs.FieldbyName('UPPER_AMOUNT').AsFloat-rs.FieldbyName('AMOUNT').AsFloat;
+            if DiffAmt > 0 then
+               fndSUPPLY_AMOUNT.Text := FormatFloat('#0.00',DiffAmt)
+            else
+               fndSUPPLY_AMOUNT.Text := '0';
          end;
        end
     else

@@ -1,17 +1,17 @@
 inherited frmDemandOrder: TfrmDemandOrder
   Left = 250
   Top = 145
-  Width = 796
+  Width = 851
   Height = 552
   Caption = #38656#27714#22635#25253
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 788
+    Width = 843
     Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 778
+      Width = 833
       Height = 115
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -273,7 +273,7 @@ inherited frmDemandOrder: TfrmDemandOrder
     end
     inherited RzPanel3: TRzPanel
       Top = 434
-      Width = 778
+      Width = 833
       Height = 49
       TabOrder = 2
       object Label1: TLabel
@@ -321,6 +321,19 @@ inherited frmDemandOrder: TfrmDemandOrder
         Width = 48
         Height = 12
         Caption = #26085#22343#38144#37327
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label11: TLabel
+        Left = 716
+        Top = 9
+        Width = 60
+        Height = 12
+        Caption = #24314#35758#34917#36135#37327
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
         Font.Height = -12
@@ -388,10 +401,26 @@ inherited frmDemandOrder: TfrmDemandOrder
         TabOrder = 3
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
+      object fndSUPPLY_AMOUNT: TcxTextEdit
+        Tag = 1
+        Left = 782
+        Top = 5
+        Width = 98
+        Height = 20
+        ParentFont = False
+        Style.Color = clWindow
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clBlue
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
     end
     inherited DBGridEh1: TDBGridEh
       Top = 153
-      Width = 778
+      Width = 833
       Height = 281
       TabOrder = 3
       Columns = <
@@ -502,15 +531,15 @@ inherited frmDemandOrder: TfrmDemandOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 120
-      Width = 778
+      Width = 833
     end
     inherited stbHint: TRzPanel
       Top = 483
-      Width = 778
+      Width = 833
     end
     inherited rzHelp: TRzPanel
       Top = 507
-      Width = 778
+      Width = 833
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox

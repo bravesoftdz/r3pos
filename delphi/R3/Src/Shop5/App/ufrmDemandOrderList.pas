@@ -518,7 +518,7 @@ procedure TfrmDemandOrderList.actNewExecute(Sender: TObject);
 begin
   if DemandType = '1' then
   begin
-    if not ShopGlobal.GetChkRight('100002124',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
+    //if not ShopGlobal.GetChkRight('100002124',2) then Raise Exception.Create('你没有新增'+Caption+'的权限,请和管理员联系.');
   end;
   if DemandType = '2' then
   begin

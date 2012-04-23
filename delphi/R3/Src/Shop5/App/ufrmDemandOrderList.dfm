@@ -1,6 +1,6 @@
 inherited frmDemandOrderList: TfrmDemandOrderList
   Left = 511
-  Top = 167
+  Top = 131
   Width = 836
   Height = 607
   Caption = #38656#27714#22635#25253

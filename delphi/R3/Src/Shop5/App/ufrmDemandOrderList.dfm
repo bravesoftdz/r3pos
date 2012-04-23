@@ -183,7 +183,7 @@ inherited frmDemandOrderList: TfrmDemandOrderList
                 DropHeight = 180
                 ShowTitle = True
                 AutoFitColWidth = True
-                ShowButton = False
+                ShowButton = True
                 LocateStyle = lsDark
                 Buttons = [zbClear]
                 DropListStyle = lsFixed

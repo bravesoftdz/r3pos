@@ -7,10 +7,10 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 830
-    Height = 484
+    Width = 838
+    Height = 495
     inherited RzPanel2: TRzPanel
-      Width = 820
+      Width = 828
       Height = 96
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -43,7 +43,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
       object Label5: TLabel [4]
         Left = 563
-        Top = 30
+        Top = 51
         Width = 48
         Height = 12
         Caption = #31080#25454#31867#22411
@@ -70,14 +70,14 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
       object Label14: TLabel [7]
         Left = 563
-        Top = 51
+        Top = 72
         Width = 48
         Height = 12
         Caption = #36827#39033#31246#29575
       end
       object Label11: TLabel [8]
         Left = 680
-        Top = 51
+        Top = 72
         Width = 6
         Height = 12
         Caption = '%'
@@ -88,6 +88,13 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         Width = 48
         Height = 12
         Caption = #25152#23646#37096#38376
+      end
+      object Label12: TLabel [10]
+        Left = 564
+        Top = 30
+        Width = 48
+        Height = 12
+        Caption = #30003#35831#21333#21495
       end
       inherited RzPanel4: TRzPanel
         Top = 5
@@ -175,7 +182,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
       object edtINVOICE_FLAG: TcxComboBox
         Left = 623
-        Top = 26
+        Top = 47
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -185,7 +192,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
       object edtTAX_RATE: TcxSpinEdit
         Left = 623
-        Top = 47
+        Top = 68
         Width = 51
         Height = 20
         Properties.MaxValue = 100.000000000000000000
@@ -383,10 +390,23 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
         NumGlyphs = 2
         Spacing = 5
       end
+      object edtDEMA_GLIDE_NO: TcxButtonEdit
+        Left = 623
+        Top = 26
+        Width = 121
+        Height = 20
+        Properties.Buttons = <
+          item
+            Default = True
+            Kind = bkEllipsis
+          end>
+        Properties.OnButtonClick = edtDEMA_GLIDE_NOPropertiesButtonClick
+        TabOrder = 11
+      end
     end
     inherited RzPanel3: TRzPanel
-      Top = 374
-      Width = 820
+      Top = 385
+      Width = 828
       Height = 62
       TabOrder = 2
       object Label8: TLabel
@@ -571,8 +591,8 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 135
-      Width = 820
-      Height = 239
+      Width = 828
+      Height = 250
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
       Columns = <
@@ -718,16 +738,16 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 101
-      Width = 820
+      Width = 828
       Height = 34
     end
     inherited stbHint: TRzPanel
-      Top = 436
-      Width = 820
+      Top = 447
+      Width = 828
     end
     inherited rzHelp: TRzPanel
-      Top = 460
-      Width = 820
+      Top = 471
+      Width = 828
       Height = 19
     end
     inherited fndUNIT_ID: TcxComboBox

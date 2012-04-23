@@ -100,7 +100,8 @@ begin
   if id<>'' then
      w := w +' and A.DEMA_ID>'''+id+'''';
   result := 'select A.TENANT_ID,A.SHOP_ID,A.DEMA_ID,A.DEMA_TYPE,A.GLIDE_NO,A.DEMA_DATE,A.CLIENT_ID,A.DEMA_USER,A.DEMA_AMT,A.DEMA_MNY,A.CHK_DATE,A.CHK_USER,'+
-  'sum(isnull(B.SHIP_AMOUNT,0)) as SHIP_AMOUNT,A.REMARK,A.CREA_DATE,A.CREA_USER from MKT_DEMANDORDER A left join MKT_DEMANDDATA B on A.TENANT_ID=B.TENANT_ID and A.DEMA_ID=B.DEMA_ID '+w+' ';
+  'sum(case when B.CALC_AMOUNT=0 then 0 else B.CALC_AMOUNT/(cast(B.CALC_AMOUNT/(B.AMOUNT*1.0) as decimal(18,3))*1.0) end) as SHIP_AMOUNT,'+
+  'A.REMARK,A.CREA_DATE,A.CREA_USER from MKT_DEMANDORDER A left join MKT_DEMANDDATA B on A.TENANT_ID=B.TENANT_ID and A.DEMA_ID=B.DEMA_ID '+w+' ';
   result := 'select ja.*,a.USER_NAME as CHK_USER_TEXT  from ('+result+') ja left outer join VIW_USERS a on ja.TENANT_ID=a.TENANT_ID and ja.CHK_USER=a.USER_ID';
   result := 'select jb.*,b.USER_NAME as DEMA_USER_TEXT from ('+result+') jb left outer join VIW_USERS b on jb.TENANT_ID=b.TENANT_ID and jb.DEMA_USER=b.USER_ID';
   result := 'select jc.*,c.USER_NAME as CREA_USER_TEXT from ('+result+') jc left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.CREA_USER=c.USER_ID ';

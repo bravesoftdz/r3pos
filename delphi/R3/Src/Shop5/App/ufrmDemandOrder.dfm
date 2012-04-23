@@ -290,7 +290,7 @@ inherited frmDemandOrder: TfrmDemandOrder
         ParentFont = False
       end
       object Label3: TLabel
-        Left = 197
+        Left = 183
         Top = 9
         Width = 48
         Height = 12
@@ -303,7 +303,7 @@ inherited frmDemandOrder: TfrmDemandOrder
         ParentFont = False
       end
       object Label4: TLabel
-        Left = 365
+        Left = 345
         Top = 9
         Width = 48
         Height = 12
@@ -316,7 +316,7 @@ inherited frmDemandOrder: TfrmDemandOrder
         ParentFont = False
       end
       object Label7: TLabel
-        Left = 541
+        Left = 511
         Top = 9
         Width = 48
         Height = 12
@@ -329,7 +329,7 @@ inherited frmDemandOrder: TfrmDemandOrder
         ParentFont = False
       end
       object Label11: TLabel
-        Left = 716
+        Left = 680
         Top = 9
         Width = 60
         Height = 12
@@ -345,7 +345,7 @@ inherited frmDemandOrder: TfrmDemandOrder
         Tag = 1
         Left = 75
         Top = 5
-        Width = 98
+        Width = 90
         Height = 20
         ParentFont = False
         Style.Font.Charset = GB2312_CHARSET
@@ -358,9 +358,9 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object fndUPPER_AMOUNT: TcxTextEdit
         Tag = 1
-        Left = 251
+        Left = 237
         Top = 5
-        Width = 98
+        Width = 90
         Height = 20
         ParentFont = False
         Style.Font.Charset = GB2312_CHARSET
@@ -373,9 +373,9 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object fndLOWER_AMOUNT: TcxTextEdit
         Tag = 1
-        Left = 419
+        Left = 399
         Top = 5
-        Width = 98
+        Width = 90
         Height = 20
         ParentFont = False
         Style.Font.Charset = GB2312_CHARSET
@@ -388,9 +388,9 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object fndDAY_SALE_AMT: TcxTextEdit
         Tag = 1
-        Left = 595
+        Left = 565
         Top = 5
-        Width = 98
+        Width = 90
         Height = 20
         ParentFont = False
         Style.Font.Charset = GB2312_CHARSET
@@ -403,9 +403,9 @@ inherited frmDemandOrder: TfrmDemandOrder
       end
       object fndSUPPLY_AMOUNT: TcxTextEdit
         Tag = 1
-        Left = 782
+        Left = 746
         Top = 5
-        Width = 98
+        Width = 90
         Height = 20
         ParentFont = False
         Style.Color = clWindow

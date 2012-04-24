@@ -346,7 +346,7 @@ begin
   WriteToObject(AObj,self);
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('CLIENT_ID').AsString  := IntToStr(Global.TENANT_ID);
-  AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
+  AObj.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;
   AObj.FieldByName('DEMA_TYPE').AsString := TRecord_(edtDEMA_TYPE.Properties.Items.Objects[edtDEMA_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString;

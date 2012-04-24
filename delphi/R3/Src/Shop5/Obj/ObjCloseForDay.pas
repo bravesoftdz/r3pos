@@ -7,7 +7,7 @@ type
   private
     ps:TZQuery;
     ss:TZQuery;
-    function GetDeptID(AGlobal:IdbHelp): string;
+    function GetDeptID(AGlobal:IdbHelp; TenID: integer; UserID: string): string;
     function GetPayment(s:string):string;
     function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
     //记录行集新增检测函数，返回值是True 测可以新增当前记录
@@ -62,7 +62,7 @@ begin
       rs.ParambyName('CLIENT_ID').AsString := IntToStr(ss.FieldbyName('TENANT_ID').AsInteger);
       rs.ParambyName('CLSE_DATE').AsInteger := ss.FieldbyName('CLSE_DATE').AsInteger;
       rs.ParambyName('CREA_USER').AsString := ss.FieldbyName('CREA_USER').AsString;
-      rs.ParambyName('DEPT_ID').AsString := GetDeptID(AGlobal);
+      rs.ParambyName('DEPT_ID').AsString := GetDeptID(AGlobal,ss.FieldbyName('TENANT_ID').AsInteger,ss.FieldbyName('CREA_USER').AsString);
       if ss.FieldbyName('PAY_A').AsFloat<>0 then
          begin
            rs.ParambyName('ABLE_ID').AsString := newid(ss.FieldbyName('SHOP_ID').asString);
@@ -267,7 +267,7 @@ begin
   inherited;
 end;
 
-function TCloseForDay.GetDeptID(AGlobal: IdbHelp): string;
+function TCloseForDay.GetDeptID(AGlobal: IdbHelp; TenID: integer; UserID: string ): string;
 var
   Rs: TZQuery;
 begin
@@ -275,8 +275,8 @@ begin
   try
     Rs:=TZQuery.Create(nil);
     Rs.SQL.Text:='select DEPT_ID from VIW_USERS where TENANT_ID=:TENANT_ID and USER_ID=:CREA_USER';
-    Rs.Params.ParamByName('TENANT_ID').AsInteger:=Params.ParamByName('TENANT_ID').AsInteger;
-    Rs.Params.ParamByName('CREA_USER').AsString:=Params.ParamByName('CREA_USER').AsString;
+    Rs.Params.ParamByName('TENANT_ID').AsInteger:=TenID;
+    Rs.Params.ParamByName('CREA_USER').AsString:=UserID;
     AGlobal.Open(Rs);
     result:=Rs.FieldByName('DEPT_ID').AsString;
   finally

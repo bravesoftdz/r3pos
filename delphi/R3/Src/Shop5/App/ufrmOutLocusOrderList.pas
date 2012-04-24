@@ -188,7 +188,8 @@ begin
   result := 'select jd.*,d.USER_NAME as GUIDE_USER_TEXT from ('+result+') jd left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.GUIDE_USER=d.USER_ID';
   result := 'select je.*,e.USER_NAME as CREA_USER_TEXT from ('+result+') je left outer join VIW_USERS e on je.TENANT_ID=e.TENANT_ID and je.CREA_USER=e.USER_ID';
   result := 'select jf.*,f.USER_NAME as LOCUS_USER_TEXT from ('+result+') jf left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.LOCUS_USER=f.USER_ID ';
-  result := 'select jg.*,g.USER_NAME as LOCUS_CHK_USER_TEXT from ('+result+') jg left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.LOCUS_CHK_USER=g.USER_ID '+w1;
+  result := 'select jg.*,g.USER_NAME as LOCUS_CHK_USER_TEXT from ('+result+') jg left outer join VIW_USERS g on jg.TENANT_ID=g.TENANT_ID and jg.LOCUS_CHK_USER=g.USER_ID ';
+  Result := 'select jh.*,h.SHOP_NAME as SHOP_ID_TEXT from ('+Result+') jh left outer join CA_SHOP_INFO h on jh.TENANT_ID=h.TENANT_ID and jh.SHOP_ID=h.SHOP_ID '+w1;
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') j order by SALES_ID';
   1:result :=

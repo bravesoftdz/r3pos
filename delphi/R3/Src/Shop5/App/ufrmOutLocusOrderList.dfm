@@ -340,6 +340,13 @@ inherited frmOutLocusOrderList: TfrmOutLocusOrderList
                 end
                 item
                   EditButtons = <>
+                  FieldName = 'SHOP_ID_TEXT'
+                  Footers = <>
+                  Title.Caption = #38376#24215#21517#31216
+                  Width = 130
+                end
+                item
+                  EditButtons = <>
                   FieldName = 'CLIENT_NAME'
                   Footers = <>
                   Title.Caption = #23458#25143#21517#31216

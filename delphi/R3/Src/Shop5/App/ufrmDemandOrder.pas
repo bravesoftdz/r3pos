@@ -265,8 +265,11 @@ begin
     SetEditStyle(dsBrowse,edtSHOP_ID.Style);
     edtSHOP_ID.Properties.ReadOnly := True;
   end;
-    
+
   rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
+    
   AObj.FieldbyName('DEMA_ID').asString := TSequence.NewId();
   oid := AObj.FieldbyName('DEMA_ID').asString;
   gid := '..ÐÂÔö..';// AObj.FieldbyName('GLIDE_NO').asString;

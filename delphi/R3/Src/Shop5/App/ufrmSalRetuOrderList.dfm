@@ -51,7 +51,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
               end
               object RzLabel5: TRzLabel
                 Left = 33
-                Top = 88
+                Top = 89
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -104,7 +104,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 502
-                Top = 59
+                Top = 79
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -139,7 +139,7 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
               end
               object fndSTATUS: TcxRadioGroup
                 Left = 344
-                Top = -4
+                Top = 17
                 Width = 145
                 Height = 88
                 ItemIndex = 0
@@ -504,6 +504,10 @@ inherited frmSalRetuOrderList: TfrmSalRetuOrderList
         end
       end
     end
+  end
+  inherited mmMenu: TMainMenu
+    Left = 200
+    Top = 152
   end
   inherited actList: TActionList
     inherited actInfo: TAction

@@ -1,6 +1,6 @@
 inherited frmSalesOrderList: TfrmSalesOrderList
-  Left = 297
-  Top = 236
+  Left = 232
+  Top = 181
   Width = 836
   Height = 560
   Caption = #38144#21806#21333
@@ -51,7 +51,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
               end
               object RzLabel5: TRzLabel
                 Left = 33
-                Top = 88
+                Top = 89
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -104,7 +104,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 500
-                Top = 60
+                Top = 79
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -139,7 +139,7 @@ inherited frmSalesOrderList: TfrmSalesOrderList
               end
               object fndSTATUS: TcxRadioGroup
                 Left = 344
-                Top = -4
+                Top = 16
                 Width = 145
                 Height = 89
                 ItemIndex = 0

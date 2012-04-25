@@ -19,8 +19,8 @@ inherited frmKpiIndexInfo: TfrmKpiIndexInfo
       Top = 103
       Width = 631
       Height = 284
-      ActivePage = TabSheet3
-      TabIndex = 1
+      ActivePage = TabSheet4
+      TabIndex = 2
       OnChange = RzPageChange
       OnChanging = RzPageChanging
       FixedDimension = 20

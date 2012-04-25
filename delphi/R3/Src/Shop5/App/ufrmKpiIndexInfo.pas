@@ -1696,6 +1696,7 @@ var
   CurRow: integer;
 begin
   result:='';
+  if FKpiGridList.Count=0 then Exit;
   if RowIdx=-1 then
     CurRow:=FRowIdx-2  //标题有2行
   else
@@ -2251,7 +2252,7 @@ procedure TfrmKpiIndexInfo.KpiGridGetFloatFormat(Sender: TObject; ACol, ARow: In
    end;
  end;
  function GetLVLValue(TIMES_ID,SEQNO_ID: String): string;
- var KPI_CALC:integer; UNIT_ID: string; RsTime,RsGods,RsUnit: TZQuery;
+ var KPI_DATA:integer; UNIT_ID: string; RsTime,RsGods,RsUnit: TZQuery;
  begin
    result:='';
    RsTime:=TZQuery.Create(nil);
@@ -2259,9 +2260,9 @@ procedure TfrmKpiIndexInfo.KpiGridGetFloatFormat(Sender: TObject; ACol, ARow: In
      RsTime.Data:=CdsKpiTimes.Data;
      if RsTime.Locate('TIMES_ID',TIMES_ID,[]) then
      begin
-       KPI_CALC:=StrToIntDef(trim(RsTime.FieldByName('KPI_CALC').AsString),0);
+       KPI_DATA:=StrToIntDef(trim(RsTime.FieldByName('KPI_DATA').AsString),0);
        //达标系数根据(KPI_CALC:[1:按百分率];[2:按完成量];[3:指定金额]);
-       case KPI_CALC of
+       case KPI_DATA of
         1,2: result:='％';
         3:result := edtUNIT_NAME.Text;
         4:result := '元';

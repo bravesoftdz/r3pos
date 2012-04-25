@@ -1,6 +1,6 @@
 inherited frmKpiTimes: TfrmKpiTimes
-  Left = 396
-  Top = 267
+  Left = 266
+  Top = 212
   Caption = #26102#27573#23450#20041
   ClientHeight = 214
   ClientWidth = 529
@@ -93,7 +93,7 @@ inherited frmKpiTimes: TfrmKpiTimes
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #24320#22987#26085#26399
+            Caption = #24320#22987#26102#38388
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -108,7 +108,7 @@ inherited frmKpiTimes: TfrmKpiTimes
             Height = 12
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #32456#27490#26085#26399
+            Caption = #32467#26463#26102#38388
             Font.Charset = GB2312_CHARSET
             Font.Color = clBlack
             Font.Height = -12
@@ -161,13 +161,41 @@ inherited frmKpiTimes: TfrmKpiTimes
             Font.Style = []
             ParentFont = False
           end
+          object Label2: TLabel
+            Left = 157
+            Top = 40
+            Width = 12
+            Height = 12
+            Caption = #26376
+          end
+          object Label3: TLabel
+            Left = 221
+            Top = 40
+            Width = 12
+            Height = 12
+            Caption = #26085
+          end
+          object Label4: TLabel
+            Left = 389
+            Top = 40
+            Width = 12
+            Height = 12
+            Caption = #26376
+          end
+          object Label5: TLabel
+            Left = 453
+            Top = 40
+            Width = 12
+            Height = 12
+            Caption = #26085
+          end
           object edtKPI_CALC: TcxComboBox
             Left = 346
             Top = 59
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 4
+            TabOrder = 2
           end
           object edtKPI_DATA: TcxComboBox
             Left = 113
@@ -175,21 +203,7 @@ inherited frmKpiTimes: TfrmKpiTimes
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 3
-          end
-          object edtKPI_DATE1: TcxDateEdit
-            Left = 113
-            Top = 35
-            Width = 121
-            Height = 20
             TabOrder = 1
-          end
-          object edtKPI_DATE2: TcxDateEdit
-            Left = 346
-            Top = 35
-            Width = 121
-            Height = 20
-            TabOrder = 2
           end
           object edtTIMES_NAME: TcxTextEdit
             Left = 113
@@ -204,7 +218,7 @@ inherited frmKpiTimes: TfrmKpiTimes
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
-            TabOrder = 5
+            TabOrder = 3
           end
           object edtKPI_FLAG: TcxCheckBox
             Left = 113
@@ -213,7 +227,7 @@ inherited frmKpiTimes: TfrmKpiTimes
             Height = 21
             Properties.DisplayUnchecked = 'False'
             Properties.Caption = #26159#21542#20026#20419#38144#26102#27573
-            TabOrder = 6
+            TabOrder = 4
           end
           object edtUSING_BRRW: TcxCheckBox
             Left = 347
@@ -222,7 +236,47 @@ inherited frmKpiTimes: TfrmKpiTimes
             Height = 21
             Properties.DisplayUnchecked = 'False'
             Properties.Caption = #26159#21542#20801#35768#20511#37327
+            TabOrder = 5
+          end
+          object edtKpi_Month1: TcxSpinEdit
+            Left = 113
+            Top = 35
+            Width = 40
+            Height = 20
+            Properties.MaxValue = 12.000000000000000000
+            Properties.MinValue = 1.000000000000000000
+            TabOrder = 6
+            Value = 1
+          end
+          object edtKpi_Day1: TcxSpinEdit
+            Left = 176
+            Top = 35
+            Width = 40
+            Height = 20
+            Properties.MaxValue = 31.000000000000000000
+            Properties.MinValue = 1.000000000000000000
             TabOrder = 7
+            Value = 1
+          end
+          object edtKpi_Day2: TcxSpinEdit
+            Left = 410
+            Top = 35
+            Width = 40
+            Height = 20
+            Properties.MaxValue = 31.000000000000000000
+            Properties.MinValue = 1.000000000000000000
+            TabOrder = 8
+            Value = 1
+          end
+          object edtKpi_Month2: TcxSpinEdit
+            Left = 346
+            Top = 35
+            Width = 40
+            Height = 20
+            Properties.MaxValue = 12.000000000000000000
+            Properties.MinValue = 1.000000000000000000
+            TabOrder = 9
+            Value = 1
           end
         end
       end

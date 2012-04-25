@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel, DateUtils,
   RzButton, cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, ZBase,
-  cxDropDownEdit, StdCtrls, RzLabel, cxCalendar, cxCheckBox, uDsUtil, uFnUtil;
+  cxDropDownEdit, StdCtrls, RzLabel, cxCalendar, cxCheckBox, uDsUtil, uFnUtil,
+  cxSpinEdit;
 
 type
   TfrmKpiTimes = class(TframeDialogForm)
@@ -20,8 +21,6 @@ type
     edtKPI_DATA: TcxComboBox;
     RzLabel1: TRzLabel;
     Label1: TLabel;
-    edtKPI_DATE1: TcxDateEdit;
-    edtKPI_DATE2: TcxDateEdit;
     RzLabel4: TRzLabel;
     edtTIMES_NAME: TcxTextEdit;
     RzLabel5: TRzLabel;
@@ -29,6 +28,14 @@ type
     edtRATIO_TYPE: TcxComboBox;
     edtKPI_FLAG: TcxCheckBox;
     edtUSING_BRRW: TcxCheckBox;
+    edtKpi_Month1: TcxSpinEdit;
+    edtKpi_Day1: TcxSpinEdit;
+    edtKpi_Day2: TcxSpinEdit;
+    edtKpi_Month2: TcxSpinEdit;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -51,6 +58,7 @@ type
     procedure SetTimesName(const Value: String);
     procedure SetUsingBrrw(const Value: String);
     procedure SetIsFirst(const Value: Boolean);
+    function EstimateDate:Boolean;
     { Private declarations }
   public
     { Public declarations }
@@ -100,17 +108,17 @@ begin
   FKpiDate1 := Value;
   if not IsFirst then Exit;
 
-  edtKPI_DATE1.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',Date()))*10000+Value));
+  edtKpi_Month1.Value := Value div 100;
+  edtKpi_Day1.Value := Value mod 100;
 end;
 
 procedure TfrmKpiTimes.SetKpiDate2(const Value: Integer);
 begin
   FKpiDate2 := Value;
   if not IsFirst then Exit;
-  if FKpiDate1 < FKpiDate2 then
-     edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',Date()))*10000+Value))
-  else
-     edtKPI_DATE2.Date := FnTime.fnStrtoDate(IntToStr(StrToInt(FormatDateTime('YYYY',IncYear(Date())))*10000+Value));
+
+  edtKpi_Month2.Value := Value div 100;
+  edtKpi_Day2.Value := Value mod 100;
 end;
 
 procedure TfrmKpiTimes.SetKpiFlag(const Value: String);
@@ -150,14 +158,14 @@ end;
 procedure TfrmKpiTimes.Btn_SaveClick(Sender: TObject);
 begin
   inherited;
-  if edtKPI_DATE1.Date > edtKPI_DATE2.Date then Raise Exception.Create('"开始日期"不能大于"终止日期",请重新选择!');
+  EstimateDate;
   IsFirst := False;
   TimesName := edtTIMES_NAME.Text;
   RatioType := TRecord_(edtRATIO_TYPE.Properties.Items.Objects[edtRATIO_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString;
   KpiData := TRecord_(edtKPI_DATA.Properties.Items.Objects[edtKPI_DATA.ItemIndex]).FieldbyName('CODE_ID').AsString;
   KpiCalc := TRecord_(edtKPI_CALC.Properties.Items.Objects[edtKPI_CALC.ItemIndex]).FieldbyName('CODE_ID').AsString;;
-  KpiDate1 := StrToInt(FormatDateTime('MMDD',edtKPI_DATE1.Date));
-  KpiDate2 := StrToInt(FormatDateTime('MMDD',edtKPI_DATE2.Date));
+  KpiDate1 := edtKpi_Month1.Value*100+edtKpi_Day1.Value;
+  KpiDate2 := edtKpi_Month2.Value*100+edtKpi_Day2.Value;
   if edtKPI_FLAG.Checked then KpiFlag := '1' else KpiFlag := '0';
   if edtUSING_BRRW.Checked then UsingBrrw := '1' else UsingBrrw := '0';
   ModalResult := mrOk;
@@ -167,6 +175,23 @@ procedure TfrmKpiTimes.FormShow(Sender: TObject);
 begin
   inherited;
   if edtTIMES_NAME.CanFocus then edtTIMES_NAME.SetFocus;
+end;
+
+function TfrmKpiTimes.EstimateDate: Boolean;
+var Date1,Date2:TDateTime;
+begin
+  try
+    Date1 := EncodeDate(StrToInt(FormatDateTime('YYYY',Date())),edtKpi_Month1.Value,edtKpi_Day1.Value);
+  except
+    raise Exception.Create('"开始时间"输入错误,请重新输入!');
+  end;
+  try
+    Date2 := EncodeDate(StrToInt(FormatDateTime('YYYY',Date())),edtKpi_Month2.Value,edtKpi_Day2.Value);
+  except
+    raise Exception.Create('"结束时间"输入错误,请重新输入!');
+  end;
+  if Date1 > Date2 then Raise Exception.Create('"开始时间"不能大于"结束时间",请重新选择!');
+  
 end;
 
 end.

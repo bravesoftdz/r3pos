@@ -17,8 +17,6 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 469
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -40,7 +38,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 Left = 6
                 Top = 6
                 Width = 860
-                Height = 120
+                Height = 128
                 Align = alTop
                 BorderOuter = fsNone
                 BorderColor = clWhite
@@ -49,14 +47,14 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 TabOrder = 0
                 object Label3: TLabel
                   Left = 24
-                  Top = 33
+                  Top = 27
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object RzLabel2: TRzLabel
                   Left = 24
-                  Top = 11
+                  Top = 6
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -64,28 +62,28 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 end
                 object RzLabel3: TRzLabel
                   Left = 186
-                  Top = 11
+                  Top = 6
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
                 object Label2: TLabel
                   Left = 24
-                  Top = 76
+                  Top = 68
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#21517#31216
                 end
                 object Label8: TLabel
                   Left = 24
-                  Top = 55
+                  Top = 48
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
                 end
                 object RzLabel5: TRzLabel
                   Left = 24
-                  Top = 99
+                  Top = 111
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -93,7 +91,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 end
                 object Label1: TLabel
                   Left = 188
-                  Top = 99
+                  Top = 111
                   Width = 126
                   Height = 12
                   Caption = #25903#25345#38144#21806#21333#21495#21518'4'#20301#26597#35810
@@ -104,9 +102,17 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                   Font.Style = []
                   ParentFont = False
                 end
+                object Label6: TLabel
+                  Left = 23
+                  Top = 90
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #38144#21806#26041#24335
+                end
                 object P1_D1: TcxDateEdit
                   Left = 80
-                  Top = 7
+                  Top = 2
                   Width = 97
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -115,7 +121,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 end
                 object P1_D2: TcxDateEdit
                   Left = 205
-                  Top = 7
+                  Top = 2
                   Width = 98
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -123,8 +129,8 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 442
-                  Top = 88
+                  Left = 666
+                  Top = 95
                   Width = 67
                   Height = 27
                   Action = actFind
@@ -152,7 +158,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 80
-                  Top = 29
+                  Top = 23
                   Width = 223
                   Height = 20
                   Properties.AutoSelect = False
@@ -192,8 +198,8 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                   MultiSelect = False
                 end
                 object fndSTATUS: TcxRadioGroup
-                  Left = 324
-                  Top = 30
+                  Left = 460
+                  Top = 37
                   Width = 105
                   Height = 85
                   ItemIndex = 1
@@ -212,7 +218,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 end
                 object fndP1_CUST_ID: TzrComboBoxList
                   Left = 80
-                  Top = 73
+                  Top = 65
                   Width = 223
                   Height = 20
                   Properties.AutoSelect = False
@@ -282,7 +288,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
                   Left = 80
-                  Top = 51
+                  Top = 44
                   Width = 223
                   Height = 20
                   Properties.AutoSelect = False
@@ -316,18 +322,68 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 end
                 object fndSALES_ID: TcxTextEdit
                   Left = 80
-                  Top = 95
+                  Top = 107
                   Width = 104
                   Height = 20
                   TabOrder = 5
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
+                object fndSALES_STYLE: TzrComboBoxList
+                  Left = 80
+                  Top = 86
+                  Width = 223
+                  Height = 20
+                  Properties.AutoSelect = False
+                  Properties.Buttons = <
+                    item
+                      Default = True
+                    end>
+                  Properties.ReadOnly = True
+                  TabOrder = 8
+                  InGrid = False
+                  KeyValue = Null
+                  FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+                  KeyField = 'CODE_ID'
+                  ListField = 'CODE_NAME'
+                  Columns = <
+                    item
+                      EditButtons = <>
+                      FieldName = 'CODE_NAME'
+                      Footers = <>
+                      Title.Caption = #23610#30721#32452
+                      Width = 121
+                    end>
+                  DropWidth = 121
+                  DropHeight = 120
+                  ShowTitle = False
+                  AutoFitColWidth = True
+                  ShowButton = True
+                  LocateStyle = lsDark
+                  Buttons = [zbNew]
+                  DropListStyle = lsFixed
+                  MultiSelect = False
+                end
+                object fndOrderType: TcxRadioGroup
+                  Left = 572
+                  Top = 60
+                  Width = 89
+                  Height = 62
+                  Properties.Items = <
+                    item
+                      Caption = #38144#21806#35746#21333
+                    end
+                    item
+                      Caption = #38144#21806#21333
+                    end>
+                  TabOrder = 9
+                  Caption = #21333#25454#31867#22411
+                end
               end
               object Panel1: TPanel
                 Left = 6
-                Top = 126
+                Top = 134
                 Width = 860
-                Height = 300
+                Height = 292
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
@@ -335,7 +391,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                   Left = 1
                   Top = 1
                   Width = 858
-                  Height = 298
+                  Height = 290
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite

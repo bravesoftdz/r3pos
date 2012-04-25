@@ -44,6 +44,7 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure edtINVH_IDPropertiesChange(Sender: TObject);
   private
     FisAudit: boolean;
     Fcid: string;
@@ -57,6 +58,9 @@ type
     procedure SetClientId(const Value: String);
     procedure SetInvoiceMny(const Value: Real);
     procedure SetInvoiceId(const Value: String);
+    function ReadInvoiceNo(Flag:String):String;
+    procedure WriteInvoiceNo(Flag,InvoiceNo:String);
+    function IncInvoiceNo(InvoiceNo:String):String;
   public
     { Public declarations }
     AObj:TRecord_;
@@ -75,7 +79,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, ufrmBasic;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, IniFiles, ufrmBasic;
 {$R *.dfm}
 
 { TfrmSalInvoice }
@@ -100,11 +104,12 @@ begin
   if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InvoiceId);
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
-  edtINVOICE_MNY.Text := FloatToStr(InvoiceMny);
+  edtINVOICE_MNY.Text := FormatFloat('#0.00',InvoiceMny);
   AObj.FieldbyName('INVD_ID').asString := TSequence.NewId();
   AObj.FieldByName('INVOICE_STATUS').AsString := '1';
   AObj.FieldByName('EXPORT_STATUS').AsString := '1';
   edtCLIENT_IDSaveValue(nil);
+  edtINVOICE_NO.Text := ReadInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString);
 
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
 end;
@@ -188,6 +193,7 @@ begin
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('开票部门不能为空');
   if edtSHOP_ID.AsString = '' then Raise Exception.Create('开票门店不能为空');
   WriteToObject(AObj,self);
+
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
   //cdsHeader.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
@@ -211,6 +217,7 @@ begin
     Factor.CancelBatch;
     Raise;
   end;
+  WriteInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString,edtINVOICE_NO.Text);
   dbState := dsBrowse;
   if Assigned(OnSave) then OnSave(AObj);
 end;
@@ -232,11 +239,13 @@ begin
   dsEdit:begin
      Caption := '开票单--(修改)';
      Label14.Caption := '状态:修改';
+     edtINVOICE_NO.Enabled := False;
   end;
   else
       begin
         Caption := '开票单';
         Label14.Caption := '状态:查看';
+        btnOk.Visible := False;
       end;
   end;
 end;
@@ -255,8 +264,12 @@ begin
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   CdsInvoice.Close;
-  CdsInvoice.SQL.Text := ' select INVH_ID,INVH_NO,INVOICE_FLAG from SAL_INVOICE_BOOK where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') ';
+  CdsInvoice.SQL.Text := ' select INVH_ID,INVH_NO,INVOICE_FLAG,BEGIN_NO,ENDED_NO from SAL_INVOICE_BOOK '+
+  ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and CREA_USER=:CREA_USER '+
+  ' and BALANCE>0 and INVOICE_FLAG=:INVOICE_FLAG order by INVH_NO ';
   CdsInvoice.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  CdsInvoice.ParamByName('CREA_USER').AsString := Global.UserID;
+  CdsInvoice.ParamByName('INVOICE_FLAG').AsString := InvoiceId;
   Factor.Open(CdsInvoice);
 
 end;
@@ -304,6 +317,60 @@ procedure TfrmSalInvoice.FormShow(Sender: TObject);
 begin
   inherited;
   if edtINVOICE_NO.CanFocus then edtINVOICE_NO.SetFocus;
+end;
+
+function TfrmSalInvoice.ReadInvoiceNo(Flag: String): String;
+var F:TIniFile;
+    L,InvoiceNo:Integer;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.ini');
+  try
+    Result := F.ReadString('INVOICE','NO'+Flag+'_'+Global.UserID,'');
+    L := length(Result);
+    if Trim(Result) <> '' then
+    begin
+       InvoiceNo := StrToIntDef(Result,0)+1;
+       Result := FnString.FormatStringEx(IntToStr(InvoiceNo),L,'0');
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmSalInvoice.WriteInvoiceNo(Flag, InvoiceNo: String);
+var F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.ini');
+  try
+    F.WriteString('INVOICE','NO'+Flag+'_'+Global.UserID,InvoiceNo);
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmSalInvoice.edtINVH_IDPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if Trim(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString) = '' then
+     edtINVOICE_NO.Text := edtINVH_ID.DataSet.FieldByName('BEGIN_NO').AsString
+  else
+     edtINVOICE_NO.Text := IncInvoiceNo(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString);
+end;
+
+function TfrmSalInvoice.IncInvoiceNo(InvoiceNo: String): String;
+var
+  Number: string;
+  vNo,i,vLen,vLen1: integer;
+begin
+  result:='';
+  Number:=trim(InvoiceNo);
+  vLen:=length(Number);
+  vNo:=strtoInt(Number)+1;
+  i:=Length(inttoStr(vNo));
+  if vLen-i>0 then
+    result:=Copy(Number,1,vLen-i)+inttoStr(vNo)
+  else if vLen=i then
+    result:=inttoStr(vNo);
 end;
 
 end.

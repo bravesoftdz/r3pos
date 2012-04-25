@@ -68,6 +68,9 @@ type
     fndINVOICE_NO: TcxTextEdit;
     DataSource2: TDataSource;
     cdsList: TZQuery;
+    Label6: TLabel;
+    fndSALES_STYLE: TzrComboBoxList;
+    fndOrderType: TcxRadioGroup;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -104,7 +107,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSalInvoice;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSalInvoice,
+  uframeMDForm;
 {$R *.dfm}
 
 procedure TfrmSalInvoiceList.actNewExecute(Sender: TObject);
@@ -113,66 +117,83 @@ var Client_Id,InvoiceFlag:String;
     SumMny:Real;
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
-  if CdsSalesList.State in [dsInsert,dsEdit] then CdsSalesList.Post;
-  CdsSalesList.DisableControls;
-  try
-    CdsSalesList.Filtered := False;
-    CdsSalesList.Filter := ' SetFlag=''1'' ';
-    CdsSalesList.Filtered := True;
-    IsExist := False;
-    SumMny := 0;
-    if (RzPage.ActivePage=TabSheet1) and (CdsSalesList.Active) and (CdsSalesList.RecordCount>0) then
-    begin
-       IsExist := True;
-       CdsSalesList.First;
-       while not CdsSalesList.Eof do
-       begin
-         if Client_Id = '' then Client_Id := CdsSalesList.FieldByName('CLIENT_ID').AsString;
-         if (Client_Id<>'') and (Client_Id<>CdsSalesList.FieldByName('CLIENT_ID').AsString) then
-            Raise Exception.Create('请选择相同客户的销售单进行开票...');
+  case RzPage.ActivePageIndex of
+  0: begin
+    if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有开票的权限,请和管理员联系.');
+    if CdsSalesList.State in [dsInsert,dsEdit] then CdsSalesList.Post;
+    CdsSalesList.DisableControls;
+    try
+      CdsSalesList.Filtered := False;
+      CdsSalesList.Filter := ' SetFlag=''1'' ';
+      CdsSalesList.Filtered := True;
+      IsExist := False;
+      SumMny := 0;
+      if (RzPage.ActivePage=TabSheet1) and (CdsSalesList.Active) and (CdsSalesList.RecordCount>0) then
+      begin
+         IsExist := True;
+         CdsSalesList.First;
+         while not CdsSalesList.Eof do
+         begin
+           if Client_Id = '' then Client_Id := CdsSalesList.FieldByName('CLIENT_ID').AsString;
+           if (Client_Id<>'') and (Client_Id<>CdsSalesList.FieldByName('CLIENT_ID').AsString) then
+              Raise Exception.Create('请选择相同客户的销售单进行开票...');
 
-         if InvoiceFlag = '' then InvoiceFlag := CdsSalesList.FieldByName('INVOICE_FLAG').AsString;
-         if (InvoiceFlag<>'') and (InvoiceFlag<>CdsSalesList.FieldByName('INVOICE_FLAG').AsString) then
-            Raise Exception.Create('请选择相同发票类型的销售单进行开票...');
+           if InvoiceFlag = '' then InvoiceFlag := CdsSalesList.FieldByName('INVOICE_FLAG').AsString;
+           if (InvoiceFlag<>'') and (InvoiceFlag<>CdsSalesList.FieldByName('INVOICE_FLAG').AsString) then
+              Raise Exception.Create('请选择相同发票类型的销售单进行开票...');
 
-         if CdsSalesList.FieldByName('INVOICE_NO').AsString <> '' then
-            Raise Exception.Create('销售单号"'+CdsSalesList.FieldByName('GLIDE_NO').AsString+'"已经开票...');
-         SumMny := SumMny + CdsSalesList.FieldByName('AMONEY').AsFloat;
-         CdsSalesList.Next;
-       end;
+           if CdsSalesList.FieldByName('INVOICE_NO').AsString <> '' then
+              Raise Exception.Create('销售单号"'+CdsSalesList.FieldByName('GLIDE_NO').AsString+'"已经开票...');
+           SumMny := SumMny + CdsSalesList.FieldByName('AMONEY').AsFloat;
+           CdsSalesList.Next;
+         end;
+      end;
+      if not IsExist then Raise Exception.Create('请选择要开票的销售单...');
+      if SumMny = 0 then Raise Exception.Create('所选择的销售单的金额为0');
+
+      with TfrmSalInvoice.Create(self) do
+        begin
+          try
+            ClientId := Client_Id;
+            InvoiceId := InvoiceFlag;
+            InvoiceMny := SumMny;
+            Append;
+            OnSave := AddRecord;
+            //开票选择第一分页 [开票查询] 时执行
+            CdsSalesList.First;
+            while not CdsSalesList.Eof do
+            begin
+              cdsDetail.Append;
+              cdsDetail.FieldByName('SALES_ID').AsString := CdsSalesList.FieldByName('SALES_ID').AsString;
+              cdsDetail.Post;
+              CdsSalesList.Next;
+            end;
+            //开票选择第一分页 [开票查询] 时执行
+            CdsSalesList.Filtered := False;
+            CdsSalesList.EnableControls;
+            ShowModal;
+          finally
+            free;
+          end;
+        end;
+    finally
+      CdsSalesList.Filtered := False;
+      CdsSalesList.EnableControls;
     end;
-    if not IsExist then Raise Exception.Create('请选择要开票的销售单...');
-    if SumMny = 0 then Raise Exception.Create('所选择的销售单的金额为0');
-
-    with TfrmSalInvoice.Create(self) do
+  end
+  1: begin
+      with TfrmSalInvoice.Create(self) do
       begin
         try
-          ClientId := Client_Id;
-          InvoiceId := InvoiceFlag;
-          InvoiceMny := SumMny;
+          ClientId := '';
+          InvoiceId := '';
+          InvoiceMny := 0;
           Append;
-          OnSave := AddRecord;
-          //开票选择第一分页 [开票查询] 时执行
-          CdsSalesList.First;
-          while not CdsSalesList.Eof do
-          begin
-            cdsDetail.Append;
-            cdsDetail.FieldByName('SALES_ID').AsString := CdsSalesList.FieldByName('SALES_ID').AsString;
-            cdsDetail.Post;
-            CdsSalesList.Next;
-          end;
-          //开票选择第一分页 [开票查询] 时执行
-          CdsSalesList.Filtered := False;
-          CdsSalesList.EnableControls;
           ShowModal;
         finally
           free;
         end;
       end;
-  finally
-    CdsSalesList.Filtered := False;
-    CdsSalesList.EnableControls;
   end;
 end;
 
@@ -347,9 +368,9 @@ end;
 procedure TfrmSalInvoiceList.ChangeButton;
 begin
   if cdsList.Active and (cdsList.FieldByName('INVOICE_STATUS').AsString = '1') then actAudit.Caption := '作废' else actAudit.Caption := '还原';
+  if RzPage.ActivePageIndex = 0 then actNew.Caption := '开票' else actNew.Caption := '登记';
 //  if rzPage.ActivePageIndex = 0 then
      begin
-       actNew.Enabled := rzPage.ActivePageIndex = 0;
        actDelete.Enabled := rzPage.ActivePageIndex > 0;
        actEdit.Enabled := rzPage.ActivePageIndex > 0;
        actSave.Enabled := rzPage.ActivePageIndex > 0;

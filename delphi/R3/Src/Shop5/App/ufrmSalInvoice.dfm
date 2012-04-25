@@ -1,6 +1,6 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 496
-  Top = 247
+  Left = 543
+  Top = 114
   Caption = #21457#31080#20449#24687
   ClientHeight = 258
   ClientWidth = 527
@@ -121,6 +121,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = True
+            Properties.OnChange = edtINVH_IDPropertiesChange
             TabOrder = 2
             InGrid = False
             KeyValue = Null
@@ -133,6 +134,20 @@ inherited frmSalInvoice: TfrmSalInvoice
                 FieldName = 'INVH_NO'
                 Footers = <>
                 Title.Caption = #21457#31080#20195#21495
+                Width = 100
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BEGIN_NO'
+                Footers = <>
+                Title.Caption = #36215#22987#21495
+                Width = 60
+              end
+              item
+                EditButtons = <>
+                FieldName = 'ENDED_NO'
+                Footers = <>
+                Title.Caption = #32456#27490#21495
                 Width = 60
               end>
             DataSet = CdsInvoice
@@ -486,6 +501,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             Top = 36
             Width = 133
             Height = 20
+            Enabled = False
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             Properties.DropDownListStyle = lsFixedList
             TabOrder = 1

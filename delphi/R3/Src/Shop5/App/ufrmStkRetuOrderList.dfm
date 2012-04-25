@@ -181,7 +181,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
               end
               object btnOk: TRzBitBtn
                 Left = 504
-                Top = 56
+                Top = 74
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -208,7 +208,7 @@ inherited frmStkRetuOrderList: TfrmStkRetuOrderList
               end
               object fndSTATUS: TcxRadioGroup
                 Left = 344
-                Top = -5
+                Top = 14
                 Width = 145
                 Height = 86
                 ItemIndex = 0

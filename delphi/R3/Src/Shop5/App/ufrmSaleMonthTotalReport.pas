@@ -489,7 +489,7 @@ begin
     ',0 as BAL_RTL '+   //可销售额<按零售价>
     ',0 as BAL_CST '+   //结存成本<移动加权成本>
     ','+inttostr(Day)+' as DAYS_AMT '+  //销售天数
-    'from '+GetAllTab(strWhere_y)+
+    'from '+GetAllTab(strWhere_m)+
     ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,B.REGION_ID ';
 
   //关联商品

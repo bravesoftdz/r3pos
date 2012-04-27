@@ -254,7 +254,7 @@ begin
       Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
       Update;
       PrgPercent := (i*100 div pt) div 3+5;
-      Application.ProcessMessages;
+      //Application.ProcessMessages;
       SQL :=
         'insert into '+tempTableName1+'('+
         'TENANT_ID,SHOP_ID,CREA_DATE,GODS_ID,BATCH_NO,'+
@@ -741,7 +741,7 @@ begin
        end;
     Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM',bDate+b);
     Update;
-    Application.ProcessMessages;
+    //Application.ProcessMessages;
 //    if (bDate+b)<=uDate then //只计算有数据部份
     begin
 
@@ -1079,7 +1079,7 @@ begin
       Label11.Caption := '正在核算成本...'+formatDatetime('YYYY-MM-DD',cDate+i);
       Update;
       PrgPercent := (i*100 div pt) div 3+5;
-      Application.ProcessMessages;
+      //Application.ProcessMessages;
       //准备期初
       SQL :=
         'insert into '+tempTableName1+'('+
@@ -1248,7 +1248,7 @@ begin
     while true do
     begin
       if pt>0 then PrgPercent := (b*100 div pt) div 3+35;
-      Application.ProcessMessages;
+      //Application.ProcessMessages;
       if reck_flag=1 then
          begin
            if isfirst and (b=1) then
@@ -1719,7 +1719,7 @@ begin
     while true do
     begin
       if pt>0 then PrgPercent := (b*100 div pt) div 3+80;
-      Application.ProcessMessages;
+      //Application.ProcessMessages;
       if reck_flag=1 then
          begin
            if isfirst and (b=1) then
@@ -1794,7 +1794,7 @@ begin
     for i:= 1 to pt do
       begin
         PrgPercent := (i*100 div pt) div 3+60;
-        Application.ProcessMessages;
+        //Application.ProcessMessages;
         SQL :=
           'insert into RCK_ACCT_DAYS('+
           'TENANT_ID,SHOP_ID,CREA_DATE,ACCOUNT_ID,'+

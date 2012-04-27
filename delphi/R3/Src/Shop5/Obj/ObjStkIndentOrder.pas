@@ -130,25 +130,28 @@ end;
 { TStkIndentOrder }
 
 function TStkIndentOrder.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-var SQL:string;
+var
+  SQL:string;
 begin
-{  SQL :=
-    'UPDATE STK_INDENTDATA '+
-    'SET '+
-    '  FNSH_AMOUNT = ( '+
-    '    SELECT '+
-    '      sum( b.CALC_AMOUNT ) '+
-    '    FROM  '+
-    '      STK_STOCKORDER a ,'+
-    '      STK_STOCKDATA b '+
-    '    WHERE '+
-    '      a.TENANT_ID = b.TENANT_ID AND a.STOCK_ID = b.STOCK_ID AND a.TENANT_ID = :TENANT_ID AND a.FROM_ID = :INDE_ID '+
-    '      AND b.GODS_ID = STK_INDENTDATA.GODS_ID AND b.LOCUS_NO = STK_INDENTDATA.LOCUS_NO AND b.BATCH_NO = STK_INDENTDATA.BATCH_NO '+
-    '      AND b.UNIT_ID = STK_INDENTDATA.UNIT_ID AND b.PROPERTY_01 = STK_INDENTDATA.PROPERTY_01 AND b.PROPERTY_02 = STK_INDENTDATA.PROPERTY_02 AND b.IS_PRESENT = STK_INDENTDATA.IS_PRESENT  '+
-    '  ) '+
-    'WHERE INDE_ID = :INDE_ID AND TENANT_ID = :TENANT_ID';
-  AGlobal.ExecSQL(SQL,self);   }
-  result := true;
+  if FieldbyName('FIG_ID').AsString <> '' then
+     begin                                               
+       SQL :=
+        'UPDATE MKT_DEMANDDATA '+
+        'SET '+
+        '  SHIP_AMOUNT = ( '+
+        '    SELECT '+
+        '      sum( b.CALC_AMOUNT ) '+
+        '    FROM  '+
+        '      STK_INDENTORDER a ,'+
+        '      STK_INDENTDATA b '+
+        '    WHERE '+
+        '      a.TENANT_ID = b.TENANT_ID AND a.INDE_ID = b.INDE_ID AND a.TENANT_ID = MKT_DEMANDDATA.TENANT_ID AND a.FIG_ID = MKT_DEMANDDATA.DEMA_ID '+
+        '      AND b.GODS_ID = MKT_DEMANDDATA.GODS_ID AND b.BATCH_NO = MKT_DEMANDDATA.BATCH_NO '+
+        '      AND b.UNIT_ID = MKT_DEMANDDATA.UNIT_ID AND b.PROPERTY_01 = MKT_DEMANDDATA.PROPERTY_01 AND b.PROPERTY_02 = MKT_DEMANDDATA.PROPERTY_02 AND b.IS_PRESENT = MKT_DEMANDDATA.IS_PRESENT  '+
+        '  ) '+
+        'WHERE DEMA_ID = :FIG_ID AND TENANT_ID = :TENANT_ID';
+         AGlobal.ExecSQL(SQL,self);
+     end;
 end;
 
 function TStkIndentOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
@@ -343,10 +346,10 @@ begin
       rs.SQL.Text := 'select STOCK_ID from STK_STOCKORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and FROM_ID='''+Params.FindParam('INDE_ID').asString+'''';
       AGlobal.Open(rs);
       if not rs.IsEmpty then Raise Exception.Create('已经入库的订货单不能弃审...');
-      rs.Close;
-      rs.SQL.Text := 'select FIG_ID from STK_INDENTORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+'''';
-      AGlobal.Open(rs);
-      if rs.FieldbyName('FIG_ID').AsString <> '' then Raise Exception.Create('已经配货的订货单不能弃审...');
+      //rs.Close;
+      //rs.SQL.Text := 'select FIG_ID from STK_INDENTORDER where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and INDE_ID='''+Params.FindParam('INDE_ID').asString+'''';
+      //AGlobal.Open(rs);
+      //if rs.FieldbyName('FIG_ID').AsString <> '' then Raise Exception.Create('已经配货的订货单不能弃审...');
     finally
       rs.Free;
     end;

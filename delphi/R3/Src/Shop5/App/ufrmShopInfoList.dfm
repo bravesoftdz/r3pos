@@ -1,6 +1,6 @@
 inherited frmShopInfoList: TfrmShopInfoList
-  Left = 372
-  Top = 156
+  Left = 302
+  Top = 175
   Width = 901
   Height = 516
   Caption = #38376#24215#26723#26696#31649#29702
@@ -293,16 +293,16 @@ inherited frmShopInfoList: TfrmShopInfoList
   end
   inherited RzPanel4: TRzPanel
     Width = 885
-    inherited Image1: TImage
-      Left = 328
-      Width = 537
-    end
     inherited Image3: TImage
       Left = 328
-      Width = 537
+      Width = 0
     end
     inherited Image14: TImage
       Left = 865
+    end
+    inherited Image1: TImage
+      Left = 328
+      Width = 537
     end
     inherited rzPanel5: TPanel
       Left = 328

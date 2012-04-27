@@ -17,8 +17,6 @@ inherited frmRckMng: TfrmRckMng
       inherited RzPage: TRzPageControl
         Width = 759
         Height = 486
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet

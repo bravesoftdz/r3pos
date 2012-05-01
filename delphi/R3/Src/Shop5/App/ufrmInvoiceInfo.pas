@@ -48,6 +48,8 @@ type
     edtDEPT_ID: TzrComboBoxList;
     edtINVOICE_FLAG: TcxComboBox;
     labIDN_TYPE: TRzLabel;
+    RzLabel15: TRzLabel;
+    edtCURRENT_NO: TcxTextEdit;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

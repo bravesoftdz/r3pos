@@ -258,7 +258,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
           Color = clWhite
           object lab_REMARK: TRzLabel
             Left = 1
-            Top = 64
+            Top = 85
             Width = 100
             Height = 12
             Alignment = taRightJustify
@@ -331,11 +331,26 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
             Font.Style = []
             ParentFont = False
           end
+          object RzLabel15: TRzLabel
+            Left = 1
+            Top = 65
+            Width = 100
+            Height = 12
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = #24403#21069#25171#21360#31080#21495
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
           object edtREMARK: TcxMemo
             Left = 106
-            Top = 64
+            Top = 85
             Width = 355
-            Height = 73
+            Height = 58
             TabOrder = 4
           end
           object edtTOTAL_AMT: TcxTextEdit
@@ -351,6 +366,7 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
             Top = 10
             Width = 121
             Height = 20
+            Enabled = False
             Properties.OnChange = edtCANCEL_AMTPropertiesChange
             TabOrder = 2
           end
@@ -367,8 +383,18 @@ inherited frmInvoiceInfo: TfrmInvoiceInfo
             Top = 36
             Width = 121
             Height = 20
+            Enabled = False
             Properties.OnChange = edtUSING_AMTPropertiesChange
             TabOrder = 1
+          end
+          object edtCURRENT_NO: TcxTextEdit
+            Left = 106
+            Top = 60
+            Width = 121
+            Height = 20
+            Enabled = False
+            Properties.OnChange = edtUSING_AMTPropertiesChange
+            TabOrder = 5
           end
         end
       end

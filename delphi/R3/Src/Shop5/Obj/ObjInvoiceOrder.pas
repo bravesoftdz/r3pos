@@ -39,20 +39,31 @@ type
 
 implementation
 
+uses Variants;
+
 { TInvoiceOrder }
 
 function TInvoiceOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var str:String;
 begin
-
+  Result := False;
+  str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
+         'BALANCE=BALANCE+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
+  AGlobal.ExecSQL(ParseSQL(iDbType,str));
+  Result := True;
 end;
 
 function TInvoiceOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
+var str:String;
 begin
-
+  Result := False;
+  str := ' update SAL_INVOICE_BOOK set CURRENT_NO=:CURRENT_NO,USING_AMT=isnull(USING_AMT,0)+1,'+
+         'BALANCE=isnull(BALANCE,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
+  AGlobal.ExecSQL(ParseSQL(iDbType,str));
+  Result := True;
 end;
 
 function TInvoiceOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前发票已经被另一用户修改，你不能再保存。');
 end;
@@ -129,13 +140,24 @@ end;
 function TInvoiceData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
 begin
+  if Params.ParamByName('ORDERTYPE').AsInteger = 3 then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    rs.SQL.Text := ' select B.GLIDE_NO from SAL_INVOICE_LIST A,SAL_SALESORDER B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID '+
-    ' and A.SALES_ID=B.SALES_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID ';
-    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
-    rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
+    case Params.ParamByName('ORDERTYPE').AsInteger of
+      0:begin
+        rs.SQL.Text := ' select B.GLIDE_NO from SAL_INVOICE_LIST A,SAL_INDENTORDER B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID '+
+        ' and A.SALES_ID=B.INDE_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID ';
+        rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+        rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
+      end;
+      1,2:begin
+        rs.SQL.Text := ' select B.GLIDE_NO from SAL_INVOICE_LIST A,SAL_SALESORDER B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID '+
+        ' and A.SALES_ID=B.SALES_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID ';
+        rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+        rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
+      end;
+    end;
     AGlobal.Open(rs);
     if rs.RecordCount>0 then
        Raise Exception.Create('销售单号"'+rs.FieldByName('GLIDE_NO').AsString+'"已经开单...');
@@ -158,7 +180,7 @@ begin
     rs.ParamByName('INVD_ID').AsString := FieldByName('INVD_ID').AsString;
     AGlobal.Open(rs);
     if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('发票中的销售单已开票!');
+       Raise Exception.Create('发票中的单据已开票!');
   finally
     rs.Free;
   end;

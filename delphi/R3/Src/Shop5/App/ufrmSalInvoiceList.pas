@@ -71,6 +71,7 @@ type
     Label6: TLabel;
     fndSALES_STYLE: TzrComboBoxList;
     fndOrderType: TcxRadioGroup;
+    Label10: TLabel;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -108,11 +109,12 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSalInvoice,
-  uframeMDForm;
+  uframeMDForm, uframeDialogForm;
 {$R *.dfm}
 
 procedure TfrmSalInvoiceList.actNewExecute(Sender: TObject);
 var Client_Id,InvoiceFlag:String;
+    Order_Type:Integer;
     IsExist:Boolean;
     SumMny:Real;
 begin
@@ -132,6 +134,7 @@ begin
       begin
          IsExist := True;
          CdsSalesList.First;
+         Order_Type := CdsSalesList.FieldByName('ORDERTYPE').AsInteger;
          while not CdsSalesList.Eof do
          begin
            if Client_Id = '' then Client_Id := CdsSalesList.FieldByName('CLIENT_ID').AsString;
@@ -157,6 +160,7 @@ begin
             ClientId := Client_Id;
             InvoiceId := InvoiceFlag;
             InvoiceMny := SumMny;
+            OrderType := Order_Type;
             Append;
             OnSave := AddRecord;
             //开票选择第一分页 [开票查询] 时执行
@@ -180,7 +184,7 @@ begin
       CdsSalesList.Filtered := False;
       CdsSalesList.EnableControls;
     end;
-  end
+  end;
   1: begin
       with TfrmSalInvoice.Create(self) do
       begin
@@ -188,39 +192,42 @@ begin
           ClientId := '';
           InvoiceId := '';
           InvoiceMny := 0;
+          OrderType := 3;
           Append;
+          OnSave := AddRecord;
           ShowModal;
         finally
           free;
         end;
       end;
   end;
+  end;
 end;
 
 procedure TfrmSalInvoiceList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
-   if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('100002314',4) then Raise Exception.Create('你没有删除发票的权限,请和管理员联系.');
-   if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
-    begin
-      if not ShopGlobal.GetChkRight('100002314',4) then
-        Raise Exception.Create('你没有删除"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"发票的权限!');
-    end;
+  if cdsList.IsEmpty then Exit;
+  if not ShopGlobal.GetChkRight('100002314',4) then Raise Exception.Create('你没有删除发票的权限,请和管理员联系.');
+  if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
+  begin
+    if not ShopGlobal.GetChkRight('100002314',4) then
+      Raise Exception.Create('你没有删除"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"发票的权限!');
+  end;
 
-   if MessageBox(Handle,'确认删除当前选中的发票吗？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-   with TfrmSalInvoice.Create(self) do
-      begin
-        try
-          Open(cdsList.FieldByName('INVD_ID').AsString);
-          DeleteOrder;
-          cdsList.Delete;
-          if cdsList.IsEmpty then cdsDetail.Close;
-          MessageBox(Handle,'删除发票成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
-        finally
-          free;
-        end;
+  if MessageBox(Handle,'确认删除当前选中的发票吗？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  with TfrmSalInvoice.Create(self) do
+    begin
+      try
+        Open(cdsList.FieldByName('INVD_ID').AsString);
+        DeleteOrder;
+        cdsList.Delete;
+        if cdsList.IsEmpty then cdsDetail.Close;
+        MessageBox(Handle,'删除发票成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
+      finally
+        free;
       end;
+    end;
 end;
 
 procedure TfrmSalInvoiceList.actEditExecute(Sender: TObject);
@@ -239,6 +246,7 @@ begin
     begin
       try
         Edit(cdsList.FieldByName('INVD_ID').AsString);
+        OrderType := 3;
         OnSave := AddRecord;
         ShowModal;
       finally
@@ -387,67 +395,144 @@ end;
 
 function TfrmSalInvoiceList.EncodeSQL1(id: string): string;
 var
-  strSql,strWhere: string;
+  strSql,strWhere,StrField: string;
   Column:TColumnEh;
 begin
   if P1_D1.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D2.EditValue = null then Raise Exception.Create('销售日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('销售查询开始日期不能大于结束日期');
-  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE in (1,3,4) and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 ';
+  
+  case fndOrderType.ItemIndex of
+    1,2:begin
+      strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 ';
 
-  //分批取数据的条件:
-  if trim(id)<>'' then
-    strWhere:=strWhere+' and A.SALES_ID > '+QuotedStr(id);
-  //门店条件:
-  if fndP1_SHOP_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.SHOP_ID=:SHOP_ID ';
-  //部门条件:
-  if fndP1_DEPT_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.DEPT_ID=:DEPT_ID ';
-  //客户条件:
-  if fndP1_CUST_ID.AsString <> '' then
-     strWhere := strWhere + ' and A.CLIENT_ID=:CLIENT_ID ';
-  if trim(fndSALES_ID.Text) <> '' then
-     strWhere := strWhere +' and A.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+''' ';
+      //分批取数据的条件:
+      if trim(id)<>'' then
+        strWhere:=strWhere+' and A.SALES_ID > '+QuotedStr(id);
+      //门店条件:
+      if fndP1_SHOP_ID.AsString <> '' then
+         strWhere := strWhere + ' and A.SHOP_ID=:SHOP_ID ';
+      //部门条件:
+      if fndP1_DEPT_ID.AsString <> '' then
+         strWhere := strWhere + ' and A.DEPT_ID=:DEPT_ID ';
+      //客户条件:
+      if fndP1_CUST_ID.AsString <> '' then
+         strWhere := strWhere + ' and A.CLIENT_ID=:CLIENT_ID ';
+      if trim(fndSALES_ID.Text) <> '' then
+         strWhere := strWhere + ' and A.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+''' ';
+      if fndSALES_STYLE.AsString <> '' then
+         strWhere := strWhere + ' and A.SALES_STYLE=:SALES_STYLE '; 
+      if fndOrderType.ItemIndex = 1 then
+      begin
+         strWhere := strWhere + ' and A.SALES_TYPE=1 ';
+         StrField := '1 as ORDERTYPE,';
+      end
+      else
+      begin
+         strWhere := strWhere + ' and A.SALES_TYPE=3 ';
+         StrField := '2 as ORDERTYPE,';
+      end;
 
-  case fndSTATUS.ItemIndex of
-   0:begin
-       Column := FindColumn('SetFlag');
-       if Column <> nil then Column.Visible := True;
-     end;
-   1:begin
-       strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
-       Column := FindColumn('SetFlag');
-       if Column <> nil then Column.Visible := True;
-     end;
-   2:begin
-       strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
-       Column := FindColumn('SetFlag');
-       if Column <> nil then Column.Visible := False;
-     end;
-  end;
+      case fndSTATUS.ItemIndex of
+       0:begin
+           Column := FindColumn('SetFlag');
+           if Column <> nil then Column.Visible := True;
+         end;
+       1:begin
+           strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
+           Column := FindColumn('SetFlag');
+           if Column <> nil then Column.Visible := True;
+         end;
+       2:begin
+           strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
+           Column := FindColumn('SetFlag');
+           if Column <> nil then Column.Visible := False;
+         end;
+      end;
 
-  strSql:=
-  'select 0 as SetFlag,A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.REMARK,A.CLIENT_ID,D.CLIENT_NAME,A.SHOP_ID,A.CREA_DATE,'+
-  'E.SHOP_NAME as SHOP_ID_TEXT,A.SALE_AMT as AMOUNT,A.SALE_MNY as AMONEY,B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,B.INVOICE_MNY '+
-  ' from SAL_SALESORDER A left join ( '+
-  ' select M.TENANT_ID,M.CLIENT_ID,M.INVD_ID,N.SALES_ID,H.USER_NAME as CREA_USER_TEXT,M.INVOICE_FLAG,M.INVOICE_NO,M.INVOICE_MNY,M.INVOICE_STATUS '+
-  ' from SAL_INVOICE_INFO M inner join SAL_INVOICE_LIST N on M.TENANT_ID=N.TENANT_ID and M.INVD_ID=N.INVD_ID '+
-  ' left join VIW_USERS H on M.TENANT_ID=H.TENANT_ID and M.CREA_USER=H.USER_ID where M.INVOICE_STATUS=''1'' '+
-  ' ) B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.CLIENT_ID=B.CLIENT_ID '+
-  ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
-  ' left join CA_SHOP_INFO E on A.TENANT_ID=E.TENANT_ID and A.SHOP_ID=E.SHOP_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+      strSql:=
+      'select 0 as SetFlag,'+StrField+'A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.REMARK,A.CLIENT_ID,D.CLIENT_NAME,A.SHOP_ID,A.CREA_DATE,'+
+      'E.SHOP_NAME as SHOP_ID_TEXT,A.SALE_AMT as AMOUNT,A.SALE_MNY as AMONEY,B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,B.INVOICE_MNY '+
+      ' from SAL_SALESORDER A left join ( '+
+      ' select M.TENANT_ID,M.CLIENT_ID,M.INVD_ID,N.SALES_ID,H.USER_NAME as CREA_USER_TEXT,M.INVOICE_FLAG,M.INVOICE_NO,M.INVOICE_MNY,M.INVOICE_STATUS '+
+      ' from SAL_INVOICE_INFO M inner join SAL_INVOICE_LIST N on M.TENANT_ID=N.TENANT_ID and M.INVD_ID=N.INVD_ID '+
+      ' left join VIW_USERS H on M.TENANT_ID=H.TENANT_ID and M.CREA_USER=H.USER_ID where M.INVOICE_STATUS=''1'' '+
+      ' ) B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.CLIENT_ID=B.CLIENT_ID '+
+      ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+      ' left join CA_SHOP_INFO E on A.TENANT_ID=E.TENANT_ID and A.SHOP_ID=E.SHOP_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
 
-  case Factor.iDbType of
-  0:result := 'select top 600 * from ('+strSql+') jp order by SALES_ID';
-  1:result := 'select * from ('+strSql+' order by SALES_ID) where ROWNUM<=600';
-  4:result :=
-       'select * from ('+
-       'select * from ('+strSql+') j order by SALES_ID) tp fetch first 600  rows only';
+      case Factor.iDbType of
+      0:result := 'select top 600 * from ('+strSql+') jp order by SALES_ID';
+      1:result := 'select * from ('+strSql+' order by SALES_ID) where ROWNUM<=600';
+      4:result :=
+           'select * from ('+
+           'select * from ('+strSql+') j order by SALES_ID) tp fetch first 600  rows only';
 
-  5:result := 'select * from ('+strSql+') j order by SALES_ID limit 600';
-  else
-    result := 'select * from ('+strSql+') j order by SALES_ID';
+      5:result := 'select * from ('+strSql+') j order by SALES_ID limit 600';
+      else
+        result := 'select * from ('+strSql+') j order by SALES_ID';
+      end;
+    end;
+    0:begin
+      strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 ';
+
+      //分批取数据的条件:
+      if trim(id)<>'' then
+        strWhere:=strWhere+' and A.INDE_ID > '+QuotedStr(id);
+      //门店条件:
+      if fndP1_SHOP_ID.AsString <> '' then
+         strWhere := strWhere + ' and A.SHOP_ID=:SHOP_ID ';
+      //部门条件:
+      if fndP1_DEPT_ID.AsString <> '' then
+         strWhere := strWhere + ' and A.DEPT_ID=:DEPT_ID ';
+      //客户条件:
+      if fndP1_CUST_ID.AsString <> '' then
+         strWhere := strWhere + ' and A.CLIENT_ID=:CLIENT_ID ';
+      if trim(fndSALES_ID.Text) <> '' then
+         strWhere := strWhere + ' and A.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+''' ';
+      if fndSALES_STYLE.AsString <> '' then
+         strWhere := strWhere + ' and A.SALES_STYLE=:SALES_STYLE ';
+
+      case fndSTATUS.ItemIndex of
+       0:begin
+           Column := FindColumn('SetFlag');
+           if Column <> nil then Column.Visible := True;
+         end;
+       1:begin
+           strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.INDE_ID=F.SALES_ID ) ';
+           Column := FindColumn('SetFlag');
+           if Column <> nil then Column.Visible := True;
+         end;
+       2:begin
+           strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.INDE_ID=F.SALES_ID ) ';
+           Column := FindColumn('SetFlag');
+           if Column <> nil then Column.Visible := False;
+         end;
+      end;
+
+      strSql:=
+      'select 0 as SetFlag,0 as ORDERTYPE,A.TENANT_ID,A.INDE_ID as SALES_ID,A.GLIDE_NO,A.INDE_DATE as SALES_DATE,A.REMARK,A.CLIENT_ID,D.CLIENT_NAME,A.SHOP_ID,A.CREA_DATE,'+
+      'E.SHOP_NAME as SHOP_ID_TEXT,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY,B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,B.INVOICE_MNY '+
+      ' from SAL_INDENTORDER A left join ( '+
+      ' select M.TENANT_ID,M.CLIENT_ID,M.INVD_ID,N.SALES_ID,H.USER_NAME as CREA_USER_TEXT,M.INVOICE_FLAG,M.INVOICE_NO,M.INVOICE_MNY,M.INVOICE_STATUS '+
+      ' from SAL_INVOICE_INFO M inner join SAL_INVOICE_LIST N on M.TENANT_ID=N.TENANT_ID and M.INVD_ID=N.INVD_ID '+
+      ' left join VIW_USERS H on M.TENANT_ID=H.TENANT_ID and M.CREA_USER=H.USER_ID where M.INVOICE_STATUS=''1'' '+
+      ' ) B on A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.SALES_ID and A.CLIENT_ID=B.CLIENT_ID '+
+      ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
+      ' left join CA_SHOP_INFO E on A.TENANT_ID=E.TENANT_ID and A.SHOP_ID=E.SHOP_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+
+      case Factor.iDbType of
+      0:result := 'select top 600 * from ('+strSql+') jp order by SALES_ID';
+      1:result := 'select * from ('+strSql+' order by SALES_ID) where ROWNUM<=600';
+      4:result :=
+           'select * from ('+
+           'select * from ('+strSql+') j order by SALES_ID) tp fetch first 600  rows only';
+
+      5:result := 'select * from ('+strSql+') j order by SALES_ID limit 600';
+      else
+        result := 'select * from ('+strSql+') j order by SALES_ID';
+      end;
+    end;
   end;
 end;
 
@@ -542,6 +627,7 @@ begin
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndP1_CUST_ID.AsString;
     if rs.Params.FindParam('SHOP_ID')<>nil then rs.Params.FindParam('SHOP_ID').AsString := fndP1_SHOP_ID.AsString;
     if rs.Params.FindParam('DEPT_ID')<>nil then rs.Params.FindParam('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
+    if rs.Params.FindParam('SALES_STYLE')<>nil then rs.Params.FindParam('SALES_STYLE').AsString := fndSALES_STYLE.AsString; 
     Factor.Open(rs);
     rs.Last;
     MaxId1 := rs.FieldbyName('SALES_ID').AsString;
@@ -680,7 +766,7 @@ begin
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   fndCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
-
+  fndSALES_STYLE.DataSet := Global.GetZQueryFromName('PUB_SALE_STYLE');
 
   //第一分页销售开票查询:
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));

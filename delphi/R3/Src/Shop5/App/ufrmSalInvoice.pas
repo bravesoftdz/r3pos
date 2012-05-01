@@ -7,7 +7,8 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   RzButton, cxDropDownEdit, cxTextEdit, cxCalendar, cxControls, ZBase,
   cxContainer, cxEdit, cxMaskEdit, cxButtonEdit, zrComboBoxList, StdCtrls,
-  Grids, DBGridEh, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  Grids, DBGridEh, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset,
+  cxCheckBox;
 
 type
   TfrmSalInvoice = class(TframeDialogForm)
@@ -39,6 +40,7 @@ type
     edtINVOICE_MNY: TcxTextEdit;
     edtDEPT_ID: TzrComboBoxList;
     edtCREA_USER: TzrComboBoxList;
+    edtIfDuplicate: TcxCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -51,6 +53,7 @@ type
     FInvoiceMny: Real;
     FClientId: String;
     FInvoiceId: String;
+    FOrderType: Integer;
     { Private declarations }
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Setcid(const Value: string);
@@ -61,6 +64,7 @@ type
     function ReadInvoiceNo(Flag:String):String;
     procedure WriteInvoiceNo(Flag,InvoiceNo:String);
     function IncInvoiceNo(InvoiceNo:String):String;
+    procedure SetOrderType(const Value: Integer);
   public
     { Public declarations }
     AObj:TRecord_;
@@ -76,6 +80,7 @@ type
     property InvoiceId:String read FInvoiceId write SetInvoiceId;
     property InvoiceMny:Real read FInvoiceMny write SetInvoiceMny;
     property isAudit:boolean read FisAudit write SetisAudit;
+    property OrderType:Integer read FOrderType write SetOrderType;
   end;
 
 implementation
@@ -98,10 +103,12 @@ begin
   edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
   edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
   rs := Global.GetZQueryFromName('PUB_CUSTOMER');
-  rs.Locate('CLIENT_ID',ClientId,[]);
-  edtCLIENT_ID.KeyValue := rs.FieldByName('CLIENT_ID').AsString;
-  edtCLIENT_ID.Text := rs.FieldByName('CLIENT_NAME').AsString;
-  if edtINVOICE_FLAG.ItemIndex<0 then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InvoiceId);
+  if rs.Locate('CLIENT_ID',ClientId,[]) then
+  begin
+     edtCLIENT_ID.KeyValue := rs.FieldByName('CLIENT_ID').AsString;
+     edtCLIENT_ID.Text := rs.FieldByName('CLIENT_NAME').AsString;
+  end;
+  if (edtINVOICE_FLAG.ItemIndex<0) and (InvoiceId <> '') then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InvoiceId);
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
   edtINVOICE_MNY.Text := FormatFloat('#0.00',InvoiceMny);
@@ -109,7 +116,10 @@ begin
   AObj.FieldByName('INVOICE_STATUS').AsString := '1';
   AObj.FieldByName('EXPORT_STATUS').AsString := '1';
   edtCLIENT_IDSaveValue(nil);
-  edtINVOICE_NO.Text := ReadInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString);
+  if edtINVOICE_FLAG.ItemIndex >= 0 then 
+     edtINVOICE_NO.Text := ReadInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString)
+  else
+     edtINVOICE_FLAG.Enabled := True;
 
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
 end;
@@ -181,10 +191,10 @@ begin
 end;
 
 procedure TfrmSalInvoice.SaveOrder;
-var
-  n:integer;
-  rs:TZQuery;
-  r:real;
+var Params:TftParamList;
+    n:integer;
+    rs:TZQuery;
+    r:real;
 begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择开票客户');
   if Trim(edtINVOICE_NO.Text) = '' then Raise Exception.Create('发票号不能为空');
@@ -192,6 +202,36 @@ begin
   if edtCREA_USER.AsString = '' then Raise Exception.Create('开票人不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('开票部门不能为空');
   if edtSHOP_ID.AsString = '' then Raise Exception.Create('开票门店不能为空');
+  if not edtIfDuplicate.Checked then
+  begin
+    rs := TZQuery.Create(nil);
+    try
+      rs.Close;
+      rs.SQL.Text :=
+      ' select INVD_ID from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and INVOICE_NO=:INVOICE_NO ';
+      rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      rs.ParamByName('CLIENT_ID').AsString := edtCLIENT_ID.AsString;
+      rs.ParamByName('INVOICE_NO').AsString := Trim(edtINVOICE_NO.Text);
+      Factor.Open(rs);
+      if not rs.IsEmpty then
+      begin
+         if dbState = dsInsert then
+            Raise Exception.Create('发票号"'+Trim(edtINVOICE_NO.Text)+'"已经存在!');
+         if dbState = dsEdit then
+         begin
+            rs.First;
+            while not rs.Eof do
+            begin
+              if rs.FieldByName('INVD_ID').AsString <> AObj.FieldByName('INVD_ID').AsString then
+                 Raise Exception.Create('发票号"'+Trim(edtINVOICE_NO.Text)+'"已经存在!');
+              rs.Next;
+            end;
+         end;
+      end;
+    finally
+      rs.Free;
+    end;
+  end;
   WriteToObject(AObj,self);
 
   cdsHeader.Edit;
@@ -208,14 +248,20 @@ begin
     cdsDetail.Post;
     cdsDetail.Next;
   end;
-  Factor.BeginBatch;
+  Params := TftParamList.Create(nil);
   try
-    Factor.AddBatch(cdsHeader,'TInvoiceOrder');
-    Factor.AddBatch(cdsDetail,'TInvoiceData');
-    Factor.CommitBatch;
-  except
-    Factor.CancelBatch;
-    Raise;
+    Params.ParamByName('ORDERTYPE').AsInteger := OrderType;
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsHeader,'TInvoiceOrder',Params);
+      Factor.AddBatch(cdsDetail,'TInvoiceData');
+      Factor.CommitBatch;
+    except
+      Factor.CancelBatch;
+      Raise;
+    end;
+  finally
+    Params.Free;
   end;
   WriteInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString,edtINVOICE_NO.Text);
   dbState := dsBrowse;
@@ -264,12 +310,10 @@ begin
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   CdsInvoice.Close;
-  CdsInvoice.SQL.Text := ' select INVH_ID,INVH_NO,INVOICE_FLAG,BEGIN_NO,ENDED_NO from SAL_INVOICE_BOOK '+
-  ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and CREA_USER=:CREA_USER '+
-  ' and BALANCE>0 and INVOICE_FLAG=:INVOICE_FLAG order by INVH_NO ';
+  CdsInvoice.SQL.Text := ' select INVH_ID,INVH_NO,INVOICE_FLAG,BEGIN_NO,ENDED_NO,CURRENT_NO from SAL_INVOICE_BOOK '+
+  ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') and CREA_USER=:CREA_USER and BALANCE>0 order by INVH_NO ';
   CdsInvoice.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
   CdsInvoice.ParamByName('CREA_USER').AsString := Global.UserID;
-  CdsInvoice.ParamByName('INVOICE_FLAG').AsString := InvoiceId;
   Factor.Open(CdsInvoice);
 
 end;
@@ -278,6 +322,7 @@ procedure TfrmSalInvoice.edtCLIENT_IDSaveValue(Sender: TObject);
 var rs:TZQuery;
 begin
   inherited;
+  if edtCLIENT_ID.AsString = '' then Exit;
   rs := Global.GetZQueryFromName('PUB_CUSTOMER');
   if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的客户没找到,异常错误.');
   AObj.FieldByName('INVO_NAME').AsString := rs.FieldByName('CLIENT_NAME').AsString;
@@ -364,13 +409,18 @@ var
 begin
   result:='';
   Number:=trim(InvoiceNo);
-  vLen:=length(Number);
+  vLen:=8;
   vNo:=strtoInt(Number)+1;
   i:=Length(inttoStr(vNo));
   if vLen-i>0 then
     result:=Copy(Number,1,vLen-i)+inttoStr(vNo)
   else if vLen=i then
     result:=inttoStr(vNo);
+end;
+
+procedure TfrmSalInvoice.SetOrderType(const Value: Integer);
+begin
+  FOrderType := Value;
 end;
 
 end.

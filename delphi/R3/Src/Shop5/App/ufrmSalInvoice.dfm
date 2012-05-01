@@ -1,6 +1,6 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 543
-  Top = 114
+  Left = 482
+  Top = 169
   Caption = #21457#31080#20449#24687
   ClientHeight = 258
   ClientWidth = 527
@@ -643,6 +643,15 @@ inherited frmSalInvoice: TfrmSalInvoice
             Buttons = []
             DropListStyle = lsFixed
             MultiSelect = False
+          end
+          object edtIfDuplicate: TcxCheckBox
+            Left = 164
+            Top = 160
+            Width = 121
+            Height = 21
+            Properties.DisplayUnchecked = 'False'
+            Properties.Caption = #20801#35768#37325#21495
+            TabOrder = 11
           end
         end
       end

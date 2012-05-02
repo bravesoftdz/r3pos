@@ -398,3 +398,58 @@ CREATE INDEX IX_DATH_TENANT_ID ON MKT_ATTHDATA(TENANT_ID);
 CREATE INDEX IX_DATH_ATTH_ID ON MKT_ATTHDATA(TENANT_ID,ATTH_ID);
 CREATE INDEX IX_DATH_GODS_ID ON MKT_ATTHDATA(TENANT_ID,GODS_ID);
 
+--合同类型
+delete from PUB_PARAMS where TYPE_CODE='PLAN_TYPE';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','经销合同','PLAN_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','年度目标','PLAN_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','采购合同','PLAN_TYPE','00',5497000);
+
+
+--添加保证金
+alter table SAL_INDENTDATA add [BOND_MNY] [decimal](18, 3) NULL;
+alter table STK_INDENTDATA add [BOND_MNY] [decimal](18, 3) NULL;
+alter table SAL_INDENTDATA add [BOND_RET] [decimal](18, 3) NULL;
+alter table STK_INDENTDATA add [BOND_RET] [decimal](18, 3) NULL;
+
+--发票类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','销项发票','IVIO_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','进项发票','IVIO_TYPE','00',5497000);
+--发票类型
+alter table SAL_INVOICE_INFO add IVIO_TYPE char(1) NULL;
+update SAL_INVOICE_INFO set IVIO_TYPE='1';
+
+--发票明细
+drop table SAL_INVOICE_LIST;
+CREATE TABLE [SAL_INVOICE_LIST] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --发票流水ID号
+	[INVD_ID] [char] (36) NOT NULL ,
+        --关联单号
+	[SEQNO] int NOT NULL;
+        --关联单号(0无 1销售单 2 退货单(销) 3订货单(销) 4进货单 5 退货单(进) 6 订货单(进))
+	[FROM_TYPE] [char] (36) NOT NULL ,
+        --关联单号
+	[FROM_ID] [char] (36) NULL ,
+        --商品代码
+	[GODS_ID] varchar(36) NULL,
+        --商品名称
+	[GODS_NAME] varchar(50) NULL,
+        --单位
+	[UNIT_NAME] varchar(10) NULL,
+        --数量
+	[AMOUNT] [decimal](18, 3) NULL,
+        --单价
+	[APRICE] [decimal](18, 3) NULL,
+        --未税金额
+	[NOTAX_MNY] [decimal](18, 3) NULL,
+        --税额
+	[TAX_MNY] [decimal](18, 3) NULL,
+	CONSTRAINT [PK_SAL_INVOICE_LIST] PRIMARY KEY   
+	(
+		[TENANT_ID],[INVD_ID],[SEQNO]
+	)
+);
+CREATE INDEX IX_SAL_INVOICE_LIST_SALES_ID ON SAL_INVOICE_LIST(TENANT_ID,FROM_ID);
+CREATE INDEX IX_SAL_INVOICE_LIST_INVD_ID ON SAL_INVOICE_LIST(TENANT_ID,INVD_ID);
+

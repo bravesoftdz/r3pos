@@ -114,7 +114,6 @@ uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSalInvoice,
 
 procedure TfrmSalInvoiceList.actNewExecute(Sender: TObject);
 var Client_Id,InvoiceFlag:String;
-    Order_Type:Integer;
     IsExist:Boolean;
     SumMny:Real;
 begin
@@ -134,7 +133,7 @@ begin
       begin
          IsExist := True;
          CdsSalesList.First;
-         Order_Type := CdsSalesList.FieldByName('ORDERTYPE').AsInteger;
+
          while not CdsSalesList.Eof do
          begin
            if Client_Id = '' then Client_Id := CdsSalesList.FieldByName('CLIENT_ID').AsString;
@@ -160,7 +159,7 @@ begin
             ClientId := Client_Id;
             InvoiceId := InvoiceFlag;
             InvoiceMny := SumMny;
-            OrderType := Order_Type;
+            IvioType := '1';
             Append;
             OnSave := AddRecord;
             //开票选择第一分页 [开票查询] 时执行
@@ -168,7 +167,13 @@ begin
             while not CdsSalesList.Eof do
             begin
               cdsDetail.Append;
-              cdsDetail.FieldByName('SALES_ID').AsString := CdsSalesList.FieldByName('SALES_ID').AsString;
+              cdsDetail.FieldByName('FROM_ID').AsString := CdsSalesList.FieldByName('SALES_ID').AsString;
+              cdsDetail.FieldByName('GODS_ID').AsString := CdsSalesList.FieldByName('GODS_ID').AsString;
+              cdsDetail.FieldByName('GODS_NAME').AsString := CdsSalesList.FieldByName('GODS_NAME').AsString;
+              cdsDetail.FieldByName('UNIT_NAME').AsString := CdsSalesList.FieldByName('UNIT_NAME').AsString;
+              cdsDetail.FieldByName('AMOUNT').AsFloat := CdsSalesList.FieldByName('AMOUNT').AsFloat;
+              cdsDetail.FieldByName('APRICE').AsFloat := CdsSalesList.FieldByName('APRICE').AsFloat;
+              cdsDetail.FieldByName('FROM_TYPE').AsString := CdsSalesList.FieldByName('ORDERTYPE').AsString;
               cdsDetail.Post;
               CdsSalesList.Next;
             end;
@@ -192,9 +197,18 @@ begin
           ClientId := '';
           InvoiceId := '';
           InvoiceMny := 0;
-          OrderType := 3;
+          IvioType := '1';
           Append;
           OnSave := AddRecord;
+          cdsDetail.Append;
+          cdsDetail.FieldByName('FROM_ID').AsString := '#';
+          cdsDetail.FieldByName('GODS_ID').AsString := '#';
+          cdsDetail.FieldByName('GODS_NAME').AsString := '#';
+          cdsDetail.FieldByName('UNIT_NAME').AsString := '#';
+          cdsDetail.FieldByName('AMOUNT').AsFloat := 0;
+          cdsDetail.FieldByName('APRICE').AsFloat := 0;
+          cdsDetail.FieldByName('FROM_TYPE').AsString := '0';
+          cdsDetail.Post;
           ShowModal;
         finally
           free;
@@ -246,7 +260,7 @@ begin
     begin
       try
         Edit(cdsList.FieldByName('INVD_ID').AsString);
-        OrderType := 3;
+        //OrderType := CdsSalesList.FieldByName('').AsInteger;
         OnSave := AddRecord;
         ShowModal;
       finally
@@ -439,17 +453,17 @@ begin
            if Column <> nil then Column.Visible := True;
          end;
        1:begin
-           strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
+           strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST K,SAL_INVOICE_INFO L where K.TENANT_ID=L.TENANT_ID and K.INVD_ID=L.INVD_ID and L.INVOICE_STATUS=''1'' and A.TENANT_ID=K.TENANT_ID and A.SALES_ID=K.FROM_ID and A.GODS_ID=K.GODS_ID ) ';
            Column := FindColumn('SetFlag');
            if Column <> nil then Column.Visible := True;
          end;
        2:begin
-           strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID ) ';
+           strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST K,SAL_INVOICE_INFO L where K.TENANT_ID=L.TENANT_ID and K.INVD_ID=L.INVD_ID and L.INVOICE_STATUS=''1'' and A.TENANT_ID=K.TENANT_ID and A.SALES_ID=K.FROM_ID and A.GODS_ID=K.GODS_ID ) ';
            Column := FindColumn('SetFlag');
            if Column <> nil then Column.Visible := False;
          end;
       end;
-
+{
       strSql:=
       'select 0 as SetFlag,'+StrField+'A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.REMARK,A.CLIENT_ID,D.CLIENT_NAME,A.SHOP_ID,A.CREA_DATE,'+
       'E.SHOP_NAME as SHOP_ID_TEXT,A.SALE_AMT as AMOUNT,A.SALE_MNY as AMONEY,B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,B.INVOICE_MNY '+
@@ -460,17 +474,35 @@ begin
       ' ) B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.CLIENT_ID=B.CLIENT_ID '+
       ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
       ' left join CA_SHOP_INFO E on A.TENANT_ID=E.TENANT_ID and A.SHOP_ID=E.SHOP_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+}
+      strSql:=
+      'select 0 as SetFlag,'+StrField+'A.TENANT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.REMARK,A.CLIENT_ID,C.CLIENT_NAME,'+
+      'A.SHOP_ID,E.GODS_NAME,A.CREA_DATE,D.SHOP_NAME as SHOP_ID_TEXT,A.AMOUNT,A.APRICE,A.AMONEY,B.CREA_USER_TEXT,A.INVOICE_FLAG,'+
+      'B.INVOICE_NO,F.UNIT_NAME,A.GODS_ID,B.INVOICE_MNY from ( '+
+      'select X.TENANT_ID,X.SALES_ID,X.GLIDE_NO,X.SALES_DATE,X.REMARK,X.SALES_TYPE,X.CLIENT_ID,X.SHOP_ID,'+
+      'X.CREA_DATE,X.INVOICE_FLAG,Y.GODS_ID,Y.UNIT_ID,Y.AMOUNT,Y.APRICE,Y.AMONEY '+
+      ' from SAL_SALESORDER X inner join SAL_SALESDATA Y on X.TENANT_ID=Y.TENANT_ID and X.SALES_ID=Y.SALES_ID '+
+      ') A left join ( '+
+      'select M.TENANT_ID,M.CLIENT_ID,M.INVD_ID,N.FROM_ID,N.GODS_ID,H.USER_NAME as CREA_USER_TEXT,M.INVOICE_FLAG,'+
+      'M.INVOICE_NO,M.INVOICE_MNY,M.INVOICE_STATUS '+
+      ' from SAL_INVOICE_INFO M inner join SAL_INVOICE_LIST N on M.TENANT_ID=N.TENANT_ID and M.INVD_ID=N.INVD_ID '+
+      ' left join VIW_USERS H on M.TENANT_ID=H.TENANT_ID and M.CREA_USER=H.USER_ID where M.INVOICE_STATUS=''1'' '+
+      ' ) B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.FROM_ID and A.GODS_ID=B.GODS_ID '+
+      ' left join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
+      ' left join CA_SHOP_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID '+
+      ' left join VIW_GOODSINFO E on A.TENANT_ID=E.TENANT_ID and A.GODS_ID=E.GODS_ID '+
+      ' left join VIW_MEAUNITS F on A.TENANT_ID=F.TENANT_ID and A.UNIT_ID=F.UNIT_ID'+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
 
       case Factor.iDbType of
-      0:result := 'select top 600 * from ('+strSql+') jp order by SALES_ID';
-      1:result := 'select * from ('+strSql+' order by SALES_ID) where ROWNUM<=600';
+      0:result := 'select top 600 * from ('+strSql+') jp order by CLIENT_ID,SALES_ID';
+      1:result := 'select * from ('+strSql+' order by CLIENT_ID,SALES_ID) where ROWNUM<=600';
       4:result :=
            'select * from ('+
-           'select * from ('+strSql+') j order by SALES_ID) tp fetch first 600  rows only';
+           'select * from ('+strSql+') j order by CLIENT_ID,SALES_ID) tp fetch first 600  rows only';
 
-      5:result := 'select * from ('+strSql+') j order by SALES_ID limit 600';
+      5:result := 'select * from ('+strSql+') j order by CLIENT_ID,SALES_ID limit 600';
       else
-        result := 'select * from ('+strSql+') j order by SALES_ID';
+        result := 'select * from ('+strSql+') j order by CLIENT_ID,SALES_ID';
       end;
     end;
     0:begin
@@ -499,38 +531,44 @@ begin
            if Column <> nil then Column.Visible := True;
          end;
        1:begin
-           strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.INDE_ID=F.SALES_ID ) ';
+           strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST K,SAL_INVOICE_INFO L where K.TENANT_ID=L.TENANT_ID and K.INVD_ID=L.INVD_ID and L.INVOICE_STATUS=''1'' and A.TENANT_ID=K.TENANT_ID and A.INDE_ID=K.FROM_ID and A.GODS_ID=K.GODS_ID ) ';
            Column := FindColumn('SetFlag');
            if Column <> nil then Column.Visible := True;
          end;
        2:begin
-           strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST F,SAL_INVOICE_INFO G where F.TENANT_ID=G.TENANT_ID and F.INVD_ID=G.INVD_ID and G.INVOICE_STATUS=''1'' and A.TENANT_ID=F.TENANT_ID and A.INDE_ID=F.SALES_ID ) ';
+           strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST K,SAL_INVOICE_INFO L where K.TENANT_ID=L.TENANT_ID and K.INVD_ID=L.INVD_ID and L.INVOICE_STATUS=''1'' and A.TENANT_ID=K.TENANT_ID and A.INDE_ID=K.FROM_ID and A.GODS_ID=K.GODS_ID ) ';
            Column := FindColumn('SetFlag');
            if Column <> nil then Column.Visible := False;
          end;
       end;
 
       strSql:=
-      'select 0 as SetFlag,0 as ORDERTYPE,A.TENANT_ID,A.INDE_ID as SALES_ID,A.GLIDE_NO,A.INDE_DATE as SALES_DATE,A.REMARK,A.CLIENT_ID,D.CLIENT_NAME,A.SHOP_ID,A.CREA_DATE,'+
-      'E.SHOP_NAME as SHOP_ID_TEXT,A.INDE_AMT as AMOUNT,A.INDE_MNY as AMONEY,B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,B.INVOICE_MNY '+
-      ' from SAL_INDENTORDER A left join ( '+
-      ' select M.TENANT_ID,M.CLIENT_ID,M.INVD_ID,N.SALES_ID,H.USER_NAME as CREA_USER_TEXT,M.INVOICE_FLAG,M.INVOICE_NO,M.INVOICE_MNY,M.INVOICE_STATUS '+
+      'select 0 as SetFlag,3 as ORDERTYPE,A.TENANT_ID,A.INDE_ID as SALES_ID,A.GLIDE_NO,A.INDE_DATE as SALES_DATE,A.REMARK,A.CLIENT_ID,'+
+      'C.CLIENT_NAME,A.SHOP_ID,E.GODS_NAME,A.CREA_DATE,D.SHOP_NAME as SHOP_ID_TEXT,A.AMOUNT,A.APRICE,A.AMONEY,'+
+      'B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,B.INVOICE_MNY from ( '+
+      ' select X.TENANT_ID,X.INDE_ID,X.GLIDE_NO,X.INDE_DATE,X.REMARK,X.CLIENT_ID,X.SHOP_ID,'+
+      'X.CREA_DATE,X.INVOICE_FLAG,Y.GODS_ID,Y.UNIT_ID,Y.AMOUNT,Y.APRICE,Y.AMONEY '+
+      ' from SAL_INDENTORDER X inner join SAL_INDENTDATA Y on X.TENANT_ID=Y.TENANT_ID and X.INDE_ID=Y.INDE_ID '+
+      ') A left join ( '+
+      'select M.TENANT_ID,M.CLIENT_ID,M.INVD_ID,N.FROM_ID,N.GODS_ID,H.USER_NAME as CREA_USER_TEXT,M.INVOICE_FLAG,M.INVOICE_NO,M.INVOICE_MNY,M.INVOICE_STATUS '+
       ' from SAL_INVOICE_INFO M inner join SAL_INVOICE_LIST N on M.TENANT_ID=N.TENANT_ID and M.INVD_ID=N.INVD_ID '+
       ' left join VIW_USERS H on M.TENANT_ID=H.TENANT_ID and M.CREA_USER=H.USER_ID where M.INVOICE_STATUS=''1'' '+
-      ' ) B on A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.SALES_ID and A.CLIENT_ID=B.CLIENT_ID '+
-      ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
-      ' left join CA_SHOP_INFO E on A.TENANT_ID=E.TENANT_ID and A.SHOP_ID=E.SHOP_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+      ' ) B on A.TENANT_ID=B.TENANT_ID and A.INDE_ID=B.FROM_ID and A.GODS_ID=B.GODS_ID '+
+      ' left join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
+      ' left join CA_SHOP_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID '+
+      ' left join VIW_GOODSINFO E on A.TENANT_ID=E.TENANT_ID and A.GODS_ID=E.GODS_ID '+
+      ' left join VIW_MEAUNITS F on A.TENANT_ID=F.TENANT_ID and A.UNIT_ID=F.UNIT_ID '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
 
       case Factor.iDbType of
-      0:result := 'select top 600 * from ('+strSql+') jp order by SALES_ID';
-      1:result := 'select * from ('+strSql+' order by SALES_ID) where ROWNUM<=600';
+      0:result := 'select top 600 * from ('+strSql+') jp order by CLIENT_ID,SALES_ID';
+      1:result := 'select * from ('+strSql+' order by CLIENT_ID,SALES_ID) where ROWNUM<=600';
       4:result :=
            'select * from ('+
-           'select * from ('+strSql+') j order by SALES_ID) tp fetch first 600  rows only';
+           'select * from ('+strSql+') j order by CLIENT_ID,SALES_ID) tp fetch first 600  rows only';
 
-      5:result := 'select * from ('+strSql+') j order by SALES_ID limit 600';
+      5:result := 'select * from ('+strSql+') j order by CLIENT_ID,SALES_ID limit 600';
       else
-        result := 'select * from ('+strSql+') j order by SALES_ID';
+        result := 'select * from ('+strSql+') j order by CLIENT_ID,SALES_ID';
       end;
     end;
   end;

@@ -41,6 +41,8 @@ type
     edtDEPT_ID: TzrComboBoxList;
     edtCREA_USER: TzrComboBoxList;
     edtIfDuplicate: TcxCheckBox;
+    Label1: TLabel;
+    edtIVIO_TYPE: TcxComboBox;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -53,7 +55,7 @@ type
     FInvoiceMny: Real;
     FClientId: String;
     FInvoiceId: String;
-    FOrderType: Integer;
+    FIvioType: String;
     { Private declarations }
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Setcid(const Value: string);
@@ -62,9 +64,11 @@ type
     procedure SetInvoiceMny(const Value: Real);
     procedure SetInvoiceId(const Value: String);
     function ReadInvoiceNo(Flag:String):String;
+    function ReadInvoiceId:String;
     procedure WriteInvoiceNo(Flag,InvoiceNo:String);
+    procedure WriteInvoiceId(InvoiceId:String);
     function IncInvoiceNo(InvoiceNo:String):String;
-    procedure SetOrderType(const Value: Integer);
+    procedure SetIvioType(const Value: String);
   public
     { Public declarations }
     AObj:TRecord_;
@@ -80,11 +84,12 @@ type
     property InvoiceId:String read FInvoiceId write SetInvoiceId;
     property InvoiceMny:Real read FInvoiceMny write SetInvoiceMny;
     property isAudit:boolean read FisAudit write SetisAudit;
-    property OrderType:Integer read FOrderType write SetOrderType;
+    property IvioType:String read FIvioType write SetIvioType;
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, IniFiles, ufrmBasic;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, IniFiles, ufrmBasic,
+  Math;
 {$R *.dfm}
 
 { TfrmSalInvoice }
@@ -93,6 +98,7 @@ procedure TfrmSalInvoice.Append;
 var
   rs:TZQuery;
   i: Integer;
+  Invoice_Id:String;
 begin
   Open('');
   dbState := dsInsert;
@@ -108,7 +114,10 @@ begin
      edtCLIENT_ID.KeyValue := rs.FieldByName('CLIENT_ID').AsString;
      edtCLIENT_ID.Text := rs.FieldByName('CLIENT_NAME').AsString;
   end;
-  if (edtINVOICE_FLAG.ItemIndex<0) and (InvoiceId <> '') then edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InvoiceId);
+  if (edtINVOICE_FLAG.ItemIndex<0) and (InvoiceId <> '') then
+     edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InvoiceId);
+  if edtIVIO_TYPE.ItemIndex < 0 then
+     edtIVIO_TYPE.ItemIndex := TdsItems.FindItems(edtIVIO_TYPE.Properties.Items,'CODE_ID',IvioType); 
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
   edtINVOICE_MNY.Text := FormatFloat('#0.00',InvoiceMny);
@@ -116,7 +125,16 @@ begin
   AObj.FieldByName('INVOICE_STATUS').AsString := '1';
   AObj.FieldByName('EXPORT_STATUS').AsString := '1';
   edtCLIENT_IDSaveValue(nil);
-  if edtINVOICE_FLAG.ItemIndex >= 0 then 
+  Invoice_Id := ReadInvoiceId;
+  if (Invoice_Id <> '') and not CdsInvoice.IsEmpty then
+  begin
+     if CdsInvoice.Locate('INVH_ID',Invoice_Id,[]) then
+     begin
+        edtINVH_ID.KeyValue := CdsInvoice.FieldByName('INVH_ID').AsString;
+        edtINVH_ID.Text := CdsInvoice.FieldByName('INVH_NO').AsString;
+     end;
+  end;
+  if edtINVOICE_FLAG.ItemIndex >= 0 then
      edtINVOICE_NO.Text := ReadInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString)
   else
      edtINVOICE_FLAG.Enabled := True;
@@ -180,6 +198,8 @@ begin
       //edtSHOP_ID.Properties.ReadOnly := False;
       AObj.ReadFromDataSet(cdsHeader);
       ReadFromObject(AObj,self);
+      if (Length(Trim(edtINVOICE_NO.Text))<8) and (Trim(edtINVOICE_NO.Text)<>'') then
+         edtINVOICE_NO.Text := FnString.FormatStringEx(Trim(edtINVOICE_NO.Text),8);
       dbState := dsBrowse;
       //isAudit := (AObj.FieldByName('CHK_DATE').AsString <> '');
     finally
@@ -193,6 +213,7 @@ end;
 procedure TfrmSalInvoice.SaveOrder;
 var Params:TftParamList;
     n:integer;
+    Tax_Rate:Currency;
     rs:TZQuery;
     r:real;
 begin
@@ -233,36 +254,52 @@ begin
     end;
   end;
   WriteToObject(AObj,self);
-
+  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
   //cdsHeader.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   cdsHeader.Post;
+  case TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+    1:Tax_Rate := 0;
+    2:begin
+      case TRecord_(edtIVIO_TYPE.Properties.Items.Objects[edtIVIO_TYPE.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+        1:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
+        2:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
+      end;
+    end;
+    3:begin
+      case TRecord_(edtIVIO_TYPE.Properties.Items.Objects[edtIVIO_TYPE.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+        1:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.17);
+        2:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.17);
+      end;
+    end;
+  end;
+  n := 1;
   cdsDetail.First;
   while not cdsDetail.Eof do
   begin
     cdsDetail.Edit;
     cdsDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsDetail.FieldByName('INVD_ID').AsString := cdsHeader.FieldByName('INVD_ID').AsString;
+    cdsDetail.FieldByName('SEQNO').AsInteger := n;
+    cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
+    cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
+    Inc(n);
     cdsDetail.Post;
     cdsDetail.Next;
   end;
-  Params := TftParamList.Create(nil);
+
+  Factor.BeginBatch;
   try
-    Params.ParamByName('ORDERTYPE').AsInteger := OrderType;
-    Factor.BeginBatch;
-    try
-      Factor.AddBatch(cdsHeader,'TInvoiceOrder',Params);
-      Factor.AddBatch(cdsDetail,'TInvoiceData');
-      Factor.CommitBatch;
-    except
-      Factor.CancelBatch;
-      Raise;
-    end;
-  finally
-    Params.Free;
+    Factor.AddBatch(cdsHeader,'TInvoiceOrder');
+    Factor.AddBatch(cdsDetail,'TInvoiceData');
+    Factor.CommitBatch;
+  except
+    Factor.CancelBatch;
+    Raise;
   end;
+  WriteInvoiceId(edtINVH_ID.AsString);
   WriteInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString,edtINVOICE_NO.Text);
   dbState := dsBrowse;
   if Assigned(OnSave) then OnSave(AObj);
@@ -327,7 +364,7 @@ begin
   if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的客户没找到,异常错误.');
   AObj.FieldByName('INVO_NAME').AsString := rs.FieldByName('CLIENT_NAME').AsString;
   AObj.FieldByName('ADDR_NAME').AsString := rs.FieldByName('ADDRESS').AsString;
-  if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
+  
 end;
 
 procedure TfrmSalInvoice.SetClientId(const Value: String);
@@ -361,7 +398,7 @@ end;
 procedure TfrmSalInvoice.FormShow(Sender: TObject);
 begin
   inherited;
-  if edtINVOICE_NO.CanFocus then edtINVOICE_NO.SetFocus;
+  if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
 end;
 
 function TfrmSalInvoice.ReadInvoiceNo(Flag: String): String;
@@ -375,7 +412,8 @@ begin
     if Trim(Result) <> '' then
     begin
        InvoiceNo := StrToIntDef(Result,0)+1;
-       Result := FnString.FormatStringEx(IntToStr(InvoiceNo),L,'0');
+       if L < 8 then
+          Result := FnString.FormatStringEx(IntToStr(InvoiceNo),8,'0');
     end;
   finally
     F.Free;
@@ -418,9 +456,32 @@ begin
     result:=inttoStr(vNo);
 end;
 
-procedure TfrmSalInvoice.SetOrderType(const Value: Integer);
+procedure TfrmSalInvoice.SetIvioType(const Value: String);
 begin
-  FOrderType := Value;
+  FIvioType := Value;
+end;
+
+function TfrmSalInvoice.ReadInvoiceId: String;
+var F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.ini');
+  try
+    Result := F.ReadString('INVOICE',Global.UserID,'');
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TfrmSalInvoice.WriteInvoiceId(InvoiceId: String);
+var F:TIniFile;
+begin
+  F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.ini');
+  try
+    F.WriteString('INVOICE',Global.UserID,InvoiceId);
+  finally
+    F.Free;
+  end;
+
 end;
 
 end.

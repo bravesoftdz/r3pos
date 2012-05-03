@@ -1,8 +1,8 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 482
-  Top = 169
+  Left = 533
+  Top = 337
   Caption = #21457#31080#20449#24687
-  ClientHeight = 258
+  ClientHeight = 268
   ClientWidth = 527
   OnCreate = FormCreate
   OnShow = FormShow
@@ -10,11 +10,11 @@ inherited frmSalInvoice: TfrmSalInvoice
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 527
-    Height = 258
+    Height = 268
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
       Width = 517
-      Height = 208
+      Height = 218
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -25,20 +25,20 @@ inherited frmSalInvoice: TfrmSalInvoice
         Caption = #24320#31080#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 513
-          Height = 181
+          Height = 191
           BorderColor = clWhite
           Color = clWhite
           object Label2: TLabel
             Left = 113
-            Top = 66
+            Top = 65
             Width = 48
             Height = 12
             Alignment = taRightJustify
             Caption = #21457#31080#26412#21495
           end
           object Label6: TLabel
-            Left = 315
-            Top = 40
+            Left = 316
+            Top = 65
             Width = 48
             Height = 12
             Alignment = taRightJustify
@@ -46,7 +46,7 @@ inherited frmSalInvoice: TfrmSalInvoice
           end
           object Label7: TLabel
             Left = 137
-            Top = 142
+            Top = 163
             Width = 24
             Height = 12
             Alignment = taRightJustify
@@ -68,15 +68,15 @@ inherited frmSalInvoice: TfrmSalInvoice
             Caption = #21457#31080#31867#22411
           end
           object Label40: TLabel
-            Left = 315
-            Top = 65
+            Left = 316
+            Top = 89
             Width = 48
             Height = 12
             Caption = #24320#31080#38376#24215
           end
           object Label4: TLabel
             Left = 109
-            Top = 92
+            Top = 89
             Width = 53
             Height = 12
             Alignment = taRightJustify
@@ -90,29 +90,37 @@ inherited frmSalInvoice: TfrmSalInvoice
           end
           object Label8: TLabel
             Left = 114
-            Top = 116
+            Top = 114
             Width = 48
             Height = 12
             Alignment = taRightJustify
             Caption = #24320#31080#37329#39069
           end
           object Label5: TLabel
-            Left = 315
-            Top = 91
+            Left = 316
+            Top = 114
             Width = 48
             Height = 12
             Caption = #24320#31080#37096#38376
           end
           object Label9: TLabel
-            Left = 315
-            Top = 116
+            Left = 316
+            Top = 138
             Width = 48
             Height = 12
             Caption = #24320' '#31080' '#20154
           end
+          object Label1: TLabel
+            Left = 315
+            Top = 40
+            Width = 48
+            Height = 12
+            Alignment = taRightJustify
+            Caption = #21457#31080#31181#31867
+          end
           object edtINVH_ID: TzrComboBoxList
             Left = 167
-            Top = 62
+            Top = 61
             Width = 133
             Height = 20
             Properties.AutoSelect = False
@@ -137,21 +145,31 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Width = 100
               end
               item
+                DisplayFormat = '00000000'
                 EditButtons = <>
                 FieldName = 'BEGIN_NO'
                 Footers = <>
                 Title.Caption = #36215#22987#21495
-                Width = 60
+                Width = 70
               end
               item
+                DisplayFormat = '00000000'
                 EditButtons = <>
                 FieldName = 'ENDED_NO'
                 Footers = <>
                 Title.Caption = #32456#27490#21495
-                Width = 60
+                Width = 70
+              end
+              item
+                DisplayFormat = '00000000'
+                EditButtons = <>
+                FieldName = 'CURRENT_NO'
+                Footers = <>
+                Title.Caption = #24403#21069#31080#21495
+                Width = 70
               end>
             DataSet = CdsInvoice
-            DropWidth = 180
+            DropWidth = 210
             DropHeight = 180
             ShowTitle = True
             AutoFitColWidth = True
@@ -162,19 +180,19 @@ inherited frmSalInvoice: TfrmSalInvoice
             MultiSelect = False
           end
           object edtCREA_DATE: TcxDateEdit
-            Left = 369
-            Top = 36
+            Left = 370
+            Top = 61
             Width = 131
             Height = 20
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            TabOrder = 5
+            TabOrder = 7
           end
           object edtREMARK: TcxTextEdit
             Left = 167
-            Top = 137
-            Width = 273
+            Top = 158
+            Width = 334
             Height = 20
-            TabOrder = 9
+            TabOrder = 11
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object RzPanel4: TRzPanel
@@ -187,7 +205,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             BorderShadow = clActiveCaption
             Color = clWhite
             FlatColor = clBlue
-            TabOrder = 10
+            TabOrder = 12
             Visible = False
             object Image1: TImage
               Left = 15
@@ -507,8 +525,8 @@ inherited frmSalInvoice: TfrmSalInvoice
             TabOrder = 1
           end
           object edtSHOP_ID: TzrComboBoxList
-            Left = 369
-            Top = 62
+            Left = 370
+            Top = 85
             Width = 131
             Height = 20
             Properties.AutoSelect = False
@@ -517,7 +535,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = False
-            TabOrder = 6
+            TabOrder = 8
             InGrid = False
             KeyValue = Null
             FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -549,7 +567,7 @@ inherited frmSalInvoice: TfrmSalInvoice
           end
           object edtINVOICE_NO: TcxTextEdit
             Left = 167
-            Top = 87
+            Top = 85
             Width = 133
             Height = 20
             ParentFont = False
@@ -563,15 +581,15 @@ inherited frmSalInvoice: TfrmSalInvoice
           end
           object edtINVOICE_MNY: TcxTextEdit
             Left = 167
-            Top = 112
+            Top = 110
             Width = 133
             Height = 20
             TabOrder = 4
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
           end
           object edtDEPT_ID: TzrComboBoxList
-            Left = 369
-            Top = 87
+            Left = 370
+            Top = 110
             Width = 131
             Height = 20
             Properties.AutoSelect = False
@@ -580,7 +598,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = False
-            TabOrder = 7
+            TabOrder = 9
             InGrid = False
             KeyValue = Null
             FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -604,8 +622,8 @@ inherited frmSalInvoice: TfrmSalInvoice
             MultiSelect = False
           end
           object edtCREA_USER: TzrComboBoxList
-            Left = 369
-            Top = 112
+            Left = 370
+            Top = 134
             Width = 131
             Height = 20
             Properties.AutoSelect = False
@@ -614,7 +632,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 8
+            TabOrder = 10
             InGrid = False
             KeyValue = Null
             FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -646,18 +664,28 @@ inherited frmSalInvoice: TfrmSalInvoice
           end
           object edtIfDuplicate: TcxCheckBox
             Left = 164
-            Top = 160
+            Top = 134
             Width = 121
             Height = 21
             Properties.DisplayUnchecked = 'False'
             Properties.Caption = #20801#35768#37325#21495
-            TabOrder = 11
+            TabOrder = 5
+          end
+          object edtIVIO_TYPE: TcxComboBox
+            Left = 369
+            Top = 36
+            Width = 133
+            Height = 20
+            Enabled = False
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            Properties.DropDownListStyle = lsFixedList
+            TabOrder = 6
           end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Top = 213
+      Top = 223
       Width = 517
       Color = clWhite
       object btnOk: TRzBitBtn

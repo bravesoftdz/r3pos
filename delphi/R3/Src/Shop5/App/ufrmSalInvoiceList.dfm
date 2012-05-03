@@ -482,6 +482,13 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'GODS_NAME'
+                      Footers = <>
+                      Title.Caption = #21830#21697#21517#31216
+                      Width = 100
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'CLIENT_NAME'
                       Footers = <>
                       ReadOnly = True
@@ -968,6 +975,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                     Width = 32
                   end
                   item
+                    DisplayFormat = '00000000'
                     EditButtons = <>
                     FieldName = 'INVOICE_NO'
                     Footers = <>

@@ -49,7 +49,7 @@ begin
   Result := False;
   str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
          'BALANCE=BALANCE+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
-  AGlobal.ExecSQL(ParseSQL(iDbType,str));
+  AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
   Result := True;
 end;
 
@@ -57,9 +57,9 @@ function TInvoiceOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var str:String;
 begin
   Result := False;
-  str := ' update SAL_INVOICE_BOOK set CURRENT_NO=:INVOICE_NO,USING_AMT=isnull(USING_AMT,0)+1,'+
-         'BALANCE=isnull(BALANCE,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
-  AGlobal.ExecSQL(ParseSQL(iDbType,str));
+  str := ParseSQL(iDbType,' update SAL_INVOICE_BOOK set CURRENT_NO=:INVOICE_NO,USING_AMT=isnull(USING_AMT,0)+1,'+
+         'BALANCE=isnull(BALANCE,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ');
+  AGlobal.ExecSQL(str,Self);
   Result := True;
 end;
 

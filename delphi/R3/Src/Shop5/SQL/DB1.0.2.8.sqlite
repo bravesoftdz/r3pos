@@ -414,6 +414,7 @@ alter table STK_INDENTDATA add [BOND_RET] [decimal](18, 3) NULL;
 --发票类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','销项发票','IVIO_TYPE','00',5497000);
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','进项发票','IVIO_TYPE','00',5497000);
+
 --发票类型
 alter table SAL_INVOICE_INFO add IVIO_TYPE char(1) NULL;
 update SAL_INVOICE_INFO set IVIO_TYPE='1';
@@ -453,3 +454,145 @@ CREATE TABLE [SAL_INVOICE_LIST] (
 CREATE INDEX IX_SAL_INVOICE_LIST_SALES_ID ON SAL_INVOICE_LIST(TENANT_ID,FROM_ID);
 CREATE INDEX IX_SAL_INVOICE_LIST_INVD_ID ON SAL_INVOICE_LIST(TENANT_ID,INVD_ID);
 
+--财务凭证
+CREATE TABLE [ACC_FVCHORDER] (
+  --企业代码
+  [TENANT_ID] int   NOT NULL,
+  --门店代码
+  [SHOP_ID] [varchar](13)   NOT NULL,
+  --所属部门
+  [DEPT_ID] [varchar](12)   NOT NULL,
+  --凭证编号
+  [FVCH_ID] [char](36)   NOT NULL,
+  --凭证日期
+  [FVCH_DATE] int   NOT NULL,
+  --附件张数
+  [FVCH_ATTACH] int   NOT NULL,
+  --制单人
+  [CREA_USER] [varchar](36)   NOT NULL,
+  --引入标志 0 新增 1修改 2 引入完毕
+  [FVCH_FLAG] [char](1)   NULL,
+  --凭证内码
+  [FVCH_CODE] [varchar](10)   NULL,
+  --引入后凭证编号
+  [FVCH_IMPORT_ID] [varchar](10)   NULL,
+  --通讯标志
+  [COMM] [varchar](2)   NOT NULL CONSTRAINT [DF_ACC_FVCHORDER_COMM] DEFAULT ('00'),
+  --时间戳
+  [TIME_STAMP] bigint   NOT NULL,
+  --主键
+  CONSTRAINT [PK_ACC_FVCHORDER] PRIMARY KEY 
+  ( 
+  	[TENANT_ID],
+  	[FVCH_ID] 
+  )
+)
+
+CREATE INDEX IX_ACC_FVCHORDER_TENANT_ID ON ACC_FVCHORDER (TENANT_ID);
+CREATE INDEX IX_ACC_FVCHORDER_TIME_STAMP ON ACC_FVCHORDER (TENANT_ID, TIME_STAMP);
+CREATE INDEX IX_ACC_FVCHORDER_SHOP_ID ON ACC_FVCHORDER (TENANT_ID,SHOP_ID);
+CREATE INDEX IX_ACC_FVCHORDER_FVCH_DATE ON ACC_FVCHORDER (TENANT_ID,FVCH_DATE);
+
+--凭证分录
+CREATE TABLE [ACC_FVCHDATA] (
+  --企业代码
+  [TENANT_ID] int  NOT NULL,
+  --门店代码
+  [SHOP_ID] [varchar](13)   NOT NULL,
+  --凭证单号
+  [FVCH_ID] [char](36)   NOT NULL,
+  --凭证分录编号
+  [FVCH_DID] [char](36)   NOT NULL,
+  --序号
+	[SEQNO] [int] NOT NULL ,
+  --科目代码
+  [SUBJECT_NO] [varchar](10)   NOT NULL,
+  --摘要
+  [SUMMARY] [varchar](100)   NOT NULL,
+        --金额
+	[AMONEY] [decimal](18, 3) NULL,
+        --数量
+	[AMOUNT] [decimal](18, 3) NULL,
+        --单价
+	[APRICE] [decimal](18, 3) NULL,
+  --记账方向  1借方 2贷方
+  [SUBJECT_NO] [char](1)   NOT NULL,
+  --业务日期
+  [OPER_DATE] int   NOT NULL,
+  CONSTRAINT [PK_ACC_FVCHDATA] PRIMARY KEY 
+  ( 
+		[TENANT_ID],
+		[FVCH_DID]
+  )
+);
+CREATE INDEX IX_ACC_FVCHDATA_TENANT_ID ON ACC_FVCHDATA (TENANT_ID);
+CREATE INDEX IX_ACC_FVCHDATA_FVCH_ID ON ACC_FVCHDATA (TENANT_ID,FVCH_ID);
+
+--凭证明细
+CREATE TABLE [ACC_FVCHDETAIL] (
+  --企业代码
+  [TENANT_ID] int  NOT NULL,
+  --门店代码
+  [SHOP_ID] [varchar](13)   NOT NULL,
+  --明细ID
+  [FVCH_TID] [char](36)   NOT NULL,
+  --凭证单号
+  [FVCH_ID] [char](36)   NOT NULL,
+  --凭证分录编号
+  [FVCH_DID] [char](36)   NOT NULL,
+  --序号
+	[SEQNO] [int] NOT NULL ,
+  --人员编号->财务系统
+  [SUBJ_USER] [char](36)  NULL,
+  --部门编号->财务系统
+  [SUBJ_DEPT] [char](36)  NULL,
+  --往来单位->财务系统
+  [SUBJ_CLIENT] [char](36)  NULL,
+  --专项1->财务系统
+  [SUBJ_OTHR1] [char](36)  NULL,
+  --专项2->财务系统
+  [SUBJ_OTHR2] [char](36)  NULL,
+  --专项3->财务系统
+  [SUBJ_OTHR3] [char](36)  NULL,
+  --专项4->财务系统
+  [SUBJ_OTHR4] [char](36)  NULL,
+  --专项5->财务系统
+  [SUBJ_OTHR5] [char](36)  NULL,
+  --摘要
+  [SUMMARY] [varchar](100)   NOT NULL,
+        --金额
+	[AMONEY] [decimal](18, 3) NULL,
+        --数量
+	[AMOUNT] [decimal](18, 3) NULL,
+        --单价
+	[APRICE] [decimal](18, 3) NULL,
+  --业务日期
+  [OPER_DATE] int   NOT NULL,
+  CONSTRAINT [PK_ACC_FVCHDETAIL] PRIMARY KEY 
+  ( 
+		[TENANT_ID],
+		[FVCH_TID]
+  )
+);
+CREATE INDEX IX_ACC_FVCHDETAIL_TENANT_ID ON ACC_FVCHDETAIL (TENANT_ID);
+CREATE INDEX IX_ACC_FVCHDETAIL_FVCH_ID ON ACC_FVCHDETAIL (TENANT_ID,FVCH_ID);
+
+--关联单据
+CREATE TABLE [ACC_FVCHGLIDE] (
+  --企业代码
+  [TENANT_ID] int  NOT NULL,
+  --行ID
+  [FVCH_GLID] [char](36)   NOT NULL,
+  --凭证单号
+  [FVCH_ID] [char](36)   NOT NULL,
+  --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单 11缴款单 12 其他收入 13其他支出 14 存取款单
+  [FVCH_GTYPE] [char](2)   NOT NULL,
+  --关联单号
+  [FVCH_GID] [char](36)   NOT NULL,
+  CONSTRAINT [PK_ACC_FVCHGLIDE] PRIMARY KEY 
+  ( 
+		[TENANT_ID],
+		[FVCH_GLID]
+  )
+);
+CREATE INDEX IX_ACC_FVCHGLIDE_FVCH_ID ON ACC_FVCHGLIDE(TENANT_ID,FVCH_ID);

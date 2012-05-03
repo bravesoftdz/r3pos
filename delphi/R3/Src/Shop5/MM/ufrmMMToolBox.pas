@@ -36,7 +36,7 @@ type
   end;
 
 implementation
-uses ufrmMMMain,uShopGlobal;
+uses ufrmMMMain,uShopGlobal,uRcFactory;
 {$R *.dfm}
 
 { TfrmMMToolBox }
@@ -115,6 +115,7 @@ var
   lvid:string;
   Action:TAction;
   pData:PMMToolBox;
+  bitmap:TBitMap;
 begin
   Clear;
   rs := frmMMMain.CA_MODULE;
@@ -133,7 +134,19 @@ begin
               begin
                  ListItem := rzList.Items.Add;
                  ListItem.Caption := rs.FieldbyName('MODU_NAME').AsString;
-                 ListItem.ImageIndex := 0;
+                 bitmap := rcFactory.GetBitMap(rs.FieldbyName('MODU_NAME').AsString);
+                 if bitmap <> nil then
+                    begin
+                      try
+                        bitmap.Transparent := true;
+                        ListItem.ImageIndex := ImageList1.Add(bitmap, nil);
+                      except
+                        ListItem.ImageIndex := 0;
+                      end;
+                      bitmap.Free;
+                    end
+                 else
+                    ListItem.ImageIndex := 0;
                  new(pData);
                  pData^.Action := Action;
                  pData^.mid := rs.FieldbyName('MODU_ID').AsString;
@@ -168,6 +181,11 @@ begin
       Dispose(RzList.Items[i].Data);
     end;
   rzList.Items.Clear;
+
+  for i:=2 to ImageList1.Count -1 do
+    begin
+      ImageList1.Delete(i);
+    end;
 end;
 
 procedure TfrmMMToolBox.FormDestroy(Sender: TObject);

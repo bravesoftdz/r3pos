@@ -57,7 +57,7 @@ function TInvoiceOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var str:String;
 begin
   Result := False;
-  str := ' update SAL_INVOICE_BOOK set CURRENT_NO=:CURRENT_NO,USING_AMT=isnull(USING_AMT,0)+1,'+
+  str := ' update SAL_INVOICE_BOOK set CURRENT_NO=:INVOICE_NO,USING_AMT=isnull(USING_AMT,0)+1,'+
          'BALANCE=isnull(BALANCE,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
   AGlobal.ExecSQL(ParseSQL(iDbType,str));
   Result := True;
@@ -102,7 +102,7 @@ begin
   inherited;
   SelectSQL.Text :=
   'select A.TENANT_ID,A.INVD_ID,A.INVH_ID,A.SHOP_ID,C.SHOP_NAME as SHOP_ID_TEXT,A.DEPT_ID,D.DEPT_NAME as DEPT_ID_TEXT,'+
-  'A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,A.CREA_DATE,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.INVO_NAME,'+
+  'A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,A.CREA_DATE,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.INVO_NAME,A.IVIO_TYPE,'+
   'A.ADDR_NAME,A.REMARK,A.INVOICE_FLAG,A.INVOICE_NO,A.INVOICE_MNY,A.EXPORT_STATUS,A.INVOICE_STATUS,A.COMM,A.TIME_STAMP '+
   ' from SAL_INVOICE_INFO A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
@@ -111,12 +111,14 @@ begin
   ' left join PUB_PARAMS F on A.INVOICE_FLAG=F.CODE_ID '+
   ' where A.TENANT_ID=:TENANT_ID and A.INVD_ID=:INVD_ID and F.TYPE_CODE=''INVOICE_FLAG'' ';
   IsSQLUpdate := True;
-  Str := 'insert into SAL_INVOICE_INFO(TENANT_ID,INVD_ID,INVH_ID,SHOP_ID,DEPT_ID,CREA_USER,CREA_DATE,CLIENT_ID,INVO_NAME,ADDR_NAME,REMARK,INVOICE_FLAG,INVOICE_NO,INVOICE_MNY,INVOICE_STATUS,EXPORT_STATUS,COMM,TIME_STAMP) '
-    + 'VALUES(:TENANT_ID,:INVD_ID,:INVH_ID,:SHOP_ID,:DEPT_ID,:CREA_USER,:CREA_DATE,:CLIENT_ID,:INVO_NAME,:ADDR_NAME,:REMARK,:INVOICE_FLAG,:INVOICE_NO,:INVOICE_MNY,:INVOICE_STATUS,:EXPORT_STATUS,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into SAL_INVOICE_INFO(TENANT_ID,INVD_ID,INVH_ID,SHOP_ID,DEPT_ID,CREA_USER,CREA_DATE,CLIENT_ID,INVO_NAME,'+
+         'IVIO_TYPE,ADDR_NAME,REMARK,INVOICE_FLAG,INVOICE_NO,INVOICE_MNY,INVOICE_STATUS,EXPORT_STATUS,COMM,TIME_STAMP) '+
+         'VALUES(:TENANT_ID,:INVD_ID,:INVH_ID,:SHOP_ID,:DEPT_ID,:CREA_USER,:CREA_DATE,:CLIENT_ID,:INVO_NAME,:IVIO_TYPE,'+
+         ':ADDR_NAME,:REMARK,:INVOICE_FLAG,:INVOICE_NO,:INVOICE_MNY,:INVOICE_STATUS,:EXPORT_STATUS,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
   Str := 'update SAL_INVOICE_INFO set TENANT_ID=:TENANT_ID,INVD_ID=:INVD_ID,INVH_ID=:INVH_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,CREA_USER=:CREA_USER,'
     + 'CREA_DATE=:CREA_DATE,CLIENT_ID=:CLIENT_ID,INVO_NAME=:INVO_NAME,ADDR_NAME=:ADDR_NAME,REMARK=:REMARK,INVOICE_FLAG=:INVOICE_FLAG,'
-    + 'INVOICE_NO=:INVOICE_NO,INVOICE_MNY=:INVOICE_MNY,INVOICE_STATUS=:INVOICE_STATUS,EXPORT_STATUS=:EXPORT_STATUS '
+    + 'IVIO_TYPE=:IVIO_TYPE,INVOICE_NO=:INVOICE_NO,INVOICE_MNY=:INVOICE_MNY,INVOICE_STATUS=:INVOICE_STATUS,EXPORT_STATUS=:EXPORT_STATUS '
     + ',COMM=' + GetCommStr(iDbType)
     + ',TIME_STAMP='+GetTimeStamp(iDbType)
     + ' where INVD_ID=:OLD_INVD_ID and TENANT_ID=:OLD_TENANT_ID';
@@ -140,27 +142,29 @@ end;
 function TInvoiceData.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var rs:TZQuery;
 begin
-  if Params.ParamByName('ORDERTYPE').AsInteger = 3 then Exit;
+  if FieldByName('FROM_TYPE').AsInteger = 0 then Exit;
   rs := TZQuery.Create(nil);
   try
     rs.Close;
-    case Params.ParamByName('ORDERTYPE').AsInteger of
-      0:begin
-        rs.SQL.Text := ' select B.GLIDE_NO from SAL_INVOICE_LIST A,SAL_INDENTORDER B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID '+
-        ' and A.SALES_ID=B.INDE_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID ';
-        rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
-        rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
-      end;
+    case FieldByName('FROM_TYPE').AsInteger of
       1,2:begin
-        rs.SQL.Text := ' select B.GLIDE_NO from SAL_INVOICE_LIST A,SAL_SALESORDER B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID '+
-        ' and A.SALES_ID=B.SALES_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID ';
+        rs.SQL.Text := ' select A.GODS_NAME from SAL_INVOICE_LIST A,SAL_SALESDATA B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID and A.FROM_ID=B.SALES_ID '+
+        ' and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.FROM_ID=:FROM_ID and A.GODS_ID=:GODS_ID ';
         rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
-        rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
+        rs.ParamByName('FROM_ID').AsString := FieldByName('FROM_ID').AsString;
+        rs.ParamByName('GODS_ID').AsString := FieldByName('GODS_ID').AsString;
+      end;
+      3:begin
+        rs.SQL.Text := ' select A.GODS_NAME from SAL_INVOICE_LIST A,SAL_INDENTDATA B,SAL_INVOICE_INFO C where A.TENANT_ID=B.TENANT_ID and A.FROM_ID=B.INDE_ID '+
+        ' and A.GODS_ID=B.GODS_ID and A.TENANT_ID=C.TENANT_ID and A.INVD_ID=C.INVD_ID and C.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.FROM_ID=:FROM_ID and A.GODS_ID=:GODS_ID ';
+        rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+        rs.ParamByName('FROM_ID').AsString := FieldByName('FROM_ID').AsString;
+        rs.ParamByName('GODS_ID').AsString := FieldByName('GODS_ID').AsString;
       end;
     end;
     AGlobal.Open(rs);
     if rs.RecordCount>0 then
-       Raise Exception.Create('销售单号"'+rs.FieldByName('GLIDE_NO').AsString+'"已经开单...');
+       Raise Exception.Create('"'+rs.FieldByName('GODS_NAME').AsString+'"已经开单...');
   finally
     rs.Free;
   end;
@@ -173,14 +177,15 @@ var Str:string;
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := ' select count(*) from SAL_INVOICE_LIST A,SAL_INVOICE_INFO B where A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
-    ' and A.TENANT_ID=:TENANT_ID and A.SALES_ID=:SALES_ID and A.INVD_ID<>:INVD_ID and B.INVOICE_STATUS=''1'' ';
+    rs.SQL.Text := ' select A.GODS_NAME from SAL_INVOICE_LIST A,SAL_INVOICE_INFO B where A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
+    ' and B.INVOICE_STATUS=''1'' and A.TENANT_ID=:TENANT_ID and A.FROM_ID=:FROM_ID and A.INVD_ID<>:INVD_ID and A.GODS_ID=:GODS_ID ';
     rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
-    rs.ParamByName('SALES_ID').AsString := FieldByName('SALES_ID').AsString;
+    rs.ParamByName('FROM_ID').AsString := FieldByName('FROM_ID').AsString;
     rs.ParamByName('INVD_ID').AsString := FieldByName('INVD_ID').AsString;
+    rs.ParamByName('GODS_ID').AsString := FieldByName('GODS_ID').AsString;
     AGlobal.Open(rs);
-    if rs.Fields[0].AsInteger > 0 then
-       Raise Exception.Create('发票中的单据已开票!');
+    if rs.RecordCount > 0 then
+       Raise Exception.Create('"'+rs.FieldByName('GODS_NAME').AsString+'"已存在其它开单中...');
   finally
     rs.Free;
   end;
@@ -192,14 +197,17 @@ var
 begin
   inherited;
   SelectSQL.Text :=
-  'select TENANT_ID,INVD_ID,SALES_ID from SAL_INVOICE_LIST where TENANT_ID=:TENANT_ID and INVD_ID=:INVD_ID ';
+  'select TENANT_ID,INVD_ID,SEQNO,FROM_TYPE,FROM_ID,GODS_ID,GODS_NAME,UNIT_NAME,AMOUNT,APRICE,NOTAX_MNY,TAX_MNY '+
+  ' from SAL_INVOICE_LIST where TENANT_ID=:TENANT_ID and INVD_ID=:INVD_ID order by SEQNO ';
   IsSQLUpdate := True;
-  Str := ' insert into SAL_INVOICE_LIST(TENANT_ID,INVD_ID,SALES_ID) VALUES(:TENANT_ID,:INVD_ID,:SALES_ID) ';
+  Str := ' insert into SAL_INVOICE_LIST(TENANT_ID,INVD_ID,SEQNO,FROM_TYPE,FROM_ID,GODS_ID,GODS_NAME,UNIT_NAME,AMOUNT,APRICE,NOTAX_MNY,TAX_MNY) '+
+         ' VALUES(:TENANT_ID,:INVD_ID,:SEQNO,:FROM_TYPE,:FROM_ID,:GODS_ID,:GODS_NAME,:UNIT_NAME,:AMOUNT,:APRICE,:NOTAX_MNY,:TAX_MNY) ';
   InsertSQL.Text := Str;
-  Str := 'update SAL_INVOICE_LIST set TENANT_ID=:TENANT_ID,INVD_ID=:INVD_ID,SALES_ID=:SALES_ID '+
-         ' where SALES_ID=:OLD_SALES_ID and INVD_ID=:OLD_INVD_ID and TENANT_ID=:OLD_TENANT_ID';
+  Str := 'update SAL_INVOICE_LIST set TENANT_ID=:TENANT_ID,INVD_ID=:INVD_ID,SEQNO=:SEQNO,FROM_TYPE=:FROM_TYPE,FROM_ID=:FROM_ID,'+
+         'GODS_ID=:GODS_ID,GODS_NAME=:GODS_NAME,UNIT_NAME=:UNIT_NAME,AMOUNT=:AMOUNT,APRICE=:APRICE,NOTAX_MNY=:NOTAX_MNY,TAX_MNY=:TAX_MNY '+
+         ' where SEQNO=:OLD_SEQNO and INVD_ID=:OLD_INVD_ID and TENANT_ID=:OLD_TENANT_ID';
   UpdateSQL.Text := Str;
-  Str := 'delete from SAL_INVOICE_LIST where SALES_ID=:OLD_SALES_ID and INVD_ID=:OLD_INVD_ID and TENANT_ID=:OLD_TENANT_ID';
+  Str := 'delete from SAL_INVOICE_LIST where SEQNO=:OLD_SEQNO and INVD_ID=:OLD_INVD_ID and TENANT_ID=:OLD_TENANT_ID';
   DeleteSQL.Text := Str;
 end;
 
@@ -241,12 +249,12 @@ begin
   try
     rs := TZQuery.Create(nil);
     try
-      rs.SQL.Text := ' select A.SALES_ID from SAL_INVOICE_LIST A,SAL_INVOICE_INFO B where A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID and A.TENANT_ID=:TENANT_ID'+
-      ' and A.SALES_ID in ( select SALES_ID from SAL_INVOICE_LIST  where TENANT_ID=:TENANT_ID and INVD_ID=:INVD_ID) and B.INVOICE_STATUS=''1'' ';
+      rs.SQL.Text := ' select A.FROM_ID from SAL_INVOICE_LIST A,SAL_INVOICE_INFO B where A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID and A.TENANT_ID=:TENANT_ID'+
+      ' and A.FROM_ID in ( select FROM_ID from SAL_INVOICE_LIST  where TENANT_ID=:TENANT_ID and INVD_ID=:INVD_ID) and B.INVOICE_STATUS=''1'' ';
       rs.ParamByName('TENANT_ID').AsInteger := Params.FindParam('TENANT_ID').AsInteger;
       rs.ParamByName('INVD_ID').AsString := Params.FindParam('INVD_ID').AsString;
       AGlobal.Open(rs);
-      if rs.FieldByName('SALES_ID').AsString <> '' then
+      if rs.FieldByName('FROM_ID').AsString <> '' then
          Raise Exception.Create('作废发票中的销售单已有重新开票!');
     finally
       rs.Free;
@@ -260,12 +268,12 @@ begin
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
     Result := true;
-    Msg := '升效发票成功';
+    Msg := '还原发票成功';
   except
     on E:Exception do
       begin
         Result := false;
-        Msg := '升效错误'+E.Message;
+        Msg := '还原错误'+E.Message;
       end;
   end;
 end;

@@ -467,7 +467,7 @@ begin
   inherited;
   SelectSQL.Text :=
   'select j.UNION_NAME,j.UNION_ID,ic.CLIENT_ID,j.TENANT_ID,ic.IC_CARDNO,ic.PASSWRD,ic.CREA_DATE,ic.CREA_USER,ic.IC_INFO,ic.IC_STATUS,ic.IC_TYPE,'+
-  'ic.ACCU_INTEGRAL,ic.RULE_INTEGRAL,ic.INTEGRAL,ic.BALANCE from ('+
+  'ic.ACCU_INTEGRAL,ic.RULE_INTEGRAL,ic.INTEGRAL,ic.BALANCE,ic.NEAR_BUY_DATE,ic.FREQUENCY from ('+
   'select  '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,'+Params.ParambyName('TENANT_ID').asString+' as TENANT_ID,''#'' as UNION_ID,''企业会员'' as UNION_NAME from CA_TENANT where TENANT_ID=:TENANT_ID '+
   'union all '+
   'select '''+Params.ParambyName('CUST_ID').asString+''' as CLIENT_ID,TENANT_ID,PRICE_ID as UNION_ID,PRICE_NAME as UNION_NAME from PUB_PRICEGRADE where TENANT_ID=:TENANT_ID and PRICE_TYPE=''2'' and COMM not in (''02'',''12'') '+

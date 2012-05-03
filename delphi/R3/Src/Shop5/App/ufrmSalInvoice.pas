@@ -134,10 +134,11 @@ begin
         edtINVH_ID.Text := CdsInvoice.FieldByName('INVH_NO').AsString;
      end;
   end;
-  if edtINVOICE_FLAG.ItemIndex >= 0 then
+  {if edtINVOICE_FLAG.ItemIndex >= 0 then
      edtINVOICE_NO.Text := ReadInvoiceNo(TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString)
   else
-     edtINVOICE_FLAG.Enabled := True;
+     edtINVOICE_FLAG.Enabled := True;}
+  if edtINVOICE_FLAG.ItemIndex < 0 then edtINVOICE_FLAG.Enabled := True;
 
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
 end;
@@ -413,7 +414,9 @@ begin
     begin
        InvoiceNo := StrToIntDef(Result,0)+1;
        if L < 8 then
-          Result := FnString.FormatStringEx(IntToStr(InvoiceNo),8,'0');
+          Result := FnString.FormatStringEx(IntToStr(InvoiceNo),8,'0')
+       else
+          Result := IntToStr(InvoiceNo);
     end;
   finally
     F.Free;
@@ -435,7 +438,7 @@ procedure TfrmSalInvoice.edtINVH_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   if Trim(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString) = '' then
-     edtINVOICE_NO.Text := edtINVH_ID.DataSet.FieldByName('BEGIN_NO').AsString
+     edtINVOICE_NO.Text := FnString.FormatStringEx(edtINVH_ID.DataSet.FieldByName('BEGIN_NO').AsString,8)
   else
      edtINVOICE_NO.Text := IncInvoiceNo(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString);
 end;
@@ -450,10 +453,8 @@ begin
   vLen:=8;
   vNo:=strtoInt(Number)+1;
   i:=Length(inttoStr(vNo));
-  if vLen-i>0 then
-    result:=Copy(Number,1,vLen-i)+inttoStr(vNo)
-  else if vLen=i then
-    result:=inttoStr(vNo);
+  if i<8 then
+     result:=FnString.FormatStringEx(IntToStr(vNo),8);
 end;
 
 procedure TfrmSalInvoice.SetIvioType(const Value: String);

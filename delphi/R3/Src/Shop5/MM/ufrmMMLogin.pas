@@ -92,6 +92,7 @@ begin
     mmGlobal.MoveToLocal;
     mmGlobal.Connect;
     CaFactory.auto := true;
+    cxedtUsers.Text := trim(cxedtUsers.Text);// 替换回车符,空格
     //认证企业合法性
     if not mmGlobal.CheckRegister then //没有注册，现在新注册一个
        begin
@@ -137,10 +138,12 @@ begin
          end;
        end;
     end;
-    if not (mmGlobal.NetVersion or mmGlobal.ONLVersion) then
-       begin
-          mmGlobal.MoveToLocal;
-       end;
+
+    if mmGlobal.NetVersion or mmGlobal.ONLVersion then
+      mmGlobal.MoveToRemate
+    else
+      mmGlobal.MoveToLocal;
+
     //开始登录了
     rs := TZQuery.Create(nil);
     temp := TZQuery.Create(nil);
@@ -252,8 +255,9 @@ begin
      begin
        F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.Ini');
        try
-         F.WriteString('Login','Account',cxedtUsers.Text);
-         F.WriteBool('Login','SaveLogin',cxcbSave.Checked);
+         // 保存用户登录信息
+         F.WriteString('Login', cxedtUsers.Text, EncStr(cxedtPasswrd.Text, ENC_KEY));
+         F.WriteString('Last', 'Account', cxedtUsers.Text);
        finally
           try
             F.Free;
@@ -266,17 +270,29 @@ end;
 procedure TfrmMMLogin.LoadLogin;
 var
   F:TIniFile;
+  accounts:TStrings;
+  i:integer;
+  last:string;
 begin
   F := TIniFile.Create(ExtractFilePath(Application.ExeName)+'Seting.Ini');
+  accounts := TStringList.Create;
   try
-    cxcbSave.Checked := F.ReadBool('Login','SaveLogin',True);
-    if cxcbSave.Checked then
-       begin
-         cxedtUsers.Text := F.ReadString('Login','Account','');
-       end;
+    // 加载所有登录过的用户信息
+    F.ReadSection('Login', accounts);
+    cxedtUsers.Properties.Items.Clear;
+    for i := 0 to accounts.Count - 1 do
+      begin
+        cxedtUsers.Properties.Items.Add(accounts[i]);
+      end;
+
+    // 默认选中上次登录的用户
+    last := F.ReadString('Last', 'Account', '');
+    if (last <> '') and (accounts.IndexOf(last) >= 0) and (accounts.IndexOf(last) < accounts.Count) then
+      cxedtUsers.ItemIndex := accounts.IndexOf(last);
   finally
     try
       F.Free;
+      accounts.Free;
     except
     end;
   end;

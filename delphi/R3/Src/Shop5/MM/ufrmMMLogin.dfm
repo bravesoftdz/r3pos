@@ -235,6 +235,7 @@ inherited frmMMLogin: TfrmMMLogin
         Top = 38
         Width = 152
         Height = 20
+        Properties.ImmediateDropDown = False
         TabOrder = 1
       end
       object logoStatus: TPanel

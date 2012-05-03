@@ -84,6 +84,15 @@ begin
        url := ExtractFilePath(ParamStr(0))+'adv\adv1.html';
        iframe := Doc.all.item('Adv1',EmptyParam) as DispHTMLIFrame;
        if iframe<>nil then iframe.src := url;
+     end
+  else
+     begin
+       iframe := Doc.all.item('Adv1',EmptyParam) as DispHTMLIFrame;
+       if iframe<>nil then
+         (iframe.style as IHTMLStyle).height := '0px';
+       iframe := Doc.all.item('mht1',EmptyParam) as DispHTMLIFrame;
+       if iframe<>nil then
+         (iframe.style as IHTMLStyle).height := '100%';
      end;
 end;
 

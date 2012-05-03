@@ -682,8 +682,11 @@ begin
   try
    try
      frmLogo.ShowTitle := '读取我的好友信息';
-     if mmGlobal.Logined and (mmGlobal.module[1]='1') then mmGlobal.getAllfriends;
-     frmMMList.LoadFriends;
+     if mmGlobal.Logined and (mmGlobal.module[1]='1') then
+        begin
+          mmGlobal.getAllfriends;
+          frmMMList.LoadFriends;
+        end;
    except
      on E:Exception do
         ShowMsgBox(Pchar(E.Message),'友情提示...',MB_OK+MB_ICONINFORMATION);
@@ -2636,14 +2639,16 @@ begin
        if ShowMsgBox('连接已经断开了，是否重连RIM服务器？','友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
        if not frmRimIEBrowser.RimLogin(true) then Exit;
      end;
+     
     frmLogo.Show;
     sl.CommaText := s;
     frmRimIEBrowser.Caption := CA_MODULE.FieldbyName('MODU_NAME').AsString;
     AddFrom(frmRimIEBrowser);
     frmRimIEBrowser.WindowState := wsMaximized;
     frmRimIEBrowser.BringToFront;
+    frmLogo.ShowTitle := '正在打开' + CA_MODULE.FieldbyName('MODU_NAME').AsString + '，请稍后...';
     if pos('?',sl.values['url'])=0 then p := '?' else p := '&';
-    frmRimIEBrowser.IEOpen(frmRimIEBrowser.rimUrl+sl.values['url']+p+'comId='+frmRimIEBrowser.rimcomId+'&custId='+frmRimIEBrowser.rimcustId);
+    frmRimIEBrowser.IEOpen(frmRimIEBrowser.rimUrl+sl.values['url']+p+'comId='+frmRimIEBrowser.rimcomId+'&custId='+frmRimIEBrowser.rimcustId, true);
   finally
     frmLogo.Close;
     sl.free;
@@ -2970,7 +2975,7 @@ begin
   rzPage8.Bitmaps.Hot := rcFactory.GetBitmap(sflag + 'left8_hot');
   rzPage8.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'left8'); }
   //bottom
-  UsersStatus.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'bottom_Status_Down');
+  //UsersStatus.Bitmaps.Down := rcFactory.GetBitmap(sflag + 'bottom_Status_Down');
   UsersStatus.Bitmaps.Up := rcFactory.GetBitmap(sflag + 'bottom_Status');
   bkg_03.Picture.Graphic := rcFactory.GetBitmap(sflag + 'bottom_bkg_03');
   bkg_04.Picture.Graphic := rcFactory.GetBitmap(sflag + 'bottom_bkg_04');
@@ -3299,7 +3304,7 @@ begin
      begin
        TObject(FTool[i]).Free;
      end;
-  FMenu.Clear;
+  FTool.Clear;
   if CA_MODULE.Locate('MODU_NAME,','导航菜单',[]) then
      lvid := CA_MODULE.FieldbyName('LEVEL_ID').AsString
   else

@@ -478,7 +478,7 @@ inherited frmCustomer: TfrmCustomer
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #20250#21592#31561#32423
-                    Width = 70
+                    Width = 85
                   end
                   item
                     EditButtons = <>
@@ -547,7 +547,7 @@ inherited frmCustomer: TfrmCustomer
                     Footers = <>
                     ReadOnly = True
                     Title.Caption = #22320#22336
-                    Width = 279
+                    Width = 246
                   end>
               end
               object stbPanel: TPanel

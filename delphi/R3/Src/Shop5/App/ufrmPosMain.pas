@@ -4821,6 +4821,7 @@ begin
       CopyDetailInfo.Data:=cdsTable.Data;
       NewReturnSaleOrder(1); //新增退货单
     end;
+   9999999:;
    else
     Raise Exception.Create('暂时不支持此项功能...');
   end;

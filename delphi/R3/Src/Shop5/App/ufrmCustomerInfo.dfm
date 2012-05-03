@@ -791,14 +791,14 @@ inherited frmCustomerInfo: TfrmCustomerInfo
               FieldName = 'UNION_NAME'
               Footers = <>
               Title.Caption = #21830#30431#21517#31216
-              Width = 102
+              Width = 96
             end
             item
               EditButtons = <>
               FieldName = 'IC_CARDNO'
               Footers = <>
               Title.Caption = #21345'  '#21495
-              Width = 110
+              Width = 100
             end
             item
               EditButtons = <>
@@ -812,27 +812,43 @@ inherited frmCustomerInfo: TfrmCustomerInfo
               FieldName = 'ACCU_INTEGRAL'
               Footers = <>
               Title.Caption = #32047#35745#31215#20998
-              Width = 60
+              Width = 35
             end
             item
               EditButtons = <>
               FieldName = 'RULE_INTEGRAL'
               Footers = <>
               Title.Caption = #20351#29992#31215#20998
-              Width = 60
+              Width = 35
             end
             item
               EditButtons = <>
               FieldName = 'INTEGRAL'
               Footers = <>
               Title.Caption = #21487#29992#31215#20998
-              Width = 60
+              Width = 35
             end
             item
               EditButtons = <>
               FieldName = 'BALANCE'
               Footers = <>
               Title.Caption = #21487#29992#20313#39069
+              Width = 35
+            end
+            item
+              DisplayFormat = '0000-00-00'
+              EditButtons = <>
+              FieldName = 'NEAR_BUY_DATE'
+              Footers = <>
+              Title.Caption = #36141#20080#26085#26399
+              Width = 75
+            end
+            item
+              DisplayFormat = '0'#22825'/'#27425
+              EditButtons = <>
+              FieldName = 'FREQUENCY'
+              Footers = <>
+              Title.Caption = #36141#20080#39057#27425
               Width = 60
             end>
         end

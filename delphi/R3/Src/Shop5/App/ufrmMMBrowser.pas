@@ -137,11 +137,13 @@ begin
   Application.ProcessMessages;
   if WaitFor then
      begin
+        frmLogo.ProgressBar1.Max := 100;
         while ReadyState <> READYSTATE_COMPLETE do
           begin
+             frmLogo.ProgressBar1.Position := Round((GetTickCount-_Start)/100000 * 100);
              frmLogo.BringToFront;
              Application.ProcessMessages;
-             if (GetTickCount-_Start)>100000 then Exit;
+             if (GetTickCount-_Start) > 100000 then Exit;
           end;
      end;
   result := true;
@@ -402,10 +404,11 @@ begin
   List := TStringList.Create;
   try
     result := f.ReadString('H_'+f.ReadString('db','srvrId','default'),'srvrPath','');
-    if result='' then Raise Exception.Create('系统没找到新商盟的参数，无法进行新商盟.'); 
-
+    if result='' then Raise Exception.Create('系统没找到新商盟的参数，无法连接新商盟.');
     List.CommaText := result;
     result := List.Values['xsm'];
+    if pos('?', result) <= 0 then
+      result := (result + '?v=' + formatDateTime('YYYY_MM_DD_HH', now()));
   finally
     List.free;
     try
@@ -457,7 +460,7 @@ begin
      Rim_ComId := rimcomId;
      Rim_CustId := rimcustId;
      if rimcustId='' then rimcustId := Params.ParambyName('rimuid').AsString;
-     if rimcustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入修改正确的许可证号.');
+     if rimcustId='' then Raise Exception.Create('当前登录门店的许可证号无效，请输入正确的许可证号.');
    finally
      Params.Free;
    end;

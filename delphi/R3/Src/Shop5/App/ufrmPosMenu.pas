@@ -58,12 +58,16 @@ class function TfrmPosMenu.ShowMenu(Owner: TForm): integer;
 begin
   with TfrmPosMenu.Create(Owner) do
     begin
-      if ShowModal=MROK then
-         begin
-           result := rgMenu.Row; 
-         end
-      else
-         result := 9999999;
+      try
+        if ShowModal=MROK then
+           begin
+             result := rgMenu.Row;
+           end
+        else
+           result := 9999999;
+      finally
+        Free;
+      end;
     end;
 end;
 

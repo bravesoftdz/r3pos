@@ -292,6 +292,7 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('CLIENT_ID').asString := CurContract.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
+          Params.ParamByName('PLAN_TYPE').AsString := '1';
           if (CurContract.gid = '') or (CurContract.gid='..ÐÂÔö..') then
              Params.ParamByName('GLIDE_NO').asString := '9999999999999999'
           else
@@ -327,6 +328,7 @@ begin
           Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
           Params.ParamByName('CLIENT_ID').asString := CurContract.cid;
           Params.ParamByName('CREA_USER').asString := Global.UserID;
+          Params.ParamByName('PLAN_TYPE').AsString := '1';
           if (CurContract.gid = '') then
              Params.ParamByName('GLIDE_NO').asString := '00000000000000'
           else

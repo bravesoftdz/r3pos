@@ -1,4 +1,3 @@
-
 unit ObjMktPlanOrder;
 
 interface
@@ -117,8 +116,10 @@ begin
 
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and CLIENT_ID='+QuotedStr(FieldbyName('CLIENT_ID').AsString)+
-                   ' and PLAN_TYPE='+QuotedStr(FieldByName('PLAN_TYPE').AsString)+' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString;
+    rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and CLIENT_ID=:CLIENT_ID and PLAN_TYPE=''1'' and TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR ';
+    rs.ParamByName('CLIENT_ID').AsString := FieldByName('CLIENT_ID').AsString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('KPI_YEAR').AsInteger := FieldByName('KPI_YEAR').AsInteger;
     aGlobal.Open(rs);
 
     if rs.FieldByName('Record_Sum').AsInteger > 0 then
@@ -144,8 +145,11 @@ begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前单据已经被另一用户修改，你不能再保存。');
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and CLIENT_ID='+QuotedStr(FieldbyName('CLIENT_ID').AsString)+' and PLAN_TYPE='+QuotedStr(FieldByName('PLAN_TYPE').AsString)+
-                   ' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+' and KPI_YEAR='+FieldbyName('KPI_YEAR').AsString+' and PLAN_ID<>'+QuotedStr(FieldbyName('PLAN_ID').AsString);
+    rs.SQL.Text := 'select count(*) as Record_Sum from MKT_PLANORDER where COMM not in (''02'',''12'') and CLIENT_ID=:CLIENT_ID and PLAN_TYPE=''1'' and TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR and PLAN_ID<>:PLAN_ID ';
+    rs.ParamByName('CLIENT_ID').AsString := FieldByName('CLIENT_ID').AsString;
+    rs.ParamByName('PLAN_ID').AsString := FieldByName('PLAN_ID').AsOldString;
+    rs.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
+    rs.ParamByName('KPI_YEAR').AsInteger := FieldByName('KPI_YEAR').AsInteger;
     aGlobal.Open(rs);
 
     if rs.FieldByName('Record_Sum').AsInteger > 0 then
@@ -270,10 +274,10 @@ procedure TMktPlanOrderGetPrior.InitClass;
 begin
   inherited;
   case iDbType of
-  0,3:SelectSQL.Text := 'select top 1 PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC';
-  1:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC ) where ROWNUM=1';
-  4:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC ) tp fetch first 1 rows only';
-  5:SelectSQL.Text := 'select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC limit 1';
+  0,3:SelectSQL.Text := 'select top 1 PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC';
+  1:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC ) where ROWNUM=1';
+  4:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC ) tp fetch first 1 rows only';
+  5:SelectSQL.Text := 'select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO<:GLIDE_NO order by GLIDE_NO DESC limit 1';
   end;
 end;
 
@@ -283,10 +287,10 @@ procedure TMktPlanOrderGetNext.InitClass;
 begin
   inherited;
   case iDbType of
-  0,3:SelectSQL.Text := 'select top 1 PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
-  1:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) where ROWNUM=1';
-  4:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
-  5:SelectSQL.Text := 'select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
+  0,3:SelectSQL.Text := 'select top 1 PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO';
+  1:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) where ROWNUM=1';
+  4:SelectSQL.Text := 'select * from (select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO) tp fetch first 1 rows only';
+  5:SelectSQL.Text := 'select PLAN_ID from MKT_PLANORDER where TENANT_ID=:TENANT_ID and PLAN_TYPE =:PLAN_TYPE and CREA_USER=:CREA_USER and GLIDE_NO>:GLIDE_NO order by GLIDE_NO limit 1';
   end;
 end;
 

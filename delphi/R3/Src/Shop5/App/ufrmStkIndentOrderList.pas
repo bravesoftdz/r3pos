@@ -315,7 +315,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
+//  if not ShopGlobal.GetChkRight('11100001',3) then Raise Exception.Create('你没有修改订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -334,7 +334,7 @@ end;
 
 procedure TfrmStkIndentOrderList.actDeleteExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('11100001',4) then Raise Exception.Create('你没有删除订货单的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('11100001',4) then Raise Exception.Create('你没有删除订货单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;

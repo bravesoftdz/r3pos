@@ -1,6 +1,6 @@
 inherited frmStkIndentOrder: TfrmStkIndentOrder
-  Left = 492
-  Top = 163
+  Left = 326
+  Top = 172
   Width = 846
   Height = 522
   Caption = #35746#36135#35746#21333
@@ -592,7 +592,7 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     inherited DBGridEh1: TDBGridEh
       Top = 135
       Width = 828
-      Height = 250
+      Height = 220
       TabOrder = 3
       OnCellClick = DBGridEh1CellClick
       Columns = <
@@ -671,6 +671,16 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
           Title.Caption = #37329#39069
           Width = 72
           OnUpdateData = DBGridEh1Columns6UpdateData
+        end
+        item
+          EditButtons = <>
+          FieldName = 'BOND_MNY'
+          Footer.DisplayFormat = '#0.00'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #20445#35777#37329
+          Width = 70
+          OnUpdateData = DBGridEh1Columns9UpdateData
         end
         item
           Alignment = taCenter
@@ -752,6 +762,65 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     end
     inherited fndUNIT_ID: TcxComboBox
       Top = 176
+    end
+    object pnlFEE: TPanel
+      Left = 5
+      Top = 355
+      Width = 828
+      Height = 30
+      Align = alBottom
+      BevelOuter = bvNone
+      Color = clWindowFrame
+      TabOrder = 8
+      DesignSize = (
+        828
+        30)
+      object Label20: TLabel
+        Left = 28
+        Top = 9
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #20445' '#35777' '#37329
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clWhite
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label21: TLabel
+        Left = 835
+        Top = 10
+        Width = 66
+        Height = 12
+        Cursor = crHandPoint
+        Alignment = taRightJustify
+        Anchors = [akTop, akRight]
+        Caption = #26597#30475#38468#20214'...'
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlue
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsUnderline]
+        ParentFont = False
+      end
+      object edtBOND_MNY: TcxTextEdit
+        Tag = 1
+        Left = 83
+        Top = 5
+        Width = 99
+        Height = 20
+        TabStop = False
+        ParentFont = False
+        Style.Font.Charset = GB2312_CHARSET
+        Style.Font.Color = clNavy
+        Style.Font.Height = -12
+        Style.Font.Name = #23435#20307
+        Style.Font.Style = [fsBold]
+        TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
     end
   end
   inherited mmMenu: TMainMenu
@@ -881,6 +950,10 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
       end
       item
         Name = 'FNSH_AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'BOND_MNY'
         DataType = ftFloat
       end>
     AfterScroll = edtTableAfterScroll

@@ -1,16 +1,16 @@
 inherited frmSalIndentOrder: TfrmSalIndentOrder
-  Left = 200
-  Top = 181
+  Left = 265
+  Top = 184
   Width = 950
   Height = 552
   Caption = #38144#21806#35746#21333
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 934
-    Height = 514
+    Width = 942
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 924
+      Width = 932
       Height = 137
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -508,8 +508,8 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 421
-      Width = 924
+      Top = 432
+      Width = 932
       Height = 51
       TabOrder = 2
       object Label8: TLabel
@@ -694,8 +694,8 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 175
-      Width = 924
-      Height = 216
+      Width = 932
+      Height = 227
       TabOrder = 3
       Columns = <
         item
@@ -777,6 +777,16 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
           OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
+          EditButtons = <>
+          FieldName = 'BOND_MNY'
+          Footer.DisplayFormat = '#0.00'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #20445#35777#37329
+          Width = 80
+          OnUpdateData = DBGridEh1Columns9UpdateData
+        end
+        item
           DisplayFormat = '#0%'
           EditButtons = <>
           FieldName = 'AGIO_RATE'
@@ -813,15 +823,15 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 142
-      Width = 924
+      Width = 932
     end
     inherited stbHint: TRzPanel
-      Top = 472
-      Width = 924
+      Top = 483
+      Width = 932
     end
     inherited rzHelp: TRzPanel
-      Top = 496
-      Width = 924
+      Top = 507
+      Width = 932
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox
@@ -829,15 +839,15 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
     end
     object pnlFEE: TPanel
       Left = 5
-      Top = 391
-      Width = 924
+      Top = 402
+      Width = 932
       Height = 30
       Align = alBottom
       BevelOuter = bvNone
       Color = clWindowFrame
       TabOrder = 8
       DesignSize = (
-        924
+        932
         30)
       object Label20: TLabel
         Left = 28
@@ -955,6 +965,7 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
         OnClick = Label21Click
       end
       object edtBOND_MNY: TcxTextEdit
+        Tag = 1
         Left = 83
         Top = 5
         Width = 99
@@ -1190,6 +1201,10 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
       end
       item
         Name = 'FNSH_AMOUNT'
+        DataType = ftFloat
+      end
+      item
+        Name = 'BOND_MNY'
         DataType = ftFloat
       end>
     AfterScroll = edtTableAfterScroll

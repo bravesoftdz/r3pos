@@ -117,6 +117,8 @@ type
     procedure N5Click(Sender: TObject);
     procedure useLvlPriceClick(Sender: TObject);
     procedure Label21Click(Sender: TObject);
+    procedure DBGridEh1Columns9UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     //进位法则
@@ -436,6 +438,7 @@ end;
 procedure TfrmSalIndentOrder.SaveOrder;
 var
   Printed:boolean;
+  BondMny:Real;
 begin
   inherited;
   if dbState = dsBrowse then Exit;
@@ -477,6 +480,7 @@ begin
     AObj.WriteToDataSet(cdsHeader);
     cdsHeader.Post;
     WriteTo(cdsDetail);
+    BondMny := 0;
     cdsDetail.First;
     while not cdsDetail.Eof do
        begin
@@ -484,9 +488,13 @@ begin
          cdsDetail.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
          cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
          cdsDetail.FieldByName('INDE_ID').AsString := cdsHeader.FieldbyName('INDE_ID').AsString;
+         BondMny := BondMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
          cdsDetail.Post;
          cdsDetail.Next;
        end;
+    cdsHeader.Edit;
+    cdsHeader.FieldByName('BOND_MNY').AsFloat := BondMny;
+    cdsHeader.Post;
     Factor.AddBatch(cdsHeader,'TSalIndentOrder');
     Factor.AddBatch(cdsDetail,'TSalIndentData');
     Factor.CommitBatch;
@@ -1983,6 +1991,26 @@ begin
   Application.ProcessMessages;
   SendMessage(frmMktRequOrderList.Handle,WM_JOIN_DATA,integer(Pchar(s)),0);
   //PostMessage(frmMktRequOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
+end;
+
+procedure TfrmSalIndentOrder.DBGridEh1Columns9UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  r:real;
+begin
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  //op := TColumnEh(Sender).Field.AsFloat;
+  TColumnEh(Sender).Field.asFloat := r;
 end;
 
 end.

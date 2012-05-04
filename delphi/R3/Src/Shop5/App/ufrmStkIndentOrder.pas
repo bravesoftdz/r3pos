@@ -56,6 +56,10 @@ type
     RzBitBtn1: TRzBitBtn;
     Label12: TLabel;
     edtDEMA_GLIDE_NO: TcxButtonEdit;
+    pnlFEE: TPanel;
+    Label20: TLabel;
+    Label21: TLabel;
+    edtBOND_MNY: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -84,6 +88,8 @@ type
     procedure RzBitBtn1Click(Sender: TObject);
     procedure edtDEMA_GLIDE_NOPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure DBGridEh1Columns9UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     //结算金额
@@ -323,7 +329,7 @@ begin
 end;
 
 procedure TfrmStkIndentOrder.SaveOrder;
-var mny,amt:real;
+var mny,amt,BondMny:real;
 begin
   inherited;
   Saved := false;
@@ -356,6 +362,7 @@ begin
     WriteTo(cdsDetail);
     mny := 0;
     amt := 0;
+    BondMny := 0;
     cdsDetail.First;
     while not cdsDetail.Eof do
        begin
@@ -365,12 +372,14 @@ begin
          cdsDetail.FieldByName('INDE_ID').AsString := cdsHeader.FieldbyName('INDE_ID').AsString;
          mny := mny + cdsDetail.FieldbyName('CALC_MONEY').asFloat;
          amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
+         BondMny := BondMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
          cdsDetail.Post;
          cdsDetail.Next;
        end;
     cdsHeader.Edit;
     cdsHeader.FieldbyName('INDE_MNY').asFloat := mny;
     cdsHeader.FieldbyName('INDE_AMT').asFloat := amt;
+    cdsHeader.FieldByName('BOND_MNY').AsFloat := BondMny;
     cdsHeader.Post;
     Factor.AddBatch(cdsHeader,'TStkIndentOrder');
     Factor.AddBatch(cdsDetail,'TStkIndentData');
@@ -1261,6 +1270,26 @@ begin
        end;
        DemaFrom(s);
      end;
+end;
+
+procedure TfrmStkIndentOrder.DBGridEh1Columns9UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var
+  r:real;
+begin
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  //op := TColumnEh(Sender).Field.AsFloat;
+  TColumnEh(Sender).Field.asFloat := r;
 end;
 
 end.

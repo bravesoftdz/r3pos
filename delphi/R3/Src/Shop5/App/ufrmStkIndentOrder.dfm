@@ -1039,4 +1039,16 @@ inherited frmStkIndentOrder: TfrmStkIndentOrder
     Left = 120
     Top = 224
   end
+  object DBSumList1: TDBSumList
+    DataSet = edtTable
+    ExternalRecalc = False
+    SumCollection = <
+      item
+        FieldName = 'BOND_MNY'
+        GroupOperation = goSum
+      end>
+    VirtualRecords = True
+    Left = 360
+    Top = 216
+  end
 end

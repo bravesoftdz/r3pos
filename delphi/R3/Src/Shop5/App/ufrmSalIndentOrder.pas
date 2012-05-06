@@ -1996,7 +1996,9 @@ end;
 procedure TfrmSalIndentOrder.DBGridEh1Columns9UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
-  r:real;
+  r,SumMny:real;
+  i:Integer;
+  GodsId:String;
 begin
   try
     if Text='' then
@@ -2011,6 +2013,26 @@ begin
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   //op := TColumnEh(Sender).Field.AsFloat;
   TColumnEh(Sender).Field.asFloat := r;
+
+  edtTable.Post;
+  edtTable.DisableControls;
+  try
+    i := DBGridEh1.Col;
+    GodsId := edtTable.FieldByName('GODS_ID').AsString;
+    edtTable.First;
+    while not edtTable.Eof do
+    begin
+      SumMny := SumMny + edtTable.FieldByName('BOND_MNY').AsFloat;
+      edtTable.Next;
+    end;
+    edtBOND_MNY.EditValue := SumMny;
+    edtTable.Locate('GODS_ID',GodsId,[]);
+    DBGridEh1.Col := i;
+    DBGridEh1.SetFocus;
+  finally
+    edtTable.EnableControls;
+  end;
+  edtTable.Edit;
 end;
 
 end.

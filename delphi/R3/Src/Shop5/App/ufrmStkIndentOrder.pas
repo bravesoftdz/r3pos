@@ -8,7 +8,7 @@ uses
   cxTextEdit, cxControls, cxContainer, cxEdit, cxMaskEdit, cxButtonEdit,
   zrComboBoxList, Grids, DBGridEh, ExtCtrls, RzPanel, cxDropDownEdit,
   cxCalendar, zBase, cxSpinEdit, RzButton, cxListBox,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, DBSumLst;
 
 type
   TfrmStkIndentOrder = class(TframeOrderForm)
@@ -60,6 +60,7 @@ type
     Label20: TLabel;
     Label21: TLabel;
     edtBOND_MNY: TcxTextEdit;
+    DBSumList1: TDBSumList;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -213,7 +214,7 @@ begin
   InRate2 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
   InRate3 := StrtoFloatDef(ShopGlobal.GetParameter('IN_RATE3'),0.17);
   DefInvFlag := StrtoIntDef(ShopGlobal.GetParameter('IN_INV_FLAG'),1);
-
+  DBSumList1.DataSet := DBGridEh1.DataSource.DataSet;
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label40.Caption := '订货仓库';
@@ -362,7 +363,7 @@ begin
     WriteTo(cdsDetail);
     mny := 0;
     amt := 0;
-    BondMny := 0;
+    //BondMny := 0;
     cdsDetail.First;
     while not cdsDetail.Eof do
        begin
@@ -372,14 +373,14 @@ begin
          cdsDetail.FieldByName('INDE_ID').AsString := cdsHeader.FieldbyName('INDE_ID').AsString;
          mny := mny + cdsDetail.FieldbyName('CALC_MONEY').asFloat;
          amt := amt + cdsDetail.FieldbyName('AMOUNT').asFloat;
-         BondMny := BondMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
+         //BondMny := BondMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
          cdsDetail.Post;
          cdsDetail.Next;
        end;
     cdsHeader.Edit;
     cdsHeader.FieldbyName('INDE_MNY').asFloat := mny;
     cdsHeader.FieldbyName('INDE_AMT').asFloat := amt;
-    cdsHeader.FieldByName('BOND_MNY').AsFloat := BondMny;
+    //cdsHeader.FieldByName('BOND_MNY').AsFloat := BondMny;
     cdsHeader.Post;
     Factor.AddBatch(cdsHeader,'TStkIndentOrder');
     Factor.AddBatch(cdsDetail,'TStkIndentData');
@@ -1275,7 +1276,9 @@ end;
 procedure TfrmStkIndentOrder.DBGridEh1Columns9UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var
-  r:real;
+  r,SumMny:real;
+  i:Integer;
+  GodsId:String;
 begin
   try
     if Text='' then
@@ -1290,6 +1293,25 @@ begin
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   //op := TColumnEh(Sender).Field.AsFloat;
   TColumnEh(Sender).Field.asFloat := r;
+  edtTable.Post;
+  edtTable.DisableControls;
+  try
+    i := DBGridEh1.Col;
+    GodsId := edtTable.FieldByName('GODS_ID').AsString;
+    edtTable.First;
+    while not edtTable.Eof do
+    begin
+      SumMny := SumMny + edtTable.FieldByName('BOND_MNY').AsFloat;
+      edtTable.Next;
+    end;
+    edtBOND_MNY.EditValue := SumMny;
+    edtTable.Locate('GODS_ID',GodsId,[]);
+    DBGridEh1.Col := i;
+    DBGridEh1.SetFocus;
+  finally
+    edtTable.EnableControls;
+  end;
+  edtTable.Edit;
 end;
 
 end.

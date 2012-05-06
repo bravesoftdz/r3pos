@@ -438,7 +438,7 @@ end;
 procedure TfrmSalIndentOrder.SaveOrder;
 var
   Printed:boolean;
-  BondMny:Real;
+  //BondMny:Real;
 begin
   inherited;
   if dbState = dsBrowse then Exit;
@@ -480,7 +480,7 @@ begin
     AObj.WriteToDataSet(cdsHeader);
     cdsHeader.Post;
     WriteTo(cdsDetail);
-    BondMny := 0;
+    //BondMny := 0;
     cdsDetail.First;
     while not cdsDetail.Eof do
        begin
@@ -488,13 +488,13 @@ begin
          cdsDetail.FieldByName('TENANT_ID').AsInteger := cdsHeader.FieldbyName('TENANT_ID').AsInteger;
          cdsDetail.FieldByName('SHOP_ID').AsString := cdsHeader.FieldbyName('SHOP_ID').AsString;
          cdsDetail.FieldByName('INDE_ID').AsString := cdsHeader.FieldbyName('INDE_ID').AsString;
-         BondMny := BondMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
+         //BondMny := BondMny + cdsDetail.FieldByName('BOND_MNY').AsFloat;
          cdsDetail.Post;
          cdsDetail.Next;
        end;
-    cdsHeader.Edit;
-    cdsHeader.FieldByName('BOND_MNY').AsFloat := BondMny;
-    cdsHeader.Post;
+    //cdsHeader.Edit;
+    //cdsHeader.FieldByName('BOND_MNY').AsFloat := BondMny;
+    //cdsHeader.Post;
     Factor.AddBatch(cdsHeader,'TSalIndentOrder');
     Factor.AddBatch(cdsDetail,'TSalIndentData');
     Factor.CommitBatch;

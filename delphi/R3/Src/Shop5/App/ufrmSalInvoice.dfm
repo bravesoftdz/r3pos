@@ -992,7 +992,6 @@ inherited frmSalInvoice: TfrmSalInvoice
                   EditButtons = <>
                   FieldName = 'APRICE'
                   Footer.Alignment = taRightJustify
-                  Footer.ValueType = fvtSum
                   Footers = <>
                   Tag = 1
                   Title.Caption = #21333#20215

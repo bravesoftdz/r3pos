@@ -3619,6 +3619,14 @@ inherited frmShopMain: TfrmShopMain
             end
           end
         end
+        object Button1: TButton
+          Left = 16
+          Top = 14
+          Width = 75
+          Height = 25
+          Action = actfrmPlanOrderList3
+          TabOrder = 1
+        end
       end
     end
     object rzTool: TPanel
@@ -5218,7 +5226,7 @@ inherited frmShopMain: TfrmShopMain
     end
     object actfrmSalInvoiceList: TAction
       Tag = 100002314
-      Caption = #21457#31080#31649#29702
+      Caption = #38144#39033#21457#31080
       Enabled = False
       OnExecute = actfrmSalInvoiceListExecute
     end
@@ -5632,6 +5640,21 @@ inherited frmShopMain: TfrmShopMain
       Tag = 100002305
       Caption = #36153#29992#26680#38144#25253#34920
       OnExecute = actfrmMktBudgReportExecute
+    end
+    object actfrmPlanOrderList3: TAction
+      Tag = 100002400
+      Caption = #37319#36141#21512#21516
+      OnExecute = actfrmPlanOrderList3Execute
+    end
+    object actfrmStkInvoiceList: TAction
+      Tag = 100002401
+      Caption = #36827#39033#21457#31080
+      OnExecute = actfrmStkInvoiceListExecute
+    end
+    object actfrmInvoice: TAction
+      Tag = 100002402
+      Caption = #21457#31080#39046#29992
+      OnExecute = actfrmInvoiceExecute
     end
   end
   inherited PopupMenu: TPopupMenu

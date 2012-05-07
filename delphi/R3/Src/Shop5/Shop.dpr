@@ -310,7 +310,10 @@ uses
   ufrmMktBudgOrderList in 'App\ufrmMktBudgOrderList.pas' {frmMktBudgOrderList},
   ufrmMktBudgReport in 'App\ufrmMktBudgReport.pas' {frmMktBudgReport},
   ObjMktBudgOrder in 'Obj\ObjMktBudgOrder.pas',
-  ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder};
+  ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder},
+  ufrmMktPlanOrder3 in 'App\ufrmMktPlanOrder3.pas' {frmMktPlanOrder3},
+  ufrmMktPlanOrderList3 in 'App\ufrmMktPlanOrderList3.pas' {frmMktPlanOrderList3},
+  ObjMktPlanOrder3 in 'Obj\ObjMktPlanOrder3.pas';
 
 {$R *.res}
 var

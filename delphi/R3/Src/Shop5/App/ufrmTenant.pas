@@ -300,7 +300,7 @@ begin
         CdsTable.FieldByName('PROD_ID').AsString := Tenant.PROD_ID;
         CdsTable.FieldByName('AUDIT_STATUS').AsString := Tenant.AUDIT_STATUS;
         CdsTable.Post;
-        Global.LocalFactory.UpdateBatch(CdsTable,'TTenant',nil);
+        uGlobal.Factor.UpdateBatch(CdsTable,'TTenant',nil);
      end;
   Global.TENANT_ID := Tenant.TENANT_ID;
   Global.TENANT_NAME := Tenant.TENANT_NAME;

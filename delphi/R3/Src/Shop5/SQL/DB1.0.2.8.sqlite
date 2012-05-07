@@ -1,3 +1,7 @@
+alter table RCK_C_GOODS_DAYS add SALES_STYLE varchar (36) NULL;
+--全初始化成门店销售
+update RCK_C_GOODS_DAYS set SALES_STYLE='6BD82B9E-3678-4F33-89ED-B8C26B6589BD';
+
 drop table SAL_INVOICE_BOOK;
 --发票本管理
 CREATE TABLE [SAL_INVOICE_BOOK] (
@@ -427,7 +431,7 @@ CREATE TABLE [SAL_INVOICE_LIST] (
         --发票流水ID号
 	[INVD_ID] [char] (36) NOT NULL ,
         --关联单号
-	[SEQNO] int NOT NULL;
+	[SEQNO] int NOT NULL,
         --关联单号(0无 1销售单 2 退货单(销) 3订货单(销) 4进货单 5 退货单(进) 6 订货单(进))
 	[FROM_TYPE] [char] (36) NOT NULL ,
         --关联单号
@@ -486,7 +490,7 @@ CREATE TABLE [ACC_FVCHORDER] (
   	[TENANT_ID],
   	[FVCH_ID] 
   )
-)
+);
 
 CREATE INDEX IX_ACC_FVCHORDER_TENANT_ID ON ACC_FVCHORDER (TENANT_ID);
 CREATE INDEX IX_ACC_FVCHORDER_TIME_STAMP ON ACC_FVCHORDER (TENANT_ID, TIME_STAMP);
@@ -516,7 +520,7 @@ CREATE TABLE [ACC_FVCHDATA] (
         --单价
 	[APRICE] [decimal](18, 3) NULL,
   --记账方向  1借方 2贷方
-  [SUBJECT_NO] [char](1)   NOT NULL,
+  [SUBJECT_TYPE] [char](1)   NOT NULL,
   --业务日期
   [OPER_DATE] int   NOT NULL,
   CONSTRAINT [PK_ACC_FVCHDATA] PRIMARY KEY 
@@ -546,6 +550,8 @@ CREATE TABLE [ACC_FVCHDETAIL] (
   [SUBJ_USER] [char](36)  NULL,
   --部门编号->财务系统
   [SUBJ_DEPT] [char](36)  NULL,
+  --门店编号->财务系统
+  [SUBJ_SHOP] [char](36)  NULL,
   --往来单位->财务系统
   [SUBJ_CLIENT] [char](36)  NULL,
   --专项1->财务系统
@@ -585,7 +591,7 @@ CREATE TABLE [ACC_FVCHGLIDE] (
   [FVCH_GLID] [char](36)   NOT NULL,
   --凭证单号
   [FVCH_ID] [char](36)   NOT NULL,
-  --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单 11缴款单 12 其他收入 13其他支出 14 存取款单
+  --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单  11 零售单据 12缴款单 13 其他收入 14其他支出 15 存取款单
   [FVCH_GTYPE] [char](2)   NOT NULL,
   --关联单号
   [FVCH_GID] [char](36)   NOT NULL,
@@ -593,6 +599,60 @@ CREATE TABLE [ACC_FVCHGLIDE] (
   ( 
 		[TENANT_ID],
 		[FVCH_GLID]
-  )
+  ) 
 );
 CREATE INDEX IX_ACC_FVCHGLIDE_FVCH_ID ON ACC_FVCHGLIDE(TENANT_ID,FVCH_ID);
+
+
+--凭证模块
+CREATE TABLE [ACC_FVCHFRAME] (
+  --企业代码
+  [TENANT_ID] int  NOT NULL,
+  --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单  11 零售单据 12缴款单 13 其他收入 14其他支出 15 存取款单
+  [FVCH_GTYPE] [char](2)   NOT NULL,
+  --序号
+	[SEQNO] [int] NOT NULL ,
+  --科目代码
+  [SUBJECT_NO] [varchar](10)   NOT NULL,
+  --摘要
+  [SUMMARY] [varchar](100)   NOT NULL,
+        --金额<取数字段>
+	[AMONEY] [varchar](20) NULL,
+        --数量<取数字段>
+	[AMOUNT] [varchar](20) NULL,
+        --单价<取数字段>
+	[APRICE] [varchar](20) NULL,
+  --取数条件
+  [SWHERE] [varchar](255) NOT NULL,
+  --分录明细 100000000 按位取数0代表不分细明1表代分明细(1人员 2部门 3门店<仓库> 4往来单位 其他分别为专项1-5)
+  [DATAFLAG] [varchar](8)   NOT NULL,
+  --记账方向  1借方 2贷方
+  [SUBJECT_TYPE] [char](1) NOT NULL,
+  CONSTRAINT [PK_ACC_FVCHDATA] PRIMARY KEY 
+  ( 
+		[TENANT_ID],
+		[FVCH_DID]
+  )
+);
+CREATE INDEX IX_ACC_FVCHFRAME_TENANT_ID ON ACC_FVCHFRAME (TENANT_ID);
+CREATE INDEX IX_ACC_FVCHFRAME_FVCH_GTYPE ON ACC_FVCHFRAME (TENANT_ID,FVCH_GTYPE);
+
+--取数字段定义 采购订单
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('CALC_AMOUNT','数量','FVCH_DATA_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('APRICE','单价','FVCH_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('CALC_MONEY','含税金额','FVCH_DATA_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('NOTAX_MONEY','不含税金额','FVCH_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('TAX_MONEY','进项金额','FVCH_DATA_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('ADAV_MNY','预付款','FVCH_DATA_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('BOND_MNY','保证金','FVCH_DATA_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('OTHR_MNY','其他费用','FVCH_DATA_01','00',5497000);
+
+--取数条件定义 采购订单
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('DEPT_ID','部门','FVCH_WHERE_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('SHOP_ID','门店','FVCH_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('SORT_ID','商品指标','FVCH_WHERE_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('CLIENT_ID','供应商','FVCH_WHERE_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('GUIDE_USER','采购员','FVCH_WHERE_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('INVOICE_FLAG','发票类型','FVCH_WHERE_01','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('IS_PRESENT','是否赠品','FVCH_WHERE_01','00',5497000);
+

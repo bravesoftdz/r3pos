@@ -3,7 +3,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
   Top = 144
   Width = 908
   Height = 549
-  Caption = #21457#31080#31649#29702
+  Caption = #38144#39033#21457#31080#31649#29702
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -17,12 +17,10 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 469
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #38144#21806#24320#31080#26597#35810
+          Caption = #38144#39033#21457#31080#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 882
             Height = 442

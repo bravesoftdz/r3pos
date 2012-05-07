@@ -85,14 +85,14 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, ufrmMktPla
 
 procedure TfrmMktPlanOrderList3.actNewExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002150',2) then Raise Exception.Create('你没有新增采购合同的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002400',2) then Raise Exception.Create('你没有新增采购合同的权限,请和管理员联系.');
   inherited;
 
 end;
 
 procedure TfrmMktPlanOrderList3.actDeleteExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002150',4) then Raise Exception.Create('你没有删除采购合同的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002400',4) then Raise Exception.Create('你没有删除采购合同的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -102,14 +102,14 @@ begin
 
   if TfrmMktPlanOrder3(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('100002150',5) then
+      if not ShopGlobal.GetChkRight('100002400',5) then
          Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktPlanOrder3(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入合同的权限!');
     end;
   inherited;
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       if ShopGlobal.GetChkRight('100002150',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增采购合同？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002400',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增采购合同？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -118,7 +118,7 @@ end;
 
 procedure TfrmMktPlanOrderList3.actEditExecute(Sender: TObject);
 begin
-//  if not ShopGlobal.GetChkRight('100002150',3) then Raise Exception.Create('你没有修改采购合同的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002400',3) then Raise Exception.Create('你没有修改采购合同的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -128,7 +128,7 @@ begin
 
   if TfrmMktPlanOrder3(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('100002150',5) then
+      if not ShopGlobal.GetChkRight('100002400',5) then
          Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktPlanOrder3(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
@@ -142,7 +142,7 @@ begin
      begin
        if not CurContract.saved then Exit;       
 
-       if ShopGlobal.GetChkRight('100002150',2) and (MessageBox(Handle,'是否继续新增采购合同？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002400',2) and (MessageBox(Handle,'是否继续新增采购合同？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -152,7 +152,7 @@ end;
 procedure TfrmMktPlanOrderList3.actPrintExecute(Sender: TObject);
 begin
   inherited;
-//  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印采购合同的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002400',6) then Raise Exception.Create('你没有打印采购合同的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -180,7 +180,7 @@ end;
 procedure TfrmMktPlanOrderList3.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-//  if not ShopGlobal.GetChkRight('100002150',6) then Raise Exception.Create('你没有打印采购合同的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002400',6) then Raise Exception.Create('你没有打印采购合同的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -268,7 +268,7 @@ end;
 
 procedure TfrmMktPlanOrderList3.actAuditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002150',5) then Raise Exception.Create('你没有审核采购合同的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002400',5) then Raise Exception.Create('你没有审核采购合同的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;

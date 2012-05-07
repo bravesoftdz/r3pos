@@ -1,20 +1,20 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 533
-  Top = 337
-  Caption = #21457#31080#20449#24687
-  ClientHeight = 268
-  ClientWidth = 527
+  Left = 299
+  Top = 148
+  Caption = #38144#39033#21457#31080
+  ClientHeight = 483
+  ClientWidth = 719
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 527
-    Height = 268
+    Width = 719
+    Height = 483
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
-      Width = 517
-      Height = 218
+      Width = 709
+      Height = 433
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -24,188 +24,21 @@ inherited frmSalInvoice: TfrmSalInvoice
         Color = clWhite
         Caption = #24320#31080#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 513
-          Height = 191
+          Width = 705
+          Height = 406
           BorderColor = clWhite
           Color = clWhite
-          object Label2: TLabel
-            Left = 113
-            Top = 65
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #21457#31080#26412#21495
-          end
-          object Label6: TLabel
-            Left = 316
-            Top = 65
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #24320#31080#26085#26399
-          end
-          object Label7: TLabel
-            Left = 137
-            Top = 163
-            Width = 24
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #35828#26126
-          end
-          object Label17: TLabel
-            Left = 113
-            Top = 14
-            Width = 48
-            Height = 12
-            Caption = #23458#25143#21517#31216
-          end
-          object Label3: TLabel
-            Left = 113
-            Top = 40
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #21457#31080#31867#22411
-          end
-          object Label40: TLabel
-            Left = 316
-            Top = 89
-            Width = 48
-            Height = 12
-            Caption = #24320#31080#38376#24215
-          end
-          object Label4: TLabel
-            Left = 109
-            Top = 89
-            Width = 53
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #21457' '#31080' '#21495
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = [fsBold]
-            ParentFont = False
-          end
-          object Label8: TLabel
-            Left = 114
-            Top = 114
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #24320#31080#37329#39069
-          end
-          object Label5: TLabel
-            Left = 316
-            Top = 114
-            Width = 48
-            Height = 12
-            Caption = #24320#31080#37096#38376
-          end
-          object Label9: TLabel
-            Left = 316
-            Top = 138
-            Width = 48
-            Height = 12
-            Caption = #24320' '#31080' '#20154
-          end
-          object Label1: TLabel
-            Left = 315
-            Top = 40
-            Width = 48
-            Height = 12
-            Alignment = taRightJustify
-            Caption = #21457#31080#31181#31867
-          end
-          object edtINVH_ID: TzrComboBoxList
-            Left = 167
-            Top = 61
-            Width = 133
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
-            Properties.OnChange = edtINVH_IDPropertiesChange
-            TabOrder = 2
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'INVH_NO'
-            KeyField = 'INVH_ID'
-            ListField = 'INVH_NO'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'INVH_NO'
-                Footers = <>
-                Title.Caption = #21457#31080#20195#21495
-                Width = 100
-              end
-              item
-                DisplayFormat = '00000000'
-                EditButtons = <>
-                FieldName = 'BEGIN_NO'
-                Footers = <>
-                Title.Caption = #36215#22987#21495
-                Width = 70
-              end
-              item
-                DisplayFormat = '00000000'
-                EditButtons = <>
-                FieldName = 'ENDED_NO'
-                Footers = <>
-                Title.Caption = #32456#27490#21495
-                Width = 70
-              end
-              item
-                DisplayFormat = '00000000'
-                EditButtons = <>
-                FieldName = 'CURRENT_NO'
-                Footers = <>
-                Title.Caption = #24403#21069#31080#21495
-                Width = 70
-              end>
-            DataSet = CdsInvoice
-            DropWidth = 210
-            DropHeight = 180
-            ShowTitle = True
-            AutoFitColWidth = True
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = []
-            DropListStyle = lsFixed
-            MultiSelect = False
-          end
-          object edtCREA_DATE: TcxDateEdit
-            Left = 370
-            Top = 61
-            Width = 131
-            Height = 20
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            TabOrder = 7
-          end
-          object edtREMARK: TcxTextEdit
-            Left = 167
-            Top = 158
-            Width = 334
-            Height = 20
-            TabOrder = 11
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          end
           object RzPanel4: TRzPanel
             Left = 8
             Top = 16
-            Width = 81
+            Width = 1
             Height = 89
             BorderOuter = fsFlat
             BorderColor = clActiveCaption
             BorderShadow = clActiveCaption
             Color = clWhite
             FlatColor = clBlue
-            TabOrder = 12
+            TabOrder = 4
             Visible = False
             object Image1: TImage
               Left = 15
@@ -443,253 +276,778 @@ inherited frmSalInvoice: TfrmSalInvoice
               Transparent = True
             end
           end
-          object edtCLIENT_ID: TzrComboBoxList
-            Left = 167
-            Top = 10
-            Width = 205
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
-            TabOrder = 0
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
-            KeyField = 'CLIENT_ID'
-            ListField = 'CLIENT_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'CLIENT_CODE'
-                Footers = <>
-                Title.Caption = #23458#25143#21495
-                Width = 60
-              end
-              item
-                EditButtons = <>
-                FieldName = 'CLIENT_NAME'
-                Footers = <>
-                Title.Caption = #23458#25143#21517#31216
-                Width = 150
-              end
-              item
-                EditButtons = <>
-                FieldName = 'LINKMAN'
-                Footers = <>
-                Title.Caption = #32852#31995#20154
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'TELEPHONE2'
-                Footers = <>
-                Title.Caption = #32852#31995#30005#35805
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'LICENSE_CODE'
-                Footers = <>
-                Title.Caption = #35777#20214#21495
-                Width = 70
-              end
-              item
-                EditButtons = <>
-                FieldName = 'ADDRESS'
-                Footers = <>
-                Title.Caption = #22320#22336
-                Width = 150
-              end>
-            DropWidth = 314
-            DropHeight = 281
-            ShowTitle = True
-            AutoFitColWidth = False
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = [zbNew]
-            DropListStyle = lsFixed
-            OnSaveValue = edtCLIENT_IDSaveValue
-            MultiSelect = False
-          end
-          object edtINVOICE_FLAG: TcxComboBox
-            Left = 167
-            Top = 36
-            Width = 133
-            Height = 20
-            Enabled = False
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            Properties.DropDownListStyle = lsFixedList
+          object RzPanel1: TRzPanel
+            Left = 5
+            Top = 85
+            Width = 695
+            Height = 90
+            Align = alTop
+            BorderOuter = fsNone
+            BorderColor = clGreen
+            BorderWidth = 1
+            Color = clWhite
             TabOrder = 1
-          end
-          object edtSHOP_ID: TzrComboBoxList
-            Left = 370
-            Top = 85
-            Width = 131
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = False
-            TabOrder = 8
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'SHOP_NAME;SHOP_SPELL'
-            KeyField = 'SHOP_ID'
-            ListField = 'SHOP_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'SHOP_NAME'
-                Footers = <>
-                Title.Caption = #21517#31216
+            object Label7: TLabel
+              Left = 62
+              Top = 71
+              Width = 82
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #35828'       '#26126':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label17: TLabel
+              Left = 64
+              Top = 8
+              Width = 80
+              Height = 12
+              Caption = #23458' '#25143' '#21517' '#31216':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label40: TLabel
+              Left = 64
+              Top = 29
+              Width = 80
+              Height = 12
+              Caption = #24320' '#31080' '#38376' '#24215':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label5: TLabel
+              Left = 64
+              Top = 50
+              Width = 80
+              Height = 12
+              Caption = #24320' '#31080' '#37096' '#38376':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object edtREMARK: TcxTextEdit
+              Left = 150
+              Top = 67
+              Width = 334
+              Height = 20
+              TabOrder = 3
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtCLIENT_ID: TzrComboBoxList
+              Left = 150
+              Top = 4
+              Width = 205
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = True
+              TabOrder = 0
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
+              KeyField = 'CLIENT_ID'
+              ListField = 'CLIENT_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'CLIENT_CODE'
+                  Footers = <>
+                  Title.Caption = #23458#25143#21495
+                  Width = 60
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'CLIENT_NAME'
+                  Footers = <>
+                  Title.Caption = #23458#25143#21517#31216
+                  Width = 150
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LINKMAN'
+                  Footers = <>
+                  Title.Caption = #32852#31995#20154
+                  Width = 70
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'TELEPHONE2'
+                  Footers = <>
+                  Title.Caption = #32852#31995#30005#35805
+                  Width = 70
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'LICENSE_CODE'
+                  Footers = <>
+                  Title.Caption = #35777#20214#21495
+                  Width = 70
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'ADDRESS'
+                  Footers = <>
+                  Title.Caption = #22320#22336
+                  Width = 150
+                end>
+              DropWidth = 314
+              DropHeight = 281
+              ShowTitle = True
+              AutoFitColWidth = False
+              ShowButton = True
+              LocateStyle = lsDark
+              Buttons = [zbNew]
+              DropListStyle = lsFixed
+              OnSaveValue = edtCLIENT_IDSaveValue
+              MultiSelect = False
+            end
+            object edtSHOP_ID: TzrComboBoxList
+              Left = 150
+              Top = 25
+              Width = 205
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 1
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'SHOP_NAME;SHOP_SPELL'
+              KeyField = 'SHOP_ID'
+              ListField = 'SHOP_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SEQ_NO'
+                  Footers = <>
+                  Title.Caption = #24207#21495
+                  Width = 20
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = []
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
+            object edtDEPT_ID: TzrComboBoxList
+              Left = 150
+              Top = 46
+              Width = 205
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 2
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'DEPT_NAME;DEPT_SPELL'
+              KeyField = 'DEPT_ID'
+              ListField = 'DEPT_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'DEPT_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = []
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
+            object RzPanel8: TRzPanel
+              Left = 1
+              Top = 1
+              Width = 47
+              Height = 88
+              Align = alLeft
+              BorderOuter = fsNone
+              BorderSides = [sdRight]
+              BorderColor = clGreen
+              BorderWidth = 1
+              Color = clWhite
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 4
+              object RzLabel3: TRzLabel
+                Left = 15
+                Top = 16
+                Width = 15
+                Height = 56
+                Caption = #36141#13#36135#13#21333#13#20301
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clGreen
+                Font.Height = -14
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
               end
-              item
-                EditButtons = <>
-                FieldName = 'SEQ_NO'
-                Footers = <>
-                Title.Caption = #24207#21495
-                Width = 20
-              end>
-            DropWidth = 185
-            DropHeight = 180
-            ShowTitle = True
-            AutoFitColWidth = True
-            ShowButton = False
-            LocateStyle = lsDark
-            Buttons = []
-            DropListStyle = lsFixed
-            MultiSelect = False
+            end
           end
-          object edtINVOICE_NO: TcxTextEdit
-            Left = 167
-            Top = 85
-            Width = 133
-            Height = 20
+          object RzPanel3: TRzPanel
+            Left = 5
+            Top = 5
+            Width = 695
+            Height = 80
+            Align = alTop
+            BorderOuter = fsNone
+            Color = clWhite
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = [fsBold]
             ParentFont = False
-            Style.Font.Charset = GB2312_CHARSET
-            Style.Font.Color = clWindowText
-            Style.Font.Height = -12
-            Style.Font.Name = #23435#20307
-            Style.Font.Style = [fsBold]
+            TabOrder = 0
+            object RzLabel1: TRzLabel
+              Left = 272
+              Top = 1
+              Width = 139
+              Height = 24
+              Caption = #19987' '#29992' '#21457' '#31080
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -24
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label6: TLabel
+              Left = 1
+              Top = 61
+              Width = 59
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #24320#31080#26085#26399':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object RzLabel2: TRzLabel
+              Left = 264
+              Top = 25
+              Width = 161
+              Height = 12
+              Caption = '======================='
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label2: TLabel
+              Left = 489
+              Top = 24
+              Width = 59
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21457#31080#26412#21495':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label4: TLabel
+              Left = 488
+              Top = 45
+              Width = 60
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21457' '#31080' '#21495':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label3: TLabel
+              Left = 241
+              Top = 61
+              Width = 59
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21457#31080#31867#22411':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object edtCREA_DATE: TcxDateEdit
+              Left = 66
+              Top = 57
+              Width = 133
+              Height = 20
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              TabOrder = 3
+            end
+            object edtINVH_ID: TzrComboBoxList
+              Left = 554
+              Top = 20
+              Width = 133
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = True
+              Properties.OnChange = edtINVH_IDPropertiesChange
+              TabOrder = 0
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'INVH_NO'
+              KeyField = 'INVH_ID'
+              ListField = 'INVH_NO'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'INVH_NO'
+                  Footers = <>
+                  Title.Caption = #21457#31080#20195#21495
+                  Width = 100
+                end
+                item
+                  DisplayFormat = '00000000'
+                  EditButtons = <>
+                  FieldName = 'BEGIN_NO'
+                  Footers = <>
+                  Title.Caption = #36215#22987#21495
+                  Width = 70
+                end
+                item
+                  DisplayFormat = '00000000'
+                  EditButtons = <>
+                  FieldName = 'ENDED_NO'
+                  Footers = <>
+                  Title.Caption = #32456#27490#21495
+                  Width = 70
+                end
+                item
+                  DisplayFormat = '00000000'
+                  EditButtons = <>
+                  FieldName = 'CURRENT_NO'
+                  Footers = <>
+                  Title.Caption = #24403#21069#31080#21495
+                  Width = 70
+                end>
+              DataSet = CdsInvoice
+              DropWidth = 210
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = True
+              LocateStyle = lsDark
+              Buttons = []
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
+            object edtINVOICE_NO: TcxTextEdit
+              Left = 554
+              Top = 41
+              Width = 133
+              Height = 20
+              ParentFont = False
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clWindowText
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = [fsBold]
+              TabOrder = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtIfDuplicate: TcxCheckBox
+              Left = 551
+              Top = 60
+              Width = 121
+              Height = 21
+              Properties.DisplayUnchecked = 'False'
+              Properties.Caption = #20801#35768#37325#21495
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clGreen
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = [fsBold]
+              TabOrder = 2
+            end
+            object edtINVOICE_FLAG: TcxComboBox
+              Left = 306
+              Top = 57
+              Width = 133
+              Height = 20
+              Enabled = False
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Properties.DropDownListStyle = lsFixedList
+              TabOrder = 4
+            end
+          end
+          object RzPanel5: TRzPanel
+            Left = 5
+            Top = 372
+            Width = 695
+            Height = 29
+            Align = alBottom
+            BorderOuter = fsNone
+            Color = clWhite
             TabOrder = 3
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            object Label12: TLabel
+              Left = 23
+              Top = 12
+              Width = 46
+              Height = 12
+              Caption = #25910#27454#20154':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label13: TLabel
+              Left = 174
+              Top = 12
+              Width = 33
+              Height = 12
+              Caption = #22797#26680':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label15: TLabel
+              Left = 326
+              Top = 12
+              Width = 46
+              Height = 12
+              Caption = #24320#31080#20154':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label16: TLabel
+              Left = 543
+              Top = 12
+              Width = 86
+              Height = 12
+              Caption = #38144#36135#21333#20301':('#31456')'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object edtCREA_USER: TzrComboBoxList
+              Left = 377
+              Top = 8
+              Width = 131
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = True
+              TabOrder = 0
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
+              KeyField = 'USER_ID'
+              ListField = 'USER_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'ACCOUNT'
+                  Footers = <>
+                  Title.Caption = #24080#21495
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'USER_NAME'
+                  Footers = <>
+                  Title.Caption = #22995#21517
+                  Width = 130
+                end>
+              DropWidth = 180
+              DropHeight = 150
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = True
+              LocateStyle = lsDark
+              Buttons = []
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
           end
-          object edtINVOICE_MNY: TcxTextEdit
-            Left = 167
-            Top = 110
-            Width = 133
-            Height = 20
-            TabOrder = 4
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-          end
-          object edtDEPT_ID: TzrComboBoxList
-            Left = 370
-            Top = 110
-            Width = 131
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = False
-            TabOrder = 9
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'DEPT_NAME;DEPT_SPELL'
-            KeyField = 'DEPT_ID'
-            ListField = 'DEPT_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'DEPT_NAME'
-                Footers = <>
-                Title.Caption = #21517#31216
-              end>
-            DropWidth = 185
-            DropHeight = 180
-            ShowTitle = True
-            AutoFitColWidth = True
-            ShowButton = False
-            LocateStyle = lsDark
-            Buttons = []
-            DropListStyle = lsFixed
-            MultiSelect = False
-          end
-          object edtCREA_USER: TzrComboBoxList
-            Left = 370
-            Top = 134
-            Width = 131
-            Height = 20
-            Properties.AutoSelect = False
-            Properties.Buttons = <
-              item
-                Default = True
-              end>
-            Properties.ReadOnly = True
-            TabOrder = 10
-            InGrid = False
-            KeyValue = Null
-            FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
-            KeyField = 'USER_ID'
-            ListField = 'USER_NAME'
-            Columns = <
-              item
-                EditButtons = <>
-                FieldName = 'ACCOUNT'
-                Footers = <>
-                Title.Caption = #24080#21495
+          object RzPanel6: TRzPanel
+            Left = 5
+            Top = 335
+            Width = 695
+            Height = 37
+            Align = alBottom
+            BorderOuter = fsNone
+            BorderColor = clGreen
+            BorderWidth = 1
+            Color = clWhite
+            TabOrder = 2
+            object edtINVOICE_MNY: TcxTextEdit
+              Left = 167
+              Top = 10
+              Width = 133
+              Height = 20
+              TabOrder = 0
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object RzPanel9: TRzPanel
+              Left = 1
+              Top = 1
+              Width = 163
+              Height = 35
+              Align = alLeft
+              BorderOuter = fsNone
+              BorderSides = [sdRight]
+              BorderColor = clGreen
+              BorderWidth = 1
+              Color = clWhite
+              TabOrder = 1
+              object Label1: TLabel
+                Left = 97
+                Top = 13
+                Width = 59
+                Height = 12
+                Caption = #24320#31080#37329#39069':'
+                Font.Charset = GB2312_CHARSET
+                Font.Color = clGreen
+                Font.Height = -12
+                Font.Name = #23435#20307
+                Font.Style = [fsBold]
+                ParentFont = False
               end
-              item
-                EditButtons = <>
-                FieldName = 'USER_NAME'
-                Footers = <>
-                Title.Caption = #22995#21517
-                Width = 130
-              end>
-            DropWidth = 180
-            DropHeight = 150
-            ShowTitle = True
-            AutoFitColWidth = True
-            ShowButton = True
-            LocateStyle = lsDark
-            Buttons = []
-            DropListStyle = lsFixed
-            MultiSelect = False
+            end
           end
-          object edtIfDuplicate: TcxCheckBox
-            Left = 164
-            Top = 134
-            Width = 121
-            Height = 21
-            Properties.DisplayUnchecked = 'False'
-            Properties.Caption = #20801#35768#37325#21495
+          object RzPanel7: TRzPanel
+            Left = 5
+            Top = 175
+            Width = 695
+            Height = 160
+            Align = alClient
+            BorderOuter = fsNone
+            BorderSides = [sdLeft, sdRight]
+            BorderColor = clGreen
+            BorderWidth = 1
+            Color = clWhite
             TabOrder = 5
-          end
-          object edtIVIO_TYPE: TcxComboBox
-            Left = 369
-            Top = 36
-            Width = 133
-            Height = 20
-            Enabled = False
-            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            Properties.DropDownListStyle = lsFixedList
-            TabOrder = 6
+            object DBGridEh1: TDBGridEh
+              Left = 1
+              Top = 1
+              Width = 693
+              Height = 158
+              Align = alClient
+              AllowedOperations = [alopUpdateEh]
+              DataSource = DataSource1
+              Flat = True
+              FooterColor = clWindow
+              FooterFont.Charset = GB2312_CHARSET
+              FooterFont.Color = clWindowText
+              FooterFont.Height = -12
+              FooterFont.Name = #23435#20307
+              FooterFont.Style = []
+              FooterRowCount = 1
+              FrozenCols = 2
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+              ReadOnly = True
+              RowHeight = 20
+              SumList.Active = True
+              TabOrder = 0
+              TitleFont.Charset = GB2312_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -12
+              TitleFont.Name = #23435#20307
+              TitleFont.Style = []
+              TitleHeight = 20
+              UseMultiTitle = True
+              IsDrawNullRow = False
+              CurrencySymbol = #65509
+              DecimalNumber = 2
+              DigitalNumber = 12
+              OnDrawColumnCell = DBGridEh1DrawColumnCell
+              Columns = <
+                item
+                  Color = clWhite
+                  EditButtons = <>
+                  FieldName = 'SEQNO'
+                  Footers = <>
+                  Title.Caption = #24207#21495
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 30
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'GODS_NAME'
+                  Footer.Value = #21512'   '#35745#65306
+                  Footer.ValueType = fvtStaticText
+                  Footers = <>
+                  Title.Caption = #36135#29289#21450#24212#31246#21171#21153#21517#31216
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 240
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'UNIT_NAME'
+                  Footers = <>
+                  Title.Caption = #21333#20301
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 40
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'AMOUNT'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #25968#37327
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 70
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'APRICE'
+                  Footer.Alignment = taRightJustify
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Tag = 1
+                  Title.Caption = #21333#20215
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 80
+                end
+                item
+                  Alignment = taRightJustify
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'NOTAX_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #37329#39069
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 100
+                end
+                item
+                  DisplayFormat = '#0.00'
+                  EditButtons = <>
+                  FieldName = 'TAX_MNY'
+                  Footer.DisplayFormat = '#0.00'
+                  Footer.ValueType = fvtSum
+                  Footers = <>
+                  Title.Caption = #31246#39069
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 100
+                end>
+            end
           end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Top = 223
-      Width = 517
+      Top = 438
+      Width = 709
       Color = clWhite
       object btnOk: TRzBitBtn
-        Left = 343
+        Left = 535
         Top = 11
         Width = 67
         Height = 26
@@ -716,7 +1074,7 @@ inherited frmSalInvoice: TfrmSalInvoice
         Spacing = 5
       end
       object btnClose: TRzBitBtn
-        Left = 426
+        Left = 618
         Top = 11
         Width = 67
         Height = 26
@@ -745,32 +1103,37 @@ inherited frmSalInvoice: TfrmSalInvoice
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 6
-    Top = 181
+    Left = 110
+    Top = 445
   end
   inherited actList: TActionList
-    Left = 38
-    Top = 181
+    Left = 142
+    Top = 445
   end
   object cdsDetail: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 6
-    Top = 149
+    Left = 22
+    Top = 293
   end
   object cdsHeader: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 6
-    Top = 117
+    Left = 22
+    Top = 261
   end
   object CdsInvoice: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 88
-    Top = 56
+    Left = 600
+    Top = 48
+  end
+  object DataSource1: TDataSource
+    DataSet = cdsDetail
+    Left = 53
+    Top = 293
   end
 end

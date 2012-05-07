@@ -8,7 +8,7 @@ uses
   RzButton, cxDropDownEdit, cxTextEdit, cxCalendar, cxControls, ZBase,
   cxContainer, cxEdit, cxMaskEdit, cxButtonEdit, zrComboBoxList, StdCtrls,
   Grids, DBGridEh, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset,
-  cxCheckBox;
+  cxCheckBox, RzLabel;
 
 type
   TfrmSalInvoice = class(TframeDialogForm)
@@ -17,38 +17,53 @@ type
     cdsDetail: TZQuery;
     cdsHeader: TZQuery;
     CdsInvoice: TZQuery;
-    Label2: TLabel;
-    Label6: TLabel;
-    Label7: TLabel;
-    Label17: TLabel;
-    Label3: TLabel;
-    Label40: TLabel;
-    Label4: TLabel;
-    Label8: TLabel;
-    Label5: TLabel;
-    Label9: TLabel;
-    edtINVH_ID: TzrComboBoxList;
-    edtCREA_DATE: TcxDateEdit;
-    edtREMARK: TcxTextEdit;
     RzPanel4: TRzPanel;
     Image1: TImage;
     Label14: TLabel;
+    RzPanel1: TRzPanel;
+    Label7: TLabel;
+    Label17: TLabel;
+    Label40: TLabel;
+    Label5: TLabel;
+    edtREMARK: TcxTextEdit;
     edtCLIENT_ID: TzrComboBoxList;
-    edtINVOICE_FLAG: TcxComboBox;
     edtSHOP_ID: TzrComboBoxList;
-    edtINVOICE_NO: TcxTextEdit;
-    edtINVOICE_MNY: TcxTextEdit;
     edtDEPT_ID: TzrComboBoxList;
-    edtCREA_USER: TzrComboBoxList;
+    RzPanel3: TRzPanel;
+    RzLabel1: TRzLabel;
+    Label6: TLabel;
+    edtCREA_DATE: TcxDateEdit;
+    RzLabel2: TRzLabel;
+    edtINVH_ID: TzrComboBoxList;
+    Label2: TLabel;
+    Label4: TLabel;
+    edtINVOICE_NO: TcxTextEdit;
+    RzPanel5: TRzPanel;
+    RzPanel6: TRzPanel;
+    RzPanel7: TRzPanel;
+    edtINVOICE_MNY: TcxTextEdit;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    RzPanel8: TRzPanel;
+    RzLabel3: TRzLabel;
     edtIfDuplicate: TcxCheckBox;
+    edtCREA_USER: TzrComboBoxList;
+    Label3: TLabel;
+    edtINVOICE_FLAG: TcxComboBox;
+    RzPanel9: TRzPanel;
     Label1: TLabel;
-    edtIVIO_TYPE: TcxComboBox;
+    DBGridEh1: TDBGridEh;
+    DataSource1: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure edtINVH_IDPropertiesChange(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     FisAudit: boolean;
     Fcid: string;
@@ -56,6 +71,7 @@ type
     FClientId: String;
     FInvoiceId: String;
     FIvioType: String;
+    Tax_Rate:Currency;
     { Private declarations }
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Setcid(const Value: string);
@@ -115,9 +131,15 @@ begin
      edtCLIENT_ID.Text := rs.FieldByName('CLIENT_NAME').AsString;
   end;
   if (edtINVOICE_FLAG.ItemIndex<0) and (InvoiceId <> '') then
+  begin
      edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID',InvoiceId);
-  if edtIVIO_TYPE.ItemIndex < 0 then
-     edtIVIO_TYPE.ItemIndex := TdsItems.FindItems(edtIVIO_TYPE.Properties.Items,'CODE_ID',IvioType); 
+      if InvoiceId='1' then
+         Tax_Rate := 0
+      else if InvoiceId = '2' then
+         Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05)
+      else if InvoiceId = '3' then
+         Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE3'),0.17);
+  end;
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
   edtINVOICE_MNY.Text := FormatFloat('#0.00',InvoiceMny);
@@ -213,9 +235,8 @@ end;
 
 procedure TfrmSalInvoice.SaveOrder;
 var Params:TftParamList;
-    n:integer;
-    Tax_Rate:Currency;
     rs:TZQuery;
+    n:Integer;
     r:real;
 begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('请选择开票客户');
@@ -258,24 +279,9 @@ begin
   if AObj.FieldByName('ADDR_NAME').AsString = '' then AObj.FieldByName('ADDR_NAME').AsString := '无';
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
-  //cdsHeader.FieldbyName('SHOP_ID').AsString := edtSHOP_ID.AsString;
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
+  cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
   cdsHeader.Post;
-  case TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-    1:Tax_Rate := 0;
-    2:begin
-      case TRecord_(edtIVIO_TYPE.Properties.Items.Objects[edtIVIO_TYPE.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-        1:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.05);
-        2:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
-      end;
-    end;
-    3:begin
-      case TRecord_(edtIVIO_TYPE.Properties.Items.Objects[edtIVIO_TYPE.ItemIndex]).FieldByName('CODE_ID').AsInteger of
-        1:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('IN_RATE2'),0.17);
-        2:Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.17);
-      end;
-    end;
-  end;
   n := 1;
   cdsDetail.First;
   while not cdsDetail.Eof do
@@ -284,8 +290,6 @@ begin
     cdsDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     cdsDetail.FieldByName('INVD_ID').AsString := cdsHeader.FieldByName('INVD_ID').AsString;
     cdsDetail.FieldByName('SEQNO').AsInteger := n;
-    cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
-    cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
     Inc(n);
     cdsDetail.Post;
     cdsDetail.Next;
@@ -317,17 +321,17 @@ begin
   btnOk.Visible:=(dbState<>dsBrowse);
   case Value of
   dsInsert:begin
-     Caption := '开票单--(新增)';
+     Caption := '销项发票--(新增)';
      Label14.Caption := '状态:新增';
   end;
   dsEdit:begin
-     Caption := '开票单--(修改)';
+     Caption := '销项发票--(修改)';
      Label14.Caption := '状态:修改';
      edtINVOICE_NO.Enabled := False;
   end;
   else
       begin
-        Caption := '开票单';
+        Caption := '销项发票';
         Label14.Caption := '状态:查看';
         btnOk.Visible := False;
       end;
@@ -365,7 +369,7 @@ begin
   if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的客户没找到,异常错误.');
   AObj.FieldByName('INVO_NAME').AsString := rs.FieldByName('CLIENT_NAME').AsString;
   AObj.FieldByName('ADDR_NAME').AsString := rs.FieldByName('ADDRESS').AsString;
-  
+
 end;
 
 procedure TfrmSalInvoice.SetClientId(const Value: String);
@@ -400,6 +404,15 @@ procedure TfrmSalInvoice.FormShow(Sender: TObject);
 begin
   inherited;
   if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
+  cdsDetail.First;
+  while not cdsDetail.Eof do
+  begin
+    cdsDetail.Edit;
+    cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
+    cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
+    cdsDetail.Post;
+    cdsDetail.Next;
+  end;
 end;
 
 function TfrmSalInvoice.ReadInvoiceNo(Flag: String): String;
@@ -483,6 +496,36 @@ begin
     F.Free;
   end;
 
+end;
+
+procedure TfrmSalInvoice.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  inherited;
+  if (Rect.Top = DBGridEh1.CellRect(DBGridEh1.Col, DBGridEh1.Row).Top) and (not
+    (gdFocused in State) or not DBGridEh1.Focused) then
+  begin
+    DBGridEh1.Canvas.Brush.Color := clAqua;
+  end;
+  DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DbGridEh1.canvas.FillRect(ARect);
+      DrawText(DbGridEh1.Canvas.Handle,pchar(Inttostr(cdsDetail.RecNo)),length(Inttostr(cdsDetail.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+  //DBGridEh1.DefaultDrawColumnCell(Rect,DataCol,Column,State);
+  with (Sender as TDBGridEh).Canvas do
+  begin
+    Pen.Color := clGreen;
+    MoveTo(Rect.Left,Rect.Bottom);
+    LineTo(Rect.Right,Rect.Bottom);
+    MoveTo(Rect.Right,Rect.Top);
+    LineTo(Rect.Right,Rect.Bottom);
+  end;
 end;
 
 end.

@@ -372,6 +372,11 @@ begin
     ErrorCode := FPlainDriver.Execute(FHandle, PChar(SQL),
       nil, nil, ErrorMessage);
     CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, SQL);
+
+    SQL := 'PRAGMA  page_size = 8192';
+    ErrorCode := FPlainDriver.Execute(FHandle, PChar(SQL),
+      nil, nil, ErrorMessage);
+    CheckSQLiteError(FPlainDriver, ErrorCode, ErrorMessage, lcExecute, SQL);
 {
 
     SQL := 'PRAGMA empty_result_callbacks = ON';

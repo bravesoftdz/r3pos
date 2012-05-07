@@ -36,7 +36,7 @@ end;
 
 procedure TUIFactory.InitForm(Form:TWinControl);
 var
-  i,c:integer;
+  i,c,d:integer;
   Control:TControl;
 begin
   for i:=0 to Form.ComponentCount -1 do
@@ -107,7 +107,7 @@ begin
                   if not F.ReadBool(Form.Name,Control.Name+'.'+Columns[c].FieldName+'_visible',true) then
                      Columns.Delete(c)
                   else
-                     Columns[c].Title.Caption := F.ReadString(Form.Name,Control.Name+'.'+Columns[c].FieldName+'_caption',Columns[c].Title.Caption);
+                     Columns[c].Title.Caption := F.ReadString(Form.Name,Control.Name+'.'+Columns[c].FieldName+'_name',Columns[c].Title.Caption);
                 end;
               finally
                 Columns.EndUpdate;

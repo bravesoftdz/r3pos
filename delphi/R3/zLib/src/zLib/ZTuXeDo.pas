@@ -908,7 +908,7 @@ begin
     coPacket.HasResult := true;
     coPacket.Params := null;
     coPacket.Data := null;
-    Send(@coPacket,'svciDbType');
+    Send(@coPacket,'iDbType');
     Recv(@coPacket);
     CheckPackedError(@coPacket);
     result := coPacket.Data;

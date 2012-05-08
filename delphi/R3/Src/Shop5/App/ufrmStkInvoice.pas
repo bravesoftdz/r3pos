@@ -397,6 +397,8 @@ begin
     cdsDetail.Post;
     cdsDetail.Next;
   end;
+  if TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString <> '3' then
+     DBGridEh1.Columns[6].Visible := False;
 end;
 
 function TfrmStkInvoice.ReadInvoiceNo(Flag: String): String;

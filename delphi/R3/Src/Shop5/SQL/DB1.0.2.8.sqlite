@@ -24,7 +24,7 @@ CREATE TABLE [SAL_INVOICE_BOOK] (
         --发票代码
 	[INVH_NO] [varchar] (50) NOT NULL ,
         --当前票号
-	[CURRENT_NO] int NOT NULL ,
+	[CURRENT_NO] int NULL ,
         --发票起始号
 	[BEGIN_NO] int NOT NULL ,
         --发票终止号

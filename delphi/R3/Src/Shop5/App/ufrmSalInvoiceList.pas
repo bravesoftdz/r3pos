@@ -545,7 +545,7 @@ begin
       strSql:=
       'select 0 as SetFlag,3 as ORDERTYPE,A.TENANT_ID,A.INDE_ID as SALES_ID,A.GLIDE_NO,A.INDE_DATE as SALES_DATE,A.REMARK,A.CLIENT_ID,'+
       'C.CLIENT_NAME,A.SHOP_ID,E.GODS_NAME,A.CREA_DATE,D.SHOP_NAME as SHOP_ID_TEXT,A.AMOUNT,A.APRICE,A.AMONEY,'+
-      'B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,B.INVOICE_MNY from ( '+
+      'B.CREA_USER_TEXT,A.INVOICE_FLAG,B.INVOICE_NO,F.UNIT_NAME,A.GODS_ID,B.INVOICE_MNY from ( '+
       ' select X.TENANT_ID,X.INDE_ID,X.GLIDE_NO,X.INDE_DATE,X.REMARK,X.CLIENT_ID,X.SHOP_ID,'+
       'X.CREA_DATE,X.INVOICE_FLAG,Y.GODS_ID,Y.UNIT_ID,Y.AMOUNT,Y.APRICE,Y.AMONEY '+
       ' from SAL_INDENTORDER X inner join SAL_INDENTDATA Y on X.TENANT_ID=Y.TENANT_ID and X.INDE_ID=Y.INDE_ID '+
@@ -581,7 +581,7 @@ begin
   if D1.EditValue = null then Raise Exception.Create('开票日期条件不能为空');
   if D2.EditValue = null then Raise Exception.Create('开票日期条件不能为空');
   if D1.Date > D2.Date then Raise Exception.Create('开票查询开始日期不能大于结束日期');
-  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and and A.IVIO_TYPE=''1'' and A.CREA_DATE>=:D1 and A.CREA_DATE<=:D2 ';
+  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.IVIO_TYPE=''1'' and A.CREA_DATE>=:D1 and A.CREA_DATE<=:D2 ';
 
   //分批取数据的条件:
   if trim(id)<>'' then

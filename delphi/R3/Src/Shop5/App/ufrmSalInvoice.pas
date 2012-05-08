@@ -280,7 +280,8 @@ begin
   cdsHeader.Edit;
   AObj.WriteToDataSet(cdsHeader);
   cdsHeader.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
+  if dbState = dsInsert then
+     cdsHeader.FieldByName('IVIO_TYPE').AsString := IvioType;
   cdsHeader.Post;
   n := 1;
   cdsDetail.First;

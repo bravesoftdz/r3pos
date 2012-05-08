@@ -38,7 +38,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             BorderShadow = clActiveCaption
             Color = clWhite
             FlatColor = clBlue
-            TabOrder = 4
+            TabOrder = 5
             Visible = False
             object Image1: TImage
               Left = 15
@@ -286,7 +286,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             BorderColor = clGreen
             BorderWidth = 1
             Color = clWhite
-            TabOrder = 1
+            TabOrder = 2
             object Label7: TLabel
               Left = 62
               Top = 71
@@ -541,7 +541,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             Font.Name = #23435#20307
             Font.Style = [fsBold]
             ParentFont = False
-            TabOrder = 0
+            TabOrder = 1
             object RzLabel1: TRzLabel
               Left = 272
               Top = 1
@@ -740,7 +740,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             Align = alBottom
             BorderOuter = fsNone
             Color = clWhite
-            TabOrder = 3
+            TabOrder = 4
             object Label12: TLabel
               Left = 23
               Top = 12
@@ -845,7 +845,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             BorderColor = clGreen
             BorderWidth = 1
             Color = clWhite
-            TabOrder = 2
+            TabOrder = 3
             object edtINVOICE_MNY: TcxTextEdit
               Left = 167
               Top = 10
@@ -892,7 +892,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             BorderColor = clGreen
             BorderWidth = 1
             Color = clWhite
-            TabOrder = 5
+            TabOrder = 0
             object DBGridEh1: TDBGridEh
               Left = 1
               Top = 1

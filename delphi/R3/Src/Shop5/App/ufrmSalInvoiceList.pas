@@ -581,7 +581,7 @@ begin
   if D1.EditValue = null then Raise Exception.Create('开票日期条件不能为空');
   if D2.EditValue = null then Raise Exception.Create('开票日期条件不能为空');
   if D1.Date > D2.Date then Raise Exception.Create('开票查询开始日期不能大于结束日期');
-  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and A.CREA_DATE>=:D1 and A.CREA_DATE<=:D2 ';
+  strWhere := strWhere + ' where A.TENANT_ID=:TENANT_ID and and A.IVIO_TYPE=''1'' and A.CREA_DATE>=:D1 and A.CREA_DATE<=:D2 ';
 
   //分批取数据的条件:
   if trim(id)<>'' then

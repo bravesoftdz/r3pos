@@ -85,6 +85,7 @@ uses uShopUtil,uDsUtil, ufrmBasic, Math, uGlobal, uFnUtil, uShopGlobal ,ufrmShop
 {$R *.dfm}
 
 procedure TfrmInvoiceInfo.Append;
+var rs:TZQuery;
 begin
   Open('');
   dbState := dsInsert;
@@ -94,6 +95,9 @@ begin
   edtSHOP_ID.Text := Global.SHOP_NAME;
   edtCREA_USER.KeyValue := Global.UserID;
   edtCREA_USER.Text := Global.UserName;
+  rs := ShopGlobal.GetDeptInfo;
+  edtDEPT_ID.KeyValue := rs.FieldByName('DEPT_ID').AsString;
+  edtDEPT_ID.Text := rs.FieldByName('DEPT_NAME').AsString;
 end;
 
 procedure TfrmInvoiceInfo.Btn_CloseClick(Sender: TObject);

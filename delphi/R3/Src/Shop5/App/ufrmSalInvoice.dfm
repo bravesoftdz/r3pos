@@ -547,7 +547,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Top = 1
               Width = 139
               Height = 24
-              Caption = #19987' '#29992' '#21457' '#31080
+              Caption = #38144' '#39033' '#21457' '#31080
               Font.Charset = GB2312_CHARSET
               Font.Color = clGreen
               Font.Height = -24
@@ -643,7 +643,6 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Default = True
                 end>
               Properties.ReadOnly = True
-              Properties.OnChange = edtINVH_IDPropertiesChange
               TabOrder = 0
               InGrid = False
               KeyValue = Null
@@ -691,6 +690,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               LocateStyle = lsDark
               Buttons = []
               DropListStyle = lsFixed
+              OnSaveValue = edtINVH_IDSaveValue
               MultiSelect = False
             end
             object edtINVOICE_NO: TcxTextEdit
@@ -900,6 +900,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Height = 158
               Align = alClient
               AllowedOperations = [alopUpdateEh]
+              BorderStyle = bsNone
               DataSource = DataSource1
               Flat = True
               FooterColor = clWindow

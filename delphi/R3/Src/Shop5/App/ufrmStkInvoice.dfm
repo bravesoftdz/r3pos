@@ -304,9 +304,9 @@ inherited frmStkInvoice: TfrmStkInvoice
             object Label17: TLabel
               Left = 65
               Top = 8
-              Width = 79
+              Width = 74
               Height = 12
-              Caption = #20379#24212#21830' '#21517#31216':'
+              Caption = #20379'  '#24212'  '#21830':'
               Font.Charset = GB2312_CHARSET
               Font.Color = clGreen
               Font.Height = -12
@@ -547,7 +547,7 @@ inherited frmStkInvoice: TfrmStkInvoice
               Top = 1
               Width = 139
               Height = 24
-              Caption = #19987' '#29992' '#21457' '#31080
+              Caption = #36827' '#39033' '#21457' '#31080
               Font.Charset = GB2312_CHARSET
               Font.Color = clGreen
               Font.Height = -24
@@ -853,6 +853,8 @@ inherited frmStkInvoice: TfrmStkInvoice
               Height = 158
               Align = alClient
               AllowedOperations = [alopUpdateEh]
+              BorderStyle = bsNone
+              Ctl3D = True
               DataSource = DataSource1
               Flat = True
               FooterColor = clWindow
@@ -866,6 +868,7 @@ inherited frmStkInvoice: TfrmStkInvoice
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+              ParentCtl3D = False
               ReadOnly = True
               RowHeight = 20
               SumList.Active = True

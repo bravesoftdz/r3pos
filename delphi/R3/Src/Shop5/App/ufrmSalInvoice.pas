@@ -61,9 +61,9 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure edtINVH_IDPropertiesChange(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure edtINVH_IDSaveValue(Sender: TObject);
   private
     FisAudit: boolean;
     Fcid: string;
@@ -154,6 +154,7 @@ begin
      begin
         edtINVH_ID.KeyValue := CdsInvoice.FieldByName('INVH_ID').AsString;
         edtINVH_ID.Text := CdsInvoice.FieldByName('INVH_NO').AsString;
+        edtINVH_IDSaveValue(nil);
      end;
   end;
   {if edtINVOICE_FLAG.ItemIndex >= 0 then
@@ -328,6 +329,7 @@ begin
   dsEdit:begin
      Caption := '销项发票--(修改)';
      Label14.Caption := '状态:修改';
+     edtINVH_ID.Enabled := False;
      edtINVOICE_NO.Enabled := False;
   end;
   else
@@ -404,7 +406,7 @@ end;
 procedure TfrmSalInvoice.FormShow(Sender: TObject);
 begin
   inherited;
-  if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
+  if edtINVH_ID.CanFocus then edtINVH_ID.SetFocus;
   cdsDetail.First;
   while not cdsDetail.Eof do
   begin
@@ -448,15 +450,6 @@ begin
   finally
     F.Free;
   end;
-end;
-
-procedure TfrmSalInvoice.edtINVH_IDPropertiesChange(Sender: TObject);
-begin
-  inherited;
-  if Trim(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString) = '' then
-     edtINVOICE_NO.Text := FnString.FormatStringEx(edtINVH_ID.DataSet.FieldByName('BEGIN_NO').AsString,8)
-  else
-     edtINVOICE_NO.Text := IncInvoiceNo(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString);
 end;
 
 function TfrmSalInvoice.IncInvoiceNo(InvoiceNo: String): String;
@@ -529,6 +522,22 @@ begin
     MoveTo(Rect.Right,Rect.Top);
     LineTo(Rect.Right,Rect.Bottom);
   end;
+end;
+
+procedure TfrmSalInvoice.edtINVH_IDSaveValue(Sender: TObject);
+begin
+  inherited;
+  if not CdsInvoice.Active then Exit;
+  if not CdsInvoice.Locate('INVH_NO',Trim(edtINVH_ID.Text),[]) then
+  begin
+     edtINVH_ID.Text := '';
+     edtINVH_ID.SetFocus;
+     Raise Exception.Create('选择或输入的发票本号不存在!');
+  end;
+  if Trim(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString) = '' then
+     edtINVOICE_NO.Text := FnString.FormatStringEx(edtINVH_ID.DataSet.FieldByName('BEGIN_NO').AsString,8)
+  else
+     edtINVOICE_NO.Text := IncInvoiceNo(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString);
 end;
 
 end.

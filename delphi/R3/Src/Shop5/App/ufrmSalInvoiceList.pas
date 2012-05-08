@@ -191,11 +191,15 @@ begin
     end;
   end;
   1: begin
+      InvoiceFlag := ShopGlobal.GetParameter('RTL_INV_FLAG');
       with TfrmSalInvoice.Create(self) do
       begin
         try
           ClientId := '';
-          InvoiceId := '';
+          if InvoiceFlag <> '' then
+             InvoiceId := InvoiceFlag
+          else
+             InvoiceId := '1';
           InvoiceMny := 0;
           IvioType := '1';
           Append;

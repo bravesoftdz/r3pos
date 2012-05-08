@@ -491,6 +491,7 @@ inherited frmStkInvoiceList: TfrmStkInvoiceList
                       Width = 70
                     end
                     item
+                      DisplayFormat = '00000000'
                       EditButtons = <>
                       FieldName = 'INVOICE_NO'
                       Footers = <>

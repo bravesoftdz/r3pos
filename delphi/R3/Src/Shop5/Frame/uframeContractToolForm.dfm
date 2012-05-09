@@ -18,10 +18,12 @@ inherited frameContractToolForm: TframeContractToolForm
       inherited RzPage: TRzPageControl
         Width = 852
         Height = 409
+        UseColoredTabs = True
         OnChange = RzPageChange
         OnDblClick = RzPageDblClick
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
+          Color = clWhite
           Caption = #21512#21516#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
             Width = 850

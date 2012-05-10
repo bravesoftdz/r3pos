@@ -1,6 +1,7 @@
 inherited frmMktRequOrderList: TfrmMktRequOrderList
-  Top = 110
-  Caption = #36153#29992#30003#39046#21333
+  Left = 379
+  Top = 159
+  Caption = #36153#29992#30003#35831#21333
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -9,17 +10,17 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
       inherited RzPage: TRzPageControl
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #36153#29992#30003#39046#21333#21015#34920
+          Caption = #36153#29992#30003#35831#21333#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
             inherited RzPanel1: TRzPanel
-              Height = 110
+              Height = 113
               object RzLabel2: TRzLabel
                 Left = 33
                 Top = 4
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #22635#25253#26085#26399
+                Caption = #30003#35831#26085#26399
               end
               object RzLabel3: TRzLabel
                 Left = 200
@@ -42,7 +43,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #30003#39046#21333#21495
+                Caption = #30003#35831#21333#21495
               end
               object Label1: TLabel
                 Left = 201
@@ -202,7 +203,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 MultiSelect = False
               end
               object btnOk: TRzBitBtn
-                Left = 480
+                Left = 446
                 Top = 76
                 Width = 67
                 Height = 26
@@ -271,12 +272,11 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 MultiSelect = False
               end
               object fndSTATUS: TcxRadioGroup
-                Left = 328
+                Left = 338
                 Top = 16
-                Width = 129
+                Width = 92
                 Height = 86
                 ItemIndex = 0
-                Properties.Columns = 2
                 Properties.Items = <
                   item
                     Caption = #20840#37096
@@ -286,20 +286,14 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                   end
                   item
                     Caption = #24050#23457#26680
-                  end
-                  item
-                    Caption = #26410#26680#38144
-                  end
-                  item
-                    Caption = #24050#26680#38144
                   end>
                 TabOrder = 7
                 Caption = ''
               end
             end
             inherited DBGridEh1: TDBGridEh
-              Top = 115
-              Height = 306
+              Top = 118
+              Height = 259
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -367,12 +361,6 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
                 end
                 item
                   EditButtons = <>
-                  FieldName = 'HEXIAO'
-                  Footers = <>
-                  Title.Caption = #26680#38144
-                end
-                item
-                  EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
                   Title.Caption = #22791#27880
@@ -386,26 +374,27 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 581
+      Left = 579
+      Width = 249
     end
     inherited rzPanel5: TPanel
-      Left = 581
+      Left = 579
     end
     inherited CoolBar1: TCoolBar
-      Width = 561
+      Width = 559
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 561
-          Width = 36
+          MinHeight = 559
+          Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 561
-        object ToolButton11: TToolButton
-          Left = 518
+        Width = 559
+        object ToolButton15: TToolButton
+          Left = 516
           Top = 0
           Action = actExit
         end
@@ -413,34 +402,24 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 768
-    Top = 56
+    Left = 688
+    Top = 72
   end
   inherited actList: TActionList
-    Left = 736
-    Top = 56
+    Left = 654
+    Top = 72
     inherited actInfo: TAction
       OnExecute = actInfoExecute
     end
-  end
-  inherited dsList: TDataSource
-    Left = 78
-    Top = 280
-  end
-  inherited ppmReport: TPopupMenu
-    Left = 798
-    Top = 55
-  end
-  inherited cdsList: TZQuery
-    Left = 46
-    Top = 280
   end
   object frfMktRequOrderList: TfrReport
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     StoreInDFM = True
-    Left = 112
-    Top = 281
+    OnGetValue = frfMktRequOrderListGetValue
+    OnUserFunction = frfMktRequOrderListUserFunction
+    Left = 368
+    Top = 233
     ReportForm = {
       180000001C1A0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000
@@ -504,7 +483,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
       00020000000000FFFFFF0000000002000000000000000000FF07000005004D65
       6D6F320002003500000019000000850200001800000001000000010000000000
       00000500FFFFFF1F2E020000000000010014005BC6F3D2B5C3FBB3C65DB7D1D3
-      C3C9EAC1ECB5A500000000FFFF00000000000200000001000000000400CBCECC
+      C3C9EAC7EBB5A500000000FFFF00000000000200000001000000000400CBCECC
       E500100000000200000000000A0000008600020000000000FFFFFF0000000002
       0000000000000000008608000006004D656D6F31320002003500000032000000
       46000000120000000100000001000000000000000000FFFFFF1F2E0200000000
@@ -516,7 +495,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
       000200000001000000000400CBCECCE5000A0000000200000000000800000086
       00020000000000FFFFFF00000000020000000000000000009409000006004D65
       6D6F33340002009A01000070000000500000001600000001000F000100000000
-      0000000000FFFFFF1F2E02000000000001000800C9EAC1ECBDF0B6EE00000000
+      0000000000FFFFFF1F2E02000000000001000800C9EAC7EBBDF0B6EE00000000
       FFFF00000000000200000001000000000400CBCECCE5000A0000000200000000
       000A0000008600020000000000FFFFFF00000000020000000000000000001A0A
       000006004D656D6F33360002005200000070000000B80000001600000001000F
@@ -525,7 +504,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
       000200000000000A0000008600020000000000FFFFFF00000000020000000000
       00000000A00A000006004D656D6F33370002004A010000700000005000000016
       00000001000F0001000000000000000000FFFFFF1F2E02000000000001000800
-      BCC6CCE1BDF0B6EE00000000FFFF00000000000200000001000000000400CBCE
+      B7B5C0FBBDF0B6EE00000000FFFF00000000000200000001000000000400CBCE
       CCE5000A0000000200000000000A0000008600020000000000FFFFFF00000000
       02000000000000000000220B000006004D656D6F33380002000A010000700000
       00400000001600000001000F0001000000000000000000FFFFFF1F2E02000000

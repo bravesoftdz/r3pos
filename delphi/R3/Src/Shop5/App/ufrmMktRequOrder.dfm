@@ -1,26 +1,24 @@
 inherited frmMktRequOrder: TfrmMktRequOrder
-  Left = 428
-  Top = 133
-  Width = 938
-  Height = 605
-  Caption = #36153#29992#30003#39046#21333
+  Left = 365
+  Top = 164
+  Width = 837
+  Caption = #36153#29992#30003#35831#21333
+  OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 922
-    Height = 567
+    Width = 829
     inherited RzPanel2: TRzPanel
-      Width = 912
-      Height = 107
+      Width = 819
+      Height = 113
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
         Top = 17
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #22635#25253#26085#26399
+        Caption = #30003#35831#26085#26399
       end
       object lblCLIENT_ID: TLabel [1]
         Left = 195
@@ -38,15 +36,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Alignment = taRightJustify
         Caption = #22791'    '#27880
       end
-      object Label5: TLabel [3]
-        Left = 392
-        Top = 59
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #36820#36824#31867#22411
-      end
-      object Label6: TLabel [4]
+      object Label6: TLabel [3]
         Left = 404
         Top = 38
         Width = 36
@@ -54,21 +44,21 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Alignment = taRightJustify
         Caption = #22635#25253#20154
       end
-      object Label40: TLabel [5]
+      object Label40: TLabel [4]
         Left = 195
         Top = 38
         Width = 48
         Height = 12
         Caption = #30003#25253#38376#24215
       end
-      object Label3: TLabel [6]
+      object Label3: TLabel [5]
         Left = 195
         Top = 59
         Width = 48
         Height = 12
         Caption = #25152#23646#37096#38376
       end
-      object Label8: TLabel [7]
+      object Label8: TLabel [6]
         Left = 562
         Top = 38
         Width = 48
@@ -76,7 +66,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Alignment = taRightJustify
         Caption = #23457#26680#26085#26399
       end
-      object Label9: TLabel [8]
+      object Label9: TLabel [7]
         Left = 562
         Top = 59
         Width = 48
@@ -84,13 +74,16 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Alignment = taRightJustify
         Caption = #23457#26680#29992#25143
       end
+      object Label5: TLabel [8]
+        Left = 392
+        Top = 59
+        Width = 48
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #36820#36824#31867#22411
+      end
       inherited RzPanel4: TRzPanel
-        Height = 91
-        TabOrder = 7
-        inherited Image1: TImage
-          Left = 95
-          Top = 39
-        end
+        TabOrder = 8
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 251
@@ -169,25 +162,15 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtREMARK: TcxTextEdit
         Left = 251
         Top = 76
         Width = 286
         Height = 20
-        TabOrder = 5
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-      object edtREQU_TYPE: TcxComboBox
-        Left = 448
-        Top = 55
-        Width = 89
-        Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        Properties.DropDownListStyle = lsFixedList
-        Properties.OnChange = edtREQU_TYPEPropertiesChange
         TabOrder = 4
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREQU_USER: TzrComboBoxList
         Left = 448
@@ -200,7 +183,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 2
+        TabOrder = 3
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -282,7 +265,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 3
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -324,7 +307,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 8
+        TabOrder = 9
         TabStop = False
         TextStyle = tsRaised
         ThemeAware = False
@@ -337,7 +320,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Top = 34
         Width = 121
         Height = 20
-        TabOrder = 9
+        TabOrder = 6
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCHK_USER_TEXT: TcxTextEdit
@@ -346,329 +329,31 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Top = 55
         Width = 121
         Height = 20
-        TabOrder = 10
+        TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtREQU_TYPE: TcxComboBox
+        Left = 448
+        Top = 55
+        Width = 89
+        Height = 20
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+        Properties.DropDownListStyle = lsFixedList
+        TabOrder = 10
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 456
-      Width = 912
-      Height = 34
-      BorderInner = fsStatus
-      Color = clWindowFrame
-      object Label1: TLabel
-        Left = 22
-        Top = 11
-        Width = 52
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #20998#25674#36820#21033
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label4: TLabel
-        Left = 203
-        Top = 11
-        Width = 39
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #24066#22330#36153
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label7: TLabel
-        Left = 366
-        Top = 11
-        Width = 52
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #20215#26684#25903#25345
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label10: TLabel
-        Left = 542
-        Top = 11
-        Width = 52
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #20854#20182#36153#29992
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object lblFeeOption: TLabel
-        Left = 716
-        Top = 12
-        Width = 72
-        Height = 12
-        Caption = '<<'#24453#20998#25674#20313#39069
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlue
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = []
-        ParentFont = False
-      end
-      object edtKPI_MNY: TcxTextEdit
-        Tag = 1
-        Left = 83
-        Top = 7
-        Width = 102
-        Height = 20
-        TabOrder = 0
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-      object edtBUDG_MNY: TcxTextEdit
-        Tag = 1
-        Left = 251
-        Top = 7
-        Width = 102
-        Height = 20
-        TabOrder = 1
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-      object edtAGIO_MNY: TcxTextEdit
-        Tag = 1
-        Left = 427
-        Top = 7
-        Width = 102
-        Height = 20
-        TabOrder = 2
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-      object edtOTHR_MNY: TcxTextEdit
-        Tag = 1
-        Left = 603
-        Top = 7
-        Width = 102
-        Height = 20
-        TabOrder = 3
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
+      Top = 398
+      Width = 819
+      Height = 14
     end
     inherited DBGridEh1: TDBGridEh
-      Top = 145
-      Width = 912
-      Height = 180
-      Columns = <
-        item
-          EditButtons = <>
-          FieldName = 'SEQNO'
-          Footers = <>
-          Title.Caption = #24207#21495
-          Width = 31
-        end
-        item
-          EditButtons = <>
-          FieldName = 'GODS_NAME'
-          Footers = <>
-          Title.Caption = #21830#21697#21517#31216
-          Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721#12289#35745#37327#21333#20301#26465#30721'" '#26597#35810
-          Width = 142
-          Control = fndGODS_ID
-          OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
-        end
-        item
-          EditButtons = <>
-          FieldName = 'GODS_CODE'
-          Footers = <>
-          ReadOnly = True
-          Tag = 1
-          Title.Caption = #36135#21495
-          Width = 61
-        end
-        item
-          EditButtons = <>
-          FieldName = 'BARCODE'
-          Footers = <>
-          Tag = 1
-          Title.Caption = #26465#30721
-          Width = 93
-        end
-        item
-          EditButtons = <>
-          FieldName = 'UNIT_ID'
-          Footers = <>
-          Title.Caption = #21333#20301
-          Width = 41
-          Control = fndUNIT_ID
-          OnBeforeShowControl = DBGridEh1Columns3BeforeShowControl
-        end
-        item
-          EditButtons = <>
-          FieldName = 'AMOUNT'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #25968#37327
-          Width = 53
-          OnUpdateData = DBGridEh1Columns5UpdateData
-        end
-        item
-          DisplayFormat = '#0.00'
-          EditButtons = <>
-          FieldName = 'APRICE'
-          Footers = <>
-          Title.Caption = #24403#21069#21333#20215
-          Width = 60
-        end
-        item
-          DisplayFormat = '#0.00'
-          EditButtons = <>
-          FieldName = 'AMONEY'
-          Footers = <>
-          Title.Caption = #21487#38144#21806#39069
-          Width = 80
-        end
-        item
-          EditButtons = <>
-          FieldName = 'KPI_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #38144#21806#36820#21033
-          Width = 69
-          OnUpdateData = DBGridEh1Columns6UpdateData
-        end
-        item
-          EditButtons = <>
-          FieldName = 'BUDG_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #24066#22330#36153#29992
-          Width = 67
-          OnUpdateData = DBGridEh1Columns7UpdateData
-        end
-        item
-          EditButtons = <>
-          FieldName = 'AGIO_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #20215#26684#25903#25345
-          Width = 66
-          OnUpdateData = DBGridEh1Columns8UpdateData
-        end
-        item
-          EditButtons = <>
-          FieldName = 'OTHR_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          Title.Caption = #20854#23427#37329#39069
-          Width = 61
-          OnUpdateData = DBGridEh1Columns9UpdateData
-        end
-        item
-          EditButtons = <>
-          FieldName = 'REMARK'
-          Footers = <>
-          Title.Caption = #25688#35201
-          Width = 200
-        end>
-    end
-    inherited pnlBarCode: TRzPanel [3]
-      Top = 112
-      Width = 912
-      inherited lblInput: TLabel
-        Left = 583
-        Visible = False
-      end
-      inherited lblHint: TLabel
-        Left = 885
-        Visible = False
-      end
-      inherited edtInput: TcxTextEdit
-        Left = 673
-        Visible = False
-      end
-      object RzTab: TRzTabControl
-        Left = 0
-        Top = 1
-        Width = 912
-        Height = 29
-        Align = alTop
-        TabHeight = 29
-        TabIndex = 0
-        TabOrder = 1
-        Tabs = <
-          item
-            Caption = #21830#21697#28165#21333
-          end
-          item
-            Caption = #36153#29992#20998#25674
-          end>
-        OnChange = RzTabChange
-        FixedDimension = 29
-      end
-    end
-    inherited stbHint: TRzPanel [4]
-      Top = 538
-      Width = 912
-    end
-    inherited rzHelp: TRzPanel [5]
-      Top = 490
-      Width = 912
-    end
-    inherited fndUNIT_ID: TcxComboBox [6]
-      Top = 184
-    end
-    object DBGridEh2: TDBGridEh [7]
-      Left = 5
-      Top = 325
-      Width = 912
-      Height = 131
-      Align = alBottom
-      AllowedOperations = [alopUpdateEh]
-      DataSource = dsDetail2
-      Flat = True
-      FooterColor = clWindow
-      FooterFont.Charset = GB2312_CHARSET
-      FooterFont.Color = clWindowText
-      FooterFont.Height = -12
-      FooterFont.Name = #23435#20307
-      FooterFont.Style = []
-      FooterRowCount = 1
-      FrozenCols = 2
-      Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
-      OptionsEh = [dghFixed3D, dghResizeWholeRightPart, dghHighlightFocus, dghClearSelection]
-      PopupMenu = PopupMenu2
-      RowHeight = 17
-      SumList.Active = True
-      TabOrder = 8
-      TitleFont.Charset = GB2312_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -12
-      TitleFont.Name = #23435#20307
-      TitleFont.Style = []
-      TitleHeight = 20
-      UseMultiTitle = True
-      VertScrollBar.VisibleMode = sbAlwaysShowEh
-      IsDrawNullRow = False
-      CurrencySymbol = #65509
-      DecimalNumber = 2
-      DigitalNumber = 12
-      OnDrawColumnCell = DBGridEh2DrawColumnCell
-      OnDrawFooterCell = DBGridEh2DrawFooterCell
-      OnKeyPress = DBGridEh2KeyPress
-      OnMouseDown = DBGridEh2MouseDown
+      Top = 118
+      Width = 819
+      Height = 280
+      PopupMenu = PopupMenu1
+      OnDrawFooterCell = DBGridEh1DrawFooterCell
+      OnKeyPress = DBGridEh1KeyPress
       Columns = <
         item
           EditButtons = <>
@@ -682,61 +367,52 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           FieldName = 'KPI_ID_TEXT'
           Footers = <>
           Title.Caption = #25351#26631#21517#31216
-          Width = 204
+          Width = 200
           Control = edtKPI_ID
-          OnUpdateData = DBGridEh2Columns1UpdateData
-          OnBeforeShowControl = DBGridEh2Columns1BeforeShowControl
+          OnUpdateData = DBGridEh1Columns1UpdateData
+          OnBeforeShowControl = DBGridEh1Columns1BeforeShowControl
         end
         item
           EditButtons = <>
           FieldName = 'KPI_YEAR'
           Footers = <>
-          Tag = 1
           Title.Caption = #24180#24230
           Width = 60
           Control = edtKPI_YEAR
-          OnBeforeShowControl = DBGridEh2Columns2BeforeShowControl
+          OnBeforeShowControl = DBGridEh1Columns2BeforeShowControl
         end
         item
           DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'KPI_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #36820#21033#37329#39069
-          Width = 67
-          OnUpdateData = DBGridEh2Columns3UpdateData
+          Width = 70
+          OnUpdateData = DBGridEh1Columns3UpdateData
         end
         item
-          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'BUDG_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #24066#22330#36153#29992
-          Width = 63
-          OnUpdateData = DBGridEh2Columns4UpdateData
+          Width = 70
+          OnUpdateData = DBGridEh1Columns4UpdateData
         end
         item
           EditButtons = <>
           FieldName = 'AGIO_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #20215#26684#25903#25345
-          Width = 63
-          OnUpdateData = DBGridEh2Columns5UpdateData
+          Width = 70
+          OnUpdateData = DBGridEh1Columns5UpdateData
         end
         item
           EditButtons = <>
           FieldName = 'OTHR_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #20854#23427#37329#39069
-          OnUpdateData = DBGridEh2Columns6UpdateData
+          Title.Caption = #20854#23427#36153#29992
+          Width = 70
+          OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
           EditButtons = <>
@@ -746,9 +422,18 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           Width = 200
         end>
     end
-    object edtKPI_YEAR: TzrComboBoxList [8]
-      Left = 256
-      Top = 368
+    inherited stbHint: TRzPanel
+      Top = 412
+      Width = 819
+    end
+    inherited rzHelp: TRzPanel
+      Top = 436
+      Width = 819
+      Height = 21
+    end
+    object edtKPI_YEAR: TzrComboBoxList
+      Left = 280
+      Top = 232
       Width = 73
       Height = 20
       Properties.AutoSelect = False
@@ -757,7 +442,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           Default = True
         end>
       Properties.ReadOnly = True
-      TabOrder = 10
+      TabOrder = 5
       Visible = False
       OnEnter = edtKPI_YEAREnter
       OnExit = edtKPI_YEARExit
@@ -786,14 +471,9 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       OnSaveValue = edtKPI_YEARSaveValue
       MultiSelect = False
     end
-    inherited fndGODS_ID: TzrComboBoxList [9]
-      Left = 48
-      Top = 187
-      Buttons = [zbFind]
-    end
     object edtKPI_ID: TzrComboBoxList
-      Left = 128
-      Top = 368
+      Left = 152
+      Top = 232
       Width = 121
       Height = 20
       Properties.AutoSelect = False
@@ -802,7 +482,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
           Default = True
         end>
       Properties.ReadOnly = True
-      TabOrder = 9
+      TabOrder = 6
       Visible = False
       OnEnter = edtKPI_IDEnter
       OnExit = edtKPI_IDExit
@@ -839,188 +519,12 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       MultiSelect = False
     end
   end
-  inherited dsTable: TDataSource
-    Left = 109
-    Top = 250
-  end
-  inherited PopupMenu1: TPopupMenu
-    OnPopup = PopupMenu1Popup
-    object N4: TMenuItem [9]
-      Caption = #29983#25104#38144#21806#35746#21333
-      OnClick = N4Click
-    end
-    object N3: TMenuItem [10]
-      Caption = '-'
-    end
-  end
-  inherited edtTable: TZQuery
-    FieldDefs = <
-      item
-        Name = 'SEQNO'
-        DataType = ftInteger
-      end
-      item
-        Name = 'GODS_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BARCODE'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'GODS_CODE'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'GODS_NAME'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'UNIT_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BATCH_NO'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'IS_PRESENT'
-        DataType = ftInteger
-      end
-      item
-        Name = 'LOCUS_NO'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'BOM_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'AMOUNT'
-        DataType = ftFloat
-      end
-      item
-        Name = 'APRICE'
-        DataType = ftFloat
-      end
-      item
-        Name = 'AMONEY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'CALC_AMOUNT'
-        DataType = ftFloat
-      end
-      item
-        Name = 'KPI_MNY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'BUDG_MNY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'AGIO_MNY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'OTHR_MNY'
-        DataType = ftFloat
-      end
-      item
-        Name = 'REMARK'
-        DataType = ftString
-        Size = 100
-      end
-      item
-        Name = 'CACL_AMOUNT'
-        DataType = ftFloat
-      end>
-    AfterScroll = edtTableAfterScroll
-    AfterPost = edtTableAfterPost
-    Left = 77
-    Top = 250
-  end
-  inherited edtProperty: TZQuery
-    FieldDefs = <
-      item
-        Name = 'SEQNO'
-        DataType = ftInteger
-      end
-      item
-        Name = 'GODS_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'GODS_CODE'
-        DataType = ftString
-        Size = 20
-      end
-      item
-        Name = 'GODS_NAME'
-        DataType = ftString
-        Size = 100
-      end
-      item
-        Name = 'UNIT_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BATCH_NO'
-        DataType = ftString
-        Size = 50
-      end
-      item
-        Name = 'IS_PRESENT'
-        DataType = ftInteger
-      end
-      item
-        Name = 'LOCUS_NO'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'BOM_ID'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'PROPERTY_01'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'PROPERTY_02'
-        DataType = ftString
-        Size = 36
-      end
-      item
-        Name = 'AMOUNT'
-        DataType = ftFloat
-      end
-      item
-        Name = 'CALC_AMOUNT'
-        DataType = ftFloat
-      end>
-    Left = 96
-    Top = 296
-  end
-  object cdsHeader: TZQuery
+  object cdsKPI_YEAR: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 77
-    Top = 181
+    Left = 292
+    Top = 255
   end
   object cdsKPI_ID: TZQuery
     FieldDefs = <
@@ -1074,39 +578,12 @@ inherited frmMktRequOrder: TfrmMktRequOrder
       end>
     CachedUpdates = True
     Params = <>
-    Left = 168
-    Top = 392
+    Left = 224
+    Top = 256
   end
-  object cdsKPI_YEAR: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 196
-    Top = 391
-  end
-  object cdsDetail: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 77
-    Top = 213
-  end
-  object dsDetail2: TDataSource
-    DataSet = cdsDetail2
-    Left = 104
-    Top = 392
-  end
-  object cdsDetail2: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    AfterPost = cdsDetail2AfterPost
-    Params = <>
-    Left = 72
-    Top = 392
-  end
-  object PopupMenu2: TPopupMenu
-    Left = 136
-    Top = 392
+  object PopupMenu1: TPopupMenu
+    Left = 192
+    Top = 280
     object N1: TMenuItem
       Caption = #21024#38500#25351#26631
       OnClick = N1Click

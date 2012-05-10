@@ -38,6 +38,8 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
+    Fflag: integer;
+    procedure Setflag(const Value: integer);
     { Private declarations }
   public
     { Public declarations }
@@ -46,6 +48,7 @@ type
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
     class function FindDialog(AOwner:TForm;cid:string;var RText,UId,UText:String):string;
+    property flag:integer read Fflag write Setflag;
   end;
 
 implementation
@@ -57,7 +60,7 @@ uses uGlobal,uShopUtil, uShopGlobal;
 function TfrmFindRequOrder.EncodeSQL(id: string): string;
 var w,w1,JoinStr:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.REQU_DATE>=:D1 and A.REQU_DATE<=:D2 and A.CHK_DATE is not null ';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.REQU_TYPE=''1'' and A.REQU_DATE>=:D1 and A.REQU_DATE<=:D2 and A.CHK_DATE is not null ';
   if fndSHOP_ID.AsString <> '' then
      w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndCLIENT_ID.AsString <> '' then
@@ -74,6 +77,7 @@ begin
   ' left join CA_DEPT_INFO C on A.TENANT_ID=C.TENANT_ID and A.DEPT_ID=C.DEPT_ID '+
   ' left join VIW_CUSTOMER D on A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+
   ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.REQU_USER=E.USER_ID '+w+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
+
   Result := ParseSQL(Factor.iDbType,Result);
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+result+') j order by REQU_ID';
@@ -214,6 +218,11 @@ begin
       DBGridEh1.canvas.FillRect(ARect);
       DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
+end;
+
+procedure TfrmFindRequOrder.Setflag(const Value: integer);
+begin
+  Fflag := Value;
 end;
 
 end.

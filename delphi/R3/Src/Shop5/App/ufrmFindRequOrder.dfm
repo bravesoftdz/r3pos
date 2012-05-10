@@ -1,7 +1,7 @@
 inherited frmFindRequOrder: TfrmFindRequOrder
   Left = 536
   Top = 191
-  Caption = #26597#25214#30003#39046#21333
+  Caption = #26597#25214#30003#35831#21333
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 12
@@ -192,7 +192,7 @@ inherited frmFindRequOrder: TfrmFindRequOrder
         Width = 48
         Height = 12
         Alignment = taRightJustify
-        Caption = #30003#39046#26085#26399
+        Caption = #30003#35831#26085#26399
       end
       object RzLabel3: TRzLabel
         Left = 192
@@ -235,7 +235,7 @@ inherited frmFindRequOrder: TfrmFindRequOrder
         Top = 25
         Width = 48
         Height = 12
-        Caption = #30003#25253#38376#24215
+        Caption = #30003#35831#38376#24215
       end
       object D1: TcxDateEdit
         Left = 81

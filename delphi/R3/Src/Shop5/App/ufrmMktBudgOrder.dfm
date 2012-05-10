@@ -8,10 +8,10 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 913
-    Height = 482
+    Width = 921
+    Height = 493
     inherited RzPanel2: TRzPanel
-      Width = 903
+      Width = 911
       Height = 125
       object lblBUDG_DATE: TLabel [0]
         Left = 562
@@ -72,7 +72,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
         Top = 38
         Width = 48
         Height = 12
-        Caption = #30003#39046#21333#21495
+        Caption = #30003#35831#21333#21495
       end
       object Label6: TLabel [8]
         Left = 404
@@ -373,14 +373,14 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 437
-      Width = 903
+      Top = 448
+      Width = 911
       Height = 16
     end
     inherited DBGridEh1: TDBGridEh
       Top = 130
-      Width = 903
-      Height = 299
+      Width = 911
+      Height = 310
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
@@ -427,13 +427,13 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 429
-      Width = 903
+      Top = 440
+      Width = 911
       Height = 8
     end
     inherited rzHelp: TRzPanel
-      Top = 453
-      Width = 903
+      Top = 464
+      Width = 911
       Height = 24
     end
     object edtKPI_ID: TzrComboBoxList

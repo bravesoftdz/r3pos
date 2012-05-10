@@ -1984,8 +1984,8 @@ begin
   //if not isAudit then Raise Exception.Create('没有审核的单据不能发货...');
   //if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...');
   //if not ShopGlobal.GetChkRight('100002176',1) then Raise Exception.Create('你没有查看"费用申领"的权限,请和管理员联系.');
-  if not frmMain.FindAction('actfrmMktRequOrderList').Enabled then Raise Exception.Create('找不到"费用申领"模块,请和管理员联系.');;
-  frmMain.FindAction('actfrmMktRequOrderList').OnExecute(nil);
+  if not frmMain.FindAction('actfrmMktAtthOrderList').Enabled then Raise Exception.Create('找不到"费用申领"模块,请和管理员联系.');;
+  frmMain.FindAction('actfrmMktAtthOrderList').OnExecute(nil);
   frmMktAtthOrderList := TfrmMktAtthOrderList(frmMain.FindChildForm(TfrmMktAtthOrderList));
   s := copy(AObj.FieldByName('ATTH_ID').AsString,4,36);
   Application.ProcessMessages;

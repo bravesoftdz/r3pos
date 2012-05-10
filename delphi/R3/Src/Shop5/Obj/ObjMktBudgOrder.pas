@@ -318,6 +318,10 @@ begin
   Str := 'delete from MKT_BUDGSHARE where TENANT_ID=:OLD_TENANT_ID and BUDG_ID=:OLD_BUDG_ID and SEQNO=:OLD_SEQNO';
   AGlobal.ExecSQL(str,Self);
 
+  str := ' update MKT_REQUORDER set BUDG_VRF=round(isnull(BUDG_VRF,0)-:BUDG_VRF,2) '+
+         ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID ';
+  AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
+
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)-:OLD_BUDG_VRF,2) '+
          ' where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and KPI_ID=:OLD_KPI_ID and KPI_YEAR=:OLD_KPI_YEAR ';
   AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
@@ -336,6 +340,10 @@ begin
   Str := 'insert into MKT_BUDGSHARE(TENANT_ID,SEQNO,REQU_ID,BUDG_ID,KPI_ID,KPI_YEAR,BUDG_VRF) '
   + 'values(:TENANT_ID,:SEQNO,:REQU_ID,:BUDG_ID,:KPI_ID,:KPI_YEAR,:BUDG_VRF)';
   AGlobal.ExecSQL(str,Self);
+
+  str := ' update MKT_REQUORDER set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
+         ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID ';
+  AGlobal.ExecSQL(ParseSQL(iDbType,str),Self);
 
   str := ' update MKT_REQUDATA set BUDG_VRF=round(isnull(BUDG_VRF,0)+:BUDG_VRF,2) '+
          ' where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID and KPI_YEAR=:KPI_YEAR ';

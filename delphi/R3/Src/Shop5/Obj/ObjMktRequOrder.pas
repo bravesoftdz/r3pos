@@ -30,18 +30,7 @@ type
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
-  TMktRequShare=class(TZFactory)
-  public
-    function BeforeUpdateRecord(AGlobal:IdbHelp): Boolean;override;
-    //记录行集新增检测函数，返回值是True 测可以新增当前记录
-    function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集修改检测函数，返回值是True 测可以修改当前记录
-    function BeforeModifyRecord(AGlobal:IdbHelp):Boolean;override;
-    //记录行集删除检测函数，返回值是True 测可以删除当前记录
-    function BeforeDeleteRecord(AGlobal:IdbHelp):Boolean;override;
-    function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
-    procedure InitClass; override;
-  end;
+
   TMktRequOrderGetPrior=class(TZFactory)
   public
     procedure InitClass;override;
@@ -332,64 +321,9 @@ begin
   end;
 end;
 
-{ TMktRequShare }
-
-function TMktRequShare.BeforeCommitRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktRequShare.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktRequShare.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktRequShare.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-function TMktRequShare.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
-begin
-
-end;
-
-procedure TMktRequShare.InitClass;
-var
-  Str: string;
-begin
-  inherited;
-  //Locked := false;
-  Str :=
-  'select A.TENANT_ID,A.SHOP_ID,A.SEQNO,A.REQU_ID,A.GODS_ID,A.UNIT_ID,A.AMOUNT,A.CALC_AMOUNT,'+
-  'case when A.UNIT_ID=B.CALC_UNITS then isnull(B.NEW_OUTPRICE,0) when A.UNIT_ID=B.SMALL_UNITS then isnull(B.[NEW_OUTPRICE],0)*B.SMALLTO_CALC '+
-  'when A.UNIT_ID=B.BIG_UNITS then isnull(B.[NEW_OUTPRICE],0)*B.BIGTO_CALC end as APRICE,A.CALC_AMOUNT*B.NEW_OUTPRICE as AMONEY,'+
-  'A.KPI_MNY,A.BUDG_MNY,A.AGIO_MNY,A.OTHR_MNY,A.REMARK,B.GODS_NAME,B.GODS_CODE,''#'' as BATCH_NO,'+
-  '''#'' as LOCUS_NO,''#'' as BOM_ID,''#'' as PROPERTY_01,''#'' as PROPERTY_02,0 as IS_PRESENT '+
-  ' from MKT_REQUSHARE A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID  '+
-  ' where A.TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID ';
-  SelectSQL.Text := ParseSQL(iDbType,Str);
-  IsSQLUpdate := True;
-  Str := 'insert into MKT_REQUSHARE(TENANT_ID,SHOP_ID,SEQNO,REQU_ID,GODS_ID,UNIT_ID,AMOUNT,CALC_AMOUNT,KPI_MNY,BUDG_MNY,AGIO_MNY,OTHR_MNY,REMARK) '
-    + 'VALUES(:TENANT_ID,:SHOP_ID,:SEQNO,:REQU_ID,:GODS_ID,:UNIT_ID,:AMOUNT,:CALC_AMOUNT,:KPI_MNY,:BUDG_MNY,:AGIO_MNY,:OTHR_MNY,:REMARK)';
-  InsertSQL.Text := Str;
-  Str := 'update MKT_REQUSHARE set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,SEQNO=:SEQNO,REQU_ID=:REQU_ID,GODS_ID=:GODS_ID,UNIT_ID=:UNIT_ID,'+
-         'AMOUNT=:AMOUNT,CALC_AMOUNT=:CALC_AMOUNT,KPI_MNY=:KPI_MNY,BUDG_MNY=:BUDG_MNY,AGIO_MNY=:AGIO_MNY,OTHR_MNY=:OTHR_MNY,REMARK=:REMARK '+
-         'where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO ';
-  UpdateSQL.Text := Str;
-  Str := ' delete from MKT_REQUSHARE where TENANT_ID=:OLD_TENANT_ID and REQU_ID=:OLD_REQU_ID and SEQNO=:OLD_SEQNO ';
-  DeleteSQL.Text := Str;
-end;
-
 initialization
   RegisterClass(TMktRequOrder);
   RegisterClass(TMktRequData);
-  RegisterClass(TMktRequShare);
   RegisterClass(TMktRequOrderGetPrior);
   RegisterClass(TMktRequOrderGetNext);
   RegisterClass(TMktRequOrderAudit);
@@ -397,11 +331,9 @@ initialization
 finalization
   UnRegisterClass(TMktRequOrder);
   UnRegisterClass(TMktRequData);
-  UnRegisterClass(TMktRequShare);
   UnRegisterClass(TMktRequOrderGetPrior);
   UnRegisterClass(TMktRequOrderGetNext);
   UnRegisterClass(TMktRequOrderAudit);
   UnRegisterClass(TMktRequOrderUnAudit);
 end.
-{
-}
+

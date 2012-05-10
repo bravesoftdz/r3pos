@@ -189,7 +189,7 @@ type
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
    ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo,
-   ufrmExcelFactory,ufrmMktRequOrder,ufrmMktRequOrderList, ufrmBasic;
+   ufrmExcelFactory,ufrmMktAtthOrder,ufrmMktAtthOrderList, ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -1888,30 +1888,30 @@ procedure TfrmSalIndentOrder.WMFillData(var Message: TMessage);
 var
   i:integer;
   FieldName,GODS_ID: string;
-  frmMktRequOrder: TfrmMktRequOrder;
+  frmMktAtthOrder: TfrmMktAtthOrder;
 begin
   if dbState <> dsInsert then Raise Exception.Create('不是在新增状态不能完成操作');
-  frmMktRequOrder := TfrmMktRequOrder(Message.WParam);
+  frmMktAtthOrder := TfrmMktAtthOrder(Message.WParam);
 
   //经销商
-  self.edtCLIENT_ID.KeyValue := frmMktRequOrder.edtCLIENT_ID.KeyValue;
-  self.edtCLIENT_ID.Text := frmMktRequOrder.edtCLIENT_ID.Text;
+  self.edtCLIENT_ID.KeyValue := frmMktAtthOrder.edtCLIENT_ID.KeyValue;
+  self.edtCLIENT_ID.Text := frmMktAtthOrder.edtCLIENT_ID.Text;
   //申报门店
-  self.edtSHOP_ID.KeyValue := frmMktRequOrder.edtSHOP_ID.KeyValue;
-  self.edtSHOP_ID.Text := frmMktRequOrder.edtSHOP_ID.Text;
+  self.edtSHOP_ID.KeyValue := frmMktAtthOrder.edtSHOP_ID.KeyValue;
+  self.edtSHOP_ID.Text := frmMktAtthOrder.edtSHOP_ID.Text;
   //填报人
-  self.edtGUIDE_USER.KeyValue := frmMktRequOrder.edtREQU_USER.KeyValue;
-  self.edtGUIDE_USER.Text := frmMktRequOrder.edtREQU_USER.Text;
+  self.edtGUIDE_USER.KeyValue := frmMktAtthOrder.edtREQU_USER.KeyValue;
+  self.edtGUIDE_USER.Text := frmMktAtthOrder.edtREQU_USER.Text;
   //所属部门
-  self.edtDEPT_ID.KeyValue := frmMktRequOrder.edtDEPT_ID.KeyValue;
-  self.edtDEPT_ID.Text := frmMktRequOrder.edtDEPT_ID.Text;
+  self.edtDEPT_ID.KeyValue := frmMktAtthOrder.edtDEPT_ID.KeyValue;
+  self.edtDEPT_ID.Text := frmMktAtthOrder.edtDEPT_ID.Text;
   //关联单据ID
   //self.AObj.FieldbyName('ATTH_ID').AsString:='REQ'+AObj.FieldbyName('REQU_ID').AsString;
   //self.AObj.FieldbyName('TAX_RATE').AsString := AObj.FieldbyName('TAX_RATE').AsString;
   //self.edtINDE_GLIDE_NO.Text := AObj.FieldbyName('GLIDE_NO').AsString;
-  self.edtREMARK.Text := frmMktRequOrder.edtREMARK.Text;
+  self.edtREMARK.Text := frmMktAtthOrder.edtREMARK.Text;
   //导入明细数据
-  self.SalIndentFrom(frmMktRequOrder.AObj.FieldbyName('REQU_ID').AsString);
+  self.SalIndentFrom(frmMktAtthOrder.AObj.FieldbyName('ATTH_ID').AsString);
   
 end;
 
@@ -1927,15 +1927,15 @@ begin
    HObj := TRecord_.Create;
    try
       Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
-      Params.ParamByName('REQU_ID').asString := id;
+      Params.ParamByName('ATTH_ID').asString := id;
       Factor.BeginBatch;
       try
-        Factor.AddBatch(h,'TMktRequOrder',Params);
-        Factor.AddBatch(d,'TMktRequShare',Params);
+        Factor.AddBatch(h,'TMktAtthOrder',Params);
+        Factor.AddBatch(d,'TMktAtthData',Params);
         Factor.OpenBatch;
         HObj.ReadFromDataSet(h);
         ReadFromObject(HObj,self);
-        AObj.FieldbyName('ATTH_ID').AsString:='REQ'+HObj.FieldbyName('REQU_ID').AsString;
+        AObj.FieldbyName('ATTH_ID').AsString:='REQ'+HObj.FieldbyName('ATTH_ID').AsString;
         //edtINDE_GLIDE_NO.Text := HObj.FieldbyName('GLIDE_NO').AsString;
         edtINDE_DATE.Date:= Global.SysDate;
         //AObj.FieldbyName('TAX_RATE').AsFloat := HObj.FieldbyName('TAX_RATE').AsFloat;
@@ -1976,20 +1976,20 @@ begin
 end;
 
 procedure TfrmSalIndentOrder.Label21Click(Sender: TObject);
-var frmMktRequOrderList:TfrmMktRequOrderList;
+var frmMktAtthOrderList:TfrmMktAtthOrderList;
   s:string;
 begin
   inherited;
   //if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   //if not isAudit then Raise Exception.Create('没有审核的单据不能发货...');
   //if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...');
-  if not ShopGlobal.GetChkRight('100002176',1) then Raise Exception.Create('你没有查看"费用申领"的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002176',1) then Raise Exception.Create('你没有查看"费用申领"的权限,请和管理员联系.');
   if not frmMain.FindAction('actfrmMktRequOrderList').Enabled then Raise Exception.Create('找不到"费用申领"模块,请和管理员联系.');;
   frmMain.FindAction('actfrmMktRequOrderList').OnExecute(nil);
-  frmMktRequOrderList := TfrmMktRequOrderList(frmMain.FindChildForm(TfrmMktRequOrderList));
+  frmMktAtthOrderList := TfrmMktAtthOrderList(frmMain.FindChildForm(TfrmMktAtthOrderList));
   s := copy(AObj.FieldByName('ATTH_ID').AsString,4,36);
   Application.ProcessMessages;
-  SendMessage(frmMktRequOrderList.Handle,WM_JOIN_DATA,integer(Pchar(s)),0);
+  SendMessage(frmMktAtthOrderList.Handle,WM_JOIN_DATA,integer(Pchar(s)),0);
   //PostMessage(frmMktRequOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
 end;
 

@@ -1,9 +1,9 @@
 inherited frmMktAtthOrder: TfrmMktAtthOrder
-  Left = 252
-  Top = 126
+  Left = 259
+  Top = 154
   Width = 938
   Height = 605
-  Caption = #38468#20214#21333
+  Caption = #35746#36135#38468#20214#21333
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12

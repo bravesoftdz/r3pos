@@ -1,5 +1,5 @@
 inherited frmMktPlanOrder: TfrmMktPlanOrder
-  Left = 332
+  Left = 280
   Top = 164
   Width = 883
   Height = 524
@@ -304,6 +304,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         TabOrder = 5
       end
       object edtBOND_MNY: TcxTextEdit
+        Tag = 1
         Left = 403
         Top = 74
         Width = 75
@@ -453,28 +454,38 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
           Width = 78
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'AMONEY'
+          Footer.DisplayFormat = '#0.00'
+          Footer.FieldName = 'AMONEY'
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #31614#32422#37329#39069
           Width = 78
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'BOND_MNY'
+          Footer.FieldName = 'BOND_MNY'
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #20445#35777#37329
           Width = 75
+          OnUpdateData = DBGridEh1Columns5UpdateData
         end
         item
+          DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'BUDG_MNY'
+          Footer.DisplayFormat = '#0.00'
+          Footer.FieldName = 'BUDG_MNY'
           Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #39044#31639#37329#39069
           Width = 75
+          OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
           EditButtons = <>

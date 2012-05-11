@@ -1,6 +1,6 @@
 inherited frmMktPlanOrder3: TfrmMktPlanOrder3
-  Left = 191
-  Top = 138
+  Left = 273
+  Top = 159
   Width = 883
   Height = 524
   Caption = #37319#36141#21512#21516
@@ -304,6 +304,7 @@ inherited frmMktPlanOrder3: TfrmMktPlanOrder3
         TabOrder = 5
       end
       object edtBOND_MNY: TcxTextEdit
+        Tag = 1
         Left = 403
         Top = 74
         Width = 75
@@ -467,6 +468,7 @@ inherited frmMktPlanOrder3: TfrmMktPlanOrder3
           Footers = <>
           Title.Caption = #20445#35777#37329
           Width = 75
+          OnUpdateData = DBGridEh1Columns5UpdateData
         end
         item
           EditButtons = <>
@@ -475,6 +477,7 @@ inherited frmMktPlanOrder3: TfrmMktPlanOrder3
           Footers = <>
           Title.Caption = #39044#31639#37329#39069
           Width = 75
+          OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
           EditButtons = <>

@@ -66,11 +66,16 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure N3Click(Sender: TObject);
+    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns6UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     procedure FocusNextColumn;
     procedure SetdbState(const Value: TDataSetState);override;
     function GetIsNull: boolean;override;
+    procedure Calc;
   public
     { Public declarations }
     RowID:Integer;
@@ -771,6 +776,78 @@ begin
     FreeAndNil(a);
     FreeAndNil(b);
     cdsDetail.EnableControls;
+  end;
+end;
+
+procedure TfrmMktPlanOrder3.DBGridEh1Columns5UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Real;
+begin
+  if cdsDetail.FieldbyName('KPI_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  TColumnEh(Sender).Field.asFloat := r;
+  Calc;
+  cdsDetail.Edit;  
+end;
+
+procedure TfrmMktPlanOrder3.DBGridEh1Columns6UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Real;
+begin
+  if cdsDetail.FieldbyName('KPI_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  TColumnEh(Sender).Field.asFloat := r;
+end;
+
+procedure TfrmMktPlanOrder3.Calc;
+var rs:TZQuery;
+    SumMny:Currency;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Data := cdsDetail.Data;
+    SumMny := 0;
+    rs.First;
+    while not rs.Eof do
+    begin
+      SumMny := SumMny + rs.FieldByName('BOND_MNY').AsFloat;
+      rs.Next;
+    end;
+    edtBOND_MNY.EditValue := SumMny;
+  finally
+    rs.Free;
   end;
 end;
 

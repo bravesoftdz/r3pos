@@ -180,7 +180,15 @@ begin
             //开票选择第一分页 [开票查询] 时执行
             CdsSalesList.Filtered := False;
             CdsSalesList.EnableControls;
-            ShowModal;
+            if ShowModal=mrOk then
+            begin
+              CdsSalesList.Filtered := False;
+              CdsSalesList.Filter := ' SetFlag=''1'' ';
+              CdsSalesList.Filtered := True;
+              CdsSalesList.First;
+              while not CdsSalesList.Eof do CdsSalesList.Delete;
+              CdsSalesList.Filtered := False;
+            end;
           finally
             free;
           end;

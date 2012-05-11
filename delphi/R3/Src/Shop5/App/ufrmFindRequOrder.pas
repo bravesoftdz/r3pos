@@ -47,7 +47,7 @@ type
     MaxId:string;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
-    class function FindDialog(AOwner:TForm;cid:string;var RText,UId,UText:String):string;
+    class function FindDialog(AOwner:TForm;cid:string;var RText,RType,UId,UText:String):string;
     property flag:integer read Fflag write Setflag;
   end;
 
@@ -60,7 +60,7 @@ uses uGlobal,uShopUtil, uShopGlobal;
 function TfrmFindRequOrder.EncodeSQL(id: string): string;
 var w,w1,JoinStr:string;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.REQU_TYPE=''1'' and A.REQU_DATE>=:D1 and A.REQU_DATE<=:D2 and A.CHK_DATE is not null ';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.REQU_DATE>=:D1 and A.REQU_DATE<=:D2 and A.CHK_DATE is not null ';
   if fndSHOP_ID.AsString <> '' then
      w := w +' and A.SHOP_ID=:SHOP_ID';
   if fndCLIENT_ID.AsString <> '' then
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-class function TfrmFindRequOrder.FindDialog(AOwner: TForm; cid: string;var RText,UId,UText:String): string;
+class function TfrmFindRequOrder.FindDialog(AOwner: TForm; cid: string;var RText,RType,UId,UText:String): string;
 begin
   with TfrmFindRequOrder.Create(AOwner) do
     begin
@@ -111,6 +111,7 @@ begin
         begin
            result := cdsList.FieldbyName('REQU_ID').AsString;
            RText :=cdsList.FieldbyName('GLIDE_NO').AsString;
+           RType := cdsList.FieldByName('REQU_TYPE').AsString;
            UId := cdsList.FieldbyName('REQU_USER').AsString;
            UText := cdsList.FieldbyName('REQU_USER_TEXT').AsString;
         end

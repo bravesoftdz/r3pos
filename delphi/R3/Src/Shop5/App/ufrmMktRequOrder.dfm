@@ -83,7 +83,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Caption = #36820#36824#31867#22411
       end
       inherited RzPanel4: TRzPanel
-        TabOrder = 8
+        TabOrder = 9
       end
       object edtCLIENT_ID: TzrComboBoxList
         Left = 251
@@ -162,14 +162,14 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 5
+        TabOrder = 6
       end
       object edtREMARK: TcxTextEdit
         Left = 251
         Top = 76
         Width = 286
         Height = 20
-        TabOrder = 4
+        TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREQU_USER: TzrComboBoxList
@@ -307,7 +307,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         ParentFont = False
         TextShadowColor = clWhite
         TextShadowDepth = 4
-        TabOrder = 9
+        TabOrder = 10
         TabStop = False
         TextStyle = tsRaised
         ThemeAware = False
@@ -320,7 +320,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Top = 34
         Width = 121
         Height = 20
-        TabOrder = 6
+        TabOrder = 7
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtCHK_USER_TEXT: TcxTextEdit
@@ -329,7 +329,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Top = 55
         Width = 121
         Height = 20
-        TabOrder = 7
+        TabOrder = 8
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREQU_TYPE: TcxComboBox
@@ -339,11 +339,11 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 10
+        TabOrder = 4
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 398
+      Top = 422
       Width = 819
       Height = 14
     end
@@ -423,7 +423,7 @@ inherited frmMktRequOrder: TfrmMktRequOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 412
+      Top = 398
       Width = 819
     end
     inherited rzHelp: TRzPanel

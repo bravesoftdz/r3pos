@@ -216,10 +216,10 @@ begin
   edtDEPT_ID.RangeValue := '1';
   edtREQU_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   AddCbxPickList(edtREQU_TYPE);
-  {cdsKPI_ID.Close;
+  cdsKPI_ID.Close;
   cdsKPI_ID.SQL.Text := ' select KPI_ID,KPI_NAME,KPI_SPELL from MKT_KPI_INDEX where TENANT_ID=:TENANT_ID and IDX_TYPE=''1'' and COMM not in (''02'',''12'') ';
   cdsKPI_ID.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  Factor.Open(cdsKPI_ID);}
+  Factor.Open(cdsKPI_ID);
 end;
 
 procedure TfrmMktRequOrder.edtKPI_YEAREnter(Sender: TObject);

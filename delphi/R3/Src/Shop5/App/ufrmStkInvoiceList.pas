@@ -114,7 +114,7 @@ var Client_Id,InvoiceFlag:String;
     SumMny:Real;
 begin
   inherited;
-    //if not ShopGlobal.GetChkRight('100002314',2) then Raise Exception.Create('你没有收票的权限,请和管理员联系.');
+    if not ShopGlobal.GetChkRight('100002401',2) then Raise Exception.Create('你没有收票的权限,请和管理员联系.');
     if CdsSalesList.State in [dsInsert,dsEdit] then CdsSalesList.Post;
     CdsSalesList.DisableControls;
     try
@@ -199,10 +199,10 @@ procedure TfrmStkInvoiceList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  //if not ShopGlobal.GetChkRight('100002314',4) then Raise Exception.Create('你没有删除发票的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002401',4) then Raise Exception.Create('你没有删除发票的权限,请和管理员联系.');
   if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
   begin
-    if not ShopGlobal.GetChkRight('100002314',4) then
+    if not ShopGlobal.GetChkRight('100002401',4) then
       Raise Exception.Create('你没有删除"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"发票的权限!');
   end;
 
@@ -225,10 +225,10 @@ procedure TfrmStkInvoiceList.actEditExecute(Sender: TObject);
 begin
   inherited;
   if cdsList.IsEmpty then Exit;
-  //if not ShopGlobal.GetChkRight('100002314',3) then Raise Exception.Create('你没有修改发票的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002401',3) then Raise Exception.Create('你没有修改发票的权限,请和管理员联系.');
   if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('100002314',3) then
+      if not ShopGlobal.GetChkRight('100002401',3) then
         Raise Exception.Create('你没有修改"'+cdsList.FieldByName('CREA_USER_TEXT').AsString+'"发票的权限!');
     end;
 
@@ -249,14 +249,14 @@ end;
 procedure TfrmStkInvoiceList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002401',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
   Raise Exception.Create('此功能暂时没有开放.')
 end;
 
 procedure TfrmStkInvoiceList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002314',7) then Raise Exception.Create('你没有导出发票的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002401',7) then Raise Exception.Create('你没有导出发票的权限,请和管理员联系.');
   Raise Exception.Create('此功能暂时没有开放.')
 end;
 

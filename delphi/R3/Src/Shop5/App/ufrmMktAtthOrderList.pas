@@ -220,19 +220,19 @@ end;
 
 procedure TfrmMktAtthOrderList.actNewExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002176',2) then Raise Exception.Create('你没有新增费用申领的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',2) then Raise Exception.Create('你没有新增销售附件单的权限,请和管理员联系.');
   inherited;
 end;
 
 procedure TfrmMktAtthOrderList.actDeleteExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002176',4) then Raise Exception.Create('你没有删除费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',4) then Raise Exception.Create('你没有删除销售附件单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
        OpenForm(cdsList.FieldbyName('ATTH_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
-  if CurOrder=nil then Raise Exception.Create('"费用申领"打开异常!');
+  if CurOrder=nil then Raise Exception.Create('"销售附件单"打开异常!');
 
   if TfrmMktAtthOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
@@ -243,7 +243,7 @@ begin
   if (CurOrder<>nil) then
      begin
        if not CurOrder.saved then Exit;
-       if ShopGlobal.GetChkRight('100002176',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增费用申领单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002176',2) and (MessageBox(Handle,'删除当前单据成功,是否继续新增销售附件单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -252,13 +252,13 @@ end;
 
 procedure TfrmMktAtthOrderList.actEditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002176',3) then Raise Exception.Create('你没有修改费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',3) then Raise Exception.Create('你没有修改销售附件单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;
        OpenForm(cdsList.FieldbyName('ATTH_ID').AsString,cdsList.FieldbyName('SHOP_ID').AsString);
      end;
-  if CurOrder=nil then Raise Exception.Create('"费用申领"打开异常!');
+  if CurOrder=nil then Raise Exception.Create('"销售附件单"打开异常!');
 
   if TfrmMktAtthOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
@@ -278,7 +278,7 @@ begin
           begin
             actPrint.OnExecute(nil);
           end;}
-       if ShopGlobal.GetChkRight('100002176',2) and (MessageBox(Handle,'是否继续新增费用申领单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002176',2) and (MessageBox(Handle,'是否继续新增销售附件单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurOrder.NewOrder
        else
           if rzPage.PageCount>2 then CurOrder.Close;
@@ -288,7 +288,7 @@ end;
 procedure TfrmMktAtthOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印销售附件单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -316,7 +316,7 @@ end;
 procedure TfrmMktAtthOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',6) then Raise Exception.Create('你没有打印销售附件单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -359,7 +359,7 @@ end;
 
 procedure TfrmMktAtthOrderList.actAuditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002176',5) then Raise Exception.Create('你没有审核费用申领单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002176',5) then Raise Exception.Create('你没有审核销售附件单的权限,请和管理员联系.');
   if (CurOrder=nil) then
      begin
        if cdsList.IsEmpty then Exit;

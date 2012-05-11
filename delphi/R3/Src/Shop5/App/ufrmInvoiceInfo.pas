@@ -98,6 +98,7 @@ begin
   rs := ShopGlobal.GetDeptInfo;
   edtDEPT_ID.KeyValue := rs.FieldByName('DEPT_ID').AsString;
   edtDEPT_ID.Text := rs.FieldByName('DEPT_NAME').AsString;
+  edtINVOICE_FLAG.ItemIndex := TdsItems.FindItems(edtINVOICE_FLAG.Properties.Items,'CODE_ID','3');
 end;
 
 procedure TfrmInvoiceInfo.Btn_CloseClick(Sender: TObject);

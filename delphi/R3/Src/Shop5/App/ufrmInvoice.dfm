@@ -78,6 +78,7 @@ inherited frmInvoice: TfrmInvoice
                     Width = 30
                   end
                   item
+                    DisplayFormat = '0000-00-00'
                     EditButtons = <>
                     FieldName = 'CREA_DATE'
                     Footers = <>

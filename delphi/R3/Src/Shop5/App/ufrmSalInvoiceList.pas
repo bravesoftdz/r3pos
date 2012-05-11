@@ -182,6 +182,7 @@ begin
             CdsSalesList.EnableControls;
             if ShowModal=mrOk then
             begin
+              //对勾选列表清除
               CdsSalesList.Filtered := False;
               CdsSalesList.Filter := ' SetFlag=''1'' ';
               CdsSalesList.Filtered := True;

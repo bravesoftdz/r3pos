@@ -579,7 +579,7 @@ end;
 
 procedure TfrmMktBudgOrder.edtREQU_IDPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
-var g,uid,utext:string;
+var g,t,uid,utext:string;
 begin
   if dbState = dsBrowse then Exit;
   if edtCLIENT_ID.AsString = '' then
@@ -593,12 +593,13 @@ begin
   if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入申领单号.');
   cdsDetail.DisableControls;
   try
-    FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,uid,utext);
+    FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,t,uid,utext);
     if FromId<>'' then
        begin
          edtREQU_ID_TEXT.Text := g;
          edtBUDG_USER.KeyValue := uid;
          edtBUDG_USER.Text := utext;
+         AObj.FieldByName('REQU_TYPE').AsString := t;
 
          cdsKPI_ID.Close;
          cdsKPI_ID.SQL.Text := ' select A.KPI_ID,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+

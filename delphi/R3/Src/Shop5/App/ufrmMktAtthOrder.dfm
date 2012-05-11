@@ -1,6 +1,6 @@
 inherited frmMktAtthOrder: TfrmMktAtthOrder
-  Left = 259
-  Top = 154
+  Left = 273
+  Top = 155
   Width = 938
   Height = 605
   Caption = #38144#21806#38468#20214#21333

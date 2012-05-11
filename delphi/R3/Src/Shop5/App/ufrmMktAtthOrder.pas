@@ -670,7 +670,7 @@ end;
 
 procedure TfrmMktAtthOrder.edtREQU_ID_TEXTPropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
-var g,uid,utext:string;
+var g,t,uid,utext:string;
     rs:TZQuery;
 begin
   if dbState = dsBrowse then Exit;
@@ -681,7 +681,7 @@ begin
        Exit;
      end;
   inherited;
-  FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,uid,utext);
+  FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,t,uid,utext);
   if FromId<>'' then
      begin
        rs := TZQuery.Create(nil);

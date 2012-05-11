@@ -316,6 +316,8 @@ CREATE TABLE [MKT_ATTHORDER] (
 	[SHOP_ID] [varchar] (13) NOT NULL ,
         --单号
 	[ATTH_ID] [char] (36) NOT NULL ,
+        --申请单号
+	[REQU_ID] [char] (36) NULL ,
         --所属部门
 	[DEPT_ID] varchar (12) NOT NULL ,
         --返还类型

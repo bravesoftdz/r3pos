@@ -313,7 +313,10 @@ uses
   ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder},
   ufrmMktPlanOrder3 in 'App\ufrmMktPlanOrder3.pas' {frmMktPlanOrder3},
   ufrmMktPlanOrderList3 in 'App\ufrmMktPlanOrderList3.pas' {frmMktPlanOrderList3},
-  ObjMktPlanOrder3 in 'Obj\ObjMktPlanOrder3.pas';
+  ObjMktPlanOrder3 in 'Obj\ObjMktPlanOrder3.pas',
+  ufrmStkInvoiceList in 'App\ufrmStkInvoiceList.pas' {frmStkInvoiceList},
+  ufrmStkInvoice in 'App\ufrmStkInvoice.pas' {frmStkInvoice},
+  ObjStkInvoiceOrder in 'Obj\ObjStkInvoiceOrder.pas';
 
 {$R *.res}
 var

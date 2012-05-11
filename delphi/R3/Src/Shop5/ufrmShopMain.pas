@@ -314,6 +314,7 @@ type
     Button1: TButton;
     actfrmStkInvoiceList: TAction;
     actfrmInvoice: TAction;
+    Button2: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -535,7 +536,7 @@ uses
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
   ufrmMktKpiResult2,ufrmMktKpiResult3,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
-  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice;
+  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4512,10 +4513,10 @@ begin
      end;
   Application.Restore;
   frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmSalInvoiceList);
+  Form := FindChildForm(TfrmStkInvoiceList);
   if not Assigned(Form) then
      begin
-       Form := TfrmSalInvoiceList.Create(self);
+       Form := TfrmStkInvoiceList.Create(self);
        AddFrom(Form);
      end;
   Form.Show;

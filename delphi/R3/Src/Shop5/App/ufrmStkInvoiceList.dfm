@@ -1,6 +1,6 @@
 inherited frmStkInvoiceList: TfrmStkInvoiceList
-  Left = 505
-  Top = 121
+  Left = 406
+  Top = 103
   Width = 908
   Height = 549
   Caption = #36827#39033#21457#31080#31649#29702
@@ -68,11 +68,11 @@ inherited frmStkInvoiceList: TfrmStkInvoiceList
                   Caption = #33267
                 end
                 object Label2: TLabel
-                  Left = 13
+                  Left = 24
                   Top = 68
-                  Width = 60
+                  Width = 48
                   Height = 12
-                  Caption = #20379#24212#21830#21517#31216
+                  Caption = #20379' '#24212' '#21830
                 end
                 object Label8: TLabel
                   Left = 24
@@ -559,11 +559,11 @@ inherited frmStkInvoiceList: TfrmStkInvoiceList
                 Caption = #25910#31080#20154
               end
               object Label17: TLabel
-                Left = 13
+                Left = 24
                 Top = 68
-                Width = 60
+                Width = 48
                 Height = 12
-                Caption = #20379#24212#21830#21517#31216
+                Caption = #20379' '#24212' '#21830
               end
               object Label7: TLabel
                 Left = 24

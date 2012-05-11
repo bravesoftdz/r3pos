@@ -113,6 +113,25 @@ where e.com_id=d.com_id and e.com_id=c.com_id and c.com_id=d.com_id and a.item_i
       a.item_id=c.item_id and a.item_id=d.item_id and a.item_id=e.item_id and  c.pri_type='03' and d.pri_type='04' and a.is_mrb='1' and 
       c.is_mrb='1' and e.is_mrb='1';    
 
+--创建视图：RIM_SD_CO_LINE ( 订单明明细表)
+drop view RIM_SD_CO_LINE;
+create view RIM_SD_CO_LINE
+as
+select 
+  CO_NUM,   --订单编号
+  LINE_NUM, --行号
+  ITEM_ID,  --商品编号
+  UM_ID,    --计量单位
+  QTY_NEED, --需求数量
+  QTY_VFY,  --审核数量
+  QTY_ORD,  --订购数量
+  PRI,      --折扣价格
+  PRI3,     --三级批发价
+  AMT,      --含税金额, 金额=订购数量*折扣价格
+  RET_AMT,  --折扣额
+  NOTE as NOTE   --备注					
+from SD_CO_LINE
+where QTY_ORD<>0; 
  
  
  

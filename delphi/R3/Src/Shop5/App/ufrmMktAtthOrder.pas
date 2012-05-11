@@ -237,6 +237,7 @@ begin
   if edtREQU_TYPE.Properties.Items.Count>0 then
   begin
     edtREQU_TYPE.ItemIndex := 0;
+    edtREQU_TYPE.Enabled := False;
   end;
 
   InitRecord;

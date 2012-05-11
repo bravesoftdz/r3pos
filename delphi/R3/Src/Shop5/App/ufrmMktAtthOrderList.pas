@@ -57,7 +57,7 @@ type
   end;
 
 implementation
-uses ufrmMktRequOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,
+uses uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,
   uShopGlobal,uDsUtil, uMsgBox, uframeMDForm, ObjCommon, ufrmMktAtthOrder;
 {$R *.dfm}
 
@@ -234,10 +234,10 @@ begin
      end;
   if CurOrder=nil then Raise Exception.Create('"费用申领"打开异常!');
 
-  if TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmMktAtthOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002176',5) then
-         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktAtthOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
   if (CurOrder<>nil) then
@@ -260,10 +260,10 @@ begin
      end;
   if CurOrder=nil then Raise Exception.Create('"费用申领"打开异常!');
 
-  if TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
+  if TfrmMktAtthOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
       if not ShopGlobal.GetChkRight('100002176',5) then
-         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktRequOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
+         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmMktAtthOrder(CurOrder).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入单据的权限!');
     end;
   inherited;
 end;

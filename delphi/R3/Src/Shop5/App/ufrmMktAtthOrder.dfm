@@ -201,6 +201,7 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtREQU_TYPE: TcxComboBox
+        Tag = 1
         Left = 448
         Top = 76
         Width = 89
@@ -370,6 +371,7 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtSUM_MNY: TcxTextEdit
+        Tag = 1
         Left = 448
         Top = 34
         Width = 89

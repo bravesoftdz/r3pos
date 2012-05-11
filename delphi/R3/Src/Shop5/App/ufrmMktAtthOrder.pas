@@ -237,7 +237,6 @@ begin
   if edtREQU_TYPE.Properties.Items.Count>0 then
   begin
     edtREQU_TYPE.ItemIndex := 0;
-    edtREQU_TYPE.Enabled := False;
   end;
 
   InitRecord;
@@ -691,16 +690,12 @@ begin
          rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
          rs.ParamByName('REQU_ID').AsString := FromId;
          Factor.Open(rs);
-         //AObj.FieldByName('KPI_MNY').AsFloat := rs.FieldByName('KPI_MNY').AsFloat;
          SKpiMny := rs.FieldByName('KPI_MNY').AsFloat;
          edtKPI_MNY.EditValue := SKpiMny;
-         //AObj.FieldByName('BUDG_MNY').AsFloat := rs.FieldByName('BUDG_VRF').AsFloat;
          SBudgMny := rs.FieldByName('BUDG_VRF').AsFloat;
          edtBUDG_MNY.EditValue := SBudgMny;
-         //AObj.FieldByName('AGIO_MNY').AsFloat := rs.FieldByName('AGIO_MNY').AsFloat;
          SAgioMny := rs.FieldByName('AGIO_MNY').AsFloat;
          edtAGIO_MNY.EditValue := SAgioMny;
-         //AObj.FieldByName('OTHR_MNY').AsFloat := rs.FieldByName('OTHR_MNY').AsFloat;
          SOthrMny := rs.FieldByName('OTHR_MNY').AsFloat;
          edtOTHR_MNY.EditValue := SOthrMny;
          edtSUM_MNY.EditValue := SKpiMny+SBudgMny+SAgioMny+SOthrMny;

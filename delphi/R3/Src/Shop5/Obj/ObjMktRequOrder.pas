@@ -264,8 +264,8 @@ begin
     ChkUser:=Params.ParamByName('CHK_USER').AsString;
     Str:=
       'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
-      'select REQU_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,''费用申请'''+GetStrJoin(AGlobal.iDbType)+'''(申请单号:'''+GetStrJoin(AGlobal.iDbType)+'GLIDE_NO'+GetStrJoin(AGlobal.iDbType)+''')'',''5'','+
-      ' KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,0,0,KPI_MNY+BUDG_MNY+AGIO_MNY+OTHR_MNY,REQU_DATE,REQU_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''','''+ChkUser+''' as CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+
+      'select REQU_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,''营销费用'''+GetStrJoin(AGlobal.iDbType)+'''(申请单号:'''+GetStrJoin(AGlobal.iDbType)+'GLIDE_NO'+GetStrJoin(AGlobal.iDbType)+''')'',''5'','+
+      ' KPI_MNY+AGIO_MNY+OTHR_MNY,0,0,KPI_MNY+AGIO_MNY+OTHR_MNY,REQU_DATE,REQU_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''','''+ChkUser+''' as CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+
       ' from MKT_REQUORDER where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and REQU_TYPE=''2''';
     AGlobal.ExecSQL(Str,params);
     AGlobal.CommitTrans;

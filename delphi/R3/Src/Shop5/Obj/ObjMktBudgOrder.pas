@@ -124,7 +124,7 @@ begin
   inherited;
   Locked := false;
   SelectSQL.Text :=
-  'select A.TENANT_ID,A.BUDG_ID,A.GLIDE_NO,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.SHOP_ID,D.SHOP_NAME as SHOP_ID_TEXT,'+
+  'select A.TENANT_ID,A.BUDG_ID,A.GLIDE_NO,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.SHOP_ID,D.SHOP_NAME as SHOP_ID_TEXT,A.REQU_TYPE,'+
   'A.DEPT_ID,C.DEPT_NAME as DEPT_ID_TEXT,A.BUDG_DATE,A.CHK_DATE,A.CHK_USER,F.USER_NAME as CHK_USER_TEXT,A.REQU_ID,A.REMARK,A.BUDG_VRF,'+
   'A.CREA_DATE,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,A.BUDG_USER,G.USER_NAME as BUDG_USER_TEXT,H.GLIDE_NO as REQU_ID_TEXT,A.COMM,A.TIME_STAMP '+
   ' from MKT_BUDGORDER A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
@@ -136,10 +136,10 @@ begin
   ' left join MKT_REQUORDER H on A.TENANT_ID=H.TENANT_ID and A.REQU_ID=H.REQU_ID '+
   ' where A.TENANT_ID=:TENANT_ID and A.BUDG_ID=:BUDG_ID ';
   IsSQLUpdate := True;
-  Str := 'insert into MKT_BUDGORDER(TENANT_ID,BUDG_ID,GLIDE_NO,CLIENT_ID,SHOP_ID,DEPT_ID,BUDG_DATE,BUDG_USER,BUDG_VRF,CHK_DATE,CHK_USER,REQU_ID,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
-    + 'VALUES(:TENANT_ID,:BUDG_ID,:GLIDE_NO,:CLIENT_ID,:SHOP_ID,:DEPT_ID,:BUDG_DATE,:BUDG_USER,:BUDG_VRF,:CHK_DATE,:CHK_USER,:REQU_ID,:REMARK,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
+  Str := 'insert into MKT_BUDGORDER(TENANT_ID,BUDG_ID,GLIDE_NO,CLIENT_ID,SHOP_ID,REQU_TYPE,DEPT_ID,BUDG_DATE,BUDG_USER,BUDG_VRF,CHK_DATE,CHK_USER,REQU_ID,REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '
+    + 'VALUES(:TENANT_ID,:BUDG_ID,:GLIDE_NO,:CLIENT_ID,:SHOP_ID,:REQU_TYPE,:DEPT_ID,:BUDG_DATE,:BUDG_USER,:BUDG_VRF,:CHK_DATE,:CHK_USER,:REQU_ID,:REMARK,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')';
   InsertSQL.Text := Str;
-  Str := 'update MKT_BUDGORDER set TENANT_ID=:TENANT_ID,BUDG_ID=:BUDG_ID,GLIDE_NO=:GLIDE_NO,CLIENT_ID=:CLIENT_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,BUDG_USER=:BUDG_USER,'+
+  Str := 'update MKT_BUDGORDER set TENANT_ID=:TENANT_ID,BUDG_ID=:BUDG_ID,GLIDE_NO=:GLIDE_NO,CLIENT_ID=:CLIENT_ID,SHOP_ID=:SHOP_ID,REQU_TYPE=:REQU_TYPE,DEPT_ID=:DEPT_ID,BUDG_USER=:BUDG_USER,'+
          'BUDG_DATE=:BUDG_DATE,BUDG_VRF=:BUDG_VRF,CHK_DATE=:CHK_DATE,CHK_USER=:CHK_USER,REQU_ID=:REQU_ID,REMARK=:REMARK,CREA_DATE=:CREA_DATE,CREA_USER=:CREA_USER,'+
          'COMM=' + GetCommStr(iDbType) + ','+
          'TIME_STAMP='+GetTimeStamp(iDbType)+' '+
@@ -230,10 +230,11 @@ end;
 function TMktBudgOrderAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var
-  Str:string;
+  Str,ChkUser:string;
   n:Integer;
   rs:TZQuery;
 begin
+  AGlobal.BeginTrans;
   try
     Str := 'update MKT_BUDGORDER set CHK_DATE='''+Params.FindParam('CHK_DATE').asString+''',CHK_USER='''+Params.FindParam('CHK_USER').asString+''',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and BUDG_ID='''+Params.FindParam('BUDG_ID').asString+''' and CHK_DATE IS NULL';
     n := AGlobal.ExecSQL(Str);
@@ -242,6 +243,16 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+
+    ChkUser:=Params.ParamByName('CHK_USER').AsString;
+    Str:=
+      'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,REVE_MNY,RECK_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+      'select BUDG_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,''市场费用'''+GetStrJoin(AGlobal.iDbType)+'''(核销单号:'''+GetStrJoin(AGlobal.iDbType)+'GLIDE_NO'+GetStrJoin(AGlobal.iDbType)+''')'',''5'','+
+      ' BUDG_VRF,0,0,BUDG_VRF,BUDG_DATE,BUDG_ID,'''+formatDatetime('YYYY-MM-DD HH:NN:SS',now())+''','''+ChkUser+''' as CHK_USER,''00'','+GetTimeStamp(AGlobal.iDbType)+
+      ' from MKT_BUDGORDER where TENANT_ID=:TENANT_ID and BUDG_ID=:BUDG_ID and REQU_TYPE=''2''';
+    AGlobal.ExecSQL(Str,params);
+    AGlobal.CommitTrans;
+
     Result := true;
     Msg := '审核单据成功';
   except
@@ -259,7 +270,9 @@ function TMktBudgOrderUnAudit.Execute(AGlobal: IdbHelp;
   Params: TftParamList): Boolean;
 var Str:string;
     n:Integer;
+    rs:TZQuery;
 begin
+  AGlobal.BeginTrans;
   try
     Str := 'update MKT_BUDGORDER set CHK_DATE=null,CHK_USER=null,COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+'   where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and BUDG_ID='''+Params.FindParam('BUDG_ID').asString+''' and CHK_DATE IS NOT NULL';
     n := AGlobal.ExecSQL(Str);
@@ -268,6 +281,18 @@ begin
     else
     if n>1 then
        Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('BUDG_ID').asString+''' and RECV_TYPE=''5''';
+      AGlobal.Open(rs);
+      if (rs.Fields[0].AsFloat <>0) then Raise Exception.Create('已经收款的单不能弃审...');
+      AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID='+Params.FindParam('TENANT_ID').asString+' and SALES_ID='''+Params.FindParam('BUDG_ID').asString+''' and RECV_TYPE=''5''');
+    finally
+      rs.Free;
+    end;
+    AGlobal.CommitTrans;
+
     MSG := '反审核单据成功。';
     Result := True;
   except

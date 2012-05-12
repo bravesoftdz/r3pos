@@ -1,4 +1,4 @@
-alter table RCK_C_GOODS_DAYS add SALES_STYLE varchar2 (36);
+alter table RCK_C_GOODS_DAYS add SALES_STYLE varchar (36);
 --全初始化成门店销售
 update RCK_C_GOODS_DAYS set SALES_STYLE='6BD82B9E-3678-4F33-89ED-B8C26B6589BD';
 
@@ -10,19 +10,19 @@ CREATE TABLE SAL_INVOICE_BOOK (
         --流水ID号
 	INVH_ID char (36) NOT NULL ,
         --领用门店
-	SHOP_ID varchar2 (13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --领用部门
-	DEPT_ID varchar2 (12) NOT NULL ,
+	DEPT_ID varchar (12) NOT NULL ,
         --发票类型
-	INVOICE_FLAG varchar2 (1) ,
+	INVOICE_FLAG varchar (1) ,
         --领用人
-	CREA_USER varchar2(36) NOT NULL ,
+	CREA_USER varchar(36) NOT NULL ,
         --领用日期
 	CREA_DATE int NOT NULL ,
         --备注
-	REMARK varchar2 (100) ,
+	REMARK varchar (100) ,
         --发票代码
-	INVH_NO varchar2 (50) NOT NULL ,
+	INVH_NO varchar (50) NOT NULL ,
         --当前票号
 	CURRENT_NO int ,
         --发票起始号
@@ -38,7 +38,7 @@ CREATE TABLE SAL_INVOICE_BOOK (
         --结余张数
 	BALANCE int ,
         --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_SAL_INV_BOOK PRIMARY KEY   
@@ -72,24 +72,24 @@ CREATE TABLE SAL_VOUCHERORDER (
         --入库单号
 	VOUCHER_ID char (36) NOT NULL ,
         --入库门店
-	SHOP_ID varchar2 (13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --入库部门
-	DEPT_ID varchar2 (12) NOT NULL ,
+	DEPT_ID varchar (12) NOT NULL ,
         --代金券类型
-	VOUCHER_TYPE varchar2 (1) NOT NULL ,
+	VOUCHER_TYPE varchar (1) NOT NULL ,
         --入库日期
 	INTO_DATE int NOT NULL ,
         --负责人
-	INTO_USER varchar2 (36) ,
+	INTO_USER varchar (36) ,
 	
         --操作时间
-	CREA_DATE varchar2 (30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2 (36) ,
+	CREA_USER varchar (36) ,
         --备注
-	REMARK varchar2 (100) ,
+	REMARK varchar (100) ,
         --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_SAL_VCHORDER PRIMARY KEY   
@@ -109,9 +109,9 @@ CREATE TABLE SAL_VOUCHERDATA (
         --入库单号
 	VOUCHER_ID char (36) NOT NULL ,
         --防伪码
-	BARCODE varchar2 (50) NOT NULL ,
+	BARCODE varchar (50) NOT NULL ,
         --代金券类型
-	VOUCHER_TYPE varchar2 (1) ,
+	VOUCHER_TYPE varchar (1) ,
         --面值
 	VOUCHER_PRC int NOT NULL ,
         --状态
@@ -119,9 +119,9 @@ CREATE TABLE SAL_VOUCHERDATA (
         --有效期
 	VAILD_DATE int NOT NULL ,
         --记名券时记在谁名下
-	CLIENT_ID varchar2 (36) NOT NULL ,
+	CLIENT_ID varchar (36) NOT NULL ,
         --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_SAL_VOUCHERDATA PRIMARY KEY   
@@ -141,22 +141,22 @@ CREATE TABLE SAL_VHLEADORDER (
         --领用单号
 	VHLEAD_ID char (36) NOT NULL ,
         --领用门店
-	SHOP_ID varchar2 (13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --领用部门
-	DEPT_ID varchar2 (12) NOT NULL ,
+	DEPT_ID varchar (12) NOT NULL ,
         --领用日期
 	LEAD_DATE int NOT NULL ,
         --负责人
-	LEAD_USER varchar2 (36) ,
+	LEAD_USER varchar (36) ,
 	
         --操作时间
-	CREA_DATE varchar2 (30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2 (36) ,
+	CREA_USER varchar (36) ,
         --备注
-	REMARK varchar2 (100) ,
+	REMARK varchar (100) ,
         --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_SAL_VHLDORDER PRIMARY KEY   
@@ -176,7 +176,7 @@ CREATE TABLE SAL_VHLEADDATA (
         --领用单号
 	VHLEAD_ID char (36) NOT NULL ,
         --防伪码
-	BARCODE varchar2 (50) NOT NULL ,
+	BARCODE varchar (50) NOT NULL ,
         --面值
 	VOUCHER_PRC int NOT NULL ,
 	CONSTRAINT PK_SAL_VHLEADDATA PRIMARY KEY   
@@ -196,28 +196,28 @@ CREATE TABLE SAL_VHSENDORDER (
         --发放单号
 	VHSEND_ID char (36) NOT NULL ,
         --发放门店
-	SHOP_ID varchar2 (13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --发放部门
-	DEPT_ID varchar2 (12) NOT NULL ,
+	DEPT_ID varchar (12) NOT NULL ,
         --客户
-	CLIENT_ID varchar2 (36) NOT NULL ,
+	CLIENT_ID varchar (36) NOT NULL ,
         --发放日期
 	SEND_DATE int NOT NULL ,
         --负责人
-	SEND_USER varchar2 (36) ,
+	SEND_USER varchar (36) ,
         --面值金额
 	VOUCHER_TTL decimal(18, 3) ,
         --实收金额
 	VOUCHER_MNY decimal(18, 3) ,
 	
         --操作时间
-	CREA_DATE varchar2 (30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2 (36) ,
+	CREA_USER varchar (36) ,
         --备注
-	REMARK varchar2 (100) ,
+	REMARK varchar (100) ,
         --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_SAL_VHSDORDER PRIMARY KEY   
@@ -237,11 +237,11 @@ CREATE TABLE SAL_VHSENDDATA (
         --发放单号
 	VHSEND_ID char (36) NOT NULL ,
         --防伪码
-	BARCODE varchar2 (50) NOT NULL ,
+	BARCODE varchar (50) NOT NULL ,
         --面值
 	VOUCHER_PRC int NOT NULL ,
         --代金券类型
-	VOUCHER_TYPE varchar2 (1) ,
+	VOUCHER_TYPE varchar (1) ,
         --实收金额
 	VOUCHER_MNY decimal(18, 3) ,
         --折扣率
@@ -264,21 +264,21 @@ CREATE TABLE SAL_VHPAY_GLIDE (
         --支付流水
 	VHPAY_ID char (36) NOT NULL ,
         --防伪码
-	BARCODE varchar2 (50) NOT NULL ,
+	BARCODE varchar (50) NOT NULL ,
         --支付门店
-	SHOP_ID varchar2 (13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --支付部门
-	DEPT_ID varchar2 (12) NOT NULL ,
+	DEPT_ID varchar (12) NOT NULL ,
         --客户
-	CLIENT_ID varchar2 (36) NOT NULL ,
+	CLIENT_ID varchar (36) NOT NULL ,
         --支付日期
 	VHPAY_DATE int NOT NULL ,
         --收银员
-	VHPAY_USER varchar2 (36) ,
+	VHPAY_USER varchar (36) ,
         --面值
 	VOUCHER_PRC int NOT NULL ,
         --代金券类型
-	VOUCHER_TYPE varchar2 (1) ,
+	VOUCHER_TYPE varchar (1) ,
         --支付金额
 	VHPAY_MNY decimal(18, 3) ,
         --折扣率
@@ -287,16 +287,16 @@ CREATE TABLE SAL_VHPAY_GLIDE (
 	AGIO_MONEY decimal(18, 3) ,
 	
         --关联单号
-	FROM_ID varchar2 (36) NOT NULL ,
+	FROM_ID varchar (36) NOT NULL ,
 
         --操作时间
-	CREA_DATE varchar2 (30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2 (36) ,
+	CREA_USER varchar (36) ,
         --备注
-	REMARK varchar2 (100) ,
+	REMARK varchar (100) ,
         --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_VHPY_GLIDE PRIMARY KEY   
@@ -314,27 +314,27 @@ CREATE TABLE MKT_ATTHORDER (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --门店代码
-	SHOP_ID varchar2 (13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --单号
 	ATTH_ID char (36) NOT NULL ,
         --申请单号
 	REQU_ID char (36) ,
         --所属部门
-	DEPT_ID varchar2 (12) NOT NULL ,
+	DEPT_ID varchar (12) NOT NULL ,
         --返还类型
 	REQU_TYPE char (36) NOT NULL ,
         --流水号
-	GLIDE_NO varchar2 (20) NOT NULL ,
+	GLIDE_NO varchar (20) NOT NULL ,
         --填报日期
 	REQU_DATE int NOT NULL ,
         --经销商
-	CLIENT_ID varchar2 (36) NOT NULL ,
+	CLIENT_ID varchar (36) NOT NULL ,
         --填报人
-	REQU_USER varchar2 (36) ,
+	REQU_USER varchar (36) ,
         --审核日期
-	CHK_DATE varchar2 (10) ,
+	CHK_DATE varchar (10) ,
         --审核人员
-	CHK_USER varchar2 (36) ,
+	CHK_USER varchar (36) ,
         --返利金额
 	KPI_MNY decimal(18, 3) ,
         --市场费用
@@ -344,13 +344,13 @@ CREATE TABLE MKT_ATTHORDER (
         --其他金额
 	OTHR_MNY decimal(18, 3) ,
         --备注
-	REMARK varchar2 (100) ,
+	REMARK varchar (100) ,
         --操作时间
-	CREA_DATE varchar2 (30) ,
+	CREA_DATE varchar (30) ,
         --操作人员
-	CREA_USER varchar2 (36) ,
+	CREA_USER varchar (36) ,
         --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 当前系统日期*86400000
   TIME_STAMP bigint NOT NULL,
 	CONSTRAINT PK_MKT_ATTHORDER PRIMARY KEY 
@@ -370,7 +370,7 @@ CREATE TABLE MKT_ATTHDATA (
         --企业代码
 	TENANT_ID int NOT NULL ,
         --门店代码
-	SHOP_ID varchar2 (13) NOT NULL ,
+	SHOP_ID varchar (13) NOT NULL ,
         --序号
 	SEQNO int NOT NULL ,
         --单号
@@ -392,7 +392,7 @@ CREATE TABLE MKT_ATTHDATA (
         --其他金额
 	OTHR_MNY decimal(18, 3) ,
         --摘要
-	REMARK varchar2 (100) ,
+	REMARK varchar (100) ,
 	CONSTRAINT PK_MKT_ATTHDATA PRIMARY KEY  
 	(
 		TENANT_ID,
@@ -440,11 +440,11 @@ CREATE TABLE SAL_INVOICE_LIST (
         --关联单号
 	FROM_ID char (36) ,
         --商品代码
-	GODS_ID varchar2(36),
+	GODS_ID varchar(36),
         --商品名称
-	GODS_NAME varchar2(50),
+	GODS_NAME varchar(50),
         --单位
-	UNIT_NAME varchar2(10),
+	UNIT_NAME varchar(10),
         --数量
 	AMOUNT decimal(18, 3),
         --单价
@@ -466,9 +466,9 @@ CREATE TABLE ACC_FVCHORDER (
   --企业代码
   TENANT_ID int   NOT NULL,
   --门店代码
-  SHOP_ID varchar2(13)   NOT NULL,
+  SHOP_ID varchar(13)   NOT NULL,
   --所属部门
-  DEPT_ID varchar2(12)   NOT NULL,
+  DEPT_ID varchar(12)   NOT NULL,
   --凭证编号
   FVCH_ID char(36)   NOT NULL,
   --凭证日期
@@ -476,15 +476,15 @@ CREATE TABLE ACC_FVCHORDER (
   --附件张数
   FVCH_ATTACH int   NOT NULL,
   --制单人
-  CREA_USER varchar2(36)   NOT NULL,
+  CREA_USER varchar(36)   NOT NULL,
   --引入标志 0 新增 1修改 2 引入完毕
   FVCH_FLAG char(1)  ,
   --凭证内码
-  FVCH_CODE varchar2(10)  ,
+  FVCH_CODE varchar(10)  ,
   --引入后凭证编号
-  FVCH_IMPORT_ID varchar2(10)  ,
+  FVCH_IMPORT_ID varchar(10)  ,
   --通讯标志
-	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+	COMM varchar (2) NOT NULL DEFAULT '00',
   --时间戳
   TIME_STAMP bigint   NOT NULL,
   --主键
@@ -505,7 +505,7 @@ CREATE TABLE ACC_FVCHDATA (
   --企业代码
   TENANT_ID int  NOT NULL,
   --门店代码
-  SHOP_ID varchar2(13)   NOT NULL,
+  SHOP_ID varchar(13)   NOT NULL,
   --凭证单号
   FVCH_ID char(36)   NOT NULL,
   --凭证分录编号
@@ -513,9 +513,9 @@ CREATE TABLE ACC_FVCHDATA (
   --序号
 	SEQNO int NOT NULL ,
   --科目代码
-  SUBJECT_NO varchar2(10)   NOT NULL,
+  SUBJECT_NO varchar(10)   NOT NULL,
   --摘要
-  SUMMARY varchar2(100)   NOT NULL,
+  SUMMARY varchar(100)   NOT NULL,
         --金额
 	AMONEY decimal(18, 3),
         --数量
@@ -540,7 +540,7 @@ CREATE TABLE ACC_FVCHDETAIL (
   --企业代码
   TENANT_ID int  NOT NULL,
   --门店代码
-  SHOP_ID varchar2(13)   NOT NULL,
+  SHOP_ID varchar(13)   NOT NULL,
   --明细ID
   FVCH_TID char(36)   NOT NULL,
   --凭证单号
@@ -568,7 +568,7 @@ CREATE TABLE ACC_FVCHDETAIL (
   --专项5->财务系统
   SUBJ_OTHR5 char(36) ,
   --摘要
-  SUMMARY varchar2(100)   NOT NULL,
+  SUMMARY varchar(100)   NOT NULL,
         --金额
 	AMONEY decimal(18, 3),
         --数量
@@ -610,34 +610,33 @@ CREATE INDEX IX_FVCG_FVCH_ID ON ACC_FVCHGLIDE(TENANT_ID,FVCH_ID);
 --凭证模块
 CREATE TABLE ACC_FVCHFRAME (
   --企业代码
-  TENANT_ID int  NOT NULL,
+  TENANT_ID int NOT NULL,
   --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单  11 零售单据 12缴款单 13 其他收入 14其他支出 15 存取款单
   FVCH_GTYPE char(2)   NOT NULL,
   --序号
 	SEQNO int NOT NULL ,
   --科目代码
-  SUBJECT_NO varchar2(10)   NOT NULL,
+  SUBJECT_NO varchar(10)   NOT NULL,
   --摘要
-  SUMMARY varchar2(100)   NOT NULL,
+  SUMMARY varchar(100)   NOT NULL,
         --金额<取数字段>
-	AMONEY varchar2(20),
+	AMONEY varchar(20),
         --数量<取数字段>
-	AMOUNT varchar2(20),
+	AMOUNT varchar(20),
         --单价<取数字段>
-	APRICE varchar2(20),
+	APRICE varchar(20),
   --取数条件
-  SWHERE varchar2(255) NOT NULL,
+  SWHERE varchar(255) NOT NULL,
   --分录明细 100000000 按位取数0代表不分细明1表代分明细(1人员 2部门 3门店<仓库> 4往来单位 其他分别为专项1-5)
-  DATAFLAG varchar2(8)   NOT NULL,
+  DATAFLAG varchar(8)   NOT NULL,
   --记账方向  1借方 2贷方
   SUBJECT_TYPE char(1) NOT NULL,
-  CONSTRAINT [PK_ACC_FVCHFRAME] PRIMARY KEY 
+  CONSTRAINT PK_ACC_FVCHFRAME PRIMARY KEY 
   ( 
-		[TENANT_ID],
-		[FVCH_GTYPE],
-                [SEQNO]
+		TENANT_ID,
+		FVCH_GTYPE,
+    SEQNO
   )
-);
 );
 CREATE INDEX IX_FVCF_TENANT_ID ON ACC_FVCHFRAME (TENANT_ID);
 CREATE INDEX IX_FVCF_FVCH_GTYPE ON ACC_FVCHFRAME (TENANT_ID,FVCH_GTYPE);

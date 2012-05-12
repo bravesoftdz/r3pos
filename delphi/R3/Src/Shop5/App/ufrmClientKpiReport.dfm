@@ -1,6 +1,6 @@
 inherited frmClientKpiReport: TfrmClientKpiReport
-  Left = 230
-  Top = 103
+  Left = 192
+  Top = 108
   Width = 891
   Height = 586
   Caption = #23458#25143#36820#21033#25253#34920
@@ -15,10 +15,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
       inherited RzPage: TRzPageControl
         Width = 668
         Height = 506
-        ActivePage = TabSheet2
         Color = clCream
         ParentColor = False
-        TabIndex = 1
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream

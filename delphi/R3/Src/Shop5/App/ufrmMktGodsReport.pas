@@ -301,8 +301,8 @@ begin
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
       ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_GOODSINFO C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
            '  B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+strWhere+' ';
   end else
   begin
@@ -314,12 +314,12 @@ begin
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
       ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
       ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+
       ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
   end;
-  
+
   Result :=ParseSQL(Factor.iDbType,
      'select '+
      ' K.DEPT_ID as DEPT_ID,'+
@@ -391,12 +391,12 @@ begin
     ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
     ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
     ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-    ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+    ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
           ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+
           ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
 
-  Result :=ParseSQL(Factor.iDbType,
+  Result :=ParseSQL(Factor.iDbType,  
      'select '+
      ' K.REGION_ID as REGION_ID,'+
      ' isnull(Area.CODE_NAME,''无'') as CODE_NAME,'+
@@ -524,15 +524,15 @@ begin
 
   strSql:=
     'select '+
-    ' A.CLIENT_ID as CLIENT_ID,'+
+    ' A.CLIENT_ID as CLIENT_ID,'+      
     ' D.CLIENT_NAME as CLIENT_NAME,'+
     ' sum(B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
     ' sum(B.KPI_MNY) as KPI_MNY,'+     //返利金额
     ' sum(B.BUDG_MNY) as BUDG_MNY,'+   //市场费用
     ' sum(B.AGIO_MNY) as AGIO_MNY,'+   //价格支持
     ' sum(B.OTHR_MNY) as OTHR_MNY '+   //其他金额
-    ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+    ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
           ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+
           ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
     ' Group by A.CLIENT_ID,D.CLIENT_NAME ';
@@ -603,8 +603,8 @@ begin
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
       ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_GOODSINFO C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
             ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+strWhere+strCnd+' ';
   end else
   begin
@@ -620,9 +620,9 @@ begin
       ' B.KPI_MNY as KPI_MNY,'+     //返利金额
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
-      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额       
+      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
             ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+ 
             ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
   end;
@@ -715,10 +715,10 @@ begin
     ' A.CREA_USER as CREA_USER,'+      //创建人
     ' A.CHK_DATE as CHK_DATE,'+        //审核日期
     ' A.CHK_USER as CHK_USER '+        //审核人
-    ' from MKT_REQUORDER A,MKT_REQUSHARE B,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+    ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID  '+strWhere+strCnd+' ';
- 
+
   Result :=ParseSQL(Factor.iDbType,
     'select K.*,'+
     ' G.GODS_NAME as GODS_NAME,'+

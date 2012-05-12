@@ -639,14 +639,12 @@ begin
   strSql:=
     'select '+
      'A.TENANT_ID as TENANT_ID,'+
-     'C.KPI_ID as KPI_ID,'+
      'A.GLIDE_NO as GLIDE_NO,'+
      'C.ACTIVE_ID,'+
      'B.KPI_YEAR,'+
      'B.KPI_ID,'+
      'A.BUDG_DATE,'+
      'D.CLIENT_NAME,'+
-     'B.KPI_YEAR,'+
      'B.BUDG_VRF as BUDG_WDW,'+
      'C.BUDG_VRF as BUDG_VRF,'+
      'C.REMARK as REMARK,'+

@@ -13,8 +13,8 @@ inherited frmWelcome: TfrmWelcome
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 554
-    Height = 575
+    Width = 562
+    Height = 586
     Align = alClient
     BorderOuter = fsNone
     BorderColor = 16440232
@@ -25,18 +25,18 @@ inherited frmWelcome: TfrmWelcome
     object RzPanel2: TRzPanel
       Left = 1
       Top = 1
-      Width = 552
+      Width = 560
       Height = 37
       Align = alTop
       BorderOuter = fsNone
       TabOrder = 0
       DesignSize = (
-        552
+        560
         37)
       object Image1: TImage
         Left = 2
         Top = 0
-        Width = 548
+        Width = 556
         Height = 37
         Align = alClient
         ParentShowHint = False
@@ -346,7 +346,7 @@ inherited frmWelcome: TfrmWelcome
         Stretch = True
       end
       object Image3: TImage
-        Left = 550
+        Left = 558
         Top = 0
         Width = 2
         Height = 37
@@ -629,7 +629,7 @@ inherited frmWelcome: TfrmWelcome
       object RzFormShape1: TRzFormShape
         Left = 2
         Top = 0
-        Width = 548
+        Width = 556
         Height = 37
       end
       object ImgClose: TImage
@@ -2740,8 +2740,8 @@ inherited frmWelcome: TfrmWelcome
     object RzPanel4: TRzPanel
       Left = 1
       Top = 38
-      Width = 552
-      Height = 536
+      Width = 560
+      Height = 547
       Align = alClient
       BorderOuter = fsNone
       Color = 16643821
@@ -2751,7 +2751,7 @@ inherited frmWelcome: TfrmWelcome
         Left = 0
         Top = 0
         Width = 2
-        Height = 480
+        Height = 491
         Align = alLeft
         Picture.Data = {
           0A544A504547496D616765C8210000FFD8FFE000104A46494600010201004800
@@ -3028,10 +3028,10 @@ inherited frmWelcome: TfrmWelcome
         Stretch = True
       end
       object ImgRightLine: TImage
-        Left = 550
+        Left = 558
         Top = 0
         Width = 2
-        Height = 480
+        Height = 491
         Align = alRight
         Picture.Data = {
           0A544A504547496D616765DB210000FFD8FFE000104A46494600010201004800
@@ -3310,8 +3310,8 @@ inherited frmWelcome: TfrmWelcome
       end
       object RzPanel3: TRzPanel
         Left = 0
-        Top = 480
-        Width = 552
+        Top = 491
+        Width = 560
         Height = 56
         Align = alBottom
         BorderOuter = fsNone
@@ -3319,7 +3319,7 @@ inherited frmWelcome: TfrmWelcome
         object ImgButtom: TImage
           Left = 0
           Top = 0
-          Width = 552
+          Width = 560
           Height = 56
           Align = alClient
           Picture.Data = {
@@ -4801,8 +4801,8 @@ inherited frmWelcome: TfrmWelcome
       object RzPanel6: TRzPanel
         Left = 2
         Top = 0
-        Width = 548
-        Height = 480
+        Width = 556
+        Height = 491
         Align = alClient
         BorderOuter = fsNone
         Color = clWhite
@@ -4810,8 +4810,8 @@ inherited frmWelcome: TfrmWelcome
         object RzPage: TRzPageControl
           Left = 0
           Top = 0
-          Width = 548
-          Height = 480
+          Width = 556
+          Height = 491
           ActivePage = Tab2
           Align = alClient
           UseColoredTabs = True
@@ -5269,7 +5269,7 @@ inherited frmWelcome: TfrmWelcome
             object PnlTitleMonth: TRzPanel
               Left = 0
               Top = 0
-              Width = 548
+              Width = 556
               Height = 38
               Align = alTop
               BorderOuter = fsNone
@@ -5856,8 +5856,8 @@ inherited frmWelcome: TfrmWelcome
             object RzPanel8: TRzPanel
               Left = 0
               Top = 38
-              Width = 548
-              Height = 423
+              Width = 556
+              Height = 434
               Align = alClient
               BorderOuter = fsNone
               BorderColor = 16643821
@@ -5870,13 +5870,13 @@ inherited frmWelcome: TfrmWelcome
               object MthBrowser: TWebBrowser
                 Left = 8
                 Top = 8
-                Width = 532
-                Height = 407
+                Width = 540
+                Height = 418
                 Align = alClient
                 TabOrder = 0
                 OnBeforeNavigate2 = MthBrowserBeforeNavigate2
                 ControlData = {
-                  4C000000FC360000112A00000000000000000000000000000000000000000000
+                  4C000000D0370000342B00000000000000000000000000000000000000000000
                   000000004C000000000000000000000001000000E0D057007335CF11AE690800
                   2B2E126208000000000000004C0000000114020000000000C000000000000046
                   8000000000000000000000000000000000000000000000000000000000000000

@@ -534,7 +534,7 @@ begin
       '   left join PUB_GOODS_INSHOP b on  a.TENANT_ID=b.TENANT_ID and a.SHOP_ID=b.SHOP_ID and a.GODS_ID=b.GODS_ID '+
       '  where a.TENANT_ID=:TENANT_ID and a.SHOP_ID=:SHOP_ID) bb '+
       ' on c.GODS_ID=bb.STOR_GODS_ID '+
-      ' where c.TENANT_ID='+inttostr(Global.TENANT_ID)+' and c.RELATION_ID=1000006 and c.COMM not in (''01'',''02'')');
+      ' where c.TENANT_ID='+inttostr(Global.TENANT_ID)+' and c.RELATION_ID=1000006 and c.COMM not in (''12'',''02'')');
   dayKc.Close;
   dayKc.SQL.Text:=ParseSQL(Factor.iDbType, Str);
   dayKc.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;

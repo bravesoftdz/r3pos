@@ -59,6 +59,7 @@ type
       Headers: OleVariant; var Cancel: WordBool);
   private
     { Private declarations }
+    function GetCompare(FirstValue,SecondValue: Real): string;
     function PutText(Font: TFont; Text: String):string;
     procedure Createparams(Var Params:TCreateParams);override;
     function EncodeScript:string;
@@ -100,6 +101,20 @@ function DivText(s1,s2:real):real;
 begin
   if s2=0 then result := 0 else result := s1 / s2;
 end;
+
+function TfrmWelcome.GetCompare(FirstValue, SecondValue: Real): string;
+var
+  curValue: Real;
+begin
+  curValue:=Abs(SecondValue-FirstValue);
+  if FirstValue < SecondValue then
+    result:='增长'+FormatFloat('#0.00',curValue)
+  else if FirstValue > SecondValue then
+    result:='下降'+FormatFloat('#0.00',curValue)
+  else
+    result:='相等';
+end;
+
 function TfrmWelcome.PutText(Font: TFont; Text: String):string;
 function GetColor(Color: TColor): String;
 var s: String;
@@ -187,19 +202,13 @@ begin
            '金额'+FormatFloat('#0.00',MsgDayInfo.YDSale_MNY)+'元，'+
            '毛利'+FormatFloat('#0.00',MsgDayInfo.YDSale_PRF)+'元，'+
            '毛利率'+FormatFloat('#0.00',MsgDayInfo.YDSale_PRF_RATE)+'%';
-      if MsgDayInfo.QTSale_AMT<>0 then
-         begin
-           if MsgDayInfo.QTSale_AMT<MsgDayInfo.YDSale_AMT then
-             s := s+
-             ',与前天比，销量增长'+FormatFloat('#0.00',MsgDayInfo.YDSale_AMT-MsgDayInfo.QTSale_AMT)+'条，'+
-             '金额增长'+FormatFloat('#0.00',MsgDayInfo.YDSale_MNY-MsgDayInfo.QTSale_MNY)+'元，'+
-             '毛利增长'+FormatFloat('#0.00',MsgDayInfo.YDSale_PRF-MsgDayInfo.QTSale_PRF)+'元。'
-           else
-             s := s+
-             ',与前天比，销量下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_AMT-MsgDayInfo.YDSale_AMT)+'条，'+
-             '金额下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_MNY-MsgDayInfo.YDSale_MNY)+'元，'+
-             '毛利下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_PRF-MsgDayInfo.YDSale_PRF)+'元。';
-         end;
+      //对比销量:
+      s := s+',与前天比，销量'+GetCompare(MsgDayInfo.QTSale_AMT, MsgDayInfo.YDSale_AMT)+'条，';
+      //对比销售额:
+      s := s+',金额'+GetCompare(MsgDayInfo.QTSale_MNY, MsgDayInfo.YDSale_MNY)+'元，';
+      //对比毛利：
+      s := s+',毛利'+GetCompare(MsgDayInfo.QTSale_PRF, MsgDayInfo.YDSale_PRF)+'元。';
+ 
       result := result + PutText(Font,s)+#13#10+'<br>'+#13#10;
       s := '    您今天还没有销售，祝您生意兴隆，加油！';
       result := result + PutText(Font,s)+#13#10;
@@ -211,20 +220,16 @@ begin
            '金额'+FormatFloat('#0.00',MsgDayInfo.YDSale_MNY)+'元，'+
            '毛利'+FormatFloat('#0.00',MsgDayInfo.YDSale_PRF)+'元，'+
            '毛利率'+FormatFloat('#0.00',MsgDayInfo.YDSale_PRF_RATE)+'%';
-      if MsgDayInfo.QTSale_AMT<>0 then
-         begin
-           if MsgDayInfo.QTSale_AMT<MsgDayInfo.YDSale_AMT then
-             s := s+
-             ',与前天比，销量增长'+FormatFloat('#0.00',MsgDayInfo.YDSale_AMT-MsgDayInfo.QTSale_AMT)+'条，'+
-             '金额增长'+FormatFloat('#0.00',MsgDayInfo.YDSale_MNY-MsgDayInfo.QTSale_MNY)+'元，'+
-             '毛利增长'+FormatFloat('#0.00',MsgDayInfo.YDSale_PRF-MsgDayInfo.QTSale_PRF)+'元。'
-           else
-             s := s+
-             ',与前天比，销量下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_AMT-MsgDayInfo.YDSale_AMT)+'条，'+
-             '金额下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_MNY-MsgDayInfo.YDSale_MNY)+'元，'+
-             '毛利下降'+FormatFloat('#0.00',MsgDayInfo.QTSale_PRF-MsgDayInfo.YDSale_PRF)+'元。';
-         end;
+
+      //对比销量:
+      s := s+',与前天比，销量'+GetCompare(MsgDayInfo.QTSale_AMT, MsgDayInfo.YDSale_AMT)+'条，';
+      //对比销售额:
+      s := s+',金额'+GetCompare(MsgDayInfo.QTSale_MNY, MsgDayInfo.YDSale_MNY)+'元，';
+      //对比毛利：
+      s := s+',毛利'+GetCompare(MsgDayInfo.QTSale_PRF, MsgDayInfo.YDSale_PRF)+'元。';
+
       result := result + PutText(Font,s)+#13#10+'<br>'+#13#10;
+
       if MsgDayInfo.TDSale_PRF<MsgDayInfo.YDSale_PRF then //小于昨天
       begin
         s:='    今天您的销售卷烟品种'+InttoStr(MsgDayInfo.TDSaleGods_Count)+'个，'+
@@ -267,21 +272,28 @@ begin
     Font.Color := clBlack;
     MsgDayInfo := Welcome.EncodeMsgDayInfo;
     if MsgDayInfo.SCStock_AMT<>0 then
-    s:=
-      '    您本次卷烟进货品种'+InttoStr(MsgDayInfo.TDStockGods_Count)+'个，'+
-      ''+FormatFloat('#0.##',MsgDayInfo.TDStock_AMT)+'条，'+
-      '金额'+FormatFloat('#0.##',MsgDayInfo.TDStock_MNY)+'元，'+
-      '单条值'+ FormatFloat('#0.##',MsgDayInfo.TDStock_MNY/MsgDayInfo.TDStock_AMT)+'元。'
-    else
-    s:= '    您还没有进货记录，请到卷烟到货里做到货确认吧。';
+    begin
+      s:=
+        '    您本次卷烟进货品种'+InttoStr(MsgDayInfo.TDStockGods_Count)+'个，'+
+        ''+FormatFloat('#0.##',MsgDayInfo.TDStock_AMT)+'条，'+
+        '金额'+FormatFloat('#0.##',MsgDayInfo.TDStock_MNY)+'元，'+
+        '单条值'+ FormatFloat('#0.##',MsgDayInfo.TDStock_MNY/MsgDayInfo.TDStock_AMT)+'元。'
+    end else
+    begin
+      s:= '    您还没有进货记录，请到卷烟到货里做到货确认吧。';
+    end;
     if MsgDayInfo.SCStock_AMT>0 then
-      begin
-          s:= s+
-          '与上次比，'+
-          '进货量增长'+FormatFloat('#0.00',(MsgDayInfo.TDStock_AMT-MsgDayInfo.SCStock_AMT)*100/MsgDayInfo.SCStock_AMT)+'%，'+
-          '金额增长'+FormatFloat('#0.00',MsgDayInfo.TDStock_MNY-MsgDayInfo.SCStock_MNY)+'元，'+
-          '单条值增长'+FormatFloat('#0.00',(MsgDayInfo.TDStock_MNY/MsgDayInfo.TDStock_AMT)-(MsgDayInfo.SCStock_MNY/MsgDayInfo.SCStock_AMT))+'元。'
-      end;
+    begin
+      s:= s+'与上次比，';
+      if MsgDayInfo.SCStock_AMT < MsgDayInfo.TDStock_AMT then
+        s:= s+'进货量增长'+FormatFloat('#0.00',(MsgDayInfo.TDStock_AMT-MsgDayInfo.SCStock_AMT)*100/MsgDayInfo.SCStock_AMT)+'%，'
+      else
+        s:= s+'进货量下降'+FormatFloat('#0.00',(MsgDayInfo.SCStock_AMT-MsgDayInfo.TDStock_AMT)*100/MsgDayInfo.SCStock_AMT)+'%，';
+      //对比进货金额:
+      s:= s+'金额'+GetCompare(MsgDayInfo.SCStock_MNY,MsgDayInfo.TDStock_MNY)+'元,';
+      //对比单条值:
+      s:= s+'单条值'+GetCompare((MsgDayInfo.SCStock_MNY/MsgDayInfo.SCStock_AMT),(MsgDayInfo.TDStock_MNY/MsgDayInfo.TDStock_AMT))+'元。'
+    end;
     result := result + PutText(Font,s)+ #13#10;
   finally
     Font.Free;
@@ -534,16 +546,27 @@ begin
     Font.Color := clBlack;
     Font.Size := 9;
     MsgMthInfo := Welcome.EncodeMsgMthInfo;
-    
+
     //2、本月销售情况
     s:='    您本月销售卷烟'+formatFloat('#0.0#',MsgMthInfo.TMSale_AMT)+'条，'+
            '单条值'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY)+'元，'+
            '实现毛利'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF)+'元，毛利率'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_RATE)+'%。';
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
-    
-    s:='    您本月与上月比：销量增长'+formatFloat('#0.00',MsgMthInfo.TMSale_AMT_UP_RATE)+'%，'+
-           '单条值增长'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE)+'%，'+
-           '毛利增长'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_UP_RATE)+'%。';
+
+    if MsgMthInfo.TMSale_AMT_UP_RATE>=0 then
+      s:='    您本月与上月比：销量增长'+formatFloat('#0.00',MsgMthInfo.TMSale_AMT_UP_RATE)+'%，'
+    else
+      s:='    您本月与上月比：销量下降'+formatFloat('#0.00',-MsgMthInfo.TMSale_AMT_UP_RATE)+'%，';
+    //单条值:
+    if MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE>=0 then
+      s:=s+'单条值增长'+formatFloat('#0.00',MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE)+'%，'
+    else
+      s:=s+'单条值下降'+formatFloat('#0.00',-MsgMthInfo.TMSale_SINGLE_MNY_UP_RATE)+'%，';
+    //毛利:
+    if MsgMthInfo.TMSale_PRF_UP_RATE>0 then
+      s:=s+'毛利增长'+formatFloat('#0.00',MsgMthInfo.TMSale_PRF_UP_RATE)+'%。'
+    else
+      s:=s+'毛利下降'+formatFloat('#0.00',-MsgMthInfo.TMSale_PRF_UP_RATE)+'%。';
     result := result + PutText(Font,s)+ #13#10+'<BR>'+ #13#10;
 
     s:='    您本月销量最大的五个规格分别是：'+MsgMthInfo.TMGods_MaxGrow_AMT+'，上月销量最大的五个规格分别是：'+MsgMthInfo.LMGods_SY_MaxGrow_AMT+'。';
@@ -552,6 +575,7 @@ begin
     result := result + PutText(Font,s)+ '<br>'+ #13#10;
     s:='    您本月与上月比,销量增长最快的规格是：'+MsgMthInfo.TMGods_MaxGrowRate_AMT+'。';
     result := result + PutText(Font,s)+ #13#10;
+
   finally
     Font.Free;
   end;

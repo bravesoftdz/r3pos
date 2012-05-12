@@ -8,10 +8,10 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 930
-    Height = 578
+    Width = 922
+    Height = 567
     inherited RzPanel2: TRzPanel
-      Width = 920
+      Width = 912
       Height = 123
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
@@ -393,8 +393,8 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 467
-      Width = 920
+      Top = 456
+      Width = 912
       Height = 34
       BorderInner = fsStatus
       object Label1: TLabel
@@ -492,8 +492,8 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 161
-      Width = 920
-      Height = 306
+      Width = 912
+      Height = 295
       Columns = <
         item
           EditButtons = <>
@@ -560,6 +560,7 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
           DisplayFormat = '#0.00'
           EditButtons = <>
           FieldName = 'AMONEY'
+          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #21487#38144#21806#39069
           Width = 80
@@ -614,7 +615,7 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
     end
     inherited pnlBarCode: TRzPanel [3]
       Top = 128
-      Width = 920
+      Width = 912
       inherited lblInput: TLabel
         Left = 31
       end
@@ -626,12 +627,12 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
       end
     end
     inherited stbHint: TRzPanel [4]
-      Top = 549
-      Width = 920
+      Top = 538
+      Width = 912
     end
     inherited rzHelp: TRzPanel [5]
-      Top = 501
-      Width = 920
+      Top = 490
+      Width = 912
     end
     inherited fndUNIT_ID: TcxComboBox [6]
       Top = 184

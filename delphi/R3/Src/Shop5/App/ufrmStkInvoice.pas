@@ -122,7 +122,7 @@ begin
   rs := ShopGlobal.GetDeptInfo;
   edtDEPT_ID.KeyValue := rs.FieldbyName('DEPT_ID').AsString;
   edtDEPT_ID.Text := rs.FieldbyName('DEPT_NAME').AsString;
-  rs := Global.GetZQueryFromName('PUB_CUSTOMER');
+  rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
   if rs.Locate('CLIENT_ID',ClientId,[]) then
   begin
      edtCLIENT_ID.KeyValue := rs.FieldByName('CLIENT_ID').AsString;
@@ -309,6 +309,7 @@ procedure TfrmStkInvoice.SetdbState(const Value: TDataSetState);
 begin
   inherited;
   btnOk.Visible:=(dbState<>dsBrowse);
+  DBGridEh1.Readonly := (dbState=dsBrowse);
   case Value of
   dsInsert:begin
      Caption := '进项发票--(新增)';
@@ -337,7 +338,7 @@ procedure TfrmStkInvoice.FormCreate(Sender: TObject);
 begin
   inherited;
   AObj := TRecord_.Create;
-  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CLIENTINFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
@@ -349,8 +350,8 @@ var rs:TZQuery;
 begin
   inherited;
   if edtCLIENT_ID.AsString = '' then Exit;
-  rs := Global.GetZQueryFromName('PUB_CUSTOMER');
-  if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的客户没找到,异常错误.');
+  rs := Global.GetZQueryFromName('PUB_CLIENTINFO');
+  if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的供应商没找到,异常错误.');
   AObj.FieldByName('INVO_NAME').AsString := rs.FieldByName('CLIENT_NAME').AsString;
   AObj.FieldByName('ADDR_NAME').AsString := rs.FieldByName('ADDRESS').AsString;
 

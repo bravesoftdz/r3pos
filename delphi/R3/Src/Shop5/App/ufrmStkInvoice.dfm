@@ -286,7 +286,7 @@ inherited frmStkInvoice: TfrmStkInvoice
             BorderColor = clGreen
             BorderWidth = 1
             Color = clWhite
-            TabOrder = 2
+            TabOrder = 1
             object Label7: TLabel
               Left = 62
               Top = 71
@@ -541,7 +541,7 @@ inherited frmStkInvoice: TfrmStkInvoice
             Font.Name = #23435#20307
             Font.Style = [fsBold]
             ParentFont = False
-            TabOrder = 1
+            TabOrder = 0
             object RzLabel1: TRzLabel
               Left = 272
               Top = 1
@@ -845,7 +845,7 @@ inherited frmStkInvoice: TfrmStkInvoice
             BorderColor = clGreen
             BorderWidth = 1
             Color = clWhite
-            TabOrder = 0
+            TabOrder = 2
             object DBGridEh1: TDBGridEh
               Left = 1
               Top = 1
@@ -867,7 +867,7 @@ inherited frmStkInvoice: TfrmStkInvoice
               FrozenCols = 2
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+              OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
               ParentCtl3D = False
               ReadOnly = True
               RowHeight = 20

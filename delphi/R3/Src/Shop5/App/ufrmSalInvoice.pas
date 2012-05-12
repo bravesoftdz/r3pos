@@ -321,6 +321,7 @@ procedure TfrmSalInvoice.SetdbState(const Value: TDataSetState);
 begin
   inherited;
   btnOk.Visible:=(dbState<>dsBrowse);
+  DBGridEh1.Readonly := (dbState=dsBrowse);
   case Value of
   dsInsert:begin
      Caption := '销项发票--(新增)';

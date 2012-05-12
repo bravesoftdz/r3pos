@@ -267,8 +267,6 @@ uses
   ufrmMktKpiResult in 'App\ufrmMktKpiResult.pas' {frmMktKpiResult},
   uKpiCalculate in 'App\uKpiCalculate.pas',
   ObjMktKpiResult in 'Obj\ObjMktKpiResult.pas',
-  ufrmMktKpiResult2 in 'App\ufrmMktKpiResult2.pas' {frmMktKpiResult2},
-  ufrmMktKpiResult3 in 'App\ufrmMktKpiResult3.pas' {frmMktKpiResult3},
   ufrmBondRequReport in 'App\ufrmBondRequReport.pas' {frmBondRequReport},
   ufrmMktRequReport in 'App\ufrmMktRequReport.pas' {frmMktRequReport},
   ufrmMktCostTotalReport in 'App\ufrmMktCostTotalReport.pas' {frmMktCostTotalReport},
@@ -316,7 +314,10 @@ uses
   ObjMktPlanOrder3 in 'Obj\ObjMktPlanOrder3.pas',
   ufrmStkInvoiceList in 'App\ufrmStkInvoiceList.pas' {frmStkInvoiceList},
   ufrmStkInvoice in 'App\ufrmStkInvoice.pas' {frmStkInvoice},
-  ObjStkInvoiceOrder in 'Obj\ObjStkInvoiceOrder.pas';
+  ObjStkInvoiceOrder in 'Obj\ObjStkInvoiceOrder.pas',
+  ufrmMktAtthOrder in 'App\ufrmMktAtthOrder.pas' {frmMktAtthOrder},
+  ufrmMktAtthOrderList in 'App\ufrmMktAtthOrderList.pas' {frmMktAtthOrderList},
+  ObjMktAtthOrder in 'Obj\ObjMktAtthOrder.pas';
 
 {$R *.res}
 var

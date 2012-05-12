@@ -311,10 +311,9 @@ type
     actfrmMktBudgOrderList: TAction;
     actfrmMktBudgReport: TAction;
     actfrmPlanOrderList3: TAction;
-    Button1: TButton;
     actfrmStkInvoiceList: TAction;
     actfrmInvoice: TAction;
-    Button2: TButton;
+    actfrmMktAtthOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -443,8 +442,6 @@ type
     procedure actfrmMktKpiResultExecute(Sender: TObject);
     procedure actfrmClientKpiReportExecute(Sender: TObject);
     procedure actfrmManKpiReportExecute(Sender: TObject);
-    procedure actfrmMktKpiResult2Execute(Sender: TObject);
-    procedure actfrmMktKpiResult3Execute(Sender: TObject);
     procedure actfrmBondRequReportExecute(Sender: TObject);
     procedure actfrmMktRequReportExecute(Sender: TObject);
     procedure actfrmMktCostTotalReportExecute(Sender: TObject);
@@ -460,6 +457,7 @@ type
     procedure actfrmPlanOrderList3Execute(Sender: TObject);
     procedure actfrmStkInvoiceListExecute(Sender: TObject);
     procedure actfrmInvoiceExecute(Sender: TObject);
+    procedure actfrmMktAtthOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -534,9 +532,9 @@ uses
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList,
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
-  ufrmMktKpiResult2,ufrmMktKpiResult3,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
+  ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
-  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList;
+  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4204,50 +4202,6 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.actfrmMktKpiResult2Execute(Sender: TObject);
-var Form:TfrmBasic;
-begin
-  inherited;
-  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
-  if not Logined then
-     begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
-       Exit;
-     end;
-  Application.Restore;
-  frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmMktKpiResult2);
-  if not Assigned(Form) then
-     begin
-       Form := TfrmMktKpiResult2.Create(self);
-       AddFrom(Form);
-     end;
-  Form.WindowState := wsMaximized;
-  Form.BringToFront;
-end;
-
-procedure TfrmShopMain.actfrmMktKpiResult3Execute(Sender: TObject);
-var Form:TfrmBasic;
-begin
-  inherited;
-  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
-  if not Logined then
-     begin
-       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
-       Exit;
-     end;
-  Application.Restore;
-  frmShopDesk.SaveToFront;
-  Form := FindChildForm(TfrmMktKpiResult3);
-  if not Assigned(Form) then
-     begin
-       Form := TfrmMktKpiResult3.Create(self);
-       AddFrom(Form);
-     end;
-  Form.WindowState := wsMaximized;
-  Form.BringToFront;
-end;
-
 procedure TfrmShopMain.actfrmBondRequReportExecute(Sender: TObject);
 var Form:TfrmBasic;
 begin
@@ -4463,7 +4417,7 @@ end;
 procedure TfrmShopMain.Button3Click(Sender: TObject);
 begin
   inherited;
-  actfrmMktActiveList.OnExecute(nil);
+  actfrmMktAtthOrderListExecute(nil);
 end;
 
 procedure TfrmShopMain.Button4Click(Sender: TObject);
@@ -4539,6 +4493,28 @@ begin
   if not Assigned(Form) then
      begin
        Form := TfrmInvoice.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmMktAtthOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmMktAtthOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktAtthOrderList.Create(self);
        AddFrom(Form);
      end;
   Form.Show;

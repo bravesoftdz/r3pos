@@ -16,10 +16,10 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     Caption = #32463' '#25163' '#20154
   end
   inherited RzPanel1: TRzPanel
-    Width = 875
-    Height = 497
+    Width = 867
+    Height = 486
     inherited RzPanel2: TRzPanel
-      Width = 865
+      Width = 857
       Height = 121
       object RzLabel2: TRzLabel [0]
         Left = 507
@@ -91,7 +91,7 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         Height = 12
         Alignment = taRightJustify
         AutoSize = False
-        Caption = #20445#35777#37329#24635#39069
+        Caption = #20445#35777#37329' '
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlue
         Font.Height = -12
@@ -374,8 +374,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 428
-      Width = 865
+      Top = 417
+      Width = 857
       Height = 45
       object RzLabel9: TRzLabel
         Left = 33
@@ -413,8 +413,8 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 126
-      Width = 865
-      Height = 302
+      Width = 857
+      Height = 291
       FrozenCols = 1
       PopupMenu = PopupMenu1
       OnDblClick = DBGridEh1DblClick
@@ -496,13 +496,13 @@ inherited frmMktPlanOrder: TfrmMktPlanOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 473
-      Width = 865
+      Top = 462
+      Width = 857
       Height = 0
     end
     inherited rzHelp: TRzPanel
-      Top = 473
-      Width = 865
+      Top = 462
+      Width = 857
       Height = 19
     end
     object edtKPI_ID: TzrComboBoxList

@@ -293,7 +293,7 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
             end
             inherited DBGridEh1: TDBGridEh
               Top = 118
-              Height = 259
+              Height = 248
               OnDblClick = DBGridEh1DblClick
               Columns = <
                 item
@@ -374,27 +374,27 @@ inherited frmMktRequOrderList: TfrmMktRequOrderList
   end
   inherited RzPanel4: TRzPanel
     inherited Image3: TImage
-      Left = 579
-      Width = 249
+      Left = 583
+      Width = 237
     end
     inherited rzPanel5: TPanel
-      Left = 579
+      Left = 583
     end
     inherited CoolBar1: TCoolBar
-      Width = 559
+      Width = 563
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 559
+          MinHeight = 563
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 559
+        Width = 563
         object ToolButton15: TToolButton
-          Left = 516
+          Left = 520
           Top = 0
           Action = actExit
         end

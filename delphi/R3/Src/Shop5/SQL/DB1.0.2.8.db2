@@ -1,0 +1,670 @@
+alter table RCK_C_GOODS_DAYS add SALES_STYLE varchar2 (36);
+--全初始化成门店销售
+update RCK_C_GOODS_DAYS set SALES_STYLE='6BD82B9E-3678-4F33-89ED-B8C26B6589BD';
+
+drop table SAL_INVOICE_BOOK;
+--发票本管理
+CREATE TABLE SAL_INVOICE_BOOK (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --流水ID号
+	INVH_ID char (36) NOT NULL ,
+        --领用门店
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --领用部门
+	DEPT_ID varchar2 (12) NOT NULL ,
+        --发票类型
+	INVOICE_FLAG varchar2 (1) ,
+        --领用人
+	CREA_USER varchar2(36) NOT NULL ,
+        --领用日期
+	CREA_DATE int NOT NULL ,
+        --备注
+	REMARK varchar2 (100) ,
+        --发票代码
+	INVH_NO varchar2 (50) NOT NULL ,
+        --当前票号
+	CURRENT_NO int ,
+        --发票起始号
+	BEGIN_NO int NOT NULL ,
+        --发票终止号
+	ENDED_NO int NOT NULL ,
+        --合计张数
+	TOTAL_AMT int ,
+        --开票张数
+	USING_AMT int ,
+        --作废张数
+	CANCEL_AMT int ,
+        --结余张数
+	BALANCE int ,
+        --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+        --时间戳 
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_SAL_INV_BOOK PRIMARY KEY   
+	(
+		TENANT_ID,INVH_ID
+	) 
+);
+
+CREATE INDEX IX_IVBK_TENANT_ID ON SAL_INVOICE_BOOK(TENANT_ID);
+CREATE INDEX IX_IVBK_TIME_STAMP ON SAL_INVOICE_BOOK(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_IVBK_CREA_DATE ON SAL_INVOICE_BOOK(CREA_DATE);
+CREATE INDEX IX_IVBK_SHOP_ID ON SAL_INVOICE_BOOK(TENANT_ID,SHOP_ID);
+
+
+--代金券类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','赠券','VOUCHER_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','现金券','VOUCHER_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','记名券','VOUCHER_TYPE','00',5497000);
+
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','入库','VOUCHER_STATUS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','领用','VOUCHER_STATUS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','发放','VOUCHER_STATUS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','结算','VOUCHER_STATUS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('5','回收','VOUCHER_STATUS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('6','作废','VOUCHER_STATUS','00',5497000);
+
+--代金券入库
+CREATE TABLE SAL_VOUCHERORDER (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --入库单号
+	VOUCHER_ID char (36) NOT NULL ,
+        --入库门店
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --入库部门
+	DEPT_ID varchar2 (12) NOT NULL ,
+        --代金券类型
+	VOUCHER_TYPE varchar2 (1) NOT NULL ,
+        --入库日期
+	INTO_DATE int NOT NULL ,
+        --负责人
+	INTO_USER varchar2 (36) ,
+	
+        --操作时间
+	CREA_DATE varchar2 (30) ,
+        --操作人员
+	CREA_USER varchar2 (36) ,
+        --备注
+	REMARK varchar2 (100) ,
+        --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+        --时间戳 
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_SAL_VCHORDER PRIMARY KEY   
+	(
+		TENANT_ID,VOUCHER_ID
+	) 
+);
+
+CREATE INDEX IX_VCHR_TENANT_ID ON SAL_VOUCHERORDER(TENANT_ID);
+CREATE INDEX IX_VCHR_TIME_STAMP ON SAL_VOUCHERORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_VCHR_INTO_DATE ON SAL_VOUCHERORDER(INTO_DATE);
+
+--代金券档案
+CREATE TABLE SAL_VOUCHERDATA (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --入库单号
+	VOUCHER_ID char (36) NOT NULL ,
+        --防伪码
+	BARCODE varchar2 (50) NOT NULL ,
+        --代金券类型
+	VOUCHER_TYPE varchar2 (1) ,
+        --面值
+	VOUCHER_PRC int NOT NULL ,
+        --状态
+	VOUCHER_STATUS char (1) NOT NULL ,
+        --有效期
+	VAILD_DATE int NOT NULL ,
+        --记名券时记在谁名下
+	CLIENT_ID varchar2 (36) NOT NULL ,
+        --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+        --时间戳 
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_SAL_VOUCHERDATA PRIMARY KEY   
+	(
+		TENANT_ID,BARCODE
+	) 
+);
+
+CREATE INDEX IX_VCHD_TENANT_ID ON SAL_VOUCHERDATA(TENANT_ID);
+CREATE INDEX IX_VCHD_TIME_STAMP ON SAL_VOUCHERDATA(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_VCHD_VOUCHER_ID ON SAL_VOUCHERDATA(TENANT_ID,VOUCHER_ID);
+
+--代金券领用
+CREATE TABLE SAL_VHLEADORDER (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --领用单号
+	VHLEAD_ID char (36) NOT NULL ,
+        --领用门店
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --领用部门
+	DEPT_ID varchar2 (12) NOT NULL ,
+        --领用日期
+	LEAD_DATE int NOT NULL ,
+        --负责人
+	LEAD_USER varchar2 (36) ,
+	
+        --操作时间
+	CREA_DATE varchar2 (30) ,
+        --操作人员
+	CREA_USER varchar2 (36) ,
+        --备注
+	REMARK varchar2 (100) ,
+        --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+        --时间戳 
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_SAL_VHLDORDER PRIMARY KEY   
+	(
+		TENANT_ID,VHLEAD_ID
+	) 
+);
+
+CREATE INDEX IX_VHLD_TENANT_ID ON SAL_VHLEADORDER(TENANT_ID);
+CREATE INDEX IX_VHLD_TIME_STAMP ON SAL_VHLEADORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_VHLD_LEAD_DATE ON SAL_VHLEADORDER(LEAD_DATE);
+
+--代金券领用
+CREATE TABLE SAL_VHLEADDATA (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --领用单号
+	VHLEAD_ID char (36) NOT NULL ,
+        --防伪码
+	BARCODE varchar2 (50) NOT NULL ,
+        --面值
+	VOUCHER_PRC int NOT NULL ,
+	CONSTRAINT PK_SAL_VHLEADDATA PRIMARY KEY   
+	(
+		TENANT_ID,VHLEAD_ID,BARCODE
+	) 
+);
+
+CREATE INDEX IX_VHDD_TENANT_ID ON SAL_VHLEADDATA(TENANT_ID);
+CREATE INDEX IX_VHDD_VHLEAD_ID ON SAL_VHLEADDATA(TENANT_ID,VHLEAD_ID);
+
+
+--代金券发放
+CREATE TABLE SAL_VHSENDORDER (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --发放单号
+	VHSEND_ID char (36) NOT NULL ,
+        --发放门店
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --发放部门
+	DEPT_ID varchar2 (12) NOT NULL ,
+        --客户
+	CLIENT_ID varchar2 (36) NOT NULL ,
+        --发放日期
+	SEND_DATE int NOT NULL ,
+        --负责人
+	SEND_USER varchar2 (36) ,
+        --面值金额
+	VOUCHER_TTL decimal(18, 3) ,
+        --实收金额
+	VOUCHER_MNY decimal(18, 3) ,
+	
+        --操作时间
+	CREA_DATE varchar2 (30) ,
+        --操作人员
+	CREA_USER varchar2 (36) ,
+        --备注
+	REMARK varchar2 (100) ,
+        --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+        --时间戳 
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_SAL_VHSDORDER PRIMARY KEY   
+	(
+		TENANT_ID,VHSEND_ID
+	) 
+);
+
+CREATE INDEX IX_VHSD_TENANT_ID ON SAL_VHSENDORDER(TENANT_ID);
+CREATE INDEX IX_VHSD_TIME_STAMP ON SAL_VHSENDORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_VHSD_SEND_DATE ON SAL_VHSENDORDER(SEND_DATE);
+
+--代金券发放
+CREATE TABLE SAL_VHSENDDATA (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --发放单号
+	VHSEND_ID char (36) NOT NULL ,
+        --防伪码
+	BARCODE varchar2 (50) NOT NULL ,
+        --面值
+	VOUCHER_PRC int NOT NULL ,
+        --代金券类型
+	VOUCHER_TYPE varchar2 (1) ,
+        --实收金额
+	VOUCHER_MNY decimal(18, 3) ,
+        --折扣率
+	AGIO_RATE decimal(18, 3) ,
+        --折扣额
+	AGIO_MONEY decimal(18, 3) ,
+	CONSTRAINT PK_SAL_VSDDDATA PRIMARY KEY   
+	(
+		TENANT_ID,VHSEND_ID,BARCODE
+	) 
+);
+
+CREATE INDEX IX_VSDD_TENANT_ID ON SAL_VHSENDDATA(TENANT_ID);
+CREATE INDEX IX_VSDD_VHSEND_ID ON SAL_VHSENDDATA(TENANT_ID,VHSEND_ID);
+
+--支付流水
+CREATE TABLE SAL_VHPAY_GLIDE (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --支付流水
+	VHPAY_ID char (36) NOT NULL ,
+        --防伪码
+	BARCODE varchar2 (50) NOT NULL ,
+        --支付门店
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --支付部门
+	DEPT_ID varchar2 (12) NOT NULL ,
+        --客户
+	CLIENT_ID varchar2 (36) NOT NULL ,
+        --支付日期
+	VHPAY_DATE int NOT NULL ,
+        --收银员
+	VHPAY_USER varchar2 (36) ,
+        --面值
+	VOUCHER_PRC int NOT NULL ,
+        --代金券类型
+	VOUCHER_TYPE varchar2 (1) ,
+        --支付金额
+	VHPAY_MNY decimal(18, 3) ,
+        --折扣率
+	AGIO_RATE decimal(18, 3) ,
+        --折扣额
+	AGIO_MONEY decimal(18, 3) ,
+	
+        --关联单号
+	FROM_ID varchar2 (36) NOT NULL ,
+
+        --操作时间
+	CREA_DATE varchar2 (30) ,
+        --操作人员
+	CREA_USER varchar2 (36) ,
+        --备注
+	REMARK varchar2 (100) ,
+        --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+        --时间戳 
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_VHPY_GLIDE PRIMARY KEY   
+	(
+		TENANT_ID,VHPAY_ID
+	) 
+);
+
+CREATE INDEX IX_VHPY_TENANT_ID ON SAL_VHPAY_GLIDE(TENANT_ID);
+CREATE INDEX IX_VHPY_VHPAY_ID ON SAL_VHPAY_GLIDE(TENANT_ID,VHPAY_ID);
+
+--附件单
+CREATE TABLE MKT_ATTHORDER (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店代码
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --单号
+	ATTH_ID char (36) NOT NULL ,
+        --申请单号
+	REQU_ID char (36) ,
+        --所属部门
+	DEPT_ID varchar2 (12) NOT NULL ,
+        --返还类型
+	REQU_TYPE char (36) NOT NULL ,
+        --流水号
+	GLIDE_NO varchar2 (20) NOT NULL ,
+        --填报日期
+	REQU_DATE int NOT NULL ,
+        --经销商
+	CLIENT_ID varchar2 (36) NOT NULL ,
+        --填报人
+	REQU_USER varchar2 (36) ,
+        --审核日期
+	CHK_DATE varchar2 (10) ,
+        --审核人员
+	CHK_USER varchar2 (36) ,
+        --返利金额
+	KPI_MNY decimal(18, 3) ,
+        --市场费用
+	BUDG_MNY decimal(18, 3) ,
+        --价格支持
+	AGIO_MNY decimal(18, 3) ,
+        --其他金额
+	OTHR_MNY decimal(18, 3) ,
+        --备注
+	REMARK varchar2 (100) ,
+        --操作时间
+	CREA_DATE varchar2 (30) ,
+        --操作人员
+	CREA_USER varchar2 (36) ,
+        --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+        --时间戳 当前系统日期*86400000
+  TIME_STAMP bigint NOT NULL,
+	CONSTRAINT PK_MKT_ATTHORDER PRIMARY KEY 
+	(
+		TENANT_ID,
+		ATTH_ID
+	) 
+);
+
+CREATE INDEX IX_MATH_TENANT_ID ON MKT_ATTHORDER(TENANT_ID);
+CREATE INDEX IX_MATH_TIME_STAMP ON MKT_ATTHORDER(TENANT_ID,TIME_STAMP);
+CREATE INDEX IX_MATH_REQU_DATE ON MKT_ATTHORDER(REQU_DATE);
+
+drop table MKT_REQUSHARE;
+--附件单明细
+CREATE TABLE MKT_ATTHDATA (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --门店代码
+	SHOP_ID varchar2 (13) NOT NULL ,
+        --序号
+	SEQNO int NOT NULL ,
+        --单号
+	ATTH_ID char (36) NOT NULL ,
+        --商品
+	GODS_ID char (36) NOT NULL ,
+	      --单价
+	UNIT_ID char (36) NOT NULL ,
+        --返还数量
+	AMOUNT decimal(18, 3) ,
+        --返还数量
+	CALC_AMOUNT decimal(18, 3) ,
+        --返利金额
+	KPI_MNY decimal(18, 3) ,
+        --市场费用
+	BUDG_MNY decimal(18, 3) ,
+        --价格支持
+	AGIO_MNY decimal(18, 3) ,
+        --其他金额
+	OTHR_MNY decimal(18, 3) ,
+        --摘要
+	REMARK varchar2 (100) ,
+	CONSTRAINT PK_MKT_ATTHDATA PRIMARY KEY  
+	(
+		TENANT_ID,
+		ATTH_ID,
+		SEQNO
+	)
+);
+
+CREATE INDEX IX_DATH_TENANT_ID ON MKT_ATTHDATA(TENANT_ID);
+CREATE INDEX IX_DATH_ATTH_ID ON MKT_ATTHDATA(TENANT_ID,ATTH_ID);
+CREATE INDEX IX_DATH_GODS_ID ON MKT_ATTHDATA(TENANT_ID,GODS_ID);
+
+--合同类型
+delete from PUB_PARAMS where TYPE_CODE='PLAN_TYPE';
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','经销合同','PLAN_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','年度目标','PLAN_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('3','采购合同','PLAN_TYPE','00',5497000);
+
+
+--添加保证金
+alter table SAL_INDENTDATA add BOND_MNY decimal(18, 3);
+alter table STK_INDENTDATA add BOND_MNY decimal(18, 3);
+alter table SAL_INDENTDATA add BOND_RET decimal(18, 3);
+alter table STK_INDENTDATA add BOND_RET decimal(18, 3);
+
+--发票类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('1','销项发票','IVIO_TYPE','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('2','进项发票','IVIO_TYPE','00',5497000);
+
+--发票类型
+alter table SAL_INVOICE_INFO add IVIO_TYPE char(1);
+update SAL_INVOICE_INFO set IVIO_TYPE='1';
+
+--发票明细
+drop table SAL_INVOICE_LIST;
+CREATE TABLE SAL_INVOICE_LIST (
+        --企业代码
+	TENANT_ID int NOT NULL ,
+        --发票流水ID号
+	INVD_ID char (36) NOT NULL ,
+        --关联单号
+	SEQNO int NOT NULL,
+        --关联单号(0无 1销售单 2 退货单(销) 3订货单(销) 4进货单 5 退货单(进) 6 订货单(进))
+	FROM_TYPE char (36) NOT NULL ,
+        --关联单号
+	FROM_ID char (36) ,
+        --商品代码
+	GODS_ID varchar2(36),
+        --商品名称
+	GODS_NAME varchar2(50),
+        --单位
+	UNIT_NAME varchar2(10),
+        --数量
+	AMOUNT decimal(18, 3),
+        --单价
+	APRICE decimal(18, 3),
+        --未税金额
+	NOTAX_MNY decimal(18, 3),
+        --税额
+	TAX_MNY decimal(18, 3),
+	CONSTRAINT PK_SAL_INV_LIST PRIMARY KEY   
+	(
+		TENANT_ID,INVD_ID,SEQNO
+	)
+);
+CREATE INDEX IX_IVLT_SALES_ID ON SAL_INVOICE_LIST(TENANT_ID,FROM_ID);
+CREATE INDEX IX_IVLT_INVD_ID ON SAL_INVOICE_LIST(TENANT_ID,INVD_ID);
+
+--财务凭证
+CREATE TABLE ACC_FVCHORDER (
+  --企业代码
+  TENANT_ID int   NOT NULL,
+  --门店代码
+  SHOP_ID varchar2(13)   NOT NULL,
+  --所属部门
+  DEPT_ID varchar2(12)   NOT NULL,
+  --凭证编号
+  FVCH_ID char(36)   NOT NULL,
+  --凭证日期
+  FVCH_DATE int   NOT NULL,
+  --附件张数
+  FVCH_ATTACH int   NOT NULL,
+  --制单人
+  CREA_USER varchar2(36)   NOT NULL,
+  --引入标志 0 新增 1修改 2 引入完毕
+  FVCH_FLAG char(1)  ,
+  --凭证内码
+  FVCH_CODE varchar2(10)  ,
+  --引入后凭证编号
+  FVCH_IMPORT_ID varchar2(10)  ,
+  --通讯标志
+	COMM varchar2 (2) DEFAULT ('00') NOT NULL,
+  --时间戳
+  TIME_STAMP bigint   NOT NULL,
+  --主键
+  CONSTRAINT PK_ACC_FVCHORDER PRIMARY KEY 
+  ( 
+  	TENANT_ID,
+  	FVCH_ID 
+  )
+);
+
+CREATE INDEX IX_FVCH_TENANT_ID ON ACC_FVCHORDER (TENANT_ID);
+CREATE INDEX IX_FVCH_TIME_STAMP ON ACC_FVCHORDER (TENANT_ID, TIME_STAMP);
+CREATE INDEX IX_FVCH_SHOP_ID ON ACC_FVCHORDER (TENANT_ID,SHOP_ID);
+CREATE INDEX IX_FVCH_FVCH_DATE ON ACC_FVCHORDER (TENANT_ID,FVCH_DATE);
+
+--凭证分录
+CREATE TABLE ACC_FVCHDATA (
+  --企业代码
+  TENANT_ID int  NOT NULL,
+  --门店代码
+  SHOP_ID varchar2(13)   NOT NULL,
+  --凭证单号
+  FVCH_ID char(36)   NOT NULL,
+  --凭证分录编号
+  FVCH_DID char(36)   NOT NULL,
+  --序号
+	SEQNO int NOT NULL ,
+  --科目代码
+  SUBJECT_NO varchar2(10)   NOT NULL,
+  --摘要
+  SUMMARY varchar2(100)   NOT NULL,
+        --金额
+	AMONEY decimal(18, 3),
+        --数量
+	AMOUNT decimal(18, 3),
+        --单价
+	APRICE decimal(18, 3),
+  --记账方向  1借方 2贷方
+  SUBJECT_TYPE char(1)   NOT NULL,
+  --业务日期
+  OPER_DATE int   NOT NULL,
+  CONSTRAINT PK_ACC_FVCHDATA PRIMARY KEY 
+  ( 
+		TENANT_ID,
+		FVCH_DID
+  )
+);
+CREATE INDEX IX_FVCD_TENANT_ID ON ACC_FVCHDATA (TENANT_ID);
+CREATE INDEX IX_FVCD_FVCH_ID ON ACC_FVCHDATA (TENANT_ID,FVCH_ID);
+
+--凭证明细
+CREATE TABLE ACC_FVCHDETAIL (
+  --企业代码
+  TENANT_ID int  NOT NULL,
+  --门店代码
+  SHOP_ID varchar2(13)   NOT NULL,
+  --明细ID
+  FVCH_TID char(36)   NOT NULL,
+  --凭证单号
+  FVCH_ID char(36)   NOT NULL,
+  --凭证分录编号
+  FVCH_DID char(36)   NOT NULL,
+  --序号
+	SEQNO int NOT NULL ,
+  --人员编号->财务系统
+  SUBJ_USER char(36) ,
+  --部门编号->财务系统
+  SUBJ_DEPT char(36) ,
+  --门店编号->财务系统
+  SUBJ_SHOP char(36) ,
+  --往来单位->财务系统
+  SUBJ_CLIENT char(36) ,
+  --专项1->财务系统
+  SUBJ_OTHR1 char(36) ,
+  --专项2->财务系统
+  SUBJ_OTHR2 char(36) ,
+  --专项3->财务系统
+  SUBJ_OTHR3 char(36) ,
+  --专项4->财务系统
+  SUBJ_OTHR4 char(36) ,
+  --专项5->财务系统
+  SUBJ_OTHR5 char(36) ,
+  --摘要
+  SUMMARY varchar2(100)   NOT NULL,
+        --金额
+	AMONEY decimal(18, 3),
+        --数量
+	AMOUNT decimal(18, 3),
+        --单价
+	APRICE decimal(18, 3),
+  --业务日期
+  OPER_DATE int   NOT NULL,
+  CONSTRAINT PK_ACC_FVCHDETAIL PRIMARY KEY 
+  ( 
+		TENANT_ID,
+		FVCH_TID
+  )
+);
+CREATE INDEX IX_FVCL_TENANT_ID ON ACC_FVCHDETAIL (TENANT_ID);
+CREATE INDEX IX_FVCL_FVCH_ID ON ACC_FVCHDETAIL (TENANT_ID,FVCH_ID);
+
+--关联单据
+CREATE TABLE ACC_FVCHGLIDE (
+  --企业代码
+  TENANT_ID int  NOT NULL,
+  --行ID
+  FVCH_GLID char(36)   NOT NULL,
+  --凭证单号
+  FVCH_ID char(36)   NOT NULL,
+  --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单  11 零售单据 12缴款单 13 其他收入 14其他支出 15 存取款单
+  FVCH_GTYPE char(2)   NOT NULL,
+  --关联单号
+  FVCH_GID char(36)   NOT NULL,
+  CONSTRAINT PK_ACC_FVCHGLIDE PRIMARY KEY 
+  ( 
+		TENANT_ID,
+		FVCH_GLID
+  ) 
+);
+CREATE INDEX IX_FVCG_FVCH_ID ON ACC_FVCHGLIDE(TENANT_ID,FVCH_ID);
+
+
+--凭证模块
+CREATE TABLE ACC_FVCHFRAME (
+  --企业代码
+  TENANT_ID int  NOT NULL,
+  --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单  11 零售单据 12缴款单 13 其他收入 14其他支出 15 存取款单
+  FVCH_GTYPE char(2)   NOT NULL,
+  --序号
+	SEQNO int NOT NULL ,
+  --科目代码
+  SUBJECT_NO varchar2(10)   NOT NULL,
+  --摘要
+  SUMMARY varchar2(100)   NOT NULL,
+        --金额<取数字段>
+	AMONEY varchar2(20),
+        --数量<取数字段>
+	AMOUNT varchar2(20),
+        --单价<取数字段>
+	APRICE varchar2(20),
+  --取数条件
+  SWHERE varchar2(255) NOT NULL,
+  --分录明细 100000000 按位取数0代表不分细明1表代分明细(1人员 2部门 3门店<仓库> 4往来单位 其他分别为专项1-5)
+  DATAFLAG varchar2(8)   NOT NULL,
+  --记账方向  1借方 2贷方
+  SUBJECT_TYPE char(1) NOT NULL,
+  CONSTRAINT PK_ACC_FVCHDATA PRIMARY KEY 
+  ( 
+		TENANT_ID,
+		FVCH_DID
+  )
+);
+CREATE INDEX IX_FVCF_TENANT_ID ON ACC_FVCHFRAME (TENANT_ID);
+CREATE INDEX IX_FVCF_FVCH_GTYPE ON ACC_FVCHFRAME (TENANT_ID,FVCH_GTYPE);
+
+alter table MKT_BUDGORDER add REQU_TYPE char (1);
+alter table MKT_REQUORDER add BUDG_VRF decimal(18, 3);
+
+--参考返利销量调整
+CREATE TABLE MKT_KPI_MODIFY (
+  --企业代码
+  TENANT_ID int  NOT NULL,
+  --行ID
+  MODIFY_ID char(36)   NOT NULL,
+  --年度
+	KPI_YEAR int NOT NULL ,
+  --行ID
+  SALES_ID char(36)   NOT NULL,
+  --凭证单号
+  SEQNO int   NOT NULL,
+  --凭证单号
+  GODS_ID char(36)  NOT NULL,
+  --调整销量
+  MODI_AMOUNT decimal(18, 3) ,
+  --调整金额
+  MODI_MONEY decimal(18, 3) ,
+  CONSTRAINT PK_MKT_KPI_MODIFY PRIMARY KEY 
+  ( 
+		TENANT_ID,
+		MODIFY_ID
+  ) 
+);
+CREATE INDEX IX_KPIM_KPI_YEAR ON ACC_FVCHGLIDE(TENANT_ID,KPI_YEAR);
+CREATE INDEX IX_KPIM_SEQNO ON ACC_FVCHGLIDE(TENANT_ID,SALES_ID,SEQNO);

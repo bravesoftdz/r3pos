@@ -64,7 +64,7 @@ type
 
 implementation
 uses ufrmMktRequOrder,uDevFactory,ufrmFastReport,uGlobal,uFnUtil,uShopUtil,uXDictFactory,
-  uShopGlobal,uDsUtil, uMsgBox, uframeMDForm,ObjCommon;
+  uShopGlobal,uDsUtil, uMsgBox, uframeMDForm,ObjCommon, ufrmBasic;
 
 {$R *.dfm}
 
@@ -409,14 +409,16 @@ begin
 end;
 
 function TfrmMktRequOrderList.PrintSQL(tenantid, id: string): string;
+var SQL:String;
 begin
-  Result := 'select C.*,D.USER_NAME as CHK_USER_TEXT,E.USER_NAME as CREA_USER_TEXT,F.USER_NAME as REQU_USER_TEXT,'+
+  SQL := 'select C.*,D.USER_NAME as CHK_USER_TEXT,E.USER_NAME as CREA_USER_TEXT,F.USER_NAME as REQU_USER_TEXT,'+
             'G.DEPT_NAME as DEPT_ID_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,I.KPI_NAME as KPI_ID_TEXT,J.SHOP_NAME as SHOP_ID_TEXT,'+
             'K.CODE_NAME as REQU_TYPE_TEXT from ( '+
-            'Select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.REQU_TYPE,A.GLIDE_NO,A.REQU_USER,A.CLIENT_ID,A.CHK_USER,A.REQU_DATE,'+
-            'A.REMARK,A.CREA_USER,B.SEQNO,B.PLAN_ID,B.KPI_ID,B.KPI_YEAR,C.KPI_MNY,(B.KPI_MNY+B.BUDG_MNY+B.AGIO_MNY+B.OTHR_MNY) as REQU_MNY,B.REMARK as REMARK_DETAIL '+
-            ' From MKT_REQUDATA B,MKT_REQUORDER A,MKT_KPI_RESULT C  where A.TENANT_ID = B.TENANT_ID and A.REQU_ID=B.REQU_ID '+
-            ' and B.TENANT_ID = C.TENANT_ID and B.PLAN_ID=C.PLAN_ID and A.TENANT_ID = '+tenantid+' and A.REQU_ID = '''+id+''' ) C '+
+            'Select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.REQU_TYPE,A.GLIDE_NO,A.REQU_USER,A.CLIENT_ID,A.CHK_USER,A.REQU_DATE,A.REMARK,A.CREA_USER,'+
+            'B.SEQNO,B.PLAN_ID,B.KPI_ID,B.KPI_YEAR,isnull(B.KPI_MNY,0) as KPI_MNY,isnull(B.BUDG_MNY,0) as BUDG_MNY,isnull(B.AGIO_MNY,0) as AGIO_MNY,isnull(B.OTHR_MNY,0) as OTHR_MNY,'+
+            '(isnull(A.KPI_MNY,0)+isnull(A.BUDG_MNY,0)+isnull(A.AGIO_MNY,0)+isnull(A.OTHR_MNY,0)) as REQU_MNY,B.REMARK as REMARK_DETAIL '+
+            ' From MKT_REQUDATA B,MKT_REQUORDER A where A.TENANT_ID = B.TENANT_ID and A.REQU_ID=B.REQU_ID '+
+            '  and A.TENANT_ID = '+tenantid+' and A.REQU_ID = '''+id+''' ) C '+
             ' left join VIW_USERS D on D.TENANT_ID=C.TENANT_ID and D.USER_ID = C.CHK_USER '+
             ' left join VIW_USERS E on E.TENANT_ID=C.TENANT_ID and E.USER_ID = C.CREA_USER '+
             ' left join VIW_USERS F on F.TENANT_ID=C.TENANT_ID and F.USER_ID = C.REQU_USER '+
@@ -425,6 +427,7 @@ begin
             ' left join MKT_KPI_INDEX I on I.TENANT_ID=C.TENANT_ID and I.KPI_ID=C.KPI_ID '+
             ' left join CA_SHOP_INFO J on J.TENANT_ID=C.TENANT_ID and J.SHOP_ID=C.SHOP_ID '+
             ' left join PUB_PARAMS K on K.CODE_ID=C.REQU_TYPE where K.TYPE_CODE=''REQU_TYPE'' order by C.SEQNO  ';
+  Result := ParseSQL(Factor.iDbType,SQL);
 end;
 
 procedure TfrmMktRequOrderList.DBGridEh1DblClick(Sender: TObject);

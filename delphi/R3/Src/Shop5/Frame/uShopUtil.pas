@@ -46,6 +46,8 @@ function GetBarCodeColor(BarCode:string):string;
 function GetBarCodeSize(BarCode:string):string;
 //截地区后缀
 function GetRegionId(id:string):string;
+//截取定长字符:
+function GetTrimStr(const srcStr: string; vLen: integer): string;
 
 
 implementation
@@ -58,6 +60,19 @@ begin
   if copy(result,length(result)-1,2)='00' then
      delete(result,length(result)-1,2);
 end;
+//截取定长字符:
+function GetTrimStr(const srcStr: string; vLen: integer): string;
+var
+  wStr: widestring;
+begin
+  if Length(srcStr)> vLen then
+  begin
+    wStr:=srcStr;
+    result:= Copy(wStr,1,(vLen div 2)); //拷贝取(vLen div 2)
+  end else
+    result:= srcStr;
+end;
+
 function GetBarCodeID(BarCode:string):string;
 begin
   Result := copy(BarCode,2,6);

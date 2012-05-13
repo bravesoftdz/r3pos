@@ -2415,7 +2415,7 @@ begin
   if edtREMARK.Text='输入备注按[\]键' then
      AObj.FieldByName('REMARK').AsString := ''
   else
-     AObj.FieldByName('REMARK').AsString := Copy(edtREMARK.Text,1,100);  //2012.05.13长度限制100字节
+     AObj.FieldByName('REMARK').AsString := GetTrimStr(edtREMARK.Text,100); //2012.05.13长度限制100字节
 
   if (AObj.FieldByName('BARTER_INTEGRAL').AsFloat<>0) and (AObj.FieldByName('CLIENT_ID').AsString='') then Raise Exception.Create('不是会员消费，不能有积分兑换对商品.');
   Printed := DevFactory.SavePrint;

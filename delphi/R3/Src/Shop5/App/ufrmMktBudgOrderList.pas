@@ -65,7 +65,7 @@ type
 
 implementation
 uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, uShopGlobal,
-   uMsgBox, ufrmMktBudgOrder;
+   ObjCommon,uMsgBox, ufrmMktBudgOrder;
 {$R *.dfm}
 
 procedure TfrmMktBudgOrderList.actNewExecute(Sender: TObject);
@@ -392,9 +392,9 @@ end;
 function TfrmMktBudgOrderList.PrintSQL(tenantid, id: string): string;
 begin
   Result :=
-  'select A.GLIDE_NO,G.CLIENT_NAME as CLIENT_ID_TEXT,C.SHOP_NAME as SHOP_ID_TEXT,DEPT_NAME as DEPT_ID_TEXT,A.BUDG_DATE,'+
-  'E.USER_NAME as BUDG_USER_TEXT,A.CHK_DATE,F.USER_NAME as CHK_USER_TEXT,A.BUDG_VRF,A.REMARK,H.GLIDE_NO as REQU_ID_TEXT,K.USER_NAME as CREA_USER_TEXT,'+
-  'A.CREA_DATE,B.SEQNO,I.ACTIVE_NAME as ACTIVE_ID_TEXT,J.KPI_NAME as KPI_ID_TEXT,B.BUDG_VRF as DETAIL_BUDG_VRF,B.REMARK as DETAIL_REMARK '+
+  'select A.GLIDE_NO,G.CLIENT_NAME as CLIENT_ID_TEXT,C.SHOP_NAME as SHOP_ID_TEXT,DEPT_NAME as DEPT_ID_TEXT,A.BUDG_DATE,E.USER_NAME as BUDG_USER_TEXT,'+
+  'A.CHK_DATE,F.USER_NAME as CHK_USER_TEXT,isnull(A.BUDG_VRF,0) as BUDG_VRF,A.REMARK,H.GLIDE_NO as REQU_ID_TEXT,K.USER_NAME as CREA_USER_TEXT,'+
+  'A.CREA_DATE,B.SEQNO,I.ACTIVE_NAME as ACTIVE_ID_TEXT,J.KPI_NAME as KPI_ID_TEXT,isnull(B.BUDG_VRF,0) as DETAIL_BUDG_VRF,B.REMARK as DETAIL_REMARK '+
   ' from MKT_BUDGORDER A inner join MKT_BUDGDATA B on A.TENANT_ID=B.TENANT_ID and A.BUDG_ID=B.BUDG_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
@@ -406,6 +406,7 @@ begin
   ' left join MKT_ACTIVE_INFO I on B.TENANT_ID=I.TENANT_ID and B.ACTIVE_ID=I.ACTIVE_ID '+
   ' left join MKT_KPI_INDEX J on B.TENANT_ID=J.TENANT_ID and B.KPI_ID=J.KPI_ID '+
   ' where A.TENANT_ID='+tenantid+' and A.BUDG_ID='''+id+''' order by B.SEQNO ';
+  Result := ParseSQL(Factor.iDbType,Result);
 end;
 
 function TfrmMktBudgOrderList.CheckCanExport: boolean;

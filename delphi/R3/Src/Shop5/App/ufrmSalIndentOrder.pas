@@ -454,7 +454,7 @@ begin
   if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空');
   if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
-
+  if length(edtLINKMAN.Text)>20 then edtLINKMAN.Text:=Copy(edtLINKMAN.Text,1,20); //2012.05.13截掉超长
 
   ClearInvaid;
   if edtTable.IsEmpty then Raise Exception.Create('不能保存一张空单据...');

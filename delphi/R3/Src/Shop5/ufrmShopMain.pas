@@ -314,6 +314,7 @@ type
     actfrmStkInvoiceList: TAction;
     actfrmInvoice: TAction;
     actfrmMktAtthOrderList: TAction;
+    actfrmSalIndentDayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -458,6 +459,7 @@ type
     procedure actfrmStkInvoiceListExecute(Sender: TObject);
     procedure actfrmInvoiceExecute(Sender: TObject);
     procedure actfrmMktAtthOrderListExecute(Sender: TObject);
+    procedure actfrmSalIndentDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -532,7 +534,7 @@ uses
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmInitialRights,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,ufrmDemandOrderList,ufrmKpiIndex,ufrmMktPlanOrderList,
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
-  ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
+  ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,ufrmSalIndentDayReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList;
 {$R *.dfm}
@@ -4518,6 +4520,27 @@ begin
        AddFrom(Form);
      end;
   Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmSalIndentDayReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSalIndentDayReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSalIndentDayReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;
 

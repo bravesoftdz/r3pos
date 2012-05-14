@@ -5651,6 +5651,11 @@ inherited frmShopMain: TfrmShopMain
       Caption = #30003#39046#38468#20214#21333
       OnExecute = actfrmMktAtthOrderListExecute
     end
+    object actfrmSalIndentDayReport: TAction
+      Tag = 100002355
+      Caption = #38144#21806#35746#36135#25253#34920
+      OnExecute = actfrmSalIndentDayReportExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

@@ -317,7 +317,8 @@ uses
   ObjStkInvoiceOrder in 'Obj\ObjStkInvoiceOrder.pas',
   ufrmMktAtthOrder in 'App\ufrmMktAtthOrder.pas' {frmMktAtthOrder},
   ufrmMktAtthOrderList in 'App\ufrmMktAtthOrderList.pas' {frmMktAtthOrderList},
-  ObjMktAtthOrder in 'Obj\ObjMktAtthOrder.pas';
+  ObjMktAtthOrder in 'Obj\ObjMktAtthOrder.pas',
+  ufrmSalIndentDayReport in 'App\ufrmSalIndentDayReport.pas' {frmSalIndentDayReport};
 
 {$R *.res}
 var
@@ -326,7 +327,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.7';
+  DBVersion := '1.0.2.8';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

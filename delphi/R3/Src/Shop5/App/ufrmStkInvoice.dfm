@@ -517,7 +517,7 @@ inherited frmStkInvoice: TfrmStkInvoice
                 Top = 16
                 Width = 15
                 Height = 56
-                Caption = #36141#13#36135#13#21333#13#20301
+                Caption = #20379#13#36135#13#21333#13#20301
                 Font.Charset = GB2312_CHARSET
                 Font.Color = clGreen
                 Font.Height = -14

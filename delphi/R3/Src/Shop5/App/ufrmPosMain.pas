@@ -2405,6 +2405,7 @@ begin
 
   AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
   AObj.FieldbyName('SHOP_ID').AsString := Global.SHOP_ID;
+  AObj.FieldbyName('SALES_STYLE').AsString :='6BD82B9E-3678-4F33-89ED-B8C26B6589BD'; //门店销售方式
   AObj.FieldByName('SALES_TYPE').AsInteger := 4;
   AObj.FieldbyName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
   AObj.FieldByName('CREA_USER').AsString := Global.UserID;

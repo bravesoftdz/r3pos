@@ -116,7 +116,9 @@ type
     //添加统计单位Items
     procedure AddTongjiUnitList(TJUnit: TcxComboBox);
     //添加销售类型ItemsList: ItemsIdx: 对应：PUB_PARAMS.TYPE_CODE='TYPE_CODE'; AddAll:是否添加“全部”
-    procedure AddCBxItemsList(SetCbx: TcxComboBox; TYPE_CODE: string; AddAll: Boolean=False);
+    procedure AddCBxItemsList(SetCbx: TcxComboBox; TYPE_CODE: string; AddAll: Boolean=False);overload;
+    //添加:PUB_CODE_INFO: ItemsIdx: 对应：PUB_CODE_INFO.CODE_TYPE='TYPE_CODE'; AddAll:是否添加“全部”
+    procedure AddCBxItemsList(SetCbx: TcxComboBox; ItemsQry: TZQuery; AddAll: Boolean=False);overload;
     //返回年度选择，指定数据集添加
     procedure CopyItemsList(SrcCbx,DistCbx: TcxComboBox);
 
@@ -496,6 +498,7 @@ var
   Column:TColumnEh;
   Grid: TDBGridEh;
   SetCbx: TcxComboBox;
+  SetQry: TZQuery;
 begin
   inherited;
   //汇总记录值
@@ -551,6 +554,12 @@ begin
         if RightStr(CmpName,11)='_SALES_TYPE' then //销售类型
         begin
           AddCBxItemsList(Cbx,'IS_PRESENT',true);
+          Cbx.ItemIndex:=0;
+        end;
+        if RightStr(CmpName,12)='_SALES_STYLE' then //销售类型
+        begin
+          SetQry:=Global.GetZQueryFromName('PUB_SALE_STYLE'); 
+          AddCBxItemsList(Cbx,SetQry,true);
           Cbx.ItemIndex:=0;
         end;
       end;
@@ -964,6 +973,29 @@ begin
   finally
     Rs.Filtered:=False;
     Rs.Filter:='';
+  end;
+end;
+
+//添加:PUB_CODE_INFO: ItemsIdx: 对应：PUB_CODE_INFO.CODE_TYPE='TYPE_CODE'; AddAll:是否添加“全部”
+procedure TframeBaseReport.AddCBxItemsList(SetCbx: TcxComboBox; ItemsQry: TZQuery; AddAll: Boolean=False);
+var
+  CurObj: TRecord_;
+begin
+  if ItemsQry.IsEmpty then Exit;
+  ClearCbxPickList(SetCbx);
+  if AddAll then  //添加全部
+  begin
+    CurObj:=TRecord_.Create;
+    CurObj.ReadField(ItemsQry);
+    SetCbx.Properties.Items.AddObject('全部',CurObj);
+  end;
+  ItemsQry.First;
+  while not ItemsQry.Eof do
+  begin
+    CurObj:=TRecord_.Create;
+    CurObj.ReadFromDataSet(ItemsQry);
+    SetCbx.Properties.Items.AddObject(CurObj.fieldbyName('CODE_NAME').AsString,CurObj);
+    ItemsQry.Next;
   end;
 end;
 
@@ -1415,12 +1447,21 @@ begin
     TitleList.add('销售类型：'+TcxComboBox(FindCmp1).Text);
   end;
 
-  // 10、计量单位
+  //10、销售方式[继承类实现:订货方式或销售方式]
+  {
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SALES_STYLE');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex>-1)  then
+  begin
+    TitleList.add('销售方式：'+TcxComboBox(FindCmp1).Text);
+  end;
+  }
+
+  //11、计量单位
   FindCmp1:=FindComponent('fndP'+PageNo+'_UNIT_ID');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
     TitleList.Add('统计单位：'+TcxComboBox(FindCmp1).Text);
 
-  // 11、业务员、导购员
+  //12、业务员、导购员
   FindCmp1:=FindComponent('fndP'+PageNo+'_GUIDE_USER');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TzrComboBoxList) and (TzrComboBoxList(FindCmp1).Visible) and (TzrComboBoxList(FindCmp1).AsString<>'') then
   begin
@@ -1430,14 +1471,14 @@ begin
       TitleList.Add('业务员：'+TzrComboBoxList(FindCmp1).Text);
   end;
 
-  // 12、统计类型：     
+  //13、统计类型：
   FindCmp1:=FindComponent('fndP'+PageNo+'_RPTTYPE');
   if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex<>-1) then
   begin
     TitleList.add('统计类型：'+TcxComboBox(FindCmp1).Text);
   end;
 
-  // 13、单据类型:[全部命名规则]
+  //14、单据类型:[全部命名规则]
   FindCmp1:=FindComponent('fndP'+PageNo+'_ALL');
   if (FindCmp1<>nil) and (FindCmp1 is TcxRadioButton) and (not TcxRadioButton(FindCmp1).Checked) then //所有:
   begin

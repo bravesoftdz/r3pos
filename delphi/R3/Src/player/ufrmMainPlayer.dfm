@@ -1,6 +1,6 @@
 object frmMainPlayer: TfrmMainPlayer
   Left = 192
-  Top = 521
+  Top = 579
   Width = 207
   Height = 139
   Caption = 'frmMainPlayer'
@@ -12,6 +12,7 @@ object frmMainPlayer: TfrmMainPlayer
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
 end

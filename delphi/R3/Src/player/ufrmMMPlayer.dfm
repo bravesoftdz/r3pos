@@ -1,6 +1,6 @@
 object frmMMPlayer: TfrmMMPlayer
   Left = 485
-  Top = 237
+  Top = 246
   Width = 715
   Height = 459
   Caption = #35270#23631#24191#21578

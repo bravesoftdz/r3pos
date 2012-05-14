@@ -45,6 +45,8 @@ type
     Label40: TLabel;
     fndP1_SALES_TYPE: TcxComboBox;
     P1_DateControl: TfrmDateControl;
+    Label45: TLabel;
+    fndP1_SALES_STYLE: TcxComboBox;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -237,6 +239,11 @@ begin
 
   //过滤企业ID
   strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+
+  //销售方式:    
+  if fndP1_SALES_STYLE.ItemIndex>0 then
+    strWhere:=strWhere+' and A.SALES_STYLE='''+TRecord_(fndP1_SALES_STYLE.Properties.Items.Objects[fndP1_SALES_STYLE.ItemIndex]).FieldbyName('CODE_ID').AsString+''' ';
+
   //销售类型：
   if fndP1_SALES_TYPE.ItemIndex>0 then
     strWhere:=strWhere+' and A.IS_PRESENT='+TRecord_(fndP1_SALES_TYPE.Properties.Items.Objects[fndP1_SALES_TYPE.ItemIndex]).FieldbyName('CODE_ID').AsString+' ';
@@ -324,7 +331,7 @@ begin
 
   if RckMaxDate < vBegDate then      //--[全部查询视图]
   begin
-    SQLData:='(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,CLIENT_ID,GUIDE_USER,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,'+
+    SQLData:='(select TENANT_ID,SHOP_ID,DEPT_ID,SALES_STYLE,IS_PRESENT,CLIENT_ID,GUIDE_USER,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,'+
              'TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
              ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+')'
   end else
@@ -333,10 +340,10 @@ begin
   else
   begin
     SQLData :=
-      '(select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,CLIENT_ID,GUIDE_USER,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_C_GOODS_DAYS '+
+      '(select TENANT_ID,SHOP_ID,DEPT_ID,SALES_STYLE,IS_PRESENT,CLIENT_ID,GUIDE_USER,CREA_DATE,GODS_ID,SALE_AMT,SALE_MNY,SALE_TAX,SALE_RTL,SALE_CST,SALE_AGO,SALE_PRF from RCK_C_GOODS_DAYS '+
       ' where TENANT_ID='+Inttostr(Global.TENANT_ID)+' and CREA_DATE>='+InttoStr(vBegDate)+' and CREA_DATE<='+InttoStr(RckMaxDate)+' '+
       ' union all '+
-      ' select TENANT_ID,SHOP_ID,DEPT_ID,IS_PRESENT,CLIENT_ID,GUIDE_USER,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,'+
+      ' select TENANT_ID,SHOP_ID,DEPT_ID,SALES_STYLE,IS_PRESENT,CLIENT_ID,GUIDE_USER,SALES_DATE as CREA_DATE,GODS_ID,CALC_AMOUNT as SALE_AMT,NOTAX_MONEY as SALE_MNY,'+
       ' TAX_MONEY as SALE_TAX,(CALC_MONEY+AGIO_MONEY) as SALE_RTL,COST_MONEY as SALE_CST,AGIO_MONEY as SALE_AGO,NOTAX_MONEY-COST_MONEY as SALE_PRF '+
       ' from VIW_SALESDATA where TENANT_ID='+Inttostr(Global.TENANT_ID)+' '+StrCnd+' '+
       ')';
@@ -446,6 +453,12 @@ begin
      (TcxDateEdit(FindCmp1).Visible) and (TcxDateEdit(FindCmp2).Visible)  then
     TitleList.add('日期：'+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp1).Date)+' 至 '+formatDatetime('YYYY-MM-DD',TcxDateEdit(FindCmp2).Date));
 
+  FindCmp1:=FindComponent('fndP'+PageNo+'_SALES_STYLE');
+  if (FindCmp1<>nil) and (FindCmp1.Tag<>100) and (FindCmp1 is TcxComboBox) and (TcxComboBox(FindCmp1).Visible) and (TcxComboBox(FindCmp1).ItemIndex>-1)  then
+  begin
+    TitleList.add('销售方式：'+TcxComboBox(FindCmp1).Text);
+  end;
+    
   inherited AddReportReport(TitleList,PageNo);
 end;
 

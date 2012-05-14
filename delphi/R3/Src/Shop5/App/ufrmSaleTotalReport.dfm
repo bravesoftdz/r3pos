@@ -6,26 +6,26 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 942
-    Height = 483
+    Width = 950
+    Height = 494
     inherited RzPanel2: TRzPanel
-      Width = 932
-      Height = 473
+      Width = 940
+      Height = 484
       inherited RzPage: TRzPageControl
-        Width = 727
-        Height = 467
+        Width = 735
+        Height = 478
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 725
-            Height = 440
+            Width = 733
+            Height = 451
             inherited Panel4: TPanel
-              Width = 715
-              Height = 430
+              Width = 723
+              Height = 441
               inherited w1: TRzPanel
-                Width = 715
-                Height = 147
+                Width = 723
+                Height = 164
                 object Label3: TLabel
                   Left = 16
                   Top = 37
@@ -34,8 +34,8 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   Caption = #25253#34920#26679#24335
                 end
                 object Label4: TLabel
-                  Left = 279
-                  Top = 80
+                  Left = 16
+                  Top = 122
                   Width = 48
                   Height = 12
                   Caption = #21830#21697#20998#31867
@@ -49,7 +49,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 end
                 object Label16: TLabel
                   Left = 581
-                  Top = 122
+                  Top = 143
                   Width = 48
                   Height = 12
                   Anchors = [akTop, akRight]
@@ -64,21 +64,21 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 end
                 object Label32: TLabel
                   Left = 279
-                  Top = 59
+                  Top = 80
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
                 end
                 object Label43: TLabel
                   Left = 16
-                  Top = 122
+                  Top = 143
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#21517#31216
                 end
                 object Label39: TLabel
                   Left = 279
-                  Top = 100
+                  Top = 143
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -101,7 +101,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 end
                 object Label21: TLabel
                   Left = 16
-                  Top = 100
+                  Top = 101
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
@@ -113,6 +113,14 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   Height = 12
                   Alignment = taRightJustify
                   Caption = #38144#21806#31867#22411
+                end
+                object Label45: TLabel
+                  Left = 279
+                  Top = 101
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #38144#21806#26041#24335
                 end
                 object rptTemplate: TcxComboBox
                   Left = 72
@@ -177,7 +185,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 end
                 object RzBitBtn1: TRzBitBtn
                   Left = 465
-                  Top = 109
+                  Top = 129
                   Width = 72
                   Height = 29
                   Action = actFind
@@ -216,7 +224,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 end
                 object fndP1_UNIT_ID: TcxComboBox
                   Left = 631
-                  Top = 118
+                  Top = 139
                   Width = 80
                   Height = 20
                   Anchors = [akTop, akRight]
@@ -271,9 +279,9 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   MultiSelect = False
                 end
                 object fndP1_SORT_ID: TcxButtonEdit
-                  Left = 336
-                  Top = 76
-                  Width = 121
+                  Left = 72
+                  Top = 118
+                  Width = 193
                   Height = 20
                   Properties.Buttons = <
                     item
@@ -341,7 +349,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
                   Left = 336
-                  Top = 55
+                  Top = 76
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -378,7 +386,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 object fndP1_CLIENT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 72
-                  Top = 118
+                  Top = 139
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -420,7 +428,7 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                 object fndP1_GUIDE_USER: TzrComboBoxList
                   Tag = -1
                   Left = 336
-                  Top = 97
+                  Top = 139
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -564,14 +572,26 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
                   Height = 20
                   TabOrder = 15
                 end
+                object fndP1_SALES_STYLE: TcxComboBox
+                  Left = 336
+                  Top = 97
+                  Width = 121
+                  Height = 20
+                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+                  Properties.DropDownListStyle = lsEditFixedList
+                  Properties.Items.Strings = (
+                    #34892#25919#22320#21306
+                    #31649#29702#32676#32452)
+                  TabOrder = 19
+                end
               end
               inherited RzPanel7: TRzPanel
-                Top = 147
-                Width = 715
-                Height = 283
+                Top = 164
+                Width = 723
+                Height = 277
                 inherited DBGridEh1: TDBGridEh
-                  Width = 711
-                  Height = 279
+                  Width = 719
+                  Height = 273
                   OnGetFooterParams = DBGridEh1GetFooterParams
                 end
               end
@@ -580,8 +600,8 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 730
-        Height = 467
+        Left = 738
+        Height = 478
         Visible = False
         inherited Panel2: TPanel
           Height = 444
@@ -596,9 +616,9 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 942
+    Width = 950
     inherited Image14: TImage
-      Left = 922
+      Left = 930
     end
     inherited Image1: TImage
       Width = 580
@@ -617,6 +637,10 @@ inherited frmSaleTotalReport: TfrmSaleTotalReport
     object actTemplate: TAction
       Caption = #34920#26679
     end
+  end
+  inherited SaveDialog1: TSaveDialog
+    Left = 325
+    Top = 300
   end
   inherited PrintDBGridEh1: TPrintDBGridEh
     Left = 184

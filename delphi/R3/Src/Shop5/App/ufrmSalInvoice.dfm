@@ -914,7 +914,6 @@ inherited frmSalInvoice: TfrmSalInvoice
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
-              ReadOnly = True
               RowHeight = 20
               SumList.Active = True
               TabOrder = 0
@@ -930,6 +929,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               DecimalNumber = 2
               DigitalNumber = 12
               OnDrawColumnCell = DBGridEh1DrawColumnCell
+              OnKeyPress = DBGridEh1KeyPress
               Columns = <
                 item
                   Color = clWhite
@@ -959,6 +959,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Title.Font.Name = #23435#20307
                   Title.Font.Style = []
                   Width = 240
+                  Control = fndGODS_ID
                 end
                 item
                   EditButtons = <>
@@ -986,6 +987,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Title.Font.Name = #23435#20307
                   Title.Font.Style = []
                   Width = 70
+                  OnUpdateData = DBGridEh1Columns3UpdateData
                 end
                 item
                   Alignment = taRightJustify
@@ -1003,6 +1005,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Title.Font.Name = #23435#20307
                   Title.Font.Style = []
                   Width = 80
+                  OnUpdateData = DBGridEh1Columns4UpdateData
                 end
                 item
                   Alignment = taRightJustify
@@ -1012,6 +1015,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #37329#39069
                   Title.Color = clWhite
                   Title.Font.Charset = GB2312_CHARSET
@@ -1028,6 +1032,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
+                  ReadOnly = True
                   Title.Caption = #31246#39069
                   Title.Color = clWhite
                   Title.Font.Charset = GB2312_CHARSET
@@ -1037,6 +1042,63 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Title.Font.Style = []
                   Width = 100
                 end>
+            end
+            object fndGODS_ID: TzrComboBoxList
+              Left = 104
+              Top = 28
+              Width = 121
+              Height = 20
+              TabStop = False
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = True
+              TabOrder = 1
+              Visible = False
+              OnEnter = fndGODS_IDEnter
+              OnExit = fndGODS_IDExit
+              OnKeyDown = fndGODS_IDKeyDown
+              OnKeyPress = fndGODS_IDKeyPress
+              InGrid = True
+              KeyValue = Null
+              FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+              KeyField = 'GODS_ID'
+              ListField = 'GODS_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'GODS_NAME'
+                  Footers = <>
+                  Title.Caption = #21830#21697#21517#31216
+                  Width = 150
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'GODS_CODE'
+                  Footers = <>
+                  Title.Caption = #36135#21495
+                  Width = 50
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'BARCODE'
+                  Footers = <>
+                  Title.Caption = #26465#30721
+                  Width = 65
+                end>
+              DropWidth = 380
+              DropHeight = 250
+              ShowTitle = True
+              AutoFitColWidth = True
+              OnFindClick = fndGODS_IDFindClick
+              ShowButton = True
+              LocateStyle = lsDark
+              Buttons = [zbFind]
+              DropListStyle = lsFixed
+              OnSaveValue = fndGODS_IDSaveValue
+              MultiSelect = False
             end
           end
         end

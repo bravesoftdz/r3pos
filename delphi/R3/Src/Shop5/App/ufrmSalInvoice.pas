@@ -56,6 +56,7 @@ type
     Label1: TLabel;
     DBGridEh1: TDBGridEh;
     DataSource1: TDataSource;
+    fndGODS_ID: TzrComboBoxList;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -64,6 +65,18 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure edtINVH_IDSaveValue(Sender: TObject);
+    procedure fndGODS_IDEnter(Sender: TObject);
+    procedure fndGODS_IDExit(Sender: TObject);
+    procedure fndGODS_IDFindClick(Sender: TObject);
+    procedure fndGODS_IDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure fndGODS_IDKeyPress(Sender: TObject; var Key: Char);
+    procedure fndGODS_IDSaveValue(Sender: TObject);
+    procedure DBGridEh1Columns3UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1Columns4UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
   private
     FisAudit: boolean;
     Fcid: string;
@@ -85,10 +98,21 @@ type
     procedure WriteInvoiceId(InvoiceId:String);
     function IncInvoiceNo(InvoiceNo:String):String;
     procedure SetIvioType(const Value: String);
+    procedure FocusNextColumn;
+    procedure InitRecord;
+    procedure OpenDialogGoods;
+    procedure AddFromDialog(AObj:TRecord_);
+    procedure EraseRecord;
+    procedure AddRecord(AObj:TRecord_;UNIT_ID:string;Located:boolean=false;IsPresent:boolean=false);
+    procedure UpdateRecord(AObj:TRecord_;UNIT_ID:string;pt:boolean=false);
+    function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;
+    function InitPrice(GODS_ID,UNIT_ID:string):Currency;
+    procedure AMountToCalc(Amount:Real);
   public
     { Public declarations }
     AObj:TRecord_;
     locked:Boolean;
+    RowID:integer;
     procedure Open(id:string);
     procedure Append;
     procedure Edit(id:string);
@@ -104,8 +128,8 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, IniFiles, ufrmBasic,
-  Math;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal, IniFiles, ufrmBasic, uXDictFactory,
+  Math, uframeSelectGoods;
 {$R *.dfm}
 
 { TfrmSalInvoice }
@@ -352,6 +376,7 @@ begin
   inherited;
   AObj := TRecord_.Create;
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
+  fndGODS_ID.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
@@ -417,8 +442,10 @@ begin
     cdsDetail.Post;
     cdsDetail.Next;
   end;
+  if cdsDetail.FieldByName('FROM_TYPE').AsString = '0' then DBGridEh1.ReadOnly := False; 
   if TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString <> '3' then
-     DBGridEh1.Columns[6].Visible := False;  
+     DBGridEh1.Columns[6].Visible := False;
+
 end;
 
 function TfrmSalInvoice.ReadInvoiceNo(Flag: String): String;
@@ -539,6 +566,469 @@ begin
      edtINVOICE_NO.Text := FnString.FormatStringEx(edtINVH_ID.DataSet.FieldByName('BEGIN_NO').AsString,8)
   else
      edtINVOICE_NO.Text := IncInvoiceNo(edtINVH_ID.DataSet.FieldByName('CURRENT_NO').AsString);
+end;
+
+procedure TfrmSalInvoice.fndGODS_IDEnter(Sender: TObject);
+begin
+  inherited;
+  fndGODS_ID.Text := cdsDetail.FieldByName('GODS_NAME').AsString;
+  fndGODS_ID.KeyValue := cdsDetail.FieldByName('GODS_ID').AsString;
+  fndGODS_ID.Properties.ReadOnly := DBGridEh1.ReadOnly;
+end;
+
+procedure TfrmSalInvoice.fndGODS_IDExit(Sender: TObject);
+begin
+  inherited;
+  if not fndGODS_ID.DropListed then fndGODS_ID.Visible := false;
+end;
+
+procedure TfrmSalInvoice.fndGODS_IDFindClick(Sender: TObject);
+begin
+  inherited;
+  fndGODS_ID.CloseList;
+  fndGODS_ID.Visible := false;
+  OpenDialogGoods;
+end;
+
+procedure TfrmSalInvoice.fndGODS_IDKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key=VK_RIGHT) and not fndGODS_ID.Edited then
+     begin
+       DBGridEh1.SetFocus;
+       fndGODS_ID.Visible := false;
+       FocusNextColumn;
+     end;
+  if (Key=VK_UP) and not fndGODS_ID.DropListed then
+     begin
+       DBGridEh1.SetFocus;
+       fndGODS_ID.Visible := false;
+       cdsDetail.Prior;
+     end;
+  if (Key=VK_DOWN) and (Shift=[]) and not fndGODS_ID.DropListed then
+     begin
+       if (cdsDetail.FieldByName('SEQNO').AsString<>'') and (cdsDetail.FieldByName('GODS_ID').AsString='') then
+         fndGODS_ID.DropList
+       else
+       begin
+         DBGridEh1.SetFocus;
+         fndGODS_ID.Visible := false;
+         cdsDetail.Next;
+         if cdsDetail.Eof then
+            InitRecord;
+            //PostMessage(Handle,WM_INIT_RECORD,0,0);
+         if cdsDetail.FieldByName('GODS_ID').AsString <> '' then
+            Key := 0
+       end;
+     end;
+  inherited;
+end;
+
+procedure TfrmSalInvoice.fndGODS_IDKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key=#13 then
+     begin
+       Key := #0;
+       if fndGODS_ID.AsString = '' then
+          begin
+            InitRecord;
+            Exit;
+          end;
+       if cdsDetail.FieldbyName('GODS_ID').AsString = '' then
+          begin
+            fndGODS_ID.DropList;
+            Exit;
+          end;
+       DBGridEh1.SetFocus;
+       FocusNextColumn;
+     end;
+end;
+
+procedure TfrmSalInvoice.fndGODS_IDSaveValue(Sender: TObject);
+var AObj:TRecord_;
+  rs:TZQuery;
+  pt:boolean;
+begin
+  inherited;
+  if not cdsDetail.Active then Exit;
+  if cdsDetail.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then exit;
+  cdsDetail.DisableControls;
+  try
+    if cdsDetail.FieldbyName('GODS_ID').AsString <> '' then
+       begin
+       if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
+          begin
+            fndGODS_ID.Text := cdsDetail.FieldbyName('GODS_NAME').AsString;
+            fndGODS_ID.KeyValue := cdsDetail.FieldbyName('GODS_ID').AsString;
+            Exit;
+          end;
+
+       end;
+    if VarIsNull(fndGODS_ID.KeyValue) then
+    begin
+      EraseRecord;
+    end
+    else
+    begin
+      AObj := TRecord_.Create;
+      try
+        rs := Global.GetZQueryFromName('PUB_GOODSINFO');
+        if rs.Locate('GODS_ID',fndGODS_ID.AsString,[]) then
+        begin
+          AObj.ReadField(cdsDetail);
+          AObj.ReadFromDataSet(rs,false);
+          //AObj.FieldbyName('UNIT_ID').AsString := rs.FieldbyName('UNIT_ID').AsString;
+
+          pt := false;
+
+          if CheckRepeat(AObj,pt) then
+             begin
+               fndGODS_ID.Text := cdsDetail.FieldbyName('GODS_NAME').AsString;
+               fndGODS_ID.KeyValue := cdsDetail.FieldbyName('GODS_ID').AsString;
+               Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.GoodsRepeat','"%s"货品重复录入,请核对输入是否正确.',[cdsDetail.FieldbyName('GODS_NAME').AsString]));
+             end;
+          UpdateRecord(AObj,rs.FieldByName('UNIT_ID').AsString,pt);
+        end
+        else
+          Raise Exception.Create(XDictFactory.GetMsgStringFmt('frame.NoFindGoodsInfo','在经营品牌中没找到"%s"',[fndGODS_ID.Text]));
+      finally
+        AObj.Free;
+      end;
+
+    end;
+  finally
+    if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
+    cdsDetail.EnableControls;
+  end;
+end;
+
+procedure TfrmSalInvoice.FocusNextColumn;
+var i:Integer;
+begin
+  i:=DbGridEh1.Col;
+  if cdsDetail.RecordCount>cdsDetail.RecNo then
+     begin
+       cdsDetail.Next;
+       Exit;
+     end;
+  Inc(i);
+  while True do
+    begin
+      if i>=DbGridEh1.Columns.Count then i:= 1;
+      if (DbGridEh1.Columns[i].ReadOnly or not DbGridEh1.Columns[i].Visible) and (i<>1) then
+         inc(i)
+      else
+         begin
+           if Trim(cdsDetail.FieldbyName('GODS_ID').asString)='' then
+              i := 1;
+           if (i=1) and (Trim(cdsDetail.FieldbyName('GODS_ID').asString)<>'') then
+              begin
+                 cdsDetail.Next ;
+                 if cdsDetail.Eof then
+                    begin
+                      InitRecord;
+                    end;
+                 DbGridEh1.SetFocus;
+                 DbGridEh1.Col := 1 ;
+              end
+           else
+              DbGridEh1.Col := i;
+           Exit;
+         end;
+    end;
+end;
+
+procedure TfrmSalInvoice.InitRecord;
+begin
+  if dbState = dsBrowse then Exit;
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
+  fndGODS_ID.Visible := false;
+  cdsDetail.DisableControls;
+  try
+  cdsDetail.Last;
+  if cdsDetail.IsEmpty or (cdsDetail.FieldbyName('GODS_ID').AsString <>'') then
+    begin
+      inc(RowID);
+      cdsDetail.Append;
+      cdsDetail.FieldByName('GODS_ID').Value := null;
+      if cdsDetail.FindField('SEQNO')<> nil then
+         cdsDetail.FindField('SEQNO').asInteger := RowID;
+      cdsDetail.Post;
+    end;
+    DbGridEh1.Col := 1 ;
+    if DBGridEh1.CanFocus and Visible and (dbState <> dsBrowse) then DBGridEh1.SetFocus;
+  finally
+    cdsDetail.EnableControls;
+    cdsDetail.Edit;
+  end;
+end;
+
+procedure TfrmSalInvoice.OpenDialogGoods;
+var
+  AObj:TRecord_;
+
+begin
+  try
+  with TframeSelectGoods.Create(self) do
+    begin
+      try
+        MultiSelect := false;
+        OnSave := AddFromDialog;
+        if ShowModal=MROK then
+           begin
+             cdsList.first;
+             while not cdsList.eof do
+               begin
+                 AObj := TRecord_.Create;
+                 try
+                   AObj.ReadFromDataSet(cdsList);
+                   AddFromDialog(AObj);
+                 finally
+                   AObj.Free;
+                 end;
+                 cdsList.Next;
+               end;
+           end;
+      finally
+        free;
+      end;
+    end;
+  finally
+    DBGridEh1.SetFocus;
+  end;
+end;
+
+procedure TfrmSalInvoice.AddFromDialog(AObj: TRecord_);
+var basInfo:TZQuery;
+begin
+  basInfo := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not basInfo.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]) then Raise Exception.Create('经营商品中没找到"'+AObj.FieldbyName('GODS_NAME').AsString+'"');
+  AddRecord(AObj,basInfo.FieldbyName('UNIT_ID').AsString,True);
+
+end;
+
+procedure TfrmSalInvoice.AddRecord(AObj: TRecord_; UNIT_ID: string;
+  Located, IsPresent: boolean);
+var
+  Pt:integer;
+  r:boolean;
+  rs:TZQuery;
+begin
+  if IsPresent then pt := 1 else pt := 0;
+  if Located then
+     begin
+        r := cdsDetail.Locate('GODS_ID',AObj.FieldbyName('GODS_ID').AsString,[]);
+        if r then Exit;
+
+        //inc(RowID);
+        if (cdsDetail.FieldbyName('GODS_ID').asString='') and (cdsDetail.FieldbyName('SEQNO').asString<>'') then
+        cdsDetail.Edit else InitRecord;
+        cdsDetail.FieldbyName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+        cdsDetail.FieldbyName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+        cdsDetail.FieldByName('AMOUNT').AsFloat := 1;
+        cdsDetail.FieldByName('APRICE').AsFloat := InitPrice(cdsDetail.FieldbyName('GODS_ID').AsString,UNIT_ID);
+        cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
+        cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
+
+        if UNIT_ID='' then
+           cdsDetail.FieldbyName('UNIT_NAME').AsString := ''
+        else
+           begin
+             rs := ShopGlobal.GetZQueryFromName('PUB_MEAUNITS');
+             if rs.Locate('UNIT_ID',UNIT_ID,[]) then
+                cdsDetail.FieldbyName('UNIT_NAME').AsString := rs.FieldByName('UNIT_NAME').AsString
+             else
+                cdsDetail.FieldByName('UNIT_NAME').AsString := '';
+           end;
+
+     end;
+  cdsDetail.Edit;
+
+end;
+
+procedure TfrmSalInvoice.EraseRecord;
+var i:integer;
+begin
+  if cdsDetail.State = dsBrowse then cdsDetail.Edit;
+  for i:=1 to cdsDetail.Fields.Count -1 do cdsDetail.Fields[i].Value := null;
+  fndGODS_ID.Text := '';
+  fndGODS_ID.KeyValue := null;
+end;
+
+function TfrmSalInvoice.CheckRepeat(AObj: TRecord_;
+  var pt: boolean): boolean;
+var
+  r,c:integer;
+begin
+  result := false;
+  r := cdsDetail.FieldbyName('SEQNO').AsInteger;
+  cdsDetail.DisableControls;
+  try
+    c := 0;
+    cdsDetail.First;
+    while not cdsDetail.Eof do
+      begin
+        if
+           (cdsDetail.FieldbyName('GODS_ID').AsString = AObj.FieldbyName('GODS_ID').AsString)
+           and
+           (cdsDetail.FieldbyName('SEQNO').AsInteger <> r)
+        then
+           begin
+             inc(c);
+             break;
+           end;
+        cdsDetail.Next;
+      end;
+    pt := false;
+    if c>0 then
+      begin
+        if (MessageBox(Handle,pchar('"'+AObj.FieldbyName('GODS_NAME').asString+'('+AObj.FieldbyName('GODS_CODE').asString+')已经存在，是否继续添加赠品？'),'友情提示...',MB_YESNO+MB_ICONQUESTION)=6) then
+           result := false else result := true;
+      end;
+  finally
+    cdsDetail.Locate('SEQNO',r,[]);
+    cdsDetail.EnableControls;
+  end;
+end;
+
+procedure TfrmSalInvoice.UpdateRecord(AObj: TRecord_; UNIT_ID: string;
+  pt: boolean);
+var Field:TField;
+    rs:TZQuery;
+begin
+  if cdsDetail.State = dsBrowse then
+     begin
+       if cdsDetail.FieldbyName('SEQNO').asString='' then
+          InitRecord else cdsDetail.Edit;
+     end;
+  cdsDetail.FieldByName('GODS_ID').AsString := AObj.FieldbyName('GODS_ID').AsString;
+  cdsDetail.FieldByName('GODS_NAME').AsString := AObj.FieldbyName('GODS_NAME').AsString;
+  cdsDetail.FieldByName('AMOUNT').AsFloat := 1;
+  cdsDetail.FieldByName('APRICE').AsFloat := InitPrice(cdsDetail.FieldbyName('GODS_ID').AsString,UNIT_ID);
+  cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
+  cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
+
+  if UNIT_ID='' then
+     cdsDetail.FieldbyName('UNIT_NAME').AsString := ''
+  else
+     begin
+       rs := ShopGlobal.GetZQueryFromName('PUB_MEAUNITS');
+       if rs.Locate('UNIT_ID',UNIT_ID,[]) then
+          cdsDetail.FieldbyName('UNIT_NAME').AsString := rs.FieldByName('UNIT_NAME').AsString
+       else
+          cdsDetail.FieldByName('UNIT_NAME').AsString := '';
+     end;
+  cdsDetail.Edit;
+
+end;
+
+function TfrmSalInvoice.InitPrice(GODS_ID, UNIT_ID: string): Currency;
+var
+  rs,bs:TZQuery;
+  Params:TftParamList;
+  str,OutLevel:string;
+begin
+  rs := TZQuery.Create(nil);
+  bs := Global.GetZQueryFromName('PUB_GOODSINFO');
+  if not bs.Locate('GODS_ID',GODS_ID,[]) then Raise Exception.Create('缓冲数据集中没找到当前商品...');  
+  Params := TftParamList.Create(nil);
+  try
+    Params.ParamByName('CarryRule').asInteger := 0;
+    Params.ParamByName('Deci').asInteger := 2;
+    Params.ParamByName('CLIENT_ID').asString := edtCLIENT_ID.AsString;
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('SHOP_ID').asString := edtSHOP_ID.AsString;
+    Params.ParamByName('GODS_ID').asString := GODS_ID;
+    Params.ParamByName('PRICE_ID').asString := '#';
+    Params.ParamByName('UNIT_ID').asString := UNIT_ID;
+    Factor.Open(rs,'TGetSalesPrice',Params);
+    Result := rs.FieldbyName('V_APRICE').AsFloat;
+
+  finally
+    Params.Free;
+    rs.Free;
+  end;
+end;
+
+procedure TfrmSalInvoice.DBGridEh1Columns3UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Currency;
+begin
+  if cdsDetail.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
+
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  TColumnEh(Sender).Field.asFloat := r;
+  AMountToCalc(r);
+
+end;
+
+procedure TfrmSalInvoice.AMountToCalc(Amount: Real);
+begin
+  if locked then Exit;
+  locked := True;
+  try
+    if not (cdsDetail.State in [dsEdit,dsInsert]) then cdsDetail.Edit;
+    cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
+    cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
+    cdsDetail.Edit;
+  finally
+    locked := False;
+  end;
+end;
+
+procedure TfrmSalInvoice.DBGridEh1Columns4UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Currency;
+begin
+  if cdsDetail.FieldbyName('GODS_ID').AsString = '' then
+     begin
+       Text := '';
+       Value := null;
+       FocusNextColumn;
+       Exit;
+     end;
+
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  TColumnEh(Sender).Field.asFloat := r;
+  AMountToCalc(r);
+end;
+
+procedure TfrmSalInvoice.DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if (Key=#13) then
+     begin
+       FocusNextColumn;
+       Key := #0;
+     end;
 end;
 
 end.

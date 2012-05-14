@@ -116,6 +116,7 @@ procedure TfrmSalInvoiceList.actNewExecute(Sender: TObject);
 var Client_Id,InvoiceFlag:String;
     IsExist:Boolean;
     SumMny:Real;
+    R:Integer;
 begin
   inherited;
   case RzPage.ActivePageIndex of
@@ -163,10 +164,13 @@ begin
             Append;
             OnSave := AddRecord;
             //开票选择第一分页 [开票查询] 时执行
+            R := 0;
             CdsSalesList.First;
             while not CdsSalesList.Eof do
             begin
+              inc(R);
               cdsDetail.Append;
+              cdsDetail.FieldByName('SEQNO').AsInteger := R;
               cdsDetail.FieldByName('FROM_ID').AsString := CdsSalesList.FieldByName('SALES_ID').AsString;
               cdsDetail.FieldByName('GODS_ID').AsString := CdsSalesList.FieldByName('GODS_ID').AsString;
               cdsDetail.FieldByName('GODS_NAME').AsString := CdsSalesList.FieldByName('GODS_NAME').AsString;
@@ -177,6 +181,7 @@ begin
               cdsDetail.Post;
               CdsSalesList.Next;
             end;
+            RowID := R;
             //开票选择第一分页 [开票查询] 时执行
             CdsSalesList.Filtered := False;
             CdsSalesList.EnableControls;
@@ -214,6 +219,7 @@ begin
           Append;
           OnSave := AddRecord;
           cdsDetail.Append;
+          cdsDetail.FieldByName('SEQNO').AsInteger := 1;
           cdsDetail.FieldByName('FROM_ID').AsString := '#';
           cdsDetail.FieldByName('GODS_ID').AsString := '#';
           cdsDetail.FieldByName('GODS_NAME').AsString := '#';
@@ -222,6 +228,7 @@ begin
           cdsDetail.FieldByName('APRICE').AsFloat := 0;
           cdsDetail.FieldByName('FROM_TYPE').AsString := '0';
           cdsDetail.Post;
+          RowID := 1;
           ShowModal;
         finally
           free;

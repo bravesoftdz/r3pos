@@ -897,6 +897,8 @@ begin
      (sid='SREGION_ID2')
      or
      (sid='SHOP_TYPE')
+     or
+     (sid='SALES_STYLE')
   then
      result := DataSet.FindField(sid).Index
   else
@@ -954,7 +956,7 @@ end;
 var
   i,j:integer;
   node:PIdxNode;
-  dept,users,region,sort,shpType:TZQuery;
+  dept,users,region,sort,shpType,salStyle:TZQuery;
 begin
   for i:=0 to TLate.Count-1 do
   begin
@@ -968,6 +970,7 @@ begin
   region := Global.GetZQueryFromName('PUB_REGION_INFO');
   sort := Global.GetZQueryFromName('PUB_GOODSSORT');
   shpType := Global.GetZQueryFromName('PUB_SHOP_TYPE');
+  salStyle := Global.GetZQueryFromName('PUB_SALE_STYLE');
   DataSet.First;
   while not DataSet.Eof do
     begin
@@ -1044,8 +1047,25 @@ begin
                      end;
                   if PRTemplate(TLate[i])^.INDEX_ID='KPI_ID' then
                      begin
-                       if dept.Locate('KPI_ID',node^.id,[]) then
+                       if FKpi.Locate('KPI_ID',node^.id,[]) then
                           node^.title := FKpi.FieldbyName('KPI_NAME').AsString
+                       else
+                          begin
+                            DataSet.Edit;
+                            DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString := '#';
+                            DataSet.Post;
+                            if CheckExists(DataSet.Fields[PRTemplate(TLate[i])^.FieldIndex].AsString,TList(PRTemplate(TLate[i])^.Data)) then
+                               begin
+                                 dispose(node);
+                                 continue;
+                               end;
+                            node^.title := 'Î´ÖªÃû³Æ';
+                          end;
+                     end;                     
+                  if PRTemplate(TLate[i])^.INDEX_ID='SALES_STYLE' then
+                     begin
+                       if salStyle.Locate('CODE_ID',node^.id,[]) then
+                          node^.title := salStyle.FieldbyName('CODE_NAME').AsString
                        else
                           begin
                             DataSet.Edit;
@@ -1399,6 +1419,8 @@ begin
      (sid='DEPT_ID')
      or
      (sid='KPI_ID')
+     or
+     (sid='SALES_STYLE')     
      or
      (sid='GUIDE_USER')
      or

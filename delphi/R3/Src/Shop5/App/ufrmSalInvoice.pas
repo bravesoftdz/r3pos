@@ -85,6 +85,7 @@ type
     FInvoiceId: String;
     FIvioType: String;
     Tax_Rate:Currency;
+    InputType:Integer;
     { Private declarations }
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Setcid(const Value: string);
@@ -375,6 +376,7 @@ procedure TfrmSalInvoice.FormCreate(Sender: TObject);
 begin
   inherited;
   AObj := TRecord_.Create;
+  InputType := 1;
   edtCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndGODS_ID.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO');
   edtSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO');
@@ -631,7 +633,8 @@ begin
   if Key=#13 then
      begin
        Key := #0;
-       if fndGODS_ID.AsString = '' then
+
+       if (fndGODS_ID.AsString = '') and (InputType=1) then
           begin
             InitRecord;
             Exit;
@@ -643,6 +646,7 @@ begin
           end;
        DBGridEh1.SetFocus;
        FocusNextColumn;
+       InputType := 1;
      end;
 end;
 
@@ -653,19 +657,29 @@ var AObj:TRecord_;
 begin
   inherited;
   if not cdsDetail.Active then Exit;
+  if (fndGODS_ID.AsString = '') and (Trim(fndGODS_ID.Text) <> '') then
+  begin
+    if cdsDetail.Locate('GODS_NAME',Trim(fndGODS_ID.Text),[]) then
+       Raise Exception.Create('"'+Trim(fndGODS_ID.Text)+'"商品名已经存在!');
+    InputType := 2;
+    InitRecord;
+    //InputType := 1;
+    Exit;
+  end;
   if cdsDetail.FieldbyName('GODS_ID').AsString=fndGODS_ID.AsString then exit;
   cdsDetail.DisableControls;
   try
     if cdsDetail.FieldbyName('GODS_ID').AsString <> '' then
        begin
-       if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
-          begin
-            fndGODS_ID.Text := cdsDetail.FieldbyName('GODS_NAME').AsString;
-            fndGODS_ID.KeyValue := cdsDetail.FieldbyName('GODS_ID').AsString;
-            Exit;
-          end;
-
+         if MessageBox(Handle,pchar('是否把当前选中商品修改为"'+fndGODS_ID.Text+'('+fndGODS_ID.DataSet.FieldbyName('GODS_CODE').AsString+')"？'),'友情提示',MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON2)<>6 then
+            begin
+              fndGODS_ID.Text := cdsDetail.FieldbyName('GODS_NAME').AsString;
+              fndGODS_ID.KeyValue := cdsDetail.FieldbyName('GODS_ID').AsString;
+              Exit;
+            end;
        end;
+
+
     if VarIsNull(fndGODS_ID.KeyValue) then
     begin
       EraseRecord;
@@ -748,15 +762,30 @@ begin
   cdsDetail.DisableControls;
   try
   cdsDetail.Last;
-  if cdsDetail.IsEmpty or (cdsDetail.FieldbyName('GODS_ID').AsString <>'') then
+  if InputType = 1 then
+  begin
+    if cdsDetail.IsEmpty or (cdsDetail.FieldbyName('GODS_ID').AsString <>'') then
+      begin
+        inc(RowID);
+        cdsDetail.Append;
+        cdsDetail.FieldByName('GODS_ID').Value := null;
+        if cdsDetail.FindField('SEQNO')<> nil then
+           cdsDetail.FindField('SEQNO').asInteger := RowID;
+        cdsDetail.Post;
+      end;
+  end
+  else
+  begin
+    //Inc(RowID);
+    if cdsDetail.FieldByName('SEQNO').AsString <> '' then
     begin
-      inc(RowID);
-      cdsDetail.Append;
-      cdsDetail.FieldByName('GODS_ID').Value := null;
-      if cdsDetail.FindField('SEQNO')<> nil then
-         cdsDetail.FindField('SEQNO').asInteger := RowID;
-      cdsDetail.Post;
+    cdsDetail.Edit;
+    cdsDetail.FieldbyName('GODS_ID').AsString := '#';
+    cdsDetail.FieldbyName('GODS_NAME').AsString := Trim(fndGODS_ID.Text);
+    cdsDetail.FieldByName('AMOUNT').AsFloat := 1;
+    cdsDetail.Post;
     end;
+  end;
     DbGridEh1.Col := 1 ;
     if DBGridEh1.CanFocus and Visible and (dbState <> dsBrowse) then DBGridEh1.SetFocus;
   finally

@@ -65,6 +65,8 @@ type
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure DBGridEh1Columns5UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     FromId:String;
@@ -72,6 +74,7 @@ type
     procedure SetdbState(const Value: TDataSetState);override;
     procedure ShareCost; //分摊核销费用
     function IsNull:Boolean;
+    procedure Calc;
   public
     { Public declarations }
     RowID:Integer;
@@ -200,6 +203,7 @@ begin
 end;
 
 procedure TfrmMktBudgOrder.EditOrder;
+var SQL:String;
 begin
   inherited;
   if cdsHeader.IsEmpty then Raise Exception.Create('不能修改空单据');
@@ -208,10 +212,12 @@ begin
   if AObj.FieldByName('REQU_ID').AsString <> '' then
   begin
     cdsKPI_ID.Close;
-    cdsKPI_ID.SQL.Text := ' select A.KPI_ID,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
-                          ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
-                          ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
-                          ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
+    SQL :=
+    ' select A.KPI_ID,A.BUDG_MNY,A.BUDG_VRF,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
+    ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
+    ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
+    ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
+    cdsKPI_ID.SQL.Text := ParseSQL(Factor.iDbType,SQL);
     Factor.Open(cdsKPI_ID);
   end;
   dbState := dsEdit;
@@ -222,11 +228,11 @@ procedure TfrmMktBudgOrder.FocusNextColumn;
 var i:Integer;
 begin
   i:=DbGridEh1.Col;
-  if cdsDetail.RecordCount > cdsDetail.RecNo then
+  {if cdsDetail.RecordCount > cdsDetail.RecNo then
   begin
      cdsDetail.Next;
      Exit;
-  end;
+  end;}
   Inc(i);
   while True do
     begin
@@ -535,6 +541,10 @@ begin
        cdsDetail.Edit;
        cdsDetail.FieldByName('KPI_ID').AsString := edtKPI_ID.AsString;
        cdsDetail.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
+       cdsDetail.FieldByName('BUDG_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat;
+       cdsDetail.FieldByName('LESS_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat-edtKPI_ID.DataSet.FieldByName('BUDG_VRF').AsFloat;
+       cdsDetail.FieldByName('BUDG_VRF').AsFloat := 0;
+       cdsDetail.FieldByName('BLAN_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat-edtKPI_ID.DataSet.FieldByName('BUDG_VRF').AsFloat; 
        cdsDetail.Post;
     end;
   finally
@@ -579,7 +589,7 @@ end;
 
 procedure TfrmMktBudgOrder.edtREQU_IDPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
-var g,t,uid,utext:string;
+var g,t,uid,utext,SQL:string;
 begin
   if dbState = dsBrowse then Exit;
   if edtCLIENT_ID.AsString = '' then
@@ -602,10 +612,12 @@ begin
          AObj.FieldByName('REQU_TYPE').AsString := t;
 
          cdsKPI_ID.Close;
-         cdsKPI_ID.SQL.Text := ' select A.KPI_ID,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
-                               ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
-                               ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
-                               ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
+         SQL :=
+         ' select A.KPI_ID,A.BUDG_MNY,A.BUDG_VRF,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
+         ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
+         ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
+         ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
+         cdsKPI_ID.SQL.Text := ParseSQL(Factor.iDbType,SQL);
          Factor.Open(cdsKPI_ID);
        end;
   finally
@@ -931,6 +943,34 @@ begin
        DBGridEh1.Canvas.Font.Style := [fsBold];
        DBGridEh1.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh1.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
      end;
+end;
+
+procedure TfrmMktBudgOrder.Calc;
+begin
+  cdsDetail.Edit;
+  cdsDetail.FieldByName('BLAN_MNY').AsFloat := cdsDetail.FieldByName('LESS_MNY').AsFloat - cdsDetail.FieldByName('BUDG_VRF').AsFloat;
+end;
+
+procedure TfrmMktBudgOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Currency;  
+begin
+  inherited;
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  TColumnEh(Sender).Field.asFloat := r;
+  Calc;
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
+  cdsDetail.Edit;  
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited frmMktBudgOrder: TfrmMktBudgOrder
-  Left = 224
-  Top = 173
+  Left = 239
+  Top = 158
   Width = 929
   Height = 520
   Caption = #26680#38144#21333
@@ -413,9 +413,45 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
         item
           DisplayFormat = '#0.00'
           EditButtons = <>
-          FieldName = 'BUDG_VRF'
+          FieldName = 'BUDG_MNY'
+          Footer.DisplayFormat = '#0.00'
+          Footer.ValueType = fvtSum
           Footers = <>
-          Title.Caption = #27963#21160#36153#29992
+          ReadOnly = True
+          Title.Caption = #26680#38144#24635#39069
+          Width = 67
+        end
+        item
+          DisplayFormat = '#0.00'
+          EditButtons = <>
+          FieldName = 'LESS_MNY'
+          Footer.DisplayFormat = '#0.00'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #27424#26680#37329#39069
+          Width = 67
+        end
+        item
+          DisplayFormat = '#0.00'
+          EditButtons = <>
+          FieldName = 'BUDG_VRF'
+          Footer.DisplayFormat = '#0.00'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          Title.Caption = #26412#27425#26680#38144
+          Width = 67
+          OnUpdateData = DBGridEh1Columns5UpdateData
+        end
+        item
+          DisplayFormat = '#0.00'
+          EditButtons = <>
+          FieldName = 'BLAN_MNY'
+          Footer.DisplayFormat = '#0.00'
+          Footer.ValueType = fvtSum
+          Footers = <>
+          ReadOnly = True
+          Title.Caption = #32467#20313#26680#38144
           Width = 67
         end
         item

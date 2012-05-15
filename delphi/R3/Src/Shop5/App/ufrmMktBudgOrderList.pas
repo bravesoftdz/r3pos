@@ -70,7 +70,7 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, uShopGloba
 
 procedure TfrmMktBudgOrderList.actNewExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100002297',2) then Raise Exception.Create('你没有新增核销单的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002297',2) then Raise Exception.Create('你没有新增核销单的权限,请和管理员联系.');
   inherited;
 end;
 
@@ -103,7 +103,7 @@ end;
 
 procedure TfrmMktBudgOrderList.actEditExecute(Sender: TObject);
 begin
-  if not ShopGlobal.GetChkRight('100002297',3) then Raise Exception.Create('你没有修改核销单的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002297',3) then Raise Exception.Create('你没有修改核销单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;

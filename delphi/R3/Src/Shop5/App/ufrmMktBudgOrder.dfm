@@ -1,6 +1,6 @@
 inherited frmMktBudgOrder: TfrmMktBudgOrder
-  Left = 239
-  Top = 158
+  Left = 430
+  Top = 161
   Width = 929
   Height = 520
   Caption = #26680#38144#21333
@@ -373,14 +373,60 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 448
+      Top = 430
       Width = 911
-      Height = 16
+      Height = 34
+      object Label7: TLabel
+        Left = 36
+        Top = 8
+        Width = 52
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #24453#26680#38144#39069
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label10: TLabel
+        Left = 212
+        Top = 8
+        Width = 52
+        Height = 12
+        Alignment = taRightJustify
+        Caption = #32467#20313#26680#38144
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object edtLESS_MNY: TcxTextEdit
+        Tag = 1
+        Left = 97
+        Top = 4
+        Width = 102
+        Height = 20
+        TabOrder = 0
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object edtBLAN_MNY: TcxTextEdit
+        Tag = 1
+        Left = 273
+        Top = 4
+        Width = 102
+        Height = 20
+        TabOrder = 1
+        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
     end
     inherited DBGridEh1: TDBGridEh
       Top = 130
       Width = 911
-      Height = 310
+      Height = 292
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
@@ -424,17 +470,6 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
         item
           DisplayFormat = '#0.00'
           EditButtons = <>
-          FieldName = 'LESS_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #27424#26680#37329#39069
-          Width = 67
-        end
-        item
-          DisplayFormat = '#0.00'
-          EditButtons = <>
           FieldName = 'BUDG_VRF'
           Footer.DisplayFormat = '#0.00'
           Footer.ValueType = fvtSum
@@ -442,17 +477,6 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
           Title.Caption = #26412#27425#26680#38144
           Width = 67
           OnUpdateData = DBGridEh1Columns5UpdateData
-        end
-        item
-          DisplayFormat = '#0.00'
-          EditButtons = <>
-          FieldName = 'BLAN_MNY'
-          Footer.DisplayFormat = '#0.00'
-          Footer.ValueType = fvtSum
-          Footers = <>
-          ReadOnly = True
-          Title.Caption = #32467#20313#26680#38144
-          Width = 67
         end
         item
           EditButtons = <>
@@ -463,7 +487,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 440
+      Top = 422
       Width = 911
       Height = 8
     end
@@ -570,6 +594,9 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
       OnSaveValue = edtACTIVE_IDSaveValue
       MultiSelect = False
     end
+  end
+  inherited cdsDetail: TZQuery
+    AfterScroll = cdsDetailAfterScroll
   end
   inherited cdsHeader: TZQuery
     Left = 72

@@ -40,6 +40,10 @@ type
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
+    Label7: TLabel;
+    Label10: TLabel;
+    edtLESS_MNY: TcxTextEdit;
+    edtBLAN_MNY: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure edtKPI_IDEnter(Sender: TObject);
     procedure edtKPI_IDExit(Sender: TObject);
@@ -67,17 +71,21 @@ type
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure cdsDetailAfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
     FromId:String;
+    SumOldMny,SumNewMny:Real;
     procedure FocusNextColumn;
     procedure SetdbState(const Value: TDataSetState);override;
     procedure ShareCost; //分摊核销费用
     function IsNull:Boolean;
     procedure Calc;
+    procedure ShowInfo;
   public
     { Public declarations }
     RowID:Integer;
+    Locked:Boolean;
     procedure ClearInvaid;override;
     procedure InitRecord;override;
     procedure NewOrder;override;
@@ -324,6 +332,8 @@ begin
   gid := '..新增..';
 
   InitRecord;
+  edtLESS_MNY.Text := '';
+  edtBLAN_MNY.Text := '';
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
   TabSheet.Caption := '..新建..';
 end;
@@ -333,6 +343,7 @@ var
   Params:TftParamList;
 begin
   inherited;
+  Locked := True;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
@@ -350,6 +361,7 @@ begin
     dbState := dsBrowse;  
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
+    SumOldMny := AObj.FieldByName('BUDG_VRF').AsFloat;
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := AObj.FieldbyName('BUDG_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
@@ -358,6 +370,7 @@ begin
     RowID := cdsDetail.RecordCount;
   finally
     Params.Free;
+    Locked := False;
   end;
 end;
 
@@ -538,14 +551,12 @@ begin
     end
     else
     begin
-       cdsDetail.Edit;
-       cdsDetail.FieldByName('KPI_ID').AsString := edtKPI_ID.AsString;
-       cdsDetail.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
-       cdsDetail.FieldByName('BUDG_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat;
-       cdsDetail.FieldByName('LESS_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat-edtKPI_ID.DataSet.FieldByName('BUDG_VRF').AsFloat;
-       cdsDetail.FieldByName('BUDG_VRF').AsFloat := 0;
-       cdsDetail.FieldByName('BLAN_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat-edtKPI_ID.DataSet.FieldByName('BUDG_VRF').AsFloat; 
-       cdsDetail.Post;
+      cdsDetail.Edit;
+      cdsDetail.FieldByName('KPI_ID').AsString := edtKPI_ID.AsString;
+      cdsDetail.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
+      cdsDetail.FieldByName('BUDG_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat;
+      cdsDetail.FieldByName('BUDG_VRF').AsFloat := 0;
+      cdsDetail.Post;
     end;
   finally
     if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
@@ -945,12 +956,6 @@ begin
      end;
 end;
 
-procedure TfrmMktBudgOrder.Calc;
-begin
-  cdsDetail.Edit;
-  cdsDetail.FieldByName('BLAN_MNY').AsFloat := cdsDetail.FieldByName('LESS_MNY').AsFloat - cdsDetail.FieldByName('BUDG_VRF').AsFloat;
-end;
-
 procedure TfrmMktBudgOrder.DBGridEh1Columns5UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
 var r:Currency;  
@@ -968,9 +973,69 @@ begin
   end;
   if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
   TColumnEh(Sender).Field.asFloat := r;
-  Calc;
+  ShowInfo;
   if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
   cdsDetail.Edit;  
+end;
+
+procedure TfrmMktBudgOrder.cdsDetailAfterScroll(DataSet: TDataSet);
+begin
+  if Locked then Exit;
+  inherited;
+  ShowInfo;
+end;
+
+procedure TfrmMktBudgOrder.ShowInfo;
+var i:Integer;
+    rs:TZQuery;
+    sql:String;
+begin
+  if cdsDetail.FieldByName('KPI_ID').AsString = '' then Exit;
+  try
+    rs := TZQuery.Create(nil);
+    sql := 'select TENANT_ID,REQU_ID,KPI_ID,sum(isnull(BUDG_MNY,0)) as BUDG_MNY,sum(isnull(BUDG_VRF,0)) as BUDG_VRF '+
+    ' from MKT_REQUDATA where TENANT_ID=:TENANT_ID and REQU_ID=:REQU_ID and KPI_ID=:KPI_ID group by TENANT_ID,REQU_ID,KPI_ID ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,sql);
+    rs.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.ParamByName('REQU_ID').AsString := FromId;
+    rs.ParamByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
+    Factor.Open(rs);
+    Calc;
+    edtLESS_MNY.EditValue := rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny-SumNewMny+cdsDetail.FieldByName('BUDG_VRF').AsFloat;
+    edtBLAN_MNY.EditValue := rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny-SumNewMny;
+    SumOldMny := SumNewMny;
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmMktBudgOrder.Calc;
+var i,SeqNo:Integer;
+    ID:String;
+    rs:TZQuery;
+begin
+  SumNewMny := 0;
+  //i := DBGridEh1.Col;
+  //SeqNo := cdsDetail.FieldByName('SEQNO').AsInteger;
+  ID := cdsDetail.FieldByName('KPI_ID').AsString;
+
+  rs := TZQuery.Create(nil);
+  rs.Data := cdsDetail.Data;
+  try
+    rs.Filtered := False;
+    rs.Filter := 'KPI_ID='+QuotedStr(ID);
+    rs.Filtered := True;
+    rs.First;
+    while not rs.Eof do
+    begin
+      SumNewMny := SumNewMny + rs.FieldByName('BUDG_VRF').AsFloat;
+      rs.Next;
+    end;
+    //DBGridEh1.Col := i;
+  finally
+    rs.Filtered := False;
+    rs.Free;
+  end;
 end;
 
 end.

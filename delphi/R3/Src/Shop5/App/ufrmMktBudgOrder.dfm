@@ -1,10 +1,11 @@
 inherited frmMktBudgOrder: TfrmMktBudgOrder
-  Left = 430
-  Top = 161
+  Left = 266
+  Top = 156
   Width = 929
   Height = 520
   Caption = #26680#38144#21333
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
@@ -464,7 +465,7 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
           Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
-          Title.Caption = #26680#38144#24635#39069
+          Title.Caption = #30003#39046#24635#39069
           Width = 67
         end
         item

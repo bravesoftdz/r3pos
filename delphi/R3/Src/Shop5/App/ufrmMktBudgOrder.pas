@@ -72,9 +72,11 @@ type
     procedure DBGridEh1Columns5UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure cdsDetailAfterScroll(DataSet: TDataSet);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     FromId:String;
+    TempData:TZQuery;
     SumOldMny,SumNewMny:Real;
     procedure FocusNextColumn;
     procedure SetdbState(const Value: TDataSetState);override;
@@ -286,6 +288,24 @@ begin
   //edtDEPT_ID.RangeField := 'DEPT_TYPE';
   //edtDEPT_ID.RangeValue := '1';
   edtBUDG_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
+  TempData := TZQuery.Create(nil);
+  with TempData.FieldDefs do
+  begin
+    Add('TENANT_ID',ftInteger,0,False);
+    Add('BUDG_ID',ftString,36,False);
+    Add('SHOP_ID',ftString,36,False);
+    Add('SEQNO',ftInteger,0,False);
+    Add('ACTIVE_ID',ftString,36,False);
+    Add('KPI_ID',ftString,36,False);
+    Add('BUDG_MNY',ftFloat,0,False);
+    Add('ACTIVE_ID_TEXT',ftString,50,False);
+    Add('KPI_ID_TEXT',ftString,50,False);
+    Add('LESS_MNY',ftFloat,0,False);
+    Add('BUDG_VRF',ftFloat,0,False);
+    Add('BLAN_MNY',ftFloat,0,False);
+    Add('REMARK',ftString,50,False);
+  end;
+  TempData.CreateDataSet;
 end;
 
 procedure TfrmMktBudgOrder.InitRecord;
@@ -319,6 +339,7 @@ var rs:TZQuery;
 begin
   inherited;
   Open('');
+  Locked := True;
   dbState := dsInsert;
   edtBUDG_DATE.Date := Global.SysDate;
 
@@ -336,6 +357,8 @@ begin
   edtBLAN_MNY.Text := '';
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
   TabSheet.Caption := '..新建..';
+  TempData.Data := Null;
+  Locked := False;
 end;
 
 procedure TfrmMktBudgOrder.Open(id: string);
@@ -361,7 +384,6 @@ begin
     dbState := dsBrowse;  
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
-    SumOldMny := AObj.FieldByName('BUDG_VRF').AsFloat;
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
     oid := AObj.FieldbyName('BUDG_ID').asString;
     gid := AObj.FieldbyName('GLIDE_NO').asString;
@@ -473,6 +495,7 @@ end;
 procedure TfrmMktBudgOrder.edtKPI_IDKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
+  Locked := True;
   if (Key=VK_RIGHT) and not edtKPI_ID.Edited then
      begin
        DBGridEh1.SetFocus;
@@ -500,6 +523,7 @@ begin
             Key := 0;
        end;
      end;
+  Locked := False;
   inherited;
 end;
 
@@ -510,6 +534,7 @@ begin
   if Key=#13 then
      begin
        Key := #0;
+       Locked := True;
        if cdsDetail.FieldbyName('KPI_ID').AsString = '' then
           begin
             edtKPI_ID.DropList;
@@ -517,6 +542,7 @@ begin
           end;
        FocusNextColumn;
        DBGridEh1.SetFocus;
+       Locked := False;
      end;
 end;
 
@@ -551,23 +577,29 @@ begin
     end
     else
     begin
+      Locked := True;
       cdsDetail.Edit;
       cdsDetail.FieldByName('KPI_ID').AsString := edtKPI_ID.AsString;
       cdsDetail.FieldByName('KPI_ID_TEXT').AsString := edtKPI_ID.Text;
       cdsDetail.FieldByName('BUDG_MNY').AsFloat := edtKPI_ID.DataSet.FieldByName('BUDG_MNY').AsFloat;
       cdsDetail.FieldByName('BUDG_VRF').AsFloat := 0;
       cdsDetail.Post;
+      Locked := False;
+      ShowInfo;
     end;
   finally
     if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
     cdsDetail.EnableControls;
+    Locked := True;
     cdsDetail.Edit;
+    Locked := False;
   end;
 end;
 
 procedure TfrmMktBudgOrder.edtACTIVE_IDKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
+  Locked := True;
   if (Key=VK_RIGHT) and not edtACTIVE_ID.Edited then
      begin
        DBGridEh1.SetFocus;
@@ -595,6 +627,7 @@ begin
             Key := 0;
        end;
      end;
+  Locked := False;
   inherited;
 end;
 
@@ -613,6 +646,7 @@ begin
   if not IsNull then Raise Exception.Create('已经输入指标,不能导入申领单号.');
   if dbState <> dsInsert then Raise Exception.Create('只有不是新增状态的单据不能导入申领单号.');
   cdsDetail.DisableControls;
+  Locked := True;
   try
     FromId := TfrmFindRequOrder.FindDialog(self,edtCLIENT_ID.asString,g,t,uid,utext);
     if FromId<>'' then
@@ -634,6 +668,7 @@ begin
   finally
     cdsDetail.EnableControls;
     cdsDetail.Edit;
+    Locked := False;
   end;
 
 end;
@@ -672,6 +707,7 @@ begin
   Controls := cdsDetail.ControlsDisabled;
   r := cdsDetail.RecNo;
   if not Controls then cdsDetail.DisableControls;
+  Locked := True;
   try
   cdsDetail.First;
   while not cdsDetail.Eof do
@@ -688,7 +724,8 @@ begin
     end;
   finally
     if r>0 then cdsDetail.RecNo := r;
-    if not Controls then  cdsDetail.EnableControls;
+    Locked := False;
+    if not Controls then cdsDetail.EnableControls;
   end;
 end;
 
@@ -716,6 +753,7 @@ begin
      Raise Exception.Create('没找到你想查找的活动名称？');
 
   cdsDetail.DisableControls;
+  Locked := True;
   try
     if VarIsNull(edtACTIVE_ID.KeyValue) then
     begin
@@ -739,6 +777,7 @@ begin
     if DBGridEh1.CanFocus then DBGridEh1.SetFocus;
     cdsDetail.EnableControls;
     cdsDetail.Edit;
+    Locked := False;
   end;
 end;
 
@@ -749,6 +788,7 @@ begin
   if Key=#13 then
      begin
        Key := #0;
+       Locked := True;
        if cdsDetail.FieldbyName('ACTIVE_ID').AsString = '' then
           begin
             edtACTIVE_ID.DropList;
@@ -756,6 +796,7 @@ begin
           end;
        FocusNextColumn;
        DBGridEh1.SetFocus;
+       Locked := False;
      end;
 end;
 
@@ -765,8 +806,10 @@ begin
   inherited;
   if Key=#13 then
      begin
+       Locked := True;
        FocusNextColumn;
        Key := #0;
+       Locked := False;
      end;
 end;
 
@@ -1001,7 +1044,7 @@ begin
     rs.ParamByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
     Factor.Open(rs);
     Calc;
-    edtLESS_MNY.EditValue := rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny-SumNewMny+cdsDetail.FieldByName('BUDG_VRF').AsFloat;
+    edtLESS_MNY.EditValue := rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny;
     edtBLAN_MNY.EditValue := rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny-SumNewMny;
     SumOldMny := SumNewMny;
   finally
@@ -1015,13 +1058,25 @@ var i,SeqNo:Integer;
     rs:TZQuery;
 begin
   SumNewMny := 0;
+  SumOldMny := 0;
   //i := DBGridEh1.Col;
   //SeqNo := cdsDetail.FieldByName('SEQNO').AsInteger;
   ID := cdsDetail.FieldByName('KPI_ID').AsString;
-
+  if TempData.IsEmpty then
+     TempData.Data := cdsDetail.Data;
   rs := TZQuery.Create(nil);
   rs.Data := cdsDetail.Data;
   try
+    TempData.Filtered := False;
+    TempData.Filter := 'KPI_ID='+QuotedStr(ID);
+    TempData.Filtered := True;
+    TempData.First;
+    while not TempData.Eof do
+    begin
+      SumOldMny := SumOldMny + TempData.FieldByName('BUDG_VRF').AsFloat;
+      TempData.Next;
+    end;
+
     rs.Filtered := False;
     rs.Filter := 'KPI_ID='+QuotedStr(ID);
     rs.Filtered := True;
@@ -1031,11 +1086,19 @@ begin
       SumNewMny := SumNewMny + rs.FieldByName('BUDG_VRF').AsFloat;
       rs.Next;
     end;
-    //DBGridEh1.Col := i;
+
+    TempData.Data := cdsDetail.Data;
   finally
     rs.Filtered := False;
+    TempData.Filtered := False;
     rs.Free;
   end;
+end;
+
+procedure TfrmMktBudgOrder.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  FreeAndNil(TempData);
 end;
 
 end.

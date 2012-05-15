@@ -27,6 +27,8 @@ type
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
     P1_DateControl: TfrmDateControl;
+    frfStockOrder: TfrReport;
+    frfSalesOrder: TfrReport;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -45,7 +47,19 @@ type
     procedure actColumnVisibleExecute(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
+    procedure actPreviewExecute(Sender: TObject);
+    procedure actPrintExecute(Sender: TObject);
+    procedure frfSalesOrderGetValue(const ParName: String;
+      var ParValue: Variant);
+    procedure frfSalesOrderUserFunction(const Name: String; p1, p2,
+      p3: Variant; var Val: Variant);
+    procedure frfStockOrderUserFunction(const Name: String; p1, p2,
+      p3: Variant; var Val: Variant);
+    procedure frfStockOrderGetValue(const ParName: String;
+      var ParValue: Variant);
   private
+    Lock:boolean;
+    FOrderID: string;  //当前的ID
     PrintTimes:Integer;
     idx: integer;
     FrptIndex: integer;  //报表索引
@@ -63,9 +77,9 @@ type
     procedure LoadFormat; override;
     procedure SaveFormat; override;
     procedure RefreshColumn; override;
+    function  GetPrintSQL(tenantid, id: string): string; //返回打印SQL
   public
     Factory: TReportFactory;
-    Lock:boolean;
     //按商品销售汇总表
     function  GetGodsSQL(chk:boolean=true): string;   //5555
     function  GetSQL: string;
@@ -73,9 +87,11 @@ type
     procedure Open(id:string);
     procedure load;
     procedure PrintBefore;override;
+    procedure FrfPrintBefore(Sender:TObject);
+    procedure FrfPrintAfter(Sender:TObject);
     property  rptType: integer read GetrptType;
-    property  BillType: integer Read GetBillType;
-    property CurOrder:TframeOrderForm read GetCurOrder;    
+    property  BillType: integer Read GetBillType; {1:台账类;2:入库单;3:零售单}
+    property  CurOrder:TframeOrderForm read GetCurOrder;
   end;
 
 
@@ -577,12 +593,18 @@ begin
         Column.Title.Caption:='进价';
         Column.DisplayFormat:='#0.00#';
         Column.Width :=66;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+
         //售价
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'NEW_OUTPRICE';
         Column.Title.Caption:='售价';
         Column.DisplayFormat:='#0.00#';
         Column.Width :=66;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+
         //期初
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'ORG_AMT';
@@ -591,6 +613,9 @@ begin
         Column.Footer.DisplayFormat:='#0.###';
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=72;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+        
         //进货
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'STOCK_AMT';
@@ -598,6 +623,9 @@ begin
         Column.DisplayFormat:='#0.###';
         Column.Footer.DisplayFormat:='#0.###';
         Column.Footer.ValueType:=fvtSum;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+                
         Column.Width :=72;
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'STOCK_TTL';
@@ -606,6 +634,9 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=75;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+                
         //销售
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_AMT';
@@ -614,6 +645,9 @@ begin
         Column.Footer.DisplayFormat:='#0.###';
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=72;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
+        
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_TTL';
         Column.Title.Caption:='销售|金额';
@@ -621,6 +655,9 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=75;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
+        
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_PRF';
         Column.Title.Caption:='销售|毛利';
@@ -628,12 +665,18 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=72;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
+        
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_RATE';
         Column.Title.Caption:='销售|毛利率';
         Column.DisplayFormat:='#0.00%';
         Column.Footer.DisplayFormat:='#0.00%';
         Column.Width :=66;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+
         //库存
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'BAL_AMT';
@@ -642,6 +685,9 @@ begin
         Column.Footer.DisplayFormat:='#0.###';
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=75;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+
         vType:=1;
       end;
      3: //进货类台账:
@@ -701,6 +747,8 @@ begin
         Column.Footer.DisplayFormat:='#0.###';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=54;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
         //合计金额
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'AMONEY';
@@ -709,6 +757,8 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=58;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
         //已结算
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'PAYM_MNY';
@@ -717,6 +767,8 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=56;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
         //未结算
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'RECK_MNY';
@@ -725,6 +777,8 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=58;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
         //备注
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'REMARK';
@@ -790,6 +844,8 @@ begin
         Column.Footer.DisplayFormat:='#0.###';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=56;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
         //合计金额
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'AMONEY';
@@ -798,6 +854,8 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=62;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
         //实收金额
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'RECV_MNY';
@@ -806,6 +864,8 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=60;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
         //欠收金额
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'RECK_MNY';
@@ -814,6 +874,8 @@ begin
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;        
         Column.Width :=60;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;        
         //导购员
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'GUIDE_USER_TEXT';
@@ -1017,6 +1079,7 @@ begin
       BillID:=trim(adoReport1.FieldByName('SALES_ID').AsString);  
     if BillID='' then Exit;
     OpenDetailForm(BillID, adoReport1.FieldbyName('SHOP_ID').AsString);
+    FOrderID:=BillID;
   end;
 end;
 
@@ -1249,6 +1312,257 @@ procedure TfrmAllRckReport.DBGridEh1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 begin
   GridDrawColumnCell(Sender, Rect,DataCol, Column, State);
+end;
+
+procedure TfrmAllRckReport.FrfPrintAfter(Sender: TObject);
+var
+  upSql: String;
+begin
+  PrintTimes:=PrintTimes+1;
+  case rptType of
+   3: upSql:='update STK_STOCKORDER set PRINT_TIMES = '+IntToStr(PrintTimes)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and STOCK_ID='''+FOrderID+''' ';
+   4: upSql:='update SAL_SALESORDER set PRINT_TIMES = '+IntToStr(PrintTimes)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and SALES_ID='''+FOrderID+''' ';
+  end;
+  Factor.ExecSQL(upSql);
+end;
+
+procedure TfrmAllRckReport.FrfPrintBefore(Sender: TObject);
+var
+  i:Integer;
+  Sql_Str,Info:String;
+  rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    case rptType of
+     3: Sql_Str :='select PRINT_TIMES,PRINT_USER from STK_STOCKORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and STOCK_ID='''+FOrderID+''' ';
+     4: Sql_Str :='select PRINT_TIMES,PRINT_USER from SAL_SALESORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_ID='''+FOrderID+''' ';
+    end;
+    rs.Close;
+    rs.SQL.Text := Sql_Str;
+    Factor.Open(rs);
+    PrintTimes := rs.FieldByName('PRINT_TIMES').AsInteger;
+    if PrintTimes > 0  then
+    begin
+      Info := '本单据已经打印"'+IntToStr(PrintTimes)+'"次,是否再次打印!';
+      i := ShowMsgBox(Pchar(Info),'友情提示...',MB_YESNO+MB_ICONQUESTION);
+      if i = 7 then Raise Exception.Create('');
+      //Raise Exception.Create('');
+    end;
+  finally
+    rs.Free;
+  end;
+end;
+
+
+procedure TfrmAllRckReport.actPreviewExecute(Sender: TObject);
+ procedure CheckPrintRight;
+ begin
+   case BillType of
+    2: if not ShopGlobal.GetChkRight('11200001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+    3: if not ShopGlobal.GetChkRight('12400001',8) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+   end;
+ end;
+var
+  pSQL: string;
+begin
+  case RzPage.ActivePageIndex of
+   0:
+    begin
+      inherited;
+    end;
+   1:
+    begin
+      CheckPrintRight;
+      pSQL:=self.GetPrintSQL(IntToStr(Global.TENANT_ID), self.FOrderID);
+      with TfrmFastReport.Create(Self) do
+      begin
+        try
+          if trim(FOrderID)='' then Raise Exception.Create(' 没有单据号不能预览，请先选择... '); 
+          BeforePrint := self.FrfPrintBefore;
+          AfterPrint := self.FrfPrintAfter;
+          case BillType of
+           2: ShowReport(pSQL,frfStockOrder,nil,true);
+           3: ShowReport(pSQL,frfSalesOrder,nil,true);
+          end;
+        finally
+          free;
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TfrmAllRckReport.actPrintExecute(Sender: TObject);
+ procedure CheckPrintRight;
+ begin
+   case BillType of
+    2: if not ShopGlobal.GetChkRight('11200001',6) then Raise Exception.Create('你没有打印订货单的权限,请和管理员联系.');
+    3: if not ShopGlobal.GetChkRight('12400001',8) then Raise Exception.Create('你没有打印销售单的权限,请和管理员联系.');
+   end;
+ end;
+var
+  pSQL: string; 
+begin
+  case RzPage.ActivePageIndex of
+   0:
+    begin
+      inherited;
+    end;
+   1:
+    begin
+      CheckPrintRight;
+      pSQL:=self.GetPrintSQL(IntToStr(Global.TENANT_ID), self.FOrderID);
+      with TfrmFastReport.Create(Self) do
+      begin
+        try
+          if trim(FOrderID)='' then Raise Exception.Create(' 没有单据号不能打印，请先选择... '); 
+          BeforePrint := self.FrfPrintBefore;
+          AfterPrint := self.FrfPrintAfter;
+          case BillType of
+           2: PrintReport(pSQL,frfStockOrder);
+           3: PrintReport(pSQL,frfSalesOrder);
+          end;
+        finally
+          free;
+        end;
+      end;
+    end; 
+  end; //end case of
+end;
+
+function TfrmAllRckReport.GetPrintSQL(tenantid, id: string): string;
+var
+  TopCnd: string;
+begin
+  //数据库类型 0:SQL Server; 1:Oracle; 2:Sybase; 3:ACCESS; 4:DB2; 5:Sqlite
+  case Factor.iDbType of
+   0: TopCnd:=' top 20000 ';
+   else
+      TopCnd:='';
+  end;
+  case BillType of
+   2:
+    begin
+      result :=
+         'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT,'+
+         'j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_TAX_MNY,'+
+         'j.STOCK_MNY-j.STOCK_MNY/(1+j.TAX_RATE)*j.TAX_RATE as TOTAL_NOTAX_MNY,'+
+         '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID and STOCK_ID='''+id+''') as ORDER_OWE_MNY,'+
+         '(select sum(RECK_MNY) from ACC_PAYABLE_INFO where TENANT_ID='+tenantid+' and CLIENT_ID=j.CLIENT_ID) as TOTAL_OWE_MNY '+
+         'from ('+
+         'select jn.*,n.GLIDE_NO as GLIDE_NO_FROM from('+
+         'select jm.*,m.DEPT_NAME as DEPT_ID_TEXT from ('+
+         'select jl.*,l.CODE_NAME as SETTLE_CODE_TEXT from ('+
+         'select jk.*,k.UNIT_NAME from ('+
+         'select jj.*,j.COLOR_NAME as PROPERTY_02_TEXT from ('+
+         'select ji.*,i.SIZE_NAME as PROPERTY_01_TEXT from ('+
+         'select jh.*,h.GODS_NAME,h.GODS_CODE,h.BARCODE from ('+
+         'select jg.*,g.SHOP_NAME,g.ADDRESS as SHOP_ADDR,g.TELEPHONE as SHOP_TELE,g.FAXES from ('+
+         'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
+         'select je.*,e.CODE_NAME as INVOICE_FLAG_TEXT from ('+
+         'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
+         'select jc.*,c.USER_NAME as GUIDE_USER_TEXT,m.USER_NAME as LOCUS_USER_TEXT from ('+
+         'select jb.*,b.CLIENT_NAME,b.LINKMAN,b.TELEPHONE2 as MOVE_TELE,b.SETTLE_CODE,b.POSTALCODE,b.ADDRESS,b.FAXES CLIENT_FAXES from ('+
+         'select A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.STOCK_ID,A.GLIDE_NO,A.STOCK_DATE,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,'+
+         'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.STOCK_AMT,A.STOCK_MNY,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.PRINT_TIMES,'+
+         'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.GODS_ID,B.LOCUS_NO,B.CALC_MONEY,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from STK_STOCKORDER A,STK_STOCKDATA B '+
+         'where A.TENANT_ID=B.TENANT_ID and A.STOCK_ID=B.STOCK_ID and A.TENANT_ID='+tenantid+' and A.STOCK_ID='''+id+''' ) jb '+
+         'left outer join VIW_CLIENTINFO b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+         'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID left outer join VIW_USERS m on jc.TENANT_ID=m.TENANT_ID and jc.GUIDE_USER=m.USER_ID ) jd '+
+         'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
+         'left outer join (select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''INVOICE_FLAG'') e on je.INVOICE_FLAG=e.CODE_ID ) jf '+
+         'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
+         'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID) jh '+
+         'left outer join VIW_GOODSINFO h on jh.TENANT_ID=h.TENANT_ID and jh.GODS_ID=h.GODS_ID ) ji '+
+         'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
+         'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and jj.PROPERTY_02=j.COLOR_ID ) jk '+
+         'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl '+
+         'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') l on jl.SETTLE_CODE=l.CODE_ID) jm '+
+         'left outer join CA_DEPT_INFO m on jm.TENANT_ID=m.TENANT_ID and jm.DEPT_ID=m.DEPT_ID ) jn '+
+         'left outer join STK_INDENTORDER n on jn.TENANT_ID=n.TENANT_ID and jn.FROM_ID=n.INDE_ID ) j order by SEQNO';    
+    end;
+   3:
+    begin
+      result :=
+         'select j.*,case when j.IS_PRESENT=2 then ''(兑换)'' when j.IS_PRESENT=1 then ''(赠送)'' else '''' end as IS_PRESENT_TEXT ,'+
+         '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+') as TOTAL_OWE_MNY,'+
+         '(select sum(RECK_MNY) from ACC_RECVABLE_INFO where CLIENT_ID=j.CLIENT_ID and TENANT_ID='+tenantid+' and SALES_ID='''+id+''') as ORDER_OWE_MNY,'+
+         'case when j.INVOICE_FLAG=''1'' then ''收款收据'' when j.INVOICE_FLAG=''2'' then ''普通发票'' else ''增值税票'' end as INVOICE_FLAG_TEXT '+  //INVOICE_FLAG: 字符型号
+         'from ('+
+         'select jn.*,n.DEPT_NAME as DEPT_ID_TEXT from ('+
+         'select jm.*,m.CODE_NAME as SETTLE_CODE_TEXT from ( '+
+         'select jl.*,l.CODE_NAME as SALES_STYLE_TEXT from ( '+
+         'select jk.*,k.UNIT_NAME from ('+
+         'select jj.*,j.COLOR_NAME as PROPERTY_02_TEXT from ('+
+         'select ji.*,i.SIZE_NAME as PROPERTY_01_TEXT from ('+
+         'select jh.*,h.GODS_NAME,h.GODS_CODE,h.BARCODE from ('+
+         'select jg.*,g.SHOP_NAME,g.ADDRESS as SHOP_ADDR,g.TELEPHONE as SHOP_TELE,g.FAXES from ('+
+         'select jf.*,f.USER_NAME as CREA_USER_TEXT from ('+
+         'select je.*,e.GLIDE_NO as GLIDE_NO_FROM from ('+
+         'select jd.*,d.USER_NAME as CHK_USER_TEXT from ('+
+         'select jc.*,c.USER_NAME as GUIDE_USER_TEXT from ('+
+         'select jb.*,b.CLIENT_NAME,b.CLIENT_CODE,b.SETTLE_CODE,b.ADDRESS,b.POSTALCODE,b.TELEPHONE2 as MOVE_TELE,b.INTEGRAL as ACCU_INTEGRAL,b.FAXES as CLIENT_FAXES from ('+
+         'select '+TopCnd+' A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.SALES_ID,A.GLIDE_NO,A.SALES_DATE,A.PLAN_DATE,A.LINKMAN,A.TELEPHONE,A.SEND_ADDR,A.CLIENT_ID,A.CREA_USER,A.GUIDE_USER,A.PRINT_TIMES,'+
+         'A.CHK_DATE,A.CHK_USER,A.FROM_ID,A.FIG_ID,A.SALE_AMT,A.SALE_MNY,A.CASH_MNY,A.PAY_ZERO,A.PAY_DIBS,A.PAY_A,A.PAY_B,A.PAY_C,A.PAY_D,'+
+         'A.PAY_E,A.PAY_F,A.PAY_G,A.PAY_H,A.PAY_I,A.PAY_J,A.INTEGRAL,A.REMARK,A.INVOICE_FLAG,A.TAX_RATE,A.CREA_DATE,A.SALES_STYLE,'+
+         'B.AMOUNT,B.APRICE,B.SEQNO,B.ORG_PRICE,B.PROPERTY_01,B.PROPERTY_02,B.UNIT_ID,B.BATCH_NO,B.LOCUS_NO,B.GODS_ID,B.CALC_MONEY,A.BARTER_INTEGRAL,B.AGIO_RATE,B.AGIO_MONEY,B.IS_PRESENT,B.REMARK as REMARK_DETAIL from SAL_SALESORDER A,SAL_SALESDATA B '+
+         'where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and A.TENANT_ID='+tenantid+' and A.SALES_ID='''+id+''' order by SEQNO) jb '+
+         'left outer join VIW_CUSTOMER b on jb.TENANT_ID=b.TENANT_ID and jb.CLIENT_ID=b.CLIENT_ID ) jc '+
+         'left outer join VIW_USERS c on jc.TENANT_ID=c.TENANT_ID and jc.GUIDE_USER=c.USER_ID ) jd '+
+         'left outer join VIW_USERS d on jd.TENANT_ID=d.TENANT_ID and jd.CHK_USER=d.USER_ID ) je '+
+         'left outer join SAL_INDENTORDER e on je.TENANT_ID=e.TENANT_ID and je.FROM_ID=e.INDE_ID ) jf '+
+         'left outer join VIW_USERS f on jf.TENANT_ID=f.TENANT_ID and jf.CREA_USER=f.USER_ID ) jg '+
+         'left outer join CA_SHOP_INFO g on jg.TENANT_ID=g.TENANT_ID and jg.SHOP_ID=g.SHOP_ID ) jh '+
+         'left outer join VIW_GOODSINFO h on jh.TENANT_ID=h.TENANT_ID and jh.GODS_ID=h.GODS_ID ) ji '+
+         'left outer join VIW_SIZE_INFO i on ji.TENANT_ID=i.TENANT_ID and ji.PROPERTY_01=i.SIZE_ID ) jj '+
+         'left outer join VIW_COLOR_INFO j on jj.TENANT_ID=j.TENANT_ID and  jj.PROPERTY_02=j.COLOR_ID ) jk '+
+         'left outer join VIW_MEAUNITS k on jk.TENANT_ID=k.TENANT_ID and jk.UNIT_ID=k.UNIT_ID ) jl  '+
+         'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''2'' and TENANT_ID='+tenantid+') l on jl.SALES_STYLE=l.CODE_ID) jm '+
+         'left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''6'' and TENANT_ID='+tenantid+') m on jm.SETTLE_CODE=m.CODE_ID) jn '+
+         'left outer join CA_DEPT_INFO n on jn.TENANT_ID=n.TENANT_ID and jn.DEPT_ID=n.DEPT_ID ) j ';
+    end;
+  end;
+end;
+ 
+
+procedure TfrmAllRckReport.frfSalesOrderGetValue(const ParName: String;
+  var ParValue: Variant);
+begin
+  inherited;
+  if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
+  if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+  if ParName='打印人' then ParValue := ShopGlobal.UserName;
+end;
+
+procedure TfrmAllRckReport.frfSalesOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
+var small:real;
+begin
+  inherited;
+  if UPPERCASE(Name)='SMALLTOBIG' then
+     begin
+       small := frParser.Calc(p1);
+       Val := FnNumber.SmallTOBig(small);
+     end;
+end;
+
+procedure TfrmAllRckReport.frfStockOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
+var small:real;
+begin
+  inherited;
+  if UPPERCASE(Name)='SMALLTOBIG' then
+     begin
+       small := frParser.Calc(p1);
+       Val := FnNumber.SmallTOBig(small);
+     end;
+end;
+
+procedure TfrmAllRckReport.frfStockOrderGetValue(const ParName: String; var ParValue: Variant);
+begin
+  inherited;
+  if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
+  if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+  if ParName='打印人' then ParValue := ShopGlobal.UserName;
 end;
 
 end.

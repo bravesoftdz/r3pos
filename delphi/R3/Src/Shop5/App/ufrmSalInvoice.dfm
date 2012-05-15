@@ -1,6 +1,6 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 299
-  Top = 148
+  Left = 334
+  Top = 176
   Caption = #38144#39033#21457#31080
   ClientHeight = 483
   ClientWidth = 719
@@ -729,6 +729,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Enabled = False
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Properties.DropDownListStyle = lsFixedList
+              Properties.OnChange = edtINVOICE_FLAGPropertiesChange
               TabOrder = 4
             end
           end
@@ -914,6 +915,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
               OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+              ReadOnly = True
               RowHeight = 20
               SumList.Active = True
               TabOrder = 0
@@ -1015,7 +1017,6 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
-                  ReadOnly = True
                   Title.Caption = #37329#39069
                   Title.Color = clWhite
                   Title.Font.Charset = GB2312_CHARSET
@@ -1032,7 +1033,6 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Footer.DisplayFormat = '#0.00'
                   Footer.ValueType = fvtSum
                   Footers = <>
-                  ReadOnly = True
                   Title.Caption = #31246#39069
                   Title.Color = clWhite
                   Title.Font.Charset = GB2312_CHARSET

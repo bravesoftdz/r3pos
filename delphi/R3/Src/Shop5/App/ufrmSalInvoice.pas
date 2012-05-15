@@ -77,6 +77,7 @@ type
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+    procedure edtINVOICE_FLAGPropertiesChange(Sender: TObject);
   private
     FisAudit: boolean;
     Fcid: string;
@@ -109,6 +110,7 @@ type
     function CheckRepeat(AObj:TRecord_;var pt:boolean):boolean;
     function InitPrice(GODS_ID,UNIT_ID:string):Currency;
     procedure AMountToCalc(Amount:Real);
+    procedure CalcTaxMny;
   public
     { Public declarations }
     AObj:TRecord_;
@@ -346,7 +348,7 @@ procedure TfrmSalInvoice.SetdbState(const Value: TDataSetState);
 begin
   inherited;
   btnOk.Visible:=(dbState<>dsBrowse);
-  DBGridEh1.Readonly := (dbState=dsBrowse);
+  //DBGridEh1.Readonly := (dbState=dsBrowse);
   case Value of
   dsInsert:begin
      Caption := '销项发票--(新增)';
@@ -444,7 +446,14 @@ begin
     cdsDetail.Post;
     cdsDetail.Next;
   end;
-  if cdsDetail.FieldByName('FROM_TYPE').AsString = '0' then DBGridEh1.ReadOnly := False; 
+
+  if cdsDetail.FieldByName('FROM_TYPE').AsString = '0' then
+  begin
+     DBGridEh1.ReadOnly := False;
+     edtINVOICE_FLAG.Enabled := True;
+  end
+  else
+     DBGridEh1.ReadOnly := True;
   if TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString <> '3' then
      DBGridEh1.Columns[6].Visible := False;
 
@@ -769,6 +778,7 @@ begin
         inc(RowID);
         cdsDetail.Append;
         cdsDetail.FieldByName('GODS_ID').Value := null;
+        cdsDetail.FieldByName('FROM_TYPE').AsString := '0';
         if cdsDetail.FindField('SEQNO')<> nil then
            cdsDetail.FindField('SEQNO').asInteger := RowID;
         cdsDetail.Post;
@@ -1058,6 +1068,49 @@ begin
        FocusNextColumn;
        Key := #0;
      end;
+end;
+
+procedure TfrmSalInvoice.edtINVOICE_FLAGPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  case TRecord_(edtINVOICE_FLAG.Properties.Items.Objects[edtINVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsInteger of
+    1:begin
+    Tax_Rate := 0;
+    DBGridEh1.Columns[6].Visible := False;
+    end;
+    2:begin
+    Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE2'),0.05);
+    DBGridEh1.Columns[6].Visible := False;
+    end;
+    3:begin
+    Tax_Rate := StrToFloatDef(ShopGlobal.GetParameter('RTL_RATE3'),0.17);
+    DBGridEh1.Columns[6].Visible := True;
+    end;
+  end;
+  CalcTaxMny;
+end;
+
+procedure TfrmSalInvoice.CalcTaxMny;
+var SeqNo,i:Integer;
+begin
+  i := DBGridEh1.Col;
+  SeqNo := cdsDetail.FieldByName('SEQNO').AsInteger;
+  cdsDetail.DisableControls;
+  try
+    cdsDetail.First;
+    while not cdsDetail.Eof do
+    begin
+      cdsDetail.Edit;
+      cdsDetail.FieldByName('NOTAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat/(1+Tax_Rate);
+      cdsDetail.FieldByName('TAX_MNY').AsFloat := cdsDetail.FieldByName('AMOUNT').AsFloat*cdsDetail.FieldByName('APRICE').AsFloat-cdsDetail.FieldByName('NOTAX_MNY').AsFloat;
+      cdsDetail.Post;
+      cdsDetail.Next;
+    end;
+    DBGridEh1.Col := i;
+    cdsDetail.Locate('SEQNO',SeqNo,[]);
+  finally
+    cdsDetail.EnableControls;
+  end;
 end;
 
 end.

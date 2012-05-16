@@ -107,7 +107,6 @@ begin
         r := MyRoundTo(_TotalFee,Digit);
         //2012.04.10在固显屏上显示总计(抹0之后金额):
         TDevFactory.ShowATotal(r);
-
         MainRecord := _MainRecord;
         //2011-07-25 为简单操作，去掉保留收款数据功能 zhangsr
         //if MainRecord.FieldByName('PAY_DIBS').AsString = '' then
@@ -204,7 +203,7 @@ begin
        MainRecord.FieldByName('PAY_A').AsFloat := MainRecord.FieldByName('CASH_MNY').AsFloat;
        //2012.04.10固显屏上显示实收现金:
        TDevFactory.ShowAMoney(MainRecord.FieldByName('PAY_A').AsFloat);
-
+       if edtTakeFee.CanFocus and not edtTakeFee.Focused then edtTakeFee.SetFocus;
        r :=  Calc-(TotalFee);
        ShowFee;
        edtTakeFee.Text := '';
@@ -216,7 +215,8 @@ begin
        MainRecord.FieldByName('CASH_MNY').AsFloat := GetFee(edtTakeFee.Text);
        MainRecord.FieldByName('PAY_A').AsFloat := MainRecord.FieldByName('CASH_MNY').AsFloat;
        //2012.04.10固显屏上显示实收现金:
-       TDevFactory.ShowAMoney(MainRecord.FieldByName('PAY_A').AsFloat);       
+       TDevFactory.ShowAMoney(MainRecord.FieldByName('PAY_A').AsFloat);
+       if edtTakeFee.CanFocus and not edtTakeFee.Focused then edtTakeFee.SetFocus;    
        ShowFee;
        edtTakeFee.Text := '';
      end;
@@ -796,6 +796,7 @@ begin
 	edtTakeFee.Text := edtPAY_WAIT.Text;
   //2012.04.10固显屏上显示总计:
   TDevFactory.ShowATotal(r);
+  if edtTakeFee.CanFocus and not edtTakeFee.Focused then edtTakeFee.SetFocus;
 end;
 
 end.

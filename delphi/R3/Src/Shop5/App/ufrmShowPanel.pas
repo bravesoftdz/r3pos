@@ -4,13 +4,13 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, RzPanel,MultiMon;
+  Dialogs, StdCtrls, ExtCtrls, RzPanel,MultiMon, RzStatus;
 
 type
   TfrmShowPanel = class(TForm)
     RzPanel1: TRzPanel;
-    Label1: TLabel;
     Timer1: TTimer;
+    RzMarqueeStatus1: TRzMarqueeStatus;
     procedure Timer1Timer(Sender: TObject);
   private
     FsText: string;
@@ -25,51 +25,86 @@ type
 
 implementation
 {$R *.dfm}
-
-{ TfrmShowPanel }
-
+const
+  MonitorDefaultFlags: array[TMonitorDefaultTo] of DWORD = (MONITOR_DEFAULTTONEAREST,
+                                                          MONITOR_DEFAULTTONULL,
+                                                          MONITOR_DEFAULTTOPRIMARY);
+var
+  MMonitor:TMonitor;
+  MIndex:integer;
+function GetMonitorExt:integer;
+var
+  I: Integer;
+begin
+  Result := 0;
+  for I := 0 to Screen.MonitorCount - 1 do
+    if MIndex <> I then
+    begin
+      Result := I;
+      break;
+    end;
+end;
 function FindMonitor(Handle: THandle): TMonitor;
 var
   I: Integer;
 begin
   Result := nil;
   for I := 0 to Screen.MonitorCount - 1 do
-  if Screen.Monitors[I].Handle = Handle then
-  begin
-    Result := Screen.Monitors[I];
-    break;
-  end;
+    if Screen.Monitors[I].Handle = Handle then
+    begin
+      Result := Screen.Monitors[I];
+      break;
+    end;
+end;
+function FindMonitorIndex(Monitor: TMonitor): integer;
+var
+  I: Integer;
+begin
+  Result := -1;
+  for I := 0 to Screen.MonitorCount - 1 do
+    if Screen.Monitors[I].Handle = Monitor.Handle then
+    begin
+      Result := i;
+      break;
+    end;
 end;
 
 function MonitorFromWindow(const Handle: THandle;
   MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
-const
-  MonitorDefaultFlags: array[TMonitorDefaultTo] of DWORD = (MONITOR_DEFAULTTONEAREST,
-                                                          MONITOR_DEFAULTTONULL,
-                                                          MONITOR_DEFAULTTOPRIMARY);
 begin
   Result := FindMonitor(MultiMon.MonitorFromWindow(Handle,
     MonitorDefaultFlags[MonitorDefault]));
-    end;
+end;
+
+{ TfrmShowPanel }
+
 procedure TfrmShowPanel.StartScreen;
+var
+  Form:TCustomForm;
 begin
-  Start(Screen.Monitors[1]);
+  Form := Screen.ActiveCustomForm;
+  try
+    Start(Screen.Monitors[GetMonitorExt]);
+  finally
+    if Form.CanFocus and Form.Visible then Form.SetFocus;
+  end;
 end;
 
 procedure TfrmShowPanel.SetsText(const Value: string);
 begin
   FsText := Value;
-  Label1.Caption := Value;
-  Label1.Width := Label1.Canvas.TextWidth(Value) + 20; 
+  RzMarqueeStatus1.Caption := Value;
 end;
 
 procedure TfrmShowPanel.Start(OnMonitor: TMonitor);
 begin
-  BoundsRect := rect(OnMonitor.Left+width,
-                     OnMonitor.Top+0,
-                     Width,
-                     Height);
+  Timer1.Enabled := false;
   Show;
+  BoundsRect := rect(OnMonitor.Left+3,
+                     OnMonitor.Top,
+                     OnMonitor.Left+3+Width,
+                     OnMonitor.Top+Height);
+  BringToFront;
   Timer1.Enabled := true;
 end;
 

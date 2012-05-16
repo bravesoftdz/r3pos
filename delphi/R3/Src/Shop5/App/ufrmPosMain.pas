@@ -1098,10 +1098,11 @@ begin
     ts.First;
     cdsTable.FieldByName('TREND_ID').AsString := ts.FieldbyName('CODE_ID').AsString;
     //2012.04.10固显屏上显示单价:
-    TDevFactory.ShowAPrice(cdsTable.FieldByName('APRICE').AsFloat);
+    TDevFactory.ShowAPrice(cdsTable.FieldByName('APRICE').AsFloat,cdsTable.FieldByName('GODS_NAME').asString);
   finally
     Params.Free;
     rs.Free;
+    if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 end;
 
@@ -1383,6 +1384,7 @@ begin
            end;
       finally
         free;
+        if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       end;
     end;
 end;
@@ -1437,6 +1439,7 @@ begin
   finally
     cdsTable.EnableControls;
     AObj.Free;
+    if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 end;
 
@@ -2216,6 +2219,7 @@ begin
            end;
       finally
         free;
+        if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
       end;
     end;
 end;
@@ -3157,6 +3161,7 @@ begin
        end;
   finally
     SObj.Free;
+    if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 
 end;
@@ -3522,7 +3527,8 @@ begin
     begin
       PriceToGods(floattostr(r));
       //2012.04.10固显屏上显示单价:
-      TDevFactory.ShowAPrice(r);
+      TDevFactory.ShowAPrice(r,cdsTable.FieldByName('GODS_NAME').asString);
+      if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
     end;
   end;
 end;
@@ -4437,6 +4443,7 @@ begin
        end;
   finally
     SObj.Free;
+    if edtInput.CanFocus and not edtInput.Focused then edtInput.SetFocus;
   end;
 end;
 

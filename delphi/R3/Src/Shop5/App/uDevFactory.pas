@@ -61,7 +61,7 @@ TDevFactory=class
     procedure InitComm;
 
     Class procedure OpenCashBox;
-    Class procedure ShowAPrice(Value:Real); //单价
+    Class procedure ShowAPrice(Value:Real;ShowN:string=''); //单价
     Class procedure ShowAMoney(Value:Real); //收款
     Class procedure ShowATotal(Value:Real); //总计
     Class procedure ShowDibs(Value:Real);   //找零
@@ -419,18 +419,21 @@ begin
   DevFactory.SetLEDNumber(Value);
   if Screen.MonitorCount>1 then
      begin
-       DevFactory.frmShowPanel.sText := '金额:'+formatFloat('#0.0##',Value);
+       DevFactory.frmShowPanel.sText := '金额:'+formatFloat('#0.0##',Value)+'元';
        DevFactory.frmShowPanel.StartScreen;
      end;
 end;
 
-class procedure TDevFactory.ShowAPrice(Value: Real);
+class procedure TDevFactory.ShowAPrice(Value: Real;ShowN:string='');
 begin
   DevFactory.SetLEDType(1);
   DevFactory.SetLEDNumber(Value);
   if Screen.MonitorCount>1 then
      begin
-       DevFactory.frmShowPanel.sText := '单价:'+formatFloat('#0.0##',Value);
+       if ShowN<>'' then
+          DevFactory.frmShowPanel.sText := '"'+ShowN+'"单价:'+formatFloat('#0.0##',Value)+'元'
+       else
+          DevFactory.frmShowPanel.sText := '单价:'+formatFloat('#0.0##',Value)+'元';
        DevFactory.frmShowPanel.StartScreen;
      end;
 end;
@@ -441,7 +444,7 @@ begin
   DevFactory.SetLEDNumber(Value);
   if Screen.MonitorCount>1 then
      begin
-       DevFactory.frmShowPanel.sText := '总价:'+formatFloat('#0.0##',Value);
+       DevFactory.frmShowPanel.sText := '总价:'+formatFloat('#0.0##',Value)+'元';
        DevFactory.frmShowPanel.StartScreen;
      end;
 end;
@@ -452,7 +455,7 @@ begin
   DevFactory.SetLEDNumber(Value);
   if Screen.MonitorCount>1 then
      begin
-       DevFactory.frmShowPanel.sText := '找零:'+formatFloat('#0.0##',Value);
+       DevFactory.frmShowPanel.sText := '找零:'+formatFloat('#0.0##',Value)+'元';
        DevFactory.frmShowPanel.StartScreen;
      end;
 end;

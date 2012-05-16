@@ -429,7 +429,6 @@ type
     procedure actfrmDemandOrderList1Execute(Sender: TObject);
     procedure actfrmDemandOrderList2Execute(Sender: TObject);
     procedure actfrmInitGuideExecute(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure RzBmpButton5Click(Sender: TObject);
     procedure actfrmAllRckReportExecute(Sender: TObject);
     procedure actfrmSyncAllExecute(Sender: TObject);
@@ -4200,12 +4199,6 @@ begin
   inherited;
   TfrmInitGuide.StartGuide(self);
 
-end;
-
-procedure TfrmN26Main.Button1Click(Sender: TObject);
-begin
-  inherited;
-  TDevFactory.ShowAPrice(2943.4); 
 end;
 
 procedure TfrmN26Main.SetdeskFlag(const Value: integer);

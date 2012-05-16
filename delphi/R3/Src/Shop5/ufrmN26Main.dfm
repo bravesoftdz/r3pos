@@ -1,6 +1,6 @@
 inherited frmN26Main: TfrmN26Main
-  Left = 193
-  Top = 144
+  Left = 250
+  Top = 319
   Width = 958
   Height = 556
   Caption = ''
@@ -7582,10 +7582,110 @@ inherited frmN26Main: TfrmN26Main
       Caption = #25968#25454#21516#27493
       OnExecute = actfrmSyncAllExecute
     end
+    object actfrmKpiIndex: TAction
+      Tag = 100002143
+      Caption = #25351#26631#31649#29702
+      OnExecute = actfrmKpiIndexExecute
+    end
+    object actfrmMktPlanOrderList: TAction
+      Tag = 100002150
+      Caption = #32463#38144#21830#21512#32422
+      OnExecute = actfrmMktPlanOrderListExecute
+    end
+    object actfrmMktRequOrderList: TAction
+      Tag = 100002403
+      Caption = #36153#29992#30003#39046#21333
+      OnExecute = actfrmMktRequOrderListExecute
+    end
     object actfrmBomOrderList: TAction
       Tag = 100002306
       Caption = #31036#30418#31649#29702
       OnExecute = actfrmBomOrderListExecute
+    end
+    object actfrmMktKpiResult: TAction
+      Tag = 100002158
+      Caption = #32463#38144#21830#36820#21033
+      OnExecute = actfrmMktKpiResultExecute
+    end
+    object actfrmClientKpiReport: TAction
+      Tag = 100002201
+      Caption = #23458#25143#32771#26680#25253#34920
+      OnExecute = actfrmClientKpiReportExecute
+    end
+    object actfrmManKpiReport: TAction
+      Tag = 100002205
+      Caption = #21592#24037#32771#26680#25253#34920
+      OnExecute = actfrmManKpiReportExecute
+    end
+    object actfrmBondRequReport: TAction
+      Tag = 100002209
+      Caption = #20445#35777#37329#30003#39046#34920
+      OnExecute = actfrmBondRequReportExecute
+    end
+    object actfrmMktRequReport: TAction
+      Tag = 100002214
+      Caption = #36153#29992#30003#39046#25253#34920
+      OnExecute = actfrmMktRequReportExecute
+    end
+    object actfrmMktCostTotalReport: TAction
+      Tag = 100002218
+      Caption = #36153#29992#20998#26512#25253#34920
+      OnExecute = actfrmMktCostTotalReportExecute
+    end
+    object actfrmMktKpiTotalReport: TAction
+      Tag = 100002222
+      Caption = #35745#25552#20998#26512#25253#34920
+      OnExecute = actfrmMktKpiTotalReportExecute
+    end
+    object actfrmMktMarketCostOrderList: TAction
+      Tag = 100002226
+      Caption = #24066#22330#36153#39044#31639
+      OnExecute = actfrmMktMarketCostOrderListExecute
+    end
+    object actfrmMktActiveList: TAction
+      Tag = 100002257
+      Caption = #27963#21160#39033#30446
+      OnExecute = actfrmMktActiveListExecute
+    end
+    object actfrmMktGodsReport: TAction
+      Tag = 100002339
+      Caption = #21830#21697#30003#39046#25253#34920
+      OnExecute = actfrmMktGodsReportExecute
+    end
+    object actfrmMktBudgOrderList: TAction
+      Tag = 100002297
+      Caption = #36153#29992#26680#38144
+      OnExecute = actfrmMktBudgOrderListExecute
+    end
+    object actfrmMktBudgReport: TAction
+      Tag = 100002305
+      Caption = #36153#29992#26680#38144#25253#34920
+      OnExecute = actfrmMktBudgReportExecute
+    end
+    object actfrmPlanOrderList3: TAction
+      Tag = 100002400
+      Caption = #37319#36141#21512#21516
+      OnExecute = actfrmPlanOrderList3Execute
+    end
+    object actfrmStkInvoiceList: TAction
+      Tag = 100002401
+      Caption = #36827#39033#21457#31080
+      OnExecute = actfrmStkInvoiceListExecute
+    end
+    object actfrmInvoice: TAction
+      Tag = 100002402
+      Caption = #21457#31080#39046#29992
+      OnExecute = actfrmInvoiceExecute
+    end
+    object actfrmMktAtthOrderList: TAction
+      Tag = 100002176
+      Caption = #30003#39046#38468#20214#21333
+      OnExecute = actfrmMktAtthOrderListExecute
+    end
+    object actfrmSalIndentDayReport: TAction
+      Tag = 100002355
+      Caption = #38144#21806#35746#36135#25253#34920
+      OnExecute = actfrmSalIndentDayReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

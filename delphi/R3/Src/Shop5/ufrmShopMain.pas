@@ -293,13 +293,10 @@ type
     actfrmMktPlanOrderList: TAction;
     actfrmMktRequOrderList: TAction;
     actfrmBondOrderList: TAction;
-    actfrmMktTaskOrderList: TAction;
     actfrmMktKpiResult: TAction;
     Image18: TImage;
     actfrmClientKpiReport: TAction;
     actfrmManKpiReport: TAction;
-    actfrmMktKpiResult2: TAction;
-    actfrmMktKpiResult3: TAction;
     actfrmBondRequReport: TAction;
     actfrmMktRequReport: TAction;
     actfrmMktCostTotalReport: TAction;
@@ -315,6 +312,7 @@ type
     actfrmInvoice: TAction;
     actfrmMktAtthOrderList: TAction;
     actfrmSalIndentDayReport: TAction;
+    actfrmAllRckReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -453,13 +451,13 @@ type
     procedure actfrmMktGodsReportExecute(Sender: TObject);
     procedure actfrmMktBudgOrderListExecute(Sender: TObject);
     procedure actfrmMktBudgReportExecute(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure actfrmPlanOrderList3Execute(Sender: TObject);
     procedure actfrmStkInvoiceListExecute(Sender: TObject);
     procedure actfrmInvoiceExecute(Sender: TObject);
     procedure actfrmMktAtthOrderListExecute(Sender: TObject);
     procedure actfrmSalIndentDayReportExecute(Sender: TObject);
+    procedure actfrmAllRckReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -520,7 +518,7 @@ var
 
 implementation
 uses
-  uDsUtil,uFnUtil,ufrmLogo,uMsgBox,uTimerFactory,ufrmTenant,ufrmShopDesk, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
+  uDsUtil,uFnUtil,ufrmLogo,uMsgBox,uTimerFactory,ufrmShopDesk,ufrmTenant, ufrmDbUpgrade, uShopGlobal, udbUtil, uGlobal, IniFiles, ufrmLogin,
   ufrmDesk,ufrmPswModify,ufrmDutyInfoList,ufrmRoleInfoList,ufrmMeaUnits,ufrmDeptInfo,ufrmUsers,ufrmStockOrderList,
   ufrmSalesOrderList,ufrmChangeOrderList,ufrmGoodsSortTree,ufrmGoodsSort,ufrmGoodsInfoList,ufrmCodeInfo,ufrmRecvOrderList,
   ufrmPayOrderList,ufrmClient,ufrmSupplier,ufrmSalRetuOrderList,ufrmStkRetuOrderList,ufrmPosMain,uDevFactory,ufrmPriceGradeInfo,
@@ -536,7 +534,7 @@ uses
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
   ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,ufrmSalIndentDayReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
-  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList;
+  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4416,12 +4414,6 @@ begin
   Form.BringToFront;
 end;
 
-procedure TfrmShopMain.Button3Click(Sender: TObject);
-begin
-  inherited;
-  actfrmMktAtthOrderListExecute(nil);
-end;
-
 procedure TfrmShopMain.Button4Click(Sender: TObject);
 begin
   inherited;
@@ -4541,6 +4533,28 @@ begin
        AddFrom(Form);
      end;
   Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmAllRckReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmAllRckReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmAllRckReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
   Form.BringToFront;
 end;
 

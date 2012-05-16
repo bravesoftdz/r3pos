@@ -409,7 +409,7 @@ uses ufrmMain, ZLogFile, uXDictFactory, uframeSelectCustomer, uShopUtil, uFnUtil
      uframeSelectGoods, uframeDialogProperty, ufrmLogin, ufrmShowDibs, uDevFactory, ufrmCustomerInfo,
      ufrmHangUpFile, uframeListDialog, ufrmPosPrice, IniFiles, ufrmPosMenu, ufrmCloseForDay, ufrmDeposit, ufrmNewCard,
      ufrmCancelCard, ufrmReturn, ufrmPassWord, ufrmLossCard, ufrmPosMainList, ufrmFastReport, uN26Factory,
-     ufrmSalRetuMenu, ufrmShopMain;
+     ufrmSalRetuMenu;
      
 {$R *.dfm}
 

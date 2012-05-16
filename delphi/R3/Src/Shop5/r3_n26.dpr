@@ -305,7 +305,26 @@ uses
   ufrmSalInvoice in 'App\ufrmSalInvoice.pas' {frmSalInvoice},
   ufrmSalInvoiceList in 'App\ufrmSalInvoiceList.pas' {frmSalInvoiceList},
   ObjBomOrder in 'Obj\ObjBomOrder.pas',
-  ObjInvoiceOrder in 'Obj\ObjInvoiceOrder.pas';
+  ObjInvoiceOrder in 'Obj\ObjInvoiceOrder.pas',
+  ufrmMktAtthOrder in 'App\ufrmMktAtthOrder.pas' {frmMktAtthOrder},
+  ufrmMktAtthOrderList in 'App\ufrmMktAtthOrderList.pas' {frmMktAtthOrderList},
+  ufrmMktBudgOrder in 'App\ufrmMktBudgOrder.pas' {frmMktBudgOrder},
+  ufrmMktBudgOrderList in 'App\ufrmMktBudgOrderList.pas' {frmMktBudgOrderList},
+  ufrmMktBudgReport in 'App\ufrmMktBudgReport.pas' {frmMktBudgReport},
+  ufrmMktPlanOrder3 in 'App\ufrmMktPlanOrder3.pas' {frmMktPlanOrder3},
+  ufrmMktPlanOrderList3 in 'App\ufrmMktPlanOrderList3.pas' {frmMktPlanOrderList3},
+  ufrmStkInvoice in 'App\ufrmStkInvoice.pas' {frmStkInvoice},
+  ufrmStkInvoiceList in 'App\ufrmStkInvoiceList.pas' {frmStkInvoiceList},
+  ufrmSalIndentDayReport in 'App\ufrmSalIndentDayReport.pas' {frmSalIndentDayReport},
+  ObjCostCalc in 'Obj\ObjCostCalc.pas',
+  ObjMktActiveList in 'Obj\ObjMktActiveList.pas',
+  ObjMktAtthOrder in 'Obj\ObjMktAtthOrder.pas',
+  ObjMktBudgOrder in 'Obj\ObjMktBudgOrder.pas',
+  ObjMktPlanOrder3 in 'Obj\ObjMktPlanOrder3.pas',
+  ObjNoteBook in 'Obj\ObjNoteBook.pas',
+  ObjStkInvoiceOrder in 'Obj\ObjStkInvoiceOrder.pas',
+  ObjVoucherOrder in 'Obj\ObjVoucherOrder.pas',
+  ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder};
 
 {$R *.res}
 var
@@ -314,7 +333,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.6';
+  DBVersion := '1.0.2.8';
   Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

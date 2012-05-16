@@ -5558,11 +5558,6 @@ inherited frmShopMain: TfrmShopMain
       Caption = #20445#35777#37329#31649#29702
       OnExecute = actfrmBondOrderListExecute
     end
-    object actfrmMktTaskOrderList: TAction
-      Tag = 100002184
-      Caption = #24180#24230#35745#21010
-      OnExecute = actfrmMktTaskOrderListExecute
-    end
     object actfrmMktKpiResult: TAction
       Tag = 100002158
       Caption = #32463#38144#21830#36820#21033
@@ -5577,14 +5572,6 @@ inherited frmShopMain: TfrmShopMain
       Tag = 100002205
       Caption = #21592#24037#32771#26680#25253#34920
       OnExecute = actfrmManKpiReportExecute
-    end
-    object actfrmMktKpiResult2: TAction
-      Tag = 100002164
-      Caption = #24066#22330#36153#35745#25552
-    end
-    object actfrmMktKpiResult3: TAction
-      Tag = 100002170
-      Caption = #19994#21153#21592#25552#25104
     end
     object actfrmBondRequReport: TAction
       Tag = 100002209
@@ -5655,6 +5642,10 @@ inherited frmShopMain: TfrmShopMain
       Tag = 100002355
       Caption = #38144#21806#35746#36135#25253#34920
       OnExecute = actfrmSalIndentDayReportExecute
+    end
+    object actfrmAllRckReport: TAction
+      Caption = #32508#21512#21488#36134
+      OnExecute = actfrmAllRckReportExecute
     end
   end
   inherited PopupMenu: TPopupMenu

@@ -40,10 +40,7 @@ type
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
-    Label7: TLabel;
-    Label10: TLabel;
-    edtLESS_MNY: TcxTextEdit;
-    edtBLAN_MNY: TcxTextEdit;
+    Label4: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure edtKPI_IDEnter(Sender: TObject);
     procedure edtKPI_IDExit(Sender: TObject);
@@ -73,6 +70,10 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure cdsDetailAfterScroll(DataSet: TDataSet);
     procedure FormDestroy(Sender: TObject);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     { Private declarations }
     FromId:String;
@@ -353,11 +354,8 @@ begin
   gid := '..新增..';
 
   InitRecord;
-  edtLESS_MNY.Text := '';
-  edtBLAN_MNY.Text := '';
   if edtCLIENT_ID.CanFocus and Visible then edtCLIENT_ID.SetFocus;
   TabSheet.Caption := '..新建..';
-  TempData.Data := Null;
   Locked := False;
 end;
 
@@ -381,7 +379,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
-    dbState := dsBrowse;  
+    dbState := dsBrowse;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
@@ -390,10 +388,12 @@ begin
     cid := AObj.FieldbyName('SHOP_ID').AsString;
     FromId := AObj.FieldByName('REQU_ID').AsString;
     RowID := cdsDetail.RecordCount;
+    TempData.Data := cdsDetail.Data;
   finally
     Params.Free;
     Locked := False;
   end;
+  ShowInfo;
 end;
 
 procedure TfrmMktBudgOrder.SaveOrder;
@@ -1044,9 +1044,12 @@ begin
     rs.ParamByName('KPI_ID').AsString := cdsDetail.FieldByName('KPI_ID').AsString;
     Factor.Open(rs);
     Calc;
-    edtLESS_MNY.EditValue := rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny;
-    edtBLAN_MNY.EditValue := rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny-SumNewMny;
-    SumOldMny := SumNewMny;
+    Label4.Caption := '';
+    Label4.Caption := '"'+cdsDetail.FieldbyName('KPI_ID_TEXT').AsString +'"  ';
+    Label4.Caption := Label4.Caption+'申领总额：'+formatFloat('#0.00',cdsDetail.FieldbyName('BUDG_MNY').asFloat)+'  ';
+    Label4.Caption := Label4.Caption+'往日核销：'+formatFloat('#0.00',rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny)+'  ';
+    Label4.Caption := Label4.Caption+'本次核销：'+formatFloat('#0.00',SumNewMny)+'  ';
+    Label4.Caption := Label4.Caption+'结余金额：'+formatFloat('#0.00',rs.FieldByName('BUDG_MNY').AsFloat-rs.FieldByName('BUDG_VRF').AsFloat+SumOldMny-SumNewMny)+'  ';
   finally
     rs.Free;
   end;
@@ -1062,8 +1065,6 @@ begin
   //i := DBGridEh1.Col;
   //SeqNo := cdsDetail.FieldByName('SEQNO').AsInteger;
   ID := cdsDetail.FieldByName('KPI_ID').AsString;
-  if TempData.IsEmpty then
-     TempData.Data := cdsDetail.Data;
   rs := TZQuery.Create(nil);
   rs.Data := cdsDetail.Data;
   try
@@ -1087,7 +1088,6 @@ begin
       rs.Next;
     end;
 
-    TempData.Data := cdsDetail.Data;
   finally
     rs.Filtered := False;
     TempData.Filtered := False;
@@ -1099,6 +1099,16 @@ procedure TfrmMktBudgOrder.FormDestroy(Sender: TObject);
 begin
   inherited;
   FreeAndNil(TempData);
+end;
+
+procedure TfrmMktBudgOrder.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  inherited;
+  if Column.FieldName = 'BUDG_VRF' then
+     edtBUDG_VRF.Text := Text;
 end;
 
 end.

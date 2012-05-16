@@ -9,10 +9,10 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 921
-    Height = 493
+    Width = 913
+    Height = 482
     inherited RzPanel2: TRzPanel
-      Width = 911
+      Width = 903
       Height = 125
       object lblBUDG_DATE: TLabel [0]
         Left = 562
@@ -374,62 +374,30 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 430
-      Width = 911
-      Height = 34
-      object Label7: TLabel
-        Left = 36
-        Top = 8
-        Width = 52
+      Top = 423
+      Width = 903
+      Height = 30
+      Color = clWindowFrame
+      object Label4: TLabel
+        Left = 18
+        Top = 10
+        Width = 6
         Height = 12
-        Alignment = taRightJustify
-        Caption = #24453#26680#38144#39069
         Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clLime
         Font.Height = -12
         Font.Name = #23435#20307
-        Font.Style = [fsBold]
+        Font.Style = []
         ParentFont = False
-      end
-      object Label10: TLabel
-        Left = 212
-        Top = 8
-        Width = 52
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #32467#20313#26680#38144
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object edtLESS_MNY: TcxTextEdit
-        Tag = 1
-        Left = 97
-        Top = 4
-        Width = 102
-        Height = 20
-        TabOrder = 0
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
-      object edtBLAN_MNY: TcxTextEdit
-        Tag = 1
-        Left = 273
-        Top = 4
-        Width = 102
-        Height = 20
-        TabOrder = 1
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end
     inherited DBGridEh1: TDBGridEh
       Top = 130
-      Width = 911
-      Height = 292
+      Width = 903
+      Height = 285
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
+      OnGetFooterParams = DBGridEh1GetFooterParams
       OnKeyPress = DBGridEh1KeyPress
       Columns = <
         item
@@ -488,13 +456,13 @@ inherited frmMktBudgOrder: TfrmMktBudgOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Top = 422
-      Width = 911
+      Top = 415
+      Width = 903
       Height = 8
     end
     inherited rzHelp: TRzPanel
-      Top = 464
-      Width = 911
+      Top = 453
+      Width = 903
       Height = 24
     end
     object edtKPI_ID: TzrComboBoxList

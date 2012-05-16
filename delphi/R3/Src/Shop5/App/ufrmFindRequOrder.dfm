@@ -8,16 +8,16 @@ inherited frmFindRequOrder: TfrmFindRequOrder
   inherited bgPanel: TRzPanel
     inherited RzPage: TRzPageControl
       Top = 91
-      Height = 251
+      Height = 240
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         inherited RzPanel2: TRzPanel
-          Height = 224
+          Height = 213
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
-            Width = 524
-            Height = 214
+            Width = 516
+            Height = 203
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             Color = clWhite
@@ -181,7 +181,7 @@ inherited frmFindRequOrder: TfrmFindRequOrder
     object RzPanel1: TRzPanel
       Left = 5
       Top = 5
-      Width = 538
+      Width = 530
       Height = 86
       Align = alTop
       BorderOuter = fsNone

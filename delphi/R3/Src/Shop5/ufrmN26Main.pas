@@ -300,6 +300,10 @@ type
     actfrmAllRckReport: TAction;
     actfrmSyncAll: TAction;
     actfrmBomOrderList: TAction;
+    actfrmKpiIndex: TAction;
+    actfrmMktPlanOrderList: TAction;
+    actfrmMktRequOrderList: TAction;
+    actfrmMktKpiResult: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -431,6 +435,26 @@ type
     procedure actfrmSyncAllExecute(Sender: TObject);
     procedure RzBmpButton4Click(Sender: TObject);
     procedure actfrmBomOrderListExecute(Sender: TObject);
+    procedure actfrmKpiIndexExecute(Sender: TObject);
+    procedure actfrmMktPlanOrderListExecute(Sender: TObject);
+    procedure actfrmMktRequOrderListExecute(Sender: TObject);
+    procedure actfrmMktKpiResultExecute(Sender: TObject);
+    procedure actfrmClientKpiReportExecute(Sender: TObject);
+    procedure actfrmManKpiReportExecute(Sender: TObject);
+    procedure actfrmBondRequReportExecute(Sender: TObject);
+    procedure actfrmMktRequReportExecute(Sender: TObject);
+    procedure actfrmMktCostTotalReportExecute(Sender: TObject);
+    procedure actfrmMktKpiTotalReportExecute(Sender: TObject);
+    procedure actfrmMktMarketCostOrderListExecute(Sender: TObject);
+    procedure actfrmMktActiveListExecute(Sender: TObject);
+    procedure actfrmMktGodsReportExecute(Sender: TObject);
+    procedure actfrmMktBudgOrderListExecute(Sender: TObject);
+    procedure actfrmMktBudgReportExecute(Sender: TObject);
+    procedure actfrmPlanOrderList3Execute(Sender: TObject);
+    procedure actfrmStkInvoiceListExecute(Sender: TObject);
+    procedure actfrmInvoiceExecute(Sender: TObject);
+    procedure actfrmMktAtthOrderListExecute(Sender: TObject);
+    procedure actfrmSalIndentDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -510,7 +534,10 @@ uses
   ufrmDownStockOrder,ufrmRecvPosList,ufrmHostDialog,ufrmImpeach,ufrmClearData,EncDec,ufrmSaleAnaly,ufrmClientSaleReport,
   ufrmSaleManSaleReport,ufrmSaleTotalReport,ufrmStgTotalReport,ufrmStockTotalReport,ufrmPrgBar,ufrmSaleMonthTotalReport,
   ufrmInitialRights,ufrmN26Browser,ufrmInitGuide,uLoginFactory,ufrmGoodsMonth,uSyncThread,uCommand,uMsgBox,uN26Factory,
-  ufrmDemandOrderList,ufrmAllRckReport,ufrmSalInvoiceList;
+  ufrmDemandOrderList,ufrmAllRckReport,ufrmSalInvoiceList,ufrmKpiIndex,ufrmMktPlanOrderList,ufrmMktRequOrderList,ufrmMktKpiResult,
+  ufrmClientKpiReport,ufrmManKpiReport,ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,
+  ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmMktGodsReport,ufrmMktBudgOrderList,ufrmMktBudgReport,ufrmMktPlanOrderList3,
+  ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmSalIndentDayReport;
 {$R *.dfm}
 
 function CheckXsmPassWord(uid, pwd: string): boolean;
@@ -4306,6 +4333,434 @@ begin
     Form := TfrmBomOrderList.Create(self);
     AddFrom(Form);
   end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmKpiIndexExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmKpiIndex);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmKpiIndex.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktPlanOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktPlanOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktPlanOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktRequOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktRequOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktRequOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktKpiResultExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktKpiResult);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktKpiResult.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmClientKpiReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmClientKpiReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmClientKpiReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmManKpiReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmManKpiReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmManKpiReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmBondRequReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmBondRequReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmBondRequReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktRequReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktRequReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktRequReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktCostTotalReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktCostTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktCostTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktKpiTotalReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktKpiTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktKpiTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktMarketCostOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktMarketCostOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktMarketCostOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktActiveListExecute(Sender: TObject);
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  with TfrmMktActiveList.Create(self) do
+    begin
+      try
+        ShowModal;
+      finally
+        free;
+      end;
+    end;
+
+end;
+
+procedure TfrmN26Main.actfrmMktGodsReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktGodsReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktGodsReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.WindowState := wsMaximized;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktBudgOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktBudgOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktBudgOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktBudgReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktBudgReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktBudgReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmPlanOrderList3Execute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktPlanOrderList3);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktPlanOrderList3.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmStkInvoiceListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmStkInvoiceList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmStkInvoiceList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmInvoiceExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmInvoice);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmInvoice.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmMktAtthOrderListExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if ShopGlobal.offline then Raise Exception.Create('此功能不能脱机操作。。。');
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmMktAtthOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmMktAtthOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmN26Main.actfrmSalIndentDayReportExecute(Sender: TObject);
+var Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmN26Main.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmN26Desk.SaveToFront;
+  Form := FindChildForm(TfrmSalIndentDayReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSalIndentDayReport.Create(self);
+       AddFrom(Form);
+     end;
   Form.WindowState := wsMaximized;
   Form.BringToFront;
 end;

@@ -75,7 +75,7 @@ inherited frmPosMain: TfrmPosMain
           Width = 52
           Height = 12
           Alignment = taRightJustify
-          Caption = #23458#25143#21517#31216
+          Caption = #20250#21592#21517#31216
           Font.Charset = GB2312_CHARSET
           Font.Color = clWhite
           Font.Height = -12
@@ -214,7 +214,7 @@ inherited frmPosMain: TfrmPosMain
           Width = 52
           Height = 12
           Alignment = taRightJustify
-          Caption = #23458#25143#31561#32423
+          Caption = #20250#21592#31561#32423
           Font.Charset = GB2312_CHARSET
           Font.Color = clWhite
           Font.Height = -12

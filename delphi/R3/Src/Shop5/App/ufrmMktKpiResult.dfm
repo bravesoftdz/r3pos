@@ -9,29 +9,29 @@ inherited frmMktKpiResult: TfrmMktKpiResult
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 899
+    Width = 907
     inherited RzPanel2: TRzPanel
-      Width = 889
+      Width = 897
       inherited RzPage: TRzPageControl
-        Width = 883
+        Width = 891
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32463#38144#21830#36820#21033#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 881
+            Width = 889
             object Panel1: TPanel
               Left = 5
               Top = 98
-              Width = 871
-              Height = 312
+              Width = 879
+              Height = 323
               Align = alClient
               BevelInner = bvLowered
               TabOrder = 0
               object Grid: TDBGridEh
                 Left = 2
                 Top = 2
-                Width = 867
-                Height = 308
+                Width = 875
+                Height = 319
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DsKpiResult
@@ -256,7 +256,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
             object Panel2: TPanel
               Left = 5
               Top = 5
-              Width = 871
+              Width = 879
               Height = 93
               Align = alTop
               BevelInner = bvLowered
@@ -600,16 +600,16 @@ inherited frmMktKpiResult: TfrmMktKpiResult
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 899
+    Width = 907
     inherited Image3: TImage
       Left = 341
-      Width = 518
+      Width = 526
     end
     inherited Image14: TImage
-      Left = 879
+      Left = 887
     end
     inherited Image1: TImage
-      Left = 859
+      Left = 867
     end
     inherited rzPanel5: TPanel
       Left = 341
@@ -765,6 +765,10 @@ inherited frmMktKpiResult: TfrmMktKpiResult
     object N1: TMenuItem
       Caption = #23646#24615#25351#26631
       OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Caption = #36820#21033#35843#25972
+      OnClick = N2Click
     end
   end
 end

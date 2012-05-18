@@ -45,6 +45,7 @@ type
     fndSHOP_ID: TzrComboBoxList;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
+    N2: TMenuItem;
     procedure actExitExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
@@ -67,6 +68,7 @@ type
     procedure fndKPI_YEARPropertiesValidate(Sender: TObject;
       var DisplayValue: Variant; var ErrorText: TCaption;
       var Error: Boolean);
+    procedure N2Click(Sender: TObject);
   private
     { Private declarations }
     MaxId:String;
@@ -87,7 +89,7 @@ type
 
 implementation
 uses uGlobal, uCtrlUtil, uShopGlobal, ufrmEhLibReport, uframeMDForm, ufrmMktKpiResultList, ufrmMktKpiCalculate,
-  ufrmBasic,ObjCommon,uFnUtil,uShopUtil,uXDictFactory,ufrmKpiIndexInfo;
+  ufrmBasic,ObjCommon,uFnUtil,uShopUtil,uXDictFactory,ufrmKpiIndexInfo,ufrmMktKpiModify;
 {$R *.dfm}
 
 procedure TfrmMktKpiResult.actExitExecute(Sender: TObject);
@@ -627,6 +629,24 @@ begin
      CdsKpiResult.Edit;
      CdsKpiResult.FieldByName('FISH_AMT').AsFloat := Aobj.fieldByName('FISH_AMT').AsFloat;
      CdsKpiResult.Post;
+  end;
+end;
+
+procedure TfrmMktKpiResult.N2Click(Sender: TObject);
+begin
+  inherited;
+  if (not CdsKpiResult.Active) or (CdsKpiResult.IsEmpty) then exit;
+  with TfrmMktKpiModify.Create(Self) do
+  begin
+    try
+      ClientId := CdsKpiResult.FieldByName('CLIENT_ID').AsString;
+      KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
+      KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsInteger;
+      KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
+      ShowModal;
+    finally
+      Free;
+    end;
   end;
 end;
 

@@ -345,7 +345,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                     item
                       Default = True
                     end>
-                  Properties.ReadOnly = True
+                  Properties.ReadOnly = False
                   TabOrder = 8
                   InGrid = False
                   KeyValue = Null
@@ -366,7 +366,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                   AutoFitColWidth = True
                   ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = [zbNew]
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end

@@ -60,6 +60,9 @@ type
     RzLabel5: TRzLabel;
     Image2: TImage;
     RzLabel6: TRzLabel;
+    actDownLoadExcel: TAction;
+    SaveDialog1: TSaveDialog;
+    Image3: TImage;
     procedure RzBitBtn2Click(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -77,9 +80,11 @@ type
     procedure edtNumClick(Sender: TObject);
     procedure chkignorePropertiesChange(Sender: TObject);
     procedure edtFileNameClick(Sender: TObject);
+    procedure actDownLoadExcelExecute(Sender: TObject);
   private
     FDataSet: TDataSet;
     FStartRow: Integer;
+    ExcelName:String;
     { Private declarations }
     procedure ClearConfig;
     procedure CreateColumn;
@@ -99,7 +104,9 @@ type
     FilePath: String;
     function Execute(DataSet:TDataSet):Boolean;virtual;
     procedure OpenExecl(FileName:string);
-    class function ExcelFactory(_DataSet:TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;SaveFun:TExeclFactorySave=nil;FindC:TExeclFactoryFindColumn=nil;Formats:string='';vStartRow:Integer=1):Boolean;
+    class function ExcelFactory(_DataSet:TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;
+    SaveFun:TExeclFactorySave=nil;FindC:TExeclFactoryFindColumn=nil;Formats:string='';
+    vStartRow:Integer=1;ModlName:String=''):Boolean;
     property DataSet:TDataSet read FDataSet write SetDataSet;
     property StartRow:Integer read FStartRow write SetStartRow;
   end;
@@ -108,7 +115,8 @@ implementation
 
 {$R *.dfm}
 
-class function TfrmExcelFactory.ExcelFactory(_DataSet: TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;SaveFun:TExeclFactorySave=nil;FindC:TExeclFactoryFindColumn=nil;Formats:string='';vStartRow:Integer=1): Boolean;
+class function TfrmExcelFactory.ExcelFactory(_DataSet: TDataSet;Fields:string;CheckProc:TExeclFactoryCheck=nil;
+SaveFun:TExeclFactorySave=nil;FindC:TExeclFactoryFindColumn=nil;Formats:string='';vStartRow:Integer=1;ModlName:String=''): Boolean;
 begin
   with TfrmExcelFactory.Create(Application.MainForm) do
     begin
@@ -118,6 +126,7 @@ begin
         Proc := CheckProc;
         Save := SaveFun;
         FindCdsColumn := FindC;
+        ExcelName := ModlName;  
         DecodeFields(Fields);
         DecodeFormats(Formats);
         result := (ShowModal=MROK);
@@ -686,6 +695,27 @@ begin
   OpenDialog1.Execute;
   edtFileName.Text := OpenDialog1.FileName;
   FilePath := Trim(edtFileName.Text);
+end;
+
+procedure TfrmExcelFactory.actDownLoadExcelExecute(Sender: TObject);
+var SourseFileName:String;
+begin
+  inherited;
+  SourseFileName := ExtractFilePath(Application.ExeName)+'\Res\xls\'+ExcelName+'.xlsx';
+  if not FileExists(SourseFileName) then Raise Exception.Create('未发现下载源文件,不能下载!');
+  if SaveDialog1.Execute then
+  begin
+     if FileExists(SaveDialog1.FileName) then
+     begin
+        if MessageBox(Handle,pchar('"'+SaveDialog1.FileName+'"文件已经存在,是否覆盖!'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then
+           Exit;
+        DeleteFile(SaveDialog1.FileName);
+     end;
+     if CopyFile(pchar(SourseFileName),pchar(SaveDialog1.FileName),true) then
+        MessageBox(Handle,pchar('下载成功!'),pchar(Application.Title),MB_OK)
+     else
+        MessageBox(Handle,pchar('下载失败!'),pchar(Application.Title),MB_OK);
+  end;
 end;
 
 end.

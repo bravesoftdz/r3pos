@@ -17,8 +17,6 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 469
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -60,7 +58,7 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #38144#21806#26085#26399
+                  Caption = #19994#21153#26085#26399
                 end
                 object RzLabel3: TRzLabel
                   Left = 186

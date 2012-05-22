@@ -1,10 +1,9 @@
 inherited frmMktKpiModify: TfrmMktKpiModify
-  Left = 367
-  Top = 179
+  Left = 473
+  Top = 121
   Caption = #36820#21033#38144#37327#35843#25972
   ClientHeight = 443
   ClientWidth = 726
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
@@ -12,9 +11,9 @@ inherited frmMktKpiModify: TfrmMktKpiModify
     Width = 726
     Height = 443
     inherited RzPage: TRzPageControl
-      Top = 74
+      Top = 44
       Width = 716
-      Height = 324
+      Height = 354
       ActivePage = TabSheet2
       TabIndex = 1
       FixedDimension = 20
@@ -22,12 +21,12 @@ inherited frmMktKpiModify: TfrmMktKpiModify
         Caption = #38750#36820#21033#21830#21697#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 712
-          Height = 297
+          Height = 327
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 702
-            Height = 287
+            Height = 317
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = dsList
@@ -83,15 +82,6 @@ inherited frmMktKpiModify: TfrmMktKpiModify
                 Width = 31
               end
               item
-                EditButtons = <>
-                FieldName = 'GODS_NAME'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #21830#21697#21517#31216
-                Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721'" '#26597#35810
-                Width = 150
-              end
-              item
                 DisplayFormat = '0000-00-00'
                 EditButtons = <>
                 FieldName = 'SALES_DATE'
@@ -99,6 +89,15 @@ inherited frmMktKpiModify: TfrmMktKpiModify
                 ReadOnly = True
                 Title.Caption = #38144#21806#26085#26399
                 Width = 80
+              end
+              item
+                EditButtons = <>
+                FieldName = 'GODS_NAME'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #21830#21697#21517#31216
+                Title.Hint = #25903#25345' "'#36135#21495#12289#21830#21697#21517#31216#12289#25340#38899#30721'" '#26597#35810
+                Width = 150
               end
               item
                 EditButtons = <>
@@ -205,7 +204,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
           Left = 0
           Top = 0
           Width = 712
-          Height = 297
+          Height = 327
           Align = alClient
           BorderOuter = fsNone
           BorderWidth = 5
@@ -214,7 +213,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
             Left = 5
             Top = 5
             Width = 702
-            Height = 287
+            Height = 317
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = dsList2
@@ -266,9 +265,17 @@ inherited frmMktKpiModify: TfrmMktKpiModify
                 EditButtons = <>
                 FieldName = 'SEQNO'
                 Footers = <>
-                ReadOnly = True
                 Title.Caption = #24207#21495
                 Width = 31
+              end
+              item
+                DisplayFormat = '0000-00-00'
+                EditButtons = <>
+                FieldName = 'SALES_DATE'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #38144#21806#26085#26399
+                Width = 80
               end
               item
                 EditButtons = <>
@@ -295,7 +302,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
                 ReadOnly = True
                 Title.Caption = #21333#20301
                 Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#21333#20301#36716#25442
-                Width = 41
+                Width = 30
               end
               item
                 ButtonStyle = cbsEllipsis
@@ -325,23 +332,31 @@ inherited frmMktKpiModify: TfrmMktKpiModify
                 Width = 83
               end
               item
-                Alignment = taRightJustify
+                Alignment = taCenter
+                Checkboxes = False
                 EditButtons = <>
-                FieldName = 'COPY_MODI_AMOUNT'
+                FieldName = 'IS_PRESENT'
                 Footers = <>
-                Title.Caption = #35843#25972#38144#37327
-                Width = 70
-                OnUpdateData = DBGridEh2Columns8UpdateData
+                KeyList.Strings = (
+                  '0'
+                  '1'
+                  '2')
+                PickList.Strings = (
+                  #27491#24120
+                  #36192#21697
+                  #20817#25442)
+                ReadOnly = True
+                Title.Caption = #36192#21697
+                Title.Hint = #25353' "'#31354#26684#38190'(SPACE)" '#36827#34892#36192#21697#36716#25442
+                Width = 36
               end
               item
-                Alignment = taRightJustify
-                DisplayFormat = '#0.00'
                 EditButtons = <>
-                FieldName = 'MODI_MONEY'
+                FieldName = 'BATCH_NO'
                 Footers = <>
-                Title.Caption = #35843#25972#37329#39069
-                Width = 70
-                OnUpdateData = DBGridEh2Columns9UpdateData
+                ReadOnly = True
+                Title.Caption = #25209#21495
+                Width = 95
               end
               item
                 EditButtons = <>
@@ -350,6 +365,22 @@ inherited frmMktKpiModify: TfrmMktKpiModify
                 ReadOnly = True
                 Title.Caption = #22791#27880
                 Width = 140
+              end
+              item
+                EditButtons = <>
+                FieldName = 'GLIDE_NO'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #21333#21495
+                Width = 110
+              end
+              item
+                EditButtons = <>
+                FieldName = 'CLIENT_NAME'
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #32463#38144#21830
+                Width = 150
               end>
           end
         end
@@ -417,28 +448,13 @@ inherited frmMktKpiModify: TfrmMktKpiModify
       Left = 5
       Top = 5
       Width = 716
-      Height = 69
+      Height = 39
       Align = alTop
       BorderOuter = fsNone
       TabOrder = 2
-      object RzLabel2: TRzLabel
-        Left = 25
-        Top = 43
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #38144#21806#26085#26399
-      end
-      object RzLabel3: TRzLabel
-        Left = 192
-        Top = 43
-        Width = 12
-        Height = 12
-        Caption = #33267
-      end
       object lab_KPI_NAME: TRzLabel
         Left = -16
-        Top = 12
+        Top = 13
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -453,7 +469,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
       end
       object RzLabel10: TRzLabel
         Left = 280
-        Top = 12
+        Top = 13
         Width = 57
         Height = 12
         Alignment = taRightJustify
@@ -466,67 +482,23 @@ inherited frmMktKpiModify: TfrmMktKpiModify
         Font.Style = []
         ParentFont = False
       end
-      object D1: TcxDateEdit
-        Left = 81
-        Top = 39
-        Width = 104
-        Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        Properties.DateButtons = [btnToday]
-        TabOrder = 0
-      end
-      object D2: TcxDateEdit
-        Left = 208
-        Top = 39
-        Width = 109
-        Height = 20
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        Properties.DateButtons = [btnToday]
-        TabOrder = 1
-      end
-      object btnFind: TRzBitBtn
-        Left = 336
-        Top = 34
-        Width = 67
-        Height = 26
-        Action = actQuery
-        Caption = #26597#35810
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 2
-        TextStyle = tsRaised
-        ThemeAware = False
-        NumGlyphs = 2
-        Spacing = 5
-      end
       object edtKPI_NAME: TcxTextEdit
         Tag = 1
         Left = 81
-        Top = 8
+        Top = 9
         Width = 221
         Height = 20
         Properties.MaxLength = 50
-        TabOrder = 3
+        TabOrder = 0
       end
       object edtKPI_YEAR: TcxTextEdit
         Tag = 1
         Left = 343
-        Top = 8
+        Top = 9
         Width = 60
         Height = 20
         Properties.MaxLength = 10
-        TabOrder = 4
+        TabOrder = 1
       end
     end
   end
@@ -541,7 +513,6 @@ inherited frmMktKpiModify: TfrmMktKpiModify
     end
     object actQuery: TAction
       Caption = #26597#35810
-      OnExecute = actQueryExecute
     end
   end
   object cdsList: TZQuery

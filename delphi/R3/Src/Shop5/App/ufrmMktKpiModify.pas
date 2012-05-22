@@ -12,11 +12,6 @@ uses
 type
   TfrmMktKpiModify = class(TframeDialogForm)
     RzPanel1: TRzPanel;
-    RzLabel2: TRzLabel;
-    RzLabel3: TRzLabel;
-    D1: TcxDateEdit;
-    D2: TcxDateEdit;
-    btnFind: TRzBitBtn;
     btnOK: TRzBitBtn;
     btnExit: TRzBitBtn;
     DBGridEh1: TDBGridEh;
@@ -24,7 +19,6 @@ type
     dsList: TDataSource;
     TabSheet2: TRzTabSheet;
     RzPanel3: TRzPanel;
-    DBGridEh2: TDBGridEh;
     cdsList2: TZQuery;
     dsList2: TDataSource;
     PopupMenu1: TPopupMenu;
@@ -38,7 +32,7 @@ type
     RzLabel10: TRzLabel;
     edtKPI_NAME: TcxTextEdit;
     edtKPI_YEAR: TcxTextEdit;
-    procedure FormCreate(Sender: TObject);
+    DBGridEh2: TDBGridEh;
     procedure FormShow(Sender: TObject);
     procedure actToModifyExecute(Sender: TObject);
     procedure actToNotModifyExecute(Sender: TObject);
@@ -46,28 +40,22 @@ type
     procedure btnExitClick(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure actQueryExecute(Sender: TObject);
     procedure DBGridEh2DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
-    procedure DBGridEh2Columns8UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-    procedure DBGridEh2Columns9UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh2KeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
   private
     FClientId: String;
     FKpiId: String;
     FKpiYear: Integer;
-    FIsQuery: Boolean;
+    D1,D2:Integer;
     procedure SetClientId(const Value: String);
     procedure SetKpiId(const Value: String);
     procedure SetKpiYear(const Value: Integer);
-    procedure SetIsQuery(const Value: Boolean);
     procedure FocusNextColumn;
     procedure FocusNextColumn2;
     procedure SetKpiName(const Value: String);
-    procedure WriteToData(SurData,ObjData:TZQuery;m:Integer);
+    procedure WriteToData(var SurData,ObjData:TZQuery);
     { Private declarations }
   public
     { Public declarations }
@@ -79,7 +67,6 @@ type
     property ClientId:String read FClientId write SetClientId;
     property KpiId:String read FKpiId write SetKpiId;
     property KpiYear:Integer read FKpiYear write SetKpiYear;
-    property IsQuery:Boolean read FIsQuery write SetIsQuery;
     property KpiName:String write SetKpiName;
   end;
 
@@ -96,14 +83,15 @@ var w,sql:string;
 begin
   w := ' and B.TENANT_ID=:TENANT_ID and B.CHK_DATE is not null and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 '+
        ' and B.CLIENT_ID=:CLIENT_ID and A.GODS_ID in (select GODS_ID from MKT_KPI_RATIO where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) '+
-       ' and not exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) ';
+       ' and ((not exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT in (1,2))'+
+       ' or (exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT = 0))';
 
   sql := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
          'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,D.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
          'C.AMOUNT+isnull(D.MODI_AMOUNT,0) as COPY_MODI_AMOUNT,isnull(D.MODI_AMOUNT,0) as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
          'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,'+
          'A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.IS_PRESENT,A.APRICE,A.AMONEY,A.REMARK '+
-         ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+ w + ' order by B.SALES_ID '+
+         ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+ w +' order by B.SALES_ID '+
          ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.GODS_ID=D.GODS_ID '+
          ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
          ' left join VIW_CUSTOMER F on C.TENANT_ID=F.TENANT_ID and C.CLIENT_ID=F.CLIENT_ID '+
@@ -120,8 +108,8 @@ begin
   try
     cdsList.SQL.Text := EncodeSQL(Id);
     cdsList.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsList.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',D1.Date));
-    cdsList.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',D2.Date));
+    cdsList.Params.ParamByName('D1').AsInteger := D1;
+    cdsList.Params.ParamByName('D2').AsInteger := D2;
     cdsList.Params.ParamByName('CLIENT_ID').AsString := ClientId;
     cdsList.Params.ParamByName('KPI_ID').AsString := KpiId;
     Factor.Open(cdsList);
@@ -131,20 +119,13 @@ begin
   end;
 end;
 
-procedure TfrmMktKpiModify.FormCreate(Sender: TObject);
-begin
-  inherited;
-  D1.Date := Date;
-  D2.Date := Date;
-  IsQuery := False;
-end;
-
 function TfrmMktKpiModify.EncodeSQL2(id: string): string;
 var w,sql:string;
 begin
   w := ' and B.TENANT_ID=:TENANT_ID and B.CHK_DATE is not null and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 '+
        ' and B.CLIENT_ID=:CLIENT_ID and A.GODS_ID in (select GODS_ID from MKT_KPI_RATIO where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) '+
-       ' and exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID )';
+       ' and ((exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT in (1,2))'+
+       ' or (not exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT = 0))';
 
   sql := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
          'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,D.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
@@ -169,8 +150,8 @@ begin
   try
     cdsList2.SQL.Text := EncodeSQL2(Id);
     cdsList2.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsList2.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',D1.Date));
-    cdsList2.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',D2.Date));
+    cdsList2.Params.ParamByName('D1').AsInteger := D1;
+    cdsList2.Params.ParamByName('D2').AsInteger := D2;
     cdsList2.Params.ParamByName('CLIENT_ID').AsString := ClientId;
     cdsList2.Params.ParamByName('KPI_ID').AsString := KpiId;
     Factor.Open(cdsList2);
@@ -193,8 +174,10 @@ end;
 procedure TfrmMktKpiModify.SetKpiYear(const Value: Integer);
 begin
   FKpiYear := Value;
-  D1.Date := FnTime.fnStrtoDate(FormatDateTime(IntToStr(Value)+'-01-01',Date));
-  D2.Date := FnTime.fnStrtoDate(FormatDateTime(IntToStr(Value)+'-12-31',Date));
+  {D1.Date := FnTime.fnStrtoDate(FormatDateTime(IntToStr(Value)+'-01-01',Date));
+  D2.Date := FnTime.fnStrtoDate(FormatDateTime(IntToStr(Value)+'-12-31',Date));}
+  D1 := Value*10000+101;
+  D2 := Value*10000+1231;
   edtKPI_YEAR.EditValue := Value;
   edtKPI_YEAR.Properties.ReadOnly := True;
 end;
@@ -218,8 +201,7 @@ begin
     cdsList.Filter := 'A=1';
     cdsList.Filtered := True;
     if cdsList.IsEmpty then Raise Exception.Create('请选择要返利的商品...');
-    IsQuery := True;
-    WriteToData(cdsList,cdsList2,0);
+    WriteToData(cdsList,cdsList2);
     cdsList.First;
     while not cdsList.Eof do cdsList.Delete;
     RzPage.ActivePageIndex := TabSheet2.PageIndex;
@@ -241,8 +223,7 @@ begin
     cdsList2.Filter := 'A=1';
     cdsList2.Filtered := True;
     if cdsList2.IsEmpty then Raise Exception.Create('请选择要非返利的商品...');
-    IsQuery := True;
-    WriteToData(cdsList2,cdsList,1);
+    WriteToData(cdsList2,cdsList);
     cdsList2.First;
     while not cdsList2.Eof do cdsList2.Delete;
     RzPage.ActivePageIndex := TabSheet1.PageIndex;
@@ -260,30 +241,24 @@ begin
 end;
 
 procedure TfrmMktKpiModify.Save;
-var i:Integer;
 begin
+  if cdsList.State in [dsInsert,dsEdit] then cdsList.Post;
   if cdsList2.State in [dsInsert,dsEdit] then cdsList2.Post;
+  cdsList.DisableControls;
   cdsList2.DisableControls;
   try
-    i := 1;
-    cdsList2.First;
-    while not cdsList2.Eof do
-    begin
-      cdsList2.Edit;
-      cdsList2.FieldByName('SEQNO').AsInteger := i;
-      cdsList2.FieldByName('KPI_YEAR').AsInteger := KpiYear;
-      cdsList2.Post;
-      cdsList2.Next;
-      Inc(i);
-    end;
-
+    Factor.BeginBatch;
     try
-      Factor.UpdateBatch(cdsList2,'TMktKpiModify');
+      Factor.AddBatch(cdsList,'TMktKpiNotModify');
+      Factor.AddBatch(cdsList2,'TMktKpiModify');
+      Factor.CommitBatch;
     except
+      Factor.CancelBatch;
       Raise Exception.Create('调整量提交失败!');
     end;
   finally
     cdsList2.EnableControls;
+    cdsList.EnableControls;
   end;
 
 end;
@@ -316,26 +291,6 @@ begin
     end;
 end;
 
-procedure TfrmMktKpiModify.SetIsQuery(const Value: Boolean);
-begin
-  FIsQuery := Value;
-end;
-
-procedure TfrmMktKpiModify.actQueryExecute(Sender: TObject);
-begin
-  inherited;
-  if IsQuery then
-  begin
-     if MessageBox(Handle,pchar('返利商品有调整,如需重新查询,将丢失已调整数据!'),pchar(Application.Title),MB_YESNO+MB_ICONQUESTION) <> 6 then
-        Exit
-     else
-        IsQuery := False;
-  end;
-  Open('');
-  Open2('');
-  if RzPage.ActivePageIndex = TabSheet2.TabIndex then RzPage.ActivePageIndex := TabSheet1.TabIndex;
-end;
-
 procedure TfrmMktKpiModify.DBGridEh2DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumnEh;
   State: TGridDrawState);
@@ -356,54 +311,6 @@ begin
       DBGridEh2.canvas.FillRect(ARect);
       DrawText(DBGridEh2.Canvas.Handle,pchar(Inttostr(cdsList2.RecNo)),length(Inttostr(cdsList2.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
-end;
-
-procedure TfrmMktKpiModify.DBGridEh2Columns8UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var  r:Currency;
-begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoFloat(Text);
-  except
-    on E:Exception do
-       begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-         Exit;
-       end;
-  end;
-  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
-  TColumnEh(Sender).Field.asFloat := r;
-  cdsList2.FieldByName('MODI_AMOUNT').AsFloat := r - cdsList2.FieldByName('AMOUNT').AsFloat;
-  cdsList2.FieldByName('MODI_MONEY').AsFloat := r * cdsList2.FieldByName('APRICE').AsFloat;
-  cdsList2.Post;
-  cdsList2.Edit;
-end;
-
-procedure TfrmMktKpiModify.DBGridEh2Columns9UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var  r:Currency;
-begin
-  try
-    if Text='' then
-       r := 0
-    else
-       r := StrtoFloat(Text);
-  except
-    on E:Exception do
-       begin
-         Text := TColumnEh(Sender).Field.AsString;
-         Value := TColumnEh(Sender).Field.asFloat;
-         MessageBox(Handle,pchar('输入无效数值型,错误：'+E.Message),pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-         Exit;
-       end;
-  end;
-  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
-  TColumnEh(Sender).Field.asFloat := r;
 end;
 
 procedure TfrmMktKpiModify.FocusNextColumn;
@@ -484,7 +391,7 @@ begin
   inherited;
 end;
 
-procedure TfrmMktKpiModify.WriteToData(SurData, ObjData: TZQuery; m: Integer);
+procedure TfrmMktKpiModify.WriteToData(var SurData, ObjData: TZQuery);
 var i:Integer;
 begin
   SurData.First;
@@ -497,10 +404,9 @@ begin
          ObjData.FindField(SurData.Fields[i].FieldName).Value := SurData.Fields[i].Value;
     end;
     ObjData.FieldByName('A').AsInteger := 0;
-    if m = 0 then
-       ObjData.FieldByName('MODIFY_ID').AsString := TSequence.NewId
-    else
-       ObjData.FieldByName('MODIFY_ID').AsString := '';
+    if ObjData.FieldByName('MODIFY_ID').AsString = '' then
+       ObjData.FieldByName('MODIFY_ID').AsString := TSequence.NewId;
+       
     ObjData.Post;
     SurData.Next;
   end;

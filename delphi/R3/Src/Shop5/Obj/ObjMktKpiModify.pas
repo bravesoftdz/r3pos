@@ -55,9 +55,12 @@ function TMktKpiModify.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
 begin
   Result := False;
-  Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
-         ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
-  AGlobal.ExecSQL(Str,Self);
+  if FieldByName('IS_PRESENT').AsInteger in [1,2] then
+  begin
+     Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
+            ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
+     AGlobal.ExecSQL(Str,Self);
+  end;
   Result := True;
 end;
 
@@ -89,6 +92,7 @@ function TMktKpiNotModify.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
 begin
   Result := False;
+
   Str := ' delete from MKT_KPI_MODIFY where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and SALES_ID=:OLD_SALES_ID and GODS_ID=:OLD_GODS_ID ';
   AGlobal.ExecSQL(Str,Self);
   Result := True;
@@ -98,9 +102,12 @@ function TMktKpiNotModify.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
 begin
   Result := False;
-  Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
-         ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
-  AGlobal.ExecSQL(Str,Self);
+  if FieldByName('IS_PRESENT').AsInteger = 0 then
+  begin
+     Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
+            ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
+     AGlobal.ExecSQL(Str,Self);
+  end;
   Result := True;
 end;
 

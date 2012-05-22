@@ -87,9 +87,9 @@ begin
        ' or (exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT = 0))';
 
   sql := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
-         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,D.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
+         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
          'C.AMOUNT+isnull(D.MODI_AMOUNT,0) as COPY_MODI_AMOUNT,isnull(D.MODI_AMOUNT,0) as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
-         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,'+
+         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
          'A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.IS_PRESENT,A.APRICE,A.AMONEY,A.REMARK '+
          ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+ w +' order by B.SALES_ID '+
          ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.GODS_ID=D.GODS_ID '+
@@ -128,9 +128,9 @@ begin
        ' or (not exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT = 0))';
 
   sql := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
-         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,D.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
+         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
          'C.AMOUNT+isnull(D.MODI_AMOUNT,0) as COPY_MODI_AMOUNT,isnull(D.MODI_AMOUNT,0) as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
-         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,'+
+         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
          'A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.IS_PRESENT,A.APRICE,A.AMONEY,A.REMARK '+
          ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+ w + ' order by B.SALES_ID '+
          ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.GODS_ID=D.GODS_ID '+
@@ -196,6 +196,8 @@ begin
   if (not cdsList.Active) or (cdsList.IsEmpty) then Exit;
   if cdsList.State in [dsInsert,dsEdit] then cdsList.Post;
   cdsList.DisableControls;
+  Self.dsList.DataSet := nil;
+  Self.dsList2.DataSet := nil;
   try
     cdsList.Filtered := False;
     cdsList.Filter := 'A=1';
@@ -209,6 +211,8 @@ begin
   finally
     cdsList.Filtered := False;
     cdsList.EnableControls;
+    Self.dsList2.DataSet := cdsList2;
+    Self.dsList.DataSet := cdsList;
   end;
 end;
 
@@ -218,6 +222,8 @@ begin
   if (not cdsList2.Active) or (cdsList2.IsEmpty) then Exit;
   if cdsList2.State in [dsInsert,dsEdit] then cdsList2.Post;
   cdsList2.DisableControls;
+  Self.dsList.DataSet := nil;
+  Self.dsList2.DataSet := nil;
   try
     cdsList2.Filtered := False;
     cdsList2.Filter := 'A=1';
@@ -230,6 +236,8 @@ begin
   finally
     cdsList2.Filtered := False;
     cdsList2.EnableControls;
+    Self.dsList2.DataSet := cdsList2;
+    Self.dsList.DataSet := cdsList;
   end;
 end;
 
@@ -404,8 +412,8 @@ begin
          ObjData.FindField(SurData.Fields[i].FieldName).Value := SurData.Fields[i].Value;
     end;
     ObjData.FieldByName('A').AsInteger := 0;
-    if ObjData.FieldByName('MODIFY_ID').AsString = '' then
-       ObjData.FieldByName('MODIFY_ID').AsString := TSequence.NewId;
+    ObjData.FieldByName('KPI_YEAR').AsInteger := KpiYear;
+    ObjData.FieldByName('MODIFY_ID').AsString := TSequence.NewId;
        
     ObjData.Post;
     SurData.Next;

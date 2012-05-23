@@ -7,7 +7,8 @@ uses
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   cxButtonEdit, zrComboBoxList, RzButton, cxTextEdit, cxControls, ObjCommon,
   cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, StdCtrls, ZDataset,
-  RzLabel, Grids, DBGridEh, DB, ZAbstractRODataset, ZAbstractDataset;
+  RzLabel, Grids, DBGridEh, DB, ZAbstractRODataset, ZAbstractDataset, ZBase,
+  RzBmpBtn;
 
 type
   TfrmMktKpiModify = class(TframeDialogForm)
@@ -33,6 +34,10 @@ type
     edtKPI_NAME: TcxTextEdit;
     edtKPI_YEAR: TcxTextEdit;
     DBGridEh2: TDBGridEh;
+    RzLabel1: TRzLabel;
+    edtCLIENT_ID: TcxTextEdit;
+    edtRightTranBtn: TRzBmpButton;
+    edtLeftTranBtn: TRzBmpButton;
     procedure FormShow(Sender: TObject);
     procedure actToModifyExecute(Sender: TObject);
     procedure actToNotModifyExecute(Sender: TObject);
@@ -44,6 +49,11 @@ type
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure DBGridEh2KeyPress(Sender: TObject; var Key: Char);
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure DBGridEh2DrawFooterCell(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
+    procedure RzPageChange(Sender: TObject);
   private
     FClientId: String;
     FKpiId: String;
@@ -56,109 +66,50 @@ type
     procedure FocusNextColumn2;
     procedure SetKpiName(const Value: String);
     procedure WriteToData(var SurData,ObjData:TZQuery);
+    procedure SetClientName(const Value: String);
     { Private declarations }
   public
     { Public declarations }
-    function EncodeSQL(id:string):string;
-    function EncodeSQL2(id:string):string;
     procedure Open(Id:string);
-    procedure Open2(Id:string);
     procedure Save;
     property ClientId:String read FClientId write SetClientId;
     property KpiId:String read FKpiId write SetKpiId;
     property KpiYear:Integer read FKpiYear write SetKpiYear;
     property KpiName:String write SetKpiName;
+    property ClientName:String write SetClientName;
   end;
 
 implementation
 
-uses ufrmBasic,uGlobal,uFnUtil,uShopUtil, uDsUtil, Math;
+uses ufrmBasic,uGlobal,uFnUtil,uShopUtil, uDsUtil, Math, uXDictFactory;
 
 {$R *.dfm}
 
 { TfrmMktKpiModify }
 
-function TfrmMktKpiModify.EncodeSQL(id: string): string;
-var w,sql:string;
-begin
-  w := ' and B.TENANT_ID=:TENANT_ID and B.CHK_DATE is not null and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 '+
-       ' and B.CLIENT_ID=:CLIENT_ID and A.GODS_ID in (select GODS_ID from MKT_KPI_RATIO where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) '+
-       ' and ((not exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT in (1,2))'+
-       ' or (exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT = 0))';
-
-  sql := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
-         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
-         'C.AMOUNT+isnull(D.MODI_AMOUNT,0) as COPY_MODI_AMOUNT,isnull(D.MODI_AMOUNT,0) as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
-         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
-         'A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.IS_PRESENT,A.APRICE,A.AMONEY,A.REMARK '+
-         ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+ w +' order by B.SALES_ID '+
-         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.GODS_ID=D.GODS_ID '+
-         ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
-         ' left join VIW_CUSTOMER F on C.TENANT_ID=F.TENANT_ID and C.CLIENT_ID=F.CLIENT_ID '+
-         ' left join VIW_MEAUNITS G on C.TENANT_ID=G.TENANT_ID and C.UNIT_ID=G.UNIT_ID '+
-         ' left join PUB_PARAMS H on C.SALES_TYPE=H.CODE_ID where H.TYPE_CODE=''SALES_TYPE'' ';
-  Result := ParseSQL(Factor.iDbType,sql);
-end;
-
 procedure TfrmMktKpiModify.Open(Id: string);
+var Params:TftParamList;
 begin
   if not Visible then Exit;
-  if Trim(Id) = '' then cdsList.Close;
-  cdsList.DisableControls;
+  Params := TftParamList.Create;
   try
-    cdsList.SQL.Text := EncodeSQL(Id);
-    cdsList.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsList.Params.ParamByName('D1').AsInteger := D1;
-    cdsList.Params.ParamByName('D2').AsInteger := D2;
-    cdsList.Params.ParamByName('CLIENT_ID').AsString := ClientId;
-    cdsList.Params.ParamByName('KPI_ID').AsString := KpiId;
-    Factor.Open(cdsList);
-    cdsList.IndexFieldNames := 'GLIDE_NO';
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('D1').AsInteger := D1;
+    Params.ParamByName('D2').AsInteger := D2;
+    Params.ParamByName('CLIENT_ID').AsString := ClientId;
+    Params.ParamByName('KPI_ID').AsString := KpiId;
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(cdsList,'TMktKpiModify',Params);
+      Factor.AddBatch(cdsList2,'TMktKpiNotModify',Params);
+      Factor.OpenBatch;
+    Except
+      Factor.CancelBatch;
+    end;
   finally
-    cdsList.EnableControls;
+    FreeAndNil(Params);
   end;
-end;
 
-function TfrmMktKpiModify.EncodeSQL2(id: string): string;
-var w,sql:string;
-begin
-  w := ' and B.TENANT_ID=:TENANT_ID and B.CHK_DATE is not null and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 '+
-       ' and B.CLIENT_ID=:CLIENT_ID and A.GODS_ID in (select GODS_ID from MKT_KPI_RATIO where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) '+
-       ' and ((exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT in (1,2))'+
-       ' or (not exists (select * from MKT_KPI_MODIFY M where M.TENANT_ID=A.TENANT_ID and M.SALES_ID=A.SALES_ID and M.GODS_ID=A.GODS_ID) and A.IS_PRESENT = 0))';
-
-  sql := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
-         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
-         'C.AMOUNT+isnull(D.MODI_AMOUNT,0) as COPY_MODI_AMOUNT,isnull(D.MODI_AMOUNT,0) as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
-         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
-         'A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.IS_PRESENT,A.APRICE,A.AMONEY,A.REMARK '+
-         ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+ w + ' order by B.SALES_ID '+
-         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.GODS_ID=D.GODS_ID '+
-         ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
-         ' left join VIW_CUSTOMER F on C.TENANT_ID=F.TENANT_ID and C.CLIENT_ID=F.CLIENT_ID '+
-         ' left join VIW_MEAUNITS G on C.TENANT_ID=G.TENANT_ID and C.UNIT_ID=G.UNIT_ID '+
-         ' left join PUB_PARAMS H on C.SALES_TYPE=H.CODE_ID where H.TYPE_CODE=''SALES_TYPE'' ';
-  Result := ParseSQL(Factor.iDbType,sql);
-end;
-
-procedure TfrmMktKpiModify.Open2(Id: string);
-begin
-  if not Visible then Exit;
-  if Trim(Id) = '' then cdsList2.Close;
-
-  cdsList2.DisableControls;
-  try
-    cdsList2.SQL.Text := EncodeSQL2(Id);
-    cdsList2.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    cdsList2.Params.ParamByName('D1').AsInteger := D1;
-    cdsList2.Params.ParamByName('D2').AsInteger := D2;
-    cdsList2.Params.ParamByName('CLIENT_ID').AsString := ClientId;
-    cdsList2.Params.ParamByName('KPI_ID').AsString := KpiId;
-    Factor.Open(cdsList2);
-    cdsList2.IndexFieldNames := 'GLIDE_NO';
-  finally
-    cdsList2.EnableControls;
-  end;
 end;
 
 procedure TfrmMktKpiModify.SetClientId(const Value: String);
@@ -172,12 +123,22 @@ begin
 end;
 
 procedure TfrmMktKpiModify.SetKpiYear(const Value: Integer);
+var rs:TZQuery;
 begin
   FKpiYear := Value;
-  {D1.Date := FnTime.fnStrtoDate(FormatDateTime(IntToStr(Value)+'-01-01',Date));
-  D2.Date := FnTime.fnStrtoDate(FormatDateTime(IntToStr(Value)+'-12-31',Date));}
-  D1 := Value*10000+101;
-  D2 := Value*10000+1231;
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.SQL.Text := 'select BEGIN_DATE,END_DATE from MKT_PLANORDER where TENANT_ID=:TENANT_ID and CLIENT_ID=:CLIENT_ID and KPI_YEAR=:KPI_YEAR ';
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('CLIENT_ID').AsString := ClientId;
+    rs.Params.ParamByName('KPI_YEAR').AsInteger := KpiYear;
+    Factor.Open(rs);
+    D1 := StrToInt(FormatDateTime('YYYYMMDD',FnTime.fnStrtoDate(rs.FieldByName('BEGIN_DATE').AsString)));
+    D2 := StrToInt(FormatDateTime('YYYYMMDD',FnTime.fnStrtoDate(rs.FieldByName('END_DATE').AsString)));
+  finally
+    rs.Free;
+  end;
   edtKPI_YEAR.EditValue := Value;
   edtKPI_YEAR.Properties.ReadOnly := True;
 end;
@@ -186,8 +147,8 @@ procedure TfrmMktKpiModify.FormShow(Sender: TObject);
 begin
   inherited;
   Open('');
-  Open2('');
   RzPage.ActivePage := TabSheet1;
+  RzPageChange(Sender);
 end;
 
 procedure TfrmMktKpiModify.actToModifyExecute(Sender: TObject);
@@ -417,6 +378,67 @@ begin
        
     ObjData.Post;
     SurData.Next;
+  end;
+end;
+
+procedure TfrmMktKpiModify.SetClientName(const Value: String);
+begin
+  edtCLIENT_ID.Text := Value;
+  edtCLIENT_ID.Properties.ReadOnly := True;
+end;
+
+procedure TfrmMktKpiModify.DBGridEh1DrawFooterCell(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; Rect: TRect;
+  State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+
+       DBGridEh1.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s个',[Inttostr(cdsList.RecordCount)]);
+       DBGridEh1.Canvas.Font.Style := [fsBold];
+       DBGridEh1.Canvas.TextRect(R,(Rect.Right) div 2,Rect.Top+2,s);
+     end;
+end;
+
+procedure TfrmMktKpiModify.DBGridEh2DrawFooterCell(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; Rect: TRect;
+  State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'GODS_NAME' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+
+       DBGridEh2.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s个',[Inttostr(cdsList2.RecordCount)]);
+       DBGridEh2.Canvas.Font.Style := [fsBold];
+       DBGridEh2.Canvas.TextRect(R,(Rect.Right) div 2,Rect.Top+2,s);
+     end;
+end;
+
+procedure TfrmMktKpiModify.RzPageChange(Sender: TObject);
+begin
+  inherited;
+  if RzPage.ActivePageIndex = 0 then
+  begin
+     edtRightTranBtn.Enabled := True;
+     edtLeftTranBtn.Enabled := False;
+  end
+  else
+  begin
+     edtRightTranBtn.Enabled := False;
+     edtLeftTranBtn.Enabled := True;
   end;
 end;
 

@@ -641,8 +641,9 @@ begin
     try
       ClientId := CdsKpiResult.FieldByName('CLIENT_ID').AsString;
       KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
-      KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsInteger;
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
+      ClientName := CdsKpiResult.FieldByName('CLIENT_ID_TEXT').AsString;
+      KpiYear := CdsKpiResult.FieldByName('KPI_YEAR').AsInteger;
       ShowModal;
     finally
       Free;

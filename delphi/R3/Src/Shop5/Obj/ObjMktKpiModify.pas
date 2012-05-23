@@ -55,7 +55,7 @@ function TMktKpiModify.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var Str:String;
 begin
   Result := False;
-  if FieldByName('IS_PRESENT').AsInteger in [1,2] then
+  if FieldByName('IS_PRESENT').AsInteger <> 0 then
   begin
      Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
             ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
@@ -76,9 +76,24 @@ begin
 end;
 
 procedure TMktKpiModify.InitClass;
+var Str:String;
 begin
   inherited;
-
+  Str := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
+         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
+         'C.AMOUNT+isnull(D.MODI_AMOUNT,0) as COPY_MODI_AMOUNT,isnull(D.MODI_AMOUNT,0) as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
+         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
+         'A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.IS_PRESENT,A.APRICE,A.AMONEY,A.REMARK '+
+         ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
+         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.GODS_ID=D.GODS_ID '+
+         ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
+         ' left join VIW_CUSTOMER F on C.TENANT_ID=F.TENANT_ID and C.CLIENT_ID=F.CLIENT_ID '+
+         ' left join VIW_MEAUNITS G on C.TENANT_ID=G.TENANT_ID and C.UNIT_ID=G.UNIT_ID '+
+         ' left join PUB_PARAMS H on C.SALES_TYPE=H.CODE_ID '+
+         ' where H.TYPE_CODE=''SALES_TYPE'' and C.TENANT_ID=:TENANT_ID and C.SALES_DATE>=:D1 and C.SALES_DATE<=:D2 '+
+         ' and C.CLIENT_ID=:CLIENT_ID and C.GODS_ID in (select GODS_ID from MKT_KPI_RATIO where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) '+
+         ' and ((C.IS_PRESENT = 0 and isnull(D.TENANT_ID,0)>0) or (C.IS_PRESENT <> 0 and isnull(D.TENANT_ID,0)=0))';
+  SelectSQL.Text := ParseSQL(iDbType,Str);
 end;
 
 { TMktKpiNotModify }
@@ -123,9 +138,24 @@ begin
 end;
 
 procedure TMktKpiNotModify.InitClass;
+var Str:String;
 begin
   inherited;
-
+  Str := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,H.CODE_NAME,E.GODS_NAME,E.GODS_CODE,F.CLIENT_NAME,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
+         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,G.UNIT_NAME,C.AMOUNT,C.IS_PRESENT,C.APRICE,C.AMONEY,C.REMARK,D.KPI_YEAR,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,'+
+         'C.AMOUNT+isnull(D.MODI_AMOUNT,0) as COPY_MODI_AMOUNT,isnull(D.MODI_AMOUNT,0) as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
+         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
+         'A.LOCUS_NO,A.UNIT_ID,A.AMOUNT,A.IS_PRESENT,A.APRICE,A.AMONEY,A.REMARK '+
+         ' from SAL_SALESDATA A,SAL_SALESORDER B where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
+         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.GODS_ID=D.GODS_ID '+
+         ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
+         ' left join VIW_CUSTOMER F on C.TENANT_ID=F.TENANT_ID and C.CLIENT_ID=F.CLIENT_ID '+
+         ' left join VIW_MEAUNITS G on C.TENANT_ID=G.TENANT_ID and C.UNIT_ID=G.UNIT_ID '+
+         ' left join PUB_PARAMS H on C.SALES_TYPE=H.CODE_ID '+
+         ' where H.TYPE_CODE=''SALES_TYPE'' and C.TENANT_ID=:TENANT_ID and C.SALES_DATE>=:D1 and C.SALES_DATE<=:D2 '+
+         ' and C.CLIENT_ID=:CLIENT_ID and C.GODS_ID in (select GODS_ID from MKT_KPI_RATIO where TENANT_ID=:TENANT_ID and KPI_ID=:KPI_ID) '+
+         ' and ((C.IS_PRESENT <> 0 and isnull(D.TENANT_ID,0)>0) or (C.IS_PRESENT = 0 and isnull(D.TENANT_ID,0)=0))';
+  SelectSQL.Text := ParseSQL(iDbType,Str);
 end;
 
 initialization

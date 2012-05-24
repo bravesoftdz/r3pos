@@ -337,17 +337,6 @@ begin
     //fndP6_SHOP_ID.Properties.ReadOnly := True;
   end; 
 
-  //2011.04.22 Add 设置查看成本价权限
-  if not ShopGlobal.GetChkRight('14500001',2) then
-  begin
-    SetNotShowCostPrice(DBGridEh1, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh2, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh3, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh4, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh5, ['SALE_CST','SALE_ALLPRF','SALE_MNY','SALE_RATE','SALE_PRF']);
-    SetNotShowCostPrice(DBGridEh6, ['COST_MONEY','PROFIT_MONEY','PROFIT_RATE','NOTAX_MONEY','AVG_PROFIT']); 
-  end;
-
   if ShopGlobal.GetProdFlag = 'E' then
     begin
       Label5.Caption := '仓库群组';

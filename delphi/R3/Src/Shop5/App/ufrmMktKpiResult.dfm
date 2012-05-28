@@ -9,29 +9,29 @@ inherited frmMktKpiResult: TfrmMktKpiResult
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 907
+    Width = 899
     inherited RzPanel2: TRzPanel
-      Width = 897
+      Width = 889
       inherited RzPage: TRzPageControl
-        Width = 891
+        Width = 883
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32463#38144#21830#36820#21033#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 889
+            Width = 881
             object Panel1: TPanel
               Left = 5
               Top = 98
-              Width = 879
-              Height = 323
+              Width = 871
+              Height = 312
               Align = alClient
               BevelInner = bvLowered
               TabOrder = 0
               object Grid: TDBGridEh
                 Left = 2
                 Top = 2
-                Width = 875
-                Height = 319
+                Width = 867
+                Height = 308
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DsKpiResult
@@ -128,8 +128,17 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Width = 58
                   end
                   item
-                    Alignment = taRightJustify
                     DisplayFormat = '#0.00'
+                    EditButtons = <>
+                    FieldName = 'ADJS_AMT'
+                    Footer.ValueType = fvtSum
+                    Footers = <>
+                    Title.Caption = #23436#25104#29575'|'#35843#25972#37327
+                    Width = 56
+                  end
+                  item
+                    Alignment = taRightJustify
+                    DisplayFormat = '#0.00%'
                     EditButtons = <>
                     FieldName = 'FISH_RATE'
                     Footer.Alignment = taRightJustify
@@ -256,7 +265,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
             object Panel2: TPanel
               Left = 5
               Top = 5
-              Width = 879
+              Width = 871
               Height = 93
               Align = alTop
               BevelInner = bvLowered
@@ -600,16 +609,16 @@ inherited frmMktKpiResult: TfrmMktKpiResult
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 907
+    Width = 899
     inherited Image3: TImage
       Left = 341
-      Width = 526
+      Width = 518
     end
     inherited Image14: TImage
-      Left = 887
+      Left = 879
     end
     inherited Image1: TImage
-      Left = 867
+      Left = 859
     end
     inherited rzPanel5: TPanel
       Left = 341

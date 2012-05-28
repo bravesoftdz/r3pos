@@ -303,7 +303,7 @@ procedure TfrmShopInfo.SetdbState(const Value: TDataSetState);
 var
   Name_S:String;
 begin
-  if trim(edtXSM_CODE.Text)<>'' then
+  if (trim(edtXSM_CODE.Text)<>'') and (Global.UserID<>'admin') and (Global.UserID<>'system') then
      edtXSM_CODE.Tag := 1
   else
      edtXSM_CODE.Tag := 0;

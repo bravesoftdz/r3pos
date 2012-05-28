@@ -261,17 +261,17 @@ begin
       while not cdsDetail.Eof do
       begin
         SumFishAmt := SumFishAmt + cdsDetail.FieldByName('FISH_AMT').AsFloat;
-        SumFishMny := SumFishAmt + cdsDetail.FieldByName('ADJS_AMT').AsFloat;
-        SumAdjsAmt := SumFishAmt + cdsDetail.FieldByName('FISH_MNY').AsFloat;
-        SumAdjsMny := SumFishAmt + cdsDetail.FieldByName('ADJS_MNY').AsFloat;
+        SumFishMny := SumFishMny + cdsDetail.FieldByName('FISH_MNY').AsFloat;
+        SumAdjsAmt := SumAdjsAmt + cdsDetail.FieldByName('ADJS_AMT').AsFloat;
+        SumAdjsMny := SumAdjsMny + cdsDetail.FieldByName('ADJS_MNY').AsFloat;
         SumKpiMny := SumKpiMny + cdsDetail.FieldByName('KPI_MNY').AsFloat;
         SumBudgKpi := SumBudgKpi + cdsDetail.FieldByName('BUDG_KPI').AsFloat;
         cdsDetail.Next;
       end;
       cdsHeader.Edit;
       cdsHeader.FieldByName('FISH_AMT').AsFloat := SumFishAmt;
-      cdsHeader.FieldByName('ADJS_AMT').AsFloat := SumFishMny;
-      cdsHeader.FieldByName('FISH_MNY').AsFloat := SumAdjsAmt;
+      cdsHeader.FieldByName('ADJS_AMT').AsFloat := SumAdjsAmt;
+      cdsHeader.FieldByName('FISH_MNY').AsFloat := SumFishMny;
       cdsHeader.FieldByName('ADJS_MNY').AsFloat := SumAdjsMny;
       cdsHeader.FieldByName('KPI_MNY').AsFloat := SumKpiMny;
       cdsHeader.FieldByName('BUDG_KPI').AsFloat := SumBudgKpi;

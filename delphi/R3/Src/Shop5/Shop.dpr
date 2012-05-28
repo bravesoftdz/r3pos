@@ -318,7 +318,9 @@ uses
   ufrmMktAtthOrder in 'App\ufrmMktAtthOrder.pas' {frmMktAtthOrder},
   ufrmMktAtthOrderList in 'App\ufrmMktAtthOrderList.pas' {frmMktAtthOrderList},
   ObjMktAtthOrder in 'Obj\ObjMktAtthOrder.pas',
-  ufrmSalIndentDayReport in 'App\ufrmSalIndentDayReport.pas' {frmSalIndentDayReport};
+  ufrmSalIndentDayReport in 'App\ufrmSalIndentDayReport.pas' {frmSalIndentDayReport},
+  ufrmMktKpiModify in 'App\ufrmMktKpiModify.pas' {frmMktKpiModify},
+  ObjMktKpiModify in 'Obj\ObjMktKpiModify.pas';
 
 {$R *.res}
 var

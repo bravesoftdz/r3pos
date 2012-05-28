@@ -247,6 +247,7 @@ end;
 procedure TfrmMktKpiResult.actEditExecute(Sender: TObject);
 begin
   inherited;
+  if IsAudit then Raise Exception.Create('已经审核不能调整...'); 
   if not ShopGlobal.GetChkRight('100002158',2) then Raise Exception.Create('你没有计算'+Caption+'的权限,请和管理员联系.');
   with TfrmMktKpiCalculate.Create(nil) do
   begin
@@ -323,7 +324,7 @@ begin
             ' left outer join MKT_KPI_INDEX F on A.TENANT_ID=F.TENANT_ID and A.KPI_ID=F.KPI_ID ' + w; }
 
   Result := ' select A.TENANT_ID,A.CLIENT_ID,A.PLAN_ID,C.CLIENT_NAME as CLIENT_ID_TEXT,A.IDX_TYPE,A.KPI_TYPE,A.KPI_ID,F.KPI_NAME as KPI_ID_TEXT,F.UNIT_NAME,A.KPI_YEAR,'+
-            ' A.CHK_DATE,A.CHK_USER,A.PLAN_AMT,A.FISH_AMT,A.FISH_MNY,A.KPI_MNY,A.WDW_MNY,isnull(A.KPI_MNY,0)-isnull(A.WDW_MNY,0) as KPI_BAL,A.BUDG_MNY,A.BUDG_KPI,A.BUDG_WDW,isnull(A.BUDG_KPI,0)-isnull(BUDG_WDW,0) as BUDG_BAL,'+
+            ' A.CHK_DATE,A.CHK_USER,A.PLAN_AMT,A.FISH_AMT,A.ADJS_AMT,A.FISH_MNY,A.KPI_MNY,A.WDW_MNY,isnull(A.KPI_MNY,0)-isnull(A.WDW_MNY,0) as KPI_BAL,A.BUDG_MNY,A.BUDG_KPI,A.BUDG_WDW,isnull(A.BUDG_KPI,0)-isnull(BUDG_WDW,0) as BUDG_BAL,'+
             ' A.CREA_DATE,E.USER_NAME as CHK_USER_TEXT,A.CREA_USER,D.USER_NAME as CREA_USER_TEXT from MKT_KPI_RESULT A '+
             ' left join VIW_CUSTOMER C on A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID '+
             ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+
@@ -635,6 +636,7 @@ end;
 procedure TfrmMktKpiResult.N2Click(Sender: TObject);
 begin
   inherited;
+  if IsAudit then Raise Exception.Create('已经审核不能调整...'); 
   if (not CdsKpiResult.Active) or (CdsKpiResult.IsEmpty) then exit;
   with TfrmMktKpiModify.Create(Self) do
   begin

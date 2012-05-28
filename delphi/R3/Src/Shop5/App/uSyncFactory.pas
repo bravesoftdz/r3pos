@@ -1127,6 +1127,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncChangeOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -1267,6 +1269,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncCheckOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -1407,7 +1411,9 @@ begin
            Raise;
          end;
 
-         ls.Next;
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncCloseForDay');
+          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
@@ -1630,6 +1636,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRckDaysClose');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -1851,6 +1859,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncIoroOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2068,6 +2078,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRckMonthClose');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2209,6 +2221,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncPayOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2363,6 +2377,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncPriceOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2495,6 +2511,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncMscQuestion');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2678,6 +2696,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRecvOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2859,6 +2879,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSalesOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2999,6 +3021,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSalIndentOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3209,6 +3233,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncStkIndentOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3364,6 +3390,8 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncStockOrder');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3496,6 +3524,9 @@ begin
              Raise;
            end;
          end;
+
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSysReport');
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3793,6 +3824,9 @@ begin
            Raise;
          end;
 
+         cs_h.Delete;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncBomOrder');
+         ls.Next;
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));

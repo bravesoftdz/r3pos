@@ -324,7 +324,9 @@ uses
   ObjNoteBook in 'Obj\ObjNoteBook.pas',
   ObjStkInvoiceOrder in 'Obj\ObjStkInvoiceOrder.pas',
   ObjVoucherOrder in 'Obj\ObjVoucherOrder.pas',
-  ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder};
+  ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder},
+  ufrmMktKpiModify in 'App\ufrmMktKpiModify.pas' {frmMktKpiModify},
+  ObjMktKpiModify in 'Obj\ObjMktKpiModify.pas';
 
 {$R *.res}
 var

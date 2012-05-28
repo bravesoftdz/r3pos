@@ -147,7 +147,11 @@ begin
   if not CaFactory.Audited then Exit;
   if not Logined then
      begin
-       if not coAutoLogin then Exit;
+       try
+         if not coAutoLogin then Exit;
+       except
+         Exit;
+       end;
      end;
   if not fileExists(ExtractFilePath(ParamStr(0))+'mmPlayer.exe') then Exit;
   if N26Url<>'' then

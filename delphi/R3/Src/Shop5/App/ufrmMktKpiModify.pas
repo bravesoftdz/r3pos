@@ -36,8 +36,6 @@ type
     DBGridEh2: TDBGridEh;
     RzLabel1: TRzLabel;
     edtCLIENT_ID: TcxTextEdit;
-    edtRightTranBtn: TRzBmpButton;
-    edtLeftTranBtn: TRzBmpButton;
     procedure FormShow(Sender: TObject);
     procedure actToModifyExecute(Sender: TObject);
     procedure actToNotModifyExecute(Sender: TObject);
@@ -53,7 +51,11 @@ type
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
     procedure DBGridEh2DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
-    procedure RzPageChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure DBGridEh2Columns8UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh2Columns6UpdateData(Sender: TObject;
+      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     FClientId: String;
     FKpiId: String;
@@ -65,8 +67,9 @@ type
     procedure FocusNextColumn;
     procedure FocusNextColumn2;
     procedure SetKpiName(const Value: String);
-    procedure WriteToData(var SurData,ObjData:TZQuery);
+    procedure WriteToData(var SurData,ObjData:TZQuery;flag:integer);
     procedure SetClientName(const Value: String);
+    procedure InitUnit;
     { Private declarations }
   public
     { Public declarations }
@@ -100,8 +103,8 @@ begin
     Params.ParamByName('KPI_ID').AsString := KpiId;
     Factor.BeginBatch;
     try
-      Factor.AddBatch(cdsList,'TMktKpiModify',Params);
-      Factor.AddBatch(cdsList2,'TMktKpiNotModify',Params);
+      Factor.AddBatch(cdsList,'TMktKpiNotModify',Params);
+      Factor.AddBatch(cdsList2,'TMktKpiModify',Params);
       Factor.OpenBatch;
     Except
       Factor.CancelBatch;
@@ -148,7 +151,6 @@ begin
   inherited;
   Open('');
   RzPage.ActivePage := TabSheet1;
-  RzPageChange(Sender);
 end;
 
 procedure TfrmMktKpiModify.actToModifyExecute(Sender: TObject);
@@ -157,23 +159,20 @@ begin
   if (not cdsList.Active) or (cdsList.IsEmpty) then Exit;
   if cdsList.State in [dsInsert,dsEdit] then cdsList.Post;
   cdsList.DisableControls;
-  Self.dsList.DataSet := nil;
-  Self.dsList2.DataSet := nil;
+  cdsList2.DisableControls;
   try
     cdsList.Filtered := False;
     cdsList.Filter := 'A=1';
     cdsList.Filtered := True;
     if cdsList.IsEmpty then Raise Exception.Create('请选择要返利的商品...');
-    WriteToData(cdsList,cdsList2);
+    WriteToData(cdsList,cdsList2,0);
     cdsList.First;
     while not cdsList.Eof do cdsList.Delete;
-    RzPage.ActivePageIndex := TabSheet2.PageIndex;
-    
+    //RzPage.ActivePageIndex := TabSheet2.PageIndex;
   finally
     cdsList.Filtered := False;
     cdsList.EnableControls;
-    Self.dsList2.DataSet := cdsList2;
-    Self.dsList.DataSet := cdsList;
+    cdsList2.EnableControls;
   end;
 end;
 
@@ -182,23 +181,20 @@ begin
   inherited;
   if (not cdsList2.Active) or (cdsList2.IsEmpty) then Exit;
   if cdsList2.State in [dsInsert,dsEdit] then cdsList2.Post;
+  cdsList.DisableControls;
   cdsList2.DisableControls;
-  Self.dsList.DataSet := nil;
-  Self.dsList2.DataSet := nil;
   try
     cdsList2.Filtered := False;
     cdsList2.Filter := 'A=1';
     cdsList2.Filtered := True;
     if cdsList2.IsEmpty then Raise Exception.Create('请选择要非返利的商品...');
-    WriteToData(cdsList2,cdsList);
+    WriteToData(cdsList2,cdsList,1);
     cdsList2.First;
     while not cdsList2.Eof do cdsList2.Delete;
-    RzPage.ActivePageIndex := TabSheet1.PageIndex;
   finally
     cdsList2.Filtered := False;
+    cdsList.EnableControls;
     cdsList2.EnableControls;
-    Self.dsList2.DataSet := cdsList2;
-    Self.dsList.DataSet := cdsList;
   end;
 end;
 
@@ -360,12 +356,14 @@ begin
   inherited;
 end;
 
-procedure TfrmMktKpiModify.WriteToData(var SurData, ObjData: TZQuery);
+procedure TfrmMktKpiModify.WriteToData(var SurData, ObjData: TZQuery;flag:integer);
 var i:Integer;
 begin
   SurData.First;
   while not SurData.Eof do
   begin
+    if ObjData.Locate('TENANT_ID,SALES_ID,SEQNO',varArrayOf([SurData.FieldbyName('TENANT_ID').AsInteger,SurData.FieldbyName('SALES_ID').AsString,SurData.FieldbyName('SEQNO').AsInteger]),[]) then
+    ObjData.Edit else 
     ObjData.Append;
     for i:=0 to SurData.Fields.Count - 1 do
     begin
@@ -375,7 +373,34 @@ begin
     ObjData.FieldByName('A').AsInteger := 0;
     ObjData.FieldByName('KPI_YEAR').AsInteger := KpiYear;
     ObjData.FieldByName('MODIFY_ID').AsString := TSequence.NewId;
-       
+    case flag of
+    0:begin //设为反利
+        if ObjData.FieldbyName('IS_PRESENT').asInteger=0 then
+           begin
+             ObjData.FieldByName('MODI_AMOUNT').AsFloat := 0;
+             ObjData.FieldByName('MODI_MONEY').AsFloat := 0;
+           end
+        else
+           begin
+             ObjData.FieldByName('MODI_AMOUNT').AsFloat := ObjData.FieldByName('ORG_AMOUNT').AsFloat;
+             ObjData.FieldByName('MODI_MONEY').AsFloat := ObjData.FieldByName('ORG_MONEY').AsFloat;
+           end;
+      end;
+    1:begin //设为不反利
+        if ObjData.FieldbyName('IS_PRESENT').asInteger=0 then
+           begin
+             ObjData.FieldByName('MODI_AMOUNT').AsFloat := -ObjData.FieldByName('ORG_AMOUNT').AsFloat;
+             ObjData.FieldByName('MODI_MONEY').AsFloat := -ObjData.FieldByName('ORG_MONEY').AsFloat;
+           end
+        else
+           begin
+             ObjData.FieldByName('MODI_AMOUNT').AsFloat := 0;
+             ObjData.FieldByName('MODI_MONEY').AsFloat := 0;
+           end;
+      end;
+    end;
+    ObjData.FieldByName('CALC_AMOUNT').AsFloat := ObjData.FieldByName('ORG_AMOUNT').AsFloat;
+    ObjData.FieldByName('CALC_MONEY').AsFloat := ObjData.FieldByName('ORG_MONEY').AsFloat;
     ObjData.Post;
     SurData.Next;
   end;
@@ -427,19 +452,101 @@ begin
      end;
 end;
 
-procedure TfrmMktKpiModify.RzPageChange(Sender: TObject);
+procedure TfrmMktKpiModify.FormCreate(Sender: TObject);
 begin
+  InitUnit;
   inherited;
-  if RzPage.ActivePageIndex = 0 then
-  begin
-     edtRightTranBtn.Enabled := True;
-     edtLeftTranBtn.Enabled := False;
-  end
-  else
-  begin
-     edtRightTranBtn.Enabled := False;
-     edtLeftTranBtn.Enabled := True;
+  InitGridPickList(DBGridEh1);
+  InitGridPickList(DBGridEh2);
+end;
+
+procedure TfrmMktKpiModify.DBGridEh2Columns8UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Real;
+begin
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
   end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  TColumnEh(Sender).Field.asFloat := r;
+  cdsList2.FieldByName('KPI_YEAR').AsInteger := KpiYear;
+  cdsList2.FieldByName('MODIFY_ID').AsString := TSequence.NewId;
+  case cdsList2.FieldByName('IS_PRESENT').AsInteger of
+  0:begin
+      cdsList2.FieldByName('MODI_AMOUNT').AsFloat := cdsList2.FieldByName('CALC_AMOUNT').AsFloat-cdsList2.FieldByName('ORG_AMOUNT').AsFloat;
+      cdsList2.FieldByName('MODI_MONEY').AsFloat := cdsList2.FieldByName('CALC_MONEY').AsFloat-cdsList2.FieldByName('ORG_MONEY').AsFloat;
+    end;
+  else
+    begin
+      cdsList2.FieldByName('MODI_AMOUNT').AsFloat := cdsList2.FieldByName('CALC_AMOUNT').AsFloat;
+      cdsList2.FieldByName('MODI_MONEY').AsFloat := cdsList2.FieldByName('CALC_MONEY').AsFloat;
+    end;
+  end;
+end;
+
+procedure TfrmMktKpiModify.DBGridEh2Columns6UpdateData(Sender: TObject;
+  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+var r:Real;
+begin
+  try
+    if Text='' then
+       r := 0
+    else
+       r := StrtoFloat(Text);
+  except
+    Text := TColumnEh(Sender).Field.AsString;
+    Value := TColumnEh(Sender).Field.asFloat;
+    Raise Exception.Create('输入无效数值型');
+  end;
+  if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
+  TColumnEh(Sender).Field.asFloat := r;
+  cdsList2.FieldByName('KPI_YEAR').AsInteger := KpiYear;
+  cdsList2.FieldByName('MODIFY_ID').AsString := TSequence.NewId;
+  cdsList2.FieldByName('CALC_MONEY').AsString := formatFloat('#0.00',cdsList2.FieldByName('CALC_AMOUNT').AsFloat*cdsList2.FieldByName('APRICE').AsFloat);
+  case cdsList2.FieldByName('IS_PRESENT').AsInteger of
+  0:begin
+      cdsList2.FieldByName('MODI_AMOUNT').AsFloat := cdsList2.FieldByName('CALC_AMOUNT').AsFloat-cdsList2.FieldByName('ORG_AMOUNT').AsFloat;
+      cdsList2.FieldByName('MODI_MONEY').AsFloat := cdsList2.FieldByName('CALC_MONEY').AsFloat-cdsList2.FieldByName('ORG_MONEY').AsFloat;
+    end;
+  else
+    begin
+      cdsList2.FieldByName('MODI_AMOUNT').AsFloat := cdsList2.FieldByName('CALC_AMOUNT').AsFloat;
+      cdsList2.FieldByName('MODI_MONEY').AsFloat := cdsList2.FieldByName('CALC_MONEY').AsFloat;
+    end;
+  end;
+end;
+
+procedure TfrmMktKpiModify.InitUnit;
+var
+  rs:TZQuery;
+  Column:TColumnEh;
+begin
+  rs := Global.GetZQueryFromName('PUB_MEAUNITS');
+  DBGridEh1.Columns[5].KeyList.Clear;
+  DBGridEh1.Columns[5].PickList.Clear;
+  rs.First;
+  while not rs.Eof do
+    begin
+      DBGridEh1.Columns[5].KeyList.add(rs.FieldbyName('UNIT_ID').asString);
+      DBGridEh1.Columns[5].PickList.add(rs.FieldbyName('UNIT_NAME').asString);
+      rs.Next;
+    end;
+  DBGridEh2.Columns[5].KeyList.Clear;
+  DBGridEh2.Columns[5].PickList.Clear;
+  rs.First;
+  while not rs.Eof do
+    begin
+      DBGridEh2.Columns[5].KeyList.add(rs.FieldbyName('UNIT_ID').asString);
+      DBGridEh2.Columns[5].PickList.add(rs.FieldbyName('UNIT_NAME').asString);
+      rs.Next;
+    end;
 end;
 
 end.

@@ -921,30 +921,31 @@ function TClientRebate.GetSaleMoney(StartDate, EndDate: Integer): Real;
 function GetUnitTO_CALC: string;
 var str:string;
 begin
-  str:='( case when B.UNIT_ID=C.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
-       ' when B.UNIT_ID=C.SMALL_UNITS then cast(C.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
-       ' when B.UNIT_ID=C.BIG_UNITS then cast(C.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
+  str:='( case when C.UNIT_ID=E.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
+       ' when C.UNIT_ID=E.SMALL_UNITS then cast(E.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
+       ' when C.UNIT_ID=E.BIG_UNITS then cast(E.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
        ' else 1.0 end )';
   result:=str;
 end;
+var Str:string;
 begin
-  if FKpiIndexInfo.IdxType = '1' then
-    CdsGoods.SQL.Text :=
-    ' select A.GODS_ID,sum(A.CALC_AMOUNT) as CALC_AMOUNT,sum(A.CALC_AMOUNT/'+GetUnitTO_CALC+') as AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
-    ' from VIW_SALESDATA A inner join MKT_KPI_GOODS B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
-    ' inner join VIW_GOODSINFO C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-//    ' left join MKT_KPI_RESULT_LIST D on A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID and A.CLIENT_ID=D.CLIENT_ID and A.KPI'+
-    ' where A.IS_PRESENT=0 and A.TENANT_ID=:TENANT_ID and A.CLIENT_ID=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 '+
-    ' and A.SALES_DATE <= :SALES_DATE2 and B.KPI_ID=:KPI_ID group by A.GODS_ID '
-  else
-    CdsGoods.SQL.Text :=
-    ' select A.GODS_ID,sum(A.CALC_AMOUNT) as CALC_AMOUNT,sum(A.CALC_AMOUNT/'+GetUnitTO_CALC+') as AMOUNT,sum(A.CALC_MONEY) as CALC_MONEY '+
-    ' from VIW_SALESDATA A inner join MKT_KPI_GOODS B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
-    ' inner join VIW_GOODSINFO C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
-//    ' left join MKT_KPI_RATIO D on A.TENANT_ID=D.TENANT_ID and A.GODS_ID=D.GODS_ID '+
-    ' where A.IS_PRESENT=0 and A.TENANT_ID=:TENANT_ID and A.GUIDE_USER=:CLIENT_ID and A.SALES_DATE >= :SALES_DATE1 '+
-    ' and A.SALES_DATE <= :SALES_DATE2 and B.KPI_ID=:KPI_ID group by A.GODS_ID ';
-
+  Str := 'select C.GODS_ID,'+
+         'sum(D.MODI_AMOUNT/'+GetUnitTO_CALC+') as MODI_AMOUNT,D.MODI_MONEY as MODI_MONEY,'+
+         'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(D.MODI_AMOUNT,0)) ) as CALC_AMOUNT,'+
+         'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(D.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' ) as AMOUNT,'+
+         'case when C.IS_PRESENT=0 then C.CALC_MONEY else 0.00 end + isnull(D.MODI_MONEY,0) as CALC_MONEY '+
+         'from ('+
+         'select A.TENANT_ID,A.SALES_ID,A.GODS_ID,A.SEQNO,'+
+         ' A.CALC_AMOUNT,B1.UNIT_ID,A.IS_PRESENT,A.APRICE,A.CALC_MONEY '+
+         ' from MKT_KPI_GOODS B1 left outer join SAL_SALESDATA A on A.TENANT_ID=B1.TENANT_ID and A.GODS_ID=B1.GODS_ID '+
+         ' inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
+         ' where B.TENANT_ID=:TENANT_ID and B.SALES_DATE>=:SALES_DATE1 and B.SALES_DATE<=:SALES_DATE2 '+
+         ' and B.SALES_TYPE in (1,3,4) and B.COMM not in (''02'',''12'')  '+
+         ' and B.CLIENT_ID=:CLIENT_ID and B1.KPI_ID=:KPI_ID '+
+         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.SEQNO=D.SEQNO '+
+         ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
+         ' group by C.GODS_ID';
+  CdsGoods.SQL.Text := ParseSQL(Factor.iDbType,Str);
   CdsGoods.Params.ParamByName('TENANT_ID').AsInteger := FKpiIndexInfo.TenantId;
   CdsGoods.Params.ParamByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
   CdsGoods.Params.ParamByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
@@ -1213,9 +1214,9 @@ begin
       KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
       KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
       KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('AMOUNT').AsFloat;//KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
-      KpiDetail.FieldByName('ADJS_AMT').AsFloat := 0;
+      KpiDetail.FieldByName('ADJS_AMT').AsFloat := CdsGoods.FieldByName('MODI_AMOUNT').AsFloat;
       KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
-      KpiDetail.FieldByName('ADJS_MNY').AsFloat := 0;
+      KpiDetail.FieldByName('ADJS_MNY').AsFloat := CdsGoods.FieldByName('MODI_MONEY').AsFloat;
 
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
       if KpiCalc = 1 then
@@ -1245,6 +1246,8 @@ begin
       KpiDetail.FieldByName('KPI_RATE').AsFloat := KpiRate;
       KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('AMOUNT').AsFloat;
       KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+      KpiDetail.FieldByName('ADJS_AMT').AsFloat := CdsGoods.FieldByName('MODI_AMOUNT').AsFloat;
+      KpiDetail.FieldByName('ADJS_MNY').AsFloat := CdsGoods.FieldByName('MODI_MONEY').AsFloat;
       KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
 

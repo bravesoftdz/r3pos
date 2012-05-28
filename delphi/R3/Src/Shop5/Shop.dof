@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=3
 MinorVer=0
 Release=2
-Build=40
+Build=41
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=R3
-FileVersion=3.0.2.40
+FileVersion=3.0.2.41
 InternalName=
 LegalCopyright=
 LegalTrademarks=

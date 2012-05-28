@@ -3827,7 +3827,6 @@ begin
          cs_h.Delete;
          Global.LocalFactory.UpdateBatch(cs_h,'TSyncBomOrder');
          ls.Next;
-         ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);

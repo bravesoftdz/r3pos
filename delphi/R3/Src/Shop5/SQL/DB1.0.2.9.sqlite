@@ -41,12 +41,12 @@ CREATE TABLE [ACC_FVCHSWHERE] (
   [SROW_ID] [char](36)   NOT NULL,
   --条件ID
   [SWHERE] [char](36)   NOT NULL,
-  --摘要
+  --条件字段
   [FIELD_NAME] [varchar](30)   NOT NULL,
   --操作符 in 或 not in
-  [FIELD_EQUE] [varchar](6) NULL
-  --操作符
-  [FIELD_VALUE] [varchar](50) NULL
+	[FIELD_EQUE] [varchar](6) NULL,
+  --字段值
+  [FIELD_VALUE] [varchar](50) NULL,
   CONSTRAINT [PK_ACC_FVCHSWHERE] PRIMARY KEY 
   ( 
 		[TENANT_ID],

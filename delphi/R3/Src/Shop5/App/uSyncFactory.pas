@@ -1128,7 +1128,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncChangeOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncChangeOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -1270,7 +1270,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncCheckOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncCheckOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -1412,8 +1412,8 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncCloseForDay');
-          ls.Next;
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncCloseForDay',Params);
+         ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
     SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
@@ -1637,7 +1637,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRckDaysClose');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRckDaysClose',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -1860,7 +1860,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncIoroOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncIoroOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2079,7 +2079,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRckMonthClose');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRckMonthClose',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2222,7 +2222,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncPayOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncPayOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2378,7 +2378,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncPriceOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncPriceOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2512,7 +2512,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncMscQuestion');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncMscQuestion',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2697,7 +2697,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRecvOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncRecvOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -2880,7 +2880,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSalesOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSalesOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3022,7 +3022,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSalIndentOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSalIndentOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3234,7 +3234,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncStkIndentOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncStkIndentOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3391,7 +3391,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncStockOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncStockOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3526,7 +3526,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSysReport');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncSysReport',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));
@@ -3825,7 +3825,7 @@ begin
          end;
 
          cs_h.Delete;
-         Global.LocalFactory.UpdateBatch(cs_h,'TSyncBomOrder');
+         Global.LocalFactory.UpdateBatch(cs_h,'TSyncBomOrder',Params);
          ls.Next;
        end;
     LogFile.AddLogFile(0,'上传<'+tbName+'>保存时长:'+inttostr(GetTicket));

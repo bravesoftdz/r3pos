@@ -55,3 +55,48 @@ CREATE TABLE [ACC_FVCHSWHERE] (
 );
 CREATE INDEX IX_ACC_FVCHSWHERE_TENANT_ID ON ACC_FVCHSWHERE (TENANT_ID);
 CREATE INDEX IX_ACC_FVCHSWHERE_SWHERE ON ACC_FVCHSWHERE (TENANT_ID,SWHERE);
+
+--服务类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('19','活动组','INST_CLASS','00',5497000);
+
+--设备安装及维修记录
+  CREATE TABLE [SVC_INST_INFO] (
+        --企业代码
+        [TENANT_ID] int  NOT NULL,
+        --流水ID号(内码)
+	[INST_ID] [char] (36) NOT NULL ,
+        --销售单号  
+	[SALES_ID] [char] (36) NOT NULL ,
+        --客户  
+	[CLIENT_ID] [char] (36) NOT NULL ,
+        --商品单号  
+	[GODS_ID] [char] (36) NOT NULL ,
+        --服务类型  
+	[INST_CLASS] [varchar] (36) NOT NULL ,
+        --产品序列号  
+	[SERIAL_NO] [varchar] (50) NULL ,
+        --安装地址
+	[INST_ADDR] [varchar] (120) NULL ,
+        --安装人
+	[INST_USER] [varchar] (36) NULL ,
+	--安装日期
+	[INST_DATE] int NOT NULL ,
+        --备注
+	[REMARK] [varchar] (200) NULL,
+        --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SVC_INST_INFO_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+        [TIME_STAMP] bigint NOT NULL,
+  CONSTRAINT [PK_SVC_INST_INFO] PRIMARY KEY 
+  ( 
+		[TENANT_ID],
+		[INST_ID]
+  )
+);
+CREATE INDEX IX_SVC_INST_INFO_TENANT_ID ON SVC_INST_INFO(TENANT_ID);
+CREATE INDEX IX_SVC_INST_INFO_SALES_ID ON SVC_INST_INFO(TENANT_ID,SALES_ID);
+CREATE INDEX IX_SVC_INST_INFO_INST_DATE ON SVC_INST_INFO(TENANT_ID,INST_DATE);

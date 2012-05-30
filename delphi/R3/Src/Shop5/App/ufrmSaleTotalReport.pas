@@ -372,7 +372,7 @@ begin
     ',sum(SALE_AGO) as SALE_AGO '+
     'from '+SQLData+' A,CA_SHOP_INFO B,'+GoodTab+' C '+
     ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere + ' '+
-    'group by A.TENANT_ID,A.GODS_ID,isnull(A.DEPT_ID,''#''),isnull(A.GUIDE_USER,''#''),isnull(A.CLIENT_ID,''#''),A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME,B.SHOP_TYPE';
+    'group by A.TENANT_ID,A.GODS_ID,isnull(A.DEPT_ID,''#''),isnull(A.GUIDE_USER,''#''),isnull(A.CLIENT_ID,''#''),isnull(A.SALES_STYLE,''#''),A.SHOP_ID,isnull(B.REGION_ID,''#''),B.SHOP_NAME,B.SHOP_TYPE';
 
   strSql :=
     'select j.*,a.CLIENT_CODE,'+

@@ -27,8 +27,8 @@ type
     edtSORT_ID: TcxComboBox;
     RzPanel4: TRzPanel;
     DataTree: TRzCheckTree;
-    cxRadioButton1: TcxRadioButton;
-    cxRadioButton2: TcxRadioButton;
+    edtIn: TcxRadioButton;
+    edtNotIn: TcxRadioButton;
     procedure edtSORT_IDPropertiesChange(Sender: TObject);
     procedure DataTreeStateChange(Sender: TObject; Node: TTreeNode;
       NewState: TRzCheckState);
@@ -122,7 +122,7 @@ begin
     if rs.Params.FindParam('TYPE_CODE') <> nil then rs.Params.FindParam('TYPE_CODE').AsString := TreeType;
 
     Factor.Open(rs);
-    CreateLevelTree(rs,DataTree,'3333333','DATA_OBJECT','DATA_NAME','LEVEL_ID');
+    CreateLevelTree(rs,DataTree,'44','DATA_OBJECT','DATA_NAME','LEVEL_ID');
     if DataTree.Items.Count>0 then DataTree.TopItem.Selected:=True;
   finally
     rs.Free;
@@ -167,9 +167,6 @@ end;
 procedure TfrmFvchFrameDefine.edtSORT_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
-  //InitTree(TRecord_(edtSORT_ID.Properties.Items.Objects[edtSORT_ID.ItemIndex]).FieldByName('CODE_ID').AsString);
-  //if DataTree.Items.Count > 0 then
-  //   WriteFvchSwhere;
   ReadFvchSwhere;
 end;
 
@@ -177,74 +174,74 @@ function TfrmFvchFrameDefine.GetTreeSql(TreeType: String): String;
 var Sql:String;
 begin
   if TreeType = '1' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '2' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '3' then
-     Sql := 'select CLIENT_ID as DATA_OBJECT,CLIENT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_CLIENTINFO '+
+     Sql := 'select CLIENT_ID as DATA_OBJECT,CLIENT_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_CLIENTINFO '+
      ' where COMM not in (''02'',''12'')  and CLIENT_TYPE=''1'' and TENANT_ID=:TENANT_ID order by CLIENT_CODE '
   else if TreeType = '4' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '5' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '6' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '7' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '8' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '9' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = '10' then
-     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_GOODSSORT '+
+     Sql := 'select SORT_ID as DATA_OBJECT,SORT_NAME as DATA_NAME,LEVEL_ID from VIW_GOODSSORT '+
      'where TENANT_ID=:TENANT_ID and SORT_TYPE=:SORT_TYPE and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = 'DEPT_ID' then
      Sql := 'select  DEPT_ID as DATA_OBJECT,DEPT_NAME as DATA_NAME,LEVEL_ID '+
      'from CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') order by LEVEL_ID '
   else if TreeType = 'SHOP_ID' then
-     Sql := 'select SHOP_ID as DATA_OBJECT,SHOP_NAME as DATA_NAME,''001'' as LEVEL_ID from CA_SHOP_INFO where TENANT_ID=:TENANT_ID '+
+     Sql := 'select SHOP_ID as DATA_OBJECT,SHOP_NAME as DATA_NAME,''0001'' as LEVEL_ID from CA_SHOP_INFO where TENANT_ID=:TENANT_ID '+
      ' and COMM not in (''02'',''12'') order by SEQ_NO'
   else if TreeType = 'CLIENT_ID' then
   begin
     case StrToInt(FvchType) of
       1,2,3,10,14:
-        Sql := 'select CLIENT_ID as DATA_OBJECT,CLIENT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_CLIENTINFO '+
+        Sql := 'select CLIENT_ID as DATA_OBJECT,CLIENT_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_CLIENTINFO '+
         ' where COMM not in (''02'',''12'')  and CLIENT_TYPE=''1'' and TENANT_ID=:TENANT_ID order by CLIENT_CODE ';
       4,5,6,9,11,13:
-        Sql := 'select CLIENT_ID as DATA_OBJECT,CLIENT_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_CUSTOMER '+
+        Sql := 'select CLIENT_ID as DATA_OBJECT,CLIENT_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_CUSTOMER '+
         ' where COMM not in (''02'',''12'')  and CLIENT_TYPE=''2'' and TENANT_ID=:TENANT_ID order by CLIENT_CODE ';
     end;
   end
   else if TreeType = 'GUIDE_USER' then
-     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
+     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
      ' and TENANT_ID=:TENANT_ID and USER_ID<>''system'' order by ACCOUNT '
   else if TreeType = 'DUTY_USER' then
-     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
+     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
      ' and TENANT_ID=:TENANT_ID and USER_ID<>''system'' order by ACCOUNT '
   else if TreeType = 'IORO_USER' then
-     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
+     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
      ' and TENANT_ID=:TENANT_ID and USER_ID<>''system'' order by ACCOUNT '
   else if TreeType = 'TRANS_USER' then
-     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
+     Sql := 'select USER_ID as DATA_OBJECT,USER_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_USERS where COMM not in (''02'',''12'') '+
      ' and TENANT_ID=:TENANT_ID and USER_ID<>''system'' order by ACCOUNT '
   else if TreeType = 'INVOICE_FLAG' then
-     Sql := 'select CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''001'' as LEVEL_ID from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
+     Sql := 'select CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''0001'' as LEVEL_ID from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
   else if TreeType = 'IS_PRESENT' then
-     Sql := 'select CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''001'' as LEVEL_ID from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
+     Sql := 'select CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''0001'' as LEVEL_ID from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
   else if TreeType = 'ITEM_ID' then
-     Sql := 'select CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_ITEM_INFO '+
+     Sql := 'select CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_ITEM_INFO '+
      ' where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'') '
   else if TreeType = 'PAYM_ID' then
   begin
-     Sql := 'select ''PAY_''||CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''001'' as LEVEL_ID from VIW_PAYMENT where TENANT_ID=:TENANT_ID  ';
+     Sql := 'select ''PAY_''||CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_PAYMENT where TENANT_ID=:TENANT_ID  ';
      Sql := ParseSQL(Factor.iDbType,Sql);
   end;
   Result := Sql;
@@ -366,7 +363,7 @@ procedure TfrmFvchFrameDefine.ReadFvchSwhere;
 var i,r:Integer;
     SId,sName,sValue,sCodeId:String;
 begin
-  ClearTree(DataTree);
+  //ClearTree(DataTree);
   if edtSORT_ID.Properties.Items.Count < 0 then Exit;
   if edtSORT_ID.ItemIndex<0 then Exit;
   sCodeId := TRecord_(edtSORT_ID.Properties.Items.Objects[edtSORT_ID.ItemIndex]).FieldByName('CODE_ID').AsString;
@@ -376,6 +373,10 @@ begin
   try
   if DataSet_Swhere.Locate('SWHERE,FIELD_NAME',VarArrayOf([sWhere,sName]),[]) then
     begin
+      if DataSet_Swhere.FieldByName('FIELD_EQUE').AsString = 'in' then
+         edtIn.Checked := True
+      else
+         edtNotIn.Checked := True;
       for i := 0 to DataTree.Items.Count - 1 do
         begin
           SId := TRecord_(DataTree.Items[i].Data).FieldbyName('DATA_OBJECT').AsString;
@@ -387,6 +388,7 @@ begin
     end
   else
     begin
+      edtIn.Checked := True;
       for i := 0 to DataTree.Items.Count - 1 do
         DataTree.ItemState[i] := csUnchecked;
     end;
@@ -418,8 +420,20 @@ begin
               DataSet_Swhere.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
               DataSet_Swhere.FieldByName('SWHERE').AsString := Swhere;
               DataSet_Swhere.FieldByName('FIELD_NAME').AsString := sName;
-              DataSet_Swhere.FieldByName('FIELD_EQUE').AsString := 'in';
+              if edtIn.Checked then
+                 DataSet_Swhere.FieldByName('FIELD_EQUE').AsString := 'in'
+              else
+                 DataSet_Swhere.FieldByName('FIELD_EQUE').AsString := 'not in';
               DataSet_Swhere.FieldByName('FIELD_VALUE').AsString := sValue;
+              DataSet_Swhere.Post;
+            end
+          else
+            begin
+              DataSet_Swhere.Edit;
+              if edtIn.Checked then
+                 DataSet_Swhere.FieldByName('FIELD_EQUE').AsString := 'in'
+              else
+                 DataSet_Swhere.FieldByName('FIELD_EQUE').AsString := 'not in';
               DataSet_Swhere.Post;
             end;
         end

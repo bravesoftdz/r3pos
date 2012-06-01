@@ -1,6 +1,5 @@
 inherited frmFvchFrameDefine: TfrmFvchFrameDefine
-  Left = 647
-  Top = 196
+  Left = 875
   Caption = #20973#35777#36873#39033
   ClientHeight = 394
   ClientWidth = 347
@@ -60,7 +59,7 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
             BorderColor = clWhite
             BorderWidth = 10
             Color = clWhite
-            TabOrder = 1
+            TabOrder = 3
             object DataTree: TRzCheckTree
               Left = 10
               Top = 10
@@ -83,21 +82,21 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
               TabOrder = 0
             end
           end
-          object cxRadioButton1: TcxRadioButton
+          object edtIn: TcxRadioButton
             Left = 200
             Top = 6
             Width = 49
             Height = 17
             Caption = #21253#21547
-            TabOrder = 2
+            TabOrder = 1
           end
-          object cxRadioButton2: TcxRadioButton
+          object edtNotIn: TcxRadioButton
             Left = 248
             Top = 6
             Width = 65
             Height = 17
             Caption = #19981#21253#21547
-            TabOrder = 3
+            TabOrder = 2
           end
         end
       end

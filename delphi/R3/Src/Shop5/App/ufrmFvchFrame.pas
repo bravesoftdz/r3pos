@@ -75,8 +75,8 @@ end;
 function TfrmFvchFrame.EncodeSql: String;
 var sql:String;
 begin
-  sql := 'select 0 as SEQ_NO,A.CODE_ID,A.CODE_NAME as FVCH_GTYPE_NAME,isnull(B.SUM_FVCH_GTYPE,0) as SUM_FVCH_GTYPE from PUB_PARAMS A left join '+
-         '(select FVCH_GTYPE,count(SEQNO) as SUM_FVCH_GTYPE from ACC_FVCHFRAME where TENANT_ID=:TENANT_ID group by FVCH_GTYPE) B '+
+  sql := 'select 0 as SEQ_NO,A.CODE_ID,A.CODE_NAME as FVCH_GTYPE_NAME,case when isnull(B.SUM_FVCH_GTYPE,0) > 0 then 1 else 0 end as SUM_FVCH_GTYPE '+
+         ' from PUB_PARAMS A left join (select FVCH_GTYPE,count(SEQNO) as SUM_FVCH_GTYPE from ACC_FVCHFRAME where TENANT_ID=:TENANT_ID group by FVCH_GTYPE) B '+
          ' on A.CODE_ID = B.FVCH_GTYPE where A.TYPE_CODE=''BILL_NAME'' order by A.CODE_ID ';
   Result := sql;
 end;
@@ -101,7 +101,10 @@ begin
           if ShowModal = mrOk then
           begin
              CdsFrame.Edit;
-             CdsFrame.FieldByName('SUM_FVCH_GTYPE').AsInteger := cdsFvchFrame.RecordCount;
+             if cdsFvchFrame.RecordCount > 0 then
+                CdsFrame.FieldByName('SUM_FVCH_GTYPE').AsInteger := 1
+             else
+                CdsFrame.FieldByName('SUM_FVCH_GTYPE').AsInteger := 0;
              CdsFrame.Post;
           end;
         finally

@@ -64,7 +64,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object Label1: TLabel
               Left = 228
               Top = 5
-              Width = 149
+              Width = 139
               Height = 24
               Anchors = [akLeft, akTop, akRight]
               Caption = #20973' '#35777' '#23450' '#20041
@@ -187,6 +187,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                   Width = 210
                 end
                 item
+                  Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'SUBJECT_TYPE_1'
                   Footers = <>
@@ -202,7 +203,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                   OnBeforeShowControl = DBGridEh1Columns3BeforeShowControl
                 end
                 item
-                  Alignment = taRightJustify
+                  Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'SUBJECT_TYPE_2'
                   Footer.Alignment = taRightJustify

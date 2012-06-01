@@ -78,10 +78,17 @@ inherited frmFvchFrame: TfrmFvchFrame
                 Width = 150
               end
               item
+                Alignment = taCenter
                 EditButtons = <>
                 FieldName = 'SUM_FVCH_GTYPE'
                 Footers = <>
-                Title.Caption = #39033#30446#24635#37327
+                KeyList.Strings = (
+                  '0'
+                  '1')
+                PickList.Strings = (
+                  #27809#26377
+                  #26377)
+                Title.Caption = #29366#24577
                 Title.Color = clWhite
                 Width = 87
               end
@@ -89,7 +96,7 @@ inherited frmFvchFrame: TfrmFvchFrame
                 EditButtons = <>
                 FieldName = 'EDIT_INFO'
                 Footers = <>
-                Title.Caption = #35814#24773
+                Title.Caption = #25805#20316
                 Title.Color = clWhite
               end>
           end

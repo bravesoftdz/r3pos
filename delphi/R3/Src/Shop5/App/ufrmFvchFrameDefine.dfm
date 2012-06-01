@@ -203,7 +203,7 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
         Height = 21
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #19987#39033'3'
-        TabOrder = 5
+        TabOrder = 6
       end
       object edtDATAFLAG_6: TcxCheckBox
         Left = 92
@@ -212,7 +212,7 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
         Height = 21
         Properties.DisplayUnchecked = 'False'
         Properties.Caption = #19987#39033'2'
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtDATAFLAG_8: TcxCheckBox
         Left = 240

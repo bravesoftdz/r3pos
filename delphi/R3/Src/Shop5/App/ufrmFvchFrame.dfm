@@ -1,6 +1,6 @@
 inherited frmFvchFrame: TfrmFvchFrame
-  Left = 593
-  Top = 92
+  Left = 581
+  Top = 161
   Caption = #20973#35777#27169#22359#21015#34920
   ClientHeight = 380
   ClientWidth = 382
@@ -32,6 +32,7 @@ inherited frmFvchFrame: TfrmFvchFrame
             Width = 358
             Height = 316
             Align = alClient
+            AllowedOperations = []
             AutoFitColWidths = True
             DataSource = DsFrame
             Flat = True
@@ -43,7 +44,7 @@ inherited frmFvchFrame: TfrmFvchFrame
             FooterFont.Style = []
             FrozenCols = 1
             ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-            Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection, dghEnterAsTab]
             ReadOnly = True
             RowHeight = 20

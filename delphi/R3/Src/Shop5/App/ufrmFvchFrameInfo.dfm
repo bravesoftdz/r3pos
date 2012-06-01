@@ -1,20 +1,20 @@
 inherited frmFvchFrameInfo: TfrmFvchFrameInfo
-  Left = 225
-  Top = 159
+  Left = 294
+  Top = 154
   Caption = #20973#35777#27169#22359#23450#20041
   ClientHeight = 392
-  ClientWidth = 624
+  ClientWidth = 630
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 624
+    Width = 630
     Height = 392
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 614
+      Width = 620
       Height = 342
       TabIndex = -1
       FixedDimension = 20
@@ -23,7 +23,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         TabVisible = False
         Caption = #23450#20041#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 610
+          Width = 616
           Height = 338
           BorderColor = clWhite
           Color = clWhite
@@ -45,7 +45,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
           object RzPanel3: TRzPanel
             Left = 5
             Top = 5
-            Width = 600
+            Width = 606
             Height = 52
             Align = alTop
             BorderOuter = fsNone
@@ -59,12 +59,12 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             ParentFont = False
             TabOrder = 0
             DesignSize = (
-              600
+              606
               52)
             object Label1: TLabel
               Left = 228
               Top = 5
-              Width = 139
+              Width = 145
               Height = 24
               Anchors = [akLeft, akTop, akRight]
               Caption = #20973' '#35777' '#23450' '#20041
@@ -78,7 +78,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object Label2: TLabel
               Left = 221
               Top = 32
-              Width = 156
+              Width = 162
               Height = 12
               Anchors = [akLeft, akTop, akRight]
               Caption = '=========================='
@@ -93,7 +93,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
           object RzPanel7: TRzPanel
             Left = 5
             Top = 57
-            Width = 600
+            Width = 606
             Height = 276
             Align = alClient
             BorderOuter = fsNone
@@ -104,7 +104,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object DBGridEh1: TDBGridEh
               Left = 1
               Top = 1
-              Width = 598
+              Width = 604
               Height = 274
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -221,8 +221,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                   OnBeforeShowControl = DBGridEh1Columns4BeforeShowControl
                 end
                 item
-                  Alignment = taRightJustify
-                  ButtonStyle = cbsEllipsis
+                  Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'OPTION'
                   Footers = <>
@@ -269,10 +268,10 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
     end
     inherited btPanel: TRzPanel
       Top = 347
-      Width = 614
+      Width = 620
       Color = clWhite
       object Btn_Save: TRzBitBtn
-        Left = 447
+        Left = 453
         Top = 10
         Width = 67
         Height = 26
@@ -299,7 +298,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 533
+        Left = 539
         Top = 10
         Width = 67
         Height = 26

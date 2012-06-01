@@ -57,6 +57,7 @@ type
     function GetListSql(FvchType:Integer):String;
     procedure SetDataSet_Swhere(const Value: TZQuery);
     procedure SetsWhere(const Value: String);
+    function IsIntStr(const s:String):Boolean;
   public
     { Public declarations }
     procedure Save;
@@ -403,7 +404,7 @@ begin
   if edtSORT_ID.Properties.Items.Count < 0 then Exit;
   if edtSORT_ID.ItemIndex<0 then Exit;
   sCodeId := TRecord_(edtSORT_ID.Properties.Items.Objects[edtSORT_ID.ItemIndex]).FieldByName('CODE_ID').AsString;
-  sName := sCodeId;
+  if IsIntStr(sCodeId) then sName := 'SORT_ID'+sCodeId else sName := sCodeId;
   sValue := '';
 
   for i := 0 to DataTree.Items.Count - 1 do
@@ -493,6 +494,11 @@ procedure TfrmFvchFrameDefine.FormShow(Sender: TObject);
 begin
   inherited;
   if edtSORT_ID.Properties.Items.Count > 0 then edtSORT_ID.ItemIndex := 0;
+end;
+
+function TfrmFvchFrameDefine.IsIntStr(const s: String): Boolean;
+begin
+  Result := StrToIntDef(s,0)=StrToIntDef(s,1);
 end;
 
 end.

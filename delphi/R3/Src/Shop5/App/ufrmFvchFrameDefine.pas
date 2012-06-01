@@ -8,7 +8,7 @@ uses
   RzButton, cxControls, cxContainer, cxEdit, cxCheckBox, StdCtrls, DBGridEh,
   zrComboBoxList, RzLabel, cxTextEdit, cxMaskEdit, cxDropDownEdit, ZBase,
   DB, ZAbstractRODataset, ZAbstractDataset, ZDataset, cxButtonEdit, ObjCommon,
-  ComCtrls, RzTreeVw;
+  ComCtrls, RzTreeVw, cxRadioGroup;
 
 type
   TfrmFvchFrameDefine = class(TframeDialogForm)
@@ -27,6 +27,8 @@ type
     edtSORT_ID: TcxComboBox;
     RzPanel4: TRzPanel;
     DataTree: TRzCheckTree;
+    cxRadioButton1: TcxRadioButton;
+    cxRadioButton2: TcxRadioButton;
     procedure edtSORT_IDPropertiesChange(Sender: TObject);
     procedure DataTreeStateChange(Sender: TObject; Node: TTreeNode;
       NewState: TRzCheckState);

@@ -2,33 +2,35 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
   Left = 647
   Top = 196
   Caption = #20973#35777#36873#39033
-  ClientHeight = 407
+  ClientHeight = 394
   ClientWidth = 347
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 347
-    Height = 407
+    Height = 394
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Top = 84
+      Top = 71
       Width = 337
       Height = 278
       Align = alBottom
+      TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
+        TabVisible = False
         Caption = #39033#30446#36873#39033
         inherited RzPanel2: TRzPanel
           Width = 333
-          Height = 251
+          Height = 274
           BorderColor = clWhite
           Color = clWhite
           object Label16: TLabel
             Left = 15
-            Top = 16
+            Top = 8
             Width = 60
             Height = 12
             Caption = #25968#25454#36873#39033#65306
@@ -41,7 +43,7 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
           end
           object edtSORT_ID: TcxComboBox
             Left = 74
-            Top = 12
+            Top = 4
             Width = 121
             Height = 20
             Properties.DropDownListStyle = lsFixedList
@@ -50,9 +52,9 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
           end
           object RzPanel4: TRzPanel
             Left = 5
-            Top = 31
+            Top = 24
             Width = 323
-            Height = 215
+            Height = 245
             Align = alBottom
             BorderOuter = fsNone
             BorderColor = clWhite
@@ -63,7 +65,7 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
               Left = 10
               Top = 10
               Width = 303
-              Height = 195
+              Height = 225
               OnStateChange = DataTreeStateChange
               Align = alClient
               Font.Charset = GB2312_CHARSET
@@ -81,11 +83,27 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
               TabOrder = 0
             end
           end
+          object cxRadioButton1: TcxRadioButton
+            Left = 200
+            Top = 6
+            Width = 49
+            Height = 17
+            Caption = #21253#21547
+            TabOrder = 2
+          end
+          object cxRadioButton2: TcxRadioButton
+            Left = 248
+            Top = 6
+            Width = 65
+            Height = 17
+            Caption = #19981#21253#21547
+            TabOrder = 3
+          end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Top = 362
+      Top = 349
       Width = 337
       Color = clWhite
       object btnSave: TRzBitBtn
@@ -145,9 +163,9 @@ inherited frmFvchFrameDefine: TfrmFvchFrameDefine
     end
     object RzGroupBox1: TRzGroupBox
       Left = 8
-      Top = 9
+      Top = 4
       Width = 331
-      Height = 65
+      Height = 64
       Caption = #26126#32454#36873#39033
       Color = clWhite
       TabOrder = 2

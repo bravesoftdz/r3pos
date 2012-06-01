@@ -2,20 +2,20 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
   Left = 225
   Top = 159
   Caption = #20973#35777#27169#22359#23450#20041
-  ClientHeight = 359
-  ClientWidth = 675
+  ClientHeight = 392
+  ClientWidth = 624
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 675
-    Height = 359
+    Width = 624
+    Height = 392
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 665
-      Height = 309
+      Width = 614
+      Height = 342
       TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -23,8 +23,8 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         TabVisible = False
         Caption = #23450#20041#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 661
-          Height = 305
+          Width = 610
+          Height = 338
           BorderColor = clWhite
           Color = clWhite
           object RzLabel6: TRzLabel
@@ -45,8 +45,8 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
           object RzPanel3: TRzPanel
             Left = 5
             Top = 5
-            Width = 651
-            Height = 59
+            Width = 600
+            Height = 52
             Align = alTop
             BorderOuter = fsNone
             BorderColor = clGreen
@@ -59,12 +59,12 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             ParentFont = False
             TabOrder = 0
             DesignSize = (
-              651
-              59)
+              600
+              52)
             object Label1: TLabel
-              Left = 252
+              Left = 228
               Top = 5
-              Width = 139
+              Width = 149
               Height = 24
               Anchors = [akLeft, akTop, akRight]
               Caption = #20973' '#35777' '#23450' '#20041
@@ -76,7 +76,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
               ParentFont = False
             end
             object Label2: TLabel
-              Left = 245
+              Left = 221
               Top = 32
               Width = 156
               Height = 12
@@ -92,9 +92,9 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
           end
           object RzPanel7: TRzPanel
             Left = 5
-            Top = 64
-            Width = 651
-            Height = 236
+            Top = 57
+            Width = 600
+            Height = 276
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clGreen
@@ -104,8 +104,8 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object DBGridEh1: TDBGridEh
               Left = 1
               Top = 1
-              Width = 649
-              Height = 234
+              Width = 598
+              Height = 274
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               BorderStyle = bsNone
@@ -233,7 +233,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                   Title.Font.Height = -12
                   Title.Font.Name = #23435#20307
                   Title.Font.Style = []
-                  Width = 100
+                  Width = 55
                 end>
             end
             object edtAMONEY: TcxComboBox
@@ -267,11 +267,11 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
       end
     end
     inherited btPanel: TRzPanel
-      Top = 314
-      Width = 665
+      Top = 347
+      Width = 614
       Color = clWhite
       object Btn_Save: TRzBitBtn
-        Left = 498
+        Left = 447
         Top = 10
         Width = 67
         Height = 26
@@ -298,7 +298,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 584
+        Left = 533
         Top = 10
         Width = 67
         Height = 26

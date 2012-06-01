@@ -320,7 +320,11 @@ uses
   ObjMktAtthOrder in 'Obj\ObjMktAtthOrder.pas',
   ufrmSalIndentDayReport in 'App\ufrmSalIndentDayReport.pas' {frmSalIndentDayReport},
   ufrmMktKpiModify in 'App\ufrmMktKpiModify.pas' {frmMktKpiModify},
-  ObjMktKpiModify in 'Obj\ObjMktKpiModify.pas';
+  ObjMktKpiModify in 'Obj\ObjMktKpiModify.pas',
+  ufrmFvchCalc in 'App\ufrmFvchCalc.pas' {frmFvchCalc},
+  ufrmFvchFrame in 'App\ufrmFvchFrame.pas' {frmFvchFrame},
+  ufrmFvchFrameDefine in 'App\ufrmFvchFrameDefine.pas' {frmFvchFrameDefine},
+  ufrmFvchFrameInfo in 'App\ufrmFvchFrameInfo.pas' {frmFvchFrameInfo};
 
 {$R *.res}
 var

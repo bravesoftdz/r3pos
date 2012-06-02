@@ -35,7 +35,7 @@ type
     TopPnl2: TRzPanel;
     DBGridEh1: TDBGridEh;
     Label4: TLabel;
-    edtGUIDE_USER: TzrComboBoxList;
+    edtCREA_USER: TzrComboBoxList;
     Label8: TLabel;
     edtFVCH_FLAG: TcxComboBox;
     Label3: TLabel;
@@ -63,6 +63,8 @@ type
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Setcid(const Value: string);
     procedure FocusNextColumn;
+    procedure SetGridAmtPriceCol(const AmtVisible,PriVisible: Boolean);
+    procedure SetParams;
   public
     { Public declarations }
     AObj:TRecord_;
@@ -101,10 +103,16 @@ begin
   CdsFvchOrder.Delete;
   //删除分录
   CdsFvchData.First;
-  while not CdsFvchData.Eof do CdsFvchData.Delete;
+  while not CdsFvchData.Eof do
+  begin
+    CdsFvchData.Delete;
+  end;
   //删除明细项
   CdsFvchDetail.First;
-  while not CdsFvchDetail.Eof do CdsFvchDetail.Delete;
+  while not CdsFvchDetail.Eof do
+  begin
+    CdsFvchDetail.Delete;
+  end;
 
   Factor.BeginBatch;
   try
@@ -146,6 +154,13 @@ begin
       end;
       AObj.ReadFromDataSet(CdsFvchOrder);
       ReadFromObject(AObj,self);
+      //设置显示
+      edtFVCH_FLAG.ItemIndex:=StrToIntDef(CdsFvchOrder.FieldByName('FVCH_FLAG').AsString,0);
+      edtFVCH_ATTACH.Value:=CdsFvchOrder.FieldByName('FVCH_ATTACH').AsInteger;
+
+      //设置控制属性
+      SetParams;
+      
       dbState := dsBrowse;
     finally
       Params.Free;
@@ -246,8 +261,97 @@ end;
 procedure TfrmFvchOrder.FormCreate(Sender: TObject);
 begin
   inherited;
-  AObj:=TRecord_.Create;  
+  AObj:=TRecord_.Create;
 
+end;
+
+procedure TfrmFvchOrder.SetGridAmtPriceCol(const AmtVisible,PriVisible: Boolean);
+var
+  FindCol: TColumnEh;
+begin
+  //DBGridEh1设置借方
+  FindCol:=FindDBColumn(DBGridEh1,'DEBIT_AMT');
+  if FindCol<>nil then FindCol.Visible:=AmtVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'DEBIT_PRICE');
+  if FindCol<>nil then FindCol.Visible:=PriVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'DEBIT_MNY');
+  if FindCol<>nil then
+  begin
+    if (not AmtVisible) and (not PriVisible) then //设置显示
+      FindCol.Title.Caption:='借方金额'
+    else
+      FindCol.Title.Caption:='借方|金额';
+  end;
+  //DBGridEh1设置贷方
+  FindCol:=FindDBColumn(DBGridEh1,'CREDIT_AMT');
+  if FindCol<>nil then FindCol.Visible:=AmtVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'CREDIT_PRICE');
+  if FindCol<>nil then FindCol.Visible:=PriVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'CREDIT_MNY');
+  if FindCol<>nil then
+  begin
+    if (not AmtVisible) and (not PriVisible) then //设置显示
+      FindCol.Title.Caption:='贷方金额'
+    else
+      FindCol.Title.Caption:='贷方|金额';
+  end;
+
+  //DBGridEh1设置借方
+  FindCol:=FindDBColumn(DBGridEh1,'DEBIT_AMT');
+  if FindCol<>nil then FindCol.Visible:=AmtVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'DEBIT_PRICE');
+  if FindCol<>nil then FindCol.Visible:=PriVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'DEBIT_MNY');
+  if FindCol<>nil then
+  begin
+    if (not AmtVisible) and (not PriVisible) then //设置显示
+      FindCol.Title.Caption:='借方金额'
+    else
+      FindCol.Title.Caption:='借方|金额';
+  end;
+  //DBGridEh1设置贷方
+  FindCol:=FindDBColumn(DBGridEh1,'CREDIT_AMT');
+  if FindCol<>nil then FindCol.Visible:=AmtVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'CREDIT_PRICE');
+  if FindCol<>nil then FindCol.Visible:=PriVisible;
+  FindCol:=FindDBColumn(DBGridEh1,'CREDIT_MNY');
+  if FindCol<>nil then
+  begin
+    if (not AmtVisible) and (not PriVisible) then //设置显示
+      FindCol.Title.Caption:='贷方金额'
+    else
+      FindCol.Title.Caption:='贷方|金额';
+  end;
+end;
+
+procedure TfrmFvchOrder.SetParams;
+var
+  Rs: TZQuery;
+  SumAmt,SumPri: real;    
+begin
+  SumAmt:=0;
+  SumPri:=0;
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.Data:=CdsFvchData.Data;
+    if not Rs.IsEmpty then
+    begin
+      Rs.First;
+      while not Rs.Eof do
+      begin
+        SumAmt:=SumAmt+Rs.FieldByName('AMOUNT').AsFloat;
+        SumPri:=SumAmt+Rs.FieldByName('APRICE').AsFloat;
+        Rs.Next;
+      end;
+    end;     
+  finally
+    Rs.Free;
+  end;   
+  //设置控件显示
+  TopPnl3.Visible:=not CdsFvchDetail.IsEmpty;
+  TopPnl4.Visible:=not CdsFvchDetail.IsEmpty;
+  SetGridAmtPriceCol((SumAmt<>0),(SumPri<>0));
+  if (not TopPnl3.Visible) and (not TopPnl4.Visible) then TopPnl2.Align:=alClient;
 end;
 
 end.

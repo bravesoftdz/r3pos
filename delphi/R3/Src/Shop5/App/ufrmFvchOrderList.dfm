@@ -227,15 +227,6 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                   #31649#29702#32676#32452)
                 TabOrder = 6
               end
-              object Button1: TButton
-                Left = 456
-                Top = 8
-                Width = 75
-                Height = 25
-                Caption = #35814#32454
-                TabOrder = 7
-                OnClick = Button1Click
-              end
             end
             object Panel1: TPanel
               Left = 6

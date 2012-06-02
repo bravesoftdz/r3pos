@@ -44,7 +44,6 @@ type
     fndP1_DEPT_ID: TzrComboBoxList;
     fndP1_BILL_NAME: TcxComboBox;
     actFvch: TAction;
-    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
@@ -59,7 +58,6 @@ type
     procedure actFvchExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
   private
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
@@ -68,8 +66,7 @@ type
     MaxId:string;
     pid:string;
     locked:boolean;
-    procedure AddRecord(AObj:TRecord_);
-
+    procedure AddRecord(AObj:TRecord_);    
     function EncodeSQL(id:string;var w:string):string;
     procedure Open(Id:string);
   end;
@@ -123,7 +120,7 @@ begin
   begin
     try
       cid := cdsList.FieldbyName('SHOP_ID').AsString;
-      Open(cdsList.FieldByName('RECV_ID').AsString);
+      Open(cdsList.FieldByName('FVCH_ID').AsString);
       ShowModal;
     finally
       free;
@@ -427,21 +424,6 @@ procedure TfrmFvchOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   //
-end;
-
-procedure TfrmFvchOrderList.Button1Click(Sender: TObject);
-begin
-  inherited;
-  with TfrmFvchOrder.Create(self) do
-  begin
-    try
-      cid := cdsList.FieldbyName('SHOP_ID').AsString;
-      Open(cdsList.FieldByName('FVCH_ID').AsString);
-      ShowModal;
-    finally
-      free;
-    end;
-  end;  
 end;
 
 end.

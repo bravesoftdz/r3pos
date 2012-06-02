@@ -768,7 +768,7 @@ inherited frmFvchOrder: TfrmFvchOrder
               Font.Style = []
               ParentFont = False
             end
-            object edtGUIDE_USER: TzrComboBoxList
+            object edtCREA_USER: TzrComboBoxList
               Left = 57
               Top = 7
               Width = 133
@@ -818,8 +818,9 @@ inherited frmFvchOrder: TfrmFvchOrder
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Properties.DropDownListStyle = lsEditFixedList
               Properties.Items.Strings = (
-                #34892#25919#22320#21306
-                #31649#29702#32676#32452)
+                #26032#22686
+                #20462#25913
+                #24341#20837#23436#27605)
               TabOrder = 1
             end
             object edtFVCH_ATTACH: TcxSpinEdit

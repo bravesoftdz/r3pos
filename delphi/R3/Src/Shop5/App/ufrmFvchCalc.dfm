@@ -61,8 +61,8 @@ inherited frmFvchCalc: TfrmFvchCalc
         ParentFont = False
       end
       object labInfomation: TLabel
-        Left = 94
-        Top = 233
+        Left = 98
+        Top = 231
         Width = 24
         Height = 12
         Caption = '....'
@@ -154,7 +154,7 @@ inherited frmFvchCalc: TfrmFvchCalc
       Color = clWhite
       TabOrder = 1
       object btnStart: TRzBitBtn
-        Left = 153
+        Left = 161
         Top = 5
         Width = 72
         Height = 27
@@ -184,9 +184,9 @@ inherited frmFvchCalc: TfrmFvchCalc
   end
   object RzPanel7: TRzPanel [1]
     Left = 40
-    Top = 64
+    Top = 62
     Width = 310
-    Height = 160
+    Height = 164
     BorderOuter = fsNone
     BorderColor = clSilver
     BorderWidth = 1
@@ -196,7 +196,7 @@ inherited frmFvchCalc: TfrmFvchCalc
       Left = 1
       Top = 1
       Width = 308
-      Height = 158
+      Height = 162
       Align = alClient
       AllowedOperations = [alopUpdateEh]
       DataSource = Ds_BillName
@@ -212,6 +212,7 @@ inherited frmFvchCalc: TfrmFvchCalc
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+      PopupMenu = GridPm
       RowHeight = 18
       SumList.Active = True
       TabOrder = 0
@@ -267,16 +268,9 @@ inherited frmFvchCalc: TfrmFvchCalc
     Left = 16
     Top = 0
   end
-  object FvchOrder: TZQuery
-    FieldDefs = <>
-    CachedUpdates = True
-    Params = <>
-    Left = 15
-    Top = 369
-  end
   object Ds_BillName: TDataSource
-    Left = 16
-    Top = 104
+    Left = 8
+    Top = 136
   end
   object CdsFvchOrder: TZQuery
     FieldDefs = <>
@@ -305,5 +299,24 @@ inherited frmFvchCalc: TfrmFvchCalc
     Params = <>
     Left = 112
     Top = 277
+  end
+  object GridPm: TPopupMenu
+    Left = 58
+    Top = 83
+    object N2: TMenuItem
+      Caption = #20840#36873
+      ShortCut = 16449
+      OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = #20840#21453#36873
+      ShortCut = 16450
+      OnClick = N3Click
+    end
+    object N4: TMenuItem
+      Caption = #20840#19981#36873
+      ShortCut = 16452
+      OnClick = N4Click
+    end
   end
 end

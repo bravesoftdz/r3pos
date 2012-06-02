@@ -26,7 +26,6 @@ type
     P1_D2: TcxDateEdit;
     RzLabel1: TRzLabel;
     edt_Fvch_Type: TcxComboBox;
-    FvchOrder: TZQuery;
     CB_CHECK: TCheckBox;
     RzPanel7: TRzPanel;
     DBGridEh1: TDBGridEh;
@@ -35,21 +34,36 @@ type
     CdsFvchData: TZQuery;
     CdsFvchDetail: TZQuery;
     CdsFvchGlide: TZQuery;
+    GridPm: TPopupMenu;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
     procedure btnCancelClick(Sender: TObject);
     procedure btnStartClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
   private
-    FvchDataSQL: string;
-    FvchDetailSQL: string;
-    FvchGlideSQL: string;
+    //控制进度
+    FAllRecNo: integer; //所有记录
+    FCurRecNo: integer; //当前记录
+    
+    FvchDataSQL: WideString;
+    FvchDetailSQL: WideString;
+    FvchGlideSQL: WideString;
       
     Rs_BillName: TZQuery;
     Rs_FvchFrame: TZQuery;
+    Rs_FvchWhere: TZQuery;
     FPrgPercent: Integer;
     function  GetDeptID: string;
     function  GetBillName: Boolean;
     function  GetFvchName: Boolean;
     function  SetFvchNameFlag(const FVCH_GTYPE,SUBJECT_TYPE: string; var Rs_Fvch: TZQuery): Boolean;
+    function  GetGodsSORT_ID(const SWHERE_ID: string): string;
+    function  GetSQLCnd(const FieldType: Integer; const SWHERE_ID,Field_Name: string): string;
+    function  GetFvchWhereCnd(const SWHERE_ID: string): WideString;
     function  GetFvchDataSQL(const FvchObj: TRecord_; const vBegDate,vEndDate: string): Boolean;
     function  FillFvchData(const FVCH_GTYPE,SUBJECT_TYPE,BegDate,EndDate:string; var Sub_Mny:Currency): Boolean;
     function  StartCalcFvchOrder(const FVCH_GTYPE,BillName:string): Boolean;
@@ -76,7 +90,7 @@ var
   FVCH_GTYPE: string; //单据类型
   Rs_ChoiceBill: TZQuery;
 begin
-  if P1_D2.Date < P1_D1.Date then Raise Exception.Create(' 业务结束日期不能小于开始日期... '); 
+  if P1_D2.Date < P1_D1.Date then Raise Exception.Create(' 业务结束日期不能小于开始日期... ');
   btnStart.Enabled := False;
   try
     PB.Percent:=0;
@@ -85,13 +99,21 @@ begin
     Rs_ChoiceBill.Filtered:=False;
     Rs_ChoiceBill.Filter:='A=1';
     Rs_ChoiceBill.Filtered:=true;
+    //判断是否选择单据类型
+    if Rs_ChoiceBill.RecordCount=0 then Raise Exception.Create('  请先选择要生成的单据  ');
+    FAllRecNo:=Rs_ChoiceBill.RecordCount;
     Rs_ChoiceBill.First;
     while not Rs_ChoiceBill.Eof do
     begin
+      FCurRecNo:=Rs_ChoiceBill.RecNo; //设置当前进度
       labInfomation.Caption:='正在生成['+Rs_ChoiceBill.FieldByName('CODE_NAME').AsString+']...';
       FVCH_GTYPE:=trim(Rs_ChoiceBill.FieldByName('CODE_ID').AsString);
+
       //开始生成1类别的凭证
       StartCalcFvchOrder(FVCH_GTYPE,trim(Rs_ChoiceBill.FieldByName('CODE_NAME').AsString));
+
+      //补充一下进度
+      PB.Percent:=Round((100*Rs_ChoiceBill.RecNo)/Rs_ChoiceBill.RecordCount);
       Rs_ChoiceBill.Next;
     end;
   finally
@@ -104,10 +126,17 @@ begin
 end;
 
 procedure TfrmFvchCalc.SetPrgPercent(const Value: Integer);
+var
+  BigStep,SmallStep: Real;
 begin
   FPrgPercent := Value;
-  PB.Percent := Value;
-  Update;
+  if (FCurRecNo>0) and (FCurRecNo<=FAllRecNo) and (FPrgPercent>0) then
+  begin
+    BigStep:=RoundTo((100/FAllRecNo),-2); //进度条的步长
+    SmallStep:=RoundTo((BigStep/5)*FPrgPercent,-2);
+    PB.Percent:=Round(BigStep*(FCurRecNo-1)+SmallStep);
+    Update;
+  end;
 end;
 
 
@@ -120,6 +149,7 @@ begin
   //创建数据集对象
   Rs_BillName:=TZQuery.Create(self);
   Rs_FvchFrame:=TZQuery.Create(self);
+  Rs_FvchWhere:=TZQuery.Create(self);
 
   GetBillName; //取SQL;
   Ds_BillName.DataSet:=Rs_BillName;
@@ -149,6 +179,7 @@ begin
     InParams:=TftParamList.Create(nil);
     InParams.ParamByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
     InParams.ParamByName('FVCH_GTYPE').AsString:=FVCH_GTYPE;
+    SetPrgPercent(1);  //进度1111
     //本次实现1天1张凭证
     while (BegDate<EndDate) do
     begin
@@ -165,6 +196,7 @@ begin
         Factor.CancelBatch;
         Raise;
       end;
+      SetPrgPercent(2);  //进度2222
       //2、编辑凭证主表数据
       CdsFvchOrder.Append;
       CdsFvchOrder.FieldByName('TENANT_ID').AsInteger:=Global.TENANT_ID;
@@ -179,6 +211,7 @@ begin
 
       //3、开始填冲借方数据(借方[SUBJECT_TYPE='1'])
       FillFvchData(FVCH_GTYPE,'1',FormatDatetime('YYYYMMDD',BegDate),FormatDatetime('YYYYMMDD',EndDate),JieFangMny);
+      SetPrgPercent(3);  //进度3333
       //4、开始填冲贷方数据(贷方[SUBJECT_TYPE='2'])
       FillFvchData(FVCH_GTYPE,'2',FormatDatetime('YYYYMMDD',BegDate),FormatDatetime('YYYYMMDD',EndDate),DaiFangMny);
 
@@ -193,6 +226,7 @@ begin
         msg:=msg+'生成凭证借贷不平衡'+#13+'[借方:'+FormatFloat('#0.00',RoundTo(JieFangMny,-2))+'和贷方:'+FormatFloat('#0.00', RoundTo(DaiFangMny,-2))+']！ ';
         Raise Exception.Create(msg);
       end;
+      SetPrgPercent(4);  //进度4444
 
       //6、开始提交保存数据
       if CdsFvchData.RecordCount>0 then
@@ -209,6 +243,7 @@ begin
           Raise;
         end;
       end;
+      SetPrgPercent(5);  //进度5555  
       //日期+1天
       BegDate:=BegDate+1;
     end;
@@ -238,22 +273,22 @@ begin
    0,5:
     begin
       cxFields:=
-        ' substr(TAB_SQL,1,256)as SQL1 '+
-        ',substr(TAB_SQL,257,256)as SQL2'+
-        ',substr(TAB_SQL,513,256)as SQL3'+
-        ',substr(TAB_SQL,768,256)as SQL4'+
-        ',substr(TAB_SQL,1024,256)as SQL5'+
-        ',substr(TAB_SQL,1280,256)as SQL6'+
-        ',substr(TAB_SQL,1536,256)as SQL7'+
-        ',substr(TAB_SQL,1792,256)as SQL8'+
-        ',substr(TAB_SQL,2048,256)as SQL9'+
-        ',substr(TAB_SQL,2304,256)as SQL10'+
-        ',substr(TAB_SQL,2560,256)as SQL11'+
-        ',substr(TAB_SQL,2816,256)as SQL12'+
-        ',substr(TAB_SQL,3072,256)as SQL13'+
-        ',substr(TAB_SQL,3328,256)as SQL14'+
-        ',substr(TAB_SQL,3584,256)as SQL15'+
-        ',substr(TAB_SQL,3840,256)as SQL16 ';
+        ' substr(TAB_SQL,1,255)as SQL1 '+
+        ',substr(TAB_SQL,256,510)as SQL2'+
+        ',substr(TAB_SQL,512,256)as SQL3'+
+        ',substr(TAB_SQL,769,256)as SQL4'+
+        ',substr(TAB_SQL,1025,256)as SQL5'+
+        ',substr(TAB_SQL,1281,256)as SQL6'+
+        ',substr(TAB_SQL,1537,256)as SQL7'+
+        ',substr(TAB_SQL,1793,256)as SQL8'+
+        ',substr(TAB_SQL,2049,256)as SQL9'+
+        ',substr(TAB_SQL,2305,256)as SQL10'+
+        ',substr(TAB_SQL,2561,256)as SQL11'+
+        ',substr(TAB_SQL,2817,256)as SQL12'+
+        ',substr(TAB_SQL,3073,256)as SQL13'+
+        ',substr(TAB_SQL,3329,256)as SQL14'+
+        ',substr(TAB_SQL,3585,256)as SQL15'+
+        ',substr(TAB_SQL,3841,256)as SQL16 ';
     end;
    else
      cxFields:='TAB_SQL as SQL1 ';
@@ -269,41 +304,29 @@ end;
 function TfrmFvchCalc.GetFvchName: Boolean;
 var
   Str: widestring;
-  cxFields: widestring;
 begin
-  case Factor.iDbType of
-   0,5:
-    begin
-      cxFields:=
-        ' substr(SWHERE,1,256)as SQL1 '+
-        ',substr(SWHERE,257,256)as SQL2'+
-        ',substr(SWHERE,513,256)as SQL3'+
-        ',substr(SWHERE,768,256)as SQL4'+
-        ',substr(SWHERE,1024,256)as SQL5'+
-        ',substr(SWHERE,1280,256)as SQL6'+
-        ',substr(SWHERE,1536,256)as SQL7'+
-        ',substr(SWHERE,1792,256)as SQL8'+
-        ',substr(SWHERE,2048,256)as SQL9'+
-        ',substr(SWHERE,2304,256)as SQL10'+
-        ',substr(SWHERE,2560,256)as SQL11'+
-        ',substr(SWHERE,2816,256)as SQL12'+
-        ',substr(SWHERE,3072,256)as SQL13'+
-        ',substr(SWHERE,3328,256)as SQL14'+
-        ',substr(SWHERE,3584,256)as SQL15'+
-        ',substr(SWHERE,3840,256)as SQL16 ';
-    end;
-   else
-     cxFields:=' SWHERE as SQL1 ';
-  end;
-
   //判断是否定义凭证模板(ACC_FVCHFRAME)
   Str:=
-     'select FVCH_GTYPE,SEQNO,SUBJECT_NO,SUMMARY,AMONEY,AMOUNT,APRICE,'+cxFields+',DATAFLAG,SUBJECT_TYPE,SEQNO as FLAG from ACC_FVCHFRAME '+
+     'select FVCH_GTYPE,SEQNO,SUBJECT_NO,SUMMARY,AMONEY,AMOUNT,APRICE,SWHERE,DATAFLAG,SUBJECT_TYPE,SEQNO as FLAG from ACC_FVCHFRAME '+
      ' where TENANT_ID='+IntToStr(Global.TENANT_ID);
   Rs_FvchFrame.Close;
   Rs_FvchFrame.SQL.Text:=Str;
   Factor.Open(Rs_FvchFrame);
-  //if Rs_FvchFrame.RecordCount=0 then Raise Exception.Create(' 没有找到凭证模板... '); 
+
+  //取条件SQL:
+  Str:=
+    'select B.FVCH_GTYPE as FVCH_GTYPE'+     //单据类型
+          ',A.SWHERE as SWHERE'+             //条件ID
+          ',A.FIELD_NAME as FIELD_NAME'+     //字段名称
+          ',A.FIELD_EQUE as FIELD_EQUE'+     //条件关系
+          ',A.FIELD_VALUE as FIELD_VALUE'+   //字段值
+    ' from ACC_FVCHSWHERE A,ACC_FVCHFRAME B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SWHERE=B.SWHERE '+
+    ' order by B.FVCH_GTYPE';
+  Rs_FvchWhere.Close;
+  Rs_FvchWhere.SQL.Text:=Str;
+  Factor.Open(Rs_FvchWhere);
+  //if Rs_FvchFrame.RecordCount=0 then Raise Exception.Create(' 没有找到凭证模板... ');
 end;
 
 function TfrmFvchCalc.FillFvchData(const FVCH_GTYPE,SUBJECT_TYPE,BegDate,EndDate:string; var Sub_Mny:Currency): Boolean;
@@ -470,20 +493,247 @@ begin
   end;
 end;
 
+//返回查询条件
+function TfrmFvchCalc.GetSQLCnd(const FieldType: Integer; const SWHERE_ID,Field_Name: string): string;
+var
+  Value_IDS,CurValue: string;
+  PosIdx,Field_Eque: Integer;
+begin
+  result:='';
+  try
+    Value_IDS:='';
+    //过滤:(1)单据条件SWHERE;(2)字段名称FIELD_NAME;
+    Rs_FvchWhere.Filtered:=False;
+    Rs_FvchWhere.Filter:='SWHERE='''+trim(SWHERE_ID)+''' and FIELD_NAME='''+Field_Name+''' ';
+    Rs_FvchWhere.Filtered:=true;
+    if Rs_FvchWhere.RecordCount=0 then Exit; //没有条件则退出
+    if trim(UpperCase(Rs_FvchWhere.FieldbyName('FIELD_EQUE').AsString))='IN' then Field_Eque:=1 else Field_Eque:=-1;
+    //开始循环取条件值
+    Rs_FvchWhere.First;
+    while not Rs_FvchWhere.Eof do
+    begin
+      CurValue:=trim(Rs_FvchWhere.FieldbyName('FIELD_VALUE').AsString); //当前字段值
+      case FieldType of
+       0: if Value_IDS='' then Value_IDS:=CurValue else Value_IDS:=Value_IDS+','+CurValue;  //整型
+       1: if Value_IDS='' then Value_IDS:=CurValue else Value_IDS:=Value_IDS+','+CurValue;  //字符型
+      end;
+      Rs_FvchWhere.Next;
+    end;
+    //组合条件
+    case FieldType of
+     0: //整型
+      begin
+        case Field_Eque of
+         -1: //not in
+          begin
+            if Rs_FvchWhere.RecordCount=1 then //单条记录
+              result:='('+Field_Name+'<>'+Value_IDS+')'
+            else
+              result:='('+Field_Name+' not in ('+Value_IDS+'))';
+          end;
+           1: //in
+          begin
+            if Rs_FvchWhere.RecordCount=1 then //单条记录
+              result:='('+Field_Name+'='+Value_IDS+')'
+            else
+              result:='('+Field_Name+' in ('+Value_IDS+'))';
+          end;
+        end;
+      end;
+     1: //字符型
+      begin
+        case Field_Eque of
+         -1: //not in
+          begin
+            if Rs_FvchWhere.RecordCount=1 then //单条记录
+              result:='('+Field_Name+'<>'''+Value_IDS+''')'
+            else
+              result:='('+Field_Name+' not in('''+StringReplace(Value_IDS,',',''',''',[rfReplaceAll])+'''))';
+          end;
+           1: //in
+          begin
+            if Rs_FvchWhere.RecordCount=1 then //单条记录
+              result:='('+Field_Name+'='''+Value_IDS+''')'
+            else
+              result:='('+Field_Name+' in('''+StringReplace(Value_IDS,',',''',''',[rfReplaceAll])+'''))';
+          end;
+        end; //end case Field_Eque of
+      end; //end字符型
+    end; //end case FieldType of
+  finally
+    Rs_FvchWhere.Filtered:=False;
+    Rs_FvchWhere.Filter:='';      
+  end;
+end;
+
+//返回商品分类(SORT_ID1)
+function TfrmFvchCalc.GetGodsSORT_ID(const SWHERE_ID: string): string;
+var
+  Str: string;
+  CurID: string;
+  Rs_Sort: TZQuery;
+begin
+  result:='';
+  Str:='';
+  Rs_Sort:=Global.GetZQueryFromName('PUB_GOODSSORT');
+  if Rs_Sort=nil then Exit;
+  //过滤:(1)单据条件SWHERE;(2)字段名称FIELD_NAME;
+  Rs_FvchWhere.Filtered:=False;
+  Rs_FvchWhere.Filter:='SWHERE='''+trim(SWHERE_ID)+''' and FIELD_NAME=''SORT_ID1'' ';
+  Rs_FvchWhere.Filtered:=true;
+  if Rs_FvchWhere.RecordCount=0 then Exit; //没有条件则退出
+
+  //开始循环取条件值
+  Rs_FvchWhere.First;
+  while not Rs_FvchWhere.Eof do
+  begin
+    CurID:=trim(Rs_FvchWhere.FieldbyName('FIELD_VALUE').AsString); //当前字段值
+    if Rs_Sort.Locate('SORT_ID',CurID,[]) then
+    begin
+      if trim(Rs_Sort.FieldByName('LEVEL_ID').AsString)<>'' then
+      begin
+        if Str='' then
+          Str:='(LEVEL_ID like '''+trim(Rs_Sort.FieldByName('LEVEL_ID').AsString)+'%'')'
+        else
+          Str:=Str+' or (LEVEL_ID like '''+trim(Rs_Sort.FieldByName('LEVEL_ID').AsString)+'%'')';
+      end;
+    end;
+    Rs_FvchWhere.Next;
+  end;
+ 
+  if Rs_FvchWhere.RecordCount>1 then Str:='('+Str+')';
+  if Str<>'' then
+  begin
+    result:='(select SORT_ID from VIW_GOODSSORT where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and COMM not in (''02'',''12'') and SORT_TYPE=1 and '+Str+')';
+    if trim(UpperCase(Rs_FvchWhere.FieldbyName('FIELD_EQUE').AsString))='IN' then
+      result:=' SORT_ID1 in '+result 
+    else
+      result:=' SORT_ID1 not in '+result; 
+  end;
+end;
+
+function TfrmFvchCalc.GetFvchWhereCnd(const SWHERE_ID: string): WideString;
+ //设置当前单据有几个条件字段
+ function SetFvchFrameList(var FvchFrameList: TZQuery): Boolean;
+ var vRecNo: integer;
+ begin
+   result:=False;
+   try
+     //创建数据集
+     FvchFrameList.Close;
+     FvchFrameList.FieldDefs.Clear;
+     FvchFrameList.FieldDefs.Add('FIELD_ID',ftInteger,0,true);
+     FvchFrameList.FieldDefs.Add('FIELD_NAME',ftstring,30,true);
+     FvchFrameList.CreateDataSet;
+     //循环生成
+     Rs_FvchWhere.Filtered:=False;
+     Rs_FvchWhere.Filter:='SWHERE='''+trim(SWHERE_ID)+''' ';
+     Rs_FvchWhere.Filtered:=true;
+     Rs_FvchWhere.First;
+     while not Rs_FvchWhere.Eof do
+     begin
+       vRecNo:=FvchFrameList.RecordCount+1;
+       if not(FvchFrameList.Locate('FIELD_NAME',trim(Rs_FvchWhere.FieldByName('FIELD_NAME').AsString),[])) then
+       begin
+         FvchFrameList.Append;
+         FvchFrameList.FieldByName('FIELD_ID').AsInteger:=vRecNo+1;
+         FvchFrameList.FieldByName('FIELD_NAME').AsString:=trim(Rs_FvchWhere.FieldByName('FIELD_NAME').AsString);
+         FvchFrameList.Post;
+       end;
+       Rs_FvchWhere.Next;
+     end;
+     result:=true;
+   finally
+     Rs_FvchWhere.Filtered:=False;
+     Rs_FvchWhere.Filter:='';
+   end;
+ end;
+var
+  vCnd:string;
+  Field_Name:string; //字段名
+  Rs_FvchList:TZQuery; //1张凭证模板的字段条件List
+begin
+  result:='';
+  //组合SQL条件
+  try
+    Rs_FvchList:=TZQuery.Create(nil);
+    if SetFvchFrameList(Rs_FvchList) then //设置1条凭证模板内包含的条件字段
+    begin
+      //开始循环凭证模板字段条件
+      Rs_FvchList.First;   
+      while not Rs_FvchList.Eof do
+      begin
+        vCnd:='';
+        Field_Name:=trim(Rs_FvchList.FieldByName('FIELD_NAME').AsString); //字段名
+        //字段特殊处理:
+        if Field_Name='IS_PRESENT' then //整型字段
+          vCnd:=GetSQLCnd(0,SWHERE_ID,'IS_PRESENT')
+        else if Field_Name='SORT_ID1' then //商品分类[树型结构]
+          vCnd:=GetGodsSORT_ID(SWHERE_ID)
+        else //其他通用字段
+          vCnd:=GetSQLCnd(1,SWHERE_ID,Field_Name);
+          
+        if result='' then
+          result:=vCnd
+        else
+          result:=result+' and '+vCnd;
+        Rs_FvchList.Next;
+      end;
+    end; //条件字段循环 end
+    
+    if Rs_FvchList.RecordCount>1 then  result:='('+result+')';
+  finally
+    Rs_FvchList.Free;
+  end;
+end;
+
 function TfrmFvchCalc.GetFvchDataSQL(const FvchObj: TRecord_; const vBegDate,vEndDate:string): Boolean;
+  function GetViewTab(FVCH_GTYPE: string): string;
+  var str,Cnd,DateFields: string;
+  begin
+    result:='';
+    if Rs_BillName.Locate('FVCH_GTYPE',FVCH_GTYPE,[]) then
+    begin
+      case Factor.iDbType of
+       0,5:
+        begin
+          str:=
+             Rs_BillName.FieldByName('SQL1').AsString+Rs_BillName.FieldByName('SQL2').AsString+Rs_BillName.FieldByName('SQL3').AsString+
+             Rs_BillName.FieldByName('SQL4').AsString+Rs_BillName.FieldByName('SQL5').AsString+Rs_BillName.FieldByName('SQL6').AsString+
+             Rs_BillName.FieldByName('SQL7').AsString+Rs_BillName.FieldByName('SQL8').AsString+Rs_BillName.FieldByName('SQL9').AsString+
+             Rs_BillName.FieldByName('SQL10').AsString+Rs_BillName.FieldByName('SQL11').AsString+Rs_BillName.FieldByName('SQL12').AsString+
+             Rs_BillName.FieldByName('SQL13').AsString+Rs_BillName.FieldByName('SQL14').AsString+Rs_BillName.FieldByName('SQL15').AsString+
+             Rs_BillName.FieldByName('SQL16').AsString;
+        end;
+       else
+        str:=Rs_BillName.FieldByName('SQL1').AsString;
+      end;
+      //过滤企业条件
+      Cnd:=' and A.TENANT_ID='+IntToStr(Global.TENANT_ID);
+      //过滤业务日期条件
+      DateFields:=trim(Rs_BillName.FieldByName('DATE_FIELD').AsString);
+      if vBegDate<vEndDate then
+        Cnd:=Cnd+' and ('+DateFields+'>='+vBegDate+' and '+DateFields+'<='+vEndDate+')'
+      else
+        Cnd:=Cnd+' and '+DateFields+'='+vBegDate+' ';
+      result:='('+str+')';
+    end;
+  end;
 var
   str: string;
   Fields_mny: string;
   Fields_amt: string;
   Fields_price: string;
   cxFields,GroupFields: string;
-  ViwTab: string;
-  ViwCnd,WhereCnd: string;
+  ViwTab,ViwCnd: string;
+  WhereCnd,CurCnd: string;
   FilterCnd: string;
 begin
   Result:=False;
   ViwCnd:='';
   ViwTab:='';
+  CurCnd:='';
+  WhereCnd:='';
   cxFields:='';
   GroupFields:='';
   FvchDataSQL:='';              
@@ -520,77 +770,38 @@ begin
       Rs_FvchFrame.Filtered:=False;
       Rs_FvchFrame.Filter:=FilterCnd;
       Rs_FvchFrame.Filtered:=true;
+      FilterCnd:='';
       Rs_FvchFrame.First;
       while not Rs_FvchFrame.Eof do
       begin
-        case Factor.iDbType of
-         0,5:
-          begin
-            str:=
-              '('+Rs_FvchFrame.FieldByName('SQL1').AsString+Rs_FvchFrame.FieldByName('SQL2').AsString+Rs_FvchFrame.FieldByName('SQL3').AsString+
-                  Rs_FvchFrame.FieldByName('SQL4').AsString+Rs_FvchFrame.FieldByName('SQL5').AsString+Rs_FvchFrame.FieldByName('SQL6').AsString+
-                  Rs_FvchFrame.FieldByName('SQL7').AsString+Rs_FvchFrame.FieldByName('SQL8').AsString+Rs_FvchFrame.FieldByName('SQL9').AsString+
-                  Rs_FvchFrame.FieldByName('SQL10').AsString+Rs_FvchFrame.FieldByName('SQL11').AsString+Rs_FvchFrame.FieldByName('SQL12').AsString+
-                  Rs_FvchFrame.FieldByName('SQL13').AsString+Rs_FvchFrame.FieldByName('SQL14').AsString+Rs_FvchFrame.FieldByName('SQL15').AsString+
-                  Rs_FvchFrame.FieldByName('SQL16').AsString+')';
-          end;
-         else
-          str:='('+Rs_FvchFrame.FieldByName('SQL1').AsString+')';
+        CurCnd:=GetFvchWhereCnd(Rs_FvchFrame.FieldByName('SWHERE').AsString);
+        //连接条件
+        if CurCnd<>'' then
+        begin
+          if ViwCnd='' then
+            ViwCnd:=CurCnd
+          else
+            ViwCnd:=ViwCnd+' or '+CurCnd;
         end;
-        if ViwCnd='' then
-          ViwCnd:=str
-        else
-          ViwCnd:=ViwCnd+' or '+str;
         Rs_FvchFrame.Edit;
         Rs_FvchFrame.FieldByName('FLAG').AsInteger:=1; //设置取标记
         Rs_FvchFrame.Post;
         Rs_FvchFrame.Next;
       end;
-      //连接条件
-      if Rs_FvchFrame.RecordCount=1 then
-        ViwCnd:=' and '+ViwCnd+' '
-      else
-        ViwCnd:=' and ('+ViwCnd+') ';
-
-      //过滤企业条件
-      WhereCnd:=' where TENANT_ID='+IntToStr(Global.TENANT_ID);
-
-      //过滤业务日期条件
-      if vBegDate<vEndDate then
-      begin
-        WhereCnd:=WhereCnd+' and ('+Rs_BillName.FieldByName('DATE_FIELD').AsString+'>='+vBegDate+' and '
-                                   +Rs_BillName.FieldByName('DATE_FIELD').AsString+'<='+vEndDate+')';
-      end else
-        WhereCnd:=WhereCnd+' and '+Rs_BillName.FieldByName('DATE_FIELD').AsString+'='+vBegDate+' ';
-
-      WhereCnd:=WhereCnd+ViwCnd;
+      ViwCnd:=' where ('+ViwCnd+')';
     finally
       Rs_FvchFrame.Filtered:=False;
       Rs_FvchFrame.Filter:='';
     end;
-           
-    case Factor.iDbType of
-     0,5:
-      begin
-        str:=
-           Rs_BillName.FieldByName('SQL1').AsString+Rs_BillName.FieldByName('SQL2').AsString+Rs_BillName.FieldByName('SQL3').AsString+
-           Rs_BillName.FieldByName('SQL4').AsString+Rs_BillName.FieldByName('SQL5').AsString+Rs_BillName.FieldByName('SQL6').AsString+
-           Rs_BillName.FieldByName('SQL7').AsString+Rs_BillName.FieldByName('SQL8').AsString+Rs_BillName.FieldByName('SQL9').AsString+
-           Rs_BillName.FieldByName('SQL10').AsString+Rs_BillName.FieldByName('SQL11').AsString+Rs_BillName.FieldByName('SQL12').AsString+
-           Rs_BillName.FieldByName('SQL13').AsString+Rs_BillName.FieldByName('SQL14').AsString+Rs_BillName.FieldByName('SQL15').AsString+
-           Rs_BillName.FieldByName('SQL16').AsString;
-      end;
-     else
-      str:=Rs_BillName.FieldByName('SQL1').AsString;
-    end;
-    ViwTab:='('+str+')';
 
+    ViwTab:=GetViewTab(FvchObj.FieldByName('FVCH_GTYPE').AsString);
     //生成此条模板的凭证分录SQL
     FvchDataSQL:='select '+cxFields+' from '+ViwTab+' as tp '+ViwCnd;
 
     //生成插入单据关联(ACC_FVCHGLIDE)
-    FvchGlideSQL:=//'insert into ACC_FVCHGLIDE(TENANT_ID,FVCH_GLID,FVCH_ID,FVCH_GTYPE,FVCH_GID) '+
-      'select ORDER_ID from  '+ViwTab+' as tp '+ViwCnd+' and ORDER_ID not in (select FVCH_GID from ACC_FVCHGLIDE and FVCH_GTYPE='''+FvchObj.FieldByName('FVCH_GTYPE').AsString+''') ';
+    FvchGlideSQL:=
+      'select ORDER_ID from '+ViwTab+' as tp '+ViwCnd+
+      ' and ORDER_ID not in (select FVCH_GID from ACC_FVCHGLIDE and FVCH_GTYPE='''+FvchObj.FieldByName('FVCH_GTYPE').AsString+''')';
 
     //生成此条模板的凭证分录明细SQL[专项目前没有对应字段]
     FilterCnd:=trim(FvchObj.FieldByName('DATAFLAG').AsString);
@@ -622,6 +833,72 @@ begin
     else
       FvchDetailSQL:='select '+GroupFields+','+cxFields+' from '+ViwTab+' as tp '+ViwCnd+' group by '+GroupFields;
     result:=true;
+  end;
+end;
+
+procedure TfrmFvchCalc.N2Click(Sender: TObject);
+var
+  r:integer;
+begin
+  r := Rs_BillName.RecNo;
+  Rs_BillName.DisableControls;
+  try
+    Rs_BillName.First;
+    while not Rs_BillName.Eof do
+    begin
+      Rs_BillName.Edit;
+      Rs_BillName.FieldbyName('A').AsInteger := 1;
+      Rs_BillName.Post;
+      Rs_BillName.Next;
+    end;
+  finally
+    if r>0 then Rs_BillName.RecNo := r;
+    Rs_BillName.EnableControls;
+  end;
+end;
+
+procedure TfrmFvchCalc.N3Click(Sender: TObject);
+var
+  r:integer;
+begin
+  r := Rs_BillName.RecNo;
+  Rs_BillName.DisableControls;
+  try
+    Rs_BillName.First;
+    while not Rs_BillName.Eof do
+    begin
+      Rs_BillName.Edit;
+      if Rs_BillName.FieldbyName('A').AsInteger = 0 then
+         Rs_BillName.FieldbyName('A').AsInteger := 1
+      else
+         Rs_BillName.FieldbyName('A').AsInteger := 0 ;
+      Rs_BillName.Post;
+      Rs_BillName.Next;
+    end;
+  finally
+    if r>0 then Rs_BillName.RecNo := r;
+    Rs_BillName.EnableControls;
+  end;
+end;
+
+procedure TfrmFvchCalc.N4Click(Sender: TObject);
+var
+  r:integer;
+begin
+  r := Rs_BillName.RecNo;
+  Rs_BillName.DisableControls;
+  try
+    Rs_BillName.First;
+    while not Rs_BillName.Eof do
+    begin
+      Rs_BillName.Edit;
+      Rs_BillName.FieldbyName('A').AsInteger := 0;
+      Rs_BillName.Post;
+      Rs_BillName.Next;
+    end;
+  finally
+    if r>0 then Rs_BillName.RecNo := r;
+    Rs_BillName.EnableControls;
   end;
 end;
 

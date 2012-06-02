@@ -45,9 +45,11 @@ function TFvchOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   Fvch_Code: string;
 begin
-  Fvch_Code:=GetSequence(AGlobal,'GNO_11_'+Params.ParamByName('TENANT_ID').AsString,
-                         Params.ParamByName('TENANT_ID').AsString,
-                         Params.ParamByName('FVCH_GTYPE').AsString,6);
+  Fvch_Code:=
+    GetSequence(AGlobal,'GNO_11_'+Params.ParamByName('TENANT_ID').AsString,
+                Params.ParamByName('TENANT_ID').AsString,
+                Params.ParamByName('FVCH_GTYPE').AsString,
+                6);
   FieldbyName('FVCH_CODE').AsString := Fvch_Code;
   DataSet.Edit;
   DataSet.FieldByName('FVCH_CODE').AsString:=Fvch_Code;

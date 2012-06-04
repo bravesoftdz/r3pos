@@ -44,6 +44,7 @@ type
     fndP1_DEPT_ID: TzrComboBoxList;
     fndP1_BILL_NAME: TcxComboBox;
     actFvch: TAction;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
@@ -58,6 +59,7 @@ type
     procedure actFvchExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
@@ -247,7 +249,7 @@ begin
     ',A.CREA_USER'+
     ',A.FVCH_FLAG'+
     ',A.FVCH_IMPORT_ID '+
-    ',B.FVCH_GTYPE '+
+    ',B.FVCH_GTYPE as BILL_NAME '+
     ' from ACC_FVCHORDER A,ACC_FVCHGLIDE B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.FVCH_ID=B.FVCH_ID '+
     ' '+strWhere+ShopGlobal.GetDataRight('A.SHOP_ID',1)+ShopGlobal.GetDataRight('A.DEPT_ID',2)+' ';
@@ -424,6 +426,21 @@ procedure TfrmFvchOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   //
+end;
+
+procedure TfrmFvchOrderList.Button1Click(Sender: TObject);
+begin
+  if cdsList.IsEmpty then Exit;
+  with TfrmFvchOrder.Create(self) do
+  begin
+    try
+      cid := cdsList.FieldbyName('SHOP_ID').AsString;
+      Open(cdsList.FieldByName('FVCH_ID').AsString);
+      ShowModal;
+    finally
+      free;
+    end;
+  end;  
 end;
 
 end.

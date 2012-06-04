@@ -339,8 +339,8 @@ begin
       Rs.First;
       while not Rs.Eof do
       begin
-        SumAmt:=SumAmt+Rs.FieldByName('AMOUNT').AsFloat;
-        SumPri:=SumAmt+Rs.FieldByName('APRICE').AsFloat;
+        SumAmt:=SumAmt+abs(Rs.FieldByName('DEBIT_AMT').AsFloat)+abs(Rs.FieldByName('CREDIT_AMT').AsFloat);
+        SumPri:=SumAmt+abs(Rs.FieldByName('DEBIT_PRI').AsFloat)+abs(Rs.FieldByName('CREDIT_PRI').AsFloat);
         Rs.Next;
       end;
     end;     

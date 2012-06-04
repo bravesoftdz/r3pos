@@ -64,7 +64,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object Label1: TLabel
               Left = 228
               Top = 5
-              Width = 145
+              Width = 139
               Height = 24
               Anchors = [akLeft, akTop, akRight]
               Caption = #20973' '#35777' '#23450' '#20041
@@ -78,7 +78,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object Label2: TLabel
               Left = 221
               Top = 32
-              Width = 162
+              Width = 156
               Height = 12
               Anchors = [akLeft, akTop, akRight]
               Caption = '=========================='

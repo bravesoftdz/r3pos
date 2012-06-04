@@ -370,7 +370,7 @@ begin
   if edtSORT_ID.ItemIndex<0 then Exit;
   sCodeId := TRecord_(edtSORT_ID.Properties.Items.Objects[edtSORT_ID.ItemIndex]).FieldByName('CODE_ID').AsString;
   InitTree(sCodeId);
-  sName := sCodeId;
+  if IsIntStr(sCodeId) then sName := 'SORT_ID'+sCodeId else sName := sCodeId;
   locked := true;
   try
   if DataSet_Swhere.Locate('SWHERE,FIELD_NAME',VarArrayOf([sWhere,sName]),[]) then

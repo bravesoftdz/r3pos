@@ -115,11 +115,25 @@ procedure TfrmFvchFrameInfo.Save;
 var tmp:TZQuery;
     i,j:integer;
 begin
-  //Aobj.FieldByName('SUBJECT_TYPE').AsString := IntToStr(integer(edtSUBJECT_TYPE_1.Properties.Items.Objects[edtSUBJECT_TYPE_1.ItemIndex]));
-  //Aobj.FieldByName('DATAFLAG').AsString := DecodeDataFlag;
-  ClearNullRecord;
   cdsFvchFrame.DisableControls;
   try
+    j := cdsFvchFrame.RecNo;
+    cdsFvchFrame.First;
+    while not cdsFvchFrame.Eof do
+    begin
+      if (Trim(cdsFvchFrame.FieldByName('SUMMARY').AsString) = '') and (Trim(cdsFvchFrame.FieldByName('SUBJECT_NO').AsString) <> '') then
+      begin
+         j := cdsFvchFrame.RecNo;
+         Raise Exception.Create('序号"'+IntToStr(j)+'"中摘要不能为空!');
+      end;
+      if (Trim(cdsFvchFrame.FieldByName('SUBJECT_TYPE').AsString) = '') and (Trim(cdsFvchFrame.FieldByName('SUBJECT_NO').AsString) <> '') then
+      begin
+         j := cdsFvchFrame.RecNo;
+         Raise Exception.Create('序号"'+IntToStr(j)+'"中"贷方、借方"两者其一必填!');
+      end;
+      cdsFvchFrame.Next;
+    end;
+    ClearNullRecord;
     i := 0;
     cdsFvchFrame.First;
     while not cdsFvchFrame.Eof do
@@ -183,26 +197,15 @@ var i:Integer;
     rs:TZQuery;
 begin
   FFVCH_GTYPE := Value;
-  i := StrToIntDef(Value,1);
-  case i of
-    1:Label1.Caption := '采购订单模板';
-    2:Label1.Caption := '采购进货模板';
-    3:Label1.Caption := '采购退货模板';
-    4:Label1.Caption := '销售订单模板';
-    5:Label1.Caption := '销售出货模板';
-    6:Label1.Caption := '销售退货模板';
-    7:Label1.Caption := '领用单模板';
-    8:Label1.Caption := '损益单模板';
-    9:Label1.Caption := '收款单模板';
-    10:Label1.Caption := '付款单模板';
-    11:Label1.Caption := '零售单据模板';
-    12:Label1.Caption := '缴款单模板';
-    13:Label1.Caption := '其他收入模板';
-    14:Label1.Caption := '其他支出模板';
-    15:Label1.Caption := '存取款单模板';
-  end;
+
   rs := TZQuery.Create(nil);
   try
+    rs.Close;
+    rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''BILL_NAME'' and CODE_ID=:CODE_ID ';
+    rs.Params.ParamByName('CODE_ID').AsString := Value;
+    Factor.Open(rs);
+    Label1.Caption := rs.FieldByName('CODE_NAME').AsString+'模板';
+
     rs.Close;
     rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE ';
     rs.Params.ParamByName('TYPE_CODE').AsString := 'FVCH_DATA_'+Value;
@@ -278,6 +281,7 @@ begin
         Free;
       end;
     end;
+    DBGridEh1.Col := 0;
   end;
 end;
 
@@ -318,6 +322,7 @@ begin
 end;
 
 procedure TfrmFvchFrameInfo.InitRecord;
+var iFvch:Integer;
 begin
   if cdsFvchFrame.State in [dsEdit,dsInsert] then cdsFvchFrame.Post;
   cdsFvchFrame.DisableControls;
@@ -330,8 +335,21 @@ begin
       cdsFvchFrame.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       cdsFvchFrame.FieldByName('FVCH_GTYPE').AsString := FVCH_GTYPE;
       cdsFvchFrame.FieldByName('SWHERE').AsString := TSequence.NewId;
-      cdsFvchFrame.FieldByName('AMOUNT').AsString := 'CALC_AMOUNT';
-      cdsFvchFrame.FieldByName('APRICE').AsString := 'APRICE';
+      iFvch := StrToInt(FVCH_GTYPE);
+      case iFvch of
+        1,2,3,4,5,6,11:begin
+          cdsFvchFrame.FieldByName('AMOUNT').AsString := 'CALC_AMOUNT';
+          cdsFvchFrame.FieldByName('APRICE').AsString := 'APRICE';
+        end;
+        7,8:begin
+          cdsFvchFrame.FieldByName('AMOUNT').AsString := 'CALC_AMOUNT';
+          cdsFvchFrame.FieldByName('APRICE').AsString := '';
+        end;
+        9,10,12,13,14,15:begin
+          cdsFvchFrame.FieldByName('AMOUNT').AsString := '';
+          cdsFvchFrame.FieldByName('APRICE').AsString := '';
+        end;
+      end;
       cdsFvchFrame.FieldByName('DATAFLAG').AsString := '00000000';
       cdsFvchFrame.FieldByName('SUBJECT_NO').Value := null;
       cdsFvchFrame.FieldByName('SUMMARY').Value := null;
@@ -602,8 +620,26 @@ begin
 end;
 
 procedure TfrmFvchFrameInfo.DelRecord;
+var i:Integer;
 begin
-  if not cdsFvchFrame.IsEmpty then cdsFvchFrame.Delete;
+  if not cdsFvchFrame.IsEmpty then Exit;
+  i:=MessageBox(Handle,Pchar('确定要删除当前科目?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
+  if i <> 6 then Exit;
+  cdsFvchFrame.DisableControls;
+  try
+    CdsFvchSwhere.Filtered := False;
+    CdsFvchSwhere.Filter := 'SWHERE='+QuotedStr(cdsFvchFrame.FieldByName('SWHERE').AsString);
+    CdsFvchSwhere.Filtered := True;
+    if not CdsFvchSwhere.IsEmpty then
+    begin
+       CdsFvchSwhere.First;
+       while not CdsFvchSwhere.Eof do CdsFvchSwhere.Delete;
+    end;
+    cdsFvchFrame.Delete;
+  finally
+    CdsFvchSwhere.Filtered := False;
+    cdsFvchFrame.EnableControls;
+  end;
 end;
 
 procedure TfrmFvchFrameInfo.ClearNullRecord;
@@ -645,7 +681,7 @@ begin
     if cdsFvchFrame.Locate('SUBJECT_NO',sText,[]) then
     begin
        Text := '';
-       Raise Exception.Create('项目代码"'+sText+'"已经存在!');
+       Raise Exception.Create('科目代码"'+sText+'"已经存在!');
     end;
   finally
     cdsFvchFrame.RecNo := iRecNo;

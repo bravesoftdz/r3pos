@@ -111,6 +111,7 @@ begin
           Free;
         end;
      end;
+     DBGridEh1.Col := 0;  
   end;
 end;
 

@@ -67,9 +67,11 @@ begin
     ' ,j.CREA_USER,j.FVCH_FLAG,j.FVCH_CODE,j.FVCH_IMPORT_ID,j.COMM,j.TIME_STAMP'+
     ' ,a.SHOP_NAME as SHOP_ID_TEXT '+
     ' ,b.DEPT_NAME as DEPT_ID_TEXT '+
+    ' ,c.USER_NAME as CREA_USER_TEXT'+
     ' from ACC_FVCHORDER j '+
     ' left outer join CA_SHOP_INFO a on j.TENANT_ID=a.TENANT_ID and j.SHOP_ID=a.SHOP_ID '+
     ' left outer join CA_DEPT_INFO b on j.TENANT_ID=b.TENANT_ID and j.DEPT_ID=b.DEPT_ID '+
+    ' left outer join VIW_USERS c on j.TENANT_ID=c.TENANT_ID and j.CREA_USER=c.USER_ID '+
     ' where j.TENANT_ID=:TENANT_ID and j.FVCH_ID=:FVCH_ID and j.COMM not in (''02'',''12'') ';
 
   InsertSQL.Text :=
@@ -115,7 +117,13 @@ begin
   inherited;
   IsSQLUpdate := True;  
   SelectSQL.Text:=
-    'select TENANT_ID,SHOP_ID,FVCH_ID,FVCH_DID,SEQNO,SUBJECT_NO,SUMMARY,AMONEY,AMOUNT,APRICE,SUBJECT_TYPE,OPER_DATE '+
+    'select TENANT_ID,SHOP_ID,FVCH_ID,FVCH_DID,SEQNO,SUBJECT_NO,SUBJECT_TYPE,OPER_DATE,SUMMARY,AMONEY,AMOUNT,APRICE'+
+    ',(case when SUBJECT_TYPE=''1'' then AMONEY else null end)as DEBIT_MNY'+  //借方金额
+    ',(case when SUBJECT_TYPE=''1'' then AMOUNT else null end)as DEBIT_AMT'+  //借方数量
+    ',(case when SUBJECT_TYPE=''1'' then APRICE else null end)as DEBIT_PRI'+  //借方单价
+    ',(case when SUBJECT_TYPE=''2'' then AMONEY else null end)as CREDIT_MNY'+  //贷方金额
+    ',(case when SUBJECT_TYPE=''2'' then AMOUNT else null end)as CREDIT_AMT'+  //贷方数量
+    ',(case when SUBJECT_TYPE=''2'' then APRICE else null end)as CREDIT_PRI '+  //贷方单价
     ' from ACC_FVCHDATA where TENANT_ID=:TENANT_ID and FVCH_ID=:FVCH_ID ';
 
   InsertSQL.Text :=
@@ -142,25 +150,51 @@ begin
   inherited;
   IsSQLUpdate := True;
   SelectSQL.Text:=
-    'select TENANT_ID,SHOP_ID,FVCH_TID,FVCH_ID,FVCH_DID,SEQNO,SUBJ_USER,SUBJ_DEPT,SUBJ_SHOP,SUBJ_CLIENT,SUBJ_OTHR1,SUBJ_OTHR2,SUBJ_OTHR3,SUBJ_OTHR4,SUBJ_OTHR5,'+
-    'SUMMARY,AMONEY,AMOUNT,APRICE,OPER_DATE from ACC_FVCHDETAIL where TENANT_ID=:TENANT_ID and FVCH_ID=:FVCH_ID ';
+    'select A.TENANT_ID as TENANT_ID'+
+     ',A.SHOP_ID as SHOP_ID'+
+     ',A.FVCH_TID as FVCH_TID'+
+     ',A.FVCH_ID as FVCH_ID'+
+     ',A.FVCH_DID as FVCH_DID'+
+     ',A.SEQNO as SEQNO'+
+     ',A.SUBJ_USER as SUBJ_USER'+
+     ',A.SUBJ_DEPT as SUBJ_DEPT'+
+     ',A.SUBJ_SHOP as SUBJ_SHOP'+
+     ',A.SUBJ_CLIENT as SUBJ_CLIENT'+
+     ',A.SUBJ_OTHR1 as SUBJ_OTHR1'+
+     ',A.SUBJ_OTHR2 as SUBJ_OTHR2'+
+     ',A.SUBJ_OTHR3 as SUBJ_OTHR3'+
+     ',A.SUBJ_OTHR4 as SUBJ_OTHR4'+
+     ',A.SUBJ_OTHR5 as SUBJ_OTHR5'+
+     ',A.SUMMARY as SUMMARY'+
+     ',A.OPER_DATE as OPER_DATE'+
+     ',A.AMONEY as AMONEY'+
+     ',A.AMOUNT as AMOUNT'+
+     ',A.APRICE as APRICE'+
+     ',(case when B.SUBJECT_TYPE=''1'' then A.AMONEY else null end)as DEBIT_MNY'+  //借方金额
+     ',(case when B.SUBJECT_TYPE=''1'' then A.AMOUNT else null end)as DEBIT_AMT'+  //借方数量
+     ',(case when B.SUBJECT_TYPE=''1'' then A.APRICE else null end)as DEBIT_PRI'+  //借方单价
+     ',(case when B.SUBJECT_TYPE=''2'' then A.AMONEY else null end)as CREDIT_MNY'+  //贷方金额
+     ',(case when B.SUBJECT_TYPE=''2'' then A.AMOUNT else null end)as CREDIT_AMT'+  //贷方数量
+     ',(case when B.SUBJECT_TYPE=''2'' then A.APRICE else null end)as CREDIT_PRI '+  //贷方单价
+    '  from ACC_FVCHDETAIL A,ACC_FVCHDATA B '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.FVCH_ID=B.FVCH_ID and A.FVCH_DID=B.FVCH_DID and A.TENANT_ID=:TENANT_ID and A.FVCH_ID=:FVCH_ID ';
 
   InsertSQL.Text :=
-    'insert into ACC_FVCHDATA '+
+    'insert into ACC_FVCHDETAIL '+
     ' (TENANT_ID,SHOP_ID,FVCH_TID,FVCH_ID,FVCH_DID,SEQNO,SUBJ_USER,SUBJ_DEPT,SUBJ_SHOP,SUBJ_CLIENT,SUBJ_OTHR1,SUBJ_OTHR2,SUBJ_OTHR3,SUBJ_OTHR4,SUBJ_OTHR5,'+
       'SUMMARY,AMONEY,AMOUNT,APRICE,OPER_DATE) '+
     ' VALUES(:TENANT_ID,:SHOP_ID,:FVCH_TID,:FVCH_ID,:FVCH_DID,:SEQNO,:SUBJ_USER,:SUBJ_DEPT,:SUBJ_SHOP,:SUBJ_CLIENT,:SUBJ_OTHR1,:SUBJ_OTHR2,:SUBJ_OTHR3,:SUBJ_OTHR4,:SUBJ_OTHR5,'+
       ':SUMMARY,:AMONEY,:AMOUNT,:APRICE,:OPER_DATE)';
 
   UpdateSQL.Text :=
-    'update ACC_FVCHDATA '+
+    'update ACC_FVCHDETAIL '+
     ' set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,FVCH_TID=:FVCH_TID,FVCH_ID=:FVCH_ID,FVCH_DID=:FVCH_DID,SEQNO=:SEQNO,SUBJ_USER=:SUBJ_USER,SUBJ_DEPT=:SUBJ_DEPT,'+
       'SUBJ_SHOP=:SUBJ_SHOP,SUBJ_CLIENT=:SUBJ_CLIENT,SUBJ_OTHR1=:SUBJ_OTHR1,SUBJ_OTHR2=:SUBJ_OTHR2,SUBJ_OTHR3=:SUBJ_OTHR3,SUBJ_OTHR4=:SUBJ_OTHR4,SUBJ_OTHR5=:SUBJ_OTHR5,'+
       'SUMMARY=:SUMMARY,AMONEY=:AMONEY,AMOUNT=:AMOUNT,APRICE=:APRICE,OPER_DATE=:OPER_DATE '+
     ' where TENANT_ID=:OLD_TENANT_ID and FVCH_ID=:OLD_FVCH_ID and FVCH_DID=:OLD_FVCH_DID and FVCH_TID=:OLD_FVCH_TID and SEQNO=:OLD_SEQNO';
 
   DeleteSQL.Text :=
-    'delete from ACC_FVCHDATA where TENANT_ID=:OLD_TENANT_ID and FVCH_ID=:OLD_FVCH_ID and and FVCH_DID=:OLD_FVCH_DID and FVCH_TID=:OLD_FVCH_TID and SEQNO=:OLD_SEQNO';
+    'delete from ACC_FVCHDETAIL where TENANT_ID=:OLD_TENANT_ID and FVCH_ID=:OLD_FVCH_ID and and FVCH_DID=:OLD_FVCH_DID and FVCH_TID=:OLD_FVCH_TID and SEQNO=:OLD_SEQNO';
 end;
 
 { TFvchGlide }

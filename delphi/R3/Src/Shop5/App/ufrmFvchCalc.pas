@@ -266,10 +266,7 @@ var
 begin
   //取单据名称
   str:=
-    'select 0 as A,A.CODE_ID,A.CODE_NAME,DATE_FIELD,TAB_SQL1,TAB_SQL2,TAB_SQL3,TAB_SQL4,TAB_SQL5,TAB_SQL6,TAB_SQL7'+
-     ',TAB_SQL8,TAB_SQL9,TAB_SQL10,TAB_SQL11,TAB_SQL12,TAB_SQL13,TAB_SQL14,TAB_SQL15,TAB_SQL16,TAB_SQL17,TAB_SQL18 '+
-    ' from PUB_PARAMS A,ACC_FVCHDATA_SQL B '+
-    ' where A.CODE_ID=B.FVCH_GTYPE and A.TYPE_CODE=''BILL_NAME'' ';
+    'select 0 as A,CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''BILL_NAME'' ';
   Rs_BillName.Close;
   Rs_BillName.SQL.Text:=ParseSQL(Factor.iDbType, str);
   Factor.Open(Rs_BillName);

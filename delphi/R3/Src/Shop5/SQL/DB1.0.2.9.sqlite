@@ -1,3 +1,66 @@
+--序号
+alter table SAL_VOUCHERDATA add SEQNO int NOT NULL;
+
+
+--代金券领用
+drop table SAL_VHLEADDATA;
+CREATE TABLE [SAL_VHLEADDATA] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --领用单号
+	[VHLEAD_ID] [char] (36) NOT NULL ,
+        --领用的入库单号
+	[VOUCHER_ID] [varchar] (36) NOT NULL ,
+        --摘要
+        [SUMMARY] [varchar](100)   NOT NULL,
+        --领用张数
+	[AMOUNT] [decimal](18, 3) NULL ,
+        --面值
+	[VOUCHER_PRC] int NOT NULL ,
+        --面值金额
+	[VOUCHER_TTL] [decimal](18, 3) NULL ,
+	CONSTRAINT [PK_SAL_VHLEADDATA] PRIMARY KEY   
+	(
+		[TENANT_ID],[VHLEAD_ID],[BARCODE]
+	) 
+);
+
+CREATE INDEX IX_SAL_VHLEADDATA_TENANT_ID ON SAL_VHLEADDATA(TENANT_ID);
+CREATE INDEX IX_SAL_VHLEADDATA_VHLEAD_ID ON SAL_VHLEADDATA(TENANT_ID,VHLEAD_ID);
+
+
+--代金券发放
+CREATE TABLE [SAL_VHSENDDATA] (
+        --企业代码
+	[TENANT_ID] int NOT NULL ,
+        --发放单号
+	[VHSEND_ID] [char] (36) NOT NULL ,
+        --领用的入库单号
+	[VOUCHER_ID] [varchar] (36) NOT NULL ,
+        --防伪码--不记名时 为 #
+	[BARCODE] [varchar] (50) NOT NULL ,
+        --领用张数
+	[AMOUNT] [decimal](18, 3) NULL ,
+        --面值
+	[VOUCHER_PRC] int NOT NULL ,
+        --面值金额
+	[VOUCHER_TTL] [decimal](18, 3) NULL ,
+        --实收金额
+	[VOUCHER_MNY] [decimal](18, 3) NULL ,
+        --折扣率
+	[AGIO_RATE] [decimal](18, 3) NULL ,
+        --折扣额
+	[AGIO_MONEY] [decimal](18, 3) NULL ,
+	CONSTRAINT [PK_SAL_VHSEADDATA] PRIMARY KEY   
+	(
+		[TENANT_ID],[VHSEND_ID],[BARCODE]
+	) 
+);
+
+CREATE INDEX IX_SAL_VHSENDDATA_TENANT_ID ON SAL_VHSENDDATA(TENANT_ID);
+CREATE INDEX IX_SAL_VHSENDDATA_VHSEND_ID ON SAL_VHSENDDATA(TENANT_ID,VHSEND_ID);
+
+
 --凭证模块
 DROP TABLE ACC_FVCHFRAME;
 CREATE TABLE [ACC_FVCHFRAME] (
@@ -6,7 +69,7 @@ CREATE TABLE [ACC_FVCHFRAME] (
   --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单  11 零售单据 12缴款单 13 其他收入 14其他支出 15 存取款单
   [FVCH_GTYPE] [char](2)   NOT NULL,
   --序号
-	[SEQNO] [int] NOT NULL ,
+  [SEQNO] [int] NOT NULL ,
   --科目代码
   [SUBJECT_NO] [varchar](10)   NOT NULL,
   --摘要
@@ -57,10 +120,10 @@ CREATE INDEX IX_ACC_FVCHSWHERE_TENANT_ID ON ACC_FVCHSWHERE (TENANT_ID);
 CREATE INDEX IX_ACC_FVCHSWHERE_SWHERE ON ACC_FVCHSWHERE (TENANT_ID,SWHERE);
 
 --服务类型
-insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('19','活动组','INST_CLASS','00',5497000);
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('19','服务类型','INST_CLASS','00',5497000);
 
 --设备安装及维修记录
-  CREATE TABLE [SVC_INST_INFO] (
+CREATE TABLE [SVC_INST_INFO] (
         --企业代码
         [TENANT_ID] int  NOT NULL,
         --流水ID号(内码)

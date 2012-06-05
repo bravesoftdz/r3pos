@@ -1,3 +1,8 @@
+--有效期
+alter table SAL_VOUCHERORDER [VAILD_DATE] int NOT NULL;
+--礼券名称
+alter table SAL_VOUCHERORDER [VUCH_NAME] varchar(50) NOT NULL;
+
 --序号
 alter table SAL_VOUCHERDATA add SEQNO int NOT NULL;
 
@@ -83,7 +88,7 @@ CREATE TABLE [ACC_FVCHFRAME] (
   --取数条件=>ACC_FVCHSWHERE
   [SWHERE] [char](36) NULL,
   --分录明细 100000000 按位取数0代表不分细明1表代分明细(1人员 2部门 3门店<仓库> 4往来单位 其他分别为专项1-5)
-  [DATAFLAG] [varchar](8)   NOT NULL,
+  [DATAFLAG] [varchar](9)   NOT NULL,
   --记账方向  1借方 2贷方
   [SUBJECT_TYPE] [char](1) NOT NULL,
   CONSTRAINT [PK_ACC_FVCHFRAME] PRIMARY KEY 

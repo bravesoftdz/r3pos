@@ -6,12 +6,35 @@ uses
   SysUtils;
 
 
-
+function GetFrvhOrderIDField(const FVCH_GTYPE: string):string;
 function GetFrvhDateField(const FVCH_GTYPE: string):string;
 function GetFrvhViewSQL(const FVCH_GTYPE: string):wideString;
 
 
 implementation
+
+uses
+  uGlobal;
+
+function GetFrvhOrderIDField(const FVCH_GTYPE: string):string;
+var
+  Str: string;
+  FVCH_GTYPE_IDX: integer;
+begin
+  FVCH_GTYPE_IDX:=StrToIntDef(FVCH_GTYPE,0);
+  case FVCH_GTYPE_IDX of
+   1,4: Str:='A.INDE_ID';
+   2,3: Str:='A.STOCK_ID';
+   5,6,11:
+        Str:='A.SALES_ID';
+   7,8: Str:='A.CHANGE_ID';
+   9,12: Str:='A.RECV_ID';
+   10: Str:='A.PAY_ID';
+   13,14: Str:='A.IORO_ID';
+   15: Str:='A.TRANS_ID';
+  end;
+  result:=Str+' not in (select FVCH_GID from ACC_FVCHGLIDE where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and FVCH_GTYPE='''+FVCH_GTYPE+''') ';
+end;
 
 function GetFrvhDateField(const FVCH_GTYPE: string):string;
 var
@@ -19,21 +42,15 @@ var
 begin
   FVCH_GTYPE_IDX:=StrToIntDef(FVCH_GTYPE,0);
   case FVCH_GTYPE_IDX of
-   1:  result:='INDE_DATE';
-   2:  result:='STOCK_DATE';
-   3:  result:='STOCK_DATE';
-   4:  result:='INDE_DATE';
-   5:  result:='SALES_DATE';
-   6:  result:='SALES_DATE';
-   7:  result:='CHANGE_DATE';
-   8:  result:='CHANGE_DATE';
-   9:  result:='RECV_DATE';
-   10: result:='PAY_DATE';
-   11: result:='SALES_DATE';
-   12: result:='RECV_DATE';
-   13: result:='IORO_DATE';
-   14: result:='IORO_DATE';
-   15: result:='TRANS_DATE';
+   1,4:  result:='INDE_DATE';
+   2,3:  result:='STOCK_DATE';
+   5,6,11:
+         result:='SALES_DATE';
+   7,8:  result:='CHANGE_DATE';
+   9,12: result:='RECV_DATE';
+   10:   result:='PAY_DATE';
+   13,14:result:='IORO_DATE';
+   15:   result:='TRANS_DATE';
   end;
 end;
  

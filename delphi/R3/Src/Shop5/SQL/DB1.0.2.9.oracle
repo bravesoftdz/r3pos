@@ -1,132 +1,132 @@
 --有效期
-alter table SAL_VOUCHERORDER [VAILD_DATE] int NOT NULL;
+alter table SAL_VOUCHERORDER VAILD_DATE NUMBER(9,0) NOT NULL;
 --礼券名称
-alter table SAL_VOUCHERORDER [VUCH_NAME] varchar(50) NOT NULL;
+alter table SAL_VOUCHERORDER VUCH_NAME varchar2(50) NOT NULL;
 --序号
-alter table SAL_VOUCHERDATA add SEQNO int NOT NULL;
+alter table SAL_VOUCHERDATA add SEQNO NUMBER(9,0) NOT NULL;
 
 
 --代金券领用
 drop table SAL_VHLEADDATA;
-CREATE TABLE [SAL_VHLEADDATA] (
+CREATE TABLE SAL_VHLEADDATA (
         --企业代码
-	[TENANT_ID] int NOT NULL ,
+	TENANT_ID NUMBER(9,0) NOT NULL ,
         --领用单号
-	[VHLEAD_ID] [char] (36) NOT NULL ,
+	VHLEAD_ID char (36) NOT NULL ,
         --领用的入库单号
-	[VOUCHER_ID] [varchar] (36) NOT NULL ,
+	VOUCHER_ID varchar2 (36) NOT NULL ,
         --摘要
-        [SUMMARY] [varchar](100)   NOT NULL,
+        SUMMARY varchar2(100)   NOT NULL,
         --领用张数
-	[AMOUNT] [decimal](18, 3) NULL ,
+	AMOUNT decimal(18, 3) ,
         --面值
-	[VOUCHER_PRC] int NOT NULL ,
+	VOUCHER_PRC NUMBER(9,0) NOT NULL ,
         --面值金额
-	[VOUCHER_TTL] [decimal](18, 3) NULL ,
-	CONSTRAINT [PK_SAL_VHLEADDATA] PRIMARY KEY   
+	VOUCHER_TTL decimal(18, 3) ,
+	CONSTRAINT PK_SAL_VHLEADDATA PRIMARY KEY   
 	(
-		[TENANT_ID],[VHLEAD_ID],[BARCODE]
+		TENANT_ID,VHLEAD_ID,BARCODE
 	) 
 );
 
-CREATE INDEX IX_SAL_VHLEADDATA_TENANT_ID ON SAL_VHLEADDATA(TENANT_ID);
-CREATE INDEX IX_SAL_VHLEADDATA_VHLEAD_ID ON SAL_VHLEADDATA(TENANT_ID,VHLEAD_ID);
+CREATE INDEX IX_VLDD_TENANT_ID ON SAL_VHLEADDATA(TENANT_ID);
+CREATE INDEX IX_VLDD_VHLEAD_ID ON SAL_VHLEADDATA(TENANT_ID,VHLEAD_ID);
 
 
 --代金券发放
-CREATE TABLE [SAL_VHSENDDATA] (
+CREATE TABLE SAL_VHSENDDATA (
         --企业代码
-	[TENANT_ID] int NOT NULL ,
+	TENANT_ID NUMBER(9,0) NOT NULL ,
         --发放单号
-	[VHSEND_ID] [char] (36) NOT NULL ,
+	VHSEND_ID char (36) NOT NULL ,
         --领用的入库单号
-	[VOUCHER_ID] [varchar] (36) NOT NULL ,
+	VOUCHER_ID varchar2 (36) NOT NULL ,
         --防伪码--不记名时 为 #
-	[BARCODE] [varchar] (50) NOT NULL ,
+	BARCODE varchar2 (50) NOT NULL ,
         --领用张数
-	[AMOUNT] [decimal](18, 3) NULL ,
+	AMOUNT decimal(18, 3) ,
         --面值
-	[VOUCHER_PRC] int NOT NULL ,
+	VOUCHER_PRC NUMBER(9,0) NOT NULL ,
         --面值金额
-	[VOUCHER_TTL] [decimal](18, 3) NULL ,
+	VOUCHER_TTL decimal(18, 3) ,
         --实收金额
-	[VOUCHER_MNY] [decimal](18, 3) NULL ,
+	VOUCHER_MNY decimal(18, 3) ,
         --折扣率
-	[AGIO_RATE] [decimal](18, 3) NULL ,
+	AGIO_RATE decimal(18, 3) ,
         --折扣额
-	[AGIO_MONEY] [decimal](18, 3) NULL ,
-	CONSTRAINT [PK_SAL_VHSEADDATA] PRIMARY KEY   
+	AGIO_MONEY decimal(18, 3) ,
+	CONSTRAINT PK_SAL_VHSEADDATA PRIMARY KEY   
 	(
-		[TENANT_ID],[VHSEND_ID],[BARCODE]
+		TENANT_ID,VHSEND_ID,BARCODE
 	) 
 );
 
-CREATE INDEX IX_SAL_VHSENDDATA_TENANT_ID ON SAL_VHSENDDATA(TENANT_ID);
-CREATE INDEX IX_SAL_VHSENDDATA_VHSEND_ID ON SAL_VHSENDDATA(TENANT_ID,VHSEND_ID);
+CREATE INDEX IX_VSDD_TENANT_ID ON SAL_VHSENDDATA(TENANT_ID);
+CREATE INDEX IX_VSDD_VHSEND_ID ON SAL_VHSENDDATA(TENANT_ID,VHSEND_ID);
 
 --财务系统编码对照
-alter table CA_SHOP_INFO add SUBJECT_NO varchar(30) NULL;
-alter table CA_DEPT_INFO add SUBJECT_NO varchar(30) NULL;
-alter table CA_USERS add SUBJECT_NO varchar(30) NULL;
-alter table PUB_CLIENTINFO add SUBJECT_NO varchar(30) NULL;
+alter table CA_SHOP_INFO add SUBJECT_NO varchar2(30);
+alter table CA_DEPT_INFO add SUBJECT_NO varchar2(30);
+alter table CA_USERS add SUBJECT_NO varchar2(30);
+alter table PUB_CLIENTINFO add SUBJECT_NO varchar2(30);
 
 --凭证模块
 DROP TABLE ACC_FVCHFRAME;
-CREATE TABLE [ACC_FVCHFRAME] (
+CREATE TABLE ACC_FVCHFRAME (
   --企业代码
-  [TENANT_ID] int  NOT NULL,
+  TENANT_ID NUMBER(9,0)  NOT NULL,
   --单据类型 01采购订单 02采购进货 03采购退货 04 销售订单 05 销售出货 06销售退货 07领用单 08 损益单 09收款单 10 付款单  11 零售单据 12缴款单 13 其他收入 14其他支出 15 存取款单
-  [FVCH_GTYPE] [char](2)   NOT NULL,
+  FVCH_GTYPE char(2)   NOT NULL,
   --序号
-  [SEQNO] [int] NOT NULL ,
+  SEQNO NUMBER(9,0) NOT NULL ,
   --科目代码
-  [SUBJECT_NO] [varchar](10)   NOT NULL,
+  SUBJECT_NO varchar2(10)   NOT NULL,
   --摘要
-  [SUMMARY] [varchar](100)   NOT NULL,
+  SUMMARY varchar2(100)   NOT NULL,
         --金额<取数字段>
-	[AMONEY] [varchar](20) NULL,
+	AMONEY varchar2(20),
         --数量<取数字段>
-	[AMOUNT] [varchar](20) NULL,
+	AMOUNT varchar2(20),
         --单价<取数字段>
-	[APRICE] [varchar](20) NULL,
+	APRICE varchar2(20),
   --取数条件=>ACC_FVCHSWHERE
-  [SWHERE] [char](36) NULL,
+  SWHERE char(36),
   --分录明细 100000000 按位取数0代表不分细明1表代分明细(1人员 2部门 3门店<仓库> 4往来单位 其他分别为专项1-5)
-  [DATAFLAG] [varchar](9)   NOT NULL,
+  DATAFLAG varchar2(9)   NOT NULL,
   --记账方向  1借方 2贷方
-  [SUBJECT_TYPE] [char](1) NOT NULL,
-  CONSTRAINT [PK_ACC_FVCHFRAME] PRIMARY KEY 
+  SUBJECT_TYPE char(1) NOT NULL,
+  CONSTRAINT PK_ACC_FVCHFRAME PRIMARY KEY 
   ( 
-		[TENANT_ID],
-		[FVCH_GTYPE],
-    [SEQNO]
+		TENANT_ID,
+		FVCH_GTYPE,
+    SEQNO
   )
 );
-CREATE INDEX IX_ACC_FVCHFRAME_TENANT_ID ON ACC_FVCHFRAME (TENANT_ID);
-CREATE INDEX IX_ACC_FVCHFRAME_FVCH_GTYPE ON ACC_FVCHFRAME (TENANT_ID,FVCH_GTYPE);
+CREATE INDEX IX_FVFR_TENANT_ID ON ACC_FVCHFRAME (TENANT_ID);
+CREATE INDEX IX_FVFR_FVCH_GTYPE ON ACC_FVCHFRAME (TENANT_ID,FVCH_GTYPE);
 
 --凭证模块条件
-CREATE TABLE [ACC_FVCHSWHERE] (
+CREATE TABLE ACC_FVCHSWHERE (
   --企业代码
-  [TENANT_ID] int  NOT NULL,
+  TENANT_ID NUMBER(9,0)  NOT NULL,
   --行号
-  [SROW_ID] [char](36)   NOT NULL,
+  SROW_ID char(36)   NOT NULL,
   --条件ID
-  [SWHERE] [char](36)   NOT NULL,
+  SWHERE char(36)   NOT NULL,
   --条件字段
-  [FIELD_NAME] [varchar](30)   NOT NULL,
+  FIELD_NAME varchar2(30)   NOT NULL,
   --操作符 in 或 not in
-	[FIELD_EQUE] [varchar](6) NULL,
+	FIELD_EQUE varchar2(6),
   --字段值
-  [FIELD_VALUE] [varchar](50) NULL,
-  CONSTRAINT [PK_ACC_FVCHSWHERE] PRIMARY KEY 
+  FIELD_VALUE varchar2(50),
+  CONSTRAINT PK_ACC_FVCHSWHERE PRIMARY KEY 
   ( 
-		[TENANT_ID],
-		[SROW_ID]
+		TENANT_ID,
+		SROW_ID
   )
 );
-CREATE INDEX IX_ACC_FVCHSWHERE_TENANT_ID ON ACC_FVCHSWHERE (TENANT_ID);
-CREATE INDEX IX_ACC_FVCHSWHERE_SWHERE ON ACC_FVCHSWHERE (TENANT_ID,SWHERE);
+CREATE INDEX IX_FVFS_TENANT_ID ON ACC_FVCHSWHERE (TENANT_ID);
+CREATE INDEX IX_FVFS_SWHERE ON ACC_FVCHSWHERE (TENANT_ID,SWHERE);
 
 --单据类型
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('01','采购订单','BILL_NAME','00',5497000);
@@ -334,92 +334,6 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('SHOP
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('TRANS_USER','经手人','FVCH_WHERE_15','00',5497000);
 
 
--客户商品销售账
-drop table RCK_C_GOODS_DAYS ;
-CREATE TABLE RCK_C_GOODS_DAYS (
-        --企业代码
-	TENANT_ID int NOT NULL ,
-        --门店
-	SHOP_ID varchar (13) NOT NULL ,
-        --部门
-	DEPT_ID varchar (12) NOT NULL ,
-        --客户
-	CLIENT_ID varchar (36) NOT NULL ,
-        --销售日期
-	CREA_DATE int NOT NULL ,
-        --客户编码
-	GODS_ID char (36)  NOT NULL ,
-        --导购员
-        GUIDE_USER varchar (36) NOT NULL ,
-        --批号
-	BATCH_NO varchar (36) NOT NULL ,
-        --赠送标志
-        IS_PRESENT int NOT NULL ,
-        --销售方式
-	SALES_STYLE varchar (36) NOT NULL ,
-
---销售类台账	
-        --销售数量<含退货>
-	SALE_AMT decimal(18, 3)  null,
-        --可销售额<按零售价>
-	SALE_RTL decimal(18, 3)  null,
-        --让利金额<销售让利>
-	SALE_AGO decimal(18, 3)  null,
-        --销售金额<末税>
-	SALE_MNY decimal(18, 3)  null,
-        --销项税额
-	SALE_TAX decimal(18, 3)  null,
-        --销售成本
-	SALE_CST decimal(18, 3)  null,
-        --成本单价<移动加权成本>
-	COST_PRICE decimal(18, 6)  null,
-        --销售毛利
-	SALE_PRF decimal(18, 3)  null,
-	
-	
-        --其中退货数量
-	SALRT_AMT decimal(18, 3)  null,
-        --销售金额<末税>
-	SALRT_MNY decimal(18, 3)  null,
-        --销项税额
-	SALRT_TAX decimal(18, 3)  null,
-        --退货成本
-	SALRT_CST decimal(18, 3)  null,
-	
-	
-        --通讯标志
-	COMM varchar (2) NOT NULL DEFAULT '00',
-        --时间戳 
-        TIME_STAMP bigint NOT NULL
-);
-CREATE INDEX IX_RCK_C_GOODS_DAYS_TENANT_ID ON RCK_C_GOODS_DAYS(TENANT_ID);
-CREATE INDEX IX_RCK_C_GOODS_DAYS_TIME_STAMP ON RCK_C_GOODS_DAYS(TENANT_ID,TIME_STAMP);
-CREATE INDEX IX_RCK_C_GOODS_DAYS_CREA_DATE ON RCK_C_GOODS_DAYS(TENANT_ID,CREA_DATE);
-CREATE INDEX IX_RCK_C_GOODS_DAYS_GODS_ID ON RCK_C_GOODS_DAYS(TENANT_ID,GODS_ID);
-CREATE INDEX IX_RCK_C_GOODS_DAYS_CLIENT_ID ON RCK_C_GOODS_DAYS(TENANT_ID,CLIENT_ID);
-CREATE INDEX IX_RCK_C_GOODS_DAYS_DEPT_ID ON RCK_C_GOODS_DAYS(TENANT_ID,DEPT_ID);
-
-insert into RCK_C_GOODS_DAYS(TENANT_ID,SHOP_ID,DEPT_ID,GUIDE_USER,CLIENT_ID,CREA_DATE,GODS_ID,BATCH_NO,IS_PRESENT,SALES_STYLE,
-SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,COMM,TIME_STAMP) 
-select A.TENANT_ID,A.SHOP_ID,
-case when A.DEPT_ID is null then '#' else A.DEPT_ID end,
-case when A.GUIDE_USER is null then '#' else A.GUIDE_USER end,
-case when A.CLIENT_ID is null then '#' else A.CLIENT_ID end,
-A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT,
-case when A.SALES_STYLE is null then '#' else A.SALES_STYLE end, 
-sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,sum(A.NOTAX_MONEY) as SALE_MNY,sum(A.TAX_MONEY) as SALE_TAX, 
-sum(round(A.CALC_AMOUNT*B.COST_PRICE,2)) as SALE_CST,max(B.COST_PRICE) as COST_PRICE, 
-sum(A.NOTAX_MONEY-round(A.CALC_AMOUNT*B.COST_PRICE,2)) as SALE_PRF, 
-sum(case when A.SALES_TYPE=3 then A.CALC_AMOUNT else 0 end) as SALRT_AMT, 
-sum(case when A.SALES_TYPE=3 then A.NOTAX_MONEY else 0 end) as SALRT_MNY, 
-sum(case when A.SALES_TYPE=3 then A.TAX_MONEY else 0 end) as SALRT_TAX, 
-sum(case when A.SALES_TYPE=3 then round(A.CALC_AMOUNT*B.COST_PRICE,2) else 0 end) as SALRT_CST, 
-'00',strftime('%s','now','localtime')-1293840000 from VIW_SALESDATA A,RCK_GOODS_DAYS B 
-where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.SALES_DATE=B.CREA_DATE and A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO  
-group by A.TENANT_ID,A.SHOP_ID,
-case when A.GUIDE_USER is null then '#' else A.GUIDE_USER end,
-case when A.DEPT_ID is null then '#' else A.DEPT_ID end,
-case when A.CLIENT_ID is null then '#' else A.CLIENT_ID end,
-A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT,
-case when A.SALES_STYLE is null then '#' else A.SALES_STYLE end;
+--删除约束
+alter table RCK_C_GOODS_DAYS drop CONSTRAINT PK_RCK_C_G_DAYS;
 

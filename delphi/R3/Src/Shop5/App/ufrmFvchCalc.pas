@@ -672,6 +672,8 @@ function TfrmFvchCalc.GetFvchDataSQL(const FvchObj: TRecord_; const vBegDate,vEn
       Cnd:=Cnd+' and '+DateFields+'='+vBegDate+' '
     else
       Cnd:=Cnd+' and ('+DateFields+'>='+vBegDate+' and '+DateFields+'<='+vEndDate+')';
+    //过滤已经在关联单据中生成: ACC_FVCHGLIDE
+    Cnd:=Cnd+' and '+GetFrvhOrderIDField(FVCH_GTYPE);
     result:='('+GetFrvhViewSQL(FVCH_GTYPE)+Cnd+')';
   end;
 var
@@ -747,7 +749,7 @@ begin
       end;
       if Rs_FvchFrame.RecordCount=1 then
         ViwCnd:=' where '+ViwCnd
-      else
+      else if Rs_FvchFrame.RecordCount>1 then
         ViwCnd:=' where ('+ViwCnd+')';
     finally
       Rs_FvchFrame.Filtered:=False;

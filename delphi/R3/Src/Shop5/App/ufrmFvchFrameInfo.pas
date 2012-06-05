@@ -206,10 +206,9 @@ begin
     Label1.Caption := rs.FieldByName('CODE_NAME').AsString+'Ä£°å';
 
     rs.Close;
-    sSql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '+
-            ' union '+
-            ' select ''PAY_'' || CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID ';
-    rs.SQL.Text := ParseSQL(Factor.iDbType,sSql);
+    rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID not in (''CALC_AMOUNT'',''APRICE'',''COST_ APRICE'') '+
+            ' union all '+
+            ' select ''PAY_'' '+GetStrJoin(Factor.iDbType)+' CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID ';
     rs.Params.ParamByName('TYPE_CODE').AsString := 'FVCH_DATA_'+Value;
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(rs);
@@ -338,7 +337,7 @@ begin
       cdsFvchFrame.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       cdsFvchFrame.FieldByName('FVCH_GTYPE').AsString := FVCH_GTYPE;
       cdsFvchFrame.FieldByName('SWHERE').AsString := TSequence.NewId;
-      iFvch := StrToInt(FVCH_GTYPE);
+      {iFvch := StrToInt(FVCH_GTYPE);
       case iFvch of
         1,2,3,4,5,6,11:begin
           cdsFvchFrame.FieldByName('AMOUNT').AsString := 'CALC_AMOUNT';
@@ -352,7 +351,7 @@ begin
           cdsFvchFrame.FieldByName('AMOUNT').AsString := '';
           cdsFvchFrame.FieldByName('APRICE').AsString := '';
         end;
-      end;
+      end;}
       cdsFvchFrame.FieldByName('DATAFLAG').AsString := '00000000';
       cdsFvchFrame.FieldByName('SUBJECT_NO').Value := null;
       cdsFvchFrame.FieldByName('SUMMARY').Value := null;

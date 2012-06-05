@@ -245,106 +245,15 @@ begin
   begin
      Sql := 'select ''PAY_''||CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''0001'' as LEVEL_ID from VIW_PAYMENT where TENANT_ID=:TENANT_ID  ';
      Sql := ParseSQL(Factor.iDbType,Sql);
-  end;
+  end
+  else if TreeType = 'SALES_STYLE' then
+     Sql := 'select CODE_ID as DATA_OBJECT,CODE_NAME as DATA_NAME,''0001'' as LEVEL_ID  from PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''2'' and COMM not in (''02'',''12'')';
   Result := Sql;
 end;
 
 function TfrmFvchFrameDefine.GetListSql(FvchType: Integer): String;
 var Sql:String;
 begin
-  {if FvchType = '01' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '02' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '03' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '04' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '05' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '06' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '07' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '08' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '09' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
-  else if FvchType = '10' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
-  else if FvchType = '11' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
-            ' union all '+
-            'select CODE_ID,CODE_NAME from ( '+
-            'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
-            'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-            '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
-            ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
-            ' g where not(CODE_NAME like ''自定义%'') '
-  else if FvchType = '12' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
-  else if FvchType = '13' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
-  else if FvchType = '14' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '
-  else if FvchType = '15' then
-     Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE ';}
   case FvchType of
     0,1,2,3,4,5,6,7,8,11:
       Sql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID<>''SORT_ID'' '+
@@ -352,7 +261,7 @@ begin
       'select CODE_ID,CODE_NAME from ( '+
       'select j.CODE_ID,case when b.CODE_NAME is null then j.CODE_NAME else b.CODE_NAME end as CODE_NAME,'+
       'case when b.SEQ_NO is null then 0 else b.SEQ_NO end as SEQ_NO from PUB_PARAMS j left outer join '+
-      '(select CODE_ID,CODE_NAME,SEQ_NO from  PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
+      '(select CODE_ID,CODE_NAME,SEQ_NO from PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''16'') '+
       ' b on j.CODE_ID=b.CODE_ID where j.TYPE_CODE=''SORT_TYPE'') '+
       ' g where not(CODE_NAME like ''自定义%'') ';
     9,10,12,13,14,15:

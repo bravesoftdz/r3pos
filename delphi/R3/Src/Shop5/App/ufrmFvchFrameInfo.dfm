@@ -1,6 +1,6 @@
 inherited frmFvchFrameInfo: TfrmFvchFrameInfo
-  Left = 294
-  Top = 154
+  Left = 700
+  Top = 161
   Caption = #20973#35777#27169#22359#23450#20041
   ClientHeight = 392
   ClientWidth = 630
@@ -171,7 +171,6 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                   Title.Font.Name = #23435#20307
                   Title.Font.Style = []
                   Width = 120
-                  OnUpdateData = DBGridEh1Columns1UpdateData
                 end
                 item
                   EditButtons = <>

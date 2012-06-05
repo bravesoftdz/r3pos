@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, uframeDialogForm, ActnList, Menus, RzTabs, ExtCtrls, RzPanel,
   cxControls, cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  StdCtrls, RzLabel, RzButton, cxMemo, ZBase, DB, ZAbstractRODataset,
+  StdCtrls, RzLabel, RzButton, cxMemo, ZBase, DB, ZAbstractRODataset, ObjCommon,
   ZAbstractDataset, ZDataset, cxCheckBox, Grids, DBGridEh;
 
 type
@@ -53,8 +53,6 @@ type
     procedure edtAMONEY_2KeyPress(Sender: TObject; var Key: Char);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
-    procedure DBGridEh1Columns1UpdateData(Sender: TObject;
-      var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
     RowID:Integer;
@@ -195,6 +193,7 @@ end;
 procedure TfrmFvchFrameInfo.SetFVCH_GTYPE(const Value: String);
 var i:Integer;
     rs:TZQuery;
+    sSql:String;
 begin
   FFVCH_GTYPE := Value;
 
@@ -207,8 +206,12 @@ begin
     Label1.Caption := rs.FieldByName('CODE_NAME').AsString+'模板';
 
     rs.Close;
-    rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE ';
+    sSql := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '+
+            ' union '+
+            ' select ''PAY_'' || CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,sSql);
     rs.Params.ParamByName('TYPE_CODE').AsString := 'FVCH_DATA_'+Value;
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(rs);
     AddCbxPickList(edtAMONEY,'',rs);
     AddCbxPickList(edtAMONEY_2,'',rs);
@@ -665,30 +668,6 @@ begin
     if r>0 then cdsFvchFrame.RecNo := r;
     if not Controls then  cdsFvchFrame.EnableControls;
   end;
-end;
-
-procedure TfrmFvchFrameInfo.DBGridEh1Columns1UpdateData(Sender: TObject;
-  var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var sText:String;
-    iRecNo:Integer;
-begin
-  inherited;
-  if Trim(Text) = '' then Exit;
-  sText := Text;
-  iRecNo := cdsFvchFrame.RecNo;
-  cdsFvchFrame.DisableControls;
-  try
-    if cdsFvchFrame.Locate('SUBJECT_NO',sText,[]) then
-    begin
-       Text := '';
-       Raise Exception.Create('科目代码"'+sText+'"已经存在!');
-    end;
-  finally
-    cdsFvchFrame.RecNo := iRecNo;
-    cdsFvchFrame.EnableControls;
-  end;
-  Text := sText;
-  cdsFvchFrame.Edit;
 end;
 
 end.

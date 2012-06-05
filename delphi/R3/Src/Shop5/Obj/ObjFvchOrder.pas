@@ -115,7 +115,7 @@ var
   Str: string;
 begin
   inherited;
-  IsSQLUpdate := True;  
+  IsSQLUpdate := True;
   SelectSQL.Text:=
     'select TENANT_ID,SHOP_ID,FVCH_ID,FVCH_DID,SEQNO,SUBJECT_NO,SUBJECT_TYPE,OPER_DATE,SUMMARY,AMONEY,AMOUNT,APRICE'+
     ',(case when SUBJECT_TYPE=''1'' then AMONEY else null end)as DEBIT_MNY'+  //借方金额
@@ -170,12 +170,14 @@ begin
      ',A.AMONEY as AMONEY'+
      ',A.AMOUNT as AMOUNT'+
      ',A.APRICE as APRICE'+
+     {
      ',(case when B.SUBJECT_TYPE=''1'' then A.AMONEY else null end)as DEBIT_MNY'+  //借方金额
      ',(case when B.SUBJECT_TYPE=''1'' then A.AMOUNT else null end)as DEBIT_AMT'+  //借方数量
      ',(case when B.SUBJECT_TYPE=''1'' then A.APRICE else null end)as DEBIT_PRI'+  //借方单价
      ',(case when B.SUBJECT_TYPE=''2'' then A.AMONEY else null end)as CREDIT_MNY'+  //贷方金额
      ',(case when B.SUBJECT_TYPE=''2'' then A.AMOUNT else null end)as CREDIT_AMT'+  //贷方数量
      ',(case when B.SUBJECT_TYPE=''2'' then A.APRICE else null end)as CREDIT_PRI '+  //贷方单价
+     }
     '  from ACC_FVCHDETAIL A,ACC_FVCHDATA B '+
     ' where A.TENANT_ID=B.TENANT_ID and A.FVCH_ID=B.FVCH_ID and A.FVCH_DID=B.FVCH_DID and A.TENANT_ID=:TENANT_ID and A.FVCH_ID=:FVCH_ID ';
 
@@ -203,7 +205,7 @@ function TFvchGlide.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var
   Str: string;
 begin
-  //插入前做判断
+  //插入前做判断             
   try
     Str:='insert into ACC_FVCHGLIDE(TENANT_ID,FVCH_GLID,FVCH_ID,FVCH_GTYPE,FVCH_GID) values (:TENANT_ID,:FVCH_GLID,:FVCH_ID,:FVCH_GTYPE,:FVCH_GID)';
     AGlobal.ExecSQL(Str,self);

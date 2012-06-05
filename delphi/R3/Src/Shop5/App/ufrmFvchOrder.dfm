@@ -1,6 +1,6 @@
 inherited frmFvchOrder: TfrmFvchOrder
-  Left = 203
-  Top = 108
+  Left = 22
+  Top = 68
   Caption = #20973#35777
   ClientHeight = 589
   ClientWidth = 847

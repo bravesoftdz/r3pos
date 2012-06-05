@@ -2495,7 +2495,7 @@ begin
   AObj.CopyTo(SaveAObj);
   ShowHeader;
   //2011.11.14向双屏终端发送结算消息
-  PostPayMessage(SaveAObj);
+  //PostPayMessage(SaveAObj);
   dbState := dsBrowse;
 end;
 

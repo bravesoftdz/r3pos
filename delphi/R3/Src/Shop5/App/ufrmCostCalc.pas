@@ -2018,9 +2018,12 @@ begin
      Factor.ExecSQL(
      'insert into RCK_C_GOODS_DAYS(TENANT_ID,SHOP_ID,DEPT_ID,GUIDE_USER,SALES_STYLE,CLIENT_ID,CREA_DATE,GODS_ID,BATCH_NO,IS_PRESENT,'+
      'SALE_AMT,SALE_RTL,SALE_AGO,SALE_MNY,SALE_TAX,SALE_CST,COST_PRICE,SALE_PRF,SALRT_AMT,SALRT_MNY,SALRT_TAX,SALRT_CST,COMM,TIME_STAMP) '+
-     'select A.TENANT_ID,A.SHOP_ID,case when A.DEPT_ID is null then ''#'' else A.DEPT_ID end,'+
-     'case when A.GUIDE_USER is null then ''#'' else A.GUIDE_USER end,A.SALES_STYLE,'+
-     'case when A.CLIENT_ID is null then ''#'' else A.CLIENT_ID end,A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
+     'select A.TENANT_ID,A.SHOP_ID,'+
+     'case when A.DEPT_ID is null then ''#'' else A.DEPT_ID end,'+
+     'case when A.GUIDE_USER is null then ''#'' else A.GUIDE_USER end,'+
+     'case when A.SALES_STYLE is null then ''#'' else A.SALES_STYLE end,'+
+     'case when A.CLIENT_ID is null then ''#'' else A.CLIENT_ID end,'+
+     'A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT, '+
      'sum(A.CALC_AMOUNT) as SALE_AMT,sum(A.CALC_MONEY+A.AGIO_MONEY) as SALE_RTL,sum(A.AGIO_MONEY) as SALE_AGO,'+
      'sum(A.NOTAX_MONEY) as SALE_MNY,sum(A.TAX_MONEY) as SALE_TAX, '+
      'sum(round(A.CALC_AMOUNT*B.COST_PRICE,2)) as SALE_CST,max(B.COST_PRICE) as COST_PRICE, '+
@@ -2032,7 +2035,11 @@ begin
      '''00'','+GetTimeStamp(Factor.iDbType)+' from VIW_SALESDATA A,RCK_GOODS_DAYS B '+
      'where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.SALES_DATE=B.CREA_DATE and A.GODS_ID=B.GODS_ID and A.BATCH_NO=B.BATCH_NO and '+
      'A.TENANT_ID='+inttostr(Global.TENANT_ID)+' and A.SALES_DATE>'+formatDatetime('YYYYMMDD',cDate)+' '+
-     'group by A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,A.GUIDE_USER,A.SALES_STYLE,A.CLIENT_ID,A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT'
+     'group by A.TENANT_ID,A.SHOP_ID,A.DEPT_ID,'+
+     'case when A.GUIDE_USER is null then ''#'' else A.GUIDE_USER end,'+
+     'case when A.SALES_STYLE is null then ''#'' else A.SALES_STYLE end,'+
+     'case when A.CLIENT_ID is null then ''#'' else A.CLIENT_ID end'+
+     ',A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT'
      );
      if Factor.iDbType <> 5 then Factor.CommitTrans;
   except

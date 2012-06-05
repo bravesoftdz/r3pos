@@ -10,6 +10,7 @@ uses
   Grids, DBGridEh, DB, ZAbstractRODataset, ZAbstractDataset, ZDataset,
   cxCheckBox, RzLabel, cxSpinEdit;
 
+
 type
   TfrmFvchOrder = class(TframeDialogForm)
     btnOk: TRzBitBtn;

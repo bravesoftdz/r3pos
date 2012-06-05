@@ -61,7 +61,7 @@ begin
   inherited;
   ViwTab := ' select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE '+
             ' union all '+
-            ' select ''PAY_''||CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID';
+            ' select ''PAY_'''+GetStrJoin(iDbType)+'CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID';
             
   SelectSQL.Text := 'select A.TENANT_ID,A.FVCH_GTYPE,A.SEQNO,A.SUBJECT_NO,A.SUMMARY,A.AMONEY,A.AMOUNT,A.APRICE,A.SWHERE,A.DATAFLAG,A.SUBJECT_TYPE,'+
                     'case A.SUBJECT_TYPE when ''1'' then B.CODE_NAME when ''2'' then '''' end as SUBJECT_TYPE_1,'+

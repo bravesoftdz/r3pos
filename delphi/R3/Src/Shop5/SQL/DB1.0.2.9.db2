@@ -1,9 +1,9 @@
 --有效期
-alter table SAL_VOUCHERORDER VAILD_DATE int NOT NULL;
+alter table SAL_VOUCHERORDER add column VAILD_DATE int;
 --礼券名称
-alter table SAL_VOUCHERORDER VUCH_NAME varchar2(50) NOT NULL;
+alter table SAL_VOUCHERORDER add column VUCH_NAME varchar(50);
 --序号
-alter table SAL_VOUCHERDATA add SEQNO int NOT NULL;
+alter table SAL_VOUCHERDATA add column SEQNO int;
 
 
 --代金券领用
@@ -14,9 +14,9 @@ CREATE TABLE SAL_VHLEADDATA (
         --领用单号
 	VHLEAD_ID char (36) NOT NULL ,
         --领用的入库单号
-	VOUCHER_ID varchar2 (36) NOT NULL ,
+	VOUCHER_ID varchar (36) NOT NULL ,
         --摘要
-        SUMMARY varchar2(100)   NOT NULL,
+	SUMMARY varchar(100)   NOT NULL,
         --领用张数
 	AMOUNT decimal(18, 3) ,
         --面值
@@ -41,9 +41,9 @@ CREATE TABLE SAL_VHSENDDATA (
         --发放单号
 	VHSEND_ID char (36) NOT NULL ,
         --领用的入库单号
-	VOUCHER_ID varchar2 (36) NOT NULL ,
+	VOUCHER_ID varchar (36) NOT NULL ,
         --防伪码--不记名时 为 #
-	BARCODE varchar2 (50) NOT NULL ,
+	BARCODE varchar (50) NOT NULL ,
         --领用张数
 	AMOUNT decimal(18, 3) ,
         --面值
@@ -66,10 +66,10 @@ CREATE INDEX IX_VSDD_TENANT_ID ON SAL_VHSENDDATA(TENANT_ID);
 CREATE INDEX IX_VSDD_VHSEND_ID ON SAL_VHSENDDATA(TENANT_ID,VHSEND_ID);
 
 --财务系统编码对照
-alter table CA_SHOP_INFO add SUBJECT_NO varchar2(30);
-alter table CA_DEPT_INFO add SUBJECT_NO varchar2(30);
-alter table CA_USERS add SUBJECT_NO varchar2(30);
-alter table PUB_CLIENTINFO add SUBJECT_NO varchar2(30);
+alter table CA_SHOP_INFO add column SUBJECT_NO varchar(30);
+alter table CA_DEPT_INFO add column SUBJECT_NO varchar(30);
+alter table CA_USERS add column SUBJECT_NO varchar(30);
+alter table PUB_CLIENTINFO add column SUBJECT_NO varchar(30);
 
 --凭证模块
 DROP TABLE ACC_FVCHFRAME;
@@ -81,19 +81,19 @@ CREATE TABLE ACC_FVCHFRAME (
   --序号
   SEQNO int NOT NULL ,
   --科目代码
-  SUBJECT_NO varchar2(10)   NOT NULL,
+  SUBJECT_NO varchar(10)   NOT NULL,
   --摘要
-  SUMMARY varchar2(100)   NOT NULL,
+  SUMMARY varchar(100)   NOT NULL,
         --金额<取数字段>
-	AMONEY varchar2(20),
+	AMONEY varchar(20),
         --数量<取数字段>
-	AMOUNT varchar2(20),
+	AMOUNT varchar(20),
         --单价<取数字段>
-	APRICE varchar2(20),
+	APRICE varchar(20),
   --取数条件=>ACC_FVCHSWHERE
   SWHERE char(36),
   --分录明细 100000000 按位取数0代表不分细明1表代分明细(1人员 2部门 3门店<仓库> 4往来单位 其他分别为专项1-5)
-  DATAFLAG varchar2(9)   NOT NULL,
+  DATAFLAG varchar(9)   NOT NULL,
   --记账方向  1借方 2贷方
   SUBJECT_TYPE char(1) NOT NULL,
   CONSTRAINT PK_ACC_FVCHFRAME PRIMARY KEY 
@@ -115,11 +115,11 @@ CREATE TABLE ACC_FVCHSWHERE (
   --条件ID
   SWHERE char(36)   NOT NULL,
   --条件字段
-  FIELD_NAME varchar2(30)   NOT NULL,
+  FIELD_NAME varchar(30)   NOT NULL,
   --操作符 in 或 not in
-	FIELD_EQUE varchar2(6),
+	FIELD_EQUE varchar(6),
   --字段值
-  FIELD_VALUE varchar2(50),
+  FIELD_VALUE varchar(50),
   CONSTRAINT PK_ACC_FVCHSWHERE PRIMARY KEY 
   ( 
 		TENANT_ID,
@@ -337,4 +337,3 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('TRAN
 
 --删除约束
 alter table RCK_C_GOODS_DAYS drop CONSTRAINT PK_RCK_C_G_DAYS;
-

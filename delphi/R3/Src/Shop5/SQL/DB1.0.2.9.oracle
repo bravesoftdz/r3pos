@@ -1,7 +1,7 @@
 --有效期
-alter table SAL_VOUCHERORDER VAILD_DATE NUMBER(9,0) NOT NULL;
+alter table SAL_VOUCHERORDER add VAILD_DATE NUMBER(9,0) NOT NULL;
 --礼券名称
-alter table SAL_VOUCHERORDER VUCH_NAME varchar2(50) NOT NULL;
+alter table SAL_VOUCHERORDER add VUCH_NAME varchar2(50) NOT NULL;
 --序号
 alter table SAL_VOUCHERDATA add SEQNO NUMBER(9,0) NOT NULL;
 
@@ -84,11 +84,11 @@ CREATE TABLE ACC_FVCHFRAME (
   SUBJECT_NO varchar2(10)   NOT NULL,
   --摘要
   SUMMARY varchar2(100)   NOT NULL,
-        --金额<取数字段>
+	--金额<取数字段>
 	AMONEY varchar2(20),
-        --数量<取数字段>
+	--数量<取数字段>
 	AMOUNT varchar2(20),
-        --单价<取数字段>
+	--单价<取数字段>
 	APRICE varchar2(20),
   --取数条件=>ACC_FVCHSWHERE
   SWHERE char(36),
@@ -337,4 +337,3 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('TRAN
 
 --删除约束
 alter table RCK_C_GOODS_DAYS drop CONSTRAINT PK_RCK_C_G_DAYS;
-

@@ -1,7 +1,7 @@
 --有效期
-alter table SAL_VOUCHERORDER [VAILD_DATE] int NOT NULL;
+alter table SAL_VOUCHERORDER add VAILD_DATE int NOT NULL;
 --礼券名称
-alter table SAL_VOUCHERORDER [VUCH_NAME] varchar(50) NOT NULL;
+alter table SAL_VOUCHERORDER add VUCH_NAME varchar(50) NOT NULL;
 --序号
 alter table SAL_VOUCHERDATA add SEQNO int NOT NULL;
 
@@ -16,7 +16,7 @@ CREATE TABLE [SAL_VHLEADDATA] (
         --领用的入库单号
 	[VOUCHER_ID] [varchar] (36) NOT NULL ,
         --摘要
-        [SUMMARY] [varchar](100)   NOT NULL,
+	[SUMMARY] [varchar](100)   NOT NULL,
         --领用张数
 	[AMOUNT] [decimal](18, 3) NULL ,
         --面值
@@ -337,4 +337,3 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('TRAN
 
 --删除约束
 alter table RCK_C_GOODS_DAYS drop CONSTRAINT PK_RCK_C_G_DAYS;
-

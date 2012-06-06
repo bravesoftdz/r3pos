@@ -1,9 +1,9 @@
 --有效期
-alter table SAL_VOUCHERORDER [VAILD_DATE] int NOT NULL;
+alter table SAL_VOUCHERORDER add [VAILD_DATE] int NULL;
 --礼券名称
-alter table SAL_VOUCHERORDER [VUCH_NAME] varchar(50) NOT NULL;
+alter table SAL_VOUCHERORDER add [VUCH_NAME] varchar(50) NULL;
 --序号
-alter table SAL_VOUCHERDATA add SEQNO int NOT NULL;
+alter table SAL_VOUCHERDATA add [SEQNO] int NULL;
 
 
 --代金券领用
@@ -16,7 +16,7 @@ CREATE TABLE [SAL_VHLEADDATA] (
         --领用的入库单号
 	[VOUCHER_ID] [varchar] (36) NOT NULL ,
         --摘要
-        [SUMMARY] [varchar](100)   NOT NULL,
+	[SUMMARY] [varchar](100)   NOT NULL,
         --领用张数
 	[AMOUNT] [decimal](18, 3) NULL ,
         --面值
@@ -335,7 +335,7 @@ insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('SHOP
 insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('TRANS_USER','经手人','FVCH_WHERE_15','00',5497000);
 
 
--客户商品销售账
+--客户商品销售账
 drop table RCK_C_GOODS_DAYS ;
 CREATE TABLE RCK_C_GOODS_DAYS (
         --企业代码
@@ -351,15 +351,15 @@ CREATE TABLE RCK_C_GOODS_DAYS (
         --客户编码
 	GODS_ID char (36)  NOT NULL ,
         --导购员
-        GUIDE_USER varchar (36) NOT NULL ,
+	GUIDE_USER varchar (36) NOT NULL ,
         --批号
 	BATCH_NO varchar (36) NOT NULL ,
         --赠送标志
-        IS_PRESENT int NOT NULL ,
+	IS_PRESENT int NOT NULL ,
         --销售方式
 	SALES_STYLE varchar (36) NOT NULL ,
 
---销售类台账	
+	--销售类台账	
         --销售数量<含退货>
 	SALE_AMT decimal(18, 3)  null,
         --可销售额<按零售价>
@@ -375,9 +375,7 @@ CREATE TABLE RCK_C_GOODS_DAYS (
         --成本单价<移动加权成本>
 	COST_PRICE decimal(18, 6)  null,
         --销售毛利
-	SALE_PRF decimal(18, 3)  null,
-	
-	
+	SALE_PRF decimal(18, 3)  null,	
         --其中退货数量
 	SALRT_AMT decimal(18, 3)  null,
         --销售金额<末税>
@@ -385,13 +383,11 @@ CREATE TABLE RCK_C_GOODS_DAYS (
         --销项税额
 	SALRT_TAX decimal(18, 3)  null,
         --退货成本
-	SALRT_CST decimal(18, 3)  null,
-	
-	
+	SALRT_CST decimal(18, 3)  null,	
         --通讯标志
 	COMM varchar (2) NOT NULL DEFAULT '00',
         --时间戳 
-        TIME_STAMP bigint NOT NULL
+	TIME_STAMP bigint NOT NULL
 );
 CREATE INDEX IX_RCK_C_GOODS_DAYS_TENANT_ID ON RCK_C_GOODS_DAYS(TENANT_ID);
 CREATE INDEX IX_RCK_C_GOODS_DAYS_TIME_STAMP ON RCK_C_GOODS_DAYS(TENANT_ID,TIME_STAMP);
@@ -423,4 +419,3 @@ case when A.DEPT_ID is null then '#' else A.DEPT_ID end,
 case when A.CLIENT_ID is null then '#' else A.CLIENT_ID end,
 A.SALES_DATE,A.GODS_ID,A.BATCH_NO,A.IS_PRESENT,
 case when A.SALES_STYLE is null then '#' else A.SALES_STYLE end;
-

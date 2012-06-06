@@ -33,6 +33,19 @@ type
     procedure InitClass;override;
   end;
 
+  //凭证过账（审核）
+  TFvchAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  //凭证反过账（弃审）
+  TFvchUnAudit=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
+  
+
+
 
 implementation
 
@@ -217,6 +230,22 @@ end;
 procedure TFvchGlide.InitClass;
 begin
   SelectSQL.Text:='select TENANT_ID,FVCH_GLID,FVCH_ID,FVCH_GTYPE,FVCH_GID from ACC_FVCHGLIDE where TENANT_ID=:TENANT_ID and FVCH_ID=:FVCH_ID';
+end;
+
+{ TFvchAudit }
+
+function TFvchAudit.Execute(AGlobal: IdbHelp;Params: TftParamList): Boolean;
+var
+  
+begin
+  
+end;
+
+{ TFvchUnAudit }
+
+function TFvchUnAudit.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
+begin
+
 end;
 
 initialization

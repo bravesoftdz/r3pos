@@ -10,6 +10,8 @@ const
   WM_PLAY_INIT=WM_PLAY_ENDING+1;
   WM_LOGFILE_MSG=WM_PLAY_INIT+1;
   WM_PLAY_START=WM_LOGFILE_MSG+1;
+  WM_PLAY_END=WM_PLAY_START+1;
+  WM_PLAY_CLOSE=WM_PLAY_END+1;
 type
   TMonitorType=(mtNone,mtPhoto,mtText,mtVideo);
   TPlayStatus=(psNone,psPlaying,psEnded);
@@ -116,8 +118,11 @@ type
   end;
   TrzVideoMonitor=class(TrzMonitor)
   private
+    Handle:THandle;
     FilterGraph:TFilterGraph;
     procedure FilterGraphGraphComplete(sender: TObject;Result: HRESULT; Renderer: IBaseFilter);
+    procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
+    procedure WndProc(var Message: TMessage);
   public
     function Open(src:PSrcDefine):boolean;override;
     procedure Close;override;
@@ -173,6 +178,9 @@ type
     FProgramIndex: integer;
     F_Start: int64;
     Fended: boolean;
+    FMonitorLen: integer;
+    FVedioLen: integer;
+    FProgramCount: integer;
     procedure SetProgramId(const Value: string);
     procedure SetProgramLen(const Value: integer);
     procedure SetProgramSeq(const Value: integer);
@@ -183,8 +191,13 @@ type
     procedure SetProgramIndex(const Value: integer);
     procedure Set_Start(const Value: int64);
     procedure Setended(const Value: boolean);
+    procedure SetMonitorLen(const Value: integer);
+    procedure SetVedioLen(const Value: integer);
+    procedure SetProgramCount(const Value: integer);
   protected
     procedure TimerComplete(Sender:TObject);
+    function PlayEnd:boolean;
+    function PlayNext:boolean;
   public
     constructor Create(AOwner: TWinControl;PlayList:TrzPlayList);
     destructor Destroy; override;
@@ -199,6 +212,9 @@ type
     property ProgramId:string read FProgramId write SetProgramId;
     property ProgramSeq:integer read FProgramSeq write SetProgramSeq;
     property ProgramLen:integer read FProgramLen write SetProgramLen;
+    property ProgramCount:integer read FProgramCount write SetProgramCount;
+    property MonitorLen:integer read FMonitorLen write SetMonitorLen;
+    property VedioLen:integer read FVedioLen write SetVedioLen;
     property ScreenWidth:integer read FScreenWidth write SetScreenWidth;
     property ScreenHeight:integer read FScreenHeight write SetScreenHeight;
     property ProgramIndex:integer read FProgramIndex write SetProgramIndex;
@@ -227,6 +243,8 @@ type
     FPlayListIndex: integer;
     F_Start: Int64;
     FPlayTimes: integer;
+    FProgramLen: integer;
+    FPlayCount: integer;
     procedure SetPlayListId(const Value: string);
     procedure SetPlayListLen(const Value: integer);
     procedure SetPlayType(const Value: integer);
@@ -239,10 +257,13 @@ type
     procedure SetPlayListIndex(const Value: integer);
     procedure Set_Start(const Value: Int64);
     procedure SetPlayTimes(const Value: integer);
+    procedure SetProgramLen(const Value: integer);
+    procedure SetPlayCount(const Value: integer);
   protected
     procedure TimerComplete(Sender:TObject);
     procedure PlayNext;
     procedure Sort;
+    function PlayEnd:boolean;
   public
     constructor Create(AOwner: TWinControl;AFile:TrzFile);
     destructor Destroy; override;
@@ -257,7 +278,9 @@ type
 
     property PlayListId:string read FPlayListId write SetPlayListId;
     property PlayListLen:integer read FPlayListLen write SetPlayListLen;
+    property ProgramLen:integer read FProgramLen write SetProgramLen;
     property PlayType:integer read FPlayType write SetPlayType;
+    property PlayCount:integer read FPlayCount write SetPlayCount;
     property StartTime:string read FStartTime write SetStartTime;
     property PlayListSeq:integer read FPlayListSeq write SetPlayListSeq;
     property index:integer read Findex write Setindex;
@@ -310,6 +333,7 @@ type
     procedure Pause;
     procedure resume;
     procedure DoTimer;
+    procedure rePlay;
 
     property index:integer read Findex write Setindex;
     property ProgramListId:string read FProgramListId write SetProgramListId;
@@ -324,6 +348,9 @@ type
 TrzPlayIni=class
   private
     F:TIniFile;
+    FThreadLock:TRTLCriticalSection;
+    procedure Enter;
+    procedure Leave;
   public
     constructor Create;
     destructor Destroy; override;
@@ -334,6 +361,7 @@ TrzPlayIni=class
     procedure WriteString(Section, Ident:string;default:string);
     procedure WriteInteger(Section, Ident:string;default:integer);
     procedure EraseSection(Section:string);
+    procedure DeleteKey(Section, Ident:string);
   end;
 //FATAL、ERROR、WARN、INFO、 DEBUG、TRACE、ALL
 procedure SendDebug(s:string;flag:integer=0);
@@ -343,6 +371,7 @@ var
   log:TextFile;
   logFlag:string='110000';
   AppPath,AppData:string;
+  resDay:integer=30;
 implementation
 procedure SendDebug(s:string;flag:integer=0);
 var
@@ -386,8 +415,7 @@ begin
             closefile(log);
           end;
     end;
-  except
-  end;
+  except  end;
 end;
 procedure ClearDebug;
 var
@@ -403,7 +431,7 @@ begin
     if sText.Size<=1024*512 then Exit;
     sText.Position := sText.Size - 1024*512;
     nText.CopyFrom(sText,1024*512);
-    nText.SaveToFile(Filename); 
+    nText.SaveToFile(Filename);
   finally
     sText.Free;
     nText.Free;
@@ -494,14 +522,15 @@ end;
 
 procedure TrzMonitor.PlayEnded;
 begin
-  if SrcCount<=0 then exit;
-  index := index+1;
-  if index<0 then index := 0;
   if index=(flist.count-1) then
      begin
        Ended := true;
        inc(FplayTimes);
      end;
+  if rcProgram.PlayNext then Exit;
+  if SrcCount<=0 then exit;
+  index := index+1;
+  if index<0 then index := 0;
   if ended and (index=0) then  ended := false;
   Open(srcs[index]);
 end;
@@ -538,7 +567,6 @@ procedure TrzMonitor.Setindex(const Value: integer);
 begin
   Findex := Value;
   if findex>=flist.Count then findex := 0;
-//  Plays.WriteString('cache_program','')
 end;
 
 procedure TrzMonitor.Setleft(const Value: integer);
@@ -627,6 +655,7 @@ end;
 constructor TrzVideoMonitor.Create(AOwner: TWinControl);
 begin
   inherited;
+  Handle := AllocateHwnd(WndProc);
   FilterGraph := TFilterGraph.Create(nil);
   FilterGraph.OnGraphComplete := FilterGraphGraphComplete;
   display := TVideoWindow.Create(AOwner);
@@ -639,25 +668,31 @@ begin
        Parent := AOwner;
      end;
   MonitorType := mtVideo;
+  SendDebug('--------------------创建视屏--------------------',4);
 end;
 
 destructor TrzVideoMonitor.Destroy;
 begin
+  if Handle <> 0 then DeallocateHWnd(Handle);
   Close;
   display.Free;
   FilterGraph.Free;
+  SendDebug('====================释放视屏====================',4);
   inherited;
 end;
 
 procedure TrzVideoMonitor.FilterGraphGraphComplete(sender: TObject;
   Result: HRESULT; Renderer: IBaseFilter);
 begin
-  PlayEnded;
+  PostMessage(Handle,WM_PLAY_END,0,0);
 end;
 
 function TrzVideoMonitor.Open(src: PSrcDefine): boolean;
+var
+  hCurWindow,CurActiveWindow: HWnd;  // 窗口句柄
 begin
-  SendDebug('播放视屏<'+inttostr(index)+'>"'+src^.SourceId+'"',3);
+  SendDebug('第'+inttostr(playTimes+1)+'次播放视屏<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
+  hCurWindow:=GetActiveWindow();
   Timer.Enabled := false;
   display.Visible := true;
   display.BringToFront;
@@ -673,12 +708,15 @@ begin
         dpyStart := GetTickCount div 1000;
         dpyLength := src^.srcLength;
         _Start := GetTickCount;
-        DoTimer;
+        CurActiveWindow:=GetActiveWindow();
+        if CurActiveWindow<>hCurWindow then SetForegroundWindow(hCurWindow);
+        //DoTimer;
         result := true;
      end
   else
      Raise Exception.Create('"'+src^.src+'"视屏文件没找到');
   Plays.WriteInteger(rcProgram.rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(MonitorIdx),index);
+  Plays.WriteString('res',src^.SourceId,formatDatetime('YYYYMMDDHHNNSS',now()));
 end;
 
 procedure TrzVideoMonitor.Pause;
@@ -690,8 +728,18 @@ end;
 procedure TrzVideoMonitor.resume;
 begin
   inherited;
-  FilterGraph.Play;
+//  if FilterGraph.State<>gsPlaying then
+     FilterGraph.Play;
+end;
 
+procedure TrzVideoMonitor.WMPlayEnd(var Message: TMessage);
+begin
+  PlayEnded;
+end;
+
+procedure TrzVideoMonitor.WndProc(var Message: TMessage);
+begin
+  Dispatch(Message);
 end;
 
 { TrzPhotoMonitor }
@@ -716,18 +764,20 @@ begin
     end;
   TImage(display).Stretch := true;
   MonitorType := mtPhoto;
+  SendDebug('--------------------创建图片--------------------',4);
 end;
 
 destructor TrzPhotoMonitor.Destroy;
 begin
   Close;
   display.Free;
+  SendDebug('====================释放图片====================',4);
   inherited;
 end;
 
 function TrzPhotoMonitor.Open(src: PSrcDefine): boolean;
 begin
-  SendDebug('播放图片<'+inttostr(index)+'>"'+src^.SourceId+'"',3);
+  SendDebug('第'+inttostr(playTimes+1)+'次播放图片<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
   Timer.Enabled := false;
   TImage(display).Picture.LoadFromFile(src^.src);
   display.BringToFront;
@@ -738,6 +788,7 @@ begin
   DoTimer;
   result := true;
   Plays.WriteInteger(rcProgram.rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(MonitorIdx),index);
+  Plays.WriteString('res',src^.SourceId,formatDatetime('YYYYMMDDHHNNSS',now()));
 end;
 
 procedure TrzPhotoMonitor.Pause;
@@ -757,6 +808,8 @@ begin
   inherited;
   Timer.Enabled := false;
   TRzMarqueeStatus(display).Caption := '';
+  TRzMarqueeStatus(display).ScrollType := stNone;
+  TRzMarqueeStatus(display).Scrolling := false;
   display.Visible := false;
   index := -1;
 end;
@@ -772,12 +825,14 @@ begin
       frameStyle := fsNone;
     end;
   MonitorType := mtText;
+  SendDebug('--------------------创建字幕--------------------',4);
 end;
 
 destructor TrzTextMonitor.Destroy;
 begin
   Close;
   display.Free;
+  SendDebug('====================释放字幕====================',4);
   inherited;
 end;
 
@@ -807,7 +862,7 @@ end;
 
 function TrzTextMonitor.Open(src: PSrcDefine): boolean;
 begin
-  SendDebug('播放字幕<'+inttostr(index)+'>"'+src^.src+'"',3);
+  SendDebug('第'+inttostr(playTimes+1)+'次播放字幕<'+inttostr(index)+'>"'+src^.src+'"',4);
   Timer.Enabled := false;
   TRzMarqueeStatus(display).Caption := src^.src;
   display.BringToFront;
@@ -828,8 +883,12 @@ begin
        case src^.Effect of
        0:ScrollType := stLeftToRight;
        1:ScrollType := stRightToLeft;
-       2:ScrollType := stNone;
+       2:begin
+           ScrollType := stNone;
+           Alignment := taCenter;
+         end;
        end;
+       Scrolling := true;
      end;
   _Start := GetTickCount;
   DoTimer;
@@ -920,11 +979,17 @@ var
   LayoutStartX,LayoutEndX,LayoutStartY,LayoutEndY:integer;
   Video:TrzVideoMonitor;
   Src:PSrcDefine;
+  Volume:integer;
+  myLen:integer;
 begin
   LayoutStartX := StrtoIntDef(Root.selectSingleNode('layoutStartX').text,0);
   LayoutEndX := StrtoIntDef(Root.selectSingleNode('layoutEndX').text,0);
   LayoutStartY := StrtoIntDef(Root.selectSingleNode('layoutStartY').text,0);
   LayoutEndY := StrtoIntDef(Root.selectSingleNode('layoutEndY').text,0);
+  if Root.selectSingleNode('volume')<>nil then
+     Volume:= StrtoIntDef(Root.selectSingleNode('volume').text,-1)
+  else
+     Volume := -1;
 
   Video := TrzVideoMonitor.Create(Parant);
   Flist.Add(Video);
@@ -936,6 +1001,8 @@ begin
   Video.MonitorIdx := Flist.Count -1 ;
   Node := Root.selectSingleNode('videoList');
   Node := Node.firstChild;
+  myLen := 0;
+  VedioLen := 0;
   while Node<>nil do
     begin
       if Node.nodeName='video' then
@@ -943,25 +1010,31 @@ begin
            new(src);
            src^.SourceId := Node.selectSingleNode('videoId').text;
            src^.Sequence := StrtoIntDef(Node.selectSingleNode('sequence').text,0);
-           if Node.selectSingleNode('volume')<>nil then
-              src^.volume := StrtoIntDef(Node.selectSingleNode('volume').text,-1)
-           else
-              src^.volume := -1;
-           src^.srcLength := 0;
+           src^.volume := Volume;
            src^.src := AppData+'\res\vedio\'+Node.selectSingleNode('videoId').text+ExtractFileExt(Node.selectSingleNode('videoName').text);
+           if Node.selectSingleNode('showTime')<>nil then
+              src^.srcLength:= StrtoIntDef(Node.selectSingleNode('showTime').text,1)
+           else
+              src^.srcLength := 1;
            Video.AddSrc(src);
+           myLen := myLen + src^.srcLength;
+           VedioLen := VedioLen + src^.srcLength;
          end;
       Node := Node.nextSibling;
     end;
-  if (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_playlist_index',-1)=rzPlayList.PlayListIndex)
-      and
-     (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_program_index',-1)=ProgramIndex)
-  then
-     begin
-       Video.Findex := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(flist.Count-1),0)-1;
-       if Video.Findex >= (Video.SrcCount-1) then Video.Findex :=  -1;
-     end;
+  if myLen>MonitorLen then MonitorLen := myLen;
   Video.Sort;
+  if rzPlayList.PlayType = 0 then
+     begin
+      if (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_playlist_index',-1)=rzPlayList.PlayListIndex)
+          and
+         (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_program_index',-1)=ProgramIndex)
+      then
+         begin
+           Video.Findex := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(flist.Count-1),0)-1;
+           if Video.Findex >= (Video.SrcCount-1) then Video.Findex :=  -1;
+         end;
+     end;
 end;
 procedure AddPhoto(root: IXMLDOMNode);
 var
@@ -969,6 +1042,7 @@ var
   LayoutStartX,LayoutEndX,LayoutStartY,LayoutEndY:integer;
   Photo:TrzPhotoMonitor;
   Src:PSrcDefine;
+  myLen:integer;
 begin
   LayoutStartX := StrtoIntDef(Root.selectSingleNode('layoutStartX').text,0);
   LayoutEndX := StrtoIntDef(Root.selectSingleNode('layoutEndX').text,0);
@@ -983,6 +1057,7 @@ begin
   Photo.width := LayoutEndX-LayoutStartX;
   Photo.rcProgram := self;
   Photo.MonitorIdx := Flist.Count -1 ;
+  myLen := 0;
   Node := Root.selectSingleNode('photoList');
   Node := Node.firstChild;
   while Node<>nil do
@@ -996,25 +1071,40 @@ begin
            src^.srcLength := StrtoIntDef(Node.selectSingleNode('showTime').text,0);
            src^.Effect := StrtoIntDef(Node.selectSingleNode('effect').text,0);
            Photo.AddSrc(src);
+           myLen := myLen + src^.srcLength;
          end;
       Node := Node.nextSibling;
     end;
-  if (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_playlist_index',-1)=rzPlayList.PlayListIndex)
-      and
-     (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_program_index',-1)=ProgramIndex)
-  then
-     begin
-       Photo.Findex := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(flist.Count-1),0)-1;
-       if Photo.Findex >= (Photo.SrcCount-1) then Photo.Findex :=  -1;
-     end;
+  if myLen>MonitorLen then MonitorLen := myLen;
   Photo.Sort;
+  if rzPlayList.PlayType = 0 then
+    begin
+      if (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_playlist_index',-1)=rzPlayList.PlayListIndex)
+          and
+         (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_program_index',-1)=ProgramIndex)
+      then
+         begin
+           Photo.Findex := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(flist.Count-1),0)-1;
+           if Photo.Findex >= (Photo.SrcCount-1) then Photo.Findex :=  -1;
+         end;
+    end;
 end;
 procedure AddText(root: IXMLDOMNode);
+function ConvColor(s:string;def:integer):TColor;
+var
+  s1,s2,s3:string;
+begin
+  s1 := copy(s,1,2);
+  s2 := copy(s,3,2);
+  s3 := copy(s,5,2);
+  result := StrtoIntDef('$'+s3+s2+s1,$ffff);
+end;
 var
   Node:IXMLDOMNode;
   LayoutStartX,LayoutEndX,LayoutStartY,LayoutEndY:integer;
   Text:TrzTextMonitor;
   Src:PSrcDefine;
+  myLen:integer;
 begin
   LayoutStartX := StrtoIntDef(Root.selectSingleNode('layoutStartX').text,0);
   LayoutEndX := StrtoIntDef(Root.selectSingleNode('layoutEndX').text,0);
@@ -1029,6 +1119,7 @@ begin
   Text.width := LayoutEndX-LayoutStartX;
   Text.rcProgram := self;
   Text.MonitorIdx := Flist.Count -1 ;
+  myLen := 0;
   Node := Root.selectSingleNode('textList');
   Node := Node.firstChild;
   while Node<>nil do
@@ -1042,24 +1133,29 @@ begin
            src^.srcLength := StrtoIntDef(Node.selectSingleNode('showTime').text,0);
            src^.Effect := StrtoIntDef(Node.selectSingleNode('effect').text,0);
            src^.FontSize := StrtoIntDef(Node.selectSingleNode('fontSize').text,12);
-           src^.FontColor := StrtoIntDef(Node.selectSingleNode('fontColor').text,$0);
-           src^.BackColor := StrtoIntDef(Node.selectSingleNode('backColor').text,$ffff);
+           src^.FontColor := ConvColor(Node.selectSingleNode('fontColor').text,$0);
+           src^.BackColor := ConvColor(Node.selectSingleNode('backColor').text,$ffff);
            src^.ScrollSpeed := StrtoIntDef(Node.selectSingleNode('scrollSpeed').text,100);
            src^.FontName := Node.selectSingleNode('fontName').text;
            src^.CharSet := StrtoIntDef(Node.selectSingleNode('charSet').text,0);
            Text.AddSrc(src);
+           myLen := myLen + src^.srcLength;
          end;
       Node := Node.nextSibling;
     end;
-  if (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_playlist_index',-1)=rzPlayList.PlayListIndex)
-      and
-     (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_program_index',-1)=ProgramIndex)
-  then
-     begin
-       Text.Findex := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(flist.Count-1),0)-1;
-       if Text.Findex >= (Text.SrcCount-1) then Text.Findex :=  -1;
-     end;
+  if myLen>MonitorLen then MonitorLen := myLen;
   Text.Sort;
+  if rzPlayList.PlayType=0 then
+     begin
+        if (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_playlist_index',-1)=rzPlayList.PlayListIndex)
+            and
+           (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_program_index',-1)=ProgramIndex)
+        then
+           begin
+             Text.Findex := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(flist.Count-1),0)-1;
+             if Text.Findex >= (Text.SrcCount-1) then Text.Findex :=  -1;
+           end;
+     end;
 end;
 var
   Node:IXMLDOMNode;
@@ -1072,6 +1168,10 @@ begin
   ScreenWidth := StrtoIntDef(trim(copy(ScreenSize,1,w-1)),1024);
   ScreenHeight := StrtoIntDef(trim(copy(ScreenSize,w+1,255)),768);
   Parant.SetBounds(Parant.left,Parant.top,ScreenWidth,ScreenHeight);
+  programCount := StrtoIntDef(Root.selectSingleNode('programCount').text,1);
+  programLen := StrtoIntDef(Root.selectSingleNode('programLen').text,0);
+  programSeq := StrtoIntDef(Root.selectSingleNode('programSeq').text,0);
+  programId := Root.selectSingleNode('programId').text;
   //初始化图片
   Node := Root.selectSingleNode('photoElList');
   if Node<>nil then
@@ -1128,20 +1228,24 @@ end;
 procedure TrzProgram.Play;
 var
   i:integer;
+  _playTimes:integer;
 begin
   Timer.Enabled := false;
-  Timer.Interval := ProgramLen*1000 - Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_program_length',0);
-  SendDebug('节目时长<'+inttostr(Timer.Interval)+'>微秒',3);
+  if rzPlayList.playType=0 then
+     _playTimes := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_program_length',0);
+  SendDebug('第'+inttostr(rzPlayList.PlayTimes)+'次节目"'+programId+'" ====== 时长<'+inttostr(Timer.Interval)+'>微秒',4);
   ended := false;
   for i:=0 to flist.Count -1 do
     begin
       with TrzMonitor(flist[i]) do
         begin
+          playTimes := _playTimes;
           if SrcCount<=0 then continue;
-          if index=0 then playTimes := 0;
+          //if index=0 then playTimes := 0;
           index := index+1;
           try
             Ended := false;
+            if index<0 then index := 0;
             Open(srcs[index]);
           except
             on E:Exception do
@@ -1154,6 +1258,93 @@ begin
     end;
   _Start := GetTickCount;
   Timer.Enabled := true;
+end;
+
+function TrzProgram.PlayEnd: boolean;
+var
+  i:integer;
+  myTimes:integer;
+begin
+  result := false;
+  {
+  if VedioLen=0 then //没有视屏时按最长资源
+     begin
+        if monitorLen<>0 then
+           begin
+             myTimes := programLen div monitorLen;
+             if (programLen mod monitorLen)<>0 then inc(myTimes);
+           end
+        else
+           myTimes := 0;
+        Plays.WriteInteger(rzPlayList.rzFile.ProgramListId,'cache_program_Length',myTimes);
+        for i:=0 to flist.Count-1 do
+          begin
+             if (TrzMonitor(flist[i]).playTimes<myTimes) and (TrzMonitor(flist[i]).SrcCount>0) then Exit;
+          end;
+     end
+  else
+     begin
+        if VedioLen<>0 then
+           begin
+             myTimes := programLen div VedioLen;
+             if (programLen mod VedioLen)<>0 then inc(myTimes);
+           end
+        else
+           myTimes := 0;
+        Plays.WriteInteger(rzPlayList.rzFile.ProgramListId,'cache_program_Length',myTimes);
+        for i:=0 to flist.Count-1 do
+          begin
+             if (TrzMonitor(flist[i]).MonitorType=mtVideo) and (TrzMonitor(flist[i]).SrcCount>0) and (TrzMonitor(flist[i]).playTimes<myTimes) then Exit;
+          end;
+     end;
+  }
+  myTimes := 999999999;
+  for i:=0 to flist.Count-1 do
+    begin
+       if VedioLen=0 then
+          begin
+            if TrzMonitor(flist[i]).playTimes<myTimes then
+               begin
+                 myTimes := TrzMonitor(flist[i]).playTimes;
+                 if rzPlayList.PlayType=0 then
+                    Plays.WriteInteger(rzPlayList.rzFile.ProgramListId,'cache_program_Length',myTimes);
+               end;
+            if (TrzMonitor(flist[i]).SrcCount>0) and (TrzMonitor(flist[i]).playTimes<programCount) then Exit;
+          end
+       else
+          begin
+            if (TrzMonitor(flist[i]).MonitorType=mtVideo) and (TrzMonitor(flist[i]).playTimes<myTimes) then
+               begin
+                 myTimes := TrzMonitor(flist[i]).playTimes;
+                 if rzPlayList.PlayType=0 then
+                    Plays.WriteInteger(rzPlayList.rzFile.ProgramListId,'cache_program_Length',myTimes);
+               end;
+            if (TrzMonitor(flist[i]).MonitorType=mtVideo) and (TrzMonitor(flist[i]).SrcCount>0) and (TrzMonitor(flist[i]).playTimes<programCount) then Exit;
+          end;
+    end;
+  result := true;
+end;
+
+function TrzProgram.PlayNext:boolean;
+var i:integer;
+begin
+  result := PlayEnd;
+  if result then
+     begin
+        for i:=0 to flist.Count -1 do
+          begin
+            with TrzMonitor(flist[i]) do
+              begin
+                Plays.DeleteKey(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(i));
+              end;
+          end;
+        Close;
+        ended := true;
+        if rzPlayList.PlayType=0 then
+           Plays.WriteInteger(rzPlaylist.rzFile.ProgramListId,'cache_program_Length',0);
+        //SendDebug('节目"'+programId+'" 播放结束',4);
+        rzPlayList.PlayNext;
+     end;
 end;
 
 procedure TrzProgram.resume;
@@ -1185,6 +1376,16 @@ end;
 procedure TrzProgram.Setended(const Value: boolean);
 begin
   Fended := Value;
+end;
+
+procedure TrzProgram.SetMonitorLen(const Value: integer);
+begin
+  FMonitorLen := Value;
+end;
+
+procedure TrzProgram.SetProgramCount(const Value: integer);
+begin
+  FProgramCount := Value;
 end;
 
 procedure TrzProgram.SetProgramId(const Value: string);
@@ -1223,6 +1424,11 @@ begin
   FScreenWidth := Value;
 end;
 
+procedure TrzProgram.SetVedioLen(const Value: integer);
+begin
+  FVedioLen := Value;
+end;
+
 procedure TrzProgram.Set_Start(const Value: int64);
 begin
   F_Start := Value;
@@ -1240,10 +1446,14 @@ begin
   result := true;
 end;
 begin
+  Exit;
+  //不走定时了
   if CheckPlaying then
      begin
         ended := true;
-        Plays.WriteInteger(rzPlaylist.rzFile.ProgramListId,'cache_program_Length',0);
+        if rzPlayList.PlayType=0 then
+           Plays.WriteInteger(rzPlaylist.rzFile.ProgramListId,'cache_program_Length',0);
+        Close;
         rzPlayList.PlayNext;
      end
   else
@@ -1270,12 +1480,12 @@ begin
   FList := TList.Create;
   Timer := TTimer.Create(nil);
   Timer.Enabled := false;
-  Timer.OnTimer := TimerComplete;
+//  Timer.OnTimer := TimerComplete;
   rzFile := AFile;
   Parant := AOwner;
   curProgram := nil;
   findex := -1;
-  Ended := false;
+  fEnded := false;
 end;
 
 destructor TrzPlayList.Destroy;
@@ -1295,11 +1505,12 @@ var
 begin
   PlayListId := Root.selectSingleNode('playId').text;
   PlayListLen := StrtoIntDef(Root.selectSingleNode('playLen').text,0);
+  PlayCount := StrtoIntDef(Root.selectSingleNode('playCount').text,0);
   PlayType := StrtoIntDef(Root.selectSingleNode('type').text,0);
   StartTime := Root.selectSingleNode('startTime').text;
   PlayListSeq := StrtoIntDef(Root.selectSingleNode('playSeq').text,0);
   if PlayType=1 then FNearTime := Plays.ReadString(rzFile.ProgramListId,'cache_timer_'+PlayListId,'');
-
+  ProgramLen := 0;
   Node := Root.selectSingleNode('programList');
   Node := Node.firstChild;
   while Node<>nil do
@@ -1311,6 +1522,7 @@ begin
            prog.root := Node;
            prog.ProgramId := Node.selectSingleNode('programId').text;
            prog.ProgramLen := StrtoIntDef(Node.selectSingleNode('programLen').text,0);
+           ProgramLen := ProgramLen + prog.ProgramLen;
            prog.ProgramSeq := StrtoIntDef(Node.selectSingleNode('programSeq').text,0);
            prog.ProgramIndex := flist.Count - 1;
          end;
@@ -1357,6 +1569,7 @@ begin
        Timer.Enabled := false;
        ended := false; //如果已经结束，打开重播放
        PlayTimes := 0;
+       SendDebug('>>>>>>>播表<'+inttostr(rzFile.index)+'> ===== 时长<'+inttostr(Timer.Interval)+'>微秒',4);
      end;
   pProgram := curProgram;
   if curProgram=nil then
@@ -1370,26 +1583,32 @@ begin
        if findex>=flist.Count then
           begin
             findex := -1;
-            inc(FPlayTimes);
           end;
        if index<0 then index := 0;
        curProgram := TrzProgram(flist[index]);
      end;
-  SendDebug('播放节目<'+inttostr(index)+'>"'+curProgram.ProgramId+'"',3);
-  if not Timer.Enabled then
+//  if not Timer.Enabled then
      begin
-       Timer.Interval := FPlayListLen*1000 - Plays.readInteger(rzFile.ProgramListId,'cache_playlist_length',0);
-       SendDebug('播表时长<'+inttostr(Timer.Interval)+'>微秒',3);
+       //if ProgramLen>0 then
+       if PlayType = 0 then
+          playTimes := Plays.readInteger(rzFile.ProgramListId,'cache_playlist_length',0);
+       //Timer.Interval := FPlayListLen*1000 - Plays.readInteger(rzFile.ProgramListId,'cache_playlist_length',0);
      end;
   if pProgram<>curProgram then
      begin
-       if pProgram<>nil then pProgram.Close;
+       if pProgram<>nil then
+          begin
+            pProgram.Close;
+            pProgram.Clear;
+          end;
+       //Close;
        if not curProgram.active then
           curProgram.Open(curProgram.root);
        curProgram.Play;
      end
   else
      begin
+       //curProgram.Close;
        if not curProgram.active then
           curProgram.Open(curProgram.root);
        curProgram.Play;
@@ -1406,17 +1625,25 @@ procedure TrzPlayList.Close;
 begin
   Timer.Enabled := false;
 //  findex := -1;
-  curProgram.Close;
-  curProgram.Clear;
+  if assigned(curProgram) then
+     begin
+       curProgram.Close;
+       curProgram.Clear;
+     end;
+//  Ended := true;
 end;
 
 procedure TrzPlayList.TimerComplete(Sender: TObject);
 begin
-  if PlayTimes>0 then
+  if PlayEnd then
      begin
+       //SendDebug('第'+inttostr(playTimes+1)+'次播放"'+PlayListId+'"播表完毕',4);
        Close;
-       Plays.WriteInteger(rzFile.ProgramListId,'cache_playlist_Length',0);
-       Plays.WriteInteger(rzFile.ProgramListId,'cache_program_Length',0);
+       index := -1;
+       playTimes := 0;
+       //Plays.WriteInteger(rzFile.ProgramListId,'cache_playlist_Length',0);
+       if playType=0 then
+          Plays.WriteInteger(rzFile.ProgramListId,'cache_program_Length',0);
        Ended := true;
      end
   else
@@ -1430,7 +1657,12 @@ end;
 procedure TrzPlayList.Setindex(const Value: integer);
 begin
   Findex := Value;
-  Plays.WriteInteger(rzFile.ProgramListId,'cache_program_index',value);
+  if playType=0 then
+     begin
+        if Value<0 then
+        Plays.DeleteKey(rzFile.ProgramListId,'cache_program_index') else
+        Plays.WriteInteger(rzFile.ProgramListId,'cache_program_index',value);
+     end;
 end;
 
 procedure TrzPlayList.SetEnded(const Value: boolean);
@@ -1458,10 +1690,15 @@ end;
 
 procedure TrzPlayList.PlayNext;
 begin
-//  if index>=(flist.Count-1) then
-//     ended := true
-//  else
-     Play;
+//  SendDebug('第'+inttostr(playTimes+1)+'次播放"'+curProgram.ProgramId+'"节目完毕',4);
+  if index>=(flist.Count-1) then PlayTimes := PlayTimes + 1;
+  if PlayEnd then
+       TimerComplete(nil)
+    else
+       begin
+         Close;
+         Play;
+       end;
 end;
 
 procedure TrzPlayList.Setactive(const Value: boolean);
@@ -1497,7 +1734,7 @@ end;
 
 function TrzPlayList.reLoad:boolean;
 begin
- if Plays.readInteger(rzFile.ProgramListId,'cache_playlist_index',-1)=rzFile.index then
+ if (playType=0) and (Plays.readInteger(rzFile.ProgramListId,'cache_playlist_index',-1)=rzFile.index) then
     begin
       findex := Plays.ReadInteger(rzFile.ProgramListId,'cache_program_index',0)-1;
       if FIndex>=0 then curProgram := TrzProgram(FList[Index]);
@@ -1510,6 +1747,33 @@ end;
 procedure TrzPlayList.SetPlayTimes(const Value: integer);
 begin
   FPlayTimes := Value;
+  if playType=0 then
+     Plays.WriteInteger(rzFile.ProgramListId,'cache_playlist_Length',PlayTimes);
+end;
+
+procedure TrzPlayList.SetProgramLen(const Value: integer);
+begin
+  FProgramLen := Value;
+end;
+
+function TrzPlayList.PlayEnd: boolean;
+var
+  myTimes:integer;
+begin
+{  if programLen=0 then
+     begin
+       myTimes := playlistLen div programLen;
+       if (playlistLen mod programLen)<>0 then inc(myTimes);
+     end
+  else
+     myTimes := 1;
+}
+  result := playTimes>=playCount;
+end;
+
+procedure TrzPlayList.SetPlayCount(const Value: integer);
+begin
+  FPlayCount := Value;
 end;
 
 { TrzFile }
@@ -1528,7 +1792,7 @@ procedure TrzFile.Close;
 begin
   Timer.Enabled := false;
 //  findex := -1;
-  curPlayList.Close;
+  if assigned(curPlayList) then curPlayList.Close;
 end;
 
 constructor TrzFile.Create(AOwner: TWinControl);
@@ -1563,7 +1827,7 @@ var
   i:integer;
 begin
   ffilename := filename;
-  SendDebug('打开文件"'+filename+'"',3);
+  SendDebug('打开文件"'+filename+'"',4);
   Clear;
   xmlDoc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   xmlDoc.load(filename);
@@ -1587,8 +1851,18 @@ begin
     end;
   Sort;
   for i:=0 to flist.count-1 do TrzPlaylist(flist[i]).PlayListIndex := i;
-  findex := plays.ReadInteger(ProgramListId,'cache_playlist_index',-1);
-  if index>=0 then curPlayList :=  TrzPlaylist(flist[index]);
+//  if curPlayList.PlayType = 0 then
+     begin
+      findex := plays.ReadInteger(ProgramListId,'cache_playlist_index',-1);
+      if index>=0 then
+         begin
+           curPlayList :=  TrzPlaylist(flist[index]);
+           if curPlayList.PlayType<>0 then curPlayList.Ended := true else
+              begin
+                curPlayList.Ended := (curPlayList.FList.Count=0);
+              end;
+         end;
+     end;
   Active := true;
 end;
 
@@ -1600,12 +1874,13 @@ end;
 procedure TrzFile.Play(CallBacked:boolean=false);
 begin
   if flist.Count=0 then Exit;
+  if (index<=0) then SendDebug('节目单>>>>>>>>>>>>>>>>>>>>>>>>>>"'+ProgramListId+'"',4);
   if curPlayList=nil then index := -1
   else
      begin
         if (curPlaylist.PlayType=0) and not curPlaylist.Ended then //如果正常播表没有播继续播
            begin
-             SendDebug('复播播表<'+inttostr(index)+'>"'+curPlaylist.PlayListId+'"',3);
+             SendDebug('复播播表--<'+inttostr(index)+'>--播表"'+curPlaylist.PlayListId+'"',4);
              if not curPlayList.reload then
                 if curPlaylist.findex>=0 then curPlaylist.findex := curPlaylist.findex -1;
              curPlaylist.Play;
@@ -1616,11 +1891,11 @@ begin
         else
            begin
              if not CallBacked then Timer.OnTimer(Timer);
+             if Index<0 then Exit;
            end;
      end;
-  Plays.WriteInteger(ProgramListId,'cache_playlist_Length',0);
-  Plays.WriteInteger(ProgramListId,'cache_program_Length',0);
-
+   Plays.WriteInteger(ProgramListId,'cache_playlist_Length',0);
+   Plays.WriteInteger(ProgramListId,'cache_program_Length',0);
 {  if curPlayList=nil then
      begin
        curPlayList := TrzPlayList(flist[0]);
@@ -1638,6 +1913,19 @@ begin
   if PlayStatus<>psPlaying then PlayStatus := psPlaying;
   Timer.Enabled := true;
 
+end;
+
+procedure TrzFile.rePlay;
+var
+  i:integer;
+begin
+  if not assigned(curPlaylist) then Exit;
+  if not assigned(curPlaylist.curProgram) then Exit;
+  for i:=0 to curPlaylist.curProgram.FList.Count -1 do
+    begin
+      if TrzMonitor(curPlaylist.curProgram.FList[i]).MonitorType = mtVideo then
+         TrzMonitor(curPlaylist.curProgram.FList[i]).resume;
+    end;
 end;
 
 procedure TrzFile.resume;
@@ -1663,7 +1951,12 @@ end;
 procedure TrzFile.Setindex(const Value: integer);
 begin
   Findex := Value;
-  plays.WriteInteger(ProgramListId,'cache_playlist_index',Value);
+  if Value<0 then
+  plays.DeleteKey(ProgramListId,'cache_playlist_index') else
+     begin
+       if TrzPlayList(flist[value]).playType=0 then
+          plays.WriteInteger(ProgramListId,'cache_playlist_index',Value)
+     end;
 end;
 
 procedure TrzFile.SetPeriod(const Value: integer);
@@ -1685,9 +1978,12 @@ begin
      end;
   if PlayStatus = psEnded then
      begin
-       Plays.WriteInteger(ProgramListId,'cache_playlist_Length',0);
-       if Assigned(curPlayList.curProgram) then
-          Plays.WriteInteger(ProgramListId,'cache_program_Length', 0);
+       if Assigned(curPlayList) and (curPlayList.PlayType=0) then
+          Plays.WriteInteger(ProgramListId,'cache_playlist_Length',0);
+       if Assigned(curPlayList) and (curPlayList.PlayType=0) and Assigned(curPlayList.curProgram) then
+          begin
+            Plays.WriteInteger(ProgramListId,'cache_program_Length', 0);
+          end;
      end;
 end;
 
@@ -1728,12 +2024,6 @@ var
   hasPlay:boolean;
 begin
   if flist.Count=0 then exit;
-  if Assigned(curPlayList) and (curPlayList.PlayType=0) and not curPlayList.Ended then //缓冲已播放时长
-     begin
-       Plays.WriteInteger(ProgramListId,'cache_playlist_Length',GetTickCount-curPlayList._Start);
-       if Assigned(curPlayList.curProgram) then
-          Plays.WriteInteger(ProgramListId,'cache_program_Length', GetTickCount-curPlayList.curProgram._Start);
-     end;
   hasPlay := false;
   if Assigned(curPlayList) and (curPlayList.PlayType=1) and not curPlayList.Ended then Exit;
 
@@ -1742,21 +2032,25 @@ begin
     begin
       if TrzPlayList(flist[i]).PlayType = 1 then //定时播表
          begin
-
            if
            (    copy(TrzPlayList(flist[i]).NearTime,1,10)
                 =
                 formatDatetime('YYYY-MM-DD',now())
            )
-           then continue else TrzPlayList(flist[i]).Ended := false;
+           then continue else
+              begin
+                if (TrzPlayList(flist[i]).StartTime>=formatDatetime('HH:NN:SS',now())) then
+                   TrzPlayList(flist[i]).Ended := false;
+              end;
 
-           if (copy(TrzPlayList(flist[i]).StartTime,12,8)<formatDatetime('HH:NN:SS',now())) then
+           if (TrzPlayList(flist[i]).StartTime<formatDatetime('HH:NN:SS',now())) then
               begin
                 if TrzPlayList(flist[i])<>curPlayList then
                    begin
                      if Assigned(curPlayList) then curPlayList.Close;
                      curPlayList := TrzPlayList(flist[i]);
-                     SendDebug('定时播表<'+inttostr(i)+'>"'+curPlaylist.PlayListId+'"',3);
+                     SendDebug('定时播表--<'+inttostr(i)+'>--"'+curPlaylist.PlayListId+'"',4);
+                     curPlayList.Close;
                      curPlayList.Play;
                      exit;
                    end;
@@ -1767,10 +2061,20 @@ begin
     end;
   if (index<0) or not( Assigned(curPlayList) and not curPlayList.Ended) then
      begin
+       if Assigned(curPlayList) and (curPlayList.PlayType=1) and (index>=0) then //加上定时还原
+          begin
+            curPlayList.Close;
+            curPlayList := TrzPlayList(flist[index]);
+            curPlayList.Ended := false;
+            Play(false);
+            Exit;
+          end;
        if (index=(flist.Count-1)) then
           begin
+            SendDebug('节目单<<<<<<<<<<<<<<<<<<<<<<<<<<"'+ProgramListId+'"',4);
             PlayStatus := psEnded;
             index := -1;
+            curPlayList.Close;
             postmessage(Parant.Handle,WM_PLAY_ENDING,integer(self),0);
             Exit;
           end;
@@ -1780,7 +2084,8 @@ begin
        if TrzPlayList(flist[index]).PlayType=0 then
           begin
             curPlayList := TrzPlayList(flist[index]);
-            SendDebug('播放播表<'+inttostr(index)+'>"'+curPlaylist.PlayListId+'"',3);
+            curPlayList.close;
+            //SendDebug('播放播表<'+inttostr(index)+'>>>>>>>>>>>>>>>>>"'+curPlaylist.PlayListId+'"',4);
             curPlayList.Play;
           end
        else
@@ -1795,9 +2100,10 @@ var
   Buf:array [0..255] of char;
 begin
   inherited;
+  InitializeCriticalSection(FThreadLock);
   AppPath := ExtractFilePath(ParamStr(0));
   fillchar(Buf,256,0);
-  GetEnvironmentVariable('APPDATA',Buf,256);
+  GetEnvironmentVariable('ALLUSERSPROFILE',Buf,256);
   AppData := Buf+'\rzico';
   if AppData='' then AppData := AppPath;
   F := TIniFile.Create(AppData+'\adv\plays.ini');
@@ -1805,42 +2111,94 @@ end;
 
 procedure TrzPlayIni.EraseSection(Section: string);
 begin
-  F.EraseSection(Section);
-  F.UpdateFile;
+  Enter;
+  try
+    F.EraseSection(Section);
+    F.UpdateFile;
+  finally
+    Leave;
+  end;
 end;
 
 destructor TrzPlayIni.Destroy;
 begin
+  DeleteCriticalSection(FThreadLock);
   F.Free;
   inherited;
 end;
 
 function TrzPlayIni.readInteger(Section, Ident: string; default: integer): integer;
 begin
-  result := F.ReadInteger(Section,Ident,Default);
+  Enter;
+  try
+    result := F.ReadInteger(Section,Ident,Default);
+  finally
+    Leave;
+  end;
 end;
 
 procedure TrzPlayIni.ReadSections(Strings: TStrings);
 begin
-  F.ReadSections(Strings); 
+  Enter;
+  try
+    F.ReadSections(Strings);
+  finally
+    Leave;
+  end;
 end;
 
 function TrzPlayIni.readString(Section, Ident, default: string): string;
 begin
-  result := F.ReadString(Section,Ident,Default);
+  Enter;
+  try
+    result := F.ReadString(Section,Ident,Default);
+  finally
+    Leave;
+  end;
 end;
 
 procedure TrzPlayIni.WriteInteger(Section, Ident: string;
   default: integer);
 begin
-  F.WriteInteger(Section, Ident, default);
-  F.UpdateFile;
+  Enter;
+  try
+    F.WriteInteger(Section, Ident, default);
+    F.UpdateFile;
+  finally
+    Leave;
+  end;
 end;
 
 procedure TrzPlayIni.WriteString(Section, Ident, default: string);
 begin
-  F.WriteString(Section, Ident, default);
-  F.UpdateFile;
+  Enter;
+  try
+    F.WriteString(Section, Ident, default);
+    F.UpdateFile;
+  finally
+    Leave;
+  end;
+end;
+
+procedure TrzPlayIni.DeleteKey(Section, Ident: string);
+begin
+  Enter;
+  try
+    F.DeleteKey(Section, Ident);
+    F.UpdateFile;
+  finally
+    Leave;
+  end;
+end;
+
+procedure TrzPlayIni.Enter;
+begin
+  EnterCriticalSection(FThreadLock);
+end;
+
+procedure TrzPlayIni.Leave;
+begin
+  LeaveCriticalSection(FThreadLock);
 end;
 
 initialization

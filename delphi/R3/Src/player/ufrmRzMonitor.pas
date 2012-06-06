@@ -201,6 +201,26 @@ begin
         AddFile(rc);
         rc.Open(pFile);
       end;
+    if defFile=nil then //没有有效默认时，找最后一个
+      begin
+        for i:=0 to jm.Count -1 do
+          begin
+            filename := Plays.ReadString(jm[i],'filename','');
+            if fileExists(filename)
+               and
+               (Plays.ReadString(jm[i],'ready','0')='1')
+            then
+               begin
+                 if Plays.ReadInteger(jm[i],'programType',0) in [2] then
+                   begin
+                      if FdefFile<>nil then freeAndNil(FdefFile);
+                      rc := TrzFile.Create(self);
+                      defFile := rc;
+                      rc.Open(filename);
+                   end;
+               end;
+          end;
+      end;
   finally
     Leave;
     jm.Free;

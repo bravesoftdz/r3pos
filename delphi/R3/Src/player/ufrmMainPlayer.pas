@@ -26,7 +26,7 @@ var
   hExists:boolean;
 
 implementation
-uses IniFiles;
+uses IniFiles,ScrnCtrl;
 {$R *.dfm}
 const
   WH_MOUSE_LL=14;
@@ -53,6 +53,10 @@ begin
                (pt.Y<sTop)
             then
                begin
+                 if (pt.X>(sLeft+sWidth)) then
+                    setcursorpos((sLeft+sWidth),pt.Y)
+                 else
+                    setcursorpos((sLeft),pt.Y);
                  result := 1;
                  Exit;
                end;
@@ -77,10 +81,12 @@ begin
     hInstance,
     0
     );
-  sTop := Screen.Monitors[0].Top;
-  sLeft := Screen.Monitors[0].Left;
-  sWidth := Screen.Monitors[0].Width;
-  sHeight := Screen.Monitors[0].Height;
+  MMonitor := MonitorfromWindow(Application.Handle);
+  MIndex := FindMonitorIndex(MMonitor);
+  sTop := MMonitor.Top;
+  sLeft := MMonitor.Left;
+  sWidth := MMonitor.Width;
+  sHeight := MMonitor.Height;
 end;
 
 procedure TfrmMainPlayer.WMTPosDisplay(var Message: TMessage);

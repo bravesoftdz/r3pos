@@ -1,6 +1,6 @@
 object frmRzPlayer: TfrmRzPlayer
-  Left = -1094
-  Top = 167
+  Left = 323
+  Top = 296
   Width = 463
   Height = 334
   BorderIcons = [biMaximize]
@@ -40,7 +40,7 @@ object frmRzPlayer: TfrmRzPlayer
       Height = 251
       Align = alClient
       BorderStyle = bsNone
-      Color = 5701632
+      Color = clNavy
       Font.Charset = GB2312_CHARSET
       Font.Color = clWhite
       Font.Height = -12
@@ -86,14 +86,19 @@ object frmRzPlayer: TfrmRzPlayer
       end
       object N1: TMenuItem
         Caption = #26085#24535#19978#20256
+        OnClick = N1Click
       end
-      object N2: TMenuItem
-        Caption = #19978#20256#20449#24687
-        OnClick = N2Click
+      object N11: TMenuItem
+        Caption = #24320#22987#25130#23631
+        OnClick = N11Click
       end
       object N9: TMenuItem
         Caption = #29366#24577#19978#20256
         OnClick = N9Click
+      end
+      object N2: TMenuItem
+        Caption = #36164#28304#28165#29702
+        OnClick = N2Click
       end
     end
     object N10: TMenuItem
@@ -1886,6 +1891,7 @@ object frmRzPlayer: TfrmRzPlayer
       000000000000000000000000000000000000}
   end
   object RzTrayIcon1: TRzTrayIcon
+    Enabled = False
     HideOnMinimize = False
     Interval = 500
     RestoreOn = ticNone
@@ -1899,21 +1905,9 @@ object frmRzPlayer: TfrmRzPlayer
     Left = 192
     Top = 112
   end
-  object IdHTTP1: TIdHTTP
-    MaxLineAction = maException
-    ReadTimeout = 0
-    AllowCookies = True
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
-    Request.ContentLength = -1
-    Request.ContentRangeEnd = 0
-    Request.ContentRangeStart = 0
-    Request.ContentType = 'text/html'
-    Request.Accept = 'text/html, */*'
-    Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    HTTPOptions = [hoForceEncodeParams]
-    Left = 280
-    Top = 104
+  object Timer2: TTimer
+    OnTimer = Timer2Timer
+    Left = 192
+    Top = 80
   end
 end

@@ -2,8 +2,8 @@ unit rzXmlDown;
 
 interface
 
-uses XMLIntf, XMLDoc, msXml, classes, ComObj, IdBaseComponent, IdComponent,Forms,
-     IdTCPConnection, IdTCPClient, IdHTTP, SysUtils, Windows, RzCtrls, HttpApp, ActiveX;
+uses Windows, XMLIntf, Graphics, XMLDoc, msXml, classes, ComObj, IdBaseComponent, IdComponent,Forms,
+     IdTCPConnection, IdTCPClient, IdHTTP, SysUtils, RzCtrls, HttpApp, ActiveX, Jpeg;
 
 type
   TUrlInfo=record
@@ -14,6 +14,17 @@ type
   PUrlInfo=^TUrlInfo;
 
 type
+  PPlaysInfo=^TPlaysInfo;
+  TPlaysInfo=record
+    srctype:integer;
+    srcFlag:integer; //0 url 1 xmlfile
+    src:string;
+    ApplyUrl:string;
+    msgId:string;
+    pid:string;
+    TryTime:integer;
+    token:string;
+  end;
 
   TrzXmlDown=class
   private
@@ -24,12 +35,15 @@ type
     idHttp:TidHttp;
     Fpid: string;
     FmsgId: string;
+    Fapply: string;
     function GetUrlInfo(itemindex: integer): PUrlInfo;
     function GetCount: integer;
     procedure IdHTTPWork(Sender: TObject; AWorkMode: TWorkMode; const AWorkCount: Integer);
     procedure Setsrc(const Value: string);
     procedure Setpid(const Value: string);
     procedure SetmsgId(const Value: string);
+    function PutFile(url, filename: string): boolean;
+    procedure Setapply(const Value: string);
   protected
     procedure ReadPlayList(Root:IXMLDOMNode);
     procedure ReadProgramList(Root:IXMLDOMNode);
@@ -44,26 +58,26 @@ type
     function DownAllRes:boolean;
     function DownHeader:boolean;
     function SendStatus(flag:integer;msg:string=''):boolean;
+    function ApplyStatus(src,s:string):boolean;
     procedure AddToPlays;
+
+    function GetScreenBmp:string;
+    function SendLog(Plays:PPlaysInfo):string;
+    procedure SendScn(Plays:PPlaysInfo);
+    procedure UpdateLog(Plays:PPlaysInfo);
+    procedure ClearRes(Play:PPlaysInfo);
 
     property UrlInfo[itemindex:integer]:PUrlInfo read GetUrlInfo;
     property Count:integer read GetCount;
     property src:string read Fsrc write Setsrc;
     property pid:string read Fpid write Setpid;
     property msgId:string read FmsgId write SetmsgId;
-  end;
-  PPlaysInfo=^TPlaysInfo;
-  TPlaysInfo=record
-    srcFlag:integer; //0 url 1 xmlfile
-    src:string;
-    msgId:string;
-    pid:string;
-    TryTime:integer;
+    property apply:string read Fapply write Setapply;
   end;
   TXmlDownThread=class(TThread)
   private
-    Event:THandle;
     Down:TrzXmlDown;
+    Event:THandle;
     FList:TList;
     procedure Execute; override;
     procedure Clear;
@@ -72,18 +86,17 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure DownSrc(src,msgId,pId:string);
+    procedure DownSrc(srctype:integer;src,msgId,pId,apply,token:string);
     procedure DownXml(xml:string);
     procedure DownPrm(xml:string);
-    procedure ClearRes;
     procedure Play;
   end;
 
 var XmlDown:TXmlDownThread;
     PosHWND: HWND = 0;
-    
+
 implementation
-uses ufrmRzPlayer;
+uses ufrmRzPlayer,ipc;
 { TrzXmlDown }
 
 procedure TrzXmlDown.AddPhoto(Root: IXMLDOMNode);
@@ -210,7 +223,7 @@ begin
        deletefile(pchar(filename+'.ft'));
        Raise Exception.Create('下载"'+src+'"失败了.');
      end;
-  SendDebug('下载“'+src+'”完毕',3);
+  SendDebug('下载“'+src+'”完毕',4);
   result := true;
 end;
 
@@ -284,6 +297,7 @@ begin
   EndDate := Root.selectSingleNode('endDate').text;
   ProgramListType := Root.selectSingleNode('playbillType').text;
   msgId := Plays.readString(pid,'msgId','');
+  apply := Plays.readString(pid,'apply','');
   Node := Root.selectSingleNode('playList');
   Node := Node.firstChild;
   while Node <> nil do
@@ -375,17 +389,14 @@ begin
 end;
 
 function TrzXmlDown.SendStatus(flag: integer;msg:string=''): boolean;
-function GetUrl:string;
-begin
-  result := 'http://ad.rzico.net/publish/application/modifyStatus';
-end;
 var
   Request,Response:TStringStream;
   s:string;
   idHTTP:TidHTTP;
 begin
   try
-    s :='messId='+msgId+'&userCode=chenzh&playbillId='+pid+'&statusFlag='+inttostr(flag)+'&statusLog='+HTTPEncode(msg)+'&token=123456789';
+    if apply='' then Exit;
+    s :='messageId='+msgId+'&userCode='+username+'&status='+inttostr(flag)+'&log='+HTTPEncode(msg)+'&token=123456789';
 
     Response := TStringStream.Create('');
     Request := TStringStream.Create(s);
@@ -394,8 +405,8 @@ begin
       idHTTP.OnWork := IdHTTPWork;
       idHttp.HandleRedirects := true;
       IdHTTP.Request.ContentType := 'application/x-www-form-urlencoded';
-      idHttp.Post(GetUrl,Request,Response);
-      //SendDebug(Response.DataString,3);
+      idHttp.Post(apply,Request,Response);
+      SendDebug(apply+'->'+s+'发送成功',4);
     finally
       idHTTP.Free;
       Request.Free;
@@ -412,6 +423,293 @@ end;
 procedure TrzXmlDown.SetmsgId(const Value: string);
 begin
   FmsgId := Value;
+end;
+
+function TrzXmlDown.PutFile(url:string;filename: string): boolean;
+var fFile:TFileStream;
+  idHTTP:TidHTTP;
+  w:integer;
+  upUrl:string;
+begin
+  result := false;
+  w := pos('?',url);
+  upUrl := stringreplace(URL,'[replaceName]',ExtractFileName(filename),[rfReplaceAll]);
+
+  fFile := TFileStream.Create(filename,fmShareDenyNone);
+  idHTTP := TidHTTP.Create(nil);
+  try
+      idHTTP.OnWork := IdHTTPWork;
+      idHttp.HandleRedirects := true;
+      try
+        IdHTTP.Put(upUrl,FFile);
+      except
+        on E:Exception do
+           begin
+             if pos('Cannot assign requested address',E.Message)=0 then Raise; 
+           end;
+      end;
+  finally
+    idHTTP.Free;
+    fFile.Free;
+  end;
+  SendDebug('上传“'+filename+'”完毕',4);
+  result := true;
+end;
+
+function TrzXmlDown.GetScreenBmp: string;
+var
+  B: TBitmap;
+  S: string;
+  i:integer;
+  JPEG: TJPEGImage;
+begin
+//  for i:=0 to Screen.MonitorCount-1 do
+  begin
+    B := TBitmap.Create;
+    JPEG := TJPEGImage.Create;
+    try
+      B.PixelFormat := pf32bit;
+      B.Width := GetSystemMetrics(SM_CXSCREEN);
+      B.Height := GetSystemMetrics(SM_CYSCREEN);
+      BitBlt(B.Canvas.handle, 0, 0, B.Width, B.Height,GetDc(0), 0, 0, SRCCOPY);
+      JPEG.Assign(B);
+      result := Appdata+'\logs\main_screen.jpg';
+      deletefile(result);
+      JPEG.SaveToFile(result);
+    finally
+      JPEG.Free;
+      b.Free;
+    end;
+
+    B := TBitmap.Create;
+    JPEG := TJPEGImage.Create;
+    try
+      B.PixelFormat := pf32bit;
+      B.Width := frmRzPlayer.frmRzMonitor.Width;
+      B.Height := frmRzPlayer.frmRzMonitor.Height;
+
+      BitBlt(B.Canvas.handle, 0, 0, B.Width, B.Height,frmRzPlayer.frmRzMonitor.Canvas.Handle, 0, 0, SRCCOPY);
+      JPEG.Assign(B);
+      result := Appdata+'\logs\client_screen.jpg';
+      deletefile(result);
+      JPEG.SaveToFile (result);
+    finally
+      JPEG.Free;
+      b.Free;
+    end;
+  end;
+end;
+
+function TrzXmlDown.SendLog(Plays:PPlaysInfo):string;
+var
+  sr: TSearchRec;
+  FileAttrs: Integer;
+  msg:string;
+begin
+  try
+  result := '';
+  FileAttrs := 0;
+  FileAttrs := FileAttrs + faAnyFile;
+  if FindFirst(appdata+'\logs\*.log', FileAttrs, sr) = 0 then
+    begin
+      repeat
+        begin
+          PutFile(Plays^.src,appdata+'\logs\'+sr.Name);
+          if result<>'' then result := result+',';
+          result := result+sr.Name;
+        end;
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+    msg :='messageId='+Plays^.msgId+'&filename='+result+'&status=0&terminalType='+inttostr(Plays^.srcType)+'&userCode='+username+'&token='+Plays^.token;
+  except
+    on E:Exception do
+       begin
+         msg :='messageId='+Plays^.msgId+'&filename='+result+'&status=1&terminalType='+inttostr(Plays^.srcType)+'&userCode='+username+'&token='+Plays^.token;
+         SendDebug(E.Message,1);
+       end;
+  end;
+  ApplyStatus(Plays^.ApplyUrl,msg);
+end;
+
+procedure TrzXmlDown.SendScn(Plays:PPlaysInfo);
+var
+  msg,filename:string;
+begin
+  try
+    filename := GetScreenBmp;
+    PutFile(Plays^.src,Appdata+'\logs\main_screen.jpg');
+    PutFile(Plays^.src,Appdata+'\logs\client_screen.jpg');
+    msg :='messageId='+Plays^.msgId+'&filename=main_screen.jpg,client_screen.jpg&status=0&terminalType='+inttostr(Plays^.srcType)+'&userCode='+username+'&token='+Plays^.token;
+  except
+    on E:Exception do
+       begin
+         msg :='messageId='+Plays^.msgId+'&filename=&status=1&terminalType='+inttostr(Plays^.srcType)+'&userCode='+username+'&token='+Plays^.token;
+         SendDebug(E.Message,1);
+       end;
+  end;
+  ApplyStatus(Plays^.ApplyUrl,msg);
+end;
+
+function TrzXmlDown.ApplyStatus(src,s: string): boolean;
+var
+  Request,Response:TStringStream;
+  idHTTP:TidHTTP;
+begin
+  if src='' then Exit;
+  try
+    Response := TStringStream.Create('');
+    Request := TStringStream.Create(s);
+    idHTTP := TidHTTP.Create(nil);
+    try
+      idHTTP.OnWork := IdHTTPWork;
+      idHttp.HandleRedirects := true;
+      IdHTTP.Request.ContentType := 'application/x-www-form-urlencoded';
+      idHttp.Post(src,Request,Response);
+      SendDebug(src+'->'+s+'发送成功',4);
+    finally
+      idHTTP.Free;
+      Request.Free;
+      Response.Free;
+    end;
+  except
+    on E:Exception do
+       begin
+         SendDebug(E.Message,1);
+       end;
+  end;
+end;
+
+procedure TrzXmlDown.Setapply(const Value: string);
+begin
+  Fapply := Value;
+end;
+
+procedure TrzXmlDown.UpdateLog(Plays: PPlaysInfo);
+var
+  msg:string;
+begin
+  try
+    if pos('FATAL',Plays.src)>0 then logFlag[1] := '1' else logFlag[1] := '0';
+    if pos('ERROR',Plays.src)>0 then logFlag[2] := '1' else logFlag[2] := '0';
+    if pos('WARN',Plays.src)>0 then logFlag[3] := '1' else logFlag[3] := '0';
+    if pos('INFO',Plays.src)>0 then logFlag[4] := '1' else logFlag[4] := '0';
+    if pos('DEBUG',Plays.src)>0 then logFlag[5] := '1' else logFlag[5] := '0';
+    if pos('ALL',Plays.src)>0 then logFlag[6] := '1' else logFlag[6] := '0';
+    msg :='messageId='+Plays^.msgId+'&status=0&token='+Plays^.token;
+  except
+    on E:Exception do
+       begin
+         msg :='messageId='+Plays^.msgId+'&status=1&token='+Plays^.token;
+         SendDebug(E.Message,1);
+       end;
+  end;
+  ApplyStatus(Plays^.ApplyUrl,msg);
+end;
+
+procedure TrzXmlDown.ClearRes(Play: PPlaysInfo);
+procedure ClearAll(day:integer=-1);
+var
+  sr: TSearchRec;
+  FileAttrs,w: Integer;
+  s,p:string;
+begin
+  if day<0 then
+  begin
+    PostMessage(Application.MainForm.Handle,WM_PLAY_CLOSE,0,0);
+  end;
+  FileAttrs := 0;
+  FileAttrs := FileAttrs + faAnyFile;
+  if FindFirst(appdata+'\res\photo\*.*', FileAttrs, sr) = 0 then
+    begin
+      repeat
+        begin
+          s := sr.Name;
+          w := length(ExtractFileExt(sr.Name));
+          delete(s,length(s)-w-1,w);
+          if (s<>'') and (s<>'.') and (s<>'..') then
+             begin
+                p := copy(Plays.readString('res',s,''),1,8);
+                if p<>'' then
+                   begin
+                     if (day<0) or (p<formatDatetime('YYYYMMDD',now()-day)) then
+                        begin
+                          if deletefile(appdata+'\res\photo\'+sr.Name) then
+                          plays.DeleteKey('res',s);
+                        end;
+                   end;
+             end;
+        end;
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+  FileAttrs := 0;
+  FileAttrs := FileAttrs + faAnyFile;
+  if FindFirst(appdata+'\res\vedio\*.*', FileAttrs, sr) = 0 then
+    begin
+      repeat
+        begin
+          s := sr.Name;
+          w := length(ExtractFileExt(sr.Name));
+          delete(s,length(s)-w-1,w);
+          if (s<>'') and (s<>'.') and (s<>'..') then
+             begin
+                p := copy(Plays.readString('res',s,''),1,8);
+                if p<>'' then
+                   begin
+                     if (day<0) or (p<formatDatetime('YYYYMMDD',now()-day)) then
+                        begin
+                          if deletefile(appdata+'\res\vedio\'+sr.Name) then
+                          plays.DeleteKey('res',s);
+                        end;
+                   end;
+             end;
+        end;
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+  if day>=0 then Exit;
+  FileAttrs := 0;
+  FileAttrs := FileAttrs + faAnyFile;
+  if FindFirst(appdata+'\adv\*.*', FileAttrs, sr) = 0 then
+    begin
+      repeat
+        begin
+          s := sr.Name;
+          w := length(ExtractFileExt(sr.Name));
+          delete(s,length(s)-w-1,w);
+          if (s<>'') and (s<>'.') and (s<>'..') then
+             begin
+                deletefile(appdata+'\adv\'+sr.Name);
+             end;
+        end;
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+  SendDebug('----------清理资源结束-------------',4);
+end;
+var
+  msg:string;
+begin
+  try
+  if Play.src='RESET' then
+     begin
+       ClearAll;
+     end
+  else
+     begin
+       resDay := StrtoIntDef(Play^.src,30);
+       ClearAll(resDay);
+     end;
+     msg :='messageId='+Play^.msgId+'&status=0&token='+Play^.token;
+  except
+    on E:Exception do
+       begin
+         msg :='messageId='+Play^.msgId+'&status=1&token='+Play^.token;
+         SendDebug(E.Message,1);
+       end;
+  end;
+  ApplyStatus(Play^.ApplyUrl,msg);
 end;
 
 { TXmlDownThread }
@@ -446,16 +744,20 @@ begin
   Down.Free;
 end;
 
-procedure TXmlDownThread.DownSrc(src,msgId,pId: string);
+procedure TXmlDownThread.DownSrc(srctype:integer;src,msgId,pId,apply,token: string);
 var
   Plays:PPlaysInfo;
 begin
+  if srctype=0 then Exit;
   new(Plays);
+  Plays^.srctype := srctype;
   Plays^.srcFlag := 0;
   Plays^.src := src;
   Plays^.msgId := msgId;
   Plays^.pid := pId;
+  Plays^.ApplyUrl := apply;
   Plays^.TryTime := 0;
+  Plays^.token := token;
   FList.Insert(0,Plays);
   SetEvent(Event);
 end;
@@ -464,7 +766,7 @@ procedure TXmlDownThread.DownXml(xml: string);
 var
   Doc:IXMLDOMDocument;
   node:IXMLDOMNode;
-  msgId,pId,url,ptype:string;
+  msgId,pId,url,ptype,applyurl,token:string;
 begin
   Doc := CreateOleObject('Microsoft.XMLDOM')  as IXMLDomDocument;
   Doc.loadXML(xml);
@@ -481,19 +783,59 @@ begin
          begin
            msgId := node.attributes.getNamedItem('value').nodeValue;
          end;
-      if node.attributes.getNamedItem('key').nodeValue='playbillId' then
-         begin
-           pId := node.attributes.getNamedItem('value').nodeValue;
-         end;
       if node.attributes.getNamedItem('key').nodeValue='type' then
          begin
            ptype := node.attributes.getNamedItem('value').nodeValue;
          end;
+      if node.attributes.getNamedItem('key').nodeValue='token' then
+         begin
+           token := node.attributes.getNamedItem('value').nodeValue;
+         end;
+      if node.attributes.getNamedItem('key').nodeValue='interface' then
+         begin
+           applyurl := node.attributes.getNamedItem('value').nodeValue;
+         end;
+      if node.attributes.getNamedItem('key').nodeValue='playbillId' then
+         begin
+           pId := node.attributes.getNamedItem('value').nodeValue;
+         end;
+
+      //新指令
+      if node.attributes.getNamedItem('key').nodeValue='messageId' then
+         begin
+           msgId := node.attributes.getNamedItem('value').nodeValue;
+         end;
+      if node.attributes.getNamedItem('key').nodeValue='content' then
+         begin
+           url := node.attributes.getNamedItem('value').nodeValue;
+         end;
+      if node.attributes.getNamedItem('key').nodeValue='code' then
+         begin
+           if node.attributes.getNamedItem('value').nodeValue='PLAYBILL_UPDATE' then
+              ptype := '1'
+           else
+           if node.attributes.getNamedItem('value').nodeValue='LOG_LEVEL_MODIFY' then
+              ptype := '3'
+           else
+           if node.attributes.getNamedItem('value').nodeValue='COMMAND_EXECUTE' then
+              ptype := '4'
+           else
+           if node.attributes.getNamedItem('value').nodeValue='RESOURCE_CLEAN_STRATEGY' then
+              ptype := '5'
+           else
+           if node.attributes.getNamedItem('value').nodeValue='LOG_UPLOAD' then
+              ptype := '6'
+           else
+           if node.attributes.getNamedItem('value').nodeValue='SCREENSHOT_UPLOAD' then
+              ptype := '7';
+         end;
+      if node.attributes.getNamedItem('key').nodeValue='api' then
+         begin
+           applyurl := node.attributes.getNamedItem('value').nodeValue;
+         end;
       node := node.nextSibling;
     end;
-  case StrtoIntDef(ptype,0) of
-  1:if url<>'' then DownSrc(url,msgId,pId);
-  end;
+  DownSrc(StrtoIntDef(ptype,0),url,msgId,pId,applyurl,token);
 end;
 
 procedure TXmlDownThread.Execute;
@@ -528,35 +870,76 @@ begin
                 continue;
               end;
            try
-             case Plays^.srcFlag of
-             0:begin
-                 Down.src := Plays^.src;
-                 if Down.DownHeader then
-                 begin
-                   Plays^.srcFlag := 1;
-                   Plays^.src :=AppData+'\adv\'+down.pid+'.xml';
-                   if Plays^.pid<>'' then
-                      RzCtrls.Plays.WriteString(Plays^.pid,'msgId',Plays^.msgId); 
-                   if Down.DownAllRes then
-                      begin
-                        FList.Remove(Plays);
-                        dispose(Plays);
-                        SendMessage(Application.MainForm.Handle,WM_PLAY_START,0,0);
-                      end;
+             case Plays^.srctype of
+             1:begin
+                 case Plays^.srcFlag of
+                 0:begin
+                     Down.src := Plays^.src;
+                     if Down.DownHeader then
+                     begin
+                       Down.msgId := Plays^.msgId;
+                       Down.apply := Plays^.applyUrl;
+                       Plays^.srcFlag := 1;
+                       Plays^.src :=AppData+'\adv\'+down.pid+'.xml';
+                       if Down.pid<>'' then
+                          begin
+                            RzCtrls.Plays.WriteString(Down.pid,'msgId',Plays^.msgId);
+                            RzCtrls.Plays.WriteString(Down.pid,'apply',Plays^.applyUrl);
+                          end;
+                       if Down.DownAllRes then
+                          begin
+                            FList.Remove(Plays);
+                            dispose(Plays);
+                            SendMessage(Application.MainForm.Handle,WM_PLAY_START,0,0);
+                          end;
+                     end;
+                   end;
+                 1:begin
+                     Down.Open(Plays^.src);
+                     if Down.DownAllRes then
+                        begin
+                          FList.Remove(Plays);
+                          dispose(Plays);
+                          SendMessage(Application.MainForm.Handle,WM_PLAY_START,0,0);
+                        end;
+                   end;
+                 2:begin
+                     try
+                       DownXml(Plays^.src);
+                     finally
+                       FList.Remove(Plays);
+                       dispose(Plays);
+                     end;
+                   end;
                  end;
                end;
-             1:begin
-                 Down.Open(Plays^.src);
-                 if Down.DownAllRes then
-                    begin
-                      FList.Remove(Plays);
-                      dispose(Plays);
-                      SendMessage(Application.MainForm.Handle,WM_PLAY_START,0,0);
-                    end;
-               end;
-             2:begin
+             3:begin //设置LOG参数
                  try
-                   DownXml(Plays^.src);
+                   Down.UpdateLog(Plays);
+                 finally
+                   FList.Remove(Plays);
+                   dispose(Plays);
+                 end;
+               end;
+             5:begin //资源清除
+                 try
+                   Down.ClearRes(Plays);
+                 finally
+                   FList.Remove(Plays);
+                   dispose(Plays);
+                 end;
+               end;
+             6:begin //日志上传
+                 try
+                   Down.SendLog(Plays);
+                 finally
+                   FList.Remove(Plays);
+                   dispose(Plays);
+                 end;
+               end;
+             7:begin //截屏上传
+                 try
+                   Down.SendScn(Plays);
                  finally
                    FList.Remove(Plays);
                    dispose(Plays);
@@ -568,7 +951,7 @@ begin
                 begin
                   if (FList.IndexOf(Plays)>=0) and (FList.Count > 1) then
                      FList.Move(FList.IndexOf(Plays),FList.Count-1);
-                  SendDebug('第'+inttostr(Plays^.TryTime)+'次下载节目"'+Plays^.src+'"失败了，错误原因：'+e.Message,1);
+                  SendDebug('第'+inttostr(Plays^.TryTime)+'次执行"'+Plays^.src+'"失败了，错误原因：'+e.Message,1);
                 end;
            end;
          end;
@@ -599,6 +982,7 @@ begin
         then
            begin
              new(node);
+             node^.srctype := 1;
              node^.srcFlag := 1;
              node^.src := filename;
              node^.TryTime := 0;
@@ -621,16 +1005,12 @@ var
   node:PPlaysInfo;
 begin
   new(node);
+  node^.srctype := 1;
   node^.srcFlag := 2;
   node^.src := xml;
   node^.TryTime := 0;
-  FList.Insert(0,node); 
+  FList.Insert(0,node);
   SetEvent(Event);
-end;
-
-procedure TXmlDownThread.ClearRes;
-begin
-
 end;
 
 initialization

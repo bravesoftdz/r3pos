@@ -13,10 +13,23 @@ function MonitorFromWindow(const Handle: THandle;
   MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
 function FindMonitorIndex(Monitor: TMonitor): integer;
 function GetMonitorExt:integer;
+function IsWorkStationLocked:boolean;
 var
   MMonitor:TMonitor;
   MIndex:integer;
 implementation
+
+function IsWorkStationLocked:boolean;
+var
+  hDesk:THandle;
+begin
+  hDesk := OpenDesktop('Default', 0, FALSE, DESKTOP_SWITCHDESKTOP);
+  if (hDesk>0) then
+     begin
+       result := not SwitchDesktop(hDesk);
+       CloseDesktop(hDesk);
+     end;
+end;
 function GetMonitorExt:integer;
 var
   I: Integer;
@@ -57,8 +70,7 @@ end;
 function MonitorFromWindow(const Handle: THandle;
   MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
 begin
-  Result := FindMonitor(MultiMon.MonitorFromWindow(Handle,
-    MonitorDefaultFlags[MonitorDefault]));
+  Result := Screen.MonitorFromWindow(Handle,mdNearest);
 end;
 
 end.

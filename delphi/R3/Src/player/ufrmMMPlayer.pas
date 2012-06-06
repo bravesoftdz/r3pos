@@ -383,7 +383,10 @@ begin
 end;
 
 procedure TfrmMMPlayer.PlayFile(Filename : String);
+var
+  hCurWindow,CurActiveWindow: HWnd;  // ´°¿Ú¾ä±ú
 begin
+  hCurWindow:=GetActiveWindow();
   FilterGraph1.ClearGraph;
 
   // --------------------------------------------------------------------------------------
@@ -398,6 +401,8 @@ begin
   SoundLevel.Position := FilterGraph1.Volume;
   FilterGraph1.Play;
   CheckColorControlSupport;
+  CurActiveWindow:=GetActiveWindow();
+  if CurActiveWindow<>hCurWindow then SetForegroundWindow(hCurWindow);
 end;
 
 procedure TfrmMMPlayer.FilterGraph1GraphComplete(sender: TObject;

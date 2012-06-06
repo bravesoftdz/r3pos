@@ -279,7 +279,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             Left = 5
             Top = 5
             Width = 823
-            Height = 102
+            Height = 110
             Align = alTop
             BorderOuter = fsNone
             Color = clWhite
@@ -305,7 +305,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label6: TLabel
               Left = 211
-              Top = 52
+              Top = 57
               Width = 48
               Height = 12
               Alignment = taRightJustify
@@ -332,7 +332,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label2: TLabel
               Left = 15
-              Top = 52
+              Top = 57
               Width = 48
               Height = 12
               Alignment = taRightJustify
@@ -346,7 +346,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label40: TLabel
               Left = 392
-              Top = 52
+              Top = 57
               Width = 48
               Height = 12
               Caption = #38376#24215#21517#31216
@@ -359,7 +359,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label5: TLabel
               Left = 392
-              Top = 76
+              Top = 82
               Width = 48
               Height = 12
               Caption = #25152#23646#37096#38376
@@ -372,7 +372,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label4: TLabel
               Left = 15
-              Top = 75
+              Top = 81
               Width = 48
               Height = 12
               Alignment = taRightJustify
@@ -386,7 +386,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label3: TLabel
               Left = 211
-              Top = 75
+              Top = 81
               Width = 48
               Height = 12
               Alignment = taRightJustify
@@ -400,7 +400,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label8: TLabel
               Left = 650
-              Top = 51
+              Top = 56
               Width = 48
               Height = 12
               Caption = #20973#35777#29366#24577
@@ -413,7 +413,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object Label9: TLabel
               Left = 650
-              Top = 75
+              Top = 81
               Width = 48
               Height = 12
               Alignment = taRightJustify
@@ -427,7 +427,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtFVCH_DATE: TcxDateEdit
               Left = 266
-              Top = 48
+              Top = 53
               Width = 92
               Height = 20
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -435,7 +435,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtFVCH_CODE: TcxTextEdit
               Left = 70
-              Top = 48
+              Top = 53
               Width = 104
               Height = 20
               TabOrder = 1
@@ -443,7 +443,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtDEPT_ID: TzrComboBoxList
               Left = 449
-              Top = 72
+              Top = 78
               Width = 160
               Height = 20
               Properties.AutoSelect = False
@@ -477,7 +477,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtSHOP_ID: TzrComboBoxList
               Left = 449
-              Top = 48
+              Top = 53
               Width = 160
               Height = 20
               Properties.AutoSelect = False
@@ -518,7 +518,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtCREA_USER: TzrComboBoxList
               Left = 70
-              Top = 71
+              Top = 77
               Width = 104
               Height = 20
               Properties.AutoSelect = False
@@ -560,7 +560,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtFVCH_ATTACH: TcxSpinEdit
               Left = 266
-              Top = 71
+              Top = 77
               Width = 92
               Height = 20
               ParentFont = False
@@ -577,7 +577,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtFVCH_FLAG: TcxComboBox
               Left = 705
-              Top = 47
+              Top = 52
               Width = 90
               Height = 20
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -590,7 +590,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             end
             object edtFVCH_IMPORT_ID: TcxTextEdit
               Left = 705
-              Top = 71
+              Top = 77
               Width = 90
               Height = 20
               TabOrder = 7
@@ -599,10 +599,10 @@ inherited frmFvchOrder: TfrmFvchOrder
           end
           object RzPageDetail: TRzPageControl
             Left = 5
-            Top = 107
+            Top = 115
             Width = 823
-            Height = 302
-            ActivePage = RzTabSheet1
+            Height = 294
+            ActivePage = Tab_FvchDetail
             Align = alClient
             Color = clWindow
             FlatColor = clBtnFace
@@ -610,20 +610,21 @@ inherited frmFvchOrder: TfrmFvchOrder
             ShowShadow = False
             TabColors.Shadow = 14588523
             TabHeight = 25
-            TabIndex = 0
+            TabIndex = 1
             TabOrder = 2
             TabOrientation = toBottom
             TextColors.DisabledShadow = clNavy
             TextColors.Selected = clNavy
+            OnChanging = RzPageDetailChanging
             FixedDimension = 25
-            object RzTabSheet1: TRzTabSheet
+            object Tab_FvchDATA: TRzTabSheet
               Color = clWindow
-              Caption = '  '#20973#35777#20998#24405' '
+              Caption = '   '#20973#35777#20998#24405'  '
               object RzPanel3: TRzPanel
                 Left = 0
                 Top = 0
                 Width = 821
-                Height = 275
+                Height = 267
                 Align = alClient
                 BorderOuter = fsNone
                 BorderShadow = clWindow
@@ -634,13 +635,18 @@ inherited frmFvchOrder: TfrmFvchOrder
                   Left = 0
                   Top = 0
                   Width = 821
-                  Height = 275
+                  Height = 267
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   BorderStyle = bsNone
                   DataSource = DsFvchData
                   FixedColor = clWhite
                   Flat = True
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -12
+                  Font.Name = #23435#20307
+                  Font.Style = []
                   FooterColor = clWindow
                   FooterFont.Charset = GB2312_CHARSET
                   FooterFont.Color = clWindowText
@@ -652,12 +658,13 @@ inherited frmFvchOrder: TfrmFvchOrder
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Options = [dgEditing, dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
                   OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+                  ParentFont = False
                   ReadOnly = True
                   RowHeight = 20
                   SumList.Active = True
                   TabOrder = 0
                   TitleFont.Charset = GB2312_CHARSET
-                  TitleFont.Color = clWindowText
+                  TitleFont.Color = clGreen
                   TitleFont.Height = -12
                   TitleFont.Name = #23435#20307
                   TitleFont.Style = []
@@ -667,6 +674,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                   CurrencySymbol = #65509
                   DecimalNumber = 2
                   DigitalNumber = 12
+                  OnDblClick = DBGridEh1DblClick
                   Columns = <
                     item
                       Color = clWhite
@@ -679,7 +687,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = []
-                      Width = 30
+                      Width = 28
                     end
                     item
                       EditButtons = <>
@@ -698,6 +706,11 @@ inherited frmFvchOrder: TfrmFvchOrder
                     item
                       EditButtons = <>
                       FieldName = 'SUBJECT_NO'
+                      Font.Charset = GB2312_CHARSET
+                      Font.Color = clGreen
+                      Font.Height = -12
+                      Font.Name = #23435#20307
+                      Font.Style = []
                       Footers = <>
                       Title.Caption = #31185#30446
                       Title.Font.Charset = GB2312_CHARSET
@@ -705,11 +718,16 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = []
-                      Width = 40
+                      Width = 50
                     end
                     item
                       EditButtons = <>
                       FieldName = 'DEBIT_AMT'
+                      Font.Charset = GB2312_CHARSET
+                      Font.Color = clGreen
+                      Font.Height = -12
+                      Font.Name = #23435#20307
+                      Font.Style = []
                       Footers = <>
                       Title.Caption = #20511#26041'|'#25968#37327
                       Title.Font.Charset = GB2312_CHARSET
@@ -724,6 +742,11 @@ inherited frmFvchOrder: TfrmFvchOrder
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DEBIT_PRICE'
+                      Font.Charset = GB2312_CHARSET
+                      Font.Color = clGreen
+                      Font.Height = -12
+                      Font.Name = #23435#20307
+                      Font.Style = []
                       Footer.Alignment = taRightJustify
                       Footer.Value = #21512#35745#65306
                       Footer.ValueType = fvtStaticText
@@ -742,6 +765,11 @@ inherited frmFvchOrder: TfrmFvchOrder
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DEBIT_MNY'
+                      Font.Charset = GB2312_CHARSET
+                      Font.Color = clGreen
+                      Font.Height = -12
+                      Font.Name = #23435#20307
+                      Font.Style = []
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -757,6 +785,11 @@ inherited frmFvchOrder: TfrmFvchOrder
                       DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'CREDIT_AMT'
+                      Font.Charset = GB2312_CHARSET
+                      Font.Color = clGreen
+                      Font.Height = -12
+                      Font.Name = #23435#20307
+                      Font.Style = []
                       Footers = <>
                       Title.Caption = #36151#26041'|'#25968#37327
                       Title.Font.Charset = GB2312_CHARSET
@@ -769,6 +802,11 @@ inherited frmFvchOrder: TfrmFvchOrder
                     item
                       EditButtons = <>
                       FieldName = 'CREDIT_PRICE'
+                      Font.Charset = GB2312_CHARSET
+                      Font.Color = clGreen
+                      Font.Height = -12
+                      Font.Name = #23435#20307
+                      Font.Style = []
                       Footer.Alignment = taRightJustify
                       Footer.Value = #21512#35745#65306
                       Footer.ValueType = fvtStaticText
@@ -779,6 +817,11 @@ inherited frmFvchOrder: TfrmFvchOrder
                     item
                       EditButtons = <>
                       FieldName = 'CREDIT_MNY'
+                      Font.Charset = GB2312_CHARSET
+                      Font.Color = clGreen
+                      Font.Height = -12
+                      Font.Name = #23435#20307
+                      Font.Style = []
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
@@ -796,14 +839,14 @@ inherited frmFvchOrder: TfrmFvchOrder
                 end
               end
             end
-            object TabSheet2: TRzTabSheet
+            object Tab_FvchDetail: TRzTabSheet
               Color = clWindow
-              Caption = '  '#20998#24405#26126#32454'   '
+              Caption = '   '#20998#24405#26126#32454'   '
               object RzPanel1: TRzPanel
                 Left = 0
                 Top = 0
                 Width = 821
-                Height = 275
+                Height = 267
                 Align = alClient
                 BorderOuter = fsNone
                 BorderShadow = clWindow
@@ -814,7 +857,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                   Left = 0
                   Top = 0
                   Width = 821
-                  Height = 275
+                  Height = 267
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   BorderStyle = bsNone
@@ -864,7 +907,6 @@ inherited frmFvchOrder: TfrmFvchOrder
                     item
                       EditButtons = <>
                       FieldName = 'SUMMARY'
-                      Footer.Value = #20154#27665#24065#65288#22823#20889#65289
                       Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #25688#35201
@@ -873,19 +915,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = []
-                      Width = 274
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'SUBJECT_NO'
-                      Footers = <>
-                      Title.Caption = #31185#30446
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
-                      Width = 40
+                      Width = 264
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -898,7 +928,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = []
-                      Width = 63
+                      Width = 60
                     end
                     item
                       EditButtons = <>
@@ -913,7 +943,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = []
-                      Width = 80
+                      Width = 60
                     end
                     item
                       DisplayFormat = '#0.00'
@@ -928,7 +958,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Title.Font.Height = -12
                       Title.Font.Name = #23435#20307
                       Title.Font.Style = []
-                      Width = 84
+                      Width = 66
                     end
                     item
                       EditButtons = <>
@@ -1068,7 +1098,7 @@ inherited frmFvchOrder: TfrmFvchOrder
         Width = 67
         Height = 26
         Anchors = [akTop, akRight]
-        Caption = #24320#31080'(&S)'
+        Caption = #30830#23450'(&S)'
         Color = clSilver
         Font.Charset = GB2312_CHARSET
         Font.Color = clBlack
@@ -1085,6 +1115,7 @@ inherited frmFvchOrder: TfrmFvchOrder
         TabOrder = 0
         TextStyle = tsRaised
         ThemeAware = False
+        Visible = False
         NumGlyphs = 2
         Spacing = 5
       end

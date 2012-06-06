@@ -162,7 +162,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
               object fndSTATUS: TcxRadioGroup
                 Left = 324
                 Top = 4
-                Width = 85
+                Width = 69
                 Height = 90
                 ItemIndex = 0
                 Properties.Items = <
@@ -173,10 +173,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                     Caption = #26032#22686
                   end
                   item
-                    Caption = #20462#25913
-                  end
-                  item
-                    Caption = #24341#20837
+                    Caption = #36807#36134
                   end>
                 TabOrder = 4
                 Caption = #29366#24577
@@ -226,15 +223,6 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                   #34892#25919#22320#21306
                   #31649#29702#32676#32452)
                 TabOrder = 6
-              end
-              object Button1: TButton
-                Left = 448
-                Top = 8
-                Width = 75
-                Height = 25
-                Caption = #26597#30475#26126#32454
-                TabOrder = 7
-                OnClick = Button1Click
               end
             end
             object Panel1: TPanel
@@ -305,35 +293,35 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                     FieldName = 'FVCH_CODE'
                     Footers = <>
                     Title.Caption = #20973#35777#20869#30721
-                    Width = 71
+                    Width = 80
                   end
                   item
                     EditButtons = <>
                     FieldName = 'BILL_NAME'
                     Footers = <>
                     Title.Caption = #21333#25454#31867#22411
-                    Width = 112
+                    Width = 87
                   end
                   item
                     EditButtons = <>
                     FieldName = 'DEPT_NAME'
                     Footers = <>
                     Title.Caption = #25152#23646#37096#38376
-                    Width = 93
+                    Width = 119
                   end
                   item
                     EditButtons = <>
                     FieldName = 'SHOP_ID_TEXT'
                     Footers = <>
                     Title.Caption = #25152#23646#38376#24215
-                    Width = 97
+                    Width = 120
                   end
                   item
                     EditButtons = <>
                     FieldName = 'CREA_USER_TXT'
                     Footers = <>
                     Title.Caption = #21046#21333#20154
-                    Width = 116
+                    Width = 85
                   end
                   item
                     DisplayFormat = '#0'
@@ -341,7 +329,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                     FieldName = 'FVCH_ATTACH'
                     Footers = <>
                     Title.Caption = #38468#20214#25968
-                    Width = 61
+                    Width = 46
                   end
                   item
                     EditButtons = <>
@@ -356,13 +344,14 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                       #20462#25913
                       #24341#20837#23436#27605)
                     Title.Caption = #29366#24577
+                    Width = 50
                   end
                   item
                     EditButtons = <>
                     FieldName = 'FVCH_IMPORT_ID'
                     Footers = <>
                     Title.Caption = #36130#21153#31995#32479#24341#20837#20869#30721
-                    Width = 61
+                    Width = 100
                   end>
               end
             end
@@ -374,7 +363,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
   inherited RzPanel4: TRzPanel
     Width = 896
     inherited Image3: TImage
-      Left = 374
+      Left = 417
       Width = 380
     end
     inherited Image14: TImage
@@ -385,49 +374,54 @@ inherited frmFvchOrderList: TfrmFvchOrderList
       Width = 506
     end
     inherited rzPanel5: TPanel
-      Left = 374
+      Left = 417
       inherited lblToolCaption: TRzLabel
         Width = 36
         Caption = #25910#27454#21333
       end
     end
     inherited CoolBar1: TCoolBar
-      Width = 354
+      Width = 397
       Bands = <
         item
           Break = False
           Control = ToolBar1
           FixedSize = True
           ImageIndex = -1
-          MinHeight = 354
+          MinHeight = 397
           Width = 48
         end>
       inherited ToolBar1: TToolBar
-        Width = 354
+        Width = 397
         ButtonWidth = 43
         object ToolButton2: TToolButton
           Left = 0
           Top = 0
-          Action = actFind
+          Action = actFvch
         end
         object ToolButton4: TToolButton
           Left = 43
           Top = 0
-          Action = actFvch
+          Action = actNew
+        end
+        object ToolButton9: TToolButton
+          Left = 86
+          Top = 0
+          Action = actEdit
         end
         object ToolButton1: TToolButton
-          Left = 86
+          Left = 129
           Top = 0
           Action = actInfo
           Caption = #35814#32454
         end
         object ToolButton5: TToolButton
-          Left = 129
+          Left = 172
           Top = 0
           Action = actDelete
         end
         object ToolButton7: TToolButton
-          Left = 172
+          Left = 215
           Top = 0
           Width = 10
           Caption = 'ToolButton7'
@@ -435,22 +429,22 @@ inherited frmFvchOrderList: TfrmFvchOrderList
           Style = tbsDivider
         end
         object ToolButton8: TToolButton
-          Left = 182
+          Left = 225
           Top = 0
           Action = actAudit
         end
         object ToolButton3: TToolButton
-          Left = 225
+          Left = 268
           Top = 0
           Action = actPrint
         end
         object ToolButton6: TToolButton
-          Left = 268
+          Left = 311
           Top = 0
           Action = actPreview
         end
         object ToolButton10: TToolButton
-          Left = 311
+          Left = 354
           Top = 0
           Action = actExit
         end
@@ -464,11 +458,15 @@ inherited frmFvchOrderList: TfrmFvchOrderList
   inherited actList: TActionList
     Left = 144
     Top = 232
+    inherited actNew: TAction
+      OnExecute = actNewExecute
+    end
     inherited actDelete: TAction
       OnExecute = actDeleteExecute
     end
     inherited actEdit: TAction
-      Caption = #29983#25104
+      Caption = #20462#25913
+      OnExecute = actEditExecute
     end
     inherited actPrint: TAction
       OnExecute = actPrintExecute
@@ -483,6 +481,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
       OnExecute = actInfoExecute
     end
     inherited actAudit: TAction
+      Caption = #36807#36134
       OnExecute = actAuditExecute
     end
     object actfrmBatchReck: TAction

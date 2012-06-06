@@ -1,3 +1,4 @@
+
 unit ufrmFvchOrder;
 
 interface
@@ -35,9 +36,9 @@ type
     DsFvchData: TDataSource;
     DsFvchDetail: TDataSource;
     RzPageDetail: TRzPageControl;
-    RzTabSheet1: TRzTabSheet;
+    Tab_FvchDATA: TRzTabSheet;
     RzPanel3: TRzPanel;
-    TabSheet2: TRzTabSheet;
+    Tab_FvchDetail: TRzTabSheet;
     RzPanel1: TRzPanel;
     Label4: TLabel;
     edtCREA_USER: TzrComboBoxList;
@@ -55,12 +56,15 @@ type
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
+    procedure RzPageDetailChanging(Sender: TObject; NewIndex: Integer;
+      var AllowChange: Boolean);
   private
     FisAudit: boolean;
     Fcid: string;
     Tax_Rate:Currency;
     InputType:Integer;
-    { Private declarations }
+    function  NumToStr(const mny: Currency): string;
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Setcid(const Value: string);
     procedure FocusNextColumn;
@@ -257,7 +261,7 @@ procedure TfrmFvchOrder.FormCreate(Sender: TObject);
 begin
   inherited;
   AObj:=TRecord_.Create;
-
+  RzPageDetail.ActivePage:=Tab_FvchDATA;
 end;
 
 procedure TfrmFvchOrder.SetGridAmtPriceCol(const AmtVisible,PriVisible: Boolean);
@@ -301,10 +305,13 @@ end;
 procedure TfrmFvchOrder.SetParams;
 var
   Rs: TZQuery;
-  SumAmt,SumPri: real;    
+  CurMny:Currency;
+  SumAmt,SumPri: real;
+  FindCol: TColumnEh;
 begin
   SumAmt:=0;
   SumPri:=0;
+  CurMny:=0;
   try
     Rs:=TZQuery.Create(nil);
     Rs.Data:=CdsFvchData.Data;
@@ -313,6 +320,7 @@ begin
       Rs.First;
       while not Rs.Eof do
       begin
+        CurMny:=CurMny+Rs.FieldByName('DEBIT_MNY').AsFloat;
         SumAmt:=SumAmt+abs(Rs.FieldByName('DEBIT_AMT').AsFloat)+abs(Rs.FieldByName('CREDIT_AMT').AsFloat);
         SumPri:=SumAmt+abs(Rs.FieldByName('DEBIT_PRI').AsFloat)+abs(Rs.FieldByName('CREDIT_PRI').AsFloat);
         Rs.Next;
@@ -320,8 +328,70 @@ begin
     end;     
   finally
     Rs.Free;
-  end;   
+  end;
+  FindCol:=FindDBColumn(DBGridEh1,'SUMMARY');
+  if FindCol<>nil then
+    FindCol.Footer.Value:='人民币(大写)'+NumToStr(CurMny);  
   SetGridAmtPriceCol((SumAmt<>0),(SumPri<>0));
+end;
+
+procedure TfrmFvchOrder.DBGridEh1DblClick(Sender: TObject);
+var
+  ChangeFlag: Boolean;
+begin
+  inherited;
+  if CdsFvchData.IsEmpty then Exit;
+  RzPageDetail.ActivePage:=Tab_FvchDetail;
+end;
+
+procedure TfrmFvchOrder.RzPageDetailChanging(Sender: TObject; NewIndex: Integer; var AllowChange: Boolean);
+begin
+  if (RzPageDetail.ActivePage<>Tab_FvchDetail) and (not CdsFvchData.IsEmpty) then
+  begin
+    CdsFvchDetail.Filtered:=False;
+    CdsFvchDetail.Filter:='FVCH_DID='''+trim(CdsFvchData.FieldByName('FVCH_DID').AsString)+''' ';
+    CdsFvchDetail.Filtered:=true;
+    if CdsFvchDetail.RecordCount=0 then
+    begin
+      AllowChange:=False;
+      Raise Exception.Create('  当前凭证分录没有明细...  ');
+    end;
+  end;
+end;
+
+function TfrmFvchOrder.NumToStr(const mny: Currency): string;
+const
+  cnum: array[0..9] of string=('零','壹','贰','叁','肆','伍','陆','柒','捌','玖');
+  cunit: array[0..14] of string=('万','仟','佰','拾','亿','仟','佰','拾','万','仟','佰','拾','元','角','分');
+var
+  i : Integer;
+  snum,stemp : string;
+begin
+  result :='';
+  snum := format('%15d',[round(mny * 100)]);
+  for i := 0 to 14 do
+  begin
+    stemp := copy(snum,i+1,1);
+    if stemp=' ' then continue
+    else result := result + cnum[strtoint(stemp)] + cunit[i];
+  end;
+  //去掉多余的零
+  Result := StringReplace(Result, '零元','元', [rfReplaceAll]);
+  Result := StringReplace(Result, '零拾', '零', [rfReplaceAll]);
+  Result := StringReplace(Result, '零佰', '零', [rfReplaceAll]);
+  Result := StringReplace(Result, '零仟', '零', [rfReplaceAll]);
+  Result := StringReplace(Result, '零万', '万', [rfReplaceAll]);
+  Result := StringReplace(Result, '零亿', '亿', [rfReplaceAll]);
+  Result := StringReplace(Result, '亿万', '亿', [rfReplaceAll]);
+  Result := StringReplace(Result, '零零零','零', [rfReplaceAll]);
+  Result := StringReplace(Result, '零零', '零', [rfReplaceAll]);
+  Result := StringReplace(Result, '零万', '万', [rfReplaceAll]);
+  Result := StringReplace(Result, '零亿', '亿', [rfReplaceAll]);
+  Result := StringReplace(Result, '亿万', '亿', [rfReplaceAll]);
+  Result := StringReplace(Result, '零元', '元', [rfReplaceAll]);
+  if pos('零分',result)=0 then Result := StringReplace(Result,'零角','零', [rfReplaceAll])
+  else Result := StringReplace(Result,'零角','整', [rfReplaceAll]);
+  Result := StringReplace(Result,'零分','', [rfReplaceAll]);
 end;
 
 end.

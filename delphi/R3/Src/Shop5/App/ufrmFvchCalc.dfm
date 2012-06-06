@@ -12,8 +12,8 @@ inherited frmFvchCalc: TfrmFvchCalc
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 380
-    Height = 311
+    Width = 388
+    Height = 322
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -21,8 +21,8 @@ inherited frmFvchCalc: TfrmFvchCalc
     object RzPanel2: TRzPanel
       Left = 0
       Top = 0
-      Width = 380
-      Height = 269
+      Width = 388
+      Height = 280
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
@@ -146,8 +146,8 @@ inherited frmFvchCalc: TfrmFvchCalc
     end
     object RzPanel3: TRzPanel
       Left = 0
-      Top = 269
-      Width = 380
+      Top = 280
+      Width = 388
       Height = 42
       Align = alBottom
       BorderOuter = fsNone

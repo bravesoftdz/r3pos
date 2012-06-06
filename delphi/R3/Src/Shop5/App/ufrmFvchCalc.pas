@@ -747,9 +747,9 @@ begin
         Rs_FvchFrame.Post;
         Rs_FvchFrame.Next;
       end;
-      if Rs_FvchFrame.RecordCount=1 then
+      if (ViwCnd<>'') and (Rs_FvchFrame.RecordCount=1) then
         ViwCnd:=' where '+ViwCnd
-      else if Rs_FvchFrame.RecordCount>1 then
+      else if (ViwCnd<>'') and (Rs_FvchFrame.RecordCount>1) then
         ViwCnd:=' where ('+ViwCnd+')';
     finally
       Rs_FvchFrame.Filtered:=False;

@@ -192,23 +192,35 @@ end;
 
 procedure TfrmFvchFrameInfo.SetFVCH_GTYPE(const Value: String);
 var i:Integer;
-    rs:TZQuery;
+    rs,Rs_Params:TZQuery;
     sSql:String;
 begin
   FFVCH_GTYPE := Value;
+  //xhh修改成取Global
+  Rs_Params:=Global.GetZQueryFromName('PUB_PARAMS');
+  if (Rs_Params<>nil) and (not Rs_Params.IsEmpty) then
+  begin
+    if Rs_Params.Locate('TYPE_CODE;CODE_ID',VarArrayOf(['BILL_NAME',FFVCH_GTYPE]),[]) then
+      Label1.Caption := Rs_Params.FieldByName('CODE_NAME').AsString+'模板';
+  end;
 
   rs := TZQuery.Create(nil);
   try
-    rs.Close;
+    {rs.Close;
     rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''BILL_NAME'' and CODE_ID=:CODE_ID ';
     rs.Params.ParamByName('CODE_ID').AsString := Value;
     Factor.Open(rs);
     Label1.Caption := rs.FieldByName('CODE_NAME').AsString+'模板';
+    }
+
+    sSql :='select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID not in (''CALC_AMOUNT'',''APRICE'',''COST_ APRICE'') ';
+    if trim(FFVCH_GTYPE)='11' then
+      sSql := sSql +
+        ' union all '+
+        ' select ''PAY_'' '+GetStrJoin(Factor.iDbType)+' CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID ';
 
     rs.Close;
-    rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID not in (''CALC_AMOUNT'',''APRICE'',''COST_ APRICE'') '+
-            ' union all '+
-            ' select ''PAY_'' '+GetStrJoin(Factor.iDbType)+' CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID ';
+    rs.SQL.Text:=sSql;
     rs.Params.ParamByName('TYPE_CODE').AsString := 'FVCH_DATA_'+Value;
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(rs);

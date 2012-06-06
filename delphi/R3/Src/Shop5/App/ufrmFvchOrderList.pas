@@ -1,4 +1,5 @@
-{  21300001	0	凭证表	1	查询	2	新增	3	修改	4	删除	5	审核	6	打印	7	导出   }
+{  100002407	0	查询 1 新增|生成	2	修改	3	修改	4	删除	5	过账	6	打印	7	导出   }
+
 
 unit ufrmFvchOrderList;
 
@@ -44,7 +45,7 @@ type
     fndP1_DEPT_ID: TzrComboBoxList;
     fndP1_BILL_NAME: TcxComboBox;
     actFvch: TAction;
-    Button1: TButton;
+    ToolButton9: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
@@ -59,7 +60,8 @@ type
     procedure actFvchExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure actNewExecute(Sender: TObject);
+    procedure actEditExecute(Sender: TObject);
   private
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
@@ -132,35 +134,25 @@ end;
 
 procedure TfrmFvchOrderList.ChangeButton;
 begin
-  if cdsList.Active and (cdsList.FieldByName('CHK_DATE').AsString = '') then actAudit.Caption := '审核' else actAudit.Caption := '弃审';
-   begin
-     actDelete.Enabled := rzPage.ActivePageIndex > 0;
-     actEdit.Enabled := rzPage.ActivePageIndex > 0;
-     actSave.Enabled := rzPage.ActivePageIndex > 0;
-     actCancel.Enabled := false;
-     actInfo.Enabled := rzPage.ActivePageIndex > 0;
-     actAudit.Enabled := rzPage.ActivePageIndex > 0;
-   end;
+  if cdsList.Active and (cdsList.FieldByName('FVCH_FLAG').AsString = '2') then
+    actAudit.Caption := '已过账'
+  else
+    actAudit.Caption := '过账';
 end;
 procedure TfrmFvchOrderList.actAuditExecute(Sender: TObject);
 var
   Msg :string;
   Params:TftParamList;
 begin
-  inherited;
-    if cdsList.IsEmpty then Raise Exception.Create('请选择待审核的收款单');
-   if not ShopGlobal.GetChkRight('21300001',5) then Raise Exception.Create('你没有审核收款单的权限,请和管理员联系.');
-    if cdsList.FieldByName('CHK_DATE').AsString<>'' then
-       begin
-         //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能弃审');
-         if cdsList.FieldByName('CHK_USER').AsString<>Global.UserID then Raise Exception.Create('只有审核人才能对当前销售单执行弃审');
-         if MessageBox(Handle,'确认弃审当前收款单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-       end
-    else
-       begin
-         //if copy(cdsList.FieldByName('COMM').AsString,1,1)= '1' then Raise Exception.Create('已经同步的数据不能再审核');
-         if MessageBox(Handle,'确认审核当前收款单？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
-       end;
+  if cdsList.IsEmpty then Raise Exception.Create('     请选择待过账的凭证单...    ');
+  if not ShopGlobal.GetChkRight('100002407',5) then Raise Exception.Create('  您没有过账凭证单的权限,请和管理员联系.   ');
+  if cdsList.FieldByName('FVCH_FLAG').AsString='2' then
+  begin
+    Raise Exception.Create('   已过账的凭证单不能操作...   ');  
+  end else
+  begin
+    if MessageBox(Handle,'   确认过账当前凭证单？  ',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
+  end;
     try
       Params := TftParamList.Create(nil);
       try
@@ -231,8 +223,11 @@ begin
     strWhere := strWhere + ' and A.DEPT_ID='''+fndP1_DEPT_ID.AsString+'''';
 
   //引入状态
-  if fndSTATUS.ItemIndex>0 then
-    strWhere := strWhere + ' and isnull(A.FVCH_FLAG,'''')='''+InttoStr(fndSTATUS.ItemIndex)+''' ';
+  case fndSTATUS.ItemIndex of
+   1: strWhere := strWhere + ' and isnull(A.FVCH_FLAG,'''')=''0'' ';  //新增状态
+   2: strWhere := strWhere + ' and isnull(A.FVCH_FLAG,'''')=''2'' ';  //过账状态
+  end;
+
   //单据类型
   if fndP1_BILL_NAME.ItemIndex>0 then
     strWhere := strWhere + ' and B.FVCH_GTYPE='''+TRecord_(fndP1_BILL_NAME.Properties.Items.Objects[fndP1_BILL_NAME.ItemIndex]).FieldByName('CODE_ID').AsString+''' ';
@@ -334,11 +329,11 @@ end;
 procedure TfrmFvchOrderList.actDeleteExecute(Sender: TObject);
 begin
   inherited;
-   if cdsList.IsEmpty then Exit;
-   if not ShopGlobal.GetChkRight('21300001',4) then Raise Exception.Create('你没有删除凭证的权限,请和管理员联系.');
+   if cdsList.IsEmpty then Exit;  
+   if not ShopGlobal.GetChkRight('100002407',4) then Raise Exception.Create('你没有删除凭证的权限,请和管理员联系.');
    if cdsList.FieldByName('CREA_USER').AsString <> Global.UserID then
     begin
-      if not ShopGlobal.GetChkRight('21300001',5) then
+      if not ShopGlobal.GetChkRight('100002407',5) then
         Raise Exception.Create('你没有删除"'+cdsList.FieldByName('RECV_USER_TEXT').AsString+'"录入凭证的权限!');
     end;
    if cdsList.FieldByName('FVCH_IMPORT_ID').AsString <> '' then Raise Exception.Create('此凭证导入财务系统,不能执行删除操作.');   
@@ -350,7 +345,7 @@ begin
        DeleteOrder;
        cdsList.Delete;
        if cdsList.IsEmpty then CdsFvchData.Close;
-       MessageBox(Handle,'删除收款单成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
+       MessageBox(Handle,'删除凭证单成功...','友情提示...',MB_OK+MB_ICONINFORMATION);
      finally
        free;
      end;
@@ -428,19 +423,18 @@ begin
   //
 end;
 
-procedure TfrmFvchOrderList.Button1Click(Sender: TObject);
+procedure TfrmFvchOrderList.actNewExecute(Sender: TObject);
 begin
-  if cdsList.IsEmpty then Exit;
-  with TfrmFvchOrder.Create(self) do
-  begin
-    try
-      cid := cdsList.FieldbyName('SHOP_ID').AsString;
-      Open(cdsList.FieldByName('FVCH_ID').AsString);
-      ShowModal;
-    finally
-      free;
-    end;
-  end;  
+  //新增凭证
+  Showmessage('New.Bill');
+
+end;
+
+procedure TfrmFvchOrderList.actEditExecute(Sender: TObject);
+begin
+  //编辑
+  Showmessage('Edit.Bill');
+  
 end;
 
 end.

@@ -29,6 +29,7 @@ type
     DataTree: TRzCheckTree;
     edtIn: TcxRadioButton;
     edtNotIn: TcxRadioButton;
+    edtDATAFLAG_9: TcxCheckBox;
     procedure edtSORT_IDPropertiesChange(Sender: TObject);
     procedure DataTreeStateChange(Sender: TObject; Node: TTreeNode;
       NewState: TRzCheckState);
@@ -78,7 +79,7 @@ uses ufrmBasic, uFnUtil, uShopGlobal, uGlobal, uDsUtil, uShopUtil, uTreeUtil,
 function TfrmFvchFrameDefine.DecodeDataFlag: String;
 var StrData:String;
 begin
-  Result := '00000000';
+  Result := '000000000';
   StrData := ''; 
   if edtDATAFLAG_1.Checked then StrData := '1' else  StrData := '0';
   if edtDATAFLAG_2.Checked then StrData := StrData+'1' else  StrData := StrData+'0';
@@ -88,6 +89,7 @@ begin
   if edtDATAFLAG_6.Checked then StrData := StrData+'1' else  StrData := StrData+'0';
   if edtDATAFLAG_7.Checked then StrData := StrData+'1' else  StrData := StrData+'0';
   if edtDATAFLAG_8.Checked then StrData := StrData+'1' else  StrData := StrData+'0';
+  if edtDATAFLAG_9.Checked then StrData := StrData+'1' else  StrData := StrData+'0';
   Result := StrData;
 end;
 
@@ -105,6 +107,7 @@ begin
      edtDATAFLAG_6.Checked := StrToInt(Copy(StrData,6,1))=1;
      edtDATAFLAG_7.Checked := StrToInt(Copy(StrData,7,1))=1;
      edtDATAFLAG_8.Checked := StrToInt(Copy(StrData,8,1))=1;
+     edtDATAFLAG_9.Checked := StrToInt(Copy(StrData,9,1))=1;
   end;
 end;
 

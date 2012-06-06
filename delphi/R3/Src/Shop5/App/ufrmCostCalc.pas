@@ -877,7 +877,7 @@ begin
           '0 as CHANGE4_AMT,0 as CHANGE4_MNY,0 as CHANGE4_RTL,0 as CHANGE4_CST,'+
           '0 as CHANGE5_AMT,0 as CHANGE5_MNY,0 as CHANGE5_RTL,0 as CHANGE5_CST '+
           'from '+tempTableName1+' A where A.TENANT_ID=0 and A.CREA_DATE='+formatDatetime('YYYYMMDD',bDate+i-1)+' '+
-          ') j left outer join ('+tempTableName2+') c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and j.BATCH_NO=c.BATCH_NO '+
+          ') j left outer join '+tempTableName2+' c on j.TENANT_ID=c.TENANT_ID and j.GODS_ID=c.GODS_ID and j.BATCH_NO=c.BATCH_NO '+
           'group by j.TENANT_ID,j.SHOP_ID,j.CREA_DATE,j.GODS_ID,j.BATCH_NO ) jc ';
         Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
 

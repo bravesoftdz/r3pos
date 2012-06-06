@@ -25,12 +25,14 @@ type
     edtREMARK: TcxTextEdit;
     edtInput: TcxTextEdit;
     lblInput: TLabel;
-    Label8: TLabel;
-    edtVOUCHER_PRC: TcxTextEdit;
-    edtVAILD_DATE: TcxDateEdit;
-    Label2: TLabel;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
+    Label4: TLabel;
+    Label5: TLabel;
+    edtVAILD_DATE: TcxDateEdit;
+    edtVUCH_NAME: TcxTextEdit;
+    edtVOUCHER_PRC: TcxTextEdit;
+    Label8: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure N1Click(Sender: TObject);
@@ -39,6 +41,7 @@ type
   private
     { Private declarations }
     //procedure FocusNextColumn;
+    RowId:Integer;
     procedure SetdbState(const Value: TDataSetState);override;
   public
     { Public declarations }
@@ -127,6 +130,7 @@ begin
   cdsDetail.Last;
   if cdsDetail.IsEmpty or (cdsDetail.FieldbyName('BARCODE').AsString <>'') then
     begin
+      Inc(RowId);
       cdsDetail.Append;
       cdsDetail.FieldByName('BARCODE').AsString := Trim(edtInput.Text);
       cdsDetail.FieldByName('VOUCHER_TYPE').AsString := TRecord_(edtVOUCHER_TYPE.Properties.Items.Objects[edtVOUCHER_TYPE.ItemIndex]).FieldByName('CODE_ID').AsString;
@@ -134,6 +138,7 @@ begin
       cdsDetail.FieldByName('VAILD_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',edtVAILD_DATE.Date));
       cdsDetail.FieldByName('CLIENT_ID').AsString := '#';
       cdsDetail.FieldByName('VOUCHER_STATUS').AsString := '1';
+      cdsDetail.FieldByName('SEQNO').asInteger := RowID;
       cdsDetail.Post;
     end;
   //DbGridEh1.Col := 1 ;
@@ -188,6 +193,7 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
+    RowId := cdsDetail.RecordCount;
     dbState := dsBrowse;
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);

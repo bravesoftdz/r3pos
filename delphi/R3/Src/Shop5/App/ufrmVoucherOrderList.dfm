@@ -1,7 +1,7 @@
 inherited frmVoucherOrderList: TfrmVoucherOrderList
   Left = 430
   Top = 185
-  Caption = #31036#21048#31649#29702
+  Caption = #31036#21048#20837#24211#31649#29702
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
@@ -290,14 +290,14 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                   EditButtons = <>
                   FieldName = 'CREA_DATE'
                   Footers = <>
-                  Title.Caption = #25805#20316#26102#38388
+                  Title.Caption = #24405#20837#26102#38388
                   Width = 110
                 end
                 item
                   EditButtons = <>
                   FieldName = 'CREA_USER_TEXT'
                   Footers = <>
-                  Title.Caption = #25805#20316#20154#21592
+                  Title.Caption = #21046#21333#21592
                   Width = 80
                 end>
             end

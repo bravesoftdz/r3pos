@@ -163,7 +163,7 @@ end;
 procedure TfrmVoucherOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -297,7 +297,7 @@ begin
      w := w +' and A.VOUCHER_ID>'''+id+'''';
   result :=
      'select A.TENANT_ID,A.VOUCHER_ID,A.VOUCHER_TYPE,A.INTO_DATE,A.SHOP_ID,C.SHOP_NAME as SHOP_ID_TEXT,E.USER_NAME as INTO_USER_TEXT,'+
-     'B.DEPT_NAME as DEPT_ID_TEXT,D.USER_NAME as CREA_USER_TEXT,A.CREA_DATE,A.REMARK '+
+     'A.VAILD_DATE,B.DEPT_NAME as DEPT_ID_TEXT,D.USER_NAME as CREA_USER_TEXT,A.CREA_DATE,A.REMARK '+
      ' from SAL_VOUCHERORDER A left join CA_DEPT_INFO B on A.TENANT_ID=B.TENANT_ID and A.DEPT_ID=B.DEPT_ID '+
      ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
      ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+

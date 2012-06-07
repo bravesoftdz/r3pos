@@ -86,7 +86,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         Left = 1
         Top = 3
         Width = 0
-        TabOrder = 6
+        TabOrder = 9
         Visible = False
       end
       object edtDEPT_ID: TzrComboBoxList
@@ -100,7 +100,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 1
+        TabOrder = 2
         InGrid = False
         KeyValue = Null
         FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -134,7 +134,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 0
+        TabOrder = 1
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -170,7 +170,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         Width = 121
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-        TabOrder = 4
+        TabOrder = 6
       end
       object edtINTO_USER: TzrComboBoxList
         Left = 442
@@ -183,7 +183,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
             Default = True
           end>
         Properties.ReadOnly = True
-        TabOrder = 5
+        TabOrder = 8
         InGrid = False
         KeyValue = Null
         FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -220,14 +220,14 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsFixedList
-        TabOrder = 2
+        TabOrder = 3
       end
       object edtREMARK: TcxTextEdit
         Left = 87
         Top = 83
         Width = 288
         Height = 20
-        TabOrder = 3
+        TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object edtVAILD_DATE: TcxDateEdit
@@ -243,7 +243,8 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         Top = 3
         Width = 288
         Height = 20
-        TabOrder = 8
+        Properties.OnChange = edtVUCH_NAMEPropertiesChange
+        TabOrder = 0
       end
       object edtVOUCHER_PRC: TcxTextEdit
         Left = 254
@@ -251,7 +252,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
         Width = 121
         Height = 20
         Properties.OnChange = edtVOUCHER_PRCPropertiesChange
-        TabOrder = 9
+        TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end

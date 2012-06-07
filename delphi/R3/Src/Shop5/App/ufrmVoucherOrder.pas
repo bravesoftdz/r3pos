@@ -38,6 +38,7 @@ type
     procedure N1Click(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure edtVOUCHER_PRCPropertiesChange(Sender: TObject);
+    procedure edtVUCH_NAMEPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     //procedure FocusNextColumn;
@@ -171,7 +172,7 @@ begin
   gid := '..新增..';
 
   //InitRecord;
-  if edtSHOP_ID.CanFocus and Visible then edtSHOP_ID.SetFocus;
+  if edtVUCH_NAME.CanFocus and Visible then edtVUCH_NAME.SetFocus;
   TabSheet.Caption := '..新建..';
 end;
 
@@ -340,6 +341,13 @@ procedure TfrmVoucherOrder.edtVOUCHER_PRCPropertiesChange(Sender: TObject);
 begin
   inherited;
   StrToInt64Def(Trim(edtVOUCHER_PRC.Text),0);
+end;
+
+procedure TfrmVoucherOrder.edtVUCH_NAMEPropertiesChange(Sender: TObject);
+begin
+  inherited;
+  if Trim(edtVUCH_NAME.Text) <> '' then
+     TabSheet.Caption := Trim(edtVUCH_NAME.Text);
 end;
 
 end.

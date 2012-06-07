@@ -280,6 +280,14 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                   Width = 80
                 end
                 item
+                  DisplayFormat = '0000-00-00'
+                  EditButtons = <>
+                  FieldName = 'VAILD_DATE'
+                  Footers = <>
+                  Title.Caption = #26377#25928#26085#26399
+                  Width = 80
+                end
+                item
                   EditButtons = <>
                   FieldName = 'REMARK'
                   Footers = <>
@@ -291,7 +299,7 @@ inherited frmVoucherOrderList: TfrmVoucherOrderList
                   FieldName = 'CREA_DATE'
                   Footers = <>
                   Title.Caption = #24405#20837#26102#38388
-                  Width = 110
+                  Width = 140
                 end
                 item
                   EditButtons = <>

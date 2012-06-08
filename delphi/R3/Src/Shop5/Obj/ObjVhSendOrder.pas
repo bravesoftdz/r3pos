@@ -118,7 +118,7 @@ begin
   Result := False;
   if FieldByName('VOUCHER_TYPE').AsString = '3' then
   begin
-     Str := ' update SAL_VOUCHERDATA set VOUCHER_STATUS=''3'' where TENANT_ID=:OLD_TENANT_ID and BARCODE=:OLD_BARCODE ';
+     Str := ' update SAL_VOUCHERDATA set VOUCHER_STATUS=''1'',CLIENT_ID=''#'' where TENANT_ID=:OLD_TENANT_ID and BARCODE=:OLD_BARCODE ';
      AGlobal.ExecSQL(Str,Self);
   end;
   Result := True;
@@ -137,9 +137,9 @@ begin
        rs.Params.ParamByName('TENANT_ID').AsInteger := FieldByName('TENANT_ID').AsInteger;
        rs.Params.ParamByName('BARCODE').AsString := FieldByName('BARCODE').AsString;
        AGlobal.Open(rs);
-       if rs.FieldByName('BARCODE').AsString = '' then Raise Exception.Create('"'+FieldByName('BARCODE').AsString+'"防伪码不存在!');
-       if rs.FieldByName('VOUCHER_STATUS').AsString = '3' then Raise Exception.Create('"'+FieldByName('BARCODE').AsString+'"防伪码已经发放状态!');
-       Str := ' update SAL_VOUCHERDATA set VOUCHER_STATUS=''3'' where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE ';
+       if rs.FieldByName('BARCODE').AsString = '' then Raise Exception.Create('"'+FieldByName('BARCODE').AsString+'"礼券不存在库中,请核对防伪码!');
+       if rs.FieldByName('VOUCHER_STATUS').AsString = '3' then Raise Exception.Create('"'+FieldByName('BARCODE').AsString+'"礼券已在发放状态!');
+       Str := ' update SAL_VOUCHERDATA set VOUCHER_STATUS=''3'',CLIENT_ID='+QuotedStr(Params.FindParam('CLIENT_ID').AsString)+' where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE ';
        AGlobal.ExecSQL(Str,Self);
      finally
        rs.Free;

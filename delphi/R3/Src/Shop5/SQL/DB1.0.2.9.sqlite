@@ -1,5 +1,7 @@
 --有效期
 alter table SAL_VOUCHERORDER add [VAILD_DATE] int NULL;
+--面值
+alter table SAL_VOUCHERORDER add [VOUCHER_PRC] int NULL;
 --礼券名称
 alter table SAL_VOUCHERORDER add [VUCH_NAME] varchar(50) NULL;
 --序号
@@ -82,6 +84,8 @@ CREATE TABLE [ACC_FVCHFRAME] (
   [SEQNO] [int] NOT NULL ,
   --科目代码
   [SUBJECT_NO] [varchar](10)   NOT NULL,
+  --凭证字
+  [FVCH_NAME] [varchar](20)   NOT NULL,
   --摘要
   [SUMMARY] [varchar](100)   NOT NULL,
         --金额<取数字段>

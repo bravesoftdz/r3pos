@@ -1,5 +1,5 @@
 inherited frmFvchFrameInfo: TfrmFvchFrameInfo
-  Left = 700
+  Left = 642
   Top = 161
   Caption = #20973#35777#27169#22359#23450#20041
   ClientHeight = 392

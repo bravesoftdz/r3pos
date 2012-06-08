@@ -218,7 +218,6 @@ begin
       sSql := sSql +
         ' union all '+
         ' select ''PAY_'' '+GetStrJoin(Factor.iDbType)+' CODE_ID as CODE_ID,CODE_NAME from VIW_PAYMENT where TENANT_ID=:TENANT_ID ';
-
     rs.Close;
     rs.SQL.Text:=sSql;
     rs.Params.ParamByName('TYPE_CODE').AsString := 'FVCH_DATA_'+Value;

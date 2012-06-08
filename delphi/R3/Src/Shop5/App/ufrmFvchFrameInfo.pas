@@ -221,7 +221,8 @@ begin
     rs.Close;
     rs.SQL.Text:=sSql;
     rs.Params.ParamByName('TYPE_CODE').AsString := 'FVCH_DATA_'+Value;
-    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+
+    if rs.Params.FindParam('TENANT_ID') <> nil then rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(rs);
     AddCbxPickList(edtAMONEY,'',rs);
     AddCbxPickList(edtAMONEY_2,'',rs);

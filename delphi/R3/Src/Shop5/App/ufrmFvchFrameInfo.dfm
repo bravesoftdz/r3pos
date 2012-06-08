@@ -1,20 +1,20 @@
 inherited frmFvchFrameInfo: TfrmFvchFrameInfo
-  Left = 642
-  Top = 161
+  Left = 338
+  Top = 157
   Caption = #20973#35777#27169#22359#23450#20041
   ClientHeight = 392
-  ClientWidth = 630
+  ClientWidth = 687
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 630
+    Width = 687
     Height = 392
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 620
+      Width = 677
       Height = 342
       TabIndex = -1
       FixedDimension = 20
@@ -23,7 +23,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         TabVisible = False
         Caption = #23450#20041#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 616
+          Width = 673
           Height = 338
           BorderColor = clWhite
           Color = clWhite
@@ -45,8 +45,8 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
           object RzPanel3: TRzPanel
             Left = 5
             Top = 5
-            Width = 606
-            Height = 52
+            Width = 663
+            Height = 74
             Align = alTop
             BorderOuter = fsNone
             BorderColor = clGreen
@@ -59,12 +59,12 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             ParentFont = False
             TabOrder = 0
             DesignSize = (
-              606
-              52)
+              663
+              74)
             object Label1: TLabel
               Left = 228
               Top = 5
-              Width = 139
+              Width = 196
               Height = 24
               Anchors = [akLeft, akTop, akRight]
               Caption = #20973' '#35777' '#23450' '#20041
@@ -78,7 +78,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object Label2: TLabel
               Left = 221
               Top = 32
-              Width = 156
+              Width = 213
               Height = 12
               Anchors = [akLeft, akTop, akRight]
               Caption = '=========================='
@@ -92,9 +92,9 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
           end
           object RzPanel7: TRzPanel
             Left = 5
-            Top = 57
-            Width = 606
-            Height = 276
+            Top = 79
+            Width = 663
+            Height = 254
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clGreen
@@ -104,8 +104,8 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object DBGridEh1: TDBGridEh
               Left = 1
               Top = 1
-              Width = 604
-              Height = 274
+              Width = 661
+              Height = 252
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               BorderStyle = bsNone
@@ -220,6 +220,19 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                   OnBeforeShowControl = DBGridEh1Columns4BeforeShowControl
                 end
                 item
+                  EditButtons = <>
+                  FieldName = 'FVCH_NAME'
+                  Footers = <>
+                  Title.Caption = #20973#35777#23383
+                  Title.Color = clWhite
+                  Title.Font.Charset = GB2312_CHARSET
+                  Title.Font.Color = clGreen
+                  Title.Font.Height = -12
+                  Title.Font.Name = #23435#20307
+                  Title.Font.Style = []
+                  Width = 80
+                end
+                item
                   Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'OPTION'
@@ -267,10 +280,10 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
     end
     inherited btPanel: TRzPanel
       Top = 347
-      Width = 620
+      Width = 677
       Color = clWhite
       object Btn_Save: TRzBitBtn
-        Left = 453
+        Left = 510
         Top = 10
         Width = 67
         Height = 26
@@ -297,7 +310,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 539
+        Left = 596
         Top = 10
         Width = 67
         Height = 26

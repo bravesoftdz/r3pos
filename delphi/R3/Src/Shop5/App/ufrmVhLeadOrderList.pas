@@ -39,6 +39,8 @@ type
     procedure DBGridEh1DblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
   private
     { Private declarations }
     function CheckCanExport: boolean; override;
@@ -129,6 +131,7 @@ end;
 procedure TfrmVhLeadOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
+  Exit;
   //if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印领用礼券单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
@@ -157,6 +160,7 @@ end;
 procedure TfrmVhLeadOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
+  Exit;
   //if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印领用礼券单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
@@ -390,10 +394,26 @@ end;
 
 procedure TfrmVhLeadOrderList.FormShow(Sender: TObject);
 begin
+  inherited;
   Open('');
   //进入窗体默认新增加判断是否新增权限:
   //if (ShopGlobal.GetChkRight('100002297',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then
   actNew.OnExecute(nil);
+end;
+
+procedure TfrmVhLeadOrderList.DBGridEh1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumnEh;
+  State: TGridDrawState);
+var ARect:TRect;
+begin
+  inherited;
+  if Column.FieldName = 'SEQNO' then
+    begin
+      ARect := Rect;
+      DBGridEh1.canvas.Brush.Color := $0000F2F2;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsList.RecNo)),length(Inttostr(cdsList.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
 end;
 
 end.

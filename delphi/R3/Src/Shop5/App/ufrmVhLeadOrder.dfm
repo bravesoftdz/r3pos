@@ -1,6 +1,6 @@
 inherited frmVhLeadOrder: TfrmVhLeadOrder
-  Left = 383
-  Top = 162
+  Left = 226
+  Top = 202
   Width = 807
   Height = 541
   Caption = #31036#21048#39046#29992#31649#29702
@@ -99,7 +99,7 @@ inherited frmVhLeadOrder: TfrmVhLeadOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        Properties.OnButtonClick = edtSHOP_IDPropertiesButtonClick
+        Properties.OnChange = edtSHOP_IDPropertiesChange
         TabOrder = 0
         InGrid = False
         KeyValue = Null
@@ -189,14 +189,14 @@ inherited frmVhLeadOrder: TfrmVhLeadOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 400
+      Top = 415
       Width = 789
-      Height = 37
+      Height = 22
     end
     inherited DBGridEh1: TDBGridEh
       Top = 92
       Width = 789
-      Height = 308
+      Height = 323
       PopupMenu = PopupMenu1
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
@@ -227,6 +227,7 @@ inherited frmVhLeadOrder: TfrmVhLeadOrder
         item
           EditButtons = <>
           FieldName = 'AMOUNT'
+          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #25968#37327
           Width = 53
@@ -243,6 +244,8 @@ inherited frmVhLeadOrder: TfrmVhLeadOrder
         item
           EditButtons = <>
           FieldName = 'VOUCHER_TTL'
+          Footer.DisplayFormat = '#0.00'
+          Footer.ValueType = fvtSum
           Footers = <>
           ReadOnly = True
           Title.Caption = #38754#20540#37329#39069
@@ -350,12 +353,6 @@ inherited frmVhLeadOrder: TfrmVhLeadOrder
       OnExecute = actDeleteVoucherExecute
     end
   end
-  object cdsVoucher: TZReadOnlyQuery
-    FieldDefs = <>
-    Params = <>
-    Left = 296
-    Top = 176
-  end
   object PopupMenu1: TPopupMenu
     Left = 200
     Top = 240
@@ -365,5 +362,12 @@ inherited frmVhLeadOrder: TfrmVhLeadOrder
     object N2: TMenuItem
       Action = actDeleteVoucher
     end
+  end
+  object cdsVoucher: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 288
+    Top = 176
   end
 end

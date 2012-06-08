@@ -174,7 +174,7 @@ inherited frmVhLeadOrderList: TfrmVhLeadOrderList
               object fndLEAD_USER: TzrComboBoxList
                 Left = 89
                 Top = 70
-                Width = 91
+                Width = 104
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <

@@ -22,7 +22,6 @@ type
     edtLEAD_USER: TzrComboBoxList;
     edtREMARK: TcxTextEdit;
     edtVOUCHER_ID: TzrComboBoxList;
-    cdsVoucher: TZReadOnlyQuery;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
@@ -30,6 +29,7 @@ type
     actDeleteVoucher: TAction;
     edtVOUCHER_AMOUNT: TcxTextEdit;
     Label8: TLabel;
+    cdsVoucher: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
       Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
@@ -45,8 +45,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure actNewVoucherExecute(Sender: TObject);
     procedure actDeleteVoucherExecute(Sender: TObject);
-    procedure edtSHOP_IDPropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
+    procedure edtSHOP_IDPropertiesChange(Sender: TObject);
   private
     { Private declarations }
     procedure SetdbState(const Value: TDataSetState);override;
@@ -254,8 +253,8 @@ begin
   if edtLEAD_DATE.EditValue = null then Raise Exception.Create('领用日期不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('领用部门不能为空');
   if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
-  if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空领用礼券单...');
   ClearInvaid;
+  if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空领用礼券单...');
   cdsDetail.DisableControls;
   try
     WriteToObject(AObj,self);
@@ -562,8 +561,7 @@ begin
   end;
 end;
 
-procedure TfrmVhLeadOrder.edtSHOP_IDPropertiesButtonClick(Sender: TObject;
-  AButtonIndex: Integer);
+procedure TfrmVhLeadOrder.edtSHOP_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   TabSheet.Caption := edtSHOP_ID.Text;

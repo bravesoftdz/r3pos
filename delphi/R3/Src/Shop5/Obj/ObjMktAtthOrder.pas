@@ -93,7 +93,7 @@ var
 begin
   rs := TZQuery.Create(nil);
   try
-    rs.SQL.Text := 'select TIME_STAMP,COMM from MKT_REQUORDER where REQU_ID='''+FieldbyName('REQU_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+'';
+    rs.SQL.Text := 'select TIME_STAMP,COMM from MKT_ATTHORDER where ATTH_ID='''+FieldbyName('ATTH_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString+'';
     aGlobal.Open(rs);
     result := (rs.Fields[0].AsString = s);
     if comm and result and

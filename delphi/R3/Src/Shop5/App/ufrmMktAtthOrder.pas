@@ -66,8 +66,8 @@ type
       AButtonIndex: Integer);
   private
     { Private declarations }
-    SKpiMny,SBudgMny,SAgioMny,SOthrMny:Real;
-    DKpiMny,DBudgMny,DAgioMny,DOthrMny:Real;    
+    SKpiMny,SBudgMny,SAgioMny,SOthrMny:Currency;
+    DKpiMny,DBudgMny,DAgioMny,DOthrMny:Currency;    
     FromId:String;
     //进位法则
     CarryRule:integer;

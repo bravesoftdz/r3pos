@@ -255,7 +255,7 @@ begin
       DrawText(DBGridEh1.Canvas.Handle,pchar(Inttostr(cdsFvchFrame.RecNo)),length(Inttostr(cdsFvchFrame.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
 
-  if Column.FieldName = 'OPTION' then
+  if Column.FieldName = 'OPTION_SET' then
     begin
       ARect := Rect;
       AFont := TFont.Create;
@@ -275,7 +275,7 @@ end;
 procedure TfrmFvchFrameInfo.DBGridEh1CellClick(Column: TColumnEh);
 begin
   inherited;
-  if Column.FieldName = 'OPTION' then
+  if Column.FieldName = 'OPTION_SET' then
   begin
     if cdsFvchFrame.FieldByName('SUBJECT_NO').AsString = '' then Raise Exception.Create('"科目代码"不能为空!');
     if cdsFvchFrame.FieldByName('SUMMARY').AsString = '' then Raise Exception.Create('"摘要"不能为空!');

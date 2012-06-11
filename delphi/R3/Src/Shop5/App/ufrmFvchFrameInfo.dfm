@@ -64,7 +64,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object Label1: TLabel
               Left = 226
               Top = 5
-              Width = 163
+              Width = 139
               Height = 24
               Anchors = [akLeft, akTop, akRight]
               Caption = #20973' '#35777' '#23450' '#20041
@@ -78,7 +78,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object Label2: TLabel
               Left = 219
               Top = 32
-              Width = 170
+              Width = 156
               Height = 12
               Anchors = [akLeft, akTop, akRight]
               Caption = '=========================='
@@ -269,7 +269,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                 item
                   Alignment = taCenter
                   EditButtons = <>
-                  FieldName = 'OPTION'
+                  FieldName = 'OPTION_SET'
                   Footers = <>
                   ReadOnly = True
                   Title.Caption = #36873#39033

@@ -59,8 +59,8 @@ type
     procedure SetDataSet_Swhere(const Value: TZQuery);
     procedure SetsWhere(const Value: String);
     function IsIntStr(const s:String):Boolean;
+    function ReadZxName:Boolean; //读取专项名称
   public
-    { Public declarations }
     procedure Save;
     property DataFlag:String read FDataFlag write SetDataFlag;
     property FvchType:String read FFvchType write SetFvchType;
@@ -406,11 +406,39 @@ procedure TfrmFvchFrameDefine.FormShow(Sender: TObject);
 begin
   inherited;
   if edtSORT_ID.Properties.Items.Count > 0 then edtSORT_ID.ItemIndex := 0;
+  ReadZxName;
 end;
 
 function TfrmFvchFrameDefine.IsIntStr(const s: String): Boolean;
 begin
   Result := StrToIntDef(s,0)=StrToIntDef(s,1);
+end;
+
+function TfrmFvchFrameDefine.ReadZxName: Boolean;
+var
+  Rs: TZQuery;
+begin
+  try
+    Rs:=TZQuery.Create(nil);
+    Rs.Close;
+    Rs.SQL.Text:='select CODE_ID,CODE_NAME from PUB_CODE_INFO where TENANT_ID='+IntToStr(Global.TENANT_ID)+' and CODE_TYPE=''20'' ';
+    Factor.Open(Rs);
+    if Rs.Active then
+    begin
+      if Rs.Locate('CODE_ID','AB12A078-3FDD-4474-B666-249EAE3DD060',[]) then
+        edtDATAFLAG_5.Properties.Caption:=trim(Rs.FieldByName('CODE_NAME').AsString);
+      if Rs.Locate('CODE_ID','FC5D745F-C3C3-4B2B-9629-18B44064EA45',[]) then
+        edtDATAFLAG_6.Properties.Caption:=trim(Rs.FieldByName('CODE_NAME').AsString);
+      if Rs.Locate('CODE_ID','887B1EAF-0FD0-41EC-AE3A-7F84453CF076',[]) then
+        edtDATAFLAG_7.Properties.Caption:=trim(Rs.FieldByName('CODE_NAME').AsString);
+      if Rs.Locate('CODE_ID','49273929-0C5F-413F-BE03-B38DF9950B75',[]) then
+        edtDATAFLAG_8.Properties.Caption:=trim(Rs.FieldByName('CODE_NAME').AsString);
+      if Rs.Locate('CODE_ID','72632CA0-8F61-43FE-8307-2100C9CB15D1',[]) then
+        edtDATAFLAG_9.Properties.Caption:=trim(Rs.FieldByName('CODE_NAME').AsString);
+    end;
+  finally
+    Rs.Free;
+  end;
 end;
 
 end.

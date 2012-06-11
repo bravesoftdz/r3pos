@@ -262,6 +262,7 @@ begin
 
 procedure TfrmVhSendOrder.SaveOrder;
 var VoucherTtl,VoucherMny:Currency;
+    Params:TftParamList;
 begin
   inherited;
   Saved := false;
@@ -272,6 +273,7 @@ begin
   ClearInvaid;
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空发放礼券单...');
   cdsDetail.DisableControls;
+  Params := TftParamList.Create;
   try
     WriteToObject(AObj,self);
     AObj.FieldbyName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -299,10 +301,11 @@ begin
     cdsHeader.FieldByName('VOUCHER_TTL').AsFloat := VoucherTtl;
     cdsHeader.FieldByName('VOUCHER_MNY').AsFloat := VoucherMny;
     cdsHeader.Post;
+    Params.ParamByName('CLIENT_ID').AsString := cdsHeader.FieldByName('CLIENT_ID').AsString;
     Factor.BeginBatch;
     try
       Factor.AddBatch(cdsHeader,'TVhSendOrder');
-      Factor.AddBatch(cdsDetail,'TVhSendData');
+      Factor.AddBatch(cdsDetail,'TVhSendData',Params);
       Factor.CommitBatch;
       Saved := true;
     except
@@ -311,6 +314,7 @@ begin
       Raise;
     end;
   finally
+    Params.Free;
     cdsDetail.EnableControls;
   end;
   Open(oid);

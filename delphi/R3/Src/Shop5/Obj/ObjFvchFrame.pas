@@ -65,7 +65,7 @@ begin
             
   SelectSQL.Text := 'select A.TENANT_ID,A.FVCH_GTYPE,A.SEQNO,A.SUBJECT_NO,A.SUMMARY,A.AMONEY,A.AMOUNT,A.APRICE,A.SWHERE,A.DATAFLAG,A.SUBJECT_TYPE,'+
                     'case A.SUBJECT_TYPE when ''1'' then B.CODE_NAME when ''2'' then '''' end as SUBJECT_TYPE_1,'+
-                    'case A.SUBJECT_TYPE when ''1'' then '''' when ''2'' then B.CODE_NAME end as SUBJECT_TYPE_2,A.FVCH_NAME,'''' as OPTION '+
+                    'case A.SUBJECT_TYPE when ''1'' then '''' when ''2'' then B.CODE_NAME end as SUBJECT_TYPE_2,A.FVCH_NAME,'''' as OPTION_SET '+
                     ' from ACC_FVCHFRAME A left join ( ' + ViwTab + ') B on A.AMONEY=B.CODE_ID '+
                     'where A.TENANT_ID=:TENANT_ID and A.FVCH_GTYPE=:FVCH_GTYPE ';
 

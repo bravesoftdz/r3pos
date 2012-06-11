@@ -118,6 +118,7 @@ procedure TfrmFvchFrameInfo.Save;
 var tmp:TZQuery;
     i,j:integer;
 begin
+  if Trim(edtFVCH_NAME.Text) = '' then Raise Exception.Create('凭证字不能为空!');
   cdsFvchFrame.DisableControls;
   try
     j := cdsFvchFrame.RecNo;

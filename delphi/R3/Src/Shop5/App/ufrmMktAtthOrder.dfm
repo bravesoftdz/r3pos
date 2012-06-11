@@ -8,10 +8,10 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 922
-    Height = 567
+    Width = 930
+    Height = 578
     inherited RzPanel2: TRzPanel
-      Width = 912
+      Width = 920
       Height = 123
       object lblSTOCK_DATE: TLabel [0]
         Left = 562
@@ -393,8 +393,8 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 456
-      Width = 912
+      Top = 467
+      Width = 920
       Height = 34
       BorderInner = fsStatus
       object Label1: TLabel
@@ -492,8 +492,8 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 161
-      Width = 912
-      Height = 295
+      Width = 920
+      Height = 306
       Columns = <
         item
           EditButtons = <>
@@ -555,6 +555,7 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
           Footers = <>
           Title.Caption = #24403#21069#21333#20215
           Width = 60
+          OnUpdateData = DBGridEh1Columns6UpdateData
         end
         item
           DisplayFormat = '#0.00'
@@ -615,7 +616,7 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
     end
     inherited pnlBarCode: TRzPanel [3]
       Top = 128
-      Width = 912
+      Width = 920
       inherited lblInput: TLabel
         Left = 31
       end
@@ -627,12 +628,12 @@ inherited frmMktAtthOrder: TfrmMktAtthOrder
       end
     end
     inherited stbHint: TRzPanel [4]
-      Top = 538
-      Width = 912
+      Top = 549
+      Width = 920
     end
     inherited rzHelp: TRzPanel [5]
-      Top = 490
-      Width = 912
+      Top = 501
+      Width = 920
     end
     inherited fndUNIT_ID: TcxComboBox [6]
       Top = 184

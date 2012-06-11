@@ -267,7 +267,12 @@ begin
     end;
     dbState := dsBrowse;  
     AObj.ReadFromDataSet(cdsHeader);
-    SumMny := AObj.FieldByName('KPI_MNY').AsFloat+AObj.FieldByName('BUDG_MNY').AsFloat+AObj.FieldByName('AGIO_MNY').AsFloat+AObj.FieldByName('OTHR_MNY').AsFloat;
+    FromId := AObj.FieldByName('REQU_ID').AsString;
+    SBudgMny := AObj.FieldByName('BUDG_MNY').AsFloat;
+    SKpiMny := AObj.FieldByName('KPI_MNY').AsFloat;
+    SAgioMny := AObj.FieldByName('AGIO_MNY').AsFloat;
+    SOthrMny := AObj.FieldByName('OTHR_MNY').AsFloat;
+    SumMny := SKpiMny+SBudgMny+SAgioMny+SOthrMny;
     edtSUM_MNY.EditValue := SumMny;
     ReadFromObject(AObj,self);
     IsAudit := (AObj.FieldbyName('CHK_DATE').AsString<>'');
@@ -443,6 +448,9 @@ begin
         end;
         if abs(r)>999999999 then Raise Exception.Create('输入的数值过大，无效');
         TColumnEh(Sender).Field.asFloat := r;
+        edtTable.FieldByName('AMONEY').AsFloat := edtTable.FieldByName('AMOUNT').AsInteger * edtTable.FieldByName('APRICE').AsFloat;
+        edtTable.Post;
+        edtTable.Edit;
      end;
 end;
 

@@ -701,6 +701,7 @@ procedure TfrmExcelFactory.actDownLoadExcelExecute(Sender: TObject);
 var SourseFileName:String;
 begin
   inherited;
+  if Trim(ExcelName) = '' then Raise Exception.Create('当前没有下载文件!');
   SourseFileName := ExtractFilePath(Application.ExeName)+'\Res\xls\'+ExcelName+'.xlsx';
   if not FileExists(SourseFileName) then Raise Exception.Create('未发现下载源文件,不能下载!');
   if SaveDialog1.Execute then

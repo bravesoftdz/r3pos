@@ -2,7 +2,8 @@ unit ObjFvchOrder;
 
 interface
 
-uses Dialogs,SysUtils,zBase,Classes,DB,ZIntf,ZDataset,ObjCommon;
+uses
+  Dialogs,SysUtils,zBase,Classes,DB,ZIntf,ZDataset,ObjCommon;
 
 type
   //财务凭证
@@ -32,19 +33,6 @@ type
     function BeforeInsertRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass;override;
   end;
-
-  //凭证过账（审核）
-  TFvchAudit=class(TZProcFactory)
-  public
-    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
-  end;
-  //凭证反过账（弃审）
-  TFvchUnAudit=class(TZProcFactory)
-  public
-    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
-  end;
-  
-
 
 
 implementation
@@ -77,7 +65,7 @@ begin
   IsSQLUpdate := True;  
   SelectSQL.Text:=
     'select j.TENANT_ID,j.SHOP_ID,j.DEPT_ID,j.FVCH_ID,j.FVCH_DATE,j.FVCH_ATTACH'+
-    ' ,j.CREA_USER,j.FVCH_FLAG,j.FVCH_CODE,j.FVCH_IMPORT_ID,j.COMM,j.TIME_STAMP'+
+    ' ,j.CREA_USER,j.FVCH_FLAG,j.FVCH_CODE,j.FVCH_IMPORT_ID,j.FVCH_NAME,j.COMM,j.TIME_STAMP'+
     ' ,a.SHOP_NAME as SHOP_ID_TEXT '+
     ' ,b.DEPT_NAME as DEPT_ID_TEXT '+
     ' ,c.USER_NAME as CREA_USER_TEXT'+
@@ -89,14 +77,14 @@ begin
 
   InsertSQL.Text :=
     'insert into ACC_FVCHORDER '+
-    ' (TENANT_ID,SHOP_ID,DEPT_ID,FVCH_ID,FVCH_DATE,FVCH_ATTACH,CREA_USER,FVCH_FLAG,FVCH_CODE,FVCH_IMPORT_ID,COMM,TIME_STAMP) '+
-    ' VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:FVCH_ID,:FVCH_DATE,:FVCH_ATTACH,:CREA_USER,:FVCH_FLAG,:FVCH_CODE,:FVCH_IMPORT_ID,'+
+    ' (TENANT_ID,SHOP_ID,DEPT_ID,FVCH_ID,FVCH_DATE,FVCH_ATTACH,CREA_USER,FVCH_FLAG,FVCH_CODE,FVCH_IMPORT_ID,FVCH_NAME,COMM,TIME_STAMP) '+
+    ' VALUES(:TENANT_ID,:SHOP_ID,:DEPT_ID,:FVCH_ID,:FVCH_DATE,:FVCH_ATTACH,:CREA_USER,:FVCH_FLAG,:FVCH_CODE,:FVCH_IMPORT_ID,:FVCH_NAME,'+
     ' ''00'','+GetTimeStamp(iDbType)+')';
 
   UpdateSQL.Text :=
     'update ACC_FVCHORDER '+
     ' set TENANT_ID=:TENANT_ID,SHOP_ID=:SHOP_ID,DEPT_ID=:DEPT_ID,FVCH_ID=:FVCH_ID,FVCH_DATE=:FVCH_DATE,FVCH_ATTACH=:FVCH_ATTACH,CREA_USER=:CREA_USER,'+
-    ' FVCH_FLAG=:FVCH_FLAG,FVCH_CODE=:FVCH_CODE,FVCH_IMPORT_ID=:FVCH_IMPORT_ID,COMM=' + GetCommStr(iDbType) +',TIME_STAMP='+GetTimeStamp(iDbType)+
+    ' FVCH_FLAG=:FVCH_FLAG,FVCH_CODE=:FVCH_CODE,FVCH_IMPORT_ID=:FVCH_IMPORT_ID,FVCH_NAME=:FVCH_NAME,COMM=' + GetCommStr(iDbType) +',TIME_STAMP='+GetTimeStamp(iDbType)+
     ' where TENANT_ID=:OLD_TENANT_ID and FVCH_ID=:OLD_FVCH_ID ';
 
   DeleteSQL.Text :=
@@ -230,22 +218,6 @@ end;
 procedure TFvchGlide.InitClass;
 begin
   SelectSQL.Text:='select TENANT_ID,FVCH_GLID,FVCH_ID,FVCH_GTYPE,FVCH_GID from ACC_FVCHGLIDE where TENANT_ID=:TENANT_ID and FVCH_ID=:FVCH_ID';
-end;
-
-{ TFvchAudit }
-
-function TFvchAudit.Execute(AGlobal: IdbHelp;Params: TftParamList): Boolean;
-var
-  
-begin
-  
-end;
-
-{ TFvchUnAudit }
-
-function TFvchUnAudit.Execute(AGlobal: IdbHelp; Params: TftParamList): Boolean;
-begin
-
 end;
 
 initialization

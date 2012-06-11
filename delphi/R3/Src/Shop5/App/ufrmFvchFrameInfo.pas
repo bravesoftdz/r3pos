@@ -27,6 +27,10 @@ type
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
+    Label9: TLabel;
+    edtFVCH_GTYPE: TcxTextEdit;
+    Label3: TLabel;
+    edtFVCH_NAME: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure Btn_CloseClick(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -102,6 +106,7 @@ begin
     except
       Factor.CancelBatch;
     end;
+    edtFVCH_NAME.Text := cdsFvchFrame.FieldByName('FVCH_NAME').AsString;
     RowID := cdsFvchFrame.RecordCount;
     InitRecord;
   finally
@@ -139,6 +144,7 @@ begin
       Inc(i);
       cdsFvchFrame.Edit;
       cdsFvchFrame.FieldByName('SEQNO').AsInteger := i;
+      cdsFvchFrame.FieldByName('FVCH_NAME').AsString := Trim(edtFVCH_NAME.Text);
       cdsFvchFrame.Post;
       cdsFvchFrame.Next;
     end;
@@ -201,18 +207,14 @@ begin
   if (Rs_Params<>nil) and (not Rs_Params.IsEmpty) then
   begin
     if Rs_Params.Locate('TYPE_CODE;CODE_ID',VarArrayOf(['BILL_NAME',FFVCH_GTYPE]),[]) then
-      Label1.Caption := Rs_Params.FieldByName('CODE_NAME').AsString+'Ä£°å';
+    begin
+       Label1.Caption := Rs_Params.FieldByName('CODE_NAME').AsString+'Ä£°å';
+       edtFVCH_GTYPE.Text := Rs_Params.FieldByName('CODE_NAME').AsString;
+    end;
   end;
 
   rs := TZQuery.Create(nil);
   try
-    {rs.Close;
-    rs.SQL.Text := 'select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=''BILL_NAME'' and CODE_ID=:CODE_ID ';
-    rs.Params.ParamByName('CODE_ID').AsString := Value;
-    Factor.Open(rs);
-    Label1.Caption := rs.FieldByName('CODE_NAME').AsString+'Ä£°å';
-    }
-
     sSql :='select CODE_ID,CODE_NAME from PUB_PARAMS where TYPE_CODE=:TYPE_CODE and CODE_ID not in (''CALC_AMOUNT'',''APRICE'',''COST_ APRICE'') ';
     if trim(FFVCH_GTYPE)='11' then
       sSql := sSql +
@@ -221,7 +223,6 @@ begin
     rs.Close;
     rs.SQL.Text:=sSql;
     rs.Params.ParamByName('TYPE_CODE').AsString := 'FVCH_DATA_'+Value;
-
     if rs.Params.FindParam('TENANT_ID') <> nil then rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     Factor.Open(rs);
     AddCbxPickList(edtAMONEY,'',rs);

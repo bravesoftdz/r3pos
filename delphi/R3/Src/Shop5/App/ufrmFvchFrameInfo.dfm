@@ -1,20 +1,20 @@
 inherited frmFvchFrameInfo: TfrmFvchFrameInfo
-  Left = 338
-  Top = 157
+  Left = 321
+  Top = 170
   Caption = #20973#35777#27169#22359#23450#20041
   ClientHeight = 392
-  ClientWidth = 687
+  ClientWidth = 615
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 687
+    Width = 615
     Height = 392
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
-      Width = 677
+      Width = 605
       Height = 342
       TabIndex = -1
       FixedDimension = 20
@@ -23,7 +23,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         TabVisible = False
         Caption = #23450#20041#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 673
+          Width = 601
           Height = 338
           BorderColor = clWhite
           Color = clWhite
@@ -45,7 +45,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
           object RzPanel3: TRzPanel
             Left = 5
             Top = 5
-            Width = 663
+            Width = 591
             Height = 74
             Align = alTop
             BorderOuter = fsNone
@@ -59,12 +59,12 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             ParentFont = False
             TabOrder = 0
             DesignSize = (
-              663
+              591
               74)
             object Label1: TLabel
-              Left = 228
+              Left = 226
               Top = 5
-              Width = 196
+              Width = 163
               Height = 24
               Anchors = [akLeft, akTop, akRight]
               Caption = #20973' '#35777' '#23450' '#20041
@@ -76,9 +76,9 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
               ParentFont = False
             end
             object Label2: TLabel
-              Left = 221
+              Left = 219
               Top = 32
-              Width = 213
+              Width = 170
               Height = 12
               Anchors = [akLeft, akTop, akRight]
               Caption = '=========================='
@@ -89,11 +89,58 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
               Font.Style = []
               ParentFont = False
             end
+            object Label9: TLabel
+              Left = 4
+              Top = 50
+              Width = 52
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21333#25454#31867#22411
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label3: TLabel
+              Left = 422
+              Top = 50
+              Width = 39
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #20973#35777#23383
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object edtFVCH_GTYPE: TcxTextEdit
+              Tag = 1
+              Left = 60
+              Top = 46
+              Width = 121
+              Height = 20
+              Enabled = False
+              TabOrder = 0
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtFVCH_NAME: TcxTextEdit
+              Tag = 1
+              Left = 465
+              Top = 46
+              Width = 121
+              Height = 20
+              TabOrder = 1
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
           end
           object RzPanel7: TRzPanel
             Left = 5
             Top = 79
-            Width = 663
+            Width = 591
             Height = 254
             Align = alClient
             BorderOuter = fsNone
@@ -104,7 +151,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
             object DBGridEh1: TDBGridEh
               Left = 1
               Top = 1
-              Width = 661
+              Width = 589
               Height = 252
               Align = alClient
               AllowedOperations = [alopUpdateEh]
@@ -220,19 +267,6 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
                   OnBeforeShowControl = DBGridEh1Columns4BeforeShowControl
                 end
                 item
-                  EditButtons = <>
-                  FieldName = 'FVCH_NAME'
-                  Footers = <>
-                  Title.Caption = #20973#35777#23383
-                  Title.Color = clWhite
-                  Title.Font.Charset = GB2312_CHARSET
-                  Title.Font.Color = clGreen
-                  Title.Font.Height = -12
-                  Title.Font.Name = #23435#20307
-                  Title.Font.Style = []
-                  Width = 80
-                end
-                item
                   Alignment = taCenter
                   EditButtons = <>
                   FieldName = 'OPTION'
@@ -280,10 +314,10 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
     end
     inherited btPanel: TRzPanel
       Top = 347
-      Width = 677
+      Width = 605
       Color = clWhite
       object Btn_Save: TRzBitBtn
-        Left = 510
+        Left = 438
         Top = 10
         Width = 67
         Height = 26
@@ -310,7 +344,7 @@ inherited frmFvchFrameInfo: TfrmFvchFrameInfo
         Spacing = 5
       end
       object Btn_Close: TRzBitBtn
-        Left = 596
+        Left = 524
         Top = 10
         Width = 67
         Height = 26

@@ -27,6 +27,10 @@ type
     DsSales: TDataSource;
     RzLabel5: TRzLabel;
     edtCustomerID: TzrComboBoxList;
+    Label40: TLabel;
+    Label3: TLabel;
+    fndSHOP_ID: TzrComboBoxList;
+    fndDEPT_ID: TzrComboBoxList;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
@@ -65,11 +69,16 @@ begin
   if Trim(edtSALES_ID.Text) <> '' then
     Whe_Str := Whe_Str + ' and GLIDE_NO like ''%'+edtSALES_ID.Text+'''';
   if Trim(edtCustomerID.Text) <> '' then
-    Whe_Str := Whe_Str + ' and CLIENT_ID='+QuotedStr(edtCustomerID.AsString);
+    Whe_Str := Whe_Str + ' and CLIENT_ID='+QuotedStr(edtCustomerID.AsString)+ ' ';
   if Trim(Id) <> '' then
-    Whe_Str := Whe_Str + ' and SALES_ID>'+Id;
-  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
-    Whe_Str := Whe_Str + ' and SHOP_ID='+QuotedStr(Global.SHOP_ID);
+    Whe_Str := Whe_Str + ' and SALES_ID>'''+Id+''' ';
+  if fndSHOP_ID.AsString <> '' then
+     Whe_Str := Whe_Str +' and SHOP_ID=:SHOP_ID';
+  //[2012.02.03 xhh修改:可以按树上下级查询]
+  if fndDEPT_ID.AsString <> '' then //w := w +' and A.DEPT_ID=:DEPT_ID';
+     Whe_Str := Whe_Str +ShopGlobal.GetDeptID('DEPT_ID',fndDEPT_ID.AsString);
+//  if Copy(Global.SHOP_ID,Length(Global.SHOP_ID)-3,Length(Global.SHOP_ID)) <> '0001' then
+//    Whe_Str := Whe_Str + ' and SHOP_ID='+QuotedStr(Global.SHOP_ID);
 
   Sql_Str := ' select TENANT_ID,SALES_ID,GLIDE_NO,SALES_DATE,CLIENT_ID,SALE_AMT,SALE_MNY,CASH_MNY,PAY_ZERO,CREA_USER from SAL_SALESORDER '+Whe_Str+ShopGlobal.GetDataRight('SHOP_ID',1)+ShopGlobal.GetDataRight('DEPT_ID',2);
   Result := 'select ja.*,a.CLIENT_NAME as CLIENT_ID_TEXT from ('+Sql_Str+') ja left join VIW_CUSTOMER a on ja.TENANT_ID=a.TENANT_ID and ja.CLIENT_ID=a.CLIENT_ID ';
@@ -142,6 +151,12 @@ end;
 procedure TfrmPosMainList.FormCreate(Sender: TObject);
 begin
   inherited;
+  fndSHOP_ID.KeyValue := Global.SHOP_ID;
+  fndSHOP_ID.Text := Global.SHOP_NAME;
+  fndSHOP_ID.DataSet := Global.GetZQueryFromName('CA_SHOP_INFO'); 
+  fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
+  fndDEPT_ID.RangeField := 'DEPT_TYPE';
+  fndDEPT_ID.RangeValue := '1';
   D1.Date := Date();
   D2.Date := Date();
   edtCustomerID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');

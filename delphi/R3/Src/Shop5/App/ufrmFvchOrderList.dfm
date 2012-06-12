@@ -9,26 +9,26 @@ inherited frmFvchOrderList: TfrmFvchOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 896
-    Height = 536
+    Width = 888
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 886
-      Height = 526
+      Width = 878
+      Height = 515
       inherited RzPage: TRzPageControl
-        Width = 880
-        Height = 520
+        Width = 872
+        Height = 509
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36130#21153#20973#35777#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 878
-            Height = 493
+            Width = 870
+            Height = 482
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
               Top = 6
-              Width = 866
+              Width = 858
               Height = 100
               Align = alTop
               BorderOuter = fsNone
@@ -228,16 +228,16 @@ inherited frmFvchOrderList: TfrmFvchOrderList
             object Panel1: TPanel
               Left = 6
               Top = 106
-              Width = 866
-              Height = 381
+              Width = 858
+              Height = 370
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 864
-                Height = 379
+                Width = 856
+                Height = 368
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = ListDs
@@ -361,16 +361,16 @@ inherited frmFvchOrderList: TfrmFvchOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 896
+    Width = 888
     inherited Image3: TImage
       Left = 417
       Width = 380
     end
     inherited Image14: TImage
-      Left = 876
+      Left = 868
     end
     inherited Image1: TImage
-      Left = 370
+      Left = 362
       Width = 506
     end
     inherited rzPanel5: TPanel

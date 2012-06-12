@@ -326,7 +326,16 @@ uses
   ObjVoucherOrder in 'Obj\ObjVoucherOrder.pas',
   ufrmFindRequOrder in 'App\ufrmFindRequOrder.pas' {frmFindRequOrder},
   ufrmMktKpiModify in 'App\ufrmMktKpiModify.pas' {frmMktKpiModify},
-  ObjMktKpiModify in 'Obj\ObjMktKpiModify.pas';
+  ObjMktKpiModify in 'Obj\ObjMktKpiModify.pas',
+  ufrmFvchCalc in 'App\ufrmFvchCalc.pas' {frmFvchCalc},
+  ufrmFvchFrame in 'App\ufrmFvchFrame.pas' {frmFvchFrame},
+  ufrmFvchFrameDefine in 'App\ufrmFvchFrameDefine.pas' {frmFvchFrameDefine},
+  ufrmFvchFrameInfo in 'App\ufrmFvchFrameInfo.pas' {frmFvchFrameInfo},
+  ufrmFvchOrder in 'App\ufrmFvchOrder.pas' {frmFvchOrder},
+  ufrmFvchOrderList in 'App\ufrmFvchOrderList.pas' {frmFvchOrderList},
+  ObjFvchFrame in 'Obj\ObjFvchFrame.pas',
+  ObjFvchOrder in 'Obj\ObjFvchOrder.pas',
+  ufvchDataSQL in 'App\ufvchDataSQL.pas';
 
 {$R *.res}
 var

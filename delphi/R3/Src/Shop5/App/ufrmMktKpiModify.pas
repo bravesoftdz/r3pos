@@ -154,25 +154,36 @@ begin
 end;
 
 procedure TfrmMktKpiModify.actToModifyExecute(Sender: TObject);
+//var tmp:TZQuery;
 begin
   inherited;
   if (not cdsList.Active) or (cdsList.IsEmpty) then Exit;
   if cdsList.State in [dsInsert,dsEdit] then cdsList.Post;
+  if cdsList2.State in [dsInsert,dsEdit] then cdsList2.Post;
   cdsList.DisableControls;
   cdsList2.DisableControls;
+//  tmp := TZQuery.Create(nil);
   try
+    cdsList2.Filtered := False;
     cdsList.Filtered := False;
     cdsList.Filter := 'A=1';
     cdsList.Filtered := True;
     if cdsList.IsEmpty then Raise Exception.Create('请选择要返利的商品...');
     WriteToData(cdsList,cdsList2,0);
-    cdsList.First;
-    while not cdsList.Eof do cdsList.Delete;
-    //RzPage.ActivePageIndex := TabSheet2.PageIndex;
-  finally
     cdsList.Filtered := False;
+    cdsList.First;
+    while not cdsList.Eof do
+       begin
+         if cdsList.FieldByName('A').AsString='1' then
+            cdsList.Delete else cdsList.Next;
+       end;
+  finally
+//    tmp.Free;
+    cdsList.Filtered := False;
+    cdsList2.Filtered := False;
     cdsList.EnableControls;
     cdsList2.EnableControls;
+    //cdsList.Refresh;
   end;
 end;
 
@@ -180,21 +191,30 @@ procedure TfrmMktKpiModify.actToNotModifyExecute(Sender: TObject);
 begin
   inherited;
   if (not cdsList2.Active) or (cdsList2.IsEmpty) then Exit;
+  if cdsList.State in [dsInsert,dsEdit] then cdsList.Post;
   if cdsList2.State in [dsInsert,dsEdit] then cdsList2.Post;
   cdsList.DisableControls;
   cdsList2.DisableControls;
   try
+    cdsList.Filtered := False;
     cdsList2.Filtered := False;
     cdsList2.Filter := 'A=1';
     cdsList2.Filtered := True;
     if cdsList2.IsEmpty then Raise Exception.Create('请选择要非返利的商品...');
     WriteToData(cdsList2,cdsList,1);
+    cdsList2.Filtered := False;
     cdsList2.First;
-    while not cdsList2.Eof do cdsList2.Delete;
+    while not cdsList2.Eof do
+       begin
+         if cdsList2.FieldByName('A').AsString='1' then
+            cdsList2.Delete else cdsList2.Next;
+       end;
   finally
+    cdsList.Filtered := False;
     cdsList2.Filtered := False;
     cdsList.EnableControls;
     cdsList2.EnableControls;
+    //cdsList2.Refresh;
   end;
 end;
 
@@ -367,7 +387,7 @@ begin
     ObjData.Append;
     for i:=0 to SurData.Fields.Count - 1 do
     begin
-      if ObjData.FindField(SurData.Fields[i].FieldName) <> nil then
+      if (ObjData.FindField(SurData.Fields[i].FieldName) <> nil) and (SurData.Fields[i].FieldName<>'A') then
          ObjData.FindField(SurData.Fields[i].FieldName).Value := SurData.Fields[i].Value;
     end;
     ObjData.FieldByName('A').AsInteger := 0;

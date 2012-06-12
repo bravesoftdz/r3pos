@@ -930,10 +930,10 @@ end;
 var Str:string;
 begin
   Str := 'select C.GODS_ID,'+
-         'sum(D.MODI_AMOUNT/'+GetUnitTO_CALC+') as MODI_AMOUNT,D.MODI_MONEY as MODI_MONEY,'+
+         'sum(D.MODI_AMOUNT/'+GetUnitTO_CALC+') as MODI_AMOUNT,sum(D.MODI_MONEY) as MODI_MONEY,'+
          'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(D.MODI_AMOUNT,0)) ) as CALC_AMOUNT,'+
          'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(D.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' ) as AMOUNT,'+
-         'case when C.IS_PRESENT=0 then C.CALC_MONEY else 0.00 end + isnull(D.MODI_MONEY,0) as CALC_MONEY '+
+         'sum(case when C.IS_PRESENT=0 then C.CALC_MONEY else 0.00 end + isnull(D.MODI_MONEY,0)) as CALC_MONEY '+
          'from ('+
          'select A.TENANT_ID,A.SALES_ID,A.GODS_ID,A.SEQNO,'+
          ' A.CALC_AMOUNT,B1.UNIT_ID,A.IS_PRESENT,A.APRICE,A.CALC_MONEY '+

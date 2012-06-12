@@ -1,32 +1,32 @@
 inherited frmPosMainList: TfrmPosMainList
-  Left = 560
-  Top = 172
+  Left = 358
+  Top = 187
   Caption = #38144#21806#21333#26597#35810
   ClientHeight = 421
-  ClientWidth = 596
+  ClientWidth = 576
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 596
+    Width = 576
     Height = 421
     inherited RzPage: TRzPageControl
-      Top = 76
-      Width = 586
-      Height = 300
+      Top = 102
+      Width = 566
+      Height = 274
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Caption = #38144#21806#21333#21015#34920
         inherited RzPanel2: TRzPanel
-          Width = 582
-          Height = 273
+          Width = 562
+          Height = 247
           Color = clWhite
           object dbGrid: TDBGridEh
             Left = 5
             Top = 5
-            Width = 572
-            Height = 263
+            Width = 552
+            Height = 237
             Align = alClient
             AllowedOperations = []
             DataSource = DsSales
@@ -62,7 +62,7 @@ inherited frmPosMainList: TfrmPosMainList
                 FieldName = 'SEQNO'
                 Footers = <>
                 Title.Caption = #24207#21495
-                Width = 30
+                Width = 27
               end
               item
                 EditButtons = <>
@@ -76,20 +76,21 @@ inherited frmPosMainList: TfrmPosMainList
                 FieldName = 'SALES_DATE'
                 Footers = <>
                 Title.Caption = #38144#21806#26085#26399
-                Width = 100
+                Width = 75
               end
               item
                 EditButtons = <>
                 FieldName = 'CREA_USER_TEXT'
                 Footers = <>
                 Title.Caption = #25910#38134#21592
-                Width = 80
+                Width = 47
               end
               item
                 EditButtons = <>
                 FieldName = 'SALE_AMT'
                 Footers = <>
                 Title.Caption = #38144#21806#25968#37327
+                Width = 57
               end
               item
                 EditButtons = <>
@@ -102,7 +103,7 @@ inherited frmPosMainList: TfrmPosMainList
                 FieldName = 'CLIENT_ID_TEXT'
                 Footers = <>
                 Title.Caption = #20250#21592#22995#21517
-                Width = 80
+                Width = 127
               end>
           end
         end
@@ -110,7 +111,7 @@ inherited frmPosMainList: TfrmPosMainList
     end
     inherited btPanel: TRzPanel
       Top = 376
-      Width = 586
+      Width = 566
       object btnClose: TRzBitBtn
         Left = 419
         Top = 10
@@ -159,42 +160,42 @@ inherited frmPosMainList: TfrmPosMainList
     object RzPanel1: TRzPanel
       Left = 5
       Top = 5
-      Width = 586
-      Height = 71
+      Width = 566
+      Height = 97
       Align = alTop
       BorderOuter = fsNone
       TabOrder = 2
       object RzLabel1: TRzLabel
         Left = 16
-        Top = 8
+        Top = 3
         Width = 48
         Height = 12
         Caption = #38144#21806#26085#26399
       end
       object RzLabel2: TRzLabel
         Left = 16
-        Top = 51
+        Top = 80
         Width = 48
         Height = 12
         Caption = #38144#21806#21333#21495
       end
       object RzLabel3: TRzLabel
         Left = 16
-        Top = 28
+        Top = 59
         Width = 48
         Height = 12
         Caption = #20250#21592#22995#21517
       end
       object RzLabel4: TRzLabel
         Left = 185
-        Top = 8
+        Top = 3
         Width = 12
         Height = 12
         Caption = #33267
       end
       object RzLabel5: TRzLabel
         Left = 216
-        Top = 52
+        Top = 81
         Width = 91
         Height = 12
         Caption = #25903#25345#21518#22235#20301#26597#35810
@@ -205,30 +206,44 @@ inherited frmPosMainList: TfrmPosMainList
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object Label40: TLabel
+        Left = 16
+        Top = 22
+        Width = 48
+        Height = 12
+        Caption = #38376#24215#21517#31216
+      end
+      object Label3: TLabel
+        Left = 16
+        Top = 41
+        Width = 48
+        Height = 12
+        Caption = #25152#23646#37096#38376
+      end
       object D1: TcxDateEdit
         Left = 72
-        Top = 4
+        Top = -1
         Width = 110
         Height = 20
         TabOrder = 0
       end
       object D2: TcxDateEdit
         Left = 201
-        Top = 4
+        Top = -1
         Width = 110
         Height = 20
         TabOrder = 1
       end
       object edtSALES_ID: TcxTextEdit
         Left = 72
-        Top = 46
+        Top = 75
         Width = 133
         Height = 20
         TabOrder = 3
       end
       object btnSearch: TRzBitBtn
-        Left = 316
-        Top = 43
+        Left = 332
+        Top = 72
         Height = 26
         Caption = #26597#35810'(&F)'
         Color = clSilver
@@ -251,7 +266,7 @@ inherited frmPosMainList: TfrmPosMainList
       end
       object edtCustomerID: TzrComboBoxList
         Left = 72
-        Top = 25
+        Top = 56
         Width = 239
         Height = 20
         Properties.AutoSelect = False
@@ -291,7 +306,91 @@ inherited frmPosMainList: TfrmPosMainList
         DropListStyle = lsFixed
         MultiSelect = False
       end
+      object fndSHOP_ID: TzrComboBoxList
+        Tag = -1
+        Left = 72
+        Top = 18
+        Width = 239
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 5
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
+        KeyField = 'SHOP_ID'
+        ListField = 'SHOP_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'SHOP_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end
+          item
+            EditButtons = <>
+            FieldName = 'SHOP_ID'
+            Footers = <>
+            Title.Caption = #20195#30721
+            Width = 20
+          end>
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbClear]
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
+      object fndDEPT_ID: TzrComboBoxList
+        Left = 72
+        Top = 37
+        Width = 239
+        Height = 20
+        Properties.AutoSelect = False
+        Properties.Buttons = <
+          item
+            Default = True
+          end>
+        Properties.ReadOnly = False
+        TabOrder = 6
+        InGrid = False
+        KeyValue = Null
+        FilterFields = 'DEPT_NAME;DEPT_SPELL'
+        KeyField = 'DEPT_ID'
+        ListField = 'DEPT_NAME'
+        Columns = <
+          item
+            EditButtons = <>
+            FieldName = 'DEPT_NAME'
+            Footers = <>
+            Title.Caption = #21517#31216
+          end>
+        DropWidth = 185
+        DropHeight = 180
+        ShowTitle = True
+        AutoFitColWidth = True
+        ShowButton = True
+        LocateStyle = lsDark
+        Buttons = [zbClear]
+        DropListStyle = lsFixed
+        MultiSelect = False
+      end
     end
+  end
+  inherited mmMenu: TMainMenu
+    Left = 144
+    Top = 120
+  end
+  inherited actList: TActionList
+    Left = 176
+    Top = 120
   end
   object CdsSales: TZQuery
     FieldDefs = <>

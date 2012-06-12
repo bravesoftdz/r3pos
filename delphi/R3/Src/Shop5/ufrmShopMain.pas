@@ -313,6 +313,8 @@ type
     actfrmMktAtthOrderList: TAction;
     actfrmSalIndentDayReport: TAction;
     actfrmAllRckReport: TAction;
+    actfrmFvchFrame: TAction;
+    actfrmFvchOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -458,6 +460,10 @@ type
     procedure actfrmMktAtthOrderListExecute(Sender: TObject);
     procedure actfrmSalIndentDayReportExecute(Sender: TObject);
     procedure actfrmAllRckReportExecute(Sender: TObject);
+    procedure actfrmFvchFrameExecute(Sender: TObject);
+    procedure actfrmFvchOrderListExecute(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -534,7 +540,8 @@ uses
   ufrmMktRequOrderList,ufrmBondOrderList,ufrmMktTaskOrderList,ufrmMktKpiResult,ufrmClientKpiReport,ufrmManKpiReport,
   ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,ufrmSalIndentDayReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
-  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport;
+  ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
+  ufrmFvchOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4556,6 +4563,46 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmFvchFrameExecute(Sender: TObject);
+begin
+  inherited;
+  TfrmFvchFrame.ShowFvchFrame;
+end;
+
+procedure TfrmShopMain.actfrmFvchOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmFvchOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmFvchOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.Button2Click(Sender: TObject);
+begin
+  inherited;
+  actfrmFvchFrame.OnExecute(nil);
+end;
+
+procedure TfrmShopMain.Button1Click(Sender: TObject);
+begin
+  inherited;
+  actfrmFvchOrderList.OnExecute(nil);
 end;
 
 end.

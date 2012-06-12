@@ -5647,6 +5647,16 @@ inherited frmShopMain: TfrmShopMain
       Caption = #32508#21512#21488#36134
       OnExecute = actfrmAllRckReportExecute
     end
+    object actfrmFvchFrame: TAction
+      Tag = 100002404
+      Caption = #20973#35777#27169#29256
+      OnExecute = actfrmFvchFrameExecute
+    end
+    object actfrmFvchOrderList: TAction
+      Tag = 100002407
+      Caption = #20973#35777#31649#29702
+      OnExecute = actfrmFvchOrderListExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

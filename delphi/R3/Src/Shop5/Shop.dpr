@@ -324,7 +324,12 @@ uses
   ufrmFvchCalc in 'App\ufrmFvchCalc.pas' {frmFvchCalc},
   ufrmFvchFrame in 'App\ufrmFvchFrame.pas' {frmFvchFrame},
   ufrmFvchFrameDefine in 'App\ufrmFvchFrameDefine.pas' {frmFvchFrameDefine},
-  ufrmFvchFrameInfo in 'App\ufrmFvchFrameInfo.pas' {frmFvchFrameInfo};
+  ufrmFvchFrameInfo in 'App\ufrmFvchFrameInfo.pas' {frmFvchFrameInfo},
+  ObjFvchFrame in 'Obj\ObjFvchFrame.pas',
+  ufrmFvchOrder in 'App\ufrmFvchOrder.pas' {frmFvchOrder},
+  ufrmFvchOrderList in 'App\ufrmFvchOrderList.pas' {frmFvchOrderList},
+  ObjFvchOrder in 'Obj\ObjFvchOrder.pas',
+  ufvchDataSQL in 'App\ufvchDataSQL.pas';
 
 {$R *.res}
 var
@@ -333,7 +338,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.8';
+  DBVersion := '1.0.2.9';
   Application.Title := 'R3零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

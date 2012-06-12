@@ -38,7 +38,6 @@ type
     procedure DBGridEh1KeyPress(Sender: TObject; var Key: Char);
     procedure edtACTIVE_GROUPKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure cdsActiveNewRecord(DataSet: TDataSet);
     procedure DBGridEh1Columns2BeforeShowControl(Sender: TObject);
     procedure edtACTIVE_GROUPAddClick(Sender: TObject);
   private
@@ -155,6 +154,12 @@ begin
         raise Exception.Create('拼音码不能为空！');
       if cdsActive.FieldByName('ACTIVE_GROUP').AsString='' then
         raise Exception.Create('活动分组不能为空！');
+      cdsActive.Edit;
+      if cdsActive.FieldByName('ACTIVE_ID').AsString='' then
+         cdsActive.FieldByName('ACTIVE_ID').AsString := TSequence.NewId;
+      if cdsActive.FieldByName('TENANT_ID').AsString='' then
+         cdsActive.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      cdsActive.Post;
       cdsActive.Next;
     end;
   finally
@@ -491,14 +496,6 @@ begin
        end;
      end;
   inherited;
-end;
-
-procedure TfrmMktActiveList.cdsActiveNewRecord(DataSet: TDataSet);
-begin
-  inherited;
-  cdsActive.FieldByName('ACTIVE_ID').AsString := TSequence.NewId;
-  cdsActive.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-  Exit;
 end;
 
 procedure TfrmMktActiveList.ClearInvaid;

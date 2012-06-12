@@ -236,6 +236,7 @@ begin
       cdsDetail.Edit;
       cdsDetail.FieldByName('TENANT_ID').AsString := cdsHeader.FieldbyName('TENANT_ID').AsString;
       cdsDetail.FieldByName('VOUCHER_ID').AsString := cdsHeader.FieldbyName('VOUCHER_ID').AsString;
+      cdsDetail.FieldByName('VOUCHER_TYPE').AsString := cdsHeader.FieldByName('VOUCHER_TYPE').AsString;
       cdsDetail.Post;
       cdsDetail.Next;
     end;

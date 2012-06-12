@@ -366,7 +366,7 @@ begin
           cdsFvchFrame.FieldByName('APRICE').AsString := '';
         end;
       end;}
-      cdsFvchFrame.FieldByName('DATAFLAG').AsString := '00000000';
+      cdsFvchFrame.FieldByName('DATAFLAG').AsString := '000000000';
       cdsFvchFrame.FieldByName('SUBJECT_NO').Value := null;
       cdsFvchFrame.FieldByName('SUMMARY').Value := null;
       if cdsFvchFrame.FindField('SEQNO')<> nil then

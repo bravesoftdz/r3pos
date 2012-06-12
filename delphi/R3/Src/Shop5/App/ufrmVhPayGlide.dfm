@@ -15,12 +15,14 @@ inherited frmVhPayGlide: TfrmVhPayGlide
       Width = 347
       Height = 206
       ParentColor = False
+      TabIndex = -1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
+        TabVisible = False
         Caption = #20195#37329#21048#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 343
-          Height = 179
+          Height = 202
           Color = clWhite
           object RzPanel1: TRzPanel
             Left = 5
@@ -66,7 +68,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
             Left = 5
             Top = 53
             Width = 333
-            Height = 121
+            Height = 144
             Align = alBottom
             BorderOuter = fsNone
             TabOrder = 1
@@ -85,7 +87,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
             end
             object labPRC: TLabel
               Left = 13
-              Top = 91
+              Top = 110
               Width = 95
               Height = 20
               Caption = #31036#21048#38754#20540':'
@@ -98,10 +100,23 @@ inherited frmVhPayGlide: TfrmVhPayGlide
             end
             object labAMOUNT: TLabel
               Left = 34
-              Top = 53
+              Top = 46
               Width = 74
               Height = 20
               Caption = #31036#21048#25968':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clNavy
+              Font.Height = -20
+              Font.Name = #40657#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object labNO: TLabel
+              Left = 34
+              Top = 79
+              Width = 74
+              Height = 20
+              Caption = #31036#21048#21495':'
               Font.Charset = GB2312_CHARSET
               Font.Color = clNavy
               Font.Height = -20

@@ -225,7 +225,7 @@ begin
     cdsKPI_ID.Close;
     SQL :=
     ' select A.KPI_ID,sum(A.BUDG_MNY) as BUDG_MNY,sum(A.BUDG_VRF) asBUDG_VRF,B.KPI_NAME,B.KPI_SPELL from MKT_REQUDATA A '+
-    ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
+    ' left join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID ' +
     ' where A.TENANT_ID='+IntToStr(Global.TENANT_ID)+' and A.REQU_ID='+QuotedStr(FromId)+
     ' group by A.KPI_ID,B.KPI_NAME,B.KPI_SPELL ';
     cdsKPI_ID.SQL.Text := ParseSQL(Factor.iDbType,SQL);

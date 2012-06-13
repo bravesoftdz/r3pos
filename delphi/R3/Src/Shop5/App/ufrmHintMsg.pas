@@ -315,7 +315,7 @@ end;
 class procedure TfrmHintMsg.ShowInfo(Msg: PMsgInfo);
 var Contents_M:WideString;
 begin
-  if frmMsg=nil then frmMsg := TfrmHintMsg.Create(Application.MainForm);
+  if frmMsg=nil then frmMsg := TfrmHintMsg.Create(nil);
   if Pointer(frmMsg.MsgInfo)=Pointer(Msg) then
      begin
        if not frmMsg.Visible then

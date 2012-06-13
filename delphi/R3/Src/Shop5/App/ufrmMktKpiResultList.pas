@@ -132,6 +132,27 @@ begin
   end;
   DBGridEh1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 
+  if Column.FieldName = 'FISH_RATE' then
+    begin
+      if CdsResultList.FieldByName('KPI_DATA').AsInteger in [1,3] then
+         begin
+           if CdsResult.FieldByName('FISH_AMT').AsFloat<>0 then
+              s := formatFloat('#0.00%',CdsResultList.FieldbyName('FISH_AMT').AsFloat/CdsResult.FieldByName('FISH_AMT').AsFloat*100)
+           else
+              s := '0.00%';
+         end
+      else
+         begin
+           if CdsResult.FieldByName('FISH_MNY').AsFloat<>0 then
+              s := formatFloat('#0.00%',CdsResultList.FieldbyName('FISH_AMT').AsFloat/CdsResult.FieldByName('FISH_MNY').AsFloat*100)
+           else
+              s := '0.00%';
+         end;
+      ARect := Rect;
+      DBGridEh1.canvas.FillRect(ARect);
+      DrawText(DBGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
+    end;
+
   if Column.FieldName = 'KPI_RATIO' then
      begin
       ARect := Rect;

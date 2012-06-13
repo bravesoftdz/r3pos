@@ -1,6 +1,5 @@
 inherited frmMktKpiResultList: TfrmMktKpiResultList
   Left = 267
-  Top = 219
   Caption = #25351#26631#32771#26680#28165#21333
   ClientHeight = 383
   ClientWidth = 600
@@ -75,7 +74,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #24320#22987#26085#26399
-                Width = 62
+                Width = 61
               end
               item
                 DisplayFormat = '0000-00-00'
@@ -92,7 +91,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #21830#21697#21517#31216
-                Width = 69
+                Width = 127
               end
               item
                 EditButtons = <>
@@ -119,14 +118,14 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footer.ValueType = fvtSum
                 Footers = <>
                 Title.Caption = #23436#25104#37327
-                Width = 51
+                Width = 42
                 OnUpdateData = DBGridEh1Columns9UpdateData
               end
               item
                 Alignment = taRightJustify
                 DisplayFormat = '#0.00%'
                 EditButtons = <>
-                FieldName = 'KPI_RATE'
+                FieldName = 'FISH_RATE'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #23436#25104#29575
@@ -142,7 +141,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #35843#25972#37327
-                Width = 51
+                Width = 44
               end
               item
                 Alignment = taRightJustify

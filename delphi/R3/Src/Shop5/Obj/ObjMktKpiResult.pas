@@ -229,6 +229,7 @@ begin
                     'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,isnull(B.SHORT_GODS_NAME,B.GODS_NAME) as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,'+
                     'case when A.KPI_DATA in (''1'',''3'') then isnull(A.FISH_AMT,0)-isnull(A.ADJS_AMT,0) else isnull(A.FISH_MNY,0)-isnull(A.ADJS_MNY,0) end as ORG_AMT,'+
                     'case when A.KPI_DATA in (''1'',''3'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
+                    'A.KPI_DATA as FISH_RATE,'+
                     'case when A.KPI_DATA in (''1'',''3'') then A.ADJS_AMT else A.ADJS_MNY end as ADJS_AMT,'+
                     'case when A.KPI_DATA in (''1'',''3'') then C.UNIT_NAME else ''Ԫ'' end as UNIT_NAME,'+
                     'case when A.KPI_CALC in (''1'') then ''%'' when A.KPI_CALC in (''2'') then D.UNIT_NAME else ''Ԫ'' end as CALC_SHOW_NAME,'+

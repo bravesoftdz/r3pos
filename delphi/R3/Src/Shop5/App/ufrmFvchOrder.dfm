@@ -431,6 +431,12 @@ inherited frmFvchOrder: TfrmFvchOrder
               Width = 92
               Height = 20
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              ParentFont = False
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clBlack
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = []
               TabOrder = 0
             end
             object edtFVCH_CODE: TcxTextEdit
@@ -438,6 +444,12 @@ inherited frmFvchOrder: TfrmFvchOrder
               Top = 53
               Width = 104
               Height = 20
+              ParentFont = False
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clBlack
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = []
               TabOrder = 1
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
@@ -446,12 +458,18 @@ inherited frmFvchOrder: TfrmFvchOrder
               Top = 78
               Width = 160
               Height = 20
+              ParentFont = False
               Properties.AutoSelect = False
               Properties.Buttons = <
                 item
                   Default = True
                 end>
               Properties.ReadOnly = False
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clBlack
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = []
               TabOrder = 2
               InGrid = False
               KeyValue = Null
@@ -480,12 +498,18 @@ inherited frmFvchOrder: TfrmFvchOrder
               Top = 53
               Width = 160
               Height = 20
+              ParentFont = False
               Properties.AutoSelect = False
               Properties.Buttons = <
                 item
                   Default = True
                 end>
               Properties.ReadOnly = False
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clBlack
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = []
               TabOrder = 3
               InGrid = False
               KeyValue = Null
@@ -521,12 +545,18 @@ inherited frmFvchOrder: TfrmFvchOrder
               Top = 77
               Width = 104
               Height = 20
+              ParentFont = False
               Properties.AutoSelect = False
               Properties.Buttons = <
                 item
                   Default = True
                 end>
               Properties.ReadOnly = True
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clBlack
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = []
               TabOrder = 4
               InGrid = False
               KeyValue = Null
@@ -581,11 +611,17 @@ inherited frmFvchOrder: TfrmFvchOrder
               Width = 90
               Height = 20
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              ParentFont = False
               Properties.DropDownListStyle = lsEditFixedList
               Properties.Items.Strings = (
                 #26032#22686
                 #20462#25913
                 #24341#20837#23436#27605)
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clBlack
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = []
               TabOrder = 6
             end
             object edtFVCH_IMPORT_ID: TcxTextEdit
@@ -593,6 +629,12 @@ inherited frmFvchOrder: TfrmFvchOrder
               Top = 77
               Width = 90
               Height = 20
+              ParentFont = False
+              Style.Font.Charset = GB2312_CHARSET
+              Style.Font.Color = clBlack
+              Style.Font.Height = -12
+              Style.Font.Name = #23435#20307
+              Style.Font.Style = []
               TabOrder = 7
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
@@ -682,11 +724,6 @@ inherited frmFvchOrder: TfrmFvchOrder
                       FieldName = 'SEQNO'
                       Footers = <>
                       Title.Caption = #34892#21495
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
                       Width = 28
                     end
                     item
@@ -696,11 +733,6 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #25688#35201
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
                       Width = 274
                     end
                     item
@@ -713,14 +745,10 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Font.Style = []
                       Footers = <>
                       Title.Caption = #31185#30446
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
                       Width = 50
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DEBIT_AMT'
                       Font.Charset = GB2312_CHARSET
@@ -730,11 +758,6 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Font.Style = []
                       Footers = <>
                       Title.Caption = #20511#26041'|'#25968#37327
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
                       Width = 62
                     end
                     item
@@ -753,16 +776,11 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Footers = <>
                       Tag = 1
                       Title.Caption = #20511#26041'|'#21333#20215
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
                       Width = 62
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.##'
                       EditButtons = <>
                       FieldName = 'DEBIT_MNY'
                       Font.Charset = GB2312_CHARSET
@@ -774,11 +792,6 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #20511#26041'|'#37329#39069
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
                       Width = 72
                     end
                     item
@@ -792,14 +805,10 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Font.Style = []
                       Footers = <>
                       Title.Caption = #36151#26041'|'#25968#37327
-                      Title.Font.Charset = GB2312_CHARSET
-                      Title.Font.Color = clGreen
-                      Title.Font.Height = -12
-                      Title.Font.Name = #23435#20307
-                      Title.Font.Style = []
                       Width = 62
                     end
                     item
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'CREDIT_PRICE'
                       Font.Charset = GB2312_CHARSET
@@ -815,6 +824,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Width = 62
                     end
                     item
+                      DisplayFormat = '#0.##'
                       EditButtons = <>
                       FieldName = 'CREDIT_MNY'
                       Font.Charset = GB2312_CHARSET

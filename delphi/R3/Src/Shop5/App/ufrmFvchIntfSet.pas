@@ -234,15 +234,8 @@ begin
      3: FindCol.Title.Caption:='往来单位';
      4: FindCol.Title.Caption:='专项名称';
     end;
+    FindCol.ReadOnly:=(edtIntf_TYPE.ItemIndex<>4);
   end;
-  if edtIntf_TYPE.ItemIndex<>4 then
-     begin
-      FindCol.ReadOnly:=True;
-     end
-  else
-    begin
-      FindCol.ReadOnly:=False;
-    end;
   try
     Params:=TftParamList.Create(nil);
     Params.ParamByName('vType').AsInteger:=edtIntf_TYPE.ItemIndex;

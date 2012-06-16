@@ -162,6 +162,8 @@ begin
       //设置显示
       edtFVCH_FLAG.ItemIndex:=StrToIntDef(CdsFvchOrder.FieldByName('FVCH_FLAG').AsString,0);
       edtFVCH_ATTACH.Value:=CdsFvchOrder.FieldByName('FVCH_ATTACH').AsInteger;
+      //case  of
+      //end;
 
       //设置控制属性
       SetParams;

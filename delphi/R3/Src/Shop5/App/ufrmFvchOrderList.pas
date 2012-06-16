@@ -145,7 +145,7 @@ var
   Params:TftParamList;
 begin
   if cdsList.IsEmpty then Raise Exception.Create('     请选择待过账的凭证单...    ');
-  if not ShopGlobal.GetChkRight('100002407',5) then Raise Exception.Create('  您没有过账凭证单的权限,请和管理员联系.   ');
+  //if not ShopGlobal.GetChkRight('100002407',5) then Raise Exception.Create('  您没有过账凭证单的权限,请和管理员联系.   ');
   if cdsList.FieldByName('FVCH_FLAG').AsString='2' then
   begin
     Raise Exception.Create('   已过账的凭证单不能操作...   ');  
@@ -153,44 +153,23 @@ begin
   begin
     if MessageBox(Handle,'   确认过账当前凭证单？  ',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
   end;
+  
+  try
+    Params := TftParamList.Create(nil);
     try
-      Params := TftParamList.Create(nil);
-      try
-        Params.ParamByName('TENANT_ID').AsInteger := cdsList.FieldbyName('TENANT_ID').AsInteger;
-        Params.ParamByName('SHOP_ID').asString := cdsList.FieldbyName('SHOP_ID').AsString;
-        Params.ParamByName('RECV_ID').asString := cdsList.FieldbyName('RECV_ID').AsString;
-        Params.ParamByName('CHK_DATE').asString := FormatDatetime('YYYY-MM-DD',date());
-        Params.ParamByName('CHK_USER').asString := Global.UserID;
-        if cdsList.FieldByName('CHK_DATE').AsString='' then
-           Msg := Factor.ExecProc('TRecvOrderAudit',Params)
-        else
-           Msg := Factor.ExecProc('TRecvOrderUnAudit',Params) ;
-      finally
-         Params.free;
-      end;
-      MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-      if cdsList.FieldByName('CHK_DATE').AsString='' then
-         begin
-            cdsList.Edit;
-            cdsList.FieldByName('CHK_DATE').AsString := FormatDatetime('YYYY-MM-DD',date());
-            cdsList.FieldByName('CHK_USER').AsString := Global.UserID;
-            cdsList.FieldByName('CHK_USER_TEXT').AsString := Global.UserName;
-            cdsList.Post;
-         end
-      else
-         begin
-            cdsList.Edit;
-            cdsList.FieldByName('CHK_DATE').AsString := '';
-            cdsList.FieldByName('CHK_USER').AsString := '';
-            cdsList.FieldByName('CHK_USER_TEXT').AsString := '';
-            cdsList.Post;
-         end;
-    except
-      on E:Exception do
-         begin
-           Raise Exception.Create(E.Message);
-         end;
+      Params.ParamByName('TENANT_ID').AsInteger := cdsList.FieldbyName('TENANT_ID').AsInteger;
+      Params.ParamByName('FVCH_ID').asString := cdsList.FieldbyName('FVCH_ID').AsString;
+      Msg := Factor.ExecProc('TFvchPostForInspur',Params) ;
+    finally
+       Params.free;
     end;
+    MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+  except
+    on E:Exception do
+    begin
+      Raise Exception.Create(E.Message);
+    end;
+  end;
 end;
 
 procedure TfrmFvchOrderList.FormShow(Sender: TObject);
@@ -426,14 +405,14 @@ end;
 procedure TfrmFvchOrderList.actNewExecute(Sender: TObject);
 begin
   //新增凭证
-  Showmessage('New.Bill');
+ 
 
 end;
 
 procedure TfrmFvchOrderList.actEditExecute(Sender: TObject);
 begin
   //编辑
-  Showmessage('Edit.Bill');
+
   
 end;
 

@@ -1,6 +1,6 @@
 inherited frmFvchIntfSet: TfrmFvchIntfSet
-  Left = 869
-  Top = 291
+  Left = 320
+  Top = 170
   Caption = #25509#21475#32534#30721#35774#32622
   ClientHeight = 376
   ClientWidth = 370

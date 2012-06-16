@@ -34,12 +34,12 @@ function TFvchIntfSet.BeforeOpenRecord(AGlobal:IdbHelp):Boolean;
 var
   str: string;
 begin
-  case self.Params.ParamByName('vTYPE').AsInteger of
-   0: Str:='Select 1 as vTYPE,1 as SEQ_NO,TENANT_ID,SHOP_ID,SHOP_NAME as CNAME,SUBJECT_NO From CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
-   1: Str:='Select 2 as vTYPE,2 as SEQ_NO,TENANT_ID,DEPT_ID,DEPT_NAME as CNAME,SUBJECT_NO From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
-   2: Str:='Select 3 as vTYPE,3 as SEQ_NO,TENANT_ID,USER_ID,USER_NAME as CNAME,SUBJECT_NO From CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
-   3: Str:='Select 4 as vTYPE,4 as SEQ_NO,TENANT_ID,CLIENT_ID,CLIENT_NAME as CNAME,SUBJECT_NO From PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
-   4: Str:='Select 5 as vTYPE,5 as SEQ_NO,TENANT_ID,CODE_ID,CODE_SPELL as SUBJECT_NO,CODE_TYPE,CODE_NAME as CNAME From PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''20'' and COMM not in (''02'',''12'')';
+  case self.Params.ParamByName('vTYPE').AsInteger of  //1 as SEQ_NO,
+   0: Str:='Select 1 as vTYPE,TENANT_ID,SHOP_ID,SHOP_NAME as CNAME,SUBJECT_NO From CA_SHOP_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
+   1: Str:='Select 2 as vTYPE,TENANT_ID,DEPT_ID,DEPT_NAME as CNAME,SUBJECT_NO From CA_DEPT_INFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
+   2: Str:='Select 3 as vTYPE,TENANT_ID,USER_ID,USER_NAME as CNAME,SUBJECT_NO From CA_USERS where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
+   3: Str:='Select 4 as vTYPE,TENANT_ID,CLIENT_ID,CLIENT_NAME as CNAME,SUBJECT_NO From PUB_CLIENTINFO where TENANT_ID=:TENANT_ID and COMM not in (''02'',''12'')';
+   4: Str:='Select 5 as vTYPE,TENANT_ID,CODE_ID,CODE_SPELL as SUBJECT_NO,CODE_TYPE,CODE_NAME as CNAME From PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''20'' and COMM not in (''02'',''12'')';
   end;
   SelectSQL.Text:=str;
 end;

@@ -638,7 +638,7 @@ end;
 procedure TfrmFvchFrameInfo.DelRecord;
 var i:Integer;
 begin
-  if not cdsFvchFrame.IsEmpty then Exit;
+  if cdsFvchFrame.IsEmpty then Exit;
   i:=MessageBox(Handle,Pchar('确定要删除当前科目?'),Pchar(Caption),MB_YESNO+MB_DEFBUTTON1+MB_ICONQUESTION);
   if i <> 6 then Exit;
   cdsFvchFrame.DisableControls;

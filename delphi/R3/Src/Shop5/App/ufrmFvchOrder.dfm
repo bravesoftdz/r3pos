@@ -644,7 +644,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             Top = 115
             Width = 823
             Height = 294
-            ActivePage = Tab_FvchDetail
+            ActivePage = Tab_FvchDATA
             Align = alClient
             Color = clWindow
             FlatColor = clBtnFace
@@ -652,7 +652,7 @@ inherited frmFvchOrder: TfrmFvchOrder
             ShowShadow = False
             TabColors.Shadow = 14588523
             TabHeight = 25
-            TabIndex = 1
+            TabIndex = 0
             TabOrder = 2
             TabOrientation = toBottom
             TextColors.DisabledShadow = clNavy
@@ -748,7 +748,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Width = 50
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'DEBIT_AMT'
                       Font.Charset = GB2312_CHARSET
@@ -762,7 +762,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'DEBIT_PRICE'
                       Font.Charset = GB2312_CHARSET
@@ -780,7 +780,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                     end
                     item
                       Alignment = taRightJustify
-                      DisplayFormat = '#0.##'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'DEBIT_MNY'
                       Font.Charset = GB2312_CHARSET
@@ -795,7 +795,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Width = 72
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'CREDIT_AMT'
                       Font.Charset = GB2312_CHARSET
@@ -808,7 +808,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Width = 62
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'CREDIT_PRICE'
                       Font.Charset = GB2312_CHARSET
@@ -824,7 +824,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Width = 62
                     end
                     item
-                      DisplayFormat = '#0.##'
+                      DisplayFormat = '#0.00'
                       EditButtons = <>
                       FieldName = 'CREDIT_MNY'
                       Font.Charset = GB2312_CHARSET
@@ -928,9 +928,10 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Width = 264
                     end
                     item
-                      DisplayFormat = '#0.00'
+                      DisplayFormat = '#0.###'
                       EditButtons = <>
                       FieldName = 'AMOUNT'
+                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #25968#37327
                       Title.Font.Charset = GB2312_CHARSET
@@ -941,10 +942,10 @@ inherited frmFvchOrder: TfrmFvchOrder
                       Width = 60
                     end
                     item
+                      DisplayFormat = '#0.00#'
                       EditButtons = <>
                       FieldName = 'APRICE'
                       Footer.Alignment = taRightJustify
-                      Footer.Value = #21512#35745#65306
                       Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #21333#20215
@@ -960,7 +961,7 @@ inherited frmFvchOrder: TfrmFvchOrder
                       EditButtons = <>
                       FieldName = 'AMONEY'
                       Footer.DisplayFormat = '#0.00'
-                      Footer.ValueType = fvtSum
+                      Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #37329#39069
                       Title.Font.Charset = GB2312_CHARSET

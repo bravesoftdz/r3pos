@@ -1,6 +1,6 @@
 inherited frmFvchOrderList: TfrmFvchOrderList
-  Left = 194
-  Top = 102
+  Left = 197
+  Top = 111
   Width = 904
   Height = 600
   Caption = #36130#21153#20973#35777
@@ -9,26 +9,26 @@ inherited frmFvchOrderList: TfrmFvchOrderList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 888
-    Height = 525
+    Width = 896
+    Height = 536
     inherited RzPanel2: TRzPanel
-      Width = 878
-      Height = 515
+      Width = 886
+      Height = 526
       inherited RzPage: TRzPageControl
-        Width = 872
-        Height = 509
+        Width = 880
+        Height = 520
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #36130#21153#20973#35777#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 870
-            Height = 482
+            Width = 878
+            Height = 493
             BorderInner = fsStatus
             object RzPanel6: TRzPanel
               Left = 6
               Top = 6
-              Width = 858
+              Width = 866
               Height = 100
               Align = alTop
               BorderOuter = fsNone
@@ -91,8 +91,8 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                 TabOrder = 1
               end
               object btnOk: TRzBitBtn
-                Left = 451
-                Top = 57
+                Left = 419
+                Top = 60
                 Width = 67
                 Height = 32
                 Action = actFind
@@ -228,16 +228,16 @@ inherited frmFvchOrderList: TfrmFvchOrderList
             object Panel1: TPanel
               Left = 6
               Top = 106
-              Width = 858
-              Height = 370
+              Width = 866
+              Height = 381
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh1: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 856
-                Height = 368
+                Width = 864
+                Height = 379
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = ListDs
@@ -268,6 +268,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                 CurrencySymbol = #65509
                 DecimalNumber = 2
                 DigitalNumber = 12
+                OnDblClick = DBGridEh1DblClick
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
                 Columns = <
                   item
@@ -276,7 +277,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                     FieldName = 'SEQNO'
                     Footers = <>
                     Title.Caption = #24207#21495
-                    Width = 32
+                    Width = 30
                   end
                   item
                     DisplayFormat = '0000-00-00'
@@ -286,7 +287,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                     Footer.ValueType = fvtStaticText
                     Footers = <>
                     Title.Caption = #20973#35777#26085#26399
-                    Width = 81
+                    Width = 75
                   end
                   item
                     EditButtons = <>
@@ -344,7 +345,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                       #20462#25913
                       #24341#20837#23436#27605)
                     Title.Caption = #29366#24577
-                    Width = 50
+                    Width = 77
                   end
                   item
                     EditButtons = <>
@@ -361,16 +362,16 @@ inherited frmFvchOrderList: TfrmFvchOrderList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 888
+    Width = 896
     inherited Image3: TImage
       Left = 417
       Width = 380
     end
     inherited Image14: TImage
-      Left = 868
+      Left = 876
     end
     inherited Image1: TImage
-      Left = 362
+      Left = 370
       Width = 506
     end
     inherited rzPanel5: TPanel
@@ -459,6 +460,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
     Left = 144
     Top = 232
     inherited actNew: TAction
+      Visible = False
       OnExecute = actNewExecute
     end
     inherited actDelete: TAction
@@ -466,6 +468,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
     end
     inherited actEdit: TAction
       Caption = #20462#25913
+      Visible = False
       OnExecute = actEditExecute
     end
     inherited actPrint: TAction
@@ -720,5 +723,45 @@ inherited frmFvchOrderList: TfrmFvchOrderList
     DataSet = CdsList
     Left = 109
     Top = 282
+  end
+  object PrintDBGridEh1: TPrintDBGridEh
+    DBGridEh = DBGridEh1
+    Options = [pghFitGridToPageWidth]
+    Page.BottomMargin = 2.000000000000000000
+    Page.LeftMargin = 2.000000000000000000
+    Page.RightMargin = 0.500000000000000000
+    Page.TopMargin = 2.000000000000000000
+    PageFooter.Font.Charset = DEFAULT_CHARSET
+    PageFooter.Font.Color = clWindowText
+    PageFooter.Font.Height = -11
+    PageFooter.Font.Name = 'MS Sans Serif'
+    PageFooter.Font.Style = []
+    PageHeader.CenterText.Strings = (
+      #35843#25972#27719#24635#34920)
+    PageHeader.Font.Charset = GB2312_CHARSET
+    PageHeader.Font.Color = clWindowText
+    PageHeader.Font.Height = -16
+    PageHeader.Font.Name = #23435#20307
+    PageHeader.Font.Style = [fsBold]
+    Units = MM
+    Left = 760
+    Top = 80
+    BeforeGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C6C616E67323035325C66305C6673323020255B7768725D5C66315C6673
+      3136200D0A5C706172207D0D0A00}
+    AfterGridText_Data = {
+      7B5C727466315C616E73695C616E73696370673933365C64656666305C646566
+      6C616E67313033335C6465666C616E676665323035327B5C666F6E7474626C7B
+      5C66305C666E696C5C6663686172736574313334205C2763625C2763655C2763
+      635C2765353B7D7B5C66315C666E696C5C6663686172736574313334204D5320
+      53616E732053657269663B7D7D0D0A5C766965776B696E64345C7563315C7061
+      72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
+      615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
+      0A5C706172207D0D0A00}
   end
 end

@@ -70,8 +70,8 @@ type
     procedure FocusNextColumn;
     procedure SetGridAmtPriceCol(const AmtVisible,PriVisible: Boolean);
     procedure SetParams;
+    procedure SetGridFooterSum; //设置页脚汇总
   public
-    { Public declarations }
     AObj:TRecord_;
     locked:Boolean;
     RowID:integer;
@@ -358,6 +358,8 @@ begin
       AllowChange:=False;
       Raise Exception.Create('  当前凭证分录没有明细...  ');
     end;
+    //设置Grid计算页脚
+    SetGridFooterSum;
   end;
 end;
 
@@ -394,6 +396,48 @@ begin
   if pos('零分',result)=0 then Result := StringReplace(Result,'零角','零', [rfReplaceAll])
   else Result := StringReplace(Result,'零角','整', [rfReplaceAll]);
   Result := StringReplace(Result,'零分','', [rfReplaceAll]);
+end;
+
+procedure TfrmFvchOrder.SetGridFooterSum;
+var
+  SumAmt:real; //数量
+  SumPri:real; //单价
+  SumMny:Currency; //金额
+  FindCol: TColumnEh; //查找列
+  RsData: TZQuery;
+begin
+  SumAmt:=0;
+  SumPri:=0;
+  SumMny:=0;
+  try
+    RsData:=TZQuery.Create(nil);
+    RsData.Data:=CdsFvchDetail.Data;
+    RsData.Filtered:=False;
+    RsData.Filter:='FVCH_DID='''+trim(CdsFvchData.FieldByName('FVCH_DID').AsString)+''' ';
+    RsData.Filtered:=true;
+    RsData.First;
+    if RsData.Active then
+    begin
+      SumAmt:=SumAmt+RsData.FieldByName('AMOUNT').AsFloat;
+      SumMny:=SumMny+RsData.FieldByName('AMONEY').AsFloat;
+      RsData.Next;
+    end;
+    if SumAmt<>0 then SumPri:=Roundto((SumMny*1.00)/(SumAmt*1.00),-2);
+  finally
+    RsData.Free;
+  end;
+  //数量累计
+  FindCol:=self.FindDBColumn(DBGridEh2,'AMOUNT');
+  if (FindCol<>nil) and (FindCol.Visible) then
+    FindCol.Footer.Value:=FormatFloat('#0.###',SumAmt);
+  //单价平均
+  FindCol:=self.FindDBColumn(DBGridEh2,'APRICE');
+  if (FindCol<>nil) and (FindCol.Visible) then
+    FindCol.Footer.Value:=FormatFloat('#0.00#',SumPri);
+  //金额汇总
+  FindCol:=self.FindDBColumn(DBGridEh2,'AMONEY');
+  if (FindCol<>nil) and (FindCol.Visible) then
+    FindCol.Footer.Value:=FormatFloat('#0.00',SumMny);
 end;
 
 end.

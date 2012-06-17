@@ -46,6 +46,7 @@ type
     fndP1_BILL_NAME: TcxComboBox;
     actFvch: TAction;
     ToolButton9: TToolButton;
+    PrintDBGridEh1: TPrintDBGridEh;
     procedure FormCreate(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actInfoExecute(Sender: TObject);
@@ -62,6 +63,7 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
+    procedure DBGridEh1DblClick(Sender: TObject);
   private
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
@@ -145,8 +147,8 @@ var
   Params:TftParamList;
 begin
   if cdsList.IsEmpty then Raise Exception.Create('     请选择待过账的凭证单...    ');
-  //if not ShopGlobal.GetChkRight('100002407',5) then Raise Exception.Create('  您没有过账凭证单的权限,请和管理员联系.   ');
-  if cdsList.FieldByName('FVCH_FLAG').AsString='2' then
+  if not ShopGlobal.GetChkRight('100002407',5) then Raise Exception.Create('  您没有过账凭证单的权限,请和管理员联系.   ');
+  if (cdsList.FieldByName('FVCH_FLAG').AsString='2') and (cdsList.FieldByName('FVCH_IMPORT_ID').AsString<>'') then
   begin
     Raise Exception.Create('   已过账的凭证单不能操作...   ');  
   end else
@@ -293,16 +295,16 @@ begin
   ChangeButton;
 end;
 
-procedure TfrmFvchOrderList.frfRecvOrderUserFunction(const Name: String; p1,
-  p2, p3: Variant; var Val: Variant);
-var small:real;
+procedure TfrmFvchOrderList.frfRecvOrderUserFunction(const Name: String; p1, p2, p3: Variant; var Val: Variant);
+var
+  small:real;
 begin
   inherited;
   if UPPERCASE(Name)='SMALLTOBIG' then
-     begin
-       small := frParser.Calc(p1);
-       Val := FnNumber.SmallTOBig(small);
-     end;
+  begin
+    small := frParser.Calc(p1);
+    Val := FnNumber.SmallTOBig(small);
+  end;
 end;
 
 procedure TfrmFvchOrderList.actDeleteExecute(Sender: TObject);
@@ -315,7 +317,8 @@ begin
       if not ShopGlobal.GetChkRight('100002407',5) then
         Raise Exception.Create('你没有删除"'+cdsList.FieldByName('RECV_USER_TEXT').AsString+'"录入凭证的权限!');
     end;
-   if cdsList.FieldByName('FVCH_IMPORT_ID').AsString <> '' then Raise Exception.Create('此凭证导入财务系统,不能执行删除操作.');   
+   if (cdsList.FieldByName('FVCH_FLAG').AsString='2') and (cdsList.FieldByName('FVCH_IMPORT_ID').AsString<>'') then
+     Raise Exception.Create('此凭证已过账财务系统,不能执行删除操作.');
    if MessageBox(Handle,'确认删除当前选中的凭证？','友情提示',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
    with TfrmFvchOrder.Create(self) do
    begin
@@ -380,6 +383,7 @@ end;
 
 procedure TfrmFvchOrderList.actFvchExecute(Sender: TObject);
 begin
+  if not ShopGlobal.GetChkRight('100002407',2) then Raise Exception.Create('  您生成凭证单的权限,请和管理员联系.   ');
   with TfrmFvchCalc.Create(nil) do
   begin
     try
@@ -391,15 +395,56 @@ begin
 end;
 
 procedure TfrmFvchOrderList.actPrintExecute(Sender: TObject);
+var
+  ReStr: string;
 begin
-  inherited;
-  //
+  if not DBGridEh1.DataSource.DataSet.Active then Exit;
+  //日期条件
+  ReStr:='凭证日期:'+FormatDatetime('YYYY-MM-DD',P1_D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',P1_D2.Date);
+  if fndP1_SHOP_ID.AsString<>'' then
+    ReStr:=ReStr+'  门店名称:'+fndP1_SHOP_ID.Text;
+  if fndP1_DEPT_ID.AsString<>'' then
+    ReStr:=ReStr+'  部门名称:'+fndP1_DEPT_ID.Text;
+  if trim(fndP1_BILL_NAME.Text)<>'' then
+    ReStr:=ReStr+'  业务单据:'+fndP1_BILL_NAME.Text;
+  case fndSTATUS.ItemIndex of
+   1: ReStr:=ReStr+'  状态:新增';
+   2: ReStr:=ReStr+'  状态:过账';
+  end;
+  PrintDBGridEh1.SetSubstitutes(['%[whr]', ReStr]);
+  PrintDBGridEh1.PageHeader.CenterText.Text:=Global.TENANT_NAME+trim(PrintDBGridEh1.PageHeader.CenterText.Text);
+  DBGridEh1.DataSource.DataSet.Filtered := false;
+  PrintDBGridEh1.Print;
 end;
 
 procedure TfrmFvchOrderList.actPreviewExecute(Sender: TObject);
+var
+  ReStr: string;
 begin
-  inherited;
-  //
+  if not DBGridEh1.DataSource.DataSet.Active then Exit;
+  //日期条件
+  ReStr:='凭证日期:'+FormatDatetime('YYYY-MM-DD',P1_D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',P1_D2.Date);
+  if fndP1_SHOP_ID.AsString<>'' then
+    ReStr:=ReStr+'  门店名称:'+fndP1_SHOP_ID.Text;
+  if fndP1_DEPT_ID.AsString<>'' then
+    ReStr:=ReStr+'  部门名称:'+fndP1_DEPT_ID.Text;
+  if trim(fndP1_BILL_NAME.Text)<>'' then
+    ReStr:=ReStr+'  业务单据:'+fndP1_BILL_NAME.Text;
+  case fndSTATUS.ItemIndex of
+   1: ReStr:=ReStr+'  状态:新增';
+   2: ReStr:=ReStr+'  状态:过账';
+  end;
+  PrintDBGridEh1.SetSubstitutes(['%[whr]', ReStr]);
+  PrintDBGridEh1.PageHeader.CenterText.Text:=Global.TENANT_NAME+trim(PrintDBGridEh1.PageHeader.CenterText.Text);
+  DBGridEh1.DataSource.DataSet.Filtered := false;
+  with TfrmEhLibReport.Create(self) do
+  begin
+    try
+      Preview(PrintDBGridEh1);
+    finally
+      free;
+    end;
+  end;
 end;
 
 procedure TfrmFvchOrderList.actNewExecute(Sender: TObject);
@@ -414,6 +459,12 @@ begin
   //编辑
 
   
+end;
+
+procedure TfrmFvchOrderList.DBGridEh1DblClick(Sender: TObject);
+begin
+  inherited;
+  actInfoExecute(Sender);   
 end;
 
 end.

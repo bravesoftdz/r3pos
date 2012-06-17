@@ -47,7 +47,7 @@ var
   Fvch_Code: string;
 begin
   Fvch_Code:=
-    GetSequence(AGlobal,'GNO_11_'+Params.ParamByName('TENANT_ID').AsString,
+    GetSequence(AGlobal,'GNO_11_'+Params.ParamByName('TENANT_ID').AsString+'_'+Params.ParamByName('FVCH_GTYPE').AsString,
                 Params.ParamByName('TENANT_ID').AsString,
                 Params.ParamByName('FVCH_GTYPE').AsString,
                 6);
@@ -62,7 +62,7 @@ var
   Str: string;
 begin
   inherited;
-  IsSQLUpdate := True;  
+  IsSQLUpdate := True;
   SelectSQL.Text:=
     'select j.TENANT_ID,j.SHOP_ID,j.DEPT_ID,j.FVCH_ID,j.FVCH_DATE,j.FVCH_ATTACH'+
     ' ,j.CREA_USER,j.FVCH_FLAG,j.FVCH_CODE,j.FVCH_IMPORT_ID,j.FVCH_NAME,j.COMM,j.TIME_STAMP'+
@@ -125,7 +125,8 @@ begin
     ',(case when SUBJECT_TYPE=''2'' then AMONEY else null end)as CREDIT_MNY'+  //贷方金额
     ',(case when SUBJECT_TYPE=''2'' then AMOUNT else null end)as CREDIT_AMT'+  //贷方数量
     ',(case when SUBJECT_TYPE=''2'' then APRICE else null end)as CREDIT_PRI '+  //贷方单价
-    ' from ACC_FVCHDATA where TENANT_ID=:TENANT_ID and FVCH_ID=:FVCH_ID ';
+    ' from ACC_FVCHDATA where TENANT_ID=:TENANT_ID and FVCH_ID=:FVCH_ID '+
+    ' order by SEQNO';
 
   InsertSQL.Text :=
     'insert into ACC_FVCHDATA '+
@@ -146,41 +147,53 @@ end;
 
 procedure TFvchDetail.InitClass;
 var
-  Str: string;
+  Str,ZxTab: string;
 begin
   inherited;
   IsSQLUpdate := True;
+  ZxTab:='select CODE_ID,CODE_NAME from PUB_CODE_INFO where TENANT_ID=:TENANT_ID and CODE_TYPE=''20'' ';
   SelectSQL.Text:=
-    'select A.TENANT_ID as TENANT_ID'+
+    'select A.TENANT_ID as TENANT_ID '+
      ',A.SHOP_ID as SHOP_ID'+
-     ',A.FVCH_TID as FVCH_TID'+
-     ',A.FVCH_ID as FVCH_ID'+
-     ',A.FVCH_DID as FVCH_DID'+
+     ',FVCH_ID'+
+     ',FVCH_DID'+
+     ',FVCH_TID'+
      ',A.SEQNO as SEQNO'+
-     ',A.SUBJ_USER as SUBJ_USER'+
+     ',A.SUMMARY as SUMMARY'+
+     ',A.OPER_DATE as OPER_DATE'+
+     ',A.AMONEY as AMONEY'+        
+     ',A.AMOUNT as AMOUNT'+
+     ',A.APRICE as APRICE'+
+     ',A.SUBJ_USER as SUBJ_USER'+     
      ',A.SUBJ_DEPT as SUBJ_DEPT'+
      ',A.SUBJ_SHOP as SUBJ_SHOP'+
      ',A.SUBJ_CLIENT as SUBJ_CLIENT'+
-     ',A.SUBJ_OTHR1 as SUBJ_OTHR1'+
+     ',A.SUBJ_OTHR1 as SUBJ_OTHR1'+                    
      ',A.SUBJ_OTHR2 as SUBJ_OTHR2'+
      ',A.SUBJ_OTHR3 as SUBJ_OTHR3'+
      ',A.SUBJ_OTHR4 as SUBJ_OTHR4'+
      ',A.SUBJ_OTHR5 as SUBJ_OTHR5'+
-     ',A.SUMMARY as SUMMARY'+
-     ',A.OPER_DATE as OPER_DATE'+
-     ',A.AMONEY as AMONEY'+
-     ',A.AMOUNT as AMOUNT'+
-     ',A.APRICE as APRICE'+
-     {
-     ',(case when B.SUBJECT_TYPE=''1'' then A.AMONEY else null end)as DEBIT_MNY'+  //借方金额
-     ',(case when B.SUBJECT_TYPE=''1'' then A.AMOUNT else null end)as DEBIT_AMT'+  //借方数量
-     ',(case when B.SUBJECT_TYPE=''1'' then A.APRICE else null end)as DEBIT_PRI'+  //借方单价
-     ',(case when B.SUBJECT_TYPE=''2'' then A.AMONEY else null end)as CREDIT_MNY'+  //贷方金额
-     ',(case when B.SUBJECT_TYPE=''2'' then A.AMOUNT else null end)as CREDIT_AMT'+  //贷方数量
-     ',(case when B.SUBJECT_TYPE=''2'' then A.APRICE else null end)as CREDIT_PRI '+  //贷方单价
-     }
-    '  from ACC_FVCHDETAIL A,ACC_FVCHDATA B '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.FVCH_ID=B.FVCH_ID and A.FVCH_DID=B.FVCH_DID and A.TENANT_ID=:TENANT_ID and A.FVCH_ID=:FVCH_ID ';
+     ',B.DEPT_NAME as SUBJ_DEPT_TXT'+
+     ',C.USER_NAME as SUBJ_USER_TXT'+
+     ',D.SHOP_NAME as SUBJ_SHOP_TXT'+
+     ',E.CLIENT_NAME as SUBJ_CLIENT_TXT'+
+     ',F.CODE_NAME as SUBJ_OTHR1'+
+     ',G.CODE_NAME as SUBJ_OTHR2'+
+     ',H.CODE_NAME as SUBJ_OTHR3'+
+     ',I.CODE_NAME as SUBJ_OTHR4'+
+     ',J.CODE_NAME as SUBJ_OTHR5 '+
+    '  from ACC_FVCHDETAIL A '+
+    ' left outer join CA_DEPT_INFO B on A.TENANT_ID=B.TENANT_ID and A.SUBJ_DEPT=B.DEPT_ID '+
+    ' left outer join CA_USERS C on A.TENANT_ID=C.TENANT_ID and A.SUBJ_USER=C.USER_ID '+
+    ' left outer join CA_SHOP_INFO D on A.TENANT_ID=D.TENANT_ID and A.SUBJ_SHOP=D.SHOP_ID '+
+    ' left outer join PUB_CLIENTINFO E on A.TENANT_ID=E.TENANT_ID and A.SUBJ_CLIENT=E.CLIENT_ID '+
+    ' left outer join ('+ZxTab+')F on A.SUBJ_OTHR1=F.CODE_ID '+
+    ' left outer join ('+ZxTab+')G on A.SUBJ_OTHR2=G.CODE_ID '+
+    ' left outer join ('+ZxTab+')H on A.SUBJ_OTHR3=H.CODE_ID '+
+    ' left outer join ('+ZxTab+')I on A.SUBJ_OTHR4=I.CODE_ID '+
+    ' left outer join ('+ZxTab+')J on A.SUBJ_OTHR5=J.CODE_ID '+   
+    ' where A.TENANT_ID=:TENANT_ID and A.FVCH_ID=:FVCH_ID '+
+    ' order by A.FVCH_DID,A.SEQNO';
 
   InsertSQL.Text :=
     'insert into ACC_FVCHDETAIL '+

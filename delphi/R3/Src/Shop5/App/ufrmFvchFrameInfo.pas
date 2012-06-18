@@ -279,6 +279,7 @@ begin
   begin
     if cdsFvchFrame.FieldByName('SUBJECT_NO').AsString = '' then Raise Exception.Create('"科目代码"不能为空!');
     if cdsFvchFrame.FieldByName('SUMMARY').AsString = '' then Raise Exception.Create('"摘要"不能为空!');
+    if not ShopGlobal.GetChkRight('100002404',2) then Raise Exception.Create('你没有设置的权限,请和管理员联系.');
     with TfrmFvchFrameDefine.Create(Self) do
     begin
       try

@@ -94,6 +94,7 @@ begin
   inherited;
   if Column.FieldName = 'EDIT_INFO' then
   begin
+     if not ShopGlobal.GetChkRight('100002404',1) then Raise Exception.Create('你没有查询的权限,请和管理员联系.');
      with TfrmFvchFrameInfo.Create(Self) do
      begin
         try

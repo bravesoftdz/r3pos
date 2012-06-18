@@ -61,13 +61,13 @@ uses uDsUtil, uFnUtil,uGlobal,uShopUtil,uXDictFactory,ufrmFastReport, uShopGloba
 
 procedure TfrmVhLeadOrderList.actNewExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('12400001',2) then Raise Exception.Create('你没有领用礼券的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002438',2) then Raise Exception.Create('你没有领用礼券的权限,请和管理员联系.');
   inherited;
 end;
 
 procedure TfrmVhLeadOrderList.actDeleteExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002297',4) then Raise Exception.Create('你没有删除领用礼券单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002438',4) then Raise Exception.Create('你没有删除领用礼券单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -78,14 +78,14 @@ begin
   if (TfrmVhLeadOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString<>'')
   and (TfrmVhLeadOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID) then
     begin
-      if not ShopGlobal.GetChkRight('100002297',5) then
+      if not ShopGlobal.GetChkRight('100002438',5) then
         Raise Exception.Create('你没有删除"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmVhLeadOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入领用礼券单的权限!');
     end;
   inherited;
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       if ShopGlobal.GetChkRight('100002297',2) and (MessageBox(Handle,'删除当前领用礼券单成功,是否继续新增领用礼券单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
+       if ShopGlobal.GetChkRight('100002438',2) and (MessageBox(Handle,'删除当前领用礼券单成功,是否继续新增领用礼券单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
           CurContract.NewOrder
        else
           if rzPage.PageCount>2 then CurContract.Close;
@@ -94,7 +94,7 @@ end;
 
 procedure TfrmVhLeadOrderList.actEditExecute(Sender: TObject);
 begin
-  //if not ShopGlobal.GetChkRight('100002297',3) then Raise Exception.Create('你没有修改领用礼券单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002438',3) then Raise Exception.Create('你没有修改领用礼券单的权限,请和管理员联系.');
   if (CurContract=nil) then
      begin
        if cdsList.IsEmpty then Exit;
@@ -105,7 +105,7 @@ begin
   if (TfrmVhLeadOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString<>'')
   and (TfrmVhLeadOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString <> Global.UserID) then
     begin
-      if not ShopGlobal.GetChkRight('100002297',5) then
+      if not ShopGlobal.GetChkRight('100002438',5) then
         Raise Exception.Create('你没有修改"'+TdsFind.GetNameByID(Global.GetZQueryFromName('CA_USERS'),'USER_ID','USER_NAME',TfrmVhLeadOrder(CurContract).cdsHeader.FieldByName('CREA_USER').AsString)+'"录入领用礼券单的权限!');
     end;
   inherited;
@@ -117,8 +117,8 @@ begin
   if (CurContract<>nil) then
      begin
        if not CurContract.saved then Exit;
-       {if ShopGlobal.GetChkRight('100002297',6) then
-          begin       ShopGlobal.GetChkRight('100002297',2) and
+       {if ShopGlobal.GetChkRight('100002438',6) then
+          begin       ShopGlobal.GetChkRight('100002438',2) and
             actPrint.OnExecute(nil);
           end;}
        if  (MessageBox(Handle,'是否继续新增领用礼券单？',pchar(Application.Title),MB_YESNO+MB_ICONINFORMATION)=6) then
@@ -132,7 +132,7 @@ procedure TfrmVhLeadOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
   Exit;
-  //if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印领用礼券单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002438',6) then Raise Exception.Create('你没有打印领用礼券单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -161,7 +161,7 @@ procedure TfrmVhLeadOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
   Exit;
-  //if not ShopGlobal.GetChkRight('100002297',6) then Raise Exception.Create('你没有打印领用礼券单的权限,请和管理员联系.');
+  if not ShopGlobal.GetChkRight('100002438',6) then Raise Exception.Create('你没有打印领用礼券单的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -304,7 +304,7 @@ end;
 
 function TfrmVhLeadOrderList.CheckCanExport: boolean;
 begin
-  //result:=ShopGlobal.GetChkRight('100002297',7);
+  result:=ShopGlobal.GetChkRight('100002438',7);
 end;
 
 function TfrmVhLeadOrderList.EncodeSQL(id: string): string;
@@ -397,7 +397,7 @@ begin
   inherited;
   Open('');
   //进入窗体默认新增加判断是否新增权限:
-  //if (ShopGlobal.GetChkRight('100002297',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then
+  if (ShopGlobal.GetChkRight('100002438',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then
   actNew.OnExecute(nil);
 end;
 

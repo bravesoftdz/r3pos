@@ -5,127 +5,81 @@ inherited frmAllRckReport: TfrmAllRckReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 942
-    Height = 479
+    Width = 950
+    Height = 490
     inherited RzPanel2: TRzPanel
-      Width = 932
-      Height = 469
+      Width = 940
+      Height = 480
       inherited RzPage: TRzPageControl
-        Width = 727
-        Height = 463
+        Width = 735
+        Height = 474
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32508#21512#21488#36134
           inherited RzPanel3: TRzPanel
-            Width = 725
-            Height = 436
+            Width = 733
+            Height = 447
             inherited Panel4: TPanel
-              Width = 715
-              Height = 426
+              Width = 723
+              Height = 437
               inherited w1: TRzPanel
-                Width = 715
-                Height = 60
-                object Label3: TLabel
-                  Left = 16
-                  Top = 37
+                Width = 723
+                Height = 85
+                object LblRckType: TLabel
+                  Left = 9
+                  Top = 64
                   Width = 48
                   Height = 12
                   Caption = #21488#24080#20998#31867
                 end
                 object LblUnit: TLabel
-                  Left = 295
-                  Top = 37
+                  Left = 192
+                  Top = 64
                   Width = 48
                   Height = 12
                   Caption = #26174#31034#21333#20301
                 end
-                object RzLabel1: TRzLabel
-                  Left = 16
-                  Top = 12
+                object LblDate: TRzLabel
+                  Left = 9
+                  Top = 41
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #25152#23646#26085#26399
+                  Caption = #26597#35810#26085#26399
                 end
-                object RzLabel12: TRzLabel
-                  Left = 162
-                  Top = 12
+                object LblDateAnd: TRzLabel
+                  Left = 192
+                  Top = 41
                   Width = 12
                   Height = 12
                   Caption = #33267
                 end
+                object RzLabel1: TRzLabel
+                  Left = 9
+                  Top = 13
+                  Width = 48
+                  Height = 12
+                  Alignment = taRightJustify
+                  Caption = #26597#35810#21608#26399
+                end
                 object rptTemplate: TcxComboBox
-                  Left = 72
-                  Top = 33
-                  Width = 193
+                  Left = 61
+                  Top = 60
+                  Width = 125
                   Height = 20
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
-                    #20840#37096#21830#21697#21488#36134
                     #21367#28895#21830#21697#21488#36134
-                    #38750#28895#21830#21697#21488#24080
-                    #36827#36135#21488#36134
-                    #38144#21806#21488#36134)
+                    #20840#37096#21830#21697#21488#36134
+                    #38750#28895#21830#21697#21488#24080)
                   Properties.OnChange = rptTemplatePropertiesChange
                   TabOrder = 2
                 end
-                object btnNew: TRzBitBtn
-                  Left = 572
-                  Top = 35
-                  Width = 48
-                  Height = 21
-                  Caption = #28155#21152
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 6
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  OnClick = btnNewClick
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
-                object btnEdit: TRzBitBtn
-                  Left = 621
-                  Top = 35
-                  Width = 48
-                  Height = 21
-                  Caption = #20462#25913
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 7
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  OnClick = btnEditClick
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
                 object RzBitBtn1: TRzBitBtn
-                  Left = 454
-                  Top = 24
-                  Width = 72
-                  Height = 29
+                  Left = 348
+                  Top = 52
+                  Width = 74
+                  Height = 27
                   Action = actFind
                   Caption = #26597#35810
                   Color = clSilver
@@ -149,9 +103,9 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Spacing = 5
                 end
                 object fndP1_UNIT_ID: TcxComboBox
-                  Left = 346
-                  Top = 33
-                  Width = 89
+                  Left = 244
+                  Top = 60
+                  Width = 90
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   Properties.DropDownListStyle = lsFixedList
@@ -161,64 +115,86 @@ inherited frmAllRckReport: TfrmAllRckReport
                     #21253#35013'2')
                   TabOrder = 3
                 end
-                object btnDelete: TRzBitBtn
-                  Left = 670
-                  Top = 35
-                  Width = 48
-                  Height = 21
-                  Caption = #21024#38500
-                  Color = clSilver
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = [fsBold]
-                  HighlightColor = 16026986
-                  HotTrack = True
-                  HotTrackColor = 3983359
-                  HotTrackColorType = htctActual
-                  ParentFont = False
-                  TextShadowColor = clWhite
-                  TextShadowDepth = 4
-                  TabOrder = 8
-                  TextStyle = tsRaised
-                  ThemeAware = False
-                  OnClick = btnDeleteClick
-                  NumGlyphs = 2
-                  Spacing = 5
-                end
                 object P1_D1: TcxDateEdit
-                  Left = 72
-                  Top = 7
-                  Width = 85
+                  Left = 61
+                  Top = 37
+                  Width = 124
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   TabOrder = 0
                 end
                 object P1_D2: TcxDateEdit
-                  Left = 180
-                  Top = 7
-                  Width = 85
+                  Left = 210
+                  Top = 37
+                  Width = 124
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                   TabOrder = 1
                 end
-                inline P1_DateControl: TfrmDateControl
-                  Left = 270
+                object pnlDate: TPanel
+                  Left = 62
                   Top = 7
-                  Width = 170
-                  Height = 20
+                  Width = 272
+                  Height = 24
+                  BevelInner = bvLowered
                   TabOrder = 5
+                  object RB_Today: TRadioButton
+                    Left = 4
+                    Top = 4
+                    Width = 46
+                    Height = 17
+                    Caption = #20170#22825
+                    Checked = True
+                    TabOrder = 0
+                    TabStop = True
+                    OnClick = RB_TodayClick
+                  end
+                  object RB_Week: TRadioButton
+                    Left = 53
+                    Top = 4
+                    Width = 46
+                    Height = 17
+                    Caption = #26412#21608
+                    TabOrder = 1
+                    OnClick = RB_WeekClick
+                  end
+                  object RB_Month: TRadioButton
+                    Left = 105
+                    Top = 4
+                    Width = 46
+                    Height = 17
+                    Caption = #26412#26376
+                    TabOrder = 2
+                    OnClick = RB_MonthClick
+                  end
+                  object RB_Year: TRadioButton
+                    Left = 158
+                    Top = 4
+                    Width = 46
+                    Height = 17
+                    Caption = #26412#24180
+                    TabOrder = 3
+                    OnClick = RB_YearClick
+                  end
+                  object RB_Define: TRadioButton
+                    Left = 209
+                    Top = 4
+                    Width = 57
+                    Height = 17
+                    Caption = #33258#23450#20041
+                    TabOrder = 4
+                    OnClick = RB_DefineClick
+                  end
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 60
-                Width = 715
-                Height = 366
+                Top = 85
+                Width = 723
+                Height = 352
                 inherited DBGridEh1: TDBGridEh
                   Tag = 1
-                  Width = 711
-                  Height = 362
+                  Width = 719
+                  Height = 348
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
@@ -258,8 +234,8 @@ inherited frmAllRckReport: TfrmAllRckReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 730
-        Height = 463
+        Left = 738
+        Height = 474
         Visible = False
         inherited Panel2: TPanel
           Height = 440
@@ -274,9 +250,9 @@ inherited frmAllRckReport: TfrmAllRckReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 942
+    Width = 950
     inherited Image14: TImage
-      Left = 922
+      Left = 930
     end
     inherited Image1: TImage
       Width = 580
@@ -333,8 +309,8 @@ inherited frmAllRckReport: TfrmAllRckReport
     StoreInDFM = True
     OnGetValue = frfStockOrderGetValue
     OnUserFunction = frfStockOrderUserFunction
-    Left = 640
-    Top = 161
+    Left = 632
+    Top = 169
     ReportForm = {
       18000000321E0000180000FFFF01000100FFFFFFFFFF00010000340800007805
       00002400000012000000240000001200000000FFFF00000000FFFF0000000000

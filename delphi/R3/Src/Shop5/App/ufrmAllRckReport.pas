@@ -13,22 +13,25 @@ uses
 
 type
   TfrmAllRckReport = class(TframeBaseReport)
-    Label3: TLabel;
+    LblRckType: TLabel;
     rptTemplate: TcxComboBox;
-    btnNew: TRzBitBtn;
-    btnEdit: TRzBitBtn;
     RzBitBtn1: TRzBitBtn;
     LblUnit: TLabel;
     fndP1_UNIT_ID: TcxComboBox;
-    RzLabel1: TRzLabel;
-    RzLabel12: TRzLabel;
+    LblDate: TRzLabel;
+    LblDateAnd: TRzLabel;
     actTemplate: TAction;
-    btnDelete: TRzBitBtn;
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
-    P1_DateControl: TfrmDateControl;
     frfStockOrder: TfrReport;
     frfSalesOrder: TfrReport;
+    pnlDate: TPanel;
+    RB_Today: TRadioButton;
+    RB_Week: TRadioButton;
+    RB_Month: TRadioButton;
+    RB_Year: TRadioButton;
+    RB_Define: TRadioButton;
+    RzLabel1: TRzLabel;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -57,6 +60,11 @@ type
       p3: Variant; var Val: Variant);
     procedure frfStockOrderGetValue(const ParName: String;
       var ParValue: Variant);
+    procedure RB_TodayClick(Sender: TObject);
+    procedure RB_WeekClick(Sender: TObject);
+    procedure RB_MonthClick(Sender: TObject);
+    procedure RB_YearClick(Sender: TObject);
+    procedure RB_DefineClick(Sender: TObject);
   private
     Lock:boolean;
     FOrderID: string;  //当前的ID
@@ -78,6 +86,8 @@ type
     procedure SaveFormat; override;
     procedure RefreshColumn; override;
     function  GetPrintSQL(tenantid, id: string): string; //返回打印SQL
+    procedure SetDateCmp(IsVisible: Boolean);
+    function  DoCalcAnaly:Boolean;  //计算日均销量
   public
     Factory: TReportFactory;
     //按商品销售汇总表
@@ -100,9 +110,34 @@ implementation
 uses
   ufrmDefineReport,ufnUtil,uShopUtil,uCtrlUtil,udsUtil, uGlobal, ObjCommon,
   uShopGlobal, ufrmPrgBar, ufrmCostCalc,ufrmStockOrder,ufrmSalesOrder,
-  ufrmFastReport,uMsgBox;
+  ufrmFastReport,uMsgBox,DateUtils;
 
 {$R *.dfm}
+
+procedure TfrmAllRckReport.SetDateCmp(IsVisible: Boolean);
+begin
+  LblDate.Visible:=IsVisible;
+  LblDateAnd.Visible:=IsVisible;
+  P1_D1.Visible:=IsVisible;
+  P1_D2.Visible:=IsVisible;
+  if IsVisible then
+  begin
+    LblRckType.Top:=64;
+    LblUnit.Top:=64;
+    rptTemplate.Top:=60;
+    fndP1_UNIT_ID.Top:=60;
+    RzBitBtn1.Top:=52;
+    w1.Height:=85;
+  end else
+  begin
+    LblRckType.Top:=LblDate.Top;
+    LblUnit.Top:=LblDateAnd.Top;
+    rptTemplate.Top:=P1_D1.Top;
+    fndP1_UNIT_ID.Top:=P1_D2.Top;
+    RzBitBtn1.Top:=30;
+    w1.Height:=60;
+  end;
+end;
 
 procedure TfrmAllRckReport.btnNewClick(Sender: TObject);
 begin
@@ -167,19 +202,12 @@ begin
   TDbGridEhSort.InitForm(self,false);
   P1_D1.date := date; //默认当月
   P1_D2.date := date; //默认当月
-  P1_DateControl.StartDateControl := P1_D1;
-  P1_DateControl.EndDateControl := P1_D2;
 
   Factory := nil;
-  // load;
-  btnNew.Visible := False;
-  btnEdit.Visible := False;
-  btnDelete.Visible := False;
-  //btnNew.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
-  //btnEdit.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
-  //btnDelete.Visible := (Global.UserId='system') or (Global.UserId='admin') or (Global.Roles = 'xsm');
   if rptTemplate.Properties.Items.Count>0 then
     rptTemplate.ItemIndex:=0;
+
+  SetDateCmp(False);  
 end;
 
 procedure TfrmAllRckReport.FormDestroy(Sender: TObject);
@@ -521,7 +549,10 @@ begin
     rs.ParamByName('CREA_DATE').AsInteger := e;
     Factor.Open(rs);
     if rs.Fields[0].AsInteger=0 then
+    begin
       TfrmCostCalc.TryCalcMthGods(self);
+      DoCalcAnaly;  //计算日均
+    end;
   finally
     rs.Free;
   end;
@@ -646,8 +677,8 @@ begin
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=72;
         Column.Alignment:=taRightJustify;
-        Column.Footer.Alignment:=taRightJustify;        
-        
+        Column.Footer.Alignment:=taRightJustify;
+
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_TTL';
         Column.Title.Caption:='销售|金额';
@@ -656,8 +687,20 @@ begin
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=75;
         Column.Alignment:=taRightJustify;
-        Column.Footer.Alignment:=taRightJustify;        
-        
+        Column.Footer.Alignment:=taRightJustify;
+
+        //库存
+        Column := DBGridEh1.Columns.Add;
+        Column.FieldName := 'BAL_AMT';
+        Column.Title.Caption:='库存';
+        Column.DisplayFormat:='#0.###';
+        Column.Footer.DisplayFormat:='#0.###';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Width :=75;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+
+        //销售毛利、毛利率
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_PRF';
         Column.Title.Caption:='销售|毛利';
@@ -677,14 +720,13 @@ begin
         Column.Alignment:=taRightJustify;
         Column.Footer.Alignment:=taRightJustify;
 
-        //库存
+        //存销比
         Column := DBGridEh1.Columns.Add;
-        Column.FieldName := 'BAL_AMT';
-        Column.Title.Caption:='库存';
-        Column.DisplayFormat:='#0.###';
-        Column.Footer.DisplayFormat:='#0.###';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Width :=75;
+        Column.FieldName := 'CX_RATE';
+        Column.Title.Caption:='存销比';
+        Column.DisplayFormat:='#0.00%';
+        Column.Footer.DisplayFormat:='#0.00%';
+        Column.Width :=60;
         Column.Alignment:=taRightJustify;
         Column.Footer.Alignment:=taRightJustify;
 
@@ -941,7 +983,9 @@ var
   w,w1:string;
   strWhere,UnitCalc,mx,strSql,BarTab: string;
   BegDate,EndDate: string;
+  Safe_Day: integer;  //安全天数
 begin
+  Safe_Day:=StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7); //安全天数
   BegDate:=Formatdatetime('YYYYMMDD',P1_D1.Date);
   EndDate:=Formatdatetime('YYYYMMDD',P1_D2.Date);
   case rptType of
@@ -957,10 +1001,10 @@ begin
       UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
       //过滤企业ID:
       strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
-      if rptType=1 then
-        strWhere:=strWhere+' and C.RELATION_ID=1000006 '
-      else if rptType=2 then
-        strWhere:=strWhere+' and C.RELATION_ID<>1000006 ';
+      case rptType of
+       0: strWhere:=strWhere+' and C.RELATION_ID=1000006 ';
+       2: strWhere:=strWhere+' and C.RELATION_ID<>1000006 ';
+      end;
       //日期:
       if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',P1_D1.Date)=formatDatetime('YYYYMMDD',P1_D2.Date)) then
         strWhere:=strWhere+' and A.CREA_DATE='+FormatDatetime('YYYYMMDD',P1_D1.Date)
@@ -998,10 +1042,14 @@ begin
         ' ,''#'' as PROPERTY_02 '+
         ' ,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
         ' ,isnull(r.SORT_ID2,''#'') as SORT_ID '+
+        ' ,(isnull(E.DAY_SALE_AMT,0)*'+IntToStr(Safe_Day)+') as DAY_SALE_AMT '+
         ' from ('+strSql+') j '+
-        ' inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID ';
+        ' inner join VIW_GOODSINFO r on j.TENANT_ID=r.TENANT_ID and j.GODS_ID=r.GODS_ID '+
+        ' left outer join PUB_GOODS_INSHOP E on j.TENANT_ID=E.TENANT_ID and j.SHOP_ID=E.SHOP_ID and j.GODS_ID=E.GODS_ID ';
+
       strSql :=
-        'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME '+
+        'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME, '+
+        ' (case when ja.SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.00)/(ja.DAY_SALE_AMT*1.00) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
         ' from ('+strSql+') ja '+
         ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
         ' on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and '+
@@ -1563,6 +1611,60 @@ begin
   if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
   if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
   if ParName='打印人' then ParValue := ShopGlobal.UserName;
+end;
+
+procedure TfrmAllRckReport.RB_TodayClick(Sender: TObject);
+begin
+  P1_D1.Date:=Today();
+  P1_D2.Date:=Today();
+  SetDateCmp(False);
+end;
+
+procedure TfrmAllRckReport.RB_WeekClick(Sender: TObject);
+begin
+  P1_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', StartOfTheWeek(date())));
+  P1_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', Date()));
+  SetDateCmp(False);
+end;
+
+procedure TfrmAllRckReport.RB_MonthClick(Sender: TObject);
+begin
+  P1_D1.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', StartOfTheWeek(date())));
+  P1_D2.Date:=fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', Date()));
+  SetDateCmp(False);
+end;
+
+procedure TfrmAllRckReport.RB_YearClick(Sender: TObject);
+begin
+  P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-01-01', Date()));
+  P1_D2.Date := Today();
+  SetDateCmp(False);
+end;
+
+procedure TfrmAllRckReport.RB_DefineClick(Sender: TObject);
+begin
+  inherited;
+  P1_D1.Date:=Today();
+  P1_D2.Date:=Today();
+  SetDateCmp(true);
+end;
+
+function TfrmAllRckReport.DoCalcAnaly:Boolean;
+var
+  SQL: string;
+  daySale: integer;
+begin
+  result:=False;
+  daySale := StrtoIntDef(ShopGlobal.GetParameter('DAY_SALE_STAND'),90);
+  //日均销量测算
+  SQL :=
+    'update PUB_GOODS_INSHOP '+
+    ' set DAY_SALE_AMT=(select round(sum(CALC_AMOUNT)*1.0/'+GetDayDiff(Factor.iDbType,'min(SALES_DATE)','max(SALES_DATE)')+',3) '+
+                      ' from VIW_SALESDATA where TENANT_ID='+inttostr(Global.TENANT_ID)+' and SALES_DATE>='+formatDatetime('YYYYMMDD',Date-daySale-1)+
+                      ' and SALES_DATE<='+formatDatetime('YYYYMMDD',Date-1)+' and TENANT_ID=PUB_GOODS_INSHOP.TENANT_ID and GODS_ID=PUB_GOODS_INSHOP.GODS_ID and SHOP_ID=PUB_GOODS_INSHOP.SHOP_ID) '+
+    ' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
+  if Factor.ExecSQL(SQL)>0 then
+    result:=true;
 end;
 
 end.

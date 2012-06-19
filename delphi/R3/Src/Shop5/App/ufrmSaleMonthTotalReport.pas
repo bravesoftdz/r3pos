@@ -227,6 +227,50 @@ end;
 
 function TfrmSaleMonthTotalReport.GetGodsSQL_YouHua(chk: boolean): string;
   function GetAllTab(vStrWhere: string): string;
+  var CxCnd,GodsCnd,GodsReCnd: string;
+  begin
+    //商品分类:
+    if (trim(fndP1_SORT_ID.Text)<>'') and (trim(srid1)<>'') then
+    begin
+      if srid1='0' then //自主经营
+      begin
+        GodsCnd:=' TENANT_ID='+IntToStr(Global.TENANT_ID);
+        GodsReCnd:=' TENANT_ID=0 '; //不走供应链
+      end else  //加盟供应链
+      begin
+        case Factor.iDbType of
+         4: CxCnd:=' and R.RELATION_ID='+srid1+' ';
+         else
+            CxCnd:=' and R.RELATION_ID='''+srid1+''' ';
+        end;
+        GodsCnd:=GetGodsOwnerTenIds('TENANT_ID');
+        GodsReCnd:=GetGodsOwnerTenIds('TENANT_ID',1);
+      end;
+
+      if trim(sid1)<>'' then
+        CxCnd := CxCnd+' and S.LEVEL_ID like '''+sid1+'%'' ';
+
+      Result:=
+        ' RCK_GOODS_DAYS A '+
+        ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+        ' inner join (select * from PUB_GOODSINFO where '+GodsCnd+')C on A.GODS_ID=C.GODS_ID '+
+        ' left outer join (select * from PUB_GOODS_RELATION where '+GodsReCnd+')R on A.GODS_ID=R.GODS_ID '+
+        ' left outer join PUB_GOODSSORT S on C.TENANT_ID=S.TENANT_ID and C.SORT_ID1=S.SORT_ID '+
+        ' left outer join PUB_GOODSPRICE P on A.TENANT_ID=P.TENANT_ID and A.GODS_ID=P.GODS_ID '+
+        ' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+CxCnd+' '+vStrWhere;
+    end else
+    begin
+      Result:=
+        ' RCK_GOODS_DAYS A '+
+        ' inner join CA_SHOP_INFO B on A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
+        ' inner join (select * from PUB_GOODSINFO where '+GetGodsOwnerTenIds('TENANT_ID')+')C on A.GODS_ID=C.GODS_ID '+
+        ' left outer join (select * from PUB_GOODS_RELATION where '+GetGodsOwnerTenIds('TENANT_ID',1)+')R on A.GODS_ID=R.GODS_ID '+        
+        ' left outer join PUB_GOODSPRICE P on A.TENANT_ID=P.TENANT_ID and A.GODS_ID=P.GODS_ID '+
+        ' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+vStrWhere;
+    end;
+  end;
+  {
+  function GetAllTab(vStrWhere: string): string;
   var CxCnd: string;
   begin
     //商品分类:
@@ -259,6 +303,7 @@ function TfrmSaleMonthTotalReport.GetGodsSQL_YouHua(chk: boolean): string;
         ' where A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+vStrWhere;
     end;
   end;
+  }
 var
   mx, UnitCalc, UnitID: string;  //单位计算关系
   strSql,strWhere,strWhere_y,strWhere_m,FieldStr,GoodTab,AllTab,CxCnd: widestring;

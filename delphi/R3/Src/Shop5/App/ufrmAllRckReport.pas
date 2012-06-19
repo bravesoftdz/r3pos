@@ -244,6 +244,7 @@ begin
   if strSql='' then Exit;
   adoReport1.SQL.Text := strSql;
   Factor.Open(adoReport1);
+  showmessage(strSql);
   FMax_Sale_Rate:=GetSalePRF_Rate(adoReport1.Data,5);
   if rptType<3 then
   begin
@@ -693,7 +694,7 @@ begin
         //销售毛利、毛利率
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_PRF';
-        Column.Title.Caption:='毛利';
+        Column.Title.Caption:='销售|毛利';
         Column.DisplayFormat:='#0.00#';
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;
@@ -703,10 +704,10 @@ begin
         
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_RATE';
-        Column.Title.Caption:='毛利率';
+        Column.Title.Caption:='销售|毛利率';
         Column.DisplayFormat:='#0.00%';
         Column.Footer.DisplayFormat:='#0.00%';
-        Column.Width :=66;
+        Column.Width :=52;
         Column.Alignment:=taRightJustify;
         Column.Footer.Alignment:=taRightJustify;
 
@@ -716,7 +717,7 @@ begin
         Column.Title.Caption:='存销比';
         Column.DisplayFormat:='#0.00';
         Column.Footer.DisplayFormat:='#0.00';
-        Column.Width :=60;
+        Column.Width :=52;
         Column.Alignment:=taRightJustify;
         Column.Footer.Alignment:=taRightJustify;
 
@@ -1790,7 +1791,8 @@ begin
     ' ,''#'' as PROPERTY_01 '+
     ' ,''#'' as BATCH_NO '+
     ' ,''#'' as PROPERTY_02 '+
-    ',(r.NEW_INPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') as NEW_INPRICE,(r.NEW_OUTPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') as NEW_OUTPRICE '+
+    ' ,(case when j.STOCK_AMT<>0 then cast((j.STOCK_TTL*1.00)/(j.STOCK_AMT*1.00) as decimal(18,3)) else (r.NEW_INPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') end) as NEW_INPRICE '+
+    ' ,(case when j.SALE_AMT<>0 then cast((j.SALE_TTL*1.00)/(j.SALE_AMT*1.00) as decimal(18,3)) else (r.NEW_OUTPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') end) as NEW_OUTPRICE '+
     ' ,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
     ' ,isnull(r.SORT_ID2,''#'') as SORT_ID '+
     ' ,(isnull(E.DAY_SALE_AMT,0)*'+IntToStr(Safe_Day)+') as DAY_SALE_AMT '+

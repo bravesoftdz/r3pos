@@ -335,7 +335,8 @@ uses
   ufrmFvchOrderList in 'App\ufrmFvchOrderList.pas' {frmFvchOrderList},
   ObjFvchFrame in 'Obj\ObjFvchFrame.pas',
   ObjFvchOrder in 'Obj\ObjFvchOrder.pas',
-  ufvchDataSQL in 'App\ufvchDataSQL.pas';
+  ufvchDataSQL in 'App\ufvchDataSQL.pas',
+  ufrmInvoiceTotalReport in 'App\ufrmInvoiceTotalReport.pas' {frmInvoiceTotalReport};
 
 {$R *.res}
 var
@@ -344,7 +345,7 @@ var
   Msg:Integer;
 begin
   Application.Initialize;
-  DBVersion := '1.0.2.8';
+  DBVersion := '1.0.2.9';
   Application.Title := '零售终端管理系统';
   Application.CreateForm(TdmIcon, dmIcon);
   Application.CreateForm(TShopGlobal, ShopGlobal);

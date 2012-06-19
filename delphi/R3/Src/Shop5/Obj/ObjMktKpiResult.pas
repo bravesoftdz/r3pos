@@ -238,7 +238,7 @@ begin
                     ' from MKT_KPI_RESULT_LIST A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
                     ' left join MKT_KPI_INDEX C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
                     ' left join VIW_MEAUNITS D on B.TENANT_ID=D.TENANT_ID and B.CALC_UNITS=D.UNIT_ID '+
-                    ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.KPI_ID=:KPI_ID and A.CLIENT_ID=:CLIENT_ID order by A.KPI_DATE1'
+                    ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.KPI_ID=:KPI_ID and A.CLIENT_ID=:CLIENT_ID order by A.GODS_ID,A.KPI_DATE1,A.KPI_DATE2'
              );
 end;
 

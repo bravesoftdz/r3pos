@@ -244,7 +244,6 @@ begin
   if strSql='' then Exit;
   adoReport1.SQL.Text := strSql;
   Factor.Open(adoReport1);
-  showmessage(strSql);
   FMax_Sale_Rate:=GetSalePRF_Rate(adoReport1.Data,5);
   if rptType<3 then
   begin
@@ -1802,7 +1801,7 @@ begin
 
   strSql :=
     'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME,ja.DAY_SALE_AMT as DAY_SALE_AMT,'+
-    ' (case when ja.SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.00)/(ja.DAY_SALE_AMT*1.00) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
+    ' (case when ja.DAY_SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.00)/(ja.DAY_SALE_AMT*1.00) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
     ' from ('+strSql+') ja '+
     ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
     ' on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and '+

@@ -315,6 +315,10 @@ type
     actfrmAllRckReport: TAction;
     actfrmFvchFrame: TAction;
     actfrmFvchOrderList: TAction;
+    actfrmInvoiceTotalReport: TAction;
+    actfrmVoucherOrderList: TAction;
+    actfrmVhSendOrderList: TAction;
+    actfrmVhLeadOrderList: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -464,6 +468,10 @@ type
     procedure actfrmFvchOrderListExecute(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure actfrmInvoiceTotalReportExecute(Sender: TObject);
+    procedure actfrmVoucherOrderListExecute(Sender: TObject);
+    procedure actfrmVhSendOrderListExecute(Sender: TObject);
+    procedure actfrmVhLeadOrderListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -541,7 +549,7 @@ uses
   ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,ufrmSalIndentDayReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
-  ufrmFvchOrderList;
+  ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4603,6 +4611,94 @@ procedure TfrmShopMain.Button1Click(Sender: TObject);
 begin
   inherited;
   actfrmFvchOrderList.OnExecute(nil);
+end;
+
+procedure TfrmShopMain.actfrmInvoiceTotalReportExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmInvoiceTotalReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmInvoiceTotalReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmVoucherOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmVoucherOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmVoucherOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmVhSendOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmVhSendOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmVhSendOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmVhLeadOrderListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmVhLeadOrderList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmVhLeadOrderList.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

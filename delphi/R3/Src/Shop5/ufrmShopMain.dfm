@@ -5657,6 +5657,26 @@ inherited frmShopMain: TfrmShopMain
       Caption = #20973#35777#31649#29702
       OnExecute = actfrmFvchOrderListExecute
     end
+    object actfrmInvoiceTotalReport: TAction
+      Tag = 100002454
+      Caption = #21457#31080#32479#35745#25253#34920
+      OnExecute = actfrmInvoiceTotalReportExecute
+    end
+    object actfrmVoucherOrderList: TAction
+      Tag = 100002430
+      Caption = #31036#21048#20837#24211
+      OnExecute = actfrmVoucherOrderListExecute
+    end
+    object actfrmVhSendOrderList: TAction
+      Tag = 100002446
+      Caption = #31036#21048#21457#25918
+      OnExecute = actfrmVhSendOrderListExecute
+    end
+    object actfrmVhLeadOrderList: TAction
+      Tag = 100002438
+      Caption = #31036#21048#39046#29992
+      OnExecute = actfrmVhLeadOrderListExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

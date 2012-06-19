@@ -1222,6 +1222,7 @@ procedure TfrmAllRckReport.DBGridEh1GetFooterParams(Sender: TObject;
 var
   ColName: string;
   GridDs: TDataSet;
+  SALE_PRF_RATE: real;
   Day_Sale_Amt: real;
   All_Stor_Amt: real;
 begin
@@ -1235,7 +1236,14 @@ begin
     begin
       if (Copy(ColName,1,4)='ORG_') or (Copy(ColName,1,6)='STOCK_') or (Copy(ColName,1,5)='SALE_') or (Copy(ColName,1,4)='BAL_') then
       begin
-        if ColName<>'SALE_RATE' then
+        if ColName='SALE_RATE' then
+        begin
+          if AllRecord.FindField('SALE_MNY').AsFloat<>0 then
+            SALE_PRF_RATE:=roundto((AllRecord.FindField('SALE_PRF').AsFloat*100.00)/AllRecord.FindField('SALE_MNY').AsFloat,-2)
+          else
+            SALE_PRF_RATE:=0;
+          Text:=FormatFloat(Column.DisplayFormat,SALE_PRF_RATE);
+        end else
           Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
       end else
       if ColName='CX_RATE' then

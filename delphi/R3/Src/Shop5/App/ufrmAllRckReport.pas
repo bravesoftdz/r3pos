@@ -65,7 +65,10 @@ type
     procedure RB_MonthClick(Sender: TObject);
     procedure RB_YearClick(Sender: TObject);
     procedure RB_DefineClick(Sender: TObject);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
+    FMax_Sale_Rate:real; //高毛利率临界值
     Lock:boolean;
     FOrderID: string;  //当前的ID
     PrintTimes:Integer;
@@ -88,6 +91,7 @@ type
     function  GetPrintSQL(tenantid, id: string): string; //返回打印SQL
     procedure SetDateCmp(IsVisible: Boolean);
     function  DoCalcAnaly:Boolean;  //计算日均销量
+    function  GetSalePRF_Rate(vData:OleVariant;const vTop: integer):real; //返回排vTop名的毛利
   public
     Factory: TReportFactory;
     //按商品销售汇总表
@@ -110,7 +114,7 @@ implementation
 uses
   ufrmDefineReport,ufnUtil,uShopUtil,uCtrlUtil,udsUtil, uGlobal, ObjCommon,
   uShopGlobal, ufrmPrgBar, ufrmCostCalc,ufrmStockOrder,ufrmSalesOrder,
-  ufrmFastReport,uMsgBox,DateUtils;
+  ufrmFastReport,uMsgBox,DateUtils,Math;
 
 {$R *.dfm}
 
@@ -239,11 +243,12 @@ begin
   if strSql='' then Exit;
   adoReport1.SQL.Text := strSql;
   Factor.Open(adoReport1);
+  FMax_Sale_Rate:=GetSalePRF_Rate(adoReport1.Data,5);
   if rptType<3 then
   begin
     dsadoReport1.DataSet:=nil;
-    DoGodsGroupBySort(adoReport1,'2','SORT_ID','GODS_ID_TEXT','ORDER_ID',
-                      ['ORG_AMT','STOCK_AMT','STOCK_TTL','SALE_AMT','SALE_TTL','SALE_PRF','SALE_RATE','BAL_AMT'],
+    DoGodsGroupBySort(adoReport1,'2','SORT_ID','GODS_ID_TEXT','ORDER_ID',                            
+                      ['ORG_AMT','STOCK_AMT','STOCK_TTL','SALE_AMT','SALE_TTL','SALE_PRF','BAL_AMT','DAY_SALE_AMT'], //'SALE_RATE',
                       ['SALE_RATE=SALE_PRF/SALE_MNY*100.0']);
     dsadoReport1.DataSet:=adoReport1;
   end;
@@ -687,7 +692,7 @@ begin
         //销售毛利、毛利率
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_PRF';
-        Column.Title.Caption:='销售|毛利';
+        Column.Title.Caption:='毛利';
         Column.DisplayFormat:='#0.00#';
         Column.Footer.DisplayFormat:='#0.00#';
         Column.Footer.ValueType:=fvtSum;
@@ -697,7 +702,7 @@ begin
         
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_RATE';
-        Column.Title.Caption:='销售|毛利率';
+        Column.Title.Caption:='毛利率';
         Column.DisplayFormat:='#0.00%';
         Column.Footer.DisplayFormat:='#0.00%';
         Column.Width :=66;
@@ -1032,7 +1037,7 @@ begin
         ' left outer join PUB_GOODS_INSHOP E on j.TENANT_ID=E.TENANT_ID and j.SHOP_ID=E.SHOP_ID and j.GODS_ID=E.GODS_ID ';
 
       strSql :=
-        'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME, '+
+        'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME,ja.DAY_SALE_AMT as DAY_SALE_AMT,'+
         ' (case when ja.SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.00)/(ja.DAY_SALE_AMT*1.00) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
         ' from ('+strSql+') ja '+
         ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
@@ -1215,6 +1220,8 @@ procedure TfrmAllRckReport.DBGridEh1GetFooterParams(Sender: TObject;
 var
   ColName: string;
   GridDs: TDataSet;
+  Day_Sale_Amt: real;
+  All_Stor_Amt: real;
 begin
   ColName:=trim(UpperCase(Column.FieldName));
   GridDs:=TDataSet(DBGridEh1.DataSource.DataSet);
@@ -1226,9 +1233,20 @@ begin
     begin
       if (Copy(ColName,1,4)='ORG_') or (Copy(ColName,1,6)='STOCK_') or (Copy(ColName,1,5)='SALE_') or (Copy(ColName,1,4)='BAL_') then
       begin
-        Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
-      end
-    end;    
+        if ColName<>'SALE_RATE' then
+          Text:=FormatFloat(Column.DisplayFormat,AllRecord.FindField(ColName).AsFloat);
+      end else
+      if ColName='CX_RATE' then
+      begin
+        All_Stor_Amt:=AllRecord.FindField('BAL_AMT').AsFloat;
+        Day_Sale_Amt:=AllRecord.FindField('DAY_SALE_AMT').AsFloat;
+        if Day_Sale_Amt>0 then
+          All_Stor_Amt:=roundto((All_Stor_Amt/Day_Sale_Amt),-2)
+        else
+          All_Stor_Amt:=0;
+        Text:=FormatFloat(Column.DisplayFormat,All_Stor_Amt);
+      end;
+    end;
   end else
   begin
     if ColName='GLIDE_NO' then 
@@ -1654,6 +1672,61 @@ begin
     ' where TENANT_ID='+inttostr(Global.TENANT_ID)+'';
   if Factor.ExecSQL(SQL)>0 then
     result:=true;
+end;
+
+function TfrmAllRckReport.GetSalePRF_Rate(vData:OleVariant;const vTop: integer):real;
+var
+  RsData,RsSort: TZQuery;
+  CurRate: real;      
+  CurTop: integer;
+begin
+  result:=0;
+  try
+    RsData:=TZQuery.Create(nil);
+    RsSort:=TZQuery.Create(nil);
+    RsSort.FieldDefs.Add('SALE_RATE',ftFloat,0,true); //添加字段
+    RsSort.CreateDataSet;
+    RsData.Close;
+    RsData.Data:=vData;
+    if not RsData.Active then Exit;
+    while not RsData.Eof do
+    begin
+      CurRate:=RoundTo(RsData.fieldByName('SALE_RATE').AsFloat,-6);
+      if not RsSort.Locate('SALE_RATE',CurRate,[]) then
+      begin
+        RsSort.Append;
+        RsSort.FieldByName('SALE_RATE').AsFloat:=CurRate;
+        RsSort.Post;
+      end;
+      RsData.Next;
+    end;
+    RsSort.SortedFields:='SALE_RATE DESC';
+    CurTop:=vTop;
+    if CurTop<0 then CurTop:=1;
+    if CurTop>RsSort.RecordCount then CurTop:=RsSort.RecordCount;
+    RsSort.RecNo:=CurTop;
+    result:=RsSort.FieldByName('SALE_RATE').AsFloat;
+  finally
+    RsData.Free;
+    RsSort.Free;
+  end;
+end;
+
+procedure TfrmAllRckReport.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+var
+  GridDs: TDataSet;
+begin
+  inherited;
+  GridDs:=TDataSet(TDBGridEh(Sender).DataSource.DataSet);
+  if (GridDs<>nil) and (GridDs.Active) then
+  begin
+    if (Column.FieldName = 'SALE_RATE') and (FMax_Sale_Rate>0) and (GridDs.FieldByName('SALE_RATE').AsFloat>=FMax_Sale_Rate) then
+       Background := $0080FF80;
+    if (Column.FieldName = 'CX_RATE') and (GridDs.FieldByName('CX_RATE').AsFloat>1.00) then
+       Background := clRed;
+  end;
 end;
 
 end.

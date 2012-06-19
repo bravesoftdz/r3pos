@@ -247,22 +247,6 @@ begin
                       ['SALE_RATE=SALE_PRF/SALE_MNY*100.0']);
     dsadoReport1.DataSet:=adoReport1;
   end;
-  {if Factory<>nil then Factory.Free;
-  Factory := TReportFactory.Create('4');
-  try
-    if Factory.DataSet.Active then Factory.DataSet.Close;
-    strSql := GetGodsSQL;
-    if strSql='' then Exit;
-    TZQuery(Factory.DataSet).SQL.Text:= strSql;
-    {frmPrgBar.Show;
-    frmPrgBar.Update;
-    frmPrgBar.WaitHint := '准备数据源...';
-    frmPrgBar.Precent := 0;
-    Factor.Open(TZQuery(Factory.DataSet));
-    Open(TRecord_(rptTempLate.Properties.Items.Objects[rptTempLate.ItemIndex]).FieldbyName('REPORT_ID').AsString);
-  finally
-    frmPrgBar.Close;
-  end;}
 end;
 
 procedure TfrmAllRckReport.btnEditClick(Sender: TObject);
@@ -724,8 +708,8 @@ begin
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'CX_RATE';
         Column.Title.Caption:='存销比';
-        Column.DisplayFormat:='#0.00%';
-        Column.Footer.DisplayFormat:='#0.00%';
+        Column.DisplayFormat:='#0.00';
+        Column.Footer.DisplayFormat:='#0.00';
         Column.Width :=60;
         Column.Alignment:=taRightJustify;
         Column.Footer.Alignment:=taRightJustify;
@@ -1656,6 +1640,11 @@ var
 begin
   result:=False;
   daySale := StrtoIntDef(ShopGlobal.GetParameter('DAY_SALE_STAND'),90);
+  SQL :=
+    'insert into PUB_GOODS_INSHOP(TENANT_ID,GODS_ID,SHOP_ID,COMM,TIME_STAMP)'+
+    'select TENANT_ID,GODS_ID,SHOP_ID,''00'','+GetTimeStamp(Factor.iDbType)+' from VIW_GOODSPRICE A where TENANT_ID='+inttostr(Global.TENANT_ID)+' and '+
+    'not Exists(select * from PUB_GOODS_INSHOP where TENANT_ID=A.TENANT_ID and GODS_ID=A.GODS_ID and SHOP_ID=A.SHOP_ID)';
+  Factor.ExecSQL(SQL);
   //日均销量测算
   SQL :=
     'update PUB_GOODS_INSHOP '+

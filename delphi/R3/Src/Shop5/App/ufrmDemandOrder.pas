@@ -117,7 +117,7 @@ type
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmMain,
      ufrmUsersInfo,ufrmCodeInfo,uframeListDialog,uframeSelectCustomer,ufrmSalesOrderList,
-     ufrmSalesOrder,ufrmShopMain,ufrmSupplierInfo,ufrmTenantInfo,ufrmChangeOrderList,ufrmDbOrderList,
+     ufrmSalesOrder,ufrmSupplierInfo,ufrmTenantInfo,ufrmChangeOrderList,ufrmDbOrderList,
      ufrmStkIndentOrderList;
 {$R *.dfm}
 

@@ -260,10 +260,13 @@ begin
       cdsDetail.First;
       while not cdsDetail.Eof do
       begin
-        SumFishAmt := SumFishAmt + cdsDetail.FieldByName('FISH_AMT').AsFloat;
-        SumFishMny := SumFishMny + cdsDetail.FieldByName('FISH_MNY').AsFloat;
-        SumAdjsAmt := SumAdjsAmt + cdsDetail.FieldByName('ADJS_AMT').AsFloat;
-        SumAdjsMny := SumAdjsMny + cdsDetail.FieldByName('ADJS_MNY').AsFloat;
+        if CdsKpiTimes.Locate('TIMES_ID',cdsDetail.FieldByName('TIMES_ID').AsString,[]) and (CdsKpiTimes.FieldByName('KPI_FLAG').AsString = '0') then
+           begin
+              SumFishAmt := SumFishAmt + cdsDetail.FieldByName('FISH_AMT').AsFloat;
+              SumFishMny := SumFishMny + cdsDetail.FieldByName('FISH_MNY').AsFloat;
+              SumAdjsAmt := SumAdjsAmt + cdsDetail.FieldByName('ADJS_AMT').AsFloat;
+              SumAdjsMny := SumAdjsMny + cdsDetail.FieldByName('ADJS_MNY').AsFloat;
+           end;
         SumKpiMny := SumKpiMny + cdsDetail.FieldByName('KPI_MNY').AsFloat;
         SumBudgKpi := SumBudgKpi + cdsDetail.FieldByName('BUDG_KPI').AsFloat;
         cdsDetail.Next;

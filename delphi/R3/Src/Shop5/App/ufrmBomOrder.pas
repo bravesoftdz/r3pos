@@ -71,8 +71,6 @@ type
     procedure edtBOM_USERAddClick(Sender: TObject);
     procedure edtTableAfterScroll(DataSet: TDataSet);
     procedure DBGridEh1CellClick(Column: TColumnEh);
-    procedure N3Click(Sender: TObject);
-    procedure N4Click(Sender: TObject);
     procedure edtBOM_AMOUNTPropertiesChange(Sender: TObject);
     procedure edtBOM_TYPEPropertiesChange(Sender: TObject);
     procedure edtGODS_IDSSaveValue(Sender: TObject);
@@ -117,7 +115,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrderList,ufrmShopMain
+uses uGlobal,uShopUtil,uDsUtil,uFnUtil,uShopGlobal,ufrmSupplierInfo, ufrmGoodsInfo, ufrmUsersInfo,ufrmStockOrderList
   ;
 {$R *.dfm}
 
@@ -764,32 +762,6 @@ begin
   if edtTable.State in [dsEdit,dsInsert] then edtTable.Post;
 //  inherited;
 
-end;
-
-procedure TfrmBomOrder.N3Click(Sender: TObject);
-var frmStockOrderList:TfrmStockOrderList;
-begin
-  inherited;
-  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
-  if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
-  frmShopMain.actfrmStockOrderList.OnExecute(nil);
-  frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
-  PostMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
-  PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),0);
-  inherited;
-end;
-
-procedure TfrmBomOrder.N4Click(Sender: TObject);
-var frmStockOrderList:TfrmStockOrderList;
-begin
-  inherited;
-  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
-  if not frmShopMain.actfrmStockOrderList.Enabled then Exit;
-  frmShopMain.actfrmStockOrderList.OnExecute(nil);
-  frmStockOrderList := TfrmStockOrderList(frmShopMain.FindChildForm(TfrmStockOrderList));
-  PostMessage(frmStockOrderList.Handle,WM_EXEC_ORDER,0,2);
-  PostMessage(frmStockOrderList.CurOrder.Handle,WM_FILL_DATA,integer(self),1);
-  inherited;
 end;
 
 function TfrmBomOrder.CheckInput: boolean;  //JP_???

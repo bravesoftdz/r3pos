@@ -85,6 +85,7 @@ type
   public
     FKpiIndexInfo:TKpiIndexInfo;
     FSeqNo:TKpiSeqNo;
+    finshed:boolean;
     constructor Create;
     destructor Destroy; override;
     procedure YearCheck;            //年度考核
@@ -891,6 +892,7 @@ procedure TClientRebate.DateSectionCheck;
 var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
     IsBorrow:Boolean;
 begin
+  finshed := true;
   LocateLevel(FKpiIndexInfo.PlanAmt);
   IsFlag := False;
   KpiTimes.First;
@@ -1089,7 +1091,7 @@ end;
 
 procedure TClientRebate.PromJudge(KpiRate: Real);
 var GoodsId,UnitId:String;
-    Ratio,PromNum:Real;
+    Ratio,PromNum,FishCalcRate:Real;
     Date1,Date2,myYear:Integer;
 begin
   GoodsId := '';
@@ -1103,17 +1105,16 @@ begin
     else
        GoodsId:=CdsGoods.FieldByName('GODS_ID').AsString;
     if KpiRatio.Locate('SEQNO_ID;GODS_ID',
-      VarArrayOf([KpiSeqNo.FieldByName('SEQNO_ID').AsString,GoodsId]),[]) then
+      VarArrayOf([FSeqNo.SeqNoId,GoodsId]),[]) then
     begin
       GoodsId := KpiRatio.FieldByName('GODS_ID').AsString;
-      UnitId := '';
+      //UnitId := '';
       Ratio := KpiRatio.FieldByName('KPI_RATIO').AsFloat;
     end
     else
     begin
       GoodsId := CdsGoods.FieldByName('GODS_ID').AsString;
-      UnitId := '';
-      Ratio := 0;
+      Ratio := FKpiIndexInfo.LevelLowRate;
     end;
     myYear := FKpiIndexInfo.KpiYear;
     if KpiTimes.FieldByName('KPI_DATE1').AsInteger<minTime then inc(myYear);
@@ -1130,26 +1131,27 @@ begin
         if (KpiDetail.FieldByName('KPI_DATE1').AsInteger<=Date1)
            and
            (KpiDetail.FieldByName('KPI_DATE2').AsInteger>=Date2)
+           and
+           (KpiDetail.FieldByName('GODS_ID').AsString=CdsGoods.FieldByName('GODS_ID').AsString)
         then //促销时段内的区间
            begin
              if KpiDetail.FieldByName('KPI_RATIO').AsFloat<Ratio then
                 begin
                   KpiDetail.Edit;
-                  KpiDetail.FieldbyName('KPI_RATE').AsFloat := FSeqNo.KpiAmt;
                   case KpiCalc of
                   1:begin
                       PromNum := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
                       KpiDetail.FieldByName('KPI_MNY').AsFloat :=
                         (KpiDetail.FieldByName('FISH_MNY').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat/100
-                        +
-                        PromNum*Ratio/100
+                        //+
+                        //PromNum*Ratio/100
                     end;
                   2:begin
                       PromNum := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat;
                       KpiDetail.FieldByName('KPI_MNY').AsFloat :=
                         (CdsGoods.FieldByName('FISH_AMT').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat
-                        +
-                        PromNum*Ratio
+                        //+
+                        //PromNum*Ratio
                     end;
                   3:begin
                       Raise Exception.Create('指定金额方式不支持促销时段。');
@@ -1159,6 +1161,81 @@ begin
            end;
         KpiDetail.Next;
       end;
+
+    if not KpiGoods.Locate('GODS_ID',CdsGoods.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('KpiGoods没找到商品');
+    FishCalcRate := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,KpiGoods.FieldByName('UNIT_ID').AsString);
+    if not KpiDetail.Locate('GODS_ID;TIMES_ID',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('TIMES_ID').AsString]),[]) then
+    begin
+      KpiDetail.Append;
+      KpiDetail.FieldByName('ROWS_ID').AsString := TSequence.NewId;
+      KpiDetail.FieldByName('TIMES_ID').AsString := KpiTimes.FieldByName('TIMES_ID').AsString;
+      KpiDetail.FieldByName('KPI_ID').AsString := FKpiIndexInfo.KpiId;
+      KpiDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      KpiDetail.FieldByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
+      KpiDetail.FieldByName('KPI_YEAR').AsInteger := FKpiIndexInfo.KpiYear;
+
+      KpiDetail.FieldByName('KPI_DATE1').AsInteger := MyYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
+      if KpiTimes.FieldByName('KPI_DATE1').AsInteger < KpiTimes.FieldByName('KPI_DATE2').AsInteger then
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := MyYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
+      else
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := (MyYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+
+      KpiDetail.FieldByName('KPI_DATA').AsString := IntToStr(KpiData);
+      KpiDetail.FieldByName('KPI_CALC').AsString := IntToStr(KpiCalc);
+      KpiDetail.FieldByName('RATIO_TYPE').AsString := IntToStr(RatioType);
+      KpiDetail.FieldByName('GODS_ID').AsString := CdsGoods.FieldByName('GODS_ID').AsString;
+      KpiDetail.FieldByName('LVL_AMT').AsFloat := FKpiIndexInfo.LevelAmt;
+      KpiDetail.FieldByName('KPI_RATE').AsFloat := FSeqNo.KpiAmt;
+      KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
+      KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('AMOUNT').AsFloat;//KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat;
+      KpiDetail.FieldByName('ADJS_AMT').AsFloat := CdsGoods.FieldByName('MODI_AMOUNT').AsFloat;
+      KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+      KpiDetail.FieldByName('ADJS_MNY').AsFloat := CdsGoods.FieldByName('MODI_MONEY').AsFloat;
+
+      KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
+      if KpiCalc = 1 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
+      else if KpiCalc = 2 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
+      else if KpiCalc = 3 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
+
+      CalculationRaito(CdsGoods.FieldbyName('GODS_ID').AsString,CdsGoods.FieldByName('AMOUNT').AsFloat);
+      KpiDetail.Post;      
+    end
+    else
+    begin
+      KpiDetail.Edit;
+
+      KpiDetail.FieldByName('KPI_DATE1').AsInteger := myYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
+      if KpiTimes.FieldByName('KPI_DATE1').AsInteger > KpiTimes.FieldByName('KPI_DATE2').AsInteger then
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := myYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
+      else
+         KpiDetail.FieldByName('KPI_DATE2').AsInteger := (myYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
+
+      KpiDetail.FieldByName('KPI_DATA').AsString := IntToStr(KpiData);
+      KpiDetail.FieldByName('KPI_CALC').AsString := IntToStr(KpiCalc);
+      KpiDetail.FieldByName('RATIO_TYPE').AsString := IntToStr(RatioType);
+      KpiDetail.FieldByName('LVL_AMT').AsFloat := FKpiIndexInfo.LevelAmt;
+      KpiDetail.FieldByName('KPI_RATE').AsFloat := FSeqNo.KpiAmt;
+      KpiDetail.FieldByName('FISH_AMT').AsFloat := CdsGoods.FieldByName('AMOUNT').AsFloat;
+      KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
+      KpiDetail.FieldByName('ADJS_AMT').AsFloat := CdsGoods.FieldByName('MODI_AMOUNT').AsFloat;
+      KpiDetail.FieldByName('ADJS_MNY').AsFloat := CdsGoods.FieldByName('MODI_MONEY').AsFloat;
+      KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
+      KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
+
+      if KpiCalc = 1 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
+      else if KpiCalc = 2 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
+      else if KpiCalc = 3 then
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
+
+      CalculationRaito(CdsGoods.FieldbyName('GODS_ID').AsString,CdsGoods.FieldByName('AMOUNT').AsFloat);
+      KpiDetail.Post;
+    end;
+
     CdsGoods.Next;
   end;
 end;
@@ -1179,20 +1256,37 @@ begin
     else
        GoodsId:=CdsGoods.FieldByName('GODS_ID').AsString;
     if KpiRatio.Locate('SEQNO_ID;GODS_ID',
-      VarArrayOf([KpiSeqNo.FieldByName('SEQNO_ID').AsString,GoodsId]),[]) then
+      VarArrayOf([FSeqNo.SeqNoId,GoodsId]),[]) then
     begin
       GoodsId := KpiRatio.FieldByName('GODS_ID').AsString;
-      UnitId := KpiRatio.FieldByName('UNIT_ID').AsString;
-      Ratio := KpiRatio.FieldByName('KPI_RATIO').AsFloat;
+      //UnitId := KpiRatio.FieldByName('UNIT_ID').AsString;
+      if not finshed then
+         begin
+          if (CheckNum>=FKpiIndexInfo.PlanAmt) then
+             Ratio := KpiRatio.FieldByName('KPI_RATIO').AsFloat
+          else
+             Ratio := 0;
+          finshed := true;
+         end
+      else
+         Ratio := KpiRatio.FieldByName('KPI_RATIO').AsFloat;
     end
     else
     begin
       GoodsId := CdsGoods.FieldByName('GODS_ID').AsString;
-      UnitId := '';
-      if (CheckNum>=FKpiIndexInfo.PlanAmt) then
-         Ratio := FKpiIndexInfo.LevelLowRate
+      //UnitId := '';
+      if not finshed then
+         begin
+            if (CheckNum>=FKpiIndexInfo.PlanAmt) then
+               begin
+                 Ratio := FKpiIndexInfo.LevelLowRate;
+                 finshed := true;
+               end
+            else
+               Ratio := 0;
+         end
       else
-         Ratio := 0;
+         Ratio := FKpiIndexInfo.LevelLowRate;
     end;
 
     if (Ratio<FKpiIndexInfo.LevelLowRate) and (CheckNum>=FKpiIndexInfo.PlanAmt) then Ratio := FKpiIndexInfo.LevelLowRate;
@@ -1208,7 +1302,7 @@ begin
       KpiDetail.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       KpiDetail.FieldByName('CLIENT_ID').AsString := FKpiIndexInfo.ClientId;
       KpiDetail.FieldByName('KPI_YEAR').AsInteger := FKpiIndexInfo.KpiYear;
-      
+
       myYear := FKpiIndexInfo.KpiYear;
       if KpiTimes.FieldByName('KPI_DATE1').AsInteger<MinTime then inc(myYear);
       KpiDetail.FieldByName('KPI_DATE1').AsInteger := MyYear*10000+KpiTimes.FieldByName('KPI_DATE1').AsInteger;
@@ -1243,7 +1337,7 @@ begin
     else
     begin
       KpiDetail.Edit;
-      
+
       myYear := FKpiIndexInfo.KpiYear;
       if KpiTimes.FieldByName('KPI_DATE1').AsInteger<MinTime then inc(myYear);
 
@@ -1266,9 +1360,9 @@ begin
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
 
       if KpiCalc = 1 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_MONEY').AsFloat+KpiDetail.FieldByName('ADJS_MNY').AsFloat)*Ratio/100
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
       else if KpiCalc = 2 then
-         KpiDetail.FieldByName('KPI_MNY').AsFloat := (CdsGoods.FieldByName('CALC_AMOUNT').AsFloat+KpiDetail.FieldByName('ADJS_AMT').AsFloat)*Ratio
+         KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat*Ratio
       else if KpiCalc = 3 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := Ratio;
 
@@ -1284,6 +1378,7 @@ procedure TClientRebate.SeasonCheck;
 var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
     IsBorrow:Boolean;
 begin
+  finshed := true;
   LocateLevel(FKpiIndexInfo.PlanAmt);
   IsFlag := False;
   KpiTimes.First;
@@ -1416,11 +1511,13 @@ begin
 
       if (KpiTimes.FieldByName('USING_BRRW').AsString = '1') then IsBorrow := True else IsBorrow := False;
       CurKpiRate := LocateTapPosition(CheckNum,IsBorrow); //定位达标档位并获取相关参数
+      finshed := false;
       ReachJudge(CurKpiRate,CheckNum);
     end;
     KpiTimes.Next;
   end;
 
+  if not finshed then Exit;
   IsFlag := True;
   KpiTimes.First;
   while not KpiTimes.Eof do

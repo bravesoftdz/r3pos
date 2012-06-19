@@ -136,15 +136,15 @@ begin
     begin
       if CdsResultList.FieldByName('KPI_DATA').AsInteger in [1,3] then
          begin
-           if CdsResult.FieldByName('FISH_AMT').AsFloat<>0 then
-              s := formatFloat('#0.00%',CdsResultList.FieldbyName('FISH_AMT').AsFloat/CdsResult.FieldByName('FISH_AMT').AsFloat*100)
+           if CdsResult.FieldByName('PLAN_AMT').AsFloat<>0 then
+              s := formatFloat('#0.00%',CdsResultList.FieldbyName('FISH_AMT').AsFloat/CdsResult.FieldByName('PLAN_AMT').AsFloat*100)
            else
               s := '0.00%';
          end
       else
          begin
-           if CdsResult.FieldByName('FISH_MNY').AsFloat<>0 then
-              s := formatFloat('#0.00%',CdsResultList.FieldbyName('FISH_AMT').AsFloat/CdsResult.FieldByName('FISH_MNY').AsFloat*100)
+           if CdsResult.FieldByName('PLAN_MNY').AsFloat<>0 then
+              s := formatFloat('#0.00%',CdsResultList.FieldbyName('FISH_AMT').AsFloat/CdsResult.FieldByName('PLAN_MNY').AsFloat*100)
            else
               s := '0.00%';
          end;

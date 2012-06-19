@@ -97,6 +97,7 @@ type
     //按商品销售汇总表
     function  GetGodsSQL(chk:boolean=true): string;   //5555
     function  GetSQL: string;
+    function  GetSQL_YouHua: string;
     procedure CreateGridColumn; //创建报表列
     procedure Open(id:string);
     procedure load;
@@ -239,7 +240,7 @@ begin
   if P1_D1.Date>P1_D2.Date then  Raise Exception.Create('  结束日期不能小于开始日期...');
   if rptTemplate.ItemIndex=-1 then Raise Exception.Create('     请选择台账分类！    ');
   CreateGridColumn; //创建列
-  strSql := self.GetSQL;
+  strSql := self.GetSQL_YouHua;
   if strSql='' then Exit;
   adoReport1.SQL.Text := strSql;
   Factor.Open(adoReport1);
@@ -248,8 +249,8 @@ begin
   begin
     dsadoReport1.DataSet:=nil;
     DoGodsGroupBySort(adoReport1,'2','SORT_ID','GODS_ID_TEXT','ORDER_ID',                            
-                      ['ORG_AMT','STOCK_AMT','STOCK_TTL','SALE_AMT','SALE_TTL','SALE_PRF','BAL_AMT','DAY_SALE_AMT'], //'SALE_RATE',
-                      ['SALE_RATE=SALE_PRF/SALE_MNY*100.0']);
+                      ['ORG_AMT','STOCK_AMT','STOCK_TTL','SALE_AMT','SALE_MNY','SALE_TTL','SALE_PRF','BAL_AMT','DAY_SALE_AMT'], //'SALE_RATE',
+                      ['SALE_RATE=SALE_PRF/SALE_MNY*100.0','CX_RATE=BAL_AMT/DAY_SALE_AMT']);
     dsadoReport1.DataSet:=adoReport1;
   end;
 end;
@@ -1020,6 +1021,7 @@ begin
         ' from RCK_GOODS_DAYS A,CA_SHOP_INFO B,VIW_GOODSPRICE C '+
         ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+ strWhere+' '+
         ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE,(C.NEW_INPRICE*'+UnitCalc+'),(C.NEW_OUTPRICE*'+UnitCalc+')';
+
       strSql :=
         'select j.* '+
         ' ,(case when SALE_MNY<>0 then (SALE_PRF*100.00/SALE_MNY) else 0.00 end) as SALE_RATE '+    //销售毛利率
@@ -1724,9 +1726,91 @@ begin
   begin
     if (Column.FieldName = 'SALE_RATE') and (FMax_Sale_Rate>0) and (GridDs.FieldByName('SALE_RATE').AsFloat>=FMax_Sale_Rate) then
        Background := $0080FF80;
-    if (Column.FieldName = 'CX_RATE') and (GridDs.FieldByName('CX_RATE').AsFloat>1.00) then
+    if (Column.FieldName = 'CX_RATE') and (GridDs.FieldByName('CX_RATE').AsFloat>1.00) and (GridDs.FieldByName('CX_RATE').AsFloat<1000.00) then
        Background := clRed;
   end;
+end;
+
+function TfrmAllRckReport.GetSQL_YouHua: string;
+var
+  w,w1:string;
+  BegDate,EndDate,GodsCnd: string;
+  strWhere,UnitCalc,mx,strSql,BarTab: string;
+  Safe_Day: integer;  //安全天数
+begin
+  Safe_Day:=StrtoIntDef(ShopGlobal.GetParameter('SAFE_DAY'),7); //安全天数
+  BegDate:=Formatdatetime('YYYYMMDD',P1_D1.Date);
+  EndDate:=Formatdatetime('YYYYMMDD',P1_D2.Date);
+
+  //检测是否计算:
+  CheckCalc(strtoInt(formatDatetime('YYYYMMDD',P1_D1.Date)),strtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
+  //取日台账日期内最大日期:
+  mx := GetMaxDate(StrtoInt(formatDatetime('YYYYMMDD',P1_D2.Date)));
+  //计量单位换算:
+  UnitCalc:=GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'C');
+  //过滤企业ID:
+  strWhere:=' and A.TENANT_ID='+inttoStr(Global.TENANT_ID)+' '+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  case rptType of
+   0: GodsCnd:=' where r.RELATION_ID=1000006 ';
+   2: GodsCnd:=' where r.RELATION_ID<>1000006 ';
+  end;
+  //日期:
+  if (P1_D1.EditValue<>null) and (formatDatetime('YYYYMMDD',P1_D1.Date)=formatDatetime('YYYYMMDD',P1_D2.Date)) then
+    strWhere:=strWhere+' and A.CREA_DATE='+FormatDatetime('YYYYMMDD',P1_D1.Date)
+  else if P1_D1.Date<P1_D2.Date then
+    strWhere:=strWhere+' and A.CREA_DATE>='+FormatDatetime('YYYYMMDD',P1_D1.Date)+' and A.CREA_DATE<='+FormatDatetime('YYYYMMDD',P1_D2.Date)+' ';
+  strSql :=
+    'SELECT '+
+    ' A.TENANT_ID '+
+    ',A.GODS_ID,A.SHOP_ID,B.SHOP_NAME,isnull(B.SHOP_TYPE,''#'') as SHOP_TYPE '+
+    //',(C.NEW_INPRICE*'+UnitCalc+') as NEW_INPRICE,(C.NEW_OUTPRICE*'+UnitCalc+') as NEW_OUTPRICE '+
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_AMT*1.00/'+UnitCalc+' else 0 end) as ORG_AMT '+ //期初数量
+    ',sum(case when A.CREA_DATE='+formatDatetime('YYYYMMDD',P1_D1.Date)+' then ORG_MNY else 0 end) as ORG_MNY '+   //进项金额<按当时进价>
+
+    ',sum(STOCK_AMT*1.00/'+UnitCalc+') as STOCK_AMT '+   //进货数量
+    ',isnull(sum(STOCK_MNY),0)+isnull(sum(STOCK_TAX),0) as STOCK_TTL '+   //进货金额<末税>
+
+    ',sum(SALE_AMT*1.00/'+UnitCalc+') as SALE_AMT '+   //销售数量
+    ',sum(SALE_MNY) as SALE_MNY '+    //销售金额<末税>
+    ',isnull(sum(SALE_MNY),0)+isnull(sum(SALE_TAX),0) as SALE_TTL '+  //销售金额
+    ',sum(SALE_PRF) as SALE_PRF '+    //销售毛利
+
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_AMT*1.00/'+UnitCalc+' else 0 end) as BAL_AMT '+ //结存数量
+    ',sum(case when A.CREA_DATE='+mx+' then BAL_MNY else 0 end) as BAL_MNY '+   //进项金额<按当时进价>
+    ' from RCK_GOODS_DAYS A,CA_SHOP_INFO B,PUB_GOODSINFO C '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and A.GODS_ID=C.GODS_ID '+ strWhere+' '+
+    ' group by A.TENANT_ID,A.SHOP_ID,A.GODS_ID,B.SHOP_NAME,B.SHOP_TYPE ';
+
+  strSql :=
+    'select j.* '+
+    ' ,(case when SALE_MNY<>0 then (SALE_PRF*100.00/SALE_MNY) else 0.00 end) as SALE_RATE '+    //销售毛利率
+    ' ,r.BARCODE as CALC_BARCODE '+
+    ' ,r.GODS_CODE '+
+    ' ,r.GODS_NAME as GODS_ID_TEXT'+
+    ' ,''#'' as PROPERTY_01 '+
+    ' ,''#'' as BATCH_NO '+
+    ' ,''#'' as PROPERTY_02 '+
+    ',(r.NEW_INPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') as NEW_INPRICE,(r.NEW_OUTPRICE*'+GetUnitTO_CALC(fndP1_UNIT_ID.ItemIndex,'r')+') as NEW_OUTPRICE '+
+    ' ,'+GetUnitID(fndP1_UNIT_ID.ItemIndex,'r')+' as UNIT_ID '+
+    ' ,isnull(r.SORT_ID2,''#'') as SORT_ID '+
+    ' ,(isnull(E.DAY_SALE_AMT,0)*'+IntToStr(Safe_Day)+') as DAY_SALE_AMT '+
+    ' from ('+strSql+') j '+
+    ' inner join VIW_GOODSPRICE r on j.TENANT_ID=r.TENANT_ID and j.SHOP_ID=r.SHOP_ID and j.GODS_ID=r.GODS_ID '+
+    ' left outer join PUB_GOODS_INSHOP E on j.TENANT_ID=E.TENANT_ID and j.SHOP_ID=E.SHOP_ID and j.GODS_ID=E.GODS_ID '+GodsCnd;
+
+  strSql :=
+    'select ja.*,s.ORDER_ID as ORDER_ID,isnull(b.BARCODE,ja.CALC_BARCODE) as BARCODE,u.UNIT_NAME as UNIT_NAME,ja.DAY_SALE_AMT as DAY_SALE_AMT,'+
+    ' (case when ja.SALE_AMT=0 then 1000 when (ja.BAL_AMT<>0) and (ja.DAY_SALE_AMT>0) then cast((ja.BAL_AMT*1.00)/(ja.DAY_SALE_AMT*1.00) as decimal(18,3)) else 0 end) as CX_RATE '+  //存销比
+    ' from ('+strSql+') ja '+
+    ' left outer join (select * from VIW_BARCODE where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and BARCODE_TYPE in (''0'',''1'',''2'')) b '+
+    ' on ja.TENANT_ID=b.TENANT_ID and ja.GODS_ID=b.GODS_ID and ja.BATCH_NO=b.BATCH_NO and ja.PROPERTY_01=b.PROPERTY_01 and '+
+       ' ja.PROPERTY_02=b.PROPERTY_02 and ja.UNIT_ID=b.UNIT_ID '+
+    ' left outer join VIW_MEAUNITS u on ja.TENANT_ID=u.TENANT_ID and ja.UNIT_ID=u.UNIT_ID '+
+    ' left outer join '+
+    ' (select SORT_ID,'+IntToVarchar('(10000000+SEQ_NO)')+' as ORDER_ID from VIW_GOODSSORT where TENANT_ID='+InttoStr(Global.TENANT_ID)+' and SORT_TYPE=2 and COMM not in (''02'',''12'')) s '+
+    ' on ja.SORT_ID=s.SORT_ID '+
+    ' order by s.ORDER_ID,ja.GODS_CODE';
+  result:=ParseSQL(Factor.iDbType,strSql);
 end;
 
 end.

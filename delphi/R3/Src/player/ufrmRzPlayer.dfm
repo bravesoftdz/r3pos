@@ -1,6 +1,6 @@
 object frmRzPlayer: TfrmRzPlayer
-  Left = 323
-  Top = 296
+  Left = 324
+  Top = 297
   Width = 463
   Height = 334
   BorderIcons = [biMaximize]
@@ -14,6 +14,7 @@ object frmRzPlayer: TfrmRzPlayer
   Menu = MainMenu1
   OldCreateOrder = False
   Position = poScreenCenter
+  WindowState = wsMinimized
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 12
@@ -1909,5 +1910,22 @@ object frmRzPlayer: TfrmRzPlayer
     OnTimer = Timer2Timer
     Left = 192
     Top = 80
+  end
+  object IdHTTP1: TIdHTTP
+    MaxLineAction = maException
+    ReadTimeout = 0
+    AllowCookies = True
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = 0
+    Request.ContentRangeStart = 0
+    Request.ContentType = 'text/html'
+    Request.Accept = 'text/html, */*'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 328
+    Top = 96
   end
 end

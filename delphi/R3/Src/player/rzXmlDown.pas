@@ -50,6 +50,9 @@ type
     procedure AddPhoto(Root:IXMLDOMNode);
     procedure AddVideo(Root:IXMLDOMNode);
     procedure Open(FileName:String);
+    procedure DoRedirect(Sender: TObject; var dest: String;
+      var NumRedirect: Integer; var Handled: Boolean;
+      var VMethod: TIdHTTPMethod);
   public
     constructor Create;
     destructor Destroy; override;
@@ -209,6 +212,7 @@ begin
   idHTTP := TidHTTP.Create(nil);
   try
       idHTTP.OnWork := IdHTTPWork;
+      idHTTP.OnRedirect := DoRedirect;
       idHttp.HandleRedirects := true;
       IdHTTP.Head(src);
       FTFileSize := IdHTTP.Response.ContentLength;
@@ -403,6 +407,7 @@ begin
     idHTTP := TidHTTP.Create(nil);
     try
       idHTTP.OnWork := IdHTTPWork;
+      idHTTP.OnRedirect := DoRedirect;
       idHttp.HandleRedirects := true;
       IdHTTP.Request.ContentType := 'application/x-www-form-urlencoded';
       idHttp.Post(apply,Request,Response);
@@ -563,6 +568,7 @@ begin
     idHTTP := TidHTTP.Create(nil);
     try
       idHTTP.OnWork := IdHTTPWork;
+      idHTTP.OnRedirect := DoRedirect;
       idHttp.HandleRedirects := true;
       IdHTTP.Request.ContentType := 'application/x-www-form-urlencoded';
       idHttp.Post(src,Request,Response);
@@ -616,7 +622,7 @@ var
 begin
   if day<0 then
   begin
-    PostMessage(Application.MainForm.Handle,WM_PLAY_CLOSE,0,0);
+    SendMessage(Application.MainForm.Handle,WM_PLAY_CLOSE,0,0);
   end;
   FileAttrs := 0;
   FileAttrs := FileAttrs + faAnyFile;
@@ -630,7 +636,7 @@ begin
           if (s<>'') and (s<>'.') and (s<>'..') then
              begin
                 p := copy(Plays.readString('res',s,''),1,8);
-                if p<>'' then
+                if (p<>'') or (day<0) then
                    begin
                      if (day<0) or (p<formatDatetime('YYYYMMDD',now()-day)) then
                         begin
@@ -655,7 +661,7 @@ begin
           if (s<>'') and (s<>'.') and (s<>'..') then
              begin
                 p := copy(Plays.readString('res',s,''),1,8);
-                if p<>'' then
+                if (p<>'') or (day<0) then
                    begin
                      if (day<0) or (p<formatDatetime('YYYYMMDD',now()-day)) then
                         begin
@@ -710,6 +716,13 @@ begin
        end;
   end;
   ApplyStatus(Play^.ApplyUrl,msg);
+end;
+
+procedure TrzXmlDown.DoRedirect(Sender: TObject; var dest: String;
+  var NumRedirect: Integer; var Handled: Boolean;
+  var VMethod: TIdHTTPMethod);
+begin
+  SendDebug('<'+inttostr(NumRedirect)+'>重定向url='+dest,4);
 end;
 
 { TXmlDownThread }
@@ -849,16 +862,16 @@ begin
   resetEvent(Event);
   while not Terminated do
     begin
-      if (FList.Count = 0) then
-         begin
-           WaitForSingleObject(Event,INFINITE);
-           resetEvent(Event);
-         end
-      else
-         begin
+//      if (FList.Count = 0) then
+//         begin
+//           WaitForSingleObject(Event,INFINITE);
+//           resetEvent(Event);
+//         end
+//      else
+//         begin
            WaitForSingleObject(Event,60000);
            resetEvent(Event);
-         end;
+//         end;
       if not Terminated and (FList.Count > 0) then
          begin
            Plays := PPlaysInfo(FList[0]);
@@ -949,9 +962,13 @@ begin
            except
              on E:Exception do
                 begin
-                  if (FList.IndexOf(Plays)>=0) and (FList.Count > 1) then
-                     FList.Move(FList.IndexOf(Plays),FList.Count-1);
-                  SendDebug('第'+inttostr(Plays^.TryTime)+'次执行"'+Plays^.src+'"失败了，错误原因：'+e.Message,1);
+                  try
+                    if (FList.IndexOf(Plays)>=0) and (FList.Count > 1) then
+                       FList.Move(FList.IndexOf(Plays),FList.Count-1);
+                    SendDebug('第'+inttostr(Plays^.TryTime)+'次执行"'+Plays^.src+'"失败了，错误原因：'+e.Message,1);
+                  except
+                    ;
+                  end;
                 end;
            end;
          end;

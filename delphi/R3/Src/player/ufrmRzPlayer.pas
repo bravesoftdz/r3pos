@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, DSPack, DirectShow9, StdCtrls, ActiveX, DSUtil, Menus, rzCtrls,
-  ExtCtrls, ComCtrls, Buttons, ImgList, RzTray, RzStatus, RzPanel,ufrmRzMonitor;
+  ExtCtrls, ComCtrls, Buttons, ImgList, RzTray, RzStatus, RzPanel,ufrmRzMonitor,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
 const
   RZ_PLAYER = '{878F551E-FE1B-4A89-B6BF-A49B300882A6}';
@@ -40,6 +41,7 @@ type
     RACE1: TMenuItem;
     N11: TMenuItem;
     Timer2: TTimer;
+    IdHTTP1: TIdHTTP;
     procedure Fullscreen1Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -166,7 +168,8 @@ begin
        WM_KEYUP,
        WM_SYSKEYUP:
          begin
-           p := PKBDLLHOOKSTRUCT(KeyboardHook);
+           //p := PKBDLLHOOKSTRUCT(KeyboardHook);
+            {
            if (((p^.vkCode = VK_TAB) and ((p^.flags and LLKHF_ALTDOWN) <> 0)) or
               ((p^.vkCode = VK_ESCAPE) and ((p^.flags and LLKHF_ALTDOWN) <> 0)) or
               ((p^.vkCode = VK_ESCAPE) and ((GetKeyState(VK_CONTROL) and $8000) <> 0)) or
@@ -175,7 +178,7 @@ begin
               begin
                  result := 1;
                  Exit;
-              end;
+              end;   }
          end;
        end;
        Result := CallNextHookEx(whKeyboard, Code, Msg, KeyboardHook);
@@ -345,7 +348,9 @@ begin
 //     end;
   if (formatdatetime('YYYYMMDD',now())<>LogDate) then
      begin
+
        Memo1.Lines.Clear;
+       if IsWorkStationLocked then Exit;
 //       SaveLogFile;
        LogDate := formatdatetime('YYYYMMDD',now());
        frmRzMonitor.Load;
@@ -533,6 +538,30 @@ begin
        SendDebug('阻止屏幕保护的启动',4);
      end
   else
+  if(Msg.message=WM_SYSCOMMAND) and (Msg.wParam=SC_MONITORPOWER) then
+     begin
+       Handled:=true;  //阻止屏幕保护的启动
+       SendDebug('阻止电源选项的启动',4);
+     end
+  else
+  if (Msg.message=SC_SCREENSAVE) or (Msg.message=SC_MONITORPOWER) then
+     begin
+       Handled:=true;  //阻止屏幕保护的启动
+       SendDebug('阻止屏幕及电源选项的启动',4);
+     end
+  else
+  if Msg.message = WM_SETFOCUS then
+     begin
+       Handled:=true;  //阻止屏幕保护的启动
+       SendDebug('阻止WM_SETFOCUS的启动',4);
+     end
+  else
+  if Msg.message = WM_KILLFOCUS then
+     begin
+       Handled:=true;  //阻止屏幕保护的启动
+       SendDebug('阻止WM_KILLFOCUS的启动',4);
+     end
+  else
      Handled:=false; //进行该消息的缺省处理
 end;
 
@@ -551,11 +580,12 @@ begin
      begin
        if locked then
           begin
-            frmRzMonitor.playFile.rePlay;
+            if Assigned(frmRzMonitor.playFile) then
+               frmRzMonitor.playFile.rePlay;
             Senddebug('+++++++++++++锁屏重播++++++++++++++',4);
           end;
        locked := false;
-     end
+     end;
 end;
 
 procedure TfrmRzPlayer.RzPlayClose(var Message: TMessage);

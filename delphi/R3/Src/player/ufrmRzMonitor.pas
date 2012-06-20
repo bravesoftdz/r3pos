@@ -89,6 +89,8 @@ begin
   playFile := nil;
   defFile := nil;
   playIndex := -1;
+  windows.SetParent(Handle,FindWindow('Progman',nil)); 
+
 end;
 
 procedure TfrmRzMonitor.Play;

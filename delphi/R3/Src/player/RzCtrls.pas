@@ -373,6 +373,7 @@ var
   AppPath,AppData:string;
   resDay:integer=30;
 implementation
+uses ScrnCtrl;
 procedure SendDebug(s:string;flag:integer=0);
 var
   buf:Pchar;
@@ -522,6 +523,14 @@ end;
 
 procedure TrzMonitor.PlayEnded;
 begin
+  if IsWorkStationLocked then
+     begin
+       Timer.Enabled := false;
+       Timer.Interval := 3000;
+       Timer.Enabled := true;
+       SendDebug('锁屏暂停播放',4);
+       Exit;
+     end;
   if index=(flist.count-1) then
      begin
        Ended := true;
@@ -692,10 +701,9 @@ var
   hCurWindow,CurActiveWindow: HWnd;  // 窗口句柄
 begin
   SendDebug('第'+inttostr(playTimes+1)+'次播放视屏<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
-  hCurWindow:=GetActiveWindow();
+  hCurWindow:=GetForegroundWindow();
   Timer.Enabled := false;
   display.Visible := true;
-  display.BringToFront;
   FilterGraph.Stop;
   FilterGraph.ClearGraph;
   FilterGraph.Active := False;
@@ -708,8 +716,12 @@ begin
         dpyStart := GetTickCount div 1000;
         dpyLength := src^.srcLength;
         _Start := GetTickCount;
-        CurActiveWindow:=GetActiveWindow();
-        if CurActiveWindow<>hCurWindow then SetForegroundWindow(hCurWindow);
+        CurActiveWindow:=GetForegroundWindow();
+        if (GetActiveWindow()>0) and (CurActiveWindow<>hCurWindow) then
+           begin
+              SendDebug('窗口切换',4);
+              ForceForegroundWindow(hCurWindow);
+           end;
         //DoTimer;
         result := true;
      end
@@ -780,7 +792,7 @@ begin
   SendDebug('第'+inttostr(playTimes+1)+'次播放图片<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
   Timer.Enabled := false;
   TImage(display).Picture.LoadFromFile(src^.src);
-  display.BringToFront;
+//  display.BringToFront;
   display.Visible := true;
   dpyStart := GetTickCount div 1000;
   dpyLength := src^.srcLength;
@@ -865,7 +877,7 @@ begin
   SendDebug('第'+inttostr(playTimes+1)+'次播放字幕<'+inttostr(index)+'>"'+src^.src+'"',4);
   Timer.Enabled := false;
   TRzMarqueeStatus(display).Caption := src^.src;
-  display.BringToFront;
+//  display.BringToFront;
   dpyStart := GetTickCount div 1000;
   dpyLength := src^.srcLength;
   with TRzMarqueeStatus(display) do
@@ -1435,33 +1447,8 @@ begin
 end;
 
 procedure TrzProgram.TimerComplete(Sender: TObject);
-function CheckPlaying:boolean;
-var i:integer;
 begin
-  result := false;
-  for i:=0 to flist.Count-1 do
-    begin
-       if TrzMonitor(flist[i]).playTimes=0 then Exit;
-    end;
-  result := true;
-end;
-begin
-  Exit;
-  //不走定时了
-  if CheckPlaying then
-     begin
-        ended := true;
-        if rzPlayList.PlayType=0 then
-           Plays.WriteInteger(rzPlaylist.rzFile.ProgramListId,'cache_program_Length',0);
-        Close;
-        rzPlayList.PlayNext;
-     end
-  else
-     begin
-       Timer.Interval := 1000;
-       Timer.Enabled := false;
-       Timer.Enabled := true;
-     end;
+
 end;
 
 { TrzPlayList }
@@ -2024,6 +2011,8 @@ var
   hasPlay:boolean;
 begin
   if flist.Count=0 then exit;
+  if SLocked then Exit;
+
   hasPlay := false;
   if Assigned(curPlayList) and (curPlayList.PlayType=1) and not curPlayList.Ended then Exit;
 

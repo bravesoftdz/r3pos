@@ -12,7 +12,8 @@ uses
   ipc in 'ipc.pas',
   ufrmPassword in 'ufrmPassword.pas' {frmPassword},
   ssCtrl in 'ssCtrl.pas',
-  ScrnCtrl in 'ScrnCtrl.pas';
+  ScrnCtrl in 'ScrnCtrl.pas',
+  MultPlayer in 'MultPlayer.pas';
 
 {$R *.res}
 //{$R ..\..\Pub\UAC.res}

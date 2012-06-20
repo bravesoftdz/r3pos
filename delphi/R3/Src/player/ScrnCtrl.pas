@@ -14,10 +14,20 @@ function MonitorFromWindow(const Handle: THandle;
 function FindMonitorIndex(Monitor: TMonitor): integer;
 function GetMonitorExt:integer;
 function IsWorkStationLocked:boolean;
+function ForceForegroundWindow(hWnd: THandle): BOOL;
 var
   MMonitor:TMonitor;
   MIndex:integer;
+  SLocked:boolean;
 implementation
+procedure SwitchToThisWindow(hWnd:THandle;bRestore:boolean);stdcall; external user32 name 'SwitchToThisWindow';  
+function ForceForegroundWindow(hWnd: THandle): BOOL;
+begin
+   SwitchToThisWindow(hWnd,true);
+//  AttachThreadInput(GetCurrentThreadId,GetWindowThreadProcessId(hWnd, nil), True);
+//  Result := SetForegroundWindow(hWnd);
+//  AttachThreadInput(GetCurrentThreadId,GetWindowThreadProcessId(hWnd, nil), False);
+end;
 
 function IsWorkStationLocked:boolean;
 var
@@ -29,6 +39,7 @@ begin
        result := not SwitchDesktop(hDesk);
        CloseDesktop(hDesk);
      end;
+  SLocked := result;
 end;
 function GetMonitorExt:integer;
 var

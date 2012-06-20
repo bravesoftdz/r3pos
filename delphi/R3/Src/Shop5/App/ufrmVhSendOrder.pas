@@ -525,7 +525,7 @@ begin
   TColumnEh(Sender).Field.asFloat := r;
   cdsDetail.FieldByName('VOUCHER_MNY').AsFloat := r;
   cdsDetail.FieldByName('AGIO_MONEY').AsFloat := cdsDetail.FieldByName('VOUCHER_TTL').AsFloat-cdsDetail.FieldByName('VOUCHER_MNY').AsFloat;
-  cdsDetail.FieldByName('AGIO_RATE').AsFloat := cdsDetail.FieldByName('AGIO_MONEY').AsFloat/cdsDetail.FieldByName('VOUCHER_TTL').AsFloat;
+  cdsDetail.FieldByName('AGIO_RATE').AsFloat := cdsDetail.FieldByName('VOUCHER_MNY').AsFloat/cdsDetail.FieldByName('VOUCHER_TTL').AsFloat*100;
   if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
   cdsDetail.Edit;
   edtInput.SetFocus;

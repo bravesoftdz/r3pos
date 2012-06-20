@@ -1,6 +1,6 @@
 inherited frmVhSendOrder: TfrmVhSendOrder
-  Left = 252
-  Top = 217
+  Left = 418
+  Top = 214
   Width = 803
   Caption = #31036#21048#21457#25918#31649#29702
   OnCreate = FormCreate
@@ -331,7 +331,7 @@ inherited frmVhSendOrder: TfrmVhSendOrder
           OnUpdateData = DBGridEh1Columns5UpdateData
         end
         item
-          DisplayFormat = '#0.00'
+          DisplayFormat = '#0%'
           EditButtons = <>
           FieldName = 'AGIO_RATE'
           Footers = <>

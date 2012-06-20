@@ -55,6 +55,7 @@ type
     { Public declarations }
     Locked:Boolean;
     procedure ClearInvaid;override;
+    procedure CheckInvaid;
     procedure InitRecord;override;
     procedure NewOrder;override;
     procedure EditOrder;override;
@@ -256,6 +257,7 @@ begin
   if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
   ClearInvaid;
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空领用礼券单...');
+  CheckInvaid;
   cdsDetail.DisableControls;
   try
     WriteToObject(AObj,self);
@@ -566,6 +568,31 @@ procedure TfrmVhLeadOrder.edtSHOP_IDPropertiesChange(Sender: TObject);
 begin
   inherited;
   TabSheet.Caption := edtSHOP_ID.Text;
+end;
+
+procedure TfrmVhLeadOrder.CheckInvaid;
+var
+  Field:TField;
+  Controls:boolean;
+  r:integer;
+begin
+  if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
+  Controls := cdsDetail.ControlsDisabled;
+  r := cdsDetail.RecNo;
+  if not Controls then cdsDetail.DisableControls;
+  Locked := True;
+  try
+  cdsDetail.First;
+  while not cdsDetail.Eof do
+    begin
+      if (cdsDetail.FieldByName('SUMMARY').AsString = '') then Raise Exception.Create('"摘要"不能为空!');
+      cdsDetail.Next;
+    end;
+  finally
+    if r>0 then cdsDetail.RecNo := r;
+    Locked := False;
+    if not Controls then cdsDetail.EnableControls;
+  end;
 end;
 
 end.

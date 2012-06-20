@@ -1,6 +1,6 @@
 inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
-  Left = 197
-  Top = 145
+  Left = 367
+  Top = 133
   Width = 999
   Height = 551
   Caption = #21457#31080#32479#35745#25253#34920
@@ -103,7 +103,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #39046#29992#26085#26399
+                  Caption = #26597#35810#26085#26399
                 end
                 object RzLabel12: TRzLabel
                   Left = 186
@@ -473,6 +473,61 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
     Top = 324
   end
   inherited adoReport1: TZQuery
+    FieldDefs = <
+      item
+        Name = 'SEQNO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'INVH_NO'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'LAST_TOTAL_AMT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'LAST_TOTAL_INVH_NO'
+        DataType = ftString
+        Size = 200
+      end
+      item
+        Name = 'THIS_TOTAL_AMT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'THIS_TOTAL_INVH_NO'
+        DataType = ftString
+        Size = 200
+      end
+      item
+        Name = 'USING_AMT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'USING_INVH_NO'
+        DataType = ftString
+        Size = 200
+      end
+      item
+        Name = 'CANCEL_AMT'
+        DataType = ftInteger
+      end
+      item
+        Name = 'CANCEL_INVH_NO'
+        DataType = ftString
+        Size = 200
+      end
+      item
+        Name = 'BALANCE'
+        DataType = ftInteger
+      end
+      item
+        Name = 'BALANCE_INVH_NO'
+        DataType = ftString
+        Size = 200
+      end>
     Left = 18
     Top = 324
   end

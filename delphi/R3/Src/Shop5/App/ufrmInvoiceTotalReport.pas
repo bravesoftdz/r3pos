@@ -12,12 +12,10 @@ uses
 
 type
   TfrmInvoiceTotalReport = class(TframeBaseReport)
-    labINVH_NO: TRzLabel;
     lab_SHOP_ID: TRzLabel;
     RzLabel6: TRzLabel;
     RzLabel13: TRzLabel;
     labIDN_TYPE: TRzLabel;
-    fndP1_INVH_NO: TcxTextEdit;
     fndP1_SHOP_ID: TzrComboBoxList;
     fndP1_CREA_USER: TzrComboBoxList;
     fndP1_DEPT_ID: TzrComboBoxList;
@@ -27,7 +25,6 @@ type
     P1_D1: TcxDateEdit;
     P1_D2: TcxDateEdit;
     BtnDept: TRzBitBtn;
-    Label3: TLabel;
     procedure actFindExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -66,7 +63,6 @@ begin
     if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
     if rs.Params.FindParam('CREA_USER') <> nil then rs.Params.ParamByName('CREA_USER').AsString := fndP1_CREA_USER.AsString;
     if rs.Params.FindParam('INVOICE_FLAG') <> nil then rs.Params.ParamByName('INVOICE_FLAG').AsString := TRecord_(fndP1_INVOICE_FLAG.Properties.Items[fndP1_INVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString;
-    if rs.Params.FindParam('INVH_NO') <> nil then rs.Params.ParamByName('INVH_NO').AsString := Trim(fndP1_INVH_NO.Text);
     Factor.Open(rs);
 
     rs1.SQL.Text := ParseSQL(Factor.iDbType,' select isnull(INVH_ID,'''') as INVH_ID,count(INVD_ID) as USING_AMT,max(INVOICE_NO) as USING_MAX_INVH_NO,min(INVOICE_NO) as USING_MIN_INVH_NO '+
@@ -204,8 +200,6 @@ begin
      sWhere := sWhere + ' and A.CREA_USER=:CREA_USER ';
   if fndP1_INVOICE_FLAG.ItemIndex <> -1 then
      sWhere := sWhere + ' and A.INVOICE_FLAG=:INVOICE_FLAG ';
-  if Trim(fndP1_INVH_NO.Text) <> '' then
-     sWhere := sWhere + ' and A.INVH_NO like ''%:INVH_NO''';
 
   sSql := ' select A.INVH_ID,A.INVH_NO,'+
           ' case when A.BEGIN_NO=B.MIN_INVOICE_NO then 0 else A.TOTAL_AMT-('+

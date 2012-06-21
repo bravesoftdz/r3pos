@@ -26,21 +26,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
               Height = 434
               inherited w1: TRzPanel
                 Width = 764
-                Height = 122
-                object labINVH_NO: TRzLabel
-                  Left = 24
-                  Top = 100
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #21457#31080#26412#21495
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clBlack
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  ParentFont = False
-                end
+                Height = 100
                 object lab_SHOP_ID: TRzLabel
                   Left = 24
                   Top = 34
@@ -111,27 +97,6 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   Width = 12
                   Height = 12
                   Caption = #33267
-                end
-                object Label3: TLabel
-                  Left = 181
-                  Top = 100
-                  Width = 120
-                  Height = 12
-                  Caption = #25903#25345#27169#22359','#36755#21518'4'#20301#26597#35810
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clNavy
-                  Font.Height = -12
-                  Font.Name = #23435#20307
-                  Font.Style = []
-                  ParentFont = False
-                end
-                object fndP1_INVH_NO: TcxTextEdit
-                  Left = 80
-                  Top = 96
-                  Width = 99
-                  Height = 20
-                  Properties.MaxLength = 50
-                  TabOrder = 6
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Left = 80
@@ -296,8 +261,8 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   TabOrder = 1
                 end
                 object BtnDept: TRzBitBtn
-                  Left = 318
-                  Top = 86
+                  Left = 324
+                  Top = 65
                   Width = 67
                   Height = 29
                   Action = actFind
@@ -315,7 +280,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 7
+                  TabOrder = 6
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -324,12 +289,12 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 122
+                Top = 100
                 Width = 764
-                Height = 312
+                Height = 334
                 inherited DBGridEh1: TDBGridEh
                   Width = 760
-                  Height = 308
+                  Height = 330
                   Columns = <
                     item
                       EditButtons = <>

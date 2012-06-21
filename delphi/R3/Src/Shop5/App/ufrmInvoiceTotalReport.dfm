@@ -1,6 +1,6 @@
 inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
-  Left = 367
-  Top = 133
+  Left = 337
+  Top = 155
   Width = 999
   Height = 551
   Caption = #21457#31080#32479#35745#25253#34920
@@ -125,7 +125,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   Font.Style = []
                   ParentFont = False
                 end
-                object fndINVH_NO: TcxTextEdit
+                object fndP1_INVH_NO: TcxTextEdit
                   Left = 80
                   Top = 96
                   Width = 99
@@ -133,7 +133,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   Properties.MaxLength = 50
                   TabOrder = 6
                 end
-                object fndSHOP_ID: TzrComboBoxList
+                object fndP1_SHOP_ID: TzrComboBoxList
                   Left = 80
                   Top = 30
                   Width = 223
@@ -176,7 +176,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndCREA_USER: TzrComboBoxList
+                object fndP1_CREA_USER: TzrComboBoxList
                   Left = 208
                   Top = 74
                   Width = 95
@@ -219,7 +219,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndDEPT_ID: TzrComboBoxList
+                object fndP1_DEPT_ID: TzrComboBoxList
                   Left = 80
                   Top = 52
                   Width = 223
@@ -270,7 +270,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
-                object fndINVOICE_FLAG: TcxComboBox
+                object fndP1_INVOICE_FLAG: TcxComboBox
                   Left = 80
                   Top = 74
                   Width = 80

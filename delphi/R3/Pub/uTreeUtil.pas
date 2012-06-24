@@ -98,6 +98,16 @@ Begin
    End;
  Result := 1;
 End;
+//根据代码返加树结点级别;
+Function GetNodeLength(Level:integer;ATreeFormat:String):Integer;
+Var nLen,i:Integer;
+Begin
+ result := 0;
+ For i:=1 to Level Do
+   Begin
+     result:=result+StrtoInt(ATreeFormat[i]);
+   End;
+End;
 
 procedure ClearTree(ATree:TRzTreeView;RootNode:TTreeNode=nil);
 var
@@ -174,7 +184,27 @@ Var Node:Array[1..MaxLevelTree] Of TTreeNode;
     AObj:TRecord_;
     ALevelField:Integer;
     Compare:TrzTreeCompare;
+function FindParent(Level:integer):TTreeNode;
+var
+  i,len:integer;
 begin
+  result := RootNode;
+  for i:=Level-1 downto 1 do
+    begin
+      len := GetNodeLength(i,ATreeFormat);
+      if Assigned(Node[i]) and
+        (copy(TRecord_(Node[i].Data).FieldByName(LevelField).AsString,1,len)=
+         copy(AObj.FieldByName(LevelField).AsString,1,len)
+        )
+      then
+        begin
+          result := Node[i];
+          break;
+        end;
+    end;
+end;
+begin
+ fillchar(Node,SizeOf(Node),0);
  if KeyField<>'' then
     DataSet.FieldByName(KeyField).Index :=0;
  if ListField<>'' then
@@ -186,6 +216,7 @@ begin
     end
     else
       ALevelField := 0;
+
  Level:=0;
  if RootNode=nil then
     ClearTree(ATree);
@@ -201,7 +232,7 @@ begin
          Raise Exception.Create('级别溢出，树状最大级别支持10级。');
       if Level<=1 then
          Node[Level]:=Items.AddChildObject(RootNode,Trim(Fields[1].AsString),AObj) Else
-      Node[Level]:=Items.AddChildObject(Node[Level-1],Trim(Fields[1].AsString),AObj);
+      Node[Level]:=Items.AddChildObject(FindParent(Level),Trim(Fields[1].AsString),AObj);
       Node[Level].ImageIndex :=ImageIndex;
       Node[Level].SelectedIndex :=SelectIndex;
       Next;
@@ -233,7 +264,27 @@ Var Node:Array[1..MaxLevelTree] Of TTreeNode;
     AObj:TRecord_;
     ALevelField:Integer;
     Compare:TrzTreeCompare;
+function FindParent(Level:integer):TTreeNode;
+var
+  i,len:integer;
 begin
+  result := RootNode;
+  for i:=Level-1 downto 1 do
+    begin
+      len := GetNodeLength(i,ATreeFormat);
+      if Assigned(Node[i]) and
+        (copy(TRecord_(Node[i].Data).FieldByName(LevelField).AsString,1,len)=
+         copy(AObj.FieldByName(LevelField).AsString,1,len)
+        )
+      then
+        begin
+          result := Node[i];
+          break;
+        end;
+    end;
+end;
+begin
+ fillchar(Node,SizeOf(Node),0);
  if KeyField<>'' then
     DataSet.FieldByName(KeyField).Index :=0;
  if ListField<>'' then
@@ -245,7 +296,6 @@ begin
     end
     else
       ALevelField := 0;
-
  Level:=0;
  if RootNode=nil then
     ClearTree(ATree);
@@ -261,7 +311,7 @@ begin
          Raise Exception.Create('级别溢出，树状最大级别支持10级。');
       if Level<=1 then
       Node[Level]:=Items.AddChildObject(RootNode,Trim(Fields[1].AsString),AObj) Else
-      Node[Level]:=Items.AddChildObject(Node[Level-1],Trim(Fields[1].AsString),AObj);
+      Node[Level]:=Items.AddChildObject(FindParent(Level),Trim(Fields[1].AsString),AObj);
       Node[Level].ImageIndex :=ImageIndex;
       Node[Level].SelectedIndex :=SelectIndex;
       Next;

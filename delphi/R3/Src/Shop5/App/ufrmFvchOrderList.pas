@@ -64,6 +64,10 @@ type
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure DBGridEh1DblClick(Sender: TObject);
+    procedure DBGridEh1GetFooterParams(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; AFont: TFont;
+      var Background: TColor; var Alignment: TAlignment;
+      State: TGridDrawState; var Text: String);
   private
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
@@ -349,7 +353,7 @@ end;
 
 function TfrmFvchOrderList.CheckCanExport: boolean;
 begin
-  result:=ShopGlobal.GetChkRight('21300001',7);
+  result:=ShopGlobal.GetChkRight('100002407',7);
 end;
 
 
@@ -398,6 +402,7 @@ procedure TfrmFvchOrderList.actPrintExecute(Sender: TObject);
 var
   ReStr: string;
 begin
+  if not ShopGlobal.GetChkRight('100002407',6) then Raise Exception.Create('  您没有打印凭证的权限,请和管理员联系.   ');
   if not DBGridEh1.DataSource.DataSet.Active then Exit;
   //日期条件
   ReStr:='凭证日期:'+FormatDatetime('YYYY-MM-DD',P1_D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',P1_D2.Date);
@@ -421,6 +426,7 @@ procedure TfrmFvchOrderList.actPreviewExecute(Sender: TObject);
 var
   ReStr: string;
 begin
+  if not ShopGlobal.GetChkRight('100002407',6) then Raise Exception.Create('  您没有打印凭证的权限,请和管理员联系.   ');
   if not DBGridEh1.DataSource.DataSet.Active then Exit;
   //日期条件
   ReStr:='凭证日期:'+FormatDatetime('YYYY-MM-DD',P1_D1.Date)+' 至 '+FormatDatetime('YYYY-MM-DD',P1_D2.Date);
@@ -465,6 +471,14 @@ procedure TfrmFvchOrderList.DBGridEh1DblClick(Sender: TObject);
 begin
   inherited;
   actInfoExecute(Sender);   
+end;
+
+procedure TfrmFvchOrderList.DBGridEh1GetFooterParams(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; AFont: TFont;
+  var Background: TColor; var Alignment: TAlignment; State: TGridDrawState;
+  var Text: String);
+begin
+  if Column.FieldName = 'FVCH_DATE' then Text := '合计:'+Text+'笔';
 end;
 
 end.

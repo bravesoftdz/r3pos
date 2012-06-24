@@ -270,6 +270,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                 DigitalNumber = 12
                 OnDblClick = DBGridEh1DblClick
                 OnDrawColumnCell = DBGridEh1DrawColumnCell
+                OnGetFooterParams = DBGridEh1GetFooterParams
                 Columns = <
                   item
                     Color = clBtnFace
@@ -284,7 +285,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                     EditButtons = <>
                     FieldName = 'FVCH_DATE'
                     Footer.Value = #21512'   '#35745#65306
-                    Footer.ValueType = fvtStaticText
+                    Footer.ValueType = fvtCount
                     Footers = <>
                     Title.Caption = #20973#35777#26085#26399
                     Width = 75
@@ -319,7 +320,7 @@ inherited frmFvchOrderList: TfrmFvchOrderList
                   end
                   item
                     EditButtons = <>
-                    FieldName = 'CREA_USER_TXT'
+                    FieldName = 'CREA_USER_TEXT'
                     Footers = <>
                     Title.Caption = #21046#21333#20154
                     Width = 85

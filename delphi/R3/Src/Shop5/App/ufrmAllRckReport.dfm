@@ -1,30 +1,32 @@
 inherited frmAllRckReport: TfrmAllRckReport
-  Width = 958
-  Height = 554
+  Left = -8
+  Top = -8
+  Width = 1296
+  Height = 776
   Caption = #32508#21512#21488#36134
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 942
-    Height = 479
+    Width = 1280
+    Height = 701
     inherited RzPanel2: TRzPanel
-      Width = 932
-      Height = 469
+      Width = 1270
+      Height = 691
       inherited RzPage: TRzPageControl
-        Width = 727
-        Height = 463
+        Width = 1065
+        Height = 685
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32508#21512#21488#36134
           inherited RzPanel3: TRzPanel
-            Width = 725
-            Height = 436
+            Width = 1063
+            Height = 658
             inherited Panel4: TPanel
-              Width = 715
-              Height = 426
+              Width = 1053
+              Height = 648
               inherited w1: TRzPanel
-                Width = 715
-                Height = 85
+                Width = 1053
+                Height = 82
                 object LblRckType: TLabel
                   Left = 9
                   Top = 59
@@ -62,16 +64,50 @@ inherited frmAllRckReport: TfrmAllRckReport
                   Alignment = taRightJustify
                   Caption = #26597#35810#21608#26399
                 end
+                object Shape1: TShape
+                  Left = 850
+                  Top = 56
+                  Width = 44
+                  Height = 17
+                  Anchors = [akRight, akBottom]
+                  Brush.Color = clRed
+                end
+                object Shape2: TShape
+                  Left = 954
+                  Top = 56
+                  Width = 44
+                  Height = 17
+                  Anchors = [akRight, akBottom]
+                  Brush.Color = 8454016
+                end
+                object Label3: TLabel
+                  Left = 898
+                  Top = 58
+                  Width = 36
+                  Height = 12
+                  Anchors = [akRight, akBottom]
+                  Caption = #26368#28382#38144
+                end
+                object Label4: TLabel
+                  Left = 1002
+                  Top = 58
+                  Width = 36
+                  Height = 12
+                  Anchors = [akRight, akBottom]
+                  Caption = #39640#27611#21033
+                end
                 object rptTemplate: TcxComboBox
                   Left = 61
                   Top = 55
-                  Width = 125
+                  Width = 124
                   Height = 20
                   Properties.DropDownListStyle = lsFixedList
                   Properties.Items.Strings = (
                     #21367#28895#21830#21697#21488#36134
                     #20840#37096#21830#21697#21488#36134
-                    #38750#28895#21830#21697#21488#24080)
+                    #38750#28895#21830#21697#21488#24080
+                    #36827#36135#21830#21697#21488#36134
+                    #38144#21806#21830#21697#21488#36134)
                   Properties.OnChange = rptTemplatePropertiesChange
                   TabOrder = 2
                 end
@@ -188,13 +224,13 @@ inherited frmAllRckReport: TfrmAllRckReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 85
-                Width = 715
-                Height = 341
+                Top = 82
+                Width = 1053
+                Height = 566
                 inherited DBGridEh1: TDBGridEh
                   Tag = 1
-                  Width = 711
-                  Height = 337
+                  Width = 1049
+                  Height = 562
                   OnDblClick = DBGridEh1DblClick
                   OnGetFooterParams = DBGridEh1GetFooterParams
                   OnTitleClick = DBGridEh1TitleClick
@@ -234,15 +270,15 @@ inherited frmAllRckReport: TfrmAllRckReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 730
-        Height = 463
+        Left = 1068
+        Height = 685
         Visible = False
         inherited Panel2: TPanel
-          Height = 440
+          Height = 662
           inherited Panel5: TPanel
-            Height = 325
+            Height = 547
             inherited rzShowColumns: TRzCheckList
-              Height = 321
+              Height = 543
             end
           end
         end
@@ -250,11 +286,15 @@ inherited frmAllRckReport: TfrmAllRckReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 942
+    Width = 1280
+    inherited Image3: TImage
+      Width = 326
+    end
     inherited Image14: TImage
-      Left = 922
+      Left = 1260
     end
     inherited Image1: TImage
+      Left = 680
       Width = 580
     end
     inherited CoolBar1: TCoolBar

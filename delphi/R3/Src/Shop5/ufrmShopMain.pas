@@ -319,6 +319,7 @@ type
     actfrmVoucherOrderList: TAction;
     actfrmVhSendOrderList: TAction;
     actfrmVhLeadOrderList: TAction;
+    actfrmFvchIntfSet: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -472,6 +473,8 @@ type
     procedure actfrmVoucherOrderListExecute(Sender: TObject);
     procedure actfrmVhSendOrderListExecute(Sender: TObject);
     procedure actfrmVhLeadOrderListExecute(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure actfrmFvchIntfSetExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -549,7 +552,7 @@ uses
   ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,ufrmSalIndentDayReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
-  ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList;
+  ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4604,13 +4607,13 @@ end;
 procedure TfrmShopMain.Button2Click(Sender: TObject);
 begin
   inherited;
-  actfrmFvchFrame.OnExecute(nil);
+  actfrmVoucherOrderList.OnExecute(nil);
 end;
 
 procedure TfrmShopMain.Button1Click(Sender: TObject);
 begin
   inherited;
-  actfrmFvchOrderList.OnExecute(nil);
+  actfrmVhLeadOrderList.OnExecute(nil);
 end;
 
 procedure TfrmShopMain.actfrmInvoiceTotalReportExecute(Sender: TObject);
@@ -4699,6 +4702,23 @@ begin
      end;
   Form.Show;
   Form.BringToFront;
+end;
+
+procedure TfrmShopMain.Button3Click(Sender: TObject);
+begin
+  inherited;
+  actfrmVhSendOrderList.OnExecute(nil);
+end;
+
+procedure TfrmShopMain.actfrmFvchIntfSetExecute(Sender: TObject);
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  TfrmFvchIntfSet.ShowDialog(self);
 end;
 
 end.

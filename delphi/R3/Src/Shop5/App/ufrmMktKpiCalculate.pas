@@ -278,6 +278,8 @@ begin
       cdsHeader.FieldByName('ADJS_MNY').AsFloat := SumAdjsMny;
       cdsHeader.FieldByName('KPI_MNY').AsFloat := SumKpiMny;
       cdsHeader.FieldByName('BUDG_KPI').AsFloat := SumBudgKpi;
+      cdsHeader.FieldByName('CREA_DATE').AsString := formatDatetime('YYYYMMDD HH:NN:SS',now());
+      cdsHeader.FieldByName('CREA_USER').AsString := Global.UserID;
       cdsHeader.Post;
       try
         Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);

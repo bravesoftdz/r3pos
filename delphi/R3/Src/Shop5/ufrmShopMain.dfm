@@ -5677,6 +5677,11 @@ inherited frmShopMain: TfrmShopMain
       Caption = #31036#21048#39046#29992
       OnExecute = actfrmVhLeadOrderListExecute
     end
+    object actfrmFvchIntfSet: TAction
+      Tag = 100002460
+      Caption = #36741#21161#32534#30721#34920
+      OnExecute = actfrmFvchIntfSetExecute
+    end
   end
   inherited PopupMenu: TPopupMenu
     Left = 464

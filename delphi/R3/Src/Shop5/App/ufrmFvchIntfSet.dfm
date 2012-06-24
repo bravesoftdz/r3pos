@@ -1,8 +1,7 @@
 inherited frmFvchIntfSet: TfrmFvchIntfSet
   Left = 320
   Top = 170
-  Caption = #25509#21475#32534#30721#35774#32622
-  ClientHeight = 376
+  Caption = #36741#21161#32534#30721#34920
   ClientWidth = 370
   Color = clWhite
   OnShow = FormShow
@@ -10,7 +9,6 @@ inherited frmFvchIntfSet: TfrmFvchIntfSet
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 370
-    Height = 376
     BorderColor = clWhite
     Color = clWhite
     inherited RzPage: TRzPageControl
@@ -19,7 +17,7 @@ inherited frmFvchIntfSet: TfrmFvchIntfSet
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
-        Caption = #25509#21475#32534#30721#35774#32622
+        Caption = #36741#21161#32534#30721#34920
         inherited RzPanel2: TRzPanel
           Width = 356
           Height = 301
@@ -80,7 +78,7 @@ inherited frmFvchIntfSet: TfrmFvchIntfSet
                 EditButtons = <>
                 FieldName = 'SUBJECT_NO'
                 Footers = <>
-                Title.Caption = #25509#21475#20195#30721
+                Title.Caption = #36741#21161#20195#30721
                 Width = 139
                 OnUpdateData = DBGridEh1Columns2UpdateData
               end>
@@ -100,7 +98,7 @@ inherited frmFvchIntfSet: TfrmFvchIntfSet
               Top = 7
               Width = 48
               Height = 12
-              Caption = #25509#21475#31867#22411
+              Caption = #32534#30721#31867#22411
             end
             object RzLabel23: TRzLabel
               Left = 230
@@ -125,11 +123,11 @@ inherited frmFvchIntfSet: TfrmFvchIntfSet
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Properties.DropDownListStyle = lsFixedList
               Properties.Items.Strings = (
-                #38376#24215
-                #37096#38376
-                #20154#21592
-                #24448#26469#21333#20301
-                #19987#39033)
+                #38376#24215#26680#31639
+                #37096#38376#26680#31639
+                #20010#20154#24448#26469
+                #21333#20301#24448#26469
+                #19987#39033#26680#31639)
               Properties.OnChange = edtLVL_TYPEPropertiesChange
               Properties.OnEditValueChanged = edtLVL_TYPEPropertiesEditValueChanged
               TabOrder = 0

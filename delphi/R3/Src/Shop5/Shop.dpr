@@ -337,7 +337,14 @@ uses
   ufrmVhSendOrder in 'App\ufrmVhSendOrder.pas' {frmVhSendOrder},
   ufrmVhSendOrderList in 'App\ufrmVhSendOrderList.pas' {frmVhSendOrderList},
   ufrmVoucherOrder in 'App\ufrmVoucherOrder.pas' {frmVoucherOrder},
-  ufrmVoucherOrderList in 'App\ufrmVoucherOrderList.pas' {frmVoucherOrderList};
+  ufrmVoucherOrderList in 'App\ufrmVoucherOrderList.pas' {frmVoucherOrderList},
+  ObjFvchIntfSet in 'Obj\ObjFvchIntfSet.pas',
+  ObjFvchPosting in 'Obj\ObjFvchPosting.pas',
+  ObjVhLeadOrder in 'Obj\ObjVhLeadOrder.pas',
+  ObjVhPayGlide in 'Obj\ObjVhPayGlide.pas',
+  ObjVhSendOrder in 'Obj\ObjVhSendOrder.pas',
+  ObjVoucherOrder in 'Obj\ObjVoucherOrder.pas',
+  ufrmFvchIntfSet in 'App\ufrmFvchIntfSet.pas' {frmFvchIntfSet};
 
 {$R *.res}
 var

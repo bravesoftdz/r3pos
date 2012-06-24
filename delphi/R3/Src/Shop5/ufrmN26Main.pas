@@ -628,17 +628,17 @@ begin
     Panel24.Width := 23;
     frmMain.OnResize(nil);
   end;
-  leftVisible := true;
-  case deskFlag of
-  1:begin
-       if rzLeft.Enabled then
-          begin
-            rzLeft.Width := 29;
-            Panel12.Width := 31;
-            Panel24.Width := 23;
-          end;
-    end;
-  end;
+//  leftVisible := true;
+//  case deskFlag of
+//  1:begin
+//       if rzLeft.Enabled then
+//          begin
+//            rzLeft.Width := 29;
+//            Panel12.Width := 31;
+//            Panel24.Width := 23;
+//          end;
+//    end;
+//  end;
 end;
 
 procedure TfrmN26Main.RemoveFrom(form: TForm);

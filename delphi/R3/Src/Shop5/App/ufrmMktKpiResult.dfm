@@ -104,7 +104,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                   end
                   item
                     Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
+                    DisplayFormat = '#0.00#'
                     EditButtons = <>
                     FieldName = 'PLAN_AMT'
                     Footer.Alignment = taRightJustify
@@ -116,7 +116,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                   end
                   item
                     Alignment = taRightJustify
-                    DisplayFormat = '#0.00'
+                    DisplayFormat = '#0.00#'
                     EditButtons = <>
                     FieldName = 'FISH_AMT'
                     Footer.Alignment = taRightJustify
@@ -128,7 +128,7 @@ inherited frmMktKpiResult: TfrmMktKpiResult
                     Width = 58
                   end
                   item
-                    DisplayFormat = '#0.00'
+                    DisplayFormat = '#0.00#'
                     EditButtons = <>
                     FieldName = 'ADJS_AMT'
                     Footer.ValueType = fvtSum

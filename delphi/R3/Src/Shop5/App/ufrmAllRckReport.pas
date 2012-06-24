@@ -32,6 +32,10 @@ type
     RB_Year: TRadioButton;
     RB_Define: TRadioButton;
     RzLabel1: TRzLabel;
+    Shape1: TShape;
+    Shape2: TShape;
+    Label3: TLabel;
+    Label4: TLabel;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -68,7 +72,8 @@ type
     procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
       AFont: TFont; var Background: TColor; State: TGridDrawState);
   private
-    FMax_Sale_Rate:real; //高毛利率临界值
+    FMax_Sale_prf:real; //高毛利临界值
+    FMax_Sale_cxb:real; //高存销比临界值
     Lock:boolean;
     FOrderID: string;  //当前的ID
     PrintTimes:Integer;
@@ -91,7 +96,7 @@ type
     function  GetPrintSQL(tenantid, id: string): string; //返回打印SQL
     procedure SetDateCmp(IsVisible: Boolean);
     function  DoCalcAnaly:Boolean;  //计算日均销量
-    function  GetSalePRF_Rate(vData:OleVariant;const vTop: integer):real; //返回排vTop名的毛利
+    function  GetSalePRF_Rate(rsData:TZQuery;const vTop: integer):real; //返回排vTop名的毛利
   public
     Factory: TReportFactory;
     //按商品销售汇总表
@@ -234,24 +239,32 @@ begin
     self.SaveFormat;
     adoReport1.Close;
   end;
-  adoReport1.SortedFields:='';
-  if P1_D1.EditValue = null then Raise Exception.Create('  开始日期条件不能为空！ ');
-  if P1_D2.EditValue = null then Raise Exception.Create('  结束日期条件不能为空！ ');
-  if P1_D1.Date>P1_D2.Date then  Raise Exception.Create('  结束日期不能小于开始日期...');
-  if rptTemplate.ItemIndex=-1 then Raise Exception.Create('     请选择台账分类！    ');
-  CreateGridColumn; //创建列
-  strSql := self.GetSQL_YouHua;
-  if strSql='' then Exit;
-  adoReport1.SQL.Text := strSql;
-  Factor.Open(adoReport1);
-  FMax_Sale_Rate:=GetSalePRF_Rate(adoReport1.Data,5);
-  if rptType<3 then
-  begin
-    dsadoReport1.DataSet:=nil;
-    DoGodsGroupBySort(adoReport1,'2','SORT_ID','GODS_ID_TEXT','ORDER_ID',                            
-                      ['ORG_AMT','STOCK_AMT','STOCK_TTL','SALE_AMT','SALE_MNY','SALE_TTL','SALE_PRF','BAL_AMT','DAY_SALE_AMT'], //'SALE_RATE',
-                      ['SALE_RATE=SALE_PRF/SALE_MNY*100.0','CX_RATE=BAL_AMT/DAY_SALE_AMT']);
-    dsadoReport1.DataSet:=adoReport1;
+  adoReport1.DisableControls;
+  try
+    adoReport1.SortedFields:='';
+    if P1_D1.EditValue = null then Raise Exception.Create('  开始日期条件不能为空！ ');
+    if P1_D2.EditValue = null then Raise Exception.Create('  结束日期条件不能为空！ ');
+    if P1_D1.Date>P1_D2.Date then  Raise Exception.Create('  结束日期不能小于开始日期...');
+    if rptTemplate.ItemIndex=-1 then Raise Exception.Create('     请选择台账分类！    ');
+    CreateGridColumn; //创建列
+    if rptType<3 then
+       strSql := self.GetSQL_YouHua
+    else
+       strSql := self.GetSQL;
+    if strSql='' then Exit;
+    adoReport1.SQL.Text := strSql;
+    Factor.Open(adoReport1);
+    if rptType<3 then
+    begin
+      GetSalePRF_Rate(adoReport1,5);
+      dsadoReport1.DataSet:=nil;
+      DoGodsGroupBySort(adoReport1,'2','SORT_ID','GODS_ID_TEXT','ORDER_ID',
+                        ['ORG_AMT','STOCK_AMT','STOCK_TTL','SALE_AMT','SALE_MNY','SALE_TTL','SALE_PRF','BAL_AMT','DAY_SALE_AMT'], //'SALE_RATE',
+                        ['SALE_RATE=SALE_PRF/SALE_MNY*100.0','CX_RATE=BAL_AMT/DAY_SALE_AMT']);
+      dsadoReport1.DataSet:=adoReport1;
+    end;
+  finally
+    adoReport1.EnableControls;
   end;
 end;
 
@@ -679,17 +692,6 @@ begin
         Column.Alignment:=taRightJustify;
         Column.Footer.Alignment:=taRightJustify;
 
-        //库存
-        Column := DBGridEh1.Columns.Add;
-        Column.FieldName := 'BAL_AMT';
-        Column.Title.Caption:='库存';
-        Column.DisplayFormat:='#0.###';
-        Column.Footer.DisplayFormat:='#0.###';
-        Column.Footer.ValueType:=fvtSum;
-        Column.Width :=75;
-        Column.Alignment:=taRightJustify;
-        Column.Footer.Alignment:=taRightJustify;
-
         //销售毛利、毛利率
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_PRF';
@@ -699,14 +701,25 @@ begin
         Column.Footer.ValueType:=fvtSum;
         Column.Width :=72;
         Column.Alignment:=taRightJustify;
-        Column.Footer.Alignment:=taRightJustify;        
-        
+        Column.Footer.Alignment:=taRightJustify;
+
         Column := DBGridEh1.Columns.Add;
         Column.FieldName := 'SALE_RATE';
         Column.Title.Caption:='销售|毛利率';
         Column.DisplayFormat:='#0.00%';
         Column.Footer.DisplayFormat:='#0.00%';
         Column.Width :=52;
+        Column.Alignment:=taRightJustify;
+        Column.Footer.Alignment:=taRightJustify;
+
+        //库存
+        Column := DBGridEh1.Columns.Add;
+        Column.FieldName := 'BAL_AMT';
+        Column.Title.Caption:='库存';
+        Column.DisplayFormat:='#0.###';
+        Column.Footer.DisplayFormat:='#0.###';
+        Column.Footer.ValueType:=fvtSum;
+        Column.Width :=75;
         Column.Alignment:=taRightJustify;
         Column.Footer.Alignment:=taRightJustify;
 
@@ -1684,40 +1697,64 @@ begin
     result:=true;
 end;
 
-function TfrmAllRckReport.GetSalePRF_Rate(vData:OleVariant;const vTop: integer):real;
+function TfrmAllRckReport.GetSalePRF_Rate(rsData:TZQuery;const vTop: integer):real;
 var
-  RsData,RsSort: TZQuery;
-  CurRate: real;      
+  RsSort: TZQuery;
+  CurRate: real;
   CurTop: integer;
 begin
   result:=0;
+  RsSort:=TZQuery.Create(nil);
   try
-    RsData:=TZQuery.Create(nil);
-    RsSort:=TZQuery.Create(nil);
-    RsSort.FieldDefs.Add('SALE_RATE',ftFloat,0,true); //添加字段
+    RsSort.FieldDefs.Add('SALE_PRF',ftFloat,0,true); //添加字段
     RsSort.CreateDataSet;
-    RsData.Close;
-    RsData.Data:=vData;
     if not RsData.Active then Exit;
+    RsData.first;
     while not RsData.Eof do
     begin
-      CurRate:=RoundTo(RsData.fieldByName('SALE_RATE').AsFloat,-6);
-      if not RsSort.Locate('SALE_RATE',CurRate,[]) then
+      CurRate:=RsData.fieldByName('SALE_PRF').AsFloat;
+      if not RsSort.Locate('SALE_PRF',CurRate,[]) then
       begin
         RsSort.Append;
-        RsSort.FieldByName('SALE_RATE').AsFloat:=CurRate;
+        RsSort.FieldByName('SALE_PRF').AsFloat:=CurRate;
         RsSort.Post;
       end;
       RsData.Next;
     end;
-    RsSort.SortedFields:='SALE_RATE DESC';
+    RsSort.SortedFields:='SALE_PRF DESC';
     CurTop:=vTop;
     if CurTop<0 then CurTop:=1;
-    if CurTop>RsSort.RecordCount then CurTop:=RsSort.RecordCount;
+    if CurTop>RsSort.RecordCount then CurTop:=RsSort.RecordCount else RsSort.Last;
     RsSort.RecNo:=CurTop;
-    result:=RsSort.FieldByName('SALE_RATE').AsFloat;
+    FMax_Sale_prf:=RsSort.FieldByName('SALE_PRF').AsFloat;
   finally
-    RsData.Free;
+    RsSort.Free;
+  end;
+
+  RsSort:=TZQuery.Create(nil);
+  try
+    RsSort.FieldDefs.Add('CX_RATE',ftFloat,0,true); //添加字段
+    RsSort.CreateDataSet;
+    if not RsData.Active then Exit;
+    RsData.first;
+    while not RsData.Eof do
+    begin
+      CurRate:=RsData.fieldByName('CX_RATE').AsFloat;
+      if not RsSort.Locate('CX_RATE',CurRate,[]) and (CurRate<>1000) then
+      begin
+        RsSort.Append;
+        RsSort.FieldByName('CX_RATE').AsFloat:=CurRate;
+        RsSort.Post;
+      end;
+      RsData.Next;
+    end;
+    RsSort.SortedFields:='CX_RATE DESC';
+    CurTop:=vTop;
+    if CurTop<0 then CurTop:=1;
+    if CurTop>RsSort.RecordCount then CurTop:=RsSort.RecordCount else RsSort.Last;
+    RsSort.RecNo:=CurTop;
+    FMax_Sale_cxb:=RsSort.FieldByName('CX_RATE').AsFloat;
+  finally
     RsSort.Free;
   end;
 end;
@@ -1732,9 +1769,9 @@ begin
   GridDs:=TDataSet(TDBGridEh(Sender).DataSource.DataSet);
   if (GridDs<>nil) and (GridDs.Active) then
   begin
-    if (Column.FieldName = 'SALE_RATE') and (FMax_Sale_Rate>0) and (GridDs.FieldByName('SALE_RATE').AsFloat>=FMax_Sale_Rate) then
+    if (Column.FieldName = 'SALE_PRF') and (FMax_Sale_prf>0) and (GridDs.FieldByName('SALE_PRF').AsFloat>0) and (GridDs.FieldByName('SALE_PRF').AsFloat>=FMax_Sale_prf) then
        Background := $0080FF80;
-    if (Column.FieldName = 'CX_RATE') and (GridDs.FieldByName('CX_RATE').AsFloat>1.00) and (GridDs.FieldByName('CX_RATE').AsFloat<1000.00) then
+    if (Column.FieldName = 'CX_RATE') and (FMax_Sale_cxb>0) and (GridDs.FieldByName('CX_RATE').AsFloat>0) and (GridDs.FieldByName('CX_RATE').AsFloat>=FMax_Sale_cxb) and (GridDs.FieldByName('CX_RATE').AsFloat<>1000) then
        Background := clRed;
   end;
 end;

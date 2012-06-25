@@ -393,7 +393,7 @@ begin
        ',D.CREA_USER as CREA_USER'+   //单据操作员
        ',B.SHOP_NAME as SHOP_NAME  '+ //所属门店
       ' from PUB_CUSTOMER A,PUB_IC_INFO C,CA_SHOP_INFO B,SAL_IC_GLIDE D,('+CardSumTab+')E '+
-      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
+      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
         ' and A.TENANT_ID=D.TENANT_ID and A.CUST_ID=D.CLIENT_ID and A.CUST_ID=E.CLIENT_ID '+
         ' and D.IC_GLIDE_TYPE=''1'' and D.GLIDE_MNY>=0 '+CardCnd+' '+DateCnd;
     i:=i+1;
@@ -427,7 +427,7 @@ begin
        ',D.CREA_USER as CREA_USER'+   //单据操作员
        ',B.SHOP_NAME as SHOP_NAME  '+ //所属门店
       ' from PUB_CUSTOMER A,PUB_IC_INFO C,CA_SHOP_INFO B,SAL_IC_GLIDE D,('+CardSumTab+')E '+
-      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
+      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
         ' and A.TENANT_ID=D.TENANT_ID and A.CUST_ID=D.CLIENT_ID and A.CUST_ID=E.CLIENT_ID '+
         ' and D.IC_GLIDE_TYPE=''1'' and D.GLIDE_MNY<0 '+CardCnd+' '+DateCnd;
     i:=i+1;
@@ -461,7 +461,7 @@ begin
        ',D.CREA_USER as CREA_USER'+   //单据操作员
        ',B.SHOP_NAME as SHOP_NAME  '+ //所属门店
       ' from PUB_CUSTOMER A,PUB_IC_INFO C,CA_SHOP_INFO B,SAL_SALESORDER D,('+CardSumTab+')E '+
-      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
+      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
         ' and A.TENANT_ID=D.TENANT_ID and A.CUST_ID=D.CLIENT_ID and A.CUST_ID=E.CLIENT_ID '+
         ' and D.SALES_TYPE in (''1'',''3'',''4'') '+CardCnd+' '+DateCnd;
     i:=i+1;
@@ -495,7 +495,7 @@ begin
        ',D.CREA_USER as CREA_USER'+   //单据操作员
        ',B.SHOP_NAME as SHOP_NAME  '+ //所属门店
       ' from PUB_CUSTOMER A,PUB_IC_INFO C,CA_SHOP_INFO B,SAL_IC_GLIDE D,('+CardSumTab+')E '+
-      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID '+
+      ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID '+
         ' and A.TENANT_ID=D.TENANT_ID and A.CUST_ID=D.CLIENT_ID and A.CUST_ID=E.CLIENT_ID '+
         ' and D.IC_GLIDE_TYPE=''2'' '+CardCnd+' '+DateCnd;
     i:=i+1;
@@ -609,7 +609,8 @@ begin
      ',sum(E.IC_REG-E.IC_SHISHOU) as IC_AGO_MNY '+   //优惠金额
      ',sum(E.IC_SAL) as IC_SAL_MNY '+   //消费金额
     ' from PUB_CUSTOMER A,PUB_IC_INFO C,CA_SHOP_INFO B,('+CardSumTab+')E '+
-    ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and C.CLIENT_ID=E.CLIENT_ID '+CardCnd+
+    ' where A.TENANT_ID=C.TENANT_ID and A.CUST_ID=C.CLIENT_ID and A.TENANT_ID=B.TENANT_ID and A.SHOP_ID=B.SHOP_ID and '+
+    ' C.CLIENT_ID=E.CLIENT_ID '+CardCnd+
     ' group by C.TENANT_ID,C.IC_TYPE,C.UNION_ID ';
   //关联查询
   SumTab:=

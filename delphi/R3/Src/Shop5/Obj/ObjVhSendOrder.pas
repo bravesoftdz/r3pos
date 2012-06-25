@@ -50,18 +50,38 @@ begin
 end;
 
 function TVhSendOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
+var rs:TZQuery;
 begin
-
+  if FieldByName('VOUCHER_MNY').AsFloat <> 0 then
+  begin
+    rs := TZQuery.Create(nil);
+    try
+      rs.SQL.Text := 'select RECV_MNY from ACC_RECVABLE_INFO where TENANT_ID='+FieldbyName('TENANT_ID').AsOldString+' and SALES_ID='''+FieldbyName('VHSEND_ID').AsOldString+''' and RECV_TYPE=''5''';
+      AGlobal.Open(rs);
+      if rs.Fields[0].AsFloat <> 0 then Raise Exception.Create('已经收款的发放礼券单不能修改...');
+    finally
+      rs.Free;
+    end;
+    AGlobal.ExecSQL('delete from ACC_RECVABLE_INFO where TENANT_ID=:OLD_TENANT_ID and SALES_ID=:OLD_VHSEND_ID and RECV_TYPE=''5''',self);
+  end;
 end;
 
 function TVhSendOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  if FieldByName('VOUCHER_MNY').AsFloat <> 0 then
+  begin
+    AGlobal.ExecSQL(
+    'insert into ACC_RECVABLE_INFO(ABLE_ID,TENANT_ID,SHOP_ID,DEPT_ID,CLIENT_ID,ACCT_INFO,RECV_TYPE,ACCT_MNY,RECV_MNY,RECK_MNY,REVE_MNY,ABLE_DATE,SALES_ID,CREA_DATE,CREA_USER,COMM,TIME_STAMP) '+
+    'VALUES('''+newid(FieldbyName('SHOP_ID').asString)+''',:TENANT_ID,:SHOP_ID,:DEPT_ID,:CLIENT_ID,''礼券收入'',''5'',:VOUCHER_MNY,0,:VOUCHER_MNY,0,:SEND_DATE,:VHSEND_ID,:CREA_DATE,:CREA_USER,''00'','+GetTimeStamp(iDbType)+')'
+    ,self);
+  end;
 end;
 
 function TVhSendOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
-
+  if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前发放礼券单已经被另一用户修改，你不能再保存。');
+  result := BeforeDeleteRecord(AGlobal);
+  result := BeforeInsertRecord(AGlobal);
 end;
 
 function TVhSendOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;
@@ -71,8 +91,23 @@ end;
 
 function TVhSendOrder.CheckTimeStamp(aGlobal: IdbHelp; s: string;
   comm: boolean): boolean;
+var rs:TZQuery;
 begin
-
+  rs := TZQuery.Create(nil);
+  try
+    rs.SQL.Text := 'select TIME_STAMP,COMM from SAL_VHSENDORDER where VHSEND_ID='''+FieldbyName('VHSEND_ID').AsString+''' and TENANT_ID='+FieldbyName('TENANT_ID').AsString;
+    aGlobal.Open(rs);
+    result := (rs.Fields[0].AsString = s);
+    if comm and result and
+    (
+       (copy(rs.Fields[1].asString,1,1)='1')
+       or
+       (copy(rs.Fields[1].asString,2,1)<>'0')
+    )
+    then Raise Exception.Create('已经同步的数据不能删除..');
+  finally
+    rs.Free;
+  end;
 end;
 
 procedure TVhSendOrder.InitClass;
@@ -84,7 +119,7 @@ begin
   SelectSQL.Text :=
   ' select A.TENANT_ID,A.VHSEND_ID,A.SHOP_ID,C.SHOP_NAME as SHOP_ID_TEXT,A.DEPT_ID,B.DEPT_NAME as DEPT_ID_TEXT,A.CLIENT_ID,'+
   'F.CLIENT_NAME as CLIENT_ID_TEXT,A.SEND_DATE,A.SEND_USER,E.USER_NAME as SEND_USER_TEXT,A.VOUCHER_TTL,A.VOUCHER_MNY,A.CREA_DATE,'+
-  'A.CREA_USER,D.USER_NAME as CREA_USER_TEXT,A.REMARK,A.COMM '+
+  'A.CREA_USER,D.USER_NAME as CREA_USER_TEXT,A.REMARK,A.COMM,A.TIME_STAMP '+
   ' from SAL_VHSENDORDER A left join CA_DEPT_INFO B on A.TENANT_ID=B.TENANT_ID and A.DEPT_ID=B.DEPT_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.CREA_USER=D.USER_ID '+
@@ -177,7 +212,7 @@ begin
          'VOUCHER_TTL=:VOUCHER_TTL,VOUCHER_MNY=:VOUCHER_MNY,AGIO_RATE=:AGIO_RATE,AGIO_MONEY=:AGIO_MONEY '+
          ' where TENANT_ID=:OLD_TENANT_ID and VHSEND_ID=:OLD_VHSEND_ID and VOUCHER_ID=:OLD_VOUCHER_ID and BARCODE=:OLD_BARCODE ';
   UpdateSQL.Text := Str;
-  Str := ' delete from SAL_VHSENDDATA where TENANT_ID=:OLD_TENANT_ID and VHLEAD_ID=:OLD_VHLEAD_ID and VOUCHER_ID=:OLD_VOUCHER_ID and BARCODE=:OLD_BARCODE ';
+  Str := ' delete from SAL_VHSENDDATA where TENANT_ID=:OLD_TENANT_ID and VHSEND_ID=:OLD_VHSEND_ID and VOUCHER_ID=:OLD_VOUCHER_ID and BARCODE=:OLD_BARCODE ';
   DeleteSQL.Text := Str;
 end;
 

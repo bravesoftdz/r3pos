@@ -148,24 +148,24 @@ begin
   edtDEPT_ID.RangeField := 'DEPT_TYPE';
   edtDEPT_ID.RangeValue := '1';
   TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_PAYMENT'),edtPAYM_ID.Properties.Items,'CODE_NAME');
-  idx := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID','C');
+{  idx := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID','C');
   if idx<>-1 then
   begin
     edtPAYM_ID.Properties.Items.Objects[idx].Free;
     edtPAYM_ID.Properties.Items.Delete(idx);
-  end;
+  end;   }
   idx := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID','D');
   if idx<>-1 then
   begin
     edtPAYM_ID.Properties.Items.Objects[idx].Free;
     edtPAYM_ID.Properties.Items.Delete(idx);
   end;
-  idx := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID','G');
+{  idx := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID','G');
   if idx<>-1 then
   begin
     edtPAYM_ID.Properties.Items.Objects[idx].Free;
     edtPAYM_ID.Properties.Items.Delete(idx);
-  end;
+  end;    }
 //  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_BANK_INFO'),edtBANK_ID.Properties.Items,'CODE_NAME');
 end;
 

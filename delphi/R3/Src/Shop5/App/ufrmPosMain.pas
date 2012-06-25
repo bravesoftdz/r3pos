@@ -4347,6 +4347,7 @@ begin
     RsRelation:=Global.GetZQueryFromName('CA_RELATIONS'); //供应链
     //开始循环[累计出本单单品和供应链汇总数据]：
     CurIdx:=cdsTable.RecNo;  //保存当前序号
+    cdsTable.DisableControls;
     cdsTable.First;
     while not cdsTable.Eof do
     begin
@@ -4419,7 +4420,8 @@ begin
       RelQry.Next;
     end;
   finally
-    cdsTable.RecNo:=CurIdx;   
+    cdsTable.RecNo:=CurIdx;
+    cdsTable.EnableControls;
     GodsQry.Free;
     RelQry.Free;
   end;

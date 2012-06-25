@@ -140,6 +140,8 @@ begin
 end;
 
 procedure TfrmRecvOrder.FormCreate(Sender: TObject);
+var
+  idx:integer;
 begin
   inherited;
   AObj := TRecord_.Create;
@@ -152,6 +154,12 @@ begin
   edtDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   edtDEPT_ID.RangeField := 'DEPT_TYPE';
   edtDEPT_ID.RangeValue := '1';
+  idx := TdsItems.FindItems(edtPAYM_ID.Properties.Items,'CODE_ID','D');
+  if idx<>-1 then
+  begin
+    edtPAYM_ID.Properties.Items.Objects[idx].Free;
+    edtPAYM_ID.Properties.Items.Delete(idx);
+  end;
 //  TdsItems.AddDataSetToItems(Global.GetZQueryFromName('PUB_BANK_INFO'),edtBANK_ID.Properties.Items,'CODE_NAME');
 
   if ShopGlobal.GetProdFlag = 'E' then

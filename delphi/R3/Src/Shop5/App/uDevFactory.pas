@@ -419,7 +419,7 @@ begin
   DevFactory.SetLEDNumber(Value);
   if Screen.MonitorCount>1 then
      begin
-       DevFactory.frmShowPanel.sText := '金额:'+formatFloat('#0.0##',Value)+'元';
+       DevFactory.frmShowPanel.sText := '实收:'+formatFloat('#0.0##',Value)+'元';
        DevFactory.frmShowPanel.StartScreen;
      end;
 end;
@@ -430,10 +430,7 @@ begin
   DevFactory.SetLEDNumber(Value);
   if Screen.MonitorCount>1 then
      begin
-       if ShowN<>'' then
-          DevFactory.frmShowPanel.sText := '"'+ShowN+'"单价:'+formatFloat('#0.0##',Value)+'元'
-       else
-          DevFactory.frmShowPanel.sText := '单价:'+formatFloat('#0.0##',Value)+'元';
+       DevFactory.frmShowPanel.sText := '单价:'+formatFloat('#0.0##',Value)+'元';
        DevFactory.frmShowPanel.StartScreen;
      end;
 end;

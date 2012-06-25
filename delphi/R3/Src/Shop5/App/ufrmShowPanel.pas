@@ -10,7 +10,7 @@ type
   TfrmShowPanel = class(TForm)
     RzPanel1: TRzPanel;
     Timer1: TTimer;
-    RzMarqueeStatus1: TRzMarqueeStatus;
+    RzMarqueeStatus1: TRzStatusPane;
     procedure Timer1Timer(Sender: TObject);
   private
     FsText: string;
@@ -85,6 +85,7 @@ begin
   Form := Screen.ActiveCustomForm;
   try
     Start(Screen.Monitors[GetMonitorExt]);
+    self.BringToFront;
   finally
     if Form.CanFocus and Form.Visible then Form.SetFocus;
   end;
@@ -93,7 +94,7 @@ end;
 procedure TfrmShowPanel.SetsText(const Value: string);
 begin
   FsText := Value;
-  RzMarqueeStatus1.Caption := Value;
+  RzMarqueeStatus1.Caption := ' '+Value;
 end;
 
 procedure TfrmShowPanel.Start(OnMonitor: TMonitor);

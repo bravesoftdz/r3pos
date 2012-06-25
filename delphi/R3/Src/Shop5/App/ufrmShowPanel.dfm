@@ -3,8 +3,8 @@ object frmShowPanel: TfrmShowPanel
   Top = 324
   BorderStyle = bsNone
   Caption = #39038#26174#23631
-  ClientHeight = 72
-  ClientWidth = 347
+  ClientHeight = 95
+  ClientWidth = 402
   Color = clBlack
   TransparentColorValue = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,8 @@ object frmShowPanel: TfrmShowPanel
   object RzPanel1: TRzPanel
     Left = 0
     Top = 0
-    Width = 347
-    Height = 72
+    Width = 402
+    Height = 95
     Align = alClient
     BorderOuter = fsFlat
     BorderColor = clNavy
@@ -28,21 +28,20 @@ object frmShowPanel: TfrmShowPanel
     Color = clBlack
     FlatColor = clOlive
     TabOrder = 0
-    object RzMarqueeStatus1: TRzMarqueeStatus
+    object RzMarqueeStatus1: TRzStatusPane
       Left = 2
       Top = 2
-      Width = 343
-      Height = 68
+      Width = 398
+      Height = 91
       FrameStyle = fsNone
       Align = alClient
-      Font.Charset = GB2312_CHARSET
+      Font.Charset = ANSI_CHARSET
       Font.Color = clLime
-      Font.Height = -35
+      Font.Height = -56
       Font.Name = #23435#20307
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
-      Caption = #37329#39069
-      ScrollSize = 2
+      Caption = #37329#39069':738.94'
     end
   end
   object Timer1: TTimer

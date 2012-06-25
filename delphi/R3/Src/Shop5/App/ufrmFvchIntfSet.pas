@@ -173,6 +173,7 @@ end;
 
 class function TfrmFvchIntfSet.ShowDialog(Owner: TForm): boolean;
 begin
+  if not ShopGlobal.GetChkRight('100002460',1) then Raise Exception.Create('你没有查看的权限,请和管理员联系.');
   with TfrmFvchIntfSet.Create(Owner) do
   begin
     try
@@ -223,6 +224,7 @@ var
   Params:TftParamList;
   FindCol: TColumnEh;
 begin
+  if not ShopGlobal.GetChkRight('100002460',2) then Raise Exception.Create('你没有设置的权限,请和管理员联系.');
   inherited;
   FindCol:=self.FindDBColumn(self.DBGridEh1,'CNAME');
   if FindCol<>nil then
@@ -259,6 +261,7 @@ end;
 
 procedure TfrmFvchIntfSet.btnSaveClick(Sender: TObject);
 begin
+  if not ShopGlobal.GetChkRight('100002460',2) then Raise Exception.Create('你没有设置的权限,请和管理员联系.');
   inherited;
     if not cdsPriceLv.Active then Raise Exception.Create('没有数据！');
     if cdsPriceLv.IsEmpty then Raise Exception.Create('没有数据！');

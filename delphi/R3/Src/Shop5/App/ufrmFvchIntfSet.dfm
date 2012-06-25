@@ -13,21 +13,21 @@ inherited frmFvchIntfSet: TfrmFvchIntfSet
     Color = clWhite
     inherited RzPage: TRzPageControl
       Width = 360
-      Height = 328
+      Height = 339
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Color = clWhite
         Caption = #36741#21161#32534#30721#34920
         inherited RzPanel2: TRzPanel
           Width = 356
-          Height = 301
+          Height = 312
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 36
             Width = 346
-            Height = 260
+            Height = 271
             Align = alClient
             DataSource = dsPriceLv
             Flat = True
@@ -137,7 +137,7 @@ inherited frmFvchIntfSet: TfrmFvchIntfSet
       end
     end
     inherited btPanel: TRzPanel
-      Top = 333
+      Top = 344
       Width = 360
       Height = 38
       BorderColor = clWhite

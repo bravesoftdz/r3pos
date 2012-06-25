@@ -269,6 +269,7 @@ begin
   if cdsDetail.State in [dsEdit,dsInsert] then cdsDetail.Post;
   if edtSEND_DATE.EditValue = null then Raise Exception.Create('发放日期不能为空');
   if edtDEPT_ID.AsString = '' then Raise Exception.Create('发放部门不能为空');
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空');
   if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');
   ClearInvaid;
   if cdsDetail.IsEmpty then Raise Exception.Create('不能保存一张空发放礼券单...');

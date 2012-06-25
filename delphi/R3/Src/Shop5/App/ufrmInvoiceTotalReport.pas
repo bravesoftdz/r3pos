@@ -55,7 +55,7 @@ begin
   rs1 := TZQuery.Create(nil);
   rs2 := TZQuery.Create(nil);
   try
-    rs.SQL.Text := GetInvoiceBookSql;
+    rs.SQL.Text := ParseSQL(Factor.iDbType,GetInvoiceBookSql);
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
     rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
@@ -65,14 +65,14 @@ begin
     if rs.Params.FindParam('INVOICE_FLAG') <> nil then rs.Params.ParamByName('INVOICE_FLAG').AsString := TRecord_(fndP1_INVOICE_FLAG.Properties.Items[fndP1_INVOICE_FLAG.ItemIndex]).FieldByName('CODE_ID').AsString;
     Factor.Open(rs);
 
-    rs1.SQL.Text := ParseSQL(Factor.iDbType,' select isnull(INVH_ID,'''') as INVH_ID,count(INVD_ID) as USING_AMT,max(INVOICE_NO) as USING_MAX_INVH_NO,min(INVOICE_NO) as USING_MIN_INVH_NO '+
+    rs1.SQL.Text := ParseSQL(Factor.iDbType,' select isnull(INVH_ID,''#'') as INVH_ID,count(INVD_ID) as USING_AMT,max(INVOICE_NO) as USING_MAX_INVH_NO,min(INVOICE_NO) as USING_MIN_INVH_NO '+
     ' from SAL_INVOICE_INFO  where TENANT_ID=:TENANT_ID and INVOICE_STATUS=''1'' and CREA_DATE>=:D1 and CREA_DATE<=:D2 group by INVH_ID');
     rs1.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs1.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
     rs1.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
     Factor.Open(rs1);
 
-    rs2.SQL.Text := ParseSQL(Factor.iDbType,' select isnull(INVH_ID,'''') as INVH_ID,INVOICE_NO from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and INVOICE_STATUS=''2'' and CREA_DATE>=:D1 and CREA_DATE<=:D2 ');
+    rs2.SQL.Text := ParseSQL(Factor.iDbType,' select isnull(INVH_ID,''#'') as INVH_ID,INVOICE_NO from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and INVOICE_STATUS=''2'' and CREA_DATE>=:D1 and CREA_DATE<=:D2 ');
     rs2.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs2.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
     rs2.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
@@ -132,10 +132,10 @@ begin
       rs.Next;
     end;
     rs1.Filtered := False;
-    rs1.Filter := 'INVH_ID=''''';
+    rs1.Filter := 'INVH_ID=''#''';
     rs1.Filtered := True;
     rs2.Filtered := False;
-    rs2.Filter := 'INVH_ID=''''';
+    rs2.Filter := 'INVH_ID=''#''';
     rs2.Filtered := True;
     UsingNum := 0;
     UsingNo := '';
@@ -191,7 +191,7 @@ var sSql,sWhere:String;
 begin
   if (P1_D1.EditValue = null) or (P1_D2.EditValue = null) then Raise Exception.Create('领用日期条件不能为空');
   if P1_D1.Date > P1_D2.Date then Raise Exception.Create('领用的结束日期不能小于开始日期...');
-  sWhere := ' and A.TENANT_ID=:TENANT_ID '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+  sWhere := ' and A.TENANT_ID=:TENANT_ID and CREA_DATE<=:D2  '+ShopGlobal.GetDataRight('A.DEPT_ID',2)+ShopGlobal.GetDataRight('A.SHOP_ID',1);
   if fndP1_SHOP_ID.AsString <> '' then
      sWhere := sWhere + ' and A.SHOP_ID=:SHOP_ID ';
   if fndP1_DEPT_ID.AsString <> '' then
@@ -202,17 +202,16 @@ begin
      sWhere := sWhere + ' and A.INVOICE_FLAG=:INVOICE_FLAG ';
 
   sSql := ' select A.INVH_ID,A.INVH_NO,'+
-          ' case when A.BEGIN_NO=B.MIN_INVOICE_NO then 0 else A.TOTAL_AMT-('+
-          ' select count(INVD_ID) from SAL_INVOICE_INFO where INVH_ID=A.INVH_ID and TENANT_ID=:TENANT_ID and CREA_DATE<=:D2 ) end as LAST_TOTAL_AMT,'+
-          ' case when A.BEGIN_NO=B.MIN_INVOICE_NO then '''' else B.MIN_INVOICE_NO end as LAST_BEGIN_INVH_NO,'+
-          ' case when A.BEGIN_NO=B.MIN_INVOICE_NO then '''' else A.ENDED_NO end as LAST_END_INVH_NO,'+
-          ' case when A.BEGIN_NO=B.MIN_INVOICE_NO then A.TOTAL_AMT else 0 end as THIS_TOTAL_AMT,'+
-          ' case when A.BEGIN_NO=B.MIN_INVOICE_NO then B.MIN_INVOICE_NO else '''' end as THIS_BEGIN_INVH_NO,'+
-          ' case when A.BEGIN_NO=B.MIN_INVOICE_NO then A.ENDED_NO else '''' end as THIS_END_INVH_NO '+
-          ' from SAL_INVOICE_BOOK A,('+
-          ' select TENANT_ID,INVH_ID,count(INVD_ID) as THIS_SUM,min(INVOICE_NO) as MIN_INVOICE_NO '+
-          ' from SAL_INVOICE_INFO where CREA_DATE>=:D1 and CREA_DATE<=:D2 group by TENANT_ID,INVH_ID '+
-          ' ) B where A.TENANT_ID=B.TENANT_ID and A.INVH_ID=B.INVH_ID '+sWhere;
+          ' case when A.CREA_DATE>=:D1 then 0 else A.TOTAL_AMT-isnull(B.ORG_TOTAL_AMT,0) end as LAST_TOTAL_AMT,'+
+          ' case when A.CREA_DATE>=:D1 then '''' else B.MIN_INVOICE_NO end as LAST_BEGIN_INVH_NO,'+
+          ' case when A.CREA_DATE>=:D1 then '''' else A.ENDED_NO end as LAST_END_INVH_NO,'+
+          ' case when A.CREA_DATE>=:D1 then A.TOTAL_AMT else 0 end as THIS_TOTAL_AMT,'+
+          ' case when A.CREA_DATE>=:D1 then B.BEGIN_NO else '''' end as THIS_BEGIN_INVH_NO,'+
+          ' case when A.CREA_DATE>=:D1 then A.ENDED_NO else '''' end as THIS_END_INVH_NO '+
+          ' from SAL_INVOICE_BOOK A left outer join ('+
+          ' select TENANT_ID,INVH_ID,count(distinct INVH_ID) as ORG_TOTAL_AMT '+
+          ' from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and CREA_DATE<:D1 group by TENANT_ID,INVH_ID '+
+          ' ) B where A.TENANT_ID=B.TENANT_ID and A.INVH_ID=B.INVH_ID and (A.TOTAL_AMT-isnull(B.ORG_TOTAL_AMT,0))<>0 '+sWhere;
   Result := sSql;
 end;
 

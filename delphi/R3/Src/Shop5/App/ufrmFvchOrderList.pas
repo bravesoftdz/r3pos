@@ -165,7 +165,8 @@ begin
     try
       Params.ParamByName('TENANT_ID').AsInteger := cdsList.FieldbyName('TENANT_ID').AsInteger;
       Params.ParamByName('FVCH_ID').asString := cdsList.FieldbyName('FVCH_ID').AsString;
-      Msg := Factor.ExecProc('TFvchPostForInspur',Params) ;
+      Params.ParamByName('CW_IDX').AsInteger:=1;
+      Msg := Factor.ExecProc('TFvchPosting',Params) ;
     finally
        Params.free;
     end;

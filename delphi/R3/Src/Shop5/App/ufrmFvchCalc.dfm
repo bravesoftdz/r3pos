@@ -12,8 +12,8 @@ inherited frmFvchCalc: TfrmFvchCalc
   object RzPanel1: TRzPanel [0]
     Left = 0
     Top = 0
-    Width = 380
-    Height = 311
+    Width = 388
+    Height = 322
     Align = alClient
     BorderOuter = fsNone
     Color = clWhite
@@ -21,8 +21,8 @@ inherited frmFvchCalc: TfrmFvchCalc
     object RzPanel2: TRzPanel
       Left = 0
       Top = 0
-      Width = 380
-      Height = 269
+      Width = 388
+      Height = 280
       Align = alClient
       BorderOuter = fsNone
       Color = clWhite
@@ -117,7 +117,7 @@ inherited frmFvchCalc: TfrmFvchCalc
       object edt_Fvch_Type: TcxComboBox
         Left = 89
         Top = 39
-        Width = 202
+        Width = 260
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.DropDownListStyle = lsEditFixedList
@@ -142,12 +142,13 @@ inherited frmFvchCalc: TfrmFvchCalc
         Height = 17
         Caption = #24050#23457#26680
         TabOrder = 3
+        Visible = False
       end
     end
     object RzPanel3: TRzPanel
       Left = 0
-      Top = 269
-      Width = 380
+      Top = 280
+      Width = 388
       Height = 42
       Align = alBottom
       BorderOuter = fsNone

@@ -47,15 +47,15 @@ function TInvoiceOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var str:String;
 begin
   Result := False;
-  if FieldByName('INVOICE_STATUS').AsString = '1' then
+  if FieldByName('INVOICE_STATUS').AsOldString = '1' then
   begin
     str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
-           'BALANCE=BALANCE+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
+           'BALANCE=isnull(BALANCE,0)+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
     AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
   end
   else
   begin
-    str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)+1,'+
+    str := ' update SAL_INVOICE_BOOK set BALANCE=isnull(BALANCE,0)+1'+
            'CANCEL_AMT=isnull(CANCEL_AMT,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
     AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
   end;
@@ -74,7 +74,7 @@ begin
   end
   else
   begin
-    str := ParseSQL(iDbType,' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
+    str := ParseSQL(iDbType,' update SAL_INVOICE_BOOK set BALANCE=isnull(BALANCE,0)-1,'+
            'CANCEL_AMT=isnull(CANCEL_AMT,0)+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ');
     AGlobal.ExecSQL(str,Self);
   end;

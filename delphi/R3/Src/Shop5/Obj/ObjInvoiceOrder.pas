@@ -47,9 +47,18 @@ function TInvoiceOrder.BeforeDeleteRecord(AGlobal: IdbHelp): Boolean;
 var str:String;
 begin
   Result := False;
-  str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
-         'BALANCE=BALANCE+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
-  AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
+  if FieldByName('INVOICE_STATUS').AsString = '1' then
+  begin
+    str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
+           'BALANCE=BALANCE+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
+    AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
+  end
+  else
+  begin
+    str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)+1,'+
+           'CANCEL_AMT=isnull(CANCEL_AMT,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
+    AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
+  end;
   Result := True;
 end;
 
@@ -57,15 +66,26 @@ function TInvoiceOrder.BeforeInsertRecord(AGlobal: IdbHelp): Boolean;
 var str:String;
 begin
   Result := False;
-  str := ParseSQL(iDbType,' update SAL_INVOICE_BOOK set CURRENT_NO=:INVOICE_NO,USING_AMT=isnull(USING_AMT,0)+1,'+
-         'BALANCE=isnull(BALANCE,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ');
-  AGlobal.ExecSQL(str,Self);
+  if FieldByName('INVOICE_STATUS').AsString = '1' then
+  begin
+    str := ParseSQL(iDbType,' update SAL_INVOICE_BOOK set CURRENT_NO=:INVOICE_NO,USING_AMT=isnull(USING_AMT,0)+1,'+
+           'BALANCE=isnull(BALANCE,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ');
+    AGlobal.ExecSQL(str,Self);
+  end
+  else
+  begin
+    str := ParseSQL(iDbType,' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
+           'CANCEL_AMT=isnull(CANCEL_AMT,0)+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ');
+    AGlobal.ExecSQL(str,Self);
+  end;
   Result := True;
 end;
 
 function TInvoiceOrder.BeforeModifyRecord(AGlobal: IdbHelp): Boolean;
 begin
   if not CheckTimeStamp(AGlobal,FieldbyName('TIME_STAMP').AsString,false) then Raise Exception.Create('当前发票已经被另一用户修改，你不能再保存。');
+  Result := BeforeDeleteRecord(AGlobal);
+  Result := BeforeInsertRecord(AGlobal);
 end;
 
 function TInvoiceOrder.BeforeUpdateRecord(AGlobal: IdbHelp): Boolean;

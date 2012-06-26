@@ -348,30 +348,25 @@ begin
        if MessageBox(Handle,'确认还原作废发票？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
-    Params := TftParamList.Create(nil);
-    try
-      Params.ParamByName('TENANT_ID').AsInteger := cdsList.FieldbyName('TENANT_ID').AsInteger;
-      Params.ParamByName('INVD_ID').asString := cdsList.FieldbyName('INVD_ID').AsString;
-      if cdsList.FieldByName('INVOICE_STATUS').AsString='1' then
-         Msg := Factor.ExecProc('TInvoiceOrderAudit',Params)
-      else
-         Msg := Factor.ExecProc('TInvoiceOrderUnAudit',Params) ;
-    finally
-       Params.free;
-    end;
-    MessageBox(Handle,Pchar(Msg),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+
     if cdsList.FieldByName('INVOICE_STATUS').AsString='1' then
        begin
           cdsList.Edit;
           cdsList.FieldByName('INVOICE_STATUS').AsString := '2';
           cdsList.Post;
+          Factor.UpdateBatch(cdsList,'TInvoiceOrder');
+          MessageBox(Handle,Pchar('作废发票成功'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
        end
     else
        begin
           cdsList.Edit;
           cdsList.FieldByName('INVOICE_STATUS').AsString := '1';
           cdsList.Post;
+          Factor.UpdateBatch(cdsList,'TInvoiceOrder');
+          MessageBox(Handle,Pchar('还原发票成功'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
        end;
+
+
   except
     on E:Exception do
        begin
@@ -627,8 +622,9 @@ begin
      strWhere := strWhere +' and A.INVOICE_NO like ''%'+trim(fndINVOICE_NO.Text)+''' ';
 
   strSql:=
-  'select A.TENANT_ID,A.INVD_ID,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,'+
-  'A.CREA_DATE,B.CLIENT_NAME as CLIENT_ID_TEXT,A.REMARK,A.INVOICE_FLAG,A.INVOICE_NO,A.INVOICE_STATUS,A.INVOICE_MNY '+
+  'select A.TENANT_ID,A.INVD_ID,A.INVH_ID,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,'+
+  'A.SHOP_ID,A.DEPT_ID,A.CREA_DATE,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.INVO_NAME,A.ADDR_NAME,A.REMARK,A.INVOICE_FLAG,'+
+  'A.INVOICE_NO,A.INVOICE_STATUS,A.EXPORT_STATUS,A.INVOICE_MNY,A.COMM,A.TIME_STAMP '+
   ' from SAL_INVOICE_INFO A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+

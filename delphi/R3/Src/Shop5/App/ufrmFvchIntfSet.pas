@@ -61,7 +61,6 @@ end;
 procedure TfrmFvchIntfSet.FormShow(Sender: TObject);
 begin
   inherited;
-  FModifRight:=ShopGlobal.GetChkRight('100002460',2);
   //Open; //打开数据
   btnSave.Enabled:=False;
   DBGridEh1.SetFocus;
@@ -157,11 +156,6 @@ end;
 
 procedure TfrmFvchIntfSet.SetdbState(const Value: TDataSetState);
 begin
-   if FModifRight=False then
-   begin
-     Exit;
-     dbState:=Browse;
-   end;
    inherited;
 end;
 

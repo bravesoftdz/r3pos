@@ -50,13 +50,13 @@ begin
   if FieldByName('INVOICE_STATUS').AsOldString = '1' then
   begin
     str := ' update SAL_INVOICE_BOOK set USING_AMT=isnull(USING_AMT,0)-1,'+
-           'BALANCE=isnull(BALANCE,0)+1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
+           'BALANCE=isnull(BALANCE,0)+1 where TENANT_ID=:OLD_TENANT_ID and INVH_ID=:OLD_INVH_ID ';
     AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
   end
   else
   begin
     str := ' update SAL_INVOICE_BOOK set BALANCE=isnull(BALANCE,0)+1'+
-           'CANCEL_AMT=isnull(CANCEL_AMT,0)-1 where TENANT_ID=:TENANT_ID and INVH_ID=:INVH_ID ';
+           'CANCEL_AMT=isnull(CANCEL_AMT,0)-1 where TENANT_ID=:OLD_TENANT_ID and INVH_ID=:OLD_INVH_ID ';
     AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
   end;
   Result := True;

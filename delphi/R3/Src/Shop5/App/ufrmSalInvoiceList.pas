@@ -109,7 +109,7 @@ type
 
 implementation
 uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSalInvoice,
-  uframeMDForm, uframeDialogForm;
+  uframeMDForm, uframeDialogForm, ufrmBasic;
 {$R *.dfm}
 
 procedure TfrmSalInvoiceList.actNewExecute(Sender: TObject);
@@ -332,6 +332,7 @@ procedure TfrmSalInvoiceList.actAuditExecute(Sender: TObject);
 var
   Msg :string;
   Params:TftParamList;
+  rs:TZQuery;
 begin
   inherited;
   if cdsList.IsEmpty then Raise Exception.Create('请选择要作废的发票');
@@ -348,24 +349,33 @@ begin
        if MessageBox(Handle,'确认还原作废发票？',pchar(Application.Title),MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
      end;
   try
+    Params := TftParamList.Create;
+    rs := TZQuery.Create(nil);
+    try
+      Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+      Params.ParamByName('INVD_ID').AsString := cdsList.FieldByName('INVD_ID').AsString;
+      Factor.Open(rs,'TInvoiceOrder',Params);
 
-    if cdsList.FieldByName('INVOICE_STATUS').AsString='1' then
-       begin
-          cdsList.Edit;
-          cdsList.FieldByName('INVOICE_STATUS').AsString := '2';
-          cdsList.Post;
-          Factor.UpdateBatch(cdsList,'TInvoiceOrder');
-          MessageBox(Handle,Pchar('作废发票成功'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-       end
-    else
-       begin
-          cdsList.Edit;
-          cdsList.FieldByName('INVOICE_STATUS').AsString := '1';
-          cdsList.Post;
-          Factor.UpdateBatch(cdsList,'TInvoiceOrder');
-          MessageBox(Handle,Pchar('还原发票成功'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
-       end;
-
+      if cdsList.FieldByName('INVOICE_STATUS').AsString='1' then
+         begin
+            rs.Edit;
+            rs.FieldByName('INVOICE_STATUS').AsString := '2';
+            rs.Post;
+            Factor.UpdateBatch(rs,'TInvoiceOrder');
+            MessageBox(Handle,Pchar('作废发票成功'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+         end
+      else
+         begin
+            rs.Edit;
+            rs.FieldByName('INVOICE_STATUS').AsString := '1';
+            rs.Post;
+            Factor.UpdateBatch(rs,'TInvoiceOrder');
+            MessageBox(Handle,Pchar('还原发票成功'),Pchar(Application.Title),MB_OK+MB_ICONINFORMATION);
+         end;
+    finally
+      rs.Free;
+      Params.Free;
+    end;
 
   except
     on E:Exception do
@@ -623,8 +633,7 @@ begin
 
   strSql:=
   'select A.TENANT_ID,A.INVD_ID,A.INVH_ID,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,'+
-  'A.SHOP_ID,A.DEPT_ID,A.CREA_DATE,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.INVO_NAME,A.ADDR_NAME,A.REMARK,A.INVOICE_FLAG,'+
-  'A.INVOICE_NO,A.INVOICE_STATUS,A.EXPORT_STATUS,A.INVOICE_MNY,A.COMM,A.TIME_STAMP '+
+  'A.CREA_DATE,A.CLIENT_ID,B.CLIENT_NAME as CLIENT_ID_TEXT,A.INVO_NAME,A.REMARK,A.INVOICE_FLAG,A.INVOICE_NO,A.INVOICE_STATUS,A.INVOICE_MNY '+
   ' from SAL_INVOICE_INFO A left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+

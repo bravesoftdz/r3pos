@@ -55,7 +55,7 @@ begin
   end
   else
   begin
-    str := ' update SAL_INVOICE_BOOK set BALANCE=isnull(BALANCE,0)+1'+
+    str := ' update SAL_INVOICE_BOOK set BALANCE=isnull(BALANCE,0)+1,'+
            'CANCEL_AMT=isnull(CANCEL_AMT,0)-1 where TENANT_ID=:OLD_TENANT_ID and INVH_ID=:OLD_INVH_ID ';
     AGlobal.ExecSQL(ParseSQL(iDbType,str),self);
   end;

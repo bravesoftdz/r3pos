@@ -7,25 +7,25 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 983
-    Height = 476
+    Width = 991
+    Height = 487
     inherited RzPanel2: TRzPanel
-      Width = 973
-      Height = 466
+      Width = 981
+      Height = 477
       inherited RzPage: TRzPageControl
-        Width = 768
-        Height = 460
+        Width = 776
+        Height = 471
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21457#31080#32479#35745#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
-            Width = 766
-            Height = 433
+            Width = 774
+            Height = 444
             inherited Panel4: TPanel
-              Width = 756
-              Height = 423
+              Width = 764
+              Height = 434
               inherited w1: TRzPanel
-                Width = 756
+                Width = 764
                 Height = 100
                 object lab_SHOP_ID: TRzLabel
                   Left = 24
@@ -290,11 +290,11 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 100
-                Width = 756
-                Height = 323
+                Width = 764
+                Height = 334
                 inherited DBGridEh1: TDBGridEh
-                  Width = 752
-                  Height = 319
+                  Width = 760
+                  Height = 330
                   Columns = <
                     item
                       EditButtons = <>
@@ -392,8 +392,8 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 771
-        Height = 460
+        Left = 779
+        Height = 471
         inherited Panel2: TPanel
           Height = 439
           inherited Panel5: TPanel
@@ -407,15 +407,15 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 983
+    Width = 991
     inherited Image3: TImage
-      Width = 197
+      Width = 209
     end
     inherited Image14: TImage
-      Left = 963
+      Left = 971
     end
     inherited Image1: TImage
-      Left = 551
+      Left = 559
     end
   end
   inherited mmMenu: TMainMenu

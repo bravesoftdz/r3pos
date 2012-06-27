@@ -203,15 +203,15 @@ begin
 
   sSql := ' select A.INVH_ID,A.INVH_NO,'+
           ' case when A.CREA_DATE>=:D1 then 0 else A.TOTAL_AMT-isnull(B.ORG_TOTAL_AMT,0) end as LAST_TOTAL_AMT,'+
-          ' case when A.CREA_DATE>=:D1 then '''' else B.MIN_INVOICE_NO end as LAST_BEGIN_INVH_NO,'+
+          ' case when A.CREA_DATE>=:D1 then '''' else A.BEGIN_NO end as LAST_BEGIN_INVH_NO,'+
           ' case when A.CREA_DATE>=:D1 then '''' else A.ENDED_NO end as LAST_END_INVH_NO,'+
           ' case when A.CREA_DATE>=:D1 then A.TOTAL_AMT else 0 end as THIS_TOTAL_AMT,'+
-          ' case when A.CREA_DATE>=:D1 then B.BEGIN_NO else '''' end as THIS_BEGIN_INVH_NO,'+
+          ' case when A.CREA_DATE>=:D1 then A.BEGIN_NO else '''' end as THIS_BEGIN_INVH_NO,'+
           ' case when A.CREA_DATE>=:D1 then A.ENDED_NO else '''' end as THIS_END_INVH_NO '+
           ' from SAL_INVOICE_BOOK A left outer join ('+
-          ' select TENANT_ID,INVH_ID,count(distinct INVH_ID) as ORG_TOTAL_AMT '+
+          ' select TENANT_ID,INVH_ID,count(distinct INVD_ID) as ORG_TOTAL_AMT '+
           ' from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and CREA_DATE<:D1 group by TENANT_ID,INVH_ID '+
-          ' ) B where A.TENANT_ID=B.TENANT_ID and A.INVH_ID=B.INVH_ID and (A.TOTAL_AMT-isnull(B.ORG_TOTAL_AMT,0))<>0 '+sWhere;
+          ' ) B on A.TENANT_ID=B.TENANT_ID and A.INVH_ID=B.INVH_ID where (A.TOTAL_AMT-isnull(B.ORG_TOTAL_AMT,0))<>0 '+sWhere;
   Result := sSql;
 end;
 

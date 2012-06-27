@@ -85,7 +85,7 @@ CREATE TABLE ACC_FVCHFRAME (
   --科目代码
   SUBJECT_NO varchar(10)   NOT NULL,
   --凭证字
-  FVCH_NAME varchar2(20)   NOT NULL,
+  FVCH_NAME varchar(20)   NOT NULL,
   --摘要
   SUMMARY varchar(100)   NOT NULL,
         --金额<取数字段>

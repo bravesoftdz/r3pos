@@ -3,7 +3,7 @@ unit rzXmlDown;
 interface
 
 uses Windows, XMLIntf, Graphics, XMLDoc, msXml, classes, ComObj, IdBaseComponent, IdComponent,Forms,
-     IdTCPConnection, IdTCPClient, IdHTTP, SysUtils, RzCtrls, HttpApp, ActiveX, Jpeg;
+     IdTCPConnection, IdTCPClient, IdHTTP, SysUtils, RzCtrls, HttpApp, ActiveX, Jpeg,md5;
 
 type
   TUrlInfo=record
@@ -49,6 +49,7 @@ type
     procedure ReadProgramList(Root:IXMLDOMNode);
     procedure AddPhoto(Root:IXMLDOMNode);
     procedure AddVideo(Root:IXMLDOMNode);
+    procedure AddMusic(Root:IXMLDOMNode);
     procedure Open(FileName:String);
     procedure DoRedirect(Sender: TObject; var dest: String;
       var NumRedirect: Integer; var Handled: Boolean;
@@ -58,6 +59,7 @@ type
     destructor Destroy; override;
     procedure Clear;
     function DownFile(src:string;filename:string):boolean;
+    function GetFile(src:string;filename:string):boolean;
     function DownAllRes:boolean;
     function DownHeader:boolean;
     function SendStatus(flag:integer;msg:string=''):boolean;
@@ -92,6 +94,7 @@ type
     procedure DownSrc(srctype:integer;src,msgId,pId,apply,token:string);
     procedure DownXml(xml:string);
     procedure DownPrm(xml:string);
+    procedure DownFile_Test(url:string;filename:string);
     procedure Play;
   end;
 
@@ -203,28 +206,70 @@ begin
 end;
 
 function TrzXmlDown.DownFile(src, filename: string): boolean;
-var fFile:TFileStream;
+var
+  fFile:TFileStream;
   idHTTP:TidHTTP;
+  lastModify:string;
+  Etag:string;
+  ext:string;
+  mm:TMemoryStream;
 begin
   result := false;
   ForceDirectories(ExtractFileDir(filename));
-  fFile := TFileStream.Create(filename+'.ft',fmCreate);
   idHTTP := TidHTTP.Create(nil);
   try
       idHTTP.OnWork := IdHTTPWork;
       idHTTP.OnRedirect := DoRedirect;
-      idHttp.HandleRedirects := true;
+      idHTTP.ProtocolVersion := pv1_1 ;
+      idHTTP.HandleRedirects := true;
       IdHTTP.Head(src);
-      FTFileSize := IdHTTP.Response.ContentLength;
-      IdHTTP.Get(src,FFile);
+      lastModify := IdHTTP.Response.RawHeaders.Values['Last-Modified'];
+      Etag := IdHTTP.Response.RawHeaders.Values['Etag'];
+      ext := MD5Print(MD5String(lastModify+Etag));
+      FTFileSize := StrtoInt64Def(IdHTTP.Response.RawHeaders.Values['Content-Length'],0);
+      SendDebug('信息“'+filename+'”->Last-Modified:'+lastModify+' Etag:'+Etag+' Content-Length:'+inttostr(FTFileSize),4);
+      if (FTFileSize<=0) then
+      begin
+         deletefile(filename+'.'+ext);
+         fFile := TFileStream.Create(filename+'.'+ext,fmCreate);
+         try
+           IdHTTP.Get(src,FFile);
+         finally
+           fFile.Free;
+         end;
+      end
+      else
+      begin
+         if not fileExists(filename+'.'+ext) then
+           fFile := TFileStream.Create(filename+'.'+ext,fmCreate)
+         else
+           fFile := TFileStream.Create(filename+'.'+ext,fmOpenReadWrite);
+         mm := TMemoryStream.Create;
+         try
+            fFile.Seek(0,soEnd);
+            while fFile.Position<FTFileSize do
+               begin
+                 if XmlDown.Terminated then Exit;
+                 IdHttp.Request.ContentRangeStart := fFile.Position;
+                 IdHttp.Request.ContentRangeEnd   := fFile.Position+1024*10;
+                 SendDebug('分块下载->Content-Range:'+inttostr(IdHttp.Request.ContentRangeStart)+'-'+inttostr(IdHttp.Request.ContentRangeEnd),4);
+                 mm.Clear;
+                 IdHTTP.Get(src,mm);
+                 mm.Position := 0;
+                 fFile.CopyFrom(mm,mm.Size); 
+               end;
+         finally
+            mm.Free;
+            fFile.Free;
+         end;
+      end;
   finally
     idHTTP.Free;
-    fFile.Free;
   end;
   deletefile(pchar(filename));
-  if not renamefile(filename+'.ft',filename) then
+  if not renamefile(filename+'.'+ext,filename) then
      begin
-       deletefile(pchar(filename+'.ft'));
+       deletefile(pchar(filename+'.'+ext));
        Raise Exception.Create('下载"'+src+'"失败了.');
      end;
   SendDebug('下载“'+src+'”完毕',4);
@@ -244,7 +289,6 @@ end;
 procedure TrzXmlDown.IdHTTPWork(Sender: TObject; AWorkMode: TWorkMode;
   const AWorkCount: Integer);
 begin
-
 end;
 
 procedure TrzXmlDown.ReadPlayList(Root: IXMLDOMNode);
@@ -275,6 +319,18 @@ begin
     end;
   end;
 
+  Node := Root.selectSingleNode('musicElList');
+  if Node <> nil then
+  begin
+    Node := Node.firstChild;
+    while Node <> nil do
+    begin
+      if Node.nodeName = 'musicEl' then
+         AddMusic(Node);
+      Node := Node.nextSibling;
+    end;
+  end;
+  
   Node := Root.selectSingleNode('videoElList');
   if Node <> nil then
   begin
@@ -334,7 +390,7 @@ var
 begin
   result := false;
   filename := AppData+'\temp\play'+formatDatetime('yyyymmddhhnnss',now())+'.xml';
-  downfile(src,filename);
+  Getfile(src,filename);
   try
     open(filename);
     result := true;
@@ -444,6 +500,7 @@ begin
   idHTTP := TidHTTP.Create(nil);
   try
       idHTTP.OnWork := IdHTTPWork;
+      idHTTP.OnRedirect := DoRedirect;
       idHttp.HandleRedirects := true;
       try
         IdHTTP.Put(upUrl,FFile);
@@ -722,7 +779,56 @@ procedure TrzXmlDown.DoRedirect(Sender: TObject; var dest: String;
   var NumRedirect: Integer; var Handled: Boolean;
   var VMethod: TIdHTTPMethod);
 begin
-  SendDebug('<'+inttostr(NumRedirect)+'>重定向url='+dest,4);
+//  SendDebug('<'+inttostr(NumRedirect)+'>重定向url='+dest,4);
+end;
+
+procedure TrzXmlDown.AddMusic(Root: IXMLDOMNode);
+var Node:IXMLDOMNode;
+    Url_Info:PUrlInfo;
+begin
+  Node := Root.selectSingleNode('musicList');
+  Node := Node.firstChild;
+  while Node <> nil do
+  begin
+    if Node.nodeName = 'music' then
+    begin
+      new(Url_Info);
+      Url_Info^.UrlId := Node.selectSingleNode('musicId').text+ExtractFileExt(Node.selectSingleNode('musicName').text);
+      Url_Info^.Url := Node.selectSingleNode('path').text;
+      Url_Info^.resType := 3;
+      FList.Add(Url_Info);
+    end;
+    Node := Node.nextSibling;
+  end;
+end;
+
+function TrzXmlDown.GetFile(src, filename: string): boolean;
+var fFile:TFileStream;
+  idHTTP:TidHTTP;
+begin
+  result := false;
+  ForceDirectories(ExtractFileDir(filename));
+  fFile := TFileStream.Create(filename+'.ft',fmCreate);
+  idHTTP := TidHTTP.Create(nil);
+  try
+      idHTTP.OnWork := IdHTTPWork;
+      idHTTP.OnRedirect := DoRedirect;
+      idHttp.HandleRedirects := true;
+      IdHTTP.Head(src);
+      FTFileSize := IdHTTP.Response.ContentLength;
+      IdHTTP.Get(src,FFile);
+  finally
+    idHTTP.Free;
+    fFile.Free;
+  end;
+  deletefile(pchar(filename));
+  if not renamefile(filename+'.ft',filename) then
+     begin
+       deletefile(pchar(filename+'.ft'));
+       Raise Exception.Create('下载"'+src+'"失败了.');
+     end;
+  SendDebug('下载“'+src+'”完毕',4);
+  result := true;
 end;
 
 { TXmlDownThread }
@@ -1030,9 +1136,14 @@ begin
   SetEvent(Event);
 end;
 
+procedure TXmlDownThread.DownFile_Test(url, filename: string);
+begin
+  Down.DownFile(url,filename); 
+end;
+
 initialization
   XmlDown := TXmlDownThread.Create;
 finalization
   XmlDown.free;
 
-end.                                                                               
+end.

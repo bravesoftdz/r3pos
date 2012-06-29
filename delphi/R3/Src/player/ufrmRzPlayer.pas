@@ -42,6 +42,7 @@ type
     N11: TMenuItem;
     Timer2: TTimer;
     IdHTTP1: TIdHTTP;
+    N12: TMenuItem;
     procedure Fullscreen1Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -56,6 +57,7 @@ type
     procedure N11Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
+    procedure N12Click(Sender: TObject);
   private
     FdefaultMonitor: integer;
     OsdChanged : Boolean;
@@ -226,11 +228,12 @@ begin
   Application.OnException := AppExecption;
   Keyid:=GlobalAddAtom('playStore');
   RegisterHotKey(Handle,Keyid,MOD_CONTROL+MOD_SHIFT,VK_F12);
-       
+{
   whMouse := SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallBack,
     hInstance,
     0
     );
+}    
   whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
     hInstance,
     0);
@@ -257,7 +260,7 @@ end;
 destructor TfrmRzPlayer.Destroy;
 begin
   Timer1.Enabled := false;
-  UnhookWindowsHookEx(whMouse);
+//  UnhookWindowsHookEx(whMouse);
   UnhookWindowsHookEx(whKeyboard);
 //  UnhookWindowsHookEx(whMessage);
   UnRegisterHotKey(handle,Keyid);
@@ -282,6 +285,7 @@ begin
   ShowWindow( Application.Handle, sw_Hide );
   XmlDown.Resume;
   Timer1.Enabled := true;
+  Timer2.Enabled := true;
   SetScreenSaverActive(0);
 end;
 
@@ -571,6 +575,8 @@ begin
 end;
 
 procedure TfrmRzPlayer.Timer2Timer(Sender: TObject);
+var
+  lpRect:PRect;
 begin
   if IsWorkStationLocked then
      begin
@@ -578,6 +584,13 @@ begin
      end
   else
      begin
+       new(lpRect);
+       try
+         lpRect^  := MMonitor.BoundsRect;
+         ClipCursor(lpRect);
+       finally
+         dispose(lpRect);
+       end;
        if locked then
           begin
             if Assigned(frmRzMonitor.playFile) then
@@ -592,6 +605,16 @@ procedure TfrmRzPlayer.RzPlayClose(var Message: TMessage);
 begin
   frmRzMonitor.close;
   frmRzMonitor.clear;
+end;
+
+procedure TfrmRzPlayer.N12Click(Sender: TObject);
+var
+  s:string;
+begin
+  if InputRzBox('断点下载','请下载文件url:',s) then
+     begin
+       XmlDown.DownFile_Test(s,appdata+'\downfile.test');
+     end;
 end;
 
 initialization

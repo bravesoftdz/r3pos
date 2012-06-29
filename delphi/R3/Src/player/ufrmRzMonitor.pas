@@ -23,6 +23,7 @@ type
     procedure SetplayIndex(const Value: integer);
     procedure SetdefFile(const Value: TrzFile); // ²å²¥ÁÐ±í
   protected
+    procedure CreateParams(var Params: TCreateParams); override;
     procedure PlayEndIng(var Message: TMessage); message WM_PLAY_ENDING;
     procedure AddFile(rzFile:TrzFile);
     procedure AddPFile(rzFile:TrzFile);
@@ -52,7 +53,7 @@ type
     property playFile:TrzFile read FplayFile write SetplayFile;
     property defFile:TrzFile read FdefFile write SetdefFile;
   end;
-
+var DeskWnd:THandle;
 implementation
 uses IniFiles,ScrnCtrl;
 {$R *.dfm}
@@ -89,8 +90,6 @@ begin
   playFile := nil;
   defFile := nil;
   playIndex := -1;
-  windows.SetParent(Handle,FindWindow('Progman',nil)); 
-
 end;
 
 procedure TfrmRzMonitor.Play;
@@ -360,6 +359,15 @@ end;
 procedure TfrmRzMonitor.SetdefFile(const Value: TrzFile);
 begin
   FdefFile := Value;
+end;
+
+procedure TfrmRzMonitor.CreateParams(var Params: TCreateParams);
+begin
+  inherited CreateParams(Params);
+  with Params do
+    begin
+       WndParent:=FindWindow('Progman',nil);
+    end;
 end;
 
 end.

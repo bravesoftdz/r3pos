@@ -13,7 +13,9 @@ uses
   ufrmPassword in 'ufrmPassword.pas' {frmPassword},
   ssCtrl in 'ssCtrl.pas',
   ScrnCtrl in 'ScrnCtrl.pas',
-  MultPlayer in 'MultPlayer.pas';
+  MultPlayer in 'MultPlayer.pas',
+  Des in '..\..\Pub\des.pas',
+  md5 in 'md5.pas';
 
 {$R *.res}
 //{$R ..\..\Pub\UAC.res}

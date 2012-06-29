@@ -13,7 +13,7 @@ const
   WM_PLAY_END=WM_PLAY_START+1;
   WM_PLAY_CLOSE=WM_PLAY_END+1;
 type
-  TMonitorType=(mtNone,mtPhoto,mtText,mtVideo);
+  TMonitorType=(mtNone,mtPhoto,mtText,mtVideo,mtMusic);
   TPlayStatus=(psNone,psPlaying,psEnded);
   PSrcDefine=^TSrcDefine;
   TSrcDefine=record
@@ -117,6 +117,22 @@ type
     property playTimes:integer read FplayTimes write SetplayTimes;
   end;
   TrzVideoMonitor=class(TrzMonitor)
+  private
+    Handle:THandle;
+    FilterGraph:TFilterGraph;
+    procedure FilterGraphGraphComplete(sender: TObject;Result: HRESULT; Renderer: IBaseFilter);
+    procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
+    procedure WndProc(var Message: TMessage);
+  public
+    function Open(src:PSrcDefine):boolean;override;
+    procedure Close;override;
+    procedure Pause;override;
+    procedure resume;override;
+
+    constructor Create(AOwner: TWinControl); override;
+    destructor Destroy; override;
+  end;
+  TrzMusicMonitor=class(TrzMonitor)
   private
     Handle:THandle;
     FilterGraph:TFilterGraph;
@@ -264,6 +280,7 @@ type
     procedure PlayNext;
     procedure Sort;
     function PlayEnd:boolean;
+    procedure WriteToFile;
   public
     constructor Create(AOwner: TWinControl;AFile:TrzFile);
     destructor Destroy; override;
@@ -300,6 +317,9 @@ type
     FList:TList;
     Timer:TTimer;
     Findex: integer;
+    maxLen:int64;
+    playLen:int64;
+    dayPlayFile:string;
     curPlayList:TrzPlayList;
     xmlDoc:IXMLDomDocument;
     FProgramListType: integer;
@@ -322,6 +342,7 @@ type
   protected
     procedure TimerComplete(Sender:TObject);
     procedure Sort;
+    procedure WriteToFile;
   public
     constructor Create(AOwner: TWinControl);
     destructor Destroy; override;
@@ -1048,6 +1069,60 @@ begin
          end;
      end;
 end;
+procedure AddMusic(root: IXMLDOMNode);
+var
+  Node:IXMLDOMNode;
+  Music:TrzMusicMonitor;
+  Src:PSrcDefine;
+  Volume:integer;
+  MusicLen,myLen:integer;
+begin
+  if Root.selectSingleNode('volume')<>nil then
+     Volume:= StrtoIntDef(Root.selectSingleNode('volume').text,-1)
+  else
+     Volume := -1;
+
+  Music := TrzMusicMonitor.Create(Parant);
+  Flist.Add(Music);
+  Music.rcProgram := self;
+  Music.MonitorIdx := Flist.Count -1 ;
+  Node := Root.selectSingleNode('musicList');
+  Node := Node.firstChild;
+  myLen := 0;
+  MusicLen := 0;
+  while Node<>nil do
+    begin
+      if Node.nodeName='music' then
+         begin
+           new(src);
+           src^.SourceId := Node.selectSingleNode('musicId').text;
+           src^.Sequence := StrtoIntDef(Node.selectSingleNode('sequence').text,0);
+           src^.volume := Volume;
+           src^.src := AppData+'\res\music\'+Node.selectSingleNode('musicId').text+ExtractFileExt(Node.selectSingleNode('musicName').text);
+           if Node.selectSingleNode('musicLen')<>nil then
+              src^.srcLength:= StrtoIntDef(Node.selectSingleNode('musicLen').text,1)
+           else
+              src^.srcLength := 1;
+           Music.AddSrc(src);
+           myLen := myLen + src^.srcLength;
+           MusicLen := MusicLen + src^.srcLength;
+         end;
+      Node := Node.nextSibling;
+    end;
+  if myLen>MonitorLen then MonitorLen := myLen;
+  Music.Sort;
+  if rzPlayList.PlayType = 0 then
+     begin
+      if (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_playlist_index',-1)=rzPlayList.PlayListIndex)
+          and
+         (plays.ReadInteger(rzPlayList.rzFile.ProgramListId,'cache_program_index',-1)=ProgramIndex)
+      then
+         begin
+           Music.Findex := Plays.readInteger(rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(flist.Count-1),0)-1;
+           if Music.Findex >= (Music.SrcCount-1) then Music.Findex :=  -1;
+         end;
+     end;
+end;
 procedure AddPhoto(root: IXMLDOMNode);
 var
   Node:IXMLDOMNode;
@@ -1205,6 +1280,18 @@ begin
           begin
             if Node.nodeName='videoEl' then
                AddVideo(Node);
+            Node := Node.nextSibling;
+          end;
+     end;
+  //初始化音频
+  Node := Root.selectSingleNode('musicElList');
+  if Node<>nil then
+     begin
+        Node := Node.firstChild;
+        while Node<>nil do
+          begin
+            if Node.nodeName='musicEl' then
+               AddMusic(Node);
             Node := Node.nextSibling;
           end;
      end;
@@ -1462,6 +1549,23 @@ begin
   Flist.Clear;
 end;
 
+
+procedure TrzPlayList.WriteToFile;
+var
+  F:TIniFile;
+  filename:string;
+  n:integer;
+begin
+  filename := AppData+'\logs\'+formatDatetime('YYYYMMDD',now())+'.dat';
+  F := TIniFile.Create(filename);
+  try
+    n := F.ReadInteger(rzFile.ProgramListId,PlayListId,0);
+    F.WriteInteger(rzFile.ProgramListId,PlayListId,n+1);
+  finally
+    F.Free;
+  end;
+  SendDebug('>>'+rzFile.ProgramListId+'->PlayListId->'+inttostr(n+1)+'次',4);
+end;
 constructor TrzPlayList.Create(AOwner: TWinControl;AFile:TrzFile);
 begin
   FList := TList.Create;
@@ -1605,6 +1709,7 @@ begin
        NearTime := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
        _Start := GetTickCount;
        Timer.Enabled := (Timer.Interval>0);
+       WriteToFile;
      end;
 end;
 
@@ -1792,6 +1897,7 @@ begin
   Parant := AOwner;
   curPlayList := nil;
   findex := -1;
+  playLen := 0;
 end;
 
 destructor TrzFile.Destroy;
@@ -2012,7 +2118,12 @@ var
 begin
   if flist.Count=0 then exit;
   if SLocked then Exit;
-
+  inc(playLen);
+  inc(maxLen);
+  if (playlen mod 60)=0 then
+     begin
+       WriteToFile;
+     end;
   hasPlay := false;
   if Assigned(curPlayList) and (curPlayList.PlayType=1) and not curPlayList.Ended then Exit;
 
@@ -2080,6 +2191,25 @@ begin
        else
           if hasPlay then Play(false);
      end;
+end;
+
+procedure TrzFile.WriteToFile;
+var
+  F:TIniFile;
+  filename:string;
+begin
+  filename := AppData+'\logs\'+formatDatetime('YYYYMMDD',now())+'.dat';
+  if (dayPlayFile<>filename) and (dayPlayFile<>'') then playLen := 0;
+  F := TIniFile.Create(filename);
+  try
+    dayPlayFile := filename;
+    F.WriteInteger('playLength','maxLength',maxLen div 60);
+    F.WriteInteger('playLength','Length',playLen div 60);
+  finally
+    F.Free;
+  end;
+  SendDebug('>>dayLength->maxLength->'+inttostr(maxLen div 60)+'分',4);
+  SendDebug('>>dayLength->Length->'+inttostr(playLen div 60)+'分',4);
 end;
 
 { TrzPlayIni }
@@ -2188,6 +2318,95 @@ end;
 procedure TrzPlayIni.Leave;
 begin
   LeaveCriticalSection(FThreadLock);
+end;
+
+{ TrzMusicMonitor }
+
+procedure TrzMusicMonitor.Close;
+begin
+  Timer.Enabled := false;
+  FilterGraph.Stop;
+  FilterGraph.ClearGraph;
+  FilterGraph.Active := False;
+  index := -1;
+  inherited;
+
+end;
+
+constructor TrzMusicMonitor.Create(AOwner: TWinControl);
+begin
+  inherited;
+  Handle := AllocateHwnd(WndProc);
+  FilterGraph := TFilterGraph.Create(nil);
+  FilterGraph.OnGraphComplete := FilterGraphGraphComplete;
+  MonitorType := mtMusic;
+  SendDebug('--------------------创建音频--------------------',4);
+end;
+
+destructor TrzMusicMonitor.Destroy;
+begin
+  if Handle <> 0 then DeallocateHWnd(Handle);
+  Close;
+  FilterGraph.Free;
+  SendDebug('====================释放音频====================',4);
+
+  inherited;
+end;
+
+procedure TrzMusicMonitor.FilterGraphGraphComplete(sender: TObject;
+  Result: HRESULT; Renderer: IBaseFilter);
+begin
+  PostMessage(Handle,WM_PLAY_END,0,0);
+
+end;
+
+function TrzMusicMonitor.Open(src: PSrcDefine): boolean;
+begin
+  SendDebug('第'+inttostr(playTimes+1)+'次播放音频<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
+  Timer.Enabled := false;
+  FilterGraph.Stop;
+  FilterGraph.ClearGraph;
+  FilterGraph.Active := False;
+  FilterGraph.Active := True;
+  if fileExists(src^.src) then
+     begin
+        FilterGraph.RenderFile(src^.src);
+        if src^.volume>=0 then FilterGraph.Volume := src^.volume*100;
+        FilterGraph.Play;
+        dpyStart := GetTickCount div 1000;
+        dpyLength := src^.srcLength;
+        _Start := GetTickCount;
+        result := true;
+     end
+  else
+     Raise Exception.Create('"'+src^.src+'"音频文件没找到');
+  Plays.WriteInteger(rcProgram.rzPlayList.rzFile.ProgramListId,'cache_ei_'+inttostr(MonitorIdx),index);
+  Plays.WriteString('res',src^.SourceId,formatDatetime('YYYYMMDDHHNNSS',now()));
+end;
+
+procedure TrzMusicMonitor.Pause;
+begin
+  inherited;
+  FilterGraph.Pause;
+end;
+
+procedure TrzMusicMonitor.resume;
+begin
+  inherited;
+     FilterGraph.Play;
+
+end;
+
+procedure TrzMusicMonitor.WMPlayEnd(var Message: TMessage);
+begin
+  PlayEnded;
+
+end;
+
+procedure TrzMusicMonitor.WndProc(var Message: TMessage);
+begin
+  Dispatch(Message);
+
 end;
 
 initialization

@@ -14,7 +14,6 @@ object frmRzPlayer: TfrmRzPlayer
   Menu = MainMenu1
   OldCreateOrder = False
   Position = poScreenCenter
-  WindowState = wsMinimized
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 12
@@ -100,6 +99,10 @@ object frmRzPlayer: TfrmRzPlayer
       object N2: TMenuItem
         Caption = #36164#28304#28165#29702
         OnClick = N2Click
+      end
+      object N12: TMenuItem
+        Caption = #25991#20214#19979#36733
+        OnClick = N12Click
       end
     end
     object N10: TMenuItem
@@ -1907,6 +1910,7 @@ object frmRzPlayer: TfrmRzPlayer
     Top = 112
   end
   object Timer2: TTimer
+    Enabled = False
     OnTimer = Timer2Timer
     Left = 192
     Top = 80

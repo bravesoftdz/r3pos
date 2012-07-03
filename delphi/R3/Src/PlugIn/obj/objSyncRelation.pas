@@ -151,12 +151,12 @@ begin
       iRet:=AGlobal.ExecSQL(UpSQL);
 
       //2012.03.06处理(删除标记)上次自动对照，本次对照不上:
-      UpSQL:=ParseSQL(AGlobal.iDbType,
+      {UpSQL:=ParseSQL(AGlobal.iDbType,
         'update PUB_GOODS_RELATION A set COMM='+GetDeleteComm(AGlobal.iDbType)+',TIME_STAMP='+TimeStp+' '+
         ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and nvl(A.COMM_ID,'''')='''' and not '+
         ' exists(select gods_id from INF_GOODS_RELATION B where '+
         ' A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1)');
-      AGlobal.ExecSQL(UpSQL);
+      AGlobal.ExecSQL(UpSQL);}
     end;
    2: //刷新新品:
     begin
@@ -177,7 +177,7 @@ begin
         'update PUB_GOODS_RELATION A '+
         ' set (NEW_INPRICE,NEW_OUTPRICE,COMM,TIME_STAMP)= '+
         ' (select NEW_INPRICE,NEW_OUTPRICE,'+Comm+','+TimeStp+' from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+') '+
-        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') an '+
+        ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and '+
         ' exists(select 1 from INF_GOODS_RELATION B where A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=3 and B.TENANT_ID='+TENANT_ID+')';
       iRet:=AGlobal.ExecSQL(UpSQL);
 
@@ -257,12 +257,12 @@ begin
       iRet:=iRet+AGlobal.ExecSQL(UpSQL);
 
       //2012.03.06处理(删除标记)上次自动对照，本次对照不上:
-      UpSQL:=
+      {UpSQL:=
         'update PUB_GOODS_RELATION A set COMM='+GetDeleteComm(AGlobal.iDbType)+',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' '+
         ' where A.TENANT_ID='+TENANT_ID+' and A.COMM not in (''02'',''12'') and not '+
         ' exists(select gods_id from INF_GOODS_RELATION B where '+
         ' A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID and B.UPDATE_FLAG=1)';
-      AGlobal.ExecSQL(UpSQL);
+      AGlobal.ExecSQL(UpSQL);}
     end;
    2: //刷新新品:
     begin

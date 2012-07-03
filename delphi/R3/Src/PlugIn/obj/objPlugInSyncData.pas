@@ -782,7 +782,7 @@ begin
       'select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID,A.LICENSE_CODE as LICENSE_CODE from RM_CUST A,CA_SHOP_INFO B '+
       ' where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+TenID+' and B.SHOP_ID='''+ShopID+''' ';
     DBFactor.Open(Rs);
-    if (Rs.Active) and (Rs.RecordCount=0) then
+    if (Rs.Active) and (Rs.RecordCount>0) then
     begin
       ComID:=trim(Rs.FieldByName('COM_ID').AsString);
       CustID:=trim(Rs.FieldByName('CUST_ID').AsString);

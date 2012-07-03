@@ -114,8 +114,8 @@ begin
       ' where A.TENANT_ID=110000001 and A.BARCODE_TYPE=''1'' and A.COMM not in (''02'',''12'') ';
     RsBarPub.SQL.Text:=ParseSQL(DbType,SelectSQL);
     Open(RsBarPub);
-    RsRim.Close;
-    RsRim.SQL.Text:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID5+','+Sort_ID6+','+Sort_ID10+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+COM_ID+''' ';
+    RsRim.Close;                                                                                             //+Sort_ID10+','
+    RsRim.SQL.Text:='select GODS_ID as SECOND_ID,GODS_CODE,GODS_NAME,'+Sort_ID2+','+Sort_ID5+','+Sort_ID6+','+Box_InPrice+','+Box_OutPrice+',PACK_BARCODE from RIM_GOODS_RELATION where TENANT_ID='''+COM_ID+''' ';
     Open(RsRim);
     RsInf.SQL.Text:='select A.*,0 as UpdateMode,0 as FLAG from INF_GOODS_RELATION A where A.TENANT_ID='+TENANT_ID;
     Open(RsInf);

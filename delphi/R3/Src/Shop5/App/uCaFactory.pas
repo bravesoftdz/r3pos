@@ -507,7 +507,7 @@ try
   Node := doc.createElement('flag');
   Node.text := inttostr(flag);
   FindNode(doc,'header\pub').appendChild(Node);
-  
+
   Node := doc.createElement('caTenant');
   FindNode(doc,'body').appendChild(Node);
 
@@ -653,12 +653,17 @@ try
                             begin
                               if srvrId=GetNodeValue(ServerInfo,'srvrId') then
                                  begin
-                                   f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
+                                   if GetNodeValue(ServerInfo,'hostName')='localhost' then
+                                      f.WriteString('db','Connstr','')
+                                   else
+                                      f.WriteString('db','Connstr','connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID));
                                    finded := true;
                                  end;
                             end;
                          if defSrvrId=GetNodeValue(ServerInfo,'srvrId') then
                             begin
+                              if GetNodeValue(ServerInfo,'hostName')='localhost' then
+                              defStr := '' else
                               defStr := 'connmode=2;hostname='+GetNodeValue(ServerInfo,'hostName')+';port='+GetNodeValue(ServerInfo,'srvrPort')+';dbid='+inttostr(result.DB_ID);
                             end;
                          ServerInfo := ServerInfo.nextSibling;
@@ -3610,7 +3615,9 @@ var
 begin
   F := TIniFile.Create(ExtractFilePath(ParamStr(0))+'r3.cfg');
   try
-    result := (F.ReadString('r3','compiler','runing')<>'runing'); 
+    result := (F.ReadString('r3','compiler','runing')<>'runing')
+              or
+              (Global.RemoteFactory.Connected and (Global.RemoteFactory.iDbType in [3,5]));
   finally
     F.Free;
   end;
@@ -3738,12 +3745,17 @@ try
                             begin
                               if srvrId=rs.FieldbyName('srvrId').asString then
                                  begin
-                                   f.WriteString('db','Connstr','connmode=2;hostname='+rs.FieldbyName('hostName').asString+';port='+rs.FieldbyName('srvrPort').asString+';dbid='+inttostr(result.DB_ID));
+                                   if rs.FieldbyName('hostName').asString='localhost' then
+                                      f.WriteString('db','Connstr','')
+                                   else
+                                      f.WriteString('db','Connstr','connmode=2;hostname='+rs.FieldbyName('hostName').asString+';port='+rs.FieldbyName('srvrPort').asString+';dbid='+inttostr(result.DB_ID));
                                    finded := true;
                                  end;
                             end;
                          if defSrvrId=rs.FieldbyName('srvrId').AsString then
                             begin
+                              if rs.FieldbyName('hostName').asString='localhost' then
+                              defStr := '' else
                               defStr := 'connmode=2;hostname='+rs.FieldbyName('hostName').asString+';port='+rs.FieldbyName('srvrPort').asString+';dbid='+inttostr(result.DB_ID);
                             end;
                          rs.Next;

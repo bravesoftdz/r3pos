@@ -108,6 +108,7 @@ begin
       Factor.OpenBatch;
     Except
       Factor.CancelBatch;
+      Raise;
     end;
   finally
     FreeAndNil(Params);
@@ -239,7 +240,7 @@ begin
       Factor.CommitBatch;
     except
       Factor.CancelBatch;
-      Raise Exception.Create('调整量提交失败!');
+      Raise;
     end;
   finally
     cdsList2.EnableControls;

@@ -3546,6 +3546,7 @@ var
   sdate:Tdatetime;
 begin
   if Working then Exit;
+  if CaFactory.CheckDebugSync then Exit;
   Stoped := false;
   Working := true;
   if Sender=nil then frmLogo.Show;

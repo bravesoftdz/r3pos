@@ -175,7 +175,7 @@ begin
   if fndKPI_ID.AsString <> '' then
      w := w + ' and A.KPI_ID=:KPI_ID ';
 
-  Result := ' select A.TENANT_ID,A.KPI_YEAR,B.KPI_TYPE,A.KPI_ID,A.CLIENT_ID,A.PLAN_AMT,A.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.ADJS_AMT,A.ADJS_MNY,A.KPI_MNY,A.BUDG_KPI '+
+  Result := ' select A.TENANT_ID,A.KPI_YEAR,B.KPI_TYPE,A.KPI_ID,A.CLIENT_ID,A.PLAN_AMT,A.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.ADJS_AMT,A.ADJS_MNY,A.KPI_MNY,A.BUDG_KPI,A.CREA_DATE,A.CREA_USER '+
   ' from MKT_KPI_RESULT A inner join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
   ' left join MKT_PLANORDER C on A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID '+w+' order by A.KPI_ID ';
   
@@ -281,9 +281,13 @@ begin
       cdsHeader.FieldByName('CREA_DATE').AsString := formatDatetime('YYYYMMDD HH:NN:SS',now());
       cdsHeader.FieldByName('CREA_USER').AsString := Global.UserID;
       cdsHeader.Post;
+      Factor.BeginBatch;
       try
-        Factor.UpdateBatch(cdsDetail,'TMktKpiResultList',nil);
+        Factor.AddBatch(cdsHeader,'TMktKpiResult',nil);
+        Factor.AddBatch(cdsDetail,'TMktKpiResultList',nil);
+        Factor.CommitBatch;
       except
+        Factor.CancelBatch;
         Raise;
       end;
     finally
@@ -292,8 +296,6 @@ begin
     ProgressBar1.Percent := (cdsHeader.RecNo*100 div cdsHeader.RecordCount);
     cdsHeader.Next;
   end;
-
-  Factor.UpdateBatch(cdsHeader,'TMktKpiResult',nil);
   ProgressBar1.Percent := 100;
 end;
 

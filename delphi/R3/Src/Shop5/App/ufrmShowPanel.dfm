@@ -14,6 +14,7 @@ object frmShowPanel: TfrmShowPanel
   Font.Style = []
   FormStyle = fsStayOnTop
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object RzPanel1: TRzPanel
@@ -45,6 +46,7 @@ object frmShowPanel: TfrmShowPanel
     end
   end
   object Timer1: TTimer
+    Enabled = False
     Interval = 20000
     OnTimer = Timer1Timer
     Left = 152

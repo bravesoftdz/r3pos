@@ -12,6 +12,7 @@ type
     Timer1: TTimer;
     RzMarqueeStatus1: TRzStatusPane;
     procedure Timer1Timer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FsText: string;
     procedure SetsText(const Value: string);
@@ -85,7 +86,6 @@ begin
   Form := Screen.ActiveCustomForm;
   try
     Start(Screen.Monitors[GetMonitorExt]);
-    self.BringToFront;
   finally
     if Form.CanFocus and Form.Visible then Form.SetFocus;
   end;
@@ -113,6 +113,12 @@ procedure TfrmShowPanel.Timer1Timer(Sender: TObject);
 begin
   Close;
   Timer1.Enabled := false;
+end;
+
+procedure TfrmShowPanel.FormCreate(Sender: TObject);
+begin
+  MMonitor := MonitorfromWindow(Application.Handle);
+  MIndex := FindMonitorIndex(MMonitor);
 end;
 
 end.

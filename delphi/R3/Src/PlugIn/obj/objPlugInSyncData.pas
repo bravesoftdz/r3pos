@@ -240,7 +240,7 @@ end;
 
 procedure ReadPlugInCfg(var vPlugParams: TPlugParams); //取取产件定义参数
 begin                                                 {==3:下载Rim消息;5:下载Rim登录wsdl;6:问卷调查下载;8:下载参数;==}
-  vPlugParams.PlugInID:=ReadConfig('PARAMS','PlugInID','001010010000000000000000');   //启用哪些插件上报
+  vPlugParams.PlugInID:=ReadConfig('PARAMS','PlugInID','000000000000000000000000');   //启用哪些插件上报
   vPlugParams.VipUpload:=ReadBool('PARAMS','VipUpload',true);      //是否上报终端采集消费者
   vPlugParams.Up_CUST_STATUS:=ReadConfig('PARAMS','UP_CUST_STATUS','03'); //上报消费者的状态，默认:03
   vPlugParams.USE_SM_CARD:=ReadBool('PARAMS','USE_SM_CARD',true);  //默认启用上报商盟卡
@@ -757,7 +757,7 @@ var
 begin
   result:=False;
   PlugInIDS:=PlugParams.PlugInID;       {==3:下载Rim消息;5:下载Rim登录wsdl;8:下载参数;==}
-  if trim(PlugInIDS)='' then PlugInIDS:='001010010000000000000000'; //默认:开启358参数
+  if trim(PlugInIDS)='' then PlugInIDS:='000000000000000000000000'; //默认:开启358参数
   if Copy(PlugInIDS,PlugInID,1)='0' then Exit;  
 
   //传入参数列表
@@ -782,7 +782,7 @@ begin
       'select A.COM_ID as COM_ID,A.CUST_ID as CUST_ID,A.LICENSE_CODE as LICENSE_CODE from RM_CUST A,CA_SHOP_INFO B '+
       ' where A.LICENSE_CODE=B.LICENSE_CODE and B.TENANT_ID='+TenID+' and B.SHOP_ID='''+ShopID+''' ';
     DBFactor.Open(Rs);
-    if (Rs.Active) and (Rs.RecordCount=1) then
+    if (Rs.Active) and (Rs.RecordCount=0) then
     begin
       ComID:=trim(Rs.FieldByName('COM_ID').AsString);
       CustID:=trim(Rs.FieldByName('CUST_ID').AsString);

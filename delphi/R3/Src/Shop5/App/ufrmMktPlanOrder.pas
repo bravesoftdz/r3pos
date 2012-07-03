@@ -34,7 +34,7 @@ type
     RzLabel9: TRzLabel;
     Label5: TLabel;
     Delete: TMenuItem;
-    edtCHK_USER: TcxTextEdit;
+    edtCHK_USER_TEXT: TcxTextEdit;
     edtCHK_DATE: TcxTextEdit;
     RzLabel3: TRzLabel;
     edtBOND_MNY: TcxTextEdit;

@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=D:\rsp\tz_plug
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=3
 MinorVer=0
 Release=1
-Build=35
+Build=37
 Debug=0
 PreRelease=0
 Special=0
@@ -126,13 +126,13 @@ CodePage=936
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=3.0.1.35
+FileVersion=3.0.1.37
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=
-ProductVersion=1.0.0.0
+ProductName=卷烟内码对照
+ProductVersion=3.0.1.37
 Comments=
 [Excluded Packages]
 c:\program files\borland\delphi7\Projects\Bpl\dclusr70.bpl=Borland User Components
@@ -144,3 +144,8 @@ Count=3
 Item0=D:\Delphi\R3\Pub;E:\soft\控件\Gzip125;D:\Delphi\R3\Src\Shop5\App
 Item1=D:\Delphi\R3\Pub;E:\soft\控件\Gzip125
 Item2=D:\Delphi\R3\Pub
+[HistoryLists\hlOutputDirectorry]
+Count=3
+Item0=D:\rsp\tz_plug
+Item1=D:\rsp\3.0.1.32_Plug
+Item2=D:\rsp

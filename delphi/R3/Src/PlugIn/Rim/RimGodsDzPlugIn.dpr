@@ -20,6 +20,8 @@ library RimGodsDzPlugIn;
 
 uses
   DB,
+  Windows,
+  Forms,
   zDataSet,
   SysUtils,
   Variants,
@@ -86,6 +88,37 @@ begin
       result := 2001;
     end;
   end;
+end;
+
+//返回创建时间和修改时间
+function GetFileTime(const Tf:string): string;
+  function CovFileDate(Fd:_FileTime):TDateTime;
+  var
+    Tct:_SystemTime;
+    Temp:_FileTime;
+  begin
+    FileTimeToLocalFileTime(Fd,Temp);
+    FileTimeToSystemTime(Temp,Tct);
+    CovFileDate:=SystemTimeToDateTime(Tct);
+  end;
+const
+  Model='yyyy/mm/dd,hh:mm:ss'; { 设定时间格式 }
+var
+  Tp:TSearchRec; { 申明Tp为一个查找记录 }
+  T1,T2,T3:string;
+begin
+  FindFirst(Tf,faAnyFile,Tp); { 查找目标文件 }
+  T1:=FormatDateTime(Model, CovFileDate(Tp.FindData.ftCreationTime));
+
+  { 返回文件的创建时间 }
+  T2:=FormatDateTime(Model,CovFileDate(Tp.FindData.ftLastWriteTime));
+
+  { 返回文件的修改时间 }
+  T3:=FormatDateTime(Model,Now);
+
+  { 返回文件的当前访问时间 }
+  FindClose(Tp);
+  result:='创建时间='+T2+'  '+#13'     修改时间='+T3;
 end;
 
 //RSP调用插件自定义的管理界面,没有时直接返回0

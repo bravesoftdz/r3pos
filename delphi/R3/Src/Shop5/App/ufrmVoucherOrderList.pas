@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, uframeContractToolForm, DB, ZAbstractRODataset, ZBase,
+  Dialogs, uframeContractToolForm, DB, ZAbstractRODataset, ZBase, ObjCommon,
   ZAbstractDataset, ZDataset, Menus, ActnList, ComCtrls, ToolWin, StdCtrls,
   RzLabel, jpeg, ExtCtrls, Grids, DBGridEh, RzTabs, RzPanel, RzButton,
   cxButtonEdit, zrComboBoxList, cxControls, cxContainer, cxEdit,
@@ -46,7 +46,10 @@ type
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
+    PrintTimes:Integer;
     function CheckCanExport: boolean; override;
+    procedure PrintBefore(Sender:TObject);
+    procedure PrintAfter(Sender:TObject);
   public
     { Public declarations }
     IsEnd: boolean;
@@ -135,7 +138,7 @@ end;
 procedure TfrmVoucherOrderList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002430',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002430',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -143,15 +146,15 @@ begin
            begin
              if CurContract.oid = '' then Exit;
              if CurContract.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             //BeforePrint := PrintBefore;
-             //AfterPrint := PrintAfter;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(inttostr(Global.TENANT_ID),CurContract.oid),frfVoucherOrder);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             //BeforePrint := PrintBefore;
-             //AfterPrint := PrintAfter;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              PrintReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('VOUCHER_ID').AsString),frfVoucherOrder);
            end;
       finally
@@ -163,7 +166,7 @@ end;
 procedure TfrmVoucherOrderList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002430',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
+  //if not ShopGlobal.GetChkRight('100002430',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
@@ -171,15 +174,15 @@ begin
            begin
              if CurContract.oid = '' then Exit;
              if CurContract.dbState <> dsBrowse then Raise Exception.Create('请保存后再打印...');
-             //BeforePrint := PrintBefore;
-             //AfterPrint := PrintAfter;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              ShowReport(PrintSQL(inttostr(Global.TENANT_ID),CurContract.oid),frfVoucherOrder,nil,true);
            end
         else
            begin
              if cdsList.IsEmpty then Exit;
-             //BeforePrint := PrintBefore;
-             //AfterPrint := PrintAfter;
+             BeforePrint := PrintBefore;
+             AfterPrint := PrintAfter;
              ShowReport(PrintSQL(cdsList.FieldbyName('TENANT_ID').AsString,cdsList.FieldbyName('VOUCHER_ID').AsString),frfVoucherOrder,nil,true);
            end;
       finally
@@ -363,8 +366,13 @@ begin
 end;
 
 function TfrmVoucherOrderList.PrintSQL(tenantid, id: string): string;
+var Str:String;
 begin
-
+  Str := 'select A.TENANT_ID,A.SEQNO,A.BARCODE,C.GODS_NAME from SAL_VOUCHERDATA A left join SAL_INDENTDATA B on A.TENANT_ID=B.TENANT_ID '+
+  ' and A.VOUCHER_ID=B.INDE_ID and cast(substr(A.BARCODE,38,3) AS int)=B.SEQNO '+
+  ' left join VIW_GOODSINFO C on B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+
+  ' where A.TENANT_ID='+tenantid+' and A.VOUCHER_ID='+QuotedStr(id);
+  Result := ParseSQL(Factor.iDbType,Str);
 end;
 
 procedure TfrmVoucherOrderList.DBGridEh1DblClick(Sender: TObject);
@@ -426,6 +434,44 @@ begin
   //进入窗体默认新增加判断是否新增权限:
   if (ShopGlobal.GetChkRight('100002430',2)) and (rzPage.ActivePageIndex = 0) and (rzPage.PageCount=1) then
   actNew.OnExecute(nil);
+end;
+
+procedure TfrmVoucherOrderList.PrintAfter(Sender: TObject);
+var Sql_Str:String;
+begin
+  if CurContract<>nil then
+     Sql_Str := 'update SAL_VOUCHERORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and VOUCHER_ID='+QuotedStr(CurContract.oid)
+  else
+     Sql_Str := 'update SAL_VOUCHERORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and VOUCHER_ID='+QuotedStr(cdsList.FieldbyName('VOUCHER_ID').AsString);
+  Factor.ExecSQL(Sql_Str);
+end;
+
+procedure TfrmVoucherOrderList.PrintBefore(Sender: TObject);
+var rs:TZQuery;
+    Sql_Str,Info:String;
+    i:Integer;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    if CurContract<>nil then
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_VOUCHERORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and VOUCHER_ID='+QuotedStr(CurContract.oid)
+    else
+       Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_VOUCHERORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and VOUCHER_ID='+QuotedStr(cdsList.FieldbyName('VOUCHER_ID').AsString);
+    rs.Close;
+    rs.SQL.Text := Sql_Str;
+    Factor.Open(rs);
+    PrintTimes := rs.FieldByName('PRINT_TIMES').AsInteger;
+    if PrintTimes > 0  then
+       begin
+         Info := '本单据已经打印"'+IntToStr(PrintTimes)+'"次,是否再次打印!';
+         i := ShowMsgBox(Pchar(Info),'友情提示...',MB_YESNO+MB_ICONQUESTION);
+         if i = 7 then
+          Raise Exception.Create('');
+
+       end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

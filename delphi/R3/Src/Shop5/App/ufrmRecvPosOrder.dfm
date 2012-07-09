@@ -14,9 +14,9 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
     Height = 445
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
-      Top = 162
+      Top = 137
       Width = 646
-      Height = 235
+      Height = 260
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -27,14 +27,14 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Caption = #32564#27454#26126#32454
         inherited RzPanel2: TRzPanel
           Width = 642
-          Height = 208
+          Height = 233
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 632
-            Height = 198
+            Height = 223
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1
@@ -233,7 +233,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
       Left = 5
       Top = 5
       Width = 646
-      Height = 157
+      Height = 132
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
@@ -264,7 +264,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
       end
       object Label7: TLabel
         Left = 206
-        Top = 129
+        Top = 107
         Width = 24
         Height = 12
         Alignment = taRightJustify
@@ -284,14 +284,6 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Width = 48
         Height = 12
         Caption = #32564#27454#38376#24215
-      end
-      object Label4: TLabel
-        Left = 183
-        Top = 107
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #31080#25454#32534#21495
       end
       object Label5: TLabel
         Left = 446
@@ -389,15 +381,15 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtRECV_DATEPropertiesChange
-        TabOrder = 6
+        TabOrder = 5
       end
       object edtREMARK: TcxTextEdit
         Left = 236
-        Top = 124
+        Top = 102
         Width = 301
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 5
+        TabOrder = 4
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object RzPanel4: TRzPanel
@@ -410,7 +402,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         BorderShadow = clActiveCaption
         Color = clWhite
         FlatColor = clBlue
-        TabOrder = 7
+        TabOrder = 6
         object Shape1: TShape
           Left = 1
           Top = 33
@@ -721,15 +713,6 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         OnSaveValue = edtSHOP_IDSaveValue
         MultiSelect = False
       end
-      object edtBILL_NO: TcxTextEdit
-        Left = 236
-        Top = 102
-        Width = 180
-        Height = 20
-        Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 4
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
       object edtDEPT_ID: TzrComboBoxList
         Left = 500
         Top = 34
@@ -741,7 +724,7 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 8
+        TabOrder = 7
         InGrid = False
         KeyValue = Null
         FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -764,13 +747,13 @@ inherited frmRecvPosOrder: TfrmRecvPosOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
-      object cxTextEdit1: TcxTextEdit
+      object edtBILL_NO: TcxTextEdit
         Left = 500
         Top = 56
         Width = 131
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 9
+        TabOrder = 8
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end

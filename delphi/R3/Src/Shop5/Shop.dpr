@@ -344,7 +344,8 @@ uses
   ObjVhPayGlide in 'Obj\ObjVhPayGlide.pas',
   ObjVhSendOrder in 'Obj\ObjVhSendOrder.pas',
   ObjVoucherOrder in 'Obj\ObjVoucherOrder.pas',
-  ufrmFvchIntfSet in 'App\ufrmFvchIntfSet.pas' {frmFvchIntfSet};
+  ufrmFvchIntfSet in 'App\ufrmFvchIntfSet.pas' {frmFvchIntfSet},
+  ufrmBusinessIncomeDayReport in 'App\ufrmBusinessIncomeDayReport.pas' {frmBusinessIncomeDayReport};
 
 {$R *.res}
 var

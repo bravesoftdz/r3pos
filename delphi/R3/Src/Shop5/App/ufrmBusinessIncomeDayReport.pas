@@ -32,6 +32,10 @@ type
   public
     { Public declarations }
     // 根据定义自动 添加列
+    procedure getIndentData;
+    procedure getSalesData;
+    procedure getIndentMny;
+    procedure getRecvMny;
     procedure CreateGridColumn;
     procedure PrintBefore;override;
   end;
@@ -66,11 +70,12 @@ begin
     Column.Title.Caption := '名称';
     Column.Width := 100;
     adoReport1.Close;
+    adoReport1.FieldDefs.Clear;
     adoReport1.FieldDefs.Add('SEQNO',ftInteger,0,True);
     adoReport1.FieldDefs.Add('SALES_TYPE',ftString,1,True);
     adoReport1.FieldDefs.Add('SALES_TYPE_TEXT',ftString,20,True);
     adoReport1.FieldDefs.Add('SORT_TYPE',ftString,36,True);
-    adoReport1.FieldDefs.Add('SORT_TYPE_TEXT',ftString,20,True);
+    adoReport1.FieldDefs.Add('SORT_TYPE_TEXT',ftString,50,True);
     rs.First;
     while not rs.Eof do
     begin
@@ -141,10 +146,10 @@ begin
          Swhr := ' and A.SHOP_ID=:SHOP_ID ';
       if fndP1_DEPT_ID.AsString <> '' then
          Swhr := Swhr + ' and A.DEPT_ID=:DEPT_ID ';
-      rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,B.SORT_NAME,A.SALES_STYLE,sum(A.CALC_MONEY) as CALC_MONEY '+
-      ' from VIW_SALESDATA A left join VIW_GOODSINFO_SORTEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
-      ' where A.TENANT_ID=:TENANT_ID and A.SALES_TYPE=''1'' and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 '+Swhr+
-      ' group by B.SORT_ID1,B.SORT_NAME,SUBSTRING(B.LEVEL_ID,1,4),A.SALES_STYLE ');
+      rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT '+
+      ' from VIW_SALESDATA A left join PUB_GOODSINFO B on A.GODS_ID=B.GODS_ID '+
+      ' where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 '+Swhr+
+      ' group by B.SORT_ID1,A.SALES_STYLE ');
       rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
       rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
@@ -157,10 +162,10 @@ begin
          Swhr := ' and A.SHOP_ID=:SHOP_ID ';
       if fndP1_DEPT_ID.AsString <> '' then
          Swhr := Swhr + ' and A.DEPT_ID=:DEPT_ID ';
-      rs1.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,B.SORT_NAME,A.SALES_STYLE,sum(A.CALC_MONEY) as CALC_MONEY '+
-      ' from VIW_SALINDENTDATA A left join VIW_GOODSINFO_SORTEXT B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
+      rs1.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT '+
+      ' from VIW_SALINDENTDATA A left join PUB_GOODSINFO B on A.GODS_ID=B.GODS_ID '+
       ' where A.TENANT_ID=:TENANT_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 '+Swhr+
-      ' group by B.SORT_ID1,B.SORT_NAME,SUBSTRING(B.LEVEL_ID,1,4),A.SALES_STYLE ');
+      ' group by B.SORT_ID1,A.SALES_STYLE ');
       rs1.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       rs1.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
       rs1.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
@@ -171,13 +176,26 @@ begin
       Swhr := ShopGlobal.GetDataRight('A.SHOP_ID',1);
       if fndP1_SHOP_ID.AsString <> '' then
          Swhr := ' and A.SHOP_ID=:SHOP_ID ';
-      rs2.SQL.Text := ParseSQL(Factor.iDbType,'select A.ACCOUNT_ID,E.ACCT_NAME,D.SALES_STYLE,sum(B.RECV_MNY) as RECV_MNY'+
+      rs2.SQL.Text := ParseSQL(Factor.iDbType,
+      'select A.ACCOUNT_ID,D.SALES_STYLE,sum(B.RECV_MNY) as RECV_MNY'+
       ' from ACC_RECVORDER A inner join ACC_RECVDATA B on A.TENANT_ID=B.TENANT_ID and A.RECV_ID=B.RECV_ID '+
       ' left join ACC_RECVABLE_INFO C on B.TENANT_ID=C.TENANT_ID and B.ABLE_ID=C.ABLE_ID '+
       ' left join SAL_SALESORDER D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID '+
-      ' left join ACC_ACCOUNT_INFO E on A.TENANT_ID=E.TENANT_ID and A.ACCOUNT_ID=E.ACCOUNT_ID '+
       ' where A.TENANT_ID=:TENANT_ID and A.RECV_FLAG=''0'' and B.RECV_TYPE in (''1'',''2'') and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 '+Swhr+
-      ' group by A.ACCOUNT_ID,E.ACCT_NAME,D.SALES_STYLE');
+      ' group by A.ACCOUNT_ID,D.SALES_STYLE '  +
+      ' union all '+
+      'select A.ACCOUNT_ID,D.SALES_STYLE,sum(B.RECV_MNY) as RECV_MNY'+
+      ' from ACC_RECVORDER A inner join ACC_RECVDATA B on A.TENANT_ID=B.TENANT_ID and A.RECV_ID=B.RECV_ID '+
+      ' left join ACC_RECVABLE_INFO C on B.TENANT_ID=C.TENANT_ID and B.ABLE_ID=C.ABLE_ID '+
+      ' left join SAL_INDENTORDER D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.INDE_ID '+
+      ' where A.TENANT_ID=:TENANT_ID and A.RECV_FLAG=''0'' and B.RECV_TYPE in (''3'') and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 '+Swhr+
+      ' group by A.ACCOUNT_ID,D.SALES_STYLE '+
+      ' union all '+
+      'select A.ACCOUNT_ID,case when C.RECV_TYPE=''4'' then ''6BD82B9E-3678-4F33-89ED-B8C26B6589BD'' else ''#'' end as SALES_STYLE,sum(B.RECV_MNY) as RECV_MNY'+
+      ' from ACC_RECVORDER A inner join ACC_RECVDATA B on A.TENANT_ID=B.TENANT_ID and A.RECV_ID=B.RECV_ID '+
+      ' where A.TENANT_ID=:TENANT_ID and B.RECV_TYPE in (''4'',''5'',''6'') and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 '+Swhr+
+      ' group by A.ACCOUNT_ID,case when C.RECV_TYPE=''4'' then ''6BD82B9E-3678-4F33-89ED-B8C26B6589BD'' else ''#'' end '
+      );
       rs2.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
       rs2.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
       rs2.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
@@ -674,6 +692,269 @@ begin
     PrintDBGridEh1.SetSubstitutes(['%[whr]', ReStr]);
   finally
     Title.Free;
+  end;
+end;
+
+procedure TfrmBusinessIncomeDayReport.getIndentData;
+var
+  rs,sort:TZQuery;
+  Swhr,sid,stl:string;
+begin
+  sort := Global.GetZQueryFromName('PUB_GOODSSORT');
+  rs := TZQuery.Create(nil);
+  try
+    Swhr := ShopGlobal.GetDataRight('A.DEPT_ID',2)+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+    if fndP1_SHOP_ID.AsString <> '' then
+       Swhr := ' and A.SHOP_ID=:SHOP_ID ';
+    if fndP1_DEPT_ID.AsString <> '' then
+       Swhr := Swhr + ' and A.DEPT_ID=:DEPT_ID ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT '+
+    ' from VIW_SALINDENTDATA A left join PUB_GOODSINFO B on A.GODS_ID=B.GODS_ID '+
+    ' where A.TENANT_ID=:TENANT_ID and A.INDE_DATE>=:D1 and A.INDE_DATE<=:D2 '+Swhr+
+    ' group by B.SORT_ID1,A.SALES_STYLE ');
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
+    rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
+    if rs.Params.FindParam('SHOP_ID') <> nil then rs.Params.ParamByName('SHOP_ID').AsString := fndP1_SHOP_ID.AsString;
+    if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
+    Factor.Open(rs);
+
+    SumRecord.Clear;
+    SumRecord.ReadField(adoReport1);
+    rs.First;
+    while not rs.Eof do
+    begin
+      if sort.Locate('SORT_ID',rs.FieldbyName('SORT_ID1').AsString,[]) then
+         begin
+           sid := copy(rs.FieldbyName('LEVEL_ID').AsString,1,4);
+           if sort.Locate('LEVEL_ID',copy(sid,1,4),[]) then
+              sid := sort.FieldbyName('SORT_ID').AsString
+           else
+              sid := '#';
+         end
+      else
+         sid := '#';
+      stl := rs.FieldByName('SALES_STYLE').AsString;
+      if (stl='') or (adoReport1.FindField(stl)=nil) then stl := '#';
+      if adoReport1.Locate('SALES_TYPE;SORT_TYPE',VarArrayOf(['1',sid]),[]) then
+      begin
+         adoReport1.Edit;
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.Post;
+      end
+      else
+      begin
+         adoReport1.Append;
+         adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+         adoReport1.FieldByName('SALES_TYPE').AsString := '1';
+         if rs.RecNo = 1 then
+            adoReport1.FieldByName('SALES_TYPE_TEXT').AsString := '订货';
+         adoReport1.FieldByName('SORT_TYPE').AsString := sid;
+         if sid<>'#' then
+            adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := sort.FieldByName('SORT_NAME').AsString
+         else
+            adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.Post;
+      end;
+      SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+      rs.Next;
+    end;
+    if not rs.IsEmpty then
+    begin
+      adoReport1.Append;
+      SumRecord.WriteToDataSet(adoReport1);
+      adoReport1.FieldByName('SALES_TYPE').AsString := '9';
+      adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '合计:';
+      adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+      adoReport1.Post;
+    end;
+
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmBusinessIncomeDayReport.getSalesData;
+var
+  rs,sort:TZQuery;
+  Swhr,sid,stl:string;
+begin
+  sort := Global.GetZQueryFromName('PUB_GOODSSORT');
+  rs := TZQuery.Create(nil);
+  try
+    Swhr := ShopGlobal.GetDataRight('A.DEPT_ID',2)+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+    if fndP1_SHOP_ID.AsString <> '' then
+       Swhr := ' and A.SHOP_ID=:SHOP_ID ';
+    if fndP1_DEPT_ID.AsString <> '' then
+       Swhr := Swhr + ' and A.DEPT_ID=:DEPT_ID ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,' select B.SORT_ID1,A.SALES_STYLE,sum(A.CALC_AMOUNT) as CALC_AMOUNT '+
+    ' from VIW_SALESDATA A left join PUB_GOODSINFO B on A.GODS_ID=B.GODS_ID '+
+    ' where A.TENANT_ID=:TENANT_ID and A.SALES_DATE>=:D1 and A.SALES_DATE<=:D2 '+Swhr+
+    ' group by B.SORT_ID1,A.SALES_STYLE ');
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
+    rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
+    if rs.Params.FindParam('SHOP_ID') <> nil then rs.Params.ParamByName('SHOP_ID').AsString := fndP1_SHOP_ID.AsString;
+    if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
+    Factor.Open(rs);
+
+    SumRecord.Clear;
+    SumRecord.ReadField(adoReport1);
+    rs.First;
+    while not rs.Eof do
+    begin
+      if sort.Locate('SORT_ID',rs.FieldbyName('SORT_ID1').AsString,[]) then
+         begin
+           sid := copy(rs.FieldbyName('LEVEL_ID').AsString,1,4);
+           if sort.Locate('LEVEL_ID',copy(sid,1,4),[]) then
+              sid := sort.FieldbyName('SORT_ID').AsString
+           else
+              sid := '#';
+         end
+      else
+         sid := '#';
+      stl := rs.FieldByName('SALES_STYLE').AsString;
+      if (stl='') or (adoReport1.FindField(stl)=nil) then stl := '#';
+      if adoReport1.Locate('SALES_TYPE;SORT_TYPE',VarArrayOf(['2',sid]),[]) then
+      begin
+         adoReport1.Edit;
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.Post;
+      end
+      else
+      begin
+         adoReport1.Append;
+         adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+         adoReport1.FieldByName('SALES_TYPE').AsString := '2';
+         if rs.RecNo = 1 then
+            adoReport1.FieldByName('SALES_TYPE_TEXT').AsString := '销售';
+         adoReport1.FieldByName('SORT_TYPE').AsString := sid;
+         if sid<>'#' then
+            adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := sort.FieldByName('SORT_NAME').AsString
+         else
+            adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+         adoReport1.Post;
+      end;
+      SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('CALC_AMOUNT').AsFloat;
+      rs.Next;
+    end;
+    if not rs.IsEmpty then
+    begin
+      adoReport1.Append;
+      SumRecord.WriteToDataSet(adoReport1);
+      adoReport1.FieldByName('SALES_TYPE').AsString := '9';
+      adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '合计:';
+      adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+      adoReport1.Post;
+    end;
+
+  finally
+    rs.Free;
+  end;
+end;
+
+procedure TfrmBusinessIncomeDayReport.getIndentMny;
+begin
+
+end;
+
+procedure TfrmBusinessIncomeDayReport.getRecvMny;
+var
+  rs,acct:TZQuery;
+  Swhr,sid,stl:string;
+begin
+  acct := Global.GetZQueryFromName('ACC_ACCOUNT_INFO');
+  rs := TZQuery.Create(nil);
+  try
+    Swhr := ShopGlobal.GetDataRight('A.DEPT_ID',2)+ShopGlobal.GetDataRight('A.SHOP_ID',1);
+    if fndP1_SHOP_ID.AsString <> '' then
+       Swhr := ' and A.SHOP_ID=:SHOP_ID ';
+    if fndP1_DEPT_ID.AsString <> '' then
+       Swhr := Swhr + ' and A.DEPT_ID=:DEPT_ID ';
+      rs.SQL.Text := ParseSQL(Factor.iDbType,
+      'select A.ACCOUNT_ID,D.SALES_STYLE,sum(B.RECV_MNY) as RECV_MNY'+
+      ' from ACC_RECVORDER A inner join ACC_RECVDATA B on A.TENANT_ID=B.TENANT_ID and A.RECV_ID=B.RECV_ID '+
+      ' left join ACC_RECVABLE_INFO C on B.TENANT_ID=C.TENANT_ID and B.ABLE_ID=C.ABLE_ID '+
+      ' left join SAL_SALESORDER D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID '+
+      ' where A.TENANT_ID=:TENANT_ID and A.RECV_FLAG=''0'' and B.RECV_TYPE in (''1'',''2'') and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 '+Swhr+
+      ' group by A.ACCOUNT_ID,D.SALES_STYLE '  +
+      ' union all '+
+      'select A.ACCOUNT_ID,D.SALES_STYLE,sum(B.RECV_MNY) as RECV_MNY'+
+      ' from ACC_RECVORDER A inner join ACC_RECVDATA B on A.TENANT_ID=B.TENANT_ID and A.RECV_ID=B.RECV_ID '+
+      ' left join ACC_RECVABLE_INFO C on B.TENANT_ID=C.TENANT_ID and B.ABLE_ID=C.ABLE_ID '+
+      ' left join SAL_INDENTORDER D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.INDE_ID '+
+      ' where A.TENANT_ID=:TENANT_ID and A.RECV_FLAG=''0'' and B.RECV_TYPE in (''3'') and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 '+Swhr+
+      ' group by A.ACCOUNT_ID,D.SALES_STYLE '+
+      ' union all '+
+      'select A.ACCOUNT_ID,case when C.RECV_TYPE=''4'' then ''6BD82B9E-3678-4F33-89ED-B8C26B6589BD'' else ''#'' end as SALES_STYLE,sum(B.RECV_MNY) as RECV_MNY'+
+      ' from ACC_RECVORDER A inner join ACC_RECVDATA B on A.TENANT_ID=B.TENANT_ID and A.RECV_ID=B.RECV_ID '+
+      ' where A.TENANT_ID=:TENANT_ID and B.RECV_TYPE in (''4'',''5'',''6'') and A.RECV_DATE>=:D1 and A.RECV_DATE<=:D2 '+Swhr+
+      ' group by A.ACCOUNT_ID,case when C.RECV_TYPE=''4'' then ''6BD82B9E-3678-4F33-89ED-B8C26B6589BD'' else ''#'' end '
+      );
+    rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rs.Params.ParamByName('D1').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D1.Date));
+    rs.Params.ParamByName('D2').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',P1_D2.Date));
+    if rs.Params.FindParam('SHOP_ID') <> nil then rs.Params.ParamByName('SHOP_ID').AsString := fndP1_SHOP_ID.AsString;
+    if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
+    Factor.Open(rs);
+
+    SumRecord.Clear;
+    SumRecord.ReadField(adoReport1);
+    rs.First;
+    while not rs.Eof do
+    begin
+      if acct.Locate('ACCOUNT_ID',rs.FieldbyName('ACCOUNT_ID').AsString,[]) then
+         begin
+         sid := rs.FieldbyName('ACCOUNT_ID').AsString;
+         end
+      else
+         sid := '#';
+      stl := rs.FieldByName('SALES_STYLE').AsString;
+      if (stl='') or (adoReport1.FindField(stl)=nil) then stl := '#';
+      if adoReport1.Locate('SALES_TYPE;SORT_TYPE',VarArrayOf(['1',sid]),[]) then
+      begin
+         adoReport1.Edit;
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('RECV_MNY').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('RECV_MNY').AsFloat;
+         adoReport1.Post;
+      end
+      else
+      begin
+         adoReport1.Append;
+         adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+         adoReport1.FieldByName('SALES_TYPE').AsString := '4';
+         if rs.RecNo = 1 then
+            adoReport1.FieldByName('SALES_TYPE_TEXT').AsString := '收款';
+         adoReport1.FieldByName('SORT_TYPE').AsString := sid;
+         if sid<>'#' then
+            adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := acct.FieldByName('ACCT_NAME').AsString
+         else
+            adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
+         adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('RECV_MNY').AsFloat;
+         adoReport1.FieldByName('TOTAL_MNY').AsFloat := adoReport1.FieldByName('TOTAL_MNY').AsFloat+rs.FieldByName('RECV_MNY').AsFloat;
+         adoReport1.Post;
+      end;
+      SumRecord.FieldByName(stl).AsFloat:=SumRecord.FieldByName(stl).AsFloat+rs.FieldByName('RECV_MNY').AsFloat;
+      rs.Next;
+    end;
+    if not rs.IsEmpty then
+    begin
+      adoReport1.Append;
+      SumRecord.WriteToDataSet(adoReport1);
+      adoReport1.FieldByName('SALES_TYPE').AsString := '9';
+      adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '合计:';
+      adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+      adoReport1.Post;
+    end;
+
+  finally
+    rs.Free;
   end;
 end;
 

@@ -109,7 +109,7 @@ CREATE TABLE [SAL_VOUCHERDATA] (
         --入库单号
 	[VOUCHER_ID] [char] (36) NOT NULL ,
         --防伪码
-	[BARCODE] [varchar] (50) NOT NULL ,
+	[BARCODE] [varchar] (60) NOT NULL ,
         --代金券类型
 	[VOUCHER_TYPE] [varchar] (1) NULL ,
         --面值
@@ -176,7 +176,7 @@ CREATE TABLE [SAL_VHLEADDATA] (
         --领用单号
 	[VHLEAD_ID] [char] (36) NOT NULL ,
         --防伪码
-	[BARCODE] [varchar] (50) NOT NULL ,
+	[BARCODE] [varchar] (60) NOT NULL ,
         --面值
 	[VOUCHER_PRC] int NOT NULL ,
 	CONSTRAINT [PK_SAL_VHLEADDATA] PRIMARY KEY   
@@ -237,7 +237,7 @@ CREATE TABLE [SAL_VHSENDDATA] (
         --发放单号
 	[VHSEND_ID] [char] (36) NOT NULL ,
         --防伪码
-	[BARCODE] [varchar] (50) NOT NULL ,
+	[BARCODE] [varchar] (60) NOT NULL ,
         --面值
 	[VOUCHER_PRC] int NOT NULL ,
         --代金券类型
@@ -264,7 +264,7 @@ CREATE TABLE [SAL_VHPAY_GLIDE] (
         --支付流水
 	[VHPAY_ID] [char] (36) NOT NULL ,
         --防伪码
-	[BARCODE] [varchar] (50) NOT NULL ,
+	[BARCODE] [varchar] (60) NOT NULL ,
         --支付门店
 	[SHOP_ID] [varchar] (13) NOT NULL ,
         --支付部门

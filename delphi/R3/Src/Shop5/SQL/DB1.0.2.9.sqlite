@@ -45,7 +45,7 @@ CREATE TABLE [SAL_VHSENDDATA] (
         --领用的入库单号
 	[VOUCHER_ID] [varchar] (36) NOT NULL ,
         --防伪码--不记名时 为 #
-	[BARCODE] [varchar] (50) NOT NULL ,
+	[BARCODE] [varchar] (60) NOT NULL ,
         --领用张数
 	[AMOUNT] [decimal](18, 3) NULL ,
         --面值

@@ -98,10 +98,22 @@ begin
 end;
 
 procedure TfrmShowPanel.Start(OnMonitor: TMonitor);
+var
+  hWnd:THandle;
 begin
   Timer1.Enabled := false;
   Show;
-  BoundsRect := rect(OnMonitor.Left+3,
+  hWnd := FindWindow('TfrmRzMonitor',nil);
+  if hWnd>0 then
+     begin
+       Windows.SetParent(Handle,hWnd);
+       BoundsRect := rect(3,
+                     0,
+                     3+Width,
+                     Height);
+     end
+  else
+     BoundsRect := rect(OnMonitor.Left+3,
                      OnMonitor.Top,
                      OnMonitor.Left+3+Width,
                      OnMonitor.Top+Height);

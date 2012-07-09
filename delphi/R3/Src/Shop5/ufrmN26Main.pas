@@ -3136,7 +3136,7 @@ var
   Action:TAction;
 begin
   inherited;
-  ShellExecute(handle,'open','http://localhost:8888/ebp/loginJS.do?userID=3203010000055&passwd=0000 ',nil,nil,0);
+  ShellExecute(handle,'open',' http://58.222.222.46/ebp',nil,nil,0);
   Exit;
   if not CaFactory.Audited then Raise Exception.Create('不支持脱机使用..');
   if N26Factory.Checked=0 then

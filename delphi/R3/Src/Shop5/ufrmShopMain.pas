@@ -320,6 +320,7 @@ type
     actfrmVhSendOrderList: TAction;
     actfrmVhLeadOrderList: TAction;
     actfrmFvchIntfSet: TAction;
+    actfrmBusinessIncomeDayReport: TAction;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -475,6 +476,7 @@ type
     procedure actfrmVhLeadOrderListExecute(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure actfrmFvchIntfSetExecute(Sender: TObject);
+    procedure actfrmBusinessIncomeDayReportExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -552,7 +554,7 @@ uses
   ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,ufrmSalIndentDayReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
-  ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet;
+  ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet,ufrmBusinessIncomeDayReport;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4719,6 +4721,29 @@ begin
        Exit;
      end;
   TfrmFvchIntfSet.ShowDialog(self);
+end;
+
+procedure TfrmShopMain.actfrmBusinessIncomeDayReportExecute(
+  Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmBusinessIncomeDayReport);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmBusinessIncomeDayReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
 end;
 
 end.

@@ -1,32 +1,32 @@
 inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
-  Left = 285
-  Top = 179
-  Width = 1003
+  Left = 171
+  Top = 154
+  Width = 895
   Height = 559
-  Caption = #33829#19994#25910#20837#26085#25253#34920
+  Caption = #33829#19994#26085#27719#24635#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 995
-    Height = 495
+    Width = 879
+    Height = 484
     inherited RzPanel2: TRzPanel
-      Width = 985
-      Height = 485
+      Width = 869
+      Height = 474
       inherited RzPage: TRzPageControl
-        Width = 780
-        Height = 479
+        Width = 664
+        Height = 468
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #33829#19994#25910#20837#26085#25253#34920
+          Caption = #33829#19994#26085#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 778
-            Height = 452
+            Width = 662
+            Height = 441
             inherited Panel4: TPanel
-              Width = 768
-              Height = 442
+              Width = 652
+              Height = 431
               inherited w1: TRzPanel
-                Width = 768
-                Height = 88
+                Width = 652
+                Height = 82
                 object RzLabel2: TRzLabel
                   Left = 33
                   Top = 14
@@ -44,14 +44,14 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
                 end
                 object Label40: TLabel
                   Left = 33
-                  Top = 38
+                  Top = 34
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
                 end
                 object Label3: TLabel
                   Left = 33
-                  Top = 62
+                  Top = 54
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
@@ -77,7 +77,7 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
                   Left = 89
-                  Top = 34
+                  Top = 30
                   Width = 236
                   Height = 20
                   Properties.AutoSelect = False
@@ -118,7 +118,7 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
                   Left = 89
-                  Top = 58
+                  Top = 50
                   Width = 236
                   Height = 20
                   Properties.AutoSelect = False
@@ -152,7 +152,7 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
                 end
                 object RzBitBtn3: TRzBitBtn
                   Left = 345
-                  Top = 46
+                  Top = 38
                   Width = 67
                   Height = 32
                   Action = actFind
@@ -179,12 +179,12 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
                 end
               end
               inherited RzPanel7: TRzPanel
-                Top = 88
-                Width = 768
-                Height = 354
+                Top = 82
+                Width = 652
+                Height = 349
                 inherited DBGridEh1: TDBGridEh
-                  Width = 764
-                  Height = 350
+                  Width = 648
+                  Height = 345
                   Columns = <
                     item
                       EditButtons = <>
@@ -197,8 +197,8 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 783
-        Height = 479
+        Left = 667
+        Height = 468
         inherited Panel2: TPanel
           Height = 447
           inherited Panel5: TPanel
@@ -212,15 +212,15 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 995
+    Width = 879
     inherited Image3: TImage
-      Width = 213
+      Width = 93
     end
     inherited Image14: TImage
-      Left = 975
+      Left = 859
     end
     inherited Image1: TImage
-      Left = 563
+      Left = 447
     end
   end
   inherited mmMenu: TMainMenu

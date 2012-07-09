@@ -15,9 +15,9 @@ inherited frmRecvOrder: TfrmRecvOrder
     Height = 465
     BorderColor = clWhite
     inherited RzPage: TRzPageControl
-      Top = 161
+      Top = 137
       Width = 646
-      Height = 256
+      Height = 280
       BackgroundColor = clWhite
       Color = clWhite
       ParentBackgroundColor = False
@@ -28,14 +28,14 @@ inherited frmRecvOrder: TfrmRecvOrder
         Caption = #25910#27454#26126#32454
         inherited RzPanel2: TRzPanel
           Width = 642
-          Height = 229
+          Height = 253
           BorderColor = clWhite
           Color = clWhite
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 632
-            Height = 219
+            Height = 243
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = DataSource1
@@ -234,7 +234,7 @@ inherited frmRecvOrder: TfrmRecvOrder
       Left = 5
       Top = 5
       Width = 646
-      Height = 156
+      Height = 132
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
@@ -265,7 +265,7 @@ inherited frmRecvOrder: TfrmRecvOrder
       end
       object Label7: TLabel
         Left = 206
-        Top = 130
+        Top = 108
         Width = 24
         Height = 12
         Alignment = taRightJustify
@@ -292,14 +292,6 @@ inherited frmRecvOrder: TfrmRecvOrder
         Width = 48
         Height = 12
         Caption = #25910#27454#38376#24215
-      end
-      object Label4: TLabel
-        Left = 183
-        Top = 108
-        Width = 48
-        Height = 12
-        Alignment = taRightJustify
-        Caption = #31080#25454#32534#21495
       end
       object Label8: TLabel
         Left = 310
@@ -406,15 +398,15 @@ inherited frmRecvOrder: TfrmRecvOrder
         Height = 20
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
         Properties.OnChange = edtRECV_DATEPropertiesChange
-        TabOrder = 7
+        TabOrder = 6
       end
       object edtREMARK: TcxTextEdit
         Left = 236
-        Top = 125
+        Top = 103
         Width = 301
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 6
+        TabOrder = 5
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
       object RzPanel4: TRzPanel
@@ -427,7 +419,7 @@ inherited frmRecvOrder: TfrmRecvOrder
         BorderShadow = clActiveCaption
         Color = clWhite
         FlatColor = clBlue
-        TabOrder = 9
+        TabOrder = 8
         object Shape1: TShape
           Left = 1
           Top = 33
@@ -779,7 +771,7 @@ inherited frmRecvOrder: TfrmRecvOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 8
+        TabOrder = 7
         InGrid = False
         KeyValue = Null
         FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -809,15 +801,6 @@ inherited frmRecvOrder: TfrmRecvOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
-      object edtBILL_NO: TcxTextEdit
-        Left = 236
-        Top = 103
-        Width = 180
-        Height = 20
-        Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 5
-        ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-      end
       object edtBANK_CODE: TcxTextEdit
         Left = 335
         Top = 36
@@ -840,7 +823,7 @@ inherited frmRecvOrder: TfrmRecvOrder
             Default = True
           end>
         Properties.ReadOnly = False
-        TabOrder = 10
+        TabOrder = 9
         InGrid = False
         KeyValue = Null
         FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -863,13 +846,13 @@ inherited frmRecvOrder: TfrmRecvOrder
         DropListStyle = lsFixed
         MultiSelect = False
       end
-      object cxTextEdit1: TcxTextEdit
+      object edtBILL_NO: TcxTextEdit
         Left = 506
         Top = 82
         Width = 131
         Height = 20
         Properties.OnChange = edtREMARKPropertiesChange
-        TabOrder = 11
+        TabOrder = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
       end
     end

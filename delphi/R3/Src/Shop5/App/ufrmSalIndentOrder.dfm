@@ -1092,6 +1092,10 @@ inherited frmSalIndentOrder: TfrmSalIndentOrder
       Caption = #21333#31508#20986#24211
       OnClick = N3Click
     end
+    object N6: TMenuItem
+      Caption = #29983#25104#25552#36135#21048
+      OnClick = N6Click
+    end
     object N4: TMenuItem
       Caption = '-'
     end

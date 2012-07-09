@@ -82,6 +82,7 @@ type
     N5: TMenuItem;
     useLvlPrice: TMenuItem;
     Label21: TLabel;
+    N6: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -119,6 +120,7 @@ type
     procedure Label21Click(Sender: TObject);
     procedure DBGridEh1Columns9UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure N6Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -1322,7 +1324,7 @@ var frmSalesOrderList:TfrmSalesOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
-  if not isAudit then Raise Exception.Create('没有审核的单据不能发货...'); 
+  if not isAudit then Raise Exception.Create('没有审核的单据不能发货...');
   if not cdsHeader.FieldByName('SALBILL_STATUS').AsInteger=2 then Raise Exception.Create('已经结案的单据不能再发货...'); 
   if not frmMain.FindAction('actfrmSalesOrderList').Enabled then Exit;
   frmMain.FindAction('actfrmSalesOrderList').OnExecute(nil);
@@ -2033,6 +2035,84 @@ begin
     edtTable.EnableControls;
   end;
   edtTable.Edit;
+end;
+
+procedure TfrmSalIndentOrder.N6Click(Sender: TObject);
+var rsOrder,rsData:TZQuery;
+    Params:TftParamList;
+    i,ACount,SeqNo:Integer;
+begin
+  inherited;
+  if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
+  if not isAudit then Raise Exception.Create('没有审核的单据不能生成提货券...');
+  rsOrder := TZQuery.Create(nil);
+  rsData := TZQuery.Create(nil);
+  Params := TftParamList.Create;
+  cdsDetail.DisableControls;
+  try
+    Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    Params.ParamByName('VOUCHER_ID').AsString := cdsHeader.FieldByName('INDE_ID').AsString;
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(rsOrder,'TVoucherOrder',Params);
+      Factor.AddBatch(rsData,'TVoucherData',Params);
+      Factor.OpenBatch;
+    except
+      Factor.CancelBatch;
+    end;
+    if rsOrder.FieldByName('PRINT_TIMES').AsInteger > 0 then Raise Exception.Create('生成提货券已打印,不能重新生成提货券!'); 
+    rsOrder.Edit;
+    rsOrder.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+    rsOrder.FieldByName('VOUCHER_ID').AsString := cdsHeader.FieldByName('INDE_ID').AsString;
+    rsOrder.FieldByName('SHOP_ID').AsString := edtSHOP_ID.AsString;
+    rsOrder.FieldByName('DEPT_ID').AsString := edtDEPT_ID.AsString;
+    rsOrder.FieldByName('VOUCHER_TYPE').AsString := '4';
+    rsOrder.FieldByName('INTO_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Date));
+    rsOrder.FieldByName('VAILD_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',IncMonth(Date,12)));
+    rsOrder.FieldByName('VUCH_NAME').AsString := edtCLIENT_ID.Text+'提货券';
+    rsOrder.FieldByName('REMARK').AsString := '订单号"'+cdsHeader.FieldByName('GLIDE_NO').AsString+'"生成提货券';
+    rsOrder.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD HH:NN:SS',Now());
+    rsOrder.FieldByName('CREA_USER').AsString := Global.UserID;
+    rsOrder.Post;
+    rsData.First;
+    while not rsData.Eof do rsData.Delete;
+    SeqNo := 0;
+    edtTable.First;
+    while not edtTable.Eof do
+    begin
+      ACount := edtTable.FieldByName('AMOUNT').AsInteger;
+      for i := 1 to ACount do
+      begin
+        Inc(SeqNo);
+        rsData.Append;
+        rsData.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+        rsData.FieldByName('SEQNO').AsInteger := SeqNo;
+        rsData.FieldByName('VOUCHER_ID').AsString := cdsHeader.FieldByName('INDE_ID').AsString;
+        rsData.FieldByName('BARCODE').AsString := cdsHeader.FieldByName('INDE_ID').AsString+'-'+FnString.FormatStringEx(edtTable.FieldByName('SEQNO').AsString,3,'0')+'-'+
+                                                  edtTable.FieldByName('BARCODE').AsString+'-'+FnString.FormatStringEx(IntToStr(i),3,'0');
+        rsData.FieldByName('VOUCHER_TYPE').AsString := '4';
+        rsData.FieldByName('VOUCHER_PRC').AsInteger := edtTable.FieldByName('APRICE').AsInteger;
+        rsData.FieldByName('VOUCHER_STATUS').AsString := '1';
+        rsData.FieldByName('VAILD_DATE').AsInteger := rsOrder.FieldByName('VAILD_DATE').AsInteger;
+        rsData.FieldByName('CLIENT_ID').AsString := '#';
+        rsData.Post;
+      end;
+      edtTable.Next;
+    end;
+    Factor.BeginBatch;
+    try
+      Factor.AddBatch(rsOrder,'TVoucherOrder');
+      Factor.AddBatch(rsData,'TVoucherData');
+      Factor.CommitBatch;
+    except
+      Factor.CancelBatch;
+    end;
+  finally
+    rsOrder.Free;
+    rsData.Free;
+    Params.Free;
+    cdsDetail.EnableControls;
+  end;
 end;
 
 end.

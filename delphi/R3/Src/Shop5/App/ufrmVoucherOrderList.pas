@@ -368,8 +368,8 @@ end;
 function TfrmVoucherOrderList.PrintSQL(tenantid, id: string): string;
 var Str:String;
 begin
-  Str := 'select A.TENANT_ID,A.SEQNO,A.BARCODE,C.GODS_NAME from SAL_VOUCHERDATA A left join SAL_INDENTDATA B on A.TENANT_ID=B.TENANT_ID '+
-  ' and A.VOUCHER_ID=B.INDE_ID and cast(substr(A.BARCODE,38,3) AS int)=B.SEQNO '+
+  Str := 'select A.TENANT_ID,A.SEQNO,A.BARCODE as CODE,A.VAILD_DATE,C.GODS_CODE,C.BARCODE,C.GODS_NAME from SAL_VOUCHERDATA A '+
+  ' left join SAL_INDENTDATA B on A.TENANT_ID=B.TENANT_ID and A.VOUCHER_ID=B.INDE_ID and cast(substr(A.BARCODE,38,3) AS int)=B.SEQNO '+
   ' left join VIW_GOODSINFO C on B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+
   ' where A.TENANT_ID='+tenantid+' and A.VOUCHER_ID='+QuotedStr(id);
   Result := ParseSQL(Factor.iDbType,Str);

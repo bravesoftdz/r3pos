@@ -152,19 +152,19 @@ begin
   if dbState=dsBrowse then exit;
   if edtCLIENT_ID.AsString = '' then
   begin
-    edtCLIENT_ID.SetFocus;
+    if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
     Raise Exception.Create('客户名称不能为空！');
   end;
   if edtRECV_CLASS.ItemIndex = -1 then
   begin
-    edtRECV_CLASS.SetFocus;
+    if edtRECV_CLASS.CanFocus then edtRECV_CLASS.SetFocus;
     Raise Exception.Create('受理类型不能为空！');
   end;
   if edtSRVR_CLASS.ItemIndex = -1 then
   begin
-    edtSRVR_CLASS.SetFocus;
+    if edtSRVR_CLASS.CanFocus then edtSRVR_CLASS.SetFocus;
     Raise Exception.Create('服务方式不能为空！');
-  end; 
+  end;
 
   WriteToObject(Aobj,self);
   Aobj.FieldByName('CREA_USER').AsString := Global.UserID;

@@ -93,9 +93,11 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Top = 89
       Width = 519
       Height = 217
+      ActivePage = TabSheet2
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
+      TabIndex = 1
       TabOrder = 4
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -216,7 +218,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Top = 61
             Width = 355
             Height = 68
-            Properties.MaxLength = 100
+            Properties.MaxLength = 200
             TabOrder = 3
           end
           object edtRECV_DATE: TcxDateEdit
@@ -238,7 +240,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Top = 11
             Width = 121
             Height = 20
-            Properties.MaxLength = 20
+            Properties.MaxLength = 30
             TabOrder = 0
           end
           object edtTELEPHONE: TcxTextEdit
@@ -246,7 +248,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Top = 11
             Width = 121
             Height = 20
-            Properties.MaxLength = 20
+            Properties.MaxLength = 30
             TabOrder = 1
           end
           object edtADDRESS: TcxTextEdit
@@ -254,7 +256,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Top = 35
             Width = 355
             Height = 20
-            Properties.MaxLength = 20
+            Properties.MaxLength = 120
             TabOrder = 2
           end
           object edtRECV_USER: TzrComboBoxList
@@ -486,7 +488,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Top = 89
             Width = 355
             Height = 68
-            Properties.MaxLength = 100
+            Properties.MaxLength = 200
             TabOrder = 5
           end
           object edtFEE_FLAG: TRadioGroup
@@ -579,7 +581,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Top = 36
       Width = 240
       Height = 20
-      Properties.MaxLength = 20
+      Properties.MaxLength = 50
       TabOrder = 2
     end
     object edtCLIENT_CODE: TcxTextEdit
@@ -587,7 +589,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Top = 10
       Width = 103
       Height = 20
-      Properties.MaxLength = 20
+      Properties.MaxLength = 30
       TabOrder = 1
     end
     object edtCLIENT_ID: TzrComboBoxList
@@ -666,7 +668,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Top = 61
       Width = 240
       Height = 20
-      Properties.MaxLength = 0
+      Properties.MaxLength = 50
       TabOrder = 3
     end
     object RzBitBtn1: TRzBitBtn

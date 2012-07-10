@@ -1,6 +1,6 @@
 inherited frmSvcServiceList: TfrmSvcServiceList
-  Left = 334
-  Top = 165
+  Left = 299
+  Top = 146
   Width = 908
   Height = 549
   Caption = #21806#21518#26381#21153
@@ -9,28 +9,26 @@ inherited frmSvcServiceList: TfrmSvcServiceList
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 892
-    Height = 474
+    Width = 900
+    Height = 485
     inherited RzPanel2: TRzPanel
-      Width = 882
-      Height = 464
+      Width = 890
+      Height = 475
       inherited RzPage: TRzPageControl
-        Width = 876
-        Height = 458
-        ActivePage = TabSheet2
-        TabIndex = 1
+        Width = 884
+        Height = 469
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #38144#21806#35760#24405#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 874
-            Height = 431
+            Width = 882
+            Height = 442
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 864
-              Height = 421
+              Width = 872
+              Height = 432
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -39,7 +37,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object RzPanel6: TRzPanel
                 Left = 6
                 Top = 6
-                Width = 852
+                Width = 860
                 Height = 101
                 Align = alTop
                 BorderOuter = fsNone
@@ -131,7 +129,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   TabOrder = 1
                 end
                 object btnOk: TRzBitBtn
-                  Left = 412
+                  Left = 504
                   Top = 67
                   Width = 67
                   Height = 27
@@ -200,23 +198,25 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   MultiSelect = False
                 end
                 object fndSTATUS: TcxRadioGroup
-                  Left = 559
+                  Left = 391
                   Top = 9
                   Width = 105
                   Height = 85
-                  ItemIndex = 1
+                  ItemIndex = 0
                   Properties.Items = <
                     item
                       Caption = #20840#37096
                     end
                     item
-                      Caption = #26410#24320#31080
+                      Caption = #26410#30331#35760
                     end
                     item
-                      Caption = #24050#24320#31080
+                      Caption = #37096#20998#30331#35760
+                    end
+                    item
+                      Caption = #23436#25104#30331#35760
                     end>
                   TabOrder = 7
-                  Visible = False
                   Caption = #29366#24577
                 end
                 object fndP1_CUST_ID: TzrComboBoxList
@@ -370,16 +370,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object Panel1: TPanel
                 Left = 6
                 Top = 107
-                Width = 852
-                Height = 308
+                Width = 860
+                Height = 319
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 850
-                  Height = 306
+                  Width = 858
+                  Height = 317
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite
@@ -469,6 +469,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                       Footers = <>
                       ReadOnly = True
                       Title.Caption = #31080#25454#31867#22411
+                      Visible = False
                       Width = 70
                     end
                     item
@@ -488,6 +489,13 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                       ReadOnly = True
                       Title.Caption = #23548#36141#21592
                       Width = 60
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'STATUS'
+                      Footers = <>
+                      Title.Caption = #29366#24577
+                      Width = 80
                     end
                     item
                       EditButtons = <>
@@ -520,8 +528,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
           object RzPanel7: TRzPanel
             Left = 0
             Top = 0
-            Width = 874
-            Height = 431
+            Width = 882
+            Height = 442
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -530,8 +538,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object RzPanel8: TRzPanel
               Left = 6
               Top = 6
-              Width = 862
-              Height = 84
+              Width = 870
+              Height = 111
               Align = alTop
               BorderOuter = fsNone
               BorderColor = clWhite
@@ -540,7 +548,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               TabOrder = 0
               object RzLabel4: TRzLabel
                 Left = 24
-                Top = 11
+                Top = 8
                 Width = 48
                 Height = 12
                 Alignment = taRightJustify
@@ -548,14 +556,14 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               end
               object RzLabel1: TRzLabel
                 Left = 186
-                Top = 11
+                Top = 8
                 Width = 12
                 Height = 12
                 Caption = #33267
               end
               object Label4: TLabel
                 Left = 36
-                Top = 61
+                Top = 50
                 Width = 36
                 Height = 12
                 Alignment = taRightJustify
@@ -563,14 +571,30 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               end
               object Label17: TLabel
                 Left = 24
-                Top = 36
+                Top = 29
                 Width = 48
                 Height = 12
                 Caption = #23458#25143#21517#31216
               end
+              object RzLabel6: TRzLabel
+                Left = 36
+                Top = 71
+                Width = 36
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #24207#21015#21495
+              end
+              object RzLabel7: TRzLabel
+                Left = 36
+                Top = 92
+                Width = 36
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #23458#25143#21495
+              end
               object D1: TcxDateEdit
                 Left = 80
-                Top = 7
+                Top = 4
                 Width = 97
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -579,7 +603,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               end
               object D2: TcxDateEdit
                 Left = 205
-                Top = 7
+                Top = 4
                 Width = 98
                 Height = 20
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -587,8 +611,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 TabOrder = 1
               end
               object RzBitBtn1: TRzBitBtn
-                Left = 321
-                Top = 51
+                Left = 328
+                Top = 82
                 Width = 67
                 Height = 26
                 Action = actFind
@@ -606,7 +630,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 4
+                TabOrder = 6
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -615,7 +639,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               end
               object fndCREA_USER: TzrComboBoxList
                 Left = 80
-                Top = 57
+                Top = 46
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -656,7 +680,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               end
               object fndCLIENT_ID: TzrComboBoxList
                 Left = 80
-                Top = 32
+                Top = 25
                 Width = 223
                 Height = 20
                 Properties.AutoSelect = False
@@ -724,20 +748,38 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 DropListStyle = lsFixed
                 MultiSelect = False
               end
+              object fndSERIAL_NO: TcxTextEdit
+                Left = 80
+                Top = 67
+                Width = 223
+                Height = 20
+                Properties.MaxLength = 50
+                TabOrder = 4
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+              object fndCLIENT_CODE: TcxTextEdit
+                Left = 80
+                Top = 88
+                Width = 223
+                Height = 20
+                Properties.MaxLength = 30
+                TabOrder = 5
+                ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
             end
             object Panel2: TPanel
               Left = 6
-              Top = 90
-              Width = 862
-              Height = 335
+              Top = 117
+              Width = 870
+              Height = 319
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 860
-                Height = 333
+                Width = 868
+                Height = 317
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -859,16 +901,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 892
+    Width = 900
     inherited Image3: TImage
       Left = 374
-      Width = 478
+      Width = 486
     end
     inherited Image14: TImage
-      Left = 872
+      Left = 880
     end
     inherited Image1: TImage
-      Left = 852
+      Left = 860
     end
     inherited rzPanel5: TPanel
       Left = 374

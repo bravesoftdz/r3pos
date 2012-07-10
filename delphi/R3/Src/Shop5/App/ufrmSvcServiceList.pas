@@ -8,7 +8,7 @@ uses
   RzLabel, jpeg, ExtCtrls, RzTabs, RzPanel, cxTextEdit, Grids, DBGridEh,
   cxRadioGroup, cxButtonEdit, zrComboBoxList, RzButton, cxControls,
   cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, DB, ZBase,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, ObjCommon;
 
 type
   TfrmSvcServiceList = class(TframeToolForm)
@@ -60,6 +60,10 @@ type
     cdsList: TZQuery;
     Label6: TLabel;
     fndSALES_STYLE: TzrComboBoxList;
+    RzLabel6: TRzLabel;
+    fndSERIAL_NO: TcxTextEdit;
+    RzLabel7: TRzLabel;
+    fndCLIENT_CODE: TcxTextEdit;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -377,21 +381,18 @@ begin
   if fndSALES_STYLE.AsString <> '' then
      strWhere := strWhere + ' and B.SALES_STYLE=:SALES_STYLE ';
      
-  {case fndSTATUS.ItemIndex of
-   1:begin
-       strWhere := strWhere + ' and not exists (select * from SAL_INVOICE_LIST K,SAL_INVOICE_INFO L where K.TENANT_ID=L.TENANT_ID and K.INVD_ID=L.INVD_ID and L.INVOICE_STATUS=''1'' and A.TENANT_ID=K.TENANT_ID and A.SALES_ID=K.FROM_ID and A.GODS_ID=K.GODS_ID ) ';
-       Column := FindColumn('SetFlag');
-       if Column <> nil then Column.Visible := True;
-     end;
-   2:begin
-       strWhere := strWhere + ' and exists (select * from SAL_INVOICE_LIST K,SAL_INVOICE_INFO L where K.TENANT_ID=L.TENANT_ID and K.INVD_ID=L.INVD_ID and L.INVOICE_STATUS=''1'' and A.TENANT_ID=K.TENANT_ID and A.SALES_ID=K.FROM_ID and A.GODS_ID=K.GODS_ID ) ';
-       Column := FindColumn('SetFlag');
-       if Column <> nil then Column.Visible := False;
-     end;
-  end;}
+  case fndSTATUS.ItemIndex of
+    1:strWhere := strWhere + ' and isnull(I.SERIAL_NO_NUM,0) = 0 ';
+    2:strWhere := strWhere + ' and (isnull(I.SERIAL_NO_NUM,0) <> 0) and (isnull(I.SERIAL_NO_NUM,0) < A.AMOUNT) ';
+    3:strWhere := strWhere + ' and isnull(I.SERIAL_NO_NUM,0) = A.AMOUNT ';
+  end;
 
   strSql:=
   'select B.TENANT_ID,B.SALES_ID,B.GLIDE_NO,B.SALES_DATE,B.REMARK,B.CLIENT_ID,C.CLIENT_NAME,B.SALES_TYPE,B.SHOP_ID,H.USER_NAME as CREA_USER_TEXT,'+
+  ' case when isnull(I.SERIAL_NO_NUM,0)=0 then ''未登记'' '+
+  '      when (isnull(I.SERIAL_NO_NUM,0)<>0) and (isnull(I.SERIAL_NO_NUM,0) < A.AMOUNT) then ''部分登记'' '+
+  '      when isnull(I.SERIAL_NO_NUM,0) = A.AMOUNT then ''完成登记'' '+
+  ' end as STATUS,'+
   'A.GODS_ID,E.GODS_NAME,D.SHOP_NAME as SHOP_ID_TEXT,B.CREA_DATE,B.INVOICE_FLAG,A.AMOUNT,A.APRICE,A.AMONEY,G.USER_NAME as GUIDE_USER_TEXT '+
   ' from SAL_SALESDATA A inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
   ' left join VIW_CUSTOMER C on B.TENANT_ID=C.TENANT_ID and B.CLIENT_ID=C.CLIENT_ID '+
@@ -399,7 +400,11 @@ begin
   ' left join VIW_GOODSINFO E on A.TENANT_ID=E.TENANT_ID and A.GODS_ID=E.GODS_ID '+
   ' left join VIW_MEAUNITS F on A.TENANT_ID=F.TENANT_ID and A.UNIT_ID=F.UNIT_ID '+
   ' left join VIW_USERS G on B.TENANT_ID=G.TENANT_ID and B.GUIDE_USER=G.USER_ID '+
-  ' left join VIW_USERS H on B.TENANT_ID=H.TENANT_ID and B.CREA_USER=H.USER_ID '+strWhere+ShopGlobal.GetDataRight('B.SHOP_ID',1)+ShopGlobal.GetDataRight('B.DEPT_ID',2)+' ';
+  ' left join VIW_USERS H on B.TENANT_ID=H.TENANT_ID and B.CREA_USER=H.USER_ID '+
+  ' left join ( '+
+  ' select TENANT_ID,SALES_ID,GODS_ID,count(distinct SERIAL_NO) as SERIAL_NO_NUM from SVC_SERVICE_INFO '+
+  ' group by TENANT_ID,SALES_ID,GODS_ID '+
+  ' ) I on A.TENANT_ID=I.TENANT_ID and A.SALES_ID=I.SALES_ID and A.GODS_ID=I.GODS_ID '+strWhere+ShopGlobal.GetDataRight('B.SHOP_ID',1)+ShopGlobal.GetDataRight('B.DEPT_ID',2)+' ';
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by SALES_ID';
@@ -432,6 +437,10 @@ begin
      strWhere := strWhere + ' and A.CLIENT_ID=:CLIENT_ID ';
   if fndCREA_USER.AsString <> '' then
      strWhere := strWhere + ' and A.CREA_USER=:CREA_USER';
+  if Trim(fndSERIAL_NO.Text) <> '' then
+     strWhere := strWhere + ' and A.SERIAL_NO=:SERIAL_NO';
+  if Trim(fndCLIENT_CODE.Text) <> '' then
+     strWhere := strWhere + ' and A.CLIENT_CODE=:CLIENT_CODE';
 
   strSql:=
   'select A.TENANT_ID,A.SRVR_ID,F.GLIDE_NO,A.GODS_NAME,A.SERIAL_NO,A.RECV_DATE,A.RECV_USER,D.USER_NAME as RECV_USER_TEXT,A.SRVR_DATE,'+
@@ -484,7 +493,7 @@ begin
   sm := TMemoryStream.Create;
   CdsSalesList.DisableControls;
   try
-    rs.SQL.Text := EncodeSQL1(Id);
+    rs.SQL.Text := ParseSQL(Factor.iDbType,EncodeSQL1(Id));
     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rs.Params.ParamByName('D1').AsInteger := strtoint(formatdatetime('YYYYMMDD',P1_D1.Date));
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',P1_D2.Date));
@@ -531,6 +540,8 @@ begin
     rs.Params.ParamByName('D2').AsInteger := strtoint(formatdatetime('YYYYMMDD',D2.Date));
     if rs.Params.FindParam('CLIENT_ID')<>nil then rs.Params.FindParam('CLIENT_ID').AsString := fndCLIENT_ID.AsString;
     if rs.Params.FindParam('CREA_USER')<>nil then rs.Params.FindParam('CREA_USER').AsString := fndCREA_USER.AsString;
+    if rs.Params.FindParam('SERIAL_NO')<>nil then rs.Params.FindParam('SERIAL_NO').AsString := Trim(fndSERIAL_NO.Text);
+    if rs.Params.FindParam('CLIENT_CODE')<>nil then rs.Params.FindParam('CLIENT_CODE').AsString := Trim(fndCLIENT_CODE.Text);
     Factor.Open(rs);
     rs.Last;
     MaxId2 := rs.FieldbyName('SRVR_ID').AsString;

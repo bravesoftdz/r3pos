@@ -83,6 +83,7 @@ type
     useLvlPrice: TMenuItem;
     Label21: TLabel;
     N6: TMenuItem;
+    N7: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -2059,6 +2060,7 @@ begin
       Factor.OpenBatch;
     except
       Factor.CancelBatch;
+      raise;
     end;
     if rsOrder.FieldByName('PRINT_TIMES').AsInteger > 0 then Raise Exception.Create('生成提货券已打印,不能重新生成提货券!'); 
     rsOrder.Edit;
@@ -2106,6 +2108,7 @@ begin
       Factor.CommitBatch;
     except
       Factor.CancelBatch;
+      Raise;
     end;
   finally
     rsOrder.Free;

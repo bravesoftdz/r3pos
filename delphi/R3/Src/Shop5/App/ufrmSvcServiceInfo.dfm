@@ -89,6 +89,36 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Font.Style = []
       ParentFont = False
     end
+    object RzLabel1: TRzLabel [5]
+      Left = 355
+      Top = 65
+      Width = 6
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '*'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
+    object RzLabel3: TRzLabel [6]
+      Left = 355
+      Top = 40
+      Width = 6
+      Height = 12
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '*'
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = []
+      ParentFont = False
+    end
     inherited RzPage: TRzPageControl
       Top = 89
       Width = 519

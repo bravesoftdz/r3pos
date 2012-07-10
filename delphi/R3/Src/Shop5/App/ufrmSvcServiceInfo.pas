@@ -55,6 +55,8 @@ type
     edtFEE_FLAG: TRadioGroup;
     edtSATI_DEGR: TcxComboBox;
     RzBitBtn1: TRzBitBtn;
+    RzLabel1: TRzLabel;
+    RzLabel3: TRzLabel;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -154,6 +156,16 @@ begin
   begin
     if edtCLIENT_ID.CanFocus then edtCLIENT_ID.SetFocus;
     Raise Exception.Create('客户名称不能为空！');
+  end;
+  if Trim(edtGODS_NAME.Text) = '' then
+  begin
+     if edtGODS_NAME.CanFocus then edtGODS_NAME.SetFocus;
+     Raise Exception.Create('商品名称不能为空！');
+  end;
+  if Trim(edtSERIAL_NO.Text) = '' then
+  begin
+     if edtSERIAL_NO.CanFocus then edtSERIAL_NO.SetFocus;
+     Raise Exception.Create('序列号不能为空！');
   end;
   if edtRECV_CLASS.ItemIndex = -1 then
   begin

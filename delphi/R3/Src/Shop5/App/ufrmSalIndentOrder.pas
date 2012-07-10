@@ -190,9 +190,9 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo,
-   ufrmExcelFactory,ufrmMktAtthOrder,ufrmMktAtthOrderList, ufrmBasic;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,
+   uframeListDialog,uframeSelectCustomer,ufrmSalesOrderList,ufrmSalesOrder,ufrmMain,ufrmCustomerInfo,ufrmTenantInfo,
+   ufrmExcelFactory,ufrmMktAtthOrder,ufrmMktAtthOrderList, ufrmBasic,ufrmVoucherOrderList;
 {$R *.dfm}
 
 procedure TfrmSalIndentOrder.ReadHeader;
@@ -2039,15 +2039,17 @@ begin
 end;
 
 procedure TfrmSalIndentOrder.N6Click(Sender: TObject);
-var rsOrder,rsData:TZQuery;
+var rsOrder,rsData,rs:TZQuery;
     Params:TftParamList;
     i,ACount,SeqNo:Integer;
+    frmVoucherOrderList:TfrmVoucherOrderList;
 begin
   inherited;
   if dbState <> dsBrowse then Raise Exception.Create('请保存单据后再操作。');
   if not isAudit then Raise Exception.Create('没有审核的单据不能生成提货券...');
   rsOrder := TZQuery.Create(nil);
   rsData := TZQuery.Create(nil);
+  rs := TZQuery.Create(nil);
   Params := TftParamList.Create;
   cdsDetail.DisableControls;
   try
@@ -2062,7 +2064,11 @@ begin
       Factor.CancelBatch;
       raise;
     end;
-    if rsOrder.FieldByName('PRINT_TIMES').AsInteger > 0 then Raise Exception.Create('生成提货券已打印,不能重新生成提货券!'); 
+    //if rsOrder.FieldByName('PRINT_TIMES').AsInteger > 0 then Raise Exception.Create('生成提货券已打印,不能重新生成提货券!');
+    rs.SQL.Text := 'select count(VOUCHER_ID) as STATUS_SUM from SAL_VOUCHERDATA where TENANT_ID='+IntToStr(Global.TENANT_ID)+
+    ' and VOUCHER_ID='+QuotedStr(cdsHeader.FieldByName('INDE_ID').AsString)+' and VOUCHER_STATUS=''4'' ';
+    Factor.Open(rs);
+    if rs.Fields[0].AsInteger > 0 then Raise Exception.Create('本单"提货券"已提货,不能重新生成提货券!');
     rsOrder.Edit;
     rsOrder.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
     rsOrder.FieldByName('VOUCHER_ID').AsString := cdsHeader.FieldByName('INDE_ID').AsString;
@@ -2110,9 +2116,22 @@ begin
       Factor.CancelBatch;
       Raise;
     end;
+    if MessageBox(Handle,pchar('是否打印"提货券"!'),pchar(Caption),MB_YESNO+MB_ICONQUESTION) = 6 then
+    begin
+       with TfrmVoucherOrderList.Create(nil) do
+       begin
+         try
+           PrintType := 1;
+           PrintVoucher(cdsHeader.FieldByName('INDE_ID').AsString);
+         finally
+           Free;
+         end;
+       end;
+    end;
   finally
     rsOrder.Free;
     rsData.Free;
+    rs.Free;
     Params.Free;
     cdsDetail.EnableControls;
   end;

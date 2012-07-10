@@ -68,6 +68,8 @@ type
     RzBitBtn1: TRzBitBtn;
     N5: TMenuItem;
     useLvlPrice: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -102,6 +104,7 @@ type
       Shift: TShiftState);
     procedure N5Click(Sender: TObject);
     procedure useLvlPriceClick(Sender: TObject);
+    procedure N7Click(Sender: TObject);
   private
     { Private declarations }
     //进位法则
@@ -115,6 +118,7 @@ type
     function  CheckNotChangePrice(GodsID: string): Boolean; //2011.06.08返回是否企业定价
     function  CheckSale_Limit: Boolean; //2011.06.09判断是否限量
     function  getLvlPrice(priceDataSet : TZQuery; number : currency) : currency;// 获取促销档位价
+    procedure GetGodsByVoucher;
   protected
     procedure SetInputFlag(const Value: integer);override;
     procedure SetdbState(const Value: TDataSetState); override;
@@ -172,8 +176,9 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,ufrmCodeInfo,uframeListDialog
-   ,uframeSelectCustomer,ufrmSalIndentOrder,ufrmCustomerInfo,ufrmSalRetuOrderList,ufrmSalRetuOrder,ufrmMain,ufrmFindOrder,ufrmTenantInfo;
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uShopGlobal,ufrmLogin,ufrmClientInfo,ufrmGoodsInfo,ufrmUsersInfo,
+   ufrmCodeInfo,uframeListDialog,uframeSelectCustomer,ufrmSalIndentOrder,ufrmCustomerInfo,ufrmSalRetuOrderList,
+   ufrmSalRetuOrder,ufrmMain,ufrmFindOrder,ufrmTenantInfo,ufrmVhPayGlide;
 {$R *.dfm}
 
 procedure TfrmSalesOrder.ReadHeader;
@@ -2213,6 +2218,50 @@ begin
   end;
   Calc;
   DBGridEh1.SetFocus;
+end;
+
+procedure TfrmSalesOrder.N7Click(Sender: TObject);
+begin
+  inherited;
+  if DBGridEh1.ReadOnly then Exit;
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空!');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create('销售门店不能为空!');
+  if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空!');
+  GetGodsByVoucher;
+end;
+
+procedure TfrmSalesOrder.GetGodsByVoucher;
+var rs:TZQuery;
+begin
+  rs := TZQuery.Create(nil);
+  try
+    rs.Close;
+    rs.FieldDefs.Add('ID',ftString,60,True);
+    rs.CreateDataSet;
+    with TfrmVhPayGlide.Create(Self) do
+    begin
+      try
+        ClientId := edtCLIENT_ID.AsString;
+        DeptId := edtDEPT_ID.AsString;
+        ShopId := edtSHOP_ID.AsString;
+        FromId := AObj.FieldbyName('SALES_ID').asString;
+        CdsVoucher := rs;
+        if ShowModal = mrOk then
+        begin
+          rs.First;
+          while not rs.Eof do
+          begin
+            DecodeBarcode(copy(rs.FieldByName('ID').AsString,42,13));
+            rs.Next;
+          end;
+        end;
+      finally
+        Free;
+      end;
+    end;
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

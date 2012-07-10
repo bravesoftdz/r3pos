@@ -7,10 +7,10 @@ inherited frmSalesOrder: TfrmSalesOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 780
-    Height = 514
+    Width = 788
+    Height = 525
     inherited RzPanel2: TRzPanel
-      Width = 770
+      Width = 778
       Height = 140
       TabStop = True
       object lblSTOCK_DATE: TLabel [0]
@@ -488,8 +488,8 @@ inherited frmSalesOrder: TfrmSalesOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 409
-      Width = 770
+      Top = 420
+      Width = 778
       Height = 63
       TabOrder = 2
       object Label19: TLabel
@@ -690,8 +690,8 @@ inherited frmSalesOrder: TfrmSalesOrder
     end
     inherited DBGridEh1: TDBGridEh
       Top = 178
-      Width = 770
-      Height = 231
+      Width = 778
+      Height = 242
       TabOrder = 3
       Columns = <
         item
@@ -809,15 +809,15 @@ inherited frmSalesOrder: TfrmSalesOrder
     end
     inherited pnlBarCode: TRzPanel
       Top = 145
-      Width = 770
+      Width = 778
     end
     inherited stbHint: TRzPanel
-      Top = 472
-      Width = 770
+      Top = 483
+      Width = 778
     end
     inherited rzHelp: TRzPanel
-      Top = 496
-      Width = 770
+      Top = 507
+      Width = 778
       Height = 13
     end
     inherited fndUNIT_ID: TcxComboBox
@@ -855,6 +855,13 @@ inherited frmSalesOrder: TfrmSalesOrder
     object N3: TMenuItem
       Caption = #21333#31508#36864#36135
       OnClick = N3Click
+    end
+    object N6: TMenuItem
+      Caption = '-'
+    end
+    object N7: TMenuItem
+      Caption = #25552#36135#21048#25552#36135
+      OnClick = N7Click
     end
     object N4: TMenuItem
       Caption = '-'

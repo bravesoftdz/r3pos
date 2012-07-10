@@ -36,6 +36,7 @@ type
     FShopId: String;
     FDeptId: String;
     FPayUser: String;
+    FCdsVoucher: TZQuery;
     procedure SetFromId(const Value: string);
     procedure SetPayMny(const Value: Currency);
     procedure SetResultAmount(const Value: Integer);
@@ -44,6 +45,7 @@ type
     procedure SetDeptId(const Value: String);
     procedure SetPayUser(const Value: String);
     procedure SetShopId(const Value: String);
+    procedure SetCdsVoucher(const Value: TZQuery);
   public
     { Public declarations }
     procedure Open;
@@ -57,6 +59,7 @@ type
     property PayUser:String read FPayUser write SetPayUser;
     property ResultAmount:Integer read FResultAmount write SetResultAmount;
     property ResultVoucherTtl:Currency read FResultVoucherTtl write SetResultVoucherTtl;
+    property CdsVoucher:TZQuery read FCdsVoucher write SetCdsVoucher;
   end;
 
 implementation
@@ -172,7 +175,7 @@ begin
      rs := TZQuery.Create(nil);
      try
        if BarCode = '' then Exit;
-       if PayMny <= 0 then Raise Exception.Create(labMNY.Caption+',已完毕!');
+       if (PayMny <= 0) and not Assigned(CdsVoucher) then Raise Exception.Create(labMNY.Caption+',已完毕!');
        if CdsVhPay.Locate('BARCODE',BarCode,[]) then Raise Exception.Create('"'+BarCode+'"礼券已使用,请确认!');
        rs.SQL.Text := 'select BARCODE,VOUCHER_PRC,VOUCHER_STATUS,VOUCHER_TYPE,CLIENT_ID from SAL_VOUCHERDATA where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE ';
        rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
@@ -189,6 +192,12 @@ begin
        labPRC.Caption := '礼券面值:'+rs.FieldByName('VOUCHER_PRC').AsString;
        labNO.Caption := '礼券号:'+BarCode;
        CdsVhPay.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;
+       if Assigned(CdsVoucher) then
+       Begin
+          CdsVoucher.Append;
+          CdsVoucher.FieldByName('ID').AsString := rs.FieldByName('BARCODE').AsString;
+          CdsVoucher.Post;
+       end;       
        CdsVhPay.FieldByName('VOUCHER_TYPE').AsString := rs.FieldByName('VOUCHER_TYPE').AsString;
        if ClientId = '' then
           CdsVhPay.FieldByName('CLIENT_ID').AsString := '#'
@@ -206,13 +215,16 @@ begin
           CdsVhPay.FieldByName('VHPAY_USER').AsString := Global.UserID
        else
           CdsVhPay.FieldByName('VHPAY_USER').AsString := PayUser;
-       if PayMny > rs.FieldByName('VOUCHER_PRC').AsFloat then
+       if (PayMny > rs.FieldByName('VOUCHER_PRC').AsFloat) or Assigned(CdsVoucher) then
           CdsVhPay.FieldByName('VHPAY_MNY').AsFloat := rs.FieldByName('VOUCHER_PRC').AsInteger
        else
           CdsVhPay.FieldByName('VHPAY_MNY').AsFloat := PayMny;
        PayMny := PayMny - rs.FieldByName('VOUCHER_PRC').AsInteger;
        CdsVhPay.FieldByName('AGIO_MONEY').AsFloat := CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat - CdsVhPay.FieldByName('VHPAY_MNY').AsFloat;
-       CdsVhPay.FieldByName('AGIO_RATE').AsFloat := CdsVhPay.FieldByName('VHPAY_MNY').AsFloat/CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat;
+       if CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat = 0 then
+          CdsVhPay.FieldByName('AGIO_RATE').AsFloat := 0
+       else
+          CdsVhPay.FieldByName('AGIO_RATE').AsFloat := CdsVhPay.FieldByName('VHPAY_MNY').AsFloat/CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat;
        CdsVhPay.FieldByName('FROM_ID').AsString := FromId;
        CdsVhPay.FieldByName('CREA_USER').AsString := Global.UserID;
        CdsVhPay.FieldByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());;
@@ -230,13 +242,18 @@ end;
 procedure TfrmVhPayGlide.Btn_CloseClick(Sender: TObject);
 begin
   inherited;
-  Close;
+  ModalResult := mrIgnore;
 end;
 
 procedure TfrmVhPayGlide.Btn_SaveClick(Sender: TObject);
 begin
   inherited;
   Save;
+end;
+
+procedure TfrmVhPayGlide.SetCdsVoucher(const Value: TZQuery);
+begin
+  FCdsVoucher := Value;
 end;
 
 end.

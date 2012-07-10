@@ -44,19 +44,22 @@ end;
 constructor TframeMDForm.Create(AOwner: TComponent);
 begin
   inherited;
-  if Assigned(Application.MainForm) and Application.MainForm.Visible then
-     begin
-       SetBounds(-30,-20,Application.MainForm.ClientWidth+20,Application.MainForm.ClientHeight+30);
-       WindowState := wsMaximized;
-       FormStyle := fsMDIChild;
-     end
-  else
-     begin
-       SetBounds(0,0,800,580);
-     end;
-  LoadFormRes(self);
-  //初始form窗体
-  Initform(self);
+  if Assigned(AOwner) then
+  begin
+    if Assigned(Application.MainForm) and Application.MainForm.Visible then
+       begin
+         SetBounds(-30,-20,Application.MainForm.ClientWidth+20,Application.MainForm.ClientHeight+30);
+         WindowState := wsMaximized;
+         FormStyle := fsMDIChild;
+       end
+    else
+       begin
+         SetBounds(0,0,800,580);
+       end;
+    LoadFormRes(self);
+    //初始form窗体
+    Initform(self);
+  end;
 end;
 
 procedure TframeMDForm.Createparams(var Params: TCreateParams);

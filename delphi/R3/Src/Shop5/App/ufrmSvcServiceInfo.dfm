@@ -1,7 +1,7 @@
 inherited frmSvcServiceInfo: TfrmSvcServiceInfo
   Left = 402
   Top = 213
-  Caption = #23433#35013#21450#32500#25252#26723#26696
+  Caption = #21806#21518#26381#21153
   ClientHeight = 343
   ClientWidth = 529
   OnCloseQuery = FormCloseQuery
@@ -93,11 +93,9 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Top = 89
       Width = 519
       Height = 217
-      ActivePage = TabSheet2
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
-      TabIndex = 1
       TabOrder = 4
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -579,7 +577,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
     object edtGODS_NAME: TcxTextEdit
       Left = 113
       Top = 36
-      Width = 354
+      Width = 240
       Height = 20
       Properties.MaxLength = 20
       TabOrder = 2
@@ -587,7 +585,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
     object edtCLIENT_CODE: TcxTextEdit
       Left = 346
       Top = 10
-      Width = 121
+      Width = 103
       Height = 20
       Properties.MaxLength = 20
       TabOrder = 1
@@ -666,10 +664,36 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
     object edtSERIAL_NO: TcxTextEdit
       Left = 113
       Top = 61
-      Width = 354
+      Width = 240
       Height = 20
-      Properties.MaxLength = 20
+      Properties.MaxLength = 0
       TabOrder = 3
+    end
+    object RzBitBtn1: TRzBitBtn
+      Left = 448
+      Top = 9
+      Width = 27
+      Height = 22
+      Anchors = [akTop, akRight]
+      Caption = '...'
+      Color = clSilver
+      Font.Charset = GB2312_CHARSET
+      Font.Color = clBlack
+      Font.Height = -12
+      Font.Name = #23435#20307
+      Font.Style = [fsBold]
+      HighlightColor = 16026986
+      HotTrack = True
+      HotTrackColor = 3983359
+      HotTrackColorType = htctActual
+      ParentFont = False
+      TextShadowColor = clWhite
+      TextShadowDepth = 4
+      TabOrder = 6
+      TextStyle = tsRaised
+      ThemeAware = False
+      NumGlyphs = 2
+      Spacing = 5
     end
   end
   inherited mmMenu: TMainMenu

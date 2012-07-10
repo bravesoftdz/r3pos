@@ -321,6 +321,8 @@ type
     actfrmVhLeadOrderList: TAction;
     actfrmFvchIntfSet: TAction;
     actfrmBusinessIncomeDayReport: TAction;
+    actfrmSvcServiceList: TAction;
+    Button1: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -477,6 +479,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure actfrmFvchIntfSetExecute(Sender: TObject);
     procedure actfrmBusinessIncomeDayReportExecute(Sender: TObject);
+    procedure actfrmSvcServiceListExecute(Sender: TObject);
   private
     { Private declarations }
     FList:TList;
@@ -554,7 +557,8 @@ uses
   ufrmBondRequReport,ufrmMktRequReport,ufrmMktCostTotalReport,ufrmMktKpiTotalReport,ufrmSalIndentDayReport,
   ufrmMktMarketCostOrderList,ufrmMktActiveList,ufrmBomOrderList,ufrmSalInvoiceList,ufrmMktGodsReport,ufrmMktBudgOrderList,
   ufrmMktBudgReport,ufrmMktPlanOrderList3,ufrmInvoice,ufrmStkInvoiceList,ufrmMktAtthOrderList,ufrmAllRckReport,ufrmFvchFrame,
-  ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet,ufrmBusinessIncomeDayReport;
+  ufrmFvchOrderList,ufrmInvoiceTotalReport,ufrmVoucherOrderList,ufrmVhLeadOrderList,ufrmVhSendOrderList,ufrmFvchIntfSet,
+  ufrmBusinessIncomeDayReport,ufrmSvcServiceList;
 {$R *.dfm}
 
 procedure TfrmShopMain.FormActivate(Sender: TObject);
@@ -4615,7 +4619,7 @@ end;
 procedure TfrmShopMain.Button1Click(Sender: TObject);
 begin
   inherited;
-  actfrmVhLeadOrderList.OnExecute(nil);
+  actfrmSvcServiceList.OnExecute(nil);
 end;
 
 procedure TfrmShopMain.actfrmInvoiceTotalReportExecute(Sender: TObject);
@@ -4740,6 +4744,28 @@ begin
   if not Assigned(Form) then
      begin
        Form := TfrmBusinessIncomeDayReport.Create(self);
+       AddFrom(Form);
+     end;
+  Form.Show;
+  Form.BringToFront;
+end;
+
+procedure TfrmShopMain.actfrmSvcServiceListExecute(Sender: TObject);
+var
+  Form:TfrmBasic;
+begin
+  inherited;
+  if not Logined then
+     begin
+       PostMessage(frmShopMain.Handle,WM_LOGIN_REQUEST,0,0);
+       Exit;
+     end;
+  Application.Restore;
+  frmShopDesk.SaveToFront;
+  Form := FindChildForm(TfrmSvcServiceList);
+  if not Assigned(Form) then
+     begin
+       Form := TfrmSvcServiceList.Create(self);
        AddFrom(Form);
      end;
   Form.Show;

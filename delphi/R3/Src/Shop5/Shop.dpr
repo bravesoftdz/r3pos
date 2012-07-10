@@ -345,7 +345,10 @@ uses
   ObjVhSendOrder in 'Obj\ObjVhSendOrder.pas',
   ObjVoucherOrder in 'Obj\ObjVoucherOrder.pas',
   ufrmFvchIntfSet in 'App\ufrmFvchIntfSet.pas' {frmFvchIntfSet},
-  ufrmBusinessIncomeDayReport in 'App\ufrmBusinessIncomeDayReport.pas' {frmBusinessIncomeDayReport};
+  ufrmBusinessIncomeDayReport in 'App\ufrmBusinessIncomeDayReport.pas' {frmBusinessIncomeDayReport},
+  ufrmSvcServiceInfo in 'App\ufrmSvcServiceInfo.pas' {frmSvcServiceInfo},
+  ufrmSvcServiceList in 'App\ufrmSvcServiceList.pas' {frmSvcServiceList},
+  ObjSvcServiceInfo in 'Obj\ObjSvcServiceInfo.pas';
 
 {$R *.res}
 var

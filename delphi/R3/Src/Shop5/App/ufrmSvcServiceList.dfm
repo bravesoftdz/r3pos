@@ -3,34 +3,34 @@ inherited frmSvcServiceList: TfrmSvcServiceList
   Top = 165
   Width = 908
   Height = 549
-  Caption = #35774#22791#23433#35013#21450#32500#25252#31649#29702
+  Caption = #21806#21518#26381#21153
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 900
-    Height = 485
+    Width = 892
+    Height = 474
     inherited RzPanel2: TRzPanel
-      Width = 890
-      Height = 475
+      Width = 882
+      Height = 464
       inherited RzPage: TRzPageControl
-        Width = 884
-        Height = 469
+        Width = 876
+        Height = 458
         ActivePage = TabSheet2
         TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
-          Caption = #38144#21806#35774#22791#26597#35810
+          Caption = #38144#21806#35760#24405#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 882
-            Height = 442
+            Width = 874
+            Height = 431
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
-              Width = 872
-              Height = 432
+              Width = 864
+              Height = 421
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -39,7 +39,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object RzPanel6: TRzPanel
                 Left = 6
                 Top = 6
-                Width = 860
+                Width = 852
                 Height = 101
                 Align = alTop
                 BorderOuter = fsNone
@@ -370,16 +370,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object Panel1: TPanel
                 Left = 6
                 Top = 107
-                Width = 860
-                Height = 319
+                Width = 852
+                Height = 308
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
                 object DBGridEh1: TDBGridEh
                   Left = 1
                   Top = 1
-                  Width = 858
-                  Height = 317
+                  Width = 850
+                  Height = 306
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite
@@ -516,12 +516,12 @@ inherited frmSvcServiceList: TfrmSvcServiceList
           end
         end
         object TabSheet2: TRzTabSheet
-          Caption = #23433#35013'/'#32500#20445#21333#26597#35810
+          Caption = #26381#21153#35760#24405#26597#35810
           object RzPanel7: TRzPanel
             Left = 0
             Top = 0
-            Width = 882
-            Height = 442
+            Width = 874
+            Height = 431
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -530,7 +530,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object RzPanel8: TRzPanel
               Left = 6
               Top = 6
-              Width = 870
+              Width = 862
               Height = 84
               Align = alTop
               BorderOuter = fsNone
@@ -728,16 +728,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             object Panel2: TPanel
               Left = 6
               Top = 90
-              Width = 870
-              Height = 346
+              Width = 862
+              Height = 335
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
               object DBGridEh2: TDBGridEh
                 Left = 1
                 Top = 1
-                Width = 868
-                Height = 344
+                Width = 860
+                Height = 333
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -859,16 +859,16 @@ inherited frmSvcServiceList: TfrmSvcServiceList
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 900
+    Width = 892
     inherited Image3: TImage
       Left = 374
-      Width = 486
+      Width = 478
     end
     inherited Image14: TImage
-      Left = 880
+      Left = 872
     end
     inherited Image1: TImage
-      Left = 860
+      Left = 852
     end
     inherited rzPanel5: TPanel
       Left = 374

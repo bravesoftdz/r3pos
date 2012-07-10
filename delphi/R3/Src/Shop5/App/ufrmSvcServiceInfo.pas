@@ -54,6 +54,7 @@ type
     edtSERIAL_NO: TcxTextEdit;
     edtFEE_FLAG: TRadioGroup;
     edtSATI_DEGR: TcxComboBox;
+    RzBitBtn1: TRzBitBtn;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);

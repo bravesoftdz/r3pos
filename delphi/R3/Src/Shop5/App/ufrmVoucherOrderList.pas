@@ -52,12 +52,15 @@ type
     procedure PrintAfter(Sender:TObject);
   public
     { Public declarations }
+    PrintType:Integer;
+    PrintId:String;
     IsEnd: boolean;
     MaxId:string;
     function PrintSQL(tenantid,id:string):string;
     function GetFormClass:TFormClass;override;
     function EncodeSQL(id:string):string;
     procedure Open(Id:string);
+    function PrintVoucher(ID:String):Boolean;
   end;
 
 
@@ -384,6 +387,7 @@ end;
 procedure TfrmVoucherOrderList.FormCreate(Sender: TObject);
 begin
   inherited;
+  PrintType := 0;
   fndDEPT_ID.DataSet := Global.GetZQueryFromName('CA_DEPT_INFO');
   //fndDEPT_ID.RangeField := 'DEPT_TYPE';
   //fndDEPT_ID.RangeValue := '1';
@@ -442,7 +446,12 @@ begin
   if CurContract<>nil then
      Sql_Str := 'update SAL_VOUCHERORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and VOUCHER_ID='+QuotedStr(CurContract.oid)
   else
-     Sql_Str := 'update SAL_VOUCHERORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and VOUCHER_ID='+QuotedStr(cdsList.FieldbyName('VOUCHER_ID').AsString);
+  begin
+     if PrintType = 0 then
+        Sql_Str := 'update SAL_VOUCHERORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and VOUCHER_ID='+QuotedStr(cdsList.FieldbyName('VOUCHER_ID').AsString)
+     else
+        Sql_Str := 'update SAL_VOUCHERORDER set PRINT_TIMES = '+IntToStr(PrintTimes+1)+',PRINT_USER = '''+ShopGlobal.UserID+''' where TENANT_ID='+inttostr(Global.TENANT_ID)+' and VOUCHER_ID='+QuotedStr(PrintId);
+  end;
   Factor.ExecSQL(Sql_Str);
 end;
 
@@ -456,7 +465,12 @@ begin
     if CurContract<>nil then
        Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_VOUCHERORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and VOUCHER_ID='+QuotedStr(CurContract.oid)
     else
-       Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_VOUCHERORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and VOUCHER_ID='+QuotedStr(cdsList.FieldbyName('VOUCHER_ID').AsString);
+    begin
+       if PrintType = 0 then
+          Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_VOUCHERORDER where TENANT_ID='+cdsList.FieldbyName('TENANT_ID').AsString+' and VOUCHER_ID='+QuotedStr(cdsList.FieldbyName('VOUCHER_ID').AsString)
+       else
+          Sql_Str := 'select PRINT_TIMES,PRINT_USER from SAL_VOUCHERORDER where TENANT_ID='+inttostr(Global.TENANT_ID)+' and VOUCHER_ID='+QuotedStr(PrintId);
+    end;
     rs.Close;
     rs.SQL.Text := Sql_Str;
     Factor.Open(rs);
@@ -472,6 +486,23 @@ begin
   finally
     rs.Free;
   end;
+end;
+
+function TfrmVoucherOrderList.PrintVoucher(ID: String): Boolean;
+begin
+  //if not ShopGlobal.GetChkRight('100002430',6) then Raise Exception.Create('你没有打印礼券的权限,请和管理员联系.');
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+        PrintId := ID;
+        BeforePrint := PrintBefore;
+        AfterPrint := PrintAfter;
+        PrintReport(PrintSQL(IntToStr(Global.TENANT_ID),ID),frfVoucherOrder);
+      finally
+        free;
+      end;
+    end;
+
 end;
 
 end.

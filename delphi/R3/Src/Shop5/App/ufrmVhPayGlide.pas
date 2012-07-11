@@ -9,6 +9,7 @@ uses
   cxControls, cxContainer, cxEdit, cxTextEdit, StdCtrls, RzButton, ZBase;
 
 type
+  TVoucherCheckInfo = function(_Aobj:TRecord_):Boolean;
   TfrmVhPayGlide = class(TframeDialogForm)
     CdsVhPay: TZQuery;
     Btn_Close: TRzBitBtn;
@@ -17,10 +18,17 @@ type
     lblInput: TLabel;
     edtInput: TcxTextEdit;
     RzPanel3: TRzPanel;
+    RzPageControl1: TRzPageControl;
+    TabSheet2: TRzTabSheet;
+    TabSheet3: TRzTabSheet;
     labMNY: TLabel;
     labPRC: TLabel;
     labAMOUNT: TLabel;
     labNO: TLabel;
+    labClientId: TLabel;
+    LabPRC1: TLabel;
+    LabGlideNo: TLabel;
+    LabAmount1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
@@ -28,6 +36,7 @@ type
     procedure Btn_SaveClick(Sender: TObject);
   private
     { Private declarations }
+    SumMoney:Currency;
     FFromId: string;
     FPayMny: Currency;
     FResultVoucherTtl: Currency;
@@ -46,11 +55,15 @@ type
     procedure SetPayUser(const Value: String);
     procedure SetShopId(const Value: String);
     procedure SetCdsVoucher(const Value: TZQuery);
+    procedure AnalysisBarcode;
+    procedure AnalysisSalesBarcode;
   public
     { Public declarations }
+    VoucherBarcodeCheck:TVoucherCheckInfo;
     procedure Open;
     procedure Save;
     class function ScanBarcode(Owner:TForm;vFromId:String='';vShopId:String='';vDeptId:String='';vClientId:String='';vPayMny:Currency=0):Boolean;
+    class function ScanSalesBarcode(Owner:TForm;vFromId:String='';CheckInfo:TVoucherCheckInfo=nil;rs:TZQuery=nil):Currency;
     property FromId:string read FFromId write SetFromId;
     property PayMny:Currency read FPayMny write SetPayMny;
     property ShopId:String read FShopId write SetShopId;
@@ -97,7 +110,10 @@ end;
 procedure TfrmVhPayGlide.SetResultAmount(const Value: Integer);
 begin
   FResultAmount := Value;
-  labAMOUNT.Caption := '礼券数:'+IntToStr(Value);
+  if RzPageControl1.ActivePageIndex = 0 then
+     labAMOUNT.Caption := '礼券数:'+IntToStr(Value)
+  else
+     LabAmount1.Caption := '礼券数:'+IntToStr(Value);
 end;
 
 procedure TfrmVhPayGlide.SetResultVoucherTtl(const Value: Currency);
@@ -129,6 +145,7 @@ begin
       DeptId := vDeptId;
       ClientId := vClientId;
       PayMny := vPayMny;
+      RzPageControl1.ActivePageIndex := 0;
       ShowModal;
     finally
       Free;
@@ -160,81 +177,24 @@ end;
 procedure TfrmVhPayGlide.FormShow(Sender: TObject);
 begin
   inherited;
+  TabSheet2.TabVisible := False;
+  TabSheet3.TabVisible := False;
   Open;
   edtInput.SetFocus;
 end;
 
 procedure TfrmVhPayGlide.edtInputKeyPress(Sender: TObject; var Key: Char);
-var rs:TZQuery;
-    BarCode:String;
 begin
   inherited;
   if Key = #13 then
   begin
-     BarCode := Trim(edtInput.Text);
-     rs := TZQuery.Create(nil);
      try
-       if BarCode = '' then Exit;
-       if (PayMny <= 0) and not Assigned(CdsVoucher) then Raise Exception.Create(labMNY.Caption+',已完毕!');
-       if CdsVhPay.Locate('BARCODE',BarCode,[]) then Raise Exception.Create('"'+BarCode+'"礼券已使用,请确认!');
-       rs.SQL.Text := 'select BARCODE,VOUCHER_PRC,VOUCHER_STATUS,VOUCHER_TYPE,CLIENT_ID from SAL_VOUCHERDATA where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE ';
-       rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-       rs.Params.ParamByName('BARCODE').AsString := BarCode;
-       Factor.Open(rs);
-       if rs.IsEmpty then Raise Exception.Create('"'+Trim(edtInput.Text)+'"礼券不存在,请核对真实!');
-       if rs.FieldByName('VOUCHER_STATUS').AsString = '4' then Raise Exception.Create('"'+Trim(edtInput.Text)+'"礼券已经结算,请核对真实!');
-       if (rs.FieldByName('VOUCHER_TYPE').AsString = '3') and (rs.FieldByName('CLIENT_ID').AsString <> ClientId) then Raise Exception.Create('"'+Trim(edtInput.Text)+'"为记名礼券,只能本人使用');
-       CdsVhPay.Append;
-       CdsVhPay.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-       CdsVhPay.FieldByName('VHPAY_ID').AsString := TSequence.NewId;
-       CdsVhPay.FieldByName('VHPAY_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Global.SysDate));
-       CdsVhPay.FieldByName('VOUCHER_PRC').AsInteger := rs.FieldByName('VOUCHER_PRC').AsInteger;
-       labPRC.Caption := '礼券面值:'+rs.FieldByName('VOUCHER_PRC').AsString;
-       labNO.Caption := '礼券号:'+BarCode;
-       CdsVhPay.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;
-       if Assigned(CdsVoucher) then
-       Begin
-          CdsVoucher.Append;
-          CdsVoucher.FieldByName('ID').AsString := rs.FieldByName('BARCODE').AsString;
-          CdsVoucher.Post;
-       end;       
-       CdsVhPay.FieldByName('VOUCHER_TYPE').AsString := rs.FieldByName('VOUCHER_TYPE').AsString;
-       if ClientId = '' then
-          CdsVhPay.FieldByName('CLIENT_ID').AsString := '#'
+       if RzPageControl1.ActivePageIndex = 0 then
+          AnalysisBarcode
        else
-          CdsVhPay.FieldByName('CLIENT_ID').AsString := ClientId;
-       if ShopId = '' then
-          CdsVhPay.FieldByName('SHOP_ID').AsString := Global.SHOP_ID
-       else
-          CdsVhPay.FieldByName('SHOP_ID').AsString := ShopId;
-       if DeptId = '' then
-          CdsVhPay.FieldByName('DEPT_ID').AsString := TZQuery(ShopGlobal.GetDeptInfo).FieldByName('DEPT_ID').AsString
-       else
-          CdsVhPay.FieldByName('DEPT_ID').AsString := DeptId;
-       if PayUser = '' then
-          CdsVhPay.FieldByName('VHPAY_USER').AsString := Global.UserID
-       else
-          CdsVhPay.FieldByName('VHPAY_USER').AsString := PayUser;
-       if (PayMny > rs.FieldByName('VOUCHER_PRC').AsFloat) or Assigned(CdsVoucher) then
-          CdsVhPay.FieldByName('VHPAY_MNY').AsFloat := rs.FieldByName('VOUCHER_PRC').AsInteger
-       else
-          CdsVhPay.FieldByName('VHPAY_MNY').AsFloat := PayMny;
-       PayMny := PayMny - rs.FieldByName('VOUCHER_PRC').AsInteger;
-       CdsVhPay.FieldByName('AGIO_MONEY').AsFloat := CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat - CdsVhPay.FieldByName('VHPAY_MNY').AsFloat;
-       if CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat = 0 then
-          CdsVhPay.FieldByName('AGIO_RATE').AsFloat := 0
-       else
-          CdsVhPay.FieldByName('AGIO_RATE').AsFloat := CdsVhPay.FieldByName('VHPAY_MNY').AsFloat/CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat;
-       CdsVhPay.FieldByName('FROM_ID').AsString := FromId;
-       CdsVhPay.FieldByName('CREA_USER').AsString := Global.UserID;
-       CdsVhPay.FieldByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());;
-       CdsVhPay.Post;
-       ResultAmount := ResultAmount + 1;
+          AnalysisSalesBarcode;
      finally
-       Key := #0;     
-       edtInput.Text := '';
-       edtInput.SetFocus;
-       rs.Free;
+       Key := #0;
      end;
   end;
 end;
@@ -254,6 +214,170 @@ end;
 procedure TfrmVhPayGlide.SetCdsVoucher(const Value: TZQuery);
 begin
   FCdsVoucher := Value;
+end;
+
+procedure TfrmVhPayGlide.AnalysisBarcode;
+var rs:TZQuery;
+    BarCode:String;
+begin
+   BarCode := Trim(edtInput.Text);
+   if BarCode = '' then Exit;
+   rs := TZQuery.Create(nil);
+   try
+     if PayMny <= 0 then Raise Exception.Create(labMNY.Caption+',已完毕!');
+     if CdsVhPay.Locate('BARCODE',BarCode,[]) then Raise Exception.Create('"'+BarCode+'"礼券已使用,请确认!');
+     rs.SQL.Text := 'select BARCODE,VOUCHER_PRC,VOUCHER_STATUS,VOUCHER_TYPE,CLIENT_ID from SAL_VOUCHERDATA where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE ';
+     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     rs.Params.ParamByName('BARCODE').AsString := BarCode;
+     Factor.Open(rs);
+     if rs.IsEmpty then Raise Exception.Create('"'+Trim(edtInput.Text)+'"礼券不存在,请核对真实!');
+     if rs.FieldByName('VOUCHER_STATUS').AsString = '4' then Raise Exception.Create('"'+Trim(edtInput.Text)+'"礼券已经结算,请核对真实!');
+     if (rs.FieldByName('VOUCHER_TYPE').AsString = '3') and (rs.FieldByName('CLIENT_ID').AsString <> ClientId) then Raise Exception.Create('"'+Trim(edtInput.Text)+'"为记名礼券,只能本人使用');
+     CdsVhPay.Append;
+     CdsVhPay.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     CdsVhPay.FieldByName('VHPAY_ID').AsString := TSequence.NewId;
+     CdsVhPay.FieldByName('VHPAY_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Global.SysDate));
+     CdsVhPay.FieldByName('VOUCHER_PRC').AsInteger := rs.FieldByName('VOUCHER_PRC').AsInteger;
+     labPRC.Caption := '礼券面值:'+rs.FieldByName('VOUCHER_PRC').AsString;
+     labNO.Caption := '礼券号:'+BarCode;
+     CdsVhPay.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;
+     CdsVhPay.FieldByName('VOUCHER_TYPE').AsString := rs.FieldByName('VOUCHER_TYPE').AsString;
+     if ClientId = '' then
+        CdsVhPay.FieldByName('CLIENT_ID').AsString := '#'
+     else
+        CdsVhPay.FieldByName('CLIENT_ID').AsString := ClientId;
+     if ShopId = '' then
+        CdsVhPay.FieldByName('SHOP_ID').AsString := Global.SHOP_ID
+     else
+        CdsVhPay.FieldByName('SHOP_ID').AsString := ShopId;
+     if DeptId = '' then
+        CdsVhPay.FieldByName('DEPT_ID').AsString := TZQuery(ShopGlobal.GetDeptInfo).FieldByName('DEPT_ID').AsString
+     else
+        CdsVhPay.FieldByName('DEPT_ID').AsString := DeptId;
+     if PayUser = '' then
+        CdsVhPay.FieldByName('VHPAY_USER').AsString := Global.UserID
+     else
+        CdsVhPay.FieldByName('VHPAY_USER').AsString := PayUser;
+     if PayMny > rs.FieldByName('VOUCHER_PRC').AsFloat then
+        CdsVhPay.FieldByName('VHPAY_MNY').AsFloat := rs.FieldByName('VOUCHER_PRC').AsInteger
+     else
+        CdsVhPay.FieldByName('VHPAY_MNY').AsFloat := PayMny;
+     PayMny := PayMny - rs.FieldByName('VOUCHER_PRC').AsInteger;
+     CdsVhPay.FieldByName('AGIO_MONEY').AsFloat := CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat - CdsVhPay.FieldByName('VHPAY_MNY').AsFloat;
+     if CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat = 0 then
+        CdsVhPay.FieldByName('AGIO_RATE').AsFloat := 0
+     else
+        CdsVhPay.FieldByName('AGIO_RATE').AsFloat := CdsVhPay.FieldByName('VHPAY_MNY').AsFloat/CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat;
+     CdsVhPay.FieldByName('FROM_ID').AsString := FromId;
+     CdsVhPay.FieldByName('CREA_USER').AsString := Global.UserID;
+     CdsVhPay.FieldByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+     CdsVhPay.Post;
+     ResultAmount := ResultAmount + 1;
+   finally
+     edtInput.Text := '';
+     edtInput.SetFocus;
+     rs.Free;
+   end;
+
+end;
+
+procedure TfrmVhPayGlide.AnalysisSalesBarcode;
+var rs,rs1:TZQuery;
+    BarCode:String;
+    sId:String;
+    Aobj_1:TRecord_;
+begin
+   BarCode := Trim(edtInput.Text);
+   if BarCode = '' then Exit;
+   //if (sId <> '') and (Copy(BarCode,1,36)<>sId) then Raise Exception.Create('本张"提货券"与前张"提货券"出于不同订单,请确认!');
+   rs := TZQuery.Create(nil);
+   rs1 := TZQuery.Create(nil);
+   Aobj_1 := TRecord_.Create;
+   try
+     if CdsVhPay.Locate('BARCODE',BarCode,[]) then Raise Exception.Create('"'+BarCode+'"提货券已使用,请确认!');
+     rs.SQL.Text := 'select VOUCHER_PRC,VOUCHER_STATUS,VOUCHER_TYPE,CLIENT_ID from SAL_VOUCHERDATA where TENANT_ID=:TENANT_ID and BARCODE=:BARCODE ';
+     rs.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     rs.Params.ParamByName('BARCODE').AsString := BarCode;
+     Factor.Open(rs);
+     if rs.IsEmpty then Raise Exception.Create('"'+Trim(edtInput.Text)+'"礼券不存在,请核对真实!');
+     if rs.FieldByName('VOUCHER_STATUS').AsString = '4' then Raise Exception.Create('"'+Trim(edtInput.Text)+'"礼券已经结算,请核对真实!');
+
+     rs1.SQL.Text :=
+     'select A.INDE_ID,A.GLIDE_NO,A.CLIENT_ID,B.CLIENT_NAME,A.DEPT_ID,C.DEPT_NAME,A.SHOP_ID,D.SHOP_NAME,A.ADVA_MNY from SAL_INDENTORDER A '+
+     ' left join VIW_CUSTOMER B on A.TENANT_ID=B.TENANT_ID and A.CLIENT_ID=B.CLIENT_ID '+
+     ' left join CA_DEPT_INFO C on A.TENANT_ID=C.TENANT_ID and A.DEPT_ID=C.DEPT_ID '+
+     ' left join CA_SHOP_INFO D on A.TENANT_ID=D.TENANT_ID and A.SHOP_ID=D.SHOP_ID '+
+     ' where A.TENANT_ID=:TENANT_ID and A.INDE_ID=:INDE_ID ';
+     rs1.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     rs1.Params.ParamByName('INDE_ID').AsString := copy(BarCode,1,36);
+     Factor.Open(rs1);
+     if not rs1.IsEmpty then
+     begin
+        Aobj_1.ReadFromDataSet(rs1);
+        //VoucherBarcodeCheck(Aobj_1);
+     end;
+
+     CdsVhPay.Append;
+     CdsVhPay.FieldByName('TENANT_ID').AsInteger := Global.TENANT_ID;
+     CdsVhPay.FieldByName('VHPAY_ID').AsString := TSequence.NewId;
+     CdsVhPay.FieldByName('VHPAY_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Global.SysDate));
+     CdsVhPay.FieldByName('VOUCHER_PRC').AsInteger := rs.FieldByName('VOUCHER_PRC').AsInteger;
+     CdsVhPay.FieldByName('BARCODE').AsString := BarCode;
+     if Assigned(CdsVoucher) then
+     Begin
+        CdsVoucher.Append;
+        CdsVoucher.FieldByName('ID').AsString := BarCode;
+        CdsVoucher.Post;
+     end;       
+     CdsVhPay.FieldByName('VOUCHER_TYPE').AsString := rs.FieldByName('VOUCHER_TYPE').AsString;
+     CdsVhPay.FieldByName('CLIENT_ID').AsString := rs1.FieldByName('CLIENT_ID').AsString;
+     CdsVhPay.FieldByName('SHOP_ID').AsString := rs1.FieldByName('SHOP_ID').AsString;
+     CdsVhPay.FieldByName('DEPT_ID').AsString := rs1.FieldByName('DEPT_ID').AsString;
+     CdsVhPay.FieldByName('VHPAY_USER').AsString := Global.UserID;
+     CdsVhPay.FieldByName('VHPAY_MNY').AsFloat := rs.FieldByName('VOUCHER_PRC').AsFloat;
+     SumMoney := SumMoney + rs.FieldByName('VOUCHER_PRC').AsFloat;
+
+     CdsVhPay.FieldByName('AGIO_MONEY').AsFloat := CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat - CdsVhPay.FieldByName('VHPAY_MNY').AsFloat;
+     if CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat = 0 then
+        CdsVhPay.FieldByName('AGIO_RATE').AsFloat := 0
+     else
+        CdsVhPay.FieldByName('AGIO_RATE').AsFloat := CdsVhPay.FieldByName('VHPAY_MNY').AsFloat/CdsVhPay.FieldByName('VOUCHER_PRC').AsFloat;
+     CdsVhPay.FieldByName('FROM_ID').AsString := FromId;
+     CdsVhPay.FieldByName('CREA_USER').AsString := Global.UserID;
+     CdsVhPay.FieldByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
+     CdsVhPay.Post;
+     
+     LabPRC1.Caption := '礼券面值:'+rs.FieldByName('VOUCHER_PRC').AsString;
+     labClientId.Caption := '客户名称:'+rs1.FieldByName('CLIENT_NAME').AsString;
+     LabGlideNo.Caption := '订单号:'+rs1.FieldByName('GLIDE_NO').AsString;
+     ResultAmount := ResultAmount + 1;
+   finally
+     edtInput.Text := '';
+     edtInput.SetFocus;
+     rs.Free;
+     rs1.Free;
+     Aobj_1.Free;
+   end;
+end;
+
+class function TfrmVhPayGlide.ScanSalesBarcode(Owner: TForm;
+  vFromId: String; CheckInfo: TVoucherCheckInfo; rs: TZQuery): Currency;
+begin
+  with TfrmVhPayGlide.Create(Owner) do
+  begin
+    Try
+      FromId := vFromId;
+      VoucherBarcodeCheck := CheckInfo;
+      RzPageControl1.ActivePageIndex := 1;
+      CdsVoucher := rs;
+      if ShowModal = mrOk then
+         Result := SumMoney
+      else
+         Result := 0;
+    finally
+      Free;
+    end;
+  end;
 end;
 
 end.

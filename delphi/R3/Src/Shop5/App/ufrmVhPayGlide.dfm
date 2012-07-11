@@ -1,6 +1,6 @@
 inherited frmVhPayGlide: TfrmVhPayGlide
-  Left = 497
-  Top = 197
+  Left = 488
+  Top = 183
   Caption = #20195#37329#21048#32467#31639
   ClientHeight = 256
   ClientWidth = 357
@@ -72,57 +72,128 @@ inherited frmVhPayGlide: TfrmVhPayGlide
             Align = alBottom
             BorderOuter = fsNone
             TabOrder = 1
-            object labMNY: TLabel
-              Left = 13
-              Top = 14
-              Width = 95
-              Height = 20
-              Caption = #21097#20313#37329#39069':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clNavy
-              Font.Height = -20
-              Font.Name = #40657#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object labPRC: TLabel
-              Left = 13
-              Top = 110
-              Width = 95
-              Height = 20
-              Caption = #31036#21048#38754#20540':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clNavy
-              Font.Height = -20
-              Font.Name = #40657#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object labAMOUNT: TLabel
-              Left = 34
-              Top = 46
-              Width = 74
-              Height = 20
-              Caption = #31036#21048#25968':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clNavy
-              Font.Height = -20
-              Font.Name = #40657#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object labNO: TLabel
-              Left = 34
-              Top = 79
-              Width = 74
-              Height = 20
-              Caption = #31036#21048#21495':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clNavy
-              Font.Height = -20
-              Font.Name = #40657#20307
-              Font.Style = [fsBold]
-              ParentFont = False
+            object RzPageControl1: TRzPageControl
+              Left = 0
+              Top = 0
+              Width = 333
+              Height = 144
+              ActivePage = TabSheet3
+              Align = alClient
+              ParentShowHint = False
+              ShowHint = False
+              TabIndex = 1
+              TabOrder = 0
+              FixedDimension = 18
+              object TabSheet2: TRzTabSheet
+                Caption = #31036#21048#20449#24687
+                object labMNY: TLabel
+                  Left = 13
+                  Top = 3
+                  Width = 95
+                  Height = 20
+                  Caption = #21097#20313#37329#39069':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object labPRC: TLabel
+                  Left = 13
+                  Top = 97
+                  Width = 95
+                  Height = 20
+                  Caption = #31036#21048#38754#20540':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object labAMOUNT: TLabel
+                  Left = 34
+                  Top = 35
+                  Width = 74
+                  Height = 20
+                  Caption = #31036#21048#25968':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object labNO: TLabel
+                  Left = 34
+                  Top = 68
+                  Width = 74
+                  Height = 20
+                  Caption = #31036#21048#21495':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+              end
+              object TabSheet3: TRzTabSheet
+                Caption = #25552#36135#21048#20449#24687
+                object labClientId: TLabel
+                  Left = 13
+                  Top = 3
+                  Width = 95
+                  Height = 20
+                  Caption = #23458#25143#21517#31216':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object LabPRC1: TLabel
+                  Left = 14
+                  Top = 97
+                  Width = 95
+                  Height = 20
+                  Caption = #31036#21048#38754#20540':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object LabGlideNo: TLabel
+                  Left = 34
+                  Top = 35
+                  Width = 74
+                  Height = 20
+                  Caption = #35746#21333#21495':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object LabAmount1: TLabel
+                  Left = 34
+                  Top = 68
+                  Width = 74
+                  Height = 20
+                  Caption = #31036#21048#25968':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+              end
             end
           end
         end

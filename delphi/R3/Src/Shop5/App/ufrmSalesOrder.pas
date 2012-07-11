@@ -119,6 +119,7 @@ type
     function  CheckSale_Limit: Boolean; //2011.06.09判断是否限量
     function  getLvlPrice(priceDataSet : TZQuery; number : currency) : currency;// 获取促销档位价
     procedure GetGodsByVoucher;
+    //procedure CheckInfo(_DataSet:TZQuery);
   protected
     procedure SetInputFlag(const Value: integer);override;
     procedure SetdbState(const Value: TDataSetState); override;
@@ -2224,41 +2225,73 @@ procedure TfrmSalesOrder.N7Click(Sender: TObject);
 begin
   inherited;
   if DBGridEh1.ReadOnly then Exit;
-  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空!');
-  if edtSHOP_ID.AsString = '' then Raise Exception.Create('销售门店不能为空!');
-  if edtDEPT_ID.AsString = '' then Raise Exception.Create('所属部门不能为空!');
   GetGodsByVoucher;
 end;
 
 procedure TfrmSalesOrder.GetGodsByVoucher;
+  function CheckInfo(_Aobj:TRecord_):Boolean;
+  begin
+    if edtCLIENT_ID.AsString <> '' then
+    begin
+       if edtCLIENT_ID.AsString <> _Aobj.FieldByName('CLIENT_ID').AsString then
+          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('CLIENT_NAME').AsString+'"客户!');
+    end
+    else
+    begin
+       edtCLIENT_ID.KeyValue := _Aobj.FieldByName('CLIENT_ID').AsString;
+       edtCLIENT_ID.Text := _Aobj.FieldByName('CLIENT_NAME').AsString;
+    end;
+
+    if edtSHOP_ID.AsString <> '' then
+    begin
+       if edtSHOP_ID.AsString <> _Aobj.FieldByName('SHOP_ID').AsString then
+          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('SHOP_NAME').AsString+'"门店!');
+    end
+    else
+    begin
+       edtSHOP_ID.KeyValue := _Aobj.FieldByName('SHOP_ID').AsString;
+       edtSHOP_ID.Text := _Aobj.FieldByName('SHOP_NAME').AsString;
+    end;
+
+    if edtDEPT_ID.AsString <> '' then
+    begin
+       if edtDEPT_ID.AsString <> _Aobj.FieldByName('DEPT_ID').AsString then
+          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('DEPT_NAME').AsString+'"部门!');
+    end
+    else
+    begin
+       edtDEPT_ID.KeyValue := _Aobj.FieldByName('DEPT_ID').AsString;
+       edtDEPT_ID.Text := _Aobj.FieldByName('DEPT_NAME').AsString;
+    end;
+
+    if Trim(edtINDE_GLIDE_NO.Text) <> '' then
+    begin
+       if Trim(edtINDE_GLIDE_NO.Text) <> _Aobj.FieldByName('GLIDE_NO').AsString then
+          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('GLIDE_NO').AsString+'"订单!');
+    end
+    else
+    begin
+       edtINDE_GLIDE_NO.Text := _Aobj.FieldByName('GLIDE_NO').AsString;
+       AObj.FieldbyName('FROM_ID').AsString := _Aobj.FieldByName('INDE_ID').AsString;
+    end;
+
+  end;
 var rs:TZQuery;
+    Adva_Mny:Currency;
 begin
   rs := TZQuery.Create(nil);
   try
     rs.Close;
     rs.FieldDefs.Add('ID',ftString,60,True);
     rs.CreateDataSet;
-    with TfrmVhPayGlide.Create(Self) do
+    Adva_Mny := TfrmVhPayGlide.ScanSalesBarcode(Self,AObj.FieldByName('SALES_ID').AsString,@CheckInfo,rs);
+    rs.First;
+    while not rs.Eof do
     begin
-      try
-        ClientId := edtCLIENT_ID.AsString;
-        DeptId := edtDEPT_ID.AsString;
-        ShopId := edtSHOP_ID.AsString;
-        FromId := AObj.FieldbyName('SALES_ID').asString;
-        CdsVoucher := rs;
-        if ShowModal = mrOk then
-        begin
-          rs.First;
-          while not rs.Eof do
-          begin
-            DecodeBarcode(copy(rs.FieldByName('ID').AsString,42,13));
-            rs.Next;
-          end;
-        end;
-      finally
-        Free;
-      end;
+      DecodeBarcode(copy(rs.FieldByName('ID').AsString,42,13));
+      rs.Next;
     end;
+
   finally
     rs.Free;
   end;

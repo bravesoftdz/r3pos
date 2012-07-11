@@ -184,6 +184,7 @@ begin
     AObj.ReadFromDataSet(cdsHeader);
     ReadFromObject(AObj,self);
     cid := AObj.FieldbyName('GLIDE_NO').AsString;
+    lblCaption.Caption := 'µ¥ºÅ:'+cid;
     cdsDetail.DisableControls;
     try
        cdsDetail.Last;

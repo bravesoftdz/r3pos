@@ -70,7 +70,6 @@ type
     useLvlPrice: TMenuItem;
     N6: TMenuItem;
     N7: TMenuItem;
-    CdsVoucher: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -277,7 +276,6 @@ begin
       Label40.Caption := '销售仓库';
       Label6.Caption := '业务员';
     end;
-  CdsVoucher.CreateDataSet;
   Adva_Mny := 0;
 end;
 
@@ -2235,27 +2233,11 @@ end;
 
 procedure TfrmSalesOrder.GetGodsByVoucher;
 begin
-    if TfrmVhPayGlide.ScanSalesBarcode(Self,AObj.FieldByName('SALES_ID').AsString,CheckInfo) then
+    if not TfrmVhPayGlide.ScanSalesBarcode(Self,AObj.FieldByName('SALES_ID').AsString,CheckInfo) then
     begin
-       AObj.FieldByName('ADVA_MNY').AsFloat := Adva_Mny;
-       CdsVoucher.Close;
-       CdsVoucher.CreateDataSet;
-    end
-    else
-    begin
-       CdsVoucher.First;
-       while not CdsVoucher.Eof do
-       begin
-         if edtTable.Locate('BARCODE',copy(CdsVoucher.FieldByName('ID').AsString,42,13),[]) then
-         begin
-            edtTable.Edit;
-            edtTable.FieldByName('AMOUNT').AsFloat := edtTable.FieldByName('AMOUNT').AsFloat - 1;
-            edtTable.Post;
-         end;
-         CdsVoucher.Next;
-       end;
+       Adva_Mny := 0;
+       CancelOrder;
     end;
-
 end;
 
 procedure TfrmSalesOrder.CheckInfo(_Aobj: TRecord_);
@@ -2305,10 +2287,8 @@ begin
   end;
 
   DecodeBarcode(copy(_Aobj.FieldByName('BARCODE').AsString,42,13));
-  CdsVoucher.Append;
-  CdsVoucher.FieldByName('ID').AsString := _Aobj.FieldByName('BARCODE').AsString;
-  CdsVoucher.Post;
   Adva_Mny := Adva_Mny + _Aobj.FieldByName('VOUCHER_PRC').AsFloat;
+  edtADVA_MNY.EditValue := Adva_Mny;
 end;
 
 end.

@@ -185,11 +185,7 @@ inherited frmBusinessIncomeDayReport: TfrmBusinessIncomeDayReport
                 inherited DBGridEh1: TDBGridEh
                   Width = 648
                   Height = 345
-                  Columns = <
-                    item
-                      EditButtons = <>
-                      Footers = <>
-                    end>
+                  FooterRowCount = 0
                 end
               end
             end

@@ -36,6 +36,13 @@ type
     DBGridEh2: TDBGridEh;
     RzLabel1: TRzLabel;
     edtCLIENT_ID: TcxTextEdit;
+    Label1: TLabel;
+    D1: TcxDateEdit;
+    Label2: TLabel;
+    D2: TcxDateEdit;
+    RzBitBtn1: TRzBitBtn;
+    Bevel1: TBevel;
+    dropD2: TcxDateEdit;
     procedure FormShow(Sender: TObject);
     procedure actToModifyExecute(Sender: TObject);
     procedure actToNotModifyExecute(Sender: TObject);
@@ -56,11 +63,13 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh2Columns6UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
+    procedure DBGridEh2Columns2BeforeShowControl(Sender: TObject);
+    procedure dropD2PropertiesEditValueChanged(Sender: TObject);
   private
     FClientId: String;
     FKpiId: String;
     FKpiYear: Integer;
-    D1,D2:Integer;
+    //D1,D2:Integer;
     procedure SetClientId(const Value: String);
     procedure SetKpiId(const Value: String);
     procedure SetKpiYear(const Value: Integer);
@@ -97,8 +106,8 @@ begin
   Params := TftParamList.Create;
   try
     Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    Params.ParamByName('D1').AsInteger := D1;
-    Params.ParamByName('D2').AsInteger := D2;
+    Params.ParamByName('D1').AsInteger := StrtoInt(formatdatetime('YYYYMMDD',D1.Date));
+    Params.ParamByName('D2').AsInteger := StrtoInt(formatdatetime('YYYYMMDD',D2.Date));
     Params.ParamByName('CLIENT_ID').AsString := ClientId;
     Params.ParamByName('KPI_ID').AsString := KpiId;
     Factor.BeginBatch;
@@ -138,8 +147,8 @@ begin
     rs.Params.ParamByName('CLIENT_ID').AsString := ClientId;
     rs.Params.ParamByName('KPI_YEAR').AsInteger := KpiYear;
     Factor.Open(rs);
-    D1 := StrToInt(FormatDateTime('YYYYMMDD',FnTime.fnStrtoDate(rs.FieldByName('BEGIN_DATE').AsString)));
-    D2 := StrToInt(FormatDateTime('YYYYMMDD',FnTime.fnStrtoDate(rs.FieldByName('END_DATE').AsString)));
+    D1.Date := FnTime.fnStrtoDate(rs.FieldByName('BEGIN_DATE').AsString);
+    D2.Date := FnTime.fnStrtoDate(rs.FieldByName('END_DATE').AsString);
   finally
     rs.Free;
   end;
@@ -568,6 +577,22 @@ begin
       DBGridEh2.Columns[5].PickList.add(rs.FieldbyName('UNIT_NAME').asString);
       rs.Next;
     end;
+end;
+
+procedure TfrmMktKpiModify.DBGridEh2Columns2BeforeShowControl(
+  Sender: TObject);
+begin
+  inherited;
+  dropD2.Date := fnTime.fnStrtoDate(cdsList2.FieldbyName('KPI_DATE').AsString);
+end;
+
+procedure TfrmMktKpiModify.dropD2PropertiesEditValueChanged(
+  Sender: TObject);
+begin
+  inherited;
+  cdsList2.Edit;
+  cdsList2.FieldbyName('KPI_DATE').AsString := formatDatetime('YYYYMMDD',dropD2.Date);
+  cdsList2.post;
 end;
 
 end.

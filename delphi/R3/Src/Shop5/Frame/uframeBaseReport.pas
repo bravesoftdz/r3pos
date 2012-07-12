@@ -342,6 +342,7 @@ begin
   if Column.FieldName = 'SEQNO' then
   begin
     ARect := Rect;
+    Column.Grid.canvas.FillRect(ARect);
     DrawText(Column.Grid.Canvas.Handle,pchar(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),length(Inttostr(Column.Grid.DataSource.DataSet.RecNo)),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
   end;
 end;

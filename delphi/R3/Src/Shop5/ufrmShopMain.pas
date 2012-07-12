@@ -323,6 +323,8 @@ type
     actfrmBusinessIncomeDayReport: TAction;
     actfrmSvcServiceList: TAction;
     Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -4713,7 +4715,7 @@ end;
 procedure TfrmShopMain.Button3Click(Sender: TObject);
 begin
   inherited;
-  actfrmVhSendOrderList.OnExecute(nil);
+  actfrmBusinessIncomeDayReport.OnExecute(nil);
 end;
 
 procedure TfrmShopMain.actfrmFvchIntfSetExecute(Sender: TObject);

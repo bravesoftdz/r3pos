@@ -57,11 +57,11 @@ begin
   Result := False;
   Str := ' delete from MKT_KPI_MODIFY where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO ';
   AGlobal.ExecSQL(Str,Self);
-  if (FieldbyName('MODI_AMOUNT').asFloat<>0) or (FieldbyName('MODI_MONEY').asFloat<>0) then
+  if (FieldbyName('MODI_AMOUNT').asFloat<>0) or (FieldbyName('MODI_MONEY').asFloat<>0) or (FieldbyName('SALES_DATE').AsInteger<>FieldbyName('KPI_DATE').AsInteger) then
     begin
        FieldbyName('MODI_AMOUNT').AsString := formatFloat('#0.000',FieldbyName('MODI_AMOUNT').AsFloat * FieldbyName('CONV_RATE').AsFloat);
-       Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
-              ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
+       Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,KPI_DATE,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
+              ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:KPI_DATE,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
        AGlobal.ExecSQL(Str,Self);
     end;
   Result := True;
@@ -81,29 +81,33 @@ procedure TMktKpiModify.InitClass;
 function GetUnitTO_CALC: string;
 var str:string;
 begin
-  str:='( case when C.UNIT_ID=E.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
-       ' when C.UNIT_ID=E.SMALL_UNITS then cast(E.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
-       ' when C.UNIT_ID=E.BIG_UNITS then cast(E.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
+  str:='( case when J.UNIT_ID=E.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
+       ' when J.UNIT_ID=E.SMALL_UNITS then cast(E.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
+       ' when J.UNIT_ID=E.BIG_UNITS then cast(E.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
        ' else 1.0 end )';
   result:=str;
 end;
 var Str:String;
 begin
   inherited;
-  Str := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,E.GODS_NAME,E.GODS_CODE,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
-         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,C.CALC_AMOUNT/'+GetUnitTO_CALC+' as ORG_AMOUNT,C.CALC_MONEY as ORG_MONEY,'+
-         '(case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(D.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' as CALC_AMOUNT,'+
-         'case when C.IS_PRESENT=0 then C.CALC_MONEY else 0.00 end + isnull(D.MODI_MONEY,0) as CALC_MONEY,'+
-         'C.REMARK,D.KPI_YEAR,C.APRICE*'+GetUnitTO_CALC+' as APRICE,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,C.IS_PRESENT,C.UNIT_ID,'+GetUnitTO_CALC+' as CONV_RATE,'+
-         'isnull(D.MODI_AMOUNT,0)/'+GetUnitTO_CALC+' as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
-         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
-         'A.LOCUS_NO,B1.UNIT_ID,A.CALC_AMOUNT,A.IS_PRESENT,case when A.CALC_AMOUNT<>0 then A.CALC_MONEY/A.CALC_AMOUNT else 0.00 end as APRICE,A.CALC_MONEY,A.REMARK '+
-         ' from SAL_SALESDATA A,SAL_SALESORDER B,MKT_KPI_GOODS B1 where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and B.TENANT_ID=:TENANT_ID and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 '+
+  Str := 'select 0 as A,J.GLIDE_NO,J.SALES_DATE,J.KPI_DATE,E.GODS_NAME,E.GODS_CODE,J.TENANT_ID,J.SHOP_ID,J.SALES_ID,'+
+         'J.GODS_ID,J.BATCH_NO,J.LOCUS_NO,J.CALC_AMOUNT/'+GetUnitTO_CALC+' as ORG_AMOUNT,J.CALC_MONEY as ORG_MONEY,'+
+         '(case when J.IS_PRESENT=0 then J.CALC_AMOUNT else 0.00 end + isnull(J.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' as CALC_AMOUNT,'+
+         'case when J.IS_PRESENT=0 then J.CALC_MONEY else 0.00 end + isnull(J.MODI_MONEY,0) as CALC_MONEY,'+
+         'J.REMARK,J.APRICE*'+GetUnitTO_CALC+' as APRICE,J.SEQNO,J.MODIFY_ID,J.KPI_YEAR,J.IS_PRESENT,J.UNIT_ID,'+GetUnitTO_CALC+' as CONV_RATE,'+
+         'isnull(J.MODI_AMOUNT,0)/'+GetUnitTO_CALC+' as MODI_AMOUNT,isnull(J.MODI_MONEY,0) as MODI_MONEY from ('+
+         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,isnull(D.KPI_DATE,B.SALES_DATE) as KPI_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
+         'A.LOCUS_NO,C.UNIT_ID,A.CALC_AMOUNT,A.IS_PRESENT,case when A.CALC_AMOUNT<>0 then A.CALC_MONEY/A.CALC_AMOUNT else 0.00 end as APRICE,A.CALC_MONEY,A.REMARK,'+
+         'D.MODI_MONEY,D.MODI_AMOUNT,D.MODIFY_ID,D.KPI_YEAR '+
+         ' from SAL_SALESDATA A inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
+         ' inner join MKT_KPI_GOODS C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+         ' left outer join MKT_KPI_MODIFY D on A.TENANT_ID=D.TENANT_ID and A.SALES_ID=D.SALES_ID and A.SEQNO=D.SEQNO '+
+         ' where B.TENANT_ID=:TENANT_ID and C.KPI_ID=:KPI_ID and isnull(D.KPI_DATE,B.SALES_DATE)>=:D1 and isnull(D.KPI_DATE,B.SALES_DATE)<=:D2 '+
          ' and B.SALES_TYPE in (1,3,4) and B.COMM not in (''02'',''12'') '+
-         ' and B.CLIENT_ID=:CLIENT_ID and A.TENANT_ID=B1.TENANT_ID and A.GODS_ID=B1.GODS_ID and B1.KPI_ID=:KPI_ID '+
-         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.SEQNO=D.SEQNO '+
-         ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
-         ' where ((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end+isnull(D.MODI_AMOUNT,0))<>0) or ((case when C.IS_PRESENT=0 then C.CALC_MONEY else 0 end + isnull(D.MODI_MONEY,0))<>0)';
+         ' and B.CLIENT_ID=:CLIENT_ID '+
+         ' and ( ((case when A.IS_PRESENT=0 then A.CALC_AMOUNT else 0.00 end+isnull(D.MODI_AMOUNT,0))<>0) or ((case when A.IS_PRESENT=0 then A.CALC_MONEY else 0 end + isnull(D.MODI_MONEY,0))<>0) ) '+
+         ') J '+
+         ' left join VIW_GOODSINFO E on J.TENANT_ID=E.TENANT_ID and J.GODS_ID=E.GODS_ID ';
   SelectSQL.Text := ParseSQL(iDbType,Str);
 end;
 
@@ -129,11 +133,11 @@ begin
   Result := False;
   Str := ' delete from MKT_KPI_MODIFY where TENANT_ID=:OLD_TENANT_ID and KPI_YEAR=:OLD_KPI_YEAR and SALES_ID=:OLD_SALES_ID and SEQNO=:OLD_SEQNO ';
   AGlobal.ExecSQL(Str,Self);
-  if (FieldbyName('MODI_AMOUNT').asFloat<>0) or (FieldbyName('MODI_MONEY').asFloat<>0) then
+  if (FieldbyName('MODI_AMOUNT').asFloat<>0) or (FieldbyName('MODI_MONEY').asFloat<>0) or (FieldbyName('SALES_DATE').AsInteger<>FieldbyName('KPI_DATE').AsInteger) then
     begin
        FieldbyName('MODI_AMOUNT').AsString := formatFloat('#0.000',FieldbyName('MODI_AMOUNT').AsFloat * FieldbyName('CONV_RATE').AsFloat);
-       Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
-              ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
+       Str := ' insert into MKT_KPI_MODIFY(TENANT_ID,MODIFY_ID,KPI_YEAR,KPI_DATE,SALES_ID,SEQNO,GODS_ID,MODI_AMOUNT,MODI_MONEY) '+
+              ' values(:TENANT_ID,:MODIFY_ID,:KPI_YEAR,:KPI_DATE,:SALES_ID,:SEQNO,:GODS_ID,:MODI_AMOUNT,:MODI_MONEY)';
        AGlobal.ExecSQL(Str,Self);
     end;
   Result := True;
@@ -153,29 +157,33 @@ procedure TMktKpiNotModify.InitClass;
 function GetUnitTO_CALC: string;
 var str:string;
 begin
-  str:='( case when C.UNIT_ID=E.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
-       ' when C.UNIT_ID=E.SMALL_UNITS then cast(E.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
-       ' when C.UNIT_ID=E.BIG_UNITS then cast(E.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
+  str:='( case when J.UNIT_ID=E.CALC_UNITS then 1.0 '+            //默认单位为 计量单位
+       ' when J.UNIT_ID=E.SMALL_UNITS then cast(E.SMALLTO_CALC*1.00 as decimal(18,3)) '+  //默认单位为 小单位
+       ' when J.UNIT_ID=E.BIG_UNITS then cast(E.BIGTO_CALC*1.00 as decimal(18,3)) '+      //默认单位为 大单位
        ' else 1.0 end )';
   result:=str;
 end;
 var Str:String;
 begin
   inherited;
-  Str := 'select 0 as A,C.GLIDE_NO,C.SALES_DATE,E.GODS_NAME,E.GODS_CODE,C.TENANT_ID,C.SHOP_ID,C.SALES_ID,'+
-         'C.GODS_ID,C.BATCH_NO,C.LOCUS_NO,C.CALC_AMOUNT/'+GetUnitTO_CALC+' as ORG_AMOUNT,C.CALC_MONEY as ORG_MONEY,'+
-         '(case when C.IS_PRESENT=0 then 0.00 else C.CALC_AMOUNT end-isnull(D.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' as CALC_AMOUNT,'+
-         'case when C.IS_PRESENT=0 then 0.00 else C.CALC_MONEY end-isnull(D.MODI_MONEY,0) as CALC_MONEY,'+
-         'C.REMARK,D.KPI_YEAR,C.SEQNO,D.MODIFY_ID,D.KPI_YEAR,C.IS_PRESENT,C.APRICE*'+GetUnitTO_CALC+' as APRICE,C.UNIT_ID,'+GetUnitTO_CALC+' as CONV_RATE,'+
-         'isnull(D.MODI_AMOUNT,0)/'+GetUnitTO_CALC+' as MODI_AMOUNT,isnull(D.MODI_MONEY,0) as MODI_MONEY from ('+
-         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
-         'A.LOCUS_NO,B1.UNIT_ID,A.CALC_AMOUNT,A.IS_PRESENT,case when A.CALC_AMOUNT<>0 then A.CALC_MONEY/A.CALC_AMOUNT else 0.00 end as APRICE,A.CALC_MONEY,A.REMARK '+
-         ' from SAL_SALESDATA A,SAL_SALESORDER B,MKT_KPI_GOODS B1 where A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID and B.TENANT_ID=:TENANT_ID and B.SALES_DATE>=:D1 and B.SALES_DATE<=:D2 '+
+  Str := 'select 0 as A,J.GLIDE_NO,J.SALES_DATE,J.KPI_DATE,E.GODS_NAME,E.GODS_CODE,J.TENANT_ID,J.SHOP_ID,J.SALES_ID,'+
+         'J.GODS_ID,J.BATCH_NO,J.LOCUS_NO,J.CALC_AMOUNT/'+GetUnitTO_CALC+' as ORG_AMOUNT,J.CALC_MONEY as ORG_MONEY,'+
+         '(case when J.IS_PRESENT=0 then 0.00 else J.CALC_AMOUNT end-isnull(J.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' as CALC_AMOUNT,'+
+         'case when J.IS_PRESENT=0 then 0.00 else J.CALC_MONEY end-isnull(J.MODI_MONEY,0) as CALC_MONEY,'+
+         'J.REMARK,J.SEQNO,J.MODIFY_ID,J.KPI_YEAR,J.IS_PRESENT,J.APRICE*'+GetUnitTO_CALC+' as APRICE,J.UNIT_ID,'+GetUnitTO_CALC+' as CONV_RATE,'+
+         'isnull(J.MODI_AMOUNT,0)/'+GetUnitTO_CALC+' as MODI_AMOUNT,isnull(J.MODI_MONEY,0) as MODI_MONEY from ('+
+         'select B.GLIDE_NO,B.CLIENT_ID,B.SALES_TYPE,B.SALES_DATE,isnull(D.KPI_DATE,B.SALES_DATE) as KPI_DATE,A.TENANT_ID,A.SHOP_ID,A.SALES_ID,A.GODS_ID,A.BATCH_NO,A.SEQNO,'+
+         'A.LOCUS_NO,C.UNIT_ID,A.CALC_AMOUNT,A.IS_PRESENT,case when A.CALC_AMOUNT<>0 then A.CALC_MONEY/A.CALC_AMOUNT else 0.00 end as APRICE,A.CALC_MONEY,A.REMARK,'+
+         'D.MODI_MONEY,D.MODI_AMOUNT,D.MODIFY_ID,D.KPI_YEAR '+
+         ' from SAL_SALESDATA A inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
+         ' inner join MKT_KPI_GOODS C on A.TENANT_ID=C.TENANT_ID and A.GODS_ID=C.GODS_ID '+
+         ' left outer join MKT_KPI_MODIFY D on A.TENANT_ID=D.TENANT_ID and A.SALES_ID=D.SALES_ID and A.SEQNO=D.SEQNO '+
+         ' where B.TENANT_ID=:TENANT_ID and C.KPI_ID=:KPI_ID and isnull(D.KPI_DATE,B.SALES_DATE)>=:D1 and isnull(D.KPI_DATE,B.SALES_DATE)<=:D2 '+
          ' and B.SALES_TYPE in (1,3,4) and B.COMM not in (''02'',''12'') '+
-         ' and B.CLIENT_ID=:CLIENT_ID and A.TENANT_ID=B1.TENANT_ID and A.GODS_ID=B1.GODS_ID and B1.KPI_ID=:KPI_ID '+
-         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.SEQNO=D.SEQNO '+
-         ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
-         ' where ((case when C.IS_PRESENT=0 then 0.00 else C.CALC_AMOUNT end-isnull(D.MODI_AMOUNT,0))<>0) or ((case when C.IS_PRESENT=0 then 0.00 else C.CALC_MONEY end-isnull(D.MODI_MONEY,0))<>0)';
+         ' and B.CLIENT_ID=:CLIENT_ID '+
+         ' and ( ((case when A.IS_PRESENT=0 then 0.00 else A.CALC_AMOUNT end-isnull(D.MODI_AMOUNT,0))<>0) or ((case when A.IS_PRESENT=0 then 0.00 else A.CALC_MONEY end-isnull(D.MODI_MONEY,0))<>0)  ) ' +
+         ') J  '+
+         ' left join VIW_GOODSINFO E on J.TENANT_ID=E.TENANT_ID and J.GODS_ID=E.GODS_ID ';
   SelectSQL.Text := ParseSQL(iDbType,Str);
 end;
 

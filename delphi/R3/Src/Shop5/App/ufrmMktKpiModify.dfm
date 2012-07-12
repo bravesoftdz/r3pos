@@ -12,20 +12,22 @@ inherited frmMktKpiModify: TfrmMktKpiModify
     Width = 673
     Height = 443
     inherited RzPage: TRzPageControl
-      Top = 61
+      Top = 73
       Width = 663
-      Height = 337
+      Height = 325
+      ActivePage = TabSheet2
+      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Caption = #38750#36820#21033#21830#21697#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 659
-          Height = 310
+          Height = 298
           object DBGridEh1: TDBGridEh
             Left = 5
             Top = 5
             Width = 649
-            Height = 300
+            Height = 288
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = dsList
@@ -85,7 +87,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
               item
                 DisplayFormat = '0000-00-00'
                 EditButtons = <>
-                FieldName = 'SALES_DATE'
+                FieldName = 'KPI_DATE'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #38144#21806#26085#26399
@@ -197,7 +199,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
           Left = 0
           Top = 0
           Width = 659
-          Height = 310
+          Height = 298
           Align = alClient
           BorderOuter = fsNone
           BorderWidth = 5
@@ -206,7 +208,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
             Left = 5
             Top = 5
             Width = 649
-            Height = 300
+            Height = 288
             Align = alClient
             AllowedOperations = [alopUpdateEh]
             DataSource = dsList2
@@ -266,11 +268,13 @@ inherited frmMktKpiModify: TfrmMktKpiModify
               item
                 DisplayFormat = '0000-00-00'
                 EditButtons = <>
-                FieldName = 'SALES_DATE'
+                FieldName = 'KPI_DATE'
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #38144#21806#26085#26399
                 Width = 80
+                Control = dropD2
+                OnBeforeShowControl = DBGridEh2Columns2BeforeShowControl
               end
               item
                 EditButtons = <>
@@ -370,6 +374,15 @@ inherited frmMktKpiModify: TfrmMktKpiModify
                 Width = 110
               end>
           end
+          object dropD2: TcxDateEdit
+            Left = 72
+            Top = 96
+            Width = 121
+            Height = 20
+            Properties.OnEditValueChanged = dropD2PropertiesEditValueChanged
+            TabOrder = 1
+            Visible = False
+          end
         end
       end
     end
@@ -435,13 +448,16 @@ inherited frmMktKpiModify: TfrmMktKpiModify
       Left = 5
       Top = 5
       Width = 663
-      Height = 56
+      Height = 68
       Align = alTop
       BorderOuter = fsNone
       TabOrder = 2
+      DesignSize = (
+        663
+        68)
       object lab_KPI_NAME: TRzLabel
-        Left = -16
-        Top = 31
+        Left = 353
+        Top = 4
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -455,8 +471,8 @@ inherited frmMktKpiModify: TfrmMktKpiModify
         ParentFont = False
       end
       object RzLabel10: TRzLabel
-        Left = 280
-        Top = 31
+        Left = 257
+        Top = 4
         Width = 57
         Height = 12
         Alignment = taRightJustify
@@ -470,8 +486,8 @@ inherited frmMktKpiModify: TfrmMktKpiModify
         ParentFont = False
       end
       object RzLabel1: TRzLabel
-        Left = -16
-        Top = 7
+        Left = -23
+        Top = 4
         Width = 90
         Height = 12
         Alignment = taRightJustify
@@ -484,32 +500,92 @@ inherited frmMktKpiModify: TfrmMktKpiModify
         Font.Style = []
         ParentFont = False
       end
+      object Label1: TLabel
+        Left = 20
+        Top = 43
+        Width = 48
+        Height = 12
+        Caption = #19994#21153#26085#26399
+      end
+      object Label2: TLabel
+        Left = 200
+        Top = 43
+        Width = 12
+        Height = 12
+        Caption = #33267
+      end
+      object Bevel1: TBevel
+        Left = 18
+        Top = 28
+        Width = 631
+        Height = 2
+      end
       object edtKPI_NAME: TcxTextEdit
         Tag = 1
-        Left = 81
-        Top = 27
-        Width = 221
+        Left = 450
+        Top = 0
+        Width = 195
         Height = 20
         Properties.MaxLength = 50
         TabOrder = 1
       end
       object edtKPI_YEAR: TcxTextEdit
         Tag = 1
-        Left = 343
-        Top = 27
-        Width = 60
+        Left = 320
+        Top = 0
+        Width = 50
         Height = 20
         Properties.MaxLength = 10
         TabOrder = 2
       end
       object edtCLIENT_ID: TcxTextEdit
         Tag = 1
-        Left = 81
-        Top = 3
-        Width = 221
+        Left = 74
+        Top = 0
+        Width = 184
         Height = 20
         Properties.MaxLength = 50
         TabOrder = 0
+      end
+      object D1: TcxDateEdit
+        Left = 74
+        Top = 39
+        Width = 121
+        Height = 20
+        TabOrder = 3
+      end
+      object D2: TcxDateEdit
+        Left = 218
+        Top = 39
+        Width = 121
+        Height = 20
+        TabOrder = 4
+      end
+      object RzBitBtn1: TRzBitBtn
+        Left = 353
+        Top = 36
+        Width = 70
+        Height = 26
+        Anchors = [akTop, akRight]
+        Caption = #26597#35810'(&F)'
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 5
+        TextStyle = tsRaised
+        ThemeAware = False
+        NumGlyphs = 2
+        Spacing = 5
       end
     end
   end

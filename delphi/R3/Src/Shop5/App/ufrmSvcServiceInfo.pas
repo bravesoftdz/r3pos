@@ -28,7 +28,6 @@ type
     lab_RECV_DATE: TRzLabel;
     edtRECV_DATE: TcxDateEdit;
     lab_RECV_CLASS: TRzLabel;
-    edtRECV_CLASS: TcxComboBox;
     TabSheet2: TRzTabSheet;
     RzPanel1: TRzPanel;
     lab_SATI_DEGR: TRzLabel;
@@ -47,16 +46,20 @@ type
     lab_ADDRESS: TRzLabel;
     edtADDRESS: TcxTextEdit;
     edtRECV_USER: TzrComboBoxList;
-    edtSRVR_CLASS: TcxComboBox;
     edtSRVR_USER: TzrComboBoxList;
     edtSRVR_DATE: TcxDateEdit;
     edtSRVR_DESC: TcxMemo;
     edtSERIAL_NO: TcxTextEdit;
     edtFEE_FLAG: TRadioGroup;
-    edtSATI_DEGR: TcxComboBox;
     RzBitBtn1: TRzBitBtn;
     RzLabel1: TRzLabel;
     RzLabel3: TRzLabel;
+    edtRECV_CLASS: TzrComboBoxList;
+    edtSRVR_CLASS: TzrComboBoxList;
+    edtSATI_DEGR: TzrComboBoxList;
+    cdsRecvClass: TZQuery;
+    cdsSrvrClass: TZQuery;
+    cdsSatiDegr: TZQuery;
     procedure Btn_CloseClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Btn_SaveClick(Sender: TObject);
@@ -64,6 +67,9 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure edtFEE_FLAGClick(Sender: TObject);
+    procedure edtRECV_CLASSAddClick(Sender: TObject);
+    procedure edtSRVR_CLASSAddClick(Sender: TObject);
+    procedure edtSATI_DEGRAddClick(Sender: TObject);
   private
     FClientId: String;
     FGodsName: String;
@@ -89,8 +95,8 @@ type
   end;
 
 implementation
-uses uShopUtil,uDsUtil,ufrmBasic,Math,uGlobal,uFnUtil,EncDec,uShopGlobal,
-  StdConvs;//
+uses uShopUtil,uDsUtil,ufrmBasic,Math,uGlobal,uFnUtil,EncDec,uShopGlobal,ufrmCodeInfo,
+  StdConvs,ObjCommon;//
 {$R *.dfm}
 
 procedure TfrmSvcServiceInfo.Append;
@@ -167,16 +173,16 @@ begin
      if edtSERIAL_NO.CanFocus then edtSERIAL_NO.SetFocus;
      Raise Exception.Create('序列号不能为空！');
   end;
-  if edtRECV_CLASS.ItemIndex = -1 then
+  {if edtRECV_CLASS.ItemIndex = -1 then
   begin
     if edtRECV_CLASS.CanFocus then edtRECV_CLASS.SetFocus;
     Raise Exception.Create('受理类型不能为空！');
-  end;
+  end; 
   if edtSRVR_CLASS.ItemIndex = -1 then
   begin
     if edtSRVR_CLASS.CanFocus then edtSRVR_CLASS.SetFocus;
     Raise Exception.Create('服务方式不能为空！');
-  end;
+  end; }
 
   WriteToObject(Aobj,self);
   Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
@@ -339,51 +345,48 @@ begin
 end;
 
 procedure TfrmSvcServiceInfo.LoadParams;
-var rs:TZQuery;
-    Aobj_1:TRecord_;
+var str:String;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.SQL.Text :=  'select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE in (''19'',''20'',''21'') and TENANT_ID=0 order by SEQ_NO';
-    Factor.Open(rs);
-    rs.Filtered := False;
-    rs.Filter := ' CODE_TYPE=''19'' ';
-    rs.Filtered := True;
-    ClearCbxPickList(edtRECV_CLASS);
-    rs.First;
-    while not rs.Eof do
-    begin
-      Aobj_1 := TRecord_.Create;
-      Aobj_1.ReadFromDataSet(rs);
-      edtRECV_CLASS.Properties.Items.AddObject(rs.FieldByName('CODE_NAME').AsString,Aobj_1);
-      rs.Next;
-    end;
-    rs.Filtered := False;
-    rs.Filter := ' CODE_TYPE=''20'' ';
-    rs.Filtered := True;
-    ClearCbxPickList(edtSRVR_CLASS);
-    rs.First;
-    while not rs.Eof do
-    begin
-      Aobj_1 := TRecord_.Create;
-      Aobj_1.ReadFromDataSet(rs);
-      edtSRVR_CLASS.Properties.Items.AddObject(rs.FieldByName('CODE_NAME').AsString,Aobj_1);
-      rs.Next;
-    end;
-    rs.Filtered := False;
-    rs.Filter := ' CODE_TYPE=''21'' ';
-    rs.Filtered := True;
-    ClearCbxPickList(edtSATI_DEGR);
-    rs.First;
-    while not rs.Eof do
-    begin
-      Aobj_1 := TRecord_.Create;
-      Aobj_1.ReadFromDataSet(rs);
-      edtSATI_DEGR.Properties.Items.AddObject(rs.FieldByName('CODE_NAME').AsString,Aobj_1);
-      rs.Next;
-    end;
-  finally
-    rs.Free;
+  Factor.Open(cdsRecvClass);
+  if cdsRecvClass.IsEmpty then
+  begin
+     //数据集为空,对"受理类型"进行初始化
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''20'',''00'',5497000,1,'''+NewId(Global.SHOP_ID)+''',''安装'',''AZ'') ';
+     Factor.ExecSQL(str);
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''20'',''00'',5497000,2,'''+NewId(Global.SHOP_ID)+''',''维修'',''WX'') ';
+     Factor.ExecSQL(str);
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''20'',''00'',5497000,3,'''+NewId(Global.SHOP_ID)+''',''保养'',''BY'') ';
+     Factor.ExecSQL(str);
+     //初始化后,重新打开数据集
+     Factor.Open(cdsRecvClass);
+  end;
+
+  Factor.Open(cdsSrvrClass);
+  if cdsSrvrClass.IsEmpty then
+  begin
+     //数据集为空,对"服务方式"进行初始化
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''21'',''00'',5497000,1,'''+NewId(Global.SHOP_ID)+''',''热线服务'',''RXFF'') ';
+     Factor.ExecSQL(str);
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''21'',''00'',5497000,2,'''+NewId(Global.SHOP_ID)+''',''接待服务'',''JDFF'') ';
+     Factor.ExecSQL(str);
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''21'',''00'',5497000,3,'''+NewId(Global.SHOP_ID)+''',''上门服务'',''SMFF'') ';
+     Factor.ExecSQL(str);
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''21'',''00'',5497000,4,'''+NewId(Global.SHOP_ID)+''',''其它'',''QT'') ';
+     Factor.ExecSQL(str);
+     //初始化后,重新打开数据集
+     Factor.Open(cdsSrvrClass);
+  end;
+
+  Factor.Open(cdsSatiDegr);
+  if cdsSatiDegr.IsEmpty then
+  begin
+     //数据集为空,对"服务质量"进行初始化
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''22'',''00'',5497000,1,'''+NewId(Global.SHOP_ID)+''',''满意'',''MY'') ';
+     Factor.ExecSQL(str);
+     str := 'insert into PUB_CODE_INFO(TENANT_ID,CODE_TYPE,COMM,TIME_STAMP,SEQ_NO,CODE_ID,CODE_NAME,CODE_SPELL) values(0,''22'',''00'',5497000,2,'''+NewId(Global.SHOP_ID)+''',''不满意'',''BMY'') ';
+     Factor.ExecSQL(str);
+     //初始化后,重新打开数据集
+     Factor.Open(cdsSatiDegr);
   end;
 
 end;
@@ -396,6 +399,57 @@ begin
   edtRECV_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   edtSRVR_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   LoadParams;
+end;
+
+procedure TfrmSvcServiceInfo.edtRECV_CLASSAddClick(Sender: TObject);
+var Aobj_1:TRecord_;
+begin
+  inherited;
+  //if not ShopGlobal.GetChkRight('31100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  Try
+    Aobj_1 := TRecord_.Create;
+    if TfrmCodeInfo.AddDialog(Self,Aobj_1,20) then
+      begin
+        edtRECV_CLASS.KeyValue := Aobj_1.FieldbyName('CODE_ID').AsString;
+        edtRECV_CLASS.Text := Aobj_1.FieldbyName('CODE_NAME').AsString;
+      end;
+  finally
+    Aobj_1.Free;
+  end;
+end;
+
+procedure TfrmSvcServiceInfo.edtSRVR_CLASSAddClick(Sender: TObject);
+var Aobj_2:TRecord_;
+begin
+  inherited;
+  //if not ShopGlobal.GetChkRight('31100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  Try
+    Aobj_2 := TRecord_.Create;
+    if TfrmCodeInfo.AddDialog(Self,Aobj_2,21) then
+      begin
+        edtSRVR_CLASS.KeyValue := Aobj_2.FieldbyName('CODE_ID').AsString;
+        edtSRVR_CLASS.Text := Aobj_2.FieldbyName('CODE_NAME').AsString;
+      end;
+  finally
+    Aobj_2.Free;
+  end;
+end;
+
+procedure TfrmSvcServiceInfo.edtSATI_DEGRAddClick(Sender: TObject);
+var Aobj_3:TRecord_;
+begin
+  inherited;
+  //if not ShopGlobal.GetChkRight('31100001',2) then Raise Exception.Create('你没有新增的权限,请和管理员联系.');
+  Try
+    Aobj_3 := TRecord_.Create;
+    if TfrmCodeInfo.AddDialog(Self,Aobj_3,22) then
+      begin
+        edtSATI_DEGR.KeyValue := Aobj_3.FieldbyName('CODE_ID').AsString;
+        edtSATI_DEGR.Text := Aobj_3.FieldbyName('CODE_NAME').AsString;
+      end;
+  finally
+    Aobj_3.Free;
+  end;
 end;
 
 end.

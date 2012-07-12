@@ -123,11 +123,9 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Top = 89
       Width = 519
       Height = 217
-      ActivePage = TabSheet2
       Align = alBottom
       BackgroundColor = clWhite
       ParentBackgroundColor = False
-      TabIndex = 1
       TabOrder = 4
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
@@ -256,13 +254,6 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Top = 135
             Width = 121
             Height = 20
-            TabOrder = 5
-          end
-          object edtRECV_CLASS: TcxComboBox
-            Left = 106
-            Top = 135
-            Width = 121
-            Height = 20
             TabOrder = 4
           end
           object edtLINKMAN: TcxTextEdit
@@ -300,7 +291,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 6
+            TabOrder = 5
             InGrid = False
             KeyValue = Null
             FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -327,6 +318,43 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             ShowButton = True
             LocateStyle = lsDark
             Buttons = [zbNew]
+            DropListStyle = lsFixed
+            MultiSelect = False
+          end
+          object edtRECV_CLASS: TzrComboBoxList
+            Left = 106
+            Top = 135
+            Width = 121
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 6
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+            KeyField = 'CODE_ID'
+            ListField = 'CODE_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CODE_NAME'
+                Footers = <>
+                Title.Caption = #21517#31216
+                Width = 100
+              end>
+            DataSet = cdsRecvClass
+            DropWidth = 122
+            DropHeight = 130
+            ShowTitle = True
+            AutoFitColWidth = True
+            OnAddClick = edtRECV_CLASSAddClick
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbNew, zbClear]
             DropListStyle = lsFixed
             MultiSelect = False
           end
@@ -456,14 +484,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Width = 121
             Height = 20
             Properties.MaxLength = 50
-            TabOrder = 4
-          end
-          object edtSRVR_CLASS: TcxComboBox
-            Left = 106
-            Top = 12
-            Width = 121
-            Height = 20
-            TabOrder = 0
+            TabOrder = 3
           end
           object edtSRVR_USER: TzrComboBoxList
             Left = 106
@@ -476,7 +497,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
                 Default = True
               end>
             Properties.ReadOnly = True
-            TabOrder = 1
+            TabOrder = 0
             InGrid = False
             KeyValue = Null
             FilterFields = 'ACCOUNT;USER_NAME;USER_SPELL'
@@ -511,7 +532,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Top = 37
             Width = 121
             Height = 20
-            TabOrder = 2
+            TabOrder = 1
           end
           object edtSRVR_DESC: TcxMemo
             Left = 106
@@ -519,7 +540,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Width = 355
             Height = 68
             Properties.MaxLength = 200
-            TabOrder = 5
+            TabOrder = 4
           end
           object edtFEE_FLAG: TRadioGroup
             Left = 107
@@ -530,16 +551,83 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
             Items.Strings = (
               #21542
               #26159)
-            TabOrder = 3
+            TabOrder = 2
             TabStop = True
             OnClick = edtFEE_FLAGClick
           end
-          object edtSATI_DEGR: TcxComboBox
+          object edtSRVR_CLASS: TzrComboBoxList
+            Left = 106
+            Top = 12
+            Width = 121
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
+            TabOrder = 5
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+            KeyField = 'CODE_ID'
+            ListField = 'CODE_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CODE_NAME'
+                Footers = <>
+                Title.Caption = #21517#31216
+                Width = 100
+              end>
+            DataSet = cdsSrvrClass
+            DropWidth = 122
+            DropHeight = 130
+            ShowTitle = True
+            AutoFitColWidth = True
+            OnAddClick = edtSRVR_CLASSAddClick
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbNew, zbClear]
+            DropListStyle = lsFixed
+            MultiSelect = False
+          end
+          object edtSATI_DEGR: TzrComboBoxList
             Left = 106
             Top = 161
             Width = 121
             Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = True
             TabOrder = 6
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
+            KeyField = 'CODE_ID'
+            ListField = 'CODE_NAME'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'CODE_NAME'
+                Footers = <>
+                Title.Caption = #21517#31216
+                Width = 100
+              end>
+            DataSet = cdsSatiDegr
+            DropWidth = 122
+            DropHeight = 130
+            ShowTitle = True
+            AutoFitColWidth = True
+            OnAddClick = edtSATI_DEGRAddClick
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbNew, zbClear]
+            DropListStyle = lsFixed
+            MultiSelect = False
           end
         end
       end
@@ -742,5 +830,38 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
     Params = <>
     Left = 489
     Top = 163
+  end
+  object cdsRecvClass: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
+        'E_TYPE='#39'20'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <>
+    Left = 30
+    Top = 313
+  end
+  object cdsSrvrClass: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
+        'E_TYPE='#39'21'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <>
+    Left = 237
+    Top = 117
+  end
+  object cdsSatiDegr: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    SQL.Strings = (
+      
+        'select CODE_ID,CODE_NAME,CODE_SPELL from PUB_CODE_INFO where COD' +
+        'E_TYPE='#39'22'#39' and COMM not in ('#39'02'#39','#39'12'#39')')
+    Params = <>
+    Left = 238
+    Top = 265
   end
 end

@@ -1051,4 +1051,16 @@ inherited frmSalesOrder: TfrmSalesOrder
     Left = 120
     Top = 224
   end
+  object CdsVoucher: TZQuery
+    FieldDefs = <
+      item
+        Name = 'ID'
+        DataType = ftString
+        Size = 60
+      end>
+    CachedUpdates = True
+    Params = <>
+    Left = 136
+    Top = 264
+  end
 end

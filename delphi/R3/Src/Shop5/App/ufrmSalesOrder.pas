@@ -70,6 +70,7 @@ type
     useLvlPrice: TMenuItem;
     N6: TMenuItem;
     N7: TMenuItem;
+    CdsVoucher: TZQuery;
     procedure FormCreate(Sender: TObject);
     procedure DBGridEh1Columns4UpdateData(Sender: TObject;
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
@@ -111,6 +112,8 @@ type
     CarryRule:integer;
     //保留小数位
     Deci:integer;
+    //
+    Adva_Mny:Currency;
     procedure ReadHeader;
     procedure IndeFrom(id:string);
     procedure WMNextRecord(var Message: TMessage);
@@ -119,7 +122,6 @@ type
     function  CheckSale_Limit: Boolean; //2011.06.09判断是否限量
     function  getLvlPrice(priceDataSet : TZQuery; number : currency) : currency;// 获取促销档位价
     procedure GetGodsByVoucher;
-    //procedure CheckInfo(_DataSet:TZQuery);
   protected
     procedure SetInputFlag(const Value: integer);override;
     procedure SetdbState(const Value: TDataSetState); override;
@@ -174,6 +176,7 @@ type
     procedure AuditOrder;override;
     procedure CancelOrder;override;
     procedure Open(id:string);override;
+    procedure CheckInfo(_Aobj:TRecord_);
   end;
 
 implementation
@@ -274,6 +277,8 @@ begin
       Label40.Caption := '销售仓库';
       Label6.Caption := '业务员';
     end;
+  CdsVoucher.CreateDataSet;
+  Adva_Mny := 0;
 end;
 
 procedure TfrmSalesOrder.InitPrice(GODS_ID, UNIT_ID: string);
@@ -2229,72 +2234,81 @@ begin
 end;
 
 procedure TfrmSalesOrder.GetGodsByVoucher;
-  function CheckInfo(_Aobj:TRecord_):Boolean;
-  begin
-    if edtCLIENT_ID.AsString <> '' then
-    begin
-       if edtCLIENT_ID.AsString <> _Aobj.FieldByName('CLIENT_ID').AsString then
-          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('CLIENT_NAME').AsString+'"客户!');
-    end
-    else
-    begin
-       edtCLIENT_ID.KeyValue := _Aobj.FieldByName('CLIENT_ID').AsString;
-       edtCLIENT_ID.Text := _Aobj.FieldByName('CLIENT_NAME').AsString;
-    end;
-
-    if edtSHOP_ID.AsString <> '' then
-    begin
-       if edtSHOP_ID.AsString <> _Aobj.FieldByName('SHOP_ID').AsString then
-          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('SHOP_NAME').AsString+'"门店!');
-    end
-    else
-    begin
-       edtSHOP_ID.KeyValue := _Aobj.FieldByName('SHOP_ID').AsString;
-       edtSHOP_ID.Text := _Aobj.FieldByName('SHOP_NAME').AsString;
-    end;
-
-    if edtDEPT_ID.AsString <> '' then
-    begin
-       if edtDEPT_ID.AsString <> _Aobj.FieldByName('DEPT_ID').AsString then
-          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('DEPT_NAME').AsString+'"部门!');
-    end
-    else
-    begin
-       edtDEPT_ID.KeyValue := _Aobj.FieldByName('DEPT_ID').AsString;
-       edtDEPT_ID.Text := _Aobj.FieldByName('DEPT_NAME').AsString;
-    end;
-
-    if Trim(edtINDE_GLIDE_NO.Text) <> '' then
-    begin
-       if Trim(edtINDE_GLIDE_NO.Text) <> _Aobj.FieldByName('GLIDE_NO').AsString then
-          Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('GLIDE_NO').AsString+'"订单!');
-    end
-    else
-    begin
-       edtINDE_GLIDE_NO.Text := _Aobj.FieldByName('GLIDE_NO').AsString;
-       AObj.FieldbyName('FROM_ID').AsString := _Aobj.FieldByName('INDE_ID').AsString;
-    end;
-
-  end;
-var rs:TZQuery;
-    Adva_Mny:Currency;
 begin
-  rs := TZQuery.Create(nil);
-  try
-    rs.Close;
-    rs.FieldDefs.Add('ID',ftString,60,True);
-    rs.CreateDataSet;
-    Adva_Mny := TfrmVhPayGlide.ScanSalesBarcode(Self,AObj.FieldByName('SALES_ID').AsString,@CheckInfo,rs);
-    rs.First;
-    while not rs.Eof do
+    if TfrmVhPayGlide.ScanSalesBarcode(Self,AObj.FieldByName('SALES_ID').AsString,CheckInfo) then
     begin
-      DecodeBarcode(copy(rs.FieldByName('ID').AsString,42,13));
-      rs.Next;
+       AObj.FieldByName('ADVA_MNY').AsFloat := Adva_Mny;
+       CdsVoucher.Close;
+       CdsVoucher.CreateDataSet;
+    end
+    else
+    begin
+       CdsVoucher.First;
+       while not CdsVoucher.Eof do
+       begin
+         if edtTable.Locate('BARCODE',copy(CdsVoucher.FieldByName('ID').AsString,42,13),[]) then
+         begin
+            edtTable.Edit;
+            edtTable.FieldByName('AMOUNT').AsFloat := edtTable.FieldByName('AMOUNT').AsFloat - 1;
+            edtTable.Post;
+         end;
+         CdsVoucher.Next;
+       end;
     end;
 
-  finally
-    rs.Free;
+end;
+
+procedure TfrmSalesOrder.CheckInfo(_Aobj: TRecord_);
+begin
+  if edtCLIENT_ID.AsString <> '' then
+  begin
+     if edtCLIENT_ID.AsString <> _Aobj.FieldByName('CLIENT_ID').AsString then
+        Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('CLIENT_NAME').AsString+'"客户!');
+  end
+  else
+  begin
+     edtCLIENT_ID.KeyValue := _Aobj.FieldByName('CLIENT_ID').AsString;
+     edtCLIENT_ID.Text := _Aobj.FieldByName('CLIENT_NAME').AsString;
   end;
+
+  if edtSHOP_ID.AsString <> '' then
+  begin
+     if edtSHOP_ID.AsString <> _Aobj.FieldByName('SHOP_ID').AsString then
+        Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('SHOP_NAME').AsString+'"门店!');
+  end
+  else
+  begin
+     edtSHOP_ID.KeyValue := _Aobj.FieldByName('SHOP_ID').AsString;
+     edtSHOP_ID.Text := _Aobj.FieldByName('SHOP_NAME').AsString;
+  end;
+
+  if edtDEPT_ID.AsString <> '' then
+  begin
+     if edtDEPT_ID.AsString <> _Aobj.FieldByName('DEPT_ID').AsString then
+        Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('DEPT_NAME').AsString+'"部门!');
+  end
+  else
+  begin
+     edtDEPT_ID.KeyValue := _Aobj.FieldByName('DEPT_ID').AsString;
+     edtDEPT_ID.Text := _Aobj.FieldByName('DEPT_NAME').AsString;
+  end;
+
+  if Trim(edtINDE_GLIDE_NO.Text) <> '' then
+  begin
+     if Trim(edtINDE_GLIDE_NO.Text) <> _Aobj.FieldByName('GLIDE_NO').AsString then
+        Raise Exception.Create('本张"提货券"属于"'+_Aobj.FieldByName('GLIDE_NO').AsString+'"订单!');
+  end
+  else
+  begin
+     edtINDE_GLIDE_NO.Text := _Aobj.FieldByName('GLIDE_NO').AsString;
+     AObj.FieldbyName('FROM_ID').AsString := _Aobj.FieldByName('INDE_ID').AsString;
+  end;
+
+  DecodeBarcode(copy(_Aobj.FieldByName('BARCODE').AsString,42,13));
+  CdsVoucher.Append;
+  CdsVoucher.FieldByName('ID').AsString := _Aobj.FieldByName('BARCODE').AsString;
+  CdsVoucher.Post;
+  Adva_Mny := Adva_Mny + _Aobj.FieldByName('VOUCHER_PRC').AsFloat;
 end;
 
 end.

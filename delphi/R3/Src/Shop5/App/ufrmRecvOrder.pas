@@ -45,6 +45,8 @@ type
     edtDEPT_ID: TzrComboBoxList;
     Label9: TLabel;
     edtBILL_NO: TcxTextEdit;
+    BtnVoucher: TRzBitBtn;
+    Label4: TLabel;
     procedure btnCloseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -71,9 +73,11 @@ type
     procedure edtRECV_USERPropertiesChange(Sender: TObject);
     procedure edtPAYM_IDPropertiesChange(Sender: TObject);
     procedure edtBANK_CODEExit(Sender: TObject);
+    procedure BtnVoucherClick(Sender: TObject);
   private
     Fcid: string;
     FisAudit: boolean;
+    VoucherMny:Currency;
     procedure Setcid(const Value: string);
     procedure SetisAudit(const Value: boolean);
     { Private declarations }
@@ -96,7 +100,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,ufrmCodeInfo,ufrmAccountInfo,//ufrmFindReveAbleList,ufrmItemInfo,ufrmRecvAbleInfo,
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,ufrmCodeInfo,ufrmAccountInfo,ufrmVhPayGlide,//ufrmFindReveAbleList,ufrmItemInfo,ufrmRecvAbleInfo,
   uShopGlobal;
 {$R *.dfm}
 
@@ -164,6 +168,7 @@ begin
     begin
       Label40.Caption := '收款仓库';
     end;
+  VoucherMny := 0;
 end;
 
 procedure TfrmRecvOrder.FormDestroy(Sender: TObject);
@@ -281,6 +286,10 @@ begin
     cdsDetail.EnableControls;
   end;
   cdsHeader.FieldbyName('RECV_MNY').AsFloat := r;
+  if (r > VoucherMny) and (r<>0) then
+  begin
+     if MessageBox(Handle,'收款总额与礼券总额不相等,是否保存!',pchar(Application.Title),MB_YESNOCANCEL+MB_ICONINFORMATION) <> 6 then Exit;
+  end;
   cdsHeader.Post;
   if n=0 then Raise Exception.Create('没有收款记录，不能保存...');
   Factor.BeginBatch;
@@ -610,6 +619,10 @@ begin
   edtBANK_CODE.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'B');
 //  Label5.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'B');
   Label8.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'B');
+
+  BtnVoucher.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'G');
+  Label4.Visible := (TRecord_(edtPAYM_ID.Properties.Items.Objects[edtPAYM_ID.ItemIndex]).FieldByName('CODE_ID').AsString = 'G');
+
 end;
 
 procedure TfrmRecvOrder.edtBANK_CODEExit(Sender: TObject);
@@ -630,6 +643,29 @@ begin
   inherited;
   if trim(edtBANK_CODE.Text)='' then Exit;
   edtBANK_CODE.Text := GetCheckNo;
+end;
+
+procedure TfrmRecvOrder.BtnVoucherClick(Sender: TObject);
+var SumMny:Currency;
+begin
+  inherited;
+  if edtCLIENT_ID.AsString = '' then Raise Exception.Create('客户名称不能为空!');
+  if edtSHOP_ID.AsString = '' then Raise Exception.Create('门店不能为空!');
+  if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空!');
+  SumMny := 0;
+  cdsDetail.DisableControls;
+  try
+    cdsDetail.First;
+    while not cdsDetail.Eof do
+    begin
+      SumMny := SumMny + cdsDetail.FieldByName('ACCT_MNY').AsFloat;
+      cdsDetail.Next;
+    end;
+  finally
+    cdsDetail.EnableControls;
+  end;
+  VoucherMny := VoucherMny + TfrmVhPayGlide.ScanBarcode(Self,AObj.FieldbyName('RECV_ID').asString,edtSHOP_ID.AsString,edtDEPT_ID.AsString,edtCLIENT_ID.AsString,SumMny);
+  Label4.Caption := '金额:'+FloatToStr(VoucherMny);
 end;
 
 end.

@@ -1,6 +1,6 @@
 inherited frmRecvOrder: TfrmRecvOrder
-  Left = 271
-  Top = 159
+  Left = 164
+  Top = 157
   ActiveControl = edtCLIENT_ID
   Caption = #25910#27454#21333
   ClientHeight = 465
@@ -239,6 +239,9 @@ inherited frmRecvOrder: TfrmRecvOrder
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 2
+      DesignSize = (
+        646
+        132)
       object Label1: TLabel
         Left = 182
         Top = 63
@@ -316,6 +319,13 @@ inherited frmRecvOrder: TfrmRecvOrder
         Height = 12
         Alignment = taRightJustify
         Caption = #31080#25454#32534#21495
+      end
+      object Label4: TLabel
+        Left = 344
+        Top = 40
+        Width = 30
+        Height = 12
+        Caption = #37329#39069':'
       end
       object edtACCOUNT_ID: TzrComboBoxList
         Left = 236
@@ -854,6 +864,33 @@ inherited frmRecvOrder: TfrmRecvOrder
         Properties.OnChange = edtREMARKPropertiesChange
         TabOrder = 10
         ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+      end
+      object BtnVoucher: TRzBitBtn
+        Left = 305
+        Top = 35
+        Width = 36
+        Height = 22
+        Anchors = [akTop, akRight]
+        Caption = #31036#21048
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 11
+        TextStyle = tsRaised
+        ThemeAware = False
+        OnClick = BtnVoucherClick
+        NumGlyphs = 2
+        Spacing = 5
       end
     end
   end

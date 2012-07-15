@@ -8,7 +8,7 @@ uses
   RzLabel, jpeg, ExtCtrls, RzTabs, RzPanel, cxTextEdit, Grids, DBGridEh,
   cxRadioGroup, cxButtonEdit, zrComboBoxList, RzButton, cxControls,
   cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, DB, ZBase,
-  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, FR_Class;
 
 type
   TfrmSalInvoiceList = class(TframeToolForm)
@@ -72,6 +72,7 @@ type
     fndSALES_STYLE: TzrComboBoxList;
     fndOrderType: TcxRadioGroup;
     Label10: TLabel;
+    frfSalinvoice: TfrReport;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -108,7 +109,7 @@ type
   end;
 
 implementation
-uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSalInvoice,
+uses uGlobal,uShopUtil,uFnUtil,uDsUtil,uCtrlUtil,uShopGlobal,ufrmSalInvoice,ufrmFastReport,
   uframeMDForm, uframeDialogForm, ufrmBasic;
 {$R *.dfm}
 
@@ -292,8 +293,16 @@ end;
 procedure TfrmSalInvoiceList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
-  Raise Exception.Create('此功能暂时没有开放.')
+  //if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
+  //Raise Exception.Create('此功能暂时没有开放.')
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+         ShowReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('INVD_ID').AsString),frfSalinvoice);
+      finally
+         free;
+      end;
+    end;
 end;
 
 procedure TfrmSalInvoiceList.actPreviewExecute(Sender: TObject);
@@ -755,7 +764,18 @@ end;
 
 function TfrmSalInvoiceList.PrintSQL2(tenantid, id: string): string;
 begin
-
+  result :=
+  'select G.INVH_NO,A.INVOICE_NO,A.CREA_DATE,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.REMARK,'+
+  'E.USER_NAME as CREA_USER_TEXT,F.CODE_NAME as INVOICE_FLAG_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,B.GODS_NAME,B.SEQNO,B.UNIT_NAME,'+
+  'B.AMOUNT,B.APRICE,B.AMOUNT*B.APRICE as AMONEY,B.NOTAX_MNY,B.TAX_MNY '+
+  ' from SAL_INVOICE_INFO A inner join SAL_INVOICE_LIST B on A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
+  ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
+  ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
+  ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.CREA_USER=E.USER_ID '+
+  ' left join PUB_PARAMS F on A.INVOICE_FLAG=F.CODE_ID '+
+  ' left join SAL_INVOICE_BOOK G on A.TENANT_ID=G.TENANT_ID and A.INVH_ID=G.INVH_ID'+
+  ' left join VIW_CUSTOMER H on A.TENANT_ID=H.TENANT_ID and A.CLIENT_ID=H.CLIENT_ID '+
+  ' where A.TENANT_ID='+tenantid+' and A.INVD_ID='+QuotedStr(id)+' and F.TYPE_CODE=''INVOICE_FLAG'' order by SEQNO' ;
 end;
 
 procedure TfrmSalInvoiceList.DBGridEh1DrawColumnCell(Sender: TObject;

@@ -3626,6 +3626,7 @@ inherited frmShopMain: TfrmShopMain
           Height = 25
           Caption = 'Button1'
           TabOrder = 1
+          Visible = False
           OnClick = Button1Click
         end
         object Button2: TButton
@@ -3635,6 +3636,7 @@ inherited frmShopMain: TfrmShopMain
           Height = 25
           Caption = 'Button2'
           TabOrder = 2
+          Visible = False
           OnClick = Button2Click
         end
         object Button3: TButton
@@ -3644,6 +3646,7 @@ inherited frmShopMain: TfrmShopMain
           Height = 25
           Caption = 'Button1'
           TabOrder = 3
+          Visible = False
           OnClick = Button3Click
         end
       end

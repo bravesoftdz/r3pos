@@ -278,7 +278,7 @@ inherited frmSalInvoice: TfrmSalInvoice
           end
           object RzPanel1: TRzPanel
             Left = 5
-            Top = 85
+            Top = 70
             Width = 695
             Height = 90
             Align = alTop
@@ -531,7 +531,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             Left = 5
             Top = 5
             Width = 695
-            Height = 80
+            Height = 65
             Align = alTop
             BorderOuter = fsNone
             Color = clWhite
@@ -557,7 +557,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object Label6: TLabel
               Left = 1
-              Top = 61
+              Top = 45
               Width = 59
               Height = 12
               Alignment = taRightJustify
@@ -584,7 +584,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object Label2: TLabel
               Left = 489
-              Top = 24
+              Top = 3
               Width = 59
               Height = 12
               Alignment = taRightJustify
@@ -598,7 +598,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object Label4: TLabel
               Left = 488
-              Top = 45
+              Top = 24
               Width = 60
               Height = 12
               Alignment = taRightJustify
@@ -612,7 +612,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object Label3: TLabel
               Left = 241
-              Top = 61
+              Top = 45
               Width = 59
               Height = 12
               Alignment = taRightJustify
@@ -626,7 +626,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object edtCREA_DATE: TcxDateEdit
               Left = 66
-              Top = 57
+              Top = 41
               Width = 133
               Height = 20
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -634,7 +634,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object edtINVH_ID: TzrComboBoxList
               Left = 554
-              Top = 20
+              Top = -1
               Width = 133
               Height = 20
               Properties.AutoSelect = False
@@ -695,7 +695,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object edtINVOICE_NO: TcxTextEdit
               Left = 554
-              Top = 41
+              Top = 20
               Width = 133
               Height = 20
               ParentFont = False
@@ -709,7 +709,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object edtIfDuplicate: TcxCheckBox
               Left = 551
-              Top = 60
+              Top = 40
               Width = 121
               Height = 21
               Properties.DisplayUnchecked = 'False'
@@ -723,7 +723,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object edtINVOICE_FLAG: TcxComboBox
               Left = 306
-              Top = 57
+              Top = 41
               Width = 133
               Height = 20
               Enabled = False
@@ -884,9 +884,9 @@ inherited frmSalInvoice: TfrmSalInvoice
           end
           object RzPanel7: TRzPanel
             Left = 5
-            Top = 175
+            Top = 160
             Width = 695
-            Height = 160
+            Height = 175
             Align = alClient
             BorderOuter = fsNone
             BorderSides = [sdLeft, sdRight]
@@ -898,7 +898,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Left = 1
               Top = 1
               Width = 693
-              Height = 158
+              Height = 173
               Align = alClient
               AllowedOperations = [alopUpdateEh]
               BorderStyle = bsNone
@@ -1190,8 +1190,8 @@ inherited frmSalInvoice: TfrmSalInvoice
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 600
-    Top = 48
+    Left = 664
+    Top = 8
   end
   object DataSource1: TDataSource
     DataSet = cdsDetail

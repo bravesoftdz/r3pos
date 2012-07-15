@@ -936,19 +936,20 @@ var Str:string;
 begin
   myYear := FKpiIndexInfo.KpiYear;
   Str := 'select C.GODS_ID,'+
-         'sum(D.MODI_AMOUNT/'+GetUnitTO_CALC+') as MODI_AMOUNT,sum(D.MODI_MONEY) as MODI_MONEY,'+
-         'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(D.MODI_AMOUNT,0)) ) as CALC_AMOUNT,'+
-         'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(D.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' ) as AMOUNT,'+
-         'sum(case when C.IS_PRESENT=0 then C.CALC_MONEY else 0.00 end + isnull(D.MODI_MONEY,0)) as CALC_MONEY '+
+         'sum(C.MODI_AMOUNT/'+GetUnitTO_CALC+') as MODI_AMOUNT,sum(C.MODI_MONEY) as MODI_MONEY,'+
+         'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(C.MODI_AMOUNT,0)) ) as CALC_AMOUNT,'+
+         'sum((case when C.IS_PRESENT=0 then C.CALC_AMOUNT else 0.00 end + isnull(C.MODI_AMOUNT,0))/'+GetUnitTO_CALC+' ) as AMOUNT,'+
+         'sum(case when C.IS_PRESENT=0 then C.CALC_MONEY else 0.00 end + isnull(C.MODI_MONEY,0)) as CALC_MONEY '+
          'from ('+
-         'select A.TENANT_ID,A.SALES_ID,A.GODS_ID,A.SEQNO,'+
-         ' A.CALC_AMOUNT,B1.UNIT_ID,A.IS_PRESENT,A.APRICE,A.CALC_MONEY '+
+         'select A.TENANT_ID,A.SALES_ID,A.GODS_ID,'+
+         ' A.CALC_AMOUNT,B1.UNIT_ID,A.IS_PRESENT,A.APRICE,A.CALC_MONEY,D.MODI_MONEY,D.MODI_AMOUNT '+
          ' from MKT_KPI_GOODS B1 left outer join SAL_SALESDATA A on A.TENANT_ID=B1.TENANT_ID and A.GODS_ID=B1.GODS_ID '+
          ' inner join SAL_SALESORDER B on A.TENANT_ID=B.TENANT_ID and A.SALES_ID=B.SALES_ID '+
-         ' where B.TENANT_ID=:TENANT_ID and B.SALES_DATE>=:SALES_DATE1 and B.SALES_DATE<=:SALES_DATE2 '+
+         ' left join MKT_KPI_MODIFY D on A.TENANT_ID=D.TENANT_ID and A.SALES_ID=D.SALES_ID and A.SEQNO=D.SEQNO '+
+         ' where B.TENANT_ID=:TENANT_ID and isnull(D.KPI_DATE,B.SALES_DATE)>=:SALES_DATE1 and isnull(D.KPI_DATE,B.SALES_DATE)<=:SALES_DATE2 '+
          ' and B.SALES_TYPE in (1,3,4) and B.COMM not in (''02'',''12'')  '+
          ' and B.CLIENT_ID=:CLIENT_ID and B1.KPI_ID=:KPI_ID '+
-         ') C left join MKT_KPI_MODIFY D on C.TENANT_ID=D.TENANT_ID and C.SALES_ID=D.SALES_ID and C.SEQNO=D.SEQNO '+
+         ') C  '+
          ' left join VIW_GOODSINFO E on C.TENANT_ID=E.TENANT_ID and C.GODS_ID=E.GODS_ID '+
          ' group by C.GODS_ID';
   CdsGoods.SQL.Text := ParseSQL(Factor.iDbType,Str);
@@ -1093,6 +1094,7 @@ procedure TClientRebate.PromJudge(KpiRate: Real);
 var GoodsId,UnitId:String;
     Ratio,PromNum,FishCalcRate:Real;
     Date1,Date2,myYear:Integer;
+    hasHalf:boolean;
 begin
   GoodsId := '';
   UnitId := '';
@@ -1124,7 +1126,7 @@ begin
        Date2 := myYear*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger
     else
        Date2 := (myYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
-
+    hasHalf := false;
     KpiDetail.First;
     while not KpiDetail.Eof do
       begin
@@ -1142,14 +1144,16 @@ begin
                   1:begin
                       PromNum := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
                       KpiDetail.FieldByName('KPI_MNY').AsFloat :=
-                        (KpiDetail.FieldByName('FISH_MNY').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat/100
+                        (KpiDetail.FieldByName('FISH_MNY').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat/100;
+                      hasHalf := true;
                         //+
                         //PromNum*Ratio/100
                     end;
                   2:begin
                       PromNum := CdsGoods.FieldByName('CALC_AMOUNT').AsFloat;
                       KpiDetail.FieldByName('KPI_MNY').AsFloat :=
-                        (CdsGoods.FieldByName('FISH_AMT').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat
+                        (CdsGoods.FieldByName('FISH_AMT').AsFloat-PromNum)*KpiDetail.FieldByName('KPI_RATIO').AsFloat;
+                      hasHalf := true;
                         //+
                         //PromNum*Ratio
                     end;
@@ -1161,7 +1165,11 @@ begin
            end;
         KpiDetail.Next;
       end;
-
+    if not hasHalf then
+       begin
+         CdsGoods.Next;
+         break;
+       end;
     if not KpiGoods.Locate('GODS_ID',CdsGoods.FieldByName('GODS_ID').AsString,[]) then Raise Exception.Create('KpiGoods没找到商品');
     FishCalcRate := UnitToCalc(CdsGoods.FieldByName('GODS_ID').AsString,KpiGoods.FieldByName('UNIT_ID').AsString);
     if not KpiDetail.Locate('GODS_ID;TIMES_ID',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('TIMES_ID').AsString]),[]) then

@@ -645,5 +645,9 @@ inherited frmMktKpiModify: TfrmMktKpiModify
       Action = actToNotModify
       Caption = #35774#20026#38750#36820#21033#21830#21697
     end
+    object N3: TMenuItem
+      Caption = #24403#21069#35760#24405#37325#32622
+      OnClick = N3Click
+    end
   end
 end

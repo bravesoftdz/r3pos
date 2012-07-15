@@ -43,6 +43,7 @@ type
     RzBitBtn1: TRzBitBtn;
     Bevel1: TBevel;
     dropD2: TcxDateEdit;
+    N3: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure actToModifyExecute(Sender: TObject);
     procedure actToNotModifyExecute(Sender: TObject);
@@ -65,6 +66,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
     procedure DBGridEh2Columns2BeforeShowControl(Sender: TObject);
     procedure dropD2PropertiesEditValueChanged(Sender: TObject);
+    procedure N3Click(Sender: TObject);
   private
     FClientId: String;
     FKpiId: String;
@@ -591,8 +593,32 @@ procedure TfrmMktKpiModify.dropD2PropertiesEditValueChanged(
 begin
   inherited;
   cdsList2.Edit;
+  cdsList2.FieldByName('KPI_YEAR').AsInteger := KpiYear;
+  cdsList2.FieldByName('MODIFY_ID').AsString := TSequence.NewId;
   cdsList2.FieldbyName('KPI_DATE').AsString := formatDatetime('YYYYMMDD',dropD2.Date);
   cdsList2.post;
+end;
+
+procedure TfrmMktKpiModify.N3Click(Sender: TObject);
+begin
+  inherited;
+  if cdsList2.FieldByName('MODIFY_ID').AsString='' then Raise Exception.Create('当前记录没有修改过，无法重置'); 
+  cdsList2.Edit;
+  cdsList2.FieldbyName('KPI_DATE').AsString := cdsList2.FieldbyName('SALES_DATE').AsString;
+  cdsList2.FieldByName('CALC_AMOUNT').AsFloat := cdsList2.FieldByName('ORG_AMOUNT').AsFloat;
+  cdsList2.FieldByName('CALC_MONEY').AsFloat := cdsList2.FieldByName('ORG_MONEY').AsFloat;
+  if cdsList2.FieldbyName('IS_PRESENT').asInteger=0 then
+     begin
+       cdsList2.FieldByName('MODI_AMOUNT').AsFloat := 0;
+       cdsList2.FieldByName('MODI_MONEY').AsFloat := 0;
+     end
+  else
+     begin
+       cdsList2.FieldByName('MODI_AMOUNT').AsFloat := cdsList2.FieldByName('ORG_AMOUNT').AsFloat;
+       cdsList2.FieldByName('MODI_MONEY').AsFloat := cdsList2.FieldByName('ORG_MONEY').AsFloat;
+     end;
+  cdsList2.post;
+
 end;
 
 end.

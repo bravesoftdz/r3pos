@@ -789,7 +789,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       Properties.MaxLength = 50
       TabOrder = 3
     end
-    object RzBitBtn1: TRzBitBtn
+    object BtnUserInfo: TRzBitBtn
       Left = 448
       Top = 9
       Width = 27
@@ -812,6 +812,7 @@ inherited frmSvcServiceInfo: TfrmSvcServiceInfo
       TabOrder = 6
       TextStyle = tsRaised
       ThemeAware = False
+      OnClick = BtnUserInfoClick
       NumGlyphs = 2
       Spacing = 5
     end

@@ -51,7 +51,7 @@ type
     edtSRVR_DESC: TcxMemo;
     edtSERIAL_NO: TcxTextEdit;
     edtFEE_FLAG: TRadioGroup;
-    RzBitBtn1: TRzBitBtn;
+    BtnUserInfo: TRzBitBtn;
     RzLabel1: TRzLabel;
     RzLabel3: TRzLabel;
     edtRECV_CLASS: TzrComboBoxList;
@@ -70,6 +70,7 @@ type
     procedure edtRECV_CLASSAddClick(Sender: TObject);
     procedure edtSRVR_CLASSAddClick(Sender: TObject);
     procedure edtSATI_DEGRAddClick(Sender: TObject);
+    procedure BtnUserInfoClick(Sender: TObject);
   private
     FClientId: String;
     FGodsName: String;
@@ -82,6 +83,7 @@ type
     SalesId,GodsId:string;
     Aobj:TRecord_;
     Saved:Boolean;
+    procedure GetInfo(Aobj_:TRecord_);
     procedure SetdbState(const Value: TDataSetState); override;
     procedure Open(code:string);
     procedure Append;
@@ -95,7 +97,7 @@ type
   end;
 
 implementation
-uses uShopUtil,uDsUtil,ufrmBasic,Math,uGlobal,uFnUtil,EncDec,uShopGlobal,ufrmCodeInfo,
+uses uShopUtil,uDsUtil,ufrmBasic,Math,uGlobal,uFnUtil,uShopGlobal,ufrmCodeInfo,ufrmFilterUser,
   StdConvs,ObjCommon;//
 {$R *.dfm}
 
@@ -173,21 +175,20 @@ begin
      if edtSERIAL_NO.CanFocus then edtSERIAL_NO.SetFocus;
      Raise Exception.Create('序列号不能为空！');
   end;
-  {if edtRECV_CLASS.ItemIndex = -1 then
+  if edtRECV_CLASS.AsString = '' then
   begin
     if edtRECV_CLASS.CanFocus then edtRECV_CLASS.SetFocus;
     Raise Exception.Create('受理类型不能为空！');
   end; 
-  if edtSRVR_CLASS.ItemIndex = -1 then
+  if edtSRVR_CLASS.AsString = '' then
   begin
     if edtSRVR_CLASS.CanFocus then edtSRVR_CLASS.SetFocus;
     Raise Exception.Create('服务方式不能为空！');
-  end; }
+  end; 
 
   WriteToObject(Aobj,self);
   Aobj.FieldByName('CREA_USER').AsString := Global.UserID;
   Aobj.FieldByName('CREA_DATE').AsString := FormatDateTime('YYYY-MM-DD HH:NN:SS',Now());
-
 
   if not IsEdit(Aobj,cdsTable) then exit;
 
@@ -224,6 +225,14 @@ procedure TfrmSvcServiceInfo.FormShow(Sender: TObject);
 begin
   inherited;
   RzPage.ActivePageIndex := 0;
+  edtSRVR_CLASS.KeyValue := edtSRVR_CLASS.DataSet.FieldByName('CODE_ID').AsString;
+  edtSRVR_CLASS.Text := edtSRVR_CLASS.DataSet.FieldByName('CODE_NAME').AsString;
+  
+  edtRECV_CLASS.KeyValue := edtRECV_CLASS.DataSet.FieldByName('CODE_ID').AsString;
+  edtRECV_CLASS.Text := edtRECV_CLASS.DataSet.FieldByName('CODE_NAME').AsString;
+
+  edtSATI_DEGR.KeyValue := edtSATI_DEGR.DataSet.FieldByName('CODE_ID').AsString;
+  edtSATI_DEGR.Text := edtSATI_DEGR.DataSet.FieldByName('CODE_NAME').AsString;
 end;
 
 procedure TfrmSvcServiceInfo.SetdbState(const Value: TDataSetState);
@@ -450,6 +459,28 @@ begin
   finally
     Aobj_3.Free;
   end;
+end;
+
+procedure TfrmSvcServiceInfo.BtnUserInfoClick(Sender: TObject);
+begin
+  inherited;
+  with TfrmFilterUser.Create(Self) do
+  begin
+    try
+      OnGetUserInfo := GetInfo;
+      ShowModal;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TfrmSvcServiceInfo.GetInfo(Aobj_: TRecord_);
+begin
+  edtLINKMAN.Text := Aobj_.FieldByName('YQDZ_HZ_MC').AsString;
+  edtTELEPHONE.Text := Aobj_.FieldByName('YQDZ_LXDH').AsString;
+  edtADDRESS.Text := Aobj_.FieldByName('YQDZ_SM').AsString;
+  edtCLIENT_CODE.Text := Aobj_.FieldByName('YQDZ_USERID_OLD').AsString;
 end;
 
 end.

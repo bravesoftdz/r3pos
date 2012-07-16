@@ -77,11 +77,11 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               Top = 0
               Width = 333
               Height = 144
-              ActivePage = TabSheet3
+              ActivePage = TabSheet2
               Align = alClient
               ParentShowHint = False
               ShowHint = False
-              TabIndex = 1
+              TabIndex = 0
               TabOrder = 0
               FixedDimension = 18
               object TabSheet2: TRzTabSheet

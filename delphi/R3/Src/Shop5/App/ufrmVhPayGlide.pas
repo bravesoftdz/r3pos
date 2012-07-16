@@ -61,7 +61,7 @@ type
     { Public declarations }
     procedure Open;
     procedure Save;
-    class function ScanBarcode(Owner:TForm;vFromId:String='';vShopId:String='';vDeptId:String='';vClientId:String='';vPayMny:Currency=0):Boolean;
+    class function ScanBarcode(Owner:TForm;vFromId:String='';vShopId:String='';vDeptId:String='';vClientId:String='';vPayMny:Currency=0):Currency;
     class function ScanSalesBarcode(Owner:TForm;vFromId:String='';CheckInfo:TVoucherCheckInfoEvent=nil):Boolean;
     property FromId:string read FFromId write SetFromId;
     property PayMny:Currency read FPayMny write SetPayMny;
@@ -134,7 +134,7 @@ begin
 end;
 
 class function TfrmVhPayGlide.ScanBarcode(Owner: TForm; vFromId, vShopId,
-  vDeptId, vClientId: String; vPayMny: Currency): Boolean;
+  vDeptId, vClientId: String; vPayMny: Currency): Currency;
 begin
   with TfrmVhPayGlide.Create(Owner) do
   begin
@@ -145,7 +145,10 @@ begin
       ClientId := vClientId;
       PayMny := vPayMny;
       RzPageControl1.ActivePageIndex := 0;
-      ShowModal;
+      if ShowModal=mrOk then
+         Result := SumMoney
+      else
+         Result := 0;
     finally
       Free;
     end;
@@ -232,6 +235,7 @@ begin
      CdsVhPay.FieldByName('VHPAY_ID').AsString := TSequence.NewId;
      CdsVhPay.FieldByName('VHPAY_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Global.SysDate));
      CdsVhPay.FieldByName('VOUCHER_PRC').AsInteger := rs.FieldByName('VOUCHER_PRC').AsInteger;
+     SumMoney := SumMoney + rs.FieldByName('VOUCHER_PRC').AsFloat;
      labPRC.Caption := '¿Ò»Ø√Ê÷µ:'+rs.FieldByName('VOUCHER_PRC').AsString;
      labNO.Caption := '¿Ò»Ø∫≈:'+BarCode;
      CdsVhPay.FieldByName('BARCODE').AsString := rs.FieldByName('BARCODE').AsString;

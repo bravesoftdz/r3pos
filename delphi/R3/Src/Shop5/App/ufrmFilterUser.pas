@@ -32,6 +32,9 @@ type
     cdsROAD_NAME: TZQuery;
     cdsCOMMUNITY: TZQuery;
     cdsMANSION: TZQuery;
+    RzLabel5: TRzLabel;
+    fndHouseNumber: TzrComboBoxList;
+    cdsHouseNumber: TZQuery;
     procedure edtCLIENT_CODEKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -42,6 +45,7 @@ type
     procedure fndCOMMUNITYSaveValue(Sender: TObject);
     procedure fndMANSIONSaveValue(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure fndHouseNumberSaveValue(Sender: TObject);
   private
     { Private declarations }
     Aobj:TRecord_;
@@ -147,28 +151,13 @@ begin
 end;
 
 procedure TfrmFilterUser.fndMANSIONSaveValue(Sender: TObject);
-var rs:TZQuery;
-    str:String;
+var str:String;
 begin
   inherited;
   if fndMANSION.AsString = '' then Exit;
-  rs := TZQuery.Create(nil);
-  try
-    str := 'select A.YQDZ_USERID_OLD,A.YQDZ_HZ_MC,A.YQDZ_LXDH,A.YQDZ_SM from YONGQIDIZHI A inner join YONGQIDIZHI_BIANMA B on Substring(A.YQDZ_YQDZM_ID,1,11)=B.YQBM_YQDZ_ID where B.YQBM_YQDZ_ID='''+Trim(fndMANSION.AsString)+''' ';
-    rs.SQL.Text := ParseSQL(Factor.iDbType,str);
-    Factor.Open(rs);
-    if not rs.IsEmpty then
-    begin
-       lab_LINKMAN.Caption := '联系人:'+rs.FieldByName('YQDZ_HZ_MC').AsString;
-       lab_TELEPHONE.Caption := '联系电话:'+rs.FieldByName('YQDZ_LXDH').AsString;
-       edtCLIENT_CODE.Text := rs.FieldByName('YQDZ_USERID_OLD').AsString;
-    end
-    else
-       Raise Exception.Create('');
-    Aobj.ReadFromDataSet(rs);
-  finally
-    rs.Free;
-  end;
+  str := ' select YQDZ_ID,YQDZ_MIAOSHU from YONGQIDIZHI where Substring(YQDZ_YQDZM_ID,1,11)='+QuotedStr(Trim(fndMANSION.AsString));
+  cdsHouseNumber.SQL.Text := ParseSQL(Factor.iDbType,str);
+  Factor.Open(cdsHouseNumber);
 
 end;
 
@@ -176,6 +165,29 @@ procedure TfrmFilterUser.FormShow(Sender: TObject);
 begin
   inherited;
   if edtCLIENT_CODE.CanFocus then edtCLIENT_CODE.SetFocus;
+end;
+
+procedure TfrmFilterUser.fndHouseNumberSaveValue(Sender: TObject);
+var rs:TZQuery;
+    str:String;
+begin
+  inherited;
+  rs := TZQuery.Create(nil);
+  try
+    //str := 'select A.YQDZ_USERID_OLD,A.YQDZ_HZ_MC,A.YQDZ_LXDH,A.YQDZ_SM from YONGQIDIZHI A inner join YONGQIDIZHI_BIANMA B on Substring(A.YQDZ_YQDZM_ID,1,11)=B.YQBM_YQDZ_ID where B.YQBM_YQDZ_ID='''+Trim(fndMANSION.AsString)+''' ';
+    str := 'select YQDZ_USERID_OLD,YQDZ_HZ_MC,YQDZ_LXDH,YQDZ_SM from YONGQIDIZHI where YQDZ_ID='''+Trim(fndHouseNumber.AsString)+''' ';
+    rs.SQL.Text := ParseSQL(Factor.iDbType,str);
+    Factor.Open(rs);
+    if not rs.IsEmpty then
+    begin
+       lab_LINKMAN.Caption := '联系人:'+rs.FieldByName('YQDZ_HZ_MC').AsString;
+       lab_TELEPHONE.Caption := '联系电话:'+rs.FieldByName('YQDZ_LXDH').AsString;
+       edtCLIENT_CODE.Text := rs.FieldByName('YQDZ_USERID_OLD').AsString;
+    end;
+    Aobj.ReadFromDataSet(rs);
+  finally
+    rs.Free;
+  end;
 end;
 
 end.

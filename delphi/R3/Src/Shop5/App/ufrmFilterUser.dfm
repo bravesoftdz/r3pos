@@ -44,7 +44,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object RzLabel1: TRzLabel
             Left = 18
-            Top = 54
+            Top = 52
             Width = 36
             Height = 12
             Alignment = taRightJustify
@@ -58,7 +58,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object RzLabel2: TRzLabel
             Left = 18
-            Top = 85
+            Top = 77
             Width = 36
             Height = 12
             Alignment = taRightJustify
@@ -72,7 +72,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object RzLabel3: TRzLabel
             Left = 18
-            Top = 116
+            Top = 102
             Width = 36
             Height = 12
             Alignment = taRightJustify
@@ -86,7 +86,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object RzLabel4: TRzLabel
             Left = 18
-            Top = 147
+            Top = 127
             Width = 36
             Height = 12
             Alignment = taRightJustify
@@ -130,6 +130,20 @@ inherited frmFilterUser: TfrmFilterUser
             Width = 237
             Height = 2
           end
+          object RzLabel5: TRzLabel
+            Left = 18
+            Top = 151
+            Width = 36
+            Height = 12
+            Alignment = taRightJustify
+            Caption = #25151'  '#21495
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = []
+            ParentFont = False
+          end
           object edtCLIENT_CODE: TcxTextEdit
             Left = 63
             Top = 11
@@ -141,7 +155,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object fndCODE_NAME: TzrComboBoxList
             Left = 63
-            Top = 50
+            Top = 48
             Width = 160
             Height = 20
             Properties.AutoSelect = False
@@ -178,7 +192,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object fndROAD_NAME: TzrComboBoxList
             Left = 63
-            Top = 81
+            Top = 73
             Width = 160
             Height = 20
             Properties.AutoSelect = False
@@ -215,7 +229,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object fndCOMMUNITY: TzrComboBoxList
             Left = 63
-            Top = 112
+            Top = 98
             Width = 160
             Height = 20
             Properties.AutoSelect = False
@@ -252,7 +266,7 @@ inherited frmFilterUser: TfrmFilterUser
           end
           object fndMANSION: TzrComboBoxList
             Left = 63
-            Top = 143
+            Top = 123
             Width = 160
             Height = 20
             Properties.AutoSelect = False
@@ -285,6 +299,43 @@ inherited frmFilterUser: TfrmFilterUser
             Buttons = [zbClear]
             DropListStyle = lsFixed
             OnSaveValue = fndMANSIONSaveValue
+            MultiSelect = False
+          end
+          object fndHouseNumber: TzrComboBoxList
+            Left = 63
+            Top = 147
+            Width = 160
+            Height = 20
+            Properties.AutoSelect = False
+            Properties.Buttons = <
+              item
+                Default = True
+              end>
+            Properties.ReadOnly = False
+            TabOrder = 5
+            InGrid = False
+            KeyValue = Null
+            FilterFields = 'YQDZ_ID,YQDZ_MIAOSHU'
+            KeyField = 'YQDZ_ID'
+            ListField = 'YQDZ_MIAOSHU'
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'YQDZ_MIAOSHU'
+                Footers = <>
+                Title.Caption = #25151#21495
+                Width = 100
+              end>
+            DataSet = cdsHouseNumber
+            DropWidth = 122
+            DropHeight = 130
+            ShowTitle = True
+            AutoFitColWidth = True
+            ShowButton = True
+            LocateStyle = lsDark
+            Buttons = [zbClear]
+            DropListStyle = lsFixed
+            OnSaveValue = fndHouseNumberSaveValue
             MultiSelect = False
           end
         end
@@ -372,20 +423,27 @@ inherited frmFilterUser: TfrmFilterUser
     CachedUpdates = True
     Params = <>
     Left = 229
-    Top = 80
+    Top = 74
   end
   object cdsCOMMUNITY: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 229
-    Top = 114
+    Top = 101
   end
   object cdsMANSION: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
     Left = 229
-    Top = 148
+    Top = 127
+  end
+  object cdsHouseNumber: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 229
+    Top = 154
   end
 end

@@ -69,6 +69,23 @@ begin
   begin
     rs := TZQuery.Create(nil);
     try
+      Aobj.ReadFromDataSet(rs);
+      fndCODE_NAME.KeyValue := '';
+      fndCODE_NAME.Text := '';
+      cdsROAD_NAME.Close;
+      fndROAD_NAME.KeyValue := '';
+      fndROAD_NAME.Text := '';
+      cdsCOMMUNITY.Close;
+      fndCOMMUNITY.KeyValue := '';
+      fndCOMMUNITY.Text := '';
+      cdsMANSION.Close;
+      fndMANSION.KeyValue := '';
+      fndMANSION.Text := '';
+      cdsHouseNumber.Close;
+      fndHouseNumber.KeyValue := '';
+      fndHouseNumber.Text := '';
+      lab_LINKMAN.Caption := '联系人:';
+      lab_TELEPHONE.Caption := '联系电话:';
       rs.SQL.Text := 'select YQDZ_USERID_OLD,YQDZ_HZ_MC,YQDZ_LXDH,YQDZ_SM from YONGQIDIZHI where YQDZ_USERID_OLD='''+Trim(edtCLIENT_CODE.Text)+''' ';
       Factor.Open(rs);
       if not rs.IsEmpty then
@@ -76,7 +93,6 @@ begin
          lab_LINKMAN.Caption := '联系人:'+rs.FieldByName('YQDZ_HZ_MC').AsString;
          lab_TELEPHONE.Caption := '联系电话:'+rs.FieldByName('YQDZ_LXDH').AsString;
       end;
-      Aobj.ReadFromDataSet(rs);
     finally
       rs.Free;
     end;
@@ -122,22 +138,47 @@ procedure TfrmFilterUser.fndCODE_NAMESaveValue(Sender: TObject);
 var str:String;
 begin
   inherited;
+  cdsROAD_NAME.Close;
   str := ' select YQBM_YQDZ_ID,YQBM_YQDZ_MS from YONGQIDIZHI_BIANMA where len(YQBM_YQDZ_ID)=5 and substring(YQBM_YQDZ_ID,1,2)='+QuotedStr(Trim(fndCODE_NAME.AsString));
   cdsROAD_NAME.SQL.Text := ParseSQL(Factor.iDbType,str);
   Factor.Open(cdsROAD_NAME);
+  fndROAD_NAME.KeyValue := '';
+  fndROAD_NAME.Text := '';
+
+  cdsCOMMUNITY.Close;
+  fndCOMMUNITY.KeyValue := '';
+  fndCOMMUNITY.Text := '';
+  cdsMANSION.Close;
+  fndMANSION.KeyValue := '';
+  fndMANSION.Text := '';
+  cdsHouseNumber.Close;
+  fndHouseNumber.KeyValue := '';
+  fndHouseNumber.Text := '';
+  lab_LINKMAN.Caption := '联系人:';
+  lab_TELEPHONE.Caption := '联系电话:';
 end;
 
 procedure TfrmFilterUser.fndROAD_NAMESaveValue(Sender: TObject);
 var str:String;
 begin
   inherited;
+  cdsCOMMUNITY.Close;
   str := ' select YQBM_YQDZ_ID,YQBM_YQDZ_MS from YONGQIDIZHI_BIANMA where len(YQBM_YQDZ_ID)=8 and substring(YQBM_YQDZ_ID,1,5)='+QuotedStr(Trim(fndROAD_NAME.AsString));
   cdsCOMMUNITY.SQL.Text := ParseSQL(Factor.iDbType,str);
   Factor.Open(cdsCOMMUNITY);
 
+  cdsMANSION.Close;
   str := ' select YQBM_YQDZ_ID,YQBM_YQDZ_MS from YONGQIDIZHI_BIANMA where len(YQBM_YQDZ_ID)=11 and substring(YQBM_YQDZ_ID,1,5)='+QuotedStr(Trim(fndROAD_NAME.AsString));
   cdsMANSION.SQL.Text := ParseSQL(Factor.iDbType,str);
   Factor.Open(cdsMANSION);
+
+  fndCOMMUNITY.KeyValue := '';
+  fndCOMMUNITY.Text := '';
+  fndMANSION.KeyValue := '';
+  fndMANSION.Text := '';
+  cdsHouseNumber.Close;
+  fndHouseNumber.KeyValue := '';
+  fndHouseNumber.Text := '';
 end;
 
 procedure TfrmFilterUser.fndCOMMUNITYSaveValue(Sender: TObject);
@@ -145,9 +186,16 @@ var str:String;
 begin
   inherited;
   if fndCOMMUNITY.AsString = '' then Exit;
+  cdsMANSION.Close;
   str := ' select YQBM_YQDZ_ID,YQBM_YQDZ_MS from YONGQIDIZHI_BIANMA where len(YQBM_YQDZ_ID)=11 and substring(YQBM_YQDZ_ID,1,8)='+QuotedStr(Trim(fndCOMMUNITY.AsString));
   cdsMANSION.SQL.Text := ParseSQL(Factor.iDbType,str);
   Factor.Open(cdsMANSION);
+
+  fndMANSION.KeyValue := '';
+  fndMANSION.Text := '';
+  cdsHouseNumber.Close;
+  fndHouseNumber.KeyValue := '';
+  fndHouseNumber.Text := '';
 end;
 
 procedure TfrmFilterUser.fndMANSIONSaveValue(Sender: TObject);
@@ -155,10 +203,13 @@ var str:String;
 begin
   inherited;
   if fndMANSION.AsString = '' then Exit;
+  cdsHouseNumber.Close;
   str := ' select YQDZ_ID,YQDZ_MIAOSHU from YONGQIDIZHI where Substring(YQDZ_YQDZM_ID,1,11)='+QuotedStr(Trim(fndMANSION.AsString));
   cdsHouseNumber.SQL.Text := ParseSQL(Factor.iDbType,str);
   Factor.Open(cdsHouseNumber);
 
+  fndHouseNumber.KeyValue := '';
+  fndHouseNumber.Text := '';
 end;
 
 procedure TfrmFilterUser.FormShow(Sender: TObject);

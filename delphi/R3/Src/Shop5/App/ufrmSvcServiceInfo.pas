@@ -477,6 +477,7 @@ end;
 
 procedure TfrmSvcServiceInfo.GetInfo(Aobj_: TRecord_);
 begin
+  if Aobj_.FieldByName('YQDZ_USERID_OLD').AsString = '' then Exit;
   edtLINKMAN.Text := Aobj_.FieldByName('YQDZ_HZ_MC').AsString;
   edtTELEPHONE.Text := Aobj_.FieldByName('YQDZ_LXDH').AsString;
   edtADDRESS.Text := Aobj_.FieldByName('YQDZ_SM').AsString;

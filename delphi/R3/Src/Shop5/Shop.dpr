@@ -348,7 +348,8 @@ uses
   ufrmBusinessIncomeDayReport in 'App\ufrmBusinessIncomeDayReport.pas' {frmBusinessIncomeDayReport},
   ufrmSvcServiceInfo in 'App\ufrmSvcServiceInfo.pas' {frmSvcServiceInfo},
   ufrmSvcServiceList in 'App\ufrmSvcServiceList.pas' {frmSvcServiceList},
-  ObjSvcServiceInfo in 'Obj\ObjSvcServiceInfo.pas';
+  ObjSvcServiceInfo in 'Obj\ObjSvcServiceInfo.pas',
+  ufrmFilterUser in 'App\ufrmFilterUser.pas' {frmFilterUser};
 
 {$R *.res}
 var

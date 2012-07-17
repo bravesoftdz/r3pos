@@ -336,7 +336,17 @@ uses
   ObjFvchFrame in 'Obj\ObjFvchFrame.pas',
   ObjFvchOrder in 'Obj\ObjFvchOrder.pas',
   ufvchDataSQL in 'App\ufvchDataSQL.pas',
-  ufrmInvoiceTotalReport in 'App\ufrmInvoiceTotalReport.pas' {frmInvoiceTotalReport};
+  ufrmInvoiceTotalReport in 'App\ufrmInvoiceTotalReport.pas' {frmInvoiceTotalReport},
+  ufrmVhPayGlide in 'App\ufrmVhPayGlide.pas' {frmVhPayGlide},
+  ufrmVoucherOrderList in 'App\ufrmVoucherOrderList.pas' {frmVoucherOrderList},
+  ufrmVhLeadOrder in 'App\ufrmVhLeadOrder.pas' {frmVhLeadOrder},
+  ufrmVhLeadOrderList in 'App\ufrmVhLeadOrderList.pas' {frmVhLeadOrderList},
+  ufrmVhSendOrder in 'App\ufrmVhSendOrder.pas' {frmVhSendOrder},
+  ufrmVhSendOrderList in 'App\ufrmVhSendOrderList.pas' {frmVhSendOrderList},
+  ufrmVoucherOrder in 'App\ufrmVoucherOrder.pas' {frmVoucherOrder},
+  ObjVhLeadOrder in 'Obj\ObjVhLeadOrder.pas',
+  ObjVhPayGlide in 'Obj\ObjVhPayGlide.pas',
+  ObjVhSendOrder in 'Obj\ObjVhSendOrder.pas';
 
 {$R *.res}
 var

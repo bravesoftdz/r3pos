@@ -596,20 +596,20 @@ begin
   inherited;
   if (edtKPI_YEAR.Value < 2000) or (edtKPI_YEAR.Value > 2111) then Exit;
   if Locked then Exit;
-  if edtEND_DATE.EditValue = null then
-     edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-12-31', date()))
-  else
-  begin
-     if FormatDateTime('YYYY',edtBEGIN_DATE.Date)=FormatDateTime('YYYY',edtEND_DATE.Date) then
-        edtEND_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtEND_DATE.Date),5,6))
-     else
-        edtEND_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value+1)+copy(FormatDateTime('YYYY-MM-DD',edtEND_DATE.Date),5,6));
-  end;
-
+  if dbState = dsBrowse then Exit;
   if edtBEGIN_DATE.EditValue = null then
      edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-01-01', date()))
   else
      edtBEGIN_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtBEGIN_DATE.Date),5,6));
+
+  if edtEND_DATE.EditValue = null then
+     edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-12-31', date()))
+  else
+  begin
+     edtEND_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtEND_DATE.Date),5,6))
+  end;
+  if  edtEND_DATE.Date<edtBEGIN_DATE.Date then
+     edtEND_DATE.Date := incMonth(edtEND_DATE.Date,12);
 end;
 
 procedure TfrmMktPlanOrder.DeleteClick(Sender: TObject);

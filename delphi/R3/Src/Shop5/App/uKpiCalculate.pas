@@ -16,9 +16,9 @@ type
     KpiData:String;    //考核标准
     KpiCalc:String;    //计算标准
     KpiOptn:String;    //是否启用阶梯
-    KpiAgio:Real;      //标准系数
-    PlanAmt:Real;      //签约销量
-    PlanMny:Real;      //签约金额
+    KpiAgio:currency;      //标准系数
+    PlanAmt:currency;      //签约销量
+    PlanMny:currency;      //签约金额
   end;
   TKpiIndexInfo=record   //指标信息记录
     TenantId:Integer;  //企业ID
@@ -28,44 +28,44 @@ type
     IdxType:String;    //指标类型
     KpiType:String;    //考核类型
     LevelId:String;    //签约等级
-    LevelAmt:Real;     //签约量
-    LevelLowRate:Real; //等级最低返利系数
-    PlanAmt:Real;      //签约销量
-    PlanMny:Real;      //签约金额
+    LevelAmt:currency;     //签约量
+    LevelLowRate:currency; //等级最低返利系数
+    PlanAmt:currency;      //签约销量
+    PlanMny:currency;      //签约金额
   end;
   TKpiSeqNo=record     //达标档位信息记录
     SeqNoId:String;    //档位ID
-    KpiAmt:Real;       //达标量/达标系数
+    KpiAmt:currency;       //达标量/达标系数
   end;
   TKpiSite=record
     LastLv:String;
     LastSeqNo:Integer;
-    LastParam:Real;
-    LastAmt:Real;
+    LastParam:currency;
+    LastAmt:currency;
     ThisLv:String;
     ThisSeqNo:Integer;
-    ThisParam:Real;
-    ThisAmt:Real;
+    ThisParam:currency;
+    ThisAmt:currency;
   end;
   TKpiIndex=Record
     LV:String;
     SEQNO:Integer;
-    KpiRate:Real;
-    KpiAgio:Real;
-    FshVle:Real;
-    KpiMny:Real;
+    KpiRate:currency;
+    KpiAgio:currency;
+    FshVle:currency;
+    KpiMny:currency;
   end;
   //PKpiInfo=^TKpiInfo;
   PKpiIndex=^TKpiIndex;
   TClientRebate=class
   private
-    ContainerBrrw:Real; //借量值容器
-    MaxRate:Real;       //最大返利系数
-    GoodsRate:Real;     //商品转换系数
+    ContainerBrrw:currency; //借量值容器
+    MaxRate:currency;       //最大返利系数
+    GoodsRate:currency;     //商品转换系数
     IsFlag:Boolean;     //是否开始计算促销时段
     CdsGoods: TZQuery;  //记录某一时间段内各商品的相关参数
     KpiData,KpiCalc,RatioType:Integer;  //存储当前时间段内的 考核标准、计算标准、返利设定 参数
-    SmallToCalc,BigToCalc:Real;         //小换算率、大换算率
+    SmallToCalc,BigToCalc:currency;         //小换算率、大换算率
     FKpiLevel: TZQuery;
     FKpiGoods: TZQuery;
     FKpiSeqNo: TZQuery;
@@ -80,7 +80,7 @@ type
     procedure SetKpiSeqNo(const Value: TZQuery);
     procedure SetKpiTimes(const Value: TZQuery);
     procedure SetKpiDetail(const Value: TZQuery);
-    function UnitToCalc(GoodsId,UnitId:String):Real;
+    function UnitToCalc(GoodsId,UnitId:String):currency;
     procedure SetActiveRatio(const Value: TZQuery);
   public
     FKpiIndexInfo:TKpiIndexInfo;
@@ -92,14 +92,14 @@ type
     procedure SeasonCheck;          //季度考核
     procedure DateSectionCheck;     //时间段考核
     procedure CalculationRebate;    //计算返利
-    procedure CalculationRaito(GodId:String;GodNum:Real);     //计算计提
-    procedure LocateLevel(SumNum:Real);    //定位签约等级
-    function LocateTapPosition(CheckNum:Real;Brrow:boolean=false):real;//定位达标档位
-    function KpiDataNum(Num:Real):Real;    //计算当前考核达标系数
-    function GetSaleMoney(StartDate,EndDate:Integer):Real;
-    procedure ReachJudge(KpiRate,CheckNum:Real);
-    procedure PromJudge(KpiRate:Real);
-    function UseBrrw(CurAmt:Real;IsBrrw:Boolean):Real;
+    procedure CalculationRaito(GodId:String;GodNum:currency);     //计算计提
+    procedure LocateLevel(SumNum:currency);    //定位签约等级
+    function LocateTapPosition(CheckNum:currency;Brrow:boolean=false):currency;//定位达标档位
+    function KpiDataNum(Num:currency):currency;    //计算当前考核达标系数
+    function GetSaleMoney(StartDate,EndDate:Integer):currency;
+    procedure ReachJudge(KpiRate,CheckNum:currency);
+    procedure PromJudge(KpiRate:currency);
+    function UseBrrw(CurAmt:currency;IsBrrw:Boolean):currency;
     property KpiGoods:TZQuery read FKpiGoods write SetKpiGoods;
     property KpiLevel:TZQuery read FKpiLevel write SetKpiLevel;
     property KpiTimes:TZQuery read FKpiTimes write SetKpiTimes;
@@ -114,19 +114,19 @@ type
     FDataSet_Kpi: TZQuery;
     FList:TList;
     Type_Brrw:Boolean;//有关跨年度、季度中与每条档位的比较值
-    LV_MNY:Real; //在某个时间段内的销售量(销售额/毛利)
-    ContainerBrrw:Real; //借量值容器
-    LastProNum:Real;//上次累进数
-    ProNum:Real;//累进数
+    LV_MNY:currency; //在某个时间段内的销售量(销售额/毛利)
+    ContainerBrrw:currency; //借量值容器
+    LastProNum:currency;//上次累进数
+    ProNum:currency;//累进数
     FKpiSite:TKpiSite;//记录考核标准定位参数
-    function GetKpiMny(LV:String):Real;
+    function GetKpiMny(LV:String):currency;
     function GetCurSeq(LV:String):Integer;
     procedure SetDataSet_Kpi(const Value: TZQuery);
 
     procedure DateCalculate(var StartDate,EndDate:Integer);//日期计算
-    function ReachJudge(CurAmt,CurPrarm,Param1,Param2,CurAgio:Real):Real;   //判断达标情况并得出考核结果值
-    function UseBrrw(CurAmt,CurPrarm,Param1,Param2:Real;IsBrrw:Boolean):Real;   //有关借量
-    function KpiDataNum(Num:Real):Real;     //返回对应考核类型的参数值(销量、金额、毛利)
+    function ReachJudge(CurAmt,CurPrarm,Param1,Param2,CurAgio:currency):currency;   //判断达标情况并得出考核结果值
+    function UseBrrw(CurAmt,CurPrarm,Param1,Param2:currency;IsBrrw:Boolean):currency;   //有关借量
+    function KpiDataNum(Num:currency):currency;     //返回对应考核类型的参数值(销量、金额、毛利)
   public
     FKpiInfo:TKpiInfo;
 
@@ -134,12 +134,12 @@ type
     destructor Destroy; override;
     procedure BeginCalculate;     //开始计算
 
-    function GetLvFshVle(KpiLv:String;SeqNo:Integer):Real;
+    function GetLvFshVle(KpiLv:String;SeqNo:Integer):currency;
     function FindKipIndex(LV:String;SeqNo:Integer):PKpiIndex;
 
     procedure AddKpiIndex(KpiIndex:PKpiIndex);
     procedure Clear;
-    property KpiMny[LV:String]:Real read GetKpiMny;    //返回当前时间段的考核结果
+    property KpiMny[LV:String]:currency read GetKpiMny;    //返回当前时间段的考核结果
     property CurSeq[LV:String]:Integer read GetCurSeq;  //返回当前时间段的已经达标的档位序号
     property DataSet_Kpi:TZQuery read FDataSet_Kpi write SetDataSet_Kpi;
   end;
@@ -162,9 +162,9 @@ begin
   inherited;
 end;
 
-function TKpiCalculate.ReachJudge(CurAmt,CurPrarm,Param1,Param2,CurAgio:Real): Real;
+function TKpiCalculate.ReachJudge(CurAmt,CurPrarm,Param1,Param2,CurAgio:currency): currency;
 var Rate:Integer;
-    D_Value:Real;
+    D_Value:currency;
 begin
   Result := 0;
 
@@ -434,7 +434,7 @@ begin
   FDataSet_Kpi := Value;
 end;
 
-function TKpiCalculate.GetKpiMny(LV:String):Real;
+function TKpiCalculate.GetKpiMny(LV:String):currency;
 var i:Integer;
 begin
   Result := 0;
@@ -463,7 +463,7 @@ begin
   FList.Clear;
 end;
 
-function TKpiCalculate.GetLvFshVle(KpiLv: String; SeqNo: Integer): Real;
+function TKpiCalculate.GetLvFshVle(KpiLv: String; SeqNo: Integer): currency;
 begin
 
 end;
@@ -503,9 +503,9 @@ var rs:TZQuery;
     IsAdd,Brrw:Boolean;
     Kpi_Index:PKpiIndex;
 //当前时间段内的达标量、当前考核结果、当前达标率/达标量、上一指标达标率/达标量、当前指标达标率/达标量,当前折扣系数
-    CurAmount,CurMny,CurRate_Amt,LastParam,CurParam,CurAgio:Real;
+    CurAmount,CurMny,CurRate_Amt,LastParam,CurParam,CurAgio:currency;
     // 返利计算
-    CalculateAmt,ActAmt:Real;
+    CalculateAmt,ActAmt:currency;
 begin
   if FDataSet_Kpi.IsEmpty then Exit;
 
@@ -735,7 +735,7 @@ begin
   end;
 end;
 
-function TKpiCalculate.KpiDataNum(Num:Real): Real;
+function TKpiCalculate.KpiDataNum(Num:currency): currency;
 begin
   if FKpiInfo.KpiData = '1' then
   begin
@@ -762,7 +762,7 @@ begin
      Result := Num;
 end;
 
-function TKpiCalculate.UseBrrw(CurAmt,CurPrarm,Param1,Param2:Real;IsBrrw:Boolean):Real;
+function TKpiCalculate.UseBrrw(CurAmt,CurPrarm,Param1,Param2:currency;IsBrrw:Boolean):currency;
 begin
   if FKpiInfo.KpiType = '3' then
   begin
@@ -825,7 +825,7 @@ end;
 
 function TKpiCalculate.GetCurSeq(LV: String): Integer;
 var i,Seq:Integer;
-    Mny:Real;
+    Mny:currency;
 begin
   Seq := 1;
   Mny := 0;
@@ -854,8 +854,8 @@ end;
 
 { TClientRebate }
 
-procedure TClientRebate.CalculationRaito(GodId: String; GodNum: Real);
-var MidCalc,CurUnitNum:Real;
+procedure TClientRebate.CalculationRaito(GodId: String; GodNum: currency);
+var MidCalc,CurUnitNum:currency;
 begin
   if ActiveRatio.Locate('GODS_ID',GodId,[]) then
   begin
@@ -889,7 +889,7 @@ begin
 end;
 
 procedure TClientRebate.DateSectionCheck;
-var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
+var CheckNum,ResultValue,CurKpiRate,AdjsAmt:currency;
     IsBorrow:Boolean;
 begin
   finshed := true;
@@ -921,7 +921,7 @@ begin
   inherited;
 end;
 
-function TClientRebate.GetSaleMoney(StartDate, EndDate: Integer): Real;
+function TClientRebate.GetSaleMoney(StartDate, EndDate: Integer): currency;
 function GetUnitTO_CALC: string;
 var str:string;
 begin
@@ -969,6 +969,7 @@ begin
      Result := 0
   else
   begin
+     Result := 0;
      CdsGoods.First;
      while not CdsGoods.Eof do
      begin
@@ -981,7 +982,7 @@ begin
   end;
 end;
 
-function TClientRebate.KpiDataNum(Num: Real): Real;
+function TClientRebate.KpiDataNum(Num: currency): currency;
 begin
   if KpiTimes.FieldByName('KPI_DATA').AsString = '1' then
   begin
@@ -1001,9 +1002,9 @@ begin
      Result := Num;
 end;
 
-procedure TClientRebate.LocateLevel(SumNum: Real);
+procedure TClientRebate.LocateLevel(SumNum: currency);
 var Id:String;
-    Amt,Rete:Real;
+    Amt,Rete:currency;
 begin
   Id := '';
   Amt := 0;
@@ -1026,9 +1027,9 @@ begin
   FKpiIndexInfo.LevelLowRate := Rete;
 end;
 
-function TClientRebate.LocateTapPosition(CheckNum: Real;Brrow:boolean=false):real;
+function TClientRebate.LocateTapPosition(CheckNum: currency;Brrow:boolean=false):currency;
 var
-  CurRate,Rate,MaxAmt,UsingAmt:Real;
+  CurRate,Rate,MaxAmt,UsingAmt:currency;
 begin
   KpiSeqNo.Filtered := False;
   KpiSeqNo.Filter := ' LEVEL_ID='''+FKpiIndexInfo.LevelId+''' and TIMES_ID='''+KpiTimes.FieldByName('TIMES_ID').AsString+''' ';
@@ -1082,7 +1083,7 @@ begin
     else
        UsingAmt := FSeqNo.KpiAmt;
     if UsingAmt>CheckNum then result := UsingAmt;
-    
+
     if UsingAmt>CheckNum then
        ContainerBrrw := ContainerBrrw-(UsingAmt-CheckNum);
     if CheckNum>MaxAmt then
@@ -1090,9 +1091,9 @@ begin
   end;
 end;
 
-procedure TClientRebate.PromJudge(KpiRate: Real);
+procedure TClientRebate.PromJudge(KpiRate: currency);
 var GoodsId,UnitId:String;
-    Ratio,PromNum,FishCalcRate:Real;
+    Ratio,PromNum,FishCalcRate:currency;
     Date1,Date2,myYear:Integer;
     hasHalf:boolean;
 begin
@@ -1248,9 +1249,9 @@ begin
   end;
 end;
 
-procedure TClientRebate.ReachJudge(KpiRate,CheckNum:Real);
+procedure TClientRebate.ReachJudge(KpiRate,CheckNum:currency);
 var GoodsId,UnitId:String;
-    Ratio,FishCalcRate:Real;
+    Ratio,FishCalcRate:currency;
     myYear:integer;
 begin
   GoodsId := '';
@@ -1383,7 +1384,7 @@ begin
 end;
 
 procedure TClientRebate.SeasonCheck;
-var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
+var CheckNum,ResultValue,CurKpiRate,AdjsAmt:currency;
     IsBorrow:Boolean;
 begin
   finshed := true;
@@ -1444,7 +1445,7 @@ begin
   FKpiTimes := Value;
 end;
 
-function TClientRebate.UnitToCalc(GoodsId,UnitId: String): Real;
+function TClientRebate.UnitToCalc(GoodsId,UnitId: String): currency;
 var rs:TZQuery;
 begin
   Result := 1;
@@ -1466,7 +1467,7 @@ begin
   end;
 end;
 
-function TClientRebate.UseBrrw(CurAmt: Real; IsBrrw: Boolean): Real;
+function TClientRebate.UseBrrw(CurAmt: currency; IsBrrw: Boolean): currency;
 begin
   Result := CurAmt;
 
@@ -1500,7 +1501,7 @@ begin
 end;
 
 procedure TClientRebate.YearCheck;
-var CheckNum,ResultValue,CurKpiRate,AdjsAmt:Real;
+var CheckNum,ResultValue,CurKpiRate,AdjsAmt:currency;
     IsBorrow:Boolean;
 begin
   LocateLevel(FKpiIndexInfo.PlanAmt);

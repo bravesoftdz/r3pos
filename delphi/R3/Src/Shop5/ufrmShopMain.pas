@@ -322,9 +322,6 @@ type
     actfrmFvchIntfSet: TAction;
     actfrmBusinessIncomeDayReport: TAction;
     actfrmSvcServiceList: TAction;
-    Button1: TButton;
-    Button2: TButton;
-    Button3: TButton;
     procedure FormActivate(Sender: TObject);
     procedure fdsfds1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

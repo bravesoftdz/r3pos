@@ -72,6 +72,7 @@ type
       var Text: String; var Value: Variant; var UseText, Handled: Boolean);
   private
     { Private declarations }
+    Locked:Boolean;
     procedure FocusNextColumn;
     procedure SetdbState(const Value: TDataSetState);override;
     function GetIsNull: boolean;override;
@@ -263,6 +264,7 @@ var
   Params:TftParamList;
 begin
   inherited;
+  Locked := True;
   Params := TftParamList.Create(nil);
   try
     Params.ParamByName('TENANT_ID').asInteger := Global.TENANT_ID;
@@ -287,6 +289,7 @@ begin
     RowID := cdsDetail.RecordCount;
   finally
     Params.Free;
+    Locked := False;
   end;
 end;
 
@@ -592,16 +595,21 @@ procedure TfrmMktPlanOrder3.edtKPI_YEARPropertiesChange(Sender: TObject);
 begin
   inherited;
   if (edtKPI_YEAR.Value < 2000) or (edtKPI_YEAR.Value > 2111) then Exit;
-  if dbState = dsBrowse then Exit;
+  if Locked then Exit;
+  if edtEND_DATE.EditValue = null then
+     edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-12-31', date()))
+  else
+  begin
+     if FormatDateTime('YYYY',edtBEGIN_DATE.Date)=FormatDateTime('YYYY',edtEND_DATE.Date) then
+        edtEND_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtEND_DATE.Date),5,6))
+     else
+        edtEND_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value+1)+copy(FormatDateTime('YYYY-MM-DD',edtEND_DATE.Date),5,6));
+  end;
+
   if edtBEGIN_DATE.EditValue = null then
      edtBEGIN_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-01-01', date()))
   else
      edtBEGIN_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtBEGIN_DATE.Date),5,6));
-
-  if edtEND_DATE.EditValue = null then
-     edtEND_DATE.Date := fnTime.fnStrtoDate(FormatDateTime(IntToStr(edtKPI_YEAR.Value)+'-12-31', date()))
-  else
-     edtEND_DATE.Date := fnTime.fnStrtoDate(IntToStr(edtKPI_YEAR.Value)+copy(FormatDateTime('YYYY-MM-DD',edtEND_DATE.Date),5,6));
 end;
 
 procedure TfrmMktPlanOrder3.DeleteClick(Sender: TObject);

@@ -301,7 +301,7 @@ begin
   cdsDetail.DisableControls;
   try
     if edtPLAN_DATE.EditValue = null then Raise Exception.Create('采购日期不能为空');
-    if edtBEGIN_DATE.Date > edtEND_DATE.Date then Raise Exception.Create('开始日期大于结束日期');
+    if edtBEGIN_DATE.EditValue > edtEND_DATE.EditValue then Raise Exception.Create('开始日期大于结束日期');
     if edtCLIENT_ID.AsString = '' then Raise Exception.Create('供应商不能为空');
     if edtDEPT_ID.AsString = '' then Raise Exception.Create('部门不能为空');
     if edtSHOP_ID.AsString = '' then Raise Exception.Create(Label40.Caption+'不能为空');

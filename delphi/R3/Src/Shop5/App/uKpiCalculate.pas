@@ -85,6 +85,7 @@ type
   public
     FKpiIndexInfo:TKpiIndexInfo;
     FSeqNo:TKpiSeqNo;
+    DetailBk:TZQuery;
     finshed:boolean;
     constructor Create;
     destructor Destroy; override;
@@ -871,6 +872,7 @@ end;
 
 procedure TClientRebate.CalculationRebate;
 begin
+  DetailBk.Data := KpiDetail.Data;
   KpiDetail.First;
   while not KpiDetail.Eof do KpiDetail.Delete;
   
@@ -885,6 +887,7 @@ end;
 constructor TClientRebate.Create;
 begin
   CdsGoods := TZQuery.Create(nil);
+  DetailBk := TZQuery.Create(nil); 
   ContainerBrrw := 0;
 end;
 
@@ -917,6 +920,7 @@ end;
 
 destructor TClientRebate.Destroy;
 begin
+  DetailBk.Free;
   CdsGoods.Free;
   inherited;
 end;
@@ -1093,7 +1097,7 @@ end;
 
 procedure TClientRebate.PromJudge(KpiRate: currency);
 var GoodsId,UnitId:String;
-    Ratio,PromNum,FishCalcRate:currency;
+    Ratio,PromNum,FishCalcRate,AdjsRate:currency;
     Date1,Date2,myYear:Integer;
     hasHalf:boolean;
 begin
@@ -1119,6 +1123,20 @@ begin
       GoodsId := CdsGoods.FieldByName('GODS_ID').AsString;
       Ratio := FKpiIndexInfo.LevelLowRate;
     end;
+
+    if Detailbk.Locate('GODS_ID;TIMES_ID',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('TIMES_ID').AsString]),[]) then
+       begin
+         if Detailbk.FieldByName('ADJS_RATE').AsString<>'' then
+            begin
+              AdjsRate := Detailbk.FieldByName('ADJS_RATE').AsFloat;
+              Ratio := Detailbk.FieldByName('ADJS_RATE').AsFloat;
+            end
+         else
+            AdjsRate := -100;
+       end
+    else
+      AdjsRate := -100;
+
     myYear := FKpiIndexInfo.KpiYear;
     if KpiTimes.FieldByName('KPI_DATE1').AsInteger<minTime then inc(myYear);
 
@@ -1189,6 +1207,11 @@ begin
       else
          KpiDetail.FieldByName('KPI_DATE2').AsInteger := (MyYear+1)*10000+KpiTimes.FieldByName('KPI_DATE2').AsInteger;
 
+      if AdjsRate>=0 then
+         KpiDetail.FieldByName('ADJS_RATE').AsFloat := AdjsRate
+      else
+         KpiDetail.FieldByName('ADJS_RATE').Value := null;
+
       KpiDetail.FieldByName('KPI_DATA').AsString := IntToStr(KpiData);
       KpiDetail.FieldByName('KPI_CALC').AsString := IntToStr(KpiCalc);
       KpiDetail.FieldByName('RATIO_TYPE').AsString := IntToStr(RatioType);
@@ -1233,6 +1256,11 @@ begin
       KpiDetail.FieldByName('ADJS_MNY').AsFloat := CdsGoods.FieldByName('MODI_MONEY').AsFloat;
       KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
+
+      if AdjsRate>=0 then
+         KpiDetail.FieldByName('ADJS_RATE').AsFloat := AdjsRate
+      else
+         KpiDetail.FieldByName('ADJS_RATE').Value := null;
 
       if KpiCalc = 1 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
@@ -1332,6 +1360,19 @@ begin
       KpiDetail.FieldByName('FISH_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat;
       KpiDetail.FieldByName('ADJS_MNY').AsFloat := CdsGoods.FieldByName('MODI_MONEY').AsFloat;
 
+      if Detailbk.Locate('GODS_ID;TIMES_ID',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('TIMES_ID').AsString]),[]) then
+         begin
+           if Detailbk.FieldByName('ADJS_RATE').AsString<>'' then
+              begin
+                KpiDetail.FieldByName('ADJS_RATE').AsFloat := Detailbk.FieldByName('ADJS_RATE').AsFloat;
+                Ratio := Detailbk.FieldByName('ADJS_RATE').AsFloat;
+              end
+           else
+              KpiDetail.FieldByName('ADJS_RATE').Value := null;
+         end
+      else
+        KpiDetail.FieldByName('ADJS_RATE').Value := null;
+
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
       if KpiCalc = 1 then
          KpiDetail.FieldByName('KPI_MNY').AsFloat := CdsGoods.FieldByName('CALC_MONEY').AsFloat*Ratio/100
@@ -1366,6 +1407,20 @@ begin
       KpiDetail.FieldByName('ADJS_AMT').AsFloat := CdsGoods.FieldByName('MODI_AMOUNT').AsFloat;
       KpiDetail.FieldByName('ADJS_MNY').AsFloat := CdsGoods.FieldByName('MODI_MONEY').AsFloat;
       KpiDetail.FieldByName('FISH_CALC_RATE').AsFloat := FishCalcRate;
+
+      if Detailbk.Locate('GODS_ID;TIMES_ID',VarArrayOf([CdsGoods.FieldByName('GODS_ID').AsString,KpiTimes.FieldByName('TIMES_ID').AsString]),[]) then
+         begin
+           if Detailbk.FieldByName('ADJS_RATE').AsString<>'' then
+              begin
+                KpiDetail.FieldByName('ADJS_RATE').AsFloat := Detailbk.FieldByName('ADJS_RATE').AsFloat;
+                Ratio := Detailbk.FieldByName('ADJS_RATE').AsFloat;
+              end
+           else
+              KpiDetail.FieldByName('ADJS_RATE').Value := null;
+         end
+      else
+        KpiDetail.FieldByName('ADJS_RATE').Value := null;
+      
       KpiDetail.FieldByName('KPI_RATIO').AsFloat := Ratio;
 
       if KpiCalc = 1 then

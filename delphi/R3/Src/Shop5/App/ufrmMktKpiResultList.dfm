@@ -29,6 +29,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             Height = 284
             Align = alClient
             AllowedOperations = [alopUpdateEh]
+            Color = clWhite
             DataSource = DsList
             Flat = True
             FooterColor = clWindow
@@ -41,6 +42,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             FrozenCols = 1
             Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             OptionsEh = [dghFixed3D, dghFrozen3D, dghHighlightFocus, dghClearSelection]
+            PopupMenu = PopupMenu1
             RowHeight = 20
             SumList.Active = True
             TabOrder = 0
@@ -56,12 +58,14 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
             DecimalNumber = 2
             DigitalNumber = 12
             OnDrawColumnCell = DBGridEh1DrawColumnCell
+            OnGetCellParams = DBGridEh1GetCellParams
             Columns = <
               item
                 Color = clBtnFace
                 EditButtons = <>
                 FieldName = 'SEQNO'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #24207#21495
                 Width = 22
               end
@@ -97,6 +101,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 EditButtons = <>
                 FieldName = 'UNIT_NAME'
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #21333#20301
                 Width = 23
               end
@@ -107,7 +112,7 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #31614#32422#31561#32423
-                Width = 31
+                Width = 29
               end
               item
                 Alignment = taRightJustify
@@ -117,8 +122,9 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footer.DisplayFormat = '#0.00'
                 Footer.ValueType = fvtSum
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #23436#25104#37327
-                Width = 42
+                Width = 34
                 OnUpdateData = DBGridEh1Columns9UpdateData
               end
               item
@@ -129,28 +135,16 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footers = <>
                 ReadOnly = True
                 Title.Caption = #23436#25104#29575
-                Width = 40
-              end
-              item
-                Alignment = taRightJustify
-                DisplayFormat = '#0.00#'
-                EditButtons = <>
-                FieldName = 'ADJS_AMT'
-                Footer.DisplayFormat = '#0.00'
-                Footer.ValueType = fvtSum
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #35843#25972#37327
-                Width = 44
-              end
-              item
-                Alignment = taRightJustify
-                EditButtons = <>
-                FieldName = 'KPI_RATIO'
-                Footers = <>
-                ReadOnly = True
-                Title.Caption = #36820#21033#31995#25968
                 Width = 33
+              end
+              item
+                Alignment = taRightJustify
+                EditButtons = <>
+                FieldName = 'SHW_RATIO'
+                Footers = <>
+                Title.Caption = #36820#21033#31995#25968
+                Width = 66
+                OnUpdateData = DBGridEh1Columns9UpdateData
               end
               item
                 Alignment = taRightJustify
@@ -172,8 +166,21 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
                 Footer.DisplayFormat = '#0.00'
                 Footer.ValueType = fvtSum
                 Footers = <>
+                ReadOnly = True
                 Title.Caption = #24066#22330#36153
                 Width = 55
+              end
+              item
+                Alignment = taRightJustify
+                DisplayFormat = '#0.00#'
+                EditButtons = <>
+                FieldName = 'ADJS_AMT'
+                Footer.DisplayFormat = '#0.00'
+                Footer.ValueType = fvtSum
+                Footers = <>
+                ReadOnly = True
+                Title.Caption = #35843#25972#37327
+                Width = 33
               end
               item
                 EditButtons = <>
@@ -292,6 +299,34 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
         NumGlyphs = 2
         Spacing = 5
       end
+      object btnSave: TRzBitBtn
+        Left = 424
+        Top = 11
+        Width = 67
+        Height = 26
+        Anchors = [akTop, akRight]
+        Caption = #20445#23384'(&S)'
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 1
+        TextStyle = tsRaised
+        ThemeAware = False
+        Visible = False
+        OnClick = btnSaveClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
     end
   end
   object DsList: TDataSource
@@ -312,5 +347,13 @@ inherited frmMktKpiResultList: TfrmMktKpiResultList
     Params = <>
     Left = 48
     Top = 139
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 326
+    Top = 126
+    object N1: TMenuItem
+      Caption = #29305#25209#35843#25972
+      OnClick = N1Click
+    end
   end
 end

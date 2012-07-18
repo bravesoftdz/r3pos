@@ -99,20 +99,20 @@ begin
   SelectSQL.Text :=
              ParseSQL(iDbType,
                     'select A.ROWS_ID,A.TIMES_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,A.KPI_DATE1,'+
-                    'A.KPI_DATE2,'+
+                    'A.KPI_DATE2,A.ADJS_RATE,isnull(A.ADJS_RATE,A.KPI_RATIO) as SHW_RATIO,'+
                     'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,isnull(B.SHORT_GODS_NAME,B.GODS_NAME) as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,A.FISH_AMT-A.ADJS_AMT as ORG_AMT,A.FISH_AMT,'+
                     'A.FISH_CALC_RATE,A.ADJS_AMT,A.FISH_MNY,A.ADJS_MNY,A.KPI_RATIO,A.ACTR_RATIO,A.KPI_MNY,A.BUDG_KPI '+
                     ' from MKT_KPI_RESULT_LIST A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
                     ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.KPI_ID=:KPI_ID and A.CLIENT_ID=:CLIENT_ID ');
   IsSQLUpdate := True;
   Str := 'insert into MKT_KPI_RESULT_LIST(ROWS_ID,TENANT_ID,TIMES_ID,CLIENT_ID,KPI_ID,KPI_YEAR,KPI_DATE1,KPI_DATE2,KPI_DATA,KPI_CALC,RATIO_TYPE,'+
-         'GODS_ID,LVL_AMT,KPI_RATE,FISH_AMT,FISH_CALC_RATE,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_RATIO,ACTR_RATIO,KPI_MNY,BUDG_KPI) ' +
+         'GODS_ID,LVL_AMT,KPI_RATE,FISH_AMT,FISH_CALC_RATE,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_RATIO,ACTR_RATIO,KPI_MNY,BUDG_KPI,ADJS_RATE) ' +
          ' VALUES(:ROWS_ID,:TENANT_ID,:TIMES_ID,:CLIENT_ID,:KPI_ID,:KPI_YEAR,:KPI_DATE1,:KPI_DATE2,:KPI_DATA,:KPI_CALC,:RATIO_TYPE,:GODS_ID,'+
-         ':LVL_AMT,:KPI_RATE,:FISH_AMT,:FISH_CALC_RATE,:ADJS_AMT,:FISH_MNY,:ADJS_MNY,:KPI_RATIO,:ACTR_RATIO,:KPI_MNY,:BUDG_KPI)';
+         ':LVL_AMT,:KPI_RATE,:FISH_AMT,:FISH_CALC_RATE,:ADJS_AMT,:FISH_MNY,:ADJS_MNY,:KPI_RATIO,:ACTR_RATIO,:KPI_MNY,:BUDG_KPI,:ADJS_RATE)';
   InsertSQL.Text := Str;
   Str := 'update MKT_KPI_RESULT_LIST set TENANT_ID=:TENANT_ID,TIMES_ID=:TIMES_ID,CLIENT_ID=:CLIENT_ID,KPI_ID=:KPI_ID,KPI_YEAR=:KPI_YEAR,KPI_DATE1=:KPI_DATE1,'+
          'KPI_DATE2=:KPI_DATE2,KPI_DATA=:KPI_DATA,KPI_CALC=:KPI_CALC,RATIO_TYPE=:RATIO_TYPE,GODS_ID=:GODS_ID,LVL_AMT=:LVL_AMT,KPI_RATE=:KPI_RATE,'+
-         'FISH_AMT=:FISH_AMT,FISH_CALC_RATE=:FISH_CALC_RATE,ADJS_AMT=:ADJS_AMT,FISH_MNY=:FISH_MNY,ADJS_MNY=:ADJS_MNY,KPI_RATIO=:KPI_RATIO,'+
+         'FISH_AMT=:FISH_AMT,FISH_CALC_RATE=:FISH_CALC_RATE,ADJS_AMT=:ADJS_AMT,FISH_MNY=:FISH_MNY,ADJS_MNY=:ADJS_MNY,KPI_RATIO=:KPI_RATIO,ADJS_RATE=:ADJS_RATE,'+
          'ACTR_RATIO=:ACTR_RATIO,KPI_MNY=:KPI_MNY,BUDG_KPI=:BUDG_KPI where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID ';
   UpdateSQL.Text := Str;
   Str := 'delete from MKT_KPI_RESULT_LIST where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID ';//' KPI_YEAR=:OLD_KPI_YEAR and KPI_ID=:OLD_KPI_ID and CLIENT_ID=:OLD_CLIENT_ID ';
@@ -225,21 +225,23 @@ begin
   SelectSQL.Text :=
              ParseSQL(iDbType,
                     'select A.ROWS_ID,A.TENANT_ID,A.CLIENT_ID,A.KPI_ID,A.KPI_YEAR,A.KPI_DATE1,'+
-                    'A.KPI_DATE2,'+
+                    'A.KPI_DATE2,isnull(A.ADJS_RATE,A.KPI_RATIO) as SHW_RATIO,'+
                     'A.KPI_DATA,A.KPI_CALC,A.RATIO_TYPE,A.GODS_ID,isnull(B.SHORT_GODS_NAME,B.GODS_NAME) as GODS_ID_TEXT,A.LVL_AMT,A.KPI_RATE,'+
-                    'case when A.KPI_DATA in (''1'',''3'') then isnull(A.FISH_AMT,0)-isnull(A.ADJS_AMT,0) else isnull(A.FISH_MNY,0)-isnull(A.ADJS_MNY,0) end as ORG_AMT,'+
-                    'case when A.KPI_DATA in (''1'',''3'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
+                    'case when A.KPI_DATA in (''1'',''4'') then isnull(A.FISH_AMT,0)-isnull(A.ADJS_AMT,0) else isnull(A.FISH_MNY,0)-isnull(A.ADJS_MNY,0) end as ORG_AMT,'+
+                    'case when A.KPI_DATA in (''1'',''4'') then A.FISH_AMT else A.FISH_MNY end as FISH_AMT,'+
                     'A.KPI_DATA as FISH_RATE,'+
-                    'case when A.KPI_DATA in (''1'',''3'') then A.ADJS_AMT else A.ADJS_MNY end as ADJS_AMT,'+
-                    'case when A.KPI_DATA in (''1'',''3'') then C.UNIT_NAME else ''Ԫ'' end as UNIT_NAME,'+
+                    'case when A.KPI_DATA in (''1'',''4'') then A.ADJS_AMT else A.ADJS_MNY end as ADJS_AMT,'+
+                    'case when A.KPI_DATA in (''1'',''4'') then C.UNIT_NAME else ''Ԫ'' end as UNIT_NAME,'+
                     'case when A.KPI_CALC in (''1'') then ''%'' when A.KPI_CALC in (''2'') then D.UNIT_NAME else ''Ԫ'' end as CALC_SHOW_NAME,'+
-                    'A.FISH_CALC_RATE,'+
+                    'A.FISH_CALC_RATE,A.ADJS_RATE,'+
                     'A.KPI_RATIO,A.ACTR_RATIO,A.KPI_MNY,A.BUDG_KPI '+
                     ' from MKT_KPI_RESULT_LIST A left join VIW_GOODSINFO B on A.TENANT_ID=B.TENANT_ID and A.GODS_ID=B.GODS_ID '+
                     ' left join MKT_KPI_INDEX C on A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
                     ' left join VIW_MEAUNITS D on B.TENANT_ID=D.TENANT_ID and B.CALC_UNITS=D.UNIT_ID '+
                     ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.KPI_ID=:KPI_ID and A.CLIENT_ID=:CLIENT_ID order by A.GODS_ID,A.KPI_DATE1,A.KPI_DATE2'
              );
+  Str := 'update MKT_KPI_RESULT_LIST set ADJS_RATE=:ADJS_RATE,KPI_MNY=:KPI_MNY where TENANT_ID=:OLD_TENANT_ID and ROWS_ID=:OLD_ROWS_ID ';
+  UpdateSQL.Text := Str;
 end;
 
 initialization

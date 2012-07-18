@@ -22,6 +22,9 @@ type
     DsList: TDataSource;
     CdsResultList: TZQuery;
     CdsResult: TZQuery;
+    PopupMenu1: TPopupMenu;
+    N1: TMenuItem;
+    btnSave: TRzBitBtn;
     procedure FormShow(Sender: TObject);
     procedure DBGridEh1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumnEh; State: TGridDrawState);
@@ -31,6 +34,10 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure N1Click(Sender: TObject);
+    procedure DBGridEh1GetCellParams(Sender: TObject; Column: TColumnEh;
+      AFont: TFont; var Background: TColor; State: TGridDrawState);
+    procedure btnSaveClick(Sender: TObject);
   private
     IsEdit,Saved:Boolean;
     FKpiData: String;
@@ -42,6 +49,7 @@ type
     FKpiId: String;
     FClientId: String;
     FUpdateRecord: TOnEditEvent;
+    FAudited: boolean;
     procedure SetKpiType(const Value: String);
     procedure SetIdxType(const Value: String);
     procedure SetKpiName(const Value: String);
@@ -49,6 +57,7 @@ type
     procedure SetKpiId(const Value: String);
     procedure SetClientId(const Value: String);
     procedure SetUpdateRecord(const Value: TOnEditEvent);
+    procedure SetAudited(const Value: boolean);
     { Private declarations }
   public
     { Public declarations }
@@ -63,10 +72,11 @@ type
     property KpiId:String read FKpiId write SetKpiId;
     property KpiName:String write SetKpiName;
     property UpdateRecord:TOnEditEvent read FUpdateRecord write SetUpdateRecord;
+    property Audited:boolean read FAudited write SetAudited;
   end;
 
 implementation
-uses uGlobal,uCtrlUtil, ufrmBasic, uDsUtil;
+uses uGlobal,uCtrlUtil, ufrmBasic, uDsUtil, uShopGlobal;
 {$R *.dfm}
 
 { TfrmMktKpiResultList }
@@ -115,7 +125,6 @@ procedure TfrmMktKpiResultList.FormShow(Sender: TObject);
 begin
   inherited;
   dbState := dsBrowse;
-  DBGridEh1.PopupMenu :=nil; 
 end;
 
 procedure TfrmMktKpiResultList.DBGridEh1DrawColumnCell(Sender: TObject;
@@ -134,7 +143,7 @@ begin
 
   if Column.FieldName = 'FISH_RATE' then
     begin
-      if CdsResultList.FieldByName('KPI_DATA').AsInteger in [1,3] then
+      if CdsResultList.FieldByName('KPI_DATA').AsInteger in [1,4] then
          begin
            if CdsResult.FieldByName('PLAN_AMT').AsFloat<>0 then
               s := formatFloat('#0.00%',CdsResultList.FieldbyName('FISH_AMT').AsFloat/CdsResult.FieldByName('PLAN_AMT').AsFloat*100)
@@ -153,7 +162,7 @@ begin
       DrawText(DBGridEh1.Canvas.Handle,pchar(s),length(s),ARect,DT_NOCLIP or DT_SINGLELINE or DT_CENTER or DT_VCENTER);
     end;
 
-  if Column.FieldName = 'KPI_RATIO' then
+  if Column.FieldName = 'SHW_RATIO' then
      begin
       ARect := Rect;
       DBGridEh1.canvas.FillRect(ARect);
@@ -189,29 +198,28 @@ end;
 
 procedure TfrmMktKpiResultList.DBGridEh1Columns9UpdateData(Sender: TObject;
   var Text: String; var Value: Variant; var UseText, Handled: Boolean);
-var Amt,CurPrice:Real;
+var Rate:Real;
     rs:TZQuery;
 begin
   inherited;
-{  try
-    rs := Global.GetZQueryFromName('PUB_GOODSINFO');
-    if rs.Locate('GODS_ID',CdsResultList.FieldByName('GODS_ID').AsString,[]) then
-       CurPrice := rs.FieldByName('NEW_OUTPRICE').AsFloat;
-    if Text = '' then Amt := 0 else Amt := StrToFloat(Text);
+  try
+    Rate := Value;
   except
     Text := TColumnEh(Sender).Field.AsString;
     Value := TColumnEh(Sender).Field.AsFloat;
     Raise Exception.Create('无效数值类型!');
   end;
-  TColumnEh(Sender).Field.AsFloat := Amt;
-  
+  TColumnEh(Sender).Field.AsFloat := Rate;
+  CdsResultList.FieldByName('ADJS_RATE').AsFloat := Rate;
   CdsResultList.Edit;
-  CdsResultList.FieldByName('FISH_MNY').AsFloat := Amt*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat*CurPrice;
-  CdsResultList.FieldByName('ADJS_AMT').AsFloat := Amt-CdsResultList.FieldByName('ORG_AMT').AsFloat;
-  CdsResultList.FieldByName('ADJS_MNY').AsFloat := CdsResultList.FieldByName('ADJS_AMT').AsFloat*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat*CurPrice;
+  case CdsResultList.FieldbyName('KPI_CALC').AsInteger of
+  1,3:CdsResultList.FieldByName('KPI_MNY').AsFloat := CdsResultList.FieldByName('FISH_AMT').AsFloat*Rate/100;
+  2:  CdsResultList.FieldByName('KPI_MNY').AsFloat := CdsResultList.FieldByName('FISH_AMT').AsFloat*Rate*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat;
+  end;
   CdsResultList.Post;
   CdsResultList.Edit;
-  IsEdit := True;    }
+  IsEdit := true;
+  
 end;
 
 class function TfrmMktKpiResultList.ShowDialog(Owner: TForm; Id, K_Name,
@@ -220,6 +228,7 @@ begin
   with TfrmMktKpiResultList.Create(Owner) do
   begin
     try
+      DBGridEh1.ReadOnly := true;
       KpiId := Id;
       KpiName := K_Name;
       KpiType := K_Type;
@@ -235,22 +244,19 @@ begin
 end;
 
 procedure TfrmMktKpiResultList.Save;
-var SumFishAmt,SumFishMny,SumAdjsAmt,SumAdjsMny:Real;
+var SumKpiMny:Real;
 begin
+  SumKpiMny := 0;
   CdsResultList.First;
   while not CdsResultList.Eof do
   begin
-    SumFishAmt := SumFishAmt + CdsResultList.FieldByName('FISH_AMT').AsFloat;
-    SumFishMny := SumFishAmt + CdsResultList.FieldByName('ADJS_AMT').AsFloat;
-    SumAdjsAmt := SumFishAmt + CdsResultList.FieldByName('FISH_MNY').AsFloat;
-    SumAdjsMny := SumFishAmt + CdsResultList.FieldByName('ADJS_MNY').AsFloat;
+    SumKpiMny := SumKpiMny + CdsResultList.FieldByName('KPI_MNY').AsFloat;
     CdsResultList.Next;
   end;
   CdsResult.Edit;
-  CdsResult.FieldByName('FISH_AMT').AsFloat := SumFishAmt;
-  CdsResult.FieldByName('ADJS_AMT').AsFloat := SumFishMny;
-  CdsResult.FieldByName('FISH_MNY').AsFloat := SumAdjsAmt;
-  CdsResult.FieldByName('ADJS_MNY').AsFloat := SumAdjsMny;
+  CdsResult.FieldByName('KPI_MNY').AsFloat := SumKpiMny;
+  CdsResult.FieldByName('CREA_DATE').AsString := formatDatetime('YYYYMMDD HH:NN:SS',now());
+  CdsResult.FieldByName('CREA_USER').AsString := Global.UserID;
   CdsResult.Post;
   Obj_1.ReadFromDataSet(CdsResult);
   try
@@ -262,6 +268,9 @@ begin
     Factor.CancelBatch;
     Raise;
   end;
+  DBGridEh1.ReadOnly := true;
+  btnSave.Visible := not DBGridEh1.ReadOnly;
+  IsEdit := false;
   Saved := True;
 end;
 
@@ -300,6 +309,35 @@ begin
         if Saved and Assigned(UpdateRecord) then UpdateRecord(Obj_1);
      end;
   end;
+end;
+
+procedure TfrmMktKpiResultList.N1Click(Sender: TObject);
+begin
+  inherited;
+  if not ShopGlobal.GetChkRight('100002158',2) then Raise Exception.Create('你没有修改的权限,请和管理员联系.');
+  if Audited then Raise Exception.Create('已经审核不能修改');
+  DBGridEh1.ReadOnly := false;
+  btnSave.Visible := not DBGridEh1.ReadOnly;
+end;
+
+procedure TfrmMktKpiResultList.DBGridEh1GetCellParams(Sender: TObject;
+  Column: TColumnEh; AFont: TFont; var Background: TColor;
+  State: TGridDrawState);
+begin
+  inherited;
+  if not Column.ReadOnly and not DBGridEh1.ReadOnly then
+     Background := clYellow;
+end;
+
+procedure TfrmMktKpiResultList.btnSaveClick(Sender: TObject);
+begin
+  inherited;
+  Save;
+end;
+
+procedure TfrmMktKpiResultList.SetAudited(const Value: boolean);
+begin
+  FAudited := Value;
 end;
 
 end.

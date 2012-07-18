@@ -2264,8 +2264,8 @@ procedure TfrmKpiIndexInfo.KpiGridGetFloatFormat(Sender: TObject; ACol, ARow: In
        //达标系数根据(KPI_CALC:[1:按百分率];[2:按完成量];[3:指定金额]);
        case KPI_DATA of
         1,2: result:='％';
-        3:result := edtUNIT_NAME.Text;
-        4:result := '元';
+        3:result := '元';
+        4:result := edtUNIT_NAME.Text;
        end;
      end;
    finally

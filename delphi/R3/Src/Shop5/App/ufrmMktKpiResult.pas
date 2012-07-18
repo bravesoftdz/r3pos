@@ -530,6 +530,7 @@ begin
   with TfrmMktKpiResultList.Create(self) do
   begin
     try
+      DBGridEh1.ReadOnly := true;
       KpiType := CdsKpiResult.FieldByName('KPI_TYPE').AsString;
       KpiName := CdsKpiResult.FieldByName('KPI_ID_TEXT').AsString;
       IdxType := CdsKpiResult.FieldByName('IDX_TYPE').AsString;
@@ -537,6 +538,7 @@ begin
       KpiId := CdsKpiResult.FieldByName('KPI_ID').AsString;
       ClientId := CdsKpiResult.FieldByName('CLIENT_ID').AsString;
       UpdateRecord := EditRecord;
+      Audited := self.IsAudit;
       Open;
       ShowModal;
     finally

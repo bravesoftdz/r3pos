@@ -213,8 +213,6 @@ begin
   CalcFooter:=TCalcFooter.Create;                            
 end;
 
-
-
 function TfrmClientKpiReport.GetDeptSQL(chk: boolean): string;
 var
   strSql,strWhere,strCnd,KpiTab: string;
@@ -633,19 +631,21 @@ begin
     ' A.DEPT_ID as DEPT_ID,'+
     ' R.KPI_DATE1 as BEGIN_DATE,'+ //考核开始日期
     ' R.KPI_DATE2 as END_DATE,'+
-    ' (case when R.KPI_DATA in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
-    ' (case when R.KPI_DATA in (''1'',''4'') then R.FISH_AMT else R.FISH_MNY end) as KPI_AMT,'+  //完成量
-    ' R.KPI_MNY as JT_MNY,'+      //考核结果(元)[计提金额]
-    ' R.WDW_MNY as REQU_MNY,'+    //考核提取反利[申领金额]
-    ' B.BOND_MNY as BOND_MNY,'+   //保证金额
     ' R.REMARK as REMARK,'+
     ' R.CREA_DATE as CREA_DATE,'+
     ' R.CREA_USER as CREA_USER,'+
-    ' D.CLIENT_NAME as CLIENT_NAME '+
+    ' D.CLIENT_NAME as CLIENT_NAME,'+
+    ' sum(case when R.KPI_DATA in (''1'',''4'') then B.AMOUNT else B.AMONEY end) as PLAN_AMT,'+     //计划量
+    ' sum(case when R.KPI_DATA in (''1'',''4'') then R.FISH_AMT else R.FISH_MNY end) as KPI_AMT,'+  //完成量
+    ' sum(R.KPI_MNY) as JT_MNY,'+      //考核结果(元)[计提金额]
+    ' sum(R.WDW_MNY) as REQU_MNY,'+    //考核提取反利[申领金额]
+    ' sum(B.BOND_MNY) as BOND_MNY '+   //保证金额
     ' from MKT_PLANORDER A,MKT_PLANDATA B,('+KPI_R_TAB+')R,VIW_CUSTOMER D '+
     ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and '+
     ' B.TENANT_ID=R.TENANT_ID and B.KPI_ID=R.KPI_ID and '+
-    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' ';
+    ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID and A.PLAN_TYPE=''1'' '+strWhere+strCnd+' '+
+    ' group by A.TENANT_ID,A.GLIDE_NO,R.KPI_ID,A.KPI_YEAR,A.DEPT_ID,R.KPI_DATE1,R.KPI_DATE2,R.REMARK,'+
+              'R.CREA_DATE,R.CREA_USER,D.CLIENT_NAME';
 
   Result :=ParseSQL(Factor.iDbType,
     'select K.*,'+

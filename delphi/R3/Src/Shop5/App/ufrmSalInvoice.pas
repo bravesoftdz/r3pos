@@ -251,6 +251,7 @@ begin
       ReadFromObject(AObj,self);
       if (Length(Trim(edtINVOICE_NO.Text))<8) and (Trim(edtINVOICE_NO.Text)<>'') then
          edtINVOICE_NO.Text := FnString.FormatStringEx(Trim(edtINVOICE_NO.Text),8);
+      edtCLIENT_ID.Text := AObj.FieldbyName('INVO_NAME').AsString;
       dbState := dsBrowse;
       //isAudit := (AObj.FieldByName('CHK_DATE').AsString <> '');
     finally

@@ -161,7 +161,7 @@ end;
 function TfrmMktKpiCalculate.EncodeSql: String;
 var w:String;
 begin
-  w := ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and C.PLAN_TYPE=:PLAN_TYPE and A.COMM not in (''02'',''12'') ';
+  w := ' where A.TENANT_ID=:TENANT_ID and A.KPI_YEAR=:KPI_YEAR and A.IDX_TYPE=:PLAN_TYPE and A.COMM not in (''02'',''12'') ';
   if IdxType = '3' then
   begin
     if fndPLAN_USER.AsString <> '' then
@@ -175,9 +175,9 @@ begin
   if fndKPI_ID.AsString <> '' then
      w := w + ' and A.KPI_ID=:KPI_ID ';
 
-  Result := ' select A.TENANT_ID,A.KPI_YEAR,B.KPI_TYPE,A.KPI_ID,A.CLIENT_ID,A.PLAN_AMT,A.PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.ADJS_AMT,A.ADJS_MNY,A.KPI_MNY,A.BUDG_KPI,A.CREA_DATE,A.CREA_USER '+
+  Result := ' select A.TENANT_ID,A.KPI_YEAR,B.KPI_TYPE,A.KPI_ID,A.CLIENT_ID,C.AMOUNT as PLAN_AMT,C.AMONEY as PLAN_MNY,A.FISH_AMT,A.FISH_MNY,A.ADJS_AMT,A.ADJS_MNY,A.KPI_MNY,A.BUDG_KPI,A.CREA_DATE,A.CREA_USER '+
   ' from MKT_KPI_RESULT A inner join MKT_KPI_INDEX B on A.TENANT_ID=B.TENANT_ID and A.KPI_ID=B.KPI_ID '+
-  ' left join MKT_PLANORDER C on A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID '+w+' order by A.KPI_ID ';
+  ' left join MKT_PLANDATA C on A.TENANT_ID=C.TENANT_ID and A.PLAN_ID=C.PLAN_ID and A.KPI_ID=C.KPI_ID '+w+' order by A.KPI_ID ';
   
 end;
 

@@ -90,6 +90,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure RzPageChange(Sender: TObject);
+    procedure frfSalinvoiceGetValue(const ParName: String;
+      var ParValue: Variant);
+    procedure frfSalinvoiceUserFunction(const Name: String; p1, p2,
+      p3: Variant; var Val: Variant);
   private
     { Private declarations }
     procedure ChangeButton;
@@ -767,7 +771,7 @@ begin
   result :=
   'select G.INVH_NO,A.INVOICE_NO,A.CREA_DATE,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.REMARK,'+
   'E.USER_NAME as CREA_USER_TEXT,F.CODE_NAME as INVOICE_FLAG_TEXT,H.CLIENT_NAME as CLIENT_ID_TEXT,B.GODS_NAME,B.SEQNO,B.UNIT_NAME,'+
-  'B.AMOUNT,B.APRICE,B.AMOUNT*B.APRICE as AMONEY,B.NOTAX_MNY,B.TAX_MNY '+
+  'B.AMOUNT,B.APRICE,B.AMOUNT*B.APRICE as AMONEY,B.NOTAX_MNY,B.TAX_MNY,A.INVO_NAME,A.ADDR_NAME '+
   ' from SAL_INVOICE_INFO A inner join SAL_INVOICE_LIST B on A.TENANT_ID=B.TENANT_ID and A.INVD_ID=B.INVD_ID '+
   ' left join CA_SHOP_INFO C on A.TENANT_ID=C.TENANT_ID and A.SHOP_ID=C.SHOP_ID '+
   ' left join CA_DEPT_INFO D on A.TENANT_ID=D.TENANT_ID and A.DEPT_ID=D.DEPT_ID '+
@@ -891,6 +895,27 @@ begin
   inherited;
   actFind.OnExecute(nil);
   ChangeButton;
+end;
+
+procedure TfrmSalInvoiceList.frfSalinvoiceGetValue(const ParName: String;
+  var ParValue: Variant);
+begin
+  inherited;
+  if ParName='企业名称' then ParValue := ShopGlobal.TENANT_NAME;
+  if ParName='企业简称' then ParValue := ShopGlobal.SHORT_TENANT_NAME;
+
+end;
+
+procedure TfrmSalInvoiceList.frfSalinvoiceUserFunction(const Name: String;
+  p1, p2, p3: Variant; var Val: Variant);
+var small:real;
+begin
+  inherited;
+  if UPPERCASE(Name)='SMALLTOBIG' then
+     begin
+       small := frParser.Calc(p1);
+       Val := FnNumber.SmallTOBig(small);
+     end;
 end;
 
 end.

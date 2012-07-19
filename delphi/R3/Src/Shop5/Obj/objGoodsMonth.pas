@@ -84,10 +84,11 @@ begin
     rs.ParamByName('TENANT_ID').AsInteger := FieldbyName('TENANT_ID').AsInteger;
     rs.ParamByName('MONTH').AsInteger := FieldbyName('MONTH').AsInteger;
     AGlobal.Open(rs);
-    if rs.IsEmpty then Raise Exception.Create('当前调整月结没有月结，不能调整成本.');
+    if rs.IsEmpty then Raise Exception.Create('当前调整月没有月结，不能调整成本.');
     month:=rs.FieldbyName('TENANT_ID').asString;
     bdate:=StringReplace(rs.FieldbyName('BEGIN_DATE').asString,'-','',[rfReplaceAll]);
     edate:=StringReplace(rs.FieldbyName('END_DATE').asString,'-','',[rfReplaceAll]);
+    AGlobal.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(FieldbyName('TENANT_ID').AsInteger)+' and CREA_DATE>'+edate+'');
   finally
     rs.Free;
   end;

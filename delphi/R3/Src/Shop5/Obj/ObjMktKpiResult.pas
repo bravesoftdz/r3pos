@@ -164,6 +164,10 @@ REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP}
          ' where A.TENANT_ID=B.TENANT_ID and A.PLAN_ID=B.PLAN_ID and A.TENANT_ID=C.TENANT_ID and A.KPI_ID=C.KPI_ID '+
          ' and not exists (select * from MKT_KPI_RESULT where TENANT_ID=A.TENANT_ID and PLAN_ID=A.PLAN_ID and KPI_ID=A.KPI_ID) '+
          ' and B.CHK_DATE IS NOT NULL and B.PLAN_TYPE=:PLAN_TYPE and C.IDX_TYPE=:IDX_TYPE and B.TENANT_ID=:TENANT_ID and B.KPI_YEAR=:KPI_YEAR ';}
+    ExceSql := 'delete from MKT_KPI_RESULT where TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR and  not Exists(select * from MKT_PLANORDER where TENANT_ID=MKT_KPI_RESULT.TENANT_ID and PLAN_ID=MKT_KPI_RESULT.PLAN_ID) ';
+    AGlobal.ExecSQL(ExceSql,Params);
+    ExceSql := 'delete from MKT_KPI_RESULT where TENANT_ID=:TENANT_ID and KPI_YEAR=:KPI_YEAR and  not Exists(select * from MKT_KPI_INDEX where TENANT_ID=MKT_KPI_RESULT.TENANT_ID and KPI_ID=MKT_KPI_RESULT.KPI_ID and COMM not in (''12'',''02'')) ';
+    AGlobal.ExecSQL(ExceSql,Params);
 
     ExceSql := 'insert into MKT_KPI_RESULT (TENANT_ID,CLIENT_ID,KPI_ID,KPI_YEAR,SHOP_ID,DEPT_ID,PLAN_ID,IDX_TYPE,KPI_TYPE,'+
                'CREA_DATE,CREA_USER,PLAN_AMT,PLAN_MNY,FISH_AMT,ADJS_AMT,FISH_MNY,ADJS_MNY,KPI_MNY,WDW_MNY,REMARK,COMM,TIME_STAMP) '+
@@ -177,6 +181,7 @@ REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP}
        ExceSql := ExceSql + ' and B.CLIENT_ID=:CLIENT_ID ';
     if Params.FindParam('KPI_ID') <> nil then
        ExceSql := ExceSql + ' and C.KPI_ID=:KPI_ID ';
+    AGlobal.ExecSQL(ExceSql,Params);
   end
   else if Params.FindParam('EXCETYPE').AsInteger = 2 then
   begin
@@ -203,7 +208,6 @@ REMARK,CREA_DATE,CREA_USER,COMM,TIME_STAMP}
     if Params.FindParam('KPI_ID') <> nil then
        ExceSql := ExceSql + ' and KPI_ID=:KPI_ID ';
   end;
-  AGlobal.ExecSQL(ExceSql,Params);
 end;
 
 { TMktKpiResultSale }

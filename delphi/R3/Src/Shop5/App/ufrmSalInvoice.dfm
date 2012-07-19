@@ -708,9 +708,9 @@ inherited frmSalInvoice: TfrmSalInvoice
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtIfDuplicate: TcxCheckBox
-              Left = 551
+              Left = 487
               Top = 40
-              Width = 121
+              Width = 74
               Height = 21
               Properties.DisplayUnchecked = 'False'
               Properties.Caption = #20801#35768#37325#21495

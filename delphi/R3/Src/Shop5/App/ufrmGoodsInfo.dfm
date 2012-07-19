@@ -49,13 +49,11 @@ inherited frmGoodsInfo: TfrmGoodsInfo
       Top = 145
       Width = 518
       Height = 235
-      ActivePage = TabGoodPrice
       BackgroundColor = clWhite
       Color = clWhite
       UseColoredTabs = True
       ParentBackgroundColor = False
       ParentColor = False
-      TabIndex = 1
       TabOrder = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet

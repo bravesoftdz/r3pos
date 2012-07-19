@@ -748,7 +748,7 @@ begin
     Factor.BeginTrans;
     try
       r := Factor.ExecSQL('delete from RCK_MONTH_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and MONTH>='+inttostr(d)+'');
-      r := Factor.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+inttostr(b)+' and CREA_DATE<='+inttostr(e)+'');
+      r := Factor.ExecSQL('delete from RCK_DAYS_CLOSE where TENANT_ID='+inttostr(Global.TENANT_ID)+' and CREA_DATE>='+inttostr(b)+' ');
       Factor.CommitTrans;
     except
       Factor.RollbackTrans;

@@ -1,6 +1,6 @@
 inherited frmSvcServiceList: TfrmSvcServiceList
-  Left = 299
-  Top = 146
+  Left = 356
+  Top = 70
   Width = 908
   Height = 549
   Caption = #21806#21518#26381#21153
@@ -10,13 +10,13 @@ inherited frmSvcServiceList: TfrmSvcServiceList
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 900
-    Height = 485
+    Height = 478
     inherited RzPanel2: TRzPanel
       Width = 890
-      Height = 475
+      Height = 468
       inherited RzPage: TRzPageControl
         Width = 884
-        Height = 469
+        Height = 462
         ActivePage = TabSheet2
         TabIndex = 1
         OnChange = RzPageChange
@@ -25,12 +25,12 @@ inherited frmSvcServiceList: TfrmSvcServiceList
           Caption = #38144#21806#35760#24405#26597#35810
           inherited RzPanel3: TRzPanel
             Width = 882
-            Height = 442
+            Height = 435
             object RzPanel1: TRzPanel
               Left = 5
               Top = 5
               Width = 872
-              Height = 432
+              Height = 425
               Align = alClient
               BorderInner = fsStatus
               BorderOuter = fsNone
@@ -48,8 +48,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Color = clWhite
                 TabOrder = 0
                 object Label3: TLabel
-                  Left = 208
-                  Top = 55
+                  Left = 24
+                  Top = 31
                   Width = 48
                   Height = 12
                   Caption = #38376#24215#21517#31216
@@ -71,21 +71,21 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 end
                 object Label2: TLabel
                   Left = 24
-                  Top = 77
+                  Top = 53
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#21517#31216
                 end
                 object Label8: TLabel
-                  Left = 24
-                  Top = 55
+                  Left = 208
+                  Top = 31
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
                 end
                 object RzLabel5: TRzLabel
                   Left = 24
-                  Top = 32
+                  Top = 75
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -93,7 +93,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 end
                 object Label1: TLabel
                   Left = 208
-                  Top = 34
+                  Top = 77
                   Width = 126
                   Height = 12
                   Caption = #25903#25345#38144#21806#21333#21495#21518'4'#20301#26597#35810
@@ -106,7 +106,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 end
                 object Label6: TLabel
                   Left = 207
-                  Top = 78
+                  Top = 54
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -159,8 +159,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 end
                 object fndP1_SHOP_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 264
-                  Top = 51
+                  Left = 80
+                  Top = 27
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -169,7 +169,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'SHOP_ID;SHOP_NAME;SHOP_SPELL'
@@ -223,7 +223,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 end
                 object fndP1_CUST_ID: TzrComboBoxList
                   Left = 80
-                  Top = 74
+                  Top = 50
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -232,7 +232,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -292,8 +292,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   MultiSelect = False
                 end
                 object fndP1_DEPT_ID: TzrComboBoxList
-                  Left = 80
-                  Top = 51
+                  Left = 264
+                  Top = 27
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -327,15 +327,15 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 end
                 object fndSALES_ID: TcxTextEdit
                   Left = 80
-                  Top = 28
+                  Top = 73
                   Width = 121
                   Height = 20
-                  TabOrder = 2
+                  TabOrder = 6
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
                 end
                 object fndSALES_STYLE: TzrComboBoxList
                   Left = 264
-                  Top = 74
+                  Top = 50
                   Width = 121
                   Height = 20
                   Properties.AutoSelect = False
@@ -344,7 +344,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 6
+                  TabOrder = 5
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -373,7 +373,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Left = 6
                 Top = 107
                 Width = 860
-                Height = 319
+                Height = 312
                 Align = alClient
                 Caption = 'Panel1'
                 TabOrder = 1
@@ -381,7 +381,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                   Left = 1
                   Top = 1
                   Width = 858
-                  Height = 317
+                  Height = 310
                   Align = alClient
                   AllowedOperations = [alopUpdateEh]
                   Color = clWhite
@@ -531,7 +531,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
             Left = 0
             Top = 0
             Width = 882
-            Height = 442
+            Height = 435
             Align = alClient
             BorderInner = fsStatus
             BorderOuter = fsNone
@@ -564,12 +564,12 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Caption = #33267
               end
               object Label4: TLabel
-                Left = 36
-                Top = 50
-                Width = 36
+                Left = 191
+                Top = 92
+                Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #30331#35760#20154
+                Caption = #21463' '#29702' '#20154
               end
               object Label17: TLabel
                 Left = 24
@@ -579,20 +579,28 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Caption = #23458#25143#21517#31216
               end
               object RzLabel6: TRzLabel
-                Left = 36
+                Left = 24
                 Top = 71
-                Width = 36
+                Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #24207#21015#21495
+                Caption = #24207' '#21015' '#21495
               end
               object RzLabel7: TRzLabel
-                Left = 36
+                Left = 24
                 Top = 92
-                Width = 36
+                Width = 48
                 Height = 12
                 Alignment = taRightJustify
-                Caption = #23458#25143#21495
+                Caption = #23458' '#25143' '#21495
+              end
+              object Label30: TLabel
+                Left = 24
+                Top = 50
+                Width = 48
+                Height = 12
+                Alignment = taRightJustify
+                Caption = #21830#21697#21517#31216
               end
               object D1: TcxDateEdit
                 Left = 80
@@ -613,7 +621,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 TabOrder = 1
               end
               object RzBitBtn1: TRzBitBtn
-                Left = 328
+                Left = 356
                 Top = 82
                 Width = 67
                 Height = 26
@@ -632,7 +640,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 ParentFont = False
                 TextShadowColor = clWhite
                 TextShadowDepth = 4
-                TabOrder = 6
+                TabOrder = 7
                 TextStyle = tsRaised
                 ThemeAware = False
                 ImageIndex = 12
@@ -640,9 +648,9 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Spacing = 5
               end
               object fndCREA_USER: TzrComboBoxList
-                Left = 80
-                Top = 46
-                Width = 223
+                Left = 247
+                Top = 88
+                Width = 97
                 Height = 20
                 Properties.AutoSelect = False
                 Properties.Buttons = <
@@ -650,7 +658,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                     Default = True
                   end>
                 Properties.ReadOnly = False
-                TabOrder = 3
+                TabOrder = 6
                 InGrid = False
                 KeyValue = Null
                 FilterFields = 'ACCOUNT;USER_NAME'
@@ -753,7 +761,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object fndSERIAL_NO: TcxTextEdit
                 Left = 80
                 Top = 67
-                Width = 223
+                Width = 264
                 Height = 20
                 Properties.MaxLength = 50
                 TabOrder = 4
@@ -762,18 +770,69 @@ inherited frmSvcServiceList: TfrmSvcServiceList
               object fndCLIENT_CODE: TcxTextEdit
                 Left = 80
                 Top = 88
-                Width = 223
+                Width = 97
                 Height = 20
                 Properties.MaxLength = 30
                 TabOrder = 5
                 ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              end
+              object fndP2_GODS_ID: TzrComboBoxList
+                Tag = 100
+                Left = 80
+                Top = 46
+                Width = 223
+                Height = 20
+                Properties.AutoSelect = False
+                Properties.Buttons = <
+                  item
+                    Default = True
+                  end>
+                Properties.ReadOnly = False
+                TabOrder = 3
+                InGrid = True
+                KeyValue = Null
+                FilterFields = 'GODS_CODE;GODS_NAME;GODS_SPELL;BARCODE'
+                KeyField = 'GODS_ID'
+                ListField = 'GODS_NAME'
+                Columns = <
+                  item
+                    EditButtons = <>
+                    FieldName = 'GODS_NAME'
+                    Footers = <>
+                    Title.Caption = #21830#21697#21517#31216
+                    Width = 150
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'GODS_CODE'
+                    Footers = <>
+                    Title.Caption = #36135#21495
+                    Width = 50
+                  end
+                  item
+                    EditButtons = <>
+                    FieldName = 'BARCODE'
+                    Footers = <>
+                    Title.Caption = #26465#30721
+                    Width = 65
+                  end>
+                DropWidth = 380
+                DropHeight = 250
+                ShowTitle = True
+                AutoFitColWidth = True
+                ShowButton = True
+                LocateStyle = lsDark
+                Buttons = [zbNew, zbFind]
+                DropListStyle = lsFixed
+                MultiSelect = False
+                ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
               end
             end
             object Panel2: TPanel
               Left = 6
               Top = 117
               Width = 870
-              Height = 319
+              Height = 312
               Align = alClient
               Caption = 'Panel1'
               TabOrder = 1
@@ -781,7 +840,7 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                 Left = 1
                 Top = 1
                 Width = 868
-                Height = 317
+                Height = 310
                 Align = alClient
                 AllowedOperations = [alopUpdateEh]
                 DataSource = DataSource2
@@ -826,8 +885,8 @@ inherited frmSvcServiceList: TfrmSvcServiceList
                     EditButtons = <>
                     FieldName = 'GLIDE_NO'
                     Footers = <>
-                    Title.Caption = #21333#21495
-                    Width = 80
+                    Title.Caption = #38144#21806#21333#21495
+                    Width = 108
                   end
                   item
                     EditButtons = <>

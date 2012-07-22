@@ -23,21 +23,13 @@ type
     RzPanel1: TRzPanel;
     Label7: TLabel;
     Label17: TLabel;
-    Label40: TLabel;
-    Label5: TLabel;
     edtREMARK: TcxTextEdit;
     edtCLIENT_ID: TzrComboBoxList;
-    edtSHOP_ID: TzrComboBoxList;
-    edtDEPT_ID: TzrComboBoxList;
     RzPanel3: TRzPanel;
     RzLabel1: TRzLabel;
     Label6: TLabel;
     edtCREA_DATE: TcxDateEdit;
     RzLabel2: TRzLabel;
-    edtINVH_ID: TzrComboBoxList;
-    Label2: TLabel;
-    Label4: TLabel;
-    edtINVOICE_NO: TcxTextEdit;
     RzPanel5: TRzPanel;
     RzPanel6: TRzPanel;
     RzPanel7: TRzPanel;
@@ -48,7 +40,6 @@ type
     Label16: TLabel;
     RzPanel8: TRzPanel;
     RzLabel3: TRzLabel;
-    edtIfDuplicate: TcxCheckBox;
     edtCREA_USER: TzrComboBoxList;
     Label3: TLabel;
     edtINVOICE_FLAG: TcxComboBox;
@@ -57,6 +48,19 @@ type
     DBGridEh1: TDBGridEh;
     DataSource1: TDataSource;
     fndGODS_ID: TzrComboBoxList;
+    Label40: TLabel;
+    edtSHOP_ID: TzrComboBoxList;
+    Label5: TLabel;
+    edtDEPT_ID: TzrComboBoxList;
+    Label8: TLabel;
+    edtADDR_NAME: TcxTextEdit;
+    Label9: TLabel;
+    edtINVO_NAME: TcxTextEdit;
+    Label2: TLabel;
+    edtINVH_ID: TzrComboBoxList;
+    edtINVOICE_NO: TcxTextEdit;
+    Label4: TLabel;
+    edtIfDuplicate: TcxCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure edtCLIENT_IDSaveValue(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -403,6 +407,8 @@ begin
   if not rs.Locate('CLIENT_ID',edtCLIENT_ID.AsString,[]) then Raise Exception.Create('选择的客户没找到,异常错误.');
   AObj.FieldByName('INVO_NAME').AsString := rs.FieldByName('CLIENT_NAME').AsString;
   AObj.FieldByName('ADDR_NAME').AsString := rs.FieldByName('ADDRESS').AsString;
+  edtINVO_NAME.Text := rs.FieldByName('CLIENT_NAME').AsString;
+  edtADDR_NAME.Text := rs.FieldByName('ADDRESS').AsString;
 
 end;
 

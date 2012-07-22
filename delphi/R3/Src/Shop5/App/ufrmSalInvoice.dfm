@@ -1,6 +1,6 @@
 inherited frmSalInvoice: TfrmSalInvoice
-  Left = 334
-  Top = 176
+  Left = 310
+  Top = 125
   Caption = #38144#39033#21457#31080
   ClientHeight = 483
   ClientWidth = 719
@@ -289,7 +289,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             TabOrder = 1
             object Label7: TLabel
               Left = 62
-              Top = 71
+              Top = 70
               Width = 82
               Height = 12
               Alignment = taRightJustify
@@ -314,12 +314,13 @@ inherited frmSalInvoice: TfrmSalInvoice
               Font.Style = [fsBold]
               ParentFont = False
             end
-            object Label40: TLabel
+            object Label8: TLabel
               Left = 64
-              Top = 29
+              Top = 49
               Width = 80
               Height = 12
-              Caption = #24320' '#31080' '#38376' '#24215':'
+              Alignment = taRightJustify
+              Caption = #24320' '#31080' '#22320' '#22336':'
               Font.Charset = GB2312_CHARSET
               Font.Color = clGreen
               Font.Height = -12
@@ -327,12 +328,41 @@ inherited frmSalInvoice: TfrmSalInvoice
               Font.Style = [fsBold]
               ParentFont = False
             end
-            object Label5: TLabel
+            object Label9: TLabel
               Left = 64
-              Top = 50
+              Top = 29
               Width = 80
               Height = 12
-              Caption = #24320' '#31080' '#37096' '#38376':'
+              Alignment = taRightJustify
+              Caption = #24320' '#31080' '#21517' '#31216':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label2: TLabel
+              Left = 489
+              Top = 8
+              Width = 59
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21457#31080#26412#21495':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label4: TLabel
+              Left = 488
+              Top = 29
+              Width = 60
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21457' '#31080' '#21495':'
               Font.Charset = GB2312_CHARSET
               Font.Color = clGreen
               Font.Height = -12
@@ -342,10 +372,10 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object edtREMARK: TcxTextEdit
               Left = 150
-              Top = 67
+              Top = 66
               Width = 334
               Height = 20
-              TabOrder = 3
+              TabOrder = 1
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtCLIENT_ID: TzrComboBoxList
@@ -419,81 +449,6 @@ inherited frmSalInvoice: TfrmSalInvoice
               OnSaveValue = edtCLIENT_IDSaveValue
               MultiSelect = False
             end
-            object edtSHOP_ID: TzrComboBoxList
-              Left = 150
-              Top = 25
-              Width = 205
-              Height = 20
-              Properties.AutoSelect = False
-              Properties.Buttons = <
-                item
-                  Default = True
-                end>
-              Properties.ReadOnly = False
-              TabOrder = 1
-              InGrid = False
-              KeyValue = Null
-              FilterFields = 'SHOP_NAME;SHOP_SPELL'
-              KeyField = 'SHOP_ID'
-              ListField = 'SHOP_NAME'
-              Columns = <
-                item
-                  EditButtons = <>
-                  FieldName = 'SHOP_NAME'
-                  Footers = <>
-                  Title.Caption = #21517#31216
-                end
-                item
-                  EditButtons = <>
-                  FieldName = 'SEQ_NO'
-                  Footers = <>
-                  Title.Caption = #24207#21495
-                  Width = 20
-                end>
-              DropWidth = 185
-              DropHeight = 180
-              ShowTitle = True
-              AutoFitColWidth = True
-              ShowButton = False
-              LocateStyle = lsDark
-              Buttons = []
-              DropListStyle = lsFixed
-              MultiSelect = False
-            end
-            object edtDEPT_ID: TzrComboBoxList
-              Left = 150
-              Top = 46
-              Width = 205
-              Height = 20
-              Properties.AutoSelect = False
-              Properties.Buttons = <
-                item
-                  Default = True
-                end>
-              Properties.ReadOnly = False
-              TabOrder = 2
-              InGrid = False
-              KeyValue = Null
-              FilterFields = 'DEPT_NAME;DEPT_SPELL'
-              KeyField = 'DEPT_ID'
-              ListField = 'DEPT_NAME'
-              Columns = <
-                item
-                  EditButtons = <>
-                  FieldName = 'DEPT_NAME'
-                  Footers = <>
-                  Title.Caption = #21517#31216
-                end>
-              DropWidth = 185
-              DropHeight = 180
-              ShowTitle = True
-              AutoFitColWidth = True
-              ShowButton = False
-              LocateStyle = lsDark
-              Buttons = []
-              DropListStyle = lsFixed
-              MultiSelect = False
-            end
             object RzPanel8: TRzPanel
               Left = 1
               Top = 1
@@ -511,7 +466,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Font.Name = #23435#20307
               Font.Style = []
               ParentFont = False
-              TabOrder = 4
+              TabOrder = 2
               object RzLabel3: TRzLabel
                 Left = 15
                 Top = 16
@@ -526,115 +481,25 @@ inherited frmSalInvoice: TfrmSalInvoice
                 ParentFont = False
               end
             end
-          end
-          object RzPanel3: TRzPanel
-            Left = 5
-            Top = 5
-            Width = 695
-            Height = 65
-            Align = alTop
-            BorderOuter = fsNone
-            Color = clWhite
-            Font.Charset = GB2312_CHARSET
-            Font.Color = clBlack
-            Font.Height = -12
-            Font.Name = #23435#20307
-            Font.Style = [fsBold]
-            ParentFont = False
-            TabOrder = 0
-            object RzLabel1: TRzLabel
-              Left = 272
-              Top = 1
-              Width = 139
-              Height = 24
-              Caption = #38144' '#39033' '#21457' '#31080
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -24
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object Label6: TLabel
-              Left = 1
+            object edtADDR_NAME: TcxTextEdit
+              Left = 150
               Top = 45
-              Width = 59
-              Height = 12
-              Alignment = taRightJustify
-              Caption = #24320#31080#26085#26399':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object RzLabel2: TRzLabel
-              Left = 264
-              Top = 25
-              Width = 161
-              Height = 12
-              Caption = '======================='
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object Label2: TLabel
-              Left = 489
-              Top = 3
-              Width = 59
-              Height = 12
-              Alignment = taRightJustify
-              Caption = #21457#31080#26412#21495':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object Label4: TLabel
-              Left = 488
-              Top = 24
-              Width = 60
-              Height = 12
-              Alignment = taRightJustify
-              Caption = #21457' '#31080' '#21495':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object Label3: TLabel
-              Left = 241
-              Top = 45
-              Width = 59
-              Height = 12
-              Alignment = taRightJustify
-              Caption = #21457#31080#31867#22411':'
-              Font.Charset = GB2312_CHARSET
-              Font.Color = clGreen
-              Font.Height = -12
-              Font.Name = #23435#20307
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object edtCREA_DATE: TcxDateEdit
-              Left = 66
-              Top = 41
-              Width = 133
+              Width = 259
               Height = 20
-              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               TabOrder = 3
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            end
+            object edtINVO_NAME: TcxTextEdit
+              Left = 150
+              Top = 25
+              Width = 205
+              Height = 20
+              TabOrder = 4
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtINVH_ID: TzrComboBoxList
               Left = 554
-              Top = -1
+              Top = 4
               Width = 133
               Height = 20
               Properties.AutoSelect = False
@@ -643,7 +508,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Default = True
                 end>
               Properties.ReadOnly = True
-              TabOrder = 0
+              TabOrder = 5
               InGrid = False
               KeyValue = Null
               FilterFields = 'INVH_NO'
@@ -695,7 +560,7 @@ inherited frmSalInvoice: TfrmSalInvoice
             end
             object edtINVOICE_NO: TcxTextEdit
               Left = 554
-              Top = 20
+              Top = 25
               Width = 133
               Height = 20
               ParentFont = False
@@ -704,12 +569,12 @@ inherited frmSalInvoice: TfrmSalInvoice
               Style.Font.Height = -12
               Style.Font.Name = #23435#20307
               Style.Font.Style = [fsBold]
-              TabOrder = 1
+              TabOrder = 6
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtIfDuplicate: TcxCheckBox
-              Left = 487
-              Top = 40
+              Left = 615
+              Top = 45
               Width = 74
               Height = 21
               Properties.DisplayUnchecked = 'False'
@@ -719,18 +584,197 @@ inherited frmSalInvoice: TfrmSalInvoice
               Style.Font.Height = -12
               Style.Font.Name = #23435#20307
               Style.Font.Style = [fsBold]
-              TabOrder = 2
+              TabOrder = 7
             end
-            object edtINVOICE_FLAG: TcxComboBox
-              Left = 306
+          end
+          object RzPanel3: TRzPanel
+            Left = 5
+            Top = 5
+            Width = 695
+            Height = 65
+            Align = alTop
+            BorderOuter = fsNone
+            Color = clWhite
+            Font.Charset = GB2312_CHARSET
+            Font.Color = clBlack
+            Font.Height = -12
+            Font.Name = #23435#20307
+            Font.Style = [fsBold]
+            ParentFont = False
+            TabOrder = 0
+            object RzLabel1: TRzLabel
+              Left = 272
+              Top = 1
+              Width = 139
+              Height = 24
+              Caption = #38144' '#39033' '#21457' '#31080
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -24
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label6: TLabel
+              Left = 489
+              Top = 45
+              Width = 59
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #24320#31080#26085#26399':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object RzLabel2: TRzLabel
+              Left = 264
+              Top = 25
+              Width = 161
+              Height = 12
+              Caption = '======================='
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label3: TLabel
+              Left = 367
+              Top = 45
+              Width = 33
+              Height = 12
+              Alignment = taRightJustify
+              Caption = #21457#31080':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label40: TLabel
+              Left = 0
+              Top = 45
+              Width = 33
+              Height = 12
+              Caption = #38376#24215':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Label5: TLabel
+              Left = 181
+              Top = 45
+              Width = 33
+              Height = 12
+              Caption = #37096#38376':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clGreen
+              Font.Height = -12
+              Font.Name = #23435#20307
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object edtCREA_DATE: TcxDateEdit
+              Left = 554
               Top = 41
               Width = 133
+              Height = 20
+              ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+              TabOrder = 0
+            end
+            object edtINVOICE_FLAG: TcxComboBox
+              Left = 406
+              Top = 41
+              Width = 71
               Height = 20
               Enabled = False
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Properties.DropDownListStyle = lsFixedList
               Properties.OnChange = edtINVOICE_FLAGPropertiesChange
-              TabOrder = 4
+              TabOrder = 1
+            end
+            object edtSHOP_ID: TzrComboBoxList
+              Left = 34
+              Top = 41
+              Width = 139
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 2
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'SHOP_NAME;SHOP_SPELL'
+              KeyField = 'SHOP_ID'
+              ListField = 'SHOP_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'SHOP_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                end
+                item
+                  EditButtons = <>
+                  FieldName = 'SEQ_NO'
+                  Footers = <>
+                  Title.Caption = #24207#21495
+                  Width = 20
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = []
+              DropListStyle = lsFixed
+              MultiSelect = False
+            end
+            object edtDEPT_ID: TzrComboBoxList
+              Left = 219
+              Top = 41
+              Width = 136
+              Height = 20
+              Properties.AutoSelect = False
+              Properties.Buttons = <
+                item
+                  Default = True
+                end>
+              Properties.ReadOnly = False
+              TabOrder = 3
+              InGrid = False
+              KeyValue = Null
+              FilterFields = 'DEPT_NAME;DEPT_SPELL'
+              KeyField = 'DEPT_ID'
+              ListField = 'DEPT_NAME'
+              Columns = <
+                item
+                  EditButtons = <>
+                  FieldName = 'DEPT_NAME'
+                  Footers = <>
+                  Title.Caption = #21517#31216
+                end>
+              DropWidth = 185
+              DropHeight = 180
+              ShowTitle = True
+              AutoFitColWidth = True
+              ShowButton = False
+              LocateStyle = lsDark
+              Buttons = []
+              DropListStyle = lsFixed
+              MultiSelect = False
             end
           end
           object RzPanel5: TRzPanel

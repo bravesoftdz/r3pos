@@ -64,6 +64,8 @@ type
     fndSERIAL_NO: TcxTextEdit;
     RzLabel7: TRzLabel;
     fndCLIENT_CODE: TcxTextEdit;
+    Label30: TLabel;
+    fndP2_GODS_ID: TzrComboBoxList;
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -380,7 +382,7 @@ begin
      strWhere := strWhere + ' and B.GLIDE_NO like ''%'+trim(fndSALES_ID.Text)+''' ';
   if fndSALES_STYLE.AsString <> '' then
      strWhere := strWhere + ' and B.SALES_STYLE=:SALES_STYLE ';
-     
+
   case fndSTATUS.ItemIndex of
     1:strWhere := strWhere + ' and isnull(I.SERIAL_NO_NUM,0) = 0 ';
     2:strWhere := strWhere + ' and (isnull(I.SERIAL_NO_NUM,0) <> 0) and (isnull(I.SERIAL_NO_NUM,0) < A.AMOUNT) ';
@@ -431,7 +433,7 @@ begin
 
   //分批取数据的条件:
   if trim(id)<>'' then
-    strWhere:=strWhere+' A.SRVR_ID > '+QuotedStr(id);
+    strWhere:=strWhere+' and A.SRVR_ID > '+QuotedStr(id);
   //客户条件:
   if fndCLIENT_ID.AsString <> '' then
      strWhere := strWhere + ' and A.CLIENT_ID=:CLIENT_ID ';
@@ -441,6 +443,8 @@ begin
      strWhere := strWhere + ' and A.SERIAL_NO=:SERIAL_NO';
   if Trim(fndCLIENT_CODE.Text) <> '' then
      strWhere := strWhere + ' and A.CLIENT_CODE=:CLIENT_CODE';
+  if fndP2_GODS_ID.asString<>'' then
+     strWhere := strWhere + ' and A.GODS_ID=:GODS_ID';
 
   strSql:=
   'select A.TENANT_ID,A.SRVR_ID,F.GLIDE_NO,A.GODS_NAME,A.SERIAL_NO,A.RECV_DATE,A.RECV_USER,D.USER_NAME as RECV_USER_TEXT,A.SRVR_DATE,'+
@@ -449,7 +453,7 @@ begin
   ' left join VIW_USERS C on A.TENANT_ID=C.TENANT_ID and A.CREA_USER=C.USER_ID '+
   ' left join VIW_USERS D on A.TENANT_ID=D.TENANT_ID and A.RECV_USER=D.USER_ID '+
   ' left join VIW_USERS E on A.TENANT_ID=E.TENANT_ID and A.SRVR_USER=E.USER_ID '+
-  ' left join SAL_SALESORDER F on A.TENANT_ID=F.TENANT_ID and A.SALES_ID=F.SALES_ID '+strWhere;
+  ' left join SAL_SALESORDER F on A.TENANT_ID=E.TENANT_ID and A.SALES_ID=F.SALES_ID '+strWhere;
 
   case Factor.iDbType of
   0:result := 'select top 600 * from ('+strSql+') jp order by SRVR_ID';
@@ -542,6 +546,7 @@ begin
     if rs.Params.FindParam('CREA_USER')<>nil then rs.Params.FindParam('CREA_USER').AsString := fndCREA_USER.AsString;
     if rs.Params.FindParam('SERIAL_NO')<>nil then rs.Params.FindParam('SERIAL_NO').AsString := Trim(fndSERIAL_NO.Text);
     if rs.Params.FindParam('CLIENT_CODE')<>nil then rs.Params.FindParam('CLIENT_CODE').AsString := Trim(fndCLIENT_CODE.Text);
+    if rs.Params.FindParam('GODS_ID')<>nil then rs.Params.FindParam('GODS_ID').AsString := fndP2_GODS_ID.asString;
     Factor.Open(rs);
     rs.Last;
     MaxId2 := rs.FieldbyName('SRVR_ID').AsString;

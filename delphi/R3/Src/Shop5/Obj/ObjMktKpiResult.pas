@@ -236,6 +236,7 @@ begin
                     'A.KPI_DATA as FISH_RATE,'+
                     'case when A.KPI_DATA in (''1'',''4'') then A.ADJS_AMT else A.ADJS_MNY end as ADJS_AMT,'+
                     'case when A.KPI_DATA in (''1'',''4'') then C.UNIT_NAME else ''Ԫ'' end as UNIT_NAME,'+
+                    'case when A.KPI_CALC in (''1'',''3'') then A.FISH_MNY else A.FISH_AMT end as RATE_AMT,'+
                     'case when A.KPI_CALC in (''1'') then ''%'' when A.KPI_CALC in (''2'') then D.UNIT_NAME else ''Ԫ'' end as CALC_SHOW_NAME,'+
                     'A.FISH_CALC_RATE,A.ADJS_RATE,'+
                     'A.KPI_RATIO,A.ACTR_RATIO,A.KPI_MNY,A.BUDG_KPI '+

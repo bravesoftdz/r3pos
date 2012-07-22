@@ -213,8 +213,9 @@ begin
   CdsResultList.FieldByName('ADJS_RATE').AsFloat := Rate;
   CdsResultList.Edit;
   case CdsResultList.FieldbyName('KPI_CALC').AsInteger of
-  1,3:CdsResultList.FieldByName('KPI_MNY').AsFloat := CdsResultList.FieldByName('FISH_AMT').AsFloat*Rate/100;
-  2:  CdsResultList.FieldByName('KPI_MNY').AsFloat := CdsResultList.FieldByName('FISH_AMT').AsFloat*Rate*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat;
+  1:CdsResultList.FieldByName('KPI_MNY').AsFloat := CdsResultList.FieldByName('RATE_AMT').AsFloat*Rate/100;
+  2:CdsResultList.FieldByName('KPI_MNY').AsFloat := CdsResultList.FieldByName('RATE_AMT').AsFloat*Rate*CdsResultList.FieldByName('FISH_CALC_RATE').AsFloat;
+  3:CdsResultList.FieldByName('KPI_MNY').AsFloat := Rate;
   end;
   CdsResultList.Post;
   CdsResultList.Edit;

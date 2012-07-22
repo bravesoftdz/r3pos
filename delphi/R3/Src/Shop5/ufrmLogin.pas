@@ -132,9 +132,9 @@ begin
   rs := TZQuery.Create(nil);
   try
      if not cxedtUsers.Enabled then
-        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.USER_ID='''+Global.UserID+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID)
+        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.USER_ID='''+Global.UserID+''' and A.TENANT_ID='+inttostr(Global.TENANT_ID)
      else
-        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.ACCOUNT in ('''+trim(cxedtUsers.Text)+''','''+lowercase(trim(cxedtUsers.Text))+''','''+uppercase(trim(cxedtUsers.Text))+''') and A.TENANT_ID='+inttostr(Global.TENANT_ID);
+        temp.SQL.Text := 'select USER_ID,USER_NAME,PASS_WRD,ROLE_IDS,A.SHOP_ID,B.SHOP_NAME,A.ACCOUNT from VIW_USERS A,CA_SHOP_INFO B where A.SHOP_ID=B.SHOP_ID and A.TENANT_ID=B.TENANT_ID and A.COMM not in (''02'',''12'') and A.ACCOUNT in ('''+trim(cxedtUsers.Text)+''','''+lowercase(trim(cxedtUsers.Text))+''','''+uppercase(trim(cxedtUsers.Text))+''') and A.TENANT_ID='+inttostr(Global.TENANT_ID);
      Factor.Open(temp);
      if temp.IsEmpty then Raise Exception.Create(cxedtUsers.Text+'无效用户账号。');
      

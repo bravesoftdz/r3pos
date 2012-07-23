@@ -44,6 +44,7 @@ type
     //procedure FocusNextColumn;
     RowId:Integer;
     procedure SetdbState(const Value: TDataSetState);override;
+    function IsNumberOrCharacter(Str:String):Boolean;
   public
     { Public declarations }
     procedure ClearInvaid;override;
@@ -322,7 +323,7 @@ begin
             if MessageBox(Handle,pchar('是否删除当前礼券"'+cdsDetail.FieldbyName('BARCODE').asString+'"'),'友情提示...',MB_YESNO+MB_ICONQUESTION)<>6 then Exit;
             N1Click(Sender);
          end;
-         if FnString.IsNumberChar(Trim(s)) then
+         if IsNumberOrCharacter(s) then
          begin
             if cdsDetail.Locate('BARCODE',s,[]) then Raise Exception.Create('"'+cdsDetail.FieldbyName('BARCODE').asString+'"礼券号已经存在!');
             InitRecord;
@@ -349,6 +350,23 @@ begin
   inherited;
   if Trim(edtVUCH_NAME.Text) <> '' then
      TabSheet.Caption := Trim(edtVUCH_NAME.Text);
+end;
+
+function TfrmVoucherOrder.IsNumberOrCharacter(Str: String): Boolean;
+var i,r:Integer;
+begin
+  Result := True;
+  if Str[1]='-' then  r := 2 else r := 1;
+  for i:=r to Length(Str) do
+    begin
+      if not(Str[i] in ['0'..'9','a'..'z','A'..'Z','-']) then
+         begin
+           Result := False;
+           Exit;
+         end;
+    end;
+  if str='.' then result := false;
+  if str='-' then result := false;
 end;
 
 end.

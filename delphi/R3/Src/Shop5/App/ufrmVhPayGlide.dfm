@@ -1,43 +1,41 @@
 inherited frmVhPayGlide: TfrmVhPayGlide
-  Left = 488
-  Top = 183
-  Caption = #20195#37329#21048#32467#31639
-  ClientHeight = 256
-  ClientWidth = 357
+  Left = 341
+  Caption = #31036#21048#32467#31639
+  ClientHeight = 282
+  ClientWidth = 504
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 357
-    Height = 256
+    Width = 504
+    Height = 282
     inherited RzPage: TRzPageControl
-      Width = 347
-      Height = 206
+      Width = 494
+      Height = 232
+      ActivePage = TabSheet5
       ParentColor = False
-      TabIndex = -1
+      TabIndex = 1
+      OnChange = RzPageChange
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
-        TabVisible = False
-        Caption = #20195#37329#21048#20449#24687
+        Caption = #31036#21048#20449#24687
         inherited RzPanel2: TRzPanel
-          Width = 343
-          Height = 202
+          Width = 490
+          Height = 205
           Color = clWhite
           object RzPanel1: TRzPanel
             Left = 5
             Top = 5
-            Width = 333
-            Height = 48
+            Width = 480
+            Height = 81
             Align = alClient
             BorderOuter = fsNone
-            BorderSides = [sdBottom]
             BorderColor = clInactiveCaption
-            BorderWidth = 1
             TabOrder = 0
             object lblInput: TLabel
-              Left = 35
-              Top = 14
+              Left = 91
+              Top = 8
               Width = 63
               Height = 20
               Caption = #38450#20266#30721
@@ -48,9 +46,35 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               Font.Style = [fsBold]
               ParentFont = False
             end
+            object labNO: TLabel
+              Left = 14
+              Top = 39
+              Width = 49
+              Height = 14
+              Caption = #38450#20266#30721':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clFuchsia
+              Font.Height = -14
+              Font.Name = #40657#20307
+              Font.Style = []
+              ParentFont = False
+            end
+            object labPRC: TLabel
+              Left = 0
+              Top = 63
+              Width = 63
+              Height = 14
+              Caption = #31036#21048#38754#20540':'
+              Font.Charset = GB2312_CHARSET
+              Font.Color = clFuchsia
+              Font.Height = -14
+              Font.Name = #40657#20307
+              Font.Style = []
+              ParentFont = False
+            end
             object edtInput: TcxTextEdit
-              Left = 106
-              Top = 11
+              Left = 162
+              Top = 5
               Width = 204
               Height = 27
               ParentFont = False
@@ -66,17 +90,18 @@ inherited frmVhPayGlide: TfrmVhPayGlide
           end
           object RzPanel3: TRzPanel
             Left = 5
-            Top = 53
-            Width = 333
-            Height = 144
+            Top = 86
+            Width = 480
+            Height = 114
             Align = alBottom
             BorderOuter = fsNone
+            BorderShadow = clMenu
             TabOrder = 1
             object RzPageControl1: TRzPageControl
               Left = 0
               Top = 0
-              Width = 333
-              Height = 144
+              Width = 480
+              Height = 114
               ActivePage = TabSheet2
               Align = alClient
               ParentShowHint = False
@@ -87,24 +112,11 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               object TabSheet2: TRzTabSheet
                 Caption = #31036#21048#20449#24687
                 object labMNY: TLabel
-                  Left = 13
-                  Top = 3
-                  Width = 95
+                  Left = 30
+                  Top = 67
+                  Width = 75
                   Height = 20
-                  Caption = #21097#20313#37329#39069':'
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clNavy
-                  Font.Height = -20
-                  Font.Name = #40657#20307
-                  Font.Style = [fsBold]
-                  ParentFont = False
-                end
-                object labPRC: TLabel
-                  Left = 13
-                  Top = 97
-                  Width = 95
-                  Height = 20
-                  Caption = #31036#21048#38754#20540':'
+                  Caption = #32467'  '#20313':'
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clNavy
                   Font.Height = -20
@@ -113,11 +125,11 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                   ParentFont = False
                 end
                 object labAMOUNT: TLabel
-                  Left = 34
-                  Top = 35
-                  Width = 74
+                  Left = 244
+                  Top = 67
+                  Width = 75
                   Height = 20
-                  Caption = #31036#21048#25968':'
+                  Caption = #24352'  '#25968':'
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clNavy
                   Font.Height = -20
@@ -125,12 +137,25 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                   Font.Style = [fsBold]
                   ParentFont = False
                 end
-                object labNO: TLabel
-                  Left = 34
-                  Top = 68
-                  Width = 74
+                object LabPayMny: TLabel
+                  Left = 30
+                  Top = 23
+                  Width = 75
                   Height = 20
-                  Caption = #31036#21048#21495':'
+                  Caption = #24635'  '#35745':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object LabRecvMny: TLabel
+                  Left = 244
+                  Top = 23
+                  Width = 75
+                  Height = 20
+                  Caption = #24050'  '#20184':'
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clNavy
                   Font.Height = -20
@@ -142,24 +167,11 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               object TabSheet3: TRzTabSheet
                 Caption = #25552#36135#21048#20449#24687
                 object labClientId: TLabel
-                  Left = 13
-                  Top = 3
-                  Width = 95
+                  Left = 30
+                  Top = 10
+                  Width = 75
                   Height = 20
-                  Caption = #23458#25143#21517#31216':'
-                  Font.Charset = GB2312_CHARSET
-                  Font.Color = clNavy
-                  Font.Height = -20
-                  Font.Name = #40657#20307
-                  Font.Style = [fsBold]
-                  ParentFont = False
-                end
-                object LabPRC1: TLabel
-                  Left = 14
-                  Top = 97
-                  Width = 95
-                  Height = 20
-                  Caption = #31036#21048#38754#20540':'
+                  Caption = #23458'  '#25143':'
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clNavy
                   Font.Height = -20
@@ -168,8 +180,8 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                   ParentFont = False
                 end
                 object LabGlideNo: TLabel
-                  Left = 34
-                  Top = 35
+                  Left = 31
+                  Top = 42
                   Width = 74
                   Height = 20
                   Caption = #35746#21333#21495':'
@@ -181,11 +193,24 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                   ParentFont = False
                 end
                 object LabAmount1: TLabel
-                  Left = 34
-                  Top = 68
-                  Width = 74
+                  Left = 274
+                  Top = 76
+                  Width = 75
                   Height = 20
-                  Caption = #31036#21048#25968':'
+                  Caption = #24352'  '#25968':'
+                  Font.Charset = GB2312_CHARSET
+                  Font.Color = clNavy
+                  Font.Height = -20
+                  Font.Name = #40657#20307
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object LabSumMny: TLabel
+                  Left = 30
+                  Top = 76
+                  Width = 75
+                  Height = 20
+                  Caption = #24635'  '#35745':'
                   Font.Charset = GB2312_CHARSET
                   Font.Color = clNavy
                   Font.Height = -20
@@ -198,12 +223,102 @@ inherited frmVhPayGlide: TfrmVhPayGlide
           end
         end
       end
+      object TabSheet5: TRzTabSheet
+        Caption = #31036#21048#21015#34920
+        object RzPanel4: TRzPanel
+          Left = 0
+          Top = 0
+          Width = 490
+          Height = 205
+          Align = alClient
+          BorderOuter = fsNone
+          BorderWidth = 5
+          TabOrder = 0
+          object DBGridEh1: TDBGridEh
+            Left = 5
+            Top = 5
+            Width = 480
+            Height = 195
+            Align = alClient
+            AllowedOperations = []
+            DataSource = DsVhpay
+            Flat = True
+            FooterColor = clWindow
+            FooterFont.Charset = GB2312_CHARSET
+            FooterFont.Color = clWindowText
+            FooterFont.Height = -12
+            FooterFont.Name = #23435#20307
+            FooterFont.Style = []
+            ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
+            Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection]
+            ReadOnly = True
+            RowHeight = 20
+            TabOrder = 0
+            TitleFont.Charset = GB2312_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = #23435#20307
+            TitleFont.Style = []
+            TitleHeight = 20
+            UseMultiTitle = True
+            IsDrawNullRow = False
+            CurrencySymbol = #65509
+            DecimalNumber = 2
+            DigitalNumber = 12
+            OnDrawColumnCell = DBGridEh1DrawColumnCell
+            Columns = <
+              item
+                EditButtons = <>
+                FieldName = 'SEQNO'
+                Footers = <>
+                Title.Caption = #24207#21495
+                Width = 30
+              end
+              item
+                EditButtons = <>
+                FieldName = 'CREA_DATE'
+                Footers = <>
+                Title.Caption = #25903#20184#26102#38388
+                Width = 120
+              end
+              item
+                EditButtons = <>
+                FieldName = 'BARCODE'
+                Footers = <>
+                Title.Caption = #38450#20266#30721
+                Width = 120
+              end
+              item
+                EditButtons = <>
+                FieldName = 'VOUCHER_TYPE'
+                Footers = <>
+                Title.Caption = #31036#21048#31867#22411
+                Width = 70
+              end
+              item
+                EditButtons = <>
+                FieldName = 'VOUCHER_PRC'
+                Footers = <>
+                Title.Caption = #38754#20540
+                Width = 90
+              end
+              item
+                EditButtons = <>
+                FieldName = 'VOUCHER_STATUS'
+                Footers = <>
+                Title.Caption = #31036#21048#29366#24577
+                Width = 70
+              end>
+          end
+        end
+      end
     end
     inherited btPanel: TRzPanel
-      Top = 211
-      Width = 347
+      Top = 237
+      Width = 494
       object Btn_Close: TRzBitBtn
-        Left = 275
+        Left = 422
         Top = 10
         Width = 67
         Height = 26
@@ -230,7 +345,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
         Spacing = 5
       end
       object Btn_Save: TRzBitBtn
-        Left = 191
+        Left = 338
         Top = 10
         Width = 67
         Height = 26
@@ -256,21 +371,60 @@ inherited frmVhPayGlide: TfrmVhPayGlide
         NumGlyphs = 2
         Spacing = 5
       end
+      object Btn_Update: TRzBitBtn
+        Left = 328
+        Top = 10
+        Width = 67
+        Height = 26
+        Anchors = [akTop, akRight]
+        Caption = #25764#28040'(&D)'
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 2
+        TextStyle = tsRaised
+        ThemeAware = False
+        OnClick = Btn_UpdateClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
     end
   end
   inherited mmMenu: TMainMenu
-    Left = 8
-    Top = 224
+    Left = 16
+    Top = 240
   end
   inherited actList: TActionList
-    Left = 38
-    Top = 224
+    Left = 46
+    Top = 240
   end
   object CdsVhPay: TZQuery
     FieldDefs = <>
     CachedUpdates = True
     Params = <>
-    Left = 68
-    Top = 224
+    Left = 76
+    Top = 240
+  end
+  object CdsVhpayGlide: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 135
+    Top = 240
+  end
+  object DsVhpay: TDataSource
+    DataSet = CdsVhpayGlide
+    Left = 167
+    Top = 240
   end
 end

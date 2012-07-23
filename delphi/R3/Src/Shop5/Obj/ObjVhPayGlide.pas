@@ -19,6 +19,11 @@ type
     function BeforeCommitRecord(AGlobal:IdbHelp):Boolean;override;
     procedure InitClass; override;
   end;
+  
+  TUpdateVhPayGlide=class(TZProcFactory)
+  public
+    function Execute(AGlobal:IdbHelp;Params:TftParamList):Boolean;override;
+  end;
 
 implementation
 
@@ -95,10 +100,59 @@ begin
   DeleteSQL.Text := Str;
 end;
 
+{ TUpdateVhPayGlide }
+
+function TUpdateVhPayGlide.Execute(AGlobal: IdbHelp;
+  Params: TftParamList): Boolean;
+var
+  Str,ChkUser:string;
+  n:Integer;
+  rs:TZQuery;
+begin
+  AGlobal.BeginTrans;
+  try
+    Str := 'update SAL_VOUCHERDATA set VOUCHER_STATUS=''1'',COMM=' + GetCommStr(AGlobal.iDbType) + ',TIME_STAMP='+GetTimeStamp(AGlobal.iDbType)+' where TENANT_ID='+Params.FindParam('TENANT_ID').asString +' and BARCODE='''+Params.FindParam('BARCODE').asString+'''';
+    n := AGlobal.ExecSQL(Str);
+    if n=0 then
+       Raise Exception.Create('没找到待撤消的防伪码，是否被另一用户撤消。')
+    else
+    if n>1 then
+       Raise Exception.Create('删除指令会影响多行，可能数据库中数据误。');
+
+    ChkUser:=Params.ParamByName('CHK_USER').AsString;
+{    Str:='insert into SAL_VHPAY_GLIDE(TENANT_ID,VHPAY_ID,BARCODE,SHOP_ID,DEPT_ID,CLIENT_ID,VHPAY_DATE,VHPAY_USER,'+
+         'VOUCHER_PRC,VOUCHER_TYPE,VHPAY_MNY,AGIO_RATE,AGIO_MONEY,FROM_ID,CREA_DATE,CREA_USER,REMARK,COMM,TIME_STAMP) '+
+         'values('+Params.FindParam('TENANT_ID').asString+','''+Params.FindParam('VHPAY_ID').asString+''','''+Params.FindParam('BARCODE').asString+
+         ''','''+Params.FindParam('SHOP_ID').asString+''','''+Params.FindParam('DEPT_ID').asString+''','''+Params.FindParam('CLIENT_ID').asString+
+         ''','+Params.FindParam('VHPAY_DATE').asString+','''+Params.FindParam('VHPAY_USER').asString+''','+Params.FindParam('VOUCHER_PRC').asString+
+         ','''+Params.FindParam('VOUCHER_TYPE').asString+''','+Params.FindParam('VHPAY_MNY').asString+','+Params.FindParam('AGIO_RATE').asString+
+         ','+Params.FindParam('AGIO_MONEY').asString+','''+Params.FindParam('FROM_ID').asString+''','''+Params.FindParam('CREA_DATE').asString+
+         ''','''+Params.FindParam('CREA_USER').asString+''','''+Params.FindParam('REMARK').asString+''',''00'','+GetTimeStamp(AGlobal.iDbType)+')';;
+}
+    Str:='insert into SAL_VHPAY_GLIDE(TENANT_ID,VHPAY_ID,BARCODE,SHOP_ID,DEPT_ID,CLIENT_ID,VHPAY_DATE,VHPAY_USER,'+
+         'VOUCHER_PRC,VOUCHER_TYPE,VHPAY_MNY,AGIO_RATE,AGIO_MONEY,FROM_ID,CREA_DATE,CREA_USER,REMARK,COMM,TIME_STAMP) '+
+         'values(:TENANT_ID,:VHPAY_ID,:BARCODE,:SHOP_ID,:DEPT_ID,:CLIENT_ID,:VHPAY_DATE,:VHPAY_USER,:VOUCHER_PRC,'+
+         ':VOUCHER_TYPE,:VHPAY_MNY,:AGIO_RATE,:AGIO_MONEY,:FROM_ID,:CREA_DATE,:CREA_USER,:REMARK,''00'','+GetTimeStamp(AGlobal.iDbType)+')';
+    AGlobal.ExecSQL(Str,params);
+    AGlobal.CommitTrans;
+
+    Result := true;
+    Msg := '撤消成功';
+  except
+    on E:Exception do
+      begin
+        Result := false;
+        Msg := '撤消错误'+E.Message;
+        AGlobal.RollbackTrans;
+      end;
+  end;
+end;
+
 initialization
   RegisterClass(TVhPayGlide);
-
+  RegisterClass(TUpdateVhPayGlide);
 finalization
   UnRegisterClass(TVhPayGlide);
+  UnRegisterClass(TUpdateVhPayGlide);
 
 end.

@@ -7,9 +7,9 @@ inherited frmVhSendOrder: TfrmVhSendOrder
   PixelsPerInch = 96
   TextHeight = 12
   inherited RzPanel1: TRzPanel
-    Width = 787
+    Width = 795
     inherited RzPanel2: TRzPanel
-      Width = 777
+      Width = 785
       Height = 103
       object Label3: TLabel [0]
         Left = 31
@@ -265,14 +265,14 @@ inherited frmVhSendOrder: TfrmVhSendOrder
       end
     end
     inherited RzPanel3: TRzPanel
-      Top = 348
-      Width = 777
+      Top = 359
+      Width = 785
       Height = 26
     end
     inherited DBGridEh1: TDBGridEh
       Top = 145
-      Width = 777
-      Height = 203
+      Width = 785
+      Height = 214
       OnDrawFooterCell = DBGridEh1DrawFooterCell
       OnKeyPress = DBGridEh1KeyPress
       Columns = <
@@ -295,6 +295,7 @@ inherited frmVhSendOrder: TfrmVhSendOrder
         item
           EditButtons = <>
           FieldName = 'AMOUNT'
+          Footer.ValueType = fvtSum
           Footers = <>
           Title.Caption = #25968#37327
           Width = 53
@@ -359,10 +360,10 @@ inherited frmVhSendOrder: TfrmVhSendOrder
         end>
     end
     inherited stbHint: TRzPanel
-      Width = 777
+      Width = 785
     end
     inherited rzHelp: TRzPanel
-      Width = 777
+      Width = 785
     end
     object edtVOUCHER_ID: TzrComboBoxList
       Left = 160
@@ -432,7 +433,7 @@ inherited frmVhSendOrder: TfrmVhSendOrder
     object RzPanel5: TRzPanel
       Left = 5
       Top = 108
-      Width = 777
+      Width = 785
       Height = 37
       Align = alTop
       BorderOuter = fsFlat

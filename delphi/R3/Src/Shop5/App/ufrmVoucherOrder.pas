@@ -39,6 +39,8 @@ type
     procedure edtInputKeyPress(Sender: TObject; var Key: Char);
     procedure edtVOUCHER_PRCPropertiesChange(Sender: TObject);
     procedure edtVUCH_NAMEPropertiesChange(Sender: TObject);
+    procedure DBGridEh1DrawFooterCell(Sender: TObject; DataCol,
+      Row: Integer; Column: TColumnEh; Rect: TRect; State: TGridDrawState);
   private
     { Private declarations }
     //procedure FocusNextColumn;
@@ -367,6 +369,27 @@ begin
     end;
   if str='.' then result := false;
   if str='-' then result := false;
+end;
+
+procedure TfrmVoucherOrder.DBGridEh1DrawFooterCell(Sender: TObject;
+  DataCol, Row: Integer; Column: TColumnEh; Rect: TRect;
+  State: TGridDrawState);
+var R:TRect;
+  s:string;
+begin
+  inherited;
+  if Column.FieldName = 'BARCODE' then
+     begin
+       R.Left := Rect.Left;
+       R.Top := Rect.Top ;
+       R.Bottom := Rect.Bottom;
+       R.Right := Rect.Right;
+
+       DBGridEh1.Canvas.FillRect(R);
+       s := XDictFactory.GetMsgStringFmt('frame.OrderFooterLabel','合 计 共%s张',[Inttostr(cdsDetail.RecordCount)]);
+       DBGridEh1.Canvas.Font.Style := [fsBold];
+       DBGridEh1.Canvas.TextRect(R,(Rect.Right-Rect.Left-DBGridEh1.Canvas.TextWidth(s)) div 2,Rect.Top+2,s);
+     end;
 end;
 
 end.

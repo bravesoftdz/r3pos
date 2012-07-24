@@ -262,6 +262,7 @@ inherited frmVoucherOrder: TfrmVoucherOrder
       Height = 266
       PopupMenu = PopupMenu1
       TabOrder = 2
+      OnDrawFooterCell = DBGridEh1DrawFooterCell
       Columns = <
         item
           EditButtons = <>

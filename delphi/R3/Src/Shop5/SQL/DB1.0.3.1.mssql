@@ -1,0 +1,83 @@
+alter table MKT_KPI_MODIFY add KPI_DATE int NULL;
+
+alter table SAL_VOUCHERORDER add PRINT_TIMES int NULL;
+alter table SAL_VOUCHERORDER add PRINT_USER varchar(36) NULL;
+
+--1.4
+--alter table SAL_VOUCHERDATA alter column BARCODE varchar(60) not null;
+--alter table SAL_VHSENDDATA alter column BARCODE varchar(60) not null;
+--alter table SAL_VHPAY_GLIDE alter column BARCODE varchar(60) not null;
+
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('4','提货券','VOUCHER_TYPE','00',5497000);
+
+--受理类型
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('20','受理类型','CODE_TYPE','00',5497000);
+--服务方式
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('21','服务方式','CODE_TYPE','00',5497000);
+--服务质量
+insert into PUB_PARAMS(CODE_ID,CODE_NAME,TYPE_CODE,COMM,TIME_STAMP) values('22','服务质量','CODE_TYPE','00',5497000);
+
+--设备安装及维保登记表
+CREATE TABLE [SVC_SERVICE_INFO] (
+        --企业代码
+        [TENANT_ID] int  NOT NULL,
+        --流水ID号(内码)
+	[SRVR_ID] [char] (36) NOT NULL ,
+        --销售单号  
+	[SALES_ID] [char] (36) NOT NULL ,
+        --商品单号  
+	[GODS_ID] [char] (36) NULL ,
+        --商品名称  
+	[GODS_NAME] [varchar] (50) NULL ,
+        --产品序列号  
+	[SERIAL_NO] [varchar] (50) NULL ,
+        --客户  
+	[CLIENT_ID] [char] (36) NOT NULL ,
+        --用户号
+	[CLIENT_CODE] [varchar] (30) NULL ,
+        --联系人
+	[LINKMAN] [varchar] (30) NULL ,
+        --联系电话
+	[TELEPHONE] [varchar] (30) NULL ,
+        --地址
+	[ADDRESS] [varchar] (120) NULL ,
+        --受理类型  
+	[RECV_CLASS] [varchar] (36) NOT NULL ,
+        --问题描述  
+	[PROB_DESC] [varchar] (200) NULL ,
+        --受理时间
+	[RECV_DATE] int NULL ,
+        --受理人员
+	[RECV_USER] [varchar] (36) NULL ,
+        --服务方式  
+	[SRVR_CLASS] [varchar] (36) NOT NULL ,
+        --指派人员
+	[SRVR_USER] [varchar] (36) NULL ,
+	--处理日期
+	[SRVR_DATE] int NULL ,
+        --处理描述  
+	[SRVR_DESC] [varchar] (200) NULL ,
+        --是否收费  0 不收费 1收费
+	[FEE_FLAG] [char] (1) NULL ,
+        --费用金额
+	[FEE_MNY] [decimal](18, 3) NULL ,
+        --服务质量
+	[SATI_DEGR] [varchar] (36) NULL ,
+         --操作时间
+	[CREA_DATE] [varchar] (30) NULL ,
+        --操作人员
+	[CREA_USER] [varchar] (36) NULL ,
+        --通讯标志
+	[COMM] [varchar] (2) NOT NULL CONSTRAINT [DF_SVC_SERVICE_INFO_COMM] DEFAULT ('00'),
+        --时间戳 当前系统日期*86400000
+        [TIME_STAMP] bigint NOT NULL,
+  CONSTRAINT [PK_SVC_SERVICE_INFO] PRIMARY KEY 
+  ( 
+		[TENANT_ID],
+		[SRVR_ID]
+  )
+);
+CREATE INDEX IX_SVC_SERVICE_INFO_TENANT_ID ON SVC_SERVICE_INFO(TENANT_ID);
+CREATE INDEX IX_SVC_SERVICE_INFO_SALES_ID ON SVC_SERVICE_INFO(TENANT_ID,SALES_ID);
+CREATE INDEX IX_SVC_SERVICE_INFO_RECV_DATE ON SVC_SERVICE_INFO(TENANT_ID,RECV_DATE);
+CREATE INDEX IX_SVC_SERVICE_INFO_SRVR_DATE ON SVC_SERVICE_INFO(TENANT_ID,SRVR_DATE);

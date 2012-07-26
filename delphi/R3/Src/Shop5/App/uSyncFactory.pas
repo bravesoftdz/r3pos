@@ -1494,7 +1494,7 @@ begin
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
-
+{
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -1570,7 +1570,7 @@ begin
     rs_c.Free;
     cs_c.Free;
   end;
-
+}
   if (SFVersion='.NET') and not Global.Debug then //连锁版只下载日账，不上传
      begin
        SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);
@@ -1952,7 +1952,7 @@ begin
   Params.ParamByName('END_TIME_STAMP').Value := EndTimeStamp;
   //如果上次上报时间，大于等截止时间戳时，不需要同步
   if (EndTimeStamp>0) and (Params.ParamByName('TIME_STAMP').Value>=EndTimeStamp) then Exit;
-
+{
   LogFile.AddLogFile(0,'开始<'+tbName+'>上次时间:'+Params.ParamByName('TIME_STAMP').asString+'  本次时间:'+inttostr(SyncTimeStamp));
   ls := TZQuery.Create(nil);
   cs_h := TZQuery.Create(nil);
@@ -2019,7 +2019,7 @@ begin
     rs_s.Free;
     cs_s.Free;
   end;
-
+}
   if (SFVersion='.NET') and not Global.Debug then //连锁版只下载月账，不上传
      begin
        SetSynTimeStamp(tbName,SyncTimeStamp,Global.SHOP_ID);

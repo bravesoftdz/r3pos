@@ -295,44 +295,40 @@ begin
   begin
     strSql:=
       'select '+
-      ' A.DEPT_ID as DEPT_ID,'+
-      ' (B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
-      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
-      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
-      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
-      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
-           '  B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+strWhere+' ';
+      ' A.TENANT_ID,A.DEPT_ID as DEPT_ID,'+
+      ' sum(B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
+      ' sum(B.KPI_MNY) as KPI_MNY,'+     //返利金额
+      ' sum(B.BUDG_MNY) as BUDG_MNY,'+   //市场费用
+      ' sum(B.AGIO_MNY) as AGIO_MNY,'+   //价格支持
+      ' sum(B.OTHR_MNY) as OTHR_MNY '+   //其他金额
+      ' from MKT_ATTHORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
+           '  B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+strWhere+' '+
+      'group by A.TENANT_ID,A.DEPT_ID';
   end else
   begin
     strSql:=
       'select '+
-      ' A.DEPT_ID as DEPT_ID,'+
-      ' (B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
-      ' B.KPI_MNY as KPI_MNY,'+     //返利金额
-      ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
-      ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
-      ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
+      ' A.TENANT_ID,A.DEPT_ID as DEPT_ID,'+
+      ' sum(B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
+      ' sum(B.KPI_MNY) as KPI_MNY,'+     //返利金额
+      ' sum(B.BUDG_MNY) as BUDG_MNY,'+   //市场费用
+      ' sum(B.AGIO_MNY) as AGIO_MNY,'+   //价格支持
+      ' sum(B.OTHR_MNY) as OTHR_MNY '+   //其他金额
       ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
       ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+
-      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
+      ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
+      'group by A.TENANT_ID,A.DEPT_ID';
   end;
 
   Result :=ParseSQL(Factor.iDbType,
      'select '+
-     ' K.DEPT_ID as DEPT_ID,'+
-     ' DEPT.DEPT_NAME as DEPT_NAME,'+
-     ' sum(CALC_AMOUNT) as CALC_AMOUNT,'+
-     ' sum(KPI_MNY) as KPI_MNY,'+
-     ' sum(BUDG_MNY) as BUDG_MNY,'+
-     ' sum(AGIO_MNY) as AGIO_MNY,'+
-     ' sum(OTHR_MNY) as OTHR_MNY '+
+     ' K.*,'+
+     ' DEPT.DEPT_NAME as DEPT_NAME '+
      ' from ('+strSql+')K '+
-     ' left outer join (select DEPT_ID,DEPT_NAME from CA_DEPT_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')DEPT '+
-     ' on K.DEPT_ID=DEPT.DEPT_ID '+
-     ' Group by K.DEPT_ID,DEPT.DEPT_NAME '
+     ' left outer join CA_DEPT_INFO DEPT '+
+     ' on K.TENANT_ID=DEPT.TENANT_ID K.DEPT_ID=DEPT.DEPT_ID '
      );
 end;
 
@@ -386,30 +382,25 @@ begin
   strSql:=
     'select '+
     ' D.REGION_ID as REGION_ID,'+
-    ' (B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
-    ' B.KPI_MNY as KPI_MNY,'+     //返利金额
-    ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
-    ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
-    ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-    ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
+    ' sum(B.CALC_AMOUNT/'+UnitCalc+') as CALC_AMOUNT,'+  //返还数量
+    ' sum(B.KPI_MNY) as KPI_MNY,'+     //返利金额
+    ' sum(B.BUDG_MNY) as BUDG_MNY,'+   //市场费用
+    ' sum(B.AGIO_MNY) as AGIO_MNY,'+   //价格支持
+    ' sum(B.OTHR_MNY) as OTHR_MNY '+   //其他金额
+    ' from MKT_ATTHORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
           ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+
-          ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
+          ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
+    'group by D.REGION_ID';
 
   Result :=ParseSQL(Factor.iDbType,  
      'select '+
-     ' K.REGION_ID as REGION_ID,'+
-     ' isnull(Area.CODE_NAME,''无'') as CODE_NAME,'+
-     ' sum(CALC_AMOUNT) as CALC_AMOUNT,'+
-     ' sum(KPI_MNY) as KPI_MNY,'+
-     ' sum(BUDG_MNY) as BUDG_MNY,'+
-     ' sum(AGIO_MNY) as AGIO_MNY,'+
-     ' sum(OTHR_MNY) as OTHR_MNY '+
+     ' K.*,'+
+     ' isnull(Area.CODE_NAME,''无'') as CODE_NAME '+
      ' from ('+strSql+')K '+
      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0)Area '+
-     ' on K.REGION_ID=Area.CODE_ID '+
-     ' Group by K.REGION_ID,Area.CODE_NAME '
-     ); 
+     ' on K.REGION_ID=Area.CODE_ID '
+     );
      
 end;
 
@@ -531,8 +522,8 @@ begin
     ' sum(B.BUDG_MNY) as BUDG_MNY,'+   //市场费用
     ' sum(B.AGIO_MNY) as AGIO_MNY,'+   //价格支持
     ' sum(B.OTHR_MNY) as OTHR_MNY '+   //其他金额
-    ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
+    ' from MKT_ATTHORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
           ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+
           ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
     ' Group by A.CLIENT_ID,D.CLIENT_NAME ';
@@ -603,8 +594,8 @@ begin
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
       ' B.OTHR_MNY as OTHR_MNY '+   //其他金额
-      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
+      ' from MKT_ATTHORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
             ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID '+strWhere+strCnd+' ';
   end else
   begin
@@ -621,8 +612,8 @@ begin
       ' B.BUDG_MNY as BUDG_MNY,'+   //市场费用
       ' B.AGIO_MNY as AGIO_MNY,'+   //价格支持
       ' B.OTHR_MNY as OTHR_MNY '+   //其他金额       
-      ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
-      ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
+      ' from MKT_ATTHORDER A,MKT_ATTHDATA B,VIW_GOODSINFO C,VIW_CUSTOMER D '+
+      ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
             ' B.TENANT_ID=C.TENANT_ID and B.GODS_ID=C.GODS_ID and '+ 
             ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
   end;
@@ -634,14 +625,14 @@ begin
      ' K.GODS_NAME as GODS_NAME,'+
      ' K.BARCODE as BARCODE,'+
      ' K.GODS_CODE as GODS_CODE,'+
-     ' K.UNIT_ID as UNIT_ID,'+     
+     ' K.UNIT_ID as UNIT_ID,'+
      ' sum(CALC_AMOUNT) as CALC_AMOUNT,'+
      ' sum(KPI_MNY) as KPI_MNY,'+
      ' sum(BUDG_MNY) as BUDG_MNY,'+
      ' sum(AGIO_MNY) as AGIO_MNY,'+
      ' sum(OTHR_MNY) as OTHR_MNY '+
      ' from ('+strSql+')K '+
-     ' Group by K.TENANT_ID,K.GODS_ID,K.GODS_NAME) j '+
+     ' Group by K.TENANT_ID,K.GODS_ID,K.GODS_NAME,K.BARCODE,K.GODS_CODE,K.UNIT_ID) j '+
      ' left outer join VIW_MEAUNITS u on j.TENANT_ID=u.TENANT_ID and j.UNIT_ID=u.UNIT_ID '
      );
 end;
@@ -715,8 +706,8 @@ begin
     ' A.CREA_USER as CREA_USER,'+      //创建人
     ' A.CHK_DATE as CHK_DATE,'+        //审核日期
     ' A.CHK_USER as CHK_USER '+        //审核人
-    ' from MKT_REQUORDER A,MKT_ATTHDATA B,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.ATTH_ID and '+
+    ' from MKT_ATTHORDER A,MKT_ATTHDATA B,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.ATTH_ID=B.ATTH_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID  '+strWhere+strCnd+' ';
 
   Result :=ParseSQL(Factor.iDbType,

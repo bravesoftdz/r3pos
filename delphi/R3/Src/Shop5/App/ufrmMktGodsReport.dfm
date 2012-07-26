@@ -6,30 +6,30 @@ inherited frmMktGodsReport: TfrmMktGodsReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 978
-    Height = 522
+    Width = 970
+    Height = 511
     inherited RzPanel2: TRzPanel
-      Width = 968
-      Height = 512
+      Width = 960
+      Height = 501
       inherited RzPage: TRzPageControl
-        Width = 763
-        Height = 506
-        ActivePage = TabSheet4
+        Width = 755
+        Height = 495
+        ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
-        TabIndex = 3
+        TabIndex = 4
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #37096#38376#21830#21697#30003#39046#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             inherited Panel4: TPanel
-              Width = 751
-              Height = 469
+              Width = 743
+              Height = 458
               inherited w1: TRzPanel
-                Width = 751
+                Width = 743
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -338,11 +338,11 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 751
-                Height = 391
+                Width = 743
+                Height = 380
                 inherited DBGridEh1: TDBGridEh
-                  Width = 747
-                  Height = 387
+                  Width = 739
+                  Height = 376
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -430,8 +430,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -439,8 +439,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 751
-              Height = 469
+              Width = 743
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -448,14 +448,14 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel19: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 751
+                Width = 743
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  751
+                  743
                   78)
                 object Label4: TLabel
                   Left = 24
@@ -502,7 +502,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                   Caption = #21830#21697#21517#31216
                 end
                 object Label24: TLabel
-                  Left = 612
+                  Left = 604
                   Top = 57
                   Width = 48
                   Height = 12
@@ -748,7 +748,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP2_UNIT_ID: TcxComboBox
-                  Left = 662
+                  Left = 654
                   Top = 52
                   Width = 80
                   Height = 20
@@ -765,8 +765,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel20: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 751
-                Height = 391
+                Width = 743
+                Height = 380
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -774,8 +774,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 747
-                  Height = 387
+                  Width = 739
+                  Height = 376
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -903,8 +903,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -912,8 +912,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 751
-              Height = 469
+              Width = 743
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -921,14 +921,14 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 751
+                Width = 743
                 Height = 77
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  751
+                  743
                   77)
                 object Label11: TLabel
                   Left = 24
@@ -975,7 +975,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                   Caption = #21830#21697#21517#31216
                 end
                 object Label25: TLabel
-                  Left = 612
+                  Left = 604
                   Top = 56
                   Width = 48
                   Height = 12
@@ -1221,7 +1221,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP3_UNIT_ID: TcxComboBox
-                  Left = 663
+                  Left = 655
                   Top = 52
                   Width = 80
                   Height = 20
@@ -1238,8 +1238,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 77
-                Width = 751
-                Height = 392
+                Width = 743
+                Height = 381
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1376,8 +1376,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1385,8 +1385,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 751
-              Height = 469
+              Width = 743
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1394,14 +1394,14 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 751
+                Width = 743
                 Height = 100
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  751
+                  743
                   100)
                 object Label19: TLabel
                   Left = 24
@@ -1761,8 +1761,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 100
-                Width = 751
-                Height = 369
+                Width = 743
+                Height = 358
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1770,8 +1770,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 747
-                  Height = 365
+                  Width = 739
+                  Height = 354
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1908,8 +1908,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1917,8 +1917,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
             object Panel7: TPanel
               Left = 5
               Top = 5
-              Width = 751
-              Height = 469
+              Width = 743
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1926,7 +1926,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel9: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 751
+                Width = 743
                 Height = 100
                 Align = alTop
                 BorderOuter = fsGroove
@@ -2268,8 +2268,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
               object RzPanel10: TRzPanel
                 Left = 0
                 Top = 100
-                Width = 751
-                Height = 369
+                Width = 743
+                Height = 358
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2277,8 +2277,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 747
-                  Height = 365
+                  Width = 739
+                  Height = 354
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2366,7 +2366,7 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                       FieldName = 'GODS_NAME'
                       Footers = <>
                       Title.Caption = #21830#21697#21517#31216
-                      Width = 70
+                      Width = 153
                     end
                     item
                       EditButtons = <>
@@ -2424,37 +2424,17 @@ inherited frmMktGodsReport: TfrmMktGodsReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'REQU_YEAR'
-                      Footers = <>
-                      Title.Caption = #30003#39046#24180#20221
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'DEPT_NAME'
                       Footers = <>
                       Title.Caption = #25152#23646#37096#38376
-                      Width = 72
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'REQU_TYPE'
-                      Footers = <>
-                      Title.Caption = #36153#29992#31867#22411
-                      Width = 59
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CREA_DATE'
-                      Footers = <>
-                      Title.Caption = #25805#20316#26102#38388
-                      Width = 70
+                      Width = 89
                     end
                     item
                       EditButtons = <>
                       FieldName = 'REMARK'
                       Footers = <>
                       Title.Caption = #22791#27880
-                      Width = 80
+                      Width = 207
                     end
                     item
                       EditButtons = <>
@@ -2498,8 +2478,8 @@ inherited frmMktGodsReport: TfrmMktGodsReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 766
-        Height = 506
+        Left = 758
+        Height = 495
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2515,15 +2495,15 @@ inherited frmMktGodsReport: TfrmMktGodsReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 978
+    Width = 970
     inherited Image3: TImage
-      Width = 73
+      Width = 61
     end
     inherited Image14: TImage
-      Left = 958
+      Left = 950
     end
     inherited Image1: TImage
-      Left = 423
+      Left = 415
       Width = 535
     end
     inherited rzPanel5: TPanel

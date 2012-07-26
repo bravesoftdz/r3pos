@@ -4,20 +4,23 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs,ufrmMMPlayer;
+  Dialogs,ufrmMMPlayer, ExtCtrls;
   
 const
   MM_PLAYER = '{D51AB2C4-FFEE-414B-890B-30071D941E97}';
   
 type
   TfrmMainPlayer = class(TForm)
+    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     { Private declarations }
     Keyid:integer;
   public
     { Public declarations }
+    procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure WMTPosDisplay(var Message: TMessage); message WM_TPOS_DISPLAY;
   end;
 
@@ -77,10 +80,10 @@ begin
   end;
   Keyid:=GlobalAddAtom('playStore');
   RegisterHotKey(Handle,Keyid,MOD_CONTROL+MOD_SHIFT,VK_F12);
-  whMouse := SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallBack,
-    hInstance,
-    0
-    );
+//  whMouse := SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallBack,
+//    hInstance,
+//    0
+//    );
   MMonitor := MonitorfromWindow(Application.Handle);
   MIndex := FindMonitorIndex(MMonitor);
   sTop := MMonitor.Top;
@@ -96,9 +99,30 @@ end;
 
 procedure TfrmMainPlayer.FormDestroy(Sender: TObject);
 begin
-  UnhookWindowsHookEx(whMouse);
+//  UnhookWindowsHookEx(whMouse);
   UnRegisterHotKey(handle,Keyid);
 
+end;
+
+procedure TfrmMainPlayer.Timer1Timer(Sender: TObject);
+var
+  lpRect:PRect;
+begin
+       new(lpRect);
+       try
+         lpRect^  := MMonitor.BoundsRect;
+         ClipCursor(lpRect);
+       finally
+         dispose(lpRect);
+       end;
+end;
+
+procedure TfrmMainPlayer.WMHotKey(var Msg: TWMHotKey);
+begin
+  if (msg.HotKey = Keyid) then
+     begin
+       frmMMPlayer.Show;
+     end;
 end;
 
 initialization

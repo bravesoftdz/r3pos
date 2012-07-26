@@ -88,6 +88,7 @@ type
     constructor Create(AOwner: TWinControl); virtual;
     destructor Destroy; override;
 
+    procedure DoTimerNext;
     function Open(src:PSrcDefine):boolean;virtual;
     procedure Pause;virtual;
     procedure resume;virtual;
@@ -119,10 +120,13 @@ type
   TrzVideoMonitor=class(TrzMonitor)
   private
     Handle:THandle;
+    Cursrc:PSrcDefine;
     FilterGraph:TFilterGraph;
     procedure FilterGraphGraphComplete(sender: TObject;Result: HRESULT; Renderer: IBaseFilter);
     procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
     procedure WndProc(var Message: TMessage);
+    procedure GraphPausedEvent(sender: TObject; Result: HRESULT);
+    function WaitForSendMessage:boolean;
   public
     function Open(src:PSrcDefine):boolean;override;
     procedure Close;override;
@@ -135,6 +139,7 @@ type
   TrzMusicMonitor=class(TrzMonitor)
   private
     Handle:THandle;
+    Cursrc:PSrcDefine;
     FilterGraph:TFilterGraph;
     procedure FilterGraphGraphComplete(sender: TObject;Result: HRESULT; Renderer: IBaseFilter);
     procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
@@ -197,6 +202,7 @@ type
     FMonitorLen: integer;
     FVedioLen: integer;
     FProgramCount: integer;
+    Handle:THandle;
     procedure SetProgramId(const Value: string);
     procedure SetProgramLen(const Value: integer);
     procedure SetProgramSeq(const Value: integer);
@@ -214,6 +220,8 @@ type
     procedure TimerComplete(Sender:TObject);
     function PlayEnd:boolean;
     function PlayNext:boolean;
+    procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
+    procedure WndProc(var Message: TMessage);
   public
     constructor Create(AOwner: TWinControl;PlayList:TrzPlayList);
     destructor Destroy; override;
@@ -261,6 +269,7 @@ type
     FPlayTimes: integer;
     FProgramLen: integer;
     FPlayCount: integer;
+    Handle:THandle;
     procedure SetPlayListId(const Value: string);
     procedure SetPlayListLen(const Value: integer);
     procedure SetPlayType(const Value: integer);
@@ -276,18 +285,20 @@ type
     procedure SetProgramLen(const Value: integer);
     procedure SetPlayCount(const Value: integer);
   protected
+    procedure WMPlayEnd(var Message: TMessage); message WM_PLAY_END;
     procedure TimerComplete(Sender:TObject);
     procedure PlayNext;
     procedure Sort;
     function PlayEnd:boolean;
     procedure WriteToFile;
+    procedure WndProc(var Message: TMessage);
   public
     constructor Create(AOwner: TWinControl;AFile:TrzFile);
     destructor Destroy; override;
     procedure Clear;
     //引导节目
     procedure Open(root:IXMLDOMNode);
-    function reLoad:boolean;
+    function  reLoad:boolean;
     procedure Close;
     procedure Play;
     procedure Pause;
@@ -317,7 +328,6 @@ type
     FList:TList;
     Timer:TTimer;
     Findex: integer;
-    maxLen:int64;
     playLen:int64;
     dayPlayFile:string;
     curPlayList:TrzPlayList;
@@ -393,8 +403,9 @@ var
   logFlag:string='110000';
   AppPath,AppData:string;
   resDay:integer=30;
+  DefVMRVideoMode:TVMRVideoMode=vmrWindowless;
 implementation
-uses ScrnCtrl;
+uses ScrnCtrl,ufrmRzPlayer;
 procedure SendDebug(s:string;flag:integer=0);
 var
   buf:Pchar;
@@ -522,6 +533,13 @@ begin
   Timer.Enabled := (dpyLength > 0);
 end;
 
+procedure TrzMonitor.DoTimerNext;
+begin
+  Timer.Enabled := false;
+  Timer.Interval := 1000;
+  Timer.Enabled := true;
+end;
+
 function TrzMonitor.GetSrcCount: integer;
 begin
   result := FList.Count;
@@ -557,12 +575,26 @@ begin
        Ended := true;
        inc(FplayTimes);
      end;
-  if rcProgram.PlayNext then Exit;
+  if rcProgram.PlayEnd then
+     begin
+       PostMessage(rcProgram.Handle,WM_PLAY_END,0,0);
+       Exit;
+     end;
   if SrcCount<=0 then exit;
   index := index+1;
   if index<0 then index := 0;
   if ended and (index=0) then  ended := false;
-  Open(srcs[index]);
+
+  try
+    Open(srcs[index]);
+  except
+    on E:Exception do
+       begin
+         SendDebug('播放出错了，软件自动清除非法节目<'+inttostr(index)+'>，原因："'+E.Message+'"',1);
+         DelSrc(srcs[index]);
+         DoTimerNext;
+       end;
+  end;
 end;
 
 procedure TrzMonitor.resume;
@@ -676,9 +708,10 @@ procedure TrzVideoMonitor.Close;
 begin
   display.Visible := false;
   Timer.Enabled := false;
-  FilterGraph.Stop;
-  FilterGraph.ClearGraph;
+  if not WaitForSendMessage then exit;
   FilterGraph.Active := False;
+  if not WaitForSendMessage then exit;
+  FilterGraph.ClearGraph;
   index := -1;
 end;
 
@@ -688,11 +721,14 @@ begin
   Handle := AllocateHwnd(WndProc);
   FilterGraph := TFilterGraph.Create(nil);
   FilterGraph.OnGraphComplete := FilterGraphGraphComplete;
+//  FilterGraph.OnGraphPaused  := GraphPausedEvent;
   display := TVideoWindow.Create(AOwner);
   with TVideoWindow(display) do
      begin
        Mode := vmVMR;
        VMROptions.KeepAspectRatio := false;
+       VMROptions.Mode := vmrWindowless;
+       //VMROptions.Preferences := [vpRestrictToInitialMonitor];
        FilterGraph := self.FilterGraph;
        Align := alNone;
        Parent := AOwner;
@@ -717,21 +753,33 @@ begin
   PostMessage(Handle,WM_PLAY_END,0,0);
 end;
 
+procedure TrzVideoMonitor.GraphPausedEvent(sender: TObject;
+  Result: HRESULT);
+begin
+  SendDebug('被暂停了',4);
+  result := E_NOTIMPL;
+end;
+
 function TrzVideoMonitor.Open(src: PSrcDefine): boolean;
 var
   hCurWindow,CurActiveWindow: HWnd;  // 窗口句柄
 begin
   SendDebug('第'+inttostr(playTimes+1)+'次播放视屏<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
+  Cursrc := src;
   hCurWindow:=GetForegroundWindow();
   Timer.Enabled := false;
   display.Visible := true;
-  FilterGraph.Stop;
+  if not WaitForSendMessage then exit;
   FilterGraph.ClearGraph;
+  if not WaitForSendMessage then exit;
   FilterGraph.Active := False;
+  if not WaitForSendMessage then exit;
   FilterGraph.Active := True;
+  if not WaitForSendMessage then exit;
   if fileExists(src^.src) then
      begin
         FilterGraph.RenderFile(src^.src);
+        if not WaitForSendMessage then exit;
         if src^.volume>=0 then FilterGraph.Volume := src^.volume*100;
         FilterGraph.Play;
         dpyStart := GetTickCount div 1000;
@@ -743,7 +791,6 @@ begin
               SendDebug('窗口切换',4);
               ForceForegroundWindow(hCurWindow);
            end;
-        //DoTimer;
         result := true;
      end
   else
@@ -755,14 +802,45 @@ end;
 procedure TrzVideoMonitor.Pause;
 begin
   inherited;
+  if not WaitForSendMessage then exit;
   FilterGraph.Pause;
 end;
 
 procedure TrzVideoMonitor.resume;
 begin
   inherited;
-//  if FilterGraph.State<>gsPlaying then
-     FilterGraph.Play;
+//  if FilterGraph.State=gsStopped then
+//     PostMessage(Handle,WM_PLAY_END,0,0)
+//  else
+//     begin
+  try
+    Open(curSrc);
+  except
+    PostMessage(Handle,WM_PLAY_END,0,0);
+    SendDebug('锁屏重播失败了',0);
+  end;
+//     end;
+end;
+
+function TrzVideoMonitor.WaitForSendMessage: boolean;
+var
+  _Start:Int64;
+begin
+  //_Start := GetTickCount;
+  result := true;
+  Exit;
+  while not Application.Terminated and InSendMessage() do
+    begin
+      Application.HandleMessage;
+      sleep(1);
+      if (GetTickCount-_Start)>10000 then
+          begin
+            SendDebug('等待sendMessage消息超时',4);
+            PostMessage(Handle,WM_PLAY_END,0,0);
+            result := false;
+            break;
+          end;
+    end;
 end;
 
 procedure TrzVideoMonitor.WMPlayEnd(var Message: TMessage);
@@ -989,6 +1067,7 @@ end;
 
 constructor TrzProgram.Create(AOwner: TWinControl;PlayList:TrzPlayList);
 begin
+  Handle := AllocateHwnd(WndProc);
   rzPlayList := PlayList;
   FList := TList.Create;
   Parant := AOwner;
@@ -999,6 +1078,7 @@ end;
 
 destructor TrzProgram.Destroy;
 begin
+  if Handle <> 0 then DeallocateHWnd(Handle);
   Timer.Free;
   Clear;
   FList.Free;
@@ -1339,7 +1419,11 @@ begin
       with TrzMonitor(flist[i]) do
         begin
           playTimes := _playTimes;
-          if SrcCount<=0 then continue;
+          if SrcCount<=0 then
+             begin
+               DoTimerNext;
+               continue;
+             end;
           //if index=0 then playTimes := 0;
           index := index+1;
           try
@@ -1351,6 +1435,7 @@ begin
                begin
                  SendDebug('播放出错了，软件自动清除非法节目<'+inttostr(index)+'>，原因："'+E.Message+'"',1);
                  DelSrc(srcs[index]);
+                 DoTimerNext;
                end;
           end;
         end;
@@ -1402,7 +1487,8 @@ begin
     begin
        if VedioLen=0 then
           begin
-            if TrzMonitor(flist[i]).playTimes<myTimes then
+            if  not ( (TrzMonitor(flist[i]).MonitorType<>mtMusic) or ((TrzMonitor(flist[i]).MonitorType=mtMusic) and (flist.Count=1))) then continue;
+            if (TrzMonitor(flist[i]).playTimes<myTimes) then
                begin
                  myTimes := TrzMonitor(flist[i]).playTimes;
                  if rzPlayList.PlayType=0 then
@@ -1442,7 +1528,8 @@ begin
         if rzPlayList.PlayType=0 then
            Plays.WriteInteger(rzPlaylist.rzFile.ProgramListId,'cache_program_Length',0);
         //SendDebug('节目"'+programId+'" 播放结束',4);
-        rzPlayList.PlayNext;
+        PostMessage(rzPlayList.Handle,WM_PLAY_END,0,0);
+        //rzPlayList.PlayNext;
      end;
 end;
 
@@ -1538,6 +1625,16 @@ begin
 
 end;
 
+procedure TrzProgram.WMPlayEnd(var Message: TMessage);
+begin
+  PlayNext;
+end;
+
+procedure TrzProgram.WndProc(var Message: TMessage);
+begin
+  Dispatch(Message);
+end;
+
 { TrzPlayList }
 
 procedure TrzPlayList.Clear;
@@ -1556,7 +1653,7 @@ var
   filename:string;
   n:integer;
 begin
-  filename := AppData+'\logs\'+formatDatetime('YYYYMMDD',now())+'.dat';
+  filename := AppData+'\data\'+formatDatetime('YYYYMMDD',now())+'.dat';
   F := TIniFile.Create(filename);
   try
     n := F.ReadInteger(rzFile.ProgramListId,PlayListId,0);
@@ -1568,6 +1665,7 @@ begin
 end;
 constructor TrzPlayList.Create(AOwner: TWinControl;AFile:TrzFile);
 begin
+  Handle := AllocateHwnd(WndProc);
   FList := TList.Create;
   Timer := TTimer.Create(nil);
   Timer.Enabled := false;
@@ -1581,6 +1679,7 @@ end;
 
 destructor TrzPlayList.Destroy;
 begin
+  if Handle <> 0 then DeallocateHWnd(Handle);
   Timer.Free;
   curProgram := nil;
   Clear;
@@ -1709,7 +1808,6 @@ begin
        NearTime := formatDatetime('YYYY-MM-DD HH:NN:SS',now());
        _Start := GetTickCount;
        Timer.Enabled := (Timer.Interval>0);
-       WriteToFile;
      end;
 end;
 
@@ -1730,6 +1828,7 @@ begin
   if PlayEnd then
      begin
        //SendDebug('第'+inttostr(playTimes+1)+'次播放"'+PlayListId+'"播表完毕',4);
+       WriteToFile;
        Close;
        index := -1;
        playTimes := 0;
@@ -1868,6 +1967,16 @@ begin
   FPlayCount := Value;
 end;
 
+procedure TrzPlayList.WMPlayEnd(var Message: TMessage);
+begin
+  PlayNext;
+end;
+
+procedure TrzPlayList.WndProc(var Message: TMessage);
+begin
+  Dispatch(Message);
+end;
+
 { TrzFile }
 
 procedure TrzFile.Clear;
@@ -1926,7 +2035,7 @@ begin
   xmlDoc.load(filename);
   node := xmlDoc.documentElement;
   ProgramListId := node.selectSingleNode('playbillId').text;
-  Period := StrtoIntDef(node.selectSingleNode('period').text,0);
+//  Period := StrtoIntDef(node.selectSingleNode('period').text,0);
   StartDate := node.selectSingleNode('starteDate').text;
   EndDate := node.selectSingleNode('endDate').text;
   ProgramListType := StrtoIntDef(node.selectSingleNode('playbillType').text,0);
@@ -2119,7 +2228,6 @@ begin
   if flist.Count=0 then exit;
   if SLocked then Exit;
   inc(playLen);
-  inc(maxLen);
   if (playlen mod 60)=0 then
      begin
        WriteToFile;
@@ -2197,19 +2305,22 @@ procedure TrzFile.WriteToFile;
 var
   F:TIniFile;
   filename:string;
+  mLen,pLen:integer;
 begin
-  filename := AppData+'\logs\'+formatDatetime('YYYYMMDD',now())+'.dat';
-  if (dayPlayFile<>filename) and (dayPlayFile<>'') then playLen := 0;
+  filename := AppData+'\data\'+formatDatetime('YYYYMMDD',now())+'.dat';
   F := TIniFile.Create(filename);
   try
     dayPlayFile := filename;
-    F.WriteInteger('playLength','maxLength',maxLen div 60);
-    F.WriteInteger('playLength','Length',playLen div 60);
+    mLen := F.ReadInteger('playLength','maxLength',0);
+    if (playLen div 60)>mLen then mLen := (playLen div 60)-1;
+    pLen := F.ReadInteger('playLength','Length',0);
+    F.WriteInteger('playLength','maxLength',mLen+1);
+    F.WriteInteger('playLength','Length',pLen+1);
   finally
     F.Free;
   end;
-  SendDebug('>>dayLength->maxLength->'+inttostr(maxLen div 60)+'分',4);
-  SendDebug('>>dayLength->Length->'+inttostr(playLen div 60)+'分',4);
+  SendDebug('>>dayLength->maxLength->'+inttostr(mLen+1)+'分',4);
+  SendDebug('>>dayLength->Length->'+inttostr(pLen+1)+'分',4);
 end;
 
 { TrzPlayIni }
@@ -2325,9 +2436,9 @@ end;
 procedure TrzMusicMonitor.Close;
 begin
   Timer.Enabled := false;
+  FilterGraph.Active := False;
   FilterGraph.Stop;
   FilterGraph.ClearGraph;
-  FilterGraph.Active := False;
   index := -1;
   inherited;
 
@@ -2363,10 +2474,11 @@ end;
 function TrzMusicMonitor.Open(src: PSrcDefine): boolean;
 begin
   SendDebug('第'+inttostr(playTimes+1)+'次播放音频<'+inttostr(index)+'>"'+src^.SourceId+'"',4);
+  Cursrc := src;
   Timer.Enabled := false;
+  FilterGraph.Active := False;
   FilterGraph.Stop;
   FilterGraph.ClearGraph;
-  FilterGraph.Active := False;
   FilterGraph.Active := True;
   if fileExists(src^.src) then
      begin
@@ -2393,8 +2505,12 @@ end;
 procedure TrzMusicMonitor.resume;
 begin
   inherited;
-     FilterGraph.Play;
-
+  try
+    Open(curSrc);
+  except
+    PostMessage(Handle,WM_PLAY_END,0,0);
+    SendDebug('锁屏重播失败了',0);
+  end;
 end;
 
 procedure TrzMusicMonitor.WMPlayEnd(var Message: TMessage);
@@ -2410,7 +2526,9 @@ begin
 end;
 
 initialization
-  Plays := TrzPlayIni.Create;
+  if not hExists then
+     Plays := TrzPlayIni.Create;
 finalization
-  Plays.Free;
+  if not hExists then
+     Plays.Free;
 end.

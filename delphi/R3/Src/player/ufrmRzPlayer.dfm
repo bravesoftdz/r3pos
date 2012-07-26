@@ -1,8 +1,8 @@
 object frmRzPlayer: TfrmRzPlayer
-  Left = 324
-  Top = 297
-  Width = 463
-  Height = 334
+  Left = 541
+  Top = 244
+  Width = 515
+  Height = 373
   BorderIcons = [biMaximize]
   Caption = #35270#23631#24191#21578
   Color = clBtnFace
@@ -11,6 +11,7 @@ object frmRzPlayer: TfrmRzPlayer
   Font.Height = -12
   Font.Name = #23435#20307
   Font.Style = []
+  FormStyle = fsStayOnTop
   Menu = MainMenu1
   OldCreateOrder = False
   Position = poScreenCenter
@@ -19,8 +20,8 @@ object frmRzPlayer: TfrmRzPlayer
   TextHeight = 12
   object Panel1: TPanel
     Left = 0
-    Top = 251
-    Width = 447
+    Top = 290
+    Width = 499
     Height = 25
     Align = alBottom
     TabOrder = 0
@@ -28,16 +29,16 @@ object frmRzPlayer: TfrmRzPlayer
   object Bkg: TPanel
     Left = 0
     Top = 0
-    Width = 447
-    Height = 251
+    Width = 499
+    Height = 290
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Memo1: TMemo
       Left = 0
       Top = 0
-      Width = 447
-      Height = 251
+      Width = 499
+      Height = 290
       Align = alClient
       BorderStyle = bsNone
       Color = clNavy
@@ -65,13 +66,6 @@ object frmRzPlayer: TfrmRzPlayer
       object N5: TMenuItem
         Caption = #38544#34255'  Ctrl+Shift+F12'
         OnClick = N5Click
-      end
-      object N8: TMenuItem
-        Caption = '-'
-      end
-      object N7: TMenuItem
-        Caption = #36864#20986
-        OnClick = N7Click
       end
     end
     object N3: TMenuItem
@@ -1894,14 +1888,6 @@ object frmRzPlayer: TfrmRzPlayer
       FFFF000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000}
   end
-  object RzTrayIcon1: TRzTrayIcon
-    Enabled = False
-    HideOnMinimize = False
-    Interval = 500
-    RestoreOn = ticNone
-    Left = 104
-    Top = 16
-  end
   object Timer1: TTimer
     Enabled = False
     Interval = 30000
@@ -1914,22 +1900,5 @@ object frmRzPlayer: TfrmRzPlayer
     OnTimer = Timer2Timer
     Left = 192
     Top = 80
-  end
-  object IdHTTP1: TIdHTTP
-    MaxLineAction = maException
-    ReadTimeout = 0
-    AllowCookies = True
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
-    Request.ContentLength = -1
-    Request.ContentRangeEnd = 0
-    Request.ContentRangeStart = 0
-    Request.ContentType = 'text/html'
-    Request.Accept = 'text/html, */*'
-    Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    HTTPOptions = [hoForceEncodeParams]
-    Left = 328
-    Top = 96
   end
 end

@@ -388,7 +388,6 @@ var
 begin
   hCurWindow:=GetForegroundWindow();
   FilterGraph1.ClearGraph;
-
   // --------------------------------------------------------------------------------------
   // This is a workaround the problem that we don't always get the EC_CLOCK_CHANGED.
   // and because we didn't get the EC_CLOCK_CHANGED the DSTrackbar and DSVideoWindowEx1
@@ -763,8 +762,8 @@ end;
 procedure TfrmMMPlayer.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
-  RzPanel1.Visible := false;
-  RzPanel1.Update;
+//  RzPanel1.Visible := false;
+//  RzPanel1.Update;
 end;
 
 procedure TfrmMMPlayer.FormCloseQuery(Sender: TObject;

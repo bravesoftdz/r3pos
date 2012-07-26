@@ -314,7 +314,7 @@ object frmMMPlayer: TfrmMMPlayer
       ColorControl.Sharpness = 5
       ColorControl.Gamma = 1
       ColorControl.ColorEnable = True
-      NoScreenSaver = False
+      NoScreenSaver = True
       OnOverlayVisible = DSVideoWindowEx1OverlayVisible
       Color = clBlack
       PopupMenu = PopupMenu1

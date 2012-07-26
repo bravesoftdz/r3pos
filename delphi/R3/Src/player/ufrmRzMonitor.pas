@@ -55,7 +55,7 @@ type
   end;
 var DeskWnd:THandle;
 implementation
-uses IniFiles,ScrnCtrl;
+uses IniFiles,ScrnCtrl, ufrmRzPlayer;
 {$R *.dfm}
 { TfrmRcMonitor }
 
@@ -64,12 +64,7 @@ begin
   if (Monitor<0) and (Screen.MonitorCount>1) then
      begin
        StartFullScreen(Screen.Monitors[GetMonitorExt])
-     end
-  else
-  if (Monitor<Screen.MonitorCount) and (Monitor>=0) then
-     StartFullScreen(Screen.Monitors[Monitor])
-  else
-     StartFullScreen(MMonitor);
+     end;
 end;
 
 procedure TfrmRzMonitor.StartFullScreen(OnMonitor: TMonitor);
@@ -108,7 +103,7 @@ begin
   Clear;
   FList.Free;
   FPList.Free;
-  DeleteCriticalSection(FThreadLock);
+  DeleteCriticalSection(FThreadLock);       
   inherited;
 end;
 
@@ -236,7 +231,7 @@ end;
 procedure TfrmRzMonitor.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
-  CanClose := false;
+//  CanClose := false;
 end;
 
 procedure TfrmRzMonitor.SetplayFile(const Value: TrzFile);
@@ -366,7 +361,8 @@ begin
   inherited CreateParams(Params);
   with Params do
     begin
-       WndParent:=FindWindow('Progman',nil);
+       WndParent:= FindWindow('Shell_TrayWnd',nil);
+       //WndParent:= frmRzPlayer.Handle;
     end;
 end;
 

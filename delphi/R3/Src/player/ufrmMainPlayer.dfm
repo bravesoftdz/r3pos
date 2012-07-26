@@ -15,4 +15,9 @@ object frmMainPlayer: TfrmMainPlayer
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 112
+    Top = 40
+  end
 end

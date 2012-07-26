@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, DSPack, DirectShow9, StdCtrls, ActiveX, DSUtil, Menus, rzCtrls,
   ExtCtrls, ComCtrls, Buttons, ImgList, RzTray, RzStatus, RzPanel,ufrmRzMonitor,
-  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+  MPlayer;
 
 const
   RZ_PLAYER = '{878F551E-FE1B-4A89-B6BF-A49B300882A6}';
@@ -19,7 +20,6 @@ type
     Panel1: TPanel;
     ImageList1: TImageList;
     ImageList2: TImageList;
-    RzTrayIcon1: TRzTrayIcon;
     Bkg: TPanel;
     Memo1: TMemo;
     N4: TMenuItem;
@@ -28,9 +28,7 @@ type
     N6: TMenuItem;
     N1: TMenuItem;
     N2: TMenuItem;
-    N7: TMenuItem;
     N5: TMenuItem;
-    N8: TMenuItem;
     N9: TMenuItem;
     N10: TMenuItem;
     FATAL1: TMenuItem;
@@ -41,7 +39,6 @@ type
     RACE1: TMenuItem;
     N11: TMenuItem;
     Timer2: TTimer;
-    IdHTTP1: TIdHTTP;
     N12: TMenuItem;
     procedure Fullscreen1Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -58,13 +55,16 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure N12Click(Sender: TObject);
+    procedure vmrWindowed1Click(Sender: TObject);
+    procedure vmrWindowless1Click(Sender: TObject);
+    procedure vmrRenderless1Click(Sender: TObject);
   private
     FdefaultMonitor: integer;
     OsdChanged : Boolean;
-    Shut:boolean;
     LogDate:string;
     Keyid:integer;
-    locked:boolean;
+    locked,lockLogfile:boolean;
+    ShutSystem:boolean;
     procedure SetdefaultMonitor(const Value: integer);
     { Private declarations }
     procedure AppExecption(Sender: TObject; E: Exception);
@@ -74,6 +74,8 @@ type
     procedure WMHotKey(var Msg : TWMHotKey); message WM_HOTKEY;
     procedure RzPlayStart(var Message: TMessage); message WM_PLAY_START;
     procedure RzPlayClose(var Message: TMessage); message WM_PLAY_CLOSE;
+    procedure WMDisplayChange(var Message: TMessage); message WM_DISPLAYCHANGE;
+
     procedure Show;
     //清理资源
     procedure ClearRes;
@@ -109,7 +111,6 @@ const
   WH_MOUSE_LL=14;
   WH_KEYBOARD_LL=13;
 var
-  MutHandle:THandle;
   whMouse: HHook;
   whKeyboard: HHook;
   whMessage: HHook;
@@ -204,8 +205,11 @@ var
   i:Integer;
   F:TIniFile;
   Buf:array [0..255] of char;
+  hWnd:THandle;
 begin
   inherited;
+  lockLogfile := false;
+  ShutSystem := false;
   Application.OnMessage := AppMessage;
   AppPath := ExtractFileDir(ParamStr(0));
   fillchar(Buf,256,0);
@@ -223,25 +227,6 @@ begin
   finally
     F.Free;
   end;
-  Shut := false;
-  frmRzMonitor := TfrmRzMonitor.Create(nil);
-  Application.OnException := AppExecption;
-  Keyid:=GlobalAddAtom('playStore');
-  RegisterHotKey(Handle,Keyid,MOD_CONTROL+MOD_SHIFT,VK_F12);
-{
-  whMouse := SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallBack,
-    hInstance,
-    0
-    );
-}    
-  whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
-    hInstance,
-    0);
-    
-//  whMessage := SetWindowsHookEx(WH_GETMESSAGE, HookWinProc,
-//    hInstance,
-//    0
-//    );
 
   MMonitor := MonitorfromWindow(Application.Handle);
   MIndex := FindMonitorIndex(MMonitor);
@@ -251,17 +236,46 @@ begin
   sHeight := MMonitor.Height;
 
 
+  frmRzMonitor := TfrmRzMonitor.Create(nil);
+  Application.OnException := AppExecption;
+  Keyid:=GlobalAddAtom('playStore');
+  RegisterHotKey(Handle,Keyid,MOD_CONTROL+MOD_SHIFT,VK_F12);
+{
+  whMouse := SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallBack,
+    hInstance,
+    0
+    );
+}
+{  whKeyboard := SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallBack,
+    hInstance,
+    0);
+}
+//  whMessage := SetWindowsHookEx(WH_GETMESSAGE, HookWinProc,
+//    hInstance,
+//    0
+//    );
+
   Assert(SystemParametersInfo (SPI_SETLOWPOWERTIMEOUT, 0, nil, SPIF_SENDWININICHANGE));
   Assert(SystemParametersInfo (SPI_SETPOWEROFFTIMEOUT, 0, nil, SPIF_SENDWININICHANGE));
 //  Assert(SystemParametersInfo (SPI_SETSCREENSAVETIMEOUT, 0, nil, SPIF_SENDWININICHANGE));
-  
+
+
+  hWnd := FindWindow('Shell_TrayWnd',nil);
+  hWnd := FindWindowEx(hWnd,0,'TrayNotifyWnd',nil);
+  hWnd := FindWindowEx(hWnd,0,'TrayShowDesktopButtonWClass',nil);
+  EnableWindow(hWnd, false);
+  ShowWindow(hWnd, sw_Hide );
+//  hWnd := FindWindow('TaskSwitcherWnd',nil);
+//  EnableWindow(hWnd, false);
+//  SetWindowPos(Handle,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE or SWP_NOSIZE);
 end;
 
 destructor TfrmRzPlayer.Destroy;
 begin
+  Timer2.Enabled := false;
   Timer1.Enabled := false;
 //  UnhookWindowsHookEx(whMouse);
-  UnhookWindowsHookEx(whKeyboard);
+//  UnhookWindowsHookEx(whKeyboard);
 //  UnhookWindowsHookEx(whMessage);
   UnRegisterHotKey(handle,Keyid);
   frmRzMonitor.Free;
@@ -276,6 +290,7 @@ end;
 
 procedure TfrmRzPlayer.RzInit(var Message: TMessage);
 begin
+//  ParentWindow := FindWindow('Progman',nil);
   InitIpc;
   frmRzMonitor.Load;
   frmRzMonitor.Monitor := defaultMonitor;
@@ -306,6 +321,7 @@ var
 begin
   buf := pchar(Message.LParam);
   try
+    if lockLogfile then Exit;
     SetLength(s,Message.WParam);
     Move(Buf^,pchar(s)^,Message.WParam);
     Memo1.Lines.Add(s);
@@ -344,6 +360,9 @@ end;
 procedure TfrmRzPlayer.Timer1Timer(Sender: TObject);
 begin
 //  SetThreadExecutionState( ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED );
+  if lockLogfile then Exit;
+  if ShutSystem then Exit;
+
   if username='' then Subscribe;
 //  if GetScreenSaverRunning then
 //     begin
@@ -352,14 +371,19 @@ begin
 //     end;
   if (formatdatetime('YYYYMMDD',now())<>LogDate) then
      begin
-
-       Memo1.Lines.Clear;
-       if IsWorkStationLocked then Exit;
-//       SaveLogFile;
-       LogDate := formatdatetime('YYYYMMDD',now());
-       frmRzMonitor.Load;
-       frmRzMonitor.Play;
-       ClearRes;
+       lockLogfile := true;
+       Memo1.Lines.BeginUpdate;
+       try
+         Memo1.Lines.Clear;
+         if IsWorkStationLocked then Exit;
+         LogDate := formatdatetime('YYYYMMDD',now());
+         frmRzMonitor.Load;
+         frmRzMonitor.Play;
+         ClearRes;
+       finally
+         Memo1.Lines.EndUpdate;
+         lockLogfile := false;
+       end;
      end;
 end;
 
@@ -411,7 +435,7 @@ begin
        else
           Exit;
      end;
-  Shut := true;
+  ShutSystem := true;
   Application.MainForm.Close;
 end;
 
@@ -424,12 +448,14 @@ end;
 procedure TfrmRzPlayer.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
-  if not Shut then
+{  if not ShutSystem then
      begin
        CanClose := false;
        Hide;
        ShowWindow( Application.Handle, sw_Hide );
-     end;
+     end
+  else
+     XmlDown.CloseThread;    }
 end;
 
 procedure TfrmRzPlayer.ClearRes;
@@ -446,7 +472,7 @@ begin
         begin
           s := sr.Name;
           w := length(ExtractFileExt(sr.Name));
-          delete(s,length(s)-w-1,w);
+          delete(s,length(s)-w+1,w);
           if (s<>'') and (s<>'.') and (s<>'..') then
              begin
                 p := copy(Plays.readString('res',s,''),1,8);
@@ -471,7 +497,7 @@ begin
         begin
           s := sr.Name;
           w := length(ExtractFileExt(sr.Name));
-          delete(s,length(s)-w-1,w);
+          delete(s,length(s)-w+1,w);
           if (s<>'') and (s<>'.') and (s<>'..') then
              begin
                 p := copy(Plays.readString('res',s,''),1,8);
@@ -554,18 +580,6 @@ begin
        SendDebug('阻止屏幕及电源选项的启动',4);
      end
   else
-  if Msg.message = WM_SETFOCUS then
-     begin
-       Handled:=true;  //阻止屏幕保护的启动
-       SendDebug('阻止WM_SETFOCUS的启动',4);
-     end
-  else
-  if Msg.message = WM_KILLFOCUS then
-     begin
-       Handled:=true;  //阻止屏幕保护的启动
-       SendDebug('阻止WM_KILLFOCUS的启动',4);
-     end
-  else
      Handled:=false; //进行该消息的缺省处理
 end;
 
@@ -578,6 +592,9 @@ procedure TfrmRzPlayer.Timer2Timer(Sender: TObject);
 var
   lpRect:PRect;
 begin
+  if lockLogfile then Exit;
+  if ShutSystem then Exit;
+
   if IsWorkStationLocked then
      begin
        locked := true;
@@ -617,17 +634,28 @@ begin
      end;
 end;
 
-initialization
-  //打开互斥对象
-  MutHandle := OpenMutex(MUTEX_ALL_ACCESS, False, RZ_PLAYER);
-  if MutHandle = 0 then
-  begin
-    //建立互斥对象
-    MutHandle := CreateMutex(nil, False, RZ_PLAYER);
-    hExists := false;
-  end
-  else
-    hExists := true;
-finalization
-  if MutHandle<>0 then  CloseHandle(MutHandle);
+procedure TfrmRzPlayer.vmrWindowed1Click(Sender: TObject);
+begin
+  DefVMRVideoMode := vmrWindowed;
+end;
+
+procedure TfrmRzPlayer.vmrWindowless1Click(Sender: TObject);
+begin
+  DefVMRVideoMode := vmrWindowless;
+
+end;
+
+procedure TfrmRzPlayer.vmrRenderless1Click(Sender: TObject);
+begin
+  DefVMRVideoMode := vmrRenderless;
+
+end;
+
+procedure TfrmRzPlayer.WMDisplayChange(var Message: TMessage);
+begin
+  if Assigned(frmRzMonitor.playFile) then
+     frmRzMonitor.playFile.rePlay;
+  Senddebug('+++++++++++++屏幕调整++++++++++++++',4);
+end;
+
 end.

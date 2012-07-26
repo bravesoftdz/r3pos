@@ -1,7 +1,7 @@
 inherited frmVhPayGlide: TfrmVhPayGlide
   Left = 341
   Caption = #31036#21048#32467#31639
-  ClientHeight = 282
+  ClientHeight = 307
   ClientWidth = 504
   OnCreate = FormCreate
   OnShow = FormShow
@@ -9,10 +9,10 @@ inherited frmVhPayGlide: TfrmVhPayGlide
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 504
-    Height = 282
+    Height = 307
     inherited RzPage: TRzPageControl
       Width = 494
-      Height = 232
+      Height = 257
       ActivePage = TabSheet5
       ParentColor = False
       TabIndex = 1
@@ -22,19 +22,19 @@ inherited frmVhPayGlide: TfrmVhPayGlide
         Caption = #31036#21048#20449#24687
         inherited RzPanel2: TRzPanel
           Width = 490
-          Height = 205
+          Height = 230
           Color = clWhite
           object RzPanel1: TRzPanel
             Left = 5
             Top = 5
             Width = 480
-            Height = 81
+            Height = 106
             Align = alClient
             BorderOuter = fsNone
             BorderColor = clInactiveCaption
             TabOrder = 0
             object lblInput: TLabel
-              Left = 91
+              Left = 11
               Top = 8
               Width = 63
               Height = 20
@@ -47,7 +47,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               ParentFont = False
             end
             object labNO: TLabel
-              Left = 14
+              Left = 82
               Top = 39
               Width = 49
               Height = 14
@@ -60,8 +60,8 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               ParentFont = False
             end
             object labPRC: TLabel
-              Left = 0
-              Top = 63
+              Left = 67
+              Top = 62
               Width = 63
               Height = 14
               Caption = #31036#21048#38754#20540':'
@@ -73,9 +73,9 @@ inherited frmVhPayGlide: TfrmVhPayGlide
               ParentFont = False
             end
             object edtInput: TcxTextEdit
-              Left = 162
+              Left = 82
               Top = 5
-              Width = 204
+              Width = 391
               Height = 27
               ParentFont = False
               Style.BorderStyle = ebsThick
@@ -90,7 +90,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
           end
           object RzPanel3: TRzPanel
             Left = 5
-            Top = 86
+            Top = 111
             Width = 480
             Height = 114
             Align = alBottom
@@ -229,7 +229,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
           Left = 0
           Top = 0
           Width = 490
-          Height = 205
+          Height = 230
           Align = alClient
           BorderOuter = fsNone
           BorderWidth = 5
@@ -238,7 +238,7 @@ inherited frmVhPayGlide: TfrmVhPayGlide
             Left = 5
             Top = 5
             Width = 480
-            Height = 195
+            Height = 220
             Align = alClient
             AllowedOperations = []
             DataSource = DsVhpay
@@ -301,22 +301,49 @@ inherited frmVhPayGlide: TfrmVhPayGlide
                 FieldName = 'VOUCHER_PRC'
                 Footers = <>
                 Title.Caption = #38754#20540
-                Width = 90
+                Width = 67
               end
               item
                 EditButtons = <>
                 FieldName = 'VOUCHER_STATUS'
                 Footers = <>
                 Title.Caption = #31036#21048#29366#24577
-                Width = 70
+                Width = 38
               end>
           end
         end
       end
     end
     inherited btPanel: TRzPanel
-      Top = 237
+      Top = 262
       Width = 494
+      object Btn_Update: TRzBitBtn
+        Left = 337
+        Top = 10
+        Width = 67
+        Height = 26
+        Anchors = [akTop, akRight]
+        Caption = #25764#28040'(&D)'
+        Color = clSilver
+        Font.Charset = GB2312_CHARSET
+        Font.Color = clBlack
+        Font.Height = -12
+        Font.Name = #23435#20307
+        Font.Style = [fsBold]
+        HighlightColor = 16026986
+        HotTrack = True
+        HotTrackColor = 3983359
+        HotTrackColorType = htctActual
+        ParentFont = False
+        TextShadowColor = clWhite
+        TextShadowDepth = 4
+        TabOrder = 2
+        TextStyle = tsRaised
+        ThemeAware = False
+        OnClick = Btn_UpdateClick
+        NumGlyphs = 2
+        Spacing = 5
+      end
       object Btn_Close: TRzBitBtn
         Left = 422
         Top = 10
@@ -368,33 +395,6 @@ inherited frmVhPayGlide: TfrmVhPayGlide
         TextStyle = tsRaised
         ThemeAware = False
         OnClick = Btn_SaveClick
-        NumGlyphs = 2
-        Spacing = 5
-      end
-      object Btn_Update: TRzBitBtn
-        Left = 328
-        Top = 10
-        Width = 67
-        Height = 26
-        Anchors = [akTop, akRight]
-        Caption = #25764#28040'(&D)'
-        Color = clSilver
-        Font.Charset = GB2312_CHARSET
-        Font.Color = clBlack
-        Font.Height = -12
-        Font.Name = #23435#20307
-        Font.Style = [fsBold]
-        HighlightColor = 16026986
-        HotTrack = True
-        HotTrackColor = 3983359
-        HotTrackColorType = htctActual
-        ParentFont = False
-        TextShadowColor = clWhite
-        TextShadowDepth = 4
-        TabOrder = 2
-        TextStyle = tsRaised
-        ThemeAware = False
-        OnClick = Btn_UpdateClick
         NumGlyphs = 2
         Spacing = 5
       end

@@ -1,20 +1,19 @@
 inherited frmMktRequReport: TfrmMktRequReport
   Left = 218
-  Top = 105
   Width = 986
   Height = 586
   Caption = #36153#29992#30003#39046#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 978
-    Height = 522
+    Width = 970
+    Height = 511
     inherited RzPanel2: TRzPanel
-      Width = 968
-      Height = 512
+      Width = 960
+      Height = 501
       inherited RzPage: TRzPageControl
-        Width = 763
-        Height = 506
+        Width = 755
+        Height = 495
         ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
@@ -24,13 +23,13 @@ inherited frmMktRequReport: TfrmMktRequReport
           Color = clCream
           Caption = #37096#38376#36153#29992#30003#39046#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             inherited Panel4: TPanel
-              Width = 751
-              Height = 469
+              Width = 743
+              Height = 458
               inherited w1: TRzPanel
-                Width = 751
+                Width = 743
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -303,11 +302,11 @@ inherited frmMktRequReport: TfrmMktRequReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 751
-                Height = 391
+                Width = 743
+                Height = 380
                 inherited DBGridEh1: TDBGridEh
-                  Width = 747
-                  Height = 387
+                  Width = 739
+                  Height = 376
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -1226,12 +1225,12 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
         object TabSheet4: TRzTabSheet
           Color = clCream
-          Caption = #32771#26680#25351#26631#36153#29992#30003#39046#27719#24635#34920
+          Caption = #25351#26631#36153#29992#30003#39046#27719#24635#34920
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1239,7 +1238,7 @@ inherited frmMktRequReport: TfrmMktRequReport
             object RzPanel9: TRzPanel
               Left = 5
               Top = 5
-              Width = 751
+              Width = 743
               Height = 78
               Align = alTop
               Alignment = taRightJustify
@@ -1518,8 +1517,8 @@ inherited frmMktRequReport: TfrmMktRequReport
             object RzPanel10: TRzPanel
               Left = 5
               Top = 83
-              Width = 751
-              Height = 391
+              Width = 743
+              Height = 380
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1527,8 +1526,8 @@ inherited frmMktRequReport: TfrmMktRequReport
               object DBGridEh4: TDBGridEh
                 Left = 2
                 Top = 2
-                Width = 747
-                Height = 387
+                Width = 739
+                Height = 376
                 Align = alClient
                 AllowedOperations = []
                 BorderStyle = bsNone
@@ -1644,8 +1643,8 @@ inherited frmMktRequReport: TfrmMktRequReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 761
-            Height = 479
+            Width = 753
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1653,8 +1652,8 @@ inherited frmMktRequReport: TfrmMktRequReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 751
-              Height = 469
+              Width = 743
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1662,7 +1661,7 @@ inherited frmMktRequReport: TfrmMktRequReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 751
+                Width = 743
                 Height = 100
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1990,8 +1989,8 @@ inherited frmMktRequReport: TfrmMktRequReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 100
-                Width = 751
-                Height = 369
+                Width = 743
+                Height = 358
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1999,8 +1998,8 @@ inherited frmMktRequReport: TfrmMktRequReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 747
-                  Height = 365
+                  Width = 739
+                  Height = 354
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2078,17 +2077,16 @@ inherited frmMktRequReport: TfrmMktRequReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'DEPT_NAME'
-                      Footers = <>
-                      Title.Caption = #25152#23646#37096#38376
-                      Width = 72
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'KPI_NAME'
                       Footers = <>
                       Title.Caption = #32771#26680#25351#26631
-                      Width = 70
+                      Width = 128
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'REQU_YEAR'
+                      Footers = <>
+                      Title.Caption = #36153#29992#24180#24230
                     end
                     item
                       Alignment = taRightJustify
@@ -2124,44 +2122,31 @@ inherited frmMktRequReport: TfrmMktRequReport
                     end
                     item
                       EditButtons = <>
-                      FieldName = 'REQU_YEAR'
-                      Footers = <>
-                      Title.Caption = #30003#39046#24180#20221
-                    end
-                    item
-                      EditButtons = <>
                       FieldName = 'REQU_TYPE'
                       Footers = <>
-                      Title.Caption = #36153#29992#31867#22411
-                      Width = 59
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CREA_DATE'
-                      Footers = <>
-                      Title.Caption = #25805#20316#26102#38388
-                      Width = 70
+                      Title.Caption = #31867#22411
+                      Width = 38
                     end
                     item
                       EditButtons = <>
                       FieldName = 'REMARK'
                       Footers = <>
                       Title.Caption = #22791#27880
-                      Width = 80
+                      Width = 166
                     end
                     item
                       EditButtons = <>
                       FieldName = 'REQU_USER_TEXT'
                       Footers = <>
                       Title.Caption = #22635#25253#20154
-                      Width = 62
+                      Width = 49
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CHK_USER_TEXT'
                       Footers = <>
                       Title.Caption = #23457#26680#20154
-                      Width = 60
+                      Width = 52
                     end
                     item
                       EditButtons = <>
@@ -2175,14 +2160,14 @@ inherited frmMktRequReport: TfrmMktRequReport
                       FieldName = 'CREA_USER_TEXT'
                       Footers = <>
                       Title.Caption = #25805#20316#20154
-                      Width = 56
+                      Width = 52
                     end
                     item
                       EditButtons = <>
                       FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #25805#20316#26102#38388
-                      Width = 72
+                      Width = 171
                     end>
                 end
               end
@@ -2191,8 +2176,8 @@ inherited frmMktRequReport: TfrmMktRequReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 766
-        Height = 506
+        Left = 758
+        Height = 495
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2208,15 +2193,15 @@ inherited frmMktRequReport: TfrmMktRequReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 978
+    Width = 970
     inherited Image3: TImage
-      Width = 73
+      Width = 61
     end
     inherited Image14: TImage
-      Left = 958
+      Left = 950
     end
     inherited Image1: TImage
-      Left = 423
+      Left = 415
       Width = 535
     end
     inherited rzPanel5: TPanel

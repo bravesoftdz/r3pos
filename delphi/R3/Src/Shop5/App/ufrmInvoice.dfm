@@ -10,25 +10,25 @@ inherited frmInvoice: TfrmInvoice
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 847
-    Height = 476
+    Width = 855
+    Height = 480
     inherited RzPanel2: TRzPanel
-      Width = 837
-      Height = 466
+      Width = 845
+      Height = 470
       inherited RzPage: TRzPageControl
-        Width = 831
-        Height = 460
+        Width = 839
+        Height = 464
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21457#31080#20449#24687#26597#35810
           inherited RzPanel3: TRzPanel
-            Width = 829
-            Height = 433
+            Width = 837
+            Height = 437
             object RzPanel1: TRzPanel
               Left = 5
               Top = 121
-              Width = 819
-              Height = 307
+              Width = 827
+              Height = 311
               Align = alClient
               BorderOuter = fsNone
               BorderWidth = 5
@@ -36,8 +36,8 @@ inherited frmInvoice: TfrmInvoice
               object DBGridEh1: TDBGridEh
                 Left = 5
                 Top = 5
-                Width = 809
-                Height = 278
+                Width = 817
+                Height = 282
                 Align = alClient
                 DataSource = Ds_Invoice
                 Flat = True
@@ -155,8 +155,8 @@ inherited frmInvoice: TfrmInvoice
               end
               object stbPanel: TPanel
                 Left = 5
-                Top = 283
-                Width = 809
+                Top = 287
+                Width = 817
                 Height = 19
                 Align = alBottom
                 BevelOuter = bvNone
@@ -179,7 +179,7 @@ inherited frmInvoice: TfrmInvoice
             object RzPanel6: TRzPanel
               Left = 5
               Top = 5
-              Width = 819
+              Width = 827
               Height = 116
               Align = alTop
               BorderOuter = fsNone
@@ -188,7 +188,7 @@ inherited frmInvoice: TfrmInvoice
               object Panel2: TPanel
                 Left = 5
                 Top = 5
-                Width = 809
+                Width = 817
                 Height = 106
                 Align = alClient
                 Alignment = taLeftJustify
@@ -362,12 +362,12 @@ inherited frmInvoice: TfrmInvoice
                       Width = 220
                     end>
                   DropWidth = 224
-                  DropHeight = 130
+                  DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
                   ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
@@ -410,12 +410,12 @@ inherited frmInvoice: TfrmInvoice
                       Title.Caption = #36134#21495
                     end>
                   DropWidth = 222
-                  DropHeight = 130
+                  DropHeight = 170
                   ShowTitle = True
                   AutoFitColWidth = True
                   ShowButton = True
                   LocateStyle = lsDark
-                  Buttons = []
+                  Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
                 end
@@ -453,16 +453,16 @@ inherited frmInvoice: TfrmInvoice
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 847
+    Width = 855
     inherited Image3: TImage
       Left = 324
       Width = 0
     end
     inherited Image14: TImage
-      Left = 827
+      Left = 835
     end
     inherited Image1: TImage
-      Left = 316
+      Left = 324
       Width = 511
     end
     inherited rzPanel5: TPanel

@@ -375,7 +375,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Top = 66
               Width = 334
               Height = 20
-              TabOrder = 1
+              TabOrder = 4
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtCLIENT_ID: TzrComboBoxList
@@ -389,7 +389,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Default = True
                 end>
               Properties.ReadOnly = True
-              TabOrder = 0
+              TabOrder = 1
               InGrid = False
               KeyValue = Null
               FilterFields = 'CLIENT_NAME;CLIENT_SPELL;CLIENT_CODE;LICENSE_CODE;TELEPHONE2'
@@ -466,7 +466,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Font.Name = #23435#20307
               Font.Style = []
               ParentFont = False
-              TabOrder = 2
+              TabOrder = 0
               object RzLabel3: TRzLabel
                 Left = 15
                 Top = 16
@@ -494,7 +494,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Top = 25
               Width = 205
               Height = 20
-              TabOrder = 4
+              TabOrder = 2
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtINVH_ID: TzrComboBoxList
@@ -508,7 +508,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Default = True
                 end>
               Properties.ReadOnly = True
-              TabOrder = 5
+              TabOrder = 6
               InGrid = False
               KeyValue = Null
               FilterFields = 'INVH_NO'
@@ -553,7 +553,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               AutoFitColWidth = True
               ShowButton = True
               LocateStyle = lsDark
-              Buttons = []
+              Buttons = [zbClear]
               DropListStyle = lsFixed
               OnSaveValue = edtINVH_IDSaveValue
               MultiSelect = False
@@ -569,7 +569,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Style.Font.Height = -12
               Style.Font.Name = #23435#20307
               Style.Font.Style = [fsBold]
-              TabOrder = 6
+              TabOrder = 7
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
             end
             object edtIfDuplicate: TcxCheckBox
@@ -584,7 +584,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               Style.Font.Height = -12
               Style.Font.Name = #23435#20307
               Style.Font.Style = [fsBold]
-              TabOrder = 7
+              TabOrder = 5
             end
           end
           object RzPanel3: TRzPanel
@@ -643,7 +643,7 @@ inherited frmSalInvoice: TfrmSalInvoice
               ParentFont = False
             end
             object Label3: TLabel
-              Left = 367
+              Left = 364
               Top = 45
               Width = 33
               Height = 12
@@ -688,18 +688,18 @@ inherited frmSalInvoice: TfrmSalInvoice
               Width = 133
               Height = 20
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-              TabOrder = 0
+              TabOrder = 2
             end
             object edtINVOICE_FLAG: TcxComboBox
-              Left = 406
+              Left = 403
               Top = 41
-              Width = 71
+              Width = 79
               Height = 20
               Enabled = False
               ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
               Properties.DropDownListStyle = lsFixedList
               Properties.OnChange = edtINVOICE_FLAGPropertiesChange
-              TabOrder = 1
+              TabOrder = 3
             end
             object edtSHOP_ID: TzrComboBoxList
               Left = 34
@@ -712,7 +712,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 2
+              TabOrder = 0
               InGrid = False
               KeyValue = Null
               FilterFields = 'SHOP_NAME;SHOP_SPELL'
@@ -753,7 +753,7 @@ inherited frmSalInvoice: TfrmSalInvoice
                   Default = True
                 end>
               Properties.ReadOnly = False
-              TabOrder = 3
+              TabOrder = 1
               InGrid = False
               KeyValue = Null
               FilterFields = 'DEPT_NAME;DEPT_SPELL'

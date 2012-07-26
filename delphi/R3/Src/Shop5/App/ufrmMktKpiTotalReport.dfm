@@ -1,31 +1,30 @@
 inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
   Left = 192
-  Top = 105
   Width = 958
   Height = 558
-  Caption = #32771#26680#20998#26512#25253#34920
+  Caption = #36820#21033#20998#26512#25253#34920
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 950
-    Height = 494
+    Width = 942
+    Height = 483
     inherited RzPanel2: TRzPanel
-      Width = 940
-      Height = 484
+      Width = 932
+      Height = 473
       inherited RzPage: TRzPageControl
-        Width = 735
-        Height = 478
+        Width = 727
+        Height = 467
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #32771#26680#20998#26512#25253#34920
           inherited RzPanel3: TRzPanel
-            Width = 733
-            Height = 451
+            Width = 725
+            Height = 440
             inherited Panel4: TPanel
-              Width = 723
-              Height = 441
+              Width = 715
+              Height = 430
               inherited w1: TRzPanel
-                Width = 723
+                Width = 715
                 Height = 105
                 object Label3: TLabel
                   Left = 16
@@ -69,7 +68,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #32771#26680#25351#26631
+                  Caption = #21830#21697#25351#26631
                 end
                 object Label10: TLabel
                   Left = 16
@@ -77,13 +76,6 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#20998#32452
-                end
-                object Label28: TLabel
-                  Left = 281
-                  Top = 39
-                  Width = 48
-                  Height = 12
-                  Caption = #36153#29992#31867#22411
                 end
                 object rptTemplate: TcxComboBox
                   Left = 72
@@ -113,7 +105,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 10
+                  TabOrder = 9
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnNewClick
@@ -139,7 +131,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 11
+                  TabOrder = 10
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnEditClick
@@ -166,7 +158,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 9
+                  TabOrder = 8
                   TextStyle = tsRaised
                   ThemeAware = False
                   ImageIndex = 12
@@ -192,7 +184,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   ParentFont = False
                   TextShadowColor = clWhite
                   TextShadowDepth = 4
-                  TabOrder = 12
+                  TabOrder = 11
                   TextStyle = tsRaised
                   ThemeAware = False
                   OnClick = btnDeleteClick
@@ -234,7 +226,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 5
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -272,7 +264,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 8
+                  TabOrder = 7
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CLIENT_ID;CLIENT_CODE;CLIENT_NAME;CLIENT_SPELL'
@@ -314,7 +306,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 7
+                  TabOrder = 6
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'CODE_ID;CODE_NAME;CODE_SPELL'
@@ -356,7 +348,7 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME'
@@ -378,7 +370,6 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
                   MultiSelect = False
-                  RangeField = 'IDX_TYPE'
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
                 object fndP1_CUST_TYPE: TcxComboBox
@@ -393,29 +384,16 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
                     #23458#25143#31561#32423
                     #23458#25143#20998#31867
                     #23458#25143#32676#20307)
-                  TabOrder = 6
-                end
-                object fndP1_KPI_TYPE: TcxComboBox
-                  Left = 335
-                  Top = 34
-                  Width = 156
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DropDownListStyle = lsEditFixedList
-                  Properties.Items.Strings = (
-                    #23458#25143#32771#26680
-                    #20154#21592#32771#26680)
-                  Properties.OnChange = fndP1_KPI_TYPEPropertiesChange
-                  TabOrder = 3
+                  TabOrder = 5
                 end
               end
               inherited RzPanel7: TRzPanel
                 Top = 105
-                Width = 723
-                Height = 336
+                Width = 715
+                Height = 325
                 inherited DBGridEh1: TDBGridEh
-                  Width = 719
-                  Height = 332
+                  Width = 711
+                  Height = 321
                 end
               end
             end
@@ -423,8 +401,8 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 738
-        Height = 478
+        Left = 730
+        Height = 467
         Visible = False
         inherited Panel2: TPanel
           Height = 444
@@ -439,9 +417,9 @@ inherited frmMktKpiTotalReport: TfrmMktKpiTotalReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 950
+    Width = 942
     inherited Image14: TImage
-      Left = 930
+      Left = 922
     end
     inherited Image1: TImage
       Width = 580

@@ -67,6 +67,7 @@ type
     procedure DBGridEh2Columns2BeforeShowControl(Sender: TObject);
     procedure dropD2PropertiesEditValueChanged(Sender: TObject);
     procedure N3Click(Sender: TObject);
+    procedure RzBitBtn1Click(Sender: TObject);
   private
     FClientId: String;
     FKpiId: String;
@@ -618,6 +619,13 @@ begin
        cdsList2.FieldByName('MODI_MONEY').AsFloat := cdsList2.FieldByName('ORG_MONEY').AsFloat;
      end;
   cdsList2.post;
+
+end;
+
+procedure TfrmMktKpiModify.RzBitBtn1Click(Sender: TObject);
+begin
+  inherited;
+  Open('');
 
 end;
 

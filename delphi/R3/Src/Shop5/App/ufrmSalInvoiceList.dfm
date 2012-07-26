@@ -17,8 +17,6 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
       inherited RzPage: TRzPageControl
         Width = 884
         Height = 480
-        ActivePage = TabSheet2
-        TabIndex = 1
         OnChange = RzPageChange
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
@@ -640,19 +638,6 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
                 Alignment = taRightJustify
                 Caption = #21457' '#31080' '#21495
               end
-              object Label5: TLabel
-                Left = 188
-                Top = 107
-                Width = 114
-                Height = 12
-                Caption = #25903#25345#21457#31080#21495#21518'4'#20301#26597#35810
-                Font.Charset = GB2312_CHARSET
-                Font.Color = clNavy
-                Font.Height = -12
-                Font.Name = #23435#20307
-                Font.Style = []
-                ParentFont = False
-              end
               object D1: TcxDateEdit
                 Left = 80
                 Top = 7
@@ -1157,7 +1142,6 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
       OnExecute = actPrintExecute
     end
     inherited actPreview: TAction
-      Caption = #23548#20986
       OnExecute = actPreviewExecute
     end
     inherited actFind: TAction
@@ -1182,8 +1166,8 @@ inherited frmSalInvoiceList: TfrmSalInvoiceList
     AfterScroll = CdsSalesListAfterScroll
     CachedUpdates = True
     Params = <>
-    Left = 79
-    Top = 281
+    Left = 119
+    Top = 337
   end
   object DataSource2: TDataSource
     DataSet = cdsList

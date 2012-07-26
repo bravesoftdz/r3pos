@@ -64,7 +64,6 @@ type
     Panel2: TPanel;
     DBGridEh2: TDBGridEh;
     RzLabel6: TRzLabel;
-    Label5: TLabel;
     fndINVOICE_NO: TcxTextEdit;
     DataSource2: TDataSource;
     cdsList: TZQuery;
@@ -98,6 +97,7 @@ type
     { Private declarations }
     procedure ChangeButton;
     function  CheckCanExport: boolean; override;
+    procedure SavePrint(id:string);
   public
     { Public declarations }
     IsEnd1,IsEnd2: boolean;
@@ -234,7 +234,9 @@ begin
           cdsDetail.FieldByName('FROM_TYPE').AsString := '0';
           cdsDetail.Post;
           RowID := 1;
-          ShowModal;
+          if ShowModal=mrok then
+             begin
+             end;
         finally
           free;
         end;
@@ -297,12 +299,11 @@ end;
 procedure TfrmSalInvoiceList.actPrintExecute(Sender: TObject);
 begin
   inherited;
-  //if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
-  //Raise Exception.Create('此功能暂时没有开放.')
+  if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
   with TfrmFastReport.Create(Self) do
     begin
       try
-         ShowReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('INVD_ID').AsString),frfSalinvoice);
+         PrintReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('INVD_ID').AsString),frfSalinvoice);
       finally
          free;
       end;
@@ -312,8 +313,15 @@ end;
 procedure TfrmSalInvoiceList.actPreviewExecute(Sender: TObject);
 begin
   inherited;
-  if not ShopGlobal.GetChkRight('100002314',7) then Raise Exception.Create('你没有导出发票的权限,请和管理员联系.');
-  Raise Exception.Create('此功能暂时没有开放.')
+  if not ShopGlobal.GetChkRight('100002314',6) then Raise Exception.Create('你没有打印发票的权限,请和管理员联系.');
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+         ShowReport(PrintSQL2(inttostr(Global.TENANT_ID),cdsList.FieldbyName('INVD_ID').AsString),frfSalinvoice);
+      finally
+         free;
+      end;
+    end;
 end;
 
 procedure TfrmSalInvoiceList.actFindExecute(Sender: TObject);
@@ -405,7 +413,6 @@ begin
   case RzPage.ActivePageIndex of
    0:  
    begin
- 
    end;
    1:
    begin
@@ -423,6 +430,7 @@ begin
         end;
     end;
   end;
+  if MessageBox(Handle,'是否立即打印发票?','友情提示',mb_yesno)=6 then SavePrint(AObj.FieldbyName('INVH_ID').AsString);
 end;
 
 procedure TfrmSalInvoiceList.ChangeButton;
@@ -642,7 +650,7 @@ begin
   if fndCREA_USER.AsString <> '' then
      strWhere := strWhere + ' and A.CREA_USER='''+fndCREA_USER.AsString+'''';
   if trim(fndINVOICE_NO.Text) <> '' then
-     strWhere := strWhere +' and A.INVOICE_NO like ''%'+trim(fndINVOICE_NO.Text)+''' ';
+     strWhere := strWhere +' and A.INVOICE_NO = '+trim(fndINVOICE_NO.Text)+' ';
 
   strSql:=
   'select A.TENANT_ID,A.INVD_ID,A.INVH_ID,C.SHOP_NAME as SHOP_ID_TEXT,D.DEPT_NAME as DEPT_ID_TEXT,A.CREA_USER,E.USER_NAME as CREA_USER_TEXT,'+
@@ -916,6 +924,18 @@ begin
        small := frParser.Calc(p1);
        Val := FnNumber.SmallTOBig(small);
      end;
+end;
+
+procedure TfrmSalInvoiceList.SavePrint(id: string);
+begin
+  with TfrmFastReport.Create(Self) do
+    begin
+      try
+         PrintReport(PrintSQL2(inttostr(Global.TENANT_ID),id),frfSalinvoice);
+      finally
+         free;
+      end;
+    end;
 end;
 
 end.

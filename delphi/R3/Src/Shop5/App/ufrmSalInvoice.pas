@@ -255,7 +255,7 @@ begin
       ReadFromObject(AObj,self);
       if (Length(Trim(edtINVOICE_NO.Text))<8) and (Trim(edtINVOICE_NO.Text)<>'') then
          edtINVOICE_NO.Text := FnString.FormatStringEx(Trim(edtINVOICE_NO.Text),8);
-      edtCLIENT_ID.Text := AObj.FieldbyName('INVO_NAME').AsString;
+//      edtCLIENT_ID.Text := AObj.FieldbyName('INVO_NAME').AsString;
       dbState := dsBrowse;
       //isAudit := (AObj.FieldByName('CHK_DATE').AsString <> '');
     finally
@@ -353,7 +353,9 @@ procedure TfrmSalInvoice.SetdbState(const Value: TDataSetState);
 begin
   inherited;
   btnOk.Visible:=(dbState<>dsBrowse);
-  //DBGridEh1.Readonly := (dbState=dsBrowse);
+
+  edtIfDuplicate.Properties.Readonly := (Value=dsBrowse);
+  SetEditStyle(Value,edtIfDuplicate.Style);
   case Value of
   dsInsert:begin
      Caption := '销项发票--(新增)';
@@ -507,9 +509,7 @@ begin
   Number:=trim(InvoiceNo);
   vLen:=8;
   vNo:=strtoInt(Number)+1;
-  i:=Length(inttoStr(vNo));
-  if i<8 then
-     result:=FnString.FormatStringEx(IntToStr(vNo),8);
+  result:=FnString.FormatStringEx(IntToStr(vNo),8);
 end;
 
 procedure TfrmSalInvoice.SetIvioType(const Value: String);

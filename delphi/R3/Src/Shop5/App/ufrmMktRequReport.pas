@@ -619,7 +619,7 @@ begin
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP5_DEPT_ID.AsString);
   //考核指标:
   if fndP5_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and C.KPI_ID='''+fndP5_KPI_ID.AsString+''' ';
+    strWhere:=strWhere+' and B.KPI_ID='''+fndP5_KPI_ID.AsString+''' ';
   //客户名称:
   if fndP5_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP5_CLIENT_ID.AsString+''' ';
@@ -666,8 +666,9 @@ begin
     ' A.CREA_USER as CREA_USER,'+      //创建人
     ' A.CHK_DATE as CHK_DATE,'+        //审核日期
     ' A.CHK_USER as CHK_USER '+        //审核人
-    ' from MKT_REQUORDER A,MKT_REQUDATA B,MKT_KPI_RESULT C,VIW_CUSTOMER D '+
-    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and B.TENANT_ID=C.TENANT_ID and B.KPI_ID=C.KPI_ID and '+
+    ' from MKT_REQUORDER A,MKT_REQUDATA B,VIW_CUSTOMER D '+
+    ' where A.TENANT_ID=B.TENANT_ID and A.REQU_ID=B.REQU_ID and '+
+  //  ' A.TENANT_ID=C.TENANT_ID and A.CLIENT_ID=C.CLIENT_ID and B.KPI_YEAR=C.KPI_YEAR and B.KPI_ID=C.KPI_ID and '+
     ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID  '+strWhere+strCnd+' ';
 
   Result :=ParseSQL(Factor.iDbType,

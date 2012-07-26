@@ -352,6 +352,13 @@ begin
     if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
     Factor.Open(rs);
 
+    adoReport1.Append;
+    adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+    adoReport1.FieldByName('SALES_TYPE').AsString := '3';
+    adoReport1.FieldByName('SALES_TYPE_TEXT').AsString := '预缴款';
+    adoReport1.FieldByName('SORT_TYPE').AsString := '#1';
+    adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '存入';
+    adoReport1.Post;
     rs.First;
     while not rs.Eof do
     begin
@@ -370,8 +377,6 @@ begin
          adoReport1.Append;
          adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
          adoReport1.FieldByName('SALES_TYPE').AsString := '3';
-         if rs.RecNo = 1 then
-            adoReport1.FieldByName('SALES_TYPE_TEXT').AsString := '预缴款';
          adoReport1.FieldByName('SORT_TYPE').AsString := sid;
          adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '存入';
          adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('ADVA_MNY').AsFloat;
@@ -396,6 +401,13 @@ begin
     if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
     Factor.Open(rs);
 
+    adoReport1.Append;
+    adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+    adoReport1.FieldByName('SALES_TYPE').AsString := '3';
+    adoReport1.FieldByName('SALES_TYPE_TEXT').AsString := '';
+    adoReport1.FieldByName('SORT_TYPE').AsString := '#2';
+    adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '支出';
+    adoReport1.Post;
     rs.First;
     while not rs.Eof do
     begin
@@ -440,6 +452,13 @@ begin
     if rs.Params.FindParam('DEPT_ID') <> nil then rs.Params.ParamByName('DEPT_ID').AsString := fndP1_DEPT_ID.AsString;
     Factor.Open(rs);
 
+    adoReport1.Append;
+    adoReport1.FieldByName('SEQNO').AsInteger := adoReport1.RecordCount;
+    adoReport1.FieldByName('SALES_TYPE').AsString := '3';
+    adoReport1.FieldByName('SALES_TYPE_TEXT').AsString := '';
+    adoReport1.FieldByName('SORT_TYPE').AsString := '#3';
+    adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '结余';
+    adoReport1.Post;
     rs.First;
     while not rs.Eof do
     begin
@@ -522,6 +541,9 @@ begin
          sid := rs.FieldbyName('ACCOUNT_ID').AsString;
          end
       else
+      if copy(rs.FieldbyName('ACCOUNT_ID').AsString,14,22)='0000000000000000000000' then
+         sid := '0000000000000000000000'
+      else
          sid := '#';
       stl := rs.FieldByName('SALES_STYLE').AsString;
       if (stl='') or (adoReport1.FindField(stl)=nil) then stl := '#';
@@ -542,6 +564,9 @@ begin
          adoReport1.FieldByName('SORT_TYPE').AsString := sid;
          if sid<>'#' then
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := acct.FieldByName('ACCT_NAME').AsString
+         else
+         if sid='0000000000000000000000' then
+            adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '现金'
          else
             adoReport1.FieldByName('SORT_TYPE_TEXT').AsString := '其他';
          adoReport1.FindField(stl).AsFloat := adoReport1.FindField(stl).AsFloat+rs.FieldByName('RECV_MNY').AsFloat;

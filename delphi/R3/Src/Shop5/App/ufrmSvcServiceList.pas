@@ -643,7 +643,7 @@ begin
   fndCLIENT_ID.DataSet := Global.GetZQueryFromName('PUB_CUSTOMER');
   fndCREA_USER.DataSet := Global.GetZQueryFromName('CA_USERS');
   fndSALES_STYLE.DataSet := Global.GetZQueryFromName('PUB_SALE_STYLE');
-
+  fndP2_GODS_ID.DataSet := Global.GetZQueryFromName('PUB_GOODSINFO'); 
   //第一分页销售开票查询:
   P1_D1.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-01', date));
   P1_D2.Date := fnTime.fnStrtoDate(FormatDateTime('YYYY-MM-DD', date));

@@ -8,22 +8,22 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
   TextHeight = 12
   inherited bgPanel: TRzPanel
     Width = 991
-    Height = 487
+    Height = 480
     inherited RzPanel2: TRzPanel
       Width = 981
-      Height = 477
+      Height = 470
       inherited RzPage: TRzPageControl
         Width = 776
-        Height = 471
+        Height = 464
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Caption = #21457#31080#32479#35745#26597#35810#21015#34920
           inherited RzPanel3: TRzPanel
             Width = 774
-            Height = 444
+            Height = 437
             inherited Panel4: TPanel
               Width = 764
-              Height = 434
+              Height = 427
               inherited w1: TRzPanel
                 Width = 764
                 Height = 100
@@ -291,10 +291,10 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
               inherited RzPanel7: TRzPanel
                 Top = 100
                 Width = 764
-                Height = 334
+                Height = 327
                 inherited DBGridEh1: TDBGridEh
                   Width = 760
-                  Height = 330
+                  Height = 323
                   Columns = <
                     item
                       EditButtons = <>
@@ -393,7 +393,7 @@ inherited frmInvoiceTotalReport: TfrmInvoiceTotalReport
       end
       inherited PanelColumnS: TPanel
         Left = 779
-        Height = 471
+        Height = 464
         inherited Panel2: TPanel
           Height = 439
           inherited Panel5: TPanel

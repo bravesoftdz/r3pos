@@ -357,6 +357,7 @@ begin
   case fndSTATUS.ItemIndex of
    1:strWhere := strWhere + ' and (isnull(A.BOND_MNY,0)-isnull(A.BOND_RET,0))<>0 ';
    2:strWhere := strWhere + ' and (isnull(A.BOND_MNY,0)-isnull(A.BOND_RET,0))=0 ';
+   else strWhere := strWhere + ' and isnull(A.BOND_MNY,0)<>0 ';
   end;
 
   case TRecord_(P1_BOND_TYPE.Properties.Items.Objects[P1_BOND_TYPE.ItemIndex]).FieldByName('CODE_ID').AsInteger of

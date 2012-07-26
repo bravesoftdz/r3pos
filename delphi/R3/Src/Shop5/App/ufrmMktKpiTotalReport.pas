@@ -34,15 +34,12 @@ type
     Label8: TLabel;
     Label10: TLabel;
     fndP1_CUST_TYPE: TcxComboBox;
-    Label28: TLabel;
-    fndP1_KPI_TYPE: TcxComboBox;
     procedure btnNewClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure btnEditClick(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
-    procedure fndP1_KPI_TYPEPropertiesChange(Sender: TObject);
   private
     function AddReportReport(TitleList: TStringList; PageNo: string): string; override; //添加Title
     procedure AddYearCBxItemsList(SetCbx: TcxComboBox);
@@ -119,7 +116,6 @@ end;
 
 procedure TfrmMktKpiTotalReport.FormCreate(Sender: TObject);
 begin
-  fndP1_KPI_TYPE.ItemIndex:=0;
   DoCreateKPIDataSet;
   inherited;
   //初始化年度
@@ -192,16 +188,13 @@ begin
     strWhere:=strWhere+' and (A.KPI_YEAR>='+fndP1_YEAR1.Text+' and A.KPI_YEAR<='+fndP1_YEAR2.Text+')'
   else
     strWhere:=strWhere+' and A.KPI_YEAR='+fndP1_YEAR1.Text+' ';
-  //考核类型:客户考核和人员考核:
-  if fndP1_KPI_TYPE.ItemIndex > -1 then
-    strWhere:=strWhere+' and A.PLAN_TYPE='''+IntToStr(fndP1_KPI_TYPE.ItemIndex+1)+''' ';
 
   //部门条件:
   if trim(fndP1_DEPT_ID.AsString)<>'' then
     strWhere:=strWhere+ShopGlobal.GetDeptID('A.DEPT_ID',fndP1_DEPT_ID.AsString);
   //考核指标:
   if fndP1_KPI_ID.AsString<>'' then
-    strWhere:=strWhere+' and C.KPI_ID='''+fndP1_KPI_ID.AsString+''' ';
+    strWhere:=strWhere+' and A.KPI_ID='''+fndP1_KPI_ID.AsString+''' ';
   //客户名称:
   if fndP1_CLIENT_ID.AsString<>'' then
     strWhere:=strWhere+' and A.CLIENT_ID='''+fndP1_CLIENT_ID.AsString+''' ';
@@ -334,14 +327,6 @@ begin
     if SetCbx.Properties.Items.Count>0 then SetCbx.ItemIndex:=0;
   finally
     Rs.Free;
-  end;
-end;
-
-procedure TfrmMktKpiTotalReport.fndP1_KPI_TYPEPropertiesChange(Sender: TObject);
-begin
-  case fndP1_KPI_TYPE.ItemIndex of
-   0: fndP1_KPI_ID.RangeValue:='1';
-   1: fndP1_KPI_ID.RangeValue:='3';
   end;
 end;
 

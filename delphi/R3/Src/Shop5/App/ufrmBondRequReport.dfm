@@ -7,30 +7,30 @@ inherited frmBondRequReport: TfrmBondRequReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 1034
-    Height = 522
+    Width = 1026
+    Height = 511
     inherited RzPanel2: TRzPanel
-      Width = 1024
-      Height = 512
+      Width = 1016
+      Height = 501
       inherited RzPage: TRzPageControl
-        Width = 819
-        Height = 506
-        ActivePage = TabSheet2
+        Width = 811
+        Height = 495
+        ActivePage = TabSheet4
         Color = clCream
         ParentColor = False
-        TabIndex = 1
+        TabIndex = 3
         FixedDimension = 25
         inherited TabSheet1: TRzTabSheet
           Color = clCream
           Caption = #37096#38376#20445#35777#37329#30003#39046#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 817
-            Height = 479
+            Width = 809
+            Height = 468
             inherited Panel4: TPanel
-              Width = 807
-              Height = 469
+              Width = 799
+              Height = 458
               inherited w1: TRzPanel
-                Width = 807
+                Width = 799
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -280,11 +280,11 @@ inherited frmBondRequReport: TfrmBondRequReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 807
-                Height = 391
+                Width = 799
+                Height = 380
                 inherited DBGridEh1: TDBGridEh
-                  Width = 803
-                  Height = 387
+                  Width = 795
+                  Height = 376
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -314,7 +314,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20445#35777#37329#24635#39069
+                      Title.Caption = #32564#27454#24635#39069
                       Width = 120
                     end
                     item
@@ -325,7 +325,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#30003#39046
+                      Title.Caption = #30003#39046#24635#39069
                       Width = 120
                     end
                     item
@@ -372,8 +372,8 @@ inherited frmBondRequReport: TfrmBondRequReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 817
-            Height = 479
+            Width = 809
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -381,8 +381,8 @@ inherited frmBondRequReport: TfrmBondRequReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 807
-              Height = 469
+              Width = 799
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -390,7 +390,7 @@ inherited frmBondRequReport: TfrmBondRequReport
               object RzPanel19: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 807
+                Width = 799
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
@@ -645,8 +645,8 @@ inherited frmBondRequReport: TfrmBondRequReport
               object RzPanel20: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 807
-                Height = 391
+                Width = 799
+                Height = 380
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -654,8 +654,8 @@ inherited frmBondRequReport: TfrmBondRequReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 803
-                  Height = 387
+                  Width = 795
+                  Height = 376
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -725,7 +725,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20445#35777#37329#24635#39069
+                      Title.Caption = #32564#27454#24635#39069
                       Width = 120
                     end
                     item
@@ -736,7 +736,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#30003#39046
+                      Title.Caption = #30003#39046#24635#39069
                       Width = 120
                     end
                     item
@@ -783,8 +783,8 @@ inherited frmBondRequReport: TfrmBondRequReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 817
-            Height = 479
+            Width = 809
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -792,8 +792,8 @@ inherited frmBondRequReport: TfrmBondRequReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 807
-              Height = 469
+              Width = 799
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -801,7 +801,7 @@ inherited frmBondRequReport: TfrmBondRequReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 807
+                Width = 799
                 Height = 77
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1056,8 +1056,8 @@ inherited frmBondRequReport: TfrmBondRequReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 77
-                Width = 807
-                Height = 392
+                Width = 799
+                Height = 381
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1065,8 +1065,8 @@ inherited frmBondRequReport: TfrmBondRequReport
                 object DBGridEh3: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 803
-                  Height = 388
+                  Width = 795
+                  Height = 377
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1136,7 +1136,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #20445#35777#37329#24635#39069
+                      Title.Caption = #32564#27454#24635#39069
                       Width = 120
                     end
                     item
@@ -1147,7 +1147,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #32047#35745#30003#39046
+                      Title.Caption = #30003#39046#24635#39069
                       Width = 120
                     end
                     item
@@ -1194,8 +1194,8 @@ inherited frmBondRequReport: TfrmBondRequReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 817
-            Height = 479
+            Width = 809
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1203,8 +1203,8 @@ inherited frmBondRequReport: TfrmBondRequReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 807
-              Height = 469
+              Width = 799
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1212,14 +1212,14 @@ inherited frmBondRequReport: TfrmBondRequReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 807
+                Width = 799
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
                 BorderSides = [sdLeft, sdTop, sdRight]
                 TabOrder = 0
                 DesignSize = (
-                  807
+                  799
                   78)
                 object Label19: TLabel
                   Left = 24
@@ -1267,7 +1267,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                   Caption = #33267
                 end
                 object Label28: TLabel
-                  Left = 672
+                  Left = 632
                   Top = 57
                   Width = 48
                   Height = 12
@@ -1504,9 +1504,9 @@ inherited frmBondRequReport: TfrmBondRequReport
                   TabOrder = 9
                 end
                 object fndP4_BOND_TYPE: TcxComboBox
-                  Left = 722
+                  Left = 688
                   Top = 52
-                  Width = 73
+                  Width = 99
                   Height = 20
                   Anchors = [akTop, akRight]
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1522,8 +1522,8 @@ inherited frmBondRequReport: TfrmBondRequReport
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 807
-                Height = 391
+                Width = 799
+                Height = 380
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1531,8 +1531,8 @@ inherited frmBondRequReport: TfrmBondRequReport
                 object DBGridEh4: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 803
-                  Height = 387
+                  Width = 795
+                  Height = 376
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1612,7 +1612,14 @@ inherited frmBondRequReport: TfrmBondRequReport
                       FieldName = 'DEPT_NAME'
                       Footers = <>
                       Title.Caption = #25152#23646#37096#38376
-                      Width = 72
+                      Width = 85
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'BOND_ALL_MNY'
+                      Footers = <>
+                      Title.Caption = #32564#27454#24635#39069
+                      Width = 70
                     end
                     item
                       Alignment = taRightJustify
@@ -1622,14 +1629,21 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
-                      Title.Caption = #30003#39046#37329#39069
+                      Title.Caption = #26412#27425#30003#39046
                       Width = 69
+                    end
+                    item
+                      EditButtons = <>
+                      FieldName = 'JY_MNY'
+                      Footers = <>
+                      Title.Caption = #32467#20313#37329#39069
+                      Width = 66
                     end
                     item
                       EditButtons = <>
                       FieldName = 'BOND_YEAR'
                       Footers = <>
-                      Title.Caption = #30003#39046#24180#20221
+                      Title.Caption = #36153#29992#26102#38388
                     end
                     item
                       EditButtons = <>
@@ -1637,20 +1651,6 @@ inherited frmBondRequReport: TfrmBondRequReport
                       Footers = <>
                       Title.Caption = #36153#29992#31867#22411
                       Width = 59
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CREA_DATE'
-                      Footers = <>
-                      Title.Caption = #25805#20316#26102#38388
-                      Width = 70
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'REMARK'
-                      Footers = <>
-                      Title.Caption = #22791#27880
-                      Width = 80
                     end
                     item
                       EditButtons = <>
@@ -1675,6 +1675,13 @@ inherited frmBondRequReport: TfrmBondRequReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'REMARK'
+                      Footers = <>
+                      Title.Caption = #22791#27880
+                      Width = 117
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'CREA_USER_TEXT'
                       Footers = <>
                       Title.Caption = #25805#20316#20154
@@ -1685,7 +1692,7 @@ inherited frmBondRequReport: TfrmBondRequReport
                       FieldName = 'CREA_DATE'
                       Footers = <>
                       Title.Caption = #25805#20316#26102#38388
-                      Width = 72
+                      Width = 146
                     end>
                 end
               end
@@ -1694,8 +1701,8 @@ inherited frmBondRequReport: TfrmBondRequReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 822
-        Height = 506
+        Left = 814
+        Height = 495
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -1711,15 +1718,15 @@ inherited frmBondRequReport: TfrmBondRequReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 1034
+    Width = 1026
     inherited Image3: TImage
-      Width = 129
+      Width = 117
     end
     inherited Image14: TImage
-      Left = 1014
+      Left = 1006
     end
     inherited Image1: TImage
-      Left = 479
+      Left = 471
       Width = 535
     end
     inherited rzPanel5: TPanel

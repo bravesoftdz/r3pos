@@ -47,6 +47,7 @@ procedure TfrmInvoiceTotalReport.actFindExecute(Sender: TObject);
 var rs,rs1,rs2:TZQuery;
     CancelNo,UsingNo:String;
     CancelNum,UsingNum:Integer;
+    MaxNo:integer;
 begin
   inherited;
   adoReport1.Close;
@@ -89,6 +90,7 @@ begin
       rs2.Filtered := True;
       CancelNo := '';
       CancelNum := 0;
+      MaxNo := 0;
       rs2.First;
       while not rs2.Eof do
       begin
@@ -97,6 +99,7 @@ begin
            CancelNo := rs2.FieldByName('INVOICE_NO').AsString
         else
            CancelNo := CancelNo+','+rs2.FieldByName('INVOICE_NO').AsString;
+        if MaxNo>rs2.FieldByName('INVOICE_NO').AsInteger then  MaxNo := rs2.FieldByName('INVOICE_NO').AsInteger; 
         rs2.Next;
       end;
 
@@ -115,18 +118,27 @@ begin
          adoReport1.FieldByName('THIS_TOTAL_INVH_NO').AsString := FnString.FormatStringEx(rs.FieldByName('THIS_BEGIN_INVH_NO').AsString,8)+'-'+FnString.FormatStringEx(rs.FieldByName('THIS_END_INVH_NO').AsString,8);
 
       adoReport1.FieldByName('USING_AMT').AsInteger := rs1.FieldByName('USING_AMT').AsInteger;
-      adoReport1.FieldByName('USING_INVH_NO').AsString := FnString.FormatStringEx(rs1.FieldByName('USING_MIN_INVH_NO').AsString,8)+'-'+FnString.FormatStringEx(rs1.FieldByName('USING_MAX_INVH_NO').AsString,8);
+      if adoReport1.FieldByName('USING_AMT').AsInteger<>0 then
+         adoReport1.FieldByName('USING_INVH_NO').AsString := FnString.FormatStringEx(rs1.FieldByName('USING_MIN_INVH_NO').AsString,8)+'-'+FnString.FormatStringEx(rs1.FieldByName('USING_MAX_INVH_NO').AsString,8);
       adoReport1.FieldByName('CANCEL_AMT').AsInteger := CancelNum;
       adoReport1.FieldByName('CANCEL_INVH_NO').AsString := CancelNo;
+      if (rs.FieldByName('LAST_BEGIN_INVH_NO').AsInteger-1)>MaxNo then
+         MaxNo := (rs.FieldByName('LAST_BEGIN_INVH_NO').AsInteger-1);
+      if (rs.FieldByName('THIS_BEGIN_INVH_NO').AsInteger-1)>MaxNo then
+         MaxNo := rs.FieldByName('THIS_BEGIN_INVH_NO').AsInteger-1;
+      if rs1.FieldByName('USING_MAX_INVH_NO').AsInteger>MaxNo then
+         MaxNo := rs1.FieldByName('USING_MAX_INVH_NO').AsInteger;
       if rs.FieldByName('LAST_TOTAL_AMT').AsInteger = 0 then
       begin
-         adoReport1.FieldByName('BALANCE').AsInteger := adoReport1.FieldByName('THIS_TOTAL_AMT').AsInteger-adoReport1.FieldByName('USING_AMT').AsInteger;
-         adoReport1.FieldByName('BALANCE_INVH_NO').AsString := FnString.FormatStringEx(IntToStr(rs1.FieldByName('USING_MAX_INVH_NO').AsInteger+1),8)+'-'+FnString.FormatStringEx(IntToStr(rs.FieldByName('THIS_END_INVH_NO').AsInteger+1),8);
+         adoReport1.FieldByName('BALANCE').AsInteger := adoReport1.FieldByName('THIS_TOTAL_AMT').AsInteger-adoReport1.FieldByName('USING_AMT').AsInteger-adoReport1.FieldByName('CANCEL_AMT').AsInteger;
+         if adoReport1.FieldByName('BALANCE').AsInteger<>0 then
+            adoReport1.FieldByName('BALANCE_INVH_NO').AsString := FnString.FormatStringEx(IntToStr(MaxNo+1),8)+'-'+FnString.FormatStringEx(IntToStr(rs.FieldByName('THIS_END_INVH_NO').AsInteger),8)
       end
       else
       begin
-         adoReport1.FieldByName('BALANCE').AsInteger := adoReport1.FieldByName('LAST_TOTAL_AMT').AsInteger-adoReport1.FieldByName('USING_AMT').AsInteger;
-         adoReport1.FieldByName('BALANCE_INVH_NO').AsString := FnString.FormatStringEx(IntToStr(rs1.FieldByName('USING_MAX_INVH_NO').AsInteger+1),8)+'-'+FnString.FormatStringEx(IntToStr(rs.FieldByName('LAST_END_INVH_NO').AsInteger+1),8);
+         adoReport1.FieldByName('BALANCE').AsInteger := adoReport1.FieldByName('LAST_TOTAL_AMT').AsInteger-adoReport1.FieldByName('USING_AMT').AsInteger-adoReport1.FieldByName('CANCEL_AMT').AsInteger;
+         if adoReport1.FieldByName('BALANCE').AsInteger<>0 then
+            adoReport1.FieldByName('BALANCE_INVH_NO').AsString := FnString.FormatStringEx(IntToStr(MaxNo+1),8)+'-'+FnString.FormatStringEx(IntToStr(rs.FieldByName('LAST_END_INVH_NO').AsInteger),8)
       end;
       adoReport1.Post;
       rs.Next;
@@ -211,7 +223,7 @@ begin
           ' from SAL_INVOICE_BOOK A left outer join ('+
           ' select TENANT_ID,INVH_ID,count(distinct INVD_ID) as ORG_TOTAL_AMT '+
           ' from SAL_INVOICE_INFO where TENANT_ID=:TENANT_ID and CREA_DATE<:D1 group by TENANT_ID,INVH_ID '+
-          ' ) B on A.TENANT_ID=B.TENANT_ID and A.INVH_ID=B.INVH_ID where (A.TOTAL_AMT-isnull(B.ORG_TOTAL_AMT,0))<>0 '+sWhere;
+          ' ) B on A.TENANT_ID=B.TENANT_ID and A.INVH_ID=B.INVH_ID where (((A.TOTAL_AMT-isnull(B.ORG_TOTAL_AMT,0))<>0) or CREA_DATE>=:D1 ) '+sWhere;
   Result := sSql;
 end;
 

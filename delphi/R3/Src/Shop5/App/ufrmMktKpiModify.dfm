@@ -15,8 +15,6 @@ inherited frmMktKpiModify: TfrmMktKpiModify
       Top = 73
       Width = 663
       Height = 325
-      ActivePage = TabSheet2
-      TabIndex = 1
       FixedDimension = 20
       inherited TabSheet1: TRzTabSheet
         Caption = #38750#36820#21033#21830#21697#20449#24687
@@ -584,6 +582,7 @@ inherited frmMktKpiModify: TfrmMktKpiModify
         TabOrder = 5
         TextStyle = tsRaised
         ThemeAware = False
+        OnClick = RzBitBtn1Click
         NumGlyphs = 2
         Spacing = 5
       end

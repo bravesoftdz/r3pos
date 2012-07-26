@@ -201,7 +201,6 @@ begin
   RzPage.ActivePageIndex := 0;
   Btn_Save.BringToFront;
   Open;
-  OpenBalanceVoucher;
   edtInput.SetFocus;
 end;
 
@@ -405,7 +404,10 @@ begin
   if RzPage.ActivePageIndex = 0 then
      Btn_Save.BringToFront
   else
-     Btn_Update.BringToFront;
+     begin
+       OpenBalanceVoucher;
+       Btn_Update.BringToFront;
+     end;
 end;
 
 function TfrmVhPayGlide.GetBalanceVoucherSql: String;
@@ -413,8 +415,8 @@ var Str:String;
 begin
   Str := 'select A.BARCODE,A.VOUCHER_TYPE,A.VOUCHER_PRC,A.VOUCHER_STATUS,B.SHOP_ID,B.DEPT_ID,B.VHPAY_ID,'+
   'B.CLIENT_ID,B.VHPAY_USER,B.VHPAY_MNY,B.AGIO_RATE,B.AGIO_MONEY,B.VHPAY_DATE,B.CREA_DATE,B.FROM_ID '+
-  ' from SAL_VOUCHERDATA A left join SAL_VHPAY_GLIDE B on A.TENANT_ID=B.TENANT_ID and A.BARCODE=B.BARCODE '+
-  ' where A.TENANT_ID=:TENANT_ID and A.VOUCHER_STATUS=''4'' and B.VHPAY_DATE=:VHPAY_DATE and B.CREA_USER=:CREA_USER ';
+  ' from SAL_VOUCHERDATA A inner join SAL_VHPAY_GLIDE B on A.TENANT_ID=B.TENANT_ID and A.BARCODE=B.BARCODE '+
+  ' where A.TENANT_ID=:TENANT_ID and A.VOUCHER_STATUS=''4'' and B.VHPAY_DATE=:VHPAY_DATE and B.VHPAY_USER=:VHPAY_USER order by B.CREA_DATE desc';
   Result := Str;
 end;
 
@@ -427,8 +429,8 @@ begin
   try
     CdsVhpayGlide.SQL.Text := GetBalanceVoucherSql;
     CdsVhpayGlide.Params.ParamByName('TENANT_ID').AsInteger := Global.TENANT_ID;
-    CdsVhpayGlide.Params.ParamByName('VHPAY_DATE').AsInteger := strtoint(formatdatetime('YYYYMMDD',Date));
-    CdsVhpayGlide.Params.ParamByName('CREA_USER').AsString := Global.UserID;
+    CdsVhpayGlide.Params.ParamByName('VHPAY_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Global.SysDate));
+    CdsVhpayGlide.Params.ParamByName('VHPAY_USER').AsString := Global.UserID;
 
     Factor.Open(CdsVhpayGlide);
   finally
@@ -452,13 +454,13 @@ begin
       Params.ParamByName('SHOP_ID').AsString := CdsVhpayGlide.FieldByName('SHOP_ID').AsString;
       Params.ParamByName('DEPT_ID').AsString := CdsVhpayGlide.FieldByName('DEPT_ID').AsString;
       Params.ParamByName('CLIENT_ID').AsString := CdsVhpayGlide.FieldByName('CLIENT_ID').AsString;
-      Params.ParamByName('VHPAY_DATE').AsInteger := CdsVhpayGlide.FieldByName('VHPAY_DATE').AsInteger;
+      Params.ParamByName('VHPAY_DATE').AsInteger := StrToInt(FormatDateTime('YYYYMMDD',Global.SysDate));
       Params.ParamByName('VHPAY_USER').AsString := CdsVhpayGlide.FieldByName('VHPAY_USER').AsString;
       Params.ParamByName('VOUCHER_PRC').AsInteger := CdsVhpayGlide.FieldByName('VOUCHER_PRC').AsInteger;
       Params.ParamByName('VOUCHER_TYPE').AsString := CdsVhpayGlide.FieldByName('VOUCHER_TYPE').AsString;
-      Params.ParamByName('VHPAY_MNY').AsFloat := 0-CdsVhpayGlide.FieldByName('VHPAY_MNY').AsFloat;
+      Params.ParamByName('VHPAY_MNY').AsFloat :=  - CdsVhpayGlide.FieldByName('VHPAY_MNY').AsFloat;
       Params.ParamByName('AGIO_RATE').AsFloat := CdsVhpayGlide.FieldByName('AGIO_RATE').AsFloat;
-      Params.ParamByName('AGIO_MONEY').AsFloat := CdsVhpayGlide.FieldByName('AGIO_MONEY').AsFloat;
+      Params.ParamByName('AGIO_MONEY').AsFloat := - CdsVhpayGlide.FieldByName('AGIO_MONEY').AsFloat;
       Params.ParamByName('FROM_ID').AsString := CdsVhpayGlide.FieldByName('FROM_ID').AsString;
       Params.ParamByName('CREA_DATE').AsString := formatdatetime('YYYY-MM-DD HH:NN:SS',now());
       Params.ParamByName('CREA_USER').AsString := Global.UserID;

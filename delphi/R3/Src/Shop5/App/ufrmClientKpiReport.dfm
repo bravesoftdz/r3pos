@@ -7,14 +7,14 @@ inherited frmClientKpiReport: TfrmClientKpiReport
   PixelsPerInch = 96
   TextHeight = 12
   inherited bgPanel: TRzPanel
-    Width = 883
-    Height = 522
+    Width = 875
+    Height = 511
     inherited RzPanel2: TRzPanel
-      Width = 873
-      Height = 512
+      Width = 865
+      Height = 501
       inherited RzPage: TRzPageControl
-        Width = 668
-        Height = 506
+        Width = 660
+        Height = 495
         ActivePage = TabSheet5
         Color = clCream
         ParentColor = False
@@ -24,13 +24,13 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           Color = clCream
           Caption = #37096#38376#36820#21033#27719#24635#34920
           inherited RzPanel3: TRzPanel
-            Width = 666
-            Height = 479
+            Width = 658
+            Height = 468
             inherited Panel4: TPanel
-              Width = 656
-              Height = 469
+              Width = 648
+              Height = 458
               inherited w1: TRzPanel
-                Width = 656
+                Width = 648
                 Height = 78
                 object RzLabel2: TRzLabel
                   Left = 24
@@ -302,11 +302,11 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               end
               inherited RzPanel7: TRzPanel
                 Top = 78
-                Width = 656
-                Height = 391
+                Width = 648
+                Height = 380
                 inherited DBGridEh1: TDBGridEh
-                  Width = 652
-                  Height = 387
+                  Width = 644
+                  Height = 376
                   FrozenCols = 3
                   TitleHeight = 22
                   OnDblClick = DBGridEh1DblClick
@@ -390,8 +390,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel8: TRzPanel
             Left = 0
             Top = 0
-            Width = 666
-            Height = 479
+            Width = 658
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -399,8 +399,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object Panel1: TPanel
               Left = 5
               Top = 5
-              Width = 656
-              Height = 469
+              Width = 648
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -408,7 +408,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel19: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 656
+                Width = 648
                 Height = 78
                 Align = alTop
                 BorderOuter = fsGroove
@@ -685,8 +685,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel20: TRzPanel
                 Left = 0
                 Top = 78
-                Width = 656
-                Height = 391
+                Width = 648
+                Height = 380
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -694,8 +694,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object DBGridEh2: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 652
-                  Height = 387
+                  Width = 644
+                  Height = 376
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -819,8 +819,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel13: TRzPanel
             Left = 0
             Top = 0
-            Width = 666
-            Height = 479
+            Width = 658
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -828,8 +828,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object Panel3: TPanel
               Left = 5
               Top = 5
-              Width = 656
-              Height = 469
+              Width = 648
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -837,7 +837,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel11: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 656
+                Width = 648
                 Height = 77
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1114,8 +1114,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel12: TRzPanel
                 Left = 0
                 Top = 77
-                Width = 656
-                Height = 392
+                Width = 648
+                Height = 381
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -1123,8 +1123,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object DBGridEh3: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 652
-                  Height = 388
+                  Width = 644
+                  Height = 377
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -1248,8 +1248,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel6: TRzPanel
             Left = 0
             Top = 0
-            Width = 666
-            Height = 479
+            Width = 658
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1257,7 +1257,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object RzPanel9: TRzPanel
               Left = 5
               Top = 5
-              Width = 656
+              Width = 648
               Height = 78
               Align = alTop
               Alignment = taRightJustify
@@ -1282,7 +1282,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               end
               object Label10: TLabel
                 Left = 24
-                Top = 57
+                Top = 56
                 Width = 48
                 Height = 12
                 Caption = #23458#25143#20998#32452
@@ -1304,7 +1304,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               end
               object Label14: TLabel
                 Left = 287
-                Top = 57
+                Top = 56
                 Width = 48
                 Height = 12
                 Caption = #23458#25143#21517#31216
@@ -1535,8 +1535,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object RzPanel10: TRzPanel
               Left = 5
               Top = 83
-              Width = 656
-              Height = 391
+              Width = 648
+              Height = 380
               Align = alClient
               BorderOuter = fsGroove
               Color = clWhite
@@ -1544,8 +1544,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object DBGridEh4: TDBGridEh
                 Left = 2
                 Top = 2
-                Width = 652
-                Height = 387
+                Width = 644
+                Height = 376
                 Align = alClient
                 AllowedOperations = []
                 BorderStyle = bsNone
@@ -1636,7 +1636,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     Alignment = taRightJustify
                     DisplayFormat = '#0.00'
                     EditButtons = <>
-                    FieldName = 'KPI_AMT'
+                    FieldName = 'FISH_AMT'
                     Footer.DisplayFormat = '#0.00'
                     Footer.ValueType = fvtSum
                     Footers = <>
@@ -1707,8 +1707,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
           object RzPanel14: TRzPanel
             Left = 0
             Top = 0
-            Width = 666
-            Height = 479
+            Width = 658
+            Height = 468
             Align = alClient
             BorderOuter = fsNone
             BorderWidth = 5
@@ -1716,8 +1716,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
             object Panel6: TPanel
               Left = 5
               Top = 5
-              Width = 656
-              Height = 469
+              Width = 648
+              Height = 458
               Align = alClient
               BevelOuter = bvNone
               Color = clWhite
@@ -1725,7 +1725,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
               object RzPanel15: TRzPanel
                 Left = 0
                 Top = 0
-                Width = 656
+                Width = 648
                 Height = 96
                 Align = alTop
                 BorderOuter = fsGroove
@@ -1733,7 +1733,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 TabOrder = 0
                 object RzLabel9: TRzLabel
                   Left = 24
-                  Top = 32
+                  Top = 10
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1741,7 +1741,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 end
                 object Label16: TLabel
                   Left = 24
-                  Top = 54
+                  Top = 30
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
@@ -1749,14 +1749,14 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 end
                 object Label19: TLabel
                   Left = 24
-                  Top = 77
+                  Top = 72
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#20998#32452
                 end
                 object RzLabel10: TRzLabel
                   Left = 165
-                  Top = 32
+                  Top = 10
                   Width = 12
                   Height = 12
                   Alignment = taRightJustify
@@ -1764,40 +1764,25 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 end
                 object Label20: TLabel
                   Left = 287
-                  Top = 32
+                  Top = 51
                   Width = 48
                   Height = 12
                   Caption = #25152#23646#37096#38376
                 end
                 object Label21: TLabel
                   Left = 287
-                  Top = 77
+                  Top = 72
                   Width = 48
                   Height = 12
                   Caption = #23458#25143#21517#31216
                 end
-                object Label22: TLabel
-                  Left = 287
-                  Top = 55
-                  Width = 48
-                  Height = 12
-                  Alignment = taRightJustify
-                  Caption = #23548' '#36141' '#21592
-                end
-                object RzLabel11: TRzLabel
+                object Label23: TLabel
                   Left = 24
-                  Top = 10
+                  Top = 50
                   Width = 48
                   Height = 12
                   Alignment = taRightJustify
-                  Caption = #35745#21010#26085#26399
-                end
-                object RzLabel12: TRzLabel
-                  Left = 164
-                  Top = 10
-                  Width = 12
-                  Height = 12
-                  Caption = #33267
+                  Caption = #32771#26680#21608#26399
                 end
                 object BtnSaleDetail: TRzBitBtn
                   Left = 505
@@ -1828,7 +1813,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 end
                 object fndP5_CUST_TYPE: TcxComboBox
                   Left = 77
-                  Top = 72
+                  Top = 67
                   Width = 73
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1842,7 +1827,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 end
                 object fndP5_YEAR1: TcxComboBox
                   Left = 77
-                  Top = 28
+                  Top = 6
                   Width = 83
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1855,7 +1840,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object fndP5_KPI_ID: TzrComboBoxList
                   Tag = -1
                   Left = 77
-                  Top = 50
+                  Top = 26
                   Width = 193
                   Height = 20
                   Properties.AutoSelect = False
@@ -1864,7 +1849,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 3
+                  TabOrder = 2
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'KPI_ID;KPI_NAME;KPI_SPELL'
@@ -1891,7 +1876,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object fndP5_CUST_VALUE: TzrComboBoxList
                   Tag = -1
                   Left = 151
-                  Top = 72
+                  Top = 67
                   Width = 119
                   Height = 20
                   Properties.AutoSelect = False
@@ -1932,7 +1917,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 end
                 object fndP5_YEAR2: TcxComboBox
                   Left = 180
-                  Top = 28
+                  Top = 6
                   Width = 90
                   Height = 20
                   ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
@@ -1945,7 +1930,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object fndP5_CLIENT_ID: TzrComboBoxList
                   Tag = -1
                   Left = 340
-                  Top = 72
+                  Top = 67
                   Width = 152
                   Height = 20
                   Properties.AutoSelect = False
@@ -1986,7 +1971,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 end
                 object fndP5_DEPT_ID: TzrComboBoxList
                   Left = 340
-                  Top = 28
+                  Top = 47
                   Width = 152
                   Height = 20
                   Properties.AutoSelect = False
@@ -1995,7 +1980,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 2
+                  TabOrder = 4
                   InGrid = False
                   KeyValue = Null
                   FilterFields = 'DEPT_NAME;DEPT_SPELL'
@@ -2021,11 +2006,11 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                   RangeValue = '1'
                   ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
-                object fndP5_GUIDE_USER: TzrComboBoxList
+                object fndP5_TIMES_ID: TzrComboBoxList
                   Tag = -1
-                  Left = 340
-                  Top = 50
-                  Width = 152
+                  Left = 77
+                  Top = 46
+                  Width = 193
                   Height = 20
                   Properties.AutoSelect = False
                   Properties.Buttons = <
@@ -2033,67 +2018,38 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Default = True
                     end>
                   Properties.ReadOnly = False
-                  TabOrder = 4
+                  TabOrder = 3
                   InGrid = False
                   KeyValue = Null
-                  FilterFields = 'USER_ID;USER_SPELL;USER_NAME'
-                  KeyField = 'USER_ID'
-                  ListField = 'USER_NAME'
+                  FilterFields = 'TIMES_NAME'
+                  KeyField = 'TIMES_ID'
+                  ListField = 'TIMES_NAME'
                   Columns = <
                     item
                       EditButtons = <>
-                      FieldName = 'USER_NAME'
+                      FieldName = 'TIMES_NAME'
                       Footers = <>
-                      Title.Caption = #22995#21517
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'USER_SPELL'
-                      Footers = <>
-                      Title.Caption = #25340#38899#30721
-                      Width = 20
+                      Title.Caption = #32771#26680#21608#26399
                     end>
+                  DataSet = cdsTimes
                   DropWidth = 185
                   DropHeight = 180
                   ShowTitle = True
                   AutoFitColWidth = True
-                  ShowButton = False
+                  ShowButton = True
                   LocateStyle = lsDark
                   Buttons = [zbClear]
                   DropListStyle = lsFixed
+                  OnBeforeDropList = fndP5_TIMES_IDBeforeDropList
                   MultiSelect = False
-                end
-                object P5_D1: TcxDateEdit
-                  Left = 77
-                  Top = 6
-                  Width = 83
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DateButtons = [btnToday]
-                  TabOrder = 9
-                end
-                object P5_D2: TcxDateEdit
-                  Left = 180
-                  Top = 6
-                  Width = 90
-                  Height = 20
-                  ImeName = #20013#25991'('#31616#20307') - '#25628#29399#20116#31508#36755#20837#27861
-                  Properties.DateButtons = [btnToday]
-                  TabOrder = 10
-                end
-                inline P5_DateControl: TfrmDateControl
-                  Left = 289
-                  Top = 6
-                  Width = 170
-                  Height = 20
-                  TabOrder = 11
+                  ImeName = #20013#25991' ('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
                 end
               end
               object RzPanel21: TRzPanel
                 Left = 0
                 Top = 96
-                Width = 656
-                Height = 373
+                Width = 648
+                Height = 362
                 Align = alClient
                 BorderOuter = fsGroove
                 Color = clWhite
@@ -2101,8 +2057,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                 object DBGridEh5: TDBGridEh
                   Left = 2
                   Top = 2
-                  Width = 652
-                  Height = 369
+                  Width = 644
+                  Height = 358
                   Align = alClient
                   AllowedOperations = []
                   BorderStyle = bsNone
@@ -2172,6 +2128,13 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                     end
                     item
                       EditButtons = <>
+                      FieldName = 'TIMES_NAME'
+                      Footers = <>
+                      Title.Caption = #32771#26680#21608#26399
+                      Width = 61
+                    end
+                    item
+                      EditButtons = <>
                       FieldName = 'BEGIN_DATE'
                       Footers = <>
                       Title.Caption = #24320#22987#26085#26399
@@ -2189,7 +2152,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       FieldName = 'KPI_NAME'
                       Footers = <>
                       Title.Caption = #32771#26680#25351#26631
-                      Width = 70
+                      Width = 150
                     end
                     item
                       EditButtons = <>
@@ -2207,18 +2170,18 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #31614#32422#37327
-                      Width = 84
+                      Width = 55
                     end
                     item
                       Alignment = taRightJustify
                       DisplayFormat = '#0.00'
                       EditButtons = <>
-                      FieldName = 'KPI_AMT'
+                      FieldName = 'FISH_AMT'
                       Footer.DisplayFormat = '#0.00'
                       Footer.ValueType = fvtSum
                       Footers = <>
                       Title.Caption = #23436#25104#37327
-                      Width = 84
+                      Width = 55
                     end
                     item
                       Alignment = taRightJustify
@@ -2228,7 +2191,7 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footer.ValueType = fvtStaticText
                       Footers = <>
                       Title.Caption = #23436#25104#29575
-                      Width = 60
+                      Width = 52
                     end
                     item
                       Alignment = taRightJustify
@@ -2240,34 +2203,6 @@ inherited frmClientKpiReport: TfrmClientKpiReport
                       Footers = <>
                       Title.Caption = #36820#21033#37329#39069
                       Width = 84
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'REMARK'
-                      Footers = <>
-                      Title.Caption = #22791#27880
-                      Width = 103
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'GLIDE_NO'
-                      Footers = <>
-                      Title.Caption = #21333#21495
-                      Width = 80
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CREA_DATE'
-                      Footers = <>
-                      Title.Caption = #25805#20316#26102#38388
-                      Width = 72
-                    end
-                    item
-                      EditButtons = <>
-                      FieldName = 'CREA_USER'
-                      Footers = <>
-                      Title.Caption = #25805#20316#20154
-                      Width = 60
                     end>
                 end
               end
@@ -2276,8 +2211,8 @@ inherited frmClientKpiReport: TfrmClientKpiReport
         end
       end
       inherited PanelColumnS: TPanel
-        Left = 671
-        Height = 506
+        Left = 663
+        Height = 495
         inherited Panel2: TPanel
           Height = 463
           inherited RzPanel1: TRzPanel [3]
@@ -2293,15 +2228,15 @@ inherited frmClientKpiReport: TfrmClientKpiReport
     end
   end
   inherited RzPanel4: TRzPanel
-    Width = 883
+    Width = 875
     inherited Image3: TImage
-      Width = 375
+      Width = 371
     end
     inherited Image14: TImage
-      Left = 863
+      Left = 855
     end
     inherited Image1: TImage
-      Left = 328
+      Left = 320
       Width = 535
     end
     inherited rzPanel5: TPanel
@@ -2402,5 +2337,12 @@ inherited frmClientKpiReport: TfrmClientKpiReport
       72645C71725C66305C667332305C2762345C2766325C2764335C2761315C2763
       615C2762315C2762635C2765345C6C616E67323035325C66315C66733136200D
       0A5C706172207D0D0A00}
+  end
+  object cdsTimes: TZQuery
+    FieldDefs = <>
+    CachedUpdates = True
+    Params = <>
+    Left = 233
+    Top = 145
   end
 end

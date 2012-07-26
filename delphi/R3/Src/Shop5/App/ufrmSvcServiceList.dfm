@@ -1063,7 +1063,6 @@ inherited frmSvcServiceList: TfrmSvcServiceList
       OnExecute = actPrintExecute
     end
     inherited actPreview: TAction
-      Caption = #23548#20986
       OnExecute = actPreviewExecute
     end
     inherited actFind: TAction

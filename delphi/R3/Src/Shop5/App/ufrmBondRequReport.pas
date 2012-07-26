@@ -265,26 +265,28 @@ begin
       begin
         strSql:=
           'select '+
-          ' A.DEPT_ID as DEPT_ID,'+
-          ' C.BOND_MNY as BOND_ALL_MNY,'+  //计划表的保证金额总金额
-          ' B.BOND_MNY as BOND_MNY,'+      //申领保证金额
-          ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-          ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
+          ' A.TENANT_ID,A.DEPT_ID as DEPT_ID,'+
+          ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+          ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+          ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+          ' sum(B.BOND_MNY) as NEW_BOND_MNY  '+
           ' from MKT_BONDORDER A,MKT_BONDDATA B,MKT_PLANORDER C '+
-          ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.PLAN_ID '+strWhere+' ';
+          ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.PLAN_ID '+strWhere+' '+
+          ' group by A.TENANT_ID,A.DEPT_ID';
       end else
       begin
         strSql:=
           'select '+
-          ' A.DEPT_ID as DEPT_ID,'+
-          ' C.BOND_MNY as BOND_ALL_MNY,'+  //计划表的保证金额总金额          
-          ' B.BOND_MNY as BOND_MNY,'+
-          ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-          ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
+          ' A.TENANT_ID,A.DEPT_ID as DEPT_ID,'+
+          ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+          ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+          ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+          ' sum(B.BOND_MNY) as NEW_BOND_MNY  '+
           ' from MKT_BONDORDER A,MKT_BONDDATA B,MKT_PLANORDER C,VIW_CUSTOMER D '+
           ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.PLAN_ID and '+
-          ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
-      end;  
+          ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
+          ' group by A.TENANT_ID,A.DEPT_ID';
+      end;
     end;
    2: //滚存保证金
     begin
@@ -292,42 +294,38 @@ begin
       begin
         strSql:=
           'select '+
-          ' A.DEPT_ID as DEPT_ID,'+
-          ' C.BOND_MNY as BOND_ALL_MNY,'+  //计划表的保证金额总金额
-          ' B.BOND_MNY as BOND_MNY,'+      //申领保证金额
-          ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-          ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
-          ' from MKT_BONDORDER A,MKT_BONDDATA B,STK_INDENTORDER C '+
-          ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.INDE_ID '+strWhere+' ';
+          ' A.TENANT_ID,A.DEPT_ID as DEPT_ID,'+
+          ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+          ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+          ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+          ' sum(B.BOND_MNY) as NEW_BOND_MNY  '+
+          ' from MKT_BONDORDER A,MKT_BONDDATA B,SAL_INDENTORDER C '+
+          ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.INDE_ID '+strWhere+' '+
+          ' group by A.TENANT_ID,A.DEPT_ID';
       end else
       begin
         strSql:=
           'select '+
-          ' A.DEPT_ID as DEPT_ID,'+
-          ' C.BOND_MNY as BOND_ALL_MNY,'+  //计划表的保证金额总金额
-          ' B.BOND_MNY as BOND_MNY,'+
-          ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-          ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
-          ' from MKT_BONDORDER A,MKT_BONDDATA B,STK_INDENTORDER C,VIW_CUSTOMER D '+
+          ' A.TENANT_ID,A.DEPT_ID as DEPT_ID,'+
+          ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+          ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+          ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+          ' sum(B.BOND_MNY) as NEW_BOND_MNY  '+
+          ' from MKT_BONDORDER A,MKT_BONDDATA B,SAL_INDENTORDER C,VIW_CUSTOMER D '+
           ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.INDE_ID and '+
-          ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
+          ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
+          ' group by A.TENANT_ID,A.DEPT_ID';
       end;
     end;
   end;
- 
+
   Result :=ParseSQL(Factor.iDbType,
      'select '+
-     ' K.DEPT_ID as DEPT_ID,'+
+     ' K.*,'+
      ' DEPT.DEPT_NAME as DEPT_NAME,'+
-     ' sum(BOND_ALL_MNY) as BOND_ALL_MNY,'+
-     ' sum(BOND_MNY) as BOND_MNY,'+
-     ' sum(ORG_BOND_MNY) as ORG_BOND_MNY,'+
-     ' sum(NEW_BOND_MNY) as NEW_BOND_MNY, '+
-     ' sum(BOND_ALL_MNY-BOND_MNY) as JY_MNY '+
+     ' BOND_ALL_MNY-BOND_MNY as JY_MNY '+
      ' from ('+strSql+')K '+
-     ' left outer join (select DEPT_ID,DEPT_NAME from CA_DEPT_INFO where TENANT_ID='+InttoStr(Global.TENANT_ID)+')DEPT '+
-     ' on K.DEPT_ID=DEPT.DEPT_ID '+
-     ' Group by K.DEPT_ID,DEPT.DEPT_NAME '
+     ' left outer join CA_DEPT_INFO DEPT on DEPT.TENANT_ID=K.TENANT_ID and DEPT.DEPT_ID=K.DEPT_ID '
      );
 end;
 
@@ -388,43 +386,40 @@ begin
     begin
       strSql:=
         'select '+
-        ' D.REGION_ID as REGION_ID,'+
-        ' C.BOND_MNY as BOND_ALL_MNY,'+   //计划表的保证金额总金额
-        ' B.BOND_MNY as BOND_MNY,'+
-        ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-        ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
+        ' A.TENANT_ID,D.REGION_ID as REGION_ID,'+
+        ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+        ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+        ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+        ' sum(B.BOND_MNY) as NEW_BOND_MNY  '+
         ' from MKT_BONDORDER A,MKT_BONDDATA B,MKT_PLANORDER C,VIW_CUSTOMER D '+
         ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.PLAN_ID and '+
-        ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
+        ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
+        'group by A.TENANT_ID,D.REGION_ID';
     end;
    2: //滚存保证金
     begin
       strSql:=
         'select '+
-        ' D.REGION_ID as REGION_ID,'+
-        ' C.BOND_MNY as BOND_ALL_MNY,'+  //计划表的保证金额总金额
-        ' B.BOND_MNY as BOND_MNY,'+
-        ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-        ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
+        ' A.TENANT_ID,D.REGION_ID as REGION_ID,'+
+        ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+        ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+        ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+        ' sum(B.BOND_MNY) as NEW_BOND_MNY  '+
         ' from MKT_BONDORDER A,MKT_BONDDATA B,STK_INDENTORDER C,VIW_CUSTOMER D '+
         ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.INDE_ID and '+
-        ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
+        ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
+        'group by A.TENANT_ID,D.REGION_ID';
     end;
   end; 
  
   Result :=ParseSQL(Factor.iDbType,
      'select '+
-     ' K.REGION_ID as REGION_ID,'+
+     ' K.*,'+
      ' isnull(Area.CODE_NAME,''无'') as CODE_NAME,'+
-     ' sum(BOND_ALL_MNY) as BOND_ALL_MNY,'+
-     ' sum(BOND_MNY) as BOND_MNY,'+
-     ' sum(ORG_BOND_MNY) as ORG_BOND_MNY,'+
-     ' sum(NEW_BOND_MNY) as NEW_BOND_MNY,'+
-     ' sum(BOND_ALL_MNY-BOND_MNY) as JY_MNY '+     
+     ' BOND_ALL_MNY-BOND_MNY as JY_MNY '+     
      ' from ('+strSql+')K '+
      ' left outer join (select CODE_ID,CODE_NAME from PUB_CODE_INFO where CODE_TYPE=''8'' and TENANT_ID=0)Area '+
-     ' on K.REGION_ID=Area.CODE_ID '+
-     ' Group by K.REGION_ID,Area.CODE_NAME '
+     ' on K.REGION_ID=Area.CODE_ID '
      );
 
      
@@ -528,13 +523,15 @@ begin
         'select '+
         ' A.CLIENT_ID as CLIENT_ID,'+
         ' D.CLIENT_NAME as CLIENT_NAME,'+
-        ' C.BOND_MNY as BOND_ALL_MNY,'+   //计划表的保证金额总金额
-        ' B.BOND_MNY as BOND_MNY,'+
-        ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-        ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
+        ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+        ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+        ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+        ' sum(B.BOND_MNY) as NEW_BOND_MNY,'+
+        ' isnull(max(C.BOND_MNY),0)-isnull(sum(C.BOND_RET),0) as JY_MNY '+
         ' from MKT_BONDORDER A,MKT_BONDDATA B,MKT_PLANORDER C,VIW_CUSTOMER D '+
         ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.PLAN_ID and '+
-        ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
+        ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' '+
+        'group by A.CLIENT_ID,D.CLIENT_NAME';
     end;
    2: //滚存保证金
     begin
@@ -542,10 +539,11 @@ begin
         'select '+
         ' A.CLIENT_ID as CLIENT_ID,'+
         ' D.CLIENT_NAME as CLIENT_NAME,'+
-        ' C.BOND_MNY as BOND_ALL_MNY,'+  //计划表的保证金额总金额
-        ' B.BOND_MNY as BOND_MNY,'+
-        ' (case when A.BOND_DATE<'+vBegDate+' and A.BOND_DATE>'+vEndDate+' then B.BOND_MNY else 0 end) as ORG_BOND_MNY,'+
-        ' (case when A.BOND_DATE>='+vBegDate+' and A.BOND_DATE<='+vEndDate+' then B.BOND_MNY else 0 end) as NEW_BOND_MNY  '+
+        ' max(C.BOND_MNY) as BOND_ALL_MNY,'+  //计划表的保证金额总金额
+        ' max(C.BOND_RET) as BOND_MNY,'+      //申领保证金额
+        ' isnull(max(C.BOND_RET),0)-isnull(sum(B.BOND_MNY),0) as ORG_BOND_MNY,'+
+        ' sum(B.BOND_MNY) as NEW_BOND_MNY,'+
+        ' isnull(max(C.BOND_MNY),0)-isnull(sum(C.BOND_RET),0) as JY_MNY '+
         ' from MKT_BONDORDER A,MKT_BONDDATA B,STK_INDENTORDER C,VIW_CUSTOMER D '+
         ' where A.TENANT_ID=B.TENANT_ID and A.BOND_ID=B.BOND_ID and B.TENANT_ID=C.TENANT_ID and B.FROM_ID=C.INDE_ID and '+
         ' A.TENANT_ID=D.TENANT_ID and A.CLIENT_ID=D.CLIENT_ID '+strWhere+strCnd+' ';
@@ -553,16 +551,7 @@ begin
   end;
 
   Result :=ParseSQL(Factor.iDbType,
-     'select '+
-     ' K.CLIENT_ID as CLIENT_ID,'+
-     ' K.CLIENT_NAME as CLIENT_NAME,'+
-     ' sum(BOND_ALL_MNY) as BOND_ALL_MNY,'+
-     ' sum(BOND_MNY) as BOND_MNY,'+
-     ' sum(ORG_BOND_MNY) as ORG_BOND_MNY,'+
-     ' sum(NEW_BOND_MNY) as NEW_BOND_MNY,'+
-     ' sum(BOND_ALL_MNY-BOND_MNY) as JY_MNY '+     
-     ' from ('+strSql+')K '+
-     ' Group by K.CLIENT_ID,K.CLIENT_NAME '
+     strSql
      );
 end;
 
@@ -631,6 +620,8 @@ begin
         ' A.BOND_USER as BOND_USER,'+       //填报人ID
         ' C.KPI_YEAR as BOND_YEAR,'+        //申领年份
         ' A.BOND_TYPE as BOND_TYPE,'+       //申领类型
+        ' C.BOND_MNY as BOND_ALL_MNY,'+         //保证金额申请金额
+        ' isnull(C.BOND_MNY,0)-isnull(C.BOND_RET,0) as JY_MNY,'+         //保证金额申请金额
         ' B.BOND_MNY as BOND_MNY,'+         //保证金额申请金额
         ' B.REMARK as REMARK,'+             //备注
         ' A.CREA_DATE as CREA_DATE,'+       //创建日期
@@ -651,8 +642,10 @@ begin
         ' D.CLIENT_NAME as CLIENT_NAME,'+   //客户名称
         ' A.DEPT_ID as DEPT_ID,'+           //部门ID
         ' A.BOND_USER as BOND_USER,'+       //填报人ID
-        ' substr('+IntToVarchar('C.INDE_DATE')+',1,4) as BOND_YEAR,'+        //申领年份
+        ' C.INDE_DATE as BOND_YEAR,'+        //申领年份
         ' A.BOND_TYPE as BOND_TYPE,'+       //申领类型
+        ' C.BOND_MNY as BOND_ALL_MNY,'+         //保证金额申请金额
+        ' isnull(C.BOND_MNY,0)-isnull(C.BOND_RET,0) as JY_MNY,'+         //保证金额申请金额
         ' B.BOND_MNY as BOND_MNY,'+         //保证金额申请金额
         ' B.REMARK as REMARK,'+             //备注
         ' A.CREA_DATE as CREA_DATE,'+       //创建日期

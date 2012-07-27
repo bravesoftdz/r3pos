@@ -785,7 +785,7 @@ begin
       SQL :=
         'insert into '+tempTableName2+'(TENANT_ID,GODS_ID,BATCH_NO,SHOP_ID,CREA_DATE,COST_PRICE) '+
         'select 0 as TENANT_ID,GODS_ID,BATCH_NO,''#'' as SHOP_ID,0,'+
-        'case when sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(ORG_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(ORG_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.0),6) else 0 end as COST_PRICE '+
+        'case when sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0))<>0 then round(cast(sum(isnull(BAL_CST,0)+isnull(STOCK_MNY,0)) as decimal(18,3))/(cast(sum(isnull(BAL_AMT,0)+isnull(STOCK_AMT,0)) as decimal(18,3))*1.0),6) else 0 end as COST_PRICE '+
         'from '+tempTableName1+' '+
         'group by GODS_ID,BATCH_NO';
       Factor.ExecSQL(ParseSQL(Factor.iDbType,SQL));
